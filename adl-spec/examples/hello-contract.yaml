@@ -1,0 +1,54 @@
+# ADL v0.1 example: "Hello (contracts deferred)"
+#
+# This is a minimal runnable example for the swarm v0.1 runtime.
+# It demonstrates:
+# - provider
+# - agent
+# - task prompt
+# - sequential workflow execution
+#
+# NOTE: Output contracts are a v0.2+ feature; for v0.1 we document intent in comments.
+
+version: "0.1"
+
+providers:
+  ollama_local:
+    type: "ollama"
+    base_url: "http://localhost:11434"
+    config:
+      model: "gemma3:latest"
+      temperature: 0.2
+
+agents:
+  greeter:
+    provider: "ollama_local"
+    model: "gemma3:latest"
+    description: "A minimal agent that produces structured, constrained output."
+    prompt:
+      system: "You are a precise assistant."
+      developer: |
+        Follow these rules:
+        - Output ONLY the final answer (no preamble).
+        - Use exactly 1 sentence.
+        - Keep it friendly and short.
+
+tasks:
+  hello_contract:
+    description: |
+      v0.1 note: This task is intended to demonstrate output constraints.
+      v0.2+ will add explicit machine-checkable contracts.
+    prompt:
+      user: |
+        Say hello to {{name}}.
+      output: "text"
+
+run:
+  name: "hello-contract"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "hello"
+        agent: "greeter"
+        task: "hello_contract"
+        inputs:
+          name: "Daniel"

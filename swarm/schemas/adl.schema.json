@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://agent-design-language.org/schemas/adl.schema.json",
+  "title": "ADL v0.1",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "header": { "$ref": "#/definitions/Header" },
+    "providers": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/Provider" }
+    },
+    "agents": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/Agent" }
+    },
+    "tasks": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/Task" }
+    },
+    "workflows": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/Workflow" }
+    },
+    "runs": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/Run" }
+    }
+  },
+  "definitions": {
+    "Header": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "version": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "Id": { "type": "string", "minLength": 1 },
+
+    "Prompt": {
+      "description": "Prompt can be a simple string, or a structured chat prompt object.",
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "system": { "type": "string" },
+            "developer": { "type": "string" },
+            "user": { "type": "string" },
+            "output": { "type": "string" }
+          }
+        }
+      ]
+    },
+
+    "Provider": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": { "$ref": "#/definitions/Id" },
+        "kind": { "type": "string" },
+        "type": { "type": "string" },
+        "base_url": { "type": "string" },
+        "config": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "anyOf": [
+        { "required": ["kind"] },
+        { "required": ["type"] }
+      ]
+    },
+
+    "Agent": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": { "$ref": "#/definitions/Id" },
+        "description": { "type": "string" },
+        "provider": { "type": "string" },
+        "prompt": { "$ref": "#/definitions/Prompt" },
+        "config": { "type": "object", "additionalProperties": true }
+      }
+    },
+
+    "Task": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": { "$ref": "#/definitions/Id" },
+        "description": { "type": "string" },
+        "prompt": { "$ref": "#/definitions/Prompt" },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "contracts": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "Workflow": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": { "$ref": "#/definitions/Id" },
+        "description": { "type": "string" },
+        "steps": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Step" }
+        }
+      },
+      "required": ["steps"]
+    },
+
+    "Step": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": { "$ref": "#/definitions/Id" },
+        "task": { "type": "string" },
+        "agent": { "type": "string" },
+        "provider": { "type": "string" },
+        "prompt": { "$ref": "#/definitions/Prompt" },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": ["task"]
+    },
+
+    "Run": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": { "$ref": "#/definitions/Id" },
+        "workflow": { "type": "string" },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": ["workflow"]
+    }
+  }
+}

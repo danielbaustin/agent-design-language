@@ -1,0 +1,52 @@
+version: "0.1"
+
+providers:
+  ollama_local:
+    type: ollama
+    base_url: "http://localhost:11434"
+    default_model: "gemma3:latest"
+
+agents:
+  summarizer:
+    provider: ollama_local
+    model: "gemma3:latest"
+    temperature: 0.2
+    top_k: 40
+
+tasks:
+  summarize_relevant_docs:
+    prompt:
+      system: |
+        You are HAL9000. You produce concise, accurate summaries.
+      developer: |
+        Follow these rules:
+        - Output ONLY the final summary (no preamble like "Key points:" and no self-identification).
+        - Use bullet points.
+        - 3–6 bullets max.
+        - Each bullet must be one sentence.
+        - Focus on the most important ideas; omit HTML/CSS, boilerplate, navigation, and links unless essential.
+      user: |
+        Summarize the key points from the relevant documents.
+
+        Document excerpts:
+        [doc_1]
+        {{doc_1}}
+
+        [doc_2]
+        {{doc_2}}
+
+        [doc_3]
+        {{doc_3}}
+      output: bullets
+
+run:
+  name: "summarize-docs-demo"
+  workflow:
+    kind: sequential
+    steps:
+      - agent: summarizer
+        task: summarize_relevant_docs
+        inputs:
+          doc_1: "@file:examples/docs/doc_1.txt"
+          doc_2: "@file:examples/docs/doc_2.txt"
+          doc_3: "@file:examples/docs/doc_3.txt"

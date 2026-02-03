@@ -1,0 +1,11 @@
+/target
+TODO.txt
+
+# coverage artifacts
+coverage/
+lcov.info
+*.profraw
+*.profdata
+coverage.last/
+cov.old/
+*.gcov

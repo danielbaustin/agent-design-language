@@ -1,0 +1,9 @@
+v0.1 goals and constraints:
+
+- Parse + validate ADL documents.
+- Resolve a plan deterministically.
+- Assemble prompts deterministically.
+- Execute a sequential workflow step with a blocking provider call.
+- Concurrency is allowed in the schema but gated in v0.1: concurrent workflows should fail with a clear error message.
+
+Keep dependencies minimal; for local runs, prefer the `ollama` CLI.

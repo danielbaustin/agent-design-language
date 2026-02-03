@@ -1,0 +1,15 @@
+CLI quickstart:
+
+- --print-plan: show resolved steps
+- --print-prompts: print assembled prompts
+- --trace: show trace events
+- --run: execute the workflow
+
+Example:
+  cargo run -- examples/adl-0.1.yaml --run --trace
+
+Expected trace shape:
+  TRACE run_id=<...> workflow_id=<...>
+  <ts> StepStarted ...
+  <ts> PromptAssembled ...
+  <ts> StepFinished ...

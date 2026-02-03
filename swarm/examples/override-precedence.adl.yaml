@@ -1,0 +1,78 @@
+version: "0.1"
+
+providers:
+  ollama_local:
+    type: ollama
+    base_url: "http://localhost:11434"
+    default_model: "gemma3:latest"
+
+agents:
+  writer:
+    provider: ollama_local
+    model: "gemma3:latest"
+    temperature: 0.2
+    top_k: 40
+    prompt:
+      system: |
+        You are HAL9000. You produce concise, accurate summaries.
+      developer: |
+        Baseline (agent-level) behavior:
+        - Be concise and technical.
+        - Do not invent facts.
+      user: |
+        You will be given inputs; follow the task instructions.
+      output: text
+
+tasks:
+  summarize:
+    prompt:
+      developer: |
+        Task-level override:
+        - Output EXACTLY three bullets.
+        - Each bullet must be <= 12 words.
+      user: |
+        Summarize the key points from the inputs.
+
+        Inputs:
+        [doc_1]
+        {{doc_1}}
+
+        [doc_2]
+        {{doc_2}}
+      output: bullets
+
+run:
+  name: "override-precedence-demo"
+  workflow:
+    kind: sequential
+    steps:
+      # Step 1: uses TASK prompt (overrides agent prompt)
+      - agent: writer
+        task: summarize
+        inputs:
+          doc_1: "@file:examples/docs/override_input_1.txt"
+          doc_2: "@file:examples/docs/override_input_2.txt"
+
+      # Step 2: uses STEP prompt (overrides task + agent)
+      - agent: writer
+        task: summarize
+        prompt:
+          developer: |
+            Step-level override:
+            - Ignore all prior formatting rules.
+            - Return ONLY valid JSON (no markdown).
+            - Shape: {"title":"...","points":["...","...","..."]}
+            - title <= 8 words; points must be exactly 3 strings; each <= 12 words.
+          user: |
+            Produce the JSON summary from the inputs.
+
+            Inputs:
+            [doc_1]
+            {{doc_1}}
+
+            [doc_2]
+            {{doc_2}}
+          output: json
+        inputs:
+          doc_1: "@file:examples/docs/override_input_1.txt"
+          doc_2: "@file:examples/docs/override_input_2.txt"

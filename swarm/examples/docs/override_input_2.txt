@@ -1,0 +1,6 @@
+Prompt precedence demo:
+- agent.prompt is the baseline
+- task.prompt overrides agent.prompt
+- step.prompt overrides task.prompt
+
+We want the outputs to be obviously different.

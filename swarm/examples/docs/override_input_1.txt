@@ -1,0 +1,3 @@
+ADL (Agent Design Language) aims to feel compiler-like:
+parse, validate, resolve deterministically, materialize artifacts, then execute.
+Determinism matters because it makes workflows auditable and reproducible.

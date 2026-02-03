@@ -1,0 +1,38 @@
+version: "0.1"
+
+providers:
+  ollama_local:
+    type: ollama
+    base_url: "http://localhost:11434"
+    default_model: "gemma3:latest"
+
+agents:
+  summarizer:
+    provider: ollama_local
+    model: "gemma3:latest"
+    temperature: 0.2
+    top_k: 40
+
+tasks:
+  summarize:
+    prompt:
+      system: |
+        You are HAL9000. You produce concise, accurate summaries.
+      user: |
+        Summarize the input.
+
+        Input:
+        [doc_1]
+        {{doc_1}}
+      output: text
+
+run:
+  name: "failure-missing-file-demo"
+  workflow:
+    kind: sequential
+    steps:
+      - agent: summarizer
+        task: summarize
+        inputs:
+          # Intentionally missing file to test crisp error messages.
+          doc_1: "@file:examples/docs/THIS_FILE_DOES_NOT_EXIST.txt"
