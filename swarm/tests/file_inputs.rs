@@ -1,11 +1,20 @@
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use swarm::execute::materialize_inputs;
 
 fn tmp_dir() -> std::path::PathBuf {
-    std::env::temp_dir().join("swarm-file-input-tests")
+    let nonce = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_nanos();
+    let p = std::env::temp_dir()
+        .join("swarm-file-input-tests")
+        .join(format!("{nonce}"));
+    fs::create_dir_all(&p).unwrap();
+    p
 }
 
 fn write_file(path: &Path, contents: &str) {
@@ -70,10 +79,7 @@ fn directory_is_rejected() {
     let err = materialize_inputs(inputs, &base).unwrap_err();
     let msg = err.to_string();
 
-    assert!(
-        msg.contains("non-file path"),
-        "unexpected error: {msg}"
-    );
+    assert!(msg.contains("non-file path"), "unexpected error: {msg}");
 }
 
 #[test]
@@ -93,10 +99,7 @@ fn invalid_utf8_is_rejected() {
     let err = materialize_inputs(inputs, &base).unwrap_err();
     let msg = err.to_string();
 
-    assert!(
-        msg.contains("not valid UTF-8"),
-        "unexpected error: {msg}"
-    );
+    assert!(msg.contains("not valid UTF-8"), "unexpected error: {msg}");
 }
 
 #[test]
@@ -110,4 +113,45 @@ fn windows_newlines_are_normalized() {
 
     let out = materialize_inputs(inputs, &base).unwrap();
     assert_eq!(out["doc"], "a\nb\nc\n");
+}
+
+#[test]
+fn path_traversal_outside_base_dir_is_rejected() {
+    let base = tmp_dir();
+    let outside = base.parent().unwrap().join("outside.txt");
+    write_file(&outside, "secret");
+
+    let mut inputs = HashMap::new();
+    inputs.insert("doc".to_string(), "@file:../outside.txt".to_string());
+
+    let err = materialize_inputs(inputs, &base).unwrap_err();
+    let msg = err.to_string();
+
+    // We care that escaping the base dir is rejected; keep the assertion resilient
+    // to message wording changes as long as it explains the base_dir context.
+    assert!(
+        msg.contains("base_dir") || msg.contains("outside"),
+        "unexpected error: {msg}"
+    );
+}
+
+#[test]
+fn absolute_path_outside_base_dir_is_rejected() {
+    let base = tmp_dir();
+    let outside = base.parent().unwrap().join("abs_outside.txt");
+    write_file(&outside, "secret");
+
+    let mut inputs = HashMap::new();
+    inputs.insert(
+        "doc".to_string(),
+        format!("@file:{}", outside.to_string_lossy()),
+    );
+
+    let err = materialize_inputs(inputs, &base).unwrap_err();
+    let msg = err.to_string();
+
+    assert!(
+        msg.contains("base_dir") || msg.contains("outside"),
+        "unexpected error: {msg}"
+    );
 }

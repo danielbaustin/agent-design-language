@@ -280,6 +280,73 @@ fn run_with_trace_emits_trace_header_and_events() {
 }
 
 #[test]
+fn run_rejects_concurrent_workflows_in_v0_1() {
+    // Serialize because we mutate PATH.
+    let _guard = global_env_lock().lock().unwrap_or_else(|e| e.into_inner());
+
+    // Even though we expect to fail before executing the provider, install a mock
+    // `ollama` to keep the test hermetic if execution order changes.
+    let base = tmp_dir("exec-reject-concurrent");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let _path_guard = PathGuard::prepend(&base);
+
+    // Minimal doc that would otherwise run, but uses a concurrent workflow.
+    let yaml = r#"
+version: "0.1"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize: {{text}}"
+
+run:
+  name: "reject-concurrent"
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        inputs:
+          text: "hello"
+"#;
+
+    let tmp_yaml = base.join("concurrent.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        !out.status.success(),
+        "expected failure for concurrent workflow, got success.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stderr = String::from_utf8_lossy(&out.stderr).to_lowercase();
+    assert!(
+        stderr.contains("concurrent"),
+        "stderr should mention concurrent workflows; stderr was:\n{stderr}"
+    );
+    assert!(
+        stderr.contains("not supported")
+            || stderr.contains("unsupported")
+            || stderr.contains("not implemented"),
+        "stderr should explain concurrent workflows are not supported/implemented in v0.1; stderr was:\n{stderr}"
+    );
+}
+
+#[test]
 fn run_reports_error_when_materialized_doc_is_missing() {
     // Serialize because we mutate PATH.
     let _guard = global_env_lock().lock().unwrap_or_else(|e| e.into_inner());
@@ -288,24 +355,31 @@ fn run_reports_error_when_materialized_doc_is_missing() {
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
     let _path_guard = PathGuard::prepend(&base);
 
-    // The example workflow references @file:examples/docs/*.txt.
-    // When we run using a temp YAML under `base`, we must also provide those files
-    // under the same base directory so only the intentionally broken path fails.
+    // The example workflow may reference docs via either:
+    // - @file:examples/docs/*.txt
+    // - @file:docs/*.txt
+    // We populate both locations under `base` so the test stays aligned with the
+    // evolving example format, and then break exactly one path.
+    let names = ["doc_1.txt", "doc_2.txt", "doc_3.txt"];
+
     fs::create_dir_all(base.join("examples/docs")).unwrap();
-    for name in ["doc_1.txt", "doc_2.txt", "doc_3.txt"] {
+    fs::create_dir_all(base.join("docs")).unwrap();
+
+    for name in names {
         let src = Path::new("examples/docs").join(name);
-        let dst = base.join("examples/docs").join(name);
-        fs::copy(&src, &dst).unwrap();
+        fs::copy(&src, base.join("examples/docs").join(name)).unwrap();
+        fs::copy(&src, base.join("docs").join(name)).unwrap();
     }
 
     // Copy the example yaml and break one file input path.
     let yaml_src = fs::read_to_string("examples/adl-0.1.yaml").unwrap();
-    // Replace doc_1 path with a guaranteed-missing file.
-    // Keep the rest of the example intact.
-    let yaml_broken = yaml_src.replace(
-        "@file:examples/docs/doc_1.txt",
-        "@file:examples/docs/DOES_NOT_EXIST.txt",
-    );
+    // Break doc_1 for either path style.
+    let yaml_broken = yaml_src
+        .replace(
+            "@file:examples/docs/doc_1.txt",
+            "@file:examples/docs/DOES_NOT_EXIST.txt",
+        )
+        .replace("@file:docs/doc_1.txt", "@file:docs/DOES_NOT_EXIST.txt");
 
     let tmp_yaml = base.join("adl-broken.yaml");
     fs::write(&tmp_yaml, yaml_broken.as_bytes()).unwrap();

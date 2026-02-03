@@ -47,6 +47,6 @@ run:
       - agent: summarizer
         task: summarize_relevant_docs
         inputs:
-          doc_1: "@file:examples/docs/doc_1.txt"
-          doc_2: "@file:examples/docs/doc_2.txt"
-          doc_3: "@file:examples/docs/doc_3.txt"
+          doc_1: "@file:docs/doc_1.txt"
+          doc_2: "@file:docs/doc_2.txt"
+          doc_3: "@file:docs/doc_3.txt"

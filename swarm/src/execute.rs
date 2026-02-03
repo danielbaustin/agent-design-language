@@ -22,6 +22,12 @@ pub fn materialize_inputs(
 ) -> Result<HashMap<String, String>> {
     const MAX_FILE_BYTES: u64 = 512 * 1024; // 512 KiB per input file (v0.1 safety bound)
 
+    // Canonical base dir once so we can enforce that @file: inputs cannot escape it.
+    // This rejects both `../` traversal and absolute paths outside the base dir.
+    let base_canon = base_dir
+        .canonicalize()
+        .with_context(|| format!("failed to canonicalize base_dir '{}'", base_dir.display()))?;
+
     for (k, v) in inputs.iter_mut() {
         let Some(raw) = v.strip_prefix("@file:") else {
             continue;
@@ -41,7 +47,7 @@ pub fn materialize_inputs(
         }
 
         let candidate = PathBuf::from(path_str);
-        let path: PathBuf = if candidate.is_absolute() || candidate.starts_with(base_dir) {
+        let path = if candidate.is_absolute() {
             candidate
         } else {
             base_dir.join(candidate)
@@ -69,11 +75,29 @@ pub fn materialize_inputs(
             ));
         }
 
-        let bytes = std::fs::read(&path).with_context(|| {
-            format!("failed to read input file for '{k}': '{}'", path.display())
+        // Enforce that the resolved path stays within the base directory.
+        // Canonicalization also collapses any `..` segments.
+        let canon = path.canonicalize().with_context(|| {
+            format!(
+                "failed to canonicalize input file for '{k}': '{}' (base_dir='{}')",
+                path.display(),
+                base_dir.display()
+            )
+        })?;
+
+        if !canon.starts_with(&base_canon) {
+            return Err(anyhow!(
+                "input '{k}' file resolves outside base_dir: '{}' (base_dir='{}')",
+                canon.display(),
+                base_dir.display()
+            ));
+        }
+
+        let bytes = std::fs::read(&canon).with_context(|| {
+            format!("failed to read input file for '{k}': '{}'", canon.display())
         })?;
         let mut text = String::from_utf8(bytes).with_context(|| {
-            format!("input '{k}' file is not valid UTF-8: '{}'", path.display())
+            format!("input '{k}' file is not valid UTF-8: '{}'", canon.display())
         })?;
 
         // Normalize newlines for stable hashing / traces.
@@ -142,14 +166,6 @@ pub fn execute_sequential(
         // Allow inputs to reference files via "@file:<path>".
         let inputs = materialize_inputs(merged_inputs, adl_base_dir)
             .with_context(|| format!("failed to materialize inputs for step '{}'", step_id))?;
-
-        // If inputs aren't coming through, fail loudly (this matches the symptom you're seeing).
-        if inputs.is_empty() {
-            return Err(anyhow!(
-                "step '{}' has no inputs after resolution/materialization; expected doc_1/doc_2/doc_3",
-                step_id
-            ));
-        }
 
         // Assemble a single text blob suitable for basic model consumption.
         let prompt_text = prompt::trace_prompt_assembly(p, &inputs);

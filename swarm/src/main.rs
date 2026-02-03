@@ -2,13 +2,7 @@ use anyhow::{Context, Result};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-mod adl;
-mod execute;
-mod prompt;
-mod provider;
-mod resolve;
-mod schema;
-mod trace;
+use swarm::{adl, execute, prompt, resolve, trace};
 
 fn usage() -> &'static str {
     "Usage: swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run]"
