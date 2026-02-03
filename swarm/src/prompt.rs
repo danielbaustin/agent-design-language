@@ -82,7 +82,7 @@ pub fn trace_prompt_assembly(p: &PromptSpec, params: &HashMap<String, String>) -
 /// Print the assembled prompts for each step.
 pub fn print_prompts(resolved: &AdlResolved) -> Result<()> {
     for (idx, step) in resolved.steps.iter().enumerate() {
-        let p = match step.effective_prompt(resolved) {
+        let p = match step.effective_prompt_with_defaults(resolved) {
             Some(p) => p,
             None => {
                 println!("Step {idx} ({}) has no prompt.", step.id);
@@ -90,7 +90,7 @@ pub fn print_prompts(resolved: &AdlResolved) -> Result<()> {
             }
         };
 
-        let rendered = assemble_prompt(p, &step.inputs);
+        let rendered = assemble_prompt(&p, &step.inputs);
         println!("--- step {idx}: {} ---", step.id);
         println!("{rendered}");
         println!();

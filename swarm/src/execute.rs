@@ -153,12 +153,14 @@ pub fn execute_sequential(
 
         tr.step_started(&step_id, agent_id, provider_id, task_id);
 
-        let p = step.effective_prompt(resolved).ok_or_else(|| {
-            anyhow!(
-                "step '{}' has no effective prompt (step.prompt or task.prompt required)",
-                step_id
-            )
-        })?;
+        let p = step
+            .effective_prompt_with_defaults(resolved)
+            .ok_or_else(|| {
+                anyhow!(
+                    "step '{}' has no effective prompt (step.prompt or task.prompt required)",
+                    step_id
+                )
+            })?;
 
         // v0.1: step-level inputs only (run.defaults currently has only `system`)
         let merged_inputs: HashMap<String, String> = step.inputs.clone();
@@ -168,7 +170,7 @@ pub fn execute_sequential(
             .with_context(|| format!("failed to materialize inputs for step '{}'", step_id))?;
 
         // Assemble a single text blob suitable for basic model consumption.
-        let prompt_text = prompt::trace_prompt_assembly(p, &inputs);
+        let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
         let prompt_hash = prompt::hash_string(&prompt_text);
         tr.prompt_assembled(&step_id, &prompt_hash);
 
