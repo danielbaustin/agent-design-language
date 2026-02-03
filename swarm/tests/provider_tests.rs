@@ -2,40 +2,12 @@ use std::env;
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
-use std::sync::{Mutex, OnceLock};
 
 use swarm::adl;
 use swarm::provider::{build_provider, OllamaProvider};
 
-static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
-
-fn env_lock() -> std::sync::MutexGuard<'static, ()> {
-    match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
-        Ok(g) => g,
-        // If a previous test panicked while holding the lock, recover so subsequent
-        // tests can still run (these tests serialize env var changes).
-        Err(poisoned) => poisoned.into_inner(),
-    }
-}
-
-fn set_env_var(key: &str, val: &Path) {
-    // NOTE: On recent Rust toolchains, env var mutation is marked unsafe due to
-    // potential undefined behavior when used concurrently across threads.
-    // We guard with ENV_LOCK to keep tests deterministic.
-    unsafe {
-        env::set_var(key, val);
-    }
-}
-
-fn restore_env_var(key: &str, old: Option<String>) {
-    unsafe {
-        if let Some(v) = old {
-            env::set_var(key, v);
-        } else {
-            env::remove_var(key);
-        }
-    }
-}
+mod helpers;
+use helpers::EnvVarGuard;
 
 fn unique_temp_dir(prefix: &str) -> io::Result<PathBuf> {
     let mut dir = env::temp_dir();
@@ -215,13 +187,10 @@ config:
 
 #[test]
 fn provider_complete_uses_mock_binary_success() {
-    let _guard = env_lock();
-
-    let old = env::var("SWARM_OLLAMA_BIN").ok();
     let dir = unique_temp_dir("swarm-provider-tests").unwrap();
     let bin = make_mock_ollama_success(&dir).unwrap();
 
-    set_env_var("SWARM_OLLAMA_BIN", &bin);
+    let _env_guard = EnvVarGuard::set("SWARM_OLLAMA_BIN", &bin);
 
     let spec = provider_spec_from_yaml(
         r#"
@@ -240,20 +209,15 @@ config:
         "expected mock output, got: {out:?}"
     );
 
-    // restore
-    restore_env_var("SWARM_OLLAMA_BIN", old);
     let _ = fs::remove_dir_all(dir);
 }
 
 #[test]
 fn provider_complete_surfaces_stderr_on_failure() {
-    let _guard = env_lock();
-
-    let old = env::var("SWARM_OLLAMA_BIN").ok();
     let dir = unique_temp_dir("swarm-provider-tests").unwrap();
     let bin = make_mock_ollama_failure(&dir).unwrap();
 
-    set_env_var("SWARM_OLLAMA_BIN", &bin);
+    let _env_guard = EnvVarGuard::set("SWARM_OLLAMA_BIN", &bin);
 
     let spec = provider_spec_from_yaml(
         r#"
@@ -276,7 +240,24 @@ config:
         "expected stderr to be included, got: {msg}"
     );
 
-    // restore
-    restore_env_var("SWARM_OLLAMA_BIN", old);
     let _ = fs::remove_dir_all(dir);
+}
+
+#[test]
+fn env_var_guard_restores_previous_value() {
+    let key = "SWARM_TEST_ENV_GUARD_RESTORE";
+    let original = std::env::var_os(key);
+
+    {
+        let _guard = EnvVarGuard::set(key, "temporary");
+        let val = std::env::var(key).expect("env var should be set");
+        assert_eq!(val, "temporary");
+    }
+
+    {
+        let _guard = EnvVarGuard::unset(key);
+        assert!(std::env::var_os(key).is_none());
+    }
+
+    assert_eq!(std::env::var_os(key), original);
 }
