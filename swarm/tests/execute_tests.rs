@@ -2,8 +2,10 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 use std::process::Command;
-use std::sync::{Mutex, OnceLock};
 use swarm::execute::materialize_inputs;
+
+mod helpers;
+use helpers::EnvVarGuard;
 
 fn tmp_dir(prefix: &str) -> std::path::PathBuf {
     let mut p = std::env::temp_dir();
@@ -128,42 +130,14 @@ fn materialize_inputs_enforces_max_size() {
     assert!(msg.contains("doc_1"), "msg was: {msg}");
 }
 
-fn global_env_lock() -> &'static Mutex<()> {
-    static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
-    LOCK.get_or_init(|| Mutex::new(()))
-}
-
-struct PathGuard {
-    old_path: Option<String>,
-}
-
-impl PathGuard {
-    fn prepend(bin_dir: &Path) -> Self {
-        let old_path = std::env::var("PATH").ok();
-        let mut new_path = bin_dir.to_string_lossy().to_string();
-        if let Some(old) = &old_path {
-            new_path.push(':');
-            new_path.push_str(old);
-        }
-
-        // NOTE: In newer Rust toolchains, env var mutation is marked unsafe.
-        unsafe {
-            std::env::set_var("PATH", new_path);
-        }
-
-        Self { old_path }
+fn prepend_path(bin_dir: &Path) -> String {
+    let old_path = std::env::var("PATH").ok();
+    let mut new_path = bin_dir.to_string_lossy().to_string();
+    if let Some(old) = &old_path {
+        new_path.push(':');
+        new_path.push_str(old);
     }
-}
-
-impl Drop for PathGuard {
-    fn drop(&mut self) {
-        unsafe {
-            match &self.old_path {
-                Some(v) => std::env::set_var("PATH", v),
-                None => std::env::remove_var("PATH"),
-            }
-        }
-    }
+    new_path
 }
 
 fn write_mock_ollama(dir: &Path, behavior: MockOllamaBehavior) -> std::path::PathBuf {
@@ -226,12 +200,10 @@ fn run_swarm(args: &[&str]) -> std::process::Output {
 
 #[test]
 fn run_executes_example_with_mock_ollama_and_prints_step_output() {
-    // Serialize because we mutate PATH.
-    let _guard = global_env_lock().lock().unwrap_or_else(|e| e.into_inner());
-
     let base = tmp_dir("exec-run-mock-ollama");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
-    let _path_guard = PathGuard::prepend(&base);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
 
     let out = run_swarm(&["examples/adl-0.1.yaml", "--run"]);
     assert!(
@@ -254,12 +226,10 @@ fn run_executes_example_with_mock_ollama_and_prints_step_output() {
 
 #[test]
 fn run_with_trace_emits_trace_header_and_events() {
-    // Serialize because we mutate PATH.
-    let _guard = global_env_lock().lock().unwrap_or_else(|e| e.into_inner());
-
     let base = tmp_dir("exec-run-trace-mock-ollama");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
-    let _path_guard = PathGuard::prepend(&base);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
 
     let out = run_swarm(&["examples/adl-0.1.yaml", "--run", "--trace"]);
     assert!(
@@ -281,14 +251,12 @@ fn run_with_trace_emits_trace_header_and_events() {
 
 #[test]
 fn run_rejects_concurrent_workflows_in_v0_1() {
-    // Serialize because we mutate PATH.
-    let _guard = global_env_lock().lock().unwrap_or_else(|e| e.into_inner());
-
     // Even though we expect to fail before executing the provider, install a mock
     // `ollama` to keep the test hermetic if execution order changes.
     let base = tmp_dir("exec-reject-concurrent");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
-    let _path_guard = PathGuard::prepend(&base);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
 
     // Minimal doc that would otherwise run, but uses a concurrent workflow.
     let yaml = r#"
@@ -348,12 +316,10 @@ run:
 
 #[test]
 fn run_reports_error_when_materialized_doc_is_missing() {
-    // Serialize because we mutate PATH.
-    let _guard = global_env_lock().lock().unwrap_or_else(|e| e.into_inner());
-
     let base = tmp_dir("exec-missing-doc");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
-    let _path_guard = PathGuard::prepend(&base);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
 
     // The example workflow may reference docs via either:
     // - @file:examples/docs/*.txt
@@ -403,12 +369,10 @@ fn run_reports_error_when_materialized_doc_is_missing() {
 
 #[test]
 fn run_surfaces_provider_failure_stderr() {
-    // Serialize because we mutate PATH.
-    let _guard = global_env_lock().lock().unwrap_or_else(|e| e.into_inner());
-
     let base = tmp_dir("exec-provider-failure");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Fail);
-    let _path_guard = PathGuard::prepend(&base);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
 
     let out = run_swarm(&["examples/adl-0.1.yaml", "--run"]);
     assert!(
