@@ -73,6 +73,17 @@ exit 42
     Ok(bin)
 }
 
+fn make_mock_ollama_sleep(dir: &Path) -> io::Result<PathBuf> {
+    let bin = dir.join("mock_ollama_sleep.sh");
+    let script = r#"#!/bin/sh
+set -eu
+sleep 2
+echo "MOCK_COMPLETION_SLOW"
+"#;
+    write_executable(&bin, script)?;
+    Ok(bin)
+}
+
 fn provider_spec_from_yaml(yaml: &str) -> adl::ProviderSpec {
     serde_yaml::from_str::<adl::ProviderSpec>(yaml).expect("failed to parse ProviderSpec YAML")
 }
@@ -260,4 +271,62 @@ fn env_var_guard_restores_previous_value() {
     }
 
     assert_eq!(std::env::var_os(key), original);
+}
+
+#[test]
+fn provider_complete_times_out_with_env_override() {
+    let dir = unique_temp_dir("swarm-provider-timeout").unwrap();
+    let bin = make_mock_ollama_sleep(&dir).unwrap();
+
+    let _env_guard = EnvVarGuard::set_many(&[
+        ("SWARM_OLLAMA_BIN", bin.as_os_str()),
+        ("SWARM_TIMEOUT_SECS", std::ffi::OsStr::new("1")),
+    ]);
+
+    let spec = provider_spec_from_yaml(
+        r#"
+type: ollama
+config:
+  model: llama3.1:8b
+"#,
+    );
+
+    let p = build_provider(&spec).expect("build_provider failed");
+    let err = p.complete("test prompt").unwrap_err();
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("timed out") && msg.contains("1"),
+        "expected timeout error, got: {msg}"
+    );
+
+    let _ = fs::remove_dir_all(dir);
+}
+
+#[test]
+fn provider_complete_rejects_invalid_timeout_env() {
+    let dir = unique_temp_dir("swarm-provider-bad-timeout").unwrap();
+    let bin = make_mock_ollama_success(&dir).unwrap();
+
+    let _env_guard = EnvVarGuard::set_many(&[
+        ("SWARM_OLLAMA_BIN", bin.as_os_str()),
+        ("SWARM_TIMEOUT_SECS", std::ffi::OsStr::new("nope")),
+    ]);
+
+    let spec = provider_spec_from_yaml(
+        r#"
+type: ollama
+config:
+  model: llama3.1:8b
+"#,
+    );
+
+    let p = build_provider(&spec).expect("build_provider failed");
+    let err = p.complete("test prompt").unwrap_err();
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("SWARM_TIMEOUT_SECS") && msg.contains("invalid"),
+        "expected invalid config error, got: {msg}"
+    );
+
+    let _ = fs::remove_dir_all(dir);
 }

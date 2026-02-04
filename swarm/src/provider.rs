@@ -2,9 +2,11 @@ use anyhow::{anyhow, Context, Result};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::env;
-use std::io::Write;
+use std::io::{Read, Write};
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
+use std::thread;
+use std::time::{Duration, Instant};
 
 use crate::adl;
 
@@ -51,6 +53,8 @@ impl OllamaProvider {
 
 impl Provider for OllamaProvider {
     fn complete(&self, prompt: &str) -> Result<String> {
+        let timeout_secs = timeout_secs()?;
+
         // v0.1: We parse `temperature` from provider config for forward-compatibility,
         // but the `ollama` CLI does not consistently expose a stable flag across versions.
         // Read the field so it does not trip `-D dead-code`, and keep behavior deterministic.
@@ -67,30 +71,95 @@ impl Provider for OllamaProvider {
             .spawn()
             .with_context(|| "failed to spawn `ollama run` (is Ollama installed and on PATH?)")?;
 
+        let stdout = child
+            .stdout
+            .take()
+            .context("failed to open stdout for ollama")?;
+        let stderr = child
+            .stderr
+            .take()
+            .context("failed to open stderr for ollama")?;
+
+        // Drain stdout/stderr concurrently to avoid deadlock if the child fills pipe buffers.
+        let out_handle = thread::spawn(move || -> std::io::Result<Vec<u8>> {
+            let mut r = stdout;
+            let mut buf = Vec::new();
+            r.read_to_end(&mut buf)?;
+            Ok(buf)
+        });
+
+        let err_handle = thread::spawn(move || -> std::io::Result<Vec<u8>> {
+            let mut r = stderr;
+            let mut buf = Vec::new();
+            r.read_to_end(&mut buf)?;
+            Ok(buf)
+        });
+
         {
-            let stdin = child
+            let mut stdin = child
                 .stdin
-                .as_mut()
+                .take()
                 .context("failed to open stdin for ollama")?;
             stdin
                 .write_all(prompt.as_bytes())
                 .context("failed writing prompt to ollama stdin")?;
+            // Explicitly close stdin so ollama sees EOF.
+            drop(stdin);
         }
 
-        let out = child
-            .wait_with_output()
-            .context("failed waiting for ollama process")?;
+        let start = Instant::now();
+        let timeout = Duration::from_secs(timeout_secs);
 
-        if !out.status.success() {
-            let stderr = String::from_utf8_lossy(&out.stderr);
+        let status = loop {
+            if let Some(status) = child
+                .try_wait()
+                .context("failed waiting for ollama process")?
+            {
+                break status;
+            }
+
+            if start.elapsed() >= timeout {
+                let _ = child.kill();
+                let kill_start = Instant::now();
+                loop {
+                    if let Some(_status) = child
+                        .try_wait()
+                        .context("failed waiting for ollama process")?
+                    {
+                        break;
+                    }
+                    if kill_start.elapsed() >= Duration::from_secs(1) {
+                        break;
+                    }
+                    std::thread::sleep(Duration::from_millis(10));
+                }
+                return Err(anyhow!(
+                    "provider ollama timed out after {timeout_secs}s (set SWARM_TIMEOUT_SECS to override)"
+                ));
+            }
+
+            std::thread::sleep(Duration::from_millis(10));
+        };
+
+        let out_buf = out_handle
+            .join()
+            .map_err(|_| anyhow!("stdout reader thread panicked"))?
+            .context("failed reading ollama stdout")?;
+        let err_buf = err_handle
+            .join()
+            .map_err(|_| anyhow!("stderr reader thread panicked"))?
+            .context("failed reading ollama stderr")?;
+
+        if !status.success() {
+            let stderr = String::from_utf8_lossy(&err_buf);
             return Err(anyhow!(
                 "ollama run failed (exit={:?}): {}",
-                out.status.code(),
+                status.code(),
                 stderr.trim()
             ));
         }
 
-        let stdout = String::from_utf8(out.stdout).context("ollama output was not valid UTF-8")?;
+        let stdout = String::from_utf8(out_buf).context("ollama output was not valid UTF-8")?;
         Ok(stdout)
     }
 }
@@ -119,4 +188,23 @@ fn cfg_f32(cfg: &HashMap<String, Value>, key: &str) -> Option<f32> {
             None
         }
     })
+}
+
+fn timeout_secs() -> Result<u64> {
+    let raw = env::var("SWARM_TIMEOUT_SECS").ok();
+    let secs = match raw {
+        None => 120_u64,
+        Some(v) => {
+            let parsed: u64 = v.parse().map_err(|_| {
+                anyhow!("invalid SWARM_TIMEOUT_SECS: '{v}' (must be a positive integer)")
+            })?;
+            if parsed == 0 {
+                return Err(anyhow!(
+                    "invalid SWARM_TIMEOUT_SECS: '{v}' (must be a positive integer)"
+                ));
+            }
+            parsed
+        }
+    };
+    Ok(secs)
 }
