@@ -284,3 +284,16 @@ providers:
     assert_eq!(step.agent.as_deref(), Some("a"));
     assert_eq!(step.task.as_deref(), Some("t"));
 }
+
+#[test]
+fn resolve_v0_2_multi_step_examples() {
+    let examples = [
+        include_str!("../examples/v0-2-multi-step-basic.adl.yaml"),
+        include_str!("../examples/v0-2-multi-step-file-input.adl.yaml"),
+    ];
+
+    for doc_str in examples {
+        let doc = parse_doc(doc_str);
+        resolve::resolve_run(&doc).expect("resolve should succeed");
+    }
+}

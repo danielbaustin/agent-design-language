@@ -1,0 +1,36 @@
+version: "0.2"
+
+providers:
+  local_ollama:
+    type: "ollama"
+    base_url: "http://localhost:11434"
+    default_model: "gemma3:latest"
+
+agents:
+  summarizer:
+    provider: "local_ollama"
+    model: "gemma3:latest"
+
+tasks:
+  summarize_doc:
+    prompt:
+      user: |
+        Summarize the document.
+        Document:
+        {{doc}}
+
+run:
+  name: "v0-2-multi-step-file-input"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "step-file-1"
+        agent: "summarizer"
+        task: "summarize_doc"
+        inputs:
+          doc: "@file:docs/doc_1.txt"
+      - id: "step-file-2"
+        agent: "summarizer"
+        task: "summarize_doc"
+        inputs:
+          doc: "@file:docs/doc_2.txt"

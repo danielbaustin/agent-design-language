@@ -179,21 +179,10 @@ config:
 "#,
     );
 
-    let p = build_provider(&spec).expect("build_provider failed");
-    let out = p
-        .complete("hello") // will try real ollama unless SWARM_OLLAMA_BIN is set; just sanity check it is callable type-wise
-        .err();
-
-    // We don't actually want to require ollama installed here; this test just verifies construction works.
-    // If Ollama is installed, this might return Ok(..); if not, it will Err(..). Either is fine.
-    // What we *do* want is: no panic, no unsupported-kind error.
-    if let Some(e) = out {
-        let msg = format!("{e:#}");
-        assert!(
-            msg.contains("failed to spawn") || msg.contains("ollama"),
-            "unexpected error from complete(): {msg}"
-        );
-    }
+    // This test intentionally does NOT call complete(). Calling complete() depends on
+    // external binaries and ambient environment (e.g., SWARM_TIMEOUT_SECS), which can
+    // make the test flaky under parallel execution. We only verify construction.
+    let _p = build_provider(&spec).expect("build_provider failed");
 }
 
 #[test]

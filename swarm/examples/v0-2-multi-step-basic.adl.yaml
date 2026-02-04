@@ -1,0 +1,43 @@
+version: "0.2"
+
+providers:
+  local_ollama:
+    type: "ollama"
+    base_url: "http://localhost:11434"
+    default_model: "gemma3:latest"
+
+agents:
+  summarizer:
+    provider: "local_ollama"
+    model: "gemma3:latest"
+    prompt:
+      system: "You summarize content precisely and concisely."
+
+tasks:
+  summarize_text:
+    prompt:
+      user: |
+        Summarize the following text in 2-3 bullets.
+        Text:
+        {{text}}
+
+run:
+  name: "v0-2-multi-step-basic"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "step-1"
+        agent: "summarizer"
+        task: "summarize_text"
+        inputs:
+          text: "ADL provides deterministic prompt assembly and explicit inputs."
+      - id: "step-2"
+        agent: "summarizer"
+        task: "summarize_text"
+        prompt:
+          user: |
+            Summarize the text in one sentence.
+            Text:
+            {{text}}
+        inputs:
+          text: "v0.2 adds multi-step examples and tighter validation."
