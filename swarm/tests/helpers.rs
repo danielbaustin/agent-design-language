@@ -25,6 +25,12 @@ pub struct EnvVarGuard {
     _lock: MutexGuard<'static, ()>,
 }
 
+#[allow(dead_code)]
+pub struct EnvVarGuardMulti {
+    entries: Vec<(String, Option<OsString>)>,
+    _lock: MutexGuard<'static, ()>,
+}
+
 impl EnvVarGuard {
     pub fn set<K: Into<String>, V: AsRef<OsStr>>(key: K, value: V) -> Self {
         let key = key.into();
@@ -61,6 +67,25 @@ impl EnvVarGuard {
             _lock: lock,
         }
     }
+
+    #[allow(dead_code)]
+    pub fn set_many(pairs: &[(&str, &OsStr)]) -> EnvVarGuardMulti {
+        let lock = env_lock();
+        let mut entries = Vec::with_capacity(pairs.len());
+        for (key, value) in pairs.iter() {
+            let key_string = (*key).to_string();
+            let old = env::var_os(&key_string);
+            unsafe {
+                env::set_var(&key_string, value);
+            }
+            entries.push((key_string, old));
+        }
+
+        EnvVarGuardMulti {
+            entries,
+            _lock: lock,
+        }
+    }
 }
 
 impl Drop for EnvVarGuard {
@@ -69,6 +94,19 @@ impl Drop for EnvVarGuard {
             match &self.old {
                 Some(v) => env::set_var(&self.key, v),
                 None => env::remove_var(&self.key),
+            }
+        }
+    }
+}
+
+impl Drop for EnvVarGuardMulti {
+    fn drop(&mut self) {
+        for (key, old) in self.entries.iter() {
+            unsafe {
+                match old {
+                    Some(v) => env::set_var(key, v),
+                    None => env::remove_var(key),
+                }
             }
         }
     }
