@@ -14,6 +14,7 @@
 #
 # Usage:
 #   swarm/tools/pr.sh start <issue> [--slug <slug>] [--prefix codex] [--no-fetch-issue] [-f <input_card.md>]
+#   swarm/tools/pr.sh card  <issue> [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>]
 #   swarm/tools/pr.sh finish <issue> --title "<title>" [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [-f <input_card.md>] [--no-open]
 #   swarm/tools/pr.sh open
 #   swarm/tools/pr.sh status
@@ -21,6 +22,7 @@
 # Examples:
 #   swarm/tools/pr.sh start 14 --slug b6-default-system
 #   swarm/tools/pr.sh start 14 -f .adl/input_cards/input_card_14_b6-default-system.md
+#   swarm/tools/pr.sh card  14 -f .adl/input_cards/input_card_14_b6-default-system.md
 #   swarm/tools/pr.sh finish 14 --title "swarm: apply run.defaults.system fallback" --body "Tests: fmt/clippy/test" -f .adl/input_cards/input_card_14_b6-default-system.md
 #   swarm/tools/pr.sh open
 #
@@ -115,6 +117,18 @@ input_cards_dir() {
   echo "$(repo_root)/.adl/input_cards"
 }
 
+# Returns the path to the input card template file.
+input_card_template_path() {
+  echo "$(repo_root)/.adl/input_cards/_template.md"
+}
+
+default_input_card_path() {
+  # Args: issue slug
+  local issue="$1" slug="$2"
+  slug="$(sanitize_slug "$slug")"
+  echo "$(input_cards_dir)/input_card_${issue}_${slug}.md"
+}
+
 ensure_dir() {
   local d="$1"
   mkdir -p "$d"
@@ -143,56 +157,28 @@ unique_path() {
 }
 
 input_card_template() {
-  # Consistent prompt-template style input card.
-  # Args: issue title
-  local issue="$1" title="$2"
-  cat <<EOF
-# Input Card — Issue #${issue}
+  # Consistent prompt-template style input card, loaded from a file.
+  # Template path: .adl/input_cards/_template.md
+  # Placeholders:
+  #   {{ISSUE}}  -> issue number
+  #   {{TITLE}}  -> issue title
+  #   {{SLUG}}   -> slug
+  # Args: issue title slug
+  local issue="$1" title="$2" slug="$3"
 
-## Purpose
-(One sentence: what do we want to achieve?)
+  local tpl
+  tpl="$(input_card_template_path)"
+  [[ -f "$tpl" ]] || die "Missing input card template: $tpl\nCreate it (recommended) and try again."
 
-## Context
-(Background, links, prior decisions, constraints.)
+  # Escape for sed replacement.
+  local esc_title esc_slug
+  esc_title="$(printf '%s' "$title" | sed -e 's/[\\&]/\\\\&/g')"
+  esc_slug="$(printf '%s' "$slug" | sed -e 's/[\\&]/\\\\&/g')"
 
-## Requirements
-- [ ]
-
-## Non-goals
-- 
-
-## Acceptance Criteria
-- [ ]
-
-## Test / Verification Plan
-- 
-
-## Notes
-- 
-
----
-
-## Prompt Template (for Codex / agents)
-You are working on Issue #${issue}: ${title}
-
-### Task
-(Describe exactly what to change.)
-
-### Constraints
-- Keep changes minimal and focused.
-- Preserve existing behavior unless explicitly requested.
-- Add/adjust tests as needed.
-
-### Deliverables
-- Code changes
-- Tests
-- Short explanation of what changed
-
-### Review Checklist
-- [ ] Build/tests pass
-- [ ] No unrelated formatting churn
-- [ ] Clear commit + PR description
-EOF
+  sed -e "s/{{ISSUE}}/${issue}/g" \
+      -e "s/{{TITLE}}/${esc_title}/g" \
+      -e "s/{{SLUG}}/${esc_slug}/g" \
+      "$tpl"
 }
 
 archive_input_card() {
@@ -273,7 +259,63 @@ open_in_browser() {
   fi
 }
 
-# ---------- commands ----------
+cmd_card() {
+  require_cmd gh
+
+  local issue="${1:-}"; shift || true
+  [[ -n "$issue" ]] || die "card: missing <issue> number"
+
+  local slug=""
+  local no_fetch_issue="0"
+  local out_path=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --slug) slug="$2"; shift 2 ;;
+      --no-fetch-issue) no_fetch_issue="1"; shift ;;
+      -f) out_path="$2"; shift 2 ;;
+      --file) out_path="$2"; shift 2 ;;
+      *) die "card: unknown arg: $1" ;;
+    esac
+  done
+
+  local repo
+  repo="$(default_repo)"
+
+  local title=""
+  if [[ "$no_fetch_issue" != "1" ]]; then
+    note "Fetching issue title via gh…"
+    title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
+  fi
+
+  if [[ -z "$slug" ]]; then
+    if [[ -n "$title" ]]; then
+      slug="$(sanitize_slug "$title")"
+    else
+      die "card: --slug is required when --no-fetch-issue is set or issue title could not be fetched"
+    fi
+  fi
+
+  if [[ -z "$title" ]]; then
+    title="$slug"
+  fi
+
+  if [[ -z "$out_path" ]]; then
+    out_path="$(default_input_card_path "$issue" "$slug")"
+  fi
+
+  if [[ -f "$out_path" ]]; then
+    die "card: output already exists: $out_path"
+  fi
+
+  note "Creating input card: $out_path"
+  mkdir -p "$(dirname "$out_path")"
+  input_card_template "$issue" "$title" "$slug" >"$out_path"
+
+  note "Done."
+  echo "$out_path"
+}
+
 cmd_start() {
   require_cmd git
   require_cmd gh
@@ -314,7 +356,7 @@ cmd_start() {
     if [[ -n "$card_path" && ! -f "$card_path" ]]; then
       note "Creating input card: $card_path"
       mkdir -p "$(dirname "$card_path")"
-      input_card_template "$issue" "$title" >"$card_path"
+      input_card_template "$issue" "$title" "$slug" >"$card_path"
     fi
   fi
 
@@ -514,14 +556,15 @@ pr.sh — reduce git/PR thrash while preserving human review
 
 Commands:
   start  <issue> [--slug <slug>] [--prefix <pfx>] [--no-fetch-issue] [-f <input_card.md>]
+  card   <issue> [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>]
   finish <issue> --title "<title>" [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [-f <input_card.md>] [--no-open]
   open
   status
 
 Flags:
   -f, --file <input_card.md>   Use an input card file (created on start if missing). On finish, the card is archived into .adl/input_cards/ and included in the PR body.
-  --no-open                    Do not open the PR in a browser after creation.
-  --open                       Explicitly enable browser open (default).
+  (card) -f, --file <output_card.md>   Output path for the generated card (defaults to .adl/input_cards/input_card_<issue>_<slug>.md).
+  (card/start) --slug <slug>           Use an explicit slug instead of fetching the issue title.
 
 Notes:
 - PRs are created as DRAFT by default to preserve human review.
@@ -529,12 +572,13 @@ Notes:
 - Runs Rust checks in swarm/ by default (fmt, clippy -D warnings, test).
 - finish stages swarm/ by default (reduces accidental commits).
 - Input cards are archived under .adl/input_cards/ so they can be versioned in git.
+- Input card content comes from .adl/input_cards/_template.md (placeholders: {{ISSUE}}, {{TITLE}}, {{SLUG}}).
 
 Examples:
   swarm/tools/pr.sh start 17 --slug b6-default-system
   swarm/tools/pr.sh start 17 -f .adl/input_cards/input_card_17_b6-default-system.md
+  swarm/tools/pr.sh card  17 -f .adl/input_cards/input_card_17_b6-default-system.md
   swarm/tools/pr.sh finish 17 --title "swarm: apply run.defaults.system fallback" -f .adl/input_cards/input_card_17_b6-default-system.md
-  swarm/tools/pr.sh open
 EOF
 }
 
@@ -543,6 +587,7 @@ main() {
   case "$cmd" in
     start) cmd_start "$@" ;;
     finish) cmd_finish "$@" ;;
+    card) cmd_card "$@" ;;
     open) cmd_open ;;
     status) cmd_status ;;
     -h|--help|"") usage ;;
