@@ -80,6 +80,7 @@ impl AdlDoc {
 
 /// Provider spec: local Ollama, OpenAI, etc.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct ProviderSpec {
     /// Provider type (e.g. "ollama", "openai").
     #[serde(rename = "type")]
@@ -88,6 +89,10 @@ pub struct ProviderSpec {
     /// Optional base URL.
     #[serde(default)]
     pub base_url: Option<String>,
+
+    /// Optional default model name (provider-specific).
+    #[serde(default)]
+    pub default_model: Option<String>,
 
     /// Arbitrary provider config.
     #[serde(default)]
@@ -108,12 +113,22 @@ pub struct ToolSpec {
 
 /// Agent spec.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct AgentSpec {
     /// Provider this agent uses.
     pub provider: String,
 
     /// Model name (provider-specific).
     pub model: String,
+
+    /// Optional temperature for this agent.
+    #[serde(default, deserialize_with = "de_opt_string_from_number_or_string")]
+    #[schemars(with = "StringOrNumber")]
+    pub temperature: Option<String>,
+
+    /// Optional top-k for this agent.
+    #[serde(default)]
+    pub top_k: Option<u32>,
 
     /// Optional agent description.
     #[serde(default)]
@@ -126,6 +141,28 @@ pub struct AgentSpec {
     /// Optional tool ids this agent may use.
     #[serde(default)]
     pub tools: Vec<String>,
+}
+
+#[derive(Debug, Deserialize, JsonSchema)]
+#[serde(untagged)]
+enum StringOrNumber {
+    Str(String),
+    I64(i64),
+    U64(u64),
+    F64(f64),
+}
+
+fn de_opt_string_from_number_or_string<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let opt = Option::<StringOrNumber>::deserialize(deserializer)?;
+    Ok(opt.map(|v| match v {
+        StringOrNumber::Str(s) => s,
+        StringOrNumber::I64(i) => i.to_string(),
+        StringOrNumber::U64(u) => u.to_string(),
+        StringOrNumber::F64(f) => f.to_string(),
+    }))
 }
 
 /// Task spec.
@@ -200,7 +237,12 @@ pub enum WorkflowKind {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct StepSpec {
+    /// Optional explicit id for the step.
+    #[serde(default)]
+    pub id: Option<String>,
+
     /// Agent id to run (key in `agents`).
     #[serde(default)]
     pub agent: Option<String>,

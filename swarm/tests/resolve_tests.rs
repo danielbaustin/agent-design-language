@@ -38,8 +38,7 @@ tasks:
       user: "task user"
 providers:
   ollama_local:
-    type: provider
-    kind: ollama
+    type: ollama
     base_url: "http://localhost:11434"
     config:
       model: "llama3.1:8b"
@@ -85,8 +84,7 @@ tasks:
       user: "task user"
 providers:
   ollama_local:
-    type: provider
-    kind: ollama
+    type: ollama
     base_url: "http://localhost:11434"
     config:
       model: "llama3.1:8b"
@@ -135,8 +133,7 @@ tasks:
       user: "task user"
 providers:
   p1:
-    type: provider
-    kind: ollama
+    type: ollama
     base_url: "http://localhost:11434"
     config:
       model: "llama3.1:8b"
@@ -183,8 +180,7 @@ tasks:
       user: "task user"
 providers:
   p1:
-    type: provider
-    kind: ollama
+    type: ollama
     base_url: "http://localhost:11434"
     config:
       model: "llama3.1:8b"
@@ -276,8 +272,7 @@ tasks:
       user: "task user"
 providers:
   p1:
-    type: provider
-    kind: ollama
+    type: ollama
     base_url: "http://localhost:11434"
     config:
       model: "llama3.1:8b"

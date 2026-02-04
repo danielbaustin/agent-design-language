@@ -155,6 +155,116 @@ extra_top_level_key: "oops"
 }
 
 #[test]
+fn strict_rejects_unknown_provider_field() {
+    let yaml = r#"
+version: "0.1"
+
+providers:
+  local:
+    type: "ollama"
+    modell: "typo"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize: {{text}}"
+
+run:
+  name: "x"
+  workflow:
+    kind: "sequential"
+    steps: []
+"#;
+
+    let err = schema::validate_adl_yaml(yaml).unwrap_err();
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("unknown") || msg.contains("Additional properties"),
+        "expected unknown-field error; got:\n{msg}"
+    );
+    assert!(msg.contains("modell"), "expected bad key name; got:\n{msg}");
+}
+
+#[test]
+fn strict_rejects_unknown_agent_field() {
+    let yaml = r#"
+version: "0.1"
+
+providers:
+  local:
+    type: "ollama"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+    modell: "typo"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize: {{text}}"
+
+run:
+  name: "x"
+  workflow:
+    kind: "sequential"
+    steps: []
+"#;
+
+    let err = schema::validate_adl_yaml(yaml).unwrap_err();
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("unknown") || msg.contains("Additional properties"),
+        "expected unknown-field error; got:\n{msg}"
+    );
+    assert!(msg.contains("modell"), "expected bad key name; got:\n{msg}");
+}
+
+#[test]
+fn strict_rejects_unknown_step_field() {
+    let yaml = r#"
+version: "0.1"
+
+providers:
+  local:
+    type: "ollama"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize: {{text}}"
+
+run:
+  name: "x"
+  workflow:
+    kind: "sequential"
+    steps:
+      - agent: "a1"
+        task: "t1"
+        agentt: "typo"
+"#;
+
+    let err = schema::validate_adl_yaml(yaml).unwrap_err();
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("unknown") || msg.contains("Additional properties"),
+        "expected unknown-field error; got:\n{msg}"
+    );
+    assert!(msg.contains("agentt"), "expected bad key name; got:\n{msg}");
+}
+
+#[test]
 fn validate_adl_yaml_returns_yaml_parse_error_on_invalid_yaml() {
     // Hits the early parse-yaml failure path in schema.rs
     // (the `.context("parse yaml into Value")?` branch).

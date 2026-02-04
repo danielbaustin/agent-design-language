@@ -158,6 +158,7 @@ mod tests {
             adl::ProviderSpec {
                 kind: "ollama".to_string(),
                 base_url: None,
+                default_model: None,
                 config: std::collections::HashMap::new(),
             },
         );
@@ -168,6 +169,8 @@ mod tests {
             adl::AgentSpec {
                 provider: "local".to_string(),
                 model: "phi4-mini".to_string(),
+                temperature: None,
+                top_k: None,
                 description: None,
                 prompt: Some(adl::PromptSpec {
                     system: None,
@@ -234,11 +237,13 @@ mod tests {
             adl::ProviderSpec {
                 kind: "ollama".to_string(),
                 base_url: None,
+                default_model: None,
                 config: std::collections::HashMap::new(),
             },
         );
 
         let step = adl::StepSpec {
+            id: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
@@ -254,6 +259,7 @@ mod tests {
     fn resolve_provider_falls_back_to_single_provider() {
         let doc = minimal_doc();
         let step = adl::StepSpec {
+            id: None,
             agent: None,
             task: Some("t1".to_string()),
             prompt: None,
@@ -271,6 +277,7 @@ mod tests {
 
         // Step that references both task + agent but has no inline prompt => task wins.
         doc.run.workflow.steps.push(adl::StepSpec {
+            id: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
@@ -289,6 +296,7 @@ mod tests {
         // Now override with inline prompt => step wins.
         let mut doc2 = minimal_doc();
         doc2.run.workflow.steps.push(adl::StepSpec {
+            id: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: Some(adl::PromptSpec {
@@ -313,6 +321,7 @@ mod tests {
         // Task missing => agent prompt used.
         let mut doc3 = minimal_doc();
         doc3.run.workflow.steps.push(adl::StepSpec {
+            id: None,
             agent: Some("a1".to_string()),
             task: Some("nope".to_string()),
             prompt: None,
@@ -334,6 +343,7 @@ mod tests {
         let mut doc = minimal_doc();
         doc.run.defaults.system = Some("default sys".to_string());
         doc.run.workflow.steps.push(adl::StepSpec {
+            id: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
@@ -354,6 +364,7 @@ mod tests {
         let mut doc = minimal_doc();
         doc.run.defaults.system = Some("default sys".to_string());
         doc.run.workflow.steps.push(adl::StepSpec {
+            id: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: Some(adl::PromptSpec {
