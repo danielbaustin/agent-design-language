@@ -137,8 +137,8 @@ pub fn execute_sequential(
         crate::adl::WorkflowKind::Sequential
     ) {
         return Err(anyhow!(
-            "workflow kind {:?} is not implemented in v0.1 (only 'sequential')",
-            resolved.doc.run.workflow.kind
+            "v0.1 does not support concurrent workflows. Use a single workflow with sequential steps, \
+or upgrade once concurrency lands (planned v0.3)."
         ));
     }
 

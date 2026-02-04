@@ -307,10 +307,18 @@ run:
         "stderr should mention concurrent workflows; stderr was:\n{stderr}"
     );
     assert!(
-        stderr.contains("not supported")
-            || stderr.contains("unsupported")
+        stderr.contains("does not support")
+            || stderr.contains("not supported")
             || stderr.contains("not implemented"),
-        "stderr should explain concurrent workflows are not supported/implemented in v0.1; stderr was:\n{stderr}"
+        "stderr should explain concurrency is unsupported in v0.1; stderr was:\n{stderr}"
+    );
+    assert!(
+        stderr.contains("sequential") || stderr.contains("single workflow"),
+        "stderr should suggest sequential/single workflow; stderr was:\n{stderr}"
+    );
+    assert!(
+        stderr.contains("upgrade") || stderr.contains("v0.3"),
+        "stderr should mention upgrading for concurrency; stderr was:\n{stderr}"
     );
 }
 
