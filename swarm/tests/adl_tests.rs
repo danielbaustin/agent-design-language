@@ -124,6 +124,8 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
         AgentSpec {
             provider: "p".to_string(),
             model: "m".to_string(),
+            temperature: None,
+            top_k: None,
             description: None,
             prompt: Some(agent_prompt.clone()),
             tools: vec![],
@@ -148,6 +150,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
     };
 
     let step_with_step_prompt = StepSpec {
+        id: None,
         agent: Some("a1".to_string()),
         task: Some("t1".to_string()),
         prompt: Some(step_prompt.clone()),
@@ -159,6 +162,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
     assert_eq!(p.developer.as_deref(), Some("step-dev"));
 
     let step_with_task_prompt = StepSpec {
+        id: None,
         agent: Some("a1".to_string()),
         task: Some("t1".to_string()),
         prompt: None,
@@ -170,6 +174,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
     assert_eq!(p.user.as_deref(), Some("task-user"));
 
     let step_with_agent_prompt = StepSpec {
+        id: None,
         agent: Some("a1".to_string()),
         task: None,
         prompt: None,
@@ -181,6 +186,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
     assert_eq!(p.system.as_deref(), Some("agent-system"));
 
     let step_with_no_prompt = StepSpec {
+        id: None,
         agent: None,
         task: None,
         prompt: None,
