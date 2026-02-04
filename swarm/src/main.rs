@@ -131,14 +131,14 @@ fn real_main() -> Result<()> {
 
             tr.step_started(step_id, agent_id, provider_id, task_id);
 
-            if let Some(p) = step.effective_prompt(&resolved) {
+            if let Some(p) = step.effective_prompt_with_defaults(&resolved) {
                 let inputs: HashMap<String, String> = step
                     .inputs
                     .iter()
                     .map(|(k, v)| (k.clone(), v.clone()))
                     .collect();
 
-                let prompt_text = prompt::trace_prompt_assembly(p, &inputs);
+                let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
                 let hash = prompt::hash_string(&prompt_text);
                 tr.prompt_assembled(step_id, &hash);
             }

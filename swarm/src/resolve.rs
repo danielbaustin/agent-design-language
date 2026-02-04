@@ -52,6 +52,21 @@ impl ResolvedStep {
 
         None
     }
+
+    /// Returns the effective prompt with run.defaults.system applied
+    /// if the prompt has no system message.
+    pub fn effective_prompt_with_defaults(
+        &self,
+        resolved: &AdlResolved,
+    ) -> Option<adl::PromptSpec> {
+        let mut p = self.effective_prompt(resolved)?.clone();
+        if p.system.is_none() {
+            if let Some(default_system) = resolved.doc.run.defaults.system.as_ref() {
+                p.system = Some(default_system.clone());
+            }
+        }
+        Some(p)
+    }
 }
 
 /// Resolve a provider id for a step using these rules:
@@ -312,5 +327,51 @@ mod tests {
                 .and_then(|p| p.user.as_deref()),
             Some("agent user")
         );
+    }
+
+    #[test]
+    fn defaults_system_applies_when_prompt_missing_system() {
+        let mut doc = minimal_doc();
+        doc.run.defaults.system = Some("default sys".to_string());
+        doc.run.workflow.steps.push(adl::StepSpec {
+            agent: Some("a1".to_string()),
+            task: Some("t1".to_string()),
+            prompt: None,
+            inputs: std::collections::HashMap::new(),
+            guards: vec![],
+        });
+
+        let resolved = resolve_run(&doc).expect("resolve");
+        let step = &resolved.steps[0];
+        let p = step
+            .effective_prompt_with_defaults(&resolved)
+            .expect("prompt");
+        assert_eq!(p.system.as_deref(), Some("default sys"));
+    }
+
+    #[test]
+    fn defaults_system_does_not_override_existing_system() {
+        let mut doc = minimal_doc();
+        doc.run.defaults.system = Some("default sys".to_string());
+        doc.run.workflow.steps.push(adl::StepSpec {
+            agent: Some("a1".to_string()),
+            task: Some("t1".to_string()),
+            prompt: Some(adl::PromptSpec {
+                system: Some("step sys".to_string()),
+                developer: None,
+                user: Some("step user".to_string()),
+                context: None,
+                output: None,
+            }),
+            inputs: std::collections::HashMap::new(),
+            guards: vec![],
+        });
+
+        let resolved = resolve_run(&doc).expect("resolve");
+        let step = &resolved.steps[0];
+        let p = step
+            .effective_prompt_with_defaults(&resolved)
+            .expect("prompt");
+        assert_eq!(p.system.as_deref(), Some("step sys"));
     }
 }
