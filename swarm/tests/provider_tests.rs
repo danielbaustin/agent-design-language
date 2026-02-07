@@ -1,6 +1,7 @@
 use std::env;
 use std::fs;
 use std::io;
+use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
 use swarm::adl;
@@ -36,6 +37,37 @@ fn write_executable(path: &Path, contents: &str) -> io::Result<()> {
         fs::set_permissions(path, perms)?;
     }
     Ok(())
+}
+
+struct LocalhostGuard {
+    old: Option<String>,
+}
+
+fn block_incoming_localhost() -> LocalhostGuard {
+    let key = "NO_PROXY";
+    let old = std::env::var(key).ok();
+    let mut new_val = old.clone().unwrap_or_default();
+    if !new_val.is_empty() && !new_val.ends_with(',') {
+        new_val.push(',');
+    }
+    new_val.push_str("127.0.0.1,localhost");
+
+    unsafe {
+        std::env::set_var(key, new_val);
+    }
+
+    LocalhostGuard { old }
+}
+
+impl Drop for LocalhostGuard {
+    fn drop(&mut self) {
+        unsafe {
+            match &self.old {
+                Some(v) => std::env::set_var("NO_PROXY", v),
+                None => std::env::remove_var("NO_PROXY"),
+            }
+        }
+    }
 }
 
 fn make_mock_ollama_success(dir: &Path) -> io::Result<PathBuf> {
@@ -318,4 +350,161 @@ config:
     );
 
     let _ = fs::remove_dir_all(dir);
+}
+
+#[test]
+fn http_provider_happy_path() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+    let _server_guard = block_incoming_localhost();
+
+    std::thread::spawn(move || {
+        let (mut stream, _) = server.accept().unwrap();
+        let mut buf = [0u8; 1024];
+        let _ = stream.read(&mut buf);
+        let body = r#"{"output":"OK"}"#;
+        let resp = format!(
+            "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        let _ = stream.write_all(resp.as_bytes());
+    });
+
+    let spec = provider_spec_from_yaml(&format!(
+        r#"
+type: http
+config:
+  endpoint: "http://{addr}/"
+"#
+    ));
+
+    let p = build_provider(&spec).expect("build_provider failed");
+    let out = p.complete("hello").expect("http provider should succeed");
+    assert_eq!(out, "OK");
+}
+
+#[test]
+fn http_provider_accepts_https_endpoint() {
+    // This test is intentionally config-only: we verify that `https://` endpoints
+    // are accepted by parsing/building the provider, without performing a network call.
+    let spec = provider_spec_from_yaml(
+        r#"
+type: http
+config:
+  endpoint: "https://example.com/v1/complete"
+"#,
+    );
+
+    let _p = build_provider(&spec).expect("build_provider should accept https endpoints");
+}
+
+#[test]
+fn http_provider_non_200_response() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+    let _server_guard = block_incoming_localhost();
+
+    std::thread::spawn(move || {
+        let (mut stream, _) = server.accept().unwrap();
+        let mut buf = [0u8; 1024];
+        let _ = stream.read(&mut buf);
+        let body = "bad";
+        let resp = format!(
+            "HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\nContent-Length: {}\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        let _ = stream.write_all(resp.as_bytes());
+    });
+
+    let spec = provider_spec_from_yaml(&format!(
+        r#"
+type: http
+config:
+  endpoint: "http://{addr}/"
+"#
+    ));
+
+    let p = build_provider(&spec).expect("build_provider failed");
+    let err = p.complete("hello").unwrap_err();
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("non-200") && msg.contains("500"),
+        "unexpected error: {msg}"
+    );
+}
+
+#[test]
+fn http_provider_missing_auth_env_var() {
+    let addr = "127.0.0.1:9";
+
+    let spec = provider_spec_from_yaml(&format!(
+        r#"
+type: http
+config:
+  endpoint: "http://{addr}/"
+  auth:
+    type: bearer
+    env: MISSING_ENV
+"#
+    ));
+
+    let p = build_provider(&spec).expect("build_provider failed");
+    let err = p.complete("hello").unwrap_err();
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("missing required auth env var"),
+        "unexpected error: {msg}"
+    );
+}
+
+#[test]
+fn http_provider_timeout() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+    let _server_guard = block_incoming_localhost();
+
+    std::thread::spawn(move || {
+        let (mut stream, _) = server.accept().unwrap();
+        let mut buf = [0u8; 1024];
+        let _ = stream.read(&mut buf);
+        std::thread::sleep(std::time::Duration::from_secs(2));
+        let body = r#"{"output":"OK"}"#;
+        let resp = format!(
+            "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        let _ = stream.write_all(resp.as_bytes());
+    });
+
+    let spec = provider_spec_from_yaml(&format!(
+        r#"
+type: http
+config:
+  endpoint: "http://{addr}/"
+  timeout_secs: 1
+"#
+    ));
+
+    let p = build_provider(&spec).expect("build_provider failed");
+    let err = p.complete("hello").unwrap_err();
+    let msg = format!("{err:#}").to_lowercase();
+    assert!(
+        msg.contains("timeout") || msg.contains("timed out"),
+        "unexpected error: {msg}"
+    );
 }
