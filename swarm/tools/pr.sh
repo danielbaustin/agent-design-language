@@ -191,7 +191,7 @@ Branch: $branch
 ## Codex Instructions
 - Read this file.
 - Do the work described above.
-- Write the receipt to the paired output card file.
+- Write the output card to the paired output card file.
 EOF
 }
 
@@ -201,7 +201,7 @@ seed_output_card() {
     return 0
   fi
   cat >"$path" <<EOF
-# ADL Output Receipt Card
+# ADL Output Card
 
 Issue: #$issue
 Version: $ver
@@ -400,11 +400,70 @@ cmd_receipt() {
   if [[ -f "$out_path" ]]; then
     die "receipt: output already exists: $out_path"
   fi
-  note "Creating output receipt card: $out_path"
+  note "Creating output card: $out_path"
   ensure_adl_dirs
   seed_output_card "$out_path" "$issue" "$title" "$(current_branch)" "$version"
   note "Done."
   echo "$out_path"
+}
+
+cmd_cards() {
+  require_cmd gh
+
+  local issue="${1:-}"; shift || true
+  [[ -n "$issue" ]] || die "cards: missing <issue> number"
+
+  local no_fetch_issue="0"
+  local version=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --no-fetch-issue) no_fetch_issue="1"; shift ;;
+      --version) version="$2"; shift 2 ;;
+      *) die "cards: unknown arg: $1" ;;
+    esac
+  done
+
+  local repo
+  repo="$(default_repo)"
+
+  local title=""
+  if [[ "$no_fetch_issue" != "1" ]]; then
+    note "Fetching issue title via gh…"
+    title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
+  fi
+
+  if [[ -z "$title" ]]; then
+    title="issue-${issue}"
+  fi
+
+  if [[ -z "$version" ]]; then
+    version="$(issue_version "$issue")"
+  fi
+  [[ -n "$version" ]] || version="v0.2"
+
+  ensure_adl_dirs
+
+  local input_path output_path
+  input_path="$(input_card_path "$issue" "$version")"
+  output_path="$(output_card_path "$issue" "$version")"
+
+  if [[ -f "$input_path" ]]; then
+    note "Input card exists: $input_path"
+  else
+    note "Creating input card: $input_path"
+    seed_input_card "$input_path" "$issue" "$title" "TBD (run pr.sh start $issue)" "$version"
+  fi
+
+  if [[ -f "$output_path" ]]; then
+    note "Output card exists: $output_path"
+  else
+    note "Creating output card: $output_path"
+    seed_output_card "$output_path" "$issue" "$title" "TBD (run pr.sh start $issue)" "$version"
+  fi
+
+  echo "READ  $input_path"
+  echo "WRITE $output_path"
 }
 
 cmd_start() {
@@ -490,7 +549,7 @@ cmd_start() {
     seed_input_card "$in_path" "$issue" "$title" "$branch" "$ver"
   fi
   if [[ ! -f "$out_path" ]]; then
-    note "Creating output receipt card: $out_path"
+    note "Creating output card: $out_path"
     seed_output_card "$out_path" "$issue" "$title" "$branch" "$ver"
   fi
   echo "• Codex:"
@@ -555,9 +614,9 @@ cmd_finish() {
   [[ -f "$input_path" ]] || die "finish: missing input card: $input_path"
   if ! ensure_nonempty_file "$output_path"; then
     if [[ ! -f "$output_path" ]]; then
-      die "finish: missing output receipt card: $output_path"
+      die "finish: missing output card: $output_path"
     fi
-    die "finish: output receipt card is empty: $output_path"
+    die "finish: output card is empty: $output_path"
   fi
 
   # Basic safety: ensure there are changes to commit.
@@ -659,15 +718,18 @@ Commands:
   start   <issue> [--slug <slug>] [--prefix <pfx>] [--no-fetch-issue]
   card    <issue> ... [--version <v0.2>] [-f <input_card.md>]
   receipt <issue> ... [--version <v0.2>] [-f <output_receipt.md>]
+  cards   <issue> [--version <v0.2>] [--no-fetch-issue]
   finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output <output_receipt.md>] [--no-open]
   open
   status
 
 Flags:
   (card)    -f, --file <input_card.md>         Output path for the generated input card (default: .adl/cards/issue-####__input__vX.Y.md)
-  (receipt) -f, --file <output_receipt.md>     Output path for the generated receipt card (default: .adl/cards/issue-####__output__vX.Y.md)
+  (receipt) -f, --file <output_receipt.md>     Output path for the generated output card (default: .adl/cards/issue-####__output__vX.Y.md)
+  (cards)   --version <v0.2>                   Override detected version (otherwise inferred from issue labels version:vX.Y)
+  (cards)   --no-fetch-issue                   Do not fetch issue title/labels (uses issue-<n> title)
   (card/receipt) --version <v0.2>              Override detected version (otherwise inferred from issue labels version:vX.Y)
-  (finish) --receipt <output_receipt.md>       REQUIRED: output receipt card path (must exist)
+  (finish) --receipt <output_receipt.md>       REQUIRED: output card path (must exist)
   (card/start) --slug <slug>                   Use an explicit slug instead of fetching the issue title.
 
 Notes:
@@ -675,13 +737,14 @@ Notes:
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - Runs Rust checks in swarm/ by default (fmt, clippy -D warnings, test).
 - finish stages swarm/ by default (reduces accidental commits).
-- Templates are stored in .adl/templates/ (versioned): input_card_template.md and output_receipt_card_template.md.
+- Templates are stored in .adl/templates/ (versioned): input_card_template.md and output_receipt_card_template.md (output card template).
 - Cards are stored locally under .adl/cards/ and are not committed to git.
 
 Examples:
   swarm/tools/pr.sh start 17 --slug b6-default-system
   swarm/tools/pr.sh card  17 --version v0.2
   swarm/tools/pr.sh receipt 17 --version v0.2
+  swarm/tools/pr.sh cards 17 --version v0.2
   swarm/tools/pr.sh finish 17 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/issue-0017__input__v0.2.md --receipt .adl/cards/issue-0017__output__v0.2.md
 EOF
 }
@@ -693,6 +756,7 @@ main() {
     finish) cmd_finish "$@" ;;
     card) cmd_card "$@" ;;
     receipt) cmd_receipt "$@" ;;
+    cards) cmd_cards "$@" ;;
     open) cmd_open ;;
     status) cmd_status ;;
     -h|--help|"") usage ;;
