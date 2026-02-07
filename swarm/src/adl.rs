@@ -243,6 +243,10 @@ pub struct StepSpec {
     #[serde(default)]
     pub id: Option<String>,
 
+    /// Optional state key to save the step output under.
+    #[serde(default)]
+    pub save_as: Option<String>,
+
     /// Agent id to run (key in `agents`).
     #[serde(default)]
     pub agent: Option<String>,

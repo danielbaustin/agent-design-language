@@ -396,3 +396,57 @@ fn run_surfaces_provider_failure_stderr() {
         "stderr was:\n{stderr}"
     );
 }
+
+#[test]
+fn run_rejects_missing_prompt_inputs() {
+    let base = tmp_dir("exec-missing-inputs");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.2"
+
+providers:
+  local:
+    type: "ollama"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize {{missing_key}}"
+
+run:
+  name: "missing-inputs"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        inputs:
+          text: "hello"
+"#;
+
+    let tmp_yaml = base.join("missing-inputs.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        !out.status.success(),
+        "expected failure, got success.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("missing input bindings") && stderr.contains("missing_key"),
+        "stderr was:\n{stderr}"
+    );
+}

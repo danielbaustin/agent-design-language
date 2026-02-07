@@ -1,0 +1,33 @@
+version: "0.2"
+
+providers:
+  local_ollama:
+    type: "ollama"
+    base_url: "http://localhost:11434"
+    default_model: "gemma3:latest"
+
+agents:
+  a1:
+    provider: "local_ollama"
+    model: "gemma3:latest"
+
+tasks:
+  t1:
+    prompt:
+      user: |
+        Summarize the text.
+        Prior summary:
+        {{summary_2}}
+        Text:
+        {{text}}
+
+run:
+  name: "v0-2-failure-unknown-state-ref"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        inputs:
+          text: "hello"

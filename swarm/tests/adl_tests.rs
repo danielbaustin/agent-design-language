@@ -151,6 +151,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
 
     let step_with_step_prompt = StepSpec {
         id: None,
+        save_as: None,
         agent: Some("a1".to_string()),
         task: Some("t1".to_string()),
         prompt: Some(step_prompt.clone()),
@@ -163,6 +164,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
 
     let step_with_task_prompt = StepSpec {
         id: None,
+        save_as: None,
         agent: Some("a1".to_string()),
         task: Some("t1".to_string()),
         prompt: None,
@@ -175,6 +177,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
 
     let step_with_agent_prompt = StepSpec {
         id: None,
+        save_as: None,
         agent: Some("a1".to_string()),
         task: None,
         prompt: None,
@@ -187,6 +190,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
 
     let step_with_no_prompt = StepSpec {
         id: None,
+        save_as: None,
         agent: None,
         task: None,
         prompt: None,
