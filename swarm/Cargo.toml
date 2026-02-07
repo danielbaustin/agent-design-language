@@ -32,6 +32,13 @@ thiserror = "1.0"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
+# HTTP (blocking)
+reqwest = { version = "0.12", default-features = false, features = [
+  "json",
+  "blocking",
+  "rustls-tls",
+] }
+
 # JSON Schema (Option A)
 schemars = "0.8"
 jsonschema = "0.17"
