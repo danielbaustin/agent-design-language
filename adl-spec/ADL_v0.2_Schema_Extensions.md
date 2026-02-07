@@ -1,61 +1,81 @@
-# L v. Schema xtensions (raft)
+# ADL v0.2 Schema Extensions (Draft)
 
-This docment defines the **draft L v. schema extensions**. It is a forward-looking
-spec intended to gide implementation work while preserving the **deterministic core**
-of L established in v.1.
+This document defines the **draft ADL v0.2 schema extensions**. It is a forward-looking
+spec intended to guide implementation work while preserving the **deterministic core**
+of ADL established in v0.1.
 
-This is a **spec-only** docment: no rntime behavior changes are implied ntil a
-reference rntime implements these featres.
-
----
-
-## 1) Goals for v.
-
-- **Preserve determinism** in parsing, resoltion, prompt assembly, and exection order.
-- **Mlti-step workflows** are first-class (explicit step Is, inpts/otpts, overrides).
-- **Remote providers** are spported in spec (minimal, explicit configration).
-- **oncrrency remains gated** and is deferred to v.3.
-- **Strict parsing**: nknown fields rejected in key specs (with explicit escape hatches only).
-
-## ) Non-goals
-
-- oncrrency / parallel exection (see v.3 roadmap).
-- G schedling / dynamic branching.
-- Persistent state machine / resmability.
-- Streaming or tool invocation semantics beyond v.1.
+This is a **spec-only** document: no runtime behavior changes are implied until a
+reference runtime implements these features.
 
 ---
 
-## 3) Schema xtensions (v.)
+## 1) Goals for v0.2
+
+- **Preserve determinism** in parsing, resolution, prompt assembly, and execution order.
+- **Multi-step workflows** are first-class (explicit step IDs, inputs/outputs, overrides).
+- **Remote providers** are supported in spec (minimal, explicit configuration).
+- **Concurrency remains gated** and is deferred to v0.3.
+- **Strict parsing**: unknown fields rejected in key specs (with explicit escape hatches only).
+
+## 2) Non-goals
+
+- Concurrency / parallel execution (see v0.3 roadmap).
+- Graph scheduling / dynamic branching.
+- Persistent state machine / resumability.
+- Streaming or tool invocation semantics beyond v0.1.
+
+---
+
+## 3) Schema extensions (v0.2)
 
 ### 3.1 Version semantics
 
-`version` remains reqired at the top level.
+`version` remains required at the top level.
 
-- v. docments **MUST** declare `version: "."`.
-- `rn.id` is the stable rn identifier (preferred); `rn.name` MY be sed as a hman-friendly label.
-- Rntimes **MUST** reject newer versions they do not spport.
-- Rntimes **MY** provide a “best-effort” validation mode, bt **strict mode** is reqired
-  by defalt for ser-facing rns.
+- v0.2 documents **MUST** declare `version: "0.2"`.
+- `run.id` is the stable run identifier (preferred); `run.name` MAY be used as a human-friendly label.
+- Runtimes **MUST** reject newer versions they do not support.
+- Runtimes **MAY** provide a “best-effort” validation mode, but **strict mode** is required
+  by default for user-facing runs.
 
-### 3. Workflow and steps
+### 3.2 Workflow and steps
 
-**Step model** is formalized:
+v0.2 formalizes a **multi-step workflow model** with explicit ordering and data flow.
 
-- ach step **SHOUL** declare a stable `id`.
-- Steps are exected in **explicit order** as listed for seqential workflows.
-- Inpts and otpts are explicit:
-  - `inpts`: a map of inpt bindings for the step (strings or file refs) resolved against `base_dir` when sing `@file:`.
-  - `save_as`: optional state key to store the otpt.
+- Each workflow defines an ordered list of `steps`.
+- Steps are executed **strictly in the order listed**.
+- Each step **SHOULD** declare a stable `id`; step `id` is **REQUIRED in strict mode**.
 
-**Overrides** at the step level:
+#### Inputs and outputs
 
-- `prompt` may override `task.prompt` and `agent.prompt`.
-- `provider` may override the agent’s provider.
+- `inputs` is an explicit map of named bindings for the step.
+- Input values may be literal strings or file references using `@file:<path>`.
+- File inputs are resolved relative to `base_dir`.
+
+- A step may declare `save_as`, which stores the step’s primary output under a named
+  key in workflow state.
+- Stored outputs are immutable once written and may be referenced by later steps.
+
+#### Referencing prior outputs (workflow state)
+
+- `save_as` writes the step’s primary output into workflow state under the given key.
+- Later steps may reference stored state values **only** from earlier steps.
+- Reference syntax in prompts uses template variables:
+  - If a step saved `save_as: "summary_1"`, later prompts may reference it as `{{summary_1}}`.
+- State keys are write-once:
+  - Reusing a `save_as` key within a workflow is a **validation error** in strict mode.
+  - Referencing an unknown key is a **validation error** in strict mode.
+
+Note: v0.2 state values are treated as opaque strings. Structured outputs are deferred.
+
+#### Overrides
+
+- `prompt` at the step level overrides `task.prompt` and `agent.prompt`.
+- `provider` at the step level overrides the agent’s provider selection.
 
 ### 3.3 Providers
 
-v. formalizes provider types with a minimal schema.
+v0.2 formalizes provider types with a minimal schema.
 
 #### Local provider (Ollama)
 
@@ -63,197 +83,214 @@ v. formalizes provider types with a minimal schema.
 providers:
   local_ollama:
     kind: "ollama"
-    base_rl: "http://localhost:11434"
-    defalt_model: "gemma3:latest"
+    base_url: "http://localhost:11434"
+    default_model: "gemma3:latest"
 ```
 
 #### Remote provider (HTTP)
 
-Remote providers are defined as HTTP endpoints with explicit ath and headers:
+Remote providers are defined as HTTP endpoints with explicit auth and headers:
 
 ```yaml
 providers:
   remote_http:
     kind: "http"
     endpoint: "https://api.example.com/v1/complete"
-    ath:
+    auth:
       type: "bearer"
-      env: "XMPL_PI_KY"
+      env: "XMPL_API_KEY"
     headers:
-      X-lient: "adl-v."
-    timeot_secs: 
+      X-Client: "adl-v0.2"
+    timeout_secs: 30
 ```
 
 Notes:
-- `ath.env` **MUST** refer to an environment variable containing the secret.
+- `auth.env` **MUST** refer to an environment variable containing the secret.
 - `headers` is an explicit map (no implicit headers).
-- `timeot_secs` is optional; rntime defalts may apply.
+- `timeout_secs` is optional; runtime defaults may apply.
 
-### 3.4 efalts and inheritance
+### 3.4 Defaults and inheritance
 
 Inheritance order (lowest to highest precedence):
 
-1. `rn.defalts`
-. `agent`
+1. `run.defaults`
+2. `agent`
 3. `task`
 4. `step` overrides
 
-**xample defalts**:
+**Example defaults**:
 
 ```yaml
-rn:
-  defalts:
-    system: "Yo are a deterministic assistant."
+run:
+  defaults:
+    system: "You are a deterministic assistant."
 ```
 
-If a prompt has no `system` message, the rntime **MUST** apply `rn.defalts.system`.
+If a prompt has no `system` message, the runtime **MUST** apply `run.defaults.system`.
 
-### 3.5 Inpts and otpts
+### 3.5 Inputs and outputs
 
-Inpts remain explicit, inclding file references:
+Inputs remain explicit, including file references:
 
 ```yaml
-inpts:
-  doc: "@file:docs/inpt.txt"
+inputs:
+  doc: "@file:docs/input.txt"
 ```
 
-Otpts may be stored to state:
+Outputs may be stored to state:
 
 ```yaml
-save_as: "smmary"
+save_as: "summary"
 ```
+
+### 3.6 Determinism constraints (v0.2)
+
+To preserve ADL’s deterministic core, v0.2 enforces the following constraints:
+
+- Workflow execution order is fixed and explicit.
+- Step outputs are written once and never mutated.
+- Later steps may only depend on:
+  - Their declared `inputs`
+  - Explicitly named outputs from earlier steps
+- No hidden global state is permitted.
+- Provider configuration must be fully explicit in the document or environment.
+- Given identical inputs, configuration, and provider behavior, a run MUST be
+  reproducible in structure and ordering.
 
 ---
 
-## 4) Validation rles (v.)
+## 4) Validation rules (v0.2)
 
-### Reqired vs optional
+### Required vs optional
 
-- `version` and `rn` remain reqired.
-- `rn.workflow.steps` mst be non-empty for v..
-- Step `id` is **strongly recommended** and **reqired in strict mode**.
+- `version` and `run` remain required.
+- `run.workflow.steps` must be non-empty for v0.2.
+- Step `id` is **strongly recommended** and **required in strict mode**.
 
-### Rejected in v.
+### Rejected in v0.2
 
 - Unknown fields in `providers`, `agents`, and `steps` are rejected in strict mode.
-- oncrrency is rejected with actionable error gidance.
+- Concurrency is rejected with actionable error guidance.
 
 ### Version gating
 
-- v.1 rntimes **MUST** reject v. docs with a clear version error.
-- v. rntimes **MUST** reject v.3+ docs nless explicitly spported.
+- v0.1 runtimes **MUST** reject v0.2 docs with a clear version error.
+- v0.2 runtimes **MUST** reject v0.3+ docs unless explicitly supported.
 
 ---
 
-## 5) xamples
+## 5) Examples
 
-### xample : Mlti-step seqential workflow (local provider)
+### Example : Multi-step sequential workflow (local provider)
 
 ```yaml
-version: "."
+version: "0.2"
 
 providers:
   local_ollama:
     kind: "ollama"
-    base_rl: "http://localhost:11434"
-    defalt_model: "gemma3:latest"
+    base_url: "http://localhost:11434"
+    default_model: "gemma3:latest"
 
 agents:
-  smmarizer:
+  summarizer:
     provider: "local_ollama"
     model: "gemma3:latest"
     prompt:
-      system: "Yo smmarize docments precisely."
+      system: "You summarize documents precisely."
 
 tasks:
-  smmarize_doc:
+  summarize_doc:
     prompt:
-      ser: |
-        Smmarize the docment.
-        ocment:
+      user: |
+        Summarize the document.
+        Document:
         {{doc}}
 
-rn:
-  id: "mlti-step-demo"
-  defalts:
-    system: "eterministic, concise otpts only."
+run:
+  id: "multi-step-demo"
+  defaults:
+    system: "Deterministic, concise outputs only."
   workflow:
-    kind: "seqential"
+    kind: "sequential"
     steps:
       - id: "step-1"
-        agent: "smmarizer"
-        task: "smmarize_doc"
-        inpts:
+        agent: "summarizer"
+        task: "summarize_doc"
+        inputs:
           doc: "@file:docs/doc_1.txt"
-        save_as: "smmary_1"
-      - id: "step-"
-        agent: "smmarizer"
-        task: "smmarize_doc"
+        save_as: "summary_1"
+      - id: "step-2"
+        agent: "summarizer"
+        task: "summarize_doc"
         prompt:
-          ser: |
-            Smmarize the second docment in one sentence.
-            ocment:
+          user: |
+            Here is the summary of the first document:
+            {{summary_1}}
+
+            Now summarize the second document in one sentence.
+            Document:
             {{doc}}
-        inpts:
-          doc: "@file:docs/doc_.txt"
-        save_as: "smmary_"
+        inputs:
+          doc: "@file:docs/doc_2.txt"
+        save_as: "summary_2"
 ```
 
-### xample : Remote provider (HTTP)
+### Example : Remote provider (HTTP)
 
 ```yaml
-version: "."
+version: "0.2"
 
 providers:
   remote_http:
     kind: "http"
     endpoint: "https://api.example.com/v1/complete"
-    ath:
+    auth:
       type: "bearer"
-      env: "XMPL_PI_KY"
+      env: "XMPL_API_KEY"
     headers:
-      X-lient: "adl-v."
-    timeot_secs: 
+      X-Client: "adl-v0.2"
+    timeout_secs: 30
 
 agents:
   writer:
     provider: "remote_http"
     model: "example-model"
     prompt:
-      system: "Write concise technical smmaries."
+      system: "Write concise technical summaries."
 
 tasks:
-  draft_smmary:
+  draft_summary:
     prompt:
-      ser: |
-        Smmarize:
+      user: |
+        Summarize:
         {{text}}
 
-rn:
+run:
   id: "remote-provider-demo"
   workflow:
-    kind: "seqential"
+    kind: "sequential"
     steps:
       - id: "remote-step"
         agent: "writer"
-        task: "draft_smmary"
-        inpts:
-          text: "L defines deterministic agent workflows."
-        save_as: "smmary"
+        task: "draft_summary"
+        inputs:
+          text: "ADL defines deterministic agent workflows."
+        save_as: "summary"
 ```
 
 ---
 
-## ) Migration notes (v.1 → v.)
+## 6) Migration notes (v0.1 → v0.2)
 
-- If yo only se seqential workflows and local providers, yor v.1 docs are
-  conceptally compatible.
-- v. introdces stricter validation and explicit step Is.
-- oncrrency remains nspported; se seqential workflows.
+- If you only use sequential workflows and local providers, your v0.1 docs are
+  conceptually compatible.
+- v0.2 introduces stricter validation and explicit step IDs.
+- Concurrency remains unsupported; use sequential workflows.
 
 ---
 
-## ) Open qestions / follow-ps
+## 7) Open questions / follow-ups
 
-- v. implementation isses: #15–#1
-- v.3 concrrency design: #1
+- v0.2 implementation issues: #16–#20, #35–#38
+- v0.3 concurrency design: TBD (track as a future roadmap issue)
