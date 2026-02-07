@@ -12,25 +12,35 @@
 # - GitHub CLI (gh) authenticated with repo access
 # - Rust toolchain for `swarm/` checks (fmt, clippy, test)
 #
-# Usage:
-#   swarm/tools/pr.sh start <issue> [--slug <slug>] [--prefix codex] [--no-fetch-issue] [-f <input_card.md>]
-#   swarm/tools/pr.sh card  <issue> [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>]
-#   swarm/tools/pr.sh finish <issue> --title "<title>" [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [-f <input_card.md>] [--no-open]
+#   swarm/tools/pr.sh start   <issue> [--slug <slug>] [--prefix codex] [--no-fetch-issue]
+#   swarm/tools/pr.sh card    <issue> [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
+#   swarm/tools/pr.sh receipt <issue> [--slug <slug>] [--no-fetch-issue] [-f <output_receipt.md>] [--version <v0.2>]
+#   swarm/tools/pr.sh finish  <issue> --title "<title>" [-f <input_card.md>] [--receipt <output_receipt.md>] [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [--no-open]
 #   swarm/tools/pr.sh open
 #   swarm/tools/pr.sh status
 #
 # Examples:
 #   swarm/tools/pr.sh start 14 --slug b6-default-system
-#   swarm/tools/pr.sh start 14 -f .adl/input_cards/input_card_14_b6-default-system.md
-#   swarm/tools/pr.sh card  14 -f .adl/input_cards/input_card_14_b6-default-system.md
-#   swarm/tools/pr.sh finish 14 --title "swarm: apply run.defaults.system fallback" --body "Tests: fmt/clippy/test" -f .adl/input_cards/input_card_14_b6-default-system.md
+#   swarm/tools/pr.sh card  14 --version v0.2
+#   swarm/tools/pr.sh receipt 14 --version v0.2
+#   swarm/tools/pr.sh finish 14 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/issue-0014__input__v0.2.md --receipt .adl/cards/issue-0014__output__v0.2.md
 #   swarm/tools/pr.sh open
 #
 set -euo pipefail
 
+
 # ---------- helpers ----------
 die() { echo "❌ $*" >&2; exit 1; }
 note() { echo "• $*"; }
+
+print_next_steps() {
+  cat <<'EOF'
+Next steps (human review preserved):
+- Open the PR in the browser and do a quick self-review.
+- When satisfied, mark it Ready for review (or keep as draft if you want).
+- Merge via GitHub UI (Squash and merge recommended).
+EOF
+}
 
 require_cmd() {
   command -v "$1" >/dev/null 2>&1 || die "Missing required command: $1"
@@ -103,116 +113,140 @@ gh_repo_flag() {
   fi
 }
 
-print_next_steps() {
-  cat <<'EOF'
-Next steps (human review preserved):
-- Open the PR in the browser and assign a reviewer (or self-review), then mark Ready for review when appropriate.
-- After approval, merge via GitHub UI (Squash and merge recommended).
-EOF
-}
+# ---------- cards + templates (templates tracked; cards local-only) ----------
+ADL_DIR=".adl"
+ADL_TEMPLATES_DIR="$ADL_DIR/templates"
+ADL_CARDS_DIR="$ADL_DIR/cards"
 
-# ---------- input cards / PR body helpers ----------
-input_cards_dir() {
-  # Versionable location for archived input cards.
-  echo "$(repo_root)/.adl/input_cards"
-}
+INPUT_TEMPLATE="$ADL_TEMPLATES_DIR/input_card_template.md"
+OUTPUT_TEMPLATE="$ADL_TEMPLATES_DIR/output_receipt_card_template.md"
 
-# Returns the path to the input card template file.
-input_card_template_path() {
-  echo "$(repo_root)/.adl/input_cards/_template.md"
-}
+issue_pad() { printf '%04d' "$1"; }
 
-default_input_card_path() {
-  # Args: issue slug
-  local issue="$1" slug="$2"
-  slug="$(sanitize_slug "$slug")"
-  echo "$(input_cards_dir)/input_card_${issue}_${slug}.md"
-}
-
-ensure_dir() {
-  local d="$1"
-  mkdir -p "$d"
-}
-
-unique_path() {
-  # If path exists, append -2, -3, ... before extension.
-  local path="$1"
-  if [[ ! -e "$path" ]]; then
-    echo "$path"
-    return 0
-  fi
-  local base ext i
-  base="${path%.*}"
-  ext="${path##*.}"
-  if [[ "$base" == "$path" ]]; then
-    ext=""
+issue_version() {
+  local issue="$1"
+  local v
+  v="$(gh issue view "$issue" --json labels -q '.labels[].name' 2>/dev/null | sed -n 's/^version://p' | head -n1 || true)"
+  if [[ -n "$v" ]]; then
+    echo "$v"
   else
-    ext=".${ext}"
+    echo "v0.2"
   fi
-  i=2
-  while [[ -e "${base}-${i}${ext}" ]]; do
-    i=$((i+1))
-  done
-  echo "${base}-${i}${ext}"
 }
 
-input_card_template() {
-  # Consistent prompt-template style input card, loaded from a file.
-  # Template path: .adl/input_cards/_template.md
-  # Placeholders:
-  #   {{ISSUE}}  -> issue number
-  #   {{TITLE}}  -> issue title
-  #   {{SLUG}}   -> slug
-  # Args: issue title slug
-  local issue="$1" title="$2" slug="$3"
+ensure_adl_dirs() {
+  mkdir -p "$(repo_root)/$ADL_TEMPLATES_DIR" "$(repo_root)/$ADL_CARDS_DIR"
+}
 
-  local tpl
-  tpl="$(input_card_template_path)"
-  [[ -f "$tpl" ]] || die "Missing input card template: $tpl\nCreate it (recommended) and try again."
+input_card_path() {
+  local issue="$1" ver="$2"
+  local pad
+  pad="$(issue_pad "$issue")"
+  echo "$(repo_root)/$ADL_CARDS_DIR/issue-${pad}__input__${ver}.md"
+}
 
-  # Escape for sed replacement.
-  local esc_title esc_slug
+output_card_path() {
+  local issue="$1" ver="$2"
+  local pad
+  pad="$(issue_pad "$issue")"
+  echo "$(repo_root)/$ADL_CARDS_DIR/issue-${pad}__output__${ver}.md"
+}
+
+render_template_with_issue() {
+  # Args: template_path issue title branch ver kind
+  local tpl="$1" issue="$2" title="$3" branch="$4" ver="$5" kind="$6"
+  [[ -f "$tpl" ]] || return 1
+
+  local esc_title esc_branch
   esc_title="$(printf '%s' "$title" | sed -e 's/[\\&]/\\\\&/g')"
-  esc_slug="$(printf '%s' "$slug" | sed -e 's/[\\&]/\\\\&/g')"
+  esc_branch="$(printf '%s' "$branch" | sed -e 's/[\\&]/\\\\&/g')"
 
   sed -e "s/{{ISSUE}}/${issue}/g" \
       -e "s/{{TITLE}}/${esc_title}/g" \
-      -e "s/{{SLUG}}/${esc_slug}/g" \
+      -e "s/{{BRANCH}}/${esc_branch}/g" \
+      -e "s/{{VERSION}}/${ver}/g" \
+      -e "s/{{KIND}}/${kind}/g" \
       "$tpl"
 }
 
-archive_input_card() {
-  # Copies the card into .adl/input_cards/ if it's not already there.
-  local src="$1" issue="$2" slug="$3"
-  [[ -n "$src" ]] || return 0
-  [[ -f "$src" ]] || die "Input card not found: $src"
-
-  local dir dest name
-  dir="$(input_cards_dir)"
-  ensure_dir "$dir"
-
-  slug="$(sanitize_slug "$slug")"
-  name="input_card_${issue}_${slug}.md"
-  dest="$dir/$name"
-
-  # If src is already within the archive dir, don't copy.
-  local abs_src abs_dir
-  abs_src="$(cd "$(dirname "$src")" && pwd)/$(basename "$src")"
-  abs_dir="$(cd "$dir" && pwd)"
-  if [[ "$abs_src" == "$abs_dir"/* ]]; then
-    echo "$abs_src"
+seed_input_card() {
+  local path="$1" issue="$2" title="$3" branch="$4" ver="$5"
+  if render_template_with_issue "$INPUT_TEMPLATE" "$issue" "$title" "$branch" "$ver" "input" >"$path" 2>/dev/null; then
     return 0
   fi
+  cat >"$path" <<EOF
+# ADL Input Card
 
-  dest="$(unique_path "$dest")"
-  cp -f "$src" "$dest"
-  echo "$dest"
+Issue: #$issue
+Version: $ver
+Title: $title
+Branch: $branch
+
+## Goal
+
+## Acceptance Criteria
+
+## Context / Notes
+
+## Codex Instructions
+- Read this file.
+- Do the work described above.
+- Write the receipt to the paired output card file.
+EOF
+}
+
+seed_output_card() {
+  local path="$1" issue="$2" title="$3" branch="$4" ver="$5"
+  if render_template_with_issue "$OUTPUT_TEMPLATE" "$issue" "$title" "$branch" "$ver" "output" >"$path" 2>/dev/null; then
+    return 0
+  fi
+  cat >"$path" <<EOF
+# ADL Output Receipt Card
+
+Issue: #$issue
+Version: $ver
+Status: IN_PROGRESS
+
+## Provenance
+- Actor:
+- Model:
+- Branch: $branch
+- Start Time:
+- End Time:
+
+## Commands Executed
+
+## Files Changed
+
+## Tests Run
+- [ ] cargo fmt
+- [ ] cargo clippy --all-targets -- -D warnings
+- [ ] cargo test
+
+## Result
+- Pass / Fail:
+
+## Decisions Made
+
+## Follow-ups / Deferred Work
+EOF
+}
+
+ensure_nonempty_file() {
+  local path="$1"
+  [[ -f "$path" ]] || return 1
+  [[ -s "$path" ]] || return 1
+  # Also reject files that are only whitespace
+  if [[ -z "$(tr -d '[:space:]' <"$path")" ]]; then
+    return 1
+  fi
+  return 0
 }
 
 render_pr_body_file() {
   # Renders a PR body into a temp file and echoes its path.
-  # Args: issue close_line card_path extra_body no_checks
-  local issue="$1" close_line="$2" card_path="$3" extra_body="$4" no_checks="$5"
+  # Args: issue close_line input_path output_path extra_body no_checks
+  local issue="$1" close_line="$2" input_path="$3" output_path="$4" extra_body="$5" no_checks="$6"
 
   local tmp
   tmp="$(mktemp -t pr_body_XXXXXX.md)"
@@ -223,14 +257,10 @@ render_pr_body_file() {
       echo
     fi
 
-    if [[ -n "$card_path" ]]; then
-      if [[ -f "$card_path" ]]; then
-        cat "$card_path"
-        echo
-      else
-        die "Input card not found: $card_path"
-      fi
-    fi
+    echo "Local artifacts (not committed):"
+    echo "- Input card:  $input_path"
+    echo "- Output card: $output_path"
+    echo
 
     if [[ -n "$extra_body" ]]; then
       echo "$extra_body"
@@ -268,6 +298,7 @@ cmd_card() {
   local slug=""
   local no_fetch_issue="0"
   local out_path=""
+  local version=""
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -275,6 +306,7 @@ cmd_card() {
       --no-fetch-issue) no_fetch_issue="1"; shift ;;
       -f) out_path="$2"; shift 2 ;;
       --file) out_path="$2"; shift 2 ;;
+      --version) version="$2"; shift 2 ;;
       *) die "card: unknown arg: $1" ;;
     esac
   done
@@ -300,18 +332,77 @@ cmd_card() {
     title="$slug"
   fi
 
+  if [[ -z "$version" ]]; then
+    version="$(issue_version "$issue")"
+  fi
   if [[ -z "$out_path" ]]; then
-    out_path="$(default_input_card_path "$issue" "$slug")"
+    out_path="$(input_card_path "$issue" "$version")"
   fi
-
   if [[ -f "$out_path" ]]; then
-    die "card: output already exists: $out_path"
+    die "card: input card already exists: $out_path"
+  fi
+  note "Creating input card: $out_path"
+  ensure_adl_dirs
+  seed_input_card "$out_path" "$issue" "$title" "$(current_branch)" "$version"
+  note "Done."
+  echo "$out_path"
+}
+
+cmd_receipt() {
+  require_cmd gh
+
+  local issue="${1:-}"; shift || true
+  [[ -n "$issue" ]] || die "receipt: missing <issue> number"
+
+  local slug=""
+  local no_fetch_issue="0"
+  local out_path=""
+  local version=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --slug) slug="$2"; shift 2 ;;
+      --no-fetch-issue) no_fetch_issue="1"; shift ;;
+      -f) out_path="$2"; shift 2 ;;
+      --file) out_path="$2"; shift 2 ;;
+      --version) version="$2"; shift 2 ;;
+      *) die "receipt: unknown arg: $1" ;;
+    esac
+  done
+
+  local repo
+  repo="$(default_repo)"
+
+  local title=""
+  if [[ "$no_fetch_issue" != "1" ]]; then
+    note "Fetching issue title via gh…"
+    title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
   fi
 
-  note "Creating input card: $out_path"
-  mkdir -p "$(dirname "$out_path")"
-  input_card_template "$issue" "$title" "$slug" >"$out_path"
+  if [[ -z "$slug" ]]; then
+    if [[ -n "$title" ]]; then
+      slug="$(sanitize_slug "$title")"
+    else
+      die "receipt: --slug is required when --no-fetch-issue is set or issue title could not be fetched"
+    fi
+  fi
 
+  if [[ -z "$title" ]]; then
+    title="$slug"
+  fi
+
+  if [[ -z "$version" ]]; then
+    version="$(issue_version "$issue")"
+  fi
+  if [[ -z "$out_path" ]]; then
+    out_path="$(output_card_path "$issue" "$version")"
+  fi
+  if [[ -f "$out_path" ]]; then
+    die "receipt: output already exists: $out_path"
+  fi
+  note "Creating output receipt card: $out_path"
+  ensure_adl_dirs
+  seed_output_card "$out_path" "$issue" "$title" "$(current_branch)" "$version"
   note "Done."
   echo "$out_path"
 }
@@ -326,15 +417,13 @@ cmd_start() {
   local prefix="codex"
   local slug=""
   local no_fetch_issue="0"
-  local card_path=""
+  local title=""
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --prefix) prefix="$2"; shift 2 ;;
       --slug) slug="$2"; shift 2 ;;
       --no-fetch-issue) no_fetch_issue="1"; shift ;;
-      -f) card_path="$2"; shift 2 ;;
-      --file) card_path="$2"; shift 2 ;;
       *) die "start: unknown arg: $1" ;;
     esac
   done
@@ -342,22 +431,18 @@ cmd_start() {
   # Default slug: derive from issue title if possible.
   local repo
   repo="$(default_repo)"
+  title=""
   if [[ -z "$slug" ]]; then
     if [[ "$no_fetch_issue" == "1" ]]; then
       die "start: --slug is required when --no-fetch-issue is set"
     fi
     note "Fetching issue title via gh…"
-    local title
     title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
     [[ -n "$title" ]] || die "Could not fetch issue #$issue title. Pass --slug or check gh auth/repo."
     slug="$(sanitize_slug "$title")"
-
-    # If requested, create a consistent input card template (project artifact) if it doesn't exist yet.
-    if [[ -n "$card_path" && ! -f "$card_path" ]]; then
-      note "Creating input card: $card_path"
-      mkdir -p "$(dirname "$card_path")"
-      input_card_template "$issue" "$title" "$slug" >"$card_path"
-    fi
+  fi
+  if [[ -z "$title" ]]; then
+    title="$slug"
   fi
 
   local branch
@@ -395,11 +480,23 @@ cmd_start() {
   note "Creating branch…"
   git switch -c "$branch"
 
-  note "Done."
-  note "Tip: paste acceptance criteria + commands into swarm/.local/codex_inbox.md for Codex."
-  if [[ -n "$card_path" ]]; then
-    note "Tip: keep the input card archived (recommended: $(input_cards_dir))."
+  local ver in_path out_path
+  ver="$(issue_version "$issue")"
+  in_path="$(input_card_path "$issue" "$ver")"
+  out_path="$(output_card_path "$issue" "$ver")"
+  ensure_adl_dirs
+  if [[ ! -f "$in_path" ]]; then
+    note "Creating input card: $in_path"
+    seed_input_card "$in_path" "$issue" "$title" "$branch" "$ver"
   fi
+  if [[ ! -f "$out_path" ]]; then
+    note "Creating output receipt card: $out_path"
+    seed_output_card "$out_path" "$issue" "$title" "$branch" "$ver"
+  fi
+  echo "• Codex:"
+  echo "  READ  $in_path"
+  echo "  WRITE $out_path"
+  note "Done."
 }
 
 cmd_finish() {
@@ -416,7 +513,8 @@ cmd_finish() {
   local ready="0"
   local allow_gitignore="0"
   local paths="swarm"
-  local card_path=""
+  local input_path=""
+  local output_path=""
   local no_open="0"
 
   while [[ $# -gt 0 ]]; do
@@ -428,8 +526,8 @@ cmd_finish() {
       --no-close) no_close="1"; shift ;;
       --ready) ready="1"; shift ;;
       --allow-gitignore) allow_gitignore="1"; shift ;;
-      -f) card_path="$2"; shift 2 ;;
-      --file) card_path="$2"; shift 2 ;;
+      -f|--file|--input) input_path="$2"; shift 2 ;;
+      --output|--receipt|--receipt-file) output_path="$2"; shift 2 ;;
       --no-open) no_open="1"; shift ;;
       --open) no_open="0"; shift ;;
       *) die "finish: unknown arg: $1" ;;
@@ -446,11 +544,21 @@ cmd_finish() {
     die "finish: current branch '$branch' does not look like it matches issue #$issue (expected */${issue}-<slug>). Switch branches or pass the correct issue number."
   fi
 
-  # Derive a stable slug from the branch name for archiving.
-  local slug_for_card
-  slug_for_card="${branch##*/}"
-  slug_for_card="${slug_for_card#${issue}-}"
-  slug_for_card="$(sanitize_slug "$slug_for_card")"
+  local ver
+  ver="$(issue_version "$issue")"
+  if [[ -z "$input_path" ]]; then
+    input_path="$(input_card_path "$issue" "$ver")"
+  fi
+  if [[ -z "$output_path" ]]; then
+    output_path="$(output_card_path "$issue" "$ver")"
+  fi
+  [[ -f "$input_path" ]] || die "finish: missing input card: $input_path"
+  if ! ensure_nonempty_file "$output_path"; then
+    if [[ ! -f "$output_path" ]]; then
+      die "finish: missing output receipt card: $output_path"
+    fi
+    die "finish: output receipt card is empty: $output_path"
+  fi
 
   # Basic safety: ensure there are changes to commit.
   if git diff --cached --quiet && git diff --quiet; then
@@ -486,15 +594,8 @@ cmd_finish() {
   local repo
   repo="$(default_repo)"
 
-  # If an input card is provided, archive it (versionable) and use it in the PR body.
-  local archived_card=""
-  if [[ -n "$card_path" ]]; then
-    archived_card="$(archive_input_card "$card_path" "$issue" "$slug_for_card")"
-    note "Archived input card: $archived_card"
-  fi
-
   local pr_body_file
-  pr_body_file="$(render_pr_body_file "$issue" "$close_line" "$archived_card" "$extra_body" "$no_checks")"
+  pr_body_file="$(render_pr_body_file "$issue" "$close_line" "$input_path" "$output_path" "$extra_body" "$no_checks")"
   trap 'rm -f "$pr_body_file"' EXIT
 
   local commit_msg="$title"
@@ -513,7 +614,7 @@ cmd_finish() {
 
   note "Creating PR (draft)…"
   local pr_url
-  pr_url="$(gh pr create $(gh_repo_flag "$repo") --base main --head "$branch" --title "$title" --body-file "$pr_body_file" --draft --json url -q .url)"
+  pr_url="$(gh pr create $(gh_repo_flag "$repo") --base main --head "$branch" --title "$title" --body-file "$pr_body_file" --draft)"
 
   note "PR created:"
   echo "$pr_url"
@@ -555,30 +656,33 @@ usage() {
 pr.sh — reduce git/PR thrash while preserving human review
 
 Commands:
-  start  <issue> [--slug <slug>] [--prefix <pfx>] [--no-fetch-issue] [-f <input_card.md>]
-  card   <issue> [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>]
-  finish <issue> --title "<title>" [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [-f <input_card.md>] [--no-open]
+  start   <issue> [--slug <slug>] [--prefix <pfx>] [--no-fetch-issue]
+  card    <issue> ... [--version <v0.2>] [-f <input_card.md>]
+  receipt <issue> ... [--version <v0.2>] [-f <output_receipt.md>]
+  finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output <output_receipt.md>] [--no-open]
   open
   status
 
 Flags:
-  -f, --file <input_card.md>   Use an input card file (created on start if missing). On finish, the card is archived into .adl/input_cards/ and included in the PR body.
-  (card) -f, --file <output_card.md>   Output path for the generated card (defaults to .adl/input_cards/input_card_<issue>_<slug>.md).
-  (card/start) --slug <slug>           Use an explicit slug instead of fetching the issue title.
+  (card)    -f, --file <input_card.md>         Output path for the generated input card (default: .adl/cards/issue-####__input__vX.Y.md)
+  (receipt) -f, --file <output_receipt.md>     Output path for the generated receipt card (default: .adl/cards/issue-####__output__vX.Y.md)
+  (card/receipt) --version <v0.2>              Override detected version (otherwise inferred from issue labels version:vX.Y)
+  (finish) --receipt <output_receipt.md>       REQUIRED: output receipt card path (must exist)
+  (card/start) --slug <slug>                   Use an explicit slug instead of fetching the issue title.
 
 Notes:
 - PRs are created as DRAFT by default to preserve human review.
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - Runs Rust checks in swarm/ by default (fmt, clippy -D warnings, test).
 - finish stages swarm/ by default (reduces accidental commits).
-- Input cards are archived under .adl/input_cards/ so they can be versioned in git.
-- Input card content comes from .adl/input_cards/_template.md (placeholders: {{ISSUE}}, {{TITLE}}, {{SLUG}}).
+- Templates are stored in .adl/templates/ (versioned): input_card_template.md and output_receipt_card_template.md.
+- Cards are stored locally under .adl/cards/ and are not committed to git.
 
 Examples:
   swarm/tools/pr.sh start 17 --slug b6-default-system
-  swarm/tools/pr.sh start 17 -f .adl/input_cards/input_card_17_b6-default-system.md
-  swarm/tools/pr.sh card  17 -f .adl/input_cards/input_card_17_b6-default-system.md
-  swarm/tools/pr.sh finish 17 --title "swarm: apply run.defaults.system fallback" -f .adl/input_cards/input_card_17_b6-default-system.md
+  swarm/tools/pr.sh card  17 --version v0.2
+  swarm/tools/pr.sh receipt 17 --version v0.2
+  swarm/tools/pr.sh finish 17 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/issue-0017__input__v0.2.md --receipt .adl/cards/issue-0017__output__v0.2.md
 EOF
 }
 
@@ -588,6 +692,7 @@ main() {
     start) cmd_start "$@" ;;
     finish) cmd_finish "$@" ;;
     card) cmd_card "$@" ;;
+    receipt) cmd_receipt "$@" ;;
     open) cmd_open ;;
     status) cmd_status ;;
     -h|--help|"") usage ;;
