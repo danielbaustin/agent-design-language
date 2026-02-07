@@ -596,7 +596,7 @@ cmd_finish() {
 
   local pr_body_file
   pr_body_file="$(render_pr_body_file "$issue" "$close_line" "$input_path" "$output_path" "$extra_body" "$no_checks")"
-  trap 'rm -f "$pr_body_file"' EXIT
+  trap 'rm -f "${pr_body_file:-}"' EXIT
 
   local commit_msg="$title"
   if [[ -n "$close_line" ]]; then
