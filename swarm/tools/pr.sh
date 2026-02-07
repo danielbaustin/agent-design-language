@@ -28,9 +28,19 @@
 #
 set -euo pipefail
 
+
 # ---------- helpers ----------
 die() { echo "❌ $*" >&2; exit 1; }
 note() { echo "• $*"; }
+
+print_next_steps() {
+  cat <<'EOF'
+Next steps (human review preserved):
+- Open the PR in the browser and do a quick self-review.
+- When satisfied, mark it Ready for review (or keep as draft if you want).
+- Merge via GitHub UI (Squash and merge recommended).
+EOF
+}
 
 require_cmd() {
   command -v "$1" >/dev/null 2>&1 || die "Missing required command: $1"
