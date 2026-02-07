@@ -14,15 +14,15 @@ reference runtime implements these features.
 - **Preserve determinism** in parsing, resolution, prompt assembly, and execution order.
 - **Multi-step workflows** are first-class (explicit step IDs, inputs/outputs, overrides).
 - **Remote providers** are supported in spec (minimal, explicit configuration).
-- **Concurrency remains gated** and is deferred to v.3.
+- **Concurrency remains gated** and is deferred to v0.3.
 - **Strict parsing**: unknown fields rejected in key specs (with explicit escape hatches only).
 
 ## 2) Non-goals
 
-- Concurrency / parallel execution (see v.3 roadmap).
-- G scheduling / dynamic branching.
+- Concurrency / parallel execution (see v0.3 roadmap).
+- Graph scheduling / dynamic branching.
 - Persistent state machine / resumability.
-- Streaming or tool invocation semantics beyond v.1.
+- Streaming or tool invocation semantics beyond v0.1.
 
 ---
 
@@ -55,6 +55,18 @@ v0.2 formalizes a **multi-step workflow model** with explicit ordering and data 
 - A step may declare `save_as`, which stores the step’s primary output under a named
   key in workflow state.
 - Stored outputs are immutable once written and may be referenced by later steps.
+
+#### Referencing prior outputs (workflow state)
+
+- `save_as` writes the step’s primary output into workflow state under the given key.
+- Later steps may reference stored state values **only** from earlier steps.
+- Reference syntax in prompts uses template variables:
+  - If a step saved `save_as: "summary_1"`, later prompts may reference it as `{{summary_1}}`.
+- State keys are write-once:
+  - Reusing a `save_as` key within a workflow is a **validation error** in strict mode.
+  - Referencing an unknown key is a **validation error** in strict mode.
+
+Note: v0.2 state values are treated as opaque strings. Structured outputs are deferred.
 
 #### Overrides
 
@@ -89,7 +101,7 @@ providers:
       env: "XMPL_API_KEY"
     headers:
       X-Client: "adl-v0.2"
-    timeout_secs: 
+    timeout_secs: 30
 ```
 
 Notes:
@@ -213,7 +225,10 @@ run:
         task: "summarize_doc"
         prompt:
           user: |
-            Summarize the second document in one sentence.
+            Here is the summary of the first document:
+            {{summary_1}}
+
+            Now summarize the second document in one sentence.
             Document:
             {{doc}}
         inputs:
@@ -235,7 +250,7 @@ providers:
       env: "XMPL_API_KEY"
     headers:
       X-Client: "adl-v0.2"
-    timeout_secs: 
+    timeout_secs: 30
 
 agents:
   writer:
@@ -277,5 +292,5 @@ run:
 
 ## 7) Open questions / follow-ups
 
-- v0.2 implementation issues: #15–#19
-- v0.3 concurrency design: #19
+- v0.2 implementation issues: #16–#20, #35–#38
+- v0.3 concurrency design: TBD (track as a future roadmap issue)
