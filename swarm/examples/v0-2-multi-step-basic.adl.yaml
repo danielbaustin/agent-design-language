@@ -31,13 +31,17 @@ run:
         task: "summarize_text"
         inputs:
           text: "ADL provides deterministic prompt assembly and explicit inputs."
+        save_as: "summary_1"
       - id: "step-2"
         agent: "summarizer"
         task: "summarize_text"
         prompt:
           user: |
             Summarize the text in one sentence.
+            Prior summary:
+            {{summary_1}}
             Text:
             {{text}}
         inputs:
           text: "v0.2 adds multi-step examples and tighter validation."
+          summary_1: "Placeholder from step-1 (state wiring planned for v0.2+)."

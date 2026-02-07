@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
 use anyhow::{anyhow, Context, Result};
@@ -162,6 +162,15 @@ or upgrade once concurrency lands (planned v0.3)."
                 )
             })?;
 
+        let missing = missing_prompt_inputs(&p, &step.inputs);
+        if !missing.is_empty() {
+            return Err(anyhow!(
+                "step '{}' missing input bindings for: {} (provide inputs or prior state)",
+                step_id,
+                missing.join(", ")
+            ));
+        }
+
         // v0.1: step-level inputs only (run.defaults currently has only `system`)
         let merged_inputs: HashMap<String, String> = step.inputs.clone();
 
@@ -212,4 +221,47 @@ or upgrade once concurrency lands (planned v0.3)."
     }
 
     Ok(outs)
+}
+
+fn missing_prompt_inputs(
+    p: &crate::adl::PromptSpec,
+    inputs: &HashMap<String, String>,
+) -> Vec<String> {
+    let mut missing = HashSet::new();
+    let mut check = |s: &str| {
+        let mut i = 0;
+        while let Some(start) = s[i..].find("{{") {
+            let start_idx = i + start + 2;
+            if let Some(end) = s[start_idx..].find("}}") {
+                let end_idx = start_idx + end;
+                let key = s[start_idx..end_idx].trim();
+                if !key.is_empty() && !inputs.contains_key(key) {
+                    missing.insert(key.to_string());
+                }
+                i = end_idx + 2;
+            } else {
+                break;
+            }
+        }
+    };
+
+    if let Some(v) = p.system.as_deref() {
+        check(v);
+    }
+    if let Some(v) = p.developer.as_deref() {
+        check(v);
+    }
+    if let Some(v) = p.user.as_deref() {
+        check(v);
+    }
+    if let Some(v) = p.context.as_deref() {
+        check(v);
+    }
+    if let Some(v) = p.output.as_deref() {
+        check(v);
+    }
+
+    let mut out: Vec<String> = missing.into_iter().collect();
+    out.sort();
+    out
 }

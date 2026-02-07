@@ -29,8 +29,17 @@ run:
         task: "summarize_doc"
         inputs:
           doc: "@file:docs/doc_1.txt"
+        save_as: "summary_1"
       - id: "step-file-2"
         agent: "summarizer"
         task: "summarize_doc"
+        prompt:
+          user: |
+            Summarize the document, then include the prior summary:
+            {{summary_1}}
+
+            Document:
+            {{doc}}
         inputs:
           doc: "@file:docs/doc_2.txt"
+          summary_1: "Placeholder from step-file-1 (state wiring planned for v0.2+)."

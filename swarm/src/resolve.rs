@@ -244,6 +244,7 @@ mod tests {
 
         let step = adl::StepSpec {
             id: None,
+            save_as: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
@@ -260,6 +261,7 @@ mod tests {
         let doc = minimal_doc();
         let step = adl::StepSpec {
             id: None,
+            save_as: None,
             agent: None,
             task: Some("t1".to_string()),
             prompt: None,
@@ -278,6 +280,7 @@ mod tests {
         // Step that references both task + agent but has no inline prompt => task wins.
         doc.run.workflow.steps.push(adl::StepSpec {
             id: None,
+            save_as: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
@@ -297,6 +300,7 @@ mod tests {
         let mut doc2 = minimal_doc();
         doc2.run.workflow.steps.push(adl::StepSpec {
             id: None,
+            save_as: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: Some(adl::PromptSpec {
@@ -322,6 +326,7 @@ mod tests {
         let mut doc3 = minimal_doc();
         doc3.run.workflow.steps.push(adl::StepSpec {
             id: None,
+            save_as: None,
             agent: Some("a1".to_string()),
             task: Some("nope".to_string()),
             prompt: None,
@@ -344,6 +349,7 @@ mod tests {
         doc.run.defaults.system = Some("default sys".to_string());
         doc.run.workflow.steps.push(adl::StepSpec {
             id: None,
+            save_as: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
@@ -365,6 +371,7 @@ mod tests {
         doc.run.defaults.system = Some("default sys".to_string());
         doc.run.workflow.steps.push(adl::StepSpec {
             id: None,
+            save_as: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: Some(adl::PromptSpec {

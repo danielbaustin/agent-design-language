@@ -1,0 +1,29 @@
+version: "0.2"
+
+providers:
+  local_ollama:
+    type: "ollama"
+    base_url: "http://localhost:11434"
+    default_model: "gemma3:latest"
+    modell: "typo-should-fail"
+
+agents:
+  a1:
+    provider: "local_ollama"
+    model: "gemma3:latest"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize: {{text}}"
+
+run:
+  name: "v0-2-failure-unknown-field"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        inputs:
+          text: "hello"
