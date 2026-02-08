@@ -14,7 +14,7 @@
 #
 #   swarm/tools/pr.sh start   <issue> [--slug <slug>] [--prefix codex] [--no-fetch-issue]
 #   swarm/tools/pr.sh card    <issue> [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
-#   swarm/tools/pr.sh receipt <issue> [--slug <slug>] [--no-fetch-issue] [-f <output_receipt.md>] [--version <v0.2>]
+#   swarm/tools/pr.sh output  <issue> [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
 #   swarm/tools/pr.sh finish  <issue> --title "<title>" [-f <input_card.md>] [--receipt <output_receipt.md>] [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [--no-open]
 #   swarm/tools/pr.sh open
 #   swarm/tools/pr.sh status
@@ -22,16 +22,56 @@
 # Examples:
 #   swarm/tools/pr.sh start 14 --slug b6-default-system
 #   swarm/tools/pr.sh card  14 --version v0.2
-#   swarm/tools/pr.sh receipt 14 --version v0.2
+#   swarm/tools/pr.sh output 14 --version v0.2
 #   swarm/tools/pr.sh finish 14 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/issue-0014__input__v0.2.md --receipt .adl/cards/issue-0014__output__v0.2.md
 #   swarm/tools/pr.sh open
 #
 set -euo pipefail
 
 
+#
 # ---------- helpers ----------
 die() { echo "❌ $*" >&2; exit 1; }
 note() { echo "• $*"; }
+#
+# Replace the first line that begins with "<Key>:" with "<Key>: <Value>".
+# Portable (no GNU/BSD sed -i differences).
+set_field_line() {
+  local file="$1" key="$2" value="$3"
+  local tmp
+  tmp="$(mktemp -t prsh_field_XXXXXX)"
+  awk -v k="$key" -v v="$value" '
+    BEGIN { replaced = 0 }
+    {
+      if (!replaced && $0 ~ ("^" k ":")) {
+        print k ": " v
+        replaced = 1
+        next
+      }
+      print $0
+    }
+  ' "$file" >"$tmp"
+  mv "$tmp" "$file"
+}
+
+# Replace the first line that matches a regex pattern with a literal replacement line.
+replace_first_line_re() {
+  local file="$1" pattern="$2" replacement="$3"
+  local tmp
+  tmp="$(mktemp -t prsh_repl_XXXXXX)"
+  awk -v p="$pattern" -v r="$replacement" '
+    BEGIN { replaced = 0 }
+    {
+      if (!replaced && $0 ~ p) {
+        print r
+        replaced = 1
+        next
+      }
+      print $0
+    }
+  ' "$file" >"$tmp"
+  mv "$tmp" "$file"
+}
 
 print_next_steps() {
   cat <<'EOF'
@@ -119,7 +159,22 @@ ADL_TEMPLATES_DIR="$ADL_DIR/templates"
 ADL_CARDS_DIR="$ADL_DIR/cards"
 
 INPUT_TEMPLATE="$ADL_TEMPLATES_DIR/input_card_template.md"
-OUTPUT_TEMPLATE="$ADL_TEMPLATES_DIR/output_receipt_card_template.md"
+OUTPUT_TEMPLATE="$ADL_TEMPLATES_DIR/output_card_template.md"
+LEGACY_OUTPUT_TEMPLATE="$ADL_TEMPLATES_DIR/output_receipt_card_template.md"
+
+resolve_output_template() {
+  # Prefer the new name; fall back to legacy for backwards compatibility.
+  if [[ -f "$(repo_root)/$OUTPUT_TEMPLATE" ]]; then
+    echo "$(repo_root)/$OUTPUT_TEMPLATE"
+    return 0
+  fi
+  if [[ -f "$(repo_root)/$LEGACY_OUTPUT_TEMPLATE" ]]; then
+    echo "$(repo_root)/$LEGACY_OUTPUT_TEMPLATE"
+    return 0
+  fi
+  # Return the preferred path even if it doesn't exist (caller will handle).
+  echo "$(repo_root)/$OUTPUT_TEMPLATE"
+}
 
 issue_pad() { printf '%04d' "$1"; }
 
@@ -152,84 +207,139 @@ output_card_path() {
   echo "$(repo_root)/$ADL_CARDS_DIR/issue-${pad}__output__${ver}.md"
 }
 
-render_template_with_issue() {
-  # Args: template_path issue title branch ver kind
-  local tpl="$1" issue="$2" title="$3" branch="$4" ver="$5" kind="$6"
+render_template() {
+  # Args: template_path
+  local tpl="$1"
   [[ -f "$tpl" ]] || return 1
-
-  local esc_title esc_branch
-  esc_title="$(printf '%s' "$title" | sed -e 's/[\\&]/\\\\&/g')"
-  esc_branch="$(printf '%s' "$branch" | sed -e 's/[\\&]/\\\\&/g')"
-
-  sed -e "s/{{ISSUE}}/${issue}/g" \
-      -e "s/{{TITLE}}/${esc_title}/g" \
-      -e "s/{{BRANCH}}/${esc_branch}/g" \
-      -e "s/{{VERSION}}/${ver}/g" \
-      -e "s/{{KIND}}/${kind}/g" \
-      "$tpl"
+  cat "$tpl"
 }
 
 seed_input_card() {
   local path="$1" issue="$2" title="$3" branch="$4" ver="$5"
-  if render_template_with_issue "$INPUT_TEMPLATE" "$issue" "$title" "$branch" "$ver" "input" >"$path" 2>/dev/null; then
-    return 0
-  fi
-  cat >"$path" <<EOF
+  local task_id run_id
+  task_id="issue-$(issue_pad "$issue")"
+  run_id="$task_id"
+
+  # Start from template if available, else fallback.
+  if render_template "$(repo_root)/$INPUT_TEMPLATE" >"$path" 2>/dev/null; then
+    :
+  else
+    cat >"$path" <<'EOF'
 # ADL Input Card
 
-Issue: #$issue
-Version: $ver
-Title: $title
-Branch: $branch
+Task ID:
+Run ID:
+Version:
+Title:
+Branch:
+
+Context:
+- Issue:
+- PR:
+- Docs:
+- Other:
+
+Execution:
+- Agent:
+- Provider:
+- Tools allowed:
+- Sandbox / approvals:
 
 ## Goal
 
 ## Acceptance Criteria
 
-## Context / Notes
+## Inputs
+-
 
-## Codex Instructions
+## Constraints / Policies
+- Determinism requirements:
+- Security / privacy requirements:
+- Resource limits (time/CPU/memory/network):
+
+## Non-goals / Out of scope
+
+## Notes / Risks
+
+## Instructions to the Agent
 - Read this file.
 - Do the work described above.
-- Write the output card to the paired output card file.
+- Write results to the paired output card file.
 EOF
+  fi
+
+  # Stamp fields (best-effort; keeps template generic and domain-agnostic).
+  set_field_line "$path" "Task ID" "$task_id"
+  set_field_line "$path" "Run ID" "$run_id"
+  set_field_line "$path" "Version" "$ver"
+  set_field_line "$path" "Title" "$title"
+  set_field_line "$path" "Branch" "$branch"
+
+  # If there is a Context Issue line, fill it with a URL.
+  local repo
+  repo="$(default_repo)"
+  if [[ -n "$repo" ]]; then
+    local issue_url
+    issue_url="https://github.com/${repo}/issues/${issue}"
+    replace_first_line_re "$path" "^- Issue:[[:space:]]*$" "- Issue: $issue_url"
+  fi
 }
 
 seed_output_card() {
   local path="$1" issue="$2" title="$3" branch="$4" ver="$5"
-  if render_template_with_issue "$OUTPUT_TEMPLATE" "$issue" "$title" "$branch" "$ver" "output" >"$path" 2>/dev/null; then
-    return 0
-  fi
-  cat >"$path" <<EOF
+  local task_id run_id
+  task_id="issue-$(issue_pad "$issue")"
+  run_id="$task_id"
+
+  local out_tpl
+  out_tpl="$(resolve_output_template)"
+
+  if render_template "$out_tpl" >"$path" 2>/dev/null; then
+    :
+  else
+    cat >"$path" <<'EOF'
 # ADL Output Card
 
-Issue: #$issue
-Version: $ver
-Status: IN_PROGRESS
+Task ID:
+Run ID:
+Version:
+Title:
+Branch:
+Status: NOT_STARTED | IN_PROGRESS | DONE | FAILED
 
-## Provenance
+Execution:
 - Actor:
 - Model:
-- Branch: $branch
+- Provider:
 - Start Time:
 - End Time:
 
-## Commands Executed
+## Summary
 
-## Files Changed
+## Artifacts produced
+-
 
-## Tests Run
-- [ ] cargo fmt
-- [ ] cargo clippy --all-targets -- -D warnings
-- [ ] cargo test
+## Actions taken
+-
 
-## Result
-- Pass / Fail:
+## Validation
+- Tests / checks run:
+- Results:
 
-## Decisions Made
+## Decisions / Deviations
 
-## Follow-ups / Deferred Work
+## Follow-ups / Deferred work
 EOF
+  fi
+
+  set_field_line "$path" "Task ID" "$task_id"
+  set_field_line "$path" "Run ID" "$run_id"
+  set_field_line "$path" "Version" "$ver"
+  set_field_line "$path" "Title" "$title"
+  set_field_line "$path" "Branch" "$branch"
+
+  # Default Status if template left it blank.
+  replace_first_line_re "$path" "^Status:[[:space:]]*$" "Status: NOT_STARTED | IN_PROGRESS | DONE | FAILED"
 }
 
 ensure_nonempty_file() {
@@ -348,11 +458,11 @@ cmd_card() {
   echo "$out_path"
 }
 
-cmd_receipt() {
+cmd_output() {
   require_cmd gh
 
   local issue="${1:-}"; shift || true
-  [[ -n "$issue" ]] || die "receipt: missing <issue> number"
+  [[ -n "$issue" ]] || die "output: missing <issue> number"
 
   local slug=""
   local no_fetch_issue="0"
@@ -366,7 +476,7 @@ cmd_receipt() {
       -f) out_path="$2"; shift 2 ;;
       --file) out_path="$2"; shift 2 ;;
       --version) version="$2"; shift 2 ;;
-      *) die "receipt: unknown arg: $1" ;;
+      *) die "output: unknown arg: $1" ;;
     esac
   done
 
@@ -383,7 +493,7 @@ cmd_receipt() {
     if [[ -n "$title" ]]; then
       slug="$(sanitize_slug "$title")"
     else
-      die "receipt: --slug is required when --no-fetch-issue is set or issue title could not be fetched"
+      die "output: --slug is required when --no-fetch-issue is set or issue title could not be fetched"
     fi
   fi
 
@@ -398,7 +508,7 @@ cmd_receipt() {
     out_path="$(output_card_path "$issue" "$version")"
   fi
   if [[ -f "$out_path" ]]; then
-    die "receipt: output already exists: $out_path"
+    die "output: output card already exists: $out_path"
   fi
   note "Creating output card: $out_path"
   ensure_adl_dirs
@@ -552,9 +662,9 @@ cmd_start() {
     note "Creating output card: $out_path"
     seed_output_card "$out_path" "$issue" "$title" "$branch" "$ver"
   fi
-  echo "• Codex:"
-  echo "  READ  $in_path"
-  echo "  WRITE $out_path"
+  echo "• Agent:"
+  echo "  READ   $in_path"
+  echo "  WRITE  $out_path"
   note "Done."
 }
 
@@ -717,19 +827,19 @@ pr.sh — reduce git/PR thrash while preserving human review
 Commands:
   start   <issue> [--slug <slug>] [--prefix <pfx>] [--no-fetch-issue]
   card    <issue> ... [--version <v0.2>] [-f <input_card.md>]
-  receipt <issue> ... [--version <v0.2>] [-f <output_receipt.md>]
+  output  <issue> ... [--version <v0.2>] [-f <output_card.md>]
   cards   <issue> [--version <v0.2>] [--no-fetch-issue]
-  finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output <output_receipt.md>] [--no-open]
+  finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output <output_card.md>] [--no-open]
   open
   status
 
 Flags:
   (card)    -f, --file <input_card.md>         Output path for the generated input card (default: .adl/cards/issue-####__input__vX.Y.md)
-  (receipt) -f, --file <output_receipt.md>     Output path for the generated output card (default: .adl/cards/issue-####__output__vX.Y.md)
+  (output)  -f, --file <output_card.md>        Output path for the generated output card (default: .adl/cards/issue-####__output__vX.Y.md)
   (cards)   --version <v0.2>                   Override detected version (otherwise inferred from issue labels version:vX.Y)
   (cards)   --no-fetch-issue                   Do not fetch issue title/labels (uses issue-<n> title)
-  (card/receipt) --version <v0.2>              Override detected version (otherwise inferred from issue labels version:vX.Y)
-  (finish) --receipt <output_receipt.md>       REQUIRED: output card path (must exist)
+  (card/output) --version <v0.2>               Override detected version (otherwise inferred from issue labels version:vX.Y)
+  (finish) --receipt <output_card.md>          REQUIRED: output card path (must exist)
   (card/start) --slug <slug>                   Use an explicit slug instead of fetching the issue title.
 
 Notes:
@@ -737,13 +847,13 @@ Notes:
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - Runs Rust checks in swarm/ by default (fmt, clippy -D warnings, test).
 - finish stages swarm/ by default (reduces accidental commits).
-- Templates are stored in .adl/templates/ (versioned): input_card_template.md and output_receipt_card_template.md (output card template).
+- Templates are stored in .adl/templates/ (versioned): input_card_template.md and output_card_template.md (or legacy output_receipt_card_template.md) (output card template).
 - Cards are stored locally under .adl/cards/ and are not committed to git.
 
 Examples:
   swarm/tools/pr.sh start 17 --slug b6-default-system
   swarm/tools/pr.sh card  17 --version v0.2
-  swarm/tools/pr.sh receipt 17 --version v0.2
+  swarm/tools/pr.sh output 17 --version v0.2
   swarm/tools/pr.sh cards 17 --version v0.2
   swarm/tools/pr.sh finish 17 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/issue-0017__input__v0.2.md --receipt .adl/cards/issue-0017__output__v0.2.md
 EOF
@@ -755,7 +865,8 @@ main() {
     start) cmd_start "$@" ;;
     finish) cmd_finish "$@" ;;
     card) cmd_card "$@" ;;
-    receipt) cmd_receipt "$@" ;;
+    output) cmd_output "$@" ;;
+    receipt) cmd_output "$@" ;;
     cards) cmd_cards "$@" ;;
     open) cmd_open ;;
     status) cmd_status ;;
