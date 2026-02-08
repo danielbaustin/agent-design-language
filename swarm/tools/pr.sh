@@ -153,6 +153,19 @@ gh_repo_flag() {
   fi
 }
 
+# ----- pr/branch helpers -----
+commits_ahead_of_main() {
+  # Count commits on HEAD that are not on origin/main.
+  # Returns 0 if origin/main isn't available yet.
+  git rev-list --count origin/main..HEAD 2>/dev/null || echo 0
+}
+
+current_pr_url() {
+  # Returns PR url for the current branch if one exists, else empty.
+  local repo="$1"
+  gh pr view $(gh_repo_flag "$repo") --json url -q .url 2>/dev/null || true
+}
+
 # ---------- cards + templates (templates tracked; cards local-only) ----------
 ADL_DIR=".adl"
 ADL_TEMPLATES_DIR="$ADL_DIR/templates"
@@ -713,6 +726,10 @@ cmd_finish() {
     die "finish: current branch '$branch' does not look like it matches issue #$issue (expected */${issue}-<slug>). Switch branches or pass the correct issue number."
   fi
 
+  # Fetch origin so origin/main is up-to-date for ahead check.
+  note "Fetching origin refs…"
+  git fetch origin >/dev/null 2>&1 || true
+
   local ver
   ver="$(issue_version "$issue")"
   if [[ -z "$input_path" ]]; then
@@ -729,9 +746,22 @@ cmd_finish() {
     die "finish: output card is empty: $output_path"
   fi
 
-  # Basic safety: ensure there are changes to commit.
-  if git diff --cached --quiet && git diff --quiet; then
-    die "No changes detected. Nothing to commit/PR."
+  # Safety: allow finish to proceed if there are commits ahead of origin/main
+  # even when the user already committed manually (working tree clean).
+  local ahead
+  ahead="$(commits_ahead_of_main)"
+
+  local has_uncommitted="0"
+  if ! git diff --quiet || ! git diff --cached --quiet; then
+    has_uncommitted="1"
+  fi
+
+  if [[ "$has_uncommitted" == "0" && "$ahead" -eq 0 ]]; then
+    die "No changes detected and branch has no commits ahead of origin/main. Nothing to PR. If you already merged, switch branches."
+  fi
+
+  if [[ "$has_uncommitted" == "0" && "$ahead" -gt 0 ]]; then
+    note "No uncommitted changes; will create/update PR using existing commits (ahead of origin/main by ${ahead})."
   fi
 
   if [[ "$no_checks" != "1" ]]; then
@@ -740,18 +770,24 @@ cmd_finish() {
     note "Skipping checks (--no-checks)"
   fi
 
-  # Stage selected paths (default: swarm). Use --paths "adl-spec,swarm" or --paths "." to stage everything.
-  IFS=',' read -r -a path_arr <<< "$paths"
-  if [[ ${#path_arr[@]} -eq 0 ]]; then
-    die "finish: --paths resolved to empty; pass e.g. --paths \"swarm\""
-  fi
+  if [[ "$has_uncommitted" == "1" ]]; then
+    # Stage selected paths (default: swarm). Use --paths "adl-spec,swarm" or --paths "." to stage everything.
+    IFS=',' read -r -a path_arr <<< "$paths"
+    if [[ ${#path_arr[@]} -eq 0 ]]; then
+      die "finish: --paths resolved to empty; pass e.g. --paths \"swarm\""
+    fi
 
-  note "Staging changes (${paths})…"
-  git add -A "${path_arr[@]}"
+    note "Staging changes (${paths})…"
+    git add -A "${path_arr[@]}"
 
-  if [[ "$allow_gitignore" != "1" ]]; then
-    if ! git diff --cached --quiet -- .gitignore swarm/.gitignore 2>/dev/null; then
-      die "finish: .gitignore changes detected. Revert them or re-run with --allow-gitignore."
+    if git diff --cached --quiet; then
+      die "finish: nothing staged after 'git add' for paths '${paths}'. Either change --paths or commit manually and re-run finish."
+    fi
+
+    if [[ "$allow_gitignore" != "1" ]]; then
+      if ! git diff --cached --quiet -- .gitignore swarm/.gitignore 2>/dev/null; then
+        die "finish: .gitignore changes detected. Revert them or re-run with --allow-gitignore."
+      fi
     fi
   fi
 
@@ -772,21 +808,35 @@ cmd_finish() {
     commit_msg="${commit_msg} (${close_line})"
   fi
 
-  note "Committing…"
-  git commit -m "$commit_msg"
+  if [[ "$has_uncommitted" == "1" ]]; then
+    note "Committing…"
+    git commit -m "$commit_msg"
+  else
+    note "Skipping commit (working tree clean; using existing commits)."
+  fi
 
   local branch
   branch="$(current_branch)"
 
   note "Pushing…"
-  git push -u origin "$branch"
+  if ! git push -u origin "$branch"; then
+    die "Push failed (likely non-fast-forward due to remote divergence). Try: 'git fetch origin' then 'git push --force-with-lease origin $branch' (if you rebased) or 'git pull --rebase' (if you didn’t)."
+  fi
 
-  note "Creating PR (draft)…"
   local pr_url
-  pr_url="$(gh pr create $(gh_repo_flag "$repo") --base main --head "$branch" --title "$title" --body-file "$pr_body_file" --draft)"
+  pr_url="$(current_pr_url "$repo")"
 
-  note "PR created:"
-  echo "$pr_url"
+  if [[ -n "$pr_url" ]]; then
+    note "Updating existing PR…"
+    gh pr edit $(gh_repo_flag "$repo") "$pr_url" --title "$title" --body-file "$pr_body_file" >/dev/null
+    note "PR updated:"
+    echo "$pr_url"
+  else
+    note "Creating PR (draft)…"
+    pr_url="$(gh pr create $(gh_repo_flag "$repo") --base main --head "$branch" --title "$title" --body-file "$pr_body_file" --draft)"
+    note "PR created:"
+    echo "$pr_url"
+  fi
 
   if [[ "$no_open" != "1" ]]; then
     note "Opening PR in browser…"
