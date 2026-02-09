@@ -47,8 +47,6 @@ tasks:
 
         Game design:
         {{design}}
-    save_as: "html"
-    write_to: "index.html"
 
 run:
   name: "v0-2-coordinator-agents-sdk"

@@ -21,6 +21,8 @@ pub struct ResolvedStep {
     pub task: Option<String>,
     pub prompt: Option<adl::PromptSpec>,
     pub inputs: HashMap<String, String>,
+    pub save_as: Option<String>,
+    pub write_to: Option<String>,
 }
 
 impl ResolvedStep {
@@ -116,6 +118,8 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
             task: s.task.clone(),
             prompt: s.prompt.clone(),
             inputs: s.inputs.clone(),
+            save_as: s.save_as.clone(),
+            write_to: s.write_to.clone(),
         });
     }
 
@@ -245,6 +249,7 @@ mod tests {
         let step = adl::StepSpec {
             id: None,
             save_as: None,
+            write_to: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
@@ -262,6 +267,7 @@ mod tests {
         let step = adl::StepSpec {
             id: None,
             save_as: None,
+            write_to: None,
             agent: None,
             task: Some("t1".to_string()),
             prompt: None,
@@ -281,6 +287,7 @@ mod tests {
         doc.run.workflow.steps.push(adl::StepSpec {
             id: None,
             save_as: None,
+            write_to: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
@@ -301,6 +308,7 @@ mod tests {
         doc2.run.workflow.steps.push(adl::StepSpec {
             id: None,
             save_as: None,
+            write_to: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: Some(adl::PromptSpec {
@@ -327,6 +335,7 @@ mod tests {
         doc3.run.workflow.steps.push(adl::StepSpec {
             id: None,
             save_as: None,
+            write_to: None,
             agent: Some("a1".to_string()),
             task: Some("nope".to_string()),
             prompt: None,
@@ -350,6 +359,7 @@ mod tests {
         doc.run.workflow.steps.push(adl::StepSpec {
             id: None,
             save_as: None,
+            write_to: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
@@ -372,6 +382,7 @@ mod tests {
         doc.run.workflow.steps.push(adl::StepSpec {
             id: None,
             save_as: None,
+            write_to: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: Some(adl::PromptSpec {

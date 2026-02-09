@@ -398,6 +398,135 @@ fn run_surfaces_provider_failure_stderr() {
 }
 
 #[test]
+fn run_writes_step_output_to_file() {
+    let base = tmp_dir("exec-write-output");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.2"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize: {{text}}"
+
+run:
+  name: "write-output"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        inputs:
+          text: "hello"
+        save_as: "summary"
+        write_to: "index.html"
+"#;
+
+    let tmp_yaml = base.join("write-output.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out_dir = base.join("out");
+    let out = run_swarm(&[
+        tmp_yaml.to_string_lossy().as_ref(),
+        "--run",
+        "--out",
+        out_dir.to_string_lossy().as_ref(),
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, got {:?}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let output_path = out_dir.join("index.html");
+    let contents = fs::read_to_string(&output_path).unwrap();
+    assert!(
+        contents.contains("mock summary bullet one"),
+        "output file missing expected content: {contents}"
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("ARTIFACT step=") && stdout.contains("index.html"),
+        "stdout was:\n{stdout}"
+    );
+}
+
+#[test]
+fn run_rejects_write_to_traversal() {
+    let base = tmp_dir("exec-write-traversal");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.2"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize: {{text}}"
+
+run:
+  name: "write-traversal"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "bad-step"
+        agent: "a1"
+        task: "t1"
+        inputs:
+          text: "hello"
+        save_as: "summary"
+        write_to: "../escape.html"
+"#;
+
+    let tmp_yaml = base.join("write-traversal.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        !out.status.success(),
+        "expected failure, got success.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("bad-step") && stderr.contains("write_to"),
+        "stderr was:\n{stderr}"
+    );
+}
+
+#[test]
 fn run_rejects_missing_prompt_inputs() {
     let base = tmp_dir("exec-missing-inputs");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);

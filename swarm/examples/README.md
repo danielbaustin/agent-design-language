@@ -14,6 +14,13 @@ cargo run -- examples/<file> --run --trace
 
 Expected: two steps execute in order and print outputs for each step.
 
+Coordinator demo (writes HTML artifact):
+
+```bash
+cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --run --trace --out ./out
+open ./out/index.html
+```
+
 ## v0.2 failure-mode examples
 
 - `v0-2-failure-unknown-field.adl.yaml`
