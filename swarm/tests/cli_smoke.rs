@@ -97,7 +97,24 @@ fn unknown_arg_exits_with_code_2_and_prints_usage() {
     );
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert!(stderr.contains("Unknown arg"), "stderr:\n{stderr}");
+    assert!(stderr.contains("Run 'swarm --help'"), "stderr:\n{stderr}");
     assert!(stderr.contains("Usage:"), "stderr:\n{stderr}");
+}
+
+#[test]
+fn help_prints_examples() {
+    let out = run_swarm(&["--help"]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(stdout.contains("Examples:"), "stdout:\n{stdout}");
+    assert!(
+        stdout.contains("examples/adl-0.1.yaml"),
+        "stdout:\n{stdout}"
+    );
 }
 
 #[test]

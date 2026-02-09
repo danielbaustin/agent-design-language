@@ -5,7 +5,20 @@ use std::path::{Path, PathBuf};
 use swarm::{adl, execute, prompt, resolve, trace};
 
 fn usage() -> &'static str {
-    "Usage: swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run]"
+    "Usage:
+  swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run]
+
+Options:
+  --print-plan       Print the resolved plan (default)
+  --print-prompts    Print assembled prompts (--print-prompt also accepted)
+  --trace            Emit trace events (dry-run unless --run)
+  --run              Execute the workflow
+  -h, --help         Show this help
+
+Examples:
+  swarm examples/adl-0.1.yaml
+  swarm examples/adl-0.1.yaml --print-prompts
+  swarm examples/adl-0.1.yaml --run --trace"
 }
 
 fn print_error_chain(err: &anyhow::Error) {
@@ -29,17 +42,24 @@ fn main() {
 }
 
 fn real_main() -> Result<()> {
-    let mut args = std::env::args().skip(1);
+    let args: Vec<String> = std::env::args().skip(1).collect();
 
-    let adl_path: PathBuf = match args.next() {
+    if matches!(args.first().map(|s| s.as_str()), Some("--help" | "-h")) {
+        println!("{}", usage());
+        return Ok(());
+    }
+
+    let adl_path: PathBuf = match args.first() {
         Some(p) => PathBuf::from(p),
         None => {
             eprintln!("missing ADL yaml path");
+            eprintln!("Try: swarm examples/adl-0.1.yaml");
             eprintln!("{}", usage());
             std::process::exit(2);
         }
     };
 
+    let args = args.into_iter().skip(1);
     let mut print_plan = false;
     let mut print_prompts = false;
     let mut do_trace = false;
@@ -57,6 +77,7 @@ fn real_main() -> Result<()> {
             }
             _ => {
                 eprintln!("Unknown arg: {a}");
+                eprintln!("Run 'swarm --help' for usage.");
                 eprintln!("{}", usage());
                 std::process::exit(2);
             }
