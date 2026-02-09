@@ -2,7 +2,7 @@
 
 Agent Design Language (ADL) is a **declarative, contract-driven language** for designing and executing AI agent workflows with **deterministic prompting, explicit inputs, and auditable execution**.
 
-This repository is the **monorepo** for ADL v0.1.
+This repository is the **monorepo** for ADL v0.1 and the in-progress v0.2 capability expansion.
 
 ---
 
@@ -63,13 +63,16 @@ For a v0.2 coordinator-style example (agents SDK–style), see:
 
 ## Coverage & quality bar
 
-The reference runtime enforces a strong quality baseline:
+The reference runtime enforces a pragmatic quality baseline:
 
-- >90% **line coverage**
-- Full schema validation test coverage
 - `cargo fmt`, `cargo clippy -D warnings`, and `cargo test` required clean
+- Coverage guardrail enforced in CI via `cargo llvm-cov`
 
-Coverage is measured locally via `coverage.sh` (LCOV).
+Run locally from `swarm/`:
+
+```bash
+cargo llvm-cov --fail-under-lines 10
+```
 
 ---
 
