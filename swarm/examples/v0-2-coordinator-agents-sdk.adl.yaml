@@ -12,81 +12,43 @@ agents:
     model: "gemma3:latest"
     prompt:
       system: "You coordinate work across specialist agents and keep the plan consistent."
-  researcher:
+  designer:
     provider: "local_ollama"
     model: "gemma3:latest"
     prompt:
-      system: "You gather concise, relevant research notes for the coordinator."
-  analyst:
+      system: "You outline gameplay mechanics and controls."
+  implementer:
     provider: "local_ollama"
     model: "gemma3:latest"
     prompt:
-      system: "You analyze risks, assumptions, and success criteria."
-  writer:
-    provider: "local_ollama"
-    model: "gemma3:latest"
-    prompt:
-      system: "You produce clear, structured written artifacts."
+      system: "You produce a complete HTML file for the game."
 
 tasks:
-  make_brief:
+  brief:
     prompt:
       user: |
-        Create a concise project brief with:
-        - goal
-        - audience
-        - constraints
-        - desired outcome
+        Define a simple HTML game concept and constraints:
+        - single HTML file
+        - no external assets
 
         Topic:
         {{topic}}
-  research_notes:
+  design:
     prompt:
       user: |
-        Produce 5-7 bullet research notes relevant to the brief.
+        Outline the gameplay and controls for the game.
 
-        Brief:
+        Game concept:
         {{brief}}
-  analysis:
+  implementation:
     prompt:
       user: |
-        Identify key risks, assumptions, and success criteria.
+        Produce the full HTML file implementing the game.
 
-        Brief:
-        {{brief}}
-
-        Research notes:
-        {{research_notes}}
-  draft_plan:
-    prompt:
-      user: |
-        Draft a one-page plan with sections:
-        - Overview
-        - Plan
-        - Risks
-        - Next steps
-
-        Brief:
-        {{brief}}
-
-        Research notes:
-        {{research_notes}}
-
-        Analysis:
-        {{analysis}}
-  final_review:
-    prompt:
-      user: |
-        As coordinator, produce the final output:
-        - 3-bullet summary
-        - decisions made
-        - open questions
-
-        Draft plan:
-        {{draft}}
-
-        Analysis:
-        {{analysis}}
+        Game design:
+        {{design}}
+    save_as: "html"
+    write_to: "index.html"
 
 run:
   name: "v0-2-coordinator-agents-sdk"
@@ -95,35 +57,20 @@ run:
     steps:
       - id: "coordinator-brief"
         agent: "coordinator"
-        task: "make_brief"
+        task: "brief"
         inputs:
-          topic: "Community health outreach plan for a small city."
+          topic: "Simple HTML game demo."
         save_as: "brief"
-      - id: "research-notes"
-        agent: "researcher"
-        task: "research_notes"
+      - id: "design"
+        agent: "designer"
+        task: "design"
         inputs:
-          brief: "Placeholder from step coordinator-brief (brief output)."
-        save_as: "research_notes"
-      - id: "analysis"
-        agent: "analyst"
-        task: "analysis"
+          brief: "{{brief}}"
+        save_as: "design"
+      - id: "implementation"
+        agent: "implementer"
+        task: "implementation"
         inputs:
-          brief: "Placeholder from step coordinator-brief (brief output)."
-          research_notes: "Placeholder from step research-notes (notes output)."
-        save_as: "analysis"
-      - id: "draft"
-        agent: "writer"
-        task: "draft_plan"
-        inputs:
-          brief: "Placeholder from step coordinator-brief (brief output)."
-          research_notes: "Placeholder from step research-notes (notes output)."
-          analysis: "Placeholder from step analysis (analysis output)."
-        save_as: "draft"
-      - id: "final"
-        agent: "coordinator"
-        task: "final_review"
-        inputs:
-          draft: "Placeholder from step draft (draft output)."
-          analysis: "Placeholder from step analysis (analysis output)."
-        save_as: "final_output"
+          design: "{{design}}"
+        save_as: "html"
+        write_to: "index.html"
