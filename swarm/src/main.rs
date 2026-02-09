@@ -6,19 +6,21 @@ use swarm::{adl, execute, prompt, resolve, trace};
 
 fn usage() -> &'static str {
     "Usage:
-  swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run]
+  swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--out <dir>]
 
 Options:
   --print-plan       Print the resolved plan (default)
   --print-prompts    Print assembled prompts (--print-prompt also accepted)
   --trace            Emit trace events (dry-run unless --run)
   --run              Execute the workflow
+  --out <dir>        Write step outputs to files under this directory (default: ./out)
   -h, --help         Show this help
 
 Examples:
   swarm examples/adl-0.1.yaml
   swarm examples/adl-0.1.yaml --print-prompts
-  swarm examples/adl-0.1.yaml --run --trace"
+  swarm examples/adl-0.1.yaml --run --trace
+  swarm examples/v0-2-coordinator-agents-sdk.adl.yaml --run --trace --out ./out"
 }
 
 fn print_error_chain(err: &anyhow::Error) {
@@ -59,18 +61,29 @@ fn real_main() -> Result<()> {
         }
     };
 
-    let args = args.into_iter().skip(1);
     let mut print_plan = false;
     let mut print_prompts = false;
     let mut do_trace = false;
     let mut do_run = false;
+    let mut out_dir = PathBuf::from("out");
 
-    for a in args {
+    let mut i = 1;
+    while i < args.len() {
+        let a = &args[i];
         match a.as_str() {
             "--print-plan" => print_plan = true,
             "--print-prompts" | "--print-prompt" => print_prompts = true,
             "--trace" => do_trace = true,
             "--run" => do_run = true,
+            "--out" => {
+                let Some(dir) = args.get(i + 1) else {
+                    eprintln!("--out requires a directory path");
+                    eprintln!("{}", usage());
+                    std::process::exit(2);
+                };
+                out_dir = PathBuf::from(dir);
+                i += 1;
+            }
             "--help" | "-h" => {
                 println!("{}", usage());
                 return Ok(());
@@ -82,6 +95,7 @@ fn real_main() -> Result<()> {
                 std::process::exit(2);
             }
         }
+        i += 1;
     }
 
     // Default behavior: print plan if nothing else requested
@@ -151,6 +165,7 @@ fn real_main() -> Result<()> {
             &mut tr,
             true, // blocking providers
             &adl_base_dir,
+            &out_dir,
         );
         let outputs = match outputs {
             Ok(outputs) => outputs,

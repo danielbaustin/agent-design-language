@@ -51,6 +51,12 @@ impl AdlDoc {
     pub fn validate(&self) -> Result<()> {
         // Validate run.workflow references
         for (idx, step) in self.run.workflow.steps.iter().enumerate() {
+            let step_id = step
+                .id
+                .as_deref()
+                .map(|s| s.to_string())
+                .unwrap_or_else(|| format!("step-{idx}"));
+
             if let Some(agent) = step.agent.as_ref() {
                 if !self.agents.is_empty() && !self.agents.contains_key(agent) {
                     return Err(anyhow!(
@@ -71,6 +77,30 @@ impl AdlDoc {
                 // In MVP, `prompt` is an inline PromptSpec, so nothing to resolve.
                 // Keep a placeholder for future prompt registries.
                 let _ = prompt;
+            }
+
+            if step.write_to.is_some() && step.save_as.is_none() {
+                return Err(anyhow!(
+                    "step '{}' uses write_to but is missing save_as",
+                    step_id
+                ));
+            }
+
+            if let Some(write_to) = step.write_to.as_deref() {
+                if write_to.trim().is_empty() {
+                    return Err(anyhow!("step '{}' has empty write_to path", step_id));
+                }
+                let path = std::path::Path::new(write_to);
+                if path.is_absolute()
+                    || path
+                        .components()
+                        .any(|c| matches!(c, std::path::Component::ParentDir))
+                {
+                    return Err(anyhow!(
+                        "step '{}' write_to must be a relative path without '..'",
+                        step_id
+                    ));
+                }
             }
         }
 
@@ -246,6 +276,10 @@ pub struct StepSpec {
     /// Optional state key to save the step output under.
     #[serde(default)]
     pub save_as: Option<String>,
+
+    /// Optional relative path to write the step output under `--out`.
+    #[serde(default)]
+    pub write_to: Option<String>,
 
     /// Agent id to run (key in `agents`).
     #[serde(default)]

@@ -1,5 +1,5 @@
 use std::collections::{HashMap, HashSet};
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 
 use anyhow::{anyhow, Context, Result};
 
@@ -130,6 +130,7 @@ pub fn execute_sequential(
     tr: &mut Trace,
     print_outputs: bool,
     adl_base_dir: &Path,
+    out_dir: &Path,
 ) -> Result<Vec<StepOutput>> {
     // Gate concurrent early (per our decision).
     if !matches!(
@@ -151,6 +152,16 @@ or upgrade once concurrency lands (planned v0.3)."
         let agent_id: &str = step.agent.as_deref().unwrap_or("<unresolved-agent>");
         let task_id: &str = step.task.as_deref().unwrap_or("<unresolved-task>");
         let provider_id: &str = step.provider.as_deref().unwrap_or("<unresolved-provider>");
+
+        if let Some(write_to) = step.write_to.as_deref() {
+            if step.save_as.is_none() {
+                return Err(anyhow!(
+                    "step '{}' uses write_to but is missing save_as",
+                    step_id
+                ));
+            }
+            validate_write_to(&step_id, write_to)?;
+        }
 
         tr.step_started(&step_id, agent_id, provider_id, task_id);
 
@@ -218,6 +229,16 @@ or upgrade once concurrency lands (planned v0.3)."
             Ok(out) => {
                 tr.step_finished(&step_id, true);
 
+                if let Some(write_to) = step.write_to.as_deref() {
+                    let path = write_output(&step_id, out_dir, write_to, &out.model_output)?;
+                    println!(
+                        "ARTIFACT step={} path={} bytes={}",
+                        step_id,
+                        path.display(),
+                        out.model_output.len()
+                    );
+                }
+
                 if print_outputs {
                     println!("--- step: {} ---", step_id);
                     println!("{}", out.model_output.trim_end());
@@ -235,6 +256,43 @@ or upgrade once concurrency lands (planned v0.3)."
     }
 
     Ok(outs)
+}
+
+fn validate_write_to(step_id: &str, write_to: &str) -> Result<()> {
+    if write_to.trim().is_empty() {
+        return Err(anyhow!("step '{}' has empty write_to path", step_id));
+    }
+    let path = Path::new(write_to);
+    if path.is_absolute() || path.components().any(|c| matches!(c, Component::ParentDir)) {
+        return Err(anyhow!(
+            "step '{}' write_to must be a relative path without '..'",
+            step_id
+        ));
+    }
+    Ok(())
+}
+
+fn write_output(step_id: &str, out_dir: &Path, write_to: &str, contents: &str) -> Result<PathBuf> {
+    validate_write_to(step_id, write_to)?;
+    let rel = PathBuf::from(write_to);
+    let path = out_dir.join(rel);
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).with_context(|| {
+            format!(
+                "failed to create output directory for step '{}': '{}'",
+                step_id,
+                parent.display()
+            )
+        })?;
+    }
+    std::fs::write(&path, contents.as_bytes()).with_context(|| {
+        format!(
+            "failed to write output for step '{}' to '{}'",
+            step_id,
+            path.display()
+        )
+    })?;
+    Ok(path)
 }
 
 fn missing_prompt_inputs(
