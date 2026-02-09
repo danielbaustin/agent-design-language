@@ -109,6 +109,9 @@ The committed schema artifact lives at:
 schemas/adl.schema.json
 ```
 
+Note: this JSON file is **DRAFT / not authoritative** and may lag the runtime.
+The runtime’s authoritative schema is generated from the Rust structs in `src/adl.rs`.
+
 Schema tests live in:
 
 ```

@@ -28,6 +28,7 @@ but the *concepts* should map 1:1.
 - Current version: ADL 1.0 (draft)
 - Schema status: illustrative YAML while the ADL 1.0 schema is finalized
 - Reference runtime: not yet published (planned)
+- v0.x schema note: the `swarm/` runtime generates its authoritative schema from Rust structs; the committed JSON schema is a draft reference artifact and may lag.
 
 ## Design Principles
 
