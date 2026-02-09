@@ -16,6 +16,20 @@ Please keep this context in mind when proposing changes.
 
 ## How to contribute
 
+For contribution workflow details (branching, reviews, and agent-assisted processes), see `swarm/CODEX_PLAYBOOK.md`.
+
+## Agent-assisted contributions
+
+Some contributions may be prepared with the assistance of automated agents (e.g. Codex). This repository supports an explicit, auditable workflow for agent-assisted work.
+
+Key points:
+
+- Agent inputs and outputs are captured as structured “cards” stored locally under `.adl/cards/` and are not committed to the repository.
+- Pull requests must reflect reviewed, human-approved changes regardless of how the work was produced.
+- Tooling and workflow details for agent-assisted work are documented in `swarm/CODEX_PLAYBOOK.md`.
+
+The presence of agent assistance does not change review standards or design expectations.
+
 ### Discuss before large changes
 
 For substantial changes (new concepts, new abstractions, or major restructuring),
