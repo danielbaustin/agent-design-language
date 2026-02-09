@@ -2,6 +2,8 @@ use anyhow::{anyhow, Context, Result};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::env;
+use std::error::Error as StdError;
+use std::fmt;
 use std::io::{Read, Write};
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
@@ -15,6 +17,83 @@ pub trait Provider: Send + Sync {
     fn complete(&self, prompt: &str) -> Result<String>;
 }
 
+#[derive(Debug, Clone, Copy)]
+enum ProviderErrorKind {
+    UnknownKind,
+    InvalidConfig,
+    Runtime,
+}
+
+#[derive(Debug)]
+struct ProviderError {
+    kind: ProviderErrorKind,
+    provider: Option<String>,
+    message: String,
+}
+
+impl ProviderError {
+    fn unknown_kind(kind: &str) -> Self {
+        Self {
+            kind: ProviderErrorKind::UnknownKind,
+            provider: None,
+            message: format!(
+                "provider kind '{kind}' is not supported (supported: ollama, http). \
+Set providers.<id>.type to one of: ollama, http."
+            ),
+        }
+    }
+
+    fn invalid_config(provider: &str, message: impl Into<String>) -> Self {
+        Self {
+            kind: ProviderErrorKind::InvalidConfig,
+            provider: Some(provider.to_string()),
+            message: message.into(),
+        }
+    }
+
+    fn runtime(provider: &str, message: impl Into<String>) -> Self {
+        Self {
+            kind: ProviderErrorKind::Runtime,
+            provider: Some(provider.to_string()),
+            message: message.into(),
+        }
+    }
+}
+
+impl fmt::Display for ProviderError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.kind {
+            ProviderErrorKind::UnknownKind => write!(f, "{}", self.message),
+            ProviderErrorKind::InvalidConfig => write!(
+                f,
+                "provider {} invalid config: {}",
+                self.provider.as_deref().unwrap_or("<unknown>"),
+                self.message
+            ),
+            ProviderErrorKind::Runtime => write!(
+                f,
+                "provider {} runtime error: {}",
+                self.provider.as_deref().unwrap_or("<unknown>"),
+                self.message
+            ),
+        }
+    }
+}
+
+impl StdError for ProviderError {}
+
+fn unknown_kind(kind: &str) -> anyhow::Error {
+    ProviderError::unknown_kind(kind).into()
+}
+
+fn invalid_config(provider: &str, message: impl Into<String>) -> anyhow::Error {
+    ProviderError::invalid_config(provider, message).into()
+}
+
+fn runtime_error(provider: &str, message: impl Into<String>) -> anyhow::Error {
+    ProviderError::runtime(provider, message).into()
+}
+
 /// Factory: build a provider implementation from ADL ProviderSpec.
 ///
 /// Expected schema (based on your compiler errors):
@@ -24,9 +103,7 @@ pub fn build_provider(spec: &adl::ProviderSpec) -> Result<Box<dyn Provider>> {
     match kind.as_str() {
         "ollama" => Ok(Box::new(OllamaProvider::from_spec(spec)?)),
         "http" => Ok(Box::new(HttpProvider::from_spec(spec)?)),
-        other => Err(anyhow!(
-            "unsupported provider kind '{other}' (supported: ollama, http)"
-        )),
+        other => Err(unknown_kind(other)),
     }
 }
 
@@ -54,7 +131,8 @@ impl OllamaProvider {
 
 impl Provider for OllamaProvider {
     fn complete(&self, prompt: &str) -> Result<String> {
-        let timeout_secs = timeout_secs()?;
+        let timeout_secs =
+            timeout_secs().map_err(|err| invalid_config("ollama", err.to_string()))?;
 
         // v0.1: We parse `temperature` from provider config for forward-compatibility,
         // but the `ollama` CLI does not consistently expose a stable flag across versions.
@@ -70,16 +148,19 @@ impl Provider for OllamaProvider {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
-            .with_context(|| "failed to spawn `ollama run` (is Ollama installed and on PATH?)")?;
+            .with_context(|| "failed to spawn `ollama run` (is Ollama installed and on PATH?)")
+            .map_err(|err| runtime_error("ollama", err.to_string()))?;
 
         let stdout = child
             .stdout
             .take()
-            .context("failed to open stdout for ollama")?;
+            .context("failed to open stdout for ollama")
+            .map_err(|err| runtime_error("ollama", err.to_string()))?;
         let stderr = child
             .stderr
             .take()
-            .context("failed to open stderr for ollama")?;
+            .context("failed to open stderr for ollama")
+            .map_err(|err| runtime_error("ollama", err.to_string()))?;
 
         // Drain stdout/stderr concurrently to avoid deadlock if the child fills pipe buffers.
         let out_handle = thread::spawn(move || -> std::io::Result<Vec<u8>> {
@@ -100,10 +181,12 @@ impl Provider for OllamaProvider {
             let mut stdin = child
                 .stdin
                 .take()
-                .context("failed to open stdin for ollama")?;
+                .context("failed to open stdin for ollama")
+                .map_err(|err| runtime_error("ollama", err.to_string()))?;
             stdin
                 .write_all(prompt.as_bytes())
-                .context("failed writing prompt to ollama stdin")?;
+                .context("failed writing prompt to ollama stdin")
+                .map_err(|err| runtime_error("ollama", err.to_string()))?;
             // Explicitly close stdin so ollama sees EOF.
             drop(stdin);
         }
@@ -114,7 +197,8 @@ impl Provider for OllamaProvider {
         let status = loop {
             if let Some(status) = child
                 .try_wait()
-                .context("failed waiting for ollama process")?
+                .context("failed waiting for ollama process")
+                .map_err(|err| runtime_error("ollama", err.to_string()))?
             {
                 break status;
             }
@@ -125,7 +209,8 @@ impl Provider for OllamaProvider {
                 loop {
                     if let Some(_status) = child
                         .try_wait()
-                        .context("failed waiting for ollama process")?
+                        .context("failed waiting for ollama process")
+                        .map_err(|err| runtime_error("ollama", err.to_string()))?
                     {
                         break;
                     }
@@ -134,8 +219,9 @@ impl Provider for OllamaProvider {
                     }
                     std::thread::sleep(Duration::from_millis(10));
                 }
-                return Err(anyhow!(
-                    "provider ollama timed out after {timeout_secs}s (set SWARM_TIMEOUT_SECS to override)"
+                return Err(runtime_error(
+                    "ollama",
+                    format!("timed out after {timeout_secs}s (set SWARM_TIMEOUT_SECS to override)"),
                 ));
             }
 
@@ -144,23 +230,30 @@ impl Provider for OllamaProvider {
 
         let out_buf = out_handle
             .join()
-            .map_err(|_| anyhow!("stdout reader thread panicked"))?
-            .context("failed reading ollama stdout")?;
+            .map_err(|_| runtime_error("ollama", "stdout reader thread panicked"))?
+            .context("failed reading ollama stdout")
+            .map_err(|err| runtime_error("ollama", err.to_string()))?;
         let err_buf = err_handle
             .join()
-            .map_err(|_| anyhow!("stderr reader thread panicked"))?
-            .context("failed reading ollama stderr")?;
+            .map_err(|_| runtime_error("ollama", "stderr reader thread panicked"))?
+            .context("failed reading ollama stderr")
+            .map_err(|err| runtime_error("ollama", err.to_string()))?;
 
         if !status.success() {
             let stderr = String::from_utf8_lossy(&err_buf);
-            return Err(anyhow!(
-                "ollama run failed (exit={:?}): {}",
-                status.code(),
-                stderr.trim()
+            return Err(runtime_error(
+                "ollama",
+                format!(
+                    "ollama run failed (exit={:?}): {}",
+                    status.code(),
+                    stderr.trim()
+                ),
             ));
         }
 
-        let stdout = String::from_utf8(out_buf).context("ollama output was not valid UTF-8")?;
+        let stdout = String::from_utf8(out_buf)
+            .context("ollama output was not valid UTF-8")
+            .map_err(|err| runtime_error("ollama", err.to_string()))?;
         Ok(stdout)
     }
 }
@@ -210,18 +303,23 @@ impl HttpProvider {
 
         let endpoint = cfg_str(cfg, "endpoint")
             .map(|s| s.to_string())
-            .ok_or_else(|| anyhow!("http provider requires config.endpoint"))?;
+            .ok_or_else(|| {
+                invalid_config(
+                    "http",
+                    "config.endpoint is required (set providers.<id>.config.endpoint)",
+                )
+            })?;
 
         let timeout_secs = cfg_u64(cfg, "timeout_secs");
 
         let mut headers = HashMap::new();
         if let Some(h) = cfg.get("headers") {
             let obj = h.as_object().ok_or_else(|| {
-                anyhow!("http provider config.headers must be an object of string values")
+                invalid_config("http", "config.headers must be an object of string values")
             })?;
             for (k, v) in obj {
                 let v = v.as_str().ok_or_else(|| {
-                    anyhow!("http provider config.headers values must be strings")
+                    invalid_config("http", "config.headers values must be strings")
                 })?;
                 headers.insert(k.clone(), v.to_string());
             }
@@ -230,20 +328,21 @@ impl HttpProvider {
         let auth = if let Some(auth_val) = cfg.get("auth") {
             let obj = auth_val
                 .as_object()
-                .ok_or_else(|| anyhow!("http provider config.auth must be an object"))?;
+                .ok_or_else(|| invalid_config("http", "config.auth must be an object"))?;
             let auth_type = obj
                 .get("type")
                 .and_then(|v| v.as_str())
-                .ok_or_else(|| anyhow!("http provider config.auth.type is required"))?;
+                .ok_or_else(|| invalid_config("http", "config.auth.type is required"))?;
             if auth_type != "bearer" {
-                return Err(anyhow!(
-                    "http provider auth.type must be 'bearer' (got '{auth_type}')"
+                return Err(invalid_config(
+                    "http",
+                    format!("config.auth.type must be 'bearer' (got '{auth_type}')"),
                 ));
             }
             let env_key = obj
                 .get("env")
                 .and_then(|v| v.as_str())
-                .ok_or_else(|| anyhow!("http provider config.auth.env is required"))?;
+                .ok_or_else(|| invalid_config("http", "config.auth.env is required"))?;
             Some(HttpAuth {
                 env: env_key.to_string(),
             })
@@ -268,7 +367,8 @@ impl Provider for HttpProvider {
         }
         let client = client_builder
             .build()
-            .context("failed to build http client")?;
+            .context("failed to build http client")
+            .map_err(|err| runtime_error("http", err.to_string()))?;
 
         let mut req = client
             .post(&self.endpoint)
@@ -279,16 +379,41 @@ impl Provider for HttpProvider {
         }
 
         if let Some(auth) = &self.auth {
-            let token = env::var(&auth.env)
-                .map_err(|_| anyhow!("missing required auth env var '{}'", auth.env))?;
+            let token = env::var(&auth.env).map_err(|_| {
+                invalid_config(
+                    "http",
+                    format!(
+                        "missing required auth env var '{}' (set it or remove config.auth)",
+                        auth.env
+                    ),
+                )
+            })?;
             req = req.bearer_auth(token);
         }
 
         let body = serde_json::json!({ "prompt": prompt });
-        let resp = req
-            .json(&body)
-            .send()
-            .context("http provider request failed")?;
+
+        // Map timeout vs. other request failures into stable, user-facing error messages.
+        // This keeps tests and CLI output deterministic while still surfacing the underlying cause.
+        let resp = match req.json(&body).send() {
+            Ok(resp) => resp,
+            Err(err) => {
+                if err.is_timeout() {
+                    let msg = match self.timeout_secs {
+                        Some(secs) => format!(
+                            "timed out after {secs}s (set providers.<id>.config.timeout_secs to override)"
+                        ),
+                        None => "timed out (set providers.<id>.config.timeout_secs to override)".to_string(),
+                    };
+                    return Err(runtime_error("http", msg));
+                }
+
+                return Err(runtime_error(
+                    "http",
+                    format!("http provider request failed: {err}"),
+                ));
+            }
+        };
 
         if !resp.status().is_success() {
             let status = resp.status();
@@ -299,18 +424,20 @@ impl Provider for HttpProvider {
             } else {
                 trimmed
             };
-            return Err(anyhow!(
-                "http provider returned non-200 status {status}: {trimmed}"
+            return Err(runtime_error(
+                "http",
+                format!("returned non-200 status {status}: {trimmed}"),
             ));
         }
 
         let json: serde_json::Value = resp
             .json()
-            .context("http provider response was not valid JSON")?;
+            .context("http provider response was not valid JSON")
+            .map_err(|err| runtime_error("http", err.to_string()))?;
         let out = json
             .get("output")
             .and_then(|v| v.as_str())
-            .ok_or_else(|| anyhow!("http provider response missing 'output' field"))?;
+            .ok_or_else(|| runtime_error("http", "response missing 'output' field"))?;
 
         Ok(out.to_string())
     }
