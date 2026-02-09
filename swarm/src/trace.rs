@@ -4,11 +4,16 @@ use std::time::{SystemTime, UNIX_EPOCH};
 pub struct Trace {
     pub run_id: String,
     pub workflow_id: String,
+    pub version: String,
     pub events: Vec<TraceEvent>,
 }
 
 #[derive(Debug, Clone)]
 pub enum TraceEvent {
+    RunFailed {
+        ts_ms: u128,
+        message: String,
+    },
     StepStarted {
         ts_ms: u128,
         step_id: String,
@@ -31,6 +36,9 @@ pub enum TraceEvent {
 impl TraceEvent {
     pub fn summarize(&self) -> String {
         match self {
+            TraceEvent::RunFailed { ts_ms, message } => {
+                format!("{ts_ms} RunFailed message={message}")
+            }
             TraceEvent::StepStarted {
                 ts_ms,
                 step_id,
@@ -55,10 +63,15 @@ impl TraceEvent {
 }
 
 impl Trace {
-    pub fn new(run_id: impl Into<String>, workflow_id: impl Into<String>) -> Self {
+    pub fn new(
+        run_id: impl Into<String>,
+        workflow_id: impl Into<String>,
+        version: impl Into<String>,
+    ) -> Self {
         Self {
             run_id: run_id.into(),
             workflow_id: workflow_id.into(),
+            version: version.into(),
             events: Vec::new(),
         }
     }
@@ -86,6 +99,13 @@ impl Trace {
         });
     }
 
+    pub fn run_failed(&mut self, message: &str) {
+        self.events.push(TraceEvent::RunFailed {
+            ts_ms: Self::now_ms(),
+            message: message.to_string(),
+        });
+    }
+
     pub fn prompt_assembled(&mut self, step_id: &str, prompt_hash: &str) {
         self.events.push(TraceEvent::PromptAssembled {
             ts_ms: Self::now_ms(),
@@ -105,7 +125,10 @@ impl Trace {
 
 /// Print a human-readable trace to stdout (stable + diff-friendly).
 pub fn print_trace(tr: &Trace) {
-    println!("TRACE run_id={} workflow_id={}", tr.run_id, tr.workflow_id);
+    println!(
+        "TRACE run_id={} workflow_id={} version={}",
+        tr.run_id, tr.workflow_id, tr.version
+    );
     for ev in &tr.events {
         println!("{}", ev.summarize());
     }
@@ -117,7 +140,7 @@ mod tests {
 
     #[test]
     fn trace_records_step_lifecycle_events_in_order() {
-        let mut tr = Trace::new("run-1", "workflow-1");
+        let mut tr = Trace::new("run-1", "workflow-1", "0.1");
 
         tr.step_started("step-1", "agent-1", "provider-1", "task-1");
         tr.prompt_assembled("step-1", "hash-123");
@@ -149,7 +172,7 @@ mod tests {
 
     #[test]
     fn trace_preserves_run_and_workflow_ids() {
-        let tr = Trace::new("run-x", "workflow-y");
+        let tr = Trace::new("run-x", "workflow-y", "0.1");
 
         assert_eq!(tr.run_id, "run-x");
         assert_eq!(tr.workflow_id, "workflow-y");
@@ -157,7 +180,7 @@ mod tests {
 
     #[test]
     fn trace_allows_multiple_steps() {
-        let mut tr = Trace::new("run-2", "workflow-2");
+        let mut tr = Trace::new("run-2", "workflow-2", "0.1");
 
         tr.step_started("step-a", "agent-a", "provider-a", "task-a");
         tr.step_finished("step-a", true);
