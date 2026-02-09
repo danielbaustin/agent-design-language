@@ -5,19 +5,6 @@ use std::hash::{Hash, Hasher};
 use crate::adl::PromptSpec;
 use crate::resolve::AdlResolved;
 
-/// Hash a prompt spec so we can trace/debug prompt assembly without dumping content.
-/// v0.1: not yet wired into tracing; kept for forward-compatible observability.
-#[allow(dead_code)]
-pub fn hash_prompt(p: &PromptSpec) -> String {
-    let mut h = DefaultHasher::new();
-    p.system.hash(&mut h);
-    p.developer.hash(&mut h);
-    p.user.hash(&mut h);
-    p.context.hash(&mut h);
-    p.output.hash(&mut h);
-    format!("{:016x}", h.finish())
-}
-
 /// Hash an arbitrary string (used for tracing rendered prompt text).
 pub fn hash_string(s: &str) -> String {
     let mut h = DefaultHasher::new();
