@@ -3,6 +3,24 @@ use std::collections::HashMap;
 
 use crate::adl;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum AdlVersion {
+    V0_1,
+    V0_2,
+}
+
+fn parse_version(version: &str) -> Result<AdlVersion> {
+    let v = version.trim();
+    match v {
+        "0.1" => Ok(AdlVersion::V0_1),
+        "0.2" => Ok(AdlVersion::V0_2),
+        "" => Err(anyhow!("ADL document is missing required field: version")),
+        _ => Err(anyhow!(
+            "unsupported ADL version '{v}' (supported: 0.1, 0.2)"
+        )),
+    }
+}
+
 /// A resolved view of the `run` section that is convenient for printing and prompt assembly.
 #[derive(Debug, Clone)]
 pub struct AdlResolved {
@@ -95,10 +113,7 @@ fn resolve_provider_for_step(step: &adl::StepSpec, doc: &adl::AdlDoc) -> Option<
 
 /// Resolve the run section into a deterministic, convenient form.
 pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
-    // Require version for now (ADL v0.1 expectation); adjust if you want to default later.
-    if doc.version.trim().is_empty() {
-        return Err(anyhow!("ADL document is missing required field: version"));
-    }
+    let _version = parse_version(&doc.version)?;
 
     let run_id = doc.run.name.clone().unwrap_or_else(|| "run".to_string());
     // WorkflowSpec currently has no explicit `id` field; keep a stable label for printing/tracing.
@@ -228,6 +243,18 @@ mod tests {
         let msg = err.to_string();
         assert!(
             msg.contains("missing required field") || msg.contains("version"),
+            "{msg}"
+        );
+    }
+
+    #[test]
+    fn resolve_run_rejects_unsupported_version() {
+        let mut doc = minimal_doc();
+        doc.version = "0.3".to_string();
+        let err = resolve_run(&doc).unwrap_err();
+        let msg = err.to_string();
+        assert!(
+            msg.contains("unsupported ADL version") && msg.contains("0.3"),
             "{msg}"
         );
     }

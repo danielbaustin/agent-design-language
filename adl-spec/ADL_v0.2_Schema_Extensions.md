@@ -33,10 +33,29 @@ reference runtime implements these features.
 `version` remains required at the top level.
 
 - v0.2 documents **MUST** declare `version: "0.2"`.
+- Runtimes **MUST** reject documents with unsupported versions (e.g., `0.3`).
 - `run.id` is the stable run identifier (preferred); `run.name` MAY be used as a human-friendly label.
 - Runtimes **MUST** reject newer versions they do not support.
 - Runtimes **MAY** provide a “best-effort” validation mode, but **strict mode** is required
   by default for user-facing runs.
+
+#### Version gating policy (runtime)
+
+Some features may be present in the schema but gated in the runtime until a future version.
+When a gated feature is used, the runtime **MUST** fail fast with a deterministic error.
+
+Required error content:
+
+- feature name (e.g., `concurrency`)
+- required minimum version (e.g., `requires v0.3`)
+- document version (e.g., `document version is 0.2`)
+- location hint when feasible (e.g., `run.workflow.kind=concurrent`)
+
+Example (concurrency gate):
+
+```
+feature 'concurrency' requires v0.3; document version is 0.2 (run.workflow.kind=concurrent)
+```
 
 ### 3.2 Workflow and steps
 
@@ -176,6 +195,7 @@ To preserve ADL’s deterministic core, v0.2 enforces the following constraints:
 
 - v0.1 runtimes **MUST** reject v0.2 docs with a clear version error.
 - v0.2 runtimes **MUST** reject v0.3+ docs unless explicitly supported.
+- Concurrency / parallel execution remains gated to v0.3 and must emit the standard gate error.
 
 ---
 

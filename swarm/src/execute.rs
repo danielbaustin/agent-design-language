@@ -143,10 +143,11 @@ pub fn execute_sequential(
         resolved.doc.run.workflow.kind,
         crate::adl::WorkflowKind::Sequential
     ) {
+        let doc_version = resolved.doc.version.trim();
         tr.run_failed("concurrent workflows are not supported in v0.1");
         return Err(anyhow!(
-            "v0.1 does not support concurrent workflows. Use a single workflow with sequential steps, \
-or upgrade once concurrency lands (planned v0.3)."
+            "feature 'concurrency' requires v0.3; document version is {doc_version} \
+(run.workflow.kind=concurrent)"
         ));
     }
 
