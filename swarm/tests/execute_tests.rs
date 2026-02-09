@@ -527,6 +527,77 @@ run:
 }
 
 #[test]
+fn run_quiet_suppresses_step_output() {
+    let base = tmp_dir("exec-quiet");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.2"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize: {{text}}"
+
+run:
+  name: "quiet-mode"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        inputs:
+          text: "hello"
+        save_as: "summary"
+        write_to: "index.html"
+"#;
+
+    let tmp_yaml = base.join("quiet.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out_dir = base.join("out");
+    let out = run_swarm(&[
+        tmp_yaml.to_string_lossy().as_ref(),
+        "--run",
+        "--quiet",
+        "--out",
+        out_dir.to_string_lossy().as_ref(),
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, got {:?}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(stdout.contains("RUN SUMMARY"), "stdout was:\n{stdout}");
+    assert!(stdout.contains("ARTIFACT"), "stdout was:\n{stdout}");
+    assert!(
+        !stdout.contains("--- step:"),
+        "stdout should not include step bodies:\n{stdout}"
+    );
+    assert!(
+        !stdout.contains("mock summary bullet one"),
+        "stdout should not include step bodies:\n{stdout}"
+    );
+}
+
+#[test]
 fn run_rejects_missing_prompt_inputs() {
     let base = tmp_dir("exec-missing-inputs");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
