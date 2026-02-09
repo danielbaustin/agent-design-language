@@ -1,7 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://agent-design-language.org/schemas/adl.schema.json",
-  "title": "ADL v0.1",
+  "title": "ADL v0.1 (DRAFT - NOT AUTHORITATIVE)",
+  "$comment": "DRAFT artifact. The authoritative v0.1 schema is generated from Rust structs in swarm/src/adl.rs and used at runtime. This file may lag and is intended for human reference only.",
   "type": "object",
   "additionalProperties": true,
   "properties": {
