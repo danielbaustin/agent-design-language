@@ -141,18 +141,7 @@ fn real_main() -> Result<()> {
     };
 
     if print_plan {
-        println!("Resolved run: {}", resolved.run_id);
-        println!("Workflow:     {}", resolved.workflow_id);
-        println!("Steps:        {}", resolved.steps.len());
-
-        for (idx, step) in resolved.steps.iter().enumerate() {
-            let step_id = step.id.as_str();
-            let agent_id = step.agent.as_deref().unwrap_or("<unresolved-agent>");
-            let task_id = step.task.as_deref().unwrap_or("<unresolved-task>");
-            let provider_id = step.provider.as_deref().unwrap_or("<unresolved-provider>");
-
-            println!("  {idx}. {step_id}  agent={agent_id} provider={provider_id} task={task_id}");
-        }
+        resolve::print_resolved_plan(&resolved);
     }
 
     if print_prompts {
