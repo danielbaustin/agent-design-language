@@ -156,7 +156,8 @@ run:
     assert!(
         stdout.contains("StepStarted")
             && stdout.contains("StepFinished")
-            && stdout.contains("success=false"),
+            && stdout.contains("success=false")
+            && stdout.contains("RunFailed"),
         "expected step failure in trace, stdout was:\n{}",
         stdout
     );

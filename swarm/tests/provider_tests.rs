@@ -135,8 +135,8 @@ config: {}
     };
     let msg = format!("{err:#}");
     assert!(
-        msg.contains("unsupported provider kind"),
-        "expected unsupported-kind error, got: {msg}"
+        msg.contains("provider kind") && msg.contains("supported"),
+        "expected unknown-kind error, got: {msg}"
     );
 }
 
@@ -463,6 +463,26 @@ config:
     let msg = format!("{err:#}");
     assert!(
         msg.contains("missing required auth env var"),
+        "unexpected error: {msg}"
+    );
+}
+
+#[test]
+fn http_provider_rejects_missing_endpoint() {
+    let spec = provider_spec_from_yaml(
+        r#"
+type: http
+config: {}
+"#,
+    );
+
+    let err = match build_provider(&spec) {
+        Ok(_) => panic!("expected build_provider to fail for missing endpoint"),
+        Err(err) => err,
+    };
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("invalid config") && msg.contains("endpoint"),
         "unexpected error: {msg}"
     );
 }

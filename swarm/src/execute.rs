@@ -228,6 +228,7 @@ or upgrade once concurrency lands (planned v0.3)."
             }
             Err(err) => {
                 tr.step_finished(&step_id, false);
+                tr.run_failed(&err.to_string());
                 return Err(err);
             }
         }
