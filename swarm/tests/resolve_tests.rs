@@ -290,6 +290,7 @@ fn resolve_v0_2_multi_step_examples() {
     let examples = [
         include_str!("../examples/v0-2-multi-step-basic.adl.yaml"),
         include_str!("../examples/v0-2-multi-step-file-input.adl.yaml"),
+        include_str!("../examples/v0-2-coordinator-agents-sdk.adl.yaml"),
     ];
 
     for doc_str in examples {

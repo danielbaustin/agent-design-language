@@ -10,6 +10,7 @@ cargo run -- examples/<file> --run --trace
 
 - `v0-2-multi-step-basic.adl.yaml`
 - `v0-2-multi-step-file-input.adl.yaml`
+- `v0-2-coordinator-agents-sdk.adl.yaml` (see `v0-2-coordinator-agents-sdk.md`)
 
 Expected: two steps execute in order and print outputs for each step.
 

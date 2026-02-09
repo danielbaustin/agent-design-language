@@ -37,6 +37,9 @@ cargo run -- examples/override-precedence.adl.yaml --run --trace
 cargo run -- examples/failure-missing-file.adl.yaml --run --trace
 ```
 
+For a v0.2 coordinator-style example (agents SDK–style), see:
+`swarm/examples/v0-2-coordinator-agents-sdk.adl.yaml`.
+
 ---
 
 ## Core ideas
