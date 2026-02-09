@@ -147,17 +147,15 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
 }
 
 /// Used by the CLI `--print-plan` path; kept separate from execution for clarity.
-/// Not referenced in library code paths.
-#[allow(dead_code)] // CLI-only utility in v0.1
 pub fn print_resolved_plan(resolved: &AdlResolved) {
     println!("Resolved run: {}", resolved.run_id);
     println!("Workflow:     {}", resolved.workflow_id);
     println!("Steps:        {}", resolved.steps.len());
 
     for (idx, step) in resolved.steps.iter().enumerate() {
-        let agent = step.agent.as_deref().unwrap_or("<agent>");
+        let agent = step.agent.as_deref().unwrap_or("<unresolved-agent>");
         let provider = step.provider.as_deref().unwrap_or("<unresolved-provider>");
-        let task = step.task.as_deref().unwrap_or("<task>");
+        let task = step.task.as_deref().unwrap_or("<unresolved-task>");
 
         println!(
             "  {idx}. {}  agent={agent} provider={provider} task={task}",
