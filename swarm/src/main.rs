@@ -93,10 +93,32 @@ fn real_main() -> Result<()> {
 
     let adl_base_dir: PathBuf = adl_path.parent().unwrap_or(Path::new(".")).to_path_buf();
 
-    let doc = adl::AdlDoc::load_from_file(adl_path_str)
-        .with_context(|| format!("failed to load ADL document: {adl_path_str}"))?;
+    let doc = match adl::AdlDoc::load_from_file(adl_path_str)
+        .with_context(|| format!("failed to load ADL document: {adl_path_str}"))
+    {
+        Ok(doc) => doc,
+        Err(err) => {
+            if do_trace {
+                let mut tr = trace::Trace::new("unknown", "unknown", "unknown");
+                tr.run_failed(&err.to_string());
+                trace::print_trace(&tr);
+            }
+            return Err(err);
+        }
+    };
 
-    let resolved = resolve::resolve_run(&doc)?;
+    let resolved = match resolve::resolve_run(&doc) {
+        Ok(resolved) => resolved,
+        Err(err) => {
+            if do_trace {
+                let run_id = doc.run.name.clone().unwrap_or_else(|| "run".to_string());
+                let mut tr = trace::Trace::new(run_id, "workflow", doc.version.clone());
+                tr.run_failed(&err.to_string());
+                trace::print_trace(&tr);
+            }
+            return Err(err);
+        }
+    };
 
     if print_plan {
         println!("Resolved run: {}", resolved.run_id);
@@ -118,14 +140,27 @@ fn real_main() -> Result<()> {
     }
 
     if do_run {
-        let mut tr = trace::Trace::new(resolved.run_id.clone(), resolved.workflow_id.clone());
+        let mut tr = trace::Trace::new(
+            resolved.run_id.clone(),
+            resolved.workflow_id.clone(),
+            resolved.doc.version.clone(),
+        );
 
         let outputs = execute::execute_sequential(
             &resolved,
             &mut tr,
             true, // blocking providers
             &adl_base_dir,
-        )?;
+        );
+        let outputs = match outputs {
+            Ok(outputs) => outputs,
+            Err(err) => {
+                if do_trace {
+                    trace::print_trace(&tr);
+                }
+                return Err(err);
+            }
+        };
 
         // Explicitly consume StepOutput so clippy -D warnings stays green
         println!("RUN SUMMARY: {} step(s)", outputs.len());
@@ -142,7 +177,11 @@ fn real_main() -> Result<()> {
         }
     } else if do_trace {
         // Dry-run trace (no execution)
-        let mut tr = trace::Trace::new(resolved.run_id.clone(), resolved.workflow_id.clone());
+        let mut tr = trace::Trace::new(
+            resolved.run_id.clone(),
+            resolved.workflow_id.clone(),
+            resolved.doc.version.clone(),
+        );
 
         for step in resolved.steps.iter() {
             let step_id = step.id.as_str();

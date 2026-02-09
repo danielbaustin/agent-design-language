@@ -136,6 +136,7 @@ pub fn execute_sequential(
         resolved.doc.run.workflow.kind,
         crate::adl::WorkflowKind::Sequential
     ) {
+        tr.run_failed("concurrent workflows are not supported in v0.1");
         return Err(anyhow!(
             "v0.1 does not support concurrent workflows. Use a single workflow with sequential steps, \
 or upgrade once concurrency lands (planned v0.3)."
@@ -153,71 +154,83 @@ or upgrade once concurrency lands (planned v0.3)."
 
         tr.step_started(&step_id, agent_id, provider_id, task_id);
 
-        let p = step
-            .effective_prompt_with_defaults(resolved)
-            .ok_or_else(|| {
-                anyhow!(
-                    "step '{}' has no effective prompt (step.prompt or task.prompt required)",
-                    step_id
+        let result = (|| -> Result<StepOutput> {
+            let p = step
+                .effective_prompt_with_defaults(resolved)
+                .ok_or_else(|| {
+                    anyhow!(
+                        "step '{}' has no effective prompt (step.prompt or task.prompt required)",
+                        step_id
+                    )
+                })?;
+
+            let missing = missing_prompt_inputs(&p, &step.inputs);
+            if !missing.is_empty() {
+                return Err(anyhow!(
+                    "step '{}' missing input bindings for: {} (provide inputs or prior state)",
+                    step_id,
+                    missing.join(", ")
+                ));
+            }
+
+            // v0.1: step-level inputs only (run.defaults currently has only `system`)
+            let merged_inputs: HashMap<String, String> = step.inputs.clone();
+
+            // Allow inputs to reference files via "@file:<path>".
+            let inputs = materialize_inputs(merged_inputs, adl_base_dir)
+                .with_context(|| format!("failed to materialize inputs for step '{}'", step_id))?;
+
+            // Assemble a single text blob suitable for basic model consumption.
+            let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
+            let prompt_hash = prompt::hash_string(&prompt_text);
+            tr.prompt_assembled(&step_id, &prompt_hash);
+
+            // Build provider from doc.providers[provider_id]
+            let spec = resolved.doc.providers.get(provider_id).with_context(|| {
+                format!(
+                    "step '{}' references unknown provider '{}'",
+                    step_id, provider_id
                 )
             })?;
 
-        let missing = missing_prompt_inputs(&p, &step.inputs);
-        if !missing.is_empty() {
-            return Err(anyhow!(
-                "step '{}' missing input bindings for: {} (provide inputs or prior state)",
-                step_id,
-                missing.join(", ")
-            ));
+            let prov = provider::build_provider(spec).with_context(|| {
+                format!(
+                    "failed to build provider '{}' for step '{}'",
+                    provider_id, step_id
+                )
+            })?;
+
+            let model_output = prov.complete(&prompt_text).with_context(|| {
+                format!(
+                    "provider '{}' complete() failed for step '{}'",
+                    provider_id, step_id
+                )
+            })?;
+
+            Ok(StepOutput {
+                step_id: step_id.clone(),
+                provider_id: provider_id.to_string(),
+                model_output,
+            })
+        })();
+
+        match result {
+            Ok(out) => {
+                tr.step_finished(&step_id, true);
+
+                if print_outputs {
+                    println!("--- step: {} ---", step_id);
+                    println!("{}", out.model_output.trim_end());
+                    println!();
+                }
+
+                outs.push(out);
+            }
+            Err(err) => {
+                tr.step_finished(&step_id, false);
+                return Err(err);
+            }
         }
-
-        // v0.1: step-level inputs only (run.defaults currently has only `system`)
-        let merged_inputs: HashMap<String, String> = step.inputs.clone();
-
-        // Allow inputs to reference files via "@file:<path>".
-        let inputs = materialize_inputs(merged_inputs, adl_base_dir)
-            .with_context(|| format!("failed to materialize inputs for step '{}'", step_id))?;
-
-        // Assemble a single text blob suitable for basic model consumption.
-        let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
-        let prompt_hash = prompt::hash_string(&prompt_text);
-        tr.prompt_assembled(&step_id, &prompt_hash);
-
-        // Build provider from doc.providers[provider_id]
-        let spec = resolved.doc.providers.get(provider_id).with_context(|| {
-            format!(
-                "step '{}' references unknown provider '{}'",
-                step_id, provider_id
-            )
-        })?;
-
-        let prov = provider::build_provider(spec).with_context(|| {
-            format!(
-                "failed to build provider '{}' for step '{}'",
-                provider_id, step_id
-            )
-        })?;
-
-        let model_output = prov.complete(&prompt_text).with_context(|| {
-            format!(
-                "provider '{}' complete() failed for step '{}'",
-                provider_id, step_id
-            )
-        })?;
-
-        tr.step_finished(&step_id, true);
-
-        if print_outputs {
-            println!("--- step: {} ---", step_id);
-            println!("{}", model_output.trim_end());
-            println!();
-        }
-
-        outs.push(StepOutput {
-            step_id,
-            provider_id: provider_id.to_string(),
-            model_output,
-        });
     }
 
     Ok(outs)
