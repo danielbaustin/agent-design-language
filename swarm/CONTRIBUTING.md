@@ -35,6 +35,19 @@ cargo clippy --all-targets -- -D warnings
 cargo test
 ```
 
+## Coverage discipline
+
+We keep coverage regression small and visible:
+
+- New code paths and bug fixes should include tests.
+- CI enforces a modest minimum line coverage threshold as a guardrail.
+
+Run coverage locally from `swarm/`:
+
+```bash
+cargo llvm-cov --fail-under-lines 10
+```
+
 ---
 
 ## Workflow (Source of Truth: `swarm/CODEX_PLAYBOOK.md`)
