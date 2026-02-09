@@ -24,7 +24,7 @@ but expressed declaratively in ADL:
 From `swarm/`:
 
 ```bash
-cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --run --trace --out ./out
+cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --run --trace --out ./out --quiet --open
 open ./out/index.html
 ```
 

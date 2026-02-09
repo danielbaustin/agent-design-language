@@ -120,6 +120,12 @@ pub struct StepOutput {
     pub model_output: String,
 }
 
+#[derive(Debug, Clone)]
+pub struct ExecutionResult {
+    pub outputs: Vec<StepOutput>,
+    pub artifacts: Vec<PathBuf>,
+}
+
 /// Execute the resolved run in **sequential** mode (v0.1).
 ///
 /// v0.1 behavior:
@@ -131,7 +137,7 @@ pub fn execute_sequential(
     print_outputs: bool,
     adl_base_dir: &Path,
     out_dir: &Path,
-) -> Result<Vec<StepOutput>> {
+) -> Result<ExecutionResult> {
     // Gate concurrent early (per our decision).
     if !matches!(
         resolved.doc.run.workflow.kind,
@@ -145,6 +151,7 @@ or upgrade once concurrency lands (planned v0.3)."
     }
 
     let mut outs = Vec::new();
+    let mut artifacts = Vec::new();
 
     for step in &resolved.steps {
         let step_id = step.id.clone();
@@ -237,6 +244,7 @@ or upgrade once concurrency lands (planned v0.3)."
                         path.display(),
                         out.model_output.len()
                     );
+                    artifacts.push(path);
                 }
 
                 if print_outputs {
@@ -255,7 +263,10 @@ or upgrade once concurrency lands (planned v0.3)."
         }
     }
 
-    Ok(outs)
+    Ok(ExecutionResult {
+        outputs: outs,
+        artifacts,
+    })
 }
 
 fn validate_write_to(step_id: &str, write_to: &str) -> Result<()> {
