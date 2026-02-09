@@ -1,3 +1,8 @@
 swarm/issues.csv
 swarm/.local/
 .adl/cards/
+
+# Local demo/build artifacts (do not commit)
+out/
+target/
+issue-*.sh
