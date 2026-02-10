@@ -9,7 +9,7 @@ fn usage() -> &'static str {
   swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--out <dir>] [--quiet] [--open]
 
 Options:
-  --print-plan       Print the resolved plan (default)
+  --print-plan       Print the resolved plan
   --print-prompts    Print assembled prompts (--print-prompt also accepted)
   --trace            Emit trace events (dry-run unless --run)
   --run              Execute the workflow
@@ -22,7 +22,7 @@ Examples:
   swarm examples/adl-0.1.yaml
   swarm examples/adl-0.1.yaml --print-prompts
   swarm examples/adl-0.1.yaml --run --trace
-  swarm examples/v0-2-coordinator-agents-sdk.adl.yaml --run --trace --out ./out --quiet --open"
+  swarm examples/v0-2-coordinator-agents-sdk.adl.yaml"
 }
 
 fn print_error_chain(err: &anyhow::Error) {
@@ -104,11 +104,6 @@ fn real_main() -> Result<()> {
         i += 1;
     }
 
-    // Default behavior: print plan if nothing else requested
-    if !print_plan && !print_prompts && !do_trace && !do_run {
-        print_plan = true;
-    }
-
     let adl_path_str = adl_path.to_str().context("ADL path must be valid UTF-8")?;
 
     let adl_base_dir: PathBuf = adl_path.parent().unwrap_or(Path::new(".")).to_path_buf();
@@ -139,6 +134,16 @@ fn real_main() -> Result<()> {
             return Err(err);
         }
     };
+
+    // Default behavior when no mode flags were provided.
+    // v0.1: print plan; v0.2: run the workflow.
+    let mode_requested = print_plan || print_prompts || do_trace || do_run;
+    if !mode_requested {
+        match doc.version.trim() {
+            "0.1" => print_plan = true,
+            _ => do_run = true,
+        }
+    }
 
     if print_plan {
         resolve::print_resolved_plan(&resolved);

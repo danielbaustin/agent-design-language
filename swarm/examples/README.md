@@ -17,8 +17,7 @@ Expected: two steps execute in order and print outputs for each step.
 Coordinator demo (writes HTML artifact):
 
 ```bash
-cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --run --trace --out ./out --quiet --open
-open ./out/index.html
+cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml
 ```
 
 ## v0.2 failure-mode examples
