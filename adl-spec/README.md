@@ -42,6 +42,7 @@ but the *concepts* should map 1:1.
 - Product description (to be added under `docs/`)
 - Software design document (to be added under `docs/`)
 - v0.2 schema draft: `ADL_v0.2_Schema_Extensions.md`
+- Canonical schemas directory: `schemas/` (published schema artifacts)
 
 ## License
 
