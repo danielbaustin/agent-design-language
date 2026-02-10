@@ -14,6 +14,8 @@ agent workflows with deterministic resolution and clear failure modes.
 
 `swarm` is a small, conservative reference runtime for **Agent Design Language (ADL)**.
 
+For the v0.2 summary and demo commands, see `RELEASE_NOTES_v0.2.md`.
+
 It is intentionally *compiler-like* in how it processes ADL documents:
 
 1. **Parse** an ADL YAML document into a typed in-memory model.
