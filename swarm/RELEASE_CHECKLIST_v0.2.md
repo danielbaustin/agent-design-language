@@ -35,7 +35,7 @@ cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --run --trace --out .
 - [ ] v0.2 release notes written (#38)
 - [ ] README updated if behavior changed
 - [ ] Examples referenced correctly
-- [ ] Terminology consistent (input/output cards; avoid “receipt”)
+- [ ] Terminology consistent (input/output cards; avoid deprecated terms)
 
 ## 5) GitHub hygiene
 - [ ] All release PRs merged

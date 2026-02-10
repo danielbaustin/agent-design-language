@@ -15,7 +15,7 @@
 #   swarm/tools/pr.sh start   <issue> [--slug <slug>] [--prefix codex] [--no-fetch-issue]
 #   swarm/tools/pr.sh card    <issue> [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
 #   swarm/tools/pr.sh output  <issue> [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
-#   swarm/tools/pr.sh finish  <issue> --title "<title>" [-f <input_card.md>] [--receipt <output_receipt.md>] [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [--no-open]
+#   swarm/tools/pr.sh finish  <issue> --title "<title>" [-f <input_card.md>] [--output-card <output_card.md>] [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [--no-open]
 #   swarm/tools/pr.sh open
 #   swarm/tools/pr.sh status
 #
@@ -23,7 +23,7 @@
 #   swarm/tools/pr.sh start 14 --slug b6-default-system
 #   swarm/tools/pr.sh card  14 --version v0.2
 #   swarm/tools/pr.sh output 14 --version v0.2
-#   swarm/tools/pr.sh finish 14 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/issue-0014__input__v0.2.md --receipt .adl/cards/issue-0014__output__v0.2.md
+#   swarm/tools/pr.sh finish 14 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/issue-0014__input__v0.2.md --output-card .adl/cards/issue-0014__output__v0.2.md
 #   swarm/tools/pr.sh open
 #
 set -euo pipefail
@@ -173,7 +173,7 @@ ADL_CARDS_DIR="$ADL_DIR/cards"
 
 INPUT_TEMPLATE="$ADL_TEMPLATES_DIR/input_card_template.md"
 OUTPUT_TEMPLATE="$ADL_TEMPLATES_DIR/output_card_template.md"
-LEGACY_OUTPUT_TEMPLATE="$ADL_TEMPLATES_DIR/output_receipt_card_template.md"
+LEGACY_OUTPUT_TEMPLATE="$ADL_TEMPLATES_DIR/output_card_template.md"
 
 resolve_output_template() {
   # Prefer the new name; fall back to legacy for backwards compatibility.
@@ -709,7 +709,7 @@ cmd_finish() {
       --ready) ready="1"; shift ;;
       --allow-gitignore) allow_gitignore="1"; shift ;;
       -f|--file|--input) input_path="$2"; shift 2 ;;
-      --output|--receipt|--receipt-file) output_path="$2"; shift 2 ;;
+      --output|--output-card|--output-card-file) output_path="$2"; shift 2 ;;
       --no-open) no_open="1"; shift ;;
       --open) no_open="0"; shift ;;
       *) die "finish: unknown arg: $1" ;;
@@ -879,7 +879,7 @@ Commands:
   card    <issue> ... [--version <v0.2>] [-f <input_card.md>]
   output  <issue> ... [--version <v0.2>] [-f <output_card.md>]
   cards   <issue> [--version <v0.2>] [--no-fetch-issue]
-  finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output <output_card.md>] [--no-open]
+  finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open]
   open
   status
 
@@ -889,7 +889,7 @@ Flags:
   (cards)   --version <v0.2>                   Override detected version (otherwise inferred from issue labels version:vX.Y)
   (cards)   --no-fetch-issue                   Do not fetch issue title/labels (uses issue-<n> title)
   (card/output) --version <v0.2>               Override detected version (otherwise inferred from issue labels version:vX.Y)
-  (finish) --receipt <output_card.md>          REQUIRED: output card path (must exist)
+  (finish) --output-card <output_card.md>          REQUIRED: output card path (must exist)
   (card/start) --slug <slug>                   Use an explicit slug instead of fetching the issue title.
 
 Notes:
@@ -897,7 +897,7 @@ Notes:
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - Runs Rust checks in swarm/ by default (fmt, clippy -D warnings, test).
 - finish stages swarm/ by default (reduces accidental commits).
-- Templates are stored in .adl/templates/ (versioned): input_card_template.md and output_card_template.md (or legacy output_receipt_card_template.md) (output card template).
+- Templates are stored in .adl/templates/ (versioned): input_card_template.md and output_card_template.md (or legacy output_card_template.md) (output card template).
 - Cards are stored locally under .adl/cards/ and are not committed to git.
 
 Examples:
@@ -905,7 +905,7 @@ Examples:
   swarm/tools/pr.sh card  17 --version v0.2
   swarm/tools/pr.sh output 17 --version v0.2
   swarm/tools/pr.sh cards 17 --version v0.2
-  swarm/tools/pr.sh finish 17 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/issue-0017__input__v0.2.md --receipt .adl/cards/issue-0017__output__v0.2.md
+  swarm/tools/pr.sh finish 17 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/issue-0017__input__v0.2.md --output-card .adl/cards/issue-0017__output__v0.2.md
 EOF
 }
 
@@ -916,7 +916,7 @@ main() {
     finish) cmd_finish "$@" ;;
     card) cmd_card "$@" ;;
     output) cmd_output "$@" ;;
-    receipt) cmd_output "$@" ;;
+    output-card) cmd_output "$@" ;;
     cards) cmd_cards "$@" ;;
     open) cmd_open ;;
     status) cmd_status ;;
