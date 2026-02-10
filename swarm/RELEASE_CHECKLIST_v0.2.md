@@ -28,7 +28,7 @@
 Recommended demo run:
 ```
 # If supported by current CLI:
-cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --run --trace --out ./out --quiet --open
+cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml
 ```
 
 ## 4) Documentation consistency
