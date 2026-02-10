@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Debug, Clone)]
@@ -6,6 +7,8 @@ pub struct Trace {
     pub workflow_id: String,
     pub version: String,
     pub events: Vec<TraceEvent>,
+    run_started_ms: u128,
+    step_started_ms: HashMap<String, u128>,
 }
 
 #[derive(Debug, Clone)]
@@ -13,6 +16,11 @@ pub enum TraceEvent {
     RunFailed {
         ts_ms: u128,
         message: String,
+    },
+    RunFinished {
+        ts_ms: u128,
+        success: bool,
+        elapsed_ms: u128,
     },
     StepStarted {
         ts_ms: u128,
@@ -30,14 +38,35 @@ pub enum TraceEvent {
         ts_ms: u128,
         step_id: String,
         success: bool,
+        elapsed_ms: u128,
     },
 }
 
 impl TraceEvent {
-    pub fn summarize(&self) -> String {
+    pub fn summarize(&self, enhanced: bool) -> String {
         match self {
             TraceEvent::RunFailed { ts_ms, message } => {
-                format!("{ts_ms} RunFailed message={message}")
+                if enhanced {
+                    let ts = format_ts_ms(*ts_ms);
+                    format!("{ts_ms} RunFailed ts={ts} message={message}")
+                } else {
+                    format!("{ts_ms} RunFailed message={message}")
+                }
+            }
+            TraceEvent::RunFinished {
+                ts_ms,
+                success,
+                elapsed_ms,
+            } => {
+                if enhanced {
+                    let ts = format_ts_ms(*ts_ms);
+                    let elapsed = format_elapsed_ms(*elapsed_ms);
+                    format!(
+                        "{ts_ms} RunFinished ts={ts} success={success} elapsed_ms={elapsed_ms} elapsed={elapsed}"
+                    )
+                } else {
+                    format!("{ts_ms} RunFinished success={success}")
+                }
             }
             TraceEvent::StepStarted {
                 ts_ms,
@@ -45,19 +74,46 @@ impl TraceEvent {
                 agent_id,
                 provider_id,
                 task_id,
-            } => format!(
-                "{ts_ms} StepStarted step={step_id} agent={agent_id} provider={provider_id} task={task_id}"
-            ),
+            } => {
+                if enhanced {
+                    let ts = format_ts_ms(*ts_ms);
+                    format!(
+                        "{ts_ms} StepStarted ts={ts} step={step_id} agent={agent_id} provider={provider_id} task={task_id}"
+                    )
+                } else {
+                    format!(
+                        "{ts_ms} StepStarted step={step_id} agent={agent_id} provider={provider_id} task={task_id}"
+                    )
+                }
+            }
             TraceEvent::PromptAssembled {
                 ts_ms,
                 step_id,
                 prompt_hash,
-            } => format!("{ts_ms} PromptAssembled step={step_id} hash={prompt_hash}"),
+            } => {
+                if enhanced {
+                    let ts = format_ts_ms(*ts_ms);
+                    format!("{ts_ms} PromptAssembled ts={ts} step={step_id} hash={prompt_hash}")
+                } else {
+                    format!("{ts_ms} PromptAssembled step={step_id} hash={prompt_hash}")
+                }
+            }
             TraceEvent::StepFinished {
                 ts_ms,
                 step_id,
                 success,
-            } => format!("{ts_ms} StepFinished step={step_id} success={success}"),
+                elapsed_ms,
+            } => {
+                if enhanced {
+                    let ts = format_ts_ms(*ts_ms);
+                    let elapsed = format_elapsed_ms(*elapsed_ms);
+                    format!(
+                        "{ts_ms} StepFinished ts={ts} step={step_id} success={success} elapsed_ms={elapsed_ms} elapsed={elapsed}"
+                    )
+                } else {
+                    format!("{ts_ms} StepFinished step={step_id} success={success}")
+                }
+            }
         }
     }
 }
@@ -68,11 +124,14 @@ impl Trace {
         workflow_id: impl Into<String>,
         version: impl Into<String>,
     ) -> Self {
+        let started = Self::now_ms();
         Self {
             run_id: run_id.into(),
             workflow_id: workflow_id.into(),
             version: version.into(),
             events: Vec::new(),
+            run_started_ms: started,
+            step_started_ms: HashMap::new(),
         }
     }
 
@@ -90,13 +149,15 @@ impl Trace {
         provider_id: &str,
         task_id: &str,
     ) {
+        let ts_ms = Self::now_ms();
         self.events.push(TraceEvent::StepStarted {
-            ts_ms: Self::now_ms(),
+            ts_ms,
             step_id: step_id.to_string(),
             agent_id: agent_id.to_string(),
             provider_id: provider_id.to_string(),
             task_id: task_id.to_string(),
         });
+        self.step_started_ms.insert(step_id.to_string(), ts_ms);
     }
 
     pub fn run_failed(&mut self, message: &str) {
@@ -115,23 +176,54 @@ impl Trace {
     }
 
     pub fn step_finished(&mut self, step_id: &str, success: bool) {
+        let ts_ms = Self::now_ms();
+        let elapsed_ms = self
+            .step_started_ms
+            .remove(step_id)
+            .map(|started| ts_ms.saturating_sub(started))
+            .unwrap_or(0);
         self.events.push(TraceEvent::StepFinished {
-            ts_ms: Self::now_ms(),
+            ts_ms,
             step_id: step_id.to_string(),
             success,
+            elapsed_ms,
+        });
+    }
+
+    pub fn run_finished(&mut self, success: bool) {
+        let ts_ms = Self::now_ms();
+        let elapsed_ms = ts_ms.saturating_sub(self.run_started_ms);
+        self.events.push(TraceEvent::RunFinished {
+            ts_ms,
+            success,
+            elapsed_ms,
         });
     }
 }
 
 /// Print a human-readable trace to stdout (stable + diff-friendly).
 pub fn print_trace(tr: &Trace) {
+    let enhanced = tr.version.trim() == "0.2";
     println!(
         "TRACE run_id={} workflow_id={} version={}",
         tr.run_id, tr.workflow_id, tr.version
     );
     for ev in &tr.events {
-        println!("{}", ev.summarize());
+        println!("{}", ev.summarize(enhanced));
     }
+}
+
+fn format_ts_ms(ts_ms: u128) -> String {
+    // Human-readable UTC-like timestamp without extra dependencies.
+    // Kept deterministic and cross-platform for tests/log parsing.
+    let secs = ts_ms / 1000;
+    let millis = ts_ms % 1000;
+    format!("{secs}.{millis:03}Z")
+}
+
+fn format_elapsed_ms(elapsed_ms: u128) -> String {
+    let secs = elapsed_ms as f64 / 1000.0;
+    format!("{secs:.2}s")
 }
 
 #[cfg(test)]
@@ -163,8 +255,13 @@ mod tests {
         }
 
         match &tr.events[2] {
-            TraceEvent::StepFinished { success, .. } => {
+            TraceEvent::StepFinished {
+                success,
+                elapsed_ms,
+                ..
+            } => {
                 assert!(*success);
+                assert!(*elapsed_ms <= 1_000);
             }
             _ => panic!("expected StepFinished event"),
         }

@@ -166,6 +166,9 @@ fn real_main() -> Result<()> {
         let result = match result {
             Ok(result) => result,
             Err(err) => {
+                if resolved.doc.version.trim() == "0.2" {
+                    tr.run_finished(false);
+                }
                 if do_trace {
                     trace::print_trace(&tr);
                 }
@@ -186,6 +189,9 @@ fn real_main() -> Result<()> {
         }
 
         if do_trace {
+            if resolved.doc.version.trim() == "0.2" {
+                tr.run_finished(true);
+            }
             trace::print_trace(&tr);
         }
 
@@ -225,6 +231,10 @@ fn real_main() -> Result<()> {
             }
 
             tr.step_finished(step_id, true);
+        }
+
+        if resolved.doc.version.trim() == "0.2" {
+            tr.run_finished(true);
         }
 
         trace::print_trace(&tr);
