@@ -235,7 +235,7 @@ fn real_main() -> Result<()> {
                     .collect();
 
                 let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
-                let hash = prompt::hash_string(&prompt_text);
+                let hash = prompt::hash_prompt(&prompt_text);
                 tr.prompt_assembled(step_id, &hash);
             }
 
