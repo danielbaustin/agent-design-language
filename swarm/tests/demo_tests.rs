@@ -74,7 +74,6 @@ fn demo_run_writes_required_artifacts() {
         readme.contains("cargo run"),
         "README missing 'cargo run':\n{readme}"
     );
-
     let trace = fs::read_to_string(run_out.join("trace.jsonl")).unwrap();
     assert!(
         trace.contains("TRACE run_id=demo-a-say-mcp"),

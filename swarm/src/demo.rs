@@ -153,7 +153,6 @@ open index.html
 - This is a demo scaffold. It intentionally avoids extra dependencies.
 - `say` is invoked via `std::process::Command` with discrete argv entries (no shell).
 "#;
-
 const DESIGN_MD: &str = r#"# Demo A: Remote Brain, Local Hands
 
 ## Goal
