@@ -39,11 +39,7 @@ fn write_executable(path: &Path, contents: &str) -> io::Result<()> {
     Ok(())
 }
 
-struct LocalhostGuard {
-    old: Option<String>,
-}
-
-fn block_incoming_localhost() -> LocalhostGuard {
+fn block_incoming_localhost() -> EnvVarGuard {
     let key = "NO_PROXY";
     let old = std::env::var(key).ok();
     let mut new_val = old.clone().unwrap_or_default();
@@ -51,23 +47,7 @@ fn block_incoming_localhost() -> LocalhostGuard {
         new_val.push(',');
     }
     new_val.push_str("127.0.0.1,localhost");
-
-    unsafe {
-        std::env::set_var(key, new_val);
-    }
-
-    LocalhostGuard { old }
-}
-
-impl Drop for LocalhostGuard {
-    fn drop(&mut self) {
-        unsafe {
-            match &self.old {
-                Some(v) => std::env::set_var("NO_PROXY", v),
-                None => std::env::remove_var("NO_PROXY"),
-            }
-        }
-    }
+    EnvVarGuard::set(key, new_val)
 }
 
 fn make_mock_ollama_success(dir: &Path) -> io::Result<PathBuf> {
