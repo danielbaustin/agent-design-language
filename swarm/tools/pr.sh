@@ -897,7 +897,7 @@ Notes:
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - Runs Rust checks in swarm/ by default (fmt, clippy -D warnings, test).
 - finish stages swarm/ by default (reduces accidental commits).
-- Templates are stored in .adl/templates/ (versioned): input_card_template.md and output_card_template.md (or legacy output_card_template.md) (output card template).
+- Templates are stored in swarm/templates/ (versioned): input_card_template.md and output_card_template.md (or legacy output_card_template.md) (output card template).
 - Cards are stored locally under .adl/cards/ and are not committed to git.
 
 Examples:
