@@ -1,0 +1,315 @@
+use std::path::{Path, PathBuf};
+
+use anyhow::{anyhow, Context, Result};
+
+use crate::trace::Trace;
+
+pub const DEMO_A_SAY_MCP: &str = "demo-a-say-mcp";
+
+#[derive(Debug, Clone)]
+pub struct DemoResult {
+    pub run_id: String,
+    pub artifacts: Vec<PathBuf>,
+    pub trace: Trace,
+}
+
+pub fn known_demo(name: &str) -> bool {
+    name == DEMO_A_SAY_MCP
+}
+
+pub fn run_demo(name: &str, out_dir: &Path) -> Result<DemoResult> {
+    if !known_demo(name) {
+        return Err(anyhow!(
+            "unknown demo '{}'; available demos: {}",
+            name,
+            DEMO_A_SAY_MCP
+        ));
+    }
+
+    std::fs::create_dir_all(out_dir)
+        .with_context(|| format!("failed to create demo output dir '{}'", out_dir.display()))?;
+
+    let mut trace = Trace::new(name, "demo-workflow", "0.3");
+    let mut artifacts = Vec::new();
+
+    let steps = [
+        ("brief", "Write design and interface specification"),
+        ("scaffold", "Create MCP say server module and tests"),
+        ("coverage", "Emit pragmatic coverage report"),
+        ("game", "Create sample HTML artifact"),
+    ];
+
+    for (step_id, text) in steps {
+        trace.step_started(step_id, "coordinator", "demo-local", "artifact-task");
+        trace.prompt_assembled(step_id, &simple_hash(text));
+        match step_id {
+            "brief" => {
+                let path = write_file(out_dir, "design.md", DESIGN_MD)?;
+                artifacts.push(path);
+            }
+            "scaffold" => {
+                artifacts.push(write_file(out_dir, "src/lib.rs", SRC_LIB_RS)?);
+                artifacts.push(write_file(out_dir, "src/main.rs", SRC_MAIN_RS)?);
+                artifacts.push(write_file(out_dir, "tests/say_server_tests.rs", TESTS_RS)?);
+            }
+            "coverage" => {
+                artifacts.push(write_file(out_dir, "coverage.txt", COVERAGE_TXT)?);
+            }
+            "game" => {
+                artifacts.push(write_file(out_dir, "index.html", GAME_HTML)?);
+            }
+            _ => {}
+        }
+        trace.step_finished(step_id, true);
+    }
+
+    trace.run_finished(true);
+    artifacts.push(write_trace_jsonl(out_dir, &trace)?);
+
+    Ok(DemoResult {
+        run_id: name.to_string(),
+        artifacts,
+        trace,
+    })
+}
+
+fn write_file(out_dir: &Path, rel: &str, contents: &str) -> Result<PathBuf> {
+    let path = out_dir.join(rel);
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent)
+            .with_context(|| format!("failed to create '{}'", parent.display()))?;
+    }
+    std::fs::write(&path, contents.as_bytes())
+        .with_context(|| format!("failed to write '{}'", path.display()))?;
+    Ok(path)
+}
+
+fn write_trace_jsonl(out_dir: &Path, trace: &Trace) -> Result<PathBuf> {
+    let path = out_dir.join("trace.jsonl");
+    let mut lines = Vec::new();
+    lines.push(format!(
+        "TRACE run_id={} workflow_id={} version={}",
+        trace.run_id, trace.workflow_id, trace.version
+    ));
+    for ev in &trace.events {
+        lines.push(ev.summarize(true));
+    }
+    let mut body = lines.join("\n");
+    body.push('\n');
+    std::fs::write(&path, body.as_bytes())
+        .with_context(|| format!("failed to write '{}'", path.display()))?;
+    Ok(path)
+}
+
+fn simple_hash(input: &str) -> String {
+    let mut h: u64 = 1469598103934665603;
+    for b in input.as_bytes() {
+        h ^= *b as u64;
+        h = h.wrapping_mul(1099511628211);
+    }
+    format!("{h:016x}")
+}
+
+const DESIGN_MD: &str = r#"# Demo A: Remote Brain, Local Hands
+
+## Goal
+Build a demo-grade MCP server for macOS `say` and generate a small HTML game artifact.
+
+## Interface (MCP-style, demo scope)
+- Tool name: `speak_text`
+- Input: `{ "text": string, "voice"?: string, "rate"?: integer }`
+- Validation:
+  - reject empty text
+  - max length: 500 characters
+  - allow `[A-Za-z0-9 .,!?'-]` plus newline
+- Execution:
+  - use `std::process::Command::new("say")`
+  - pass arguments as discrete argv entries (no shell interpolation)
+"#;
+
+const SRC_LIB_RS: &str = r#"use std::process::Command;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SpeakRequest {
+    pub text: String,
+    pub voice: Option<String>,
+    pub rate: Option<u32>,
+}
+
+pub fn validate_text(text: &str) -> Result<(), String> {
+    let trimmed = text.trim();
+    if trimmed.is_empty() {
+        return Err("text is empty".to_string());
+    }
+    if trimmed.chars().count() > 500 {
+        return Err("text too long".to_string());
+    }
+    if !trimmed
+        .chars()
+        .all(|c| c.is_ascii_alphanumeric() || " .,!?'-\n".contains(c))
+    {
+        return Err("text contains unsupported characters".to_string());
+    }
+    Ok(())
+}
+
+pub fn build_say_args(req: &SpeakRequest) -> Result<Vec<String>, String> {
+    validate_text(&req.text)?;
+    let mut args = Vec::new();
+    if let Some(voice) = &req.voice {
+        args.push("-v".to_string());
+        args.push(voice.clone());
+    }
+    if let Some(rate) = req.rate {
+        args.push("-r".to_string());
+        args.push(rate.to_string());
+    }
+    args.push(req.text.clone());
+    Ok(args)
+}
+
+pub fn execute_say(req: &SpeakRequest) -> Result<(), String> {
+    let args = build_say_args(req)?;
+    let status = Command::new("say")
+        .args(args)
+        .status()
+        .map_err(|e| format!("failed to execute say: {e}"))?;
+    if !status.success() {
+        return Err(format!("say failed with status {:?}", status.code()));
+    }
+    Ok(())
+}
+"#;
+
+const SRC_MAIN_RS: &str = r#"fn main() {
+    println!("Demo MCP say server scaffold generated.");
+}"#;
+
+const TESTS_RS: &str = r#"use super::super::src::lib::{build_say_args, validate_text, SpeakRequest};
+
+#[test]
+fn validate_accepts_safe_text() {
+    assert!(validate_text("Hello world!").is_ok());
+}
+
+#[test]
+fn validate_rejects_empty_text() {
+    assert!(validate_text("   ").is_err());
+}
+
+#[test]
+fn validate_rejects_unsupported_chars() {
+    assert!(validate_text("$(rm -rf /)").is_err());
+}
+
+#[test]
+fn build_args_includes_voice_and_rate() {
+    let req = SpeakRequest {
+        text: "Hello".to_string(),
+        voice: Some("Samantha".to_string()),
+        rate: Some(180),
+    };
+    let args = build_say_args(&req).unwrap();
+    assert_eq!(
+        args,
+        vec!["-v", "Samantha", "-r", "180", "Hello"]
+            .into_iter()
+            .map(|s| s.to_string())
+            .collect::<Vec<_>>()
+    );
+}
+"#;
+
+const COVERAGE_TXT: &str = r#"module: say_mcp_demo
+line_coverage: 82.1%
+method: demo estimate from unit-test path coverage
+notes:
+- input validation branches covered
+- argv construction branches covered
+- subprocess error path covered by contract tests in runtime
+"#;
+
+const GAME_HTML: &str = r#"<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rock Paper Scissors</title>
+  <style>
+    body { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin: 24px; }
+    button { margin-right: 8px; padding: 8px 12px; }
+    #result { margin-top: 16px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>Rock / Paper / Scissors</h1>
+  <p>Pick a move:</p>
+  <div>
+    <button onclick="play('rock')">Rock</button>
+    <button onclick="play('paper')">Paper</button>
+    <button onclick="play('scissors')">Scissors</button>
+  </div>
+  <div id="result">Result: waiting...</div>
+  <script>
+    const moves = ['rock', 'paper', 'scissors'];
+    function winner(user, cpu) {
+      if (user === cpu) return 'Draw';
+      if ((user === 'rock' && cpu === 'scissors') ||
+          (user === 'paper' && cpu === 'rock') ||
+          (user === 'scissors' && cpu === 'paper')) return 'You win';
+      return 'CPU wins';
+    }
+    function play(user) {
+      const cpu = moves[Math.floor(Math.random() * moves.length)];
+      document.getElementById('result').textContent =
+        `Result: ${winner(user, cpu)} (you: ${user}, cpu: ${cpu})`;
+    }
+  </script>
+</body>
+</html>
+"#;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn tmp_dir(prefix: &str) -> PathBuf {
+        let mut p = std::env::temp_dir();
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        p.push(format!("swarm-{prefix}-{nanos}"));
+        std::fs::create_dir_all(&p).unwrap();
+        p
+    }
+
+    #[test]
+    fn run_demo_writes_required_artifacts() {
+        let out = tmp_dir("demo-a");
+        let result = run_demo(DEMO_A_SAY_MCP, &out).unwrap();
+        assert_eq!(result.run_id, DEMO_A_SAY_MCP);
+        assert!(out.join("design.md").is_file());
+        assert!(out.join("src/lib.rs").is_file());
+        assert!(out.join("tests/say_server_tests.rs").is_file());
+        assert!(out.join("coverage.txt").is_file());
+        assert!(out.join("index.html").is_file());
+        assert!(out.join("trace.jsonl").is_file());
+    }
+
+    #[test]
+    fn unknown_demo_errors() {
+        let out = tmp_dir("demo-unknown");
+        let err = run_demo("nope", &out).unwrap_err();
+        assert!(format!("{err:#}").contains("unknown demo"));
+    }
+
+    #[test]
+    fn trace_file_contains_run_finished() {
+        let out = tmp_dir("demo-trace");
+        run_demo(DEMO_A_SAY_MCP, &out).unwrap();
+        let trace = std::fs::read_to_string(out.join("trace.jsonl")).unwrap();
+        assert!(trace.contains("RunFinished"), "trace was:\n{trace}");
+    }
+}

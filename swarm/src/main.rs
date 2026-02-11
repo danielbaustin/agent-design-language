@@ -2,11 +2,12 @@ use anyhow::{Context, Result};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-use swarm::{adl, execute, prompt, resolve, trace};
+use swarm::{adl, demo, execute, prompt, resolve, trace};
 
 fn usage() -> &'static str {
     "Usage:
   swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--out <dir>] [--quiet] [--open]
+  swarm demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open]
 
 Options:
   --print-plan       Print the resolved plan
@@ -22,7 +23,8 @@ Examples:
   swarm examples/adl-0.1.yaml
   swarm examples/adl-0.1.yaml --print-prompts
   swarm examples/adl-0.1.yaml --run --trace
-  swarm examples/v0-2-coordinator-agents-sdk.adl.yaml"
+  swarm examples/v0-2-coordinator-agents-sdk.adl.yaml
+  swarm demo demo-a-say-mcp --run --trace --open"
 }
 
 fn print_error_chain(err: &anyhow::Error) {
@@ -51,6 +53,10 @@ fn real_main() -> Result<()> {
     if matches!(args.first().map(|s| s.as_str()), Some("--help" | "-h")) {
         println!("{}", usage());
         return Ok(());
+    }
+
+    if matches!(args.first().map(|s| s.as_str()), Some("demo")) {
+        return real_demo(&args[1..]);
     }
 
     let adl_path: PathBuf = match args.first() {
@@ -237,6 +243,125 @@ fn real_main() -> Result<()> {
             tr.run_finished(true);
         }
 
+        trace::print_trace(&tr);
+    }
+
+    Ok(())
+}
+
+fn real_demo(args: &[String]) -> Result<()> {
+    let demo_name = match args.first() {
+        Some(name) => name.as_str(),
+        None => {
+            eprintln!("missing demo name");
+            eprintln!(
+                "Try: swarm demo {} --run --trace --open",
+                demo::DEMO_A_SAY_MCP
+            );
+            eprintln!("{}", usage());
+            std::process::exit(2);
+        }
+    };
+
+    if !demo::known_demo(demo_name) {
+        eprintln!("unknown demo: {demo_name}");
+        eprintln!("available demos: {}", demo::DEMO_A_SAY_MCP);
+        std::process::exit(2);
+    }
+
+    let mut print_plan = false;
+    let mut do_trace = false;
+    let mut do_run = false;
+    let mut out_root = PathBuf::from("out");
+    let mut quiet = false;
+    let mut do_open = false;
+
+    let mut i = 1;
+    while i < args.len() {
+        let a = &args[i];
+        match a.as_str() {
+            "--print-plan" => print_plan = true,
+            "--trace" => do_trace = true,
+            "--run" => do_run = true,
+            "--out" => {
+                let Some(dir) = args.get(i + 1) else {
+                    eprintln!("--out requires a directory path");
+                    eprintln!("{}", usage());
+                    std::process::exit(2);
+                };
+                out_root = PathBuf::from(dir);
+                i += 1;
+            }
+            "--quiet" | "--no-step-output" => quiet = true,
+            "--open" | "--open-artifacts" => do_open = true,
+            "--help" | "-h" => {
+                println!("{}", usage());
+                return Ok(());
+            }
+            _ => {
+                eprintln!("Unknown arg: {a}");
+                eprintln!("Run 'swarm --help' for usage.");
+                eprintln!("{}", usage());
+                std::process::exit(2);
+            }
+        }
+        i += 1;
+    }
+
+    if !print_plan && !do_trace && !do_run {
+        do_run = true;
+    }
+
+    if print_plan {
+        println!("Demo: {demo_name}");
+        println!("Run ID: {demo_name}");
+        println!("Workflow: demo-workflow");
+        println!("Steps: 4");
+        println!("  0. brief");
+        println!("  1. scaffold");
+        println!("  2. coverage");
+        println!("  3. game");
+    }
+
+    if do_run {
+        let out_dir = out_root.join(demo_name);
+        let result = demo::run_demo(demo_name, &out_dir)?;
+        if !quiet {
+            println!("DEMO RUN: {}", result.run_id);
+            println!("OUTPUT: {}", out_dir.display());
+            println!("ARTIFACTS:");
+            for p in &result.artifacts {
+                if let Ok(rel) = p.strip_prefix(&out_dir) {
+                    println!("  - {}", rel.display());
+                } else {
+                    println!("  - {}", p.display());
+                }
+            }
+        } else {
+            println!("DEMO RUN: {}", result.run_id);
+            println!("OUTPUT: {}", out_dir.display());
+        }
+
+        if do_trace {
+            trace::print_trace(&result.trace);
+        }
+
+        if do_open {
+            if let Some(path) = select_open_artifact(&result.artifacts) {
+                let runner = RealCommandRunner;
+                open_artifact(&runner, &path)?;
+                println!("OPEN path={}", path.display());
+            }
+        }
+    } else if do_trace {
+        // Dry-run demo trace
+        let mut tr = trace::Trace::new(demo_name, "demo-workflow", "0.3");
+        for step_id in ["brief", "scaffold", "coverage", "game"] {
+            tr.step_started(step_id, "coordinator", "demo-local", "artifact-task");
+            tr.prompt_assembled(step_id, "dryrun");
+            tr.step_finished(step_id, true);
+        }
+        tr.run_finished(true);
         trace::print_trace(&tr);
     }
 
