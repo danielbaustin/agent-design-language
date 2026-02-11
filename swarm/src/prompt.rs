@@ -5,10 +5,10 @@ use std::hash::{Hash, Hasher};
 use crate::adl::PromptSpec;
 use crate::resolve::AdlResolved;
 
-/// Hash an arbitrary string (used for tracing rendered prompt text).
-pub fn hash_string(s: &str) -> String {
+/// Hash rendered prompt text for trace events.
+pub fn hash_prompt(prompt_text: &str) -> String {
     let mut h = DefaultHasher::new();
-    s.hash(&mut h);
+    prompt_text.hash(&mut h);
     format!("{:016x}", h.finish())
 }
 
@@ -90,16 +90,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn hash_string_is_deterministic() {
-        let a = hash_string("hello world");
-        let b = hash_string("hello world");
+    fn hash_prompt_is_deterministic() {
+        let a = hash_prompt("hello world");
+        let b = hash_prompt("hello world");
         assert_eq!(a, b);
     }
 
     #[test]
-    fn hash_string_changes_with_input() {
-        let a = hash_string("hello world");
-        let b = hash_string("hello world!");
+    fn hash_prompt_changes_with_input() {
+        let a = hash_prompt("hello world");
+        let b = hash_prompt("hello world!");
         assert_ne!(a, b);
     }
 

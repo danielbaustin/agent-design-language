@@ -201,7 +201,7 @@ pub fn execute_sequential(
 
             // Assemble a single text blob suitable for basic model consumption.
             let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
-            let prompt_hash = prompt::hash_string(&prompt_text);
+            let prompt_hash = prompt::hash_prompt(&prompt_text);
             tr.prompt_assembled(&step_id, &prompt_hash);
 
             // Build provider from doc.providers[provider_id]
