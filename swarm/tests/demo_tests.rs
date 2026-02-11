@@ -8,6 +8,15 @@ fn run_swarm(args: &[&str]) -> std::process::Output {
     Command::new(exe).args(args).output().unwrap()
 }
 
+fn run_swarm_with_ci(args: &[&str]) -> std::process::Output {
+    let exe = env!("CARGO_BIN_EXE_swarm");
+    Command::new(exe)
+        .env("CI", "1")
+        .args(args)
+        .output()
+        .unwrap()
+}
+
 fn tmp_dir(prefix: &str) -> PathBuf {
     let mut p = std::env::temp_dir();
     let nanos = SystemTime::now()
@@ -91,5 +100,69 @@ fn demo_unknown_name_exits_with_code_2() {
         "expected exit 2, got {:?}\nstderr:\n{}",
         out.status.code(),
         String::from_utf8_lossy(&out.stderr)
+    );
+}
+
+#[test]
+fn demo_b_print_plan_is_deterministic() {
+    let out = run_swarm(&["demo", "demo-b-one-command", "--print-plan"]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("Demo: demo-b-one-command"),
+        "stdout:\n{stdout}"
+    );
+    assert!(stdout.contains("Steps: 3"), "stdout:\n{stdout}");
+    assert!(stdout.contains("0. plan"), "stdout:\n{stdout}");
+    assert!(stdout.contains("1. build"), "stdout:\n{stdout}");
+    assert!(stdout.contains("2. verify"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn demo_b_run_is_quiet_and_writes_artifacts() {
+    let out_root = tmp_dir("demo-b-run");
+    let out = run_swarm_with_ci(&[
+        "demo",
+        "demo-b-one-command",
+        "--run",
+        "--trace",
+        "--out",
+        out_root.to_string_lossy().as_ref(),
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("DEMO OK run_id=demo-b-one-command"),
+        "stdout:\n{stdout}"
+    );
+
+    let run_out = out_root.join("demo-b-one-command");
+    assert!(run_out.join("design.md").is_file());
+    assert!(run_out.join("README.md").is_file());
+    assert!(run_out.join("coverage.txt").is_file());
+    assert!(run_out.join("index.html").is_file());
+    assert!(run_out.join("trace.jsonl").is_file());
+
+    let readme = fs::read_to_string(run_out.join("README.md")).unwrap();
+    assert!(
+        readme.contains("cargo run -- demo demo-b-one-command --run --out <dir>"),
+        "README missing run instruction:\n{readme}"
+    );
+
+    let trace = fs::read_to_string(run_out.join("trace.jsonl")).unwrap();
+    assert!(trace.contains("RunFinished"), "trace:\n{trace}");
+
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.trim().is_empty(),
+        "expected empty stderr on success, got:\n{stderr}"
     );
 }

@@ -1,13 +1,14 @@
 use anyhow::{Context, Result};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
+use std::process::Stdio;
 
 use swarm::{adl, demo, execute, prompt, resolve, trace};
 
 fn usage() -> &'static str {
     "Usage:
   swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--out <dir>] [--quiet] [--open]
-  swarm demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open]
+  swarm demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
 
 Options:
   --print-plan       Print the resolved plan
@@ -17,6 +18,7 @@ Options:
   --out <dir>        Write step outputs to files under this directory (default: ./out)
   --quiet            Suppress per-step output bodies (--no-step-output also accepted)
   --open             Open the first written HTML artifact after a successful run
+  --no-open          Disable artifact auto-open for demo runs
   -h, --help         Show this help
 
 Examples:
@@ -24,7 +26,8 @@ Examples:
   swarm examples/adl-0.1.yaml --print-prompts
   swarm examples/adl-0.1.yaml --run --trace
   swarm examples/v0-2-coordinator-agents-sdk.adl.yaml
-  swarm demo demo-a-say-mcp --run --trace --open"
+  swarm demo demo-a-say-mcp --run --trace --open
+  swarm demo demo-b-one-command --run --out ./out"
 }
 
 fn print_error_chain(err: &anyhow::Error) {
@@ -265,7 +268,11 @@ fn real_demo(args: &[String]) -> Result<()> {
 
     if !demo::known_demo(demo_name) {
         eprintln!("unknown demo: {demo_name}");
-        eprintln!("available demos: {}", demo::DEMO_A_SAY_MCP);
+        eprintln!(
+            "available demos: {}, {}",
+            demo::DEMO_A_SAY_MCP,
+            demo::DEMO_B_ONE_COMMAND
+        );
         std::process::exit(2);
     }
 
@@ -273,8 +280,8 @@ fn real_demo(args: &[String]) -> Result<()> {
     let mut do_trace = false;
     let mut do_run = false;
     let mut out_root = PathBuf::from("out");
-    let mut quiet = false;
-    let mut do_open = false;
+    let mut quiet = demo_name == demo::DEMO_B_ONE_COMMAND;
+    let mut open_pref: Option<bool> = None;
 
     let mut i = 1;
     while i < args.len() {
@@ -293,7 +300,8 @@ fn real_demo(args: &[String]) -> Result<()> {
                 i += 1;
             }
             "--quiet" | "--no-step-output" => quiet = true,
-            "--open" | "--open-artifacts" => do_open = true,
+            "--open" | "--open-artifacts" => open_pref = Some(true),
+            "--no-open" => open_pref = Some(false),
             "--help" | "-h" => {
                 println!("{}", usage());
                 return Ok(());
@@ -316,17 +324,19 @@ fn real_demo(args: &[String]) -> Result<()> {
         println!("Demo: {demo_name}");
         println!("Run ID: {demo_name}");
         println!("Workflow: demo-workflow");
-        println!("Steps: 4");
-        println!("  0. brief");
-        println!("  1. scaffold");
-        println!("  2. coverage");
-        println!("  3. game");
+        let steps = demo::plan_steps(demo_name);
+        println!("Steps: {}", steps.len());
+        for (idx, step) in steps.iter().enumerate() {
+            println!("  {idx}. {step}");
+        }
     }
 
     if do_run {
         let out_dir = out_root.join(demo_name);
         let result = demo::run_demo(demo_name, &out_dir)?;
-        if !quiet {
+        if quiet {
+            println!("DEMO OK run_id={} out={}", result.run_id, out_dir.display());
+        } else {
             println!("DEMO RUN: {}", result.run_id);
             println!("OUTPUT: {}", out_dir.display());
             println!("ARTIFACTS:");
@@ -337,20 +347,27 @@ fn real_demo(args: &[String]) -> Result<()> {
                     println!("  - {}", p.display());
                 }
             }
-        } else {
-            println!("DEMO RUN: {}", result.run_id);
-            println!("OUTPUT: {}", out_dir.display());
         }
 
         if do_trace {
             trace::print_trace(&result.trace);
         }
 
+        let do_open = match open_pref {
+            Some(v) => v,
+            None => demo_name == demo::DEMO_B_ONE_COMMAND && !is_ci_environment(),
+        };
+        let open_is_explicit = open_pref == Some(true);
         if do_open {
             if let Some(path) = select_open_artifact(&result.artifacts) {
                 let runner = RealCommandRunner;
-                open_artifact(&runner, &path)?;
-                println!("OPEN path={}", path.display());
+                if let Err(err) = open_artifact(&runner, &path) {
+                    if open_is_explicit {
+                        eprintln!("WARN: failed to open artifact '{}': {err}", path.display());
+                    }
+                } else if !quiet {
+                    println!("OPEN path={}", path.display());
+                }
             }
         }
     } else if do_trace {
@@ -368,6 +385,16 @@ fn real_demo(args: &[String]) -> Result<()> {
     Ok(())
 }
 
+fn is_ci_environment() -> bool {
+    match std::env::var("CI") {
+        Ok(v) => {
+            let t = v.trim().to_ascii_lowercase();
+            !t.is_empty() && t != "0" && t != "false"
+        }
+        Err(_) => false,
+    }
+}
+
 trait CommandRunner {
     fn run(&self, program: &str, args: &[String]) -> Result<()>;
 }
@@ -378,6 +405,8 @@ impl CommandRunner for RealCommandRunner {
     fn run(&self, program: &str, args: &[String]) -> Result<()> {
         let status = std::process::Command::new(program)
             .args(args)
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
             .status()
             .with_context(|| format!("failed to spawn '{}'", program))?;
         if !status.success() {
