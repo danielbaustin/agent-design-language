@@ -1,0 +1,66 @@
+version: "0.3"
+
+providers:
+  local_ollama:
+    type: "ollama"
+    base_url: "http://localhost:11434"
+    default_model: "gemma3:latest"
+
+agents:
+  coordinator:
+    provider: "local_ollama"
+    model: "gemma3:latest"
+    prompt:
+      system: "You coordinate deterministic artifact generation for a local engineering workflow."
+
+tasks:
+  brief:
+    prompt:
+      user: |
+        Write a short design.md for an MCP server wrapping macOS say safely.
+  scaffold:
+    prompt:
+      user: |
+        Produce Rust module and tests for a demo MCP say tool with input validation.
+  coverage:
+    prompt:
+      user: |
+        Produce a short coverage report showing pragmatic ~80% line coverage.
+  game:
+    prompt:
+      user: |
+        Produce a single-file Rock Paper Scissors HTML game.
+
+run:
+  name: "demo-a-say-mcp"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "brief"
+        agent: "coordinator"
+        task: "brief"
+        inputs:
+          objective: "MCP say server design"
+        save_as: "design_doc"
+        write_to: "design.md"
+      - id: "scaffold"
+        agent: "coordinator"
+        task: "scaffold"
+        inputs:
+          language: "rust"
+        save_as: "server_code"
+        write_to: "src/lib.rs"
+      - id: "coverage"
+        agent: "coordinator"
+        task: "coverage"
+        inputs:
+          target: "80%"
+        save_as: "coverage_report"
+        write_to: "coverage.txt"
+      - id: "game"
+        agent: "coordinator"
+        task: "game"
+        inputs:
+          title: "Rock Paper Scissors"
+        save_as: "game_html"
+        write_to: "index.html"

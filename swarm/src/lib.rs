@@ -1,4 +1,5 @@
 pub mod adl;
+pub mod demo;
 pub mod execute;
 pub mod prompt;
 pub mod provider;

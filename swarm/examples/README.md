@@ -20,6 +20,23 @@ Coordinator demo (writes HTML artifact):
 cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml
 ```
 
+## v0.3 flagship demo
+
+Run the deterministic artifact demo (single command):
+
+```bash
+cargo run -- demo demo-a-say-mcp --run --trace --open
+```
+
+Artifacts are written to:
+
+```bash
+out/demo-a-say-mcp/
+```
+
+Reference ADL doc for the demo scenario:
+- `v0-3-demo-a-say-mcp.adl.yaml`
+
 ## v0.2 failure-mode examples
 
 - `v0-2-failure-unknown-field.adl.yaml`
