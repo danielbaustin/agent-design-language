@@ -708,3 +708,59 @@ run:
         "stderr was:\n{stderr}"
     );
 }
+
+#[test]
+fn run_allows_prompt_only_step_with_no_inputs() {
+    let base = tmp_dir("exec-prompt-only-no-inputs");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.2"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize this prompt-only step."
+
+run:
+  name: "prompt-only-step"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+"#;
+
+    let tmp_yaml = base.join("prompt-only.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success for prompt-only step, got {:?}\nstdout:\n{}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(stdout.contains("--- step: t1 ---"), "stdout was:\n{stdout}");
+    assert!(
+        stdout.contains("mock summary bullet one"),
+        "stdout was:\n{stdout}"
+    );
+}
