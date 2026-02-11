@@ -73,8 +73,15 @@ done
 mkdir -p .adl/logs .adl/cards
 
 base="$(basename "$CARD")"
-issue_padded="$(echo "$base" | sed -n 's/^issue-\([0-9]\+\)__input__v[0-9.]\+\.md$/\1/p')"
-version="$(echo "$base" | sed -n 's/^issue-[0-9]\+__input__\(v[0-9.]\+\)\.md$/\1/p')"
+
+# Parse card filename in a shell-portable way (BSD/GNU sed differences
+# around \+ have caused false parse failures).
+issue_padded=""
+version=""
+if [[ "$base" =~ ^issue-([0-9]+)__input__(v[0-9.]+)\.md$ ]]; then
+  issue_padded="${BASH_REMATCH[1]}"
+  version="${BASH_REMATCH[2]}"
+fi
 
 if [[ -z "$issue_padded" || -z "$version" ]]; then
   die "Could not parse issue/version from filename: $base (expected issue-0102__input__v0.3.md)"
