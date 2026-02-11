@@ -51,6 +51,8 @@ fn demo_run_writes_required_artifacts() {
 
     let run_out = out_root.join("demo-a-say-mcp");
     assert!(run_out.join("design.md").is_file());
+    assert!(run_out.join("Cargo.toml").is_file());
+    assert!(run_out.join("README.md").is_file());
     assert!(run_out.join("src/lib.rs").is_file());
     assert!(run_out.join("src/main.rs").is_file());
     assert!(run_out.join("tests/say_server_tests.rs").is_file());
@@ -58,6 +60,20 @@ fn demo_run_writes_required_artifacts() {
     assert!(run_out.join("index.html").is_file());
     assert!(run_out.join("trace.jsonl").is_file());
 
+    // Ensure README includes canonical run instructions
+    let readme = fs::read_to_string(run_out.join("README.md")).unwrap();
+    assert!(
+        readme.contains("cargo build"),
+        "README missing 'cargo build':\n{readme}"
+    );
+    assert!(
+        readme.contains("cargo test"),
+        "README missing 'cargo test':\n{readme}"
+    );
+    assert!(
+        readme.contains("cargo run"),
+        "README missing 'cargo run':\n{readme}"
+    );
     let trace = fs::read_to_string(run_out.join("trace.jsonl")).unwrap();
     assert!(
         trace.contains("TRACE run_id=demo-a-say-mcp"),
