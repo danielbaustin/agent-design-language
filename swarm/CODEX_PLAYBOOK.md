@@ -17,7 +17,7 @@ start → cards → execute → review → finish → merge → cleanup
 
 Card semantics:
 - Input/output cards are **local-only** trace artifacts under `.adl/cards/` (not committed).
-- Templates live under `.adl/templates/` (versioned).
+- Templates live under `swarm/templates/` (versioned).
 - Tasks can be non-code; the same card-based trace applies.
 
 Fast path (copy/paste):
