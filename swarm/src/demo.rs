@@ -2,6 +2,7 @@ use std::path::{Path, PathBuf};
 
 use anyhow::{anyhow, Context, Result};
 
+use crate::prompt;
 use crate::trace::Trace;
 
 pub const DEMO_A_SAY_MCP: &str = "demo-a-say-mcp";
@@ -38,7 +39,7 @@ pub fn run_demo(name: &str, out_dir: &Path) -> Result<DemoResult> {
 
     for (step_id, text) in steps.iter() {
         trace.step_started(step_id, "coordinator", "demo-local", "artifact-task");
-        trace.prompt_assembled(step_id, &simple_hash(text));
+        trace.prompt_assembled(step_id, &prompt::hash_prompt(text));
         match name {
             DEMO_A_SAY_MCP => match *step_id {
                 "brief" => {
@@ -140,15 +141,6 @@ fn write_trace_jsonl(out_dir: &Path, trace: &Trace) -> Result<PathBuf> {
     std::fs::write(&path, body.as_bytes())
         .with_context(|| format!("failed to write '{}'", path.display()))?;
     Ok(path)
-}
-
-fn simple_hash(input: &str) -> String {
-    let mut h: u64 = 1469598103934665603;
-    for b in input.as_bytes() {
-        h ^= *b as u64;
-        h = h.wrapping_mul(1099511628211);
-    }
-    format!("{h:016x}")
 }
 
 const CARGO_TOML: &str = r#"[package]
