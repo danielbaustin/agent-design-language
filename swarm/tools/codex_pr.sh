@@ -2,6 +2,7 @@
 set -euo pipefail
 
 PR_SH="${PR_SH:-swarm/tools/pr.sh}"
+CARD_PATHS_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/card_paths.sh"
 CARD=""
 MODE="full-auto"   # full-auto | auto-edit | suggest
 SLUG=""
@@ -20,6 +21,9 @@ USAGE
 }
 
 die() { echo "ERROR: $*" >&2; exit 2; }
+
+# shellcheck disable=SC1090
+source "$CARD_PATHS_LIB"
 
 if [[ $# -lt 1 ]]; then
   usage
@@ -74,21 +78,38 @@ mkdir -p .adl/logs .adl/cards
 
 base="$(basename "$CARD")"
 
-# Parse card filename in a shell-portable way (BSD/GNU sed differences
-# around \+ have caused false parse failures).
 issue_padded=""
 version=""
+out_card=""
+
+# Legacy layout: .adl/cards/issue-0102__input__v0.3.md
 if [[ "$base" =~ ^issue-([0-9]+)__input__(v[0-9.]+)\.md$ ]]; then
   issue_padded="${BASH_REMATCH[1]}"
   version="${BASH_REMATCH[2]}"
+  out_card="${CARD/__input__/__output__}"
 fi
 
-if [[ -z "$issue_padded" || -z "$version" ]]; then
-  die "Could not parse issue/version from filename: $base (expected issue-0102__input__v0.3.md)"
+# New layout: .adl/cards/0102/input_0102.md
+if [[ -z "$issue_padded" ]]; then
+  local_re='(^|/)([0-9]{4})/input_([0-9]{4})\.md$'
+  if [[ "$CARD" =~ $local_re ]]; then
+    if [[ "${BASH_REMATCH[2]}" != "${BASH_REMATCH[3]}" ]]; then
+      die "Card path mismatch: directory issue ${BASH_REMATCH[2]} != filename issue ${BASH_REMATCH[3]}"
+    fi
+    issue_padded="${BASH_REMATCH[2]}"
+    out_card="$(dirname "$CARD")/output_${issue_padded}.md"
+    version="$(awk -F':' '/^Version:/ {gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2; exit}' "$CARD" || true)"
+  fi
+fi
+
+if [[ -z "$issue_padded" ]]; then
+  die "Could not parse input card path: $CARD (expected .adl/cards/0102/input_0102.md or .adl/cards/issue-0102__input__v0.3.md)"
+fi
+if [[ -z "$version" ]]; then
+  version="v0.x"
 fi
 
 issue=$((10#$issue_padded))
-out_card="${CARD/__input__/__output__}"
 
 title="$(awk -F': ' '/^Title:/ {print $2; exit}' "$CARD" || true)"
 if [[ -z "$title" ]]; then

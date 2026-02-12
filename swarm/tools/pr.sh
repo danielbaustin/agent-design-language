@@ -153,6 +153,50 @@ gh_repo_flag() {
   fi
 }
 
+# ----- staging helpers -----
+trim_ws() {
+  # Trim leading/trailing whitespace
+  local s="$1"
+  s="${s#"${s%%[![:space:]]*}"}"
+  s="${s%"${s##*[![:space:]]}"}"
+  echo "$s"
+}
+
+is_ignored_path() {
+  # Returns 0 if the path is ignored by git, 1 otherwise.
+  local p="$1"
+  git check-ignore -q -- "$p" >/dev/null 2>&1
+}
+
+stage_selected_paths() {
+  # Stage a comma-split list of paths, skipping paths that are gitignored.
+  # This avoids `git add` failing when an ignored path is explicitly passed.
+  local -a arr=("$@")
+  local staged_any="0"
+
+  for p in "${arr[@]}"; do
+    p="$(trim_ws "$p")"
+    [[ -z "$p" ]] && continue
+
+    if is_ignored_path "$p"; then
+      note "Skipping ignored path: $p"
+      continue
+    fi
+
+    # Stage the path. If the path doesn't exist but is listed in --paths, fail fast.
+    if [[ ! -e "$p" ]]; then
+      die "finish: path does not exist: $p"
+    fi
+
+    git add -A -- "$p"
+    staged_any="1"
+  done
+
+  if [[ "$staged_any" != "1" ]]; then
+    die "finish: all provided --paths were empty or gitignored; pass non-ignored paths (e.g. --paths \"swarm/tools\")"
+  fi
+}
+
 # ----- pr/branch helpers -----
 commits_ahead_of_main() {
   # Count commits on HEAD that are not on origin/main.
@@ -778,10 +822,10 @@ cmd_finish() {
     fi
 
     note "Staging changes (${paths})…"
-    git add -A "${path_arr[@]}"
+    stage_selected_paths "${path_arr[@]}"
 
     if git diff --cached --quiet; then
-      die "finish: nothing staged after 'git add' for paths '${paths}'. Either change --paths or commit manually and re-run finish."
+      die "finish: nothing staged after 'git add' for paths '${paths}'. Your paths may be empty/ignored or there were no changes. Either change --paths or commit manually and re-run finish."
     fi
 
     if [[ "$allow_gitignore" != "1" ]]; then

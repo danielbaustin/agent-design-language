@@ -74,8 +74,8 @@ swarm/tools/pr.sh start <issue>
 swarm/tools/pr.sh cards <issue>
 # do the work + tests
 swarm/tools/pr.sh finish <issue> --title "swarm: <short description>" \
-  -f .adl/cards/issue-####__input__v0.2.md \
-  --output-card .adl/cards/issue-####__output__v0.2.md
+  -f .adl/cards/####/input_####.md \
+  --output-card .adl/cards/####/output_####.md
 ```
 
 ## Recovery (common pitfalls)
