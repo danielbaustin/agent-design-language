@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::process::Stdio;
 
-use swarm::{adl, demo, execute, prompt, resolve, trace};
+use swarm::{adl, demo, execute, plan, prompt, resolve, trace};
 
 fn usage() -> &'static str {
     "Usage:
@@ -321,14 +321,20 @@ fn real_demo(args: &[String]) -> Result<()> {
     }
 
     if print_plan {
-        println!("Demo: {demo_name}");
-        println!("Run ID: {demo_name}");
-        println!("Workflow: demo-workflow");
         let steps = demo::plan_steps(demo_name);
-        println!("Steps: {}", steps.len());
-        for (idx, step) in steps.iter().enumerate() {
-            println!("  {idx}. {step}");
-        }
+        println!("Demo: {demo_name}");
+        plan::print_plan(
+            plan::PlanHeaders {
+                run: "Run ID:",
+                workflow: "Workflow:",
+                steps: "Steps:",
+            },
+            demo_name,
+            "demo-workflow",
+            steps.len(),
+            steps.iter(),
+            |step| step.to_string(),
+        );
     }
 
     if do_run {
