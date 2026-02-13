@@ -5,7 +5,7 @@ but expressed declaratively in ADL:
 
 - A coordinator agent defines the brief and performs final review.
 - Specialist agents (researcher, analyst, writer) produce intermediate artifacts.
-- Artifacts are passed explicitly via named inputs and `save_as` fields.
+- Artifacts are passed explicitly via files (`write_to` + `@file:`) and named `save_as` fields.
 
 ## Mapping to the SDK demo
 
@@ -24,11 +24,12 @@ but expressed declaratively in ADL:
 From `swarm/`:
 
 ```bash
-cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml
+cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --out examples/out --run
 ```
 
-## Note on artifact wiring
+## Artifact wiring
 
-The current runtime keeps handoffs explicit by listing inputs directly.
-`save_as` names the intended artifact for future wiring while preserving
-fully deterministic inputs today.
+This example uses real, deterministic file-based handoff:
+- `coordinator-brief` writes `examples/out/state/brief.txt`
+- `design` reads `@file:out/state/brief.txt` and writes `examples/out/state/design.txt`
+- `implementation` reads `@file:out/state/design.txt`

@@ -27,26 +27,19 @@ tasks:
   brief:
     prompt:
       user: |
+        BRIEF_STATE:
         Define a simple HTML game concept and constraints:
         - single HTML file
         - no external assets
-
-        Topic:
-        {{topic}}
+        Topic: {{topic}}
   design:
     prompt:
       user: |
-        Outline the gameplay and controls for the game.
-
-        Game concept:
-        {{brief}}
+        DESIGN_FROM_FILE={{brief}}
   implementation:
     prompt:
       user: |
-        Produce the full HTML file implementing the game.
-
-        Game design:
-        {{design}}
+        IMPLEMENTATION_FROM_FILE={{design}}
 
 run:
   name: "v0-2-coordinator-agents-sdk"
@@ -59,16 +52,18 @@ run:
         inputs:
           topic: "Simple HTML game demo."
         save_as: "brief"
+        write_to: "state/brief.txt"
       - id: "design"
         agent: "designer"
         task: "design"
         inputs:
-          brief: "{{brief}}"
+          brief: "@file:out/state/brief.txt"
         save_as: "design"
+        write_to: "state/design.txt"
       - id: "implementation"
         agent: "implementer"
         task: "implementation"
         inputs:
-          design: "{{design}}"
+          design: "@file:out/state/design.txt"
         save_as: "html"
         write_to: "index.html"
