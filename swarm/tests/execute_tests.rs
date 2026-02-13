@@ -758,7 +758,7 @@ run:
     );
 
     let stdout = String::from_utf8_lossy(&out.stdout);
-    assert!(stdout.contains("--- step: t1 ---"), "stdout was:\n{stdout}");
+    assert!(stdout.contains("--- step: s1 ---"), "stdout was:\n{stdout}");
     assert!(
         stdout.contains("mock summary bullet one"),
         "stdout was:\n{stdout}"

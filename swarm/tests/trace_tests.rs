@@ -225,3 +225,28 @@ run:
         stdout
     );
 }
+
+#[test]
+fn cli_trace_v0_2_preserves_explicit_step_ids() {
+    let exe = env!("CARGO_BIN_EXE_swarm");
+
+    let out = Command::new(exe)
+        .arg("examples/v0-2-multi-step-basic.adl.yaml")
+        .arg("--trace")
+        .output()
+        .expect("failed to run swarm binary");
+
+    assert!(
+        out.status.success(),
+        "expected success, got {:?}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("step=step-1") && stdout.contains("step=step-2"),
+        "expected explicit step ids in trace output, stdout was:\n{}",
+        stdout
+    );
+}

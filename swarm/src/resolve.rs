@@ -122,8 +122,10 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
 
     let mut steps = Vec::new();
     for (idx, s) in doc.run.workflow.steps.iter().enumerate() {
-        // StepSpec currently has no explicit `id`; derive it from task if available.
-        let id = s.task.clone().unwrap_or_else(|| format!("step-{idx}"));
+        // Preserve explicit step ids; otherwise derive a deterministic fallback.
+        let id =
+            s.id.clone()
+                .unwrap_or_else(|| s.task.clone().unwrap_or_else(|| format!("step-{idx}")));
 
         let provider = resolve_provider_for_step(s, doc);
 
@@ -431,5 +433,35 @@ mod tests {
             .effective_prompt_with_defaults(&resolved)
             .expect("prompt");
         assert_eq!(p.system.as_deref(), Some("step sys"));
+    }
+
+    #[test]
+    fn resolve_run_preserves_explicit_step_ids() {
+        let mut doc = minimal_doc();
+        doc.version = "0.2".to_string();
+        doc.run.workflow.steps.push(adl::StepSpec {
+            id: Some("step-1".to_string()),
+            save_as: None,
+            write_to: None,
+            agent: Some("a1".to_string()),
+            task: Some("t1".to_string()),
+            prompt: None,
+            inputs: std::collections::HashMap::new(),
+            guards: vec![],
+        });
+        doc.run.workflow.steps.push(adl::StepSpec {
+            id: Some("step-2".to_string()),
+            save_as: None,
+            write_to: None,
+            agent: Some("a1".to_string()),
+            task: Some("t1".to_string()),
+            prompt: None,
+            inputs: std::collections::HashMap::new(),
+            guards: vec![],
+        });
+
+        let resolved = resolve_run(&doc).expect("resolve");
+        assert_eq!(resolved.steps[0].id, "step-1");
+        assert_eq!(resolved.steps[1].id, "step-2");
     }
 }
