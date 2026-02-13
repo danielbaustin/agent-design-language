@@ -23,13 +23,13 @@ Run from the `swarm/` directory.
 Inspect the coordinator plan (no provider call required):
 
 ```bash
-cargo run --example coordinator -- examples/v0-2-coordinator-agents-sdk.adl.yaml --print-plan
+cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --print-plan
 ```
 
 Run the coordinator workflow (requires local Ollama provider setup):
 
 ```bash
-cargo run --example coordinator -- examples/v0-2-coordinator-agents-sdk.adl.yaml --run --trace
+cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --run --trace
 ```
 
 If local provider setup is not ready yet, use the plan command above as the recommended quickstart and track demo UX polish in the following issues:
