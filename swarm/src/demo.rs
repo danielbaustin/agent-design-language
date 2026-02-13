@@ -493,15 +493,15 @@ fn generate_rps_game_html() -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::time::{SystemTime, UNIX_EPOCH};
+    use std::sync::atomic::{AtomicU64, Ordering};
+
+    static TEMP_DIR_SEQ: AtomicU64 = AtomicU64::new(0);
 
     fn tmp_dir(prefix: &str) -> PathBuf {
-        let mut p = std::env::temp_dir();
-        let nanos = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
-            .as_nanos();
-        p.push(format!("swarm-{prefix}-{nanos}"));
+        let mut p = std::env::temp_dir().join("swarm-test-temp");
+        std::fs::create_dir_all(&p).unwrap();
+        let seq = TEMP_DIR_SEQ.fetch_add(1, Ordering::Relaxed);
+        p.push(format!("swarm-{prefix}-pid{}-n{seq}", std::process::id()));
         std::fs::create_dir_all(&p).unwrap();
         p
     }

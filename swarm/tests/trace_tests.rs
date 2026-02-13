@@ -1,5 +1,8 @@
 use std::process::Command;
 
+mod helpers;
+use helpers::unique_test_temp_dir;
+
 #[test]
 fn cli_trace_flag_prints_trace_header() {
     // This verifies end-to-end CLI wiring produces trace output.
@@ -22,16 +25,7 @@ run:
       - {}
 "#;
 
-    let mut path = std::env::temp_dir();
-    let unique = format!(
-        "adl-trace-test-{}-{}.yaml",
-        std::process::id(),
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map(|d| d.as_nanos())
-            .unwrap_or(0)
-    );
-    path.push(unique);
+    let path = unique_test_temp_dir("trace-flag").join("trace.yaml");
 
     std::fs::write(&path, yaml).expect("failed to write temp adl yaml");
 
@@ -65,16 +59,7 @@ run:
 fn cli_trace_reports_run_failed_on_invalid_yaml() {
     let exe = env!("CARGO_BIN_EXE_swarm");
 
-    let mut path = std::env::temp_dir();
-    let unique = format!(
-        "adl-trace-invalid-{}-{}.yaml",
-        std::process::id(),
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map(|d| d.as_nanos())
-            .unwrap_or(0)
-    );
-    path.push(unique);
+    let path = unique_test_temp_dir("trace-invalid-yaml").join("invalid.yaml");
 
     std::fs::write(&path, "version: [").expect("failed to write invalid yaml");
 
@@ -123,16 +108,7 @@ run:
           doc: "@file:does-not-exist.txt"
 "#;
 
-    let mut path = std::env::temp_dir();
-    let unique = format!(
-        "adl-trace-missing-file-{}-{}.yaml",
-        std::process::id(),
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map(|d| d.as_nanos())
-            .unwrap_or(0)
-    );
-    path.push(unique);
+    let path = unique_test_temp_dir("trace-missing-file").join("missing-file.yaml");
 
     std::fs::write(&path, yaml).expect("failed to write temp adl yaml");
 
@@ -186,16 +162,7 @@ run:
           name: "world"
 "#;
 
-    let mut path = std::env::temp_dir();
-    let unique = format!(
-        "adl-trace-v0-2-{}-{}.yaml",
-        std::process::id(),
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map(|d| d.as_nanos())
-            .unwrap_or(0)
-    );
-    path.push(unique);
+    let path = unique_test_temp_dir("trace-v0-2").join("trace-v0-2.yaml");
 
     std::fs::write(&path, yaml).expect("failed to write temp adl yaml");
 

@@ -1,7 +1,9 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::time::{SystemTime, UNIX_EPOCH};
+
+mod helpers;
+use helpers::unique_test_temp_dir;
 
 fn fixture_path(rel: &str) -> PathBuf {
     // Robust: works regardless of where tests are run from.
@@ -12,12 +14,7 @@ fn write_temp_adl_yaml() -> PathBuf {
     let yaml_path = fixture_path("tests/fixtures/cli_smoke.adl.yaml");
     let yaml = fs::read_to_string(&yaml_path).expect("read cli_smoke.adl.yaml fixture");
 
-    let mut p = std::env::temp_dir();
-    let nonce = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    p.push(format!("adl-cli-smoke-{nonce}.yaml"));
+    let p = unique_test_temp_dir("cli-smoke").join("cli_smoke.adl.yaml");
 
     fs::write(&p, yaml).expect("write temp yaml");
     p

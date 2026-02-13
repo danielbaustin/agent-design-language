@@ -1,4 +1,3 @@
-use std::env;
 use std::fs;
 use std::io;
 use std::io::{Read, Write};
@@ -8,24 +7,7 @@ use swarm::adl;
 use swarm::provider::{build_provider, OllamaProvider};
 
 mod helpers;
-use helpers::EnvVarGuard;
-
-fn unique_temp_dir(prefix: &str) -> io::Result<PathBuf> {
-    let mut dir = env::temp_dir();
-    let uniq = format!(
-        "{}-{}-{}",
-        prefix,
-        std::process::id(),
-        // nanos since epoch, good enough for tests
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
-            .as_nanos()
-    );
-    dir.push(uniq);
-    fs::create_dir_all(&dir)?;
-    Ok(dir)
-}
+use helpers::{unique_test_temp_dir, EnvVarGuard};
 
 fn write_executable(path: &Path, contents: &str) -> io::Result<()> {
     fs::write(path, contents)?;
@@ -199,7 +181,7 @@ config:
 
 #[test]
 fn provider_complete_uses_mock_binary_success() {
-    let dir = unique_temp_dir("swarm-provider-tests").unwrap();
+    let dir = unique_test_temp_dir("swarm-provider-tests");
     let bin = make_mock_ollama_success(&dir).unwrap();
 
     let _env_guard = EnvVarGuard::set("SWARM_OLLAMA_BIN", &bin);
@@ -226,7 +208,7 @@ config:
 
 #[test]
 fn provider_complete_surfaces_stderr_on_failure() {
-    let dir = unique_temp_dir("swarm-provider-tests").unwrap();
+    let dir = unique_test_temp_dir("swarm-provider-tests");
     let bin = make_mock_ollama_failure(&dir).unwrap();
 
     let _env_guard = EnvVarGuard::set("SWARM_OLLAMA_BIN", &bin);
@@ -276,7 +258,7 @@ fn env_var_guard_restores_previous_value() {
 
 #[test]
 fn provider_complete_times_out_with_env_override() {
-    let dir = unique_temp_dir("swarm-provider-timeout").unwrap();
+    let dir = unique_test_temp_dir("swarm-provider-timeout");
     let bin = make_mock_ollama_sleep(&dir).unwrap();
 
     let _env_guard = EnvVarGuard::set_many(&[
@@ -305,7 +287,7 @@ config:
 
 #[test]
 fn provider_complete_rejects_invalid_timeout_env() {
-    let dir = unique_temp_dir("swarm-provider-bad-timeout").unwrap();
+    let dir = unique_test_temp_dir("swarm-provider-bad-timeout");
     let bin = make_mock_ollama_success(&dir).unwrap();
 
     let _env_guard = EnvVarGuard::set_many(&[
