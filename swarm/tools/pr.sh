@@ -226,12 +226,25 @@ current_pr_url() {
 
 # ---------- cards + templates (templates tracked; cards local-only) ----------
 ADL_DIR=".adl"
-ADL_TEMPLATES_DIR="$ADL_DIR/templates"
 ADL_CARDS_DIR="$ADL_DIR/cards"
 
-INPUT_TEMPLATE="$ADL_TEMPLATES_DIR/input_card_template.md"
-OUTPUT_TEMPLATE="$ADL_TEMPLATES_DIR/output_card_template.md"
-LEGACY_OUTPUT_TEMPLATE="$ADL_TEMPLATES_DIR/output_card_template.md"
+INPUT_TEMPLATE="swarm/templates/cards/input_card_template.md"
+OUTPUT_TEMPLATE="swarm/templates/cards/output_card_template.md"
+LEGACY_INPUT_TEMPLATE="$ADL_DIR/templates/input_card_template.md"
+LEGACY_OUTPUT_TEMPLATE="$ADL_DIR/templates/output_card_template.md"
+
+resolve_input_template() {
+  if [[ -f "$(repo_root)/$INPUT_TEMPLATE" ]]; then
+    echo "$(repo_root)/$INPUT_TEMPLATE"
+    return 0
+  fi
+  if [[ -f "$(repo_root)/$LEGACY_INPUT_TEMPLATE" ]]; then
+    echo "$(repo_root)/$LEGACY_INPUT_TEMPLATE"
+    return 0
+  fi
+  # Return preferred path even if it doesn't exist (caller validates existence).
+  echo "$(repo_root)/$INPUT_TEMPLATE"
+}
 
 resolve_output_template() {
   # Prefer the new name; fall back to legacy for backwards compatibility.
@@ -259,7 +272,7 @@ issue_version() {
 }
 
 ensure_adl_dirs() {
-  mkdir -p "$(repo_root)/$ADL_TEMPLATES_DIR" "$(repo_root)/$ADL_CARDS_DIR"
+  mkdir -p "$(repo_root)/$ADL_CARDS_DIR"
 }
 
 input_card_path() {
@@ -312,76 +325,45 @@ render_template() {
   cat "$tpl"
 }
 
+validate_card_header_count() {
+  # Args: file_path header_line
+  local path="$1" header="$2"
+  local count
+  count="$(grep -c -x -F "$header" "$path" || true)"
+  [[ "$count" == "1" ]]
+}
+
 seed_input_card() {
   local path="$1" issue="$2" title="$3" branch="$4" ver="$5"
   local task_id run_id
   task_id="issue-$(card_issue_pad "$issue")"
   run_id="$task_id"
+  local tpl tmp repo issue_url
+  tpl="$(resolve_input_template)"
+  [[ -f "$tpl" ]] || die "missing input card template: $tpl"
 
-  # Start from template if available, else fallback.
   mkdir -p "$(dirname "$path")"
-  if render_template "$(repo_root)/$INPUT_TEMPLATE" >"$path" 2>/dev/null; then
-    :
-  else
-    cat >"$path" <<'EOF'
-# ADL Input Card
-
-Task ID:
-Run ID:
-Version:
-Title:
-Branch:
-
-Context:
-- Issue:
-- PR:
-- Docs:
-- Other:
-
-Execution:
-- Agent:
-- Provider:
-- Tools allowed:
-- Sandbox / approvals:
-
-## Goal
-
-## Acceptance Criteria
-
-## Inputs
--
-
-## Constraints / Policies
-- Determinism requirements:
-- Security / privacy requirements:
-- Resource limits (time/CPU/memory/network):
-
-## Non-goals / Out of scope
-
-## Notes / Risks
-
-## Instructions to the Agent
-- Read this file.
-- Do the work described above.
-- Write results to the paired output card file.
-EOF
-  fi
+  tmp="$(mktemp -t prsh_input_card_XXXXXX)"
+  render_template "$tpl" >"$tmp" || die "failed to render input card template: $tpl"
+  ensure_nonempty_file "$tmp" || die "rendered input card is empty: $tmp"
 
   # Stamp fields (best-effort; keeps template generic and domain-agnostic).
-  set_field_line "$path" "Task ID" "$task_id"
-  set_field_line "$path" "Run ID" "$run_id"
-  set_field_line "$path" "Version" "$ver"
-  set_field_line "$path" "Title" "$title"
-  set_field_line "$path" "Branch" "$branch"
+  set_field_line "$tmp" "Task ID" "$task_id"
+  set_field_line "$tmp" "Run ID" "$run_id"
+  set_field_line "$tmp" "Version" "$ver"
+  set_field_line "$tmp" "Title" "$title"
+  set_field_line "$tmp" "Branch" "$branch"
 
   # If there is a Context Issue line, fill it with a URL.
-  local repo
   repo="$(default_repo)"
   if [[ -n "$repo" ]]; then
-    local issue_url
     issue_url="https://github.com/${repo}/issues/${issue}"
-    replace_first_line_re "$path" "^- Issue:[[:space:]]*$" "- Issue: $issue_url"
+    replace_first_line_re "$tmp" "^- Issue:[[:space:]]*$" "- Issue: $issue_url"
   fi
+
+  validate_card_header_count "$tmp" "# ADL Input Card" || die "generated input card must contain exactly one '# ADL Input Card' header"
+  ensure_nonempty_file "$tmp" || die "generated input card is empty: $tmp"
+  mv "$tmp" "$path"
 }
 
 seed_output_card() {
@@ -389,57 +371,26 @@ seed_output_card() {
   local task_id run_id
   task_id="issue-$(card_issue_pad "$issue")"
   run_id="$task_id"
-
-  local out_tpl
+  local out_tpl tmp
   out_tpl="$(resolve_output_template)"
+  [[ -f "$out_tpl" ]] || die "missing output card template: $out_tpl"
 
   mkdir -p "$(dirname "$path")"
-  if render_template "$out_tpl" >"$path" 2>/dev/null; then
-    :
-  else
-    cat >"$path" <<'EOF'
-# ADL Output Card
+  tmp="$(mktemp -t prsh_output_card_XXXXXX)"
+  render_template "$out_tpl" >"$tmp" || die "failed to render output card template: $out_tpl"
+  ensure_nonempty_file "$tmp" || die "rendered output card is empty: $tmp"
 
-Task ID:
-Run ID:
-Version:
-Title:
-Branch:
-Status: NOT_STARTED | IN_PROGRESS | DONE | FAILED
-
-Execution:
-- Actor:
-- Model:
-- Provider:
-- Start Time:
-- End Time:
-
-## Summary
-
-## Artifacts produced
--
-
-## Actions taken
--
-
-## Validation
-- Tests / checks run:
-- Results:
-
-## Decisions / Deviations
-
-## Follow-ups / Deferred work
-EOF
-  fi
-
-  set_field_line "$path" "Task ID" "$task_id"
-  set_field_line "$path" "Run ID" "$run_id"
-  set_field_line "$path" "Version" "$ver"
-  set_field_line "$path" "Title" "$title"
-  set_field_line "$path" "Branch" "$branch"
+  set_field_line "$tmp" "Task ID" "$task_id"
+  set_field_line "$tmp" "Run ID" "$run_id"
+  set_field_line "$tmp" "Version" "$ver"
+  set_field_line "$tmp" "Title" "$title"
+  set_field_line "$tmp" "Branch" "$branch"
 
   # Default Status if template left it blank.
-  replace_first_line_re "$path" "^Status:[[:space:]]*$" "Status: NOT_STARTED | IN_PROGRESS | DONE | FAILED"
+  replace_first_line_re "$tmp" "^Status:[[:space:]]*$" "Status: NOT_STARTED | IN_PROGRESS | DONE | FAILED"
+  validate_card_header_count "$tmp" "# ADL Output Card" || die "generated output card must contain exactly one '# ADL Output Card' header"
+  ensure_nonempty_file "$tmp" || die "generated output card is empty: $tmp"
+  mv "$tmp" "$path"
 }
 
 ensure_nonempty_file() {
@@ -549,8 +500,10 @@ cmd_card() {
   if [[ -z "$out_path" ]]; then
     out_path="$(input_card_path "$issue")"
   fi
-  if [[ -f "$out_path" ]]; then
+  if ensure_nonempty_file "$out_path"; then
     die "card: input card already exists: $out_path"
+  elif [[ -e "$out_path" ]]; then
+    note "Input card exists but is empty; recreating: $out_path"
   fi
   note "Creating input card: $out_path"
   ensure_adl_dirs
@@ -612,8 +565,10 @@ cmd_output() {
   if [[ -z "$out_path" ]]; then
     out_path="$(output_card_path "$issue")"
   fi
-  if [[ -f "$out_path" ]]; then
+  if ensure_nonempty_file "$out_path"; then
     die "output: output card already exists: $out_path"
+  elif [[ -e "$out_path" ]]; then
+    note "Output card exists but is empty; recreating: $out_path"
   fi
   note "Creating output card: $out_path"
   ensure_adl_dirs
@@ -667,14 +622,14 @@ cmd_cards() {
   input_path="$(input_card_path "$issue")"
   output_path="$(output_card_path "$issue")"
 
-  if [[ -f "$input_path" ]]; then
+  if ensure_nonempty_file "$input_path"; then
     note "Input card exists: $input_path"
   else
     note "Creating input card: $input_path"
     seed_input_card "$input_path" "$issue" "$title" "TBD (run pr.sh start $issue)" "$version"
   fi
 
-  if [[ -f "$output_path" ]]; then
+  if ensure_nonempty_file "$output_path"; then
     note "Output card exists: $output_path"
   else
     note "Creating output card: $output_path"
@@ -757,13 +712,17 @@ cmd_start() {
   in_path="$(input_card_path "$issue")"
   out_path="$(output_card_path "$issue")"
   ensure_adl_dirs
-  if [[ ! -f "$in_path" ]]; then
+  if ! ensure_nonempty_file "$in_path"; then
     note "Creating input card: $in_path"
     seed_input_card "$in_path" "$issue" "$title" "$branch" "$ver"
+  else
+    note "Input card exists: $in_path"
   fi
-  if [[ ! -f "$out_path" ]]; then
+  if ! ensure_nonempty_file "$out_path"; then
     note "Creating output card: $out_path"
     seed_output_card "$out_path" "$issue" "$title" "$branch" "$ver"
+  else
+    note "Output card exists: $out_path"
   fi
   sync_legacy_links_for_issue "$issue" "$ver"
   echo "• Agent:"
@@ -1079,7 +1038,7 @@ Notes:
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - Runs Rust checks in swarm/ by default (fmt, clippy -D warnings, test).
 - finish stages swarm/ by default (reduces accidental commits).
-- Templates are stored in .adl/templates/ (versioned): input_card_template.md and output_card_template.md.
+- Templates are stored in swarm/templates/cards/ (legacy fallback: .adl/templates/).
 - Cards are stored locally under .adl/cards/ and are not committed to git.
 
 Examples:
