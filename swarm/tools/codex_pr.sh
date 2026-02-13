@@ -89,9 +89,9 @@ if [[ "$base" =~ ^issue-([0-9]+)__input__(v[0-9.]+)\.md$ ]]; then
   out_card="${CARD/__input__/__output__}"
 fi
 
-# New layout: .adl/cards/0102/input_0102.md
+# New layout: .adl/cards/102/input_102.md (or zero-padded variants)
 if [[ -z "$issue_padded" ]]; then
-  local_re='(^|/)([0-9]{4})/input_([0-9]{4})\.md$'
+  local_re='(^|/)([0-9]+)/input_([0-9]+)\.md$'
   if [[ "$CARD" =~ $local_re ]]; then
     if [[ "${BASH_REMATCH[2]}" != "${BASH_REMATCH[3]}" ]]; then
       die "Card path mismatch: directory issue ${BASH_REMATCH[2]} != filename issue ${BASH_REMATCH[3]}"
@@ -103,7 +103,7 @@ if [[ -z "$issue_padded" ]]; then
 fi
 
 if [[ -z "$issue_padded" ]]; then
-  die "Could not parse input card path: $CARD (expected .adl/cards/0102/input_0102.md or .adl/cards/issue-0102__input__v0.3.md)"
+  die "Could not parse input card path: $CARD (expected .adl/cards/102/input_102.md or .adl/cards/issue-0102__input__v0.3.md)"
 fi
 if [[ -z "$version" ]]; then
   version="v0.x"

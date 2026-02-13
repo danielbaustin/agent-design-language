@@ -23,10 +23,14 @@
 #   swarm/tools/pr.sh start 14 --slug b6-default-system
 #   swarm/tools/pr.sh card  14 --version v0.2
 #   swarm/tools/pr.sh output 14 --version v0.2
-#   swarm/tools/pr.sh finish 14 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/issue-0014__input__v0.2.md --output-card .adl/cards/issue-0014__output__v0.2.md
+#   swarm/tools/pr.sh finish 14 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/14/input_14.md --output-card .adl/cards/14/output_14.md
 #   swarm/tools/pr.sh open
 #
 set -euo pipefail
+
+CARD_PATHS_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/card_paths.sh"
+# shellcheck disable=SC1090
+source "$CARD_PATHS_LIB"
 
 
 #
@@ -84,6 +88,13 @@ EOF
 
 require_cmd() {
   command -v "$1" >/dev/null 2>&1 || die "Missing required command: $1"
+}
+
+normalize_issue_or_die() {
+  local raw="$1"
+  local normalized
+  normalized="$(card_issue_normalize "$raw" 2>/dev/null)" || die "invalid issue number: $raw"
+  echo "$normalized"
 }
 
 repo_root() {
@@ -233,8 +244,6 @@ resolve_output_template() {
   echo "$(repo_root)/$OUTPUT_TEMPLATE"
 }
 
-issue_pad() { printf '%04d' "$1"; }
-
 issue_version() {
   local issue="$1"
   local v
@@ -251,17 +260,43 @@ ensure_adl_dirs() {
 }
 
 input_card_path() {
-  local issue="$1" ver="$2"
-  local pad
-  pad="$(issue_pad "$issue")"
-  echo "$(repo_root)/$ADL_CARDS_DIR/issue-${pad}__input__${ver}.md"
+  local issue="$1"
+  local rel
+  rel="$(card_input_path "$issue")" || die "invalid issue number: $issue"
+  echo "$(repo_root)/$rel"
 }
 
 output_card_path() {
+  local issue="$1"
+  local rel
+  rel="$(card_output_path "$issue")" || die "invalid issue number: $issue"
+  echo "$(repo_root)/$rel"
+}
+
+resolve_input_card_path_abs() {
   local issue="$1" ver="$2"
-  local pad
-  pad="$(issue_pad "$issue")"
-  echo "$(repo_root)/$ADL_CARDS_DIR/issue-${pad}__output__${ver}.md"
+  local rel
+  rel="$(cd "$(repo_root)" && resolve_input_card_path "$issue" "$ver")" || die "invalid issue number: $issue"
+  echo "$(repo_root)/$rel"
+}
+
+resolve_output_card_path_abs() {
+  local issue="$1" ver="$2"
+  local rel
+  rel="$(cd "$(repo_root)" && resolve_output_card_path "$issue" "$ver")" || die "invalid issue number: $issue"
+  echo "$(repo_root)/$rel"
+}
+
+sync_legacy_links_for_issue() {
+  local issue="$1" ver="$2" canonical_input="$3" canonical_output="$4"
+  local legacy_input legacy_output
+  legacy_input="$(card_legacy_input_path "$issue" "$ver")"
+  legacy_output="$(card_legacy_output_path "$issue" "$ver")"
+  (
+    cd "$(repo_root)"
+    sync_legacy_card_link "$canonical_input" "$legacy_input"
+    sync_legacy_card_link "$canonical_output" "$legacy_output"
+  )
 }
 
 render_template() {
@@ -274,10 +309,11 @@ render_template() {
 seed_input_card() {
   local path="$1" issue="$2" title="$3" branch="$4" ver="$5"
   local task_id run_id
-  task_id="issue-$(issue_pad "$issue")"
+  task_id="issue-$(card_issue_pad "$issue")"
   run_id="$task_id"
 
   # Start from template if available, else fallback.
+  mkdir -p "$(dirname "$path")"
   if render_template "$(repo_root)/$INPUT_TEMPLATE" >"$path" 2>/dev/null; then
     :
   else
@@ -345,12 +381,13 @@ EOF
 seed_output_card() {
   local path="$1" issue="$2" title="$3" branch="$4" ver="$5"
   local task_id run_id
-  task_id="issue-$(issue_pad "$issue")"
+  task_id="issue-$(card_issue_pad "$issue")"
   run_id="$task_id"
 
   local out_tpl
   out_tpl="$(resolve_output_template)"
 
+  mkdir -p "$(dirname "$path")"
   if render_template "$out_tpl" >"$path" 2>/dev/null; then
     :
   else
@@ -461,6 +498,7 @@ cmd_card() {
 
   local issue="${1:-}"; shift || true
   [[ -n "$issue" ]] || die "card: missing <issue> number"
+  issue="$(normalize_issue_or_die "$issue")"
 
   local slug=""
   local no_fetch_issue="0"
@@ -503,7 +541,7 @@ cmd_card() {
     version="$(issue_version "$issue")"
   fi
   if [[ -z "$out_path" ]]; then
-    out_path="$(input_card_path "$issue" "$version")"
+    out_path="$(input_card_path "$issue")"
   fi
   if [[ -f "$out_path" ]]; then
     die "card: input card already exists: $out_path"
@@ -511,6 +549,9 @@ cmd_card() {
   note "Creating input card: $out_path"
   ensure_adl_dirs
   seed_input_card "$out_path" "$issue" "$title" "$(current_branch)" "$version"
+  if [[ "$out_path" == "$(input_card_path "$issue")" ]]; then
+    sync_legacy_links_for_issue "$issue" "$version" "$(input_card_path "$issue")" "$(output_card_path "$issue")"
+  fi
   note "Done."
   echo "$out_path"
 }
@@ -520,6 +561,7 @@ cmd_output() {
 
   local issue="${1:-}"; shift || true
   [[ -n "$issue" ]] || die "output: missing <issue> number"
+  issue="$(normalize_issue_or_die "$issue")"
 
   local slug=""
   local no_fetch_issue="0"
@@ -562,7 +604,7 @@ cmd_output() {
     version="$(issue_version "$issue")"
   fi
   if [[ -z "$out_path" ]]; then
-    out_path="$(output_card_path "$issue" "$version")"
+    out_path="$(output_card_path "$issue")"
   fi
   if [[ -f "$out_path" ]]; then
     die "output: output card already exists: $out_path"
@@ -570,6 +612,9 @@ cmd_output() {
   note "Creating output card: $out_path"
   ensure_adl_dirs
   seed_output_card "$out_path" "$issue" "$title" "$(current_branch)" "$version"
+  if [[ "$out_path" == "$(output_card_path "$issue")" ]]; then
+    sync_legacy_links_for_issue "$issue" "$version" "$(input_card_path "$issue")" "$(output_card_path "$issue")"
+  fi
   note "Done."
   echo "$out_path"
 }
@@ -579,6 +624,7 @@ cmd_cards() {
 
   local issue="${1:-}"; shift || true
   [[ -n "$issue" ]] || die "cards: missing <issue> number"
+  issue="$(normalize_issue_or_die "$issue")"
 
   local no_fetch_issue="0"
   local version=""
@@ -612,8 +658,8 @@ cmd_cards() {
   ensure_adl_dirs
 
   local input_path output_path
-  input_path="$(input_card_path "$issue" "$version")"
-  output_path="$(output_card_path "$issue" "$version")"
+  input_path="$(input_card_path "$issue")"
+  output_path="$(output_card_path "$issue")"
 
   if [[ -f "$input_path" ]]; then
     note "Input card exists: $input_path"
@@ -629,6 +675,8 @@ cmd_cards() {
     seed_output_card "$output_path" "$issue" "$title" "TBD (run pr.sh start $issue)" "$version"
   fi
 
+  sync_legacy_links_for_issue "$issue" "$version" "$(input_card_path "$issue")" "$(output_card_path "$issue")"
+
   echo "READ  $input_path"
   echo "WRITE $output_path"
 }
@@ -639,6 +687,7 @@ cmd_start() {
 
   local issue="${1:-}"; shift || true
   [[ -n "$issue" ]] || die "start: missing <issue> number"
+  issue="$(normalize_issue_or_die "$issue")"
 
   local prefix="codex"
   local slug=""
@@ -676,40 +725,31 @@ cmd_start() {
 
   note "Target branch: $branch"
 
-  # If already on the branch, do nothing.
+  # Ensure we are on the target branch.
   if [[ "$(current_branch)" == "$branch" ]]; then
     note "Already on $branch"
-    return 0
-  fi
-
-  # If branch exists locally, switch.
-  if git show-ref --verify --quiet "refs/heads/$branch"; then
+  elif git show-ref --verify --quiet "refs/heads/$branch"; then
     note "Switching to existing local branch…"
     git switch "$branch"
-    return 0
-  fi
-
-  # If branch exists on origin, switch and track.
-  if git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+  elif git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
     note "Branch exists on origin; checking out and tracking…"
     git switch --track "origin/$branch"
-    return 0
+  else
+    # Otherwise create new branch from main, ensuring main is up to date.
+    ensure_clean_worktree
+
+    note "Updating main…"
+    git switch main >/dev/null 2>&1 || true
+    git pull --ff-only
+
+    note "Creating branch…"
+    git switch -c "$branch"
   fi
-
-  # Otherwise create new branch from main, ensuring main is up to date.
-  ensure_clean_worktree
-
-  note "Updating main…"
-  git switch main >/dev/null 2>&1 || true
-  git pull --ff-only
-
-  note "Creating branch…"
-  git switch -c "$branch"
 
   local ver in_path out_path
   ver="$(issue_version "$issue")"
-  in_path="$(input_card_path "$issue" "$ver")"
-  out_path="$(output_card_path "$issue" "$ver")"
+  in_path="$(input_card_path "$issue")"
+  out_path="$(output_card_path "$issue")"
   ensure_adl_dirs
   if [[ ! -f "$in_path" ]]; then
     note "Creating input card: $in_path"
@@ -719,6 +759,7 @@ cmd_start() {
     note "Creating output card: $out_path"
     seed_output_card "$out_path" "$issue" "$title" "$branch" "$ver"
   fi
+  sync_legacy_links_for_issue "$issue" "$ver" "$(input_card_path "$issue")" "$(output_card_path "$issue")"
   echo "• Agent:"
   echo "  READ   $in_path"
   echo "  WRITE  $out_path"
@@ -731,6 +772,7 @@ cmd_finish() {
 
   local issue="${1:-}"; shift || true
   [[ -n "$issue" ]] || die "finish: missing <issue> number"
+  issue="$(normalize_issue_or_die "$issue")"
 
   local title=""
   local extra_body=""
@@ -777,10 +819,10 @@ cmd_finish() {
   local ver
   ver="$(issue_version "$issue")"
   if [[ -z "$input_path" ]]; then
-    input_path="$(input_card_path "$issue" "$ver")"
+    input_path="$(resolve_input_card_path_abs "$issue" "$ver")"
   fi
   if [[ -z "$output_path" ]]; then
-    output_path="$(output_card_path "$issue" "$ver")"
+    output_path="$(resolve_output_card_path_abs "$issue" "$ver")"
   fi
   [[ -f "$input_path" ]] || die "finish: missing input card: $input_path"
   if ! ensure_nonempty_file "$output_path"; then
@@ -928,8 +970,8 @@ Commands:
   status
 
 Flags:
-  (card)    -f, --file <input_card.md>         Output path for the generated input card (default: .adl/cards/issue-####__input__vX.Y.md)
-  (output)  -f, --file <output_card.md>        Output path for the generated output card (default: .adl/cards/issue-####__output__vX.Y.md)
+  (card)    -f, --file <input_card.md>         Output path for the generated input card (default: .adl/cards/<issue>/input_<issue>.md)
+  (output)  -f, --file <output_card.md>        Output path for the generated output card (default: .adl/cards/<issue>/output_<issue>.md)
   (cards)   --version <v0.2>                   Override detected version (otherwise inferred from issue labels version:vX.Y)
   (cards)   --no-fetch-issue                   Do not fetch issue title/labels (uses issue-<n> title)
   (card/output) --version <v0.2>               Override detected version (otherwise inferred from issue labels version:vX.Y)
@@ -941,7 +983,7 @@ Notes:
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - Runs Rust checks in swarm/ by default (fmt, clippy -D warnings, test).
 - finish stages swarm/ by default (reduces accidental commits).
-- Templates are stored in swarm/templates/ (versioned): input_card_template.md and output_card_template.md (or legacy output_card_template.md) (output card template).
+- Templates are stored in .adl/templates/ (versioned): input_card_template.md and output_card_template.md.
 - Cards are stored locally under .adl/cards/ and are not committed to git.
 
 Examples:
@@ -949,7 +991,7 @@ Examples:
   swarm/tools/pr.sh card  17 --version v0.2
   swarm/tools/pr.sh output 17 --version v0.2
   swarm/tools/pr.sh cards 17 --version v0.2
-  swarm/tools/pr.sh finish 17 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/issue-0017__input__v0.2.md --output-card .adl/cards/issue-0017__output__v0.2.md
+  swarm/tools/pr.sh finish 17 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/17/input_17.md --output-card .adl/cards/17/output_17.md
 EOF
 }
 
