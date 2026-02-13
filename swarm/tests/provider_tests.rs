@@ -91,7 +91,7 @@ config: {}
 "#,
     );
 
-    let err = match build_provider(&spec) {
+    let err = match build_provider(&spec, None) {
         Ok(_) => panic!("expected build_provider to fail for unknown kind"),
         Err(e) => e,
     };
@@ -111,10 +111,24 @@ config: {}
 "#,
     );
 
-    let p = OllamaProvider::from_spec(&spec).expect("from_spec failed");
+    let p = OllamaProvider::from_spec(&spec, None).expect("from_spec failed");
     // provider.rs uses this default
     assert_eq!(p.model, "llama3.1:8b");
     assert!(p.temperature.is_none());
+}
+
+#[test]
+fn ollama_from_spec_prefers_model_override() {
+    let spec = provider_spec_from_yaml(
+        r#"
+type: ollama
+config:
+  model: provider-model
+"#,
+    );
+
+    let p = OllamaProvider::from_spec(&spec, Some("agent-model")).expect("from_spec failed");
+    assert_eq!(p.model, "agent-model");
 }
 
 #[test]
@@ -128,7 +142,7 @@ config:
 "#,
     );
 
-    let p = OllamaProvider::from_spec(&spec).expect("from_spec failed");
+    let p = OllamaProvider::from_spec(&spec, None).expect("from_spec failed");
     assert_eq!(p.model, "llama3.1:8b");
     assert_eq!(p.temperature, Some(0.7_f32));
 }
@@ -144,7 +158,7 @@ config:
 "#,
     );
 
-    let p = OllamaProvider::from_spec(&spec).expect("from_spec failed");
+    let p = OllamaProvider::from_spec(&spec, None).expect("from_spec failed");
     assert_eq!(p.temperature, Some(1.0_f32));
 }
 
@@ -159,7 +173,7 @@ config:
 "#,
     );
 
-    let p = OllamaProvider::from_spec(&spec).expect("from_spec failed");
+    let p = OllamaProvider::from_spec(&spec, None).expect("from_spec failed");
     assert_eq!(p.temperature, Some(0.25_f32));
 }
 
@@ -176,7 +190,7 @@ config:
     // This test intentionally does NOT call complete(). Calling complete() depends on
     // external binaries and ambient environment (e.g., SWARM_TIMEOUT_SECS), which can
     // make the test flaky under parallel execution. We only verify construction.
-    let _p = build_provider(&spec).expect("build_provider failed");
+    let _p = build_provider(&spec, None).expect("build_provider failed");
 }
 
 #[test]
@@ -194,7 +208,7 @@ config:
 "#,
     );
 
-    let p = build_provider(&spec).expect("build_provider failed");
+    let p = build_provider(&spec, None).expect("build_provider failed");
     let out = p
         .complete("test prompt")
         .expect("complete() should succeed with mock");
@@ -221,7 +235,7 @@ config:
 "#,
     );
 
-    let p = build_provider(&spec).expect("build_provider failed");
+    let p = build_provider(&spec, None).expect("build_provider failed");
     let err = p.complete("test prompt").unwrap_err();
     let msg = format!("{err:#}");
 
@@ -274,7 +288,7 @@ config:
 "#,
     );
 
-    let p = build_provider(&spec).expect("build_provider failed");
+    let p = build_provider(&spec, None).expect("build_provider failed");
     let err = p.complete("test prompt").unwrap_err();
     let msg = format!("{err:#}");
     assert!(
@@ -303,7 +317,7 @@ config:
 "#,
     );
 
-    let p = build_provider(&spec).expect("build_provider failed");
+    let p = build_provider(&spec, None).expect("build_provider failed");
     let err = p.complete("test prompt").unwrap_err();
     let msg = format!("{err:#}");
     assert!(
@@ -345,7 +359,7 @@ config:
 "#
     ));
 
-    let p = build_provider(&spec).expect("build_provider failed");
+    let p = build_provider(&spec, None).expect("build_provider failed");
     let out = p.complete("hello").expect("http provider should succeed");
     assert_eq!(out, "OK");
 }
@@ -362,7 +376,7 @@ config:
 "#,
     );
 
-    let _p = build_provider(&spec).expect("build_provider should accept https endpoints");
+    let _p = build_provider(&spec, None).expect("build_provider should accept https endpoints");
 }
 
 #[test]
@@ -396,7 +410,7 @@ config:
 "#
     ));
 
-    let p = build_provider(&spec).expect("build_provider failed");
+    let p = build_provider(&spec, None).expect("build_provider failed");
     let err = p.complete("hello").unwrap_err();
     let msg = format!("{err:#}");
     assert!(
@@ -420,7 +434,7 @@ config:
 "#
     ));
 
-    let p = build_provider(&spec).expect("build_provider failed");
+    let p = build_provider(&spec, None).expect("build_provider failed");
     let err = p.complete("hello").unwrap_err();
     let msg = format!("{err:#}");
     assert!(
@@ -438,7 +452,7 @@ config: {}
 "#,
     );
 
-    let err = match build_provider(&spec) {
+    let err = match build_provider(&spec, None) {
         Ok(_) => panic!("expected build_provider to fail for missing endpoint"),
         Err(err) => err,
     };
@@ -482,7 +496,7 @@ config:
 "#
     ));
 
-    let p = build_provider(&spec).expect("build_provider failed");
+    let p = build_provider(&spec, None).expect("build_provider failed");
     let err = p.complete("hello").unwrap_err();
     let msg = format!("{err:#}").to_lowercase();
     assert!(

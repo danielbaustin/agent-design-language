@@ -212,7 +212,13 @@ pub fn execute_sequential(
                 )
             })?;
 
-            let prov = provider::build_provider(spec).with_context(|| {
+            let model_override = step
+                .agent
+                .as_ref()
+                .and_then(|agent_id| resolved.doc.agents.get(agent_id))
+                .map(|agent| agent.model.as_str());
+
+            let prov = provider::build_provider(spec, model_override).with_context(|| {
                 format!(
                     "failed to build provider '{}' for step '{}'",
                     provider_id, step_id
