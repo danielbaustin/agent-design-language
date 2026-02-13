@@ -11,6 +11,7 @@ Utility scripts for ADL workflow automation and PR hygiene.
 
 ## Codex.app Skills
 This section documents Codex.app skills used with ADL; skills live in Codex.app but are specified here for versioning.
+Default workflow: `adl_pr_cycle` is the authoritative path for new ADL development work.
 
 ### `adl_pr_cycle`
 
