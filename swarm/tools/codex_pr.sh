@@ -2,25 +2,27 @@
 set -euo pipefail
 
 PR_SH="${PR_SH:-swarm/tools/pr.sh}"
+CODEXW_SH="${CODEXW_SH:-swarm/tools/codexw.sh}"
 CARD_PATHS_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/card_paths.sh"
 CARD=""
-MODE="full-auto"   # full-auto | auto-edit | suggest
+MODE="full-auto"   # full-auto | auto-edit | suggest | help
 SLUG=""
 PATHS=""
 
 usage() {
   cat <<'USAGE' >&2
 Usage:
-  swarm/tools/codex_pr.sh <input-card> --paths "<p1,p2,...>" [--mode full-auto|auto-edit|suggest] [--slug <slug>] [--pr-sh <path>]
+  swarm/tools/codex_pr.sh <input-card> --paths "<p1,p2,...>" [--mode full-auto|auto-edit|suggest|help] [--slug <slug>] [--pr-sh <path>] [--codexw-sh <path>]
 
 Notes:
 - --paths is required.
 - --paths '.' is forbidden.
 - .adl/cards must not be included in --paths.
+- --mode help validates inputs and exits before running codex/pr.
 USAGE
 }
 
-die() { echo "ERROR: $*" >&2; exit 2; }
+die() { printf '%s\n' "ERROR: $*" >&2; exit 2; }
 
 # shellcheck disable=SC1090
 source "$CARD_PATHS_LIB"
@@ -49,6 +51,11 @@ version_from_card() {
   awk -F':' '/^Version:/ {gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2; exit}' "$card" || true
 }
 
+if [[ $# -eq 1 && ( "$1" == "-h" || "$1" == "--help" ) ]]; then
+  usage
+  exit 0
+fi
+
 if [[ $# -lt 1 ]]; then
   usage
   exit 2
@@ -63,6 +70,7 @@ while [[ $# -gt 0 ]]; do
     --mode) MODE="$2"; shift 2 ;;
     --slug) SLUG="$2"; shift 2 ;;
     --pr-sh) PR_SH="$2"; shift 2 ;;
+    --codexw-sh) CODEXW_SH="$2"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
     *) die "Unknown arg: $1" ;;
   esac
@@ -74,12 +82,19 @@ fi
 if [[ ! -x "$PR_SH" ]]; then
   die "pr.sh not executable or not found at: $PR_SH"
 fi
+if [[ ! -x "$CODEXW_SH" ]]; then
+  die "codexw.sh not executable or not found at: $CODEXW_SH"
+fi
 if [[ -z "$PATHS" ]]; then
   die "Missing required --paths"
 fi
 if [[ "$PATHS" == "." ]]; then
   die "Refusing --paths '.'; pass explicit repo subpaths"
 fi
+case "$MODE" in
+  full-auto|auto-edit|suggest|help) ;;
+  *) die "Invalid --mode: $MODE (expected full-auto|auto-edit|suggest|help)" ;;
+esac
 
 IFS=',' read -r -a path_arr <<< "$PATHS"
 if [[ ${#path_arr[@]} -eq 0 ]]; then
@@ -125,44 +140,31 @@ if [[ -z "$SLUG" ]]; then
     | cut -c1-60)"
 fi
 
-echo "• Issue:   #$issue"
-echo "• Version: $version"
-echo "• Title:   $title"
-echo "• Card:    $CARD"
-echo "• Output:  $out_card"
-echo "• Mode:    $MODE"
-echo "• Slug:    $SLUG"
-echo "• Paths:   $PATHS"
-echo
+printf '%s\n' "• Issue:   #$issue"
+printf '%s\n' "• Version: $version"
+printf '%s\n' "• Title:   $title"
+printf '%s\n' "• Card:    $CARD"
+printf '%s\n' "• Output:  $out_card"
+printf '%s\n' "• Mode:    $MODE"
+printf '%s\n' "• Slug:    $SLUG"
+printf '%s\n' "• Paths:   $PATHS"
+printf '\n'
+
+if [[ "$MODE" == "help" ]]; then
+  printf '%s\n' "• Help mode: input validation succeeded; no codex/pr actions executed."
+  exit 0
+fi
 
 "$PR_SH" start "$issue" --slug "$SLUG"
-
-prompt="$(cat "$CARD")
-
-## Execution notes
-- Repository: agent-design-language
-- Follow ADL card instructions exactly.
-- Work only on the current git branch.
-- Make only issue-scoped, minimal changes.
-- Run these checks before finishing:
-  - cargo fmt
-  - cargo clippy --all-targets -- -D warnings
-  - cargo test
-- Write/update output card at: $out_card
-"
 
 stamp="$(date +%Y%m%d-%H%M%S)"
 logfile=".adl/logs/issue-${issue}.${stamp}.log"
 
-echo "• Running Codex (non-interactive)..."
-if [[ "$MODE" == "full-auto" ]]; then
-  codex exec --full-auto "$prompt" | tee "$logfile"
-else
-  codex exec --approval-mode "$MODE" "$prompt" | tee "$logfile"
-fi
+printf '%s\n' "• Running codexw (non-interactive)..."
+"$CODEXW_SH" "$CARD" --mode "$MODE" --log "$logfile"
 
-echo
-echo "• Codex run complete. Finishing via pr.sh..."
+printf '\n'
+printf '%s\n' "• Codex run complete. Finishing via pr.sh..."
 
 pr_body=$'## ADL Workflow\n- Implemented from the paired ADL input/output card flow.\n- Scope kept minimal and issue-specific.\n\n## Validation\n- cargo fmt\n- cargo clippy --all-targets -- -D warnings\n- cargo test'
 
