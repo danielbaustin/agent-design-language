@@ -214,7 +214,9 @@ stage_selected_paths() {
       die "finish: path does not exist: $p"
     fi
 
-    git add -A -- "$p"
+    if ! git add -A -- "$p"; then
+      die "finish: git add failed for path '$p'"
+    fi
     staged_any="1"
   done
 
@@ -983,7 +985,9 @@ cmd_finish() {
 
   if [[ "$has_uncommitted" == "1" ]]; then
     note "Committing…"
-    git commit -m "$commit_msg"
+    if ! git commit -m "$commit_msg"; then
+      die "finish: git commit failed"
+    fi
   else
     note "Skipping commit (working tree clean; using existing commits)."
   fi
@@ -1001,12 +1005,16 @@ cmd_finish() {
 
   if [[ -n "$pr_url" ]]; then
     note "Updating existing PR…"
-    gh pr edit $(gh_repo_flag "$repo") "$pr_url" --title "$title" --body-file "$pr_body_file" >/dev/null
+    if ! gh pr edit $(gh_repo_flag "$repo") "$pr_url" --title "$title" --body-file "$pr_body_file" >/dev/null; then
+      die "finish: failed to update existing PR"
+    fi
     note "PR updated:"
     echo "$pr_url"
   else
     note "Creating PR (draft)…"
-    pr_url="$(gh pr create $(gh_repo_flag "$repo") --base main --head "$branch" --title "$title" --body-file "$pr_body_file" --draft)"
+    if ! pr_url="$(gh pr create $(gh_repo_flag "$repo") --base main --head "$branch" --title "$title" --body-file "$pr_body_file" --draft)"; then
+      die "finish: failed to create PR"
+    fi
     note "PR created:"
     echo "$pr_url"
   fi
