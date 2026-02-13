@@ -164,6 +164,23 @@ echo "mock ollama failure: boom" 1>&2
 exit 42
 "#
         }
+        MockOllamaBehavior::EchoModel => {
+            r#"#!/bin/sh
+set -eu
+if [ "${1:-}" != "run" ]; then
+  echo "mock ollama: expected 'run'" 1>&2
+  exit 2
+fi
+model="${2:-}"
+if [ -z "${model}" ]; then
+  echo "mock ollama: expected model arg2" 1>&2
+  exit 2
+fi
+cat >/dev/null
+echo "MODEL=${model}"
+exit 0
+"#
+        }
     };
 
     fs::write(&bin, script.as_bytes()).unwrap();
@@ -184,6 +201,7 @@ exit 42
 enum MockOllamaBehavior {
     Success,
     Fail,
+    EchoModel,
 }
 
 fn run_swarm(args: &[&str]) -> std::process::Output {
@@ -213,6 +231,62 @@ fn run_executes_example_with_mock_ollama_and_prints_step_output() {
     );
     assert!(
         stdout.contains("mock summary bullet one"),
+        "stdout was:\n{stdout}"
+    );
+}
+
+#[test]
+fn run_honors_agent_model_over_provider_model() {
+    let base = tmp_dir("exec-agent-model-override");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoModel);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.2"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "provider-model"
+
+agents:
+  a1:
+    provider: "local"
+    model: "agent-model-91"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize: {{text}}"
+
+run:
+  name: "agent-model-override"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        inputs:
+          text: "hello"
+"#;
+
+    let tmp_yaml = base.join("agent-model-override.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success, got {:?}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("MODEL=agent-model-91"),
         "stdout was:\n{stdout}"
     );
 }

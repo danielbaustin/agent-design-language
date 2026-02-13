@@ -98,10 +98,13 @@ fn runtime_error(provider: &str, message: impl Into<String>) -> anyhow::Error {
 ///
 /// Expected schema (based on your compiler errors):
 /// ProviderSpec { kind, base_url, config }
-pub fn build_provider(spec: &adl::ProviderSpec) -> Result<Box<dyn Provider>> {
+pub fn build_provider(
+    spec: &adl::ProviderSpec,
+    model_override: Option<&str>,
+) -> Result<Box<dyn Provider>> {
     let kind = spec.kind.trim().to_lowercase();
     match kind.as_str() {
-        "ollama" => Ok(Box::new(OllamaProvider::from_spec(spec)?)),
+        "ollama" => Ok(Box::new(OllamaProvider::from_spec(spec, model_override)?)),
         "http" => Ok(Box::new(HttpProvider::from_spec(spec)?)),
         other => Err(unknown_kind(other)),
     }
@@ -116,12 +119,17 @@ pub struct OllamaProvider {
 }
 
 impl OllamaProvider {
-    pub fn from_spec(spec: &adl::ProviderSpec) -> Result<Self> {
+    pub fn from_spec(spec: &adl::ProviderSpec, model_override: Option<&str>) -> Result<Self> {
         // Your schema exposes `config`; we interpret it as a generic map
         // that may contain `model` and `temperature`.
         let cfg = &spec.config;
 
-        let model = cfg_str(cfg, "model").unwrap_or("llama3.1:8b").to_string();
+        let model = model_override
+            .map(str::trim)
+            .filter(|m| !m.is_empty())
+            .or_else(|| cfg_str(cfg, "model"))
+            .unwrap_or("llama3.1:8b")
+            .to_string();
 
         let temperature = cfg_f32(cfg, "temperature");
 
