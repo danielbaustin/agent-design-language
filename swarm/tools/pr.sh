@@ -486,6 +486,10 @@ cmd_card() {
   local repo
   repo="$(default_repo)"
 
+  if [[ "$no_fetch_issue" != "1" ]]; then
+    require_cmd gh
+  fi
+
   local title=""
   if [[ "$no_fetch_issue" != "1" ]]; then
     require_cmd gh
@@ -509,7 +513,6 @@ cmd_card() {
     if [[ "$no_fetch_issue" == "1" ]]; then
       version="$DEFAULT_VERSION"
     else
-      require_cmd gh
       version="$(issue_version "$issue")"
     fi
   fi
@@ -555,6 +558,10 @@ cmd_output() {
   local repo
   repo="$(default_repo)"
 
+  if [[ "$no_fetch_issue" != "1" ]]; then
+    require_cmd gh
+  fi
+
   local title=""
   if [[ "$no_fetch_issue" != "1" ]]; then
     require_cmd gh
@@ -578,7 +585,6 @@ cmd_output() {
     if [[ "$no_fetch_issue" == "1" ]]; then
       version="$DEFAULT_VERSION"
     else
-      require_cmd gh
       version="$(issue_version "$issue")"
     fi
   fi
@@ -619,6 +625,10 @@ cmd_cards() {
   local repo
   repo="$(default_repo)"
 
+  if [[ "$no_fetch_issue" != "1" ]]; then
+    require_cmd gh
+  fi
+
   local title=""
   if [[ "$no_fetch_issue" != "1" ]]; then
     require_cmd gh
@@ -634,7 +644,6 @@ cmd_cards() {
     if [[ "$no_fetch_issue" == "1" ]]; then
       version="$DEFAULT_VERSION"
     else
-      require_cmd gh
       version="$(issue_version "$issue")"
     fi
   fi
