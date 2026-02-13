@@ -81,7 +81,7 @@ Procedure:
 1) Preflight
    - Validate required inputs are non-empty.
    - Compute branch: codex/<issue_num>-<slug>.
-   - Ensure .adl/logs/<issue_num>/ and .adl/reports/pr-cycle/<issue_num>/ exist.
+   - Ensure .adl/logs/<issue_num>/ and .adl/reports/pr-cycle/<issue_num>/<timestamp>/ exist (create the <timestamp> directory before writing the report).
 2) Start
    - Run: ./swarm/tools/pr.sh start <issue_num> --slug <slug>
    - Ensure canonical cards exist:
@@ -96,7 +96,7 @@ Procedure:
    - Run:
      ./swarm/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>" -f .adl/cards/<issue_num>/input_<issue_num>.md --output .adl/cards/<issue_num>/output_<issue_num>.md
    - If open_pr=false, include --no-open.
-   - If merge=true, include --merge.
+   - If merge=true, include --merge (only when open_pr=true or an existing PR already exists).
 5) Report (always)
    - Write:
      .adl/reports/pr-cycle/<issue_num>/<timestamp>/report.md
