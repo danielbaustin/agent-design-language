@@ -10,6 +10,7 @@ Utility scripts for ADL workflow automation and PR hygiene.
 - `card_paths.sh`: Canonical card path helpers.
 
 ## Codex.app Skills
+This section documents Codex.app skills used with ADL; skills live in Codex.app but are specified here for versioning.
 
 ### `adl_pr_cycle`
 
