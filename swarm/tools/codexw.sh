@@ -40,6 +40,7 @@ ISSUE=""
 INPUT_CARD_ARG=""
 LOG_PATH=""
 ALLOW_UNCHANGED_OUTPUT=0
+MODE="full-auto"
 
 usage() {
   sed -n '1,120p' "$0"
@@ -310,10 +311,17 @@ run_conveyor_mode() {
 
   log_note "Running Codex (non-interactive)..."
   set +e
-  codex exec \
-    --full-auto \
-    -C "$(pwd)" \
-    --prompt "$prompt" 2>&1 | tee -a "$LOG_PATH"
+  if [[ "$MODE" == "full-auto" ]]; then
+    codex exec \
+      --full-auto \
+      -C "$(pwd)" \
+      --prompt "$prompt" 2>&1 | tee -a "$LOG_PATH"
+  else
+    codex exec \
+      --approval-mode "$MODE" \
+      -C "$(pwd)" \
+      --prompt "$prompt" 2>&1 | tee -a "$LOG_PATH"
+  fi
   codex_rc=${PIPESTATUS[0]}
 
   if [[ $codex_rc -eq 0 ]]; then
@@ -351,6 +359,7 @@ while [[ $# -gt 0 ]]; do
     --check) CHECKS+=("$2"); shift 2 ;;
 
     --issue) ISSUE="$2"; shift 2 ;;
+    --mode) MODE="$2"; shift 2 ;;
     --log) LOG_PATH="$2"; shift 2 ;;
     --allow-unchanged-output) ALLOW_UNCHANGED_OUTPUT=1; shift ;;
 
@@ -367,6 +376,11 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+case "$MODE" in
+  full-auto|auto-edit|suggest) ;;
+  *) die "Invalid --mode: $MODE (expected full-auto|auto-edit|suggest)" ;;
+esac
+
 if [[ -n "$ISSUE" && -n "$INPUT_CARD_ARG" ]]; then
   die "Use either --issue or an input card path, not both"
 fi
@@ -377,5 +391,8 @@ if [[ -n "$ISSUE" || -n "$INPUT_CARD_ARG" ]]; then
   fi
   run_conveyor_mode
 else
+  if [[ "$MODE" != "full-auto" ]]; then
+    die "--mode is only supported in conveyor mode (--issue or input card path)"
+  fi
   run_legacy_mode
 fi
