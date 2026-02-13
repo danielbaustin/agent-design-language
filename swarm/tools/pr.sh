@@ -166,6 +166,8 @@ run_tooling_sanity_checks() {
   bash -n "$root/swarm/tools/codexw.sh"
   bash "$root/swarm/tools/codex_pr.sh" --help >/dev/null
   bash "$root/swarm/tools/codexw.sh" --help >/dev/null
+  sh "$root/swarm/tools/codex_pr.sh" --help >/dev/null
+  sh "$root/swarm/tools/codexw.sh" --help >/dev/null
 }
 
 gh_repo_flag() {
@@ -490,6 +492,7 @@ cmd_card() {
 
   local title=""
   if [[ "$no_fetch_issue" != "1" ]]; then
+    require_cmd gh
     note "Fetching issue title via gh…"
     title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
   fi
@@ -561,6 +564,7 @@ cmd_output() {
 
   local title=""
   if [[ "$no_fetch_issue" != "1" ]]; then
+    require_cmd gh
     note "Fetching issue title via gh…"
     title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
   fi
@@ -627,6 +631,7 @@ cmd_cards() {
 
   local title=""
   if [[ "$no_fetch_issue" != "1" ]]; then
+    require_cmd gh
     note "Fetching issue title via gh…"
     title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
   fi

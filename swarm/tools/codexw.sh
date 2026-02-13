@@ -63,6 +63,33 @@ sha256_file() {
   cksum "$file" | awk '{print $1":"$2}'
 }
 
+codex_cli_sanity_check() {
+  command -v codex >/dev/null 2>&1 || die "codex CLI not found in PATH"
+  codex exec --help >/dev/null 2>&1 || die "codex CLI sanity check failed: 'codex exec --help' did not succeed"
+}
+
+codex_apply_behavior_note() {
+  local usage
+  usage="$(codex apply --help 2>&1 || true)"
+  if [[ "$usage" == *"Usage: codex apply <TASK_ID>"* ]]; then
+    echo "skip-task-id-apply"
+  else
+    echo "unknown"
+  fi
+}
+
+codex_missing_task_id_apply_error() {
+  local log_file="$1"
+  [[ -f "$log_file" ]] || return 1
+  if grep -Fq "Usage: codex apply <TASK_ID>" "$log_file"; then
+    return 0
+  fi
+  if grep -Fq "the following required arguments were not provided: <TASK_ID>" "$log_file"; then
+    return 0
+  fi
+  return 1
+}
+
 issue_from_input_path() {
   local p="$1"
   local base
@@ -83,6 +110,8 @@ issue_from_input_path() {
 }
 
 run_legacy_mode() {
+  codex_cli_sanity_check
+
   [[ -n "$BRANCH" ]] || die "Missing --branch"
   [[ "$BRANCH" != "main" && "$BRANCH" != "master" ]] || die "Refusing to run with --branch $BRANCH"
 
@@ -140,6 +169,12 @@ run_legacy_mode() {
 
   start_ts="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
   base_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+  apply_mode="$(codex_apply_behavior_note)"
+  if [[ "$apply_mode" == "skip-task-id-apply" ]]; then
+    note "Apply patch behavior: codex apply requires TASK_ID; this wrapper will skip explicit codex apply and rely on codex exec workspace edits."
+  else
+    note "Apply patch behavior: codex apply signature unknown; this wrapper still skips explicit codex apply and relies on codex exec workspace edits."
+  fi
 
   note "Running Codex (non-interactive)..."
   codex exec \
@@ -254,10 +289,14 @@ run_conveyor_mode() {
   local issue input_card canonical_input canonical_output card_version
   local output_pre_exists=0 output_pre_sha="" output_post_sha=""
   local codex_rc=0
+  local codex_exec_log=""
+  local apply_mode=""
   log_note() {
     local msg="$1"
     echo "• $msg" | tee -a "$LOG_PATH" >&2
   }
+
+  codex_cli_sanity_check
 
   if [[ -n "$ROOT" ]]; then
     [[ -d "$ROOT" ]] || die "Root dir not found: $ROOT"
@@ -300,6 +339,12 @@ run_conveyor_mode() {
   log_note "Canonical input: $canonical_input"
   log_note "Canonical output: $canonical_output"
   log_note "Log: $LOG_PATH"
+  apply_mode="$(codex_apply_behavior_note)"
+  if [[ "$apply_mode" == "skip-task-id-apply" ]]; then
+    log_note "Apply patch behavior: codex apply requires TASK_ID; codexw will not run codex apply and will use codex exec workspace edits only."
+  else
+    log_note "Apply patch behavior: codex apply signature unknown; codexw will not run codex apply and will use codex exec workspace edits only."
+  fi
 
   if [[ -f "$canonical_output" ]]; then
     output_pre_exists=1
@@ -310,26 +355,33 @@ run_conveyor_mode() {
   prompt="$(cat "$input_card")"
 
   log_note "Running Codex (non-interactive)..."
+  codex_exec_log="$(mktemp)"
   set +e
   if [[ "$MODE" == "full-auto" ]]; then
     codex exec \
       --full-auto \
       --cd "$(pwd)" \
-      "$prompt" 2>&1 | tee -a "$LOG_PATH"
+      "$prompt" 2>&1 | tee -a "$LOG_PATH" "$codex_exec_log"
   else
     codex exec \
       --approval-mode "$MODE" \
       --cd "$(pwd)" \
-      "$prompt" 2>&1 | tee -a "$LOG_PATH"
+      "$prompt" 2>&1 | tee -a "$LOG_PATH" "$codex_exec_log"
   fi
   codex_rc=${PIPESTATUS[0]}
 
   set -e
 
   if [[ $codex_rc -ne 0 ]]; then
-    die "Codex command failed (rc=$codex_rc)"
+    if codex_missing_task_id_apply_error "$codex_exec_log"; then
+      log_note "Codex reported a TASK_ID-only codex apply flow; treating this as compatibility warning and continuing."
+    else
+      rm -f "$codex_exec_log"
+      die "Codex command failed (rc=$codex_rc)"
+    fi
   fi
 
+  rm -f "$codex_exec_log"
   [[ -f "$canonical_output" ]] || die "Output card was not written: $canonical_output"
   [[ -s "$canonical_output" ]] || die "Output card is empty: $canonical_output"
 

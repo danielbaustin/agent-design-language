@@ -31,6 +31,11 @@ die() { printf '%s\n' "ERROR: $*" >&2; exit 2; }
 # shellcheck disable=SC1090
 source "$CARD_PATHS_LIB"
 
+codex_cli_preflight() {
+  command -v codex >/dev/null 2>&1 || die "codex CLI not found in PATH"
+  codex exec --help >/dev/null 2>&1 || die "codex CLI sanity check failed: 'codex exec --help' did not succeed"
+}
+
 issue_from_input_path() {
   local p="$1"
   local base
@@ -122,6 +127,7 @@ for p in "${path_arr[@]}"; do
 done
 
 mkdir -p .adl/logs .adl/cards
+codex_cli_preflight
 
 issue_padded="$(issue_from_input_path "$CARD")"
 version="$(version_from_card "$CARD")"
@@ -165,7 +171,7 @@ fi
 
 "$PR_SH" start "$issue" --slug "$SLUG"
 
-logfile=".adl/cards/${issue}/codex_run.log"
+logfile=".adl/logs/${issue}/codex.log"
 mkdir -p "$(dirname "$logfile")"
 
 printf '%s\n' "• Running codexw (non-interactive)..."
