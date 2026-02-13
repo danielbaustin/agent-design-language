@@ -93,22 +93,33 @@ resolve_output_card_path() {
 sync_legacy_card_link() {
   local canonical="$1" legacy="$2"
   local legacy_dir
+  local target
   legacy_dir="$(dirname "$legacy")"
   mkdir -p "$legacy_dir"
+  target="$canonical"
+  if [[ "$canonical" == "$legacy_dir/"* ]]; then
+    target="${canonical#"$legacy_dir/"}"
+  fi
 
   if [[ -L "$legacy" ]]; then
     local current
     current="$(readlink "$legacy" 2>/dev/null || true)"
-    if [[ "$current" == "$canonical" ]]; then
+    if [[ "$current" == "$target" ]]; then
       return 0
     fi
     rm -f "$legacy"
   elif [[ -e "$legacy" ]]; then
-    echo "warning: legacy path exists and is not a symlink, leaving as-is: $legacy" >&2
-    return 0
+    local backup="${legacy}.bak"
+    local i=0
+    while [[ -e "$backup" ]]; do
+      i=$((i + 1))
+      backup="${legacy}.bak.${i}"
+    done
+    mv "$legacy" "$backup"
+    echo "warning: moved existing legacy file to backup: $backup" >&2
   fi
 
-  if ln -s "$canonical" "$legacy" 2>/dev/null; then
+  if ln -s "$target" "$legacy" 2>/dev/null; then
     return 0
   fi
 
