@@ -250,7 +250,7 @@ run_legacy_mode() {
 }
 
 run_conveyor_mode() {
-  local issue input_card canonical_input canonical_output
+  local issue input_card canonical_input canonical_output card_version
   local output_pre_exists=0 output_pre_sha="" output_post_sha=""
   local codex_rc=0
   log_note() {
@@ -265,18 +265,20 @@ run_conveyor_mode() {
 
   if [[ -n "$ISSUE" ]]; then
     issue="$(card_issue_normalize "$ISSUE")"
-    input_card="$(card_input_path "$issue")"
+    card_version="v0.3"
   else
     [[ -n "$INPUT_CARD_ARG" ]] || die "Missing --issue or input card path"
     issue="$(issue_from_input_path "$INPUT_CARD_ARG")"
-    canonical_input="$(card_input_path "$issue")"
-    if [[ -f "$canonical_input" ]]; then
-      input_card="$canonical_input"
-    else
-      input_card="$INPUT_CARD_ARG"
+    if [[ -f "$INPUT_CARD_ARG" ]]; then
+      card_version="$(awk -F':' '/^Version:/ {gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2; exit}' "$INPUT_CARD_ARG" || true)"
     fi
   fi
 
+  if [[ -z "${card_version:-}" ]]; then
+    card_version="v0.3"
+  fi
+
+  input_card="$(resolve_input_card_path "$issue" "$card_version")"
   canonical_input="$(card_input_path "$issue")"
   canonical_output="$(card_output_path "$issue")"
 
