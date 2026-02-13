@@ -53,7 +53,6 @@ tasks: {}
 run:
   name: test
   workflow:
-    id: wf
     kind: sequential
     steps:
       - id: s0
@@ -188,6 +187,10 @@ run:
         "expected unknown-field error; got:\n{msg}"
     );
     assert!(msg.contains("modell"), "expected bad key name; got:\n{msg}");
+    assert!(
+        msg.contains("at /providers/local"),
+        "expected path context for bad field; got:\n{msg}"
+    );
 }
 
 #[test]
@@ -224,6 +227,10 @@ run:
         "expected unknown-field error; got:\n{msg}"
     );
     assert!(msg.contains("modell"), "expected bad key name; got:\n{msg}");
+    assert!(
+        msg.contains("at /agents/a1"),
+        "expected path context for bad field; got:\n{msg}"
+    );
 }
 
 #[test]
@@ -262,6 +269,52 @@ run:
         "expected unknown-field error; got:\n{msg}"
     );
     assert!(msg.contains("agentt"), "expected bad key name; got:\n{msg}");
+    assert!(
+        msg.contains("at /run/workflow/steps/0"),
+        "expected path context for bad field; got:\n{msg}"
+    );
+}
+
+#[test]
+fn strict_rejects_unknown_prompt_field_with_path() {
+    let yaml = r#"
+version: "0.2"
+
+providers:
+  local:
+    type: "ollama"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize: {{text}}"
+      usre: "typo"
+
+run:
+  name: "x"
+  workflow:
+    kind: "sequential"
+    steps:
+      - agent: "a1"
+        task: "t1"
+"#;
+
+    let err = schema::validate_adl_yaml(yaml).unwrap_err();
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("unknown") || msg.contains("Additional properties"),
+        "expected unknown-field error; got:\n{msg}"
+    );
+    assert!(msg.contains("usre"), "expected bad key name; got:\n{msg}");
+    assert!(
+        msg.contains("at /tasks/t1/prompt"),
+        "expected path context for bad field; got:\n{msg}"
+    );
 }
 
 #[test]

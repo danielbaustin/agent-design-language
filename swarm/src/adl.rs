@@ -131,6 +131,7 @@ pub struct ProviderSpec {
 
 /// Tool spec (eventually maps to MCP tools, local tools, etc.).
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct ToolSpec {
     /// Tool type (e.g. "mcp", "http", "local").
     #[serde(rename = "type")]
@@ -197,6 +198,7 @@ where
 
 /// Task spec.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct TaskSpec {
     #[serde(default)]
     pub description: Option<String>,
@@ -207,6 +209,7 @@ pub struct TaskSpec {
 
 /// Prompt specification: structured fields that will be assembled into a final prompt.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct PromptSpec {
     #[serde(default)]
     pub system: Option<String>,
@@ -228,6 +231,7 @@ pub struct PromptSpec {
 
 /// Run spec: what to execute.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct RunSpec {
     #[serde(default)]
     pub name: Option<String>,
@@ -243,6 +247,7 @@ pub struct RunSpec {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct RunDefaults {
     /// Default system string applied if prompt has no system.
     #[serde(default)]
@@ -250,6 +255,7 @@ pub struct RunDefaults {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct WorkflowSpec {
     #[serde(default)]
     pub kind: WorkflowKind,
@@ -336,6 +342,7 @@ impl StepSpec {
 
 /// Guard directive (content normalization / output constraints, etc.).
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct GuardSpec {
     #[serde(rename = "type")]
     pub kind: String,

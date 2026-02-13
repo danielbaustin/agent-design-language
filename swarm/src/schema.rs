@@ -89,7 +89,13 @@ pub fn validate_adl_yaml(yaml_text: &str) -> Result<()> {
                     msgs.push("... (more schema errors omitted)".to_string());
                     break;
                 }
-                msgs.push(e.to_string());
+                let instance_path = e.instance_path.to_string();
+                let path = if instance_path.is_empty() {
+                    "/".to_string()
+                } else {
+                    instance_path
+                };
+                msgs.push(format!("at {path}: {e}"));
             }
 
             Err(anyhow!(
