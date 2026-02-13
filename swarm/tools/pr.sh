@@ -291,8 +291,11 @@ resolve_output_card_path_abs() {
 }
 
 sync_legacy_links_for_issue() {
-  local issue="$1" ver="$2" canonical_input="$3" canonical_output="$4"
+  local issue="$1" ver="$2"
+  local canonical_input canonical_output
   local legacy_input legacy_output
+  canonical_input="$(card_input_path "$issue")"
+  canonical_output="$(card_output_path "$issue")"
   legacy_input="$(card_legacy_input_path "$issue" "$ver")"
   legacy_output="$(card_legacy_output_path "$issue" "$ver")"
   (
@@ -553,7 +556,7 @@ cmd_card() {
   ensure_adl_dirs
   seed_input_card "$out_path" "$issue" "$title" "$(current_branch)" "$version"
   if [[ "$out_path" == "$(input_card_path "$issue")" ]]; then
-    sync_legacy_links_for_issue "$issue" "$version" "$(input_card_path "$issue")" "$(output_card_path "$issue")"
+    sync_legacy_links_for_issue "$issue" "$version"
   fi
   note "Done."
   echo "$out_path"
@@ -616,7 +619,7 @@ cmd_output() {
   ensure_adl_dirs
   seed_output_card "$out_path" "$issue" "$title" "$(current_branch)" "$version"
   if [[ "$out_path" == "$(output_card_path "$issue")" ]]; then
-    sync_legacy_links_for_issue "$issue" "$version" "$(input_card_path "$issue")" "$(output_card_path "$issue")"
+    sync_legacy_links_for_issue "$issue" "$version"
   fi
   note "Done."
   echo "$out_path"
@@ -678,7 +681,7 @@ cmd_cards() {
     seed_output_card "$output_path" "$issue" "$title" "TBD (run pr.sh start $issue)" "$version"
   fi
 
-  sync_legacy_links_for_issue "$issue" "$version" "$(input_card_path "$issue")" "$(output_card_path "$issue")"
+  sync_legacy_links_for_issue "$issue" "$version"
 
   echo "READ  $input_path"
   echo "WRITE $output_path"
@@ -762,7 +765,7 @@ cmd_start() {
     note "Creating output card: $out_path"
     seed_output_card "$out_path" "$issue" "$title" "$branch" "$ver"
   fi
-  sync_legacy_links_for_issue "$issue" "$ver" "$(input_card_path "$issue")" "$(output_card_path "$issue")"
+  sync_legacy_links_for_issue "$issue" "$ver"
   echo "• Agent:"
   echo "  READ   $in_path"
   echo "  WRITE  $out_path"
