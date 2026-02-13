@@ -1,7 +1,9 @@
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
-use std::time::{SystemTime, UNIX_EPOCH};
+
+mod helpers;
+use helpers::unique_test_temp_dir;
 
 fn run_swarm(args: &[&str]) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_swarm");
@@ -18,14 +20,7 @@ fn run_swarm_with_ci(args: &[&str]) -> std::process::Output {
 }
 
 fn tmp_dir(prefix: &str) -> PathBuf {
-    let mut p = std::env::temp_dir();
-    let nanos = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    p.push(format!("swarm-{prefix}-{nanos}"));
-    fs::create_dir_all(&p).unwrap();
-    p
+    unique_test_temp_dir(prefix)
 }
 
 #[test]

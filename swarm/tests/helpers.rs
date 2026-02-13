@@ -1,8 +1,13 @@
 use std::env;
 use std::ffi::{OsStr, OsString};
+use std::fs;
+use std::io::ErrorKind;
+use std::path::PathBuf;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Mutex, MutexGuard, OnceLock};
 
 static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+static TEMP_DIR_SEQ: AtomicU64 = AtomicU64::new(0);
 
 fn env_lock() -> MutexGuard<'static, ()> {
     match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
@@ -10,6 +15,42 @@ fn env_lock() -> MutexGuard<'static, ()> {
         // If a previous test panicked while holding the lock, recover so subsequent
         // tests can still run (these tests serialize env var changes).
         Err(poisoned) => poisoned.into_inner(),
+    }
+}
+
+fn sanitize_prefix(prefix: &str) -> String {
+    prefix
+        .chars()
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '-' || c == '_' {
+                c
+            } else {
+                '_'
+            }
+        })
+        .collect()
+}
+
+/// Create a unique per-test temp directory in a deterministic way.
+///
+/// Uses process id + monotonic counter (no clock/random dependency), and retries
+/// if a stale directory from an earlier process exists.
+pub fn unique_test_temp_dir(prefix: &str) -> PathBuf {
+    let mut root = env::temp_dir();
+    root.push("swarm-test-temp");
+    fs::create_dir_all(&root).expect("create swarm-test-temp root");
+
+    let prefix = sanitize_prefix(prefix);
+    let pid = std::process::id();
+
+    loop {
+        let seq = TEMP_DIR_SEQ.fetch_add(1, Ordering::Relaxed);
+        let dir = root.join(format!("{prefix}-pid{pid}-n{seq}"));
+        match fs::create_dir(&dir) {
+            Ok(()) => return dir,
+            Err(err) if err.kind() == ErrorKind::AlreadyExists => continue,
+            Err(err) => panic!("failed to create temp dir {}: {err}", dir.display()),
+        }
     }
 }
 
@@ -30,7 +71,7 @@ pub struct EnvVarGuardMulti {
     entries: Vec<(String, Option<OsString>)>,
     _lock: MutexGuard<'static, ()>,
 }
-
+#[allow(dead_code)]
 impl EnvVarGuard {
     pub fn set<K: Into<String>, V: AsRef<OsStr>>(key: K, value: V) -> Self {
         let key = key.into();

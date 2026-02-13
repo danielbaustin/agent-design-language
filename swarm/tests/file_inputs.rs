@@ -1,20 +1,14 @@
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
-use std::time::{SystemTime, UNIX_EPOCH};
 
 use swarm::execute::materialize_inputs;
 
+mod helpers;
+use helpers::unique_test_temp_dir;
+
 fn tmp_dir() -> std::path::PathBuf {
-    let nonce = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    let p = std::env::temp_dir()
-        .join("swarm-file-input-tests")
-        .join(format!("{nonce}"));
-    fs::create_dir_all(&p).unwrap();
-    p
+    unique_test_temp_dir("file-inputs")
 }
 
 fn write_file(path: &Path, contents: &str) {

@@ -5,17 +5,10 @@ use std::process::Command;
 use swarm::execute::materialize_inputs;
 
 mod helpers;
-use helpers::EnvVarGuard;
+use helpers::{unique_test_temp_dir, EnvVarGuard};
 
 fn tmp_dir(prefix: &str) -> std::path::PathBuf {
-    let mut p = std::env::temp_dir();
-    let nanos = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    p.push(format!("swarm-{prefix}-{nanos}"));
-    fs::create_dir_all(&p).unwrap();
-    p
+    unique_test_temp_dir(prefix)
 }
 
 fn write_file(dir: &Path, rel: &str, contents: &[u8]) -> std::path::PathBuf {
