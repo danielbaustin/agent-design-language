@@ -832,6 +832,7 @@ cmd_finish() {
   local input_path=""
   local output_path=""
   local no_open="0"
+  local merge_mode="0"
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -846,11 +847,15 @@ cmd_finish() {
       --output|--output-card|--output-card-file) output_path="$2"; shift 2 ;;
       --no-open) no_open="1"; shift ;;
       --open) no_open="0"; shift ;;
+      --merge|--auto-merge) merge_mode="1"; shift ;;
       *) die "finish: unknown arg: $1" ;;
     esac
   done
 
   [[ -n "$title" ]] || die "finish: --title is required"
+  if [[ "$merge_mode" == "1" && "$no_checks" == "1" ]]; then
+    die "finish: --merge requires checks; remove --no-checks"
+  fi
 
   ensure_not_on_main
 
@@ -972,11 +977,37 @@ cmd_finish() {
     echo "$pr_url"
   fi
 
+  note "finish mode: $( [[ "$merge_mode" == "1" ]] && echo "MERGE" || echo "SAFE" )"
+  note "Operating on PR: $pr_url"
+
   if [[ "$no_open" != "1" ]]; then
     note "Opening PR in browser…"
     open_in_browser "$repo" "$pr_url" || true
   else
     note "Not opening PR (--no-open)"
+  fi
+
+  if [[ "$merge_mode" == "1" ]]; then
+    if ! git diff --quiet || ! git diff --cached --quiet; then
+      die "finish: --merge requires a clean working tree before merge"
+    fi
+
+    local is_draft="false"
+    is_draft="$(gh pr view $(gh_repo_flag "$repo") "$pr_url" --json isDraft -q .isDraft 2>/dev/null || echo "false")"
+    if [[ "$is_draft" == "true" ]]; then
+      note "Running: gh pr ready $(gh_repo_flag "$repo") $pr_url"
+      gh pr ready $(gh_repo_flag "$repo") "$pr_url"
+    fi
+
+    note "Running: gh pr merge $(gh_repo_flag "$repo") --squash --delete-branch $pr_url"
+    if ! gh pr merge $(gh_repo_flag "$repo") --squash --delete-branch "$pr_url"; then
+      local retry_cmd
+      retry_cmd="gh pr ready $(gh_repo_flag "$repo") \"$pr_url\" && gh pr merge $(gh_repo_flag "$repo") --squash --delete-branch \"$pr_url\""
+      echo "RETRY_COMMAND=$retry_cmd" >&2
+      die "finish: merge failed"
+    fi
+    note "PR merged."
+    return 0
   fi
 
   if [[ "$ready" == "1" ]]; then
@@ -1014,7 +1045,7 @@ Commands:
   card    <issue> ... [--version <v0.2>] [-f <input_card.md>]
   output  <issue> ... [--version <v0.2>] [-f <output_card.md>]
   cards   <issue> [--version <v0.2>] [--no-fetch-issue]
-  finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open]
+  finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
   open
   status
 
@@ -1031,6 +1062,7 @@ Flags:
   (cards)   --no-fetch-issue                   Do not fetch issue title/labels (uses issue-<n> title)
   (card/output) --version <v0.2>               Override detected version (otherwise inferred from issue labels version:vX.Y)
   (finish) --output-card <output_card.md>          REQUIRED: output card path (must exist)
+  (finish) --merge                              Opt-in: ready + squash-merge + delete branch.
   (card/start) --slug <slug>                   Use an explicit slug instead of fetching the issue title.
 
 Notes:
