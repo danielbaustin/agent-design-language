@@ -55,6 +55,10 @@ version_from_card() {
   awk -F':' '/^Version:/ {gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2; exit}' "$card" || true
 }
 
+working_tree_dirty() {
+  ! git diff --quiet || ! git diff --cached --quiet
+}
+
 if [[ $# -eq 1 && ( "$1" == "-h" || "$1" == "--help" ) ]]; then
   usage
   exit 0
@@ -161,11 +165,23 @@ fi
 
 "$PR_SH" start "$issue" --slug "$SLUG"
 
-stamp="$(date +%Y%m%d-%H%M%S)"
-logfile=".adl/logs/issue-${issue}.${stamp}.log"
+logfile=".adl/cards/${issue}/codex_run.log"
+mkdir -p "$(dirname "$logfile")"
 
 printf '%s\n' "• Running codexw (non-interactive)..."
+set +e
 "$CODEXW_SH" "$CARD" --mode "$MODE" --log "$logfile"
+rc=$?
+set -e
+if [[ $rc -ne 0 ]]; then
+  printf '%s\n' "ERROR: codexw failed (rc=$rc)."
+  if working_tree_dirty; then
+    printf '%s\n' "ERROR: working tree is dirty after failure."
+    git status --short || true
+    printf '%s\n' "Next steps: commit, stash, or reset your local changes before retrying."
+  fi
+  exit "$rc"
+fi
 
 printf '\n'
 printf '%s\n' "• Codex run complete. Finishing via pr.sh..."
