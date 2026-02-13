@@ -32,6 +32,9 @@ CARD_PATHS_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/card_paths.sh"
 # shellcheck disable=SC1090
 source "$CARD_PATHS_LIB"
 
+DEFAULT_VERSION="v0.3"
+DEFAULT_NEW_LABELS="track:roadmap,version:v0.3,type:bug,area:tools,epic:v0.3-tooling-git"
+
 
 #
 # ---------- helpers ----------
@@ -251,7 +254,7 @@ issue_version() {
   if [[ -n "$v" ]]; then
     echo "$v"
   else
-    echo "v0.2"
+    echo "$DEFAULT_VERSION"
   fi
 }
 
@@ -766,6 +769,89 @@ cmd_start() {
   note "Done."
 }
 
+cmd_new() {
+  require_cmd gh
+
+  local title=""
+  local slug=""
+  local body=""
+  local body_file=""
+  local labels="$DEFAULT_NEW_LABELS"
+  local version="$DEFAULT_VERSION"
+  local no_start="0"
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --title) title="$2"; shift 2 ;;
+      --slug) slug="$2"; shift 2 ;;
+      --body) body="$2"; shift 2 ;;
+      --body-file) body_file="$2"; shift 2 ;;
+      --labels) labels="$2"; shift 2 ;;
+      --version) version="$2"; shift 2 ;;
+      --no-start) no_start="1"; shift ;;
+      *) die "new: unknown arg: $1" ;;
+    esac
+  done
+
+  [[ -n "$title" ]] || die "new: --title is required"
+  [[ -n "$version" ]] || die "new: --version must be non-empty"
+
+  if [[ -n "$body" && -n "$body_file" ]]; then
+    die "new: pass only one of --body or --body-file"
+  fi
+  if [[ -n "$body_file" && ! -f "$body_file" ]]; then
+    die "new: --body-file not found: $body_file"
+  fi
+
+  if [[ -z "$slug" ]]; then
+    slug="$(sanitize_slug "$title")"
+  else
+    slug="$(sanitize_slug "$slug")"
+  fi
+  [[ -n "$slug" ]] || die "new: slug is empty after sanitization"
+
+  local issue_body
+  if [[ -n "$body_file" ]]; then
+    issue_body="$(cat "$body_file")"
+  elif [[ -n "$body" ]]; then
+    issue_body="$body"
+  else
+    issue_body=$'## Goal\n-\n\n## Acceptance Criteria\n-'
+  fi
+
+  local labels_csv
+  labels_csv="$labels"
+  if [[ "$labels_csv" != *"version:"* ]]; then
+    labels_csv="${labels_csv},version:${version}"
+  fi
+
+  local -a gh_args
+  gh_args=(issue create --title "$title" --body "$issue_body")
+  IFS=',' read -r -a label_arr <<< "$labels_csv"
+  for label in "${label_arr[@]}"; do
+    label="$(trim_ws "$label")"
+    [[ -n "$label" ]] || continue
+    gh_args+=(--label "$label")
+  done
+
+  local issue_url
+  issue_url="$(gh "${gh_args[@]}")"
+  [[ -n "$issue_url" ]] || die "new: gh issue create returned empty output"
+  local issue_num
+  issue_num="${issue_url##*/}"
+  [[ "$issue_num" =~ ^[0-9]+$ ]] || die "new: failed to parse issue number from URL: $issue_url"
+
+  echo "ISSUE_URL=$issue_url"
+  echo "ISSUE_NUM=$issue_num"
+
+  if [[ "$no_start" == "1" ]]; then
+    return 0
+  fi
+
+  cmd_start "$issue_num" --slug "$slug"
+  echo "BRANCH=codex/${issue_num}-${slug}"
+}
+
 cmd_finish() {
   require_cmd git
   require_cmd gh
@@ -961,6 +1047,7 @@ usage() {
 pr.sh — reduce git/PR thrash while preserving human review
 
 Commands:
+  new     --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
   start   <issue> [--slug <slug>] [--prefix <pfx>] [--no-fetch-issue]
   card    <issue> ... [--version <v0.2>] [-f <input_card.md>]
   output  <issue> ... [--version <v0.2>] [-f <output_card.md>]
@@ -970,6 +1057,12 @@ Commands:
   status
 
 Flags:
+  (new)     --title "<title>"                 Required issue title for gh issue create.
+  (new)     --body "<text>"                   Optional issue body text.
+  (new)     --body-file <path>                Optional issue body file path.
+  (new)     --labels <csv>                    Comma-separated labels (default: track:roadmap,version:v0.3,type:bug,area:tools,epic:v0.3-tooling-git).
+  (new)     --version <v0.3>                  Default/fallback version label for new issue/card flow.
+  (new)     --no-start                        Only create issue; do not invoke start.
   (card)    -f, --file <input_card.md>         Output path for the generated input card (default: .adl/cards/<issue>/input_<issue>.md)
   (output)  -f, --file <output_card.md>        Output path for the generated output card (default: .adl/cards/<issue>/output_<issue>.md)
   (cards)   --version <v0.2>                   Override detected version (otherwise inferred from issue labels version:vX.Y)
@@ -987,6 +1080,7 @@ Notes:
 - Cards are stored locally under .adl/cards/ and are not committed to git.
 
 Examples:
+  swarm/tools/pr.sh new --title "swarm: fix timeout handling" --slug timeout-fix
   swarm/tools/pr.sh start 17 --slug b6-default-system
   swarm/tools/pr.sh card  17 --version v0.2
   swarm/tools/pr.sh output 17 --version v0.2
@@ -998,6 +1092,7 @@ EOF
 main() {
   local cmd="${1:-}"; shift || true
   case "$cmd" in
+    new) cmd_new "$@" ;;
     start) cmd_start "$@" ;;
     finish) cmd_finish "$@" ;;
     card) cmd_card "$@" ;;
