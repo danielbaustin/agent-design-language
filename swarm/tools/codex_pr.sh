@@ -25,6 +25,30 @@ die() { echo "ERROR: $*" >&2; exit 2; }
 # shellcheck disable=SC1090
 source "$CARD_PATHS_LIB"
 
+issue_from_input_path() {
+  local p="$1"
+  local base
+  base="$(basename "$p")"
+
+  if [[ "$p" =~ (^|/)\.adl/cards/([0-9]+)/input_([0-9]+)\.md$ ]]; then
+    [[ "${BASH_REMATCH[2]}" == "${BASH_REMATCH[3]}" ]] || die "Card path mismatch: $p"
+    card_issue_normalize "${BASH_REMATCH[2]}"
+    return 0
+  fi
+
+  if [[ "$base" =~ ^issue-([0-9]+)__input__v[0-9.]+\.md$ ]]; then
+    card_issue_normalize "${BASH_REMATCH[1]}"
+    return 0
+  fi
+
+  die "Could not parse input card path: $p (expected .adl/cards/143/input_143.md or issue-0143__input__v0.3.md)"
+}
+
+version_from_card() {
+  local card="$1"
+  awk -F':' '/^Version:/ {gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2; exit}' "$card" || true
+}
+
 if [[ $# -lt 1 ]]; then
   usage
   exit 2
@@ -76,40 +100,18 @@ done
 
 mkdir -p .adl/logs .adl/cards
 
-base="$(basename "$CARD")"
-
-issue_padded=""
-version=""
-out_card=""
-
-# Legacy layout: .adl/cards/issue-0102__input__v0.3.md
-if [[ "$base" =~ ^issue-([0-9]+)__input__(v[0-9.]+)\.md$ ]]; then
-  issue_padded="${BASH_REMATCH[1]}"
-  version="${BASH_REMATCH[2]}"
-  out_card="${CARD/__input__/__output__}"
-fi
-
-# New layout: .adl/cards/102/input_102.md (or zero-padded variants)
-if [[ -z "$issue_padded" ]]; then
-  local_re='(^|/)([0-9]+)/input_([0-9]+)\.md$'
-  if [[ "$CARD" =~ $local_re ]]; then
-    if [[ "${BASH_REMATCH[2]}" != "${BASH_REMATCH[3]}" ]]; then
-      die "Card path mismatch: directory issue ${BASH_REMATCH[2]} != filename issue ${BASH_REMATCH[3]}"
-    fi
-    issue_padded="${BASH_REMATCH[2]}"
-    out_card="$(dirname "$CARD")/output_${issue_padded}.md"
-    version="$(awk -F':' '/^Version:/ {gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2; exit}' "$CARD" || true)"
-  fi
-fi
-
-if [[ -z "$issue_padded" ]]; then
-  die "Could not parse input card path: $CARD (expected .adl/cards/102/input_102.md or .adl/cards/issue-0102__input__v0.3.md)"
-fi
+issue_padded="$(issue_from_input_path "$CARD")"
+version="$(version_from_card "$CARD")"
 if [[ -z "$version" ]]; then
-  version="v0.x"
+  version="v0.3"
 fi
-
 issue=$((10#$issue_padded))
+CARD="$(resolve_input_card_path "$issue" "$version")"
+out_card="$(resolve_output_card_path "$issue" "$version")"
+
+if [[ ! -f "$CARD" ]]; then
+  die "Canonical input card not found: $CARD"
+fi
 
 title="$(awk -F': ' '/^Title:/ {print $2; exit}' "$CARD" || true)"
 if [[ -z "$title" ]]; then
