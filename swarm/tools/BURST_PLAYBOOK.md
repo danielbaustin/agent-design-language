@@ -9,6 +9,7 @@ Use this playbook for sequential burst execution.
 3. Execute child issues one by one using `adl_pr_cycle` (`start -> codex -> finish -> report`).
 4. Merge only green PRs.
 5. Write a final summary under `.adl/reports/burst/<timestamp>/final_summary.md`.
+   Use `swarm/tools/BURST_FINAL_SUMMARY_TEMPLATE.md`.
 
 ## Stop Conditions
 
