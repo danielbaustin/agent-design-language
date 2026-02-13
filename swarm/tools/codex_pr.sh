@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Re-exec under bash when invoked via sh or another non-bash shell.
+if [ -z "${BASH_VERSION:-}" ]; then
+  exec bash "$0" "$@"
+fi
 set -euo pipefail
 
 PR_SH="${PR_SH:-swarm/tools/pr.sh}"
