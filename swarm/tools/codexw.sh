@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Re-exec under bash when invoked via sh or another non-bash shell.
+if [ -z "${BASH_VERSION:-}" ]; then
+  exec bash "$0" "$@"
+fi
 set -euo pipefail
 
 # codexw.sh — run Codex CLI as a disciplined ADL worker.
@@ -140,8 +144,8 @@ run_legacy_mode() {
   note "Running Codex (non-interactive)..."
   codex exec \
     --full-auto \
-    -C "$ROOT" \
-    --prompt "$PROMPT"$'\n'"$FENCE"
+    --cd "$ROOT" \
+    "$PROMPT"$'\n'"$FENCE"
 
   note "Applying patch (codex apply)..."
   codex apply
@@ -314,13 +318,13 @@ run_conveyor_mode() {
   if [[ "$MODE" == "full-auto" ]]; then
     codex exec \
       --full-auto \
-      -C "$(pwd)" \
-      --prompt "$prompt" 2>&1 | tee -a "$LOG_PATH"
+      --cd "$(pwd)" \
+      "$prompt" 2>&1 | tee -a "$LOG_PATH"
   else
     codex exec \
       --approval-mode "$MODE" \
-      -C "$(pwd)" \
-      --prompt "$prompt" 2>&1 | tee -a "$LOG_PATH"
+      --cd "$(pwd)" \
+      "$prompt" 2>&1 | tee -a "$LOG_PATH"
   fi
   codex_rc=${PIPESTATUS[0]}
 

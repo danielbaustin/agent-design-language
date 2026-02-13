@@ -158,6 +158,16 @@ run_swarm_checks() {
   )
 }
 
+run_tooling_sanity_checks() {
+  local root
+  root="$(repo_root)"
+  note "Running tooling sanity checks (codex_pr/codexw)…"
+  bash -n "$root/swarm/tools/codex_pr.sh"
+  bash -n "$root/swarm/tools/codexw.sh"
+  bash "$root/swarm/tools/codex_pr.sh" --help >/dev/null
+  bash "$root/swarm/tools/codexw.sh" --help >/dev/null
+}
+
 gh_repo_flag() {
   local r="$1"
   if [[ -n "$r" ]]; then
@@ -904,6 +914,7 @@ cmd_finish() {
   fi
 
   if [[ "$no_checks" != "1" ]]; then
+    run_tooling_sanity_checks
     run_swarm_checks
   else
     note "Skipping checks (--no-checks)"
