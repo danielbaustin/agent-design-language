@@ -322,42 +322,7 @@ fn run_rejects_concurrent_workflows_in_v0_2() {
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
     let new_path = prepend_path(&base);
     let _path_guard = EnvVarGuard::set("PATH", new_path);
-
-    let yaml = r#"
-version: "0.2"
-
-providers:
-  local:
-    type: "ollama"
-    config:
-      model: "phi4-mini"
-
-agents:
-  a1:
-    provider: "local"
-    model: "phi4-mini"
-
-tasks:
-  t1:
-    prompt:
-      user: "Summarize: {{text}}"
-
-run:
-  name: "reject-concurrent-v0-2"
-  workflow:
-    kind: "concurrent"
-    steps:
-      - id: "s1"
-        agent: "a1"
-        task: "t1"
-        inputs:
-          text: "hello"
-"#;
-
-    let tmp_yaml = base.join("concurrent-v0-2.yaml");
-    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
-
-    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    let out = run_swarm(&["tests/fixtures/concurrent_v0_2.adl.yaml", "--run"]);
     assert!(
         !out.status.success(),
         "expected failure for concurrent workflow, got success.\nstdout:\n{}\nstderr:\n{}",
@@ -366,18 +331,9 @@ run:
     );
 
     let stderr = String::from_utf8_lossy(&out.stderr);
-    assert!(
-        stderr.contains("concurrency"),
-        "stderr should mention concurrency; stderr was:\n{stderr}"
-    );
-    assert!(
-        stderr.contains("requires v0.3"),
-        "stderr should mention required version; stderr was:\n{stderr}"
-    );
-    assert!(
-        stderr.contains("document version is 0.2"),
-        "stderr should include document version; stderr was:\n{stderr}"
-    );
+    let expected =
+        "Error: feature 'concurrency' requires v0.3; document version is 0.2 (run.workflow.kind=concurrent)";
+    assert_eq!(stderr.trim(), expected, "stderr mismatch:\n{stderr}");
 }
 
 #[test]
