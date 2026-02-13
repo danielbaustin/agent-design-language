@@ -166,6 +166,8 @@ run_tooling_sanity_checks() {
   bash -n "$root/swarm/tools/codexw.sh"
   bash "$root/swarm/tools/codex_pr.sh" --help >/dev/null
   bash "$root/swarm/tools/codexw.sh" --help >/dev/null
+  sh "$root/swarm/tools/codex_pr.sh" --help >/dev/null
+  sh "$root/swarm/tools/codexw.sh" --help >/dev/null
 }
 
 gh_repo_flag() {
