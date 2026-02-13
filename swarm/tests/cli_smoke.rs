@@ -85,6 +85,24 @@ fn trace_flag_works() {
 }
 
 #[test]
+fn print_plan_preserves_explicit_step_ids_v0_2() {
+    let path = fixture_path("examples/v0-2-multi-step-basic.adl.yaml");
+    let out = run_swarm(&[path.to_str().unwrap(), "--print-plan"]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("step-1") && stdout.contains("step-2"),
+        "expected explicit step ids in plan output, stdout:\n{}",
+        stdout
+    );
+}
+
+#[test]
 fn unknown_arg_exits_with_code_2_and_prints_usage() {
     let path = write_temp_adl_yaml();
     let out = run_swarm(&[path.to_str().unwrap(), "--nope"]);

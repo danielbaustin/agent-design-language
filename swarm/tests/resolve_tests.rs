@@ -298,3 +298,12 @@ fn resolve_v0_2_multi_step_examples() {
         resolve::resolve_run(&doc).expect("resolve should succeed");
     }
 }
+
+#[test]
+fn resolve_preserves_explicit_step_ids_for_v0_2() {
+    let doc = parse_doc(include_str!("../examples/v0-2-multi-step-basic.adl.yaml"));
+    let resolved = resolve::resolve_run(&doc).expect("resolve should succeed");
+    assert_eq!(resolved.steps.len(), 2);
+    assert_eq!(resolved.steps[0].id, "step-1");
+    assert_eq!(resolved.steps[1].id, "step-2");
+}
