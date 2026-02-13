@@ -147,9 +147,6 @@ run_legacy_mode() {
     --cd "$ROOT" \
     "$PROMPT"$'\n'"$FENCE"
 
-  note "Applying patch (codex apply)..."
-  codex apply
-
   note "Running checks..."
   check_log="$(mktemp)"
   check_results=()
@@ -222,7 +219,6 @@ run_legacy_mode() {
       echo
       echo "## Actions taken"
       echo "- codex exec --full-auto"
-      echo "- codex apply"
       echo
       echo "## Validation"
       echo "- Tests / checks run:"
@@ -328,11 +324,6 @@ run_conveyor_mode() {
   fi
   codex_rc=${PIPESTATUS[0]}
 
-  if [[ $codex_rc -eq 0 ]]; then
-    log_note "Applying patch (codex apply)..."
-    codex apply 2>&1 | tee -a "$LOG_PATH"
-    codex_rc=${PIPESTATUS[0]}
-  fi
   set -e
 
   if [[ $codex_rc -ne 0 ]]; then
