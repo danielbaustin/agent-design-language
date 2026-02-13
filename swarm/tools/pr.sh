@@ -461,8 +461,6 @@ open_in_browser() {
 }
 
 cmd_card() {
-  require_cmd gh
-
   local issue="${1:-}"; shift || true
   [[ -n "$issue" ]] || die "card: missing <issue> number"
   issue="$(normalize_issue_or_die "$issue")"
@@ -488,6 +486,7 @@ cmd_card() {
 
   local title=""
   if [[ "$no_fetch_issue" != "1" ]]; then
+    require_cmd gh
     note "Fetching issue title via gh…"
     title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
   fi
@@ -505,7 +504,12 @@ cmd_card() {
   fi
 
   if [[ -z "$version" ]]; then
-    version="$(issue_version "$issue")"
+    if [[ "$no_fetch_issue" == "1" ]]; then
+      version="$DEFAULT_VERSION"
+    else
+      require_cmd gh
+      version="$(issue_version "$issue")"
+    fi
   fi
   if [[ -z "$out_path" ]]; then
     out_path="$(input_card_path "$issue")"
@@ -526,8 +530,6 @@ cmd_card() {
 }
 
 cmd_output() {
-  require_cmd gh
-
   local issue="${1:-}"; shift || true
   [[ -n "$issue" ]] || die "output: missing <issue> number"
   issue="$(normalize_issue_or_die "$issue")"
@@ -553,6 +555,7 @@ cmd_output() {
 
   local title=""
   if [[ "$no_fetch_issue" != "1" ]]; then
+    require_cmd gh
     note "Fetching issue title via gh…"
     title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
   fi
@@ -570,7 +573,12 @@ cmd_output() {
   fi
 
   if [[ -z "$version" ]]; then
-    version="$(issue_version "$issue")"
+    if [[ "$no_fetch_issue" == "1" ]]; then
+      version="$DEFAULT_VERSION"
+    else
+      require_cmd gh
+      version="$(issue_version "$issue")"
+    fi
   fi
   if [[ -z "$out_path" ]]; then
     out_path="$(output_card_path "$issue")"
@@ -591,8 +599,6 @@ cmd_output() {
 }
 
 cmd_cards() {
-  require_cmd gh
-
   local issue="${1:-}"; shift || true
   [[ -n "$issue" ]] || die "cards: missing <issue> number"
   issue="$(normalize_issue_or_die "$issue")"
@@ -613,6 +619,7 @@ cmd_cards() {
 
   local title=""
   if [[ "$no_fetch_issue" != "1" ]]; then
+    require_cmd gh
     note "Fetching issue title via gh…"
     title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
   fi
@@ -622,7 +629,12 @@ cmd_cards() {
   fi
 
   if [[ -z "$version" ]]; then
-    version="$(issue_version "$issue")"
+    if [[ "$no_fetch_issue" == "1" ]]; then
+      version="$DEFAULT_VERSION"
+    else
+      require_cmd gh
+      version="$(issue_version "$issue")"
+    fi
   fi
   [[ -n "$version" ]] || version="v0.2"
 
