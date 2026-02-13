@@ -181,6 +181,17 @@ echo "MODEL=${model}"
 exit 0
 "#
         }
+        MockOllamaBehavior::EchoPrompt => {
+            r#"#!/bin/sh
+set -eu
+if [ "${1:-}" != "run" ]; then
+  echo "mock ollama: expected 'run'" 1>&2
+  exit 2
+fi
+cat
+exit 0
+"#
+        }
     };
 
     fs::write(&bin, script.as_bytes()).unwrap();
@@ -202,6 +213,7 @@ enum MockOllamaBehavior {
     Success,
     Fail,
     EchoModel,
+    EchoPrompt,
 }
 
 fn run_swarm(args: &[&str]) -> std::process::Output {
@@ -288,6 +300,54 @@ run:
     assert!(
         stdout.contains("MODEL=agent-model-91"),
         "stdout was:\n{stdout}"
+    );
+}
+
+#[test]
+fn run_v0_2_coordinator_example_uses_real_file_handoff() {
+    let base = tmp_dir("exec-coordinator-file-handoff");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = fs::read_to_string("examples/v0-2-coordinator-agents-sdk.adl.yaml").unwrap();
+    let yaml_path = base.join("coordinator.adl.yaml");
+    fs::write(&yaml_path, yaml.as_bytes()).unwrap();
+
+    let out_dir = base.join("out");
+    let out = run_swarm(&[
+        yaml_path.to_string_lossy().as_ref(),
+        "--run",
+        "--out",
+        out_dir.to_string_lossy().as_ref(),
+    ]);
+
+    assert!(
+        out.status.success(),
+        "expected success, got {:?}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let brief = fs::read_to_string(out_dir.join("state/brief.txt")).unwrap();
+    let design = fs::read_to_string(out_dir.join("state/design.txt")).unwrap();
+
+    assert!(
+        brief.contains("BRIEF_STATE:"),
+        "brief artifact was:\n{}",
+        brief
+    );
+    assert!(
+        design.contains("DESIGN_FROM_FILE=") && design.contains("BRIEF_STATE:"),
+        "design artifact was:\n{}",
+        design
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("IMPLEMENTATION_FROM_FILE=") && stdout.contains("DESIGN_FROM_FILE="),
+        "stdout was:\n{}",
+        stdout
     );
 }
 
