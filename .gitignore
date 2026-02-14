@@ -6,3 +6,6 @@ swarm/.local/
 out/
 target/
 issue-*.sh
+
+# Local worktrees (generated)
+.worktrees/
