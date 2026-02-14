@@ -433,8 +433,8 @@ ensure_nonempty_file() {
 
 render_pr_body_file() {
   # Renders a PR body into a temp file and echoes its path.
-  # Args: issue close_line input_path output_path extra_body no_checks
-  local issue="$1" close_line="$2" input_path="$3" output_path="$4" extra_body="$5" no_checks="$6"
+  # Args: issue close_line input_path output_path extra_body no_checks fingerprint
+  local issue="$1" close_line="$2" input_path="$3" output_path="$4" extra_body="$5" no_checks="$6" fingerprint="$7"
 
   local tmp
   tmp="$(mktemp -t pr_body_XXXXXX.md)"
@@ -448,6 +448,7 @@ render_pr_body_file() {
     echo "Local artifacts (not committed):"
     echo "- Input card:  $input_path"
     echo "- Output card: $output_path"
+    echo "- Idempotency-Key: $fingerprint"
     echo
 
     if [[ -n "$extra_body" ]]; then
@@ -464,6 +465,33 @@ render_pr_body_file() {
   } >"$tmp"
 
   echo "$tmp"
+}
+
+sha256_file() {
+  local path="$1"
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$path" | awk '{print $1}'
+    return 0
+  fi
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$path" | awk '{print $1}'
+    return 0
+  fi
+  die "Missing hash command: need shasum or sha256sum"
+}
+
+finish_inputs_fingerprint() {
+  local title="$1" paths="$2" input_path="$3" output_path="$4"
+  local in_hash out_hash
+  in_hash="$(sha256_file "$input_path")"
+  out_hash="$(sha256_file "$output_path")"
+  local payload
+  payload="title=$title|paths=$paths|input=$in_hash|output=$out_hash"
+  if command -v shasum >/dev/null 2>&1; then
+    printf '%s' "$payload" | shasum -a 256 | awk '{print $1}'
+    return 0
+  fi
+  printf '%s' "$payload" | sha256sum | awk '{print $1}'
 }
 
 open_in_browser() {
@@ -885,6 +913,7 @@ cmd_finish() {
   local output_path=""
   local no_open="0"
   local merge_mode="0"
+  local idempotent="0"
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -900,6 +929,7 @@ cmd_finish() {
       --no-open) no_open="1"; shift ;;
       --open) no_open="0"; shift ;;
       --merge|--auto-merge) merge_mode="1"; shift ;;
+      --idempotent) idempotent="1"; shift ;;
       *) die "finish: unknown arg: $1" ;;
     esac
   done
@@ -947,7 +977,27 @@ cmd_finish() {
     has_uncommitted="1"
   fi
 
+  local repo
+  repo="$(default_repo)"
+  local fingerprint
+  fingerprint="$(finish_inputs_fingerprint "$title" "$paths" "$input_path" "$output_path")"
+
   if [[ "$has_uncommitted" == "0" && "$ahead" -eq 0 ]]; then
+    if [[ "$idempotent" == "1" ]]; then
+      local pr_url pr_state pr_title pr_body
+      pr_url="$(current_pr_url "$repo")"
+      if [[ -z "$pr_url" ]]; then
+        die "finish: --idempotent requested but no PR exists for this branch"
+      fi
+      pr_state="$(gh pr view $(gh_repo_flag "$repo") "$pr_url" --json state -q .state 2>/dev/null || true)"
+      pr_title="$(gh pr view $(gh_repo_flag "$repo") "$pr_url" --json title -q .title 2>/dev/null || true)"
+      pr_body="$(gh pr view $(gh_repo_flag "$repo") "$pr_url" --json body -q .body 2>/dev/null || true)"
+      [[ "$pr_state" == "MERGED" ]] || die "finish: --idempotent only skips for merged PRs; current state=$pr_state"
+      [[ "$pr_title" == "$title" ]] || die "finish: --idempotent detected changed title; refusing skip"
+      [[ "$pr_body" == *"Idempotency-Key: $fingerprint"* ]] || die "finish: --idempotent fingerprint mismatch; refusing skip"
+      note "Idempotent skip: merged PR already matches current finish inputs."
+      return 0
+    fi
     die "No changes detected and branch has no commits ahead of origin/main. Nothing to PR. If you already merged, switch branches."
   fi
 
@@ -988,11 +1038,8 @@ cmd_finish() {
     close_line="Closes #${issue}"
   fi
 
-  local repo
-  repo="$(default_repo)"
-
   local pr_body_file
-  pr_body_file="$(render_pr_body_file "$issue" "$close_line" "$input_path" "$output_path" "$extra_body" "$no_checks")"
+  pr_body_file="$(render_pr_body_file "$issue" "$close_line" "$input_path" "$output_path" "$extra_body" "$no_checks" "$fingerprint")"
   trap 'rm -f "${pr_body_file:-}"' EXIT
 
   local commit_msg="$title"
@@ -1120,6 +1167,7 @@ Flags:
   (card/output) --version <v0.2>               Override detected version (otherwise inferred from issue labels version:vX.Y)
   (finish) --output-card <output_card.md>          REQUIRED: output card path (must exist)
   (finish) --merge                              Opt-in: ready + squash-merge + delete branch.
+  (finish) --idempotent                         Safe no-op only when existing merged PR matches current finish inputs.
   (card/start) --slug <slug>                   Use an explicit slug instead of fetching the issue title.
 
 Notes:
