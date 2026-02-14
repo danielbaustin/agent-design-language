@@ -12,6 +12,7 @@ Utility scripts for ADL workflow automation and PR hygiene.
 - `BURST_PLAYBOOK.md`: Sequential burst operator guide using `adl_pr_cycle`.
 - `burst_continue.sh`: Generates deterministic resume/continue commands for halted bursts.
 - `update_latest_reports.sh`: Refreshes `LATEST.md` pointers for automation and pr-cycle report directories.
+- `update_reports_index.sh`: Refreshes `LATEST.md` pointers and updates `.adl/reports/INDEX.md`.
 - `REPORT_SCHEMA.md`: Standard report schema reference (`adl-report/v1`).
 
 ## Codex.app Skills
