@@ -15,11 +15,14 @@ This repository is the **monorepo** for ADL v0.1 and the in-progress v0.2 capabi
 - `adl-spec/` — **Language specification**  
   Markdown specification, glossary, and examples describing the ADL language itself.
 
+- `docs/` — **Contributor docs spine**  
+  Where to start, reading order, workflow docs, and roadmap links for v0.3 planning.
+
 ## Default Development Workflow
 
 New ADL development should use the Codex.app `adl_pr_cycle` workflow as the default path (`start -> codex -> finish -> report`).
-
 Detailed guide: `docs/default_workflow.md`.
+Roadmap navigation: `docs/v0.3-roadmap.md`.
 
 ---
 
