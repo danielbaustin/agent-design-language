@@ -26,6 +26,18 @@ jobs:
           workspaces: |
             swarm -> target
 
+      - name: tooling sanity (bash -n)
+        run: bash -n swarm/tools/*.sh
+        working-directory: .
+
+      - name: tooling sanity (codex_pr help)
+        run: sh swarm/tools/codex_pr.sh --help
+        working-directory: .
+
+      - name: tooling sanity (codexw help)
+        run: sh swarm/tools/codexw.sh --help
+        working-directory: .
+
       - name: fmt
         run: cargo fmt --all -- --check
 
