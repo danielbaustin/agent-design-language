@@ -796,7 +796,7 @@ cmd_new() {
   if [[ -n "$body" && -n "$body_file" ]]; then
     die "new: pass only one of --body or --body-file"
   fi
-  if [[ -n "$body_file" && ! -f "$body_file" ]]; then
+  if [[ -n "$body_file" && "$body_file" != "-" && ! -f "$body_file" ]]; then
     die "new: --body-file not found: $body_file"
   fi
 
@@ -809,7 +809,11 @@ cmd_new() {
 
   local issue_body
   if [[ -n "$body_file" ]]; then
-    issue_body="$(cat "$body_file")"
+    if [[ "$body_file" == "-" ]]; then
+      issue_body="$(cat)"
+    else
+      issue_body="$(cat "$body_file")"
+    fi
   elif [[ -n "$body" ]]; then
     issue_body="$body"
   else
@@ -1094,7 +1098,7 @@ Commands:
 Flags:
   (new)     --title "<title>"                 Required issue title for gh issue create.
   (new)     --body "<text>"                   Optional issue body text.
-  (new)     --body-file <path>                Optional issue body file path.
+  (new)     --body-file <path|->              Optional issue body file path ('-' reads stdin).
   (new)     --labels <csv>                    Comma-separated labels (default: track:roadmap,version:v0.3,type:bug,area:tools,epic:v0.3-tooling-git).
   (new)     --version <v0.3>                  Default/fallback version label for new issue/card flow.
   (new)     --no-start                        Only create issue; do not invoke start.
