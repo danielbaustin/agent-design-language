@@ -106,8 +106,6 @@ ensure_canonical_card_from_legacy() {
     cp -f "$legacy" "$canonical"
     echo "warning: seeded canonical card from legacy content: $canonical" >&2
   fi
-
-  sync_legacy_card_link "$canonical" "$legacy"
 }
 
 resolve_input_card_path() {

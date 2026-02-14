@@ -318,18 +318,9 @@ resolve_output_card_path_abs() {
 }
 
 sync_legacy_links_for_issue() {
-  local issue="$1" ver="$2"
-  local canonical_input canonical_output
-  local legacy_input legacy_output
-  canonical_input="$(card_input_path "$issue")"
-  canonical_output="$(card_output_path "$issue")"
-  legacy_input="$(card_legacy_input_path "$issue" "$ver")"
-  legacy_output="$(card_legacy_output_path "$issue" "$ver")"
-  (
-    cd "$(repo_root)"
-    sync_legacy_card_link "$canonical_input" "$legacy_input"
-    sync_legacy_card_link "$canonical_output" "$legacy_output"
-  )
+  # Legacy compatibility links are intentionally disabled to keep cards
+  # canonicalized under .adl/cards/<issue>/ only.
+  :
 }
 
 render_template() {
