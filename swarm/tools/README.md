@@ -47,15 +47,83 @@ swarm/tools/branch_hygiene.sh --apply
 # Optionally include stale local branches and merged remote codex/* branches
 swarm/tools/branch_hygiene.sh --apply --include-stale --remote-merged
 ```
-## Recommended Allowlist Rules
+## Codex.app Permissions: `default.rules` and `writable_roots`
 
-For unattended burst runs, a minimal allowlist typically includes:
+This section documents how to reduce Codex permission prompts during ADL workflows.
 
-- `./swarm/tools/pr.sh start`
-- `./swarm/tools/pr.sh finish`
-- `./swarm/tools/pr.sh new`
-- `gh pr ready -R danielbaustin/agent-design-language <pr-url>`
-- `gh pr merge -R danielbaustin/agent-design-language --squash --delete-branch <pr-url>`
+### 1) Command approval rules (`default.rules`)
+
+Codex command approvals are prefix-match based. On macOS, the likely rules file is:
+
+- `~/.codex/rules/default.rules`
+
+Quick discovery command if that path does not exist:
+
+```bash
+find ~/.codex -maxdepth 3 -type f -name "*.rules"
+```
+
+Edit the file manually and keep an in-repo template as source-of-truth:
+
+- `swarm/tools/default.rules.profiles.example`
+
+### 2) Why "yes + don't ask again" can still prompt
+
+Approvals are shape-sensitive. A rule for:
+
+- `["./swarm/tools/pr.sh", "start"]`
+
+does not always match:
+
+- `["/bin/zsh", "-lc", "./swarm/tools/pr.sh start 233 --slug ..."]`
+- a different argv prefix, wrapper, or segmented shell pipeline
+
+Keep command shapes stable by running direct forms:
+
+- `./swarm/tools/pr.sh ...`
+- `./swarm/tools/burst_worktree.sh ...`
+- `gh ...`
+- `git ...`
+
+Avoid wrapping these in `/bin/zsh -lc ...` in automation prompts unless absolutely required.
+
+### 3) Recommended rule profiles
+
+Use one of these profiles from `swarm/tools/default.rules.profiles.example`:
+
+- `safe-default`: narrower allowlist for routine ADL work
+- `unattended-full-speed`: broader allowlist for low-touch burst execution
+
+Typical stable entries:
+
+- `prefix_rule(pattern=["./swarm/tools/pr.sh"], decision="allow")`
+- `prefix_rule(pattern=["./swarm/tools/burst_worktree.sh"], decision="allow")`
+- `prefix_rule(pattern=["gh", "pr"], decision="allow")`
+- `prefix_rule(pattern=["gh", "issue"], decision="allow")`
+- `prefix_rule(pattern=["git", "-C", "/Users/daniel/git/agent-design-language"], decision="allow")`
+
+### 4) `writable_roots` is different from `default.rules`
+
+- `default.rules` controls command approval prompts (can I run this command shape?).
+- `writable_roots` controls filesystem write scope (can this command write to this path?).
+
+In Codex.app, `writable_roots` may be injected per run/session and not persisted in `default.rules`.
+That means command approval can be "allow", but writes can still fail with sandbox denial if the path is outside the active writable roots.
+
+Practical mitigations:
+
+- Run from repo-root worktrees under a known writable root.
+- Keep report/output paths inside the repo whenever possible.
+- Ensure automation runs include required writable paths (for example, repo root plus any automation state directories).
+- If an automation memory path is outside writable roots, either add that root to the run config or move memory into a repo path.
+
+### 5) 3-lane burst checklist (near-zero prompts)
+
+1. Start from direct commands only: `./swarm/tools/...`, `gh ...`, `git ...`.
+2. Install one profile from `swarm/tools/default.rules.profiles.example` into `~/.codex/rules/default.rules`.
+3. Confirm writable roots include all active lane worktrees and report/memory destinations.
+4. Run issue flow via `./swarm/tools/pr.sh start ...` and `./swarm/tools/pr.sh finish ...` (no shell wrappers).
+5. Keep automation/log/report writes inside approved roots.
 
 ## Worktree Smoke Test
 

@@ -1,0 +1,47 @@
+# Codex.app `default.rules` profiles for ADL workflows
+#
+# Copy one profile into:
+#   ~/.codex/rules/default.rules
+#
+# Notes:
+# - Prefix matching is shape-sensitive.
+# - Prefer direct commands (`./swarm/tools/...`, `gh ...`, `git ...`).
+# - Avoid wrapping in `/bin/zsh -lc ...` when possible.
+
+################################################################################
+# PROFILE: SAFE-DEFAULT
+# Narrower allowlist with low prompt volume for normal issue work.
+################################################################################
+
+prefix_rule(pattern=["./swarm/tools/pr.sh"], decision="allow")
+prefix_rule(pattern=["./swarm/tools/burst_worktree.sh"], decision="allow")
+prefix_rule(pattern=["./swarm/tools/branch_hygiene.sh"], decision="allow")
+prefix_rule(pattern=["./swarm/tools/batched_checks.sh"], decision="allow")
+
+prefix_rule(pattern=["gh", "issue"], decision="allow")
+prefix_rule(pattern=["gh", "pr"], decision="allow")
+prefix_rule(pattern=["gh", "label"], decision="allow")
+
+prefix_rule(pattern=["git", "checkout"], decision="allow")
+prefix_rule(pattern=["git", "add"], decision="allow")
+prefix_rule(pattern=["git", "pull", "--ff-only"], decision="allow")
+prefix_rule(pattern=["git", "push"], decision="allow")
+prefix_rule(pattern=["git", "rev-parse"], decision="allow")
+prefix_rule(pattern=["git", "-C", "/Users/daniel/git/agent-design-language"], decision="allow")
+
+################################################################################
+# PROFILE: UNATTENDED-FULL-SPEED
+# Broader rules for burst operators who want minimal interruption.
+# Review this carefully before using.
+################################################################################
+
+# prefix_rule(pattern=["./swarm/tools"], decision="allow")
+# prefix_rule(pattern=["gh"], decision="allow")
+# prefix_rule(pattern=["git"], decision="allow")
+
+################################################################################
+# OPTIONAL REPO-SPECIFIC NARROWING EXAMPLES
+################################################################################
+
+# prefix_rule(pattern=["gh", "pr", "ready", "-R", "danielbaustin/agent-design-language"], decision="allow")
+# prefix_rule(pattern=["gh", "pr", "merge", "-R", "danielbaustin/agent-design-language"], decision="allow")
