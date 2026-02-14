@@ -12,7 +12,7 @@ Utility scripts for ADL workflow automation and PR hygiene.
 - `BURST_PLAYBOOK.md`: Sequential burst operator guide using `adl_pr_cycle`.
 - `burst_continue.sh`: Generates deterministic resume/continue commands for halted bursts.
 - `burst_worktree.sh`: Creates/drops deterministic issue-scoped git worktrees for burst isolation.
-- `batched_checks.sh`: Runs tooling sanity + swarm checks through one stable command shape.
+- `batched_checks.sh`: Runs tooling sanity + swarm checks through one stable command shape (quiet summaries by default; use `--verbose` or `ADL_CHECKS_VERBOSE=1` for full logs).
 - `update_latest_reports.sh`: Refreshes `LATEST.md` pointers for automation and pr-cycle report directories.
 - `update_reports_index.sh`: Refreshes `LATEST.md` pointers and updates `.adl/reports/INDEX.md`.
 - `REPORT_SCHEMA.md`: Standard report schema reference (`adl-report/v1`).
