@@ -19,6 +19,18 @@ This repository is the **monorepo** for ADL v0.1 and the in-progress v0.2 capabi
 
 New ADL development should use the Codex.app `adl_pr_cycle` workflow as the default path (`start -> codex -> finish -> report`).
 
+## Demo UX Quickstart
+
+From repo root:
+
+```bash
+# One obvious demo path (quiet by default)
+cd swarm
+cargo run -- demo demo-b-one-command --run --quiet --open --out ../.adl/reports/demo
+```
+
+The generated artifacts land under `.adl/reports/demo/demo-b-one-command/`.
+
 ---
 
 ## 5‑minute demo

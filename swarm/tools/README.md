@@ -17,6 +17,17 @@ Utility scripts for ADL workflow automation and PR hygiene.
 - `update_reports_index.sh`: Refreshes `LATEST.md` pointers and updates `.adl/reports/INDEX.md`.
 - `REPORT_SCHEMA.md`: Standard report schema reference (`adl-report/v1`).
 
+## Demo UX Quickstart
+
+From repo root:
+
+```bash
+cd swarm
+cargo run -- demo demo-b-one-command --run --quiet --open --out ../.adl/reports/demo
+```
+
+This is the recommended low-noise default path for demo UX.
+
 ## Recommended Allowlist Rules
 
 For unattended burst runs, a minimal allowlist typically includes:
