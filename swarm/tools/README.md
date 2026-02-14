@@ -13,9 +13,25 @@ Utility scripts for ADL workflow automation and PR hygiene.
 - `burst_continue.sh`: Generates deterministic resume/continue commands for halted bursts.
 - `burst_worktree.sh`: Creates/drops deterministic issue-scoped git worktrees for burst isolation.
 - `batched_checks.sh`: Runs tooling sanity + swarm checks through one stable command shape.
+- `branch_hygiene.sh`: Safe branch pruning helper (dry-run by default; apply merged/stale/remote cleanup via explicit flags).
 - `update_latest_reports.sh`: Refreshes `LATEST.md` pointers for automation and pr-cycle report directories.
 - `update_reports_index.sh`: Refreshes `LATEST.md` pointers and updates `.adl/reports/INDEX.md`.
 - `REPORT_SCHEMA.md`: Standard report schema reference (`adl-report/v1`).
+
+## Branch Hygiene
+
+Recommended safe flow:
+
+```bash
+# Dry-run report first (no deletes)
+swarm/tools/branch_hygiene.sh
+
+# Delete local merged branches only
+swarm/tools/branch_hygiene.sh --apply
+
+# Optionally include stale local branches and merged remote codex/* branches
+swarm/tools/branch_hygiene.sh --apply --include-stale --remote-merged
+```
 
 ## Recommended Allowlist Rules
 
