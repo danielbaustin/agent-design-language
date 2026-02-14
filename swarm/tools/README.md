@@ -11,9 +11,20 @@ Utility scripts for ADL workflow automation and PR hygiene.
 - `card_paths.sh`: Canonical card path helpers.
 - `BURST_PLAYBOOK.md`: Sequential burst operator guide using `adl_pr_cycle`.
 - `burst_continue.sh`: Generates deterministic resume/continue commands for halted bursts.
+- `batched_checks.sh`: Runs tooling sanity + swarm checks through one stable command shape.
 - `update_latest_reports.sh`: Refreshes `LATEST.md` pointers for automation and pr-cycle report directories.
 - `update_reports_index.sh`: Refreshes `LATEST.md` pointers and updates `.adl/reports/INDEX.md`.
 - `REPORT_SCHEMA.md`: Standard report schema reference (`adl-report/v1`).
+
+## Recommended Allowlist Rules
+
+For unattended burst runs, a minimal allowlist typically includes:
+
+- `./swarm/tools/pr.sh start`
+- `./swarm/tools/pr.sh finish`
+- `./swarm/tools/pr.sh new`
+- `gh pr ready -R danielbaustin/agent-design-language <pr-url>`
+- `gh pr merge -R danielbaustin/agent-design-language --squash --delete-branch <pr-url>`
 
 ## Codex.app Skills
 This section documents Codex.app skills used with ADL; skills live in Codex.app but are specified here for versioning.

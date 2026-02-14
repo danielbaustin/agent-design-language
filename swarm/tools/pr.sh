@@ -194,6 +194,13 @@ run_tooling_sanity_checks() {
   sh "$root/swarm/tools/codexw.sh" --help >/dev/null
 }
 
+run_batched_checks() {
+  local root
+  root="$(repo_root)"
+  note "Running batched checks via swarm/tools/batched_checks.sh…"
+  bash "$root/swarm/tools/batched_checks.sh"
+}
+
 gh_repo_flag() {
   local r="$1"
   if [[ -n "$r" ]]; then
@@ -1006,8 +1013,7 @@ cmd_finish() {
   fi
 
   if [[ "$no_checks" != "1" ]]; then
-    run_tooling_sanity_checks
-    run_swarm_checks
+    run_batched_checks
   else
     note "Skipping checks (--no-checks)"
   fi
