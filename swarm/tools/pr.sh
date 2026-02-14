@@ -262,8 +262,14 @@ commits_ahead_of_main() {
 }
 
 current_pr_url() {
-  # Returns PR url for the current branch if one exists, else empty.
-  local repo="$1"
+  # Returns open PR url for a branch if one exists, else empty.
+  local repo="$1" branch="$2"
+  local url
+  url="$(gh pr list $(gh_repo_flag "$repo") --head "$branch" --state open --json url -q '.[0].url' 2>/dev/null || true)"
+  if [[ -n "$url" ]]; then
+    echo "$url"
+    return 0
+  fi
   gh pr view $(gh_repo_flag "$repo") --json url -q .url 2>/dev/null || true
 }
 
@@ -984,6 +990,9 @@ cmd_finish() {
     has_uncommitted="1"
   fi
 
+  local branch
+  branch="$(current_branch)"
+
   local repo
   repo="$(default_repo)"
   local fingerprint
@@ -992,7 +1001,7 @@ cmd_finish() {
   if [[ "$has_uncommitted" == "0" && "$ahead" -eq 0 ]]; then
     if [[ "$idempotent" == "1" ]]; then
       local pr_url pr_state pr_title pr_body
-      pr_url="$(current_pr_url "$repo")"
+      pr_url="$(current_pr_url "$repo" "$branch")"
       if [[ -z "$pr_url" ]]; then
         die "finish: --idempotent requested but no PR exists for this branch"
       fi
@@ -1060,19 +1069,16 @@ cmd_finish() {
     note "Skipping commit (working tree clean; using existing commits)."
   fi
 
-  local branch
-  branch="$(current_branch)"
-
   note "Pushing…"
   if ! git push -u origin "$branch"; then
     die "Push failed (likely non-fast-forward due to remote divergence). Try: 'git fetch origin' then 'git push --force-with-lease origin $branch' (if you rebased) or 'git pull --rebase' (if you didn’t)."
   fi
 
   local pr_url
-  pr_url="$(current_pr_url "$repo")"
+  pr_url="$(current_pr_url "$repo" "$branch")"
 
   if [[ -n "$pr_url" ]]; then
-    note "Updating existing PR…"
+    note "Reusing existing open PR…"
     if ! gh pr edit $(gh_repo_flag "$repo") "$pr_url" --title "$title" --body-file "$pr_body_file" >/dev/null; then
       die "finish: failed to update existing PR"
     fi
