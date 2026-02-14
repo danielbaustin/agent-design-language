@@ -14,9 +14,26 @@ Utility scripts for ADL workflow automation and PR hygiene.
 - `burst_worktree.sh`: Creates/drops deterministic issue-scoped git worktrees for burst isolation.
 - `open_artifact.sh`: Opens canonical cards or burst report directories from one command.
 - `batched_checks.sh`: Runs tooling sanity + swarm checks through one stable command shape (quiet summaries by default; use `--verbose` or `ADL_CHECKS_VERBOSE=1` for full logs).
+- `demo_one_command.sh`: Recommended one-command entrypoint for demo workflows.
+- `branch_hygiene.sh`: Safe branch pruning helper (dry-run by default; apply merged/stale/remote cleanup via explicit flags).
 - `update_latest_reports.sh`: Refreshes `LATEST.md` pointers for automation and pr-cycle report directories.
 - `update_reports_index.sh`: Refreshes `LATEST.md` pointers and updates `.adl/reports/INDEX.md`.
 - `REPORT_SCHEMA.md`: Standard report schema reference (`adl-report/v1`).
+
+## Branch Hygiene
+
+Recommended safe flow:
+
+```bash
+# Dry-run report first (no deletes)
+swarm/tools/branch_hygiene.sh
+
+# Delete local merged branches only
+swarm/tools/branch_hygiene.sh --apply
+
+# Optionally include stale local branches and merged remote codex/* branches
+swarm/tools/branch_hygiene.sh --apply --include-stale --remote-merged
+```
 
 ## Recommended Allowlist Rules
 
@@ -44,6 +61,12 @@ cd /Users/daniel/git/adl-lane-b
 # 3) Burst worktree
 cd /Users/daniel/git/agent-design-language/.worktrees/burst/206-lane-b-demo-ux
 ./swarm/tools/pr.sh new --title "[smoke] pr.sh new from burst worktree" --slug smoke-burst --labels "track:roadmap,version:v0.3,area:tools,type:task,epic:v0.3-tooling-git" --body "smoke" --no-start
+```
+
+## One Obvious Demo Command
+
+```bash
+./swarm/tools/demo_one_command.sh
 ```
 
 ## Codex.app Skills
