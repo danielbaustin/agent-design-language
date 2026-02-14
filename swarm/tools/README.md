@@ -11,6 +11,7 @@ Utility scripts for ADL workflow automation and PR hygiene.
 - `card_paths.sh`: Canonical card path helpers.
 - `BURST_PLAYBOOK.md`: Sequential burst operator guide using `adl_pr_cycle`.
 - `burst_continue.sh`: Generates deterministic resume/continue commands for halted bursts.
+- `burst_worktree.sh`: Creates/drops deterministic issue-scoped git worktrees for burst isolation.
 - `batched_checks.sh`: Runs tooling sanity + swarm checks through one stable command shape.
 - `update_latest_reports.sh`: Refreshes `LATEST.md` pointers for automation and pr-cycle report directories.
 - `update_reports_index.sh`: Refreshes `LATEST.md` pointers and updates `.adl/reports/INDEX.md`.
