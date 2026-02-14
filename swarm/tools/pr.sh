@@ -819,6 +819,7 @@ cmd_start() {
   echo "• Agent:"
   echo "  READ   $in_path"
   echo "  WRITE  $out_path"
+  echo "  OPEN   ./swarm/tools/open_artifact.sh card $issue output"
   note "Done."
 }
 
@@ -1104,6 +1105,8 @@ cmd_finish() {
   else
     note "Not opening PR (--no-open)"
   fi
+  note "Open output card: ./swarm/tools/open_artifact.sh card $issue output"
+  note "Open latest burst report: ./swarm/tools/open_artifact.sh burst latest"
 
   if [[ "$merge_mode" == "1" ]]; then
     if ! git diff --quiet || ! git diff --cached --quiet; then

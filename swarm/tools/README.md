@@ -12,8 +12,9 @@ Utility scripts for ADL workflow automation and PR hygiene.
 - `BURST_PLAYBOOK.md`: Sequential burst operator guide using `adl_pr_cycle`.
 - `burst_continue.sh`: Generates deterministic resume/continue commands for halted bursts.
 - `burst_worktree.sh`: Creates/drops deterministic issue-scoped git worktrees for burst isolation.
+- `open_artifact.sh`: Opens canonical cards or burst report directories from one command.
+- `batched_checks.sh`: Runs tooling sanity + swarm checks through one stable command shape (quiet summaries by default; use `--verbose` or `ADL_CHECKS_VERBOSE=1` for full logs).
 - `demo_one_command.sh`: Recommended one-command entrypoint for demo workflows.
-- `batched_checks.sh`: Runs tooling sanity + swarm checks through one stable command shape.
 - `branch_hygiene.sh`: Safe branch pruning helper (dry-run by default; apply merged/stale/remote cleanup via explicit flags).
 - `update_latest_reports.sh`: Refreshes `LATEST.md` pointers for automation and pr-cycle report directories.
 - `update_reports_index.sh`: Refreshes `LATEST.md` pointers and updates `.adl/reports/INDEX.md`.
@@ -28,6 +29,9 @@ cargo run -- demo demo-b-one-command --run --quiet --open --out ../.adl/reports/
 ```
 
 This is the recommended low-noise default path for demo UX.
+## Default Workflow Guide
+
+- `docs/default_workflow.md`: Canonical contributor flow for `adl_pr_cycle` + `pr.sh`, including card paths and common remediations.
 ## Branch Hygiene
 
 Recommended safe flow:
