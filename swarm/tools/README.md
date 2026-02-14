@@ -10,6 +10,8 @@ Utility scripts for ADL workflow automation and PR hygiene.
 - `codexw.sh`: Codex runner wrapper used by `codex_pr.sh`.
 - `card_paths.sh`: Canonical card path helpers.
 - `BURST_PLAYBOOK.md`: Sequential burst operator guide using `adl_pr_cycle`.
+- `update_latest_reports.sh`: Refreshes `LATEST.md` pointers for automation and pr-cycle report directories.
+- `REPORT_SCHEMA.md`: Standard report schema reference (`adl-report/v1`).
 
 ## Codex.app Skills
 This section documents Codex.app skills used with ADL; skills live in Codex.app but are specified here for versioning.
