@@ -24,6 +24,18 @@ New ADL development should use the Codex.app `adl_pr_cycle` workflow as the defa
 Detailed guide: `docs/default_workflow.md`.
 Roadmap navigation: `docs/v0.3-roadmap.md`.
 
+## Demo UX Quickstart
+
+From repo root:
+
+```bash
+# One obvious demo path (quiet by default)
+cd swarm
+cargo run -- demo demo-b-one-command --run --quiet --open --out ../.adl/reports/demo
+```
+
+The generated artifacts land under `.adl/reports/demo/demo-b-one-command/`.
+
 ---
 
 ## 5‑minute demo

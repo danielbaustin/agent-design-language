@@ -19,6 +19,16 @@ Utility scripts for ADL workflow automation and PR hygiene.
 - `update_latest_reports.sh`: Refreshes `LATEST.md` pointers for automation and pr-cycle report directories.
 - `update_reports_index.sh`: Refreshes `LATEST.md` pointers and updates `.adl/reports/INDEX.md`.
 - `REPORT_SCHEMA.md`: Standard report schema reference (`adl-report/v1`).
+## Demo UX Quickstart
+
+From repo root:
+
+```bash
+cd swarm
+cargo run -- demo demo-b-one-command --run --quiet --open --out ../.adl/reports/demo
+```
+
+This is the recommended low-noise default path for demo UX.
 ## Default Workflow Guide
 
 - `docs/default_workflow.md`: Canonical contributor flow for `adl_pr_cycle` + `pr.sh`, including card paths and common remediations.
@@ -36,7 +46,6 @@ swarm/tools/branch_hygiene.sh --apply
 # Optionally include stale local branches and merged remote codex/* branches
 swarm/tools/branch_hygiene.sh --apply --include-stale --remote-merged
 ```
-
 ## Recommended Allowlist Rules
 
 For unattended burst runs, a minimal allowlist typically includes:
