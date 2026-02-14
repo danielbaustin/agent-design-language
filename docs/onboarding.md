@@ -1,0 +1,26 @@
+# Contributor Onboarding (Docs + Reports)
+
+Use this page when you need to orient quickly in the ADL repo.
+
+## Where to Add or Update Docs
+
+- Project overview: `README.md`
+- Tooling workflow docs: `swarm/tools/README.md`
+- Language docs: `adl-spec/`
+- Contributor planning docs: `docs/`
+
+## Where Reports Live
+
+- `docs/reports.md` (report directory orientation)
+- `.adl/reports/burst/<timestamp>/` (burst artifacts)
+- `.adl/reports/pr-cycle/<issue>/<timestamp>/` (per-issue cycle reports)
+
+## Workflow Context
+
+Default workflow uses `adl_pr_cycle` with canonical card paths under `.adl/cards/<issue>/`.
+
+## Reading Order
+
+1. `README.md`
+2. `swarm/tools/README.md`
+3. `.adl/reports/README.md`
