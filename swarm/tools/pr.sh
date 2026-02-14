@@ -785,15 +785,17 @@ cmd_start() {
     note "Branch exists on origin; checking out and tracking…"
     run_git_or_die "start: switch to tracking branch 'origin/$branch'" git switch --track "origin/$branch"
   else
-    # Otherwise create new branch from main, ensuring main is up to date.
+    # Otherwise create a new branch from origin/main without checking out local main.
     ensure_clean_worktree
 
-    note "Updating main…"
-    run_git_or_die "start: switch to main" git switch main
-    run_git_or_die "start: pull main (ff-only)" git pull --ff-only
+    note "Fetching origin/main…"
+    run_git_or_die "start: fetch origin main" git fetch origin main
+    if ! git rev-parse --verify --quiet origin/main >/dev/null; then
+      die "start: origin/main not found after fetch; verify remote setup and permissions"
+    fi
 
-    note "Creating branch…"
-    run_git_or_die "start: create branch '$branch'" git switch -c "$branch"
+    note "Creating branch from origin/main…"
+    run_git_or_die "start: create branch '$branch' from origin/main" git checkout -b "$branch" origin/main
   fi
 
   local ver in_path out_path

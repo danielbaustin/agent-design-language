@@ -27,6 +27,24 @@ For unattended burst runs, a minimal allowlist typically includes:
 - `gh pr ready -R danielbaustin/agent-design-language <pr-url>`
 - `gh pr merge -R danielbaustin/agent-design-language --squash --delete-branch <pr-url>`
 
+## Worktree Smoke Test
+
+`pr.sh new` should succeed from any repo worktree checkout:
+
+```bash
+# 1) Primary checkout
+cd /Users/daniel/git/agent-design-language
+./swarm/tools/pr.sh new --title "[smoke] pr.sh new from primary" --slug smoke-primary --labels "track:roadmap,version:v0.3,area:tools,type:task,epic:v0.3-tooling-git" --body "smoke" --no-start
+
+# 2) Lane worktree
+cd /Users/daniel/git/adl-lane-b
+./swarm/tools/pr.sh new --title "[smoke] pr.sh new from lane worktree" --slug smoke-lane --labels "track:roadmap,version:v0.3,area:tools,type:task,epic:v0.3-tooling-git" --body "smoke" --no-start
+
+# 3) Burst worktree
+cd /Users/daniel/git/agent-design-language/.worktrees/burst/206-lane-b-demo-ux
+./swarm/tools/pr.sh new --title "[smoke] pr.sh new from burst worktree" --slug smoke-burst --labels "track:roadmap,version:v0.3,area:tools,type:task,epic:v0.3-tooling-git" --body "smoke" --no-start
+```
+
 ## Codex.app Skills
 This section documents Codex.app skills used with ADL; skills live in Codex.app but are specified here for versioning.
 Default workflow: `adl_pr_cycle` is the authoritative path for new ADL development work.
