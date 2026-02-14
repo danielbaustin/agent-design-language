@@ -17,6 +17,10 @@ Utility scripts for ADL workflow automation and PR hygiene.
 - `update_reports_index.sh`: Refreshes `LATEST.md` pointers and updates `.adl/reports/INDEX.md`.
 - `REPORT_SCHEMA.md`: Standard report schema reference (`adl-report/v1`).
 
+## Default Workflow Guide
+
+- `docs/default_workflow.md`: Canonical contributor flow for `adl_pr_cycle` + `pr.sh`, including card paths and common remediations.
+
 ## Recommended Allowlist Rules
 
 For unattended burst runs, a minimal allowlist typically includes:
