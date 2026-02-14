@@ -86,25 +86,41 @@ card_first_legacy_path() {
   return 1
 }
 
-next_backup_path() {
-  local original="$1"
-  local backup="${original}.bak"
-  local i=0
-  while [[ -e "$backup" || -L "$backup" ]]; do
+next_migration_path() {
+  local legacy="$1"
+  local base out i
+  base="$(basename "$legacy")"
+  out=".adl/cards/_legacy_migrated/${base}"
+  i=0
+  while [[ -e "$out" || -L "$out" ]]; do
     i=$((i + 1))
-    backup="${original}.bak.${i}"
+    out=".adl/cards/_legacy_migrated/${base}.${i}"
   done
-  echo "$backup"
+  echo "$out"
 }
 
 ensure_canonical_card_from_legacy() {
   local canonical="$1" legacy="$2"
+  local migrated
 
   mkdir -p "$(dirname "$canonical")"
 
   if [[ ! -e "$canonical" && ! -L "$canonical" && -f "$legacy" ]]; then
     cp -f "$legacy" "$canonical"
     echo "warning: seeded canonical card from legacy content: $canonical" >&2
+  fi
+
+  if [[ -L "$legacy" ]]; then
+    rm -f "$legacy"
+    echo "warning: removed legacy symlink card path: $legacy" >&2
+    return 0
+  fi
+
+  if [[ -f "$legacy" ]]; then
+    mkdir -p ".adl/cards/_legacy_migrated"
+    migrated="$(next_migration_path "$legacy")"
+    mv "$legacy" "$migrated"
+    echo "warning: migrated legacy root card: $legacy -> $migrated" >&2
   fi
 }
 
@@ -128,36 +144,4 @@ resolve_output_card_path() {
     ensure_canonical_card_from_legacy "$p_new" "$p_legacy"
   fi
   echo "$p_new"
-}
-
-sync_legacy_card_link() {
-  local canonical="$1" legacy="$2"
-  local legacy_dir
-  local target
-  legacy_dir="$(dirname "$legacy")"
-  mkdir -p "$legacy_dir"
-  target="$canonical"
-  if [[ "$canonical" == "$legacy_dir/"* ]]; then
-    target="${canonical#"$legacy_dir/"}"
-  fi
-
-  if [[ -L "$legacy" ]]; then
-    local current
-    current="$(readlink "$legacy" 2>/dev/null || true)"
-    if [[ "$current" == "$target" ]]; then
-      return 0
-    fi
-    rm -f "$legacy"
-  elif [[ -e "$legacy" ]]; then
-    local backup
-    backup="$(next_backup_path "$legacy")"
-    mv "$legacy" "$backup"
-    echo "warning: moved existing legacy file to backup: $backup" >&2
-  fi
-
-  if ln -s "$target" "$legacy" 2>/dev/null; then
-    return 0
-  fi
-
-  echo "warning: failed to create legacy compatibility at: $legacy" >&2
 }
