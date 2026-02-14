@@ -21,7 +21,7 @@ This repository is the **monorepo** for ADL v0.1 and the in-progress v0.2 capabi
 ## Default Development Workflow
 
 New ADL development should use the Codex.app `adl_pr_cycle` workflow as the default path (`start -> codex -> finish -> report`).
-
+Detailed guide: `docs/default_workflow.md`.
 Roadmap navigation: `docs/v0.3-roadmap.md`.
 
 ---
