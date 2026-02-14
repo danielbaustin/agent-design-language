@@ -40,6 +40,30 @@ DEFAULT_NEW_LABELS="track:roadmap,version:v0.3,type:bug,area:tools,epic:v0.3-too
 # ---------- helpers ----------
 die() { echo "❌ $*" >&2; exit 1; }
 note() { echo "• $*"; }
+
+die_index_lock() {
+  local context="$1"
+  die "$context failed due to .git/index.lock. Remediation: ensure no other git process is running, then remove stale lock with 'rm -f .git/index.lock', and rerun the same command."
+}
+
+run_git_or_die() {
+  local context="$1"
+  shift
+  local out status
+  set +e
+  out="$("$@" 2>&1)"
+  status=$?
+  set -e
+  if [[ "$status" -eq 0 ]]; then
+    [[ -n "$out" ]] && echo "$out"
+    return 0
+  fi
+  if [[ "$out" == *".git/index.lock"* ]]; then
+    die_index_lock "$context"
+  fi
+  [[ -n "$out" ]] && echo "$out" >&2
+  die "$context failed"
+}
 #
 # Replace the first line that begins with "<Key>:" with "<Key>: <Value>".
 # Portable (no GNU/BSD sed -i differences).
@@ -214,9 +238,7 @@ stage_selected_paths() {
       die "finish: path does not exist: $p"
     fi
 
-    if ! git add -A -- "$p"; then
-      die "finish: git add failed for path '$p'"
-    fi
+    run_git_or_die "finish: git add for path '$p'" git add -A -- "$p"
     staged_any="1"
   done
 
@@ -717,20 +739,20 @@ cmd_start() {
     note "Already on $branch"
   elif git show-ref --verify --quiet "refs/heads/$branch"; then
     note "Switching to existing local branch…"
-    git switch "$branch"
+    run_git_or_die "start: switch to existing branch '$branch'" git switch "$branch"
   elif git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
     note "Branch exists on origin; checking out and tracking…"
-    git switch --track "origin/$branch"
+    run_git_or_die "start: switch to tracking branch 'origin/$branch'" git switch --track "origin/$branch"
   else
     # Otherwise create new branch from main, ensuring main is up to date.
     ensure_clean_worktree
 
     note "Updating main…"
-    git switch main >/dev/null 2>&1 || true
-    git pull --ff-only
+    run_git_or_die "start: switch to main" git switch main
+    run_git_or_die "start: pull main (ff-only)" git pull --ff-only
 
     note "Creating branch…"
-    git switch -c "$branch"
+    run_git_or_die "start: create branch '$branch'" git switch -c "$branch"
   fi
 
   local ver in_path out_path
@@ -980,9 +1002,7 @@ cmd_finish() {
 
   if [[ "$has_uncommitted" == "1" ]]; then
     note "Committing…"
-    if ! git commit -m "$commit_msg"; then
-      die "finish: git commit failed"
-    fi
+    run_git_or_die "finish: git commit" git commit -m "$commit_msg"
   else
     note "Skipping commit (working tree clean; using existing commits)."
   fi
