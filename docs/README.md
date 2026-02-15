@@ -25,3 +25,4 @@ Start here for contributor-oriented docs and planning context.
 - Runtime and CLI work: `swarm/`
 - Language and schema docs: `adl-spec/`
 - Burst reporting outputs: `.adl/reports/`
+- `docs/concurrency/v0.3-state-materialization-api.md`: Deterministic state/materialization model and minimal runtime API contract.
