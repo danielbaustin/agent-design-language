@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
+use std::io::{Read, Write};
 use std::path::Path;
 use std::process::Command;
 use swarm::execute::materialize_inputs;
@@ -221,6 +222,17 @@ fn run_swarm(args: &[&str]) -> std::process::Output {
     Command::new(exe).args(args).output().unwrap()
 }
 
+fn block_incoming_localhost() -> EnvVarGuard {
+    let key = "NO_PROXY";
+    let old = std::env::var(key).ok();
+    let mut new_val = old.clone().unwrap_or_default();
+    if !new_val.is_empty() && !new_val.ends_with(',') {
+        new_val.push(',');
+    }
+    new_val.push_str("127.0.0.1,localhost");
+    EnvVarGuard::set(key, new_val)
+}
+
 #[test]
 fn run_executes_example_with_mock_ollama_and_prints_step_output() {
     let base = tmp_dir("exec-run-mock-ollama");
@@ -301,6 +313,56 @@ run:
         stdout.contains("MODEL=agent-model-91"),
         "stdout was:\n{stdout}"
     );
+}
+
+#[test]
+fn run_remote_http_provider_demo_with_mock_server() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+    let _server_guard = block_incoming_localhost();
+
+    std::thread::spawn(move || {
+        let (mut stream, _) = server.accept().unwrap();
+        let mut buf = [0u8; 4096];
+        let _ = stream.read(&mut buf);
+        let body = r#"{"output":"REMOTE_DEMO_OK"}"#;
+        let resp = format!(
+            "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        let _ = stream.write_all(resp.as_bytes());
+    });
+
+    let base = tmp_dir("exec-remote-demo");
+    let yaml_src = fs::read_to_string("examples/v0-3-remote-http-provider.adl.yaml").unwrap();
+    let yaml = yaml_src.replace(
+        "http://127.0.0.1:8787/complete",
+        &format!("http://{addr}/complete"),
+    );
+    let tmp_yaml = base.join("remote-http-provider.adl.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let _auth_guard = EnvVarGuard::set("SWARM_REMOTE_BEARER_TOKEN", "demo-token");
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success, got {:?}\nstdout:\n{}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("--- step: remote_summary ---"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(stdout.contains("REMOTE_DEMO_OK"), "stdout was:\n{stdout}");
 }
 
 #[test]

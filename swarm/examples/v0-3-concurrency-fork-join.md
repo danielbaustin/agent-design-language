@@ -1,9 +1,24 @@
-# v0.3 Concurrency Fork/Join Example (Design Target)
+# v0.3 Concurrency Fork/Join Demo (Plan-Only)
 
-This example is a design target for the next implementation burst.
+This demo is intentionally plan-only in v0.3. Parsing and planning are supported;
+concurrent runtime execution remains intentionally unimplemented.
 
 File:
 - `swarm/examples/v0-3-concurrency-fork-join.adl.yaml`
+
+## One-obvious command
+
+From repo root:
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+```
+
+Expected: plan output that includes `fork.plan`, `fork.branch.alpha`,
+`fork.branch.beta`, and `fork.join`.
+
+If you run with `--run`, expect an explicit "not implemented yet for ADL v0.3"
+error.
 
 ## Expected Deterministic Trace Ordering
 

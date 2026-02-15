@@ -120,6 +120,24 @@ fn print_plan_v0_3_concurrency_fixture_works() {
 }
 
 #[test]
+fn print_plan_v0_3_remote_provider_demo_works() {
+    let path = fixture_path("examples/v0-3-remote-http-provider.adl.yaml");
+    let out = run_swarm(&[path.to_str().unwrap(), "--print-plan"]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("remote_summary") && stdout.contains("remote_http"),
+        "expected remote demo step/provider in plan output, stdout:\n{}",
+        stdout
+    );
+}
+
+#[test]
 fn unknown_arg_exits_with_code_2_and_prints_usage() {
     let path = write_temp_adl_yaml();
     let out = run_swarm(&[path.to_str().unwrap(), "--nope"]);

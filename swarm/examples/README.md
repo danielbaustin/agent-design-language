@@ -44,7 +44,25 @@ Reference ADL doc for the demo scenario:
 - `v0-2-failure-unknown-state-ref.adl.yaml`
   - Expected: non-zero exit; error indicates missing input bindings (e.g., `summary_2`).
 
-## v0.3 concurrency design example
+## v0.3 concurrency design example (plan-only)
 
 - `v0-3-concurrency-fork-join.adl.yaml`
 - See `v0-3-concurrency-fork-join.md` for expected deterministic trace ordering.
+
+From repo root:
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+```
+
+## v0.3 remote provider demo
+
+- `v0-3-remote-http-provider.adl.yaml`
+- `v0-3-remote-provider-demo.adl.yaml` (compat alias)
+- See `v0-3-remote-http-provider.md` for setup and expected behavior.
+
+From repo root:
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
+```
