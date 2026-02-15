@@ -464,6 +464,27 @@ fn run_rejects_concurrent_workflows_in_v0_2() {
 }
 
 #[test]
+fn run_rejects_concurrent_workflows_in_v0_3_with_not_implemented_error() {
+    let base = tmp_dir("exec-reject-concurrent-v0-3");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let out = run_swarm(&["examples/v0-3-concurrency-fork-join.adl.yaml", "--run"]);
+    assert!(
+        !out.status.success(),
+        "expected failure for v0.3 concurrent run, got success.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    let expected =
+        "Error: concurrent workflow execution is not implemented yet for ADL v0.3 (parse/plan supported)";
+    assert_eq!(stderr.trim(), expected, "stderr mismatch:\n{stderr}");
+}
+
+#[test]
 fn run_reports_error_when_materialized_doc_is_missing() {
     let base = tmp_dir("exec-missing-doc");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);

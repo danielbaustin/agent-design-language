@@ -100,6 +100,26 @@ fn print_plan_preserves_explicit_step_ids_v0_2() {
 }
 
 #[test]
+fn print_plan_v0_3_concurrency_fixture_works() {
+    let path = fixture_path("examples/v0-3-concurrency-fork-join.adl.yaml");
+    let out = run_swarm(&[path.to_str().unwrap(), "--print-plan"]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("fork.plan")
+            && stdout.contains("fork.branch.alpha")
+            && stdout.contains("fork.join"),
+        "expected v0.3 fork/join steps in plan output, stdout:\n{}",
+        stdout
+    );
+}
+
+#[test]
 fn unknown_arg_exits_with_code_2_and_prints_usage() {
     let path = write_temp_adl_yaml();
     let out = run_swarm(&[path.to_str().unwrap(), "--nope"]);

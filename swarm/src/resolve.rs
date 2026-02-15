@@ -8,6 +8,7 @@ use crate::plan;
 enum AdlVersion {
     V0_1,
     V0_2,
+    V0_3,
 }
 
 fn parse_version(version: &str) -> Result<AdlVersion> {
@@ -15,9 +16,10 @@ fn parse_version(version: &str) -> Result<AdlVersion> {
     match v {
         "0.1" => Ok(AdlVersion::V0_1),
         "0.2" => Ok(AdlVersion::V0_2),
+        "0.3" => Ok(AdlVersion::V0_3),
         "" => Err(anyhow!("ADL document is missing required field: version")),
         _ => Err(anyhow!(
-            "unsupported ADL version '{v}' (supported: 0.1, 0.2)"
+            "unsupported ADL version '{v}' (supported: 0.1, 0.2, 0.3)"
         )),
     }
 }
@@ -254,13 +256,21 @@ mod tests {
     #[test]
     fn resolve_run_rejects_unsupported_version() {
         let mut doc = minimal_doc();
-        doc.version = "0.3".to_string();
+        doc.version = "9.9".to_string();
         let err = resolve_run(&doc).unwrap_err();
         let msg = err.to_string();
         assert!(
-            msg.contains("unsupported ADL version") && msg.contains("0.3"),
+            msg.contains("unsupported ADL version") && msg.contains("9.9"),
             "{msg}"
         );
+    }
+
+    #[test]
+    fn resolve_run_accepts_v0_3() {
+        let mut doc = minimal_doc();
+        doc.version = "0.3".to_string();
+        let resolved = resolve_run(&doc).expect("v0.3 should resolve for parse/plan");
+        assert_eq!(resolved.doc.version, "0.3");
     }
 
     #[test]
