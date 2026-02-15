@@ -1,0 +1,38 @@
+version: "0.3"
+
+providers:
+  remote_http:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8787/complete"
+      timeout_secs: 10
+      auth:
+        type: bearer
+        env: SWARM_REMOTE_BEARER_TOKEN
+      headers:
+        X-Client: "swarm-v0.3"
+
+agents:
+  writer:
+    provider: "remote_http"
+    model: "unused-for-http-provider"
+
+tasks:
+  summarize:
+    prompt:
+      user: |
+        Summarize the following content in 3 bullets.
+
+        Content:
+        {{content}}
+
+run:
+  name: "v0-3-remote-http-provider"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "remote_summary"
+        agent: "writer"
+        task: "summarize"
+        inputs:
+          content: "ADL v0.3 adds deterministic parse/plan improvements."
