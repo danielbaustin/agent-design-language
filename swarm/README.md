@@ -39,6 +39,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 - File-backed inputs with safety checks (size, encoding, paths)
 - Sequential workflow execution
 - Local Ollama provider (real binary or test mock)
+- Remote HTTP provider (blocking JSON request/response)
 - Deterministic tracing (`--trace`)
 - CLI smoke tests and schema tests
 
@@ -95,6 +96,44 @@ swarm <path-to-adl.yaml> [OPTIONS]
 Exit codes are consistent:
 - `2` — invalid CLI usage
 - non-zero — schema, validation, or runtime error
+
+---
+
+## Remote Provider (HTTP MVP)
+
+`swarm` supports a minimal remote provider via `type: "http"` for deterministic,
+blocking prompt completion over HTTP.
+
+Expected request/response contract:
+- Request: `POST <endpoint>` with JSON body `{"prompt":"..."}`
+- Response: JSON object containing string field `output`
+
+Example (see `examples/v0-3-remote-http-provider.adl.yaml`):
+
+```yaml
+providers:
+  remote_http:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8787/complete"
+      timeout_secs: 10
+      auth:
+        type: bearer
+        env: SWARM_REMOTE_BEARER_TOKEN
+```
+
+Run it with:
+
+```bash
+cargo run -- examples/v0-3-remote-http-provider.adl.yaml --print-plan
+cargo run -- examples/v0-3-remote-http-provider.adl.yaml --run
+```
+
+Failure behavior is explicit:
+- Missing endpoint -> config error
+- Missing auth env var -> config error naming the env var
+- Non-200 response -> runtime error with status + body snippet
+- Timeout -> runtime error with timeout guidance
 
 ---
 
