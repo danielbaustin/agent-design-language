@@ -7,6 +7,7 @@ ADL is a schema-validated language and runtime for defining and executing
 agent workflows with deterministic resolution and clear failure modes.
 
 [![swarm-ci](https://img.shields.io/github/actions/workflow/status/danielbaustin/agent-design-language/ci.yaml?branch=main&label=swarm-ci)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
+[![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/branch/main/graph/badge.svg?flag=swarm)](https://codecov.io/gh/danielbaustin/agent-design-language)
 [![swarm-coverage-gate](https://img.shields.io/github/actions/workflow/status/danielbaustin/agent-design-language/ci.yaml?branch=main&label=swarm-coverage-gate)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![MSRV](https://img.shields.io/badge/MSRV-1.74%2B-blue)
@@ -250,6 +251,7 @@ The report makes it easy to identify:
 Contributors are expected to keep overall line coverage **≥ 85%**, and ideally improve it with each change.
 
 Badge note:
+- `coverage` is the live Codecov percentage for the `swarm` upload.
 - `swarm-coverage-gate` reflects whether the CI workflow coverage gate passes. It is a status badge, not a live percentage badge.
 
 ---
