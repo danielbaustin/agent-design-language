@@ -68,8 +68,8 @@ main() {
       local issue="${2:-}" which="${3:-output}" p=""
       [[ -n "$issue" ]] || { usage; exit 2; }
       case "$which" in
-        input) p="$ROOT/$(card_input_path "$issue")" ;;
-        output) p="$ROOT/$(card_output_path "$issue")" ;;
+        input) p="$(card_input_path "$issue")" ;;
+        output) p="$(card_output_path "$issue")" ;;
         *) echo "invalid card kind: $which (expected input|output)" >&2; exit 2 ;;
       esac
       [[ -f "$p" || -L "$p" ]] || { echo "card path not found: $p" >&2; exit 1; }
