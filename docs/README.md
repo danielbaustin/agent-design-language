@@ -25,3 +25,7 @@ Start here for contributor-oriented docs and planning context.
 - Runtime and CLI work: `swarm/`
 - Language and schema docs: `adl-spec/`
 - Burst reporting outputs: `.adl/reports/`
+
+## Concurrency Design
+
+- `docs/concurrency/v0.3-test-plan.md`: Unit/integration test matrix with concrete file paths.
