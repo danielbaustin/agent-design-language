@@ -102,6 +102,15 @@ impl AdlDoc {
                     ));
                 }
             }
+
+            if let Some(retry) = step.retry.as_ref() {
+                if retry.max_attempts == 0 {
+                    return Err(anyhow!(
+                        "step '{}' has invalid retry.max_attempts=0 (must be >= 1)",
+                        step_id
+                    ));
+                }
+            }
         }
 
         Ok(())
@@ -287,6 +296,14 @@ pub struct StepSpec {
     #[serde(default)]
     pub write_to: Option<String>,
 
+    /// Step-level error behavior. Defaults to fail-fast.
+    #[serde(default)]
+    pub on_error: Option<StepOnError>,
+
+    /// Optional deterministic retry policy.
+    #[serde(default)]
+    pub retry: Option<StepRetry>,
+
     /// Agent id to run (key in `agents`).
     #[serde(default)]
     pub agent: Option<String>,
@@ -349,4 +366,17 @@ pub struct GuardSpec {
 
     #[serde(default)]
     pub config: HashMap<String, JsonValue>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum StepOnError {
+    Fail,
+    Continue,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct StepRetry {
+    pub max_attempts: u32,
 }

@@ -121,9 +121,19 @@ pub struct StepOutput {
 }
 
 #[derive(Debug, Clone)]
+pub struct StepExecutionRecord {
+    pub step_id: String,
+    pub provider_id: String,
+    pub status: String,
+    pub attempts: u32,
+    pub output_bytes: usize,
+}
+
+#[derive(Debug, Clone)]
 pub struct ExecutionResult {
     pub outputs: Vec<StepOutput>,
     pub artifacts: Vec<PathBuf>,
+    pub records: Vec<StepExecutionRecord>,
 }
 
 /// Execute the resolved run in **sequential** mode (v0.1).
@@ -158,6 +168,7 @@ pub fn execute_sequential(
 
     let mut outs = Vec::new();
     let mut artifacts = Vec::new();
+    let mut records = Vec::new();
 
     for step in &resolved.steps {
         let step_id = step.id.clone();
@@ -178,74 +189,98 @@ pub fn execute_sequential(
 
         tr.step_started(&step_id, agent_id, provider_id, task_id);
 
-        let result = (|| -> Result<StepOutput> {
-            let p = step
-                .effective_prompt_with_defaults(resolved)
-                .ok_or_else(|| {
-                    anyhow!(
-                        "step '{}' has no effective prompt (step.prompt or task.prompt required)",
-                        step_id
+        let max_attempts = step.retry.as_ref().map(|r| r.max_attempts).unwrap_or(1);
+        let continue_on_error = matches!(step.on_error, Some(crate::adl::StepOnError::Continue));
+        let mut attempt: u32 = 0;
+        let mut last_err: Option<anyhow::Error> = None;
+        let mut success_out: Option<StepOutput> = None;
+
+        while attempt < max_attempts {
+            attempt += 1;
+            let result = (|| -> Result<StepOutput> {
+                let p = step
+                    .effective_prompt_with_defaults(resolved)
+                    .ok_or_else(|| {
+                        anyhow!(
+                            "step '{}' has no effective prompt (step.prompt or task.prompt required)",
+                            step_id
+                        )
+                    })?;
+
+                let missing = missing_prompt_inputs(&p, &step.inputs);
+                if !missing.is_empty() {
+                    return Err(anyhow!(
+                        "step '{}' missing input bindings for: {} (provide inputs or prior state)",
+                        step_id,
+                        missing.join(", ")
+                    ));
+                }
+
+                // v0.1+: step-level inputs only (run.defaults currently has only `system`)
+                let merged_inputs: HashMap<String, String> = step.inputs.clone();
+
+                // Allow inputs to reference files via "@file:<path>".
+                let inputs =
+                    materialize_inputs(merged_inputs, adl_base_dir).with_context(|| {
+                        format!("failed to materialize inputs for step '{}'", step_id)
+                    })?;
+
+                // Assemble a single text blob suitable for basic model consumption.
+                let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
+                let prompt_hash = prompt::hash_prompt(&prompt_text);
+                tr.prompt_assembled(&step_id, &prompt_hash);
+
+                // Build provider from doc.providers[provider_id]
+                let spec = resolved.doc.providers.get(provider_id).with_context(|| {
+                    format!(
+                        "step '{}' references unknown provider '{}'",
+                        step_id, provider_id
                     )
                 })?;
 
-            let missing = missing_prompt_inputs(&p, &step.inputs);
-            if !missing.is_empty() {
-                return Err(anyhow!(
-                    "step '{}' missing input bindings for: {} (provide inputs or prior state)",
-                    step_id,
-                    missing.join(", ")
-                ));
+                let model_override = step
+                    .agent
+                    .as_ref()
+                    .and_then(|agent_id| resolved.doc.agents.get(agent_id))
+                    .map(|agent| agent.model.as_str());
+
+                let prov = provider::build_provider(spec, model_override).with_context(|| {
+                    format!(
+                        "failed to build provider '{}' for step '{}'",
+                        provider_id, step_id
+                    )
+                })?;
+
+                let model_output = prov.complete(&prompt_text).with_context(|| {
+                    format!(
+                        "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
+                        provider_id, step_id
+                    )
+                })?;
+
+                Ok(StepOutput {
+                    step_id: step_id.clone(),
+                    provider_id: provider_id.to_string(),
+                    model_output,
+                })
+            })();
+
+            match result {
+                Ok(out) => {
+                    success_out = Some(out);
+                    break;
+                }
+                Err(err) => {
+                    last_err = Some(err);
+                    if attempt >= max_attempts {
+                        break;
+                    }
+                }
             }
+        }
 
-            // v0.1: step-level inputs only (run.defaults currently has only `system`)
-            let merged_inputs: HashMap<String, String> = step.inputs.clone();
-
-            // Allow inputs to reference files via "@file:<path>".
-            let inputs = materialize_inputs(merged_inputs, adl_base_dir)
-                .with_context(|| format!("failed to materialize inputs for step '{}'", step_id))?;
-
-            // Assemble a single text blob suitable for basic model consumption.
-            let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
-            let prompt_hash = prompt::hash_prompt(&prompt_text);
-            tr.prompt_assembled(&step_id, &prompt_hash);
-
-            // Build provider from doc.providers[provider_id]
-            let spec = resolved.doc.providers.get(provider_id).with_context(|| {
-                format!(
-                    "step '{}' references unknown provider '{}'",
-                    step_id, provider_id
-                )
-            })?;
-
-            let model_override = step
-                .agent
-                .as_ref()
-                .and_then(|agent_id| resolved.doc.agents.get(agent_id))
-                .map(|agent| agent.model.as_str());
-
-            let prov = provider::build_provider(spec, model_override).with_context(|| {
-                format!(
-                    "failed to build provider '{}' for step '{}'",
-                    provider_id, step_id
-                )
-            })?;
-
-            let model_output = prov.complete(&prompt_text).with_context(|| {
-                format!(
-                    "provider '{}' complete() failed for step '{}'",
-                    provider_id, step_id
-                )
-            })?;
-
-            Ok(StepOutput {
-                step_id: step_id.clone(),
-                provider_id: provider_id.to_string(),
-                model_output,
-            })
-        })();
-
-        match result {
-            Ok(out) => {
+        match success_out {
+            Some(out) => {
                 tr.step_finished(&step_id, true);
 
                 if let Some(write_to) = step.write_to.as_deref() {
@@ -265,12 +300,35 @@ pub fn execute_sequential(
                     println!();
                 }
 
+                records.push(StepExecutionRecord {
+                    step_id: step_id.clone(),
+                    provider_id: provider_id.to_string(),
+                    status: "success".to_string(),
+                    attempts: attempt,
+                    output_bytes: out.model_output.len(),
+                });
                 outs.push(out);
             }
-            Err(err) => {
+            None => {
+                let err = last_err.unwrap_or_else(|| anyhow!("step '{}' failed", step_id));
                 tr.step_finished(&step_id, false);
+                records.push(StepExecutionRecord {
+                    step_id: step_id.clone(),
+                    provider_id: provider_id.to_string(),
+                    status: "failure".to_string(),
+                    attempts: attempt.max(1),
+                    output_bytes: 0,
+                });
+                if continue_on_error {
+                    continue;
+                }
                 tr.run_failed(&err.to_string());
-                return Err(err);
+                return Err(anyhow!(
+                    "step '{}' failed after {} attempt(s): {:#}",
+                    step_id,
+                    attempt.max(1),
+                    err
+                ));
             }
         }
     }
@@ -278,6 +336,7 @@ pub fn execute_sequential(
     Ok(ExecutionResult {
         outputs: outs,
         artifacts,
+        records,
     })
 }
 

@@ -184,16 +184,16 @@ fn real_main() -> Result<()> {
                 return Err(err);
             }
         };
-        let outputs = result.outputs;
+        let _outputs = result.outputs;
         let artifacts = result.artifacts;
+        let records = result.records;
 
         // Explicitly consume StepOutput so clippy -D warnings stays green
-        println!("RUN SUMMARY: {} step(s)", outputs.len());
-        for o in outputs.iter() {
-            let bytes = o.model_output.len();
+        println!("RUN SUMMARY: {} step(s)", records.len());
+        for r in records.iter() {
             println!(
-                "  step={} provider={} bytes={}",
-                o.step_id, o.provider_id, bytes
+                "  step={} provider={} status={} attempts={} bytes={}",
+                r.step_id, r.provider_id, r.status, r.attempts, r.output_bytes
             );
         }
 

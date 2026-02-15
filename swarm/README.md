@@ -39,6 +39,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
   - `step.prompt` → `task.prompt` → `agent.prompt`
 - File-backed inputs with safety checks (size, encoding, paths)
 - Sequential workflow execution
+- Step-level error policy: fail-fast (default), continue, deterministic retry
 - Local Ollama provider (real binary or test mock)
 - Remote HTTP provider (blocking JSON request/response)
 - Deterministic tracing (`--trace`)

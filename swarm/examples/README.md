@@ -48,3 +48,8 @@ Reference ADL doc for the demo scenario:
 
 - `v0-3-concurrency-fork-join.adl.yaml`
 - See `v0-3-concurrency-fork-join.md` for expected deterministic trace ordering.
+
+## v0.3 on_error + retry example
+
+- `v0-3-on-error-retry.adl.yaml`
+- See `v0-3-on-error-retry.md` for deterministic failure-policy behavior.

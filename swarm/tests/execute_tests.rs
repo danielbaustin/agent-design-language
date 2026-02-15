@@ -193,6 +193,36 @@ cat
 exit 0
 "#
         }
+        MockOllamaBehavior::FailOnce => {
+            r#"#!/bin/sh
+set -eu
+state_file="${0}.state"
+if [ ! -f "${state_file}" ]; then
+  echo "mock ollama first attempt failure" 1>&2
+  touch "${state_file}"
+  exit 42
+fi
+cat >/dev/null
+echo "MOCK_RECOVERED"
+exit 0
+"#
+        }
+        MockOllamaBehavior::FailOnToken => {
+            r#"#!/bin/sh
+set -eu
+if [ "${1:-}" != "run" ]; then
+  echo "mock ollama: expected 'run'" 1>&2
+  exit 2
+fi
+prompt="$(cat)"
+if printf "%s" "${prompt}" | grep -q "FAIL_THIS_STEP"; then
+  echo "mock ollama forced fail token seen" 1>&2
+  exit 41
+fi
+echo "MOCK_CONTINUE_OK"
+exit 0
+"#
+        }
     };
 
     fs::write(&bin, script.as_bytes()).unwrap();
@@ -215,6 +245,8 @@ enum MockOllamaBehavior {
     Fail,
     EchoModel,
     EchoPrompt,
+    FailOnce,
+    FailOnToken,
 }
 
 fn run_swarm(args: &[&str]) -> std::process::Output {
@@ -301,6 +333,192 @@ run:
     assert!(
         stdout.contains("MODEL=agent-model-91"),
         "stdout was:\n{stdout}"
+    );
+}
+
+#[test]
+fn run_on_error_continue_proceeds_after_failure() {
+    let base = tmp_dir("exec-on-error-continue");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::FailOnToken);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t_fail:
+    prompt:
+      user: "FAIL_THIS_STEP {{text}}"
+  t_ok:
+    prompt:
+      user: "SAFE_STEP {{text}}"
+
+run:
+  name: "on-error-continue"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s_fail"
+        agent: "a1"
+        task: "t_fail"
+        on_error: "continue"
+        inputs:
+          text: "x"
+      - id: "s_ok"
+        agent: "a1"
+        task: "t_ok"
+        inputs:
+          text: "y"
+"#;
+
+    let tmp_yaml = base.join("on-error-continue.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success with continue policy, got {:?}\nstdout:\n{}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("step=s_fail") && stdout.contains("status=failure"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("step=s_ok") && stdout.contains("status=success"),
+        "stdout was:\n{stdout}"
+    );
+}
+
+#[test]
+fn run_retry_succeeds_on_second_attempt() {
+    let base = tmp_dir("exec-retry-success");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::FailOnce);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "retry me {{text}}"
+
+run:
+  name: "retry-success"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        retry:
+          max_attempts: 2
+        inputs:
+          text: "hello"
+"#;
+
+    let tmp_yaml = base.join("retry-success.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success after retry, got {:?}\nstdout:\n{}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("step=s1")
+            && stdout.contains("attempts=2")
+            && stdout.contains("status=success"),
+        "stdout was:\n{stdout}"
+    );
+}
+
+#[test]
+fn run_retry_exhausts_and_fails() {
+    let base = tmp_dir("exec-retry-exhaust");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Fail);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "retry me {{text}}"
+
+run:
+  name: "retry-exhaust"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        retry:
+          max_attempts: 2
+        inputs:
+          text: "hello"
+"#;
+
+    let tmp_yaml = base.join("retry-exhaust.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        !out.status.success(),
+        "expected failure when retries exhausted; stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("failed after 2 attempt(s)") || stderr.contains("attempt 2/2"),
+        "stderr was:\n{stderr}"
     );
 }
 
