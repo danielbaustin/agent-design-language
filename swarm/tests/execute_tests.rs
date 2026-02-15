@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
+use std::io::{Read, Write};
 use std::path::Path;
 use std::process::Command;
 use swarm::execute::materialize_inputs;
@@ -301,6 +302,81 @@ run:
         stdout.contains("MODEL=agent-model-91"),
         "stdout was:\n{stdout}"
     );
+}
+
+#[test]
+fn run_executes_step_with_http_provider() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+    let _server_guard = EnvVarGuard::set("NO_PROXY", "127.0.0.1,localhost");
+
+    std::thread::spawn(move || {
+        let (mut stream, _) = server.accept().unwrap();
+        let mut buf = [0u8; 4096];
+        let _ = stream.read(&mut buf);
+        let body = r#"{"output":"REMOTE_OK"}"#;
+        let resp = format!(
+            "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        let _ = stream.write_all(resp.as_bytes());
+    });
+
+    let base = tmp_dir("exec-http-provider");
+    let yaml = format!(
+        r#"
+version: "0.3"
+
+providers:
+  remote_http:
+    type: "http"
+    config:
+      endpoint: "http://{addr}/complete"
+      timeout_secs: 2
+
+agents:
+  a1:
+    provider: "remote_http"
+    model: "unused-for-http-provider"
+
+tasks:
+  t1:
+    prompt:
+      user: "Echo this: {{text}}"
+
+run:
+  name: "http-provider-run"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        inputs:
+          text: "hello"
+"#
+    );
+
+    let tmp_yaml = base.join("http-provider-run.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success, got {:?}\nstdout:\n{}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(stdout.contains("--- step: s1 ---"), "stdout was:\n{stdout}");
+    assert!(stdout.contains("REMOTE_OK"), "stdout was:\n{stdout}");
 }
 
 #[test]
