@@ -1,6 +1,36 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+card_primary_checkout_root() {
+  local common top
+  common="$(git rev-parse --git-common-dir 2>/dev/null || true)"
+  if [[ -z "$common" ]]; then
+    pwd -P
+    return 0
+  fi
+
+  if [[ "$common" != /* ]]; then
+    top="$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)"
+    common="$(cd "$top/$common" && pwd -P)"
+  fi
+
+  cd "$common/.." && pwd -P
+}
+
+cards_root_resolve() {
+  local root
+  root="$(card_primary_checkout_root)"
+  if [[ -n "${ADL_CARDS_ROOT:-}" ]]; then
+    if [[ "${ADL_CARDS_ROOT}" == /* ]]; then
+      echo "${ADL_CARDS_ROOT}"
+    else
+      echo "$root/${ADL_CARDS_ROOT}"
+    fi
+    return 0
+  fi
+  echo "$root/.adl/cards"
+}
+
 card_issue_normalize() {
   local raw="$1"
   if [[ ! "$raw" =~ ^[0-9]+$ ]]; then
@@ -19,33 +49,33 @@ card_issue_pad() {
 card_dir_path() {
   local issue
   issue="$(card_issue_normalize "$1")" || return 1
-  echo ".adl/cards/${issue}"
+  echo "$(cards_root_resolve)/${issue}"
 }
 
 card_input_path() {
   local issue
   issue="$(card_issue_normalize "$1")" || return 1
-  echo ".adl/cards/${issue}/input_${issue}.md"
+  echo "$(cards_root_resolve)/${issue}/input_${issue}.md"
 }
 
 card_output_path() {
   local issue
   issue="$(card_issue_normalize "$1")" || return 1
-  echo ".adl/cards/${issue}/output_${issue}.md"
+  echo "$(cards_root_resolve)/${issue}/output_${issue}.md"
 }
 
 card_legacy_input_path() {
   local issue="$1" ver="${2:-v0.2}"
   local pad
   pad="$(card_issue_pad "$issue")"
-  echo ".adl/cards/issue-${pad}__input__${ver}.md"
+  echo "$(cards_root_resolve)/issue-${pad}__input__${ver}.md"
 }
 
 card_legacy_output_path() {
   local issue="$1" ver="${2:-v0.2}"
   local pad
   pad="$(card_issue_pad "$issue")"
-  echo ".adl/cards/issue-${pad}__output__${ver}.md"
+  echo "$(cards_root_resolve)/issue-${pad}__output__${ver}.md"
 }
 
 card_first_legacy_path() {
@@ -58,11 +88,11 @@ card_first_legacy_path() {
   case "$kind" in
     input)
       preferred="$(card_legacy_input_path "$issue" "$ver")"
-      pattern=".adl/cards/issue-${pad}__input__v*.md"
+      pattern="$(cards_root_resolve)/issue-${pad}__input__v*.md"
       ;;
     output)
       preferred="$(card_legacy_output_path "$issue" "$ver")"
-      pattern=".adl/cards/issue-${pad}__output__v*.md"
+      pattern="$(cards_root_resolve)/issue-${pad}__output__v*.md"
       ;;
     *)
       echo "invalid card kind: $kind" >&2
@@ -90,11 +120,11 @@ next_migration_path() {
   local legacy="$1"
   local base out i
   base="$(basename "$legacy")"
-  out=".adl/cards/_legacy_migrated/${base}"
+  out="$(cards_root_resolve)/_legacy_migrated/${base}"
   i=0
   while [[ -e "$out" || -L "$out" ]]; do
     i=$((i + 1))
-    out=".adl/cards/_legacy_migrated/${base}.${i}"
+    out="$(cards_root_resolve)/_legacy_migrated/${base}.${i}"
   done
   echo "$out"
 }
@@ -117,7 +147,7 @@ ensure_canonical_card_from_legacy() {
   fi
 
   if [[ -f "$legacy" ]]; then
-    mkdir -p ".adl/cards/_legacy_migrated"
+    mkdir -p "$(cards_root_resolve)/_legacy_migrated"
     migrated="$(next_migration_path "$legacy")"
     mv "$legacy" "$migrated"
     echo "warning: migrated legacy root card: $legacy -> $migrated" >&2

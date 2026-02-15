@@ -23,7 +23,7 @@
 #   swarm/tools/pr.sh start 14 --slug b6-default-system
 #   swarm/tools/pr.sh card  14 --version v0.2
 #   swarm/tools/pr.sh output 14 --version v0.2
-#   swarm/tools/pr.sh finish 14 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/14/input_14.md --output-card .adl/cards/14/output_14.md
+#   swarm/tools/pr.sh finish 14 --title "swarm: apply run.defaults.system fallback" -f /abs/cards_root/14/input_14.md --output-card /abs/cards_root/14/output_14.md
 #   swarm/tools/pr.sh open
 #
 set -euo pipefail
@@ -275,7 +275,6 @@ current_pr_url() {
 
 # ---------- cards + templates (templates tracked; cards local-only) ----------
 ADL_DIR=".adl"
-ADL_CARDS_DIR="$ADL_DIR/cards"
 
 INPUT_TEMPLATE="swarm/templates/cards/input_card_template.md"
 OUTPUT_TEMPLATE="swarm/templates/cards/output_card_template.md"
@@ -321,35 +320,27 @@ issue_version() {
 }
 
 ensure_adl_dirs() {
-  mkdir -p "$(repo_root)/$ADL_CARDS_DIR"
+  mkdir -p "$(cards_root_resolve)"
 }
 
 input_card_path() {
   local issue="$1"
-  local rel
-  rel="$(card_input_path "$issue")" || die "invalid issue number: $issue"
-  echo "$(repo_root)/$rel"
+  card_input_path "$issue" || die "invalid issue number: $issue"
 }
 
 output_card_path() {
   local issue="$1"
-  local rel
-  rel="$(card_output_path "$issue")" || die "invalid issue number: $issue"
-  echo "$(repo_root)/$rel"
+  card_output_path "$issue" || die "invalid issue number: $issue"
 }
 
 resolve_input_card_path_abs() {
   local issue="$1" ver="$2"
-  local rel
-  rel="$(cd "$(repo_root)" && resolve_input_card_path "$issue" "$ver")" || die "invalid issue number: $issue"
-  echo "$(repo_root)/$rel"
+  resolve_input_card_path "$issue" "$ver" || die "invalid issue number: $issue"
 }
 
 resolve_output_card_path_abs() {
   local issue="$1" ver="$2"
-  local rel
-  rel="$(cd "$(repo_root)" && resolve_output_card_path "$issue" "$ver")" || die "invalid issue number: $issue"
-  echo "$(repo_root)/$rel"
+  resolve_output_card_path "$issue" "$ver" || die "invalid issue number: $issue"
 }
 
 sync_legacy_links_for_issue() {
@@ -1177,8 +1168,8 @@ Flags:
   (new)     --labels <csv>                    Comma-separated labels (default: track:roadmap,version:v0.3,type:bug,area:tools,epic:v0.3-tooling-git).
   (new)     --version <v0.3>                  Default/fallback version label for new issue/card flow.
   (new)     --no-start                        Only create issue; do not invoke start.
-  (card)    -f, --file <input_card.md>         Output path for the generated input card (default: .adl/cards/<issue>/input_<issue>.md)
-  (output)  -f, --file <output_card.md>        Output path for the generated output card (default: .adl/cards/<issue>/output_<issue>.md)
+  (card)    -f, --file <input_card.md>         Output path for the generated input card (default: <cards_root>/<issue>/input_<issue>.md)
+  (output)  -f, --file <output_card.md>        Output path for the generated output card (default: <cards_root>/<issue>/output_<issue>.md)
   (cards)   --version <v0.2>                   Override detected version (otherwise inferred from issue labels version:vX.Y)
   (cards)   --no-fetch-issue                   Do not fetch issue title/labels (uses issue-<n> title)
   (card/output) --version <v0.2>               Override detected version (otherwise inferred from issue labels version:vX.Y)
@@ -1193,7 +1184,8 @@ Notes:
 - Runs Rust checks in swarm/ by default (fmt, clippy -D warnings, test).
 - finish stages swarm/ by default (reduces accidental commits).
 - Templates are stored in swarm/templates/cards/ (legacy fallback: .adl/templates/).
-- Cards are stored locally under .adl/cards/ and are not committed to git.
+- Cards are stored locally under cards_root and are not committed to git.
+  cards_root resolves as: ADL_CARDS_ROOT (if set) else <primary-checkout>/.adl/cards.
 
 Examples:
   swarm/tools/pr.sh new --title "swarm: fix timeout handling" --slug timeout-fix
@@ -1201,7 +1193,7 @@ Examples:
   swarm/tools/pr.sh card  17 --version v0.2
   swarm/tools/pr.sh output 17 --version v0.2
   swarm/tools/pr.sh cards 17 --version v0.2
-  swarm/tools/pr.sh finish 17 --title "swarm: apply run.defaults.system fallback" -f .adl/cards/17/input_17.md --output-card .adl/cards/17/output_17.md
+  swarm/tools/pr.sh finish 17 --title "swarm: apply run.defaults.system fallback" -f /abs/cards_root/17/input_17.md --output-card /abs/cards_root/17/output_17.md
 EOF
 }
 
