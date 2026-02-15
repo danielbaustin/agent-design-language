@@ -138,18 +138,14 @@ pub fn execute_sequential(
     adl_base_dir: &Path,
     out_dir: &Path,
 ) -> Result<ExecutionResult> {
-    // Gate concurrent execution early.
-    if !matches!(
+    // v0.3 supports deterministic concurrent-workflow execution by running steps
+    // sequentially in declared document order (single-threaded runtime).
+    if matches!(
         resolved.doc.run.workflow.kind,
-        crate::adl::WorkflowKind::Sequential
-    ) {
+        crate::adl::WorkflowKind::Concurrent
+    ) && resolved.doc.version.trim() != "0.3"
+    {
         let doc_version = resolved.doc.version.trim();
-        if doc_version == "0.3" {
-            let msg = "concurrent workflow execution is not implemented yet for ADL v0.3 (parse/plan supported)";
-            tr.run_failed(msg);
-            return Err(anyhow!("{msg}"));
-        }
-
         tr.run_failed("concurrent workflows are not supported in v0.1/v0.2");
         return Err(anyhow!(
             "feature 'concurrency' requires v0.3; document version is {doc_version} (run.workflow.kind=concurrent)"
@@ -158,6 +154,7 @@ pub fn execute_sequential(
 
     let mut outs = Vec::new();
     let mut artifacts = Vec::new();
+    let mut saved_state: HashMap<String, String> = HashMap::new();
 
     for step in &resolved.steps {
         let step_id = step.id.clone();
@@ -188,7 +185,10 @@ pub fn execute_sequential(
                     )
                 })?;
 
-            let missing = missing_prompt_inputs(&p, &step.inputs);
+            let merged_inputs = resolve_state_inputs(&step.id, &step.inputs, &saved_state)
+                .with_context(|| format!("failed to resolve inputs for step '{}'", step_id))?;
+
+            let missing = missing_prompt_inputs(&p, &merged_inputs);
             if !missing.is_empty() {
                 return Err(anyhow!(
                     "step '{}' missing input bindings for: {} (provide inputs or prior state)",
@@ -196,9 +196,6 @@ pub fn execute_sequential(
                     missing.join(", ")
                 ));
             }
-
-            // v0.1: step-level inputs only (run.defaults currently has only `system`)
-            let merged_inputs: HashMap<String, String> = step.inputs.clone();
 
             // Allow inputs to reference files via "@file:<path>".
             let inputs = materialize_inputs(merged_inputs, adl_base_dir)
@@ -265,6 +262,10 @@ pub fn execute_sequential(
                     println!();
                 }
 
+                if let Some(save_as) = step.save_as.as_ref() {
+                    saved_state.insert(save_as.clone(), out.model_output.clone());
+                }
+
                 outs.push(out);
             }
             Err(err) => {
@@ -316,6 +317,38 @@ fn write_output(step_id: &str, out_dir: &Path, write_to: &str, contents: &str) -
         )
     })?;
     Ok(path)
+}
+
+fn resolve_state_inputs(
+    step_id: &str,
+    inputs: &HashMap<String, String>,
+    saved_state: &HashMap<String, String>,
+) -> Result<HashMap<String, String>> {
+    let mut merged = HashMap::new();
+    for (key, value) in inputs.iter() {
+        if let Some(raw_state_key) = value.strip_prefix("@state:") {
+            let state_key = raw_state_key.trim();
+            if state_key.is_empty() {
+                return Err(anyhow!(
+                    "step '{}' uses @state: with an empty key for input '{}'",
+                    step_id,
+                    key
+                ));
+            }
+            let state_value = saved_state.get(state_key).ok_or_else(|| {
+                anyhow!(
+                    "step '{}' references missing saved state '{}' for input '{}'",
+                    step_id,
+                    state_key,
+                    key
+                )
+            })?;
+            merged.insert(key.clone(), state_value.clone());
+            continue;
+        }
+        merged.insert(key.clone(), value.clone());
+    }
+    Ok(merged)
 }
 
 fn missing_prompt_inputs(

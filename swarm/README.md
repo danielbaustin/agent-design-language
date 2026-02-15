@@ -39,6 +39,8 @@ Provider execution, tracing, contracts, and repair policies are being added incr
   - `step.prompt` → `task.prompt` → `agent.prompt`
 - File-backed inputs with safety checks (size, encoding, paths)
 - Sequential workflow execution
+- v0.3 deterministic fork/join execution (`workflow.kind: concurrent`), single-threaded in declared step order
+- Join input wiring via `@state:<save_as_key>`
 - Local Ollama provider (real binary or test mock)
 - Remote HTTP provider (blocking JSON request/response)
 - Deterministic tracing (`--trace`)
@@ -46,7 +48,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 
 **Explicitly deferred**
 
-- Concurrent workflows (schema allows; runtime errors clearly)
+- Parallel workflow execution (true concurrency; v0.4 target)
 - Multi-run documents
 - Provider retries / contracts / repair policies
 
