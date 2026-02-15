@@ -30,3 +30,4 @@ Start here for contributor-oriented docs and planning context.
 
 - `docs/concurrency/v0.3-core.md`: Core fork/join primitives, deterministic trace ordering, and v0.3 scope.
 - `docs/concurrency/v0.3-failure-cancellation-replay.md`: Failure semantics, cancellation propagation, and replay invariants.
+- `docs/concurrency/v0.3-state-materialization-api.md`: Deterministic state/materialization model and minimal runtime API contract.
