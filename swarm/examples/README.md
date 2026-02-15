@@ -43,3 +43,8 @@ Reference ADL doc for the demo scenario:
   - Expected: non-zero exit; error mentions the unknown field (e.g., `modell`).
 - `v0-2-failure-unknown-state-ref.adl.yaml`
   - Expected: non-zero exit; error indicates missing input bindings (e.g., `summary_2`).
+
+## v0.3 concurrency design example
+
+- `v0-3-concurrency-fork-join.adl.yaml`
+- See `v0-3-concurrency-fork-join.md` for expected deterministic trace ordering.
