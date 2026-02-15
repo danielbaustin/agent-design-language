@@ -138,16 +138,21 @@ pub fn execute_sequential(
     adl_base_dir: &Path,
     out_dir: &Path,
 ) -> Result<ExecutionResult> {
-    // Gate concurrent early (per our decision).
+    // Gate concurrent execution early.
     if !matches!(
         resolved.doc.run.workflow.kind,
         crate::adl::WorkflowKind::Sequential
     ) {
         let doc_version = resolved.doc.version.trim();
-        tr.run_failed("concurrent workflows are not supported in v0.1");
+        if doc_version == "0.3" {
+            let msg = "concurrent workflow execution is not implemented yet for ADL v0.3 (parse/plan supported)";
+            tr.run_failed(msg);
+            return Err(anyhow!("{msg}"));
+        }
+
+        tr.run_failed("concurrent workflows are not supported in v0.1/v0.2");
         return Err(anyhow!(
-            "feature 'concurrency' requires v0.3; document version is {doc_version} \
-(run.workflow.kind=concurrent)"
+            "feature 'concurrency' requires v0.3; document version is {doc_version} (run.workflow.kind=concurrent)"
         ));
     }
 
