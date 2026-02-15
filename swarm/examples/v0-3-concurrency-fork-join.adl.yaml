@@ -1,0 +1,56 @@
+version: "0.3"
+
+providers:
+  local_ollama:
+    type: "ollama"
+    base_url: "http://localhost:11434"
+    default_model: "gemma3:latest"
+
+agents:
+  coordinator:
+    provider: "local_ollama"
+    model: "gemma3:latest"
+    prompt:
+      system: "You coordinate deterministic fork/join workflows."
+
+tasks:
+  plan_fork:
+    prompt:
+      user: "Create branch plan for topic: {{topic}}"
+  branch_work:
+    prompt:
+      user: "Process branch {{branch}} for topic: {{topic}}"
+  join_results:
+    prompt:
+      user: "Join branch outputs deterministically for topic: {{topic}}"
+
+run:
+  name: "v0-3-concurrency-fork-join"
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "fork.plan"
+        agent: "coordinator"
+        task: "plan_fork"
+        inputs:
+          topic: "deterministic concurrency"
+
+      - id: "fork.branch.alpha"
+        agent: "coordinator"
+        task: "branch_work"
+        inputs:
+          topic: "deterministic concurrency"
+          branch: "alpha"
+
+      - id: "fork.branch.beta"
+        agent: "coordinator"
+        task: "branch_work"
+        inputs:
+          topic: "deterministic concurrency"
+          branch: "beta"
+
+      - id: "fork.join"
+        agent: "coordinator"
+        task: "join_results"
+        inputs:
+          topic: "deterministic concurrency"
