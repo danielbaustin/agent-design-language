@@ -1,0 +1,40 @@
+version: "0.3"
+
+providers:
+  local_ollama:
+    type: "ollama"
+    config:
+      model: "gemma3:latest"
+
+agents:
+  worker:
+    provider: "local_ollama"
+    model: "gemma3:latest"
+
+tasks:
+  may_fail:
+    prompt:
+      user: "FAIL_THIS_STEP {{topic}}"
+  recoverable:
+    prompt:
+      user: "Summarize {{topic}}"
+
+run:
+  name: "v0-3-on-error-retry"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "step_continue"
+        agent: "worker"
+        task: "may_fail"
+        on_error: "continue"
+        inputs:
+          topic: "deterministic failure policy"
+
+      - id: "step_retry"
+        agent: "worker"
+        task: "recoverable"
+        retry:
+          max_attempts: 2
+        inputs:
+          topic: "deterministic failure policy"

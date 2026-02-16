@@ -44,6 +44,8 @@ pub struct ResolvedStep {
     pub inputs: HashMap<String, String>,
     pub save_as: Option<String>,
     pub write_to: Option<String>,
+    pub on_error: Option<adl::StepOnError>,
+    pub retry: Option<adl::StepRetry>,
 }
 
 impl ResolvedStep {
@@ -140,6 +142,8 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
             inputs: s.inputs.clone(),
             save_as: s.save_as.clone(),
             write_to: s.write_to.clone(),
+            on_error: s.on_error.clone(),
+            retry: s.retry.clone(),
         });
     }
 
@@ -291,6 +295,8 @@ mod tests {
             id: None,
             save_as: None,
             write_to: None,
+            on_error: None,
+            retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
@@ -309,6 +315,8 @@ mod tests {
             id: None,
             save_as: None,
             write_to: None,
+            on_error: None,
+            retry: None,
             agent: None,
             task: Some("t1".to_string()),
             prompt: None,
@@ -329,6 +337,8 @@ mod tests {
             id: None,
             save_as: None,
             write_to: None,
+            on_error: None,
+            retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
@@ -350,6 +360,8 @@ mod tests {
             id: None,
             save_as: None,
             write_to: None,
+            on_error: None,
+            retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: Some(adl::PromptSpec {
@@ -377,6 +389,8 @@ mod tests {
             id: None,
             save_as: None,
             write_to: None,
+            on_error: None,
+            retry: None,
             agent: Some("a1".to_string()),
             task: Some("nope".to_string()),
             prompt: None,
@@ -401,6 +415,8 @@ mod tests {
             id: None,
             save_as: None,
             write_to: None,
+            on_error: None,
+            retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
@@ -424,6 +440,8 @@ mod tests {
             id: None,
             save_as: None,
             write_to: None,
+            on_error: None,
+            retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: Some(adl::PromptSpec {
@@ -453,6 +471,8 @@ mod tests {
             id: Some("step-1".to_string()),
             save_as: None,
             write_to: None,
+            on_error: None,
+            retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
@@ -463,6 +483,8 @@ mod tests {
             id: Some("step-2".to_string()),
             save_as: None,
             write_to: None,
+            on_error: None,
+            retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
             prompt: None,
