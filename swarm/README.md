@@ -1,7 +1,7 @@
 # Agent Design Language (ADL)
 
 **Version:** v0.3  
-**Status:** Deterministic, validated execution with sequential workflows and v0.3 fork/join (single-threaded)
+**Status:** Active v0.3 runtime with deterministic execution, v0.3 fork/join support, and hardened tooling gates
 
 ADL is a schema-validated language and runtime for defining and executing
 agent workflows with deterministic resolution and clear failure modes.
@@ -26,6 +26,17 @@ It is intentionally *compiler-like* in how it processes ADL documents:
 5. **Execute** deterministic workflows (sequential and v0.3 concurrent-as-sequential), with optional tracing.
 
 Provider execution, tracing, contracts, and repair policies are being added incrementally.
+
+---
+
+## v0.3 Shipped Capabilities
+
+- Deterministic workflow execution with stable plan/trace semantics
+- Deterministic v0.3 fork/join execution (`workflow.kind: concurrent`) in single-threaded declared order
+- Step-level failure controls (`on_error: fail|continue`, `retry.max_attempts`)
+- Remote HTTP provider MVP with explicit failure behavior
+- Persistent run state artifacts under `.adl/runs/<run_id>/` for auditability (`run.json`, `steps.json`)
+- CI-aligned quality gate (`fmt`, `clippy -D warnings`, `test`)
 
 ---
 
@@ -76,6 +87,8 @@ cargo run -- examples/v0-3-remote-http-provider.adl.yaml --print-plan
 Expected output includes deterministic step ordering and resolved provider bindings.
 
 For real `--run` execution, configure provider runtime dependencies (for example local Ollama and any required auth env vars).
+
+For additional runnable examples, see `examples/README.md`.
 
 ---
 
