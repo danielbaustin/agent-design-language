@@ -165,7 +165,9 @@ fn help_prints_examples() {
     let stdout = String::from_utf8_lossy(&out.stdout);
     assert!(stdout.contains("Examples:"), "stdout:\n{stdout}");
     assert!(
-        stdout.contains("examples/adl-0.1.yaml"),
+        stdout.contains("examples/v0-3-concurrency-fork-join.adl.yaml")
+            && stdout.contains("examples/adl-0.1.yaml")
+            && stdout.contains("legacy regression example"),
         "stdout:\n{stdout}"
     );
 }

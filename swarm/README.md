@@ -11,11 +11,11 @@ agent workflows with deterministic resolution and clear failure modes.
 [![swarm-coverage-gate](https://img.shields.io/github/actions/workflow/status/danielbaustin/agent-design-language/ci.yaml?branch=main&label=swarm-coverage-gate)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![MSRV](https://img.shields.io/badge/MSRV-1.74%2B-blue)
-# swarm
+## swarm
 
 `swarm` is a small, conservative reference runtime for **Agent Design Language (ADL)**.
 
-For the v0.2 summary and demo commands, see `RELEASE_NOTES_v0.2.md`.
+For historical context, see `RELEASE_NOTES_v0.2.md`. This README reflects the current v0.3 runtime.
 
 It is intentionally *compiler-like* in how it processes ADL documents:
 
@@ -23,7 +23,7 @@ It is intentionally *compiler-like* in how it processes ADL documents:
 2. **Validate** the document against a JSON Schema with crisp, path-specific errors.
 3. **Resolve** references deterministically (run → workflow → steps → task → agent → provider).
 4. **Materialize** deterministic artifacts (execution plan, assembled prompts).
-5. **Execute** deterministic workflows (sequential and v0.3 concurrent-as-sequential), with optional tracing.
+5. **Execute** deterministic workflows (sequential and v0.3 deterministic fork/join execution), with optional tracing.
 
 Provider execution, tracing, contracts, and repair policies are being added incrementally.
 
@@ -32,7 +32,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 ## v0.3 Shipped Capabilities
 
 - Deterministic workflow execution with stable plan/trace semantics
-- Deterministic v0.3 fork/join execution (`workflow.kind: concurrent`) in single-threaded declared order
+- Deterministic v0.3 fork/join execution (`workflow.kind: concurrent`), executed single-threaded in declared step order
 - Step-level failure controls (`on_error: fail|continue`, `retry.max_attempts`)
 - Remote HTTP provider MVP with explicit failure behavior
 - Persistent run state artifacts under `.adl/runs/<run_id>/` for auditability (`run.json`, `steps.json`)
@@ -198,11 +198,13 @@ Schema tests live in:
 tests/schema_tests.rs
 ```
 
-The example document used for validation lives in:
+Example validation documents live under:
 
 ```
-examples/adl-0.1.yaml
+examples/
 ```
+
+Legacy examples (e.g. `adl-0.1.yaml`) remain for regression testing, but the runtime behavior described here reflects v0.3.
 
 The schema/runtime behavior described here is aligned with current **v0.3** support.
 
@@ -247,7 +249,7 @@ All of the above must pass for changes to be accepted.
 
 As of v0.3:
 
-- **Overall line coverage:** ~**92%**
+- **Overall line coverage:** enforced by CI gate (see coverage badge above)
 - **All critical paths covered:**
   - Schema validation (strict + loose modes)
   - ADL parsing and semantic validation
@@ -256,6 +258,8 @@ As of v0.3:
   - CLI behavior and error handling
   - Provider execution (mocked and real)
 - Lower coverage areas (e.g. some execution branches) are intentional and documented, not accidental gaps.
+
+Coverage percentage may fluctuate as new features are added; the CI gate ensures regressions are caught.
 
 ### Running coverage locally
 
