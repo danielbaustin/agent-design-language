@@ -1,24 +1,18 @@
-# v0.3 Concurrency Fork/Join Demo (Plan-Only)
+# v0.3 Concurrency Fork/Join Example
 
-This demo is intentionally plan-only in v0.3. Parsing and planning are supported;
-concurrent runtime execution remains intentionally unimplemented.
+This example runs in v0.3 using deterministic sequential fork/join execution.
 
 File:
 - `swarm/examples/v0-3-concurrency-fork-join.adl.yaml`
 
-## One-obvious command
+## Commands
 
 From repo root:
 
 ```bash
 cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --run --trace
 ```
-
-Expected: plan output that includes `fork.plan`, `fork.branch.alpha`,
-`fork.branch.beta`, and `fork.join`.
-
-If you run with `--run`, expect an explicit "not implemented yet for ADL v0.3"
-error.
 
 ## Expected Deterministic Trace Ordering
 
@@ -39,5 +33,5 @@ Expected high-level event order:
 13. `RunFinished(success)`
 
 Notes:
-- Branch execution order is deterministic by branch key (`alpha`, then `beta`).
-- This example defines ordering contract; runtime parallelism is intentionally deferred.
+- Branch execution order is deterministic by declared step order (`alpha`, then `beta` in this file).
+- Runtime parallelism is intentionally deferred to a later version.

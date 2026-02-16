@@ -52,6 +52,9 @@ jobs:
 
   swarm-coverage:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     defaults:
       run:
         working-directory: swarm
@@ -81,3 +84,11 @@ jobs:
           name: swarm-coverage-lcov
           path: swarm/lcov.info
           if-no-files-found: error
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
+          files: swarm/lcov.info
+          flags: swarm
+          fail_ci_if_error: false

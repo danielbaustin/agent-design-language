@@ -6,8 +6,9 @@
 ADL is a schema-validated language and runtime for defining and executing
 agent workflows with deterministic resolution and clear failure modes.
 
-![Build](https://img.shields.io/badge/build-passing-brightgreen)
-![Coverage](https://img.shields.io/badge/coverage-92%25-brightgreen)
+[![swarm-ci](https://img.shields.io/github/actions/workflow/status/danielbaustin/agent-design-language/ci.yaml?branch=main&label=swarm-ci)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
+[![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/branch/main/graph/badge.svg?flag=swarm)](https://codecov.io/gh/danielbaustin/agent-design-language)
+[![swarm-coverage-gate](https://img.shields.io/github/actions/workflow/status/danielbaustin/agent-design-language/ci.yaml?branch=main&label=swarm-coverage-gate)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![MSRV](https://img.shields.io/badge/MSRV-1.74%2B-blue)
 # swarm
@@ -38,6 +39,9 @@ Provider execution, tracing, contracts, and repair policies are being added incr
   - `step.prompt` → `task.prompt` → `agent.prompt`
 - File-backed inputs with safety checks (size, encoding, paths)
 - Sequential workflow execution
+- Step-level error policy: fail-fast (default), continue, deterministic retry
+- v0.3 deterministic fork/join execution (`workflow.kind: concurrent`), single-threaded in declared step order
+- Join input wiring via `@state:<save_as_key>`
 - Local Ollama provider (real binary or test mock)
 - Remote HTTP provider (blocking JSON request/response)
 - Deterministic tracing (`--trace`)
@@ -45,7 +49,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 
 **Explicitly deferred**
 
-- Concurrent workflows (schema allows; runtime errors clearly)
+- Parallel workflow execution (true concurrency; v0.4 target)
 - Multi-run documents
 - Provider retries / contracts / repair policies
 
@@ -96,6 +100,32 @@ swarm <path-to-adl.yaml> [OPTIONS]
 Exit codes are consistent:
 - `2` — invalid CLI usage
 - non-zero — schema, validation, or runtime error
+
+---
+
+## Run State Artifacts
+
+When running with `--run`, `swarm` writes deterministic run state files under:
+
+```bash
+.adl/runs/<run_id>/
+```
+
+Files:
+- `run.json`:
+  - `run_id`
+  - `workflow_id`
+  - `version`
+  - `status` (`success` or `failure`)
+  - `start_time_ms`, `end_time_ms`, `duration_ms`
+- `steps.json` (stable step order):
+  - `step_id`
+  - `agent_id`
+  - `provider_id`
+  - `status` (`success`, `failure`, `not_run`)
+  - `output_artifact_path` (when applicable)
+
+This is additive and does not replace existing stdout summaries.
 
 ---
 
@@ -248,6 +278,10 @@ The report makes it easy to identify:
 - Coverage is used as a **design signal**, not a vanity metric
 
 Contributors are expected to keep overall line coverage **≥ 85%**, and ideally improve it with each change.
+
+Badge note:
+- `coverage` is the live Codecov percentage for the `swarm` upload.
+- `swarm-coverage-gate` reflects whether the CI workflow coverage gate passes. It is a status badge, not a live percentage badge.
 
 ---
 

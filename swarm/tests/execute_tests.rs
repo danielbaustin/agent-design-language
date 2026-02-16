@@ -193,6 +193,36 @@ cat
 exit 0
 "#
         }
+        MockOllamaBehavior::FailOnce => {
+            r#"#!/bin/sh
+set -eu
+state_file="${0}.state"
+if [ ! -f "${state_file}" ]; then
+  echo "mock ollama first attempt failure" 1>&2
+  touch "${state_file}"
+  exit 42
+fi
+cat >/dev/null
+echo "MOCK_RECOVERED"
+exit 0
+"#
+        }
+        MockOllamaBehavior::FailOnToken => {
+            r#"#!/bin/sh
+set -eu
+if [ "${1:-}" != "run" ]; then
+  echo "mock ollama: expected 'run'" 1>&2
+  exit 2
+fi
+prompt="$(cat)"
+if printf "%s" "${prompt}" | grep -q "FAIL_THIS_STEP"; then
+  echo "mock ollama forced fail token seen" 1>&2
+  exit 41
+fi
+echo "MOCK_CONTINUE_OK"
+exit 0
+"#
+        }
     };
 
     fs::write(&bin, script.as_bytes()).unwrap();
@@ -215,6 +245,8 @@ enum MockOllamaBehavior {
     Fail,
     EchoModel,
     EchoPrompt,
+    FailOnce,
+    FailOnToken,
 }
 
 fn run_swarm(args: &[&str]) -> std::process::Output {
@@ -316,7 +348,193 @@ run:
 }
 
 #[test]
-fn run_remote_http_provider_demo_with_mock_server() {
+fn run_on_error_continue_proceeds_after_failure() {
+    let base = tmp_dir("exec-on-error-continue");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::FailOnToken);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t_fail:
+    prompt:
+      user: "FAIL_THIS_STEP {{text}}"
+  t_ok:
+    prompt:
+      user: "SAFE_STEP {{text}}"
+
+run:
+  name: "on-error-continue"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s_fail"
+        agent: "a1"
+        task: "t_fail"
+        on_error: "continue"
+        inputs:
+          text: "x"
+      - id: "s_ok"
+        agent: "a1"
+        task: "t_ok"
+        inputs:
+          text: "y"
+"#;
+
+    let tmp_yaml = base.join("on-error-continue.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success with continue policy, got {:?}\nstdout:\n{}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("step=s_fail") && stdout.contains("status=failure"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("step=s_ok") && stdout.contains("status=success"),
+        "stdout was:\n{stdout}"
+    );
+}
+
+#[test]
+fn run_retry_succeeds_on_second_attempt() {
+    let base = tmp_dir("exec-retry-success");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::FailOnce);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "retry me {{text}}"
+
+run:
+  name: "retry-success"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        retry:
+          max_attempts: 2
+        inputs:
+          text: "hello"
+"#;
+
+    let tmp_yaml = base.join("retry-success.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success after retry, got {:?}\nstdout:\n{}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("step=s1")
+            && stdout.contains("attempts=2")
+            && stdout.contains("status=success"),
+        "stdout was:\n{stdout}"
+    );
+}
+
+#[test]
+fn run_retry_exhausts_and_fails() {
+    let base = tmp_dir("exec-retry-exhaust");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Fail);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "retry me {{text}}"
+
+run:
+  name: "retry-exhaust"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        retry:
+          max_attempts: 2
+        inputs:
+          text: "hello"
+"#;
+
+    let tmp_yaml = base.join("retry-exhaust.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        !out.status.success(),
+        "expected failure when retries exhausted; stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("failed after 2 attempt(s)") || stderr.contains("attempt 2/2"),
+        "stderr was:\n{stderr}"
+    );
+}
+
+#[test]
+fn run_executes_step_with_http_provider() {
     let server = match std::net::TcpListener::bind("127.0.0.1:0") {
         Ok(s) => s,
         Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
@@ -526,24 +744,202 @@ fn run_rejects_concurrent_workflows_in_v0_2() {
 }
 
 #[test]
-fn run_rejects_concurrent_workflows_in_v0_3_with_not_implemented_error() {
-    let base = tmp_dir("exec-reject-concurrent-v0-3");
+fn run_executes_concurrent_workflows_in_v0_3_in_declared_order() {
+    let base = tmp_dir("exec-concurrent-v0-3-order");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
     let new_path = prepend_path(&base);
     let _path_guard = EnvVarGuard::set("PATH", new_path);
 
     let out = run_swarm(&["examples/v0-3-concurrency-fork-join.adl.yaml", "--run"]);
     assert!(
+        out.status.success(),
+        "expected success for v0.3 concurrent run, got failure.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let order = [
+        "--- step: fork.plan ---",
+        "--- step: fork.branch.alpha ---",
+        "--- step: fork.branch.beta ---",
+        "--- step: fork.join ---",
+    ];
+    let mut cursor = 0usize;
+    for marker in order {
+        let Some(rel_idx) = stdout[cursor..].find(marker) else {
+            panic!("missing marker '{marker}' in stdout:\n{stdout}");
+        };
+        cursor += rel_idx + marker.len();
+    }
+}
+
+#[test]
+fn run_v0_3_join_step_can_consume_saved_fork_outputs() {
+    let base = tmp_dir("exec-concurrent-v0-3-join-state");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  branch:
+    prompt:
+      user: "BRANCH={{branch}} TOPIC={{topic}}"
+  join:
+    prompt:
+      user: "JOIN A={{alpha}} B={{beta}}"
+
+run:
+  name: "v0-3-join-state"
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "fork.branch.alpha"
+        agent: "a1"
+        task: "branch"
+        save_as: "alpha"
+        inputs:
+          topic: "deterministic"
+          branch: "alpha"
+      - id: "fork.branch.beta"
+        agent: "a1"
+        task: "branch"
+        save_as: "beta"
+        inputs:
+          topic: "deterministic"
+          branch: "beta"
+      - id: "fork.join"
+        agent: "a1"
+        task: "join"
+        save_as: "joined"
+        write_to: "join.txt"
+        inputs:
+          alpha: "@state:alpha"
+          beta: "@state:beta"
+"#;
+
+    let tmp_yaml = base.join("v0-3-join-state.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out_dir = base.join("out");
+    let out = run_swarm(&[
+        tmp_yaml.to_string_lossy().as_ref(),
+        "--run",
+        "--out",
+        out_dir.to_string_lossy().as_ref(),
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, got failure.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let joined = fs::read_to_string(out_dir.join("join.txt")).unwrap();
+    assert!(
+        joined.contains("BRANCH=alpha TOPIC=deterministic"),
+        "join output missing alpha branch content:\n{joined}"
+    );
+    assert!(
+        joined.contains("BRANCH=beta TOPIC=deterministic"),
+        "join output missing beta branch content:\n{joined}"
+    );
+}
+
+#[test]
+fn run_v0_3_fails_fast_on_fork_failure_and_does_not_run_join() {
+    let base = tmp_dir("exec-concurrent-v0-3-fail-fast");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  ok_task:
+    prompt:
+      user: "OK {{value}}"
+  broken_task:
+    prompt:
+      user: "BROKEN {{missing_key}}"
+  join_task:
+    prompt:
+      user: "JOIN {{alpha}} {{beta}}"
+
+run:
+  name: "v0-3-fail-fast"
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "fork.branch.alpha"
+        agent: "a1"
+        task: "ok_task"
+        save_as: "alpha"
+        inputs:
+          value: "alpha"
+      - id: "fork.branch.beta"
+        agent: "a1"
+        task: "broken_task"
+        save_as: "beta"
+        inputs:
+          value: "beta"
+      - id: "fork.join"
+        agent: "a1"
+        task: "join_task"
+        save_as: "joined"
+        inputs:
+          alpha: "@state:alpha"
+          beta: "@state:beta"
+"#;
+
+    let tmp_yaml = base.join("v0-3-fail-fast.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run", "--trace"]);
+    assert!(
         !out.status.success(),
-        "expected failure for v0.3 concurrent run, got success.\nstdout:\n{}\nstderr:\n{}",
+        "expected failure, got success.\nstdout:\n{}\nstderr:\n{}",
         String::from_utf8_lossy(&out.stdout),
         String::from_utf8_lossy(&out.stderr)
     );
 
     let stderr = String::from_utf8_lossy(&out.stderr);
-    let expected =
-        "Error: concurrent workflow execution is not implemented yet for ADL v0.3 (parse/plan supported)";
-    assert_eq!(stderr.trim(), expected, "stderr mismatch:\n{stderr}");
+    assert!(
+        stderr.contains("fork.branch.beta") && stderr.contains("missing input bindings"),
+        "stderr should identify failed branch; stderr was:\n{stderr}"
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        !stdout.contains("StepStarted step=fork.join"),
+        "join step should not start after branch failure; stdout:\n{stdout}"
+    );
 }
 
 #[test]
@@ -690,6 +1086,99 @@ run:
         stdout.contains("ARTIFACT step=") && stdout.contains("index.html"),
         "stdout was:\n{stdout}"
     );
+}
+
+#[test]
+fn run_writes_run_state_artifacts() {
+    let base = tmp_dir("exec-run-state-artifacts");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let run_id = "run-state-artifacts-test";
+    let run_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .join(".adl")
+        .join("runs")
+        .join(run_id);
+    let _ = fs::remove_dir_all(&run_dir);
+
+    let yaml = format!(
+        r#"
+version: "0.2"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize: {{text}}"
+
+run:
+  name: "{run_id}"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        inputs:
+          text: "hello"
+"#
+    );
+
+    let tmp_yaml = base.join("run-state.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success, got {:?}\nstdout:\n{}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let run_json_path = run_dir.join("run.json");
+    let steps_json_path = run_dir.join("steps.json");
+    assert!(
+        run_json_path.is_file(),
+        "missing {}",
+        run_json_path.display()
+    );
+    assert!(
+        steps_json_path.is_file(),
+        "missing {}",
+        steps_json_path.display()
+    );
+
+    let run_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
+    assert_eq!(run_json["run_id"], run_id);
+    assert_eq!(run_json["workflow_id"], "workflow");
+    assert_eq!(run_json["status"], "success");
+
+    let steps_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&steps_json_path).unwrap()).unwrap();
+    let steps = steps_json
+        .as_array()
+        .expect("steps.json should be an array");
+    assert_eq!(steps.len(), 1);
+    assert_eq!(steps[0]["step_id"], "s1");
+    assert_eq!(steps[0]["status"], "success");
+    assert_eq!(steps[0]["provider_id"], "local");
+
+    let _ = fs::remove_dir_all(&run_dir);
 }
 
 #[test]

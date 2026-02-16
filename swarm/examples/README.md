@@ -44,16 +44,19 @@ Reference ADL doc for the demo scenario:
 - `v0-2-failure-unknown-state-ref.adl.yaml`
   - Expected: non-zero exit; error indicates missing input bindings (e.g., `summary_2`).
 
-## v0.3 concurrency design example (plan-only)
+## v0.3 concurrency examples
 
 - `v0-3-concurrency-fork-join.adl.yaml`
+  - deterministic fork/join sequence contract
+- `v0-3-fork-join-seq-run.adl.yaml`
+  - runnable v0.3 sequential fork/join execution
+  - join input wiring via `@state:<save_as_key>`
 - See `v0-3-concurrency-fork-join.md` for expected deterministic trace ordering.
 
-From repo root:
+## v0.3 on_error + retry example
 
-```bash
-cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
-```
+- `v0-3-on-error-retry.adl.yaml`
+- See `v0-3-on-error-retry.md` for deterministic failure-policy behavior.
 
 ## v0.3 remote provider demo
 

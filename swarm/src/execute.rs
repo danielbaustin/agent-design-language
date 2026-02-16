@@ -121,9 +121,19 @@ pub struct StepOutput {
 }
 
 #[derive(Debug, Clone)]
+pub struct StepExecutionRecord {
+    pub step_id: String,
+    pub provider_id: String,
+    pub status: String,
+    pub attempts: u32,
+    pub output_bytes: usize,
+}
+
+#[derive(Debug, Clone)]
 pub struct ExecutionResult {
     pub outputs: Vec<StepOutput>,
     pub artifacts: Vec<PathBuf>,
+    pub records: Vec<StepExecutionRecord>,
 }
 
 /// Execute the resolved run in **sequential** mode (v0.1).
@@ -138,18 +148,14 @@ pub fn execute_sequential(
     adl_base_dir: &Path,
     out_dir: &Path,
 ) -> Result<ExecutionResult> {
-    // Gate concurrent execution early.
-    if !matches!(
+    // v0.3 supports deterministic concurrent-workflow execution by running steps
+    // sequentially in declared document order (single-threaded runtime).
+    if matches!(
         resolved.doc.run.workflow.kind,
-        crate::adl::WorkflowKind::Sequential
-    ) {
+        crate::adl::WorkflowKind::Concurrent
+    ) && resolved.doc.version.trim() != "0.3"
+    {
         let doc_version = resolved.doc.version.trim();
-        if doc_version == "0.3" {
-            let msg = "concurrent workflow execution is not implemented yet for ADL v0.3 (parse/plan supported)";
-            tr.run_failed(msg);
-            return Err(anyhow!("{msg}"));
-        }
-
         tr.run_failed("concurrent workflows are not supported in v0.1/v0.2");
         return Err(anyhow!(
             "feature 'concurrency' requires v0.3; document version is {doc_version} (run.workflow.kind=concurrent)"
@@ -158,6 +164,8 @@ pub fn execute_sequential(
 
     let mut outs = Vec::new();
     let mut artifacts = Vec::new();
+    let mut records = Vec::new();
+    let mut saved_state: HashMap<String, String> = HashMap::new();
 
     for step in &resolved.steps {
         let step_id = step.id.clone();
@@ -178,74 +186,97 @@ pub fn execute_sequential(
 
         tr.step_started(&step_id, agent_id, provider_id, task_id);
 
-        let result = (|| -> Result<StepOutput> {
-            let p = step
-                .effective_prompt_with_defaults(resolved)
-                .ok_or_else(|| {
-                    anyhow!(
-                        "step '{}' has no effective prompt (step.prompt or task.prompt required)",
-                        step_id
+        let max_attempts = step.retry.as_ref().map(|r| r.max_attempts).unwrap_or(1);
+        let continue_on_error = matches!(step.on_error, Some(crate::adl::StepOnError::Continue));
+        let mut attempt: u32 = 0;
+        let mut last_err: Option<anyhow::Error> = None;
+        let mut success_out: Option<StepOutput> = None;
+
+        while attempt < max_attempts {
+            attempt += 1;
+            let result = (|| -> Result<StepOutput> {
+                let p = step
+                    .effective_prompt_with_defaults(resolved)
+                    .ok_or_else(|| {
+                        anyhow!(
+                            "step '{}' has no effective prompt (step.prompt or task.prompt required)",
+                            step_id
+                        )
+                    })?;
+
+                let merged_inputs = resolve_state_inputs(&step.id, &step.inputs, &saved_state)
+                    .with_context(|| format!("failed to resolve inputs for step '{}'", step_id))?;
+
+                let missing = missing_prompt_inputs(&p, &merged_inputs);
+                if !missing.is_empty() {
+                    return Err(anyhow!(
+                        "step '{}' missing input bindings for: {} (provide inputs or prior state)",
+                        step_id,
+                        missing.join(", ")
+                    ));
+                }
+
+                // Allow inputs to reference files via "@file:<path>".
+                let inputs =
+                    materialize_inputs(merged_inputs, adl_base_dir).with_context(|| {
+                        format!("failed to materialize inputs for step '{}'", step_id)
+                    })?;
+
+                // Assemble a single text blob suitable for basic model consumption.
+                let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
+                let prompt_hash = prompt::hash_prompt(&prompt_text);
+                tr.prompt_assembled(&step_id, &prompt_hash);
+
+                // Build provider from doc.providers[provider_id]
+                let spec = resolved.doc.providers.get(provider_id).with_context(|| {
+                    format!(
+                        "step '{}' references unknown provider '{}'",
+                        step_id, provider_id
+                    )
+                })?;
+                let model_override = step
+                    .agent
+                    .as_ref()
+                    .and_then(|agent_id| resolved.doc.agents.get(agent_id))
+                    .map(|agent| agent.model.as_str());
+
+                let prov = provider::build_provider(spec, model_override).with_context(|| {
+                    format!(
+                        "failed to build provider '{}' for step '{}'",
+                        provider_id, step_id
                     )
                 })?;
 
-            let missing = missing_prompt_inputs(&p, &step.inputs);
-            if !missing.is_empty() {
-                return Err(anyhow!(
-                    "step '{}' missing input bindings for: {} (provide inputs or prior state)",
-                    step_id,
-                    missing.join(", ")
-                ));
+                let model_output = prov.complete(&prompt_text).with_context(|| {
+                    format!(
+                        "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
+                        provider_id, step_id
+                    )
+                })?;
+
+                Ok(StepOutput {
+                    step_id: step_id.clone(),
+                    provider_id: provider_id.to_string(),
+                    model_output,
+                })
+            })();
+
+            match result {
+                Ok(out) => {
+                    success_out = Some(out);
+                    break;
+                }
+                Err(err) => {
+                    last_err = Some(err);
+                    if attempt >= max_attempts {
+                        break;
+                    }
+                }
             }
+        }
 
-            // v0.1: step-level inputs only (run.defaults currently has only `system`)
-            let merged_inputs: HashMap<String, String> = step.inputs.clone();
-
-            // Allow inputs to reference files via "@file:<path>".
-            let inputs = materialize_inputs(merged_inputs, adl_base_dir)
-                .with_context(|| format!("failed to materialize inputs for step '{}'", step_id))?;
-
-            // Assemble a single text blob suitable for basic model consumption.
-            let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
-            let prompt_hash = prompt::hash_prompt(&prompt_text);
-            tr.prompt_assembled(&step_id, &prompt_hash);
-
-            // Build provider from doc.providers[provider_id]
-            let spec = resolved.doc.providers.get(provider_id).with_context(|| {
-                format!(
-                    "step '{}' references unknown provider '{}'",
-                    step_id, provider_id
-                )
-            })?;
-
-            let model_override = step
-                .agent
-                .as_ref()
-                .and_then(|agent_id| resolved.doc.agents.get(agent_id))
-                .map(|agent| agent.model.as_str());
-
-            let prov = provider::build_provider(spec, model_override).with_context(|| {
-                format!(
-                    "failed to build provider '{}' for step '{}'",
-                    provider_id, step_id
-                )
-            })?;
-
-            let model_output = prov.complete(&prompt_text).with_context(|| {
-                format!(
-                    "provider '{}' complete() failed for step '{}'",
-                    provider_id, step_id
-                )
-            })?;
-
-            Ok(StepOutput {
-                step_id: step_id.clone(),
-                provider_id: provider_id.to_string(),
-                model_output,
-            })
-        })();
-
-        match result {
-            Ok(out) => {
+        match success_out {
+            Some(out) => {
                 tr.step_finished(&step_id, true);
 
                 if let Some(write_to) = step.write_to.as_deref() {
@@ -264,13 +295,38 @@ pub fn execute_sequential(
                     println!("{}", out.model_output.trim_end());
                     println!();
                 }
-
+                records.push(StepExecutionRecord {
+                    step_id: step_id.clone(),
+                    provider_id: provider_id.to_string(),
+                    status: "success".to_string(),
+                    attempts: attempt,
+                    output_bytes: out.model_output.len(),
+                });
+                if let Some(save_as) = step.save_as.as_ref() {
+                    saved_state.insert(save_as.clone(), out.model_output.clone());
+                }
                 outs.push(out);
             }
-            Err(err) => {
+            None => {
+                let err = last_err.unwrap_or_else(|| anyhow!("step '{}' failed", step_id));
                 tr.step_finished(&step_id, false);
+                records.push(StepExecutionRecord {
+                    step_id: step_id.clone(),
+                    provider_id: provider_id.to_string(),
+                    status: "failure".to_string(),
+                    attempts: attempt.max(1),
+                    output_bytes: 0,
+                });
+                if continue_on_error {
+                    continue;
+                }
                 tr.run_failed(&err.to_string());
-                return Err(err);
+                return Err(anyhow!(
+                    "step '{}' failed after {} attempt(s): {:#}",
+                    step_id,
+                    attempt.max(1),
+                    err
+                ));
             }
         }
     }
@@ -278,6 +334,7 @@ pub fn execute_sequential(
     Ok(ExecutionResult {
         outputs: outs,
         artifacts,
+        records,
     })
 }
 
@@ -316,6 +373,38 @@ fn write_output(step_id: &str, out_dir: &Path, write_to: &str, contents: &str) -
         )
     })?;
     Ok(path)
+}
+
+fn resolve_state_inputs(
+    step_id: &str,
+    inputs: &HashMap<String, String>,
+    saved_state: &HashMap<String, String>,
+) -> Result<HashMap<String, String>> {
+    let mut merged = HashMap::new();
+    for (key, value) in inputs.iter() {
+        if let Some(raw_state_key) = value.strip_prefix("@state:") {
+            let state_key = raw_state_key.trim();
+            if state_key.is_empty() {
+                return Err(anyhow!(
+                    "step '{}' uses @state: with an empty key for input '{}'",
+                    step_id,
+                    key
+                ));
+            }
+            let state_value = saved_state.get(state_key).ok_or_else(|| {
+                anyhow!(
+                    "step '{}' references missing saved state '{}' for input '{}'",
+                    step_id,
+                    state_key,
+                    key
+                )
+            })?;
+            merged.insert(key.clone(), state_value.clone());
+            continue;
+        }
+        merged.insert(key.clone(), value.clone());
+    }
+    Ok(merged)
 }
 
 fn missing_prompt_inputs(
