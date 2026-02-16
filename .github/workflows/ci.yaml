@@ -77,6 +77,9 @@ jobs:
       - name: Coverage (swarm)
         run: cargo llvm-cov --workspace --all-features --fail-under-lines 10 --lcov --output-path lcov.info
 
+      - name: Verify generated lcov file
+        run: test -s lcov.info && ls -l lcov.info
+
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
@@ -85,11 +88,10 @@ jobs:
           if-no-files-found: error
 
       - name: Upload coverage to Codecov
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./swarm/lcov.info
+          files: swarm/lcov.info
           flags: swarm
           fail_ci_if_error: true
           verbose: true
