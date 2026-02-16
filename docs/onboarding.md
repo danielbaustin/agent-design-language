@@ -23,4 +23,4 @@ Default workflow uses `adl_pr_cycle` with canonical card paths under `.adl/cards
 
 1. `README.md`
 2. `swarm/tools/README.md`
-3. `.adl/reports/README.md`
+3. `.adl/reports/INDEX.md`
