@@ -5,6 +5,15 @@ This example runs in v0.3 using deterministic sequential fork/join execution.
 File:
 - `swarm/examples/v0-3-concurrency-fork-join.adl.yaml`
 
+## Commands
+
+From repo root:
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --run --trace
+```
+
 ## Expected Deterministic Trace Ordering
 
 Expected high-level event order:

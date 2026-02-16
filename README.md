@@ -38,6 +38,26 @@ The generated artifacts land under `.adl/reports/demo/demo-b-one-command/`.
 
 ---
 
+## v0.3 Highlights
+
+- Plan-only fork/join concurrency demo:
+  `swarm/examples/v0-3-concurrency-fork-join.adl.yaml`
+- Remote HTTP provider MVP demo:
+  `swarm/examples/v0-3-remote-http-provider.adl.yaml`
+- Concurrency design docs:
+  `docs/concurrency/v0.3-core.md`
+- Demo command index:
+  `docs/demos.md`
+
+One obvious commands from repo root:
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
+```
+
+---
+
 ## 5‑minute demo
 
 > Requires Rust and a local Ollama installation (for real runs).  

@@ -47,7 +47,6 @@ Reference ADL doc for the demo scenario:
 ## v0.3 concurrency examples
 
 - `v0-3-concurrency-fork-join.adl.yaml`
-- See `v0-3-concurrency-fork-join.md` for expected deterministic trace ordering.
   - deterministic fork/join sequence contract
 - `v0-3-fork-join-seq-run.adl.yaml`
   - runnable v0.3 sequential fork/join execution
@@ -58,3 +57,15 @@ Reference ADL doc for the demo scenario:
 
 - `v0-3-on-error-retry.adl.yaml`
 - See `v0-3-on-error-retry.md` for deterministic failure-policy behavior.
+
+## v0.3 remote provider demo
+
+- `v0-3-remote-http-provider.adl.yaml`
+- `v0-3-remote-provider-demo.adl.yaml` (compat alias)
+- See `v0-3-remote-http-provider.md` for setup and expected behavior.
+
+From repo root:
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
+```
