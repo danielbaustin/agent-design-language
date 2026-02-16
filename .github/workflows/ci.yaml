@@ -54,7 +54,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write
     defaults:
       run:
         working-directory: swarm
@@ -89,7 +88,6 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          use_oidc: true
           files: ./swarm/lcov.info
           flags: swarm
           fail_ci_if_error: true
