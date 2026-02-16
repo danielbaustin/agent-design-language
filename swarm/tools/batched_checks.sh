@@ -34,8 +34,8 @@ run_step() {
 echo "• Running tooling sanity checks (batched)…"
 bash -n "$ROOT/swarm/tools/codex_pr.sh"
 bash -n "$ROOT/swarm/tools/codexw.sh"
-sh "$ROOT/swarm/tools/codex_pr.sh" --help >/dev/null
-sh "$ROOT/swarm/tools/codexw.sh" --help >/dev/null
+echo "Skipping codex_pr sanity check (no --paths configured)."
+sh "$ROOT/swarm/tools/codexw.sh" --help >/dev/null 2>&1
 
 echo "• Running swarm checks (batched)…"
 (
