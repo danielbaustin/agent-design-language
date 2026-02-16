@@ -44,7 +44,10 @@ Reference ADL doc for the demo scenario:
 - `v0-2-failure-unknown-state-ref.adl.yaml`
   - Expected: non-zero exit; error indicates missing input bindings (e.g., `summary_2`).
 
-## v0.3 concurrency design example
+## v0.3 concurrency examples
 
 - `v0-3-concurrency-fork-join.adl.yaml`
-- See `v0-3-concurrency-fork-join.md` for expected deterministic trace ordering.
+  - deterministic fork/join sequence contract
+- `v0-3-fork-join-seq-run.adl.yaml`
+  - runnable v0.3 sequential fork/join execution
+  - join input wiring via `@state:<save_as_key>`
