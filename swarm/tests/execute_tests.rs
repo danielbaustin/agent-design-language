@@ -254,17 +254,6 @@ fn run_swarm(args: &[&str]) -> std::process::Output {
     Command::new(exe).args(args).output().unwrap()
 }
 
-fn block_incoming_localhost() -> EnvVarGuard {
-    let key = "NO_PROXY";
-    let old = std::env::var(key).ok();
-    let mut new_val = old.clone().unwrap_or_default();
-    if !new_val.is_empty() && !new_val.ends_with(',') {
-        new_val.push(',');
-    }
-    new_val.push_str("127.0.0.1,localhost");
-    EnvVarGuard::set(key, new_val)
-}
-
 #[test]
 fn run_executes_example_with_mock_ollama_and_prints_step_output() {
     let base = tmp_dir("exec-run-mock-ollama");
@@ -541,7 +530,22 @@ fn run_executes_step_with_http_provider() {
         Err(e) => panic!("failed to bind local test server: {e}"),
     };
     let addr = server.local_addr().unwrap();
-    let _server_guard = block_incoming_localhost();
+
+    let old_no_proxy = std::env::var("NO_PROXY").ok();
+    let mut no_proxy_val = old_no_proxy.unwrap_or_default();
+    if !no_proxy_val.is_empty() && !no_proxy_val.ends_with(',') {
+        no_proxy_val.push(',');
+    }
+    no_proxy_val.push_str("127.0.0.1,localhost");
+
+    // Set both env vars under one guard to avoid nested env-lock acquisition.
+    let _env_guard = EnvVarGuard::set_many(&[
+        ("NO_PROXY", std::ffi::OsStr::new(&no_proxy_val)),
+        (
+            "SWARM_REMOTE_BEARER_TOKEN",
+            std::ffi::OsStr::new("demo-token"),
+        ),
+    ]);
 
     std::thread::spawn(move || {
         let (mut stream, _) = server.accept().unwrap();
@@ -565,7 +569,6 @@ fn run_executes_step_with_http_provider() {
     let tmp_yaml = base.join("remote-http-provider.adl.yaml");
     fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
 
-    let _auth_guard = EnvVarGuard::set("SWARM_REMOTE_BEARER_TOKEN", "demo-token");
     let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
     assert!(
         out.status.success(),
