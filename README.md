@@ -3,7 +3,7 @@
 Agent Design Language (ADL) is a declarative, contract-driven language for building deterministic AI workflow execution.
 
 [![swarm-ci](https://img.shields.io/github/actions/workflow/status/danielbaustin/agent-design-language/ci.yaml?branch=main&label=swarm-ci)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
-[![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/branch/main/graph/badge.svg?flag=swarm)](https://codecov.io/gh/danielbaustin/agent-design-language)
+[![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
 [![swarm-coverage-gate](https://img.shields.io/github/actions/workflow/status/danielbaustin/agent-design-language/ci.yaml?branch=main&label=swarm-coverage-gate)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 
 ## Current Status (v0.3)
