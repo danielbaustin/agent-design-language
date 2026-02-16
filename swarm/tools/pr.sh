@@ -12,9 +12,10 @@
 # - GitHub CLI (gh) authenticated with repo access
 # - Rust toolchain for `swarm/` checks (fmt, clippy, test)
 #
+#   swarm/tools/pr.sh help
 #   swarm/tools/pr.sh start   <issue> [--slug <slug>] [--prefix codex] [--no-fetch-issue]
-#   swarm/tools/pr.sh card    <issue> [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
-#   swarm/tools/pr.sh output  <issue> [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
+#   swarm/tools/pr.sh card    <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
+#   swarm/tools/pr.sh output  <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
 #   swarm/tools/pr.sh finish  <issue> --title "<title>" [-f <input_card.md>] [--output-card <output_card.md>] [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [--no-open]
 #   swarm/tools/pr.sh open
 #   swarm/tools/pr.sh status
@@ -22,7 +23,11 @@
 # Examples:
 #   swarm/tools/pr.sh start 14 --slug b6-default-system
 #   swarm/tools/pr.sh card  14 --version v0.2
+#   swarm/tools/pr.sh card  14 input
+#   swarm/tools/pr.sh card  14 output
 #   swarm/tools/pr.sh output 14 --version v0.2
+#   swarm/tools/pr.sh output 14 input
+#   swarm/tools/pr.sh output 14 output
 #   swarm/tools/pr.sh finish 14 --title "swarm: apply run.defaults.system fallback" -f /abs/cards_root/14/input_14.md --output-card /abs/cards_root/14/output_14.md
 #   swarm/tools/pr.sh open
 #
@@ -40,6 +45,13 @@ DEFAULT_NEW_LABELS="track:roadmap,version:v0.3,type:bug,area:tools,epic:v0.3-too
 # ---------- helpers ----------
 die() { echo "❌ $*" >&2; exit 1; }
 note() { echo "• $*"; }
+
+die_with_usage() {
+  local msg="$1" usage_fn="$2"
+  echo "❌ $msg" >&2
+  "$usage_fn" >&2
+  exit 1
+}
 
 die_index_lock() {
   local context="$1"
@@ -509,25 +521,86 @@ open_in_browser() {
 }
 
 cmd_card() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_card
+    return 0
+  fi
+
   local issue="${1:-}"; shift || true
-  [[ -n "$issue" ]] || die "card: missing <issue> number"
+  [[ -n "$issue" ]] || die_with_usage "card: missing <issue> number" usage_card
   issue="$(normalize_issue_or_die "$issue")"
 
   local slug=""
   local no_fetch_issue="0"
   local out_path=""
   local version=""
+  local kind="create"
+  local seen_kind="0"
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
+      input|output)
+        if [[ "$seen_kind" == "1" ]]; then
+          die_with_usage "card: duplicate positional card kind: $1" usage_card
+        fi
+        kind="$1"
+        seen_kind="1"
+        shift
+        ;;
       --slug) slug="$2"; shift 2 ;;
       --no-fetch-issue) no_fetch_issue="1"; shift ;;
       -f) out_path="$2"; shift 2 ;;
       --file) out_path="$2"; shift 2 ;;
       --version) version="$2"; shift 2 ;;
-      *) die "card: unknown arg: $1" ;;
+      -h|--help) usage_card; return 0 ;;
+      *) die_with_usage "card: unknown arg: $1" usage_card ;;
     esac
   done
+
+  local target_kind
+  target_kind="$kind"
+  if [[ "$target_kind" == "create" ]]; then
+    target_kind="input"
+  fi
+
+  if [[ "$kind" != "create" ]]; then
+    local quick_path
+    if [[ -n "$out_path" ]]; then
+      quick_path="$out_path"
+    elif [[ "$target_kind" == "output" ]]; then
+      quick_path="$(output_card_path "$issue")"
+    else
+      quick_path="$(input_card_path "$issue")"
+    fi
+    if ensure_nonempty_file "$quick_path"; then
+      echo "$quick_path"
+      return 0
+    fi
+  fi
+
+  if [[ "$target_kind" == "output" ]]; then
+    local out_target
+    out_target="${out_path:-$(output_card_path "$issue")}"
+    if ! ensure_nonempty_file "$out_target"; then
+      local -a create_args
+      create_args=("$issue")
+      if [[ -n "$slug" ]]; then
+        create_args+=(--slug "$slug")
+      fi
+      if [[ "$no_fetch_issue" == "1" ]]; then
+        create_args+=(--no-fetch-issue)
+      fi
+      if [[ -n "$version" ]]; then
+        create_args+=(--version "$version")
+      fi
+      if [[ -n "$out_path" ]]; then
+        create_args+=(--file "$out_path")
+      fi
+      cmd_output "${create_args[@]}" >/dev/null
+    fi
+    echo "$out_target"
+    return 0
+  fi
 
   local repo
   repo="$(default_repo)"
@@ -546,6 +619,8 @@ cmd_card() {
   if [[ -z "$slug" ]]; then
     if [[ -n "$title" ]]; then
       slug="$(sanitize_slug "$title")"
+    elif [[ "$kind" != "create" ]]; then
+      slug="issue-${issue}"
     else
       die "card: --slug is required when --no-fetch-issue is set or issue title could not be fetched"
     fi
@@ -566,6 +641,10 @@ cmd_card() {
     out_path="$(input_card_path "$issue")"
   fi
   if ensure_nonempty_file "$out_path"; then
+    if [[ "$kind" == "input" ]]; then
+      echo "$out_path"
+      return 0
+    fi
     die "card: input card already exists: $out_path"
   elif [[ -e "$out_path" ]]; then
     note "Input card exists but is empty; recreating: $out_path"
@@ -581,25 +660,86 @@ cmd_card() {
 }
 
 cmd_output() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_output
+    return 0
+  fi
+
   local issue="${1:-}"; shift || true
-  [[ -n "$issue" ]] || die "output: missing <issue> number"
+  [[ -n "$issue" ]] || die_with_usage "output: missing <issue> number" usage_output
   issue="$(normalize_issue_or_die "$issue")"
 
   local slug=""
   local no_fetch_issue="0"
   local out_path=""
   local version=""
+  local kind="create"
+  local seen_kind="0"
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
+      input|output)
+        if [[ "$seen_kind" == "1" ]]; then
+          die_with_usage "output: duplicate positional card kind: $1" usage_output
+        fi
+        kind="$1"
+        seen_kind="1"
+        shift
+        ;;
       --slug) slug="$2"; shift 2 ;;
       --no-fetch-issue) no_fetch_issue="1"; shift ;;
       -f) out_path="$2"; shift 2 ;;
       --file) out_path="$2"; shift 2 ;;
       --version) version="$2"; shift 2 ;;
-      *) die "output: unknown arg: $1" ;;
+      -h|--help) usage_output; return 0 ;;
+      *) die_with_usage "output: unknown arg: $1" usage_output ;;
     esac
   done
+
+  local target_kind
+  target_kind="$kind"
+  if [[ "$target_kind" == "create" ]]; then
+    target_kind="output"
+  fi
+
+  if [[ "$kind" != "create" ]]; then
+    local quick_path
+    if [[ -n "$out_path" ]]; then
+      quick_path="$out_path"
+    elif [[ "$target_kind" == "input" ]]; then
+      quick_path="$(input_card_path "$issue")"
+    else
+      quick_path="$(output_card_path "$issue")"
+    fi
+    if ensure_nonempty_file "$quick_path"; then
+      echo "$quick_path"
+      return 0
+    fi
+  fi
+
+  if [[ "$target_kind" == "input" ]]; then
+    local input_target
+    input_target="${out_path:-$(input_card_path "$issue")}"
+    if ! ensure_nonempty_file "$input_target"; then
+      local -a create_args
+      create_args=("$issue")
+      if [[ -n "$slug" ]]; then
+        create_args+=(--slug "$slug")
+      fi
+      if [[ "$no_fetch_issue" == "1" ]]; then
+        create_args+=(--no-fetch-issue)
+      fi
+      if [[ -n "$version" ]]; then
+        create_args+=(--version "$version")
+      fi
+      if [[ -n "$out_path" ]]; then
+        create_args+=(--file "$out_path")
+      fi
+      cmd_card "${create_args[@]}" >/dev/null
+    fi
+    echo "$input_target"
+    return 0
+  fi
 
   local repo
   repo="$(default_repo)"
@@ -618,6 +758,8 @@ cmd_output() {
   if [[ -z "$slug" ]]; then
     if [[ -n "$title" ]]; then
       slug="$(sanitize_slug "$title")"
+    elif [[ "$kind" != "create" ]]; then
+      slug="issue-${issue}"
     else
       die "output: --slug is required when --no-fetch-issue is set or issue title could not be fetched"
     fi
@@ -638,6 +780,10 @@ cmd_output() {
     out_path="$(output_card_path "$issue")"
   fi
   if ensure_nonempty_file "$out_path"; then
+    if [[ "$kind" == "output" ]]; then
+      echo "$out_path"
+      return 0
+    fi
     die "output: output card already exists: $out_path"
   elif [[ -e "$out_path" ]]; then
     note "Output card exists but is empty; recreating: $out_path"
@@ -653,8 +799,13 @@ cmd_output() {
 }
 
 cmd_cards() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_cards
+    return 0
+  fi
+
   local issue="${1:-}"; shift || true
-  [[ -n "$issue" ]] || die "cards: missing <issue> number"
+  [[ -n "$issue" ]] || die_with_usage "cards: missing <issue> number" usage_cards
   issue="$(normalize_issue_or_die "$issue")"
 
   local no_fetch_issue="0"
@@ -664,7 +815,8 @@ cmd_cards() {
     case "$1" in
       --no-fetch-issue) no_fetch_issue="1"; shift ;;
       --version) version="$2"; shift 2 ;;
-      *) die "cards: unknown arg: $1" ;;
+      -h|--help) usage_cards; return 0 ;;
+      *) die_with_usage "cards: unknown arg: $1" usage_cards ;;
     esac
   done
 
@@ -722,11 +874,16 @@ cmd_cards() {
 }
 
 cmd_start() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_start
+    return 0
+  fi
+
   require_cmd git
   require_cmd gh
 
   local issue="${1:-}"; shift || true
-  [[ -n "$issue" ]] || die "start: missing <issue> number"
+  [[ -n "$issue" ]] || die_with_usage "start: missing <issue> number" usage_start
   issue="$(normalize_issue_or_die "$issue")"
 
   local prefix="codex"
@@ -739,7 +896,8 @@ cmd_start() {
       --prefix) prefix="$2"; shift 2 ;;
       --slug) slug="$2"; shift 2 ;;
       --no-fetch-issue) no_fetch_issue="1"; shift ;;
-      *) die "start: unknown arg: $1" ;;
+      -h|--help) usage_start; return 0 ;;
+      *) die_with_usage "start: unknown arg: $1" usage_start ;;
     esac
   done
 
@@ -814,6 +972,11 @@ cmd_start() {
 }
 
 cmd_new() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_new
+    return 0
+  fi
+
   require_cmd gh
 
   local title=""
@@ -833,11 +996,12 @@ cmd_new() {
       --labels) labels="$2"; shift 2 ;;
       --version) version="$2"; shift 2 ;;
       --no-start) no_start="1"; shift ;;
-      *) die "new: unknown arg: $1" ;;
+      -h|--help) usage_new; return 0 ;;
+      *) die_with_usage "new: unknown arg: $1" usage_new ;;
     esac
   done
 
-  [[ -n "$title" ]] || die "new: --title is required"
+  [[ -n "$title" ]] || die_with_usage "new: --title is required" usage_new
   [[ -n "$version" ]] || die "new: --version must be non-empty"
 
   if [[ -n "$body" && -n "$body_file" ]]; then
@@ -901,11 +1065,16 @@ cmd_new() {
 }
 
 cmd_finish() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_finish
+    return 0
+  fi
+
   require_cmd git
   require_cmd gh
 
   local issue="${1:-}"; shift || true
-  [[ -n "$issue" ]] || die "finish: missing <issue> number"
+  [[ -n "$issue" ]] || die_with_usage "finish: missing <issue> number" usage_finish
   issue="$(normalize_issue_or_die "$issue")"
 
   local title=""
@@ -936,11 +1105,12 @@ cmd_finish() {
       --open) no_open="0"; shift ;;
       --merge|--auto-merge) merge_mode="1"; shift ;;
       --idempotent) idempotent="1"; shift ;;
-      *) die "finish: unknown arg: $1" ;;
+      -h|--help) usage_finish; return 0 ;;
+      *) die_with_usage "finish: unknown arg: $1" usage_finish ;;
     esac
   done
 
-  [[ -n "$title" ]] || die "finish: --title is required"
+  [[ -n "$title" ]] || die_with_usage "finish: --title is required" usage_finish
   if [[ "$merge_mode" == "1" && "$no_checks" == "1" ]]; then
     die "finish: --merge requires checks; remove --no-checks"
   fi
@@ -1151,10 +1321,11 @@ usage() {
 pr.sh — reduce git/PR thrash while preserving human review
 
 Commands:
+  help
   new     --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
   start   <issue> [--slug <slug>] [--prefix <pfx>] [--no-fetch-issue]
-  card    <issue> ... [--version <v0.2>] [-f <input_card.md>]
-  output  <issue> ... [--version <v0.2>] [-f <output_card.md>]
+  card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
+  output  <issue> [input|output] ... [--version <v0.2>] [-f <output_card.md>]
   cards   <issue> [--version <v0.2>] [--no-fetch-issue]
   finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
   open
@@ -1187,18 +1358,75 @@ Notes:
   cards_root resolves as: ADL_CARDS_ROOT (if set) else <primary-checkout>/.adl/cards.
 
 Examples:
+  swarm/tools/pr.sh help
   swarm/tools/pr.sh new --title "swarm: fix timeout handling" --slug timeout-fix
   swarm/tools/pr.sh start 17 --slug b6-default-system
+  swarm/tools/pr.sh card  17 --help
   swarm/tools/pr.sh card  17 --version v0.2
+  swarm/tools/pr.sh card  17 input
+  swarm/tools/pr.sh card  17 output
   swarm/tools/pr.sh output 17 --version v0.2
+  swarm/tools/pr.sh output 17 input
+  swarm/tools/pr.sh output 17 output
   swarm/tools/pr.sh cards 17 --version v0.2
   swarm/tools/pr.sh finish 17 --title "swarm: apply run.defaults.system fallback" -f /abs/cards_root/17/input_17.md --output-card /abs/cards_root/17/output_17.md
+EOF
+}
+
+usage_new() {
+  cat <<'EOF'
+Usage:
+  swarm/tools/pr.sh new --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
+EOF
+}
+
+usage_start() {
+  cat <<'EOF'
+Usage:
+  swarm/tools/pr.sh start <issue> [--slug <slug>] [--prefix <pfx>] [--no-fetch-issue]
+EOF
+}
+
+usage_card() {
+  cat <<'EOF'
+Usage:
+  swarm/tools/pr.sh card <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [--version <v>] [-f|--file <card.md>]
+
+Notes:
+- Default behavior (`card <issue>`) creates the input card if missing, then prints its path.
+- Positional `input|output` opens/prints that card path and creates it if missing.
+EOF
+}
+
+usage_output() {
+  cat <<'EOF'
+Usage:
+  swarm/tools/pr.sh output <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [--version <v>] [-f|--file <card.md>]
+
+Notes:
+- Default behavior (`output <issue>`) creates the output card if missing, then prints its path.
+- Positional `input|output` opens/prints that card path and creates it if missing.
+EOF
+}
+
+usage_cards() {
+  cat <<'EOF'
+Usage:
+  swarm/tools/pr.sh cards <issue> [--version <v>] [--no-fetch-issue]
+EOF
+}
+
+usage_finish() {
+  cat <<'EOF'
+Usage:
+  swarm/tools/pr.sh finish <issue> --title "<title>" [--paths "<p1,p2,...>"] [-f|--file <input_card.md>] [--output-card <output_card.md>] [--no-checks] [--no-open] [--merge]
 EOF
 }
 
 main() {
   local cmd="${1:-}"; shift || true
   case "$cmd" in
+    help) usage ;;
     new) cmd_new "$@" ;;
     start) cmd_start "$@" ;;
     finish) cmd_finish "$@" ;;
