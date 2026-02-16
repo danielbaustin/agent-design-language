@@ -24,9 +24,10 @@ Options:
   -h, --help         Show this help
 
 Examples:
-  swarm examples/adl-0.1.yaml
-  swarm examples/adl-0.1.yaml --print-prompts
-  swarm examples/adl-0.1.yaml --run --trace
+  swarm examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+  swarm examples/v0-3-on-error-retry.adl.yaml --print-plan
+  swarm examples/v0-3-remote-http-provider.adl.yaml --print-plan
+  swarm examples/adl-0.1.yaml --print-plan   # legacy regression example
   swarm examples/v0-2-coordinator-agents-sdk.adl.yaml
   swarm demo demo-a-say-mcp --run --trace --open
   swarm demo demo-b-one-command --run --out ./out"
@@ -68,7 +69,7 @@ fn real_main() -> Result<()> {
         Some(p) => PathBuf::from(p),
         None => {
             eprintln!("missing ADL yaml path");
-            eprintln!("Try: swarm examples/adl-0.1.yaml");
+            eprintln!("Try: swarm examples/v0-3-concurrency-fork-join.adl.yaml --print-plan");
             eprintln!("{}", usage());
             std::process::exit(2);
         }

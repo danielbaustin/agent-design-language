@@ -1,7 +1,7 @@
 # Agent Design Language (ADL)
 
-**Version:** v0.1  
-**Status:** Ready for early users — deterministic, validated, sequential execution
+**Version:** v0.3  
+**Status:** Active v0.3 runtime with deterministic execution, v0.3 fork/join support, and hardened tooling gates
 
 ADL is a schema-validated language and runtime for defining and executing
 agent workflows with deterministic resolution and clear failure modes.
@@ -11,11 +11,11 @@ agent workflows with deterministic resolution and clear failure modes.
 [![swarm-coverage-gate](https://img.shields.io/github/actions/workflow/status/danielbaustin/agent-design-language/ci.yaml?branch=main&label=swarm-coverage-gate)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![MSRV](https://img.shields.io/badge/MSRV-1.74%2B-blue)
-# swarm
+## swarm
 
 `swarm` is a small, conservative reference runtime for **Agent Design Language (ADL)**.
 
-For the v0.2 summary and demo commands, see `RELEASE_NOTES_v0.2.md`.
+For historical context, see `RELEASE_NOTES_v0.2.md`. This README reflects the current v0.3 runtime.
 
 It is intentionally *compiler-like* in how it processes ADL documents:
 
@@ -23,13 +23,24 @@ It is intentionally *compiler-like* in how it processes ADL documents:
 2. **Validate** the document against a JSON Schema with crisp, path-specific errors.
 3. **Resolve** references deterministically (run → workflow → steps → task → agent → provider).
 4. **Materialize** deterministic artifacts (execution plan, assembled prompts).
-5. **Execute** sequential workflows (v0.1), with optional tracing.
+5. **Execute** deterministic workflows (sequential and v0.3 deterministic fork/join execution), with optional tracing.
 
 Provider execution, tracing, contracts, and repair policies are being added incrementally.
 
 ---
 
-## Status (v0.1)
+## v0.3 Shipped Capabilities
+
+- Deterministic workflow execution with stable plan/trace semantics
+- Deterministic v0.3 fork/join execution (`workflow.kind: concurrent`), executed single-threaded in declared step order
+- Step-level failure controls (`on_error: fail|continue`, `retry.max_attempts`)
+- Remote HTTP provider MVP with explicit failure behavior
+- Persistent run state artifacts under `.adl/runs/<run_id>/` for auditability (`run.json`, `steps.json`)
+- CI-aligned quality gate (`fmt`, `clippy -D warnings`, `test`)
+
+---
+
+## Current Status (v0.3)
 
 **Implemented**
 
@@ -39,7 +50,8 @@ Provider execution, tracing, contracts, and repair policies are being added incr
   - `step.prompt` → `task.prompt` → `agent.prompt`
 - File-backed inputs with safety checks (size, encoding, paths)
 - Sequential workflow execution
-- Step-level error policy: fail-fast (default), continue, deterministic retry
+- Step-level error policy: `on_error: fail|continue`
+- Deterministic retries: `retry.max_attempts` (no backoff)
 - v0.3 deterministic fork/join execution (`workflow.kind: concurrent`), single-threaded in declared step order
 - Join input wiring via `@state:<save_as_key>`
 - Local Ollama provider (real binary or test mock)
@@ -62,24 +74,21 @@ From the `swarm` directory:
 ```bash
 cargo build
 
-# Run the example and print the resolved execution plan
-cargo run -- examples/adl-0.1.yaml --print-plan
+# Verify v0.3 fork/join plan shape
+cargo run -- examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
 
-# Run the example and execute it locally
-cargo run -- examples/adl-0.1.yaml --run
+# Verify v0.3 on_error/retry plan shape
+cargo run -- examples/v0-3-on-error-retry.adl.yaml --print-plan
 
-# Run with deterministic trace output
-cargo run -- examples/adl-0.1.yaml --run --trace
+# Verify v0.3 remote provider plan shape
+cargo run -- examples/v0-3-remote-http-provider.adl.yaml --print-plan
 ```
 
-Expected output includes:
+Expected output includes deterministic step ordering and resolved provider bindings.
 
-- A resolved step-by-step plan
-- Assembled prompts (deterministic hashes)
-- Optional trace events:
-  - `StepStarted`
-  - `PromptAssembled`
-  - `StepFinished`
+For real `--run` execution, configure provider runtime dependencies (for example local Ollama and any required auth env vars).
+
+For additional runnable examples, see `examples/README.md`.
 
 ---
 
@@ -189,13 +198,15 @@ Schema tests live in:
 tests/schema_tests.rs
 ```
 
-The example document used for validation lives in:
+Example validation documents live under:
 
 ```
-examples/adl-0.1.yaml
+examples/
 ```
 
-The schema is considered **stable for v0.1**.
+Legacy examples (e.g. `adl-0.1.yaml`) remain for regression testing, but the runtime behavior described here reflects v0.3.
+
+The schema/runtime behavior described here is aligned with current **v0.3** support.
 
 ---
 
@@ -236,9 +247,9 @@ All of the above must pass for changes to be accepted.
 
 `swarm` enforces a **high bar for test coverage**, especially for core compiler-like behavior (parsing, validation, resolution, and execution).
 
-As of v0.1:
+As of v0.3:
 
-- **Overall line coverage:** ~**92%**
+- **Overall line coverage:** enforced by CI gate (see coverage badge above)
 - **All critical paths covered:**
   - Schema validation (strict + loose modes)
   - ADL parsing and semantic validation
@@ -247,6 +258,8 @@ As of v0.1:
   - CLI behavior and error handling
   - Provider execution (mocked and real)
 - Lower coverage areas (e.g. some execution branches) are intentional and documented, not accidental gaps.
+
+Coverage percentage may fluctuate as new features are added; the CI gate ensures regressions are caught.
 
 ### Running coverage locally
 
@@ -270,7 +283,7 @@ The report makes it easy to identify:
 
 ### Coverage philosophy
 
-- **Line coverage > function coverage** for v0.1  
+- **Line coverage > function coverage** for v0.3  
   (many small helper functions are intentionally exercised indirectly)
 - No “coverage theater”:
   - No dummy tests
