@@ -54,7 +54,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write
     defaults:
       run:
         working-directory: swarm
@@ -73,10 +72,17 @@ jobs:
             swarm -> target
 
       - name: Install cargo-llvm-cov
-        run: cargo install cargo-llvm-cov --locked
+        uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: Coverage (swarm)
         run: cargo llvm-cov --workspace --all-features --fail-under-lines 10 --lcov --output-path lcov.info
+
+      - name: Verify generated lcov file
+        run: test -s lcov.info && ls -l lcov.info
+
+      - name: Verify lcov path from repository root
+        run: test -s swarm/lcov.info && ls -l swarm/lcov.info
+        working-directory: .
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
@@ -86,9 +92,11 @@ jobs:
           if-no-files-found: error
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: codecov/codecov-action@v4
         with:
-          use_oidc: true
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: swarm/lcov.info
           flags: swarm
-          fail_ci_if_error: false
+          fail_ci_if_error: true
+          verbose: true
