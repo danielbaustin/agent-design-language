@@ -1,5 +1,7 @@
 version: "0.3"
 
+# Compatibility alias for docs/commands that reference
+# v0-3-remote-provider-demo.adl.yaml.
 providers:
   remote_http:
     type: "http"
@@ -27,7 +29,7 @@ tasks:
         {{content}}
 
 run:
-  name: "v0-3-remote-http-provider"
+  name: "v0-3-remote-provider-demo"
   workflow:
     kind: "sequential"
     steps:

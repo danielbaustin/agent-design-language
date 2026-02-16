@@ -25,6 +25,7 @@ Start here for contributor-oriented docs and planning context.
 - Runtime and CLI work: `swarm/`
 - Language and schema docs: `adl-spec/`
 - Burst reporting outputs: `.adl/reports/`
+- Demo command index: `docs/demos.md`
 
 ## Concurrency Design
 
