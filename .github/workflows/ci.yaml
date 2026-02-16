@@ -73,7 +73,7 @@ jobs:
             swarm -> target
 
       - name: Install cargo-llvm-cov
-        run: cargo install cargo-llvm-cov --locked
+        uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: Coverage (swarm)
         run: cargo llvm-cov --workspace --all-features --fail-under-lines 10 --lcov --output-path lcov.info
