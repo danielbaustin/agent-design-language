@@ -1,7 +1,9 @@
 use anyhow::{Context, Result};
+use serde::Serialize;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::process::Stdio;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use swarm::{adl, demo, execute, plan, prompt, resolve, trace};
 
@@ -164,6 +166,7 @@ fn real_main() -> Result<()> {
 
     if do_run {
         let print_outputs = !quiet;
+        let run_started_ms = now_ms();
         let mut tr = trace::Trace::new(
             resolved.run_id.clone(),
             resolved.workflow_id.clone(),
@@ -175,6 +178,15 @@ fn real_main() -> Result<()> {
         let result = match result {
             Ok(result) => result,
             Err(err) => {
+                let run_finished_ms = now_ms();
+                let _run_dir = write_run_state_artifacts(
+                    &resolved,
+                    &tr,
+                    &out_dir,
+                    run_started_ms,
+                    run_finished_ms,
+                    false,
+                )?;
                 if resolved.doc.version.trim() == "0.2" {
                     tr.run_finished(false);
                 }
@@ -187,6 +199,15 @@ fn real_main() -> Result<()> {
         let _outputs = result.outputs;
         let artifacts = result.artifacts;
         let records = result.records;
+        let run_finished_ms = now_ms();
+        let _run_dir = write_run_state_artifacts(
+            &resolved,
+            &tr,
+            &out_dir,
+            run_started_ms,
+            run_finished_ms,
+            true,
+        )?;
 
         // Explicitly consume StepOutput so clippy -D warnings stays green
         println!("RUN SUMMARY: {} step(s)", records.len());
@@ -250,6 +271,129 @@ fn real_main() -> Result<()> {
     }
 
     Ok(())
+}
+
+fn now_ms() -> u128 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_millis())
+        .unwrap_or(0)
+}
+
+fn run_artifacts_root() -> Result<PathBuf> {
+    let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let repo_root = manifest
+        .parent()
+        .context("failed to derive repo root from CARGO_MANIFEST_DIR")?;
+    Ok(repo_root.join(".adl").join("runs"))
+}
+
+#[derive(Debug, Serialize)]
+struct RunStateArtifact {
+    run_id: String,
+    workflow_id: String,
+    version: String,
+    status: String,
+    start_time_ms: u128,
+    end_time_ms: u128,
+    duration_ms: u128,
+}
+
+#[derive(Debug, Serialize)]
+struct StepStateArtifact {
+    step_id: String,
+    agent_id: String,
+    provider_id: String,
+    status: String,
+    output_artifact_path: Option<String>,
+}
+
+fn write_run_state_artifacts(
+    resolved: &resolve::AdlResolved,
+    tr: &trace::Trace,
+    out_dir: &Path,
+    start_ms: u128,
+    end_ms: u128,
+    success: bool,
+) -> Result<PathBuf> {
+    let runs_root = run_artifacts_root()?;
+    let run_dir = runs_root.join(&resolved.run_id);
+    std::fs::create_dir_all(&run_dir)
+        .with_context(|| format!("failed to create run artifact dir '{}'", run_dir.display()))?;
+
+    let mut status_by_step: HashMap<String, String> = HashMap::new();
+    for ev in &tr.events {
+        if let trace::TraceEvent::StepFinished {
+            step_id, success, ..
+        } = ev
+        {
+            let status = if *success { "success" } else { "failure" };
+            status_by_step.insert(step_id.clone(), status.to_string());
+        }
+    }
+
+    let mut steps = Vec::with_capacity(resolved.steps.len());
+    for step in &resolved.steps {
+        let status = status_by_step
+            .get(&step.id)
+            .cloned()
+            .unwrap_or_else(|| "not_run".to_string());
+        let output_artifact_path = match (status.as_str(), step.write_to.as_deref()) {
+            ("success", Some(write_to)) => Some(out_dir.join(write_to).display().to_string()),
+            _ => None,
+        };
+
+        let agent_id = step
+            .agent
+            .as_deref()
+            .unwrap_or("<unresolved-agent>")
+            .to_string();
+        let provider_id = step
+            .provider
+            .as_deref()
+            .unwrap_or("<unresolved-provider>")
+            .to_string();
+
+        steps.push(StepStateArtifact {
+            step_id: step.id.clone(),
+            agent_id,
+            provider_id,
+            status,
+            output_artifact_path,
+        });
+    }
+
+    let run_artifact = RunStateArtifact {
+        run_id: resolved.run_id.clone(),
+        workflow_id: resolved.workflow_id.clone(),
+        version: resolved.doc.version.clone(),
+        status: if success {
+            "success".to_string()
+        } else {
+            "failure".to_string()
+        },
+        start_time_ms: start_ms,
+        end_time_ms: end_ms,
+        duration_ms: end_ms.saturating_sub(start_ms),
+    };
+
+    let run_json = serde_json::to_vec_pretty(&run_artifact).context("serialize run.json")?;
+    let steps_json = serde_json::to_vec_pretty(&steps).context("serialize steps.json")?;
+
+    std::fs::write(run_dir.join("run.json"), run_json).with_context(|| {
+        format!(
+            "failed to write run artifact '{}'",
+            run_dir.join("run.json").display()
+        )
+    })?;
+    std::fs::write(run_dir.join("steps.json"), steps_json).with_context(|| {
+        format!(
+            "failed to write run artifact '{}'",
+            run_dir.join("steps.json").display()
+        )
+    })?;
+
+    Ok(run_dir)
 }
 
 fn real_demo(args: &[String]) -> Result<()> {

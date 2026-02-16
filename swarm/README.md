@@ -40,6 +40,8 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 - File-backed inputs with safety checks (size, encoding, paths)
 - Sequential workflow execution
 - Step-level error policy: fail-fast (default), continue, deterministic retry
+- v0.3 deterministic fork/join execution (`workflow.kind: concurrent`), single-threaded in declared step order
+- Join input wiring via `@state:<save_as_key>`
 - Local Ollama provider (real binary or test mock)
 - Remote HTTP provider (blocking JSON request/response)
 - Deterministic tracing (`--trace`)
@@ -47,7 +49,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 
 **Explicitly deferred**
 
-- Concurrent workflows (schema allows; runtime errors clearly)
+- Parallel workflow execution (true concurrency; v0.4 target)
 - Multi-run documents
 - Provider retries / contracts / repair policies
 
@@ -98,6 +100,32 @@ swarm <path-to-adl.yaml> [OPTIONS]
 Exit codes are consistent:
 - `2` — invalid CLI usage
 - non-zero — schema, validation, or runtime error
+
+---
+
+## Run State Artifacts
+
+When running with `--run`, `swarm` writes deterministic run state files under:
+
+```bash
+.adl/runs/<run_id>/
+```
+
+Files:
+- `run.json`:
+  - `run_id`
+  - `workflow_id`
+  - `version`
+  - `status` (`success` or `failure`)
+  - `start_time_ms`, `end_time_ms`, `duration_ms`
+- `steps.json` (stable step order):
+  - `step_id`
+  - `agent_id`
+  - `provider_id`
+  - `status` (`success`, `failure`, `not_run`)
+  - `output_artifact_path` (when applicable)
+
+This is additive and does not replace existing stdout summaries.
 
 ---
 

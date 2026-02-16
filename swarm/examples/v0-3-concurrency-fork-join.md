@@ -1,6 +1,6 @@
-# v0.3 Concurrency Fork/Join Example (Design Target)
+# v0.3 Concurrency Fork/Join Example
 
-This example is a design target for the next implementation burst.
+This example runs in v0.3 using deterministic sequential fork/join execution.
 
 File:
 - `swarm/examples/v0-3-concurrency-fork-join.adl.yaml`
@@ -24,5 +24,5 @@ Expected high-level event order:
 13. `RunFinished(success)`
 
 Notes:
-- Branch execution order is deterministic by branch key (`alpha`, then `beta`).
-- This example defines ordering contract; runtime parallelism is intentionally deferred.
+- Branch execution order is deterministic by declared step order (`alpha`, then `beta` in this file).
+- Runtime parallelism is intentionally deferred to a later version.
