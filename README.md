@@ -1,6 +1,23 @@
 # Agent Design Language (ADL)
 
-Agent Design Language (ADL) is a declarative, contract-driven language for building deterministic AI workflow execution.
+Agent Design Language (ADL) is a declarative, contract-driven way to define AI workflows as data, not ad-hoc glue code. Instead of wiring prompts, scripts, and shell calls together by convention, you describe agents, tasks, providers, and workflow steps in a schema-validated document.
+
+ADL is built for teams that want repeatability. Documents are parsed and validated, then resolved into a deterministic plan before execution. That plan-first model makes behavior inspectable, testable, and easier to review than runtime-only orchestration.
+
+The v0.3 runtime focuses on predictable execution semantics: deterministic sequential execution, deterministic fork/join behavior in declared order (single-threaded, not parallel), explicit failure policies (`on_error: fail|continue`), and deterministic retry via `retry.max_attempts`.
+
+ADL also supports a remote HTTP provider MVP for controlled integration with external inference endpoints. Every run can emit stable artifacts under `.adl/runs/<run_id>/` (`run.json`, `steps.json`), which helps with reproducibility, debugging, and auditability.
+
+## Try It Now
+
+From repo root:
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-fork-join-seq-run.adl.yaml --print-plan
+cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
+```
+
+These commands print deterministic plans for v0.3 workflows without needing live provider execution.
 
 [![swarm-ci](https://img.shields.io/github/actions/workflow/status/danielbaustin/agent-design-language/ci.yaml?branch=main&label=swarm-ci)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/branch/main/graph/badge.svg?flag=swarm)](https://codecov.io/gh/danielbaustin/agent-design-language)
