@@ -885,6 +885,99 @@ run:
 }
 
 #[test]
+fn run_writes_run_state_artifacts() {
+    let base = tmp_dir("exec-run-state-artifacts");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let run_id = "run-state-artifacts-test";
+    let run_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .join(".adl")
+        .join("runs")
+        .join(run_id);
+    let _ = fs::remove_dir_all(&run_dir);
+
+    let yaml = format!(
+        r#"
+version: "0.2"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize: {{text}}"
+
+run:
+  name: "{run_id}"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        inputs:
+          text: "hello"
+"#
+    );
+
+    let tmp_yaml = base.join("run-state.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success, got {:?}\nstdout:\n{}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let run_json_path = run_dir.join("run.json");
+    let steps_json_path = run_dir.join("steps.json");
+    assert!(
+        run_json_path.is_file(),
+        "missing {}",
+        run_json_path.display()
+    );
+    assert!(
+        steps_json_path.is_file(),
+        "missing {}",
+        steps_json_path.display()
+    );
+
+    let run_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
+    assert_eq!(run_json["run_id"], run_id);
+    assert_eq!(run_json["workflow_id"], "workflow");
+    assert_eq!(run_json["status"], "success");
+
+    let steps_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&steps_json_path).unwrap()).unwrap();
+    let steps = steps_json
+        .as_array()
+        .expect("steps.json should be an array");
+    assert_eq!(steps.len(), 1);
+    assert_eq!(steps[0]["step_id"], "s1");
+    assert_eq!(steps[0]["status"], "success");
+    assert_eq!(steps[0]["provider_id"], "local");
+
+    let _ = fs::remove_dir_all(&run_dir);
+}
+
+#[test]
 fn run_rejects_write_to_traversal() {
     let base = tmp_dir("exec-write-traversal");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
