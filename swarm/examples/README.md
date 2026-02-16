@@ -47,14 +47,18 @@ Reference ADL doc for the demo scenario:
 ## v0.3 concurrency examples
 
 - `v0-3-concurrency-fork-join.adl.yaml`
-- See `v0-3-concurrency-fork-join.md` for expected deterministic trace ordering.
   - deterministic fork/join sequence contract
+  - see `v0-3-concurrency-fork-join.md` for expected deterministic trace ordering
 - `v0-3-fork-join-seq-run.adl.yaml`
   - runnable v0.3 sequential fork/join execution
   - join input wiring via `@state:<save_as_key>`
-- See `v0-3-concurrency-fork-join.md` for expected deterministic trace ordering.
 
 ## v0.3 on_error + retry example
 
 - `v0-3-on-error-retry.adl.yaml`
 - See `v0-3-on-error-retry.md` for deterministic failure-policy behavior.
+
+## v0.3 remote provider example
+
+- `v0-3-remote-http-provider.adl.yaml`
+- See `v0-3-remote-http-provider.md` for setup and expected behavior.

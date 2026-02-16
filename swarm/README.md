@@ -1,7 +1,7 @@
 # Agent Design Language (ADL)
 
-**Version:** v0.1  
-**Status:** Ready for early users — deterministic, validated, sequential execution
+**Version:** v0.3  
+**Status:** Deterministic, validated execution with sequential workflows and v0.3 fork/join (single-threaded)
 
 ADL is a schema-validated language and runtime for defining and executing
 agent workflows with deterministic resolution and clear failure modes.
@@ -23,13 +23,13 @@ It is intentionally *compiler-like* in how it processes ADL documents:
 2. **Validate** the document against a JSON Schema with crisp, path-specific errors.
 3. **Resolve** references deterministically (run → workflow → steps → task → agent → provider).
 4. **Materialize** deterministic artifacts (execution plan, assembled prompts).
-5. **Execute** sequential workflows (v0.1), with optional tracing.
+5. **Execute** deterministic workflows (sequential and v0.3 concurrent-as-sequential), with optional tracing.
 
 Provider execution, tracing, contracts, and repair policies are being added incrementally.
 
 ---
 
-## Status (v0.1)
+## Current Status (v0.3)
 
 **Implemented**
 
@@ -39,7 +39,8 @@ Provider execution, tracing, contracts, and repair policies are being added incr
   - `step.prompt` → `task.prompt` → `agent.prompt`
 - File-backed inputs with safety checks (size, encoding, paths)
 - Sequential workflow execution
-- Step-level error policy: fail-fast (default), continue, deterministic retry
+- Step-level error policy: `on_error: fail|continue`
+- Deterministic retries: `retry.max_attempts` (no backoff)
 - v0.3 deterministic fork/join execution (`workflow.kind: concurrent`), single-threaded in declared step order
 - Join input wiring via `@state:<save_as_key>`
 - Local Ollama provider (real binary or test mock)
@@ -62,24 +63,19 @@ From the `swarm` directory:
 ```bash
 cargo build
 
-# Run the example and print the resolved execution plan
-cargo run -- examples/adl-0.1.yaml --print-plan
+# Verify v0.3 fork/join plan shape
+cargo run -- examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
 
-# Run the example and execute it locally
-cargo run -- examples/adl-0.1.yaml --run
+# Verify v0.3 on_error/retry plan shape
+cargo run -- examples/v0-3-on-error-retry.adl.yaml --print-plan
 
-# Run with deterministic trace output
-cargo run -- examples/adl-0.1.yaml --run --trace
+# Verify v0.3 remote provider plan shape
+cargo run -- examples/v0-3-remote-http-provider.adl.yaml --print-plan
 ```
 
-Expected output includes:
+Expected output includes deterministic step ordering and resolved provider bindings.
 
-- A resolved step-by-step plan
-- Assembled prompts (deterministic hashes)
-- Optional trace events:
-  - `StepStarted`
-  - `PromptAssembled`
-  - `StepFinished`
+For real `--run` execution, configure provider runtime dependencies (for example local Ollama and any required auth env vars).
 
 ---
 
@@ -195,7 +191,7 @@ The example document used for validation lives in:
 examples/adl-0.1.yaml
 ```
 
-The schema is considered **stable for v0.1**.
+The schema/runtime behavior described here is aligned with current **v0.3** support.
 
 ---
 
@@ -236,7 +232,7 @@ All of the above must pass for changes to be accepted.
 
 `swarm` enforces a **high bar for test coverage**, especially for core compiler-like behavior (parsing, validation, resolution, and execution).
 
-As of v0.1:
+As of v0.3:
 
 - **Overall line coverage:** ~**92%**
 - **All critical paths covered:**
@@ -270,7 +266,7 @@ The report makes it easy to identify:
 
 ### Coverage philosophy
 
-- **Line coverage > function coverage** for v0.1  
+- **Line coverage > function coverage** for v0.3  
   (many small helper functions are intentionally exercised indirectly)
 - No “coverage theater”:
   - No dummy tests
