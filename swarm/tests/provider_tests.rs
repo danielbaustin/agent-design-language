@@ -4,7 +4,7 @@ use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
 use swarm::adl;
-use swarm::provider::{build_provider, OllamaProvider};
+use swarm::provider::{build_provider, is_retryable_error, OllamaProvider};
 
 mod helpers;
 use helpers::{unique_test_temp_dir, EnvVarGuard};
@@ -414,8 +414,56 @@ config:
     let err = p.complete("hello").unwrap_err();
     let msg = format!("{err:#}");
     assert!(
-        msg.contains("non-200") && msg.contains("500"),
+        msg.contains("server_error") && msg.contains("500"),
         "unexpected error: {msg}"
+    );
+    assert!(
+        is_retryable_error(&err),
+        "5xx responses should be retryable: {msg}"
+    );
+}
+
+#[test]
+fn http_provider_4xx_is_non_retryable() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+    let _server_guard = block_incoming_localhost();
+
+    std::thread::spawn(move || {
+        let (mut stream, _) = server.accept().unwrap();
+        let mut buf = [0u8; 1024];
+        let _ = stream.read(&mut buf);
+        let body = "bad request";
+        let resp = format!(
+            "HTTP/1.1 400 Bad Request\r\nContent-Type: text/plain\r\nContent-Length: {}\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        let _ = stream.write_all(resp.as_bytes());
+    });
+
+    let spec = provider_spec_from_yaml(&format!(
+        r#"
+type: http
+config:
+  endpoint: "http://{addr}/"
+"#
+    ));
+
+    let p = build_provider(&spec, None).expect("build_provider failed");
+    let err = p.complete("hello").unwrap_err();
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("client_error") && msg.contains("400"),
+        "unexpected error: {msg}"
+    );
+    assert!(
+        !is_retryable_error(&err),
+        "4xx responses should be non-retryable: {msg}"
     );
 }
 

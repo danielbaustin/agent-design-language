@@ -295,6 +295,7 @@ struct RunStateArtifact {
     workflow_id: String,
     version: String,
     status: String,
+    error_message: Option<String>,
     start_time_ms: u128,
     end_time_ms: u128,
     duration_ms: u128,
@@ -373,6 +374,10 @@ fn write_run_state_artifacts(
         } else {
             "failure".to_string()
         },
+        error_message: tr.events.iter().rev().find_map(|ev| match ev {
+            trace::TraceEvent::RunFailed { message, .. } => Some(message.clone()),
+            _ => None,
+        }),
         start_time_ms: start_ms,
         end_time_ms: end_ms,
         duration_ms: end_ms.saturating_sub(start_ms),
