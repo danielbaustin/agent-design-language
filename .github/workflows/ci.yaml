@@ -92,7 +92,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload coverage to Codecov
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.CODECOV_TOKEN != ''
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -100,3 +100,9 @@ jobs:
           flags: swarm
           fail_ci_if_error: true
           verbose: true
+
+      - name: Skip Codecov upload (missing token)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.CODECOV_TOKEN == ''
+        run: |
+          echo "::warning::Skipping Codecov upload because CODECOV_TOKEN is not configured for this repository."
+          echo "::warning::Coverage artifact was still generated at swarm/lcov.info."
