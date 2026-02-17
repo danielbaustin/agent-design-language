@@ -8,16 +8,21 @@ The v0.3 runtime focuses on predictable execution semantics: deterministic seque
 
 ADL also supports a remote HTTP provider MVP for controlled integration with external inference endpoints. Every run can emit stable artifacts under `.adl/runs/<run_id>/` (`run.json`, `steps.json`), which helps with reproducibility, debugging, and auditability.
 
-## Try It Now
+## Try It Now (Happy Path)
 
 From repo root:
 
 ```bash
-cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-fork-join-seq-run.adl.yaml --print-plan
-cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-fork-join-seq-run.adl.yaml --print-plan
 ```
 
-These commands print deterministic plans for v0.3 workflows without needing live provider execution.
+This prints a deterministic v0.3 fork/join plan with clean output and no provider runtime setup.
+
+If you want a second quick check:
+
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
+```
 
 [![swarm-ci](https://img.shields.io/github/actions/workflow/status/danielbaustin/agent-design-language/ci.yaml?branch=main&label=swarm-ci)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/branch/main/graph/badge.svg?flag=swarm)](https://codecov.io/gh/danielbaustin/agent-design-language)
@@ -49,9 +54,9 @@ Explicitly deferred:
 From repo root:
 
 ```bash
-cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
-cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
-cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
 ```
 
 To execute (`--run`) local-provider examples, run from `swarm/` with a local Ollama available.
