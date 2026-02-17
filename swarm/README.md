@@ -72,19 +72,18 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 From the `swarm` directory:
 
 ```bash
-cargo build
+# Happy path: one obvious first command
+cargo run -q -- examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
 
-# Verify v0.3 fork/join plan shape
-cargo run -- examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+# Optional: verify on_error/retry semantics
+cargo run -q -- examples/v0-3-on-error-retry.adl.yaml --print-plan
 
-# Verify v0.3 on_error/retry plan shape
-cargo run -- examples/v0-3-on-error-retry.adl.yaml --print-plan
-
-# Verify v0.3 remote provider plan shape
-cargo run -- examples/v0-3-remote-http-provider.adl.yaml --print-plan
+# Optional: verify remote provider wiring
+cargo run -q -- examples/v0-3-remote-http-provider.adl.yaml --print-plan
 ```
 
 Expected output includes deterministic step ordering and resolved provider bindings.
+Using `-q` keeps demo output focused on the ADL plan rather than Cargo build noise.
 
 For real `--run` execution, configure provider runtime dependencies (for example local Ollama and any required auth env vars).
 
