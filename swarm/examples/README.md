@@ -47,11 +47,18 @@ Reference ADL doc for the demo scenario:
 ## v0.3 concurrency examples
 
 - `v0-3-concurrency-fork-join.adl.yaml`
-  - deterministic fork/join sequence contract
-  - see `v0-3-concurrency-fork-join.md` for expected deterministic trace ordering
+  - deterministic fork/join sequence contract (single-threaded runtime order)
+  - clear branch/join artifacts: `fork/alpha.txt`, `fork/beta.txt`, `fork/join.txt`
+  - see `v0-3-concurrency-fork-join.md` for mental model + deterministic trace ordering
 - `v0-3-fork-join-seq-run.adl.yaml`
   - runnable v0.3 sequential fork/join execution
   - join input wiring via `@state:<save_as_key>`
+
+Quick run from repo root:
+
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --run --trace --out out
+```
 
 ## v0.3 on_error + retry example
 

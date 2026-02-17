@@ -22,7 +22,10 @@ tasks:
       user: "Process branch {{branch}} for topic: {{topic}}"
   join_results:
     prompt:
-      user: "Join branch outputs deterministically for topic: {{topic}}"
+      user: |
+        Join branch outputs deterministically for topic: {{topic}}
+        alpha={{alpha}}
+        beta={{beta}}
 
 run:
   name: "v0-3-concurrency-fork-join"
@@ -38,6 +41,8 @@ run:
       - id: "fork.branch.alpha"
         agent: "coordinator"
         task: "branch_work"
+        save_as: "alpha"
+        write_to: "fork/alpha.txt"
         inputs:
           topic: "deterministic concurrency"
           branch: "alpha"
@@ -45,6 +50,8 @@ run:
       - id: "fork.branch.beta"
         agent: "coordinator"
         task: "branch_work"
+        save_as: "beta"
+        write_to: "fork/beta.txt"
         inputs:
           topic: "deterministic concurrency"
           branch: "beta"
@@ -52,5 +59,9 @@ run:
       - id: "fork.join"
         agent: "coordinator"
         task: "join_results"
+        save_as: "joined"
+        write_to: "fork/join.txt"
         inputs:
           topic: "deterministic concurrency"
+          alpha: "@state:alpha"
+          beta: "@state:beta"
