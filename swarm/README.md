@@ -17,7 +17,9 @@ Status badges above are for `main` branch workflow health, not per-PR checks.
 
 `swarm` is a small, conservative reference runtime for **Agent Design Language (ADL)**.
 
-For historical context, see `RELEASE_NOTES_v0.2.md`. This README reflects the current v0.3 runtime.
+For historical context, see `RELEASE_NOTES_v0.2.md`.
+For the official v0.3 milestone summary, see `RELEASE_NOTES_v0.3.md`.
+This README reflects the current v0.3 runtime.
 
 It is intentionally *compiler-like* in how it processes ADL documents:
 
