@@ -21,7 +21,8 @@ pub trait Provider: Send + Sync {
 enum ProviderErrorKind {
     UnknownKind,
     InvalidConfig,
-    Runtime,
+    RuntimeRetryable,
+    RuntimeNonRetryable,
 }
 
 #[derive(Debug)]
@@ -53,7 +54,15 @@ Set providers.<id>.type to one of: ollama, http."
 
     fn runtime(provider: &str, message: impl Into<String>) -> Self {
         Self {
-            kind: ProviderErrorKind::Runtime,
+            kind: ProviderErrorKind::RuntimeRetryable,
+            provider: Some(provider.to_string()),
+            message: message.into(),
+        }
+    }
+
+    fn runtime_non_retryable(provider: &str, message: impl Into<String>) -> Self {
+        Self {
+            kind: ProviderErrorKind::RuntimeNonRetryable,
             provider: Some(provider.to_string()),
             message: message.into(),
         }
@@ -70,9 +79,15 @@ impl fmt::Display for ProviderError {
                 self.provider.as_deref().unwrap_or("<unknown>"),
                 self.message
             ),
-            ProviderErrorKind::Runtime => write!(
+            ProviderErrorKind::RuntimeRetryable => write!(
                 f,
-                "provider {} runtime error: {}",
+                "provider {} runtime error (retryable): {}",
+                self.provider.as_deref().unwrap_or("<unknown>"),
+                self.message
+            ),
+            ProviderErrorKind::RuntimeNonRetryable => write!(
+                f,
+                "provider {} runtime error (non-retryable): {}",
                 self.provider.as_deref().unwrap_or("<unknown>"),
                 self.message
             ),
@@ -92,6 +107,19 @@ fn invalid_config(provider: &str, message: impl Into<String>) -> anyhow::Error {
 
 fn runtime_error(provider: &str, message: impl Into<String>) -> anyhow::Error {
     ProviderError::runtime(provider, message).into()
+}
+
+fn runtime_error_non_retryable(provider: &str, message: impl Into<String>) -> anyhow::Error {
+    ProviderError::runtime_non_retryable(provider, message).into()
+}
+
+pub fn is_retryable_error(err: &anyhow::Error) -> bool {
+    for cause in err.chain() {
+        if let Some(p) = cause.downcast_ref::<ProviderError>() {
+            return matches!(p.kind, ProviderErrorKind::RuntimeRetryable);
+        }
+    }
+    true
 }
 
 /// Factory: build a provider implementation from ADL ProviderSpec.
@@ -409,16 +437,19 @@ impl Provider for HttpProvider {
                 if err.is_timeout() {
                     let msg = match self.timeout_secs {
                         Some(secs) => format!(
-                            "timed out after {secs}s (set providers.<id>.config.timeout_secs to override)"
+                            "kind=timeout timed out after {secs}s (set providers.<id>.config.timeout_secs to override)"
                         ),
-                        None => "timed out (set providers.<id>.config.timeout_secs to override)".to_string(),
+                        None => {
+                            "kind=timeout timed out (set providers.<id>.config.timeout_secs to override)"
+                                .to_string()
+                        }
                     };
                     return Err(runtime_error("http", msg));
                 }
 
                 return Err(runtime_error(
                     "http",
-                    format!("http provider request failed: {err}"),
+                    format!("kind=request_failed http provider request failed: {err}"),
                 ));
             }
         };
@@ -432,20 +463,27 @@ impl Provider for HttpProvider {
             } else {
                 trimmed
             };
-            return Err(runtime_error(
-                "http",
-                format!("returned non-200 status {status}: {trimmed}"),
-            ));
+            let class = if status.is_client_error() {
+                "client_error"
+            } else if status.is_server_error() {
+                "server_error"
+            } else {
+                "http_error"
+            };
+            let msg = format!("kind={class} status={status} body={trimmed}");
+            if status.is_client_error() {
+                return Err(runtime_error_non_retryable("http", msg));
+            }
+            return Err(runtime_error("http", msg));
         }
 
         let json: serde_json::Value = resp
             .json()
             .context("http provider response was not valid JSON")
-            .map_err(|err| runtime_error("http", err.to_string()))?;
-        let out = json
-            .get("output")
-            .and_then(|v| v.as_str())
-            .ok_or_else(|| runtime_error("http", "response missing 'output' field"))?;
+            .map_err(|err| runtime_error_non_retryable("http", err.to_string()))?;
+        let out = json.get("output").and_then(|v| v.as_str()).ok_or_else(|| {
+            runtime_error_non_retryable("http", "response missing 'output' field")
+        })?;
 
         Ok(out.to_string())
     }

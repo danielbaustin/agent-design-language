@@ -267,7 +267,11 @@ pub fn execute_sequential(
                     break;
                 }
                 Err(err) => {
+                    let retryable = provider::is_retryable_error(&err);
                     last_err = Some(err);
+                    if !retryable {
+                        break;
+                    }
                     if attempt >= max_attempts {
                         break;
                     }

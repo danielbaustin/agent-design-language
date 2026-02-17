@@ -587,6 +587,269 @@ fn run_executes_step_with_http_provider() {
 }
 
 #[test]
+fn run_http_retry_succeeds_on_second_attempt_after_5xx() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+
+    let old_no_proxy = std::env::var("NO_PROXY").ok();
+    let mut no_proxy_val = old_no_proxy.unwrap_or_default();
+    if !no_proxy_val.is_empty() && !no_proxy_val.ends_with(',') {
+        no_proxy_val.push(',');
+    }
+    no_proxy_val.push_str("127.0.0.1,localhost");
+    let _env_guard = EnvVarGuard::set("NO_PROXY", no_proxy_val);
+
+    std::thread::spawn(move || {
+        for idx in 0..2 {
+            let (mut stream, _) = server.accept().unwrap();
+            let mut buf = [0u8; 4096];
+            let _ = stream.read(&mut buf);
+            if idx == 0 {
+                let body = "upstream overloaded";
+                let resp = format!(
+                    "HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\nContent-Length: {}\r\n\r\n{}",
+                    body.len(),
+                    body
+                );
+                let _ = stream.write_all(resp.as_bytes());
+            } else {
+                let body = r#"{"output":"RECOVERED_200"}"#;
+                let resp = format!(
+                    "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
+                    body.len(),
+                    body
+                );
+                let _ = stream.write_all(resp.as_bytes());
+            }
+        }
+    });
+
+    let base = tmp_dir("exec-http-retry-5xx");
+    let yaml = format!(
+        r#"
+version: "0.3"
+
+providers:
+  remote_http:
+    type: "http"
+    config:
+      endpoint: "http://{addr}/complete"
+
+agents:
+  writer:
+    provider: "remote_http"
+    model: "unused"
+
+tasks:
+  summarize:
+    prompt:
+      user: "Hello {{topic}}"
+
+run:
+  name: "http-retry-5xx"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "remote_summary"
+        agent: "writer"
+        task: "summarize"
+        retry:
+          max_attempts: 2
+        inputs:
+          topic: "adl"
+"#
+    );
+    let tmp_yaml = base.join("http-retry-5xx.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success after retry, got {:?}\nstdout:\n{}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("RECOVERED_200") && stdout.contains("attempts=2"),
+        "stdout was:\n{stdout}"
+    );
+}
+
+#[test]
+fn run_http_4xx_does_not_retry_even_with_retry_policy() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+
+    let old_no_proxy = std::env::var("NO_PROXY").ok();
+    let mut no_proxy_val = old_no_proxy.unwrap_or_default();
+    if !no_proxy_val.is_empty() && !no_proxy_val.ends_with(',') {
+        no_proxy_val.push(',');
+    }
+    no_proxy_val.push_str("127.0.0.1,localhost");
+    let _env_guard = EnvVarGuard::set("NO_PROXY", no_proxy_val);
+
+    std::thread::spawn(move || {
+        let (mut stream, _) = server.accept().unwrap();
+        let mut buf = [0u8; 4096];
+        let _ = stream.read(&mut buf);
+        let body = "invalid request";
+        let resp = format!(
+            "HTTP/1.1 400 Bad Request\r\nContent-Type: text/plain\r\nContent-Length: {}\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        let _ = stream.write_all(resp.as_bytes());
+    });
+
+    let base = tmp_dir("exec-http-no-retry-4xx");
+    let yaml = format!(
+        r#"
+version: "0.3"
+
+providers:
+  remote_http:
+    type: "http"
+    config:
+      endpoint: "http://{addr}/complete"
+
+agents:
+  writer:
+    provider: "remote_http"
+    model: "unused"
+
+tasks:
+  summarize:
+    prompt:
+      user: "Hello {{topic}}"
+
+run:
+  name: "http-no-retry-4xx"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "remote_summary"
+        agent: "writer"
+        task: "summarize"
+        retry:
+          max_attempts: 3
+        inputs:
+          topic: "adl"
+"#
+    );
+    let tmp_yaml = base.join("http-no-retry-4xx.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        !out.status.success(),
+        "expected non-retryable 4xx failure; stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("failed after 1 attempt(s)") && stderr.contains("client_error"),
+        "stderr was:\n{stderr}"
+    );
+}
+
+#[test]
+fn run_http_timeout_retries_until_exhausted() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+
+    let old_no_proxy = std::env::var("NO_PROXY").ok();
+    let mut no_proxy_val = old_no_proxy.unwrap_or_default();
+    if !no_proxy_val.is_empty() && !no_proxy_val.ends_with(',') {
+        no_proxy_val.push(',');
+    }
+    no_proxy_val.push_str("127.0.0.1,localhost");
+    let _env_guard = EnvVarGuard::set("NO_PROXY", no_proxy_val);
+
+    std::thread::spawn(move || {
+        for _ in 0..2 {
+            let (mut stream, _) = server.accept().unwrap();
+            let mut buf = [0u8; 4096];
+            let _ = stream.read(&mut buf);
+            std::thread::sleep(std::time::Duration::from_secs(2));
+            let body = r#"{"output":"TOO_LATE"}"#;
+            let resp = format!(
+                "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
+                body.len(),
+                body
+            );
+            let _ = stream.write_all(resp.as_bytes());
+        }
+    });
+
+    let base = tmp_dir("exec-http-timeout-retry");
+    let yaml = format!(
+        r#"
+version: "0.3"
+
+providers:
+  remote_http:
+    type: "http"
+    config:
+      endpoint: "http://{addr}/complete"
+      timeout_secs: 1
+
+agents:
+  writer:
+    provider: "remote_http"
+    model: "unused"
+
+tasks:
+  summarize:
+    prompt:
+      user: "Hello {{topic}}"
+
+run:
+  name: "http-timeout-retry"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "remote_summary"
+        agent: "writer"
+        task: "summarize"
+        retry:
+          max_attempts: 2
+        inputs:
+          topic: "adl"
+"#
+    );
+    let tmp_yaml = base.join("http-timeout-retry.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        !out.status.success(),
+        "expected timeout retry exhaustion; stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr).to_lowercase();
+    assert!(
+        stderr.contains("failed after 2 attempt(s)") && stderr.contains("timed out"),
+        "stderr was:\n{stderr}"
+    );
+}
+
+#[test]
 fn run_v0_2_coordinator_example_uses_real_file_handoff() {
     let base = tmp_dir("exec-coordinator-file-handoff");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
