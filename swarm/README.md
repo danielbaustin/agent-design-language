@@ -40,6 +40,14 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 
 ---
 
+## Fork/Join Mental Model (v0.3)
+
+- **Fork**: declare branch steps under `workflow.kind: concurrent`.
+- **Execution**: steps run sequentially in deterministic declared order (no true runtime parallelism yet).
+- **Join**: consume branch outputs via `@state:<save_as_key>` and run only when required inputs are available.
+
+---
+
 ## Current Status (v0.3)
 
 **Implemented**

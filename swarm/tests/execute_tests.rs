@@ -778,6 +778,48 @@ fn run_executes_concurrent_workflows_in_v0_3_in_declared_order() {
 }
 
 #[test]
+fn run_v0_3_concurrency_example_writes_branch_and_join_artifacts() {
+    let base = tmp_dir("exec-concurrent-v0-3-artifacts");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let out_dir = base.join("out");
+    let out = run_swarm(&[
+        "examples/v0-3-concurrency-fork-join.adl.yaml",
+        "--run",
+        "--out",
+        out_dir.to_string_lossy().as_ref(),
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success for v0.3 concurrent run, got failure.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let alpha = fs::read_to_string(out_dir.join("fork/alpha.txt")).unwrap();
+    let beta = fs::read_to_string(out_dir.join("fork/beta.txt")).unwrap();
+    let join = fs::read_to_string(out_dir.join("fork/join.txt")).unwrap();
+
+    assert!(
+        alpha.contains("Process branch alpha"),
+        "alpha artifact was:\n{alpha}"
+    );
+    assert!(
+        beta.contains("Process branch beta"),
+        "beta artifact was:\n{beta}"
+    );
+    assert!(
+        join.contains("alpha=USER:")
+            && join.contains("Process branch alpha")
+            && join.contains("beta=USER:")
+            && join.contains("Process branch beta"),
+        "join artifact should reference both branch outputs:\n{join}"
+    );
+}
+
+#[test]
 fn run_v0_3_join_step_can_consume_saved_fork_outputs() {
     let base = tmp_dir("exec-concurrent-v0-3-join-state");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);

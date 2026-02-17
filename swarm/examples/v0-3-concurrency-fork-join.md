@@ -10,9 +10,28 @@ File:
 From repo root:
 
 ```bash
-cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
-cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --run --trace
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --run --trace --out out
 ```
+
+## Mental Model (v0.3)
+
+- **Fork**: branches are declared as steps in a `workflow.kind: concurrent` workflow.
+- **Branch execution**: runtime is still single-threaded; branch steps run in deterministic declared order.
+- **Join**: join step consumes saved branch outputs via `@state:<save_as_key>` and runs only after required inputs are available.
+
+## Artifacts
+
+Run outputs are deterministic and easy to inspect:
+
+- `out/fork/alpha.txt`
+- `out/fork/beta.txt`
+- `out/fork/join.txt`
+
+Run metadata is written under:
+
+- `.adl/runs/<run_id>/run.json`
+- `.adl/runs/<run_id>/steps.json`
 
 ## Expected Deterministic Trace Ordering
 
@@ -34,4 +53,5 @@ Expected high-level event order:
 
 Notes:
 - Branch execution order is deterministic by declared step order (`alpha`, then `beta` in this file).
+- Join uses explicit state inputs (`alpha`, `beta`) saved by upstream branch steps.
 - Runtime parallelism is intentionally deferred to a later version.
