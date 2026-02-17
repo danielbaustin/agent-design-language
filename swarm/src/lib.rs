@@ -1,6 +1,7 @@
 pub mod adl;
 pub mod demo;
 pub mod execute;
+pub mod execution_plan;
 pub mod plan;
 pub mod prompt;
 pub mod provider;
