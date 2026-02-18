@@ -173,14 +173,28 @@ fn real_main() -> Result<()> {
             resolved.workflow_id.clone(),
             resolved.doc.version.clone(),
         );
+        if !quiet {
+            eprintln!(
+                "RUN start {} run_id={} workflow={}",
+                trace::format_iso_utc_ms(tr.current_ts_ms()),
+                resolved.run_id,
+                resolved.workflow_id
+            );
+        }
 
-        let result =
-            execute::execute_sequential(&resolved, &mut tr, print_outputs, &adl_base_dir, &out_dir);
+        let result = execute::execute_sequential(
+            &resolved,
+            &mut tr,
+            print_outputs,
+            !quiet,
+            &adl_base_dir,
+            &out_dir,
+        );
         let result = match result {
             Ok(result) => result,
             Err(err) => {
                 let run_finished_ms = now_ms();
-                let _run_dir = write_run_state_artifacts(
+                let run_dir = write_run_state_artifacts(
                     &resolved,
                     &tr,
                     &out_dir,
@@ -188,6 +202,13 @@ fn real_main() -> Result<()> {
                     run_finished_ms,
                     false,
                 )?;
+                if !quiet {
+                    eprintln!(
+                        "RUN done (+{}ms) fail artifacts={}",
+                        tr.current_elapsed_ms(),
+                        run_dir.display()
+                    );
+                }
                 if resolved.doc.version.trim() == "0.2" {
                     tr.run_finished(false);
                 }
@@ -201,7 +222,7 @@ fn real_main() -> Result<()> {
         let artifacts = result.artifacts;
         let records = result.records;
         let run_finished_ms = now_ms();
-        let _run_dir = write_run_state_artifacts(
+        let run_dir = write_run_state_artifacts(
             &resolved,
             &tr,
             &out_dir,
@@ -209,6 +230,13 @@ fn real_main() -> Result<()> {
             run_finished_ms,
             true,
         )?;
+        if !quiet {
+            eprintln!(
+                "RUN done (+{}ms) ok artifacts={}",
+                tr.current_elapsed_ms(),
+                run_dir.display()
+            );
+        }
 
         // Explicitly consume StepOutput so clippy -D warnings stays green
         println!("RUN SUMMARY: {} step(s)", records.len());
