@@ -18,7 +18,8 @@ pub fn run_bounded<T: Send + 'static>(
         return Ok(Vec::new());
     }
 
-    let worker_count = max_parallel.min(jobs.len());
+    let expected_count = jobs.len();
+    let worker_count = max_parallel.min(expected_count);
     let queue: VecDeque<Job<T>> = jobs
         .into_iter()
         .enumerate()
@@ -54,7 +55,16 @@ pub fn run_bounded<T: Send + 'static>(
     }
 
     for h in handles {
-        let _ = h.join();
+        if h.join().is_err() {
+            return Err(anyhow!("bounded executor worker panicked"));
+        }
+    }
+
+    if out.len() != expected_count {
+        return Err(anyhow!(
+            "bounded executor output count mismatch (expected {expected_count}, got {})",
+            out.len()
+        ));
     }
 
     out.sort_by_key(|(idx, _)| *idx);
@@ -120,5 +130,30 @@ mod tests {
             observed_max.load(Ordering::SeqCst) <= 3,
             "observed max parallel workers exceeded bound"
         );
+    }
+
+    #[test]
+    fn run_bounded_errors_when_job_panics() {
+        let jobs: Vec<Box<dyn FnOnce() -> usize + Send + 'static>> = vec![
+            Box::new(|| 1usize),
+            Box::new(|| panic!("simulated panic")),
+            Box::new(|| 3usize),
+        ];
+
+        let err = run_bounded(2, jobs).unwrap_err();
+        assert!(
+            err.to_string().contains("worker panicked")
+                || err.to_string().contains("output count mismatch"),
+            "{err:#}"
+        );
+    }
+
+    #[test]
+    fn run_bounded_returns_all_outputs() {
+        let jobs: Vec<Box<dyn FnOnce() -> usize + Send + 'static>> = (0..11usize)
+            .map(|i| Box::new(move || i) as Box<dyn FnOnce() -> usize + Send + 'static>)
+            .collect();
+        let out = run_bounded(4, jobs).expect("run_bounded should succeed");
+        assert_eq!(out.len(), 11);
     }
 }

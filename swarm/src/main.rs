@@ -24,6 +24,7 @@ Options:
   -h, --help         Show this help
 
 Examples:
+  SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh swarm examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out ./out
   swarm examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
   swarm examples/v0-3-on-error-retry.adl.yaml --print-plan
   swarm examples/v0-3-remote-http-provider.adl.yaml --print-plan

@@ -39,9 +39,12 @@ fi
 join1="$OUT_ROOT/deterministic-replay-pass-1/replay/join.txt"
 join2="$OUT_ROOT/deterministic-replay-pass-2/replay/join.txt"
 
-if [[ -n "$hash_cmd" ]]; then
-  h1="$(eval "$hash_cmd \"$join1\"" | awk '{print $1}')"
-  h2="$(eval "$hash_cmd \"$join2\"" | awk '{print $1}')"
+if [[ "$hash_cmd" == "sha256sum" ]]; then
+  h1="$(sha256sum "$join1" | awk '{print $1}')"
+  h2="$(sha256sum "$join2" | awk '{print $1}')"
+elif [[ "$hash_cmd" == "shasum -a 256" ]]; then
+  h1="$(shasum -a 256 "$join1" | awk '{print $1}')"
+  h2="$(shasum -a 256 "$join2" | awk '{print $1}')"
 else
   h1="$(cksum "$join1" | awk '{print $1}')"
   h2="$(cksum "$join2" | awk '{print $1}')"

@@ -1,7 +1,7 @@
 # Agent Design Language (ADL)
 
-**Version:** v0.3  
-**Status:** Active v0.3 runtime with deterministic execution, v0.3 fork/join support, and hardened tooling gates
+**Version:** v0.4  
+**Status:** Active v0.4 runtime with deterministic execution, bounded fork concurrency, deterministic join semantics, and hardened tooling gates
 
 ADL is a schema-validated language and runtime for defining and executing
 agent workflows with deterministic resolution and clear failure modes.
@@ -18,8 +18,8 @@ Status badges above are for `main` branch workflow health, not per-PR checks.
 `swarm` is a small, conservative reference runtime for **Agent Design Language (ADL)**.
 
 For historical context, see `RELEASE_NOTES_v0.2.md`.
-For the official v0.3 milestone summary, see `RELEASE_NOTES_v0.3.md`.
-This README reflects the current v0.3 runtime.
+For the official v0.4 milestone summary, see `../docs/milestones/v0.4/RELEASE_NOTES_v0.4.md`.
+This README reflects the current v0.4 runtime.
 
 It is intentionally *compiler-like* in how it processes ADL documents:
 
@@ -27,16 +27,17 @@ It is intentionally *compiler-like* in how it processes ADL documents:
 2. **Validate** the document against a JSON Schema with crisp, path-specific errors.
 3. **Resolve** references deterministically (run → workflow → steps → task → agent → provider).
 4. **Materialize** deterministic artifacts (execution plan, assembled prompts).
-5. **Execute** deterministic workflows (sequential and v0.3 deterministic fork/join execution), with optional tracing.
+5. **Execute** deterministic workflows (sequential and v0.4 bounded fork/join execution), with optional tracing.
 
 Provider execution, tracing, contracts, and repair policies are being added incrementally.
 
 ---
 
-## v0.3 Shipped Capabilities
+## v0.4 Shipped Capabilities
 
 - Deterministic workflow execution with stable plan/trace semantics
-- Deterministic v0.3 fork/join execution (`workflow.kind: concurrent`), executed single-threaded in declared step order
+- Deterministic fork/join runtime execution (`workflow.kind: concurrent`) with bounded parallelism
+- Canonical concurrent ready-step ordering: lexicographic by `step_id`
 - Step-level failure controls (`on_error: fail|continue`, `retry.max_attempts`)
 - Remote HTTP provider MVP with explicit failure behavior
 - Persistent run state artifacts under `.adl/runs/<run_id>/` for auditability (`run.json`, `steps.json`)
@@ -44,15 +45,15 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 
 ---
 
-## Fork/Join Mental Model (v0.3)
+## Fork/Join Mental Model (v0.4)
 
 - **Fork**: declare branch steps under `workflow.kind: concurrent`.
-- **Execution**: steps run sequentially in deterministic declared order (no true runtime parallelism yet).
+- **Execution**: ready fork steps execute with bounded parallelism and deterministic lexicographic step-id ordering.
 - **Join**: consume branch outputs via `@state:<save_as_key>` and run only when required inputs are available.
 
 ---
 
-## Current Status (v0.3)
+## Current Status (v0.4)
 
 **Implemented**
 
@@ -64,7 +65,8 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 - Sequential workflow execution
 - Step-level error policy: `on_error: fail|continue`
 - Deterministic retries: `retry.max_attempts` (no backoff)
-- v0.3 deterministic fork/join execution (`workflow.kind: concurrent`), single-threaded in declared step order
+- Deterministic fork/join runtime execution (`workflow.kind: concurrent`) with bounded parallelism
+- Concurrent ready-step ordering is deterministic and lexicographic by `step_id`
 - Join input wiring via `@state:<save_as_key>`
 - Local Ollama provider (real binary or test mock)
 - Remote HTTP provider (blocking JSON request/response)
@@ -73,7 +75,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 
 **Explicitly deferred**
 
-- Parallel workflow execution (true concurrency; v0.4 target)
+- Configurable parallelism controls (current runtime uses fixed bounded parallelism in v0.4)
 - Multi-run documents
 - Provider retries / contracts / repair policies
 
@@ -215,9 +217,9 @@ Example validation documents live under:
 examples/
 ```
 
-Legacy examples (e.g. `adl-0.1.yaml`) remain for regression testing, but the runtime behavior described here reflects v0.3.
+Legacy examples (e.g. `adl-0.1.yaml`) remain for regression testing, but the runtime behavior described here reflects v0.4.
 
-The schema/runtime behavior described here is aligned with current **v0.3** support.
+The schema/runtime behavior described here is aligned with current **v0.4** support.
 
 ---
 
@@ -258,7 +260,7 @@ All of the above must pass for changes to be accepted.
 
 `swarm` enforces a **high bar for test coverage**, especially for core compiler-like behavior (parsing, validation, resolution, and execution).
 
-As of v0.3:
+As of v0.4:
 
 - **Overall line coverage:** enforced by CI gate (see coverage badge above)
 - **All critical paths covered:**
@@ -294,7 +296,7 @@ The report makes it easy to identify:
 
 ### Coverage philosophy
 
-- **Line coverage > function coverage** for v0.3  
+- **Line coverage > function coverage** for v0.4  
   (many small helper functions are intentionally exercised indirectly)
 - No “coverage theater”:
   - No dummy tests
