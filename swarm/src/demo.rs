@@ -134,7 +134,7 @@ fn write_trace_jsonl(out_dir: &Path, trace: &Trace) -> Result<PathBuf> {
         trace.run_id, trace.workflow_id, trace.version
     ));
     for ev in &trace.events {
-        lines.push(ev.summarize(true));
+        lines.push(ev.summarize());
     }
     let mut body = lines.join("\n");
     body.push('\n');
