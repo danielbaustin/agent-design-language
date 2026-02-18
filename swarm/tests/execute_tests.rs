@@ -235,6 +235,19 @@ echo "MOCK_CONTINUE_OK"
 exit 0
 "#
         }
+        MockOllamaBehavior::SleepTrackConcurrency => {
+            r#"#!/bin/sh
+set -eu
+if [ "${1:-}" != "run" ]; then
+  echo "mock ollama: expected 'run'" 1>&2
+  exit 2
+fi
+cat >/dev/null
+sleep 1
+echo "MOCK_SLEEP_OK"
+exit 0
+"#
+        }
     };
 
     fs::write(&bin, script.as_bytes()).unwrap();
@@ -260,6 +273,7 @@ enum MockOllamaBehavior {
     SleepEchoPrompt,
     FailOnce,
     FailOnToken,
+    SleepTrackConcurrency,
 }
 
 fn run_swarm(args: &[&str]) -> std::process::Output {
@@ -1372,6 +1386,120 @@ run:
             "join started before branch {branch} finished; stdout:\n{stdout}"
         );
     }
+}
+
+#[test]
+fn run_v0_3_concurrent_execution_is_deterministic_across_runs() {
+    let base = tmp_dir("exec-concurrent-v0-3-deterministic");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let out1 = run_swarm(&["examples/v0-3-concurrency-fork-join.adl.yaml", "--run"]);
+    assert!(
+        out1.status.success(),
+        "first run failed.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out1.stdout),
+        String::from_utf8_lossy(&out1.stderr)
+    );
+
+    let out2 = run_swarm(&["examples/v0-3-concurrency-fork-join.adl.yaml", "--run"]);
+    assert!(
+        out2.status.success(),
+        "second run failed.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out2.stdout),
+        String::from_utf8_lossy(&out2.stderr)
+    );
+
+    let s1 = String::from_utf8_lossy(&out1.stdout);
+    let s2 = String::from_utf8_lossy(&out2.stdout);
+    assert_eq!(s1, s2, "concurrent run output should be deterministic");
+}
+
+#[test]
+fn run_v0_3_concurrent_workflow_respects_bounded_parallelism() {
+    use std::time::Instant;
+
+    let base = tmp_dir("exec-concurrent-v0-3-bounded");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepTrackConcurrency);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+
+run:
+  name: "bounded-parallelism"
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: { n: "3" }
+      - id: "s4"
+        agent: "a"
+        task: "t"
+        inputs: { n: "4" }
+      - id: "s5"
+        agent: "a"
+        task: "t"
+        inputs: { n: "5" }
+      - id: "s6"
+        agent: "a"
+        task: "t"
+        inputs: { n: "6" }
+      - id: "s7"
+        agent: "a"
+        task: "t"
+        inputs: { n: "7" }
+      - id: "s8"
+        agent: "a"
+        task: "t"
+        inputs: { n: "8" }
+"#;
+
+    let tmp_yaml = base.join("bounded-parallelism.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let started = Instant::now();
+    let out = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run"]);
+    let elapsed = started.elapsed().as_secs_f64();
+    assert!(
+        out.status.success(),
+        "expected success for bounded parallelism run.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    assert!(
+        (1.6..=4.5).contains(&elapsed),
+        "expected bounded parallel runtime window (>=1.6s and <=4.5s), got {elapsed:.3}s"
+    );
 }
 
 #[test]
