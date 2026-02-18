@@ -1,0 +1,80 @@
+version: "0.3"
+
+providers:
+  local_ollama:
+    type: "ollama"
+    config:
+      model: "mock-v0-4"
+
+agents:
+  coordinator:
+    provider: "local_ollama"
+    model: "mock-v0-4"
+    prompt:
+      system: "You are a deterministic demo agent."
+
+tasks:
+  plan:
+    prompt:
+      user: "Create a deterministic branch plan for topic={{topic}}"
+  branch:
+    prompt:
+      user: "BRANCH={{branch}} TOPIC={{topic}}"
+  join:
+    prompt:
+      user: |
+        JOIN topic={{topic}}
+        alpha={{alpha}}
+        beta={{beta}}
+        gamma={{gamma}}
+
+run:
+  name: "v0-4-demo-fork-join-swarm"
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "fork.plan"
+        agent: "coordinator"
+        task: "plan"
+        save_as: "plan"
+        write_to: "fork/plan.txt"
+        inputs:
+          topic: "runtime-concurrency"
+
+      - id: "fork.branch.alpha"
+        agent: "coordinator"
+        task: "branch"
+        save_as: "alpha"
+        write_to: "fork/alpha.txt"
+        inputs:
+          topic: "runtime-concurrency"
+          branch: "alpha"
+
+      - id: "fork.branch.beta"
+        agent: "coordinator"
+        task: "branch"
+        save_as: "beta"
+        write_to: "fork/beta.txt"
+        inputs:
+          topic: "runtime-concurrency"
+          branch: "beta"
+
+      - id: "fork.branch.gamma"
+        agent: "coordinator"
+        task: "branch"
+        save_as: "gamma"
+        write_to: "fork/gamma.txt"
+        inputs:
+          topic: "runtime-concurrency"
+          branch: "gamma"
+
+      - id: "fork.join"
+        agent: "coordinator"
+        task: "join"
+        save_as: "joined"
+        write_to: "fork/join.txt"
+        inputs:
+          topic: "runtime-concurrency"
+          alpha: "@state:alpha"
+          beta: "@state:beta"
+          gamma: "@state:gamma"

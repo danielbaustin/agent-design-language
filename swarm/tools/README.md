@@ -15,6 +15,8 @@ Utility scripts for ADL workflow automation and PR hygiene.
 - `open_artifact.sh`: Opens canonical cards or burst report directories from one command.
 - `batched_checks.sh`: Runs tooling sanity + swarm checks through one stable command shape (quiet summaries by default; use `--verbose` or `ADL_CHECKS_VERBOSE=1` for full logs).
 - `demo_one_command.sh`: Recommended one-command entrypoint for demo workflows.
+- `demo_v0_4.sh`: Runs the v0.4 demo pass (fork/join swarm, bounded parallelism, deterministic replay) with a no-network mock provider.
+- `mock_ollama_v0_4.sh`: Deterministic local mock for `ollama run` used by v0.4 demos.
 - `preflight_review.sh`: One-command preflight that runs batched checks + schema/demo tests, with optional PR hygiene checks.
 - `branch_hygiene.sh`: Safe branch pruning helper (dry-run by default; apply merged/stale/remote cleanup via explicit flags).
 - `update_latest_reports.sh`: Refreshes `LATEST.md` pointers for automation and pr-cycle report directories.
