@@ -1,0 +1,98 @@
+version: "0.3"
+
+providers:
+  local_ollama:
+    type: "ollama"
+    config:
+      model: "mock-v0-4"
+
+agents:
+  worker:
+    provider: "local_ollama"
+    model: "mock-v0-4"
+
+tasks:
+  unit_work:
+    prompt:
+      user: "WORK item={{item}} mode=bounded sleep=1"
+  join:
+    prompt:
+      user: |
+        JOIN bounded-parallel
+        s1={{s1}}
+        s2={{s2}}
+        s3={{s3}}
+        s4={{s4}}
+        s5={{s5}}
+        s6={{s6}}
+        s7={{s7}}
+        s8={{s8}}
+
+run:
+  name: "v0-4-demo-bounded-parallelism"
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "fork.branch.s1"
+        agent: "worker"
+        task: "unit_work"
+        save_as: "s1"
+        write_to: "bounded/s1.txt"
+        inputs: { item: "1" }
+      - id: "fork.branch.s2"
+        agent: "worker"
+        task: "unit_work"
+        save_as: "s2"
+        write_to: "bounded/s2.txt"
+        inputs: { item: "2" }
+      - id: "fork.branch.s3"
+        agent: "worker"
+        task: "unit_work"
+        save_as: "s3"
+        write_to: "bounded/s3.txt"
+        inputs: { item: "3" }
+      - id: "fork.branch.s4"
+        agent: "worker"
+        task: "unit_work"
+        save_as: "s4"
+        write_to: "bounded/s4.txt"
+        inputs: { item: "4" }
+      - id: "fork.branch.s5"
+        agent: "worker"
+        task: "unit_work"
+        save_as: "s5"
+        write_to: "bounded/s5.txt"
+        inputs: { item: "5" }
+      - id: "fork.branch.s6"
+        agent: "worker"
+        task: "unit_work"
+        save_as: "s6"
+        write_to: "bounded/s6.txt"
+        inputs: { item: "6" }
+      - id: "fork.branch.s7"
+        agent: "worker"
+        task: "unit_work"
+        save_as: "s7"
+        write_to: "bounded/s7.txt"
+        inputs: { item: "7" }
+      - id: "fork.branch.s8"
+        agent: "worker"
+        task: "unit_work"
+        save_as: "s8"
+        write_to: "bounded/s8.txt"
+        inputs: { item: "8" }
+
+      - id: "fork.join"
+        agent: "worker"
+        task: "join"
+        save_as: "joined"
+        write_to: "bounded/join.txt"
+        inputs:
+          s1: "@state:s1"
+          s2: "@state:s2"
+          s3: "@state:s3"
+          s4: "@state:s4"
+          s5: "@state:s5"
+          s6: "@state:s6"
+          s7: "@state:s7"
+          s8: "@state:s8"

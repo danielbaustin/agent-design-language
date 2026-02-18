@@ -1,0 +1,55 @@
+version: "0.3"
+
+providers:
+  local_ollama:
+    type: "ollama"
+    config:
+      model: "mock-v0-4"
+
+agents:
+  replay:
+    provider: "local_ollama"
+    model: "mock-v0-4"
+
+tasks:
+  branch:
+    prompt:
+      user: "REPLAY branch={{branch}} seed={{seed}}"
+  join:
+    prompt:
+      user: |
+        REPLAY-JOIN
+        left={{left}}
+        right={{right}}
+
+run:
+  name: "v0-4-demo-deterministic-replay"
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "fork.branch.left"
+        agent: "replay"
+        task: "branch"
+        save_as: "left"
+        write_to: "replay/left.txt"
+        inputs:
+          branch: "left"
+          seed: "fixed-seed-v0-4"
+
+      - id: "fork.branch.right"
+        agent: "replay"
+        task: "branch"
+        save_as: "right"
+        write_to: "replay/right.txt"
+        inputs:
+          branch: "right"
+          seed: "fixed-seed-v0-4"
+
+      - id: "fork.join"
+        agent: "replay"
+        task: "join"
+        save_as: "joined"
+        write_to: "replay/join.txt"
+        inputs:
+          left: "@state:left"
+          right: "@state:right"

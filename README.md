@@ -63,6 +63,42 @@ cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http
 
 To execute (`--run`) local-provider examples, run from `swarm/` with a local Ollama available.
 
+## v0.4 Demos
+
+These demos are deterministic, non-interactive, and run without network by pinning the local mock provider binary.
+
+Fork/Join swarm (3 branches + deterministic join barrier):
+
+```bash
+SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out .adl/reports/demo-v0.4/fork-join-swarm
+```
+
+Bounded parallelism stress (8 branch steps with bounded executor):
+
+```bash
+SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-bounded-parallelism.adl.yaml --run --trace --out .adl/reports/demo-v0.4/bounded-parallelism
+```
+
+Deterministic replay (run twice with same command, then compare `replay/join.txt` hash):
+
+```bash
+SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-deterministic-replay.adl.yaml --run --trace --out .adl/reports/demo-v0.4/deterministic-replay
+```
+
+Run all three demos in sequence:
+
+```bash
+swarm/tools/demo_v0_4.sh
+```
+
+## Why v0.4 Matters
+
+v0.4 proves:
+- Concurrent execution in the real runtime
+- Deterministic replay behavior
+- Bounded parallelism
+- Stable artifacts under concurrency
+
 ## Default Workflow
 
 Default contributor workflow uses `adl_pr_cycle` (`start -> codex -> finish -> report`).
