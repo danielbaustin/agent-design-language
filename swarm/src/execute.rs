@@ -3,6 +3,7 @@ use std::path::{Component, Path, PathBuf};
 
 use anyhow::{anyhow, Context, Result};
 
+use crate::bounded_executor;
 use crate::prompt;
 use crate::provider;
 use crate::resolve::AdlResolved;
@@ -148,8 +149,6 @@ pub fn execute_sequential(
     adl_base_dir: &Path,
     out_dir: &Path,
 ) -> Result<ExecutionResult> {
-    // v0.3 supports deterministic concurrent-workflow execution by running steps
-    // sequentially in declared document order (single-threaded runtime).
     if matches!(
         resolved.doc.run.workflow.kind,
         crate::adl::WorkflowKind::Concurrent
@@ -160,6 +159,18 @@ pub fn execute_sequential(
         return Err(anyhow!(
             "feature 'concurrency' requires v0.3; document version is {doc_version} (run.workflow.kind=concurrent)"
         ));
+    }
+    if matches!(
+        resolved.doc.run.workflow.kind,
+        crate::adl::WorkflowKind::Concurrent
+    ) {
+        return execute_concurrent_deterministic(
+            resolved,
+            tr,
+            print_outputs,
+            adl_base_dir,
+            out_dir,
+        );
     }
 
     let mut outs = Vec::new();
@@ -331,6 +342,277 @@ pub fn execute_sequential(
                     attempt.max(1),
                     err
                 ));
+            }
+        }
+    }
+
+    Ok(ExecutionResult {
+        outputs: outs,
+        artifacts,
+        records,
+    })
+}
+
+#[derive(Debug)]
+struct StepRunSuccess {
+    out: StepOutput,
+    attempts: u32,
+    prompt_hash: String,
+}
+
+type StepJob = Box<dyn FnOnce() -> (String, Result<StepRunSuccess>) + Send>;
+
+fn effective_prompt_with_defaults_from_doc(
+    step: &crate::resolve::ResolvedStep,
+    doc: &crate::adl::AdlDoc,
+) -> Option<crate::adl::PromptSpec> {
+    let mut p = if let Some(p) = step.prompt.as_ref() {
+        p.clone()
+    } else if let Some(task_key) = step.task.as_ref() {
+        doc.tasks.get(task_key).map(|t| t.prompt.clone())?
+    } else if let Some(agent_key) = step.agent.as_ref() {
+        doc.agents.get(agent_key).and_then(|a| a.prompt.clone())?
+    } else {
+        return None;
+    };
+    if p.system.is_none() {
+        if let Some(default_system) = doc.run.defaults.system.as_ref() {
+            p.system = Some(default_system.clone());
+        }
+    }
+    Some(p)
+}
+
+fn execute_step_with_retry(
+    step: &crate::resolve::ResolvedStep,
+    doc: &crate::adl::AdlDoc,
+    saved_state: &HashMap<String, String>,
+    adl_base_dir: &Path,
+) -> Result<StepRunSuccess> {
+    let step_id = step.id.clone();
+    let provider_id: &str = step.provider.as_deref().unwrap_or("<unresolved-provider>");
+    let max_attempts = step.retry.as_ref().map(|r| r.max_attempts).unwrap_or(1);
+    let mut attempt: u32 = 0;
+    let mut last_err: Option<anyhow::Error> = None;
+
+    while attempt < max_attempts {
+        attempt += 1;
+        let result = (|| -> Result<StepRunSuccess> {
+            let p = effective_prompt_with_defaults_from_doc(step, doc).ok_or_else(|| {
+                anyhow!(
+                    "step '{}' has no effective prompt (step.prompt or task.prompt required)",
+                    step_id
+                )
+            })?;
+
+            let merged_inputs = resolve_state_inputs(&step.id, &step.inputs, saved_state)
+                .with_context(|| format!("failed to resolve inputs for step '{}'", step_id))?;
+            let missing = missing_prompt_inputs(&p, &merged_inputs);
+            if !missing.is_empty() {
+                return Err(anyhow!(
+                    "step '{}' missing input bindings for: {} (provide inputs or prior state)",
+                    step_id,
+                    missing.join(", ")
+                ));
+            }
+
+            let inputs = materialize_inputs(merged_inputs, adl_base_dir)
+                .with_context(|| format!("failed to materialize inputs for step '{}'", step_id))?;
+
+            let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
+            let prompt_hash = prompt::hash_prompt(&prompt_text);
+
+            let spec = doc.providers.get(provider_id).with_context(|| {
+                format!(
+                    "step '{}' references unknown provider '{}'",
+                    step_id, provider_id
+                )
+            })?;
+            let model_override = step
+                .agent
+                .as_ref()
+                .and_then(|agent_id| doc.agents.get(agent_id))
+                .map(|agent| agent.model.as_str());
+            let prov = provider::build_provider(spec, model_override).with_context(|| {
+                format!(
+                    "failed to build provider '{}' for step '{}'",
+                    provider_id, step_id
+                )
+            })?;
+            let model_output = prov.complete(&prompt_text).with_context(|| {
+                format!(
+                    "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
+                    provider_id, step_id
+                )
+            })?;
+
+            Ok(StepRunSuccess {
+                out: StepOutput {
+                    step_id: step_id.clone(),
+                    provider_id: provider_id.to_string(),
+                    model_output,
+                },
+                attempts: attempt,
+                prompt_hash,
+            })
+        })();
+
+        match result {
+            Ok(success) => return Ok(success),
+            Err(err) => {
+                let retryable = provider::is_retryable_error(&err);
+                last_err = Some(err);
+                if !retryable || attempt >= max_attempts {
+                    break;
+                }
+            }
+        }
+    }
+
+    Err(last_err.unwrap_or_else(|| anyhow!("step '{}' failed", step_id)))
+}
+
+fn execute_concurrent_deterministic(
+    resolved: &AdlResolved,
+    tr: &mut Trace,
+    print_outputs: bool,
+    adl_base_dir: &Path,
+    out_dir: &Path,
+) -> Result<ExecutionResult> {
+    const MAX_PARALLEL: usize = 4;
+
+    let mut outs = Vec::new();
+    let mut artifacts = Vec::new();
+    let mut records = Vec::new();
+    let mut saved_state: HashMap<String, String> = HashMap::new();
+    let mut completed: HashSet<String> = HashSet::new();
+    let mut pending: HashSet<String> = resolved
+        .execution_plan
+        .nodes
+        .iter()
+        .map(|n| n.step_id.clone())
+        .collect();
+    let by_id: HashMap<String, crate::resolve::ResolvedStep> = resolved
+        .steps
+        .iter()
+        .cloned()
+        .map(|s| (s.id.clone(), s))
+        .collect();
+
+    while !pending.is_empty() {
+        let ready_ids: Vec<String> = resolved
+            .execution_plan
+            .nodes
+            .iter()
+            .filter(|node| pending.contains(&node.step_id))
+            .filter(|node| node.depends_on.iter().all(|dep| completed.contains(dep)))
+            .map(|node| node.step_id.clone())
+            .collect();
+
+        if ready_ids.is_empty() {
+            let mut unresolved: Vec<String> = pending.iter().cloned().collect();
+            unresolved.sort();
+            return Err(anyhow!(
+                "no dependency-ready steps remain (possible unsatisfied join/state deps): {}",
+                unresolved.join(", ")
+            ));
+        }
+
+        let state_snapshot = saved_state.clone();
+        let doc_snapshot = resolved.doc.clone();
+        let base_snapshot = adl_base_dir.to_path_buf();
+
+        for step_id in &ready_ids {
+            let step = by_id
+                .get(step_id)
+                .ok_or_else(|| anyhow!("execution plan references unknown step '{}'", step_id))?;
+            let agent_id = step.agent.as_deref().unwrap_or("<unresolved-agent>");
+            let task_id = step.task.as_deref().unwrap_or("<unresolved-task>");
+            let provider_id = step.provider.as_deref().unwrap_or("<unresolved-provider>");
+            tr.step_started(step_id, agent_id, provider_id, task_id);
+        }
+
+        let mut jobs: Vec<StepJob> = Vec::new();
+        for step_id in &ready_ids {
+            let step_id_owned = step_id.clone();
+            let step = by_id
+                .get(step_id)
+                .ok_or_else(|| anyhow!("execution plan references unknown step '{}'", step_id))?
+                .clone();
+            let state_snapshot = state_snapshot.clone();
+            let doc_snapshot = doc_snapshot.clone();
+            let base_snapshot = base_snapshot.clone();
+            jobs.push(Box::new(move || {
+                let run =
+                    execute_step_with_retry(&step, &doc_snapshot, &state_snapshot, &base_snapshot);
+                (step_id_owned, run)
+            }));
+        }
+
+        let results = bounded_executor::run_bounded(MAX_PARALLEL, jobs)?;
+        for (step_id, run_result) in results {
+            let step = by_id
+                .get(&step_id)
+                .ok_or_else(|| anyhow!("execution result references unknown step '{}'", step_id))?;
+            pending.remove(&step_id);
+
+            match run_result {
+                Ok(success) => {
+                    tr.prompt_assembled(&step_id, &success.prompt_hash);
+                    tr.step_finished(&step_id, true);
+
+                    if let Some(write_to) = step.write_to.as_deref() {
+                        let path =
+                            write_output(&step_id, out_dir, write_to, &success.out.model_output)?;
+                        println!(
+                            "ARTIFACT step={} path={} bytes={}",
+                            step_id,
+                            path.display(),
+                            success.out.model_output.len()
+                        );
+                        artifacts.push(path);
+                    }
+
+                    if print_outputs {
+                        println!("--- step: {} ---", step_id);
+                        println!("{}", success.out.model_output.trim_end());
+                        println!();
+                    }
+                    records.push(StepExecutionRecord {
+                        step_id: step_id.clone(),
+                        provider_id: success.out.provider_id.clone(),
+                        status: "success".to_string(),
+                        attempts: success.attempts,
+                        output_bytes: success.out.model_output.len(),
+                    });
+                    if let Some(save_as) = step.save_as.as_ref() {
+                        saved_state.insert(save_as.clone(), success.out.model_output.clone());
+                    }
+                    outs.push(success.out);
+                    completed.insert(step_id);
+                }
+                Err(err) => {
+                    tr.step_finished(&step_id, false);
+                    let provider_id = step
+                        .provider
+                        .clone()
+                        .unwrap_or_else(|| "<unresolved-provider>".to_string());
+                    records.push(StepExecutionRecord {
+                        step_id: step_id.clone(),
+                        provider_id,
+                        status: "failure".to_string(),
+                        attempts: step.retry.as_ref().map(|r| r.max_attempts).unwrap_or(1),
+                        output_bytes: 0,
+                    });
+                    let continue_on_error =
+                        matches!(step.on_error, Some(crate::adl::StepOnError::Continue));
+                    if continue_on_error {
+                        completed.insert(step_id);
+                        continue;
+                    }
+                    tr.run_failed(&err.to_string());
+                    return Err(anyhow!("step '{}' failed: {:#}", step_id, err));
+                }
             }
         }
     }
