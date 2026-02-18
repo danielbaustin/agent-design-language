@@ -4,7 +4,7 @@ Agent Design Language (ADL) is a declarative, contract-driven way to define AI w
 
 ADL is built for teams that want repeatability. Documents are parsed and validated, then resolved into a deterministic plan before execution. That plan-first model makes behavior inspectable, testable, and easier to review than runtime-only orchestration.
 
-The v0.3 runtime focuses on predictable execution semantics: deterministic sequential execution, deterministic fork/join behavior in declared order (single-threaded, not parallel), explicit failure policies (`on_error: fail|continue`), and deterministic retry via `retry.max_attempts`.
+The current runtime (v0.4 milestone) focuses on predictable execution semantics: deterministic sequential execution, bounded concurrent fork execution, deterministic join barriers, explicit failure policies (`on_error: fail|continue`), and deterministic retry via `retry.max_attempts`.
 
 ADL also supports a remote HTTP provider MVP for controlled integration with external inference endpoints. Every run can emit stable artifacts under `.adl/runs/<run_id>/` (`run.json`, `steps.json`), which helps with reproducibility, debugging, and auditability.
 
@@ -30,18 +30,21 @@ cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-re
 
 Badges above report the `main` branch workflow status, not the currently open PR branch.
 
-## Current Status (v0.3)
+## Current Status (v0.4 Milestone)
 
 Implemented in the `swarm/` runtime:
 - Deterministic sequential execution
-- Deterministic v0.3 fork/join execution (`workflow.kind: concurrent`) using single-threaded declared step order
+- Plan-driven runtime fork/join execution (`workflow.kind: concurrent`)
+- Bounded concurrent fork execution in runtime
+- Deterministic join barrier semantics
 - Step-level failure policy: `on_error: fail|continue`
 - Deterministic retries: `retry.max_attempts` (no backoff)
 - Remote HTTP provider (MVP)
 - Run state artifacts under `.adl/runs/<run_id>/` (`run.json`, `steps.json`)
+- No-network v0.4 demo harness (`swarm/tools/demo_v0_4.sh`)
 
 Explicitly deferred:
-- True parallel execution (v0.4 target)
+- Configurable runtime parallelism controls
 - Cancellation propagation and replay engine
 
 ## Repository Layout
@@ -78,6 +81,8 @@ Bounded parallelism stress (8 branch steps with bounded executor):
 ```bash
 SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-bounded-parallelism.adl.yaml --run --trace --out .adl/reports/demo-v0.4/bounded-parallelism
 ```
+
+Current engine concurrency is intentionally fixed at `MAX_PARALLEL=4` in v0.4; this demo proves bounded execution at that shipped limit.
 
 Deterministic replay (run twice with same command, then compare `replay/join.txt` hash):
 

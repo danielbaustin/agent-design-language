@@ -1,46 +1,40 @@
-# Release Process Template
+# ADL v0.4 Release Plan
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Release manager: `{{release_manager}}`
-
-## How To Use
-- Execute sections in order and capture links for each completed step.
-- Keep this doc focused on shipping mechanics; use release notes for narrative.
-- Mark blockers immediately; do not publish until gates pass.
+- Milestone: `v0.4`
+- Version: `0.4.0`
+- Release date: `2026-02-18`
+- Release manager: Daniel Austin
 
 ## 1) Release Readiness
-- [ ] Milestone checklist complete (`{{milestone_checklist_link}}`)
-- [ ] Release notes approved (`{{release_notes_link}}`)
-- [ ] Go/no-go decision recorded (`{{decision_link}}`)
+- [x] Milestone checklist complete (`docs/milestones/v0.4/MILESTONE_CHECKLIST_v0.4.md`)
+- [x] Release notes approved (`docs/milestones/v0.4/RELEASE_NOTES_v0.4.md`)
+- [x] Go/no-go decision recorded (`docs/milestones/v0.4/DECISIONS_v0.4.md`)
 
 ## 2) Branch And Tag Preparation
-- [ ] Target branch confirmed (`{{target_branch}}`)
-- [ ] Working tree clean
-- [ ] Version string(s) validated (`{{version_validation_link}}`)
-- [ ] Tag created: `{{tag_name}}`
+- [x] Target branch confirmed (`main`)
+- [x] Working tree clean
+- [x] Version docs validated
+- [ ] Tag created: `v0.4.0`
 - [ ] Tag pushed and verified
 
 ## 3) GitHub Release Steps
-- [ ] GitHub Release draft created from `{{tag_name}}` (`{{release_draft_link}}`)
+- [ ] GitHub Release draft created from `v0.4.0`
 - [ ] Release body populated from approved notes
 - [ ] Links to key PRs/issues included
-- [ ] Release visibility confirmed (draft/prerelease/final)
+- [ ] Release visibility confirmed
 - [ ] Release published
 
 ## 4) Verification
-- [ ] Post-release CI status checked (`{{ci_run_link}}`)
-- [ ] Release links tested (docs, artifacts, notes)
-- [ ] Immediate regressions triaged and tracked (`{{triage_link}}`)
+- [x] Pre-release CI status checked on merged PRs (green)
+- [ ] Post-release CI status checked
+- [ ] Release links tested
+- [ ] Immediate regressions triaged (if any)
 
 ## 5) Communication
-- [ ] Community announcement published (`{{announcement_link}}`)
-- [ ] Internal update posted (`{{internal_update_link}}`)
-- [ ] Roadmap/status updated (`{{roadmap_update_link}}`)
+- [ ] Community announcement published
+- [ ] Internal update posted
+- [ ] Roadmap/status updated
 
 ## Exit Criteria
-- Tag and GitHub Release are published and accessible.
-- Verification completed with no unknown critical failures.
-- Communication links captured.
+Tag + release publication remains pending. All documentation and merged implementation evidence is in place.

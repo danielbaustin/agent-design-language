@@ -1,50 +1,44 @@
-# Milestone Checklist Template
+# ADL v0.4 Milestone Checklist
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Target release date: `{{target_release_date}}`
-- Owner: `{{owner}}`
-
-## Purpose
-Ship/no-ship gate for the milestone. Check items only when evidence exists.
+- Milestone: `v0.4`
+- Version: `0.4.0`
+- Target release date: `2026-02-18`
+- Owner: Daniel Austin
 
 ## Planning
-- [ ] Milestone goal defined (`{{goal_doc_link}}`)
-- [ ] Scope + non-goals documented (`{{scope_doc_link}}`)
-- [ ] WBS created and mapped to issues (`{{wbs_link}}`)
-- [ ] Decision log initialized (`{{decisions_link}}`)
-- [ ] Sprint plan created (`{{sprint_plan_link}}`)
+- [x] Milestone goal defined (`docs/milestones/v0.4/DESIGN_v0.4.md`)
+- [x] Scope + non-goals documented (`docs/milestones/v0.4/DESIGN_v0.4.md`)
+- [x] WBS created and mapped to issues (`docs/milestones/v0.4/WBS_v0.4.md`)
+- [x] Decision log finalized (`docs/milestones/v0.4/DECISIONS_v0.4.md`)
+- [x] Sprint summary finalized (`docs/milestones/v0.4/SPRINT_v0.4.md`)
 
 ## Execution Discipline
-- [ ] Each issue has input/output cards under `.adl/cards/<issue>/`
-- [ ] Each burst writes artifacts under `.adl/reports/burst/<timestamp>/`
-- [ ] Draft PR opened for each issue before merge
-- [ ] Transient failures retried and documented
-- [ ] "Green-only merge" policy followed
+- [x] Issue work tracked with input/output cards
+- [x] Burst artifacts captured where required
+- [x] Draft PR flow used before merge
+- [x] Transient failures documented and self-healed
+- [x] Green-only merge policy followed
 
 ## Quality Gates
-- [ ] `cargo fmt` passes
-- [ ] `cargo clippy --all-targets -- -D warnings` passes
-- [ ] `cargo test` passes
-- [ ] CI is green on the merge target
-- [ ] Coverage signal is not red (or exception documented) (`{{coverage_link_or_note}}`)
-- [ ] No unresolved high-priority blockers (`{{blocker_report_link}}`)
+- [x] `cargo fmt` passes
+- [x] `cargo clippy --all-targets -- -D warnings` passes
+- [x] `cargo test` passes
+- [x] CI is green on merge target
+- [x] Coverage signal not red
+- [x] No unresolved high-priority runtime blockers for v0.4 scope
 
 ## Release Packaging
-- [ ] Release notes finalized (`{{release_notes_link}}`)
-- [ ] Tag verified: `{{tag_name}}`
-- [ ] GitHub Release drafted (`{{release_draft_link}}`)
-- [ ] Links validated in release body
-- [ ] Release published
+- [x] Release notes finalized (`docs/milestones/v0.4/RELEASE_NOTES_v0.4.md`)
+- [ ] Tag verified: `v0.4.0`
+- [ ] GitHub Release drafted/published
+- [x] Milestone links validated in docs
 
 ## Post-Release
-- [ ] Milestone/epic issues closed with release links
-- [ ] Deferred items moved to next milestone backlog
-- [ ] Follow-up bugs/tech debt captured as issues
-- [ ] Roadmap/status docs updated (`{{roadmap_update_link}}`)
-- [ ] Retrospective summary recorded (`{{retro_link}}`)
+- [x] Demo pass merged and issue closed (#306 / #307)
+- [ ] Remaining open milestone umbrella issues closed with release links (`#290`, `#291`)
+- [ ] Deferred items moved to next milestone backlog (v0.5)
+- [ ] Retrospective summary recorded
 
 ## Exit Criteria
-- All required gates are checked, or each exception has an owner + due date.
-- Milestone can be audited end-to-end via the links captured above.
+Milestone implementation is complete and documented. Final release publication steps (tag + GitHub Release + umbrella closure) remain as the last gating actions.
