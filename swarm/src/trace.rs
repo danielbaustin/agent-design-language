@@ -97,9 +97,10 @@ impl TraceEvent {
                 success,
                 duration_ms,
             } => format!(
-                "{} (+{}ms) StepFinished step={step_id} success={success} duration_ms={duration_ms}",
+                "{} (+{}ms) StepFinished step={step_id} success={success} duration={}",
                 format_ts_ms(*ts_ms),
-                elapsed_ms
+                elapsed_ms,
+                format_duration_secs(*duration_ms)
             ),
         }
     }
@@ -238,6 +239,11 @@ fn format_ts_ms(ts_ms: u128) -> String {
         "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}.{:03}Z",
         year, m, d, hour, minute, second, millis
     )
+}
+
+fn format_duration_secs(duration_ms: u128) -> String {
+    let secs = duration_ms as f64 / 1000.0;
+    format!("{secs:.3}s")
 }
 
 #[cfg(test)]

@@ -228,8 +228,8 @@ run:
         step_finished_line
     );
     assert!(
-        step_finished_line.contains("duration_ms="),
-        "expected duration_ms on StepFinished line, got:\n{}",
+        step_finished_line.contains("duration=") && step_finished_line.ends_with('s'),
+        "expected duration=<s.sss>s on StepFinished line, got:\n{}",
         step_finished_line
     );
 }
