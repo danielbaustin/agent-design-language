@@ -1,4 +1,5 @@
 pub mod adl;
+pub mod bounded_executor;
 pub mod demo;
 pub mod execute;
 pub mod execution_plan;
