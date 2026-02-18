@@ -27,8 +27,21 @@ cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-re
 [![swarm-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
 [![swarm-coverage-gate (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
+![Milestone](https://img.shields.io/badge/milestone-v0.4-green)
 
 Badges above report the `main` branch workflow status, not the currently open PR branch.
+
+## Status
+
+Current release: **v0.4.0**
+
+v0.4 ships:
+- ExecutionPlan-driven runtime execution
+- Bounded fork concurrency
+- Deterministic join barrier
+- Deterministic replay demos
+- Human-readable trace timestamps
+- Run/Step progress banners
 
 ## Current Status (v0.4 Milestone)
 
