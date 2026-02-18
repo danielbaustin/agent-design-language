@@ -30,15 +30,15 @@
 
 ## Release Packaging
 - [x] Release notes finalized (`docs/milestones/v0.4/RELEASE_NOTES_v0.4.md`)
-- [ ] Tag verified: `v0.4.0`
-- [ ] GitHub Release drafted/published
+- [x] Tag verified: `v0.4.0`
+- [x] GitHub Release drafted/published (`https://github.com/danielbaustin/agent-design-language/releases/tag/v0.4.0`)
 - [x] Milestone links validated in docs
 
 ## Post-Release
 - [x] Demo pass merged and issue closed (#306 / #307)
-- [ ] Remaining open milestone umbrella issues closed with release links (`#290`, `#291`)
+- [x] Remaining open milestone umbrella issues closed with release links (`#290`, `#291`)
 - [ ] Deferred items moved to next milestone backlog (v0.5)
 - [ ] Retrospective summary recorded
 
 ## Exit Criteria
-Milestone implementation is complete and documented. Final release publication steps (tag + GitHub Release + umbrella closure) remain as the last gating actions.
+Milestone implementation and release publication are complete; remaining work is post-release process follow-through.

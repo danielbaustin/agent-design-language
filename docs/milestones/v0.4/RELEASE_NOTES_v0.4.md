@@ -4,7 +4,7 @@
 - Product: `ADL`
 - Version: `0.4`
 - Release date: `2026-02-18`
-- Tag: `v0.4.0` (pending tag publish)
+- Tag: `v0.4.0`
 
 ## Summary
 ADL v0.4 ships real runtime concurrency behavior with deterministic fork/join semantics, bounded fork execution, strengthened runtime wiring through `ExecutionPlan`, and no-network demos that make the behavior directly reproducible.

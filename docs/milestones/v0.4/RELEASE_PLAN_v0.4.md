@@ -15,21 +15,21 @@
 - [x] Target branch confirmed (`main`)
 - [x] Working tree clean
 - [x] Version docs validated
-- [ ] Tag created: `v0.4.0`
-- [ ] Tag pushed and verified
+- [x] Tag created: `v0.4.0`
+- [x] Tag pushed and verified
 
 ## 3) GitHub Release Steps
-- [ ] GitHub Release draft created from `v0.4.0`
-- [ ] Release body populated from approved notes
-- [ ] Links to key PRs/issues included
-- [ ] Release visibility confirmed
-- [ ] Release published
+- [x] GitHub Release draft created from `v0.4.0`
+- [x] Release body populated from approved notes
+- [x] Links to key PRs/issues included
+- [x] Release visibility confirmed
+- [x] Release published
 
 ## 4) Verification
 - [x] Pre-release CI status checked on merged PRs (green)
-- [ ] Post-release CI status checked
-- [ ] Release links tested
-- [ ] Immediate regressions triaged (if any)
+- [x] Post-release CI status checked
+- [x] Release links tested
+- [x] Immediate regressions triaged (if any)
 
 ## 5) Communication
 - [ ] Community announcement published
@@ -37,4 +37,4 @@
 - [ ] Roadmap/status updated
 
 ## Exit Criteria
-Tag + release publication remains pending. All documentation and merged implementation evidence is in place.
+Release is published: https://github.com/danielbaustin/agent-design-language/releases/tag/v0.4.0
