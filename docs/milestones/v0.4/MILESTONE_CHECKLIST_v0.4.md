@@ -37,8 +37,8 @@
 ## Post-Release
 - [x] Demo pass merged and issue closed (#306 / #307)
 - [x] Remaining open milestone umbrella issues closed with release links (`#290`, `#291`)
-- [ ] Deferred items moved to next milestone backlog (v0.5)
-- [ ] Retrospective summary recorded
+- [x] Deferred items moved to next milestone backlog (v0.5)
+- [x] Retrospective summary recorded
 
 ## Exit Criteria
-Milestone implementation and release publication are complete; remaining work is post-release process follow-through.
+Milestone implementation is complete, documented, and release-complete.

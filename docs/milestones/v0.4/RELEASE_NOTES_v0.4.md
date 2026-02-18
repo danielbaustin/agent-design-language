@@ -5,6 +5,7 @@
 - Version: `0.4`
 - Release date: `2026-02-18`
 - Tag: `v0.4.0`
+- Release: https://github.com/danielbaustin/agent-design-language/releases/tag/v0.4.0
 
 ## Summary
 ADL v0.4 ships real runtime concurrency behavior with deterministic fork/join semantics, bounded fork execution, strengthened runtime wiring through `ExecutionPlan`, and no-network demos that make the behavior directly reproducible.
@@ -39,6 +40,9 @@ ADL v0.4 ships real runtime concurrency behavior with deterministic fork/join se
 ## Known Limitations
 - Configurable runtime parallelism is not exposed yet.
 - Advanced scheduler policies and richer trace schema are deferred.
+
+## Breaking Changes
+None.
 
 ## Validation Notes
 - Local gates used for shipped PRs: `cargo fmt`, `cargo clippy --all-targets -- -D warnings`, `cargo test`.
