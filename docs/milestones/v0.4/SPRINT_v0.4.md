@@ -35,5 +35,22 @@ Ship real runtime concurrency (ExecutionPlan + bounded fork + deterministic join
 - Configurable runtime parallelism is not exposed yet (current engine limit is fixed).
 - Advanced scheduling and trace schema expansion deferred to v0.5.
 
+## Retrospective
+
+### What went well
+- Deterministic concurrency achieved without regressions.
+- CI discipline maintained (green-only merges).
+- No-network demo UX landed successfully.
+- Human-readable trace improvements.
+
+### What slowed us down
+- GitHub API flakiness during release.
+- Multiple bursts required to isolate test vs runtime wiring.
+- Trace formatting churn.
+
+### What v0.4 proves
+ADL now executes real, deterministic fork/join concurrency
+with bounded execution and reproducible artifacts.
+
 ## Exit
 Sprint goal met. Runtime concurrency is shipped, deterministic, and demoable.
