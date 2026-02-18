@@ -137,6 +137,32 @@ pub struct ExecutionResult {
     pub records: Vec<StepExecutionRecord>,
 }
 
+fn progress_step_start(enabled: bool, tr: &Trace, step_id: &str, provider_id: &str) {
+    if !enabled {
+        return;
+    }
+    eprintln!(
+        "STEP start (+{}ms) {} provider={}",
+        tr.current_elapsed_ms(),
+        step_id,
+        provider_id
+    );
+}
+
+fn progress_step_done(enabled: bool, tr: &Trace, step_id: &str, ok: bool, duration_ms: u128) {
+    if !enabled {
+        return;
+    }
+    let status = if ok { "ok" } else { "fail" };
+    eprintln!(
+        "STEP done (+{}ms) {} {} duration_ms={}",
+        tr.current_elapsed_ms(),
+        step_id,
+        status,
+        duration_ms
+    );
+}
+
 /// Execute the resolved run in **sequential** mode (v0.1).
 ///
 /// v0.1 behavior:
@@ -146,6 +172,7 @@ pub fn execute_sequential(
     resolved: &AdlResolved,
     tr: &mut Trace,
     print_outputs: bool,
+    emit_progress: bool,
     adl_base_dir: &Path,
     out_dir: &Path,
 ) -> Result<ExecutionResult> {
@@ -165,6 +192,7 @@ pub fn execute_sequential(
             resolved,
             tr,
             print_outputs,
+            emit_progress,
             adl_base_dir,
             out_dir,
         );
@@ -193,6 +221,8 @@ pub fn execute_sequential(
         }
 
         tr.step_started(&step_id, agent_id, provider_id, task_id);
+        let step_started_elapsed = tr.current_elapsed_ms();
+        progress_step_start(emit_progress, tr, &step_id, provider_id);
 
         let max_attempts = step.retry.as_ref().map(|r| r.max_attempts).unwrap_or(1);
         let continue_on_error = matches!(step.on_error, Some(crate::adl::StepOnError::Continue));
@@ -290,6 +320,8 @@ pub fn execute_sequential(
         match success_out {
             Some(out) => {
                 tr.step_finished(&step_id, true);
+                let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
+                progress_step_done(emit_progress, tr, &step_id, true, duration_ms);
 
                 if let Some(write_to) = step.write_to.as_deref() {
                     let path = write_output(&step_id, out_dir, write_to, &out.model_output)?;
@@ -322,6 +354,8 @@ pub fn execute_sequential(
             None => {
                 let err = last_err.unwrap_or_else(|| anyhow!("step '{}' failed", step_id));
                 tr.step_finished(&step_id, false);
+                let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
+                progress_step_done(emit_progress, tr, &step_id, false, duration_ms);
                 records.push(StepExecutionRecord {
                     step_id: step_id.clone(),
                     provider_id: provider_id.to_string(),
@@ -473,6 +507,7 @@ fn execute_concurrent_deterministic(
     resolved: &AdlResolved,
     tr: &mut Trace,
     print_outputs: bool,
+    emit_progress: bool,
     adl_base_dir: &Path,
     out_dir: &Path,
 ) -> Result<ExecutionResult> {
@@ -481,6 +516,7 @@ fn execute_concurrent_deterministic(
     let mut outs = Vec::new();
     let mut artifacts = Vec::new();
     let mut records = Vec::new();
+    let mut progress_started_ms: HashMap<String, u128> = HashMap::new();
     let mut saved_state: HashMap<String, String> = HashMap::new();
     let mut completed: HashSet<String> = HashSet::new();
     let mut pending: HashSet<String> = resolved
@@ -529,6 +565,8 @@ fn execute_concurrent_deterministic(
             let task_id = step.task.as_deref().unwrap_or("<unresolved-task>");
             let provider_id = step.provider.as_deref().unwrap_or("<unresolved-provider>");
             tr.step_started(step_id, agent_id, provider_id, task_id);
+            progress_started_ms.insert(step_id.clone(), tr.current_elapsed_ms());
+            progress_step_start(emit_progress, tr, step_id, provider_id);
         }
 
         let mut jobs: Vec<StepJob> = Vec::new();
@@ -559,6 +597,12 @@ fn execute_concurrent_deterministic(
                 Ok(success) => {
                     tr.prompt_assembled(&step_id, &success.prompt_hash);
                     tr.step_finished(&step_id, true);
+                    let duration_ms = tr.current_elapsed_ms().saturating_sub(
+                        progress_started_ms
+                            .remove(&step_id)
+                            .unwrap_or_else(|| tr.current_elapsed_ms()),
+                    );
+                    progress_step_done(emit_progress, tr, &step_id, true, duration_ms);
 
                     if let Some(write_to) = step.write_to.as_deref() {
                         let path =
@@ -592,6 +636,12 @@ fn execute_concurrent_deterministic(
                 }
                 Err(err) => {
                     tr.step_finished(&step_id, false);
+                    let duration_ms = tr.current_elapsed_ms().saturating_sub(
+                        progress_started_ms
+                            .remove(&step_id)
+                            .unwrap_or_else(|| tr.current_elapsed_ms()),
+                    );
+                    progress_step_done(emit_progress, tr, &step_id, false, duration_ms);
                     let provider_id = step
                         .provider
                         .clone()

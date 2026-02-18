@@ -1033,7 +1033,10 @@ fn run_rejects_concurrent_workflows_in_v0_2() {
     let stderr = String::from_utf8_lossy(&out.stderr);
     let expected =
         "Error: feature 'concurrency' requires v0.3; document version is 0.2 (run.workflow.kind=concurrent)";
-    assert_eq!(stderr.trim(), expected, "stderr mismatch:\n{stderr}");
+    assert!(
+        stderr.contains(expected),
+        "stderr should contain expected error message, stderr was:\n{stderr}"
+    );
 }
 
 #[test]
@@ -1867,6 +1870,41 @@ run:
     assert!(
         !stdout.contains("mock summary bullet one"),
         "stdout should not include step bodies:\n{stdout}"
+    );
+
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        !stderr.contains("RUN start")
+            && !stderr.contains("STEP start")
+            && !stderr.contains("STEP done")
+            && !stderr.contains("RUN done"),
+        "stderr should not include progress banners under --quiet:\n{stderr}"
+    );
+}
+
+#[test]
+fn run_emits_progress_banners_on_stderr() {
+    let base = tmp_dir("exec-progress-banners");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let out = run_swarm(&["examples/v0-3-concurrency-fork-join.adl.yaml", "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success, got {:?}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("RUN start")
+            && stderr.contains("STEP start")
+            && stderr.contains("STEP done")
+            && stderr.contains("RUN done")
+            && stderr.contains("duration_ms="),
+        "stderr missing expected progress banners:\n{stderr}"
     );
 }
 

@@ -198,6 +198,15 @@ impl Trace {
             success,
         });
     }
+
+    pub fn current_elapsed_ms(&self) -> u128 {
+        self.run_started_instant.elapsed().as_millis()
+    }
+
+    pub fn current_ts_ms(&self) -> u128 {
+        self.run_started_ms
+            .saturating_add(self.run_started_instant.elapsed().as_millis())
+    }
 }
 
 /// Print a human-readable trace to stdout (stable + diff-friendly).
@@ -209,6 +218,10 @@ pub fn print_trace(tr: &Trace) {
     for ev in &tr.events {
         println!("{}", ev.summarize());
     }
+}
+
+pub fn format_iso_utc_ms(ts_ms: u128) -> String {
+    format_ts_ms(ts_ms)
 }
 
 fn format_ts_ms(ts_ms: u128) -> String {
