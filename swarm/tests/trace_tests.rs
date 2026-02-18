@@ -3,6 +3,28 @@ use std::process::Command;
 mod helpers;
 use helpers::unique_test_temp_dir;
 
+fn has_iso_prefix_and_elapsed(line: &str) -> bool {
+    // Expected prefix: YYYY-MM-DDTHH:MM:SS.mmmZ (+Nms)
+    if line.len() < 30 {
+        return false;
+    }
+    let b = line.as_bytes();
+    if !(b[4] == b'-'
+        && b[7] == b'-'
+        && b[10] == b'T'
+        && b[13] == b':'
+        && b[16] == b':'
+        && b[19] == b'.'
+        && b[23] == b'Z'
+        && b[24] == b' '
+        && b[25] == b'('
+        && b[26] == b'+')
+    {
+        return false;
+    }
+    line.contains("ms)")
+}
+
 #[test]
 fn cli_trace_flag_prints_trace_header() {
     // This verifies end-to-end CLI wiring produces trace output.
@@ -182,14 +204,33 @@ run:
     );
 
     let stdout = String::from_utf8_lossy(&out.stdout);
+    let step_started_line = stdout
+        .lines()
+        .find(|l| l.contains("StepStarted"))
+        .unwrap_or_default();
+    let step_finished_line = stdout
+        .lines()
+        .find(|l| l.contains("StepFinished"))
+        .unwrap_or_default();
     assert!(
-        stdout.contains("version=0.2")
-            && stdout.contains("ts=")
-            && stdout.contains("elapsed_ms=")
-            && stdout.contains("elapsed=")
-            && stdout.contains("RunFinished"),
+        stdout.contains("version=0.2") && stdout.contains("RunFinished"),
         "expected v0.2 trace enhancements, stdout was:\n{}",
         stdout
+    );
+    assert!(
+        has_iso_prefix_and_elapsed(step_started_line),
+        "expected ISO timestamp + elapsed prefix on StepStarted, got:\n{}",
+        step_started_line
+    );
+    assert!(
+        has_iso_prefix_and_elapsed(step_finished_line),
+        "expected ISO timestamp + elapsed prefix on StepFinished, got:\n{}",
+        step_finished_line
+    );
+    assert!(
+        step_finished_line.contains("duration_ms="),
+        "expected duration_ms on StepFinished line, got:\n{}",
+        step_finished_line
     );
 }
 
