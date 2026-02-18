@@ -193,6 +193,18 @@ cat
 exit 0
 "#
         }
+        MockOllamaBehavior::SleepEchoPrompt => {
+            r#"#!/bin/sh
+set -eu
+if [ "${1:-}" != "run" ]; then
+  echo "mock ollama: expected 'run'" 1>&2
+  exit 2
+fi
+sleep 1
+cat
+exit 0
+"#
+        }
         MockOllamaBehavior::FailOnce => {
             r#"#!/bin/sh
 set -eu
@@ -245,6 +257,7 @@ enum MockOllamaBehavior {
     Fail,
     EchoModel,
     EchoPrompt,
+    SleepEchoPrompt,
     FailOnce,
     FailOnToken,
 }
@@ -1248,6 +1261,117 @@ run:
         !stdout.contains("StepStarted step=fork.join"),
         "join step should not start after branch failure; stdout:\n{stdout}"
     );
+}
+
+#[test]
+fn run_v0_3_fork_join_uses_bounded_executor_with_deterministic_join_barrier() {
+    let base = tmp_dir("exec-concurrent-v0-3-bounded-join-trace");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepEchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  branch:
+    prompt:
+      user: "BRANCH={{branch}}"
+  join:
+    prompt:
+      user: "JOIN A={{a}} B={{b}} C={{c}} D={{d}} E={{e}}"
+
+run:
+  name: "v0-3-bounded-join-trace"
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "fork.branch.c"
+        agent: "a1"
+        task: "branch"
+        save_as: "c"
+        inputs:
+          branch: "c"
+      - id: "fork.branch.a"
+        agent: "a1"
+        task: "branch"
+        save_as: "a"
+        inputs:
+          branch: "a"
+      - id: "fork.branch.e"
+        agent: "a1"
+        task: "branch"
+        save_as: "e"
+        inputs:
+          branch: "e"
+      - id: "fork.branch.b"
+        agent: "a1"
+        task: "branch"
+        save_as: "b"
+        inputs:
+          branch: "b"
+      - id: "fork.branch.d"
+        agent: "a1"
+        task: "branch"
+        save_as: "d"
+        inputs:
+          branch: "d"
+      - id: "fork.join"
+        agent: "a1"
+        task: "join"
+        save_as: "joined"
+        write_to: "join.txt"
+        inputs:
+          a: "@state:a"
+          b: "@state:b"
+          c: "@state:c"
+          d: "@state:d"
+          e: "@state:e"
+"#;
+
+    let tmp_yaml = base.join("v0-3-bounded-join-trace.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let started = std::time::Instant::now();
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run", "--trace"]);
+    let elapsed = started.elapsed().as_secs_f64();
+
+    assert!(
+        out.status.success(),
+        "expected success, got failure.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    assert!(
+        (2.5..=5.8).contains(&elapsed),
+        "expected bounded runtime window for 5 forks + join with max_parallel=4, got {elapsed:.3}s"
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let join_started = stdout
+        .find("StepStarted step=fork.join")
+        .expect("join step should start in trace output");
+    for branch in ["a", "b", "c", "d", "e"] {
+        let marker = format!("StepFinished step=fork.branch.{branch} success=true");
+        let idx = stdout
+            .find(&marker)
+            .unwrap_or_else(|| panic!("missing marker '{marker}' in trace output:\n{stdout}"));
+        assert!(
+            idx < join_started,
+            "join started before branch {branch} finished; stdout:\n{stdout}"
+        );
+    }
 }
 
 #[test]

@@ -91,12 +91,49 @@ pub fn build_execution_plan(
         });
     }
 
+    if matches!(workflow_kind, adl::WorkflowKind::Concurrent) {
+        apply_concurrent_fork_join_structure(&mut nodes);
+    }
+
     validate_acyclic(&nodes)?;
 
     Ok(ExecutionPlan {
         workflow_kind,
         nodes,
     })
+}
+
+fn apply_concurrent_fork_join_structure(nodes: &mut [ExecutionNode]) {
+    let plan_id = nodes
+        .iter()
+        .find(|n| n.step_id == "fork.plan")
+        .map(|n| n.step_id.clone());
+    let mut branch_ids: Vec<String> = nodes
+        .iter()
+        .filter(|n| n.step_id.starts_with("fork.branch."))
+        .map(|n| n.step_id.clone())
+        .collect();
+    branch_ids.sort();
+
+    for node in nodes.iter_mut() {
+        if node.step_id.starts_with("fork.branch.") {
+            if let Some(plan) = plan_id.as_ref() {
+                if !node.depends_on.iter().any(|d| d == plan) {
+                    node.depends_on.push(plan.clone());
+                }
+            }
+            node.depends_on.sort();
+        }
+
+        if node.step_id == "fork.join" {
+            for branch in &branch_ids {
+                if !node.depends_on.iter().any(|d| d == branch) {
+                    node.depends_on.push(branch.clone());
+                }
+            }
+            node.depends_on.sort();
+        }
+    }
 }
 
 fn validate_acyclic(nodes: &[ExecutionNode]) -> Result<()> {
@@ -229,6 +266,38 @@ mod tests {
         assert_eq!(
             plan.nodes[2].depends_on,
             vec!["branch.alpha".to_string(), "plan".to_string()]
+        );
+    }
+
+    #[test]
+    fn build_plan_adds_structural_fork_join_dependencies() {
+        let steps = vec![
+            mk_step("fork.branch.beta", Some("beta"), &[]),
+            mk_step("fork.join", Some("joined"), &[("alpha", "@state:alpha")]),
+            mk_step("fork.plan", None, &[]),
+            mk_step("fork.branch.alpha", Some("alpha"), &[]),
+        ];
+
+        let plan = build_execution_plan(adl::WorkflowKind::Concurrent, &steps).expect("valid");
+        assert_eq!(plan.nodes.len(), 4);
+
+        let by_id: HashMap<&str, &ExecutionNode> =
+            plan.nodes.iter().map(|n| (n.step_id.as_str(), n)).collect();
+
+        assert_eq!(
+            by_id["fork.branch.alpha"].depends_on,
+            vec!["fork.plan".to_string()]
+        );
+        assert_eq!(
+            by_id["fork.branch.beta"].depends_on,
+            vec!["fork.plan".to_string()]
+        );
+        assert_eq!(
+            by_id["fork.join"].depends_on,
+            vec![
+                "fork.branch.alpha".to_string(),
+                "fork.branch.beta".to_string()
+            ]
         );
     }
 }
