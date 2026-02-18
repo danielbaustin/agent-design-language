@@ -1,6 +1,7 @@
 # ADL v0.4 Release Announcement
 
 ADL v0.4 is now complete.
+Release: https://github.com/danielbaustin/agent-design-language/releases/tag/v0.4.0
 
 This release marks the shift from planned concurrency to shipped, observable runtime concurrency behavior.
 

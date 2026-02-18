@@ -59,4 +59,4 @@ v0.3 had deterministic fork/join modeling but runtime behavior needed stronger, 
 - Configurable parallelism and advanced scheduling are deferred.
 
 ## Exit
-v0.4 ships real, observable runtime concurrency with deterministic join behavior and reproducible demos, while preserving existing v0.3 stability guarantees.
+v0.4 ships plan-driven runtime concurrency with deterministic fork/join semantics and reproducible artifacts, while preserving existing v0.3 stability guarantees.
