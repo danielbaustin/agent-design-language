@@ -91,6 +91,14 @@ Run all three demos in sequence:
 swarm/tools/demo_v0_4.sh
 ```
 
+## Why v0.4 Matters
+
+v0.4 proves:
+- Concurrent execution in the real runtime
+- Deterministic replay behavior
+- Bounded parallelism
+- Stable artifacts under concurrency
+
 ## Default Workflow
 
 Default contributor workflow uses `adl_pr_cycle` (`start -> codex -> finish -> report`).

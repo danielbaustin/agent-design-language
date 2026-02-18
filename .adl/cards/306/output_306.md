@@ -21,15 +21,16 @@ Implemented a v0.4 demo pass with three no-network demos and a one-command demo 
 3. Deterministic replay demo (same workflow run twice; matching artifact hash).
 
 Added a deterministic mock `ollama` tool for demo runs, added `swarm/tools/demo_v0_4.sh`, and updated README with a new `v0.4 Demos` section containing copy/paste `cargo run -q` commands.
+No runtime semantics changed in this burst; it adds deterministic demo coverage, tooling, and documentation.
 
 ## Files changed
-- `/Users/daniel/git/agent-design-language/README.md`
-- `/Users/daniel/git/agent-design-language/swarm/tools/README.md`
-- `/Users/daniel/git/agent-design-language/swarm/examples/v0-4-demo-fork-join-swarm.adl.yaml`
-- `/Users/daniel/git/agent-design-language/swarm/examples/v0-4-demo-bounded-parallelism.adl.yaml`
-- `/Users/daniel/git/agent-design-language/swarm/examples/v0-4-demo-deterministic-replay.adl.yaml`
-- `/Users/daniel/git/agent-design-language/swarm/tools/mock_ollama_v0_4.sh`
-- `/Users/daniel/git/agent-design-language/swarm/tools/demo_v0_4.sh`
+- `README.md`
+- `swarm/tools/README.md`
+- `swarm/examples/v0-4-demo-fork-join-swarm.adl.yaml`
+- `swarm/examples/v0-4-demo-bounded-parallelism.adl.yaml`
+- `swarm/examples/v0-4-demo-deterministic-replay.adl.yaml`
+- `swarm/tools/mock_ollama_v0_4.sh`
+- `swarm/tools/demo_v0_4.sh`
 
 ## Commands run
 - `sed -n '1,260p' /Users/daniel/git/agent-design-language/.adl/cards/306/input_306.md`
@@ -68,7 +69,7 @@ From repo root:
   - `swarm/tools/demo_v0_4.sh`
 
 ## Notes / Deviations
-- Runtime parallelism level is currently fixed in engine code (`MAX_PARALLEL=4`), so the bounded demo proves bounded execution with current engine limit rather than a user-configurable 2/3 setting.
+- Current engine concurrency is fixed at 4 (`MAX_PARALLEL=4`). This demo pass intentionally proves bounded execution at the shipped runtime limit. Configurable parallelism is tracked as a future milestone item.
 - No network calls are required when using `SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh`.
 
 ## Follow-ups
