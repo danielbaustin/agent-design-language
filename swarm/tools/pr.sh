@@ -13,7 +13,7 @@
 # - Rust toolchain for `swarm/` checks (fmt, clippy, test)
 #
 #   swarm/tools/pr.sh help
-#   swarm/tools/pr.sh start   <issue> [--slug <slug>] [--prefix codex] [--no-fetch-issue]
+#   swarm/tools/pr.sh start   <issue> [--slug <slug>] [--title "<title>"] [--prefix codex] [--no-fetch-issue]
 #   swarm/tools/pr.sh card    <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
 #   swarm/tools/pr.sh output  <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
 #   swarm/tools/pr.sh finish  <issue> --title "<title>" [-f <input_card.md>] [--output-card <output_card.md>] [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [--no-open]
@@ -890,11 +890,13 @@ cmd_start() {
   local slug=""
   local no_fetch_issue="0"
   local title=""
+  local title_arg=""
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --prefix) prefix="$2"; shift 2 ;;
       --slug) slug="$2"; shift 2 ;;
+      --title) title_arg="$2"; shift 2 ;;
       --no-fetch-issue) no_fetch_issue="1"; shift ;;
       -h|--help) usage_start; return 0 ;;
       *) die_with_usage "start: unknown arg: $1" usage_start ;;
@@ -905,6 +907,12 @@ cmd_start() {
   local repo
   repo="$(default_repo)"
   title=""
+  if [[ -z "$slug" && -n "$title_arg" ]]; then
+    # Accept --title on start for CLI symmetry with finish/new and derive a stable slug.
+    slug="$(sanitize_slug "$title_arg")"
+    [[ -n "$slug" ]] || die "start: --title produced empty slug after sanitization"
+    title="$title_arg"
+  fi
   if [[ -z "$slug" ]]; then
     if [[ "$no_fetch_issue" == "1" ]]; then
       die "start: --slug is required when --no-fetch-issue is set"
@@ -1323,7 +1331,7 @@ pr.sh — reduce git/PR thrash while preserving human review
 Commands:
   help
   new     --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
-  start   <issue> [--slug <slug>] [--prefix <pfx>] [--no-fetch-issue]
+  start   <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue]
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
   output  <issue> [input|output] ... [--version <v0.2>] [-f <output_card.md>]
   cards   <issue> [--version <v0.2>] [--no-fetch-issue]
@@ -1347,6 +1355,7 @@ Flags:
   (finish) --merge                              Opt-in: ready + squash-merge + delete branch.
   (finish) --idempotent                         Safe no-op only when existing merged PR matches current finish inputs.
   (card/start) --slug <slug>                   Use an explicit slug instead of fetching the issue title.
+  (start)   --title "<title>"                  Optional; accepted for UX symmetry and used to derive slug when --slug is omitted.
 
 Notes:
 - PRs are created as DRAFT by default to preserve human review.
@@ -1383,7 +1392,7 @@ EOF
 usage_start() {
   cat <<'EOF'
 Usage:
-  swarm/tools/pr.sh start <issue> [--slug <slug>] [--prefix <pfx>] [--no-fetch-issue]
+  swarm/tools/pr.sh start <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue]
 EOF
 }
 
