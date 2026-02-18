@@ -1,57 +1,49 @@
-# Release Notes Template
+# ADL v0.4 Release Notes
 
 ## Metadata
-- Product: `{{product_name}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Tag: `{{tag_name}}`
-
-## How To Use
-- Keep statements implementation-accurate and test-validated.
-- Prefer concise bullets over marketing language.
-- Explicitly separate shipped behavior from "What's Next."
-
-# `{{product_name}}` `{{version}}` Release Notes
+- Product: `ADL`
+- Version: `0.4`
+- Release date: `2026-02-18`
+- Tag: `v0.4.0` (pending tag publish)
 
 ## Summary
-{{summary_paragraph}}
+ADL v0.4 ships real runtime concurrency behavior with deterministic fork/join semantics, bounded fork execution, strengthened runtime wiring through `ExecutionPlan`, and no-network demos that make the behavior directly reproducible.
 
 ## Highlights
-- {{highlight_1}}
-- {{highlight_2}}
-- {{highlight_3}}
+- Runtime execution now follows validated `ExecutionPlan` dependencies.
+- Fork-stage work executes through bounded concurrency in the runtime engine.
+- Join barrier behavior is deterministic and reproducible.
+- Demo coverage now includes fork/join swarm, bounded parallelism stress, and deterministic replay (no network required).
 
 ## What's New In Detail
 
-### {{area_1}}
-- {{detail_1a}}
-- {{detail_1b}}
+### Runtime Concurrency Engine
+- Landed ExecutionPlan + DAG validation scaffold.
+- Landed bounded executor primitive for fork work.
+- Landed deterministic join barrier wiring and runtime hardening.
 
-### {{area_2}}
-- {{detail_2a}}
-- {{detail_2b}}
+### Determinism and Validation
+- Added integration coverage for deterministic concurrent execution.
+- Added bounded-parallelism integration coverage.
+- Preserved existing v0.3-compatible behavior while strengthening runtime path.
 
-### {{area_3}}
-- {{detail_3a}}
-- {{detail_3b}}
+### Demo and Docs
+- Added v0.4 demo workflows under `swarm/examples/`.
+- Added `swarm/tools/demo_v0_4.sh` and deterministic `mock_ollama_v0_4.sh`.
+- Added README v0.4 Demos section and a concise "Why v0.4 matters" summary.
 
 ## Upgrade Notes
-- {{upgrade_note_1}}
-- {{upgrade_note_2}}
+- No migration action required for existing v0.3 workflows.
+- Runtime concurrency limit is fixed at engine level (`MAX_PARALLEL=4`) in this release.
 
 ## Known Limitations
-- {{limitation_1}}
-- {{limitation_2}}
+- Configurable runtime parallelism is not exposed yet.
+- Advanced scheduler policies and richer trace schema are deferred.
 
 ## Validation Notes
-- {{validation_note_1}}
-- {{validation_note_2}}
+- Local gates used for shipped PRs: `cargo fmt`, `cargo clippy --all-targets -- -D warnings`, `cargo test`.
+- CI checks on merged PRs are green (`swarm-ci`, `swarm-coverage`).
 
 ## What's Next
-- {{next_1}}
-- {{next_2}}
-
-## Exit Criteria
-- Notes reflect only shipped behavior.
-- Known limitations and future work are explicitly separated.
-- Final text is ready to paste into GitHub Release UI without further editing.
+- v0.5: configurable concurrency controls and scheduler improvements.
+- v0.5: expanded orchestration and observability roadmap items.

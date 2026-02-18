@@ -1,247 +1,62 @@
-# Design Template
-
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-- Related issues: {{issues}}
-
-## Purpose
-Define what we are building, why, and how we validate it — concisely, with links to issues/PRs.
-
-## Problem Statement
-{{problem_statement}}
-
-## Goals
-- {{goal_1}}
-- {{goal_2}}
-
-## Non-Goals
-- {{non_goal_1}}
-- {{non_goal_2}}
-
-## Scope
-### In scope
-- {{in_scope_1}}
-- {{in_scope_2}}
-
-### Out of scope
-- {{out_of_scope_1}}
-- {{out_of_scope_2}}
-
-## Requirements
-### Functional
-- {{functional_requirement_1}}
-- {{functional_requirement_2}}
-
-### Non-functional
-- Deterministic behavior and reproducible outputs.
-- Clear failure semantics and observability.
-- {{non_functional_requirement_1}}
-
-## Proposed Design
-### Overview
-{{architecture_summary}}
-
-### Interfaces / Data contracts
-- {{interface_or_contract_1}}
-- {{interface_or_contract_2}}
-
-### Execution semantics
-{{execution_semantics}}
-
-## Risks and Mitigations
-- Risk: {{risk_1}}
-  - Mitigation: {{mitigation_1}}
-- Risk: {{risk_2}}
-  - Mitigation: {{mitigation_2}}
-
-## Alternatives Considered
-- Option: {{alternative_1}}
-  - Tradeoff: {{tradeoff_1}}
-- Option: {{alternative_2}}
-  - Tradeoff: {{tradeoff_2}}
-
-## Validation Plan
-- Checks/tests: {{validation_checks}}
-- Success metrics: {{success_metrics}}
-- Rollback/fallback: {{rollback_plan}}
-
-## Exit Criteria
-- Goals/non-goals and scope boundaries are explicit.
-- Validation plan is actionable and referenced by the milestone checklist.
-- Major open questions are resolved or tracked in the decision log.
-
-# ADL v0.4 Design – Runtime Concurrency + Orchestration
+# ADL v0.4 Design - Shipped Runtime Concurrency
 
 ## Metadata
 - Milestone: `v0.4`
 - Version: `0.4`
-- Date: `{{date}}`
+- Date: `2026-02-18`
 - Owner: Daniel Austin
-- Related issues: #290, #291
-
-## Purpose
-v0.4 moves ADL from “design + sequential execution” to a minimal but real runtime concurrency engine. The goal is to execute fork/join graphs deterministically while preserving the traceability, artifacts, and review discipline established in v0.3.
-
----
+- Related issues: #290, #296, #297, #298, #302, #304, #306
 
 ## Problem Statement
-In v0.3, fork/join was design-only and execution remained sequential. ADL needs:
+v0.3 had deterministic fork/join modeling but runtime behavior needed stronger, plan-driven concurrency wiring and release-grade demos proving the behavior end-to-end.
 
-- A real execution scaffold for fork/join graphs.
-- Deterministic concurrency semantics.
-- Clear failure handling and retry policy boundaries.
-- Observability strong enough to support future memory/indexing features (scheduled for v0.5).
+## Goals (Shipped)
+- Execute workflows through validated `ExecutionPlan` dependencies.
+- Run fork-stage work with bounded concurrency.
+- Enforce deterministic join barrier behavior.
+- Preserve deterministic output/trace behavior and v0.3 compatibility.
+- Provide no-network, copy/paste demos that prove runtime behavior.
 
-Without this, ADL cannot credibly position itself as an orchestration language for multi-agent workflows.
+## Non-Goals (v0.4)
+- Distributed scheduling.
+- Persistent recovery/checkpoint engine.
+- Configurable runtime parallelism knobs.
+- New schema version beyond currently accepted ADL document versions.
 
----
+## Shipped Design
 
-## Goals
-- Implement a deterministic runtime fork/join execution scaffold.
-- Preserve sequential fallback for debugging and reproducibility.
-- Ensure full trace artifacts for concurrent steps.
-- Keep runtime simple, testable, and extensible.
+### Planner and Graph
+- `ExecutionPlan` + DAG validation is built before execution.
+- Structural concurrent dependencies are encoded for fork/join shape:
+  - `fork.branch.*` depends on `fork.plan` (when present)
+  - `fork.join` depends on all `fork.branch.*`
 
-## Non-Goals
-- High-performance distributed scheduler.
-- Persistent state store.
-- Observable memory + Bayesian indexing (moved to v0.5).
-- Cross-process or cluster-level execution.
+### Runtime Execution
+- Concurrent workflows execute through plan-ready sets.
+- Ready-node ordering is deterministic (stable sort by step id).
+- Fork work executes via bounded executor.
+- Join executes only after all required branch dependencies complete.
 
----
+### Failure and Retry Semantics
+- Existing deterministic retry semantics remain in place.
+- Fail-fast behavior remains default for unrecoverable failures.
+- v0.3 behavior remains intact.
 
-## Scope
+### Artifacts and Trace
+- Stable run artifacts and step outputs are preserved.
+- Trace event ordering remains deterministic for repeated runs with same inputs.
 
-### In scope
-- Fork node execution model (parallel branches).
-- Join node semantics (wait-for-all).
-- Execution graph validation prior to run.
-- Deterministic scheduling strategy.
-- Structured trace + artifact output per branch.
+## Validation Evidence
+- WP-01 planner/DAG scaffold: [#299](https://github.com/danielbaustin/agent-design-language/pull/299)
+- WP-02 bounded executor: [#300](https://github.com/danielbaustin/agent-design-language/pull/300)
+- WP-03 deterministic join: [#301](https://github.com/danielbaustin/agent-design-language/pull/301)
+- Runtime wiring burst 2: [#303](https://github.com/danielbaustin/agent-design-language/pull/303)
+- Runtime wiring burst 3: [#305](https://github.com/danielbaustin/agent-design-language/pull/305)
+- Demo pass: [#307](https://github.com/danielbaustin/agent-design-language/pull/307)
 
-### Out of scope
-- Remote cluster execution.
-- Dynamic graph mutation during execution.
-- Persistent run recovery.
+## Current Limitations
+- Runtime concurrency limit is fixed at `MAX_PARALLEL=4`.
+- Configurable parallelism and advanced scheduling are deferred.
 
----
-
-## Requirements
-
-### Functional
-- Execute fork blocks concurrently using a bounded executor.
-- Join blocks must wait for all upstream branches.
-- Fail-fast behavior configurable at workflow level.
-- Retry policy applied per node (existing policy integrated).
-
-### Non-functional
-- Deterministic ordering of emitted artifacts.
-- Reproducible execution traces.
-- Clear and debuggable failure semantics.
-- No unsafe shared mutable state.
-
----
-
-## Proposed Design
-
-### Overview
-We introduce a lightweight execution engine layer:
-
-- GraphBuilder → validates DAG and constructs execution plan.
-- Executor → runs nodes (sequential or concurrent mode).
-- JoinBarrier → waits for branch completion.
-- TraceRecorder → records step lifecycle events.
-
-Concurrency model:
-- Use a bounded thread pool.
-- Each fork branch executes independently.
-- Join waits for all branch futures.
-- Results merged deterministically (sorted by branch id).
-
-Sequential mode remains available for:
-- Debugging
-- Deterministic replay
-- CI tests
-
----
-
-### Interfaces / Data Contracts
-
-- `ExecutionPlan` – validated DAG with explicit dependencies.
-- `ExecutionContext` – immutable runtime inputs + scoped branch state.
-- `ExecutionResult` – node result + metadata + trace link.
-- `JoinResult` – ordered merge of branch results.
-
-Branch state must be isolated; only explicit outputs may flow across joins.
-
----
-
-### Execution Semantics
-
-1. Validate DAG.
-2. Topologically sort nodes.
-3. When encountering a fork:
-   - Spawn tasks for each branch.
-   - Record branch IDs.
-4. Join barrier waits for all branch completions.
-5. Merge outputs deterministically.
-6. Continue downstream execution.
-
-Failure policy:
-- Default: fail-fast on first unrecoverable error.
-- Optional: complete-all then aggregate errors.
-
-Retry policy:
-- Apply existing retry logic per node.
-- Retries must not violate determinism of final artifacts.
-
----
-
-## Risks and Mitigations
-
-- Risk: Non-deterministic artifact ordering.
-  - Mitigation: Explicit branch ID ordering during join merge.
-
-- Risk: Hidden shared state bugs.
-  - Mitigation: Enforce immutable context and scoped branch state.
-
-- Risk: Debug complexity.
-  - Mitigation: Preserve sequential execution mode.
-
----
-
-## Alternatives Considered
-
-- Async runtime (e.g., async/await everywhere)
-  - Tradeoff: Higher complexity, less transparent execution model.
-
-- Fully distributed executor
-  - Tradeoff: Premature optimization and infrastructure complexity.
-
----
-
-## Validation Plan
-
-- Unit tests for fork/join behavior.
-- Determinism test: multiple runs produce identical artifacts.
-- Failure tests: branch failure scenarios.
-- CI must remain green under concurrent execution mode.
-
-Success metrics:
-- Concurrent demo workflow executes correctly.
-- No regression in sequential mode.
-
-Rollback:
-- Feature flag to disable concurrency and revert to sequential mode.
-
----
-
-## Exit Criteria
-
-- Fork/join executes concurrently with deterministic artifacts.
-- CI is green.
-- Sequential mode still passes all tests.
-- Design doc reflects shipped behavior.
+## Exit
+v0.4 ships real, observable runtime concurrency with deterministic join behavior and reproducible demos, while preserving existing v0.3 stability guarantees.
