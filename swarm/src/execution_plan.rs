@@ -1,0 +1,234 @@
+use anyhow::{anyhow, Result};
+use std::collections::{HashMap, VecDeque};
+
+use crate::adl;
+use crate::resolve::ResolvedStep;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ExecutionNode {
+    pub step_id: String,
+    pub depends_on: Vec<String>,
+    pub save_as: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ExecutionPlan {
+    pub workflow_kind: adl::WorkflowKind,
+    pub nodes: Vec<ExecutionNode>,
+}
+
+fn parse_state_ref(value: &str) -> Option<&str> {
+    let raw = value.strip_prefix("@state:")?;
+    let key = raw.trim();
+    if key.is_empty() {
+        None
+    } else {
+        Some(key)
+    }
+}
+
+pub fn build_execution_plan(
+    workflow_kind: adl::WorkflowKind,
+    steps: &[ResolvedStep],
+) -> Result<ExecutionPlan> {
+    let mut id_to_index: HashMap<&str, usize> = HashMap::new();
+    for (idx, step) in steps.iter().enumerate() {
+        if id_to_index.insert(step.id.as_str(), idx).is_some() {
+            return Err(anyhow!("duplicate step id '{}' in workflow", step.id));
+        }
+    }
+
+    let mut state_producer_by_key: HashMap<&str, &str> = HashMap::new();
+    for step in steps {
+        if let Some(key) = step.save_as.as_deref() {
+            if key.trim().is_empty() {
+                return Err(anyhow!("step '{}' has empty save_as key", step.id));
+            }
+            if state_producer_by_key
+                .insert(key, step.id.as_str())
+                .is_some()
+            {
+                return Err(anyhow!(
+                    "duplicate save_as key '{}' (must be unique per workflow)",
+                    key
+                ));
+            }
+        }
+    }
+
+    let mut nodes = Vec::with_capacity(steps.len());
+    for step in steps {
+        let mut deps: Vec<String> = Vec::new();
+        for value in step.inputs.values() {
+            let Some(state_key) = parse_state_ref(value) else {
+                continue;
+            };
+            let producer_step_id = state_producer_by_key.get(state_key).ok_or_else(|| {
+                anyhow!(
+                    "step '{}' references unknown saved state '{}' via @state:{}",
+                    step.id,
+                    state_key,
+                    state_key
+                )
+            })?;
+            if *producer_step_id == step.id.as_str() {
+                return Err(anyhow!(
+                    "step '{}' cannot depend on its own @state output '{}'",
+                    step.id,
+                    state_key
+                ));
+            }
+            if !deps.iter().any(|d| d == *producer_step_id) {
+                deps.push((*producer_step_id).to_string());
+            }
+        }
+        deps.sort();
+
+        nodes.push(ExecutionNode {
+            step_id: step.id.clone(),
+            depends_on: deps,
+            save_as: step.save_as.clone(),
+        });
+    }
+
+    validate_acyclic(&nodes)?;
+
+    Ok(ExecutionPlan {
+        workflow_kind,
+        nodes,
+    })
+}
+
+fn validate_acyclic(nodes: &[ExecutionNode]) -> Result<()> {
+    let mut indegree: HashMap<&str, usize> = HashMap::new();
+    let mut outgoing: HashMap<&str, Vec<&str>> = HashMap::new();
+
+    for node in nodes {
+        indegree.entry(node.step_id.as_str()).or_insert(0);
+        outgoing.entry(node.step_id.as_str()).or_default();
+    }
+
+    for node in nodes {
+        for dep in &node.depends_on {
+            if !indegree.contains_key(dep.as_str()) {
+                return Err(anyhow!(
+                    "step '{}' depends on unknown step '{}'",
+                    node.step_id,
+                    dep
+                ));
+            }
+            *indegree.entry(node.step_id.as_str()).or_insert(0) += 1;
+            outgoing
+                .entry(dep.as_str())
+                .or_default()
+                .push(node.step_id.as_str());
+        }
+    }
+
+    let mut queue: VecDeque<&str> = indegree
+        .iter()
+        .filter_map(|(node, &deg)| if deg == 0 { Some(*node) } else { None })
+        .collect();
+
+    let mut seen = 0usize;
+    while let Some(node) = queue.pop_front() {
+        seen += 1;
+        for next in outgoing.get(node).into_iter().flatten() {
+            let deg = indegree
+                .get_mut(next)
+                .ok_or_else(|| anyhow!("internal DAG validation error for node '{}'", next))?;
+            *deg -= 1;
+            if *deg == 0 {
+                queue.push_back(next);
+            }
+        }
+    }
+
+    if seen != nodes.len() {
+        return Err(anyhow!(
+            "workflow contains a dependency cycle ({} of {} nodes resolved)",
+            seen,
+            nodes.len()
+        ));
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::resolve::ResolvedStep;
+
+    fn mk_step(id: &str, save_as: Option<&str>, input_refs: &[(&str, &str)]) -> ResolvedStep {
+        let mut inputs = HashMap::new();
+        for (k, v) in input_refs {
+            inputs.insert((*k).to_string(), (*v).to_string());
+        }
+        ResolvedStep {
+            id: id.to_string(),
+            agent: None,
+            provider: None,
+            task: None,
+            prompt: None,
+            inputs,
+            save_as: save_as.map(str::to_string),
+            write_to: None,
+            on_error: None,
+            retry: None,
+        }
+    }
+
+    #[test]
+    fn build_plan_rejects_duplicate_step_ids() {
+        let steps = vec![
+            mk_step("fork.alpha", Some("alpha"), &[]),
+            mk_step("fork.alpha", Some("alpha2"), &[]),
+        ];
+        let err = build_execution_plan(adl::WorkflowKind::Concurrent, &steps).unwrap_err();
+        assert!(err.to_string().contains("duplicate step id"), "{err:#}");
+    }
+
+    #[test]
+    fn build_plan_rejects_missing_state_producer() {
+        let steps = vec![mk_step(
+            "join",
+            None,
+            &[("alpha", "@state:alpha"), ("beta", "@state:beta")],
+        )];
+        let err = build_execution_plan(adl::WorkflowKind::Concurrent, &steps).unwrap_err();
+        assert!(
+            err.to_string().contains("references unknown saved state"),
+            "{err:#}"
+        );
+    }
+
+    #[test]
+    fn build_plan_rejects_dependency_cycles() {
+        let steps = vec![
+            mk_step("a", Some("a_out"), &[("b", "@state:b_out")]),
+            mk_step("b", Some("b_out"), &[("a", "@state:a_out")]),
+        ];
+        let err = build_execution_plan(adl::WorkflowKind::Concurrent, &steps).unwrap_err();
+        assert!(err.to_string().contains("dependency cycle"), "{err:#}");
+    }
+
+    #[test]
+    fn build_plan_allows_valid_linear_state_dependencies() {
+        let steps = vec![
+            mk_step("plan", Some("plan"), &[]),
+            mk_step("branch.alpha", Some("alpha"), &[("plan", "@state:plan")]),
+            mk_step(
+                "join",
+                Some("joined"),
+                &[("alpha", "@state:alpha"), ("plan", "@state:plan")],
+            ),
+        ];
+        let plan = build_execution_plan(adl::WorkflowKind::Concurrent, &steps).expect("valid");
+        assert_eq!(plan.nodes.len(), 3);
+        assert_eq!(plan.nodes[1].depends_on, vec!["plan".to_string()]);
+        assert_eq!(
+            plan.nodes[2].depends_on,
+            vec!["branch.alpha".to_string(), "plan".to_string()]
+        );
+    }
+}

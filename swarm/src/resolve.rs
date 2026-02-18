@@ -1,7 +1,8 @@
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Context, Result};
 use std::collections::HashMap;
 
 use crate::adl;
+use crate::execution_plan;
 use crate::plan;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -30,6 +31,7 @@ pub struct AdlResolved {
     pub run_id: String,
     pub workflow_id: String,
     pub steps: Vec<ResolvedStep>,
+    pub execution_plan: execution_plan::ExecutionPlan,
     /// Copy of the document for lookups (tasks, agents, defaults, etc.).
     pub doc: adl::AdlDoc,
 }
@@ -147,10 +149,15 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
         });
     }
 
+    let execution_plan =
+        execution_plan::build_execution_plan(doc.run.workflow.kind.clone(), &steps)
+            .with_context(|| "failed to build execution plan")?;
+
     Ok(AdlResolved {
         run_id,
         workflow_id,
         steps,
+        execution_plan,
         doc: doc.clone(),
     })
 }
