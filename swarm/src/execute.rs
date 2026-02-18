@@ -149,21 +149,18 @@ pub fn execute_sequential(
     adl_base_dir: &Path,
     out_dir: &Path,
 ) -> Result<ExecutionResult> {
-    if matches!(
-        resolved.doc.run.workflow.kind,
+    let is_concurrent = matches!(
+        resolved.execution_plan.workflow_kind,
         crate::adl::WorkflowKind::Concurrent
-    ) && resolved.doc.version.trim() != "0.3"
-    {
+    );
+    if is_concurrent && resolved.doc.version.trim() != "0.3" {
         let doc_version = resolved.doc.version.trim();
         tr.run_failed("concurrent workflows are not supported in v0.1/v0.2");
         return Err(anyhow!(
             "feature 'concurrency' requires v0.3; document version is {doc_version} (run.workflow.kind=concurrent)"
         ));
     }
-    if matches!(
-        resolved.doc.run.workflow.kind,
-        crate::adl::WorkflowKind::Concurrent
-    ) {
+    if is_concurrent {
         return execute_concurrent_deterministic(
             resolved,
             tr,
@@ -500,7 +497,7 @@ fn execute_concurrent_deterministic(
         .collect();
 
     while !pending.is_empty() {
-        let ready_ids: Vec<String> = resolved
+        let mut ready_ids: Vec<String> = resolved
             .execution_plan
             .nodes
             .iter()
@@ -508,6 +505,8 @@ fn execute_concurrent_deterministic(
             .filter(|node| node.depends_on.iter().all(|dep| completed.contains(dep)))
             .map(|node| node.step_id.clone())
             .collect();
+        // Keep branch execution deterministic even when YAML declaration order varies.
+        ready_ids.sort();
 
         if ready_ids.is_empty() {
             let mut unresolved: Vec<String> = pending.iter().cloned().collect();
