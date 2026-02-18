@@ -33,7 +33,7 @@ v0.3 had deterministic fork/join modeling but runtime behavior needed stronger, 
 
 ### Runtime Execution
 - Concurrent workflows execute through plan-ready sets.
-- Ready-node ordering is deterministic (stable sort by step id).
+- Ready-node ordering is deterministic and canonical: lexicographic by `step_id`.
 - Fork work executes via bounded executor.
 - Join executes only after all required branch dependencies complete.
 

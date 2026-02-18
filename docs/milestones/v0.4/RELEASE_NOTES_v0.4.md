@@ -22,6 +22,7 @@ ADL v0.4 ships real runtime concurrency behavior with deterministic fork/join se
 - Landed ExecutionPlan + DAG validation scaffold.
 - Landed bounded executor primitive for fork work.
 - Landed deterministic join barrier wiring and runtime hardening.
+- Canonicalized concurrent ready-step ordering to deterministic lexicographic `step_id` order.
 
 ### Determinism and Validation
 - Added integration coverage for deterministic concurrent execution.

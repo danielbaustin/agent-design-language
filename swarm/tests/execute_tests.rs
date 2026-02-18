@@ -1040,13 +1040,69 @@ fn run_rejects_concurrent_workflows_in_v0_2() {
 }
 
 #[test]
-fn run_executes_concurrent_workflows_in_v0_3_in_declared_order() {
+fn run_executes_concurrent_workflows_in_v0_3_in_lexicographic_step_id_order() {
     let base = tmp_dir("exec-concurrent-v0-3-order");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
     let new_path = prepend_path(&base);
     let _path_guard = EnvVarGuard::set("PATH", new_path);
 
-    let out = run_swarm(&["examples/v0-3-concurrency-fork-join.adl.yaml", "--run"]);
+    let yaml = r#"
+version: "0.3"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  branch:
+    prompt:
+      user: "BRANCH={{branch}}"
+  join:
+    prompt:
+      user: "JOIN A={{a}} B={{b}} C={{c}}"
+
+run:
+  name: "v0-3-lex-order"
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "fork.branch.c"
+        agent: "a1"
+        task: "branch"
+        save_as: "c"
+        inputs:
+          branch: "c"
+      - id: "fork.branch.a"
+        agent: "a1"
+        task: "branch"
+        save_as: "a"
+        inputs:
+          branch: "a"
+      - id: "fork.branch.b"
+        agent: "a1"
+        task: "branch"
+        save_as: "b"
+        inputs:
+          branch: "b"
+      - id: "fork.join"
+        agent: "a1"
+        task: "join"
+        save_as: "joined"
+        inputs:
+          a: "@state:a"
+          b: "@state:b"
+          c: "@state:c"
+"#;
+    let tmp_yaml = base.join("v0-3-lex-order.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
     assert!(
         out.status.success(),
         "expected success for v0.3 concurrent run, got failure.\nstdout:\n{}\nstderr:\n{}",
@@ -1056,9 +1112,9 @@ fn run_executes_concurrent_workflows_in_v0_3_in_declared_order() {
 
     let stdout = String::from_utf8_lossy(&out.stdout);
     let order = [
-        "--- step: fork.plan ---",
-        "--- step: fork.branch.alpha ---",
-        "--- step: fork.branch.beta ---",
+        "--- step: fork.branch.a ---",
+        "--- step: fork.branch.b ---",
+        "--- step: fork.branch.c ---",
         "--- step: fork.join ---",
     ];
     let mut cursor = 0usize;

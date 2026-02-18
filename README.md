@@ -26,10 +26,12 @@ cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-re
 
 [![swarm-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-[![swarm-coverage-gate (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 ![Milestone](https://img.shields.io/badge/milestone-v0.4-green)
 
-Badges above report the `main` branch workflow status, not the currently open PR branch.
+Badge semantics:
+- `swarm-ci`: main branch CI workflow status
+- `coverage`: Codecov line-coverage signal for `main`
+- `milestone`: current documentation milestone marker
 
 ## Status
 
@@ -38,6 +40,7 @@ Current release: **v0.4.0**
 v0.4 ships:
 - ExecutionPlan-driven runtime execution
 - Bounded fork concurrency
+- Canonical concurrent ready-step ordering (lexicographic by `step_id`)
 - Deterministic join barrier
 - Deterministic replay demos
 - Human-readable trace timestamps
@@ -67,7 +70,7 @@ Explicitly deferred:
 - `docs/`: contributor workflow and roadmap docs
 - `.adl/`: cards, reports, and run/report artifacts
 
-## v0.3 Example Commands
+## Historical v0.3 Plan-Only Commands
 
 From repo root:
 
@@ -121,7 +124,7 @@ v0.4 proves:
 
 Default contributor workflow uses `adl_pr_cycle` (`start -> codex -> finish -> report`).
 - Guide: `docs/default_workflow.md`
-- Roadmap index: `docs/v0.3-roadmap.md`
+- Milestone docs: `docs/milestones/v0.4/`
 - Tools: `swarm/tools/README.md`
 
 ## License

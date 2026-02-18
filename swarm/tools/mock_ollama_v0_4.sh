@@ -20,8 +20,10 @@ elif command -v shasum >/dev/null 2>&1; then
   hash_cmd="shasum -a 256"
 fi
 
-if [[ -n "$hash_cmd" ]]; then
-  prompt_hash="$(printf '%s' "$prompt" | eval "$hash_cmd" | awk '{print $1}')"
+if [[ "$hash_cmd" == "sha256sum" ]]; then
+  prompt_hash="$(printf '%s' "$prompt" | sha256sum | awk '{print $1}')"
+elif [[ "$hash_cmd" == "shasum -a 256" ]]; then
+  prompt_hash="$(printf '%s' "$prompt" | shasum -a 256 | awk '{print $1}')"
 else
   prompt_hash="$(printf '%s' "$prompt" | cksum | awk '{print $1}')"
 fi

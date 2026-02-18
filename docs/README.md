@@ -1,4 +1,4 @@
-# Docs Spine (v0.3)
+# Docs Spine (v0.4)
 
 Start here for contributor-oriented docs and planning context.
 
@@ -10,13 +10,19 @@ Start here for contributor-oriented docs and planning context.
 2. `swarm/tools/README.md`
 - Operational workflow tools (`pr.sh`, burst helpers, report helpers).
 
-3. `swarm/tools/BURST_PLAYBOOK.md`
+3. `docs/milestones/v0.4/RELEASE_NOTES_v0.4.md`
+- Official v0.4 capability and release summary.
+
+4. `docs/milestones/v0.4/DESIGN_v0.4.md`
+- Canonical architecture and execution semantics for v0.4.
+
+5. `swarm/tools/BURST_PLAYBOOK.md`
 - Sequential burst execution pattern and operating guardrails.
 
-4. `adl-spec/README.md`
+6. `adl-spec/README.md`
 - Language-level specification entrypoint.
 
-5. `.adl/reports/INDEX.md`
+7. `.adl/reports/INDEX.md`
 - Living index of generated reports and latest pointers.
 
 ## Contributor Entry Points
@@ -24,10 +30,11 @@ Start here for contributor-oriented docs and planning context.
 - Workflow default: `adl_pr_cycle` (`start -> codex -> finish -> report`)
 - Runtime and CLI work: `swarm/`
 - Language and schema docs: `adl-spec/`
+- v0.4 milestone docs: `docs/milestones/v0.4/`
 - Burst reporting outputs: `.adl/reports/`
 - Demo command index: `docs/demos.md`
 
-## Concurrency Design
+## Historical (v0.3) Concurrency Design
 
 - `docs/concurrency/v0.3-core.md`: Core fork/join primitives, deterministic trace ordering, and v0.3 scope.
 - `docs/concurrency/v0.3-failure-cancellation-replay.md`: Failure semantics, cancellation propagation, and replay invariants.
