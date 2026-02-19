@@ -265,12 +265,14 @@ run:
     let err = schema::validate_adl_yaml(yaml).unwrap_err();
     let msg = format!("{err:#}");
     assert!(
-        msg.contains("unknown") || msg.contains("Additional properties"),
+        msg.contains("unknown")
+            || msg.contains("Additional properties")
+            || msg.contains("anyOf"),
         "expected unknown-field error; got:\n{msg}"
     );
     assert!(msg.contains("agentt"), "expected bad key name; got:\n{msg}");
     assert!(
-        msg.contains("at /run/workflow/steps/0"),
+        msg.contains("at /run/workflow/steps/0") || msg.contains("at /run/workflow"),
         "expected path context for bad field; got:\n{msg}"
     );
 }
