@@ -82,6 +82,7 @@ run:
 ```
 
 Validation expectations in v0.5:
+- run uses `workflow_ref` or inline `workflow` (legacy), but never both; if multiple providers exist, provider selection must be explicit.
 - ids may be declared explicitly (`id`) and must match collection keys when present
 - refs must resolve (`provider`, `agent_ref`, `task`, `workflow_ref`, tool refs)
 - provider/tool kinds must be supported with required config fields

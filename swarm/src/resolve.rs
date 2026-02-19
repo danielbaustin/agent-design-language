@@ -123,7 +123,7 @@ fn resolve_provider_for_step(step: &adl::StepSpec, doc: &adl::AdlDoc) -> Option<
 
     // Fallback: if there is exactly one provider in the doc, use it.
     if doc.providers.len() == 1 {
-        return doc.providers.keys().min().cloned();
+        return doc.providers.keys().next().cloned();
     }
 
     None
@@ -210,8 +210,7 @@ mod tests {
     fn workflow_steps_mut(doc: &mut adl::AdlDoc) -> &mut Vec<adl::StepSpec> {
         &mut doc.run.workflow.as_mut().expect("inline workflow").steps
     }
-
-    fn minimal_doc() -> adl::AdlDoc {
+    pub(super) fn minimal_doc() -> adl::AdlDoc {
         let mut providers = std::collections::HashMap::new();
         providers.insert(
             "local".to_string(),
@@ -539,5 +538,44 @@ mod tests {
         let resolved = resolve_run(&doc).expect("resolve");
         assert_eq!(resolved.steps[0].id, "step-1");
         assert_eq!(resolved.steps[1].id, "step-2");
+    }
+}
+
+#[cfg(test)]
+mod wp02_followup_tests {
+    use super::*;
+
+    #[test]
+    fn resolve_provider_does_not_choose_when_multiple_providers_exist() {
+        let mut doc = super::tests::minimal_doc();
+        doc.providers.insert(
+            "other".to_string(),
+            crate::adl::ProviderSpec {
+                id: None,
+                kind: "ollama".to_string(),
+                base_url: None,
+                default_model: None,
+                config: std::collections::HashMap::new(),
+            },
+        );
+
+        let step = crate::adl::StepSpec {
+            id: None,
+            save_as: None,
+            write_to: None,
+            on_error: None,
+            retry: None,
+            agent: None,
+            task: Some("t1".to_string()),
+            prompt: None,
+            inputs: std::collections::HashMap::new(),
+            guards: vec![],
+        };
+
+        let p = resolve_provider_for_step(&step, &doc);
+        assert!(
+            p.is_none(),
+            "provider must be explicit when multiple providers exist"
+        );
     }
 }

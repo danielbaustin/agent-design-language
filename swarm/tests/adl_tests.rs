@@ -329,3 +329,40 @@ run:
         .expect_err("unsupported provider kind should fail");
     assert!(err.to_string().contains("unsupported kind"), "{err:#}");
 }
+
+#[test]
+fn validate_rejects_both_workflow_ref_and_inline_workflow() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  p1: { type: "ollama" }
+agents:
+  a1:
+    provider: "p1"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+workflows:
+  wf_main:
+    steps:
+      - task: "t1"
+        agent: "a1"
+run:
+  workflow_ref: "wf_main"
+  workflow:
+    steps:
+      - task: "t1"
+        agent: "a1"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml parse");
+    let err = doc
+        .validate()
+        .expect_err("both workflow_ref and inline workflow should fail");
+    assert!(
+        err.to_string()
+            .contains("either workflow_ref or inline workflow, but not both"),
+        "{err:#}"
+    );
+}
