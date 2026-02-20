@@ -1,0 +1,43 @@
+version: "0.5"
+
+providers:
+  local:
+    type: "ollama"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  L1:
+    prompt:
+      user: "Left 1"
+  L2:
+    prompt:
+      user: "Left 2"
+  R1:
+    prompt:
+      user: "Right 1"
+  J:
+    prompt:
+      user: "Join"
+
+patterns:
+  - id: p_fork
+    type: fork_join
+    fork:
+      branches:
+        - id: left
+          steps: [L1, L2]
+        - id: right
+          steps: [R1]
+    join:
+      step: J
+
+run:
+  name: "v0-5-pattern-fork-join"
+  pattern_ref: p_fork
+  workflow:
+    kind: sequential
+    steps: []

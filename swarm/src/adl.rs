@@ -28,6 +28,9 @@ pub struct AdlDoc {
     #[serde(default)]
     pub tasks: HashMap<String, TaskSpec>,
 
+    #[serde(default)]
+    pub patterns: Vec<PatternSpec>,
+
     pub run: RunSpec,
 }
 
@@ -49,6 +52,31 @@ impl AdlDoc {
 
     /// Lightweight validation so we can fail fast with good errors.
     pub fn validate(&self) -> Result<()> {
+        let mut seen_patterns = std::collections::HashSet::new();
+        for p in &self.patterns {
+            if p.id.trim().is_empty() {
+                return Err(anyhow!("pattern id must not be empty"));
+            }
+            if !seen_patterns.insert(p.id.clone()) {
+                return Err(anyhow!("duplicate pattern id '{}'", p.id));
+            }
+            p.validate()?;
+        }
+
+        if let Some(pattern_ref) = self.run.pattern_ref.as_ref() {
+            if !self.patterns.iter().any(|p| p.id == *pattern_ref) {
+                return Err(anyhow!(
+                    "run.pattern_ref references unknown pattern '{}'",
+                    pattern_ref
+                ));
+            }
+            if !self.run.workflow.steps.is_empty() {
+                return Err(anyhow!(
+                    "run.pattern_ref cannot be combined with run.workflow.steps"
+                ));
+            }
+        }
+
         // Validate run.workflow references
         for (idx, step) in self.run.workflow.steps.iter().enumerate() {
             let step_id = step
@@ -56,6 +84,13 @@ impl AdlDoc {
                 .as_deref()
                 .map(|s| s.to_string())
                 .unwrap_or_else(|| format!("step-{idx}"));
+
+            if step_id.starts_with("p::") {
+                return Err(anyhow!(
+                    "step id '{}' uses reserved compiler prefix 'p::'",
+                    step_id
+                ));
+            }
 
             if let Some(agent) = step.agent.as_ref() {
                 if !self.agents.is_empty() && !self.agents.contains_key(agent) {
@@ -252,6 +287,9 @@ pub struct RunSpec {
     #[serde(default)]
     pub defaults: RunDefaults,
 
+    #[serde(default)]
+    pub pattern_ref: Option<String>,
+
     pub workflow: WorkflowSpec,
 }
 
@@ -379,4 +417,122 @@ pub enum StepOnError {
 #[serde(deny_unknown_fields)]
 pub struct StepRetry {
     pub max_attempts: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct PatternSpec {
+    pub id: String,
+    #[serde(rename = "type")]
+    pub kind: PatternKind,
+    #[serde(default)]
+    pub steps: Vec<String>,
+    #[serde(default)]
+    pub fork: Option<PatternForkSpec>,
+    #[serde(default)]
+    pub join: Option<PatternJoinSpec>,
+}
+
+impl PatternSpec {
+    fn validate(&self) -> Result<()> {
+        match self.kind {
+            PatternKind::Linear => {
+                if self.steps.is_empty() {
+                    return Err(anyhow!(
+                        "pattern '{}' type=linear requires non-empty steps",
+                        self.id
+                    ));
+                }
+                for sym in &self.steps {
+                    if sym.trim().is_empty() {
+                        return Err(anyhow!("pattern '{}' has empty step symbol", self.id));
+                    }
+                }
+            }
+            PatternKind::ForkJoin => {
+                let fork = self
+                    .fork
+                    .as_ref()
+                    .ok_or_else(|| anyhow!("pattern '{}' type=fork_join requires fork", self.id))?;
+                let join = self
+                    .join
+                    .as_ref()
+                    .ok_or_else(|| anyhow!("pattern '{}' type=fork_join requires join", self.id))?;
+                if join.step.trim().is_empty() {
+                    return Err(anyhow!("pattern '{}' join.step must not be empty", self.id));
+                }
+                if fork.branches.is_empty() {
+                    return Err(anyhow!(
+                        "pattern '{}' fork.branches must not be empty",
+                        self.id
+                    ));
+                }
+                let mut seen = std::collections::HashSet::new();
+                for br in &fork.branches {
+                    if br.id.trim().is_empty() {
+                        return Err(anyhow!("pattern '{}' has branch with empty id", self.id));
+                    }
+                    if br.id.starts_with("p::") {
+                        return Err(anyhow!(
+                            "pattern '{}' branch id '{}' cannot use reserved prefix 'p::'",
+                            self.id,
+                            br.id
+                        ));
+                    }
+                    if !seen.insert(br.id.clone()) {
+                        return Err(anyhow!(
+                            "pattern '{}' has duplicate branch id '{}'",
+                            self.id,
+                            br.id
+                        ));
+                    }
+                    if br.steps.is_empty() {
+                        return Err(anyhow!(
+                            "pattern '{}' branch '{}' requires non-empty steps",
+                            self.id,
+                            br.id
+                        ));
+                    }
+                    for sym in &br.steps {
+                        if sym.trim().is_empty() {
+                            return Err(anyhow!(
+                                "pattern '{}' branch '{}' has empty step symbol",
+                                self.id,
+                                br.id
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum PatternKind {
+    Linear,
+    ForkJoin,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct PatternForkSpec {
+    #[serde(default)]
+    pub branches: Vec<PatternBranchSpec>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct PatternBranchSpec {
+    pub id: String,
+    #[serde(default)]
+    pub steps: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct PatternJoinSpec {
+    pub step: String,
 }

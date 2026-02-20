@@ -1,20 +1,33 @@
 use anyhow::{anyhow, Result};
+use serde::Serialize;
 use std::collections::{HashMap, VecDeque};
 
 use crate::adl;
 use crate::resolve::ResolvedStep;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct ExecutionNode {
     pub step_id: String,
     pub depends_on: Vec<String>,
     pub save_as: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct ExecutionPlan {
     pub workflow_kind: adl::WorkflowKind,
     pub nodes: Vec<ExecutionNode>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CompiledPatternStep {
+    pub step_id: String,
+    pub task_symbol: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CompiledPattern {
+    pub execution_plan: ExecutionPlan,
+    pub compiled_steps: Vec<CompiledPatternStep>,
 }
 
 fn parse_state_ref(value: &str) -> Option<&str> {
@@ -100,6 +113,112 @@ pub fn build_execution_plan(
     Ok(ExecutionPlan {
         workflow_kind,
         nodes,
+    })
+}
+
+pub fn compile_pattern(pattern: &adl::PatternSpec) -> Result<CompiledPattern> {
+    match pattern.kind {
+        adl::PatternKind::Linear => compile_linear_pattern(pattern),
+        adl::PatternKind::ForkJoin => compile_fork_join_pattern(pattern),
+    }
+}
+
+fn compile_linear_pattern(pattern: &adl::PatternSpec) -> Result<CompiledPattern> {
+    if pattern.steps.is_empty() {
+        return Err(anyhow!(
+            "pattern {} type=linear requires non-empty steps",
+            pattern.id
+        ));
+    }
+
+    let mut nodes = Vec::new();
+    let mut compiled_steps = Vec::new();
+    let mut prev: Option<String> = None;
+
+    for sym in &pattern.steps {
+        let step_id = format!("p::{}::{}", pattern.id, sym);
+        let deps = prev.iter().cloned().collect::<Vec<_>>();
+        nodes.push(ExecutionNode {
+            step_id: step_id.clone(),
+            depends_on: deps,
+            save_as: Some(sym.clone()),
+        });
+        compiled_steps.push(CompiledPatternStep {
+            step_id: step_id.clone(),
+            task_symbol: sym.clone(),
+        });
+        prev = Some(step_id);
+    }
+
+    Ok(CompiledPattern {
+        execution_plan: ExecutionPlan {
+            workflow_kind: adl::WorkflowKind::Sequential,
+            nodes,
+        },
+        compiled_steps,
+    })
+}
+
+fn compile_fork_join_pattern(pattern: &adl::PatternSpec) -> Result<CompiledPattern> {
+    let fork = pattern
+        .fork
+        .as_ref()
+        .ok_or_else(|| anyhow!("pattern {} type=fork_join requires fork", pattern.id))?;
+    let join = pattern
+        .join
+        .as_ref()
+        .ok_or_else(|| anyhow!("pattern {} type=fork_join requires join", pattern.id))?;
+
+    let mut nodes = Vec::new();
+    let mut compiled_steps = Vec::new();
+    let mut branch_last = Vec::new();
+
+    for br in &fork.branches {
+        let mut prev: Option<String> = None;
+        for sym in &br.steps {
+            let step_id = format!("p::{}::{}::{}", pattern.id, br.id, sym);
+            let deps = prev.iter().cloned().collect::<Vec<_>>();
+            nodes.push(ExecutionNode {
+                step_id: step_id.clone(),
+                depends_on: deps,
+                save_as: Some(format!("{}::{}", br.id, sym)),
+            });
+            compiled_steps.push(CompiledPatternStep {
+                step_id: step_id.clone(),
+                task_symbol: sym.clone(),
+            });
+            prev = Some(step_id);
+        }
+        if let Some(last) = prev {
+            branch_last.push(last);
+        }
+    }
+
+    if branch_last.is_empty() {
+        return Err(anyhow!(
+            "pattern {} type=fork_join requires at least one non-empty branch",
+            pattern.id
+        ));
+    }
+
+    branch_last.sort();
+    let join_step_id = format!("p::{}::{}", pattern.id, join.step);
+    nodes.push(ExecutionNode {
+        step_id: join_step_id.clone(),
+        depends_on: branch_last,
+        save_as: Some(join.step.clone()),
+    });
+    compiled_steps.push(CompiledPatternStep {
+        step_id: join_step_id,
+        task_symbol: join.step.clone(),
+    });
+
+    Ok(CompiledPattern {
+        execution_plan: ExecutionPlan {
+            workflow_kind: adl::WorkflowKind::Concurrent,
+            nodes,
+        },
+        compiled_steps,
     })
 }
 
@@ -298,6 +417,108 @@ mod tests {
                 "fork.branch.alpha".to_string(),
                 "fork.branch.beta".to_string()
             ]
+        );
+    }
+
+    #[test]
+    fn compile_linear_pattern_is_byte_stable_and_uses_canonical_ids() {
+        let pattern = adl::PatternSpec {
+            id: "p_linear".to_string(),
+            kind: adl::PatternKind::Linear,
+            steps: vec!["A".to_string(), "B".to_string(), "C".to_string()],
+            fork: None,
+            join: None,
+        };
+
+        let c1 = compile_pattern(&pattern).expect("compile");
+        let c2 = compile_pattern(&pattern).expect("compile");
+
+        let b1 = serde_json::to_vec(&c1.execution_plan).expect("serialize");
+        let b2 = serde_json::to_vec(&c2.execution_plan).expect("serialize");
+        assert_eq!(b1, b2, "compiled plan bytes must be stable");
+
+        assert_eq!(c1.execution_plan.nodes.len(), 3);
+        assert_eq!(c1.execution_plan.nodes[0].step_id, "p::p_linear::A");
+        assert_eq!(
+            c1.execution_plan.nodes[1].depends_on,
+            vec!["p::p_linear::A"]
+        );
+        assert_eq!(
+            c1.execution_plan.nodes[2].depends_on,
+            vec!["p::p_linear::B"]
+        );
+    }
+
+    #[test]
+    fn compile_fork_join_pattern_sets_join_dependencies_to_branch_tails() {
+        let pattern = adl::PatternSpec {
+            id: "p_fork".to_string(),
+            kind: adl::PatternKind::ForkJoin,
+            steps: vec![],
+            fork: Some(adl::PatternForkSpec {
+                branches: vec![
+                    adl::PatternBranchSpec {
+                        id: "left".to_string(),
+                        steps: vec!["L1".to_string(), "L2".to_string()],
+                    },
+                    adl::PatternBranchSpec {
+                        id: "right".to_string(),
+                        steps: vec!["R1".to_string()],
+                    },
+                ],
+            }),
+            join: Some(adl::PatternJoinSpec {
+                step: "J".to_string(),
+            }),
+        };
+
+        let compiled = compile_pattern(&pattern).expect("compile");
+        let by_id: HashMap<&str, &ExecutionNode> = compiled
+            .execution_plan
+            .nodes
+            .iter()
+            .map(|n| (n.step_id.as_str(), n))
+            .collect();
+
+        assert_eq!(
+            by_id["p::p_fork::J"].depends_on,
+            vec!["p::p_fork::left::L2", "p::p_fork::right::R1"]
+        );
+        assert_eq!(
+            by_id["p::p_fork::left::L2"].depends_on,
+            vec!["p::p_fork::left::L1"]
+        );
+    }
+
+    #[test]
+    fn compile_fork_join_pattern_is_byte_stable() {
+        let pattern = adl::PatternSpec {
+            id: "p_fork".to_string(),
+            kind: adl::PatternKind::ForkJoin,
+            steps: vec![],
+            fork: Some(adl::PatternForkSpec {
+                branches: vec![
+                    adl::PatternBranchSpec {
+                        id: "a".to_string(),
+                        steps: vec!["A1".to_string()],
+                    },
+                    adl::PatternBranchSpec {
+                        id: "b".to_string(),
+                        steps: vec!["B1".to_string()],
+                    },
+                ],
+            }),
+            join: Some(adl::PatternJoinSpec {
+                step: "J".to_string(),
+            }),
+        };
+
+        let c1 = compile_pattern(&pattern).expect("compile");
+        let c2 = compile_pattern(&pattern).expect("compile");
+        assert_eq!(
+            serde_json::to_vec(&c1.execution_plan).expect("serialize"),
+            serde_json::to_vec(&c2.execution_plan).expect("serialize"),
+            "compiled fork/join plan bytes must be stable"
         );
     }
 }

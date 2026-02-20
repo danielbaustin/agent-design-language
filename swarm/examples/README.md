@@ -76,3 +76,17 @@ From repo root:
 ```bash
 cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
 ```
+
+## v0.5 pattern compiler examples
+
+PatternSchema v0.1 compiles patterns into deterministic ExecutionPlan nodes with `p::<pattern_id>::...` step IDs.
+
+- `v0-5-pattern-linear.adl.yaml`
+- `v0-5-pattern-fork-join.adl.yaml`
+
+Quick checks from repo root:
+
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-pattern-linear.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-pattern-fork-join.adl.yaml --print-plan
+```
