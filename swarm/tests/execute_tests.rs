@@ -1561,6 +1561,235 @@ run:
     );
 }
 
+fn trace_started_step_ids(stdout: &str) -> Vec<String> {
+    stdout
+        .lines()
+        .filter_map(|line| {
+            let marker = "StepStarted step=";
+            let (_, tail) = line.split_once(marker)?;
+            Some(tail.split_whitespace().next()?.to_string())
+        })
+        .collect()
+}
+
+#[test]
+fn run_v0_3_concurrent_scheduler_uses_lexicographic_batches_with_max_concurrency_2() {
+    let base = tmp_dir("exec-concurrent-v0-3-max-concurrency-2");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepEchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  name: "v0-3-max-concurrency-2"
+  defaults:
+    max_concurrency: 2
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: { n: "3" }
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+      - id: "s4"
+        agent: "a"
+        task: "t"
+        inputs: { n: "4" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+"#;
+    let tmp_yaml = base.join("max-concurrency-2.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out1 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        out1.status.success(),
+        "expected success.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out1.stdout),
+        String::from_utf8_lossy(&out1.stderr)
+    );
+    let started1 = trace_started_step_ids(&String::from_utf8_lossy(&out1.stdout));
+    assert_eq!(started1, vec!["s1", "s2", "s3", "s4"]);
+
+    // Determinism regression guard: identical started order on a second run.
+    let out2 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        out2.status.success(),
+        "expected success.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out2.stdout),
+        String::from_utf8_lossy(&out2.stderr)
+    );
+    let started2 = trace_started_step_ids(&String::from_utf8_lossy(&out2.stdout));
+    assert_eq!(started1, started2);
+}
+
+#[test]
+fn run_v0_3_concurrent_scheduler_max_concurrency_1_matches_sequential_step_start_order() {
+    let base = tmp_dir("exec-concurrent-v0-3-max-concurrency-1");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepEchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  name: "v0-3-max-concurrency-1"
+  defaults:
+    max_concurrency: 1
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: { n: "3" }
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+"#;
+    let tmp_yaml = base.join("max-concurrency-1.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        out.status.success(),
+        "expected success.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let started = trace_started_step_ids(&String::from_utf8_lossy(&out.stdout));
+    assert_eq!(started, vec!["s1", "s2", "s3"]);
+}
+
+#[test]
+fn run_v0_3_max_concurrency_1_matches_sequential_outputs_for_same_plan() {
+    let base = tmp_dir("exec-concurrent-v0-3-max1-vs-seq");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let seq_yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  name: "v0-3-seq"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: { n: "3" }
+"#;
+    let conc_yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  name: "v0-3-conc-max1"
+  defaults:
+    max_concurrency: 1
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: { n: "3" }
+"#;
+    let seq_path = base.join("seq.yaml");
+    let conc_path = base.join("conc.yaml");
+    fs::write(&seq_path, seq_yaml).unwrap();
+    fs::write(&conc_path, conc_yaml).unwrap();
+
+    let out_seq = run_swarm(&[seq_path.to_str().unwrap(), "--run"]);
+    let out_conc = run_swarm(&[conc_path.to_str().unwrap(), "--run"]);
+    assert!(
+        out_seq.status.success(),
+        "seq failed: {:?}",
+        out_seq.status.code()
+    );
+    assert!(
+        out_conc.status.success(),
+        "conc failed: {:?}",
+        out_conc.status.code()
+    );
+    assert_eq!(
+        String::from_utf8_lossy(&out_seq.stdout),
+        String::from_utf8_lossy(&out_conc.stdout),
+        "max_concurrency=1 concurrent output should match sequential output for the same ordered plan"
+    );
+}
+
 #[test]
 fn run_reports_error_when_materialized_doc_is_missing() {
     let base = tmp_dir("exec-missing-doc");

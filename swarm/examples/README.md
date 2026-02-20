@@ -49,6 +49,8 @@ Reference ADL doc for the demo scenario:
 - `v0-3-concurrency-fork-join.adl.yaml`
   - deterministic fork/join sequence contract (single-threaded runtime order)
   - clear branch/join artifacts: `fork/alpha.txt`, `fork/beta.txt`, `fork/join.txt`
+  - optional global cap: `run.defaults.max_concurrency` (`>= 1`, default `4`)
+  - set `run.defaults.max_concurrency: 1` for fully sequential execution behavior
   - see `v0-3-concurrency-fork-join.md` for mental model + deterministic trace ordering
 - `v0-3-fork-join-seq-run.adl.yaml`
   - runnable v0.3 sequential fork/join execution
