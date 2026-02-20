@@ -1,0 +1,33 @@
+version: "0.5"
+
+providers:
+  local:
+    type: "ollama"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  A:
+    prompt:
+      user: "Step A"
+  B:
+    prompt:
+      user: "Step B"
+  C:
+    prompt:
+      user: "Step C"
+
+patterns:
+  - id: p_linear
+    type: linear
+    steps: [A, B, C]
+
+run:
+  name: "v0-5-pattern-linear"
+  pattern_ref: p_linear
+  workflow:
+    kind: sequential
+    steps: []

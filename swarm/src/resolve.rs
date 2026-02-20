@@ -46,9 +46,6 @@ pub struct ResolvedStep {
     pub agent: Option<String>,
     pub provider: Option<String>,
     pub task: Option<String>,
-    pub call: Option<String>,
-    pub with: HashMap<String, String>,
-    pub as_ns: Option<String>,
     pub prompt: Option<adl::PromptSpec>,
     pub inputs: HashMap<String, String>,
     pub save_as: Option<String>,
@@ -66,10 +63,6 @@ impl ResolvedStep {
         &'a self,
         resolved: &'a AdlResolved,
     ) -> Option<&'a adl::PromptSpec> {
-        if self.call.is_some() {
-            return None;
-        }
-
         if let Some(p) = self.prompt.as_ref() {
             return Some(p);
         }
@@ -109,14 +102,9 @@ impl ResolvedStep {
 
 /// Resolve a provider id for a step using these rules:
 /// 1) If the step has an agent and that agent has `provider`, use it.
-/// 2) Else, if the step has task and task has `agent_ref`, use that agent provider.
-/// 3) Else, if the doc defines exactly one provider, use that.
-/// 4) Else, return None (unresolved).
+/// 2) Else, if the doc defines exactly one provider, use that.
+/// 3) Else, return None (unresolved).
 fn resolve_provider_for_step(step: &adl::StepSpec, doc: &adl::AdlDoc) -> Option<String> {
-    if step.call.is_some() {
-        return None;
-    }
-
     // Agent-level provider wins.
     let step_agent = step.agent.as_ref().cloned().or_else(|| {
         step.task
@@ -141,27 +129,120 @@ fn resolve_provider_for_step(step: &adl::StepSpec, doc: &adl::AdlDoc) -> Option<
     None
 }
 
+fn resolve_provider_for_pattern(doc: &adl::AdlDoc) -> Result<(Option<String>, String)> {
+    if doc.agents.len() == 1 {
+        let (agent_id, agent) = doc
+            .agents
+            .iter()
+            .next()
+            .ok_or_else(|| anyhow!("expected exactly one agent"))?;
+        if agent.provider.trim().is_empty() {
+            return Err(anyhow!(
+                "cannot resolve provider for pattern run: single agent '{}' has empty provider",
+                agent_id
+            ));
+        }
+        if !doc.providers.contains_key(&agent.provider) {
+            return Err(anyhow!(
+                "cannot resolve provider for pattern run: agent '{}' references unknown provider '{}'",
+                agent_id,
+                agent.provider
+            ));
+        }
+        return Ok((Some(agent_id.clone()), agent.provider.clone()));
+    }
+
+    if doc.providers.len() == 1 {
+        let provider_id = doc
+            .providers
+            .keys()
+            .next()
+            .cloned()
+            .ok_or_else(|| anyhow!("expected exactly one provider"))?;
+        return Ok((None, provider_id));
+    }
+
+    Err(anyhow!(
+        "cannot resolve provider for pattern run: define exactly one provider or one agent"
+    ))
+}
+
 /// Resolve the run section into a deterministic, convenient form.
 pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
     let _version = parse_version(&doc.version)?;
 
     let run_id = doc.run.name.clone().unwrap_or_else(|| "run".to_string());
+
+    if let Some(pattern_ref) = doc.run.pattern_ref.as_ref() {
+        let pattern = doc
+            .patterns
+            .iter()
+            .find(|p| p.id == *pattern_ref)
+            .ok_or_else(|| {
+                anyhow!(
+                    "run.pattern_ref references unknown pattern '{}'",
+                    pattern_ref
+                )
+            })?;
+
+        let compiled = execution_plan::compile_pattern(pattern)
+            .with_context(|| format!("failed to compile pattern '{}'", pattern.id))?;
+        let (agent, provider) = resolve_provider_for_pattern(doc)?;
+
+        let mut save_as_by_step: HashMap<&str, Option<String>> = HashMap::new();
+        for node in &compiled.execution_plan.nodes {
+            save_as_by_step.insert(node.step_id.as_str(), node.save_as.clone());
+        }
+
+        let mut steps = Vec::with_capacity(compiled.compiled_steps.len());
+        for compiled_step in &compiled.compiled_steps {
+            if !doc.tasks.contains_key(&compiled_step.task_symbol) {
+                return Err(anyhow!(
+                    "pattern '{}' references unknown task symbol '{}'",
+                    pattern.id,
+                    compiled_step.task_symbol
+                ));
+            }
+            steps.push(ResolvedStep {
+                id: compiled_step.step_id.clone(),
+                agent: agent.clone(),
+                provider: Some(provider.clone()),
+                task: Some(compiled_step.task_symbol.clone()),
+                prompt: None,
+                inputs: HashMap::new(),
+                save_as: save_as_by_step
+                    .get(compiled_step.step_id.as_str())
+                    .cloned()
+                    .flatten(),
+                write_to: None,
+                on_error: None,
+                retry: None,
+            });
+        }
+
+        return Ok(AdlResolved {
+            run_id,
+            workflow_id: format!("pattern:{pattern_ref}"),
+            steps,
+            execution_plan: compiled.execution_plan,
+            doc: doc.clone(),
+        });
+    }
+
     let workflow = doc.run.resolve_workflow(doc)?;
     let workflow_id = doc
         .run
         .workflow_ref
         .clone()
+        .or_else(|| workflow.id.clone())
         .unwrap_or_else(|| "workflow".to_string());
 
     let mut steps = Vec::new();
     for (idx, s) in workflow.steps.iter().enumerate() {
         // Preserve explicit step ids; otherwise derive a deterministic fallback.
-        let id = s.id.clone().unwrap_or_else(|| {
-            s.task
-                .clone()
-                .or_else(|| s.call.clone())
-                .unwrap_or_else(|| format!("step-{idx}"))
-        });
+        let id =
+            s.id.clone()
+                .unwrap_or_else(|| s.task.clone().unwrap_or_else(|| format!("step-{idx}")));
 
         let provider = resolve_provider_for_step(s, doc);
 
@@ -175,9 +256,6 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
             }),
             provider,
             task: s.task.clone(),
-            call: s.call.clone(),
-            with: s.with.clone(),
-            as_ns: s.as_ns.clone(),
             prompt: s.prompt.clone(),
             inputs: s.inputs.clone(),
             save_as: s.save_as.clone(),
@@ -212,10 +290,6 @@ pub fn print_resolved_plan(resolved: &AdlResolved) {
         resolved.steps.len(),
         resolved.steps.iter(),
         |step| {
-            if let Some(callee) = step.call.as_deref() {
-                let ns = step.as_ns.as_deref().unwrap_or(step.id.as_str());
-                return format!("{}  call={} as={}", step.id, callee, ns);
-            }
             let agent = step.agent.as_deref().unwrap_or("<unresolved-agent>");
             let provider = step.provider.as_deref().unwrap_or("<unresolved-provider>");
             let task = step.task.as_deref().unwrap_or("<unresolved-task>");
@@ -228,11 +302,15 @@ pub fn print_resolved_plan(resolved: &AdlResolved) {
 mod tests {
     use super::*;
 
-    fn minimal_doc() -> adl::AdlDoc {
+    fn workflow_steps_mut(doc: &mut adl::AdlDoc) -> &mut Vec<adl::StepSpec> {
+        &mut doc.run.workflow.as_mut().expect("inline workflow").steps
+    }
+    pub(super) fn minimal_doc() -> adl::AdlDoc {
         let mut providers = std::collections::HashMap::new();
         providers.insert(
             "local".to_string(),
             adl::ProviderSpec {
+                id: None,
                 kind: "ollama".to_string(),
                 base_url: None,
                 default_model: None,
@@ -244,6 +322,7 @@ mod tests {
         agents.insert(
             "a1".to_string(),
             adl::AgentSpec {
+                id: None,
                 provider: "local".to_string(),
                 model: "phi4-mini".to_string(),
                 temperature: None,
@@ -264,10 +343,11 @@ mod tests {
         tasks.insert(
             "t1".to_string(),
             adl::TaskSpec {
-                description: None,
+                id: None,
                 agent_ref: None,
                 inputs: vec![],
                 tool_allowlist: vec![],
+                description: None,
                 prompt: adl::PromptSpec {
                     system: None,
                     developer: None,
@@ -280,22 +360,26 @@ mod tests {
 
         adl::AdlDoc {
             version: "0.1".to_string(),
-            include: vec![],
             providers,
             tools: std::collections::HashMap::new(),
             agents,
             tasks,
             workflows: std::collections::HashMap::new(),
+            patterns: vec![],
             run: adl::RunSpec {
+                id: None,
                 name: Some("r".to_string()),
                 created_at: None,
                 defaults: adl::RunDefaults::default(),
                 workflow_ref: None,
-                workflow: adl::WorkflowSpec {
+                workflow: Some(adl::WorkflowSpec {
+                    id: None,
                     kind: adl::WorkflowKind::Sequential,
                     steps: vec![],
-                },
+                }),
+                pattern_ref: None,
                 inputs: std::collections::HashMap::new(),
+                placement: None,
             },
         }
     }
@@ -339,6 +423,7 @@ mod tests {
         doc.providers.insert(
             "other".to_string(),
             adl::ProviderSpec {
+                id: None,
                 kind: "ollama".to_string(),
                 base_url: None,
                 default_model: None,
@@ -354,9 +439,6 @@ mod tests {
             retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
-            call: None,
-            with: HashMap::new(),
-            as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
             guards: vec![],
@@ -377,9 +459,6 @@ mod tests {
             retry: None,
             agent: None,
             task: Some("t1".to_string()),
-            call: None,
-            with: HashMap::new(),
-            as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
             guards: vec![],
@@ -387,5 +466,213 @@ mod tests {
 
         let p = super::resolve_provider_for_step(&step, &doc);
         assert_eq!(p.as_deref(), Some("local"));
+    }
+
+    #[test]
+    fn effective_prompt_priority_step_then_task_then_agent() {
+        let mut doc = minimal_doc();
+
+        // Step that references both task + agent but has no inline prompt => task wins.
+        workflow_steps_mut(&mut doc).push(adl::StepSpec {
+            id: None,
+            save_as: None,
+            write_to: None,
+            on_error: None,
+            retry: None,
+            agent: Some("a1".to_string()),
+            task: Some("t1".to_string()),
+            prompt: None,
+            inputs: std::collections::HashMap::new(),
+            guards: vec![],
+        });
+        let resolved = resolve_run(&doc).expect("resolve");
+        let step0 = &resolved.steps[0];
+        assert_eq!(
+            step0
+                .effective_prompt(&resolved)
+                .and_then(|p| p.user.as_deref()),
+            Some("task user")
+        );
+
+        // Now override with inline prompt => step wins.
+        let mut doc2 = minimal_doc();
+        workflow_steps_mut(&mut doc2).push(adl::StepSpec {
+            id: None,
+            save_as: None,
+            write_to: None,
+            on_error: None,
+            retry: None,
+            agent: Some("a1".to_string()),
+            task: Some("t1".to_string()),
+            prompt: Some(adl::PromptSpec {
+                system: None,
+                developer: None,
+                user: Some("step user".to_string()),
+                context: None,
+                output: None,
+            }),
+            inputs: std::collections::HashMap::new(),
+            guards: vec![],
+        });
+        let resolved2 = resolve_run(&doc2).expect("resolve");
+        let step1 = &resolved2.steps[0];
+        assert_eq!(
+            step1
+                .effective_prompt(&resolved2)
+                .and_then(|p| p.user.as_deref()),
+            Some("step user")
+        );
+
+        // Task missing => agent prompt used.
+        let mut doc3 = minimal_doc();
+        workflow_steps_mut(&mut doc3).push(adl::StepSpec {
+            id: None,
+            save_as: None,
+            write_to: None,
+            on_error: None,
+            retry: None,
+            agent: Some("a1".to_string()),
+            task: Some("nope".to_string()),
+            prompt: None,
+            inputs: std::collections::HashMap::new(),
+            guards: vec![],
+        });
+        let resolved3 = resolve_run(&doc3).expect("resolve");
+        let step2 = &resolved3.steps[0];
+        assert_eq!(
+            step2
+                .effective_prompt(&resolved3)
+                .and_then(|p| p.user.as_deref()),
+            Some("agent user")
+        );
+    }
+
+    #[test]
+    fn defaults_system_applies_when_prompt_missing_system() {
+        let mut doc = minimal_doc();
+        doc.run.defaults.system = Some("default sys".to_string());
+        workflow_steps_mut(&mut doc).push(adl::StepSpec {
+            id: None,
+            save_as: None,
+            write_to: None,
+            on_error: None,
+            retry: None,
+            agent: Some("a1".to_string()),
+            task: Some("t1".to_string()),
+            prompt: None,
+            inputs: std::collections::HashMap::new(),
+            guards: vec![],
+        });
+
+        let resolved = resolve_run(&doc).expect("resolve");
+        let step = &resolved.steps[0];
+        let p = step
+            .effective_prompt_with_defaults(&resolved)
+            .expect("prompt");
+        assert_eq!(p.system.as_deref(), Some("default sys"));
+    }
+
+    #[test]
+    fn defaults_system_does_not_override_existing_system() {
+        let mut doc = minimal_doc();
+        doc.run.defaults.system = Some("default sys".to_string());
+        workflow_steps_mut(&mut doc).push(adl::StepSpec {
+            id: None,
+            save_as: None,
+            write_to: None,
+            on_error: None,
+            retry: None,
+            agent: Some("a1".to_string()),
+            task: Some("t1".to_string()),
+            prompt: Some(adl::PromptSpec {
+                system: Some("step sys".to_string()),
+                developer: None,
+                user: Some("step user".to_string()),
+                context: None,
+                output: None,
+            }),
+            inputs: std::collections::HashMap::new(),
+            guards: vec![],
+        });
+
+        let resolved = resolve_run(&doc).expect("resolve");
+        let step = &resolved.steps[0];
+        let p = step
+            .effective_prompt_with_defaults(&resolved)
+            .expect("prompt");
+        assert_eq!(p.system.as_deref(), Some("step sys"));
+    }
+
+    #[test]
+    fn resolve_run_preserves_explicit_step_ids() {
+        let mut doc = minimal_doc();
+        doc.version = "0.2".to_string();
+        workflow_steps_mut(&mut doc).push(adl::StepSpec {
+            id: Some("step-1".to_string()),
+            save_as: None,
+            write_to: None,
+            on_error: None,
+            retry: None,
+            agent: Some("a1".to_string()),
+            task: Some("t1".to_string()),
+            prompt: None,
+            inputs: std::collections::HashMap::new(),
+            guards: vec![],
+        });
+        workflow_steps_mut(&mut doc).push(adl::StepSpec {
+            id: Some("step-2".to_string()),
+            save_as: None,
+            write_to: None,
+            on_error: None,
+            retry: None,
+            agent: Some("a1".to_string()),
+            task: Some("t1".to_string()),
+            prompt: None,
+            inputs: std::collections::HashMap::new(),
+            guards: vec![],
+        });
+
+        let resolved = resolve_run(&doc).expect("resolve");
+        assert_eq!(resolved.steps[0].id, "step-1");
+        assert_eq!(resolved.steps[1].id, "step-2");
+    }
+}
+
+#[cfg(test)]
+mod wp02_followup_tests {
+    use super::*;
+
+    #[test]
+    fn resolve_provider_does_not_choose_when_multiple_providers_exist() {
+        let mut doc = super::tests::minimal_doc();
+        doc.providers.insert(
+            "other".to_string(),
+            crate::adl::ProviderSpec {
+                id: None,
+                kind: "ollama".to_string(),
+                base_url: None,
+                default_model: None,
+                config: std::collections::HashMap::new(),
+            },
+        );
+
+        let step = crate::adl::StepSpec {
+            id: None,
+            save_as: None,
+            write_to: None,
+            on_error: None,
+            retry: None,
+            agent: None,
+            task: Some("t1".to_string()),
+            prompt: None,
+            inputs: std::collections::HashMap::new(),
+            guards: vec![],
+        };
+
+        let p = resolve_provider_for_step(&step, &doc);
+        assert!(
+            p.is_none(),
+            "provider must be explicit when multiple providers exist"
+        );
     }
 }

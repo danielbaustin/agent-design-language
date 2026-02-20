@@ -49,6 +49,8 @@ Reference ADL doc for the demo scenario:
 - `v0-3-concurrency-fork-join.adl.yaml`
   - deterministic fork/join sequence contract (single-threaded runtime order)
   - clear branch/join artifacts: `fork/alpha.txt`, `fork/beta.txt`, `fork/join.txt`
+  - optional global cap: `run.defaults.max_concurrency` (`>= 1`, default `4`)
+  - set `run.defaults.max_concurrency: 1` for fully sequential execution behavior
   - see `v0-3-concurrency-fork-join.md` for mental model + deterministic trace ordering
 - `v0-3-fork-join-seq-run.adl.yaml`
   - runnable v0.3 sequential fork/join execution
@@ -77,21 +79,35 @@ From repo root:
 cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
 ```
 
-## v0.5 composition baseline (include + call)
+## v0.5 primitives baseline
 
-- `v0-5-composition-hierarchical.adl.yaml`
-  - parent workflow calls child workflow twice (`call`)
-  - child step ids are namespaced deterministically via `::` in trace/output
-  - call results are namespaced under `as:` for state reads (`@state:<ns>.<key>`)
-- `v0-5-composition-include-root.adl.yaml`
-  - demonstrates top-level `include` merge from a second file
-  - include order is deterministic; root merges after includes
+- `v0-5-primitives-minimal.adl.yaml`
+  - defines all six primitives (`providers`, `tools`, `agents`, `tasks`, `workflows`, `run`)
+  - demonstrates explicit `workflow_ref` and task references in steps
+  - inline `run.workflow` is legacy-compatible but must not coexist with `workflow_ref`
+  - when multiple providers exist, provider selection must be explicit
+  - demonstrates `agent_ref` resolution from task
 
 From repo root:
 
 ```bash
-SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh \
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-composition-hierarchical.adl.yaml --run --trace
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-primitives-minimal.adl.yaml --print-plan
+```
 
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-composition-include-root.adl.yaml --print-plan
+## v0.5 pattern compiler examples
+
+PatternSchema v0.1 compiles patterns into deterministic ExecutionPlan nodes with `p::<pattern_id>::...` step IDs.
+
+Rules:
+- task symbols in pattern `steps` must match task IDs in `tasks` (missing symbols fail with a clear validation error)
+- fork branches are compiled in lexicographic `branch.id` order for stable plans across declaration order variants
+
+- `v0-5-pattern-linear.adl.yaml`
+- `v0-5-pattern-fork-join.adl.yaml`
+
+Quick checks from repo root:
+
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-pattern-linear.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-pattern-fork-join.adl.yaml --print-plan
 ```

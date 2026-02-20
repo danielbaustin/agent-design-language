@@ -8,16 +8,16 @@ agent workflows with deterministic resolution and clear failure modes.
 
 [![swarm-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-[![swarm-coverage-gate (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![MSRV](https://img.shields.io/badge/MSRV-1.74%2B-blue)
 
 Status badges above are for `main` branch workflow health, not per-PR checks.
+Coverage is generated via `cargo llvm-cov` in CI and uploaded to Codecov as an informational signal (upload failures do not fail CI).
 ## swarm
 
 `swarm` is a small, conservative reference runtime for **Agent Design Language (ADL)**.
 
-For historical context, see `RELEASE_NOTES_v0.2.md`.
+For historical context, see `../docs/milestones/v0.2/RELEASE_NOTES_v0.2.md`.
 For the official v0.4 milestone summary, see `../docs/milestones/v0.4/RELEASE_NOTES_v0.4.md`.
 This README reflects the current v0.4 runtime.
 
@@ -38,6 +38,9 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 - Deterministic workflow execution with stable plan/trace semantics
 - Deterministic fork/join runtime execution (`workflow.kind: concurrent`) with bounded parallelism
 - Canonical concurrent ready-step ordering: lexicographic by `step_id`
+- Global concurrency cap via `run.defaults.max_concurrency` (default: `4`, must be `>= 1`)
+  - v0.5 default is `4` (deterministic; ready-set sorted lexicographically)
+  - set to `1` for fully sequential execution behavior
 - Step-level failure controls (`on_error: fail|continue`, `retry.max_attempts`)
 - Remote HTTP provider MVP with explicit failure behavior
 - Persistent run state artifacts under `.adl/runs/<run_id>/` for auditability (`run.json`, `steps.json`)
@@ -67,6 +70,8 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 - Deterministic retries: `retry.max_attempts` (no backoff)
 - Deterministic fork/join runtime execution (`workflow.kind: concurrent`) with bounded parallelism
 - Concurrent ready-step ordering is deterministic and lexicographic by `step_id`
+- `run.defaults.max_concurrency` enforces a deterministic global concurrency cap for concurrent runs
+  - default is `4`; set to `1` for fully sequential execution behavior
 - Join input wiring via `@state:<save_as_key>`
 - Local Ollama provider (real binary or test mock)
 - Remote HTTP provider (blocking JSON request/response)
@@ -75,7 +80,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 
 **Explicitly deferred**
 
-- Configurable parallelism controls (current runtime uses fixed bounded parallelism in v0.4)
+- Advanced scheduler policy controls beyond deterministic lexicographic batching
 - Multi-run documents
 - Provider retries / contracts / repair policies
 

@@ -180,12 +180,16 @@ pub fn execute_sequential(
         resolved.execution_plan.workflow_kind,
         crate::adl::WorkflowKind::Concurrent
     );
-    if is_concurrent && resolved.doc.version.trim() != "0.3" {
+    if is_concurrent {
         let doc_version = resolved.doc.version.trim();
-        tr.run_failed("concurrent workflows are not supported in v0.1/v0.2");
-        return Err(anyhow!(
-            "feature 'concurrency' requires v0.3; document version is {doc_version} (run.workflow.kind=concurrent)"
-        ));
+        let pattern_run = resolved.doc.run.pattern_ref.is_some();
+        let allow = doc_version == "0.3" || (doc_version == "0.5" && pattern_run);
+        if !allow {
+            tr.run_failed("concurrent workflows are not supported for this document shape/version");
+            return Err(anyhow!(
+                "feature 'concurrency' requires v0.3 workflows or v0.5 pattern runs; document version is {doc_version} (run.workflow.kind=concurrent)"
+            ));
+        }
     }
     if is_concurrent {
         return execute_concurrent_deterministic(
@@ -811,7 +815,18 @@ fn execute_concurrent_deterministic(
     adl_base_dir: &Path,
     out_dir: &Path,
 ) -> Result<ExecutionResult> {
-    const MAX_PARALLEL: usize = 4;
+    const DEFAULT_MAX_PARALLEL: usize = 4;
+    let max_parallel = resolved
+        .doc
+        .run
+        .defaults
+        .max_concurrency
+        .unwrap_or(DEFAULT_MAX_PARALLEL);
+    if max_parallel == 0 {
+        return Err(anyhow!(
+            "run.defaults.max_concurrency must be >= 1 for concurrent runs"
+        ));
+    }
 
     let mut outs = Vec::new();
     let mut artifacts = Vec::new();
@@ -857,7 +872,9 @@ fn execute_concurrent_deterministic(
         let doc_snapshot = resolved.doc.clone();
         let base_snapshot = adl_base_dir.to_path_buf();
 
-        for step_id in &ready_ids {
+        let batch_ids: Vec<String> = ready_ids.into_iter().take(max_parallel).collect();
+
+        for step_id in &batch_ids {
             let step = by_id
                 .get(step_id)
                 .ok_or_else(|| anyhow!("execution plan references unknown step '{}'", step_id))?;
@@ -870,7 +887,7 @@ fn execute_concurrent_deterministic(
         }
 
         let mut jobs: Vec<StepJob> = Vec::new();
-        for step_id in &ready_ids {
+        for step_id in &batch_ids {
             let step_id_owned = step_id.clone();
             let step = by_id
                 .get(step_id)
@@ -886,7 +903,7 @@ fn execute_concurrent_deterministic(
             }));
         }
 
-        let results = bounded_executor::run_bounded(MAX_PARALLEL, jobs)?;
+        let results = bounded_executor::run_bounded(max_parallel, jobs)?;
         for (step_id, run_result) in results {
             let step = by_id
                 .get(&step_id)

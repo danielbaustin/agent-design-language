@@ -138,6 +138,26 @@ fn print_plan_v0_3_remote_provider_demo_works() {
 }
 
 #[test]
+fn print_plan_v0_5_primitives_fixture_works() {
+    let path = fixture_path("examples/v0-5-primitives-minimal.adl.yaml");
+    let out = run_swarm(&[path.to_str().unwrap(), "--print-plan"]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("summarize.topic")
+            && stdout.contains("planner")
+            && stdout.contains("local_ollama"),
+        "expected v0.5 primitive refs in plan output, stdout:\n{}",
+        stdout
+    );
+}
+
+#[test]
 fn unknown_arg_exits_with_code_2_and_prints_usage() {
     let path = write_temp_adl_yaml();
     let out = run_swarm(&[path.to_str().unwrap(), "--nope"]);

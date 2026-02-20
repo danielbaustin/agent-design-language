@@ -1,7 +1,4 @@
 use std::collections::HashMap;
-use std::fs;
-use std::path::PathBuf;
-use std::time::{SystemTime, UNIX_EPOCH};
 
 use swarm::adl::{
     AdlDoc, AgentSpec, PromptSpec, RunDefaults, RunSpec, StepSpec, TaskSpec, WorkflowKind,
@@ -12,16 +9,6 @@ fn parse_doc(yaml: &str) -> AdlDoc {
     let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
     doc.validate().expect("doc should validate");
     doc
-}
-
-fn temp_dir(prefix: &str) -> PathBuf {
-    let ts = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap_or_default()
-        .as_nanos();
-    let dir = std::env::temp_dir().join(format!("swarm-{prefix}-{ts}"));
-    fs::create_dir_all(&dir).expect("create temp dir");
-    dir
 }
 
 #[test]
@@ -56,16 +43,21 @@ run:
     assert!(doc.providers.contains_key("local"));
     assert!(doc.agents.contains_key("a1"));
     assert!(doc.tasks.contains_key("t1"));
-    assert_eq!(doc.run.workflow.steps.len(), 1);
+    assert_eq!(
+        doc.run
+            .workflow
+            .as_ref()
+            .expect("inline workflow")
+            .steps
+            .len(),
+        1
+    );
 }
 
 #[test]
 fn validate_rejects_unknown_agent_reference() {
     let yaml = r#"
 version: "0.1"
-providers:
-  p:
-    type: "ollama"
 agents:
   a1:
     provider: "p"
@@ -91,9 +83,6 @@ run:
 fn validate_rejects_unknown_task_reference() {
     let yaml = r#"
 version: "0.1"
-providers:
-  p:
-    type: "ollama"
 agents:
   a1:
     provider: "p"
@@ -119,22 +108,26 @@ run:
 fn effective_prompt_priority_is_step_then_task_then_agent() {
     let mut doc = AdlDoc {
         version: "0.1".to_string(),
-        include: vec![],
         providers: HashMap::new(),
         tools: HashMap::new(),
         agents: HashMap::new(),
         tasks: HashMap::new(),
         workflows: HashMap::new(),
+        patterns: vec![],
         run: RunSpec {
+            id: None,
             name: Some("demo".to_string()),
             created_at: None,
             defaults: RunDefaults::default(),
             workflow_ref: None,
-            workflow: WorkflowSpec {
+            workflow: Some(WorkflowSpec {
+                id: None,
                 kind: WorkflowKind::Sequential,
                 steps: vec![],
-            },
+            }),
+            pattern_ref: None,
             inputs: HashMap::new(),
+            placement: None,
         },
     };
 
@@ -145,6 +138,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
     doc.agents.insert(
         "a1".to_string(),
         AgentSpec {
+            id: None,
             provider: "p".to_string(),
             model: "m".to_string(),
             temperature: None,
@@ -162,10 +156,11 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
     doc.tasks.insert(
         "t1".to_string(),
         TaskSpec {
-            description: None,
+            id: None,
             agent_ref: None,
             inputs: vec![],
             tool_allowlist: vec![],
+            description: None,
             prompt: task_prompt.clone(),
         },
     );
@@ -226,14 +221,64 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
 }
 
 #[test]
-fn load_from_file_merges_includes_in_order() {
-    let dir = temp_dir("include-merge");
-    let inc = dir.join("defs.yaml");
-    let root = dir.join("root.yaml");
+fn validate_accepts_v0_5_complete_doc_with_all_primitives() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local_ollama:
+    id: "local_ollama"
+    type: "local_ollama"
+    config:
+      model: "phi4-mini"
+tools:
+  fetch_docs:
+    id: "fetch_docs"
+    type: "mcp"
+    config:
+      server: "docs"
+agents:
+  planner:
+    id: "planner"
+    provider: "local_ollama"
+    model: "phi4-mini"
+    tools: ["fetch_docs"]
+tasks:
+  summarize:
+    id: "summarize"
+    agent_ref: "planner"
+    inputs: ["topic"]
+    tool_allowlist: ["fetch_docs"]
+    prompt:
+      user: "Summarize {{topic}}."
+workflows:
+  wf_main:
+    id: "wf_main"
+    kind: sequential
+    steps:
+      - id: "s1"
+        task: "summarize"
+run:
+  id: "run_main"
+  name: "demo-v0-5"
+  workflow_ref: "wf_main"
+  inputs:
+    topic: "ADL"
+  placement:
+    target: "local"
+"#;
 
-    fs::write(
-        &inc,
-        r#"
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml parse");
+    doc.validate().expect("v0.5 complete doc should validate");
+
+    assert_eq!(doc.workflows.len(), 1);
+    assert_eq!(doc.tasks["summarize"].agent_ref.as_deref(), Some("planner"));
+    assert_eq!(doc.run.workflow_ref.as_deref(), Some("wf_main"));
+}
+
+#[test]
+fn validate_rejects_zero_max_concurrency() {
+    let yaml = r#"
+version: "0.3"
 providers:
   local:
     type: "ollama"
@@ -244,111 +289,188 @@ agents:
 tasks:
   t1:
     prompt:
-      user: "Summarize {{inputs.topic}}"
-workflows:
-  wf_child:
-    kind: sequential
+      user: "hello"
+run:
+  defaults:
+    max_concurrency: 0
+  workflow:
+    kind: concurrent
     steps:
-      - id: "child_s1"
+      - id: "s1"
         agent: "a1"
         task: "t1"
-"#,
-    )
-    .expect("write include");
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    let err = doc.validate().expect_err("max_concurrency=0 must fail");
+    assert!(
+        err.to_string().contains("max_concurrency must be >= 1"),
+        "unexpected error: {err:#}"
+    );
+}
 
-    fs::write(
-        &root,
-        r#"
+#[test]
+fn validate_rejects_unknown_workflow_ref() {
+    let yaml = r#"
 version: "0.5"
-include:
-  - "defs.yaml"
+providers:
+  p1: { type: "ollama" }
+agents:
+  a1:
+    provider: "p1"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+workflows: {}
+run:
+  workflow_ref: "wf_missing"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml parse");
+    let err = doc
+        .validate()
+        .expect_err("unknown workflow_ref should fail");
+    assert!(
+        err.to_string()
+            .contains("run.workflow_ref references unknown workflow"),
+        "{err:#}"
+    );
+}
+
+#[test]
+fn validate_rejects_unsupported_provider_kind() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  p1:
+    type: "weird_provider"
+agents:
+  a1:
+    provider: "p1"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "u"
 run:
   workflow:
+    steps:
+      - task: "t1"
+        agent: "a1"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml parse");
+    let err = doc
+        .validate()
+        .expect_err("unsupported provider kind should fail");
+    assert!(err.to_string().contains("unsupported kind"), "{err:#}");
+}
+
+#[test]
+fn validate_rejects_both_workflow_ref_and_inline_workflow() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  p1: { type: "ollama" }
+agents:
+  a1:
+    provider: "p1"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+workflows:
+  wf_main:
+    steps:
+      - task: "t1"
+        agent: "a1"
+run:
+  workflow_ref: "wf_main"
+  workflow:
+    steps:
+      - task: "t1"
+        agent: "a1"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml parse");
+    let err = doc
+        .validate()
+        .expect_err("both workflow_ref and inline workflow should fail");
+    assert!(
+        err.to_string()
+            .contains("either workflow_ref or inline workflow, but not both"),
+        "{err:#}"
+    );
+}
+
+#[test]
+fn validate_rejects_pattern_ref_with_inline_workflow() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+tasks:
+  A:
+    prompt:
+      user: "A"
+patterns:
+  - id: p1
+    type: linear
+    steps: [A]
+run:
+  pattern_ref: p1
+  workflow:
+    kind: sequential
+    steps: []
+"#;
+
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    let err = doc
+        .validate()
+        .expect_err("should reject ambiguous run shape");
+    assert!(
+        err.to_string().contains(
+            "run.pattern_ref cannot be combined with run.workflow_ref or inline run.workflow"
+        ),
+        "unexpected error: {err:#}"
+    );
+}
+
+#[test]
+fn validate_rejects_pattern_ref_with_workflow_ref() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+tasks:
+  A:
+    prompt:
+      user: "A"
+workflows:
+  wf:
+    id: "wf"
     kind: sequential
     steps:
-      - id: "parent"
-        call: "wf_child"
-        with:
-          topic: "ADL"
-        as: "child"
-"#,
-    )
-    .expect("write root");
-
-    let doc = AdlDoc::load_from_file(root.to_str().unwrap()).expect("load composed doc");
-    assert!(doc.providers.contains_key("local"));
-    assert!(doc.workflows.contains_key("wf_child"));
-    assert_eq!(doc.run.workflow.steps[0].call.as_deref(), Some("wf_child"));
-}
-
-#[test]
-fn load_from_file_rejects_duplicate_ids_across_includes() {
-    let dir = temp_dir("include-dup");
-    let a = dir.join("a.yaml");
-    let b = dir.join("b.yaml");
-    let root = dir.join("root.yaml");
-
-    fs::write(
-        &a,
-        r#"
-providers:
-  local:
-    type: "ollama"
-"#,
-    )
-    .expect("write a");
-    fs::write(
-        &b,
-        r#"
-providers:
-  local:
-    type: "ollama"
-"#,
-    )
-    .expect("write b");
-    fs::write(
-        &root,
-        r#"
-version: "0.5"
-include:
-  - "a.yaml"
-  - "b.yaml"
+      - id: "s1"
+        task: "A"
+patterns:
+  - id: p1
+    type: linear
+    steps: [A]
 run:
-  workflow:
-    kind: sequential
-    steps: []
-"#,
-    )
-    .expect("write root");
+  pattern_ref: p1
+  workflow_ref: "wf"
+"#;
 
-    let err = AdlDoc::load_from_file(root.to_str().unwrap())
-        .expect_err("duplicate provider id should fail");
-    let msg = format!("{err:#}");
-    assert!(msg.contains("duplicate provider id 'local'"), "{msg}");
-    assert!(msg.contains("a.yaml"), "{msg}");
-    assert!(msg.contains("b.yaml"), "{msg}");
-}
-
-#[test]
-fn load_from_file_rejects_missing_include_file() {
-    let dir = temp_dir("include-missing");
-    let root = dir.join("root.yaml");
-    fs::write(
-        &root,
-        r#"
-version: "0.5"
-include:
-  - "missing.yaml"
-run:
-  workflow:
-    kind: sequential
-    steps: []
-"#,
-    )
-    .expect("write root");
-
-    let err =
-        AdlDoc::load_from_file(root.to_str().unwrap()).expect_err("missing include should fail");
-    let msg = format!("{err:#}");
-    assert!(msg.contains("missing.yaml"), "{msg}");
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    let err = doc
+        .validate()
+        .expect_err("should reject ambiguous run shape");
+    assert!(
+        err.to_string().contains(
+            "run.pattern_ref cannot be combined with run.workflow_ref or inline run.workflow"
+        ),
+        "unexpected error: {err:#}"
+    );
 }

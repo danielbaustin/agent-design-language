@@ -4,15 +4,17 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 use std::collections::HashMap;
 use std::fs;
-use std::path::{Component, Path, PathBuf};
+
+use crate::schema;
 
 /// Top-level ADL document.
+///
+/// MVP v0.1 supports:
+/// - providers, tools, agents, tasks
+/// - a single `run` with a workflow
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 pub struct AdlDoc {
     pub version: String,
-
-    #[serde(default)]
-    pub include: Vec<String>,
 
     #[serde(default)]
     pub providers: HashMap<String, ProviderSpec>,
@@ -29,402 +31,253 @@ pub struct AdlDoc {
     #[serde(default)]
     pub workflows: HashMap<String, WorkflowSpec>,
 
+    #[serde(default)]
+    pub patterns: Vec<PatternSpec>,
+
     pub run: RunSpec,
-}
-
-#[derive(Debug, Clone, Deserialize, Default)]
-#[serde(deny_unknown_fields)]
-struct AdlFragment {
-    #[serde(default)]
-    version: Option<String>,
-
-    #[serde(default)]
-    include: Vec<String>,
-
-    #[serde(default)]
-    providers: HashMap<String, ProviderSpec>,
-
-    #[serde(default)]
-    tools: HashMap<String, ToolSpec>,
-
-    #[serde(default)]
-    agents: HashMap<String, AgentSpec>,
-
-    #[serde(default)]
-    tasks: HashMap<String, TaskSpec>,
-
-    #[serde(default)]
-    workflows: HashMap<String, WorkflowSpec>,
-
-    #[serde(default)]
-    run: Option<RunSpec>,
-}
-
-#[derive(Default)]
-struct MergeState {
-    version: Option<String>,
-    run: Option<RunSpec>,
-    providers: HashMap<String, ProviderSpec>,
-    tools: HashMap<String, ToolSpec>,
-    agents: HashMap<String, AgentSpec>,
-    tasks: HashMap<String, TaskSpec>,
-    workflows: HashMap<String, WorkflowSpec>,
-    providers_src: HashMap<String, String>,
-    tools_src: HashMap<String, String>,
-    agents_src: HashMap<String, String>,
-    tasks_src: HashMap<String, String>,
-    workflows_src: HashMap<String, String>,
 }
 
 impl AdlDoc {
     /// Load an ADL YAML document from a file path.
-    ///
-    /// Supports minimal composition includes:
-    /// - `include: ["rel/path.yaml", ...]`
-    /// - includes are processed in listed order
-    /// - root document is merged last
     pub fn load_from_file(path: &str) -> Result<Self> {
-        let root_path = PathBuf::from(path);
-        let root_path = if root_path.is_absolute() {
-            root_path
-        } else {
-            std::env::current_dir()
-                .context("resolve current_dir")?
-                .join(root_path)
-        };
+        let s = fs::read_to_string(path).with_context(|| format!("read adl file: {path}"))?;
 
-        let mut state = MergeState::default();
-        let mut stack = Vec::new();
-        load_fragment_recursive(&root_path, &mut state, &mut stack, true)?;
+        // Schema validation first, so users get crisp errors.
+        schema::validate_adl_yaml(&s)
+            .with_context(|| format!("schema validate adl yaml: {path}"))?;
 
-        let version = state
-            .version
-            .clone()
-            .ok_or_else(|| anyhow!("missing required top-level field: version"))?;
-        let run = state
-            .run
-            .clone()
-            .ok_or_else(|| anyhow!("missing required top-level field: run"))?;
+        let doc: Self =
+            serde_yaml::from_str(&s).with_context(|| format!("parse adl yaml: {path}"))?;
 
-        let doc = AdlDoc {
-            version,
-            include: Vec::new(),
-            providers: state.providers,
-            tools: state.tools,
-            agents: state.agents,
-            tasks: state.tasks,
-            workflows: state.workflows,
-            run,
-        };
-
-        // Validate merged semantics. Includes may assemble fragments that are not
-        // standalone schema-valid until merged, so semantic validation is the
-        // authoritative check here.
-        doc.validate().with_context(|| "validate merged adl")?;
+        doc.validate().with_context(|| "validate adl")?;
         Ok(doc)
     }
 
     /// Lightweight validation so we can fail fast with good errors.
     pub fn validate(&self) -> Result<()> {
-        let workflow = self.run.resolve_workflow(self)?;
-
-        // Validate task/agent/tool references.
-        for (task_id, task) in &self.tasks {
-            if let Some(agent_ref) = task.agent_ref.as_ref() {
-                if !self.agents.contains_key(agent_ref) {
-                    return Err(anyhow!(
-                        "task '{}' references unknown agent_ref '{}'",
-                        task_id,
-                        agent_ref
-                    ));
-                }
-            }
-            for tool_ref in &task.tool_allowlist {
-                if !self.tools.contains_key(tool_ref) {
-                    return Err(anyhow!(
-                        "task '{}' references unknown tool_allowlist entry '{}'",
-                        task_id,
-                        tool_ref
-                    ));
-                }
-            }
+        if matches!(self.run.defaults.max_concurrency, Some(0)) {
+            return Err(anyhow!(
+                "run.defaults.max_concurrency must be >= 1 when provided"
+            ));
         }
 
-        for (agent_id, agent) in &self.agents {
-            if !agent.provider.trim().is_empty() && !self.providers.contains_key(&agent.provider) {
+        validate_id_fields("providers", &self.providers, |spec| spec.id.as_deref())?;
+        validate_id_fields("tools", &self.tools, |spec| spec.id.as_deref())?;
+        validate_id_fields("agents", &self.agents, |spec| spec.id.as_deref())?;
+        validate_id_fields("tasks", &self.tasks, |spec| spec.id.as_deref())?;
+        validate_id_fields("workflows", &self.workflows, |spec| spec.id.as_deref())?;
+
+        for provider_id in sorted_keys(&self.providers) {
+            let provider = &self.providers[provider_id];
+            validate_provider(provider_id, provider)?;
+        }
+
+        for tool_id in sorted_keys(&self.tools) {
+            let tool = &self.tools[tool_id];
+            validate_tool(tool_id, tool)?;
+        }
+
+        for agent_id in sorted_keys(&self.agents) {
+            let agent = &self.agents[agent_id];
+            if !self.providers.is_empty() && !self.providers.contains_key(&agent.provider) {
                 return Err(anyhow!(
-                    "agent '{}' references unknown provider '{}'",
-                    agent_id,
+                    "agents.{agent_id}.provider references unknown provider '{}'",
                     agent.provider
                 ));
             }
             for tool_ref in &agent.tools {
                 if !self.tools.contains_key(tool_ref) {
                     return Err(anyhow!(
-                        "agent '{}' references unknown tool '{}'",
-                        agent_id,
-                        tool_ref
+                        "agents.{agent_id}.tools references unknown tool '{tool_ref}'"
                     ));
                 }
             }
         }
 
-        validate_workflow_steps(self, workflow, "run.workflow")?;
-        for (wf_id, wf) in &self.workflows {
-            validate_workflow_steps(self, wf, &format!("workflows.{}", wf_id))?;
+        for task_id in sorted_keys(&self.tasks) {
+            let task = &self.tasks[task_id];
+            if let Some(agent_ref) = task.agent_ref.as_deref() {
+                if !self.agents.contains_key(agent_ref) {
+                    return Err(anyhow!(
+                        "tasks.{task_id}.agent_ref references unknown agent '{agent_ref}'"
+                    ));
+                }
+            }
+            for tool_ref in &task.tool_allowlist {
+                if !self.tools.contains_key(tool_ref) {
+                    return Err(anyhow!(
+                        "tasks.{task_id}.tool_allowlist references unknown tool '{tool_ref}'"
+                    ));
+                }
+            }
+        }
+
+        let mut seen_patterns = std::collections::HashSet::new();
+        for pattern in &self.patterns {
+            if pattern.id.trim().is_empty() {
+                return Err(anyhow!("pattern id must not be empty"));
+            }
+            if !seen_patterns.insert(pattern.id.clone()) {
+                return Err(anyhow!("duplicate pattern id '{}'", pattern.id));
+            }
+            pattern.validate()?;
+        }
+
+        if let Some(pattern_ref) = self.run.pattern_ref.as_ref() {
+            if !self.patterns.iter().any(|p| p.id == *pattern_ref) {
+                return Err(anyhow!(
+                    "run.pattern_ref references unknown pattern '{}'",
+                    pattern_ref
+                ));
+            }
+            if self.run.workflow_ref.is_some() || self.run.workflow.is_some() {
+                return Err(anyhow!(
+                    "run.pattern_ref cannot be combined with run.workflow_ref or inline run.workflow"
+                ));
+            }
+            return Ok(());
+        }
+
+        let workflow = self.run.resolve_workflow(self)?;
+        for (idx, step) in workflow.steps.iter().enumerate() {
+            let step_id = step
+                .id
+                .as_deref()
+                .map(|s| s.to_string())
+                .unwrap_or_else(|| format!("step-{idx}"));
+
+            if step_id.starts_with("p::") {
+                return Err(anyhow!(
+                    "step id '{}' uses reserved compiler prefix 'p::'",
+                    step_id
+                ));
+            }
+
+            if let Some(agent) = step.agent.as_ref() {
+                if !self.agents.is_empty() && !self.agents.contains_key(agent) {
+                    return Err(anyhow!(
+                        "run.workflow.steps[{idx}] references unknown agent '{agent}'"
+                    ));
+                }
+            }
+
+            if let Some(task_ref) = step.task.as_ref() {
+                if !self.tasks.is_empty() && !self.tasks.contains_key(task_ref) {
+                    return Err(anyhow!(
+                        "run.workflow.steps[{idx}] references unknown task '{task_ref}'"
+                    ));
+                }
+            }
+
+            if let Some(prompt) = step.prompt.as_ref() {
+                // In MVP, `prompt` is an inline PromptSpec, so nothing to resolve.
+                // Keep a placeholder for future prompt registries.
+                let _ = prompt;
+            }
+
+            if step.write_to.is_some() && step.save_as.is_none() {
+                return Err(anyhow!(
+                    "step '{}' uses write_to but is missing save_as",
+                    step_id
+                ));
+            }
+
+            if let Some(write_to) = step.write_to.as_deref() {
+                if write_to.trim().is_empty() {
+                    return Err(anyhow!("step '{}' has empty write_to path", step_id));
+                }
+                let path = std::path::Path::new(write_to);
+                if path.is_absolute()
+                    || path
+                        .components()
+                        .any(|c| matches!(c, std::path::Component::ParentDir))
+                {
+                    return Err(anyhow!(
+                        "step '{}' write_to must be a relative path without '..'",
+                        step_id
+                    ));
+                }
+            }
+
+            if let Some(retry) = step.retry.as_ref() {
+                if retry.max_attempts == 0 {
+                    return Err(anyhow!(
+                        "step '{}' has invalid retry.max_attempts=0 (must be >= 1)",
+                        step_id
+                    ));
+                }
+            }
         }
 
         Ok(())
     }
 }
 
-fn validate_workflow_steps(doc: &AdlDoc, wf: &WorkflowSpec, wf_label: &str) -> Result<()> {
-    for (idx, step) in wf.steps.iter().enumerate() {
-        let step_id = step
-            .id
-            .as_deref()
-            .map(|s| s.to_string())
-            .unwrap_or_else(|| format!("step-{idx}"));
-
-        if let Some(call_target) = step.call.as_ref() {
-            if !doc.workflows.contains_key(call_target) {
-                return Err(anyhow!(
-                    "{}.steps[{}] call references unknown workflow '{}'",
-                    wf_label,
-                    idx,
-                    call_target
-                ));
-            }
-            if step.agent.is_some()
-                || step.task.is_some()
-                || step.prompt.is_some()
-                || !step.inputs.is_empty()
-                || step.save_as.is_some()
-                || step.write_to.is_some()
-                || step.on_error.is_some()
-                || step.retry.is_some()
-                || !step.guards.is_empty()
-            {
-                return Err(anyhow!(
-                    "{}.steps[{}] call step '{}' may only use id/call/with/as",
-                    wf_label,
-                    idx,
-                    step_id
-                ));
-            }
-            if let Some(ns) = step.as_ns.as_deref() {
-                if ns.trim().is_empty() {
-                    return Err(anyhow!(
-                        "{}.steps[{}] call step '{}' has empty 'as' namespace",
-                        wf_label,
-                        idx,
-                        step_id
-                    ));
-                }
-            }
-            continue;
-        }
-
-        if let Some(agent) = step.agent.as_ref() {
-            if !doc.agents.is_empty() && !doc.agents.contains_key(agent) {
-                return Err(anyhow!(
-                    "{}.steps[{}] references unknown agent '{}'",
-                    wf_label,
-                    idx,
-                    agent
-                ));
-            }
-        }
-
-        if let Some(task) = step.task.as_ref() {
-            if !doc.tasks.is_empty() && !doc.tasks.contains_key(task) {
-                return Err(anyhow!(
-                    "{}.steps[{}] references unknown task '{}'",
-                    wf_label,
-                    idx,
-                    task
-                ));
-            }
-        }
-
-        if step.write_to.is_some() && step.save_as.is_none() {
-            return Err(anyhow!(
-                "step '{}' uses write_to but is missing save_as",
-                step_id
-            ));
-        }
-
-        if let Some(write_to) = step.write_to.as_deref() {
-            if write_to.trim().is_empty() {
-                return Err(anyhow!("step '{}' has empty write_to path", step_id));
-            }
-            let path = std::path::Path::new(write_to);
-            if path.is_absolute()
-                || path
-                    .components()
-                    .any(|c| matches!(c, std::path::Component::ParentDir))
-            {
-                return Err(anyhow!(
-                    "step '{}' write_to must be a relative path without '..'",
-                    step_id
-                ));
-            }
-        }
-
-        if let Some(retry) = step.retry.as_ref() {
-            if retry.max_attempts == 0 {
-                return Err(anyhow!(
-                    "step '{}' has invalid retry.max_attempts=0 (must be >= 1)",
-                    step_id
-                ));
-            }
-        }
-    }
-    Ok(())
+fn sorted_keys<T>(m: &HashMap<String, T>) -> Vec<&String> {
+    let mut keys: Vec<&String> = m.keys().collect();
+    keys.sort();
+    keys
 }
 
-fn load_fragment_recursive(
-    path: &Path,
-    state: &mut MergeState,
-    stack: &mut Vec<PathBuf>,
-    is_root: bool,
+fn validate_id_fields<T>(
+    section: &str,
+    items: &HashMap<String, T>,
+    get_id: impl Fn(&T) -> Option<&str>,
 ) -> Result<()> {
-    let canon = path
-        .canonicalize()
-        .with_context(|| format!("resolve include path '{}'", path.display()))?;
-
-    if stack.contains(&canon) {
-        return Err(anyhow!("include cycle detected at '{}'", canon.display()));
+    for key in sorted_keys(items) {
+        if let Some(explicit_id) = get_id(&items[key]) {
+            if explicit_id != key {
+                return Err(anyhow!(
+                    "{section}.{key}.id must match key '{key}' when provided (found '{explicit_id}')"
+                ));
+            }
+        }
     }
-    stack.push(canon.clone());
-
-    let text = fs::read_to_string(&canon)
-        .with_context(|| format!("read adl/include file: {}", canon.display()))?;
-
-    let fragment: AdlFragment = serde_yaml::from_str(&text)
-        .with_context(|| format!("parse adl yaml: {}", canon.display()))?;
-
-    // Includes are processed first, in listed order.
-    let parent = canon
-        .parent()
-        .ok_or_else(|| anyhow!("include file has no parent: {}", canon.display()))?;
-    for inc in &fragment.include {
-        let inc_path = resolve_include_path(parent, inc)
-            .with_context(|| format!("invalid include '{}' in {}", inc, canon.display()))?;
-        load_fragment_recursive(&inc_path, state, stack, false)?;
-    }
-
-    merge_fragment(state, &fragment, &canon, is_root)?;
-
-    stack.pop();
     Ok(())
 }
 
-fn resolve_include_path(base_dir: &Path, include: &str) -> Result<PathBuf> {
-    let raw = include.trim();
-    if raw.is_empty() {
-        return Err(anyhow!("include path is empty"));
+fn validate_provider(provider_id: &str, provider: &ProviderSpec) -> Result<()> {
+    match provider.kind.as_str() {
+        "ollama" | "local_ollama" | "mock" => Ok(()),
+        "http" | "http_remote" => {
+            let endpoint_ok = provider.base_url.is_some()
+                || provider
+                    .config
+                    .get("endpoint")
+                    .and_then(|v| v.as_str())
+                    .is_some();
+            if !endpoint_ok {
+                return Err(anyhow!(
+                    "providers.{provider_id} kind '{}' requires base_url or config.endpoint",
+                    provider.kind
+                ));
+            }
+            Ok(())
+        }
+        other => Err(anyhow!(
+            "providers.{provider_id} has unsupported kind '{other}' (supported: ollama, local_ollama, mock, http, http_remote)"
+        )),
     }
-    let p = Path::new(raw);
-    if p.is_absolute() {
-        return Err(anyhow!("include path must be relative: '{}'", raw));
-    }
-    if p.components().any(|c| matches!(c, Component::ParentDir)) {
-        return Err(anyhow!("include path must not contain '..': '{}'", raw));
-    }
-    Ok(base_dir.join(p))
 }
 
-fn merge_fragment(
-    state: &mut MergeState,
-    fragment: &AdlFragment,
-    src: &Path,
-    is_root: bool,
-) -> Result<()> {
-    let src_s = src.display().to_string();
-
-    if is_root {
-        if let Some(v) = fragment.version.as_ref() {
-            state.version = Some(v.clone());
-        }
-        if let Some(run) = fragment.run.as_ref() {
-            state.run = Some(run.clone());
-        }
-    } else if fragment.run.is_some() {
-        return Err(anyhow!(
-            "included file '{}' must not define top-level run",
-            src.display()
-        ));
+fn validate_tool(tool_id: &str, tool: &ToolSpec) -> Result<()> {
+    match tool.kind.as_str() {
+        "mcp" | "local" | "http" | "builtin" => Ok(()),
+        other => Err(anyhow!(
+            "tools.{tool_id} has unsupported kind '{other}' (supported: mcp, local, http, builtin)"
+        )),
     }
-
-    merge_map(
-        &mut state.providers,
-        &mut state.providers_src,
-        fragment.providers.clone(),
-        "provider",
-        &src_s,
-    )?;
-    merge_map(
-        &mut state.tools,
-        &mut state.tools_src,
-        fragment.tools.clone(),
-        "tool",
-        &src_s,
-    )?;
-    merge_map(
-        &mut state.agents,
-        &mut state.agents_src,
-        fragment.agents.clone(),
-        "agent",
-        &src_s,
-    )?;
-    merge_map(
-        &mut state.tasks,
-        &mut state.tasks_src,
-        fragment.tasks.clone(),
-        "task",
-        &src_s,
-    )?;
-    merge_map(
-        &mut state.workflows,
-        &mut state.workflows_src,
-        fragment.workflows.clone(),
-        "workflow",
-        &src_s,
-    )?;
-
-    Ok(())
-}
-
-fn merge_map<T: Clone>(
-    dst: &mut HashMap<String, T>,
-    src_map: &mut HashMap<String, String>,
-    incoming: HashMap<String, T>,
-    kind: &str,
-    src: &str,
-) -> Result<()> {
-    for (id, value) in incoming {
-        if let Some(prev_src) = src_map.get(&id) {
-            return Err(anyhow!(
-                "duplicate {} id '{}' found; first defined in '{}', conflicting definition in '{}'",
-                kind,
-                id,
-                prev_src,
-                src
-            ));
-        }
-        dst.insert(id.clone(), value);
-        src_map.insert(id, src.to_string());
-    }
-    Ok(())
 }
 
 /// Provider spec: local Ollama, OpenAI, etc.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct ProviderSpec {
+    #[serde(default)]
+    pub id: Option<String>,
+
     /// Provider type (e.g. "ollama", "openai").
-    #[serde(rename = "type")]
+    #[serde(rename = "type", alias = "kind")]
     pub kind: String,
 
     /// Optional base URL.
@@ -444,8 +297,11 @@ pub struct ProviderSpec {
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct ToolSpec {
+    #[serde(default)]
+    pub id: Option<String>,
+
     /// Tool type (e.g. "mcp", "http", "local").
-    #[serde(rename = "type")]
+    #[serde(rename = "type", alias = "kind")]
     pub kind: String,
 
     /// Arbitrary config.
@@ -457,7 +313,11 @@ pub struct ToolSpec {
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct AgentSpec {
+    #[serde(default)]
+    pub id: Option<String>,
+
     /// Provider this agent uses.
+    #[serde(alias = "provider_ref")]
     pub provider: String,
 
     /// Model name (provider-specific).
@@ -512,7 +372,7 @@ where
 #[serde(deny_unknown_fields)]
 pub struct TaskSpec {
     #[serde(default)]
-    pub description: Option<String>,
+    pub id: Option<String>,
 
     #[serde(default)]
     pub agent_ref: Option<String>,
@@ -522,6 +382,9 @@ pub struct TaskSpec {
 
     #[serde(default)]
     pub tool_allowlist: Vec<String>,
+
+    #[serde(default)]
+    pub description: Option<String>,
 
     /// Default prompt for this task.
     pub prompt: PromptSpec,
@@ -554,6 +417,9 @@ pub struct PromptSpec {
 #[serde(deny_unknown_fields)]
 pub struct RunSpec {
     #[serde(default)]
+    pub id: Option<String>,
+
+    #[serde(default)]
     pub name: Option<String>,
 
     /// Optional creation time in RFC3339 (e.g. "2026-01-24T10:30:00Z").
@@ -566,22 +432,37 @@ pub struct RunSpec {
     #[serde(default)]
     pub workflow_ref: Option<String>,
 
-    pub workflow: WorkflowSpec,
+    #[serde(default)]
+    pub workflow: Option<WorkflowSpec>,
+
+    #[serde(default)]
+    pub pattern_ref: Option<String>,
 
     #[serde(default)]
     pub inputs: HashMap<String, String>,
+
+    #[serde(default)]
+    pub placement: Option<RunPlacementSpec>,
 }
 
 impl RunSpec {
     pub fn resolve_workflow<'a>(&'a self, doc: &'a AdlDoc) -> Result<&'a WorkflowSpec> {
-        match self.workflow_ref.as_deref() {
-            Some(workflow_ref) => doc.workflows.get(workflow_ref).ok_or_else(|| {
-                anyhow!(
-                    "run.workflow_ref references unknown workflow '{}'",
-                    workflow_ref
-                )
+        if self.pattern_ref.is_some() {
+            return Err(anyhow!(
+                "run.pattern_ref cannot be combined with run.workflow_ref or inline run.workflow"
+            ));
+        }
+        match (self.workflow_ref.as_deref(), self.workflow.as_ref()) {
+            (Some(_), Some(_)) => Err(anyhow!(
+                "run may define either workflow_ref or inline workflow, but not both"
+            )),
+            (Some(workflow_ref), None) => doc.workflows.get(workflow_ref).ok_or_else(|| {
+                anyhow!("run.workflow_ref references unknown workflow '{workflow_ref}'")
             }),
-            None => Ok(&self.workflow),
+            (None, Some(workflow)) => Ok(workflow),
+            (None, None) => Err(anyhow!(
+                "run must define either workflow_ref or inline workflow"
+            )),
         }
     }
 }
@@ -592,11 +473,19 @@ pub struct RunDefaults {
     /// Default system string applied if prompt has no system.
     #[serde(default)]
     pub system: Option<String>,
+
+    /// Global runtime concurrency cap for concurrent workflows/pattern runs.
+    /// When omitted, runtime uses a conservative default.
+    #[serde(default)]
+    pub max_concurrency: Option<usize>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct WorkflowSpec {
+    #[serde(default)]
+    pub id: Option<String>,
+
     #[serde(default)]
     pub kind: WorkflowKind,
 
@@ -636,24 +525,12 @@ pub struct StepSpec {
     pub retry: Option<StepRetry>,
 
     /// Agent id to run (key in `agents`).
-    #[serde(default)]
+    #[serde(default, alias = "agent_ref")]
     pub agent: Option<String>,
 
     /// Task id to run (key in `tasks`).
-    #[serde(default)]
+    #[serde(default, alias = "task_ref")]
     pub task: Option<String>,
-
-    /// Workflow id to call (key in `workflows`).
-    #[serde(default)]
-    pub call: Option<String>,
-
-    /// Optional call input bindings.
-    #[serde(default)]
-    pub with: HashMap<String, String>,
-
-    /// Optional namespace for call results.
-    #[serde(default, rename = "as")]
-    pub as_ns: Option<String>,
 
     /// Inline prompt override.
     #[serde(default)]
@@ -670,6 +547,13 @@ pub struct StepSpec {
 
 impl StepSpec {
     // Helper for prompt selection precedence (step > task > agent).
+    // Not currently used by the v0.1 binary, but relied upon by integration tests and kept
+    // as a stable utility for upcoming resolver/runtime work.
+    #[allow(dead_code)]
+    /// Returns the prompt to use for this step in priority order:
+    /// 1) step.prompt
+    /// 2) task.prompt (if task is set)
+    /// 3) agent.prompt (if agent is set)
     pub fn effective_prompt<'a>(&'a self, doc: &'a AdlDoc) -> Option<&'a PromptSpec> {
         if let Some(p) = self.prompt.as_ref() {
             return Some(p);
@@ -705,6 +589,16 @@ pub struct GuardSpec {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct RunPlacementSpec {
+    #[serde(default)]
+    pub provider: Option<String>,
+
+    #[serde(default)]
+    pub target: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum StepOnError {
     Fail,
@@ -715,4 +609,122 @@ pub enum StepOnError {
 #[serde(deny_unknown_fields)]
 pub struct StepRetry {
     pub max_attempts: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct PatternSpec {
+    pub id: String,
+    #[serde(rename = "type")]
+    pub kind: PatternKind,
+    #[serde(default)]
+    pub steps: Vec<String>,
+    #[serde(default)]
+    pub fork: Option<PatternForkSpec>,
+    #[serde(default)]
+    pub join: Option<PatternJoinSpec>,
+}
+
+impl PatternSpec {
+    fn validate(&self) -> Result<()> {
+        match self.kind {
+            PatternKind::Linear => {
+                if self.steps.is_empty() {
+                    return Err(anyhow!(
+                        "pattern '{}' type=linear requires non-empty steps",
+                        self.id
+                    ));
+                }
+                for sym in &self.steps {
+                    if sym.trim().is_empty() {
+                        return Err(anyhow!("pattern '{}' has empty step symbol", self.id));
+                    }
+                }
+            }
+            PatternKind::ForkJoin => {
+                let fork = self
+                    .fork
+                    .as_ref()
+                    .ok_or_else(|| anyhow!("pattern '{}' type=fork_join requires fork", self.id))?;
+                let join = self
+                    .join
+                    .as_ref()
+                    .ok_or_else(|| anyhow!("pattern '{}' type=fork_join requires join", self.id))?;
+                if join.step.trim().is_empty() {
+                    return Err(anyhow!("pattern '{}' join.step must not be empty", self.id));
+                }
+                if fork.branches.is_empty() {
+                    return Err(anyhow!(
+                        "pattern '{}' fork.branches must not be empty",
+                        self.id
+                    ));
+                }
+                let mut seen = std::collections::HashSet::new();
+                for br in &fork.branches {
+                    if br.id.trim().is_empty() {
+                        return Err(anyhow!("pattern '{}' has branch with empty id", self.id));
+                    }
+                    if br.id.starts_with("p::") {
+                        return Err(anyhow!(
+                            "pattern '{}' branch id '{}' cannot use reserved prefix 'p::'",
+                            self.id,
+                            br.id
+                        ));
+                    }
+                    if !seen.insert(br.id.clone()) {
+                        return Err(anyhow!(
+                            "pattern '{}' has duplicate branch id '{}'",
+                            self.id,
+                            br.id
+                        ));
+                    }
+                    if br.steps.is_empty() {
+                        return Err(anyhow!(
+                            "pattern '{}' branch '{}' requires non-empty steps",
+                            self.id,
+                            br.id
+                        ));
+                    }
+                    for sym in &br.steps {
+                        if sym.trim().is_empty() {
+                            return Err(anyhow!(
+                                "pattern '{}' branch '{}' has empty step symbol",
+                                self.id,
+                                br.id
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum PatternKind {
+    Linear,
+    ForkJoin,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct PatternForkSpec {
+    #[serde(default)]
+    pub branches: Vec<PatternBranchSpec>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct PatternBranchSpec {
+    pub id: String,
+    #[serde(default)]
+    pub steps: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct PatternJoinSpec {
+    pub step: String,
 }

@@ -1,0 +1,50 @@
+version: "0.5"
+
+providers:
+  local_ollama:
+    id: "local_ollama"
+    type: "local_ollama"
+    config:
+      model: "phi4-mini"
+
+tools:
+  fetch_docs:
+    id: "fetch_docs"
+    type: "mcp"
+    config:
+      server: "docs"
+
+agents:
+  planner:
+    id: "planner"
+    provider: "local_ollama"
+    model: "phi4-mini"
+    tools: ["fetch_docs"]
+
+tasks:
+  summarize:
+    id: "summarize"
+    agent_ref: "planner"
+    inputs: ["topic"]
+    tool_allowlist: ["fetch_docs"]
+    prompt:
+      user: "Summarize {{topic}} in 3 bullets."
+
+workflows:
+  wf_main:
+    id: "wf_main"
+    kind: sequential
+    steps:
+      - id: "summarize.topic"
+        task: "summarize"
+        inputs:
+          topic: "ADL v0.5"
+
+run:
+  id: "run_main"
+  name: "v0-5-primitives-minimal"
+  workflow_ref: "wf_main"
+  inputs:
+    topic: "ADL v0.5"
+  placement:
+    target: "local"

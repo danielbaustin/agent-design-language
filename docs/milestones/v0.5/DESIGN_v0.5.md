@@ -53,6 +53,42 @@ v0.5 must:
 
 ---
 
+## v0.5 Language Overview
+
+v0.5 formalizes six first-class primitives in a single ADL document:
+
+- `providers`: AI model-call backends (for example `local_ollama`, `http_remote`)
+- `tools`: MCP-style external capabilities (distinct from providers)
+- `agents`: execution identities that reference a provider and optional tools
+- `tasks`: reusable task contracts that reference an agent and optional tool allowlist
+- `workflows`: step graphs (currently sequential or concurrent)
+- `run`: execution instance that references a workflow and provides input/placement hooks
+
+Minimal complete example (full file: `swarm/examples/v0-5-primitives-minimal.adl.yaml`):
+
+```yaml
+version: "0.5"
+providers: { ... }
+tools: { ... }
+agents: { ... }
+tasks: { ... }
+workflows:
+  wf_main:
+    steps:
+      - id: "summarize.topic"
+        task: "summarize"
+run:
+  workflow_ref: "wf_main"
+```
+
+Validation expectations in v0.5:
+- run uses `workflow_ref` or inline `workflow` (legacy), but never both; if multiple providers exist, provider selection must be explicit.
+- ids may be declared explicitly (`id`) and must match collection keys when present
+- refs must resolve (`provider`, `agent_ref`, `task`, `workflow_ref`, tool refs)
+- provider/tool kinds must be supported with required config fields
+
+---
+
 ## Non-Goals
 
 - Distributed execution across clusters.
@@ -217,20 +253,18 @@ Replay remains provider-free and validates ordering invariants.
 - Review pass complete.
 - Milestone checklist gates satisfied.
 
-## WP-03 Composition MVP (include + call)
+---
 
-v0.5 composition adds two deterministic primitives:
+## WP-04 PatternSchema v0.1 (Implemented)
 
-- `include` (top-level): load additional ADL files in listed order, then merge the root file last.
-- `call` (workflow step): invoke a child workflow using:
-  - `call: <workflow_id>`
-  - optional `with:` bindings
-  - optional `as:` namespace
+WP-04 ships a minimal PatternSchema compiler surface:
 
-Deterministic semantics:
+- `linear` pattern: ordered node chain (`A -> B -> C`)
+- `fork_join` pattern: deterministic branch chains with join-node dependencies on each branch tail
 
-- Include merge order is fixed by list order.
-- Duplicate IDs across included files fail with first/second source paths.
-- Call step expansion uses `::` step-id composition (`parent::child`).
-- Call `with` values become callee initial state keys under `inputs.*`.
-- Callee final state is namespaced into caller state under `as:` (or caller step id).
+Compilation outputs deterministic runtime-ready `ExecutionPlan` nodes with reserved IDs:
+
+- `p::<pattern_id>::<node>`
+- `p::<pattern_id>::<branch_id>::<node>`
+
+Join semantics are encoded only as explicit dependencies in the plan; runtime scheduler behavior remains deterministic lexicographic ready-step ordering.
