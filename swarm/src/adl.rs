@@ -467,6 +467,11 @@ pub struct RunDefaults {
     /// Default system string applied if prompt has no system.
     #[serde(default)]
     pub system: Option<String>,
+
+    /// Global runtime concurrency cap for concurrent workflows/pattern runs.
+    /// When omitted, runtime uses a conservative default.
+    #[serde(default)]
+    pub max_concurrency: Option<usize>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
