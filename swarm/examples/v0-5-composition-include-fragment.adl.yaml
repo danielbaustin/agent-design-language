@@ -1,0 +1,25 @@
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  fragment_task:
+    prompt:
+      user: "Fragment says {{topic}}"
+
+workflows:
+  wf_fragment:
+    kind: sequential
+    steps:
+      - id: "fragment.step"
+        agent: "a1"
+        task: "fragment_task"
+        inputs:
+          topic: "from-include"

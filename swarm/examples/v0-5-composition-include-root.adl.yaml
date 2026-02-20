@@ -1,0 +1,10 @@
+version: "0.5"
+include:
+  - "v0-5-composition-include-fragment.adl.yaml"
+
+run:
+  name: "v0-5-composition-include-root"
+  workflow_ref: "wf_fragment"
+  workflow:
+    kind: sequential
+    steps: []

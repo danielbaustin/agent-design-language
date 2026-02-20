@@ -532,6 +532,18 @@ pub struct StepSpec {
     #[serde(default, alias = "task_ref")]
     pub task: Option<String>,
 
+    /// Workflow id to call (key in `workflows`).
+    #[serde(default)]
+    pub call: Option<String>,
+
+    /// Optional call input bindings.
+    #[serde(default)]
+    pub with: HashMap<String, String>,
+
+    /// Optional namespace for call results.
+    #[serde(default, rename = "as")]
+    pub as_ns: Option<String>,
+
     /// Inline prompt override.
     #[serde(default)]
     pub prompt: Option<PromptSpec>,
