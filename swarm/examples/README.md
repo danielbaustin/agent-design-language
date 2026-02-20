@@ -3,7 +3,7 @@
 Run any example from the `swarm/` directory:
 
 ```bash
-cargo run -- examples/<file> --run --trace
+cargo run -q --bin swarm -- examples/<file> --run --trace
 ```
 
 ## v0.2 happy-path examples
@@ -17,7 +17,7 @@ Expected: two steps execute in order and print outputs for each step.
 Coordinator demo (writes HTML artifact):
 
 ```bash
-cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml
+cargo run -q --bin swarm -- examples/v0-2-coordinator-agents-sdk.adl.yaml
 ```
 
 ## v0.3 flagship demo
@@ -25,7 +25,7 @@ cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml
 Run the deterministic artifact demo (single command):
 
 ```bash
-cargo run -- demo demo-a-say-mcp --run --trace --open
+cargo run -q --bin swarm -- demo demo-a-say-mcp --run --trace --open
 ```
 
 Artifacts are written to:
@@ -59,7 +59,7 @@ Reference ADL doc for the demo scenario:
 Quick run from repo root:
 
 ```bash
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --run --trace --out out
+cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --run --trace --out out
 ```
 
 ## v0.3 on_error + retry example
@@ -76,7 +76,7 @@ cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency
 From repo root:
 
 ```bash
-cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
 ```
 
 ## v0.5 primitives baseline
@@ -91,12 +91,15 @@ cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-pr
 From repo root:
 
 ```bash
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-primitives-minimal.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-5-primitives-minimal.adl.yaml --print-plan
 ```
 
 ## v0.5 pattern compiler examples
 
 PatternSchema v0.1 compiles patterns into deterministic ExecutionPlan nodes with `p::<pattern_id>::...` step IDs.
+
+Mutual exclusion rule:
+- `run.pattern_ref` cannot coexist with `run.workflow_ref` or inline `run.workflow`
 
 Rules:
 - task symbols in pattern `steps` must match task IDs in `tasks` (missing symbols fail with a clear validation error)
@@ -108,8 +111,8 @@ Rules:
 Quick checks from repo root:
 
 ```bash
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-pattern-linear.adl.yaml --print-plan
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-pattern-fork-join.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-5-pattern-linear.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-5-pattern-fork-join.adl.yaml --print-plan
 ```
 
 ## v0.5 remote execution MVP example
@@ -128,5 +131,8 @@ Then run the mixed-placement example from repo root:
 
 ```bash
 SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh \
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-remote-execution-mvp.adl.yaml --run --trace
+cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-5-remote-execution-mvp.adl.yaml --run --trace
 ```
+
+For a full v0.5 reproducibility checklist, see:
+- `../docs/milestones/v0.5/DEMO_MATRIX_v0.5.md`

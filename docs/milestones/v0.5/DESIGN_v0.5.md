@@ -25,7 +25,7 @@ v0.4 shipped:
 However:
 
 1. Multi-agent patterns (debate, planner-executor, referee, hierarchical) are not first-class language constructs.
-2. Scheduler behavior is fixed (MAX_PARALLEL=4).
+2. Scheduler behavior needs explicit policy documentation and guardrails for deterministic replay.
 3. Observable memory is conceptual but not productized or modularized.
 4. The six ADL primitives are not yet explicitly schema-bound with composition guarantees.
 
@@ -106,8 +106,7 @@ Validation expectations in v0.5:
 - Pattern schema (v0.1)
 - Pattern → ExecutionPlan compiler
 - Deterministic multi-agent turn ordering
-- Configurable `max_parallel`
-- Scheduler policy surface (minimal: fifo | fair)
+- `run.defaults.max_concurrency` controls bounded execution (`>= 1`, default `4`)
 - Stable deterministic trace markers for patterns
 - ObsMem crate scaffold (separate project)
 - Demo pass covering each primitive alone and in composition
@@ -175,7 +174,7 @@ ObsMem exists as a separate crate and integrates through Tools or Providers.
 - `RunSchema`
 - `WorkflowSchema`
 - `PatternSchema`
-- `SchedulerConfig { max_parallel, policy }`
+- `RunDefaultsSpec { max_concurrency }`
 
 PatternSchema compiles into deterministic ExecutionPlan nodes with stable IDs.
 
@@ -186,8 +185,8 @@ PatternSchema compiles into deterministic ExecutionPlan nodes with stable IDs.
 1. Pattern expands to structured DAG.
 2. Stable node IDs derived from canonicalized pattern + seed.
 3. Scheduler respects:
-   - max_parallel
-   - deterministic tie-breaking
+   - `run.defaults.max_concurrency`
+   - deterministic lexicographic tie-breaking by full step id
 4. Join barriers preserve stable artifact ordering.
 5. Trace logs:
    - PatternStart
@@ -237,8 +236,8 @@ Replay remains provider-free and validates ordering invariants.
   - CI green
   - Demo pass automated
 - Rollback:
-  - Disable configurable scheduler
-  - Revert to v0.4 fixed concurrency
+  - Set `run.defaults.max_concurrency: 1` for fully sequential behavior
+  - Restrict to sequential workflows where needed
 
 ---
 
