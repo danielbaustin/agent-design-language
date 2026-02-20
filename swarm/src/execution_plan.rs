@@ -327,6 +327,7 @@ mod tests {
             id: id.to_string(),
             agent: None,
             provider: None,
+            placement: None,
             task: None,
             prompt: None,
             inputs,

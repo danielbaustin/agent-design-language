@@ -6,6 +6,7 @@ pub mod execution_plan;
 pub mod plan;
 pub mod prompt;
 pub mod provider;
+pub mod remote_exec;
 pub mod resolve;
 pub mod schema;
 pub mod trace;

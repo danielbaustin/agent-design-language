@@ -1,8 +1,11 @@
 use std::collections::HashMap;
 use std::fs;
 use std::io::{Read, Write};
+use std::net::TcpListener;
 use std::path::Path;
 use std::process::Command;
+use std::thread;
+use std::time::Duration;
 use swarm::execute::materialize_inputs;
 
 mod helpers;
@@ -19,6 +22,45 @@ fn write_file(dir: &Path, rel: &str, contents: &[u8]) -> std::path::PathBuf {
     }
     fs::write(&path, contents).unwrap();
     path
+}
+
+fn reserve_local_port() -> u16 {
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind ephemeral port");
+    let port = listener.local_addr().unwrap().port();
+    drop(listener);
+    port
+}
+
+fn start_swarm_remote_server() -> String {
+    let port = reserve_local_port();
+    let bind_addr = format!("127.0.0.1:{port}");
+    thread::spawn({
+        let bind_addr = bind_addr.clone();
+        move || {
+            let _ = swarm::remote_exec::run_server(&bind_addr);
+        }
+    });
+    thread::sleep(Duration::from_millis(120));
+    format!("http://{bind_addr}")
+}
+
+fn start_raw_http_server(raw_response: &'static str) -> String {
+    let port = reserve_local_port();
+    let bind_addr = format!("127.0.0.1:{port}");
+    thread::spawn({
+        let bind_addr = bind_addr.clone();
+        move || {
+            let listener = TcpListener::bind(&bind_addr).expect("bind raw http test server");
+            if let Ok((mut stream, _)) = listener.accept() {
+                let mut buf = [0_u8; 2048];
+                let _ = stream.read(&mut buf);
+                let _ = stream.write_all(raw_response.as_bytes());
+                let _ = stream.flush();
+            }
+        }
+    });
+    thread::sleep(Duration::from_millis(80));
+    format!("http://{bind_addr}")
 }
 
 #[test]
@@ -611,6 +653,275 @@ fn run_executes_step_with_http_provider() {
         "stdout was:\n{stdout}"
     );
     assert!(stdout.contains("REMOTE_DEMO_OK"), "stdout was:\n{stdout}");
+}
+
+#[test]
+fn run_executes_mixed_local_remote_local_steps() {
+    let base = tmp_dir("exec-v0-5-remote-mixed");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+    let endpoint = start_swarm_remote_server();
+
+    let yaml = format!(
+        r#"
+version: "0.5"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t:
+    prompt:
+      user: "STEP={{step}} INPUT={{input}}"
+
+run:
+  name: "v0-5-remote-mixed"
+  placement: local
+  remote:
+    endpoint: "{endpoint}"
+    timeout_ms: 2000
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "local.first"
+        agent: "a1"
+        task: "t"
+        placement: local
+        save_as: "first"
+        inputs:
+          step: "local-1"
+          input: "seed"
+      - id: "remote.mid"
+        agent: "a1"
+        task: "t"
+        placement: remote
+        save_as: "mid"
+        inputs:
+          step: "remote-2"
+          input: "@state:first"
+      - id: "local.last"
+        agent: "a1"
+        task: "t"
+        placement: local
+        inputs:
+          step: "local-3"
+          input: "@state:mid"
+"#
+    );
+    let tmp_yaml = base.join("v0-5-remote-mixed.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("--- step: local.first ---"),
+        "stdout:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("--- step: remote.mid ---"),
+        "stdout:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("--- step: local.last ---"),
+        "stdout:\n{stdout}"
+    );
+}
+
+#[test]
+fn run_remote_unreachable_is_reported() {
+    let base = tmp_dir("exec-v0-5-remote-unreachable");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+    let port = reserve_local_port();
+    let endpoint = format!("http://127.0.0.1:{port}");
+
+    let yaml = format!(
+        r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "hello"
+run:
+  name: "v0-5-remote-unreachable"
+  placement: remote
+  remote:
+    endpoint: "{endpoint}"
+    timeout_ms: 300
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "remote.only"
+        agent: "a1"
+        task: "t"
+"#
+    );
+    let tmp_yaml = base.join("v0-5-remote-unreachable.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run"]);
+    assert!(
+        !out.status.success(),
+        "expected failure for unreachable remote"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(stderr.contains("REMOTE_UNREACHABLE"), "stderr:\n{stderr}");
+}
+
+#[test]
+fn run_remote_timeout_and_invalid_json_are_mapped() {
+    let base = tmp_dir("exec-v0-5-remote-timeout-json");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepEchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+    let endpoint_timeout = start_swarm_remote_server();
+
+    let yaml_timeout = format!(
+        r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "hello"
+run:
+  name: "v0-5-remote-timeout"
+  placement: remote
+  remote:
+    endpoint: "{endpoint_timeout}"
+    timeout_ms: 10
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "remote.timeout"
+        agent: "a1"
+        task: "t"
+"#
+    );
+    let tmp_yaml_timeout = base.join("v0-5-remote-timeout.yaml");
+    fs::write(&tmp_yaml_timeout, yaml_timeout).unwrap();
+
+    let out_timeout = run_swarm(&[tmp_yaml_timeout.to_str().unwrap(), "--run"]);
+    assert!(!out_timeout.status.success(), "expected timeout failure");
+    let stderr_timeout = String::from_utf8_lossy(&out_timeout.stderr);
+    assert!(
+        stderr_timeout.contains("REMOTE_TIMEOUT"),
+        "stderr:\n{stderr_timeout}"
+    );
+
+    let endpoint_bad_json = start_raw_http_server(
+        "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 8\r\n\r\nnot-json",
+    );
+    let yaml_bad_json = format!(
+        r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "hello"
+run:
+  name: "v0-5-remote-bad-json"
+  placement: remote
+  remote:
+    endpoint: "{endpoint_bad_json}"
+    timeout_ms: 1000
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "remote.bad_json"
+        agent: "a1"
+        task: "t"
+"#
+    );
+    let tmp_yaml_bad_json = base.join("v0-5-remote-bad-json.yaml");
+    fs::write(&tmp_yaml_bad_json, yaml_bad_json).unwrap();
+
+    let out_bad_json = run_swarm(&[tmp_yaml_bad_json.to_str().unwrap(), "--run"]);
+    assert!(!out_bad_json.status.success(), "expected bad-json failure");
+    let stderr_bad_json = String::from_utf8_lossy(&out_bad_json.stderr);
+    assert!(
+        stderr_bad_json.contains("REMOTE_INVALID_JSON"),
+        "stderr:\n{stderr_bad_json}"
+    );
+
+    let endpoint_bad_status =
+        start_raw_http_server("HTTP/1.1 503 Service Unavailable\r\nContent-Length: 0\r\n\r\n");
+    let yaml_bad_status = format!(
+        r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "hello"
+run:
+  name: "v0-5-remote-bad-status"
+  placement: remote
+  remote:
+    endpoint: "{endpoint_bad_status}"
+    timeout_ms: 1000
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "remote.bad_status"
+        agent: "a1"
+        task: "t"
+"#
+    );
+    let tmp_yaml_bad_status = base.join("v0-5-remote-bad-status.yaml");
+    fs::write(&tmp_yaml_bad_status, yaml_bad_status).unwrap();
+    let out_bad_status = run_swarm(&[tmp_yaml_bad_status.to_str().unwrap(), "--run"]);
+    assert!(
+        !out_bad_status.status.success(),
+        "expected bad-status failure"
+    );
+    let stderr_bad_status = String::from_utf8_lossy(&out_bad_status.stderr);
+    assert!(
+        stderr_bad_status.contains("REMOTE_BAD_STATUS"),
+        "stderr:\n{stderr_bad_status}"
+    );
 }
 
 #[test]
@@ -2164,6 +2475,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
             id: step.step_id.clone(),
             agent: Some("a1".to_string()),
             provider: Some("local".to_string()),
+            placement: None,
             task: Some(step.task_symbol.clone()),
             prompt: None,
             inputs: HashMap::new(),
@@ -2192,6 +2504,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
             pattern_ref: Some("p_fork".to_string()),
             inputs: HashMap::new(),
             placement: None,
+            remote: None,
         },
     };
 

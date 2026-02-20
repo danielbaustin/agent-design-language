@@ -109,3 +109,22 @@ Quick checks from repo root:
 cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-pattern-linear.adl.yaml --print-plan
 cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-pattern-fork-join.adl.yaml --print-plan
 ```
+
+## v0.5 remote execution MVP example
+
+- `v0-5-remote-execution-mvp.adl.yaml`
+  - mixed placement in one workflow: local -> remote -> local
+  - runner stays scheduler; remote executes one fully-resolved step via `/v1/execute`
+
+Start local remote executor:
+
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml --bin swarm-remote -- 127.0.0.1:8787
+```
+
+Then run the mixed-placement example from repo root:
+
+```bash
+SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh \
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-remote-execution-mvp.adl.yaml --run --trace
+```
