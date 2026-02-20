@@ -2182,6 +2182,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         tasks,
         workflows: HashMap::new(),
         patterns: vec![pattern],
+        signature: None,
         run: swarm::adl::RunSpec {
             id: None,
             name: Some("compiled-pattern-run".to_string()),

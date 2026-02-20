@@ -123,6 +123,32 @@ Exit codes are consistent:
 - `2` — invalid CLI usage
 - non-zero — schema, validation, or runtime error
 
+## Signing Quickstart (v0.5)
+
+For v0.5 workflows, signature enforcement is enabled by default for `--run`.
+
+```bash
+# 1) generate local dev keys
+swarm keygen --out-dir ./.keys
+
+# 2) sign a workflow
+swarm sign examples/v0-5-pattern-linear.adl.yaml \
+  --key ./.keys/ed25519-private.b64 \
+  --out /tmp/signed.adl.yaml
+
+# 3) verify signature
+swarm verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64
+
+# 4) run signed workflow (no override needed)
+swarm /tmp/signed.adl.yaml --run
+```
+
+Dev-only bypass:
+
+```bash
+swarm examples/v0-5-pattern-linear.adl.yaml --run --allow-unsigned
+```
+
 ---
 
 ## Run State Artifacts

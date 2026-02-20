@@ -366,6 +366,7 @@ mod tests {
             tasks,
             workflows: std::collections::HashMap::new(),
             patterns: vec![],
+            signature: None,
             run: adl::RunSpec {
                 id: None,
                 name: Some("r".to_string()),

@@ -8,4 +8,5 @@ pub mod prompt;
 pub mod provider;
 pub mod resolve;
 pub mod schema;
+pub mod signing;
 pub mod trace;

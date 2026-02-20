@@ -5,12 +5,15 @@ use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use swarm::{adl, demo, execute, plan, prompt, resolve, trace};
+use swarm::{adl, demo, execute, plan, prompt, resolve, signing, trace};
 
 fn usage() -> &'static str {
     "Usage:
   swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--out <dir>] [--quiet] [--open]
   swarm demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
+  swarm keygen --out-dir <dir>
+  swarm sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
+  swarm verify <adl.yaml> [--key <public_key_path>]
 
 Options:
   --print-plan       Print the resolved plan
@@ -21,6 +24,7 @@ Options:
   --quiet            Suppress per-step output bodies (--no-step-output also accepted)
   --open             Open the first written HTML artifact after a successful run
   --no-open          Disable artifact auto-open for demo runs
+  --allow-unsigned   Allow running unsigned workflows (dev-only override)
   -h, --help         Show this help
 
 Examples:
@@ -31,7 +35,10 @@ Examples:
   swarm examples/adl-0.1.yaml --print-plan   # legacy regression example
   swarm examples/v0-2-coordinator-agents-sdk.adl.yaml
   swarm demo demo-a-say-mcp --run --trace --open
-  swarm demo demo-b-one-command --run --out ./out"
+  swarm demo demo-b-one-command --run --out ./out
+  swarm keygen --out-dir ./.keys
+  swarm sign examples/v0-5-pattern-linear.adl.yaml --key ./.keys/ed25519-private.b64 --out /tmp/signed.adl.yaml
+  swarm verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"
 }
 
 fn print_error_chain(err: &anyhow::Error) {
@@ -65,6 +72,15 @@ fn real_main() -> Result<()> {
     if matches!(args.first().map(|s| s.as_str()), Some("demo")) {
         return real_demo(&args[1..]);
     }
+    if matches!(args.first().map(|s| s.as_str()), Some("keygen")) {
+        return real_keygen(&args[1..]);
+    }
+    if matches!(args.first().map(|s| s.as_str()), Some("sign")) {
+        return real_sign(&args[1..]);
+    }
+    if matches!(args.first().map(|s| s.as_str()), Some("verify")) {
+        return real_verify(&args[1..]);
+    }
 
     let adl_path: PathBuf = match args.first() {
         Some(p) => PathBuf::from(p),
@@ -83,6 +99,7 @@ fn real_main() -> Result<()> {
     let mut out_dir = PathBuf::from("out");
     let mut quiet = false;
     let mut do_open = false;
+    let mut allow_unsigned = false;
 
     let mut i = 1;
     while i < args.len() {
@@ -103,6 +120,7 @@ fn real_main() -> Result<()> {
             }
             "--quiet" | "--no-step-output" => quiet = true,
             "--open" | "--open-artifacts" => do_open = true,
+            "--allow-unsigned" => allow_unsigned = true,
             "--help" | "-h" => {
                 println!("{}", usage());
                 return Ok(());
@@ -134,6 +152,15 @@ fn real_main() -> Result<()> {
             return Err(err);
         }
     };
+
+    let allow_unsigned = allow_unsigned
+        || std::env::var("ADL_ALLOW_UNSIGNED")
+            .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+            .unwrap_or(false);
+    if do_run && doc.version.trim() == "0.5" && !allow_unsigned {
+        signing::verify_doc(&doc, None)
+            .with_context(|| "signature enforcement failed (use --allow-unsigned for dev)")?;
+    }
 
     let resolved = match resolve::resolve_run(&doc) {
         Ok(resolved) => resolved,
@@ -300,6 +327,127 @@ fn real_main() -> Result<()> {
         trace::print_trace(&tr);
     }
 
+    Ok(())
+}
+
+fn real_keygen(args: &[String]) -> Result<()> {
+    let mut out_dir: Option<PathBuf> = None;
+    let mut i = 0;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--out-dir" => {
+                let Some(v) = args.get(i + 1) else {
+                    eprintln!("keygen requires --out-dir <dir>");
+                    std::process::exit(2);
+                };
+                out_dir = Some(PathBuf::from(v));
+                i += 1;
+            }
+            "--help" | "-h" => {
+                println!("{}", usage());
+                return Ok(());
+            }
+            other => {
+                eprintln!("Unknown arg for keygen: {other}");
+                std::process::exit(2);
+            }
+        }
+        i += 1;
+    }
+    let out = out_dir.ok_or_else(|| anyhow::anyhow!("keygen requires --out-dir <dir>"))?;
+    let (priv_key, pub_key) = signing::keygen(&out)?;
+    println!("KEYGEN ok");
+    println!("  private={}", priv_key.display());
+    println!("  public={}", pub_key.display());
+    Ok(())
+}
+
+fn real_sign(args: &[String]) -> Result<()> {
+    let Some(path_arg) = args.first() else {
+        eprintln!("sign requires <adl.yaml>");
+        std::process::exit(2);
+    };
+    let input = PathBuf::from(path_arg);
+    let mut key: Option<PathBuf> = None;
+    let mut out: Option<PathBuf> = None;
+    let mut key_id = "dev-local".to_string();
+
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--key" => {
+                let Some(v) = args.get(i + 1) else {
+                    eprintln!("sign requires --key <private_key_path>");
+                    std::process::exit(2);
+                };
+                key = Some(PathBuf::from(v));
+                i += 1;
+            }
+            "--out" => {
+                let Some(v) = args.get(i + 1) else {
+                    eprintln!("sign requires --out <signed_file>");
+                    std::process::exit(2);
+                };
+                out = Some(PathBuf::from(v));
+                i += 1;
+            }
+            "--key-id" => {
+                let Some(v) = args.get(i + 1) else {
+                    eprintln!("sign requires --key-id <id>");
+                    std::process::exit(2);
+                };
+                key_id = v.clone();
+                i += 1;
+            }
+            "--help" | "-h" => {
+                println!("{}", usage());
+                return Ok(());
+            }
+            other => {
+                eprintln!("Unknown arg for sign: {other}");
+                std::process::exit(2);
+            }
+        }
+        i += 1;
+    }
+    let key = key.ok_or_else(|| anyhow::anyhow!("sign requires --key <private_key_path>"))?;
+    let out_path = signing::sign_file(&input, &key, &key_id, out.as_deref())?;
+    println!("SIGN ok path={}", out_path.display());
+    Ok(())
+}
+
+fn real_verify(args: &[String]) -> Result<()> {
+    let Some(path_arg) = args.first() else {
+        eprintln!("verify requires <adl.yaml>");
+        std::process::exit(2);
+    };
+    let input = PathBuf::from(path_arg);
+    let mut key: Option<PathBuf> = None;
+
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--key" => {
+                let Some(v) = args.get(i + 1) else {
+                    eprintln!("verify requires --key <public_key_path>");
+                    std::process::exit(2);
+                };
+                key = Some(PathBuf::from(v));
+                i += 1;
+            }
+            "--help" | "-h" => {
+                println!("{}", usage());
+                return Ok(());
+            }
+            other => {
+                eprintln!("Unknown arg for verify: {other}");
+                std::process::exit(2);
+            }
+        }
+        i += 1;
+    }
+    signing::verify_file(&input, key.as_deref())?;
+    println!("VERIFY ok");
     Ok(())
 }
 
