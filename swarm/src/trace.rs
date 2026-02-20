@@ -45,6 +45,20 @@ pub enum TraceEvent {
         success: bool,
         duration_ms: u128,
     },
+    CallEntered {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        caller_step_id: String,
+        callee_workflow_id: String,
+        namespace: String,
+    },
+    CallExited {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        caller_step_id: String,
+        success: bool,
+        namespace: String,
+    },
 }
 
 impl TraceEvent {
@@ -101,6 +115,34 @@ impl TraceEvent {
                 format_ts_ms(*ts_ms),
                 elapsed_ms,
                 format_duration_secs(*duration_ms)
+            ),
+            TraceEvent::CallEntered {
+                ts_ms,
+                elapsed_ms,
+                caller_step_id,
+                callee_workflow_id,
+                namespace,
+            } => format!(
+                "{} (+{}ms) CallEntered caller_step={} callee_workflow={} namespace={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                caller_step_id,
+                callee_workflow_id,
+                namespace
+            ),
+            TraceEvent::CallExited {
+                ts_ms,
+                elapsed_ms,
+                caller_step_id,
+                success,
+                namespace,
+            } => format!(
+                "{} (+{}ms) CallExited caller_step={} success={} namespace={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                caller_step_id,
+                success,
+                namespace
             ),
         }
     }
@@ -186,6 +228,35 @@ impl Trace {
             step_id: step_id.to_string(),
             success,
             duration_ms,
+        });
+    }
+
+    pub fn call_entered(
+        &mut self,
+        caller_step_id: &str,
+        callee_workflow_id: &str,
+        namespace: &str,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::CallEntered {
+            ts_ms,
+            elapsed_ms,
+            caller_step_id: caller_step_id.to_string(),
+            callee_workflow_id: callee_workflow_id.to_string(),
+            namespace: namespace.to_string(),
+        });
+    }
+
+    pub fn call_exited(&mut self, caller_step_id: &str, success: bool, namespace: &str) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::CallExited {
+            ts_ms,
+            elapsed_ms,
+            caller_step_id: caller_step_id.to_string(),
+            success,
+            namespace: namespace.to_string(),
         });
     }
 
@@ -319,5 +390,13 @@ mod tests {
         tr.step_finished("step-b", false);
 
         assert_eq!(tr.events.len(), 4);
+    }
+
+    #[test]
+    fn trace_records_call_events() {
+        let mut tr = Trace::new("run-3", "workflow-3", "0.5");
+        tr.call_entered("parent", "child", "ns");
+        tr.call_exited("parent", true, "ns");
+        assert_eq!(tr.events.len(), 2);
     }
 }

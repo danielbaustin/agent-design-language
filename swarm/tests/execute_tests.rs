@@ -614,6 +614,97 @@ fn run_executes_step_with_http_provider() {
 }
 
 #[test]
+fn run_executes_call_workflow_with_namespaced_state_and_trace_events() {
+    let base = tmp_dir("exec-call-workflow");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.5"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t_child:
+    prompt:
+      user: "child {{inputs.topic}}"
+  t_join:
+    prompt:
+      user: "join {{a}} + {{b}}"
+
+workflows:
+  wf_child:
+    kind: sequential
+    steps:
+      - id: "child_s1"
+        agent: "a1"
+        task: "t_child"
+        save_as: "child_out"
+
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - id: "call_one"
+        call: "wf_child"
+        with:
+          topic: "A"
+        as: "one"
+      - id: "call_two"
+        call: "wf_child"
+        with:
+          topic: "B"
+        as: "two"
+      - id: "join"
+        agent: "a1"
+        task: "t_join"
+        inputs:
+          a: "@state:one.child_out"
+          b: "@state:two.child_out"
+"#;
+
+    let tmp_yaml = base.join("call-workflow.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run", "--trace"]);
+    assert!(
+        out.status.success(),
+        "expected success, got {:?}\nstdout:\n{}\nstderr:\n{}",
+        out.status.code(),
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("step=call_one::child_s1"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("step=call_two::child_s1"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("CallEntered caller_step=call_one"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("CallExited caller_step=call_two success=true"),
+        "stdout was:\n{stdout}"
+    );
+}
+
+#[test]
 fn run_http_retry_succeeds_on_second_attempt_after_5xx() {
     let server = match std::net::TcpListener::bind("127.0.0.1:0") {
         Ok(s) => s,

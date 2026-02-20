@@ -1,4 +1,7 @@
 use std::collections::HashMap;
+use std::fs;
+use std::path::PathBuf;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use swarm::adl::{
     AdlDoc, AgentSpec, PromptSpec, RunDefaults, RunSpec, StepSpec, TaskSpec, WorkflowKind,
@@ -9,6 +12,16 @@ fn parse_doc(yaml: &str) -> AdlDoc {
     let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
     doc.validate().expect("doc should validate");
     doc
+}
+
+fn temp_dir(prefix: &str) -> PathBuf {
+    let ts = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_nanos();
+    let dir = std::env::temp_dir().join(format!("swarm-{prefix}-{ts}"));
+    fs::create_dir_all(&dir).expect("create temp dir");
+    dir
 }
 
 #[test]
@@ -50,6 +63,9 @@ run:
 fn validate_rejects_unknown_agent_reference() {
     let yaml = r#"
 version: "0.1"
+providers:
+  p:
+    type: "ollama"
 agents:
   a1:
     provider: "p"
@@ -75,6 +91,9 @@ run:
 fn validate_rejects_unknown_task_reference() {
     let yaml = r#"
 version: "0.1"
+providers:
+  p:
+    type: "ollama"
 agents:
   a1:
     provider: "p"
@@ -100,18 +119,22 @@ run:
 fn effective_prompt_priority_is_step_then_task_then_agent() {
     let mut doc = AdlDoc {
         version: "0.1".to_string(),
+        include: vec![],
         providers: HashMap::new(),
         tools: HashMap::new(),
         agents: HashMap::new(),
         tasks: HashMap::new(),
+        workflows: HashMap::new(),
         run: RunSpec {
             name: Some("demo".to_string()),
             created_at: None,
             defaults: RunDefaults::default(),
+            workflow_ref: None,
             workflow: WorkflowSpec {
                 kind: WorkflowKind::Sequential,
                 steps: vec![],
             },
+            inputs: HashMap::new(),
         },
     };
 
@@ -140,6 +163,9 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
         "t1".to_string(),
         TaskSpec {
             description: None,
+            agent_ref: None,
+            inputs: vec![],
+            tool_allowlist: vec![],
             prompt: task_prompt.clone(),
         },
     );
@@ -197,4 +223,132 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
         ..Default::default()
     };
     assert!(step_with_no_prompt.effective_prompt(&doc).is_none());
+}
+
+#[test]
+fn load_from_file_merges_includes_in_order() {
+    let dir = temp_dir("include-merge");
+    let inc = dir.join("defs.yaml");
+    let root = dir.join("root.yaml");
+
+    fs::write(
+        &inc,
+        r#"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "Summarize {{inputs.topic}}"
+workflows:
+  wf_child:
+    kind: sequential
+    steps:
+      - id: "child_s1"
+        agent: "a1"
+        task: "t1"
+"#,
+    )
+    .expect("write include");
+
+    fs::write(
+        &root,
+        r#"
+version: "0.5"
+include:
+  - "defs.yaml"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - id: "parent"
+        call: "wf_child"
+        with:
+          topic: "ADL"
+        as: "child"
+"#,
+    )
+    .expect("write root");
+
+    let doc = AdlDoc::load_from_file(root.to_str().unwrap()).expect("load composed doc");
+    assert!(doc.providers.contains_key("local"));
+    assert!(doc.workflows.contains_key("wf_child"));
+    assert_eq!(doc.run.workflow.steps[0].call.as_deref(), Some("wf_child"));
+}
+
+#[test]
+fn load_from_file_rejects_duplicate_ids_across_includes() {
+    let dir = temp_dir("include-dup");
+    let a = dir.join("a.yaml");
+    let b = dir.join("b.yaml");
+    let root = dir.join("root.yaml");
+
+    fs::write(
+        &a,
+        r#"
+providers:
+  local:
+    type: "ollama"
+"#,
+    )
+    .expect("write a");
+    fs::write(
+        &b,
+        r#"
+providers:
+  local:
+    type: "ollama"
+"#,
+    )
+    .expect("write b");
+    fs::write(
+        &root,
+        r#"
+version: "0.5"
+include:
+  - "a.yaml"
+  - "b.yaml"
+run:
+  workflow:
+    kind: sequential
+    steps: []
+"#,
+    )
+    .expect("write root");
+
+    let err = AdlDoc::load_from_file(root.to_str().unwrap())
+        .expect_err("duplicate provider id should fail");
+    let msg = format!("{err:#}");
+    assert!(msg.contains("duplicate provider id 'local'"), "{msg}");
+    assert!(msg.contains("a.yaml"), "{msg}");
+    assert!(msg.contains("b.yaml"), "{msg}");
+}
+
+#[test]
+fn load_from_file_rejects_missing_include_file() {
+    let dir = temp_dir("include-missing");
+    let root = dir.join("root.yaml");
+    fs::write(
+        &root,
+        r#"
+version: "0.5"
+include:
+  - "missing.yaml"
+run:
+  workflow:
+    kind: sequential
+    steps: []
+"#,
+    )
+    .expect("write root");
+
+    let err =
+        AdlDoc::load_from_file(root.to_str().unwrap()).expect_err("missing include should fail");
+    let msg = format!("{err:#}");
+    assert!(msg.contains("missing.yaml"), "{msg}");
 }

@@ -63,6 +63,11 @@ pub fn build_execution_plan(
             let Some(state_key) = parse_state_ref(value) else {
                 continue;
             };
+            // WP-03 call namespaces (e.g. @state:child.output) are produced
+            // dynamically by call steps and cannot always be mapped statically.
+            if state_key.contains('.') {
+                continue;
+            }
             let producer_step_id = state_producer_by_key.get(state_key).ok_or_else(|| {
                 anyhow!(
                     "step '{}' references unknown saved state '{}' via @state:{}",
@@ -206,6 +211,9 @@ mod tests {
             agent: None,
             provider: None,
             task: None,
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
             prompt: None,
             inputs,
             save_as: save_as.map(str::to_string),

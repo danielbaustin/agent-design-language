@@ -76,3 +76,22 @@ From repo root:
 ```bash
 cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
 ```
+
+## v0.5 composition baseline (include + call)
+
+- `v0-5-composition-hierarchical.adl.yaml`
+  - parent workflow calls child workflow twice (`call`)
+  - child step ids are namespaced deterministically via `::` in trace/output
+  - call results are namespaced under `as:` for state reads (`@state:<ns>.<key>`)
+- `v0-5-composition-include-root.adl.yaml`
+  - demonstrates top-level `include` merge from a second file
+  - include order is deterministic; root merges after includes
+
+From repo root:
+
+```bash
+SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh \
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-composition-hierarchical.adl.yaml --run --trace
+
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-composition-include-root.adl.yaml --print-plan
+```

@@ -216,3 +216,21 @@ Replay remains provider-free and validates ordering invariants.
 - Documentation pass complete.
 - Review pass complete.
 - Milestone checklist gates satisfied.
+
+## WP-03 Composition MVP (include + call)
+
+v0.5 composition adds two deterministic primitives:
+
+- `include` (top-level): load additional ADL files in listed order, then merge the root file last.
+- `call` (workflow step): invoke a child workflow using:
+  - `call: <workflow_id>`
+  - optional `with:` bindings
+  - optional `as:` namespace
+
+Deterministic semantics:
+
+- Include merge order is fixed by list order.
+- Duplicate IDs across included files fail with first/second source paths.
+- Call step expansion uses `::` step-id composition (`parent::child`).
+- Call `with` values become callee initial state keys under `inputs.*`.
+- Callee final state is namespaced into caller state under `as:` (or caller step id).
