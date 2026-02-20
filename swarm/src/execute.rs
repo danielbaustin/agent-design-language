@@ -182,10 +182,12 @@ pub fn execute_sequential(
     );
     if is_concurrent {
         let doc_version = resolved.doc.version.trim();
-        if doc_version != "0.3" && doc_version != "0.4" && doc_version != "0.5" {
-            tr.run_failed("concurrent workflows are not supported in v0.1/v0.2");
+        let pattern_run = resolved.doc.run.pattern_ref.is_some();
+        let allow = doc_version == "0.3" || (doc_version == "0.5" && pattern_run);
+        if !allow {
+            tr.run_failed("concurrent workflows are not supported for this document shape/version");
             return Err(anyhow!(
-                "feature 'concurrency' requires v0.3+; document version is {doc_version} (run.workflow.kind=concurrent)"
+                "feature 'concurrency' requires v0.3 workflows or v0.5 pattern runs; document version is {doc_version} (run.workflow.kind=concurrent)"
             ));
         }
     }

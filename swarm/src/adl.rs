@@ -75,6 +75,11 @@ impl AdlDoc {
                     "run.pattern_ref cannot be combined with run.workflow.steps"
                 ));
             }
+            if !matches!(self.run.workflow.kind, WorkflowKind::Sequential) {
+                return Err(anyhow!(
+                    "run.pattern_ref cannot be combined with non-sequential run.workflow.kind"
+                ));
+            }
         }
 
         // Validate run.workflow references

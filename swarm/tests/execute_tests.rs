@@ -1032,7 +1032,7 @@ fn run_rejects_concurrent_workflows_in_v0_2() {
 
     let stderr = String::from_utf8_lossy(&out.stderr);
     let expected =
-        "Error: feature 'concurrency' requires v0.3+; document version is 0.2 (run.workflow.kind=concurrent)";
+        "Error: feature 'concurrency' requires v0.3 workflows or v0.5 pattern runs; document version is 0.2 (run.workflow.kind=concurrent)";
     assert!(
         stderr.contains(expected),
         "stderr should contain expected error message, stderr was:\n{stderr}"
@@ -2209,4 +2209,57 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
     assert!(ids.contains(&"p::p_fork::left::L2".to_string()));
     assert!(ids.contains(&"p::p_fork::right::R1".to_string()));
     assert!(ids.contains(&"p::p_fork::J".to_string()));
+}
+
+#[test]
+fn run_rejects_concurrent_workflows_in_v0_4_without_pattern_ref() {
+    let base = tmp_dir("exec-reject-concurrent-v0-4");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.4"
+
+providers:
+  local:
+    type: "ollama"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "hello"
+
+run:
+  name: "reject-concurrent-v0-4"
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+"#;
+
+    let tmp_yaml = base.join("reject-concurrent-v0-4.yaml");
+    fs::write(&tmp_yaml, yaml.as_bytes()).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(
+        !out.status.success(),
+        "expected failure for v0.4 concurrent workflow without pattern_ref, got success.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("requires v0.3 workflows or v0.5 pattern runs")
+            && stderr.contains("document version is 0.4"),
+        "stderr should contain gate message; stderr was:\n{stderr}"
+    );
 }

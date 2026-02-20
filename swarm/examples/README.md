@@ -81,6 +81,10 @@ cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-pr
 
 PatternSchema v0.1 compiles patterns into deterministic ExecutionPlan nodes with `p::<pattern_id>::...` step IDs.
 
+Rules:
+- task symbols in pattern `steps` must match task IDs in `tasks` (missing symbols fail with a clear validation error)
+- fork branches are compiled in lexicographic `branch.id` order for stable plans across declaration order variants.
+
 - `v0-5-pattern-linear.adl.yaml`
 - `v0-5-pattern-fork-join.adl.yaml`
 

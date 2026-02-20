@@ -173,7 +173,10 @@ fn compile_fork_join_pattern(pattern: &adl::PatternSpec) -> Result<CompiledPatte
     let mut compiled_steps = Vec::new();
     let mut branch_last = Vec::new();
 
-    for br in &fork.branches {
+    let mut branches: Vec<&adl::PatternBranchSpec> = fork.branches.iter().collect();
+    branches.sort_by(|a, b| a.id.cmp(&b.id));
+
+    for br in branches {
         let mut prev: Option<String> = None;
         for sym in &br.steps {
             let step_id = format!("p::{}::{}::{}", pattern.id, br.id, sym);
@@ -519,6 +522,60 @@ mod tests {
             serde_json::to_vec(&c1.execution_plan).expect("serialize"),
             serde_json::to_vec(&c2.execution_plan).expect("serialize"),
             "compiled fork/join plan bytes must be stable"
+        );
+    }
+
+    #[test]
+    fn compile_fork_join_pattern_normalizes_branch_order_by_branch_id() {
+        let pattern_declared = adl::PatternSpec {
+            id: "p_fork".to_string(),
+            kind: adl::PatternKind::ForkJoin,
+            steps: vec![],
+            fork: Some(adl::PatternForkSpec {
+                branches: vec![
+                    adl::PatternBranchSpec {
+                        id: "right".to_string(),
+                        steps: vec!["R1".to_string()],
+                    },
+                    adl::PatternBranchSpec {
+                        id: "left".to_string(),
+                        steps: vec!["L1".to_string()],
+                    },
+                ],
+            }),
+            join: Some(adl::PatternJoinSpec {
+                step: "J".to_string(),
+            }),
+        };
+
+        let pattern_sorted = adl::PatternSpec {
+            id: "p_fork".to_string(),
+            kind: adl::PatternKind::ForkJoin,
+            steps: vec![],
+            fork: Some(adl::PatternForkSpec {
+                branches: vec![
+                    adl::PatternBranchSpec {
+                        id: "left".to_string(),
+                        steps: vec!["L1".to_string()],
+                    },
+                    adl::PatternBranchSpec {
+                        id: "right".to_string(),
+                        steps: vec!["R1".to_string()],
+                    },
+                ],
+            }),
+            join: Some(adl::PatternJoinSpec {
+                step: "J".to_string(),
+            }),
+        };
+
+        let a = compile_pattern(&pattern_declared).expect("compile");
+        let b = compile_pattern(&pattern_sorted).expect("compile");
+
+        assert_eq!(
+            serde_json::to_vec(&a.execution_plan).expect("serialize"),
+            serde_json::to_vec(&b.execution_plan).expect("serialize"),
+            "branch declaration order should not affect compiled plan"
         );
     }
 }

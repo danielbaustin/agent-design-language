@@ -200,3 +200,70 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
     };
     assert!(step_with_no_prompt.effective_prompt(&doc).is_none());
 }
+
+#[test]
+fn validate_rejects_pattern_ref_with_inline_workflow_steps() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+tasks:
+  A:
+    prompt:
+      user: "A"
+patterns:
+  - id: p1
+    type: linear
+    steps: [A]
+run:
+  pattern_ref: p1
+  workflow:
+    kind: sequential
+    steps:
+      - task: "A"
+"#;
+
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    let err = doc
+        .validate()
+        .expect_err("should reject ambiguous run shape");
+    assert!(
+        err.to_string()
+            .contains("run.pattern_ref cannot be combined with run.workflow.steps"),
+        "unexpected error: {err:#}"
+    );
+}
+
+#[test]
+fn validate_rejects_pattern_ref_with_non_sequential_workflow_kind() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+tasks:
+  A:
+    prompt:
+      user: "A"
+patterns:
+  - id: p1
+    type: linear
+    steps: [A]
+run:
+  pattern_ref: p1
+  workflow:
+    kind: concurrent
+    steps: []
+"#;
+
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    let err = doc
+        .validate()
+        .expect_err("should reject ambiguous run shape");
+    assert!(
+        err.to_string()
+            .contains("run.pattern_ref cannot be combined with non-sequential run.workflow.kind"),
+        "unexpected error: {err:#}"
+    );
+}
