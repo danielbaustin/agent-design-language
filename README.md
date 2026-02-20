@@ -30,7 +30,7 @@ cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-re
 
 Badge semantics:
 - `swarm-ci`: main branch CI workflow status
-- `coverage`: Codecov line-coverage signal for `main`
+- `coverage`: Codecov line-coverage signal for `main` (informational; CI still passes if Codecov upload is unavailable)
 - `milestone`: current documentation milestone marker
 
 ## Status

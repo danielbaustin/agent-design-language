@@ -8,16 +8,16 @@ agent workflows with deterministic resolution and clear failure modes.
 
 [![swarm-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-[![swarm-coverage-gate (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![MSRV](https://img.shields.io/badge/MSRV-1.74%2B-blue)
 
 Status badges above are for `main` branch workflow health, not per-PR checks.
+Coverage is generated via `cargo llvm-cov` in CI and uploaded to Codecov as an informational signal (upload failures do not fail CI).
 ## swarm
 
 `swarm` is a small, conservative reference runtime for **Agent Design Language (ADL)**.
 
-For historical context, see `RELEASE_NOTES_v0.2.md`.
+For historical context, see `../docs/milestones/v0.2/RELEASE_NOTES_v0.2.md`.
 For the official v0.4 milestone summary, see `../docs/milestones/v0.4/RELEASE_NOTES_v0.4.md`.
 This README reflects the current v0.4 runtime.
 
