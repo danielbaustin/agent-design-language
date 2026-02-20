@@ -24,3 +24,6 @@ Purpose: reproducible, copy/paste demo coverage for shipped v0.5 capabilities (W
 - Scheduler demo uses deterministic ready-set ordering and bounded parallelism.
 - Remote demo uses localhost and deterministic mock provider output to reduce environmental variance.
 - Signing demo canonicalization excludes top-level `signature`; signature metadata edits do not alter signed payload bytes.
+
+## Known Demo Constraint
+- Top-level `include` is not yet supported by the current CLI schema/load path; tracked in #373.
