@@ -100,7 +100,8 @@ jobs:
           token: ${{ env.CODECOV_TOKEN }}
           files: swarm/lcov.info
           flags: swarm
-          fail_ci_if_error: true
+          # Keep CI signal stable during transient Codecov outages; upload is informational.
+          fail_ci_if_error: false
           verbose: true
 
       - name: Skip Codecov upload (missing token)

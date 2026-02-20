@@ -2108,6 +2108,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
     providers.insert(
         "local".to_string(),
         swarm::adl::ProviderSpec {
+            id: None,
             kind: "ollama".to_string(),
             base_url: None,
             default_model: None,
@@ -2119,6 +2120,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
     agents.insert(
         "a1".to_string(),
         swarm::adl::AgentSpec {
+            id: None,
             provider: "local".to_string(),
             model: "phi4-mini".to_string(),
             temperature: None,
@@ -2134,6 +2136,10 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         tasks.insert(
             task_id.to_string(),
             swarm::adl::TaskSpec {
+                id: None,
+                agent_ref: None,
+                inputs: vec![],
+                tool_allowlist: vec![],
                 description: None,
                 prompt: swarm::adl::PromptSpec {
                     system: None,
@@ -2174,16 +2180,18 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         tools: HashMap::new(),
         agents,
         tasks,
+        workflows: HashMap::new(),
         patterns: vec![pattern],
         run: swarm::adl::RunSpec {
+            id: None,
             name: Some("compiled-pattern-run".to_string()),
             created_at: None,
             defaults: swarm::adl::RunDefaults::default(),
+            workflow_ref: None,
+            workflow: None,
             pattern_ref: Some("p_fork".to_string()),
-            workflow: swarm::adl::WorkflowSpec {
-                kind: swarm::adl::WorkflowKind::Sequential,
-                steps: vec![],
-            },
+            inputs: HashMap::new(),
+            placement: None,
         },
     };
 
