@@ -277,6 +277,39 @@ run:
 }
 
 #[test]
+fn validate_rejects_zero_max_concurrency() {
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "hello"
+run:
+  defaults:
+    max_concurrency: 0
+  workflow:
+    kind: concurrent
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    let err = doc.validate().expect_err("max_concurrency=0 must fail");
+    assert!(
+        err.to_string().contains("max_concurrency must be >= 1"),
+        "unexpected error: {err:#}"
+    );
+}
+
+#[test]
 fn validate_rejects_unknown_workflow_ref() {
     let yaml = r#"
 version: "0.5"

@@ -55,6 +55,12 @@ impl AdlDoc {
 
     /// Lightweight validation so we can fail fast with good errors.
     pub fn validate(&self) -> Result<()> {
+        if matches!(self.run.defaults.max_concurrency, Some(0)) {
+            return Err(anyhow!(
+                "run.defaults.max_concurrency must be >= 1 when provided"
+            ));
+        }
+
         validate_id_fields("providers", &self.providers, |spec| spec.id.as_deref())?;
         validate_id_fields("tools", &self.tools, |spec| spec.id.as_deref())?;
         validate_id_fields("agents", &self.agents, |spec| spec.id.as_deref())?;
@@ -470,6 +476,11 @@ pub struct RunDefaults {
     /// Default system string applied if prompt has no system.
     #[serde(default)]
     pub system: Option<String>,
+
+    /// Global runtime concurrency cap for concurrent workflows/pattern runs.
+    /// When omitted, runtime uses a conservative default.
+    #[serde(default)]
+    pub max_concurrency: Option<usize>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -523,6 +534,18 @@ pub struct StepSpec {
     /// Task id to run (key in `tasks`).
     #[serde(default, alias = "task_ref")]
     pub task: Option<String>,
+
+    /// Workflow id to call (key in `workflows`).
+    #[serde(default)]
+    pub call: Option<String>,
+
+    /// Optional call input bindings.
+    #[serde(default)]
+    pub with: HashMap<String, String>,
+
+    /// Optional namespace for call results.
+    #[serde(default, rename = "as")]
+    pub as_ns: Option<String>,
 
     /// Inline prompt override.
     #[serde(default)]

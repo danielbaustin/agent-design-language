@@ -47,6 +47,9 @@ pub struct ResolvedStep {
     pub provider: Option<String>,
     pub placement: Option<adl::PlacementMode>,
     pub task: Option<String>,
+    pub call: Option<String>,
+    pub with: HashMap<String, String>,
+    pub as_ns: Option<String>,
     pub prompt: Option<adl::PromptSpec>,
     pub inputs: HashMap<String, String>,
     pub save_as: Option<String>,
@@ -210,6 +213,9 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
                 provider: Some(provider.clone()),
                 placement: None,
                 task: Some(compiled_step.task_symbol.clone()),
+                call: None,
+                with: HashMap::new(),
+                as_ns: None,
                 prompt: None,
                 inputs: HashMap::new(),
                 save_as: save_as_by_step
@@ -242,9 +248,12 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
     let mut steps = Vec::new();
     for (idx, s) in workflow.steps.iter().enumerate() {
         // Preserve explicit step ids; otherwise derive a deterministic fallback.
-        let id =
-            s.id.clone()
-                .unwrap_or_else(|| s.task.clone().unwrap_or_else(|| format!("step-{idx}")));
+        let id = s.id.clone().unwrap_or_else(|| {
+            s.task
+                .clone()
+                .or_else(|| s.call.clone())
+                .unwrap_or_else(|| format!("step-{idx}"))
+        });
 
         let provider = resolve_provider_for_step(s, doc);
 
@@ -259,6 +268,9 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
             provider,
             placement: s.placement.clone(),
             task: s.task.clone(),
+            call: s.call.clone(),
+            with: s.with.clone(),
+            as_ns: s.as_ns.clone(),
             prompt: s.prompt.clone(),
             inputs: s.inputs.clone(),
             save_as: s.save_as.clone(),
@@ -293,6 +305,10 @@ pub fn print_resolved_plan(resolved: &AdlResolved) {
         resolved.steps.len(),
         resolved.steps.iter(),
         |step| {
+            if let Some(callee) = step.call.as_deref() {
+                let ns = step.as_ns.as_deref().unwrap_or(step.id.as_str());
+                return format!("{}  call={} as={}", step.id, callee, ns);
+            }
             let agent = step.agent.as_deref().unwrap_or("<unresolved-agent>");
             let provider = step.provider.as_deref().unwrap_or("<unresolved-provider>");
             let task = step.task.as_deref().unwrap_or("<unresolved-task>");
@@ -443,6 +459,9 @@ mod tests {
             retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
             placement: None,
@@ -464,6 +483,9 @@ mod tests {
             retry: None,
             agent: None,
             task: Some("t1".to_string()),
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
             placement: None,
@@ -487,6 +509,9 @@ mod tests {
             retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
             placement: None,
@@ -511,6 +536,9 @@ mod tests {
             retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
             prompt: Some(adl::PromptSpec {
                 system: None,
                 developer: None,
@@ -541,6 +569,9 @@ mod tests {
             retry: None,
             agent: Some("a1".to_string()),
             task: Some("nope".to_string()),
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
             placement: None,
@@ -568,6 +599,9 @@ mod tests {
             retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
             placement: None,
@@ -594,6 +628,9 @@ mod tests {
             retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
             prompt: Some(adl::PromptSpec {
                 system: Some("step sys".to_string()),
                 developer: None,
@@ -626,6 +663,9 @@ mod tests {
             retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
             placement: None,
@@ -639,6 +679,9 @@ mod tests {
             retry: None,
             agent: Some("a1".to_string()),
             task: Some("t1".to_string()),
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
             placement: None,
@@ -677,6 +720,9 @@ mod wp02_followup_tests {
             retry: None,
             agent: None,
             task: Some("t1".to_string()),
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
             placement: None,

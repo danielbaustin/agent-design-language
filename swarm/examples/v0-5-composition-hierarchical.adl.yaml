@@ -1,0 +1,51 @@
+version: "0.5"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  child_task:
+    prompt:
+      user: "Child summary for {{inputs.topic}}"
+  join_task:
+    prompt:
+      user: "Join A={{a}} | B={{b}}"
+
+workflows:
+  wf_child:
+    kind: sequential
+    steps:
+      - id: "child.summarize"
+        agent: "a1"
+        task: "child_task"
+        save_as: "result"
+
+run:
+  name: "v0-5-composition-hierarchical"
+  workflow:
+    kind: sequential
+    steps:
+      - id: "parent.call.a"
+        call: "wf_child"
+        with:
+          topic: "alpha"
+        as: "a"
+      - id: "parent.call.b"
+        call: "wf_child"
+        with:
+          topic: "beta"
+        as: "b"
+      - id: "parent.join"
+        agent: "a1"
+        task: "join_task"
+        inputs:
+          a: "@state:a.result"
+          b: "@state:b.result"
