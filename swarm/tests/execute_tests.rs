@@ -925,6 +925,90 @@ run:
 }
 
 #[test]
+fn run_remote_failure_with_continue_keeps_scheduler_state_intact() {
+    let base = tmp_dir("exec-v0-5-remote-continue");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let endpoint_remote_fail = start_raw_http_server(
+        "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 167\r\n\r\n{\"ok\":false,\"run_id\":\"r\",\"workflow_id\":\"w\",\"step_id\":\"remote.fail\",\"result\":null,\"artifacts\":[],\"error\":{\"code\":\"REMOTE_EXECUTION_ERROR\",\"message\":\"boom\",\"details\":{}}}",
+    );
+    let yaml = format!(
+        r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "STEP={{step}} INPUT={{input}}"
+run:
+  name: "v0-5-remote-continue"
+  placement: local
+  remote:
+    endpoint: "{endpoint_remote_fail}"
+    timeout_ms: 1000
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "local.first"
+        placement: local
+        save_as: "first"
+        agent: "a1"
+        task: "t"
+        inputs:
+          step: "local-1"
+          input: "seed"
+      - id: "remote.fail"
+        placement: remote
+        on_error: continue
+        agent: "a1"
+        task: "t"
+        inputs:
+          step: "remote-2"
+          input: "@state:first"
+      - id: "local.after"
+        placement: local
+        agent: "a1"
+        task: "t"
+        inputs:
+          step: "local-3"
+          input: "@state:first"
+"#
+    );
+    let tmp_yaml = base.join("v0-5-remote-continue.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run"]);
+    assert!(
+        out.status.success(),
+        "expected success with continue policy.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("--- step: local.first ---"),
+        "stdout:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("--- step: local.after ---"),
+        "stdout:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("status=failure") && stdout.contains("step=remote.fail"),
+        "run summary should record remote failure under continue policy; stdout:\n{stdout}"
+    );
+}
+
+#[test]
 fn run_http_retry_succeeds_on_second_attempt_after_5xx() {
     let server = match std::net::TcpListener::bind("127.0.0.1:0") {
         Ok(s) => s,

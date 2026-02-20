@@ -230,3 +230,52 @@ fn json_response(code: u16, body: Vec<u8>) -> Response<std::io::Cursor<Vec<u8>>>
     }
     response
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::{Read, Write};
+    use std::net::TcpListener;
+    use std::thread;
+
+    fn reserve_local_port() -> u16 {
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind ephemeral port");
+        let port = listener.local_addr().unwrap().port();
+        drop(listener);
+        port
+    }
+
+    #[test]
+    fn server_rejects_payloads_over_5_mib() {
+        let port = reserve_local_port();
+        let bind_addr = format!("127.0.0.1:{port}");
+        thread::spawn({
+            let bind_addr = bind_addr.clone();
+            move || {
+                let _ = run_server(&bind_addr);
+            }
+        });
+        std::thread::sleep(std::time::Duration::from_millis(120));
+
+        let mut stream = std::net::TcpStream::connect(&bind_addr).expect("connect");
+        let body = vec![b'x'; MAX_REQUEST_BYTES + 1];
+        let req = format!(
+            "POST /v1/execute HTTP/1.1\r\nHost: {bind_addr}\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n",
+            body.len()
+        );
+        stream.write_all(req.as_bytes()).unwrap();
+        stream.write_all(&body).unwrap();
+        stream.flush().unwrap();
+
+        stream
+            .set_read_timeout(Some(std::time::Duration::from_secs(2)))
+            .unwrap();
+        let mut buf = [0_u8; 1024];
+        let n = stream.read(&mut buf).expect("read response");
+        let resp = String::from_utf8_lossy(&buf[..n]);
+        assert!(
+            resp.contains("413"),
+            "expected 413 response for oversized payload, got:\n{resp}"
+        );
+    }
+}

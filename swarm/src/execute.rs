@@ -283,11 +283,7 @@ pub fn execute_sequential(
                     .and_then(|agent_id| resolved.doc.agents.get(agent_id))
                     .map(|agent| agent.model.as_str());
 
-                let placement = step
-                    .placement
-                    .clone()
-                    .or_else(|| resolved.doc.run.placement.as_ref().and_then(|p| p.mode()))
-                    .unwrap_or(crate::adl::PlacementMode::Local);
+                let placement = effective_step_placement(step, &resolved.doc);
 
                 let model_output = match placement {
                     crate::adl::PlacementMode::Local => {
@@ -458,6 +454,16 @@ fn effective_prompt_with_defaults_from_doc(
     Some(p)
 }
 
+fn effective_step_placement(
+    step: &crate::resolve::ResolvedStep,
+    doc: &crate::adl::AdlDoc,
+) -> crate::adl::PlacementMode {
+    step.placement
+        .clone()
+        .or_else(|| doc.run.placement.as_ref().and_then(|p| p.mode()))
+        .unwrap_or(crate::adl::PlacementMode::Local)
+}
+
 fn execute_step_with_retry(
     step: &crate::resolve::ResolvedStep,
     doc: &crate::adl::AdlDoc,
@@ -511,11 +517,7 @@ fn execute_step_with_retry(
                 .and_then(|agent_id| doc.agents.get(agent_id))
                 .map(|agent| agent.model.as_str());
 
-            let placement = step
-                .placement
-                .clone()
-                .or_else(|| doc.run.placement.as_ref().and_then(|p| p.mode()))
-                .unwrap_or(crate::adl::PlacementMode::Local);
+            let placement = effective_step_placement(step, doc);
 
             let model_output = match placement {
                 crate::adl::PlacementMode::Local => {
