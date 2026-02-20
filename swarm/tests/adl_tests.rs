@@ -43,7 +43,15 @@ run:
     assert!(doc.providers.contains_key("local"));
     assert!(doc.agents.contains_key("a1"));
     assert!(doc.tasks.contains_key("t1"));
-    assert_eq!(doc.run.workflow.steps.len(), 1);
+    assert_eq!(
+        doc.run
+            .workflow
+            .as_ref()
+            .expect("inline workflow")
+            .steps
+            .len(),
+        1
+    );
 }
 
 #[test]
@@ -104,14 +112,20 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
         tools: HashMap::new(),
         agents: HashMap::new(),
         tasks: HashMap::new(),
+        workflows: HashMap::new(),
         run: RunSpec {
+            id: None,
             name: Some("demo".to_string()),
             created_at: None,
             defaults: RunDefaults::default(),
-            workflow: WorkflowSpec {
+            workflow_ref: None,
+            workflow: Some(WorkflowSpec {
+                id: None,
                 kind: WorkflowKind::Sequential,
                 steps: vec![],
-            },
+            }),
+            inputs: HashMap::new(),
+            placement: None,
         },
     };
 
@@ -122,6 +136,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
     doc.agents.insert(
         "a1".to_string(),
         AgentSpec {
+            id: None,
             provider: "p".to_string(),
             model: "m".to_string(),
             temperature: None,
@@ -139,6 +154,10 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
     doc.tasks.insert(
         "t1".to_string(),
         TaskSpec {
+            id: None,
+            agent_ref: None,
+            inputs: vec![],
+            tool_allowlist: vec![],
             description: None,
             prompt: task_prompt.clone(),
         },
@@ -197,4 +216,153 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
         ..Default::default()
     };
     assert!(step_with_no_prompt.effective_prompt(&doc).is_none());
+}
+
+#[test]
+fn validate_accepts_v0_5_complete_doc_with_all_primitives() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local_ollama:
+    id: "local_ollama"
+    type: "local_ollama"
+    config:
+      model: "phi4-mini"
+tools:
+  fetch_docs:
+    id: "fetch_docs"
+    type: "mcp"
+    config:
+      server: "docs"
+agents:
+  planner:
+    id: "planner"
+    provider: "local_ollama"
+    model: "phi4-mini"
+    tools: ["fetch_docs"]
+tasks:
+  summarize:
+    id: "summarize"
+    agent_ref: "planner"
+    inputs: ["topic"]
+    tool_allowlist: ["fetch_docs"]
+    prompt:
+      user: "Summarize {{topic}}."
+workflows:
+  wf_main:
+    id: "wf_main"
+    kind: sequential
+    steps:
+      - id: "s1"
+        task: "summarize"
+run:
+  id: "run_main"
+  name: "demo-v0-5"
+  workflow_ref: "wf_main"
+  inputs:
+    topic: "ADL"
+  placement:
+    target: "local"
+"#;
+
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml parse");
+    doc.validate().expect("v0.5 complete doc should validate");
+
+    assert_eq!(doc.workflows.len(), 1);
+    assert_eq!(doc.tasks["summarize"].agent_ref.as_deref(), Some("planner"));
+    assert_eq!(doc.run.workflow_ref.as_deref(), Some("wf_main"));
+}
+
+#[test]
+fn validate_rejects_unknown_workflow_ref() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  p1: { type: "ollama" }
+agents:
+  a1:
+    provider: "p1"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+workflows: {}
+run:
+  workflow_ref: "wf_missing"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml parse");
+    let err = doc
+        .validate()
+        .expect_err("unknown workflow_ref should fail");
+    assert!(
+        err.to_string()
+            .contains("run.workflow_ref references unknown workflow"),
+        "{err:#}"
+    );
+}
+
+#[test]
+fn validate_rejects_unsupported_provider_kind() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  p1:
+    type: "weird_provider"
+agents:
+  a1:
+    provider: "p1"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    steps:
+      - task: "t1"
+        agent: "a1"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml parse");
+    let err = doc
+        .validate()
+        .expect_err("unsupported provider kind should fail");
+    assert!(err.to_string().contains("unsupported kind"), "{err:#}");
+}
+
+#[test]
+fn validate_rejects_both_workflow_ref_and_inline_workflow() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  p1: { type: "ollama" }
+agents:
+  a1:
+    provider: "p1"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+workflows:
+  wf_main:
+    steps:
+      - task: "t1"
+        agent: "a1"
+run:
+  workflow_ref: "wf_main"
+  workflow:
+    steps:
+      - task: "t1"
+        agent: "a1"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml parse");
+    let err = doc
+        .validate()
+        .expect_err("both workflow_ref and inline workflow should fail");
+    assert!(
+        err.to_string()
+            .contains("either workflow_ref or inline workflow, but not both"),
+        "{err:#}"
+    );
 }

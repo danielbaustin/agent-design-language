@@ -53,6 +53,42 @@ v0.5 must:
 
 ---
 
+## v0.5 Language Overview
+
+v0.5 formalizes six first-class primitives in a single ADL document:
+
+- `providers`: AI model-call backends (for example `local_ollama`, `http_remote`)
+- `tools`: MCP-style external capabilities (distinct from providers)
+- `agents`: execution identities that reference a provider and optional tools
+- `tasks`: reusable task contracts that reference an agent and optional tool allowlist
+- `workflows`: step graphs (currently sequential or concurrent)
+- `run`: execution instance that references a workflow and provides input/placement hooks
+
+Minimal complete example (full file: `swarm/examples/v0-5-primitives-minimal.adl.yaml`):
+
+```yaml
+version: "0.5"
+providers: { ... }
+tools: { ... }
+agents: { ... }
+tasks: { ... }
+workflows:
+  wf_main:
+    steps:
+      - id: "summarize.topic"
+        task: "summarize"
+run:
+  workflow_ref: "wf_main"
+```
+
+Validation expectations in v0.5:
+- run uses `workflow_ref` or inline `workflow` (legacy), but never both; if multiple providers exist, provider selection must be explicit.
+- ids may be declared explicitly (`id`) and must match collection keys when present
+- refs must resolve (`provider`, `agent_ref`, `task`, `workflow_ref`, tool refs)
+- provider/tool kinds must be supported with required config fields
+
+---
+
 ## Non-Goals
 
 - Distributed execution across clusters.

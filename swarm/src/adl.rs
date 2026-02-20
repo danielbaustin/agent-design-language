@@ -28,6 +28,9 @@ pub struct AdlDoc {
     #[serde(default)]
     pub tasks: HashMap<String, TaskSpec>,
 
+    #[serde(default)]
+    pub workflows: HashMap<String, WorkflowSpec>,
+
     pub run: RunSpec,
 }
 
@@ -49,8 +52,59 @@ impl AdlDoc {
 
     /// Lightweight validation so we can fail fast with good errors.
     pub fn validate(&self) -> Result<()> {
-        // Validate run.workflow references
-        for (idx, step) in self.run.workflow.steps.iter().enumerate() {
+        validate_id_fields("providers", &self.providers, |spec| spec.id.as_deref())?;
+        validate_id_fields("tools", &self.tools, |spec| spec.id.as_deref())?;
+        validate_id_fields("agents", &self.agents, |spec| spec.id.as_deref())?;
+        validate_id_fields("tasks", &self.tasks, |spec| spec.id.as_deref())?;
+        validate_id_fields("workflows", &self.workflows, |spec| spec.id.as_deref())?;
+
+        for provider_id in sorted_keys(&self.providers) {
+            let provider = &self.providers[provider_id];
+            validate_provider(provider_id, provider)?;
+        }
+
+        for tool_id in sorted_keys(&self.tools) {
+            let tool = &self.tools[tool_id];
+            validate_tool(tool_id, tool)?;
+        }
+
+        for agent_id in sorted_keys(&self.agents) {
+            let agent = &self.agents[agent_id];
+            if !self.providers.is_empty() && !self.providers.contains_key(&agent.provider) {
+                return Err(anyhow!(
+                    "agents.{agent_id}.provider references unknown provider '{}'",
+                    agent.provider
+                ));
+            }
+            for tool_ref in &agent.tools {
+                if !self.tools.contains_key(tool_ref) {
+                    return Err(anyhow!(
+                        "agents.{agent_id}.tools references unknown tool '{tool_ref}'"
+                    ));
+                }
+            }
+        }
+
+        for task_id in sorted_keys(&self.tasks) {
+            let task = &self.tasks[task_id];
+            if let Some(agent_ref) = task.agent_ref.as_deref() {
+                if !self.agents.contains_key(agent_ref) {
+                    return Err(anyhow!(
+                        "tasks.{task_id}.agent_ref references unknown agent '{agent_ref}'"
+                    ));
+                }
+            }
+            for tool_ref in &task.tool_allowlist {
+                if !self.tools.contains_key(tool_ref) {
+                    return Err(anyhow!(
+                        "tasks.{task_id}.tool_allowlist references unknown tool '{tool_ref}'"
+                    ));
+                }
+            }
+        }
+
+        let workflow = self.run.resolve_workflow(self)?;
+        for (idx, step) in workflow.steps.iter().enumerate() {
             let step_id = step
                 .id
                 .as_deref()
@@ -65,10 +119,10 @@ impl AdlDoc {
                 }
             }
 
-            if let Some(task) = step.task.as_ref() {
-                if !self.tasks.is_empty() && !self.tasks.contains_key(task) {
+            if let Some(task_ref) = step.task.as_ref() {
+                if !self.tasks.is_empty() && !self.tasks.contains_key(task_ref) {
                     return Err(anyhow!(
-                        "run.workflow.steps[{idx}] references unknown task '{task}'"
+                        "run.workflow.steps[{idx}] references unknown task '{task_ref}'"
                     ));
                 }
             }
@@ -117,12 +171,71 @@ impl AdlDoc {
     }
 }
 
+fn sorted_keys<T>(m: &HashMap<String, T>) -> Vec<&String> {
+    let mut keys: Vec<&String> = m.keys().collect();
+    keys.sort();
+    keys
+}
+
+fn validate_id_fields<T>(
+    section: &str,
+    items: &HashMap<String, T>,
+    get_id: impl Fn(&T) -> Option<&str>,
+) -> Result<()> {
+    for key in sorted_keys(items) {
+        if let Some(explicit_id) = get_id(&items[key]) {
+            if explicit_id != key {
+                return Err(anyhow!(
+                    "{section}.{key}.id must match key '{key}' when provided (found '{explicit_id}')"
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
+fn validate_provider(provider_id: &str, provider: &ProviderSpec) -> Result<()> {
+    match provider.kind.as_str() {
+        "ollama" | "local_ollama" | "mock" => Ok(()),
+        "http" | "http_remote" => {
+            let endpoint_ok = provider.base_url.is_some()
+                || provider
+                    .config
+                    .get("endpoint")
+                    .and_then(|v| v.as_str())
+                    .is_some();
+            if !endpoint_ok {
+                return Err(anyhow!(
+                    "providers.{provider_id} kind '{}' requires base_url or config.endpoint",
+                    provider.kind
+                ));
+            }
+            Ok(())
+        }
+        other => Err(anyhow!(
+            "providers.{provider_id} has unsupported kind '{other}' (supported: ollama, local_ollama, mock, http, http_remote)"
+        )),
+    }
+}
+
+fn validate_tool(tool_id: &str, tool: &ToolSpec) -> Result<()> {
+    match tool.kind.as_str() {
+        "mcp" | "local" | "http" | "builtin" => Ok(()),
+        other => Err(anyhow!(
+            "tools.{tool_id} has unsupported kind '{other}' (supported: mcp, local, http, builtin)"
+        )),
+    }
+}
+
 /// Provider spec: local Ollama, OpenAI, etc.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct ProviderSpec {
+    #[serde(default)]
+    pub id: Option<String>,
+
     /// Provider type (e.g. "ollama", "openai").
-    #[serde(rename = "type")]
+    #[serde(rename = "type", alias = "kind")]
     pub kind: String,
 
     /// Optional base URL.
@@ -142,8 +255,11 @@ pub struct ProviderSpec {
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct ToolSpec {
+    #[serde(default)]
+    pub id: Option<String>,
+
     /// Tool type (e.g. "mcp", "http", "local").
-    #[serde(rename = "type")]
+    #[serde(rename = "type", alias = "kind")]
     pub kind: String,
 
     /// Arbitrary config.
@@ -155,7 +271,11 @@ pub struct ToolSpec {
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct AgentSpec {
+    #[serde(default)]
+    pub id: Option<String>,
+
     /// Provider this agent uses.
+    #[serde(alias = "provider_ref")]
     pub provider: String,
 
     /// Model name (provider-specific).
@@ -210,6 +330,18 @@ where
 #[serde(deny_unknown_fields)]
 pub struct TaskSpec {
     #[serde(default)]
+    pub id: Option<String>,
+
+    #[serde(default)]
+    pub agent_ref: Option<String>,
+
+    #[serde(default)]
+    pub inputs: Vec<String>,
+
+    #[serde(default)]
+    pub tool_allowlist: Vec<String>,
+
+    #[serde(default)]
     pub description: Option<String>,
 
     /// Default prompt for this task.
@@ -243,6 +375,9 @@ pub struct PromptSpec {
 #[serde(deny_unknown_fields)]
 pub struct RunSpec {
     #[serde(default)]
+    pub id: Option<String>,
+
+    #[serde(default)]
     pub name: Option<String>,
 
     /// Optional creation time in RFC3339 (e.g. "2026-01-24T10:30:00Z").
@@ -252,7 +387,34 @@ pub struct RunSpec {
     #[serde(default)]
     pub defaults: RunDefaults,
 
-    pub workflow: WorkflowSpec,
+    #[serde(default)]
+    pub workflow_ref: Option<String>,
+
+    #[serde(default)]
+    pub workflow: Option<WorkflowSpec>,
+
+    #[serde(default)]
+    pub inputs: HashMap<String, String>,
+
+    #[serde(default)]
+    pub placement: Option<RunPlacementSpec>,
+}
+
+impl RunSpec {
+    pub fn resolve_workflow<'a>(&'a self, doc: &'a AdlDoc) -> Result<&'a WorkflowSpec> {
+        match (self.workflow_ref.as_deref(), self.workflow.as_ref()) {
+            (Some(_), Some(_)) => Err(anyhow!(
+                "run may define either workflow_ref or inline workflow, but not both"
+            )),
+            (Some(workflow_ref), None) => doc.workflows.get(workflow_ref).ok_or_else(|| {
+                anyhow!("run.workflow_ref references unknown workflow '{workflow_ref}'")
+            }),
+            (None, Some(workflow)) => Ok(workflow),
+            (None, None) => Err(anyhow!(
+                "run must define either workflow_ref or inline workflow"
+            )),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default, PartialEq, Eq)]
@@ -266,6 +428,9 @@ pub struct RunDefaults {
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct WorkflowSpec {
+    #[serde(default)]
+    pub id: Option<String>,
+
     #[serde(default)]
     pub kind: WorkflowKind,
 
@@ -305,11 +470,11 @@ pub struct StepSpec {
     pub retry: Option<StepRetry>,
 
     /// Agent id to run (key in `agents`).
-    #[serde(default)]
+    #[serde(default, alias = "agent_ref")]
     pub agent: Option<String>,
 
     /// Task id to run (key in `tasks`).
-    #[serde(default)]
+    #[serde(default, alias = "task_ref")]
     pub task: Option<String>,
 
     /// Inline prompt override.
@@ -366,6 +531,16 @@ pub struct GuardSpec {
 
     #[serde(default)]
     pub config: HashMap<String, JsonValue>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct RunPlacementSpec {
+    #[serde(default)]
+    pub provider: Option<String>,
+
+    #[serde(default)]
+    pub target: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]

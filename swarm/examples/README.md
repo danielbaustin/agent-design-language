@@ -76,3 +76,18 @@ From repo root:
 ```bash
 cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
 ```
+
+## v0.5 primitives baseline
+
+- `v0-5-primitives-minimal.adl.yaml`
+  - defines all six primitives (`providers`, `tools`, `agents`, `tasks`, `workflows`, `run`)
+  - demonstrates explicit `workflow_ref` and task references in steps
+  - inline `run.workflow` is legacy-compatible but must not coexist with `workflow_ref`
+  - when multiple providers exist, provider selection must be explicit
+  - demonstrates `agent_ref` resolution from task
+
+From repo root:
+
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-primitives-minimal.adl.yaml --print-plan
+```
