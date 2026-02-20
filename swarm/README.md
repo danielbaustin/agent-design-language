@@ -1,7 +1,7 @@
 # Agent Design Language (ADL)
 
-**Version:** v0.4  
-**Status:** Active v0.4 runtime with deterministic execution, bounded fork concurrency, deterministic join semantics, and hardened tooling gates
+**Version:** v0.5  
+**Status:** Active v0.5 runtime with deterministic execution, bounded concurrency, pattern compilation, remote execution MVP, and signing enforcement
 
 ADL is a schema-validated language and runtime for defining and executing
 agent workflows with deterministic resolution and clear failure modes.
@@ -17,9 +17,10 @@ Coverage is generated via `cargo llvm-cov` in CI and uploaded to Codecov as an i
 
 `swarm` is a small, conservative reference runtime for **Agent Design Language (ADL)**.
 
-For historical context, see `../docs/milestones/v0.2/RELEASE_NOTES_v0.2.md`.
-For the official v0.4 milestone summary, see `../docs/milestones/v0.4/RELEASE_NOTES_v0.4.md`.
-This README reflects the current v0.4 runtime.
+For historical context, see:
+- `../docs/milestones/v0.2/RELEASE_NOTES_v0.2.md`
+- `../docs/milestones/v0.4/RELEASE_NOTES_v0.4.md`
+This README reflects the current v0.5 runtime.
 
 It is intentionally *compiler-like* in how it processes ADL documents:
 
@@ -27,28 +28,31 @@ It is intentionally *compiler-like* in how it processes ADL documents:
 2. **Validate** the document against a JSON Schema with crisp, path-specific errors.
 3. **Resolve** references deterministically (run → workflow → steps → task → agent → provider).
 4. **Materialize** deterministic artifacts (execution plan, assembled prompts).
-5. **Execute** deterministic workflows (sequential and v0.4 bounded fork/join execution), with optional tracing.
+5. **Execute** deterministic workflows (sequential and bounded concurrent execution), with optional tracing.
 
 Provider execution, tracing, contracts, and repair policies are being added incrementally.
 
 ---
 
-## v0.4 Shipped Capabilities
+## v0.5 Shipped Capabilities
 
 - Deterministic workflow execution with stable plan/trace semantics
-- Deterministic fork/join runtime execution (`workflow.kind: concurrent`) with bounded parallelism
+- Deterministic fork/join runtime execution with bounded parallelism
 - Canonical concurrent ready-step ordering: lexicographic by `step_id`
 - Global concurrency cap via `run.defaults.max_concurrency` (default: `4`, must be `>= 1`)
-  - v0.5 default is `4` (deterministic; ready-set sorted lexicographically)
   - set to `1` for fully sequential execution behavior
+- Pattern compiler v0.1 (`linear`, `fork_join`) with deterministic canonical IDs
+- `run.pattern_ref` is mutually exclusive with `run.workflow_ref` and inline `run.workflow`
 - Step-level failure controls (`on_error: fail|continue`, `retry.max_attempts`)
 - Remote HTTP provider MVP with explicit failure behavior
+- Remote execution MVP (`/v1/health`, `/v1/execute`) where scheduler ownership remains local
+- v0.5 signing and verification (`keygen`, `sign`, `verify`) with default unsigned-run rejection on `--run`
 - Persistent run state artifacts under `.adl/runs/<run_id>/` for auditability (`run.json`, `steps.json`)
 - CI-aligned quality gate (`fmt`, `clippy -D warnings`, `test`)
 
 ---
 
-## Fork/Join Mental Model (v0.4)
+## Fork/Join Mental Model
 
 - **Fork**: declare branch steps under `workflow.kind: concurrent`.
 - **Execution**: ready fork steps execute with bounded parallelism and deterministic lexicographic step-id ordering.
@@ -56,7 +60,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 
 ---
 
-## Current Status (v0.4)
+## Current Status (v0.5)
 
 **Implemented**
 
@@ -91,14 +95,14 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 From the `swarm` directory:
 
 ```bash
-# Happy path: one obvious first command
-cargo run -q -- examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+# Happy path: v0.5 primitive schema baseline
+cargo run -q --bin swarm -- examples/v0-5-primitives-minimal.adl.yaml --print-plan
 
-# Optional: verify on_error/retry semantics
-cargo run -q -- examples/v0-3-on-error-retry.adl.yaml --print-plan
+# Optional: verify pattern compiler canonical IDs
+cargo run -q --bin swarm -- examples/v0-5-pattern-fork-join.adl.yaml --print-plan
 
-# Optional: verify remote provider wiring
-cargo run -q -- examples/v0-3-remote-http-provider.adl.yaml --print-plan
+# Optional: verify remote execution wiring (requires local swarm-remote server)
+cargo run -q --bin swarm -- examples/v0-5-remote-execution-mvp.adl.yaml --print-plan
 ```
 
 Expected output includes deterministic step ordering and resolved provider bindings.
@@ -106,14 +110,14 @@ Using `-q` keeps demo output focused on the ADL plan rather than Cargo build noi
 
 For real `--run` execution, configure provider runtime dependencies (for example local Ollama and any required auth env vars).
 
-For additional runnable examples, see `examples/README.md`.
+For additional runnable examples, see `examples/README.md` and `../docs/milestones/v0.5/DEMO_MATRIX_v0.5.md`.
 
 ---
 
 ## CLI
 
 ```bash
-swarm <path-to-adl.yaml> [OPTIONS]
+cargo run -q --bin swarm -- <path-to-adl.yaml> [OPTIONS]
 ```
 
 **Options**
@@ -134,24 +138,24 @@ For v0.5 workflows, signature enforcement is enabled by default for `--run`.
 
 ```bash
 # 1) generate local dev keys
-swarm keygen --out-dir ./.keys
+cargo run -q --bin swarm -- keygen --out-dir ./.keys
 
 # 2) sign a workflow
-swarm sign examples/v0-5-pattern-linear.adl.yaml \
+cargo run -q --bin swarm -- sign examples/v0-5-pattern-linear.adl.yaml \
   --key ./.keys/ed25519-private.b64 \
   --out /tmp/signed.adl.yaml
 
 # 3) verify signature
-swarm verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64
+cargo run -q --bin swarm -- verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64
 
 # 4) run signed workflow (no override needed)
-swarm /tmp/signed.adl.yaml --run
+cargo run -q --bin swarm -- /tmp/signed.adl.yaml --run
 ```
 
 Dev-only bypass:
 
 ```bash
-swarm examples/v0-5-pattern-linear.adl.yaml --run --allow-unsigned
+cargo run -q --bin swarm -- examples/v0-5-pattern-linear.adl.yaml --run --allow-unsigned
 ```
 
 ---
@@ -208,8 +212,8 @@ providers:
 Run it with:
 
 ```bash
-cargo run -- examples/v0-3-remote-http-provider.adl.yaml --print-plan
-cargo run -- examples/v0-3-remote-http-provider.adl.yaml --run
+cargo run -q --bin swarm -- examples/v0-3-remote-http-provider.adl.yaml --print-plan
+cargo run -q --bin swarm -- examples/v0-3-remote-http-provider.adl.yaml --run
 ```
 
 Failure behavior is explicit:
@@ -265,9 +269,9 @@ Example validation documents live under:
 examples/
 ```
 
-Legacy examples (e.g. `adl-0.1.yaml`) remain for regression testing, but the runtime behavior described here reflects v0.4.
+Legacy examples (e.g. `adl-0.1.yaml`) remain for regression testing, but the runtime behavior described here reflects v0.5.
 
-The schema/runtime behavior described here is aligned with current **v0.4** support.
+The schema/runtime behavior described here is aligned with current **v0.5** support.
 
 ---
 
@@ -308,7 +312,7 @@ All of the above must pass for changes to be accepted.
 
 `swarm` enforces a **high bar for test coverage**, especially for core compiler-like behavior (parsing, validation, resolution, and execution).
 
-As of v0.4:
+As of v0.5:
 
 - **Overall line coverage:** enforced by CI gate (see coverage badge above)
 - **All critical paths covered:**
@@ -344,7 +348,7 @@ The report makes it easy to identify:
 
 ### Coverage philosophy
 
-- **Line coverage > function coverage** for v0.4  
+- **Line coverage > function coverage** for v0.5  
   (many small helper functions are intentionally exercised indirectly)
 - No “coverage theater”:
   - No dummy tests
