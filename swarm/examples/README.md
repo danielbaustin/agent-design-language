@@ -49,6 +49,8 @@ Reference ADL doc for the demo scenario:
 - `v0-3-concurrency-fork-join.adl.yaml`
   - deterministic fork/join sequence contract (single-threaded runtime order)
   - clear branch/join artifacts: `fork/alpha.txt`, `fork/beta.txt`, `fork/join.txt`
+  - optional global cap: `run.defaults.max_concurrency` (`>= 1`, default `4`)
+  - set `run.defaults.max_concurrency: 1` for fully sequential execution behavior
   - see `v0-3-concurrency-fork-join.md` for mental model + deterministic trace ordering
 - `v0-3-fork-join-seq-run.adl.yaml`
   - runnable v0.3 sequential fork/join execution
@@ -108,4 +110,23 @@ Quick checks from repo root:
 ```bash
 cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-pattern-linear.adl.yaml --print-plan
 cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-pattern-fork-join.adl.yaml --print-plan
+```
+
+## v0.5 remote execution MVP example
+
+- `v0-5-remote-execution-mvp.adl.yaml`
+  - mixed placement in one workflow: local -> remote -> local
+  - runner stays scheduler; remote executes one fully-resolved step via `/v1/execute`
+
+Start local remote executor:
+
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml --bin swarm-remote -- 127.0.0.1:8787
+```
+
+Then run the mixed-placement example from repo root:
+
+```bash
+SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh \
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-remote-execution-mvp.adl.yaml --run --trace
 ```

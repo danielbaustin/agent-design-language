@@ -129,6 +129,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
             pattern_ref: None,
             inputs: HashMap::new(),
             placement: None,
+            remote: None,
         },
     };
 
@@ -274,6 +275,39 @@ run:
     assert_eq!(doc.workflows.len(), 1);
     assert_eq!(doc.tasks["summarize"].agent_ref.as_deref(), Some("planner"));
     assert_eq!(doc.run.workflow_ref.as_deref(), Some("wf_main"));
+}
+
+#[test]
+fn validate_rejects_zero_max_concurrency() {
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "hello"
+run:
+  defaults:
+    max_concurrency: 0
+  workflow:
+    kind: concurrent
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    let err = doc.validate().expect_err("max_concurrency=0 must fail");
+    assert!(
+        err.to_string().contains("max_concurrency must be >= 1"),
+        "unexpected error: {err:#}"
+    );
 }
 
 #[test]

@@ -6,6 +6,7 @@ use anyhow::{anyhow, Context, Result};
 use crate::bounded_executor;
 use crate::prompt;
 use crate::provider;
+use crate::remote_exec;
 use crate::resolve::AdlResolved;
 use crate::trace::Trace;
 
@@ -228,6 +229,58 @@ pub fn execute_sequential(
         let step_started_elapsed = tr.current_elapsed_ms();
         progress_step_start(emit_progress, tr, &step_id, provider_id);
 
+        if let Some(callee_workflow_id) = step.call.as_deref() {
+            let namespace = step.as_ns.clone().unwrap_or_else(|| step_id.clone());
+            tr.call_entered(&step_id, callee_workflow_id, &namespace);
+
+            let call_result = execute_called_workflow(
+                &step_id,
+                &namespace,
+                callee_workflow_id,
+                &step.with,
+                resolved,
+                tr,
+                print_outputs,
+                emit_progress,
+                adl_base_dir,
+                out_dir,
+                &saved_state,
+            );
+
+            match call_result {
+                Ok((call_outs, call_artifacts, call_records, callee_final_state)) => {
+                    tr.call_exited(&step_id, "success", &namespace);
+                    tr.step_finished(&step_id, true);
+                    let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
+                    progress_step_done(emit_progress, tr, &step_id, true, duration_ms);
+
+                    for (k, v) in callee_final_state {
+                        saved_state.insert(format!("{namespace}.{k}"), v);
+                    }
+
+                    outs.extend(call_outs);
+                    artifacts.extend(call_artifacts);
+                    records.extend(call_records);
+                    records.push(StepExecutionRecord {
+                        step_id: step_id.clone(),
+                        provider_id: "<call>".to_string(),
+                        status: "success".to_string(),
+                        attempts: 1,
+                        output_bytes: 0,
+                    });
+                    continue;
+                }
+                Err(err) => {
+                    tr.call_exited(&step_id, "failure", &namespace);
+                    tr.step_finished(&step_id, false);
+                    let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
+                    progress_step_done(emit_progress, tr, &step_id, false, duration_ms);
+                    tr.run_failed(&err.to_string());
+                    return Err(err);
+                }
+            }
+        }
+
         let max_attempts = step.retry.as_ref().map(|r| r.max_attempts).unwrap_or(1);
         let continue_on_error = matches!(step.on_error, Some(crate::adl::StepOnError::Continue));
         let mut attempt: u32 = 0;
@@ -282,19 +335,54 @@ pub fn execute_sequential(
                     .and_then(|agent_id| resolved.doc.agents.get(agent_id))
                     .map(|agent| agent.model.as_str());
 
-                let prov = provider::build_provider(spec, model_override).with_context(|| {
-                    format!(
-                        "failed to build provider '{}' for step '{}'",
-                        provider_id, step_id
-                    )
-                })?;
+                let placement = effective_step_placement(step, &resolved.doc);
 
-                let model_output = prov.complete(&prompt_text).with_context(|| {
-                    format!(
-                        "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
-                        provider_id, step_id
-                    )
-                })?;
+                let model_output = match placement {
+                    crate::adl::PlacementMode::Local => {
+                        let prov =
+                            provider::build_provider(spec, model_override).with_context(|| {
+                                format!(
+                                    "failed to build provider '{}' for step '{}'",
+                                    provider_id, step_id
+                                )
+                            })?;
+                        prov.complete(&prompt_text).with_context(|| {
+                            format!(
+                                "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
+                                provider_id, step_id
+                            )
+                        })?
+                    }
+                    crate::adl::PlacementMode::Remote => {
+                        let remote = resolved.doc.run.remote.as_ref().ok_or_else(|| {
+                            anyhow!("REMOTE_SCHEMA_VIOLATION: run.remote.endpoint is required when placement=remote")
+                        })?;
+                        let timeout_ms = remote.timeout_ms.unwrap_or(30_000);
+                        let req = remote_exec::ExecuteRequest {
+                            protocol_version: remote_exec::PROTOCOL_VERSION.to_string(),
+                            run_id: resolved.run_id.clone(),
+                            workflow_id: resolved.workflow_id.clone(),
+                            step_id: step_id.clone(),
+                            step: remote_exec::ExecuteStepPayload {
+                                kind: "task".to_string(),
+                                provider: provider_id.to_string(),
+                                prompt: prompt_text.clone(),
+                                tools: Vec::new(),
+                                provider_spec: spec.clone(),
+                                model_override: model_override.map(|v| v.to_string()),
+                            },
+                            inputs: remote_exec::ExecuteInputsPayload {
+                                inputs: inputs.clone(),
+                                state: saved_state.clone(),
+                            },
+                            timeout_ms,
+                        };
+                        remote_exec::execute_remote(&remote.endpoint, timeout_ms, &req)
+                            .with_context(|| {
+                                format!("remote step '{}' execution failed", step_id)
+                            })?
+                    }
+                };
 
                 Ok(StepOutput {
                     step_id: step_id.clone(),
@@ -388,6 +476,262 @@ pub fn execute_sequential(
     })
 }
 
+#[allow(clippy::too_many_arguments, clippy::type_complexity)]
+fn execute_called_workflow(
+    caller_step_id: &str,
+    namespace: &str,
+    callee_workflow_id: &str,
+    call_with: &HashMap<String, String>,
+    resolved: &AdlResolved,
+    tr: &mut Trace,
+    print_outputs: bool,
+    emit_progress: bool,
+    adl_base_dir: &Path,
+    out_dir: &Path,
+    caller_state: &HashMap<String, String>,
+) -> Result<(
+    Vec<StepOutput>,
+    Vec<PathBuf>,
+    Vec<StepExecutionRecord>,
+    HashMap<String, String>,
+)> {
+    let callee = resolved
+        .doc
+        .workflows
+        .get(callee_workflow_id)
+        .ok_or_else(|| anyhow!("call references unknown workflow '{}'", callee_workflow_id))?;
+
+    let mut child_state: HashMap<String, String> = HashMap::new();
+    for (k, v) in call_with {
+        let bound = resolve_call_binding(v, caller_state).with_context(|| {
+            format!(
+                "failed to resolve call.with binding '{}' for caller step '{}'",
+                k, caller_step_id
+            )
+        })?;
+        child_state.insert(format!("inputs.{k}"), bound);
+    }
+
+    let mut outs = Vec::new();
+    let mut artifacts = Vec::new();
+    let mut records = Vec::new();
+
+    for (idx, step) in callee.steps.iter().enumerate() {
+        let local_id = step.id.clone().unwrap_or_else(|| format!("step-{idx}"));
+        let full_id = format!("{caller_step_id}::{local_id}");
+
+        if let Some(nested) = step.call.as_deref() {
+            let nested_namespace = step.as_ns.clone().unwrap_or_else(|| local_id.clone());
+            tr.call_entered(&full_id, nested, &nested_namespace);
+
+            let nested_result = execute_called_workflow(
+                &full_id,
+                &nested_namespace,
+                nested,
+                &step.with,
+                resolved,
+                tr,
+                print_outputs,
+                emit_progress,
+                adl_base_dir,
+                out_dir,
+                &child_state,
+            );
+
+            let (sub_outs, sub_artifacts, sub_records, sub_state) = match nested_result {
+                Ok(v) => {
+                    tr.call_exited(&full_id, "success", &nested_namespace);
+                    v
+                }
+                Err(err) => {
+                    tr.call_exited(&full_id, "failure", &nested_namespace);
+                    return Err(err);
+                }
+            };
+            for (k, v) in sub_state {
+                child_state.insert(format!("{nested_namespace}.{k}"), v);
+            }
+            outs.extend(sub_outs);
+            artifacts.extend(sub_artifacts);
+            records.extend(sub_records);
+            records.push(StepExecutionRecord {
+                step_id: full_id,
+                provider_id: "<call>".to_string(),
+                status: "success".to_string(),
+                attempts: 1,
+                output_bytes: 0,
+            });
+            continue;
+        }
+
+        let mut step_for_exec = step.clone();
+        for key in child_state.keys() {
+            step_for_exec
+                .inputs
+                .entry(key.clone())
+                .or_insert_with(|| format!("@state:{key}"));
+        }
+        let resolved_step = resolved_step_from_raw_step(&full_id, &step_for_exec, &resolved.doc);
+        let provider_id: &str = resolved_step
+            .provider
+            .as_deref()
+            .unwrap_or("<unresolved-provider>");
+        let agent_id: &str = resolved_step
+            .agent
+            .as_deref()
+            .unwrap_or("<unresolved-agent>");
+        let task_id: &str = resolved_step.task.as_deref().unwrap_or("<unresolved-task>");
+
+        if let Some(write_to) = resolved_step.write_to.as_deref() {
+            if resolved_step.save_as.is_none() {
+                return Err(anyhow!(
+                    "step '{}' uses write_to but is missing save_as",
+                    full_id
+                ));
+            }
+            validate_write_to(&full_id, write_to)?;
+        }
+
+        tr.step_started(&full_id, agent_id, provider_id, task_id);
+        let step_started_elapsed = tr.current_elapsed_ms();
+        progress_step_start(emit_progress, tr, &full_id, provider_id);
+
+        match execute_step_with_retry(
+            &resolved_step,
+            &resolved.doc,
+            &resolved.run_id,
+            &resolved.workflow_id,
+            &child_state,
+            adl_base_dir,
+        ) {
+            Ok(success) => {
+                tr.prompt_assembled(&full_id, &success.prompt_hash);
+                tr.step_finished(&full_id, true);
+                let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
+                progress_step_done(emit_progress, tr, &full_id, true, duration_ms);
+
+                if let Some(write_to) = resolved_step.write_to.as_deref() {
+                    let path =
+                        write_output(&full_id, out_dir, write_to, &success.out.model_output)?;
+                    println!(
+                        "ARTIFACT step={} path={} bytes={}",
+                        full_id,
+                        path.display(),
+                        success.out.model_output.len()
+                    );
+                    artifacts.push(path);
+                }
+
+                if print_outputs {
+                    println!("--- step: {} ---", full_id);
+                    println!("{}", success.out.model_output.trim_end());
+                    println!();
+                }
+
+                if let Some(save_as) = resolved_step.save_as.as_ref() {
+                    child_state.insert(save_as.clone(), success.out.model_output.clone());
+                }
+
+                records.push(StepExecutionRecord {
+                    step_id: full_id.clone(),
+                    provider_id: success.out.provider_id.clone(),
+                    status: "success".to_string(),
+                    attempts: success.attempts,
+                    output_bytes: success.out.model_output.len(),
+                });
+                outs.push(StepOutput {
+                    step_id: full_id,
+                    provider_id: success.out.provider_id,
+                    model_output: success.out.model_output,
+                });
+            }
+            Err(err) => {
+                tr.step_finished(&full_id, false);
+                let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
+                progress_step_done(emit_progress, tr, &full_id, false, duration_ms);
+                tr.run_failed(&err.to_string());
+                return Err(anyhow!(
+                    "called workflow '{}' step '{}' failed: {:#}",
+                    callee_workflow_id,
+                    full_id,
+                    err
+                ));
+            }
+        }
+    }
+
+    let _ = namespace;
+    Ok((outs, artifacts, records, child_state))
+}
+
+fn resolve_call_binding(value: &str, caller_state: &HashMap<String, String>) -> Result<String> {
+    let trimmed = value.trim();
+    if let Some(state_key) = trimmed.strip_prefix("@state:") {
+        let key = state_key.trim();
+        return caller_state
+            .get(key)
+            .cloned()
+            .ok_or_else(|| anyhow!("missing state key '{}' for @state binding", key));
+    }
+
+    if trimmed.starts_with("{{") && trimmed.ends_with("}}") {
+        let inner = trimmed[2..trimmed.len() - 2].trim();
+        if let Some(rest) = inner.strip_prefix("state.") {
+            let key = rest.trim();
+            return caller_state.get(key).cloned().ok_or_else(|| {
+                anyhow!(
+                    "missing state key '{}' for '{{{{ state.* }}}}' binding",
+                    key
+                )
+            });
+        }
+    }
+
+    Ok(value.to_string())
+}
+
+fn resolved_step_from_raw_step(
+    full_id: &str,
+    step: &crate::adl::StepSpec,
+    doc: &crate::adl::AdlDoc,
+) -> crate::resolve::ResolvedStep {
+    let agent = step.agent.clone().or_else(|| {
+        step.task
+            .as_ref()
+            .and_then(|t| doc.tasks.get(t))
+            .and_then(|task| task.agent_ref.clone())
+    });
+
+    let provider = agent
+        .as_ref()
+        .and_then(|a| doc.agents.get(a))
+        .map(|a| a.provider.clone())
+        .or_else(|| {
+            if doc.providers.len() == 1 {
+                doc.providers.keys().next().cloned()
+            } else {
+                None
+            }
+        });
+
+    crate::resolve::ResolvedStep {
+        id: full_id.to_string(),
+        agent,
+        provider,
+        task: step.task.clone(),
+        placement: step.placement.clone(),
+        call: step.call.clone(),
+        with: step.with.clone(),
+        as_ns: step.as_ns.clone(),
+        prompt: step.prompt.clone(),
+        inputs: step.inputs.clone(),
+        save_as: step.save_as.clone(),
+        write_to: step.write_to.clone(),
+        on_error: step.on_error.clone(),
+        retry: step.retry.clone(),
+    }
+}
+
 #[derive(Debug)]
 struct StepRunSuccess {
     out: StepOutput,
@@ -418,9 +762,21 @@ fn effective_prompt_with_defaults_from_doc(
     Some(p)
 }
 
+fn effective_step_placement(
+    step: &crate::resolve::ResolvedStep,
+    doc: &crate::adl::AdlDoc,
+) -> crate::adl::PlacementMode {
+    step.placement
+        .clone()
+        .or_else(|| doc.run.placement.as_ref().and_then(|p| p.mode()))
+        .unwrap_or(crate::adl::PlacementMode::Local)
+}
+
 fn execute_step_with_retry(
     step: &crate::resolve::ResolvedStep,
     doc: &crate::adl::AdlDoc,
+    run_id: &str,
+    workflow_id: &str,
     saved_state: &HashMap<String, String>,
     adl_base_dir: &Path,
 ) -> Result<StepRunSuccess> {
@@ -468,18 +824,53 @@ fn execute_step_with_retry(
                 .as_ref()
                 .and_then(|agent_id| doc.agents.get(agent_id))
                 .map(|agent| agent.model.as_str());
-            let prov = provider::build_provider(spec, model_override).with_context(|| {
-                format!(
-                    "failed to build provider '{}' for step '{}'",
-                    provider_id, step_id
-                )
-            })?;
-            let model_output = prov.complete(&prompt_text).with_context(|| {
-                format!(
-                    "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
-                    provider_id, step_id
-                )
-            })?;
+
+            let placement = effective_step_placement(step, doc);
+
+            let model_output = match placement {
+                crate::adl::PlacementMode::Local => {
+                    let prov =
+                        provider::build_provider(spec, model_override).with_context(|| {
+                            format!(
+                                "failed to build provider '{}' for step '{}'",
+                                provider_id, step_id
+                            )
+                        })?;
+                    prov.complete(&prompt_text).with_context(|| {
+                        format!(
+                            "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
+                            provider_id, step_id
+                        )
+                    })?
+                }
+                crate::adl::PlacementMode::Remote => {
+                    let remote = doc.run.remote.as_ref().ok_or_else(|| {
+                        anyhow!("REMOTE_SCHEMA_VIOLATION: run.remote.endpoint is required when placement=remote")
+                    })?;
+                    let timeout_ms = remote.timeout_ms.unwrap_or(30_000);
+                    let req = remote_exec::ExecuteRequest {
+                        protocol_version: remote_exec::PROTOCOL_VERSION.to_string(),
+                        run_id: run_id.to_string(),
+                        workflow_id: workflow_id.to_string(),
+                        step_id: step_id.clone(),
+                        step: remote_exec::ExecuteStepPayload {
+                            kind: "task".to_string(),
+                            provider: provider_id.to_string(),
+                            prompt: prompt_text.clone(),
+                            tools: Vec::new(),
+                            provider_spec: spec.clone(),
+                            model_override: model_override.map(|v| v.to_string()),
+                        },
+                        inputs: remote_exec::ExecuteInputsPayload {
+                            inputs: inputs.clone(),
+                            state: saved_state.clone(),
+                        },
+                        timeout_ms,
+                    };
+                    remote_exec::execute_remote(&remote.endpoint, timeout_ms, &req)
+                        .with_context(|| format!("remote step '{}' execution failed", step_id))?
+                }
+            };
 
             Ok(StepRunSuccess {
                 out: StepOutput {
@@ -515,7 +906,18 @@ fn execute_concurrent_deterministic(
     adl_base_dir: &Path,
     out_dir: &Path,
 ) -> Result<ExecutionResult> {
-    const MAX_PARALLEL: usize = 4;
+    const DEFAULT_MAX_PARALLEL: usize = 4;
+    let max_parallel = resolved
+        .doc
+        .run
+        .defaults
+        .max_concurrency
+        .unwrap_or(DEFAULT_MAX_PARALLEL);
+    if max_parallel == 0 {
+        return Err(anyhow!(
+            "run.defaults.max_concurrency must be >= 1 for concurrent runs"
+        ));
+    }
 
     let mut outs = Vec::new();
     let mut artifacts = Vec::new();
@@ -560,8 +962,12 @@ fn execute_concurrent_deterministic(
         let state_snapshot = saved_state.clone();
         let doc_snapshot = resolved.doc.clone();
         let base_snapshot = adl_base_dir.to_path_buf();
+        let run_id_snapshot = resolved.run_id.clone();
+        let workflow_id_snapshot = resolved.workflow_id.clone();
 
-        for step_id in &ready_ids {
+        let batch_ids: Vec<String> = ready_ids.into_iter().take(max_parallel).collect();
+
+        for step_id in &batch_ids {
             let step = by_id
                 .get(step_id)
                 .ok_or_else(|| anyhow!("execution plan references unknown step '{}'", step_id))?;
@@ -574,7 +980,7 @@ fn execute_concurrent_deterministic(
         }
 
         let mut jobs: Vec<StepJob> = Vec::new();
-        for step_id in &ready_ids {
+        for step_id in &batch_ids {
             let step_id_owned = step_id.clone();
             let step = by_id
                 .get(step_id)
@@ -583,14 +989,22 @@ fn execute_concurrent_deterministic(
             let state_snapshot = state_snapshot.clone();
             let doc_snapshot = doc_snapshot.clone();
             let base_snapshot = base_snapshot.clone();
+            let run_id_snapshot = run_id_snapshot.clone();
+            let workflow_id_snapshot = workflow_id_snapshot.clone();
             jobs.push(Box::new(move || {
-                let run =
-                    execute_step_with_retry(&step, &doc_snapshot, &state_snapshot, &base_snapshot);
+                let run = execute_step_with_retry(
+                    &step,
+                    &doc_snapshot,
+                    &run_id_snapshot,
+                    &workflow_id_snapshot,
+                    &state_snapshot,
+                    &base_snapshot,
+                );
                 (step_id_owned, run)
             }));
         }
 
-        let results = bounded_executor::run_bounded(MAX_PARALLEL, jobs)?;
+        let results = bounded_executor::run_bounded(max_parallel, jobs)?;
         for (step_id, run_result) in results {
             let step = by_id
                 .get(&step_id)

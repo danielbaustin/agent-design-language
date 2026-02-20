@@ -58,6 +58,12 @@ impl AdlDoc {
 
     /// Lightweight validation so we can fail fast with good errors.
     pub fn validate(&self) -> Result<()> {
+        if matches!(self.run.defaults.max_concurrency, Some(0)) {
+            return Err(anyhow!(
+                "run.defaults.max_concurrency must be >= 1 when provided"
+            ));
+        }
+
         validate_id_fields("providers", &self.providers, |spec| spec.id.as_deref())?;
         validate_id_fields("tools", &self.tools, |spec| spec.id.as_deref())?;
         validate_id_fields("agents", &self.agents, |spec| spec.id.as_deref())?;
@@ -440,6 +446,9 @@ pub struct RunSpec {
 
     #[serde(default)]
     pub placement: Option<RunPlacementSpec>,
+
+    #[serde(default)]
+    pub remote: Option<RunRemoteSpec>,
 }
 
 impl RunSpec {
@@ -470,6 +479,11 @@ pub struct RunDefaults {
     /// Default system string applied if prompt has no system.
     #[serde(default)]
     pub system: Option<String>,
+
+    /// Global runtime concurrency cap for concurrent workflows/pattern runs.
+    /// When omitted, runtime uses a conservative default.
+    #[serde(default)]
+    pub max_concurrency: Option<usize>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -524,6 +538,18 @@ pub struct StepSpec {
     #[serde(default, alias = "task_ref")]
     pub task: Option<String>,
 
+    /// Workflow id to call (key in `workflows`).
+    #[serde(default)]
+    pub call: Option<String>,
+
+    /// Optional call input bindings.
+    #[serde(default)]
+    pub with: HashMap<String, String>,
+
+    /// Optional namespace for call results.
+    #[serde(default, rename = "as")]
+    pub as_ns: Option<String>,
+
     /// Inline prompt override.
     #[serde(default)]
     pub prompt: Option<PromptSpec>,
@@ -531,6 +557,10 @@ pub struct StepSpec {
     /// Named inputs that can be used by the runtime/prompt assembly.
     #[serde(default)]
     pub inputs: HashMap<String, String>,
+
+    /// Optional placement override for this step.
+    #[serde(default)]
+    pub placement: Option<PlacementMode>,
 
     /// Guard directives (content normalization / output constraints, etc.).
     #[serde(default)]
@@ -581,8 +611,37 @@ pub struct GuardSpec {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum PlacementMode {
+    Local,
+    Remote,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(untagged)]
+pub enum RunPlacementSpec {
+    Mode(PlacementMode),
+    Legacy(RunPlacementLegacySpec),
+}
+
+impl RunPlacementSpec {
+    pub fn mode(&self) -> Option<PlacementMode> {
+        match self {
+            RunPlacementSpec::Mode(mode) => Some(mode.clone()),
+            RunPlacementSpec::Legacy(legacy) => legacy.target.as_deref().and_then(|v| {
+                match v.trim().to_ascii_lowercase().as_str() {
+                    "local" => Some(PlacementMode::Local),
+                    "remote" => Some(PlacementMode::Remote),
+                    _ => None,
+                }
+            }),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct RunPlacementSpec {
+pub struct RunPlacementLegacySpec {
     #[serde(default)]
     pub provider: Option<String>,
 
@@ -607,6 +666,14 @@ pub struct SignedHeaderSpec {
     pub adl_version: String,
     #[serde(default)]
     pub workflow_id: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct RunRemoteSpec {
+    pub endpoint: String,
+    #[serde(default)]
+    pub timeout_ms: Option<u64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
