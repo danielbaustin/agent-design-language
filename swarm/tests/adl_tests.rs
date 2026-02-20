@@ -128,6 +128,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
             pattern_ref: None,
             inputs: HashMap::new(),
             placement: None,
+            remote: None,
         },
     };
 

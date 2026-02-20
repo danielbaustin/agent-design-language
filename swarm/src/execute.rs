@@ -6,6 +6,7 @@ use anyhow::{anyhow, Context, Result};
 use crate::bounded_executor;
 use crate::prompt;
 use crate::provider;
+use crate::remote_exec;
 use crate::resolve::AdlResolved;
 use crate::trace::Trace;
 
@@ -334,19 +335,54 @@ pub fn execute_sequential(
                     .and_then(|agent_id| resolved.doc.agents.get(agent_id))
                     .map(|agent| agent.model.as_str());
 
-                let prov = provider::build_provider(spec, model_override).with_context(|| {
-                    format!(
-                        "failed to build provider '{}' for step '{}'",
-                        provider_id, step_id
-                    )
-                })?;
+                let placement = effective_step_placement(step, &resolved.doc);
 
-                let model_output = prov.complete(&prompt_text).with_context(|| {
-                    format!(
-                        "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
-                        provider_id, step_id
-                    )
-                })?;
+                let model_output = match placement {
+                    crate::adl::PlacementMode::Local => {
+                        let prov =
+                            provider::build_provider(spec, model_override).with_context(|| {
+                                format!(
+                                    "failed to build provider '{}' for step '{}'",
+                                    provider_id, step_id
+                                )
+                            })?;
+                        prov.complete(&prompt_text).with_context(|| {
+                            format!(
+                                "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
+                                provider_id, step_id
+                            )
+                        })?
+                    }
+                    crate::adl::PlacementMode::Remote => {
+                        let remote = resolved.doc.run.remote.as_ref().ok_or_else(|| {
+                            anyhow!("REMOTE_SCHEMA_VIOLATION: run.remote.endpoint is required when placement=remote")
+                        })?;
+                        let timeout_ms = remote.timeout_ms.unwrap_or(30_000);
+                        let req = remote_exec::ExecuteRequest {
+                            protocol_version: remote_exec::PROTOCOL_VERSION.to_string(),
+                            run_id: resolved.run_id.clone(),
+                            workflow_id: resolved.workflow_id.clone(),
+                            step_id: step_id.clone(),
+                            step: remote_exec::ExecuteStepPayload {
+                                kind: "task".to_string(),
+                                provider: provider_id.to_string(),
+                                prompt: prompt_text.clone(),
+                                tools: Vec::new(),
+                                provider_spec: spec.clone(),
+                                model_override: model_override.map(|v| v.to_string()),
+                            },
+                            inputs: remote_exec::ExecuteInputsPayload {
+                                inputs: inputs.clone(),
+                                state: saved_state.clone(),
+                            },
+                            timeout_ms,
+                        };
+                        remote_exec::execute_remote(&remote.endpoint, timeout_ms, &req)
+                            .with_context(|| {
+                                format!("remote step '{}' execution failed", step_id)
+                            })?
+                    }
+                };
 
                 Ok(StepOutput {
                     step_id: step_id.clone(),
@@ -560,7 +596,14 @@ fn execute_called_workflow(
         let step_started_elapsed = tr.current_elapsed_ms();
         progress_step_start(emit_progress, tr, &full_id, provider_id);
 
-        match execute_step_with_retry(&resolved_step, &resolved.doc, &child_state, adl_base_dir) {
+        match execute_step_with_retry(
+            &resolved_step,
+            &resolved.doc,
+            &resolved.run_id,
+            &resolved.workflow_id,
+            &child_state,
+            adl_base_dir,
+        ) {
             Ok(success) => {
                 tr.prompt_assembled(&full_id, &success.prompt_hash);
                 tr.step_finished(&full_id, true);
@@ -676,6 +719,7 @@ fn resolved_step_from_raw_step(
         agent,
         provider,
         task: step.task.clone(),
+        placement: step.placement.clone(),
         call: step.call.clone(),
         with: step.with.clone(),
         as_ns: step.as_ns.clone(),
@@ -718,9 +762,21 @@ fn effective_prompt_with_defaults_from_doc(
     Some(p)
 }
 
+fn effective_step_placement(
+    step: &crate::resolve::ResolvedStep,
+    doc: &crate::adl::AdlDoc,
+) -> crate::adl::PlacementMode {
+    step.placement
+        .clone()
+        .or_else(|| doc.run.placement.as_ref().and_then(|p| p.mode()))
+        .unwrap_or(crate::adl::PlacementMode::Local)
+}
+
 fn execute_step_with_retry(
     step: &crate::resolve::ResolvedStep,
     doc: &crate::adl::AdlDoc,
+    run_id: &str,
+    workflow_id: &str,
     saved_state: &HashMap<String, String>,
     adl_base_dir: &Path,
 ) -> Result<StepRunSuccess> {
@@ -768,18 +824,53 @@ fn execute_step_with_retry(
                 .as_ref()
                 .and_then(|agent_id| doc.agents.get(agent_id))
                 .map(|agent| agent.model.as_str());
-            let prov = provider::build_provider(spec, model_override).with_context(|| {
-                format!(
-                    "failed to build provider '{}' for step '{}'",
-                    provider_id, step_id
-                )
-            })?;
-            let model_output = prov.complete(&prompt_text).with_context(|| {
-                format!(
-                    "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
-                    provider_id, step_id
-                )
-            })?;
+
+            let placement = effective_step_placement(step, doc);
+
+            let model_output = match placement {
+                crate::adl::PlacementMode::Local => {
+                    let prov =
+                        provider::build_provider(spec, model_override).with_context(|| {
+                            format!(
+                                "failed to build provider '{}' for step '{}'",
+                                provider_id, step_id
+                            )
+                        })?;
+                    prov.complete(&prompt_text).with_context(|| {
+                        format!(
+                            "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
+                            provider_id, step_id
+                        )
+                    })?
+                }
+                crate::adl::PlacementMode::Remote => {
+                    let remote = doc.run.remote.as_ref().ok_or_else(|| {
+                        anyhow!("REMOTE_SCHEMA_VIOLATION: run.remote.endpoint is required when placement=remote")
+                    })?;
+                    let timeout_ms = remote.timeout_ms.unwrap_or(30_000);
+                    let req = remote_exec::ExecuteRequest {
+                        protocol_version: remote_exec::PROTOCOL_VERSION.to_string(),
+                        run_id: run_id.to_string(),
+                        workflow_id: workflow_id.to_string(),
+                        step_id: step_id.clone(),
+                        step: remote_exec::ExecuteStepPayload {
+                            kind: "task".to_string(),
+                            provider: provider_id.to_string(),
+                            prompt: prompt_text.clone(),
+                            tools: Vec::new(),
+                            provider_spec: spec.clone(),
+                            model_override: model_override.map(|v| v.to_string()),
+                        },
+                        inputs: remote_exec::ExecuteInputsPayload {
+                            inputs: inputs.clone(),
+                            state: saved_state.clone(),
+                        },
+                        timeout_ms,
+                    };
+                    remote_exec::execute_remote(&remote.endpoint, timeout_ms, &req)
+                        .with_context(|| format!("remote step '{}' execution failed", step_id))?
+                }
+            };
 
             Ok(StepRunSuccess {
                 out: StepOutput {
@@ -871,6 +962,8 @@ fn execute_concurrent_deterministic(
         let state_snapshot = saved_state.clone();
         let doc_snapshot = resolved.doc.clone();
         let base_snapshot = adl_base_dir.to_path_buf();
+        let run_id_snapshot = resolved.run_id.clone();
+        let workflow_id_snapshot = resolved.workflow_id.clone();
 
         let batch_ids: Vec<String> = ready_ids.into_iter().take(max_parallel).collect();
 
@@ -896,9 +989,17 @@ fn execute_concurrent_deterministic(
             let state_snapshot = state_snapshot.clone();
             let doc_snapshot = doc_snapshot.clone();
             let base_snapshot = base_snapshot.clone();
+            let run_id_snapshot = run_id_snapshot.clone();
+            let workflow_id_snapshot = workflow_id_snapshot.clone();
             jobs.push(Box::new(move || {
-                let run =
-                    execute_step_with_retry(&step, &doc_snapshot, &state_snapshot, &base_snapshot);
+                let run = execute_step_with_retry(
+                    &step,
+                    &doc_snapshot,
+                    &run_id_snapshot,
+                    &workflow_id_snapshot,
+                    &state_snapshot,
+                    &base_snapshot,
+                );
                 (step_id_owned, run)
             }));
         }

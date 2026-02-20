@@ -45,6 +45,7 @@ pub struct ResolvedStep {
     pub id: String,
     pub agent: Option<String>,
     pub provider: Option<String>,
+    pub placement: Option<adl::PlacementMode>,
     pub task: Option<String>,
     pub call: Option<String>,
     pub with: HashMap<String, String>,
@@ -210,6 +211,7 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
                 id: compiled_step.step_id.clone(),
                 agent: agent.clone(),
                 provider: Some(provider.clone()),
+                placement: None,
                 task: Some(compiled_step.task_symbol.clone()),
                 call: None,
                 with: HashMap::new(),
@@ -264,6 +266,7 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
                     .and_then(|task| task.agent_ref.clone())
             }),
             provider,
+            placement: s.placement.clone(),
             task: s.task.clone(),
             call: s.call.clone(),
             with: s.with.clone(),
@@ -396,6 +399,7 @@ mod tests {
                 pattern_ref: None,
                 inputs: std::collections::HashMap::new(),
                 placement: None,
+                remote: None,
             },
         }
     }
@@ -460,6 +464,7 @@ mod tests {
             as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
+            placement: None,
             guards: vec![],
         };
 
@@ -483,6 +488,7 @@ mod tests {
             as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
+            placement: None,
             guards: vec![],
         };
 
@@ -508,6 +514,7 @@ mod tests {
             as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
+            placement: None,
             guards: vec![],
         });
         let resolved = resolve_run(&doc).expect("resolve");
@@ -540,6 +547,7 @@ mod tests {
                 output: None,
             }),
             inputs: std::collections::HashMap::new(),
+            placement: None,
             guards: vec![],
         });
         let resolved2 = resolve_run(&doc2).expect("resolve");
@@ -566,6 +574,7 @@ mod tests {
             as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
+            placement: None,
             guards: vec![],
         });
         let resolved3 = resolve_run(&doc3).expect("resolve");
@@ -595,6 +604,7 @@ mod tests {
             as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
+            placement: None,
             guards: vec![],
         });
 
@@ -629,6 +639,7 @@ mod tests {
                 output: None,
             }),
             inputs: std::collections::HashMap::new(),
+            placement: None,
             guards: vec![],
         });
 
@@ -657,6 +668,7 @@ mod tests {
             as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
+            placement: None,
             guards: vec![],
         });
         workflow_steps_mut(&mut doc).push(adl::StepSpec {
@@ -672,6 +684,7 @@ mod tests {
             as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
+            placement: None,
             guards: vec![],
         });
 
@@ -712,6 +725,7 @@ mod wp02_followup_tests {
             as_ns: None,
             prompt: None,
             inputs: std::collections::HashMap::new(),
+            placement: None,
             guards: vec![],
         };
 

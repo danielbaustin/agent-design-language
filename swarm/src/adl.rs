@@ -443,6 +443,9 @@ pub struct RunSpec {
 
     #[serde(default)]
     pub placement: Option<RunPlacementSpec>,
+
+    #[serde(default)]
+    pub remote: Option<RunRemoteSpec>,
 }
 
 impl RunSpec {
@@ -552,6 +555,10 @@ pub struct StepSpec {
     #[serde(default)]
     pub inputs: HashMap<String, String>,
 
+    /// Optional placement override for this step.
+    #[serde(default)]
+    pub placement: Option<PlacementMode>,
+
     /// Guard directives (content normalization / output constraints, etc.).
     #[serde(default)]
     pub guards: Vec<GuardSpec>,
@@ -601,13 +608,50 @@ pub struct GuardSpec {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum PlacementMode {
+    Local,
+    Remote,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(untagged)]
+pub enum RunPlacementSpec {
+    Mode(PlacementMode),
+    Legacy(RunPlacementLegacySpec),
+}
+
+impl RunPlacementSpec {
+    pub fn mode(&self) -> Option<PlacementMode> {
+        match self {
+            RunPlacementSpec::Mode(mode) => Some(mode.clone()),
+            RunPlacementSpec::Legacy(legacy) => legacy.target.as_deref().and_then(|v| {
+                match v.trim().to_ascii_lowercase().as_str() {
+                    "local" => Some(PlacementMode::Local),
+                    "remote" => Some(PlacementMode::Remote),
+                    _ => None,
+                }
+            }),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct RunPlacementSpec {
+pub struct RunPlacementLegacySpec {
     #[serde(default)]
     pub provider: Option<String>,
 
     #[serde(default)]
     pub target: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct RunRemoteSpec {
+    pub endpoint: String,
+    #[serde(default)]
+    pub timeout_ms: Option<u64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]

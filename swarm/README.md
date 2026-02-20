@@ -192,6 +192,23 @@ Failure behavior is explicit:
 - Non-200 response -> runtime error with status + body snippet
 - Timeout -> runtime error with timeout guidance
 
+## Remote Execution MVP (v0.5 Placement)
+
+In addition to HTTP providers, v0.5 includes a minimal remote execution protocol for
+step placement:
+
+- `GET /v1/health`
+- `POST /v1/execute` (single fully-resolved step payload)
+
+Design boundary:
+- Scheduler ownership stays local in `swarm`.
+- Remote server executes exactly one resolved step and returns `{ok,result,error}`.
+- Remote server does not compile/plan/schedule workflows.
+
+Limits:
+- Request payloads over 5 MiB are rejected (`413`).
+- No authn/authz in v0.5 MVP (deferred).
+
 ---
 
 ## Schema Validation

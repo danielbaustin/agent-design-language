@@ -332,6 +332,7 @@ mod tests {
             id: id.to_string(),
             agent: None,
             provider: None,
+            placement: None,
             task: None,
             call: None,
             with: HashMap::new(),
