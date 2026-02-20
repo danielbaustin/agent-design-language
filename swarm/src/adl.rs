@@ -55,6 +55,12 @@ impl AdlDoc {
 
     /// Lightweight validation so we can fail fast with good errors.
     pub fn validate(&self) -> Result<()> {
+        if matches!(self.run.defaults.max_concurrency, Some(0)) {
+            return Err(anyhow!(
+                "run.defaults.max_concurrency must be >= 1 when provided"
+            ));
+        }
+
         validate_id_fields("providers", &self.providers, |spec| spec.id.as_deref())?;
         validate_id_fields("tools", &self.tools, |spec| spec.id.as_deref())?;
         validate_id_fields("agents", &self.agents, |spec| spec.id.as_deref())?;

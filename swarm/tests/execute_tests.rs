@@ -1696,6 +1696,101 @@ run:
 }
 
 #[test]
+fn run_v0_3_max_concurrency_1_matches_sequential_outputs_for_same_plan() {
+    let base = tmp_dir("exec-concurrent-v0-3-max1-vs-seq");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let seq_yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  name: "v0-3-seq"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: { n: "3" }
+"#;
+    let conc_yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  name: "v0-3-conc-max1"
+  defaults:
+    max_concurrency: 1
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: { n: "3" }
+"#;
+    let seq_path = base.join("seq.yaml");
+    let conc_path = base.join("conc.yaml");
+    fs::write(&seq_path, seq_yaml).unwrap();
+    fs::write(&conc_path, conc_yaml).unwrap();
+
+    let out_seq = run_swarm(&[seq_path.to_str().unwrap(), "--run"]);
+    let out_conc = run_swarm(&[conc_path.to_str().unwrap(), "--run"]);
+    assert!(
+        out_seq.status.success(),
+        "seq failed: {:?}",
+        out_seq.status.code()
+    );
+    assert!(
+        out_conc.status.success(),
+        "conc failed: {:?}",
+        out_conc.status.code()
+    );
+    assert_eq!(
+        String::from_utf8_lossy(&out_seq.stdout),
+        String::from_utf8_lossy(&out_conc.stdout),
+        "max_concurrency=1 concurrent output should match sequential output for the same ordered plan"
+    );
+}
+
+#[test]
 fn run_reports_error_when_materialized_doc_is_missing() {
     let base = tmp_dir("exec-missing-doc");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);

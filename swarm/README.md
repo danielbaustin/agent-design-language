@@ -38,6 +38,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 - Deterministic workflow execution with stable plan/trace semantics
 - Deterministic fork/join runtime execution (`workflow.kind: concurrent`) with bounded parallelism
 - Canonical concurrent ready-step ordering: lexicographic by `step_id`
+- Global concurrency cap via `run.defaults.max_concurrency` (default: `4`, must be `>= 1`)
 - Step-level failure controls (`on_error: fail|continue`, `retry.max_attempts`)
 - Remote HTTP provider MVP with explicit failure behavior
 - Persistent run state artifacts under `.adl/runs/<run_id>/` for auditability (`run.json`, `steps.json`)
@@ -67,6 +68,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 - Deterministic retries: `retry.max_attempts` (no backoff)
 - Deterministic fork/join runtime execution (`workflow.kind: concurrent`) with bounded parallelism
 - Concurrent ready-step ordering is deterministic and lexicographic by `step_id`
+- `run.defaults.max_concurrency` enforces a deterministic global concurrency cap for concurrent runs
 - Join input wiring via `@state:<save_as_key>`
 - Local Ollama provider (real binary or test mock)
 - Remote HTTP provider (blocking JSON request/response)
@@ -75,7 +77,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 
 **Explicitly deferred**
 
-- Configurable parallelism controls (current runtime uses fixed bounded parallelism in v0.4)
+- Advanced scheduler policy controls beyond deterministic lexicographic batching
 - Multi-run documents
 - Provider retries / contracts / repair policies
 
