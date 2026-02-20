@@ -172,6 +172,52 @@ fn verify_ignores_signature_metadata_changes() {
 }
 
 #[test]
+fn verify_rejects_signed_header_mutation() {
+    let base = tmp_dir("sign-header-tamper");
+    let unsigned = write_unsigned_fixture(&base);
+    let key_dir = base.join(".keys");
+    let signed = base.join("signed.adl.yaml");
+    run_swarm(&["keygen", "--out-dir", key_dir.to_str().unwrap()]);
+    let sign = run_swarm(&[
+        "sign",
+        unsigned.to_str().unwrap(),
+        "--key",
+        key_dir.join("ed25519-private.b64").to_str().unwrap(),
+        "--out",
+        signed.to_str().unwrap(),
+    ]);
+    assert!(sign.status.success());
+
+    let content = fs::read_to_string(&signed).unwrap();
+    let mut yaml: serde_yaml::Value = serde_yaml::from_str(&content).unwrap();
+    let map = yaml.as_mapping_mut().unwrap();
+    let signature = map
+        .get_mut(serde_yaml::Value::String("signature".to_string()))
+        .and_then(serde_yaml::Value::as_mapping_mut)
+        .expect("signature mapping");
+    let header = signature
+        .get_mut(serde_yaml::Value::String("signed_header".to_string()))
+        .and_then(serde_yaml::Value::as_mapping_mut)
+        .expect("signed_header mapping");
+    header.insert(
+        serde_yaml::Value::String("adl_version".to_string()),
+        serde_yaml::Value::String("0.9".to_string()),
+    );
+    fs::write(&signed, serde_yaml::to_string(&yaml).unwrap()).unwrap();
+
+    let verify = run_swarm(&[
+        "verify",
+        signed.to_str().unwrap(),
+        "--key",
+        key_dir.join("ed25519-public.b64").to_str().unwrap(),
+    ]);
+    assert!(
+        !verify.status.success(),
+        "signed_header mutation must fail verification"
+    );
+}
+
+#[test]
 fn run_enforces_signature_by_default_and_allows_override() {
     let base = tmp_dir("sign-enforce");
     let _bin = write_mock_ollama(&base);

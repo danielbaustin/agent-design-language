@@ -195,3 +195,60 @@ fn decode_verifying_key_b64(raw_b64: &str) -> Result<VerifyingKey> {
         .map_err(|_| anyhow!("public key must be exactly 32 bytes"))?;
     VerifyingKey::from_bytes(&arr).context("invalid ed25519 public key")
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn sample_doc() -> adl::AdlDoc {
+        let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "hello"
+run:
+  name: "demo"
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+"#;
+        serde_yaml::from_str(yaml).expect("sample yaml")
+    }
+
+    #[test]
+    fn canonical_bytes_are_deterministic() {
+        let doc = sample_doc();
+        let header = default_signed_header(&doc);
+        let a = canonical_bytes(&doc, &header).expect("canonical bytes");
+        let b = canonical_bytes(&doc, &header).expect("canonical bytes");
+        assert_eq!(a, b);
+    }
+
+    #[test]
+    fn canonicalization_excludes_top_level_signature() {
+        let mut doc = sample_doc();
+        let header = default_signed_header(&doc);
+        let unsigned = canonical_bytes(&doc, &header).expect("canonical bytes");
+
+        doc.signature = Some(adl::SignatureSpec {
+            alg: "ed25519".to_string(),
+            key_id: "dev-local".to_string(),
+            public_key_b64: Some("ZmFrZQ==".to_string()),
+            sig_b64: "c2ln".to_string(),
+            signed_header: header.clone(),
+        });
+        let with_sig = canonical_bytes(&doc, &header).expect("canonical bytes");
+        assert_eq!(unsigned, with_sig);
+    }
+}

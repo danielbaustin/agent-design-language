@@ -157,10 +157,7 @@ fn real_main() -> Result<()> {
         || std::env::var("ADL_ALLOW_UNSIGNED")
             .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
             .unwrap_or(false);
-    if do_run && doc.version.trim() == "0.5" && !allow_unsigned {
-        signing::verify_doc(&doc, None)
-            .with_context(|| "signature enforcement failed (use --allow-unsigned for dev)")?;
-    }
+    enforce_signature_policy(&doc, do_run, allow_unsigned)?;
 
     let resolved = match resolve::resolve_run(&doc) {
         Ok(resolved) => resolved,
@@ -448,6 +445,14 @@ fn real_verify(args: &[String]) -> Result<()> {
     }
     signing::verify_file(&input, key.as_deref())?;
     println!("VERIFY ok");
+    Ok(())
+}
+
+fn enforce_signature_policy(doc: &adl::AdlDoc, do_run: bool, allow_unsigned: bool) -> Result<()> {
+    if do_run && doc.version.trim() == "0.5" && !allow_unsigned {
+        signing::verify_doc(doc, None)
+            .with_context(|| "signature enforcement failed (use --allow-unsigned for dev)")?;
+    }
     Ok(())
 }
 
