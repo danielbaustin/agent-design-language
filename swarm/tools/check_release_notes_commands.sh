@@ -6,7 +6,7 @@ cd "$ROOT_DIR/swarm"
 
 release_notes="../docs/milestones/v0.2/RELEASE_NOTES_v0.2.md"
 invalid_cmd="cargo run --example coordinator -- examples/v0-2-coordinator-agents-sdk.adl.yaml --print-plan"
-quickstart_cmd="cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --print-plan"
+quickstart_cmd="cargo run --bin swarm -- examples/v0-2-coordinator-agents-sdk.adl.yaml --print-plan"
 
 if grep -Fq "$invalid_cmd" "$release_notes"; then
   echo "invalid command present in $release_notes: $invalid_cmd" >&2
@@ -18,6 +18,6 @@ if ! grep -Fq "$quickstart_cmd" "$release_notes"; then
   exit 1
 fi
 
-cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --print-plan >/dev/null
+cargo run --bin swarm -- examples/v0-2-coordinator-agents-sdk.adl.yaml --print-plan >/dev/null
 
 echo "release-notes command check: ok"
