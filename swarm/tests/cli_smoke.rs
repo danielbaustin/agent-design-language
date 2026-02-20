@@ -158,6 +158,33 @@ fn print_plan_v0_5_primitives_fixture_works() {
 }
 
 #[test]
+fn print_plan_v0_5_pattern_fixture_is_deterministic() {
+    let path = fixture_path("examples/v0-5-pattern-fork-join.adl.yaml");
+    let out1 = run_swarm(&[path.to_str().unwrap(), "--print-plan"]);
+    let out2 = run_swarm(&[path.to_str().unwrap(), "--print-plan"]);
+    assert!(
+        out1.status.success() && out2.status.success(),
+        "expected success, stderr1:\n{}\nstderr2:\n{}",
+        String::from_utf8_lossy(&out1.stderr),
+        String::from_utf8_lossy(&out2.stderr)
+    );
+
+    assert_eq!(
+        out1.stdout, out2.stdout,
+        "expected deterministic print-plan output across repeated runs"
+    );
+
+    let stdout = String::from_utf8_lossy(&out1.stdout);
+    assert!(
+        stdout.contains("p::p_fork::left::L1")
+            && stdout.contains("p::p_fork::right::R1")
+            && stdout.contains("p::p_fork::J"),
+        "expected canonical pattern IDs in plan output, stdout:\n{}",
+        stdout
+    );
+}
+
+#[test]
 fn unknown_arg_exits_with_code_2_and_prints_usage() {
     let path = write_temp_adl_yaml();
     let out = run_swarm(&[path.to_str().unwrap(), "--nope"]);
