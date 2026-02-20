@@ -38,6 +38,3 @@ patterns:
 run:
   name: "v0-5-pattern-fork-join"
   pattern_ref: p_fork
-  workflow:
-    kind: sequential
-    steps: []
