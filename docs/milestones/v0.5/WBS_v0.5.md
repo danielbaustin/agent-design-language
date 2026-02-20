@@ -58,10 +58,10 @@ The milestone follows a disciplined execution structure:
 | WP-01 | Tooling Stabilization    | Fix pr.sh start bug, stabilize nightly automations          | pr.sh fix + CI stable              | WP-00                           | #342  |
 | WP-02 | Primitive Schema Completion | Explicit schemas for Agents, Runs, Providers, Tasks, Tools, Workflows | Schema definitions + validation tests | WP-00                           | #343  |
 | WP-03 | Composition Layer        | Implement include/call + hierarchical workflow composition  | Deterministic multi-file workflow demo | WP-02                       | #344  |
-| WP-04 | Pattern Compiler v0.1    | PatternSchema → ExecutionPlan compiler (debate, planner_executor) | Deterministic pattern demo        | WP-03                           | #345  |
-| WP-05 | Scheduler Configurability | Expose max_parallel + minimal policy surface                | Configurable concurrency demo     | WP-04                           | #309  |
+| WP-04 | Pattern Compiler v0.1    | PatternSchema → ExecutionPlan compiler (linear, fork_join; optional map_reduce) | Deterministic pattern demo        | WP-03                           | #345  |
+| WP-05 | Scheduler Configurability | Expose max_parallel + minimal policy surface                | Configurable concurrency demo     | WP-04                           | #357  |
 | WP-06 | Remote Execution MVP     | Define remote protocol + reference server + placement rules | Mixed local/remote demo            | WP-03                           | #346  |
-| WP-07 | Signing + Enforcement    | Implement sign/verify + enforcement in run                   | Signed workflow demo + rejection test | WP-02                       | #347  |
+| WP-07 | Signing + Enforcement    | Implement sign/verify + enforcement in run                   | Signed workflow demo + rejection test | WP-02, WP-03                   | #347  |
 | WP-08 | Demo Generation Pass     | Systematic demo sweep covering all primitives and patterns  | Demo matrix complete               | WP-04, WP-05, WP-06, WP-07      | #348  |
 | WP-09 | Documentation Pass       | README + spec + milestone docs updated                       | Docs aligned with shipped behavior | WP-08                          | #349  |
 | WP-10 | Review Pass              | Coverage audit + doc audit + regression audit                | CI green + nightly automation stable | WP-09                         | #350  |
@@ -84,6 +84,8 @@ The milestone follows a disciplined execution structure:
 ### Phase 3 — Distributed + Trust Model
 - WP-06
 - WP-07
+
+These work packages may proceed in parallel with Phase 2 after WP-03 is complete or stable.
 
 ### Phase 4 — Demo + Documentation Hardening
 - WP-08
