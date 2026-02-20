@@ -129,11 +129,106 @@ fn resolve_provider_for_step(step: &adl::StepSpec, doc: &adl::AdlDoc) -> Option<
     None
 }
 
+fn resolve_provider_for_pattern(doc: &adl::AdlDoc) -> Result<(Option<String>, String)> {
+    if doc.agents.len() == 1 {
+        let (agent_id, agent) = doc
+            .agents
+            .iter()
+            .next()
+            .ok_or_else(|| anyhow!("expected exactly one agent"))?;
+        if agent.provider.trim().is_empty() {
+            return Err(anyhow!(
+                "cannot resolve provider for pattern run: single agent '{}' has empty provider",
+                agent_id
+            ));
+        }
+        if !doc.providers.contains_key(&agent.provider) {
+            return Err(anyhow!(
+                "cannot resolve provider for pattern run: agent '{}' references unknown provider '{}'",
+                agent_id,
+                agent.provider
+            ));
+        }
+        return Ok((Some(agent_id.clone()), agent.provider.clone()));
+    }
+
+    if doc.providers.len() == 1 {
+        let provider_id = doc
+            .providers
+            .keys()
+            .next()
+            .cloned()
+            .ok_or_else(|| anyhow!("expected exactly one provider"))?;
+        return Ok((None, provider_id));
+    }
+
+    Err(anyhow!(
+        "cannot resolve provider for pattern run: define exactly one provider or one agent"
+    ))
+}
+
 /// Resolve the run section into a deterministic, convenient form.
 pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
     let _version = parse_version(&doc.version)?;
 
     let run_id = doc.run.name.clone().unwrap_or_else(|| "run".to_string());
+
+    if let Some(pattern_ref) = doc.run.pattern_ref.as_ref() {
+        let pattern = doc
+            .patterns
+            .iter()
+            .find(|p| p.id == *pattern_ref)
+            .ok_or_else(|| {
+                anyhow!(
+                    "run.pattern_ref references unknown pattern '{}'",
+                    pattern_ref
+                )
+            })?;
+
+        let compiled = execution_plan::compile_pattern(pattern)
+            .with_context(|| format!("failed to compile pattern '{}'", pattern.id))?;
+        let (agent, provider) = resolve_provider_for_pattern(doc)?;
+
+        let mut save_as_by_step: HashMap<&str, Option<String>> = HashMap::new();
+        for node in &compiled.execution_plan.nodes {
+            save_as_by_step.insert(node.step_id.as_str(), node.save_as.clone());
+        }
+
+        let mut steps = Vec::with_capacity(compiled.compiled_steps.len());
+        for compiled_step in &compiled.compiled_steps {
+            if !doc.tasks.contains_key(&compiled_step.task_symbol) {
+                return Err(anyhow!(
+                    "pattern '{}' references unknown task symbol '{}'",
+                    pattern.id,
+                    compiled_step.task_symbol
+                ));
+            }
+            steps.push(ResolvedStep {
+                id: compiled_step.step_id.clone(),
+                agent: agent.clone(),
+                provider: Some(provider.clone()),
+                task: Some(compiled_step.task_symbol.clone()),
+                prompt: None,
+                inputs: HashMap::new(),
+                save_as: save_as_by_step
+                    .get(compiled_step.step_id.as_str())
+                    .cloned()
+                    .flatten(),
+                write_to: None,
+                on_error: None,
+                retry: None,
+            });
+        }
+
+        return Ok(AdlResolved {
+            run_id,
+            workflow_id: format!("pattern:{pattern_ref}"),
+            steps,
+            execution_plan: compiled.execution_plan,
+            doc: doc.clone(),
+        });
+    }
+
     let workflow = doc.run.resolve_workflow(doc)?;
     let workflow_id = doc
         .run
@@ -270,6 +365,7 @@ mod tests {
             agents,
             tasks,
             workflows: std::collections::HashMap::new(),
+            patterns: vec![],
             run: adl::RunSpec {
                 id: None,
                 name: Some("r".to_string()),
@@ -281,6 +377,7 @@ mod tests {
                     kind: adl::WorkflowKind::Sequential,
                     steps: vec![],
                 }),
+                pattern_ref: None,
                 inputs: std::collections::HashMap::new(),
                 placement: None,
             },

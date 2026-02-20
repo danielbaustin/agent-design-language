@@ -252,3 +252,19 @@ Replay remains provider-free and validates ordering invariants.
 - Documentation pass complete.
 - Review pass complete.
 - Milestone checklist gates satisfied.
+
+---
+
+## WP-04 PatternSchema v0.1 (Implemented)
+
+WP-04 ships a minimal PatternSchema compiler surface:
+
+- `linear` pattern: ordered node chain (`A -> B -> C`)
+- `fork_join` pattern: deterministic branch chains with join-node dependencies on each branch tail
+
+Compilation outputs deterministic runtime-ready `ExecutionPlan` nodes with reserved IDs:
+
+- `p::<pattern_id>::<node>`
+- `p::<pattern_id>::<branch_id>::<node>`
+
+Join semantics are encoded only as explicit dependencies in the plan; runtime scheduler behavior remains deterministic lexicographic ready-step ordering.

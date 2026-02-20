@@ -91,3 +91,21 @@ From repo root:
 ```bash
 cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-primitives-minimal.adl.yaml --print-plan
 ```
+
+## v0.5 pattern compiler examples
+
+PatternSchema v0.1 compiles patterns into deterministic ExecutionPlan nodes with `p::<pattern_id>::...` step IDs.
+
+Rules:
+- task symbols in pattern `steps` must match task IDs in `tasks` (missing symbols fail with a clear validation error)
+- fork branches are compiled in lexicographic `branch.id` order for stable plans across declaration order variants
+
+- `v0-5-pattern-linear.adl.yaml`
+- `v0-5-pattern-fork-join.adl.yaml`
+
+Quick checks from repo root:
+
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-pattern-linear.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-5-pattern-fork-join.adl.yaml --print-plan
+```

@@ -113,6 +113,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
         agents: HashMap::new(),
         tasks: HashMap::new(),
         workflows: HashMap::new(),
+        patterns: vec![],
         run: RunSpec {
             id: None,
             name: Some("demo".to_string()),
@@ -124,6 +125,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
                 kind: WorkflowKind::Sequential,
                 steps: vec![],
             }),
+            pattern_ref: None,
             inputs: HashMap::new(),
             placement: None,
         },
@@ -364,5 +366,78 @@ run:
         err.to_string()
             .contains("either workflow_ref or inline workflow, but not both"),
         "{err:#}"
+    );
+}
+
+#[test]
+fn validate_rejects_pattern_ref_with_inline_workflow() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+tasks:
+  A:
+    prompt:
+      user: "A"
+patterns:
+  - id: p1
+    type: linear
+    steps: [A]
+run:
+  pattern_ref: p1
+  workflow:
+    kind: sequential
+    steps: []
+"#;
+
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    let err = doc
+        .validate()
+        .expect_err("should reject ambiguous run shape");
+    assert!(
+        err.to_string().contains(
+            "run.pattern_ref cannot be combined with run.workflow_ref or inline run.workflow"
+        ),
+        "unexpected error: {err:#}"
+    );
+}
+
+#[test]
+fn validate_rejects_pattern_ref_with_workflow_ref() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+tasks:
+  A:
+    prompt:
+      user: "A"
+workflows:
+  wf:
+    id: "wf"
+    kind: sequential
+    steps:
+      - id: "s1"
+        task: "A"
+patterns:
+  - id: p1
+    type: linear
+    steps: [A]
+run:
+  pattern_ref: p1
+  workflow_ref: "wf"
+"#;
+
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    let err = doc
+        .validate()
+        .expect_err("should reject ambiguous run shape");
+    assert!(
+        err.to_string().contains(
+            "run.pattern_ref cannot be combined with run.workflow_ref or inline run.workflow"
+        ),
+        "unexpected error: {err:#}"
     );
 }

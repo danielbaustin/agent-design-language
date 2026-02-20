@@ -180,12 +180,16 @@ pub fn execute_sequential(
         resolved.execution_plan.workflow_kind,
         crate::adl::WorkflowKind::Concurrent
     );
-    if is_concurrent && resolved.doc.version.trim() != "0.3" {
+    if is_concurrent {
         let doc_version = resolved.doc.version.trim();
-        tr.run_failed("concurrent workflows are not supported in v0.1/v0.2");
-        return Err(anyhow!(
-            "feature 'concurrency' requires v0.3; document version is {doc_version} (run.workflow.kind=concurrent)"
-        ));
+        let pattern_run = resolved.doc.run.pattern_ref.is_some();
+        let allow = doc_version == "0.3" || (doc_version == "0.5" && pattern_run);
+        if !allow {
+            tr.run_failed("concurrent workflows are not supported for this document shape/version");
+            return Err(anyhow!(
+                "feature 'concurrency' requires v0.3 workflows or v0.5 pattern runs; document version is {doc_version} (run.workflow.kind=concurrent)"
+            ));
+        }
     }
     if is_concurrent {
         return execute_concurrent_deterministic(
