@@ -244,7 +244,7 @@ pub fn execute_sequential(
 
             match call_result {
                 Ok((call_outs, call_artifacts, call_records, callee_final_state)) => {
-                    tr.call_exited(&step_id, true, &namespace);
+                    tr.call_exited(&step_id, "success", &namespace);
                     tr.step_finished(&step_id, true);
                     let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
                     progress_step_done(emit_progress, tr, &step_id, true, duration_ms);
@@ -266,7 +266,7 @@ pub fn execute_sequential(
                     continue;
                 }
                 Err(err) => {
-                    tr.call_exited(&step_id, false, &namespace);
+                    tr.call_exited(&step_id, "failure", &namespace);
                     tr.step_finished(&step_id, false);
                     let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
                     progress_step_done(emit_progress, tr, &step_id, false, duration_ms);
@@ -484,7 +484,7 @@ fn execute_called_workflow(
             let nested_namespace = step.as_ns.clone().unwrap_or_else(|| local_id.clone());
             tr.call_entered(&full_id, nested, &nested_namespace);
 
-            let (sub_outs, sub_artifacts, sub_records, sub_state) = execute_called_workflow(
+            let nested_result = execute_called_workflow(
                 &full_id,
                 &nested_namespace,
                 nested,
@@ -496,9 +496,18 @@ fn execute_called_workflow(
                 adl_base_dir,
                 out_dir,
                 &child_state,
-            )?;
+            );
 
-            tr.call_exited(&full_id, true, &nested_namespace);
+            let (sub_outs, sub_artifacts, sub_records, sub_state) = match nested_result {
+                Ok(v) => {
+                    tr.call_exited(&full_id, "success", &nested_namespace);
+                    v
+                }
+                Err(err) => {
+                    tr.call_exited(&full_id, "failure", &nested_namespace);
+                    return Err(err);
+                }
+            };
             for (k, v) in sub_state {
                 child_state.insert(format!("{nested_namespace}.{k}"), v);
             }

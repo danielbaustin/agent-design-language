@@ -699,7 +699,7 @@ run:
         "stdout was:\n{stdout}"
     );
     assert!(
-        stdout.contains("CallExited caller_step=call_two success=true"),
+        stdout.contains("CallExited caller_step=call_two status=success"),
         "stdout was:\n{stdout}"
     );
 }

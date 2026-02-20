@@ -56,7 +56,7 @@ pub enum TraceEvent {
         ts_ms: u128,
         elapsed_ms: u128,
         caller_step_id: String,
-        success: bool,
+        status: String,
         namespace: String,
     },
 }
@@ -134,14 +134,14 @@ impl TraceEvent {
                 ts_ms,
                 elapsed_ms,
                 caller_step_id,
-                success,
+                status,
                 namespace,
             } => format!(
-                "{} (+{}ms) CallExited caller_step={} success={} namespace={}",
+                "{} (+{}ms) CallExited caller_step={} status={} namespace={}",
                 format_ts_ms(*ts_ms),
                 elapsed_ms,
                 caller_step_id,
-                success,
+                status,
                 namespace
             ),
         }
@@ -248,14 +248,14 @@ impl Trace {
         });
     }
 
-    pub fn call_exited(&mut self, caller_step_id: &str, success: bool, namespace: &str) {
+    pub fn call_exited(&mut self, caller_step_id: &str, status: &str, namespace: &str) {
         let elapsed_ms = self.run_started_instant.elapsed().as_millis();
         let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
         self.events.push(TraceEvent::CallExited {
             ts_ms,
             elapsed_ms,
             caller_step_id: caller_step_id.to_string(),
-            success,
+            status: status.to_string(),
             namespace: namespace.to_string(),
         });
     }
@@ -396,7 +396,7 @@ mod tests {
     fn trace_records_call_events() {
         let mut tr = Trace::new("run-3", "workflow-3", "0.5");
         tr.call_entered("parent", "child", "ns");
-        tr.call_exited("parent", true, "ns");
+        tr.call_exited("parent", "success", "ns");
         assert_eq!(tr.events.len(), 2);
     }
 }
