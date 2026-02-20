@@ -28,6 +28,3 @@ patterns:
 run:
   name: "v0-5-pattern-linear"
   pattern_ref: p_linear
-  workflow:
-    kind: sequential
-    steps: []

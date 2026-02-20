@@ -1,0 +1,61 @@
+version: "0.3"
+
+providers:
+  local_ollama:
+    type: "ollama"
+    base_url: "http://localhost:11434"
+    default_model: "gemma3:latest"
+
+agents:
+  coordinator:
+    provider: "local_ollama"
+    model: "gemma3:latest"
+
+tasks:
+  branch_work:
+    prompt:
+      user: "Process {{branch}} for {{topic}}"
+  join_results:
+    prompt:
+      user: |
+        Join deterministic outputs for {{topic}}
+        a={{a}}
+        b={{b}}
+        c={{c}}
+
+run:
+  name: "v0-3-scheduler-max-concurrency"
+  defaults:
+    max_concurrency: 2
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "fork.a"
+        agent: "coordinator"
+        task: "branch_work"
+        save_as: "a"
+        inputs:
+          topic: "scheduler"
+          branch: "a"
+      - id: "fork.b"
+        agent: "coordinator"
+        task: "branch_work"
+        save_as: "b"
+        inputs:
+          topic: "scheduler"
+          branch: "b"
+      - id: "fork.c"
+        agent: "coordinator"
+        task: "branch_work"
+        save_as: "c"
+        inputs:
+          topic: "scheduler"
+          branch: "c"
+      - id: "fork.join"
+        agent: "coordinator"
+        task: "join_results"
+        inputs:
+          topic: "scheduler"
+          a: "@state:a"
+          b: "@state:b"
+          c: "@state:c"

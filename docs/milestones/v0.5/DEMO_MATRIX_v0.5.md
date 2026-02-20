@@ -1,0 +1,26 @@
+# ADL v0.5 Demo Matrix
+
+Purpose: reproducible, copy/paste demo coverage for shipped v0.5 capabilities (WP-02 through WP-07) without introducing new runtime/language features.
+
+## Conventions
+- Working directory is explicit for every demo.
+- Commands are copy/paste-ready.
+- Success signal states what to check.
+
+## Demo Matrix
+
+| Capability | Example | Commands | Expected success signal | Notes |
+|---|---|---|---|---|
+| WP-02 primitives (providers/tasks/tools/workflows) | `swarm/examples/v0-5-primitives-minimal.adl.yaml` | `cd /Users/daniel/git/adl-wp-361`<br>`cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-5-primitives-minimal.adl.yaml --print-plan` | Exit code `0`; plan output includes `summarize.topic` and `wf_main` | Deterministic plan output for fixed input. |
+| WP-03 include/call composition | `swarm/examples/v0-5-composition-hierarchical.adl.yaml` | `cd /Users/daniel/git/adl-wp-361`<br>`cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-5-composition-hierarchical.adl.yaml --print-plan` | Exit code `0`; plan output includes hierarchical step IDs with `::` from call expansion | Demonstrates call expansion and deterministic hierarchical IDs. Include CLI demo is tracked as follow-up due schema gating. |
+| WP-04 pattern compiler v0.1 (fork/join) | `swarm/examples/v0-5-pattern-fork-join.adl.yaml` | `cd /Users/daniel/git/adl-wp-361`<br>`cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-5-pattern-fork-join.adl.yaml --print-plan` | Exit code `0`; plan output includes canonical IDs prefixed by `p::p_fork::` and join node | Canonical IDs are deterministic across runs. |
+| WP-05 scheduler concurrency (`max_concurrency`) | `swarm/examples/v0-3-scheduler-max-concurrency.adl.yaml` | `cd /Users/daniel/git/adl-wp-361`<br>`SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-3-scheduler-max-concurrency.adl.yaml --run --trace` | Exit code `0`; trace/run summary includes `RunFinished success=true` and bounded concurrent fork execution | Explicitly sets `run.defaults.max_concurrency: 2`; ready-set remains lexicographically ordered by full step id. |
+| WP-06 remote execution MVP (mixed local/remote/local) | `swarm/examples/v0-5-remote-execution-mvp.adl.yaml` | Terminal A:<br>`cd /Users/daniel/git/adl-wp-361`<br>`cargo run -q --manifest-path swarm/Cargo.toml --bin swarm-remote -- 127.0.0.1:8787`<br><br>Terminal B:<br>`cd /Users/daniel/git/adl-wp-361`<br>`SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-5-remote-execution-mvp.adl.yaml --run --trace --allow-unsigned`<br><br>Shutdown:<br>`Ctrl-C` in Terminal A | Exit code `0`; output includes execution of `local.first`, `remote.mid`, `local.last`, and `RunFinished success=true` | Localhost only (`127.0.0.1`). Scheduler remains local; remote executes one resolved step via `/v1/execute`. |
+| WP-07 signing + verification + signed run | `swarm/examples/v0-5-pattern-linear.adl.yaml` | `cd /Users/daniel/git/adl-wp-361`<br>`rm -rf /tmp/adl-v05-sign-demo && mkdir -p /tmp/adl-v05-sign-demo`<br>`cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- keygen --out-dir /tmp/adl-v05-sign-demo/keys`<br>`cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- sign swarm/examples/v0-5-pattern-linear.adl.yaml --key /tmp/adl-v05-sign-demo/keys/ed25519-private.b64 --out /tmp/adl-v05-sign-demo/signed-v0-5-pattern-linear.adl.yaml`<br>`cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- verify /tmp/adl-v05-sign-demo/signed-v0-5-pattern-linear.adl.yaml --key /tmp/adl-v05-sign-demo/keys/ed25519-public.b64`<br>`SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- /tmp/adl-v05-sign-demo/signed-v0-5-pattern-linear.adl.yaml --run --trace` | All commands exit `0`; verify prints success; run ends with `RunFinished success=true` | Do not commit generated keys or signed output. |
+| WP-07 enforcement behavior (default reject + allow-unsigned override) | `swarm/examples/v0-5-pattern-linear.adl.yaml` | `cd /Users/daniel/git/adl-wp-361`<br>`SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-5-pattern-linear.adl.yaml --run`<br>`SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-5-pattern-linear.adl.yaml --run --allow-unsigned` | First command exits non-zero and reports `signature enforcement failed`; second exits `0` with `RunFinished success=true` | Demonstrates default enforcement and explicit dev override only. |
+
+## Determinism Notes
+- Plan generation demos are deterministic for fixed file inputs.
+- Scheduler demo uses deterministic ready-set ordering and bounded parallelism.
+- Remote demo uses localhost and deterministic mock provider output to reduce environmental variance.
+- Signing demo canonicalization excludes top-level `signature`; signature metadata edits do not alter signed payload bytes.
