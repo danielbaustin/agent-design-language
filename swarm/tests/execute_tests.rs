@@ -320,7 +320,11 @@ enum MockOllamaBehavior {
 
 fn run_swarm(args: &[&str]) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_swarm");
-    Command::new(exe).args(args).output().unwrap()
+    Command::new(exe)
+        .env("ADL_ALLOW_UNSIGNED", "1")
+        .args(args)
+        .output()
+        .unwrap()
 }
 
 #[test]
@@ -2581,6 +2585,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         tasks,
         workflows: HashMap::new(),
         patterns: vec![pattern],
+        signature: None,
         run: swarm::adl::RunSpec {
             id: None,
             name: Some("compiled-pattern-run".to_string()),

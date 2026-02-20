@@ -34,6 +34,9 @@ pub struct AdlDoc {
     #[serde(default)]
     pub patterns: Vec<PatternSpec>,
 
+    #[serde(default)]
+    pub signature: Option<SignatureSpec>,
+
     pub run: RunSpec,
 }
 
@@ -644,6 +647,25 @@ pub struct RunPlacementLegacySpec {
 
     #[serde(default)]
     pub target: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct SignatureSpec {
+    pub alg: String,
+    pub key_id: String,
+    #[serde(default)]
+    pub public_key_b64: Option<String>,
+    pub sig_b64: String,
+    pub signed_header: SignedHeaderSpec,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct SignedHeaderSpec {
+    pub adl_version: String,
+    #[serde(default)]
+    pub workflow_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]

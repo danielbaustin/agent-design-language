@@ -114,6 +114,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
         tasks: HashMap::new(),
         workflows: HashMap::new(),
         patterns: vec![],
+        signature: None,
         run: RunSpec {
             id: None,
             name: Some("demo".to_string()),
