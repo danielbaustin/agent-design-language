@@ -5,6 +5,3 @@ include:
 run:
   name: "v0-5-composition-include-root"
   workflow_ref: "wf_fragment"
-  workflow:
-    kind: sequential
-    steps: []

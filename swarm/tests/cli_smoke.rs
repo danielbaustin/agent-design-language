@@ -158,6 +158,24 @@ fn print_plan_v0_5_primitives_fixture_works() {
 }
 
 #[test]
+fn print_plan_v0_5_include_fixture_works() {
+    let path = fixture_path("examples/v0-5-composition-include-root.adl.yaml");
+    let out = run_swarm(&[path.to_str().unwrap(), "--print-plan"]);
+    assert!(
+        out.status.success(),
+        "expected include root to load/resolve, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("wf_fragment") && stdout.contains("fragment.step"),
+        "expected included workflow and step in plan output, stdout:\n{}",
+        stdout
+    );
+}
+
+#[test]
 fn print_plan_v0_5_pattern_fixture_is_deterministic() {
     let path = fixture_path("examples/v0-5-pattern-fork-join.adl.yaml");
     let out1 = run_swarm(&[path.to_str().unwrap(), "--print-plan"]);
