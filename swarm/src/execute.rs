@@ -460,9 +460,11 @@ pub fn execute_sequential(
                 }
                 tr.run_failed(&err.to_string());
                 return Err(anyhow!(
-                    "step '{}' failed after {} attempt(s): {:#}",
+                    "step '{}' failed (attempt {}/{}, max_attempts={}): {:#}",
                     step_id,
                     attempt.max(1),
+                    max_attempts,
+                    max_attempts,
                     err
                 ));
             }
@@ -895,7 +897,15 @@ fn execute_step_with_retry(
         }
     }
 
-    Err(last_err.unwrap_or_else(|| anyhow!("step '{}' failed", step_id)))
+    let err = last_err.unwrap_or_else(|| anyhow!("step '{}' failed", step_id));
+    Err(anyhow!(
+        "step '{}' failed (attempt {}/{}, max_attempts={}): {:#}",
+        step_id,
+        attempt.max(1),
+        max_attempts,
+        max_attempts,
+        err
+    ))
 }
 
 fn execute_concurrent_deterministic(
