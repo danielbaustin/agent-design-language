@@ -9,6 +9,21 @@
 ## Purpose
 Ship/no-ship gate for v0.5. Check items only when evidence exists (links, PRs, CI runs, demo logs).
 
+## Status snapshot (2026-02-21)
+
+Closed v0.5 issues during closeout:
+- #373 — include expansion / CLI schema gating fixed (merged)
+- #378 — bulletproof git automation scripts (`swarm/tools/pr.sh` + `pr_smoke.sh`) (merged)
+- #393 — bounded-parallelism test stabilized (merged)
+- #362 — WP-09 Documentation pass merged
+- #363 — WP-10 Review/regression audit merged
+- #308 — v0.5 epic closed
+
+Open v0.5 issues remaining:
+- #364 — WP-11 Closing ceremony (release + cleanup)
+
+v0.6 issues remain open and are out of scope for the v0.5 ship gate.
+
 ---
 
 ## Planning
@@ -17,10 +32,10 @@ Ship/no-ship gate for v0.5. Check items only when evidence exists (links, PRs, C
 - [x] WBS created and mapped to work packages (`docs/milestones/v0.5/WBS_v0.5.md`)
 - [x] Decision log initialized (`docs/milestones/v0.5/DECISIONS_v0.5.md`)
 - [x] Sprint plan created (`docs/milestones/v0.5/SPRINT_v0.5.md`)
-- [ ] v0.5 epic(s) created and linked in WBS / docs (see GitHub issues)
+- [x] v0.5 epic(s) created and linked in WBS / docs (GitHub: #308)
 
 ## Execution Discipline
-- [ ] Each issue has input/output cards under `.adl/cards/<issue>/`
+- [x] Each issue has input/output cards under `.adl/cards/<issue>/` (enforced in v0.5 workflow)
 - [ ] Each burst writes artifacts under `.adl/reports/burst/<timestamp>/`
 - [ ] Draft PR opened for each issue before merge
 - [ ] Transient failures retried and documented
@@ -31,6 +46,7 @@ Ship/no-ship gate for v0.5. Check items only when evidence exists (links, PRs, C
 - [ ] `cargo fmt` passes (release candidate)
 - [ ] `cargo clippy --all-targets -- -D warnings` passes (release candidate)
 - [ ] `cargo test` passes (release candidate)
+- [x] Flaky timing tests eliminated or stabilized (see #393)
 - [ ] CI is green on the merge target (`swarm-ci`, `swarm-coverage`)
 - [ ] Coverage signal is not red (or exception documented)
 - [ ] No unresolved high-priority blockers (link: `.adl/reports/triage/` or issue list snapshot)

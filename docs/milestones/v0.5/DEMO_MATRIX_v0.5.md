@@ -25,5 +25,7 @@ Purpose: reproducible, copy/paste demo coverage for shipped v0.5 capabilities (W
 - Remote demo uses localhost and deterministic mock provider output to reduce environmental variance.
 - Signing demo canonicalization excludes top-level `signature`; signature metadata edits do not alter signed payload bytes.
 
-## Known Demo Constraint
-- Top-level `include` is not yet supported by the current CLI schema/load path; tracked in #373.
+## Include Composition Status
+- Top-level `include` composition support was fixed in #373.
+- The v0.5 composition demo is now represented by `swarm/examples/v0-5-composition-hierarchical.adl.yaml`.
+- Keep any future include edge cases tracked as new follow-up issues, not under #373.
