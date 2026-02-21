@@ -27,7 +27,11 @@ pub fn run_bounded<T: Send + 'static>(
         .collect();
 
     let queue = Arc::new(Mutex::new(queue));
-    let (tx, rx) = mpsc::channel::<(usize, T)>();
+    enum WorkerMsg<T> {
+        Output(usize, T),
+        Error(&'static str),
+    }
+    let (tx, rx) = mpsc::channel::<WorkerMsg<T>>();
 
     let mut handles = Vec::with_capacity(worker_count);
     for _ in 0..worker_count {
@@ -35,14 +39,19 @@ pub fn run_bounded<T: Send + 'static>(
         let tx = tx.clone();
         handles.push(std::thread::spawn(move || loop {
             let job = {
-                let mut q = queue.lock().expect("bounded executor queue lock poisoned");
-                q.pop_front()
+                match queue.lock() {
+                    Ok(mut q) => q.pop_front(),
+                    Err(_) => {
+                        let _ = tx.send(WorkerMsg::Error("bounded executor queue lock poisoned"));
+                        break;
+                    }
+                }
             };
             let Some(job) = job else {
                 break;
             };
             let out = (job.run)();
-            if tx.send((job.index, out)).is_err() {
+            if tx.send(WorkerMsg::Output(job.index, out)).is_err() {
                 break;
             }
         }));
@@ -50,14 +59,25 @@ pub fn run_bounded<T: Send + 'static>(
     drop(tx);
 
     let mut out: Vec<(usize, T)> = Vec::new();
+    let mut worker_error: Option<&'static str> = None;
     for item in rx {
-        out.push(item);
+        match item {
+            WorkerMsg::Output(index, value) => out.push((index, value)),
+            WorkerMsg::Error(msg) => {
+                if worker_error.is_none() {
+                    worker_error = Some(msg);
+                }
+            }
+        }
     }
 
     for h in handles {
         if h.join().is_err() {
             return Err(anyhow!("bounded executor worker panicked"));
         }
+    }
+    if let Some(msg) = worker_error {
+        return Err(anyhow!(msg));
     }
 
     if out.len() != expected_count {
