@@ -16,7 +16,7 @@ cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fo
 What to expect:
 - Command succeeds.
 - Plan output includes: `fork.plan`, `fork.branch.alpha`, `fork.branch.beta`, `fork.join`.
-- This is a design/plan demo. Runtime concurrency is intentionally not implemented.
+- This is a historical v0.3 plan-shape demo. The current runtime does implement concurrent execution in v0.5.
 
 ## 2) v0.3 Remote Provider MVP Demo
 
