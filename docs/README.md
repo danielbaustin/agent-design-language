@@ -22,8 +22,8 @@ Start here for contributor-oriented docs and planning context.
 6. `adl-spec/README.md`
 - Language-level specification entrypoint.
 
-7. `.adl/reports/INDEX.md`
-- Living index of generated reports and latest pointers.
+7. `.adl/reports/INDEX.md` (generated)
+- Living index of generated reports and latest pointers (created by tooling after you run reports).
 
 ## Contributor Entry Points
 
@@ -31,7 +31,7 @@ Start here for contributor-oriented docs and planning context.
 - Runtime and CLI work: `swarm/`
 - Language and schema docs: `adl-spec/`
 - v0.4 milestone docs: `docs/milestones/v0.4/`
-- Burst reporting outputs: `.adl/reports/`
+- Burst reporting outputs: `.adl/reports/` (generated; created after running report tooling)
 - Demo command index: `docs/demos.md`
 
 ## Historical (v0.3) Concurrency Design
