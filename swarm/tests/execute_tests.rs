@@ -1186,7 +1186,8 @@ run:
     assert!(
         stderr.contains("attempt 1/3")
             && stderr.contains("max_attempts=3")
-            && stderr.contains("client_error"),
+            && stderr.contains("client_error")
+            && !stderr.contains("attempt 2/3"),
         "stderr was:\n{stderr}"
     );
 }
