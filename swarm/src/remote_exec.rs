@@ -14,6 +14,10 @@ use crate::provider;
 pub const PROTOCOL_VERSION: &str = "0.1";
 const MAX_REQUEST_BYTES: usize = 5 * 1024 * 1024;
 
+/// Client-to-server request for one remotely executed resolved step.
+///
+/// In v0.5 MVP, the local scheduler sends a single step payload to `/v1/execute`.
+/// The remote endpoint does not own scheduling or DAG orchestration.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExecuteRequest {
     pub protocol_version: String,
@@ -25,6 +29,10 @@ pub struct ExecuteRequest {
     pub timeout_ms: u64,
 }
 
+/// Resolved step payload executed by the remote endpoint.
+///
+/// The caller provides a fully resolved prompt/provider payload so the server
+/// can execute a single deterministic unit of work.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExecuteStepPayload {
     pub kind: String,
@@ -37,6 +45,7 @@ pub struct ExecuteStepPayload {
     pub model_override: Option<String>,
 }
 
+/// Input/state payload snapshot provided with a remote step request.
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct ExecuteInputsPayload {
     #[serde(default)]
@@ -45,6 +54,7 @@ pub struct ExecuteInputsPayload {
     pub state: HashMap<String, String>,
 }
 
+/// Remote execution response contract for `/v1/execute`.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExecuteResponse {
     pub ok: bool,
@@ -56,6 +66,7 @@ pub struct ExecuteResponse {
     pub error: Option<RemoteError>,
 }
 
+/// Structured remote-side error envelope.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RemoteError {
     pub code: String,
@@ -94,6 +105,12 @@ impl ExecuteResponse {
     }
 }
 
+/// Execute one step against a remote execution endpoint.
+///
+/// Behavior:
+/// - POSTs to `{endpoint}/v1/execute`
+/// - maps transport/timeout/protocol failures into stable error codes
+/// - returns only the remote model output for successful requests
 pub fn execute_remote(endpoint: &str, timeout_ms: u64, req: &ExecuteRequest) -> Result<String> {
     let client = Client::builder()
         .timeout(Duration::from_millis(timeout_ms))
@@ -130,6 +147,12 @@ pub fn execute_remote(endpoint: &str, timeout_ms: u64, req: &ExecuteRequest) -> 
     }
 }
 
+/// Run the minimal remote execution server (`/v1/health`, `/v1/execute`).
+///
+/// Security boundary (v0.5 MVP):
+/// - no request signing/authn/authz
+/// - request body capped at 5 MiB
+/// - intended for localhost or trusted-network usage only
 pub fn run_server(bind_addr: &str) -> Result<()> {
     let server = Server::http(bind_addr)
         .map_err(|err| anyhow!("failed to bind remote server at {bind_addr}: {err}"))?;

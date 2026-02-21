@@ -10,7 +10,7 @@ use crate::remote_exec;
 use crate::resolve::AdlResolved;
 use crate::trace::Trace;
 
-/// Replace any input values that start with "@file:<path>" with the file contents.
+/// Replace any input values that start with `@file:<path>` with file contents.
 ///
 /// Behavior (v0.1):
 /// - Resolves relative paths against `base_dir` (typically the directory containing the ADL YAML).
@@ -123,6 +123,10 @@ pub struct StepOutput {
     pub model_output: String,
 }
 
+/// Stable execution telemetry record for one step.
+///
+/// Records are emitted in deterministic step completion order and are intended
+/// for run summaries and machine-readable artifact generation.
 #[derive(Debug, Clone)]
 pub struct StepExecutionRecord {
     pub step_id: String,
@@ -132,6 +136,9 @@ pub struct StepExecutionRecord {
     pub output_bytes: usize,
 }
 
+/// Aggregate result from executing a resolved workflow.
+///
+/// Contains step outputs, generated artifact paths, and per-step records.
 #[derive(Debug, Clone)]
 pub struct ExecutionResult {
     pub outputs: Vec<StepOutput>,
@@ -165,11 +172,16 @@ fn progress_step_done(enabled: bool, tr: &Trace, step_id: &str, ok: bool, durati
     );
 }
 
-/// Execute the resolved run in **sequential** mode (v0.1).
+/// Execute the resolved run.
 ///
-/// v0.1 behavior:
-/// - blocking provider calls
-/// - prints outputs to stdout (caller can choose to print or not)
+/// Behavior:
+/// - sequential workflows execute step-by-step
+/// - concurrent workflows execute via deterministic bounded batching
+/// - retries and `on_error` policy are honored per step
+///
+/// Determinism:
+/// - ready-step ordering is lexicographic by full step id
+/// - bounded batches preserve deterministic output/record order
 pub fn execute_sequential(
     resolved: &AdlResolved,
     tr: &mut Trace,

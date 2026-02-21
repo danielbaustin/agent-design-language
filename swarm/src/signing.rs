@@ -37,6 +37,14 @@ pub fn keygen(out_dir: &Path) -> Result<(PathBuf, PathBuf)> {
     Ok((priv_path, pub_path))
 }
 
+/// Sign an ADL file in-place (or to `--out`) using an Ed25519 private key.
+///
+/// The signed bytes are generated from a canonical JSON envelope containing:
+/// - selected signed header fields
+/// - the ADL document with the top-level `signature` field excluded
+///
+/// This exclusion is intentional so metadata updates to `signature.*` do not
+/// recursively invalidate canonicalization.
 pub fn sign_file(
     path: &Path,
     private_key_path: &Path,
@@ -77,11 +85,23 @@ pub fn sign_file(
     Ok(out_path)
 }
 
+/// Verify a signed ADL file against either:
+/// - explicit `public_key_path`, or
+/// - embedded `signature.public_key_b64`
+///
+/// Returns an error for unsigned files, unsupported algorithms, malformed keys,
+/// or signature mismatch.
 pub fn verify_file(path: &Path, public_key_path: Option<&Path>) -> Result<()> {
     let doc = load_doc(path)?;
     verify_doc(&doc, public_key_path)
 }
 
+/// Verify a parsed ADL document signature using Ed25519.
+///
+/// Security model:
+/// - only `ed25519` is accepted in v0.5
+/// - canonicalization is deterministic and excludes top-level `signature`
+/// - this function validates integrity/authenticity, not authorization policy
 pub fn verify_doc(doc: &adl::AdlDoc, public_key_path: Option<&Path>) -> Result<()> {
     let sig = doc
         .signature
@@ -115,6 +135,10 @@ pub fn verify_doc(doc: &adl::AdlDoc, public_key_path: Option<&Path>) -> Result<(
     Ok(())
 }
 
+/// Build the default signed-header fields for canonical signing.
+///
+/// Header fields are intentionally minimal and deterministic so the same
+/// document content yields stable signed bytes across runs.
 pub fn default_signed_header(doc: &adl::AdlDoc) -> adl::SignedHeaderSpec {
     let workflow_id = doc
         .run
@@ -127,6 +151,10 @@ pub fn default_signed_header(doc: &adl::AdlDoc) -> adl::SignedHeaderSpec {
     }
 }
 
+/// Serialize deterministic canonical bytes for signing and verification.
+///
+/// Canonicalization recursively sorts object keys and strips top-level
+/// `signature` to prevent self-referential signing.
 pub fn canonical_bytes(doc: &adl::AdlDoc, header: &adl::SignedHeaderSpec) -> Result<Vec<u8>> {
     let mut unsigned = doc.clone();
     unsigned.signature = None;
