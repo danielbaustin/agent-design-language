@@ -4,121 +4,52 @@
 - Sprint: `v0.5-S1`
 - Milestone: `v0.5`
 - Start date: `2026-02-19`
-- End date: `TBD`
+- End date: `2026-02-21`
 - Owner: `Daniel Austin`
 
 ---
 
 ## Sprint Goal
-Establish the structural foundation for v0.5 by locking the language surface (6 primitives), defining composition rules, and scaffolding configurable scheduler controls—without introducing runtime instability.
-
-This sprint is architecture-first and discipline-first.
+Ship v0.5 with deterministic runtime behavior, complete WP coverage, synchronized docs, and release-ready closure discipline.
 
 ---
 
-## Planned Scope (Unit 0 + Early Work Units)
-
-### Unit 0 — Milestone Initialization (#330)
-- Populate and freeze all v0.5 milestone docs
-- Define work units clearly in WBS
-- Define demo matrix
-- Freeze v0.5 scope
-
-### WP-01 — Explicit Primitive Schemas
-- Define explicit schemas for:
-  - Agents
-  - Runs
-  - Providers
-  - Tasks
-  - Tools
-  - Workflows
-- Validate schema consistency and naming
-- Add validation tests (schema load + negative cases)
-
-### WP-02 — Composition Rules + Validation
-- Define how primitives reference each other
-- Enforce composition constraints in validator
-- Add deterministic ordering guarantees for composed graphs
-
-### WP-03 — Configurable Scheduler Controls (#309)
-- Add concurrency limit configuration surface
-- Wire config → runtime executor
-- Add integration tests for parallelism levels (1, 2, N)
-- Preserve deterministic replay behavior
-
----
-
-## Work Plan
+## Execution Summary
+All planned v0.5 work packages were executed through WP-10, with WP-11 in closeout:
 
 | Order | Work Unit | Issue | Status |
-|-------|----------|-------|--------|
-| 1 | Unit 0 — Milestone Init | #330 | In Progress |
-| 2 | WP-01 — Explicit primitive schemas | (TBD) | Planned |
-| 3 | WP-02 — Composition rules + validation | (TBD) | Planned |
-| 4 | WP-03 — Configurable scheduler controls | #309 | Planned |
-| 5 | Demo generation pass | (TBD) | Planned |
-| 6 | Documentation pass | (TBD) | Planned |
-| 7 | Review pass | (TBD) | Planned |
-| 8 | Closing ceremony (tag + release docs) | (TBD) | Planned |
+|---|---|---|---|
+| 1 | Unit 0 — Milestone Init | #330 | Done |
+| 2 | WP-01 — Tooling Stabilization | #342 | Done |
+| 3 | WP-02 — Primitive Schema Completion | #343 | Done |
+| 4 | WP-03 — Composition Layer | #344 | Done |
+| 5 | WP-04 — Pattern Compiler v0.1 | #345 | Done |
+| 6 | WP-05 — Scheduler Configurability | #357 | Done |
+| 7 | WP-06 — Remote Execution MVP | #346 | Done |
+| 8 | WP-07 — Signing + Enforcement | #347 | Done |
+| 9 | WP-08 — Demo Generation Pass | #361 | Done |
+| 10 | WP-09 — Documentation Pass | #362 | Done |
+| 11 | WP-10 — Review Pass | #363 | Done |
+| 12 | WP-11 — Closing Ceremony | #364 | In Progress |
 
 ---
 
-## Demo Matrix (v0.5 Target)
-
-### Primitive-Alone Demos
-- Agent-only demo
-- Task-only demo
-- Tool-only demo
-- Provider-only demo
-- Workflow-only demo
-
-### Composition Demos
-- Linear workflow
-- Multi-step workflow
-- Hierarchical workflow
-- Parallel fork/join workflow
-- Local + remote mixed placement workflow
-- Deterministic replay workflow
-
-All demos must be:
-- One-command runnable
-- No-network reproducible (mock provider available)
-- Documented in README
+## Outcomes
+- Deterministic runtime behavior preserved across scheduler and pattern work.
+- Remote execution MVP boundary documented and test-covered.
+- Signing + enforcement behavior integrated and validated.
+- Demo matrix and milestone docs established as release artifacts.
 
 ---
 
-## Discipline Rules
-- All implementation behind issue cards (`input` / `output`)
-- Draft PR required before merge
-- CI must be green before merge
-- Each work unit must reference a WBS item
-- No silent scope expansion
-
----
-
-## Risks
-
-### Tooling Stability
-- `pr.sh start` behavior inconsistent
-- Mitigation: tracked separately; avoid coupling runtime work to tooling fixes
-
-### Schema Drift
-- Risk: primitives evolve inconsistently
-- Mitigation: freeze definitions before runtime wiring
-
-### Determinism Regression
-- Risk: configurable concurrency breaks replay guarantees
-- Mitigation: deterministic ordering remains default; tests required for all parallel levels
+## Risks / Follow-ups
+- Closeout bookkeeping must remain synchronized with actual issue/PR states.
+- Release publication/tag checks remain the final gate under #364.
+- v0.6-scope enhancements are tracked separately and excluded from v0.5 closure.
 
 ---
 
 ## Exit Criteria
-- Unit 0 complete and milestone structure frozen
-- Primitive schemas explicitly defined and validated
-- Composition rules documented and enforced
-- Scheduler configurability scaffolded with tests
-- Demo matrix implemented and runnable
-- Documentation pass complete
-- Review pass complete
-- CI green
-- Ready for `v0.5.0` tag
+- WP-11 closes with release/tag evidence.
+- Milestone docs match shipped behavior and issue states.
+- CI and release packaging checks are green at close.

@@ -5,7 +5,7 @@
 - Version: `0.5`
 - Date: `2026-02-18`
 - Owner: Daniel Austin
-- Related issues: #308 (epic), #309 (Burst 1), TBD pattern issues
+- Related issues: #308 (epic), #342, #343, #344, #345, #357, #346, #347, #361, #362, #363, #364
 
 ## Purpose
 Define how ADL evolves from deterministic workflow execution (v0.4) into a deterministic multi-agent orchestration platform with configurable runtime scheduling and a clean boundary for an external Observable Memory (ObsMem) module.
