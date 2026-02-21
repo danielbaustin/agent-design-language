@@ -261,16 +261,22 @@ mod tests {
     use std::net::TcpListener;
     use std::thread;
 
-    fn reserve_local_port() -> u16 {
-        let listener = TcpListener::bind("127.0.0.1:0").expect("bind ephemeral port");
+    fn reserve_local_port() -> Option<u16> {
+        let listener = match TcpListener::bind("127.0.0.1:0") {
+            Ok(listener) => listener,
+            Err(err) if err.kind() == std::io::ErrorKind::PermissionDenied => return None,
+            Err(err) => panic!("bind ephemeral port: {err}"),
+        };
         let port = listener.local_addr().unwrap().port();
         drop(listener);
-        port
+        Some(port)
     }
 
     #[test]
     fn server_rejects_payloads_over_5_mib() {
-        let port = reserve_local_port();
+        let Some(port) = reserve_local_port() else {
+            return;
+        };
         let bind_addr = format!("127.0.0.1:{port}");
         thread::spawn({
             let bind_addr = bind_addr.clone();
