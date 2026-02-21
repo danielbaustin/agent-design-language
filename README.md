@@ -68,6 +68,7 @@ Explicitly deferred:
 - `swarm/`: Rust reference runtime and CLI
 - `adl-spec/`: language-level specification docs
 - `docs/`: contributor workflow and roadmap docs
+- `docs/adr/`: architecture decision records (major technical decisions)
 - `.adl/`: cards, reports, and run/report artifacts
 
 ## Historical v0.3 Plan-Only Commands
