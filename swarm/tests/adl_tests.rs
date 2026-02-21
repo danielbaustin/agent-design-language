@@ -5,6 +5,9 @@ use swarm::adl::{
     WorkflowSpec,
 };
 
+mod helpers;
+use helpers::unique_test_temp_dir;
+
 fn parse_doc(yaml: &str) -> AdlDoc {
     let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
     doc.validate().expect("doc should validate");
@@ -474,5 +477,75 @@ run:
             "run.pattern_ref cannot be combined with run.workflow_ref or inline run.workflow"
         ),
         "unexpected error: {err:#}"
+    );
+}
+
+#[test]
+fn load_from_file_rejects_include_with_parent_dir() {
+    let dir = unique_test_temp_dir("adl-include-parent");
+    let adl_path = dir.join("doc.yaml");
+    let yaml = r#"
+version: "0.1"
+include:
+  - "../outside.yaml"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "hi"
+run:
+  workflow:
+    steps:
+      - agent: "a1"
+        task: "t1"
+"#;
+    std::fs::write(&adl_path, yaml).expect("write adl");
+
+    let err = AdlDoc::load_from_file(adl_path.to_str().unwrap()).unwrap_err();
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("include path must be relative") && msg.contains("must not contain '..'"),
+        "unexpected error: {msg}"
+    );
+}
+
+#[test]
+fn validate_rejects_write_to_without_save_as() {
+    let yaml = r#"
+version: "0.1"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "hi"
+run:
+  workflow:
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        write_to: "out/result.txt"
+"#;
+
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    let err = doc
+        .validate()
+        .expect_err("write_to without save_as should fail");
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("uses write_to but is missing save_as"),
+        "unexpected error: {msg}"
     );
 }

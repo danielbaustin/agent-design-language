@@ -815,6 +815,49 @@ fn open_artifact(runner: &dyn CommandRunner, path: &Path) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::ffi::OsString;
+    use std::sync::{Mutex, MutexGuard, OnceLock};
+
+    static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+
+    fn env_lock() -> MutexGuard<'static, ()> {
+        match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
+            Ok(guard) => guard,
+            Err(poisoned) => poisoned.into_inner(),
+        }
+    }
+
+    struct EnvGuard {
+        key: String,
+        old: Option<OsString>,
+        _lock: MutexGuard<'static, ()>,
+    }
+
+    impl EnvGuard {
+        fn set(key: &str, value: &str) -> Self {
+            let lock = env_lock();
+            let old = std::env::var_os(key);
+            unsafe {
+                std::env::set_var(key, value);
+            }
+            Self {
+                key: key.to_string(),
+                old,
+                _lock: lock,
+            }
+        }
+    }
+
+    impl Drop for EnvGuard {
+        fn drop(&mut self) {
+            unsafe {
+                match &self.old {
+                    Some(v) => std::env::set_var(&self.key, v),
+                    None => std::env::remove_var(&self.key),
+                }
+            }
+        }
+    }
 
     #[test]
     fn select_open_artifact_prefers_first_html() {
@@ -854,5 +897,21 @@ mod tests {
                 "out/index.html".to_string()
             ]
         );
+    }
+
+    #[test]
+    fn is_ci_environment_treats_falsey_values_as_false() {
+        {
+            let _guard = EnvGuard::set("CI", "false");
+            assert!(!is_ci_environment());
+        }
+        {
+            let _guard = EnvGuard::set("CI", "0");
+            assert!(!is_ci_environment());
+        }
+        {
+            let _guard = EnvGuard::set("CI", "true");
+            assert!(is_ci_environment());
+        }
     }
 }
