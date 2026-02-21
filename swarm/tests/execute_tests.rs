@@ -590,7 +590,7 @@ run:
     );
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert!(
-        stderr.contains("failed after 2 attempt(s)") || stderr.contains("attempt 2/2"),
+        stderr.contains("attempt 2/2") && stderr.contains("max_attempts=2"),
         "stderr was:\n{stderr}"
     );
 }
@@ -1184,7 +1184,9 @@ run:
     );
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert!(
-        stderr.contains("failed after 1 attempt(s)") && stderr.contains("client_error"),
+        stderr.contains("attempt 1/3")
+            && stderr.contains("max_attempts=3")
+            && stderr.contains("client_error"),
         "stderr was:\n{stderr}"
     );
 }
@@ -1270,7 +1272,9 @@ run:
     );
     let stderr = String::from_utf8_lossy(&out.stderr).to_lowercase();
     assert!(
-        stderr.contains("failed after 2 attempt(s)") && stderr.contains("timed out"),
+        stderr.contains("attempt 2/2")
+            && stderr.contains("max_attempts=2")
+            && stderr.contains("timed out"),
         "stderr was:\n{stderr}"
     );
 }
