@@ -6,7 +6,7 @@ use std::path::Path;
 use std::process::Command;
 use std::thread;
 use std::time::Duration;
-use swarm::execute::materialize_inputs;
+use swarm::execute::{materialize_inputs, MATERIALIZE_INPUT_MAX_FILE_BYTES};
 
 mod helpers;
 use helpers::{unique_test_temp_dir, EnvVarGuard};
@@ -151,10 +151,30 @@ fn materialize_inputs_rejects_non_utf8() {
 }
 
 #[test]
-fn materialize_inputs_enforces_max_size() {
+fn materialize_inputs_accepts_exact_max_file_input_size() {
+    let base = tmp_dir("mat-maxsize-exact");
+    // Boundary check for the @file: materialization size limit.
+    let max = MATERIALIZE_INPUT_MAX_FILE_BYTES as usize;
+    let exact = vec![b'a'; max];
+    write_file(&base, "docs/exact.txt", &exact);
+
+    let mut inputs = HashMap::new();
+    inputs.insert("doc_1".to_string(), "@file:docs/exact.txt".to_string());
+
+    let out = materialize_inputs(inputs, &base).unwrap();
+    assert_eq!(
+        out.get("doc_1").map(|s| s.len()),
+        Some(max),
+        "exact materialization MAX payload should be accepted"
+    );
+}
+
+#[test]
+fn materialize_inputs_rejects_max_plus_one_file_input_size() {
     let base = tmp_dir("mat-maxsize");
-    // MAX is 512 KiB; create 513 KiB
-    let big = vec![b'a'; 513 * 1024];
+    // Boundary check for the @file: materialization size limit (MAX + 1).
+    let max_plus_one = MATERIALIZE_INPUT_MAX_FILE_BYTES as usize + 1;
+    let big = vec![b'a'; max_plus_one];
     write_file(&base, "docs/big.txt", &big);
 
     let mut inputs = HashMap::new();

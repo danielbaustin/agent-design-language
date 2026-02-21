@@ -22,8 +22,6 @@ pub fn materialize_inputs(
     mut inputs: HashMap<String, String>,
     base_dir: &Path,
 ) -> Result<HashMap<String, String>> {
-    const MAX_FILE_BYTES: u64 = 512 * 1024; // 512 KiB per input file (v0.1 safety bound)
-
     // Canonical base dir once so we can enforce that @file: inputs cannot escape it.
     // This rejects both `../` traversal and absolute paths outside the base dir.
     let base_canon = base_dir
@@ -68,11 +66,11 @@ pub fn materialize_inputs(
                 path.display()
             ));
         }
-        if meta.len() > MAX_FILE_BYTES {
+        if meta.len() > MATERIALIZE_INPUT_MAX_FILE_BYTES {
             return Err(anyhow!(
                 "input '{k}' file is too large ({} bytes > {} bytes): '{}'",
                 meta.len(),
-                MAX_FILE_BYTES,
+                MATERIALIZE_INPUT_MAX_FILE_BYTES,
                 path.display()
             ));
         }
@@ -112,6 +110,9 @@ pub fn materialize_inputs(
 
     Ok(inputs)
 }
+
+/// Maximum allowed bytes per `@file:` materialized input.
+pub const MATERIALIZE_INPUT_MAX_FILE_BYTES: u64 = 512 * 1024;
 
 /// Result of executing one step.
 #[allow(dead_code)] // v0.1: returned for callers / future use; not all fields are read yet

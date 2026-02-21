@@ -1,0 +1,7 @@
+version: "0.5"
+include:
+  - "include-fragment.adl.yaml"
+
+run:
+  name: "v0-5-unicode-include"
+  workflow_ref: "wf_unicode_fragment"
