@@ -4,7 +4,7 @@ Agent Design Language (ADL) is a declarative, contract-driven way to define AI w
 
 ADL is built for teams that want repeatability. Documents are parsed and validated, then resolved into a deterministic plan before execution. That plan-first model makes behavior inspectable, testable, and easier to review than runtime-only orchestration.
 
-The current runtime (v0.4 milestone) focuses on predictable execution semantics: deterministic sequential execution, bounded concurrent fork execution, deterministic join barriers, explicit failure policies (`on_error: fail|continue`), and deterministic retry via `retry.max_attempts`.
+The current runtime (v0.5 milestone) focuses on predictable execution semantics: deterministic sequential execution, bounded concurrent fork execution, deterministic join barriers, explicit failure policies (`on_error: fail|continue`), and deterministic retry via `retry.max_attempts`.
 
 ADL also supports a remote HTTP provider MVP for controlled integration with external inference endpoints. Every run can emit stable artifacts under `.adl/runs/<run_id>/` (`run.json`, `steps.json`), which helps with reproducibility, debugging, and auditability.
 
@@ -26,7 +26,7 @@ cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-re
 
 [![swarm-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.4-green)
+![Milestone](https://img.shields.io/badge/milestone-v0.5-green)
 
 Badge semantics:
 - `swarm-ci`: main branch CI workflow status
@@ -35,9 +35,9 @@ Badge semantics:
 
 ## Status
 
-Current release: **v0.4.0**
+Current release: **v0.5.0**
 
-v0.4 ships:
+v0.5 ships:
 - ExecutionPlan-driven runtime execution
 - Bounded fork concurrency
 - Canonical concurrent ready-step ordering (lexicographic by `step_id`)
@@ -45,8 +45,11 @@ v0.4 ships:
 - Deterministic replay demos
 - Human-readable trace timestamps
 - Run/Step progress banners
+- Pattern compiler (`linear`, `fork_join`) with deterministic canonical IDs
+- Signing and verification CLI (`keygen`, `sign`, `verify`) with unsigned-run rejection on `--run`
+- Remote execution MVP (`/v1/health`, `/v1/execute`) with local scheduler ownership
 
-## Current Status (v0.4 Milestone)
+## Current Status (v0.5 Milestone)
 
 Implemented in the `swarm/` runtime:
 - Deterministic sequential execution
@@ -56,8 +59,11 @@ Implemented in the `swarm/` runtime:
 - Step-level failure policy: `on_error: fail|continue`
 - Deterministic retries: `retry.max_attempts` (no backoff)
 - Remote HTTP provider (MVP)
+- Remote execution MVP
+- Pattern compiler support via `run.pattern_ref`
+- Signing enforcement for `--run` with `keygen/sign/verify` support
 - Run state artifacts under `.adl/runs/<run_id>/` (`run.json`, `steps.json`)
-- No-network v0.4 demo harness (`swarm/tools/demo_v0_4.sh`)
+- Legacy no-network v0.4 demo harness (`swarm/tools/demo_v0_4.sh`)
 
 Explicitly deferred:
 - Configurable runtime parallelism controls
@@ -83,7 +89,7 @@ cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http
 
 To execute (`--run`) local-provider examples, run from `swarm/` with a local Ollama available.
 
-## v0.4 Demos
+## Legacy v0.4 Demos
 
 These demos are deterministic, non-interactive, and run without network by pinning the local mock provider binary.
 
@@ -113,19 +119,22 @@ Run all three demos in sequence:
 swarm/tools/demo_v0_4.sh
 ```
 
-## Why v0.4 Matters
+## Why v0.5 Matters
 
-v0.4 proves:
+v0.5 proves:
 - Concurrent execution in the real runtime
 - Deterministic replay behavior
 - Bounded parallelism
 - Stable artifacts under concurrency
+- Signed workflow execution defaults for safer `--run` operation
+- Pattern-driven workflow authoring with deterministic expansion
+- Remote execution MVP wiring without giving up local deterministic scheduling
 
 ## Default Workflow
 
 Default contributor workflow uses `adl_pr_cycle` (`start -> codex -> finish -> report`).
 - Guide: `docs/default_workflow.md`
-- Milestone docs: `docs/milestones/v0.4/`
+- Milestone docs: `docs/milestones/v0.5/`
 - Tools: `swarm/tools/README.md`
 
 ## License
