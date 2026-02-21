@@ -44,6 +44,15 @@ pub struct AdlDoc {
 
 impl AdlDoc {
     /// Load an ADL YAML document from a file path.
+    ///
+    /// Loading order:
+    /// 1. expands top-level `include` files with deterministic merge semantics
+    /// 2. validates the merged document against schema
+    /// 3. parses typed structures and runs semantic validation
+    ///
+    /// Security boundary:
+    /// - include paths must be relative and cannot traverse via `..`
+    /// - include cycles are rejected
     pub fn load_from_file(path: &str) -> Result<Self> {
         let merged = load_yaml_with_includes(Path::new(path), &mut Vec::new())
             .with_context(|| format!("read/merge adl file (with includes): {path}"))?;
@@ -62,6 +71,12 @@ impl AdlDoc {
     }
 
     /// Lightweight validation so we can fail fast with good errors.
+    ///
+    /// Invariants enforced here include:
+    /// - id/reference consistency across providers/tools/agents/tasks/workflows
+    /// - safe `write_to` path policy
+    /// - retry and concurrency bounds (`>= 1` where specified)
+    /// - mutual exclusion constraints for pattern/workflow run shapes
     pub fn validate(&self) -> Result<()> {
         if matches!(self.run.defaults.max_concurrency, Some(0)) {
             return Err(anyhow!(
