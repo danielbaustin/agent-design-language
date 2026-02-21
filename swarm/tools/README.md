@@ -6,6 +6,7 @@ Utility scripts for ADL workflow automation and PR hygiene.
 
 - `pr.sh`: Canonical start/finish helper for branching, checks, commit/push, and PR creation.
   `finish` exits non-zero on stage/commit/push/PR mutation failures.
+- `pr_smoke.sh`: Non-destructive preflight that validates `pr.sh` start/finish prerequisites and expected naming paths.
 - `codex_pr.sh`: Wrapper that composes `pr.sh start`, Codex execution, and `pr.sh finish`.
 - `codexw.sh`: Codex runner wrapper used by `codex_pr.sh`.
 - `card_paths.sh`: Canonical card path helpers.

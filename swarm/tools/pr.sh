@@ -150,6 +150,94 @@ ensure_clean_worktree() {
   fi
 }
 
+primary_checkout_root() {
+  card_primary_checkout_root
+}
+
+default_worktree_path_for_issue() {
+  local issue="$1"
+  local primary parent
+  primary="$(primary_checkout_root)"
+  parent="$(cd "$primary/.." && pwd -P)"
+  echo "$parent/adl-wp-${issue}"
+}
+
+branch_checked_out_worktree_path() {
+  local target_branch="$1"
+  local wt="" br=""
+  while IFS= read -r line; do
+    case "$line" in
+      worktree\ *)
+        wt="${line#worktree }"
+        br=""
+        ;;
+      branch\ refs/heads/*)
+        br="${line#branch refs/heads/}"
+        if [[ "$br" == "$target_branch" && -n "$wt" ]]; then
+          echo "$wt"
+          return 0
+        fi
+        ;;
+    esac
+  done < <(git worktree list --porcelain)
+  return 1
+}
+
+warn_branch_upstream_not_origin_main() {
+  local branch="$1"
+  local upstream
+  upstream="$(git for-each-ref --format='%(upstream:short)' "refs/heads/$branch" 2>/dev/null || true)"
+  if [[ "$upstream" != "origin/main" ]]; then
+    note "Warning: branch '$branch' upstream is '${upstream:-<none>}' (not origin/main)."
+    note "Remediation (optional): git branch --set-upstream-to=origin/main \"$branch\""
+  fi
+}
+
+ensure_primary_checkout_on_main() {
+  local primary current
+  primary="$(primary_checkout_root)"
+  current="$(git -C "$primary" rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+  [[ -n "$current" ]] || return 0
+  if [[ "$current" == "main" ]]; then
+    return 0
+  fi
+
+  if [[ -n "$(git -C "$primary" status --porcelain 2>/dev/null || true)" ]]; then
+    die "start: primary checkout ($primary) is on '$current' with local changes. Remediation: commit/stash there, switch to main, then rerun."
+  fi
+
+  note "Switching primary checkout back to main: $primary"
+  run_git_or_die "start: switch primary checkout to main" git -C "$primary" switch main
+}
+
+ensure_worktree_path_usable() {
+  local path="$1" branch="$2"
+
+  if [[ ! -e "$path" ]]; then
+    return 0
+  fi
+
+  if [[ ! -d "$path" ]]; then
+    die "start: worktree path exists but is not a directory: $path. Remediation: move/remove that path, then rerun."
+  fi
+
+  if ! git -C "$path" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    die "start: worktree path already exists and is not a git worktree: $path. Remediation: use an empty path or remove/move this directory."
+  fi
+
+  local shared wt_branch current_common
+  shared="$(git -C "$path" rev-parse --git-common-dir 2>/dev/null || true)"
+  current_common="$(git rev-parse --git-common-dir 2>/dev/null || true)"
+  wt_branch="$(git -C "$path" rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+
+  if [[ -z "$shared" || -z "$current_common" || "$shared" != "$current_common" ]]; then
+    die "start: path '$path' belongs to a different repository. Remediation: choose a different worktree path."
+  fi
+  if [[ "$wt_branch" != "$branch" ]]; then
+    die "start: worktree path '$path' is already on branch '$wt_branch' (expected '$branch'). Remediation: remove that worktree or use its current branch."
+  fi
+}
+
 sanitize_slug() {
   # Lowercase, keep alnum+dash, collapse dashes.
   local s="$1"
@@ -880,8 +968,6 @@ cmd_start() {
   fi
 
   require_cmd git
-  require_cmd gh
-
   local issue="${1:-}"; shift || true
   [[ -n "$issue" ]] || die_with_usage "start: missing <issue> number" usage_start
   issue="$(normalize_issue_or_die "$issue")"
@@ -891,6 +977,7 @@ cmd_start() {
   local no_fetch_issue="0"
   local title=""
   local title_arg=""
+  local branch_preexisting="0"
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -917,6 +1004,7 @@ cmd_start() {
     if [[ "$no_fetch_issue" == "1" ]]; then
       die "start: --slug is required when --no-fetch-issue is set"
     fi
+    require_cmd gh
     note "Fetching issue title via gh…"
     title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
     [[ -n "$title" ]] || die "Could not fetch issue #$issue title. Pass --slug or check gh auth/repo."
@@ -928,34 +1016,60 @@ cmd_start() {
 
   local branch
   branch="$(branch_for_issue "$prefix" "$issue" "$slug")"
+  local worktree_path
+  worktree_path="$(default_worktree_path_for_issue "$issue")"
 
   note "Target branch: $branch"
+  note "Target worktree: $worktree_path"
 
-  # Ensure we are on the target branch.
-  if [[ "$(current_branch)" == "$branch" ]]; then
-    note "Already on $branch"
-  elif git show-ref --verify --quiet "refs/heads/$branch"; then
-    note "Switching to existing local branch…"
-    run_git_or_die "start: switch to existing branch '$branch'" git switch "$branch"
-  elif git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
-    note "Branch exists on origin; checking out and tracking…"
-    run_git_or_die "start: switch to tracking branch 'origin/$branch'" git switch --track "origin/$branch"
-  else
-    # Otherwise create a new branch from origin/main without checking out local main.
-    ensure_clean_worktree
-
-    note "Fetching origin/main…"
-    run_git_or_die "start: fetch origin main" git fetch origin main
-    if ! git rev-parse --verify --quiet origin/main >/dev/null; then
-      die "start: origin/main not found after fetch; verify remote setup and permissions"
-    fi
-
-    note "Creating branch from origin/main…"
-    run_git_or_die "start: create branch '$branch' from origin/main" git checkout -b "$branch" origin/main
+  note "Fetching origin/main…"
+  run_git_or_die "start: fetch origin main" git fetch origin main
+  if ! git rev-parse --verify --quiet origin/main >/dev/null; then
+    die "start: origin/main not found after fetch; verify remote setup and permissions"
   fi
 
+  # Ensure local branch exists (without switching the caller to it).
+  if git show-ref --verify --quiet "refs/heads/$branch"; then
+    branch_preexisting="1"
+    note "Local branch exists; reusing: $branch"
+  elif git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+    note "Branch exists on origin; creating local tracking branch…"
+    run_git_or_die "start: create local branch '$branch' from origin/$branch" git branch --track "$branch" "origin/$branch"
+  else
+    note "Creating local branch from origin/main…"
+    run_git_or_die "start: create branch '$branch' from origin/main" git branch "$branch" origin/main
+  fi
+
+  if [[ "$branch_preexisting" == "1" ]]; then
+    warn_branch_upstream_not_origin_main "$branch"
+  fi
+
+  local branch_worktree
+  branch_worktree="$(branch_checked_out_worktree_path "$branch" || true)"
+  if [[ -n "$branch_worktree" ]]; then
+    if [[ "$branch_worktree" != "$worktree_path" ]]; then
+      die "start: branch '$branch' is already checked out in worktree '$branch_worktree'. Remediation: run commands there or remove it with 'git worktree remove \"$branch_worktree\"'."
+    fi
+    note "Reusing existing worktree for branch: $worktree_path"
+  else
+    ensure_worktree_path_usable "$worktree_path" "$branch"
+    if [[ -e "$worktree_path" ]]; then
+      note "Reusing existing worktree path: $worktree_path"
+    else
+      note "Creating worktree: $worktree_path"
+      run_git_or_die "start: git worktree add '$worktree_path' '$branch'" git worktree add "$worktree_path" "$branch"
+    fi
+  fi
+
+  ensure_primary_checkout_on_main
+
   local ver in_path out_path
-  ver="$(issue_version "$issue")"
+  if [[ "$no_fetch_issue" == "1" ]]; then
+    ver="$DEFAULT_VERSION"
+  else
+    require_cmd gh
+    ver="$(issue_version "$issue")"
+  fi
   in_path="$(input_card_path "$issue")"
   out_path="$(output_card_path "$issue")"
   ensure_adl_dirs
@@ -975,6 +1089,8 @@ cmd_start() {
   echo "• Agent:"
   echo "  READ   $in_path"
   echo "  WRITE  $out_path"
+  echo "  WORKTREE $worktree_path"
+  echo "  BRANCH $branch"
   echo "  OPEN   ./swarm/tools/open_artifact.sh card $issue output"
   note "Done."
 }
@@ -1393,6 +1509,10 @@ usage_start() {
   cat <<'EOF'
 Usage:
   swarm/tools/pr.sh start <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue]
+
+Notes:
+- Creates or reuses issue worktree at ../adl-wp-<issue>.
+- Keeps the primary checkout on main.
 EOF
 }
 
