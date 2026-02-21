@@ -239,6 +239,41 @@ Limits:
 - Request payloads over 5 MiB are rejected (`413`).
 - No authn/authz in v0.5 MVP (deferred).
 
+### Security Model / Threat Model (v0.5)
+
+This remote execution path is an MVP transport boundary, not a hardened public
+service. Treat it as trusted-network infrastructure only.
+
+Threat-model assumptions:
+- `swarm-remote` runs on localhost or a tightly controlled private network.
+- The caller and remote endpoint are operated by the same trusted team.
+- Network peers are trusted or isolated by external controls.
+
+Current protections:
+- Request-size guard: payloads larger than 5 MiB are rejected (`413`).
+- Placement boundary: scheduler/planner remain local; remote executes exactly
+  one fully resolved step from `POST /v1/execute`.
+- Timeout/error handling: transport timeout/unreachable/bad-status/invalid-json
+  failures are surfaced with explicit stable error categories.
+
+Known gaps / risks (v0.5):
+- No request signing for remote payloads.
+- No built-in authentication/authorization.
+- Unsafe to expose directly on a public interface.
+
+Operational guidance:
+- Bind to loopback for local development:
+  - `cargo run -q --bin swarm-remote -- 127.0.0.1:8787`
+- If cross-host is required, prefer private networking plus an authenticated
+  tunnel (for example SSH tunnel or VPN), and restrict ingress with firewall
+  rules to trusted sources only.
+- Log and monitor remote-server lifecycle/events and non-2xx responses so
+  misconfiguration or abuse is visible quickly.
+
+Forward-looking hardening work:
+- v0.6 remote execution security envelope: https://github.com/danielbaustin/agent-design-language/issues/370
+- v0.6 signing trust policy tightening: https://github.com/danielbaustin/agent-design-language/issues/371
+
 ---
 
 ## Schema Validation
