@@ -1901,8 +1901,6 @@ fn run_v0_3_concurrent_execution_is_deterministic_across_runs() {
 
 #[test]
 fn run_v0_3_concurrent_workflow_respects_bounded_parallelism() {
-    use std::time::Instant;
-
     let base = tmp_dir("exec-concurrent-v0-3-bounded");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepTrackConcurrency);
     let new_path = prepend_path(&base);
@@ -1969,9 +1967,7 @@ run:
     let tmp_yaml = base.join("bounded-parallelism.yaml");
     fs::write(&tmp_yaml, yaml).unwrap();
 
-    let started = Instant::now();
     let out = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run"]);
-    let elapsed = started.elapsed().as_secs_f64();
     assert!(
         out.status.success(),
         "expected success for bounded parallelism run.\nstdout:\n{}\nstderr:\n{}",
@@ -1979,9 +1975,31 @@ run:
         String::from_utf8_lossy(&out.stderr)
     );
 
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    // Deterministic bounded scheduling evidence:
+    // - first batch (s1..s4) starts before any step completion
+    // - second batch (s5) cannot start until at least one completion occurs
+    let s1_start = stderr
+        .find("STEP start")
+        .expect("missing step start progress in stderr");
+    let s4_start = stderr
+        .find("STEP start (+0ms) s4 provider=local")
+        .or_else(|| stderr.find(" s4 provider=local"))
+        .expect("missing start marker for s4 in stderr");
+    let first_done = stderr
+        .find("STEP done")
+        .expect("missing step completion progress in stderr");
+    let s5_start = stderr
+        .find(" s5 provider=local")
+        .expect("missing start marker for s5 in stderr");
+
     assert!(
-        (1.6..=4.5).contains(&elapsed),
-        "expected bounded parallel runtime window (>=1.6s and <=4.5s), got {elapsed:.3}s"
+        s1_start < s4_start && s4_start < first_done,
+        "expected first bounded batch (s1..s4) to start before first completion.\nstderr:\n{stderr}"
+    );
+    assert!(
+        first_done < s5_start,
+        "expected s5 to wait for a completion from the first bounded batch.\nstderr:\n{stderr}"
     );
 }
 
