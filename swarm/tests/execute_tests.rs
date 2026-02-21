@@ -151,6 +151,23 @@ fn materialize_inputs_rejects_non_utf8() {
 }
 
 #[test]
+fn materialize_inputs_accepts_exact_max_size() {
+    let base = tmp_dir("mat-maxsize-exact");
+    let exact = vec![b'a'; 512 * 1024];
+    write_file(&base, "docs/exact.txt", &exact);
+
+    let mut inputs = HashMap::new();
+    inputs.insert("doc_1".to_string(), "@file:docs/exact.txt".to_string());
+
+    let out = materialize_inputs(inputs, &base).unwrap();
+    assert_eq!(
+        out.get("doc_1").map(|s| s.len()),
+        Some(512 * 1024),
+        "exact MAX payload should be accepted"
+    );
+}
+
+#[test]
 fn materialize_inputs_enforces_max_size() {
     let base = tmp_dir("mat-maxsize");
     // MAX is 512 KiB; create 513 KiB
