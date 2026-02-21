@@ -202,7 +202,7 @@ ensure_primary_checkout_on_main() {
     return 0
   fi
 
-  if ! git -C "$primary" diff --quiet || ! git -C "$primary" diff --cached --quiet; then
+  if [[ -n "$(git -C "$primary" status --porcelain 2>/dev/null || true)" ]]; then
     die "start: primary checkout ($primary) is on '$current' with local changes. Remediation: commit/stash there, switch to main, then rerun."
   fi
 

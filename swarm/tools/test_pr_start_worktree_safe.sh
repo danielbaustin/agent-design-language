@@ -97,6 +97,20 @@ assert_contains() {
   }
   assert_contains "already checked out in worktree" "$bad" "collision message"
   assert_contains "git worktree remove" "$bad" "collision remediation"
+
+  git branch codex/997-guardrail origin/main
+  git switch -q -c codex/996-dirty origin/main
+  echo "keep-me" > untracked.txt
+  set +e
+  bad2="$("$BASH_BIN" swarm/tools/pr.sh start 997 --slug guardrail --no-fetch-issue 2>&1)"
+  status=$?
+  set -e
+  [[ "$status" -ne 0 ]] || {
+    echo "assertion failed: expected dirty primary checkout guard to fail" >&2
+    exit 1
+  }
+  assert_contains "with local changes" "$bad2" "dirty guard message"
+  assert_contains "commit/stash there, switch to main, then rerun" "$bad2" "dirty guard remediation"
 )
 
 echo "pr.sh start worktree-safe/idempotent flows: ok"
