@@ -392,6 +392,7 @@ mod tests {
             as_ns: None,
             prompt: None,
             inputs,
+            guards: vec![],
             save_as: save_as.map(str::to_string),
             delegation: None,
             write_to: None,

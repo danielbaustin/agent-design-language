@@ -2,6 +2,7 @@ use std::collections::{HashMap, HashSet};
 use std::path::{Component, Path, PathBuf};
 
 use anyhow::{anyhow, Context, Result};
+use serde::{Deserialize, Serialize};
 
 use crate::bounded_executor;
 use crate::prompt;
@@ -147,6 +148,38 @@ pub struct ExecutionResult {
     pub outputs: Vec<StepOutput>,
     pub artifacts: Vec<PathBuf>,
     pub records: Vec<StepExecutionRecord>,
+    pub pause: Option<PauseState>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PauseState {
+    pub paused_step_id: String,
+    pub reason: Option<String>,
+    pub completed_step_ids: Vec<String>,
+    pub remaining_step_ids: Vec<String>,
+    pub saved_state: HashMap<String, String>,
+    pub completed_outputs: HashMap<String, String>,
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct ResumeState {
+    pub completed_step_ids: HashSet<String>,
+    pub saved_state: HashMap<String, String>,
+    pub completed_outputs: HashMap<String, String>,
+}
+
+fn pause_reason_for_step(step: &crate::resolve::ResolvedStep) -> Option<Option<String>> {
+    for guard in &step.guards {
+        if guard.kind.trim().eq_ignore_ascii_case("pause") {
+            let reason = guard
+                .config
+                .get("reason")
+                .and_then(|v| v.as_str())
+                .map(|s| s.to_string());
+            return Some(reason);
+        }
+    }
+    None
 }
 
 fn progress_step_start(enabled: bool, tr: &Trace, step_id: &str, provider_id: &str) {
@@ -197,6 +230,26 @@ pub fn execute_sequential(
     adl_base_dir: &Path,
     out_dir: &Path,
 ) -> Result<ExecutionResult> {
+    execute_sequential_with_resume(
+        resolved,
+        tr,
+        print_outputs,
+        emit_progress,
+        adl_base_dir,
+        out_dir,
+        None,
+    )
+}
+
+pub fn execute_sequential_with_resume(
+    resolved: &AdlResolved,
+    tr: &mut Trace,
+    print_outputs: bool,
+    emit_progress: bool,
+    adl_base_dir: &Path,
+    out_dir: &Path,
+    resume: Option<ResumeState>,
+) -> Result<ExecutionResult> {
     let is_concurrent = matches!(
         resolved.execution_plan.workflow_kind,
         crate::adl::WorkflowKind::Concurrent
@@ -220,16 +273,31 @@ pub fn execute_sequential(
             emit_progress,
             adl_base_dir,
             out_dir,
+            resume.as_ref(),
         );
     }
 
     let mut outs = Vec::new();
     let mut artifacts = Vec::new();
     let mut records = Vec::new();
-    let mut saved_state: HashMap<String, String> = HashMap::new();
+    let mut saved_state: HashMap<String, String> = resume
+        .as_ref()
+        .map(|r| r.saved_state.clone())
+        .unwrap_or_default();
+    let mut completed_outputs: HashMap<String, String> = resume
+        .as_ref()
+        .map(|r| r.completed_outputs.clone())
+        .unwrap_or_default();
+    let mut completed_step_ids: HashSet<String> = resume
+        .as_ref()
+        .map(|r| r.completed_step_ids.clone())
+        .unwrap_or_default();
 
     for step in &resolved.steps {
         let step_id = step.id.clone();
+        if completed_step_ids.contains(&step_id) {
+            continue;
+        }
 
         let agent_id: &str = step.agent.as_deref().unwrap_or("<unresolved-agent>");
         let task_id: &str = step.task.as_deref().unwrap_or("<unresolved-task>");
@@ -294,6 +362,31 @@ pub fn execute_sequential(
                         attempts: 1,
                         output_bytes: 0,
                     });
+                    completed_step_ids.insert(step_id.clone());
+                    if let Some(reason) = pause_reason_for_step(step) {
+                        let mut completed_step_ids_vec: Vec<String> =
+                            completed_step_ids.iter().cloned().collect();
+                        completed_step_ids_vec.sort();
+                        let remaining_step_ids = resolved
+                            .steps
+                            .iter()
+                            .map(|s| s.id.clone())
+                            .filter(|id| !completed_step_ids.contains(id))
+                            .collect::<Vec<_>>();
+                        return Ok(ExecutionResult {
+                            outputs: outs,
+                            artifacts,
+                            records,
+                            pause: Some(PauseState {
+                                paused_step_id: step_id,
+                                reason,
+                                completed_step_ids: completed_step_ids_vec,
+                                remaining_step_ids,
+                                saved_state,
+                                completed_outputs,
+                            }),
+                        });
+                    }
                     continue;
                 }
                 Err(err) => {
@@ -467,7 +560,34 @@ pub fn execute_sequential(
                 if let Some(save_as) = step.save_as.as_ref() {
                     saved_state.insert(save_as.clone(), out.model_output.clone());
                 }
+                completed_outputs.insert(step_id.clone(), out.model_output.clone());
+                completed_step_ids.insert(step_id.clone());
                 outs.push(out);
+
+                if let Some(reason) = pause_reason_for_step(step) {
+                    let mut completed_vec: Vec<String> =
+                        completed_step_ids.iter().cloned().collect();
+                    completed_vec.sort();
+                    let remaining_step_ids = resolved
+                        .steps
+                        .iter()
+                        .map(|s| s.id.clone())
+                        .filter(|id| !completed_step_ids.contains(id))
+                        .collect::<Vec<_>>();
+                    return Ok(ExecutionResult {
+                        outputs: outs,
+                        artifacts,
+                        records,
+                        pause: Some(PauseState {
+                            paused_step_id: step_id,
+                            reason,
+                            completed_step_ids: completed_vec,
+                            remaining_step_ids,
+                            saved_state,
+                            completed_outputs,
+                        }),
+                    });
+                }
             }
             None => {
                 let err = last_err.unwrap_or_else(|| anyhow!("step '{}' failed", step_id));
@@ -501,6 +621,7 @@ pub fn execute_sequential(
         outputs: outs,
         artifacts,
         records,
+        pause: None,
     })
 }
 
@@ -760,6 +881,7 @@ fn resolved_step_from_raw_step(
         delegation: step.delegation.clone(),
         prompt: step.prompt.clone(),
         inputs: step.inputs.clone(),
+        guards: step.guards.clone(),
         save_as: step.save_as.clone(),
         write_to: step.write_to.clone(),
         on_error: step.on_error.clone(),
@@ -976,6 +1098,7 @@ fn execute_concurrent_deterministic(
     emit_progress: bool,
     adl_base_dir: &Path,
     out_dir: &Path,
+    resume: Option<&ResumeState>,
 ) -> Result<ExecutionResult> {
     let max_parallel = effective_max_concurrency(resolved)?;
 
@@ -983,14 +1106,23 @@ fn execute_concurrent_deterministic(
     let mut artifacts = Vec::new();
     let mut records = Vec::new();
     let mut progress_started_ms: HashMap<String, u128> = HashMap::new();
-    let mut saved_state: HashMap<String, String> = HashMap::new();
-    let mut completed: HashSet<String> = HashSet::new();
+    let mut saved_state: HashMap<String, String> =
+        resume.map(|r| r.saved_state.clone()).unwrap_or_default();
+    let mut completed_outputs: HashMap<String, String> = resume
+        .map(|r| r.completed_outputs.clone())
+        .unwrap_or_default();
+    let mut completed: HashSet<String> = resume
+        .map(|r| r.completed_step_ids.clone())
+        .unwrap_or_default();
     let mut pending: HashSet<String> = resolved
         .execution_plan
         .nodes
         .iter()
         .map(|n| n.step_id.clone())
         .collect();
+    for done in &completed {
+        pending.remove(done);
+    }
     let by_id: HashMap<String, crate::resolve::ResolvedStep> = resolved
         .steps
         .iter()
@@ -1071,6 +1203,7 @@ fn execute_concurrent_deterministic(
         }
 
         let results = bounded_executor::run_bounded(max_parallel, jobs)?;
+        let mut batch_pause: Option<(String, Option<String>)> = None;
         for (step_id, run_result) in results {
             let step = by_id
                 .get(&step_id)
@@ -1115,8 +1248,12 @@ fn execute_concurrent_deterministic(
                     if let Some(save_as) = step.save_as.as_ref() {
                         saved_state.insert(save_as.clone(), success.out.model_output.clone());
                     }
+                    completed_outputs.insert(step_id.clone(), success.out.model_output.clone());
                     outs.push(success.out);
-                    completed.insert(step_id);
+                    completed.insert(step_id.clone());
+                    if let Some(reason) = pause_reason_for_step(step) {
+                        batch_pause = Some((step_id.clone(), reason));
+                    }
                 }
                 Err(err) => {
                     tr.step_finished(&step_id, false);
@@ -1148,12 +1285,32 @@ fn execute_concurrent_deterministic(
                 }
             }
         }
+        if let Some((paused_step_id, reason)) = batch_pause {
+            let mut completed_step_ids: Vec<String> = completed.iter().cloned().collect();
+            completed_step_ids.sort();
+            let mut remaining_step_ids: Vec<String> = pending.iter().cloned().collect();
+            remaining_step_ids.sort();
+            return Ok(ExecutionResult {
+                outputs: outs,
+                artifacts,
+                records,
+                pause: Some(PauseState {
+                    paused_step_id,
+                    reason,
+                    completed_step_ids,
+                    remaining_step_ids,
+                    saved_state,
+                    completed_outputs,
+                }),
+            });
+        }
     }
 
     Ok(ExecutionResult {
         outputs: outs,
         artifacts,
         records,
+        pause: None,
     })
 }
 
