@@ -1,0 +1,20 @@
+[
+  {
+    "kind": "StepStarted",
+    "step_id": "s1",
+    "agent_id": "agent-a",
+    "provider_id": "provider-a",
+    "task_id": "task-a",
+    "delegation_json": null
+  },
+  {
+    "kind": "StepOutputChunk",
+    "step_id": "s1",
+    "chunk_bytes": 12
+  },
+  {
+    "kind": "StepFinished",
+    "step_id": "s1",
+    "success": true
+  }
+]

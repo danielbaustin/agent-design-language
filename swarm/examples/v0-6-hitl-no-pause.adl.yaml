@@ -1,0 +1,39 @@
+version: "0.3"
+
+providers:
+  local:
+    type: "ollama"
+
+agents:
+  worker:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t:
+    prompt:
+      user: "step {{n}}"
+
+run:
+  name: "v0-6-hitl-no-pause-demo"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "worker"
+        task: "t"
+        inputs: { n: "1" }
+        save_as: "s1"
+        write_to: "s1.txt"
+      - id: "s2"
+        agent: "worker"
+        task: "t"
+        inputs: { n: "2" }
+        save_as: "s2"
+        write_to: "s2.txt"
+      - id: "s3"
+        agent: "worker"
+        task: "t"
+        inputs: { n: "3" }
+        save_as: "s3"
+        write_to: "s3.txt"
