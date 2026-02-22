@@ -269,3 +269,100 @@ fn missing_path_is_an_error() {
         "expected stderr to mention missing args"
     );
 }
+
+#[test]
+fn instrument_graph_output_is_stable() {
+    let path = fixture_path("examples/v0-5-pattern-fork-join.adl.yaml");
+    let out1 = run_swarm(&[
+        "instrument",
+        "graph",
+        path.to_str().unwrap(),
+        "--format",
+        "json",
+    ]);
+    let out2 = run_swarm(&[
+        "instrument",
+        "graph",
+        path.to_str().unwrap(),
+        "--format",
+        "json",
+    ]);
+
+    assert!(
+        out1.status.success() && out2.status.success(),
+        "expected success, stderr1:\n{}\nstderr2:\n{}",
+        String::from_utf8_lossy(&out1.stderr),
+        String::from_utf8_lossy(&out2.stderr)
+    );
+    assert_eq!(
+        out1.stdout, out2.stdout,
+        "expected deterministic graph export output"
+    );
+}
+
+#[test]
+fn instrument_replay_and_diff_trace_outputs_are_stable() {
+    let d = unique_test_temp_dir("instrument-replay-diff");
+    let trace_a = d.join("trace-a.json");
+    let trace_b = d.join("trace-b.json");
+
+    let trace_json = r#"[
+  {
+    "kind": "StepStarted",
+    "step_id": "s1",
+    "agent_id": "a",
+    "provider_id": "p",
+    "task_id": "t",
+    "delegation_json": null
+  },
+  {
+    "kind": "StepOutputChunk",
+    "step_id": "s1",
+    "chunk_bytes": 12
+  },
+  {
+    "kind": "StepFinished",
+    "step_id": "s1",
+    "success": true
+  }
+]"#;
+
+    fs::write(&trace_a, trace_json).expect("write trace_a");
+    fs::write(&trace_b, trace_json).expect("write trace_b");
+
+    let replay1 = run_swarm(&["instrument", "replay", trace_a.to_str().unwrap()]);
+    let replay2 = run_swarm(&["instrument", "replay", trace_a.to_str().unwrap()]);
+    assert!(
+        replay1.status.success() && replay2.status.success(),
+        "expected success, stderr1:\n{}\nstderr2:\n{}",
+        String::from_utf8_lossy(&replay1.stderr),
+        String::from_utf8_lossy(&replay2.stderr)
+    );
+    assert_eq!(
+        replay1.stdout, replay2.stdout,
+        "expected stable replay output"
+    );
+
+    let diff1 = run_swarm(&[
+        "instrument",
+        "diff-trace",
+        trace_a.to_str().unwrap(),
+        trace_b.to_str().unwrap(),
+    ]);
+    let diff2 = run_swarm(&[
+        "instrument",
+        "diff-trace",
+        trace_a.to_str().unwrap(),
+        trace_b.to_str().unwrap(),
+    ]);
+    assert!(
+        diff1.status.success() && diff2.status.success(),
+        "expected success, stderr1:\n{}\nstderr2:\n{}",
+        String::from_utf8_lossy(&diff1.stderr),
+        String::from_utf8_lossy(&diff2.stderr)
+    );
+    assert_eq!(
+        diff1.stdout, diff2.stdout,
+        "expected stable trace diff output"
+    );
+}

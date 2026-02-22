@@ -801,15 +801,16 @@ impl DelegationSpec {
         tags.dedup();
         Self {
             role: self.role.clone(),
-            requires_verification: self.requires_verification,
+            requires_verification: self.requires_verification.filter(|v| *v),
             escalation_target: self.escalation_target.clone(),
             tags,
         }
     }
 
     pub fn is_effectively_empty(&self) -> bool {
+        let requires_verification = self.requires_verification.unwrap_or(false);
         self.role.is_none()
-            && self.requires_verification.is_none()
+            && !requires_verification
             && self.escalation_target.is_none()
             && self.tags.is_empty()
     }
