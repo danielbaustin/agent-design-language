@@ -7,6 +7,7 @@ use std::fmt;
 use std::io::{Read, Write};
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
+use std::sync::mpsc;
 use std::thread;
 use std::time::{Duration, Instant};
 
@@ -15,6 +16,12 @@ use crate::adl;
 /// A minimal blocking provider interface for v0.1.
 pub trait Provider: Send + Sync {
     fn complete(&self, prompt: &str) -> Result<String>;
+
+    fn complete_stream(&self, prompt: &str, on_chunk: &mut dyn FnMut(&str)) -> Result<String> {
+        let out = self.complete(prompt)?;
+        on_chunk(&out);
+        Ok(out)
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -297,10 +304,12 @@ impl OllamaProvider {
 
         Ok(Self { model, temperature })
     }
-}
 
-impl Provider for OllamaProvider {
-    fn complete(&self, prompt: &str) -> Result<String> {
+    fn complete_streaming(
+        &self,
+        prompt: &str,
+        mut on_chunk: Option<&mut dyn FnMut(&str)>,
+    ) -> Result<String> {
         let timeout_secs =
             timeout_secs().map_err(|err| invalid_config("ollama", err.to_string()))?;
 
@@ -308,9 +317,6 @@ impl Provider for OllamaProvider {
         // but the `ollama` CLI does not consistently expose a stable flag across versions.
         // Read the field so it does not trip `-D dead-code`, and keep behavior deterministic.
         let _temperature = self.temperature;
-        // NOTE: Ollama CLI does not universally support a temperature flag for all models/versions.
-        // For v0.1 we keep it simple: run the model and pass the prompt on stdin.
-        // You can expand this later (parking lot: richer generation params).
         let mut child = Command::new(ollama_bin())
             .arg("run")
             .arg(&self.model)
@@ -332,12 +338,20 @@ impl Provider for OllamaProvider {
             .context("failed to open stderr for ollama")
             .map_err(|err| runtime_error("ollama", err.to_string()))?;
 
-        // Drain stdout/stderr concurrently to avoid deadlock if the child fills pipe buffers.
-        let out_handle = thread::spawn(move || -> std::io::Result<Vec<u8>> {
+        let (tx, rx) = mpsc::channel::<Vec<u8>>();
+        let out_handle = thread::spawn(move || -> std::io::Result<()> {
             let mut r = stdout;
-            let mut buf = Vec::new();
-            r.read_to_end(&mut buf)?;
-            Ok(buf)
+            let mut buf = [0u8; 4096];
+            loop {
+                let n = r.read(&mut buf)?;
+                if n == 0 {
+                    break;
+                }
+                if tx.send(buf[..n].to_vec()).is_err() {
+                    break;
+                }
+            }
+            Ok(())
         });
 
         let err_handle = thread::spawn(move || -> std::io::Result<Vec<u8>> {
@@ -357,14 +371,21 @@ impl Provider for OllamaProvider {
                 .write_all(prompt.as_bytes())
                 .context("failed writing prompt to ollama stdin")
                 .map_err(|err| runtime_error("ollama", err.to_string()))?;
-            // Explicitly close stdin so ollama sees EOF.
             drop(stdin);
         }
 
         let start = Instant::now();
         let timeout = Duration::from_secs(timeout_secs);
+        let mut out_buf = Vec::new();
 
         let status = loop {
+            while let Ok(chunk) = rx.try_recv() {
+                out_buf.extend_from_slice(&chunk);
+                if let Some(cb) = on_chunk.as_deref_mut() {
+                    cb(&String::from_utf8_lossy(&chunk));
+                }
+            }
+
             if let Some(status) = child
                 .try_wait()
                 .context("failed waiting for ollama process")
@@ -398,7 +419,14 @@ impl Provider for OllamaProvider {
             std::thread::sleep(Duration::from_millis(10));
         };
 
-        let out_buf = out_handle
+        while let Ok(chunk) = rx.try_recv() {
+            out_buf.extend_from_slice(&chunk);
+            if let Some(cb) = on_chunk.as_deref_mut() {
+                cb(&String::from_utf8_lossy(&chunk));
+            }
+        }
+
+        out_handle
             .join()
             .map_err(|_| runtime_error("ollama", "stdout reader thread panicked"))?
             .context("failed reading ollama stdout")
@@ -425,6 +453,16 @@ impl Provider for OllamaProvider {
             .context("ollama output was not valid UTF-8")
             .map_err(|err| runtime_error("ollama", err.to_string()))?;
         Ok(stdout)
+    }
+}
+
+impl Provider for OllamaProvider {
+    fn complete(&self, prompt: &str) -> Result<String> {
+        self.complete_streaming(prompt, None)
+    }
+
+    fn complete_stream(&self, prompt: &str, on_chunk: &mut dyn FnMut(&str)) -> Result<String> {
+        self.complete_streaming(prompt, Some(on_chunk))
     }
 }
 
