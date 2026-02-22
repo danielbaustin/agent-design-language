@@ -114,6 +114,9 @@ pub fn materialize_inputs(
 /// Maximum allowed bytes per `@file:` materialized input.
 pub const MATERIALIZE_INPUT_MAX_FILE_BYTES: u64 = 512 * 1024;
 
+/// Default concurrency cap for concurrent workflow runs when no override is provided.
+const DEFAULT_MAX_CONCURRENCY: usize = 4;
+
 /// Result of executing one step.
 #[allow(dead_code)] // v0.1: returned for callers / future use; not all fields are read yet
 #[derive(Debug, Clone)]
@@ -182,6 +185,10 @@ fn progress_step_done(enabled: bool, tr: &Trace, step_id: &str, ok: bool, durati
 /// Determinism:
 /// - ready-step ordering is lexicographic by full step id
 /// - bounded batches preserve deterministic output/record order
+/// - effective max concurrency for concurrent workflow runs is deterministic and applied as:
+///   1) run.workflow.max_concurrency (or workflows.<id>.max_concurrency via workflow_ref)
+///   2) run.defaults.max_concurrency
+///   3) DEFAULT_MAX_CONCURRENCY
 pub fn execute_sequential(
     resolved: &AdlResolved,
     tr: &mut Trace,
@@ -787,6 +794,34 @@ fn effective_step_placement(
         .unwrap_or(crate::adl::PlacementMode::Local)
 }
 
+fn effective_max_concurrency(resolved: &AdlResolved) -> Result<usize> {
+    let workflow_override = if resolved.doc.run.pattern_ref.is_some() {
+        None
+    } else {
+        Some(
+            resolved
+                .doc
+                .run
+                .resolve_workflow(&resolved.doc)
+                .context("resolve workflow for max_concurrency precedence")?
+                .max_concurrency,
+        )
+        .flatten()
+    };
+
+    let max_parallel = workflow_override
+        .or(resolved.doc.run.defaults.max_concurrency)
+        .unwrap_or(DEFAULT_MAX_CONCURRENCY);
+
+    if max_parallel == 0 {
+        return Err(anyhow!(
+            "effective max_concurrency must be >= 1 for concurrent runs"
+        ));
+    }
+
+    Ok(max_parallel)
+}
+
 fn execute_step_with_retry(
     step: &crate::resolve::ResolvedStep,
     doc: &crate::adl::AdlDoc,
@@ -929,18 +964,7 @@ fn execute_concurrent_deterministic(
     adl_base_dir: &Path,
     out_dir: &Path,
 ) -> Result<ExecutionResult> {
-    const DEFAULT_MAX_PARALLEL: usize = 4;
-    let max_parallel = resolved
-        .doc
-        .run
-        .defaults
-        .max_concurrency
-        .unwrap_or(DEFAULT_MAX_PARALLEL);
-    if max_parallel == 0 {
-        return Err(anyhow!(
-            "run.defaults.max_concurrency must be >= 1 for concurrent runs"
-        ));
-    }
+    let max_parallel = effective_max_concurrency(resolved)?;
 
     let mut outs = Vec::new();
     let mut artifacts = Vec::new();
