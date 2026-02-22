@@ -176,6 +176,7 @@ Gate:
 
 Subtasks:
 - Align README with v0.6 scope.
+- Eliminate duplicated README content in root and swarm directories; establish canonical docs locations.
 - Link milestone docs.
 - Validate threat-model alignment (#370, #371).
 - Final regression review.
