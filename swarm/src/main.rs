@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use swarm::{adl, demo, execute, plan, prompt, resolve, signing, trace};
+use swarm::{adl, demo, execute, instrumentation, plan, prompt, resolve, signing, trace};
 
 fn usage() -> &'static str {
     "Usage:
@@ -13,6 +13,7 @@ fn usage() -> &'static str {
   swarm demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
   swarm keygen --out-dir <dir>
   swarm sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
+  swarm instrument <graph|replay|diff-plan|diff-trace> ...
   swarm verify <adl.yaml> [--key <public_key_path>]
 
 Options:
@@ -39,6 +40,10 @@ Examples:
   swarm demo demo-b-one-command --run --out ./out
   swarm keygen --out-dir ./.keys
   swarm sign examples/v0-5-pattern-linear.adl.yaml --key ./.keys/ed25519-private.b64 --out /tmp/signed.adl.yaml
+  swarm instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format dot
+  swarm instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format json
+  swarm instrument replay /tmp/trace.json
+  swarm instrument diff-trace /tmp/trace-a.json /tmp/trace-b.json
   swarm verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"
 }
 
@@ -78,6 +83,9 @@ fn real_main() -> Result<()> {
     }
     if matches!(args.first().map(|s| s.as_str()), Some("sign")) {
         return real_sign(&args[1..]);
+    }
+    if matches!(args.first().map(|s| s.as_str()), Some("instrument")) {
+        return real_instrument(&args[1..]);
     }
     if matches!(args.first().map(|s| s.as_str()), Some("verify")) {
         return real_verify(&args[1..]);
@@ -479,6 +487,96 @@ fn real_verify(args: &[String]) -> Result<()> {
     Ok(())
 }
 
+fn real_instrument(args: &[String]) -> Result<()> {
+    let Some(cmd) = args.first().map(|s| s.as_str()) else {
+        eprintln!("instrument requires one of: graph | replay | diff-plan | diff-trace");
+        std::process::exit(2);
+    };
+
+    match cmd {
+        "graph" => {
+            let Some(path) = args.get(1) else {
+                eprintln!("instrument graph requires <adl.yaml>");
+                std::process::exit(2);
+            };
+            let mut format = "json";
+            let mut i = 2;
+            while i < args.len() {
+                match args[i].as_str() {
+                    "--format" => {
+                        let Some(v) = args.get(i + 1) else {
+                            eprintln!("instrument graph requires --format <json|dot>");
+                            std::process::exit(2);
+                        };
+                        format = v.as_str();
+                        i += 1;
+                    }
+                    other => {
+                        eprintln!("Unknown arg for instrument graph: {other}");
+                        std::process::exit(2);
+                    }
+                }
+                i += 1;
+            }
+
+            let plan = resolve_execution_plan(Path::new(path))?;
+            match format {
+                "json" => println!("{}", instrumentation::export_graph_json(&plan)?),
+                "dot" => println!("{}", instrumentation::export_graph_dot(&plan)),
+                other => {
+                    return Err(anyhow::anyhow!(
+                        "unsupported --format '{other}' (expected json|dot)"
+                    ));
+                }
+            }
+        }
+        "replay" => {
+            let Some(path) = args.get(1) else {
+                eprintln!("instrument replay requires <trace.json>");
+                std::process::exit(2);
+            };
+            if args.len() > 2 {
+                eprintln!("instrument replay accepts exactly one <trace.json>");
+                std::process::exit(2);
+            }
+            let events = instrumentation::load_trace_artifact(Path::new(path))?;
+            let replay = instrumentation::replay_trace(&events);
+            println!("{}", serde_json::to_string_pretty(&replay)?);
+        }
+        "diff-plan" => {
+            let Some(left) = args.get(1) else {
+                eprintln!("instrument diff-plan requires <left.adl.yaml> <right.adl.yaml>");
+                std::process::exit(2);
+            };
+            let Some(right) = args.get(2) else {
+                eprintln!("instrument diff-plan requires <left.adl.yaml> <right.adl.yaml>");
+                std::process::exit(2);
+            };
+            let left_plan = resolve_execution_plan(Path::new(left))?;
+            let right_plan = resolve_execution_plan(Path::new(right))?;
+            let diff = instrumentation::diff_plans(&left_plan, &right_plan);
+            println!("{}", serde_json::to_string_pretty(&diff)?);
+        }
+        "diff-trace" => {
+            let Some(left) = args.get(1) else {
+                eprintln!("instrument diff-trace requires <left.trace.json> <right.trace.json>");
+                std::process::exit(2);
+            };
+            let Some(right) = args.get(2) else {
+                eprintln!("instrument diff-trace requires <left.trace.json> <right.trace.json>");
+                std::process::exit(2);
+            };
+            let left_events = instrumentation::load_trace_artifact(Path::new(left))?;
+            let right_events = instrumentation::load_trace_artifact(Path::new(right))?;
+            let diff = instrumentation::diff_traces(&left_events, &right_events);
+            println!("{}", serde_json::to_string_pretty(&diff)?);
+        }
+        _ => return Err(anyhow::anyhow!("unknown instrument subcommand '{cmd}'")),
+    }
+
+    Ok(())
+}
+
 fn enforce_signature_policy(doc: &adl::AdlDoc, do_run: bool, allow_unsigned: bool) -> Result<()> {
     if do_run && doc.version.trim() == "0.5" && !allow_unsigned {
         signing::verify_doc(doc, None)
@@ -816,6 +914,14 @@ fn is_ci_environment() -> bool {
         }
         Err(_) => false,
     }
+}
+
+fn resolve_execution_plan(path: &Path) -> Result<swarm::execution_plan::ExecutionPlan> {
+    let path_str = path.to_str().context("path must be valid UTF-8")?;
+    let doc = adl::AdlDoc::load_from_file(path_str)
+        .with_context(|| format!("failed to load ADL document: {}", path.display()))?;
+    let resolved = resolve::resolve_run(&doc)?;
+    Ok(resolved.execution_plan)
 }
 
 trait CommandRunner {
