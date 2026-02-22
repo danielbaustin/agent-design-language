@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::process::Stdio;
@@ -9,7 +9,7 @@ use swarm::{adl, demo, execute, plan, prompt, resolve, signing, trace};
 
 fn usage() -> &'static str {
     "Usage:
-  swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--out <dir>] [--quiet] [--open]
+  swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--resume <run.json>] [--out <dir>] [--quiet] [--open]
   swarm demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
   swarm keygen --out-dir <dir>
   swarm sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
@@ -20,6 +20,7 @@ Options:
   --print-prompts    Print assembled prompts (--print-prompt also accepted)
   --trace            Emit trace events (dry-run unless --run)
   --run              Execute the workflow
+  --resume <path>    Resume a previously paused run from run.json
   --out <dir>        Write step outputs to files under this directory (default: ./out)
   --quiet            Suppress per-step output bodies (--no-step-output also accepted)
   --open             Open the first written HTML artifact after a successful run
@@ -100,6 +101,7 @@ fn real_main() -> Result<()> {
     let mut quiet = false;
     let mut do_open = false;
     let mut allow_unsigned = false;
+    let mut resume_path: Option<PathBuf> = None;
 
     let mut i = 1;
     while i < args.len() {
@@ -109,6 +111,15 @@ fn real_main() -> Result<()> {
             "--print-prompts" | "--print-prompt" => print_prompts = true,
             "--trace" => do_trace = true,
             "--run" => do_run = true,
+            "--resume" => {
+                let Some(path) = args.get(i + 1) else {
+                    eprintln!("--resume requires a run.json path");
+                    eprintln!("{}", usage());
+                    std::process::exit(2);
+                };
+                resume_path = Some(PathBuf::from(path));
+                i += 1;
+            }
             "--out" => {
                 let Some(dir) = args.get(i + 1) else {
                     eprintln!("--out requires a directory path");
@@ -207,13 +218,19 @@ fn real_main() -> Result<()> {
             );
         }
 
-        let result = execute::execute_sequential(
+        let resume_state = match resume_path.as_deref() {
+            Some(path) => Some(load_resume_state(path, &resolved)?),
+            None => None,
+        };
+
+        let result = execute::execute_sequential_with_resume(
             &resolved,
             &mut tr,
             print_outputs,
             !quiet,
             &adl_base_dir,
             &out_dir,
+            resume_state,
         );
         let result = match result {
             Ok(result) => result,
@@ -225,7 +242,8 @@ fn real_main() -> Result<()> {
                     &out_dir,
                     run_started_ms,
                     run_finished_ms,
-                    false,
+                    "failure",
+                    None,
                 )?;
                 if !quiet {
                     eprintln!(
@@ -246,19 +264,32 @@ fn real_main() -> Result<()> {
         let _outputs = result.outputs;
         let artifacts = result.artifacts;
         let records = result.records;
+        let pause_state = result.pause;
         let run_finished_ms = now_ms();
+        let status = if pause_state.is_some() {
+            "paused"
+        } else {
+            "success"
+        };
         let run_dir = write_run_state_artifacts(
             &resolved,
             &tr,
             &out_dir,
             run_started_ms,
             run_finished_ms,
-            true,
+            status,
+            pause_state.as_ref(),
         )?;
         if !quiet {
+            let status_label = if pause_state.is_some() {
+                "paused"
+            } else {
+                "ok"
+            };
             eprintln!(
-                "RUN done (+{}ms) ok artifacts={}",
+                "RUN done (+{}ms) {} artifacts={}",
                 tr.current_elapsed_ms(),
+                status_label,
                 run_dir.display()
             );
         }
@@ -274,12 +305,12 @@ fn real_main() -> Result<()> {
 
         if do_trace {
             if resolved.doc.version.trim() == "0.2" {
-                tr.run_finished(true);
+                tr.run_finished(pause_state.is_none());
             }
             trace::print_trace(&tr);
         }
 
-        if do_open {
+        if pause_state.is_none() && do_open {
             if let Some(path) = select_open_artifact(&artifacts) {
                 let runner = RealCommandRunner;
                 open_artifact(&runner, &path)?;
@@ -471,7 +502,7 @@ fn run_artifacts_root() -> Result<PathBuf> {
     Ok(repo_root.join(".adl").join("runs"))
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct RunStateArtifact {
     run_id: String,
     workflow_id: String,
@@ -481,6 +512,8 @@ struct RunStateArtifact {
     start_time_ms: u128,
     end_time_ms: u128,
     duration_ms: u128,
+    execution_plan_json: String,
+    pause: Option<execute::PauseState>,
 }
 
 #[derive(Debug, Serialize)]
@@ -498,7 +531,8 @@ fn write_run_state_artifacts(
     out_dir: &Path,
     start_ms: u128,
     end_ms: u128,
-    success: bool,
+    status: &str,
+    pause: Option<&execute::PauseState>,
 ) -> Result<PathBuf> {
     let runs_root = run_artifacts_root()?;
     let run_dir = runs_root.join(&resolved.run_id);
@@ -551,11 +585,7 @@ fn write_run_state_artifacts(
         run_id: resolved.run_id.clone(),
         workflow_id: resolved.workflow_id.clone(),
         version: resolved.doc.version.clone(),
-        status: if success {
-            "success".to_string()
-        } else {
-            "failure".to_string()
-        },
+        status: status.to_string(),
         error_message: tr.events.iter().rev().find_map(|ev| match ev {
             trace::TraceEvent::RunFailed { message, .. } => Some(message.clone()),
             _ => None,
@@ -563,6 +593,9 @@ fn write_run_state_artifacts(
         start_time_ms: start_ms,
         end_time_ms: end_ms,
         duration_ms: end_ms.saturating_sub(start_ms),
+        execution_plan_json: serde_json::to_string(&resolved.execution_plan)
+            .context("serialize execution plan")?,
+        pause: pause.cloned(),
     };
 
     let run_json = serde_json::to_vec_pretty(&run_artifact).context("serialize run.json")?;
@@ -582,6 +615,58 @@ fn write_run_state_artifacts(
     })?;
 
     Ok(run_dir)
+}
+
+fn load_resume_state(path: &Path, resolved: &resolve::AdlResolved) -> Result<execute::ResumeState> {
+    let raw = std::fs::read_to_string(path)
+        .with_context(|| format!("failed to read resume state '{}'", path.display()))?;
+    let artifact: RunStateArtifact =
+        serde_json::from_str(&raw).with_context(|| "failed to parse resume run.json")?;
+
+    if artifact.status != "paused" {
+        return Err(anyhow::anyhow!(
+            "resume state must have status='paused' (found '{}')",
+            artifact.status
+        ));
+    }
+    if artifact.run_id != resolved.run_id {
+        return Err(anyhow::anyhow!(
+            "resume run_id mismatch: state='{}' current='{}'",
+            artifact.run_id,
+            resolved.run_id
+        ));
+    }
+    if artifact.workflow_id != resolved.workflow_id {
+        return Err(anyhow::anyhow!(
+            "resume workflow_id mismatch: state='{}' current='{}'",
+            artifact.workflow_id,
+            resolved.workflow_id
+        ));
+    }
+    if artifact.version != resolved.doc.version {
+        return Err(anyhow::anyhow!(
+            "resume version mismatch: state='{}' current='{}'",
+            artifact.version,
+            resolved.doc.version
+        ));
+    }
+    let plan_json =
+        serde_json::to_string(&resolved.execution_plan).context("serialize current plan")?;
+    if artifact.execution_plan_json != plan_json {
+        return Err(anyhow::anyhow!(
+            "resume execution plan mismatch; resume requires identical plan and ordering"
+        ));
+    }
+    let pause = artifact
+        .pause
+        .ok_or_else(|| anyhow::anyhow!("resume state missing pause payload"))?;
+
+    let completed_step_ids = pause.completed_step_ids.into_iter().collect();
+    Ok(execute::ResumeState {
+        completed_step_ids,
+        saved_state: pause.saved_state,
+        completed_outputs: pause.completed_outputs,
+    })
 }
 
 fn real_demo(args: &[String]) -> Result<()> {

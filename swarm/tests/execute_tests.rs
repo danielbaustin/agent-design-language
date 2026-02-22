@@ -347,6 +347,14 @@ fn run_swarm(args: &[&str]) -> std::process::Output {
         .unwrap()
 }
 
+fn run_artifact_paths(run_id: &str) -> (std::path::PathBuf, std::path::PathBuf) {
+    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("repo root");
+    let run_dir = repo_root.join(".adl").join("runs").join(run_id);
+    (run_dir.join("run.json"), run_dir.join("steps.json"))
+}
+
 #[test]
 fn run_executes_example_with_mock_ollama_and_prints_step_output() {
     let base = tmp_dir("exec-run-mock-ollama");
@@ -2615,6 +2623,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
             delegation: None,
             prompt: None,
             inputs: HashMap::new(),
+            guards: vec![],
             save_as: save_as_by_id.get(&step.step_id).cloned().flatten(),
             write_to: None,
             on_error: None,
@@ -3270,4 +3279,290 @@ stderr:
     );
     let started2 = trace_started_step_ids(&String::from_utf8_lossy(&out2.stdout));
     assert_eq!(started1, started2);
+}
+
+#[test]
+fn run_pause_then_resume_matches_non_paused_final_artifact() {
+    let base = tmp_dir("exec-pause-resume-seq");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let paused_yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "step {{n}}"
+run:
+  name: "hitl-pause-seq"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        save_as: "s1"
+        write_to: "s1.txt"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs: { n: "2" }
+        guards:
+          - type: pause
+            config: { reason: "await_review" }
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        save_as: "s3"
+        write_to: "s3.txt"
+        inputs: { n: "3" }
+"#;
+    let plain_yaml = paused_yaml.replace(
+        "        guards:\n          - type: pause\n            config: { reason: \"await_review\" }\n",
+        "",
+    );
+    let paused_path = base.join("paused.yaml");
+    let plain_path = base.join("plain.yaml");
+    fs::write(&paused_path, paused_yaml).unwrap();
+    fs::write(&plain_path, plain_yaml).unwrap();
+
+    let out_paused = run_swarm(&[
+        paused_path.to_str().unwrap(),
+        "--run",
+        "--out",
+        base.join("out-paused").to_str().unwrap(),
+    ]);
+    assert!(
+        out_paused.status.success(),
+        "paused run should succeed with paused state.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out_paused.stdout),
+        String::from_utf8_lossy(&out_paused.stderr)
+    );
+
+    let (run_json_path, _) = run_artifact_paths("hitl-pause-seq");
+    let run_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
+    assert_eq!(run_json["status"], "paused");
+    assert_eq!(run_json["pause"]["paused_step_id"], "s2");
+
+    let out_resumed = run_swarm(&[
+        paused_path.to_str().unwrap(),
+        "--run",
+        "--resume",
+        run_json_path.to_str().unwrap(),
+        "--out",
+        base.join("out-resume").to_str().unwrap(),
+    ]);
+    assert!(
+        out_resumed.status.success(),
+        "resume run should succeed.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out_resumed.stdout),
+        String::from_utf8_lossy(&out_resumed.stderr)
+    );
+
+    let out_plain = run_swarm(&[
+        plain_path.to_str().unwrap(),
+        "--run",
+        "--out",
+        base.join("out-plain").to_str().unwrap(),
+    ]);
+    assert!(
+        out_plain.status.success(),
+        "plain run should succeed.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out_plain.stdout),
+        String::from_utf8_lossy(&out_plain.stderr)
+    );
+
+    let resumed_final = fs::read_to_string(base.join("out-resume").join("s3.txt")).unwrap();
+    let plain_final = fs::read_to_string(base.join("out-plain").join("s3.txt")).unwrap();
+    assert_eq!(resumed_final, plain_final);
+}
+
+#[test]
+fn run_concurrent_pause_then_resume_is_deterministic() {
+    let base = tmp_dir("exec-pause-resume-concurrent");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepTrackConcurrency);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "step {{n}}"
+run:
+  name: "hitl-pause-concurrent"
+  defaults:
+    max_concurrency: 2
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: { n: "3" }
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+        guards:
+          - type: pause
+      - id: "s4"
+        agent: "a"
+        task: "t"
+        inputs: { n: "4" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+"#;
+    let yaml_path = base.join("concurrent-pause.yaml");
+    fs::write(&yaml_path, yaml).unwrap();
+
+    let paused = run_swarm(&[yaml_path.to_str().unwrap(), "--run", "--trace"]);
+    assert!(paused.status.success(), "paused run should succeed");
+    let (run_json_path, _) = run_artifact_paths("hitl-pause-concurrent");
+    let run_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
+    assert_eq!(run_json["status"], "paused");
+    let paused_resume_1 = base.join("resume-1.run.json");
+    let paused_resume_2 = base.join("resume-2.run.json");
+    fs::copy(&run_json_path, &paused_resume_1).unwrap();
+    fs::copy(&run_json_path, &paused_resume_2).unwrap();
+
+    let resumed1 = run_swarm(&[
+        yaml_path.to_str().unwrap(),
+        "--run",
+        "--trace",
+        "--resume",
+        paused_resume_1.to_str().unwrap(),
+    ]);
+    let resumed2 = run_swarm(&[
+        yaml_path.to_str().unwrap(),
+        "--run",
+        "--trace",
+        "--resume",
+        paused_resume_2.to_str().unwrap(),
+    ]);
+    assert!(resumed1.status.success(), "resume run #1 should succeed");
+    assert!(resumed2.status.success(), "resume run #2 should succeed");
+    let started1 = trace_started_step_ids(&String::from_utf8_lossy(&resumed1.stdout));
+    let started2 = trace_started_step_ids(&String::from_utf8_lossy(&resumed2.stdout));
+    assert_eq!(started1, started2);
+}
+
+#[test]
+fn run_resume_rejects_modified_plan() {
+    let base = tmp_dir("exec-resume-plan-mismatch");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml_a = r#"
+version: "0.3"
+providers: { local: { type: "ollama" } }
+agents: { a: { provider: "local", model: "phi4-mini" } }
+tasks: { t: { prompt: { user: "step {{n}}" } } }
+run:
+  name: "hitl-resume-mismatch"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+        guards: [ { type: pause } ]
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+"#;
+    let yaml_b = yaml_a.replace("id: \"s2\"", "id: \"s2_changed\"");
+    let a_path = base.join("a.yaml");
+    let b_path = base.join("b.yaml");
+    fs::write(&a_path, yaml_a).unwrap();
+    fs::write(&b_path, yaml_b).unwrap();
+
+    let paused = run_swarm(&[a_path.to_str().unwrap(), "--run"]);
+    assert!(paused.status.success(), "paused run should succeed");
+    let (run_json_path, _) = run_artifact_paths("hitl-resume-mismatch");
+
+    let resumed = run_swarm(&[
+        b_path.to_str().unwrap(),
+        "--run",
+        "--resume",
+        run_json_path.to_str().unwrap(),
+    ]);
+    assert!(
+        !resumed.status.success(),
+        "resume with modified plan must fail"
+    );
+    let stderr = String::from_utf8_lossy(&resumed.stderr);
+    assert!(
+        stderr.contains("execution plan mismatch"),
+        "stderr was:\n{stderr}"
+    );
+}
+
+#[test]
+fn run_resume_rejects_non_paused_state_file() {
+    let base = tmp_dir("exec-resume-invalid-state");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+providers: { local: { type: "ollama" } }
+agents: { a: { provider: "local", model: "phi4-mini" } }
+tasks: { t: { prompt: { user: "step {{n}}" } } }
+run:
+  name: "hitl-invalid-state"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+"#;
+    let yaml_path = base.join("state.yaml");
+    fs::write(&yaml_path, yaml).unwrap();
+
+    let first = run_swarm(&[yaml_path.to_str().unwrap(), "--run"]);
+    assert!(first.status.success(), "initial run should succeed");
+    let (run_json_path, _) = run_artifact_paths("hitl-invalid-state");
+
+    let resumed = run_swarm(&[
+        yaml_path.to_str().unwrap(),
+        "--run",
+        "--resume",
+        run_json_path.to_str().unwrap(),
+    ]);
+    assert!(
+        !resumed.status.success(),
+        "resume should fail for success run.json"
+    );
+    let stderr = String::from_utf8_lossy(&resumed.stderr);
+    assert!(stderr.contains("status='paused'"), "stderr was:\n{stderr}");
 }
