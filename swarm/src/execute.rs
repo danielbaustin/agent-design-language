@@ -208,6 +208,24 @@ fn progress_step_done(enabled: bool, tr: &Trace, step_id: &str, ok: bool, durati
     );
 }
 
+fn emit_step_output(step_id: &str, model_output: &str, stream_chunks: &[String], tr: &mut Trace) {
+    println!("--- step: {} ---", step_id);
+    if stream_chunks.is_empty() {
+        println!("{}", model_output.trim_end());
+    } else {
+        for chunk in stream_chunks {
+            if !chunk.is_empty() {
+                print!("{chunk}");
+            }
+        }
+        if !model_output.ends_with('\n') {
+            println!();
+        }
+        tr.step_output_chunk(step_id, model_output.len());
+    }
+    println!();
+}
+
 /// Execute the resolved run.
 ///
 /// Behavior:
@@ -404,11 +422,11 @@ pub fn execute_sequential_with_resume(
         let continue_on_error = matches!(step.on_error, Some(crate::adl::StepOnError::Continue));
         let mut attempt: u32 = 0;
         let mut last_err: Option<anyhow::Error> = None;
-        let mut success_out: Option<StepOutput> = None;
+        let mut success_out: Option<(StepOutput, Vec<String>)> = None;
 
         while attempt < max_attempts {
             attempt += 1;
-            let result = (|| -> Result<StepOutput> {
+            let result = (|| -> Result<(StepOutput, Vec<String>)> {
                 let p = step
                     .effective_prompt_with_defaults(resolved)
                     .ok_or_else(|| {
@@ -456,6 +474,7 @@ pub fn execute_sequential_with_resume(
 
                 let placement = effective_step_placement(step, &resolved.doc);
 
+                let mut stream_chunks = Vec::new();
                 let model_output = match placement {
                     crate::adl::PlacementMode::Local => {
                         let prov =
@@ -465,7 +484,12 @@ pub fn execute_sequential_with_resume(
                                     provider_id, step_id
                                 )
                             })?;
-                        prov.complete(&prompt_text).with_context(|| {
+                        let mut on_chunk = |chunk: &str| {
+                            if !chunk.is_empty() {
+                                stream_chunks.push(chunk.to_string());
+                            }
+                        };
+                        prov.complete_stream(&prompt_text, &mut on_chunk).with_context(|| {
                             format!(
                                 "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
                                 provider_id, step_id
@@ -503,16 +527,19 @@ pub fn execute_sequential_with_resume(
                     }
                 };
 
-                Ok(StepOutput {
-                    step_id: step_id.clone(),
-                    provider_id: provider_id.to_string(),
-                    model_output,
-                })
+                Ok((
+                    StepOutput {
+                        step_id: step_id.clone(),
+                        provider_id: provider_id.to_string(),
+                        model_output,
+                    },
+                    stream_chunks,
+                ))
             })();
 
             match result {
-                Ok(out) => {
-                    success_out = Some(out);
+                Ok(success) => {
+                    success_out = Some(success);
                     break;
                 }
                 Err(err) => {
@@ -529,7 +556,7 @@ pub fn execute_sequential_with_resume(
         }
 
         match success_out {
-            Some(out) => {
+            Some((out, stream_chunks)) => {
                 tr.step_finished(&step_id, true);
                 let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
                 progress_step_done(emit_progress, tr, &step_id, true, duration_ms);
@@ -546,9 +573,7 @@ pub fn execute_sequential_with_resume(
                 }
 
                 if print_outputs {
-                    println!("--- step: {} ---", step_id);
-                    println!("{}", out.model_output.trim_end());
-                    println!();
+                    emit_step_output(&step_id, &out.model_output, &stream_chunks, tr);
                 }
                 records.push(StepExecutionRecord {
                     step_id: step_id.clone(),
@@ -758,6 +783,7 @@ fn execute_called_workflow(
             &resolved.workflow_id,
             &child_state,
             adl_base_dir,
+            true,
         ) {
             Ok(success) => {
                 tr.prompt_assembled(&full_id, &success.prompt_hash);
@@ -778,9 +804,12 @@ fn execute_called_workflow(
                 }
 
                 if print_outputs {
-                    println!("--- step: {} ---", full_id);
-                    println!("{}", success.out.model_output.trim_end());
-                    println!();
+                    emit_step_output(
+                        &full_id,
+                        &success.out.model_output,
+                        &success.stream_chunks,
+                        tr,
+                    );
                 }
 
                 if let Some(save_as) = resolved_step.save_as.as_ref() {
@@ -894,6 +923,7 @@ struct StepRunSuccess {
     out: StepOutput,
     attempts: u32,
     prompt_hash: String,
+    stream_chunks: Vec<String>,
 }
 
 type StepJob = Box<dyn FnOnce() -> (String, Result<StepRunSuccess>) + Send>;
@@ -964,6 +994,7 @@ fn execute_step_with_retry(
     workflow_id: &str,
     saved_state: &HashMap<String, String>,
     adl_base_dir: &Path,
+    capture_stream_chunks: bool,
 ) -> Result<StepRunSuccess> {
     let step_id = step.id.clone();
     let provider_id: &str = step.provider.as_deref().unwrap_or("<unresolved-provider>");
@@ -1012,6 +1043,7 @@ fn execute_step_with_retry(
 
             let placement = effective_step_placement(step, doc);
 
+            let mut stream_chunks: Vec<String> = Vec::new();
             let model_output = match placement {
                 crate::adl::PlacementMode::Local => {
                     let prov =
@@ -1021,7 +1053,12 @@ fn execute_step_with_retry(
                                 provider_id, step_id
                             )
                         })?;
-                    prov.complete(&prompt_text).with_context(|| {
+                    let mut on_chunk = |chunk: &str| {
+                        if capture_stream_chunks && !chunk.is_empty() {
+                            stream_chunks.push(chunk.to_string());
+                        }
+                    };
+                    prov.complete_stream(&prompt_text, &mut on_chunk).with_context(|| {
                         format!(
                             "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
                             provider_id, step_id
@@ -1065,6 +1102,7 @@ fn execute_step_with_retry(
                 },
                 attempts: attempt,
                 prompt_hash,
+                stream_chunks,
             })
         })();
 
@@ -1197,6 +1235,7 @@ fn execute_concurrent_deterministic(
                     &workflow_id_snapshot,
                     &state_snapshot,
                     &base_snapshot,
+                    true,
                 );
                 (step_id_owned, run)
             }));
@@ -1234,9 +1273,12 @@ fn execute_concurrent_deterministic(
                     }
 
                     if print_outputs {
-                        println!("--- step: {} ---", step_id);
-                        println!("{}", success.out.model_output.trim_end());
-                        println!();
+                        emit_step_output(
+                            &step_id,
+                            &success.out.model_output,
+                            &success.stream_chunks,
+                            tr,
+                        );
                     }
                     records.push(StepExecutionRecord {
                         step_id: step_id.clone(),

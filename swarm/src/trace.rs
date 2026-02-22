@@ -41,6 +41,12 @@ pub enum TraceEvent {
         step_id: String,
         prompt_hash: String,
     },
+    StepOutputChunk {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        step_id: String,
+        chunk_bytes: usize,
+    },
     StepFinished {
         ts_ms: u128,
         elapsed_ms: u128,
@@ -112,6 +118,16 @@ impl TraceEvent {
                 prompt_hash,
             } => format!(
                 "{} (+{}ms) PromptAssembled step={step_id} hash={prompt_hash}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms
+            ),
+            TraceEvent::StepOutputChunk {
+                ts_ms,
+                elapsed_ms,
+                step_id,
+                chunk_bytes,
+            } => format!(
+                "{} (+{}ms) StepOutputChunk step={step_id} bytes={chunk_bytes}",
                 format_ts_ms(*ts_ms),
                 elapsed_ms
             ),
@@ -224,6 +240,17 @@ impl Trace {
             elapsed_ms,
             step_id: step_id.to_string(),
             prompt_hash: prompt_hash.to_string(),
+        });
+    }
+
+    pub fn step_output_chunk(&mut self, step_id: &str, chunk_bytes: usize) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::StepOutputChunk {
+            ts_ms,
+            elapsed_ms,
+            step_id: step_id.to_string(),
+            chunk_bytes,
         });
     }
 
@@ -361,9 +388,10 @@ mod tests {
 
         tr.step_started("step-1", "agent-1", "provider-1", "task-1", None);
         tr.prompt_assembled("step-1", "hash-123");
+        tr.step_output_chunk("step-1", 5);
         tr.step_finished("step-1", true);
 
-        assert_eq!(tr.events.len(), 3);
+        assert_eq!(tr.events.len(), 4);
 
         match &tr.events[0] {
             TraceEvent::StepStarted { step_id, .. } => {
@@ -380,6 +408,13 @@ mod tests {
         }
 
         match &tr.events[2] {
+            TraceEvent::StepOutputChunk { chunk_bytes, .. } => {
+                assert_eq!(*chunk_bytes, 5);
+            }
+            _ => panic!("expected StepOutputChunk event"),
+        }
+
+        match &tr.events[3] {
             TraceEvent::StepFinished {
                 success,
                 duration_ms,
