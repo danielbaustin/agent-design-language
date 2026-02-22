@@ -740,6 +740,10 @@ pub struct StepSpec {
     #[serde(default, rename = "as")]
     pub as_ns: Option<String>,
 
+    /// Optional delegation metadata for audit/trace surfaces.
+    #[serde(default)]
+    pub delegation: Option<DelegationSpec>,
+
     /// Inline prompt override.
     #[serde(default)]
     pub prompt: Option<PromptSpec>,
@@ -755,6 +759,40 @@ pub struct StepSpec {
     /// Guard directives (content normalization / output constraints, etc.).
     #[serde(default)]
     pub guards: Vec<GuardSpec>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct DelegationSpec {
+    #[serde(default)]
+    pub role: Option<String>,
+    #[serde(default)]
+    pub requires_verification: Option<bool>,
+    #[serde(default)]
+    pub escalation_target: Option<String>,
+    #[serde(default)]
+    pub tags: Vec<String>,
+}
+
+impl DelegationSpec {
+    pub fn canonicalized(&self) -> Self {
+        let mut tags = self.tags.clone();
+        tags.sort();
+        tags.dedup();
+        Self {
+            role: self.role.clone(),
+            requires_verification: self.requires_verification,
+            escalation_target: self.escalation_target.clone(),
+            tags,
+        }
+    }
+
+    pub fn is_effectively_empty(&self) -> bool {
+        self.role.is_none()
+            && self.requires_verification.is_none()
+            && self.escalation_target.is_none()
+            && self.tags.is_empty()
+    }
 }
 
 impl StepSpec {
