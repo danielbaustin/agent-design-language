@@ -622,3 +622,66 @@ run:
         "unexpected error: {msg}"
     );
 }
+
+#[test]
+fn validate_accepts_provider_profile_without_explicit_provider_fields() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    profile: "ollama:phi4-mini"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    doc.validate()
+        .expect("profile-only provider should validate");
+}
+
+#[test]
+fn validate_rejects_profile_with_explicit_provider_fields() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    profile: "ollama:phi4-mini"
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    let err = doc
+        .validate()
+        .expect_err("profile + explicit provider fields should fail");
+    assert!(
+        err.to_string()
+            .contains("profile and explicit provider fields together"),
+        "{err:#}"
+    );
+}

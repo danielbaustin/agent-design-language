@@ -421,6 +421,22 @@ fn validate_id_fields<T>(
 }
 
 fn validate_provider(provider_id: &str, provider: &ProviderSpec) -> Result<()> {
+    if let Some(profile) = provider.profile.as_deref() {
+        if profile.trim().is_empty() {
+            return Err(anyhow!("providers.{provider_id}.profile must not be empty"));
+        }
+        if !provider.kind.trim().is_empty()
+            || provider.base_url.is_some()
+            || provider.default_model.is_some()
+            || !provider.config.is_empty()
+        {
+            return Err(anyhow!(
+                "providers.{provider_id} uses profile and explicit provider fields together (remove type/base_url/default_model/config when profile is set)"
+            ));
+        }
+        return Ok(());
+    }
+
     match provider.kind.as_str() {
         "ollama" | "local_ollama" | "mock" => Ok(()),
         "http" | "http_remote" => {
@@ -460,8 +476,12 @@ pub struct ProviderSpec {
     #[serde(default)]
     pub id: Option<String>,
 
+    /// Optional provider profile id (deterministic in-code preset).
+    #[serde(default)]
+    pub profile: Option<String>,
+
     /// Provider type (e.g. "ollama", "openai").
-    #[serde(rename = "type", alias = "kind")]
+    #[serde(default, rename = "type", alias = "kind")]
     pub kind: String,
 
     /// Optional base URL.

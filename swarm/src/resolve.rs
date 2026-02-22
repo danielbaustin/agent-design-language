@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use crate::adl;
 use crate::execution_plan;
 use crate::plan;
+use crate::provider;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum AdlVersion {
@@ -173,6 +174,8 @@ fn resolve_provider_for_pattern(doc: &adl::AdlDoc) -> Result<(Option<String>, St
 
 /// Resolve the run section into a deterministic, convenient form.
 pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
+    let doc = provider::expand_provider_profiles(doc)
+        .with_context(|| "failed to expand provider profiles")?;
     let _version = parse_version(&doc.version)?;
 
     let run_id = doc.run.name.clone().unwrap_or_else(|| "run".to_string());
@@ -183,7 +186,7 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
         let compiled = registry
             .compile(pattern_ref)
             .with_context(|| format!("failed to compile pattern '{}'", pattern_ref))?;
-        let (agent, provider) = resolve_provider_for_pattern(doc)?;
+        let (agent, provider) = resolve_provider_for_pattern(&doc)?;
 
         let mut save_as_by_step: HashMap<&str, Option<String>> = HashMap::new();
         for node in &compiled.execution_plan.nodes {
@@ -229,7 +232,7 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
         });
     }
 
-    let workflow = doc.run.resolve_workflow(doc)?;
+    let workflow = doc.run.resolve_workflow(&doc)?;
     let workflow_id = doc
         .run
         .workflow_ref
@@ -247,7 +250,7 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
                 .unwrap_or_else(|| format!("step-{idx}"))
         });
 
-        let provider = resolve_provider_for_step(s, doc);
+        let provider = resolve_provider_for_step(s, &doc);
 
         steps.push(ResolvedStep {
             id,
@@ -280,7 +283,7 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
         workflow_id,
         steps,
         execution_plan,
-        doc: doc.clone(),
+        doc,
     })
 }
 
@@ -322,6 +325,7 @@ mod tests {
             "local".to_string(),
             adl::ProviderSpec {
                 id: None,
+                profile: None,
                 kind: "ollama".to_string(),
                 base_url: None,
                 default_model: None,
@@ -438,6 +442,7 @@ mod tests {
             "other".to_string(),
             adl::ProviderSpec {
                 id: None,
+                profile: None,
                 kind: "ollama".to_string(),
                 base_url: None,
                 default_model: None,
@@ -699,6 +704,7 @@ mod wp02_followup_tests {
             "other".to_string(),
             crate::adl::ProviderSpec {
                 id: None,
+                profile: None,
                 kind: "ollama".to_string(),
                 base_url: None,
                 default_model: None,
