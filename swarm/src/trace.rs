@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
+use crate::adl::DelegationSpec;
+
 #[derive(Debug, Clone)]
 pub struct Trace {
     pub run_id: String,
@@ -31,6 +33,7 @@ pub enum TraceEvent {
         agent_id: String,
         provider_id: String,
         task_id: String,
+        delegation: Option<DelegationSpec>,
     },
     PromptAssembled {
         ts_ms: u128,
@@ -89,11 +92,19 @@ impl TraceEvent {
                 agent_id,
                 provider_id,
                 task_id,
-            } => format!(
-                "{} (+{}ms) StepStarted step={step_id} agent={agent_id} provider={provider_id} task={task_id}",
-                format_ts_ms(*ts_ms),
-                elapsed_ms
-            ),
+                delegation,
+            } => {
+                let prefix = format!(
+                    "{} (+{}ms) StepStarted step={step_id} agent={agent_id} provider={provider_id} task={task_id}",
+                    format_ts_ms(*ts_ms),
+                    elapsed_ms
+                );
+                if let Some(json) = delegation_json(delegation.as_ref()) {
+                    format!("{prefix} delegation={json}")
+                } else {
+                    prefix
+                }
+            }
             TraceEvent::PromptAssembled {
                 ts_ms,
                 elapsed_ms,
@@ -179,6 +190,7 @@ impl Trace {
         agent_id: &str,
         provider_id: &str,
         task_id: &str,
+        delegation: Option<&DelegationSpec>,
     ) {
         let elapsed_ms = self.run_started_instant.elapsed().as_millis();
         let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
@@ -189,6 +201,7 @@ impl Trace {
             agent_id: agent_id.to_string(),
             provider_id: provider_id.to_string(),
             task_id: task_id.to_string(),
+            delegation: delegation.cloned(),
         });
         self.step_started_ms.insert(step_id.to_string(), elapsed_ms);
     }
@@ -291,6 +304,14 @@ pub fn print_trace(tr: &Trace) {
     }
 }
 
+fn delegation_json(delegation: Option<&DelegationSpec>) -> Option<String> {
+    let d = delegation?;
+    if d.is_effectively_empty() {
+        return None;
+    }
+    serde_json::to_string(&d.canonicalized()).ok()
+}
+
 pub fn format_iso_utc_ms(ts_ms: u128) -> String {
     format_ts_ms(ts_ms)
 }
@@ -338,7 +359,7 @@ mod tests {
     fn trace_records_step_lifecycle_events_in_order() {
         let mut tr = Trace::new("run-1", "workflow-1", "0.1");
 
-        tr.step_started("step-1", "agent-1", "provider-1", "task-1");
+        tr.step_started("step-1", "agent-1", "provider-1", "task-1", None);
         tr.prompt_assembled("step-1", "hash-123");
         tr.step_finished("step-1", true);
 
@@ -383,10 +404,10 @@ mod tests {
     fn trace_allows_multiple_steps() {
         let mut tr = Trace::new("run-2", "workflow-2", "0.1");
 
-        tr.step_started("step-a", "agent-a", "provider-a", "task-a");
+        tr.step_started("step-a", "agent-a", "provider-a", "task-a", None);
         tr.step_finished("step-a", true);
 
-        tr.step_started("step-b", "agent-b", "provider-b", "task-b");
+        tr.step_started("step-b", "agent-b", "provider-b", "task-b", None);
         tr.step_finished("step-b", false);
 
         assert_eq!(tr.events.len(), 4);
@@ -398,5 +419,27 @@ mod tests {
         tr.call_entered("parent", "child", "ns");
         tr.call_exited("parent", "success", "ns");
         assert_eq!(tr.events.len(), 2);
+    }
+
+    #[test]
+    fn trace_step_started_includes_delegation_when_present() {
+        let mut tr = Trace::new("run-del", "workflow-del", "0.6");
+        tr.step_started(
+            "step-del",
+            "agent-del",
+            "provider-del",
+            "task-del",
+            Some(&DelegationSpec {
+                role: Some("reviewer".to_string()),
+                requires_verification: Some(true),
+                escalation_target: Some("human".to_string()),
+                tags: vec!["safety".to_string(), "compliance".to_string()],
+            }),
+        );
+        let line = tr.events[0].summarize();
+        assert!(
+            line.contains("delegation={\"role\":\"reviewer\",\"requires_verification\":true,\"escalation_target\":\"human\",\"tags\":[\"compliance\",\"safety\"]}"),
+            "line was:\n{line}"
+        );
     }
 }

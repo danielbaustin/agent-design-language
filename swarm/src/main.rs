@@ -300,7 +300,7 @@ fn real_main() -> Result<()> {
             let task_id = step.task.as_deref().unwrap_or("<unresolved-task>");
             let provider_id = step.provider.as_deref().unwrap_or("<unresolved-provider>");
 
-            tr.step_started(step_id, agent_id, provider_id, task_id);
+            tr.step_started(step_id, agent_id, provider_id, task_id, None);
 
             if let Some(p) = step.effective_prompt_with_defaults(&resolved) {
                 let inputs: HashMap<String, String> = step
@@ -712,7 +712,7 @@ fn real_demo(args: &[String]) -> Result<()> {
         // Dry-run demo trace
         let mut tr = trace::Trace::new(demo_name, "demo-workflow", "0.3");
         for step_id in ["brief", "scaffold", "coverage", "game"] {
-            tr.step_started(step_id, "coordinator", "demo-local", "artifact-task");
+            tr.step_started(step_id, "coordinator", "demo-local", "artifact-task", None);
             tr.prompt_assembled(step_id, "dryrun");
             tr.step_finished(step_id, true);
         }
