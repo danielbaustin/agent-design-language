@@ -2551,6 +2551,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         "local".to_string(),
         swarm::adl::ProviderSpec {
             id: None,
+            profile: None,
             kind: "ollama".to_string(),
             base_url: None,
             default_model: None,
