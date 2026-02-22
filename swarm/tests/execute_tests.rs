@@ -2381,6 +2381,133 @@ run:
 }
 
 #[test]
+fn run_streaming_is_observational_only_for_artifacts() {
+    let base = tmp_dir("exec-streaming-observational");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "Summarize: {{text}}"
+run:
+  name: "streaming-observational"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs:
+          text: "alpha"
+        save_as: "summary"
+        write_to: "index.html"
+"#;
+    let yaml_path = base.join("streaming-observational.yaml");
+    fs::write(&yaml_path, yaml).unwrap();
+
+    let out_stream = base.join("out-stream");
+    let run_stream = run_swarm(&[
+        yaml_path.to_str().unwrap(),
+        "--run",
+        "--out",
+        out_stream.to_str().unwrap(),
+    ]);
+    assert!(run_stream.status.success(), "stream run should succeed");
+
+    let out_quiet = base.join("out-quiet");
+    let run_quiet = run_swarm(&[
+        yaml_path.to_str().unwrap(),
+        "--run",
+        "--quiet",
+        "--out",
+        out_quiet.to_str().unwrap(),
+    ]);
+    assert!(run_quiet.status.success(), "quiet run should succeed");
+
+    let stream_html = fs::read_to_string(out_stream.join("index.html")).unwrap();
+    let quiet_html = fs::read_to_string(out_quiet.join("index.html")).unwrap();
+    assert_eq!(
+        stream_html, quiet_html,
+        "streaming must not change output artifacts"
+    );
+}
+
+#[test]
+fn run_streaming_trace_emits_chunk_events_deterministically() {
+    let base = tmp_dir("exec-streaming-trace-events");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "stream {{n}}"
+run:
+  name: "streaming-trace-events"
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: { n: "3" }
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+"#;
+    let yaml_path = base.join("streaming-trace-events.yaml");
+    fs::write(&yaml_path, yaml).unwrap();
+
+    let out1 = run_swarm(&[yaml_path.to_str().unwrap(), "--run", "--trace"]);
+    let out2 = run_swarm(&[yaml_path.to_str().unwrap(), "--run", "--trace"]);
+    assert!(out1.status.success(), "run #1 should succeed");
+    assert!(out2.status.success(), "run #2 should succeed");
+
+    let stdout1 = String::from_utf8_lossy(&out1.stdout);
+    let stdout2 = String::from_utf8_lossy(&out2.stdout);
+    assert!(
+        stdout1.contains("StepOutputChunk step=s1")
+            && stdout1.contains("StepOutputChunk step=s2")
+            && stdout1.contains("StepOutputChunk step=s3"),
+        "trace missing StepOutputChunk events:\n{stdout1}"
+    );
+    assert_eq!(
+        trace_started_step_ids(&stdout1),
+        trace_started_step_ids(&stdout2)
+    );
+    assert_eq!(
+        trace_chunk_step_ids(&stdout1),
+        trace_chunk_step_ids(&stdout2)
+    );
+}
+
+#[test]
 fn run_emits_progress_banners_on_stderr() {
     let base = tmp_dir("exec-progress-banners");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
@@ -2724,6 +2851,17 @@ fn trace_started_step_ids(stdout: &str) -> Vec<String> {
         .lines()
         .filter_map(|line| {
             let marker = "StepStarted step=";
+            let (_, tail) = line.split_once(marker)?;
+            Some(tail.split_whitespace().next()?.to_string())
+        })
+        .collect()
+}
+
+fn trace_chunk_step_ids(stdout: &str) -> Vec<String> {
+    stdout
+        .lines()
+        .filter_map(|line| {
+            let marker = "StepOutputChunk step=";
             let (_, tail) = line.split_once(marker)?;
             Some(tail.split_whitespace().next()?.to_string())
         })
