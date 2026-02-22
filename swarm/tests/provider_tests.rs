@@ -4,7 +4,10 @@ use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
 use swarm::adl;
-use swarm::provider::{build_provider, is_retryable_error, OllamaProvider};
+use swarm::provider::{
+    build_provider, expand_provider_profiles, is_retryable_error, provider_profile_names,
+    OllamaProvider,
+};
 
 mod helpers;
 use helpers::{unique_test_temp_dir, EnvVarGuard};
@@ -80,6 +83,10 @@ echo "MOCK_COMPLETION_SLOW"
 
 fn provider_spec_from_yaml(yaml: &str) -> adl::ProviderSpec {
     serde_yaml::from_str::<adl::ProviderSpec>(yaml).expect("failed to parse ProviderSpec YAML")
+}
+
+fn adl_doc_from_yaml(yaml: &str) -> adl::AdlDoc {
+    serde_yaml::from_str::<adl::AdlDoc>(yaml).expect("failed to parse AdlDoc YAML")
 }
 
 #[test]
@@ -550,5 +557,135 @@ config:
     assert!(
         msg.contains("timeout") || msg.contains("timed out"),
         "unexpected error: {msg}"
+    );
+}
+
+#[test]
+fn provider_profiles_registry_is_deterministic_and_has_at_least_twelve_profiles() {
+    let names = provider_profile_names();
+    let mut sorted = names.clone();
+    sorted.sort();
+    assert_eq!(
+        names, sorted,
+        "profile names must be sorted deterministically"
+    );
+    assert!(
+        names.len() >= 12,
+        "expected at least 12 profiles, got {}",
+        names.len()
+    );
+}
+
+#[test]
+fn expand_provider_profiles_rejects_unknown_profile() {
+    let doc = adl_doc_from_yaml(
+        r#"
+version: "0.5"
+providers:
+  p1:
+    profile: "unknown:profile"
+agents:
+  a1:
+    provider: "p1"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - agent: "a1"
+        task: "t1"
+"#,
+    );
+    let err = expand_provider_profiles(&doc).expect_err("unknown profile should fail");
+    let msg = err.to_string();
+    assert!(
+        msg.contains("unknown:profile") && msg.contains("available:"),
+        "unexpected error: {msg}"
+    );
+}
+
+#[test]
+fn expand_provider_profiles_rejects_profile_with_explicit_fields() {
+    let doc = adl_doc_from_yaml(
+        r#"
+version: "0.5"
+providers:
+  p1:
+    profile: "ollama:phi4-mini"
+    type: "ollama"
+agents:
+  a1:
+    provider: "p1"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - agent: "a1"
+        task: "t1"
+"#,
+    );
+    let err = expand_provider_profiles(&doc).expect_err("profile + explicit fields must fail");
+    assert!(
+        err.to_string()
+            .contains("profile and explicit provider fields together"),
+        "{err:#}"
+    );
+}
+
+#[test]
+fn expand_provider_profiles_is_byte_stable_across_runs() {
+    let doc = adl_doc_from_yaml(
+        r#"
+version: "0.5"
+providers:
+  z_http:
+    profile: "http:gpt-4o-mini"
+  a_ollama:
+    profile: "ollama:phi4-mini"
+agents:
+  a1:
+    provider: "a_ollama"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - agent: "a1"
+        task: "t1"
+"#,
+    );
+    let expanded1 = expand_provider_profiles(&doc).expect("expand run 1");
+    let expanded2 = expand_provider_profiles(&doc).expect("expand run 2");
+
+    let json1 = serde_json::to_string(&expanded1.providers).expect("serialize providers");
+    let json2 = serde_json::to_string(&expanded2.providers).expect("serialize providers");
+    assert_eq!(json1, json2, "profile expansion must be byte-stable");
+
+    assert_eq!(
+        expanded1.providers["a_ollama"].kind, "ollama",
+        "ollama profile should expand to kind=ollama"
+    );
+    assert_eq!(
+        expanded1.providers["z_http"].kind, "http",
+        "http profile should expand to kind=http"
+    );
+    assert!(
+        expanded1.providers["z_http"]
+            .config
+            .contains_key("endpoint"),
+        "http profile should include endpoint in config"
     );
 }

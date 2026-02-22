@@ -241,6 +241,75 @@ providers: {}
 }
 
 #[test]
+fn resolve_run_expands_provider_profile_deterministically() {
+    let doc = parse_doc(
+        r#"
+version: "0.5"
+providers:
+  p1:
+    profile: "ollama:phi4-mini"
+agents:
+  a1:
+    provider: "p1"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - agent: "a1"
+        task: "t1"
+"#,
+    );
+
+    let resolved1 = resolve::resolve_run(&doc).expect("resolve should succeed");
+    let resolved2 = resolve::resolve_run(&doc).expect("resolve should succeed");
+    assert_eq!(
+        resolved1.doc.providers["p1"].kind, "ollama",
+        "profile should expand to concrete provider kind"
+    );
+    assert_eq!(
+        resolved1.doc.providers["p1"].default_model.as_deref(),
+        Some("phi4-mini")
+    );
+    let json1 = serde_json::to_string(&resolved1.doc.providers).expect("serialize providers");
+    let json2 = serde_json::to_string(&resolved2.doc.providers).expect("serialize providers");
+    assert_eq!(json1, json2, "expanded providers should be byte-stable");
+}
+
+#[test]
+fn resolve_run_rejects_unknown_provider_profile() {
+    let doc = parse_doc(
+        r#"
+version: "0.5"
+providers:
+  p1:
+    profile: "unknown:profile"
+agents:
+  a1:
+    provider: "p1"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - agent: "a1"
+        task: "t1"
+"#,
+    );
+    let err = resolve::resolve_run(&doc).expect_err("unknown profile should fail");
+    let msg = format!("{err:#}");
+    assert!(msg.contains("unknown:profile"), "unexpected error: {msg}");
+}
+
+#[test]
 fn resolve_sets_agent_and_task_refs_on_steps() {
     // Sanity check: resolved step should preserve agent/task references.
     let doc = parse_doc(
