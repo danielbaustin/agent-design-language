@@ -3038,3 +3038,106 @@ run:
         "max_concurrency=1 concurrent output should match sequential output for the same ordered plan"
     );
 }
+
+#[test]
+fn run_v0_3_workflow_max_concurrency_override_takes_precedence_over_run_default() {
+    let base = tmp_dir("exec-concurrent-v0-3-workflow-override");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepTrackConcurrency);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  name: "v0-3-workflow-override"
+  defaults:
+    max_concurrency: 1
+  workflow:
+    kind: "concurrent"
+    max_concurrency: 2
+    steps:
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: { n: "3" }
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+      - id: "s5"
+        agent: "a"
+        task: "t"
+        inputs: { n: "5" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+      - id: "s4"
+        agent: "a"
+        task: "t"
+        inputs: { n: "4" }
+"#;
+    let tmp_yaml = base.join("workflow-override.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out1 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        out1.status.success(),
+        "expected success.
+stdout:
+{}
+stderr:
+{}",
+        String::from_utf8_lossy(&out1.stdout),
+        String::from_utf8_lossy(&out1.stderr)
+    );
+
+    let started1 = trace_started_step_ids(&String::from_utf8_lossy(&out1.stdout));
+    assert_eq!(started1, vec!["s1", "s2", "s3", "s4", "s5"]);
+
+    let stderr1 = String::from_utf8_lossy(&out1.stderr);
+    let s2_start = stderr1
+        .find(" s2 provider=local")
+        .expect("missing start marker for s2");
+    let first_done = stderr1.find("STEP done").expect("missing first completion");
+    let s3_start = stderr1
+        .find(" s3 provider=local")
+        .expect("missing start marker for s3");
+    assert!(
+        s2_start < first_done,
+        "expected workflow override max_concurrency=2 to allow s1/s2 in first batch.
+stderr:
+{stderr1}"
+    );
+    assert!(
+        first_done < s3_start,
+        "expected s3 to wait for a completion after first bounded batch.
+stderr:
+{stderr1}"
+    );
+
+    let out2 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        out2.status.success(),
+        "expected success.
+stdout:
+{}
+stderr:
+{}",
+        String::from_utf8_lossy(&out2.stdout),
+        String::from_utf8_lossy(&out2.stderr)
+    );
+    let started2 = trace_started_step_ids(&String::from_utf8_lossy(&out2.stdout));
+    assert_eq!(started1, started2);
+}

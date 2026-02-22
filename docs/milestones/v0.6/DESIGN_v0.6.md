@@ -245,9 +245,20 @@ Runtime:
 
 ### Scheduler Hardening (WP-F)
 
-- Clarify max_concurrency overrides.
-- Preserve lexicographic batching.
-- Ensure bounded executor remains test-backed.
+Determinism contract for concurrent workflow runs:
+- Ready-step selection is sorted lexicographically by full step id.
+- Batches execute with a bounded cap and preserve deterministic step lifecycle ordering.
+- Effective concurrency precedence is deterministic:
+  1) workflow-local override (`run.workflow.max_concurrency` or `workflows.<id>.max_concurrency`)
+  2) `run.defaults.max_concurrency`
+  3) runtime default (`4`)
+
+Intentionally unspecified:
+- No fairness guarantees across equally ready steps beyond deterministic lexicographic ordering.
+- No wall-clock-based scheduling policy and no adaptive concurrency in v0.6.
+
+Validation:
+- Override and bounded-cap semantics are regression tested under `swarm/tests/execute_tests.rs`.
 
 ---
 

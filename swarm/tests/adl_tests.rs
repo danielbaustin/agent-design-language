@@ -127,6 +127,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
             workflow: Some(WorkflowSpec {
                 id: None,
                 kind: WorkflowKind::Sequential,
+                max_concurrency: None,
                 steps: vec![],
             }),
             pattern_ref: None,
@@ -309,6 +310,78 @@ run:
     let err = doc.validate().expect_err("max_concurrency=0 must fail");
     assert!(
         err.to_string().contains("max_concurrency must be >= 1"),
+        "unexpected error: {err:#}"
+    );
+}
+
+#[test]
+fn validate_rejects_zero_inline_workflow_max_concurrency() {
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "hello"
+run:
+  workflow:
+    kind: concurrent
+    max_concurrency: 0
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    let err = doc
+        .validate()
+        .expect_err("run.workflow.max_concurrency=0 must fail");
+    assert!(
+        err.to_string()
+            .contains("run.workflow.max_concurrency must be >= 1"),
+        "unexpected error: {err:#}"
+    );
+}
+
+#[test]
+fn validate_rejects_zero_workflow_ref_max_concurrency() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "hello"
+workflows:
+  wf_main:
+    kind: concurrent
+    max_concurrency: 0
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+run:
+  workflow_ref: "wf_main"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml should parse");
+    let err = doc
+        .validate()
+        .expect_err("workflows.wf_main.max_concurrency=0 must fail");
+    assert!(
+        err.to_string()
+            .contains("workflows.wf_main.max_concurrency must be >= 1"),
         "unexpected error: {err:#}"
     );
 }

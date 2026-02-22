@@ -1,6 +1,6 @@
 # v0.3 Concurrency Fork/Join Example
 
-This example runs in v0.3 using deterministic sequential fork/join execution.
+This example runs in v0.3 using deterministic bounded concurrent fork/join execution.
 
 File:
 - `swarm/examples/v0-3-concurrency-fork-join.adl.yaml`
@@ -17,7 +17,7 @@ cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency
 ## Mental Model (v0.3)
 
 - **Fork**: branches are declared as steps in a `workflow.kind: concurrent` workflow.
-- **Branch execution**: runtime is still single-threaded; branch steps run in deterministic declared order.
+- **Branch execution**: ready-step batching is deterministic with lexicographic full step-id ordering and bounded concurrency.
 - **Join**: join step consumes saved branch outputs via `@state:<save_as_key>` and runs only after required inputs are available.
 
 ## Artifacts
@@ -52,6 +52,6 @@ Expected high-level event order:
 13. `RunFinished(success)`
 
 Notes:
-- Branch execution order is deterministic by declared step order (`alpha`, then `beta` in this file).
+- Branch execution order is deterministic by lexicographic step id (in this file: `fork.branch.alpha`, then `fork.branch.beta`).
 - Join uses explicit state inputs (`alpha`, `beta`) saved by upstream branch steps.
-- Runtime parallelism is intentionally deferred to a later version.
+- Effective concurrency cap precedence for concurrent workflow runs: workflow override > run default > runtime default (4).

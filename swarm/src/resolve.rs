@@ -395,6 +395,7 @@ mod tests {
                 workflow: Some(adl::WorkflowSpec {
                     id: None,
                     kind: adl::WorkflowKind::Sequential,
+                    max_concurrency: None,
                     steps: vec![],
                 }),
                 pattern_ref: None,

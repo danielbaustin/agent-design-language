@@ -83,6 +83,22 @@ impl AdlDoc {
                 "run.defaults.max_concurrency must be >= 1 when provided"
             ));
         }
+        if matches!(
+            self.run.workflow.as_ref().and_then(|wf| wf.max_concurrency),
+            Some(0)
+        ) {
+            return Err(anyhow!(
+                "run.workflow.max_concurrency must be >= 1 when provided"
+            ));
+        }
+        for workflow_id in sorted_keys(&self.workflows) {
+            let workflow = &self.workflows[workflow_id];
+            if matches!(workflow.max_concurrency, Some(0)) {
+                return Err(anyhow!(
+                    "workflows.{workflow_id}.max_concurrency must be >= 1 when provided"
+                ));
+            }
+        }
 
         validate_id_fields("providers", &self.providers, |spec| spec.id.as_deref())?;
         validate_id_fields("tools", &self.tools, |spec| spec.id.as_deref())?;
@@ -659,6 +675,15 @@ pub struct WorkflowSpec {
 
     #[serde(default)]
     pub kind: WorkflowKind,
+
+    /// Optional workflow-local concurrency cap for concurrent runs.
+    ///
+    /// Precedence for concurrent workflow runs:
+    /// 1) run.workflow.max_concurrency (or workflows.<id>.max_concurrency via workflow_ref)
+    /// 2) run.defaults.max_concurrency
+    /// 3) runtime default (4)
+    #[serde(default)]
+    pub max_concurrency: Option<usize>,
 
     #[serde(default)]
     pub steps: Vec<StepSpec>,
