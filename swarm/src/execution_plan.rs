@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Result};
 use serde::Serialize;
-use std::collections::{HashMap, VecDeque};
+use std::collections::{BTreeMap, HashMap, VecDeque};
 
 use crate::adl;
 use crate::resolve::ResolvedStep;
@@ -28,6 +28,43 @@ pub struct CompiledPatternStep {
 pub struct CompiledPattern {
     pub execution_plan: ExecutionPlan,
     pub compiled_steps: Vec<CompiledPatternStep>,
+}
+
+pub struct PatternRegistry<'a> {
+    by_id: BTreeMap<&'a str, &'a adl::PatternSpec>,
+}
+
+impl<'a> PatternRegistry<'a> {
+    /// Build a deterministic pattern registry keyed by pattern id.
+    pub fn new(patterns: &'a [adl::PatternSpec]) -> Result<Self> {
+        let mut by_id: BTreeMap<&'a str, &'a adl::PatternSpec> = BTreeMap::new();
+        for pattern in patterns {
+            if by_id.insert(pattern.id.as_str(), pattern).is_some() {
+                return Err(anyhow!("duplicate pattern id '{}' in registry", pattern.id));
+            }
+        }
+        Ok(Self { by_id })
+    }
+
+    pub fn get(&self, pattern_id: &str) -> Option<&'a adl::PatternSpec> {
+        self.by_id.get(pattern_id).copied()
+    }
+
+    pub fn compile(&self, pattern_id: &str) -> Result<CompiledPattern> {
+        let pattern = self
+            .get(pattern_id)
+            .ok_or_else(|| anyhow!("unknown pattern id '{}' in registry", pattern_id))?;
+        compile_pattern(pattern)
+    }
+
+    /// Compile all registered patterns in deterministic id order.
+    pub fn compile_all(&self) -> Result<Vec<(String, CompiledPattern)>> {
+        let mut compiled = Vec::with_capacity(self.by_id.len());
+        for (pattern_id, pattern) in &self.by_id {
+            compiled.push(((*pattern_id).to_string(), compile_pattern(pattern)?));
+        }
+        Ok(compiled)
+    }
 }
 
 fn parse_state_ref(value: &str) -> Option<&str> {
@@ -585,6 +622,88 @@ mod tests {
             serde_json::to_vec(&a.execution_plan).expect("serialize"),
             serde_json::to_vec(&b.execution_plan).expect("serialize"),
             "branch declaration order should not affect compiled plan"
+        );
+    }
+    #[test]
+    fn pattern_registry_compile_rejects_unknown_pattern_id() {
+        let patterns = vec![adl::PatternSpec {
+            id: "known".to_string(),
+            kind: adl::PatternKind::Linear,
+            steps: vec!["A".to_string()],
+            fork: None,
+            join: None,
+        }];
+
+        let registry = PatternRegistry::new(&patterns).expect("registry");
+        let err = registry
+            .compile("missing")
+            .expect_err("unknown pattern id should fail deterministically");
+        assert!(
+            err.to_string()
+                .contains("unknown pattern id 'missing' in registry"),
+            "{err:#}"
+        );
+    }
+
+    #[test]
+    fn pattern_registry_compile_all_is_deterministic_across_declaration_order() {
+        let p_a = adl::PatternSpec {
+            id: "p_a".to_string(),
+            kind: adl::PatternKind::Linear,
+            steps: vec!["A1".to_string(), "A2".to_string()],
+            fork: None,
+            join: None,
+        };
+        let p_b = adl::PatternSpec {
+            id: "p_b".to_string(),
+            kind: adl::PatternKind::ForkJoin,
+            steps: vec![],
+            fork: Some(adl::PatternForkSpec {
+                branches: vec![
+                    adl::PatternBranchSpec {
+                        id: "right".to_string(),
+                        steps: vec!["R1".to_string()],
+                    },
+                    adl::PatternBranchSpec {
+                        id: "left".to_string(),
+                        steps: vec!["L1".to_string()],
+                    },
+                ],
+            }),
+            join: Some(adl::PatternJoinSpec {
+                step: "J".to_string(),
+            }),
+        };
+
+        let declared_patterns = vec![p_b.clone(), p_a.clone()];
+        let sorted_patterns = vec![p_a.clone(), p_b.clone()];
+
+        let r_declared = PatternRegistry::new(&declared_patterns).expect("registry");
+        let r_sorted = PatternRegistry::new(&sorted_patterns).expect("registry");
+
+        let c1 = r_declared.compile_all().expect("compile all declared");
+        let c2 = r_sorted.compile_all().expect("compile all sorted");
+
+        let ids1: Vec<String> = c1.iter().map(|(id, _)| id.clone()).collect();
+        let ids2: Vec<String> = c2.iter().map(|(id, _)| id.clone()).collect();
+        assert_eq!(ids1, vec!["p_a".to_string(), "p_b".to_string()]);
+        assert_eq!(ids1, ids2);
+
+        let bytes1 = serde_json::to_vec(
+            &c1.iter()
+                .map(|(id, c)| (id, &c.execution_plan))
+                .collect::<Vec<_>>(),
+        )
+        .expect("serialize");
+        let bytes2 = serde_json::to_vec(
+            &c2.iter()
+                .map(|(id, c)| (id, &c.execution_plan))
+                .collect::<Vec<_>>(),
+        )
+        .expect("serialize");
+        assert_eq!(
+            bytes1, bytes2,
+            "compile_all order/bytes must be deterministic"
         );
     }
 }

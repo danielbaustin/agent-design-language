@@ -178,19 +178,11 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
     let run_id = doc.run.name.clone().unwrap_or_else(|| "run".to_string());
 
     if let Some(pattern_ref) = doc.run.pattern_ref.as_ref() {
-        let pattern = doc
-            .patterns
-            .iter()
-            .find(|p| p.id == *pattern_ref)
-            .ok_or_else(|| {
-                anyhow!(
-                    "run.pattern_ref references unknown pattern '{}'",
-                    pattern_ref
-                )
-            })?;
-
-        let compiled = execution_plan::compile_pattern(pattern)
-            .with_context(|| format!("failed to compile pattern '{}'", pattern.id))?;
+        let registry = execution_plan::PatternRegistry::new(&doc.patterns)
+            .with_context(|| "failed to build deterministic pattern registry")?;
+        let compiled = registry
+            .compile(pattern_ref)
+            .with_context(|| format!("failed to compile pattern '{}'", pattern_ref))?;
         let (agent, provider) = resolve_provider_for_pattern(doc)?;
 
         let mut save_as_by_step: HashMap<&str, Option<String>> = HashMap::new();
@@ -203,7 +195,7 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
             if !doc.tasks.contains_key(&compiled_step.task_symbol) {
                 return Err(anyhow!(
                     "pattern '{}' references unknown task symbol '{}'",
-                    pattern.id,
+                    pattern_ref,
                     compiled_step.task_symbol
                 ));
             }
