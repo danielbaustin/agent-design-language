@@ -809,7 +809,7 @@ impl DelegationSpec {
 
     pub fn is_effectively_empty(&self) -> bool {
         self.role.is_none()
-            && self.requires_verification.is_none()
+            && !self.requires_verification.unwrap_or(false)
             && self.escalation_target.is_none()
             && self.tags.is_empty()
     }

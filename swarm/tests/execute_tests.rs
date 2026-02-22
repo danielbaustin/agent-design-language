@@ -2505,6 +2505,13 @@ run:
             && stdout1.contains("StepOutputChunk step=s3"),
         "trace missing StepOutputChunk events:\n{stdout1}"
     );
+    assert!(
+        !stdout1
+            .lines()
+            .filter(|l| l.contains("StepOutputChunk"))
+            .any(|l| l.contains("delegation=")),
+        "chunk events must not include delegation metadata:\n{stdout1}"
+    );
     assert_eq!(
         trace_started_step_ids(&stdout1),
         trace_started_step_ids(&stdout2)
@@ -3606,6 +3613,132 @@ run:
     let started1 = trace_started_step_ids(&String::from_utf8_lossy(&resumed1.stdout));
     let started2 = trace_started_step_ids(&String::from_utf8_lossy(&resumed2.stdout));
     assert_eq!(started1, started2);
+}
+
+#[test]
+fn run_resume_trace_does_not_reemit_completed_step_chunks() {
+    let base = tmp_dir("exec-pause-resume-no-duplicate-chunks");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "chunk {{n}}"
+run:
+  name: "hitl-pause-no-dup-chunks"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+        guards:
+          - type: pause
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: { n: "3" }
+"#;
+    let yaml_path = base.join("pause-no-dup-chunks.yaml");
+    fs::write(&yaml_path, yaml).unwrap();
+
+    let paused = run_swarm(&[yaml_path.to_str().unwrap(), "--run", "--trace"]);
+    assert!(paused.status.success(), "paused run should succeed");
+    let (run_json_path, _) = run_artifact_paths("hitl-pause-no-dup-chunks");
+
+    let resumed = run_swarm(&[
+        yaml_path.to_str().unwrap(),
+        "--run",
+        "--trace",
+        "--resume",
+        run_json_path.to_str().unwrap(),
+    ]);
+    assert!(resumed.status.success(), "resume run should succeed");
+
+    let resumed_stdout = String::from_utf8_lossy(&resumed.stdout);
+    let chunk_ids = trace_chunk_step_ids(&resumed_stdout);
+    assert_eq!(
+        chunk_ids,
+        vec!["s3".to_string()],
+        "resume trace should emit chunks only for remaining steps:\n{resumed_stdout}"
+    );
+}
+
+#[test]
+fn run_pause_resume_with_provider_profile_keeps_resume_plan_compatible() {
+    let base = tmp_dir("exec-pause-resume-profile");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    profile: "ollama:phi4-mini"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "profile {{n}}"
+run:
+  name: "hitl-pause-profile"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+        guards:
+          - type: pause
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: { n: "3" }
+"#;
+    let yaml_path = base.join("pause-profile.yaml");
+    fs::write(&yaml_path, yaml).unwrap();
+
+    let paused = run_swarm(&[yaml_path.to_str().unwrap(), "--run"]);
+    assert!(paused.status.success(), "paused run should succeed");
+    let (run_json_path, _) = run_artifact_paths("hitl-pause-profile");
+
+    let resumed = run_swarm(&[
+        yaml_path.to_str().unwrap(),
+        "--run",
+        "--resume",
+        run_json_path.to_str().unwrap(),
+    ]);
+    assert!(
+        resumed.status.success(),
+        "resume with profile-expanded provider should succeed.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&resumed.stdout),
+        String::from_utf8_lossy(&resumed.stderr)
+    );
 }
 
 #[test]

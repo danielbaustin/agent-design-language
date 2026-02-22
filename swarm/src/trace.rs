@@ -477,4 +477,26 @@ mod tests {
             "line was:\n{line}"
         );
     }
+
+    #[test]
+    fn trace_step_started_omits_effectively_empty_delegation_with_false_flag_only() {
+        let mut tr = Trace::new("run-del-empty", "workflow-del-empty", "0.6");
+        tr.step_started(
+            "step-del-empty",
+            "agent-del",
+            "provider-del",
+            "task-del",
+            Some(&DelegationSpec {
+                role: None,
+                requires_verification: Some(false),
+                escalation_target: None,
+                tags: vec![],
+            }),
+        );
+        let line = tr.events[0].summarize();
+        assert!(
+            !line.contains("delegation="),
+            "delegation=false-only should not emit delegation payload, line was:\n{line}"
+        );
+    }
 }
