@@ -4,6 +4,7 @@ use swarm::adl::{
     AdlDoc, AgentSpec, PromptSpec, RunDefaults, RunSpec, StepSpec, TaskSpec, WorkflowKind,
     WorkflowSpec,
 };
+use swarm::resolve;
 
 mod helpers;
 use helpers::unique_test_temp_dir;
@@ -279,6 +280,149 @@ run:
     assert_eq!(doc.workflows.len(), 1);
     assert_eq!(doc.tasks["summarize"].agent_ref.as_deref(), Some("planner"));
     assert_eq!(doc.run.workflow_ref.as_deref(), Some("wf_main"));
+}
+
+#[test]
+fn validate_accepts_step_delegation_block() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        delegation:
+          role: "reviewer"
+          requires_verification: true
+          escalation_target: "human"
+          tags: ["safety", "compliance"]
+"#;
+    let doc = parse_doc(yaml);
+    let step = &doc.run.workflow.as_ref().expect("workflow").steps[0];
+    let delegation = step.delegation.as_ref().expect("delegation");
+    assert_eq!(delegation.role.as_deref(), Some("reviewer"));
+    assert_eq!(delegation.requires_verification, Some(true));
+    assert_eq!(delegation.escalation_target.as_deref(), Some("human"));
+    assert_eq!(delegation.tags, vec!["safety", "compliance"]);
+}
+
+#[test]
+fn parse_rejects_unknown_step_delegation_field() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        delegation:
+          role: "reviewer"
+          unknown_field: "nope"
+"#;
+    let err = serde_yaml::from_str::<AdlDoc>(yaml).expect_err("unknown delegation field must fail");
+    assert!(
+        err.to_string().contains("unknown_field"),
+        "unexpected error: {err}"
+    );
+}
+
+#[test]
+fn resolve_preserves_absent_step_delegation_as_none() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+"#;
+    let doc = parse_doc(yaml);
+    let resolved = resolve::resolve_run(&doc).expect("resolve");
+    assert!(resolved.steps[0].delegation.is_none());
+    assert!(resolved.execution_plan.nodes[0].delegation.is_none());
+}
+
+#[test]
+fn resolve_and_plan_round_trip_step_delegation() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        delegation:
+          role: "reviewer"
+          requires_verification: true
+          escalation_target: "human"
+          tags: ["safety"]
+"#;
+    let doc = parse_doc(yaml);
+    let resolved = resolve::resolve_run(&doc).expect("resolve");
+    let step = &resolved.steps[0];
+    let node = &resolved.execution_plan.nodes[0];
+    assert_eq!(
+        step.delegation.as_ref().and_then(|d| d.role.as_deref()),
+        Some("reviewer")
+    );
+    assert_eq!(
+        node.delegation
+            .as_ref()
+            .and_then(|d| d.requires_verification),
+        Some(true)
+    );
 }
 
 #[test]

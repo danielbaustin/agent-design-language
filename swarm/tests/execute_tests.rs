@@ -2611,6 +2611,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
             call: None,
             with: HashMap::new(),
             as_ns: None,
+            delegation: None,
             prompt: None,
             inputs: HashMap::new(),
             save_as: save_as_by_id.get(&step.step_id).cloned().flatten(),
@@ -2887,6 +2888,134 @@ run:
         String::from_utf8_lossy(&out2.stderr)
     );
     let started2 = trace_started_step_ids(&String::from_utf8_lossy(&out2.stdout));
+    assert_eq!(started1, started2);
+}
+
+#[test]
+fn trace_step_started_includes_step_delegation_metadata() {
+    let base = tmp_dir("exec-step-delegation-trace");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+        delegation:
+          role: "reviewer"
+          requires_verification: true
+          escalation_target: "human"
+          tags: ["safety", "compliance"]
+"#;
+    let tmp_yaml = base.join("delegation-trace.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        out.status.success(),
+        "expected success.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("StepStarted step=s1"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("delegation={\"role\":\"reviewer\",\"requires_verification\":true,\"escalation_target\":\"human\",\"tags\":[\"compliance\",\"safety\"]}"),
+        "stdout was:\n{stdout}"
+    );
+}
+
+#[test]
+fn step_delegation_does_not_change_concurrent_step_order_determinism() {
+    let base = tmp_dir("exec-step-delegation-determinism");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepEchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  name: "v0-3-delegation-determinism"
+  defaults:
+    max_concurrency: 2
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: { n: "3" }
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+        delegation:
+          role: "reviewer"
+          tags: ["safety"]
+      - id: "s4"
+        agent: "a"
+        task: "t"
+        inputs: { n: "4" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+"#;
+
+    let tmp_yaml = base.join("delegation-determinism.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out1 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        out1.status.success(),
+        "expected success.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out1.stdout),
+        String::from_utf8_lossy(&out1.stderr)
+    );
+    let out2 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        out2.status.success(),
+        "expected success.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out2.stdout),
+        String::from_utf8_lossy(&out2.stderr)
+    );
+
+    let started1 = trace_started_step_ids(&String::from_utf8_lossy(&out1.stdout));
+    let started2 = trace_started_step_ids(&String::from_utf8_lossy(&out2.stdout));
+    assert_eq!(started1, vec!["s1", "s2", "s3", "s4"]);
     assert_eq!(started1, started2);
 }
 

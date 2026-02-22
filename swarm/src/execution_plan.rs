@@ -10,6 +10,8 @@ pub struct ExecutionNode {
     pub step_id: String,
     pub depends_on: Vec<String>,
     pub save_as: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub delegation: Option<adl::DelegationSpec>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -153,6 +155,7 @@ pub fn build_execution_plan(
             step_id: step.id.clone(),
             depends_on: deps,
             save_as: step.save_as.clone(),
+            delegation: step.delegation.clone(),
         });
     }
 
@@ -194,6 +197,7 @@ fn compile_linear_pattern(pattern: &adl::PatternSpec) -> Result<CompiledPattern>
             step_id: step_id.clone(),
             depends_on: deps,
             save_as: Some(sym.clone()),
+            delegation: None,
         });
         compiled_steps.push(CompiledPatternStep {
             step_id: step_id.clone(),
@@ -237,6 +241,7 @@ fn compile_fork_join_pattern(pattern: &adl::PatternSpec) -> Result<CompiledPatte
                 step_id: step_id.clone(),
                 depends_on: deps,
                 save_as: Some(format!("{}::{}", br.id, sym)),
+                delegation: None,
             });
             compiled_steps.push(CompiledPatternStep {
                 step_id: step_id.clone(),
@@ -262,6 +267,7 @@ fn compile_fork_join_pattern(pattern: &adl::PatternSpec) -> Result<CompiledPatte
         step_id: join_step_id.clone(),
         depends_on: branch_last,
         save_as: Some(join.step.clone()),
+        delegation: None,
     });
     compiled_steps.push(CompiledPatternStep {
         step_id: join_step_id,
@@ -387,6 +393,7 @@ mod tests {
             prompt: None,
             inputs,
             save_as: save_as.map(str::to_string),
+            delegation: None,
             write_to: None,
             on_error: None,
             retry: None,

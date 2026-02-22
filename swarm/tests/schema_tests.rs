@@ -234,6 +234,40 @@ run:
 }
 
 #[test]
+fn strict_rejects_unknown_step_delegation_field() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        delegation:
+          role: "reviewer"
+          unknown_field: "typo"
+"#;
+    let err = schema::validate_adl_yaml(yaml).unwrap_err();
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("unknown_field") || msg.contains("Additional properties"),
+        "expected unknown delegation field rejection; got:\n{msg}"
+    );
+}
+
+#[test]
 fn strict_rejects_unknown_step_field() {
     let yaml = r#"
 version: "0.1"

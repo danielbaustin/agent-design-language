@@ -38,7 +38,7 @@ pub fn run_demo(name: &str, out_dir: &Path) -> Result<DemoResult> {
     let steps = steps_for(name);
 
     for (step_id, text) in steps.iter() {
-        trace.step_started(step_id, "coordinator", "demo-local", "artifact-task");
+        trace.step_started(step_id, "coordinator", "demo-local", "artifact-task", None);
         trace.prompt_assembled(step_id, &prompt::hash_prompt(text));
         match name {
             DEMO_A_SAY_MCP => match *step_id {

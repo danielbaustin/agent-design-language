@@ -245,7 +245,13 @@ pub fn execute_sequential(
             validate_write_to(&step_id, write_to)?;
         }
 
-        tr.step_started(&step_id, agent_id, provider_id, task_id);
+        tr.step_started(
+            &step_id,
+            agent_id,
+            provider_id,
+            task_id,
+            step.delegation.as_ref(),
+        );
         let step_started_elapsed = tr.current_elapsed_ms();
         progress_step_start(emit_progress, tr, &step_id, provider_id);
 
@@ -614,7 +620,13 @@ fn execute_called_workflow(
             validate_write_to(&full_id, write_to)?;
         }
 
-        tr.step_started(&full_id, agent_id, provider_id, task_id);
+        tr.step_started(
+            &full_id,
+            agent_id,
+            provider_id,
+            task_id,
+            resolved_step.delegation.as_ref(),
+        );
         let step_started_elapsed = tr.current_elapsed_ms();
         progress_step_start(emit_progress, tr, &full_id, provider_id);
 
@@ -745,6 +757,7 @@ fn resolved_step_from_raw_step(
         call: step.call.clone(),
         with: step.with.clone(),
         as_ns: step.as_ns.clone(),
+        delegation: step.delegation.clone(),
         prompt: step.prompt.clone(),
         inputs: step.inputs.clone(),
         save_as: step.save_as.clone(),
@@ -1021,7 +1034,13 @@ fn execute_concurrent_deterministic(
             let agent_id = step.agent.as_deref().unwrap_or("<unresolved-agent>");
             let task_id = step.task.as_deref().unwrap_or("<unresolved-task>");
             let provider_id = step.provider.as_deref().unwrap_or("<unresolved-provider>");
-            tr.step_started(step_id, agent_id, provider_id, task_id);
+            tr.step_started(
+                step_id,
+                agent_id,
+                provider_id,
+                task_id,
+                step.delegation.as_ref(),
+            );
             progress_started_ms.insert(step_id.clone(), tr.current_elapsed_ms());
             progress_step_start(emit_progress, tr, step_id, provider_id);
         }
