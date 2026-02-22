@@ -386,6 +386,7 @@ mod tests {
             as_ns: None,
             prompt: None,
             inputs,
+            guards: vec![],
             save_as: save_as.map(str::to_string),
             write_to: None,
             on_error: None,

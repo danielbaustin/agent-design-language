@@ -52,6 +52,7 @@ pub struct ResolvedStep {
     pub as_ns: Option<String>,
     pub prompt: Option<adl::PromptSpec>,
     pub inputs: HashMap<String, String>,
+    pub guards: Vec<adl::GuardSpec>,
     pub save_as: Option<String>,
     pub write_to: Option<String>,
     pub on_error: Option<adl::StepOnError>,
@@ -210,6 +211,7 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
                 as_ns: None,
                 prompt: None,
                 inputs: HashMap::new(),
+                guards: Vec::new(),
                 save_as: save_as_by_step
                     .get(compiled_step.step_id.as_str())
                     .cloned()
@@ -265,6 +267,7 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
             as_ns: s.as_ns.clone(),
             prompt: s.prompt.clone(),
             inputs: s.inputs.clone(),
+            guards: s.guards.clone(),
             save_as: s.save_as.clone(),
             write_to: s.write_to.clone(),
             on_error: s.on_error.clone(),
