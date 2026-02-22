@@ -51,9 +51,19 @@ impl<'a> PatternRegistry<'a> {
     }
 
     pub fn compile(&self, pattern_id: &str) -> Result<CompiledPattern> {
-        let pattern = self
-            .get(pattern_id)
-            .ok_or_else(|| anyhow!("unknown pattern id '{}' in registry", pattern_id))?;
+        let pattern = self.get(pattern_id).ok_or_else(|| {
+            let available = self
+                .by_id
+                .keys()
+                .map(|id| format!("'{}'", id))
+                .collect::<Vec<_>>()
+                .join(", ");
+            anyhow!(
+                "unknown pattern id '{}' in registry (available: [{}])",
+                pattern_id,
+                available
+            )
+        })?;
         compile_pattern(pattern)
     }
 
@@ -626,21 +636,64 @@ mod tests {
     }
     #[test]
     fn pattern_registry_compile_rejects_unknown_pattern_id() {
-        let patterns = vec![adl::PatternSpec {
-            id: "known".to_string(),
-            kind: adl::PatternKind::Linear,
-            steps: vec!["A".to_string()],
-            fork: None,
-            join: None,
-        }];
+        let patterns = vec![
+            adl::PatternSpec {
+                id: "zeta".to_string(),
+                kind: adl::PatternKind::Linear,
+                steps: vec!["Z".to_string()],
+                fork: None,
+                join: None,
+            },
+            adl::PatternSpec {
+                id: "alpha".to_string(),
+                kind: adl::PatternKind::Linear,
+                steps: vec!["A".to_string()],
+                fork: None,
+                join: None,
+            },
+        ];
 
         let registry = PatternRegistry::new(&patterns).expect("registry");
         let err = registry
             .compile("missing")
             .expect_err("unknown pattern id should fail deterministically");
+        let msg = err.to_string();
+        assert!(
+            msg.contains("unknown pattern id 'missing' in registry"),
+            "{err:#}"
+        );
+        assert!(
+            msg.contains("available: ['alpha', 'zeta']"),
+            "available ids should be canonical/sorted, got: {msg}"
+        );
+    }
+
+    #[test]
+    fn pattern_registry_new_rejects_duplicate_pattern_ids_deterministically() {
+        let patterns = vec![
+            adl::PatternSpec {
+                id: "dup".to_string(),
+                kind: adl::PatternKind::Linear,
+                steps: vec!["A".to_string()],
+                fork: None,
+                join: None,
+            },
+            adl::PatternSpec {
+                id: "dup".to_string(),
+                kind: adl::PatternKind::Linear,
+                steps: vec!["B".to_string()],
+                fork: None,
+                join: None,
+            },
+        ];
+
+        let err = match PatternRegistry::new(&patterns) {
+            Ok(_) => panic!("duplicate ids must fail deterministically"),
+            Err(err) => err,
+        };
         assert!(
             err.to_string()
-                .contains("unknown pattern id 'missing' in registry"),
+                .contains("duplicate pattern id 'dup' in registry"),
             "{err:#}"
         );
     }
