@@ -1,0 +1,42 @@
+version: "0.5"
+
+providers:
+  local:
+    profile: "ollama:phi4-mini"
+
+agents:
+  reviewer:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "first {{topic}}"
+  t2:
+    prompt:
+      user: "second {{a}}"
+
+run:
+  name: "v0-6-profile-delegation"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "a"
+        agent: "reviewer"
+        task: "t1"
+        inputs: { topic: "profiles" }
+        save_as: "a"
+        delegation:
+          requires_verification: false
+      - id: "b"
+        agent: "reviewer"
+        task: "t2"
+        inputs: { a: "@state:a" }
+        save_as: "b"
+        write_to: "b.txt"
+        delegation:
+          role: "reviewer"
+          requires_verification: true
+          escalation_target: "human"
+          tags: ["safety", "compliance", "safety"]

@@ -139,3 +139,6 @@ cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-5
 
 For a full v0.5 reproducibility checklist, see:
 - `../docs/milestones/v0.5/DEMO_MATRIX_v0.5.md`
+
+For v0.6 integration demos and determinism checks, see:
+- `../docs/milestones/v0.6/DEMOS_v0.6.md`
