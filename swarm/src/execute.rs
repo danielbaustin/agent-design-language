@@ -114,6 +114,9 @@ pub fn materialize_inputs(
 /// Maximum allowed bytes per `@file:` materialized input.
 pub const MATERIALIZE_INPUT_MAX_FILE_BYTES: u64 = 512 * 1024;
 
+/// Default concurrency cap for concurrent workflow runs when no override is provided.
+const DEFAULT_MAX_CONCURRENCY: usize = 4;
+
 /// Result of executing one step.
 #[allow(dead_code)] // v0.1: returned for callers / future use; not all fields are read yet
 #[derive(Debug, Clone)]
@@ -182,8 +185,10 @@ fn progress_step_done(enabled: bool, tr: &Trace, step_id: &str, ok: bool, durati
 /// Determinism:
 /// - ready-step ordering is lexicographic by full step id
 /// - bounded batches preserve deterministic output/record order
-/// - effective max concurrency for concurrent workflow runs is deterministic:
-///   run.workflow.max_concurrency/workflows.<id>.max_concurrency > run.defaults.max_concurrency > 4
+/// - effective max concurrency for concurrent workflow runs is deterministic and applied as:
+///   1) run.workflow.max_concurrency (or workflows.<id>.max_concurrency via workflow_ref)
+///   2) run.defaults.max_concurrency
+///   3) DEFAULT_MAX_CONCURRENCY
 pub fn execute_sequential(
     resolved: &AdlResolved,
     tr: &mut Trace,
@@ -790,8 +795,6 @@ fn effective_step_placement(
 }
 
 fn effective_max_concurrency(resolved: &AdlResolved) -> Result<usize> {
-    const DEFAULT_MAX_PARALLEL: usize = 4;
-
     let workflow_override = if resolved.doc.run.pattern_ref.is_some() {
         None
     } else {
@@ -808,7 +811,7 @@ fn effective_max_concurrency(resolved: &AdlResolved) -> Result<usize> {
 
     let max_parallel = workflow_override
         .or(resolved.doc.run.defaults.max_concurrency)
-        .unwrap_or(DEFAULT_MAX_PARALLEL);
+        .unwrap_or(DEFAULT_MAX_CONCURRENCY);
 
     if max_parallel == 0 {
         return Err(anyhow!(
