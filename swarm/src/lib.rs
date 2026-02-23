@@ -4,7 +4,7 @@
 //! `execution_plan`), deterministic execution (`execute`), and trust/verification
 //! boundaries (`signing`, `remote_exec`) used by the `swarm` CLI.
 //!
-//! v0.5 invariants:
+//! v0.6 invariants:
 //! - deterministic execution order for ready steps
 //! - bounded concurrency for concurrent execution plans
 //! - optional signature verification with strict enforcement on `--run`
