@@ -1055,3 +1055,353 @@ pub struct PatternBranchSpec {
 pub struct PatternJoinSpec {
     pub step: String,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    #[test]
+    fn runspec_resolve_workflow_shapes() {
+        let doc = AdlDoc {
+            version: "0.5".to_string(),
+            providers: HashMap::new(),
+            tools: HashMap::new(),
+            agents: HashMap::new(),
+            tasks: HashMap::new(),
+            workflows: HashMap::new(),
+            patterns: vec![],
+            signature: None,
+            run: RunSpec {
+                id: None,
+                name: None,
+                created_at: None,
+                defaults: RunDefaults::default(),
+                workflow_ref: None,
+                workflow: None,
+                pattern_ref: None,
+                inputs: HashMap::new(),
+                placement: None,
+                remote: None,
+            },
+        };
+
+        let err = doc
+            .run
+            .resolve_workflow(&doc)
+            .expect_err("missing workflow shape should fail");
+        assert!(err
+            .to_string()
+            .contains("must define either workflow_ref or inline workflow"));
+    }
+
+    #[test]
+    fn resolve_workflow_ref_unknown_and_inline_success() {
+        let mut doc = AdlDoc {
+            version: "0.5".to_string(),
+            providers: HashMap::new(),
+            tools: HashMap::new(),
+            agents: HashMap::new(),
+            tasks: HashMap::new(),
+            workflows: HashMap::new(),
+            patterns: vec![],
+            signature: None,
+            run: RunSpec {
+                id: None,
+                name: None,
+                created_at: None,
+                defaults: RunDefaults::default(),
+                workflow_ref: Some("missing".to_string()),
+                workflow: None,
+                pattern_ref: None,
+                inputs: HashMap::new(),
+                placement: None,
+                remote: None,
+            },
+        };
+        let err = doc
+            .run
+            .resolve_workflow(&doc)
+            .expect_err("unknown workflow ref");
+        assert!(err.to_string().contains("references unknown workflow"));
+
+        doc.run.workflow_ref = None;
+        doc.run.workflow = Some(WorkflowSpec {
+            id: Some("wf".to_string()),
+            kind: WorkflowKind::Sequential,
+            max_concurrency: None,
+            steps: vec![],
+        });
+        let resolved = doc.run.resolve_workflow(&doc).expect("inline workflow");
+        assert_eq!(resolved.id.as_deref(), Some("wf"));
+    }
+
+    #[test]
+    fn delegation_canonicalized_and_empty_detection() {
+        let d = DelegationSpec {
+            role: Some("review".to_string()),
+            requires_verification: Some(false),
+            escalation_target: None,
+            tags: vec!["z".to_string(), "a".to_string(), "z".to_string()],
+        };
+        let canonical = d.canonicalized();
+        assert_eq!(canonical.tags, vec!["a".to_string(), "z".to_string()]);
+        assert_eq!(canonical.requires_verification, None);
+
+        let empty = DelegationSpec {
+            role: None,
+            requires_verification: Some(false),
+            escalation_target: None,
+            tags: vec![],
+        };
+        assert!(empty.is_effectively_empty());
+        assert!(!DelegationSpec {
+            role: None,
+            requires_verification: Some(true),
+            escalation_target: None,
+            tags: vec![],
+        }
+        .is_effectively_empty());
+    }
+
+    #[test]
+    fn run_placement_mode_resolves_legacy_values() {
+        assert_eq!(
+            RunPlacementSpec::Mode(PlacementMode::Remote).mode(),
+            Some(PlacementMode::Remote)
+        );
+        let legacy_remote = RunPlacementSpec::Legacy(RunPlacementLegacySpec {
+            provider: None,
+            target: Some("REMOTE".to_string()),
+        });
+        assert_eq!(legacy_remote.mode(), Some(PlacementMode::Remote));
+        let legacy_unknown = RunPlacementSpec::Legacy(RunPlacementLegacySpec {
+            provider: None,
+            target: Some("somewhere".to_string()),
+        });
+        assert_eq!(legacy_unknown.mode(), None);
+    }
+
+    #[test]
+    fn pattern_validate_exercises_linear_and_fork_join_errors() {
+        let linear = PatternSpec {
+            id: "p".to_string(),
+            kind: PatternKind::Linear,
+            steps: vec![],
+            fork: None,
+            join: None,
+        };
+        assert!(linear.validate().is_err());
+
+        let fork_missing = PatternSpec {
+            id: "p".to_string(),
+            kind: PatternKind::ForkJoin,
+            steps: vec![],
+            fork: None,
+            join: Some(PatternJoinSpec {
+                step: "J".to_string(),
+            }),
+        };
+        assert!(fork_missing.validate().is_err());
+
+        let duplicate_branch = PatternSpec {
+            id: "p".to_string(),
+            kind: PatternKind::ForkJoin,
+            steps: vec![],
+            fork: Some(PatternForkSpec {
+                branches: vec![
+                    PatternBranchSpec {
+                        id: "b".to_string(),
+                        steps: vec!["A".to_string()],
+                    },
+                    PatternBranchSpec {
+                        id: "b".to_string(),
+                        steps: vec!["B".to_string()],
+                    },
+                ],
+            }),
+            join: Some(PatternJoinSpec {
+                step: "J".to_string(),
+            }),
+        };
+        let err = duplicate_branch
+            .validate()
+            .expect_err("duplicate branch id");
+        assert!(err.to_string().contains("duplicate branch id"));
+    }
+
+    #[test]
+    fn load_from_file_include_merge_and_cycle_errors() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let base = std::env::temp_dir().join(format!("adl-load-test-{now}-{}", std::process::id()));
+        std::fs::create_dir_all(&base).expect("create base");
+
+        let fragment = base.join("fragment.yaml");
+        let root = base.join("root.yaml");
+        std::fs::write(
+            &fragment,
+            r#"
+providers:
+  p:
+    type: "ollama"
+agents:
+  a:
+    provider: "p"
+    model: "m"
+tasks:
+  t:
+    prompt:
+      user: "u"
+"#,
+        )
+        .expect("write fragment");
+        std::fs::write(
+            &root,
+            r#"
+version: "0.1"
+include: ["fragment.yaml"]
+run:
+  workflow:
+    steps:
+      - agent: "a"
+        task: "t"
+"#,
+        )
+        .expect("write root");
+
+        let doc = AdlDoc::load_from_file(root.to_str().expect("utf8")).expect("load merged doc");
+        assert!(doc.providers.contains_key("p"));
+        assert!(doc.tasks.contains_key("t"));
+
+        let a = base.join("a.yaml");
+        let b = base.join("b.yaml");
+        std::fs::write(
+            &a,
+            r#"
+version: "0.1"
+include: ["b.yaml"]
+run:
+  workflow:
+    steps: []
+"#,
+        )
+        .expect("write a");
+        std::fs::write(
+            &b,
+            r#"
+include: ["a.yaml"]
+"#,
+        )
+        .expect("write b");
+
+        let err = AdlDoc::load_from_file(a.to_str().expect("utf8")).expect_err("cycle error");
+        let msg = format!("{err:#}");
+        assert!(
+            msg.contains("include cycle detected"),
+            "unexpected cycle error: {msg}"
+        );
+        let _ = std::fs::remove_dir_all(base);
+    }
+
+    #[test]
+    fn deserialize_temperature_number_formats() {
+        let yaml = r#"
+id: "a1"
+provider: "p"
+model: "m"
+temperature: 0.7
+"#;
+        let agent: AgentSpec = serde_yaml::from_str(yaml).expect("parse agent");
+        assert_eq!(agent.temperature.as_deref(), Some("0.7"));
+    }
+
+    #[test]
+    fn validate_provider_http_requires_endpoint() {
+        let provider = ProviderSpec {
+            id: None,
+            profile: None,
+            kind: "http".to_string(),
+            base_url: None,
+            default_model: None,
+            config: HashMap::new(),
+        };
+        let err =
+            validate_provider("p1", &provider).expect_err("http provider must require endpoint");
+        assert!(err
+            .to_string()
+            .contains("requires base_url or config.endpoint"));
+    }
+
+    #[test]
+    fn validate_provider_profile_rejects_empty_value() {
+        let provider = ProviderSpec {
+            id: None,
+            profile: Some("   ".to_string()),
+            kind: "".to_string(),
+            base_url: None,
+            default_model: None,
+            config: HashMap::new(),
+        };
+        let err = validate_provider("p1", &provider).expect_err("empty profile should fail");
+        assert!(err.to_string().contains("profile must not be empty"));
+    }
+
+    #[test]
+    fn validate_tool_rejects_unsupported_kind() {
+        let tool = ToolSpec {
+            id: None,
+            kind: "nope".to_string(),
+            config: HashMap::new(),
+        };
+        let err = validate_tool("t1", &tool).expect_err("unsupported tool kind");
+        assert!(err.to_string().contains("unsupported kind"));
+    }
+
+    #[test]
+    fn validate_rejects_explicit_id_mismatch_with_key() {
+        let doc = AdlDoc {
+            version: "0.5".to_string(),
+            providers: HashMap::from([(
+                "p1".to_string(),
+                ProviderSpec {
+                    id: Some("wrong".to_string()),
+                    profile: None,
+                    kind: "ollama".to_string(),
+                    base_url: None,
+                    default_model: None,
+                    config: HashMap::new(),
+                },
+            )]),
+            tools: HashMap::new(),
+            agents: HashMap::new(),
+            tasks: HashMap::new(),
+            workflows: HashMap::new(),
+            patterns: vec![],
+            signature: None,
+            run: RunSpec {
+                id: None,
+                name: None,
+                created_at: None,
+                defaults: RunDefaults::default(),
+                workflow_ref: None,
+                workflow: Some(WorkflowSpec {
+                    id: None,
+                    kind: WorkflowKind::Sequential,
+                    max_concurrency: None,
+                    steps: vec![],
+                }),
+                pattern_ref: None,
+                inputs: HashMap::new(),
+                placement: None,
+                remote: None,
+            },
+        };
+        let err = doc.validate().expect_err("id mismatch should fail");
+        assert!(err
+            .to_string()
+            .contains("providers.p1.id must match key 'p1'"));
+    }
+}

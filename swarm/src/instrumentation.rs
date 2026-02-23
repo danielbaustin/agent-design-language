@@ -415,8 +415,9 @@ fn escape_dot(v: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::adl::WorkflowKind;
+    use crate::adl::{DelegationSpec, WorkflowKind};
     use crate::execution_plan::ExecutionNode;
+    use std::time::{SystemTime, UNIX_EPOCH};
 
     fn sample_plan() -> ExecutionPlan {
         ExecutionPlan {
@@ -525,5 +526,245 @@ mod tests {
         let d2 = diff_traces(&left, &right);
         assert_eq!(d1, d2);
         assert_eq!(d1.changed_indices, vec![1]);
+    }
+
+    #[test]
+    fn export_graph_sorts_nodes_and_dedupes_edges() {
+        let plan = ExecutionPlan {
+            workflow_kind: WorkflowKind::Concurrent,
+            nodes: vec![
+                ExecutionNode {
+                    step_id: "b".to_string(),
+                    depends_on: vec!["a".to_string(), "a".to_string()],
+                    save_as: None,
+                    delegation: None,
+                },
+                ExecutionNode {
+                    step_id: "a".to_string(),
+                    depends_on: vec![],
+                    save_as: None,
+                    delegation: None,
+                },
+            ],
+        };
+        let graph = export_graph(&plan);
+        assert_eq!(graph.nodes[0].id, "a");
+        assert_eq!(graph.nodes[1].id, "b");
+        assert_eq!(
+            graph.edges,
+            vec![GraphEdge {
+                from: "a".to_string(),
+                to: "b".to_string()
+            }]
+        );
+    }
+
+    #[test]
+    fn diff_plans_detects_all_surface_changes() {
+        let left = ExecutionPlan {
+            workflow_kind: WorkflowKind::Sequential,
+            nodes: vec![
+                ExecutionNode {
+                    step_id: "a".to_string(),
+                    depends_on: vec![],
+                    save_as: Some("a_out".to_string()),
+                    delegation: None,
+                },
+                ExecutionNode {
+                    step_id: "b".to_string(),
+                    depends_on: vec!["a".to_string()],
+                    save_as: None,
+                    delegation: None,
+                },
+            ],
+        };
+        let right = ExecutionPlan {
+            workflow_kind: WorkflowKind::Sequential,
+            nodes: vec![
+                ExecutionNode {
+                    step_id: "a".to_string(),
+                    depends_on: vec!["x".to_string()],
+                    save_as: None,
+                    delegation: None,
+                },
+                ExecutionNode {
+                    step_id: "c".to_string(),
+                    depends_on: vec!["a".to_string()],
+                    save_as: None,
+                    delegation: None,
+                },
+            ],
+        };
+        let diff = diff_plans(&left, &right);
+        assert_eq!(diff.added_nodes, vec!["c".to_string()]);
+        assert_eq!(diff.removed_nodes, vec!["b".to_string()]);
+        assert_eq!(diff.changed_dependencies, vec!["a".to_string()]);
+        assert_eq!(diff.changed_save_as, vec!["a".to_string()]);
+    }
+
+    #[test]
+    fn diff_traces_reports_tail_items_as_side_specific() {
+        let left = vec![
+            TraceEventNormalized::RunFinished { success: true },
+            TraceEventNormalized::StepFinished {
+                step_id: "s1".to_string(),
+                success: true,
+            },
+        ];
+        let right = vec![TraceEventNormalized::RunFinished { success: true }];
+        let diff = diff_traces(&left, &right);
+        assert!(diff.changed_indices.is_empty());
+        assert_eq!(
+            diff.left_only,
+            vec!["StepFinished step=s1 success=true".to_string()]
+        );
+        assert!(diff.right_only.is_empty());
+    }
+
+    #[test]
+    fn normalize_step_started_omits_effectively_empty_delegation() {
+        let events = vec![TraceEvent::StepStarted {
+            ts_ms: 1,
+            elapsed_ms: 1,
+            step_id: "s1".to_string(),
+            agent_id: "a".to_string(),
+            provider_id: "p".to_string(),
+            task_id: "t".to_string(),
+            delegation: Some(DelegationSpec {
+                role: None,
+                requires_verification: Some(false),
+                escalation_target: None,
+                tags: vec![],
+            }),
+        }];
+        let normalized = normalize_trace_events(&events);
+        let TraceEventNormalized::StepStarted {
+            delegation_json, ..
+        } = &normalized[0]
+        else {
+            panic!("expected StepStarted");
+        };
+        assert!(delegation_json.is_none());
+    }
+
+    #[test]
+    fn normalize_step_started_canonicalizes_delegation_payload() {
+        let events = vec![TraceEvent::StepStarted {
+            ts_ms: 1,
+            elapsed_ms: 1,
+            step_id: "s1".to_string(),
+            agent_id: "a".to_string(),
+            provider_id: "p".to_string(),
+            task_id: "t".to_string(),
+            delegation: Some(DelegationSpec {
+                role: Some("review".to_string()),
+                requires_verification: Some(true),
+                escalation_target: Some("human".to_string()),
+                tags: vec!["z".to_string(), "a".to_string(), "z".to_string()],
+            }),
+        }];
+        let normalized = normalize_trace_events(&events);
+        let TraceEventNormalized::StepStarted {
+            delegation_json, ..
+        } = &normalized[0]
+        else {
+            panic!("expected StepStarted");
+        };
+        let payload = delegation_json.as_ref().expect("delegation json");
+        assert!(payload.contains("\"requires_verification\":true"));
+        assert!(
+            payload.contains("\"tags\":[\"a\",\"z\"]"),
+            "delegation should be sorted+deduped: {payload}"
+        );
+    }
+
+    #[test]
+    fn write_and_load_trace_artifact_round_trip() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let path = std::env::temp_dir().join(format!(
+            "swarm-trace-artifact-{now}-{}.json",
+            std::process::id()
+        ));
+        let events = vec![
+            TraceEvent::RunFinished {
+                ts_ms: 10,
+                elapsed_ms: 10,
+                success: true,
+            },
+            TraceEvent::StepOutputChunk {
+                ts_ms: 11,
+                elapsed_ms: 11,
+                step_id: "s1".to_string(),
+                chunk_bytes: 4,
+            },
+        ];
+        write_trace_artifact(&path, &events).expect("write artifact");
+        let loaded = load_trace_artifact(&path).expect("load artifact");
+        assert_eq!(loaded, normalize_trace_events(&events));
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn load_trace_artifact_invalid_json_returns_context_error() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let path = std::env::temp_dir().join(format!(
+            "swarm-trace-invalid-{now}-{}.json",
+            std::process::id()
+        ));
+        std::fs::write(&path, "{").expect("write invalid json");
+        let err = load_trace_artifact(&path).expect_err("invalid json should fail");
+        assert!(
+            err.to_string().contains("failed parsing trace artifact"),
+            "unexpected error: {err:#}"
+        );
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn format_normalized_event_covers_variants() {
+        let messages = [
+            format_normalized_event(&TraceEventNormalized::RunFailed {
+                message: "boom".to_string(),
+            }),
+            format_normalized_event(&TraceEventNormalized::RunFinished { success: true }),
+            format_normalized_event(&TraceEventNormalized::StepStarted {
+                step_id: "s1".to_string(),
+                agent_id: "a".to_string(),
+                provider_id: "p".to_string(),
+                task_id: "t".to_string(),
+                delegation_json: Some("{\"role\":\"r\"}".to_string()),
+            }),
+            format_normalized_event(&TraceEventNormalized::PromptAssembled {
+                step_id: "s1".to_string(),
+                prompt_hash: "abc".to_string(),
+            }),
+            format_normalized_event(&TraceEventNormalized::StepOutputChunk {
+                step_id: "s1".to_string(),
+                chunk_bytes: 3,
+            }),
+            format_normalized_event(&TraceEventNormalized::StepFinished {
+                step_id: "s1".to_string(),
+                success: false,
+            }),
+            format_normalized_event(&TraceEventNormalized::CallEntered {
+                caller_step_id: "caller".to_string(),
+                callee_workflow_id: "wf".to_string(),
+                namespace: "ns".to_string(),
+            }),
+            format_normalized_event(&TraceEventNormalized::CallExited {
+                caller_step_id: "caller".to_string(),
+                status: "success".to_string(),
+                namespace: "ns".to_string(),
+            }),
+        ];
+        assert!(messages.iter().any(|m| m.contains("RunFailed")));
+        assert!(messages.iter().any(|m| m.contains("delegation=")));
+        assert!(messages.iter().any(|m| m.contains("CallExited")));
     }
 }
