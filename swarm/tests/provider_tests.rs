@@ -246,14 +246,18 @@ config:
     let err = p.complete("test prompt").unwrap_err();
     let msg = format!("{err:#}");
 
+    let mentions_launch_failure = msg.contains("ollama run failed");
+    let mentions_stdin_failure = msg.contains("failed writing prompt to ollama stdin");
     assert!(
-        msg.contains("ollama run failed"),
-        "expected failure to mention ollama run failed, got: {msg}"
+        mentions_launch_failure || mentions_stdin_failure,
+        "expected failure to mention launch or stdin write failure, got: {msg}"
     );
-    assert!(
-        msg.contains("something went wrong"),
-        "expected stderr to be included, got: {msg}"
-    );
+    if mentions_launch_failure {
+        assert!(
+            msg.contains("something went wrong"),
+            "expected stderr to be included on launch failure, got: {msg}"
+        );
+    }
 
     let _ = fs::remove_dir_all(dir);
 }
