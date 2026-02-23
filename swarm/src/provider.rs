@@ -136,6 +136,23 @@ struct ProviderProfilePreset {
     endpoint: Option<&'static str>,
 }
 
+const HTTP_PROFILE_PLACEHOLDER_ENDPOINT: &str = "https://api.example.invalid/v1/complete";
+const INVALID_ENDPOINT_HOST_MARKER: &str = "example.invalid";
+
+fn validate_profile_endpoint(provider_id: &str, profile_name: &str, endpoint: &str) -> Result<()> {
+    let trimmed = endpoint.trim();
+    if trimmed.is_empty()
+        || trimmed == HTTP_PROFILE_PLACEHOLDER_ENDPOINT
+        || trimmed.contains(INVALID_ENDPOINT_HOST_MARKER)
+    {
+        return Err(anyhow!(
+            "providers.{provider_id}.profile '{}' has placeholder or invalid endpoint; configure providers.{provider_id}.config.endpoint with a real endpoint",
+            profile_name
+        ));
+    }
+    Ok(())
+}
+
 fn provider_profile_registry() -> BTreeMap<&'static str, ProviderProfilePreset> {
     let mut m = BTreeMap::new();
     // Ollama / local presets
@@ -195,7 +212,7 @@ fn provider_profile_registry() -> BTreeMap<&'static str, ProviderProfilePreset> 
             ProviderProfilePreset {
                 kind: "http",
                 default_model: Some(model),
-                endpoint: Some("https://api.example.invalid/v1/complete"),
+                endpoint: Some(HTTP_PROFILE_PLACEHOLDER_ENDPOINT),
             },
         );
     }
@@ -245,6 +262,7 @@ pub fn expand_provider_profiles(doc: &adl::AdlDoc) -> Result<adl::AdlDoc> {
 
         let mut config = HashMap::new();
         if let Some(endpoint) = preset.endpoint {
+            validate_profile_endpoint(&provider_id, profile_name, endpoint)?;
             config.insert("endpoint".to_string(), Value::String(endpoint.to_string()));
         }
 
