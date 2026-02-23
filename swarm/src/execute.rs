@@ -226,6 +226,20 @@ fn emit_step_output(step_id: &str, model_output: &str, stream_chunks: &[String],
     println!();
 }
 
+fn stable_fingerprint_hex(bytes: &[u8]) -> String {
+    // FNV-1a 64-bit (deterministic, dependency-free fingerprint for persisted metadata).
+    let mut hash: u64 = 0xcbf29ce484222325;
+    for b in bytes {
+        hash ^= u64::from(*b);
+        hash = hash.wrapping_mul(0x100000001b3);
+    }
+    format!("{hash:016x}")
+}
+
+fn model_output_fingerprint(output: &str) -> String {
+    stable_fingerprint_hex(output.as_bytes())
+}
+
 /// Execute the resolved run.
 ///
 /// Behavior:
@@ -585,7 +599,8 @@ pub fn execute_sequential_with_resume(
                 if let Some(save_as) = step.save_as.as_ref() {
                     saved_state.insert(save_as.clone(), out.model_output.clone());
                 }
-                completed_outputs.insert(step_id.clone(), out.model_output.clone());
+                completed_outputs
+                    .insert(step_id.clone(), model_output_fingerprint(&out.model_output));
                 completed_step_ids.insert(step_id.clone());
                 outs.push(out);
 
@@ -1290,7 +1305,10 @@ fn execute_concurrent_deterministic(
                     if let Some(save_as) = step.save_as.as_ref() {
                         saved_state.insert(save_as.clone(), success.out.model_output.clone());
                     }
-                    completed_outputs.insert(step_id.clone(), success.out.model_output.clone());
+                    completed_outputs.insert(
+                        step_id.clone(),
+                        model_output_fingerprint(&success.out.model_output),
+                    );
                     outs.push(success.out);
                     completed.insert(step_id.clone());
                     if let Some(reason) = pause_reason_for_step(step) {
