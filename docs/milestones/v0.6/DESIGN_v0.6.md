@@ -3,11 +3,11 @@
 ## Metadata
 - Milestone: v0.6
 - Version: v0.6
-- Status: Planning
+- Status: Active (WP-I docs pass)
 - Owner: ADL core (Daniel + Codex-assisted implementation)
 - Related issues:
   - #401–#411 (v0.6 umbrella WPs)
-  - #409 (Coverage audit >80% per file)
+  - #409 (Coverage audit >=80% per file)
   - #370, #371, #386 (remote security + signing follow-ups)
 
 ---
@@ -103,10 +103,11 @@ v0.6 addresses these without destabilizing the deterministic core.
   - Pattern usage
   - Delegation metadata logging
 - Ensure demos are deterministic and CI-verifiable.
+- Canonical matrix location: `docs/milestones/v0.6/DEMOS_v0.6.md`.
 
-### 9. Coverage Audit (>80% per file) (WP-H2, #409)
+### 9. Coverage Audit (>=80% per file) (WP-H2, #409)
 - Perform per-file coverage analysis.
-- Raise coverage floor to >80% where practical.
+- Raise coverage floor to >=80% where practical.
 - Identify intentional exclusions explicitly.
 
 ### 10. Docs + Review Pass (WP-I, #410)
@@ -161,7 +162,7 @@ v0.6 addresses these without destabilizing the deterministic core.
 ### Non-Functional
 - Deterministic behavior and reproducible outputs.
 - Clear failure semantics and observability.
-- >80% per-file test coverage target (WP-H2).
+- >=80% per-file test coverage target (WP-H2).
 - No regression in existing CLI smoke tests.
 
 ---
@@ -307,7 +308,8 @@ Tradeoff: coupling risk; violates separation principle. Deferred.
 - All new behaviors covered by tests.
 - Determinism tests pass across multiple runs.
 - Streaming tests confirm ordering guarantees.
-- Coverage report confirms >80% per file where practical.
+- Coverage report confirms >=80% per file where practical.
+- Demo behavior and reproducibility are captured in `docs/milestones/v0.6/DEMOS_v0.6.md`.
 - Demo matrix runs clean in CI.
 
 Rollback:

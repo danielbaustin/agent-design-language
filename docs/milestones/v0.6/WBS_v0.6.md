@@ -5,7 +5,7 @@
 - Version: v0.6
 - Owner: ADL core (Daniel + Codex-assisted implementation)
 - Governing issues: #401–#411
-- Quality gate: #409 (coverage audit >80% per file)
+- Quality gate: #409 (coverage audit >=80% per file)
 
 ---
 
@@ -37,8 +37,8 @@ Each WP below is decomposed into concrete, mergeable deliverables.
 | WP-E | Delegation metadata (log-only) | Schema extension + trace logging (no enforcement) | Schema update, trace logging, validation tests | WP-A (compile stability) | #405 |
 | WP-F | Determinism + scheduler hardening | Clarify concurrency + ordering invariants | Tests proving invariants, docs clarification | None | #406 |
 | WP-G | Instrumentation + replay diff + graph export | Improve trace tooling and visualization | Structured trace export, replay diff utility, graph export (Mermaid/DOT), demo | WP-A | #407 |
-| WP-H | Demo matrix + integration demos | Standardized demo coverage for v0.6 features | Demo matrix doc, CI-verifiable demos | WP-A–WP-G | #408 |
-| WP-H2 | Coverage audit (>80% per file) | Per-file coverage ratchet + exclusions documented | Coverage report, exclusions documented, follow-up issues | WP-A–WP-G implemented | #409 |
+| WP-H | Demo matrix + integration demos | Standardized demo coverage for v0.6 features | `docs/milestones/v0.6/DEMOS_v0.6.md`, CI-verifiable demos | WP-A–WP-G | #408 |
+| WP-H2 | Coverage audit (>=80% per file) | Per-file coverage ratchet + exclusions documented | Coverage report, exclusions documented, follow-up issues | WP-A–WP-G implemented | #409 |
 | WP-I | Docs + review pass | Consolidate documentation for release | README updates, milestone doc alignment, threat-model references | WP-H2 | #410 |
 | WP-J | Release ceremony | Final validation + tag + release notes | Tag, release notes, checklist signoff | WP-I | #411 |
 
@@ -165,7 +165,7 @@ Subtasks:
 - Commit coverage report artifact.
 
 Deliverable:
-- >80% coverage per file (where practical) + documented exceptions.
+- >=80% coverage per file (where practical) + documented exceptions.
 
 Gate:
 - WP-I cannot complete until coverage audit is complete.
