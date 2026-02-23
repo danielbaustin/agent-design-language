@@ -6,7 +6,7 @@
 - Owner: ADL core (Daniel + Codex-assisted implementation)
 - Duration model: 3 execution sprints + release sprint
 - Governing WPs: #401–#411
-- Quality gate: #409 (coverage audit >80% per file)
+- Quality gate: #409 (coverage audit >=80% per file)
 
 ---
 
@@ -97,13 +97,13 @@ Make v0.6 demonstrable, observable, and measurable.
 | 5 | Define demo matrix coverage | #408 | Daniel | Planned |
 | 6 | Implement demo scenarios | #408 | Codex | Planned |
 | 7 | Run per-file coverage audit | #409 | Codex | Planned |
-| 8 | Raise coverage to >80% where practical | #409 | Codex | Planned |
+| 8 | Raise coverage to >=80% where practical | #409 | Codex | Planned |
 | 9 | Document justified coverage exclusions | #409 | Daniel | Planned |
 
 ## Definition of Done
 - Replay + graph export produce usable artifacts.
-- Demo matrix runs deterministically in CI.
-- Coverage >80% per file (or documented exception).
+- Demo matrix (`docs/milestones/v0.6/DEMOS_v0.6.md`) runs deterministically in CI.
+- Coverage >=80% per file (or documented exception).
 - No regression in runtime invariants.
 
 ---

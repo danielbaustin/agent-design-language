@@ -52,7 +52,7 @@ Before release branch/tag creation:
 
 ## 3. Coverage Gate (WP-H2 #409)
 
-- >80% coverage per file, OR
+- >=80% coverage per file, OR
 - Documented exception with:
   - Explicit issue
   - Owner
@@ -113,6 +113,7 @@ Freeze window begins after checklist confirmation.
 2. Create GitHub release:
    - Title: `ADL v0.6.0`
    - Body from release notes
+   - Include link to `docs/milestones/v0.6/DEMOS_v0.6.md`
    - Verify links
 
 3. Confirm release appears in:
@@ -124,10 +125,9 @@ Freeze window begins after checklist confirmation.
 # Post-Release Actions
 
 1. Close WP-J (#411) and milestone docs bootstrap issue (#416).
-2. Close WP-J (#411).
-3. Move any remaining `version:v0.6` items to `version:v0.7` with explanation.
-4. Update roadmap documentation.
-5. Begin Sprint 1 execution on v0.7 EPIC-A (#412).
+2. Move any remaining `version:v0.6` items to `version:v0.7` with explanation.
+3. Update roadmap documentation.
+4. Begin Sprint 1 execution on v0.7 EPIC-A (#412).
 
 ---
 

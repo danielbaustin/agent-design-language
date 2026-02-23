@@ -39,7 +39,7 @@ This document supplements ADRs but is milestone-scoped.
 
 | D-06 | Pause/Resume is explicit and trace-visible | Accepted | Human control must be visible, auditable, and deterministic. | Implicit pause via runtime hooks | Maintains transparency + auditability | WP-B (#402) |
 
-| D-07 | Coverage >80% per file becomes milestone gate | Accepted | Establish quality ratchet without requiring perfection. | Global coverage % only | Raises engineering discipline | WP-H2 (#409) |
+| D-07 | Coverage >=80% per file becomes milestone gate | Accepted | Establish quality ratchet without requiring perfection. | Global coverage % only | Raises engineering discipline | WP-H2 (#409) |
 
 | D-08 | Provider profiles are documentation-level in v0.6 | Accepted | Avoid runtime heuristics and auto-selection; profiles are configuration contracts. | Dynamic provider auto-selection | Keeps runtime predictable | WP-D (#404) |
 

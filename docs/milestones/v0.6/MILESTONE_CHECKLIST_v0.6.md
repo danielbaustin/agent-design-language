@@ -62,7 +62,7 @@ Items are checked only when objective evidence exists (PRs, CI runs, artifacts).
 
 - [ ] WP-G (#407) Instrumentation + replay diff + graph export available
 - [ ] WP-H (#408) Demo matrix updated and validated
-- [ ] WP-H2 (#409) Coverage audit complete (>80% per file or documented exception)
+- [ ] WP-H2 (#409) Coverage audit complete (>=80% per file or documented exception)
 
 ## Finalization
 
@@ -81,7 +81,7 @@ Items are checked only when objective evidence exists (PRs, CI runs, artifacts).
 - [ ] Coverage gate satisfied per WP-H2 (#409)
 
 Coverage Gate Definition:
-- Target: >80% per file.
+- Target: >=80% per file.
 - Exceptions must:
   - Be documented.
   - Have explicit issue link.
