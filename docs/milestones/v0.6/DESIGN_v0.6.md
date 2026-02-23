@@ -239,6 +239,7 @@ Schema extension:
 
 Runtime:
 - Metadata logged into trace.
+- Metadata is observational only in v0.6 and does not alter scheduler decisions, provider routing, or step gating.
 - No enforcement logic in v0.6.
 - Enables v0.7 policy engine.
 
