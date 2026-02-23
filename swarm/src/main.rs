@@ -615,7 +615,7 @@ struct RunStateArtifact {
     start_time_ms: u128,
     end_time_ms: u128,
     duration_ms: u128,
-    execution_plan_json: String,
+    execution_plan_hash: String,
     pause: Option<execute::PauseState>,
 }
 
@@ -627,7 +627,7 @@ struct PauseStateArtifact {
     workflow_id: String,
     version: String,
     status: String,
-    execution_plan_json: String,
+    execution_plan_hash: String,
     pause: execute::PauseState,
 }
 
@@ -665,6 +665,21 @@ fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
         )
     })?;
     Ok(())
+}
+
+fn stable_fingerprint_hex(bytes: &[u8]) -> String {
+    // FNV-1a 64-bit (deterministic, dependency-free fingerprint for persisted metadata).
+    let mut hash: u64 = 0xcbf29ce484222325;
+    for b in bytes {
+        hash ^= u64::from(*b);
+        hash = hash.wrapping_mul(0x100000001b3);
+    }
+    format!("{hash:016x}")
+}
+
+fn execution_plan_hash<T: Serialize>(plan: &T) -> Result<String> {
+    let plan_json = serde_json::to_vec(plan).context("serialize execution plan for hashing")?;
+    Ok(stable_fingerprint_hex(&plan_json))
 }
 
 fn write_run_state_artifacts(
@@ -736,8 +751,7 @@ fn write_run_state_artifacts(
         start_time_ms: start_ms,
         end_time_ms: end_ms,
         duration_ms: end_ms.saturating_sub(start_ms),
-        execution_plan_json: serde_json::to_string(&resolved.execution_plan)
-            .context("serialize execution plan")?,
+        execution_plan_hash: execution_plan_hash(&resolved.execution_plan)?,
         pause: pause.cloned(),
     };
 
@@ -753,8 +767,7 @@ fn write_run_state_artifacts(
             workflow_id: resolved.workflow_id.clone(),
             version: resolved.doc.version.clone(),
             status: "paused".to_string(),
-            execution_plan_json: serde_json::to_string(&resolved.execution_plan)
-                .context("serialize execution plan for pause state")?,
+            execution_plan_hash: execution_plan_hash(&resolved.execution_plan)?,
             pause: pause_payload.clone(),
         };
         let pause_json =
@@ -810,9 +823,8 @@ fn load_resume_state(path: &Path, resolved: &resolve::AdlResolved) -> Result<exe
             resolved.doc.version
         ));
     }
-    let plan_json =
-        serde_json::to_string(&resolved.execution_plan).context("serialize current plan")?;
-    if artifact.execution_plan_json != plan_json {
+    let plan_hash = execution_plan_hash(&resolved.execution_plan)?;
+    if artifact.execution_plan_hash != plan_hash {
         return Err(anyhow::anyhow!(
             "resume execution plan mismatch; resume requires identical plan and ordering"
         ));
