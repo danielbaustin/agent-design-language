@@ -600,8 +600,13 @@ fn run_artifacts_root() -> Result<PathBuf> {
     Ok(repo_root.join(".adl").join("runs"))
 }
 
+const RUN_STATE_SCHEMA_VERSION: &str = "run_state.v1";
+const PAUSE_STATE_SCHEMA_VERSION: &str = "pause_state.v1";
+
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct RunStateArtifact {
+    schema_version: String,
     run_id: String,
     workflow_id: String,
     version: String,
@@ -614,6 +619,18 @@ struct RunStateArtifact {
     pause: Option<execute::PauseState>,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PauseStateArtifact {
+    schema_version: String,
+    run_id: String,
+    workflow_id: String,
+    version: String,
+    status: String,
+    execution_plan_json: String,
+    pause: execute::PauseState,
+}
+
 #[derive(Debug, Serialize)]
 struct StepStateArtifact {
     step_id: String,
@@ -621,6 +638,33 @@ struct StepStateArtifact {
     provider_id: String,
     status: String,
     output_artifact_path: Option<String>,
+}
+
+fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
+    let parent = path
+        .parent()
+        .ok_or_else(|| anyhow::anyhow!("artifact path has no parent: '{}'", path.display()))?;
+    std::fs::create_dir_all(parent)
+        .with_context(|| format!("failed to create artifact parent '{}'", parent.display()))?;
+
+    let tmp_name = format!(
+        ".{}.{}.tmp",
+        path.file_name()
+            .and_then(|n| n.to_str())
+            .unwrap_or("artifact"),
+        std::process::id()
+    );
+    let tmp_path = parent.join(tmp_name);
+    std::fs::write(&tmp_path, bytes)
+        .with_context(|| format!("failed to write temp artifact '{}'", tmp_path.display()))?;
+    std::fs::rename(&tmp_path, path).with_context(|| {
+        format!(
+            "failed to atomically move artifact '{}' -> '{}'",
+            tmp_path.display(),
+            path.display()
+        )
+    })?;
+    Ok(())
 }
 
 fn write_run_state_artifacts(
@@ -680,6 +724,7 @@ fn write_run_state_artifacts(
     }
 
     let run_artifact = RunStateArtifact {
+        schema_version: RUN_STATE_SCHEMA_VERSION.to_string(),
         run_id: resolved.run_id.clone(),
         workflow_id: resolved.workflow_id.clone(),
         version: resolved.doc.version.clone(),
@@ -699,18 +744,23 @@ fn write_run_state_artifacts(
     let run_json = serde_json::to_vec_pretty(&run_artifact).context("serialize run.json")?;
     let steps_json = serde_json::to_vec_pretty(&steps).context("serialize steps.json")?;
 
-    std::fs::write(run_dir.join("run.json"), run_json).with_context(|| {
-        format!(
-            "failed to write run artifact '{}'",
-            run_dir.join("run.json").display()
-        )
-    })?;
-    std::fs::write(run_dir.join("steps.json"), steps_json).with_context(|| {
-        format!(
-            "failed to write run artifact '{}'",
-            run_dir.join("steps.json").display()
-        )
-    })?;
+    atomic_write(&run_dir.join("run.json"), &run_json)?;
+    atomic_write(&run_dir.join("steps.json"), &steps_json)?;
+    if let Some(pause_payload) = pause {
+        let pause_artifact = PauseStateArtifact {
+            schema_version: PAUSE_STATE_SCHEMA_VERSION.to_string(),
+            run_id: resolved.run_id.clone(),
+            workflow_id: resolved.workflow_id.clone(),
+            version: resolved.doc.version.clone(),
+            status: "paused".to_string(),
+            execution_plan_json: serde_json::to_string(&resolved.execution_plan)
+                .context("serialize execution plan for pause state")?,
+            pause: pause_payload.clone(),
+        };
+        let pause_json =
+            serde_json::to_vec_pretty(&pause_artifact).context("serialize pause_state.json")?;
+        atomic_write(&run_dir.join("pause_state.json"), &pause_json)?;
+    }
 
     Ok(run_dir)
 }
@@ -718,8 +768,20 @@ fn write_run_state_artifacts(
 fn load_resume_state(path: &Path, resolved: &resolve::AdlResolved) -> Result<execute::ResumeState> {
     let raw = std::fs::read_to_string(path)
         .with_context(|| format!("failed to read resume state '{}'", path.display()))?;
-    let artifact: RunStateArtifact =
-        serde_json::from_str(&raw).with_context(|| "failed to parse resume run.json")?;
+    let artifact: RunStateArtifact = serde_json::from_str(&raw).with_context(|| {
+        format!(
+            "failed to parse resume state '{}' as run_state artifact",
+            path.display()
+        )
+    })?;
+
+    if artifact.schema_version != RUN_STATE_SCHEMA_VERSION {
+        return Err(anyhow::anyhow!(
+            "resume state schema_version mismatch: state='{}' expected='{}'",
+            artifact.schema_version,
+            RUN_STATE_SCHEMA_VERSION
+        ));
+    }
 
     if artifact.status != "paused" {
         return Err(anyhow::anyhow!(
@@ -1260,6 +1322,10 @@ mod tests {
             load_resume_state(&run_dir.join("run.json"), &resolved).expect("load resume state");
         assert!(resume.completed_step_ids.contains("s1"));
         assert_eq!(resume.saved_state.get("k").map(String::as_str), Some("v"));
+        assert!(
+            run_dir.join("pause_state.json").exists(),
+            "paused runs must persist pause_state.json"
+        );
         let _ = std::fs::remove_dir_all(run_dir);
         let _ = std::fs::remove_dir_all(out_dir);
     }
@@ -1280,6 +1346,55 @@ mod tests {
         let err = load_resume_state(&run_dir.join("run.json"), &resolved)
             .expect_err("non-paused run.json should fail for resume");
         assert!(err.to_string().contains("status='paused'"));
+        assert!(
+            !run_dir.join("pause_state.json").exists(),
+            "non-paused runs must not emit pause_state.json"
+        );
+        let _ = std::fs::remove_dir_all(run_dir);
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn load_resume_state_rejects_unknown_schema_version() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("run-schema-{now}-{}", std::process::id());
+        let resolved = minimal_resolved_for_artifacts(run_id.clone());
+        let out_dir = std::env::temp_dir().join(format!("swarm-main-schema-{now}"));
+
+        let mut tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
+        tr.step_started("s1", "a1", "p1", "t1", None);
+        tr.step_finished("s1", true);
+        let pause = execute::PauseState {
+            paused_step_id: "s1".to_string(),
+            reason: Some("review".to_string()),
+            completed_step_ids: vec!["s1".to_string()],
+            remaining_step_ids: vec![],
+            saved_state: HashMap::new(),
+            completed_outputs: HashMap::new(),
+        };
+        let run_dir =
+            write_run_state_artifacts(&resolved, &tr, &out_dir, 10, 20, "paused", Some(&pause))
+                .expect("write run artifacts");
+
+        let run_json_path = run_dir.join("run.json");
+        let mut run_json: serde_json::Value =
+            serde_json::from_str(&std::fs::read_to_string(&run_json_path).expect("read run.json"))
+                .expect("parse run.json");
+        run_json["schema_version"] = serde_json::Value::String("run_state.v0".to_string());
+        atomic_write(
+            &run_json_path,
+            serde_json::to_vec_pretty(&run_json)
+                .expect("serialize modified run.json")
+                .as_slice(),
+        )
+        .expect("rewrite run.json");
+
+        let err = load_resume_state(&run_json_path, &resolved)
+            .expect_err("schema mismatch should be rejected");
+        assert!(err.to_string().contains("schema_version mismatch"));
         let _ = std::fs::remove_dir_all(run_dir);
         let _ = std::fs::remove_dir_all(out_dir);
     }
