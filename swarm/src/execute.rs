@@ -1467,3 +1467,272 @@ fn missing_prompt_inputs(
     out.sort();
     out
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::adl::{AdlDoc, PromptSpec, RunDefaults, RunSpec, WorkflowKind, WorkflowSpec};
+    use crate::resolve::AdlResolved;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn minimal_resolved() -> AdlResolved {
+        AdlResolved {
+            run_id: "run".to_string(),
+            workflow_id: "wf".to_string(),
+            doc: AdlDoc {
+                version: "0.3".to_string(),
+                providers: HashMap::new(),
+                tools: HashMap::new(),
+                agents: HashMap::new(),
+                tasks: HashMap::new(),
+                workflows: HashMap::new(),
+                patterns: vec![],
+                signature: None,
+                run: RunSpec {
+                    id: None,
+                    name: Some("run".to_string()),
+                    created_at: None,
+                    defaults: RunDefaults::default(),
+                    workflow_ref: None,
+                    workflow: Some(WorkflowSpec {
+                        id: None,
+                        kind: WorkflowKind::Concurrent,
+                        max_concurrency: None,
+                        steps: vec![],
+                    }),
+                    pattern_ref: None,
+                    inputs: HashMap::new(),
+                    placement: None,
+                    remote: None,
+                },
+            },
+            steps: vec![],
+            execution_plan: crate::execution_plan::ExecutionPlan {
+                workflow_kind: WorkflowKind::Concurrent,
+                nodes: vec![],
+            },
+        }
+    }
+
+    #[test]
+    fn resolve_state_inputs_resolves_and_validates_state_bindings() {
+        let mut inputs = HashMap::new();
+        inputs.insert("a".to_string(), "@state:key1".to_string());
+        inputs.insert("b".to_string(), "literal".to_string());
+        let mut state = HashMap::new();
+        state.insert("key1".to_string(), "value1".to_string());
+
+        let merged = resolve_state_inputs("s1", &inputs, &state).expect("resolve");
+        assert_eq!(merged.get("a").map(String::as_str), Some("value1"));
+        assert_eq!(merged.get("b").map(String::as_str), Some("literal"));
+
+        inputs.insert("a".to_string(), "@state:".to_string());
+        let empty_err = resolve_state_inputs("s1", &inputs, &state).expect_err("empty key fails");
+        assert!(empty_err
+            .to_string()
+            .contains("uses @state: with an empty key"));
+
+        inputs.insert("a".to_string(), "@state:missing".to_string());
+        let missing_err =
+            resolve_state_inputs("s1", &inputs, &state).expect_err("missing key fails");
+        assert!(missing_err
+            .to_string()
+            .contains("references missing saved state"));
+    }
+
+    #[test]
+    fn missing_prompt_inputs_dedupes_and_sorts_missing_keys() {
+        let prompt = PromptSpec {
+            system: Some("{{ b }}".to_string()),
+            user: Some("{{a}} and {{b}} and {{ a }}".to_string()),
+            context: Some("{{c}}".to_string()),
+            ..Default::default()
+        };
+        let mut inputs = HashMap::new();
+        inputs.insert("c".to_string(), "ok".to_string());
+        let missing = missing_prompt_inputs(&prompt, &inputs);
+        assert_eq!(missing, vec!["a".to_string(), "b".to_string()]);
+    }
+
+    #[test]
+    fn validate_write_to_rejects_invalid_paths() {
+        let empty_err = validate_write_to("s1", "   ").expect_err("empty should fail");
+        assert!(empty_err.to_string().contains("empty write_to"));
+
+        let abs_err = validate_write_to("s1", "/tmp/out.txt").expect_err("absolute should fail");
+        assert!(abs_err.to_string().contains("must be a relative path"));
+
+        let traversal_err =
+            validate_write_to("s1", "../escape.txt").expect_err("traversal should fail");
+        assert!(traversal_err.to_string().contains("without '..'"));
+    }
+
+    #[test]
+    fn write_output_creates_parent_directories() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let out_dir =
+            std::env::temp_dir().join(format!("swarm-write-output-{now}-{}", std::process::id()));
+        let path =
+            write_output("s1", &out_dir, "nested/result.txt", "hello").expect("write output");
+        let written = std::fs::read_to_string(&path).expect("read output");
+        assert_eq!(written, "hello");
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn effective_max_concurrency_precedence_and_validation() {
+        let mut resolved = minimal_resolved();
+        assert_eq!(effective_max_concurrency(&resolved).expect("default"), 4);
+
+        resolved.doc.run.defaults.max_concurrency = Some(3);
+        assert_eq!(
+            effective_max_concurrency(&resolved).expect("run default"),
+            3
+        );
+
+        resolved
+            .doc
+            .run
+            .workflow
+            .as_mut()
+            .expect("workflow")
+            .max_concurrency = Some(2);
+        assert_eq!(
+            effective_max_concurrency(&resolved).expect("workflow override"),
+            2
+        );
+
+        resolved
+            .doc
+            .run
+            .workflow
+            .as_mut()
+            .expect("workflow")
+            .max_concurrency = Some(0);
+        let err = effective_max_concurrency(&resolved).expect_err("zero should fail");
+        assert!(err.to_string().contains("must be >= 1"));
+    }
+
+    #[test]
+    fn effective_max_concurrency_supports_workflow_ref_overrides() {
+        let mut resolved = minimal_resolved();
+        resolved.doc.run.workflow = None;
+        resolved.doc.run.workflow_ref = Some("wf_ref".to_string());
+        resolved.doc.workflows.insert(
+            "wf_ref".to_string(),
+            WorkflowSpec {
+                id: Some("wf_ref".to_string()),
+                kind: WorkflowKind::Concurrent,
+                max_concurrency: Some(5),
+                steps: vec![],
+            },
+        );
+        assert_eq!(
+            effective_max_concurrency(&resolved).expect("workflow ref override"),
+            5
+        );
+    }
+
+    #[test]
+    fn pause_reason_for_step_detects_pause_guard_and_optional_reason() {
+        let mut step = crate::resolve::ResolvedStep {
+            id: "s1".to_string(),
+            agent: None,
+            provider: None,
+            placement: None,
+            task: None,
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
+            delegation: None,
+            prompt: None,
+            inputs: HashMap::new(),
+            guards: vec![],
+            save_as: None,
+            write_to: None,
+            on_error: None,
+            retry: None,
+        };
+        assert_eq!(pause_reason_for_step(&step), None);
+
+        step.guards.push(crate::adl::GuardSpec {
+            kind: "pause".to_string(),
+            config: HashMap::new(),
+        });
+        assert_eq!(pause_reason_for_step(&step), Some(None));
+
+        step.guards[0].config.insert(
+            "reason".to_string(),
+            serde_json::Value::String("needs review".to_string()),
+        );
+        assert_eq!(
+            pause_reason_for_step(&step),
+            Some(Some("needs review".to_string()))
+        );
+    }
+
+    #[test]
+    fn effective_step_placement_prefers_step_then_run_then_local_default() {
+        let mut doc = minimal_resolved().doc;
+        let step = crate::resolve::ResolvedStep {
+            id: "s1".to_string(),
+            agent: None,
+            provider: None,
+            placement: None,
+            task: None,
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
+            delegation: None,
+            prompt: None,
+            inputs: HashMap::new(),
+            guards: vec![],
+            save_as: None,
+            write_to: None,
+            on_error: None,
+            retry: None,
+        };
+        assert_eq!(
+            effective_step_placement(&step, &doc),
+            crate::adl::PlacementMode::Local
+        );
+
+        doc.run.placement = Some(crate::adl::RunPlacementSpec::Mode(
+            crate::adl::PlacementMode::Remote,
+        ));
+        assert_eq!(
+            effective_step_placement(&step, &doc),
+            crate::adl::PlacementMode::Remote
+        );
+
+        let mut step_override = step.clone();
+        step_override.placement = Some(crate::adl::PlacementMode::Local);
+        assert_eq!(
+            effective_step_placement(&step_override, &doc),
+            crate::adl::PlacementMode::Local
+        );
+    }
+
+    #[test]
+    fn resolve_call_binding_requires_state_prefix_and_known_key() {
+        let mut state = HashMap::new();
+        state.insert("inputs.topic".to_string(), "ADL".to_string());
+
+        let resolved =
+            resolve_call_binding("@state:inputs.topic", &state).expect("state binding should work");
+        assert_eq!(resolved, "ADL");
+        let templated = resolve_call_binding("{{ state.inputs.topic }}", &state)
+            .expect("templated state binding should work");
+        assert_eq!(templated, "ADL");
+
+        let missing = resolve_call_binding("@state:inputs.missing", &state)
+            .expect_err("missing state key should fail");
+        assert!(missing.to_string().contains("missing state key"));
+
+        let passthrough = resolve_call_binding("literal", &state).expect("literal passthrough");
+        assert_eq!(passthrough, "literal");
+    }
+}

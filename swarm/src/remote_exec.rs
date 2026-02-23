@@ -307,4 +307,134 @@ mod tests {
             "expected 413 response for oversized payload, got:\n{resp}"
         );
     }
+
+    fn base_request() -> ExecuteRequest {
+        ExecuteRequest {
+            protocol_version: PROTOCOL_VERSION.to_string(),
+            run_id: "run".to_string(),
+            workflow_id: "wf".to_string(),
+            step_id: "step-1".to_string(),
+            step: ExecuteStepPayload {
+                kind: "task".to_string(),
+                provider: "local".to_string(),
+                prompt: "hello".to_string(),
+                tools: vec![],
+                provider_spec: adl::ProviderSpec {
+                    id: None,
+                    profile: None,
+                    kind: "http".to_string(),
+                    base_url: None,
+                    default_model: None,
+                    config: {
+                        let mut cfg = HashMap::new();
+                        cfg.insert(
+                            "endpoint".to_string(),
+                            serde_json::Value::String("http://127.0.0.1:9".to_string()),
+                        );
+                        cfg
+                    },
+                },
+                model_override: None,
+            },
+            inputs: ExecuteInputsPayload::default(),
+            timeout_ms: 50,
+        }
+    }
+
+    #[test]
+    fn execute_response_ok_sets_success_fields() {
+        let req = base_request();
+        let response = ExecuteResponse::ok(&req, "done".to_string());
+        assert!(response.ok);
+        assert_eq!(response.result.as_deref(), Some("done"));
+        assert!(response.error.is_none());
+        assert_eq!(response.step_id, req.step_id);
+    }
+
+    #[test]
+    fn execute_response_err_sets_error_fields() {
+        let req = base_request();
+        let response = ExecuteResponse::err(&req, "REMOTE_SCHEMA_VIOLATION", "bad");
+        assert!(!response.ok);
+        assert!(response.result.is_none());
+        let err = response.error.expect("error payload");
+        assert_eq!(err.code, "REMOTE_SCHEMA_VIOLATION");
+        assert_eq!(err.message, "bad");
+    }
+
+    #[test]
+    fn execute_request_rejects_protocol_mismatch() {
+        let mut req = base_request();
+        req.protocol_version = "999".to_string();
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_SCHEMA_VIOLATION");
+        assert!(err.message.contains("unsupported protocol_version"));
+    }
+
+    #[test]
+    fn execute_request_rejects_invalid_provider_spec() {
+        let mut req = base_request();
+        req.step.provider_spec.kind = "unsupported".to_string();
+        req.step.provider_spec.config.clear();
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_SCHEMA_VIOLATION");
+        assert!(err.message.contains("invalid provider config"));
+    }
+
+    #[test]
+    fn execute_request_maps_provider_runtime_error() {
+        let req = base_request();
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_EXECUTION_ERROR");
+    }
+
+    #[test]
+    fn execute_remote_maps_transport_and_status_errors() {
+        let req = base_request();
+        let transport_err =
+            execute_remote("http://127.0.0.1:9", 25, &req).expect_err("transport must fail");
+        assert!(
+            transport_err.to_string().starts_with("REMOTE_UNREACHABLE:")
+                || transport_err.to_string().starts_with("REMOTE_TIMEOUT:"),
+            "unexpected transport error: {transport_err:#}"
+        );
+
+        let Some(port) = reserve_local_port() else {
+            return;
+        };
+        let bind_addr = format!("127.0.0.1:{port}");
+        let server = tiny_http::Server::http(&bind_addr).expect("bind");
+        let handle = thread::spawn(move || {
+            if let Some(request) = server.incoming_requests().next() {
+                let _ = request.respond(tiny_http::Response::empty(503));
+            }
+        });
+
+        let status_err =
+            execute_remote(&format!("http://{bind_addr}"), 500, &req).expect_err("503 must fail");
+        assert!(
+            status_err
+                .to_string()
+                .contains("REMOTE_BAD_STATUS: 503 Service Unavailable"),
+            "unexpected status error: {status_err:#}"
+        );
+        let _ = handle.join();
+    }
+
+    #[test]
+    fn json_response_sets_content_type_header() {
+        let resp = json_response(200, b"{}".to_vec());
+        let content_type = resp
+            .headers()
+            .iter()
+            .find(|h| h.field.equiv("Content-Type"))
+            .map(|h| h.value.as_str().to_string());
+        assert_eq!(content_type.as_deref(), Some("application/json"));
+    }
 }

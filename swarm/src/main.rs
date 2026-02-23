@@ -1008,6 +1008,7 @@ mod tests {
     use super::*;
     use std::ffi::OsString;
     use std::sync::{Mutex, MutexGuard, OnceLock};
+    use std::time::{SystemTime, UNIX_EPOCH};
 
     static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
 
@@ -1104,5 +1105,182 @@ mod tests {
             let _guard = EnvGuard::set("CI", "true");
             assert!(is_ci_environment());
         }
+    }
+
+    #[test]
+    fn usage_mentions_v0_4_and_legacy_examples() {
+        let text = usage();
+        assert!(text.contains("Usage:"));
+        assert!(text.contains("Examples:"));
+        assert!(text.contains("examples/v0-4-demo-fork-join-swarm.adl.yaml"));
+        assert!(text.contains("examples/adl-0.1.yaml"));
+        assert!(text.contains("--allow-unsigned"));
+    }
+
+    #[test]
+    fn select_open_artifact_returns_none_without_html() {
+        let artifacts = vec![PathBuf::from("out/one.txt"), PathBuf::from("out/two.md")];
+        assert!(select_open_artifact(&artifacts).is_none());
+    }
+
+    #[test]
+    fn run_artifacts_root_points_to_repo_adl_runs() {
+        let root = run_artifacts_root().expect("run artifacts root");
+        let s = root.to_string_lossy();
+        assert!(s.ends_with(".adl/runs"), "unexpected path: {s}");
+    }
+
+    #[test]
+    fn enforce_signature_policy_skips_when_not_running_or_not_v0_5() {
+        let mk_doc = |version: &str| adl::AdlDoc {
+            version: version.to_string(),
+            providers: HashMap::new(),
+            tools: HashMap::new(),
+            agents: HashMap::new(),
+            tasks: HashMap::new(),
+            workflows: HashMap::new(),
+            patterns: vec![],
+            signature: None,
+            run: adl::RunSpec {
+                id: None,
+                name: None,
+                created_at: None,
+                defaults: adl::RunDefaults::default(),
+                workflow_ref: None,
+                workflow: Some(adl::WorkflowSpec {
+                    id: None,
+                    kind: adl::WorkflowKind::Sequential,
+                    max_concurrency: None,
+                    steps: vec![],
+                }),
+                pattern_ref: None,
+                inputs: HashMap::new(),
+                placement: None,
+                remote: None,
+            },
+        };
+
+        enforce_signature_policy(&mk_doc("0.5"), false, false).expect("do_run=false should skip");
+        enforce_signature_policy(&mk_doc("0.4"), true, false).expect("v0.4 should skip");
+        enforce_signature_policy(&mk_doc("0.5"), true, true).expect("allow_unsigned should skip");
+    }
+
+    fn minimal_resolved_for_artifacts(run_id: String) -> resolve::AdlResolved {
+        resolve::AdlResolved {
+            run_id,
+            workflow_id: "wf".to_string(),
+            steps: vec![resolve::ResolvedStep {
+                id: "s1".to_string(),
+                agent: Some("a1".to_string()),
+                provider: Some("p1".to_string()),
+                placement: None,
+                task: Some("t1".to_string()),
+                call: None,
+                with: HashMap::new(),
+                as_ns: None,
+                delegation: None,
+                prompt: Some(adl::PromptSpec {
+                    user: Some("u".to_string()),
+                    ..Default::default()
+                }),
+                inputs: HashMap::new(),
+                guards: vec![],
+                save_as: Some("s1_out".to_string()),
+                write_to: Some("out/s1.txt".to_string()),
+                on_error: None,
+                retry: None,
+            }],
+            execution_plan: swarm::execution_plan::ExecutionPlan {
+                workflow_kind: adl::WorkflowKind::Sequential,
+                nodes: vec![swarm::execution_plan::ExecutionNode {
+                    step_id: "s1".to_string(),
+                    depends_on: vec![],
+                    save_as: Some("s1_out".to_string()),
+                    delegation: None,
+                }],
+            },
+            doc: adl::AdlDoc {
+                version: "0.5".to_string(),
+                providers: HashMap::new(),
+                tools: HashMap::new(),
+                agents: HashMap::new(),
+                tasks: HashMap::new(),
+                workflows: HashMap::new(),
+                patterns: vec![],
+                signature: None,
+                run: adl::RunSpec {
+                    id: None,
+                    name: Some("run".to_string()),
+                    created_at: None,
+                    defaults: adl::RunDefaults::default(),
+                    workflow_ref: None,
+                    workflow: Some(adl::WorkflowSpec {
+                        id: Some("wf".to_string()),
+                        kind: adl::WorkflowKind::Sequential,
+                        max_concurrency: None,
+                        steps: vec![],
+                    }),
+                    pattern_ref: None,
+                    inputs: HashMap::new(),
+                    placement: None,
+                    remote: None,
+                },
+            },
+        }
+    }
+
+    #[test]
+    fn write_run_state_and_load_resume_round_trip() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("run-{now}-{}", std::process::id());
+        let resolved = minimal_resolved_for_artifacts(run_id.clone());
+        let out_dir = std::env::temp_dir().join(format!("swarm-main-out-{now}"));
+
+        let mut tr = trace::Trace::new(run_id.clone(), "wf".to_string(), "0.5".to_string());
+        tr.step_started("s1", "a1", "p1", "t1", None);
+        tr.step_finished("s1", true);
+
+        let pause = execute::PauseState {
+            paused_step_id: "s1".to_string(),
+            reason: Some("review".to_string()),
+            completed_step_ids: vec!["s1".to_string()],
+            remaining_step_ids: vec![],
+            saved_state: HashMap::from([(String::from("k"), String::from("v"))]),
+            completed_outputs: HashMap::from([(String::from("s1_out"), String::from("done"))]),
+        };
+
+        let run_dir =
+            write_run_state_artifacts(&resolved, &tr, &out_dir, 100, 150, "paused", Some(&pause))
+                .expect("write run artifacts");
+
+        let resume =
+            load_resume_state(&run_dir.join("run.json"), &resolved).expect("load resume state");
+        assert!(resume.completed_step_ids.contains("s1"));
+        assert_eq!(resume.saved_state.get("k").map(String::as_str), Some("v"));
+        let _ = std::fs::remove_dir_all(run_dir);
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn load_resume_state_rejects_non_paused_status() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("run-nonpaused-{now}-{}", std::process::id());
+        let resolved = minimal_resolved_for_artifacts(run_id.clone());
+        let out_dir = std::env::temp_dir().join(format!("swarm-main-nonpaused-{now}"));
+
+        let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
+        let run_dir = write_run_state_artifacts(&resolved, &tr, &out_dir, 0, 1, "success", None)
+            .expect("write non-paused artifacts");
+        let err = load_resume_state(&run_dir.join("run.json"), &resolved)
+            .expect_err("non-paused run.json should fail for resume");
+        assert!(err.to_string().contains("status='paused'"));
+        let _ = std::fs::remove_dir_all(run_dir);
+        let _ = std::fs::remove_dir_all(out_dir);
     }
 }
