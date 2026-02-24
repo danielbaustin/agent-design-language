@@ -37,7 +37,7 @@ This document supplements ADRs but is milestone-scoped.
 
 | D-05 | Streaming must not alter artifact determinism | Accepted | Streaming is an observability feature, not a semantic one. Artifacts must remain byte-stable. | Allow streaming to influence step completion ordering | Maintains replay guarantees | WP-C (#403) |
 
-| D-06 | Pause/Resume is explicit and trace-visible | Accepted | Human control must be visible, auditable, and deterministic. | Implicit pause via runtime hooks | Maintains transparency + auditability | WP-B (#402) |
+| D-06 | Pause/Resume is explicit, step-boundary-only, and trace-visible | Accepted | Human control must be visible, auditable, and deterministic. Resume must remain strict and fail-fast. | Implicit pause via runtime hooks | Maintains transparency + auditability | ADR-0005 + WP-B (#402) + #453 + #454 + #455 |
 
 | D-07 | Coverage >=80% per file becomes milestone gate | Accepted | Establish quality ratchet without requiring perfection. | Global coverage % only | Raises engineering discipline | WP-H2 (#409) |
 
