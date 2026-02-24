@@ -67,10 +67,14 @@ Canonical v0.6 resume surface:
   - loads `.adl/runs/<run_id>/pause_state.json`
   - enforces strict validation before resuming
 
-Transitional/legacy compatibility surface (still present in v0.6):
+## Compatibility / Deprecated
+Legacy compatibility path (deprecated, internal/back-compat only):
 - `swarm <adl.yaml> --run --resume <run.json>`
 
-The canonical path for operators and docs is `swarm resume <run_id>`.
+This path is not part of the stable public v0.6 contract and may be removed
+without notice. Operational and documentation guidance should use
+`swarm resume <run_id>`.
+
 
 ## Determinism And Safety Considerations
 - Pause/resume must preserve artifact equivalence relative to uninterrupted run.
