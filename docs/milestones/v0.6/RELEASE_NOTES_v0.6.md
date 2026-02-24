@@ -26,7 +26,7 @@ WP-J is expected to finalize formatting and publication metadata, not change tec
 - Minimal HITL pause/resume semantics added (explicit + trace-visible). (WP-B, #402)
 - Streaming output defined as an observability feature that does not alter artifact determinism. (WP-C, #403)
 - Better tooling for trace export, replay diff, and workflow graph visualization. (WP-G, #407)
-- Coverage ratchet introduced (>=80% per file or documented exception). (WP-H2, #409)
+- Per-file coverage gate enforced (>=80% per file; exceptions must include an owner and linked issue). (WP-H2, #409)
 
 ---
 
@@ -45,6 +45,7 @@ Notes:
 Shipped in v0.6:
 - Explicit pause state in the execution lifecycle.
 - Resume entrypoint with trace-visible transitions.
+- Primary CLI surface: `swarm resume <run_id>`; pause state persisted under `.adl/runs/<run_id>/pause_state.json`.
 - Tests validating that pause/resume does not introduce hidden state.
 
 Notes:
@@ -59,9 +60,9 @@ Shipped in v0.6:
 Notes:
 - Streaming is treated as observability, not semantics.
 
-### WP-D — Provider profiles: top models (#404)
+### WP-D — Provider profiles (configuration surface) (#404)
 Shipped in v0.6:
-- Documented provider profiles (configuration-level), with clear constraints and intended usage.
+- Documented provider profiles (configuration-level presets), with clear constraints and intended usage.
 - No runtime auto-selection heuristics in v0.6.
 
 Notes:
@@ -99,12 +100,12 @@ Notes:
 Shipped in v0.6:
 - A demo matrix defining canonical scenarios for v0.6.
 - Deterministic demos that run cleanly under CI.
- - Canonical matrix: `docs/milestones/v0.6/DEMOS_v0.6.md`.
+- Canonical matrix: `docs/milestones/v0.6/DEMOS_v0.6.md`.
 
 ### WP-H2 — Test coverage audit (>=80% per file) (#409)
 Shipped in v0.6:
-- Per-file coverage audit.
-- Target: >=80% per file or documented exception with an owner and linked issue.
+- Per-file coverage enforcement.
+- Requirement: >=80% per file, or an explicit exception with an owner and linked issue.
 
 ### WP-I — Docs + review pass (#410)
 In progress for v0.6:
