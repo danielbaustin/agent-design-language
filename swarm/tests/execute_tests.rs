@@ -63,6 +63,32 @@ fn start_raw_http_server(raw_response: &'static str) -> String {
     format!("http://{bind_addr}")
 }
 
+fn start_fixed_http_provider_server(max_requests: usize, output: &'static str) -> String {
+    let port = reserve_local_port();
+    let bind_addr = format!("127.0.0.1:{port}");
+    thread::spawn({
+        let bind_addr = bind_addr.clone();
+        move || {
+            let listener = TcpListener::bind(&bind_addr).expect("bind fixed http test server");
+            for _ in 0..max_requests {
+                let (mut stream, _) = listener.accept().expect("accept fixed http request");
+                let mut buf = [0_u8; 4096];
+                let _ = stream.read(&mut buf);
+                let body = format!(r#"{{"output":"{output}"}}"#);
+                let resp = format!(
+                    "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
+                    body.len(),
+                    body
+                );
+                let _ = stream.write_all(resp.as_bytes());
+                let _ = stream.flush();
+            }
+        }
+    });
+    thread::sleep(Duration::from_millis(80));
+    format!("http://{bind_addr}")
+}
+
 #[test]
 fn materialize_inputs_leaves_non_file_values_unchanged() {
     let base = tmp_dir("mat-unchanged");
@@ -341,6 +367,16 @@ enum MockOllamaBehavior {
 fn run_swarm(args: &[&str]) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_swarm");
     Command::new(exe)
+        .env("ADL_ALLOW_UNSIGNED", "1")
+        .args(args)
+        .output()
+        .unwrap()
+}
+
+fn run_swarm_in_dir(cwd: &Path, args: &[&str]) -> std::process::Output {
+    let exe = env!("CARGO_BIN_EXE_swarm");
+    Command::new(exe)
+        .current_dir(cwd)
         .env("ADL_ALLOW_UNSIGNED", "1")
         .args(args)
         .output()
@@ -3541,24 +3577,24 @@ run:
 #[test]
 fn run_pause_resume_cli_roundtrip_matches_uninterrupted_artifacts_byte_for_byte() {
     let base = tmp_dir("exec-pause-resume-cli-roundtrip");
-    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
-    let new_path = prepend_path(&base);
-    let _path_guard = EnvVarGuard::set("PATH", new_path);
+    let endpoint = start_fixed_http_provider_server(6, "HTTP_FAKE_OK");
 
-    let paused_out = base.join("out-paused-cli");
-    let plain_out = base.join("out-plain-cli");
-    let paused_out_str = paused_out.to_string_lossy();
-    let plain_out_str = plain_out.to_string_lossy();
+    let paused_case = base.join("paused-case");
+    let plain_case = base.join("plain-case");
+    fs::create_dir_all(&paused_case).unwrap();
+    fs::create_dir_all(&plain_case).unwrap();
 
     let paused_yaml = r#"
 version: "0.3"
 providers:
   local:
-    type: "ollama"
+    type: "http"
+    config:
+      endpoint: "__ENDPOINT__/complete"
 agents:
   a:
     provider: "local"
-    model: "phi4-mini"
+    model: "unused-for-http-provider"
 tasks:
   t:
     prompt:
@@ -3589,16 +3625,19 @@ run:
         save_as: "s3"
         write_to: "s3.txt"
         inputs: { n: "3" }
-"#;
+"#
+    .replace("__ENDPOINT__", &endpoint);
     let plain_yaml = r#"
 version: "0.3"
 providers:
   local:
-    type: "ollama"
+    type: "http"
+    config:
+      endpoint: "__ENDPOINT__/complete"
 agents:
   a:
     provider: "local"
-    model: "phi4-mini"
+    model: "unused-for-http-provider"
 tasks:
   t:
     prompt:
@@ -3626,19 +3665,15 @@ run:
         save_as: "s3"
         write_to: "s3.txt"
         inputs: { n: "3" }
-"#;
+"#
+    .replace("__ENDPOINT__", &endpoint);
 
-    let paused_path = base.join("roundtrip-paused.yaml");
-    let plain_path = base.join("roundtrip-plain.yaml");
+    let paused_path = paused_case.join("roundtrip-paused.yaml");
+    let plain_path = plain_case.join("roundtrip-plain.yaml");
     fs::write(&paused_path, paused_yaml).unwrap();
     fs::write(&plain_path, plain_yaml).unwrap();
 
-    let paused = run_swarm(&[
-        paused_path.to_str().unwrap(),
-        "--run",
-        "--out",
-        paused_out_str.as_ref(),
-    ]);
+    let paused = run_swarm_in_dir(&paused_case, &[paused_path.to_str().unwrap(), "--run"]);
     assert!(
         paused.status.success(),
         "paused run should succeed\nstdout:\n{}\nstderr:\n{}",
@@ -3650,14 +3685,7 @@ run:
         serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
     assert_eq!(run_json["status"], "paused");
 
-    let resumed = run_swarm(&[
-        paused_path.to_str().unwrap(),
-        "--run",
-        "--resume",
-        run_json_path.to_str().unwrap(),
-        "--out",
-        paused_out_str.as_ref(),
-    ]);
+    let resumed = run_swarm_in_dir(&paused_case, &["resume", "hitl-roundtrip-cli"]);
     assert!(
         resumed.status.success(),
         "resume CLI should succeed\nstdout:\n{}\nstderr:\n{}",
@@ -3665,12 +3693,7 @@ run:
         String::from_utf8_lossy(&resumed.stderr)
     );
 
-    let plain = run_swarm(&[
-        plain_path.to_str().unwrap(),
-        "--run",
-        "--out",
-        plain_out_str.as_ref(),
-    ]);
+    let plain = run_swarm_in_dir(&plain_case, &[plain_path.to_str().unwrap(), "--run"]);
     assert!(
         plain.status.success(),
         "plain run should succeed\nstdout:\n{}\nstderr:\n{}",
@@ -3679,10 +3702,10 @@ run:
     );
 
     for rel in ["s1.txt", "s2.txt", "s3.txt"] {
-        let paused_bytes = fs::read(paused_out.join(rel)).unwrap_or_else(|e| {
+        let paused_bytes = fs::read(paused_case.join("out").join(rel)).unwrap_or_else(|e| {
             panic!("missing paused artifact {rel}: {e}");
         });
-        let plain_bytes = fs::read(plain_out.join(rel)).unwrap_or_else(|e| {
+        let plain_bytes = fs::read(plain_case.join("out").join(rel)).unwrap_or_else(|e| {
             panic!("missing plain artifact {rel}: {e}");
         });
         assert_eq!(paused_bytes, plain_bytes, "artifact bytes differ for {rel}");
@@ -3690,48 +3713,19 @@ run:
 }
 
 #[test]
-fn resume_cli_rejects_missing_resume_state_file_path() {
-    let base = tmp_dir("exec-resume-missing-state");
-    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
-    let new_path = prepend_path(&base);
-    let _path_guard = EnvVarGuard::set("PATH", new_path);
-
-    let yaml = r#"
-version: "0.3"
-providers: { local: { type: "ollama" } }
-agents: { a: { provider: "local", model: "phi4-mini" } }
-tasks: { t: { prompt: { user: "step {{n}}" } } }
-run:
-  name: "resume-missing-state"
-  workflow:
-    kind: "sequential"
-    steps:
-      - id: "s1"
-        agent: "a"
-        task: "t"
-        inputs: { n: "1" }
-"#;
-    let yaml_path = base.join("resume-missing-state.yaml");
-    fs::write(&yaml_path, yaml).unwrap();
-
-    let missing = base.join("does-not-exist.run.json");
-    let resumed = run_swarm(&[
-        yaml_path.to_str().unwrap(),
-        "--run",
-        "--resume",
-        missing.to_str().unwrap(),
-    ]);
+fn resume_cli_rejects_missing_pause_state_for_unknown_run_id() {
+    let resumed = run_swarm(&["resume", "run-id-does-not-exist"]);
     assert!(
         !resumed.status.success(),
         "resume CLI must fail for missing pause-state"
     );
     let stderr = String::from_utf8_lossy(&resumed.stderr);
     assert!(
-        stderr.contains("failed to read resume state"),
+        stderr.contains("pause state not found"),
         "stderr was:\n{stderr}"
     );
     assert!(
-        stderr.contains("does-not-exist.run.json"),
+        stderr.contains("run-id-does-not-exist"),
         "stderr was:\n{stderr}"
     );
 }
