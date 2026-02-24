@@ -63,6 +63,32 @@ fn start_raw_http_server(raw_response: &'static str) -> String {
     format!("http://{bind_addr}")
 }
 
+fn start_fixed_http_provider_server(max_requests: usize, output: &'static str) -> String {
+    let port = reserve_local_port();
+    let bind_addr = format!("127.0.0.1:{port}");
+    thread::spawn({
+        let bind_addr = bind_addr.clone();
+        move || {
+            let listener = TcpListener::bind(&bind_addr).expect("bind fixed http test server");
+            for _ in 0..max_requests {
+                let (mut stream, _) = listener.accept().expect("accept fixed http request");
+                let mut buf = [0_u8; 4096];
+                let _ = stream.read(&mut buf);
+                let body = format!(r#"{{"output":"{output}"}}"#);
+                let resp = format!(
+                    "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
+                    body.len(),
+                    body
+                );
+                let _ = stream.write_all(resp.as_bytes());
+                let _ = stream.flush();
+            }
+        }
+    });
+    thread::sleep(Duration::from_millis(80));
+    format!("http://{bind_addr}")
+}
+
 #[test]
 fn materialize_inputs_leaves_non_file_values_unchanged() {
     let base = tmp_dir("mat-unchanged");
@@ -341,6 +367,16 @@ enum MockOllamaBehavior {
 fn run_swarm(args: &[&str]) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_swarm");
     Command::new(exe)
+        .env("ADL_ALLOW_UNSIGNED", "1")
+        .args(args)
+        .output()
+        .unwrap()
+}
+
+fn run_swarm_in_dir(cwd: &Path, args: &[&str]) -> std::process::Output {
+    let exe = env!("CARGO_BIN_EXE_swarm");
+    Command::new(exe)
+        .current_dir(cwd)
         .env("ADL_ALLOW_UNSIGNED", "1")
         .args(args)
         .output()
@@ -3536,6 +3572,162 @@ run:
     let resumed_final = fs::read_to_string(base.join("out-resume").join("s3.txt")).unwrap();
     let plain_final = fs::read_to_string(base.join("out-plain").join("s3.txt")).unwrap();
     assert_eq!(resumed_final, plain_final);
+}
+
+#[test]
+fn run_pause_resume_cli_roundtrip_matches_uninterrupted_artifacts_byte_for_byte() {
+    let base = tmp_dir("exec-pause-resume-cli-roundtrip");
+    let endpoint = start_fixed_http_provider_server(6, "HTTP_FAKE_OK");
+
+    let paused_case = base.join("paused-case");
+    let plain_case = base.join("plain-case");
+    fs::create_dir_all(&paused_case).unwrap();
+    fs::create_dir_all(&plain_case).unwrap();
+
+    let paused_yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "http"
+    config:
+      endpoint: "__ENDPOINT__/complete"
+agents:
+  a:
+    provider: "local"
+    model: "unused-for-http-provider"
+tasks:
+  t:
+    prompt:
+      user: "step {{n}}"
+run:
+  name: "hitl-roundtrip-cli"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        save_as: "s1"
+        write_to: "s1.txt"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs: { n: "2" }
+        guards:
+          - type: pause
+            config: { reason: "await_review" }
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        save_as: "s3"
+        write_to: "s3.txt"
+        inputs: { n: "3" }
+"#
+    .replace("__ENDPOINT__", &endpoint);
+    let plain_yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "http"
+    config:
+      endpoint: "__ENDPOINT__/complete"
+agents:
+  a:
+    provider: "local"
+    model: "unused-for-http-provider"
+tasks:
+  t:
+    prompt:
+      user: "step {{n}}"
+run:
+  name: "hitl-roundtrip-plain"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        save_as: "s1"
+        write_to: "s1.txt"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs: { n: "2" }
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        save_as: "s3"
+        write_to: "s3.txt"
+        inputs: { n: "3" }
+"#
+    .replace("__ENDPOINT__", &endpoint);
+
+    let paused_path = paused_case.join("roundtrip-paused.yaml");
+    let plain_path = plain_case.join("roundtrip-plain.yaml");
+    fs::write(&paused_path, paused_yaml).unwrap();
+    fs::write(&plain_path, plain_yaml).unwrap();
+
+    let paused = run_swarm_in_dir(&paused_case, &[paused_path.to_str().unwrap(), "--run"]);
+    assert!(
+        paused.status.success(),
+        "paused run should succeed\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&paused.stdout),
+        String::from_utf8_lossy(&paused.stderr)
+    );
+    let (run_json_path, _) = run_artifact_paths("hitl-roundtrip-cli");
+    let run_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
+    assert_eq!(run_json["status"], "paused");
+
+    let resumed = run_swarm_in_dir(&paused_case, &["resume", "hitl-roundtrip-cli"]);
+    assert!(
+        resumed.status.success(),
+        "resume CLI should succeed\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&resumed.stdout),
+        String::from_utf8_lossy(&resumed.stderr)
+    );
+
+    let plain = run_swarm_in_dir(&plain_case, &[plain_path.to_str().unwrap(), "--run"]);
+    assert!(
+        plain.status.success(),
+        "plain run should succeed\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&plain.stdout),
+        String::from_utf8_lossy(&plain.stderr)
+    );
+
+    for rel in ["s1.txt", "s2.txt", "s3.txt"] {
+        let paused_bytes = fs::read(paused_case.join("out").join(rel)).unwrap_or_else(|e| {
+            panic!("missing paused artifact {rel}: {e}");
+        });
+        let plain_bytes = fs::read(plain_case.join("out").join(rel)).unwrap_or_else(|e| {
+            panic!("missing plain artifact {rel}: {e}");
+        });
+        assert_eq!(paused_bytes, plain_bytes, "artifact bytes differ for {rel}");
+    }
+}
+
+#[test]
+fn resume_cli_rejects_missing_pause_state_for_unknown_run_id() {
+    let resumed = run_swarm(&["resume", "run-id-does-not-exist"]);
+    assert!(
+        !resumed.status.success(),
+        "resume CLI must fail for missing pause-state"
+    );
+    let stderr = String::from_utf8_lossy(&resumed.stderr);
+    assert!(
+        stderr.contains("pause state not found"),
+        "stderr was:\n{stderr}"
+    );
+    assert!(
+        stderr.contains("run-id-does-not-exist"),
+        "stderr was:\n{stderr}"
+    );
 }
 
 #[test]
