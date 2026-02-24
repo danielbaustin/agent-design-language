@@ -50,6 +50,7 @@ Shipped in v0.6:
 
 Notes:
 - HITL is opt-in and must be auditable through trace artifacts.
+- ADR reference: `docs/adr/0005-hitl-pause-resume.md`.
 
 ### WP-C — Streaming output (trace + runtime) (#403)
 Shipped in v0.6:
@@ -67,6 +68,7 @@ Shipped in v0.6:
 
 Notes:
 - The exact profile list is expected to evolve; keep claims conservative.
+- ADR reference: `docs/adr/0004-provider-profiles.md`.
 
 ### WP-E — Delegation metadata (schema + trace logging only) (#405)
 Shipped in v0.6:

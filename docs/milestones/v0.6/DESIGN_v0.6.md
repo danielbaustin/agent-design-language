@@ -32,7 +32,7 @@ It is not a distributed systems release and not a memory-integrated release.
 
 ## Problem Statement
 
-ADL v0.5 ships:
+Before v0.6, ADL shipped:
 - Deterministic execution planning.
 - Bounded concurrency.
 - Signing + canonicalization.
