@@ -1,12 +1,13 @@
 # Agent Design Language (ADL)
 
-Agent Design Language (ADL) is a declarative, contract-driven way to define AI workflows as data, not ad-hoc glue code. Instead of wiring prompts, scripts, and shell calls together by convention, you describe agents, tasks, providers, and workflow steps in a schema-validated document.
+Agent Design Language (ADL) is a deterministic, contract-driven orchestration language for AI systems. It lets you define agents, tasks, providers, delegation metadata, and workflows as structured data — not brittle glue code. ADL elevates orchestration from “prompt wiring” to a reviewable, testable, and reproducible engineering discipline.
 
-ADL is built for teams that want repeatability. Documents are parsed and validated, then resolved into a deterministic plan before execution. That plan-first model makes behavior inspectable, testable, and easier to review than runtime-only orchestration.
+ADL is built for teams that care about determinism and auditability. Documents are schema-validated, compiled into a deterministic ExecutionPlan, and executed under explicit concurrency, failure, retry, and signing semantics. Every run emits stable artifacts under `.adl/runs/<run_id>/` to support replay, debugging, and post-mortem analysis.
 
-The current runtime (v0.6 milestone) focuses on predictable execution semantics: deterministic sequential execution, bounded concurrent fork execution, deterministic join barriers, explicit failure policies (`on_error: fail|continue`), and deterministic retry via `retry.max_attempts`.
+[![swarm-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
+[![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
+![Milestone](https://img.shields.io/badge/milestone-v0.6-green)
 
-ADL also supports a remote HTTP provider MVP for controlled integration with external inference endpoints. Every run can emit stable artifacts under `.adl/runs/<run_id>/` (`run.json`, `steps.json`), which helps with reproducibility, debugging, and auditability.
 
 ## Try It Now (Happy Path)
 
@@ -24,10 +25,6 @@ If you want a second quick check:
 cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
 ```
 
-[![swarm-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
-[![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.6-green)
-
 Badge semantics:
 - `swarm-ci`: main branch CI workflow status
 - `coverage`: Codecov line-coverage signal for `main` (informational; CI still passes if Codecov upload is unavailable)
@@ -37,37 +34,43 @@ Badge semantics:
 
 Current release: **v0.6.0**
 
-v0.6 ships:
-- ExecutionPlan-driven runtime execution
-- Bounded fork concurrency
-- Canonical concurrent ready-step ordering (lexicographic by `step_id`)
-- Deterministic join barrier
-- Deterministic replay demos
-- Human-readable trace timestamps
-- Run/Step progress banners
-- Pattern compiler (`linear`, `fork_join`) with deterministic canonical IDs
-- Signing and verification CLI (`keygen`, `sign`, `verify`) with unsigned-run rejection on `--run`
-- Remote execution MVP (`/v1/health`, `/v1/execute`) with local scheduler ownership
+## Features by Release
 
-## Current Status (v0.6 Milestone)
+### v0.6 (Current)
 
-Implemented in the `swarm/` runtime:
-- Deterministic sequential execution
-- Plan-driven runtime fork/join execution (`workflow.kind: concurrent`)
-- Bounded concurrent fork execution in runtime
-- Deterministic join barrier semantics
-- Step-level failure policy: `on_error: fail|continue`
-- Deterministic retries: `retry.max_attempts` (no backoff)
-- Remote HTTP provider (MVP)
-- Remote execution MVP
-- Pattern compiler support via `run.pattern_ref`
-- Signing enforcement for `--run` with `keygen/sign/verify` support
-- Run state artifacts under `.adl/runs/<run_id>/` (`run.json`, `steps.json`)
-- Legacy no-network v0.4 demo harness (`swarm/tools/demo_v0_4.sh`)
+* ExecutionPlan-driven runtime execution
+* Deterministic sequential + concurrent fork/join semantics
+* Canonical concurrent ready-step ordering (lexicographic by `step_id`)
+* Deterministic join barrier semantics
+* Bounded parallelism enforcement in runtime
+* Step-level failure policy (`on_error: fail|continue`)
+* Deterministic retries (`retry.max_attempts`, no backoff)
+* Deterministic replay demos + trace diff / graph export tooling
+* Streaming trace events (observational)
+* Human-readable trace timestamps + run/step progress banners
+* Pattern compiler (`linear`, `fork_join`) with deterministic canonical IDs
+* Provider profile registry (predefined profiles)
+* Signing and verification CLI (`keygen`, `sign`, `verify`) with unsigned-run rejection on `--run`
+* Remote execution MVP (`/v1/health`, `/v1/execute`) with local scheduler ownership
+* HITL pause/resume (step-boundary-only) with deterministic, versioned, atomic pause state
 
-Explicitly deferred:
-- Configurable runtime parallelism controls
-- Cancellation propagation and replay engine
+### v0.5
+
+* Full primitives support (agents, tasks, providers, workflows)
+* Deterministic plan-only mode
+* Signing canonicalization groundwork
+
+### v0.4
+
+* Deterministic, no-network demo harness (`swarm/tools/demo_v0_4.sh`)
+* Bounded executor prototype demos
+* Stable artifact emission
+
+### v0.3
+
+* Fork/join planning semantics
+* Concurrency planning model
+* Plan printing + deterministic ID normalization
 
 ## Repository Layout
 

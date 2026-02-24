@@ -1,28 +1,71 @@
-# Agent Design Language (ADL)
+# Swarm
 
-**Version:** v0.6  
-**Status:** Active v0.6 runtime with deterministic execution, bounded concurrency, pattern compilation, remote execution MVP, and signing enforcement
+Swarm is the reference Rust runtime for **Agent Design Language (ADL)**. It compiles schema-validated ADL documents into a deterministic ExecutionPlan and executes them with explicit concurrency, failure, retry, signing, and (minimal) remote execution semantics.
 
-ADL is a schema-validated language and runtime for defining and executing
-agent workflows with deterministic resolution and clear failure modes.
+Swarm prioritizes determinism and inspectability. Every run emits stable artifacts under `.adl/runs/<run_id>/` to support replay, debugging, and post-mortem analysis.
 
 [![swarm-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![MSRV](https://img.shields.io/badge/MSRV-1.74%2B-blue)
 
-Status badges above are for `main` branch workflow health, not per-PR checks.
-Coverage is generated via `cargo llvm-cov` in CI and uploaded to Codecov as an informational signal (upload failures do not fail CI).
-## swarm
+Badge note:
+- Status badges above reflect `main` branch workflow health.
+- Coverage is generated via `cargo llvm-cov` in CI and uploaded to Codecov.
+- CI enforces a coverage gate; the Codecov upload is informational.
 
-`swarm` is a small, conservative reference runtime for **Agent Design Language (ADL)**.
+## Status
 
-For historical context, see:
-- `../docs/milestones/v0.2/RELEASE_NOTES_v0.2.md`
-- `../docs/milestones/v0.4/RELEASE_NOTES_v0.4.md`
-This README reflects the current v0.6 runtime.
+Current runtime release: **v0.6**
 
-It is intentionally *compiler-like* in how it processes ADL documents:
+This README reflects the current v0.6 runtime behavior.
+
+## Features by Release
+
+### v0.6 (Current)
+
+* ExecutionPlan-driven runtime execution
+* Deterministic sequential + concurrent fork/join semantics
+* Canonical concurrent ready-step ordering (lexicographic by `step_id`)
+* Deterministic join barrier semantics
+* Bounded parallelism enforcement via `run.defaults.max_concurrency` (default: 4; must be `>= 1`)
+* Step-level failure controls (`on_error: fail|continue`, deterministic `retry.max_attempts`, no backoff)
+* Streaming trace events (observational) with human-readable timestamps + progress banners
+* Pattern compiler (`linear`, `fork_join`) with deterministic canonical IDs
+* Provider profile registry (predefined profiles) with placeholder endpoint guardrails
+* Signing and verification CLI (`keygen`, `sign`, `verify`) with unsigned-run rejection by default for `--run`
+* Remote execution MVP (`/v1/health`, `/v1/execute`) where scheduler ownership remains local
+* HITL pause/resume (step-boundary-only) with deterministic, versioned, atomic pause state
+* CI-aligned quality gate (`fmt`, `clippy -D warnings`, `test`, coverage gate)
+
+### v0.5
+
+* Full primitives support (agents, tasks, providers, workflows)
+* Deterministic plan-only mode
+* Signing canonicalization groundwork
+
+### v0.4
+
+* Deterministic, no-network demo harness (`swarm/tools/demo_v0_4.sh`)
+* Stable artifact emission
+
+### v0.3
+
+* Fork/join planning semantics
+* Concurrency planning model
+* Plan printing + deterministic ID normalization
+
+## Documentation Map
+
+- Root repo README: `../README.md`
+- v0.6 milestone docs: `../docs/milestones/v0.6/`
+- ADRs: `../docs/adr/`
+- Runnable demos: `../docs/milestones/v0.6/DEMOS_v0.6.md`
+- More examples: `examples/README.md`
+
+## How Swarm Processes ADL (Compiler-like Pipeline)
+
+Swarm processes ADL documents in a conservative, compiler-like pipeline:
 
 1. **Parse** an ADL YAML document into a typed in-memory model.
 2. **Validate** the document against a JSON Schema with crisp, path-specific errors.
@@ -34,59 +77,11 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 
 ---
 
-## v0.6 Shipped Capabilities
-
-- Deterministic workflow execution with stable plan/trace semantics
-- Deterministic fork/join runtime execution with bounded parallelism
-- Canonical concurrent ready-step ordering: lexicographic by `step_id`
-- Global concurrency cap via `run.defaults.max_concurrency` (default: `4`, must be `>= 1`)
-  - set to `1` for fully sequential execution behavior
-- Pattern compiler v0.1 (`linear`, `fork_join`) with deterministic canonical IDs
-- `run.pattern_ref` is mutually exclusive with `run.workflow_ref` and inline `run.workflow`
-- Step-level failure controls (`on_error: fail|continue`, `retry.max_attempts`)
-- Remote HTTP provider MVP with explicit failure behavior
-- Remote execution MVP (`/v1/health`, `/v1/execute`) where scheduler ownership remains local
-- v0.6 signing and verification (`keygen`, `sign`, `verify`) with default unsigned-run rejection on `--run`
-- Persistent run state artifacts under `.adl/runs/<run_id>/` for auditability (`run.json`, `steps.json`)
-- CI-aligned quality gate (`fmt`, `clippy -D warnings`, `test`)
-
----
-
 ## Fork/Join Mental Model
 
 - **Fork**: declare branch steps under `workflow.kind: concurrent`.
 - **Execution**: ready fork steps execute with bounded parallelism and deterministic lexicographic step-id ordering.
 - **Join**: consume branch outputs via `@state:<save_as_key>` and run only when required inputs are available.
-
----
-
-## Current Status (v0.6)
-
-**Implemented**
-
-- Load and validate ADL YAML (schema + semantic validation)
-- Deterministic resolution of run / workflow / steps / agents / tasks / providers
-- Deterministic prompt assembly with precedence:
-  - `step.prompt` → `task.prompt` → `agent.prompt`
-- File-backed inputs with safety checks (size, encoding, paths)
-- Sequential workflow execution
-- Step-level error policy: `on_error: fail|continue`
-- Deterministic retries: `retry.max_attempts` (no backoff)
-- Deterministic fork/join runtime execution (`workflow.kind: concurrent`) with bounded parallelism
-- Concurrent ready-step ordering is deterministic and lexicographic by `step_id`
-- `run.defaults.max_concurrency` enforces a deterministic global concurrency cap for concurrent runs
-  - default is `4`; set to `1` for fully sequential execution behavior
-- Join input wiring via `@state:<save_as_key>`
-- Local Ollama provider (real binary or test mock)
-- Remote HTTP provider (blocking JSON request/response)
-- Deterministic tracing (`--trace`)
-- CLI smoke tests and schema tests
-
-**Explicitly deferred**
-
-- Advanced scheduler policy controls beyond deterministic lexicographic batching
-- Multi-run documents
-- Provider retries / contracts / repair policies
 
 ---
 
@@ -270,9 +265,9 @@ Operational guidance:
 - Log and monitor remote-server lifecycle/events and non-2xx responses so
   misconfiguration or abuse is visible quickly.
 
-Forward-looking hardening work:
-- v0.6 remote execution security envelope: https://github.com/danielbaustin/agent-design-language/issues/370
-- v0.6 signing trust policy tightening: https://github.com/danielbaustin/agent-design-language/issues/371
+Forward-looking hardening work (v0.7):
+- Remote execution security envelope: https://github.com/danielbaustin/agent-design-language/issues/370
+- Signing trust policy tightening: https://github.com/danielbaustin/agent-design-language/issues/371
 
 ---
 
