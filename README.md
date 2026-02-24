@@ -1,141 +1,67 @@
 # Agent Design Language (ADL)
 
-Agent Design Language (ADL) is a declarative, contract-driven way to define AI workflows as data, not ad-hoc glue code. Instead of wiring prompts, scripts, and shell calls together by convention, you describe agents, tasks, providers, and workflow steps in a schema-validated document.
+ADL is a schema-validated language for defining AI workflows as data and executing them with deterministic behavior. Instead of wiring ad hoc scripts and prompts together, ADL lets teams encode providers, agents, tasks, and workflow structure in a reviewable document that resolves into an explicit execution plan.
 
-ADL is built for teams that want repeatability. Documents are parsed and validated, then resolved into a deterministic plan before execution. That plan-first model makes behavior inspectable, testable, and easier to review than runtime-only orchestration.
-
-The current runtime (v0.6 milestone) focuses on predictable execution semantics: deterministic sequential execution, bounded concurrent fork execution, deterministic join barriers, explicit failure policies (`on_error: fail|continue`), and deterministic retry via `retry.max_attempts`.
-
-ADL also supports a remote HTTP provider MVP for controlled integration with external inference endpoints. Every run can emit stable artifacts under `.adl/runs/<run_id>/` (`run.json`, `steps.json`), which helps with reproducibility, debugging, and auditability.
-
-## Try It Now (Happy Path)
-
-From repo root:
-
-```bash
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-fork-join-seq-run.adl.yaml --print-plan
-```
-
-This prints a deterministic v0.3 fork/join plan with clean output and no provider runtime setup.
-
-If you want a second quick check:
-
-```bash
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
-```
+ADL is built for repeatability and engineering confidence. The runtime enforces strict validation, deterministic ordering, and stable run artifacts so behavior is inspectable in CI, auditable in production-like environments, and easier to debug when failures happen.
 
 [![swarm-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
 ![Milestone](https://img.shields.io/badge/milestone-v0.6-green)
 
-Badge semantics:
-- `swarm-ci`: main branch CI workflow status
-- `coverage`: Codecov line-coverage signal for `main` (informational; CI still passes if Codecov upload is unavailable)
-- `milestone`: current documentation milestone marker
+## Features By Version
 
-## Status
+### v0.7 Features
+Planned for v0.7 (roadmap; not yet released).
 
-Current release: **v0.6.0**
+- Runtime delegation policy engine (beyond v0.6 metadata-only delegation)
+- Richer checkpoint/recovery beyond step-boundary pause/resume
+- Expanded profile and policy surface for stronger operator controls
 
-v0.6 ships:
-- ExecutionPlan-driven runtime execution
-- Bounded fork concurrency
-- Canonical concurrent ready-step ordering (lexicographic by `step_id`)
-- Deterministic join barrier
-- Deterministic replay demos
-- Human-readable trace timestamps
-- Run/Step progress banners
-- Pattern compiler (`linear`, `fork_join`) with deterministic canonical IDs
-- Signing and verification CLI (`keygen`, `sign`, `verify`) with unsigned-run rejection on `--run`
-- Remote execution MVP (`/v1/health`, `/v1/execute`) with local scheduler ownership
+### v0.6 Features
+Shipped in v0.6.
 
-## Current Status (v0.6 Milestone)
+- Deterministic scheduler semantics with bounded concurrency and stable ready-step ordering
+- Pattern registry/compiler boundary with deterministic expansion
+- HITL pause/resume (minimal): explicit paused state, strict validation, step-boundary resume
+- Streaming output semantics that remain observational (artifact semantics unchanged)
+- Provider profiles with deterministic resolve-time expansion and fail-fast validation
+- Delegation metadata in schema + trace only (no runtime enforcement in v0.6)
+- Instrumentation surfaces (`instrument graph`, `replay`, `diff-plan`, `diff-trace`)
+- Coverage/quality hardening and v0.6 demo matrix alignment
 
-Implemented in the `swarm/` runtime:
-- Deterministic sequential execution
-- Plan-driven runtime fork/join execution (`workflow.kind: concurrent`)
-- Bounded concurrent fork execution in runtime
-- Deterministic join barrier semantics
-- Step-level failure policy: `on_error: fail|continue`
-- Deterministic retries: `retry.max_attempts` (no backoff)
-- Remote HTTP provider (MVP)
-- Remote execution MVP
-- Pattern compiler support via `run.pattern_ref`
-- Signing enforcement for `--run` with `keygen/sign/verify` support
-- Run state artifacts under `.adl/runs/<run_id>/` (`run.json`, `steps.json`)
-- Legacy no-network v0.4 demo harness (`swarm/tools/demo_v0_4.sh`)
+### v0.5 Features
+Brief historical context.
 
-Explicitly deferred:
-- Configurable runtime parallelism controls
-- Cancellation propagation and replay engine
+- PatternSchema v0.1 (`linear`, `fork_join`) and deterministic pattern IDs
+- Remote execution MVP boundary (`/v1/health`, `/v1/execute`) with scheduler ownership kept local
+- Signing/verification CLI baseline (`keygen`, `sign`, `verify`)
 
-## Repository Layout
-
-- `swarm/`: Rust reference runtime and CLI
-- `adl-spec/`: language-level specification docs
-- `docs/`: contributor workflow and roadmap docs
-- `docs/adr/`: architecture decision records (major technical decisions)
-- `.adl/`: cards, reports, and run/report artifacts
-
-## Historical v0.3 Plan-Only Commands
+## Quickstart
 
 From repo root:
 
 ```bash
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- swarm/examples/v0-5-primitives-minimal.adl.yaml --print-plan
 ```
 
-To execute (`--run`) local-provider examples, run from `swarm/` with a local Ollama available.
+For runnable demo coverage and determinism checks, use:
 
-## Legacy v0.4 Demos
+- `docs/milestones/v0.6/DEMOS_v0.6.md`
 
-These demos are deterministic, non-interactive, and run without network by pinning the local mock provider binary.
+## Canonical Docs Map
 
-Fork/Join swarm (3 branches + deterministic join barrier):
+- Milestone documentation: `docs/milestones/v0.6/`
+- ADRs: `docs/adr/`
+- Runtime/CLI usage (build, test, examples): `swarm/README.md`
+- Examples catalog: `swarm/examples/README.md`
+- Workflow/process docs: `docs/default_workflow.md`
 
-```bash
-SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out .adl/reports/demo-v0.4/fork-join-swarm
-```
+## Repository Layout
 
-Bounded parallelism stress (8 branch steps with bounded executor):
-
-```bash
-SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-bounded-parallelism.adl.yaml --run --trace --out .adl/reports/demo-v0.4/bounded-parallelism
-```
-
-Current engine concurrency is intentionally fixed at `MAX_PARALLEL=4` in v0.4; this demo proves bounded execution at that shipped limit.
-
-Deterministic replay (run twice with same command, then compare `replay/join.txt` hash):
-
-```bash
-SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-deterministic-replay.adl.yaml --run --trace --out .adl/reports/demo-v0.4/deterministic-replay
-```
-
-Run all three demos in sequence:
-
-```bash
-swarm/tools/demo_v0_4.sh
-```
-
-## Why v0.6 Matters
-
-v0.6 proves:
-- Concurrent execution in the real runtime
-- Deterministic replay behavior
-- Bounded parallelism
-- Stable artifacts under concurrency
-- Signed workflow execution defaults for safer `--run` operation
-- Pattern-driven workflow authoring with deterministic expansion
-- Remote execution MVP wiring without giving up local deterministic scheduling
-
-## Default Workflow
-
-Default contributor workflow uses `adl_pr_cycle` (`start -> codex -> finish -> report`).
-- Guide: `docs/default_workflow.md`
-- Milestone docs: `docs/milestones/v0.6/`
-- Tools: `swarm/tools/README.md`
+- `swarm/` runtime + CLI
+- `adl-spec/` language/spec materials
+- `docs/` milestone docs, ADRs, and contributor documentation
+- `.adl/` cards, reports, and run artifacts
 
 ## License
 
