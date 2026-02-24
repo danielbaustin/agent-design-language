@@ -437,10 +437,12 @@ pub fn execute_sequential_with_resume(
         let mut attempt: u32 = 0;
         let mut last_err: Option<anyhow::Error> = None;
         let mut success_out: Option<(StepOutput, Vec<String>)> = None;
+        let mut last_stream_chunks: Vec<String> = Vec::new();
 
         while attempt < max_attempts {
             attempt += 1;
-            let result = (|| -> Result<(StepOutput, Vec<String>)> {
+            let mut attempt_stream_chunks: Vec<String> = Vec::new();
+            let result = (|| -> Result<StepOutput> {
                 let p = step
                     .effective_prompt_with_defaults(resolved)
                     .ok_or_else(|| {
@@ -488,7 +490,6 @@ pub fn execute_sequential_with_resume(
 
                 let placement = effective_step_placement(step, &resolved.doc);
 
-                let mut stream_chunks = Vec::new();
                 let model_output = match placement {
                     crate::adl::PlacementMode::Local => {
                         let prov =
@@ -500,7 +501,7 @@ pub fn execute_sequential_with_resume(
                             })?;
                         let mut on_chunk = |chunk: &str| {
                             if !chunk.is_empty() {
-                                stream_chunks.push(chunk.to_string());
+                                attempt_stream_chunks.push(chunk.to_string());
                             }
                         };
                         prov.complete_stream(&prompt_text, &mut on_chunk).with_context(|| {
@@ -541,22 +542,21 @@ pub fn execute_sequential_with_resume(
                     }
                 };
 
-                Ok((
-                    StepOutput {
-                        step_id: step_id.clone(),
-                        provider_id: provider_id.to_string(),
-                        model_output,
-                    },
-                    stream_chunks,
-                ))
+                Ok(StepOutput {
+                    step_id: step_id.clone(),
+                    provider_id: provider_id.to_string(),
+                    model_output,
+                })
             })();
 
             match result {
                 Ok(success) => {
-                    success_out = Some(success);
+                    success_out = Some((success, attempt_stream_chunks));
                     break;
                 }
                 Err(err) => {
+                    last_stream_chunks.clear();
+                    last_stream_chunks.extend(attempt_stream_chunks);
                     let retryable = provider::is_retryable_error(&err);
                     last_err = Some(err);
                     if !retryable {
@@ -631,6 +631,11 @@ pub fn execute_sequential_with_resume(
             }
             None => {
                 let err = last_err.unwrap_or_else(|| anyhow!("step '{}' failed", step_id));
+                if print_outputs && !last_stream_chunks.is_empty() {
+                    // Preserve already-produced stream output as observational trace data even
+                    // when the step ultimately fails.
+                    emit_step_output(&step_id, "", &last_stream_chunks, tr);
+                }
                 tr.step_finished(&step_id, false);
                 let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
                 progress_step_done(emit_progress, tr, &step_id, false, duration_ms);
