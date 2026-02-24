@@ -41,7 +41,7 @@ This document supplements ADRs but is milestone-scoped.
 
 | D-07 | Coverage >=80% per file becomes milestone gate | Accepted | Establish quality ratchet without requiring perfection. | Global coverage % only | Raises engineering discipline | WP-H2 (#409) |
 
-| D-08 | Provider profiles are documentation-level in v0.6 | Accepted | Avoid runtime heuristics and auto-selection; profiles are configuration contracts. | Dynamic provider auto-selection | Keeps runtime predictable | WP-D (#404) |
+| D-08 | Provider profiles are deterministic resolve-time contracts in v0.6 | Accepted | Avoid runtime heuristics and auto-selection; profiles are configuration contracts expanded before execution. | Dynamic provider auto-selection | Keeps runtime predictable | ADR-0004 + WP-D (#404) + #452 |
 
 | D-09 | Graph export + replay diff are tooling-layer concerns | Accepted | Instrumentation belongs outside core scheduling logic. | Embed visualization logic in scheduler | Maintains clean separation of concerns | WP-G (#407) |
 
