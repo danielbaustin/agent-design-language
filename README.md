@@ -4,7 +4,7 @@ Agent Design Language (ADL) is a declarative, contract-driven way to define AI w
 
 ADL is built for teams that want repeatability. Documents are parsed and validated, then resolved into a deterministic plan before execution. That plan-first model makes behavior inspectable, testable, and easier to review than runtime-only orchestration.
 
-The current runtime (v0.5 milestone) focuses on predictable execution semantics: deterministic sequential execution, bounded concurrent fork execution, deterministic join barriers, explicit failure policies (`on_error: fail|continue`), and deterministic retry via `retry.max_attempts`.
+The current runtime (v0.6 milestone) focuses on predictable execution semantics: deterministic sequential execution, bounded concurrent fork execution, deterministic join barriers, explicit failure policies (`on_error: fail|continue`), and deterministic retry via `retry.max_attempts`.
 
 ADL also supports a remote HTTP provider MVP for controlled integration with external inference endpoints. Every run can emit stable artifacts under `.adl/runs/<run_id>/` (`run.json`, `steps.json`), which helps with reproducibility, debugging, and auditability.
 
@@ -26,7 +26,7 @@ cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-re
 
 [![swarm-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.5-green)
+![Milestone](https://img.shields.io/badge/milestone-v0.6-green)
 
 Badge semantics:
 - `swarm-ci`: main branch CI workflow status
@@ -35,9 +35,9 @@ Badge semantics:
 
 ## Status
 
-Current release: **v0.5.0**
+Current release: **v0.6.0**
 
-v0.5 ships:
+v0.6 ships:
 - ExecutionPlan-driven runtime execution
 - Bounded fork concurrency
 - Canonical concurrent ready-step ordering (lexicographic by `step_id`)
@@ -49,7 +49,7 @@ v0.5 ships:
 - Signing and verification CLI (`keygen`, `sign`, `verify`) with unsigned-run rejection on `--run`
 - Remote execution MVP (`/v1/health`, `/v1/execute`) with local scheduler ownership
 
-## Current Status (v0.5 Milestone)
+## Current Status (v0.6 Milestone)
 
 Implemented in the `swarm/` runtime:
 - Deterministic sequential execution
@@ -119,9 +119,9 @@ Run all three demos in sequence:
 swarm/tools/demo_v0_4.sh
 ```
 
-## Why v0.5 Matters
+## Why v0.6 Matters
 
-v0.5 proves:
+v0.6 proves:
 - Concurrent execution in the real runtime
 - Deterministic replay behavior
 - Bounded parallelism
@@ -134,7 +134,7 @@ v0.5 proves:
 
 Default contributor workflow uses `adl_pr_cycle` (`start -> codex -> finish -> report`).
 - Guide: `docs/default_workflow.md`
-- Milestone docs: `docs/milestones/v0.5/`
+- Milestone docs: `docs/milestones/v0.6/`
 - Tools: `swarm/tools/README.md`
 
 ## License

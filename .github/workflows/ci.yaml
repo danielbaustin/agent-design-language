@@ -75,7 +75,50 @@ jobs:
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
 
       - name: Coverage (swarm)
-        run: cargo llvm-cov --workspace --all-features --fail-under-lines 10 --lcov --output-path lcov.info
+        run: cargo llvm-cov --workspace --all-features --lcov --output-path lcov.info
+
+      - name: Coverage summary (json)
+        run: cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
+
+      - name: Enforce per-file coverage gate (swarm/src >= 80%)
+        run: |
+          set -eu
+          threshold=80
+          rows="$(jq -r '
+            [.data[].files[]
+              | select(.filename|contains("/swarm/src/"))
+              | {f:.filename, covered:.summary.lines.covered, count:.summary.lines.count}
+            ]
+            | sort_by(.f)
+            | group_by(.f)[]
+            | {
+                f: .[0].f,
+                covered: (map(.covered) | add),
+                count: (map(.count) | add),
+                percent: ((map(.covered) | add) * 100.0 / (map(.count) | add))
+              }
+            | [.f, .covered, .count, .percent]
+            | @tsv
+          ' coverage-summary.json)"
+
+          if [ -z "$rows" ]; then
+            echo "No swarm/src coverage rows found in coverage-summary.json"
+            exit 1
+          fi
+
+          echo "Per-file line coverage for swarm/src (threshold: ${threshold}%)"
+          echo "$rows" | awk -F '\t' '{
+            printf "  %s\t%d/%d\t%.2f%%\n", $1, $2, $3, $4
+          }'
+
+          echo "$rows" | awk -F '\t' -v threshold="$threshold" '
+            BEGIN { bad=0 }
+            ($4 + 0) < threshold {
+              bad=1
+              printf "Coverage below threshold: %s %.2f%% < %s%%\n", $1, $4, threshold
+            }
+            END { exit bad }
+          '
 
       - name: Verify generated lcov file
         run: test -s lcov.info && ls -l lcov.info
@@ -88,7 +131,9 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: swarm-coverage-lcov
-          path: swarm/lcov.info
+          path: |
+            swarm/lcov.info
+            swarm/coverage-summary.json
           if-no-files-found: error
 
       - name: Upload coverage to Codecov

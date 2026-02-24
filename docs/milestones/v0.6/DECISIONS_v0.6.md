@@ -29,7 +29,7 @@ This document supplements ADRs but is milestone-scoped.
 
 | D-01 | Determinism remains a hard invariant in v0.6 | Accepted | ADL’s core identity is deterministic execution planning + ordering guarantees. v0.6 extends runtime surface but must not compromise determinism. | Allow adaptive runtime behavior in v0.6 | Preserves trust model and replay guarantees | ADR-0001 + WP-F (#406) |
 
-| D-02 | Delegation metadata is log-only in v0.6 | Accepted | We introduce structured delegation metadata but defer enforcement to avoid destabilizing runtime semantics. | Implement full policy engine in v0.6 | Keeps v0.6 low-risk and sets stage for v0.7 EPIC-B | WP-E (#405) |
+| D-02 | Delegation metadata is log-only in v0.6 | Accepted | We introduce structured delegation metadata for auditability only; it does not gate scheduling/provider selection/execution, and enforcement is deferred to avoid destabilizing runtime semantics. | Implement full policy engine in v0.6 | Keeps v0.6 low-risk and sets stage for v0.7 EPIC-B | WP-E (#405) |
 
 | D-03 | No distributed execution in v0.6 | Accepted | Distributed orchestration increases complexity and risk; determinism must be preserved first. | Introduce multi-node execution in v0.6 | Keeps runtime single-node deterministic | Backlog #339 |
 
