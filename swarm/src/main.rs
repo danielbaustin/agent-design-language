@@ -10,6 +10,7 @@ use swarm::{adl, demo, execute, instrumentation, plan, prompt, resolve, signing,
 fn usage() -> &'static str {
     "Usage:
   swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--resume <run.json>] [--out <dir>] [--quiet] [--open]
+  swarm resume <run_id>
   swarm demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
   swarm keygen --out-dir <dir>
   swarm sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
@@ -30,6 +31,7 @@ Options:
   -h, --help         Show this help
 
 Examples:
+  swarm resume hitl-pause-seq
   SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh swarm examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out ./out
   swarm examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
   swarm examples/v0-3-on-error-retry.adl.yaml --print-plan
@@ -45,6 +47,16 @@ Examples:
   swarm instrument replay /tmp/trace.json
   swarm instrument diff-trace /tmp/trace-a.json /tmp/trace-b.json
   swarm verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"
+}
+
+fn resume_usage() -> &'static str {
+    "Usage:
+  swarm resume <run_id>
+
+Semantics:
+  - Loads .adl/runs/<run_id>/pause_state.json
+  - Strict validation only: schema_version, status=paused, run_id, execution_plan_hash
+  - Resumes only at step boundary (no checkpoint engine, no mid-step resume)"
 }
 
 fn print_error_chain(err: &anyhow::Error) {
@@ -89,6 +101,9 @@ fn real_main() -> Result<()> {
     }
     if matches!(args.first().map(|s| s.as_str()), Some("verify")) {
         return real_verify(&args[1..]);
+    }
+    if matches!(args.first().map(|s| s.as_str()), Some("resume")) {
+        return real_resume(&args[1..]);
     }
 
     let adl_path: PathBuf = match args.first() {
@@ -247,6 +262,7 @@ fn real_main() -> Result<()> {
                 let run_dir = write_run_state_artifacts(
                     &resolved,
                     &tr,
+                    &adl_path,
                     &out_dir,
                     run_started_ms,
                     run_finished_ms,
@@ -282,6 +298,7 @@ fn real_main() -> Result<()> {
         let run_dir = write_run_state_artifacts(
             &resolved,
             &tr,
+            &adl_path,
             &out_dir,
             run_started_ms,
             run_finished_ms,
@@ -600,8 +617,13 @@ fn run_artifacts_root() -> Result<PathBuf> {
     Ok(repo_root.join(".adl").join("runs"))
 }
 
+const RUN_STATE_SCHEMA_VERSION: &str = "run_state.v1";
+const PAUSE_STATE_SCHEMA_VERSION: &str = "pause_state.v1";
+
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct RunStateArtifact {
+    schema_version: String,
     run_id: String,
     workflow_id: String,
     version: String,
@@ -610,8 +632,21 @@ struct RunStateArtifact {
     start_time_ms: u128,
     end_time_ms: u128,
     duration_ms: u128,
-    execution_plan_json: String,
+    execution_plan_hash: String,
     pause: Option<execute::PauseState>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PauseStateArtifact {
+    schema_version: String,
+    run_id: String,
+    workflow_id: String,
+    version: String,
+    status: String,
+    adl_path: String,
+    execution_plan_hash: String,
+    pause: execute::PauseState,
 }
 
 #[derive(Debug, Serialize)]
@@ -623,9 +658,53 @@ struct StepStateArtifact {
     output_artifact_path: Option<String>,
 }
 
+fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
+    let parent = path
+        .parent()
+        .ok_or_else(|| anyhow::anyhow!("artifact path has no parent: '{}'", path.display()))?;
+    std::fs::create_dir_all(parent)
+        .with_context(|| format!("failed to create artifact parent '{}'", parent.display()))?;
+
+    let tmp_name = format!(
+        ".{}.{}.tmp",
+        path.file_name()
+            .and_then(|n| n.to_str())
+            .unwrap_or("artifact"),
+        std::process::id()
+    );
+    let tmp_path = parent.join(tmp_name);
+    std::fs::write(&tmp_path, bytes)
+        .with_context(|| format!("failed to write temp artifact '{}'", tmp_path.display()))?;
+    std::fs::rename(&tmp_path, path).with_context(|| {
+        format!(
+            "failed to atomically move artifact '{}' -> '{}'",
+            tmp_path.display(),
+            path.display()
+        )
+    })?;
+    Ok(())
+}
+
+fn stable_fingerprint_hex(bytes: &[u8]) -> String {
+    // FNV-1a 64-bit (deterministic, dependency-free fingerprint for persisted metadata).
+    let mut hash: u64 = 0xcbf29ce484222325;
+    for b in bytes {
+        hash ^= u64::from(*b);
+        hash = hash.wrapping_mul(0x100000001b3);
+    }
+    format!("{hash:016x}")
+}
+
+fn execution_plan_hash<T: Serialize>(plan: &T) -> Result<String> {
+    let plan_json = serde_json::to_vec(plan).context("serialize execution plan for hashing")?;
+    Ok(stable_fingerprint_hex(&plan_json))
+}
+
+#[allow(clippy::too_many_arguments)]
 fn write_run_state_artifacts(
     resolved: &resolve::AdlResolved,
     tr: &trace::Trace,
+    adl_path: &Path,
     out_dir: &Path,
     start_ms: u128,
     end_ms: u128,
@@ -680,6 +759,7 @@ fn write_run_state_artifacts(
     }
 
     let run_artifact = RunStateArtifact {
+        schema_version: RUN_STATE_SCHEMA_VERSION.to_string(),
         run_id: resolved.run_id.clone(),
         workflow_id: resolved.workflow_id.clone(),
         version: resolved.doc.version.clone(),
@@ -691,26 +771,30 @@ fn write_run_state_artifacts(
         start_time_ms: start_ms,
         end_time_ms: end_ms,
         duration_ms: end_ms.saturating_sub(start_ms),
-        execution_plan_json: serde_json::to_string(&resolved.execution_plan)
-            .context("serialize execution plan")?,
+        execution_plan_hash: execution_plan_hash(&resolved.execution_plan)?,
         pause: pause.cloned(),
     };
 
     let run_json = serde_json::to_vec_pretty(&run_artifact).context("serialize run.json")?;
     let steps_json = serde_json::to_vec_pretty(&steps).context("serialize steps.json")?;
 
-    std::fs::write(run_dir.join("run.json"), run_json).with_context(|| {
-        format!(
-            "failed to write run artifact '{}'",
-            run_dir.join("run.json").display()
-        )
-    })?;
-    std::fs::write(run_dir.join("steps.json"), steps_json).with_context(|| {
-        format!(
-            "failed to write run artifact '{}'",
-            run_dir.join("steps.json").display()
-        )
-    })?;
+    atomic_write(&run_dir.join("run.json"), &run_json)?;
+    atomic_write(&run_dir.join("steps.json"), &steps_json)?;
+    if let Some(pause_payload) = pause {
+        let pause_artifact = PauseStateArtifact {
+            schema_version: PAUSE_STATE_SCHEMA_VERSION.to_string(),
+            run_id: resolved.run_id.clone(),
+            workflow_id: resolved.workflow_id.clone(),
+            version: resolved.doc.version.clone(),
+            status: "paused".to_string(),
+            adl_path: adl_path.display().to_string(),
+            execution_plan_hash: execution_plan_hash(&resolved.execution_plan)?,
+            pause: pause_payload.clone(),
+        };
+        let pause_json =
+            serde_json::to_vec_pretty(&pause_artifact).context("serialize pause_state.json")?;
+        atomic_write(&run_dir.join("pause_state.json"), &pause_json)?;
+    }
 
     Ok(run_dir)
 }
@@ -718,15 +802,130 @@ fn write_run_state_artifacts(
 fn load_resume_state(path: &Path, resolved: &resolve::AdlResolved) -> Result<execute::ResumeState> {
     let raw = std::fs::read_to_string(path)
         .with_context(|| format!("failed to read resume state '{}'", path.display()))?;
-    let artifact: RunStateArtifact =
-        serde_json::from_str(&raw).with_context(|| "failed to parse resume run.json")?;
+    let artifact: RunStateArtifact = serde_json::from_str(&raw).with_context(|| {
+        format!(
+            "failed to parse resume state '{}' as run_state artifact",
+            path.display()
+        )
+    })?;
+
+    if artifact.schema_version != RUN_STATE_SCHEMA_VERSION {
+        return Err(anyhow::anyhow!(
+            "resume state schema_version mismatch: state='{}' expected='{}'",
+            artifact.schema_version,
+            RUN_STATE_SCHEMA_VERSION
+        ));
+    }
+
+    if artifact.schema_version != RUN_STATE_SCHEMA_VERSION {
+        return Err(anyhow::anyhow!(
+            "resume state schema_version mismatch: state='{}' expected='{}'",
+            artifact.schema_version,
+            RUN_STATE_SCHEMA_VERSION
+        ));
+    }
 
     if artifact.status != "paused" {
         return Err(anyhow::anyhow!(
-            "resume state must have status='paused' (found '{}')",
+            "resume state must have status='paused' (found='{}' for run_id='{}' in '{}')",
+            artifact.status,
+            artifact.run_id,
+            path.display()
+        ));
+    }
+    if artifact.run_id != resolved.run_id {
+        return Err(anyhow::anyhow!(
+            "resume run_id mismatch: state='{}' current='{}'",
+            artifact.run_id,
+            resolved.run_id
+        ));
+    }
+    if artifact.workflow_id != resolved.workflow_id {
+        return Err(anyhow::anyhow!(
+            "resume workflow_id mismatch for run_id='{}' in '{}': state='{}' current='{}'",
+            artifact.run_id,
+            path.display(),
+            artifact.workflow_id,
+            resolved.workflow_id
+        ));
+    }
+    if artifact.version != resolved.doc.version {
+        return Err(anyhow::anyhow!(
+            "resume version mismatch for run_id='{}' in '{}': state='{}' current='{}'",
+            artifact.run_id,
+            path.display(),
+            artifact.version,
+            resolved.doc.version
+        ));
+    }
+    // NOTE: resume compatibility relies on deterministic serialization in
+    // `execution_plan_hash()`. Any structural change to `ExecutionPlan` should
+    // invalidate compatibility with prior pause artifacts.
+    let plan_hash = execution_plan_hash(&resolved.execution_plan)?;
+    if artifact.execution_plan_hash != plan_hash {
+        return Err(anyhow::anyhow!(
+            "resume execution plan mismatch for run_id='{}' in '{}'; state plan != current plan (resume requires identical plan + ordering)",
+            artifact.run_id,
+            path.display()
+        ));
+    }
+    let pause = artifact
+        .pause
+        .ok_or_else(|| anyhow::anyhow!("resume state missing pause payload"))?;
+
+    let completed_step_ids = pause.completed_step_ids.into_iter().collect();
+    Ok(execute::ResumeState {
+        completed_step_ids,
+        saved_state: pause.saved_state,
+        completed_outputs: pause.completed_outputs,
+    })
+}
+
+fn resume_state_path_for_run_id(run_id: &str) -> Result<PathBuf> {
+    if run_id.trim().is_empty() {
+        return Err(anyhow::anyhow!("resume requires non-empty run_id"));
+    }
+    Ok(run_artifacts_root()?.join(run_id).join("pause_state.json"))
+}
+
+fn load_pause_state_artifact(path: &Path) -> Result<PauseStateArtifact> {
+    let raw = std::fs::read_to_string(path)
+        .with_context(|| format!("failed to read pause state '{}'", path.display()))?;
+    let artifact: PauseStateArtifact =
+        serde_json::from_str(&raw).with_context(|| "failed to parse pause_state.json")?;
+    Ok(artifact)
+}
+
+fn validate_pause_artifact_basic(artifact: &PauseStateArtifact, run_id: &str) -> Result<()> {
+    if artifact.schema_version != PAUSE_STATE_SCHEMA_VERSION {
+        return Err(anyhow::anyhow!(
+            "pause state schema_version mismatch: state='{}' expected='{}'",
+            artifact.schema_version,
+            PAUSE_STATE_SCHEMA_VERSION
+        ));
+    }
+    if artifact.status != "paused" {
+        return Err(anyhow::anyhow!(
+            "pause state must have status='paused' (found '{}')",
             artifact.status
         ));
     }
+    if artifact.run_id != run_id {
+        return Err(anyhow::anyhow!(
+            "pause state run_id mismatch: state='{}' requested='{}'",
+            artifact.run_id,
+            run_id
+        ));
+    }
+    Ok(())
+}
+
+fn validate_pause_artifact_for_resume(
+    artifact: &PauseStateArtifact,
+    run_id: &str,
+    resolved: &resolve::AdlResolved,
+) -> Result<()> {
+    validate_pause_artifact_basic(artifact, run_id)?;
     if artifact.run_id != resolved.run_id {
         return Err(anyhow::anyhow!(
             "resume run_id mismatch: state='{}' current='{}'",
@@ -748,23 +947,129 @@ fn load_resume_state(path: &Path, resolved: &resolve::AdlResolved) -> Result<exe
             resolved.doc.version
         ));
     }
-    let plan_json =
-        serde_json::to_string(&resolved.execution_plan).context("serialize current plan")?;
-    if artifact.execution_plan_json != plan_json {
+    let plan_hash = execution_plan_hash(&resolved.execution_plan)?;
+    if artifact.execution_plan_hash != plan_hash {
         return Err(anyhow::anyhow!(
-            "resume execution plan mismatch; resume requires identical plan and ordering"
+            "resume execution plan hash mismatch; resume requires identical plan and ordering"
         ));
     }
-    let pause = artifact
-        .pause
-        .ok_or_else(|| anyhow::anyhow!("resume state missing pause payload"))?;
+    Ok(())
+}
 
-    let completed_step_ids = pause.completed_step_ids.into_iter().collect();
-    Ok(execute::ResumeState {
-        completed_step_ids,
-        saved_state: pause.saved_state,
-        completed_outputs: pause.completed_outputs,
-    })
+fn real_resume(args: &[String]) -> Result<()> {
+    if matches!(args.first().map(|s| s.as_str()), Some("--help" | "-h")) {
+        println!("{}", resume_usage());
+        return Ok(());
+    }
+
+    let Some(run_id) = args.first() else {
+        eprintln!("resume requires <run_id>");
+        eprintln!("{}", resume_usage());
+        std::process::exit(2);
+    };
+    if args.len() > 1 {
+        eprintln!("resume accepts exactly one argument: <run_id>");
+        eprintln!("{}", resume_usage());
+        std::process::exit(2);
+    }
+
+    let pause_path = resume_state_path_for_run_id(run_id)?;
+    if !pause_path.exists() {
+        return Err(anyhow::anyhow!(
+            "pause state not found for run_id '{}': expected '{}'",
+            run_id,
+            pause_path.display()
+        ));
+    }
+    let pause_artifact = load_pause_state_artifact(&pause_path)?;
+    validate_pause_artifact_basic(&pause_artifact, run_id)?;
+
+    let adl_path = PathBuf::from(&pause_artifact.adl_path);
+    let adl_path_str = adl_path
+        .to_str()
+        .context("resume ADL path from pause state must be valid UTF-8")?;
+    let adl_base_dir: PathBuf = adl_path.parent().unwrap_or(Path::new(".")).to_path_buf();
+    let doc = adl::AdlDoc::load_from_file(adl_path_str).with_context(|| {
+        format!(
+            "failed to load ADL document for resume: {}",
+            adl_path.display()
+        )
+    })?;
+
+    let allow_unsigned = std::env::var("ADL_ALLOW_UNSIGNED")
+        .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+        .unwrap_or(false);
+    enforce_signature_policy(&doc, true, allow_unsigned)?;
+
+    let resolved = resolve::resolve_run(&doc)?;
+    validate_pause_artifact_for_resume(&pause_artifact, run_id, &resolved)?;
+
+    let resume_state = execute::ResumeState {
+        completed_step_ids: pause_artifact
+            .pause
+            .completed_step_ids
+            .into_iter()
+            .collect(),
+        saved_state: pause_artifact.pause.saved_state,
+        completed_outputs: pause_artifact.pause.completed_outputs,
+    };
+
+    let out_dir = PathBuf::from("out");
+    let run_started_ms = now_ms();
+    let mut tr = trace::Trace::new(
+        resolved.run_id.clone(),
+        resolved.workflow_id.clone(),
+        resolved.doc.version.clone(),
+    );
+    eprintln!(
+        "RUN resume {} run_id={} workflow={}",
+        trace::format_iso_utc_ms(tr.current_ts_ms()),
+        resolved.run_id,
+        resolved.workflow_id
+    );
+
+    let result = execute::execute_sequential_with_resume(
+        &resolved,
+        &mut tr,
+        true,
+        true,
+        &adl_base_dir,
+        &out_dir,
+        Some(resume_state),
+    )?;
+    let run_finished_ms = now_ms();
+    let run_dir = write_run_state_artifacts(
+        &resolved,
+        &tr,
+        &adl_path,
+        &out_dir,
+        run_started_ms,
+        run_finished_ms,
+        if result.pause.is_some() {
+            "paused"
+        } else {
+            "success"
+        },
+        result.pause.as_ref(),
+    )?;
+    eprintln!(
+        "RUN done (+{}ms) {} artifacts={}",
+        tr.current_elapsed_ms(),
+        if result.pause.is_some() {
+            "paused"
+        } else {
+            "ok"
+        },
+        run_dir.display()
+    );
+    println!("RUN SUMMARY: {} step(s)", result.records.len());
+    for r in &result.records {
+        println!(
+            "  step={} provider={} status={} attempts={} bytes={}",
+            r.step_id, r.provider_id, r.status, r.attempts, r.output_bytes
+        );
+    }
+    Ok(())
 }
 
 fn real_demo(args: &[String]) -> Result<()> {
@@ -1111,6 +1416,7 @@ mod tests {
     fn usage_mentions_v0_4_and_legacy_examples() {
         let text = usage();
         assert!(text.contains("Usage:"));
+        assert!(text.contains("swarm resume <run_id>"));
         assert!(text.contains("Examples:"));
         assert!(text.contains("examples/v0-4-demo-fork-join-swarm.adl.yaml"));
         assert!(text.contains("examples/adl-0.1.yaml"));
@@ -1252,14 +1558,26 @@ mod tests {
             completed_outputs: HashMap::from([(String::from("s1_out"), String::from("done"))]),
         };
 
-        let run_dir =
-            write_run_state_artifacts(&resolved, &tr, &out_dir, 100, 150, "paused", Some(&pause))
-                .expect("write run artifacts");
+        let run_dir = write_run_state_artifacts(
+            &resolved,
+            &tr,
+            Path::new("examples/adl-0.1.yaml"),
+            &out_dir,
+            100,
+            150,
+            "paused",
+            Some(&pause),
+        )
+        .expect("write run artifacts");
 
         let resume =
             load_resume_state(&run_dir.join("run.json"), &resolved).expect("load resume state");
         assert!(resume.completed_step_ids.contains("s1"));
         assert_eq!(resume.saved_state.get("k").map(String::as_str), Some("v"));
+        assert!(
+            run_dir.join("pause_state.json").exists(),
+            "paused runs must persist pause_state.json"
+        );
         let _ = std::fs::remove_dir_all(run_dir);
         let _ = std::fs::remove_dir_all(out_dir);
     }
@@ -1275,11 +1593,240 @@ mod tests {
         let out_dir = std::env::temp_dir().join(format!("swarm-main-nonpaused-{now}"));
 
         let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
-        let run_dir = write_run_state_artifacts(&resolved, &tr, &out_dir, 0, 1, "success", None)
-            .expect("write non-paused artifacts");
+        let run_dir = write_run_state_artifacts(
+            &resolved,
+            &tr,
+            Path::new("examples/adl-0.1.yaml"),
+            &out_dir,
+            0,
+            1,
+            "success",
+            None,
+        )
+        .expect("write non-paused artifacts");
         let err = load_resume_state(&run_dir.join("run.json"), &resolved)
             .expect_err("non-paused run.json should fail for resume");
         assert!(err.to_string().contains("status='paused'"));
+        assert!(err.to_string().contains("run_id='"));
+        assert!(
+            !run_dir.join("pause_state.json").exists(),
+            "non-paused runs must not emit pause_state.json"
+        );
+        let _ = std::fs::remove_dir_all(run_dir);
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn load_resume_state_rejects_unknown_schema_version() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("run-schema-{now}-{}", std::process::id());
+        let resolved = minimal_resolved_for_artifacts(run_id.clone());
+        let out_dir = std::env::temp_dir().join(format!("swarm-main-schema-{now}"));
+
+        let mut tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
+        tr.step_started("s1", "a1", "p1", "t1", None);
+        tr.step_finished("s1", true);
+        let pause = execute::PauseState {
+            paused_step_id: "s1".to_string(),
+            reason: Some("review".to_string()),
+            completed_step_ids: vec!["s1".to_string()],
+            remaining_step_ids: vec![],
+            saved_state: HashMap::new(),
+            completed_outputs: HashMap::new(),
+        };
+        let run_dir = write_run_state_artifacts(
+            &resolved,
+            &tr,
+            Path::new("examples/adl-0.1.yaml"),
+            &out_dir,
+            10,
+            20,
+            "paused",
+            Some(&pause),
+        )
+        .expect("write run artifacts");
+
+        let run_json_path = run_dir.join("run.json");
+        let mut run_json: serde_json::Value =
+            serde_json::from_str(&std::fs::read_to_string(&run_json_path).expect("read run.json"))
+                .expect("parse run.json");
+        run_json["schema_version"] = serde_json::Value::String("run_state.v0".to_string());
+        atomic_write(
+            &run_json_path,
+            serde_json::to_vec_pretty(&run_json)
+                .expect("serialize modified run.json")
+                .as_slice(),
+        )
+        .expect("rewrite run.json");
+
+        let err = load_resume_state(&run_json_path, &resolved)
+            .expect_err("schema mismatch should be rejected");
+        assert!(err.to_string().contains("schema_version mismatch"));
+        let _ = std::fs::remove_dir_all(run_dir);
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn load_resume_state_rejects_missing_pause_payload() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("run-missing-pause-{now}-{}", std::process::id());
+        let resolved = minimal_resolved_for_artifacts(run_id.clone());
+        let out_dir = std::env::temp_dir().join(format!("swarm-main-missing-pause-{now}"));
+
+        let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
+        let run_dir = write_run_state_artifacts(
+            &resolved,
+            &tr,
+            Path::new("examples/adl-0.1.yaml"),
+            &out_dir,
+            0,
+            1,
+            "paused",
+            None,
+        )
+        .expect("write paused artifacts");
+
+        let err = load_resume_state(&run_dir.join("run.json"), &resolved)
+            .expect_err("paused run.json without pause payload should fail");
+        assert!(err.to_string().contains("missing pause payload"));
+        let _ = std::fs::remove_dir_all(run_dir);
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn load_resume_state_rejects_workflow_mismatch() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("run-wf-mismatch-{now}-{}", std::process::id());
+        let resolved = minimal_resolved_for_artifacts(run_id.clone());
+        let out_dir = std::env::temp_dir().join(format!("swarm-main-wf-mismatch-{now}"));
+
+        let pause = execute::PauseState {
+            paused_step_id: "s1".to_string(),
+            reason: None,
+            completed_step_ids: vec!["s1".to_string()],
+            remaining_step_ids: vec![],
+            saved_state: HashMap::new(),
+            completed_outputs: HashMap::new(),
+        };
+        let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
+        let run_dir = write_run_state_artifacts(
+            &resolved,
+            &tr,
+            Path::new("examples/adl-0.1.yaml"),
+            &out_dir,
+            0,
+            1,
+            "paused",
+            Some(&pause),
+        )
+        .expect("write paused artifacts");
+
+        let mut mismatch = resolved.clone();
+        mismatch.workflow_id = "wf-other".to_string();
+        let err = load_resume_state(&run_dir.join("run.json"), &mismatch)
+            .expect_err("workflow mismatch must fail");
+        assert!(err.to_string().contains("workflow_id mismatch"));
+        assert!(err.to_string().contains("state='wf'"));
+        assert!(err.to_string().contains("current='wf-other'"));
+        let _ = std::fs::remove_dir_all(run_dir);
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn load_resume_state_rejects_version_mismatch() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("run-version-mismatch-{now}-{}", std::process::id());
+        let resolved = minimal_resolved_for_artifacts(run_id.clone());
+        let out_dir = std::env::temp_dir().join(format!("swarm-main-version-mismatch-{now}"));
+
+        let pause = execute::PauseState {
+            paused_step_id: "s1".to_string(),
+            reason: None,
+            completed_step_ids: vec!["s1".to_string()],
+            remaining_step_ids: vec![],
+            saved_state: HashMap::new(),
+            completed_outputs: HashMap::new(),
+        };
+        let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
+        let run_dir = write_run_state_artifacts(
+            &resolved,
+            &tr,
+            Path::new("examples/adl-0.1.yaml"),
+            &out_dir,
+            0,
+            1,
+            "paused",
+            Some(&pause),
+        )
+        .expect("write paused artifacts");
+
+        let mut mismatch = resolved.clone();
+        mismatch.doc.version = "0.6".to_string();
+        let err = load_resume_state(&run_dir.join("run.json"), &mismatch)
+            .expect_err("version mismatch must fail");
+        assert!(err.to_string().contains("version mismatch"));
+        assert!(err.to_string().contains("state='0.5'"));
+        assert!(err.to_string().contains("current='0.6'"));
+        let _ = std::fs::remove_dir_all(run_dir);
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn load_resume_state_rejects_execution_plan_mismatch() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("run-plan-mismatch-{now}-{}", std::process::id());
+        let resolved = minimal_resolved_for_artifacts(run_id.clone());
+        let out_dir = std::env::temp_dir().join(format!("swarm-main-plan-mismatch-{now}"));
+
+        let pause = execute::PauseState {
+            paused_step_id: "s1".to_string(),
+            reason: None,
+            completed_step_ids: vec!["s1".to_string()],
+            remaining_step_ids: vec![],
+            saved_state: HashMap::new(),
+            completed_outputs: HashMap::new(),
+        };
+        let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
+        let run_dir = write_run_state_artifacts(
+            &resolved,
+            &tr,
+            Path::new("examples/adl-0.1.yaml"),
+            &out_dir,
+            0,
+            1,
+            "paused",
+            Some(&pause),
+        )
+        .expect("write paused artifacts");
+
+        let run_json = run_dir.join("run.json");
+        let raw = std::fs::read_to_string(&run_json).expect("read run.json");
+        let mut value: serde_json::Value = serde_json::from_str(&raw).expect("parse run.json");
+        value["execution_plan_hash"] = serde_json::Value::String("tampered-hash".to_string());
+        std::fs::write(
+            &run_json,
+            serde_json::to_vec_pretty(&value).expect("serialize tampered run.json"),
+        )
+        .expect("write tampered run.json");
+
+        let err = load_resume_state(&run_json, &resolved).expect_err("plan mismatch must fail");
+        assert!(err.to_string().contains("execution plan mismatch"));
+        assert!(err.to_string().contains("state plan != current plan"));
         let _ = std::fs::remove_dir_all(run_dir);
         let _ = std::fs::remove_dir_all(out_dir);
     }

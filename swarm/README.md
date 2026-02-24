@@ -1,7 +1,7 @@
 # Agent Design Language (ADL)
 
-**Version:** v0.5  
-**Status:** Active v0.5 runtime with deterministic execution, bounded concurrency, pattern compilation, remote execution MVP, and signing enforcement
+**Version:** v0.6  
+**Status:** Active v0.6 runtime with deterministic execution, bounded concurrency, pattern compilation, remote execution MVP, and signing enforcement
 
 ADL is a schema-validated language and runtime for defining and executing
 agent workflows with deterministic resolution and clear failure modes.
@@ -20,7 +20,7 @@ Coverage is generated via `cargo llvm-cov` in CI and uploaded to Codecov as an i
 For historical context, see:
 - `../docs/milestones/v0.2/RELEASE_NOTES_v0.2.md`
 - `../docs/milestones/v0.4/RELEASE_NOTES_v0.4.md`
-This README reflects the current v0.5 runtime.
+This README reflects the current v0.6 runtime.
 
 It is intentionally *compiler-like* in how it processes ADL documents:
 
@@ -34,7 +34,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 
 ---
 
-## v0.5 Shipped Capabilities
+## v0.6 Shipped Capabilities
 
 - Deterministic workflow execution with stable plan/trace semantics
 - Deterministic fork/join runtime execution with bounded parallelism
@@ -46,7 +46,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 - Step-level failure controls (`on_error: fail|continue`, `retry.max_attempts`)
 - Remote HTTP provider MVP with explicit failure behavior
 - Remote execution MVP (`/v1/health`, `/v1/execute`) where scheduler ownership remains local
-- v0.5 signing and verification (`keygen`, `sign`, `verify`) with default unsigned-run rejection on `--run`
+- v0.6 signing and verification (`keygen`, `sign`, `verify`) with default unsigned-run rejection on `--run`
 - Persistent run state artifacts under `.adl/runs/<run_id>/` for auditability (`run.json`, `steps.json`)
 - CI-aligned quality gate (`fmt`, `clippy -D warnings`, `test`)
 
@@ -60,7 +60,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 
 ---
 
-## Current Status (v0.5)
+## Current Status (v0.6)
 
 **Implemented**
 
@@ -95,7 +95,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 From the `swarm` directory:
 
 ```bash
-# Happy path: v0.5 primitive schema baseline
+# Happy path: v0.6 primitive schema baseline
 cargo run -q --bin swarm -- examples/v0-5-primitives-minimal.adl.yaml --print-plan
 
 # Optional: verify pattern compiler canonical IDs
@@ -110,7 +110,7 @@ Using `-q` keeps demo output focused on the ADL plan rather than Cargo build noi
 
 For real `--run` execution, configure provider runtime dependencies (for example local Ollama and any required auth env vars).
 
-For additional runnable examples, see `examples/README.md` and `../docs/milestones/v0.5/DEMO_MATRIX_v0.5.md`.
+For additional runnable examples, see `examples/README.md` and `../docs/milestones/v0.6/DEMOS_v0.6.md`.
 
 ---
 
@@ -132,9 +132,9 @@ Exit codes are consistent:
 - `2` — invalid CLI usage
 - non-zero — schema, validation, or runtime error
 
-## Signing Quickstart (v0.5)
+## Signing Quickstart (v0.6)
 
-For v0.5 workflows, signature enforcement is enabled by default for `--run`.
+For v0.6 workflows, signature enforcement is enabled by default for `--run`.
 
 ```bash
 # 1) generate local dev keys
@@ -222,9 +222,9 @@ Failure behavior is explicit:
 - Non-200 response -> runtime error with status + body snippet
 - Timeout -> runtime error with timeout guidance
 
-## Remote Execution MVP (v0.5 Placement)
+## Remote Execution MVP (v0.6 Placement)
 
-In addition to HTTP providers, v0.5 includes a minimal remote execution protocol for
+In addition to HTTP providers, v0.6 includes a minimal remote execution protocol for
 step placement:
 
 - `GET /v1/health`
@@ -237,9 +237,9 @@ Design boundary:
 
 Limits:
 - Request payloads over 5 MiB are rejected (`413`).
-- No authn/authz in v0.5 MVP (deferred).
+- No authn/authz in v0.6 MVP (deferred).
 
-### Security Model / Threat Model (v0.5)
+### Security Model / Threat Model (v0.6)
 
 This remote execution path is an MVP transport boundary, not a hardened public
 service. Treat it as trusted-network infrastructure only.
@@ -256,7 +256,7 @@ Current protections:
 - Timeout/error handling: transport timeout/unreachable/bad-status/invalid-json
   failures are surfaced with explicit stable error categories.
 
-Known gaps / risks (v0.5):
+Known gaps / risks (v0.6):
 - No request signing for remote payloads.
 - No built-in authentication/authorization.
 - Unsafe to expose directly on a public interface.
@@ -304,9 +304,9 @@ Example validation documents live under:
 examples/
 ```
 
-Legacy examples (e.g. `adl-0.1.yaml`) remain for regression testing, but the runtime behavior described here reflects v0.5.
+Legacy examples (e.g. `adl-0.1.yaml`) remain for regression testing, but the runtime behavior described here reflects v0.6.
 
-The schema/runtime behavior described here is aligned with current **v0.5** support.
+The schema/runtime behavior described here is aligned with current **v0.6** support.
 
 ---
 
@@ -347,7 +347,7 @@ All of the above must pass for changes to be accepted.
 
 `swarm` enforces a **high bar for test coverage**, especially for core compiler-like behavior (parsing, validation, resolution, and execution).
 
-As of v0.5:
+As of v0.6:
 
 - **Overall line coverage:** enforced by CI gate (see coverage badge above)
 - **All critical paths covered:**
@@ -383,7 +383,7 @@ The report makes it easy to identify:
 
 ### Coverage philosophy
 
-- **Line coverage > function coverage** for v0.5  
+- **Line coverage > function coverage** for v0.6  
   (many small helper functions are intentionally exercised indirectly)
 - No “coverage theater”:
   - No dummy tests

@@ -74,6 +74,7 @@ Shipped in v0.6:
 - Validation and regression tests around the schema surface.
 
 Notes:
+- v0.6 delegation metadata is audit/trace-only and does not gate scheduling, provider selection, or step execution.
 - v0.6 does not enforce delegation policy at runtime (policy engine is v0.7 scope).
 
 ### WP-F — Determinism + scheduler policy hardening (#406)

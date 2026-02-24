@@ -355,6 +355,17 @@ fn run_artifact_paths(run_id: &str) -> (std::path::PathBuf, std::path::PathBuf) 
     (run_dir.join("run.json"), run_dir.join("steps.json"))
 }
 
+fn pause_state_path(run_id: &str) -> std::path::PathBuf {
+    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("repo root");
+    repo_root
+        .join(".adl")
+        .join("runs")
+        .join(run_id)
+        .join("pause_state.json")
+}
+
 #[test]
 fn run_executes_example_with_mock_ollama_and_prints_step_output() {
     let base = tmp_dir("exec-run-mock-ollama");
@@ -3901,4 +3912,125 @@ run:
     );
     let stderr = String::from_utf8_lossy(&resumed.stderr);
     assert!(stderr.contains("status='paused'"), "stderr was:\n{stderr}");
+}
+
+#[test]
+fn resume_subcommand_resumes_from_pause_state_successfully() {
+    let base = tmp_dir("exec-resume-subcommand-ok");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let paused_yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "step {{n}}"
+run:
+  name: "hitl-resume-subcommand"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        save_as: "s1"
+        write_to: "s1.txt"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs: { n: "2" }
+        guards:
+          - type: pause
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        save_as: "s3"
+        write_to: "s3.txt"
+        inputs: { n: "3" }
+"#;
+    let paused_path = base.join("paused-resume-subcommand.yaml");
+    fs::write(&paused_path, paused_yaml).unwrap();
+
+    let paused = run_swarm(&[paused_path.to_str().unwrap(), "--run"]);
+    assert!(
+        paused.status.success(),
+        "paused run should succeed.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&paused.stdout),
+        String::from_utf8_lossy(&paused.stderr)
+    );
+
+    let resume = run_swarm(&["resume", "hitl-resume-subcommand"]);
+    assert!(
+        resume.status.success(),
+        "resume subcommand should succeed.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&resume.stdout),
+        String::from_utf8_lossy(&resume.stderr)
+    );
+    let (run_json_path, _) = run_artifact_paths("hitl-resume-subcommand");
+    let run_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(run_json_path).unwrap()).unwrap();
+    assert_eq!(run_json["status"], "success");
+}
+
+#[test]
+fn resume_subcommand_rejects_pause_state_plan_hash_mismatch() {
+    let base = tmp_dir("exec-resume-subcommand-hash-mismatch");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let paused_yaml = r#"
+version: "0.3"
+providers: { local: { type: "ollama" } }
+agents: { a: { provider: "local", model: "phi4-mini" } }
+tasks: { t: { prompt: { user: "step {{n}}" } } }
+run:
+  name: "hitl-resume-subcommand-bad-hash"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+        guards: [ { type: pause } ]
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+"#;
+    let paused_path = base.join("paused-resume-subcommand-bad-hash.yaml");
+    fs::write(&paused_path, paused_yaml).unwrap();
+
+    let paused = run_swarm(&[paused_path.to_str().unwrap(), "--run"]);
+    assert!(paused.status.success(), "paused run should succeed");
+
+    let pause_path = pause_state_path("hitl-resume-subcommand-bad-hash");
+    let mut pause_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&pause_path).unwrap()).unwrap();
+    pause_json["execution_plan_hash"] = serde_json::Value::String("deadbeef".to_string());
+    fs::write(&pause_path, serde_json::to_vec_pretty(&pause_json).unwrap()).unwrap();
+
+    let resumed = run_swarm(&["resume", "hitl-resume-subcommand-bad-hash"]);
+    assert!(
+        !resumed.status.success(),
+        "resume subcommand should reject hash mismatch"
+    );
+    let stderr = String::from_utf8_lossy(&resumed.stderr);
+    assert!(
+        stderr.contains("execution plan hash mismatch"),
+        "stderr was:\n{stderr}"
+    );
 }

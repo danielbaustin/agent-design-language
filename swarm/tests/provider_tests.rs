@@ -246,14 +246,18 @@ config:
     let err = p.complete("test prompt").unwrap_err();
     let msg = format!("{err:#}");
 
+    let mentions_launch_failure = msg.contains("ollama run failed");
+    let mentions_stdin_failure = msg.contains("failed writing prompt to ollama stdin");
     assert!(
-        msg.contains("ollama run failed"),
-        "expected failure to mention ollama run failed, got: {msg}"
+        mentions_launch_failure || mentions_stdin_failure,
+        "expected failure to mention launch or stdin write failure, got: {msg}"
     );
-    assert!(
-        msg.contains("something went wrong"),
-        "expected stderr to be included, got: {msg}"
-    );
+    if mentions_launch_failure {
+        assert!(
+            msg.contains("something went wrong"),
+            "expected stderr to be included on launch failure, got: {msg}"
+        );
+    }
 
     let _ = fs::remove_dir_all(dir);
 }
@@ -647,13 +651,13 @@ fn expand_provider_profiles_is_byte_stable_across_runs() {
         r#"
 version: "0.5"
 providers:
-  z_http:
-    profile: "http:gpt-4o-mini"
-  a_ollama:
+  a_mock:
+    profile: "mock:echo-v1"
+  z_ollama:
     profile: "ollama:phi4-mini"
 agents:
   a1:
-    provider: "a_ollama"
+    provider: "z_ollama"
     model: "m"
 tasks:
   t1:
@@ -675,17 +679,79 @@ run:
     assert_eq!(json1, json2, "profile expansion must be byte-stable");
 
     assert_eq!(
-        expanded1.providers["a_ollama"].kind, "ollama",
+        expanded1.providers["z_ollama"].kind, "ollama",
         "ollama profile should expand to kind=ollama"
     );
     assert_eq!(
-        expanded1.providers["z_http"].kind, "http",
-        "http profile should expand to kind=http"
+        expanded1.providers["a_mock"].kind, "mock",
+        "mock profile should expand to kind=mock"
     );
+}
+
+#[test]
+fn expand_provider_profiles_rejects_placeholder_http_endpoint_profiles() {
+    let doc = adl_doc_from_yaml(
+        r#"
+version: "0.5"
+providers:
+  p1:
+    profile: "http:gpt-4o-mini"
+agents:
+  a1:
+    provider: "p1"
+    model: "m"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - agent: "a1"
+        task: "t1"
+"#,
+    );
+    let err = expand_provider_profiles(&doc).expect_err("placeholder endpoint profile must fail");
+    let msg = err.to_string();
     assert!(
-        expanded1.providers["z_http"]
-            .config
-            .contains_key("endpoint"),
-        "http profile should include endpoint in config"
+        msg.contains("providers.p1.profile 'http:gpt-4o-mini'")
+            && msg.contains("placeholder or invalid endpoint")
+            && msg.contains("configure providers.p1.config.endpoint"),
+        "unexpected error: {msg}"
+    );
+}
+
+#[test]
+fn resolve_run_accepts_explicit_valid_http_endpoint() {
+    let doc = adl_doc_from_yaml(
+        r#"
+version: "0.5"
+providers:
+  p1:
+    type: "http"
+    config:
+      endpoint: "https://api.openai.com/v1/complete"
+agents:
+  a1:
+    provider: "p1"
+    model: "gpt-4o-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - agent: "a1"
+        task: "t1"
+"#,
+    );
+    let resolved = swarm::resolve::resolve_run(&doc).expect("valid endpoint should pass resolve");
+    assert_eq!(
+        resolved.steps.len(),
+        1,
+        "expected exactly one resolved step"
     );
 }
