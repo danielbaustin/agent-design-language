@@ -2724,19 +2724,17 @@ run:
         "pause_state.json must not be written for non-paused failure runs"
     );
 
-    let resume_after_failure = run_swarm(&[
-        yaml_stream_path.to_str().unwrap(),
-        "--resume",
-        run_json_path.to_str().unwrap(),
-    ]);
+    let resume_after_failure = run_swarm(&["resume", &run_id]);
     assert!(
         !resume_after_failure.status.success(),
         "resume must fail from failure state"
     );
     let resume_stderr = String::from_utf8_lossy(&resume_after_failure.stderr);
     assert!(
-        resume_stderr.contains("status='paused'"),
-        "resume error should require paused state; stderr:\n{resume_stderr}"
+        resume_stderr.contains("pause state not found")
+            || resume_stderr.contains("status='paused'")
+            || resume_stderr.contains("status=\"paused\""),
+        "resume error should reject failed/non-paused runs; stderr:\n{resume_stderr}"
     );
 
     assert!(
