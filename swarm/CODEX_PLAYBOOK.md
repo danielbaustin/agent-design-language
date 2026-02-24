@@ -7,7 +7,7 @@ Codex is a **builder/operator** for this repo. It executes well-scoped work (edi
 
 ## Collaboration Workflow (Canonical)
 
-Source-of-truth quick link: `swarm/CONTRIBUTING.md` (kept consistent).
+Source-of-truth governance: `../CONTRIBUTING.md` (canonical).
 
 Workflow loop:
 
@@ -52,13 +52,7 @@ Core principles:
 - Schema-first evolution
 - Security and audit are first-class design constraints
 
-Current version intent:
-
-| Version | Focus |
-|---|---|
-| v0.1 | Deterministic parsing, validation, resolution, sequential execution, tracing |
-| v0.2 | Capability expansion, richer examples, provider flexibility, multi-step maturity |
-| v0.3 | Concurrency primitives (carefully introduced, fully testable, deterministic semantics) |
+ADL is now stabilized through v0.6. Version-specific semantics live in milestone docs under `docs/milestones/` and in ADRs under `docs/adr/`. This playbook does not restate release notes or feature lists.
 
 Concurrency is allowed in schema but **must fail clearly** when gated by version.
 
@@ -167,7 +161,7 @@ Explain:
 Run:
 
 ```
-cargo fmt
+cargo fmt --all -- --check
 cargo clippy --all-targets -- -D warnings
 cargo test
 ```
@@ -205,6 +199,18 @@ Never commit:
 - Temp outputs
 
 Unless explicitly requested.
+
+---
+
+## Governance Reminder
+
+This document defines execution mechanics only.
+
+Process, coverage discipline, documentation ownership, and repository-wide rules are defined in:
+
+- `../CONTRIBUTING.md`
+
+If any instruction here conflicts with the root CONTRIBUTING file, the root file takes precedence.
 
 ---
 
@@ -278,6 +284,10 @@ Future ADL versions will likely support:
 - Self-hosted upgrade loops (ADL helps evolve ADL)
 
 Codex should help move toward this future **incrementally and safely**.
+
+---
+
+CODEX_PLAYBOOK.md must not duplicate feature lists, milestone plans, or release notes.
 
 ---
 
