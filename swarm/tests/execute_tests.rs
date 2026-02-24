@@ -45,12 +45,14 @@ fn start_swarm_remote_server() -> String {
 }
 
 fn start_raw_http_server(raw_response: &'static str) -> String {
-    let port = reserve_local_port();
-    let bind_addr = format!("127.0.0.1:{port}");
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind raw http test server");
+    let bind_addr = listener
+        .local_addr()
+        .expect("raw http listener local addr")
+        .to_string();
     thread::spawn({
-        let bind_addr = bind_addr.clone();
+        let listener = listener;
         move || {
-            let listener = TcpListener::bind(&bind_addr).expect("bind raw http test server");
             if let Ok((mut stream, _)) = listener.accept() {
                 let mut buf = [0_u8; 2048];
                 let _ = stream.read(&mut buf);
@@ -64,12 +66,14 @@ fn start_raw_http_server(raw_response: &'static str) -> String {
 }
 
 fn start_fixed_http_provider_server(max_requests: usize, output: &'static str) -> String {
-    let port = reserve_local_port();
-    let bind_addr = format!("127.0.0.1:{port}");
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind fixed http test server");
+    let bind_addr = listener
+        .local_addr()
+        .expect("fixed http listener local addr")
+        .to_string();
     thread::spawn({
-        let bind_addr = bind_addr.clone();
+        let listener = listener;
         move || {
-            let listener = TcpListener::bind(&bind_addr).expect("bind fixed http test server");
             for _ in 0..max_requests {
                 let (mut stream, _) = listener.accept().expect("accept fixed http request");
                 let mut buf = [0_u8; 4096];
