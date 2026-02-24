@@ -323,6 +323,23 @@ echo "MOCK_CONTINUE_OK"
 exit 0
 "#
         }
+        MockOllamaBehavior::StreamThenFailOnToken => {
+            r#"#!/bin/sh
+set -eu
+if [ "${1:-}" != "run" ]; then
+  echo "mock ollama: expected 'run'" 1>&2
+  exit 2
+fi
+prompt="$(cat)"
+if printf "%s" "${prompt}" | grep -q "FAIL_THIS_STEP"; then
+  printf "PARTIAL_FAIL_CHUNK\n"
+  echo "mock ollama forced fail token seen after chunk" 1>&2
+  exit 41
+fi
+echo "MOCK_STREAM_OK"
+exit 0
+"#
+        }
         MockOllamaBehavior::SleepTrackConcurrency => {
             r#"#!/bin/sh
 set -eu
@@ -361,6 +378,7 @@ enum MockOllamaBehavior {
     SleepEchoPrompt,
     FailOnce,
     FailOnToken,
+    StreamThenFailOnToken,
     SleepTrackConcurrency,
 }
 
@@ -2559,6 +2577,193 @@ run:
     assert_eq!(
         trace_chunk_step_ids(&stdout1),
         trace_chunk_step_ids(&stdout2)
+    );
+}
+
+#[test]
+fn run_streaming_mid_step_failure_is_observational_and_resume_rejected() {
+    let base = tmp_dir("exec-streaming-mid-failure");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::StreamThenFailOnToken);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml_stream = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "stream {{text}}"
+run:
+  name: "streaming-mid-failure"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs:
+          text: "ok"
+        save_as: "s1_out"
+        write_to: "s1.txt"
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs:
+          text: "FAIL_THIS_STEP"
+        save_as: "s2_out"
+        write_to: "s2.txt"
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs:
+          text: "never"
+        save_as: "s3_out"
+        write_to: "s3.txt"
+"#;
+    let yaml_quiet = yaml_stream.replace("streaming-mid-failure", "streaming-mid-failure-quiet");
+    let yaml_stream_path = base.join("streaming-mid-failure.yaml");
+    let yaml_quiet_path = base.join("streaming-mid-failure-quiet.yaml");
+    fs::write(&yaml_stream_path, yaml_stream).unwrap();
+    fs::write(&yaml_quiet_path, &yaml_quiet).unwrap();
+
+    let out_stream_dir = base.join("out-stream");
+    let out_stream = run_swarm(&[
+        yaml_stream_path.to_str().unwrap(),
+        "--run",
+        "--trace",
+        "--out",
+        out_stream_dir.to_str().unwrap(),
+    ]);
+    assert!(
+        !out_stream.status.success(),
+        "streaming run must fail.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out_stream.stdout),
+        String::from_utf8_lossy(&out_stream.stderr)
+    );
+
+    let out_quiet_dir = base.join("out-quiet");
+    let out_quiet = run_swarm(&[
+        yaml_quiet_path.to_str().unwrap(),
+        "--run",
+        "--quiet",
+        "--out",
+        out_quiet_dir.to_str().unwrap(),
+    ]);
+    assert!(
+        !out_quiet.status.success(),
+        "non-stream baseline must fail.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out_quiet.stdout),
+        String::from_utf8_lossy(&out_quiet.stderr)
+    );
+
+    let collect_artifacts = |root: &Path| -> Vec<(String, Vec<u8>)> {
+        if !root.exists() {
+            return Vec::new();
+        }
+        let mut files: Vec<_> = fs::read_dir(root)
+            .unwrap()
+            .map(|e| e.unwrap().path())
+            .filter(|p| p.is_file())
+            .collect();
+        files.sort();
+        files
+            .into_iter()
+            .map(|path| {
+                (
+                    path.file_name().unwrap().to_string_lossy().to_string(),
+                    fs::read(&path).unwrap(),
+                )
+            })
+            .collect()
+    };
+    assert_eq!(
+        collect_artifacts(&out_stream_dir),
+        collect_artifacts(&out_quiet_dir),
+        "streaming failure mode must not change final artifact bytes"
+    );
+
+    let trace_stdout = String::from_utf8_lossy(&out_stream.stdout);
+    let run_id = trace_stdout
+        .lines()
+        .find_map(|line| {
+            let (_, tail) = line.split_once("TRACE run_id=")?;
+            Some(tail.split_whitespace().next()?.to_string())
+        })
+        .expect("expected TRACE header with run_id");
+
+    let run_dir_from_stderr = String::from_utf8_lossy(&out_stream.stderr)
+        .lines()
+        .find_map(|line| {
+            let marker = "artifacts=";
+            let (_, tail) = line.split_once(marker)?;
+            Some(Path::new(tail.trim()).to_path_buf())
+        });
+    let run_json_path = run_dir_from_stderr
+        .map(|dir| dir.join("run.json"))
+        .unwrap_or_else(|| run_artifact_paths(&run_id).0);
+    assert!(
+        run_json_path.exists(),
+        "expected run.json at '{}'\nstdout:\n{}\nstderr:\n{}",
+        run_json_path.display(),
+        trace_stdout,
+        String::from_utf8_lossy(&out_stream.stderr)
+    );
+    let run_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
+    assert_eq!(run_json["status"], "failure");
+    let run_dir = run_json_path.parent().unwrap();
+    assert!(
+        !run_dir.join("pause_state.json").exists(),
+        "pause_state.json must not be written for non-paused failure runs"
+    );
+
+    let resume_after_failure = run_swarm(&[
+        yaml_stream_path.to_str().unwrap(),
+        "--resume",
+        run_json_path.to_str().unwrap(),
+    ]);
+    assert!(
+        !resume_after_failure.status.success(),
+        "resume must fail from failure state"
+    );
+    let resume_stderr = String::from_utf8_lossy(&resume_after_failure.stderr);
+    assert!(
+        resume_stderr.contains("status='paused'"),
+        "resume error should require paused state; stderr:\n{resume_stderr}"
+    );
+
+    assert!(
+        trace_stdout.contains("StepOutputChunk step=s2"),
+        "expected streamed chunk for failing step before failure:\n{trace_stdout}"
+    );
+    let lines: Vec<&str> = trace_stdout.lines().collect();
+    let run_failed_idx = lines
+        .iter()
+        .position(|line| line.contains("RunFailed"))
+        .expect("missing RunFailed trace event");
+    let chunk_indices: Vec<usize> = lines
+        .iter()
+        .enumerate()
+        .filter_map(|(i, line)| line.contains("StepOutputChunk step=").then_some(i))
+        .collect();
+    assert!(
+        !chunk_indices.is_empty(),
+        "expected at least one StepOutputChunk event before failure"
+    );
+    assert!(
+        chunk_indices.iter().all(|idx| *idx < run_failed_idx),
+        "chunk events must not appear after terminal RunFailed event"
+    );
+    assert!(
+        !trace_stdout.contains("StepStarted step=s3"),
+        "s3 should not start after fail-fast s2 failure"
     );
 }
 
