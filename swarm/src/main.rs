@@ -803,8 +803,10 @@ fn load_resume_state(path: &Path, resolved: &resolve::AdlResolved) -> Result<exe
 
     if artifact.status != "paused" {
         return Err(anyhow::anyhow!(
-            "resume state must have status='paused' (found '{}')",
-            artifact.status
+            "resume state must have status='paused' (found='{}' for run_id='{}' in '{}')",
+            artifact.status,
+            artifact.run_id,
+            path.display()
         ));
     }
     if artifact.run_id != resolved.run_id {
@@ -816,22 +818,31 @@ fn load_resume_state(path: &Path, resolved: &resolve::AdlResolved) -> Result<exe
     }
     if artifact.workflow_id != resolved.workflow_id {
         return Err(anyhow::anyhow!(
-            "resume workflow_id mismatch: state='{}' current='{}'",
+            "resume workflow_id mismatch for run_id='{}' in '{}': state='{}' current='{}'",
+            artifact.run_id,
+            path.display(),
             artifact.workflow_id,
             resolved.workflow_id
         ));
     }
     if artifact.version != resolved.doc.version {
         return Err(anyhow::anyhow!(
-            "resume version mismatch: state='{}' current='{}'",
+            "resume version mismatch for run_id='{}' in '{}': state='{}' current='{}'",
+            artifact.run_id,
+            path.display(),
             artifact.version,
             resolved.doc.version
         ));
     }
+    // NOTE: resume compatibility relies on deterministic serialization in
+    // `execution_plan_hash()`. Any structural change to `ExecutionPlan` should
+    // invalidate compatibility with prior pause artifacts.
     let plan_hash = execution_plan_hash(&resolved.execution_plan)?;
     if artifact.execution_plan_hash != plan_hash {
         return Err(anyhow::anyhow!(
-            "resume execution plan mismatch; resume requires identical plan and ordering"
+            "resume execution plan mismatch for run_id='{}' in '{}'; state plan != current plan (resume requires identical plan + ordering)",
+            artifact.run_id,
+            path.display()
         ));
     }
     let pause = artifact
@@ -1568,6 +1579,169 @@ mod tests {
         let err = load_resume_state(&run_dir.join("run.json"), &resolved)
             .expect_err("non-paused run.json should fail for resume");
         assert!(err.to_string().contains("status='paused'"));
+        assert!(err.to_string().contains("run_id='"));
+        let _ = std::fs::remove_dir_all(run_dir);
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn load_resume_state_rejects_missing_pause_payload() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("run-missing-pause-{now}-{}", std::process::id());
+        let resolved = minimal_resolved_for_artifacts(run_id.clone());
+        let out_dir = std::env::temp_dir().join(format!("swarm-main-missing-pause-{now}"));
+
+        let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
+        let run_dir = write_run_state_artifacts(
+            &resolved,
+            &tr,
+            Path::new("examples/adl-0.1.yaml"),
+            &out_dir,
+            0,
+            1,
+            "paused",
+            None,
+        )
+        .expect("write paused artifacts");
+
+        let err = load_resume_state(&run_dir.join("run.json"), &resolved)
+            .expect_err("paused run.json without pause payload should fail");
+        assert!(err.to_string().contains("missing pause payload"));
+        let _ = std::fs::remove_dir_all(run_dir);
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn load_resume_state_rejects_workflow_mismatch() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("run-wf-mismatch-{now}-{}", std::process::id());
+        let resolved = minimal_resolved_for_artifacts(run_id.clone());
+        let out_dir = std::env::temp_dir().join(format!("swarm-main-wf-mismatch-{now}"));
+
+        let pause = execute::PauseState {
+            paused_step_id: "s1".to_string(),
+            reason: None,
+            completed_step_ids: vec!["s1".to_string()],
+            remaining_step_ids: vec![],
+            saved_state: HashMap::new(),
+            completed_outputs: HashMap::new(),
+        };
+        let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
+        let run_dir = write_run_state_artifacts(
+            &resolved,
+            &tr,
+            Path::new("examples/adl-0.1.yaml"),
+            &out_dir,
+            0,
+            1,
+            "paused",
+            Some(&pause),
+        )
+        .expect("write paused artifacts");
+
+        let mut mismatch = resolved.clone();
+        mismatch.workflow_id = "wf-other".to_string();
+        let err = load_resume_state(&run_dir.join("run.json"), &mismatch)
+            .expect_err("workflow mismatch must fail");
+        assert!(err.to_string().contains("workflow_id mismatch"));
+        assert!(err.to_string().contains("state='wf'"));
+        assert!(err.to_string().contains("current='wf-other'"));
+        let _ = std::fs::remove_dir_all(run_dir);
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn load_resume_state_rejects_version_mismatch() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("run-version-mismatch-{now}-{}", std::process::id());
+        let resolved = minimal_resolved_for_artifacts(run_id.clone());
+        let out_dir = std::env::temp_dir().join(format!("swarm-main-version-mismatch-{now}"));
+
+        let pause = execute::PauseState {
+            paused_step_id: "s1".to_string(),
+            reason: None,
+            completed_step_ids: vec!["s1".to_string()],
+            remaining_step_ids: vec![],
+            saved_state: HashMap::new(),
+            completed_outputs: HashMap::new(),
+        };
+        let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
+        let run_dir = write_run_state_artifacts(
+            &resolved,
+            &tr,
+            Path::new("examples/adl-0.1.yaml"),
+            &out_dir,
+            0,
+            1,
+            "paused",
+            Some(&pause),
+        )
+        .expect("write paused artifacts");
+
+        let mut mismatch = resolved.clone();
+        mismatch.doc.version = "0.6".to_string();
+        let err = load_resume_state(&run_dir.join("run.json"), &mismatch)
+            .expect_err("version mismatch must fail");
+        assert!(err.to_string().contains("version mismatch"));
+        assert!(err.to_string().contains("state='0.5'"));
+        assert!(err.to_string().contains("current='0.6'"));
+        let _ = std::fs::remove_dir_all(run_dir);
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn load_resume_state_rejects_execution_plan_mismatch() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("run-plan-mismatch-{now}-{}", std::process::id());
+        let resolved = minimal_resolved_for_artifacts(run_id.clone());
+        let out_dir = std::env::temp_dir().join(format!("swarm-main-plan-mismatch-{now}"));
+
+        let pause = execute::PauseState {
+            paused_step_id: "s1".to_string(),
+            reason: None,
+            completed_step_ids: vec!["s1".to_string()],
+            remaining_step_ids: vec![],
+            saved_state: HashMap::new(),
+            completed_outputs: HashMap::new(),
+        };
+        let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
+        let run_dir = write_run_state_artifacts(
+            &resolved,
+            &tr,
+            Path::new("examples/adl-0.1.yaml"),
+            &out_dir,
+            0,
+            1,
+            "paused",
+            Some(&pause),
+        )
+        .expect("write paused artifacts");
+
+        let run_json = run_dir.join("run.json");
+        let raw = std::fs::read_to_string(&run_json).expect("read run.json");
+        let mut value: serde_json::Value = serde_json::from_str(&raw).expect("parse run.json");
+        value["execution_plan_hash"] = serde_json::Value::String("tampered-hash".to_string());
+        std::fs::write(
+            &run_json,
+            serde_json::to_vec_pretty(&value).expect("serialize tampered run.json"),
+        )
+        .expect("write tampered run.json");
+
+        let err = load_resume_state(&run_json, &resolved).expect_err("plan mismatch must fail");
+        assert!(err.to_string().contains("execution plan mismatch"));
+        assert!(err.to_string().contains("state plan != current plan"));
         let _ = std::fs::remove_dir_all(run_dir);
         let _ = std::fs::remove_dir_all(out_dir);
     }
