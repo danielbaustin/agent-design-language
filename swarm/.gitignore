@@ -9,3 +9,7 @@ lcov.info
 coverage.last/
 cov.old/
 *.gcov
+
+# Local coverage artifacts
+swarm/coverage/
+swarm/coverage.last/

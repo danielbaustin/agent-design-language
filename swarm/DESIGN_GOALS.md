@@ -1,8 +1,24 @@
-# Agent Design Language (ADL) — Design Goals
+# Swarm / Agent Design Language (ADL) — Design Goals (Stable Principles)
 
 This document defines the guiding principles behind **Agent Design Language (ADL)** and its reference Rust runtime, `swarm`.
 
 ADL is designed as a *language*, not a framework: a small, explicit, and deterministic way to describe agent workflows that can be parsed, validated, reasoned about, and executed by multiple runtimes.
+
+---
+
+## How This Document Fits
+
+This document defines the **stable design principles** of ADL and the reference runtime.
+
+It is intentionally version-light and does not enumerate features by release.
+
+For feature lists and shipped behavior, see:
+- Root `README.md` (features by release)
+- `swarm/README.md` (runtime entrypoint and usage)
+- `docs/milestones/v0.6/` (design, sprint, release notes)
+- `docs/adr/` (architecture decisions)
+
+If a statement here conflicts with milestone docs or ADRs, milestone docs and ADRs take precedence for version-specific behavior.
 
 ---
 
@@ -45,7 +61,7 @@ ADL strictly separates:
 - **Specification** (YAML documents)
 - **Resolution** (reference binding and validation)
 - **Prompt Assembly** (deterministic text construction)
-- **Execution** (providers, tools, retries — future work)
+- **Execution** (providers, tools, retries — advanced policies and resilience features may evolve over time)
 
 This ensures:
 - Clear failure modes
@@ -111,6 +127,8 @@ Advanced features such as:
 - Remote providers
 
 are designed to layer *on top* of the core without changing its semantics.
+
+These extensions must not alter the deterministic semantics of the core resolution and planning pipeline.
 
 ---
 
@@ -187,12 +205,16 @@ The goal is not to automate intelligence, but to **make agent systems legible, i
 
 ---
 
-## Next Steps
+## Evolution Path
 
-With the core stabilized, the next milestones are:
+With the deterministic core stabilized, future work focuses on capabilities layered *above* the core semantics:
 
-1. Canonical example ADL documents
-2. Tool invocation semantics
-3. Provider abstraction (local + remote)
-4. Python reference runtime
-5. Formal specification versioning
+- Tool invocation semantics
+- Provider abstraction and security envelopes
+- Deterministic resilience features (pause/resume, checkpointing)
+- Multi-runtime support (e.g., additional language implementations)
+- Formal specification versioning and compatibility guarantees
+
+These efforts must preserve the principles defined in this document.
+
+---

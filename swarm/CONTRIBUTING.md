@@ -1,85 +1,46 @@
 # Contributing to Swarm (ADL Reference Runtime)
 
-## Scope and layering
+Swarm is the **reference runtime + CLI** for Agent Design Language (ADL).
 
-This directory (`/swarm`) contains the **reference runtime + CLI** for ADL.
+All contribution workflow, governance, and repository-wide policies are defined in the root:
 
-- **Language semantics and evolution live in** `/adl-spec`
-- **Runtime implementation details live here** in `/swarm`
+- `../CONTRIBUTING.md`
 
-**Rule of thumb:** If a change affects ADL *meaning* (semantics, versioning behavior, schema intent), propose it in `/adl-spec` first. If it affects *how Swarm executes* (performance, ergonomics, provider wiring, CLI behavior) it belongs here.
-
----
-
-## What we optimize for
-
-Swarm is intentionally opinionated:
-
-- **Determinism first** (resolution, prompt assembly, execution order)
-- **Traceability** (runs and step lifecycles should be observable)
-- **Schema discipline** (schema/fixtures/examples stay aligned)
-- **Hermetic tests** (no network, no real providers)
-- **Small diffs** and **high auditability**
-
-If you are unsure whether a change preserves these properties, open an issue or propose a plan before making broad edits.
+This file exists only to clarify Swarm-specific expectations and to prevent process drift.
 
 ---
 
-## Quick start
+## Before You Start
 
-From `swarm/`:
+Please read:
+
+- `../CONTRIBUTING.md` (canonical workflow + governance)
+- `CODEX_PLAYBOOK.md` (card-based PR workflow)
+- `DESIGN_GOALS.md` (stable principles)
+
+---
+
+## Swarm-Specific Expectations
+
+In addition to the root contribution rules:
+
+- Tests must remain **hermetic** (no real network calls, no real providers).
+- Runtime changes must not alter deterministic planning semantics.
+- Changes affecting ADL meaning must be proposed in `/adl-spec` first.
+- Coverage discipline (>=80% per file or documented exception) applies.
+
+If unsure whether a change affects language semantics vs runtime implementation, open an issue first.
+
+---
+
+## Quick Local Validation (from `swarm/`)
 
 ```bash
-cargo fmt
+cargo fmt --all -- --check
 cargo clippy --all-targets -- -D warnings
 cargo test
 ```
 
-## Coverage discipline
-
-We keep coverage regression small and visible:
-
-- New code paths and bug fixes should include tests.
-- CI enforces a modest minimum line coverage threshold as a guardrail.
-
-Run coverage locally from `swarm/`:
-
-```bash
-cargo llvm-cov --fail-under-lines 10
-```
-
 ---
 
-## Workflow (Source of Truth: `swarm/CODEX_PLAYBOOK.md`)
-
-For the full collaboration workflow (including input/output cards and `swarm/tools/pr.sh`),
-use `swarm/CODEX_PLAYBOOK.md` as the canonical guide. This file keeps a lightweight summary
-to avoid drift.
-
-Canonical loop:
-
-```
-start → cards → execute → review → finish → merge → cleanup
-```
-
-Key points:
-- Input/output cards are **local-only** trace artifacts stored under `.adl/cards/` (not committed).
-- Templates live under `.adl/templates/` (versioned).
-- Tasks can be non-code; the same card-based trace applies.
-
-## Fast path (copy/paste)
-
-```bash
-swarm/tools/pr.sh start <issue>
-swarm/tools/pr.sh cards <issue>
-# do the work + tests
-swarm/tools/pr.sh finish <issue> --title "swarm: <short description>" \
-  -f .adl/cards/####/input_####.md \
-  --output-card .adl/cards/####/output_####.md
-```
-
-## Recovery (common pitfalls)
-
-- **Wrong branch:** `git switch main` → `swarm/tools/pr.sh start <issue>`
-- **Finish after manual commit:** `swarm/tools/pr.sh finish ...` still works; it will commit staged changes.
-- **Issue vs PR number confusion:** always use the **issue** number for cards/branches.
+Swarm defers to the root `CONTRIBUTING.md` for all process, workflow, and governance rules.
