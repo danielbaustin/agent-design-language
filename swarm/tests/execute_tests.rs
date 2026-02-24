@@ -3528,6 +3528,204 @@ run:
 }
 
 #[test]
+fn run_pause_resume_cli_roundtrip_matches_uninterrupted_artifacts_byte_for_byte() {
+    let base = tmp_dir("exec-pause-resume-cli-roundtrip");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let paused_out = base.join("out-paused-cli");
+    let plain_out = base.join("out-plain-cli");
+    let paused_out_str = paused_out.to_string_lossy();
+    let plain_out_str = plain_out.to_string_lossy();
+
+    let paused_yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "step {{n}}"
+run:
+  name: "hitl-roundtrip-cli"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        save_as: "s1"
+        write_to: "s1.txt"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs: { n: "2" }
+        guards:
+          - type: pause
+            config: { reason: "await_review" }
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        save_as: "s3"
+        write_to: "s3.txt"
+        inputs: { n: "3" }
+"#;
+    let plain_yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "step {{n}}"
+run:
+  name: "hitl-roundtrip-plain"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        save_as: "s1"
+        write_to: "s1.txt"
+        inputs: { n: "1" }
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs: { n: "2" }
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        save_as: "s3"
+        write_to: "s3.txt"
+        inputs: { n: "3" }
+"#;
+
+    let paused_path = base.join("roundtrip-paused.yaml");
+    let plain_path = base.join("roundtrip-plain.yaml");
+    fs::write(&paused_path, paused_yaml).unwrap();
+    fs::write(&plain_path, plain_yaml).unwrap();
+
+    let paused = run_swarm(&[
+        paused_path.to_str().unwrap(),
+        "--run",
+        "--out",
+        paused_out_str.as_ref(),
+    ]);
+    assert!(
+        paused.status.success(),
+        "paused run should succeed\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&paused.stdout),
+        String::from_utf8_lossy(&paused.stderr)
+    );
+    let (run_json_path, _) = run_artifact_paths("hitl-roundtrip-cli");
+    let run_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
+    assert_eq!(run_json["status"], "paused");
+
+    let resumed = run_swarm(&[
+        paused_path.to_str().unwrap(),
+        "--run",
+        "--resume",
+        run_json_path.to_str().unwrap(),
+        "--out",
+        paused_out_str.as_ref(),
+    ]);
+    assert!(
+        resumed.status.success(),
+        "resume CLI should succeed\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&resumed.stdout),
+        String::from_utf8_lossy(&resumed.stderr)
+    );
+
+    let plain = run_swarm(&[
+        plain_path.to_str().unwrap(),
+        "--run",
+        "--out",
+        plain_out_str.as_ref(),
+    ]);
+    assert!(
+        plain.status.success(),
+        "plain run should succeed\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&plain.stdout),
+        String::from_utf8_lossy(&plain.stderr)
+    );
+
+    for rel in ["s1.txt", "s2.txt", "s3.txt"] {
+        let paused_bytes = fs::read(paused_out.join(rel)).unwrap_or_else(|e| {
+            panic!("missing paused artifact {rel}: {e}");
+        });
+        let plain_bytes = fs::read(plain_out.join(rel)).unwrap_or_else(|e| {
+            panic!("missing plain artifact {rel}: {e}");
+        });
+        assert_eq!(paused_bytes, plain_bytes, "artifact bytes differ for {rel}");
+    }
+}
+
+#[test]
+fn resume_cli_rejects_missing_resume_state_file_path() {
+    let base = tmp_dir("exec-resume-missing-state");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+providers: { local: { type: "ollama" } }
+agents: { a: { provider: "local", model: "phi4-mini" } }
+tasks: { t: { prompt: { user: "step {{n}}" } } }
+run:
+  name: "resume-missing-state"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+"#;
+    let yaml_path = base.join("resume-missing-state.yaml");
+    fs::write(&yaml_path, yaml).unwrap();
+
+    let missing = base.join("does-not-exist.run.json");
+    let resumed = run_swarm(&[
+        yaml_path.to_str().unwrap(),
+        "--run",
+        "--resume",
+        missing.to_str().unwrap(),
+    ]);
+    assert!(
+        !resumed.status.success(),
+        "resume CLI must fail for missing pause-state"
+    );
+    let stderr = String::from_utf8_lossy(&resumed.stderr);
+    assert!(
+        stderr.contains("failed to read resume state"),
+        "stderr was:\n{stderr}"
+    );
+    assert!(
+        stderr.contains("does-not-exist.run.json"),
+        "stderr was:\n{stderr}"
+    );
+}
+
+#[test]
 fn run_concurrent_pause_then_resume_is_deterministic() {
     let base = tmp_dir("exec-pause-resume-concurrent");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepTrackConcurrency);
