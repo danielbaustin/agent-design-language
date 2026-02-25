@@ -2296,6 +2296,7 @@ run:
     let run_json_path = run_dir.join("run.json");
     let steps_json_path = run_dir.join("steps.json");
     let run_summary_path = run_dir.join("run_summary.json");
+    let scores_path = run_dir.join("learning").join("scores.json");
     assert!(
         run_json_path.is_file(),
         "missing {}",
@@ -2311,6 +2312,7 @@ run:
         "missing {}",
         run_summary_path.display()
     );
+    assert!(scores_path.is_file(), "missing {}", scores_path.display());
 
     let run_json: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
@@ -2374,6 +2376,86 @@ run:
     assert!(
         summary_json.get("started_at").is_none(),
         "run summary v1 should avoid wall-clock timestamps by default"
+    );
+    let scores_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&scores_path).unwrap()).unwrap();
+    assert_eq!(scores_json["scores_version"], 1);
+    assert_eq!(scores_json["run_id"], run_id);
+    assert_eq!(scores_json["generated_from"]["artifact_model_version"], 1);
+    assert_eq!(scores_json["generated_from"]["run_summary_version"], 1);
+    assert!(scores_json["summary"]["success_ratio"].is_number());
+    assert!(scores_json["summary"]["failure_count"].is_number());
+    assert!(scores_json["summary"]["retry_count"].is_number());
+    assert!(
+        scores_json["metrics"]["scheduler_max_parallel_observed"].is_number(),
+        "scores metrics should include deterministic scheduler observation"
+    );
+
+    let _ = fs::remove_dir_all(&run_dir);
+}
+
+#[test]
+fn run_scores_artifact_is_byte_stable_across_repeated_identical_runs() {
+    let base = tmp_dir("exec-scores-stability");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let run_id = "scores-stable-test";
+    let run_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .join(".adl")
+        .join("runs")
+        .join(run_id);
+    let _ = fs::remove_dir_all(&run_dir);
+
+    let yaml = format!(
+        r#"
+version: "0.2"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t1:
+    prompt:
+      user: "Summarize: {{text}}"
+
+run:
+  name: "{run_id}"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        inputs:
+          text: "hello"
+"#
+    );
+    let tmp_yaml = base.join("scores-stability.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let first = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(first.status.success(), "first run should succeed");
+    let first_bytes = fs::read(run_dir.join("learning").join("scores.json")).unwrap();
+
+    let second = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(second.status.success(), "second run should succeed");
+    let second_bytes = fs::read(run_dir.join("learning").join("scores.json")).unwrap();
+
+    assert_eq!(
+        first_bytes, second_bytes,
+        "scores.json should be byte-stable across repeated identical runs"
     );
 
     let _ = fs::remove_dir_all(&run_dir);
