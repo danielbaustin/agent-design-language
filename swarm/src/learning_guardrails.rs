@@ -6,7 +6,8 @@
 //! sandbox, or scheduler policy surfaces.
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct OverlaySecurityMutationAttempt {
+#[allow(dead_code)] // Wired into overlay-apply path in #485.
+pub(crate) struct OverlaySecurityMutationAttempt {
     pub require_signed_requests: Option<bool>,
     pub allow_unsigned: Option<bool>,
     pub require_key_id: Option<bool>,
@@ -18,14 +19,17 @@ pub struct OverlaySecurityMutationAttempt {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum LearningGuardrailError {
+#[allow(dead_code)] // Wired into overlay-apply path in #485.
+#[allow(clippy::enum_variant_names)] // Mirrors stable *_IMMUTABLE error-code taxonomy.
+pub(crate) enum LearningGuardrailError {
     TrustPolicyImmutable,
     SandboxPolicyImmutable,
     SchedulerPolicyImmutable,
 }
 
+#[allow(dead_code)] // Wired into overlay-apply path in #485.
 impl LearningGuardrailError {
-    pub fn code(&self) -> &'static str {
+    pub(crate) fn code(&self) -> &'static str {
         match self {
             Self::TrustPolicyImmutable => "LEARNING_GUARDRAIL_TRUST_POLICY_IMMUTABLE",
             Self::SandboxPolicyImmutable => "LEARNING_GUARDRAIL_SANDBOX_POLICY_IMMUTABLE",
@@ -33,7 +37,7 @@ impl LearningGuardrailError {
         }
     }
 
-    pub fn message(&self) -> &'static str {
+    pub(crate) fn message(&self) -> &'static str {
         match self {
             Self::TrustPolicyImmutable => {
                 "learning overlay cannot modify signing/trust verification requirements"
@@ -48,7 +52,8 @@ impl LearningGuardrailError {
     }
 }
 
-pub fn validate_overlay_security_guardrails(
+#[allow(dead_code)] // Wired into overlay-apply path in #485.
+pub(crate) fn validate_overlay_security_guardrails(
     attempt: &OverlaySecurityMutationAttempt,
 ) -> Result<(), LearningGuardrailError> {
     if attempt.require_signed_requests.is_some()
@@ -120,6 +125,22 @@ mod tests {
 
         let err = validate_overlay_security_guardrails(&attempt)
             .expect_err("verification policy mutation must be rejected");
+        assert_eq!(err.code(), "LEARNING_GUARDRAIL_TRUST_POLICY_IMMUTABLE");
+        assert_eq!(
+            err.message(),
+            "learning overlay cannot modify signing/trust verification requirements"
+        );
+    }
+
+    #[test]
+    fn rejects_overlay_attempt_to_change_key_source_policy_only() {
+        let attempt = OverlaySecurityMutationAttempt {
+            verify_allowed_key_sources: Some(vec!["embedded".to_string()]),
+            ..Default::default()
+        };
+
+        let err = validate_overlay_security_guardrails(&attempt)
+            .expect_err("key source policy mutation must be rejected");
         assert_eq!(err.code(), "LEARNING_GUARDRAIL_TRUST_POLICY_IMMUTABLE");
         assert_eq!(
             err.message(),
