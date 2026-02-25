@@ -200,6 +200,20 @@ Hard constraints:
 
 Security/trust policies cannot be overridden by overlays.
 
+### Remote Security Envelope (WP-02 / #370)
+
+- Remote execute requests are centrally gated in `swarm/src/remote_exec.rs`
+  via `validate_security_envelope`.
+- The envelope enforces deterministic deny-by-default checks when policy flags
+  require trust assertions:
+  - reject unsigned requests when `require_signed_requests=true`
+  - reject missing/empty `key_id` when `require_key_id=true`
+  - reject requested path traversal / symlink escape attempts for sandboxed
+    remote file targets
+- All envelope rejections emit stable error codes for tests/tooling.
+- This WP does not implement signing material exchange (#386) or full trust
+  policy semantics (#371); it provides the enforcement boundary they plug into.
+
 ---
 
 ## Risks and Mitigations

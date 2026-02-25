@@ -27,6 +27,8 @@ pub struct ExecuteRequest {
     pub step: ExecuteStepPayload,
     pub inputs: ExecuteInputsPayload,
     pub timeout_ms: u64,
+    #[serde(default)]
+    pub security: Option<ExecuteSecurityEnvelope>,
 }
 
 /// Resolved step payload executed by the remote endpoint.
@@ -54,6 +56,26 @@ pub struct ExecuteInputsPayload {
     pub state: HashMap<String, String>,
 }
 
+/// Security envelope attached to remote execution requests.
+///
+/// This metadata is validated centrally before remote execution and provides
+/// deterministic policy gating for trust and sandbox checks.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct ExecuteSecurityEnvelope {
+    #[serde(default)]
+    pub require_signature: bool,
+    #[serde(default)]
+    pub require_key_id: bool,
+    #[serde(default)]
+    pub signed: bool,
+    #[serde(default)]
+    pub key_id: Option<String>,
+    #[serde(default)]
+    pub sandbox_root: Option<String>,
+    #[serde(default)]
+    pub requested_paths: Vec<String>,
+}
+
 /// Remote execution response contract for `/v1/execute`.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExecuteResponse {
@@ -73,6 +95,109 @@ pub struct RemoteError {
     pub message: String,
     #[serde(default)]
     pub details: HashMap<String, serde_json::Value>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum SecurityEnvelopeError {
+    UnsignedRequestRequired,
+    MissingKeyId,
+    PathTraversal { path: String },
+    SymlinkEscape { path: String },
+}
+
+impl SecurityEnvelopeError {
+    pub fn code(&self) -> &'static str {
+        match self {
+            Self::UnsignedRequestRequired => "REMOTE_ENVELOPE_UNSIGNED_REQUEST",
+            Self::MissingKeyId => "REMOTE_ENVELOPE_MISSING_KEY_ID",
+            Self::PathTraversal { .. } => "REMOTE_ENVELOPE_PATH_TRAVERSAL",
+            Self::SymlinkEscape { .. } => "REMOTE_ENVELOPE_SYMLINK_ESCAPE",
+        }
+    }
+
+    pub fn message(&self) -> String {
+        match self {
+            Self::UnsignedRequestRequired => {
+                "remote security envelope rejected unsigned request while signing is required"
+                    .to_string()
+            }
+            Self::MissingKeyId => {
+                "remote security envelope requires non-empty key_id when trust policy is enabled"
+                    .to_string()
+            }
+            Self::PathTraversal { path } => format!(
+                "remote security envelope rejected requested path with traversal/absolute components: '{path}'"
+            ),
+            Self::SymlinkEscape { path } => format!(
+                "remote security envelope rejected requested path escaping sandbox root via symlink/canonicalization: '{path}'"
+            ),
+        }
+    }
+}
+
+pub fn validate_security_envelope(
+    req: &ExecuteRequest,
+) -> std::result::Result<(), SecurityEnvelopeError> {
+    let env = req.security.as_ref().cloned().unwrap_or_default();
+
+    if env.require_signature && !env.signed {
+        return Err(SecurityEnvelopeError::UnsignedRequestRequired);
+    }
+    if env.require_key_id
+        && env
+            .key_id
+            .as_deref()
+            .map(str::trim)
+            .unwrap_or("")
+            .is_empty()
+    {
+        return Err(SecurityEnvelopeError::MissingKeyId);
+    }
+
+    if env.requested_paths.is_empty() {
+        return Ok(());
+    }
+
+    let sandbox_root = env.sandbox_root.as_deref().unwrap_or(".");
+    let root = std::path::Path::new(sandbox_root)
+        .canonicalize()
+        .map_err(|_| SecurityEnvelopeError::SymlinkEscape {
+            path: sandbox_root.to_string(),
+        })?;
+
+    for rel in &env.requested_paths {
+        let rel_path = std::path::Path::new(rel);
+        if rel_path.is_absolute()
+            || rel_path
+                .components()
+                .any(|c| matches!(c, std::path::Component::ParentDir))
+        {
+            return Err(SecurityEnvelopeError::PathTraversal { path: rel.clone() });
+        }
+
+        let candidate = root.join(rel_path);
+        let canonical = if candidate.exists() {
+            candidate
+                .canonicalize()
+                .map_err(|_| SecurityEnvelopeError::SymlinkEscape { path: rel.clone() })?
+        } else {
+            let parent = candidate
+                .parent()
+                .ok_or_else(|| SecurityEnvelopeError::SymlinkEscape { path: rel.clone() })?;
+            let parent_canon = parent
+                .canonicalize()
+                .map_err(|_| SecurityEnvelopeError::SymlinkEscape { path: rel.clone() })?;
+            let name = candidate
+                .file_name()
+                .ok_or_else(|| SecurityEnvelopeError::SymlinkEscape { path: rel.clone() })?;
+            parent_canon.join(name)
+        };
+        if !canonical.starts_with(&root) {
+            return Err(SecurityEnvelopeError::SymlinkEscape { path: rel.clone() });
+        }
+    }
+
+    Ok(())
 }
 
 impl ExecuteResponse {
@@ -112,6 +237,10 @@ impl ExecuteResponse {
 /// - maps transport/timeout/protocol failures into stable error codes
 /// - returns only the remote model output for successful requests
 pub fn execute_remote(endpoint: &str, timeout_ms: u64, req: &ExecuteRequest) -> Result<String> {
+    if let Err(env_err) = validate_security_envelope(req) {
+        return Err(anyhow!("{}: {}", env_err.code(), env_err.message()));
+    }
+
     let client = Client::builder()
         .timeout(Duration::from_millis(timeout_ms))
         .build()
@@ -149,9 +278,10 @@ pub fn execute_remote(endpoint: &str, timeout_ms: u64, req: &ExecuteRequest) -> 
 
 /// Run the minimal remote execution server (`/v1/health`, `/v1/execute`).
 ///
-/// Security boundary (v0.5 MVP):
-/// - no request signing/authn/authz
+/// Security envelope:
 /// - request body capped at 5 MiB
+/// - all execute requests pass through `validate_security_envelope`
+/// - signing/trust requirements are enforced only when explicitly requested by policy flags
 /// - intended for localhost or trusted-network usage only
 pub fn run_server(bind_addr: &str) -> Result<()> {
     let server = Server::http(bind_addr)
@@ -225,6 +355,10 @@ fn execute_request(req: &ExecuteRequest) -> ExecuteResponse {
                 req.protocol_version, PROTOCOL_VERSION
             ),
         );
+    }
+
+    if let Err(env_err) = validate_security_envelope(req) {
+        return ExecuteResponse::err(req, env_err.code(), env_err.message());
     }
 
     let prov =
@@ -338,6 +472,7 @@ mod tests {
             },
             inputs: ExecuteInputsPayload::default(),
             timeout_ms: 50,
+            security: None,
         }
     }
 
@@ -425,6 +560,93 @@ mod tests {
             "unexpected status error: {status_err:#}"
         );
         let _ = handle.join();
+    }
+
+    #[test]
+    fn security_envelope_rejects_unsigned_when_required() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: false,
+            signed: false,
+            key_id: None,
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_ENVELOPE_UNSIGNED_REQUEST");
+    }
+
+    #[test]
+    fn security_envelope_rejects_missing_key_id_when_required() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: true,
+            signed: true,
+            key_id: None,
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_ENVELOPE_MISSING_KEY_ID");
+    }
+
+    #[test]
+    fn security_envelope_rejects_path_traversal() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: false,
+            require_key_id: false,
+            signed: false,
+            key_id: None,
+            sandbox_root: Some(".".to_string()),
+            requested_paths: vec!["../escape.txt".to_string()],
+        });
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_ENVELOPE_PATH_TRAVERSAL");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn security_envelope_rejects_symlink_escape() {
+        use std::fs;
+        use std::os::unix::fs as unix_fs;
+        use std::time::{SystemTime, UNIX_EPOCH};
+
+        let stamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let base = std::env::temp_dir().join(format!("swarm-remote-env-{stamp}"));
+        let root = base.join("root");
+        let outside = base.join("outside");
+        fs::create_dir_all(&root).expect("create root");
+        fs::create_dir_all(&outside).expect("create outside");
+        fs::write(outside.join("secret.txt"), "x").expect("write outside file");
+        unix_fs::symlink(&outside, root.join("link")).expect("create symlink");
+
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: false,
+            require_key_id: false,
+            signed: false,
+            key_id: None,
+            sandbox_root: Some(root.display().to_string()),
+            requested_paths: vec!["link/secret.txt".to_string()],
+        });
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_ENVELOPE_SYMLINK_ESCAPE");
+
+        let _ = fs::remove_dir_all(&base);
     }
 
     #[test]

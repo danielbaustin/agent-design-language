@@ -534,6 +534,18 @@ pub fn execute_sequential_with_resume(
                                 state: saved_state.clone(),
                             },
                             timeout_ms,
+                            security: Some(remote_exec::ExecuteSecurityEnvelope {
+                                require_signature: remote.require_signed_requests,
+                                require_key_id: remote.require_key_id,
+                                signed: resolved.doc.signature.is_some(),
+                                key_id: resolved.doc.signature.as_ref().map(|s| s.key_id.clone()),
+                                sandbox_root: Some(out_dir.display().to_string()),
+                                requested_paths: step
+                                    .write_to
+                                    .clone()
+                                    .into_iter()
+                                    .collect::<Vec<_>>(),
+                            }),
                         };
                         remote_exec::execute_remote(&remote.endpoint, timeout_ms, &req)
                             .with_context(|| {
@@ -1108,6 +1120,14 @@ fn execute_step_with_retry(
                             state: saved_state.clone(),
                         },
                         timeout_ms,
+                        security: Some(remote_exec::ExecuteSecurityEnvelope {
+                            require_signature: remote.require_signed_requests,
+                            require_key_id: remote.require_key_id,
+                            signed: doc.signature.is_some(),
+                            key_id: doc.signature.as_ref().map(|s| s.key_id.clone()),
+                            sandbox_root: Some(adl_base_dir.display().to_string()),
+                            requested_paths: step.write_to.clone().into_iter().collect::<Vec<_>>(),
+                        }),
                     };
                     remote_exec::execute_remote(&remote.endpoint, timeout_ms, &req)
                         .with_context(|| format!("remote step '{}' execution failed", step_id))?

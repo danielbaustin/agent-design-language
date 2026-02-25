@@ -162,6 +162,17 @@ impl AdlDoc {
             pattern.validate()?;
         }
 
+        if let Some(remote) = self.run.remote.as_ref() {
+            if remote.endpoint.trim().is_empty() {
+                return Err(anyhow!("run.remote.endpoint must not be empty"));
+            }
+            if remote.require_key_id && !remote.require_signed_requests {
+                return Err(anyhow!(
+                    "run.remote.require_key_id=true requires run.remote.require_signed_requests=true"
+                ));
+            }
+        }
+
         if let Some(pattern_ref) = self.run.pattern_ref.as_ref() {
             if !self.patterns.iter().any(|p| p.id == *pattern_ref) {
                 return Err(anyhow!(
@@ -923,6 +934,10 @@ pub struct RunRemoteSpec {
     pub endpoint: String,
     #[serde(default)]
     pub timeout_ms: Option<u64>,
+    #[serde(default)]
+    pub require_signed_requests: bool,
+    #[serde(default)]
+    pub require_key_id: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
