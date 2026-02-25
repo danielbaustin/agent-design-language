@@ -1,3 +1,10 @@
+//! Guardrails for overlay security mutations.
+//!
+//! `OverlaySecurityMutationAttempt` fields are internal mutation-intent signals
+//! (not a user-facing configuration schema). The overlay schema/workflow from
+//! #485 maps into this validator and must not be allowed to weaken trust,
+//! sandbox, or scheduler policy surfaces.
+
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct OverlaySecurityMutationAttempt {
     pub require_signed_requests: Option<bool>,
