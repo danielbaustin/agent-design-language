@@ -200,6 +200,23 @@ Hard constraints:
 
 Security/trust policies cannot be overridden by overlays.
 
+### Scheduler Policy Surface (WP-05 / #369)
+
+- Surface area is intentionally minimal for determinism:
+  - `run.defaults.max_concurrency` (run-level default)
+  - `run.workflow.max_concurrency` or `workflows.<id>.max_concurrency` via `run.workflow_ref` (workflow-level override)
+- Precedence for concurrent runs is explicit and deterministic:
+  1. workflow-level override
+  2. run-level default
+  3. engine default (`4`)
+- Deterministic scheduling invariants:
+  - ready-step selection is lexicographic by full step id
+  - bounded batching uses the effective concurrency cap above
+  - trace/run summary surfaces expose effective scheduler policy for auditability
+- Out of scope in v0.7:
+  - fairness/priorities/preemption/QoS
+  - distributed scheduling and durable checkpoint orchestration
+
 ### Signing Trust Policy Profile (WP-03 / #371)
 
 - Trust checks are policy-driven via an explicit verification profile:

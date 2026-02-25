@@ -3280,6 +3280,15 @@ run:
     );
     let started1 = trace_started_step_ids(&String::from_utf8_lossy(&out1.stdout));
     assert_eq!(started1, vec!["s1", "s2", "s3", "s4"]);
+    let stdout1 = String::from_utf8_lossy(&out1.stdout);
+    assert!(
+        stdout1.contains("SchedulerPolicy max_concurrency=2 source=run_default"),
+        "stdout was:\n{stdout1}"
+    );
+    assert!(
+        stdout1.contains("SCHEDULER POLICY: max_concurrency=2 source=run_default"),
+        "stdout was:\n{stdout1}"
+    );
 
     // Determinism regression guard: identical started order on a second run.
     let out2 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
@@ -3291,6 +3300,15 @@ run:
     );
     let started2 = trace_started_step_ids(&String::from_utf8_lossy(&out2.stdout));
     assert_eq!(started1, started2);
+    let stdout2 = String::from_utf8_lossy(&out2.stdout);
+    assert!(
+        stdout2.contains("SchedulerPolicy max_concurrency=2 source=run_default"),
+        "stdout was:\n{stdout2}"
+    );
+    assert!(
+        stdout2.contains("SCHEDULER POLICY: max_concurrency=2 source=run_default"),
+        "stdout was:\n{stdout2}"
+    );
 }
 
 #[test]
@@ -3563,9 +3581,17 @@ run:
         "conc failed: {:?}",
         out_conc.status.code()
     );
+
+    let normalize = |s: &str| -> String {
+        s.lines()
+            .filter(|line| !line.starts_with("SCHEDULER POLICY:"))
+            .collect::<Vec<_>>()
+            .join("\n")
+    };
+
     assert_eq!(
-        String::from_utf8_lossy(&out_seq.stdout),
-        String::from_utf8_lossy(&out_conc.stdout),
+        normalize(&String::from_utf8_lossy(&out_seq.stdout)),
+        normalize(&String::from_utf8_lossy(&out_conc.stdout)),
         "max_concurrency=1 concurrent output should match sequential output for the same ordered plan"
     );
 }
@@ -3636,6 +3662,15 @@ stderr:
 
     let started1 = trace_started_step_ids(&String::from_utf8_lossy(&out1.stdout));
     assert_eq!(started1, vec!["s1", "s2", "s3", "s4", "s5"]);
+    let stdout1 = String::from_utf8_lossy(&out1.stdout);
+    assert!(
+        stdout1.contains("SchedulerPolicy max_concurrency=2 source=workflow_override"),
+        "stdout was:\n{stdout1}"
+    );
+    assert!(
+        stdout1.contains("SCHEDULER POLICY: max_concurrency=2 source=workflow_override"),
+        "stdout was:\n{stdout1}"
+    );
 
     let stderr1 = String::from_utf8_lossy(&out1.stderr);
     let s2_start = stderr1
