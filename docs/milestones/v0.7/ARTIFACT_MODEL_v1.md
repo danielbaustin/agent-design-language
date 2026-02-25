@@ -21,7 +21,7 @@ For each run id:
   logs/                       # reserved deterministic log subtree
   learning/
     scores.json               # scoring hooks v1 artifact
-    suggestions.json          # reserved for WP #484
+    suggestions.json          # suggestions schema v1 artifact
     overlays/                 # reserved for WP #485
   meta/
     ARTIFACT_MODEL.json       # {"artifact_model_version": 1}
