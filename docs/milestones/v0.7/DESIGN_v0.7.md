@@ -206,6 +206,14 @@ Security/trust policies cannot be overridden by overlays.
   - allowed signature algorithms (allow-list)
   - required `key_id` toggle
   - allowed key sources (`embedded`, `explicit_key`)
+- ADL run config keys:
+  - `run.remote.require_signed_requests` (default `false`)
+  - `run.remote.require_key_id` (default `false`, requires
+    `run.remote.require_signed_requests=true`)
+  - `run.remote.verify_allowed_algs` (optional allow-list; empty means receiver
+    defaults)
+  - `run.remote.verify_allowed_key_sources` (optional allow-list; allowed values
+    are exactly `embedded`, `explicit_key`)
 - Policy failures are distinct from signature integrity failures:
   - policy violations (missing key_id, disallowed alg/source)
   - malformed signature material
