@@ -124,6 +124,12 @@ pub fn runs_root() -> Result<PathBuf> {
 }
 
 pub fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
+    // Best-effort atomic write strategy:
+    // 1) write temp file in the same directory as the target
+    // 2) rename temp -> target
+    //
+    // Same-directory rename is atomic on common local filesystems, but full
+    // crash-safety/fsync semantics are platform/filesystem dependent.
     let parent = path
         .parent()
         .ok_or_else(|| anyhow!("artifact path has no parent: '{}'", path.display()))?;
