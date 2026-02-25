@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -620,6 +620,7 @@ fn now_ms() -> u128 {
 
 const RUN_STATE_SCHEMA_VERSION: &str = "run_state.v1";
 const PAUSE_STATE_SCHEMA_VERSION: &str = "pause_state.v1";
+const RUN_SUMMARY_VERSION: u32 = 1;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -663,6 +664,65 @@ struct StepStateArtifact {
     output_artifact_path: Option<String>,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RunSummaryArtifact {
+    run_summary_version: u32,
+    artifact_model_version: u32,
+    run_id: String,
+    workflow_id: String,
+    adl_version: String,
+    swarm_version: String,
+    status: String,
+    #[serde(default)]
+    error_kind: Option<String>,
+    counts: RunSummaryCounts,
+    policy: RunSummaryPolicy,
+    links: RunSummaryLinks,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RunSummaryCounts {
+    total_steps: usize,
+    completed_steps: usize,
+    failed_steps: usize,
+    provider_call_count: usize,
+    delegation_steps: usize,
+    delegation_requires_verification_steps: usize,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RunSummaryPolicy {
+    security_envelope_enabled: bool,
+    signing_required: bool,
+    key_id_required: bool,
+    verify_allowed_algs: Vec<String>,
+    verify_allowed_key_sources: Vec<String>,
+    sandbox_policy: String,
+    security_denials_by_code: BTreeMap<String, usize>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RunSummaryLinks {
+    run_json: String,
+    steps_json: String,
+    #[serde(default)]
+    pause_state_json: Option<String>,
+    outputs_dir: String,
+    logs_dir: String,
+    learning_dir: String,
+    #[serde(default)]
+    scores_json: Option<String>,
+    #[serde(default)]
+    suggestions_json: Option<String>,
+    overlays_dir: String,
+    #[serde(default)]
+    trace_json: Option<String>,
+}
+
 fn stable_fingerprint_hex(bytes: &[u8]) -> String {
     // FNV-1a 64-bit (deterministic, dependency-free fingerprint for persisted metadata).
     let mut hash: u64 = 0xcbf29ce484222325;
@@ -676,6 +736,154 @@ fn stable_fingerprint_hex(bytes: &[u8]) -> String {
 fn execution_plan_hash<T: Serialize>(plan: &T) -> Result<String> {
     let plan_json = serde_json::to_vec(plan).context("serialize execution plan for hashing")?;
     Ok(stable_fingerprint_hex(&plan_json))
+}
+
+fn extract_error_kind(message: &str) -> Option<String> {
+    let mut token = String::new();
+    for c in message.chars() {
+        if c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_' {
+            token.push(c);
+            continue;
+        }
+        if !token.is_empty() {
+            break;
+        }
+    }
+    if token.len() >= 3 && token.contains('_') {
+        Some(token)
+    } else {
+        None
+    }
+}
+
+fn build_run_summary(
+    resolved: &resolve::AdlResolved,
+    status: &str,
+    pause: Option<&execute::PauseState>,
+    steps: &[StepStateArtifact],
+    records: usize,
+    error_message: Option<&str>,
+    run_paths: &artifacts::RunArtifactPaths,
+) -> RunSummaryArtifact {
+    let failed_steps = steps.iter().filter(|s| s.status == "failure").count();
+    let completed_steps = steps
+        .iter()
+        .filter(|s| s.status == "success" || s.status == "failure")
+        .count();
+    let delegation_steps = resolved
+        .steps
+        .iter()
+        .filter(|s| {
+            s.delegation
+                .as_ref()
+                .map(|d| !d.is_effectively_empty())
+                .unwrap_or(false)
+        })
+        .count();
+    let delegation_requires_verification_steps = resolved
+        .steps
+        .iter()
+        .filter(|s| {
+            s.delegation
+                .as_ref()
+                .and_then(|d| d.requires_verification)
+                .unwrap_or(false)
+        })
+        .count();
+    let mut security_denials_by_code = BTreeMap::new();
+    if let Some(code) = error_message.and_then(extract_error_kind) {
+        *security_denials_by_code.entry(code).or_insert(0) += 1;
+    }
+
+    let (
+        security_envelope_enabled,
+        signing_required,
+        key_id_required,
+        mut allowed_algs,
+        mut allowed_key_sources,
+    ) = if let Some(remote) = resolved.doc.run.remote.as_ref() {
+        (
+            true,
+            remote.require_signed_requests,
+            remote.require_key_id,
+            remote.verify_allowed_algs.clone(),
+            remote.verify_allowed_key_sources.clone(),
+        )
+    } else {
+        (false, false, false, Vec::new(), Vec::new())
+    };
+    allowed_algs.sort();
+    allowed_algs.dedup();
+    allowed_key_sources.sort();
+    allowed_key_sources.dedup();
+
+    RunSummaryArtifact {
+        run_summary_version: RUN_SUMMARY_VERSION,
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_id: resolved.run_id.clone(),
+        workflow_id: resolved.workflow_id.clone(),
+        adl_version: resolved.doc.version.clone(),
+        swarm_version: env!("CARGO_PKG_VERSION").to_string(),
+        status: status.to_string(),
+        error_kind: error_message.and_then(extract_error_kind),
+        counts: RunSummaryCounts {
+            total_steps: resolved.steps.len(),
+            completed_steps,
+            failed_steps,
+            provider_call_count: records,
+            delegation_steps,
+            delegation_requires_verification_steps,
+        },
+        policy: RunSummaryPolicy {
+            security_envelope_enabled,
+            signing_required,
+            key_id_required,
+            verify_allowed_algs: allowed_algs,
+            verify_allowed_key_sources: allowed_key_sources,
+            sandbox_policy: "centralized_path_resolver_v1".to_string(),
+            security_denials_by_code,
+        },
+        links: RunSummaryLinks {
+            run_json: "run.json".to_string(),
+            steps_json: "steps.json".to_string(),
+            pause_state_json: pause.map(|_| "pause_state.json".to_string()),
+            outputs_dir: run_paths
+                .outputs_dir()
+                .strip_prefix(run_paths.run_dir())
+                .map(|p| p.display().to_string())
+                .unwrap_or_else(|_| "outputs".to_string()),
+            logs_dir: run_paths
+                .logs_dir()
+                .strip_prefix(run_paths.run_dir())
+                .map(|p| p.display().to_string())
+                .unwrap_or_else(|_| "logs".to_string()),
+            learning_dir: run_paths
+                .learning_dir()
+                .strip_prefix(run_paths.run_dir())
+                .map(|p| p.display().to_string())
+                .unwrap_or_else(|_| "learning".to_string()),
+            scores_json: Some(
+                run_paths
+                    .scores_json()
+                    .strip_prefix(run_paths.run_dir())
+                    .map(|p| p.display().to_string())
+                    .unwrap_or_else(|_| "learning/scores.json".to_string()),
+            ),
+            suggestions_json: Some(
+                run_paths
+                    .suggestions_json()
+                    .strip_prefix(run_paths.run_dir())
+                    .map(|p| p.display().to_string())
+                    .unwrap_or_else(|_| "learning/suggestions.json".to_string()),
+            ),
+            overlays_dir: run_paths
+                .overlays_dir()
+                .strip_prefix(run_paths.run_dir())
+                .map(|p| p.display().to_string())
+                .unwrap_or_else(|_| "learning/overlays".to_string()),
+            trace_json: None,
+        },
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -737,16 +945,17 @@ fn write_run_state_artifacts(
     }
 
     let scheduler_policy = execute::scheduler_policy_for_run(resolved)?;
+    let error_message = tr.events.iter().rev().find_map(|ev| match ev {
+        trace::TraceEvent::RunFailed { message, .. } => Some(message.clone()),
+        _ => None,
+    });
     let run_artifact = RunStateArtifact {
         schema_version: RUN_STATE_SCHEMA_VERSION.to_string(),
         run_id: resolved.run_id.clone(),
         workflow_id: resolved.workflow_id.clone(),
         version: resolved.doc.version.clone(),
         status: status.to_string(),
-        error_message: tr.events.iter().rev().find_map(|ev| match ev {
-            trace::TraceEvent::RunFailed { message, .. } => Some(message.clone()),
-            _ => None,
-        }),
+        error_message: error_message.clone(),
         start_time_ms: start_ms,
         end_time_ms: end_ms,
         duration_ms: end_ms.saturating_sub(start_ms),
@@ -758,9 +967,24 @@ fn write_run_state_artifacts(
 
     let run_json = serde_json::to_vec_pretty(&run_artifact).context("serialize run.json")?;
     let steps_json = serde_json::to_vec_pretty(&steps).context("serialize steps.json")?;
+    let run_summary = build_run_summary(
+        resolved,
+        status,
+        pause,
+        &steps,
+        tr.events
+            .iter()
+            .filter(|ev| matches!(ev, trace::TraceEvent::StepFinished { .. }))
+            .count(),
+        error_message.as_deref(),
+        &run_paths,
+    );
+    let run_summary_json =
+        serde_json::to_vec_pretty(&run_summary).context("serialize run_summary.json")?;
 
     artifacts::atomic_write(&run_paths.run_json(), &run_json)?;
     artifacts::atomic_write(&run_paths.steps_json(), &steps_json)?;
+    artifacts::atomic_write(&run_paths.run_summary_json(), &run_summary_json)?;
     if let Some(pause_payload) = pause {
         let pause_artifact = PauseStateArtifact {
             schema_version: PAUSE_STATE_SCHEMA_VERSION.to_string(),

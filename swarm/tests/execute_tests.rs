@@ -405,12 +405,18 @@ fn run_swarm_in_dir(cwd: &Path, args: &[&str]) -> std::process::Output {
         .unwrap()
 }
 
-fn run_artifact_paths(run_id: &str) -> (std::path::PathBuf, std::path::PathBuf) {
+fn run_artifact_paths(
+    run_id: &str,
+) -> (std::path::PathBuf, std::path::PathBuf, std::path::PathBuf) {
     let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .expect("repo root");
     let run_dir = repo_root.join(".adl").join("runs").join(run_id);
-    (run_dir.join("run.json"), run_dir.join("steps.json"))
+    (
+        run_dir.join("run.json"),
+        run_dir.join("steps.json"),
+        run_dir.join("run_summary.json"),
+    )
 }
 
 fn pause_state_path(run_id: &str) -> std::path::PathBuf {
@@ -2289,6 +2295,7 @@ run:
 
     let run_json_path = run_dir.join("run.json");
     let steps_json_path = run_dir.join("steps.json");
+    let run_summary_path = run_dir.join("run_summary.json");
     assert!(
         run_json_path.is_file(),
         "missing {}",
@@ -2298,6 +2305,11 @@ run:
         steps_json_path.is_file(),
         "missing {}",
         steps_json_path.display()
+    );
+    assert!(
+        run_summary_path.is_file(),
+        "missing {}",
+        run_summary_path.display()
     );
 
     let run_json: serde_json::Value =
@@ -2315,6 +2327,22 @@ run:
     assert_eq!(steps[0]["step_id"], "s1");
     assert_eq!(steps[0]["status"], "success");
     assert_eq!(steps[0]["provider_id"], "local");
+
+    let summary_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&run_summary_path).unwrap()).unwrap();
+    assert_eq!(summary_json["run_summary_version"], 1);
+    assert_eq!(summary_json["artifact_model_version"], 1);
+    assert_eq!(summary_json["run_id"], run_id);
+    assert_eq!(summary_json["workflow_id"], "workflow");
+    assert_eq!(summary_json["status"], "success");
+    assert_eq!(summary_json["links"]["run_json"], "run.json");
+    assert_eq!(summary_json["links"]["steps_json"], "steps.json");
+    assert_eq!(summary_json["links"]["outputs_dir"], "outputs");
+    assert_eq!(summary_json["links"]["learning_dir"], "learning");
+    assert!(
+        summary_json.get("started_at").is_none(),
+        "run summary v1 should avoid wall-clock timestamps by default"
+    );
 
     let _ = fs::remove_dir_all(&run_dir);
 }
@@ -3777,7 +3805,7 @@ run:
         String::from_utf8_lossy(&out_paused.stderr)
     );
 
-    let (run_json_path, _) = run_artifact_paths("hitl-pause-seq");
+    let (run_json_path, _, _) = run_artifact_paths("hitl-pause-seq");
     let run_json: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
     assert_eq!(run_json["status"], "paused");
@@ -3922,7 +3950,7 @@ run:
         String::from_utf8_lossy(&paused.stdout),
         String::from_utf8_lossy(&paused.stderr)
     );
-    let (run_json_path, _) = run_artifact_paths("hitl-roundtrip-cli");
+    let (run_json_path, _, _) = run_artifact_paths("hitl-roundtrip-cli");
     let run_json: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
     assert_eq!(run_json["status"], "paused");
@@ -4023,7 +4051,7 @@ run:
 
     let paused = run_swarm(&[yaml_path.to_str().unwrap(), "--run", "--trace"]);
     assert!(paused.status.success(), "paused run should succeed");
-    let (run_json_path, _) = run_artifact_paths("hitl-pause-concurrent");
+    let (run_json_path, _, _) = run_artifact_paths("hitl-pause-concurrent");
     let run_json: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
     assert_eq!(run_json["status"], "paused");
@@ -4088,7 +4116,7 @@ run:
 
     let paused = run_swarm(&[a_path.to_str().unwrap(), "--run"]);
     assert!(paused.status.success(), "paused run should succeed");
-    let (run_json_path, _) = run_artifact_paths("hitl-resume-mismatch");
+    let (run_json_path, _, _) = run_artifact_paths("hitl-resume-mismatch");
 
     let resumed = run_swarm(&[
         b_path.to_str().unwrap(),
@@ -4134,7 +4162,7 @@ run:
 
     let first = run_swarm(&[yaml_path.to_str().unwrap(), "--run"]);
     assert!(first.status.success(), "initial run should succeed");
-    let (run_json_path, _) = run_artifact_paths("hitl-invalid-state");
+    let (run_json_path, _, _) = run_artifact_paths("hitl-invalid-state");
 
     let resumed = run_swarm(&[
         yaml_path.to_str().unwrap(),
@@ -4214,7 +4242,7 @@ run:
         String::from_utf8_lossy(&resume.stdout),
         String::from_utf8_lossy(&resume.stderr)
     );
-    let (run_json_path, _) = run_artifact_paths("hitl-resume-subcommand");
+    let (run_json_path, _, _) = run_artifact_paths("hitl-resume-subcommand");
     let run_json: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(run_json_path).unwrap()).unwrap();
     assert_eq!(run_json["status"], "success");
