@@ -4,6 +4,8 @@
 //! (not a user-facing configuration schema). The overlay schema/workflow from
 //! #485 maps into this validator and must not be allowed to weaken trust,
 //! sandbox, or scheduler policy surfaces.
+//! Scheduler policy is treated as immutable for learning overlays to preserve
+//! deterministic execution behavior and resource-boundary guarantees.
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 #[allow(dead_code)] // Wired into overlay-apply path in #485.
