@@ -86,6 +86,10 @@ pub fn resolve_relative_path_for_write_within_root(
     root: &Path,
     rel: &Path,
 ) -> Result<PathBuf, SandboxPathError> {
+    // Security note (TOCTOU): this resolver is best-effort path hardening, not
+    // full OS-level isolation. It validates canonical ancestry at resolution
+    // time, but cannot prevent all post-check filesystem races without kernel-
+    // enforced sandboxing primitives.
     validate_relative(rel)?;
     let root_canon = root
         .canonicalize()
