@@ -191,4 +191,54 @@ mod tests {
 
         let _ = std::fs::remove_dir_all(paths.run_dir());
     }
+
+    #[test]
+    fn for_run_rejects_empty_or_whitespace_run_id() {
+        let err = RunArtifactPaths::for_run("   ").expect_err("whitespace run_id should fail");
+        assert!(
+            err.to_string().contains("run_id must not be empty"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn atomic_write_requires_parent_path() {
+        let err = atomic_write(Path::new("/"), b"x").expect_err("path without parent should fail");
+        assert!(
+            err.to_string().contains("artifact path has no parent"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn atomic_write_overwrites_existing_file_deterministically() {
+        let run_id = format!("artifact-atomic-overwrite-{}", std::process::id());
+        let paths = RunArtifactPaths::for_run(&run_id).expect("paths");
+        let target = paths.logs_dir().join("atomic-write.txt");
+
+        atomic_write(&target, b"one").expect("first write");
+        atomic_write(&target, b"two").expect("overwrite write");
+        let actual = std::fs::read_to_string(&target).expect("read back");
+        assert_eq!(actual, "two");
+
+        let _ = std::fs::remove_dir_all(paths.run_dir());
+    }
+
+    #[test]
+    fn write_model_marker_contains_expected_version_only() {
+        let run_id = format!("artifact-marker-{}", std::process::id());
+        let paths = RunArtifactPaths::for_run(&run_id).expect("paths");
+        paths.ensure_layout().expect("layout");
+        paths.write_model_marker().expect("marker");
+
+        let raw = std::fs::read_to_string(paths.artifact_model_marker_json())
+            .expect("marker should be readable");
+        let json: serde_json::Value = serde_json::from_str(&raw).expect("valid marker json");
+        assert_eq!(
+            json,
+            serde_json::json!({ "artifact_model_version": ARTIFACT_MODEL_VERSION })
+        );
+
+        let _ = std::fs::remove_dir_all(paths.run_dir());
+    }
 }
