@@ -9,6 +9,7 @@ use crate::prompt;
 use crate::provider;
 use crate::remote_exec;
 use crate::resolve::AdlResolved;
+use crate::sandbox;
 use crate::trace::Trace;
 
 /// Replace any input values that start with `@file:<path>` with file contents.
@@ -23,12 +24,6 @@ pub fn materialize_inputs(
     mut inputs: HashMap<String, String>,
     base_dir: &Path,
 ) -> Result<HashMap<String, String>> {
-    // Canonical base dir once so we can enforce that @file: inputs cannot escape it.
-    // This rejects both `../` traversal and absolute paths outside the base dir.
-    let base_canon = base_dir
-        .canonicalize()
-        .with_context(|| format!("failed to canonicalize base_dir '{}'", base_dir.display()))?;
-
     for (k, v) in inputs.iter_mut() {
         let Some(raw) = v.strip_prefix("@file:") else {
             continue;
@@ -48,23 +43,23 @@ pub fn materialize_inputs(
         }
 
         let candidate = PathBuf::from(path_str);
-        let path = if candidate.is_absolute() {
-            candidate
+        let path_for_stat = if candidate.is_absolute() {
+            candidate.clone()
         } else {
-            base_dir.join(candidate)
+            base_dir.join(&candidate)
         };
 
-        let meta = std::fs::metadata(&path).with_context(|| {
+        let meta = std::fs::metadata(&path_for_stat).with_context(|| {
             format!(
                 "failed to stat input file for '{k}': '{}' (base_dir='{}')",
-                path.display(),
+                path_for_stat.display(),
                 base_dir.display()
             )
         })?;
         if !meta.is_file() {
             return Err(anyhow!(
                 "input '{k}' references a non-file path: '{}'",
-                path.display()
+                path_for_stat.display()
             ));
         }
         if meta.len() > MATERIALIZE_INPUT_MAX_FILE_BYTES {
@@ -72,27 +67,19 @@ pub fn materialize_inputs(
                 "input '{k}' file is too large ({} bytes > {} bytes): '{}'",
                 meta.len(),
                 MATERIALIZE_INPUT_MAX_FILE_BYTES,
-                path.display()
+                path_for_stat.display()
             ));
         }
 
-        // Enforce that the resolved path stays within the base directory.
-        // Canonicalization also collapses any `..` segments.
-        let canon = path.canonicalize().with_context(|| {
-            format!(
-                "failed to canonicalize input file for '{k}': '{}' (base_dir='{}')",
-                path.display(),
-                base_dir.display()
-            )
-        })?;
-
-        if !canon.starts_with(&base_canon) {
-            return Err(anyhow!(
-                "input '{k}' file resolves outside base_dir: '{}' (base_dir='{}')",
-                canon.display(),
-                base_dir.display()
-            ));
-        }
+        let canon =
+            sandbox::resolve_existing_path_within_root(base_dir, &candidate).map_err(|err| {
+                anyhow!(
+                    "input '{k}' file rejected by sandbox resolver: {} (path='{}', base_dir='{}')",
+                    err.message(),
+                    path_for_stat.display(),
+                    base_dir.display()
+                )
+            })?;
 
         let bytes = std::fs::read(&canon).with_context(|| {
             format!("failed to read input file for '{k}': '{}'", canon.display())
@@ -1452,8 +1439,22 @@ fn validate_write_to(step_id: &str, write_to: &str) -> Result<()> {
 
 fn write_output(step_id: &str, out_dir: &Path, write_to: &str, contents: &str) -> Result<PathBuf> {
     validate_write_to(step_id, write_to)?;
+    std::fs::create_dir_all(out_dir).with_context(|| {
+        format!(
+            "failed to create sandbox output root for step '{}': '{}'",
+            step_id,
+            out_dir.display()
+        )
+    })?;
     let rel = PathBuf::from(write_to);
-    let path = out_dir.join(rel);
+    let path =
+        sandbox::resolve_relative_path_for_write_within_root(out_dir, &rel).map_err(|err| {
+            anyhow!(
+                "step '{}' write_to rejected by sandbox resolver: {}",
+                step_id,
+                err.message()
+            )
+        })?;
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent).with_context(|| {
             format!(
@@ -1660,6 +1661,35 @@ mod tests {
         let written = std::fs::read_to_string(&path).expect("read output");
         assert_eq!(written, "hello");
         let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn write_output_rejects_symlink_escape() {
+        use std::os::unix::fs as unix_fs;
+
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let base = std::env::temp_dir().join(format!(
+            "swarm-write-output-symlink-{now}-{}",
+            std::process::id()
+        ));
+        let out_dir = base.join("root");
+        let outside = base.join("outside");
+        std::fs::create_dir_all(&out_dir).expect("create out dir");
+        std::fs::create_dir_all(&outside).expect("create outside dir");
+        unix_fs::symlink(&outside, out_dir.join("link")).expect("create symlink");
+
+        let err = write_output("s1", &out_dir, "link/escape.txt", "data")
+            .expect_err("symlink escape must be rejected");
+        assert!(
+            err.to_string().contains("sandbox resolver"),
+            "unexpected error: {err}"
+        );
+
+        let _ = std::fs::remove_dir_all(base);
     }
 
     #[test]
