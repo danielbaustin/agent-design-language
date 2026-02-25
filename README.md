@@ -143,3 +143,8 @@ Default contributor workflow uses `adl_pr_cycle` (`start -> codex -> finish -> r
 ## License
 
 Apache-2.0
+
+## Security
+
+- Security policy: `SECURITY.md`
+- Threat model (v0.7): `docs/security/THREAT_MODEL_v0.7.md`

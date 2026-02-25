@@ -28,3 +28,8 @@ After remediation, publish a public summary including:
 - affected versions/commits
 - mitigation/fix
 - any required user action
+
+## Security Architecture References
+
+- Threat model (v0.7): `docs/security/THREAT_MODEL_v0.7.md`
+- v0.7 design security section: `docs/milestones/v0.7/DESIGN_v0.7.md`
