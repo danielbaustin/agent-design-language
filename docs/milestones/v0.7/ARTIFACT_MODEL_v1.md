@@ -29,7 +29,6 @@ For each run id:
 
 Run summary schema reference:
 - `docs/milestones/v0.7/RUN_SUMMARY_v1.md`
-
 ## Versioning
 
 - Marker file: `meta/ARTIFACT_MODEL.json`

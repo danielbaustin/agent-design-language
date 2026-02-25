@@ -722,7 +722,6 @@ struct RunSummaryLinks {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     trace_json: Option<String>,
 }
-
 fn stable_fingerprint_hex(bytes: &[u8]) -> String {
     // FNV-1a 64-bit (deterministic, dependency-free fingerprint for persisted metadata).
     let mut hash: u64 = 0xcbf29ce484222325;
