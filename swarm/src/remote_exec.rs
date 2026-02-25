@@ -3,9 +3,12 @@ use std::io::Read;
 use std::time::Duration;
 
 use anyhow::{anyhow, Context, Result};
+use base64::Engine;
+use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};
 use reqwest::blocking::Client;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
+use serde_json::{Map, Value};
 use tiny_http::{Header, Method, Response, Server};
 
 use crate::adl;
@@ -14,6 +17,9 @@ use crate::signing;
 
 pub const PROTOCOL_VERSION: &str = "0.1";
 const MAX_REQUEST_BYTES: usize = 5 * 1024 * 1024;
+const REMOTE_REQUEST_SIGNATURE_SCHEMA_V1: &str = "remote_request_signature.v1";
+const REMOTE_REQUEST_SIGNATURE_ALG_ED25519: &str = "ed25519";
+const B64: base64::engine::GeneralPurpose = base64::engine::general_purpose::STANDARD;
 
 /// Client-to-server request for one remotely executed resolved step.
 ///
@@ -76,6 +82,8 @@ pub struct ExecuteSecurityEnvelope {
     #[serde(default)]
     pub key_source: Option<String>,
     #[serde(default)]
+    pub request_signature: Option<RemoteRequestSignatureV1>,
+    #[serde(default)]
     pub allowed_algs: Vec<String>,
     #[serde(default)]
     pub allowed_key_sources: Vec<String>,
@@ -83,6 +91,18 @@ pub struct ExecuteSecurityEnvelope {
     pub sandbox_root: Option<String>,
     #[serde(default)]
     pub requested_paths: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct RemoteRequestSignatureV1 {
+    pub schema_version: String,
+    pub alg: String,
+    #[serde(default)]
+    pub key_id: Option<String>,
+    #[serde(default)]
+    pub public_key_b64: Option<String>,
+    pub sig_b64: String,
 }
 
 /// Remote execution response contract for `/v1/execute`.
@@ -110,6 +130,10 @@ pub struct RemoteError {
 pub enum SecurityEnvelopeError {
     UnsignedRequestRequired,
     MissingKeyId,
+    UnsupportedRequestSignatureAlgorithm { alg: String },
+    MissingRequestSignature,
+    MalformedRequestSignature { reason: String },
+    RequestSignatureMismatch,
     DisallowedAlgorithm { alg: String },
     DisallowedKeySource { key_source: String },
     MissingKeySource,
@@ -122,6 +146,12 @@ impl SecurityEnvelopeError {
         match self {
             Self::UnsignedRequestRequired => "REMOTE_ENVELOPE_UNSIGNED_REQUEST",
             Self::MissingKeyId => "REMOTE_ENVELOPE_MISSING_KEY_ID",
+            Self::UnsupportedRequestSignatureAlgorithm { .. } => {
+                "REMOTE_REQUEST_SIGNATURE_UNSUPPORTED_ALGORITHM"
+            }
+            Self::MissingRequestSignature => "REMOTE_REQUEST_SIGNATURE_MISSING",
+            Self::MalformedRequestSignature { .. } => "REMOTE_REQUEST_SIGNATURE_MALFORMED",
+            Self::RequestSignatureMismatch => "REMOTE_REQUEST_SIGNATURE_MISMATCH",
             Self::DisallowedAlgorithm { .. } => "REMOTE_ENVELOPE_DISALLOWED_ALGORITHM",
             Self::DisallowedKeySource { .. } => "REMOTE_ENVELOPE_DISALLOWED_KEY_SOURCE",
             Self::MissingKeySource => "REMOTE_ENVELOPE_MISSING_KEY_SOURCE",
@@ -138,6 +168,20 @@ impl SecurityEnvelopeError {
             }
             Self::MissingKeyId => {
                 "remote security envelope requires non-empty key_id when trust policy is enabled"
+                    .to_string()
+            }
+            Self::UnsupportedRequestSignatureAlgorithm { alg } => format!(
+                "remote request signing rejected unsupported signature algorithm '{alg}' (expected '{REMOTE_REQUEST_SIGNATURE_ALG_ED25519}')"
+            ),
+            Self::MissingRequestSignature => {
+                "remote request signing required signature payload but none was provided"
+                    .to_string()
+            }
+            Self::MalformedRequestSignature { reason } => {
+                format!("remote request signature is malformed: {reason}")
+            }
+            Self::RequestSignatureMismatch => {
+                "remote request signature verification failed (canonical request mismatch)"
                     .to_string()
             }
             Self::DisallowedAlgorithm { alg } => format!(
@@ -159,21 +203,207 @@ impl SecurityEnvelopeError {
     }
 }
 
+fn sort_value(value: &mut Value) {
+    match value {
+        Value::Object(map) => {
+            let mut sorted = std::collections::BTreeMap::new();
+            for (k, mut v) in std::mem::take(map) {
+                sort_value(&mut v);
+                sorted.insert(k, v);
+            }
+            let mut out = Map::new();
+            for (k, v) in sorted {
+                out.insert(k, v);
+            }
+            *map = out;
+        }
+        Value::Array(items) => {
+            for item in items {
+                sort_value(item);
+            }
+        }
+        _ => {}
+    }
+}
+
+pub fn canonical_request_bytes(req: &ExecuteRequest) -> Result<Vec<u8>> {
+    let mut canonical = req.clone();
+    if let Some(sec) = canonical.security.as_mut() {
+        sec.request_signature = None;
+    }
+    let mut value = serde_json::to_value(canonical)
+        .context("failed to convert execute request to canonical JSON")?;
+    sort_value(&mut value);
+    serde_json::to_vec(&value).context("failed to serialize canonical execute request")
+}
+
+pub fn sign_execute_request_v1(
+    req: &ExecuteRequest,
+    private_key_b64: &str,
+    key_id: Option<&str>,
+) -> Result<RemoteRequestSignatureV1> {
+    let key_bytes = B64
+        .decode(private_key_b64.trim().as_bytes())
+        .context("invalid base64 private key for remote request signing")?;
+    let key_arr: [u8; 32] = key_bytes
+        .try_into()
+        .map_err(|_| anyhow!("remote request private key must be exactly 32 bytes"))?;
+    let signing = SigningKey::from_bytes(&key_arr);
+    let canonical = canonical_request_bytes(req)?;
+    let sig = signing.sign(&canonical);
+    Ok(RemoteRequestSignatureV1 {
+        schema_version: REMOTE_REQUEST_SIGNATURE_SCHEMA_V1.to_string(),
+        alg: REMOTE_REQUEST_SIGNATURE_ALG_ED25519.to_string(),
+        key_id: key_id.map(|v| v.to_string()),
+        public_key_b64: Some(B64.encode(signing.verifying_key().to_bytes())),
+        sig_b64: B64.encode(sig.to_bytes()),
+    })
+}
+
+pub fn maybe_attach_request_signature_from_env(req: &mut ExecuteRequest) -> Result<()> {
+    let require_signature = req
+        .security
+        .as_ref()
+        .map(|env| env.require_signature)
+        .unwrap_or(false);
+    let private_key = std::env::var("ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64")
+        .ok()
+        .map(|v| v.trim().to_string())
+        .filter(|v| !v.is_empty());
+    let key_id = std::env::var("ADL_REMOTE_REQUEST_SIGNING_KEY_ID")
+        .ok()
+        .map(|v| v.trim().to_string())
+        .filter(|v| !v.is_empty())
+        .or_else(|| req.security.as_ref().and_then(|env| env.key_id.clone()));
+
+    match (require_signature, private_key) {
+        (true, None) => {
+            return Err(anyhow!(
+                "REMOTE_REQUEST_SIGNATURE_MISSING: signing is required but ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64 is not set"
+            ));
+        }
+        (_, None) => return Ok(()),
+        (_, Some(private_key_b64)) => {
+            let signature = sign_execute_request_v1(req, &private_key_b64, key_id.as_deref())?;
+            let env = req
+                .security
+                .get_or_insert_with(ExecuteSecurityEnvelope::default);
+            env.signed = true;
+            env.key_id = signature.key_id.clone();
+            env.signature_alg = Some(signature.alg.clone());
+            env.key_source = signature
+                .public_key_b64
+                .as_ref()
+                .map(|_| "embedded".to_string());
+            env.request_signature = Some(signature);
+        }
+    }
+    Ok(())
+}
+
+fn verify_execute_request_signature_v1(
+    req: &ExecuteRequest,
+    sig: &RemoteRequestSignatureV1,
+) -> std::result::Result<(), SecurityEnvelopeError> {
+    if sig.schema_version.trim() != REMOTE_REQUEST_SIGNATURE_SCHEMA_V1 {
+        return Err(SecurityEnvelopeError::MalformedRequestSignature {
+            reason: format!(
+                "unexpected schema_version '{}' (expected '{}')",
+                sig.schema_version, REMOTE_REQUEST_SIGNATURE_SCHEMA_V1
+            ),
+        });
+    }
+    if !sig
+        .alg
+        .trim()
+        .eq_ignore_ascii_case(REMOTE_REQUEST_SIGNATURE_ALG_ED25519)
+    {
+        return Err(
+            SecurityEnvelopeError::UnsupportedRequestSignatureAlgorithm {
+                alg: sig.alg.clone(),
+            },
+        );
+    }
+    let pub_b64 = sig.public_key_b64.as_deref().ok_or_else(|| {
+        SecurityEnvelopeError::MalformedRequestSignature {
+            reason: "missing public_key_b64".to_string(),
+        }
+    })?;
+    let pub_bytes = B64.decode(pub_b64.as_bytes()).map_err(|_| {
+        SecurityEnvelopeError::MalformedRequestSignature {
+            reason: "invalid base64 public_key_b64".to_string(),
+        }
+    })?;
+    let pub_arr: [u8; 32] =
+        pub_bytes
+            .try_into()
+            .map_err(|_| SecurityEnvelopeError::MalformedRequestSignature {
+                reason: "public key must be exactly 32 bytes".to_string(),
+            })?;
+    let public = VerifyingKey::from_bytes(&pub_arr).map_err(|_| {
+        SecurityEnvelopeError::MalformedRequestSignature {
+            reason: "invalid ed25519 public key".to_string(),
+        }
+    })?;
+    let sig_bytes = B64.decode(sig.sig_b64.as_bytes()).map_err(|_| {
+        SecurityEnvelopeError::MalformedRequestSignature {
+            reason: "invalid base64 sig_b64".to_string(),
+        }
+    })?;
+    let parsed_sig = Signature::from_slice(&sig_bytes).map_err(|_| {
+        SecurityEnvelopeError::MalformedRequestSignature {
+            reason: "invalid ed25519 signature bytes".to_string(),
+        }
+    })?;
+    let canonical = canonical_request_bytes(req).map_err(|err| {
+        SecurityEnvelopeError::MalformedRequestSignature {
+            reason: format!("failed to canonicalize request: {err:#}"),
+        }
+    })?;
+    public
+        .verify(&canonical, &parsed_sig)
+        .map_err(|_| SecurityEnvelopeError::RequestSignatureMismatch)?;
+    Ok(())
+}
+
 pub fn validate_security_envelope(
     req: &ExecuteRequest,
 ) -> std::result::Result<(), SecurityEnvelopeError> {
     let env = req.security.as_ref().cloned().unwrap_or_default();
+    let signature_payload = env.request_signature.clone();
+    if env.require_signature && signature_payload.is_none() {
+        return Err(SecurityEnvelopeError::MissingRequestSignature);
+    }
+    if let Some(sig) = signature_payload.as_ref() {
+        verify_execute_request_signature_v1(req, sig)?;
+    }
 
-    let key_source = match env.key_source.as_deref() {
-        Some(raw) => match signing::VerificationKeySource::parse(raw) {
-            Some(source) => Some(source),
-            None => {
-                return Err(SecurityEnvelopeError::DisallowedKeySource {
-                    key_source: raw.to_string(),
-                });
-            }
-        },
-        None => None,
+    let derived_alg = signature_payload
+        .as_ref()
+        .map(|sig| sig.alg.clone())
+        .or_else(|| env.signature_alg.clone());
+    let derived_key_id = signature_payload
+        .as_ref()
+        .and_then(|sig| sig.key_id.clone())
+        .or_else(|| env.key_id.clone());
+    let derived_key_source = if signature_payload
+        .as_ref()
+        .and_then(|sig| sig.public_key_b64.as_ref())
+        .is_some()
+    {
+        Some(signing::VerificationKeySource::Embedded)
+    } else {
+        match env.key_source.as_deref() {
+            Some(raw) => match signing::VerificationKeySource::parse(raw) {
+                Some(source) => Some(source),
+                None => {
+                    return Err(SecurityEnvelopeError::DisallowedKeySource {
+                        key_source: raw.to_string(),
+                    });
+                }
+            },
+            None => None,
+        }
     };
     let requested_algs = env
         .allowed_algs
@@ -226,24 +456,25 @@ pub fn validate_security_envelope(
         allowed_key_sources: receiver_profile.allowed_key_sources.clone(),
     };
     let metadata = signing::VerificationMetadata {
-        signed: env.signed,
-        key_id: env.key_id.as_deref(),
-        alg: env.signature_alg.as_deref(),
-        key_source,
+        signed: signature_payload.is_some() || env.signed,
+        key_id: derived_key_id.as_deref(),
+        alg: derived_alg.as_deref(),
+        key_source: derived_key_source,
     };
     if let Err(err) = signing::enforce_verification_profile(&metadata, &profile) {
         let mapped = match err.code {
             "SIGN_POLICY_UNSIGNED_REQUIRED" => SecurityEnvelopeError::UnsignedRequestRequired,
             "SIGN_POLICY_MISSING_KEY_ID" => SecurityEnvelopeError::MissingKeyId,
             "SIGN_POLICY_DISALLOWED_ALGORITHM" => SecurityEnvelopeError::DisallowedAlgorithm {
-                alg: env
-                    .signature_alg
-                    .as_deref()
-                    .unwrap_or("<unknown>")
-                    .to_string(),
+                alg: derived_alg.as_deref().unwrap_or("<unknown>").to_string(),
             },
             "SIGN_POLICY_DISALLOWED_KEY_SOURCE" => SecurityEnvelopeError::DisallowedKeySource {
-                key_source: env.key_source.as_deref().unwrap_or("<unknown>").to_string(),
+                key_source: env
+                    .key_source
+                    .as_deref()
+                    .or_else(|| derived_key_source.as_ref().map(|source| source.as_str()))
+                    .unwrap_or("<unknown>")
+                    .to_string(),
             },
             "SIGN_POLICY_MISSING_KEY_SOURCE" => SecurityEnvelopeError::MissingKeySource,
             _ => SecurityEnvelopeError::MissingKeySource,
@@ -656,8 +887,175 @@ mod tests {
         let _ = handle.join();
     }
 
+    fn fixed_private_key_b64() -> String {
+        B64.encode([7_u8; 32])
+    }
+
     #[test]
-    fn security_envelope_rejects_unsigned_when_required() {
+    fn canonical_request_bytes_are_deterministic_and_ignore_signature_field() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: false,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("embedded".to_string()),
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let sig = sign_execute_request_v1(&req, &fixed_private_key_b64(), Some("k1"))
+            .expect("sign request");
+        req.security.as_mut().expect("security").request_signature = Some(sig.clone());
+        let a = canonical_request_bytes(&req).expect("canonical bytes");
+        req.security
+            .as_mut()
+            .expect("security")
+            .request_signature
+            .as_mut()
+            .expect("signature")
+            .sig_b64 = "tampered".to_string();
+        let b = canonical_request_bytes(&req).expect("canonical bytes");
+        assert_eq!(
+            a, b,
+            "canonical bytes must exclude request signature payload"
+        );
+    }
+
+    #[test]
+    fn security_envelope_accepts_valid_signed_request() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: true,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("embedded".to_string()),
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let sig = sign_execute_request_v1(&req, &fixed_private_key_b64(), Some("k1"))
+            .expect("sign request");
+        req.security.as_mut().expect("security").request_signature = Some(sig);
+
+        let response = execute_request(&req);
+        assert!(!response.ok, "provider still fails in base_request config");
+        let err = response.error.expect("error");
+        assert_eq!(
+            err.code, "REMOTE_EXECUTION_ERROR",
+            "envelope/signature checks should pass before provider failure"
+        );
+    }
+
+    #[test]
+    fn security_envelope_rejects_tampered_signed_request() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: true,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("embedded".to_string()),
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let sig = sign_execute_request_v1(&req, &fixed_private_key_b64(), Some("k1"))
+            .expect("sign request");
+        req.security.as_mut().expect("security").request_signature = Some(sig);
+        req.step.prompt = "tampered".to_string();
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_MISMATCH");
+    }
+
+    #[test]
+    fn security_envelope_rejects_unsupported_request_signature_algorithm() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: false,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("embedded".to_string()),
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let mut sig = sign_execute_request_v1(&req, &fixed_private_key_b64(), Some("k1"))
+            .expect("sign request");
+        sig.alg = "rsa".to_string();
+        req.security.as_mut().expect("security").request_signature = Some(sig);
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_UNSUPPORTED_ALGORITHM");
+    }
+
+    #[test]
+    fn signature_mismatch_is_distinct_from_policy_violation() {
+        let mut policy_req = base_request();
+        policy_req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: true,
+            signed: true,
+            key_id: None,
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("embedded".to_string()),
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let policy_response = execute_request(&policy_req);
+        let policy_code = policy_response.error.expect("policy error").code;
+        assert_eq!(policy_code, "REMOTE_REQUEST_SIGNATURE_MISSING");
+
+        let mut mismatch_req = base_request();
+        mismatch_req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: false,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("embedded".to_string()),
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let sig = sign_execute_request_v1(&mismatch_req, &fixed_private_key_b64(), Some("k1"))
+            .expect("sign request");
+        mismatch_req
+            .security
+            .as_mut()
+            .expect("security")
+            .request_signature = Some(sig);
+        mismatch_req.step.prompt = "different".to_string();
+        let mismatch_response = execute_request(&mismatch_req);
+        let mismatch_code = mismatch_response.error.expect("mismatch error").code;
+        assert_eq!(mismatch_code, "REMOTE_REQUEST_SIGNATURE_MISMATCH");
+        assert_ne!(policy_code, mismatch_code);
+    }
+
+    #[test]
+    fn security_envelope_rejects_missing_signature_when_required() {
         let mut req = base_request();
         req.security = Some(ExecuteSecurityEnvelope {
             require_signature: true,
@@ -666,6 +1064,7 @@ mod tests {
             key_id: None,
             signature_alg: None,
             key_source: None,
+            request_signature: None,
             allowed_algs: vec!["ed25519".to_string()],
             allowed_key_sources: vec!["embedded".to_string()],
             sandbox_root: None,
@@ -674,7 +1073,7 @@ mod tests {
         let response = execute_request(&req);
         assert!(!response.ok);
         let err = response.error.expect("error");
-        assert_eq!(err.code, "REMOTE_ENVELOPE_UNSIGNED_REQUEST");
+        assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_MISSING");
     }
 
     #[test]
@@ -687,11 +1086,14 @@ mod tests {
             key_id: None,
             signature_alg: Some("ed25519".to_string()),
             key_source: Some("embedded".to_string()),
+            request_signature: None,
             allowed_algs: vec!["ed25519".to_string()],
             allowed_key_sources: vec!["embedded".to_string()],
             sandbox_root: None,
             requested_paths: vec![],
         });
+        let sig = sign_execute_request_v1(&req, &fixed_private_key_b64(), None).expect("sign");
+        req.security.as_mut().expect("security").request_signature = Some(sig);
         let response = execute_request(&req);
         assert!(!response.ok);
         let err = response.error.expect("error");
@@ -706,13 +1108,17 @@ mod tests {
             require_key_id: false,
             signed: true,
             key_id: Some("k1".to_string()),
-            signature_alg: Some("rsa".to_string()),
+            signature_alg: Some("ed25519".to_string()),
             key_source: Some("embedded".to_string()),
-            allowed_algs: vec!["ed25519".to_string()],
+            request_signature: None,
+            allowed_algs: vec!["rsa".to_string()],
             allowed_key_sources: vec!["embedded".to_string()],
             sandbox_root: None,
             requested_paths: vec![],
         });
+        let sig = sign_execute_request_v1(&req, &fixed_private_key_b64(), Some("k1"))
+            .expect("sign request");
+        req.security.as_mut().expect("security").request_signature = Some(sig);
         let response = execute_request(&req);
         assert!(!response.ok);
         let err = response.error.expect("error");
@@ -727,17 +1133,22 @@ mod tests {
             require_key_id: false,
             signed: true,
             key_id: Some("k1".to_string()),
-            signature_alg: Some("rsa".to_string()),
+            signature_alg: Some("ed25519".to_string()),
             key_source: Some("embedded".to_string()),
+            request_signature: None,
             allowed_algs: vec![],
             allowed_key_sources: vec![],
             sandbox_root: None,
             requested_paths: vec![],
         });
+        let mut sig = sign_execute_request_v1(&req, &fixed_private_key_b64(), Some("k1"))
+            .expect("sign request");
+        sig.alg = "rsa".to_string();
+        req.security.as_mut().expect("security").request_signature = Some(sig);
         let response = execute_request(&req);
         assert!(!response.ok);
         let err = response.error.expect("error");
-        assert_eq!(err.code, "REMOTE_ENVELOPE_DISALLOWED_ALGORITHM");
+        assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_UNSUPPORTED_ALGORITHM");
     }
 
     #[test]
@@ -749,12 +1160,16 @@ mod tests {
             signed: true,
             key_id: Some("k1".to_string()),
             signature_alg: Some("ed25519".to_string()),
-            key_source: Some("explicit_key".to_string()),
+            key_source: Some("embedded".to_string()),
+            request_signature: None,
             allowed_algs: vec!["ed25519".to_string()],
-            allowed_key_sources: vec!["embedded".to_string()],
+            allowed_key_sources: vec!["explicit_key".to_string()],
             sandbox_root: None,
             requested_paths: vec![],
         });
+        let sig = sign_execute_request_v1(&req, &fixed_private_key_b64(), Some("k1"))
+            .expect("sign request");
+        req.security.as_mut().expect("security").request_signature = Some(sig);
         let response = execute_request(&req);
         assert!(!response.ok);
         let err = response.error.expect("error");
@@ -765,12 +1180,13 @@ mod tests {
     fn security_envelope_rejects_unknown_key_source_value() {
         let mut req = base_request();
         req.security = Some(ExecuteSecurityEnvelope {
-            require_signature: true,
+            require_signature: false,
             require_key_id: false,
-            signed: true,
+            signed: false,
             key_id: Some("k1".to_string()),
             signature_alg: Some("ed25519".to_string()),
             key_source: Some("mystery_source".to_string()),
+            request_signature: None,
             allowed_algs: vec!["ed25519".to_string()],
             allowed_key_sources: vec!["embedded".to_string()],
             sandbox_root: None,
@@ -792,6 +1208,7 @@ mod tests {
             key_id: None,
             signature_alg: None,
             key_source: None,
+            request_signature: None,
             allowed_algs: vec![],
             allowed_key_sources: vec![],
             sandbox_root: Some(".".to_string()),
@@ -814,6 +1231,7 @@ mod tests {
             key_id: None,
             signature_alg: None,
             key_source: None,
+            request_signature: None,
             allowed_algs: vec![],
             allowed_key_sources: vec![],
             sandbox_root: Some(".".to_string()),
@@ -852,6 +1270,7 @@ mod tests {
             key_id: None,
             signature_alg: None,
             key_source: None,
+            request_signature: None,
             allowed_algs: vec![],
             allowed_key_sources: vec![],
             sandbox_root: Some(root.display().to_string()),
