@@ -13,6 +13,7 @@ use tiny_http::{Header, Method, Response, Server};
 
 use crate::adl;
 use crate::provider;
+use crate::sandbox;
 use crate::signing;
 
 pub const PROTOCOL_VERSION: &str = "0.1";
@@ -490,41 +491,24 @@ pub fn validate_security_envelope(
     }
 
     let sandbox_root = env.sandbox_root.as_deref().unwrap_or(".");
-    let root = std::path::Path::new(sandbox_root)
-        .canonicalize()
-        .map_err(|_| SecurityEnvelopeError::SymlinkEscape {
-            path: sandbox_root.to_string(),
-        })?;
-
     for rel in &env.requested_paths {
-        let rel_path = std::path::Path::new(rel);
-        if rel_path.is_absolute()
-            || rel_path
-                .components()
-                .any(|c| matches!(c, std::path::Component::ParentDir))
-        {
-            return Err(SecurityEnvelopeError::PathTraversal { path: rel.clone() });
-        }
-
-        let candidate = root.join(rel_path);
-        let canonical = if candidate.exists() {
-            candidate
-                .canonicalize()
-                .map_err(|_| SecurityEnvelopeError::SymlinkEscape { path: rel.clone() })?
-        } else {
-            let parent = candidate
-                .parent()
-                .ok_or_else(|| SecurityEnvelopeError::SymlinkEscape { path: rel.clone() })?;
-            let parent_canon = parent
-                .canonicalize()
-                .map_err(|_| SecurityEnvelopeError::SymlinkEscape { path: rel.clone() })?;
-            let name = candidate
-                .file_name()
-                .ok_or_else(|| SecurityEnvelopeError::SymlinkEscape { path: rel.clone() })?;
-            parent_canon.join(name)
-        };
-        if !canonical.starts_with(&root) {
-            return Err(SecurityEnvelopeError::SymlinkEscape { path: rel.clone() });
+        let resolved = sandbox::resolve_relative_path_for_write_within_root(
+            std::path::Path::new(sandbox_root),
+            std::path::Path::new(rel),
+        );
+        if let Err(err) = resolved {
+            return Err(match err {
+                sandbox::SandboxPathError::AbsolutePath { .. }
+                | sandbox::SandboxPathError::ParentTraversal { .. } => {
+                    SecurityEnvelopeError::PathTraversal { path: rel.clone() }
+                }
+                sandbox::SandboxPathError::PathOutsideRoot { .. }
+                | sandbox::SandboxPathError::EmptyPath
+                | sandbox::SandboxPathError::RootCanonicalizeFailed { .. }
+                | sandbox::SandboxPathError::SymlinkEscape { .. } => {
+                    SecurityEnvelopeError::SymlinkEscape { path: rel.clone() }
+                }
+            });
         }
     }
     Ok(())

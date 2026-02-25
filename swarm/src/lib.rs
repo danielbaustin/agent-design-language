@@ -21,6 +21,7 @@ pub mod prompt;
 pub mod provider;
 pub mod remote_exec;
 pub mod resolve;
+pub mod sandbox;
 pub mod schema;
 pub mod signing;
 pub mod trace;
