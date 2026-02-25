@@ -1053,6 +1053,9 @@ fn effective_max_concurrency_with_source(
 pub fn scheduler_policy_for_run(
     resolved: &AdlResolved,
 ) -> Result<Option<(usize, SchedulerPolicySource)>> {
+    // v0.7 scope: scheduler policy surface is emitted for concurrent workflows only.
+    // Sequential workflows intentionally return None to avoid implying a concurrency
+    // policy where no scheduler fan-out is active.
     let is_concurrent = matches!(
         resolved.execution_plan.workflow_kind,
         crate::adl::WorkflowKind::Concurrent

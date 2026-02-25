@@ -212,7 +212,8 @@ Security/trust policies cannot be overridden by overlays.
 - Deterministic scheduling invariants:
   - ready-step selection is lexicographic by full step id
   - bounded batching uses the effective concurrency cap above
-  - trace/run summary surfaces expose effective scheduler policy for auditability
+  - for concurrent workflows, trace/run summary surfaces expose effective scheduler policy for auditability
+  - sequential workflows intentionally omit scheduler-policy emission (no active concurrency scheduler surface)
 - Out of scope in v0.7:
   - fairness/priorities/preemption/QoS
   - distributed scheduling and durable checkpoint orchestration
