@@ -374,9 +374,6 @@ pub fn validate_security_envelope(
     if env.require_signature && signature_payload.is_none() {
         return Err(SecurityEnvelopeError::MissingRequestSignature);
     }
-    if let Some(sig) = signature_payload.as_ref() {
-        verify_execute_request_signature_v1(req, sig)?;
-    }
 
     let derived_alg = signature_payload
         .as_ref()
@@ -480,6 +477,12 @@ pub fn validate_security_envelope(
             _ => SecurityEnvelopeError::MissingKeySource,
         };
         return Err(mapped);
+    }
+    // Enforce trust policy constraints first, then verify cryptographic integrity.
+    // This ensures algorithm/key_id/key_source gating fails deterministically
+    // before any signature-byte verification path is evaluated.
+    if let Some(sig) = signature_payload.as_ref() {
+        verify_execute_request_signature_v1(req, sig)?;
     }
 
     if env.requested_paths.is_empty() {
@@ -981,7 +984,7 @@ mod tests {
     }
 
     #[test]
-    fn security_envelope_rejects_unsupported_request_signature_algorithm() {
+    fn security_envelope_rejects_disallowed_signature_algorithm_before_crypto_verify() {
         let mut req = base_request();
         req.security = Some(ExecuteSecurityEnvelope {
             require_signature: true,
@@ -1003,7 +1006,7 @@ mod tests {
         let response = execute_request(&req);
         assert!(!response.ok);
         let err = response.error.expect("error");
-        assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_UNSUPPORTED_ALGORITHM");
+        assert_eq!(err.code, "REMOTE_ENVELOPE_DISALLOWED_ALGORITHM");
     }
 
     #[test]
@@ -1148,7 +1151,7 @@ mod tests {
         let response = execute_request(&req);
         assert!(!response.ok);
         let err = response.error.expect("error");
-        assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_UNSUPPORTED_ALGORITHM");
+        assert_eq!(err.code, "REMOTE_ENVELOPE_DISALLOWED_ALGORITHM");
     }
 
     #[test]
