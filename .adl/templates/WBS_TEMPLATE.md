@@ -12,9 +12,16 @@
 - Include deliverables + dependencies + issue links.
 - `WP-01` is **always** the milestone **design pass** (canonical docs + WBS + decisions + sprint plan + checklist).
 - Reserve the final WPs for the release tail in this order: `WP-13` demos, `WP-14` quality/coverage gate, `WP-15` docs/review convergence, `WP-16` release ceremony.
+- The numeric IDs (WP-02..WP-N) may shift depending on milestone scope; numbering is structural, not semantic.
+- `WP-13`..`WP-16` represent the canonical release tail positions when the milestone has ~12 implementation WPs.
+- 16 WPs is a practical upper bound; smaller milestones may end earlier but must preserve the release-tail ordering.
 
 ## WBS Summary
 {{wbs_summary}}
+
+> Note: If the milestone contains fewer or more implementation WPs, adjust numbering accordingly,
+> but always keep the final four WPs reserved for:
+> demos → quality gate → docs/review → release ceremony (in that order).
 
 ## Work Packages
 | ID | Work Package | Description | Deliverable | Dependencies | Issue |
