@@ -200,23 +200,28 @@ Hard constraints:
 
 Security/trust policies cannot be overridden by overlays.
 
-### Remote Security Envelope (WP-02 / #370)
+### Signing Trust Policy Profile (WP-03 / #371)
 
-- Remote execute requests are centrally gated in `swarm/src/remote_exec.rs`
-  via `validate_security_envelope`.
-- The envelope enforces deterministic deny-by-default checks when policy flags
-  require trust assertions:
-  - reject unsigned requests when `require_signed_requests=true`
-  - reject missing/empty `key_id` when `require_key_id=true`
-  - reject requested path traversal / symlink escape attempts for sandboxed
-    remote file targets
-- `run.remote.require_signed_requests` and `run.remote.require_key_id` default
-  to `false` when absent (safe back-compat defaults).
-- All envelope rejections emit stable error codes for tests/tooling.
-- Envelope path checks are request-gate validation only; sandbox authority and
-  hardening remain in the sandbox layer (#472).
-- This WP does not implement signing material exchange (#386) or full trust
-  policy semantics (#371); it provides the enforcement boundary they plug into.
+- Trust checks are policy-driven via an explicit verification profile:
+  - allowed signature algorithms (allow-list)
+  - required `key_id` toggle
+  - allowed key sources (`embedded`, `explicit_key`)
+- ADL run config keys:
+  - `run.remote.require_signed_requests` (default `false`)
+  - `run.remote.require_key_id` (default `false`, requires
+    `run.remote.require_signed_requests=true`)
+  - `run.remote.verify_allowed_algs` (optional allow-list; empty means receiver
+    defaults)
+  - `run.remote.verify_allowed_key_sources` (optional allow-list; allowed values
+    are exactly `embedded`, `explicit_key`)
+- Policy failures are distinct from signature integrity failures:
+  - policy violations (missing key_id, disallowed alg/source)
+  - malformed signature material
+  - signature mismatch
+- Remote execution uses the centralized envelope gate in
+  `swarm/src/remote_exec.rs`; trust-policy checks are performed there before
+  remote execution.
+- Learning overlays cannot bypass trust checks (#490).
 
 ---
 

@@ -10,6 +10,7 @@ use tiny_http::{Header, Method, Response, Server};
 
 use crate::adl;
 use crate::provider;
+use crate::signing;
 
 pub const PROTOCOL_VERSION: &str = "0.1";
 const MAX_REQUEST_BYTES: usize = 5 * 1024 * 1024;
@@ -71,6 +72,14 @@ pub struct ExecuteSecurityEnvelope {
     #[serde(default)]
     pub key_id: Option<String>,
     #[serde(default)]
+    pub signature_alg: Option<String>,
+    #[serde(default)]
+    pub key_source: Option<String>,
+    #[serde(default)]
+    pub allowed_algs: Vec<String>,
+    #[serde(default)]
+    pub allowed_key_sources: Vec<String>,
+    #[serde(default)]
     pub sandbox_root: Option<String>,
     #[serde(default)]
     pub requested_paths: Vec<String>,
@@ -101,6 +110,9 @@ pub struct RemoteError {
 pub enum SecurityEnvelopeError {
     UnsignedRequestRequired,
     MissingKeyId,
+    DisallowedAlgorithm { alg: String },
+    DisallowedKeySource { key_source: String },
+    MissingKeySource,
     PathTraversal { path: String },
     SymlinkEscape { path: String },
 }
@@ -110,6 +122,9 @@ impl SecurityEnvelopeError {
         match self {
             Self::UnsignedRequestRequired => "REMOTE_ENVELOPE_UNSIGNED_REQUEST",
             Self::MissingKeyId => "REMOTE_ENVELOPE_MISSING_KEY_ID",
+            Self::DisallowedAlgorithm { .. } => "REMOTE_ENVELOPE_DISALLOWED_ALGORITHM",
+            Self::DisallowedKeySource { .. } => "REMOTE_ENVELOPE_DISALLOWED_KEY_SOURCE",
+            Self::MissingKeySource => "REMOTE_ENVELOPE_MISSING_KEY_SOURCE",
             Self::PathTraversal { .. } => "REMOTE_ENVELOPE_PATH_TRAVERSAL",
             Self::SymlinkEscape { .. } => "REMOTE_ENVELOPE_SYMLINK_ESCAPE",
         }
@@ -124,6 +139,15 @@ impl SecurityEnvelopeError {
             Self::MissingKeyId => {
                 "remote security envelope requires non-empty key_id when trust policy is enabled"
                     .to_string()
+            }
+            Self::DisallowedAlgorithm { alg } => format!(
+                "remote security envelope rejected signature algorithm '{alg}' per verification profile"
+            ),
+            Self::DisallowedKeySource { key_source } => format!(
+                "remote security envelope rejected key source '{key_source}' per verification profile"
+            ),
+            Self::MissingKeySource => {
+                "remote security envelope rejected request: missing key source for signature verification policy".to_string()
             }
             Self::PathTraversal { path } => format!(
                 "remote security envelope rejected requested path with traversal/absolute components: '{path}'"
@@ -140,18 +164,91 @@ pub fn validate_security_envelope(
 ) -> std::result::Result<(), SecurityEnvelopeError> {
     let env = req.security.as_ref().cloned().unwrap_or_default();
 
-    if env.require_signature && !env.signed {
-        return Err(SecurityEnvelopeError::UnsignedRequestRequired);
-    }
-    if env.require_key_id
-        && env
-            .key_id
-            .as_deref()
-            .map(str::trim)
-            .unwrap_or("")
-            .is_empty()
-    {
-        return Err(SecurityEnvelopeError::MissingKeyId);
+    let key_source = match env.key_source.as_deref() {
+        Some(raw) => match signing::VerificationKeySource::parse(raw) {
+            Some(source) => Some(source),
+            None => {
+                return Err(SecurityEnvelopeError::DisallowedKeySource {
+                    key_source: raw.to_string(),
+                });
+            }
+        },
+        None => None,
+    };
+    let requested_algs = env
+        .allowed_algs
+        .iter()
+        .map(|raw| raw.trim().to_ascii_lowercase())
+        .filter(|value| !value.is_empty())
+        .collect::<Vec<_>>();
+    let requested_key_sources = env
+        .allowed_key_sources
+        .iter()
+        .map(|raw| {
+            signing::VerificationKeySource::parse(raw).ok_or_else(|| {
+                SecurityEnvelopeError::DisallowedKeySource {
+                    key_source: raw.clone(),
+                }
+            })
+        })
+        .collect::<std::result::Result<Vec<_>, _>>()?;
+    let mut receiver_profile = signing::VerificationProfile::default().canonicalized();
+    let allowed_algs = if requested_algs.is_empty() {
+        receiver_profile.allowed_algs.clone()
+    } else {
+        for alg in &requested_algs {
+            if !receiver_profile.allowed_algs.iter().any(|base| base == alg) {
+                return Err(SecurityEnvelopeError::DisallowedAlgorithm { alg: alg.clone() });
+            }
+        }
+        requested_algs
+    };
+    let allowed_key_sources = if requested_key_sources.is_empty() {
+        receiver_profile.allowed_key_sources.clone()
+    } else {
+        for source in &requested_key_sources {
+            if !receiver_profile.allowed_key_sources.contains(source) {
+                return Err(SecurityEnvelopeError::DisallowedKeySource {
+                    key_source: source.as_str().to_string(),
+                });
+            }
+        }
+        requested_key_sources
+    };
+    receiver_profile.require_signature = env.require_signature;
+    receiver_profile.require_key_id = env.require_key_id;
+    receiver_profile.allowed_algs = allowed_algs;
+    receiver_profile.allowed_key_sources = allowed_key_sources;
+    let profile = signing::VerificationProfile {
+        require_signature: receiver_profile.require_signature,
+        require_key_id: receiver_profile.require_key_id,
+        allowed_algs: receiver_profile.allowed_algs.clone(),
+        allowed_key_sources: receiver_profile.allowed_key_sources.clone(),
+    };
+    let metadata = signing::VerificationMetadata {
+        signed: env.signed,
+        key_id: env.key_id.as_deref(),
+        alg: env.signature_alg.as_deref(),
+        key_source,
+    };
+    if let Err(err) = signing::enforce_verification_profile(&metadata, &profile) {
+        let mapped = match err.code {
+            "SIGN_POLICY_UNSIGNED_REQUIRED" => SecurityEnvelopeError::UnsignedRequestRequired,
+            "SIGN_POLICY_MISSING_KEY_ID" => SecurityEnvelopeError::MissingKeyId,
+            "SIGN_POLICY_DISALLOWED_ALGORITHM" => SecurityEnvelopeError::DisallowedAlgorithm {
+                alg: env
+                    .signature_alg
+                    .as_deref()
+                    .unwrap_or("<unknown>")
+                    .to_string(),
+            },
+            "SIGN_POLICY_DISALLOWED_KEY_SOURCE" => SecurityEnvelopeError::DisallowedKeySource {
+                key_source: env.key_source.as_deref().unwrap_or("<unknown>").to_string(),
+            },
+            "SIGN_POLICY_MISSING_KEY_SOURCE" => SecurityEnvelopeError::MissingKeySource,
+            _ => SecurityEnvelopeError::MissingKeySource,
+        };
+        return Err(mapped);
     }
 
     if env.requested_paths.is_empty() {
@@ -196,7 +293,6 @@ pub fn validate_security_envelope(
             return Err(SecurityEnvelopeError::SymlinkEscape { path: rel.clone() });
         }
     }
-
     Ok(())
 }
 
@@ -240,7 +336,6 @@ pub fn execute_remote(endpoint: &str, timeout_ms: u64, req: &ExecuteRequest) -> 
     if let Err(env_err) = validate_security_envelope(req) {
         return Err(anyhow!("{}: {}", env_err.code(), env_err.message()));
     }
-
     let client = Client::builder()
         .timeout(Duration::from_millis(timeout_ms))
         .build()
@@ -278,10 +373,10 @@ pub fn execute_remote(endpoint: &str, timeout_ms: u64, req: &ExecuteRequest) -> 
 
 /// Run the minimal remote execution server (`/v1/health`, `/v1/execute`).
 ///
-/// Security envelope:
+/// Security boundary:
+/// - request envelope trust policy checks are centralized in
+///   `validate_security_envelope`
 /// - request body capped at 5 MiB
-/// - all execute requests pass through `validate_security_envelope`
-/// - signing/trust requirements are enforced only when explicitly requested by policy flags
 /// - intended for localhost or trusted-network usage only
 pub fn run_server(bind_addr: &str) -> Result<()> {
     let server = Server::http(bind_addr)
@@ -346,6 +441,9 @@ pub fn run_server(bind_addr: &str) -> Result<()> {
 }
 
 fn execute_request(req: &ExecuteRequest) -> ExecuteResponse {
+    if let Err(env_err) = validate_security_envelope(req) {
+        return ExecuteResponse::err(req, env_err.code(), env_err.message());
+    }
     if req.protocol_version != PROTOCOL_VERSION {
         return ExecuteResponse::err(
             req,
@@ -355,10 +453,6 @@ fn execute_request(req: &ExecuteRequest) -> ExecuteResponse {
                 req.protocol_version, PROTOCOL_VERSION
             ),
         );
-    }
-
-    if let Err(env_err) = validate_security_envelope(req) {
-        return ExecuteResponse::err(req, env_err.code(), env_err.message());
     }
 
     let prov =
@@ -570,6 +664,10 @@ mod tests {
             require_key_id: false,
             signed: false,
             key_id: None,
+            signature_alg: None,
+            key_source: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
             sandbox_root: None,
             requested_paths: vec![],
         });
@@ -587,6 +685,10 @@ mod tests {
             require_key_id: true,
             signed: true,
             key_id: None,
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("embedded".to_string()),
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
             sandbox_root: None,
             requested_paths: vec![],
         });
@@ -597,6 +699,90 @@ mod tests {
     }
 
     #[test]
+    fn security_envelope_rejects_disallowed_algorithm() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: false,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("rsa".to_string()),
+            key_source: Some("embedded".to_string()),
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_ENVELOPE_DISALLOWED_ALGORITHM");
+    }
+
+    #[test]
+    fn security_envelope_empty_allow_lists_use_receiver_defaults() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: false,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("rsa".to_string()),
+            key_source: Some("embedded".to_string()),
+            allowed_algs: vec![],
+            allowed_key_sources: vec![],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_ENVELOPE_DISALLOWED_ALGORITHM");
+    }
+
+    #[test]
+    fn security_envelope_rejects_disallowed_key_source() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: false,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("explicit_key".to_string()),
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_ENVELOPE_DISALLOWED_KEY_SOURCE");
+    }
+
+    #[test]
+    fn security_envelope_rejects_unknown_key_source_value() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: false,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("mystery_source".to_string()),
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_ENVELOPE_DISALLOWED_KEY_SOURCE");
+    }
+
+    #[test]
     fn security_envelope_rejects_path_traversal() {
         let mut req = base_request();
         req.security = Some(ExecuteSecurityEnvelope {
@@ -604,6 +790,10 @@ mod tests {
             require_key_id: false,
             signed: false,
             key_id: None,
+            signature_alg: None,
+            key_source: None,
+            allowed_algs: vec![],
+            allowed_key_sources: vec![],
             sandbox_root: Some(".".to_string()),
             requested_paths: vec!["../escape.txt".to_string()],
         });
@@ -622,6 +812,10 @@ mod tests {
             require_key_id: false,
             signed: false,
             key_id: None,
+            signature_alg: None,
+            key_source: None,
+            allowed_algs: vec![],
+            allowed_key_sources: vec![],
             sandbox_root: Some(".".to_string()),
             requested_paths: vec![absolute.display().to_string()],
         });
@@ -656,6 +850,10 @@ mod tests {
             require_key_id: false,
             signed: false,
             key_id: None,
+            signature_alg: None,
+            key_source: None,
+            allowed_algs: vec![],
+            allowed_key_sources: vec![],
             sandbox_root: Some(root.display().to_string()),
             requested_paths: vec!["link/secret.txt".to_string()],
         });

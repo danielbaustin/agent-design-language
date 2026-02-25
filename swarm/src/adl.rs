@@ -171,6 +171,14 @@ impl AdlDoc {
                     "run.remote.require_key_id=true requires run.remote.require_signed_requests=true"
                 ));
             }
+            for source in &remote.verify_allowed_key_sources {
+                if crate::signing::VerificationKeySource::parse(source).is_none() {
+                    return Err(anyhow!(
+                        "run.remote.verify_allowed_key_sources contains unsupported source '{}' (allowed: embedded, explicit_key)",
+                        source
+                    ));
+                }
+            }
         }
 
         if let Some(pattern_ref) = self.run.pattern_ref.as_ref() {
@@ -938,6 +946,10 @@ pub struct RunRemoteSpec {
     pub require_signed_requests: bool,
     #[serde(default)]
     pub require_key_id: bool,
+    #[serde(default)]
+    pub verify_allowed_algs: Vec<String>,
+    #[serde(default)]
+    pub verify_allowed_key_sources: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -1421,53 +1433,56 @@ temperature: 0.7
     }
 
     #[test]
-    fn run_remote_security_flags_default_safe_and_validate_consistently() {
-        let mut doc = AdlDoc {
-            version: "0.5".to_string(),
-            providers: HashMap::new(),
-            tools: HashMap::new(),
-            agents: HashMap::new(),
-            tasks: HashMap::new(),
-            workflows: HashMap::new(),
-            patterns: vec![],
-            signature: None,
-            run: RunSpec {
-                id: None,
-                name: None,
-                created_at: None,
-                defaults: RunDefaults::default(),
-                workflow_ref: None,
-                workflow: Some(WorkflowSpec {
-                    id: None,
-                    kind: WorkflowKind::Sequential,
-                    max_concurrency: None,
-                    steps: vec![],
-                }),
-                pattern_ref: None,
-                inputs: HashMap::new(),
-                placement: None,
-                remote: Some(RunRemoteSpec {
-                    endpoint: "http://127.0.0.1:9000".to_string(),
-                    timeout_ms: None,
-                    require_signed_requests: false,
-                    require_key_id: false,
-                }),
-            },
-        };
+    fn run_remote_trust_policy_defaults_and_source_validation() {
+        let mut doc: AdlDoc = serde_yaml::from_str(
+            r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "hello"
+run:
+  workflow:
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+  remote:
+    endpoint: "http://127.0.0.1:7000"
+"#,
+        )
+        .expect("parse");
         doc.validate()
-            .expect("default remote flags should validate");
+            .expect("default remote policy should validate");
         let remote = doc.run.remote.as_ref().expect("remote");
         assert!(!remote.require_signed_requests);
         assert!(!remote.require_key_id);
+        assert!(remote.verify_allowed_algs.is_empty());
+        assert!(remote.verify_allowed_key_sources.is_empty());
 
         let remote = doc.run.remote.as_mut().expect("remote");
         remote.require_key_id = true;
         remote.require_signed_requests = false;
         let err = doc
             .validate()
-            .expect_err("require_key_id without require_signed_requests should fail");
+            .expect_err("require_key_id needs require_signed_requests");
         assert!(err.to_string().contains(
             "run.remote.require_key_id=true requires run.remote.require_signed_requests=true"
         ));
+
+        let remote = doc.run.remote.as_mut().expect("remote");
+        remote.require_signed_requests = true;
+        remote.verify_allowed_key_sources = vec!["bad-source".to_string()];
+        let err = doc.validate().expect_err("bad key source should fail");
+        assert!(err
+            .to_string()
+            .contains("verify_allowed_key_sources contains unsupported source"));
     }
 }
