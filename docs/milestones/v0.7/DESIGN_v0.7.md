@@ -163,6 +163,9 @@ Overlay application requires `--learn=apply` and records:
 - overridden fields
 - trace event `OverlayApplied`
 
+Artifact layout/versioning is specified in:
+- `docs/milestones/v0.7/ARTIFACT_MODEL_v1.md`
+
 ---
 
 ## Gödel Agent Pattern (Policy Evolution)
