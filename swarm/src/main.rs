@@ -5,7 +5,9 @@ use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use swarm::{adl, demo, execute, instrumentation, plan, prompt, resolve, signing, trace};
+use swarm::{
+    adl, artifacts, demo, execute, instrumentation, plan, prompt, resolve, signing, trace,
+};
 
 fn usage() -> &'static str {
     "Usage:
@@ -616,14 +618,6 @@ fn now_ms() -> u128 {
         .unwrap_or(0)
 }
 
-fn run_artifacts_root() -> Result<PathBuf> {
-    let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let repo_root = manifest
-        .parent()
-        .context("failed to derive repo root from CARGO_MANIFEST_DIR")?;
-    Ok(repo_root.join(".adl").join("runs"))
-}
-
 const RUN_STATE_SCHEMA_VERSION: &str = "run_state.v1";
 const PAUSE_STATE_SCHEMA_VERSION: &str = "pause_state.v1";
 
@@ -669,33 +663,6 @@ struct StepStateArtifact {
     output_artifact_path: Option<String>,
 }
 
-fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
-    let parent = path
-        .parent()
-        .ok_or_else(|| anyhow::anyhow!("artifact path has no parent: '{}'", path.display()))?;
-    std::fs::create_dir_all(parent)
-        .with_context(|| format!("failed to create artifact parent '{}'", parent.display()))?;
-
-    let tmp_name = format!(
-        ".{}.{}.tmp",
-        path.file_name()
-            .and_then(|n| n.to_str())
-            .unwrap_or("artifact"),
-        std::process::id()
-    );
-    let tmp_path = parent.join(tmp_name);
-    std::fs::write(&tmp_path, bytes)
-        .with_context(|| format!("failed to write temp artifact '{}'", tmp_path.display()))?;
-    std::fs::rename(&tmp_path, path).with_context(|| {
-        format!(
-            "failed to atomically move artifact '{}' -> '{}'",
-            tmp_path.display(),
-            path.display()
-        )
-    })?;
-    Ok(())
-}
-
 fn stable_fingerprint_hex(bytes: &[u8]) -> String {
     // FNV-1a 64-bit (deterministic, dependency-free fingerprint for persisted metadata).
     let mut hash: u64 = 0xcbf29ce484222325;
@@ -722,10 +689,10 @@ fn write_run_state_artifacts(
     status: &str,
     pause: Option<&execute::PauseState>,
 ) -> Result<PathBuf> {
-    let runs_root = run_artifacts_root()?;
-    let run_dir = runs_root.join(&resolved.run_id);
-    std::fs::create_dir_all(&run_dir)
-        .with_context(|| format!("failed to create run artifact dir '{}'", run_dir.display()))?;
+    let run_paths = artifacts::RunArtifactPaths::for_run(&resolved.run_id)?;
+    run_paths.ensure_layout()?;
+    run_paths.write_model_marker()?;
+    let run_dir = run_paths.run_dir();
 
     let mut status_by_step: HashMap<String, String> = HashMap::new();
     for ev in &tr.events {
@@ -792,8 +759,8 @@ fn write_run_state_artifacts(
     let run_json = serde_json::to_vec_pretty(&run_artifact).context("serialize run.json")?;
     let steps_json = serde_json::to_vec_pretty(&steps).context("serialize steps.json")?;
 
-    atomic_write(&run_dir.join("run.json"), &run_json)?;
-    atomic_write(&run_dir.join("steps.json"), &steps_json)?;
+    artifacts::atomic_write(&run_paths.run_json(), &run_json)?;
+    artifacts::atomic_write(&run_paths.steps_json(), &steps_json)?;
     if let Some(pause_payload) = pause {
         let pause_artifact = PauseStateArtifact {
             schema_version: PAUSE_STATE_SCHEMA_VERSION.to_string(),
@@ -807,7 +774,7 @@ fn write_run_state_artifacts(
         };
         let pause_json =
             serde_json::to_vec_pretty(&pause_artifact).context("serialize pause_state.json")?;
-        atomic_write(&run_dir.join("pause_state.json"), &pause_json)?;
+        artifacts::atomic_write(&run_paths.pause_state_json(), &pause_json)?;
     }
 
     Ok(run_dir)
@@ -896,10 +863,7 @@ fn load_resume_state(path: &Path, resolved: &resolve::AdlResolved) -> Result<exe
 }
 
 fn resume_state_path_for_run_id(run_id: &str) -> Result<PathBuf> {
-    if run_id.trim().is_empty() {
-        return Err(anyhow::anyhow!("resume requires non-empty run_id"));
-    }
-    Ok(run_artifacts_root()?.join(run_id).join("pause_state.json"))
+    Ok(artifacts::RunArtifactPaths::for_run(run_id)?.pause_state_json())
 }
 
 fn load_pause_state_artifact(path: &Path) -> Result<PauseStateArtifact> {
@@ -1452,7 +1416,7 @@ mod tests {
 
     #[test]
     fn run_artifacts_root_points_to_repo_adl_runs() {
-        let root = run_artifacts_root().expect("run artifacts root");
+        let root = artifacts::runs_root().expect("run artifacts root");
         let s = root.to_string_lossy();
         assert!(s.ends_with(".adl/runs"), "unexpected path: {s}");
     }
@@ -1591,6 +1555,23 @@ mod tests {
         )
         .expect("write run artifacts");
 
+        assert!(
+            run_dir.join("outputs").is_dir(),
+            "artifact model v1 requires outputs/ directory"
+        );
+        assert!(
+            run_dir.join("logs").is_dir(),
+            "artifact model v1 requires logs/ directory"
+        );
+        assert!(
+            run_dir.join("learning/overlays").is_dir(),
+            "artifact model v1 requires learning/overlays directory"
+        );
+        assert!(
+            run_dir.join("meta/ARTIFACT_MODEL.json").is_file(),
+            "artifact model v1 requires version marker"
+        );
+
         let resume =
             load_resume_state(&run_dir.join("run.json"), &resolved).expect("load resume state");
         assert!(resume.completed_step_ids.contains("s1"));
@@ -1675,7 +1656,7 @@ mod tests {
             serde_json::from_str(&std::fs::read_to_string(&run_json_path).expect("read run.json"))
                 .expect("parse run.json");
         run_json["schema_version"] = serde_json::Value::String("run_state.v0".to_string());
-        atomic_write(
+        artifacts::atomic_write(
             &run_json_path,
             serde_json::to_vec_pretty(&run_json)
                 .expect("serialize modified run.json")
