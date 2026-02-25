@@ -11,6 +11,7 @@
 //! - remote execution MVP where scheduling remains local
 
 pub mod adl;
+pub mod artifacts;
 pub mod bounded_executor;
 pub mod demo;
 pub mod execute;
