@@ -58,3 +58,18 @@ Recovered and applied the stash `wip: v0.7 milestone docs bootstrap (#473)` to t
 
 ## Follow-ups / Deferred work
 - None.
+
+## Addendum (User-requested follow-up)
+
+Included additional changes in #473:
+- Moved `.adl/*v0.3.md` files into `docs/milestones/v0.3/`:
+  - `.adl/DECISIONS_v0.3.md` -> `docs/milestones/v0.3/DECISIONS_v0.3.md`
+  - `.adl/DEMO_PLAYBOOK_v0.3.md` -> `docs/milestones/v0.3/DEMO_PLAYBOOK_v0.3.md`
+  - `.adl/DESIGN_GOALS_v0.3.md` -> `docs/milestones/v0.3/DESIGN_GOALS_v0.3.md`
+  - `.adl/RELEASE_CHECKLIST_v0.3.md` -> `docs/milestones/v0.3/RELEASE_CHECKLIST_v0.3.md`
+  - `.adl/SPRINT_PLAN_v0.3.md` -> `docs/milestones/v0.3/SPRINT_PLAN_v0.3.md`
+  - `.adl/WBS_v0.3.md` -> `docs/milestones/v0.3/WBS_v0.3.md`
+- Included additional template update per request:
+  - `.adl/templates/WBS_TEMPLATE.md`
+
+These were added to the same #473 branch/PR to keep the docs migration bundled.
