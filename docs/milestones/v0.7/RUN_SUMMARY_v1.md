@@ -44,20 +44,21 @@ Top-level fields:
 ### links (run-root relative)
 - `run_json`
 - `steps_json`
-- `pause_state_json` (present for paused runs)
+- `pause_state_json` (present for paused runs; omitted otherwise)
 - `outputs_dir`
 - `logs_dir`
 - `learning_dir`
 - `scores_json`
 - `suggestions_json`
 - `overlays_dir`
-- `trace_json` (currently `null`/absent in v1 emission)
+- `trace_json` (omitted in current v1 emission)
 
 ## Determinism rules
 
 - Path is canonical via Artifact Model v1 (`RunArtifactPaths`).
 - No wall-clock timestamps are emitted in run_summary by default.
 - Stable field names and stable error-kind extraction.
+- Optional fields are omitted when absent (not emitted as `null`).
 - Sorted/deduped policy lists prevent order drift.
 - `security_denials_by_code` uses stable map ordering.
 
@@ -65,3 +66,6 @@ Top-level fields:
 
 - This artifact is intentionally minimal and audit-friendly.
 - It is a substrate for #483–#486 and demo/export workflows.
+- `error_kind` extraction is currently best-effort from stable error-code tokens
+  in formatted error strings; this will migrate to structured runtime fields as
+  error plumbing expands.

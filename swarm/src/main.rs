@@ -674,7 +674,7 @@ struct RunSummaryArtifact {
     adl_version: String,
     swarm_version: String,
     status: String,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     error_kind: Option<String>,
     counts: RunSummaryCounts,
     policy: RunSummaryPolicy,
@@ -709,17 +709,17 @@ struct RunSummaryPolicy {
 struct RunSummaryLinks {
     run_json: String,
     steps_json: String,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pause_state_json: Option<String>,
     outputs_dir: String,
     logs_dir: String,
     learning_dir: String,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     scores_json: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     suggestions_json: Option<String>,
     overlays_dir: String,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     trace_json: Option<String>,
 }
 
@@ -739,21 +739,29 @@ fn execution_plan_hash<T: Serialize>(plan: &T) -> Result<String> {
 }
 
 fn extract_error_kind(message: &str) -> Option<String> {
-    let mut token = String::new();
-    for c in message.chars() {
-        if c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_' {
-            token.push(c);
-            continue;
-        }
-        if !token.is_empty() {
-            break;
+    // Best-effort extraction from formatted error text until all failure
+    // surfaces provide structured error-kind fields.
+    // Keep this deterministic: choose the first token matching known stable
+    // code prefixes and uppercase underscore format.
+    const PREFIXES: &[&str] = &[
+        "REMOTE_",
+        "SIGNATURE_",
+        "LEARNING_",
+        "SANDBOX_",
+        "PROVIDER_",
+        "HTTP_",
+        "VALIDATION_",
+    ];
+    for token in message
+        .split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_'))
+        .filter(|t| !t.is_empty())
+    {
+        if token.len() >= 3 && token.contains('_') && PREFIXES.iter().any(|p| token.starts_with(p))
+        {
+            return Some(token.to_string());
         }
     }
-    if token.len() >= 3 && token.contains('_') {
-        Some(token)
-    } else {
-        None
-    }
+    None
 }
 
 fn build_run_summary(
@@ -816,6 +824,16 @@ fn build_run_summary(
     allowed_algs.dedup();
     allowed_key_sources.sort();
     allowed_key_sources.dedup();
+    let scores_rel = run_paths
+        .scores_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/scores.json".to_string());
+    let suggestions_rel = run_paths
+        .suggestions_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/suggestions.json".to_string());
 
     RunSummaryArtifact {
         run_summary_version: RUN_SUMMARY_VERSION,
@@ -862,20 +880,11 @@ fn build_run_summary(
                 .strip_prefix(run_paths.run_dir())
                 .map(|p| p.display().to_string())
                 .unwrap_or_else(|_| "learning".to_string()),
-            scores_json: Some(
-                run_paths
-                    .scores_json()
-                    .strip_prefix(run_paths.run_dir())
-                    .map(|p| p.display().to_string())
-                    .unwrap_or_else(|_| "learning/scores.json".to_string()),
-            ),
-            suggestions_json: Some(
-                run_paths
-                    .suggestions_json()
-                    .strip_prefix(run_paths.run_dir())
-                    .map(|p| p.display().to_string())
-                    .unwrap_or_else(|_| "learning/suggestions.json".to_string()),
-            ),
+            scores_json: run_paths.scores_json().is_file().then_some(scores_rel),
+            suggestions_json: run_paths
+                .suggestions_json()
+                .is_file()
+                .then_some(suggestions_rel),
             overlays_dir: run_paths
                 .overlays_dir()
                 .strip_prefix(run_paths.run_dir())

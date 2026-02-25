@@ -43,6 +43,8 @@ This marker is written by default whenever run state artifacts are materialized.
 - Canonical run root is stable: `.adl/runs/<run_id>`.
 - No wall-clock timestamp or UUID components are added to artifact paths by default.
 - Reserved filenames are stable and fixed to support replay/export tooling.
+- Artifact writes use same-directory temp-file + rename (`atomic_write`) for
+  true-atomic best-effort behavior on common filesystems.
 
 ## Backwards compatibility
 
@@ -54,3 +56,9 @@ This marker is written by default whenever run state artifacts are materialized.
   - centralized path ownership
   - reserved subtrees/files for learning WPs
   - `meta/ARTIFACT_MODEL.json` marker
+
+## Atomic write limitations
+
+- The runtime uses same-directory rename as a best-effort atomic strategy.
+- Full durability guarantees (e.g., fsync ordering across crash boundaries) are
+  platform/filesystem dependent and out of scope for Artifact Model v1.

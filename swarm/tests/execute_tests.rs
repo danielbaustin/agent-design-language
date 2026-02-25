@@ -2340,6 +2340,38 @@ run:
     assert_eq!(summary_json["links"]["outputs_dir"], "outputs");
     assert_eq!(summary_json["links"]["learning_dir"], "learning");
     assert!(
+        summary_json
+            .get("links")
+            .and_then(|v| v.get("trace_json"))
+            .is_none(),
+        "trace_json should be omitted when tracing is disabled"
+    );
+    assert!(
+        summary_json
+            .get("links")
+            .and_then(|v| v.get("pause_state_json"))
+            .is_none(),
+        "pause_state_json should be omitted for non-paused runs"
+    );
+    assert!(
+        summary_json
+            .get("links")
+            .and_then(|v| v.get("scores_json"))
+            .is_none(),
+        "scores_json should be omitted when no scores artifact exists"
+    );
+    assert!(
+        summary_json
+            .get("links")
+            .and_then(|v| v.get("suggestions_json"))
+            .is_none(),
+        "suggestions_json should be omitted when no suggestions artifact exists"
+    );
+    assert!(
+        summary_json.get("error_kind").is_none(),
+        "error_kind should be omitted for successful runs"
+    );
+    assert!(
         summary_json.get("started_at").is_none(),
         "run summary v1 should avoid wall-clock timestamps by default"
     );
