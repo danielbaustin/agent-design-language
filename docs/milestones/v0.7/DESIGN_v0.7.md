@@ -210,7 +210,11 @@ Security/trust policies cannot be overridden by overlays.
   - reject missing/empty `key_id` when `require_key_id=true`
   - reject requested path traversal / symlink escape attempts for sandboxed
     remote file targets
+- `run.remote.require_signed_requests` and `run.remote.require_key_id` default
+  to `false` when absent (safe back-compat defaults).
 - All envelope rejections emit stable error codes for tests/tooling.
+- Envelope path checks are request-gate validation only; sandbox authority and
+  hardening remain in the sandbox layer (#472).
 - This WP does not implement signing material exchange (#386) or full trust
   policy semantics (#371); it provides the enforcement boundary they plug into.
 

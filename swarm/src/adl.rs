@@ -1419,4 +1419,55 @@ temperature: 0.7
             .to_string()
             .contains("providers.p1.id must match key 'p1'"));
     }
+
+    #[test]
+    fn run_remote_security_flags_default_safe_and_validate_consistently() {
+        let mut doc = AdlDoc {
+            version: "0.5".to_string(),
+            providers: HashMap::new(),
+            tools: HashMap::new(),
+            agents: HashMap::new(),
+            tasks: HashMap::new(),
+            workflows: HashMap::new(),
+            patterns: vec![],
+            signature: None,
+            run: RunSpec {
+                id: None,
+                name: None,
+                created_at: None,
+                defaults: RunDefaults::default(),
+                workflow_ref: None,
+                workflow: Some(WorkflowSpec {
+                    id: None,
+                    kind: WorkflowKind::Sequential,
+                    max_concurrency: None,
+                    steps: vec![],
+                }),
+                pattern_ref: None,
+                inputs: HashMap::new(),
+                placement: None,
+                remote: Some(RunRemoteSpec {
+                    endpoint: "http://127.0.0.1:9000".to_string(),
+                    timeout_ms: None,
+                    require_signed_requests: false,
+                    require_key_id: false,
+                }),
+            },
+        };
+        doc.validate()
+            .expect("default remote flags should validate");
+        let remote = doc.run.remote.as_ref().expect("remote");
+        assert!(!remote.require_signed_requests);
+        assert!(!remote.require_key_id);
+
+        let remote = doc.run.remote.as_mut().expect("remote");
+        remote.require_key_id = true;
+        remote.require_signed_requests = false;
+        let err = doc
+            .validate()
+            .expect_err("require_key_id without require_signed_requests should fail");
+        assert!(err.to_string().contains(
+            "run.remote.require_key_id=true requires run.remote.require_signed_requests=true"
+        ));
+    }
 }

@@ -613,6 +613,24 @@ mod tests {
         assert_eq!(err.code, "REMOTE_ENVELOPE_PATH_TRAVERSAL");
     }
 
+    #[test]
+    fn security_envelope_rejects_absolute_path_cross_platform() {
+        let mut req = base_request();
+        let absolute = std::env::temp_dir().join("swarm-envelope-abs.txt");
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: false,
+            require_key_id: false,
+            signed: false,
+            key_id: None,
+            sandbox_root: Some(".".to_string()),
+            requested_paths: vec![absolute.display().to_string()],
+        });
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_ENVELOPE_PATH_TRAVERSAL");
+    }
+
     #[cfg(unix)]
     #[test]
     fn security_envelope_rejects_symlink_escape() {
@@ -647,6 +665,15 @@ mod tests {
         assert_eq!(err.code, "REMOTE_ENVELOPE_SYMLINK_ESCAPE");
 
         let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn execute_request_deserializes_legacy_payload_without_security_field() {
+        let req = base_request();
+        let mut value = serde_json::to_value(req).expect("serialize request");
+        value.as_object_mut().expect("object").remove("security");
+        let decoded: ExecuteRequest = serde_json::from_value(value).expect("deserialize request");
+        assert!(decoded.security.is_none());
     }
 
     #[test]
