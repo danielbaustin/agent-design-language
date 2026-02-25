@@ -30,6 +30,10 @@ pub struct GraphExport {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "kind")]
 pub enum TraceEventNormalized {
+    SchedulerPolicy {
+        max_concurrency: usize,
+        source: String,
+    },
     RunFailed {
         message: String,
     },
@@ -280,6 +284,14 @@ pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized
     events
         .iter()
         .map(|ev| match ev {
+            TraceEvent::SchedulerPolicy {
+                max_concurrency,
+                source,
+                ..
+            } => TraceEventNormalized::SchedulerPolicy {
+                max_concurrency: *max_concurrency,
+                source: source.clone(),
+            },
             TraceEvent::RunFailed { message, .. } => TraceEventNormalized::RunFailed {
                 message: message.clone(),
             },
@@ -354,6 +366,10 @@ pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized
 
 pub fn format_normalized_event(ev: &TraceEventNormalized) -> String {
     match ev {
+        TraceEventNormalized::SchedulerPolicy {
+            max_concurrency,
+            source,
+        } => format!("SchedulerPolicy max_concurrency={max_concurrency} source={source}"),
         TraceEventNormalized::RunFailed { message } => {
             format!("RunFailed message={message}")
         }

@@ -321,6 +321,13 @@ fn real_main() -> Result<()> {
 
         // Explicitly consume StepOutput so clippy -D warnings stays green
         println!("RUN SUMMARY: {} step(s)", records.len());
+        if let Some((max_concurrency, source)) = execute::scheduler_policy_for_run(&resolved)? {
+            println!(
+                "SCHEDULER POLICY: max_concurrency={} source={}",
+                max_concurrency,
+                source.as_str()
+            );
+        }
         for r in records.iter() {
             println!(
                 "  step={} provider={} status={} attempts={} bytes={}",
@@ -633,6 +640,10 @@ struct RunStateArtifact {
     end_time_ms: u128,
     duration_ms: u128,
     execution_plan_hash: String,
+    #[serde(default)]
+    scheduler_max_concurrency: Option<usize>,
+    #[serde(default)]
+    scheduler_policy_source: Option<String>,
     pause: Option<execute::PauseState>,
 }
 
@@ -758,6 +769,7 @@ fn write_run_state_artifacts(
         });
     }
 
+    let scheduler_policy = execute::scheduler_policy_for_run(resolved)?;
     let run_artifact = RunStateArtifact {
         schema_version: RUN_STATE_SCHEMA_VERSION.to_string(),
         run_id: resolved.run_id.clone(),
@@ -772,6 +784,8 @@ fn write_run_state_artifacts(
         end_time_ms: end_ms,
         duration_ms: end_ms.saturating_sub(start_ms),
         execution_plan_hash: execution_plan_hash(&resolved.execution_plan)?,
+        scheduler_max_concurrency: scheduler_policy.map(|(v, _)| v),
+        scheduler_policy_source: scheduler_policy.map(|(_, source)| source.as_str().to_string()),
         pause: pause.cloned(),
     };
 
@@ -1063,6 +1077,13 @@ fn real_resume(args: &[String]) -> Result<()> {
         run_dir.display()
     );
     println!("RUN SUMMARY: {} step(s)", result.records.len());
+    if let Some((max_concurrency, source)) = execute::scheduler_policy_for_run(&resolved)? {
+        println!(
+            "SCHEDULER POLICY: max_concurrency={} source={}",
+            max_concurrency,
+            source.as_str()
+        );
+    }
     for r in &result.records {
         println!(
             "  step={} provider={} status={} attempts={} bytes={}",

@@ -16,6 +16,12 @@ pub struct Trace {
 
 #[derive(Debug, Clone)]
 pub enum TraceEvent {
+    SchedulerPolicy {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        max_concurrency: usize,
+        source: String,
+    },
     RunFailed {
         ts_ms: u128,
         elapsed_ms: u128,
@@ -73,6 +79,18 @@ pub enum TraceEvent {
 impl TraceEvent {
     pub fn summarize(&self) -> String {
         match self {
+            TraceEvent::SchedulerPolicy {
+                ts_ms,
+                elapsed_ms,
+                max_concurrency,
+                source,
+            } => format!(
+                "{} (+{}ms) SchedulerPolicy max_concurrency={} source={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                max_concurrency,
+                source
+            ),
             TraceEvent::RunFailed {
                 ts_ms,
                 elapsed_ms,
@@ -229,6 +247,17 @@ impl Trace {
             ts_ms,
             elapsed_ms,
             message: message.to_string(),
+        });
+    }
+
+    pub fn scheduler_policy(&mut self, max_concurrency: usize, source: &str) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::SchedulerPolicy {
+            ts_ms,
+            elapsed_ms,
+            max_concurrency,
+            source: source.to_string(),
         });
     }
 
@@ -424,6 +453,28 @@ mod tests {
                 assert!(*duration_ms <= 1_000);
             }
             _ => panic!("expected StepFinished event"),
+        }
+    }
+
+    #[test]
+    fn trace_records_scheduler_policy_event() {
+        let mut tr = Trace::new("run-1", "wf-1", "0.7");
+        tr.scheduler_policy(4, "engine_default");
+        assert_eq!(tr.events.len(), 1);
+        match &tr.events[0] {
+            TraceEvent::SchedulerPolicy {
+                max_concurrency,
+                source,
+                ..
+            } => {
+                assert_eq!(*max_concurrency, 4);
+                assert_eq!(source, "engine_default");
+                let summary = tr.events[0].summarize();
+                assert!(summary.contains("SchedulerPolicy"));
+                assert!(summary.contains("max_concurrency=4"));
+                assert!(summary.contains("source=engine_default"));
+            }
+            _ => panic!("expected SchedulerPolicy event"),
         }
     }
 

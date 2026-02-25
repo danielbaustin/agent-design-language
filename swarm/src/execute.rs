@@ -105,6 +105,23 @@ pub const MATERIALIZE_INPUT_MAX_FILE_BYTES: u64 = 512 * 1024;
 /// Default concurrency cap for concurrent workflow runs when no override is provided.
 const DEFAULT_MAX_CONCURRENCY: usize = 4;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SchedulerPolicySource {
+    WorkflowOverride,
+    RunDefault,
+    EngineDefault,
+}
+
+impl SchedulerPolicySource {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::WorkflowOverride => "workflow_override",
+            Self::RunDefault => "run_default",
+            Self::EngineDefault => "engine_default",
+        }
+    }
+}
+
 /// Result of executing one step.
 #[allow(dead_code)] // v0.1: returned for callers / future use; not all fields are read yet
 #[derive(Debug, Clone)]
@@ -996,7 +1013,9 @@ fn effective_step_placement(
         .unwrap_or(crate::adl::PlacementMode::Local)
 }
 
-fn effective_max_concurrency(resolved: &AdlResolved) -> Result<usize> {
+fn effective_max_concurrency_with_source(
+    resolved: &AdlResolved,
+) -> Result<(usize, SchedulerPolicySource)> {
     let workflow_override = if resolved.doc.run.pattern_ref.is_some() {
         None
     } else {
@@ -1011,9 +1030,16 @@ fn effective_max_concurrency(resolved: &AdlResolved) -> Result<usize> {
         .flatten()
     };
 
-    let max_parallel = workflow_override
-        .or(resolved.doc.run.defaults.max_concurrency)
-        .unwrap_or(DEFAULT_MAX_CONCURRENCY);
+    let (max_parallel, source) = if let Some(v) = workflow_override {
+        (v, SchedulerPolicySource::WorkflowOverride)
+    } else if let Some(v) = resolved.doc.run.defaults.max_concurrency {
+        (v, SchedulerPolicySource::RunDefault)
+    } else {
+        (
+            DEFAULT_MAX_CONCURRENCY,
+            SchedulerPolicySource::EngineDefault,
+        )
+    };
 
     if max_parallel == 0 {
         return Err(anyhow!(
@@ -1021,7 +1047,24 @@ fn effective_max_concurrency(resolved: &AdlResolved) -> Result<usize> {
         ));
     }
 
-    Ok(max_parallel)
+    Ok((max_parallel, source))
+}
+
+pub fn scheduler_policy_for_run(
+    resolved: &AdlResolved,
+) -> Result<Option<(usize, SchedulerPolicySource)>> {
+    // v0.7 scope: scheduler policy surface is emitted for concurrent workflows only.
+    // Sequential workflows intentionally return None to avoid implying a concurrency
+    // policy where no scheduler fan-out is active.
+    let is_concurrent = matches!(
+        resolved.execution_plan.workflow_kind,
+        crate::adl::WorkflowKind::Concurrent
+    );
+    if !is_concurrent {
+        return Ok(None);
+    }
+    let (max_parallel, source) = effective_max_concurrency_with_source(resolved)?;
+    Ok(Some((max_parallel, source)))
 }
 
 fn execute_step_with_retry(
@@ -1202,7 +1245,8 @@ fn execute_concurrent_deterministic(
     out_dir: &Path,
     resume: Option<&ResumeState>,
 ) -> Result<ExecutionResult> {
-    let max_parallel = effective_max_concurrency(resolved)?;
+    let (max_parallel, scheduler_source) = effective_max_concurrency_with_source(resolved)?;
+    tr.scheduler_policy(max_parallel, scheduler_source.as_str());
 
     let mut outs = Vec::new();
     let mut artifacts = Vec::new();
@@ -1695,11 +1739,18 @@ mod tests {
     #[test]
     fn effective_max_concurrency_precedence_and_validation() {
         let mut resolved = minimal_resolved();
-        assert_eq!(effective_max_concurrency(&resolved).expect("default"), 4);
+        assert_eq!(
+            effective_max_concurrency_with_source(&resolved)
+                .expect("default")
+                .0,
+            4
+        );
 
         resolved.doc.run.defaults.max_concurrency = Some(3);
         assert_eq!(
-            effective_max_concurrency(&resolved).expect("run default"),
+            effective_max_concurrency_with_source(&resolved)
+                .expect("run default")
+                .0,
             3
         );
 
@@ -1711,7 +1762,9 @@ mod tests {
             .expect("workflow")
             .max_concurrency = Some(2);
         assert_eq!(
-            effective_max_concurrency(&resolved).expect("workflow override"),
+            effective_max_concurrency_with_source(&resolved)
+                .expect("workflow override")
+                .0,
             2
         );
 
@@ -1722,7 +1775,7 @@ mod tests {
             .as_mut()
             .expect("workflow")
             .max_concurrency = Some(0);
-        let err = effective_max_concurrency(&resolved).expect_err("zero should fail");
+        let err = effective_max_concurrency_with_source(&resolved).expect_err("zero should fail");
         assert!(err.to_string().contains("must be >= 1"));
     }
 
@@ -1741,7 +1794,9 @@ mod tests {
             },
         );
         assert_eq!(
-            effective_max_concurrency(&resolved).expect("workflow ref override"),
+            effective_max_concurrency_with_source(&resolved)
+                .expect("workflow ref override")
+                .0,
             5
         );
     }
