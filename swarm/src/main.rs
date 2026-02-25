@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -621,6 +621,7 @@ fn now_ms() -> u128 {
 const RUN_STATE_SCHEMA_VERSION: &str = "run_state.v1";
 const PAUSE_STATE_SCHEMA_VERSION: &str = "pause_state.v1";
 const RUN_SUMMARY_VERSION: u32 = 1;
+const SCORES_VERSION: u32 = 1;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -721,6 +722,39 @@ struct RunSummaryLinks {
     overlays_dir: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     trace_json: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ScoresArtifact {
+    scores_version: u32,
+    run_id: String,
+    generated_from: ScoresGeneratedFrom,
+    summary: ScoresSummary,
+    metrics: ScoresMetrics,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ScoresGeneratedFrom {
+    artifact_model_version: u32,
+    run_summary_version: u32,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ScoresSummary {
+    success_ratio: f64,
+    failure_count: usize,
+    retry_count: usize,
+    delegation_denied_count: usize,
+    security_denied_count: usize,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ScoresMetrics {
+    scheduler_max_parallel_observed: usize,
 }
 fn stable_fingerprint_hex(bytes: &[u8]) -> String {
     // FNV-1a 64-bit (deterministic, dependency-free fingerprint for persisted metadata).
@@ -894,6 +928,83 @@ fn build_run_summary(
     }
 }
 
+fn compute_retry_count(tr: &trace::Trace) -> usize {
+    let mut started_by_step: BTreeMap<&str, usize> = BTreeMap::new();
+    for event in &tr.events {
+        if let trace::TraceEvent::StepStarted { step_id, .. } = event {
+            *started_by_step.entry(step_id.as_str()).or_insert(0) += 1;
+        }
+    }
+    started_by_step
+        .values()
+        .map(|count| count.saturating_sub(1))
+        .sum()
+}
+
+fn compute_max_parallel_observed(tr: &trace::Trace) -> usize {
+    let mut active: BTreeSet<&str> = BTreeSet::new();
+    let mut max_parallel = 0usize;
+    for event in &tr.events {
+        match event {
+            trace::TraceEvent::StepStarted { step_id, .. } => {
+                active.insert(step_id.as_str());
+                max_parallel = max_parallel.max(active.len());
+            }
+            trace::TraceEvent::StepFinished { step_id, .. } => {
+                active.remove(step_id.as_str());
+            }
+            _ => {}
+        }
+    }
+    max_parallel
+}
+
+fn build_scores_artifact(run_summary: &RunSummaryArtifact, tr: &trace::Trace) -> ScoresArtifact {
+    let success_steps = run_summary
+        .counts
+        .completed_steps
+        .saturating_sub(run_summary.counts.failed_steps);
+    let success_ratio = if run_summary.counts.total_steps == 0 {
+        1.0
+    } else {
+        // Quantize to thousandths for deterministic JSON across runtimes.
+        let permille = (success_steps * 1000) / run_summary.counts.total_steps;
+        (permille as f64) / 1000.0
+    };
+    let security_denied_count: usize = run_summary.policy.security_denials_by_code.values().sum();
+    let delegation_denied_count: usize = run_summary
+        .policy
+        .security_denials_by_code
+        .iter()
+        .filter_map(|(code, count)| {
+            if code.starts_with("DELEGATION_") {
+                Some(*count)
+            } else {
+                None
+            }
+        })
+        .sum();
+
+    ScoresArtifact {
+        scores_version: SCORES_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: ScoresGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+        },
+        summary: ScoresSummary {
+            success_ratio,
+            failure_count: run_summary.counts.failed_steps,
+            retry_count: compute_retry_count(tr),
+            delegation_denied_count,
+            security_denied_count,
+        },
+        metrics: ScoresMetrics {
+            scheduler_max_parallel_observed: compute_max_parallel_observed(tr),
+        },
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 fn write_run_state_artifacts(
     resolved: &resolve::AdlResolved,
@@ -989,10 +1100,13 @@ fn write_run_state_artifacts(
     );
     let run_summary_json =
         serde_json::to_vec_pretty(&run_summary).context("serialize run_summary.json")?;
+    let scores = build_scores_artifact(&run_summary, tr);
+    let scores_json = serde_json::to_vec_pretty(&scores).context("serialize scores.json")?;
 
     artifacts::atomic_write(&run_paths.run_json(), &run_json)?;
     artifacts::atomic_write(&run_paths.steps_json(), &steps_json)?;
     artifacts::atomic_write(&run_paths.run_summary_json(), &run_summary_json)?;
+    artifacts::atomic_write(&run_paths.scores_json(), &scores_json)?;
     if let Some(pause_payload) = pause {
         let pause_artifact = PauseStateArtifact {
             schema_version: PAUSE_STATE_SCHEMA_VERSION.to_string(),

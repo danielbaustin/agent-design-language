@@ -20,7 +20,7 @@ For each run id:
   outputs/                    # canonical output subtree
   logs/                       # reserved deterministic log subtree
   learning/
-    scores.json               # reserved for WP #483
+    scores.json               # scoring hooks v1 artifact
     suggestions.json          # reserved for WP #484
     overlays/                 # reserved for WP #485
   meta/
