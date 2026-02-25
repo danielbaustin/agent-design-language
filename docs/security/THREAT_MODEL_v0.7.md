@@ -1,6 +1,6 @@
 # ADL Threat Model (v0.7)
 
-Status: Accepted
+Status: Draft
 
 ## Scope
 This document captures the v0.7 security envelope threat model for the ADL runtime and CLI.
@@ -46,7 +46,7 @@ It focuses on implemented controls and explicit non-goals.
 1. `#370` Remote security envelope:
    - centralized envelope enforcement in `swarm/src/remote_exec.rs`.
 2. `#371` Trust policy:
-   - deterministic verification-profile gating (`require_key_id`, allowed algs/sources).
+   - deterministic verification policy gating (algorithm/key source/key-id constraints) in `swarm/src/signing.rs` and `swarm/src/remote_exec.rs`.
 3. `#386` Request signing:
    - canonical bytes + deterministic signature verification path for remote execute requests.
 4. `#472` Sandbox hardening:
@@ -55,15 +55,13 @@ It focuses on implemented controls and explicit non-goals.
    - overlays are explicitly blocked from weakening trust/sandbox controls.
 
 ## Operational Guidance
-1. Use signed requests for remote execution where possible (`run.remote.require_signed_requests=true`).
-2. For stricter provenance, require key IDs (`run.remote.require_key_id=true` with signed requests).
-3. Constrain verification scope explicitly only when needed:
-   - `run.remote.verify_allowed_algs`
-   - `run.remote.verify_allowed_key_sources` (`embedded`, `explicit_key`)
+1. Prefer signed remote requests and explicit trust constraints for provenance-sensitive runs.
+2. Keep verification policy deny-by-default; allow only intended algorithms and key sources.
+3. Treat envelope validation as an early gate before execution; sandbox path policy remains enforced by the sandbox layer.
 4. On verification failures, inspect:
    - run-level stderr output
    - `.adl/runs/<run_id>/run.json` and `steps.json`
-   - deterministic error codes emitted by envelope/policy checks
+   - deterministic error codes emitted by envelope/policy checks in `swarm/src/remote_exec.rs` and `swarm/src/signing.rs`
 
 ## Known Limits
 1. Path validation is deterministic and hardened, but not a complete TOCTOU elimination mechanism.
