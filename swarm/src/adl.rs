@@ -162,6 +162,25 @@ impl AdlDoc {
             pattern.validate()?;
         }
 
+        if let Some(remote) = self.run.remote.as_ref() {
+            if remote.endpoint.trim().is_empty() {
+                return Err(anyhow!("run.remote.endpoint must not be empty"));
+            }
+            if remote.require_key_id && !remote.require_signed_requests {
+                return Err(anyhow!(
+                    "run.remote.require_key_id=true requires run.remote.require_signed_requests=true"
+                ));
+            }
+            for source in &remote.verify_allowed_key_sources {
+                if crate::signing::VerificationKeySource::parse(source).is_none() {
+                    return Err(anyhow!(
+                        "run.remote.verify_allowed_key_sources contains unsupported source '{}' (allowed: embedded, explicit_key)",
+                        source
+                    ));
+                }
+            }
+        }
+
         if let Some(pattern_ref) = self.run.pattern_ref.as_ref() {
             if !self.patterns.iter().any(|p| p.id == *pattern_ref) {
                 return Err(anyhow!(
@@ -923,6 +942,14 @@ pub struct RunRemoteSpec {
     pub endpoint: String,
     #[serde(default)]
     pub timeout_ms: Option<u64>,
+    #[serde(default)]
+    pub require_signed_requests: bool,
+    #[serde(default)]
+    pub require_key_id: bool,
+    #[serde(default)]
+    pub verify_allowed_algs: Vec<String>,
+    #[serde(default)]
+    pub verify_allowed_key_sources: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -1403,5 +1430,59 @@ temperature: 0.7
         assert!(err
             .to_string()
             .contains("providers.p1.id must match key 'p1'"));
+    }
+
+    #[test]
+    fn run_remote_trust_policy_defaults_and_source_validation() {
+        let mut doc: AdlDoc = serde_yaml::from_str(
+            r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "hello"
+run:
+  workflow:
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+  remote:
+    endpoint: "http://127.0.0.1:7000"
+"#,
+        )
+        .expect("parse");
+        doc.validate()
+            .expect("default remote policy should validate");
+        let remote = doc.run.remote.as_ref().expect("remote");
+        assert!(!remote.require_signed_requests);
+        assert!(!remote.require_key_id);
+        assert!(remote.verify_allowed_algs.is_empty());
+        assert!(remote.verify_allowed_key_sources.is_empty());
+
+        let remote = doc.run.remote.as_mut().expect("remote");
+        remote.require_key_id = true;
+        remote.require_signed_requests = false;
+        let err = doc
+            .validate()
+            .expect_err("require_key_id needs require_signed_requests");
+        assert!(err.to_string().contains(
+            "run.remote.require_key_id=true requires run.remote.require_signed_requests=true"
+        ));
+
+        let remote = doc.run.remote.as_mut().expect("remote");
+        remote.require_signed_requests = true;
+        remote.verify_allowed_key_sources = vec!["bad-source".to_string()];
+        let err = doc.validate().expect_err("bad key source should fail");
+        assert!(err
+            .to_string()
+            .contains("verify_allowed_key_sources contains unsupported source"));
     }
 }

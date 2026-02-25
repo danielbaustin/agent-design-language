@@ -534,6 +534,28 @@ pub fn execute_sequential_with_resume(
                                 state: saved_state.clone(),
                             },
                             timeout_ms,
+                            security: Some(remote_exec::ExecuteSecurityEnvelope {
+                                require_signature: remote.require_signed_requests,
+                                require_key_id: remote.require_key_id,
+                                signed: resolved.doc.signature.is_some(),
+                                key_id: resolved.doc.signature.as_ref().map(|s| s.key_id.clone()),
+                                signature_alg: resolved
+                                    .doc
+                                    .signature
+                                    .as_ref()
+                                    .map(|s| s.alg.clone()),
+                                key_source: resolved.doc.signature.as_ref().and_then(|s| {
+                                    s.public_key_b64.as_ref().map(|_| "embedded".to_string())
+                                }),
+                                allowed_algs: remote.verify_allowed_algs.clone(),
+                                allowed_key_sources: remote.verify_allowed_key_sources.clone(),
+                                sandbox_root: Some(out_dir.display().to_string()),
+                                requested_paths: step
+                                    .write_to
+                                    .as_ref()
+                                    .map(|w| vec![w.clone()])
+                                    .unwrap_or_default(),
+                            }),
                         };
                         remote_exec::execute_remote(&remote.endpoint, timeout_ms, &req)
                             .with_context(|| {
@@ -1108,6 +1130,24 @@ fn execute_step_with_retry(
                             state: saved_state.clone(),
                         },
                         timeout_ms,
+                        security: Some(remote_exec::ExecuteSecurityEnvelope {
+                            require_signature: remote.require_signed_requests,
+                            require_key_id: remote.require_key_id,
+                            signed: doc.signature.is_some(),
+                            key_id: doc.signature.as_ref().map(|s| s.key_id.clone()),
+                            signature_alg: doc.signature.as_ref().map(|s| s.alg.clone()),
+                            key_source: doc.signature.as_ref().and_then(|s| {
+                                s.public_key_b64.as_ref().map(|_| "embedded".to_string())
+                            }),
+                            allowed_algs: remote.verify_allowed_algs.clone(),
+                            allowed_key_sources: remote.verify_allowed_key_sources.clone(),
+                            sandbox_root: Some(adl_base_dir.display().to_string()),
+                            requested_paths: step
+                                .write_to
+                                .as_ref()
+                                .map(|w| vec![w.clone()])
+                                .unwrap_or_default(),
+                        }),
                     };
                     remote_exec::execute_remote(&remote.endpoint, timeout_ms, &req)
                         .with_context(|| format!("remote step '{}' execution failed", step_id))?

@@ -200,6 +200,21 @@ Hard constraints:
 
 Security/trust policies cannot be overridden by overlays.
 
+### Signing Trust Policy Profile (WP-03 / #371)
+
+- Trust checks are policy-driven via an explicit verification profile:
+  - allowed signature algorithms (allow-list)
+  - required `key_id` toggle
+  - allowed key sources (`embedded`, `explicit_key`)
+- Policy failures are distinct from signature integrity failures:
+  - policy violations (missing key_id, disallowed alg/source)
+  - malformed signature material
+  - signature mismatch
+- Remote execution uses the centralized envelope gate in
+  `swarm/src/remote_exec.rs`; trust-policy checks are performed there before
+  remote execution.
+- Learning overlays cannot bypass trust checks (#490).
+
 ---
 
 ## Risks and Mitigations
