@@ -191,7 +191,6 @@ mod tests {
 
         let _ = std::fs::remove_dir_all(paths.run_dir());
     }
-
     #[test]
     fn for_run_rejects_empty_or_whitespace_run_id() {
         let err = RunArtifactPaths::for_run("   ").expect_err("whitespace run_id should fail");
