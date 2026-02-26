@@ -201,7 +201,7 @@ fn real_main() -> Result<()> {
     };
 
     let applied_overlay = if let Some(path) = overlay_path.as_deref() {
-        let spec = overlay::load_overlay(path, &adl_base_dir)?;
+        let spec = overlay::load_overlay(path)?;
         Some(overlay::apply_overlay_to_doc(&mut doc, &spec)?)
     } else {
         None

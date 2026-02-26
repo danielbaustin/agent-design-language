@@ -2,7 +2,7 @@ use anyhow::{anyhow, Context, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use crate::adl;
 use crate::learning_guardrails::{
@@ -19,8 +19,6 @@ pub struct OverlaySpecV1 {
     pub base_run_id: Option<String>,
     pub created_by: String,
     pub created_from: OverlayCreatedFrom,
-    #[serde(default)]
-    pub suggestions_path: Option<String>,
     #[serde(default)]
     pub changes: Vec<OverlayChange>,
 }
@@ -61,31 +59,10 @@ pub struct AppliedOverlayAudit {
     pub applied_paths: Vec<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct SuggestionsArtifactLite {
-    #[serde(default)]
-    suggestions: Vec<SuggestionItemLite>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct SuggestionItemLite {
-    id: String,
-    proposed_change: ProposedChangeLite,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct ProposedChangeLite {
-    intent: String,
-    target: String,
-}
-
-pub fn load_overlay(path: &Path, base_dir: &Path) -> Result<OverlaySpecV1> {
+pub fn load_overlay(path: &Path) -> Result<OverlaySpecV1> {
     let raw = std::fs::read_to_string(path)
         .with_context(|| format!("failed to read overlay file '{}'", path.display()))?;
-    let mut overlay: OverlaySpecV1 = serde_json::from_str(&raw)
+    let overlay: OverlaySpecV1 = serde_json::from_str(&raw)
         .with_context(|| format!("failed to parse overlay file '{}'", path.display()))?;
     if overlay.overlay_version != OVERLAY_VERSION {
         return Err(anyhow!(
@@ -96,12 +73,6 @@ pub fn load_overlay(path: &Path, base_dir: &Path) -> Result<OverlaySpecV1> {
     }
     if overlay.created_by.trim().is_empty() {
         return Err(anyhow!("overlay.created_by must not be empty"));
-    }
-    if let Some(suggestions_path) = overlay.suggestions_path.clone() {
-        let suggestions_file = resolve_relative(base_dir, &suggestions_path)
-            .with_context(|| "resolve overlay suggestions_path".to_string())?;
-        let mapped = map_changes_from_suggestions(&suggestions_file)?;
-        overlay.changes.extend(mapped);
     }
     validate_overlay_changes(&overlay.changes)?;
     Ok(overlay)
@@ -134,37 +105,6 @@ pub fn apply_overlay_to_doc(
         applied_change_ids,
         applied_paths,
     })
-}
-
-fn resolve_relative(base_dir: &Path, rel: &str) -> Result<PathBuf> {
-    let path = Path::new(rel);
-    if path.is_absolute() {
-        return Err(anyhow!("overlay suggestions_path must be relative"));
-    }
-    Ok(base_dir.join(path))
-}
-
-fn map_changes_from_suggestions(path: &Path) -> Result<Vec<OverlayChange>> {
-    let raw = std::fs::read_to_string(path)
-        .with_context(|| format!("failed to read suggestions file '{}'", path.display()))?;
-    let suggestions: SuggestionsArtifactLite = serde_json::from_str(&raw)
-        .with_context(|| format!("failed to parse suggestions file '{}'", path.display()))?;
-    let mut out = Vec::new();
-    for s in suggestions.suggestions {
-        if s.proposed_change.intent == "increase_step_retry_budget"
-            && s.proposed_change.target == "failed-step-set"
-        {
-            out.push(OverlayChange {
-                id: format!("{}_mapped_retry", s.id),
-                path: "run.workflow.steps.*.retry.max_attempts".to_string(),
-                op: OverlayOp::Set,
-                value: JsonValue::from(2u64),
-                rationale: "mapped from suggestions.proposed_change".to_string(),
-                evidence: None,
-            });
-        }
-    }
-    Ok(out)
 }
 
 fn validate_overlay_changes(changes: &[OverlayChange]) -> Result<()> {
@@ -338,7 +278,6 @@ mod tests {
                 suggestions_version: None,
                 artifact_model_version: Some(1),
             },
-            suggestions_path: None,
             changes: vec![OverlayChange {
                 id: "c1".to_string(),
                 path: "run.remote.require_signed_requests".to_string(),
@@ -365,7 +304,6 @@ mod tests {
                 suggestions_version: Some(1),
                 artifact_model_version: Some(1),
             },
-            suggestions_path: None,
             changes: vec![OverlayChange {
                 id: "retry-all".to_string(),
                 path: "run.workflow.steps.*.retry.max_attempts".to_string(),
@@ -404,7 +342,6 @@ mod tests {
                 suggestions_version: None,
                 artifact_model_version: Some(1),
             },
-            suggestions_path: None,
             changes: vec![OverlayChange {
                 id: "bad".to_string(),
                 path: "run.workflow.steps.*.retry.max_attempts".to_string(),
@@ -426,7 +363,6 @@ mod tests {
                 suggestions_version: None,
                 artifact_model_version: Some(1),
             },
-            suggestions_path: None,
             changes: vec![OverlayChange {
                 id: "bad-path".to_string(),
                 path: "run.workflow.steps.*.retry.unsupported".to_string(),
@@ -451,7 +387,7 @@ mod tests {
             r#"{"overlay_version":2,"created_by":"x","created_from":{},"changes":[]}"#,
         )
         .unwrap();
-        let err = load_overlay(&p, &td).expect_err("bad version");
+        let err = load_overlay(&p).expect_err("bad version");
         assert!(err.to_string().contains("overlay_version must be 1"));
 
         fs::write(
@@ -459,7 +395,7 @@ mod tests {
             r#"{"overlay_version":1,"created_by":" ","created_from":{},"changes":[]}"#,
         )
         .unwrap();
-        let err = load_overlay(&p, &td).expect_err("empty created_by");
+        let err = load_overlay(&p).expect_err("empty created_by");
         assert!(err.to_string().contains("created_by must not be empty"));
 
         fs::write(
@@ -470,49 +406,7 @@ mod tests {
             ]}"#,
         )
         .unwrap();
-        let err = load_overlay(&p, &td).expect_err("dup ids");
+        let err = load_overlay(&p).expect_err("dup ids");
         assert!(err.to_string().contains("duplicate overlay change id"));
-    }
-
-    #[test]
-    fn load_overlay_maps_supported_suggestion_intent_and_rejects_absolute_path() {
-        let td = std::env::temp_dir().join(format!("overlay-map-{}", std::process::id()));
-        let _ = fs::create_dir_all(&td);
-        let suggestions = td.join("suggestions.json");
-        fs::write(
-            &suggestions,
-            r#"{"suggestions":[
-              {"id":"sug-001","proposed_change":{"intent":"increase_step_retry_budget","target":"failed-step-set"}},
-              {"id":"sug-002","proposed_change":{"intent":"ignored","target":"ignored"}}
-            ]}"#,
-        )
-        .unwrap();
-        let overlay = td.join("overlay.json");
-        fs::write(
-            &overlay,
-            r#"{"overlay_version":1,"created_by":"x","created_from":{},"suggestions_path":"suggestions.json","changes":[]}"#,
-        )
-        .unwrap();
-
-        let loaded = load_overlay(&overlay, &td).expect("load with mapping");
-        assert_eq!(loaded.changes.len(), 1);
-        assert_eq!(loaded.changes[0].id, "sug-001_mapped_retry");
-        assert_eq!(
-            loaded.changes[0].path,
-            "run.workflow.steps.*.retry.max_attempts"
-        );
-
-        fs::write(
-            &overlay,
-            r#"{"overlay_version":1,"created_by":"x","created_from":{},"suggestions_path":"/abs/path.json","changes":[]}"#,
-        )
-        .unwrap();
-        let err = load_overlay(&overlay, &td).expect_err("absolute path should fail");
-        let msg = err.to_string();
-        assert!(
-            msg.contains("suggestions_path must be relative")
-                || msg.contains("resolve overlay suggestions_path"),
-            "unexpected error message: {msg}"
-        );
     }
 }

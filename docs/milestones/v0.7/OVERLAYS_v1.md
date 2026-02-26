@@ -22,7 +22,6 @@ Default behavior is unchanged when `--overlay` is not provided.
     "suggestions_version": 1,
     "artifact_model_version": 1
   },
-  "suggestions_path": "optional/relative/path/to/suggestions.json",
   "changes": [
     {
       "id": "retry-all",
@@ -46,10 +45,9 @@ Default behavior is unchanged when `--overlay` is not provided.
 
 Any forbidden mutation is rejected with a stable guardrail code prefix.
 
-## Suggestions mapping
-
-If `suggestions_path` is provided, recognized `suggestions[].proposed_change`
-intents are mapped into overlay changes deterministically before apply.
+`--overlay` is the only canonical v0.7 apply surface. Converting
+`suggestions.json` into an overlay file is an explicit pre-step (out of band),
+then the generated overlay is applied with `--overlay`.
 
 ## Artifacts
 
