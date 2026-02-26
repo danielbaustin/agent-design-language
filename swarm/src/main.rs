@@ -6,12 +6,12 @@ use std::process::Stdio;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use swarm::{
-    adl, artifacts, demo, execute, instrumentation, plan, prompt, resolve, signing, trace,
+    adl, artifacts, demo, execute, instrumentation, overlay, plan, prompt, resolve, signing, trace,
 };
 
 fn usage() -> &'static str {
     "Usage:
-  swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--resume <run.json>] [--out <dir>] [--quiet] [--open]
+  swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--resume <run.json>] [--overlay <overlay.json>] [--out <dir>] [--quiet] [--open]
   swarm resume <run_id>
   swarm demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
   swarm keygen --out-dir <dir>
@@ -25,6 +25,7 @@ Options:
   --trace            Emit trace events (dry-run unless --run)
   --run              Execute the workflow
   --resume <path>    Resume a previously paused run from run.json
+  --overlay <path>   Apply overlay v1 config changes (opt-in only)
   --out <dir>        Write step outputs to files under this directory (default: ./out)
   --quiet            Suppress per-step output bodies (--no-step-output also accepted)
   --open             Open the first written HTML artifact after a successful run
@@ -127,6 +128,7 @@ fn real_main() -> Result<()> {
     let mut do_open = false;
     let mut allow_unsigned = false;
     let mut resume_path: Option<PathBuf> = None;
+    let mut overlay_path: Option<PathBuf> = None;
 
     let mut i = 1;
     while i < args.len() {
@@ -143,6 +145,15 @@ fn real_main() -> Result<()> {
                     std::process::exit(2);
                 };
                 resume_path = Some(PathBuf::from(path));
+                i += 1;
+            }
+            "--overlay" => {
+                let Some(path) = args.get(i + 1) else {
+                    eprintln!("--overlay requires a path to overlay.json");
+                    eprintln!("{}", usage());
+                    std::process::exit(2);
+                };
+                overlay_path = Some(PathBuf::from(path));
                 i += 1;
             }
             "--out" => {
@@ -175,7 +186,7 @@ fn real_main() -> Result<()> {
 
     let adl_base_dir: PathBuf = adl_path.parent().unwrap_or(Path::new(".")).to_path_buf();
 
-    let doc = match adl::AdlDoc::load_from_file(adl_path_str)
+    let mut doc = match adl::AdlDoc::load_from_file(adl_path_str)
         .with_context(|| format!("failed to load ADL document: {adl_path_str}"))
     {
         Ok(doc) => doc,
@@ -187,6 +198,13 @@ fn real_main() -> Result<()> {
             }
             return Err(err);
         }
+    };
+
+    let applied_overlay = if let Some(path) = overlay_path.as_deref() {
+        let spec = overlay::load_overlay(path)?;
+        Some(overlay::apply_overlay_to_doc(&mut doc, &spec)?)
+    } else {
+        None
     };
 
     let allow_unsigned = allow_unsigned
@@ -207,6 +225,10 @@ fn real_main() -> Result<()> {
             return Err(err);
         }
     };
+
+    if let Some(applied) = applied_overlay.as_ref() {
+        persist_overlay_audit(&resolved.run_id, applied, overlay_path.as_deref())?;
+    }
 
     // Default behavior when no mode flags were provided.
     // v0.1: print plan; v0.2: run the workflow.
@@ -389,6 +411,34 @@ fn real_main() -> Result<()> {
         trace::print_trace(&tr);
     }
 
+    Ok(())
+}
+
+fn persist_overlay_audit(
+    run_id: &str,
+    applied: &overlay::AppliedOverlayAudit,
+    overlay_path: Option<&Path>,
+) -> Result<()> {
+    let run_paths = artifacts::RunArtifactPaths::for_run(run_id)?;
+    run_paths.ensure_layout()?;
+    run_paths.write_model_marker()?;
+
+    let mut audit = applied.clone();
+    if let Some(path) = overlay_path {
+        audit.source_path = path.display().to_string();
+    }
+    let audit_bytes =
+        serde_json::to_vec_pretty(&audit).context("serialize applied overlay audit")?;
+    artifacts::atomic_write(
+        &run_paths.overlays_dir().join("applied_overlay.json"),
+        &audit_bytes,
+    )?;
+
+    if let Some(path) = overlay_path {
+        let raw = std::fs::read(path)
+            .with_context(|| format!("read overlay source '{}'", path.display()))?;
+        artifacts::atomic_write(&run_paths.overlays_dir().join("source_overlay.json"), &raw)?;
+    }
     Ok(())
 }
 
