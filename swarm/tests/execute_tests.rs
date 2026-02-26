@@ -2297,6 +2297,7 @@ run:
     let steps_json_path = run_dir.join("steps.json");
     let run_summary_path = run_dir.join("run_summary.json");
     let scores_path = run_dir.join("learning").join("scores.json");
+    let suggestions_path = run_dir.join("learning").join("suggestions.json");
     assert!(
         run_json_path.is_file(),
         "missing {}",
@@ -2313,6 +2314,11 @@ run:
         run_summary_path.display()
     );
     assert!(scores_path.is_file(), "missing {}", scores_path.display());
+    assert!(
+        suggestions_path.is_file(),
+        "missing {}",
+        suggestions_path.display()
+    );
 
     let run_json: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
@@ -2390,6 +2396,25 @@ run:
         scores_json["metrics"]["scheduler_max_parallel_observed"].is_number(),
         "scores metrics should include deterministic scheduler observation"
     );
+    let suggestions_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&suggestions_path).unwrap()).unwrap();
+    assert_eq!(suggestions_json["suggestions_version"], 1);
+    assert_eq!(suggestions_json["run_id"], run_id);
+    assert_eq!(
+        suggestions_json["generated_from"]["artifact_model_version"],
+        1
+    );
+    assert_eq!(suggestions_json["generated_from"]["run_summary_version"], 1);
+    assert_eq!(suggestions_json["generated_from"]["scores_version"], 1);
+    let suggestions = suggestions_json["suggestions"]
+        .as_array()
+        .expect("suggestions should be an array");
+    for (idx, item) in suggestions.iter().enumerate() {
+        assert_eq!(item["id"], format!("sug-{:03}", idx + 1));
+        let proposed_change = &item["proposed_change"];
+        assert!(proposed_change["intent"].is_string());
+        assert!(proposed_change["target"].is_string());
+    }
 
     let _ = fs::remove_dir_all(&run_dir);
 }
@@ -2447,15 +2472,28 @@ run:
 
     let first = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
     assert!(first.status.success(), "first run should succeed");
-    let first_bytes = fs::read(run_dir.join("learning").join("scores.json")).unwrap();
+    let first_scores = fs::read(run_dir.join("learning").join("scores.json")).unwrap();
+    let first_suggestions = fs::read(run_dir.join("learning").join("suggestions.json")).unwrap();
 
     let second = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
     assert!(second.status.success(), "second run should succeed");
-    let second_bytes = fs::read(run_dir.join("learning").join("scores.json")).unwrap();
+    let second_scores = fs::read(run_dir.join("learning").join("scores.json")).unwrap();
+    let second_suggestions = fs::read(run_dir.join("learning").join("suggestions.json")).unwrap();
 
     assert_eq!(
-        first_bytes, second_bytes,
+        first_scores, second_scores,
         "scores.json should be byte-stable across repeated identical runs"
+    );
+    assert_eq!(
+        first_suggestions, second_suggestions,
+        "suggestions.json should be byte-stable across repeated identical runs"
+    );
+    let suggestions_text = String::from_utf8(second_suggestions).unwrap();
+    assert!(
+        !suggestions_text.contains("/Users/")
+            && !suggestions_text.contains("\\\\")
+            && !suggestions_text.contains("gho_"),
+        "suggestions output must not leak absolute host paths or secrets: {suggestions_text}"
     );
 
     let _ = fs::remove_dir_all(&run_dir);

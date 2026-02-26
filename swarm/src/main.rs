@@ -707,6 +707,7 @@ const RUN_STATE_SCHEMA_VERSION: &str = "run_state.v1";
 const PAUSE_STATE_SCHEMA_VERSION: &str = "pause_state.v1";
 const RUN_SUMMARY_VERSION: u32 = 1;
 const SCORES_VERSION: u32 = 1;
+const SUGGESTIONS_VERSION: u32 = 1;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -809,7 +810,7 @@ struct RunSummaryLinks {
     trace_json: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ScoresArtifact {
     scores_version: u32,
@@ -819,14 +820,14 @@ struct ScoresArtifact {
     metrics: ScoresMetrics,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ScoresGeneratedFrom {
     artifact_model_version: u32,
     run_summary_version: u32,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ScoresSummary {
     success_ratio: f64,
@@ -836,10 +837,57 @@ struct ScoresSummary {
     security_denied_count: usize,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ScoresMetrics {
     scheduler_max_parallel_observed: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SuggestionsArtifact {
+    suggestions_version: u32,
+    run_id: String,
+    generated_from: SuggestionsGeneratedFrom,
+    suggestions: Vec<SuggestionItem>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SuggestionsGeneratedFrom {
+    artifact_model_version: u32,
+    run_summary_version: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    scores_version: Option<u32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SuggestionItem {
+    id: String,
+    category: String,
+    severity: String,
+    rationale: String,
+    evidence: SuggestionEvidence,
+    proposed_change: SuggestedChangeIntent,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SuggestionEvidence {
+    failure_count: usize,
+    retry_count: usize,
+    delegation_denied_count: usize,
+    security_denied_count: usize,
+    success_ratio: f64,
+    scheduler_max_parallel_observed: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SuggestedChangeIntent {
+    intent: String,
+    target: String,
 }
 fn stable_fingerprint_hex(bytes: &[u8]) -> String {
     // FNV-1a 64-bit (deterministic, dependency-free fingerprint for persisted metadata).
@@ -1090,6 +1138,161 @@ fn build_scores_artifact(run_summary: &RunSummaryArtifact, tr: &trace::Trace) ->
     }
 }
 
+fn read_scores_if_present(run_paths: &artifacts::RunArtifactPaths) -> Option<ScoresArtifact> {
+    let path = run_paths.scores_json();
+    let raw = std::fs::read_to_string(path).ok()?;
+    serde_json::from_str::<ScoresArtifact>(&raw).ok()
+}
+
+fn build_suggestions_artifact(
+    run_summary: &RunSummaryArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> SuggestionsArtifact {
+    let fallback_summary;
+    let fallback_metrics;
+    let (score_summary, score_metrics, score_version) = if let Some(scores) = scores {
+        (
+            &scores.summary,
+            &scores.metrics,
+            Some(scores.scores_version),
+        )
+    } else {
+        let failed_steps = run_summary.counts.failed_steps;
+        let success_steps = run_summary
+            .counts
+            .completed_steps
+            .saturating_sub(failed_steps);
+        let success_ratio = if run_summary.counts.total_steps == 0 {
+            1.0
+        } else {
+            let permille = (success_steps * 1000) / run_summary.counts.total_steps;
+            (permille as f64) / 1000.0
+        };
+        let security_denied_count: usize =
+            run_summary.policy.security_denials_by_code.values().sum();
+        let delegation_denied_count: usize = run_summary
+            .policy
+            .security_denials_by_code
+            .iter()
+            .filter_map(|(code, count)| {
+                if code.starts_with("DELEGATION_") {
+                    Some(*count)
+                } else {
+                    None
+                }
+            })
+            .sum();
+        fallback_summary = ScoresSummary {
+            success_ratio,
+            failure_count: failed_steps,
+            retry_count: 0,
+            delegation_denied_count,
+            security_denied_count,
+        };
+        fallback_metrics = ScoresMetrics {
+            scheduler_max_parallel_observed: 1,
+        };
+        (&fallback_summary, &fallback_metrics, None)
+    };
+
+    let base_evidence = SuggestionEvidence {
+        failure_count: score_summary.failure_count,
+        retry_count: score_summary.retry_count,
+        delegation_denied_count: score_summary.delegation_denied_count,
+        security_denied_count: score_summary.security_denied_count,
+        success_ratio: score_summary.success_ratio,
+        scheduler_max_parallel_observed: score_metrics.scheduler_max_parallel_observed,
+    };
+
+    let mut suggestions = Vec::new();
+
+    if score_summary.failure_count > 0 {
+        suggestions.push(SuggestionItem {
+            id: String::new(),
+            category: "retry".to_string(),
+            severity: "improvement".to_string(),
+            rationale: "One or more steps failed; consider safer retry policy for transient paths."
+                .to_string(),
+            evidence: base_evidence.clone(),
+            proposed_change: SuggestedChangeIntent {
+                intent: "increase_step_retry_budget".to_string(),
+                target: "failed-step-set".to_string(),
+            },
+        });
+    }
+    if score_summary.delegation_denied_count > 0 {
+        suggestions.push(SuggestionItem {
+            id: String::new(),
+            category: "delegation".to_string(),
+            severity: "warning".to_string(),
+            rationale: "Delegation-denied signals detected; review delegation policy scope."
+                .to_string(),
+            evidence: base_evidence.clone(),
+            proposed_change: SuggestedChangeIntent {
+                intent: "review_delegation_policy_scope".to_string(),
+                target: "delegation-boundary".to_string(),
+            },
+        });
+    }
+    if score_summary.security_denied_count > 0 {
+        suggestions.push(SuggestionItem {
+            id: String::new(),
+            category: "security".to_string(),
+            severity: "warning".to_string(),
+            rationale: "Security denials observed; align expected capabilities with trust policy."
+                .to_string(),
+            evidence: base_evidence.clone(),
+            proposed_change: SuggestedChangeIntent {
+                intent: "review_security_policy_expectations".to_string(),
+                target: "security-envelope".to_string(),
+            },
+        });
+    }
+    if score_summary.success_ratio < 1.0 {
+        suggestions.push(SuggestionItem {
+            id: String::new(),
+            category: "general".to_string(),
+            severity: "improvement".to_string(),
+            rationale: "Success ratio is below 1.0; review failing steps and dependency shape."
+                .to_string(),
+            evidence: base_evidence.clone(),
+            proposed_change: SuggestedChangeIntent {
+                intent: "review_failure_hotspots".to_string(),
+                target: "workflow-step-dependencies".to_string(),
+            },
+        });
+    }
+    if run_summary.counts.total_steps > 1 && score_metrics.scheduler_max_parallel_observed <= 1 {
+        suggestions.push(SuggestionItem {
+            id: String::new(),
+            category: "scheduler".to_string(),
+            severity: "info".to_string(),
+            rationale: "Observed parallelism is low; evaluate opportunities for safe concurrency."
+                .to_string(),
+            evidence: base_evidence,
+            proposed_change: SuggestedChangeIntent {
+                intent: "evaluate_parallelizable_dependencies".to_string(),
+                target: "workflow-structure".to_string(),
+            },
+        });
+    }
+
+    for (idx, suggestion) in suggestions.iter_mut().enumerate() {
+        suggestion.id = format!("sug-{:03}", idx + 1);
+    }
+
+    SuggestionsArtifact {
+        suggestions_version: SUGGESTIONS_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: SuggestionsGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            scores_version: score_version,
+        },
+        suggestions,
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 fn write_run_state_artifacts(
     resolved: &resolve::AdlResolved,
@@ -1187,11 +1390,16 @@ fn write_run_state_artifacts(
         serde_json::to_vec_pretty(&run_summary).context("serialize run_summary.json")?;
     let scores = build_scores_artifact(&run_summary, tr);
     let scores_json = serde_json::to_vec_pretty(&scores).context("serialize scores.json")?;
+    let scores_for_suggestions = read_scores_if_present(&run_paths).unwrap_or(scores.clone());
+    let suggestions = build_suggestions_artifact(&run_summary, Some(&scores_for_suggestions));
+    let suggestions_json =
+        serde_json::to_vec_pretty(&suggestions).context("serialize suggestions.json")?;
 
     artifacts::atomic_write(&run_paths.run_json(), &run_json)?;
     artifacts::atomic_write(&run_paths.steps_json(), &steps_json)?;
     artifacts::atomic_write(&run_paths.run_summary_json(), &run_summary_json)?;
     artifacts::atomic_write(&run_paths.scores_json(), &scores_json)?;
+    artifacts::atomic_write(&run_paths.suggestions_json(), &suggestions_json)?;
     if let Some(pause_payload) = pause {
         let pause_artifact = PauseStateArtifact {
             schema_version: PAUSE_STATE_SCHEMA_VERSION.to_string(),
