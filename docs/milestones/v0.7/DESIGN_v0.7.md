@@ -167,6 +167,7 @@ Artifact layout/versioning is specified in:
 - `docs/milestones/v0.7/ARTIFACT_MODEL_v1.md`
 - `docs/milestones/v0.7/RUN_SUMMARY_v1.md`
 - `docs/milestones/v0.7/SCORES_v1.md`
+- `docs/milestones/v0.7/SUGGESTIONS_v1.md`
 - `docs/milestones/v0.7/OVERLAYS_v1.md`
 
 ---
