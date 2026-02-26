@@ -1,11 +1,14 @@
 # Learning Export v1 (v0.7)
 
-Learning Export v1 provides deterministic JSONL export for completed run
-artifacts.
+Learning Export v1 currently provides deterministic JSONL export for completed
+run artifacts.
 
 ## CLI
 
 `swarm learn export --format jsonl [--runs-dir <dir>] [--run-id <id> ...] --out <file>`
+
+This issue intentionally ships JSONL-only export. Full bundle export
+(directory/archive + `provenance.json`) is tracked as follow-up in #509.
 
 ## Row schema (v1)
 
@@ -27,3 +30,7 @@ Each JSONL line contains:
 - suggestion IDs/categories are sorted deterministically
 - export contains hashes/pointers, not raw large prompt payloads
 - output excludes absolute host paths and token-like secrets
+
+## Deferred
+
+- Bundle export v1 (directory/archive packaging + `provenance.json`) is deferred to #509.

@@ -151,17 +151,16 @@ Artifacts under `.adl/`:
     trace.json
     run_summary.json
     feedback.json
-    suggestions.json
-  learning/
-    overlays/<workflow_id>.yaml
-    exports/<timestamp>.jsonl
+    learning/scores.json
+    learning/suggestions.json
+    learning/overlays/source_overlay.json
+    learning/overlays/applied_overlay.json
 ```
 
-Overlay application requires `--learn=apply` and records:
+Overlay application is opt-in via `--overlay <overlay.json>` and records:
 
 - overlay sha256
 - overridden fields
-- trace event `OverlayApplied`
 
 Artifact layout/versioning is specified in:
 - `docs/milestones/v0.7/ARTIFACT_MODEL_v1.md`
