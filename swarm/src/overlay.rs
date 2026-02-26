@@ -260,10 +260,10 @@ fn stable_fingerprint_hex(bytes: &[u8]) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
 
-    #[test]
-    fn rejects_forbidden_remote_surface_via_guardrails() {
-        let mut doc = adl::AdlDoc {
+    fn doc_with_inline_steps() -> adl::AdlDoc {
+        adl::AdlDoc {
             version: "0.7".to_string(),
             providers: Default::default(),
             tools: Default::default(),
@@ -282,14 +282,54 @@ mod tests {
                     id: Some("wf".to_string()),
                     kind: adl::WorkflowKind::Sequential,
                     max_concurrency: None,
-                    steps: vec![],
+                    steps: vec![
+                        adl::StepSpec {
+                            id: Some("s1".to_string()),
+                            save_as: None,
+                            write_to: None,
+                            on_error: None,
+                            retry: None,
+                            agent: None,
+                            task: None,
+                            call: None,
+                            with: Default::default(),
+                            as_ns: None,
+                            delegation: None,
+                            prompt: None,
+                            inputs: Default::default(),
+                            placement: None,
+                            guards: vec![],
+                        },
+                        adl::StepSpec {
+                            id: Some("s2".to_string()),
+                            save_as: None,
+                            write_to: None,
+                            on_error: None,
+                            retry: None,
+                            agent: None,
+                            task: None,
+                            call: None,
+                            with: Default::default(),
+                            as_ns: None,
+                            delegation: None,
+                            prompt: None,
+                            inputs: Default::default(),
+                            placement: None,
+                            guards: vec![],
+                        },
+                    ],
                 }),
                 pattern_ref: None,
                 inputs: Default::default(),
                 placement: None,
                 remote: None,
             },
-        };
+        }
+    }
+
+    #[test]
+    fn rejects_forbidden_remote_surface_via_guardrails() {
+        let mut doc = doc_with_inline_steps();
         let overlay = OverlaySpecV1 {
             overlay_version: OVERLAY_VERSION,
             base_run_id: None,
@@ -312,5 +352,167 @@ mod tests {
         assert!(err
             .to_string()
             .contains("LEARNING_GUARDRAIL_TRUST_POLICY_IMMUTABLE"));
+    }
+
+    #[test]
+    fn apply_overlay_sets_retry_for_all_steps_deterministically() {
+        let mut doc = doc_with_inline_steps();
+        let overlay = OverlaySpecV1 {
+            overlay_version: OVERLAY_VERSION,
+            base_run_id: Some("run-1".to_string()),
+            created_by: "test".to_string(),
+            created_from: OverlayCreatedFrom {
+                suggestions_version: Some(1),
+                artifact_model_version: Some(1),
+            },
+            suggestions_path: None,
+            changes: vec![OverlayChange {
+                id: "retry-all".to_string(),
+                path: "run.workflow.steps.*.retry.max_attempts".to_string(),
+                op: OverlayOp::Set,
+                value: JsonValue::from(2u64),
+                rationale: "set retry".to_string(),
+                evidence: None,
+            }],
+        };
+
+        let audit = apply_overlay_to_doc(&mut doc, &overlay).expect("overlay apply");
+        let wf = doc.run.workflow.as_ref().expect("workflow");
+        assert_eq!(
+            wf.steps
+                .iter()
+                .map(|s| s.retry.as_ref().map(|r| r.max_attempts))
+                .collect::<Vec<_>>(),
+            vec![Some(2), Some(2)]
+        );
+        assert_eq!(audit.applied_change_ids, vec!["retry-all"]);
+        assert_eq!(
+            audit.applied_paths,
+            vec!["run.workflow.steps.*.retry.max_attempts"]
+        );
+        assert!(!audit.overlay_hash.is_empty());
+    }
+
+    #[test]
+    fn apply_overlay_rejects_bad_values_and_paths() {
+        let mut doc = doc_with_inline_steps();
+        let bad_value = OverlaySpecV1 {
+            overlay_version: OVERLAY_VERSION,
+            base_run_id: None,
+            created_by: "test".to_string(),
+            created_from: OverlayCreatedFrom {
+                suggestions_version: None,
+                artifact_model_version: Some(1),
+            },
+            suggestions_path: None,
+            changes: vec![OverlayChange {
+                id: "bad".to_string(),
+                path: "run.workflow.steps.*.retry.max_attempts".to_string(),
+                op: OverlayOp::Set,
+                value: JsonValue::String("two".to_string()),
+                rationale: "bad".to_string(),
+                evidence: None,
+            }],
+        };
+        let err = apply_overlay_to_doc(&mut doc, &bad_value).expect_err("must reject");
+        assert!(err.to_string().contains("expects integer value"));
+
+        let mut doc2 = doc_with_inline_steps();
+        let bad_path = OverlaySpecV1 {
+            overlay_version: OVERLAY_VERSION,
+            base_run_id: None,
+            created_by: "test".to_string(),
+            created_from: OverlayCreatedFrom {
+                suggestions_version: None,
+                artifact_model_version: Some(1),
+            },
+            suggestions_path: None,
+            changes: vec![OverlayChange {
+                id: "bad-path".to_string(),
+                path: "run.workflow.steps.*.retry.unsupported".to_string(),
+                op: OverlayOp::Set,
+                value: JsonValue::from(2u64),
+                rationale: "bad".to_string(),
+                evidence: None,
+            }],
+        };
+        let err = apply_overlay_to_doc(&mut doc2, &bad_path).expect_err("must reject");
+        assert!(err.to_string().contains("uses unsupported path"));
+    }
+
+    #[test]
+    fn load_overlay_validates_version_created_by_and_duplicate_ids() {
+        let td = std::env::temp_dir().join(format!("overlay-load-{}", std::process::id()));
+        let _ = fs::create_dir_all(&td);
+        let p = td.join("overlay.json");
+
+        fs::write(
+            &p,
+            r#"{"overlay_version":2,"created_by":"x","created_from":{},"changes":[]}"#,
+        )
+        .unwrap();
+        let err = load_overlay(&p, &td).expect_err("bad version");
+        assert!(err.to_string().contains("overlay_version must be 1"));
+
+        fs::write(
+            &p,
+            r#"{"overlay_version":1,"created_by":" ","created_from":{},"changes":[]}"#,
+        )
+        .unwrap();
+        let err = load_overlay(&p, &td).expect_err("empty created_by");
+        assert!(err.to_string().contains("created_by must not be empty"));
+
+        fs::write(
+            &p,
+            r#"{"overlay_version":1,"created_by":"x","created_from":{},"changes":[
+              {"id":"dup","path":"run.workflow.steps.*.retry.max_attempts","op":"set","value":2,"rationale":"a"},
+              {"id":"dup","path":"run.workflow.steps.*.retry.max_attempts","op":"set","value":2,"rationale":"b"}
+            ]}"#,
+        )
+        .unwrap();
+        let err = load_overlay(&p, &td).expect_err("dup ids");
+        assert!(err.to_string().contains("duplicate overlay change id"));
+    }
+
+    #[test]
+    fn load_overlay_maps_supported_suggestion_intent_and_rejects_absolute_path() {
+        let td = std::env::temp_dir().join(format!("overlay-map-{}", std::process::id()));
+        let _ = fs::create_dir_all(&td);
+        let suggestions = td.join("suggestions.json");
+        fs::write(
+            &suggestions,
+            r#"{"suggestions":[
+              {"id":"sug-001","proposed_change":{"intent":"increase_step_retry_budget","target":"failed-step-set"}},
+              {"id":"sug-002","proposed_change":{"intent":"ignored","target":"ignored"}}
+            ]}"#,
+        )
+        .unwrap();
+        let overlay = td.join("overlay.json");
+        fs::write(
+            &overlay,
+            r#"{"overlay_version":1,"created_by":"x","created_from":{},"suggestions_path":"suggestions.json","changes":[]}"#,
+        )
+        .unwrap();
+
+        let loaded = load_overlay(&overlay, &td).expect("load with mapping");
+        assert_eq!(loaded.changes.len(), 1);
+        assert_eq!(loaded.changes[0].id, "sug-001_mapped_retry");
+        assert_eq!(
+            loaded.changes[0].path,
+            "run.workflow.steps.*.retry.max_attempts"
+        );
+
+        fs::write(
+            &overlay,
+            r#"{"overlay_version":1,"created_by":"x","created_from":{},"suggestions_path":"/abs/path.json","changes":[]}"#,
+        )
+        .unwrap();
+        let err = load_overlay(&overlay, &td).expect_err("absolute path should fail");
+        let msg = err.to_string();
+        assert!(
+            msg.contains("suggestions_path must be relative")
+                || msg.contains("resolve overlay suggestions_path"),
+            "unexpected error message: {msg}"
+        );
     }
 }
