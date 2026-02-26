@@ -6,7 +6,8 @@ use std::process::Stdio;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use swarm::{
-    adl, artifacts, demo, execute, instrumentation, overlay, plan, prompt, resolve, signing, trace,
+    adl, artifacts, demo, execute, instrumentation, learning_export, overlay, plan, prompt,
+    resolve, signing, trace,
 };
 
 fn usage() -> &'static str {
@@ -17,6 +18,7 @@ fn usage() -> &'static str {
   swarm keygen --out-dir <dir>
   swarm sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
   swarm instrument <graph|replay|diff-plan|diff-trace> ...
+  swarm learn export --format jsonl [--runs-dir <dir>] [--run-id <id> ...] --out <file>
   swarm verify <adl.yaml> [--key <public_key_path>]
 
 Options:
@@ -49,6 +51,7 @@ Examples:
   swarm instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format json
   swarm instrument replay /tmp/trace.json
   swarm instrument diff-trace /tmp/trace-a.json /tmp/trace-b.json
+  swarm learn export --format jsonl --runs-dir .adl/runs --out /tmp/learning.jsonl
   swarm verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"
 }
 
@@ -101,6 +104,9 @@ fn real_main() -> Result<()> {
     }
     if matches!(args.first().map(|s| s.as_str()), Some("instrument")) {
         return real_instrument(&args[1..]);
+    }
+    if matches!(args.first().map(|s| s.as_str()), Some("learn")) {
+        return real_learn(&args[1..]);
     }
     if matches!(args.first().map(|s| s.as_str()), Some("verify")) {
         return real_verify(&args[1..]);
@@ -650,6 +656,85 @@ fn real_instrument(args: &[String]) -> Result<()> {
         _ => return Err(anyhow::anyhow!("unknown instrument subcommand '{cmd}'")),
     }
 
+    Ok(())
+}
+
+fn real_learn(args: &[String]) -> Result<()> {
+    let Some(cmd) = args.first().map(|s| s.as_str()) else {
+        return Err(anyhow::anyhow!(
+            "learn subcommand required (supported: export)"
+        ));
+    };
+    match cmd {
+        "export" => real_learn_export(&args[1..]),
+        other => Err(anyhow::anyhow!(
+            "unknown learn subcommand '{other}' (supported: export)"
+        )),
+    }
+}
+
+fn real_learn_export(args: &[String]) -> Result<()> {
+    let mut format = "jsonl".to_string();
+    let mut runs_dir: Option<PathBuf> = None;
+    let mut out_path: Option<PathBuf> = None;
+    let mut run_ids: Vec<String> = Vec::new();
+
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--format" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!("--format requires a value"));
+                };
+                format = v.clone();
+                i += 1;
+            }
+            "--runs-dir" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!("--runs-dir requires a directory path"));
+                };
+                runs_dir = Some(PathBuf::from(v));
+                i += 1;
+            }
+            "--out" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!("--out requires a file path"));
+                };
+                out_path = Some(PathBuf::from(v));
+                i += 1;
+            }
+            "--run-id" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!("--run-id requires a value"));
+                };
+                run_ids.push(v.clone());
+                i += 1;
+            }
+            other => {
+                return Err(anyhow::anyhow!(
+                    "unknown learn export arg '{other}' (supported: --format, --runs-dir, --run-id, --out)"
+                ));
+            }
+        }
+        i += 1;
+    }
+
+    if format != "jsonl" {
+        return Err(anyhow::anyhow!(
+            "unsupported learn export format '{format}' (supported: jsonl)"
+        ));
+    }
+    let out_path = out_path.ok_or_else(|| anyhow::anyhow!("learn export requires --out <file>"))?;
+    let runs_dir = runs_dir.unwrap_or_else(|| {
+        artifacts::runs_root().unwrap_or_else(|_| PathBuf::from(".adl").join("runs"))
+    });
+
+    let rows = learning_export::export_jsonl(&runs_dir, &run_ids, &out_path)?;
+    eprintln!(
+        "LEARN EXPORT: rows={} format=jsonl out={}",
+        rows,
+        out_path.display()
+    );
     Ok(())
 }
 
