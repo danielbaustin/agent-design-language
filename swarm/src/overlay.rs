@@ -1,0 +1,316 @@
+use anyhow::{anyhow, Context, Result};
+use serde::{Deserialize, Serialize};
+use serde_json::Value as JsonValue;
+use std::collections::BTreeMap;
+use std::path::{Path, PathBuf};
+
+use crate::adl;
+use crate::learning_guardrails::{
+    validate_overlay_security_guardrails, OverlaySecurityMutationAttempt,
+};
+
+pub const OVERLAY_VERSION: u32 = 1;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct OverlaySpecV1 {
+    pub overlay_version: u32,
+    #[serde(default)]
+    pub base_run_id: Option<String>,
+    pub created_by: String,
+    pub created_from: OverlayCreatedFrom,
+    #[serde(default)]
+    pub suggestions_path: Option<String>,
+    #[serde(default)]
+    pub changes: Vec<OverlayChange>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct OverlayCreatedFrom {
+    #[serde(default)]
+    pub suggestions_version: Option<u32>,
+    #[serde(default)]
+    pub artifact_model_version: Option<u32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum OverlayOp {
+    Set,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct OverlayChange {
+    pub id: String,
+    pub path: String,
+    pub op: OverlayOp,
+    pub value: JsonValue,
+    pub rationale: String,
+    #[serde(default)]
+    pub evidence: Option<JsonValue>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AppliedOverlayAudit {
+    pub overlay_hash: String,
+    pub source_path: String,
+    pub applied_change_ids: Vec<String>,
+    pub applied_paths: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SuggestionsArtifactLite {
+    #[serde(default)]
+    suggestions: Vec<SuggestionItemLite>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SuggestionItemLite {
+    id: String,
+    proposed_change: ProposedChangeLite,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ProposedChangeLite {
+    intent: String,
+    target: String,
+}
+
+pub fn load_overlay(path: &Path, base_dir: &Path) -> Result<OverlaySpecV1> {
+    let raw = std::fs::read_to_string(path)
+        .with_context(|| format!("failed to read overlay file '{}'", path.display()))?;
+    let mut overlay: OverlaySpecV1 = serde_json::from_str(&raw)
+        .with_context(|| format!("failed to parse overlay file '{}'", path.display()))?;
+    if overlay.overlay_version != OVERLAY_VERSION {
+        return Err(anyhow!(
+            "overlay_version must be {} (found {})",
+            OVERLAY_VERSION,
+            overlay.overlay_version
+        ));
+    }
+    if overlay.created_by.trim().is_empty() {
+        return Err(anyhow!("overlay.created_by must not be empty"));
+    }
+    if let Some(suggestions_path) = overlay.suggestions_path.clone() {
+        let suggestions_file = resolve_relative(base_dir, &suggestions_path)
+            .with_context(|| "resolve overlay suggestions_path".to_string())?;
+        let mapped = map_changes_from_suggestions(&suggestions_file)?;
+        overlay.changes.extend(mapped);
+    }
+    validate_overlay_changes(&overlay.changes)?;
+    Ok(overlay)
+}
+
+pub fn apply_overlay_to_doc(
+    doc: &mut adl::AdlDoc,
+    overlay: &OverlaySpecV1,
+) -> Result<AppliedOverlayAudit> {
+    let canonical = serde_json::to_vec(overlay).context("serialize overlay for hashing")?;
+    let overlay_hash = stable_fingerprint_hex(&canonical);
+
+    let mut applied_change_ids = Vec::new();
+    let mut applied_paths = Vec::new();
+    for change in &overlay.changes {
+        enforce_guardrails(change)?;
+        apply_change(doc, change)?;
+        applied_change_ids.push(change.id.clone());
+        applied_paths.push(change.path.clone());
+    }
+    doc.validate()
+        .context("overlay produced invalid run configuration")?;
+
+    Ok(AppliedOverlayAudit {
+        overlay_hash,
+        source_path: overlay
+            .base_run_id
+            .clone()
+            .unwrap_or_else(|| "<overlay-file>".to_string()),
+        applied_change_ids,
+        applied_paths,
+    })
+}
+
+fn resolve_relative(base_dir: &Path, rel: &str) -> Result<PathBuf> {
+    let path = Path::new(rel);
+    if path.is_absolute() {
+        return Err(anyhow!("overlay suggestions_path must be relative"));
+    }
+    Ok(base_dir.join(path))
+}
+
+fn map_changes_from_suggestions(path: &Path) -> Result<Vec<OverlayChange>> {
+    let raw = std::fs::read_to_string(path)
+        .with_context(|| format!("failed to read suggestions file '{}'", path.display()))?;
+    let suggestions: SuggestionsArtifactLite = serde_json::from_str(&raw)
+        .with_context(|| format!("failed to parse suggestions file '{}'", path.display()))?;
+    let mut out = Vec::new();
+    for s in suggestions.suggestions {
+        if s.proposed_change.intent == "increase_step_retry_budget"
+            && s.proposed_change.target == "failed-step-set"
+        {
+            out.push(OverlayChange {
+                id: format!("{}_mapped_retry", s.id),
+                path: "run.workflow.steps.*.retry.max_attempts".to_string(),
+                op: OverlayOp::Set,
+                value: JsonValue::from(2u64),
+                rationale: "mapped from suggestions.proposed_change".to_string(),
+                evidence: None,
+            });
+        }
+    }
+    Ok(out)
+}
+
+fn validate_overlay_changes(changes: &[OverlayChange]) -> Result<()> {
+    let mut seen = BTreeMap::<&str, ()>::new();
+    for c in changes {
+        if c.id.trim().is_empty() {
+            return Err(anyhow!("overlay change id must not be empty"));
+        }
+        if seen.insert(c.id.as_str(), ()).is_some() {
+            return Err(anyhow!("duplicate overlay change id '{}'", c.id));
+        }
+        if c.path.trim().is_empty() {
+            return Err(anyhow!("overlay change '{}' path must not be empty", c.id));
+        }
+    }
+    Ok(())
+}
+
+fn enforce_guardrails(change: &OverlayChange) -> Result<()> {
+    let mut attempt = OverlaySecurityMutationAttempt::default();
+    let path = change.path.as_str();
+    if path.starts_with("run.remote.") {
+        attempt.require_signed_requests = Some(false);
+    }
+    if path.contains("verify_allowed_algs") {
+        attempt.verify_allowed_algs = Some(vec!["rsa".to_string()]);
+    }
+    if path.contains("verify_allowed_key_sources") {
+        attempt.verify_allowed_key_sources = Some(vec!["embedded".to_string()]);
+    }
+    if path.starts_with("sandbox.") || path.starts_with("run.sandbox.") {
+        attempt.sandbox_root = Some(".".to_string());
+    }
+    if path.contains("max_concurrency") {
+        attempt.scheduler_max_concurrency = Some(1);
+    }
+    if let Err(e) = validate_overlay_security_guardrails(&attempt) {
+        return Err(anyhow!("{}: {}", e.code(), e.message()));
+    }
+    Ok(())
+}
+
+fn apply_change(doc: &mut adl::AdlDoc, change: &OverlayChange) -> Result<()> {
+    match change.path.as_str() {
+        "run.workflow.steps.*.retry.max_attempts" => {
+            let max_attempts = value_u32(change)?;
+            let workflow = doc.run.workflow.as_mut().ok_or_else(|| {
+                anyhow!(
+                    "overlay path '{}' requires inline run.workflow",
+                    change.path
+                )
+            })?;
+            for step in &mut workflow.steps {
+                step.retry = Some(adl::StepRetry { max_attempts });
+            }
+            Ok(())
+        }
+        _ => Err(anyhow!(
+            "overlay change '{}' uses unsupported path '{}'",
+            change.id,
+            change.path
+        )),
+    }
+}
+
+fn value_u32(change: &OverlayChange) -> Result<u32> {
+    let n = change.value.as_u64().ok_or_else(|| {
+        anyhow!(
+            "overlay change '{}' path '{}' expects integer value",
+            change.id,
+            change.path
+        )
+    })?;
+    if n == 0 || n > u32::MAX as u64 {
+        return Err(anyhow!(
+            "overlay change '{}' path '{}' integer out of range",
+            change.id,
+            change.path
+        ));
+    }
+    Ok(n as u32)
+}
+
+fn stable_fingerprint_hex(bytes: &[u8]) -> String {
+    let mut hash: u64 = 0xcbf29ce484222325;
+    for b in bytes {
+        hash ^= u64::from(*b);
+        hash = hash.wrapping_mul(0x100000001b3);
+    }
+    format!("{hash:016x}")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rejects_forbidden_remote_surface_via_guardrails() {
+        let mut doc = adl::AdlDoc {
+            version: "0.7".to_string(),
+            providers: Default::default(),
+            tools: Default::default(),
+            agents: Default::default(),
+            tasks: Default::default(),
+            workflows: Default::default(),
+            patterns: vec![],
+            signature: None,
+            run: adl::RunSpec {
+                id: None,
+                name: None,
+                created_at: None,
+                defaults: adl::RunDefaults::default(),
+                workflow_ref: None,
+                workflow: Some(adl::WorkflowSpec {
+                    id: Some("wf".to_string()),
+                    kind: adl::WorkflowKind::Sequential,
+                    max_concurrency: None,
+                    steps: vec![],
+                }),
+                pattern_ref: None,
+                inputs: Default::default(),
+                placement: None,
+                remote: None,
+            },
+        };
+        let overlay = OverlaySpecV1 {
+            overlay_version: OVERLAY_VERSION,
+            base_run_id: None,
+            created_by: "test".to_string(),
+            created_from: OverlayCreatedFrom {
+                suggestions_version: None,
+                artifact_model_version: Some(1),
+            },
+            suggestions_path: None,
+            changes: vec![OverlayChange {
+                id: "c1".to_string(),
+                path: "run.remote.require_signed_requests".to_string(),
+                op: OverlayOp::Set,
+                value: JsonValue::Bool(false),
+                rationale: "bad".to_string(),
+                evidence: None,
+            }],
+        };
+        let err = apply_overlay_to_doc(&mut doc, &overlay).expect_err("must reject");
+        assert!(err
+            .to_string()
+            .contains("LEARNING_GUARDRAIL_TRUST_POLICY_IMMUTABLE"));
+    }
+}

@@ -18,6 +18,7 @@ pub mod execute;
 pub mod execution_plan;
 pub mod instrumentation;
 pub mod learning_guardrails;
+pub mod overlay;
 pub mod plan;
 pub mod prompt;
 pub mod provider;

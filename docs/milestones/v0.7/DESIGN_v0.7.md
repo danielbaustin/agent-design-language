@@ -157,7 +157,7 @@ Artifacts under `.adl/`:
     exports/<timestamp>.jsonl
 ```
 
-Overlay application requires `--learn=apply` and records:
+Overlay application is opt-in via `--overlay <overlay.json>` and records:
 
 - overlay sha256
 - overridden fields
@@ -167,6 +167,7 @@ Artifact layout/versioning is specified in:
 - `docs/milestones/v0.7/ARTIFACT_MODEL_v1.md`
 - `docs/milestones/v0.7/RUN_SUMMARY_v1.md`
 - `docs/milestones/v0.7/SCORES_v1.md`
+- `docs/milestones/v0.7/OVERLAYS_v1.md`
 
 ---
 
