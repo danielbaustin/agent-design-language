@@ -28,6 +28,8 @@ pub trait Provider: Send + Sync {
 enum ProviderErrorKind {
     UnknownKind,
     InvalidConfig,
+    Timeout,
+    Panic,
     RuntimeRetryable,
     RuntimeNonRetryable,
 }
@@ -74,6 +76,22 @@ Set providers.<id>.type to one of: ollama, http."
             message: message.into(),
         }
     }
+
+    fn timeout(provider: &str, message: impl Into<String>) -> Self {
+        Self {
+            kind: ProviderErrorKind::Timeout,
+            provider: Some(provider.to_string()),
+            message: message.into(),
+        }
+    }
+
+    fn panic(provider: &str, message: impl Into<String>) -> Self {
+        Self {
+            kind: ProviderErrorKind::Panic,
+            provider: Some(provider.to_string()),
+            message: message.into(),
+        }
+    }
 }
 
 impl fmt::Display for ProviderError {
@@ -83,6 +101,18 @@ impl fmt::Display for ProviderError {
             ProviderErrorKind::InvalidConfig => write!(
                 f,
                 "provider {} invalid config: {}",
+                self.provider.as_deref().unwrap_or("<unknown>"),
+                self.message
+            ),
+            ProviderErrorKind::Timeout => write!(
+                f,
+                "provider {} timeout: {}",
+                self.provider.as_deref().unwrap_or("<unknown>"),
+                self.message
+            ),
+            ProviderErrorKind::Panic => write!(
+                f,
+                "provider {} panic: {}",
                 self.provider.as_deref().unwrap_or("<unknown>"),
                 self.message
             ),
@@ -120,13 +150,40 @@ fn runtime_error_non_retryable(provider: &str, message: impl Into<String>) -> an
     ProviderError::runtime_non_retryable(provider, message).into()
 }
 
+fn timeout_error(provider: &str, message: impl Into<String>) -> anyhow::Error {
+    ProviderError::timeout(provider, message).into()
+}
+
+fn panic_error(provider: &str, message: impl Into<String>) -> anyhow::Error {
+    ProviderError::panic(provider, message).into()
+}
+
 pub fn is_retryable_error(err: &anyhow::Error) -> bool {
     for cause in err.chain() {
         if let Some(p) = cause.downcast_ref::<ProviderError>() {
-            return matches!(p.kind, ProviderErrorKind::RuntimeRetryable);
+            return matches!(
+                p.kind,
+                ProviderErrorKind::RuntimeRetryable | ProviderErrorKind::Timeout
+            );
         }
     }
     true
+}
+
+pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
+    for cause in err.chain() {
+        if let Some(p) = cause.downcast_ref::<ProviderError>() {
+            return Some(match p.kind {
+                ProviderErrorKind::Timeout => "timeout",
+                ProviderErrorKind::Panic => "panic",
+                ProviderErrorKind::UnknownKind | ProviderErrorKind::InvalidConfig => "schema_error",
+                ProviderErrorKind::RuntimeRetryable | ProviderErrorKind::RuntimeNonRetryable => {
+                    "provider_error"
+                }
+            });
+        }
+    }
+    None
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -428,7 +485,7 @@ impl OllamaProvider {
                     }
                     std::thread::sleep(Duration::from_millis(10));
                 }
-                return Err(runtime_error(
+                return Err(timeout_error(
                     "ollama",
                     format!("timed out after {timeout_secs}s (set SWARM_TIMEOUT_SECS to override)"),
                 ));
@@ -446,12 +503,12 @@ impl OllamaProvider {
 
         out_handle
             .join()
-            .map_err(|_| runtime_error("ollama", "stdout reader thread panicked"))?
+            .map_err(|_| panic_error("ollama", "stdout reader thread panicked"))?
             .context("failed reading ollama stdout")
             .map_err(|err| runtime_error("ollama", err.to_string()))?;
         let err_buf = err_handle
             .join()
-            .map_err(|_| runtime_error("ollama", "stderr reader thread panicked"))?
+            .map_err(|_| panic_error("ollama", "stderr reader thread panicked"))?
             .context("failed reading ollama stderr")
             .map_err(|err| runtime_error("ollama", err.to_string()))?;
 
@@ -634,7 +691,7 @@ impl Provider for HttpProvider {
                                 .to_string()
                         }
                     };
-                    return Err(runtime_error("http", msg));
+                    return Err(timeout_error("http", msg));
                 }
 
                 return Err(runtime_error(

@@ -405,13 +405,18 @@ fn run_swarm_in_dir(cwd: &Path, args: &[&str]) -> std::process::Output {
         .unwrap()
 }
 
+fn repo_runs_dir() -> std::path::PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("repo root")
+        .join(".adl")
+        .join("runs")
+}
+
 fn run_artifact_paths(
     run_id: &str,
 ) -> (std::path::PathBuf, std::path::PathBuf, std::path::PathBuf) {
-    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .expect("repo root");
-    let run_dir = repo_root.join(".adl").join("runs").join(run_id);
+    let run_dir = repo_runs_dir().join(run_id);
     (
         run_dir.join("run.json"),
         run_dir.join("steps.json"),
@@ -420,14 +425,7 @@ fn run_artifact_paths(
 }
 
 fn pause_state_path(run_id: &str) -> std::path::PathBuf {
-    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .expect("repo root");
-    repo_root
-        .join(".adl")
-        .join("runs")
-        .join(run_id)
-        .join("pause_state.json")
+    repo_runs_dir().join(run_id).join("pause_state.json")
 }
 
 #[test]
@@ -2276,6 +2274,8 @@ run:
       - id: "s1"
         agent: "a1"
         task: "t1"
+        save_as: "s1"
+        write_to: "s1.txt"
         inputs:
           text: "hello"
 "#
@@ -2294,6 +2294,7 @@ run:
     );
 
     let run_json_path = run_dir.join("run.json");
+    let run_status_path = run_dir.join("run_status.json");
     let steps_json_path = run_dir.join("steps.json");
     let run_summary_path = run_dir.join("run_summary.json");
     let scores_path = run_dir.join("learning").join("scores.json");
@@ -2302,6 +2303,11 @@ run:
         run_json_path.is_file(),
         "missing {}",
         run_json_path.display()
+    );
+    assert!(
+        run_status_path.is_file(),
+        "missing {}",
+        run_status_path.display()
     );
     assert!(
         steps_json_path.is_file(),
@@ -2335,6 +2341,26 @@ run:
     assert_eq!(steps[0]["step_id"], "s1");
     assert_eq!(steps[0]["status"], "success");
     assert_eq!(steps[0]["provider_id"], "local");
+    assert_eq!(steps[0]["output_artifact_path"], "s1.txt");
+
+    let run_status_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&run_status_path).unwrap()).unwrap();
+    assert_eq!(run_status_json["run_status_version"], 1);
+    assert_eq!(run_status_json["run_id"], run_id);
+    assert_eq!(run_status_json["workflow_id"], "workflow");
+    assert_eq!(run_status_json["overall_status"], "succeeded");
+    assert_eq!(
+        run_status_json["completed_steps"],
+        serde_json::json!(["s1"])
+    );
+    assert_eq!(run_status_json["pending_steps"], serde_json::json!([]));
+    assert_eq!(run_status_json["started_steps"], serde_json::json!(["s1"]));
+    assert_eq!(run_status_json["attempt_counts_by_step"]["s1"], 1);
+    let run_status_raw = fs::read_to_string(&run_status_path).unwrap();
+    assert!(
+        !run_status_raw.contains(base.to_str().unwrap()),
+        "run_status.json must not leak absolute host paths:\n{run_status_raw}"
+    );
 
     let summary_json: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(&run_summary_path).unwrap()).unwrap();
@@ -2495,6 +2521,126 @@ run:
             && !suggestions_text.contains("gho_"),
         "suggestions output must not leak absolute host paths or secrets: {suggestions_text}"
     );
+
+    let _ = fs::remove_dir_all(&run_dir);
+}
+
+#[test]
+fn run_status_artifact_is_byte_stable_across_repeated_identical_runs() {
+    let base = tmp_dir("exec-run-status-stability");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let run_id = "run-status-stable";
+    let run_dir = repo_runs_dir().join(run_id);
+    let _ = fs::remove_dir_all(&run_dir);
+
+    let yaml = format!(
+        r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "Echo {{text}}"
+run:
+  name: "{run_id}"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        save_as: "s1_out"
+        write_to: "s1.txt"
+        inputs:
+          text: "hello"
+"#
+    );
+    let tmp_yaml = base.join("run-status-stable.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out1 = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(out1.status.success(), "first run failed");
+    let first = fs::read(run_dir.join("run_status.json")).unwrap();
+
+    let out2 = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(out2.status.success(), "second run failed");
+    let second = fs::read(run_dir.join("run_status.json")).unwrap();
+
+    assert_eq!(first, second, "run_status.json must be byte-stable");
+
+    let _ = fs::remove_dir_all(run_dir);
+}
+
+#[test]
+fn run_status_failure_kind_maps_timeout_without_raw_provider_error_text() {
+    let listener = match TcpListener::bind("127.0.0.1:0") {
+        Ok(listener) => listener,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let bind_addr = listener.local_addr().unwrap();
+    thread::spawn(move || {
+        if let Ok((mut stream, _)) = listener.accept() {
+            let mut buf = [0_u8; 1024];
+            let _ = stream.read(&mut buf);
+            std::thread::sleep(Duration::from_millis(1200));
+            let _ = stream.write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\n{}");
+        }
+    });
+
+    let base = tmp_dir("exec-run-status-timeout");
+    let run_id = "run-status-timeout";
+    let run_dir = repo_runs_dir().join(run_id);
+    let _ = fs::remove_dir_all(&run_dir);
+    let yaml = format!(
+        r#"
+version: "0.5"
+providers:
+  http:
+    type: "http"
+    config:
+      endpoint: "http://{bind_addr}"
+      timeout_secs: 1
+agents:
+  a1:
+    provider: "http"
+    model: "unused-for-http-provider"
+tasks:
+  t1:
+    prompt:
+      user: "timeout"
+run:
+  name: "{run_id}"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+"#
+    );
+    let tmp_yaml = base.join("run-status-timeout.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(!out.status.success(), "timeout run must fail");
+
+    let run_status: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(run_dir.join("run_status.json")).unwrap())
+            .unwrap();
+    assert_eq!(run_status["overall_status"], "failed");
+    assert_eq!(run_status["failure_kind"], "timeout");
+    let raw = serde_json::to_string_pretty(&run_status).unwrap();
+    assert!(!raw.contains("127.0.0.1"));
+    assert!(!raw.contains("providers.<id>.config.timeout_secs"));
 
     let _ = fs::remove_dir_all(&run_dir);
 }
@@ -4267,7 +4413,7 @@ run:
         "--resume",
         run_json_path.to_str().unwrap(),
         "--out",
-        base.join("out-resume").to_str().unwrap(),
+        base.join("out-paused").to_str().unwrap(),
     ]);
     assert!(
         out_resumed.status.success(),
@@ -4289,7 +4435,7 @@ run:
         String::from_utf8_lossy(&out_plain.stderr)
     );
 
-    let resumed_final = fs::read_to_string(base.join("out-resume").join("s3.txt")).unwrap();
+    let resumed_final = fs::read_to_string(base.join("out-paused").join("s3.txt")).unwrap();
     let plain_final = fs::read_to_string(base.join("out-plain").join("s3.txt")).unwrap();
     assert_eq!(resumed_final, plain_final);
 }
@@ -4447,6 +4593,148 @@ fn resume_cli_rejects_missing_pause_state_for_unknown_run_id() {
     assert!(
         stderr.contains("run-id-does-not-exist"),
         "stderr was:\n{stderr}"
+    );
+}
+
+#[test]
+fn resume_skips_verified_completed_steps_and_preserves_run_status() {
+    let base = tmp_dir("exec-resume-skip-verified");
+    let endpoint = start_fixed_http_provider_server(8, "resume-ok");
+    let paused_case = base.join("paused");
+    fs::create_dir_all(&paused_case).unwrap();
+
+    let paused_yaml = r#"
+version: "0.5"
+providers:
+  http:
+    type: "http"
+    config:
+      endpoint: "__ENDPOINT__"
+agents:
+  a:
+    provider: "http"
+    model: "unused-for-http-provider"
+tasks:
+  t:
+    prompt:
+      user: "step {{n}}"
+run:
+  name: "resume-skip-verified"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        save_as: "s1"
+        write_to: "s1.txt"
+        inputs: { n: "1" }
+        guards:
+          - type: pause
+            config:
+              reason: "after step 1"
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs: { n: "2" }
+"#
+    .replace("__ENDPOINT__", &endpoint);
+    let paused_path = paused_case.join("resume-skip.yaml");
+    fs::write(&paused_path, paused_yaml).unwrap();
+
+    let paused = run_swarm_in_dir(&paused_case, &[paused_path.to_str().unwrap(), "--run"]);
+    assert!(paused.status.success(), "paused run should succeed");
+
+    let resumed = run_swarm_in_dir(&paused_case, &["resume", "resume-skip-verified"]);
+    assert!(resumed.status.success(), "resume should succeed");
+    let resumed_stderr = String::from_utf8_lossy(&resumed.stderr);
+    assert!(
+        resumed_stderr.contains("RESUME step=s1 action=skip reason=completed_artifact_verified"),
+        "stderr was:\n{resumed_stderr}"
+    );
+    assert!(
+        !resumed_stderr.contains("STEP start (+0ms) s1"),
+        "resumed run must not rerun verified step s1:\n{resumed_stderr}"
+    );
+
+    let run_status_path = repo_runs_dir()
+        .join("resume-skip-verified")
+        .join("run_status.json");
+    let run_status: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&run_status_path).unwrap()).unwrap();
+    assert_eq!(run_status["overall_status"], "succeeded");
+    assert_eq!(
+        run_status["completed_steps"],
+        serde_json::json!(["s1", "s2"])
+    );
+    assert_eq!(run_status["attempt_counts_by_step"]["s1"], 0);
+    assert_eq!(run_status["attempt_counts_by_step"]["s2"], 1);
+}
+
+#[test]
+fn resume_reruns_completed_step_when_expected_artifact_is_missing() {
+    let base = tmp_dir("exec-resume-rerun-missing");
+    let endpoint = start_fixed_http_provider_server(8, "resume-rerun");
+    let paused_case = base.join("paused");
+    fs::create_dir_all(&paused_case).unwrap();
+
+    let paused_yaml = r#"
+version: "0.5"
+providers:
+  http:
+    type: "http"
+    config:
+      endpoint: "__ENDPOINT__"
+agents:
+  a:
+    provider: "http"
+    model: "unused-for-http-provider"
+tasks:
+  t:
+    prompt:
+      user: "step {{n}}"
+run:
+  name: "resume-rerun-missing"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        save_as: "s1"
+        write_to: "s1.txt"
+        inputs: { n: "1" }
+        guards:
+          - type: pause
+            config:
+              reason: "after step 1"
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs: { n: "2" }
+"#
+    .replace("__ENDPOINT__", &endpoint);
+    let paused_path = paused_case.join("resume-rerun.yaml");
+    fs::write(&paused_path, paused_yaml).unwrap();
+
+    let paused = run_swarm_in_dir(&paused_case, &[paused_path.to_str().unwrap(), "--run"]);
+    assert!(paused.status.success(), "paused run should succeed");
+    fs::remove_file(paused_case.join("out").join("s1.txt")).unwrap();
+
+    let resumed = run_swarm_in_dir(&paused_case, &["resume", "resume-rerun-missing"]);
+    assert!(resumed.status.success(), "resume should succeed");
+    let resumed_stderr = String::from_utf8_lossy(&resumed.stderr);
+    assert!(
+        resumed_stderr.contains("RESUME step=s1 action=rerun reason=missing_expected_artifact"),
+        "stderr was:\n{resumed_stderr}"
+    );
+    assert!(
+        resumed_stderr.contains("s1 provider=http"),
+        "missing artifact must force rerun of s1:\n{resumed_stderr}"
     );
 }
 

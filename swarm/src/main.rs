@@ -6,8 +6,8 @@ use std::process::Stdio;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use swarm::{
-    adl, artifacts, demo, execute, instrumentation, learning_export, overlay, plan, prompt,
-    resolve, signing, trace,
+    adl, artifacts, bounded_executor, demo, execute, instrumentation, learning_export, overlay,
+    plan, prompt, provider, remote_exec, resolve, sandbox, signing, trace,
 };
 
 fn usage() -> &'static str {
@@ -275,6 +275,7 @@ fn real_main() -> Result<()> {
             Some(path) => Some(load_resume_state(path, &resolved)?),
             None => None,
         };
+        let resume_completed_ids = resume_state.as_ref().map(|r| r.completed_step_ids.clone());
 
         let result = execute::execute_sequential_with_resume(
             &resolved,
@@ -298,6 +299,8 @@ fn real_main() -> Result<()> {
                     run_finished_ms,
                     "failure",
                     None,
+                    resume_completed_ids.as_ref(),
+                    Some(&err),
                 )?;
                 if !quiet {
                     eprintln!(
@@ -334,6 +337,8 @@ fn real_main() -> Result<()> {
             run_finished_ms,
             status,
             pause_state.as_ref(),
+            resume_completed_ids.as_ref(),
+            None,
         )?;
         if !quiet {
             let status_label = if pause_state.is_some() {
@@ -755,6 +760,7 @@ fn now_ms() -> u128 {
 
 const RUN_STATE_SCHEMA_VERSION: &str = "run_state.v1";
 const PAUSE_STATE_SCHEMA_VERSION: &str = "pause_state.v1";
+const RUN_STATUS_VERSION: u32 = 1;
 const RUN_SUMMARY_VERSION: u32 = 1;
 const SCORES_VERSION: u32 = 1;
 const SUGGESTIONS_VERSION: u32 = 1;
@@ -799,6 +805,28 @@ struct StepStateArtifact {
     provider_id: String,
     status: String,
     output_artifact_path: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RunStatusArtifact {
+    run_status_version: u32,
+    run_id: String,
+    workflow_id: String,
+    overall_status: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    failure_kind: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    failed_step_id: Option<String>,
+    completed_steps: Vec<String>,
+    pending_steps: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    started_steps: Option<Vec<String>>,
+    attempt_counts_by_step: BTreeMap<String, u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    effective_max_concurrency: Option<usize>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    effective_max_concurrency_source: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -954,30 +982,22 @@ fn execution_plan_hash<T: Serialize>(plan: &T) -> Result<String> {
     Ok(stable_fingerprint_hex(&plan_json))
 }
 
-fn extract_error_kind(message: &str) -> Option<String> {
-    // Best-effort extraction from formatted error text until all failure
-    // surfaces provide structured error-kind fields.
-    // Keep this deterministic: choose the first token matching known stable
-    // code prefixes and uppercase underscore format.
-    const PREFIXES: &[&str] = &[
-        "REMOTE_",
-        "SIGNATURE_",
-        "LEARNING_",
-        "SANDBOX_",
-        "PROVIDER_",
-        "HTTP_",
-        "VALIDATION_",
-    ];
-    for token in message
-        .split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_'))
-        .filter(|t| !t.is_empty())
-    {
-        if token.len() >= 3 && token.contains('_') && PREFIXES.iter().any(|p| token.starts_with(p))
-        {
-            return Some(token.to_string());
-        }
-    }
-    None
+fn classify_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
+    execute::stable_failure_kind(err)
+        .or_else(|| provider::stable_failure_kind(err))
+        .or_else(|| remote_exec::stable_failure_kind(err))
+        .or_else(|| bounded_executor::stable_failure_kind(err))
+        .or_else(|| {
+            err.chain().find_map(|cause| {
+                if cause.downcast_ref::<sandbox::SandboxPathError>().is_some() {
+                    Some("sandbox_denied")
+                } else if cause.downcast_ref::<std::io::Error>().is_some() {
+                    Some("io_error")
+                } else {
+                    None
+                }
+            })
+        })
 }
 
 fn build_run_summary(
@@ -986,7 +1006,7 @@ fn build_run_summary(
     pause: Option<&execute::PauseState>,
     steps: &[StepStateArtifact],
     records: usize,
-    error_message: Option<&str>,
+    failure: Option<&anyhow::Error>,
     run_paths: &artifacts::RunArtifactPaths,
 ) -> RunSummaryArtifact {
     let failed_steps = steps.iter().filter(|s| s.status == "failure").count();
@@ -1015,8 +1035,10 @@ fn build_run_summary(
         })
         .count();
     let mut security_denials_by_code = BTreeMap::new();
-    if let Some(code) = error_message.and_then(extract_error_kind) {
-        *security_denials_by_code.entry(code).or_insert(0) += 1;
+    if let Some(code) = failure.and_then(classify_failure_kind) {
+        *security_denials_by_code
+            .entry(code.to_string())
+            .or_insert(0) += 1;
     }
 
     let (
@@ -1059,7 +1081,7 @@ fn build_run_summary(
         adl_version: resolved.doc.version.clone(),
         swarm_version: env!("CARGO_PKG_VERSION").to_string(),
         status: status.to_string(),
-        error_kind: error_message.and_then(extract_error_kind),
+        error_kind: failure.and_then(classify_failure_kind).map(str::to_string),
         counts: RunSummaryCounts {
             total_steps: resolved.steps.len(),
             completed_steps,
@@ -1108,6 +1130,70 @@ fn build_run_summary(
                 .unwrap_or_else(|_| "learning/overlays".to_string()),
             trace_json: None,
         },
+    }
+}
+
+fn build_run_status(
+    resolved: &resolve::AdlResolved,
+    tr: &trace::Trace,
+    overall_status: &str,
+    steps: &[StepStateArtifact],
+    failure: Option<&anyhow::Error>,
+    resume_completed_step_ids: &BTreeSet<String>,
+) -> RunStatusArtifact {
+    let mut completed_steps: BTreeSet<String> = resume_completed_step_ids.clone();
+    let mut pending_steps: BTreeSet<String> = BTreeSet::new();
+    let mut failed_step_id: Option<String> = None;
+
+    for step in steps {
+        match step.status.as_str() {
+            "success" => {
+                completed_steps.insert(step.step_id.clone());
+            }
+            "failure" => {
+                if failed_step_id.is_none() {
+                    failed_step_id = Some(step.step_id.clone());
+                }
+                pending_steps.insert(step.step_id.clone());
+            }
+            _ => {
+                pending_steps.insert(step.step_id.clone());
+            }
+        }
+    }
+
+    let mut attempts_by_step: BTreeMap<String, u32> = resume_completed_step_ids
+        .iter()
+        .map(|step_id| (step_id.clone(), 0))
+        .collect();
+    let mut started_set = BTreeSet::new();
+    for event in &tr.events {
+        if let trace::TraceEvent::StepStarted { step_id, .. } = event {
+            started_set.insert(step_id.clone());
+            *attempts_by_step.entry(step_id.clone()).or_insert(0) += 1;
+        }
+    }
+
+    let scheduler_policy = execute::scheduler_policy_for_run(resolved).ok().flatten();
+
+    RunStatusArtifact {
+        run_status_version: RUN_STATUS_VERSION,
+        run_id: resolved.run_id.clone(),
+        workflow_id: resolved.workflow_id.clone(),
+        overall_status: overall_status.to_string(),
+        failure_kind: failure.and_then(classify_failure_kind).map(str::to_string),
+        failed_step_id,
+        completed_steps: completed_steps.into_iter().collect(),
+        pending_steps: pending_steps.into_iter().collect(),
+        started_steps: if started_set.is_empty() {
+            None
+        } else {
+            Some(started_set.into_iter().collect())
+        },
+        attempt_counts_by_step: attempts_by_step,
+        effective_max_concurrency: scheduler_policy.map(|(value, _)| value),
+        effective_max_concurrency_source: scheduler_policy
+            .map(|(_, source)| source.as_str().to_string()),
     }
 }
 
@@ -1348,16 +1434,21 @@ fn write_run_state_artifacts(
     resolved: &resolve::AdlResolved,
     tr: &trace::Trace,
     adl_path: &Path,
-    out_dir: &Path,
+    _out_dir: &Path,
     start_ms: u128,
     end_ms: u128,
     status: &str,
     pause: Option<&execute::PauseState>,
+    resume_completed_step_ids: Option<&std::collections::HashSet<String>>,
+    failure: Option<&anyhow::Error>,
 ) -> Result<PathBuf> {
     let run_paths = artifacts::RunArtifactPaths::for_run(&resolved.run_id)?;
     run_paths.ensure_layout()?;
     run_paths.write_model_marker()?;
     let run_dir = run_paths.run_dir();
+    let resume_completed: BTreeSet<String> = resume_completed_step_ids
+        .map(|ids| ids.iter().cloned().collect())
+        .unwrap_or_default();
 
     let mut status_by_step: HashMap<String, String> = HashMap::new();
     for ev in &tr.events {
@@ -1375,9 +1466,14 @@ fn write_run_state_artifacts(
         let status = status_by_step
             .get(&step.id)
             .cloned()
+            .or_else(|| {
+                resume_completed
+                    .contains(&step.id)
+                    .then(|| "success".to_string())
+            })
             .unwrap_or_else(|| "not_run".to_string());
         let output_artifact_path = match (status.as_str(), step.write_to.as_deref()) {
-            ("success", Some(write_to)) => Some(out_dir.join(write_to).display().to_string()),
+            ("success", Some(write_to)) => Some(write_to.to_string()),
             _ => None,
         };
 
@@ -1433,11 +1529,27 @@ fn write_run_state_artifacts(
             .iter()
             .filter(|ev| matches!(ev, trace::TraceEvent::StepFinished { .. }))
             .count(),
-        error_message.as_deref(),
+        failure,
         &run_paths,
+    );
+    let overall_status = match status {
+        "success" => "succeeded",
+        "failure" => "failed",
+        "paused" => "running",
+        other => other,
+    };
+    let run_status = build_run_status(
+        resolved,
+        tr,
+        overall_status,
+        &steps,
+        failure,
+        &resume_completed,
     );
     let run_summary_json =
         serde_json::to_vec_pretty(&run_summary).context("serialize run_summary.json")?;
+    let run_status_json =
+        serde_json::to_vec_pretty(&run_status).context("serialize run_status.json")?;
     let scores = build_scores_artifact(&run_summary, tr);
     let scores_json = serde_json::to_vec_pretty(&scores).context("serialize scores.json")?;
     let scores_for_suggestions = read_scores_if_present(&run_paths).unwrap_or(scores.clone());
@@ -1447,6 +1559,7 @@ fn write_run_state_artifacts(
 
     artifacts::atomic_write(&run_paths.run_json(), &run_json)?;
     artifacts::atomic_write(&run_paths.steps_json(), &steps_json)?;
+    artifacts::atomic_write(&run_paths.run_status_json(), &run_status_json)?;
     artifacts::atomic_write(&run_paths.run_summary_json(), &run_summary_json)?;
     artifacts::atomic_write(&run_paths.scores_json(), &scores_json)?;
     artifacts::atomic_write(&run_paths.suggestions_json(), &suggestions_json)?;
@@ -1680,6 +1793,7 @@ fn real_resume(args: &[String]) -> Result<()> {
         saved_state: pause_artifact.pause.saved_state,
         completed_outputs: pause_artifact.pause.completed_outputs,
     };
+    let resume_completed_ids = resume_state.completed_step_ids.clone();
 
     let out_dir = PathBuf::from("out");
     let run_started_ms = now_ms();
@@ -1718,6 +1832,8 @@ fn real_resume(args: &[String]) -> Result<()> {
             "success"
         },
         result.pause.as_ref(),
+        Some(&resume_completed_ids),
+        None,
     )?;
     eprintln!(
         "RUN done (+{}ms) {} artifacts={}",
@@ -2243,6 +2359,8 @@ mod tests {
             150,
             "paused",
             Some(&pause),
+            None,
+            None,
         )
         .expect("write run artifacts");
 
@@ -2295,6 +2413,8 @@ mod tests {
             1,
             "success",
             None,
+            None,
+            None,
         )
         .expect("write non-paused artifacts");
         let err = load_resume_state(&run_dir.join("run.json"), &resolved)
@@ -2339,6 +2459,8 @@ mod tests {
             20,
             "paused",
             Some(&pause),
+            None,
+            None,
         )
         .expect("write run artifacts");
 
@@ -2382,6 +2504,8 @@ mod tests {
             1,
             "paused",
             None,
+            None,
+            None,
         )
         .expect("write paused artifacts");
 
@@ -2420,6 +2544,8 @@ mod tests {
             1,
             "paused",
             Some(&pause),
+            None,
+            None,
         )
         .expect("write paused artifacts");
 
@@ -2462,6 +2588,8 @@ mod tests {
             1,
             "paused",
             Some(&pause),
+            None,
+            None,
         )
         .expect("write paused artifacts");
 
@@ -2504,6 +2632,8 @@ mod tests {
             1,
             "paused",
             Some(&pause),
+            None,
+            None,
         )
         .expect("write paused artifacts");
 

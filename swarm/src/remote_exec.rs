@@ -142,6 +142,64 @@ pub enum SecurityEnvelopeError {
     SymlinkEscape { path: String },
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum RemoteExecuteClientErrorKind {
+    Timeout,
+    Unreachable,
+    BadStatus,
+    InvalidJson,
+    SchemaViolation,
+    RemoteExecution,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RemoteExecuteClientError {
+    pub kind: RemoteExecuteClientErrorKind,
+    pub code: String,
+    pub message: String,
+}
+
+impl std::fmt::Display for RemoteExecuteClientError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}: {}", self.code, self.message)
+    }
+}
+
+impl std::error::Error for RemoteExecuteClientError {}
+
+impl RemoteExecuteClientError {
+    fn new(
+        kind: RemoteExecuteClientErrorKind,
+        code: impl Into<String>,
+        message: impl Into<String>,
+    ) -> Self {
+        Self {
+            kind,
+            code: code.into(),
+            message: message.into(),
+        }
+    }
+}
+
+pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
+    for cause in err.chain() {
+        if cause.downcast_ref::<SecurityEnvelopeError>().is_some() {
+            return Some("policy_denied");
+        }
+        if let Some(remote) = cause.downcast_ref::<RemoteExecuteClientError>() {
+            return Some(match remote.kind {
+                RemoteExecuteClientErrorKind::Timeout => "timeout",
+                RemoteExecuteClientErrorKind::SchemaViolation => "schema_error",
+                RemoteExecuteClientErrorKind::Unreachable
+                | RemoteExecuteClientErrorKind::BadStatus
+                | RemoteExecuteClientErrorKind::InvalidJson => "io_error",
+                RemoteExecuteClientErrorKind::RemoteExecution => "provider_error",
+            });
+        }
+    }
+    None
+}
+
 impl SecurityEnvelopeError {
     pub fn code(&self) -> &'static str {
         match self {
@@ -203,6 +261,14 @@ impl SecurityEnvelopeError {
         }
     }
 }
+
+impl std::fmt::Display for SecurityEnvelopeError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}: {}", self.code(), self.message())
+    }
+}
+
+impl std::error::Error for SecurityEnvelopeError {}
 
 fn sort_value(value: &mut Value) {
     match value {
@@ -552,7 +618,7 @@ impl ExecuteResponse {
 /// - returns only the remote model output for successful requests
 pub fn execute_remote(endpoint: &str, timeout_ms: u64, req: &ExecuteRequest) -> Result<String> {
     if let Err(env_err) = validate_security_envelope(req) {
-        return Err(anyhow!("{}: {}", env_err.code(), env_err.message()));
+        return Err(env_err.into());
     }
     let client = Client::builder()
         .timeout(Duration::from_millis(timeout_ms))
@@ -560,32 +626,65 @@ pub fn execute_remote(endpoint: &str, timeout_ms: u64, req: &ExecuteRequest) -> 
         .context("failed to build remote executor client")?;
 
     let url = format!("{}/v1/execute", endpoint.trim_end_matches('/'));
-    let response = client.post(url).json(req).send().map_err(|err| {
-        if err.is_timeout() {
-            anyhow!("REMOTE_TIMEOUT: {err}")
-        } else {
-            anyhow!("REMOTE_UNREACHABLE: {err}")
-        }
-    })?;
+    let response = client
+        .post(url)
+        .json(req)
+        .send()
+        .map_err(|err| -> anyhow::Error {
+            if err.is_timeout() {
+                RemoteExecuteClientError::new(
+                    RemoteExecuteClientErrorKind::Timeout,
+                    "REMOTE_TIMEOUT",
+                    err.to_string(),
+                )
+                .into()
+            } else {
+                RemoteExecuteClientError::new(
+                    RemoteExecuteClientErrorKind::Unreachable,
+                    "REMOTE_UNREACHABLE",
+                    err.to_string(),
+                )
+                .into()
+            }
+        })?;
 
     if response.status() != StatusCode::OK {
-        return Err(anyhow!("REMOTE_BAD_STATUS: {}", response.status()));
+        return Err(RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::BadStatus,
+            "REMOTE_BAD_STATUS",
+            response.status().to_string(),
+        )
+        .into());
     }
 
-    let parsed: ExecuteResponse = response
-        .json()
-        .map_err(|err| anyhow!("REMOTE_INVALID_JSON: {err}"))?;
+    let parsed: ExecuteResponse = response.json().map_err(|err| {
+        RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::InvalidJson,
+            "REMOTE_INVALID_JSON",
+            err.to_string(),
+        )
+    })?;
     if parsed.ok {
-        parsed
-            .result
-            .ok_or_else(|| anyhow!("REMOTE_SCHEMA_VIOLATION: missing result on ok response"))
+        parsed.result.ok_or_else(|| {
+            RemoteExecuteClientError::new(
+                RemoteExecuteClientErrorKind::SchemaViolation,
+                "REMOTE_SCHEMA_VIOLATION",
+                "missing result on ok response",
+            )
+            .into()
+        })
     } else {
         let err = parsed.error.unwrap_or(RemoteError {
             code: "REMOTE_EXECUTION_ERROR".to_string(),
             message: "remote execution failed".to_string(),
             details: HashMap::new(),
         });
-        Err(anyhow!("{}: {}", err.code, err.message))
+        Err(RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::RemoteExecution,
+            err.code,
+            err.message,
+        )
+        .into())
     }
 }
 

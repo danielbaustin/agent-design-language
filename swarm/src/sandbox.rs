@@ -36,6 +36,14 @@ impl SandboxPathError {
     }
 }
 
+impl std::fmt::Display for SandboxPathError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.message())
+    }
+}
+
+impl std::error::Error for SandboxPathError {}
+
 fn validate_relative(path: &Path) -> Result<(), SandboxPathError> {
     let raw = path.display().to_string();
     if raw.trim().is_empty() {

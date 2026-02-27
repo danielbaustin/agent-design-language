@@ -173,6 +173,77 @@ pub struct ResumeState {
     pub completed_outputs: HashMap<String, String>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ExecutionPolicyErrorKind {
+    Denied,
+    ApprovalRequired,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ExecutionPolicyError {
+    pub kind: ExecutionPolicyErrorKind,
+    pub step_id: String,
+    pub action_kind: String,
+    pub target_id: String,
+    pub rule_id: Option<String>,
+}
+
+impl ExecutionPolicyError {
+    pub fn code(&self) -> &'static str {
+        match self.kind {
+            ExecutionPolicyErrorKind::Denied => DELEGATION_POLICY_DENY_CODE,
+            ExecutionPolicyErrorKind::ApprovalRequired => "DELEGATION_POLICY_APPROVAL_REQUIRED",
+        }
+    }
+}
+
+impl std::fmt::Display for ExecutionPolicyError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let suffix = self
+            .rule_id
+            .as_ref()
+            .map(|id| format!(" (rule_id={id})"))
+            .unwrap_or_default();
+        match self.kind {
+            ExecutionPolicyErrorKind::Denied => write!(
+                f,
+                "{}: step '{}' action '{}' target '{}' denied{}",
+                self.code(),
+                self.step_id,
+                self.action_kind,
+                self.target_id,
+                suffix
+            ),
+            ExecutionPolicyErrorKind::ApprovalRequired => write!(
+                f,
+                "{}: step '{}' action '{}' target '{}' requires approval{}",
+                self.code(),
+                self.step_id,
+                self.action_kind,
+                self.target_id,
+                suffix
+            ),
+        }
+    }
+}
+
+impl std::error::Error for ExecutionPolicyError {}
+
+pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
+    for cause in err.chain() {
+        if cause.downcast_ref::<ExecutionPolicyError>().is_some() {
+            return Some("policy_denied");
+        }
+    }
+    None
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ResumeDisposition {
+    Skip(&'static str),
+    Rerun(&'static str),
+}
+
 fn pause_reason_for_step(step: &crate::resolve::ResolvedStep) -> Option<Option<String>> {
     for guard in &step.guards {
         if guard.kind.trim().eq_ignore_ascii_case("pause") {
@@ -243,6 +314,49 @@ fn stable_fingerprint_hex(bytes: &[u8]) -> String {
 
 fn model_output_fingerprint(output: &str) -> String {
     stable_fingerprint_hex(output.as_bytes())
+}
+
+fn resume_disposition_for_step(
+    step: &crate::resolve::ResolvedStep,
+    out_dir: &Path,
+    completed_outputs: &HashMap<String, String>,
+) -> Result<ResumeDisposition> {
+    let Some(write_to) = step.write_to.as_deref() else {
+        return Ok(ResumeDisposition::Skip("completed_no_artifact_expected"));
+    };
+
+    validate_write_to(&step.id, write_to)?;
+    let artifact_path = out_dir.join(write_to);
+    if !artifact_path.is_file() {
+        return Ok(ResumeDisposition::Rerun("missing_expected_artifact"));
+    }
+
+    let Some(expected_fingerprint) = completed_outputs.get(&step.id) else {
+        return Ok(ResumeDisposition::Rerun("missing_output_fingerprint"));
+    };
+    let actual = std::fs::read_to_string(&artifact_path).with_context(|| {
+        format!(
+            "failed to read expected resume artifact for step '{}' at '{}'",
+            step.id,
+            artifact_path.display()
+        )
+    })?;
+    let actual_fingerprint = model_output_fingerprint(&actual);
+    if &actual_fingerprint != expected_fingerprint {
+        return Ok(ResumeDisposition::Rerun("invalid_expected_artifact"));
+    }
+
+    Ok(ResumeDisposition::Skip("completed_artifact_verified"))
+}
+
+fn emit_resume_note(enabled: bool, step_id: &str, action: &str, reason: &str) {
+    if !enabled {
+        return;
+    }
+    eprintln!(
+        "RESUME step={} action={} reason={}",
+        step_id, action, reason
+    );
 }
 
 /// Execute the resolved run.
@@ -329,6 +443,29 @@ pub fn execute_sequential_with_resume(
         .as_ref()
         .map(|r| r.completed_step_ids.clone())
         .unwrap_or_default();
+
+    if let Some(resume) = resume.as_ref() {
+        let mut validated_completed = HashSet::new();
+        for step in &resolved.steps {
+            if !resume.completed_step_ids.contains(&step.id) {
+                continue;
+            }
+            match resume_disposition_for_step(step, out_dir, &completed_outputs)? {
+                ResumeDisposition::Skip(reason) => {
+                    emit_resume_note(emit_progress, &step.id, "skip", reason);
+                    validated_completed.insert(step.id.clone());
+                }
+                ResumeDisposition::Rerun(reason) => {
+                    emit_resume_note(emit_progress, &step.id, "rerun", reason);
+                    if let Some(save_as) = step.save_as.as_ref() {
+                        saved_state.remove(save_as);
+                    }
+                    completed_outputs.remove(&step.id);
+                }
+            }
+        }
+        completed_step_ids = validated_completed;
+    }
 
     for step in &resolved.steps {
         let step_id = step.id.clone();
@@ -697,14 +834,13 @@ pub fn execute_sequential_with_resume(
                     continue;
                 }
                 tr.run_failed(&err.to_string());
-                return Err(anyhow!(
-                    "step '{}' failed (attempt {}/{}, max_attempts={}): {:#}",
+                return Err(err.context(format!(
+                    "step '{}' failed (attempt {}/{}, max_attempts={})",
                     step_id,
                     attempt.max(1),
                     max_attempts,
-                    max_attempts,
-                    err
-                ));
+                    max_attempts
+                )));
             }
         }
     }
@@ -1149,18 +1285,14 @@ fn enforce_delegation_policy(
                 outcome.decision.as_str(),
                 outcome.rule_id.as_deref(),
             );
-            Err(anyhow!(
-                "{}: step '{}' action '{}' target '{}' requires approval{}",
-                DELEGATION_POLICY_APPROVAL_REQUIRED_CODE,
-                step.id,
-                action.as_str(),
-                target_id,
-                outcome
-                    .rule_id
-                    .as_ref()
-                    .map(|id| format!(" (rule_id={id})"))
-                    .unwrap_or_default()
-            ))
+            Err(ExecutionPolicyError {
+                kind: ExecutionPolicyErrorKind::ApprovalRequired,
+                step_id: step.id.clone(),
+                action_kind: action.as_str().to_string(),
+                target_id: target_id.to_string(),
+                rule_id: outcome.rule_id,
+            }
+            .into())
         }
         DelegationDecision::Denied => {
             tr.delegation_policy_evaluated(
@@ -1176,18 +1308,14 @@ fn enforce_delegation_policy(
                 target_id,
                 outcome.rule_id.as_deref(),
             );
-            Err(anyhow!(
-                "{}: step '{}' action '{}' target '{}' denied{}",
-                DELEGATION_POLICY_DENY_CODE,
-                step.id,
-                action.as_str(),
-                target_id,
-                outcome
-                    .rule_id
-                    .as_ref()
-                    .map(|id| format!(" (rule_id={id})"))
-                    .unwrap_or_default()
-            ))
+            Err(ExecutionPolicyError {
+                kind: ExecutionPolicyErrorKind::Denied,
+                step_id: step.id.clone(),
+                action_kind: action.as_str().to_string(),
+                target_id: target_id.to_string(),
+                rule_id: outcome.rule_id,
+            }
+            .into())
         }
     }
 }
@@ -1402,14 +1530,13 @@ fn execute_step_with_retry(
     }
 
     let err = last_err.unwrap_or_else(|| anyhow!("step '{}' failed", step_id));
-    Err(anyhow!(
-        "step '{}' failed (attempt {}/{}, max_attempts={}): {:#}",
+    Err(err.context(format!(
+        "step '{}' failed (attempt {}/{}, max_attempts={})",
         step_id,
         attempt.max(1),
         max_attempts,
-        max_attempts,
-        err
-    ))
+        max_attempts
+    )))
 }
 
 fn execute_concurrent_deterministic(
@@ -1436,6 +1563,28 @@ fn execute_concurrent_deterministic(
     let mut completed: HashSet<String> = resume
         .map(|r| r.completed_step_ids.clone())
         .unwrap_or_default();
+    if let Some(resume) = resume {
+        let mut validated_completed = HashSet::new();
+        for step in &resolved.steps {
+            if !resume.completed_step_ids.contains(&step.id) {
+                continue;
+            }
+            match resume_disposition_for_step(step, out_dir, &completed_outputs)? {
+                ResumeDisposition::Skip(reason) => {
+                    emit_resume_note(emit_progress, &step.id, "skip", reason);
+                    validated_completed.insert(step.id.clone());
+                }
+                ResumeDisposition::Rerun(reason) => {
+                    emit_resume_note(emit_progress, &step.id, "rerun", reason);
+                    if let Some(save_as) = step.save_as.as_ref() {
+                        saved_state.remove(save_as);
+                    }
+                    completed_outputs.remove(&step.id);
+                }
+            }
+        }
+        completed = validated_completed;
+    }
     let mut pending: HashSet<String> = resolved
         .execution_plan
         .nodes
