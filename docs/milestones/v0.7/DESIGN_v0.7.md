@@ -61,6 +61,7 @@ Deliver:
 - Sandbox hardening (symlink escape prevention) (#472)
 - Canonical execution path consolidation (#383)
 - Deferred high-churn rename (#336)
+- Delegation trace lifecycle v1 (#488)
 
 ### G2 — Stable Learning Surfaces
 
@@ -236,6 +237,14 @@ Detailed field-level semantics are documented in `docs/milestones/v0.7/DELEGATIO
 - Out of scope in v0.7:
   - fairness/priorities/preemption/QoS
   - distributed scheduling and durable checkpoint orchestration
+
+### Delegation Trace Model v1 (WP-05 / #488)
+
+- Delegated execution emits a deterministic lifecycle over the existing trace sink.
+- Correlation uses `run_id`, `workflow_id`, `step_id`, and deterministic `delegation_id` values (`del-1`, `del-2`, ...).
+- Event payloads are intentionally privacy-safe: action kind, stable target ids, compact result metadata, and optional policy identifiers only.
+- The normalized trace surface remains usable even when policy data is absent; `rule_id` is optional for compatibility with #487.
+- Reference: `docs/milestones/v0.7/DELEGATION_TRACE_v1.md`
 
 ### Signing Trust Policy Profile (WP-03 / #371)
 

@@ -3556,6 +3556,199 @@ run:
 }
 
 #[test]
+fn trace_emits_deterministic_delegation_lifecycle_sequence() {
+    let base = tmp_dir("exec-delegation-lifecycle-trace");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+        delegation:
+          role: "reviewer"
+          tags: ["safety"]
+"#;
+    let tmp_yaml = base.join("delegation-lifecycle-trace.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out1 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    let out2 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        out1.status.success(),
+        "stdout:
+{}
+stderr:
+{}",
+        String::from_utf8_lossy(&out1.stdout),
+        String::from_utf8_lossy(&out1.stderr)
+    );
+    assert!(
+        out2.status.success(),
+        "stdout:
+{}
+stderr:
+{}",
+        String::from_utf8_lossy(&out2.stdout),
+        String::from_utf8_lossy(&out2.stderr)
+    );
+
+    let normalize = |stdout: &str| -> Vec<String> {
+        stdout
+            .lines()
+            .filter_map(|line| line.split_once(") ").map(|(_, rest)| rest.to_string()))
+            .filter(|line| line.starts_with("Delegation"))
+            .collect()
+    };
+
+    let lifecycle1 = normalize(&String::from_utf8_lossy(&out1.stdout));
+    let lifecycle2 = normalize(&String::from_utf8_lossy(&out2.stdout));
+
+    assert_eq!(
+        lifecycle1,
+        vec![
+            "DelegationRequested delegation_id=del-1 step=s1 action=provider_call target=local"
+                .to_string(),
+            "DelegationPolicyEvaluated delegation_id=del-1 step=s1 action=provider_call target=local decision=allowed"
+                .to_string(),
+            "DelegationDispatched delegation_id=del-1 step=s1 action=provider_call target=local"
+                .to_string(),
+            "DelegationResultReceived delegation_id=del-1 step=s1 success=true bytes=12"
+                .to_string(),
+            "DelegationCompleted delegation_id=del-1 step=s1 outcome=success".to_string(),
+        ]
+    );
+    assert_eq!(
+        lifecycle1, lifecycle2,
+        "delegation lifecycle should be byte-stable across identical runs"
+    );
+
+    let stdout = String::from_utf8_lossy(&out1.stdout);
+    assert!(
+        !stdout.contains(base.to_str().unwrap()),
+        "trace should not leak absolute temp paths:
+{stdout}"
+    );
+}
+
+#[test]
+fn concurrent_delegation_ids_are_deterministic_across_repeated_runs() {
+    let base = tmp_dir("exec-concurrent-delegation-ids");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepEchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  defaults:
+    max_concurrency: 2
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+        delegation:
+          role: "reviewer"
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+        delegation:
+          role: "reviewer"
+"#;
+    let tmp_yaml = base.join("concurrent-delegation-ids.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let parse_ids = |stdout: &str| -> Vec<(String, String)> {
+        stdout
+            .lines()
+            .filter_map(|line| line.split_once(") ").map(|(_, rest)| rest))
+            .filter(|line| line.starts_with("DelegationRequested "))
+            .map(|line| {
+                let mut step_id = String::new();
+                let mut delegation_id = String::new();
+                for part in line.split_whitespace() {
+                    if let Some(v) = part.strip_prefix("step=") {
+                        step_id = v.to_string();
+                    }
+                    if let Some(v) = part.strip_prefix("delegation_id=") {
+                        delegation_id = v.to_string();
+                    }
+                }
+                (step_id, delegation_id)
+            })
+            .collect()
+    };
+
+    let out1 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    let out2 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        out1.status.success(),
+        "stdout:
+{}
+stderr:
+{}",
+        String::from_utf8_lossy(&out1.stdout),
+        String::from_utf8_lossy(&out1.stderr)
+    );
+    assert!(
+        out2.status.success(),
+        "stdout:
+{}
+stderr:
+{}",
+        String::from_utf8_lossy(&out2.stdout),
+        String::from_utf8_lossy(&out2.stderr)
+    );
+
+    let ids1 = parse_ids(&String::from_utf8_lossy(&out1.stdout));
+    let ids2 = parse_ids(&String::from_utf8_lossy(&out2.stdout));
+    assert_eq!(
+        ids1,
+        vec![
+            ("s1".to_string(), "del-1".to_string()),
+            ("s2".to_string(), "del-2".to_string())
+        ]
+    );
+    assert_eq!(
+        ids1, ids2,
+        "delegation ids should remain deterministic across repeated concurrent runs"
+    );
+}
+
+#[test]
 fn step_delegation_does_not_change_concurrent_step_order_determinism() {
     let base = tmp_dir("exec-step-delegation-determinism");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepEchoPrompt);
@@ -3706,8 +3899,8 @@ stderr:
     assert_eq!(
         lifecycle,
         vec![
-            "DelegationPolicyEvaluated action=provider_call target=local decision=denied rule_id=deny-local-provider",
-            "DelegationDenied action=provider_call target=local rule_id=deny-local-provider",
+            "DelegationPolicyEvaluated delegation_id=del-1 step=s1 action=provider_call target=local decision=denied rule_id=deny-local-provider",
+            "DelegationDenied delegation_id=del-1 step=s1 action=provider_call target=local rule_id=deny-local-provider",
         ],
         "stdout was:
 {stdout}"
