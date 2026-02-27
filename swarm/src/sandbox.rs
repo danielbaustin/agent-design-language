@@ -512,6 +512,93 @@ mod tests {
         let _ = fs::remove_dir_all(root);
     }
 
+    #[test]
+    fn sandbox_error_accessors_are_stable_for_all_variants() {
+        let denied = SandboxPathError::PathDenied {
+            requested_path: "sandbox:/a".to_string(),
+            reason: "parent_traversal",
+        };
+        assert_eq!(denied.code(), "sandbox_path_denied");
+        assert!(denied.message().contains("denied"));
+        assert_eq!(denied.requested_path(), Some("sandbox:/a"));
+        assert_eq!(denied.resolved_path(), None);
+
+        let not_found = SandboxPathError::PathNotFound {
+            requested_path: "sandbox:/missing".to_string(),
+        };
+        assert_eq!(not_found.code(), "sandbox_path_not_found");
+        assert!(not_found.message().contains("not found"));
+        assert_eq!(not_found.requested_path(), Some("sandbox:/missing"));
+        assert_eq!(not_found.resolved_path(), None);
+
+        let not_canonical = SandboxPathError::PathNotCanonical {
+            requested_path: "sandbox:/bad".to_string(),
+        };
+        assert_eq!(not_canonical.code(), "sandbox_path_not_canonical");
+        assert!(not_canonical.message().contains("canonicalized"));
+        assert_eq!(not_canonical.requested_path(), Some("sandbox:/bad"));
+        assert_eq!(not_canonical.resolved_path(), None);
+
+        let symlink_disallowed = SandboxPathError::SymlinkDisallowed {
+            requested_path: "sandbox:/link/x".to_string(),
+            resolved_path: Some("sandbox:/resolved/x".to_string()),
+        };
+        assert_eq!(symlink_disallowed.code(), "sandbox_symlink_disallowed");
+        assert!(symlink_disallowed.message().contains("symlink"));
+        assert_eq!(symlink_disallowed.requested_path(), Some("sandbox:/link/x"));
+        assert_eq!(
+            symlink_disallowed.resolved_path(),
+            Some("sandbox:/resolved/x")
+        );
+
+        let escape = SandboxPathError::EscapeAttempt {
+            requested_path: "sandbox:/link/y".to_string(),
+            resolved_path: Some("sandbox:/<outside-root>".to_string()),
+        };
+        assert_eq!(escape.code(), "sandbox_escape_attempt");
+        assert!(escape.message().contains("escapes sandbox root"));
+        assert_eq!(escape.requested_path(), Some("sandbox:/link/y"));
+        assert_eq!(escape.resolved_path(), Some("sandbox:/<outside-root>"));
+
+        let io = SandboxPathError::IoError {
+            requested_path: "sandbox:/io".to_string(),
+            operation: "canonicalize_candidate",
+        };
+        assert_eq!(io.code(), "sandbox_io_error");
+        assert!(io.message().contains("canonicalize_candidate"));
+        assert_eq!(io.requested_path(), Some("sandbox:/io"));
+        assert_eq!(io.resolved_path(), None);
+    }
+
+    #[test]
+    fn sandbox_error_display_matches_message() {
+        let err = SandboxPathError::PathDenied {
+            requested_path: "sandbox:/x".to_string(),
+            reason: "absolute_path",
+        };
+        assert_eq!(format!("{err}"), err.message());
+    }
+
+    #[test]
+    fn resolve_existing_absolute_outside_root_reports_escape_attempt_with_redacted_path() {
+        let root = temp_dir("swarm-sandbox-abs-outside-root");
+        fs::create_dir_all(&root).expect("root");
+        let outside_base = temp_dir("swarm-sandbox-abs-outside-candidate");
+        fs::create_dir_all(&outside_base).expect("outside base");
+        let outside_file = outside_base.join("outside.txt");
+        fs::write(&outside_file, "x").expect("outside write");
+
+        let err = resolve_existing_path_within_root(&root, &outside_file)
+            .expect_err("absolute path outside root should fail");
+        assert_eq!(err.code(), "sandbox_escape_attempt");
+        assert_eq!(err.requested_path(), Some("sandbox:/<absolute>"));
+        assert_eq!(err.resolved_path(), Some("sandbox:/<outside-root>"));
+        assert!(!err.message().contains(&outside_file.display().to_string()));
+
+        let _ = fs::remove_dir_all(root);
+        let _ = fs::remove_dir_all(outside_base);
+    }
+
     #[cfg(windows)]
     #[test]
     fn sandbox_error_message_redacts_windows_drive_letter_paths() {
