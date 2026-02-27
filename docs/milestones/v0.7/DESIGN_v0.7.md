@@ -198,7 +198,7 @@ Hard constraints:
 - All step execution routes through canonical helpers.
 - Retry + provider switching logic centralized.
 - Scheduler policy surface is explicit and configurable.
-- Sandbox validation ensures canonicalized paths stay within base_dir.
+- Sandbox validation ensures canonicalized paths stay within base_dir (see `docs/milestones/v0.7/SANDBOX_FILESYSTEM_v1.md`).
 - Overlay precedence:
 
   1. Workflow spec
