@@ -1,6 +1,52 @@
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use std::collections::VecDeque;
 use std::sync::{mpsc, Arc, Mutex};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BoundedExecutorErrorKind {
+    InvalidParallelism,
+    QueuePoisoned,
+    WorkerPanic,
+    OutputCountMismatch,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct BoundedExecutorError {
+    pub kind: BoundedExecutorErrorKind,
+    pub message: String,
+}
+
+impl std::fmt::Display for BoundedExecutorError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl std::error::Error for BoundedExecutorError {}
+
+impl BoundedExecutorError {
+    fn new(kind: BoundedExecutorErrorKind, message: impl Into<String>) -> Self {
+        Self {
+            kind,
+            message: message.into(),
+        }
+    }
+}
+
+pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
+    for cause in err.chain() {
+        if let Some(exec_err) = cause.downcast_ref::<BoundedExecutorError>() {
+            return Some(match exec_err.kind {
+                BoundedExecutorErrorKind::WorkerPanic | BoundedExecutorErrorKind::QueuePoisoned => {
+                    "panic"
+                }
+                BoundedExecutorErrorKind::InvalidParallelism => "schema_error",
+                BoundedExecutorErrorKind::OutputCountMismatch => "io_error",
+            });
+        }
+    }
+    None
+}
 
 struct Job<T> {
     index: usize,
@@ -12,7 +58,11 @@ pub fn run_bounded<T: Send + 'static>(
     jobs: Vec<Box<dyn FnOnce() -> T + Send + 'static>>,
 ) -> Result<Vec<T>> {
     if max_parallel == 0 {
-        return Err(anyhow!("max_parallel must be >= 1"));
+        return Err(BoundedExecutorError::new(
+            BoundedExecutorErrorKind::InvalidParallelism,
+            "max_parallel must be >= 1",
+        )
+        .into());
     }
     if jobs.is_empty() {
         return Ok(Vec::new());
@@ -73,18 +123,26 @@ pub fn run_bounded<T: Send + 'static>(
 
     for h in handles {
         if h.join().is_err() {
-            return Err(anyhow!("bounded executor worker panicked"));
+            return Err(BoundedExecutorError::new(
+                BoundedExecutorErrorKind::WorkerPanic,
+                "bounded executor worker panicked",
+            )
+            .into());
         }
     }
     if let Some(msg) = worker_error {
-        return Err(anyhow!(msg));
+        return Err(BoundedExecutorError::new(BoundedExecutorErrorKind::QueuePoisoned, msg).into());
     }
 
     if out.len() != expected_count {
-        return Err(anyhow!(
-            "bounded executor output count mismatch (expected {expected_count}, got {})",
-            out.len()
-        ));
+        return Err(BoundedExecutorError::new(
+            BoundedExecutorErrorKind::OutputCountMismatch,
+            format!(
+                "bounded executor output count mismatch (expected {expected_count}, got {})",
+                out.len()
+            ),
+        )
+        .into());
     }
 
     out.sort_by_key(|(idx, _)| *idx);
