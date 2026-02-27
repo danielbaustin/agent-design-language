@@ -404,6 +404,7 @@ mod tests {
                 inputs: std::collections::HashMap::new(),
                 placement: None,
                 remote: None,
+                delegation_policy: None,
             },
         }
     }

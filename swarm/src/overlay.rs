@@ -263,6 +263,7 @@ mod tests {
                 inputs: Default::default(),
                 placement: None,
                 remote: None,
+                delegation_policy: None,
             },
         }
     }

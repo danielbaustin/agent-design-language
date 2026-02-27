@@ -64,6 +64,8 @@ pub enum TraceEventNormalized {
     DelegationPolicyEvaluated {
         delegation_id: String,
         step_id: String,
+        action_kind: String,
+        target_id: String,
         decision: String,
         rule_id: Option<String>,
     },
@@ -74,6 +76,8 @@ pub enum TraceEventNormalized {
     DelegationDenied {
         delegation_id: String,
         step_id: String,
+        action_kind: String,
+        target_id: String,
         rule_id: Option<String>,
     },
     DelegationDispatched {
@@ -399,12 +403,16 @@ pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized
             TraceEvent::DelegationPolicyEvaluated {
                 delegation_id,
                 step_id,
+                action_kind,
+                target_id,
                 decision,
                 rule_id,
                 ..
             } => TraceEventNormalized::DelegationPolicyEvaluated {
                 delegation_id: delegation_id.clone(),
                 step_id: step_id.clone(),
+                action_kind: action_kind.clone(),
+                target_id: target_id.clone(),
                 decision: decision.clone(),
                 rule_id: rule_id.clone(),
             },
@@ -419,11 +427,15 @@ pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized
             TraceEvent::DelegationDenied {
                 delegation_id,
                 step_id,
+                action_kind,
+                target_id,
                 rule_id,
                 ..
             } => TraceEventNormalized::DelegationDenied {
                 delegation_id: delegation_id.clone(),
                 step_id: step_id.clone(),
+                action_kind: action_kind.clone(),
+                target_id: target_id.clone(),
                 rule_id: rule_id.clone(),
             },
             TraceEvent::DelegationDispatched {
@@ -541,11 +553,13 @@ pub fn format_normalized_event(ev: &TraceEventNormalized) -> String {
         TraceEventNormalized::DelegationPolicyEvaluated {
             delegation_id,
             step_id,
+            action_kind,
+            target_id,
             decision,
             rule_id,
         } => {
             let base = format!(
-                "DelegationPolicyEvaluated delegation_id={delegation_id} step={step_id} decision={decision}"
+                "DelegationPolicyEvaluated delegation_id={delegation_id} step={step_id} action={action_kind} target={target_id} decision={decision}"
             );
             if let Some(rule_id) = rule_id {
                 format!("{base} rule_id={rule_id}")
@@ -560,9 +574,13 @@ pub fn format_normalized_event(ev: &TraceEventNormalized) -> String {
         TraceEventNormalized::DelegationDenied {
             delegation_id,
             step_id,
+            action_kind,
+            target_id,
             rule_id,
         } => {
-            let base = format!("DelegationDenied delegation_id={delegation_id} step={step_id}");
+            let base = format!(
+                "DelegationDenied delegation_id={delegation_id} step={step_id} action={action_kind} target={target_id}"
+            );
             if let Some(rule_id) = rule_id {
                 format!("{base} rule_id={rule_id}")
             } else {
@@ -944,6 +962,8 @@ mod tests {
                 elapsed_ms: 2,
                 delegation_id: "del-1".to_string(),
                 step_id: "s1".to_string(),
+                action_kind: "provider_call".to_string(),
+                target_id: "local".to_string(),
                 decision: "allowed".to_string(),
                 rule_id: None,
             },
@@ -965,7 +985,7 @@ mod tests {
             normalized.iter().map(format_normalized_event).collect::<Vec<_>>(),
             vec![
                 "DelegationRequested delegation_id=del-1 step=s1 action=provider_call target=local".to_string(),
-                "DelegationPolicyEvaluated delegation_id=del-1 step=s1 decision=allowed".to_string(),
+                "DelegationPolicyEvaluated delegation_id=del-1 step=s1 action=provider_call target=local decision=allowed".to_string(),
                 "DelegationDispatched delegation_id=del-1 step=s1 action=provider_call target=local".to_string(),
             ]
         );
@@ -974,6 +994,14 @@ mod tests {
     #[test]
     fn format_normalized_event_covers_variants() {
         let messages = [
+            format_normalized_event(&TraceEventNormalized::DelegationPolicyEvaluated {
+                delegation_id: "del-1".to_string(),
+                step_id: "s1".to_string(),
+                action_kind: "provider_call".to_string(),
+                target_id: "local".to_string(),
+                decision: "denied".to_string(),
+                rule_id: Some("deny-local".to_string()),
+            }),
             format_normalized_event(&TraceEventNormalized::RunFailed {
                 message: "boom".to_string(),
             }),
@@ -1009,6 +1037,9 @@ mod tests {
             }),
         ];
         assert!(messages.iter().any(|m| m.contains("RunFailed")));
+        assert!(messages
+            .iter()
+            .any(|m| m.contains("DelegationPolicyEvaluated")));
         assert!(messages.iter().any(|m| m.contains("delegation=")));
         assert!(messages.iter().any(|m| m.contains("CallExited")));
     }
