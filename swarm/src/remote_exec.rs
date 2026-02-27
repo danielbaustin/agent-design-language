@@ -563,17 +563,9 @@ pub fn validate_security_envelope(
             std::path::Path::new(rel),
         );
         if let Err(err) = resolved {
-            return Err(match err {
-                sandbox::SandboxPathError::AbsolutePath { .. }
-                | sandbox::SandboxPathError::ParentTraversal { .. } => {
-                    SecurityEnvelopeError::PathTraversal { path: rel.clone() }
-                }
-                sandbox::SandboxPathError::PathOutsideRoot { .. }
-                | sandbox::SandboxPathError::EmptyPath
-                | sandbox::SandboxPathError::RootCanonicalizeFailed { .. }
-                | sandbox::SandboxPathError::SymlinkEscape { .. } => {
-                    SecurityEnvelopeError::SymlinkEscape { path: rel.clone() }
-                }
+            return Err(match err.code() {
+                "sandbox_path_denied" => SecurityEnvelopeError::PathTraversal { path: rel.clone() },
+                _ => SecurityEnvelopeError::SymlinkEscape { path: rel.clone() },
             });
         }
     }

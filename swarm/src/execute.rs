@@ -74,11 +74,17 @@ pub fn materialize_inputs(
 
         let canon =
             sandbox::resolve_existing_path_within_root(base_dir, &candidate).map_err(|err| {
+                let requested = err.requested_path().unwrap_or("sandbox:/<unknown>");
+                let resolved = err
+                    .resolved_path()
+                    .map(|value| format!(" resolved_path={value}"))
+                    .unwrap_or_default();
                 anyhow!(
-                    "input '{k}' file rejected by sandbox resolver: {} (path='{}', base_dir='{}')",
+                    "input '{k}' file rejected by sandbox resolver: code={} message={} requested_path={}{}",
+                    err.code(),
                     err.message(),
-                    path_for_stat.display(),
-                    base_dir.display()
+                    requested,
+                    resolved
                 )
             })?;
 
@@ -1827,10 +1833,18 @@ fn write_output(step_id: &str, out_dir: &Path, write_to: &str, contents: &str) -
     let rel = PathBuf::from(write_to);
     let path =
         sandbox::resolve_relative_path_for_write_within_root(out_dir, &rel).map_err(|err| {
+            let requested = err.requested_path().unwrap_or("sandbox:/<unknown>");
+            let resolved = err
+                .resolved_path()
+                .map(|value| format!(" resolved_path={value}"))
+                .unwrap_or_default();
             anyhow!(
-                "step '{}' write_to rejected by sandbox resolver: {}",
+                "step {} write_to rejected by sandbox resolver: code={} message={} requested_path={}{}",
                 step_id,
-                err.message()
+                err.code(),
+                err.message(),
+                requested,
+                resolved
             )
         })?;
     if let Some(parent) = path.parent() {
