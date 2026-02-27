@@ -511,4 +511,22 @@ mod tests {
 
         let _ = fs::remove_dir_all(root);
     }
+
+    #[cfg(windows)]
+    #[test]
+    fn sandbox_error_message_redacts_windows_drive_letter_paths() {
+        let root = temp_dir("swarm-sandbox-windows-redaction");
+        fs::create_dir_all(&root).expect("root");
+
+        let win_abs = PathBuf::from(r"C:\Users\alice\secrets.txt");
+        let err = resolve_relative_path_for_write_within_root(&root, &win_abs)
+            .expect_err("windows absolute path must be denied");
+        let msg = err.message();
+        assert_eq!(err.code(), "sandbox_path_denied");
+        assert_eq!(err.requested_path(), Some("sandbox:/<absolute>"));
+        assert!(!msg.contains(r"C:\Users\alice\secrets.txt"));
+        assert!(!msg.contains(r"C:\"));
+
+        let _ = fs::remove_dir_all(root);
+    }
 }
