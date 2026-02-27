@@ -74,3 +74,11 @@ This v1 schema is intended to support later surfaces without reformatting trace 
 - policy/audit enrichment (#487)
 - learning/scoring surfaces
 - demo/review artifacts
+
+
+## v1 Guarantees
+
+- Determinism: `delegation_id` allocation is deterministic under repeated replay, including concurrent delegated runs, because lifecycle start is emitted in deterministic step order.
+- Ordering semantics: allowed lifecycles emit `DelegationRequested` -> `DelegationPolicyEvaluated` -> `DelegationDispatched` -> `DelegationResultReceived` -> `DelegationCompleted`; denied paths are represented without dispatch.
+- Non-goals: no approval UX, no new sink/format, no raw prompt or argument logging, and no expansion of policy grammar.
+- Forward compatibility: optional fields such as `rule_id` allow policy enrichment later without breaking the v1 normalized trace contract.
