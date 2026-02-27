@@ -1,16 +1,21 @@
 [package]
-name = "swarm"
+name = "adl"
 version = "0.6.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "ADL (Agent Design Language) reference runtime and CLI"
 
 [lib]
+name = "swarm"
 path = "src/lib.rs"
 
 [[bin]]
-name = "swarm"
+name = "adl"
 path = "src/main.rs"
+
+[[bin]]
+name = "swarm"
+path = "src/bin/swarm.rs"
 
 [[bin]]
 name = "swarm-remote"
