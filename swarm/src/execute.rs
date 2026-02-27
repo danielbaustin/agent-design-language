@@ -585,6 +585,7 @@ pub fn execute_sequential_with_resume(
         }
 
         let continue_on_error = matches!(step.on_error, Some(crate::adl::StepOnError::Continue));
+        let max_attempts = step.retry.as_ref().map(|r| r.max_attempts).unwrap_or(1);
         match execute_step_with_retry_core(
             step,
             &resolved.doc,
@@ -637,8 +638,10 @@ pub fn execute_sequential_with_resume(
                 if let Some(save_as) = step.save_as.as_ref() {
                     saved_state.insert(save_as.clone(), success.out.model_output.clone());
                 }
-                completed_outputs
-                    .insert(step_id.clone(), model_output_fingerprint(&success.out.model_output));
+                completed_outputs.insert(
+                    step_id.clone(),
+                    model_output_fingerprint(&success.out.model_output),
+                );
                 completed_step_ids.insert(step_id.clone());
                 outs.push(success.out);
 
@@ -688,12 +691,10 @@ pub fn execute_sequential_with_resume(
                     continue;
                 }
                 tr.run_failed(&failure.err.to_string());
-                return Err(anyhow!(
-                    "step '{}' failed after {} attempt(s): {:#}",
-                    step_id,
-                    failure.attempts,
-                    failure.err
-                ));
+                return Err(failure.err.context(format!(
+                    "step '{}' failed (attempt {}/{}, max_attempts={})",
+                    step_id, failure.attempts, max_attempts, max_attempts
+                )));
             }
         }
     }
@@ -1255,6 +1256,7 @@ fn execute_step_with_retry(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn execute_step_with_retry_core<F>(
     step: &crate::resolve::ResolvedStep,
     doc: &crate::adl::AdlDoc,
@@ -1403,7 +1405,7 @@ where
                 },
                 attempts: attempt,
                 prompt_hash,
-                stream_chunks: attempt_stream_chunks,
+                stream_chunks: attempt_stream_chunks.clone(),
             })
         })();
 
