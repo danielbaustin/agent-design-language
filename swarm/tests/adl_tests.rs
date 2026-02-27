@@ -135,6 +135,7 @@ fn effective_prompt_priority_is_step_then_task_then_agent() {
             inputs: HashMap::new(),
             placement: None,
             remote: None,
+            delegation_policy: None,
         },
     };
 
@@ -349,6 +350,92 @@ run:
     assert!(
         err.to_string().contains("unknown_field"),
         "unexpected error: {err}"
+    );
+}
+
+#[test]
+fn validate_rejects_duplicate_delegation_policy_rule_ids() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  delegation_policy:
+    default_allow: true
+    rules:
+      - id: "dup"
+        action: provider_call
+        effect: allow
+      - id: "dup"
+        action: filesystem_write
+        effect: deny
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        delegation:
+          role: "reviewer"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml parse");
+    let err = doc
+        .validate()
+        .expect_err("duplicate delegation rule ids must fail");
+    assert!(
+        err.to_string().contains("duplicate id 'dup'"),
+        "unexpected error: {err:#}"
+    );
+}
+
+#[test]
+fn validate_rejects_empty_delegation_policy_target_id() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  delegation_policy:
+    default_allow: true
+    rules:
+      - id: "bad-target"
+        action: provider_call
+        target_id: "   "
+        effect: deny
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        delegation:
+          role: "reviewer"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml parse");
+    let err = doc
+        .validate()
+        .expect_err("empty delegation target_id must fail");
+    assert!(
+        err.to_string().contains("target_id must not be empty"),
+        "unexpected error: {err:#}"
     );
 }
 

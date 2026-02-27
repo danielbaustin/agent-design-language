@@ -207,6 +207,18 @@ Hard constraints:
 
 Security/trust policies cannot be overridden by overlays.
 
+### Delegation Policy Surface v1 (WP-04 / #487)
+
+Delegation policy is intentionally minimal in v0.7:
+
+- policy is configured under `run.delegation_policy`
+- rules are evaluated in declared order
+- first match wins; otherwise `default_allow` applies
+- the runtime emits minimal audit data through the existing trace sink
+- policy decisions cannot bypass the security envelope or sandbox layers
+
+Detailed field-level semantics are documented in `docs/milestones/v0.7/DELEGATION_POLICY_v1.md`.
+
 ### Scheduler Policy Surface (WP-05 / #369)
 
 - Surface area is intentionally minimal for determinism:

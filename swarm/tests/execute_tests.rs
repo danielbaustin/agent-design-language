@@ -3212,6 +3212,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
             inputs: HashMap::new(),
             placement: None,
             remote: None,
+            delegation_policy: None,
         },
     };
 
@@ -3311,6 +3312,13 @@ fn trace_chunk_step_ids(stdout: &str) -> Vec<String> {
             Some(tail.split_whitespace().next()?.to_string())
         })
         .collect()
+}
+
+fn delegation_error_code(stderr: &str) -> Option<&str> {
+    stderr
+        .lines()
+        .find_map(|line| line.strip_prefix("Error: "))
+        .and_then(|msg| msg.split(": ").next())
 }
 
 #[test]
@@ -3617,6 +3625,103 @@ run:
     let started2 = trace_started_step_ids(&String::from_utf8_lossy(&out2.stdout));
     assert_eq!(started1, vec!["s1", "s2", "s3", "s4"]);
     assert_eq!(started1, started2);
+}
+
+#[test]
+fn run_delegation_policy_deny_has_stable_error_code_and_trace() {
+    let base = tmp_dir("exec-delegation-policy-deny");
+
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  delegation_policy:
+    default_allow: true
+    rules:
+      - id: "deny-local-provider"
+        action: provider_call
+        target_id: "local"
+        effect: deny
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+        delegation:
+          role: "reviewer"
+          tags: ["safety"]
+"#;
+
+    let tmp_yaml = base.join("delegation-policy-deny.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        !out.status.success(),
+        "expected denial failure.
+stdout:
+{}
+stderr:
+{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert_eq!(
+        delegation_error_code(&stderr),
+        Some(swarm::execute::DELEGATION_POLICY_DENY_CODE),
+        "stderr was:
+{stderr}"
+    );
+    assert!(
+        stderr.contains("action 'provider_call' target 'local' denied"),
+        "stderr was:
+{stderr}"
+    );
+    assert!(
+        stderr.contains("rule_id=deny-local-provider"),
+        "stderr was:
+{stderr}"
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let lifecycle: Vec<&str> = stdout
+        .lines()
+        .filter_map(|line| line.split_once(") ").map(|(_, rest)| rest))
+        .filter(|line| line.starts_with("Delegation"))
+        .collect();
+    assert_eq!(
+        lifecycle,
+        vec![
+            "DelegationPolicyEvaluated action=provider_call target=local decision=denied rule_id=deny-local-provider",
+            "DelegationDenied action=provider_call target=local rule_id=deny-local-provider",
+        ],
+        "stdout was:
+{stdout}"
+    );
+    assert!(
+        !stdout.contains("DelegationDispatched"),
+        "denied policy path must not dispatch. stdout was:
+{stdout}"
+    );
+    assert!(
+        !stdout.contains("StepStarted step=s1"),
+        "policy denial should happen before StepStarted. stdout was:
+{stdout}"
+    );
 }
 
 #[test]

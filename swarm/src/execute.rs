@@ -5,6 +5,7 @@ use anyhow::{anyhow, Context, Result};
 use serde::{Deserialize, Serialize};
 
 use crate::bounded_executor;
+use crate::delegation_policy::{self, DelegationDecision};
 use crate::prompt;
 use crate::provider;
 use crate::remote_exec;
@@ -348,6 +349,7 @@ pub fn execute_sequential_with_resume(
             }
             validate_write_to(&step_id, write_to)?;
         }
+        enforce_delegation_policy_for_step_actions(tr, step, &resolved.doc)?;
 
         tr.step_started(
             &step_id,
@@ -819,6 +821,7 @@ fn execute_called_workflow(
             }
             validate_write_to(&full_id, write_to)?;
         }
+        enforce_delegation_policy_for_step_actions(tr, &resolved_step, &resolved.doc)?;
 
         tr.step_started(
             &full_id,
@@ -982,6 +985,9 @@ struct StepRunSuccess {
 
 type StepJob = Box<dyn FnOnce() -> (String, Result<StepRunSuccess>) + Send>;
 
+pub const DELEGATION_POLICY_DENY_CODE: &str = "DELEGATION_POLICY_DENY";
+pub const DELEGATION_POLICY_APPROVAL_REQUIRED_CODE: &str = "DELEGATION_POLICY_APPROVAL_REQUIRED";
+
 fn effective_prompt_with_defaults_from_doc(
     step: &crate::resolve::ResolvedStep,
     doc: &crate::adl::AdlDoc,
@@ -1065,6 +1071,110 @@ pub fn scheduler_policy_for_run(
     }
     let (max_parallel, source) = effective_max_concurrency_with_source(resolved)?;
     Ok(Some((max_parallel, source)))
+}
+
+fn enforce_delegation_policy(
+    tr: &mut Trace,
+    step: &crate::resolve::ResolvedStep,
+    doc: &crate::adl::AdlDoc,
+    action: crate::adl::DelegationActionKind,
+    target_id: &str,
+) -> Result<()> {
+    let outcome = delegation_policy::evaluate(
+        doc.run.delegation_policy.as_ref(),
+        step.delegation.as_ref(),
+        action.clone(),
+        target_id,
+    );
+
+    tr.delegation_policy_evaluated(
+        action.as_str(),
+        target_id,
+        outcome.decision.as_str(),
+        outcome.rule_id.as_deref(),
+    );
+
+    match outcome.decision {
+        DelegationDecision::Allowed => Ok(()),
+        DelegationDecision::NeedsApproval => Err(anyhow!(
+            "{}: step '{}' action '{}' target '{}' requires approval{}",
+            DELEGATION_POLICY_APPROVAL_REQUIRED_CODE,
+            step.id,
+            action.as_str(),
+            target_id,
+            outcome
+                .rule_id
+                .as_ref()
+                .map(|id| format!(" (rule_id={id})"))
+                .unwrap_or_default()
+        )),
+        DelegationDecision::Denied => {
+            tr.delegation_denied(action.as_str(), target_id, outcome.rule_id.as_deref());
+            Err(anyhow!(
+                "{}: step '{}' action '{}' target '{}' denied{}",
+                DELEGATION_POLICY_DENY_CODE,
+                step.id,
+                action.as_str(),
+                target_id,
+                outcome
+                    .rule_id
+                    .as_ref()
+                    .map(|id| format!(" (rule_id={id})"))
+                    .unwrap_or_default()
+            ))
+        }
+    }
+}
+
+fn enforce_delegation_policy_for_step_actions(
+    tr: &mut Trace,
+    step: &crate::resolve::ResolvedStep,
+    doc: &crate::adl::AdlDoc,
+) -> Result<()> {
+    let provider_id: &str = step.provider.as_deref().unwrap_or("<unresolved-provider>");
+    match effective_step_placement(step, doc) {
+        crate::adl::PlacementMode::Local => enforce_delegation_policy(
+            tr,
+            step,
+            doc,
+            crate::adl::DelegationActionKind::ProviderCall,
+            provider_id,
+        )?,
+        crate::adl::PlacementMode::Remote => enforce_delegation_policy(
+            tr,
+            step,
+            doc,
+            crate::adl::DelegationActionKind::RemoteExec,
+            "run.remote.endpoint",
+        )?,
+    }
+
+    if step.write_to.is_some() {
+        let target = step.write_to.as_deref().unwrap_or("<none>");
+        enforce_delegation_policy(
+            tr,
+            step,
+            doc,
+            crate::adl::DelegationActionKind::FilesystemWrite,
+            target,
+        )?;
+    }
+
+    if step
+        .inputs
+        .values()
+        .any(|v| v.trim_start().starts_with("@file:"))
+    {
+        enforce_delegation_policy(
+            tr,
+            step,
+            doc,
+            crate::adl::DelegationActionKind::FilesystemRead,
+            "@file",
+        )?;
+    }
+
+    Ok(())
 }
 
 fn execute_step_with_retry(
@@ -1312,6 +1422,7 @@ fn execute_concurrent_deterministic(
             let agent_id = step.agent.as_deref().unwrap_or("<unresolved-agent>");
             let task_id = step.task.as_deref().unwrap_or("<unresolved-task>");
             let provider_id = step.provider.as_deref().unwrap_or("<unresolved-provider>");
+            enforce_delegation_policy_for_step_actions(tr, step, &resolved.doc)?;
             tr.step_started(
                 step_id,
                 agent_id,
@@ -1629,6 +1740,7 @@ mod tests {
                     inputs: HashMap::new(),
                     placement: None,
                     remote: None,
+                    delegation_policy: None,
                 },
             },
             steps: vec![],

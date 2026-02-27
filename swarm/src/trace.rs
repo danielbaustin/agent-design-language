@@ -16,6 +16,21 @@ pub struct Trace {
 
 #[derive(Debug, Clone)]
 pub enum TraceEvent {
+    DelegationPolicyEvaluated {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        action_kind: String,
+        target_id: String,
+        decision: String,
+        rule_id: Option<String>,
+    },
+    DelegationDenied {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        action_kind: String,
+        target_id: String,
+        rule_id: Option<String>,
+    },
     SchedulerPolicy {
         ts_ms: u128,
         elapsed_ms: u128,
@@ -79,6 +94,48 @@ pub enum TraceEvent {
 impl TraceEvent {
     pub fn summarize(&self) -> String {
         match self {
+            TraceEvent::DelegationPolicyEvaluated {
+                ts_ms,
+                elapsed_ms,
+                action_kind,
+                target_id,
+                decision,
+                rule_id,
+            } => {
+                let base = format!(
+                    "{} (+{}ms) DelegationPolicyEvaluated action={} target={} decision={}",
+                    format_ts_ms(*ts_ms),
+                    elapsed_ms,
+                    action_kind,
+                    target_id,
+                    decision
+                );
+                if let Some(rule_id) = rule_id {
+                    format!("{base} rule_id={rule_id}")
+                } else {
+                    base
+                }
+            }
+            TraceEvent::DelegationDenied {
+                ts_ms,
+                elapsed_ms,
+                action_kind,
+                target_id,
+                rule_id,
+            } => {
+                let base = format!(
+                    "{} (+{}ms) DelegationDenied action={} target={}",
+                    format_ts_ms(*ts_ms),
+                    elapsed_ms,
+                    action_kind,
+                    target_id
+                );
+                if let Some(rule_id) = rule_id {
+                    format!("{base} rule_id={rule_id}")
+                } else {
+                    base
+                }
+            }
             TraceEvent::SchedulerPolicy {
                 ts_ms,
                 elapsed_ms,
@@ -238,6 +295,37 @@ impl Trace {
             delegation: delegation.cloned(),
         });
         self.step_started_ms.insert(step_id.to_string(), elapsed_ms);
+    }
+
+    pub fn delegation_policy_evaluated(
+        &mut self,
+        action_kind: &str,
+        target_id: &str,
+        decision: &str,
+        rule_id: Option<&str>,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::DelegationPolicyEvaluated {
+            ts_ms,
+            elapsed_ms,
+            action_kind: action_kind.to_string(),
+            target_id: target_id.to_string(),
+            decision: decision.to_string(),
+            rule_id: rule_id.map(|v| v.to_string()),
+        });
+    }
+
+    pub fn delegation_denied(&mut self, action_kind: &str, target_id: &str, rule_id: Option<&str>) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::DelegationDenied {
+            ts_ms,
+            elapsed_ms,
+            action_kind: action_kind.to_string(),
+            target_id: target_id.to_string(),
+            rule_id: rule_id.map(|v| v.to_string()),
+        });
     }
 
     pub fn run_failed(&mut self, message: &str) {
@@ -457,6 +545,24 @@ mod tests {
     }
 
     #[test]
+    fn trace_records_delegation_denied_event_with_optional_rule_id() {
+        let mut tr = Trace::new("run-1", "wf-1", "0.7");
+        tr.delegation_denied("provider_call", "local", Some("deny-local"));
+        tr.delegation_denied("provider_call", "backup", None);
+
+        let line0 = tr.events[0].summarize();
+        let line1 = tr.events[1].summarize();
+        assert!(line0.contains("DelegationDenied"));
+        assert!(line0.contains("action=provider_call"));
+        assert!(line0.contains("target=local"));
+        assert!(line0.contains("rule_id=deny-local"));
+        assert!(line1.contains("DelegationDenied"));
+        assert!(line1.contains("action=provider_call"));
+        assert!(line1.contains("target=backup"));
+        assert!(!line1.contains("rule_id="));
+    }
+
+    #[test]
     fn trace_records_scheduler_policy_event() {
         let mut tr = Trace::new("run-1", "wf-1", "0.7");
         tr.scheduler_policy(4, "engine_default");
@@ -476,6 +582,25 @@ mod tests {
             }
             _ => panic!("expected SchedulerPolicy event"),
         }
+    }
+
+    #[test]
+    fn trace_records_delegation_policy_event_with_optional_rule_id() {
+        let mut tr = Trace::new("run-del-policy", "wf-del-policy", "0.7");
+        tr.delegation_policy_evaluated("provider_call", "local", "denied", Some("deny-local"));
+        tr.delegation_policy_evaluated("provider_call", "backup", "allowed", None);
+        assert_eq!(tr.events.len(), 2);
+
+        let line0 = tr.events[0].summarize();
+        assert!(line0.contains("DelegationPolicyEvaluated"));
+        assert!(line0.contains("action=provider_call"));
+        assert!(line0.contains("target=local"));
+        assert!(line0.contains("decision=denied"));
+        assert!(line0.contains("rule_id=deny-local"));
+
+        let line1 = tr.events[1].summarize();
+        assert!(line1.contains("decision=allowed"));
+        assert!(!line1.contains("rule_id="));
     }
 
     #[test]

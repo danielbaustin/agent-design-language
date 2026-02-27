@@ -180,6 +180,29 @@ impl AdlDoc {
                 }
             }
         }
+        if let Some(policy) = self.run.delegation_policy.as_ref() {
+            let mut seen_rule_ids = std::collections::BTreeSet::new();
+            for (idx, rule) in policy.rules.iter().enumerate() {
+                if rule.id.trim().is_empty() {
+                    return Err(anyhow!(
+                        "run.delegation_policy.rules[{idx}].id must not be empty"
+                    ));
+                }
+                if !seen_rule_ids.insert(rule.id.clone()) {
+                    return Err(anyhow!(
+                        "run.delegation_policy.rules contains duplicate id '{}'",
+                        rule.id
+                    ));
+                }
+                if let Some(target_id) = rule.target_id.as_ref() {
+                    if target_id.trim().is_empty() {
+                        return Err(anyhow!(
+                            "run.delegation_policy.rules[{idx}].target_id must not be empty when provided"
+                        ));
+                    }
+                }
+            }
+        }
 
         if let Some(pattern_ref) = self.run.pattern_ref.as_ref() {
             if !self.patterns.iter().any(|p| p.id == *pattern_ref) {
@@ -669,6 +692,9 @@ pub struct RunSpec {
 
     #[serde(default)]
     pub remote: Option<RunRemoteSpec>,
+
+    #[serde(default)]
+    pub delegation_policy: Option<DelegationPolicySpec>,
 }
 
 impl RunSpec {
@@ -704,6 +730,73 @@ pub struct RunDefaults {
     /// When omitted, runtime uses a conservative default.
     #[serde(default)]
     pub max_concurrency: Option<usize>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct DelegationPolicySpec {
+    #[serde(default = "default_true")]
+    pub default_allow: bool,
+
+    #[serde(default)]
+    pub rules: Vec<DelegationPolicyRuleSpec>,
+}
+
+impl Default for DelegationPolicySpec {
+    fn default() -> Self {
+        Self {
+            default_allow: true,
+            rules: Vec::new(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct DelegationPolicyRuleSpec {
+    pub id: String,
+    pub action: DelegationActionKind,
+
+    #[serde(default)]
+    pub target_id: Option<String>,
+
+    pub effect: DelegationRuleEffect,
+
+    #[serde(default)]
+    pub require_approval: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum DelegationActionKind {
+    ToolInvoke,
+    ProviderCall,
+    RemoteExec,
+    FilesystemRead,
+    FilesystemWrite,
+}
+
+impl DelegationActionKind {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            DelegationActionKind::ToolInvoke => "tool_invoke",
+            DelegationActionKind::ProviderCall => "provider_call",
+            DelegationActionKind::RemoteExec => "remote_exec",
+            DelegationActionKind::FilesystemRead => "filesystem_read",
+            DelegationActionKind::FilesystemWrite => "filesystem_write",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum DelegationRuleEffect {
+    Allow,
+    Deny,
+}
+
+fn default_true() -> bool {
+    true
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -1110,6 +1203,7 @@ mod tests {
                 inputs: HashMap::new(),
                 placement: None,
                 remote: None,
+                delegation_policy: None,
             },
         };
 
@@ -1144,6 +1238,7 @@ mod tests {
                 inputs: HashMap::new(),
                 placement: None,
                 remote: None,
+                delegation_policy: None,
             },
         };
         let err = doc
@@ -1424,6 +1519,7 @@ temperature: 0.7
                 inputs: HashMap::new(),
                 placement: None,
                 remote: None,
+                delegation_policy: None,
             },
         };
         let err = doc.validate().expect_err("id mismatch should fail");
