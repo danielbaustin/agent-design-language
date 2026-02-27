@@ -13,8 +13,8 @@ use tiny_http::{Header, Method, Response, Server};
 
 use crate::adl;
 use crate::provider;
-use crate::sandbox;
 use crate::signing;
+use crate::{env_compat, sandbox};
 
 pub const PROTOCOL_VERSION: &str = "0.1";
 const MAX_REQUEST_BYTES: usize = 5 * 1024 * 1024;
@@ -333,15 +333,19 @@ pub fn maybe_attach_request_signature_from_env(req: &mut ExecuteRequest) -> Resu
         .as_ref()
         .map(|env| env.require_signature)
         .unwrap_or(false);
-    let private_key = std::env::var("ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64")
-        .ok()
-        .map(|v| v.trim().to_string())
-        .filter(|v| !v.is_empty());
-    let key_id = std::env::var("ADL_REMOTE_REQUEST_SIGNING_KEY_ID")
-        .ok()
-        .map(|v| v.trim().to_string())
-        .filter(|v| !v.is_empty())
-        .or_else(|| req.security.as_ref().and_then(|env| env.key_id.clone()));
+    let private_key = env_compat::var(
+        "ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64",
+        "SWARM_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64",
+    )
+    .map(|v| v.trim().to_string())
+    .filter(|v| !v.is_empty());
+    let key_id = env_compat::var(
+        "ADL_REMOTE_REQUEST_SIGNING_KEY_ID",
+        "SWARM_REMOTE_REQUEST_SIGNING_KEY_ID",
+    )
+    .map(|v| v.trim().to_string())
+    .filter(|v| !v.is_empty())
+    .or_else(|| req.security.as_ref().and_then(|env| env.key_id.clone()));
 
     match (require_signature, private_key) {
         (true, None) => {

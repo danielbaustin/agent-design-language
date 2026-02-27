@@ -195,7 +195,7 @@ config:
     );
 
     // This test intentionally does NOT call complete(). Calling complete() depends on
-    // external binaries and ambient environment (e.g., SWARM_TIMEOUT_SECS), which can
+    // external binaries and ambient environment (e.g., ADL_TIMEOUT_SECS), which can
     // make the test flaky under parallel execution. We only verify construction.
     let _p = build_provider(&spec, None).expect("build_provider failed");
 }
@@ -205,7 +205,7 @@ fn provider_complete_uses_mock_binary_success() {
     let dir = unique_test_temp_dir("swarm-provider-tests");
     let bin = make_mock_ollama_success(&dir).unwrap();
 
-    let _env_guard = EnvVarGuard::set("SWARM_OLLAMA_BIN", &bin);
+    let _env_guard = EnvVarGuard::set("ADL_OLLAMA_BIN", &bin);
 
     let spec = provider_spec_from_yaml(
         r#"
@@ -287,8 +287,8 @@ fn provider_complete_times_out_with_env_override() {
     let bin = make_mock_ollama_sleep(&dir).unwrap();
 
     let _env_guard = EnvVarGuard::set_many(&[
-        ("SWARM_OLLAMA_BIN", bin.as_os_str()),
-        ("SWARM_TIMEOUT_SECS", std::ffi::OsStr::new("1")),
+        ("ADL_OLLAMA_BIN", bin.as_os_str()),
+        ("ADL_TIMEOUT_SECS", std::ffi::OsStr::new("1")),
     ]);
 
     let spec = provider_spec_from_yaml(
@@ -316,8 +316,8 @@ fn provider_complete_rejects_invalid_timeout_env() {
     let bin = make_mock_ollama_success(&dir).unwrap();
 
     let _env_guard = EnvVarGuard::set_many(&[
-        ("SWARM_OLLAMA_BIN", bin.as_os_str()),
-        ("SWARM_TIMEOUT_SECS", std::ffi::OsStr::new("nope")),
+        ("ADL_OLLAMA_BIN", bin.as_os_str()),
+        ("ADL_TIMEOUT_SECS", std::ffi::OsStr::new("nope")),
     ]);
 
     let spec = provider_spec_from_yaml(
@@ -332,8 +332,37 @@ config:
     let err = p.complete("test prompt").unwrap_err();
     let msg = format!("{err:#}");
     assert!(
-        msg.contains("SWARM_TIMEOUT_SECS") && msg.contains("invalid"),
+        msg.contains("ADL_TIMEOUT_SECS") && msg.contains("invalid"),
         "expected invalid config error, got: {msg}"
+    );
+
+    let _ = fs::remove_dir_all(dir);
+}
+
+#[test]
+fn provider_complete_legacy_env_vars_still_work() {
+    let dir = unique_test_temp_dir("swarm-provider-timeout-legacy");
+    let bin = make_mock_ollama_sleep(&dir).unwrap();
+
+    let _env_guard = EnvVarGuard::set_many(&[
+        ("SWARM_OLLAMA_BIN", bin.as_os_str()),
+        ("SWARM_TIMEOUT_SECS", std::ffi::OsStr::new("1")),
+    ]);
+
+    let spec = provider_spec_from_yaml(
+        r#"
+type: ollama
+config:
+  model: llama3.1:8b
+"#,
+    );
+
+    let p = build_provider(&spec, None).expect("build_provider failed");
+    let err = p.complete("test prompt").unwrap_err();
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("timed out") && msg.contains("1"),
+        "expected timeout error with legacy env var override, got: {msg}"
     );
 
     let _ = fs::remove_dir_all(dir);

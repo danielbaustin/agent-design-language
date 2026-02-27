@@ -11,7 +11,7 @@ use std::sync::mpsc;
 use std::thread;
 use std::time::{Duration, Instant};
 
-use crate::adl;
+use crate::{adl, env_compat};
 
 /// A minimal blocking provider interface for v0.1.
 pub trait Provider: Send + Sync {
@@ -544,7 +544,7 @@ impl Provider for OllamaProvider {
 fn ollama_bin() -> PathBuf {
     // Allows tests (and power users) to override the binary path.
     // Defaults to `ollama` on PATH.
-    env::var_os("SWARM_OLLAMA_BIN")
+    env_compat::var_os("ADL_OLLAMA_BIN", "SWARM_OLLAMA_BIN")
         .map(PathBuf::from)
         .unwrap_or_else(|| PathBuf::from("ollama"))
 }
@@ -684,10 +684,10 @@ impl Provider for HttpProvider {
                 if err.is_timeout() {
                     let msg = match self.timeout_secs {
                         Some(secs) => format!(
-                            "kind=timeout timed out after {secs}s (set providers.<id>.config.timeout_secs to override)"
+                            "kind=timeout timed out after {secs}s (set providers.<id>.config.timeout_secs or ADL_TIMEOUT_SECS to override)"
                         ),
                         None => {
-                            "kind=timeout timed out (set providers.<id>.config.timeout_secs to override)"
+                            "kind=timeout timed out (set providers.<id>.config.timeout_secs or ADL_TIMEOUT_SECS to override)"
                                 .to_string()
                         }
                     };
@@ -737,16 +737,16 @@ impl Provider for HttpProvider {
 }
 
 fn timeout_secs() -> Result<u64> {
-    let raw = env::var("SWARM_TIMEOUT_SECS").ok();
+    let raw = env_compat::var("ADL_TIMEOUT_SECS", "SWARM_TIMEOUT_SECS");
     let secs = match raw {
         None => 120_u64,
         Some(v) => {
             let parsed: u64 = v.parse().map_err(|_| {
-                anyhow!("invalid SWARM_TIMEOUT_SECS: '{v}' (must be a positive integer)")
+                anyhow!("invalid ADL_TIMEOUT_SECS: '{v}' (must be a positive integer)")
             })?;
             if parsed == 0 {
                 return Err(anyhow!(
-                    "invalid SWARM_TIMEOUT_SECS: '{v}' (must be a positive integer)"
+                    "invalid ADL_TIMEOUT_SECS: '{v}' (must be a positive integer)"
                 ));
             }
             parsed
