@@ -584,214 +584,66 @@ pub fn execute_sequential_with_resume(
             }
         }
 
-        let max_attempts = step.retry.as_ref().map(|r| r.max_attempts).unwrap_or(1);
         let continue_on_error = matches!(step.on_error, Some(crate::adl::StepOnError::Continue));
-        let mut attempt: u32 = 0;
-        let mut last_err: Option<anyhow::Error> = None;
-        let mut success_out: Option<(StepOutput, Vec<String>)> = None;
-        let mut last_stream_chunks: Vec<String> = Vec::new();
-
-        while attempt < max_attempts {
-            attempt += 1;
-            let mut attempt_stream_chunks: Vec<String> = Vec::new();
-            let result = (|| -> Result<StepOutput> {
-                let p = step
-                    .effective_prompt_with_defaults(resolved)
-                    .ok_or_else(|| {
-                        anyhow!(
-                            "step '{}' has no effective prompt (step.prompt or task.prompt required)",
-                            step_id
-                        )
-                    })?;
-
-                let merged_inputs = resolve_state_inputs(&step.id, &step.inputs, &saved_state)
-                    .with_context(|| format!("failed to resolve inputs for step '{}'", step_id))?;
-
-                let missing = missing_prompt_inputs(&p, &merged_inputs);
-                if !missing.is_empty() {
-                    return Err(anyhow!(
-                        "step '{}' missing input bindings for: {} (provide inputs or prior state)",
-                        step_id,
-                        missing.join(", ")
-                    ));
-                }
-
-                // Allow inputs to reference files via "@file:<path>".
-                let inputs =
-                    materialize_inputs(merged_inputs, adl_base_dir).with_context(|| {
-                        format!("failed to materialize inputs for step '{}'", step_id)
-                    })?;
-
-                // Assemble a single text blob suitable for basic model consumption.
-                let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
-                let prompt_hash = prompt::hash_prompt(&prompt_text);
-                tr.prompt_assembled(&step_id, &prompt_hash);
-
-                // Build provider from doc.providers[provider_id]
-                let spec = resolved.doc.providers.get(provider_id).with_context(|| {
-                    format!(
-                        "step '{}' references unknown provider '{}'",
-                        step_id, provider_id
-                    )
-                })?;
-                let model_override = step
-                    .agent
-                    .as_ref()
-                    .and_then(|agent_id| resolved.doc.agents.get(agent_id))
-                    .map(|agent| agent.model.as_str());
-
-                let placement = effective_step_placement(step, &resolved.doc);
-
-                let model_output = match placement {
-                    crate::adl::PlacementMode::Local => {
-                        let prov =
-                            provider::build_provider(spec, model_override).with_context(|| {
-                                format!(
-                                    "failed to build provider '{}' for step '{}'",
-                                    provider_id, step_id
-                                )
-                            })?;
-                        let mut on_chunk = |chunk: &str| {
-                            if !chunk.is_empty() {
-                                attempt_stream_chunks.push(chunk.to_string());
-                            }
-                        };
-                        prov.complete_stream(&prompt_text, &mut on_chunk).with_context(|| {
-                            format!(
-                                "provider '{}' complete() failed for step '{}' (attempt {attempt}/{max_attempts})",
-                                provider_id, step_id
-                            )
-                        })?
-                    }
-                    crate::adl::PlacementMode::Remote => {
-                        let remote = resolved.doc.run.remote.as_ref().ok_or_else(|| {
-                            anyhow!("REMOTE_SCHEMA_VIOLATION: run.remote.endpoint is required when placement=remote")
-                        })?;
-                        let timeout_ms = remote.timeout_ms.unwrap_or(30_000);
-                        let mut req = remote_exec::ExecuteRequest {
-                            protocol_version: remote_exec::PROTOCOL_VERSION.to_string(),
-                            run_id: resolved.run_id.clone(),
-                            workflow_id: resolved.workflow_id.clone(),
-                            step_id: step_id.clone(),
-                            step: remote_exec::ExecuteStepPayload {
-                                kind: "task".to_string(),
-                                provider: provider_id.to_string(),
-                                prompt: prompt_text.clone(),
-                                tools: Vec::new(),
-                                provider_spec: spec.clone(),
-                                model_override: model_override.map(|v| v.to_string()),
-                            },
-                            inputs: remote_exec::ExecuteInputsPayload {
-                                inputs: inputs.clone(),
-                                state: saved_state.clone(),
-                            },
-                            timeout_ms,
-                            security: Some(remote_exec::ExecuteSecurityEnvelope {
-                                require_signature: remote.require_signed_requests,
-                                require_key_id: remote.require_key_id,
-                                signed: resolved.doc.signature.is_some(),
-                                key_id: resolved.doc.signature.as_ref().map(|s| s.key_id.clone()),
-                                signature_alg: resolved
-                                    .doc
-                                    .signature
-                                    .as_ref()
-                                    .map(|s| s.alg.clone()),
-                                key_source: resolved.doc.signature.as_ref().and_then(|s| {
-                                    s.public_key_b64.as_ref().map(|_| "embedded".to_string())
-                                }),
-                                request_signature: None,
-                                allowed_algs: remote.verify_allowed_algs.clone(),
-                                allowed_key_sources: remote.verify_allowed_key_sources.clone(),
-                                sandbox_root: Some(out_dir.display().to_string()),
-                                requested_paths: step
-                                    .write_to
-                                    .as_ref()
-                                    .map(|w| vec![w.clone()])
-                                    .unwrap_or_default(),
-                            }),
-                        };
-                        remote_exec::maybe_attach_request_signature_from_env(&mut req)
-                            .with_context(|| {
-                                format!(
-                                    "failed to attach remote request signature for step '{}'",
-                                    step_id
-                                )
-                            })?;
-                        remote_exec::execute_remote(&remote.endpoint, timeout_ms, &req)
-                            .with_context(|| {
-                                format!("remote step '{}' execution failed", step_id)
-                            })?
-                    }
-                };
-
-                Ok(StepOutput {
-                    step_id: step_id.clone(),
-                    provider_id: provider_id.to_string(),
-                    model_output,
-                })
-            })();
-
-            match result {
-                Ok(success) => {
-                    success_out = Some((success, attempt_stream_chunks));
-                    break;
-                }
-                Err(err) => {
-                    last_stream_chunks.clear();
-                    last_stream_chunks.extend(attempt_stream_chunks);
-                    let retryable = provider::is_retryable_error(&err);
-                    last_err = Some(err);
-                    if !retryable {
-                        break;
-                    }
-                    if attempt >= max_attempts {
-                        break;
-                    }
-                }
-            }
-        }
-
-        match success_out {
-            Some((out, stream_chunks)) => {
+        let max_attempts = step.retry.as_ref().map(|r| r.max_attempts).unwrap_or(1);
+        match execute_step_with_retry_core(
+            step,
+            &resolved.doc,
+            &resolved.run_id,
+            &resolved.workflow_id,
+            &saved_state,
+            adl_base_dir,
+            true,
+            |prompt_hash| tr.prompt_assembled(&step_id, prompt_hash),
+        ) {
+            Ok(success) => {
                 emit_delegation_lifecycle_finish(
                     tr,
                     step,
                     &resolved.doc,
                     true,
-                    out.model_output.len(),
+                    success.out.model_output.len(),
                 );
                 tr.step_finished(&step_id, true);
                 let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
                 progress_step_done(emit_progress, tr, &step_id, true, duration_ms);
 
                 if let Some(write_to) = step.write_to.as_deref() {
-                    let path = write_output(&step_id, out_dir, write_to, &out.model_output)?;
+                    let path =
+                        write_output(&step_id, out_dir, write_to, &success.out.model_output)?;
                     println!(
                         "ARTIFACT step={} path={} bytes={}",
                         step_id,
                         path.display(),
-                        out.model_output.len()
+                        success.out.model_output.len()
                     );
                     artifacts.push(path);
                 }
 
                 if print_outputs {
-                    emit_step_output(&step_id, &out.model_output, &stream_chunks, tr);
+                    emit_step_output(
+                        &step_id,
+                        &success.out.model_output,
+                        &success.stream_chunks,
+                        tr,
+                    );
                 }
                 records.push(StepExecutionRecord {
                     step_id: step_id.clone(),
                     provider_id: provider_id.to_string(),
                     status: "success".to_string(),
-                    attempts: attempt,
-                    output_bytes: out.model_output.len(),
+                    attempts: success.attempts,
+                    output_bytes: success.out.model_output.len(),
                 });
                 if let Some(save_as) = step.save_as.as_ref() {
-                    saved_state.insert(save_as.clone(), out.model_output.clone());
+                    saved_state.insert(save_as.clone(), success.out.model_output.clone());
                 }
-                completed_outputs
-                    .insert(step_id.clone(), model_output_fingerprint(&out.model_output));
+                completed_outputs.insert(
+                    step_id.clone(),
+                    model_output_fingerprint(&success.out.model_output),
+                );
                 completed_step_ids.insert(step_id.clone());
-                outs.push(out);
+                outs.push(success.out);
 
                 if let Some(reason) = pause_reason_for_step(step) {
                     let mut completed_vec: Vec<String> =
@@ -818,12 +670,11 @@ pub fn execute_sequential_with_resume(
                     });
                 }
             }
-            None => {
-                let err = last_err.unwrap_or_else(|| anyhow!("step '{}' failed", step_id));
-                if print_outputs && !last_stream_chunks.is_empty() {
+            Err(failure) => {
+                if print_outputs && !failure.stream_chunks.is_empty() {
                     // Preserve already-produced stream output as observational trace data even
                     // when the step ultimately fails.
-                    emit_step_output(&step_id, "", &last_stream_chunks, tr);
+                    emit_step_output(&step_id, "", &failure.stream_chunks, tr);
                 }
                 emit_delegation_lifecycle_finish(tr, step, &resolved.doc, false, 0);
                 tr.step_finished(&step_id, false);
@@ -833,19 +684,16 @@ pub fn execute_sequential_with_resume(
                     step_id: step_id.clone(),
                     provider_id: provider_id.to_string(),
                     status: "failure".to_string(),
-                    attempts: attempt.max(1),
+                    attempts: failure.attempts,
                     output_bytes: 0,
                 });
                 if continue_on_error {
                     continue;
                 }
-                tr.run_failed(&err.to_string());
-                return Err(err.context(format!(
+                tr.run_failed(&failure.err.to_string());
+                return Err(failure.err.context(format!(
                     "step '{}' failed (attempt {}/{}, max_attempts={})",
-                    step_id,
-                    attempt.max(1),
-                    max_attempts,
-                    max_attempts
+                    step_id, failure.attempts, max_attempts, max_attempts
                 )));
             }
         }
@@ -1136,6 +984,13 @@ struct StepRunSuccess {
     stream_chunks: Vec<String>,
 }
 
+#[derive(Debug)]
+struct StepRunFailure {
+    err: anyhow::Error,
+    attempts: u32,
+    stream_chunks: Vec<String>,
+}
+
 type StepJob = Box<dyn FnOnce() -> (String, Result<StepRunSuccess>) + Send>;
 
 pub const DELEGATION_POLICY_DENY_CODE: &str = "DELEGATION_POLICY_DENY";
@@ -1386,14 +1241,45 @@ fn execute_step_with_retry(
     adl_base_dir: &Path,
     capture_stream_chunks: bool,
 ) -> Result<StepRunSuccess> {
+    match execute_step_with_retry_core(
+        step,
+        doc,
+        run_id,
+        workflow_id,
+        saved_state,
+        adl_base_dir,
+        capture_stream_chunks,
+        |_| {},
+    ) {
+        Ok(success) => Ok(success),
+        Err(failure) => Err(failure.err),
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn execute_step_with_retry_core<F>(
+    step: &crate::resolve::ResolvedStep,
+    doc: &crate::adl::AdlDoc,
+    run_id: &str,
+    workflow_id: &str,
+    saved_state: &HashMap<String, String>,
+    adl_base_dir: &Path,
+    capture_stream_chunks: bool,
+    mut on_prompt_hash: F,
+) -> std::result::Result<StepRunSuccess, StepRunFailure>
+where
+    F: FnMut(&str),
+{
     let step_id = step.id.clone();
     let provider_id: &str = step.provider.as_deref().unwrap_or("<unresolved-provider>");
     let max_attempts = step.retry.as_ref().map(|r| r.max_attempts).unwrap_or(1);
     let mut attempt: u32 = 0;
     let mut last_err: Option<anyhow::Error> = None;
+    let mut last_stream_chunks: Vec<String> = Vec::new();
 
     while attempt < max_attempts {
         attempt += 1;
+        let mut attempt_stream_chunks: Vec<String> = Vec::new();
         let result = (|| -> Result<StepRunSuccess> {
             let p = effective_prompt_with_defaults_from_doc(step, doc).ok_or_else(|| {
                 anyhow!(
@@ -1418,6 +1304,7 @@ fn execute_step_with_retry(
 
             let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
             let prompt_hash = prompt::hash_prompt(&prompt_text);
+            on_prompt_hash(&prompt_hash);
 
             let spec = doc.providers.get(provider_id).with_context(|| {
                 format!(
@@ -1433,7 +1320,6 @@ fn execute_step_with_retry(
 
             let placement = effective_step_placement(step, doc);
 
-            let mut stream_chunks: Vec<String> = Vec::new();
             let model_output = match placement {
                 crate::adl::PlacementMode::Local => {
                     let prov =
@@ -1445,7 +1331,7 @@ fn execute_step_with_retry(
                         })?;
                     let mut on_chunk = |chunk: &str| {
                         if capture_stream_chunks && !chunk.is_empty() {
-                            stream_chunks.push(chunk.to_string());
+                            attempt_stream_chunks.push(chunk.to_string());
                         }
                     };
                     prov.complete_stream(&prompt_text, &mut on_chunk).with_context(|| {
@@ -1519,13 +1405,14 @@ fn execute_step_with_retry(
                 },
                 attempts: attempt,
                 prompt_hash,
-                stream_chunks,
+                stream_chunks: attempt_stream_chunks.clone(),
             })
         })();
 
         match result {
-            Ok(success) => return Ok(success),
+            Ok(success) => return std::result::Result::Ok(success),
             Err(err) => {
+                last_stream_chunks = attempt_stream_chunks;
                 let retryable = provider::is_retryable_error(&err);
                 last_err = Some(err);
                 if !retryable || attempt >= max_attempts {
@@ -1535,14 +1422,11 @@ fn execute_step_with_retry(
         }
     }
 
-    let err = last_err.unwrap_or_else(|| anyhow!("step '{}' failed", step_id));
-    Err(err.context(format!(
-        "step '{}' failed (attempt {}/{}, max_attempts={})",
-        step_id,
-        attempt.max(1),
-        max_attempts,
-        max_attempts
-    )))
+    std::result::Result::Err(StepRunFailure {
+        err: last_err.unwrap_or_else(|| anyhow!("step '{}' failed", step_id)),
+        attempts: attempt.max(1),
+        stream_chunks: last_stream_chunks,
+    })
 }
 
 fn execute_concurrent_deterministic(
