@@ -349,6 +349,7 @@ pub fn execute_sequential_with_resume(
             validate_write_to(&step_id, write_to)?;
         }
 
+        emit_delegation_lifecycle_start(tr, step, &resolved.doc);
         tr.step_started(
             &step_id,
             agent_id,
@@ -380,6 +381,7 @@ pub fn execute_sequential_with_resume(
             match call_result {
                 Ok((call_outs, call_artifacts, call_records, callee_final_state)) => {
                     tr.call_exited(&step_id, "success", &namespace);
+                    emit_delegation_lifecycle_finish(tr, step, &resolved.doc, true, 0);
                     tr.step_finished(&step_id, true);
                     let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
                     progress_step_done(emit_progress, tr, &step_id, true, duration_ms);
@@ -427,6 +429,7 @@ pub fn execute_sequential_with_resume(
                 }
                 Err(err) => {
                     tr.call_exited(&step_id, "failure", &namespace);
+                    emit_delegation_lifecycle_finish(tr, step, &resolved.doc, false, 0);
                     tr.step_finished(&step_id, false);
                     let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
                     progress_step_done(emit_progress, tr, &step_id, false, duration_ms);
@@ -605,6 +608,13 @@ pub fn execute_sequential_with_resume(
 
         match success_out {
             Some((out, stream_chunks)) => {
+                emit_delegation_lifecycle_finish(
+                    tr,
+                    step,
+                    &resolved.doc,
+                    true,
+                    out.model_output.len(),
+                );
                 tr.step_finished(&step_id, true);
                 let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
                 progress_step_done(emit_progress, tr, &step_id, true, duration_ms);
@@ -670,6 +680,7 @@ pub fn execute_sequential_with_resume(
                     // when the step ultimately fails.
                     emit_step_output(&step_id, "", &last_stream_chunks, tr);
                 }
+                emit_delegation_lifecycle_finish(tr, step, &resolved.doc, false, 0);
                 tr.step_finished(&step_id, false);
                 let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
                 progress_step_done(emit_progress, tr, &step_id, false, duration_ms);
@@ -1013,6 +1024,47 @@ fn effective_step_placement(
         .unwrap_or(crate::adl::PlacementMode::Local)
 }
 
+fn delegation_trace_target(
+    step: &crate::resolve::ResolvedStep,
+    doc: &crate::adl::AdlDoc,
+) -> Option<(&'static str, String)> {
+    step.delegation.as_ref()?;
+    let provider_id = step
+        .provider
+        .clone()
+        .unwrap_or_else(|| "<unresolved-provider>".to_string());
+    let action_kind = match effective_step_placement(step, doc) {
+        crate::adl::PlacementMode::Local => "provider_call",
+        crate::adl::PlacementMode::Remote => "remote_exec",
+    };
+    Some((action_kind, provider_id))
+}
+
+fn emit_delegation_lifecycle_start(
+    tr: &mut Trace,
+    step: &crate::resolve::ResolvedStep,
+    doc: &crate::adl::AdlDoc,
+) {
+    if let Some((action_kind, target_id)) = delegation_trace_target(step, doc) {
+        tr.delegation_requested(&step.id, action_kind, &target_id);
+        tr.delegation_policy_evaluated(&step.id, "allowed", None);
+        tr.delegation_dispatched(&step.id, action_kind, &target_id);
+    }
+}
+
+fn emit_delegation_lifecycle_finish(
+    tr: &mut Trace,
+    step: &crate::resolve::ResolvedStep,
+    doc: &crate::adl::AdlDoc,
+    success: bool,
+    output_bytes: usize,
+) {
+    if delegation_trace_target(step, doc).is_some() {
+        tr.delegation_result_received(&step.id, success, output_bytes);
+        tr.delegation_completed(&step.id, if success { "success" } else { "failure" });
+    }
+}
+
 fn effective_max_concurrency_with_source(
     resolved: &AdlResolved,
 ) -> Result<(usize, SchedulerPolicySource)> {
@@ -1312,6 +1364,7 @@ fn execute_concurrent_deterministic(
             let agent_id = step.agent.as_deref().unwrap_or("<unresolved-agent>");
             let task_id = step.task.as_deref().unwrap_or("<unresolved-task>");
             let provider_id = step.provider.as_deref().unwrap_or("<unresolved-provider>");
+            emit_delegation_lifecycle_start(tr, step, &resolved.doc);
             tr.step_started(
                 step_id,
                 agent_id,
@@ -1360,6 +1413,13 @@ fn execute_concurrent_deterministic(
             match run_result {
                 Ok(success) => {
                     tr.prompt_assembled(&step_id, &success.prompt_hash);
+                    emit_delegation_lifecycle_finish(
+                        tr,
+                        step,
+                        &resolved.doc,
+                        true,
+                        success.out.model_output.len(),
+                    );
                     tr.step_finished(&step_id, true);
                     let duration_ms = tr.current_elapsed_ms().saturating_sub(
                         progress_started_ms

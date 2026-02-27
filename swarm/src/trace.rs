@@ -12,6 +12,8 @@ pub struct Trace {
     run_started_ms: u128,
     run_started_instant: Instant,
     step_started_ms: HashMap<String, u128>,
+    delegation_ids: HashMap<String, String>,
+    next_delegation_counter: u64,
 }
 
 #[derive(Debug, Clone)]
@@ -52,6 +54,58 @@ pub enum TraceEvent {
         elapsed_ms: u128,
         step_id: String,
         chunk_bytes: usize,
+    },
+    DelegationRequested {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        delegation_id: String,
+        step_id: String,
+        action_kind: String,
+        target_id: String,
+    },
+    DelegationPolicyEvaluated {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        delegation_id: String,
+        step_id: String,
+        decision: String,
+        rule_id: Option<String>,
+    },
+    DelegationApproved {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        delegation_id: String,
+        step_id: String,
+    },
+    DelegationDenied {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        delegation_id: String,
+        step_id: String,
+        rule_id: Option<String>,
+    },
+    DelegationDispatched {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        delegation_id: String,
+        step_id: String,
+        action_kind: String,
+        target_id: String,
+    },
+    DelegationResultReceived {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        delegation_id: String,
+        step_id: String,
+        success: bool,
+        output_bytes: usize,
+    },
+    DelegationCompleted {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        delegation_id: String,
+        step_id: String,
+        outcome: String,
     },
     StepFinished {
         ts_ms: u128,
@@ -149,6 +203,122 @@ impl TraceEvent {
                 format_ts_ms(*ts_ms),
                 elapsed_ms
             ),
+            TraceEvent::DelegationRequested {
+                ts_ms,
+                elapsed_ms,
+                delegation_id,
+                step_id,
+                action_kind,
+                target_id,
+            } => format!(
+                "{} (+{}ms) DelegationRequested delegation_id={} step={} action={} target={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                delegation_id,
+                step_id,
+                action_kind,
+                target_id
+            ),
+            TraceEvent::DelegationPolicyEvaluated {
+                ts_ms,
+                elapsed_ms,
+                delegation_id,
+                step_id,
+                decision,
+                rule_id,
+            } => {
+                let base = format!(
+                    "{} (+{}ms) DelegationPolicyEvaluated delegation_id={} step={} decision={}",
+                    format_ts_ms(*ts_ms),
+                    elapsed_ms,
+                    delegation_id,
+                    step_id,
+                    decision
+                );
+                if let Some(rule_id) = rule_id {
+                    format!("{base} rule_id={rule_id}")
+                } else {
+                    base
+                }
+            }
+            TraceEvent::DelegationApproved {
+                ts_ms,
+                elapsed_ms,
+                delegation_id,
+                step_id,
+            } => format!(
+                "{} (+{}ms) DelegationApproved delegation_id={} step={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                delegation_id,
+                step_id
+            ),
+            TraceEvent::DelegationDenied {
+                ts_ms,
+                elapsed_ms,
+                delegation_id,
+                step_id,
+                rule_id,
+            } => {
+                let base = format!(
+                    "{} (+{}ms) DelegationDenied delegation_id={} step={}",
+                    format_ts_ms(*ts_ms),
+                    elapsed_ms,
+                    delegation_id,
+                    step_id
+                );
+                if let Some(rule_id) = rule_id {
+                    format!("{base} rule_id={rule_id}")
+                } else {
+                    base
+                }
+            }
+            TraceEvent::DelegationDispatched {
+                ts_ms,
+                elapsed_ms,
+                delegation_id,
+                step_id,
+                action_kind,
+                target_id,
+            } => format!(
+                "{} (+{}ms) DelegationDispatched delegation_id={} step={} action={} target={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                delegation_id,
+                step_id,
+                action_kind,
+                target_id
+            ),
+            TraceEvent::DelegationResultReceived {
+                ts_ms,
+                elapsed_ms,
+                delegation_id,
+                step_id,
+                success,
+                output_bytes,
+            } => format!(
+                "{} (+{}ms) DelegationResultReceived delegation_id={} step={} success={} bytes={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                delegation_id,
+                step_id,
+                success,
+                output_bytes
+            ),
+            TraceEvent::DelegationCompleted {
+                ts_ms,
+                elapsed_ms,
+                delegation_id,
+                step_id,
+                outcome,
+            } => format!(
+                "{} (+{}ms) DelegationCompleted delegation_id={} step={} outcome={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                delegation_id,
+                step_id,
+                outcome
+            ),
             TraceEvent::StepFinished {
                 ts_ms,
                 elapsed_ms,
@@ -208,6 +378,8 @@ impl Trace {
             run_started_ms: started,
             run_started_instant: Instant::now(),
             step_started_ms: HashMap::new(),
+            delegation_ids: HashMap::new(),
+            next_delegation_counter: 0,
         }
     }
 
@@ -280,6 +452,121 @@ impl Trace {
             elapsed_ms,
             step_id: step_id.to_string(),
             chunk_bytes,
+        });
+    }
+
+    fn delegation_id_for_step(&mut self, step_id: &str) -> String {
+        if let Some(existing) = self.delegation_ids.get(step_id) {
+            return existing.clone();
+        }
+        self.next_delegation_counter = self.next_delegation_counter.saturating_add(1);
+        let delegation_id = format!("del-{}", self.next_delegation_counter);
+        self.delegation_ids
+            .insert(step_id.to_string(), delegation_id.clone());
+        delegation_id
+    }
+
+    pub fn delegation_requested(&mut self, step_id: &str, action_kind: &str, target_id: &str) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        let delegation_id = self.delegation_id_for_step(step_id);
+        self.events.push(TraceEvent::DelegationRequested {
+            ts_ms,
+            elapsed_ms,
+            delegation_id,
+            step_id: step_id.to_string(),
+            action_kind: action_kind.to_string(),
+            target_id: target_id.to_string(),
+        });
+    }
+
+    pub fn delegation_policy_evaluated(
+        &mut self,
+        step_id: &str,
+        decision: &str,
+        rule_id: Option<&str>,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        let delegation_id = self.delegation_id_for_step(step_id);
+        self.events.push(TraceEvent::DelegationPolicyEvaluated {
+            ts_ms,
+            elapsed_ms,
+            delegation_id,
+            step_id: step_id.to_string(),
+            decision: decision.to_string(),
+            rule_id: rule_id.map(|v| v.to_string()),
+        });
+    }
+
+    pub fn delegation_approved(&mut self, step_id: &str) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        let delegation_id = self.delegation_id_for_step(step_id);
+        self.events.push(TraceEvent::DelegationApproved {
+            ts_ms,
+            elapsed_ms,
+            delegation_id,
+            step_id: step_id.to_string(),
+        });
+    }
+
+    pub fn delegation_denied(&mut self, step_id: &str, rule_id: Option<&str>) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        let delegation_id = self.delegation_id_for_step(step_id);
+        self.events.push(TraceEvent::DelegationDenied {
+            ts_ms,
+            elapsed_ms,
+            delegation_id,
+            step_id: step_id.to_string(),
+            rule_id: rule_id.map(|v| v.to_string()),
+        });
+    }
+
+    pub fn delegation_dispatched(&mut self, step_id: &str, action_kind: &str, target_id: &str) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        let delegation_id = self.delegation_id_for_step(step_id);
+        self.events.push(TraceEvent::DelegationDispatched {
+            ts_ms,
+            elapsed_ms,
+            delegation_id,
+            step_id: step_id.to_string(),
+            action_kind: action_kind.to_string(),
+            target_id: target_id.to_string(),
+        });
+    }
+
+    pub fn delegation_result_received(
+        &mut self,
+        step_id: &str,
+        success: bool,
+        output_bytes: usize,
+    ) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        let delegation_id = self.delegation_id_for_step(step_id);
+        self.events.push(TraceEvent::DelegationResultReceived {
+            ts_ms,
+            elapsed_ms,
+            delegation_id,
+            step_id: step_id.to_string(),
+            success,
+            output_bytes,
+        });
+    }
+
+    pub fn delegation_completed(&mut self, step_id: &str, outcome: &str) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        let delegation_id = self.delegation_id_for_step(step_id);
+        self.events.push(TraceEvent::DelegationCompleted {
+            ts_ms,
+            elapsed_ms,
+            delegation_id,
+            step_id: step_id.to_string(),
+            outcome: outcome.to_string(),
         });
     }
 
@@ -505,6 +792,56 @@ mod tests {
         tr.call_entered("parent", "child", "ns");
         tr.call_exited("parent", "success", "ns");
         assert_eq!(tr.events.len(), 2);
+    }
+
+    #[test]
+    fn delegation_ids_are_stable_per_step_and_increment_in_order() {
+        let mut tr = Trace::new("run-del", "workflow-del", "0.7");
+        tr.delegation_requested("s1", "provider_call", "local");
+        tr.delegation_policy_evaluated("s1", "allowed", None);
+        tr.delegation_requested("s2", "remote_exec", "remote");
+
+        let ids: Vec<String> = tr
+            .events
+            .iter()
+            .filter_map(|event| match event {
+                TraceEvent::DelegationRequested { delegation_id, .. } => {
+                    Some(delegation_id.clone())
+                }
+                TraceEvent::DelegationPolicyEvaluated { delegation_id, .. } => {
+                    Some(delegation_id.clone())
+                }
+                _ => None,
+            })
+            .collect();
+        assert_eq!(ids, vec!["del-1", "del-1", "del-2"]);
+    }
+
+    #[test]
+    fn delegation_event_summaries_are_stable_and_safe() {
+        let mut tr = Trace::new("run-del", "workflow-del", "0.7");
+        tr.delegation_requested("s1", "provider_call", "local");
+        tr.delegation_policy_evaluated("s1", "allowed", None);
+        tr.delegation_dispatched("s1", "provider_call", "local");
+        tr.delegation_result_received("s1", true, 12);
+        tr.delegation_completed("s1", "success");
+
+        let lines: Vec<String> = tr.events.iter().map(TraceEvent::summarize).collect();
+        assert!(lines.iter().any(|line| line.contains(
+            "DelegationRequested delegation_id=del-1 step=s1 action=provider_call target=local"
+        )));
+        assert!(lines.iter().any(|line| line
+            .contains("DelegationPolicyEvaluated delegation_id=del-1 step=s1 decision=allowed")));
+        assert!(lines.iter().any(|line| line.contains(
+            "DelegationDispatched delegation_id=del-1 step=s1 action=provider_call target=local"
+        )));
+        assert!(lines.iter().any(|line| line.contains(
+            "DelegationResultReceived delegation_id=del-1 step=s1 success=true bytes=12"
+        )));
+        assert!(lines
+            .iter()
+            .any(|line| line
+                .contains("DelegationCompleted delegation_id=del-1 step=s1 outcome=success")));
     }
 
     #[test]
