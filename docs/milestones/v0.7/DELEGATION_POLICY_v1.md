@@ -69,3 +69,11 @@ Out of scope for v1:
 - bypassing security envelope or sandbox checks
 
 Security and sandbox invariants remain enforced independently by the remote envelope and sandbox layers.
+
+
+## v1 Guarantees
+
+- Determinism: rule matching is first-match-wins in declared order; no nondeterministic fallback or map iteration participates in evaluation.
+- Ordering semantics: for denied actions, `DelegationPolicyEvaluated(decision=denied)` is emitted before `DelegationDenied`, and execution does not emit `StepStarted`.
+- Non-goals: no approval UX, no expanded grammar, no extra action kinds beyond the documented v1 surface.
+- Forward compatibility: policy events remain minimal so later delegation trace/runtime work can enrich them without changing the v1 decision contract.

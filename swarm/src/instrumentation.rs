@@ -28,12 +28,17 @@ pub struct GraphExport {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(tag = "kind")]
+#[serde(tag = "kind", deny_unknown_fields)]
 pub enum TraceEventNormalized {
     DelegationPolicyEvaluated {
         action_kind: String,
         target_id: String,
         decision: String,
+        rule_id: Option<String>,
+    },
+    DelegationDenied {
+        action_kind: String,
+        target_id: String,
         rule_id: Option<String>,
     },
     SchedulerPolicy {
@@ -302,6 +307,16 @@ pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized
                 decision: decision.clone(),
                 rule_id: rule_id.clone(),
             },
+            TraceEvent::DelegationDenied {
+                action_kind,
+                target_id,
+                rule_id,
+                ..
+            } => TraceEventNormalized::DelegationDenied {
+                action_kind: action_kind.clone(),
+                target_id: target_id.clone(),
+                rule_id: rule_id.clone(),
+            },
             TraceEvent::SchedulerPolicy {
                 max_concurrency,
                 source,
@@ -393,6 +408,18 @@ pub fn format_normalized_event(ev: &TraceEventNormalized) -> String {
             let base = format!(
                 "DelegationPolicyEvaluated action={action_kind} target={target_id} decision={decision}"
             );
+            if let Some(rule_id) = rule_id {
+                format!("{base} rule_id={rule_id}")
+            } else {
+                base
+            }
+        }
+        TraceEventNormalized::DelegationDenied {
+            action_kind,
+            target_id,
+            rule_id,
+        } => {
+            let base = format!("DelegationDenied action={action_kind} target={target_id}");
             if let Some(rule_id) = rule_id {
                 format!("{base} rule_id={rule_id}")
             } else {

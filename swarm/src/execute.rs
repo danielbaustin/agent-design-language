@@ -985,6 +985,9 @@ struct StepRunSuccess {
 
 type StepJob = Box<dyn FnOnce() -> (String, Result<StepRunSuccess>) + Send>;
 
+pub const DELEGATION_POLICY_DENY_CODE: &str = "DELEGATION_POLICY_DENY";
+pub const DELEGATION_POLICY_APPROVAL_REQUIRED_CODE: &str = "DELEGATION_POLICY_APPROVAL_REQUIRED";
+
 fn effective_prompt_with_defaults_from_doc(
     step: &crate::resolve::ResolvedStep,
     doc: &crate::adl::AdlDoc,
@@ -1094,7 +1097,8 @@ fn enforce_delegation_policy(
     match outcome.decision {
         DelegationDecision::Allowed => Ok(()),
         DelegationDecision::NeedsApproval => Err(anyhow!(
-            "DELEGATION_POLICY_APPROVAL_REQUIRED: step '{}' action '{}' target '{}' requires approval{}",
+            "{}: step '{}' action '{}' target '{}' requires approval{}",
+            DELEGATION_POLICY_APPROVAL_REQUIRED_CODE,
             step.id,
             action.as_str(),
             target_id,
@@ -1104,17 +1108,21 @@ fn enforce_delegation_policy(
                 .map(|id| format!(" (rule_id={id})"))
                 .unwrap_or_default()
         )),
-        DelegationDecision::Denied => Err(anyhow!(
-            "DELEGATION_POLICY_DENY: step '{}' action '{}' target '{}' denied{}",
-            step.id,
-            action.as_str(),
-            target_id,
-            outcome
-                .rule_id
-                .as_ref()
-                .map(|id| format!(" (rule_id={id})"))
-                .unwrap_or_default()
-        )),
+        DelegationDecision::Denied => {
+            tr.delegation_denied(action.as_str(), target_id, outcome.rule_id.as_deref());
+            Err(anyhow!(
+                "{}: step '{}' action '{}' target '{}' denied{}",
+                DELEGATION_POLICY_DENY_CODE,
+                step.id,
+                action.as_str(),
+                target_id,
+                outcome
+                    .rule_id
+                    .as_ref()
+                    .map(|id| format!(" (rule_id={id})"))
+                    .unwrap_or_default()
+            ))
+        }
     }
 }
 

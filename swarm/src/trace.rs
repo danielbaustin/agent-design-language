@@ -24,6 +24,13 @@ pub enum TraceEvent {
         decision: String,
         rule_id: Option<String>,
     },
+    DelegationDenied {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        action_kind: String,
+        target_id: String,
+        rule_id: Option<String>,
+    },
     SchedulerPolicy {
         ts_ms: u128,
         elapsed_ms: u128,
@@ -102,6 +109,26 @@ impl TraceEvent {
                     action_kind,
                     target_id,
                     decision
+                );
+                if let Some(rule_id) = rule_id {
+                    format!("{base} rule_id={rule_id}")
+                } else {
+                    base
+                }
+            }
+            TraceEvent::DelegationDenied {
+                ts_ms,
+                elapsed_ms,
+                action_kind,
+                target_id,
+                rule_id,
+            } => {
+                let base = format!(
+                    "{} (+{}ms) DelegationDenied action={} target={}",
+                    format_ts_ms(*ts_ms),
+                    elapsed_ms,
+                    action_kind,
+                    target_id
                 );
                 if let Some(rule_id) = rule_id {
                     format!("{base} rule_id={rule_id}")
@@ -285,6 +312,18 @@ impl Trace {
             action_kind: action_kind.to_string(),
             target_id: target_id.to_string(),
             decision: decision.to_string(),
+            rule_id: rule_id.map(|v| v.to_string()),
+        });
+    }
+
+    pub fn delegation_denied(&mut self, action_kind: &str, target_id: &str, rule_id: Option<&str>) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::DelegationDenied {
+            ts_ms,
+            elapsed_ms,
+            action_kind: action_kind.to_string(),
+            target_id: target_id.to_string(),
             rule_id: rule_id.map(|v| v.to_string()),
         });
     }
@@ -503,6 +542,24 @@ mod tests {
             }
             _ => panic!("expected StepFinished event"),
         }
+    }
+
+    #[test]
+    fn trace_records_delegation_denied_event_with_optional_rule_id() {
+        let mut tr = Trace::new("run-1", "wf-1", "0.7");
+        tr.delegation_denied("provider_call", "local", Some("deny-local"));
+        tr.delegation_denied("provider_call", "backup", None);
+
+        let line0 = tr.events[0].summarize();
+        let line1 = tr.events[1].summarize();
+        assert!(line0.contains("DelegationDenied"));
+        assert!(line0.contains("action=provider_call"));
+        assert!(line0.contains("target=local"));
+        assert!(line0.contains("rule_id=deny-local"));
+        assert!(line1.contains("DelegationDenied"));
+        assert!(line1.contains("action=provider_call"));
+        assert!(line1.contains("target=backup"));
+        assert!(!line1.contains("rule_id="));
     }
 
     #[test]

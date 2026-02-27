@@ -3314,6 +3314,13 @@ fn trace_chunk_step_ids(stdout: &str) -> Vec<String> {
         .collect()
 }
 
+fn delegation_error_code(stderr: &str) -> Option<&str> {
+    stderr
+        .lines()
+        .find_map(|line| line.strip_prefix("Error: "))
+        .and_then(|msg| msg.split(": ").next())
+}
+
 #[test]
 fn run_executes_call_workflow_with_namespaced_state_and_trace_events() {
     let base = tmp_dir("exec-call-workflow");
@@ -3673,8 +3680,9 @@ stderr:
     );
 
     let stderr = String::from_utf8_lossy(&out.stderr);
-    assert!(
-        stderr.contains("DELEGATION_POLICY_DENY"),
+    assert_eq!(
+        delegation_error_code(&stderr),
+        Some(swarm::execute::DELEGATION_POLICY_DENY_CODE),
         "stderr was:
 {stderr}"
     );
@@ -3690,9 +3698,23 @@ stderr:
     );
 
     let stdout = String::from_utf8_lossy(&out.stdout);
-    assert!(
-        stdout.contains("DelegationPolicyEvaluated action=provider_call target=local decision=denied rule_id=deny-local-provider"),
+    let lifecycle: Vec<&str> = stdout
+        .lines()
+        .filter_map(|line| line.split_once(") ").map(|(_, rest)| rest))
+        .filter(|line| line.starts_with("Delegation"))
+        .collect();
+    assert_eq!(
+        lifecycle,
+        vec![
+            "DelegationPolicyEvaluated action=provider_call target=local decision=denied rule_id=deny-local-provider",
+            "DelegationDenied action=provider_call target=local rule_id=deny-local-provider",
+        ],
         "stdout was:
+{stdout}"
+    );
+    assert!(
+        !stdout.contains("DelegationDispatched"),
+        "denied policy path must not dispatch. stdout was:
 {stdout}"
     );
     assert!(
