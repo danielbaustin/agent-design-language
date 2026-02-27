@@ -2137,6 +2137,7 @@ mod tests {
                 inputs: HashMap::new(),
                 placement: None,
                 remote: None,
+                delegation_policy: None,
             },
         };
 
@@ -2204,6 +2205,7 @@ mod tests {
                     inputs: HashMap::new(),
                     placement: None,
                     remote: None,
+                    delegation_policy: None,
                 },
             },
         }

@@ -30,6 +30,12 @@ pub struct GraphExport {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "kind")]
 pub enum TraceEventNormalized {
+    DelegationPolicyEvaluated {
+        action_kind: String,
+        target_id: String,
+        decision: String,
+        rule_id: Option<String>,
+    },
     SchedulerPolicy {
         max_concurrency: usize,
         source: String,
@@ -284,6 +290,18 @@ pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized
     events
         .iter()
         .map(|ev| match ev {
+            TraceEvent::DelegationPolicyEvaluated {
+                action_kind,
+                target_id,
+                decision,
+                rule_id,
+                ..
+            } => TraceEventNormalized::DelegationPolicyEvaluated {
+                action_kind: action_kind.clone(),
+                target_id: target_id.clone(),
+                decision: decision.clone(),
+                rule_id: rule_id.clone(),
+            },
             TraceEvent::SchedulerPolicy {
                 max_concurrency,
                 source,
@@ -366,6 +384,21 @@ pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized
 
 pub fn format_normalized_event(ev: &TraceEventNormalized) -> String {
     match ev {
+        TraceEventNormalized::DelegationPolicyEvaluated {
+            action_kind,
+            target_id,
+            decision,
+            rule_id,
+        } => {
+            let base = format!(
+                "DelegationPolicyEvaluated action={action_kind} target={target_id} decision={decision}"
+            );
+            if let Some(rule_id) = rule_id {
+                format!("{base} rule_id={rule_id}")
+            } else {
+                base
+            }
+        }
         TraceEventNormalized::SchedulerPolicy {
             max_concurrency,
             source,
@@ -745,6 +778,12 @@ mod tests {
     #[test]
     fn format_normalized_event_covers_variants() {
         let messages = [
+            format_normalized_event(&TraceEventNormalized::DelegationPolicyEvaluated {
+                action_kind: "provider_call".to_string(),
+                target_id: "local".to_string(),
+                decision: "denied".to_string(),
+                rule_id: Some("deny-local".to_string()),
+            }),
             format_normalized_event(&TraceEventNormalized::RunFailed {
                 message: "boom".to_string(),
             }),
@@ -780,6 +819,9 @@ mod tests {
             }),
         ];
         assert!(messages.iter().any(|m| m.contains("RunFailed")));
+        assert!(messages
+            .iter()
+            .any(|m| m.contains("DelegationPolicyEvaluated")));
         assert!(messages.iter().any(|m| m.contains("delegation=")));
         assert!(messages.iter().any(|m| m.contains("CallExited")));
     }
