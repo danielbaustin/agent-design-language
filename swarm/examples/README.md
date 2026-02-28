@@ -1,6 +1,6 @@
 # swarm/examples
 
-Runnable ADL example documents for the `swarm` runtime.
+Runnable ADL example documents for the `adl` runtime.
 Use these files for local smoke checks, deterministic demo runs, and CLI validation.
 This README focuses on how to run examples and where canonical demo guidance lives.
 
@@ -9,14 +9,14 @@ This README focuses on how to run examples and where canonical demo guidance liv
 From `swarm/`:
 
 ```bash
-cargo run -q --bin swarm -- examples/<file>.adl.yaml --print-plan
-cargo run -q --bin swarm -- examples/<file>.adl.yaml --run --trace
+cargo run -q --bin adl -- examples/<file>.adl.yaml --print-plan
+cargo run -q --bin adl -- examples/<file>.adl.yaml --run --trace
 ```
 
 No-network mock-provider pattern:
 
 ```bash
-SWARM_OLLAMA_BIN=tools/mock_ollama_v0_4.sh cargo run -q --bin swarm -- examples/v0-6-hitl-no-pause.adl.yaml --run --trace --out ./out
+ADL_OLLAMA_BIN=tools/mock_ollama_v0_4.sh cargo run -q --bin adl -- examples/v0-6-hitl-no-pause.adl.yaml --run --trace --out ./out
 ```
 
 ## Example Families (Short Index)
