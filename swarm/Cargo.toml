@@ -23,7 +23,7 @@ path = "src/bin/swarm_remote.rs"
 
 [[bin]]
 name = "adl-remote"
-path = "src/bin/swarm_remote.rs"
+path = "src/bin/adl_remote.rs"
 
 [dependencies]
 # CLI
