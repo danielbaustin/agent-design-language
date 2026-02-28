@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  swarm-ci:
+  adl-ci:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -50,7 +50,7 @@ jobs:
       - name: test
         run: cargo test
 
-  swarm-coverage:
+  adl-coverage:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -130,7 +130,7 @@ jobs:
       - name: Upload coverage artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: swarm-coverage-lcov
+          name: adl-coverage-lcov
           path: |
             swarm/lcov.info
             swarm/coverage-summary.json
