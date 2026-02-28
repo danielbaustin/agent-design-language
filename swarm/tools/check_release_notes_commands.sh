@@ -30,10 +30,8 @@ if [ "$has_adl" -eq 0 ] && [ "$has_swarm" -eq 0 ]; then
   exit 1
 fi
 
-if [ "$has_adl" -eq 1 ]; then
-  cargo run --bin adl -- examples/v0-2-coordinator-agents-sdk.adl.yaml --print-plan >/dev/null
-else
-  cargo run --bin swarm -- examples/v0-2-coordinator-agents-sdk.adl.yaml --print-plan >/dev/null
-fi
+# Always execute the canonical binary for validation, even when historical docs
+# still show the compatibility shim command.
+cargo run --bin adl -- examples/v0-2-coordinator-agents-sdk.adl.yaml --print-plan >/dev/null
 
 echo "release-notes command check: ok"
