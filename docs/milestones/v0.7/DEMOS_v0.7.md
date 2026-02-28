@@ -5,7 +5,6 @@ Canonical runnable demos for milestone v0.7 (WP-13 / #474).
 Execution assumptions:
 - Run commands from repo root unless noted.
 - Use canonical binaries: `adl` and `adl-remote`.
-- Legacy `swarm` / `swarm-remote` are compatibility shims only (deprecated).
 - Core demos are offline/local (loopback only, no external network).
 - `run` commands use `--allow-unsigned` where needed so runtime signature enforcement for workflow docs does not block demo execution. This does not bypass remote request signing policy in D-11.
 
@@ -142,7 +141,3 @@ ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swar
   - negative command fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISSING`
 - Artifact paths: `.adl/runs/v0-7-enterprise-signed-remote/`, `/tmp/adl-remote-d11.log`, `"$tmpdir/out"/`.
 
-## Compatibility Notes
-- Legacy compatibility shims remain in v0.7:
-  - `swarm` (deprecated; use `adl`)
-  - `swarm-remote` (deprecated; use `adl-remote`)
