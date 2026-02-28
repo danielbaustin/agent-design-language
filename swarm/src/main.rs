@@ -6,8 +6,8 @@ use std::process::Stdio;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use swarm::{
-    adl, artifacts, bounded_executor, demo, execute, instrumentation, learning_export, overlay,
-    plan, prompt, provider, remote_exec, resolve, sandbox, signing, trace,
+    adl, artifacts, bounded_executor, demo, env_compat, execute, instrumentation, learning_export,
+    overlay, plan, prompt, provider, remote_exec, resolve, sandbox, signing, trace,
 };
 
 fn usage() -> &'static str {
@@ -37,7 +37,7 @@ Options:
 
 Examples:
   adl resume hitl-pause-seq
-  SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh adl examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out ./out
+  ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh adl examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out ./out
   adl examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
   adl examples/v0-3-on-error-retry.adl.yaml --print-plan
   adl examples/v0-3-remote-http-provider.adl.yaml --print-plan
@@ -217,10 +217,8 @@ fn real_main() -> Result<()> {
         None
     };
 
-    let allow_unsigned = allow_unsigned
-        || std::env::var("ADL_ALLOW_UNSIGNED")
-            .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
-            .unwrap_or(false);
+    let allow_unsigned =
+        allow_unsigned || env_compat::bool_var("ADL_ALLOW_UNSIGNED", "SWARM_ALLOW_UNSIGNED");
     enforce_signature_policy(&doc, do_run, allow_unsigned)?;
 
     let resolved = match resolve::resolve_run(&doc) {
@@ -1789,9 +1787,7 @@ fn real_resume(args: &[String]) -> Result<()> {
         )
     })?;
 
-    let allow_unsigned = std::env::var("ADL_ALLOW_UNSIGNED")
-        .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
-        .unwrap_or(false);
+    let allow_unsigned = env_compat::bool_var("ADL_ALLOW_UNSIGNED", "SWARM_ALLOW_UNSIGNED");
     enforce_signature_policy(&doc, true, allow_unsigned)?;
 
     let resolved = resolve::resolve_run(&doc)?;
