@@ -29,6 +29,18 @@ fn run_swarm(args: &[&str]) -> std::process::Output {
         .expect("run adl binary")
 }
 
+#[test]
+fn adl_binary_help_runs() {
+    let out = run_swarm(&["--help"]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(stdout.contains("Usage:"), "stdout:\n{stdout}");
+}
+
 fn run_swarm_shim(args: &[&str]) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_swarm");
     Command::new(exe)
