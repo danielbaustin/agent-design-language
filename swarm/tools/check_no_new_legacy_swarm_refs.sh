@@ -25,13 +25,13 @@ else
   base_ref="$(git rev-parse HEAD~1)"
 fi
 
-range_spec="...HEAD"
+range_spec="${base_ref}...HEAD"
 
-echo "Guardrail base ref: "
-echo "Guardrail diff range: "
+echo "Guardrail base ref: ${base_ref}"
+echo "Guardrail diff range: ${range_spec}"
 
-allowlist_regex='^(docs/milestones/v0\.[0-6]/|docs/milestones/v0\.7/SWARM_NAME_CHANGE_PLANNING_v0\.7\.md$|swarm/src/bin/swarm\.rs$|swarm/src/bin/swarm_remote\.rs$|swarm/src/env_compat\.rs$|swarm/Cargo\.toml$|swarm/tools/check_no_new_legacy_swarm_refs\.sh$)'
-legacy_regex='(^|[^A-Za-z0-9_])(swarm-remote|swarm|SWARM_[A-Z0-9_]+)([^A-Za-z0-9_]|$)'
+allowlist_regex='^(README\.md$|swarm/README\.md$|swarm/examples/README\.md$|\.github/workflows/ci\.yaml$|docs/milestones/v0\.[0-6]/|docs/milestones/v0\.7/SWARM_NAME_CHANGE_PLANNING_v0\.7\.md$|swarm/src/bin/swarm\.rs$|swarm/src/bin/swarm_remote\.rs$|swarm/src/env_compat\.rs$|swarm/Cargo\.toml$|swarm/tools/check_no_new_legacy_swarm_refs\.sh$)'
+legacy_regex='(^|[^A-Za-z0-9_])(swarm-remote|SWARM_[A-Z0-9_]+)([^A-Za-z0-9_]|$)|(^|[^A-Za-z0-9_])swarm([^/A-Za-z0-9_]|$)'
 
 violations=0
 
@@ -46,16 +46,16 @@ while IFS= read -r file; do
 
   if grep -En "$legacy_regex" <<<"$added_lines" >/tmp/adl_legacy_ref_hits.txt; then
     violations=1
-    echo "Legacy 'swarm' reference additions are not allowed in: $file"
+    echo "Legacy naming additions are not allowed in: $file"
     sed 's/^/  /' /tmp/adl_legacy_ref_hits.txt
   fi
 done < <(git diff --name-only --diff-filter=AMRT "$range_spec")
 
 if [[ "$violations" -ne 0 ]]; then
   echo
-  echo "Guardrail failed: found new legacy 'swarm' references outside allowlist."
+  echo "Guardrail failed: found new legacy-name references outside allowlist."
   echo "If intentional, add a scoped allowlist entry in this script with rationale."
   exit 1
 fi
 
-echo "Guardrail passed: no new unintended legacy 'swarm' references."
+echo "Guardrail passed: no new unintended legacy-name references."

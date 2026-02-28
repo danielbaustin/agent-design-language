@@ -40,7 +40,7 @@ jobs:
         run: sh swarm/tools/codexw.sh --help
         working-directory: .
 
-      - name: guardrail (no new legacy swarm refs)
+      - name: guardrail (no new legacy refs)
         run: bash swarm/tools/check_no_new_legacy_swarm_refs.sh
         working-directory: .
 
