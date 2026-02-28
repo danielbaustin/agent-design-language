@@ -25,7 +25,10 @@ else
   base_ref="$(git rev-parse HEAD~1)"
 fi
 
-range_spec="${base_ref}...HEAD"
+range_spec="...HEAD"
+
+echo "Guardrail base ref: "
+echo "Guardrail diff range: "
 
 allowlist_regex='^(docs/milestones/v0\.[0-6]/|docs/milestones/v0\.7/SWARM_NAME_CHANGE_PLANNING_v0\.7\.md$|swarm/src/bin/swarm\.rs$|swarm/src/bin/swarm_remote\.rs$|swarm/src/env_compat\.rs$|swarm/Cargo\.toml$|swarm/tools/check_no_new_legacy_swarm_refs\.sh$)'
 legacy_regex='(^|[^A-Za-z0-9_])(swarm-remote|swarm|SWARM_[A-Z0-9_]+)([^A-Za-z0-9_]|$)'
