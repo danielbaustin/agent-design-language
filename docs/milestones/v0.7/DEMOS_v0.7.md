@@ -137,7 +137,6 @@ unset ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64
 ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-enterprise-signed-remote.adl.yaml --run --trace --allow-unsigned
 ```
 - Expected output:
-  - signed-path command currently reaches remote signing verification and fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISMATCH` (tracked as follow-up)
+  - signed-path command succeeds end-to-end (`local.first -> remote.mid -> local.last`)
   - negative command fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISSING`
 - Artifact paths: `.adl/runs/v0-7-enterprise-signed-remote/`, `/tmp/adl-remote-d11.log`, `"$tmpdir/out"/`.
-

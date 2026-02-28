@@ -327,6 +327,37 @@ pub fn sign_execute_request_v1(
     })
 }
 
+fn attach_request_signature(
+    req: &mut ExecuteRequest,
+    private_key_b64: &str,
+    key_id: Option<&str>,
+) -> Result<()> {
+    {
+        let env = req
+            .security
+            .get_or_insert_with(ExecuteSecurityEnvelope::default);
+        // Ensure canonical bytes include deterministic signature metadata prior to signing.
+        env.signed = true;
+        env.key_id = key_id.map(|v| v.to_string());
+        env.signature_alg = Some(REMOTE_REQUEST_SIGNATURE_ALG_ED25519.to_string());
+        env.key_source = Some("embedded".to_string());
+    }
+
+    let signature = sign_execute_request_v1(req, private_key_b64, key_id)?;
+    let env = req
+        .security
+        .get_or_insert_with(ExecuteSecurityEnvelope::default);
+    env.signed = true;
+    env.key_id = signature.key_id.clone();
+    env.signature_alg = Some(signature.alg.clone());
+    env.key_source = signature
+        .public_key_b64
+        .as_ref()
+        .map(|_| "embedded".to_string());
+    env.request_signature = Some(signature);
+    Ok(())
+}
+
 pub fn maybe_attach_request_signature_from_env(req: &mut ExecuteRequest) -> Result<()> {
     let require_signature = req
         .security
@@ -355,18 +386,7 @@ pub fn maybe_attach_request_signature_from_env(req: &mut ExecuteRequest) -> Resu
         }
         (_, None) => return Ok(()),
         (_, Some(private_key_b64)) => {
-            let signature = sign_execute_request_v1(req, &private_key_b64, key_id.as_deref())?;
-            let env = req
-                .security
-                .get_or_insert_with(ExecuteSecurityEnvelope::default);
-            env.signed = true;
-            env.key_id = signature.key_id.clone();
-            env.signature_alg = Some(signature.alg.clone());
-            env.key_source = signature
-                .public_key_b64
-                .as_ref()
-                .map(|_| "embedded".to_string());
-            env.request_signature = Some(signature);
+            attach_request_signature(req, &private_key_b64, key_id.as_deref())?;
         }
     }
     Ok(())
@@ -1033,6 +1053,34 @@ mod tests {
         assert_eq!(
             err.code, "REMOTE_EXECUTION_ERROR",
             "envelope/signature checks should pass before provider failure"
+        );
+    }
+
+    #[test]
+    fn attach_request_signature_preserves_verification_with_metadata_fields() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: true,
+            signed: false,
+            key_id: None,
+            signature_alg: None,
+            key_source: None,
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        attach_request_signature(&mut req, &fixed_private_key_b64(), Some("k1"))
+            .expect("attach request signature");
+
+        let response = execute_request(&req);
+        assert!(!response.ok, "provider still fails in base_request config");
+        let err = response.error.expect("error");
+        assert_eq!(
+            err.code, "REMOTE_EXECUTION_ERROR",
+            "signature verification should pass before provider failure"
         );
     }
 
