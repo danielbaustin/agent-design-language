@@ -86,6 +86,10 @@ fn main() {
 }
 
 fn real_main() -> Result<()> {
+    if is_legacy_swarm_invocation() {
+        eprintln!("DEPRECATION: 'swarm' CLI is deprecated; use 'adl' instead.");
+    }
+
     let args: Vec<String> = std::env::args().skip(1).collect();
 
     if matches!(args.first().map(|s| s.as_str()), Some("--help" | "-h")) {
@@ -423,6 +427,15 @@ fn real_main() -> Result<()> {
     }
 
     Ok(())
+}
+
+fn is_legacy_swarm_invocation() -> bool {
+    std::env::args_os()
+        .next()
+        .and_then(|arg0| Path::new(&arg0).file_stem().map(|s| s.to_owned()))
+        .and_then(|stem| stem.to_str().map(|s| s.to_ascii_lowercase()))
+        .map(|name| name == "swarm")
+        .unwrap_or(false)
 }
 
 fn persist_overlay_audit(
