@@ -10,7 +10,7 @@ fn tmp_dir(prefix: &str) -> std::path::PathBuf {
 }
 
 fn run_swarm(args: &[&str]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_swarm");
+    let exe = env!("CARGO_BIN_EXE_adl");
     Command::new(exe).args(args).output().unwrap()
 }
 

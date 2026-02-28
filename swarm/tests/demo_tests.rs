@@ -6,12 +6,12 @@ mod helpers;
 use helpers::unique_test_temp_dir;
 
 fn run_swarm(args: &[&str]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_swarm");
+    let exe = env!("CARGO_BIN_EXE_adl");
     Command::new(exe).args(args).output().unwrap()
 }
 
 fn run_swarm_with_ci(args: &[&str]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_swarm");
+    let exe = env!("CARGO_BIN_EXE_adl");
     Command::new(exe)
         .env("CI", "1")
         .args(args)
