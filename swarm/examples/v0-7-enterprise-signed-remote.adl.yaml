@@ -1,0 +1,56 @@
+version: "0.5"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t:
+    prompt:
+      user: "STEP={{step}} INPUT={{input}}"
+
+run:
+  name: "v0-7-enterprise-signed-remote"
+  placement: local
+  remote:
+    endpoint: "http://127.0.0.1:8787"
+    timeout_ms: 30000
+    require_signed_requests: true
+    require_key_id: true
+    verify_allowed_algs:
+      - "ed25519"
+    verify_allowed_key_sources:
+      - "embedded"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "local.first"
+        placement: local
+        agent: "a1"
+        task: "t"
+        save_as: "first"
+        inputs:
+          step: "local-1"
+          input: "seed"
+      - id: "remote.mid"
+        placement: remote
+        agent: "a1"
+        task: "t"
+        save_as: "mid"
+        inputs:
+          step: "remote-2"
+          input: "@state:first"
+      - id: "local.last"
+        placement: local
+        agent: "a1"
+        task: "t"
+        inputs:
+          step: "local-3"
+          input: "@state:mid"

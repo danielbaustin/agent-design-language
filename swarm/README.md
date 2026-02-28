@@ -66,7 +66,7 @@ This README reflects the current v0.6 runtime behavior.
 - Root repo README: `../README.md`
 - v0.6 milestone docs: `../docs/milestones/v0.6/`
 - ADRs: `../docs/adr/`
-- Runnable demos: `../docs/milestones/v0.6/DEMOS_v0.6.md`
+- Runnable demos: `../docs/milestones/v0.7/DEMOS_v0.7.md`
 - More examples: `examples/README.md`
 
 ## How Swarm Processes ADL (Compiler-like Pipeline)
@@ -111,7 +111,7 @@ Using `-q` keeps demo output focused on the ADL plan rather than Cargo build noi
 
 For real `--run` execution, configure provider runtime dependencies (for example local Ollama and any required auth env vars).
 
-For additional runnable examples, see `examples/README.md` and `../docs/milestones/v0.6/DEMOS_v0.6.md`.
+For additional runnable examples, see `examples/README.md` and `../docs/milestones/v0.7/DEMOS_v0.7.md`.
 
 ---
 
