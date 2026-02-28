@@ -30,7 +30,7 @@ fn cli_trace_flag_prints_trace_header() {
     // This verifies end-to-end CLI wiring produces trace output.
     // We generate a minimal ADL YAML in a temp file so the test does not depend
     // on any checked-in example files.
-    let exe = env!("CARGO_BIN_EXE_swarm");
+    let exe = env!("CARGO_BIN_EXE_adl");
 
     // Minimal doc: empty agents/tasks, one empty step.
     // Keep this aligned with the structs in src/adl.rs.
@@ -55,7 +55,7 @@ run:
         .arg(path.to_string_lossy().as_ref())
         .arg("--trace")
         .output()
-        .expect("failed to run swarm binary");
+        .expect("failed to run adl binary");
 
     // Best-effort cleanup.
     let _ = std::fs::remove_file(&path);
@@ -79,7 +79,7 @@ run:
 
 #[test]
 fn cli_trace_reports_run_failed_on_invalid_yaml() {
-    let exe = env!("CARGO_BIN_EXE_swarm");
+    let exe = env!("CARGO_BIN_EXE_adl");
 
     let path = unique_test_temp_dir("trace-invalid-yaml").join("invalid.yaml");
 
@@ -89,7 +89,7 @@ fn cli_trace_reports_run_failed_on_invalid_yaml() {
         .arg(path.to_string_lossy().as_ref())
         .arg("--trace")
         .output()
-        .expect("failed to run swarm binary");
+        .expect("failed to run adl binary");
 
     let _ = std::fs::remove_file(&path);
 
@@ -110,7 +110,7 @@ fn cli_trace_reports_run_failed_on_invalid_yaml() {
 
 #[test]
 fn cli_trace_records_step_failure_on_missing_file() {
-    let exe = env!("CARGO_BIN_EXE_swarm");
+    let exe = env!("CARGO_BIN_EXE_adl");
 
     let yaml = r#"version: "0.1"
 providers: {}
@@ -139,7 +139,7 @@ run:
         .arg("--run")
         .arg("--trace")
         .output()
-        .expect("failed to run swarm binary");
+        .expect("failed to run adl binary");
 
     let _ = std::fs::remove_file(&path);
 
@@ -163,7 +163,7 @@ run:
 
 #[test]
 fn cli_trace_v0_2_includes_human_timestamps_and_durations() {
-    let exe = env!("CARGO_BIN_EXE_swarm");
+    let exe = env!("CARGO_BIN_EXE_adl");
 
     let yaml = r#"version: "0.2"
 providers: {}
@@ -192,7 +192,7 @@ run:
         .arg(path.to_string_lossy().as_ref())
         .arg("--trace")
         .output()
-        .expect("failed to run swarm binary");
+        .expect("failed to run adl binary");
 
     let _ = std::fs::remove_file(&path);
 
@@ -236,13 +236,13 @@ run:
 
 #[test]
 fn cli_trace_v0_2_preserves_explicit_step_ids() {
-    let exe = env!("CARGO_BIN_EXE_swarm");
+    let exe = env!("CARGO_BIN_EXE_adl");
 
     let out = Command::new(exe)
         .arg("examples/v0-2-multi-step-basic.adl.yaml")
         .arg("--trace")
         .output()
-        .expect("failed to run swarm binary");
+        .expect("failed to run adl binary");
 
     assert!(
         out.status.success(),

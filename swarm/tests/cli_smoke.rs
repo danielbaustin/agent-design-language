@@ -22,11 +22,19 @@ fn write_temp_adl_yaml() -> PathBuf {
 
 fn run_swarm(args: &[&str]) -> std::process::Output {
     // This env var is provided by Cargo for integration tests.
+    let exe = env!("CARGO_BIN_EXE_adl");
+    Command::new(exe)
+        .args(args)
+        .output()
+        .expect("run adl binary")
+}
+
+fn run_swarm_shim(args: &[&str]) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_swarm");
     Command::new(exe)
         .args(args)
         .output()
-        .expect("run swarm binary")
+        .expect("run swarm shim binary")
 }
 
 #[test]
@@ -233,8 +241,28 @@ fn unknown_arg_exits_with_code_2_and_prints_usage() {
     );
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert!(stderr.contains("Unknown arg"), "stderr:\n{stderr}");
-    assert!(stderr.contains("Run 'swarm --help'"), "stderr:\n{stderr}");
+    assert!(stderr.contains("Run 'adl --help'"), "stderr:\n{stderr}");
     assert!(stderr.contains("Usage:"), "stderr:\n{stderr}");
+}
+
+#[test]
+fn swarm_shim_help_prints_deprecation_once() {
+    let out = run_swarm_shim(&["--help"]);
+    assert!(
+        out.status.success(),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    let needle = "DEPRECATION: 'swarm' CLI is deprecated; use 'adl' instead.";
+    assert_eq!(
+        stderr.matches(needle).count(),
+        1,
+        "expected exactly one deprecation warning, stderr:\n{stderr}"
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(stdout.contains("Usage:"), "stdout:\n{stdout}");
+    assert!(stdout.contains("adl resume <run_id>"), "stdout:\n{stdout}");
 }
 
 #[test]

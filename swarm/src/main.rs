@@ -12,14 +12,14 @@ use swarm::{
 
 fn usage() -> &'static str {
     "Usage:
-  swarm <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--resume <run.json>] [--overlay <overlay.json>] [--out <dir>] [--quiet] [--open]
-  swarm resume <run_id>
-  swarm demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
-  swarm keygen --out-dir <dir>
-  swarm sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
-  swarm instrument <graph|replay|diff-plan|diff-trace> ...
-  swarm learn export --format jsonl [--runs-dir <dir>] [--run-id <id> ...] --out <file>
-  swarm verify <adl.yaml> [--key <public_key_path>]
+  adl <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--resume <run.json>] [--overlay <overlay.json>] [--out <dir>] [--quiet] [--open]
+  adl resume <run_id>
+  adl demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
+  adl keygen --out-dir <dir>
+  adl sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
+  adl instrument <graph|replay|diff-plan|diff-trace> ...
+  adl learn export --format jsonl [--runs-dir <dir>] [--run-id <id> ...] --out <file>
+  adl verify <adl.yaml> [--key <public_key_path>]
 
 Options:
   --print-plan       Print the resolved plan
@@ -36,28 +36,28 @@ Options:
   -h, --help         Show this help
 
 Examples:
-  swarm resume hitl-pause-seq
-  ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh swarm examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out ./out
-  swarm examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
-  swarm examples/v0-3-on-error-retry.adl.yaml --print-plan
-  swarm examples/v0-3-remote-http-provider.adl.yaml --print-plan
-  swarm examples/adl-0.1.yaml --print-plan   # legacy regression example
-  swarm examples/v0-2-coordinator-agents-sdk.adl.yaml
-  swarm demo demo-a-say-mcp --run --trace --open
-  swarm demo demo-b-one-command --run --out ./out
-  swarm keygen --out-dir ./.keys
-  swarm sign examples/v0-5-pattern-linear.adl.yaml --key ./.keys/ed25519-private.b64 --out /tmp/signed.adl.yaml
-  swarm instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format dot
-  swarm instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format json
-  swarm instrument replay /tmp/trace.json
-  swarm instrument diff-trace /tmp/trace-a.json /tmp/trace-b.json
-  swarm learn export --format jsonl --runs-dir .adl/runs --out /tmp/learning.jsonl
-  swarm verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"
+  adl resume hitl-pause-seq
+  ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh adl examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out ./out
+  adl examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+  adl examples/v0-3-on-error-retry.adl.yaml --print-plan
+  adl examples/v0-3-remote-http-provider.adl.yaml --print-plan
+  adl examples/adl-0.1.yaml --print-plan   # legacy regression example
+  adl examples/v0-2-coordinator-agents-sdk.adl.yaml
+  adl demo demo-a-say-mcp --run --trace --open
+  adl demo demo-b-one-command --run --out ./out
+  adl keygen --out-dir ./.keys
+  adl sign examples/v0-5-pattern-linear.adl.yaml --key ./.keys/ed25519-private.b64 --out /tmp/signed.adl.yaml
+  adl instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format dot
+  adl instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format json
+  adl instrument replay /tmp/trace.json
+  adl instrument diff-trace /tmp/trace-a.json /tmp/trace-b.json
+  adl learn export --format jsonl --runs-dir .adl/runs --out /tmp/learning.jsonl
+  adl verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"
 }
 
 fn resume_usage() -> &'static str {
     "Usage:
-  swarm resume <run_id>
+  adl resume <run_id>
 
 Semantics:
   - Loads .adl/runs/<run_id>/pause_state.json
@@ -119,7 +119,7 @@ fn real_main() -> Result<()> {
         Some(p) => PathBuf::from(p),
         None => {
             eprintln!("missing ADL yaml path");
-            eprintln!("Try: swarm examples/v0-3-concurrency-fork-join.adl.yaml --print-plan");
+            eprintln!("Try: adl examples/v0-3-concurrency-fork-join.adl.yaml --print-plan");
             eprintln!("{}", usage());
             std::process::exit(2);
         }
@@ -180,7 +180,7 @@ fn real_main() -> Result<()> {
             }
             _ => {
                 eprintln!("Unknown arg: {a}");
-                eprintln!("Run 'swarm --help' for usage.");
+                eprintln!("Run 'adl --help' for usage.");
                 eprintln!("{}", usage());
                 std::process::exit(2);
             }
@@ -1864,7 +1864,7 @@ fn real_demo(args: &[String]) -> Result<()> {
         None => {
             eprintln!("missing demo name");
             eprintln!(
-                "Try: swarm demo {} --run --trace --open",
+                "Try: adl demo {} --run --trace --open",
                 demo::DEMO_A_SAY_MCP
             );
             eprintln!("{}", usage());
@@ -1914,7 +1914,7 @@ fn real_demo(args: &[String]) -> Result<()> {
             }
             _ => {
                 eprintln!("Unknown arg: {a}");
-                eprintln!("Run 'swarm --help' for usage.");
+                eprintln!("Run 'adl --help' for usage.");
                 eprintln!("{}", usage());
                 std::process::exit(2);
             }
@@ -2202,7 +2202,7 @@ mod tests {
     fn usage_mentions_v0_4_and_legacy_examples() {
         let text = usage();
         assert!(text.contains("Usage:"));
-        assert!(text.contains("swarm resume <run_id>"));
+        assert!(text.contains("adl resume <run_id>"));
         assert!(text.contains("Examples:"));
         assert!(text.contains("examples/v0-4-demo-fork-join-swarm.adl.yaml"));
         assert!(text.contains("examples/adl-0.1.yaml"));

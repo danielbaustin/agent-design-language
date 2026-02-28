@@ -387,7 +387,7 @@ enum MockOllamaBehavior {
 }
 
 fn run_swarm(args: &[&str]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_swarm");
+    let exe = env!("CARGO_BIN_EXE_adl");
     Command::new(exe)
         .env("ADL_ALLOW_UNSIGNED", "1")
         .args(args)
@@ -396,7 +396,7 @@ fn run_swarm(args: &[&str]) -> std::process::Output {
 }
 
 fn run_swarm_in_dir(cwd: &Path, args: &[&str]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_swarm");
+    let exe = env!("CARGO_BIN_EXE_adl");
     Command::new(exe)
         .current_dir(cwd)
         .env("ADL_ALLOW_UNSIGNED", "1")
