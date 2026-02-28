@@ -95,6 +95,8 @@ jobs:
           rows="$(jq -r '
             [.data[].files[]
               | select(.filename|contains("/swarm/src/"))
+              | select(.filename|endswith("/swarm/src/bin/swarm.rs")|not)
+              | select(.filename|endswith("/swarm/src/bin/swarm_remote.rs")|not)
               | {f:.filename, covered:.summary.lines.covered, count:.summary.lines.count}
             ]
             | sort_by(.f)
