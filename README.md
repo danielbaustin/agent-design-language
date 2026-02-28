@@ -4,7 +4,7 @@ Agent Design Language (ADL) is a deterministic, contract-driven orchestration la
 
 ADL is built for teams that care about determinism and auditability. Documents are schema-validated, compiled into a deterministic ExecutionPlan, and executed under explicit concurrency, failure, retry, and signing semantics. Every run emits stable artifacts under `.adl/runs/<run_id>/` to support replay, debugging, and post-mortem analysis.
 
-[![swarm-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
+[![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
 ![Milestone](https://img.shields.io/badge/milestone-v0.6-green)
 
@@ -26,13 +26,19 @@ cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-re
 ```
 
 Badge semantics:
-- `swarm-ci`: main branch CI workflow status
+- `adl-ci`: main branch CI workflow status
 - `coverage`: Codecov line-coverage signal for `main` (informational; CI still passes if Codecov upload is unavailable)
 - `milestone`: current documentation milestone marker
 
 ## Status
 
 Current release: **v0.6.0**
+
+## v0.7 Naming Migration (Compatibility Window)
+
+- Canonical CLI/runtime naming is `adl` and `adl-remote`.
+- Legacy compatibility shim commands remain available in v0.7 with deprecation warnings.
+- Canonical env vars use `ADL_*`; legacy compatibility env vars remain supported in v0.7 with deprecation warnings.
 
 ## Features by Release
 
@@ -96,16 +102,16 @@ To execute (`--run`) local-provider examples, run from `swarm/` with a local Oll
 
 These demos are deterministic, non-interactive, and run without network by pinning the local mock provider binary.
 
-Fork/Join swarm (3 branches + deterministic join barrier):
+Fork/Join demo (3 branches + deterministic join barrier):
 
 ```bash
-SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out .adl/reports/demo-v0.4/fork-join-swarm
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out .adl/reports/demo-v0.4/fork-join-swarm
 ```
 
 Bounded parallelism stress (8 branch steps with bounded executor):
 
 ```bash
-SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-bounded-parallelism.adl.yaml --run --trace --out .adl/reports/demo-v0.4/bounded-parallelism
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-bounded-parallelism.adl.yaml --run --trace --out .adl/reports/demo-v0.4/bounded-parallelism
 ```
 
 Current engine concurrency is intentionally fixed at `MAX_PARALLEL=4` in v0.4; this demo proves bounded execution at that shipped limit.
@@ -113,7 +119,7 @@ Current engine concurrency is intentionally fixed at `MAX_PARALLEL=4` in v0.4; t
 Deterministic replay (run twice with same command, then compare `replay/join.txt` hash):
 
 ```bash
-SWARM_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-deterministic-replay.adl.yaml --run --trace --out .adl/reports/demo-v0.4/deterministic-replay
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-deterministic-replay.adl.yaml --run --trace --out .adl/reports/demo-v0.4/deterministic-replay
 ```
 
 Run all three demos in sequence:

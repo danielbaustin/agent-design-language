@@ -14,6 +14,8 @@ jobs:
         working-directory: swarm
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
@@ -38,6 +40,10 @@ jobs:
         run: sh swarm/tools/codexw.sh --help
         working-directory: .
 
+      - name: guardrail (no new legacy swarm refs)
+        run: bash swarm/tools/check_no_new_legacy_swarm_refs.sh
+        working-directory: .
+
       - name: fmt
         run: cargo fmt --all -- --check
 
@@ -59,6 +65,8 @@ jobs:
         working-directory: swarm
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
