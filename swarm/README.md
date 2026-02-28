@@ -395,7 +395,7 @@ Contributors are expected to keep overall line coverage **≥ 85%**, and ideally
 
 Badge note:
 - `coverage` is the live Codecov percentage for the `swarm` upload.
-- `swarm-coverage-gate` reflects whether the CI workflow coverage gate passes. It is a status badge, not a live percentage badge.
+- `adl-coverage-gate` reflects whether the CI workflow coverage gate passes. It is a status badge, not a live percentage badge.
 
 ---
 

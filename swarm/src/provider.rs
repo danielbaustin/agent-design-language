@@ -487,7 +487,7 @@ impl OllamaProvider {
                 }
                 return Err(timeout_error(
                     "ollama",
-                    format!("timed out after {timeout_secs}s (set SWARM_TIMEOUT_SECS to override)"),
+                    format!("timed out after {timeout_secs}s (set ADL_TIMEOUT_SECS to override)"),
                 ));
             }
 
