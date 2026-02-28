@@ -15,6 +15,7 @@ pub mod artifacts;
 pub mod bounded_executor;
 pub mod delegation_policy;
 pub mod demo;
+pub mod env_compat;
 pub mod execute;
 pub mod execution_plan;
 pub mod instrumentation;

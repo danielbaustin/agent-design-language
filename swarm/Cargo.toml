@@ -13,6 +13,10 @@ name = "swarm"
 path = "src/main.rs"
 
 [[bin]]
+name = "adl-remote"
+path = "src/bin/adl_remote.rs"
+
+[[bin]]
 name = "swarm-remote"
 path = "src/bin/swarm_remote.rs"
 

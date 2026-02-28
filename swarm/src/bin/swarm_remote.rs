@@ -1,41 +1,22 @@
 use anyhow::Result;
+use std::ffi::OsString;
+use std::process::Command;
 
-fn bind_arg_from_args(args: &[String]) -> String {
-    args.get(1)
-        .cloned()
-        .unwrap_or_else(|| "127.0.0.1:8787".to_string())
-}
-
-fn run_with_bind(bind: &str) -> Result<()> {
-    eprintln!("swarm-remote listening on http://{bind}");
-    swarm::remote_exec::run_server(bind)
+fn adl_remote_binary_name() -> &'static str {
+    if cfg!(windows) {
+        "adl-remote.exe"
+    } else {
+        "adl-remote"
+    }
 }
 
 fn main() -> Result<()> {
-    let args: Vec<String> = std::env::args().collect();
-    let bind = bind_arg_from_args(&args);
-    run_with_bind(&bind)
-}
+    eprintln!("DEPRECATION: 'swarm-remote' is deprecated; use 'adl-remote' instead.");
 
-#[cfg(test)]
-mod tests {
-    use super::{bind_arg_from_args, run_with_bind};
+    let args: Vec<OsString> = std::env::args_os().skip(1).collect();
+    let current_exe = std::env::current_exe()?;
+    let adl_remote_exe = current_exe.with_file_name(adl_remote_binary_name());
 
-    #[test]
-    fn bind_arg_defaults_when_not_provided() {
-        let args = vec!["swarm_remote".to_string()];
-        assert_eq!(bind_arg_from_args(&args), "127.0.0.1:8787".to_string());
-    }
-
-    #[test]
-    fn bind_arg_uses_first_cli_argument() {
-        let args = vec!["swarm_remote".to_string(), "0.0.0.0:9000".to_string()];
-        assert_eq!(bind_arg_from_args(&args), "0.0.0.0:9000".to_string());
-    }
-
-    #[test]
-    fn run_with_bind_returns_error_for_invalid_address() {
-        let err = run_with_bind("127.0.0.1:not-a-port").expect_err("invalid bind");
-        assert!(err.to_string().contains("failed to bind remote server"));
-    }
+    let status = Command::new(&adl_remote_exe).args(args).status()?;
+    std::process::exit(status.code().unwrap_or(1));
 }
