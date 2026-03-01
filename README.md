@@ -25,6 +25,21 @@ If you want a second quick check:
 cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
 ```
 
+## Demos (Story-Driven, User-Facing)
+
+ADL includes both low-level matrix demos and story-driven demo packs for first-time users.
+
+Story packs (v0.7):
+- `S-01` Determinism You Can Trust
+- `S-02` From Failure to Clarity
+- `S-03` Portable Learning (Exportable Intelligence)
+- `S-04` Enterprise Trust Boundary (Signed Remote Requests)
+- `S-05` ADL is the Product Name (Compatibility Window)
+- `S-06` The Agent That Learns (planned/deferred)
+
+Canonical demo commands and artifact paths:
+- `docs/milestones/v0.7/DEMOS_v0.7.md#story-driven-demo-packs-user-facing`
+
 Badge semantics:
 - `adl-ci`: main branch CI workflow status
 - `coverage`: Codecov line-coverage signal for `main` (informational; CI still passes if Codecov upload is unavailable)

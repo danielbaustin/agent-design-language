@@ -8,6 +8,37 @@ Execution assumptions:
 - Core demos are offline/local (loopback only, no external network).
 - `run` commands use `--allow-unsigned` where needed so runtime signature enforcement for workflow docs does not block demo execution. This does not bypass remote request signing policy in D-11.
 
+## Story-driven demo packs (user-facing)
+
+These packs are narrative entry points built from the canonical demo matrix below.
+
+### S-01 Determinism You Can Trust
+- Narrative: ADL produces stable plans and stable artifacts across repeated runs.
+- Matrix coverage: D-01, D-02, D-07, D-09.
+
+### S-02 From Failure to Clarity
+- Narrative: failures are deterministic, actionable, and leave clear forensic artifacts.
+- Matrix coverage: D-05, D-09.
+
+### S-03 Portable Learning (Exportable Intelligence)
+- Narrative: learning is exportable, inspectable, and deterministic artifact output.
+- Matrix coverage: D-01, D-10.
+
+### S-04 Enterprise Trust Boundary (Signed Remote Requests)
+- Narrative: remote execution enforces signing/trust policy before executing remote work.
+- Matrix coverage: D-11.
+- Deterministic expectation:
+  - success path executes end-to-end with valid signing material
+  - negative path fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISSING`
+
+### S-05 ADL is the Product Name (Compatibility Window)
+- Narrative: canonical runtime naming is `adl`/`adl-remote`; compatibility surfaces remain bounded in v0.7.
+- Matrix coverage: D-02 and compatibility checks in CLI/CI.
+
+### S-06 The Agent That Learns (planned)
+- Narrative: end-to-end fail -> propose -> replay loop.
+- Status: planned/deferred to follow-up milestone work.
+
 ## D-01 Basic Local Run
 - Purpose: Validate baseline local execution and deterministic artifact emission.
 - Preconditions: `ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh`.
@@ -140,4 +171,3 @@ ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swar
   - signed-path command currently reaches remote signing verification and fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISMATCH` (tracked as follow-up)
   - negative command fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISSING`
 - Artifact paths: `.adl/runs/v0-7-enterprise-signed-remote/`, `/tmp/adl-remote-d11.log`, `"$tmpdir/out"/`.
-
