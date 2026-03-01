@@ -1581,4 +1581,161 @@ run:
             .to_string()
             .contains("verify_allowed_key_sources contains unsupported source"));
     }
+
+    #[test]
+    fn validate_rejects_unknown_references_across_agent_and_task_fields() {
+        let mut doc: AdlDoc = serde_yaml::from_str(
+            r#"
+version: "0.5"
+providers:
+  p1:
+    type: "ollama"
+tools:
+  t1:
+    kind: "builtin"
+agents:
+  a1:
+    provider: "p1"
+    model: "m1"
+    tools: ["t1"]
+tasks:
+  task1:
+    agent_ref: "a1"
+    tool_allowlist: ["t1"]
+    prompt:
+      user: "u"
+run:
+  workflow:
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "task1"
+"#,
+        )
+        .expect("parse");
+        doc.validate().expect("baseline doc should validate");
+
+        doc.agents.get_mut("a1").expect("agent").provider = "missing-provider".to_string();
+        let err = doc.validate().expect_err("unknown provider should fail");
+        assert!(err.to_string().contains("references unknown provider"));
+
+        doc.agents.get_mut("a1").expect("agent").provider = "p1".to_string();
+        doc.agents.get_mut("a1").expect("agent").tools = vec!["missing-tool".to_string()];
+        let err = doc.validate().expect_err("unknown agent tool should fail");
+        assert!(err.to_string().contains("tools references unknown tool"));
+
+        doc.agents.get_mut("a1").expect("agent").tools = vec!["t1".to_string()];
+        doc.tasks.get_mut("task1").expect("task").agent_ref = Some("missing-agent".to_string());
+        let err = doc
+            .validate()
+            .expect_err("unknown task agent_ref should fail");
+        assert!(err
+            .to_string()
+            .contains("agent_ref references unknown agent"));
+
+        doc.tasks.get_mut("task1").expect("task").agent_ref = Some("a1".to_string());
+        doc.tasks.get_mut("task1").expect("task").tool_allowlist = vec!["missing-tool".to_string()];
+        let err = doc
+            .validate()
+            .expect_err("unknown task tool_allowlist entry should fail");
+        assert!(err
+            .to_string()
+            .contains("tool_allowlist references unknown tool"));
+    }
+
+    #[test]
+    fn pattern_validate_rejects_additional_fork_join_and_linear_edge_cases() {
+        let mut linear = PatternSpec {
+            id: "p".to_string(),
+            kind: PatternKind::Linear,
+            steps: vec!["   ".to_string()],
+            fork: None,
+            join: None,
+        };
+        let err = linear
+            .validate()
+            .expect_err("linear pattern should reject empty step symbols");
+        assert!(err.to_string().contains("empty step symbol"));
+        linear.steps = vec!["A".to_string()];
+        linear.validate().expect("valid linear pattern");
+
+        let mut fork_join = PatternSpec {
+            id: "p".to_string(),
+            kind: PatternKind::ForkJoin,
+            steps: vec![],
+            fork: Some(PatternForkSpec { branches: vec![] }),
+            join: Some(PatternJoinSpec {
+                step: "join".to_string(),
+            }),
+        };
+        let err = fork_join
+            .validate()
+            .expect_err("fork_join must reject empty branch list");
+        assert!(err.to_string().contains("fork.branches must not be empty"));
+
+        fork_join.join = Some(PatternJoinSpec {
+            step: "   ".to_string(),
+        });
+        fork_join.fork = Some(PatternForkSpec {
+            branches: vec![PatternBranchSpec {
+                id: "b1".to_string(),
+                steps: vec!["A".to_string()],
+            }],
+        });
+        let err = fork_join
+            .validate()
+            .expect_err("fork_join must reject empty join.step");
+        assert!(err.to_string().contains("join.step must not be empty"));
+
+        fork_join.join = Some(PatternJoinSpec {
+            step: "join".to_string(),
+        });
+        fork_join.fork = Some(PatternForkSpec {
+            branches: vec![PatternBranchSpec {
+                id: "   ".to_string(),
+                steps: vec!["A".to_string()],
+            }],
+        });
+        let err = fork_join
+            .validate()
+            .expect_err("fork_join must reject empty branch id");
+        assert!(err.to_string().contains("branch with empty id"));
+
+        fork_join.fork = Some(PatternForkSpec {
+            branches: vec![PatternBranchSpec {
+                id: "p::reserved".to_string(),
+                steps: vec!["A".to_string()],
+            }],
+        });
+        let err = fork_join
+            .validate()
+            .expect_err("fork_join must reject reserved branch id prefix");
+        assert!(err.to_string().contains("cannot use reserved prefix 'p::'"));
+
+        fork_join.fork = Some(PatternForkSpec {
+            branches: vec![PatternBranchSpec {
+                id: "b1".to_string(),
+                steps: vec![],
+            }],
+        });
+        let err = fork_join
+            .validate()
+            .expect_err("fork_join must require non-empty branch steps");
+        assert!(err
+            .to_string()
+            .contains("branch 'b1' requires non-empty steps"));
+
+        fork_join.fork = Some(PatternForkSpec {
+            branches: vec![PatternBranchSpec {
+                id: "b1".to_string(),
+                steps: vec!["   ".to_string()],
+            }],
+        });
+        let err = fork_join
+            .validate()
+            .expect_err("fork_join must reject empty branch step symbol");
+        assert!(err
+            .to_string()
+            .contains("branch 'b1' has empty step symbol"));
+    }
 }
