@@ -82,10 +82,6 @@ cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- --help
   - legacy compatibility shim behavior is deterministic and emits a stable deprecation warning (validated by CI + CLI compatibility tests)
 - Artifact paths: stdout/stderr only.
 
-### S-06 The Agent That Learns (Flagship, planned)
-- Status: planned/deferred (v0.7x).
-- Notes: requires deeper learning/refinement integration before becoming a canonical runnable pack.
-
 ## D-01 Basic Local Run
 - Purpose: Validate baseline local execution and deterministic artifact emission.
 - Preconditions: `ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh`.
