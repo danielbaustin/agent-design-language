@@ -1121,6 +1121,38 @@ mod tests {
     }
 
     #[test]
+    fn security_envelope_rejects_signature_schema_version_mismatch() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: true,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("embedded".to_string()),
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let mut sig = sign_execute_request_v1(&req, &fixed_private_key_b64(), Some("k1"))
+            .expect("sign request");
+        sig.schema_version = "remote_request_signature.v999".to_string();
+        req.security.as_mut().expect("security").request_signature = Some(sig);
+
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_MALFORMED");
+        assert!(
+            err.message.contains("unexpected schema_version"),
+            "unexpected message: {}",
+            err.message
+        );
+    }
+
+    #[test]
     fn security_envelope_rejects_disallowed_signature_algorithm_before_crypto_verify() {
         let mut req = base_request();
         req.security = Some(ExecuteSecurityEnvelope {
