@@ -221,7 +221,7 @@ swarm/tools/demo_d11_signed_remote.sh negative
 - Preconditions: `ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh`.
 - Command:
 ```bash
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh adl swarm/examples/v0-7-hierarchical-planner.adl.yaml --run --allow-unsigned --out .tmp/v07-d12
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-hierarchical-planner.adl.yaml --run --allow-unsigned --out .tmp/v07-d12
 ```
 - Expected output:
   - run succeeds through `planner.plan`, `executor.alpha`, `executor.beta`, `aggregator.final`
