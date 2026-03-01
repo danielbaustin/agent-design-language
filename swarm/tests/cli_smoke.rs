@@ -50,6 +50,31 @@ fn run_swarm_shim(args: &[&str]) -> std::process::Output {
 }
 
 #[test]
+fn swarm_shim_print_plan_still_works_with_single_deprecation_warning() {
+    let path = fixture_path("examples/v0-5-pattern-linear.adl.yaml");
+    let out = run_swarm_shim(&[path.to_str().unwrap(), "--print-plan"]);
+    assert!(
+        out.status.success(),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    let needle = "DEPRECATION: 'swarm' CLI is deprecated; use 'adl' instead.";
+    assert_eq!(
+        stderr.matches(needle).count(),
+        1,
+        "expected exactly one deprecation warning, stderr:\n{stderr}"
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("p::p_linear::A")
+            && stdout.contains("p::p_linear::B")
+            && stdout.contains("p::p_linear::C"),
+        "stdout:\n{stdout}"
+    );
+}
+
+#[test]
 fn default_behavior_prints_plan() {
     let path = write_temp_adl_yaml();
     let out = run_swarm(&[path.to_str().unwrap()]);
@@ -307,6 +332,147 @@ fn missing_path_is_an_error() {
     assert!(
         !out.stderr.is_empty(),
         "expected stderr to mention missing args"
+    );
+}
+
+#[test]
+fn keygen_requires_out_dir_arg() {
+    let out = run_swarm(&["keygen"]);
+    assert!(
+        !out.status.success(),
+        "expected keygen arg validation failure"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("keygen requires --out-dir"),
+        "stderr:\n{stderr}"
+    );
+}
+
+#[test]
+fn keygen_sign_verify_round_trip_works() {
+    let d = unique_test_temp_dir("keygen-sign-verify");
+    let key_dir = d.join("keys");
+    let signed = d.join("signed.adl.yaml");
+    let source = fixture_path("examples/v0-5-pattern-linear.adl.yaml");
+
+    let keygen = run_swarm(&["keygen", "--out-dir", key_dir.to_str().unwrap()]);
+    assert!(
+        keygen.status.success(),
+        "keygen stderr:\n{}",
+        String::from_utf8_lossy(&keygen.stderr)
+    );
+    assert!(key_dir.join("ed25519-private.b64").is_file());
+    assert!(key_dir.join("ed25519-public.b64").is_file());
+
+    let sign = run_swarm(&[
+        "sign",
+        source.to_str().unwrap(),
+        "--key",
+        key_dir.join("ed25519-private.b64").to_str().unwrap(),
+        "--key-id",
+        "test-key",
+        "--out",
+        signed.to_str().unwrap(),
+    ]);
+    assert!(
+        sign.status.success(),
+        "sign stderr:\n{}",
+        String::from_utf8_lossy(&sign.stderr)
+    );
+    assert!(signed.is_file(), "signed ADL must be written");
+
+    let verify = run_swarm(&[
+        "verify",
+        signed.to_str().unwrap(),
+        "--key",
+        key_dir.join("ed25519-public.b64").to_str().unwrap(),
+    ]);
+    assert!(
+        verify.status.success(),
+        "verify stderr:\n{}",
+        String::from_utf8_lossy(&verify.stderr)
+    );
+}
+
+#[test]
+fn verify_requires_path_arg() {
+    let out = run_swarm(&["verify"]);
+    assert!(
+        !out.status.success(),
+        "expected verify arg validation failure"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("verify requires <adl.yaml>"),
+        "stderr:\n{stderr}"
+    );
+}
+
+#[test]
+fn resume_requires_exactly_one_run_id() {
+    let none = run_swarm(&["resume"]);
+    assert_eq!(
+        none.status.code(),
+        Some(2),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&none.stderr)
+    );
+    let stderr_none = String::from_utf8_lossy(&none.stderr);
+    assert!(
+        stderr_none.contains("resume requires <run_id>"),
+        "stderr:\n{stderr_none}"
+    );
+
+    let many = run_swarm(&["resume", "a", "b"]);
+    assert_eq!(
+        many.status.code(),
+        Some(2),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&many.stderr)
+    );
+    let stderr_many = String::from_utf8_lossy(&many.stderr);
+    assert!(
+        stderr_many.contains("resume accepts exactly one argument"),
+        "stderr:\n{stderr_many}"
+    );
+}
+
+#[test]
+fn instrument_subcommand_validates_arguments() {
+    let unknown = run_swarm(&["instrument", "unknown"]);
+    assert!(!unknown.status.success());
+    let stderr_unknown = String::from_utf8_lossy(&unknown.stderr);
+    assert!(
+        stderr_unknown.contains("unknown instrument subcommand"),
+        "stderr:\n{stderr_unknown}"
+    );
+
+    let graph_missing = run_swarm(&["instrument", "graph"]);
+    assert!(!graph_missing.status.success());
+    let stderr_graph = String::from_utf8_lossy(&graph_missing.stderr);
+    assert!(
+        stderr_graph.contains("instrument graph requires <adl.yaml>"),
+        "stderr:\n{stderr_graph}"
+    );
+}
+
+#[test]
+fn learn_export_validates_required_and_unknown_args() {
+    let missing_out = run_swarm(&["learn", "export", "--format", "jsonl"]);
+    assert!(!missing_out.status.success());
+    let stderr_missing = String::from_utf8_lossy(&missing_out.stderr);
+    assert!(
+        stderr_missing.contains("learn export requires --out <file>"),
+        "stderr:\n{stderr_missing}"
+    );
+
+    let unknown = run_swarm(&["learn", "export", "--bogus", "x"]);
+    assert!(!unknown.status.success());
+    let stderr_unknown = String::from_utf8_lossy(&unknown.stderr);
+    assert!(
+        stderr_unknown.contains("unknown learn export arg"),
+        "stderr:\n{stderr_unknown}"
     );
 }
 

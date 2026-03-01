@@ -88,47 +88,34 @@ jobs:
       - name: Coverage summary (json)
         run: cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
 
-      - name: Enforce per-file coverage gate (swarm/src >= 80%)
+      - name: Coverage summary (text)
+        run: cargo llvm-cov --workspace --summary-only | tee coverage-summary.txt
+
+      - name: Enforce workspace line coverage gate (>= 90%)
         run: |
           set -eu
-          threshold=80
-          rows="$(jq -r '
-            [.data[].files[]
-              | select(.filename|contains("/swarm/src/"))
-              | select(.filename|endswith("/swarm/src/bin/swarm.rs")|not)
-              | select(.filename|endswith("/swarm/src/bin/swarm_remote.rs")|not)
-              | {f:.filename, covered:.summary.lines.covered, count:.summary.lines.count}
-            ]
-            | sort_by(.f)
-            | group_by(.f)[]
-            | {
-                f: .[0].f,
-                covered: (map(.covered) | add),
-                count: (map(.count) | add),
-                percent: ((map(.covered) | add) * 100.0 / (map(.count) | add))
-              }
-            | [.f, .covered, .count, .percent]
-            | @tsv
-          ' coverage-summary.json)"
-
-          if [ -z "$rows" ]; then
-            echo "No swarm/src coverage rows found in coverage-summary.json"
+          threshold=90
+          total_line="$(awk '/^TOTAL/ {line=$0} END {print line}' coverage-summary.txt)"
+          if [ -z "$total_line" ]; then
+            echo "Failed to locate TOTAL line in coverage-summary.txt"
             exit 1
           fi
 
-          echo "Per-file line coverage for swarm/src (threshold: ${threshold}%)"
-          echo "$rows" | awk -F '\t' '{
-            printf "  %s\t%d/%d\t%.2f%%\n", $1, $2, $3, $4
-          }'
+          workspace_line_pct="$(echo "$total_line" | awk '{gsub("%","",$10); print $10}')"
+          if [ -z "$workspace_line_pct" ]; then
+            echo "Failed to parse workspace line coverage from TOTAL line:"
+            echo "$total_line"
+            exit 1
+          fi
 
-          echo "$rows" | awk -F '\t' -v threshold="$threshold" '
-            BEGIN { bad=0 }
-            ($4 + 0) < threshold {
-              bad=1
-              printf "Coverage below threshold: %s %.2f%% < %s%%\n", $1, $4, threshold
-            }
-            END { exit bad }
-          '
+          printf "Workspace line coverage: %.2f%% (threshold: %s%%)\n" "$workspace_line_pct" "$threshold"
+          awk -v pct="$workspace_line_pct" -v threshold="$threshold" '
+            BEGIN {
+              if ((pct + 0) < threshold) {
+                printf "Coverage below threshold: %.2f%% < %s%%\n", pct, threshold
+                exit 1
+              }
+            }'
 
       - name: Verify generated lcov file
         run: test -s lcov.info && ls -l lcov.info
@@ -144,6 +131,7 @@ jobs:
           path: |
             swarm/lcov.info
             swarm/coverage-summary.json
+            swarm/coverage-summary.txt
           if-no-files-found: error
 
       - name: Upload coverage to Codecov
