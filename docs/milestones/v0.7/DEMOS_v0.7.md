@@ -8,6 +8,85 @@ Execution assumptions:
 - Core demos are offline/local (loopback only, no external network).
 - `run` commands use `--allow-unsigned` where needed so runtime signature enforcement for workflow docs does not block demo execution. This does not bypass remote request signing policy in D-11.
 
+## Story-driven demo packs (user-facing)
+
+### S-01 Determinism You Can Trust
+- Purpose: Show the same workflow yields byte-identical outputs across repeated runs.
+- Preconditions: `ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh`.
+- Commands:
+```bash
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-6-hitl-no-pause.adl.yaml --run --trace --allow-unsigned --out .tmp/v07-s01-a
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-6-hitl-no-pause.adl.yaml --run --trace --allow-unsigned --out .tmp/v07-s01-b
+cmp .tmp/v07-s01-a/s1.txt .tmp/v07-s01-b/s1.txt
+cmp .tmp/v07-s01-a/s2.txt .tmp/v07-s01-b/s2.txt
+cmp .tmp/v07-s01-a/s3.txt .tmp/v07-s01-b/s3.txt
+```
+- Expected output: all `cmp` checks succeed; run artifacts exist for `v0-6-hitl-no-pause-demo`.
+- Artifact paths: `.tmp/v07-s01-a/`, `.tmp/v07-s01-b/`, `.adl/runs/v0-6-hitl-no-pause-demo/`.
+
+### S-02 From Failure to Clarity
+- Purpose: Show deterministic failure surfaces with preserved run artifacts for diagnosis.
+- Preconditions: none.
+- Commands:
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/failure-missing-file.adl.yaml --run --allow-unsigned
+```
+- Expected output: deterministic failure with actionable missing-file message.
+- Artifact paths: `.adl/runs/failure-missing-file-demo/run_status.json`, `.adl/runs/failure-missing-file-demo/run_summary.json`.
+
+### S-03 Portable Learning (Exportable Intelligence)
+- Purpose: Show learning export is deterministic and sanitized for sharing.
+- Preconditions: at least one prior run in `.adl/runs` (for example S-01).
+- Commands:
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- learn export --format jsonl --runs-dir .adl/runs --out .tmp/v07-s03-a.jsonl
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- learn export --format jsonl --runs-dir .adl/runs --out .tmp/v07-s03-b.jsonl
+cmp .tmp/v07-s03-a.jsonl .tmp/v07-s03-b.jsonl
+```
+- Expected output: `cmp` succeeds and JSONL export is stable across reruns.
+- Artifact paths: `.tmp/v07-s03-a.jsonl`, `.tmp/v07-s03-b.jsonl`.
+
+### S-04 Enterprise Trust Boundary (Signed Remote Requests)
+- Purpose: Demonstrate deterministic remote-signing trust failures and policy messaging.
+- Preconditions:
+  - `ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh`
+  - loopback remote server via `adl-remote`
+  - local keypair generated via `adl keygen`
+- Commands:
+```bash
+tmpdir="$(mktemp -d)"
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- keygen --out-dir "$tmpdir/.keys"
+export ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64="$(tr -d '\n' < "$tmpdir/.keys/ed25519-private.b64")"
+export ADL_REMOTE_REQUEST_SIGNING_KEY_ID="demo-key-1"
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl-remote -- 127.0.0.1:8787 >/tmp/adl-remote-s04.log 2>&1 &
+remote_pid=$!
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-enterprise-signed-remote.adl.yaml --run --trace --allow-unsigned --out "$tmpdir/out"
+kill "$remote_pid"
+unset ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-enterprise-signed-remote.adl.yaml --run --trace --allow-unsigned
+```
+- Expected output:
+  - signed-path currently fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISMATCH`
+  - missing-signature path fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISSING`
+- Artifact paths: `.adl/runs/v0-7-enterprise-signed-remote/`, `/tmp/adl-remote-s04.log`, `"$tmpdir/out"/` (partial/failed run output).
+
+### S-05 ADL is the Product Name (Compatibility Window)
+- Purpose: Show canonical CLI naming plus deterministic legacy shim warning.
+- Preconditions: none.
+- Commands:
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- --help
+cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- --help
+```
+- Expected output:
+  - `adl` help prints without deprecation noise
+  - `swarm` prints deterministic warning: `DEPRECATION: 'swarm' CLI is deprecated; use 'adl' instead.`
+- Artifact paths: stdout/stderr only.
+
+### S-06 The Agent That Learns (Flagship, planned)
+- Status: planned/deferred (v0.7x).
+- Notes: requires deeper learning/refinement integration before becoming a canonical runnable pack.
+
 ## D-01 Basic Local Run
 - Purpose: Validate baseline local execution and deterministic artifact emission.
 - Preconditions: `ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh`.
@@ -56,7 +135,7 @@ ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swar
 cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/failure-missing-file.adl.yaml --run --allow-unsigned
 ```
 - Expected output: run fails with deterministic, actionable error.
-- Artifact paths: `.adl/runs/failure-missing-file/` (failed-run artifacts).
+- Artifact paths: `.adl/runs/failure-missing-file-demo/` (failed-run artifacts).
 
 ## D-06 HITL Pause/Resume (Step-Boundary)
 - Purpose: Validate pause/resume strictness and deterministic roundtrip.
@@ -140,4 +219,3 @@ ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swar
   - signed-path command currently reaches remote signing verification and fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISMATCH` (tracked as follow-up)
   - negative command fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISSING`
 - Artifact paths: `.adl/runs/v0-7-enterprise-signed-remote/`, `/tmp/adl-remote-d11.log`, `"$tmpdir/out"/`.
-
