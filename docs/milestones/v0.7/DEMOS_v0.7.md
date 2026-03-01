@@ -212,3 +212,21 @@ swarm/tools/demo_d11_signed_remote.sh negative
   - `.adl/runs/v0-7-enterprise-signed-remote/`
   - `.tmp/d11-remote.log`
   - `.tmp/d11-keys/` (ephemeral demo keys; do not commit, private key file is chmod 600 on unix)
+
+## D-12 Hierarchical Planner Pattern (Issue #541)
+- Purpose: Demonstrate canonical Planner -> Executor -> Aggregator orchestration with deterministic artifact layout.
+- Preconditions: `ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh`.
+- Command:
+```bash
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-hierarchical-planner.adl.yaml --run --allow-unsigned --out .tmp/v07-d12
+```
+- Expected output:
+  - run succeeds through `planner.plan`, `executor.alpha`, `executor.beta`, `aggregator.final`
+  - artifacts include structured stage files: `plan.json`, `exec-alpha.json`, `exec-beta.json`, `aggregate.json`
+- Artifact paths:
+  - `.tmp/v07-d12/plan.json`
+  - `.tmp/v07-d12/exec-alpha.json`
+  - `.tmp/v07-d12/exec-beta.json`
+  - `.tmp/v07-d12/aggregate.json`
+  - `.adl/runs/v0-7-hierarchical-planner/`
+
