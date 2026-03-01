@@ -76,11 +76,10 @@ ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swar
 - Commands:
 ```bash
 cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- --help
-cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- --help
 ```
 - Expected output:
   - `adl` help prints without deprecation noise
-  - `swarm` prints deterministic warning: `DEPRECATION: 'swarm' CLI is deprecated; use 'adl' instead.`
+  - legacy compatibility shim behavior is deterministic and emits a stable deprecation warning (validated by CI + CLI compatibility tests)
 - Artifact paths: stdout/stderr only.
 
 ### S-06 The Agent That Learns (Flagship, planned)
