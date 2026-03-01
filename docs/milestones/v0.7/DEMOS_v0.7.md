@@ -129,9 +129,11 @@ swarm/tools/demo_d11_signed_remote.sh negative
 ```
 - Expected output:
   - success command runs end-to-end through `local.first -> remote.mid -> local.last`
+  - harness explicitly verifies remote-step execution by asserting `remote.mid` and `local.last` are `success` in `.adl/runs/v0-7-enterprise-signed-remote/steps.json`
   - negative command fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISSING`
+- Signature contract:
+  - request signatures use canonical JSON bytes where object keys are recursively sorted and only `security.request_signature` is excluded before signing/verifying.
 - Artifact paths:
   - `.adl/runs/v0-7-enterprise-signed-remote/`
-  - `.tmp/d11-out/`
   - `.tmp/d11-remote.log`
-  - `.tmp/d11-keys/` (ephemeral demo keys; do not commit)
+  - `.tmp/d11-keys/` (ephemeral demo keys; do not commit, private key file is chmod 600 on unix)

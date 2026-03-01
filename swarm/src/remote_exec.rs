@@ -294,6 +294,14 @@ fn sort_value(value: &mut Value) {
 }
 
 pub fn canonical_request_bytes(req: &ExecuteRequest) -> Result<Vec<u8>> {
+    // Canonicalization contract (v1):
+    // 1) clone request
+    // 2) exclude only `security.request_signature`
+    // 3) recursively sort JSON object keys (including HashMap-backed fields)
+    // 4) serialize compact JSON bytes
+    //
+    // Client and server both use this routine for signature verification.
+    // Any change here is a wire-compatibility change for signed requests.
     let mut canonical = req.clone();
     if let Some(sec) = canonical.security.as_mut() {
         sec.request_signature = None;
@@ -1020,6 +1028,40 @@ mod tests {
         assert_eq!(
             a, b,
             "canonical bytes must exclude request signature payload"
+        );
+    }
+
+    #[test]
+    fn canonical_request_bytes_stable_across_hashmap_insertion_order() {
+        let mut req_a = base_request();
+        req_a.inputs.inputs.insert("b".to_string(), "2".to_string());
+        req_a.inputs.inputs.insert("a".to_string(), "1".to_string());
+        req_a
+            .inputs
+            .state
+            .insert("y".to_string(), "state-y".to_string());
+        req_a
+            .inputs
+            .state
+            .insert("x".to_string(), "state-x".to_string());
+
+        let mut req_b = base_request();
+        req_b.inputs.inputs.insert("a".to_string(), "1".to_string());
+        req_b.inputs.inputs.insert("b".to_string(), "2".to_string());
+        req_b
+            .inputs
+            .state
+            .insert("x".to_string(), "state-x".to_string());
+        req_b
+            .inputs
+            .state
+            .insert("y".to_string(), "state-y".to_string());
+
+        let bytes_a = canonical_request_bytes(&req_a).expect("canonical bytes a");
+        let bytes_b = canonical_request_bytes(&req_b).expect("canonical bytes b");
+        assert_eq!(
+            bytes_a, bytes_b,
+            "hash map insertion order must not affect canonical bytes"
         );
     }
 

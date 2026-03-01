@@ -13,7 +13,7 @@ OUT_DIR=".tmp/d11-out"
 KEY_DIR=".tmp/d11-keys"
 
 mkdir -p .tmp
-rm -rf "$OUT_DIR" "$KEY_DIR"
+rm -rf "$KEY_DIR"
 
 cleanup() {
   if [[ -n "${REMOTE_PID:-}" ]]; then
@@ -23,7 +23,9 @@ cleanup() {
 trap cleanup EXIT
 
 run_success() {
+  umask 077
   cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- keygen --out-dir "$KEY_DIR"
+  chmod 600 "$KEY_DIR/ed25519-private.b64" "$KEY_DIR/ed25519-public.b64" 2>/dev/null || true
 
   export ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64
   ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64="$(tr -d '\n' < "$KEY_DIR/ed25519-private.b64")"
@@ -35,12 +37,29 @@ run_success() {
   sleep 1
 
   ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh \
-    cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- "$EXAMPLE" --run --trace --allow-unsigned --out "$OUT_DIR"
+    cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- "$EXAMPLE" --run --trace --allow-unsigned
+
+  # Prove remote step actually executed by checking run step outcomes.
+  steps_file=".adl/runs/$RUN_ID/steps.json"
+  python3 - "$steps_file" <<'PY'
+import json
+import sys
+
+path = sys.argv[1]
+with open(path, "r", encoding="utf-8") as f:
+    steps = json.load(f)
+
+status = {item.get("step_id"): item.get("status") for item in steps}
+if status.get("remote.mid") != "success":
+    raise SystemExit(f"D11 ERROR: expected remote.mid success in {path}; got {status.get('remote.mid')!r}")
+if status.get("local.last") != "success":
+    raise SystemExit(f"D11 ERROR: expected local.last success in {path}; got {status.get('local.last')!r}")
+PY
 
   echo "D11 success complete"
   echo "  run_id=$RUN_ID"
-  echo "  out_dir=$OUT_DIR"
   echo "  remote_log=$REMOTE_LOG"
+  echo "  remote_step=verified (remote.mid=success, local.last=success)"
 }
 
 run_negative() {
