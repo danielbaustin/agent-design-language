@@ -1118,6 +1118,75 @@ mod tests {
         assert!(!response.ok);
         let err = response.error.expect("error");
         assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_MISMATCH");
+        let env_err = validate_security_envelope(&req).expect_err("tampered signature must fail");
+        assert_eq!(env_err.code(), "REMOTE_REQUEST_SIGNATURE_MISMATCH");
+        let as_anyhow: anyhow::Error = env_err.into();
+        assert_eq!(stable_failure_kind(&as_anyhow), Some("policy_denied"));
+    }
+
+    #[test]
+    fn security_envelope_rejects_signature_schema_version_mismatch() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: true,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("embedded".to_string()),
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let mut sig = sign_execute_request_v1(&req, &fixed_private_key_b64(), Some("k1"))
+            .expect("sign request");
+        sig.schema_version = "remote_request_signature.v999".to_string();
+        req.security.as_mut().expect("security").request_signature = Some(sig);
+
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_MALFORMED");
+        let env_err =
+            validate_security_envelope(&req).expect_err("schema version mismatch must fail");
+        assert_eq!(env_err.code(), "REMOTE_REQUEST_SIGNATURE_MALFORMED");
+        let as_anyhow: anyhow::Error = env_err.into();
+        assert_eq!(stable_failure_kind(&as_anyhow), Some("policy_denied"));
+    }
+
+    #[test]
+    fn security_envelope_rejects_malformed_signature_payload() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: true,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("embedded".to_string()),
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let mut sig = sign_execute_request_v1(&req, &fixed_private_key_b64(), Some("k1"))
+            .expect("sign request");
+        sig.sig_b64 = "not-valid-base64***".to_string();
+        req.security.as_mut().expect("security").request_signature = Some(sig);
+
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_MALFORMED");
+
+        let env_err =
+            validate_security_envelope(&req).expect_err("malformed signature payload must fail");
+        assert_eq!(env_err.code(), "REMOTE_REQUEST_SIGNATURE_MALFORMED");
+        let as_anyhow: anyhow::Error = env_err.into();
+        assert_eq!(stable_failure_kind(&as_anyhow), Some("policy_denied"));
     }
 
     #[test]

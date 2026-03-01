@@ -207,6 +207,7 @@ swarm/tools/demo_d11_signed_remote.sh negative
   - negative command fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISSING`
 - Signature contract:
   - request signatures use canonical JSON bytes where object keys are recursively sorted and only `security.request_signature` is excluded before signing/verifying.
+  - normative reference: [ADR-0006 Remote Request Signing Canonicalization](../../adr/0006-remote-signing-canonicalization.md)
 - Artifact paths:
   - `.adl/runs/v0-7-enterprise-signed-remote/`
   - `.tmp/d11-remote.log`
