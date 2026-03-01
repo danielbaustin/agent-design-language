@@ -35,10 +35,9 @@ Story packs (v0.7):
 - `S-03` Portable Learning (Exportable Intelligence)
 - `S-04` Enterprise Trust Boundary (Signed Remote Requests)
 - `S-05` ADL is the Product Name (Compatibility Window)
-- `S-06` The Agent That Learns (planned/deferred)
 
 Canonical demo commands and artifact paths:
-- `docs/milestones/v0.7/DEMOS_v0.7.md#story-driven-demo-packs-user-facing`
+- [v0.7 Demo Matrix (Story-driven section)](docs/milestones/v0.7/DEMOS_v0.7.md#story-driven-demo-packs-user-facing)
 
 Badge semantics:
 - `adl-ci`: main branch CI workflow status

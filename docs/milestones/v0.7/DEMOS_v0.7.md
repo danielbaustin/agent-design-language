@@ -28,16 +28,12 @@ These packs are narrative entry points built from the canonical demo matrix belo
 - Narrative: remote execution enforces signing/trust policy before executing remote work.
 - Matrix coverage: D-11.
 - Deterministic expectation:
-  - success path executes end-to-end with valid signing material
+  - signed-path currently fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISMATCH` (tracked follow-up)
   - negative path fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISSING`
 
 ### S-05 ADL is the Product Name (Compatibility Window)
 - Narrative: canonical runtime naming is `adl`/`adl-remote`; compatibility surfaces remain bounded in v0.7.
 - Matrix coverage: D-02 and compatibility checks in CLI/CI.
-
-### S-06 The Agent That Learns (planned)
-- Narrative: end-to-end fail -> propose -> replay loop.
-- Status: planned/deferred to follow-up milestone work.
 
 ## D-01 Basic Local Run
 - Purpose: Validate baseline local execution and deterministic artifact emission.
