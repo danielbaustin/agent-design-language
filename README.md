@@ -44,6 +44,19 @@ Badge semantics:
 - `coverage`: Codecov line-coverage signal for `main` (informational; CI still passes if Codecov upload is unavailable)
 - `milestone`: current documentation milestone marker
 
+## Demos
+
+Story-driven demo packs live in [`docs/milestones/v0.7/DEMOS_v0.7.md`](docs/milestones/v0.7/DEMOS_v0.7.md) under **Story-driven demo packs (user-facing)**:
+
+- `S-01` Determinism You Can Trust
+- `S-02` From Failure to Clarity
+- `S-03` Portable Learning (Exportable Intelligence)
+- `S-04` Enterprise Trust Boundary (Signed Remote Requests)
+- `S-05` ADL is the Product Name (Compatibility Window)
+- `S-06` The Agent That Learns (planned/deferred)
+
+Canonical reference: [`docs/milestones/v0.7/DEMOS_v0.7.md`](docs/milestones/v0.7/DEMOS_v0.7.md)
+
 ## Status
 
 Current release: **v0.6.0**

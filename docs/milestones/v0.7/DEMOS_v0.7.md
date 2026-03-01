@@ -10,30 +10,77 @@ Execution assumptions:
 
 ## Story-driven demo packs (user-facing)
 
-These packs are narrative entry points built from the canonical demo matrix below.
-
 ### S-01 Determinism You Can Trust
-- Narrative: ADL produces stable plans and stable artifacts across repeated runs.
-- Matrix coverage: D-01, D-02, D-07, D-09.
+- Purpose: Show the same workflow yields byte-identical outputs across repeated runs.
+- Preconditions: `ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh`.
+- Commands:
+```bash
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-6-hitl-no-pause.adl.yaml --run --trace --allow-unsigned --out .tmp/v07-s01-a
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-6-hitl-no-pause.adl.yaml --run --trace --allow-unsigned --out .tmp/v07-s01-b
+cmp .tmp/v07-s01-a/s1.txt .tmp/v07-s01-b/s1.txt
+cmp .tmp/v07-s01-a/s2.txt .tmp/v07-s01-b/s2.txt
+cmp .tmp/v07-s01-a/s3.txt .tmp/v07-s01-b/s3.txt
+```
+- Expected output: all `cmp` checks succeed; run artifacts exist for `v0-6-hitl-no-pause-demo`.
+- Artifact paths: `.tmp/v07-s01-a/`, `.tmp/v07-s01-b/`, `.adl/runs/v0-6-hitl-no-pause-demo/`.
 
 ### S-02 From Failure to Clarity
-- Narrative: failures are deterministic, actionable, and leave clear forensic artifacts.
-- Matrix coverage: D-05, D-09.
+- Purpose: Show deterministic failure surfaces with preserved run artifacts for diagnosis.
+- Preconditions: none.
+- Commands:
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/failure-missing-file.adl.yaml --run --allow-unsigned
+```
+- Expected output: deterministic failure with actionable missing-file message.
+- Artifact paths: `.adl/runs/failure-missing-file-demo/run_status.json`, `.adl/runs/failure-missing-file-demo/run_summary.json`.
 
 ### S-03 Portable Learning (Exportable Intelligence)
-- Narrative: learning is exportable, inspectable, and deterministic artifact output.
-- Matrix coverage: D-01, D-10.
+- Purpose: Show learning export is deterministic and sanitized for sharing.
+- Preconditions: at least one prior run in `.adl/runs` (for example S-01).
+- Commands:
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- learn export --format jsonl --runs-dir .adl/runs --out .tmp/v07-s03-a.jsonl
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- learn export --format jsonl --runs-dir .adl/runs --out .tmp/v07-s03-b.jsonl
+cmp .tmp/v07-s03-a.jsonl .tmp/v07-s03-b.jsonl
+```
+- Expected output: `cmp` succeeds and JSONL export is stable across reruns.
+- Artifact paths: `.tmp/v07-s03-a.jsonl`, `.tmp/v07-s03-b.jsonl`.
 
 ### S-04 Enterprise Trust Boundary (Signed Remote Requests)
-- Narrative: remote execution enforces signing/trust policy before executing remote work.
-- Matrix coverage: D-11.
-- Deterministic expectation:
-  - signed-path currently fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISMATCH` (tracked follow-up)
-  - negative path fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISSING`
+- Purpose: Demonstrate deterministic remote-signing trust failures and policy messaging.
+- Preconditions:
+  - `ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh`
+  - loopback remote server via `adl-remote`
+  - local keypair generated via `adl keygen`
+- Commands:
+```bash
+tmpdir="$(mktemp -d)"
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- keygen --out-dir "$tmpdir/.keys"
+export ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64="$(tr -d '\n' < "$tmpdir/.keys/ed25519-private.b64")"
+export ADL_REMOTE_REQUEST_SIGNING_KEY_ID="demo-key-1"
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl-remote -- 127.0.0.1:8787 >/tmp/adl-remote-s04.log 2>&1 &
+remote_pid=$!
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-enterprise-signed-remote.adl.yaml --run --trace --allow-unsigned --out "$tmpdir/out"
+kill "$remote_pid"
+unset ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-enterprise-signed-remote.adl.yaml --run --trace --allow-unsigned
+```
+- Expected output:
+  - signed-path currently fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISMATCH`
+  - missing-signature path fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISSING`
+- Artifact paths: `.adl/runs/v0-7-enterprise-signed-remote/`, `/tmp/adl-remote-s04.log`, `"$tmpdir/out"/` (partial/failed run output).
 
 ### S-05 ADL is the Product Name (Compatibility Window)
-- Narrative: canonical runtime naming is `adl`/`adl-remote`; compatibility surfaces remain bounded in v0.7.
-- Matrix coverage: D-02 and compatibility checks in CLI/CI.
+- Purpose: Show canonical CLI naming plus deterministic legacy shim warning.
+- Preconditions: none.
+- Commands:
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- --help
+```
+- Expected output:
+  - `adl` help prints without deprecation noise
+  - legacy compatibility shim behavior is deterministic and emits a stable deprecation warning (validated by CI + CLI compatibility tests)
+- Artifact paths: stdout/stderr only.
 
 ## D-01 Basic Local Run
 - Purpose: Validate baseline local execution and deterministic artifact emission.
@@ -83,7 +130,7 @@ ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swar
 cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/failure-missing-file.adl.yaml --run --allow-unsigned
 ```
 - Expected output: run fails with deterministic, actionable error.
-- Artifact paths: `.adl/runs/failure-missing-file/` (failed-run artifacts).
+- Artifact paths: `.adl/runs/failure-missing-file-demo/` (failed-run artifacts).
 
 ## D-06 HITL Pause/Resume (Step-Boundary)
 - Purpose: Validate pause/resume strictness and deterministic roundtrip.
@@ -145,25 +192,22 @@ cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- learn export --format
 - Purpose: Exercise real remote signing/trust policy path with deterministic success/failure behavior.
 - Preconditions:
   - `ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh`
-  - local keypair generated via `adl keygen`
-  - loopback remote server (`adl-remote`) running
-- Commands:
+  - no external network; loopback-only local remote process
+- One-command harness (success):
 ```bash
-tmpdir="$(mktemp -d)"
-cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- keygen --out-dir "$tmpdir/.keys"
-export ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64="$(tr -d '\n' < "$tmpdir/.keys/ed25519-private.b64")"
-export ADL_REMOTE_REQUEST_SIGNING_KEY_ID="demo-key-1"
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl-remote -- 127.0.0.1:8787 >/tmp/adl-remote-d11.log 2>&1 &
-remote_pid=$!
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-enterprise-signed-remote.adl.yaml --run --trace --allow-unsigned --out "$tmpdir/out"
-kill "$remote_pid"
+swarm/tools/demo_d11_signed_remote.sh success
 ```
-- Negative command:
+- Negative harness command (deterministic rejection):
 ```bash
-unset ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-enterprise-signed-remote.adl.yaml --run --trace --allow-unsigned
+swarm/tools/demo_d11_signed_remote.sh negative
 ```
 - Expected output:
-  - signed-path command currently reaches remote signing verification and fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISMATCH` (tracked as follow-up)
+  - success command runs end-to-end through `local.first -> remote.mid -> local.last`
+  - harness explicitly verifies remote-step execution by asserting `remote.mid` and `local.last` are `success` in `.adl/runs/v0-7-enterprise-signed-remote/steps.json`
   - negative command fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISSING`
-- Artifact paths: `.adl/runs/v0-7-enterprise-signed-remote/`, `/tmp/adl-remote-d11.log`, `"$tmpdir/out"/`.
+- Signature contract:
+  - request signatures use canonical JSON bytes where object keys are recursively sorted and only `security.request_signature` is excluded before signing/verifying.
+- Artifact paths:
+  - `.adl/runs/v0-7-enterprise-signed-remote/`
+  - `.tmp/d11-remote.log`
+  - `.tmp/d11-keys/` (ephemeral demo keys; do not commit, private key file is chmod 600 on unix)

@@ -294,6 +294,14 @@ fn sort_value(value: &mut Value) {
 }
 
 pub fn canonical_request_bytes(req: &ExecuteRequest) -> Result<Vec<u8>> {
+    // Canonicalization contract (v1):
+    // 1) clone request
+    // 2) exclude only `security.request_signature`
+    // 3) recursively sort JSON object keys (including HashMap-backed fields)
+    // 4) serialize compact JSON bytes
+    //
+    // Client and server both use this routine for signature verification.
+    // Any change here is a wire-compatibility change for signed requests.
     let mut canonical = req.clone();
     if let Some(sec) = canonical.security.as_mut() {
         sec.request_signature = None;
@@ -327,6 +335,33 @@ pub fn sign_execute_request_v1(
     })
 }
 
+fn attach_request_signature(
+    req: &mut ExecuteRequest,
+    private_key_b64: &str,
+    key_id: Option<&str>,
+) -> Result<()> {
+    {
+        let env = req
+            .security
+            .get_or_insert_with(ExecuteSecurityEnvelope::default);
+        env.signed = true;
+        if let Some(id) = key_id {
+            env.key_id = Some(id.to_string());
+        }
+        env.signature_alg = Some(REMOTE_REQUEST_SIGNATURE_ALG_ED25519.to_string());
+        env.key_source = Some("embedded".to_string());
+    }
+
+    // Canonical request bytes include envelope metadata and exclude only the
+    // request_signature payload itself.
+    let signature = sign_execute_request_v1(req, private_key_b64, key_id)?;
+    let env = req
+        .security
+        .get_or_insert_with(ExecuteSecurityEnvelope::default);
+    env.request_signature = Some(signature);
+    Ok(())
+}
+
 pub fn maybe_attach_request_signature_from_env(req: &mut ExecuteRequest) -> Result<()> {
     let require_signature = req
         .security
@@ -355,18 +390,7 @@ pub fn maybe_attach_request_signature_from_env(req: &mut ExecuteRequest) -> Resu
         }
         (_, None) => return Ok(()),
         (_, Some(private_key_b64)) => {
-            let signature = sign_execute_request_v1(req, &private_key_b64, key_id.as_deref())?;
-            let env = req
-                .security
-                .get_or_insert_with(ExecuteSecurityEnvelope::default);
-            env.signed = true;
-            env.key_id = signature.key_id.clone();
-            env.signature_alg = Some(signature.alg.clone());
-            env.key_source = signature
-                .public_key_b64
-                .as_ref()
-                .map(|_| "embedded".to_string());
-            env.request_signature = Some(signature);
+            attach_request_signature(req, &private_key_b64, key_id.as_deref())?;
         }
     }
     Ok(())
@@ -1008,6 +1032,40 @@ mod tests {
     }
 
     #[test]
+    fn canonical_request_bytes_stable_across_hashmap_insertion_order() {
+        let mut req_a = base_request();
+        req_a.inputs.inputs.insert("b".to_string(), "2".to_string());
+        req_a.inputs.inputs.insert("a".to_string(), "1".to_string());
+        req_a
+            .inputs
+            .state
+            .insert("y".to_string(), "state-y".to_string());
+        req_a
+            .inputs
+            .state
+            .insert("x".to_string(), "state-x".to_string());
+
+        let mut req_b = base_request();
+        req_b.inputs.inputs.insert("a".to_string(), "1".to_string());
+        req_b.inputs.inputs.insert("b".to_string(), "2".to_string());
+        req_b
+            .inputs
+            .state
+            .insert("x".to_string(), "state-x".to_string());
+        req_b
+            .inputs
+            .state
+            .insert("y".to_string(), "state-y".to_string());
+
+        let bytes_a = canonical_request_bytes(&req_a).expect("canonical bytes a");
+        let bytes_b = canonical_request_bytes(&req_b).expect("canonical bytes b");
+        assert_eq!(
+            bytes_a, bytes_b,
+            "hash map insertion order must not affect canonical bytes"
+        );
+    }
+
+    #[test]
     fn security_envelope_accepts_valid_signed_request() {
         let mut req = base_request();
         req.security = Some(ExecuteSecurityEnvelope {
@@ -1156,6 +1214,34 @@ mod tests {
         assert!(!response.ok);
         let err = response.error.expect("error");
         assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_MISSING");
+    }
+
+    #[test]
+    fn attach_request_signature_preserves_verification_with_metadata_fields() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: true,
+            signed: false,
+            key_id: None,
+            signature_alg: None,
+            key_source: None,
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+
+        attach_request_signature(&mut req, &fixed_private_key_b64(), Some("k1"))
+            .expect("attach signature");
+
+        // Signature verification should pass; the request then fails in the
+        // provider path, proving envelope/crypto acceptance.
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("provider error");
+        assert_eq!(err.code, "REMOTE_EXECUTION_ERROR");
     }
 
     #[test]
