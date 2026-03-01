@@ -118,26 +118,20 @@ cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- learn export --format
 - Purpose: Exercise real remote signing/trust policy path with deterministic success/failure behavior.
 - Preconditions:
   - `ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh`
-  - local keypair generated via `adl keygen`
-  - loopback remote server (`adl-remote`) running
-- Commands:
+  - no external network; loopback-only local remote process
+- One-command harness (success):
 ```bash
-tmpdir="$(mktemp -d)"
-cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- keygen --out-dir "$tmpdir/.keys"
-export ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64="$(tr -d '\n' < "$tmpdir/.keys/ed25519-private.b64")"
-export ADL_REMOTE_REQUEST_SIGNING_KEY_ID="demo-key-1"
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl-remote -- 127.0.0.1:8787 >/tmp/adl-remote-d11.log 2>&1 &
-remote_pid=$!
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-enterprise-signed-remote.adl.yaml --run --trace --allow-unsigned --out "$tmpdir/out"
-kill "$remote_pid"
+swarm/tools/demo_d11_signed_remote.sh success
 ```
-- Negative command:
+- Negative harness command (deterministic rejection):
 ```bash
-unset ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-enterprise-signed-remote.adl.yaml --run --trace --allow-unsigned
+swarm/tools/demo_d11_signed_remote.sh negative
 ```
 - Expected output:
-  - signed-path command currently reaches remote signing verification and fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISMATCH` (tracked as follow-up)
+  - success command runs end-to-end through `local.first -> remote.mid -> local.last`
   - negative command fails deterministically with `REMOTE_REQUEST_SIGNATURE_MISSING`
-- Artifact paths: `.adl/runs/v0-7-enterprise-signed-remote/`, `/tmp/adl-remote-d11.log`, `"$tmpdir/out"/`.
-
+- Artifact paths:
+  - `.adl/runs/v0-7-enterprise-signed-remote/`
+  - `.tmp/d11-out/`
+  - `.tmp/d11-remote.log`
+  - `.tmp/d11-keys/` (ephemeral demo keys; do not commit)
