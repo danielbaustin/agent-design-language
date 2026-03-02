@@ -29,6 +29,27 @@ fn run_swarm(args: &[&str]) -> std::process::Output {
         .expect("run adl binary")
 }
 
+fn run_swarm_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Output {
+    let exe = env!("CARGO_BIN_EXE_adl");
+    let mut cmd = Command::new(exe);
+    cmd.args(args);
+    for (k, v) in envs {
+        cmd.env(k, v);
+    }
+    cmd.output().expect("run adl binary")
+}
+
+fn assert_failure_contains(out: &std::process::Output, needle: &str) {
+    assert!(
+        !out.status.success(),
+        "expected failure, stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(stderr.contains(needle), "stderr:\n{stderr}");
+}
+
 #[test]
 fn adl_binary_help_runs() {
     let out = run_swarm(&["--help"]);
@@ -106,6 +127,18 @@ fn print_plan_flag_works() {
 fn print_prompts_flag_works() {
     let path = write_temp_adl_yaml();
     let out = run_swarm(&[path.to_str().unwrap(), "--print-prompts"]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    assert!(!out.stdout.is_empty(), "expected stdout");
+}
+
+#[test]
+fn print_prompt_alias_flag_works() {
+    let path = write_temp_adl_yaml();
+    let out = run_swarm(&[path.to_str().unwrap(), "--print-prompt"]);
     assert!(
         out.status.success(),
         "expected success, stderr:\n{}",
@@ -574,6 +607,261 @@ fn instrument_replay_and_diff_trace_outputs_are_stable() {
 }
 
 #[test]
+fn run_flag_executes_fixture_with_mock_provider_and_writes_outputs() {
+    let out_dir = unique_test_temp_dir("cli-run-mock").join("out");
+    let fixture = fixture_path("examples/v0-6-hitl-no-pause.adl.yaml");
+    let mock = fixture_path("tools/mock_ollama_v0_4.sh");
+    let out = run_swarm_with_env(
+        &[
+            fixture.to_str().unwrap(),
+            "--run",
+            "--allow-unsigned",
+            "--out",
+            out_dir.to_str().unwrap(),
+        ],
+        &[("ADL_OLLAMA_BIN", mock.to_str().unwrap())],
+    );
+    assert!(
+        out.status.success(),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    assert!(out_dir.join("s1.txt").is_file(), "missing s1.txt");
+    assert!(out_dir.join("s2.txt").is_file(), "missing s2.txt");
+    assert!(out_dir.join("s3.txt").is_file(), "missing s3.txt");
+}
+
+#[test]
+fn run_flag_honors_no_step_output_alias() {
+    let out_dir = unique_test_temp_dir("cli-run-no-step-output").join("out");
+    let fixture = fixture_path("examples/v0-6-hitl-no-pause.adl.yaml");
+    let mock = fixture_path("tools/mock_ollama_v0_4.sh");
+    let out = run_swarm_with_env(
+        &[
+            fixture.to_str().unwrap(),
+            "--run",
+            "--allow-unsigned",
+            "--no-step-output",
+            "--out",
+            out_dir.to_str().unwrap(),
+        ],
+        &[("ADL_OLLAMA_BIN", mock.to_str().unwrap())],
+    );
+    assert!(
+        out.status.success(),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    assert!(out_dir.join("s1.txt").is_file(), "missing s1.txt");
+}
+
+#[test]
+fn demo_command_accepts_no_open_flag_for_print_plan() {
+    let out = run_swarm(&["demo", "demo-b-one-command", "--print-plan", "--no-open"]);
+    assert!(
+        out.status.success(),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("Demo: demo-b-one-command"),
+        "stdout:\n{stdout}"
+    );
+}
+
+#[test]
+fn resume_unknown_run_id_fails_with_pause_state_message() {
+    let out = run_swarm(&["resume", "does-not-exist-475"]);
+    assert!(!out.status.success(), "resume should fail");
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("pause_state.json") || stderr.contains("missing"),
+        "stderr:\n{stderr}"
+    );
+}
+
+#[test]
+fn instrument_graph_dot_and_invalid_format_branches_are_covered() {
+    let path = fixture_path("examples/v0-5-pattern-linear.adl.yaml");
+    let dot = run_swarm(&[
+        "instrument",
+        "graph",
+        path.to_str().unwrap(),
+        "--format",
+        "dot",
+    ]);
+    assert!(
+        dot.status.success(),
+        "dot stderr:\n{}",
+        String::from_utf8_lossy(&dot.stderr)
+    );
+    let dot_stdout = String::from_utf8_lossy(&dot.stdout);
+    assert!(dot_stdout.contains("digraph"), "stdout:\n{dot_stdout}");
+
+    let bad = run_swarm(&[
+        "instrument",
+        "graph",
+        path.to_str().unwrap(),
+        "--format",
+        "xml",
+    ]);
+    assert!(!bad.status.success(), "invalid format should fail");
+    let bad_stderr = String::from_utf8_lossy(&bad.stderr);
+    assert!(
+        bad_stderr.contains("unsupported --format"),
+        "stderr:\n{bad_stderr}"
+    );
+}
+
+#[test]
+fn instrument_replay_rejects_extra_argument() {
+    let d = unique_test_temp_dir("instrument-replay-extra");
+    let trace = d.join("trace.json");
+    fs::write(&trace, "[]").expect("write trace");
+    let out = run_swarm(&["instrument", "replay", trace.to_str().unwrap(), "extra"]);
+    assert!(!out.status.success(), "replay with extra arg should fail");
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("accepts exactly one <trace.json>"),
+        "stderr:\n{stderr}"
+    );
+}
+
+#[test]
+fn learn_subcommand_requires_supported_export_only() {
+    let missing = run_swarm(&["learn"]);
+    assert!(
+        !missing.status.success(),
+        "learn without subcommand should fail"
+    );
+    let missing_stderr = String::from_utf8_lossy(&missing.stderr);
+    assert!(
+        missing_stderr.contains("learn subcommand required"),
+        "stderr:\n{missing_stderr}"
+    );
+
+    let unsupported = run_swarm(&["learn", "export", "--format", "csv", "--out", "x.jsonl"]);
+    assert!(
+        !unsupported.status.success(),
+        "unsupported format should fail"
+    );
+    let unsupported_stderr = String::from_utf8_lossy(&unsupported.stderr);
+    assert!(
+        unsupported_stderr.contains("unsupported learn export format"),
+        "stderr:\n{unsupported_stderr}"
+    );
+}
+
+#[test]
+fn keygen_sign_verify_argument_errors_are_deterministic() {
+    assert_failure_contains(&run_swarm(&["keygen", "--bogus"]), "Unknown arg for keygen");
+    assert_failure_contains(&run_swarm(&["sign"]), "sign requires <adl.yaml>");
+    assert_failure_contains(
+        &run_swarm(&["sign", "examples/v0-5-pattern-linear.adl.yaml"]),
+        "sign requires --key <private_key_path>",
+    );
+    assert_failure_contains(
+        &run_swarm(&["verify", "examples/v0-5-pattern-linear.adl.yaml", "--bogus"]),
+        "Unknown arg for verify",
+    );
+    let help_keygen = run_swarm(&["keygen", "--help"]);
+    assert!(help_keygen.status.success(), "keygen --help should succeed");
+}
+
+#[test]
+fn instrument_diff_subcommands_validate_required_args() {
+    assert_failure_contains(
+        &run_swarm(&[
+            "instrument",
+            "diff-plan",
+            "examples/v0-5-pattern-linear.adl.yaml",
+        ]),
+        "instrument diff-plan requires <left.adl.yaml> <right.adl.yaml>",
+    );
+    assert_failure_contains(
+        &run_swarm(&["instrument", "diff-trace", "/tmp/a.trace.json"]),
+        "instrument diff-trace requires <left.trace.json> <right.trace.json>",
+    );
+    assert_failure_contains(
+        &run_swarm(&[
+            "instrument",
+            "graph",
+            "examples/v0-5-pattern-linear.adl.yaml",
+            "--format",
+        ]),
+        "instrument graph requires --format <json|dot>",
+    );
+}
+
+#[test]
+fn learn_export_value_validation_covers_missing_values() {
+    assert_failure_contains(
+        &run_swarm(&["learn", "export", "--format"]),
+        "--format requires a value",
+    );
+    assert_failure_contains(
+        &run_swarm(&["learn", "export", "--runs-dir"]),
+        "--runs-dir requires a directory path",
+    );
+    assert_failure_contains(
+        &run_swarm(&["learn", "export", "--out"]),
+        "--out requires a file path",
+    );
+    assert_failure_contains(
+        &run_swarm(&["learn", "export", "--run-id"]),
+        "--run-id requires a value",
+    );
+}
+
+#[test]
+fn sign_and_verify_missing_option_values_are_reported() {
+    let src = "examples/v0-5-pattern-linear.adl.yaml";
+    assert_failure_contains(
+        &run_swarm(&["sign", src, "--key"]),
+        "sign requires --key <private_key_path>",
+    );
+    assert_failure_contains(
+        &run_swarm(&["sign", src, "--out"]),
+        "sign requires --out <signed_file>",
+    );
+    assert_failure_contains(
+        &run_swarm(&["sign", src, "--key-id"]),
+        "sign requires --key-id <id>",
+    );
+    assert_failure_contains(
+        &run_swarm(&["verify", src, "--key"]),
+        "verify requires --key <public_key_path>",
+    );
+}
+
+#[test]
+fn legacy_resume_flag_path_validation_fails_deterministically() {
+    assert_failure_contains(
+        &run_swarm(&["examples/v0-5-pattern-linear.adl.yaml", "--run", "--resume"]),
+        "--resume requires a run.json path",
+    );
+    assert_failure_contains(
+        &run_swarm(&[
+            "examples/v0-5-pattern-linear.adl.yaml",
+            "--run",
+            "--overlay",
+            "/tmp/does-not-exist-overlay.json",
+        ]),
+        "failed to read overlay file",
+    );
+}
+
+#[test]
+fn demo_subcommand_validates_name_and_unknown_flag() {
+    assert_failure_contains(&run_swarm(&["demo"]), "missing demo name");
+    assert_failure_contains(
+        &run_swarm(&["demo", "demo-a-say-mcp", "--bogus"]),
+        "Unknown arg: --bogus",
+    );
+}
+
+#[test]
 fn learn_export_jsonl_is_deterministic() {
     let d = unique_test_temp_dir("learn-export");
     let runs = d.join("runs");
@@ -684,5 +972,46 @@ fn learn_export_jsonl_has_no_secrets_or_absolute_paths() {
     assert!(
         !body.contains("gho_"),
         "export must not leak token-like secrets: {body}"
+    );
+}
+
+#[test]
+fn adl_remote_and_swarm_remote_reject_invalid_bind_deterministically() {
+    let Ok(adl_remote) = std::env::var("CARGO_BIN_EXE_adl_remote") else {
+        return;
+    };
+    let adl_out = Command::new(adl_remote)
+        .arg("127.0.0.1:not-a-port")
+        .output()
+        .expect("run adl-remote");
+    assert!(
+        !adl_out.status.success(),
+        "adl-remote should fail on invalid bind"
+    );
+    let adl_stderr = String::from_utf8_lossy(&adl_out.stderr);
+    assert!(
+        adl_stderr.contains("failed to bind remote server"),
+        "stderr:\n{adl_stderr}"
+    );
+
+    let Ok(swarm_remote) = std::env::var("CARGO_BIN_EXE_swarm_remote") else {
+        return;
+    };
+    let swarm_out = Command::new(swarm_remote)
+        .arg("127.0.0.1:not-a-port")
+        .output()
+        .expect("run swarm-remote");
+    assert!(
+        !swarm_out.status.success(),
+        "swarm-remote should fail on invalid bind"
+    );
+    let swarm_stderr = String::from_utf8_lossy(&swarm_out.stderr);
+    assert!(
+        swarm_stderr.contains("DEPRECATION: 'swarm-remote' is deprecated"),
+        "stderr:\n{swarm_stderr}"
+    );
+    assert!(
+        swarm_stderr.contains("failed to bind remote server"),
+        "stderr:\n{swarm_stderr}"
     );
 }
