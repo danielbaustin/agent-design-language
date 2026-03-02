@@ -3003,7 +3003,7 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .expect("time")
             .as_nanos();
-        let base = std::env::temp_dir().join(format!("swarm-main-keygen-{now}"));
+        let base = std::env::temp_dir().join(format!("adl-main-keygen-{now}"));
         let key_dir = base.join("keys");
         std::fs::create_dir_all(&base).expect("create base dir");
         real_keygen(&[
@@ -3071,7 +3071,7 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .expect("time")
             .as_nanos();
-        let base = std::env::temp_dir().join(format!("swarm-main-instrument-{now}"));
+        let base = std::env::temp_dir().join(format!("adl-main-instrument-{now}"));
         std::fs::create_dir_all(&base).expect("create base dir");
         let left = base.join("left.trace.json");
         let right = base.join("right.trace.json");
@@ -3094,7 +3094,7 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .expect("time")
             .as_nanos();
-        let base = std::env::temp_dir().join(format!("swarm-main-learn-{now}"));
+        let base = std::env::temp_dir().join(format!("adl-main-learn-{now}"));
         let runs_dir = base.join("runs");
         std::fs::create_dir_all(&runs_dir).expect("create runs dir");
         let out = base.join("learning.jsonl");
