@@ -1,0 +1,181 @@
+name: nightly-coverage-ratchet
+
+on:
+  schedule:
+    # 11:00 UTC is 03:00 PST / 04:00 PDT.
+    - cron: "0 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  nightly-coverage-ratchet:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: swarm
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
+        with:
+          components: rustfmt, clippy, llvm-tools-preview
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2
+        with:
+          workspaces: |
+            swarm -> target
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
+
+      - name: Run coverage and quality gates
+        id: checks
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          cargo llvm-cov --summary-only | tee coverage-summary.txt
+          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
+          cargo fmt --all -- --check
+          cargo clippy --all-targets -- -D warnings
+          cargo test
+
+      - name: Build nightly report
+        id: report
+        env:
+          FILE_THRESHOLD: "80"
+        run: |
+          set -euo pipefail
+
+          date_local="$(TZ=America/Los_Angeles date '+%Y-%m-%d %H:%M %Z')"
+          report_path="$RUNNER_TEMP/nightly-coverage-report.md"
+          below_path="$RUNNER_TEMP/nightly-below-threshold.txt"
+
+          if [ ! -s coverage-summary.json ]; then
+            {
+              echo "# Daily coverage blockers: $(TZ=America/Los_Angeles date '+%Y-%m-%d')"
+              echo
+              echo "## Nightly coverage report ($date_local)"
+              echo
+              echo "- Checks step outcome: **${{ steps.checks.outcome }}**"
+              echo
+              echo "## Blocker"
+              echo "- `coverage-summary.json` was not produced. Coverage tooling likely failed before report generation."
+            } > "$report_path"
+            echo "has_below_threshold=true" >> "$GITHUB_OUTPUT"
+            echo "total_coverage=unknown" >> "$GITHUB_OUTPUT"
+            echo "report_path=$report_path" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          total_row="$(jq -r '
+            [.data[].files[]
+              | {covered:(.summary.lines.covered // 0), count:(.summary.lines.count // 0)}
+            ]
+            | reduce .[] as $x ({covered:0, count:0}; .covered += $x.covered | .count += $x.count)
+            | .percent = (if .count == 0 then 0 else (.covered * 100.0 / .count) end)
+            | [.covered, .count, .percent]
+            | @tsv
+          ' coverage-summary.json)"
+          total_cov="$(echo "$total_row" | awk -F '\t' '{printf "%.2f", $3 + 0}')"
+
+          per_file_rows="$(jq -r '
+            [.data[].files[]
+              | select(.filename | contains("/swarm/src/"))
+              | {f:.filename, covered:(.summary.lines.covered // 0), count:(.summary.lines.count // 0)}
+            ]
+            | sort_by(.f)
+            | group_by(.f)[]
+            | {
+                f: .[0].f,
+                covered: (map(.covered) | add),
+                count: (map(.count) | add),
+                percent: (if (map(.count) | add) == 0 then 0 else ((map(.covered) | add) * 100.0 / (map(.count) | add)) end)
+              }
+            | [.f, .covered, .count, .percent]
+            | @tsv
+          ' coverage-summary.json)"
+
+          if [ -z "$per_file_rows" ]; then
+            echo "No per-file rows found for /swarm/src in coverage-summary.json" >&2
+            exit 1
+          fi
+
+          : > "$below_path"
+          echo "$per_file_rows" | awk -F '\t' -v threshold="$FILE_THRESHOLD" '
+            ($4 + 0) < threshold {
+              printf "%s\t%d/%d\t%.2f%%\n", $1, $2, $3, $4
+            }
+          ' > "$below_path"
+
+          {
+            echo "# Daily coverage blockers: $(TZ=America/Los_Angeles date '+%Y-%m-%d')"
+            echo
+            echo "## Nightly coverage report ($date_local)"
+            echo
+            echo "- Total line coverage: **${total_cov}%**"
+            echo "- Per-file floor: **${FILE_THRESHOLD}%**"
+            echo "- Checks step outcome: **${{ steps.checks.outcome }}**"
+            echo
+            echo "## Files below ${FILE_THRESHOLD}%"
+            if [ -s "$below_path" ]; then
+              awk -F '\t' '{printf "- `%s` — %s\n", $1, $3}' "$below_path"
+            else
+              echo "- None"
+            fi
+            echo
+            echo "## Top remaining uncovered targets"
+            echo "$per_file_rows" | awk -F '\t' '{printf "%s\t%s\n", $1, $4}' | sort -t $'\t' -k2,2n | head -n 10 | awk -F '\t' '{printf "- `%s` — %.2f%% covered\n", $1, $2}'
+            echo
+            echo "## Notes"
+            echo "- This GitHub Actions workflow is a scheduled watchdog/reporter."
+            echo "- Code-changing ratchet work (test authoring + PRs) is still handled by Codex automation."
+          } > "$report_path"
+
+          below_count="$(wc -l < "$below_path" | tr -d ' ')"
+          if [ "$below_count" -gt 0 ]; then
+            echo "has_below_threshold=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_below_threshold=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "total_coverage=$total_cov" >> "$GITHUB_OUTPUT"
+          echo "report_path=$report_path" >> "$GITHUB_OUTPUT"
+
+      - name: Upload nightly coverage report
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: nightly-coverage-ratchet-report
+          path: |
+            swarm/coverage-summary.txt
+            swarm/coverage-summary.json
+            ${{ steps.report.outputs.report_path }}
+          if-no-files-found: error
+
+      - name: Open or update daily blocker issue
+        if: always() && (steps.report.outputs.has_below_threshold == 'true' || steps.checks.outcome != 'success')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          day="$(TZ=America/Los_Angeles date '+%Y-%m-%d')"
+          title="Daily coverage blockers: $day"
+          body_file="${{ steps.report.outputs.report_path }}"
+
+          existing="$(gh issue list --state open --search "$title in:title" --json number,title --jq '.[] | select(.title == "'"$title"'") | .number' | head -n 1 || true)"
+          if [ -n "${existing:-}" ]; then
+            gh issue comment "$existing" --body-file "$body_file"
+          else
+            gh issue create --title "$title" --body-file "$body_file"
+          fi
+
+      - name: Fail when blockers exist or checks fail
+        if: always() && (steps.report.outputs.has_below_threshold == 'true' || steps.checks.outcome != 'success')
+        run: |
+          echo "Nightly coverage ratchet found blockers (see issue/report)."
+          exit 1

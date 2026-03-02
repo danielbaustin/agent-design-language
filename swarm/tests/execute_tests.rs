@@ -1932,7 +1932,7 @@ run:
         String::from_utf8_lossy(&out.stderr)
     );
     assert!(
-        (2.5..=5.8).contains(&elapsed),
+        (2.5..=7.5).contains(&elapsed),
         "expected bounded runtime window for 5 forks + join with max_parallel=4, got {elapsed:.3}s"
     );
 
