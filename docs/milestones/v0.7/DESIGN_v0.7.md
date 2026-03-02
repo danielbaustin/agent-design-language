@@ -72,7 +72,7 @@ Before introducing learning mechanics:
 - Stabilize trace event schemas
 - Enforce strict JSON schemas (`deny_unknown_fields`)
 
-These surfaces must not depend on ObsMem integration (deferred to v0.8).
+These surfaces must not depend on ObsMem integration (tracked in v0.75 planning).
 
 ### G3 — Controlled Learning Substrate (v0.7.x)
 
@@ -95,9 +95,9 @@ No silent auto-promotion.
 - Runtime self-modifying Rust code.
 - Automatic mutation of security/trust policies.
 - Mid-run gradient updates (LoRA, etc.).
-- Distributed cluster execution (v0.8).
-- Durable checkpoint engine final form (v0.8).
-- ObsMem integration (retargeted to v0.8).
+- Distributed cluster execution (v0.85/v0.9 planning).
+- Durable checkpoint engine final form (v0.85/v0.9 planning).
+- ObsMem integration (retargeted to v0.75 planning).
 
 ---
 
@@ -106,7 +106,7 @@ No silent auto-promotion.
 ### In Scope
 
 - EPIC-B: Delegation runtime
-- EPIC-C: Learning surfaces (without ObsMem integration)
+- EPIC-C: Learning surfaces (without ObsMem integration in v0.7)
 - EPIC-D: Cleanup + deferred systems work
 - EPIC-E: Security envelope hardening
 - EPIC-F: Resilience + checkpointing surfaces
@@ -116,11 +116,11 @@ No silent auto-promotion.
 
 ### Out of Scope
 
-- Distributed cluster execution (#339 → v0.8)
-- Durable checkpoint engine (#340 → v0.8)
+- Distributed cluster execution (#339 → v0.85/v0.9)
+- Durable checkpoint engine (#340 → v0.85/v0.9)
 - Adapter registry + fine-tune infra
 - Autonomous self-modifying code
-- ObsMem integration (v0.8)
+- ObsMem integration (v0.75)
 
 ---
 

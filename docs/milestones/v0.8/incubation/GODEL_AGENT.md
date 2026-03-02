@@ -96,7 +96,7 @@ Suggested top-level fields:
 - `prompts` (map of prompt template ids -> text)
 - `routing` (tool routing rules; provider profile selection rules)
 - `planner` (knobs; decomposition style; limits)
-- `memory_policy` (what to store/summarize; ObsMem hooks)
+- `memory_policy` (what to store/summarize; consumes ObsMem v1 surfaces from v0.75)
 - `executor_policy` (timeouts; retries; strictness)
 - `metadata` (description; created_at; tags)
 
@@ -257,8 +257,8 @@ Hard rules:
 ## Integration points with existing v0.6 / v0.7 work
 
 - v0.6 HITL pause/resume artifacts make the evolution loop safe to pause/resume.
-- v0.7 EPIC-A (Dynamic learning) is the natural home for this pattern.
-- v0.7 EPIC-C (ObsMem integration + learning surfaces) supplies richer signals and memory policy knobs to evolve.
+- v0.8 EPIC-C/EPIC-D is the natural home for this pattern.
+- v0.75 ObsMem v1 supplies richer signals and memory policy knobs consumed by v0.8.
 - v0.7 EPIC-F (Resilience + checkpointing) enables long evolution runs and partial recovery.
 
 ## Suggested issues to add (v0.7.x)
