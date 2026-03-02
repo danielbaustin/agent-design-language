@@ -2676,6 +2676,12 @@ mod tests {
     }
 
     #[test]
+    fn classify_failure_kind_returns_none_for_unclassified_errors() {
+        let generic = anyhow::anyhow!("generic failure");
+        assert_eq!(classify_failure_kind(&generic), None);
+    }
+
+    #[test]
     fn execution_plan_hash_is_deterministic_for_same_plan() {
         let resolved = minimal_resolved_for_artifacts("hash-run".to_string());
         let a = execution_plan_hash(&resolved.execution_plan).expect("hash a");
