@@ -2133,4 +2133,19 @@ mod tests {
         let passthrough = resolve_call_binding("literal", &state).expect("literal passthrough");
         assert_eq!(passthrough, "literal");
     }
+
+    #[test]
+    fn stable_failure_kind_detects_only_policy_errors() {
+        let policy_err = anyhow::Error::new(ExecutionPolicyError {
+            kind: ExecutionPolicyErrorKind::Denied,
+            step_id: "s1".to_string(),
+            action_kind: "tool".to_string(),
+            target_id: "fs.write".to_string(),
+            rule_id: Some("rule-1".to_string()),
+        });
+        assert_eq!(stable_failure_kind(&policy_err), Some("policy_denied"));
+
+        let generic = anyhow::anyhow!("not policy related");
+        assert_eq!(stable_failure_kind(&generic), None);
+    }
 }

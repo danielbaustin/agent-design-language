@@ -2662,4 +2662,22 @@ mod tests {
         let _ = std::fs::remove_dir_all(run_dir);
         let _ = std::fs::remove_dir_all(out_dir);
     }
+
+    #[test]
+    fn classify_failure_kind_detects_sandbox_and_io_errors() {
+        let sandbox_err = anyhow::Error::new(sandbox::SandboxPathError::PathDenied {
+            requested_path: "sandbox:/tmp".to_string(),
+            reason: "absolute_path",
+        });
+        assert_eq!(classify_failure_kind(&sandbox_err), Some("sandbox_denied"));
+
+        let io_err = anyhow::Error::from(std::io::Error::other("disk full"));
+        assert_eq!(classify_failure_kind(&io_err), Some("io_error"));
+    }
+
+    #[test]
+    fn classify_failure_kind_returns_none_for_unclassified_errors() {
+        let generic = anyhow::anyhow!("generic failure");
+        assert_eq!(classify_failure_kind(&generic), None);
+    }
 }
