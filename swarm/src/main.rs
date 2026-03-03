@@ -18,7 +18,7 @@ fn usage() -> &'static str {
   adl keygen --out-dir <dir>
   adl sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
   adl instrument <graph|replay|diff-plan|diff-trace> ...
-  adl learn export --format jsonl [--runs-dir <dir>] [--run-id <id> ...] --out <file>
+  adl learn export --format <jsonl|bundle-v1> [--runs-dir <dir>] [--run-id <id> ...] --out <path>
   adl verify <adl.yaml> [--key <public_key_path>]
 
 Options:
@@ -51,10 +51,9 @@ Examples:
   adl instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format json
   adl instrument replay /tmp/trace.json
   adl instrument diff-trace /tmp/trace-a.json /tmp/trace-b.json
-  adl learn export --format jsonl --runs-dir .adl/runs --out /tmp/learning.jsonl
+  adl learn export --format bundle-v1 --runs-dir .adl/runs --out /tmp/learning-bundle
   adl verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"
 }
-
 fn resume_usage() -> &'static str {
     "Usage:
   adl resume <run_id>
@@ -714,7 +713,7 @@ fn real_learn_export(args: &[String]) -> Result<()> {
             }
             "--out" => {
                 let Some(v) = args.get(i + 1) else {
-                    return Err(anyhow::anyhow!("--out requires a file path"));
+                    return Err(anyhow::anyhow!("--out requires a path"));
                 };
                 out_path = Some(PathBuf::from(v));
                 i += 1;
@@ -735,22 +734,40 @@ fn real_learn_export(args: &[String]) -> Result<()> {
         i += 1;
     }
 
-    if format != "jsonl" {
-        return Err(anyhow::anyhow!(
-            "unsupported learn export format '{format}' (supported: jsonl)"
-        ));
-    }
-    let out_path = out_path.ok_or_else(|| anyhow::anyhow!("learn export requires --out <file>"))?;
+    let out_path = out_path.ok_or_else(|| anyhow::anyhow!("learn export requires --out <path>"))?;
     let runs_dir = runs_dir.unwrap_or_else(|| {
         artifacts::runs_root().unwrap_or_else(|_| PathBuf::from(".adl").join("runs"))
     });
 
-    let rows = learning_export::export_jsonl(&runs_dir, &run_ids, &out_path)?;
-    eprintln!(
-        "LEARN EXPORT: rows={} format=jsonl out={}",
-        rows,
-        out_path.display()
-    );
+    let rows = match format.as_str() {
+        "jsonl" => {
+            let rows = learning_export::export_jsonl(&runs_dir, &run_ids, &out_path)?;
+            eprintln!(
+                "LEARN EXPORT: rows={} format=jsonl out={}",
+                rows,
+                out_path.display()
+            );
+            rows
+        }
+        "bundle-v1" => {
+            let rows = learning_export::export_bundle_v1(&runs_dir, &run_ids, &out_path)?;
+            eprintln!(
+                "LEARN EXPORT: rows={} format=bundle-v1 out={}",
+                rows,
+                out_path.join("learning_export_v1").display()
+            );
+            rows
+        }
+        _ => {
+            return Err(anyhow::anyhow!(
+                "unsupported learn export format '{format}' (supported: jsonl, bundle-v1)"
+            ));
+        }
+    };
+
+    if rows == 0 {
+        eprintln!("LEARN EXPORT: no runs exported");
+    }
     Ok(())
 }
 
@@ -2990,8 +3007,13 @@ mod tests {
         let err = real_learn(&["unknown".to_string()]).expect_err("unknown subcommand");
         assert!(err.to_string().contains("unknown learn subcommand"));
 
-        let err = real_learn_export(&["--format".to_string(), "csv".to_string()])
-            .expect_err("unsupported format");
+        let err = real_learn_export(&[
+            "--format".to_string(),
+            "csv".to_string(),
+            "--out".to_string(),
+            "/tmp/out".to_string(),
+        ])
+        .expect_err("unsupported format");
         assert!(err.to_string().contains("unsupported learn export format"));
 
         let err = real_learn_export(&["--format".to_string(), "jsonl".to_string()])
