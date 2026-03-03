@@ -50,6 +50,7 @@ Current release: **v0.6.0**
 
 ## v0.7 Naming Migration (Compatibility Window)
 
+- Canonical Rust crate/package/lib identity is `adl`.
 - Canonical CLI/runtime naming is `adl` and `adl-remote`.
 - Legacy compatibility shim commands remain available in v0.7 with deprecation warnings.
 - Canonical env vars use `ADL_*`; legacy compatibility env vars remain supported in v0.7 with deprecation warnings.

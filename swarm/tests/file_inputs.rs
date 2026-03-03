@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
-use swarm::execute::materialize_inputs;
+use ::adl::execute::materialize_inputs;
 
 mod helpers;
 use helpers::unique_test_temp_dir;

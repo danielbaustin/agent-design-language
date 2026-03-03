@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
-use swarm::adl::{
+use ::adl::adl::{
     AdlDoc, AgentSpec, PromptSpec, RunDefaults, RunSpec, StepSpec, TaskSpec, WorkflowKind,
     WorkflowSpec,
 };
-use swarm::resolve;
+use ::adl::resolve;
 
 mod helpers;
 use helpers::unique_test_temp_dir;

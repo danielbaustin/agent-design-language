@@ -9,7 +9,7 @@ fn bind_arg_from_args(args: &[String]) -> String {
 
 fn run_with_bind(bind: &str) -> Result<()> {
     eprintln!("swarm-remote listening on http://{bind}");
-    swarm::remote_exec::run_server(bind)
+    ::adl::remote_exec::run_server(bind)
 }
 
 fn is_legacy_swarm_remote_invocation() -> bool {
