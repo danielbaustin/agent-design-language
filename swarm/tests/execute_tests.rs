@@ -388,8 +388,7 @@ enum MockOllamaBehavior {
 }
 
 fn run_swarm(args: &[&str]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_adl");
-    Command::new(exe)
+    Command::new(resolve_adl_exe())
         .env("ADL_ALLOW_UNSIGNED", "1")
         .args(args)
         .output()
@@ -397,13 +396,24 @@ fn run_swarm(args: &[&str]) -> std::process::Output {
 }
 
 fn run_swarm_in_dir(cwd: &Path, args: &[&str]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_adl");
-    Command::new(exe)
+    Command::new(resolve_adl_exe())
         .current_dir(cwd)
         .env("ADL_ALLOW_UNSIGNED", "1")
         .args(args)
         .output()
         .unwrap()
+}
+
+fn resolve_adl_exe() -> std::path::PathBuf {
+    let raw = std::env::var("CARGO_BIN_EXE_adl")
+        .or_else(|_| std::env::var("CARGO_BIN_EXE_swarm"))
+        .unwrap_or_else(|_| env!("CARGO_BIN_EXE_adl").to_string());
+    let path = std::path::PathBuf::from(raw);
+    if path.is_absolute() {
+        path
+    } else {
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(path)
+    }
 }
 
 fn repo_runs_dir() -> std::path::PathBuf {
