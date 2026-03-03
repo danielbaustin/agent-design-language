@@ -81,14 +81,14 @@ Run tail work in parallel, converge before tagging:
 
 v0.7.x minors deliver learning incrementally, overlay-based and opt-in:
 
-- EPIC-C Learning surfaces (ObsMem deferred to v0.8): #414
+- EPIC-C Learning surfaces (ObsMem deferred to v0.75 planning): #414
 - EPIC-A Dynamic learning train: #412
 
 Constraints (must remain true for every v0.7.x minor):
 - No workflow YAML mutation.
 - No silent auto-promotion.
 - Versioned, schema-validated artifacts (`deny_unknown_fields`).
-- Learning surfaces must remain independent of ObsMem (v0.8).
+- Learning surfaces must remain independent of ObsMem (v0.75 planning).
 
 Each minor release repeats:
 - update `RELEASE_NOTES_v0.7.md` (new sub-section)

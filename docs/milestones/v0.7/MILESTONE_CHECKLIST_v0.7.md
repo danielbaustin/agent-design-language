@@ -62,7 +62,7 @@ Hard constraints (must hold for all learning features)
 - [ ] Overlay-based only; no workflow YAML mutation
 - [ ] Opt-in only; no silent auto-promotion
 - [ ] Artifacts are versioned and schema-validated (`deny_unknown_fields`)
-- [ ] Learning surfaces independent of ObsMem (ObsMem deferred to v0.8)
+- [ ] Learning surfaces independent of ObsMem (ObsMem deferred to v0.75 planning)
 
 ---
 
@@ -110,7 +110,7 @@ Hard constraints (must hold for all learning features)
 ## Post-Release
 
 - [ ] Milestone/epic issues closed with release links
-- [ ] Deferred items moved to next milestone backlog (notably v0.8: ObsMem, cluster execution, durable checkpoint engine)
+- [ ] Deferred items moved to next milestone backlog (notably v0.75: ObsMem; v0.85/v0.9: cluster execution + durable checkpoint engine)
 - [ ] Follow-up bugs/tech debt captured as issues
 - [ ] Roadmap/status docs updated (as part of WP-16)
 - [ ] Retrospective summary recorded (as part of WP-16)
