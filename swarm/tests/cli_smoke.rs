@@ -480,3 +480,161 @@ fn learn_export_jsonl_has_no_secrets_or_absolute_paths() {
         "export must not leak token-like secrets: {body}"
     );
 }
+
+#[test]
+fn learn_export_bundle_v1_is_deterministic() {
+    let d = unique_test_temp_dir("learn-export-bundle");
+    let runs = d.join("runs");
+    let run = runs.join("r1");
+    fs::create_dir_all(run.join("learning")).unwrap();
+
+    fs::write(
+        run.join("run_summary.json"),
+        r#"{"workflow_id":"wf","adl_version":"0.7","swarm_version":"0.6.0","status":"success"}"#,
+    )
+    .unwrap();
+    fs::write(
+        run.join("steps.json"),
+        r#"[{"step_id":"s2","provider_id":"p2","status":"failure","output_artifact_path":"/tmp/o2"},{"step_id":"s1","provider_id":"p1","status":"success","output_artifact_path":"/tmp/o1"}]"#,
+    )
+    .unwrap();
+    fs::write(
+        run.join("learning").join("scores.json"),
+        r#"{"summary":{"success_ratio":0.5,"retry_count":1,"failure_count":1}}"#,
+    )
+    .unwrap();
+    fs::write(
+        run.join("learning").join("suggestions.json"),
+        r#"{"suggestions":[{"id":"sug-002","category":"security"},{"id":"sug-001","category":"retry"}]}"#,
+    )
+    .unwrap();
+
+    let out1 = d.join("bundle-1");
+    let out2 = d.join("bundle-2");
+
+    let one = run_swarm(&[
+        "learn",
+        "export",
+        "--format",
+        "bundle-v1",
+        "--runs-dir",
+        runs.to_str().unwrap(),
+        "--out",
+        out1.to_str().unwrap(),
+    ]);
+    let two = run_swarm(&[
+        "learn",
+        "export",
+        "--format",
+        "bundle-v1",
+        "--runs-dir",
+        runs.to_str().unwrap(),
+        "--out",
+        out2.to_str().unwrap(),
+    ]);
+
+    assert!(
+        one.status.success(),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&one.stderr)
+    );
+    assert!(
+        two.status.success(),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&two.stderr)
+    );
+
+    let manifest1 = fs::read(out1.join("learning_export_v1").join("manifest.json")).unwrap();
+    let manifest2 = fs::read(out2.join("learning_export_v1").join("manifest.json")).unwrap();
+    assert_eq!(
+        manifest1, manifest2,
+        "bundle manifest should be deterministic"
+    );
+
+    assert!(out1
+        .join("learning_export_v1")
+        .join("runs")
+        .join("r1")
+        .join("metadata.json")
+        .is_file());
+    assert!(out1
+        .join("learning_export_v1")
+        .join("runs")
+        .join("r1")
+        .join("step_records.json")
+        .is_file());
+    assert!(out1
+        .join("learning_export_v1")
+        .join("runs")
+        .join("r1")
+        .join("scores_summary.json")
+        .is_file());
+    assert!(out1
+        .join("learning_export_v1")
+        .join("runs")
+        .join("r1")
+        .join("suggestions_summary.json")
+        .is_file());
+}
+
+#[test]
+fn learn_export_bundle_v1_has_no_secrets_or_absolute_paths() {
+    let d = unique_test_temp_dir("learn-export-bundle-redact");
+    let runs = d.join("runs");
+    let run = runs.join("r1");
+    fs::create_dir_all(run.join("learning")).unwrap();
+
+    fs::write(
+        run.join("run_summary.json"),
+        r#"{"workflow_id":"wf","adl_version":"0.7","swarm_version":"0.6.0","status":"success"}"#,
+    )
+    .unwrap();
+    fs::write(
+        run.join("steps.json"),
+        r#"[{"step_id":"s1","provider_id":"p1","status":"success","output_artifact_path":"/Users/name/private/path.txt"}]"#,
+    )
+    .unwrap();
+    fs::write(
+        run.join("learning").join("suggestions.json"),
+        r#"{"suggestions":[{"id":"sug-001","category":"retry"}]}"#,
+    )
+    .unwrap();
+
+    let out = d.join("bundle");
+    let cmd = run_swarm(&[
+        "learn",
+        "export",
+        "--format",
+        "bundle-v1",
+        "--runs-dir",
+        runs.to_str().unwrap(),
+        "--out",
+        out.to_str().unwrap(),
+    ]);
+    assert!(
+        cmd.status.success(),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&cmd.stderr)
+    );
+
+    let mut all_json = String::new();
+    let bundle_root = out.join("learning_export_v1");
+    for rel in [
+        "manifest.json",
+        "runs/r1/metadata.json",
+        "runs/r1/step_records.json",
+        "runs/r1/suggestions_summary.json",
+    ] {
+        all_json.push_str(&fs::read_to_string(bundle_root.join(rel)).unwrap());
+        all_json.push('\n');
+    }
+
+    assert!(
+        !all_json.contains("/Users/") && !all_json.contains("/home/"),
+        "bundle export must not leak absolute host paths: {all_json}"
+    );
+    assert!(
+        !all_json.contains("gho_"),
+        "bundle export must not leak token-like secrets: {all_json}"
+    );
+}

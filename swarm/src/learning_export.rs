@@ -7,6 +7,7 @@ use std::path::Path;
 use crate::artifacts;
 
 pub const DATASET_VERSION: u32 = 1;
+pub const BUNDLE_VERSION: u32 = 1;
 
 #[derive(Debug, Serialize)]
 pub struct DatasetRowV1 {
@@ -38,18 +39,37 @@ pub struct SuggestionsSummary {
     pub categories: Vec<String>,
 }
 
+#[derive(Debug, Serialize)]
+struct BundleRunMetadataV1 {
+    bundle_run_version: u32,
+    run_id: String,
+    workflow_id: String,
+    adl_version: String,
+    swarm_version: String,
+    status: String,
+    feedback_present: bool,
+    pointers: BTreeMap<String, String>,
+}
+
+#[derive(Debug, Serialize)]
+struct BundleManifestV1 {
+    bundle_version: u32,
+    run_count: usize,
+    runs: Vec<String>,
+    files: Vec<BundleFileEntry>,
+}
+
+#[derive(Debug, Serialize)]
+struct BundleFileEntry {
+    path: String,
+    hash: String,
+}
+
 pub fn export_jsonl(runs_root: &Path, run_ids: &[String], out_file: &Path) -> Result<usize> {
-    let mut ids = if run_ids.is_empty() {
-        discover_run_ids(runs_root)?
-    } else {
-        let mut v = run_ids.to_vec();
-        v.sort();
-        v
-    };
-    ids.dedup();
+    let mut ids = resolve_export_ids(runs_root, run_ids)?;
 
     let mut lines = Vec::new();
-    for run_id in ids {
+    for run_id in ids.drain(..) {
         let row = load_dataset_row(runs_root, &run_id)?;
         lines.push(serde_json::to_string(&row).context("serialize dataset row")?);
     }
@@ -60,6 +80,131 @@ pub fn export_jsonl(runs_root: &Path, run_ids: &[String], out_file: &Path) -> Re
     }
     artifacts::atomic_write(out_file, out.as_bytes())?;
     Ok(lines.len())
+}
+
+pub fn export_bundle_v1(runs_root: &Path, run_ids: &[String], out_dir: &Path) -> Result<usize> {
+    let ids = resolve_export_ids(runs_root, run_ids)?;
+    let bundle_root = out_dir.join("learning_export_v1");
+    let runs_root_out = bundle_root.join("runs");
+
+    if bundle_root.exists() {
+        std::fs::remove_dir_all(&bundle_root)
+            .with_context(|| format!("remove existing bundle root '{}'", bundle_root.display()))?;
+    }
+    std::fs::create_dir_all(&runs_root_out)
+        .with_context(|| format!("create bundle runs root '{}'", runs_root_out.display()))?;
+
+    let mut file_entries = Vec::new();
+    for run_id in &ids {
+        let row = load_dataset_row(runs_root, run_id)?;
+        let run_dir = runs_root_out.join(run_id);
+        std::fs::create_dir_all(&run_dir)
+            .with_context(|| format!("create bundle run dir '{}'", run_dir.display()))?;
+
+        let metadata = BundleRunMetadataV1 {
+            bundle_run_version: BUNDLE_VERSION,
+            run_id: row.run_id.clone(),
+            workflow_id: row.workflow_id.clone(),
+            adl_version: row.adl_version.clone(),
+            swarm_version: row.swarm_version.clone(),
+            status: row.status.clone(),
+            feedback_present: row.feedback_present,
+            pointers: row.pointers.clone(),
+        };
+        write_bundle_json(
+            &bundle_root,
+            &run_dir.join("metadata.json"),
+            &format!("runs/{run_id}/metadata.json"),
+            &metadata,
+            &mut file_entries,
+        )?;
+
+        write_bundle_json(
+            &bundle_root,
+            &run_dir.join("step_records.json"),
+            &format!("runs/{run_id}/step_records.json"),
+            &row.step_records,
+            &mut file_entries,
+        )?;
+
+        if let Some(scores_summary) = row.scores_summary.as_ref() {
+            write_bundle_json(
+                &bundle_root,
+                &run_dir.join("scores_summary.json"),
+                &format!("runs/{run_id}/scores_summary.json"),
+                scores_summary,
+                &mut file_entries,
+            )?;
+        }
+
+        write_bundle_json(
+            &bundle_root,
+            &run_dir.join("suggestions_summary.json"),
+            &format!("runs/{run_id}/suggestions_summary.json"),
+            &row.suggestions_summary,
+            &mut file_entries,
+        )?;
+    }
+
+    file_entries.sort_by(|a, b| a.path.cmp(&b.path));
+    let manifest = BundleManifestV1 {
+        bundle_version: BUNDLE_VERSION,
+        run_count: ids.len(),
+        runs: ids,
+        files: file_entries,
+    };
+    let manifest_path = bundle_root.join("manifest.json");
+    let manifest_bytes =
+        serde_json::to_vec_pretty(&manifest).context("serialize bundle manifest")?;
+    artifacts::atomic_write(&manifest_path, &manifest_bytes)?;
+
+    Ok(manifest.run_count)
+}
+
+fn write_bundle_json<T: Serialize>(
+    bundle_root: &Path,
+    path: &Path,
+    rel_path: &str,
+    payload: &T,
+    file_entries: &mut Vec<BundleFileEntry>,
+) -> Result<()> {
+    let bytes = serde_json::to_vec_pretty(payload)
+        .with_context(|| format!("serialize bundle payload '{}'", rel_path))?;
+    artifacts::atomic_write(path, &bytes)?;
+    file_entries.push(BundleFileEntry {
+        path: rel_path.to_string(),
+        hash: stable_fingerprint_hex(&bytes),
+    });
+
+    let rendered = String::from_utf8_lossy(&bytes);
+    if rendered.contains("/Users/") || rendered.contains("/home/") || rendered.contains("gho_") {
+        return Err(anyhow!(
+            "bundle payload '{}' contains disallowed host path or token-like secret",
+            rel_path
+        ));
+    }
+
+    let absolute_bundle_root = bundle_root.display().to_string();
+    if rendered.contains(&absolute_bundle_root) {
+        return Err(anyhow!(
+            "bundle payload '{}' leaked absolute bundle root path",
+            rel_path
+        ));
+    }
+
+    Ok(())
+}
+
+fn resolve_export_ids(runs_root: &Path, run_ids: &[String]) -> Result<Vec<String>> {
+    let mut ids = if run_ids.is_empty() {
+        discover_run_ids(runs_root)?
+    } else {
+        let mut v = run_ids.to_vec();
+        v.sort();
+        v
+    };
+    ids.dedup();
+    Ok(ids)
 }
 
 fn discover_run_ids(runs_root: &Path) -> Result<Vec<String>> {
@@ -279,5 +424,74 @@ mod tests {
         let a = std::fs::read(&out1).unwrap();
         let b = std::fs::read(&out2).unwrap();
         assert_eq!(a, b, "export jsonl must be byte-stable");
+    }
+
+    #[test]
+    fn export_bundle_v1_is_deterministic_and_path_safe() {
+        let base = std::env::temp_dir().join(format!("learn-bundle-{}", std::process::id()));
+        let runs_root = base.join("runs");
+        let run_dir = runs_root.join("r1");
+        std::fs::create_dir_all(run_dir.join("learning")).unwrap();
+        std::fs::write(
+            run_dir.join("run_summary.json"),
+            r#"{"workflow_id":"wf","adl_version":"0.7","swarm_version":"0.6.0","status":"success"}"#,
+        )
+        .unwrap();
+        std::fs::write(
+            run_dir.join("steps.json"),
+            r#"[{"step_id":"s1","provider_id":"p1","status":"success","output_artifact_path":"/Users/redacted/path.txt"}]"#,
+        )
+        .unwrap();
+        std::fs::write(
+            run_dir.join("learning").join("suggestions.json"),
+            r#"{"suggestions":[{"id":"sug-002","category":"security"},{"id":"sug-001","category":"retry"}]}"#,
+        )
+        .unwrap();
+
+        let out1 = base.join("bundle-a");
+        let out2 = base.join("bundle-b");
+        export_bundle_v1(&runs_root, &[], &out1).unwrap();
+        export_bundle_v1(&runs_root, &[], &out2).unwrap();
+
+        let manifest_a =
+            std::fs::read(out1.join("learning_export_v1").join("manifest.json")).unwrap();
+        let manifest_b =
+            std::fs::read(out2.join("learning_export_v1").join("manifest.json")).unwrap();
+        assert_eq!(
+            manifest_a, manifest_b,
+            "bundle manifest must be byte-stable"
+        );
+
+        let manifest_json: serde_json::Value = serde_json::from_slice(&manifest_a).unwrap();
+        for entry in manifest_json
+            .get("files")
+            .and_then(|v| v.as_array())
+            .unwrap()
+        {
+            let rel = entry.get("path").and_then(|v| v.as_str()).unwrap();
+            let expected_hash = entry.get("hash").and_then(|v| v.as_str()).unwrap();
+            let bytes = std::fs::read(out1.join("learning_export_v1").join(rel)).unwrap();
+            assert_eq!(
+                expected_hash,
+                stable_fingerprint_hex(&bytes),
+                "manifest hash must match file content for {rel}"
+            );
+        }
+
+        let steps = std::fs::read_to_string(
+            out1.join("learning_export_v1")
+                .join("runs")
+                .join("r1")
+                .join("step_records.json"),
+        )
+        .unwrap();
+        assert!(
+            !steps.contains("/Users/") && !steps.contains("/home/"),
+            "bundle must not leak host paths: {steps}"
+        );
+        assert!(
+            !steps.contains("gho_"),
+            "bundle must not leak token-like secrets: {steps}"
+        );
     }
 }
