@@ -4,6 +4,9 @@ swarm/.local/
 !.adl/templates/
 !.adl/templates/**
 
+!.adl/docs/
+!.adl/docs/**
+
 # Local demo/build artifacts (do not commit)
 out/
 target/
