@@ -6,6 +6,8 @@ use std::path::Path;
 use std::process::Command;
 use std::thread;
 use std::time::Duration;
+
+use ::adl as swarm;
 use swarm::execute::{materialize_inputs, MATERIALIZE_INPUT_MAX_FILE_BYTES};
 
 mod helpers;

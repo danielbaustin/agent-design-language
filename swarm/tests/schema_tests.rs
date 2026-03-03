@@ -1,3 +1,4 @@
+use ::adl as swarm;
 use swarm::adl::AdlDoc;
 use swarm::schema::validate_adl_yaml;
 

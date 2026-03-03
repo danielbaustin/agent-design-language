@@ -3,6 +3,7 @@ use std::io;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
+use ::adl as swarm;
 use swarm::adl;
 use swarm::provider::{
     build_provider, expand_provider_profiles, is_retryable_error, provider_profile_names,

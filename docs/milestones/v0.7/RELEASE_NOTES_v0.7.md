@@ -95,7 +95,8 @@ Planned sequence (overlay-based, opt-in; no workflow YAML mutation):
 As of 2026-02-24: **Not yet shipped**.
 
 - WP-12 / EPIC-H (#336 / #479) renames runtime identity late in v0.7:
-  - Crate/package + binaries become `adl`
+  - Canonical crate/package/lib identity becomes `adl`
+  - Canonical binaries are `adl` and `adl-remote`
   - Keep the `swarm/` directory path stable in v0.7
   - One-release compatibility window:
     - legacy `swarm` / `swarm-remote` entrypoints remain as shims with deprecation warnings

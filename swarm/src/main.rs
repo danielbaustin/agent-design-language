@@ -5,6 +5,7 @@ use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use ::adl as swarm;
 use swarm::{
     adl, artifacts, bounded_executor, demo, env_compat, execute, instrumentation, learning_export,
     overlay, plan, prompt, provider, remote_exec, resolve, sandbox, signing, trace,

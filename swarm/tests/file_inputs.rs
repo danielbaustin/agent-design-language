@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
+use ::adl as swarm;
 use swarm::execute::materialize_inputs;
 
 mod helpers;

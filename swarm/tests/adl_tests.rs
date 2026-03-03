@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use ::adl as swarm;
 use swarm::adl::{
     AdlDoc, AgentSpec, PromptSpec, RunDefaults, RunSpec, StepSpec, TaskSpec, WorkflowKind,
     WorkflowSpec,
