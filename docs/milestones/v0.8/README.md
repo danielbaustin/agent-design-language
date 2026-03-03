@@ -12,3 +12,6 @@ Scope slicing reference:
 - v0.85+: cluster / distributed execution
 
 This directory remains valid for milestone-local notes and incubation material.
+
+Cluster execution planning spec:
+- `docs/milestones/v0.8/CLUSTER_EXECUTION_v0.8.md`
