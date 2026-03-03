@@ -10,18 +10,20 @@ Learning export now supports two deterministic formats:
 `adl learn export --format <jsonl|bundle-v1> [--runs-dir <dir>] [--run-id <id> ...] --out <path>`
 
 Notes:
+- Supported via both canonical `adl` and legacy `swarm` binaries during the v0.7 compatibility window.
 - For `jsonl`, `--out` is a file path.
 - For `bundle-v1`, `--out` is a directory root, and export writes under `learning_export_v1/`.
 
+
 ## Bundle v1 contract
 
-Root layout:
+Root layout (paths are relative to `learning_export_v1/`):
 
-- `learning_export_v1/manifest.json`
-- `learning_export_v1/runs/<run_id>/metadata.json`
-- `learning_export_v1/runs/<run_id>/step_records.json`
-- `learning_export_v1/runs/<run_id>/suggestions_summary.json`
-- `learning_export_v1/runs/<run_id>/scores_summary.json` (optional, only if scores exist)
+- `manifest.json`
+- `runs/<run_id>/metadata.json`
+- `runs/<run_id>/step_records.json`
+- `runs/<run_id>/suggestions_summary.json`
+- `runs/<run_id>/scores_summary.json` (optional, only if scores exist)
 
 Manifest contract (`manifest.json`):
 
@@ -42,7 +44,7 @@ Per-run metadata contract (`metadata.json`):
 ## Determinism and replay safety
 
 - run IDs are sorted deterministically
-- step records are sorted by `step_id`
+- step records are sorted lexicographically by `step_id`
 - suggestion IDs/categories are sorted deterministically
 - manifest file list is sorted by relative path
 - exported values are derived from persisted run artifacts and stable hashes
@@ -56,6 +58,8 @@ Default behavior excludes high-risk raw payloads:
 - no provider credentials exported
 - no absolute host paths exported
 - token-like secret marker `gho_` is rejected in emitted payload checks
+
+These checks are heuristic leak guards, not a complete secret scanner.
 
 Redaction is structural and deterministic:
 
