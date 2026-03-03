@@ -1,0 +1,37 @@
+version: "0.5"
+
+providers:
+  local:
+    type: "local_ollama"
+    config:
+      model: "phi4-mini"
+
+tools:
+  docs:
+    type: "mcp"
+    config:
+      server: "docs"
+
+agents:
+  planner:
+    provider: "local"
+    model: "phi4-mini"
+    tools: ["docs"]
+
+tasks:
+  Discover:
+    prompt:
+      user: "Discover key points about ADL plugin workflows."
+    tool_allowlist: ["docs"]
+  Summarize:
+    prompt:
+      user: "Summarize findings from Discover in 3 bullets."
+
+patterns:
+  - id: p_local_plugin
+    type: linear
+    steps: [Discover, Summarize]
+
+run:
+  name: "local-plugin-pattern"
+  pattern_ref: p_local_plugin

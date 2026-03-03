@@ -13,8 +13,8 @@ use tiny_http::{Header, Method, Response, Server};
 
 use crate::adl;
 use crate::provider;
-use crate::sandbox;
 use crate::signing;
+use crate::{env_compat, sandbox};
 
 pub const PROTOCOL_VERSION: &str = "0.1";
 const MAX_REQUEST_BYTES: usize = 5 * 1024 * 1024;
@@ -142,6 +142,64 @@ pub enum SecurityEnvelopeError {
     SymlinkEscape { path: String },
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum RemoteExecuteClientErrorKind {
+    Timeout,
+    Unreachable,
+    BadStatus,
+    InvalidJson,
+    SchemaViolation,
+    RemoteExecution,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RemoteExecuteClientError {
+    pub kind: RemoteExecuteClientErrorKind,
+    pub code: String,
+    pub message: String,
+}
+
+impl std::fmt::Display for RemoteExecuteClientError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}: {}", self.code, self.message)
+    }
+}
+
+impl std::error::Error for RemoteExecuteClientError {}
+
+impl RemoteExecuteClientError {
+    fn new(
+        kind: RemoteExecuteClientErrorKind,
+        code: impl Into<String>,
+        message: impl Into<String>,
+    ) -> Self {
+        Self {
+            kind,
+            code: code.into(),
+            message: message.into(),
+        }
+    }
+}
+
+pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
+    for cause in err.chain() {
+        if cause.downcast_ref::<SecurityEnvelopeError>().is_some() {
+            return Some("policy_denied");
+        }
+        if let Some(remote) = cause.downcast_ref::<RemoteExecuteClientError>() {
+            return Some(match remote.kind {
+                RemoteExecuteClientErrorKind::Timeout => "timeout",
+                RemoteExecuteClientErrorKind::SchemaViolation => "schema_error",
+                RemoteExecuteClientErrorKind::Unreachable
+                | RemoteExecuteClientErrorKind::BadStatus
+                | RemoteExecuteClientErrorKind::InvalidJson => "io_error",
+                RemoteExecuteClientErrorKind::RemoteExecution => "provider_error",
+            });
+        }
+    }
+    None
+}
+
 impl SecurityEnvelopeError {
     pub fn code(&self) -> &'static str {
         match self {
@@ -204,6 +262,14 @@ impl SecurityEnvelopeError {
     }
 }
 
+impl std::fmt::Display for SecurityEnvelopeError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}: {}", self.code(), self.message())
+    }
+}
+
+impl std::error::Error for SecurityEnvelopeError {}
+
 fn sort_value(value: &mut Value) {
     match value {
         Value::Object(map) => {
@@ -228,6 +294,14 @@ fn sort_value(value: &mut Value) {
 }
 
 pub fn canonical_request_bytes(req: &ExecuteRequest) -> Result<Vec<u8>> {
+    // Canonicalization contract (v1):
+    // 1) clone request
+    // 2) exclude only `security.request_signature`
+    // 3) recursively sort JSON object keys (including HashMap-backed fields)
+    // 4) serialize compact JSON bytes
+    //
+    // Client and server both use this routine for signature verification.
+    // Any change here is a wire-compatibility change for signed requests.
     let mut canonical = req.clone();
     if let Some(sec) = canonical.security.as_mut() {
         sec.request_signature = None;
@@ -261,21 +335,52 @@ pub fn sign_execute_request_v1(
     })
 }
 
+fn attach_request_signature(
+    req: &mut ExecuteRequest,
+    private_key_b64: &str,
+    key_id: Option<&str>,
+) -> Result<()> {
+    {
+        let env = req
+            .security
+            .get_or_insert_with(ExecuteSecurityEnvelope::default);
+        env.signed = true;
+        if let Some(id) = key_id {
+            env.key_id = Some(id.to_string());
+        }
+        env.signature_alg = Some(REMOTE_REQUEST_SIGNATURE_ALG_ED25519.to_string());
+        env.key_source = Some("embedded".to_string());
+    }
+
+    // Canonical request bytes include envelope metadata and exclude only the
+    // request_signature payload itself.
+    let signature = sign_execute_request_v1(req, private_key_b64, key_id)?;
+    let env = req
+        .security
+        .get_or_insert_with(ExecuteSecurityEnvelope::default);
+    env.request_signature = Some(signature);
+    Ok(())
+}
+
 pub fn maybe_attach_request_signature_from_env(req: &mut ExecuteRequest) -> Result<()> {
     let require_signature = req
         .security
         .as_ref()
         .map(|env| env.require_signature)
         .unwrap_or(false);
-    let private_key = std::env::var("ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64")
-        .ok()
-        .map(|v| v.trim().to_string())
-        .filter(|v| !v.is_empty());
-    let key_id = std::env::var("ADL_REMOTE_REQUEST_SIGNING_KEY_ID")
-        .ok()
-        .map(|v| v.trim().to_string())
-        .filter(|v| !v.is_empty())
-        .or_else(|| req.security.as_ref().and_then(|env| env.key_id.clone()));
+    let private_key = env_compat::var(
+        "ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64",
+        "SWARM_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64",
+    )
+    .map(|v| v.trim().to_string())
+    .filter(|v| !v.is_empty());
+    let key_id = env_compat::var(
+        "ADL_REMOTE_REQUEST_SIGNING_KEY_ID",
+        "SWARM_REMOTE_REQUEST_SIGNING_KEY_ID",
+    )
+    .map(|v| v.trim().to_string())
+    .filter(|v| !v.is_empty())
+    .or_else(|| req.security.as_ref().and_then(|env| env.key_id.clone()));
 
     match (require_signature, private_key) {
         (true, None) => {
@@ -285,18 +390,7 @@ pub fn maybe_attach_request_signature_from_env(req: &mut ExecuteRequest) -> Resu
         }
         (_, None) => return Ok(()),
         (_, Some(private_key_b64)) => {
-            let signature = sign_execute_request_v1(req, &private_key_b64, key_id.as_deref())?;
-            let env = req
-                .security
-                .get_or_insert_with(ExecuteSecurityEnvelope::default);
-            env.signed = true;
-            env.key_id = signature.key_id.clone();
-            env.signature_alg = Some(signature.alg.clone());
-            env.key_source = signature
-                .public_key_b64
-                .as_ref()
-                .map(|_| "embedded".to_string());
-            env.request_signature = Some(signature);
+            attach_request_signature(req, &private_key_b64, key_id.as_deref())?;
         }
     }
     Ok(())
@@ -497,17 +591,9 @@ pub fn validate_security_envelope(
             std::path::Path::new(rel),
         );
         if let Err(err) = resolved {
-            return Err(match err {
-                sandbox::SandboxPathError::AbsolutePath { .. }
-                | sandbox::SandboxPathError::ParentTraversal { .. } => {
-                    SecurityEnvelopeError::PathTraversal { path: rel.clone() }
-                }
-                sandbox::SandboxPathError::PathOutsideRoot { .. }
-                | sandbox::SandboxPathError::EmptyPath
-                | sandbox::SandboxPathError::RootCanonicalizeFailed { .. }
-                | sandbox::SandboxPathError::SymlinkEscape { .. } => {
-                    SecurityEnvelopeError::SymlinkEscape { path: rel.clone() }
-                }
+            return Err(match err.code() {
+                "sandbox_path_denied" => SecurityEnvelopeError::PathTraversal { path: rel.clone() },
+                _ => SecurityEnvelopeError::SymlinkEscape { path: rel.clone() },
             });
         }
     }
@@ -552,7 +638,7 @@ impl ExecuteResponse {
 /// - returns only the remote model output for successful requests
 pub fn execute_remote(endpoint: &str, timeout_ms: u64, req: &ExecuteRequest) -> Result<String> {
     if let Err(env_err) = validate_security_envelope(req) {
-        return Err(anyhow!("{}: {}", env_err.code(), env_err.message()));
+        return Err(env_err.into());
     }
     let client = Client::builder()
         .timeout(Duration::from_millis(timeout_ms))
@@ -560,32 +646,65 @@ pub fn execute_remote(endpoint: &str, timeout_ms: u64, req: &ExecuteRequest) -> 
         .context("failed to build remote executor client")?;
 
     let url = format!("{}/v1/execute", endpoint.trim_end_matches('/'));
-    let response = client.post(url).json(req).send().map_err(|err| {
-        if err.is_timeout() {
-            anyhow!("REMOTE_TIMEOUT: {err}")
-        } else {
-            anyhow!("REMOTE_UNREACHABLE: {err}")
-        }
-    })?;
+    let response = client
+        .post(url)
+        .json(req)
+        .send()
+        .map_err(|err| -> anyhow::Error {
+            if err.is_timeout() {
+                RemoteExecuteClientError::new(
+                    RemoteExecuteClientErrorKind::Timeout,
+                    "REMOTE_TIMEOUT",
+                    err.to_string(),
+                )
+                .into()
+            } else {
+                RemoteExecuteClientError::new(
+                    RemoteExecuteClientErrorKind::Unreachable,
+                    "REMOTE_UNREACHABLE",
+                    err.to_string(),
+                )
+                .into()
+            }
+        })?;
 
     if response.status() != StatusCode::OK {
-        return Err(anyhow!("REMOTE_BAD_STATUS: {}", response.status()));
+        return Err(RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::BadStatus,
+            "REMOTE_BAD_STATUS",
+            response.status().to_string(),
+        )
+        .into());
     }
 
-    let parsed: ExecuteResponse = response
-        .json()
-        .map_err(|err| anyhow!("REMOTE_INVALID_JSON: {err}"))?;
+    let parsed: ExecuteResponse = response.json().map_err(|err| {
+        RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::InvalidJson,
+            "REMOTE_INVALID_JSON",
+            err.to_string(),
+        )
+    })?;
     if parsed.ok {
-        parsed
-            .result
-            .ok_or_else(|| anyhow!("REMOTE_SCHEMA_VIOLATION: missing result on ok response"))
+        parsed.result.ok_or_else(|| {
+            RemoteExecuteClientError::new(
+                RemoteExecuteClientErrorKind::SchemaViolation,
+                "REMOTE_SCHEMA_VIOLATION",
+                "missing result on ok response",
+            )
+            .into()
+        })
     } else {
         let err = parsed.error.unwrap_or(RemoteError {
             code: "REMOTE_EXECUTION_ERROR".to_string(),
             message: "remote execution failed".to_string(),
             details: HashMap::new(),
         });
-        Err(anyhow!("{}: {}", err.code, err.message))
+        Err(RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::RemoteExecution,
+            err.code,
+            err.message,
+        )
+        .into())
     }
 }
 
@@ -913,6 +1032,40 @@ mod tests {
     }
 
     #[test]
+    fn canonical_request_bytes_stable_across_hashmap_insertion_order() {
+        let mut req_a = base_request();
+        req_a.inputs.inputs.insert("b".to_string(), "2".to_string());
+        req_a.inputs.inputs.insert("a".to_string(), "1".to_string());
+        req_a
+            .inputs
+            .state
+            .insert("y".to_string(), "state-y".to_string());
+        req_a
+            .inputs
+            .state
+            .insert("x".to_string(), "state-x".to_string());
+
+        let mut req_b = base_request();
+        req_b.inputs.inputs.insert("a".to_string(), "1".to_string());
+        req_b.inputs.inputs.insert("b".to_string(), "2".to_string());
+        req_b
+            .inputs
+            .state
+            .insert("x".to_string(), "state-x".to_string());
+        req_b
+            .inputs
+            .state
+            .insert("y".to_string(), "state-y".to_string());
+
+        let bytes_a = canonical_request_bytes(&req_a).expect("canonical bytes a");
+        let bytes_b = canonical_request_bytes(&req_b).expect("canonical bytes b");
+        assert_eq!(
+            bytes_a, bytes_b,
+            "hash map insertion order must not affect canonical bytes"
+        );
+    }
+
+    #[test]
     fn security_envelope_accepts_valid_signed_request() {
         let mut req = base_request();
         req.security = Some(ExecuteSecurityEnvelope {
@@ -965,6 +1118,75 @@ mod tests {
         assert!(!response.ok);
         let err = response.error.expect("error");
         assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_MISMATCH");
+        let env_err = validate_security_envelope(&req).expect_err("tampered signature must fail");
+        assert_eq!(env_err.code(), "REMOTE_REQUEST_SIGNATURE_MISMATCH");
+        let as_anyhow: anyhow::Error = env_err.into();
+        assert_eq!(stable_failure_kind(&as_anyhow), Some("policy_denied"));
+    }
+
+    #[test]
+    fn security_envelope_rejects_signature_schema_version_mismatch() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: true,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("embedded".to_string()),
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let mut sig = sign_execute_request_v1(&req, &fixed_private_key_b64(), Some("k1"))
+            .expect("sign request");
+        sig.schema_version = "remote_request_signature.v999".to_string();
+        req.security.as_mut().expect("security").request_signature = Some(sig);
+
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_MALFORMED");
+        let env_err =
+            validate_security_envelope(&req).expect_err("schema version mismatch must fail");
+        assert_eq!(env_err.code(), "REMOTE_REQUEST_SIGNATURE_MALFORMED");
+        let as_anyhow: anyhow::Error = env_err.into();
+        assert_eq!(stable_failure_kind(&as_anyhow), Some("policy_denied"));
+    }
+
+    #[test]
+    fn security_envelope_rejects_malformed_signature_payload() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: true,
+            signed: true,
+            key_id: Some("k1".to_string()),
+            signature_alg: Some("ed25519".to_string()),
+            key_source: Some("embedded".to_string()),
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+        let mut sig = sign_execute_request_v1(&req, &fixed_private_key_b64(), Some("k1"))
+            .expect("sign request");
+        sig.sig_b64 = "not-valid-base64***".to_string();
+        req.security.as_mut().expect("security").request_signature = Some(sig);
+
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_MALFORMED");
+
+        let env_err =
+            validate_security_envelope(&req).expect_err("malformed signature payload must fail");
+        assert_eq!(env_err.code(), "REMOTE_REQUEST_SIGNATURE_MALFORMED");
+        let as_anyhow: anyhow::Error = env_err.into();
+        assert_eq!(stable_failure_kind(&as_anyhow), Some("policy_denied"));
     }
 
     #[test]
@@ -1061,6 +1283,34 @@ mod tests {
         assert!(!response.ok);
         let err = response.error.expect("error");
         assert_eq!(err.code, "REMOTE_REQUEST_SIGNATURE_MISSING");
+    }
+
+    #[test]
+    fn attach_request_signature_preserves_verification_with_metadata_fields() {
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            require_key_id: true,
+            signed: false,
+            key_id: None,
+            signature_alg: None,
+            key_source: None,
+            request_signature: None,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec!["embedded".to_string()],
+            sandbox_root: None,
+            requested_paths: vec![],
+        });
+
+        attach_request_signature(&mut req, &fixed_private_key_b64(), Some("k1"))
+            .expect("attach signature");
+
+        // Signature verification should pass; the request then fails in the
+        // provider path, proving envelope/crypto acceptance.
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("provider error");
+        assert_eq!(err.code, "REMOTE_EXECUTION_ERROR");
     }
 
     #[test]

@@ -28,7 +28,7 @@ pub struct GraphExport {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(tag = "kind")]
+#[serde(tag = "kind", deny_unknown_fields)]
 pub enum TraceEventNormalized {
     SchedulerPolicy {
         max_concurrency: usize,
@@ -54,6 +54,48 @@ pub enum TraceEventNormalized {
     StepOutputChunk {
         step_id: String,
         chunk_bytes: usize,
+    },
+    DelegationRequested {
+        delegation_id: String,
+        step_id: String,
+        action_kind: String,
+        target_id: String,
+    },
+    DelegationPolicyEvaluated {
+        delegation_id: String,
+        step_id: String,
+        action_kind: String,
+        target_id: String,
+        decision: String,
+        rule_id: Option<String>,
+    },
+    DelegationApproved {
+        delegation_id: String,
+        step_id: String,
+    },
+    DelegationDenied {
+        delegation_id: String,
+        step_id: String,
+        action_kind: String,
+        target_id: String,
+        rule_id: Option<String>,
+    },
+    DelegationDispatched {
+        delegation_id: String,
+        step_id: String,
+        action_kind: String,
+        target_id: String,
+    },
+    DelegationResultReceived {
+        delegation_id: String,
+        step_id: String,
+        success: bool,
+        output_bytes: usize,
+    },
+    DelegationCompleted {
+        delegation_id: String,
+        step_id: String,
+        outcome: String,
     },
     StepFinished {
         step_id: String,
@@ -194,7 +236,19 @@ pub fn replay_trace(events: &[TraceEventNormalized]) -> TraceReplay {
             TraceEventNormalized::StepOutputChunk { step_id, .. } => {
                 step_output_chunk_order.push(step_id.clone())
             }
-            _ => {}
+            TraceEventNormalized::DelegationRequested { .. }
+            | TraceEventNormalized::DelegationPolicyEvaluated { .. }
+            | TraceEventNormalized::DelegationApproved { .. }
+            | TraceEventNormalized::DelegationDenied { .. }
+            | TraceEventNormalized::DelegationDispatched { .. }
+            | TraceEventNormalized::DelegationResultReceived { .. }
+            | TraceEventNormalized::DelegationCompleted { .. }
+            | TraceEventNormalized::SchedulerPolicy { .. }
+            | TraceEventNormalized::RunFailed { .. }
+            | TraceEventNormalized::RunFinished { .. }
+            | TraceEventNormalized::PromptAssembled { .. }
+            | TraceEventNormalized::CallEntered { .. }
+            | TraceEventNormalized::CallExited { .. } => {}
         }
     }
 
@@ -334,6 +388,90 @@ pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized
                 step_id: step_id.clone(),
                 chunk_bytes: *chunk_bytes,
             },
+            TraceEvent::DelegationRequested {
+                delegation_id,
+                step_id,
+                action_kind,
+                target_id,
+                ..
+            } => TraceEventNormalized::DelegationRequested {
+                delegation_id: delegation_id.clone(),
+                step_id: step_id.clone(),
+                action_kind: action_kind.clone(),
+                target_id: target_id.clone(),
+            },
+            TraceEvent::DelegationPolicyEvaluated {
+                delegation_id,
+                step_id,
+                action_kind,
+                target_id,
+                decision,
+                rule_id,
+                ..
+            } => TraceEventNormalized::DelegationPolicyEvaluated {
+                delegation_id: delegation_id.clone(),
+                step_id: step_id.clone(),
+                action_kind: action_kind.clone(),
+                target_id: target_id.clone(),
+                decision: decision.clone(),
+                rule_id: rule_id.clone(),
+            },
+            TraceEvent::DelegationApproved {
+                delegation_id,
+                step_id,
+                ..
+            } => TraceEventNormalized::DelegationApproved {
+                delegation_id: delegation_id.clone(),
+                step_id: step_id.clone(),
+            },
+            TraceEvent::DelegationDenied {
+                delegation_id,
+                step_id,
+                action_kind,
+                target_id,
+                rule_id,
+                ..
+            } => TraceEventNormalized::DelegationDenied {
+                delegation_id: delegation_id.clone(),
+                step_id: step_id.clone(),
+                action_kind: action_kind.clone(),
+                target_id: target_id.clone(),
+                rule_id: rule_id.clone(),
+            },
+            TraceEvent::DelegationDispatched {
+                delegation_id,
+                step_id,
+                action_kind,
+                target_id,
+                ..
+            } => TraceEventNormalized::DelegationDispatched {
+                delegation_id: delegation_id.clone(),
+                step_id: step_id.clone(),
+                action_kind: action_kind.clone(),
+                target_id: target_id.clone(),
+            },
+            TraceEvent::DelegationResultReceived {
+                delegation_id,
+                step_id,
+                success,
+                output_bytes,
+                ..
+            } => TraceEventNormalized::DelegationResultReceived {
+                delegation_id: delegation_id.clone(),
+                step_id: step_id.clone(),
+                success: *success,
+                output_bytes: *output_bytes,
+            },
+            TraceEvent::DelegationCompleted {
+                delegation_id,
+                step_id,
+                outcome,
+                ..
+            } => TraceEventNormalized::DelegationCompleted {
+                delegation_id: delegation_id.clone(),
+                step_id: step_id.clone(),
+                outcome: outcome.clone(),
+            },
             TraceEvent::StepFinished {
                 step_id, success, ..
             } => TraceEventNormalized::StepFinished {
@@ -404,6 +542,72 @@ pub fn format_normalized_event(ev: &TraceEventNormalized) -> String {
         } => {
             format!("StepOutputChunk step={step_id} bytes={chunk_bytes}")
         }
+        TraceEventNormalized::DelegationRequested {
+            delegation_id,
+            step_id,
+            action_kind,
+            target_id,
+        } => format!(
+            "DelegationRequested delegation_id={delegation_id} step={step_id} action={action_kind} target={target_id}"
+        ),
+        TraceEventNormalized::DelegationPolicyEvaluated {
+            delegation_id,
+            step_id,
+            action_kind,
+            target_id,
+            decision,
+            rule_id,
+        } => {
+            let base = format!(
+                "DelegationPolicyEvaluated delegation_id={delegation_id} step={step_id} action={action_kind} target={target_id} decision={decision}"
+            );
+            if let Some(rule_id) = rule_id {
+                format!("{base} rule_id={rule_id}")
+            } else {
+                base
+            }
+        }
+        TraceEventNormalized::DelegationApproved {
+            delegation_id,
+            step_id,
+        } => format!("DelegationApproved delegation_id={delegation_id} step={step_id}"),
+        TraceEventNormalized::DelegationDenied {
+            delegation_id,
+            step_id,
+            action_kind,
+            target_id,
+            rule_id,
+        } => {
+            let base = format!(
+                "DelegationDenied delegation_id={delegation_id} step={step_id} action={action_kind} target={target_id}"
+            );
+            if let Some(rule_id) = rule_id {
+                format!("{base} rule_id={rule_id}")
+            } else {
+                base
+            }
+        }
+        TraceEventNormalized::DelegationDispatched {
+            delegation_id,
+            step_id,
+            action_kind,
+            target_id,
+        } => format!(
+            "DelegationDispatched delegation_id={delegation_id} step={step_id} action={action_kind} target={target_id}"
+        ),
+        TraceEventNormalized::DelegationResultReceived {
+            delegation_id,
+            step_id,
+            success,
+            output_bytes,
+        } => format!(
+            "DelegationResultReceived delegation_id={delegation_id} step={step_id} success={success} bytes={output_bytes}"
+        ),
+        TraceEventNormalized::DelegationCompleted {
+            delegation_id,
+            step_id,
+            outcome,
+        } => format!("DelegationCompleted delegation_id={delegation_id} step={step_id} outcome={outcome}"),
         TraceEventNormalized::StepFinished { step_id, success } => {
             format!("StepFinished step={step_id} success={success}")
         }
@@ -743,8 +947,61 @@ mod tests {
     }
 
     #[test]
+    fn normalize_delegation_events_preserves_optional_rule_id_and_order() {
+        let events = vec![
+            TraceEvent::DelegationRequested {
+                ts_ms: 1,
+                elapsed_ms: 1,
+                delegation_id: "del-1".to_string(),
+                step_id: "s1".to_string(),
+                action_kind: "provider_call".to_string(),
+                target_id: "local".to_string(),
+            },
+            TraceEvent::DelegationPolicyEvaluated {
+                ts_ms: 2,
+                elapsed_ms: 2,
+                delegation_id: "del-1".to_string(),
+                step_id: "s1".to_string(),
+                action_kind: "provider_call".to_string(),
+                target_id: "local".to_string(),
+                decision: "allowed".to_string(),
+                rule_id: None,
+            },
+            TraceEvent::DelegationDispatched {
+                ts_ms: 3,
+                elapsed_ms: 3,
+                delegation_id: "del-1".to_string(),
+                step_id: "s1".to_string(),
+                action_kind: "provider_call".to_string(),
+                target_id: "local".to_string(),
+            },
+        ];
+        let normalized = normalize_trace_events(&events);
+        let json = serde_json::to_string_pretty(&normalized).expect("serialize");
+        assert!(json.contains("\"kind\": \"DelegationRequested\""));
+        assert!(json.contains("\"delegation_id\": \"del-1\""));
+        assert!(json.contains("\"rule_id\": null"));
+        assert_eq!(
+            normalized.iter().map(format_normalized_event).collect::<Vec<_>>(),
+            vec![
+                "DelegationRequested delegation_id=del-1 step=s1 action=provider_call target=local".to_string(),
+                "DelegationPolicyEvaluated delegation_id=del-1 step=s1 action=provider_call target=local decision=allowed".to_string(),
+                "DelegationDispatched delegation_id=del-1 step=s1 action=provider_call target=local".to_string(),
+            ]
+        );
+    }
+
+    #[test]
     fn format_normalized_event_covers_variants() {
         let messages = [
+            format_normalized_event(&TraceEventNormalized::DelegationPolicyEvaluated {
+                delegation_id: "del-1".to_string(),
+                step_id: "s1".to_string(),
+                action_kind: "provider_call".to_string(),
+                target_id: "local".to_string(),
+                decision: "denied".to_string(),
+                rule_id: Some("deny-local".to_string()),
+            }),
             format_normalized_event(&TraceEventNormalized::RunFailed {
                 message: "boom".to_string(),
             }),
@@ -780,6 +1037,9 @@ mod tests {
             }),
         ];
         assert!(messages.iter().any(|m| m.contains("RunFailed")));
+        assert!(messages
+            .iter()
+            .any(|m| m.contains("DelegationPolicyEvaluated")));
         assert!(messages.iter().any(|m| m.contains("delegation=")));
         assert!(messages.iter().any(|m| m.contains("CallExited")));
     }

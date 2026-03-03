@@ -61,6 +61,7 @@ Deliver:
 - Sandbox hardening (symlink escape prevention) (#472)
 - Canonical execution path consolidation (#383)
 - Deferred high-churn rename (#336)
+- Delegation trace lifecycle v1 (#488)
 
 ### G2 — Stable Learning Surfaces
 
@@ -71,7 +72,7 @@ Before introducing learning mechanics:
 - Stabilize trace event schemas
 - Enforce strict JSON schemas (`deny_unknown_fields`)
 
-These surfaces must not depend on ObsMem integration (deferred to v0.8).
+These surfaces must not depend on ObsMem integration (tracked in v0.75 planning).
 
 ### G3 — Controlled Learning Substrate (v0.7.x)
 
@@ -94,9 +95,9 @@ No silent auto-promotion.
 - Runtime self-modifying Rust code.
 - Automatic mutation of security/trust policies.
 - Mid-run gradient updates (LoRA, etc.).
-- Distributed cluster execution (v0.8).
-- Durable checkpoint engine final form (v0.8).
-- ObsMem integration (retargeted to v0.8).
+- Distributed cluster execution (v0.85/v0.9 planning).
+- Durable checkpoint engine final form (v0.85/v0.9 planning).
+- ObsMem integration (retargeted to v0.75 planning).
 
 ---
 
@@ -105,7 +106,7 @@ No silent auto-promotion.
 ### In Scope
 
 - EPIC-B: Delegation runtime
-- EPIC-C: Learning surfaces (without ObsMem integration)
+- EPIC-C: Learning surfaces (without ObsMem integration in v0.7)
 - EPIC-D: Cleanup + deferred systems work
 - EPIC-E: Security envelope hardening
 - EPIC-F: Resilience + checkpointing surfaces
@@ -115,11 +116,11 @@ No silent auto-promotion.
 
 ### Out of Scope
 
-- Distributed cluster execution (#339 → v0.8)
-- Durable checkpoint engine (#340 → v0.8)
+- Distributed cluster execution (#339 → v0.85/v0.9)
+- Durable checkpoint engine (#340 → v0.85/v0.9)
 - Adapter registry + fine-tune infra
 - Autonomous self-modifying code
-- ObsMem integration (v0.8)
+- ObsMem integration (v0.75)
 
 ---
 
@@ -197,7 +198,7 @@ Hard constraints:
 - All step execution routes through canonical helpers.
 - Retry + provider switching logic centralized.
 - Scheduler policy surface is explicit and configurable.
-- Sandbox validation ensures canonicalized paths stay within base_dir.
+- Sandbox validation ensures canonicalized paths stay within base_dir (see `docs/milestones/v0.7/SANDBOX_FILESYSTEM_v1.md`).
 - Overlay precedence:
 
   1. Workflow spec
@@ -206,6 +207,18 @@ Hard constraints:
   4. Engine defaults
 
 Security/trust policies cannot be overridden by overlays.
+
+### Delegation Policy Surface v1 (WP-04 / #487)
+
+Delegation policy is intentionally minimal in v0.7:
+
+- policy is configured under `run.delegation_policy`
+- rules are evaluated in declared order
+- first match wins; otherwise `default_allow` applies
+- the runtime emits minimal audit data through the existing trace sink
+- policy decisions cannot bypass the security envelope or sandbox layers
+
+Detailed field-level semantics are documented in `docs/milestones/v0.7/DELEGATION_POLICY_v1.md`.
 
 ### Scheduler Policy Surface (WP-05 / #369)
 
@@ -224,6 +237,14 @@ Security/trust policies cannot be overridden by overlays.
 - Out of scope in v0.7:
   - fairness/priorities/preemption/QoS
   - distributed scheduling and durable checkpoint orchestration
+
+### Delegation Trace Model v1 (WP-05 / #488)
+
+- Delegated execution emits a deterministic lifecycle over the existing trace sink.
+- Correlation uses `run_id`, `workflow_id`, `step_id`, and deterministic `delegation_id` values (`del-1`, `del-2`, ...).
+- Event payloads are intentionally privacy-safe: action kind, stable target ids, compact result metadata, and optional policy identifiers only.
+- The normalized trace surface remains usable even when policy data is absent; `rule_id` is optional for compatibility with #487.
+- Reference: `docs/milestones/v0.7/DELEGATION_TRACE_v1.md`
 
 ### Signing Trust Policy Profile (WP-03 / #371)
 

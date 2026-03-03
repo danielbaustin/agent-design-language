@@ -1,8 +1,9 @@
-//! ADL `swarm` runtime library.
+//! ADL runtime library crate (`adl`).
 //!
 //! This crate provides the language model (`adl`), resolution/planning (`resolve`,
 //! `execution_plan`), deterministic execution (`execute`), and trust/verification
-//! boundaries (`signing`, `remote_exec`) used by the `swarm` CLI.
+//! boundaries (`signing`, `remote_exec`) used by the canonical `adl` CLI and
+//! legacy compatibility shim.
 //!
 //! v0.6 invariants:
 //! - deterministic execution order for ready steps
@@ -13,7 +14,9 @@
 pub mod adl;
 pub mod artifacts;
 pub mod bounded_executor;
+pub mod delegation_policy;
 pub mod demo;
+pub mod env_compat;
 pub mod execute;
 pub mod execution_plan;
 pub mod instrumentation;

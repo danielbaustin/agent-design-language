@@ -180,6 +180,29 @@ impl AdlDoc {
                 }
             }
         }
+        if let Some(policy) = self.run.delegation_policy.as_ref() {
+            let mut seen_rule_ids = std::collections::BTreeSet::new();
+            for (idx, rule) in policy.rules.iter().enumerate() {
+                if rule.id.trim().is_empty() {
+                    return Err(anyhow!(
+                        "run.delegation_policy.rules[{idx}].id must not be empty"
+                    ));
+                }
+                if !seen_rule_ids.insert(rule.id.clone()) {
+                    return Err(anyhow!(
+                        "run.delegation_policy.rules contains duplicate id '{}'",
+                        rule.id
+                    ));
+                }
+                if let Some(target_id) = rule.target_id.as_ref() {
+                    if target_id.trim().is_empty() {
+                        return Err(anyhow!(
+                            "run.delegation_policy.rules[{idx}].target_id must not be empty when provided"
+                        ));
+                    }
+                }
+            }
+        }
 
         if let Some(pattern_ref) = self.run.pattern_ref.as_ref() {
             if !self.patterns.iter().any(|p| p.id == *pattern_ref) {
@@ -669,6 +692,9 @@ pub struct RunSpec {
 
     #[serde(default)]
     pub remote: Option<RunRemoteSpec>,
+
+    #[serde(default)]
+    pub delegation_policy: Option<DelegationPolicySpec>,
 }
 
 impl RunSpec {
@@ -704,6 +730,73 @@ pub struct RunDefaults {
     /// When omitted, runtime uses a conservative default.
     #[serde(default)]
     pub max_concurrency: Option<usize>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct DelegationPolicySpec {
+    #[serde(default = "default_true")]
+    pub default_allow: bool,
+
+    #[serde(default)]
+    pub rules: Vec<DelegationPolicyRuleSpec>,
+}
+
+impl Default for DelegationPolicySpec {
+    fn default() -> Self {
+        Self {
+            default_allow: true,
+            rules: Vec::new(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct DelegationPolicyRuleSpec {
+    pub id: String,
+    pub action: DelegationActionKind,
+
+    #[serde(default)]
+    pub target_id: Option<String>,
+
+    pub effect: DelegationRuleEffect,
+
+    #[serde(default)]
+    pub require_approval: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum DelegationActionKind {
+    ToolInvoke,
+    ProviderCall,
+    RemoteExec,
+    FilesystemRead,
+    FilesystemWrite,
+}
+
+impl DelegationActionKind {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            DelegationActionKind::ToolInvoke => "tool_invoke",
+            DelegationActionKind::ProviderCall => "provider_call",
+            DelegationActionKind::RemoteExec => "remote_exec",
+            DelegationActionKind::FilesystemRead => "filesystem_read",
+            DelegationActionKind::FilesystemWrite => "filesystem_write",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum DelegationRuleEffect {
+    Allow,
+    Deny,
+}
+
+fn default_true() -> bool {
+    true
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -1110,6 +1203,7 @@ mod tests {
                 inputs: HashMap::new(),
                 placement: None,
                 remote: None,
+                delegation_policy: None,
             },
         };
 
@@ -1144,6 +1238,7 @@ mod tests {
                 inputs: HashMap::new(),
                 placement: None,
                 remote: None,
+                delegation_policy: None,
             },
         };
         let err = doc
@@ -1424,6 +1519,7 @@ temperature: 0.7
                 inputs: HashMap::new(),
                 placement: None,
                 remote: None,
+                delegation_policy: None,
             },
         };
         let err = doc.validate().expect_err("id mismatch should fail");
@@ -1484,5 +1580,162 @@ run:
         assert!(err
             .to_string()
             .contains("verify_allowed_key_sources contains unsupported source"));
+    }
+
+    #[test]
+    fn validate_rejects_unknown_references_across_agent_and_task_fields() {
+        let mut doc: AdlDoc = serde_yaml::from_str(
+            r#"
+version: "0.5"
+providers:
+  p1:
+    type: "ollama"
+tools:
+  t1:
+    kind: "builtin"
+agents:
+  a1:
+    provider: "p1"
+    model: "m1"
+    tools: ["t1"]
+tasks:
+  task1:
+    agent_ref: "a1"
+    tool_allowlist: ["t1"]
+    prompt:
+      user: "u"
+run:
+  workflow:
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "task1"
+"#,
+        )
+        .expect("parse");
+        doc.validate().expect("baseline doc should validate");
+
+        doc.agents.get_mut("a1").expect("agent").provider = "missing-provider".to_string();
+        let err = doc.validate().expect_err("unknown provider should fail");
+        assert!(err.to_string().contains("references unknown provider"));
+
+        doc.agents.get_mut("a1").expect("agent").provider = "p1".to_string();
+        doc.agents.get_mut("a1").expect("agent").tools = vec!["missing-tool".to_string()];
+        let err = doc.validate().expect_err("unknown agent tool should fail");
+        assert!(err.to_string().contains("tools references unknown tool"));
+
+        doc.agents.get_mut("a1").expect("agent").tools = vec!["t1".to_string()];
+        doc.tasks.get_mut("task1").expect("task").agent_ref = Some("missing-agent".to_string());
+        let err = doc
+            .validate()
+            .expect_err("unknown task agent_ref should fail");
+        assert!(err
+            .to_string()
+            .contains("agent_ref references unknown agent"));
+
+        doc.tasks.get_mut("task1").expect("task").agent_ref = Some("a1".to_string());
+        doc.tasks.get_mut("task1").expect("task").tool_allowlist = vec!["missing-tool".to_string()];
+        let err = doc
+            .validate()
+            .expect_err("unknown task tool_allowlist entry should fail");
+        assert!(err
+            .to_string()
+            .contains("tool_allowlist references unknown tool"));
+    }
+
+    #[test]
+    fn pattern_validate_rejects_additional_fork_join_and_linear_edge_cases() {
+        let mut linear = PatternSpec {
+            id: "p".to_string(),
+            kind: PatternKind::Linear,
+            steps: vec!["   ".to_string()],
+            fork: None,
+            join: None,
+        };
+        let err = linear
+            .validate()
+            .expect_err("linear pattern should reject empty step symbols");
+        assert!(err.to_string().contains("empty step symbol"));
+        linear.steps = vec!["A".to_string()];
+        linear.validate().expect("valid linear pattern");
+
+        let mut fork_join = PatternSpec {
+            id: "p".to_string(),
+            kind: PatternKind::ForkJoin,
+            steps: vec![],
+            fork: Some(PatternForkSpec { branches: vec![] }),
+            join: Some(PatternJoinSpec {
+                step: "join".to_string(),
+            }),
+        };
+        let err = fork_join
+            .validate()
+            .expect_err("fork_join must reject empty branch list");
+        assert!(err.to_string().contains("fork.branches must not be empty"));
+
+        fork_join.join = Some(PatternJoinSpec {
+            step: "   ".to_string(),
+        });
+        fork_join.fork = Some(PatternForkSpec {
+            branches: vec![PatternBranchSpec {
+                id: "b1".to_string(),
+                steps: vec!["A".to_string()],
+            }],
+        });
+        let err = fork_join
+            .validate()
+            .expect_err("fork_join must reject empty join.step");
+        assert!(err.to_string().contains("join.step must not be empty"));
+
+        fork_join.join = Some(PatternJoinSpec {
+            step: "join".to_string(),
+        });
+        fork_join.fork = Some(PatternForkSpec {
+            branches: vec![PatternBranchSpec {
+                id: "   ".to_string(),
+                steps: vec!["A".to_string()],
+            }],
+        });
+        let err = fork_join
+            .validate()
+            .expect_err("fork_join must reject empty branch id");
+        assert!(err.to_string().contains("branch with empty id"));
+
+        fork_join.fork = Some(PatternForkSpec {
+            branches: vec![PatternBranchSpec {
+                id: "p::reserved".to_string(),
+                steps: vec!["A".to_string()],
+            }],
+        });
+        let err = fork_join
+            .validate()
+            .expect_err("fork_join must reject reserved branch id prefix");
+        assert!(err.to_string().contains("cannot use reserved prefix 'p::'"));
+
+        fork_join.fork = Some(PatternForkSpec {
+            branches: vec![PatternBranchSpec {
+                id: "b1".to_string(),
+                steps: vec![],
+            }],
+        });
+        let err = fork_join
+            .validate()
+            .expect_err("fork_join must require non-empty branch steps");
+        assert!(err
+            .to_string()
+            .contains("branch 'b1' requires non-empty steps"));
+
+        fork_join.fork = Some(PatternForkSpec {
+            branches: vec![PatternBranchSpec {
+                id: "b1".to_string(),
+                steps: vec!["   ".to_string()],
+            }],
+        });
+        let err = fork_join
+            .validate()
+            .expect_err("fork_join must reject empty branch step symbol");
+        assert!(err
+            .to_string()
+            .contains("branch 'b1' has empty step symbol"));
     }
 }

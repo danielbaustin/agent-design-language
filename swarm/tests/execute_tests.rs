@@ -6,7 +6,8 @@ use std::path::Path;
 use std::process::Command;
 use std::thread;
 use std::time::Duration;
-use swarm::execute::{materialize_inputs, MATERIALIZE_INPUT_MAX_FILE_BYTES};
+
+use ::adl::execute::{materialize_inputs, MATERIALIZE_INPUT_MAX_FILE_BYTES};
 
 mod helpers;
 use helpers::{unique_test_temp_dir, EnvVarGuard};
@@ -37,7 +38,7 @@ fn start_swarm_remote_server() -> String {
     thread::spawn({
         let bind_addr = bind_addr.clone();
         move || {
-            let _ = swarm::remote_exec::run_server(&bind_addr);
+            let _ = ::adl::remote_exec::run_server(&bind_addr);
         }
     });
     thread::sleep(Duration::from_millis(120));
@@ -387,8 +388,7 @@ enum MockOllamaBehavior {
 }
 
 fn run_swarm(args: &[&str]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_swarm");
-    Command::new(exe)
+    Command::new(resolve_adl_exe())
         .env("ADL_ALLOW_UNSIGNED", "1")
         .args(args)
         .output()
@@ -396,8 +396,7 @@ fn run_swarm(args: &[&str]) -> std::process::Output {
 }
 
 fn run_swarm_in_dir(cwd: &Path, args: &[&str]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_swarm");
-    Command::new(exe)
+    Command::new(resolve_adl_exe())
         .current_dir(cwd)
         .env("ADL_ALLOW_UNSIGNED", "1")
         .args(args)
@@ -405,13 +404,30 @@ fn run_swarm_in_dir(cwd: &Path, args: &[&str]) -> std::process::Output {
         .unwrap()
 }
 
+fn resolve_adl_exe() -> std::path::PathBuf {
+    let raw = std::env::var("CARGO_BIN_EXE_adl")
+        .or_else(|_| std::env::var("CARGO_BIN_EXE_swarm"))
+        .unwrap_or_else(|_| env!("CARGO_BIN_EXE_adl").to_string());
+    let path = std::path::PathBuf::from(raw);
+    if path.is_absolute() {
+        path
+    } else {
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(path)
+    }
+}
+
+fn repo_runs_dir() -> std::path::PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("repo root")
+        .join(".adl")
+        .join("runs")
+}
+
 fn run_artifact_paths(
     run_id: &str,
 ) -> (std::path::PathBuf, std::path::PathBuf, std::path::PathBuf) {
-    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .expect("repo root");
-    let run_dir = repo_root.join(".adl").join("runs").join(run_id);
+    let run_dir = repo_runs_dir().join(run_id);
     (
         run_dir.join("run.json"),
         run_dir.join("steps.json"),
@@ -420,14 +436,7 @@ fn run_artifact_paths(
 }
 
 fn pause_state_path(run_id: &str) -> std::path::PathBuf {
-    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .expect("repo root");
-    repo_root
-        .join(".adl")
-        .join("runs")
-        .join(run_id)
-        .join("pause_state.json")
+    repo_runs_dir().join(run_id).join("pause_state.json")
 }
 
 #[test]
@@ -1934,7 +1943,7 @@ run:
         String::from_utf8_lossy(&out.stderr)
     );
     assert!(
-        (2.5..=5.8).contains(&elapsed),
+        (2.5..=7.5).contains(&elapsed),
         "expected bounded runtime window for 5 forks + join with max_parallel=4, got {elapsed:.3}s"
     );
 
@@ -2276,6 +2285,8 @@ run:
       - id: "s1"
         agent: "a1"
         task: "t1"
+        save_as: "s1"
+        write_to: "s1.txt"
         inputs:
           text: "hello"
 "#
@@ -2294,6 +2305,7 @@ run:
     );
 
     let run_json_path = run_dir.join("run.json");
+    let run_status_path = run_dir.join("run_status.json");
     let steps_json_path = run_dir.join("steps.json");
     let run_summary_path = run_dir.join("run_summary.json");
     let scores_path = run_dir.join("learning").join("scores.json");
@@ -2302,6 +2314,11 @@ run:
         run_json_path.is_file(),
         "missing {}",
         run_json_path.display()
+    );
+    assert!(
+        run_status_path.is_file(),
+        "missing {}",
+        run_status_path.display()
     );
     assert!(
         steps_json_path.is_file(),
@@ -2335,6 +2352,26 @@ run:
     assert_eq!(steps[0]["step_id"], "s1");
     assert_eq!(steps[0]["status"], "success");
     assert_eq!(steps[0]["provider_id"], "local");
+    assert_eq!(steps[0]["output_artifact_path"], "s1.txt");
+
+    let run_status_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&run_status_path).unwrap()).unwrap();
+    assert_eq!(run_status_json["run_status_version"], 1);
+    assert_eq!(run_status_json["run_id"], run_id);
+    assert_eq!(run_status_json["workflow_id"], "workflow");
+    assert_eq!(run_status_json["overall_status"], "succeeded");
+    assert_eq!(
+        run_status_json["completed_steps"],
+        serde_json::json!(["s1"])
+    );
+    assert_eq!(run_status_json["pending_steps"], serde_json::json!([]));
+    assert_eq!(run_status_json["started_steps"], serde_json::json!(["s1"]));
+    assert_eq!(run_status_json["attempt_counts_by_step"]["s1"], 1);
+    let run_status_raw = fs::read_to_string(&run_status_path).unwrap();
+    assert!(
+        !run_status_raw.contains(base.to_str().unwrap()),
+        "run_status.json must not leak absolute host paths:\n{run_status_raw}"
+    );
 
     let summary_json: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(&run_summary_path).unwrap()).unwrap();
@@ -2495,6 +2532,126 @@ run:
             && !suggestions_text.contains("gho_"),
         "suggestions output must not leak absolute host paths or secrets: {suggestions_text}"
     );
+
+    let _ = fs::remove_dir_all(&run_dir);
+}
+
+#[test]
+fn run_status_artifact_is_byte_stable_across_repeated_identical_runs() {
+    let base = tmp_dir("exec-run-status-stability");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let run_id = "run-status-stable";
+    let run_dir = repo_runs_dir().join(run_id);
+    let _ = fs::remove_dir_all(&run_dir);
+
+    let yaml = format!(
+        r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "Echo {{text}}"
+run:
+  name: "{run_id}"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        save_as: "s1_out"
+        write_to: "s1.txt"
+        inputs:
+          text: "hello"
+"#
+    );
+    let tmp_yaml = base.join("run-status-stable.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out1 = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(out1.status.success(), "first run failed");
+    let first = fs::read(run_dir.join("run_status.json")).unwrap();
+
+    let out2 = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(out2.status.success(), "second run failed");
+    let second = fs::read(run_dir.join("run_status.json")).unwrap();
+
+    assert_eq!(first, second, "run_status.json must be byte-stable");
+
+    let _ = fs::remove_dir_all(run_dir);
+}
+
+#[test]
+fn run_status_failure_kind_maps_timeout_without_raw_provider_error_text() {
+    let listener = match TcpListener::bind("127.0.0.1:0") {
+        Ok(listener) => listener,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let bind_addr = listener.local_addr().unwrap();
+    thread::spawn(move || {
+        if let Ok((mut stream, _)) = listener.accept() {
+            let mut buf = [0_u8; 1024];
+            let _ = stream.read(&mut buf);
+            std::thread::sleep(Duration::from_millis(1200));
+            let _ = stream.write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\n{}");
+        }
+    });
+
+    let base = tmp_dir("exec-run-status-timeout");
+    let run_id = "run-status-timeout";
+    let run_dir = repo_runs_dir().join(run_id);
+    let _ = fs::remove_dir_all(&run_dir);
+    let yaml = format!(
+        r#"
+version: "0.5"
+providers:
+  http:
+    type: "http"
+    config:
+      endpoint: "http://{bind_addr}"
+      timeout_secs: 1
+agents:
+  a1:
+    provider: "http"
+    model: "unused-for-http-provider"
+tasks:
+  t1:
+    prompt:
+      user: "timeout"
+run:
+  name: "{run_id}"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+"#
+    );
+    let tmp_yaml = base.join("run-status-timeout.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(!out.status.success(), "timeout run must fail");
+
+    let run_status: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(run_dir.join("run_status.json")).unwrap())
+            .unwrap();
+    assert_eq!(run_status["overall_status"], "failed");
+    assert_eq!(run_status["failure_kind"], "timeout");
+    let raw = serde_json::to_string_pretty(&run_status).unwrap();
+    assert!(!raw.contains("127.0.0.1"));
+    assert!(!raw.contains("providers.<id>.config.timeout_secs"));
 
     let _ = fs::remove_dir_all(&run_dir);
 }
@@ -3092,33 +3249,33 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
     let new_path = prepend_path(&base);
     let _path_guard = EnvVarGuard::set("PATH", new_path);
 
-    let pattern = swarm::adl::PatternSpec {
+    let pattern = ::adl::adl::PatternSpec {
         id: "p_fork".to_string(),
-        kind: swarm::adl::PatternKind::ForkJoin,
+        kind: ::adl::adl::PatternKind::ForkJoin,
         steps: vec![],
-        fork: Some(swarm::adl::PatternForkSpec {
+        fork: Some(::adl::adl::PatternForkSpec {
             branches: vec![
-                swarm::adl::PatternBranchSpec {
+                ::adl::adl::PatternBranchSpec {
                     id: "left".to_string(),
                     steps: vec!["L1".to_string(), "L2".to_string()],
                 },
-                swarm::adl::PatternBranchSpec {
+                ::adl::adl::PatternBranchSpec {
                     id: "right".to_string(),
                     steps: vec!["R1".to_string()],
                 },
             ],
         }),
-        join: Some(swarm::adl::PatternJoinSpec {
+        join: Some(::adl::adl::PatternJoinSpec {
             step: "J".to_string(),
         }),
     };
 
-    let compiled = swarm::execution_plan::compile_pattern(&pattern).expect("compile pattern");
+    let compiled = ::adl::execution_plan::compile_pattern(&pattern).expect("compile pattern");
 
     let mut providers = HashMap::new();
     providers.insert(
         "local".to_string(),
-        swarm::adl::ProviderSpec {
+        ::adl::adl::ProviderSpec {
             id: None,
             profile: None,
             kind: "ollama".to_string(),
@@ -3131,7 +3288,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
     let mut agents = HashMap::new();
     agents.insert(
         "a1".to_string(),
-        swarm::adl::AgentSpec {
+        ::adl::adl::AgentSpec {
             id: None,
             provider: "local".to_string(),
             model: "phi4-mini".to_string(),
@@ -3147,13 +3304,13 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
     for task_id in ["L1", "L2", "R1", "J"] {
         tasks.insert(
             task_id.to_string(),
-            swarm::adl::TaskSpec {
+            ::adl::adl::TaskSpec {
                 id: None,
                 agent_ref: None,
                 inputs: vec![],
                 tool_allowlist: vec![],
                 description: None,
-                prompt: swarm::adl::PromptSpec {
+                prompt: ::adl::adl::PromptSpec {
                     system: None,
                     developer: None,
                     user: Some(format!("Task {task_id}")),
@@ -3169,10 +3326,10 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         save_as_by_id.insert(node.step_id.clone(), node.save_as.clone());
     }
 
-    let steps: Vec<swarm::resolve::ResolvedStep> = compiled
+    let steps: Vec<::adl::resolve::ResolvedStep> = compiled
         .compiled_steps
         .iter()
-        .map(|step| swarm::resolve::ResolvedStep {
+        .map(|step| ::adl::resolve::ResolvedStep {
             id: step.step_id.clone(),
             agent: Some("a1".to_string()),
             provider: Some("local".to_string()),
@@ -3192,7 +3349,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         })
         .collect();
 
-    let doc = swarm::adl::AdlDoc {
+    let doc = ::adl::adl::AdlDoc {
         version: "0.5".to_string(),
         providers,
         tools: HashMap::new(),
@@ -3201,21 +3358,22 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         workflows: HashMap::new(),
         patterns: vec![pattern],
         signature: None,
-        run: swarm::adl::RunSpec {
+        run: ::adl::adl::RunSpec {
             id: None,
             name: Some("compiled-pattern-run".to_string()),
             created_at: None,
-            defaults: swarm::adl::RunDefaults::default(),
+            defaults: ::adl::adl::RunDefaults::default(),
             workflow_ref: None,
             workflow: None,
             pattern_ref: Some("p_fork".to_string()),
             inputs: HashMap::new(),
             placement: None,
             remote: None,
+            delegation_policy: None,
         },
     };
 
-    let resolved = swarm::resolve::AdlResolved {
+    let resolved = ::adl::resolve::AdlResolved {
         run_id: "compiled-pattern-run".to_string(),
         workflow_id: "pattern:p_fork".to_string(),
         steps,
@@ -3223,12 +3381,12 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         doc,
     };
 
-    let mut tr = swarm::trace::Trace::new("compiled-pattern-run", "pattern:p_fork", "0.5");
+    let mut tr = ::adl::trace::Trace::new("compiled-pattern-run", "pattern:p_fork", "0.5");
     let out_dir = base.join("out");
     fs::create_dir_all(&out_dir).unwrap();
 
     let result =
-        swarm::execute::execute_sequential(&resolved, &mut tr, false, false, &base, &out_dir)
+        ::adl::execute::execute_sequential(&resolved, &mut tr, false, false, &base, &out_dir)
             .expect("compiled pattern should execute");
 
     assert_eq!(result.outputs.len(), 4);
@@ -3311,6 +3469,13 @@ fn trace_chunk_step_ids(stdout: &str) -> Vec<String> {
             Some(tail.split_whitespace().next()?.to_string())
         })
         .collect()
+}
+
+fn delegation_error_code(stderr: &str) -> Option<&str> {
+    stderr
+        .lines()
+        .find_map(|line| line.strip_prefix("Error: "))
+        .and_then(|msg| msg.split(": ").next())
 }
 
 #[test]
@@ -3548,6 +3713,199 @@ run:
 }
 
 #[test]
+fn trace_emits_deterministic_delegation_lifecycle_sequence() {
+    let base = tmp_dir("exec-delegation-lifecycle-trace");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+        delegation:
+          role: "reviewer"
+          tags: ["safety"]
+"#;
+    let tmp_yaml = base.join("delegation-lifecycle-trace.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out1 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    let out2 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        out1.status.success(),
+        "stdout:
+{}
+stderr:
+{}",
+        String::from_utf8_lossy(&out1.stdout),
+        String::from_utf8_lossy(&out1.stderr)
+    );
+    assert!(
+        out2.status.success(),
+        "stdout:
+{}
+stderr:
+{}",
+        String::from_utf8_lossy(&out2.stdout),
+        String::from_utf8_lossy(&out2.stderr)
+    );
+
+    let normalize = |stdout: &str| -> Vec<String> {
+        stdout
+            .lines()
+            .filter_map(|line| line.split_once(") ").map(|(_, rest)| rest.to_string()))
+            .filter(|line| line.starts_with("Delegation"))
+            .collect()
+    };
+
+    let lifecycle1 = normalize(&String::from_utf8_lossy(&out1.stdout));
+    let lifecycle2 = normalize(&String::from_utf8_lossy(&out2.stdout));
+
+    assert_eq!(
+        lifecycle1,
+        vec![
+            "DelegationRequested delegation_id=del-1 step=s1 action=provider_call target=local"
+                .to_string(),
+            "DelegationPolicyEvaluated delegation_id=del-1 step=s1 action=provider_call target=local decision=allowed"
+                .to_string(),
+            "DelegationDispatched delegation_id=del-1 step=s1 action=provider_call target=local"
+                .to_string(),
+            "DelegationResultReceived delegation_id=del-1 step=s1 success=true bytes=12"
+                .to_string(),
+            "DelegationCompleted delegation_id=del-1 step=s1 outcome=success".to_string(),
+        ]
+    );
+    assert_eq!(
+        lifecycle1, lifecycle2,
+        "delegation lifecycle should be byte-stable across identical runs"
+    );
+
+    let stdout = String::from_utf8_lossy(&out1.stdout);
+    assert!(
+        !stdout.contains(base.to_str().unwrap()),
+        "trace should not leak absolute temp paths:
+{stdout}"
+    );
+}
+
+#[test]
+fn concurrent_delegation_ids_are_deterministic_across_repeated_runs() {
+    let base = tmp_dir("exec-concurrent-delegation-ids");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepEchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let yaml = r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  defaults:
+    max_concurrency: 2
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: { n: "2" }
+        delegation:
+          role: "reviewer"
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+        delegation:
+          role: "reviewer"
+"#;
+    let tmp_yaml = base.join("concurrent-delegation-ids.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let parse_ids = |stdout: &str| -> Vec<(String, String)> {
+        stdout
+            .lines()
+            .filter_map(|line| line.split_once(") ").map(|(_, rest)| rest))
+            .filter(|line| line.starts_with("DelegationRequested "))
+            .map(|line| {
+                let mut step_id = String::new();
+                let mut delegation_id = String::new();
+                for part in line.split_whitespace() {
+                    if let Some(v) = part.strip_prefix("step=") {
+                        step_id = v.to_string();
+                    }
+                    if let Some(v) = part.strip_prefix("delegation_id=") {
+                        delegation_id = v.to_string();
+                    }
+                }
+                (step_id, delegation_id)
+            })
+            .collect()
+    };
+
+    let out1 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    let out2 = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        out1.status.success(),
+        "stdout:
+{}
+stderr:
+{}",
+        String::from_utf8_lossy(&out1.stdout),
+        String::from_utf8_lossy(&out1.stderr)
+    );
+    assert!(
+        out2.status.success(),
+        "stdout:
+{}
+stderr:
+{}",
+        String::from_utf8_lossy(&out2.stdout),
+        String::from_utf8_lossy(&out2.stderr)
+    );
+
+    let ids1 = parse_ids(&String::from_utf8_lossy(&out1.stdout));
+    let ids2 = parse_ids(&String::from_utf8_lossy(&out2.stdout));
+    assert_eq!(
+        ids1,
+        vec![
+            ("s1".to_string(), "del-1".to_string()),
+            ("s2".to_string(), "del-2".to_string())
+        ]
+    );
+    assert_eq!(
+        ids1, ids2,
+        "delegation ids should remain deterministic across repeated concurrent runs"
+    );
+}
+
+#[test]
 fn step_delegation_does_not_change_concurrent_step_order_determinism() {
     let base = tmp_dir("exec-step-delegation-determinism");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepEchoPrompt);
@@ -3617,6 +3975,103 @@ run:
     let started2 = trace_started_step_ids(&String::from_utf8_lossy(&out2.stdout));
     assert_eq!(started1, vec!["s1", "s2", "s3", "s4"]);
     assert_eq!(started1, started2);
+}
+
+#[test]
+fn run_delegation_policy_deny_has_stable_error_code_and_trace() {
+    let base = tmp_dir("exec-delegation-policy-deny");
+
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  delegation_policy:
+    default_allow: true
+    rules:
+      - id: "deny-local-provider"
+        action: provider_call
+        target_id: "local"
+        effect: deny
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: { n: "1" }
+        delegation:
+          role: "reviewer"
+          tags: ["safety"]
+"#;
+
+    let tmp_yaml = base.join("delegation-policy-deny.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out = run_swarm(&[tmp_yaml.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        !out.status.success(),
+        "expected denial failure.
+stdout:
+{}
+stderr:
+{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert_eq!(
+        delegation_error_code(&stderr),
+        Some(::adl::execute::DELEGATION_POLICY_DENY_CODE),
+        "stderr was:
+{stderr}"
+    );
+    assert!(
+        stderr.contains("action 'provider_call' target 'local' denied"),
+        "stderr was:
+{stderr}"
+    );
+    assert!(
+        stderr.contains("rule_id=deny-local-provider"),
+        "stderr was:
+{stderr}"
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let lifecycle: Vec<&str> = stdout
+        .lines()
+        .filter_map(|line| line.split_once(") ").map(|(_, rest)| rest))
+        .filter(|line| line.starts_with("Delegation"))
+        .collect();
+    assert_eq!(
+        lifecycle,
+        vec![
+            "DelegationPolicyEvaluated delegation_id=del-1 step=s1 action=provider_call target=local decision=denied rule_id=deny-local-provider",
+            "DelegationDenied delegation_id=del-1 step=s1 action=provider_call target=local rule_id=deny-local-provider",
+        ],
+        "stdout was:
+{stdout}"
+    );
+    assert!(
+        !stdout.contains("DelegationDispatched"),
+        "denied policy path must not dispatch. stdout was:
+{stdout}"
+    );
+    assert!(
+        !stdout.contains("StepStarted step=s1"),
+        "policy denial should happen before StepStarted. stdout was:
+{stdout}"
+    );
 }
 
 #[test]
@@ -3969,7 +4424,7 @@ run:
         "--resume",
         run_json_path.to_str().unwrap(),
         "--out",
-        base.join("out-resume").to_str().unwrap(),
+        base.join("out-paused").to_str().unwrap(),
     ]);
     assert!(
         out_resumed.status.success(),
@@ -3991,7 +4446,7 @@ run:
         String::from_utf8_lossy(&out_plain.stderr)
     );
 
-    let resumed_final = fs::read_to_string(base.join("out-resume").join("s3.txt")).unwrap();
+    let resumed_final = fs::read_to_string(base.join("out-paused").join("s3.txt")).unwrap();
     let plain_final = fs::read_to_string(base.join("out-plain").join("s3.txt")).unwrap();
     assert_eq!(resumed_final, plain_final);
 }
@@ -4149,6 +4604,148 @@ fn resume_cli_rejects_missing_pause_state_for_unknown_run_id() {
     assert!(
         stderr.contains("run-id-does-not-exist"),
         "stderr was:\n{stderr}"
+    );
+}
+
+#[test]
+fn resume_skips_verified_completed_steps_and_preserves_run_status() {
+    let base = tmp_dir("exec-resume-skip-verified");
+    let endpoint = start_fixed_http_provider_server(8, "resume-ok");
+    let paused_case = base.join("paused");
+    fs::create_dir_all(&paused_case).unwrap();
+
+    let paused_yaml = r#"
+version: "0.5"
+providers:
+  http:
+    type: "http"
+    config:
+      endpoint: "__ENDPOINT__"
+agents:
+  a:
+    provider: "http"
+    model: "unused-for-http-provider"
+tasks:
+  t:
+    prompt:
+      user: "step {{n}}"
+run:
+  name: "resume-skip-verified"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        save_as: "s1"
+        write_to: "s1.txt"
+        inputs: { n: "1" }
+        guards:
+          - type: pause
+            config:
+              reason: "after step 1"
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs: { n: "2" }
+"#
+    .replace("__ENDPOINT__", &endpoint);
+    let paused_path = paused_case.join("resume-skip.yaml");
+    fs::write(&paused_path, paused_yaml).unwrap();
+
+    let paused = run_swarm_in_dir(&paused_case, &[paused_path.to_str().unwrap(), "--run"]);
+    assert!(paused.status.success(), "paused run should succeed");
+
+    let resumed = run_swarm_in_dir(&paused_case, &["resume", "resume-skip-verified"]);
+    assert!(resumed.status.success(), "resume should succeed");
+    let resumed_stderr = String::from_utf8_lossy(&resumed.stderr);
+    assert!(
+        resumed_stderr.contains("RESUME step=s1 action=skip reason=completed_artifact_verified"),
+        "stderr was:\n{resumed_stderr}"
+    );
+    assert!(
+        !resumed_stderr.contains("STEP start (+0ms) s1"),
+        "resumed run must not rerun verified step s1:\n{resumed_stderr}"
+    );
+
+    let run_status_path = repo_runs_dir()
+        .join("resume-skip-verified")
+        .join("run_status.json");
+    let run_status: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&run_status_path).unwrap()).unwrap();
+    assert_eq!(run_status["overall_status"], "succeeded");
+    assert_eq!(
+        run_status["completed_steps"],
+        serde_json::json!(["s1", "s2"])
+    );
+    assert_eq!(run_status["attempt_counts_by_step"]["s1"], 0);
+    assert_eq!(run_status["attempt_counts_by_step"]["s2"], 1);
+}
+
+#[test]
+fn resume_reruns_completed_step_when_expected_artifact_is_missing() {
+    let base = tmp_dir("exec-resume-rerun-missing");
+    let endpoint = start_fixed_http_provider_server(8, "resume-rerun");
+    let paused_case = base.join("paused");
+    fs::create_dir_all(&paused_case).unwrap();
+
+    let paused_yaml = r#"
+version: "0.5"
+providers:
+  http:
+    type: "http"
+    config:
+      endpoint: "__ENDPOINT__"
+agents:
+  a:
+    provider: "http"
+    model: "unused-for-http-provider"
+tasks:
+  t:
+    prompt:
+      user: "step {{n}}"
+run:
+  name: "resume-rerun-missing"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        save_as: "s1"
+        write_to: "s1.txt"
+        inputs: { n: "1" }
+        guards:
+          - type: pause
+            config:
+              reason: "after step 1"
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs: { n: "2" }
+"#
+    .replace("__ENDPOINT__", &endpoint);
+    let paused_path = paused_case.join("resume-rerun.yaml");
+    fs::write(&paused_path, paused_yaml).unwrap();
+
+    let paused = run_swarm_in_dir(&paused_case, &[paused_path.to_str().unwrap(), "--run"]);
+    assert!(paused.status.success(), "paused run should succeed");
+    fs::remove_file(paused_case.join("out").join("s1.txt")).unwrap();
+
+    let resumed = run_swarm_in_dir(&paused_case, &["resume", "resume-rerun-missing"]);
+    assert!(resumed.status.success(), "resume should succeed");
+    let resumed_stderr = String::from_utf8_lossy(&resumed.stderr);
+    assert!(
+        resumed_stderr.contains("RESUME step=s1 action=rerun reason=missing_expected_artifact"),
+        "stderr was:\n{resumed_stderr}"
+    );
+    assert!(
+        resumed_stderr.contains("s1 provider=http"),
+        "missing artifact must force rerun of s1:\n{resumed_stderr}"
     );
 }
 

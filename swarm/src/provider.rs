@@ -11,7 +11,7 @@ use std::sync::mpsc;
 use std::thread;
 use std::time::{Duration, Instant};
 
-use crate::adl;
+use crate::{adl, env_compat};
 
 /// A minimal blocking provider interface for v0.1.
 pub trait Provider: Send + Sync {
@@ -28,6 +28,8 @@ pub trait Provider: Send + Sync {
 enum ProviderErrorKind {
     UnknownKind,
     InvalidConfig,
+    Timeout,
+    Panic,
     RuntimeRetryable,
     RuntimeNonRetryable,
 }
@@ -74,6 +76,22 @@ Set providers.<id>.type to one of: ollama, http."
             message: message.into(),
         }
     }
+
+    fn timeout(provider: &str, message: impl Into<String>) -> Self {
+        Self {
+            kind: ProviderErrorKind::Timeout,
+            provider: Some(provider.to_string()),
+            message: message.into(),
+        }
+    }
+
+    fn panic(provider: &str, message: impl Into<String>) -> Self {
+        Self {
+            kind: ProviderErrorKind::Panic,
+            provider: Some(provider.to_string()),
+            message: message.into(),
+        }
+    }
 }
 
 impl fmt::Display for ProviderError {
@@ -83,6 +101,18 @@ impl fmt::Display for ProviderError {
             ProviderErrorKind::InvalidConfig => write!(
                 f,
                 "provider {} invalid config: {}",
+                self.provider.as_deref().unwrap_or("<unknown>"),
+                self.message
+            ),
+            ProviderErrorKind::Timeout => write!(
+                f,
+                "provider {} timeout: {}",
+                self.provider.as_deref().unwrap_or("<unknown>"),
+                self.message
+            ),
+            ProviderErrorKind::Panic => write!(
+                f,
+                "provider {} panic: {}",
                 self.provider.as_deref().unwrap_or("<unknown>"),
                 self.message
             ),
@@ -120,13 +150,40 @@ fn runtime_error_non_retryable(provider: &str, message: impl Into<String>) -> an
     ProviderError::runtime_non_retryable(provider, message).into()
 }
 
+fn timeout_error(provider: &str, message: impl Into<String>) -> anyhow::Error {
+    ProviderError::timeout(provider, message).into()
+}
+
+fn panic_error(provider: &str, message: impl Into<String>) -> anyhow::Error {
+    ProviderError::panic(provider, message).into()
+}
+
 pub fn is_retryable_error(err: &anyhow::Error) -> bool {
     for cause in err.chain() {
         if let Some(p) = cause.downcast_ref::<ProviderError>() {
-            return matches!(p.kind, ProviderErrorKind::RuntimeRetryable);
+            return matches!(
+                p.kind,
+                ProviderErrorKind::RuntimeRetryable | ProviderErrorKind::Timeout
+            );
         }
     }
     true
+}
+
+pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
+    for cause in err.chain() {
+        if let Some(p) = cause.downcast_ref::<ProviderError>() {
+            return Some(match p.kind {
+                ProviderErrorKind::Timeout => "timeout",
+                ProviderErrorKind::Panic => "panic",
+                ProviderErrorKind::UnknownKind | ProviderErrorKind::InvalidConfig => "schema_error",
+                ProviderErrorKind::RuntimeRetryable | ProviderErrorKind::RuntimeNonRetryable => {
+                    "provider_error"
+                }
+            });
+        }
+    }
+    None
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -428,9 +485,9 @@ impl OllamaProvider {
                     }
                     std::thread::sleep(Duration::from_millis(10));
                 }
-                return Err(runtime_error(
+                return Err(timeout_error(
                     "ollama",
-                    format!("timed out after {timeout_secs}s (set SWARM_TIMEOUT_SECS to override)"),
+                    format!("timed out after {timeout_secs}s (set ADL_TIMEOUT_SECS to override)"),
                 ));
             }
 
@@ -446,12 +503,12 @@ impl OllamaProvider {
 
         out_handle
             .join()
-            .map_err(|_| runtime_error("ollama", "stdout reader thread panicked"))?
+            .map_err(|_| panic_error("ollama", "stdout reader thread panicked"))?
             .context("failed reading ollama stdout")
             .map_err(|err| runtime_error("ollama", err.to_string()))?;
         let err_buf = err_handle
             .join()
-            .map_err(|_| runtime_error("ollama", "stderr reader thread panicked"))?
+            .map_err(|_| panic_error("ollama", "stderr reader thread panicked"))?
             .context("failed reading ollama stderr")
             .map_err(|err| runtime_error("ollama", err.to_string()))?;
 
@@ -487,7 +544,7 @@ impl Provider for OllamaProvider {
 fn ollama_bin() -> PathBuf {
     // Allows tests (and power users) to override the binary path.
     // Defaults to `ollama` on PATH.
-    env::var_os("SWARM_OLLAMA_BIN")
+    env_compat::var_os("ADL_OLLAMA_BIN", "SWARM_OLLAMA_BIN")
         .map(PathBuf::from)
         .unwrap_or_else(|| PathBuf::from("ollama"))
 }
@@ -627,14 +684,14 @@ impl Provider for HttpProvider {
                 if err.is_timeout() {
                     let msg = match self.timeout_secs {
                         Some(secs) => format!(
-                            "kind=timeout timed out after {secs}s (set providers.<id>.config.timeout_secs to override)"
+                            "kind=timeout timed out after {secs}s (set providers.<id>.config.timeout_secs or ADL_TIMEOUT_SECS to override)"
                         ),
                         None => {
-                            "kind=timeout timed out (set providers.<id>.config.timeout_secs to override)"
+                            "kind=timeout timed out (set providers.<id>.config.timeout_secs or ADL_TIMEOUT_SECS to override)"
                                 .to_string()
                         }
                     };
-                    return Err(runtime_error("http", msg));
+                    return Err(timeout_error("http", msg));
                 }
 
                 return Err(runtime_error(
@@ -680,16 +737,16 @@ impl Provider for HttpProvider {
 }
 
 fn timeout_secs() -> Result<u64> {
-    let raw = env::var("SWARM_TIMEOUT_SECS").ok();
+    let raw = env_compat::var("ADL_TIMEOUT_SECS", "SWARM_TIMEOUT_SECS");
     let secs = match raw {
         None => 120_u64,
         Some(v) => {
             let parsed: u64 = v.parse().map_err(|_| {
-                anyhow!("invalid SWARM_TIMEOUT_SECS: '{v}' (must be a positive integer)")
+                anyhow!("invalid ADL_TIMEOUT_SECS: '{v}' (must be a positive integer)")
             })?;
             if parsed == 0 {
                 return Err(anyhow!(
-                    "invalid SWARM_TIMEOUT_SECS: '{v}' (must be a positive integer)"
+                    "invalid ADL_TIMEOUT_SECS: '{v}' (must be a positive integer)"
                 ));
             }
             parsed

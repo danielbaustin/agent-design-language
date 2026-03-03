@@ -1,0 +1,68 @@
+version: "0.5"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  planner:
+    provider: "local"
+    model: "phi4-mini"
+  executor:
+    provider: "local"
+    model: "phi4-mini"
+  aggregator:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  planner_task:
+    prompt:
+      user: |
+        {"stage":"planner","plan":[{"id":"exec.alpha","input":"alpha"},{"id":"exec.beta","input":"beta"}],"schema":"hierarchical-planner.v1"}
+  execute_task:
+    prompt:
+      user: |
+        {"stage":"executor","step":"{{step_id}}","plan":"{{plan_doc}}","result":"done"}
+  aggregate_task:
+    prompt:
+      user: |
+        {"stage":"aggregator","plan":"{{plan_doc}}","results":["{{exec_alpha}}","{{exec_beta}}"],"summary":"complete"}
+
+run:
+  name: "v0-7-hierarchical-planner"
+  workflow:
+    kind: sequential
+    steps:
+      - id: "planner.plan"
+        agent: "planner"
+        task: "planner_task"
+        save_as: "plan_doc"
+        write_to: "plan.json"
+      - id: "executor.alpha"
+        agent: "executor"
+        task: "execute_task"
+        inputs:
+          step_id: "exec.alpha"
+          plan_doc: "@state:plan_doc"
+        save_as: "exec_alpha"
+        write_to: "exec-alpha.json"
+      - id: "executor.beta"
+        agent: "executor"
+        task: "execute_task"
+        inputs:
+          step_id: "exec.beta"
+          plan_doc: "@state:plan_doc"
+        save_as: "exec_beta"
+        write_to: "exec-beta.json"
+      - id: "aggregator.final"
+        agent: "aggregator"
+        task: "aggregate_task"
+        inputs:
+          plan_doc: "@state:plan_doc"
+          exec_alpha: "@state:exec_alpha"
+          exec_beta: "@state:exec_beta"
+        save_as: "aggregate_doc"
+        write_to: "aggregate.json"

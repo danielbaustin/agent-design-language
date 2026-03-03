@@ -1,10 +1,10 @@
-# Swarm
+# ADL Runtime (`swarm/`)
 
-Swarm is the reference Rust runtime for **Agent Design Language (ADL)**. It compiles schema-validated ADL documents into a deterministic ExecutionPlan and executes them with explicit concurrency, failure, retry, signing, and (minimal) remote execution semantics.
+ADL runtime is the reference Rust runtime for **Agent Design Language (ADL)**. It compiles schema-validated ADL documents into a deterministic ExecutionPlan and executes them with explicit concurrency, failure, retry, signing, and (minimal) remote execution semantics.
 
-Swarm prioritizes determinism and inspectability. Every run emits stable artifacts under `.adl/runs/<run_id>/` to support replay, debugging, and post-mortem analysis.
+ADL runtime prioritizes determinism and inspectability. Every run emits stable artifacts under `.adl/runs/<run_id>/` to support replay, debugging, and post-mortem analysis.
 
-[![swarm-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
+[![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![MSRV](https://img.shields.io/badge/MSRV-1.74%2B-blue)
@@ -19,6 +19,12 @@ Badge note:
 Current runtime release: **v0.6**
 
 This README reflects the current v0.6 runtime behavior.
+
+## v0.7 Naming Migration (Compatibility Window)
+
+- Canonical binaries are `adl` and `adl-remote`.
+- Legacy compatibility shim binaries remain available in v0.7 with deprecation warnings.
+- Canonical env vars use `ADL_*`; legacy compatibility env vars remain supported in v0.7 with deprecation warnings.
 
 ## Features by Release
 
@@ -60,7 +66,7 @@ This README reflects the current v0.6 runtime behavior.
 - Root repo README: `../README.md`
 - v0.6 milestone docs: `../docs/milestones/v0.6/`
 - ADRs: `../docs/adr/`
-- Runnable demos: `../docs/milestones/v0.6/DEMOS_v0.6.md`
+- Runnable demos: `../docs/milestones/v0.7/DEMOS_v0.7.md`
 - More examples: `examples/README.md`
 
 ## How Swarm Processes ADL (Compiler-like Pipeline)
@@ -91,13 +97,13 @@ From the `swarm` directory:
 
 ```bash
 # Happy path: v0.6 primitive schema baseline
-cargo run -q --bin swarm -- examples/v0-5-primitives-minimal.adl.yaml --print-plan
+cargo run -q --bin adl -- examples/v0-5-primitives-minimal.adl.yaml --print-plan
 
 # Optional: verify pattern compiler canonical IDs
-cargo run -q --bin swarm -- examples/v0-5-pattern-fork-join.adl.yaml --print-plan
+cargo run -q --bin adl -- examples/v0-5-pattern-fork-join.adl.yaml --print-plan
 
-# Optional: verify remote execution wiring (requires local swarm-remote server)
-cargo run -q --bin swarm -- examples/v0-5-remote-execution-mvp.adl.yaml --print-plan
+# Optional: verify remote execution wiring (requires local adl-remote server)
+cargo run -q --bin adl -- examples/v0-5-remote-execution-mvp.adl.yaml --print-plan
 ```
 
 Expected output includes deterministic step ordering and resolved provider bindings.
@@ -105,14 +111,14 @@ Using `-q` keeps demo output focused on the ADL plan rather than Cargo build noi
 
 For real `--run` execution, configure provider runtime dependencies (for example local Ollama and any required auth env vars).
 
-For additional runnable examples, see `examples/README.md` and `../docs/milestones/v0.6/DEMOS_v0.6.md`.
+For additional runnable examples, see `examples/README.md` and `../docs/milestones/v0.7/DEMOS_v0.7.md`.
 
 ---
 
 ## CLI
 
 ```bash
-cargo run -q --bin swarm -- <path-to-adl.yaml> [OPTIONS]
+cargo run -q --bin adl -- <path-to-adl.yaml> [OPTIONS]
 ```
 
 **Options**
@@ -133,31 +139,31 @@ For v0.6 workflows, signature enforcement is enabled by default for `--run`.
 
 ```bash
 # 1) generate local dev keys
-cargo run -q --bin swarm -- keygen --out-dir ./.keys
+cargo run -q --bin adl -- keygen --out-dir ./.keys
 
 # 2) sign a workflow
-cargo run -q --bin swarm -- sign examples/v0-5-pattern-linear.adl.yaml \
+cargo run -q --bin adl -- sign examples/v0-5-pattern-linear.adl.yaml \
   --key ./.keys/ed25519-private.b64 \
   --out /tmp/signed.adl.yaml
 
 # 3) verify signature
-cargo run -q --bin swarm -- verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64
+cargo run -q --bin adl -- verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64
 
 # 4) run signed workflow (no override needed)
-cargo run -q --bin swarm -- /tmp/signed.adl.yaml --run
+cargo run -q --bin adl -- /tmp/signed.adl.yaml --run
 ```
 
 Dev-only bypass:
 
 ```bash
-cargo run -q --bin swarm -- examples/v0-5-pattern-linear.adl.yaml --run --allow-unsigned
+cargo run -q --bin adl -- examples/v0-5-pattern-linear.adl.yaml --run --allow-unsigned
 ```
 
 ---
 
 ## Run State Artifacts
 
-When running with `--run`, `swarm` writes deterministic run state files under:
+When running with `--run`, `adl` writes deterministic run state files under:
 
 ```bash
 .adl/runs/<run_id>/
@@ -183,7 +189,7 @@ This is additive and does not replace existing stdout summaries.
 
 ## Remote Provider (HTTP MVP)
 
-`swarm` supports a minimal remote provider via `type: "http"` for deterministic,
+`adl` supports a minimal remote provider via `type: "http"` for deterministic,
 blocking prompt completion over HTTP.
 
 Expected request/response contract:
@@ -201,14 +207,14 @@ providers:
       timeout_secs: 10
       auth:
         type: bearer
-        env: SWARM_REMOTE_BEARER_TOKEN
+        env: ADL_REMOTE_BEARER_TOKEN
 ```
 
 Run it with:
 
 ```bash
-cargo run -q --bin swarm -- examples/v0-3-remote-http-provider.adl.yaml --print-plan
-cargo run -q --bin swarm -- examples/v0-3-remote-http-provider.adl.yaml --run
+cargo run -q --bin adl -- examples/v0-3-remote-http-provider.adl.yaml --print-plan
+cargo run -q --bin adl -- examples/v0-3-remote-http-provider.adl.yaml --run
 ```
 
 Failure behavior is explicit:
@@ -240,7 +246,7 @@ This remote execution path is an MVP transport boundary, not a hardened public
 service. Treat it as trusted-network infrastructure only.
 
 Threat-model assumptions:
-- `swarm-remote` runs on localhost or a tightly controlled private network.
+- `adl-remote` runs on localhost or a tightly controlled private network.
 - The caller and remote endpoint are operated by the same trusted team.
 - Network peers are trusted or isolated by external controls.
 
@@ -258,7 +264,7 @@ Known gaps / risks (v0.6):
 
 Operational guidance:
 - Bind to loopback for local development:
-  - `cargo run -q --bin swarm-remote -- 127.0.0.1:8787`
+  - `cargo run -q --bin adl-remote -- 127.0.0.1:8787`
 - If cross-host is required, prefer private networking plus an authenticated
   tunnel (for example SSH tunnel or VPN), and restrict ingress with firewall
   rules to trusted sources only.
@@ -389,7 +395,7 @@ Contributors are expected to keep overall line coverage **≥ 85%**, and ideally
 
 Badge note:
 - `coverage` is the live Codecov percentage for the `swarm` upload.
-- `swarm-coverage-gate` reflects whether the CI workflow coverage gate passes. It is a status badge, not a live percentage badge.
+- `adl-coverage-gate` reflects whether the CI workflow coverage gate passes. It is a status badge, not a live percentage badge.
 
 ---
 

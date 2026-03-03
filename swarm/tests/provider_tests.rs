@@ -3,10 +3,10 @@ use std::io;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
-use swarm::adl;
-use swarm::provider::{
+use ::adl::adl;
+use ::adl::provider::{
     build_provider, expand_provider_profiles, is_retryable_error, provider_profile_names,
-    OllamaProvider,
+    stable_failure_kind, OllamaProvider,
 };
 
 mod helpers;
@@ -107,6 +107,11 @@ config: {}
         msg.contains("provider kind") && msg.contains("supported"),
         "expected unknown-kind error, got: {msg}"
     );
+    assert_eq!(
+        stable_failure_kind(&err),
+        Some("schema_error"),
+        "unknown provider kind should classify as schema_error"
+    );
 }
 
 #[test]
@@ -195,7 +200,7 @@ config:
     );
 
     // This test intentionally does NOT call complete(). Calling complete() depends on
-    // external binaries and ambient environment (e.g., SWARM_TIMEOUT_SECS), which can
+    // external binaries and ambient environment (e.g., ADL_TIMEOUT_SECS), which can
     // make the test flaky under parallel execution. We only verify construction.
     let _p = build_provider(&spec, None).expect("build_provider failed");
 }
@@ -205,7 +210,7 @@ fn provider_complete_uses_mock_binary_success() {
     let dir = unique_test_temp_dir("swarm-provider-tests");
     let bin = make_mock_ollama_success(&dir).unwrap();
 
-    let _env_guard = EnvVarGuard::set("SWARM_OLLAMA_BIN", &bin);
+    let _env_guard = EnvVarGuard::set("ADL_OLLAMA_BIN", &bin);
 
     let spec = provider_spec_from_yaml(
         r#"
@@ -287,8 +292,8 @@ fn provider_complete_times_out_with_env_override() {
     let bin = make_mock_ollama_sleep(&dir).unwrap();
 
     let _env_guard = EnvVarGuard::set_many(&[
-        ("SWARM_OLLAMA_BIN", bin.as_os_str()),
-        ("SWARM_TIMEOUT_SECS", std::ffi::OsStr::new("1")),
+        ("ADL_OLLAMA_BIN", bin.as_os_str()),
+        ("ADL_TIMEOUT_SECS", std::ffi::OsStr::new("1")),
     ]);
 
     let spec = provider_spec_from_yaml(
@@ -316,8 +321,8 @@ fn provider_complete_rejects_invalid_timeout_env() {
     let bin = make_mock_ollama_success(&dir).unwrap();
 
     let _env_guard = EnvVarGuard::set_many(&[
-        ("SWARM_OLLAMA_BIN", bin.as_os_str()),
-        ("SWARM_TIMEOUT_SECS", std::ffi::OsStr::new("nope")),
+        ("ADL_OLLAMA_BIN", bin.as_os_str()),
+        ("ADL_TIMEOUT_SECS", std::ffi::OsStr::new("nope")),
     ]);
 
     let spec = provider_spec_from_yaml(
@@ -332,8 +337,37 @@ config:
     let err = p.complete("test prompt").unwrap_err();
     let msg = format!("{err:#}");
     assert!(
-        msg.contains("SWARM_TIMEOUT_SECS") && msg.contains("invalid"),
+        msg.contains("ADL_TIMEOUT_SECS") && msg.contains("invalid"),
         "expected invalid config error, got: {msg}"
+    );
+
+    let _ = fs::remove_dir_all(dir);
+}
+
+#[test]
+fn provider_complete_legacy_env_vars_still_work() {
+    let dir = unique_test_temp_dir("swarm-provider-timeout-legacy");
+    let bin = make_mock_ollama_sleep(&dir).unwrap();
+
+    let _env_guard = EnvVarGuard::set_many(&[
+        ("SWARM_OLLAMA_BIN", bin.as_os_str()),
+        ("SWARM_TIMEOUT_SECS", std::ffi::OsStr::new("1")),
+    ]);
+
+    let spec = provider_spec_from_yaml(
+        r#"
+type: ollama
+config:
+  model: llama3.1:8b
+"#,
+    );
+
+    let p = build_provider(&spec, None).expect("build_provider failed");
+    let err = p.complete("test prompt").unwrap_err();
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("timed out") && msg.contains("1"),
+        "expected timeout error with legacy env var override, got: {msg}"
     );
 
     let _ = fs::remove_dir_all(dir);
@@ -435,6 +469,98 @@ config:
 }
 
 #[test]
+fn http_provider_long_error_body_is_truncated_deterministically() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+    let _server_guard = block_incoming_localhost();
+
+    std::thread::spawn(move || {
+        let (mut stream, _) = server.accept().unwrap();
+        let mut buf = [0u8; 1024];
+        let _ = stream.read(&mut buf);
+        let body = "x".repeat(300);
+        let resp = format!(
+            "HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\nContent-Length: {}\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        let _ = stream.write_all(resp.as_bytes());
+    });
+
+    let spec = provider_spec_from_yaml(&format!(
+        r#"
+type: http
+config:
+  endpoint: "http://{addr}/"
+"#
+    ));
+
+    let p = build_provider(&spec, None).expect("build_provider failed");
+    let err = p.complete("hello").expect_err("500 should fail");
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("kind=server_error"),
+        "expected server_error classification, got: {msg}"
+    );
+    assert!(
+        msg.contains("status=500"),
+        "expected status code in message, got: {msg}"
+    );
+    assert!(
+        msg.len() < 600,
+        "response body should be truncated in error message, got len={}",
+        msg.len()
+    );
+}
+
+#[test]
+fn http_provider_rejects_json_without_output_field() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+    let _server_guard = block_incoming_localhost();
+
+    std::thread::spawn(move || {
+        let (mut stream, _) = server.accept().unwrap();
+        let mut buf = [0u8; 1024];
+        let _ = stream.read(&mut buf);
+        let body = r#"{"not_output":"value"}"#;
+        let resp = format!(
+            "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        let _ = stream.write_all(resp.as_bytes());
+    });
+
+    let spec = provider_spec_from_yaml(&format!(
+        r#"
+type: http
+config:
+  endpoint: "http://{addr}/"
+"#
+    ));
+
+    let p = build_provider(&spec, None).expect("build_provider failed");
+    let err = p
+        .complete("hello")
+        .expect_err("response without output should fail");
+    let msg = format!("{err:#}");
+    assert!(
+        msg.contains("response missing 'output' field"),
+        "unexpected error: {msg}"
+    );
+    assert_eq!(stable_failure_kind(&err), Some("provider_error"));
+}
+
+#[test]
 fn http_provider_4xx_is_non_retryable() {
     let server = match std::net::TcpListener::bind("127.0.0.1:0") {
         Ok(s) => s,
@@ -500,6 +626,98 @@ config:
         msg.contains("missing required auth env var"),
         "unexpected error: {msg}"
     );
+    assert_eq!(
+        stable_failure_kind(&err),
+        Some("schema_error"),
+        "missing auth env var should classify as schema_error"
+    );
+}
+
+#[test]
+fn http_provider_rejects_non_object_headers_and_non_string_values() {
+    let non_object = provider_spec_from_yaml(
+        r#"
+type: http
+config:
+  endpoint: "http://127.0.0.1:9/"
+  headers: "not-an-object"
+"#,
+    );
+    let err = match build_provider(&non_object, None) {
+        Ok(_) => panic!("non-object headers should fail"),
+        Err(err) => err,
+    };
+    assert!(
+        err.to_string().contains("config.headers must be an object"),
+        "unexpected error: {err:#}"
+    );
+
+    let non_string_value = provider_spec_from_yaml(
+        r#"
+type: http
+config:
+  endpoint: "http://127.0.0.1:9/"
+  headers:
+    X-Number: 123
+"#,
+    );
+    let err2 = match build_provider(&non_string_value, None) {
+        Ok(_) => panic!("non-string header should fail"),
+        Err(err) => err,
+    };
+    assert!(
+        err2.to_string()
+            .contains("config.headers values must be strings"),
+        "unexpected error: {err2:#}"
+    );
+}
+
+#[test]
+fn http_provider_rejects_non_bearer_auth_type() {
+    let spec = provider_spec_from_yaml(
+        r#"
+type: http
+config:
+  endpoint: "http://127.0.0.1:9/"
+  auth:
+    type: basic
+    env: API_KEY
+"#,
+    );
+    let err = match build_provider(&spec, None) {
+        Ok(_) => panic!("non-bearer auth should fail"),
+        Err(err) => err,
+    };
+    assert!(
+        err.to_string()
+            .contains("config.auth.type must be 'bearer'"),
+        "unexpected error: {err:#}"
+    );
+}
+
+#[test]
+fn http_provider_supports_timeout_secs_string_and_rejects_negative_number() {
+    let string_timeout = provider_spec_from_yaml(
+        r#"
+type: http
+config:
+  endpoint: "http://127.0.0.1:9/"
+  timeout_secs: "7"
+"#,
+    );
+    let _provider =
+        build_provider(&string_timeout, None).expect("string timeout should parse as u64");
+
+    let negative_timeout = provider_spec_from_yaml(
+        r#"
+type: http
+config:
+  endpoint: "http://127.0.0.1:9/"
+  timeout_secs: -3
+"#,
+    );
+    let _provider = build_provider(&negative_timeout, None)
+        .expect("negative timeout should be treated as absent, not a parse failure");
 }
 
 #[test]
@@ -748,7 +966,7 @@ run:
         task: "t1"
 "#,
     );
-    let resolved = swarm::resolve::resolve_run(&doc).expect("valid endpoint should pass resolve");
+    let resolved = ::adl::resolve::resolve_run(&doc).expect("valid endpoint should pass resolve");
     assert_eq!(
         resolved.steps.len(),
         1,
