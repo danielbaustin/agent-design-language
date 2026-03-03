@@ -32,7 +32,7 @@ Capture significant architectural, scope, and sequencing decisions for v0.7 at t
 
 - What formal evaluation harness is required before enabling Gödel-style promotion in v0.8? (Owner: Daniel Austin) (Target: v0.8 design pass)
 - Should learning overlays support versioned precedence rules beyond workflow/runtime/CLI layering? (Owner: Daniel Austin) (Target: v0.7.x refinement)
-- Confirm the canonical remote runner binary name (default target: `adl-remote`) and the exact deprecation/removal messaging for legacy `swarm` entrypoints (target removal: post-v0.75 compatibility window).
+- Confirm the canonical remote runner binary name (default target: `adl-remote`) and the exact deprecation/removal messaging for legacy compatibility entrypoints (target removal: post-v0.75 compatibility window).
 
 ---
 
