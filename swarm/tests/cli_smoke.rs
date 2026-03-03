@@ -336,6 +336,31 @@ fn swarm_shim_help_prints_deprecation_once() {
 }
 
 #[test]
+fn swarm_shim_reports_missing_sibling_adl_binary() {
+    let temp = unique_test_temp_dir("swarm-shim-missing-adl");
+    let copied_swarm = temp.join("swarm");
+    fs::copy(env!("CARGO_BIN_EXE_swarm"), &copied_swarm).expect("copy swarm shim");
+
+    let out = Command::new(&copied_swarm)
+        .arg("--help")
+        .output()
+        .expect("run copied swarm shim");
+    assert!(
+        !out.status.success(),
+        "expected failure without sibling adl binary"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("DEPRECATION: 'swarm' CLI is deprecated; use 'adl' instead."),
+        "stderr:\n{stderr}"
+    );
+    assert!(
+        stderr.contains("failed to launch 'adl' shim target"),
+        "stderr:\n{stderr}"
+    );
+}
+
+#[test]
 fn help_prints_examples() {
     let out = run_swarm(&["--help"]);
     assert!(
@@ -1013,5 +1038,30 @@ fn adl_remote_and_swarm_remote_reject_invalid_bind_deterministically() {
     assert!(
         swarm_stderr.contains("failed to bind remote server"),
         "stderr:\n{swarm_stderr}"
+    );
+}
+
+#[test]
+fn swarm_remote_renamed_binary_skips_legacy_deprecation() {
+    let Ok(swarm_remote) = std::env::var("CARGO_BIN_EXE_swarm_remote") else {
+        return;
+    };
+    let temp = unique_test_temp_dir("swarm-remote-renamed");
+    let renamed = temp.join("adl_remote");
+    fs::copy(swarm_remote, &renamed).expect("copy swarm-remote");
+
+    let out = Command::new(&renamed)
+        .arg("127.0.0.1:not-a-port")
+        .output()
+        .expect("run renamed swarm-remote");
+    assert!(!out.status.success(), "expected bind failure");
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        !stderr.contains("DEPRECATION: 'swarm-remote' is deprecated"),
+        "stderr:\n{stderr}"
+    );
+    assert!(
+        stderr.contains("failed to bind remote server"),
+        "stderr:\n{stderr}"
     );
 }
