@@ -65,8 +65,8 @@ extra_nope: true
     assert!(msg.contains("schema validation failed"));
 }
 
-use serde_json::Value as JsonValue;
 use ::adl::schema;
+use serde_json::Value as JsonValue;
 
 /// Helper: validate a YAML string with the *loose* compiled schema
 /// (generated from Rust structs, no strict top-level tweaks).
