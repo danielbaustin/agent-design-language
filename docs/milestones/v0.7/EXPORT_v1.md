@@ -10,7 +10,7 @@ Learning export now supports two deterministic formats:
 `adl learn export --format <jsonl|bundle-v1> [--runs-dir <dir>] [--run-id <id> ...] --out <path>`
 
 Notes:
-- Supported via both canonical `adl` and legacy `swarm` binaries during the v0.7 compatibility window.
+- Supported via canonical `adl` and the legacy compatibility CLI during the v0.7 compatibility window.
 - For `jsonl`, `--out` is a file path.
 - For `bundle-v1`, `--out` is a directory root, and export writes under `learning_export_v1/`.
 
