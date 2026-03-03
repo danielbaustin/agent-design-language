@@ -5,8 +5,7 @@ use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use ::adl as swarm;
-use swarm::{
+use ::adl::{
     adl, artifacts, bounded_executor, demo, env_compat, execute, instrumentation, learning_export,
     overlay, plan, prompt, provider, remote_exec, resolve, sandbox, signing, trace,
 };
@@ -2021,7 +2020,7 @@ fn is_ci_environment() -> bool {
     }
 }
 
-fn resolve_execution_plan(path: &Path) -> Result<swarm::execution_plan::ExecutionPlan> {
+fn resolve_execution_plan(path: &Path) -> Result<::adl::execution_plan::ExecutionPlan> {
     let path_str = path.to_str().context("path must be valid UTF-8")?;
     let doc = adl::AdlDoc::load_from_file(path_str)
         .with_context(|| format!("failed to load ADL document: {}", path.display()))?;
@@ -2297,9 +2296,9 @@ mod tests {
                 on_error: None,
                 retry: None,
             }],
-            execution_plan: swarm::execution_plan::ExecutionPlan {
+            execution_plan: ::adl::execution_plan::ExecutionPlan {
                 workflow_kind: adl::WorkflowKind::Sequential,
-                nodes: vec![swarm::execution_plan::ExecutionNode {
+                nodes: vec![::adl::execution_plan::ExecutionNode {
                     step_id: "s1".to_string(),
                     depends_on: vec![],
                     save_as: Some("s1_out".to_string()),

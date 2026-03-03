@@ -7,8 +7,7 @@ use std::process::Command;
 use std::thread;
 use std::time::Duration;
 
-use ::adl as swarm;
-use swarm::execute::{materialize_inputs, MATERIALIZE_INPUT_MAX_FILE_BYTES};
+use ::adl::execute::{materialize_inputs, MATERIALIZE_INPUT_MAX_FILE_BYTES};
 
 mod helpers;
 use helpers::{unique_test_temp_dir, EnvVarGuard};
@@ -39,7 +38,7 @@ fn start_swarm_remote_server() -> String {
     thread::spawn({
         let bind_addr = bind_addr.clone();
         move || {
-            let _ = swarm::remote_exec::run_server(&bind_addr);
+            let _ = ::adl::remote_exec::run_server(&bind_addr);
         }
     });
     thread::sleep(Duration::from_millis(120));
@@ -3240,33 +3239,33 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
     let new_path = prepend_path(&base);
     let _path_guard = EnvVarGuard::set("PATH", new_path);
 
-    let pattern = swarm::adl::PatternSpec {
+    let pattern = ::adl::adl::PatternSpec {
         id: "p_fork".to_string(),
-        kind: swarm::adl::PatternKind::ForkJoin,
+        kind: ::adl::adl::PatternKind::ForkJoin,
         steps: vec![],
-        fork: Some(swarm::adl::PatternForkSpec {
+        fork: Some(::adl::adl::PatternForkSpec {
             branches: vec![
-                swarm::adl::PatternBranchSpec {
+                ::adl::adl::PatternBranchSpec {
                     id: "left".to_string(),
                     steps: vec!["L1".to_string(), "L2".to_string()],
                 },
-                swarm::adl::PatternBranchSpec {
+                ::adl::adl::PatternBranchSpec {
                     id: "right".to_string(),
                     steps: vec!["R1".to_string()],
                 },
             ],
         }),
-        join: Some(swarm::adl::PatternJoinSpec {
+        join: Some(::adl::adl::PatternJoinSpec {
             step: "J".to_string(),
         }),
     };
 
-    let compiled = swarm::execution_plan::compile_pattern(&pattern).expect("compile pattern");
+    let compiled = ::adl::execution_plan::compile_pattern(&pattern).expect("compile pattern");
 
     let mut providers = HashMap::new();
     providers.insert(
         "local".to_string(),
-        swarm::adl::ProviderSpec {
+        ::adl::adl::ProviderSpec {
             id: None,
             profile: None,
             kind: "ollama".to_string(),
@@ -3279,7 +3278,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
     let mut agents = HashMap::new();
     agents.insert(
         "a1".to_string(),
-        swarm::adl::AgentSpec {
+        ::adl::adl::AgentSpec {
             id: None,
             provider: "local".to_string(),
             model: "phi4-mini".to_string(),
@@ -3295,13 +3294,13 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
     for task_id in ["L1", "L2", "R1", "J"] {
         tasks.insert(
             task_id.to_string(),
-            swarm::adl::TaskSpec {
+            ::adl::adl::TaskSpec {
                 id: None,
                 agent_ref: None,
                 inputs: vec![],
                 tool_allowlist: vec![],
                 description: None,
-                prompt: swarm::adl::PromptSpec {
+                prompt: ::adl::adl::PromptSpec {
                     system: None,
                     developer: None,
                     user: Some(format!("Task {task_id}")),
@@ -3317,10 +3316,10 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         save_as_by_id.insert(node.step_id.clone(), node.save_as.clone());
     }
 
-    let steps: Vec<swarm::resolve::ResolvedStep> = compiled
+    let steps: Vec<::adl::resolve::ResolvedStep> = compiled
         .compiled_steps
         .iter()
-        .map(|step| swarm::resolve::ResolvedStep {
+        .map(|step| ::adl::resolve::ResolvedStep {
             id: step.step_id.clone(),
             agent: Some("a1".to_string()),
             provider: Some("local".to_string()),
@@ -3340,7 +3339,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         })
         .collect();
 
-    let doc = swarm::adl::AdlDoc {
+    let doc = ::adl::adl::AdlDoc {
         version: "0.5".to_string(),
         providers,
         tools: HashMap::new(),
@@ -3349,11 +3348,11 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         workflows: HashMap::new(),
         patterns: vec![pattern],
         signature: None,
-        run: swarm::adl::RunSpec {
+        run: ::adl::adl::RunSpec {
             id: None,
             name: Some("compiled-pattern-run".to_string()),
             created_at: None,
-            defaults: swarm::adl::RunDefaults::default(),
+            defaults: ::adl::adl::RunDefaults::default(),
             workflow_ref: None,
             workflow: None,
             pattern_ref: Some("p_fork".to_string()),
@@ -3364,7 +3363,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         },
     };
 
-    let resolved = swarm::resolve::AdlResolved {
+    let resolved = ::adl::resolve::AdlResolved {
         run_id: "compiled-pattern-run".to_string(),
         workflow_id: "pattern:p_fork".to_string(),
         steps,
@@ -3372,12 +3371,12 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
         doc,
     };
 
-    let mut tr = swarm::trace::Trace::new("compiled-pattern-run", "pattern:p_fork", "0.5");
+    let mut tr = ::adl::trace::Trace::new("compiled-pattern-run", "pattern:p_fork", "0.5");
     let out_dir = base.join("out");
     fs::create_dir_all(&out_dir).unwrap();
 
     let result =
-        swarm::execute::execute_sequential(&resolved, &mut tr, false, false, &base, &out_dir)
+        ::adl::execute::execute_sequential(&resolved, &mut tr, false, false, &base, &out_dir)
             .expect("compiled pattern should execute");
 
     assert_eq!(result.outputs.len(), 4);
@@ -4023,7 +4022,7 @@ stderr:
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert_eq!(
         delegation_error_code(&stderr),
-        Some(swarm::execute::DELEGATION_POLICY_DENY_CODE),
+        Some(::adl::execute::DELEGATION_POLICY_DENY_CODE),
         "stderr was:
 {stderr}"
     );

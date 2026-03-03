@@ -1,6 +1,5 @@
-use ::adl as swarm;
-use swarm::adl::AdlDoc;
-use swarm::schema::validate_adl_yaml;
+use ::adl::adl::AdlDoc;
+use ::adl::schema::validate_adl_yaml;
 
 #[test]
 fn schema_accepts_examples_adl_0_1() {
@@ -67,7 +66,7 @@ extra_nope: true
 }
 
 use serde_json::Value as JsonValue;
-use swarm::schema;
+use ::adl::schema;
 
 /// Helper: validate a YAML string with the *loose* compiled schema
 /// (generated from Rust structs, no strict top-level tweaks).

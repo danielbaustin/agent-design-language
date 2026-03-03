@@ -3,9 +3,8 @@ use std::io;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
-use ::adl as swarm;
-use swarm::adl;
-use swarm::provider::{
+use ::adl::adl;
+use ::adl::provider::{
     build_provider, expand_provider_profiles, is_retryable_error, provider_profile_names,
     stable_failure_kind, OllamaProvider,
 };
@@ -967,7 +966,7 @@ run:
         task: "t1"
 "#,
     );
-    let resolved = swarm::resolve::resolve_run(&doc).expect("valid endpoint should pass resolve");
+    let resolved = ::adl::resolve::resolve_run(&doc).expect("valid endpoint should pass resolve");
     assert_eq!(
         resolved.steps.len(),
         1,

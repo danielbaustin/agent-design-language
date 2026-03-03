@@ -2,9 +2,8 @@ use std::fs;
 use std::path::Path;
 use std::process::Command;
 
-use ::adl as swarm;
-use swarm::adl;
-use swarm::signing::{
+use ::adl::adl;
+use ::adl::signing::{
     enforce_verification_profile, verify_doc_with_profile, VerificationErrorKind,
     VerificationKeySource, VerificationMetadata, VerificationProfile,
 };

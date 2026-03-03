@@ -1,5 +1,4 @@
 use anyhow::Result;
-use ::adl as swarm;
 
 fn bind_arg_from_args(args: &[String]) -> String {
     args.get(1)
@@ -9,7 +8,7 @@ fn bind_arg_from_args(args: &[String]) -> String {
 
 fn run_with_bind(bind: &str) -> Result<()> {
     eprintln!("adl-remote listening on http://{bind}");
-    swarm::remote_exec::run_server(bind)
+    ::adl::remote_exec::run_server(bind)
 }
 
 fn main() -> Result<()> {

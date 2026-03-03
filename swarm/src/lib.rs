@@ -3,7 +3,7 @@
 //! This crate provides the language model (`adl`), resolution/planning (`resolve`,
 //! `execution_plan`), deterministic execution (`execute`), and trust/verification
 //! boundaries (`signing`, `remote_exec`) used by the canonical `adl` CLI and
-//! legacy `swarm` compatibility shim.
+//! legacy compatibility shim.
 //!
 //! v0.6 invariants:
 //! - deterministic execution order for ready steps
