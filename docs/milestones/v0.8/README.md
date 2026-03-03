@@ -4,6 +4,7 @@ Canonical v0.8 planning docs live under `.adl/docs/v08planning/`:
 - `.adl/docs/v08planning/ARCHITECTURE_V0.8.md`
 - `.adl/docs/v08planning/EPIC_MAPPING_v0.8.md`
 - `.adl/docs/v08planning/CLUSTER_EXECUTION.md`
+- `.adl/docs/v08planning/CHECKPOINT_RECOVERY.md`
 
 To avoid drift, `docs/milestones/v0.8/` should not maintain duplicate copies of v0.8 planning specs.
 
