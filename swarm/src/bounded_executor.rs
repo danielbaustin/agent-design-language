@@ -3,10 +3,23 @@ use std::collections::VecDeque;
 use std::sync::{mpsc, Arc, Mutex};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// Deterministic bounded-executor failure classes.
 pub enum BoundedExecutorErrorKind {
+    /// Invalid parallelism configuration was provided (`max_parallel < 1`).
+    ///
+    /// Recovery: supply `max_parallel >= 1`.
     InvalidParallelism,
+    /// Shared queue mutex was poisoned by a panic in another worker.
+    ///
+    /// Recovery: treat as execution failure and retry from a clean run state.
     QueuePoisoned,
+    /// A worker thread panicked while executing a job.
+    ///
+    /// Recovery: inspect step/provider logic and rerun after fixing the panic.
     WorkerPanic,
+    /// Executor completed with a mismatched output count.
+    ///
+    /// Recovery: treat as integrity failure and rerun deterministically.
     OutputCountMismatch,
 }
 

@@ -15,25 +15,47 @@ impl Default for SandboxPathPolicy {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+/// Stable sandbox path validation errors.
+///
+/// These errors expose deterministic `code()` values suitable for logs, tests,
+/// and policy handling. Path fields are sanitized to avoid leaking host paths.
 pub enum SandboxPathError {
+    /// The requested path was denied by a static sandbox policy rule.
+    ///
+    /// Recovery: choose a sandbox-relative path that satisfies the configured
+    /// policy constraints.
     PathDenied {
         requested_path: String,
         reason: &'static str,
     },
-    PathNotFound {
-        requested_path: String,
-    },
-    PathNotCanonical {
-        requested_path: String,
-    },
+    /// The requested path does not exist at validation time.
+    ///
+    /// Recovery: create the file or parent directory under the sandbox root,
+    /// then re-run.
+    PathNotFound { requested_path: String },
+    /// The path could not be canonicalized in a deterministic/safe manner.
+    ///
+    /// Recovery: provide a normalized path inside sandbox root and retry.
+    PathNotCanonical { requested_path: String },
+    /// Symlink traversal was explicitly disallowed by sandbox policy.
+    ///
+    /// Recovery: disable symlink usage for this path or update policy
+    /// intentionally.
     SymlinkDisallowed {
         requested_path: String,
         resolved_path: Option<String>,
     },
+    /// A path (or symlink resolution) escapes the sandbox root.
+    ///
+    /// Recovery: constrain the path so the resolved target remains inside the
+    /// configured sandbox root.
     EscapeAttempt {
         requested_path: String,
         resolved_path: Option<String>,
     },
+    /// Underlying filesystem IO prevented deterministic sandbox validation.
+    ///
+    /// Recovery: inspect filesystem state/permissions and retry.
     IoError {
         requested_path: String,
         operation: &'static str,
