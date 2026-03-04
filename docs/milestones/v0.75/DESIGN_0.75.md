@@ -92,6 +92,10 @@ v0.75 is two layers:
 - Failure Taxonomy:
   - Stable machine-readable classification codes
   - Deterministic mapping from observed failures to codes
+- ObsMem Integration Contract (WP-07):
+  - Defined by `swarm::obsmem_contract` and `docs/milestones/v0.75/OBSMEM_INTEGRATION_CONTRACT_0.75.md`
+  - Runtime depends on a trait boundary (`ObsMemClient`), not a concrete ObsMem implementation
+  - Request/query normalization and validation enforce deterministic ordering and privacy-safe payloads
 - ObsMem Index:
   - Versioned schema
   - Deterministic query and ordering semantics
