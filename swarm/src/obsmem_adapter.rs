@@ -12,11 +12,11 @@ use crate::obsmem_contract::{
 ///
 /// This adapter keeps runtime integration isolated to trait calls and deterministic
 /// request construction from existing ADL run artifacts.
-pub struct ObsMemRuntimeAdapter<C: ObsMemClient> {
+pub struct ObsMemAdapter<C: ObsMemClient> {
     client: C,
 }
 
-impl<C: ObsMemClient> ObsMemRuntimeAdapter<C> {
+impl<C: ObsMemClient> ObsMemAdapter<C> {
     pub fn new(client: C) -> Self {
         Self { client }
     }
@@ -32,7 +32,10 @@ impl<C: ObsMemClient> ObsMemRuntimeAdapter<C> {
         self.client.write_entry(&request)
     }
 
-    /// Execute a structured deterministic query through the contract surface.
+    /// Execute deterministic structured retrieval through the contract surface.
+    ///
+    /// v0.75 boundary: this query path must return the same records in the same
+    /// order for identical query filters/tags/limit and identical backend state.
     pub fn query(
         &self,
         workflow_id: Option<&str>,
@@ -189,14 +192,15 @@ mod tests {
     use std::sync::{Arc, Mutex};
 
     use super::*;
+    use crate::obsmem_contract::MemoryRecord;
 
     #[derive(Clone, Default)]
-    struct RecordingClient {
+    struct ObsMemInMemory {
         writes: Arc<Mutex<Vec<MemoryWriteRequest>>>,
         queries: Arc<Mutex<Vec<MemoryQuery>>>,
     }
 
-    impl ObsMemClient for RecordingClient {
+    impl ObsMemClient for ObsMemInMemory {
         fn write_entry(
             &self,
             request: &MemoryWriteRequest,
@@ -216,7 +220,33 @@ mod tests {
                 .lock()
                 .expect("queries lock")
                 .push(query.clone());
-            Ok(MemoryQueryResult { hits: vec![] })
+            let writes = self.writes.lock().expect("writes lock");
+            let mut hits: Vec<MemoryRecord> = writes
+                .iter()
+                .filter(|e| {
+                    query
+                        .workflow_id
+                        .as_ref()
+                        .is_none_or(|wid| &e.workflow_id == wid)
+                        && query
+                            .failure_code
+                            .as_ref()
+                            .is_none_or(|fc| e.failure_code.as_ref() == Some(fc))
+                        && query.tags.iter().all(|t| e.tags.binary_search(t).is_ok())
+                })
+                .map(|e| MemoryRecord {
+                    id: format!("{}::{}", e.run_id, e.workflow_id),
+                    run_id: e.run_id.clone(),
+                    workflow_id: e.workflow_id.clone(),
+                    tags: e.tags.clone(),
+                    payload: e.summary.clone(),
+                    score: "1.0".to_string(),
+                    citations: e.citations.clone(),
+                })
+                .collect();
+            hits.sort_by(|a, b| a.id.cmp(&b.id));
+            hits.truncate(query.limit);
+            Ok(MemoryQueryResult { hits })
         }
     }
 
@@ -272,8 +302,8 @@ mod tests {
         let tmp = unique_temp_dir("roundtrip");
         write_fixture_run(&tmp, "r1");
 
-        let client = RecordingClient::default();
-        let adapter = ObsMemRuntimeAdapter::new(client.clone());
+        let client = ObsMemInMemory::default();
+        let adapter = ObsMemAdapter::new(client.clone());
 
         let ack = adapter
             .index_run_from_artifacts(&tmp, "r1")
@@ -294,6 +324,62 @@ mod tests {
         assert_eq!(writes.len(), 1);
         assert_eq!(queries.len(), 1);
         assert_eq!(queries[0].tags, vec!["status:failed", "workflow:wf-a"]);
+    }
+
+    #[test]
+    fn same_query_returns_same_records() {
+        let tmp = unique_temp_dir("same-records");
+        write_fixture_run(&tmp, "r1");
+        write_fixture_run(&tmp, "r2");
+
+        let client = ObsMemInMemory::default();
+        let adapter = ObsMemAdapter::new(client);
+        adapter
+            .index_run_from_artifacts(&tmp, "r1")
+            .expect("index r1");
+        adapter
+            .index_run_from_artifacts(&tmp, "r2")
+            .expect("index r2");
+
+        let qtags = vec!["status:failed".to_string()];
+        let a = adapter
+            .query(None, Some("policy_denied"), &qtags, 10)
+            .expect("query a");
+        let b = adapter
+            .query(None, Some("policy_denied"), &qtags, 10)
+            .expect("query b");
+
+        let ids_a: Vec<String> = a.hits.iter().map(|h| h.id.clone()).collect();
+        let ids_b: Vec<String> = b.hits.iter().map(|h| h.id.clone()).collect();
+        assert_eq!(ids_a, ids_b);
+    }
+
+    #[test]
+    fn same_query_returns_same_order() {
+        let tmp = unique_temp_dir("same-order");
+        write_fixture_run(&tmp, "r3");
+        write_fixture_run(&tmp, "r1");
+        write_fixture_run(&tmp, "r2");
+
+        let client = ObsMemInMemory::default();
+        let adapter = ObsMemAdapter::new(client);
+        for run_id in ["r3", "r1", "r2"] {
+            adapter
+                .index_run_from_artifacts(&tmp, run_id)
+                .expect("index run");
+        }
+
+        let qtags = vec!["status:failed".to_string()];
+        let first = adapter
+            .query(None, Some("policy_denied"), &qtags, 10)
+            .expect("query first");
+        let second = adapter
+            .query(None, Some("policy_denied"), &qtags, 10)
+            .expect("query second");
+
+        let first_order: Vec<String> = first.hits.iter().map(|h| h.id.clone()).collect();
+        let second_order: Vec<String> = second.hits.iter().map(|h| h.id.clone()).collect();
+        assert_eq!(first_order, second_order);
     }
 
     #[test]
