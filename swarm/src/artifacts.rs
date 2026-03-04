@@ -5,6 +5,9 @@ use serde::Serialize;
 
 pub const ARTIFACT_MODEL_VERSION: u32 = 1;
 
+/// Canonical run artifact path builder.
+///
+/// Produces deterministic, timestamp-free paths under `.adl/runs/<run_id>/`.
 #[derive(Debug, Clone)]
 pub struct RunArtifactPaths {
     run_id: String,
@@ -18,6 +21,7 @@ struct ArtifactModelMarker {
 }
 
 impl RunArtifactPaths {
+    /// Construct deterministic artifact paths for a run id.
     pub fn for_run(run_id: &str) -> Result<Self> {
         let run_id = run_id.trim();
         if run_id.is_empty() {
@@ -29,70 +33,87 @@ impl RunArtifactPaths {
         })
     }
 
+    /// Run identifier associated with this path set.
     pub fn run_id(&self) -> &str {
         &self.run_id
     }
 
+    /// Root directory containing all run artifacts.
     pub fn runs_root(&self) -> &Path {
         &self.runs_root
     }
 
+    /// Run-scoped directory path.
     pub fn run_dir(&self) -> PathBuf {
         self.runs_root.join(&self.run_id)
     }
 
+    /// Canonical `run.json` path.
     pub fn run_json(&self) -> PathBuf {
         self.run_dir().join("run.json")
     }
 
+    /// Canonical `steps.json` path.
     pub fn steps_json(&self) -> PathBuf {
         self.run_dir().join("steps.json")
     }
 
+    /// Canonical pause-state artifact path.
     pub fn pause_state_json(&self) -> PathBuf {
         self.run_dir().join("pause_state.json")
     }
 
+    /// Canonical run-summary artifact path.
     pub fn run_summary_json(&self) -> PathBuf {
         self.run_dir().join("run_summary.json")
     }
 
+    /// Canonical run-status artifact path.
     pub fn run_status_json(&self) -> PathBuf {
         self.run_dir().join("run_status.json")
     }
 
+    /// Output artifact directory.
     pub fn outputs_dir(&self) -> PathBuf {
         self.run_dir().join("outputs")
     }
 
+    /// Logs artifact directory.
     pub fn logs_dir(&self) -> PathBuf {
         self.run_dir().join("logs")
     }
 
+    /// Learning artifact directory.
     pub fn learning_dir(&self) -> PathBuf {
         self.run_dir().join("learning")
     }
 
+    /// Learning scores artifact path.
     pub fn scores_json(&self) -> PathBuf {
         self.learning_dir().join("scores.json")
     }
 
+    /// Learning suggestions artifact path.
     pub fn suggestions_json(&self) -> PathBuf {
         self.learning_dir().join("suggestions.json")
     }
 
+    /// Learning overlays directory.
     pub fn overlays_dir(&self) -> PathBuf {
         self.learning_dir().join("overlays")
     }
 
+    /// Metadata artifact directory.
     pub fn meta_dir(&self) -> PathBuf {
         self.run_dir().join("meta")
     }
 
+    /// Artifact model marker path.
     pub fn artifact_model_marker_json(&self) -> PathBuf {
         self.meta_dir().join("ARTIFACT_MODEL.json")
     }
 
+    /// Ensure canonical directory layout exists for this run.
     pub fn ensure_layout(&self) -> Result<()> {
         let run_dir = self.run_dir();
         std::fs::create_dir_all(&run_dir).with_context(|| {
@@ -109,6 +130,7 @@ impl RunArtifactPaths {
         Ok(())
     }
 
+    /// Write the artifact model marker file atomically.
     pub fn write_model_marker(&self) -> Result<()> {
         let marker = ArtifactModelMarker {
             artifact_model_version: ARTIFACT_MODEL_VERSION,
@@ -119,6 +141,7 @@ impl RunArtifactPaths {
     }
 }
 
+/// Resolve repository run-artifact root (`.adl/runs`).
 pub fn runs_root() -> Result<PathBuf> {
     let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
     let repo_root = manifest
@@ -127,6 +150,7 @@ pub fn runs_root() -> Result<PathBuf> {
     Ok(repo_root.join(".adl").join("runs"))
 }
 
+/// Atomically write bytes to a file using same-directory temp + rename.
 pub fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
     // Best-effort atomic write strategy:
     // 1) write temp file in the same directory as the target

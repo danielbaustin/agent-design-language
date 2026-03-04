@@ -9,6 +9,7 @@ use crate::artifacts;
 pub const DATASET_VERSION: u32 = 1;
 pub const BUNDLE_VERSION: u32 = 1;
 
+/// Deterministic learning export row (JSONL format).
 #[derive(Debug, Serialize)]
 pub struct DatasetRowV1 {
     pub dataset_version: u32,
@@ -24,6 +25,7 @@ pub struct DatasetRowV1 {
     pub suggestions_summary: SuggestionsSummary,
 }
 
+/// Stable per-step record embedded in dataset exports.
 #[derive(Debug, Serialize)]
 pub struct StepRecord {
     pub step_id: String,
@@ -33,6 +35,7 @@ pub struct StepRecord {
     pub output_pointer_hash: Option<String>,
 }
 
+/// Compact deterministic suggestions summary.
 #[derive(Debug, Default, Serialize)]
 pub struct SuggestionsSummary {
     pub ids: Vec<String>,
@@ -65,6 +68,13 @@ struct BundleFileEntry {
     hash: String,
 }
 
+/// Export selected runs as deterministic JSONL rows.
+///
+/// # Examples
+///
+/// ```text
+/// adl learn export --format jsonl --runs-dir .adl/runs --out /tmp/learning.jsonl
+/// ```
 pub fn export_jsonl(runs_root: &Path, run_ids: &[String], out_file: &Path) -> Result<usize> {
     let mut ids = resolve_export_ids(runs_root, run_ids)?;
 
@@ -82,6 +92,13 @@ pub fn export_jsonl(runs_root: &Path, run_ids: &[String], out_file: &Path) -> Re
     Ok(lines.len())
 }
 
+/// Export selected runs as bundle v1 under `learning_export_v1/`.
+///
+/// # Examples
+///
+/// ```text
+/// adl learn export --format bundle --runs-dir .adl/runs --out /tmp/learning-bundle
+/// ```
 pub fn export_bundle_v1(runs_root: &Path, run_ids: &[String], out_dir: &Path) -> Result<usize> {
     let ids = resolve_export_ids(runs_root, run_ids)?;
     let bundle_root = out_dir.join("learning_export_v1");

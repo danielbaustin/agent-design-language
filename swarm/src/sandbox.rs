@@ -3,6 +3,7 @@ use std::path::{Component, Path, PathBuf};
 /// Best-effort filesystem policy for sandbox path resolution.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SandboxPathPolicy {
+    /// When false, traversing any symlinked component is denied.
     pub allow_symlink_traversal: bool,
 }
 
@@ -16,31 +17,48 @@ impl Default for SandboxPathPolicy {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SandboxPathError {
+    /// Path was denied before canonical resolution.
     PathDenied {
+        /// Sanitized requested path (never host-absolute).
         requested_path: String,
+        /// Stable machine-readable denial reason.
         reason: &'static str,
     },
+    /// Requested path does not exist.
     PathNotFound {
+        /// Sanitized requested path.
         requested_path: String,
     },
+    /// Path could not be canonicalized safely/deterministically.
     PathNotCanonical {
+        /// Sanitized requested path.
         requested_path: String,
     },
+    /// Symlink traversal is disallowed by sandbox policy.
     SymlinkDisallowed {
+        /// Sanitized requested path.
         requested_path: String,
+        /// Optional sanitized resolved path.
         resolved_path: Option<String>,
     },
+    /// Canonical path escapes the sandbox root.
     EscapeAttempt {
+        /// Sanitized requested path.
         requested_path: String,
+        /// Optional sanitized resolved path.
         resolved_path: Option<String>,
     },
+    /// IO error occurred while validating path safety.
     IoError {
+        /// Sanitized requested path.
         requested_path: String,
+        /// Stable operation label where the IO error occurred.
         operation: &'static str,
     },
 }
 
 impl SandboxPathError {
+    /// Stable error code used by traces/artifacts and tests.
     pub fn code(&self) -> &'static str {
         match self {
             Self::PathDenied { .. } => "sandbox_path_denied",
@@ -52,6 +70,7 @@ impl SandboxPathError {
         }
     }
 
+    /// Human-readable, safe message without host-absolute paths.
     pub fn message(&self) -> String {
         match self {
             Self::PathDenied { reason, .. } => {
@@ -76,6 +95,7 @@ impl SandboxPathError {
         }
     }
 
+    /// Sanitized requested path when available.
     pub fn requested_path(&self) -> Option<&str> {
         match self {
             Self::PathDenied { requested_path, .. }
@@ -87,6 +107,7 @@ impl SandboxPathError {
         }
     }
 
+    /// Sanitized resolved path for escape/symlink errors.
     pub fn resolved_path(&self) -> Option<&str> {
         match self {
             Self::SymlinkDisallowed { resolved_path, .. }
@@ -255,6 +276,10 @@ pub fn resolve_existing_path_within_root(
     resolve_existing_path_within_root_with_policy(root, candidate, SandboxPathPolicy::default())
 }
 
+/// Resolve an existing file path under a sandbox root with explicit policy.
+///
+/// This enforces canonical ancestry under `root`, and optionally blocks any
+/// traversed symlink component.
 pub fn resolve_existing_path_within_root_with_policy(
     root: &Path,
     candidate: &Path,
@@ -301,6 +326,10 @@ pub fn resolve_relative_path_for_write_within_root(
     resolve_relative_path_for_write_within_root_with_policy(root, rel, SandboxPathPolicy::default())
 }
 
+/// Resolve a relative path for write operations under the sandbox root.
+///
+/// Non-existent targets are accepted only when their nearest existing ancestor
+/// canonicalizes under `root`.
 pub fn resolve_relative_path_for_write_within_root_with_policy(
     root: &Path,
     rel: &Path,
