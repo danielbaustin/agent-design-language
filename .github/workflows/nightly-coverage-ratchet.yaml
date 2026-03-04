@@ -88,7 +88,11 @@ jobs:
           per_file_rows="$(jq -r '
             [.data[].files[]
               | select(.filename | contains("/swarm/src/"))
-              | {f:.filename, covered:(.summary.lines.covered // 0), count:(.summary.lines.count // 0)}
+              | {
+                  f:(.filename | gsub("^/home/runner/work/[^/]+/[^/]+/"; "")),
+                  covered:(.summary.lines.covered // 0),
+                  count:(.summary.lines.count // 0)
+                }
             ]
             | sort_by(.f)
             | group_by(.f)[]
