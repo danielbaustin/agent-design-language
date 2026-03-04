@@ -1,16 +1,24 @@
-# v0.8 Planning Docs Pointer
+# v0.8 Docs Index
 
-Canonical v0.8 planning docs live under `.adl/docs/v08planning/`:
-- `.adl/docs/v08planning/ARCHITECTURE_V0.8.md`
-- `.adl/docs/v08planning/EPIC_MAPPING_v0.8.md`
-- `.adl/docs/v08planning/CLUSTER_EXECUTION.md`
-- `.adl/docs/v08planning/CHECKPOINT_RECOVERY.md`
+This directory is a milestone navigation surface.
 
-To avoid drift, `docs/milestones/v0.8/` should not maintain duplicate copies of v0.8 planning specs.
+Canonical planning docs live under `.adl/docs/vXXplanning/`.
+
+## Canonical Planning References
+
+- v0.8 architecture: `.adl/docs/v08planning/ARCHITECTURE_V0.8.md`
+- v0.8 epic mapping: `.adl/docs/v08planning/EPIC_MAPPING_v0.8.md`
+- v0.8 cluster planning: `.adl/docs/v08planning/CLUSTER_EXECUTION.md`
+- v0.8 checkpoint/recovery planning: `.adl/docs/v08planning/CHECKPOINT_RECOVERY.md`
+- v0.75 ObsMem plan: `.adl/docs/v075planning/OBSMEM_BAYES.md`
+- v0.85 cluster plan: `.adl/docs/v085planning/CLUSTER_EXECUTION.md`
 
 Scope slicing reference:
 - v0.75: EPIC-A + EPIC-B (deterministic substrate + ObsMem)
 - v0.8: EPIC-C + EPIC-D (Godel + Authoring)
 - v0.85+: cluster / distributed execution
 
-This directory remains valid for milestone-local notes and incubation material.
+## Milestone Materials
+
+- `STICKTOITTIVENESS.md`
+- `incubation/`

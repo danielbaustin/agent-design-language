@@ -1,6 +1,6 @@
 
 
-# V0.7 Planning: Gödel Agent Pattern (ADL)
+# V0.8 Planning: Godel Agent Pattern (ADL)
 
 > Paper inspiration: **Gödel Agent: A Self-Referential Agent Framework for Recursive Self-Improvement** (arXiv:2410.04444; Yin et al.).
 >
@@ -257,9 +257,10 @@ Hard rules:
 ## Integration points with existing v0.6 / v0.7 work
 
 - v0.6 HITL pause/resume artifacts make the evolution loop safe to pause/resume.
-- v0.8 EPIC-C/EPIC-D is the natural home for this pattern.
-- v0.75 ObsMem v1 supplies richer signals and memory policy knobs consumed by v0.8.
-- v0.7 EPIC-F (Resilience + checkpointing) enables long evolution runs and partial recovery.
+- v0.8 EPIC-C (Godel-oriented adaptive architecture) is the primary home for this pattern.
+- v0.8 EPIC-D (Authoring/composition surfaces) defines how these patterns are authored and governed.
+- v0.75 EPIC-B (ObsMem v1 integration) supplies the memory interface context referenced by `memory_policy`.
+- v0.85+ cluster and deeper resilience surfaces remain separate deferred infrastructure layers.
 
 ## Suggested issues to add (v0.7.x)
 
