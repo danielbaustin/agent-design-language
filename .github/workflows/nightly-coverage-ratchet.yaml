@@ -89,7 +89,13 @@ jobs:
             [.data[].files[]
               | select(.filename | contains("/swarm/src/"))
               | {
-                  f:(.filename | gsub("^/home/runner/work/[^/]+/[^/]+/"; "")),
+                  f:(
+                    .filename
+                    | gsub("\\\\"; "/")
+                    | sub("^/home/runner/work/[^/]+/[^/]+/"; "")
+                    | sub("^/__w/[^/]+/[^/]+/"; "")
+                    | sub("^[A-Za-z]:/a/[^/]+/[^/]+/"; "")
+                  ),
                   covered:(.summary.lines.covered // 0),
                   count:(.summary.lines.count // 0)
                 }
