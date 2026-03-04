@@ -89,6 +89,7 @@ v0.75 is two layers:
   - Versioned manifest
   - Canonical serialization for hashed components
   - Stable relative paths within the bundle
+  - Canonical spec: `docs/milestones/v0.75/TRACE_BUNDLE_v2.md`
 - Failure Taxonomy:
   - Stable machine-readable classification codes
   - Deterministic mapping from observed failures to codes
