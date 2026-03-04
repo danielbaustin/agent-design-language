@@ -101,6 +101,9 @@ pub fn apply_overlay_to_doc(
     doc: &mut adl::AdlDoc,
     overlay: &OverlaySpecV1,
 ) -> Result<AppliedOverlayAudit> {
+    // Security invariant: overlays are an explicit allowlist. Any path outside
+    // supported mutation targets is rejected, which keeps delegation policy and
+    // other trust boundaries immutable in v1.
     let canonical = serde_json::to_vec(overlay).context("serialize overlay for hashing")?;
     let overlay_hash = stable_fingerprint_hex(&canonical);
 
@@ -394,6 +397,33 @@ mod tests {
         };
         let err = apply_overlay_to_doc(&mut doc2, &bad_path).expect_err("must reject");
         assert!(err.to_string().contains("uses unsupported path"));
+    }
+
+    #[test]
+    fn apply_overlay_rejects_delegation_policy_mutation_paths() {
+        let mut doc = doc_with_inline_steps();
+        let overlay = OverlaySpecV1 {
+            overlay_version: OVERLAY_VERSION,
+            base_run_id: None,
+            created_by: "test".to_string(),
+            created_from: OverlayCreatedFrom {
+                suggestions_version: None,
+                artifact_model_version: Some(1),
+            },
+            changes: vec![OverlayChange {
+                id: "delegate-policy".to_string(),
+                path: "run.delegation_policy.default_action".to_string(),
+                op: OverlayOp::Set,
+                value: JsonValue::String("allow".to_string()),
+                rationale: "attempt policy change".to_string(),
+                evidence: None,
+            }],
+        };
+
+        let err = apply_overlay_to_doc(&mut doc, &overlay).expect_err("must reject");
+        let msg = err.to_string();
+        assert!(msg.contains("uses unsupported path"));
+        assert!(msg.contains("run.delegation_policy.default_action"));
     }
 
     #[test]
