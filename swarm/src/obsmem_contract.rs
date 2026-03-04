@@ -133,18 +133,19 @@ impl MemoryQuery {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct MemoryHit {
-    pub entry_id: String,
+pub struct MemoryRecord {
+    pub id: String,
     pub run_id: String,
     pub workflow_id: String,
+    pub tags: Vec<String>,
+    pub payload: String,
     pub score: String,
-    pub summary: String,
     pub citations: Vec<MemoryCitation>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MemoryQueryResult {
-    pub hits: Vec<MemoryHit>,
+    pub hits: Vec<MemoryRecord>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -200,6 +201,11 @@ pub trait ObsMemClient {
         &self,
         request: &MemoryWriteRequest,
     ) -> Result<MemoryWriteAck, ObsMemContractError>;
+    /// v0.75 retrieval boundary: structured deterministic query only.
+    ///
+    /// Backends may support semantic retrieval internally, but returned records
+    /// must be normalized into deterministic ordering for identical query+index
+    /// inputs before results are exposed to runtime callers.
     fn query(&self, query: &MemoryQuery) -> Result<MemoryQueryResult, ObsMemContractError>;
 }
 
@@ -226,11 +232,11 @@ mod tests {
     use super::*;
 
     #[derive(Default)]
-    struct InMemoryObsMem {
+    struct ObsMemInMemory {
         entries: Arc<Mutex<Vec<MemoryWriteRequest>>>,
     }
 
-    impl ObsMemClient for InMemoryObsMem {
+    impl ObsMemClient for ObsMemInMemory {
         fn write_entry(
             &self,
             request: &MemoryWriteRequest,
@@ -262,7 +268,7 @@ mod tests {
             q.normalize();
 
             let entries = self.entries.lock().expect("lock entries");
-            let mut hits: Vec<MemoryHit> = entries
+            let mut hits: Vec<MemoryRecord> = entries
                 .iter()
                 .filter(|e| {
                     q.workflow_id
@@ -273,12 +279,13 @@ mod tests {
                             .is_none_or(|fc| e.failure_code.as_ref() == Some(fc))
                         && q.tags.iter().all(|tag| e.tags.binary_search(tag).is_ok())
                 })
-                .map(|e| MemoryHit {
-                    entry_id: format!("{}::{}", e.run_id, e.workflow_id),
+                .map(|e| MemoryRecord {
+                    id: format!("{}::{}", e.run_id, e.workflow_id),
                     run_id: e.run_id.clone(),
                     workflow_id: e.workflow_id.clone(),
+                    tags: e.tags.clone(),
+                    payload: e.summary.clone(),
                     score: "1.0".to_string(),
-                    summary: e.summary.clone(),
                     citations: e.citations.clone(),
                 })
                 .collect();
@@ -287,7 +294,7 @@ mod tests {
                 b.score
                     .cmp(&a.score)
                     .then_with(|| a.run_id.cmp(&b.run_id))
-                    .then_with(|| a.entry_id.cmp(&b.entry_id))
+                    .then_with(|| a.id.cmp(&b.id))
             });
             hits.truncate(q.limit);
             Ok(MemoryQueryResult { hits })
@@ -355,7 +362,7 @@ mod tests {
 
     #[test]
     fn in_memory_client_round_trip_is_deterministic() {
-        let client = InMemoryObsMem::default();
+        let client = ObsMemInMemory::default();
         let req = sample_request();
 
         let ack = client.write_entry(&req).expect("write entry");

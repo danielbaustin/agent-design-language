@@ -157,6 +157,24 @@ Allowed volatile differences:
 - Bundle import rejects path traversal, absolute host paths, and token-like secret leakage.
 - Replay-from-bundle output is deterministic for identical imported activation logs.
 
+## ObsMem Adapter Runtime (WP-08)
+The runtime integration surface for ObsMem is implemented via `swarm::obsmem_adapter`.
+
+Initialization/wiring model:
+- Runtime components receive an `ObsMemClient` implementation.
+- `ObsMemAdapter` builds deterministic `MemoryWriteRequest` payloads from persisted run artifacts (`run_summary.json`, `run_status.json`, `logs/activation_log.json`).
+- Adapter forwards write/query operations only through the contract trait and does not couple core runtime execution paths to backend-specific types.
+
+Determinism and safety notes:
+- Adapter request construction is deterministic for identical run artifacts.
+- Retrieval remains optional and traceable through explicit adapter calls.
+- Adapter payloads are validated through contract guards (relative paths, privacy-safe summary content, stable code surfaces).
+
+Deterministic retrieval contract:
+- For identical query inputs (`query`, `filters`, `tags`, `limit`) and identical backend index state, adapter results must contain the exact same record set in the exact same order.
+- If a backend supports semantic/probabilistic retrieval, it must still return deterministically ordered records for identical inputs before the adapter returns them to ADL runtime callers.
+- This invariant is required so replay remains deterministic, trace bundles remain reproducible, and learning experiments stay auditable.
+
 ## Risks and Mitigations
 - Risk: Hidden nondeterminism at tool boundaries (time, env, ordering)
   - Mitigation: boundary capture + replay gating; add regression tests; enforce stable ordering.
