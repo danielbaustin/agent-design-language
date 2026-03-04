@@ -7,7 +7,7 @@ restricted runtime configuration changes without mutating source ADL YAML.
 
 Use:
 
-`swarm <adl.yaml> --overlay <overlay.json> --run`
+`adl <adl.yaml> --overlay <overlay.json> --run`
 
 Default behavior is unchanged when `--overlay` is not provided.
 
@@ -42,8 +42,10 @@ Default behavior is unchanged when `--overlay` is not provided.
   - trust/signing policy fields
   - sandbox policy fields
   - scheduler policy fields
+  - delegation policy fields (`run.delegation_policy.*`)
 
-Any forbidden mutation is rejected with a stable guardrail code prefix.
+Delegation policy and security envelope behavior are immutable under overlays in
+v1. Unknown or forbidden mutation paths are rejected deterministically.
 
 `--overlay` is the only canonical v0.7 apply surface. Converting
 `suggestions.json` into an overlay file is an explicit pre-step (out of band),
