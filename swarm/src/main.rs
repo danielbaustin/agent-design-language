@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use swarm::{
+use ::adl::{
     adl, artifacts, bounded_executor, demo, env_compat, execute, instrumentation, learning_export,
     overlay, plan, prompt, provider, remote_exec, resolve, sandbox, signing, trace,
 };
@@ -18,7 +18,7 @@ fn usage() -> &'static str {
   adl keygen --out-dir <dir>
   adl sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
   adl instrument <graph|replay|diff-plan|diff-trace> ...
-  adl learn export --format jsonl [--runs-dir <dir>] [--run-id <id> ...] --out <file>
+  adl learn export --format <jsonl|bundle-v1> [--runs-dir <dir>] [--run-id <id> ...] --out <path>
   adl verify <adl.yaml> [--key <public_key_path>]
 
 Options:
@@ -51,10 +51,9 @@ Examples:
   adl instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format json
   adl instrument replay /tmp/trace.json
   adl instrument diff-trace /tmp/trace-a.json /tmp/trace-b.json
-  adl learn export --format jsonl --runs-dir .adl/runs --out /tmp/learning.jsonl
+  adl learn export --format bundle-v1 --runs-dir .adl/runs --out /tmp/learning-bundle
   adl verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"
 }
-
 fn resume_usage() -> &'static str {
     "Usage:
   adl resume <run_id>
@@ -714,7 +713,7 @@ fn real_learn_export(args: &[String]) -> Result<()> {
             }
             "--out" => {
                 let Some(v) = args.get(i + 1) else {
-                    return Err(anyhow::anyhow!("--out requires a file path"));
+                    return Err(anyhow::anyhow!("--out requires a path"));
                 };
                 out_path = Some(PathBuf::from(v));
                 i += 1;
@@ -735,22 +734,40 @@ fn real_learn_export(args: &[String]) -> Result<()> {
         i += 1;
     }
 
-    if format != "jsonl" {
-        return Err(anyhow::anyhow!(
-            "unsupported learn export format '{format}' (supported: jsonl)"
-        ));
-    }
-    let out_path = out_path.ok_or_else(|| anyhow::anyhow!("learn export requires --out <file>"))?;
+    let out_path = out_path.ok_or_else(|| anyhow::anyhow!("learn export requires --out <path>"))?;
     let runs_dir = runs_dir.unwrap_or_else(|| {
         artifacts::runs_root().unwrap_or_else(|_| PathBuf::from(".adl").join("runs"))
     });
 
-    let rows = learning_export::export_jsonl(&runs_dir, &run_ids, &out_path)?;
-    eprintln!(
-        "LEARN EXPORT: rows={} format=jsonl out={}",
-        rows,
-        out_path.display()
-    );
+    let rows = match format.as_str() {
+        "jsonl" => {
+            let rows = learning_export::export_jsonl(&runs_dir, &run_ids, &out_path)?;
+            eprintln!(
+                "LEARN EXPORT: rows={} format=jsonl out={}",
+                rows,
+                out_path.display()
+            );
+            rows
+        }
+        "bundle-v1" => {
+            let rows = learning_export::export_bundle_v1(&runs_dir, &run_ids, &out_path)?;
+            eprintln!(
+                "LEARN EXPORT: rows={} format=bundle-v1 out={}",
+                rows,
+                out_path.join("learning_export_v1").display()
+            );
+            rows
+        }
+        _ => {
+            return Err(anyhow::anyhow!(
+                "unsupported learn export format '{format}' (supported: jsonl, bundle-v1)"
+            ));
+        }
+    };
+
+    if rows == 0 {
+        eprintln!("LEARN EXPORT: no runs exported");
+    }
     Ok(())
 }
 
@@ -2020,7 +2037,7 @@ fn is_ci_environment() -> bool {
     }
 }
 
-fn resolve_execution_plan(path: &Path) -> Result<swarm::execution_plan::ExecutionPlan> {
+fn resolve_execution_plan(path: &Path) -> Result<::adl::execution_plan::ExecutionPlan> {
     let path_str = path.to_str().context("path must be valid UTF-8")?;
     let doc = adl::AdlDoc::load_from_file(path_str)
         .with_context(|| format!("failed to load ADL document: {}", path.display()))?;
@@ -2296,9 +2313,9 @@ mod tests {
                 on_error: None,
                 retry: None,
             }],
-            execution_plan: swarm::execution_plan::ExecutionPlan {
+            execution_plan: ::adl::execution_plan::ExecutionPlan {
                 workflow_kind: adl::WorkflowKind::Sequential,
-                nodes: vec![swarm::execution_plan::ExecutionNode {
+                nodes: vec![::adl::execution_plan::ExecutionNode {
                     step_id: "s1".to_string(),
                     depends_on: vec![],
                     save_as: Some("s1_out".to_string()),
@@ -2661,5 +2678,513 @@ mod tests {
         assert!(err.to_string().contains("state plan != current plan"));
         let _ = std::fs::remove_dir_all(run_dir);
         let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn classify_failure_kind_handles_sandbox_and_io_causes() {
+        let sandbox_err = anyhow::Error::new(sandbox::SandboxPathError::PathDenied {
+            requested_path: "sandbox:/bad".to_string(),
+            reason: "parent_traversal",
+        });
+        assert_eq!(classify_failure_kind(&sandbox_err), Some("sandbox_denied"));
+
+        let io_err = anyhow::Error::new(std::io::Error::other("disk issue"));
+        assert_eq!(classify_failure_kind(&io_err), Some("io_error"));
+    }
+
+    #[test]
+    fn classify_failure_kind_returns_none_for_unclassified_errors() {
+        let generic = anyhow::anyhow!("generic failure");
+        assert_eq!(classify_failure_kind(&generic), None);
+    }
+
+    #[test]
+    fn execution_plan_hash_is_deterministic_for_same_plan() {
+        let resolved = minimal_resolved_for_artifacts("hash-run".to_string());
+        let a = execution_plan_hash(&resolved.execution_plan).expect("hash a");
+        let b = execution_plan_hash(&resolved.execution_plan).expect("hash b");
+        assert_eq!(a, b);
+        assert_eq!(a.len(), 16, "fnv-1a hex length should be stable");
+    }
+
+    #[test]
+    fn build_run_summary_sorts_remote_policy_and_tracks_denials() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("summary-{now}-{}", std::process::id());
+        let mut resolved = minimal_resolved_for_artifacts(run_id);
+        resolved.steps.push(resolve::ResolvedStep {
+            id: "s2".to_string(),
+            agent: Some("a1".to_string()),
+            provider: Some("p1".to_string()),
+            placement: None,
+            task: Some("t1".to_string()),
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
+            delegation: Some(adl::DelegationSpec {
+                role: Some("reviewer".to_string()),
+                requires_verification: Some(true),
+                escalation_target: None,
+                tags: vec!["b".to_string(), "a".to_string()],
+            }),
+            prompt: Some(adl::PromptSpec {
+                user: Some("u".to_string()),
+                ..Default::default()
+            }),
+            inputs: HashMap::new(),
+            guards: vec![],
+            save_as: Some("s2_out".to_string()),
+            write_to: Some("out/s2.txt".to_string()),
+            on_error: None,
+            retry: None,
+        });
+        resolved.doc.run.remote = Some(adl::RunRemoteSpec {
+            endpoint: "http://127.0.0.1:8787".to_string(),
+            timeout_ms: Some(30_000),
+            require_signed_requests: true,
+            require_key_id: true,
+            verify_allowed_algs: vec!["rsa".to_string(), "ed25519".to_string(), "rsa".to_string()],
+            verify_allowed_key_sources: vec![
+                "embedded".to_string(),
+                "kms".to_string(),
+                "embedded".to_string(),
+            ],
+        });
+
+        let run_paths = artifacts::RunArtifactPaths::for_run(&resolved.run_id).expect("paths");
+        run_paths.ensure_layout().expect("layout");
+        run_paths.write_model_marker().expect("marker");
+        artifacts::atomic_write(&run_paths.scores_json(), b"{}").expect("scores");
+        artifacts::atomic_write(&run_paths.suggestions_json(), b"{}").expect("suggestions");
+
+        let steps = vec![
+            StepStateArtifact {
+                step_id: "s1".to_string(),
+                agent_id: "a1".to_string(),
+                provider_id: "p1".to_string(),
+                status: "success".to_string(),
+                output_artifact_path: Some("out/s1.txt".to_string()),
+            },
+            StepStateArtifact {
+                step_id: "s2".to_string(),
+                agent_id: "a1".to_string(),
+                provider_id: "p1".to_string(),
+                status: "failure".to_string(),
+                output_artifact_path: None,
+            },
+            StepStateArtifact {
+                step_id: "s3".to_string(),
+                agent_id: "a1".to_string(),
+                provider_id: "p1".to_string(),
+                status: "not_run".to_string(),
+                output_artifact_path: None,
+            },
+        ];
+        let failure = anyhow::Error::new(sandbox::SandboxPathError::PathDenied {
+            requested_path: "sandbox:/bad".to_string(),
+            reason: "parent_traversal",
+        });
+        let summary = build_run_summary(
+            &resolved,
+            "failure",
+            None,
+            &steps,
+            2,
+            Some(&failure),
+            &run_paths,
+        );
+
+        assert!(summary.policy.security_envelope_enabled);
+        assert_eq!(summary.policy.verify_allowed_algs, vec!["ed25519", "rsa"]);
+        assert_eq!(
+            summary.policy.verify_allowed_key_sources,
+            vec!["embedded", "kms"]
+        );
+        assert_eq!(
+            summary
+                .policy
+                .security_denials_by_code
+                .get("sandbox_denied"),
+            Some(&1)
+        );
+        assert_eq!(summary.counts.total_steps, 2);
+        assert_eq!(summary.counts.completed_steps, 2);
+        assert_eq!(summary.counts.failed_steps, 1);
+        assert_eq!(summary.counts.delegation_steps, 1);
+        assert_eq!(summary.counts.delegation_requires_verification_steps, 1);
+        assert_eq!(
+            summary.links.scores_json.as_deref(),
+            Some("learning/scores.json")
+        );
+        assert_eq!(
+            summary.links.suggestions_json.as_deref(),
+            Some("learning/suggestions.json")
+        );
+
+        let _ = std::fs::remove_dir_all(run_paths.run_dir());
+    }
+
+    #[test]
+    fn build_run_status_tracks_attempts_and_resume_completed_steps() {
+        let resolved = minimal_resolved_for_artifacts("status-run".to_string());
+        let mut tr = trace::Trace::new(
+            "status-run".to_string(),
+            "wf".to_string(),
+            "0.5".to_string(),
+        );
+        tr.step_started("s1", "a1", "p1", "t1", None);
+        tr.step_finished("s1", true);
+        tr.step_started("s2", "a1", "p1", "t1", None);
+        tr.step_started("s2", "a1", "p1", "t1", None);
+        tr.step_finished("s2", false);
+
+        let steps = vec![
+            StepStateArtifact {
+                step_id: "s1".to_string(),
+                agent_id: "a1".to_string(),
+                provider_id: "p1".to_string(),
+                status: "success".to_string(),
+                output_artifact_path: Some("out/s1.txt".to_string()),
+            },
+            StepStateArtifact {
+                step_id: "s2".to_string(),
+                agent_id: "a1".to_string(),
+                provider_id: "p1".to_string(),
+                status: "failure".to_string(),
+                output_artifact_path: None,
+            },
+            StepStateArtifact {
+                step_id: "s3".to_string(),
+                agent_id: "a1".to_string(),
+                provider_id: "p1".to_string(),
+                status: "not_run".to_string(),
+                output_artifact_path: None,
+            },
+        ];
+        let resume_completed = BTreeSet::from(["s0".to_string()]);
+        let status = build_run_status(&resolved, &tr, "failed", &steps, None, &resume_completed);
+
+        assert_eq!(
+            status.completed_steps,
+            vec!["s0".to_string(), "s1".to_string()]
+        );
+        assert_eq!(
+            status.pending_steps,
+            vec!["s2".to_string(), "s3".to_string()]
+        );
+        assert_eq!(status.failed_step_id.as_deref(), Some("s2"));
+        assert_eq!(status.attempt_counts_by_step.get("s0"), Some(&0));
+        assert_eq!(status.attempt_counts_by_step.get("s1"), Some(&1));
+        assert_eq!(status.attempt_counts_by_step.get("s2"), Some(&2));
+        assert_eq!(status.started_steps.as_ref().map(|v| v.len()), Some(2));
+        assert!(
+            status.effective_max_concurrency.is_none()
+                || status.effective_max_concurrency == Some(4)
+        );
+    }
+
+    #[test]
+    fn build_scores_and_suggestions_artifacts_are_deterministic() {
+        let run_summary = RunSummaryArtifact {
+            run_summary_version: 1,
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_id: "run-demo".to_string(),
+            workflow_id: "wf".to_string(),
+            adl_version: "0.5".to_string(),
+            swarm_version: env!("CARGO_PKG_VERSION").to_string(),
+            status: "failure".to_string(),
+            error_kind: Some("sandbox_denied".to_string()),
+            counts: RunSummaryCounts {
+                total_steps: 4,
+                completed_steps: 3,
+                failed_steps: 1,
+                provider_call_count: 4,
+                delegation_steps: 1,
+                delegation_requires_verification_steps: 1,
+            },
+            policy: RunSummaryPolicy {
+                security_envelope_enabled: true,
+                signing_required: true,
+                key_id_required: true,
+                verify_allowed_algs: vec!["ed25519".to_string()],
+                verify_allowed_key_sources: vec!["embedded".to_string()],
+                sandbox_policy: "centralized_path_resolver_v1".to_string(),
+                security_denials_by_code: BTreeMap::from([
+                    ("DELEGATION_DENIED".to_string(), 2usize),
+                    ("sandbox_denied".to_string(), 1usize),
+                ]),
+            },
+            links: RunSummaryLinks {
+                run_json: "run.json".to_string(),
+                steps_json: "steps.json".to_string(),
+                pause_state_json: None,
+                outputs_dir: "outputs".to_string(),
+                logs_dir: "logs".to_string(),
+                learning_dir: "learning".to_string(),
+                scores_json: None,
+                suggestions_json: None,
+                overlays_dir: "learning/overlays".to_string(),
+                trace_json: None,
+            },
+        };
+        let mut tr = trace::Trace::new("run-demo".to_string(), "wf".to_string(), "0.5".to_string());
+        tr.step_started("a", "a1", "p1", "t1", None);
+        tr.step_started("b", "a1", "p1", "t1", None);
+        tr.step_finished("a", true);
+        tr.step_started("b", "a1", "p1", "t1", None);
+        tr.step_finished("b", false);
+
+        let scores = build_scores_artifact(&run_summary, &tr);
+        assert_eq!(scores.summary.failure_count, 1);
+        assert_eq!(scores.summary.retry_count, 1);
+        assert_eq!(scores.summary.delegation_denied_count, 2);
+        assert_eq!(scores.summary.security_denied_count, 3);
+        assert_eq!(scores.summary.success_ratio, 0.5);
+        assert_eq!(scores.metrics.scheduler_max_parallel_observed, 2);
+
+        let with_scores = build_suggestions_artifact(&run_summary, Some(&scores));
+        let without_scores = build_suggestions_artifact(&run_summary, None);
+        assert_eq!(with_scores.suggestions_version, 1);
+        assert_eq!(
+            with_scores.suggestions.first().map(|s| s.id.as_str()),
+            Some("sug-001")
+        );
+        assert!(with_scores
+            .suggestions
+            .windows(2)
+            .all(|pair| pair[0].id < pair[1].id));
+        assert_eq!(with_scores.generated_from.scores_version, Some(1));
+        assert_eq!(without_scores.generated_from.scores_version, None);
+    }
+
+    #[test]
+    fn read_scores_if_present_handles_valid_and_invalid_json() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let run_id = format!("scores-read-{now}-{}", std::process::id());
+        let run_paths = artifacts::RunArtifactPaths::for_run(&run_id).expect("paths");
+        run_paths.ensure_layout().expect("layout");
+
+        artifacts::atomic_write(&run_paths.scores_json(), b"{not-json").expect("write invalid");
+        assert!(read_scores_if_present(&run_paths).is_none());
+
+        let valid = serde_json::to_vec_pretty(&ScoresArtifact {
+            scores_version: 1,
+            run_id: run_id.clone(),
+            generated_from: ScoresGeneratedFrom {
+                artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+                run_summary_version: 1,
+            },
+            summary: ScoresSummary {
+                success_ratio: 1.0,
+                failure_count: 0,
+                retry_count: 0,
+                delegation_denied_count: 0,
+                security_denied_count: 0,
+            },
+            metrics: ScoresMetrics {
+                scheduler_max_parallel_observed: 1,
+            },
+        })
+        .expect("serialize");
+        artifacts::atomic_write(&run_paths.scores_json(), &valid).expect("write valid");
+        let parsed = read_scores_if_present(&run_paths).expect("should parse valid score file");
+        assert_eq!(parsed.run_id, run_id);
+
+        let _ = std::fs::remove_dir_all(run_paths.run_dir());
+    }
+
+    #[test]
+    fn real_learn_validates_subcommand_and_export_args() {
+        let err = real_learn(&[]).expect_err("missing subcommand");
+        assert!(err.to_string().contains("supported: export"));
+
+        let err = real_learn(&["unknown".to_string()]).expect_err("unknown subcommand");
+        assert!(err.to_string().contains("unknown learn subcommand"));
+
+        let err = real_learn_export(&[
+            "--format".to_string(),
+            "csv".to_string(),
+            "--out".to_string(),
+            "/tmp/out".to_string(),
+        ])
+        .expect_err("unsupported format");
+        assert!(err.to_string().contains("unsupported learn export format"));
+
+        let err = real_learn_export(&["--format".to_string(), "jsonl".to_string()])
+            .expect_err("missing out");
+        assert!(err.to_string().contains("requires --out"));
+
+        let err =
+            real_learn_export(&["--bogus".to_string(), "x".to_string()]).expect_err("unknown arg");
+        assert!(err.to_string().contains("unknown learn export arg"));
+    }
+
+    #[test]
+    fn cli_internal_keygen_sign_verify_roundtrip_succeeds() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let base = std::env::temp_dir().join(format!("adl-main-keygen-{now}"));
+        let key_dir = base.join("keys");
+        std::fs::create_dir_all(&base).expect("create base dir");
+        real_keygen(&[
+            "--out-dir".to_string(),
+            key_dir.to_string_lossy().to_string(),
+        ])
+        .expect("keygen should succeed");
+
+        let source =
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("examples/v0-5-pattern-linear.adl.yaml");
+        let signed = base.join("signed.adl.yaml");
+        real_sign(&[
+            source.to_string_lossy().to_string(),
+            "--key".to_string(),
+            key_dir
+                .join("ed25519-private.b64")
+                .to_string_lossy()
+                .to_string(),
+            "--key-id".to_string(),
+            "test-main".to_string(),
+            "--out".to_string(),
+            signed.to_string_lossy().to_string(),
+        ])
+        .expect("sign should succeed");
+
+        real_verify(&[
+            signed.to_string_lossy().to_string(),
+            "--key".to_string(),
+            key_dir
+                .join("ed25519-public.b64")
+                .to_string_lossy()
+                .to_string(),
+        ])
+        .expect("verify should succeed");
+
+        let _ = std::fs::remove_dir_all(base);
+    }
+
+    #[test]
+    fn cli_internal_instrument_variants_succeed() {
+        let fixture =
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("examples/v0-5-pattern-fork-join.adl.yaml");
+        real_instrument(&[
+            "graph".to_string(),
+            fixture.to_string_lossy().to_string(),
+            "--format".to_string(),
+            "json".to_string(),
+        ])
+        .expect("graph json");
+        real_instrument(&[
+            "graph".to_string(),
+            fixture.to_string_lossy().to_string(),
+            "--format".to_string(),
+            "dot".to_string(),
+        ])
+        .expect("graph dot");
+        real_instrument(&[
+            "diff-plan".to_string(),
+            fixture.to_string_lossy().to_string(),
+            fixture.to_string_lossy().to_string(),
+        ])
+        .expect("diff-plan");
+
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let base = std::env::temp_dir().join(format!("adl-main-instrument-{now}"));
+        std::fs::create_dir_all(&base).expect("create base dir");
+        let left = base.join("left.trace.json");
+        let right = base.join("right.trace.json");
+        std::fs::write(&left, "[]").expect("write left trace");
+        std::fs::write(&right, "[]").expect("write right trace");
+        real_instrument(&["replay".to_string(), left.to_string_lossy().to_string()])
+            .expect("replay");
+        real_instrument(&[
+            "diff-trace".to_string(),
+            left.to_string_lossy().to_string(),
+            right.to_string_lossy().to_string(),
+        ])
+        .expect("diff-trace");
+        let _ = std::fs::remove_dir_all(base);
+    }
+
+    #[test]
+    fn cli_internal_learn_export_writes_jsonl() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let base = std::env::temp_dir().join(format!("adl-main-learn-{now}"));
+        let runs_dir = base.join("runs");
+        std::fs::create_dir_all(&runs_dir).expect("create runs dir");
+        let out = base.join("learning.jsonl");
+        real_learn_export(&[
+            "--format".to_string(),
+            "jsonl".to_string(),
+            "--runs-dir".to_string(),
+            runs_dir.to_string_lossy().to_string(),
+            "--out".to_string(),
+            out.to_string_lossy().to_string(),
+        ])
+        .expect("learn export");
+        assert!(out.exists(), "learn export should emit output file");
+        let _ = std::fs::remove_dir_all(base);
+    }
+
+    #[test]
+    fn cli_internal_demo_print_plan_path_succeeds() {
+        real_demo(&["demo-a-say-mcp".to_string(), "--print-plan".to_string()])
+            .expect("known demo should succeed");
+    }
+
+    #[test]
+    fn validate_pause_artifact_basic_rejects_mismatches() {
+        let mk = || PauseStateArtifact {
+            schema_version: PAUSE_STATE_SCHEMA_VERSION.to_string(),
+            run_id: "run-1".to_string(),
+            workflow_id: "wf".to_string(),
+            version: "0.5".to_string(),
+            status: "paused".to_string(),
+            adl_path: "swarm/examples/v0-6-hitl-pause-resume.adl.yaml".to_string(),
+            execution_plan_hash: "abc".to_string(),
+            pause: execute::PauseState {
+                paused_step_id: "s1".to_string(),
+                reason: None,
+                completed_step_ids: vec!["s1".to_string()],
+                remaining_step_ids: vec![],
+                saved_state: HashMap::new(),
+                completed_outputs: HashMap::new(),
+            },
+        };
+
+        let mut wrong_schema = mk();
+        wrong_schema.schema_version = "pause_state.v0".to_string();
+        assert!(validate_pause_artifact_basic(&wrong_schema, "run-1").is_err());
+
+        let mut wrong_status = mk();
+        wrong_status.status = "success".to_string();
+        assert!(validate_pause_artifact_basic(&wrong_status, "run-1").is_err());
+
+        let mut wrong_run = mk();
+        wrong_run.run_id = "run-2".to_string();
+        assert!(validate_pause_artifact_basic(&wrong_run, "run-1").is_err());
+    }
+
+    #[test]
+    fn resume_state_path_for_run_id_targets_pause_state_json() {
+        let path = resume_state_path_for_run_id("demo-run").expect("path");
+        let s = path.to_string_lossy();
+        assert!(
+            s.ends_with(".adl/runs/demo-run/pause_state.json"),
+            "path={s}"
+        );
     }
 }

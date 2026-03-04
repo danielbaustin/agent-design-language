@@ -16,10 +16,9 @@ v0.7 executes as a **two-phase release train**:
 - **Phase 2: v0.7.x Learning Train** — incremental, overlay-based learning features (observe → score → suggest → apply → export), independent of ObsMem.
 
 
-Explicit deferrals to v0.8:
-- ObsMem integration (and memory-backed learning)
-- Distributed / cluster execution
-- Durable checkpoint / recovery engine
+Explicit deferrals beyond v0.7:
+- v0.75: ObsMem integration (and memory-backed learning substrate)
+- v0.85/v0.9: Distributed / cluster execution and durable checkpoint / recovery engine
 
 Release tail: after core feature work (including WP-12), v0.7 concludes with a set of parallelizable “tail” WPs (demos, quality gates, docs review, and release ceremony). These are intentionally structured to run in parallel where possible and converge on a final release checklist.
 
@@ -39,7 +38,7 @@ EPICs organize the roadmap; WPs are the unit of execution.
 |---|---|---|---|
 | EPIC-A (#412) | Dynamic learning (release train) | WP-08, WP-09, WP-10 | — |
 | EPIC-B (#413) | Delegation runtime | WP-04 | — |
-| EPIC-C (#414) | Learning surfaces (ObsMem deferred to v0.8) | WP-08 | — |
+| EPIC-C (#414) | Learning surfaces (ObsMem deferred to v0.75 planning) | WP-08 | — |
 | EPIC-D (#415) | Cleanup + deferred hard systems work | WP-11 | — |
 | EPIC-E (#429) | Security envelope + trust hardening | WP-02, WP-03 | #472, #370, #371, #386 |
 | EPIC-F (#430) | Runtime resilience + checkpointing surfaces | WP-06 | — |
@@ -57,7 +56,7 @@ EPICs organize the roadmap; WPs are the unit of execution.
 | WP-03 | Remote Signing + Trust Policy | Enforce signing and trust policy requirements for remote execution requests, with deterministic verification and clear failure semantics. | Remote signing enforcement + trust policy docs/tests | WP-02 | #370, #371, #386 |
 | WP-04 | Delegation Runtime (Paper-driven) | Implement/solidify delegation runtime semantics and policy-driven delegation patterns (paper-driven / DeepMind-style). | Delegation runtime features + docs + demos | WP-01, WP-02 | #413 (EPIC-B) |
 | WP-05 | Scheduler Policy Surface | Add explicit scheduler policy configuration (per-workflow concurrency / policy surface) without breaking determinism. | Scheduler policy surface + tests + docs | WP-01 | #369 |
-| WP-06 | Runtime Resilience Surfaces | Deliver v0.7-level resilience surfaces (structured state, replay affordances, initial checkpointing surface) without promising durable recovery engine (v0.8). | Resilience surfaces + docs; clear v0.8 deferral note | WP-01, WP-05 | #430 (EPIC-F) |
+| WP-06 | Runtime Resilience Surfaces | Deliver v0.7-level resilience surfaces (structured state, replay affordances, initial checkpointing surface) without promising durable recovery engine (v0.85/v0.9). | Resilience surfaces + docs; clear deferred-cluster note | WP-01, WP-05 | #430 (EPIC-F) |
 | WP-07 | Canonical Execution Path Cleanup | Remove duplication and consolidate step execution semantics into canonical helpers without behavior changes. | Simplified execution code paths + regression tests | WP-01 | #383 |
 | WP-08 | Learning Surfaces (No ObsMem) | Stabilize IDs, artifact layout, trace schema, and strict JSON schemas needed for learning train; explicitly independent of ObsMem. | Stable surfaces + `run_summary.json` schema stub + docs | WP-01, WP-02 | #412 (EPIC-A), #414 (EPIC-C) |
 | WP-09 | Learning Train: Observe → Score → Suggest | Incremental learning features across v0.7.x minors: summaries, scoring hooks, explainable suggestions (no automatic application). | `run_summary.json`, scoring hooks, `suggestions.json` + tests | WP-08 | #412 (EPIC-A) |
@@ -124,4 +123,4 @@ Execute and merge in roughly this order:
 - Every in-scope requirement maps to at least one WBS item and issue reference.
 - v0.7.0 foundation can be released independently of v0.7.x learning minors.
 - Learning features remain opt-in and reversible with strict artifact schemas.
-- Deferred v0.8 work is explicitly tracked (ObsMem integration, cluster execution, durable checkpoint engine).
+- Deferred follow-on work is explicitly tracked (v0.75 ObsMem integration; v0.85/v0.9 cluster execution + durable checkpoint engine).

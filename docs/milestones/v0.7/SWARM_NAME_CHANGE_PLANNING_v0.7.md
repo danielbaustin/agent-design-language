@@ -14,7 +14,7 @@ Rename the runtime/CLI/tooling identity from `swarm` to `adl` with a controlled 
 Execute this as the final v0.7 step with a temporary compatibility window:
 - Introduce `adl` as canonical in v0.7.
 - Keep `swarm` aliases for one release cycle.
-- Remove legacy aliases in v0.8 after migration notice period.
+- Remove legacy aliases after the v0.75 compatibility window (exact target release set during release planning).
 
 ## Decision Lock (Accepted)
 
@@ -65,7 +65,7 @@ Calendar estimate:
 ## Execution Plan
 ### Phase 0: Decision Lock (0.5 day)
 - Confirm scope: Option A (active surfaces only; historical docs treated as historical).
-- Confirm compatibility: Option C (one-release window; remove in v0.8).
+- Confirm compatibility: Option C (one-release window; remove after v0.75).
 - Confirm naming targets for v0.7:
   - Keep the `swarm/` directory path stable.
   - Rename crate/package and binaries to `adl`.
@@ -98,7 +98,7 @@ Deliverable:
 
 ### Phase 4: Compatibility Window (Required, 2-4 days)
 - Keep `swarm` aliases/shims for CLI/scripts/env vars.
-- Emit deprecation messaging with removal target (`v0.8`).
+- Emit deprecation messaging with explicit post-v0.75 removal target once finalized.
 - Add tests that prove both new and old entrypoints work during transition.
 
 Deliverable:
@@ -138,7 +138,7 @@ Integration checkpoint required before merge:
 - Migration guide exists with concrete command/env var mappings.
 - If compatibility window is enabled:
   - `swarm` entrypoints continue to function in v0.7.
-  - Deprecation notices point to removal plan in v0.8.
+  - Deprecation notices point to the post-v0.75 removal plan.
 
 ## Proposed Tracking Checklist (for WBS/issues)
 - [ ] Decision recorded: scope option and compatibility policy
@@ -154,4 +154,4 @@ Integration checkpoint required before merge:
 ## Open Decisions
 
 - Exact binary naming for the remote runner (default target: `adl-remote`).
-- Exact deprecation messaging text and removal date (target: v0.8).
+- Exact deprecation messaging text and removal date (target: post-v0.75 compatibility window).

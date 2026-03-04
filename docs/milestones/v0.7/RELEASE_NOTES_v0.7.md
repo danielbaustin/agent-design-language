@@ -26,7 +26,7 @@
 v0.7 is a two-phase release train:
 
 - **v0.7.0 (Foundation)** hardens ADL’s runtime for deterministic, replayable multi-agent execution with security/trust boundaries and paper-driven delegation patterns.
-- **v0.7.x minors (Learning train)** add overlay-based, opt-in learning features (observe → score → suggest → apply → export) without depending on ObsMem (deferred to v0.8).
+- **v0.7.x minors (Learning train)** add overlay-based, opt-in learning features (observe → score → suggest → apply → export) without depending on ObsMem (moved to v0.75 planning).
 
 Core principle: **no silent drift**. Adaptive behavior must be opt-in, artifacted, auditable, and reversible.
 
@@ -64,7 +64,7 @@ Planned areas for v0.7.0 (do not claim shipped until merged/tagged):
 ### Known Limitations
 
 - Learning loop features are **not part of v0.7.0** (they land in v0.7.x minors).
-- ObsMem integration is deferred to **v0.8**.
+- ObsMem integration is deferred to **v0.75 planning**.
 
 ---
 
@@ -86,7 +86,7 @@ Planned sequence (overlay-based, opt-in; no workflow YAML mutation):
 - Overlay-based only; **no workflow YAML mutation**.
 - Opt-in only; **no silent auto-promotion**.
 - Artifacts are versioned and schema-validated (`deny_unknown_fields`).
-- Learning surfaces remain independent of ObsMem (ObsMem is v0.8).
+- Learning surfaces remain independent of ObsMem (ObsMem is v0.75 planning).
 
 ---
 
@@ -95,7 +95,8 @@ Planned sequence (overlay-based, opt-in; no workflow YAML mutation):
 As of 2026-02-24: **Not yet shipped**.
 
 - WP-12 / EPIC-H (#336 / #479) renames runtime identity late in v0.7:
-  - Crate/package + binaries become `adl`
+  - Canonical crate/package/lib identity becomes `adl`
+  - Canonical binaries are `adl` and `adl-remote`
   - Keep the `swarm/` directory path stable in v0.7
   - One-release compatibility window:
     - legacy `swarm` / `swarm-remote` entrypoints remain as shims with deprecation warnings
@@ -115,13 +116,12 @@ At ship time (WP-16), the release must be supported by:
 
 ---
 
-## What’s Next (v0.8 preview)
+## What’s Next (v0.75/v0.8/v0.85+ preview)
 
 These are explicitly out of scope for v0.7:
-- ObsMem integration (memory-backed learning)
-- Distributed/cluster execution (#339)
-- Durable checkpoint / recovery engine (#340)
-- Gödel agent promotion/evaluation harness expansion
+- v0.75: ObsMem v1 integration and deterministic substrate follow-ons (EPIC-A + EPIC-B)
+- v0.8: Gödel + authoring work (EPIC-C + EPIC-D)
+- v0.85/v0.9: Distributed/cluster execution (#339) and durable checkpoint / recovery engine (#340)
 
 ---
 

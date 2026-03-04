@@ -96,7 +96,7 @@ Suggested top-level fields:
 - `prompts` (map of prompt template ids -> text)
 - `routing` (tool routing rules; provider profile selection rules)
 - `planner` (knobs; decomposition style; limits)
-- `memory_policy` (what to store/summarize; ObsMem hooks)
+- `memory_policy` (what to store/summarize; consumes ObsMem v1 surfaces from v0.75)
 - `executor_policy` (timeouts; retries; strictness)
 - `metadata` (description; created_at; tags)
 

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use swarm::adl;
-use swarm::resolve;
+use ::adl::adl;
+use ::adl::resolve;
 
 fn parse_doc(yaml: &str) -> adl::AdlDoc {
     serde_yaml::from_str::<adl::AdlDoc>(yaml).expect("yaml should parse")

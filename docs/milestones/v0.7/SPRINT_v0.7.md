@@ -32,7 +32,7 @@ Complete the v0.7 design pass and milestone-document bootstrap so v0.7 execution
 | Order | Item | Issue | Owner | Status |
 |---|---|---|---|---|
 | 1 | Bootstrap canonical v0.7 milestone docs and generation/check script | #473 | Daniel + Codex.app | in-progress |
-| 2 | De-mangle and finalize `DESIGN_v0.7.md` and record scope boundaries (learning train; ObsMem deferred to v0.8) | #473 | Daniel | done |
+| 2 | De-mangle and finalize `DESIGN_v0.7.md` and record scope boundaries (learning train; ObsMem deferred to v0.75 planning) | #473 | Daniel | done |
 | 3 | Finalize WBS, including EPIC/WP/task taxonomy and mapping to current issue list | #473 | Daniel | in-progress |
 | 4 | Finalize decisions log (learning phasing, ObsMem deferral, rename-last + compat window) | #473 | Daniel | done |
 | 5 | Remove remaining placeholders across v0.7 docs and verify checks | #473 | Daniel + Codex.app | planned |

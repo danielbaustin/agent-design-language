@@ -9,7 +9,7 @@ fn bind_arg_from_args(args: &[String]) -> String {
 
 fn run_with_bind(bind: &str) -> Result<()> {
     eprintln!("swarm-remote listening on http://{bind}");
-    swarm::remote_exec::run_server(bind)
+    ::adl::remote_exec::run_server(bind)
 }
 
 fn is_legacy_swarm_remote_invocation() -> bool {
@@ -17,8 +17,12 @@ fn is_legacy_swarm_remote_invocation() -> bool {
         .next()
         .and_then(|arg0| Path::new(&arg0).file_stem().map(|s| s.to_owned()))
         .and_then(|stem| stem.to_str().map(|s| s.to_ascii_lowercase()))
-        .map(|name| name == "swarm_remote" || name == "swarm-remote")
+        .map(|name| is_legacy_swarm_remote_name(&name))
         .unwrap_or(false)
+}
+
+fn is_legacy_swarm_remote_name(name: &str) -> bool {
+    name == "swarm_remote" || name == "swarm-remote"
 }
 
 fn main() -> Result<()> {
@@ -33,7 +37,10 @@ fn main() -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use super::{bind_arg_from_args, is_legacy_swarm_remote_invocation, run_with_bind};
+    use super::{
+        bind_arg_from_args, is_legacy_swarm_remote_invocation, is_legacy_swarm_remote_name,
+        run_with_bind,
+    };
     use std::path::Path;
 
     #[test]
@@ -65,5 +72,13 @@ mod tests {
         if current_name == "swarm_remote" || current_name == "swarm-remote" {
             assert!(is_legacy_swarm_remote_invocation());
         }
+    }
+
+    #[test]
+    fn legacy_swarm_remote_name_helper_is_precise() {
+        assert!(is_legacy_swarm_remote_name("swarm_remote"));
+        assert!(is_legacy_swarm_remote_name("swarm-remote"));
+        assert!(!is_legacy_swarm_remote_name("adl_remote"));
+        assert!(!is_legacy_swarm_remote_name("adl-remote"));
     }
 }

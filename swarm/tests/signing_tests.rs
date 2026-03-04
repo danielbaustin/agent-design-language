@@ -2,6 +2,12 @@ use std::fs;
 use std::path::Path;
 use std::process::Command;
 
+use ::adl::adl;
+use ::adl::signing::{
+    enforce_verification_profile, verify_doc_with_profile, VerificationErrorKind,
+    VerificationKeySource, VerificationMetadata, VerificationProfile,
+};
+
 mod helpers;
 use helpers::{unique_test_temp_dir, EnvVarGuard};
 
@@ -270,4 +276,129 @@ fn signed_run_executes_without_allow_unsigned() {
         "signed run should pass without --allow-unsigned:\n{}",
         String::from_utf8_lossy(&out.stderr)
     );
+}
+
+fn load_signed_doc_for_testing(base: &Path) -> (std::path::PathBuf, adl::AdlDoc) {
+    let unsigned = write_unsigned_fixture(base);
+    let key_dir = base.join(".keys");
+    let signed = base.join("signed.adl.yaml");
+
+    let keygen = run_swarm(&["keygen", "--out-dir", key_dir.to_str().unwrap()]);
+    assert!(keygen.status.success(), "keygen failed");
+    let sign = run_swarm(&[
+        "sign",
+        unsigned.to_str().unwrap(),
+        "--key",
+        key_dir.join("ed25519-private.b64").to_str().unwrap(),
+        "--key-id",
+        "dev-local",
+        "--out",
+        signed.to_str().unwrap(),
+    ]);
+    assert!(
+        sign.status.success(),
+        "sign failed: {}",
+        String::from_utf8_lossy(&sign.stderr)
+    );
+    let raw = fs::read_to_string(&signed).expect("read signed doc");
+    let doc: adl::AdlDoc = serde_yaml::from_str(&raw).expect("parse signed doc");
+    (signed, doc)
+}
+
+#[test]
+fn enforce_profile_rejects_missing_alg_for_signed_metadata() {
+    let metadata = VerificationMetadata {
+        signed: true,
+        key_id: Some("dev-local"),
+        alg: None,
+        key_source: Some(VerificationKeySource::Embedded),
+    };
+    let profile = VerificationProfile::default();
+    let err = enforce_verification_profile(&metadata, &profile).expect_err("missing alg must fail");
+    assert_eq!(err.kind, VerificationErrorKind::MalformedSignatureMaterial);
+    assert_eq!(err.code, "SIGN_MALFORMED_ALGORITHM");
+}
+
+#[test]
+fn enforce_profile_rejects_disallowed_key_source() {
+    let metadata = VerificationMetadata {
+        signed: true,
+        key_id: Some("dev-local"),
+        alg: Some("ed25519"),
+        key_source: Some(VerificationKeySource::Embedded),
+    };
+    let profile = VerificationProfile {
+        require_signature: true,
+        require_key_id: false,
+        allowed_algs: vec!["ed25519".to_string()],
+        allowed_key_sources: vec![VerificationKeySource::ExplicitKey],
+    };
+    let err =
+        enforce_verification_profile(&metadata, &profile).expect_err("embedded key source denied");
+    assert_eq!(err.kind, VerificationErrorKind::PolicyViolation);
+    assert_eq!(err.code, "SIGN_POLICY_DISALLOWED_KEY_SOURCE");
+    assert!(err.message.contains("embedded"), "message={}", err.message);
+}
+
+#[test]
+fn verify_doc_with_profile_rejects_unsigned_when_profile_allows_unsigned_without_sig_material() {
+    let base = tmp_dir("verify-unsigned-no-sig");
+    let unsigned = write_unsigned_fixture(&base);
+    let raw = fs::read_to_string(&unsigned).expect("read unsigned doc");
+    let doc: adl::AdlDoc = serde_yaml::from_str(&raw).expect("parse unsigned doc");
+    let profile = VerificationProfile {
+        require_signature: false,
+        ..VerificationProfile::default()
+    };
+    let err = verify_doc_with_profile(&doc, None, &profile).expect_err("unsigned must fail here");
+    assert_eq!(err.kind, VerificationErrorKind::PolicyViolation);
+    assert_eq!(err.code, "SIGN_POLICY_UNSIGNED_REQUIRED");
+}
+
+#[test]
+fn verify_doc_with_profile_rejects_missing_key_source_for_signed_doc() {
+    let base = tmp_dir("verify-missing-key-source");
+    let (_, mut doc) = load_signed_doc_for_testing(&base);
+    doc.signature.as_mut().expect("signature").public_key_b64 = None;
+
+    let err = verify_doc_with_profile(&doc, None, &VerificationProfile::default())
+        .expect_err("missing key source must fail");
+    assert_eq!(err.kind, VerificationErrorKind::PolicyViolation);
+    assert_eq!(err.code, "SIGN_POLICY_MISSING_KEY_SOURCE");
+}
+
+#[test]
+fn verify_doc_with_profile_rejects_invalid_embedded_public_key_and_signature_material() {
+    let base = tmp_dir("verify-invalid-embedded-pubkey");
+    let (_, mut doc) = load_signed_doc_for_testing(&base);
+    doc.signature.as_mut().expect("signature").public_key_b64 =
+        Some("!!!not-base64!!!".to_string());
+
+    let err = verify_doc_with_profile(&doc, None, &VerificationProfile::default())
+        .expect_err("invalid embedded key must fail");
+    assert_eq!(err.kind, VerificationErrorKind::MalformedSignatureMaterial);
+    assert_eq!(err.code, "SIGN_MALFORMED_PUBLIC_KEY");
+
+    let base2 = tmp_dir("verify-invalid-sig-material");
+    let (_, mut doc2) = load_signed_doc_for_testing(&base2);
+    doc2.signature.as_mut().expect("signature").sig_b64 = "not-base64".to_string();
+    let err2 = verify_doc_with_profile(&doc2, None, &VerificationProfile::default())
+        .expect_err("invalid signature b64 must fail");
+    assert_eq!(err2.kind, VerificationErrorKind::MalformedSignatureMaterial);
+    assert_eq!(err2.code, "SIGN_MALFORMED_SIGNATURE");
+}
+
+#[test]
+fn verify_doc_with_profile_rejects_invalid_explicit_public_key_file() {
+    assert_eq!(VerificationKeySource::ExplicitKey.as_str(), "explicit_key");
+
+    let base = tmp_dir("verify-invalid-explicit-pubkey");
+    let (_, doc) = load_signed_doc_for_testing(&base);
+    let bad_key = base.join("bad-public-key.b64");
+    fs::write(&bad_key, "not-base64-material").expect("write bad key");
+
+    let err = verify_doc_with_profile(&doc, Some(&bad_key), &VerificationProfile::default())
+        .expect_err("invalid explicit public key should fail");
+    assert_eq!(err.kind, VerificationErrorKind::MalformedSignatureMaterial);
+    assert_eq!(err.code, "SIGN_MALFORMED_PUBLIC_KEY");
 }

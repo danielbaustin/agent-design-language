@@ -6,7 +6,7 @@ ADL is built for teams that care about determinism and auditability. Documents a
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.6-green)
+![Milestone](https://img.shields.io/badge/milestone-v0.7-green)
 
 
 ## Try It Now (Happy Path)
@@ -14,7 +14,7 @@ ADL is built for teams that care about determinism and auditability. Documents a
 From repo root:
 
 ```bash
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-fork-join-seq-run.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-3-fork-join-seq-run.adl.yaml --print-plan
 ```
 
 This prints a deterministic v0.3 fork/join plan with clean output and no provider runtime setup.
@@ -22,7 +22,7 @@ This prints a deterministic v0.3 fork/join plan with clean output and no provide
 If you want a second quick check:
 
 ```bash
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
 ```
 
 ## Demos (Story-Driven, User-Facing)
@@ -44,25 +44,13 @@ Badge semantics:
 - `coverage`: Codecov line-coverage signal for `main` (informational; CI still passes if Codecov upload is unavailable)
 - `milestone`: current documentation milestone marker
 
-## Demos
-
-Story-driven demo packs live in [`docs/milestones/v0.7/DEMOS_v0.7.md`](docs/milestones/v0.7/DEMOS_v0.7.md) under **Story-driven demo packs (user-facing)**:
-
-- `S-01` Determinism You Can Trust
-- `S-02` From Failure to Clarity
-- `S-03` Portable Learning (Exportable Intelligence)
-- `S-04` Enterprise Trust Boundary (Signed Remote Requests)
-- `S-05` ADL is the Product Name (Compatibility Window)
-- `S-06` The Agent That Learns (planned/deferred)
-
-Canonical reference: [`docs/milestones/v0.7/DEMOS_v0.7.md`](docs/milestones/v0.7/DEMOS_v0.7.md)
-
 ## Status
 
 Current release: **v0.6.0**
 
 ## v0.7 Naming Migration (Compatibility Window)
 
+- Canonical Rust crate/package/lib identity is `adl`.
 - Canonical CLI/runtime naming is `adl` and `adl-remote`.
 - Legacy compatibility shim commands remain available in v0.7 with deprecation warnings.
 - Canonical env vars use `ADL_*`; legacy compatibility env vars remain supported in v0.7 with deprecation warnings.
@@ -118,9 +106,9 @@ Current release: **v0.6.0**
 From repo root:
 
 ```bash
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
-cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
 ```
 
 To execute (`--run`) local-provider examples, run from `swarm/` with a local Ollama available.
@@ -132,13 +120,13 @@ These demos are deterministic, non-interactive, and run without network by pinni
 Fork/Join demo (3 branches + deterministic join barrier):
 
 ```bash
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out .adl/reports/demo-v0.4/fork-join-swarm
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out .adl/reports/demo-v0.4/fork-join-swarm
 ```
 
 Bounded parallelism stress (8 branch steps with bounded executor):
 
 ```bash
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-bounded-parallelism.adl.yaml --run --trace --out .adl/reports/demo-v0.4/bounded-parallelism
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-4-demo-bounded-parallelism.adl.yaml --run --trace --out .adl/reports/demo-v0.4/bounded-parallelism
 ```
 
 Current engine concurrency is intentionally fixed at `MAX_PARALLEL=4` in v0.4; this demo proves bounded execution at that shipped limit.
@@ -146,7 +134,7 @@ Current engine concurrency is intentionally fixed at `MAX_PARALLEL=4` in v0.4; t
 Deterministic replay (run twice with same command, then compare `replay/join.txt` hash):
 
 ```bash
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml -- swarm/examples/v0-4-demo-deterministic-replay.adl.yaml --run --trace --out .adl/reports/demo-v0.4/deterministic-replay
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-4-demo-deterministic-replay.adl.yaml --run --trace --out .adl/reports/demo-v0.4/deterministic-replay
 ```
 
 Run all three demos in sequence:
