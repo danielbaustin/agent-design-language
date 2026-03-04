@@ -136,6 +136,30 @@ pub struct TraceDiff {
     pub right_only: Vec<String>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+/// Stable replay-surface schema/contract failures.
+pub struct ReplayInvariantError {
+    pub code: &'static str,
+    pub message: String,
+}
+
+impl ReplayInvariantError {
+    fn new(message: impl Into<String>) -> Self {
+        Self {
+            code: "REPLAY_INVARIANT_VIOLATION",
+            message: message.into(),
+        }
+    }
+}
+
+impl std::fmt::Display for ReplayInvariantError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}: {}", self.code, self.message)
+    }
+}
+
+impl std::error::Error for ReplayInvariantError {}
+
 pub const ACTIVATION_LOG_VERSION: u32 = 1;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -238,52 +262,70 @@ pub fn write_trace_artifact(path: &Path, events: &[TraceEvent]) -> Result<()> {
         .with_context(|| format!("failed writing trace artifact '{}'", path.display()))
 }
 
+pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
+    for cause in err.chain() {
+        if cause.downcast_ref::<ReplayInvariantError>().is_some() {
+            return Some("replay_invariant_violation");
+        }
+    }
+    None
+}
+
 pub fn load_trace_artifact(path: &Path) -> Result<Vec<TraceEventNormalized>> {
     let raw = fs::read_to_string(path)
         .with_context(|| format!("failed reading trace artifact '{}'", path.display()))?;
 
-    let parsed: serde_json::Value = serde_json::from_str(&raw)
-        .with_context(|| format!("failed parsing trace artifact '{}' as json", path.display()))?;
+    let parsed: serde_json::Value = serde_json::from_str(&raw).map_err(|err| {
+        ReplayInvariantError::new(format!(
+            "failed parsing trace artifact '{}' as json: {err}",
+            path.display()
+        ))
+    })?;
 
     match parsed {
         // Canonical v0.75+ wrapper object.
         serde_json::Value::Object(obj) => {
-            let artifact: ActivationLogArtifact =
-                serde_json::from_value(serde_json::Value::Object(obj)).with_context(|| {
-                    format!(
-                        "failed parsing trace artifact '{}' as activation log wrapper",
+            let artifact: ActivationLogArtifact = serde_json::from_value(serde_json::Value::Object(obj))
+                .map_err(|err| {
+                    ReplayInvariantError::new(format!(
+                        "failed parsing trace artifact '{}' as activation log wrapper: {err}",
                         path.display()
-                    )
+                    ))
                 })?;
             if artifact.activation_log_version != ACTIVATION_LOG_VERSION {
-                return Err(anyhow::anyhow!(
+                return Err(ReplayInvariantError::new(format!(
                     "unsupported activation_log_version {} in '{}'; expected {}",
                     artifact.activation_log_version,
                     path.display(),
                     ACTIVATION_LOG_VERSION
-                ));
+                ))
+                .into());
             }
             if artifact.ordering != "append_only_emission_order" {
-                return Err(anyhow::anyhow!(
+                return Err(ReplayInvariantError::new(format!(
                     "unsupported activation log ordering '{}' in '{}'",
                     artifact.ordering,
                     path.display()
-                ));
+                ))
+                .into());
             }
             Ok(artifact.events)
         }
         // Backward compatibility: pre-v0.75 artifacts stored a bare normalized-event array.
-        serde_json::Value::Array(arr) => serde_json::from_value(serde_json::Value::Array(arr))
-            .with_context(|| {
-                format!(
-                    "failed parsing trace artifact '{}' as legacy activation log event array",
+        serde_json::Value::Array(arr) => {
+            serde_json::from_value(serde_json::Value::Array(arr)).map_err(|err| {
+                ReplayInvariantError::new(format!(
+                    "failed parsing trace artifact '{}' as legacy activation log event array: {err}",
                     path.display()
-                )
-            }),
-        _ => Err(anyhow::anyhow!(
+                ))
+                .into()
+            })
+        }
+        _ => Err(ReplayInvariantError::new(format!(
             "failed parsing trace artifact '{}': expected activation log wrapper object or legacy event array",
             path.display()
-        )),
+        ))
+        .into()),
     }
 }
 

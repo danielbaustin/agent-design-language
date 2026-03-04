@@ -754,6 +754,36 @@ fn instrument_replay_rejects_extra_argument() {
 }
 
 #[test]
+fn instrument_replay_schema_mismatch_emits_stable_replay_failure_code() {
+    let d = unique_test_temp_dir("instrument-replay-schema-mismatch");
+    let trace = d.join("trace.json");
+    fs::write(
+        &trace,
+        r#"{
+  "activation_log_version": 1,
+  "ordering": "unordered",
+  "stable_ids": {
+    "step_id": "stable within resolved execution plan",
+    "delegation_id": "deterministic per run: del-<counter>",
+    "run_id": "run-scoped identifier; not replay-stable across independent runs"
+  },
+  "events": []
+}"#,
+    )
+    .expect("write invalid ordering trace");
+    let out = run_swarm(&["instrument", "replay", trace.to_str().unwrap()]);
+    assert!(
+        !out.status.success(),
+        "replay with invalid ordering should fail"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("REPLAY_INVARIANT_VIOLATION"),
+        "stderr should contain stable replay failure code; stderr:\n{stderr}"
+    );
+}
+
+#[test]
 fn learn_subcommand_requires_supported_export_only() {
     let missing = run_swarm(&["learn"]);
     assert!(

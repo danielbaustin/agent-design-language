@@ -92,6 +92,7 @@ v0.75 is two layers:
 - Failure Taxonomy:
   - Stable machine-readable classification codes
   - Deterministic mapping from observed failures to codes
+  - Canonical reference: `docs/milestones/v0.75/FAILURE_TAXONOMY_0.75.md`
 - ObsMem Index:
   - Versioned schema
   - Deterministic query and ordering semantics
