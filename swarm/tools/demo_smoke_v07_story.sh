@@ -35,8 +35,8 @@ if [[ "$s02_rc" -eq 0 ]]; then
   echo "DEMO_SMOKE_FAIL id=S-02 expected failure but command succeeded" >&2
   exit 1
 fi
-if ! rg -n "RUN done .* fail artifacts=|Error: step '.*' failed|No such file or directory" "$s02_log" >/dev/null 2>&1; then
-  echo "DEMO_SMOKE_FAIL id=S-02 expected deterministic failure markers in output" >&2
+if ! rg -n "failed to stat input file|No such file or directory \(os error 2\)|THIS_FILE_DOES_NOT_EXIST\.txt" "$s02_log" >/dev/null 2>&1; then
+  echo "DEMO_SMOKE_FAIL id=S-02 expected deterministic missing-file signal" >&2
   exit 1
 fi
 
