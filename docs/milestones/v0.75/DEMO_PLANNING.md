@@ -114,7 +114,7 @@ User request
 Example job definition:
 
 ```
-swarm/examples/hierarchical-planner.adl.yaml
+examples/v0-7-hierarchical-planner.adl.yaml
 ```
 
 ### Validation
@@ -196,13 +196,12 @@ This also prepares ADL for future **authoring surfaces and planning introspectio
 
 Before running demos:
 
-- The Cargo workspace root is `swarm/` (that is where `Cargo.toml` lives).
-- Commands below assume you are in the `swarm/` directory.
+- Use the runtime workspace directory (the directory that contains `Cargo.toml` for the ADL runtime).
+- Commands below assume you are in that runtime workspace directory.
 
 Build + test:
 
 ```
-cd swarm
 cargo build --workspace
 cargo test --workspace
 ```
@@ -232,7 +231,7 @@ Verify:
 The following must be true before the v0.75 release:
 
 - [ ] All demos run successfully on a clean checkout
-- [ ] Example files live under `swarm/examples/`
+- [ ] Example files live under `examples/` in the runtime workspace
 - [ ] Demo artifacts are reproducible
 - [ ] Documentation references correct example paths
 
