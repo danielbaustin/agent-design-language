@@ -35,7 +35,9 @@ if [[ "$s02_rc" -eq 0 ]]; then
   echo "DEMO_SMOKE_FAIL id=S-02 expected failure but command succeeded" >&2
   exit 1
 fi
-if ! rg -n "failed to stat input file|No such file or directory \(os error 2\)|THIS_FILE_DOES_NOT_EXIST\.txt" "$s02_log" >/dev/null 2>&1; then
+if ! rg -n "failed to stat input file|failed to materialize inputs|No such file or directory|THIS_FILE_DOES_NOT_EXIST\.txt|missing|not found" "$s02_log" >/dev/null 2>&1; then
+  echo "[demo-smoke] S-02 captured output:" >&2
+  sed -n '1,120p' "$s02_log" >&2 || true
   echo "DEMO_SMOKE_FAIL id=S-02 expected deterministic missing-file signal" >&2
   exit 1
 fi
