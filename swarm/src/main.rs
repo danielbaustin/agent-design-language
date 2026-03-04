@@ -18,7 +18,7 @@ fn usage() -> &'static str {
   adl keygen --out-dir <dir>
   adl sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
   adl instrument <graph|replay|diff-plan|diff-trace> ...
-  adl learn export --format <jsonl|bundle-v1> [--runs-dir <dir>] [--run-id <id> ...] --out <path>
+  adl learn export --format <jsonl|bundle-v1|trace-bundle-v2> [--runs-dir <dir>] [--run-id <id> ...] --out <path>
   adl verify <adl.yaml> [--key <public_key_path>]
 
 Options:
@@ -52,6 +52,7 @@ Examples:
   adl instrument replay /tmp/trace.json
   adl instrument diff-trace /tmp/trace-a.json /tmp/trace-b.json
   adl learn export --format bundle-v1 --runs-dir .adl/runs --out /tmp/learning-bundle
+  adl learn export --format trace-bundle-v2 --runs-dir .adl/runs --out /tmp/trace-bundle
   adl verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"
 }
 fn resume_usage() -> &'static str {
@@ -758,9 +759,18 @@ fn real_learn_export(args: &[String]) -> Result<()> {
             );
             rows
         }
+        "trace-bundle-v2" => {
+            let rows = learning_export::export_trace_bundle_v2(&runs_dir, &run_ids, &out_path)?;
+            eprintln!(
+                "LEARN EXPORT: rows={} format=trace-bundle-v2 out={}",
+                rows,
+                out_path.join("trace_bundle_v2").display()
+            );
+            rows
+        }
         _ => {
             return Err(anyhow::anyhow!(
-                "unsupported learn export format '{format}' (supported: jsonl, bundle-v1)"
+                "unsupported learn export format '{format}' (supported: jsonl, bundle-v1, trace-bundle-v2)"
             ));
         }
     };
@@ -1534,6 +1544,8 @@ fn write_run_state_artifacts(
 
     let run_json = serde_json::to_vec_pretty(&run_artifact).context("serialize run.json")?;
     let steps_json = serde_json::to_vec_pretty(&steps).context("serialize steps.json")?;
+    let activation_log_path = run_paths.activation_log_json();
+    instrumentation::write_trace_artifact(&activation_log_path, &tr.events)?;
     let run_summary = build_run_summary(
         resolved,
         status,
