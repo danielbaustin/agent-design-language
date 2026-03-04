@@ -10,6 +10,8 @@ pub const USER_ABORT: &str = "user_abort";
 pub const EXTERNAL_ABORT: &str = "external_abort";
 
 /// Stable classification entry point shared by runtime and replay surfaces.
+/// Classifier order is deterministic and first-match-wins; do not reorder
+/// without updating the v0.75 taxonomy contract documentation.
 pub fn classify(err: &anyhow::Error) -> Option<&'static str> {
     execute::stable_failure_kind(err)
         .or_else(|| provider::stable_failure_kind(err))
