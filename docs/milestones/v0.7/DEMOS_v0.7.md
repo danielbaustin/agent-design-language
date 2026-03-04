@@ -60,6 +60,10 @@ export ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64="$(tr -d '\n' < "$tmpdir/.keys
 export ADL_REMOTE_REQUEST_SIGNING_KEY_ID="demo-key-1"
 ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl-remote -- 127.0.0.1:8787 >/tmp/adl-remote-s04.log 2>&1 &
 remote_pid=$!
+for i in 1 2 3 4 5 6 7 8 9 10; do
+  rg -n "Listening on 127.0.0.1:8787" /tmp/adl-remote-s04.log >/dev/null 2>&1 && break
+  sleep 0.2
+done
 ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-enterprise-signed-remote.adl.yaml --run --trace --allow-unsigned --out "$tmpdir/out"
 kill "$remote_pid"
 unset ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64
@@ -138,10 +142,10 @@ cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/failur
 - Commands:
 ```bash
 ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-6-hitl-pause-resume.adl.yaml --run --trace --allow-unsigned --out .tmp/v07-d06-pause
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- resume v0-6-hitl-pause-demo --out .tmp/v07-d06-resume
+ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- resume v0-6-hitl-pause-demo
 ```
 - Expected output: first command pauses at deterministic boundary; resume command completes.
-- Artifact paths: `.adl/runs/v0-6-hitl-pause-demo/pause_state.json`, `.tmp/v07-d06-resume/`.
+- Artifact paths: `.adl/runs/v0-6-hitl-pause-demo/pause_state.json`, `.adl/runs/v0-6-hitl-pause-demo/run_summary.json`, `out/` (resume outputs).
 
 ## D-07 Streaming Is Observational
 - Purpose: Show streaming trace output does not change final artifacts.

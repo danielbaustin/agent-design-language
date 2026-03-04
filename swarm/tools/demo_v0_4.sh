@@ -5,7 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 MOCK_BIN="$ROOT/swarm/tools/mock_ollama_v0_4.sh"
 OUT_ROOT="$ROOT/.adl/reports/demo-v0.4"
 
-export SWARM_OLLAMA_BIN="$MOCK_BIN"
+export ADL_OLLAMA_BIN="$MOCK_BIN"
 
 run_demo() {
   local name="$1"
@@ -16,7 +16,7 @@ run_demo() {
   mkdir -p "$out_dir"
 
   echo "==> Running $name"
-  cargo run -q --manifest-path "$ROOT/swarm/Cargo.toml" -- "$yaml" --run --trace --out "$out_dir"
+  cargo run -q --manifest-path "$ROOT/swarm/Cargo.toml" --bin adl -- "$yaml" --run --trace --out "$out_dir"
 }
 
 run_demo "fork-join-swarm" "$ROOT/swarm/examples/v0-4-demo-fork-join-swarm.adl.yaml"
