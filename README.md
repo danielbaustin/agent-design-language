@@ -39,16 +39,6 @@ Story packs (v0.7):
 Canonical demo commands and artifact paths:
 - [v0.7 Demo Matrix (Story-driven section)](docs/milestones/v0.7/DEMOS_v0.7.md#story-driven-demo-packs-user-facing)
 
-## Learning Export CLI (v1)
-
-Learning export is available from the canonical CLI:
-
-- `adl learn export --format jsonl --runs-dir .adl/runs --out /tmp/learning.jsonl`
-- `adl learn export --format bundle-v1 --runs-dir .adl/runs --out /tmp/learning-bundle`
-
-During the v0.7 compatibility window, the legacy shim binary also supports the
-same command surface (`swarm learn export ...`).
-
 Badge semantics:
 - `adl-ci`: main branch CI workflow status
 - `coverage`: Codecov line-coverage signal for `main` (informational; CI still passes if Codecov upload is unavailable)
