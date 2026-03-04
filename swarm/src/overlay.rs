@@ -11,18 +11,25 @@ use crate::learning_guardrails::{
 
 pub const OVERLAY_VERSION: u32 = 1;
 
+/// Overlay schema v1 used for deterministic learning-time config mutations.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct OverlaySpecV1 {
+    /// Overlay schema version marker.
     pub overlay_version: u32,
+    /// Logical source run id for audit linkage (optional).
     #[serde(default)]
     pub base_run_id: Option<String>,
+    /// Author/automation identifier.
     pub created_by: String,
+    /// Source artifact versions used to generate this overlay.
     pub created_from: OverlayCreatedFrom,
+    /// Ordered set of overlay changes to apply.
     #[serde(default)]
     pub changes: Vec<OverlayChange>,
 }
 
+/// Version metadata captured when overlay is generated from learning artifacts.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct OverlayCreatedFrom {
@@ -32,24 +39,34 @@ pub struct OverlayCreatedFrom {
     pub artifact_model_version: Option<u32>,
 }
 
+/// Supported overlay operation kinds.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum OverlayOp {
+    /// Set the target field to a new value.
     Set,
 }
 
+/// Single overlay mutation entry.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct OverlayChange {
+    /// Stable change identifier.
     pub id: String,
+    /// Canonical target path.
     pub path: String,
+    /// Mutation operation.
     pub op: OverlayOp,
+    /// New value to apply.
     pub value: JsonValue,
+    /// Human-readable reason.
     pub rationale: String,
+    /// Optional supporting evidence object.
     #[serde(default)]
     pub evidence: Option<JsonValue>,
 }
 
+/// Deterministic audit payload emitted after overlay application.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AppliedOverlayAudit {
@@ -59,6 +76,7 @@ pub struct AppliedOverlayAudit {
     pub applied_paths: Vec<String>,
 }
 
+/// Load and validate an overlay file from disk.
 pub fn load_overlay(path: &Path) -> Result<OverlaySpecV1> {
     let raw = std::fs::read_to_string(path)
         .with_context(|| format!("failed to read overlay file '{}'", path.display()))?;
@@ -78,6 +96,7 @@ pub fn load_overlay(path: &Path) -> Result<OverlaySpecV1> {
     Ok(overlay)
 }
 
+/// Apply an overlay to an ADL document and return deterministic audit metadata.
 pub fn apply_overlay_to_doc(
     doc: &mut adl::AdlDoc,
     overlay: &OverlaySpecV1,

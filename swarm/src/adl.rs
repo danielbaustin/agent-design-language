@@ -811,7 +811,7 @@ pub struct WorkflowSpec {
     /// Optional workflow-local concurrency cap for concurrent runs.
     ///
     /// Precedence for concurrent workflow runs:
-    /// 1) run.workflow.max_concurrency (or workflows.<id>.max_concurrency via workflow_ref)
+    /// 1) `run.workflow.max_concurrency` (or `workflows.<id>.max_concurrency` via `workflow_ref`)
     /// 2) run.defaults.max_concurrency
     /// 3) runtime default (4)
     #[serde(default)]
