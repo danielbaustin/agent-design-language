@@ -419,7 +419,7 @@ mod tests {
 
     #[test]
     fn resolve_existing_allows_unicode_relative_path() {
-        let root = temp_dir("swarm-sandbox-unicode");
+        let root = temp_dir("adl-sandbox-unicode");
         let unicode_dir = root.join("unicodé");
         fs::create_dir_all(&unicode_dir).expect("unicode dir");
         let file = unicode_dir.join("数据.txt");
@@ -434,7 +434,7 @@ mod tests {
 
     #[test]
     fn resolve_for_write_allows_long_nested_relative_path() {
-        let root = temp_dir("swarm-sandbox-long-path");
+        let root = temp_dir("adl-sandbox-long-path");
         fs::create_dir_all(&root).expect("root");
 
         let rel = (0..32)
@@ -467,7 +467,7 @@ mod tests {
     #[cfg(not(windows))]
     #[test]
     fn windows_style_path_string_is_handled_without_host_leakage_on_unix() {
-        let root = temp_dir("swarm-sandbox-win-style-unix");
+        let root = temp_dir("adl-sandbox-win-style-unix");
         fs::create_dir_all(&root).expect("root");
         let win_style = Path::new(r"C:\Users\alice\demo.txt");
         let sanitized = sanitize_requested_path(win_style);
