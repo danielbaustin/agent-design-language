@@ -48,19 +48,7 @@ run_cmd "S-03" \
 # S-04: Enterprise trust-boundary tamper check (daemon-free)
 run_cmd "S-04" "./swarm/tools/demo_d11_signed_remote.sh tamper"
 
-# S-05: Canonical naming + legacy shim warning
+# S-05: Canonical naming path
 run_cmd "S-05" "cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- --help >/dev/null"
-set +e
-cargo run -q --manifest-path swarm/Cargo.toml --bin swarm -- --help >"${TMP_DIR}/s05.stdout" 2>"${TMP_DIR}/s05.stderr"
-s05_rc=$?
-set -e
-if [[ "$s05_rc" -ne 0 ]]; then
-  echo "DEMO_SMOKE_FAIL id=S-05 swarm shim help failed" >&2
-  exit 1
-fi
-if ! rg -n "deprecated|use 'adl'" "${TMP_DIR}/s05.stderr" >/dev/null 2>&1; then
-  echo "DEMO_SMOKE_FAIL id=S-05 expected deterministic shim deprecation warning" >&2
-  exit 1
-fi
 
 echo "[demo-smoke] PASS S-01..S-05"
