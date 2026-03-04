@@ -56,6 +56,10 @@ jobs:
       - name: test
         run: cargo test
 
+      - name: demo smoke (S-01..S-05)
+        run: bash swarm/tools/demo_smoke_v07_story.sh
+        working-directory: .
+
   adl-coverage:
     runs-on: ubuntu-latest
     permissions:
