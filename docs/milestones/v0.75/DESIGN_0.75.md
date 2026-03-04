@@ -96,6 +96,32 @@ v0.75 is two layers:
   - Versioned schema
   - Deterministic query and ordering semantics
 
+### Activation Log Schema Freeze (WP-02)
+The v0.75 activation log schema is frozen at `activation_log_version = 1`.
+
+Canonical on-disk artifact shape:
+- `activation_log_version` (required integer)
+- `ordering` (required string; currently `append_only_emission_order`)
+- `stable_ids` (required object describing identifier stability rules)
+- `events` (required array of normalized activation/trace events)
+
+Backwards-compatibility statement:
+- Readers MUST accept v1 wrapped artifacts.
+- Readers MAY accept legacy event-array artifacts for compatibility during the v0.75 transition window.
+- New writes in v0.75 MUST emit the wrapped v1 artifact shape.
+
+Stable identifier rules:
+- Replay/bundle-stable identifiers:
+  - `step_id`: stable within the resolved execution plan.
+  - `delegation_id`: deterministic within a run (`del-<counter>` allocation), and stable for replay of that run's captured activation log.
+- Run-scoped (intentionally not cross-run stable):
+  - `run_id`: run-scoped identifier; not replay-stable across independent runs.
+
+Deterministic ordering and tie-break rules:
+- Events are emitted and persisted in append-only emission order.
+- The activation log does not apply map/set iteration ordering at write time.
+- Replay consumers MUST process events in persisted order; ties are resolved by position in the `events` array.
+
 ### Execution semantics
 - Determinism definition:
   - If workflow version + inputs + captured boundary events are identical, then replay produces identical outputs and artifact layout (excluding run-id/timestamps).
