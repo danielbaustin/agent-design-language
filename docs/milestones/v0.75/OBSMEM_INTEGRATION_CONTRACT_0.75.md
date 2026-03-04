@@ -40,6 +40,10 @@ Validation and safety rules:
 - `tags`
 - `limit`
 
+Scope note (v0.75):
+- `query` is a structured deterministic retrieval surface in v0.75.
+- Semantic/hybrid retrieval is optional and deferred to later WPs; when enabled later, deterministic tie-break rules must still produce stable ordering for identical index state + query.
+
 Validation rules:
 - `limit >= 1`
 - deterministic upper bound (`limit <= 1000`)
@@ -67,6 +71,11 @@ Stable error codes:
 
 Requirement: callers and tests assert on these stable codes, not free-form strings.
 
+Backend mapping guidance:
+- Backends must map implementation-specific failures into the stable contract codes above.
+- Backend-specific diagnostics may be included in a debug/diagnostic message field, but must not alter deterministic code classification.
+- Determinism-sensitive consumers should key on `code`, not backend message text.
+
 ## Determinism and Replay Guarantees
 - The contract is side-effect free from ADL scheduler semantics.
 - ObsMem retrieval is optional and must not affect replay determinism.
@@ -77,3 +86,7 @@ Requirement: callers and tests assert on these stable codes, not free-form strin
 - No secrets, raw prompts, raw tool arguments, or host absolute paths in contract payloads.
 - Contract payloads are privacy-safe summaries + citations to deterministic artifacts.
 - Implementations may enrich internally, but the interface boundary must remain sanitized.
+
+Privacy guard heuristic notes:
+- v0.75 contract validation uses deterministic local string checks (no network/env-dependent scanners) for obvious host-path and token-like leakage markers.
+- These checks are intentionally conservative safeguards, not a full DLP system.
