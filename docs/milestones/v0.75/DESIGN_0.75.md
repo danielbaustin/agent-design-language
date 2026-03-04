@@ -129,6 +129,22 @@ Deterministic ordering and tie-break rules:
 - Retrieval determinism definition:
   - Given the same index state + query + retrieval config, results return in the same order.
 
+### Replay Semantics (WP-03)
+Replay consumes activation log artifacts using the WP-02 schema contract:
+- Preferred format: v1 wrapper object (`activation_log_version`, `ordering`, `stable_ids`, `events`).
+- Compatibility format: legacy normalized-event array (read-only compatibility path).
+
+Stable replay guarantees:
+- Stable event ordering: consumers process events in persisted array order.
+- Stable replay projection: replay output derived from normalized events is deterministic for equivalent inputs.
+- Stable artifact expectations (for deterministic-mode regression runs): output tree shape and stable file contents match across repeated equivalent runs.
+- Stable failure taxonomy: deterministic failures map to stable machine-readable kinds (for example `policy_denied`, `timeout`, `sandbox_denied`).
+
+Allowed volatile differences:
+- `run_id` across independent runs
+- wall-clock timestamps / elapsed durations in human-readable logs
+- any explicitly documented non-persisted process metadata
+
 ## Risks and Mitigations
 - Risk: Hidden nondeterminism at tool boundaries (time, env, ordering)
   - Mitigation: boundary capture + replay gating; add regression tests; enforce stable ordering.
