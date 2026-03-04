@@ -128,27 +128,75 @@ pub struct RemoteError {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+/// Deterministic security-envelope validation failures for remote execution.
+///
+/// Use [`SecurityEnvelopeError::code`] as the stable classifier in tests and
+/// machine-readable handling.
 pub enum SecurityEnvelopeError {
+    /// Request was unsigned while receiver policy requires signatures.
+    ///
+    /// Recovery: attach a valid request signature or relax policy intentionally.
     UnsignedRequestRequired,
+    /// Request omitted key_id while trust policy requires it.
+    ///
+    /// Recovery: provide a non-empty key_id in signature/security metadata.
     MissingKeyId,
+    /// Signature algorithm is unsupported for remote request verification.
+    ///
+    /// Recovery: use a receiver-allowed algorithm (currently ed25519).
     UnsupportedRequestSignatureAlgorithm { alg: String },
+    /// Signing is required but no request signature payload was provided.
+    ///
+    /// Recovery: sign canonical request bytes and include the signature payload.
     MissingRequestSignature,
+    /// Signature payload is malformed and cannot be parsed/validated.
+    ///
+    /// Recovery: regenerate signature metadata and ensure schema/encoding is
+    /// correct.
     MalformedRequestSignature { reason: String },
+    /// Signature verification failed against canonical request bytes.
+    ///
+    /// Recovery: re-sign the exact request payload without post-sign mutation.
     RequestSignatureMismatch,
+    /// Request used a signature algorithm not allowed by receiver trust policy.
+    ///
+    /// Recovery: select an allowed algorithm or update receiver policy.
     DisallowedAlgorithm { alg: String },
+    /// Request used a key source not allowed by receiver trust policy.
+    ///
+    /// Recovery: use an allowed key source (embedded/explicit_key as configured).
     DisallowedKeySource { key_source: String },
+    /// A signed request omitted key-source metadata when policy requires it.
+    ///
+    /// Recovery: provide deterministic key-source metadata with the request.
     MissingKeySource,
+    /// Requested path contains traversal semantics rejected by the envelope gate.
+    ///
+    /// Recovery: use sandbox-relative normalized paths.
     PathTraversal { path: String },
+    /// Requested path resolves outside sandbox root via symlink traversal.
+    ///
+    /// Recovery: constrain symlink targets to sandbox root.
     SymlinkEscape { path: String },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+/// Stable remote execute client-side error kinds.
+///
+/// This enum normalizes transport/protocol/remote failures for deterministic
+/// handling and retry classification.
 pub enum RemoteExecuteClientErrorKind {
+    /// Request timed out before a valid response was received.
     Timeout,
+    /// Remote endpoint was unreachable.
     Unreachable,
+    /// Remote endpoint returned a non-success HTTP status.
     BadStatus,
+    /// Response body could not be parsed as expected JSON schema.
     InvalidJson,
+    /// Request payload violated remote execution schema constraints.
     SchemaViolation,
+    /// Remote endpoint executed request but returned a structured execution error.
     RemoteExecution,
 }
 

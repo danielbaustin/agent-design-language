@@ -180,8 +180,11 @@ pub struct ResumeState {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+/// Stable policy rejection kinds emitted by execution-time delegation checks.
 pub enum ExecutionPolicyErrorKind {
+    /// Action was denied by policy and execution must fail/stop that step.
     Denied,
+    /// Action requires approval and cannot proceed automatically.
     ApprovalRequired,
 }
 

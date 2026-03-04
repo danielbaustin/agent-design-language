@@ -92,9 +92,19 @@ pub struct VerificationMetadata<'a> {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// Stable verification failure classes for signed ADL documents.
 pub enum VerificationErrorKind {
+    /// Verification failed due to trust/policy constraints.
+    ///
+    /// Recovery: align signing metadata and trust policy requirements.
     PolicyViolation,
+    /// Signature cryptographically failed for canonical bytes.
+    ///
+    /// Recovery: re-sign unmodified canonical document/header bytes.
     SignatureMismatch,
+    /// Signature material (keys/encoding/schema) was malformed.
+    ///
+    /// Recovery: regenerate valid key/signature material and retry.
     MalformedSignatureMaterial,
 }
 

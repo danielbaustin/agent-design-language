@@ -24,10 +24,21 @@ pub(crate) struct OverlaySecurityMutationAttempt {
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[allow(dead_code)] // Wired into overlay-apply path in #485.
 #[allow(clippy::enum_variant_names)] // Mirrors stable *_IMMUTABLE error-code taxonomy.
-/// Guardrail classification for blocked overlay security mutations.
+/// Overlay guardrail failures that prevent learning overlays from mutating
+/// protected security/scheduler surfaces.
 pub(crate) enum LearningGuardrailError {
+    /// Overlay attempted to mutate trust/signing policy surfaces.
+    ///
+    /// Recovery: remove trust/signing changes from overlay intent.
     TrustPolicyImmutable,
+    /// Overlay attempted to mutate sandbox root/requested path policy.
+    ///
+    /// Recovery: keep sandbox policy immutable and adjust only allowed learning
+    /// surfaces.
     SandboxPolicyImmutable,
+    /// Overlay attempted to mutate scheduler policy surfaces.
+    ///
+    /// Recovery: leave scheduler controls unchanged in learning overlays.
     SchedulerPolicyImmutable,
 }
 
