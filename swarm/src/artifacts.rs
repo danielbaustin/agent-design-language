@@ -83,6 +83,11 @@ impl RunArtifactPaths {
         self.run_dir().join("logs")
     }
 
+    /// Canonical activation-log artifact path.
+    pub fn activation_log_json(&self) -> PathBuf {
+        self.logs_dir().join("activation_log.json")
+    }
+
     /// Learning artifact directory.
     pub fn learning_dir(&self) -> PathBuf {
         self.run_dir().join("learning")

@@ -89,9 +89,11 @@ v0.75 is two layers:
   - Versioned manifest
   - Canonical serialization for hashed components
   - Stable relative paths within the bundle
+  - Canonical spec: `docs/milestones/v0.75/TRACE_BUNDLE_v2.md`
 - Failure Taxonomy:
   - Stable machine-readable classification codes
   - Deterministic mapping from observed failures to codes
+  - Canonical reference: `docs/milestones/v0.75/FAILURE_TAXONOMY_0.75.md`
 - ObsMem Integration Contract (WP-07):
   - Defined by `swarm::obsmem_contract` and `docs/milestones/v0.75/OBSMEM_INTEGRATION_CONTRACT_0.75.md`
   - Runtime depends on a trait boundary (`ObsMemClient`), not a concrete ObsMem implementation
@@ -100,12 +102,60 @@ v0.75 is two layers:
   - Versioned schema
   - Deterministic query and ordering semantics
 
+### Activation Log Schema Freeze (WP-02)
+The v0.75 activation log schema is frozen at `activation_log_version = 1`.
+
+Canonical on-disk artifact shape:
+- `activation_log_version` (required integer)
+- `ordering` (required string; currently `append_only_emission_order`)
+- `stable_ids` (required object describing identifier stability rules)
+- `events` (required array of normalized activation/trace events)
+
+Backwards-compatibility statement:
+- Readers MUST accept v1 wrapped artifacts.
+- Readers MAY accept legacy event-array artifacts for compatibility during the v0.75 transition window.
+- New writes in v0.75 MUST emit the wrapped v1 artifact shape.
+
+Stable identifier rules:
+- Replay/bundle-stable identifiers:
+  - `step_id`: stable within the resolved execution plan.
+  - `delegation_id`: deterministic within a run (`del-<counter>` allocation), and stable for replay of that run's captured activation log.
+- Run-scoped (intentionally not cross-run stable):
+  - `run_id`: run-scoped identifier; not replay-stable across independent runs.
+
+Deterministic ordering and tie-break rules:
+- Events are emitted and persisted in append-only emission order.
+- The activation log does not apply map/set iteration ordering at write time.
+- Replay consumers MUST process events in persisted order; ties are resolved by position in the `events` array.
+
 ### Execution semantics
 - Determinism definition:
   - If workflow version + inputs + captured boundary events are identical, then replay produces identical outputs and artifact layout (excluding run-id/timestamps).
 - Tool boundary capture is the “seal” between deterministic interpretation and nondeterministic world.
 - Retrieval determinism definition:
   - Given the same index state + query + retrieval config, results return in the same order.
+
+### Replay Semantics (WP-03)
+Replay consumes activation log artifacts using the WP-02 schema contract:
+- Preferred format: v1 wrapper object (`activation_log_version`, `ordering`, `stable_ids`, `events`).
+- Compatibility format: legacy normalized-event array (read-only compatibility path).
+
+Stable replay guarantees:
+- Stable event ordering: consumers process events in persisted array order.
+- Stable replay projection: replay output derived from normalized events is deterministic for equivalent inputs.
+- Stable artifact expectations (for deterministic-mode regression runs): output tree shape and stable file contents match across repeated equivalent runs.
+- Stable failure taxonomy: deterministic failures map to stable machine-readable kinds (for example `policy_denied`, `timeout`, `sandbox_denied`).
+
+Allowed volatile differences:
+- `run_id` across independent runs
+- wall-clock timestamps / elapsed durations in human-readable logs
+- any explicitly documented non-persisted process metadata
+
+### Replay from Trace Bundle (WP-06)
+- Trace Bundle v2 import validates manifest version, required files, and per-file hash integrity.
+- Bundle replay uses `runs/<run_id>/logs/activation_log.json` as canonical replay input.
+- Bundle import rejects path traversal, absolute host paths, and token-like secret leakage.
+- Replay-from-bundle output is deterministic for identical imported activation logs.
 
 ## Risks and Mitigations
 - Risk: Hidden nondeterminism at tool boundaries (time, env, ordering)

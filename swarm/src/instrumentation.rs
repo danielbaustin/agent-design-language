@@ -136,6 +136,49 @@ pub struct TraceDiff {
     pub right_only: Vec<String>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+/// Stable replay-surface schema/contract failures.
+pub struct ReplayInvariantError {
+    pub code: &'static str,
+    pub message: String,
+}
+
+impl ReplayInvariantError {
+    fn new(message: impl Into<String>) -> Self {
+        Self {
+            code: "REPLAY_INVARIANT_VIOLATION",
+            message: message.into(),
+        }
+    }
+}
+
+impl std::fmt::Display for ReplayInvariantError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}: {}", self.code, self.message)
+    }
+}
+
+impl std::error::Error for ReplayInvariantError {}
+
+pub const ACTIVATION_LOG_VERSION: u32 = 1;
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct ActivationLogStableIds {
+    step_id: String,
+    delegation_id: String,
+    run_id: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct ActivationLogArtifact {
+    activation_log_version: u32,
+    ordering: String,
+    stable_ids: ActivationLogStableIds,
+    events: Vec<TraceEventNormalized>,
+}
+
 pub fn export_graph(plan: &ExecutionPlan) -> GraphExport {
     let mut nodes: Vec<GraphNode> = plan
         .nodes
@@ -204,20 +247,86 @@ pub fn export_graph_dot(plan: &ExecutionPlan) -> String {
 
 pub fn write_trace_artifact(path: &Path, events: &[TraceEvent]) -> Result<()> {
     let normalized = normalize_trace_events(events);
-    let body = serde_json::to_vec_pretty(&normalized).context("serialize trace artifact")?;
+    let artifact = ActivationLogArtifact {
+        activation_log_version: ACTIVATION_LOG_VERSION,
+        ordering: "append_only_emission_order".to_string(),
+        stable_ids: ActivationLogStableIds {
+            step_id: "stable within resolved execution plan".to_string(),
+            delegation_id: "deterministic per run: del-<counter>".to_string(),
+            run_id: "run-scoped identifier; not replay-stable across independent runs".to_string(),
+        },
+        events: normalized,
+    };
+    let body = serde_json::to_vec_pretty(&artifact).context("serialize trace artifact")?;
     fs::write(path, body)
         .with_context(|| format!("failed writing trace artifact '{}'", path.display()))
+}
+
+pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
+    for cause in err.chain() {
+        if cause.downcast_ref::<ReplayInvariantError>().is_some() {
+            return Some("replay_invariant_violation");
+        }
+    }
+    None
 }
 
 pub fn load_trace_artifact(path: &Path) -> Result<Vec<TraceEventNormalized>> {
     let raw = fs::read_to_string(path)
         .with_context(|| format!("failed reading trace artifact '{}'", path.display()))?;
-    serde_json::from_str(&raw).with_context(|| {
-        format!(
-            "failed parsing trace artifact '{}' as normalized trace json",
+
+    let parsed: serde_json::Value = serde_json::from_str(&raw).map_err(|err| {
+        ReplayInvariantError::new(format!(
+            "failed parsing trace artifact '{}' as json: {err}",
             path.display()
-        )
-    })
+        ))
+    })?;
+
+    match parsed {
+        // Canonical v0.75+ wrapper object.
+        serde_json::Value::Object(obj) => {
+            let artifact: ActivationLogArtifact = serde_json::from_value(serde_json::Value::Object(obj))
+                .map_err(|err| {
+                    ReplayInvariantError::new(format!(
+                        "failed parsing trace artifact '{}' as activation log wrapper: {err}",
+                        path.display()
+                    ))
+                })?;
+            if artifact.activation_log_version != ACTIVATION_LOG_VERSION {
+                return Err(ReplayInvariantError::new(format!(
+                    "unsupported activation_log_version {} in '{}'; expected {}",
+                    artifact.activation_log_version,
+                    path.display(),
+                    ACTIVATION_LOG_VERSION
+                ))
+                .into());
+            }
+            if artifact.ordering != "append_only_emission_order" {
+                return Err(ReplayInvariantError::new(format!(
+                    "unsupported activation log ordering '{}' in '{}'",
+                    artifact.ordering,
+                    path.display()
+                ))
+                .into());
+            }
+            Ok(artifact.events)
+        }
+        // Backward compatibility: pre-v0.75 artifacts stored a bare normalized-event array.
+        serde_json::Value::Array(arr) => {
+            serde_json::from_value(serde_json::Value::Array(arr)).map_err(|err| {
+                ReplayInvariantError::new(format!(
+                    "failed parsing trace artifact '{}' as legacy activation log event array: {err}",
+                    path.display()
+                ))
+                .into()
+            })
+        }
+        _ => Err(ReplayInvariantError::new(format!(
+            "failed parsing trace artifact '{}': expected activation log wrapper object or legacy event array",
+            path.display()
+        ))
+        .into()),
+    }
 }
 
 pub fn replay_trace(events: &[TraceEventNormalized]) -> TraceReplay {
@@ -905,7 +1014,7 @@ mod tests {
             .expect("time")
             .as_nanos();
         let path = std::env::temp_dir().join(format!(
-            "swarm-trace-artifact-{now}-{}.json",
+            "adl-trace-artifact-{now}-{}.json",
             std::process::id()
         ));
         let events = vec![
@@ -928,13 +1037,185 @@ mod tests {
     }
 
     #[test]
+    fn write_trace_artifact_emits_frozen_activation_log_wrapper() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let path = std::env::temp_dir().join(format!(
+            "adl-trace-wrapper-{now}-{}.json",
+            std::process::id()
+        ));
+        let events = vec![TraceEvent::RunFinished {
+            ts_ms: 10,
+            elapsed_ms: 10,
+            success: true,
+        }];
+        write_trace_artifact(&path, &events).expect("write artifact");
+        let raw = std::fs::read_to_string(&path).expect("read artifact");
+        let parsed: serde_json::Value = serde_json::from_str(&raw).expect("parse artifact");
+        assert_eq!(
+            parsed["activation_log_version"].as_u64(),
+            Some(ACTIVATION_LOG_VERSION as u64)
+        );
+        assert_eq!(
+            parsed["ordering"].as_str(),
+            Some("append_only_emission_order")
+        );
+        assert!(parsed["stable_ids"].is_object());
+        assert!(parsed["events"].is_array());
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn load_trace_artifact_rejects_missing_required_wrapper_fields() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let path = std::env::temp_dir().join(format!(
+            "adl-trace-missing-required-{now}-{}.json",
+            std::process::id()
+        ));
+        let body = serde_json::json!({
+            "activation_log_version": ACTIVATION_LOG_VERSION,
+            "stable_ids": {
+                "step_id": "stable within resolved execution plan",
+                "delegation_id": "deterministic per run: del-<counter>",
+                "run_id": "run-scoped identifier; not replay-stable across independent runs"
+            },
+            "events": []
+        });
+        std::fs::write(
+            &path,
+            serde_json::to_vec_pretty(&body).expect("serialize missing ordering"),
+        )
+        .expect("write artifact");
+        let err = load_trace_artifact(&path).expect_err("missing ordering should fail");
+        assert!(
+            err.to_string().contains("failed parsing trace artifact"),
+            "unexpected error: {err:#}"
+        );
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn load_trace_artifact_rejects_version_mismatch() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let path = std::env::temp_dir().join(format!(
+            "adl-trace-version-mismatch-{now}-{}.json",
+            std::process::id()
+        ));
+        let body = serde_json::json!({
+            "activation_log_version": ACTIVATION_LOG_VERSION + 1,
+            "ordering": "append_only_emission_order",
+            "stable_ids": {
+                "step_id": "stable within resolved execution plan",
+                "delegation_id": "deterministic per run: del-<counter>",
+                "run_id": "run-scoped identifier; not replay-stable across independent runs"
+            },
+            "events": []
+        });
+        std::fs::write(
+            &path,
+            serde_json::to_vec_pretty(&body).expect("serialize mismatched version"),
+        )
+        .expect("write artifact");
+        let err = load_trace_artifact(&path).expect_err("version mismatch should fail");
+        assert!(
+            err.to_string()
+                .contains("unsupported activation_log_version"),
+            "unexpected error: {err:#}"
+        );
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn load_trace_artifact_rejects_ordering_mismatch() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let path = std::env::temp_dir().join(format!(
+            "adl-trace-ordering-mismatch-{now}-{}.json",
+            std::process::id()
+        ));
+        let body = serde_json::json!({
+            "activation_log_version": ACTIVATION_LOG_VERSION,
+            "ordering": "unordered",
+            "stable_ids": {
+                "step_id": "stable within resolved execution plan",
+                "delegation_id": "deterministic per run: del-<counter>",
+                "run_id": "run-scoped identifier; not replay-stable across independent runs"
+            },
+            "events": []
+        });
+        std::fs::write(
+            &path,
+            serde_json::to_vec_pretty(&body).expect("serialize mismatched ordering"),
+        )
+        .expect("write artifact");
+        let err = load_trace_artifact(&path).expect_err("ordering mismatch should fail");
+        assert!(
+            err.to_string()
+                .contains("unsupported activation log ordering"),
+            "unexpected error: {err:#}"
+        );
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn load_trace_artifact_preserves_append_ordering_in_events() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let path = std::env::temp_dir().join(format!(
+            "adl-trace-order-preserved-{now}-{}.json",
+            std::process::id()
+        ));
+        let events = vec![
+            TraceEvent::StepFinished {
+                ts_ms: 20,
+                elapsed_ms: 20,
+                step_id: "z-step".to_string(),
+                success: true,
+                duration_ms: 0,
+            },
+            TraceEvent::StepFinished {
+                ts_ms: 21,
+                elapsed_ms: 21,
+                step_id: "a-step".to_string(),
+                success: false,
+                duration_ms: 0,
+            },
+            TraceEvent::RunFinished {
+                ts_ms: 22,
+                elapsed_ms: 22,
+                success: false,
+            },
+        ];
+        write_trace_artifact(&path, &events).expect("write artifact");
+        let loaded = load_trace_artifact(&path).expect("load artifact");
+        assert_eq!(
+            loaded,
+            normalize_trace_events(&events),
+            "activation log must preserve append order (no implicit re-sorting)"
+        );
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
     fn load_trace_artifact_invalid_json_returns_context_error() {
         let now = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .expect("time")
             .as_nanos();
         let path = std::env::temp_dir().join(format!(
-            "swarm-trace-invalid-{now}-{}.json",
+            "adl-trace-invalid-{now}-{}.json",
             std::process::id()
         ));
         std::fs::write(&path, "{").expect("write invalid json");

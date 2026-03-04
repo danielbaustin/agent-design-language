@@ -149,6 +149,15 @@ impl fmt::Display for VerificationError {
 
 impl std::error::Error for VerificationError {}
 
+pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
+    for cause in err.chain() {
+        if cause.downcast_ref::<VerificationError>().is_some() {
+            return Some("verification_failed");
+        }
+    }
+    None
+}
+
 pub fn keygen(out_dir: &Path) -> Result<(PathBuf, PathBuf)> {
     fs::create_dir_all(out_dir)
         .with_context(|| format!("failed to create key directory '{}'", out_dir.display()))?;
@@ -233,7 +242,7 @@ pub fn verify_file(path: &Path, public_key_path: Option<&Path>) -> Result<()> {
 /// - this function validates integrity/authenticity, not authorization policy
 pub fn verify_doc(doc: &adl::AdlDoc, public_key_path: Option<&Path>) -> Result<()> {
     verify_doc_with_profile(doc, public_key_path, &VerificationProfile::default())
-        .map_err(|err| anyhow!("{err}"))
+        .map_err(anyhow::Error::new)
 }
 
 pub fn verify_doc_with_profile(

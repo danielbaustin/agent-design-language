@@ -6,8 +6,8 @@ use std::process::Stdio;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use ::adl::{
-    adl, artifacts, bounded_executor, demo, env_compat, execute, instrumentation, learning_export,
-    overlay, plan, prompt, provider, remote_exec, resolve, sandbox, signing, trace,
+    adl, artifacts, demo, env_compat, execute, failure_taxonomy, instrumentation, learning_export,
+    overlay, plan, prompt, resolve, signing, trace,
 };
 
 fn usage() -> &'static str {
@@ -17,8 +17,8 @@ fn usage() -> &'static str {
   adl demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
   adl keygen --out-dir <dir>
   adl sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
-  adl instrument <graph|replay|diff-plan|diff-trace> ...
-  adl learn export --format <jsonl|bundle-v1> [--runs-dir <dir>] [--run-id <id> ...] --out <path>
+  adl instrument <graph|replay|replay-bundle|diff-plan|diff-trace> ...
+  adl learn export --format <jsonl|bundle-v1|trace-bundle-v2> [--runs-dir <dir>] [--run-id <id> ...] --out <path>
   adl verify <adl.yaml> [--key <public_key_path>]
 
 Options:
@@ -50,8 +50,10 @@ Examples:
   adl instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format dot
   adl instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format json
   adl instrument replay /tmp/trace.json
+  adl instrument replay-bundle /tmp/trace_bundle_v2 run-123
   adl instrument diff-trace /tmp/trace-a.json /tmp/trace-b.json
   adl learn export --format bundle-v1 --runs-dir .adl/runs --out /tmp/learning-bundle
+  adl learn export --format trace-bundle-v2 --runs-dir .adl/runs --out /tmp/trace-bundle
   adl verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"
 }
 fn resume_usage() -> &'static str {
@@ -586,7 +588,9 @@ fn real_verify(args: &[String]) -> Result<()> {
 
 fn real_instrument(args: &[String]) -> Result<()> {
     let Some(cmd) = args.first().map(|s| s.as_str()) else {
-        eprintln!("instrument requires one of: graph | replay | diff-plan | diff-trace");
+        eprintln!(
+            "instrument requires one of: graph | replay | replay-bundle | diff-plan | diff-trace"
+        );
         std::process::exit(2);
     };
 
@@ -637,6 +641,24 @@ fn real_instrument(args: &[String]) -> Result<()> {
                 std::process::exit(2);
             }
             let events = instrumentation::load_trace_artifact(Path::new(path))?;
+            let replay = instrumentation::replay_trace(&events);
+            println!("{}", serde_json::to_string_pretty(&replay)?);
+        }
+        "replay-bundle" => {
+            let Some(bundle_dir) = args.get(1) else {
+                eprintln!("instrument replay-bundle requires <bundle_dir> <run_id>");
+                std::process::exit(2);
+            };
+            let Some(run_id) = args.get(2) else {
+                eprintln!("instrument replay-bundle requires <bundle_dir> <run_id>");
+                std::process::exit(2);
+            };
+            if args.len() > 3 {
+                eprintln!("instrument replay-bundle accepts exactly <bundle_dir> <run_id>");
+                std::process::exit(2);
+            }
+            let imported = learning_export::import_trace_bundle_v2(Path::new(bundle_dir), run_id)?;
+            let events = instrumentation::load_trace_artifact(&imported.activation_log_path)?;
             let replay = instrumentation::replay_trace(&events);
             println!("{}", serde_json::to_string_pretty(&replay)?);
         }
@@ -758,9 +780,18 @@ fn real_learn_export(args: &[String]) -> Result<()> {
             );
             rows
         }
+        "trace-bundle-v2" => {
+            let rows = learning_export::export_trace_bundle_v2(&runs_dir, &run_ids, &out_path)?;
+            eprintln!(
+                "LEARN EXPORT: rows={} format=trace-bundle-v2 out={}",
+                rows,
+                out_path.join("trace_bundle_v2").display()
+            );
+            rows
+        }
         _ => {
             return Err(anyhow::anyhow!(
-                "unsupported learn export format '{format}' (supported: jsonl, bundle-v1)"
+                "unsupported learn export format '{format}' (supported: jsonl, bundle-v1, trace-bundle-v2)"
             ));
         }
     };
@@ -1011,21 +1042,7 @@ fn execution_plan_hash<T: Serialize>(plan: &T) -> Result<String> {
 }
 
 fn classify_failure_kind(err: &anyhow::Error) -> Option<&'static str> {
-    execute::stable_failure_kind(err)
-        .or_else(|| provider::stable_failure_kind(err))
-        .or_else(|| remote_exec::stable_failure_kind(err))
-        .or_else(|| bounded_executor::stable_failure_kind(err))
-        .or_else(|| {
-            err.chain().find_map(|cause| {
-                if cause.downcast_ref::<sandbox::SandboxPathError>().is_some() {
-                    Some("sandbox_denied")
-                } else if cause.downcast_ref::<std::io::Error>().is_some() {
-                    Some("io_error")
-                } else {
-                    None
-                }
-            })
-        })
+    failure_taxonomy::classify(err)
 }
 
 fn build_run_summary(
@@ -1548,6 +1565,8 @@ fn write_run_state_artifacts(
 
     let run_json = serde_json::to_vec_pretty(&run_artifact).context("serialize run.json")?;
     let steps_json = serde_json::to_vec_pretty(&steps).context("serialize steps.json")?;
+    let activation_log_path = run_paths.activation_log_json();
+    instrumentation::write_trace_artifact(&activation_log_path, &tr.events)?;
     let run_summary = build_run_summary(
         resolved,
         status,
@@ -2682,7 +2701,7 @@ mod tests {
 
     #[test]
     fn classify_failure_kind_handles_sandbox_and_io_causes() {
-        let sandbox_err = anyhow::Error::new(sandbox::SandboxPathError::PathDenied {
+        let sandbox_err = anyhow::Error::new(::adl::sandbox::SandboxPathError::PathDenied {
             requested_path: "sandbox:/bad".to_string(),
             reason: "parent_traversal",
         });
@@ -2690,6 +2709,78 @@ mod tests {
 
         let io_err = anyhow::Error::new(std::io::Error::other("disk issue"));
         assert_eq!(classify_failure_kind(&io_err), Some("io_error"));
+    }
+
+    #[test]
+    fn classify_failure_kind_covers_verification_and_replay_invariant_failures() {
+        let unsigned_doc = adl::AdlDoc {
+            version: "0.5".to_string(),
+            providers: HashMap::new(),
+            tools: HashMap::new(),
+            agents: HashMap::new(),
+            tasks: HashMap::new(),
+            workflows: HashMap::new(),
+            patterns: vec![],
+            signature: None,
+            run: adl::RunSpec {
+                id: None,
+                name: None,
+                created_at: None,
+                defaults: adl::RunDefaults::default(),
+                workflow_ref: None,
+                workflow: Some(adl::WorkflowSpec {
+                    id: None,
+                    kind: adl::WorkflowKind::Sequential,
+                    max_concurrency: None,
+                    steps: vec![],
+                }),
+                pattern_ref: None,
+                inputs: HashMap::new(),
+                placement: None,
+                remote: None,
+                delegation_policy: None,
+            },
+        };
+        let verify_err = signing::verify_doc(&unsigned_doc, None).expect_err("unsigned verify");
+        assert_eq!(
+            classify_failure_kind(&verify_err),
+            Some("verification_failed")
+        );
+
+        let bad_trace_path = std::env::temp_dir().join(format!(
+            "adl-main-replay-kind-{}-{}.json",
+            now_ms(),
+            std::process::id()
+        ));
+        std::fs::write(&bad_trace_path, "{\"activation_log_version\":1,\"ordering\":\"bad\",\"stable_ids\":{\"step_id\":\"x\",\"delegation_id\":\"x\",\"run_id\":\"x\"},\"events\":[]}")
+            .expect("write bad replay file");
+        let replay_err =
+            instrumentation::load_trace_artifact(&bad_trace_path).expect_err("ordering mismatch");
+        assert_eq!(
+            classify_failure_kind(&replay_err),
+            Some("replay_invariant_violation")
+        );
+        let _ = std::fs::remove_file(&bad_trace_path);
+    }
+
+    #[test]
+    fn taxonomy_category_mapping_is_stable_for_core_codes() {
+        assert_eq!(
+            failure_taxonomy::category_for_code("policy_denied"),
+            failure_taxonomy::POLICY_DENIED
+        );
+        assert_eq!(
+            failure_taxonomy::category_for_code("verification_failed"),
+            failure_taxonomy::VERIFICATION_FAILED
+        );
+        assert_eq!(
+            failure_taxonomy::category_for_code("replay_invariant_violation"),
+            failure_taxonomy::REPLAY_INVARIANT_VIOLATION
+        );
+        assert_eq!(
+            failure_taxonomy::category_for_code("provider_error"),
+            failure_taxonomy::TOOL_FAILURE
+        );
     }
 
     #[test]
@@ -2783,7 +2874,7 @@ mod tests {
                 output_artifact_path: None,
             },
         ];
-        let failure = anyhow::Error::new(sandbox::SandboxPathError::PathDenied {
+        let failure = anyhow::Error::new(::adl::sandbox::SandboxPathError::PathDenied {
             requested_path: "sandbox:/bad".to_string(),
             reason: "parent_traversal",
         });

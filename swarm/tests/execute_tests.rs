@@ -2592,6 +2592,321 @@ run:
 }
 
 #[test]
+fn replay_regression_holds_event_order_artifact_layout_and_failure_kind_stability() {
+    let base = tmp_dir("exec-replay-regression");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepEchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let success_run_id = "replay-regression-success";
+    let success_run_dir = repo_runs_dir().join(success_run_id);
+    let _ = fs::remove_dir_all(&success_run_dir);
+
+    let success_yaml = format!(
+        r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  name: "{success_run_id}"
+  defaults:
+    max_concurrency: 2
+  workflow:
+    kind: "concurrent"
+    steps:
+      - id: "s3"
+        agent: "a"
+        task: "t"
+        inputs: {{ n: "3" }}
+        save_as: "s3"
+        write_to: "s3.txt"
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: {{ n: "1" }}
+        save_as: "s1"
+        write_to: "s1.txt"
+      - id: "s4"
+        agent: "a"
+        task: "t"
+        inputs: {{ n: "4" }}
+        save_as: "s4"
+        write_to: "s4.txt"
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        inputs: {{ n: "2" }}
+        save_as: "s2"
+        write_to: "s2.txt"
+"#
+    );
+    let success_yaml_path = base.join("replay-regression-success.yaml");
+    fs::write(&success_yaml_path, success_yaml).unwrap();
+
+    let out_a = base.join("out-a");
+    let out_b = base.join("out-b");
+    let trace_a = base.join("trace-a.json");
+    let trace_b = base.join("trace-b.json");
+
+    let first = run_swarm(&[
+        success_yaml_path.to_str().unwrap(),
+        "--run",
+        "--trace",
+        "--out",
+        out_a.to_str().unwrap(),
+    ]);
+    assert!(
+        first.status.success(),
+        "first success run should pass.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&first.stdout),
+        String::from_utf8_lossy(&first.stderr)
+    );
+
+    let second = run_swarm(&[
+        success_yaml_path.to_str().unwrap(),
+        "--run",
+        "--trace",
+        "--out",
+        out_b.to_str().unwrap(),
+    ]);
+    assert!(
+        second.status.success(),
+        "second success run should pass.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&second.stdout),
+        String::from_utf8_lossy(&second.stderr)
+    );
+
+    // Stable event ordering: start order is deterministic across repeated runs.
+    let started_a = trace_started_step_ids(&String::from_utf8_lossy(&first.stdout));
+    let started_b = trace_started_step_ids(&String::from_utf8_lossy(&second.stdout));
+    assert_eq!(started_a, vec!["s1", "s2", "s3", "s4"]);
+    assert_eq!(started_a, started_b);
+
+    // Replay runner determinism against WP-02 activation-log schema wrapper.
+    let replay_events_a = vec![
+        ::adl::trace::TraceEvent::StepStarted {
+            ts_ms: 10,
+            elapsed_ms: 10,
+            step_id: "s1".to_string(),
+            agent_id: "a".to_string(),
+            provider_id: "local".to_string(),
+            task_id: "t".to_string(),
+            delegation: None,
+        },
+        ::adl::trace::TraceEvent::StepOutputChunk {
+            ts_ms: 11,
+            elapsed_ms: 11,
+            step_id: "s1".to_string(),
+            chunk_bytes: 24,
+        },
+        ::adl::trace::TraceEvent::StepFinished {
+            ts_ms: 12,
+            elapsed_ms: 12,
+            step_id: "s1".to_string(),
+            success: true,
+            duration_ms: 2,
+        },
+        ::adl::trace::TraceEvent::RunFinished {
+            ts_ms: 13,
+            elapsed_ms: 13,
+            success: true,
+        },
+    ];
+    let replay_events_b = vec![
+        ::adl::trace::TraceEvent::StepStarted {
+            ts_ms: 110,
+            elapsed_ms: 110,
+            step_id: "s1".to_string(),
+            agent_id: "a".to_string(),
+            provider_id: "local".to_string(),
+            task_id: "t".to_string(),
+            delegation: None,
+        },
+        ::adl::trace::TraceEvent::StepOutputChunk {
+            ts_ms: 111,
+            elapsed_ms: 111,
+            step_id: "s1".to_string(),
+            chunk_bytes: 24,
+        },
+        ::adl::trace::TraceEvent::StepFinished {
+            ts_ms: 112,
+            elapsed_ms: 112,
+            step_id: "s1".to_string(),
+            success: true,
+            duration_ms: 2,
+        },
+        ::adl::trace::TraceEvent::RunFinished {
+            ts_ms: 113,
+            elapsed_ms: 113,
+            success: true,
+        },
+    ];
+    ::adl::instrumentation::write_trace_artifact(&trace_a, &replay_events_a).unwrap();
+    ::adl::instrumentation::write_trace_artifact(&trace_b, &replay_events_b).unwrap();
+
+    // Replay runner determinism: equivalent activation logs must produce identical replay JSON.
+    let replay_a = run_swarm(&["instrument", "replay", trace_a.to_str().unwrap()]);
+    let replay_b = run_swarm(&["instrument", "replay", trace_b.to_str().unwrap()]);
+    assert!(
+        replay_a.status.success() && replay_b.status.success(),
+        "replay should succeed.\nreplay_a stderr:\n{}\nreplay_b stderr:\n{}",
+        String::from_utf8_lossy(&replay_a.stderr),
+        String::from_utf8_lossy(&replay_b.stderr)
+    );
+    assert_eq!(
+        replay_a.stdout, replay_b.stdout,
+        "replay output JSON should be byte-stable across repeated equivalent runs"
+    );
+
+    // Stable artifact layout and stable output bytes.
+    let collect_files = |root: &Path| -> Vec<(String, Vec<u8>)> {
+        fn walk(root: &Path, cur: &Path, out: &mut Vec<(String, Vec<u8>)>) {
+            let mut entries: Vec<_> = fs::read_dir(cur)
+                .unwrap()
+                .map(|e| e.unwrap().path())
+                .collect();
+            entries.sort();
+            for p in entries {
+                if p.is_dir() {
+                    walk(root, &p, out);
+                } else {
+                    let rel = p
+                        .strip_prefix(root)
+                        .unwrap()
+                        .to_string_lossy()
+                        .replace('\\', "/");
+                    out.push((rel, fs::read(&p).unwrap()));
+                }
+            }
+        }
+        let mut out = Vec::new();
+        walk(root, root, &mut out);
+        out
+    };
+    assert_eq!(
+        collect_files(&out_a),
+        collect_files(&out_b),
+        "output artifact tree and bytes should be stable across repeated runs"
+    );
+
+    let failure_run_id = "replay-regression-failure";
+    let failure_run_dir = repo_runs_dir().join(failure_run_id);
+    let _ = fs::remove_dir_all(&failure_run_dir);
+    let failure_yaml = format!(
+        r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t:
+    prompt:
+      user: "work {{n}}"
+run:
+  name: "{failure_run_id}"
+  delegation_policy:
+    default_allow: true
+    rules:
+      - id: "deny-local-provider"
+        action: provider_call
+        target_id: "local"
+        effect: deny
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        inputs: {{ n: "1" }}
+        delegation:
+          role: "reviewer"
+"#
+    );
+    let failure_yaml_path = base.join("replay-regression-failure.yaml");
+    fs::write(&failure_yaml_path, failure_yaml).unwrap();
+
+    let fail1 = run_swarm(&[failure_yaml_path.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        !fail1.status.success(),
+        "expected first policy-denied run to fail"
+    );
+    let status1: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(failure_run_dir.join("run_status.json")).unwrap())
+            .unwrap();
+    assert_eq!(status1["failure_kind"], "policy_denied");
+
+    let fail2 = run_swarm(&[failure_yaml_path.to_str().unwrap(), "--run", "--trace"]);
+    assert!(
+        !fail2.status.success(),
+        "expected second policy-denied run to fail"
+    );
+    let status2: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(failure_run_dir.join("run_status.json")).unwrap())
+            .unwrap();
+    assert_eq!(status2["failure_kind"], "policy_denied");
+    let fail_trace_a = base.join("trace-fail-a.json");
+    let fail_trace_b = base.join("trace-fail-b.json");
+    let fail_events_a = vec![
+        ::adl::trace::TraceEvent::StepStarted {
+            ts_ms: 20,
+            elapsed_ms: 20,
+            step_id: "s1".to_string(),
+            agent_id: "a".to_string(),
+            provider_id: "local".to_string(),
+            task_id: "t".to_string(),
+            delegation: None,
+        },
+        ::adl::trace::TraceEvent::RunFailed {
+            ts_ms: 21,
+            elapsed_ms: 21,
+            message: "DELEGATION_POLICY_DENIED: denied".to_string(),
+        },
+    ];
+    let fail_events_b = vec![
+        ::adl::trace::TraceEvent::StepStarted {
+            ts_ms: 120,
+            elapsed_ms: 120,
+            step_id: "s1".to_string(),
+            agent_id: "a".to_string(),
+            provider_id: "local".to_string(),
+            task_id: "t".to_string(),
+            delegation: None,
+        },
+        ::adl::trace::TraceEvent::RunFailed {
+            ts_ms: 121,
+            elapsed_ms: 121,
+            message: "DELEGATION_POLICY_DENIED: denied".to_string(),
+        },
+    ];
+    ::adl::instrumentation::write_trace_artifact(&fail_trace_a, &fail_events_a).unwrap();
+    ::adl::instrumentation::write_trace_artifact(&fail_trace_b, &fail_events_b).unwrap();
+
+    let fail_replay_a = run_swarm(&["instrument", "replay", fail_trace_a.to_str().unwrap()]);
+    let fail_replay_b = run_swarm(&["instrument", "replay", fail_trace_b.to_str().unwrap()]);
+    assert!(
+        fail_replay_a.status.success() && fail_replay_b.status.success(),
+        "failed-run replay should still parse deterministically"
+    );
+    assert_eq!(
+        fail_replay_a.stdout, fail_replay_b.stdout,
+        "failed-run replay output should be stable"
+    );
+}
+
+#[test]
 fn run_status_failure_kind_maps_timeout_without_raw_provider_error_text() {
     let listener = match TcpListener::bind("127.0.0.1:0") {
         Ok(listener) => listener,
