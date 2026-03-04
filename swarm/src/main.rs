@@ -17,7 +17,7 @@ fn usage() -> &'static str {
   adl demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
   adl keygen --out-dir <dir>
   adl sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
-  adl instrument <graph|replay|diff-plan|diff-trace> ...
+  adl instrument <graph|replay|replay-bundle|diff-plan|diff-trace> ...
   adl learn export --format <jsonl|bundle-v1|trace-bundle-v2> [--runs-dir <dir>] [--run-id <id> ...] --out <path>
   adl verify <adl.yaml> [--key <public_key_path>]
 
@@ -50,6 +50,7 @@ Examples:
   adl instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format dot
   adl instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format json
   adl instrument replay /tmp/trace.json
+  adl instrument replay-bundle /tmp/trace_bundle_v2 run-123
   adl instrument diff-trace /tmp/trace-a.json /tmp/trace-b.json
   adl learn export --format bundle-v1 --runs-dir .adl/runs --out /tmp/learning-bundle
   adl learn export --format trace-bundle-v2 --runs-dir .adl/runs --out /tmp/trace-bundle
@@ -587,7 +588,9 @@ fn real_verify(args: &[String]) -> Result<()> {
 
 fn real_instrument(args: &[String]) -> Result<()> {
     let Some(cmd) = args.first().map(|s| s.as_str()) else {
-        eprintln!("instrument requires one of: graph | replay | diff-plan | diff-trace");
+        eprintln!(
+            "instrument requires one of: graph | replay | replay-bundle | diff-plan | diff-trace"
+        );
         std::process::exit(2);
     };
 
@@ -638,6 +641,24 @@ fn real_instrument(args: &[String]) -> Result<()> {
                 std::process::exit(2);
             }
             let events = instrumentation::load_trace_artifact(Path::new(path))?;
+            let replay = instrumentation::replay_trace(&events);
+            println!("{}", serde_json::to_string_pretty(&replay)?);
+        }
+        "replay-bundle" => {
+            let Some(bundle_dir) = args.get(1) else {
+                eprintln!("instrument replay-bundle requires <bundle_dir> <run_id>");
+                std::process::exit(2);
+            };
+            let Some(run_id) = args.get(2) else {
+                eprintln!("instrument replay-bundle requires <bundle_dir> <run_id>");
+                std::process::exit(2);
+            };
+            if args.len() > 3 {
+                eprintln!("instrument replay-bundle accepts exactly <bundle_dir> <run_id>");
+                std::process::exit(2);
+            }
+            let imported = learning_export::import_trace_bundle_v2(Path::new(bundle_dir), run_id)?;
+            let events = instrumentation::load_trace_artifact(&imported.activation_log_path)?;
             let replay = instrumentation::replay_trace(&events);
             println!("{}", serde_json::to_string_pretty(&replay)?);
         }

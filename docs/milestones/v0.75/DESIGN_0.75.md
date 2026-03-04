@@ -147,6 +147,12 @@ Allowed volatile differences:
 - wall-clock timestamps / elapsed durations in human-readable logs
 - any explicitly documented non-persisted process metadata
 
+### Replay from Trace Bundle (WP-06)
+- Trace Bundle v2 import validates manifest version, required files, and per-file hash integrity.
+- Bundle replay uses `runs/<run_id>/logs/activation_log.json` as canonical replay input.
+- Bundle import rejects path traversal, absolute host paths, and token-like secret leakage.
+- Replay-from-bundle output is deterministic for identical imported activation logs.
+
 ## Risks and Mitigations
 - Risk: Hidden nondeterminism at tool boundaries (time, env, ordering)
   - Mitigation: boundary capture + replay gating; add regression tests; enforce stable ordering.

@@ -45,6 +45,9 @@ Determinism rules:
 Export command:
 - `adl learn export --format trace-bundle-v2 --runs-dir .adl/runs --out /tmp/trace-bundle`
 
+Replay-from-bundle command:
+- `adl instrument replay-bundle /tmp/trace-bundle/trace_bundle_v2 <run_id>`
+
 Compatibility note:
 - Legacy CLI shim remains available during compatibility window.
 
@@ -55,3 +58,13 @@ Trace Bundle v2 export provides replay-sufficient artifacts for WP-06 import/rep
 - step mapping (`steps.json`)
 
 Output files and learning summaries are optional and not required for replay correctness.
+
+Replay-from-bundle guarantees (WP-06):
+- Import validates manifest version, required files, file hashes, and canonical path safety.
+- Import rejects tampered bundle content with deterministic hash-mismatch errors.
+- Replay uses the imported `logs/activation_log.json` as the canonical activation source.
+- For equivalent bundle input, replay output is byte-stable.
+
+Allowed volatile fields:
+- Independent run ids and wall-clock timestamps from original execution.
+- Human log formatting outside canonical replay JSON output.
