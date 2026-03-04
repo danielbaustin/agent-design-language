@@ -242,32 +242,49 @@ pub fn load_trace_artifact(path: &Path) -> Result<Vec<TraceEventNormalized>> {
     let raw = fs::read_to_string(path)
         .with_context(|| format!("failed reading trace artifact '{}'", path.display()))?;
 
-    if let Ok(artifact) = serde_json::from_str::<ActivationLogArtifact>(&raw) {
-        if artifact.activation_log_version != ACTIVATION_LOG_VERSION {
-            return Err(anyhow::anyhow!(
-                "unsupported activation_log_version {} in '{}'; expected {}",
-                artifact.activation_log_version,
-                path.display(),
-                ACTIVATION_LOG_VERSION
-            ));
-        }
-        if artifact.ordering != "append_only_emission_order" {
-            return Err(anyhow::anyhow!(
-                "unsupported activation log ordering '{}' in '{}'",
-                artifact.ordering,
-                path.display()
-            ));
-        }
-        return Ok(artifact.events);
-    }
+    let parsed: serde_json::Value = serde_json::from_str(&raw)
+        .with_context(|| format!("failed parsing trace artifact '{}' as json", path.display()))?;
 
-    // Backward compatibility: pre-v0.75 artifacts stored a bare normalized-event array.
-    serde_json::from_str::<Vec<TraceEventNormalized>>(&raw).with_context(|| {
-        format!(
-            "failed parsing trace artifact '{}' as activation log json",
+    match parsed {
+        // Canonical v0.75+ wrapper object.
+        serde_json::Value::Object(obj) => {
+            let artifact: ActivationLogArtifact =
+                serde_json::from_value(serde_json::Value::Object(obj)).with_context(|| {
+                    format!(
+                        "failed parsing trace artifact '{}' as activation log wrapper",
+                        path.display()
+                    )
+                })?;
+            if artifact.activation_log_version != ACTIVATION_LOG_VERSION {
+                return Err(anyhow::anyhow!(
+                    "unsupported activation_log_version {} in '{}'; expected {}",
+                    artifact.activation_log_version,
+                    path.display(),
+                    ACTIVATION_LOG_VERSION
+                ));
+            }
+            if artifact.ordering != "append_only_emission_order" {
+                return Err(anyhow::anyhow!(
+                    "unsupported activation log ordering '{}' in '{}'",
+                    artifact.ordering,
+                    path.display()
+                ));
+            }
+            Ok(artifact.events)
+        }
+        // Backward compatibility: pre-v0.75 artifacts stored a bare normalized-event array.
+        serde_json::Value::Array(arr) => serde_json::from_value(serde_json::Value::Array(arr))
+            .with_context(|| {
+                format!(
+                    "failed parsing trace artifact '{}' as legacy activation log event array",
+                    path.display()
+                )
+            }),
+        _ => Err(anyhow::anyhow!(
+            "failed parsing trace artifact '{}': expected activation log wrapper object or legacy event array",
             path.display()
-        )
-    })
+        )),
+    }
 }
 
 pub fn replay_trace(events: &[TraceEventNormalized]) -> TraceReplay {
@@ -955,7 +972,7 @@ mod tests {
             .expect("time")
             .as_nanos();
         let path = std::env::temp_dir().join(format!(
-            "swarm-trace-artifact-{now}-{}.json",
+            "adl-trace-artifact-{now}-{}.json",
             std::process::id()
         ));
         let events = vec![
@@ -984,7 +1001,7 @@ mod tests {
             .expect("time")
             .as_nanos();
         let path = std::env::temp_dir().join(format!(
-            "swarm-trace-wrapper-{now}-{}.json",
+            "adl-trace-wrapper-{now}-{}.json",
             std::process::id()
         ));
         let events = vec![TraceEvent::RunFinished {
@@ -1015,7 +1032,7 @@ mod tests {
             .expect("time")
             .as_nanos();
         let path = std::env::temp_dir().join(format!(
-            "swarm-trace-missing-required-{now}-{}.json",
+            "adl-trace-missing-required-{now}-{}.json",
             std::process::id()
         ));
         let body = serde_json::json!({
@@ -1047,7 +1064,7 @@ mod tests {
             .expect("time")
             .as_nanos();
         let path = std::env::temp_dir().join(format!(
-            "swarm-trace-version-mismatch-{now}-{}.json",
+            "adl-trace-version-mismatch-{now}-{}.json",
             std::process::id()
         ));
         let body = serde_json::json!({
@@ -1081,7 +1098,7 @@ mod tests {
             .expect("time")
             .as_nanos();
         let path = std::env::temp_dir().join(format!(
-            "swarm-trace-ordering-mismatch-{now}-{}.json",
+            "adl-trace-ordering-mismatch-{now}-{}.json",
             std::process::id()
         ));
         let body = serde_json::json!({
@@ -1115,7 +1132,7 @@ mod tests {
             .expect("time")
             .as_nanos();
         let path = std::env::temp_dir().join(format!(
-            "swarm-trace-order-preserved-{now}-{}.json",
+            "adl-trace-order-preserved-{now}-{}.json",
             std::process::id()
         ));
         let events = vec![
@@ -1156,7 +1173,7 @@ mod tests {
             .expect("time")
             .as_nanos();
         let path = std::env::temp_dir().join(format!(
-            "swarm-trace-invalid-{now}-{}.json",
+            "adl-trace-invalid-{now}-{}.json",
             std::process::id()
         ));
         std::fs::write(&path, "{").expect("write invalid json");

@@ -111,9 +111,11 @@ Backwards-compatibility statement:
 - New writes in v0.75 MUST emit the wrapped v1 artifact shape.
 
 Stable identifier rules:
-- `step_id`: stable within the resolved execution plan.
-- `delegation_id`: deterministic within a run (`del-<counter>` allocation).
-- `run_id`: run-scoped identifier; not replay-stable across independent runs.
+- Replay/bundle-stable identifiers:
+  - `step_id`: stable within the resolved execution plan.
+  - `delegation_id`: deterministic within a run (`del-<counter>` allocation), and stable for replay of that run's captured activation log.
+- Run-scoped (intentionally not cross-run stable):
+  - `run_id`: run-scoped identifier; not replay-stable across independent runs.
 
 Deterministic ordering and tie-break rules:
 - Events are emitted and persisted in append-only emission order.
