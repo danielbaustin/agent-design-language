@@ -46,7 +46,7 @@ Export command:
 - `adl learn export --format trace-bundle-v2 --runs-dir .adl/runs --out /tmp/trace-bundle`
 
 Compatibility note:
-- `swarm` shim remains available during compatibility window.
+- Legacy CLI shim remains available during compatibility window.
 
 ## Replay sufficiency boundary
 Trace Bundle v2 export provides replay-sufficient artifacts for WP-06 import/replay proof:
