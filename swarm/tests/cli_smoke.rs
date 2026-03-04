@@ -754,6 +754,170 @@ fn instrument_replay_rejects_extra_argument() {
 }
 
 #[test]
+fn instrument_replay_bundle_rejects_invalid_arguments() {
+    assert_failure_contains(
+        &run_swarm(&["instrument", "replay-bundle"]),
+        "instrument replay-bundle requires <bundle_dir> <run_id>",
+    );
+    assert_failure_contains(
+        &run_swarm(&["instrument", "replay-bundle", "/tmp/trace_bundle_v2"]),
+        "instrument replay-bundle requires <bundle_dir> <run_id>",
+    );
+    assert_failure_contains(
+        &run_swarm(&[
+            "instrument",
+            "replay-bundle",
+            "/tmp/trace_bundle_v2",
+            "run1",
+            "extra",
+        ]),
+        "instrument replay-bundle accepts exactly <bundle_dir> <run_id>",
+    );
+}
+
+#[test]
+fn instrument_replay_bundle_from_trace_bundle_v2_is_stable() {
+    let d = unique_test_temp_dir("instrument-replay-bundle");
+    let runs = d.join("runs");
+    let run = runs.join("r1");
+    fs::create_dir_all(run.join("logs")).unwrap();
+    fs::create_dir_all(run.join("learning")).unwrap();
+
+    fs::write(
+        run.join("run.json"),
+        r#"{"schema_version":"run_state.v1","run_id":"r1","workflow_id":"wf","version":"0.75","status":"success","error_message":null,"start_time_ms":1,"end_time_ms":2,"duration_ms":1,"execution_plan_hash":"abc","scheduler_max_concurrency":null,"scheduler_policy_source":null,"pause":null}"#,
+    )
+    .unwrap();
+    fs::write(
+        run.join("steps.json"),
+        r#"[{"step_id":"s1","agent_id":"a","provider_id":"p","status":"success","output_artifact_path":"outputs/s1.txt"}]"#,
+    )
+    .unwrap();
+    fs::write(
+        run.join("run_summary.json"),
+        r#"{"run_summary_version":1,"artifact_model_version":1,"run_id":"r1","workflow_id":"wf","adl_version":"0.75","swarm_version":"0.7.0","status":"success","counts":{"total_steps":1,"completed_steps":1,"failed_steps":0,"provider_call_count":1,"delegation_steps":0,"delegation_requires_verification_steps":0},"policy":{"security_envelope_enabled":false,"signing_required":false,"key_id_required":false,"verify_allowed_algs":[],"verify_allowed_key_sources":[],"sandbox_policy":"centralized_path_resolver_v1","security_denials_by_code":{}},"links":{"run_json":"run.json","steps_json":"steps.json","outputs_dir":"outputs","logs_dir":"logs","learning_dir":"learning","overlays_dir":"learning/overlays"}}"#,
+    )
+    .unwrap();
+    fs::write(
+        run.join("run_status.json"),
+        r#"{"run_status_version":1,"run_id":"r1","workflow_id":"wf","overall_status":"succeeded","failure_kind":null,"completed_steps":["s1"],"pending_steps":[],"attempt_counts_by_step":{"s1":1}}"#,
+    )
+    .unwrap();
+    fs::write(
+        run.join("logs").join("activation_log.json"),
+        r#"{"activation_log_version":1,"ordering":"append_only_emission_order","stable_ids":{"step_id":"replay_stable_with_same_plan","delegation_id":"replay_stable_with_same_activation_log","run_id":"run_scoped_not_cross_run_stable"},"events":[{"kind":"StepStarted","step_id":"s1","agent_id":"a","provider_id":"p","task_id":"t","delegation_json":null},{"kind":"StepFinished","step_id":"s1","success":true}]}"#,
+    )
+    .unwrap();
+
+    let bundle_out = d.join("bundle");
+    let export = run_swarm(&[
+        "learn",
+        "export",
+        "--format",
+        "trace-bundle-v2",
+        "--runs-dir",
+        runs.to_str().unwrap(),
+        "--out",
+        bundle_out.to_str().unwrap(),
+    ]);
+    assert!(
+        export.status.success(),
+        "export stderr:\n{}",
+        String::from_utf8_lossy(&export.stderr)
+    );
+
+    let bundle_dir = bundle_out.join("trace_bundle_v2");
+    let replay1 = run_swarm(&[
+        "instrument",
+        "replay-bundle",
+        bundle_dir.to_str().unwrap(),
+        "r1",
+    ]);
+    let replay2 = run_swarm(&[
+        "instrument",
+        "replay-bundle",
+        bundle_dir.to_str().unwrap(),
+        "r1",
+    ]);
+    assert!(
+        replay1.status.success() && replay2.status.success(),
+        "stderr1:\n{}\nstderr2:\n{}",
+        String::from_utf8_lossy(&replay1.stderr),
+        String::from_utf8_lossy(&replay2.stderr)
+    );
+    assert_eq!(
+        replay1.stdout, replay2.stdout,
+        "replay-from-bundle output should be deterministic"
+    );
+}
+
+#[test]
+fn instrument_replay_bundle_rejects_tampered_bundle() {
+    let d = unique_test_temp_dir("instrument-replay-bundle-tamper");
+    let runs = d.join("runs");
+    let run = runs.join("r1");
+    fs::create_dir_all(run.join("logs")).unwrap();
+    fs::write(
+        run.join("run.json"),
+        r#"{"schema_version":"run_state.v1","run_id":"r1","workflow_id":"wf","version":"0.75","status":"success","error_message":null,"start_time_ms":1,"end_time_ms":2,"duration_ms":1,"execution_plan_hash":"abc","scheduler_max_concurrency":null,"scheduler_policy_source":null,"pause":null}"#,
+    )
+    .unwrap();
+    fs::write(run.join("steps.json"), r#"[]"#).unwrap();
+    fs::write(
+        run.join("run_summary.json"),
+        r#"{"run_summary_version":1,"artifact_model_version":1,"run_id":"r1","workflow_id":"wf","adl_version":"0.75","swarm_version":"0.7.0","status":"success","counts":{"total_steps":0,"completed_steps":0,"failed_steps":0,"provider_call_count":0,"delegation_steps":0,"delegation_requires_verification_steps":0},"policy":{"security_envelope_enabled":false,"signing_required":false,"key_id_required":false,"verify_allowed_algs":[],"verify_allowed_key_sources":[],"sandbox_policy":"centralized_path_resolver_v1","security_denials_by_code":{}},"links":{"run_json":"run.json","steps_json":"steps.json","outputs_dir":"outputs","logs_dir":"logs","learning_dir":"learning","overlays_dir":"learning/overlays"}}"#,
+    )
+    .unwrap();
+    fs::write(
+        run.join("run_status.json"),
+        r#"{"run_status_version":1,"run_id":"r1","workflow_id":"wf","overall_status":"succeeded","failure_kind":null,"completed_steps":[],"pending_steps":[],"attempt_counts_by_step":{}}"#,
+    )
+    .unwrap();
+    fs::write(
+        run.join("logs").join("activation_log.json"),
+        r#"{"activation_log_version":1,"ordering":"append_only_emission_order","stable_ids":{"step_id":"x","delegation_id":"x","run_id":"x"},"events":[]}"#,
+    )
+    .unwrap();
+
+    let bundle_out = d.join("bundle");
+    let export = run_swarm(&[
+        "learn",
+        "export",
+        "--format",
+        "trace-bundle-v2",
+        "--runs-dir",
+        runs.to_str().unwrap(),
+        "--out",
+        bundle_out.to_str().unwrap(),
+    ]);
+    assert!(
+        export.status.success(),
+        "export stderr:\n{}",
+        String::from_utf8_lossy(&export.stderr)
+    );
+    let activation = bundle_out
+        .join("trace_bundle_v2")
+        .join("runs")
+        .join("r1")
+        .join("logs")
+        .join("activation_log.json");
+    fs::write(&activation, b"{\"tampered\":true}").unwrap();
+
+    let out = run_swarm(&[
+        "instrument",
+        "replay-bundle",
+        bundle_out.join("trace_bundle_v2").to_str().unwrap(),
+        "r1",
+    ]);
+    assert!(!out.status.success(), "tampered bundle should fail");
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("hash mismatch") || stderr.contains("size mismatch"),
+        "stderr:\n{stderr}"
+    );
+}
+
+#[test]
 fn instrument_replay_schema_mismatch_emits_stable_replay_failure_code() {
     let d = unique_test_temp_dir("instrument-replay-schema-mismatch");
     let trace = d.join("trace.json");

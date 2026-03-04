@@ -1,8 +1,8 @@
 use anyhow::{anyhow, Context, Result};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 use std::collections::BTreeMap;
-use std::path::Path;
+use std::path::{Component, Path, PathBuf};
 
 use crate::artifacts;
 
@@ -69,7 +69,7 @@ struct BundleFileEntry {
     hash: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct TraceBundleManifestV2 {
     trace_bundle_version: u32,
     run_count: usize,
@@ -77,7 +77,7 @@ struct TraceBundleManifestV2 {
     files: Vec<TraceBundleFileEntry>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 struct TraceBundleFileEntry {
     path: String,
     hash: String,
@@ -94,6 +94,13 @@ struct TraceBundleRunMetadataV2 {
     status: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     failure_kind: Option<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ImportedTraceBundleV2 {
+    pub bundle_root: PathBuf,
+    pub run_id: String,
+    pub activation_log_path: PathBuf,
 }
 
 /// Export selected runs as deterministic JSONL rows.
@@ -319,6 +326,116 @@ pub fn export_trace_bundle_v2(
     Ok(manifest.run_count)
 }
 
+/// Validate/import Trace Bundle v2 and return replay-relevant paths.
+pub fn import_trace_bundle_v2(bundle_dir: &Path, run_id: &str) -> Result<ImportedTraceBundleV2> {
+    let bundle_root = if bundle_dir.join("manifest.json").is_file() {
+        bundle_dir.to_path_buf()
+    } else if bundle_dir
+        .join("trace_bundle_v2")
+        .join("manifest.json")
+        .is_file()
+    {
+        bundle_dir.join("trace_bundle_v2")
+    } else {
+        return Err(anyhow!(
+            "trace bundle v2 manifest not found in '{}' (expected manifest.json or trace_bundle_v2/manifest.json)",
+            bundle_dir.display()
+        ));
+    };
+
+    let manifest_path = bundle_root.join("manifest.json");
+    let manifest_raw = std::fs::read_to_string(&manifest_path)
+        .with_context(|| format!("read trace bundle manifest '{}'", manifest_path.display()))?;
+    let manifest: TraceBundleManifestV2 = serde_json::from_str(&manifest_raw)
+        .with_context(|| format!("parse trace bundle manifest '{}'", manifest_path.display()))?;
+
+    if manifest.trace_bundle_version != TRACE_BUNDLE_VERSION {
+        return Err(anyhow!(
+            "unsupported trace_bundle_version {} in '{}' (expected {})",
+            manifest.trace_bundle_version,
+            manifest_path.display(),
+            TRACE_BUNDLE_VERSION
+        ));
+    }
+    if !manifest.runs.iter().any(|r| r == run_id) {
+        return Err(anyhow!("trace bundle does not contain run_id '{}'", run_id));
+    }
+    let mut sorted_runs = manifest.runs.clone();
+    sorted_runs.sort();
+    if sorted_runs != manifest.runs {
+        return Err(anyhow!(
+            "trace bundle runs list is not canonically sorted in '{}'",
+            manifest_path.display()
+        ));
+    }
+
+    let mut entries = manifest.files.clone();
+    entries.sort_by(|a, b| a.path.cmp(&b.path));
+    if entries.iter().map(|e| &e.path).collect::<Vec<_>>()
+        != manifest.files.iter().map(|e| &e.path).collect::<Vec<_>>()
+    {
+        return Err(anyhow!(
+            "trace bundle file inventory is not canonically sorted in '{}'",
+            manifest_path.display()
+        ));
+    }
+
+    let by_path: BTreeMap<String, TraceBundleFileEntry> = manifest
+        .files
+        .iter()
+        .cloned()
+        .map(|entry| (entry.path.clone(), entry))
+        .collect();
+
+    for rel in required_trace_bundle_files(run_id) {
+        if !by_path.contains_key(&rel) {
+            return Err(anyhow!(
+                "trace bundle v2 missing required file '{}' for run '{}'",
+                rel,
+                run_id
+            ));
+        }
+    }
+
+    for entry in &manifest.files {
+        validate_bundle_rel_path(&entry.path)?;
+        let full = bundle_root.join(&entry.path);
+        if !full.is_file() {
+            return Err(anyhow!(
+                "trace bundle file '{}' is missing on disk",
+                entry.path
+            ));
+        }
+        let bytes = std::fs::read(&full)
+            .with_context(|| format!("read bundle file '{}'", full.display()))?;
+        if bytes.len() != entry.size_bytes {
+            return Err(anyhow!(
+                "trace bundle file '{}' size mismatch: manifest={} actual={}",
+                entry.path,
+                entry.size_bytes,
+                bytes.len()
+            ));
+        }
+        let actual_hash = stable_fingerprint_hex(&bytes);
+        if actual_hash != entry.hash {
+            return Err(anyhow!(
+                "trace bundle file '{}' hash mismatch: manifest={} actual={}",
+                entry.path,
+                entry.hash,
+                actual_hash
+            ));
+        }
+        validate_export_payload_safety(&bundle_root, &entry.path, &bytes)?;
+    }
+
+    let activation_log_rel = format!("runs/{run_id}/logs/activation_log.json");
+    Ok(ImportedTraceBundleV2 {
+        bundle_root: bundle_root.clone(),
+        run_id: run_id.to_string(),
+        activation_log_path: bundle_root.join(activation_log_rel),
+    })
+}
+
 fn write_bundle_json<T: Serialize>(
     bundle_root: &Path,
     path: &Path,
@@ -401,6 +518,42 @@ fn validate_export_payload_safety(bundle_root: &Path, rel_path: &str, bytes: &[u
         ));
     }
     Ok(())
+}
+
+fn validate_bundle_rel_path(path: &str) -> Result<()> {
+    let p = Path::new(path);
+    if p.is_absolute() {
+        return Err(anyhow!("trace bundle contains absolute path '{}'", path));
+    }
+    if path.contains('\\') {
+        return Err(anyhow!(
+            "trace bundle contains non-canonical path separator in '{}'",
+            path
+        ));
+    }
+    for component in p.components() {
+        if matches!(component, Component::ParentDir | Component::Prefix(_)) {
+            return Err(anyhow!(
+                "trace bundle contains traversal or prefix component in '{}'",
+                path
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn required_trace_bundle_files(run_id: &str) -> Vec<String> {
+    [
+        "metadata.json",
+        "run.json",
+        "steps.json",
+        "run_summary.json",
+        "run_status.json",
+        "logs/activation_log.json",
+    ]
+    .iter()
+    .map(|rel| format!("runs/{run_id}/{rel}"))
+    .collect()
 }
 
 fn resolve_export_ids(runs_root: &Path, run_ids: &[String]) -> Result<Vec<String>> {
@@ -806,5 +959,97 @@ mod tests {
                 "manifest hash must match file content for {rel}"
             );
         }
+    }
+
+    #[test]
+    fn import_trace_bundle_v2_accepts_valid_bundle_and_returns_activation_log_path() {
+        let base =
+            std::env::temp_dir().join(format!("trace-bundle-import-ok-{}", std::process::id()));
+        let runs_root = base.join("runs");
+        let run_dir = runs_root.join("r1");
+        std::fs::create_dir_all(run_dir.join("logs")).unwrap();
+        std::fs::create_dir_all(run_dir.join("learning")).unwrap();
+        std::fs::write(
+            run_dir.join("run.json"),
+            r#"{"schema_version":"run_state.v1","run_id":"r1","workflow_id":"wf","version":"0.75","status":"success","error_message":null,"start_time_ms":1,"end_time_ms":2,"duration_ms":1,"execution_plan_hash":"abc","scheduler_max_concurrency":null,"scheduler_policy_source":null,"pause":null}"#,
+        )
+        .unwrap();
+        std::fs::write(
+            run_dir.join("steps.json"),
+            r#"[{"step_id":"s1","agent_id":"a","provider_id":"p","status":"success","output_artifact_path":"outputs/s1.txt"}]"#,
+        )
+        .unwrap();
+        std::fs::write(
+            run_dir.join("run_summary.json"),
+            r#"{"run_summary_version":1,"artifact_model_version":1,"run_id":"r1","workflow_id":"wf","adl_version":"0.75","swarm_version":"0.7.0","status":"success","counts":{"total_steps":1,"completed_steps":1,"failed_steps":0,"provider_call_count":1,"delegation_steps":0,"delegation_requires_verification_steps":0},"policy":{"security_envelope_enabled":false,"signing_required":false,"key_id_required":false,"verify_allowed_algs":[],"verify_allowed_key_sources":[],"sandbox_policy":"centralized_path_resolver_v1","security_denials_by_code":{}},"links":{"run_json":"run.json","steps_json":"steps.json","outputs_dir":"outputs","logs_dir":"logs","learning_dir":"learning","overlays_dir":"learning/overlays"}}"#,
+        )
+        .unwrap();
+        std::fs::write(
+            run_dir.join("run_status.json"),
+            r#"{"run_status_version":1,"run_id":"r1","workflow_id":"wf","overall_status":"succeeded","failure_kind":null,"completed_steps":["s1"],"pending_steps":[],"attempt_counts_by_step":{"s1":1}}"#,
+        )
+        .unwrap();
+        std::fs::write(
+            run_dir.join("logs").join("activation_log.json"),
+            r#"{"activation_log_version":1,"ordering":"append_only_emission_order","stable_ids":{"step_id":"replay_stable_with_same_plan","delegation_id":"replay_stable_with_same_activation_log","run_id":"run_scoped_not_cross_run_stable"},"events":[{"RunStarted":{"ts":"2026-03-01T00:00:00.000Z","run_id":"r1","workflow_id":"wf","version":"0.75"}}]}"#,
+        )
+        .unwrap();
+        let out = base.join("bundle");
+        export_trace_bundle_v2(&runs_root, &[], &out).unwrap();
+
+        let imported = import_trace_bundle_v2(&out.join("trace_bundle_v2"), "r1").unwrap();
+        assert_eq!(imported.run_id, "r1");
+        assert!(imported.activation_log_path.is_file());
+        assert!(imported
+            .activation_log_path
+            .ends_with("trace_bundle_v2/runs/r1/logs/activation_log.json"));
+    }
+
+    #[test]
+    fn import_trace_bundle_v2_rejects_manifest_hash_mismatch() {
+        let base = std::env::temp_dir().join(format!(
+            "trace-bundle-import-bad-hash-{}",
+            std::process::id()
+        ));
+        let runs_root = base.join("runs");
+        let run_dir = runs_root.join("r1");
+        std::fs::create_dir_all(run_dir.join("logs")).unwrap();
+        std::fs::write(
+            run_dir.join("run.json"),
+            r#"{"schema_version":"run_state.v1","run_id":"r1","workflow_id":"wf","version":"0.75","status":"success","error_message":null,"start_time_ms":1,"end_time_ms":2,"duration_ms":1,"execution_plan_hash":"abc","scheduler_max_concurrency":null,"scheduler_policy_source":null,"pause":null}"#,
+        )
+        .unwrap();
+        std::fs::write(run_dir.join("steps.json"), r#"[]"#).unwrap();
+        std::fs::write(
+            run_dir.join("run_summary.json"),
+            r#"{"run_summary_version":1,"artifact_model_version":1,"run_id":"r1","workflow_id":"wf","adl_version":"0.75","swarm_version":"0.7.0","status":"success","counts":{"total_steps":0,"completed_steps":0,"failed_steps":0,"provider_call_count":0,"delegation_steps":0,"delegation_requires_verification_steps":0},"policy":{"security_envelope_enabled":false,"signing_required":false,"key_id_required":false,"verify_allowed_algs":[],"verify_allowed_key_sources":[],"sandbox_policy":"centralized_path_resolver_v1","security_denials_by_code":{}},"links":{"run_json":"run.json","steps_json":"steps.json","outputs_dir":"outputs","logs_dir":"logs","learning_dir":"learning","overlays_dir":"learning/overlays"}}"#,
+        )
+        .unwrap();
+        std::fs::write(
+            run_dir.join("run_status.json"),
+            r#"{"run_status_version":1,"run_id":"r1","workflow_id":"wf","overall_status":"succeeded","failure_kind":null,"completed_steps":[],"pending_steps":[],"attempt_counts_by_step":{}}"#,
+        )
+        .unwrap();
+        std::fs::write(
+            run_dir.join("logs").join("activation_log.json"),
+            r#"{"activation_log_version":1,"ordering":"append_only_emission_order","stable_ids":{"step_id":"x","delegation_id":"x","run_id":"x"},"events":[]}"#,
+        )
+        .unwrap();
+        let out = base.join("bundle");
+        export_trace_bundle_v2(&runs_root, &[], &out).unwrap();
+        let activation = out
+            .join("trace_bundle_v2")
+            .join("runs")
+            .join("r1")
+            .join("logs")
+            .join("activation_log.json");
+        std::fs::write(&activation, b"{\"tampered\":true}").unwrap();
+
+        let err = import_trace_bundle_v2(&out.join("trace_bundle_v2"), "r1")
+            .expect_err("tampered bundle should fail hash check");
+        assert!(
+            err.to_string().contains("hash mismatch") || err.to_string().contains("size mismatch"),
+            "unexpected: {err}"
+        );
     }
 }
