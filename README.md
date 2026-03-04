@@ -46,7 +46,7 @@ Badge semantics:
 
 ## Status
 
-Current release: **v0.6.0**
+Current release: **v0.7.0**
 
 ## v0.7 Naming Migration (Compatibility Window)
 
