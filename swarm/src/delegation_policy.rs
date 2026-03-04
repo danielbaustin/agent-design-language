@@ -2,10 +2,14 @@ use crate::adl::{
     DelegationActionKind, DelegationPolicySpec, DelegationRuleEffect, DelegationSpec,
 };
 
+/// Result of evaluating delegation policy for an attempted action.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum DelegationDecision {
+    /// Delegated action is permitted immediately.
     Allowed,
+    /// Delegated action is rejected by policy.
     Denied,
+    /// Delegated action is permitted only after explicit approval.
     NeedsApproval,
 }
 
@@ -21,10 +25,19 @@ impl DelegationDecision {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DelegationPolicyOutcome {
+    /// Final policy decision for this attempted action.
     pub decision: DelegationDecision,
+    /// Matched rule id when a concrete policy rule decided the outcome.
     pub rule_id: Option<String>,
 }
 
+/// Evaluate delegation policy for a single action and target.
+///
+/// Evaluation order is deterministic:
+/// 1) if delegation metadata is absent, allow
+/// 2) if no policy exists, allow
+/// 3) first matching rule in declared order decides
+/// 4) otherwise fall back to `default_allow`
 pub fn evaluate(
     policy: Option<&DelegationPolicySpec>,
     delegation: Option<&DelegationSpec>,

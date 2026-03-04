@@ -9,6 +9,7 @@
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 #[allow(dead_code)] // Wired into overlay-apply path in #485.
+/// Internal mutation-intent envelope used for overlay security validation.
 pub(crate) struct OverlaySecurityMutationAttempt {
     pub require_signed_requests: Option<bool>,
     pub allow_unsigned: Option<bool>,
@@ -43,6 +44,7 @@ pub(crate) enum LearningGuardrailError {
 
 #[allow(dead_code)] // Wired into overlay-apply path in #485.
 impl LearningGuardrailError {
+    /// Stable machine-readable error code.
     pub(crate) fn code(&self) -> &'static str {
         match self {
             Self::TrustPolicyImmutable => "LEARNING_GUARDRAIL_TRUST_POLICY_IMMUTABLE",
@@ -51,6 +53,7 @@ impl LearningGuardrailError {
         }
     }
 
+    /// Human-readable explanation suitable for operator logs.
     pub(crate) fn message(&self) -> &'static str {
         match self {
             Self::TrustPolicyImmutable => {
@@ -67,6 +70,7 @@ impl LearningGuardrailError {
 }
 
 #[allow(dead_code)] // Wired into overlay-apply path in #485.
+/// Validate that overlay mutation intents do not weaken immutable security surfaces.
 pub(crate) fn validate_overlay_security_guardrails(
     attempt: &OverlaySecurityMutationAttempt,
 ) -> Result<(), LearningGuardrailError> {

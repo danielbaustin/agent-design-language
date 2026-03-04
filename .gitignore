@@ -1,11 +1,6 @@
 swarm/issues.csv
 swarm/.local/
-.adl/*
-!.adl/templates/
-!.adl/templates/**
-
-!.adl/docs/
-!.adl/docs/**
+.adl/
 
 # Local demo/build artifacts (do not commit)
 out/

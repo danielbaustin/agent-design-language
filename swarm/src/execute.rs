@@ -379,7 +379,7 @@ fn emit_resume_note(enabled: bool, step_id: &str, action: &str, reason: &str) {
 /// - ready-step ordering is lexicographic by full step id
 /// - bounded batches preserve deterministic output/record order
 /// - effective max concurrency for concurrent workflow runs is deterministic and applied as:
-///   1) run.workflow.max_concurrency (or `workflows.<id>.max_concurrency` via workflow_ref)
+///   1) `run.workflow.max_concurrency` (or `workflows.<id>.max_concurrency` via `workflow_ref`)
 ///   2) run.defaults.max_concurrency
 ///   3) DEFAULT_MAX_CONCURRENCY
 pub fn execute_sequential(

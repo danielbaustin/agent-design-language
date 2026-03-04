@@ -3,6 +3,7 @@ use std::path::{Component, Path, PathBuf};
 /// Best-effort filesystem policy for sandbox path resolution.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SandboxPathPolicy {
+    /// When false, traversing any symlinked component is denied.
     pub allow_symlink_traversal: bool,
 }
 
@@ -25,24 +26,34 @@ pub enum SandboxPathError {
     /// Recovery: choose a sandbox-relative path that satisfies the configured
     /// policy constraints.
     PathDenied {
+        /// Sanitized requested path (never host-absolute).
         requested_path: String,
+        /// Stable machine-readable denial reason.
         reason: &'static str,
     },
     /// The requested path does not exist at validation time.
     ///
     /// Recovery: create the file or parent directory under the sandbox root,
     /// then re-run.
-    PathNotFound { requested_path: String },
+    PathNotFound {
+        /// Sanitized requested path.
+        requested_path: String,
+    },
     /// The path could not be canonicalized in a deterministic/safe manner.
     ///
     /// Recovery: provide a normalized path inside sandbox root and retry.
-    PathNotCanonical { requested_path: String },
+    PathNotCanonical {
+        /// Sanitized requested path.
+        requested_path: String,
+    },
     /// Symlink traversal was explicitly disallowed by sandbox policy.
     ///
     /// Recovery: disable symlink usage for this path or update policy
     /// intentionally.
     SymlinkDisallowed {
+        /// Sanitized requested path.
         requested_path: String,
+        /// Optional sanitized resolved path.
         resolved_path: Option<String>,
     },
     /// A path (or symlink resolution) escapes the sandbox root.
@@ -50,19 +61,24 @@ pub enum SandboxPathError {
     /// Recovery: constrain the path so the resolved target remains inside the
     /// configured sandbox root.
     EscapeAttempt {
+        /// Sanitized requested path.
         requested_path: String,
+        /// Optional sanitized resolved path.
         resolved_path: Option<String>,
     },
     /// Underlying filesystem IO prevented deterministic sandbox validation.
     ///
     /// Recovery: inspect filesystem state/permissions and retry.
     IoError {
+        /// Sanitized requested path.
         requested_path: String,
+        /// Stable operation label where the IO error occurred.
         operation: &'static str,
     },
 }
 
 impl SandboxPathError {
+    /// Stable error code used by traces/artifacts and tests.
     pub fn code(&self) -> &'static str {
         match self {
             Self::PathDenied { .. } => "sandbox_path_denied",
@@ -74,6 +90,7 @@ impl SandboxPathError {
         }
     }
 
+    /// Human-readable, safe message without host-absolute paths.
     pub fn message(&self) -> String {
         match self {
             Self::PathDenied { reason, .. } => {
@@ -98,6 +115,7 @@ impl SandboxPathError {
         }
     }
 
+    /// Sanitized requested path when available.
     pub fn requested_path(&self) -> Option<&str> {
         match self {
             Self::PathDenied { requested_path, .. }
@@ -109,6 +127,7 @@ impl SandboxPathError {
         }
     }
 
+    /// Sanitized resolved path for escape/symlink errors.
     pub fn resolved_path(&self) -> Option<&str> {
         match self {
             Self::SymlinkDisallowed { resolved_path, .. }
@@ -277,6 +296,10 @@ pub fn resolve_existing_path_within_root(
     resolve_existing_path_within_root_with_policy(root, candidate, SandboxPathPolicy::default())
 }
 
+/// Resolve an existing file path under a sandbox root with explicit policy.
+///
+/// This enforces canonical ancestry under `root`, and optionally blocks any
+/// traversed symlink component.
 pub fn resolve_existing_path_within_root_with_policy(
     root: &Path,
     candidate: &Path,
@@ -323,6 +346,10 @@ pub fn resolve_relative_path_for_write_within_root(
     resolve_relative_path_for_write_within_root_with_policy(root, rel, SandboxPathPolicy::default())
 }
 
+/// Resolve a relative path for write operations under the sandbox root.
+///
+/// Non-existent targets are accepted only when their nearest existing ancestor
+/// canonicalizes under `root`.
 pub fn resolve_relative_path_for_write_within_root_with_policy(
     root: &Path,
     rel: &Path,
