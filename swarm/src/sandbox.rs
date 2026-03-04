@@ -467,6 +467,65 @@ mod tests {
     }
 
     #[test]
+    fn resolve_existing_allows_unicode_relative_path() {
+        let root = temp_dir("adl-sandbox-unicode");
+        let unicode_dir = root.join("unicodé");
+        fs::create_dir_all(&unicode_dir).expect("unicode dir");
+        let file = unicode_dir.join("数据.txt");
+        fs::write(&file, "ok").expect("write unicode file");
+
+        let resolved = resolve_existing_path_within_root(&root, Path::new("unicodé/数据.txt"))
+            .expect("unicode path should resolve");
+        assert!(resolved.starts_with(root.canonicalize().expect("canon root")));
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn resolve_for_write_allows_long_nested_relative_path() {
+        let root = temp_dir("adl-sandbox-long-path");
+        fs::create_dir_all(&root).expect("root");
+
+        let rel = (0..32)
+            .map(|i| format!("segment{i:02}"))
+            .collect::<Vec<_>>()
+            .join("/");
+        let candidate = PathBuf::from(format!("{rel}/artifact.txt"));
+        let resolved = resolve_relative_path_for_write_within_root(&root, &candidate)
+            .expect("long nested relative path should remain in sandbox");
+        assert!(resolved.starts_with(root.canonicalize().expect("canon root")));
+        assert!(resolved.ends_with(Path::new("artifact.txt")));
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn sanitize_requested_path_handles_mixed_separators_deterministically() {
+        let mixed = Path::new("alpha/beta\\gamma/delta.txt");
+        let sanitized = sanitize_requested_path(mixed);
+        assert!(
+            sanitized.starts_with("sandbox:/"),
+            "sanitized path should keep sandbox prefix"
+        );
+        assert!(
+            !sanitized.contains('\\') || sanitized.contains("beta\\gamma"),
+            "mixed separator segment should be represented deterministically: {sanitized}"
+        );
+    }
+
+    #[cfg(not(windows))]
+    #[test]
+    fn windows_style_path_string_is_handled_without_host_leakage_on_unix() {
+        let root = temp_dir("adl-sandbox-win-style-unix");
+        fs::create_dir_all(&root).expect("root");
+        let win_style = Path::new(r"C:\Users\alice\demo.txt");
+        let sanitized = sanitize_requested_path(win_style);
+        assert!(sanitized.starts_with("sandbox:/"));
+        assert!(!sanitized.contains("/Users/alice"));
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
     fn resolve_for_write_rejects_absolute_paths_cross_platform() {
         let root = temp_dir("swarm-sandbox-abs");
         fs::create_dir_all(&root).expect("root");
