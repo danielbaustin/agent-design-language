@@ -213,3 +213,19 @@ Deterministic retrieval contract:
 - Contracts to freeze are documented and referenced by tests.
 - Demo matrix is runnable and reproducible.
 - Major open questions are captured in DECISIONS_0.75.md.
+
+## WP-09 ObsMem indexing pipeline (deterministic)
+
+The v0.75 indexing pipeline is implemented in `swarm::obsmem_indexing` and consumes
+run artifacts plus normalized activation-log events to produce deterministic
+memory-entry payloads.
+
+Deterministic guarantees:
+- Input surface: `run_summary.json`, `run_status.json`, and `logs/activation_log.json`.
+- Step contexts are indexed with explicit sequence numbers from activation-log order.
+- Output tags are lexicographically sorted and deduplicated.
+- Re-indexing the same run artifacts yields byte-identical serialized indexing output.
+
+Privacy boundary:
+- Raw prompts and tool arguments are not persisted by the indexing summary surface.
+- Host absolute paths and token-like strings are rejected by deterministic local checks.
