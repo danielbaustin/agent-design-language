@@ -213,3 +213,21 @@ Deterministic retrieval contract:
 - Contracts to freeze are documented and referenced by tests.
 - Demo matrix is runnable and reproducible.
 - Major open questions are captured in DECISIONS_0.75.md.
+
+## WP-10 ObsMem retrieval policy v1 (deterministic)
+
+The retrieval policy layer is implemented in `swarm::obsmem_retrieval_policy`.
+It defines a deterministic runtime interface for selecting and ordering memory
+records retrieved through `ObsMemClient`.
+
+Policy v1 behavior:
+- Query parameters are resolved from request inputs plus policy defaults.
+- Required tags and failure-code constraints are merged deterministically.
+- Result ordering is deterministic (default score-desc with lexical tie-breaks,
+  or explicit lexical-id ordering).
+- Identical policy + request + backend state yields identical result set and order.
+
+Configuration boundary:
+- Retrieval parameters are represented as explicit runtime policy/request values.
+- WP-11 demo integration can map workflow-level configuration onto this policy
+  without coupling core runtime to a specific memory backend.

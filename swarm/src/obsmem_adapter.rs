@@ -7,6 +7,9 @@ use crate::obsmem_contract::{
     MemoryCitation, MemoryQuery, MemoryQueryResult, MemoryWriteAck, MemoryWriteRequest,
     ObsMemClient, ObsMemContractError, ObsMemContractErrorCode, OBSMEM_CONTRACT_VERSION,
 };
+use crate::obsmem_retrieval_policy::{
+    apply_policy_to_results, RetrievalPolicyV1, RetrievalRequest,
+};
 
 /// Runtime bridge for ObsMem contract operations.
 ///
@@ -53,6 +56,16 @@ impl<C: ObsMemClient> ObsMemAdapter<C> {
         q.normalize();
         q.validate()?;
         self.client.query(&q)
+    }
+
+    pub fn query_with_policy(
+        &self,
+        policy: &RetrievalPolicyV1,
+        request: &RetrievalRequest,
+    ) -> Result<MemoryQueryResult, ObsMemContractError> {
+        let query = request.to_query(policy)?;
+        let result = self.client.query(&query)?;
+        apply_policy_to_results(policy, request, result)
     }
 }
 
@@ -380,6 +393,39 @@ mod tests {
         let first_order: Vec<String> = first.hits.iter().map(|h| h.id.clone()).collect();
         let second_order: Vec<String> = second.hits.iter().map(|h| h.id.clone()).collect();
         assert_eq!(first_order, second_order);
+    }
+
+    #[test]
+    fn query_with_policy_applies_default_limit_and_required_failure_tag() {
+        let tmp = unique_temp_dir("policy");
+        write_fixture_run(&tmp, "r1");
+
+        let client = ObsMemInMemory::default();
+        let adapter = ObsMemAdapter::new(client);
+        adapter
+            .index_run_from_artifacts(&tmp, "r1")
+            .expect("index run");
+
+        let mut policy = RetrievalPolicyV1 {
+            default_limit: 1,
+            required_tags: vec!["status:failed".to_string()],
+            required_failure_code: Some("policy_denied".to_string()),
+            order: crate::obsmem_retrieval_policy::RetrievalOrder::IdAsc,
+        };
+        policy.normalize();
+
+        let request = RetrievalRequest {
+            workflow_id: Some("wf-a".to_string()),
+            failure_code: None,
+            tags: vec!["workflow:wf-a".to_string()],
+            limit_override: None,
+        };
+
+        let result = adapter
+            .query_with_policy(&policy, &request)
+            .expect("query with policy");
+        assert_eq!(result.hits.len(), 1);
+        assert_eq!(result.hits[0].workflow_id, "wf-a");
     }
 
     #[test]

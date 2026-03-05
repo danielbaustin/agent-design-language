@@ -25,6 +25,7 @@ pub mod learning_export;
 pub mod learning_guardrails;
 pub mod obsmem_adapter;
 pub mod obsmem_contract;
+pub mod obsmem_retrieval_policy;
 pub mod overlay;
 pub mod plan;
 pub mod prompt;
