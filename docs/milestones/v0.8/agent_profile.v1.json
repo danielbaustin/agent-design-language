@@ -1,0 +1,345 @@
+
+
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-logic.ai/adl/schemas/agent_profile.v1.json",
+  "title": "ADL Agent Profile (v1)",
+  "description": "Defines the evolvable behavior surface for an ADL agent (prompts, routing, planner knobs, memory and executor policy). This schema is intended for Gödel-style policy evolution with strict validation and replayability.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "profile_id",
+    "prompts",
+    "routing",
+    "planner",
+    "memory_policy",
+    "executor_policy"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "agent_profile.v1",
+      "description": "Schema/version tag. Must be exactly 'agent_profile.v1'."
+    },
+    "profile_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier for this profile (e.g., 'default', 'best', or a UUID)."
+    },
+    "profile_hash": {
+      "type": "string",
+      "minLength": 8,
+      "description": "Optional content hash/fingerprint of the normalized profile. Useful for audit, cache keys, and replay verification.",
+      "examples": ["sha256:…"]
+    },
+    "base": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional provenance pointer to the parent profile this was derived from.",
+      "required": ["parent_profile_id", "parent_hash"],
+      "properties": {
+        "parent_profile_id": { "type": "string", "minLength": 1 },
+        "parent_hash": { "type": "string", "minLength": 8 }
+      }
+    },
+
+    "prompts": {
+      "type": "object",
+      "description": "Named prompt templates. Keys are prompt ids (stable). Values are prompt text.",
+      "additionalProperties": { "type": "string" }
+    },
+
+    "routing": {
+      "type": "object",
+      "description": "Tool + provider routing policies.",
+      "additionalProperties": false,
+      "required": ["tool_routing"],
+      "properties": {
+        "tool_routing": {
+          "type": "object",
+          "description": "Rules for choosing tools and fallbacks.",
+          "additionalProperties": false,
+          "properties": {
+            "rules": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/tool_routing_rule" },
+              "default": []
+            },
+            "default": {
+              "$ref": "#/$defs/tool_routing_default"
+            }
+          }
+        },
+        "provider_selection": {
+          "type": "object",
+          "description": "Rules for selecting provider profiles (e.g., openai/ollama/local).",
+          "additionalProperties": false,
+          "properties": {
+            "default_provider_profile": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Provider profile id used when no other rule matches."
+            },
+            "overrides": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/provider_override" },
+              "default": []
+            }
+          }
+        }
+      }
+    },
+
+    "planner": {
+      "type": "object",
+      "description": "Planner decomposition and search knobs.",
+      "additionalProperties": false,
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "default",
+            "hierarchical",
+            "dag",
+            "beam",
+            "local_brain_remote_hands"
+          ],
+          "default": "default"
+        },
+        "max_depth": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 8
+        },
+        "max_steps": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 64
+        },
+        "beam_width": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        },
+        "stop_on_first_error": {
+          "type": "boolean",
+          "default": true
+        },
+        "notes": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "default": {}
+    },
+
+    "memory_policy": {
+      "type": "object",
+      "description": "Controls what is persisted (ObsMem) vs ephemeral, and summarization cadence.",
+      "additionalProperties": false,
+      "properties": {
+        "enable_obsmem": {
+          "type": "boolean",
+          "default": false
+        },
+        "persist_prompts": {
+          "type": "boolean",
+          "description": "Whether to persist full prompt text in run artifacts (often false; prefer hashes/fingerprints).",
+          "default": false
+        },
+        "persist_plan": {
+          "type": "boolean",
+          "description": "Whether to persist full plan text in run artifacts (often false; prefer hashes/fingerprints).",
+          "default": false
+        },
+        "summarization": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": ["off", "periodic", "on_demand"],
+              "default": "periodic"
+            },
+            "every_n_steps": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 10
+            },
+            "max_summary_chars": {
+              "type": "integer",
+              "minimum": 256,
+              "default": 8000
+            }
+          },
+          "default": {}
+        },
+        "notes": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "default": {}
+    },
+
+    "executor_policy": {
+      "type": "object",
+      "description": "Execution constraints (timeouts, retries, strictness, streaming settings).",
+      "additionalProperties": false,
+      "properties": {
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 600000
+        },
+        "max_retries": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 1
+        },
+        "retry_backoff_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 500
+        },
+        "strict_json": {
+          "type": "boolean",
+          "description": "If true, tool outputs and key artifacts must validate against schemas; unknown fields are rejected.",
+          "default": true
+        },
+        "streaming": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "flush_interval_ms": { "type": "integer", "minimum": 0, "default": 50 }
+          },
+          "default": {}
+        },
+        "notes": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "default": {}
+    },
+
+    "metadata": {
+      "type": "object",
+      "description": "Human-facing description and tags.",
+      "additionalProperties": false,
+      "properties": {
+        "description": { "type": "string", "default": "" },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "RFC3339 timestamp (informational)."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      },
+      "default": {}
+    }
+  },
+
+  "$defs": {
+    "tool_routing_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_id", "when", "then"],
+      "properties": {
+        "rule_id": { "type": "string", "minLength": 1 },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 100
+        },
+        "when": {
+          "$ref": "#/$defs/rule_condition"
+        },
+        "then": {
+          "$ref": "#/$defs/rule_action"
+        },
+        "notes": { "type": "string", "default": "" }
+      }
+    },
+
+    "tool_routing_default": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowed_tools": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "fallback_tools": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      },
+      "default": {}
+    },
+
+    "rule_condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "A minimal condition language. Keep it intentionally small in v1.",
+      "properties": {
+        "task_type": {
+          "type": "string",
+          "description": "Optional task category (e.g., 'code', 'research', 'write', 'eval')."
+        },
+        "requires_network": { "type": "boolean" },
+        "requires_filesystem": { "type": "boolean" },
+        "requires_exec": { "type": "boolean" },
+        "text_contains_any": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      },
+      "default": {}
+    },
+
+    "rule_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "use_tool": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Tool id to use when condition matches."
+        },
+        "use_provider_profile": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Provider profile id to use when condition matches."
+        },
+        "set": {
+          "type": "object",
+          "description": "Optional key/value overrides applied to planner/executor knobs.",
+          "additionalProperties": { "type": ["string", "number", "integer", "boolean", "null"] },
+          "default": {}
+        }
+      },
+      "default": {}
+    },
+
+    "provider_override": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["when", "provider_profile"],
+      "properties": {
+        "when": { "$ref": "#/$defs/rule_condition" },
+        "provider_profile": { "type": "string", "minLength": 1 },
+        "notes": { "type": "string", "default": "" }
+      }
+    }
+  }
+}

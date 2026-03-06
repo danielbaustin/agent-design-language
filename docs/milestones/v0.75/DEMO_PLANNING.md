@@ -12,6 +12,8 @@ Demos serve three purposes:
 
 v0.75 demos focus on:
 
+Note: The Rust transpiler demo is planned for v0.8 and is not part of the v0.75 milestone. See `docs/milestones/v0.8/RUST_TRANSPILER_DEMO.md`.
+
 - Deterministic execution and replay
 - Learning artifact export
 - ObsMem integration boundary

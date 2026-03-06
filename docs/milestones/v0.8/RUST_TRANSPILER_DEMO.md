@@ -1,6 +1,12 @@
 # ADL Demo: Rust Transpiler / Migration Workflow
 
+
+Status: Planned for v0.8
+Milestone: v0.8
+Not part of v0.75 release scope
 ## Purpose
+
+> This demo is planned for v0.8 and is not part of the v0.75 milestone.
 
 This document defines a **flagship ADL demo** showing how deterministic workflows, adaptive execution, verification hooks, and replayable artifacts can be used to safely perform automated code transformations.
 
