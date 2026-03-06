@@ -60,6 +60,21 @@ contains_disallowed_content() {
     "$file" >/dev/null 2>&1
 }
 
+display_card_ref() {
+  local p="$1"
+  local normalized
+  normalized="$(echo "$p" | sed 's#\\#/#g')"
+  if [[ "$normalized" =~ (.*/)?(\.adl/cards/[0-9]+/input_[0-9]+\.md)$ ]]; then
+    echo "${BASH_REMATCH[2]}"
+    return 0
+  fi
+  if [[ "$normalized" =~ (^|/)issue-([0-9]+)__input__v[0-9.]+\.md$ ]]; then
+    echo "issue-${BASH_REMATCH[2]} (legacy input card)"
+    return 0
+  fi
+  echo "$(basename "$p")"
+}
+
 ISSUE=""
 INPUT=""
 OUT=""
@@ -106,6 +121,7 @@ invariants="$(section_body "$INPUT" "System Invariants (must remain true)" | tri
 checklist="$(section_body "$INPUT" "Reviewer Checklist (machine-readable hints)" | trim_blank_edges)"
 non_goals="$(section_body "$INPUT" "Non-goals / Out of scope" | trim_blank_edges)"
 risks="$(section_body "$INPUT" "Notes / Risks" | trim_blank_edges)"
+input_ref="$(display_card_ref "$INPUT")"
 
 render_or_na() {
   local value="$1"
@@ -126,7 +142,7 @@ Context
 - Version: ${version:-unknown}
 - Title: ${title:-unknown}
 - Branch: ${branch:-unknown}
-- Input Card: ${INPUT}
+- Input Card: ${input_ref}
 
 Goal
 $(render_or_na "$goal")

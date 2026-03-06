@@ -54,11 +54,15 @@ EOF
   cd "$repo"
   out1="$tmpdir/prompt-1.txt"
   out2="$tmpdir/prompt-2.txt"
-  ./swarm/tools/card_prompt.sh --input .adl/cards/701/input_701.md --out "$out1"
+  ./swarm/tools/card_prompt.sh --input "$repo/.adl/cards/701/input_701.md" --out "$out1"
   ./swarm/tools/card_prompt.sh --input .adl/cards/701/input_701.md --out "$out2"
   cmp -s "$out1" "$out2"
   rg -n "System Invariants \\(must remain true\\)" "$out1" >/dev/null
   rg -n "Reviewer Checklist \\(machine-readable hints\\)" "$out1" >/dev/null
+  if rg -n "/Users/|/home/|[A-Za-z]:\\\\" "$out1" >/dev/null; then
+    echo "assertion failed: prompt output leaked absolute host path" >&2
+    exit 1
+  fi
 )
 
 mkdir -p "$repo/.adl/cards/702"
