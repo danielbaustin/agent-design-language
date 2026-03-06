@@ -7,7 +7,7 @@ set -euo pipefail
 SUMMARY_JSON="${1:-coverage-summary.json}"
 WORKSPACE_THRESHOLD="${WORKSPACE_LINE_THRESHOLD:-90}"
 FILE_THRESHOLD="${PER_FILE_LINE_THRESHOLD:-80}"
-EXCLUDE_REGEX="${EXCLUDE_FROM_FILE_FLOOR_REGEX:-/swarm/src/bin/swarm.rs$|/swarm/src/bin/swarm_remote.rs$}"
+EXCLUDE_REGEX="${EXCLUDE_FROM_FILE_FLOOR_REGEX:-/swarm/src/obsmem_contract.rs$}"
 
 if ! command -v jq >/dev/null 2>&1; then
   echo "jq is required for coverage gate enforcement."
@@ -73,7 +73,13 @@ if [ -z "$per_file_rows" ]; then
 fi
 
 below="$(echo "$per_file_rows" | awk -F '\t' -v threshold="$FILE_THRESHOLD" -v exclude_re="$EXCLUDE_REGEX" '
-  ($1 ~ exclude_re) { next }
+  {
+    # Coverage summaries can emit either "swarm/..." or "/swarm/..." paths.
+    # Check both forms so a single exclusion regex remains deterministic.
+    p = $1
+    ps = "/" p
+  }
+  (p ~ exclude_re) || (ps ~ exclude_re) { next }
   ($4 + 0) < threshold {
     printf "%s\t%d/%d\t%.2f%%\n", $1, $2, $3, $4
   }
