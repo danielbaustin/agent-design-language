@@ -97,7 +97,7 @@ Not allowed in v0.7.0 (learning loop):
 ### 3.3 Optional compatibility stub (recommended)
 
 If low-cost, land a no-op CLI surface in v0.7.0:
-- `swarm run --learn=off` exists and is the default
+- `adl run --learn=off` exists and is the default
 - other values return a clear “not implemented in v0.7.0” error
 
 This reduces CLI churn across minors.
@@ -113,7 +113,7 @@ This reduces CLI churn across minors.
 Deliver:
 - `run_summary.json` emission per run (and partial summaries on pause/resume if applicable)
 - schema + tests
-- (optional) `swarm feedback add --run-id ... --rating ... --note ...`
+- (optional) `adl feedback add --run-id ... --rating ... --note ...`
 
 Demo definition:
 - runs produce a canonical learning record that is stable and diffable.
@@ -138,7 +138,7 @@ Deliver:
   - provider preference per step (success/score/latency)
   - retry/fallback suggestions from error signatures
   - prompt fragment include/exclude suggestions (when fragments exist)
-- `swarm learn suggest`
+- `adl learn suggest`
 
 Demo definition:
 - ADL produces actionable, explainable advice from prior runs.
@@ -148,7 +148,7 @@ Demo definition:
 Deliver:
 - overlay format + deterministic runtime application under `--learn=apply`
 - overlay sha256 recorded into trace + run_summary
-- `swarm learn apply` (materialize overlay from latest suggestions)
+- `adl learn apply` (materialize overlay from latest suggestions)
 
 Demo definition:
 - closed-loop improvement exists but remains fully reversible.
@@ -156,7 +156,7 @@ Demo definition:
 ### v0.7.5 — Export
 
 Deliver:
-- `swarm learn export --format jsonl`
+- `adl learn export --format jsonl`
 - deterministic export of:
   - prompts/tool calls/outputs (as available)
   - metadata + score + feedback

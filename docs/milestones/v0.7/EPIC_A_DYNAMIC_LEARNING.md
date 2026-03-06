@@ -80,7 +80,7 @@ workflow spec  →  runtime defaults  →  overlays (opt-in)  →  effective exe
 ## 4. User-facing CLI
 
 ### 4.1 Run modes
-Add `--learn` to `swarm run`:
+Add `--learn` to `adl run`:
 
 - `--learn=off` (default)
 - `--learn=observe`  (write run_summary)
@@ -88,20 +88,20 @@ Add `--learn` to `swarm run`:
 - `--learn=apply`    (apply overlay + write run_summary + log overlay hash)
 
 ### 4.2 Learning commands
-Add `swarm learn`:
+Add `adl learn`:
 
-- `swarm learn suggest [--workflow <id>] [--since <date>]`
+- `adl learn suggest [--workflow <id>] [--since <date>]`
   - reads historical runs + feedback
   - writes suggestions
   - optional `--write-overlay` to update overlay
 
-- `swarm learn apply [--workflow <id>]`
+- `adl learn apply [--workflow <id>]`
   - materializes overlay from latest suggestions
 
-- `swarm learn export --format jsonl`
+- `adl learn export --format jsonl`
   - exports (prompt/tool calls/output + metadata + score + feedback)
 
-- `swarm feedback add --run-id <id> --rating <1-5> [--note "..."]`
+- `adl feedback add --run-id <id> --rating <1-5> [--note "..."]`
   - writes feedback.json
 
 ---
@@ -174,7 +174,7 @@ Add `swarm learn`:
 
 Notes:
 - `tokens` may be unknown for some providers; keep fields stable and use `0` when unavailable.
-- Store hashes in summaries; raw prompts can be exported via `swarm learn export`.
+- Store hashes in summaries; raw prompts can be exported via `adl learn export`.
 
 ### 6.2 `feedback.json`
 
@@ -438,5 +438,5 @@ We have multiple v0.7 epics (security envelope, checkpointing, delegation/policy
 ## 13. Open questions (v0.7 defaults)
 
 - Prompt fragment storage: recommend named fragments in workflow YAML; deterministic assembly.
-- Raw prompt storage: store hashes in summaries; export raw content through `swarm learn export`.
+- Raw prompt storage: store hashes in summaries; export raw content through `adl learn export`.
 - Error normalization: start with error codes + substring signatures; iterate.
