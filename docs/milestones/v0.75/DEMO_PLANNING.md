@@ -267,3 +267,9 @@ Run the hierarchical planner demo with deterministic local provider + ObsMem emi
 Expected deterministic ObsMem artifacts:
 - `.adl/runs/v0-7-hierarchical-planner/learning/obs_mem_index_summary.json`
 - `.adl/runs/v0-7-hierarchical-planner/learning/obs_mem_query_result.json`
+
+Note:
+- This demo uses a deterministic in-memory `ObsMemClient` adapter for local
+  reproducibility.
+- It demonstrates adapter-contract behavior only; production backends are
+  expected to plug in behind the same contract.

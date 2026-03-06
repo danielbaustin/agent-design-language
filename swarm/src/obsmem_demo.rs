@@ -137,6 +137,9 @@ impl ObsMemClient for ObsMemInMemory {
 }
 
 pub fn maybe_emit_obsmem_demo_artifacts(run_id: &str) -> Result<Option<ObsMemDemoArtifacts>> {
+    // ObsMem demo integration pipeline (env-gated).
+    // Enabled only when ADL_OBSMEM_DEMO=1 to keep default runtime behavior unchanged.
+    // Demonstrates deterministic indexing + retrieval through a demo adapter.
     match std::env::var("ADL_OBSMEM_DEMO") {
         Ok(v) if v.trim() == "1" => {
             let runs_root = artifacts::runs_root()?;
