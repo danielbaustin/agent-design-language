@@ -26,6 +26,30 @@ Execution:
 - Tests / checks run:
 - Results:
 
+## Verification Summary
+```yaml
+verification_summary:
+  validation:
+    status: PASS | FAIL | PARTIAL | NOT_RUN
+    checks_run:
+      - ""
+  determinism:
+    status: PASS | FAIL | PARTIAL | NOT_RUN
+    replay_verified: true | false | unknown
+    ordering_guarantees_verified: true | false | unknown
+  security_privacy:
+    status: PASS | FAIL | PARTIAL | NOT_RUN
+    secrets_leakage_detected: true | false | unknown
+    prompt_or_tool_arg_leakage_detected: true | false | unknown
+    absolute_path_leakage_detected: true | false | unknown
+  artifacts:
+    status: PASS | FAIL | PARTIAL | NOT_RUN
+    required_artifacts_present: true | false | unknown
+    schema_changes:
+      present: true | false | unknown
+      approved: true | false | not_applicable | unknown
+```
+
 ## Determinism Evidence
 - Determinism tests executed:
 - Replay verification (same inputs -> same artifacts/order):

@@ -177,6 +177,46 @@ Output cards capture verification evidence such as:
 
 These sections allow automated reviewers or CI systems to verify the results of agent execution.
 
+### Verification Summary (machine-readable)
+
+To reduce dependence on free-form prose, output cards include a deterministic `Verification Summary` YAML block.
+
+Required top-level structure:
+
+```yaml
+verification_summary:
+  validation:
+    status: PASS | FAIL | PARTIAL | NOT_RUN
+    checks_run:
+      - ""
+  determinism:
+    status: PASS | FAIL | PARTIAL | NOT_RUN
+    replay_verified: true | false | unknown
+    ordering_guarantees_verified: true | false | unknown
+  security_privacy:
+    status: PASS | FAIL | PARTIAL | NOT_RUN
+    secrets_leakage_detected: true | false | unknown
+    prompt_or_tool_arg_leakage_detected: true | false | unknown
+    absolute_path_leakage_detected: true | false | unknown
+  artifacts:
+    status: PASS | FAIL | PARTIAL | NOT_RUN
+    required_artifacts_present: true | false | unknown
+    schema_changes:
+      present: true | false | unknown
+      approved: true | false | not_applicable | unknown
+```
+
+Design constraints:
+
+• Deterministic key order and field names for identical outcomes
+• Field values constrained to small enums / booleans for stable parsing
+• Backward compatible: older output cards may omit this block
+• Reviewer agents and CI tooling should prefer this block over prose when present
+
+This block supports the end-to-end pipeline:
+
+Issue → Input Card → Prompt Generator → Agent Execution → Output Card → Reviewer
+
 ---
 
 ## Future Automation
