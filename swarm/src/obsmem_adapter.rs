@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::Path;
 
-use serde_json::Value as JsonValue;
+use crate::obsmem_indexing::index_run_from_artifacts;
 
 use crate::obsmem_contract::{
     MemoryCitation, MemoryQuery, MemoryQueryResult, MemoryWriteAck, MemoryWriteRequest,
@@ -71,47 +71,12 @@ pub fn build_write_request_from_run_artifacts(
     let run_summary_path = run_dir.join("run_summary.json");
     let run_status_path = run_dir.join("run_status.json");
     let activation_log_path = run_dir.join("logs").join("activation_log.json");
+    let indexed = index_run_from_artifacts(runs_root, run_id)?;
 
-    let run_summary = read_json(&run_summary_path)?;
-    let run_status = read_json(&run_status_path)?;
-
-    let workflow_id = run_summary
-        .get("workflow_id")
-        .and_then(JsonValue::as_str)
-        .ok_or_else(|| {
-            ObsMemContractError::new(
-                ObsMemContractErrorCode::InvalidRequest,
-                "run_summary.json missing workflow_id",
-            )
-        })?;
-
-    let status = run_status
-        .get("overall_status")
-        .and_then(JsonValue::as_str)
-        .unwrap_or("unknown");
-    let failure_code = run_status
-        .get("failure_kind")
-        .and_then(JsonValue::as_str)
-        .map(str::to_string);
-
-    let summary = match failure_code.as_deref() {
-        Some(code) => format!(
-            "workflow={} overall_status={} failure_kind={}",
-            workflow_id, status, code
-        ),
-        None => format!(
-            "workflow={} overall_status={} failure_kind=none",
-            workflow_id, status
-        ),
-    };
-
-    let mut tags = vec![
-        format!("workflow:{workflow_id}"),
-        format!("status:{status}"),
-    ];
-    if let Some(code) = failure_code.as_deref() {
-        tags.push(format!("failure:{code}"));
-    }
+    let workflow_id = indexed.workflow_id;
+    let failure_code = indexed.failure_code;
+    let summary = indexed.summary;
+    let tags = indexed.tags;
 
     let mut citations = Vec::new();
     citations.push(citation_for_path(
@@ -156,21 +121,6 @@ fn citation_for_path(path: &Path, rel_path: String) -> Result<MemoryCitation, Ob
     Ok(MemoryCitation {
         path: rel_path,
         hash: stable_fingerprint_hex(&bytes),
-    })
-}
-
-fn read_json(path: &Path) -> Result<JsonValue, ObsMemContractError> {
-    let raw = fs::read_to_string(path).map_err(|err| {
-        ObsMemContractError::new(
-            ObsMemContractErrorCode::InvalidRequest,
-            format!("failed reading '{}': {err}", path.display()),
-        )
-    })?;
-    serde_json::from_str(&raw).map_err(|err| {
-        ObsMemContractError::new(
-            ObsMemContractErrorCode::InvalidRequest,
-            format!("failed parsing '{}' as json: {err}", path.display()),
-        )
     })
 }
 
