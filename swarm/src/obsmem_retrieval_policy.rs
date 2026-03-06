@@ -1,0 +1,260 @@
+use crate::obsmem_contract::{
+    MemoryQuery, MemoryQueryResult, MemoryRecord, ObsMemContractError, ObsMemContractErrorCode,
+    OBSMEM_CONTRACT_VERSION,
+};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RetrievalOrder {
+    /// Canonical default: descending score, then deterministic lexical tie-breaks.
+    ScoreDescIdAsc,
+    /// Simple deterministic lexical ordering for explicit policy/testing.
+    IdAsc,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RetrievalPolicyV1 {
+    pub default_limit: usize,
+    pub required_tags: Vec<String>,
+    pub required_failure_code: Option<String>,
+    pub order: RetrievalOrder,
+}
+
+impl Default for RetrievalPolicyV1 {
+    fn default() -> Self {
+        Self {
+            default_limit: 10,
+            required_tags: Vec::new(),
+            required_failure_code: None,
+            order: RetrievalOrder::ScoreDescIdAsc,
+        }
+    }
+}
+
+impl RetrievalPolicyV1 {
+    pub fn normalize(&mut self) {
+        self.required_tags.sort();
+        self.required_tags.dedup();
+    }
+
+    pub fn validate(&self) -> Result<(), ObsMemContractError> {
+        if self.default_limit == 0 || self.default_limit > 1000 {
+            return Err(ObsMemContractError::new(
+                ObsMemContractErrorCode::InvalidQuery,
+                "retrieval policy default_limit must be in 1..=1000",
+            ));
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RetrievalRequest {
+    pub workflow_id: Option<String>,
+    pub failure_code: Option<String>,
+    pub tags: Vec<String>,
+    pub limit_override: Option<usize>,
+}
+
+impl RetrievalRequest {
+    pub fn normalize(&mut self) {
+        self.tags.sort();
+        self.tags.dedup();
+    }
+
+    pub fn to_query(&self, policy: &RetrievalPolicyV1) -> Result<MemoryQuery, ObsMemContractError> {
+        policy.validate()?;
+        let mut request = self.clone();
+        request.normalize();
+
+        let mut merged_tags = request.tags;
+        merged_tags.extend(policy.required_tags.iter().cloned());
+        merged_tags.sort();
+        merged_tags.dedup();
+
+        let limit = request.limit_override.unwrap_or(policy.default_limit);
+        if limit == 0 || limit > 1000 {
+            return Err(ObsMemContractError::new(
+                ObsMemContractErrorCode::InvalidQuery,
+                "retrieval request limit must be in 1..=1000",
+            ));
+        }
+
+        let failure_code = request
+            .failure_code
+            .or_else(|| policy.required_failure_code.clone());
+
+        let mut q = MemoryQuery {
+            contract_version: OBSMEM_CONTRACT_VERSION,
+            workflow_id: request.workflow_id,
+            failure_code,
+            tags: merged_tags,
+            limit,
+        };
+        q.normalize();
+        q.validate()?;
+        Ok(q)
+    }
+}
+
+pub fn apply_policy_to_results(
+    policy: &RetrievalPolicyV1,
+    request: &RetrievalRequest,
+    mut result: MemoryQueryResult,
+) -> Result<MemoryQueryResult, ObsMemContractError> {
+    policy.validate()?;
+
+    let query = request.to_query(policy)?;
+
+    let required_failure_tag = query
+        .failure_code
+        .as_ref()
+        .map(|fc| format!("failure:{fc}"));
+
+    result.hits.retain(|hit| {
+        query
+            .workflow_id
+            .as_ref()
+            .is_none_or(|wid| wid == &hit.workflow_id)
+            && query.tags.iter().all(|t| hit.tags.binary_search(t).is_ok())
+            && required_failure_tag
+                .as_ref()
+                .is_none_or(|tag| hit.tags.binary_search(tag).is_ok())
+    });
+
+    stable_sort_hits(policy.order, &mut result.hits);
+    result.hits.truncate(query.limit);
+    Ok(result)
+}
+
+fn stable_sort_hits(order: RetrievalOrder, hits: &mut [MemoryRecord]) {
+    match order {
+        RetrievalOrder::ScoreDescIdAsc => {
+            hits.sort_by(|a, b| {
+                parse_score_hundredths(&b.score)
+                    .cmp(&parse_score_hundredths(&a.score))
+                    .then_with(|| a.id.cmp(&b.id))
+                    .then_with(|| a.run_id.cmp(&b.run_id))
+                    .then_with(|| a.workflow_id.cmp(&b.workflow_id))
+                    .then_with(|| a.payload.cmp(&b.payload))
+            });
+        }
+        RetrievalOrder::IdAsc => {
+            hits.sort_by(|a, b| {
+                a.id.cmp(&b.id)
+                    .then_with(|| a.run_id.cmp(&b.run_id))
+                    .then_with(|| a.workflow_id.cmp(&b.workflow_id))
+                    .then_with(|| a.payload.cmp(&b.payload))
+            });
+        }
+    }
+}
+
+fn parse_score_hundredths(score: &str) -> i64 {
+    let trimmed = score.trim();
+    let mut iter = trimmed.split('.');
+    let whole = iter.next().and_then(|s| s.parse::<i64>().ok()).unwrap_or(0);
+    let frac_raw = iter.next().unwrap_or("0");
+    let frac_two = match frac_raw.len() {
+        0 => "00".to_string(),
+        1 => format!("{}0", frac_raw),
+        _ => frac_raw[..2].to_string(),
+    };
+    let frac = frac_two.parse::<i64>().unwrap_or(0);
+    whole * 100 + frac
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::obsmem_contract::{MemoryCitation, MemoryQueryResult, MemoryRecord};
+
+    fn hit(id: &str, score: &str, tags: &[&str]) -> MemoryRecord {
+        let mut t: Vec<String> = tags.iter().map(|s| (*s).to_string()).collect();
+        t.sort();
+        t.dedup();
+        MemoryRecord {
+            id: id.to_string(),
+            run_id: format!("run-{id}"),
+            workflow_id: "wf-a".to_string(),
+            tags: t,
+            payload: format!("payload-{id}"),
+            score: score.to_string(),
+            citations: vec![MemoryCitation {
+                path: format!("runs/{id}/run_summary.json"),
+                hash: "det64:0000000000000001".to_string(),
+            }],
+        }
+    }
+
+    #[test]
+    fn to_query_is_deterministic_for_identical_inputs() {
+        let mut policy = RetrievalPolicyV1 {
+            default_limit: 5,
+            required_tags: vec!["status:success".to_string(), "status:success".to_string()],
+            required_failure_code: Some("tool_failure".to_string()),
+            order: RetrievalOrder::ScoreDescIdAsc,
+        };
+        policy.normalize();
+
+        let mut request = RetrievalRequest {
+            workflow_id: Some("wf-a".to_string()),
+            failure_code: None,
+            tags: vec!["workflow:wf-a".to_string(), "workflow:wf-a".to_string()],
+            limit_override: Some(3),
+        };
+        request.normalize();
+
+        let left = request.to_query(&policy).expect("left query");
+        let right = request.to_query(&policy).expect("right query");
+        assert_eq!(left, right);
+        assert_eq!(left.failure_code.as_deref(), Some("tool_failure"));
+        assert_eq!(left.tags, vec!["status:success", "workflow:wf-a"]);
+        assert_eq!(left.limit, 3);
+    }
+
+    #[test]
+    fn apply_policy_filters_and_orders_deterministically() {
+        let mut policy = RetrievalPolicyV1 {
+            default_limit: 2,
+            required_tags: vec!["status:success".to_string()],
+            required_failure_code: Some("tool_failure".to_string()),
+            order: RetrievalOrder::ScoreDescIdAsc,
+        };
+        policy.normalize();
+
+        let request = RetrievalRequest {
+            workflow_id: Some("wf-a".to_string()),
+            failure_code: None,
+            tags: vec!["workflow:wf-a".to_string()],
+            limit_override: None,
+        };
+
+        let input = MemoryQueryResult {
+            hits: vec![
+                hit(
+                    "b",
+                    "1.20",
+                    &["workflow:wf-a", "status:success", "failure:tool_failure"],
+                ),
+                hit(
+                    "a",
+                    "1.20",
+                    &["workflow:wf-a", "status:success", "failure:tool_failure"],
+                ),
+                hit(
+                    "c",
+                    "9.99",
+                    &["workflow:wf-a", "status:success", "failure:runtime_failure"],
+                ),
+            ],
+        };
+
+        let left = apply_policy_to_results(&policy, &request, input.clone()).expect("left");
+        let right = apply_policy_to_results(&policy, &request, input).expect("right");
+
+        assert_eq!(left, right);
+        assert_eq!(left.hits.len(), 2);
+        assert_eq!(left.hits[0].id, "a");
+        assert_eq!(left.hits[1].id, "b");
+    }
+}

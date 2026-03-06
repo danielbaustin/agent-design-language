@@ -245,3 +245,36 @@ Deterministic guarantees:
 Privacy boundary:
 - Raw prompts and tool arguments are not persisted by the indexing summary surface.
 - Host absolute paths and token-like strings are rejected by deterministic local checks.
+
+## WP-10 ObsMem retrieval policy v1 (deterministic structured retrieval)
+
+v0.75 ships deterministic **structured retrieval v1** only. Hybrid/semantic
+retrieval and probabilistic ranking remain deferred to later milestones.
+
+Policy v1 contract:
+- Runtime surface: `swarm::obsmem_retrieval_policy`.
+- Request + policy inputs resolve to a canonical `MemoryQuery`.
+- Result filtering and ordering are deterministic for identical inputs and index state.
+
+Canonical normalization rules:
+- `tags` are sorted and deduplicated on both policy and request.
+- `required_tags` are merged with request tags deterministically.
+- `limit` resolves as `limit_override` if present, otherwise `default_limit`; valid range is `1..=1000`.
+- `failure_code` resolves from request when present, otherwise policy-required failure code.
+- Empty optional fields are represented as `None` and do not alter ordering semantics.
+
+Default ordering and tie-break rules:
+- Default order is `ScoreDescIdAsc`.
+- Primary sort key: parsed score descending.
+- Deterministic ties break by lexical comparison in this order:
+  - `id`
+  - `run_id`
+  - `workflow_id`
+  - `payload`
+- Alternative explicit order `IdAsc` is fully lexical using the same tie-break chain.
+
+Determinism boundary:
+- Given identical normalized request/policy + identical backend index state,
+  retrieval returns the same record set in the same order.
+- Any future hybrid/semantic mode must preserve deterministic tie-break behavior
+  before results are exposed to runtime callers.
