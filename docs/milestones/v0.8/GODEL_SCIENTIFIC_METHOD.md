@@ -35,6 +35,16 @@ Where:
 - **ObsMem** stores indexed knowledge derived from traces.
 - **Gödel** reasons over that evidence and proposes improvements.
 
+## Canonical Schema/Spec Artifacts (Design Stage)
+
+The following machine-readable schema/spec artifacts are canonical for v0.8 design work:
+
+- `docs/milestones/v0.8/agent_profile.v1.json`
+- `docs/milestones/v0.8/mutation.v1.json`
+
+These are design-stage schema artifacts now and are candidates for later promotion into a runtime schema directory.
+Legacy copies under `.adl/docs/v07planning/` may remain for historical planning context, but the canonical source of truth is under `docs/milestones/v0.8/`.
+
 ---
 
 # Core Concept: Experiment Records
