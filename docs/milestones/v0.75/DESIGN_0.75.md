@@ -285,6 +285,13 @@ The v0.75 demo integration path uses the hierarchical planner workflow as a
 real run surface and emits deterministic ObsMem artifacts when
 `ADL_OBSMEM_DEMO=1`.
 
+ObsMem demo adapter semantics:
+- The demo path uses a deterministic in-memory `ObsMemClient` implementation.
+- This adapter exists only to demonstrate indexing + retrieval without external
+  infrastructure dependencies.
+- Production deployments may substitute another backend behind the same adapter
+  contract while preserving deterministic indexing/retrieval behavior.
+
 Pipeline contract (deterministic, replay-safe):
 
 trace artifacts
@@ -297,6 +304,10 @@ Determinism notes:
 - Indexing order is derived from canonical activation-log event order.
 - Retrieval order uses policy-defined deterministic ordering and tie-breaks.
 - Artifacts are written via atomic deterministic paths under `.adl/runs/<run_id>/learning/`.
+- For identical normalized retrieval inputs and identical index state, both
+  result-set membership and ordering are deterministic.
+- Byte-equal artifact output across independent runs is not required when
+  underlying run artifacts differ (for example run IDs or metadata hashes).
 
 Security/privacy notes:
 - Artifacts contain query metadata and deterministic result fields only.
