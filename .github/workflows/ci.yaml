@@ -95,31 +95,16 @@ jobs:
       - name: Coverage summary (text)
         run: cargo llvm-cov --workspace --summary-only | tee coverage-summary.txt
 
-      - name: Enforce workspace line coverage gate (>= 90%)
+      - name: Enforce coverage policy gates (workspace + per-file)
+        env:
+          WORKSPACE_LINE_THRESHOLD: "90"
+          PER_FILE_LINE_THRESHOLD: "80"
+          # Documented exclusion rationale is tracked in
+          # docs/milestones/v0.75/COVERAGE_POLICY_0.75.md.
+          EXCLUDE_FROM_FILE_FLOOR_REGEX: "/swarm/src/bin/swarm.rs$|/swarm/src/bin/swarm_remote.rs$|/swarm/src/obsmem_contract.rs$"
         run: |
           set -eu
-          threshold=90
-          total_line="$(awk '/^TOTAL/ {line=$0} END {print line}' coverage-summary.txt)"
-          if [ -z "$total_line" ]; then
-            echo "Failed to locate TOTAL line in coverage-summary.txt"
-            exit 1
-          fi
-
-          workspace_line_pct="$(echo "$total_line" | awk '{gsub("%","",$10); print $10}')"
-          if [ -z "$workspace_line_pct" ]; then
-            echo "Failed to parse workspace line coverage from TOTAL line:"
-            echo "$total_line"
-            exit 1
-          fi
-
-          printf "Workspace line coverage: %.2f%% (threshold: %s%%)\n" "$workspace_line_pct" "$threshold"
-          awk -v pct="$workspace_line_pct" -v threshold="$threshold" '
-            BEGIN {
-              if ((pct + 0) < threshold) {
-                printf "Coverage below threshold: %.2f%% < %s%%\n", pct, threshold
-                exit 1
-              }
-            }'
+          bash tools/enforce_coverage_gates.sh coverage-summary.json
 
       - name: Verify generated lcov file
         run: test -s lcov.info && ls -l lcov.info

@@ -10,6 +10,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `card_prompt.sh`: deterministic input-card parser that generates execution prompts.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
 - `batched_checks.sh`, `preflight_review.sh`: quality/preflight checks.
+- `enforce_coverage_gates.sh`: deterministic coverage threshold enforcement (workspace + per-file).
 - `open_artifact.sh`: convenience opener for cards/reports.
 - `update_reports_index.sh`, `update_latest_reports.sh`: report index maintenance.
 
@@ -23,6 +24,9 @@ From repo root:
 
 # run standard checks
 ./swarm/tools/batched_checks.sh
+
+# enforce coverage thresholds from coverage-summary.json
+cd ./swarm/ && bash tools/enforce_coverage_gates.sh coverage-summary.json
 
 # generate deterministic execution prompt from an input card
 ./swarm/tools/card_prompt.sh --issue <issue_num> --out /tmp/prompt.txt
