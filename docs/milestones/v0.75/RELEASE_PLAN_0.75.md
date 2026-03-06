@@ -1,50 +1,3 @@
-# Release Process Template
-
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Release manager: `{{release_manager}}`
-
-## How To Use
-- Execute sections in order and capture links for each completed step.
-- Keep this doc focused on shipping mechanics; use release notes for narrative.
-- Mark blockers immediately; do not publish until gates pass.
-
-## 1) Release Readiness
-- [ ] Milestone checklist complete (`{{milestone_checklist_link}}`)
-- [ ] Release notes approved (`{{release_notes_link}}`)
-- [ ] Go/no-go decision recorded (`{{decision_link}}`)
-
-## 2) Branch And Tag Preparation
-- [ ] Target branch confirmed (`{{target_branch}}`)
-- [ ] Working tree clean
-- [ ] Version string(s) validated (`{{version_validation_link}}`)
-- [ ] Tag created: `{{tag_name}}`
-- [ ] Tag pushed and verified
-
-## 3) GitHub Release Steps
-- [ ] GitHub Release draft created from `{{tag_name}}` (`{{release_draft_link}}`)
-- [ ] Release body populated from approved notes
-- [ ] Links to key PRs/issues included
-- [ ] Release visibility confirmed (draft/prerelease/final)
-- [ ] Release published
-
-## 4) Verification
-- [ ] Post-release CI status checked (`{{ci_run_link}}`)
-- [ ] Release links tested (docs, artifacts, notes)
-- [ ] Immediate regressions triaged and tracked (`{{triage_link}}`)
-
-## 5) Communication
-- [ ] Community announcement published (`{{announcement_link}}`)
-- [ ] Internal update posted (`{{internal_update_link}}`)
-- [ ] Roadmap/status updated (`{{roadmap_update_link}}`)
-
-## Exit Criteria
-- Tag and GitHub Release are published and accessible.
-- Verification completed with no unknown critical failures.
-- Communication links captured.
-
 # Release Plan — v0.75
 
 ## Metadata
@@ -54,11 +7,11 @@
 - Release manager: **Daniel Austin**
 
 ## Purpose
-v0.75 is the **interstitial stabilization milestone** between v0.7 and v0.8.
+v0.75 is the interstitial stabilization milestone between v0.7 and v0.8.
 
 Primary intent:
 - Ship **EPIC-A + EPIC-B** (Deterministic Substrate + ObsMem v1 integration boundary)
-- Keep changes **reviewable** (small, auditable PRs)
+- Keep changes reviewable (small, auditable PRs)
 - Preserve the v0.7 compatibility window (canonical `adl` naming)
 
 Non-goals:
@@ -66,87 +19,87 @@ Non-goals:
 - Advanced adaptive policy + online learning v2 (tracked separately)
 
 ## Release Gates
-A release candidate is eligible to ship only if all gates are green:
+A release candidate is eligible to ship only if all gates are green.
 
 ### Quality gates
 - [ ] CI required checks green on `main`
-- [ ] `cargo test --workspace` passes (workspace rooted at `swarm/`)
-- [ ] `cargo fmt --check` passes
+- [ ] `cargo test --workspace` passes (run from `./swarm/`)
+- [ ] `cargo fmt --all -- --check` passes
 - [ ] `cargo clippy --workspace --all-targets -- -D warnings` passes
-- [ ] Coverage floor maintained (90% target)
+- [ ] Coverage policy gate passes (workspace >= 90%, per-file runtime >= 80% with documented exclusions)
 
 ### Docs + demo gates
-- [ ] v0.75 milestone docs complete (VISION/DESIGN/WBS/SPRINT/DECISIONS/MILESTONE_CHECKLIST/RELEASE_NOTES)
-- [ ] Canonical planning docs are under `.adl/docs/v075planning/` (no duplicate sources of truth)
-- [ ] Demos referenced in milestone docs are runnable and verified
+- [ ] v0.75 milestone docs complete and cross-linked
+- [ ] Demo matrix commands are runnable from docs (`docs/milestones/v0.75/DEMO_MATRIX.md`)
+- [ ] Coverage policy doc aligned with CI/nightly configuration (`docs/milestones/v0.75/COVERAGE_POLICY_0.75.md`)
 
 ### Security + determinism gates
 - [ ] No regression in signing / verification behavior (remote execution envelope)
 - [ ] Determinism expectations documented for any nondeterministic surfaces
-- [ ] No secrets exported by default in any learning/export artifacts
+- [ ] No secrets exported by default in learning/export artifacts
 
 ### Review gates
 - [ ] Internal review pass completed and findings triaged
-- [ ] **3rd party review completed** and findings triaged (required)
+- [ ] 3rd-party review completed and findings triaged
 
 ## 0) Pre-flight
 - [ ] Confirm milestone scope is up to date (issues + WBS)
 - [ ] Confirm release manager and reviewers
 - [ ] Ensure local dev environment is clean (toolchain, rustfmt, clippy)
-- [ ] Confirm repo is fast-forwarded to `origin/main`
+- [ ] Confirm branch is fast-forwarded to `origin/main`
 
-Links:
-- Milestone checklist: TODO
-- Sprint plan: TODO
-- WBS: TODO
+Canonical references:
+- Milestone checklist: `docs/milestones/v0.75/MILESTONE_CHECKLIST_0.75.md`
+- Sprint plan: `docs/milestones/v0.75/SPRINT_0.75.md`
+- WBS: `docs/milestones/v0.75/WBS_0.75.md`
+- Release notes: `docs/milestones/v0.75/RELEASE_NOTES_0.75.md`
+- Design: `docs/milestones/v0.75/DESIGN_0.75.md`
 
 ## 1) Release Readiness
-- [ ] Milestone checklist complete (link: TODO)
-- [ ] Release notes draft complete (link: TODO)
-- [ ] Go/no-go decision recorded in DECISIONS doc (link: TODO)
+- [ ] Milestone checklist complete
+- [ ] Release notes draft complete
+- [ ] Go/no-go decision recorded in DECISIONS doc
 
 ## 2) Branch and Tag Preparation
 - [ ] Target branch confirmed: `main`
 - [ ] Working tree clean (no local changes)
-- [ ] Version string(s) validated (link: TODO)
+- [ ] Version string(s) validated
 - [ ] Tag created: `v0.75.0`
 - [ ] Tag pushed and verified on GitHub
 
 ## 3) GitHub Release Steps
-- [ ] GitHub Release draft created from tag `v0.75.0` (link: TODO)
+- [ ] GitHub Release draft created from tag `v0.75.0`
 - [ ] Release body populated from approved v0.75 release notes
 - [ ] Links to key PRs/issues included (at minimum: EPIC-A/B deliverables + major fixes)
 - [ ] Release visibility confirmed (draft/prerelease/final)
 - [ ] Release published
 
 ## 4) Verification
-- [ ] Post-release CI status checked (link: TODO)
+- [ ] Post-release CI status checked
 - [ ] Release links tested (docs, artifacts, notes)
-- [ ] Immediate regressions triaged and tracked (link: TODO)
+- [ ] Immediate regressions triaged and tracked
 
 ## 5) Communication
-- [ ] Community announcement published (link: TODO)
-- [ ] Internal update posted (link: TODO)
-- [ ] Roadmap/status updated (link: TODO)
+- [ ] Community announcement published
+- [ ] Internal update posted
+- [ ] Roadmap/status updated
 
 ## Exit Criteria
 - Tag `v0.75.0` and GitHub Release are published and accessible.
 - All gates are green with no unknown critical failures.
-- Review links (internal + 3rd party) and triage links are captured.
+- Review and triage links are captured in release notes/decision records.
 
 ---
 
 ## Appendix A — Canonical v0.75 Docs Inventory
-Canonical planning + milestone docs must live in `.adl/docs/v075planning/`:
 
-- VISION_0.75.md
-- DESIGN_0.75.md
-- WBS_0.75.md
-- SPRINT_0.75.md
-- DECISIONS_0.75.md
-- MILESTONE_CHECKLIST_0.75.md
-- RELEASE_NOTES_0.75.md
-- RELEASE_PLAN_0.75.md (this file)
-
-Notes:
-- `docs/milestones/` may include pointer READMEs, but must not duplicate canonical planning docs.
+- `docs/milestones/v0.75/VISION_0.75.md`
+- `docs/milestones/v0.75/DESIGN_0.75.md`
+- `docs/milestones/v0.75/WBS_0.75.md`
+- `docs/milestones/v0.75/SPRINT_0.75.md`
+- `docs/milestones/v0.75/DECISIONS_0.75.md`
+- `docs/milestones/v0.75/MILESTONE_CHECKLIST_0.75.md`
+- `docs/milestones/v0.75/RELEASE_NOTES_0.75.md`
+- `docs/milestones/v0.75/RELEASE_PLAN_0.75.md`
+- `docs/milestones/v0.75/DEMO_MATRIX.md`
+- `docs/milestones/v0.75/COVERAGE_POLICY_0.75.md`

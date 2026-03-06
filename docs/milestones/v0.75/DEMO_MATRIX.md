@@ -125,7 +125,7 @@ Expected trace outputs:
 ## Verification
 
 cargo test --workspace
-cargo run demo
+cargo run -q --bin adl -- demo demo-b-one-command --run --no-open --out ../.tmp/wp13/demo-b
 artifact paths validated
 
 Executed/validated form in this WP:

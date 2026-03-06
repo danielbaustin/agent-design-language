@@ -42,6 +42,8 @@ v0.75 is the interstitial stabilization milestone between v0.7 and v0.8. It focu
 ## Validation Notes
 - CI required checks must be green on `main`.
 - Workspace checks (fmt/clippy/tests) and coverage floor are enforced as release gates.
+- Coverage thresholds and exclusions are defined in `docs/milestones/v0.75/COVERAGE_POLICY_0.75.md`.
+- Runnable demo validation commands are defined in `docs/milestones/v0.75/DEMO_MATRIX.md`.
 
 ## What’s Next
 - v0.8: Gödel and Authoring surfaces (EPIC-C/D).

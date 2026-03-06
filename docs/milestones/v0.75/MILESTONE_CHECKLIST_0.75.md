@@ -64,7 +64,7 @@ Evidence:
 - [ ] Artifact trees verified as stable where applicable
 
 Reference:
-- `docs/milestones/v0.75/DEMOS_v0.75.md`
+- `docs/milestones/v0.75/DEMO_MATRIX.md`
 
 ---
 
@@ -73,6 +73,7 @@ Reference:
 - [ ] `cargo clippy --all-targets -- -D warnings` passes
 - [ ] `cargo test --workspace` passes (run twice consecutively)
 - [ ] Coverage meets or exceeds ratchet threshold (workspace line coverage ≥ target)
+- [ ] Per-file runtime line coverage floor (>= 80%) satisfied with explicit documented exclusions
 - [ ] CI required checks are green on merge target
 - [ ] No flaky tests
 - [ ] No unresolved high-priority blockers
@@ -85,6 +86,7 @@ Reference:
 - [ ] Architecture doc updated to reflect milestone slicing
 - [ ] WP-15A doc alignment PR merged
 - [ ] Review notes addressed
+- [ ] Coverage policy doc aligned with CI thresholds and exclusions (`docs/milestones/v0.75/COVERAGE_POLICY_0.75.md`)
 
 ---
 

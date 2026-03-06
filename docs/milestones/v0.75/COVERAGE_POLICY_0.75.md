@@ -9,7 +9,10 @@ This policy applies to the Rust runtime workspace under `swarm/`.
 ## Coverage Gates
 
 - Workspace line coverage must be at least **90%**.
-- Per-file line coverage for `swarm/src/**/*.rs` must be at least **80%**.
+- Per-file line coverage for canonical runtime source under `swarm/src/**/*.rs`
+  must be at least **80%**.
+- Test code, fixtures, generated code, and other non-runtime paths are outside
+  the per-file floor unless explicitly brought under policy later.
 
 Both gates are enforced in CI via:
 
@@ -21,7 +24,7 @@ Both gates are enforced in CI via:
 From repo root:
 
 ```bash
-cd ./swarm/
+cd swarm/
 cargo llvm-cov --workspace --all-features --lcov --output-path lcov.info
 cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
 bash tools/enforce_coverage_gates.sh coverage-summary.json
@@ -29,23 +32,24 @@ bash tools/enforce_coverage_gates.sh coverage-summary.json
 
 ## Exclusions (Per-File Floor Only)
 
-The following files are excluded from the
-per-file 80% gate (see `EXCLUDE_FROM_FILE_FLOOR_REGEX` in
-`.github/workflows/ci.yaml`):
+The per-file 80% gate excludes legacy compatibility shim binaries under
+`swarm/src/bin/` and also excludes:
 
-- legacy CLI compatibility shim bin
-- legacy remote compatibility shim bin
-- `./swarm/src/obsmem_contract.rs`
+- `swarm/src/obsmem_contract.rs`
 
 Rationale:
 
-- These are legacy compatibility shim binaries retained for transition/backward compatibility behavior.
-- They are covered by integration/CLI smoke tests and remain inside the stricter workspace 90% aggregate gate.
-- Excluding them from the per-file floor avoids forcing low-value test inflation in wrapper-only entrypoints.
-- `./swarm/src/obsmem_contract.rs` is a deterministic contract/normalization boundary with many defensive validation branches already exercised indirectly by adapter/integration tests; this exclusion keeps the WP-14 gate stable while preserving strict workspace coverage enforcement.
+- Legacy compatibility shim bins are covered by integration/CLI smoke tests and
+  remain inside the stricter workspace 90% aggregate gate.
+- Excluding shim wrappers from per-file thresholds avoids low-value test
+  inflation in transition entrypoints.
+- `swarm/src/obsmem_contract.rs` is a deterministic contract/normalization
+  boundary with many defensive validation branches exercised indirectly through
+  adapter/integration tests.
 
 ## Determinism / Security Notes
 
 - Coverage checks run locally in CI without external network requirements.
 - Coverage parsing uses normalized, repository-relative file paths.
-- Gating output does not include secrets, prompts, tool arguments, or absolute host-path leakage.
+- Gating output does not include secrets, prompts, tool arguments, or absolute
+  host-path leakage.

@@ -200,7 +200,7 @@ Deterministic retrieval contract:
   - Failure taxonomy stability tests (stable codes; deterministic mapping)
   - ObsMem ingest/query tests (deterministic ordering + citations)
   - CI gates for “no secrets / no host paths”
-  - Coverage policy gate (workspace >= 90% line coverage; per-file >= 80% line coverage with explicit documented exclusions)
+  - Coverage policy gate (workspace >= 90% line coverage; per-file runtime >= 80% line coverage with explicit documented exclusions)
   - Coverage policy reference: `docs/milestones/v0.75/COVERAGE_POLICY_0.75.md`
 - Success metrics:
   - Demo A/B/C (from VISION_0.75.md) run from docs on a fresh checkout
