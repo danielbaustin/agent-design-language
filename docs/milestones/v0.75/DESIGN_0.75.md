@@ -278,3 +278,26 @@ Determinism boundary:
   retrieval returns the same record set in the same order.
 - Any future hybrid/semantic mode must preserve deterministic tie-break behavior
   before results are exposed to runtime callers.
+
+## WP-11 ObsMem demo integration (hierarchical planner)
+
+The v0.75 demo integration path uses the hierarchical planner workflow as a
+real run surface and emits deterministic ObsMem artifacts when
+`ADL_OBSMEM_DEMO=1`.
+
+Pipeline contract (deterministic, replay-safe):
+
+trace artifacts
+  -> indexing pipeline (`swarm::obsmem_indexing`)
+  -> ObsMem adapter write/query (`swarm::obsmem_adapter`)
+  -> retrieval policy (`swarm::obsmem_retrieval_policy`)
+  -> emitted artifacts (`obs_mem_index_summary.json`, `obs_mem_query_result.json`)
+
+Determinism notes:
+- Indexing order is derived from canonical activation-log event order.
+- Retrieval order uses policy-defined deterministic ordering and tie-breaks.
+- Artifacts are written via atomic deterministic paths under `.adl/runs/<run_id>/learning/`.
+
+Security/privacy notes:
+- Artifacts contain query metadata and deterministic result fields only.
+- No raw prompts, tool arguments, secrets, or absolute host paths are emitted.

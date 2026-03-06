@@ -257,3 +257,13 @@ Planned demonstrations for the next milestone:
 - Gödel agent reasoning loop
 - Authoring surface (structured prompt → ADL job)
 - expanded multi‑agent coordination examples
+
+## WP-11 ObsMem demo run (hierarchical planner)
+
+Run the hierarchical planner demo with deterministic local provider + ObsMem emission:
+
+`ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh ADL_OBSMEM_DEMO=1 cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-hierarchical-planner.adl.yaml --run --trace --allow-unsigned --out .tmp/v075-obsmem-demo`
+
+Expected deterministic ObsMem artifacts:
+- `.adl/runs/v0-7-hierarchical-planner/learning/obs_mem_index_summary.json`
+- `.adl/runs/v0-7-hierarchical-planner/learning/obs_mem_query_result.json`

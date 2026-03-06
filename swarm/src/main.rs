@@ -7,7 +7,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use ::adl::{
     adl, artifacts, demo, env_compat, execute, failure_taxonomy, instrumentation, learning_export,
-    overlay, plan, prompt, resolve, signing, trace,
+    obsmem_demo, overlay, plan, prompt, resolve, signing, trace,
 };
 
 fn usage() -> &'static str {
@@ -355,6 +355,18 @@ fn real_main() -> Result<()> {
                 status_label,
                 run_dir.display()
             );
+        }
+
+        if pause_state.is_none() {
+            if let Some(paths) = obsmem_demo::maybe_emit_obsmem_demo_artifacts(&resolved.run_id)? {
+                if !quiet {
+                    eprintln!(
+                        "OBSMEM artifacts index={} query={}",
+                        paths.index_summary.display(),
+                        paths.query_result.display()
+                    );
+                }
+            }
         }
 
         // Explicitly consume StepOutput so clippy -D warnings stays green
