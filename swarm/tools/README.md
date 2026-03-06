@@ -7,6 +7,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 ## What Is Here
 
 - `pr.sh`: canonical issue start/finish workflow helper.
+- `card_prompt.sh`: deterministic input-card parser that generates execution prompts.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
 - `batched_checks.sh`, `preflight_review.sh`: quality/preflight checks.
 - `open_artifact.sh`: convenience opener for cards/reports.
@@ -22,6 +23,9 @@ From repo root:
 
 # run standard checks
 ./swarm/tools/batched_checks.sh
+
+# generate deterministic execution prompt from an input card
+./swarm/tools/card_prompt.sh --issue <issue_num> --out /tmp/prompt.txt
 
 # finish issue and open/update PR
 ./swarm/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>"
