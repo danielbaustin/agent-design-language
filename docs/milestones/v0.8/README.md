@@ -30,5 +30,7 @@ Scope slicing reference:
 
 ## Milestone Materials
 
+- `RUST_TRANSPILER_DEMO.md` (planned for v0.8)
+
 - `STICKTOITTIVENESS.md`
 - `incubation/`
