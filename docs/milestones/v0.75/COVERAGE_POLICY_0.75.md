@@ -33,10 +33,9 @@ bash tools/enforce_coverage_gates.sh coverage-summary.json
 
 ## Explicit Per-File Exclusions
 
-The per-file floor excludes the following files via CI regex:
+The per-file floor excludes legacy compatibility shim binaries under
+`./swarm/src/bin/` and also excludes:
 
-- `./swarm/src/bin/swarm.rs`
-- `./swarm/src/bin/swarm_remote.rs`
 - `./swarm/src/obsmem_contract.rs`
 
 Rationale:
