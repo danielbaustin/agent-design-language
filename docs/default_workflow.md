@@ -14,6 +14,20 @@ Canonical cards:
 - `.adl/cards/<issue_num>/input_<issue_num>.md`
 - `.adl/cards/<issue_num>/output_<issue_num>.md`
 
+Structured Card Templates v2 (required sections):
+- Input card:
+  - `System Invariants (must remain true)`
+  - `Reviewer Checklist (machine-readable hints)`
+  - `Card Automation Hooks (prompt generation)`
+- Output card:
+  - `Determinism Evidence`
+  - `Security / Privacy Checks`
+  - `Replay Artifacts`
+  - `Artifact Verification`
+
+These sections are designed to support deterministic replay/security verification and
+machine-parsable prompt automation.
+
 ## 2) Implement and Validate
 
 Typical local preflight:
