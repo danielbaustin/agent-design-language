@@ -87,15 +87,19 @@ v0.75 is complete when we can demonstrate:
 ### Demo C — Operational report
 - Report basic operational metrics from the index (cost/latency/retry counts) in a deterministic way.
 
-## CLI surfaces (expected in v0.75)
+## CLI surfaces (implemented and used in v0.75 docs)
 
-(Exact subcommands may evolve; the contract is the capability.)
+The current CLI and demo docs use these surfaces:
 
-- `adl replay <run-id>` (or equivalent)
-- `adl trace export <run-id> --format v2`
-- `adl obsmem ingest <trace_bundle_path>`
-- `adl obsmem query ...` (structured filters + optional semantic)
-- `adl obsmem report ...`
+- `adl <workflow.adl.yaml> --run --trace --allow-unsigned`
+- `adl demo <name> --run --no-open`
+- `adl instrument replay <activation_log.json>`
+- `adl instrument replay-bundle <trace_bundle_dir> <run_id>`
+- `adl learn export --format <bundle-v1|trace-bundle-v2> ...`
+
+ObsMem indexing/retrieval/report are demonstrated in v0.75 through the
+runtime adapter and demo artifacts (`ADL_OBSMEM_DEMO=1`), not as a dedicated
+top-level `adl obsmem ...` command surface.
 
 ## Determinism and hygiene requirements
 

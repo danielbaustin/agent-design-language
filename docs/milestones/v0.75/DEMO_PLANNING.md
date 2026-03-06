@@ -264,7 +264,7 @@ Planned demonstrations for the next milestone:
 
 Run the hierarchical planner demo with deterministic local provider + ObsMem emission:
 
-`ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh ADL_OBSMEM_DEMO=1 cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-7-hierarchical-planner.adl.yaml --run --trace --allow-unsigned --out .tmp/v075-obsmem-demo`
+`ADL_OLLAMA_BIN=tools/mock_ollama_v0_4.sh ADL_OBSMEM_DEMO=1 cargo run -q --bin adl -- examples/v0-7-hierarchical-planner.adl.yaml --run --trace --allow-unsigned --out ../.tmp/v075-obsmem-demo`
 
 Expected deterministic ObsMem artifacts:
 - `.adl/runs/v0-7-hierarchical-planner/learning/obs_mem_index_summary.json`

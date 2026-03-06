@@ -255,9 +255,13 @@ v0.8 requirements:
 
 ### 10.1 CLI
 
-- `adl obsmem ingest <trace_bundle>`
-- `adl obsmem query --structured ... --semantic ...`
-- `adl obsmem report <run_id>`
+Current repository state:
+
+- v0.75 demonstrates ObsMem indexing/retrieval via adapter/demo artifacts
+  (for example `ADL_OBSMEM_DEMO=1` runs), not via a dedicated top-level
+  `adl obsmem ...` CLI.
+- Dedicated `adl obsmem ingest/query/report` commands remain a planned future
+  interface.
 
 ### 10.2 Rust API (conceptual)
 
