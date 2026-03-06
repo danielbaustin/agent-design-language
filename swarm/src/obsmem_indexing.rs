@@ -145,6 +145,7 @@ pub fn index_run_from_artifacts(
     }
 
     let mut tags = vec![
+        format!("run:{run_id}"),
         format!("workflow:{workflow_id}"),
         format!("status:{status}"),
         format!("step_context_count:{}", steps.len()),
