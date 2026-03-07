@@ -190,4 +190,4 @@ v0.8 proves that thesis.
 
 ---
 
-**Next file to draft:** `.adl/docs/v085planning/VISION_v0.85.md`
+**Related planning:** see `../v0.85/CLUSTER_EXECUTION.md` for deferred cluster/distributed execution scope.

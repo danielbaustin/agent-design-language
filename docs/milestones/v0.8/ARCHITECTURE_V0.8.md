@@ -10,7 +10,7 @@ This document defines how the following pillars fit together:
 
 - Deterministic Workflow Runtime
 - Replay / Auto‑Retry / Checkpointing
-- ObsMem (Observational Memory + Bayesian Retrieval)
+- ObsMem integration boundary (v0.75 foundation)
 - Gödel Self‑Improvement Model
 - Authoring Surfaces (Plain English → ADL)
 
@@ -152,14 +152,15 @@ Trace bundles are:
 
 ---
 
-## 2.6 ObsMem — Observational Memory
+## 2.6 ObsMem Integration Boundary (v0.75 Foundation)
 
-ObsMem ingests trace bundles and builds:
+ObsMem is treated as an existing dependency from v0.75 and remains outside the v0.8 runtime expansion surface.
+
+ObsMem capabilities available to v0.8:
 
 - Structured index
-- Optional embedding index
-- Derived feature store
-- Bayesian ranking layer
+- Deterministic retrieval over indexed evidence
+- Derived feature summaries
 
 ObsMem retrieval must:
 
@@ -167,14 +168,14 @@ ObsMem retrieval must:
 - Always explain score components
 - Be deterministic given index state + query
 
-ObsMem provides:
+ObsMem integration provides:
 
-- Smart RAG over runs
+- Evidence retrieval over prior runs
 - Failure similarity search
 - Provider/policy analytics
 - Stability metrics
 
-See `OBSMEM_BAYES.md` for full model.
+See `incubation/OBSMEM_BAYES.md` for background model details.
 
 ---
 
@@ -217,6 +218,7 @@ Must ship:
 - Failure taxonomy
 - Auto‑retry policy
 - Trace bundle export v2
+- ObsMem indexing + retrieval v1
 
 v0.75 delivers infrastructure only.
 
@@ -226,8 +228,6 @@ v0.75 delivers infrastructure only.
 
 Must ship:
 
-- ObsMem indexing + retrieval v1
-- Smart RAG over runs
 - Gödel mutation + evaluation harness
 - Authoring Surfaces v1
 - 2–3 flagship end‑to‑end demos
@@ -247,12 +247,12 @@ v0.8 is complete when we can demonstrate:
 - Simulated failure
 - Auto‑retry
 - Replay explains failure
-- ObsMem retrieves similar cases
+- Retrieval surfaces consume v0.75 ObsMem evidence deterministically
 
 ### Demo 2 — Operational Intelligence
 
 - Query: "Best provider under budget"
-- ObsMem returns ranked, cited results
+- Retrieval results are deterministic, cited, and replay-auditable
 - Deterministic ranking
 
 ### Demo 3 — Gödel Improvement Loop
@@ -328,8 +328,8 @@ Implementation order recommendation:
 
 1. Lock execution contract
 2. Lock trace bundle schema
-3. Implement minimal structured ObsMem index
-4. Add Bayesian ranking layer
+3. Consume v0.75 ObsMem retrieval/indexing surfaces
+4. Add v0.8 retrieval integration reports
 5. Build replay‑backed Gödel evaluation harness
 6. Expose authoring loop
 
