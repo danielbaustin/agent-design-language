@@ -322,14 +322,7 @@ Mitigation: PWA v1 is generate/export only; optional Local Run Bridge provides a
 
 ---
 
-# 11. Notes for this PR
+# 11. Canonical Location Note
 
-This EPIC draft currently lives under:
-- `.adl/docs/v08planning/EPIC_AUTHORING_SURFACES_v1.md`
-
-**Planned follow-up (when the git/worktree situation is calm):** move (not copy) the document into the canonical milestone location:
+This document is canonical at:
 - `docs/milestones/v0.8/EPIC_AUTHORING_SURFACES_v1.md`
-
-When that move happens:
-- Do not leave a duplicate behind.
-- Prefer a single commit that is a pure move/rename (no content edits mixed in).
