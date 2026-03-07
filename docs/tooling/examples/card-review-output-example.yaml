@@ -1,0 +1,69 @@
+review_format_version: card_review_output.v1
+review_metadata:
+  reviewer: card_reviewer_gpt
+  review_time_utc: 2026-03-06T18:05:00Z
+  checklist_version: card_review_checklist.v1
+review_target:
+  issue: "#660"
+  output_card_path: .adl/cards/660/output_660.md
+  input_card_path: .adl/cards/660/input_660.md
+  pr: "#670"
+decision: PASS
+summary:
+  status_line: "All checklist domains passed; no findings."
+  failed_rule_count: 0
+  failed_rule_ids: []
+domain_results:
+  - domain: structure
+    status: PASS
+    failed_rules: []
+  - domain: acceptance
+    status: PASS
+    failed_rules: []
+  - domain: determinism
+    status: PASS
+    failed_rules: []
+  - domain: security_privacy
+    status: PASS
+    failed_rules: []
+  - domain: artifacts
+    status: PASS
+    failed_rules: []
+  - domain: validation
+    status: PASS
+    failed_rules: []
+findings: []
+acceptance_criteria:
+  - criterion: "Canonical source-of-truth language is consistent across README and v0.8 docs."
+    status: met
+    evidence:
+      - path:docs/milestones/v0.8/README.md
+      - path:docs/milestones/v0.8/ARCHITECTURE_V0.8.md
+  - criterion: "v0.75 vs v0.8 milestone split is consistent across architecture and epic mapping docs."
+    status: met
+    evidence:
+      - path:docs/milestones/v0.8/ARCHITECTURE_V0.8.md
+      - path:docs/milestones/v0.8/EPIC_MAPPING_v0.8.md
+determinism_checks:
+  ordering_contract_verified: true
+  replay_impact: unchanged
+  notes: "Docs-only changes; runtime behavior unchanged."
+security_privacy_checks:
+  secrets_present: false
+  raw_prompt_or_tool_args_present: false
+  absolute_host_paths_present: false
+  notes: "No sensitive data or host paths in review artifact."
+artifact_checks:
+  required_artifacts_present: true
+  schema_change_present: false
+  schema_change_approved: not_applicable
+  notes: "Expected docs artifacts present."
+validation_checks:
+  required_commands_run: true
+  validation_result: PASS
+  commands:
+    - cargo fmt --all
+    - cargo clippy --workspace --all-targets -- -D warnings
+    - cargo test --workspace
+  notes: "All required checks passed."
+follow_ups: []
