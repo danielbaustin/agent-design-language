@@ -6,7 +6,7 @@ ADL is built for teams that care about determinism and auditability. Documents a
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.7-green)
+![Milestone](https://img.shields.io/badge/milestone-v0.75-orange)
 
 
 ## Try It Now (Happy Path)
@@ -29,7 +29,7 @@ cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-3-o
 
 ADL includes both low-level matrix demos and story-driven demo packs for first-time users.
 
-Story packs (v0.7):
+Story packs (released in v0.7):
 - `S-01` Determinism You Can Trust
 - `S-02` From Failure to Clarity
 - `S-03` Portable Learning (Exportable Intelligence)
@@ -38,6 +38,7 @@ Story packs (v0.7):
 
 Canonical demo commands and artifact paths:
 - [v0.7 Demo Matrix (Story-driven section)](docs/milestones/v0.7/DEMOS_v0.7.md#story-driven-demo-packs-user-facing)
+- [v0.75 Demo Matrix (active milestone)](docs/milestones/v0.75/DEMO_MATRIX.md)
 
 Badge semantics:
 - `adl-ci`: main branch CI workflow status
@@ -46,19 +47,20 @@ Badge semantics:
 
 ## Status
 
-Current release: **v0.7.0**
-Project changelog: `CHANGELOG.md`
+- Latest released milestone: **v0.7.0** (tag: `v0.7.0`)
+- Active development milestone: **v0.75**
+- Project changelog: `CHANGELOG.md`
 
 ## v0.7 Naming Migration (Compatibility Window)
 
 - Canonical Rust crate/package/lib identity is `adl`.
 - Canonical CLI/runtime naming is `adl` and `adl-remote`.
-- Legacy compatibility shim commands remain available in v0.7 with deprecation warnings.
-- Canonical env vars use `ADL_*`; legacy compatibility env vars remain supported in v0.7 with deprecation warnings.
+- Legacy compatibility shim commands introduced in v0.7 remain available during the compatibility window with deprecation warnings.
+- Canonical env vars use `ADL_*`; legacy compatibility env vars remain supported during the compatibility window with deprecation warnings.
 
 ## Features by Release
 
-### v0.6 (Current)
+### v0.7.0 (Current Release)
 
 * ExecutionPlan-driven runtime execution
 * Deterministic sequential + concurrent fork/join semantics
@@ -144,9 +146,9 @@ Run all three demos in sequence:
 swarm/tools/demo_v0_4.sh
 ```
 
-## Why v0.6 Matters
+## Why v0.7 Matters
 
-v0.6 proves:
+v0.7.0 proves:
 - Concurrent execution in the real runtime
 - Deterministic replay behavior
 - Bounded parallelism
@@ -159,7 +161,7 @@ v0.6 proves:
 
 Default contributor workflow uses `adl_pr_cycle` (`start -> codex -> finish -> report`).
 - Guide: `docs/default_workflow.md`
-- Milestone docs: `docs/milestones/v0.6/`
+- Active milestone docs: `docs/milestones/v0.75/`
 - Tools: `swarm/tools/README.md`
 
 ## License

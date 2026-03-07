@@ -3,6 +3,7 @@
 ## Metadata
 - Milestone: **v0.75**
 - Version: **v0.75.0**
+- Status: **Active development milestone**
 - Target release date: **TBD (target: end of next week)**
 - Release manager: **Daniel Austin**
 
