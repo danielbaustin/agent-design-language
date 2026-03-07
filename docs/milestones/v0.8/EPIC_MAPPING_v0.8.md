@@ -18,8 +18,8 @@ It answers:
 |-------------------|---------------|----------------------|
 | Deterministic Workflow Runtime | Stable execution contract, hashing, idempotence | EPIC-A (Runtime Core) |
 | Durable Execution Substrate | Activation log, replay, auto-retry | EPIC-A (Replay + Substrate) |
-| Trace Bundles | Stable export contract for indexing | EPIC-A + ObsMem B1 |
-| ObsMem | Indexing + retrieval + Bayesian ranking | EPIC-B (ObsMem v1) |
+| Trace Bundles | Stable export contract for indexing | EPIC-A + EPIC-B |
+| ObsMem | Indexing + retrieval contract (foundation) | EPIC-B (ObsMem v1, v0.75) |
 | Gödel Layer | Proposal → evaluation → overlay | EPIC-C (Godel v1) |
 | Authoring Surfaces | NL → ADL + refinement loop | #517 (Authoring Surfaces v1) |
 
@@ -48,14 +48,14 @@ ObsMem and Gödel depend on this EPIC.
 
 ---
 
-# 3. EPIC-B — ObsMem v1 (Operational Memory)
+# 3. EPIC-B — ObsMem v1 (Operational Memory Foundation)
 
 Implements:
 
 - Architecture §2.6 ObsMem
-- Bayesian model defined in `OBSMEM_BAYES.md`
+- Bayesian model background in `incubation/OBSMEM_BAYES.md`
 
-Sub-issues (created via `create_obsmem_issues_v0.8.sh`):
+Sub-issues (foundation track):
 
 - B1 — Trace Export Bundle v2
 - B2 — Index + Retrieval API v1
@@ -68,7 +68,7 @@ Dependencies:
 
 Milestone target:
 
-> v0.8 (Product Cohesion)
+> v0.75 (Foundation complete before v0.8 product integration)
 
 ---
 
@@ -107,7 +107,7 @@ Implements:
 - Architecture §2.1 Authoring Surfaces
 - Architecture §2.2 Compiler + Static Analysis
 
-Child issues (created via `create_authoring_issues_v0..8.sh`):
+Child issues (authoring track):
 
 - AUTH-1 — NL→ADL Compiler v1
 - AUTH-2 — Interactive Refinement Loop
@@ -152,11 +152,11 @@ Important nuance:
 Complete:
 
 - EPIC-A (fully)
+- EPIC-B (ObsMem v1 foundation)
 - Trace Bundle schema freeze
 
 Do NOT start:
 
-- Bayesian ranking
 - Gödel proposal evaluation
 
 ---
@@ -165,7 +165,6 @@ Do NOT start:
 
 Complete:
 
-- EPIC-B
 - EPIC-C
 - EPIC-D
 - Demo matrix acceptance

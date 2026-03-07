@@ -322,7 +322,7 @@ Mitigation: PWA v1 is generate/export only; optional Local Run Bridge provides a
 
 ---
 
-# 11. Canonical Location Note
+# 11. Canonical Location
 
-This document is canonical at:
+This EPIC document is canonical at:
 - `docs/milestones/v0.8/EPIC_AUTHORING_SURFACES_v1.md`

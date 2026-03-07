@@ -1,8 +1,11 @@
 # Adaptive Execution Engine (AEE)
 
+**Status:** Incubation / planning
+**Milestone:** v0.8+ (deferred; likely v0.9)
+
 ## Overview
 
-The **Adaptive Execution Engine (AEE)** is the runtime subsystem in ADL responsible for persistent, policy‑gated task execution. Its purpose is to allow agents to **continue working toward a goal despite failures**, using bounded strategies, deterministic replay, and explicit artifacts.
+The **Adaptive Execution Engine (AEE)** is a planned runtime subsystem in ADL for persistent, policy‑gated task execution. Its purpose is to allow agents to **continue working toward a goal despite failures**, using bounded strategies, deterministic replay, and explicit artifacts.
 
 This capability provides the “sticktoitiveness” behavior commonly observed in advanced coding agents: when a task fails, the system attempts alternative strategies rather than terminating immediately.
 
@@ -13,7 +16,7 @@ Unlike most agent frameworks, the Adaptive Execution Engine is:
 - **Policy‑bounded** (no silent capability escalation)
 - **Artifact‑driven** (all adaptation decisions are captured as trace artifacts)
 
-Conceptually, the AEE serves as a deterministic control system that manages attempts, retries, and strategy changes. ADL agents run workflows and complete tasks using the AEE, which serves as a 'control plane' of sorts for ADL agents and their activities.
+Conceptually, the AEE serves as a deterministic control system that manages attempts, retries, and strategy changes. This document defines the planning contract and does not imply that AEE ships in the v0.8 GA scope.
 
 ---
 
