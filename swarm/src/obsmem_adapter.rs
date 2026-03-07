@@ -20,6 +20,7 @@ pub struct ObsMemAdapter<C: ObsMemClient> {
 }
 
 impl<C: ObsMemClient> ObsMemAdapter<C> {
+    /// Construct a new adapter over a concrete [`ObsMemClient`] implementation.
     pub fn new(client: C) -> Self {
         Self { client }
     }
@@ -69,6 +70,10 @@ impl<C: ObsMemClient> ObsMemAdapter<C> {
     }
 }
 
+/// Build a validated deterministic write request from persisted ADL run
+/// artifacts under `runs_root/<run_id>/...`.
+///
+/// Errors are surfaced as contract errors with stable error codes.
 pub fn build_write_request_from_run_artifacts(
     runs_root: &Path,
     run_id: &str,
