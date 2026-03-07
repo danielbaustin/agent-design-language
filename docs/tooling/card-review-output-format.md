@@ -53,7 +53,7 @@ Top-level key order MUST be:
 
 - type: map
 - required fields:
-  - `reviewer`: string (`human` | `card_reviewer_gpt` | explicit reviewer id)
+  - `reviewer`: string (`human` | versioned reviewer id, e.g. `card_reviewer_gpt.v1`)
   - `review_time_utc`: string (ISO-8601 UTC)
   - `checklist_version`: string (for #650 checklist, use `card_review_checklist.v1`)
 
@@ -145,7 +145,7 @@ Each item fields:
 - required fields:
   - `required_artifacts_present`: boolean
   - `schema_change_present`: boolean
-  - `schema_change_approved`: enum (`true` | `false` | `not_applicable`)
+  - `schema_change_status`: enum (`approved` | `rejected` | `not_applicable`)
   - `notes`: string
 
 ### `validation_checks`
@@ -170,7 +170,7 @@ Each item fields:
 
 - Field names and top-level order are fixed.
 - Domain order is fixed.
-- Findings order must be deterministic: by severity (`blocker`, `high`, `medium`, `low`) then `rule_id` ascending.
+- Findings order must be deterministic: by severity (`blocker`, `high`, `medium`, `low`), then `rule_id` ascending, then lexicographic `title`.
 - Lists of rule IDs must be lexicographically sorted unless domain order is explicitly required.
 - No host-specific or environment-specific values outside normalized fields.
 

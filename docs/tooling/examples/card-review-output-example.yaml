@@ -1,6 +1,6 @@
 review_format_version: card_review_output.v1
 review_metadata:
-  reviewer: card_reviewer_gpt
+  reviewer: card_reviewer_gpt.v1
   review_time_utc: 2026-03-06T18:05:00Z
   checklist_version: card_review_checklist.v1
 review_target:
@@ -56,7 +56,7 @@ security_privacy_checks:
 artifact_checks:
   required_artifacts_present: true
   schema_change_present: false
-  schema_change_approved: not_applicable
+  schema_change_status: not_applicable
   notes: "Expected docs artifacts present."
 validation_checks:
   required_commands_run: true
