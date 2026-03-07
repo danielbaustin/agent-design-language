@@ -11,6 +11,7 @@ pub enum RetrievalOrder {
     IdAsc,
 }
 
+/// Deterministic retrieval policy contract for v0.75 structured retrieval.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RetrievalPolicyV1 {
     pub default_limit: usize,
@@ -31,11 +32,13 @@ impl Default for RetrievalPolicyV1 {
 }
 
 impl RetrievalPolicyV1 {
+    /// Canonicalize policy state for deterministic comparisons/application.
     pub fn normalize(&mut self) {
         self.required_tags.sort();
         self.required_tags.dedup();
     }
 
+    /// Validate policy bounds before building/processing queries.
     pub fn validate(&self) -> Result<(), ObsMemContractError> {
         if self.default_limit == 0 || self.default_limit > 1000 {
             return Err(ObsMemContractError::new(
@@ -47,6 +50,7 @@ impl RetrievalPolicyV1 {
     }
 }
 
+/// Caller-provided retrieval request prior to policy normalization/merging.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RetrievalRequest {
     pub workflow_id: Option<String>,
@@ -56,11 +60,13 @@ pub struct RetrievalRequest {
 }
 
 impl RetrievalRequest {
+    /// Canonicalize request tags for deterministic behavior.
     pub fn normalize(&mut self) {
         self.tags.sort();
         self.tags.dedup();
     }
 
+    /// Convert a retrieval request plus policy into a validated contract query.
     pub fn to_query(&self, policy: &RetrievalPolicyV1) -> Result<MemoryQuery, ObsMemContractError> {
         policy.validate()?;
         let mut request = self.clone();
@@ -96,6 +102,10 @@ impl RetrievalRequest {
     }
 }
 
+/// Apply policy-level filtering/order/limits to backend query results.
+///
+/// For identical inputs and index state, this function must produce identical
+/// result ordering and truncation.
 pub fn apply_policy_to_results(
     policy: &RetrievalPolicyV1,
     request: &RetrievalRequest,
