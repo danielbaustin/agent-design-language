@@ -2,16 +2,16 @@
 
 This directory is a milestone navigation surface.
 
-Canonical planning docs live under `.adl/docs/vXXplanning/`.
+Canonical v0.8 milestone planning docs live in this directory (`docs/milestones/v0.8/`).
 
 ## Canonical Planning References
 
-- v0.8 architecture: `.adl/docs/v08planning/ARCHITECTURE_V0.8.md`
-- v0.8 epic mapping: `.adl/docs/v08planning/EPIC_MAPPING_v0.8.md`
-- v0.8 cluster planning: `.adl/docs/v08planning/CLUSTER_EXECUTION.md`
-- v0.8 checkpoint/recovery planning: `.adl/docs/v08planning/CHECKPOINT_RECOVERY.md`
-- v0.75 ObsMem plan: `.adl/docs/v075planning/OBSMEM_BAYES.md`
-- v0.85 cluster plan: `.adl/docs/v085planning/CLUSTER_EXECUTION.md`
+- v0.8 architecture: `ARCHITECTURE_V0.8.md`
+- v0.8 epic mapping: `EPIC_MAPPING_v0.8.md`
+- v0.8 cluster planning: `CLUSTER_EXECUTION.md`
+- v0.8 checkpoint/recovery planning: `CHECKPOINT_RECOVERY.md`
+- v0.75 ObsMem plan: `../v0.75/OBSMEM_BAYES.md`
+- v0.85 cluster plan: `../v0.85/CLUSTER_EXECUTION.md`
 
 ## Canonical Design-Stage Schema/Spec Artifacts
 
