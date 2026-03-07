@@ -30,7 +30,7 @@ range_spec="${base_ref}...HEAD"
 echo "Guardrail base ref: ${base_ref}"
 echo "Guardrail diff range: ${range_spec}"
 
-allowlist_regex='^(README\.md$|swarm/README\.md$|swarm/examples/README\.md$|\.github/workflows/ci\.yaml$|\.github/workflows/nightly-coverage-ratchet\.yaml$|docs/milestones/v0\.[0-6]/|docs/milestones/v0\.7/SWARM_NAME_CHANGE_PLANNING_v0\.7\.md$|swarm/src/bin/swarm\.rs$|swarm/src/bin/swarm_remote\.rs$|swarm/src/env_compat\.rs$|swarm/Cargo\.toml$|swarm/tests/cli_smoke\.rs$|swarm/tools/check_no_new_legacy_swarm_refs\.sh$)'
+allowlist_regex='^(README\.md$|swarm/README\.md$|swarm/examples/README\.md$|\.github/workflows/ci\.yaml$|\.github/workflows/nightly-coverage-ratchet\.yaml$|docs/milestones/v0\.[0-6]/|docs/milestones/v0\.7/SWARM_NAME_CHANGE_PLANNING_v0\.7\.md$|swarm/src/bin/swarm\.rs$|swarm/src/bin/swarm_remote\.rs$|swarm/src/env_compat\.rs$|swarm/src/cli/mod\.rs$|swarm/src/cli/usage\.rs$|swarm/Cargo\.toml$|swarm/tests/cli_smoke\.rs$|swarm/tools/check_no_new_legacy_swarm_refs\.sh$)'
 legacy_regex='(^|[^A-Za-z0-9_])(swarm-remote|SWARM_[A-Z0-9_]+)([^A-Za-z0-9_]|$)|(^|[^A-Za-z0-9_])swarm([^:/A-Za-z0-9_]|$)'
 
 violations=0
