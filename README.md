@@ -49,6 +49,7 @@ Badge semantics:
 
 - Latest released milestone: **v0.7.0** (tag: `v0.7.0`)
 - Active development milestone: **v0.75**
+- Project changelog: `CHANGELOG.md`
 
 ## v0.7 Naming Migration (Compatibility Window)
 
