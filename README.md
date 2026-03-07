@@ -102,6 +102,7 @@ Badge semantics:
 - `adl-spec/`: language-level specification docs
 - `docs/`: contributor workflow and roadmap docs
 - `docs/adr/`: architecture decision records (major technical decisions)
+- `docs/OBSMEM.md`: user-facing ObsMem boundary and usage guide (v0.75)
 - `.adl/`: cards, reports, and run/report artifacts
 
 ## Historical v0.3 Plan-Only Commands
