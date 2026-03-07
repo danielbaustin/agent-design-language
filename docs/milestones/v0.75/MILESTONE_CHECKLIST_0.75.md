@@ -5,6 +5,7 @@
 - Version: 0.75
 - Target release window: Week of 2026-03-09 (tentative)
 - Owner: Daniel / Agent Logic team
+- Reconciled: 2026-03-06 (issue #657)
 
 ## Purpose
 Ship / no-ship gate for v0.75.
@@ -16,24 +17,24 @@ Check items only when objective evidence exists.
 ---
 
 ## Planning
-- [ ] VISION_0.75.md finalized and aligned with redistributed scope (A+B only)
-- [ ] DESIGN_0.75.md contains no placeholders and documents frozen contracts
-- [ ] WBS_0.75.md mapped to concrete GitHub issues (WP-01..WP-16)
-- [ ] DECISIONS_0.75.md initialized and key design decisions recorded
-- [ ] SPRINT_0.75.md created and reflects current execution order
-- [ ] RELEASE_PLAN_0.75.md drafted
+- [x] VISION_0.75.md finalized and aligned with redistributed scope (A+B only)
+- [x] DESIGN_0.75.md contains no placeholders and documents frozen contracts
+- [x] WBS_0.75.md mapped to concrete GitHub issues (WP-01..WP-16)
+- [x] DECISIONS_0.75.md initialized and key design decisions recorded
+- [x] SPRINT_0.75.md created and reflects current execution order
+- [x] RELEASE_PLAN_0.75.md drafted
 
 ---
 
 ## Deterministic Substrate (EPIC‑A)
-- [ ] Activation log schema frozen and documented
-- [ ] Replay runner deterministically reproduces outputs (excluding run-id/timestamps)
-- [ ] Trace bundle v2 spec documented and versioned
-- [ ] Trace bundle export implemented and tested
-- [ ] Trace bundle import works and replay-from-bundle demonstrated
-- [ ] Failure taxonomy stabilized with deterministic classification codes
-- [ ] No secrets persisted in artifacts or bundles
-- [ ] No absolute host paths persisted
+- [x] Activation log schema frozen and documented
+- [x] Replay runner deterministically reproduces outputs (excluding run-id/timestamps)
+- [x] Trace bundle v2 spec documented and versioned
+- [x] Trace bundle export implemented and tested
+- [x] Trace bundle import works and replay-from-bundle demonstrated
+- [x] Failure taxonomy stabilized with deterministic classification codes
+- [x] No secrets persisted in artifacts or bundles
+- [x] No absolute host paths persisted
 
 Evidence:
 - Links to relevant tests
@@ -42,13 +43,13 @@ Evidence:
 ---
 
 ## ObsMem v1 (EPIC‑B)
-- [ ] Index schema versioned and documented
-- [ ] Bundle ingestion is deterministic and tested
-- [ ] Structured query returns deterministically ordered results
-- [ ] Tie-break rules documented and enforced
-- [ ] Optional hybrid retrieval records model/config and remains deterministic
-- [ ] Retrieval explanations + citations implemented
-- [ ] Operational report surfaces produce stable, deterministic output
+- [x] Index schema versioned and documented
+- [x] Bundle ingestion is deterministic and tested
+- [x] Structured query returns deterministically ordered results
+- [x] Tie-break rules documented and enforced
+- [x] Optional hybrid retrieval records model/config and remains deterministic
+- [x] Retrieval explanations + citations implemented
+- [x] Operational report surfaces produce stable, deterministic output
 
 Evidence:
 - Example query command + output
@@ -57,11 +58,11 @@ Evidence:
 ---
 
 ## Demo Matrix (v0.75)
-- [ ] Demo A — Determinism + Replay
-- [ ] Demo B — Ingest + Similarity Query + Citations
-- [ ] Demo C — Operational Report
-- [ ] All demos run from docs on a fresh checkout
-- [ ] Artifact trees verified as stable where applicable
+- [x] Demo A — Determinism + Replay
+- [x] Demo B — Ingest + Similarity Query + Citations
+- [x] Demo C — Operational Report
+- [x] All demos run from docs on a fresh checkout
+- [x] Artifact trees verified as stable where applicable
 
 Reference:
 - `docs/milestones/v0.75/DEMO_MATRIX.md`
@@ -69,24 +70,24 @@ Reference:
 ---
 
 ## Quality Gates
-- [ ] `cargo fmt` passes
-- [ ] `cargo clippy --all-targets -- -D warnings` passes
-- [ ] `cargo test --workspace` passes (run twice consecutively)
-- [ ] Coverage meets or exceeds ratchet threshold (workspace line coverage ≥ target)
-- [ ] Per-file runtime line coverage floor (>= 80%) satisfied with explicit documented exclusions
-- [ ] CI required checks are green on merge target
-- [ ] No flaky tests
-- [ ] No unresolved high-priority blockers
+- [x] `cargo fmt` passes
+- [x] `cargo clippy --all-targets -- -D warnings` passes
+- [x] `cargo test --workspace` passes (run twice consecutively)
+- [x] Coverage meets or exceeds ratchet threshold (workspace line coverage ≥ target)
+- [x] Per-file runtime line coverage floor (>= 80%) satisfied with explicit documented exclusions
+- [x] CI required checks are green on merge target
+- [x] No flaky tests
+- [x] No unresolved high-priority blockers
 
 ---
 
 ## Documentation & Review
-- [ ] All cross-links between v0.75 / v0.8 / v0.85 planning docs are consistent
-- [ ] No stale references to cluster or Gödel in v0.75 docs
-- [ ] Architecture doc updated to reflect milestone slicing
-- [ ] WP-15A doc alignment PR merged
-- [ ] Review notes addressed
-- [ ] Coverage policy doc aligned with CI thresholds and exclusions (`docs/milestones/v0.75/COVERAGE_POLICY_0.75.md`)
+- [x] All cross-links between v0.75 / v0.8 / v0.85 planning docs are consistent
+- [x] No stale references to cluster or Gödel in v0.75 docs
+- [x] Architecture doc updated to reflect milestone slicing
+- [x] WP-15A doc alignment PR merged (#601)
+- [x] 3rd-party review pass findings addressed via review-fix batch (#644, #645, #646, #647, #648)
+- [x] Coverage policy doc aligned with CI thresholds and exclusions (`docs/milestones/v0.75/COVERAGE_POLICY_0.75.md`)
 
 ---
 
@@ -104,6 +105,15 @@ Reference:
 - [ ] Follow-up bugs/tech debt captured as issues
 - [ ] Roadmap/status docs updated
 - [ ] Retrospective summary recorded
+
+---
+
+## Evidence Snapshot
+- Planning/doc alignment completed and frozen pre-review in issue #601.
+- Review-fix batch merged in issues #644–#648.
+- Demo execution and artifact expectations are captured in `docs/milestones/v0.75/DEMO_MATRIX.md`.
+- Coverage and exclusions policy is captured in `docs/milestones/v0.75/COVERAGE_POLICY_0.75.md`.
+- Release-ceremony and post-release items remain intentionally unchecked until ceremony execution.
 
 ---
 
