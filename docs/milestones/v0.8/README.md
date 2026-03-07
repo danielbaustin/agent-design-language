@@ -38,6 +38,7 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 
 - [WBS_V0.8.md](WBS_V0.8.md)
 - [SPRINT_V0.8.md](SPRINT_V0.8.md)
+- [EXECUTION_ORDER_V0.8.md](EXECUTION_ORDER_V0.8.md)
 - [MILESTONE_CHECKLIST_V0.8.md](MILESTONE_CHECKLIST_V0.8.md)
 - [DECISIONS_V0.8.md](DECISIONS_V0.8.md)
 - [RELEASE_PLAN_V0.8.md](RELEASE_PLAN_V0.8.md)
@@ -66,4 +67,3 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 
 - [v0.75 milestone docs](../v0.75/)
 - [v0.85 milestone docs](../v0.85/)
-
