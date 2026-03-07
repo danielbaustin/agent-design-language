@@ -22,6 +22,21 @@ Execution:
 ## Actions taken
 - 
 
+## Main Repo Integration (REQUIRED)
+- Main-repo paths updated:
+- Worktree-only paths remaining: none | list explicitly
+- Integration method used: `git checkout <branch> -- <path>` | cherry-pick | direct write in main repo | not_applicable
+- Verification performed in main repo:
+  - `git status`
+  - `ls <path>` / equivalent path check
+- Result: PASS | FAIL
+
+Rules:
+- Final artifacts must exist in the main repository, not only in a worktree.
+- Do not leave docs, code, or generated artifacts only under a `adl-wp-*` worktree.
+- Prefer git-aware transfer into the main repo (`git checkout <branch> -- <path>` or commit + cherry-pick).
+- If artifacts exist only in the worktree, the task is NOT complete.
+
 ## Validation
 - Tests / checks run:
 - Results:
