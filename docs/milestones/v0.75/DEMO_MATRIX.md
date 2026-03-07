@@ -28,6 +28,7 @@ No network access is required.
 
 - Design contract: `docs/milestones/v0.75/DESIGN_0.75.md`
 - Demo planning context: `docs/milestones/v0.75/DEMO_PLANNING.md`
+- User-facing ObsMem guide: `docs/OBSMEM.md`
 
 ## Demo Matrix
 
