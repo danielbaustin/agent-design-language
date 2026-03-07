@@ -3,6 +3,7 @@
 ## Metadata
 - Product: **ADL (Agent Design Language)**
 - Version: **v0.75.0**
+- Status: **Active development milestone**
 - Release date: **TBD**
 - Tag: **v0.75.0**
 

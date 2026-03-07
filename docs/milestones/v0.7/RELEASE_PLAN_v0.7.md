@@ -10,6 +10,10 @@
 
 ---
 
+> Historical note: v0.7 is released (tag `v0.7.0`). Active development is tracked under `docs/milestones/v0.75/`.
+
+---
+
 ## Purpose
 
 This plan defines the mechanics to ship ADL v0.7, including:
