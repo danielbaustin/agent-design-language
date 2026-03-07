@@ -1,13 +1,19 @@
 use serde::{Deserialize, Serialize};
 
+/// Current ObsMem contract schema version expected by runtime surfaces.
 pub const OBSMEM_CONTRACT_VERSION: u32 = 1;
 
+/// Citation to a deterministic artifact path/hash pair that supports replay-safe
+/// evidence references.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MemoryCitation {
+    /// Repository-relative or run-relative path to a cited artifact.
     pub path: String,
+    /// Stable deterministic hash/fingerprint for cited artifact contents.
     pub hash: String,
 }
 
+/// Contract payload used to write a normalized run summary into ObsMem.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MemoryWriteRequest {
     pub contract_version: u32,
@@ -22,6 +28,8 @@ pub struct MemoryWriteRequest {
 }
 
 impl MemoryWriteRequest {
+    /// Canonicalize in-memory ordering for deterministic equality, hashing, and
+    /// serialization across runs.
     pub fn normalize(&mut self) {
         self.tags.sort();
         self.tags.dedup();
@@ -31,6 +39,9 @@ impl MemoryWriteRequest {
             .dedup_by(|a, b| a.path == b.path && a.hash == b.hash);
     }
 
+    /// Validate request semantics and privacy guards for contract ingestion.
+    ///
+    /// This is the canonical validation path used by runtime and tests.
     pub fn validate(&self) -> Result<(), ObsMemContractError> {
         if self.contract_version != OBSMEM_CONTRACT_VERSION {
             return Err(ObsMemContractError::new(
@@ -85,12 +96,14 @@ impl MemoryWriteRequest {
     }
 }
 
+/// Acknowledgement returned by a contract write operation.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MemoryWriteAck {
     pub entry_id: String,
     pub accepted: bool,
 }
 
+/// Structured deterministic query surface for v0.75 retrieval.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MemoryQuery {
     pub contract_version: u32,
@@ -101,11 +114,13 @@ pub struct MemoryQuery {
 }
 
 impl MemoryQuery {
+    /// Canonicalize query tags for deterministic backend behavior.
     pub fn normalize(&mut self) {
         self.tags.sort();
         self.tags.dedup();
     }
 
+    /// Validate query contract invariants before dispatching to backend clients.
     pub fn validate(&self) -> Result<(), ObsMemContractError> {
         if self.contract_version != OBSMEM_CONTRACT_VERSION {
             return Err(ObsMemContractError::new(
@@ -132,6 +147,7 @@ impl MemoryQuery {
     }
 }
 
+/// Normalized memory hit returned by an ObsMem query.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MemoryRecord {
     pub id: String,
@@ -143,11 +159,13 @@ pub struct MemoryRecord {
     pub citations: Vec<MemoryCitation>,
 }
 
+/// Query response wrapper for deterministic hit lists.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MemoryQueryResult {
     pub hits: Vec<MemoryRecord>,
 }
 
+/// Stable machine-readable error taxonomy for ObsMem contract boundaries.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ObsMemContractErrorCode {
     ContractVersionMismatch,
@@ -158,6 +176,7 @@ pub enum ObsMemContractErrorCode {
 }
 
 impl ObsMemContractErrorCode {
+    /// Return the stable wire/log error code string.
     pub fn as_str(self) -> &'static str {
         match self {
             Self::ContractVersionMismatch => "OBSMEM_CONTRACT_VERSION_MISMATCH",
@@ -169,6 +188,7 @@ impl ObsMemContractErrorCode {
     }
 }
 
+/// Structured contract error with stable code plus human-readable message.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ObsMemContractError {
     pub code: ObsMemContractErrorCode,
@@ -176,6 +196,7 @@ pub struct ObsMemContractError {
 }
 
 impl ObsMemContractError {
+    /// Construct a new contract error.
     pub fn new(code: ObsMemContractErrorCode, message: impl Into<String>) -> Self {
         Self {
             code,
@@ -358,6 +379,63 @@ mod tests {
             .validate()
             .expect_err("parent traversal path should fail");
         assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+    }
+
+    #[test]
+    fn write_request_validation_rejects_version_and_empty_fields() {
+        let mut req = sample_request();
+        req.contract_version = OBSMEM_CONTRACT_VERSION + 1;
+        let err = req.validate().expect_err("version mismatch should fail");
+        assert_eq!(err.code.as_str(), "OBSMEM_CONTRACT_VERSION_MISMATCH");
+
+        req.contract_version = OBSMEM_CONTRACT_VERSION;
+        req.run_id = "   ".to_string();
+        let err = req.validate().expect_err("empty run_id should fail");
+        assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+        req.run_id = "run-001".to_string();
+        req.summary = " ".to_string();
+        let err = req.validate().expect_err("empty summary should fail");
+        assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+    }
+
+    #[test]
+    fn write_request_validation_rejects_citation_and_privacy_violations() {
+        let mut req = sample_request();
+        req.citations[0].hash = " ".to_string();
+        let err = req
+            .validate()
+            .expect_err("empty citation hash should be invalid");
+        assert_eq!(err.code.as_str(), "OBSMEM_INVALID_REQUEST");
+
+        req.citations[0].hash = "abc123".to_string();
+        req.summary = "token leak sk-test".to_string();
+        let err = req
+            .validate()
+            .expect_err("token-like content should be blocked");
+        assert_eq!(err.code.as_str(), "OBSMEM_PRIVACY_VIOLATION");
+    }
+
+    #[test]
+    fn query_validation_rejects_invalid_bounds_and_version() {
+        let mut q = MemoryQuery {
+            contract_version: OBSMEM_CONTRACT_VERSION + 1,
+            workflow_id: None,
+            failure_code: None,
+            tags: vec![],
+            limit: 1,
+        };
+        let err = q.validate().expect_err("version mismatch should fail");
+        assert_eq!(err.code.as_str(), "OBSMEM_CONTRACT_VERSION_MISMATCH");
+
+        q.contract_version = OBSMEM_CONTRACT_VERSION;
+        q.limit = 0;
+        let err = q.validate().expect_err("zero limit should fail");
+        assert_eq!(err.code.as_str(), "OBSMEM_INVALID_QUERY");
+
+        q.limit = 1001;
+        let err = q.validate().expect_err("oversized limit should fail");
+        assert_eq!(err.code.as_str(), "OBSMEM_INVALID_QUERY");
     }
 
     #[test]
