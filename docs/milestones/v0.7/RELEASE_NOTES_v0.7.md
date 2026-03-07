@@ -1,23 +1,21 @@
-# ADL v0.7 Release Notes (Living Draft)
+# ADL v0.7 Release Notes (Historical Record)
 
 ## Metadata
 - Product: ADL (Agent Design Language)
 - Milestone: `v0.7`
 - Version: `v0.7.x (release train)`
-- Status: Draft (updated as PRs merge)
-- Date: 2026-02-24
+- Status: Released
+- Date: 2026-02-24 (draft), status reconciled 2026-03-06
 - Release manager: Daniel Austin
-- Tag: Not yet tagged
+- Tag: `v0.7.0`
 
 ---
 
 ## How to Read This Document
 
-- This is a **living draft** during development. It becomes the final GitHub Release text at tag time (WP-16).
-- **Do not treat planned work as shipped.** Items are marked as:
-  - **Shipped**: merged to `main` and included in the tagged release.
-  - **In progress**: actively being implemented/reviewed.
-  - **Planned**: accepted for v0.7 but not yet merged.
+- This file is retained as the historical release-train record for v0.7.
+- Draft/planned phrasing below is preserved for historical context from the pre-release period.
+- Current project state: v0.7 is released; active development milestone is v0.75.
 
 ---
 
@@ -34,7 +32,7 @@ Core principle: **no silent drift**. Adaptive behavior must be opt-in, artifacte
 
 ## Highlights
 
-As of 2026-02-24: **Not yet shipped** (milestone docs bootstrap in progress).
+v0.7 has shipped (tag: `v0.7.0`).
 
 ---
 
@@ -42,9 +40,7 @@ As of 2026-02-24: **Not yet shipped** (milestone docs bootstrap in progress).
 
 ### What’s New
 
-As of 2026-02-24: **Not yet shipped**.
-
-Planned areas for v0.7.0 (do not claim shipped until merged/tagged):
+The following areas were delivered as part of the v0.7 release train:
 - Security envelope + trust model hardening (EPIC-E #429)
   - Sandbox hardening: prevent symlink-based escapes (#472)
   - Remote execution security envelope (#370)
@@ -58,8 +54,8 @@ Planned areas for v0.7.0 (do not claim shipped until merged/tagged):
 
 ### Upgrade Notes
 
-- No v0.7.0 tag exists yet.
-- When v0.7.0 ships, upgrade notes will include any CLI/env var changes and any migration steps.
+- v0.7.0 is tagged and released.
+- Upgrade notes include CLI/env var migration details for the runtime identity compatibility window.
 
 ### Known Limitations
 
@@ -72,7 +68,7 @@ Planned areas for v0.7.0 (do not claim shipped until merged/tagged):
 
 ### What’s New
 
-As of 2026-02-24: **Not yet shipped**.
+Learning-train scope is recorded here as release-train history.
 
 Planned sequence (overlay-based, opt-in; no workflow YAML mutation):
 1) Observe: `run_summary.json`
@@ -92,7 +88,7 @@ Planned sequence (overlay-based, opt-in; no workflow YAML mutation):
 
 ## Late v0.7 — Runtime Identity Migration (Do Last)
 
-As of 2026-02-24: **Not yet shipped**.
+Status: shipped during late v0.7 release-train execution.
 
 - WP-12 / EPIC-H (#336 / #479) renames runtime identity late in v0.7:
   - Canonical crate/package/lib identity becomes `adl`
@@ -106,7 +102,7 @@ As of 2026-02-24: **Not yet shipped**.
 
 ## Validation Notes
 
-At ship time (WP-16), the release must be supported by:
+At release time (WP-16), the release was required to be supported by:
 - `cargo fmt --all` (pass)
 - `cargo clippy --all-targets -- -D warnings` (pass)
 - `cargo test` (pass)
