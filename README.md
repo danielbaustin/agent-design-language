@@ -47,6 +47,7 @@ Badge semantics:
 ## Status
 
 Current release: **v0.7.0**
+Project changelog: `CHANGELOG.md`
 
 ## v0.7 Naming Migration (Compatibility Window)
 
