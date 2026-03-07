@@ -35,16 +35,6 @@ Where:
 - **ObsMem** stores indexed knowledge derived from traces.
 - **Gödel** reasons over that evidence and proposes improvements.
 
-## Canonical Schema/Spec Artifacts (Design Stage)
-
-The following machine-readable schema/spec artifacts are canonical for v0.8 design work:
-
-- `docs/milestones/v0.8/agent_profile.v1.json`
-- `docs/milestones/v0.8/mutation.v1.json`
-
-These are design-stage schema artifacts now and are candidates for later promotion into a runtime schema directory.
-Legacy copies under `.adl/docs/v07planning/` may remain for historical planning context, but the canonical source of truth is under `docs/milestones/v0.8/`.
-
 ---
 
 # Core Concept: Experiment Records
@@ -240,6 +230,34 @@ Even without failure, Gödel may propose experiments when signals cross threshol
 - oscillating strategies (no convergence)
 
 These triggers should be conservative in v1 and always produce policy-gated, bounded experiments.
+
+---
+
+# Gödel Schema Artifacts (Design‑Stage)
+
+The Gödel planning work references two **canonical JSON schema artifacts** that define
+key structures used by the experimental self‑improvement system.
+
+Canonical locations (v0.8 milestone docs):
+
+- `docs/milestones/v0.8/agent_profile.v1.json`
+- `docs/milestones/v0.8/mutation.v1.json`
+
+These schemas currently represent **design‑stage artifacts** for the planned
+Gödel evolution surface. They are used to document the structure of:
+
+- evolvable agent behavior profiles
+- bounded mutation records used in improvement experiments
+
+At this stage they are treated as **documentation‑level schemas** rather than
+runtime‑enforced contracts.
+
+Future milestones may promote these artifacts into runtime schemas under
+`swarm/schemas/` once the Gödel runtime components are implemented.
+
+The legacy planning copies under `.adl/docs/v07planning/` remain for historical
+reference, but the canonical reference for v0.8 documentation is the
+`docs/milestones/v0.8/` location.
 
 ---
 
