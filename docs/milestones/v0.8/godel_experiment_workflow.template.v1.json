@@ -1,0 +1,144 @@
+{
+  "template_name": "godel_experiment_workflow",
+  "template_version": 1,
+  "stage_order": [
+    "failure",
+    "hypothesis",
+    "mutation",
+    "experiment",
+    "evaluation",
+    "record"
+  ],
+  "stages": [
+    {
+      "stage_id": "failure",
+      "inputs": [
+        "run_artifacts_ref",
+        "trace_summary_ref"
+      ],
+      "outputs": [
+        "canonical_evidence_view_ref",
+        "failure_context_ref"
+      ],
+      "artifact_contracts": [
+        {
+          "schema_name": "canonical_evidence_view",
+          "schema_version": 1
+        }
+      ]
+    },
+    {
+      "stage_id": "hypothesis",
+      "inputs": [
+        "canonical_evidence_view_ref"
+      ],
+      "outputs": [
+        "hypothesis_list_ref"
+      ],
+      "artifact_contracts": []
+    },
+    {
+      "stage_id": "mutation",
+      "inputs": [
+        "hypothesis_list_ref"
+      ],
+      "outputs": [
+        "mutation_refs"
+      ],
+      "artifact_contracts": [
+        {
+          "schema_name": "mutation",
+          "schema_version": 1
+        }
+      ]
+    },
+    {
+      "stage_id": "experiment",
+      "inputs": [
+        "baseline_run_ref",
+        "mutation_refs"
+      ],
+      "outputs": [
+        "candidate_run_refs",
+        "candidate_evidence_refs"
+      ],
+      "artifact_contracts": []
+    },
+    {
+      "stage_id": "evaluation",
+      "inputs": [
+        "baseline_evidence_ref",
+        "candidate_evidence_refs",
+        "mutation_refs",
+        "evaluation_plan_ref"
+      ],
+      "outputs": [
+        "evaluation_decision_ref",
+        "evaluation_summary_ref"
+      ],
+      "artifact_contracts": [
+        {
+          "schema_name": "evaluation_plan",
+          "schema_version": 1
+        },
+        {
+          "schema_name": "canonical_evidence_view",
+          "schema_version": 1
+        },
+        {
+          "schema_name": "mutation",
+          "schema_version": 1
+        }
+      ]
+    },
+    {
+      "stage_id": "record",
+      "inputs": [
+        "evaluation_decision_ref",
+        "evaluation_summary_ref",
+        "mutation_refs",
+        "baseline_run_ref",
+        "candidate_run_refs",
+        "candidate_evidence_refs"
+      ],
+      "outputs": [
+        "experiment_record_ref"
+      ],
+      "artifact_contracts": [
+        {
+          "schema_name": "experiment_record",
+          "schema_version": 1
+        }
+      ]
+    }
+  ],
+  "determinism": {
+    "stage_order_fixed": true,
+    "input_order_required": true,
+    "hidden_state_allowed": false,
+    "tie_break_policy": "lexicographic_ids"
+  },
+  "security_privacy": {
+    "allow_secrets": false,
+    "allow_raw_prompts": false,
+    "allow_tool_args": false,
+    "allow_absolute_host_paths": false
+  },
+  "replay_audit": {
+    "replay_compatible": true,
+    "artifact_references_required": true,
+    "traceability_required": true
+  },
+  "downstream": {
+    "obsmem_indexing_ready": true,
+    "demo_path_ready": true,
+    "related_issues": [
+      609,
+      610,
+      611,
+      612,
+      614,
+      615
+    ]
+  }
+}

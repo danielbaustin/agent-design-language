@@ -26,6 +26,8 @@ Scope slicing reference:
 
 ## Milestone Materials
 
+- `docs/milestones/v0.8/GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md`
+- `docs/milestones/v0.8/godel_experiment_workflow.template.v1.json`
 - `RUST_TRANSPILER_DEMO.md` (planned for v0.8)
 
 - `STICKTOITTIVENESS.md`
