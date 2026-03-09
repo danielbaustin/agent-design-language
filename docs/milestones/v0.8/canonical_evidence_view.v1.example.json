@@ -1,0 +1,82 @@
+{
+  "schema_name": "canonical_evidence_view",
+  "schema_version": 1,
+  "evidence_view_id": "cev-20260308-mut-a",
+  "run_context": {
+    "run_id": "run-mut-a-001",
+    "workflow_id": "workflow-coverage-experiment",
+    "subject": "swarm/src/coverage.rs",
+    "variant_label": "mutation-a"
+  },
+  "canonicalization_profile": {
+    "profile_name": "godel-evidence-default",
+    "profile_version": 1,
+    "volatile_fields_excluded": [
+      "elapsed_ms",
+      "host_paths",
+      "timestamps"
+    ]
+  },
+  "failure_codes": [
+    "none"
+  ],
+  "verification_results": [
+    {
+      "check_id": "clippy_all_targets",
+      "status": "pass",
+      "evidence_ref": "artifacts/evidence/cev-20260308-mut-a/verifications/clippy.json"
+    },
+    {
+      "check_id": "fmt",
+      "status": "pass",
+      "evidence_ref": "artifacts/evidence/cev-20260308-mut-a/verifications/fmt.json"
+    },
+    {
+      "check_id": "test_workspace",
+      "status": "pass",
+      "evidence_ref": "artifacts/evidence/cev-20260308-mut-a/verifications/test.json"
+    }
+  ],
+  "artifact_hashes": [
+    {
+      "path": "artifacts/evidence/cev-20260308-mut-a/metrics.json",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "path": "artifacts/evidence/cev-20260308-mut-a/verifications/test.json",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+    }
+  ],
+  "trace_bundle_ref": "artifacts/traces/run-mut-a-001/trace_bundle_v2.json",
+  "activation_log_ref": "artifacts/runs/run-mut-a-001/logs/activation_log.json",
+  "comparison_axes": {
+    "primary_metric": "coverage_percent",
+    "direction": "increase_is_better",
+    "secondary_metrics": [
+      {
+        "metric": "test_failures",
+        "direction": "decrease_is_better"
+      }
+    ]
+  },
+  "privacy": {
+    "secrets_present": false,
+    "raw_prompt_or_tool_args_present": false,
+    "absolute_host_paths_present": false,
+    "redaction_notes": [
+      "prompt bodies omitted",
+      "tool argument payloads omitted"
+    ]
+  },
+  "derived_metrics": [
+    {
+      "metric": "coverage_percent",
+      "value": 80.5,
+      "unit": "percent"
+    }
+  ],
+  "notes": [
+    "verification_results sorted by check_id",
+    "artifact_hashes sorted by path"
+  ]
+}

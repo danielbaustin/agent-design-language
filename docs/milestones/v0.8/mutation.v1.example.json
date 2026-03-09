@@ -1,0 +1,69 @@
+{
+  "schema_name": "mutation",
+  "schema_version": 1,
+  "mutation_id": "mut_retry_policy_narrow_001",
+  "experiment_id": "exp_remote_retry_stability_001",
+  "hypothesis_id": "hyp_remote_retries_reduce_transient_failures_001",
+  "mutation_type": "overlay_update",
+  "bounded_scope": [
+    "overlay:run.retry_policy",
+    "overlay:run.timeout"
+  ],
+  "operations": [
+    {
+      "op_id": "op_set_retry_backoff_ms",
+      "action": "set",
+      "target_surface": "workflow_overlay",
+      "target_pointer": "/run/retry_policy/backoff_ms",
+      "value": 100,
+      "expected_old_value": 0
+    },
+    {
+      "op_id": "op_set_retry_max_attempts",
+      "action": "set",
+      "target_surface": "workflow_overlay",
+      "target_pointer": "/run/retry_policy/max_attempts",
+      "value": 2,
+      "expected_old_value": 1
+    }
+  ],
+  "constraints": {
+    "max_operations": 2,
+    "policy_gate_required": true,
+    "sandbox_required": true,
+    "allow_create_new_paths": false
+  },
+  "comparison": {
+    "canonical_fingerprint": "sha256:1d9b1f32877f122bdb3ce5f03e202d58ee57f2d529e7ca24a02f4571eb44d0a0",
+    "ordering_key": "retry_policy.max_attempts_then_backoff"
+  },
+  "safety": {
+    "allowed_surfaces": [
+      "evaluation_plan",
+      "workflow_overlay"
+    ],
+    "prohibited_surfaces": [
+      "artifact_validation_strictness",
+      "security_envelope",
+      "signing_trust_policy"
+    ]
+  },
+  "evidence_ref": {
+    "evidence_id": "ev_remote_retry_failure_cluster_001",
+    "schema_name": "canonical_evidence_view",
+    "schema_version": 1
+  },
+  "evaluation_plan_ref": {
+    "plan_id": "plan_retry_policy_eval_001",
+    "schema_name": "evaluation_plan",
+    "schema_version": 1
+  },
+  "metadata": {
+    "tags": [
+      "deterministic",
+      "retry-policy",
+      "v0.8"
+    ],
+    "created_by": "godel.candidate.generator"
+  }
+}
