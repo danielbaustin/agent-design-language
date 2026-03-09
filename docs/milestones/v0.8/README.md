@@ -59,6 +59,9 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - [EXPERIMENT_RECORD_V1.md](EXPERIMENT_RECORD_V1.md)
 - [experiment_record.v1.schema.json](experiment_record.v1.schema.json)
 - [experiment_record.v1.example.json](experiment_record.v1.example.json)
+- [CANONICAL_EVIDENCE_VIEW_V1.md](CANONICAL_EVIDENCE_VIEW_V1.md)
+- [canonical_evidence_view.v1.schema.json](canonical_evidence_view.v1.schema.json)
+- [canonical_evidence_view.v1.example.json](canonical_evidence_view.v1.example.json)
 
 ## Scope Slicing Reference
 
