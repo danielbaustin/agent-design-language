@@ -1,0 +1,136 @@
+{
+  "schema_name": "experiment_record",
+  "schema_version": 1,
+  "experiment_id": "exp-20260308-coverage-floor",
+  "comparison_key": {
+    "subject": "swarm/src/coverage.rs",
+    "baseline_label": "main",
+    "variant_label": "mutation-a"
+  },
+  "runs": {
+    "baseline_run_id": "run-main-001",
+    "variant_run_id": "run-mut-a-001"
+  },
+  "hypothesis": {
+    "statement": "Mutation A will raise deterministic coverage score without introducing lint/test regressions.",
+    "expected_effect": "coverage_delta_positive",
+    "risk_class": "low",
+    "success_criteria": [
+      "coverage_primary_delta_gt_0",
+      "clippy_clean",
+      "test_pass"
+    ]
+  },
+  "mutation": {
+    "mutation_id": "mut-20260308-a",
+    "mutation_version": 1,
+    "mutation_ref": "artifacts/mutations/mut-20260308-a/mutation.v1.json",
+    "scope": [
+      "swarm/src/coverage.rs",
+      "swarm/tests/coverage_behavior.rs"
+    ],
+    "change_summary": [
+      "add deterministic test for edge threshold",
+      "normalize coverage gate fixture ordering"
+    ]
+  },
+  "evaluation_plan": {
+    "evaluation_plan_id": "evalplan-20260308-a",
+    "evaluation_plan_version": 1,
+    "evaluation_plan_ref": "artifacts/evaluation/evalplan-20260308-a/evaluation_plan.v1.json",
+    "check_ids": [
+      "fmt",
+      "clippy_all_targets",
+      "test_workspace",
+      "coverage_summary"
+    ]
+  },
+  "evidence": {
+    "canonical_evidence_view_id": "cev-20260308-a",
+    "canonical_evidence_view_version": 1,
+    "canonical_evidence_ref": "artifacts/evidence/cev-20260308-a/canonical_evidence_view.v1.json",
+    "evidence_items": [
+      {
+        "evidence_id": "artifact-hash-main",
+        "kind": "artifact_hash",
+        "value": "3d2f6a8b",
+        "source_ref": "artifacts/runs/run-main-001/manifest.json"
+      },
+      {
+        "evidence_id": "artifact-hash-variant",
+        "kind": "artifact_hash",
+        "value": "9c75e122",
+        "source_ref": "artifacts/runs/run-mut-a-001/manifest.json"
+      },
+      {
+        "evidence_id": "metric-coverage-delta",
+        "kind": "metric",
+        "value": 2.4,
+        "source_ref": "artifacts/evidence/cev-20260308-a/metrics.json"
+      },
+      {
+        "evidence_id": "verification-test-pass",
+        "kind": "verification",
+        "value": true,
+        "source_ref": "artifacts/evidence/cev-20260308-a/verification.json"
+      }
+    ]
+  },
+  "outcome": {
+    "primary_metric": "coverage_percent",
+    "direction": "increase_is_better",
+    "baseline_value": 78.1,
+    "variant_value": 80.5,
+    "delta": 2.4,
+    "secondary_metrics": [
+      {
+        "metric": "test_failures",
+        "direction": "decrease_is_better",
+        "baseline_value": 0,
+        "variant_value": 0,
+        "delta": 0
+      }
+    ]
+  },
+  "decision": {
+    "result": "adopt",
+    "rationale": "Coverage improved while deterministic checks remained green."
+  },
+  "replay": {
+    "replay_profile": "strict",
+    "artifact_manifest": [
+      {
+        "path": "artifacts/evidence/cev-20260308-a/canonical_evidence_view.v1.json",
+        "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      {
+        "path": "artifacts/evaluation/evalplan-20260308-a/evaluation_plan.v1.json",
+        "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      {
+        "path": "artifacts/mutations/mut-20260308-a/mutation.v1.json",
+        "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+      }
+    ]
+  },
+  "obsmem_index": {
+    "memory_kind": "experiment_record",
+    "index_key": "exp-20260308-coverage-floor::swarm/src/coverage.rs::main::mutation-a",
+    "tags": [
+      "adopt",
+      "coverage",
+      "godel",
+      "v0.8"
+    ],
+    "facets": {
+      "decision_result": "adopt",
+      "primary_metric": "coverage_percent",
+      "subject": "swarm/src/coverage.rs"
+    }
+  },
+  "policy_approval_ref": "artifacts/policy/policy-decision-20260308-a.json",
+  "notes": [
+    "Evidence item order is deterministic by evidence_id.",
+    "All references are repository-relative."
+  ]
+}

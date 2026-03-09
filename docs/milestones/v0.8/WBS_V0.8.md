@@ -98,7 +98,7 @@ The milestone must remain focused on a narrow backbone:
 ## Work Packages
 | ID | Work Package | Description | Deliverable | Dependencies | Issue |
 |---|---|---|---|---|---|
-| WP-01 | Design pass (milestone docs + planning) | Finalize canonical v0.8 docs: design, WBS, sprint plan, checklist, decisions, release notes/plan stubs, and align scope with v0.75 outcomes. | Complete v0.8 planning doc set under `.adl/docs/v08planning/` and canonical milestone copies as needed. | v0.75 design complete | TBD |
+| WP-01 | Design pass (milestone docs + planning) | Finalize canonical v0.8 docs: design, WBS, sprint plan, checklist, decisions, release notes/plan stubs, and align scope with v0.75 outcomes. | Complete the v0.8 planning doc set under `docs/milestones/v0.8/`. | v0.75 design complete | TBD |
 | WP-02 | ExperimentRecord schema v1 | Define the stable experiment artifact for baseline/variant comparisons, decisions, and evidence references. | `ExperimentRecord` schema, examples, parser/serializer, tests. | WP-01 | #609 |
 | WP-03 | Canonical Evidence View | Implement deterministic evidence canonicalization for traces, failure codes, artifact hashes, and verification results. | Canonical evidence module + tests + docs. | WP-01 | #610 |
 | WP-04 | Mutation format v1 | Define bounded, policy-gated mutation records used by Gödel experiments. | Mutation schema + validation rules + examples. | WP-01 | #611 |

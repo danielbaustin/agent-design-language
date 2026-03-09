@@ -24,9 +24,9 @@ v0.8 is intended to ship as a focused milestone for **controlled experimentation
 The release should avoid over-claiming. If any major v0.8 feature is deferred, that deferral must be explicit in the release notes.
 
 ## 1) Release Readiness
-- [ ] Milestone checklist complete (`.adl/docs/v08planning/MILESTONE_CHECKLIST_V0.8.md`)
+- [ ] Milestone checklist complete (`docs/milestones/v0.8/MILESTONE_CHECKLIST_V0.8.md`)
 - [ ] Design / WBS / sprint / decisions docs are aligned and current
-- [ ] Release notes approved (`.adl/docs/v08planning/RELEASE_NOTES_V0.8.md` or canonical milestone copy)
+- [ ] Release notes approved (`docs/milestones/v0.8/RELEASE_NOTES_V0.8.md`)
 - [ ] Go/no-go decision recorded in milestone artifacts
 - [ ] No unknown critical blockers remain
 
