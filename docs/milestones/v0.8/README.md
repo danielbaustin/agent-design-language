@@ -56,6 +56,9 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 
 - [agent_profile.v1.json](agent_profile.v1.json)
 - [mutation.v1.json](mutation.v1.json)
+- [EXPERIMENT_RECORD_V1.md](EXPERIMENT_RECORD_V1.md)
+- [experiment_record.v1.schema.json](experiment_record.v1.schema.json)
+- [experiment_record.v1.example.json](experiment_record.v1.example.json)
 
 ## Scope Slicing Reference
 
