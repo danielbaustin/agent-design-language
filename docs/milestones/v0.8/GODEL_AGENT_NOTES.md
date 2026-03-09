@@ -31,7 +31,7 @@ The Gödel–Hadamard–Bayes loop can be visualized as a scientific reasoning c
 failure
    ↓
 hypothesis (Hadamard)
-   ↓
+   ↓g
 mutation / experiment
    ↓
 evaluation (Bayes)
