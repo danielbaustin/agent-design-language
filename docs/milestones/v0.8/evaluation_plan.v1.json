@@ -1,0 +1,344 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adl.dev/schemas/evaluation_plan.v1.json",
+  "title": "EvaluationPlan v1",
+  "description": "Deterministic declarative evaluation plan for v0.8 Godel experiments.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_name",
+    "schema_version",
+    "plan_id",
+    "experiment_id",
+    "baseline_run_id",
+    "candidate_run_id",
+    "mutation_ref",
+    "evidence_inputs",
+    "metrics",
+    "decision_rules",
+    "outcome_model"
+  ],
+  "properties": {
+    "schema_name": {
+      "const": "evaluation_plan"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "plan_id": {
+      "type": "string",
+      "pattern": "^plan_[a-z0-9_]{3,128}$"
+    },
+    "experiment_id": {
+      "type": "string",
+      "pattern": "^exp_[a-z0-9_]{3,128}$"
+    },
+    "baseline_run_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_.:-]{3,200}$"
+    },
+    "candidate_run_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_.:-]{3,200}$"
+    },
+    "mutation_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mutation_id",
+        "schema_name",
+        "schema_version"
+      ],
+      "properties": {
+        "mutation_id": {
+          "type": "string",
+          "pattern": "^mut_[a-z0-9_]{3,128}$"
+        },
+        "schema_name": {
+          "const": "mutation"
+        },
+        "schema_version": {
+          "const": 1
+        }
+      }
+    },
+    "evidence_inputs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "evidence_id",
+          "source_artifact",
+          "evidence_view_ref"
+        ],
+        "properties": {
+          "evidence_id": {
+            "type": "string",
+            "pattern": "^ev_[a-z0-9_]{3,128}$"
+          },
+          "source_artifact": {
+            "type": "string",
+            "pattern": "^(\\.adl|docs|out|tmp)/[A-Za-z0-9_./:-]+$"
+          },
+          "evidence_view_ref": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schema_name",
+              "schema_version"
+            ],
+            "properties": {
+              "schema_name": {
+                "const": "canonical_evidence_view"
+              },
+              "schema_version": {
+                "const": 1
+              }
+            }
+          },
+          "selectors": {
+            "type": "array",
+            "minItems": 0,
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9_.:/-]{1,200}$"
+            }
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "metric_id",
+          "metric_type",
+          "direction",
+          "aggregation",
+          "weight"
+        ],
+        "properties": {
+          "metric_id": {
+            "type": "string",
+            "pattern": "^met_[a-z0-9_]{3,128}$"
+          },
+          "metric_type": {
+            "type": "string",
+            "enum": [
+              "failure_rate_delta",
+              "success_ratio_delta",
+              "artifact_equivalence",
+              "policy_violation_count",
+              "deterministic_replay_match",
+              "custom_scalar"
+            ]
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "increase_is_better",
+              "decrease_is_better",
+              "target_match"
+            ]
+          },
+          "aggregation": {
+            "type": "string",
+            "enum": [
+              "latest",
+              "mean",
+              "median",
+              "sum",
+              "boolean_all"
+            ]
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "threshold": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "decision_rules": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rule_id",
+          "kind",
+          "precedence",
+          "operator"
+        ],
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "pattern": "^rule_[a-z0-9_]{3,128}$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "threshold_gate",
+              "weighted_score_gate",
+              "hard_fail_if",
+              "tie_break"
+            ]
+          },
+          "precedence": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1024
+          },
+          "metric_id": {
+            "type": "string",
+            "pattern": "^met_[a-z0-9_]{3,128}$"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              ">",
+              ">=",
+              "<",
+              "<=",
+              "==",
+              "!="
+            ]
+          },
+          "target_value": {},
+          "on_fail": {
+            "type": "string",
+            "enum": [
+              "adopt",
+              "reject",
+              "requires_human_review"
+            ]
+          }
+        }
+      }
+    },
+    "outcome_model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision_order",
+        "default_decision",
+        "tie_break"
+      ],
+      "properties": {
+        "decision_order": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "adopt",
+              "reject",
+              "requires_human_review"
+            ]
+          }
+        },
+        "default_decision": {
+          "type": "string",
+          "enum": [
+            "adopt",
+            "reject",
+            "requires_human_review"
+          ]
+        },
+        "tie_break": {
+          "type": "string",
+          "enum": [
+            "higher_weighted_score",
+            "lower_policy_risk",
+            "lexicographic_plan_id"
+          ]
+        }
+      }
+    },
+    "experiment_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_hypotheses_per_failure",
+        "max_parallel_experiments",
+        "max_experiments_per_hypothesis"
+      ],
+      "properties": {
+        "max_hypotheses_per_failure": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "max_parallel_experiments": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "max_experiments_per_hypothesis": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "admission_thresholds": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "min_evidence_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000
+            },
+            "min_confidence_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "require_policy_approval": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 4000
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tags": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9_.:-]{1,128}$"
+          }
+        },
+        "created_by": {
+          "type": "string",
+          "maxLength": 200
+        }
+      }
+    }
+  }
+}
