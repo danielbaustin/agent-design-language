@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "adl.docs.milestones.v0.8.experiment_index_entry.v1",
+  "title": "experiment_index_entry.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "experiment_id",
+    "run_id",
+    "workflow_id",
+    "failure_class",
+    "hypothesis_id",
+    "hypothesis_digest",
+    "mutation_id",
+    "evaluation_plan_id",
+    "decision",
+    "outcome",
+    "improvement_delta",
+    "experiment_seed",
+    "evidence_refs",
+    "artifact_refs",
+    "sort_key"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "experiment_index_entry.v1"
+    },
+    "experiment_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workflow_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "failure_class": {
+      "type": "string",
+      "minLength": 1
+    },
+    "hypothesis_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "hypothesis_digest": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mutation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evaluation_plan_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["adopt", "reject", "defer"]
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["improved", "regressed", "neutral", "failed"]
+    },
+    "improvement_delta": {
+      "type": ["number", "null"]
+    },
+    "experiment_seed": {
+      "type": ["string", "null"]
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "artifact_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "path", "sha256"],
+        "properties": {
+          "kind": { "type": "string", "minLength": 1 },
+          "path": {
+            "type": "string",
+            "pattern": "^(\\.adl|docs|swarm|out|tmp)/[A-Za-z0-9_./:-]+$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "sort_key": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "secondary", "tertiary", "quaternary"],
+      "properties": {
+        "primary": { "type": "string", "const": "failure_class" },
+        "secondary": { "type": "string", "const": "hypothesis_id" },
+        "tertiary": { "type": "string", "const": "outcome" },
+        "quaternary": { "type": "string", "const": "experiment_id" }
+      }
+    },
+    "related_experiments": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

@@ -16,6 +16,11 @@ For the Gödel/evolution design track, the canonical machine-readable schema/spe
 
 - `docs/milestones/v0.8/agent_profile.v1.json`
 - `docs/milestones/v0.8/mutation.v1.json`
+- `docs/milestones/v0.8/run_summary.v1.json`
+- `docs/milestones/v0.8/experiment_index_entry.v1.json`
+- `docs/milestones/v0.8/run_summary.v1.example.json`
+- `docs/milestones/v0.8/experiment_index_entry.v1.example.json`
+- `docs/milestones/v0.8/OBSMEM_INDEXING_SURFACES_V1.md`
 
 These are design-stage schema artifacts now and candidates for later promotion into runtime schemas.
 
