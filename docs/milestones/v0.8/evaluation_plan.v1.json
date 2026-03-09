@@ -81,7 +81,7 @@
           },
           "source_artifact": {
             "type": "string",
-            "pattern": "^(\\.adl|docs|swarm|out|tmp)/[A-Za-z0-9_./:-]+$"
+            "pattern": "^(\\.adl|docs|out|tmp)/[A-Za-z0-9_./:-]+$"
           },
           "evidence_view_ref": {
             "type": "object",
