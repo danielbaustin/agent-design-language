@@ -1,5 +1,7 @@
 # Gödel Agent Scientific Method
 
+For cross-document alignment, see `GODEL_LOOP_INTEGRATION_V0.8.md` for the canonical v0.8 stage order and artifact mapping.
+
 ## Purpose
 
 The Gödel Agent introduces a **scientific reasoning loop** into ADL. Instead of merely executing workflows, the system can analyze prior runs, form hypotheses about improvements, test those hypotheses deterministically, and adopt or reject changes based on evidence.
@@ -162,8 +164,15 @@ The Gödel Agent executes a deterministic improvement loop.
    Adopt, reject, or request human approval.
 ```
 
+Canonical stage naming for v0.8 docs:
+
+- failure -> hypothesis -> mutation -> experiment -> evaluation -> record -> indexing
 
 Each step emits trace events and produces artifacts.
+
+## v0.8 Scope Boundary
+
+This document describes the deterministic scientific-loop architecture and artifact contracts. It does not claim that autonomous self-modifying runtime execution is already implemented in v0.8.
 
 ---
 
