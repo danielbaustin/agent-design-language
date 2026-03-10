@@ -1,5 +1,8 @@
 # ADL Output Card
 
+Canonical Template Source: `swarm/templates/cards/output_card_template.md`
+Consumed by: `swarm/tools/pr.sh` (`OUTPUT_TEMPLATE`) with legacy fallback support for `.adl/templates/output_card_template.md`.
+
 Task ID:
 Run ID:
 Version:
