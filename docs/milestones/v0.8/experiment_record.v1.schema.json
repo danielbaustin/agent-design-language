@@ -9,6 +9,7 @@
     "schema_name",
     "schema_version",
     "experiment_id",
+    "experiment_seed",
     "comparison_key",
     "runs",
     "hypothesis",
@@ -16,6 +17,7 @@
     "evaluation_plan",
     "evidence",
     "outcome",
+    "improvement_delta",
     "decision",
     "replay",
     "obsmem_index"
@@ -32,6 +34,10 @@
     "experiment_id": {
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"
+    },
+    "experiment_seed": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{2,127}$"
     },
     "comparison_key": {
       "type": "object",
@@ -176,6 +182,40 @@
             }
           },
           "uniqueItems": true
+        }
+      }
+    },
+    "improvement_delta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "metric",
+        "baseline",
+        "experiment",
+        "delta",
+        "direction"
+      ],
+      "properties": {
+        "metric": {
+          "type": "string",
+          "minLength": 1
+        },
+        "baseline": {
+          "type": "number"
+        },
+        "experiment": {
+          "type": "number"
+        },
+        "delta": {
+          "type": "number"
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "increase_is_better",
+            "decrease_is_better",
+            "target_match"
+          ]
         }
       }
     },
