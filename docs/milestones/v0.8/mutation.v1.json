@@ -1,0 +1,244 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adl.dev/schemas/mutation.v1.json",
+  "title": "Mutation v1",
+  "description": "Canonical bounded mutation descriptor for v0.8 Godel experiments.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_name",
+    "schema_version",
+    "mutation_id",
+    "experiment_id",
+    "hypothesis_id",
+    "mutation_type",
+    "bounded_scope",
+    "operations",
+    "constraints",
+    "comparison",
+    "safety"
+  ],
+  "properties": {
+    "schema_name": {
+      "const": "mutation"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "mutation_id": {
+      "type": "string",
+      "pattern": "^mut_[a-z0-9_]{3,128}$"
+    },
+    "experiment_id": {
+      "type": "string",
+      "pattern": "^exp_[a-z0-9_]{3,128}$"
+    },
+    "hypothesis_id": {
+      "type": "string",
+      "pattern": "^hyp_[a-z0-9_]{3,128}$"
+    },
+    "mutation_type": {
+      "type": "string",
+      "enum": [
+        "overlay_update",
+        "evaluation_adjustment",
+        "guardrail_adjustment"
+      ]
+    },
+    "bounded_scope": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_.:/-]{1,200}$"
+      }
+    },
+    "operations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "op_id",
+          "action",
+          "target_surface",
+          "target_pointer"
+        ],
+        "properties": {
+          "op_id": {
+            "type": "string",
+            "pattern": "^op_[a-z0-9_]{2,128}$"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "set",
+              "remove",
+              "append_unique"
+            ]
+          },
+          "target_surface": {
+            "type": "string",
+            "enum": [
+              "workflow_overlay",
+              "evaluation_plan",
+              "provider_profile",
+              "delegation_policy",
+              "scheduler_policy"
+            ]
+          },
+          "target_pointer": {
+            "type": "string",
+            "pattern": "^/([A-Za-z0-9_.-]|~0|~1|/)*$"
+          },
+          "value": {},
+          "expected_old_value": {}
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_operations",
+        "policy_gate_required",
+        "sandbox_required",
+        "allow_create_new_paths"
+      ],
+      "properties": {
+        "max_operations": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "policy_gate_required": {
+          "type": "boolean"
+        },
+        "sandbox_required": {
+          "type": "boolean"
+        },
+        "allow_create_new_paths": {
+          "type": "boolean"
+        }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonical_fingerprint",
+        "ordering_key"
+      ],
+      "properties": {
+        "canonical_fingerprint": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "ordering_key": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:-]{1,200}$"
+        }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowed_surfaces",
+        "prohibited_surfaces"
+      ],
+      "properties": {
+        "allowed_surfaces": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9_.:-]{1,128}$"
+          }
+        },
+        "prohibited_surfaces": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9_.:-]{1,128}$"
+          }
+        }
+      }
+    },
+    "evidence_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "schema_name",
+        "schema_version"
+      ],
+      "properties": {
+        "evidence_id": {
+          "type": "string",
+          "pattern": "^ev_[a-z0-9_]{3,128}$"
+        },
+        "schema_name": {
+          "const": "canonical_evidence_view"
+        },
+        "schema_version": {
+          "const": 1
+        }
+      }
+    },
+    "evaluation_plan_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan_id",
+        "schema_name",
+        "schema_version"
+      ],
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "pattern": "^plan_[a-z0-9_]{3,128}$"
+        },
+        "schema_name": {
+          "const": "evaluation_plan"
+        },
+        "schema_version": {
+          "const": 1
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tags": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9_.:-]{1,128}$"
+          }
+        },
+        "created_by": {
+          "type": "string",
+          "maxLength": 200
+        }
+      }
+    }
+  }
+}

@@ -33,6 +33,9 @@ Subsequent milestone implementation issues should treat this directory as the ca
 - [ADAPTIVE_EXECUTION_ENGINE.md](ADAPTIVE_EXECUTION_ENGINE.md)
 - [MEMORY_MODEL_FOR_AI.md](MEMORY_MODEL_FOR_AI.md)
 - [GODEL_SCIENTIFIC_METHOD.md](GODEL_SCIENTIFIC_METHOD.md)
+- [GODEL_LOOP_INTEGRATION_V0.8.md](GODEL_LOOP_INTEGRATION_V0.8.md)
+- [GODEL_LOOP_DIAGRAM.md](GODEL_LOOP_DIAGRAM.md)
+- [GODEL_AGENT_NOTES.md](GODEL_AGENT_NOTES.md)
 
 ## Epics
 
@@ -43,6 +46,7 @@ Subsequent milestone implementation issues should treat this directory as the ca
 
 - [WBS_V0.8.md](WBS_V0.8.md)
 - [SPRINT_V0.8.md](SPRINT_V0.8.md)
+- [EXECUTION_ORDER_V0.8.md](EXECUTION_ORDER_V0.8.md)
 - [MILESTONE_CHECKLIST_V0.8.md](MILESTONE_CHECKLIST_V0.8.md)
 - [DECISIONS_V0.8.md](DECISIONS_V0.8.md)
 - [RELEASE_PLAN_V0.8.md](RELEASE_PLAN_V0.8.md)
@@ -60,6 +64,25 @@ Subsequent milestone implementation issues should treat this directory as the ca
 
 - [agent_profile.v1.json](agent_profile.v1.json)
 - [mutation.v1.json](mutation.v1.json)
+- [mutation.v1.example.json](mutation.v1.example.json)
+- [MUTATION_FORMAT_V1.md](MUTATION_FORMAT_V1.md)
+- [evaluation_plan.v1.json](evaluation_plan.v1.json)
+- [evaluation_plan.v1.example.json](evaluation_plan.v1.example.json)
+- [EVALUATION_PLAN_V1.md](EVALUATION_PLAN_V1.md)
+- [EXPERIMENT_RECORD_V1.md](EXPERIMENT_RECORD_V1.md)
+- [experiment_record.v1.schema.json](experiment_record.v1.schema.json)
+- [experiment_record.v1.example.json](experiment_record.v1.example.json)
+- [CANONICAL_EVIDENCE_VIEW_V1.md](CANONICAL_EVIDENCE_VIEW_V1.md)
+- [canonical_evidence_view.v1.schema.json](canonical_evidence_view.v1.schema.json)
+- [canonical_evidence_view.v1.example.json](canonical_evidence_view.v1.example.json)
+- [TOOL_RESULT_CONTRACT_V1.md](TOOL_RESULT_CONTRACT_V1.md)
+- [tool_result.v1.schema.json](tool_result.v1.schema.json)
+- [tool_result.v1.example.json](tool_result.v1.example.json)
+- [run_summary.v1.json](run_summary.v1.json)
+- [run_summary.v1.example.json](run_summary.v1.example.json)
+- [experiment_index_entry.v1.json](experiment_index_entry.v1.json)
+- [experiment_index_entry.v1.example.json](experiment_index_entry.v1.example.json)
+- [OBSMEM_INDEXING_SURFACES_V1.md](OBSMEM_INDEXING_SURFACES_V1.md)
 
 ## Scope Slicing Reference
 
@@ -67,7 +90,16 @@ Subsequent milestone implementation issues should treat this directory as the ca
 - v0.8: EPIC-C + EPIC-D (Godel + Authoring)
 - v0.85+: cluster / distributed execution
 
+## Gödel loop diagram
+
+- [GODEL_LOOP_DIAGRAM.md](GODEL_LOOP_DIAGRAM.md)
+
 ## Related Milestones
 
 - [v0.75 milestone docs](../v0.75/)
 - [v0.85 milestone docs](../v0.85/)
+- [GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md](GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md)
+- [godel_experiment_workflow.template.v1.json](godel_experiment_workflow.template.v1.json)
+- [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
+- [STICKTOITTIVENESS.md](STICKTOITTIVENESS.md)
+- [incubation/](incubation/)

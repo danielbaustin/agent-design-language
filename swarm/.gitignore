@@ -13,3 +13,4 @@ cov.old/
 # Local coverage artifacts
 swarm/coverage/
 swarm/coverage.last/
+coverage-summary.json
