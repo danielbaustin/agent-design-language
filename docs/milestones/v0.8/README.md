@@ -4,6 +4,12 @@ This directory is the canonical source of truth for v0.8 milestone documentation
 
 Use this index as the primary navigation surface for v0.8 scope, sequencing, and release readiness.
 
+## Current Status
+
+- Milestone state: active development (not released).
+- Runtime base release: v0.7.0.
+- v0.8 currently includes both implemented artifacts and planning/spec surfaces; see `RECOVERY_AUDIT_V0.8.md` for repository-truth status.
+
 ## Baseline Freeze Status
 
 The v0.8 milestone documentation baseline is frozen for implementation work.

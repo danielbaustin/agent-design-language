@@ -2,14 +2,24 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.75 (Active Development Milestone)
+## v0.8 (Active Development Milestone)
 
 Status: In progress.
 
 Summary:
-- Deterministic substrate hardening and release-gate alignment for v0.75.
-- ObsMem v1 integration boundary documentation and contract-focused validation work.
-- Demo matrix, coverage policy, and milestone documentation convergence for release readiness.
+- Repository-truth reconciliation, milestone docs convergence, and review-tail preparation.
+- Gödel schema/design surfaces and bounded transpiler demo scaffolding.
+- Ongoing work to reconcile planned v0.8 scope with runtime-implemented surfaces.
+
+References:
+- `docs/milestones/v0.8/RELEASE_PLAN_V0.8.md`
+- `docs/milestones/v0.8/RELEASE_NOTES_V0.8.md`
+- `docs/milestones/v0.8/MILESTONE_CHECKLIST_V0.8.md`
+- `docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md`
+
+## v0.75 (Previous Milestone)
+
+Status: prior milestone reference.
 
 References:
 - `docs/milestones/v0.75/RELEASE_PLAN_0.75.md`

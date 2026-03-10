@@ -1,40 +1,44 @@
-# Milestone Checklist Template
+# Milestone Checklist — v0.8
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Target release date: `{{target_release_date}}`
-- Owner: `{{owner}}`
+- Milestone: `v0.8`
+- Version: `0.8`
+- Target release date: `TBD`
+- Owner: `Daniel Austin / Agent Logic`
 
 ## Purpose
-Ship/no-ship gate for the milestone. Check items only when evidence exists.
+Ship/no-ship gate for v0.8. Check items only when evidence exists.
+
+Status note:
+- v0.8 is in active development.
+- This checklist tracks milestone completion and should not be interpreted as release-ready.
 
 ## Planning
-- [ ] Milestone goal defined (`{{goal_doc_link}}`)
-- [ ] Scope + non-goals documented (`{{scope_doc_link}}`)
-- [ ] WBS created and mapped to issues (`{{wbs_link}}`)
-- [ ] Decision log initialized (`{{decisions_link}}`)
-- [ ] Sprint plan created (`{{sprint_plan_link}}`)
+- [x] Milestone goal defined (`docs/milestones/v0.8/DESIGN_V0.8.md`)
+- [x] Scope + non-goals documented (`docs/milestones/v0.8/VISION_0.80.md`)
+- [x] WBS created and mapped to issues (`docs/milestones/v0.8/WBS_V0.8.md`)
+- [x] Decision log initialized (`docs/milestones/v0.8/DECISIONS_V0.8.md`)
+- [x] Sprint plan created (`docs/milestones/v0.8/SPRINT_V0.8.md`)
 
 ## Execution Discipline
-- [ ] Each issue has input/output cards under `.adl/cards/<issue>/`
-- [ ] Each burst writes artifacts under `.adl/reports/burst/<timestamp>/`
+- [ ] Each in-scope issue has complete input/output card traceability
 - [ ] Draft PR opened for each issue before merge
+- [ ] Deterministic evidence retained for demo and review surfaces
 - [ ] Transient failures retried and documented
-- [ ] "Green-only merge" policy followed
+- [ ] Green-only merge policy consistently enforced
 
 ## Quality Gates
-- [ ] `cargo fmt` passes
-- [ ] `cargo clippy --all-targets -- -D warnings` passes
-- [ ] `cargo test` passes
-- [ ] CI is green on the merge target
-- [ ] Coverage signal is not red (or exception documented) (`{{coverage_link_or_note}}`)
-- [ ] No unresolved high-priority blockers (`{{blocker_report_link}}`)
+- [ ] `cargo fmt` passes on release candidate branch
+- [ ] `cargo clippy --all-targets -- -D warnings` passes on release candidate branch
+- [ ] `cargo test` passes on release candidate branch
+- [ ] CI is green on merge target
+- [ ] v0.8 quality gate status is green (`docs/milestones/v0.8/QUALITY_GATE_V0.8.md`)
+- [ ] No unresolved blocker-grade findings (`docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md` + review artifacts)
 
 ## Release Packaging
-- [ ] Release notes finalized (`{{release_notes_link}}`)
-- [ ] Tag verified: `{{tag_name}}`
-- [ ] GitHub Release drafted (`{{release_draft_link}}`)
+- [ ] Release notes finalized (`docs/milestones/v0.8/RELEASE_NOTES_V0.8.md`)
+- [ ] Tag verified (`v0.8.0` or superseding tag decision)
+- [ ] GitHub Release drafted
 - [ ] Links validated in release body
 - [ ] Release published
 
@@ -42,9 +46,9 @@ Ship/no-ship gate for the milestone. Check items only when evidence exists.
 - [ ] Milestone/epic issues closed with release links
 - [ ] Deferred items moved to next milestone backlog
 - [ ] Follow-up bugs/tech debt captured as issues
-- [ ] Roadmap/status docs updated (`{{roadmap_update_link}}`)
-- [ ] Retrospective summary recorded (`{{retro_link}}`)
+- [ ] Roadmap/status docs updated
+- [ ] Retrospective summary recorded
 
 ## Exit Criteria
 - All required gates are checked, or each exception has an owner + due date.
-- Milestone can be audited end-to-end via the links captured above.
+- Milestone can be audited end-to-end via linked evidence.

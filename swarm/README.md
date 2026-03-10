@@ -16,9 +16,9 @@ Badge note:
 
 ## Status
 
-Current runtime release: **v0.6**
+Current runtime release: **v0.7.0**
 
-This README reflects the current v0.6 runtime behavior.
+This README reflects the current v0.7 runtime behavior.
 
 ## v0.7 Naming Migration (Compatibility Window)
 
@@ -28,7 +28,7 @@ This README reflects the current v0.6 runtime behavior.
 
 ## Features by Release
 
-### v0.6 (Current)
+### v0.7.0 (Current)
 
 * ExecutionPlan-driven runtime execution
 * Deterministic sequential + concurrent fork/join semantics
@@ -64,7 +64,7 @@ This README reflects the current v0.6 runtime behavior.
 ## Documentation Map
 
 - Root repo README: `../README.md`
-- v0.6 milestone docs: `../docs/milestones/v0.6/`
+- v0.7 milestone docs: `../docs/milestones/v0.7/`
 - ADRs: `../docs/adr/`
 - Runnable demos: `../docs/milestones/v0.7/DEMOS_v0.7.md`
 - More examples: `examples/README.md`
@@ -96,7 +96,7 @@ Provider execution, tracing, contracts, and repair policies are being added incr
 From the `swarm` directory:
 
 ```bash
-# Happy path: v0.6 primitive schema baseline
+# Happy path: v0.7 primitive schema baseline
 cargo run -q --bin adl -- examples/v0-5-primitives-minimal.adl.yaml --print-plan
 
 # Optional: verify pattern compiler canonical IDs
@@ -133,9 +133,9 @@ Exit codes are consistent:
 - `2` — invalid CLI usage
 - non-zero — schema, validation, or runtime error
 
-## Signing Quickstart (v0.6)
+## Signing Quickstart (v0.7)
 
-For v0.6 workflows, signature enforcement is enabled by default for `--run`.
+For v0.7 workflows, signature enforcement is enabled by default for `--run`.
 
 ```bash
 # 1) generate local dev keys
@@ -223,9 +223,9 @@ Failure behavior is explicit:
 - Non-200 response -> runtime error with status + body snippet
 - Timeout -> runtime error with timeout guidance
 
-## Remote Execution MVP (v0.6 Placement)
+## Remote Execution MVP (v0.7 Placement)
 
-In addition to HTTP providers, v0.6 includes a minimal remote execution protocol for
+In addition to HTTP providers, v0.7 includes a minimal remote execution protocol for
 step placement:
 
 - `GET /v1/health`
@@ -238,9 +238,9 @@ Design boundary:
 
 Limits:
 - Request payloads over 5 MiB are rejected (`413`).
-- No authn/authz in v0.6 MVP (deferred).
+- No authn/authz in the current MVP (deferred).
 
-### Security Model / Threat Model (v0.6)
+### Security Model / Threat Model (v0.7)
 
 This remote execution path is an MVP transport boundary, not a hardened public
 service. Treat it as trusted-network infrastructure only.
@@ -257,7 +257,7 @@ Current protections:
 - Timeout/error handling: transport timeout/unreachable/bad-status/invalid-json
   failures are surfaced with explicit stable error categories.
 
-Known gaps / risks (v0.6):
+Known gaps / risks (v0.7):
 - No request signing for remote payloads.
 - No built-in authentication/authorization.
 - Unsafe to expose directly on a public interface.
@@ -305,9 +305,9 @@ Example validation documents live under:
 examples/
 ```
 
-Legacy examples (e.g. `adl-0.1.yaml`) remain for regression testing, but the runtime behavior described here reflects v0.6.
+Legacy examples (e.g. `adl-0.1.yaml`) remain for regression testing, but the runtime behavior described here reflects v0.7.
 
-The schema/runtime behavior described here is aligned with current **v0.6** support.
+The schema/runtime behavior described here is aligned with current **v0.7** support.
 
 ---
 
@@ -348,7 +348,7 @@ All of the above must pass for changes to be accepted.
 
 `swarm` enforces a **high bar for test coverage**, especially for core compiler-like behavior (parsing, validation, resolution, and execution).
 
-As of v0.6:
+As of v0.7:
 
 - **Overall line coverage:** enforced by CI gate (see coverage badge above)
 - **All critical paths covered:**
@@ -384,7 +384,7 @@ The report makes it easy to identify:
 
 ### Coverage philosophy
 
-- **Line coverage > function coverage** for v0.6  
+- **Line coverage > function coverage** for v0.7  
   (many small helper functions are intentionally exercised indirectly)
 - No “coverage theater”:
   - No dummy tests
