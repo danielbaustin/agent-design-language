@@ -72,7 +72,7 @@
           },
           "path": {
             "type": "string",
-            "pattern": "^(\\.adl|docs|swarm|out|tmp)/[A-Za-z0-9_./:-]+$"
+            "pattern": "^(\\.adl|docs|out|tmp|[A-Za-z0-9._-]+)/[A-Za-z0-9_./:-]+$"
           },
           "sha256": {
             "type": "string",
