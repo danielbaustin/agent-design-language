@@ -32,3 +32,10 @@ Prompt Spec aligns generation with the reviewer/tooling stack:
 Together, Prompt Spec + reviewer specs create an end-to-end deterministic path:
 
 Input Card -> Prompt Generation -> Agent Execution -> Output Card -> Structured Review
+
+## Protocol Bindings
+Prompt Spec should declare reviewer-facing protocol surfaces using stable IDs:
+- `card_review_checklist.v1`: required checklist semantics used to evaluate card completeness and policy alignment.
+- `card_review_output.v1`: deterministic review artifact envelope used for machine-readable findings output.
+
+When these IDs are present in `review_surfaces`, prompt generators and reviewers can coordinate on stable contracts without markdown heuristic coupling.

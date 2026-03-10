@@ -38,8 +38,8 @@ constraints:
   disallow_secrets: true
   disallow_absolute_host_paths: true
 review_surfaces:
-  - checklist_spec_v1
-  - deterministic_review_output_v1
+  - card_review_checklist.v1
+  - card_review_output.v1
   - card_reviewer_gpt_v1
 ```
 
