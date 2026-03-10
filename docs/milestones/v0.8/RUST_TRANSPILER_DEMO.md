@@ -1,9 +1,14 @@
 # ADL Demo: Rust Transpiler / Migration Workflow
 
 
-Status: Planned for v0.8
+Status: Active v0.8 demo surface (bounded scaffold + verification)
 Milestone: v0.8
 Not part of v0.75 release scope
+
+Bounded implementation references:
+
+- Fixture/scaffold/runtime: `#702`
+- Verification/evidence: `RUST_TRANSPILER_VERIFICATION_V0.8.md` (`#703`)
 ## Purpose
 
 > This demo is planned for v0.8 and is not part of the v0.75 milestone.
