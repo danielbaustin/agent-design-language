@@ -12,4 +12,4 @@ Versioned spec text lives here and is intended to stay stable once finalized.
 - Spec entrypoint: `../README.md`
 - Schema artifacts: `../schemas/README.md`
 - Root project entrypoint: `../../README.md`
-- v0.6 milestone docs: `../../docs/milestones/v0.6/`
+- v0.8 milestone docs: `../../docs/milestones/v0.8/`
