@@ -1,0 +1,43 @@
+{
+  "schema_version": "run_summary.v1",
+  "run_id": "run-0001",
+  "workflow_id": "godel-loop-baseline",
+  "workflow_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "outcome": "failure",
+  "step_totals": {
+    "planned": 6,
+    "completed": 5,
+    "failed": 1,
+    "skipped": 0
+  },
+  "failure_classes": [
+    "policy_denied",
+    "verification_failed"
+  ],
+  "experiment_refs": [
+    "exp-0001",
+    "exp-0002"
+  ],
+  "hypothesis_refs": [
+    "hyp-0007",
+    "hyp-0013"
+  ],
+  "artifact_refs": [
+    {
+      "kind": "experiment_record",
+      "path": ".adl/runs/run-0001/learning/experiment_record.json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "kind": "run_status",
+      "path": ".adl/runs/run-0001/run_status.json",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    {
+      "kind": "run_summary",
+      "path": ".adl/runs/run-0001/run_summary.json",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  ],
+  "notes": "bounded deterministic index summary"
+}

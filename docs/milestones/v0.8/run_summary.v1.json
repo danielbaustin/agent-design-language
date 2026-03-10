@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "adl.docs.milestones.v0.8.run_summary.v1",
+  "title": "run_summary.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "workflow_id",
+    "workflow_digest",
+    "outcome",
+    "step_totals",
+    "failure_classes",
+    "experiment_refs",
+    "hypothesis_refs",
+    "artifact_refs"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "run_summary.v1"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workflow_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workflow_digest": {
+      "type": "string",
+      "minLength": 1
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["success", "failure", "partial"]
+    },
+    "step_totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["planned", "completed", "failed", "skipped"],
+      "properties": {
+        "planned": { "type": "integer", "minimum": 0 },
+        "completed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "skipped": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "failure_classes": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "experiment_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "hypothesis_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "artifact_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "path", "sha256"],
+        "properties": {
+          "kind": { "type": "string", "minLength": 1 },
+          "path": {
+            "type": "string",
+            "pattern": "^(\\.adl|docs|out|tmp)/[A-Za-z0-9_./:-]+$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

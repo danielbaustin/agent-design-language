@@ -12,6 +12,47 @@ Context:
 - Docs:
 - Other:
 
+## Agent Execution Rules
+- Do not run `pr start`; the branch and worktree already exist.
+- Do not delete or recreate cards.
+- Do not switch branches unless explicitly instructed.
+- Do not work on `main`.
+- Only modify files required for the issue.
+- Use repository-relative paths; avoid absolute host paths.
+- Write the output card to the paired `.adl/cards/<issue>/output_<issue>.md` path.
+- If repository state is unexpected, stop and ask before attempting repository repair.
+
+## Prompt Spec
+```yaml
+prompt_schema: adl.v1
+actor:
+  role: execution_agent
+  name: codex
+model:
+  id: gpt-5-codex
+  determinism_mode: stable
+inputs:
+  sections:
+    - goal
+    - acceptance_criteria
+    - inputs
+    - constraints_policies
+    - system_invariants
+    - reviewer_checklist
+outputs:
+  output_card: .adl/cards/<issue>/output_<issue>.md
+  summary_style: concise_structured
+constraints:
+  include_system_invariants: true
+  include_reviewer_checklist: true
+  disallow_secrets: true
+  disallow_absolute_host_paths: true
+review_surfaces:
+  - card_review_checklist.v1
+  - card_review_output.v1
+  - card_reviewer_gpt_v1
+```
+
 Execution:
 - Agent:
 - Provider:

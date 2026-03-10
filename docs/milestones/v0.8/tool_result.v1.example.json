@@ -1,0 +1,38 @@
+{
+  "schema_version": "tool_result.v1",
+  "tool_name": "cargo_test",
+  "invocation_id": "tool-cargo-test-001",
+  "status": "partial",
+  "payload": {
+    "summary": "2 of 3 checks completed",
+    "passed_checks": [
+      "fmt",
+      "clippy"
+    ],
+    "pending_checks": [
+      "test"
+    ]
+  },
+  "error": {
+    "code": "TOOL_TIMEOUT",
+    "message": "Tool execution exceeded configured timeout.",
+    "category": "tool_failure"
+  },
+  "artifact_refs": [
+    {
+      "kind": "log",
+      "path": "out/run-0001/logs/cargo-clippy.log",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "kind": "report",
+      "path": "out/run-0001/reports/verification-summary.json",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+    }
+  ],
+  "metadata": {
+    "attempt": 1,
+    "duration_ms": 30000,
+    "provider": "local"
+  }
+}

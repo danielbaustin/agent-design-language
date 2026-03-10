@@ -2,6 +2,7 @@
   "schema_name": "experiment_record",
   "schema_version": 1,
   "experiment_id": "exp-20260308-coverage-floor",
+  "experiment_seed": "seed-20260308-coverage-floor-a",
   "comparison_key": {
     "subject": "swarm/src/coverage.rs",
     "baseline_label": "main",
@@ -91,6 +92,13 @@
         "delta": 0
       }
     ]
+  },
+  "improvement_delta": {
+    "metric": "coverage_percent",
+    "baseline": 78.1,
+    "experiment": 80.5,
+    "delta": 2.4,
+    "direction": "increase_is_better"
   },
   "decision": {
     "result": "adopt",
