@@ -4,6 +4,11 @@ This directory is the canonical source of truth for v0.8 milestone documentation
 
 Use this index as the primary navigation surface for v0.8 scope, sequencing, and release readiness.
 
+## Baseline Freeze Status
+
+The v0.8 milestone documentation baseline is frozen for implementation work.
+Subsequent milestone implementation issues should treat this directory as the canonical reference.
+
 ## Reading Order
 
 1. [Vision](VISION_0.80.md)
@@ -98,4 +103,3 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
 - [STICKTOITTIVENESS.md](STICKTOITTIVENESS.md)
 - [incubation/](incubation/)
-
