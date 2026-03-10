@@ -67,6 +67,9 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - [CANONICAL_EVIDENCE_VIEW_V1.md](CANONICAL_EVIDENCE_VIEW_V1.md)
 - [canonical_evidence_view.v1.schema.json](canonical_evidence_view.v1.schema.json)
 - [canonical_evidence_view.v1.example.json](canonical_evidence_view.v1.example.json)
+- [TOOL_RESULT_CONTRACT_V1.md](TOOL_RESULT_CONTRACT_V1.md)
+- [tool_result.v1.schema.json](tool_result.v1.schema.json)
+- [tool_result.v1.example.json](tool_result.v1.example.json)
 
 ## Scope Slicing Reference
 
