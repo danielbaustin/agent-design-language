@@ -6,7 +6,7 @@ ADL is built for teams that care about determinism and auditability. Documents a
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.75-orange)
+![Milestone](https://img.shields.io/badge/milestone-v0.8-orange)
 
 
 ## Try It Now (Happy Path)
@@ -38,7 +38,7 @@ Story packs (released in v0.7):
 
 Canonical demo commands and artifact paths:
 - [v0.7 Demo Matrix (Story-driven section)](docs/milestones/v0.7/DEMOS_v0.7.md#story-driven-demo-packs-user-facing)
-- [v0.75 Demo Matrix (active milestone)](docs/milestones/v0.75/DEMO_MATRIX.md)
+- [v0.8 Demo Matrix (active milestone)](docs/milestones/v0.8/DEMOS_V0.8.md)
 
 Badge semantics:
 - `adl-ci`: main branch CI workflow status
@@ -48,8 +48,12 @@ Badge semantics:
 ## Status
 
 - Latest released milestone: **v0.7.0** (tag: `v0.7.0`)
-- Active development milestone: **v0.75**
+- Active development milestone: **v0.8**
 - Project changelog: `CHANGELOG.md`
+
+v0.8 status note:
+- The v0.8 milestone currently contains a mix of implemented demo scaffold code and design/spec surfaces.
+- Not all v0.8 planning artifacts are runtime-implemented yet; see `docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md`.
 
 ## v0.7 Naming Migration (Compatibility Window)
 
@@ -102,7 +106,7 @@ Badge semantics:
 - `adl-spec/`: language-level specification docs
 - `docs/`: contributor workflow and roadmap docs
 - `docs/adr/`: architecture decision records (major technical decisions)
-- `docs/OBSMEM.md`: user-facing ObsMem boundary and usage guide (v0.75)
+- `docs/OBSMEM.md`: user-facing ObsMem boundary and usage guide (v0.75 reference)
 - `.adl/`: cards, reports, and run/report artifacts
 
 ## Historical v0.3 Plan-Only Commands
@@ -162,7 +166,7 @@ v0.7.0 proves:
 
 Default contributor workflow uses `adl_pr_cycle` (`start -> codex -> finish -> report`).
 - Guide: `docs/default_workflow.md`
-- Active milestone docs: `docs/milestones/v0.75/`
+- Active milestone docs: `docs/milestones/v0.8/`
 - Tools: `swarm/tools/README.md`
 
 ## License
