@@ -63,6 +63,7 @@ Subsequent milestone implementation issues should treat this directory as the ca
 ## Supporting Design Docs and Demo Surfaces
 
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
+- [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
 - [STICKTOITTIVENESS.md](STICKTOITTIVENESS.md)
 - [incubation/GODEL_AGENT.md](incubation/GODEL_AGENT.md)
 - [incubation/OBSMEM_BAYES.md](incubation/OBSMEM_BAYES.md)

@@ -21,7 +21,7 @@ These demos are required before third-party review (`#707`) and release converge
 | D8-01 | Gödel schema spine | ExperimentRecord + Evidence + Mutation + EvaluationPlan schema alignment | `#609`, `#610`, `#611`, `#612`, `#683` | canonical schema/example artifacts under `docs/milestones/v0.8/` |
 | D8-02 | Gödel workflow integration | Failure -> hypothesis -> mutation -> experiment -> evaluation -> record loop template alignment | `#613`, `#615`, `#616` | `GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md` + `godel_experiment_workflow.template.v1.json` + demo docs |
 | D8-03 | ObsMem indexing integration | Run summary + ExperimentRecord-derived indexing surfaces | `#614` | indexing surface definitions and retrieval linkage notes |
-| D8-04 | Runtime/transpiler flagship | Rust transpiler and integration verification path | `#702`, `#703` | `RUST_TRANSPILER_DEMO.md` plus milestone checklist references |
+| D8-04 | Runtime/transpiler flagship | Rust transpiler and integration verification path | `#702`, `#703` | `RUST_TRANSPILER_DEMO.md` + `RUST_TRANSPILER_VERIFICATION_V0.8.md` + `demos/rust_output/transpiler_verification.v0.8.json` |
 | D8-05 | Authoring/reviewer compatibility | Prompt spec + reviewer checklist/output contracts and ordering | `#633`, `#650`, `#651`, `#649`, `#667`, `#677` | tooling docs/contracts + template references |
 
 ## Supporting Demos (Helpful, Not Release-Blocking Alone)
