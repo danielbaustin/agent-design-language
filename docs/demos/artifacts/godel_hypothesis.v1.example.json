@@ -1,0 +1,16 @@
+{
+  "artifact_version": "godel_hypothesis.v1",
+  "hypothesis_id": "hyp-0201",
+  "failure_id": "fail-0001",
+  "failure_class": "verification_failed",
+  "claim": "Evaluation step fails because verification mode is omitted for this workflow profile.",
+  "confidence": 0.62,
+  "evidence_refs": [
+    "evidence-0004",
+    "evidence-0009"
+  ],
+  "related_run_refs": [
+    "run-0098",
+    "run-0100"
+  ]
+}

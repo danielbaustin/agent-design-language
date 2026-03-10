@@ -1,0 +1,17 @@
+{
+  "artifact_version": "godel_failure_signal.v1",
+  "run_id": "run-0100",
+  "workflow_id": "godel-demo-v1",
+  "failure_id": "fail-0001",
+  "failure_class": "verification_failed",
+  "failure_code": "REPLAY_INVARIANT_VIOLATION",
+  "step_id": "evaluation",
+  "evidence_refs": [
+    "evidence-0004",
+    "evidence-0009"
+  ],
+  "artifact_refs": [
+    ".adl/runs/run-0100/learning/canonical_evidence_view.json",
+    ".adl/runs/run-0100/run_summary.json"
+  ]
+}

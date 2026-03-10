@@ -1,0 +1,50 @@
+{
+  "schema_version": "experiment_index_entry.v1",
+  "experiment_id": "exp-0002",
+  "run_id": "run-0001",
+  "workflow_id": "godel-loop-baseline",
+  "failure_class": "verification_failed",
+  "hypothesis_id": "hyp-0013",
+  "hypothesis_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "mutation_id": "mut-0009",
+  "evaluation_plan_id": "eval-plan-0003",
+  "decision": "adopt",
+  "outcome": "improved",
+  "improvement_delta": 0.18,
+  "experiment_seed": "seed-0042",
+  "evidence_refs": [
+    "evidence-0001",
+    "evidence-0003"
+  ],
+  "artifact_refs": [
+    {
+      "kind": "canonical_evidence_view",
+      "path": ".adl/runs/run-0001/learning/canonical_evidence_view.json",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    {
+      "kind": "evaluation_plan",
+      "path": ".adl/runs/run-0001/learning/evaluation_plan.json",
+      "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "kind": "mutation",
+      "path": ".adl/runs/run-0001/learning/mutation.json",
+      "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    }
+  ],
+  "sort_key": {
+    "primary": "failure_class",
+    "secondary": "hypothesis_id",
+    "tertiary": "outcome",
+    "quaternary": "experiment_id"
+  },
+  "related_experiments": [
+    "exp-0001",
+    "exp-0004"
+  ],
+  "tags": [
+    "failure:verification_failed",
+    "workflow:godel-loop-baseline"
+  ]
+}

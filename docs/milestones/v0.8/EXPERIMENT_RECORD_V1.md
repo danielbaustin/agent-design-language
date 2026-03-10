@@ -32,6 +32,7 @@ Required top-level fields:
 - `schema_name`
 - `schema_version`
 - `experiment_id`
+- `experiment_seed`
 - `comparison_key`
 - `runs`
 - `hypothesis`
@@ -39,6 +40,7 @@ Required top-level fields:
 - `evaluation_plan`
 - `evidence`
 - `outcome`
+- `improvement_delta`
 - `decision`
 - `replay`
 - `obsmem_index`
@@ -63,6 +65,11 @@ Optional top-level fields:
 - Type: string
 - Pattern: `^[a-z0-9][a-z0-9._-]{2,127}$`
 - Why: stable join key across evidence/mutation/evaluation/ObsMem.
+
+### `experiment_seed` (required)
+- Type: string
+- Pattern: `^[a-z0-9][a-z0-9._:-]{2,127}$`
+- Why: deterministic reproduction anchor for the experiment. This seed identifies the controlled experiment setup and must be stable for identical replay conditions.
 
 ### `comparison_key` (required)
 - Type: object
@@ -135,6 +142,16 @@ Optional top-level fields:
   - `secondary_metrics` (ordered list of same shape)
 - Why: deterministic experiment comparison for automation and review.
 
+### `improvement_delta` (required)
+- Type: object
+- Required fields:
+  - `metric` (string)
+  - `baseline` (number)
+  - `experiment` (number)
+  - `delta` (number; `experiment - baseline`)
+  - `direction` (`increase_is_better|decrease_is_better|target_match`)
+- Why: explicit, index-friendly improvement summary used by downstream ranking/selection and ObsMem query surfaces.
+
 ### `decision` (required)
 - Type: object
 - Required fields:
@@ -181,6 +198,7 @@ Optional top-level fields:
 - `mutation.scope` sorted lexicographically ascending.
 - `obsmem_index.tags` sorted lexicographically ascending and de-duplicated.
 - `replay.artifact_manifest` sorted by `path` ascending.
+- `improvement_delta` uses fixed keys and deterministic numeric values derived from canonical evaluation results.
 
 ## Security and Privacy Rules
 
@@ -203,3 +221,8 @@ All artifact references must be repository-relative.
 
 - Schema: `docs/milestones/v0.8/experiment_record.v1.schema.json`
 - Example: `docs/milestones/v0.8/experiment_record.v1.example.json`
+
+## Integration Notes
+
+- `improvement_delta` is the canonical ranking signal consumed by indexing/query surfaces (see #614).
+- `experiment_seed` is the canonical reproduction signal for deterministic rerun/replay comparisons.

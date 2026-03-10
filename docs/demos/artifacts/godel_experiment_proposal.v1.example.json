@@ -1,0 +1,23 @@
+{
+  "artifact_version": "godel_experiment_proposal.v1",
+  "experiment_id": "exp-0301",
+  "hypothesis_id": "hyp-0201",
+  "mutation": {
+    "mutation_version": "mutation.v1",
+    "mutation_id": "mut-0501",
+    "intent": "set_verification_mode",
+    "scope": "workflow_config",
+    "bounded_change": true
+  },
+  "evaluation_plan_ref": "eval-plan-0007",
+  "expected_outcome": "verification step passes and failure class is not emitted",
+  "stop_criteria": [
+    "single experiment run",
+    "no policy expansion"
+  ],
+  "artifact_refs": [
+    "docs/milestones/v0.8/MUTATION_FORMAT_V1.md",
+    "docs/milestones/v0.8/EVALUATION_PLAN_V1.md",
+    "docs/milestones/v0.8/EXPERIMENT_RECORD_V1.md"
+  ]
+}

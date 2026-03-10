@@ -28,6 +28,9 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - [ADAPTIVE_EXECUTION_ENGINE.md](ADAPTIVE_EXECUTION_ENGINE.md)
 - [MEMORY_MODEL_FOR_AI.md](MEMORY_MODEL_FOR_AI.md)
 - [GODEL_SCIENTIFIC_METHOD.md](GODEL_SCIENTIFIC_METHOD.md)
+- [GODEL_LOOP_INTEGRATION_V0.8.md](GODEL_LOOP_INTEGRATION_V0.8.md)
+- [GODEL_LOOP_DIAGRAM.md](GODEL_LOOP_DIAGRAM.md)
+- [GODEL_AGENT_NOTES.md](GODEL_AGENT_NOTES.md)
 
 ## Epics
 
@@ -70,12 +73,21 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - [TOOL_RESULT_CONTRACT_V1.md](TOOL_RESULT_CONTRACT_V1.md)
 - [tool_result.v1.schema.json](tool_result.v1.schema.json)
 - [tool_result.v1.example.json](tool_result.v1.example.json)
+- [run_summary.v1.json](run_summary.v1.json)
+- [run_summary.v1.example.json](run_summary.v1.example.json)
+- [experiment_index_entry.v1.json](experiment_index_entry.v1.json)
+- [experiment_index_entry.v1.example.json](experiment_index_entry.v1.example.json)
+- [OBSMEM_INDEXING_SURFACES_V1.md](OBSMEM_INDEXING_SURFACES_V1.md)
 
 ## Scope Slicing Reference
 
 - v0.75: EPIC-A + EPIC-B (deterministic substrate + ObsMem)
 - v0.8: EPIC-C + EPIC-D (Godel + Authoring)
 - v0.85+: cluster / distributed execution
+
+## Gödel loop diagram
+
+- [GODEL_LOOP_DIAGRAM.md](GODEL_LOOP_DIAGRAM.md)
 
 ## Related Milestones
 
@@ -86,3 +98,4 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
 - [STICKTOITTIVENESS.md](STICKTOITTIVENESS.md)
 - [incubation/](incubation/)
+
