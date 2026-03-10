@@ -1,0 +1,95 @@
+# ToolResult Contract v1
+
+## Purpose
+Define a deterministic, replay-safe, and privacy-safe contract for tool execution outputs consumed by ADL workflows and review surfaces.
+
+This contract is schema/spec only for v0.8 and does not imply new runtime execution behavior by itself.
+
+## Schema Identity
+- Schema ID: `tool_result.v1`
+- Canonical schema file: `docs/milestones/v0.8/tool_result.v1.schema.json`
+- Canonical example file: `docs/milestones/v0.8/tool_result.v1.example.json`
+
+## Contract Shape
+
+### Required fields
+- `schema_version` (string): must be `tool_result.v1`.
+- `tool_name` (string): stable tool identifier.
+- `invocation_id` (string): stable invocation ID within a run.
+- `status` (enum): `success | failure | partial`.
+- `artifact_refs` (array): zero or more replay-safe artifact references.
+
+### Optional fields
+- `payload` (json value): bounded structured output.
+- `error` (object): stable failure descriptor.
+- `metadata` (object): bounded machine-readable metadata.
+
+## Status Semantics
+- `success`
+  - The tool operation completed successfully.
+  - `error` must be absent.
+- `failure`
+  - The operation failed.
+  - `error` is required with stable `code` and safe `message`.
+- `partial`
+  - The operation produced usable partial output but did not fully complete.
+  - `payload` is required.
+  - `error` is optional, but when present must use stable code semantics.
+
+## Error Contract
+`error` fields:
+- `code` (required): stable, machine-readable identifier.
+- `message` (required): safe, human-readable summary.
+- `category` (optional): coarse deterministic bucket.
+
+Unknown error strings from providers/tools must not be treated as stable contract identifiers.
+
+## Artifact Reference Contract
+Each `artifact_refs[]` entry includes:
+- `kind` (required): logical artifact kind (for example `trace`, `report`, `log`, `output`).
+- `path` (required): repo-relative path only.
+- `sha256` (required): lowercase 64-hex content hash.
+
+Absolute host paths are disallowed.
+
+## Metadata Contract
+`metadata` is optional and bounded.
+
+Recommended keys (when available):
+- `duration_ms` (number)
+- `attempt` (number)
+- `provider` (string)
+
+Metadata must not include secrets, raw prompts, raw tool arguments, or environment dumps.
+
+## Determinism Requirements
+For identical tool inputs and environment:
+- `status` semantics are stable.
+- `error.code` remains stable.
+- `artifact_refs` ordering is deterministic:
+  1. sort by `kind` (lexicographic)
+  2. then by `path` (lexicographic)
+  3. then by `sha256` (lexicographic)
+- Map-like metadata emitted into persisted artifacts must use stable key ordering.
+
+## Security / Privacy
+The contract explicitly forbids:
+- secrets/tokens
+- raw prompts
+- raw tool arguments
+- absolute host paths
+
+If sensitive details are needed for debugging, store sanitized references and hashes only.
+
+## Relationship to v0.8 Gödel Surfaces
+ToolResult v1 is compatible with:
+- `ExperimentRecord` (`experiment_record.v1.schema.json`)
+- `Canonical Evidence View` (`canonical_evidence_view.v1.schema.json`)
+- `EvaluationPlan` (`evaluation_plan.v1.json`)
+
+It provides an explicit result envelope that downstream evidence/review flows can compare without parsing ad hoc text blobs.
+
+## Non-goals
+- Defining tool orchestration policy.
+- Implementing runtime adapter refactors.
+- Adding autonomous mutation acceptance.

@@ -70,6 +70,9 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - [CANONICAL_EVIDENCE_VIEW_V1.md](CANONICAL_EVIDENCE_VIEW_V1.md)
 - [canonical_evidence_view.v1.schema.json](canonical_evidence_view.v1.schema.json)
 - [canonical_evidence_view.v1.example.json](canonical_evidence_view.v1.example.json)
+- [TOOL_RESULT_CONTRACT_V1.md](TOOL_RESULT_CONTRACT_V1.md)
+- [tool_result.v1.schema.json](tool_result.v1.schema.json)
+- [tool_result.v1.example.json](tool_result.v1.example.json)
 - [run_summary.v1.json](run_summary.v1.json)
 - [run_summary.v1.example.json](run_summary.v1.example.json)
 - [experiment_index_entry.v1.json](experiment_index_entry.v1.json)
@@ -95,5 +98,4 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
 - [STICKTOITTIVENESS.md](STICKTOITTIVENESS.md)
 - [incubation/](incubation/)
-
 
