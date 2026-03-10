@@ -83,3 +83,8 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 
 - [v0.75 milestone docs](../v0.75/)
 - [v0.85 milestone docs](../v0.85/)
+- [GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md](GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md)
+- [godel_experiment_workflow.template.v1.json](godel_experiment_workflow.template.v1.json)
+- [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
+- [STICKTOITTIVENESS.md](STICKTOITTIVENESS.md)
+- [incubation/](incubation/)
