@@ -29,6 +29,7 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - [MEMORY_MODEL_FOR_AI.md](MEMORY_MODEL_FOR_AI.md)
 - [GODEL_SCIENTIFIC_METHOD.md](GODEL_SCIENTIFIC_METHOD.md)
 - [GODEL_LOOP_INTEGRATION_V0.8.md](GODEL_LOOP_INTEGRATION_V0.8.md)
+- [GODEL_LOOP_DIAGRAM.md](GODEL_LOOP_DIAGRAM.md)
 - [GODEL_AGENT_NOTES.md](GODEL_AGENT_NOTES.md)
 
 ## Epics
@@ -81,6 +82,10 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - v0.8: EPIC-C + EPIC-D (Godel + Authoring)
 - v0.85+: cluster / distributed execution
 
+## Gödel loop diagram
+
+- [GODEL_LOOP_DIAGRAM.md](GODEL_LOOP_DIAGRAM.md)
+
 ## Related Milestones
 
 - [v0.75 milestone docs](../v0.75/)
@@ -90,3 +95,5 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
 - [STICKTOITTIVENESS.md](STICKTOITTIVENESS.md)
 - [incubation/](incubation/)
+
+
