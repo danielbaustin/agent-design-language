@@ -48,6 +48,7 @@ Subsequent milestone implementation issues should treat this directory as the ca
 - [SPRINT_V0.8.md](SPRINT_V0.8.md)
 - [EXECUTION_ORDER_V0.8.md](EXECUTION_ORDER_V0.8.md)
 - [MILESTONE_CHECKLIST_V0.8.md](MILESTONE_CHECKLIST_V0.8.md)
+- [DEMOS_V0.8.md](DEMOS_V0.8.md)
 - [DECISIONS_V0.8.md](DECISIONS_V0.8.md)
 - [RELEASE_PLAN_V0.8.md](RELEASE_PLAN_V0.8.md)
 - [RELEASE_NOTES_V0.8.md](RELEASE_NOTES_V0.8.md)
