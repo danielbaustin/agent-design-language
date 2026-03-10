@@ -44,3 +44,16 @@ cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-pr
 What to expect:
 - On reachable endpoint: step output + run summary.
 - On failure: clear error for timeout, non-200 response, or missing auth env var.
+
+## 3) v0.8 Gödel Failure -> Hypothesis -> Experiment (Docs Demo)
+
+Files:
+- `docs/demos/godel_failure_hypothesis_experiment.md`
+- `docs/demos/artifacts/godel_failure_signal.v1.example.json`
+- `docs/demos/artifacts/godel_hypothesis.v1.example.json`
+- `docs/demos/artifacts/godel_experiment_proposal.v1.example.json`
+
+What to expect:
+- Deterministic, artifact-driven loop documentation only.
+- Explicit stage flow: failure -> hypothesis -> experiment.
+- Bounded experiment proposal aligned to Mutation v1 and EvaluationPlan v1 references.

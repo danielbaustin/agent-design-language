@@ -4,6 +4,11 @@ This directory is the canonical source of truth for v0.8 milestone documentation
 
 Use this index as the primary navigation surface for v0.8 scope, sequencing, and release readiness.
 
+## Baseline Freeze Status
+
+The v0.8 milestone documentation baseline is frozen for implementation work.
+Subsequent milestone implementation issues should treat this directory as the canonical reference.
+
 ## Reading Order
 
 1. [Vision](VISION_0.80.md)
@@ -28,6 +33,9 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - [ADAPTIVE_EXECUTION_ENGINE.md](ADAPTIVE_EXECUTION_ENGINE.md)
 - [MEMORY_MODEL_FOR_AI.md](MEMORY_MODEL_FOR_AI.md)
 - [GODEL_SCIENTIFIC_METHOD.md](GODEL_SCIENTIFIC_METHOD.md)
+- [GODEL_LOOP_INTEGRATION_V0.8.md](GODEL_LOOP_INTEGRATION_V0.8.md)
+- [GODEL_LOOP_DIAGRAM.md](GODEL_LOOP_DIAGRAM.md)
+- [GODEL_AGENT_NOTES.md](GODEL_AGENT_NOTES.md)
 
 ## Epics
 
@@ -40,6 +48,7 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - [SPRINT_V0.8.md](SPRINT_V0.8.md)
 - [EXECUTION_ORDER_V0.8.md](EXECUTION_ORDER_V0.8.md)
 - [GODEL_HANDOFF_BOUNDARIES_V0.8.md](GODEL_HANDOFF_BOUNDARIES_V0.8.md)
+- [GODEL_SCHEMA_DELIVERY_ORDER_V0.8.md](GODEL_SCHEMA_DELIVERY_ORDER_V0.8.md)
 - [MILESTONE_CHECKLIST_V0.8.md](MILESTONE_CHECKLIST_V0.8.md)
 - [DECISIONS_V0.8.md](DECISIONS_V0.8.md)
 - [RELEASE_PLAN_V0.8.md](RELEASE_PLAN_V0.8.md)
@@ -68,12 +77,24 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - [CANONICAL_EVIDENCE_VIEW_V1.md](CANONICAL_EVIDENCE_VIEW_V1.md)
 - [canonical_evidence_view.v1.schema.json](canonical_evidence_view.v1.schema.json)
 - [canonical_evidence_view.v1.example.json](canonical_evidence_view.v1.example.json)
+- [TOOL_RESULT_CONTRACT_V1.md](TOOL_RESULT_CONTRACT_V1.md)
+- [tool_result.v1.schema.json](tool_result.v1.schema.json)
+- [tool_result.v1.example.json](tool_result.v1.example.json)
+- [run_summary.v1.json](run_summary.v1.json)
+- [run_summary.v1.example.json](run_summary.v1.example.json)
+- [experiment_index_entry.v1.json](experiment_index_entry.v1.json)
+- [experiment_index_entry.v1.example.json](experiment_index_entry.v1.example.json)
+- [OBSMEM_INDEXING_SURFACES_V1.md](OBSMEM_INDEXING_SURFACES_V1.md)
 
 ## Scope Slicing Reference
 
 - v0.75: EPIC-A + EPIC-B (deterministic substrate + ObsMem)
 - v0.8: EPIC-C + EPIC-D (Godel + Authoring)
 - v0.85+: cluster / distributed execution
+
+## Gödel loop diagram
+
+- [GODEL_LOOP_DIAGRAM.md](GODEL_LOOP_DIAGRAM.md)
 
 ## Related Milestones
 

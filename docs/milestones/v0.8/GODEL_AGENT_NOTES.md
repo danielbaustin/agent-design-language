@@ -12,7 +12,7 @@ Replay and determinism remain essential properties of the architecture. Experime
 - Hadamard-style hypothesis generation and creative insight
 - Bayesian evaluation of evidence and experiment outcomes
 
-Together these form what can be thought of as the **Gödel–Hadamard–Bayes cognition loop**. Failures generate hypotheses, hypotheses generate experiments, experiments produce evidence, and evidence updates the system's understanding of which mutations and strategies are effective.
+Together these form what can be thought of as the **Gödel–Hadamard–Bayes cognition loop**. Failures generate hypotheses, hypotheses generate bounded mutations and experiments, experiments produce evidence, and evidence updates the system's understanding of which strategies are effective.
 
 ObsMem is the memory substrate that makes this loop possible. It stores the scientific artifacts of the agent's reasoning process: failures, hypotheses, experiments, evaluations, and outcomes. With proper indexing, the system can retrieve prior reasoning and reuse it when encountering similar failures.
 
@@ -31,15 +31,17 @@ The Gödel–Hadamard–Bayes loop can be visualized as a scientific reasoning c
 failure
    ↓
 hypothesis (Hadamard)
-   ↓g
+   ↓
 mutation / experiment
    ↓
 evaluation (Bayes)
    ↓
 record + index (ObsMem)
-   ↓
-improved strategy (Gödel)
 ```
+
+## v0.8 Boundary Note
+
+For v0.8, this loop is documented as a deterministic artifact architecture. The docs do not claim a fully autonomous Gödel runtime agent. Runtime autonomy and policy-learning expansion are explicitly out of scope for this pass.
 
 Each stage produces explicit artifacts that can be inspected, replayed, and indexed. This is a key difference from traditional self‑modifying systems. Rather than rewriting itself blindly, the agent accumulates a structured scientific memory of its reasoning process.
 
