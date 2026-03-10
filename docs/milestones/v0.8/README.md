@@ -51,6 +51,7 @@ Subsequent milestone implementation issues should treat this directory as the ca
 - [DECISIONS_V0.8.md](DECISIONS_V0.8.md)
 - [RELEASE_PLAN_V0.8.md](RELEASE_PLAN_V0.8.md)
 - [RELEASE_NOTES_V0.8.md](RELEASE_NOTES_V0.8.md)
+- [THIRD_PARTY_REVIEW_V0.8.md](THIRD_PARTY_REVIEW_V0.8.md)
 
 ## Supporting Design Docs and Demo Surfaces
 
