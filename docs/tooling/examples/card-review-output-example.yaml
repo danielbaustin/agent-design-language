@@ -1,6 +1,6 @@
 review_format_version: card_review_output.v1
 review_metadata:
-  reviewer: card_reviewer_gpt.v1
+  reviewer: card_reviewer_gpt.v1.1
   review_time_utc: 2026-03-06T18:05:00Z
   checklist_version: card_review_checklist.v1
 review_target:
