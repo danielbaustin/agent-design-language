@@ -1,7 +1,7 @@
 # Adaptive Execution Engine (AEE)
 
-**Status:** Incubation / planning
-**Milestone:** v0.8+ (deferred; likely v0.9)
+**Status:** Planning (bounded v1 scope in v0.8; broader autonomy deferred)
+**Milestone:** v0.8 bounded AEE v1; v0.9+ advanced autonomy
 
 ## Overview
 
@@ -16,7 +16,7 @@ Unlike most agent frameworks, the Adaptive Execution Engine is:
 - **Policy‑bounded** (no silent capability escalation)
 - **Artifact‑driven** (all adaptation decisions are captured as trace artifacts)
 
-Conceptually, the AEE serves as a deterministic control system that manages attempts, retries, and strategy changes. This document defines the planning contract and does not imply that AEE ships in the v0.8 GA scope.
+Conceptually, the AEE serves as a deterministic control system that manages attempts, retries, and strategy changes. For the explicit v0.8 scope boundary, see `BOUNDED_AEE_V1_SCOPE_V0.8.md`.
 
 ---
 
