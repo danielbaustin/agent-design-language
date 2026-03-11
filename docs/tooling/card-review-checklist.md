@@ -127,6 +127,12 @@ Each finding must include at least one evidence pointer:
 
 Narrative-only claims without evidence should be marked as `needs_evidence` and fail the relevant rule.
 
+Required evidence-state classification per finding:
+- `contradicted`: card evidence conflicts with claimed status
+- `not_evidenced`: required evidence absent or insufficient
+- `not_applicable`: rule inapplicable for this target
+
+Reviewers must not collapse these states into each other.
 ## Prompt Spec Integration Notes
 
 When `CRS-STR-005` applies, reviewers should verify:
@@ -143,7 +149,6 @@ When `CRS-STR-005` applies, reviewers should verify:
 
 Canonical cross-surface field map:
 - `docs/tooling/prompt-review-surface-mapping.md`
-
 ## Example Checklist Application (Real ADL Card)
 
 Review target:

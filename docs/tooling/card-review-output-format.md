@@ -114,9 +114,15 @@ Each item fields:
 - each finding fields:
   - `rule_id`: checklist rule id
   - `severity`: enum (`blocker` | `high` | `medium` | `low`)
+  - `evidence_state`: enum (`contradicted` | `not_evidenced` | `not_applicable`)
   - `title`: short deterministic summary
-  - `evidence`: ordered list of evidence pointers (`path:...`, `command:...`, `ci:...`)
+  - `evidence`: ordered list of evidence pointers (`path:...`, `command:...`, `ci:...`, `artifact:...`)
   - `remediation`: deterministic action statement
+
+`evidence_state` semantics:
+- `contradicted`: evidence exists and directly conflicts with the expected condition.
+- `not_evidenced`: no sufficient evidence was provided to verify the condition.
+- `not_applicable`: rule was evaluated but does not apply for this target/review mode.
 
 ### `acceptance_criteria`
 
@@ -176,6 +182,12 @@ Each item fields:
 - Field names and top-level order are fixed.
 - Domain order is fixed.
 - Findings order must be deterministic: by severity (`blocker`, `high`, `medium`, `low`), then `rule_id` ascending, then lexicographic `title`.
+- Within a finding, `evidence` pointers must be ordered by pointer class:
+  1. `path:`
+  2. `command:`
+  3. `ci:`
+  4. `artifact:`
+  then lexicographically within each class.
 - Lists of rule IDs must be lexicographically sorted unless domain order is explicitly required.
 - No host-specific or environment-specific values outside normalized fields.
 
@@ -183,6 +195,8 @@ Each item fields:
 
 See:
 - `docs/tooling/examples/card-review-output-example.yaml`
+- reviewer regression fixture:
+  - `docs/tooling/examples/reviewer-regression/issue-661/expected_review_output_661.yaml`
 
 This example is normative for structure and field ordering.
 
@@ -194,7 +208,7 @@ This example is normative for structure and field ordering.
 ## Prompt Spec Alignment
 
 When the reviewed input card contains a Prompt Spec block, reviewers should populate
-`review_target.prompt_spec_bindings` to make the protocol/version alignment explicit.
+`review_target.prompt_spec_bindings` to make protocol/version alignment explicit.
 
 Canonical mapping reference:
 - `docs/tooling/prompt-review-surface-mapping.md`
