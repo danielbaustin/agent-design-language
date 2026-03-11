@@ -68,7 +68,7 @@ AEE v1 does **not** rely on hidden adaptive state.
 
 AEE behavior is exercised through standard workflow execution surfaces:
 
-- `adl --run <workflow>` / `swarm --run <workflow>`
+- `adl --run <workflow>`
 - workflow step fields:
   - `retry.max_attempts`
   - `on_error: continue`
