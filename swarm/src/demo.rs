@@ -2,6 +2,7 @@ use std::path::{Path, PathBuf};
 
 use anyhow::{anyhow, Context, Result};
 
+use crate::godel;
 use crate::godel_runtime;
 use crate::prompt;
 use crate::trace::Trace;
@@ -9,6 +10,9 @@ use crate::trace::Trace;
 pub const DEMO_A_SAY_MCP: &str = "demo-a-say-mcp";
 pub const DEMO_B_ONE_COMMAND: &str = "demo-b-one-command";
 pub const DEMO_C_GODEL_RUNTIME: &str = "demo-c-godel-runtime";
+pub const DEMO_D_GODEL_OBSMEM_LOOP: &str = "demo-d-godel-obsmem-loop";
+pub const DEMO_E_MULTI_AGENT_CARD_PIPELINE: &str = "demo-e-multi-agent-card-pipeline";
+pub const DEMO_F_OBSMEM_RETRIEVAL: &str = "demo-f-obsmem-retrieval";
 
 #[derive(Debug, Clone)]
 pub struct DemoResult {
@@ -18,16 +22,28 @@ pub struct DemoResult {
 }
 
 pub fn known_demo(name: &str) -> bool {
-    name == DEMO_A_SAY_MCP || name == DEMO_B_ONE_COMMAND || name == DEMO_C_GODEL_RUNTIME
+    matches!(
+        name,
+        DEMO_A_SAY_MCP
+            | DEMO_B_ONE_COMMAND
+            | DEMO_C_GODEL_RUNTIME
+            | DEMO_D_GODEL_OBSMEM_LOOP
+            | DEMO_E_MULTI_AGENT_CARD_PIPELINE
+            | DEMO_F_OBSMEM_RETRIEVAL
+    )
 }
 
 pub fn run_demo(name: &str, out_dir: &Path) -> Result<DemoResult> {
     if !known_demo(name) {
         return Err(anyhow!(
-            "unknown demo '{}'; available demos: {}, {}",
+            "unknown demo '{}'; available demos: {}, {}, {}, {}, {}, {}",
             name,
             DEMO_A_SAY_MCP,
-            DEMO_B_ONE_COMMAND
+            DEMO_B_ONE_COMMAND,
+            DEMO_C_GODEL_RUNTIME,
+            DEMO_D_GODEL_OBSMEM_LOOP,
+            DEMO_E_MULTI_AGENT_CARD_PIPELINE,
+            DEMO_F_OBSMEM_RETRIEVAL
         ));
     }
 
@@ -100,6 +116,75 @@ pub fn run_demo(name: &str, out_dir: &Path) -> Result<DemoResult> {
                 }
                 _ => {}
             },
+            DEMO_D_GODEL_OBSMEM_LOOP => match *step_id {
+                "failure" => {
+                    artifacts.push(write_file(
+                        out_dir,
+                        "failure_signal.json",
+                        DEMO_D_FAILURE_SIGNAL_JSON,
+                    )?);
+                }
+                "run" => {
+                    let run = run_godel_stage_loop_demo(out_dir)?;
+                    artifacts.extend(run);
+                }
+                "summarize" => {
+                    artifacts.push(write_file(out_dir, "README.md", DEMO_D_README_MD)?);
+                }
+                _ => {}
+            },
+            DEMO_E_MULTI_AGENT_CARD_PIPELINE => match *step_id {
+                "writer" => {
+                    artifacts.push(write_file(
+                        out_dir,
+                        "pipeline/input_card.md",
+                        DEMO_E_INPUT_CARD_MD,
+                    )?);
+                    artifacts.push(write_file(
+                        out_dir,
+                        "pipeline/01_writer.md",
+                        DEMO_E_WRITER_MD,
+                    )?);
+                }
+                "editor" => {
+                    artifacts.push(write_file(
+                        out_dir,
+                        "pipeline/02_editor.md",
+                        DEMO_E_EDITOR_MD,
+                    )?);
+                }
+                "copyeditor" => {
+                    artifacts.push(write_file(
+                        out_dir,
+                        "pipeline/03_copyeditor.md",
+                        DEMO_E_COPYEDITOR_MD,
+                    )?);
+                }
+                "publisher" => {
+                    let manifest = build_card_pipeline_manifest();
+                    artifacts.push(write_file(
+                        out_dir,
+                        "pipeline/pipeline_manifest.json",
+                        &serde_json::to_string_pretty(&manifest)?,
+                    )?);
+                    artifacts.push(write_file(out_dir, "README.md", DEMO_E_README_MD)?);
+                }
+                _ => {}
+            },
+            DEMO_F_OBSMEM_RETRIEVAL => match *step_id {
+                "seed" => {
+                    let seeded = seed_obsmem_retrieval_demo(out_dir)?;
+                    artifacts.extend(seeded);
+                }
+                "query" => {
+                    let queried = query_obsmem_retrieval_demo(out_dir)?;
+                    artifacts.extend(queried);
+                }
+                "emit" => {
+                    artifacts.push(write_file(out_dir, "README.md", DEMO_F_README_MD)?);
+                }
+                _ => {}
+            },
             _ => {}
         }
         trace.step_finished(step_id, true);
@@ -120,6 +205,9 @@ pub fn plan_steps(name: &str) -> &'static [&'static str] {
         DEMO_A_SAY_MCP => &["brief", "scaffold", "coverage", "game"],
         DEMO_B_ONE_COMMAND => &["plan", "build", "verify"],
         DEMO_C_GODEL_RUNTIME => &["load", "verify", "emit"],
+        DEMO_D_GODEL_OBSMEM_LOOP => &["failure", "run", "summarize"],
+        DEMO_E_MULTI_AGENT_CARD_PIPELINE => &["writer", "editor", "copyeditor", "publisher"],
+        DEMO_F_OBSMEM_RETRIEVAL => &["seed", "query", "emit"],
         _ => &[],
     }
 }
@@ -144,6 +232,25 @@ fn steps_for(name: &str) -> &'static [(&'static str, &'static str)] {
                 "Validate deterministic stage order and cross-links",
             ),
             ("emit", "Write runtime surface status artifact"),
+        ],
+        DEMO_D_GODEL_OBSMEM_LOOP => &[
+            ("failure", "Seed deterministic failure signal"),
+            (
+                "run",
+                "Execute bounded Gödel stage loop and persist ObsMem artifacts",
+            ),
+            ("summarize", "Emit deterministic demo summary"),
+        ],
+        DEMO_E_MULTI_AGENT_CARD_PIPELINE => &[
+            ("writer", "Create writer stage card artifact"),
+            ("editor", "Create editor stage artifact"),
+            ("copyeditor", "Create copyeditor stage artifact"),
+            ("publisher", "Emit publish-ready artifact and manifest"),
+        ],
+        DEMO_F_OBSMEM_RETRIEVAL => &[
+            ("seed", "Persist deterministic experiment/index entries"),
+            ("query", "Run deterministic ObsMem retrieval query"),
+            ("emit", "Emit retrieval summary"),
         ],
         _ => &[],
     }
@@ -441,6 +548,258 @@ This demo validates canonical v0.8 Gödel runtime artifact surfaces and emits:
 - `trace.jsonl`
 "#;
 
+const DEMO_D_FAILURE_SIGNAL_JSON: &str = r#"{
+  "schema_version": "godel_failure_signal.v1",
+  "run_id": "demo-d-run-001",
+  "workflow_id": "godel-obsmem-demo",
+  "failure_code": "tool_failure",
+  "failure_summary": "bounded deterministic failure signal for demo",
+  "evidence_refs": [
+    "runs/demo-d-run-001/logs/activation_log.json",
+    "runs/demo-d-run-001/run_status.json"
+  ]
+}
+"#;
+
+const DEMO_D_README_MD: &str = r#"# Demo D Output — Gödel + ObsMem Loop
+
+Generated by:
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-d-godel-obsmem-loop --run --trace --out ./out
+```
+
+This demo executes the bounded Gödel stage loop and persists:
+
+- `runs/demo-d-run-001/godel/experiment_record.runtime.v1.json`
+- `runs/demo-d-run-001/godel/obsmem_index_entry.runtime.v1.json`
+- `godel_obsmem_demo_summary.json`
+- `trace.jsonl`
+"#;
+
+const DEMO_E_INPUT_CARD_MD: &str = r#"# Input Card (Demo Fixture)
+
+Task: produce a concise release-note paragraph for a deterministic CLI improvement.
+
+Prompt Spec:
+- actor: writer
+- model: bounded-demo
+- outputs: markdown paragraph
+"#;
+
+const DEMO_E_WRITER_MD: &str = r#"# Stage 1 — Writer
+
+The CLI now includes deterministic demo surfaces with explicit artifact paths and stable replay-oriented output.
+"#;
+
+const DEMO_E_EDITOR_MD: &str = r#"# Stage 2 — Editor
+
+Edited for clarity: each demo documents command, artifacts, and deterministic constraints.
+"#;
+
+const DEMO_E_COPYEDITOR_MD: &str = r#"# Stage 3 — Copyeditor
+
+Copyedited to remove ambiguity and keep all artifact paths repo-relative.
+"#;
+
+const DEMO_E_README_MD: &str = r#"# Demo E Output — Multi-Agent Card Pipeline
+
+Generated by:
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-e-multi-agent-card-pipeline --run --trace --out ./out
+```
+
+Stages:
+- writer -> editor -> copyeditor -> publisher
+
+Primary artifacts:
+- `pipeline/input_card.md`
+- `pipeline/01_writer.md`
+- `pipeline/02_editor.md`
+- `pipeline/03_copyeditor.md`
+- `pipeline/pipeline_manifest.json`
+- `trace.jsonl`
+"#;
+
+const DEMO_F_README_MD: &str = r#"# Demo F Output — ObsMem Retrieval
+
+Generated by:
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-f-obsmem-retrieval --run --trace --out ./out
+```
+
+This demo seeds deterministic runtime experiment/index artifacts and performs deterministic retrieval by:
+
+- `failure_code`
+- optional `hypothesis_id`
+- optional `experiment_outcome`
+
+Primary artifacts:
+- `runs/demo-f-run-a/godel/experiment_record.runtime.v1.json`
+- `runs/demo-f-run-a/godel/obsmem_index_entry.runtime.v1.json`
+- `runs/demo-f-run-b/godel/experiment_record.runtime.v1.json`
+- `runs/demo-f-run-b/godel/obsmem_index_entry.runtime.v1.json`
+- `obsmem_retrieval_result.json`
+- `trace.jsonl`
+"#;
+
+#[derive(Debug, serde::Serialize)]
+struct CardPipelineManifest {
+    schema_version: &'static str,
+    stage_order: Vec<&'static str>,
+    stage_artifacts: Vec<CardPipelineStageArtifact>,
+}
+
+#[derive(Debug, serde::Serialize)]
+struct CardPipelineStageArtifact {
+    stage: &'static str,
+    path: &'static str,
+    content_hash: String,
+}
+
+fn build_card_pipeline_manifest() -> CardPipelineManifest {
+    let stage_artifacts = vec![
+        ("writer", "pipeline/01_writer.md", DEMO_E_WRITER_MD),
+        ("editor", "pipeline/02_editor.md", DEMO_E_EDITOR_MD),
+        (
+            "copyeditor",
+            "pipeline/03_copyeditor.md",
+            DEMO_E_COPYEDITOR_MD,
+        ),
+    ]
+    .into_iter()
+    .map(|(stage, path, content)| CardPipelineStageArtifact {
+        stage,
+        path,
+        content_hash: prompt::hash_prompt(content),
+    })
+    .collect();
+
+    CardPipelineManifest {
+        schema_version: "multi_agent_card_pipeline.demo.v1",
+        stage_order: vec!["writer", "editor", "copyeditor", "publisher"],
+        stage_artifacts,
+    }
+}
+
+fn run_godel_stage_loop_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let mut artifacts = Vec::new();
+    let runs_root = out_dir.join("runs");
+    let exec = godel::GodelStageLoopExecutor::new(godel::StageLoopConfig::default());
+    let input = godel::StageLoopInput {
+        run_id: "demo-d-run-001".to_string(),
+        workflow_id: "godel-obsmem-demo".to_string(),
+        failure_code: "tool_failure".to_string(),
+        failure_summary: "bounded deterministic failure signal for demo".to_string(),
+        evidence_refs: vec![
+            "runs/demo-d-run-001/logs/activation_log.json".to_string(),
+            "runs/demo-d-run-001/run_status.json".to_string(),
+        ],
+    };
+    let persisted = exec.execute_and_persist(&input, &runs_root)?;
+    let summary = serde_json::json!({
+        "schema_version": "godel_obsmem_demo_summary.v1",
+        "run_id": persisted.run.record.run_id,
+        "stage_order": persisted
+            .run
+            .stage_order
+            .iter()
+            .map(|s| s.as_str())
+            .collect::<Vec<_>>(),
+        "hypothesis_count": persisted.run.hypotheses.len(),
+        "selected_hypothesis_id": persisted.run.hypothesis.id,
+        "selected_mutation_id": persisted.run.mutation.id,
+        "evaluation_decision": format!("{:?}", persisted.run.evaluation.decision).to_lowercase(),
+        "experiment_record_rel_path": persisted.experiment_record_rel_path,
+        "obsmem_index_rel_path": persisted.obsmem_index_rel_path
+    });
+    artifacts.push(write_file(
+        out_dir,
+        "godel_obsmem_demo_summary.json",
+        &serde_json::to_string_pretty(&summary)?,
+    )?);
+    artifacts.push(out_dir.join("runs/demo-d-run-001/godel/experiment_record.runtime.v1.json"));
+    artifacts.push(out_dir.join("runs/demo-d-run-001/godel/obsmem_index_entry.runtime.v1.json"));
+    Ok(artifacts)
+}
+
+fn seed_obsmem_retrieval_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let mut artifacts = Vec::new();
+    let runs_root = out_dir.join("runs");
+    let exec = godel::GodelStageLoopExecutor::new(godel::StageLoopConfig::default());
+
+    let input_a = godel::StageLoopInput {
+        run_id: "demo-f-run-a".to_string(),
+        workflow_id: "godel-retrieval-demo".to_string(),
+        failure_code: "tool_failure".to_string(),
+        failure_summary: "deterministic failure A".to_string(),
+        evidence_refs: vec!["runs/demo-f-run-a/run_status.json".to_string()],
+    };
+    let mut input_b = input_a.clone();
+    input_b.run_id = "demo-f-run-b".to_string();
+    input_b.failure_code = "policy_denied".to_string();
+    input_b.failure_summary = "deterministic failure B".to_string();
+    input_b.evidence_refs = vec!["runs/demo-f-run-b/run_status.json".to_string()];
+
+    for input in [input_a, input_b] {
+        let persisted = exec.execute_and_persist(&input, &runs_root)?;
+        artifacts.push(out_dir.join(&persisted.experiment_record_rel_path));
+        artifacts.push(out_dir.join(&persisted.obsmem_index_rel_path));
+    }
+
+    Ok(artifacts)
+}
+
+fn query_obsmem_retrieval_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let mut entries: Vec<godel::obsmem_index::StageIndexEntry> = Vec::new();
+    let runs_root = out_dir.join("runs");
+    for run_id in ["demo-f-run-a", "demo-f-run-b"] {
+        let path = runs_root
+            .join(run_id)
+            .join("godel")
+            .join("obsmem_index_entry.runtime.v1.json");
+        let raw = std::fs::read_to_string(&path)
+            .with_context(|| format!("failed to read '{}'", path.display()))?;
+        let persisted: godel::obsmem_index::PersistedStageIndexEntry =
+            serde_json::from_str(&raw)
+                .with_context(|| format!("failed to parse '{}'", path.display()))?;
+        entries.push(persisted.entry);
+    }
+
+    let query = godel::obsmem_index::ObsMemIndexQuery {
+        failure_code: "tool_failure".to_string(),
+        hypothesis_id: None,
+        experiment_outcome: None,
+    };
+
+    let mut matches: Vec<_> = entries
+        .into_iter()
+        .filter(|e| godel::obsmem_index::matches_query(e, &query))
+        .collect();
+    matches.sort_by(|a, b| {
+        a.index_key
+            .cmp(&b.index_key)
+            .then(a.run_id.cmp(&b.run_id))
+            .then(a.mutation_id.cmp(&b.mutation_id))
+    });
+
+    let result = serde_json::json!({
+        "schema_version": "obsmem_retrieval_result.demo.v1",
+        "query": query,
+        "result_count": matches.len(),
+        "results": matches,
+    });
+
+    let path = write_file(
+        out_dir,
+        "obsmem_retrieval_result.json",
+        &serde_json::to_string_pretty(&result)?,
+    )?;
+    Ok(vec![path])
+}
+
 fn generate_rps_game_html() -> String {
     // Build from components instead of embedding one monolithic page.
     let title = "Rock / Paper / Scissors";
@@ -596,6 +955,59 @@ mod tests {
             std::fs::read_to_string(out.join("godel_runtime_surface_status.json")).unwrap();
         assert!(status.contains("\"failure\""), "status was:\n{status}");
         assert!(status.contains("\"record\""), "status was:\n{status}");
+    }
+
+    #[test]
+    fn run_demo_d_writes_godel_obsmem_artifacts() {
+        let out = tmp_dir("demo-d");
+        let result = run_demo(DEMO_D_GODEL_OBSMEM_LOOP, &out).unwrap();
+        assert_eq!(result.run_id, DEMO_D_GODEL_OBSMEM_LOOP);
+        assert!(out.join("failure_signal.json").is_file());
+        assert!(out.join("godel_obsmem_demo_summary.json").is_file());
+        assert!(out
+            .join("runs/demo-d-run-001/godel/experiment_record.runtime.v1.json")
+            .is_file());
+        assert!(out
+            .join("runs/demo-d-run-001/godel/obsmem_index_entry.runtime.v1.json")
+            .is_file());
+        assert!(out.join("README.md").is_file());
+        assert!(out.join("trace.jsonl").is_file());
+    }
+
+    #[test]
+    fn run_demo_e_writes_multi_agent_pipeline_artifacts() {
+        let out = tmp_dir("demo-e");
+        let result = run_demo(DEMO_E_MULTI_AGENT_CARD_PIPELINE, &out).unwrap();
+        assert_eq!(result.run_id, DEMO_E_MULTI_AGENT_CARD_PIPELINE);
+        assert!(out.join("pipeline/input_card.md").is_file());
+        assert!(out.join("pipeline/01_writer.md").is_file());
+        assert!(out.join("pipeline/02_editor.md").is_file());
+        assert!(out.join("pipeline/03_copyeditor.md").is_file());
+        assert!(out.join("pipeline/pipeline_manifest.json").is_file());
+        assert!(out.join("README.md").is_file());
+        assert!(out.join("trace.jsonl").is_file());
+    }
+
+    #[test]
+    fn run_demo_f_writes_obsmem_retrieval_artifacts() {
+        let out = tmp_dir("demo-f");
+        let result = run_demo(DEMO_F_OBSMEM_RETRIEVAL, &out).unwrap();
+        assert_eq!(result.run_id, DEMO_F_OBSMEM_RETRIEVAL);
+        assert!(out
+            .join("runs/demo-f-run-a/godel/experiment_record.runtime.v1.json")
+            .is_file());
+        assert!(out
+            .join("runs/demo-f-run-a/godel/obsmem_index_entry.runtime.v1.json")
+            .is_file());
+        assert!(out
+            .join("runs/demo-f-run-b/godel/experiment_record.runtime.v1.json")
+            .is_file());
+        assert!(out
+            .join("runs/demo-f-run-b/godel/obsmem_index_entry.runtime.v1.json")
+            .is_file());
+        assert!(out.join("obsmem_retrieval_result.json").is_file());
+        assert!(out.join("README.md").is_file());
+        assert!(out.join("trace.jsonl").is_file());
     }
 
     #[test]

@@ -212,3 +212,93 @@ fn demo_c_run_writes_runtime_surface_artifacts() {
     assert!(status.contains("\"failure\""), "status:\n{status}");
     assert!(status.contains("\"record\""), "status:\n{status}");
 }
+
+#[test]
+fn demo_d_print_plan_works() {
+    let out = run_swarm(&["demo", "demo-d-godel-obsmem-loop", "--print-plan"]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("Demo: demo-d-godel-obsmem-loop"),
+        "stdout:\n{stdout}"
+    );
+    assert!(stdout.contains("Steps: 3"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn demo_d_run_writes_godel_obsmem_artifacts() {
+    let out_root = tmp_dir("demo-d-run");
+    let out = run_swarm(&[
+        "demo",
+        "demo-d-godel-obsmem-loop",
+        "--run",
+        "--trace",
+        "--out",
+        out_root.to_string_lossy().as_ref(),
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let run_out = out_root.join("demo-d-godel-obsmem-loop");
+    assert!(run_out.join("failure_signal.json").is_file());
+    assert!(run_out.join("godel_obsmem_demo_summary.json").is_file());
+    assert!(run_out
+        .join("runs/demo-d-run-001/godel/experiment_record.runtime.v1.json")
+        .is_file());
+    assert!(run_out
+        .join("runs/demo-d-run-001/godel/obsmem_index_entry.runtime.v1.json")
+        .is_file());
+}
+
+#[test]
+fn demo_e_run_writes_card_pipeline_artifacts() {
+    let out_root = tmp_dir("demo-e-run");
+    let out = run_swarm(&[
+        "demo",
+        "demo-e-multi-agent-card-pipeline",
+        "--run",
+        "--trace",
+        "--out",
+        out_root.to_string_lossy().as_ref(),
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let run_out = out_root.join("demo-e-multi-agent-card-pipeline");
+    assert!(run_out.join("pipeline/input_card.md").is_file());
+    assert!(run_out.join("pipeline/pipeline_manifest.json").is_file());
+}
+
+#[test]
+fn demo_f_run_writes_retrieval_artifacts() {
+    let out_root = tmp_dir("demo-f-run");
+    let out = run_swarm(&[
+        "demo",
+        "demo-f-obsmem-retrieval",
+        "--run",
+        "--trace",
+        "--out",
+        out_root.to_string_lossy().as_ref(),
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let run_out = out_root.join("demo-f-obsmem-retrieval");
+    assert!(run_out.join("obsmem_retrieval_result.json").is_file());
+    assert!(run_out
+        .join("runs/demo-f-run-a/godel/obsmem_index_entry.runtime.v1.json")
+        .is_file());
+    assert!(run_out
+        .join("runs/demo-f-run-b/godel/obsmem_index_entry.runtime.v1.json")
+        .is_file());
+}
