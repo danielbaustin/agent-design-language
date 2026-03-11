@@ -7,5 +7,5 @@ pub mod stage_loop;
 
 pub use stage_loop::{
     GodelStage, GodelStageLoopExecutor, StageLoopConfig, StageLoopError, StageLoopInput,
-    StageLoopRun,
+    StageLoopPersistenceResult, StageLoopRun,
 };
