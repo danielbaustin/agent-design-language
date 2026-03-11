@@ -114,6 +114,7 @@ Do not mark a field as both satisfied and unsatisfied in the same artifact.
 
 The reviewer MUST output YAML conforming to:
 - `docs/tooling/card-review-output-format.md`
+- `docs/tooling/prompt-review-surface-mapping.md` (for Prompt Spec binding fields when Prompt Spec is present)
 
 Decision enum is strictly:
 - `PASS`

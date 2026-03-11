@@ -8,6 +8,13 @@ review_target:
   output_card_path: .adl/cards/660/output_660.md
   input_card_path: .adl/cards/660/input_660.md
   pr: "#670"
+  prompt_spec_bindings:
+    prompt_schema: adl.v1
+    review_surfaces:
+      - card_review_checklist.v1
+      - card_review_output.v1
+      - card_reviewer_gpt.v1.1
+    bindings_validated: true
 decision: PASS
 summary:
   status_line: "All checklist domains passed; no findings."
