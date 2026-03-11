@@ -4,8 +4,8 @@ use serde::{Deserialize, Serialize};
 
 use super::evaluation::{self, EvaluationOutcome};
 use super::experiment_record::{self, StageExperimentRecord};
-use super::hypothesis::{self, HypothesisCandidate};
-use super::mutation::{self, MutationProposal};
+use super::hypothesis::{self, HypothesisCandidate, HypothesisPipelineInput};
+use super::mutation::{self, MutationPlan, MutationProposal};
 use super::obsmem_index::{self, StageIndexEntry};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -109,6 +109,8 @@ pub struct StageTransitionEvent {
 pub struct StageLoopRun {
     pub stage_order: Vec<GodelStage>,
     pub transitions: Vec<StageTransitionEvent>,
+    pub hypotheses: Vec<HypothesisCandidate>,
+    pub mutation_plan: MutationPlan,
     pub hypothesis: HypothesisCandidate,
     pub mutation: MutationProposal,
     pub experiment_result: String,
@@ -174,13 +176,34 @@ impl GodelStageLoopExecutor {
         }
 
         let refs = input.normalized_evidence_refs();
-        let hypothesis = hypothesis::derive_hypothesis(
-            &input.run_id,
-            &input.failure_code,
-            &input.failure_summary,
-            &refs,
-        );
-        let mutation = mutation::propose_mutation(&input.run_id, &hypothesis);
+        let hypotheses = hypothesis::generate_hypotheses(&HypothesisPipelineInput {
+            run_id: input.run_id.clone(),
+            failure_code: input.failure_code.clone(),
+            failure_summary: input.failure_summary.clone(),
+            evidence_refs: refs.clone(),
+        });
+        let mutation_plan = mutation::propose_mutations(&input.run_id, &hypotheses);
+        let hypothesis = hypotheses
+            .iter()
+            .find(|h| h.id == mutation_plan.selected_hypothesis_id)
+            .cloned()
+            .or_else(|| hypotheses.first().cloned())
+            .ok_or_else(|| {
+                StageLoopError::DeterminismViolation(
+                    "hypothesis pipeline produced no deterministic candidate".to_string(),
+                )
+            })?;
+        let mutation = mutation_plan
+            .proposals
+            .iter()
+            .find(|m| m.hypothesis_id == hypothesis.id)
+            .cloned()
+            .or_else(|| mutation_plan.proposals.first().cloned())
+            .ok_or_else(|| {
+                StageLoopError::DeterminismViolation(
+                    "mutation pipeline produced no deterministic proposal".to_string(),
+                )
+            })?;
 
         let experiment_result = "bounded_experiment_completed".to_string();
         let score_delta = if input.failure_code.contains("transient") {
@@ -203,6 +226,8 @@ impl GodelStageLoopExecutor {
         let run = StageLoopRun {
             stage_order: STAGE_ORDER.to_vec(),
             transitions,
+            hypotheses,
+            mutation_plan,
             hypothesis,
             mutation,
             experiment_result,
@@ -257,6 +282,22 @@ impl GodelStageLoopExecutor {
                 ));
             }
         }
+        if !run.hypotheses.windows(2).all(|w| w[0].id <= w[1].id) {
+            return Err(StageLoopError::DeterminismViolation(
+                "hypothesis candidates must be sorted lexicographically by hypothesis_id"
+                    .to_string(),
+            ));
+        }
+        if !run
+            .mutation_plan
+            .proposals
+            .windows(2)
+            .all(|w| w[0].id <= w[1].id)
+        {
+            return Err(StageLoopError::DeterminismViolation(
+                "mutation proposals must be sorted lexicographically by mutation_id".to_string(),
+            ));
+        }
         Ok(())
     }
 }
@@ -310,12 +351,136 @@ mod tests {
     }
 
     #[test]
+    fn stage_loop_exposes_deterministic_hypothesis_and_mutation_pipeline() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
+        let run = exec.execute(&fixture_input()).expect("stage loop run");
+        assert!(!run.hypotheses.is_empty());
+        assert!(!run.mutation_plan.proposals.is_empty());
+        assert!(run.hypotheses.windows(2).all(|w| w[0].id <= w[1].id));
+        assert!(run
+            .mutation_plan
+            .proposals
+            .windows(2)
+            .all(|w| w[0].id <= w[1].id));
+        assert_eq!(run.hypothesis.id, run.mutation_plan.selected_hypothesis_id);
+        assert_eq!(run.mutation.hypothesis_id, run.hypothesis.id);
+    }
+
+    #[test]
     fn stage_loop_rejects_unsafe_evidence_paths() {
         let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
         let mut input = fixture_input();
         input.evidence_refs = vec!["/Users/daniel/secret.json".to_string()];
         let err = exec.execute(&input).expect_err("must reject absolute path");
         assert!(err.to_string().contains("GODEL_STAGE_LOOP_INVALID_INPUT"));
+    }
+
+    #[test]
+    fn stage_loop_rejects_unbounded_mode() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig {
+            bounded_mode: false,
+        });
+        let err = exec
+            .execute(&fixture_input())
+            .expect_err("unbounded mode must be rejected");
+        assert!(err.to_string().contains("GODEL_STAGE_LOOP_INVALID_INPUT"));
+    }
+
+    #[test]
+    fn stage_loop_transient_failure_branch_sets_zero_improvement() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
+        let mut input = fixture_input();
+        input.failure_code = "transient_timeout".to_string();
+        let run = exec.execute(&input).expect("stage loop run");
+        assert_eq!(run.evaluation.score_delta, 0);
+    }
+
+    #[test]
+    fn deterministic_contract_rejects_stage_order_drift() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
+        let mut run = exec.execute(&fixture_input()).expect("stage loop run");
+        run.stage_order.swap(0, 1);
+        let err = exec
+            .validate_deterministic_contract(&run)
+            .expect_err("must reject stage order drift");
+        assert!(err
+            .to_string()
+            .contains("GODEL_STAGE_LOOP_DETERMINISM_VIOLATION"));
+    }
+
+    #[test]
+    fn deterministic_contract_rejects_transition_pattern_drift() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
+        let mut run = exec.execute(&fixture_input()).expect("stage loop run");
+        run.transitions[1].transition = "entered".to_string();
+        let err = exec
+            .validate_deterministic_contract(&run)
+            .expect_err("must reject transition drift");
+        assert!(err
+            .to_string()
+            .contains("GODEL_STAGE_LOOP_DETERMINISM_VIOLATION"));
+    }
+
+    #[test]
+    fn deterministic_contract_rejects_hypothesis_order_drift() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
+        let mut run = exec.execute(&fixture_input()).expect("stage loop run");
+        if run.hypotheses.len() > 1 {
+            run.hypotheses.swap(0, 1);
+        } else {
+            run.hypotheses.push(HypothesisCandidate {
+                id: "hyp:z".to_string(),
+                statement: "z".to_string(),
+                failure_code: "tool_failure".to_string(),
+                evidence_refs: vec![],
+            });
+            run.hypotheses.insert(
+                0,
+                HypothesisCandidate {
+                    id: "hyp:y".to_string(),
+                    statement: "y".to_string(),
+                    failure_code: "tool_failure".to_string(),
+                    evidence_refs: vec![],
+                },
+            );
+        }
+        let err = exec
+            .validate_deterministic_contract(&run)
+            .expect_err("must reject hypothesis order drift");
+        assert!(err
+            .to_string()
+            .contains("GODEL_STAGE_LOOP_DETERMINISM_VIOLATION"));
+    }
+
+    #[test]
+    fn deterministic_contract_rejects_mutation_order_drift() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
+        let mut run = exec.execute(&fixture_input()).expect("stage loop run");
+        if run.mutation_plan.proposals.len() > 1 {
+            run.mutation_plan.proposals.swap(0, 1);
+        } else {
+            run.mutation_plan.proposals.push(MutationProposal {
+                id: "mut:z".to_string(),
+                hypothesis_id: run.hypothesis.id.clone(),
+                target_surface: "workflow-step-config".to_string(),
+                bounded_change: "z".to_string(),
+            });
+            run.mutation_plan.proposals.insert(
+                0,
+                MutationProposal {
+                    id: "mut:y".to_string(),
+                    hypothesis_id: run.hypothesis.id.clone(),
+                    target_surface: "workflow-step-config".to_string(),
+                    bounded_change: "y".to_string(),
+                },
+            );
+        }
+        let err = exec
+            .validate_deterministic_contract(&run)
+            .expect_err("must reject mutation order drift");
+        assert!(err
+            .to_string()
+            .contains("GODEL_STAGE_LOOP_DETERMINISM_VIOLATION"));
     }
 
     #[test]
@@ -334,6 +499,20 @@ mod tests {
             persisted.obsmem_index_rel_path,
             PathBuf::from("runs/run-745-a/godel/obsmem_index_entry.runtime.v1.json")
         );
+        let _ = std::fs::remove_dir_all(&tmp);
+    }
+
+    #[test]
+    fn execute_and_persist_surfaces_record_persistence_error() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
+        let tmp = test_tmp_dir("stage-loop-persist-error");
+        let file_root = tmp.join("file-root");
+        std::fs::write(&file_root, "not-a-directory").expect("write file root");
+
+        let err = exec
+            .execute_and_persist(&fixture_input(), &file_root)
+            .expect_err("persist should fail against file root");
+        assert!(err.to_string().contains("GODEL_STAGE_LOOP_INVALID_INPUT"));
         let _ = std::fs::remove_dir_all(&tmp);
     }
 }
