@@ -16,13 +16,13 @@ Demo entries are ordered by:
 
 These demos are required before third-party review (`#707`) and release convergence.
 
-| Demo ID | Workstream | Scope | Primary Issue(s) | Required Evidence Surface |
-|---|---|---|---|---|
-| D8-01 | Gödel schema spine | ExperimentRecord + Evidence + Mutation + EvaluationPlan schema alignment | `#609`, `#610`, `#611`, `#612`, `#683` | canonical schema/example artifacts under `docs/milestones/v0.8/` |
-| D8-02 | Gödel workflow integration | Failure -> hypothesis -> mutation -> experiment -> evaluation -> record loop template alignment | `#613`, `#615`, `#616` | `GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md` + `godel_experiment_workflow.template.v1.json` + demo docs |
-| D8-03 | ObsMem indexing integration | Run summary + ExperimentRecord-derived indexing surfaces | `#614` | indexing surface definitions and retrieval linkage notes |
-| D8-04 | Runtime/transpiler flagship | Rust transpiler and integration verification path | `#702`, `#703` | `RUST_TRANSPILER_DEMO.md` + `RUST_TRANSPILER_VERIFICATION_V0.8.md` + `demos/rust_output/transpiler_verification.v0.8.json` |
-| D8-05 | Authoring/reviewer compatibility | Prompt spec + reviewer checklist/output contracts and ordering | `#633`, `#650`, `#651`, `#649`, `#667`, `#677` | tooling docs/contracts + template references |
+| Demo ID | Workstream | Scope | Primary Issue(s) | Required Evidence Surface | Canonical Validation Command |
+|---|---|---|---|---|---|
+| D8-01 | Gödel schema spine | ExperimentRecord + Evidence + Mutation + EvaluationPlan schema alignment | `#609`, `#610`, `#611`, `#612`, `#683` | canonical schema/example artifacts under `docs/milestones/v0.8/` | `jq . docs/milestones/v0.8/*.json` (targeted schema/example checks) |
+| D8-02 | Gödel workflow integration | Failure -> hypothesis -> mutation -> experiment -> evaluation -> record loop template alignment | `#613`, `#615`, `#616` | `GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md` + `godel_experiment_workflow.template.v1.json` + demo docs | template/doc cross-reference checks |
+| D8-03 | ObsMem indexing integration | Run summary + ExperimentRecord-derived indexing surfaces | `#614` | indexing surface definitions and retrieval linkage notes | schema/example and link consistency checks |
+| D8-04 | Runtime/transpiler flagship | Bounded Rust-first transpiler mapping + deterministic verification evidence | `#702`, `#703`, `#704`, `#759` | `RUST_TRANSPILER_DEMO.md` + `RUST_TRANSPILER_VERIFICATION_V0.8.md` + `demos/rust_output/transpiler_verification.v0.8.json` | `cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet` |
+| D8-05 | Authoring/reviewer compatibility | Prompt spec + reviewer checklist/output contracts and ordering | `#633`, `#650`, `#651`, `#649`, `#667`, `#677` | tooling docs/contracts + template references | docs/tooling cross-reference checks |
 
 ## Supporting Demos (Helpful, Not Release-Blocking Alone)
 
@@ -37,7 +37,7 @@ Each required demo row should provide:
 
 1. A canonical doc/spec pointer in `docs/milestones/v0.8/`.
 2. Deterministic artifact/evidence references (schema/example/template/contract).
-3. Clear in-scope vs deferred boundary notes where applicable.
+3. Clear implemented-vs-illustrative boundary notes where applicable.
 4. No secrets, tool arguments, raw prompts, or absolute host paths in persisted evidence.
 
 ## Review Gate Usage
