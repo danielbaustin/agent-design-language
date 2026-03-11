@@ -1,3 +1,5 @@
+use std::path::{Path, PathBuf};
+
 use serde::{Deserialize, Serialize};
 
 use super::evaluation::{self, EvaluationOutcome};
@@ -115,6 +117,13 @@ pub struct StageLoopRun {
     pub index_entry: StageIndexEntry,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct StageLoopPersistenceResult {
+    pub run: StageLoopRun,
+    pub experiment_record_rel_path: PathBuf,
+    pub obsmem_index_rel_path: PathBuf,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum StageLoopError {
     InvalidInput(String),
@@ -184,6 +193,8 @@ impl GodelStageLoopExecutor {
         let record = experiment_record::build_record(
             &input.run_id,
             &input.workflow_id,
+            &input.failure_code,
+            &refs,
             &mutation,
             &evaluation,
         );
@@ -201,6 +212,28 @@ impl GodelStageLoopExecutor {
         };
         self.validate_deterministic_contract(&run)?;
         Ok(run)
+    }
+
+    pub fn execute_and_persist(
+        &self,
+        input: &StageLoopInput,
+        runs_root: &Path,
+    ) -> Result<StageLoopPersistenceResult, StageLoopError> {
+        let run = self.execute(input)?;
+        let experiment_record_rel_path = experiment_record::persist_record(runs_root, &run.record)
+            .map_err(|err| {
+                StageLoopError::InvalidInput(format!("experiment record persistence failed: {err}"))
+            })?;
+        let obsmem_index_rel_path = obsmem_index::persist_index_entry(runs_root, &run.index_entry)
+            .map_err(|err| {
+                StageLoopError::InvalidInput(format!("obsmem index persistence failed: {err}"))
+            })?;
+
+        Ok(StageLoopPersistenceResult {
+            run,
+            experiment_record_rel_path,
+            obsmem_index_rel_path,
+        })
     }
 
     fn validate_deterministic_contract(&self, run: &StageLoopRun) -> Result<(), StageLoopError> {
@@ -231,6 +264,7 @@ impl GodelStageLoopExecutor {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::path::PathBuf;
 
     fn fixture_input() -> StageLoopInput {
         StageLoopInput {
@@ -244,6 +278,13 @@ mod tests {
                 "runs/run-745-a/run_status.json".to_string(),
             ],
         }
+    }
+
+    fn test_tmp_dir(label: &str) -> PathBuf {
+        let root = std::env::temp_dir().join(format!("adl-godel-{label}-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        std::fs::create_dir_all(&root).expect("mkdir test tmp");
+        root
     }
 
     #[test]
@@ -275,5 +316,24 @@ mod tests {
         input.evidence_refs = vec!["/Users/daniel/secret.json".to_string()];
         let err = exec.execute(&input).expect_err("must reject absolute path");
         assert!(err.to_string().contains("GODEL_STAGE_LOOP_INVALID_INPUT"));
+    }
+
+    #[test]
+    fn execute_and_persist_writes_record_and_indexing_runtime_artifacts() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
+        let tmp = test_tmp_dir("stage-loop-persist");
+        let persisted = exec
+            .execute_and_persist(&fixture_input(), &tmp)
+            .expect("persisted stage loop");
+
+        assert_eq!(
+            persisted.experiment_record_rel_path,
+            PathBuf::from("runs/run-745-a/godel/experiment_record.runtime.v1.json")
+        );
+        assert_eq!(
+            persisted.obsmem_index_rel_path,
+            PathBuf::from("runs/run-745-a/godel/obsmem_index_entry.runtime.v1.json")
+        );
+        let _ = std::fs::remove_dir_all(&tmp);
     }
 }
