@@ -53,6 +53,11 @@ review_surfaces:
   - card_reviewer_gpt.v1.1
 ```
 
+Reviewer protocol IDs are versioned and order-sensitive:
+1. checklist contract
+2. output artifact contract
+3. reviewer behavior contract
+
 Execution:
 - Agent:
 - Provider:

@@ -97,6 +97,21 @@ Distinguish clearly between:
 
 Do not collapse these states into one another.
 
+Each finding must set `evidence_state` explicitly to one of those values.
+
+Evidence pointer grammar:
+- `path:<repo-relative-path>`
+- `command:<exact-command>`
+- `ci:<check-name-or-url>`
+- `artifact:<repo-relative-artifact-path>`
+
+Order evidence pointers deterministically by pointer class:
+1. `path:`
+2. `command:`
+3. `ci:`
+4. `artifact:`
+then lexicographically within class.
+
 ## Structured Field Precedence
 
 When the reviewed card contains structured fields, prefer those fields over narrative inference.
@@ -119,6 +134,19 @@ Decision enum is strictly:
 - `PASS`
 - `MINOR_FIXES`
 - `MAJOR_ISSUES`
+
+Finding objects must include:
+- `rule_id`
+- `severity`
+- `evidence_state` (`contradicted` | `not_evidenced` | `not_applicable`)
+- `title`
+- `evidence`
+- `remediation`
+
+If Prompt Spec exists in the reviewed input card, output must include:
+- `review_target.prompt_spec_bindings.prompt_schema`
+- `review_target.prompt_spec_bindings.review_surfaces`
+- `review_target.prompt_spec_bindings.bindings_validated`
 
 The final answer must be:
 - a **single YAML artifact**
@@ -283,6 +311,14 @@ For issue `#661`, a conforming reviewer output must:
 - use repo-relative evidence paths only
 - distinguish `not_evidenced` from `contradicted`
 - not emit markdown bullets, smart quotes, or malformed indentation
+
+## Regression Fixture
+
+Canonical reviewer regression fixture:
+- input card: `docs/tooling/examples/reviewer-regression/issue-660/input_660.md`
+- expected review artifact: `docs/tooling/examples/reviewer-regression/issue-660/expected_review_output_660.yaml`
+
+Use this pair to sanity-check deterministic reviewer behavior after reviewer-spec updates.
 
 ## Versioning
 

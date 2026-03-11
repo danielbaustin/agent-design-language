@@ -45,3 +45,11 @@ Prompt Spec should declare reviewer-facing protocol surfaces using stable IDs:
 - `card_reviewer_gpt.v1.1`: reviewer behavior contract for deterministic card evaluation and YAML-only output.
 
 When these IDs are present in `review_surfaces`, prompt generators and reviewers can coordinate on stable contracts without markdown heuristic coupling.
+
+Canonical ordering for `review_surfaces`:
+1. `card_review_checklist.v1`
+2. `card_review_output.v1`
+3. `card_reviewer_gpt.v1.1`
+
+This ordering keeps protocol dependencies explicit and deterministic.
+`swarm/tools/lint_prompt_spec.sh` enforces required IDs and canonical order.

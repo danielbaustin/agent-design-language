@@ -6,3 +6,8 @@ This directory documents ADL tooling contracts used by card automation and revie
 - [Prompt Spec](prompt-spec.md): machine-readable input-card block defining deterministic prompt generation surfaces and reviewer alignment.
 - [Prompt Spec Protocol Bindings](prompt-spec.md#protocol-bindings): linkage to `card_review_checklist.v1` and `card_review_output.v1` reviewer contracts.
 - [Card Reviewer GPT Instructions](card-reviewer-gpt.md): canonical reviewer behavior and deterministic YAML output contract (`card_reviewer_gpt.v1.1`).
+- [Deterministic Review Output Format](card-review-output-format.md): canonical review artifact schema including finding evidence-state semantics.
+- Reviewer regression fixture (stable):
+  - `docs/tooling/examples/reviewer-regression/issue-661/input_661.md`
+  - `docs/tooling/examples/reviewer-regression/issue-661/output_661.md`
+  - `docs/tooling/examples/reviewer-regression/issue-661/expected_review_output_661.yaml`
