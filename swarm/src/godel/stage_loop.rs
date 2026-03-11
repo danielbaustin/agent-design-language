@@ -180,7 +180,7 @@ impl GodelStageLoopExecutor {
             run_id: input.run_id.clone(),
             failure_code: input.failure_code.clone(),
             failure_summary: input.failure_summary.clone(),
-            evidence_refs: refs,
+            evidence_refs: refs.clone(),
         });
         let mutation_plan = mutation::propose_mutations(&input.run_id, &hypotheses);
         let hypothesis = hypotheses
