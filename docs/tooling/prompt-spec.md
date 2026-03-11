@@ -14,6 +14,11 @@ Prompt Spec reduces heuristic parsing and gives a stable contract for automation
 - `constraints`: Safety and determinism constraints the generator must preserve.
 - `review_surfaces`: Reviewer protocols expected to consume outputs.
 
+### `review_surfaces` Protocol ID Rules
+- Use dotted version IDs (for example `card_review_output.v1`), not underscore variants.
+- IDs are case-sensitive and must match referenced specs exactly.
+- Unknown or misspelled IDs should be treated as contract failures by automation/review tooling.
+
 ## Agent Interpretation
 Agents should interpret Prompt Spec as an execution contract:
 - Preserve section order from `inputs.sections`.
@@ -37,5 +42,6 @@ Input Card -> Prompt Generation -> Agent Execution -> Output Card -> Structured 
 Prompt Spec should declare reviewer-facing protocol surfaces using stable IDs:
 - `card_review_checklist.v1`: required checklist semantics used to evaluate card completeness and policy alignment.
 - `card_review_output.v1`: deterministic review artifact envelope used for machine-readable findings output.
+- `card_reviewer_gpt.v1.1`: reviewer behavior contract for deterministic card evaluation and YAML-only output.
 
 When these IDs are present in `review_surfaces`, prompt generators and reviewers can coordinate on stable contracts without markdown heuristic coupling.
