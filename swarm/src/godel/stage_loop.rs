@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::evaluation::{self, EvaluationOutcome};
 use super::experiment_record::{self, StageExperimentRecord};
-use super::hypothesis::{self, HypothesisCandidate};
-use super::mutation::{self, MutationProposal};
+use super::hypothesis::{self, HypothesisCandidate, HypothesisPipelineInput};
+use super::mutation::{self, MutationPlan, MutationProposal};
 use super::obsmem_index::{self, StageIndexEntry};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -107,6 +107,8 @@ pub struct StageTransitionEvent {
 pub struct StageLoopRun {
     pub stage_order: Vec<GodelStage>,
     pub transitions: Vec<StageTransitionEvent>,
+    pub hypotheses: Vec<HypothesisCandidate>,
+    pub mutation_plan: MutationPlan,
     pub hypothesis: HypothesisCandidate,
     pub mutation: MutationProposal,
     pub experiment_result: String,
@@ -165,13 +167,34 @@ impl GodelStageLoopExecutor {
         }
 
         let refs = input.normalized_evidence_refs();
-        let hypothesis = hypothesis::derive_hypothesis(
-            &input.run_id,
-            &input.failure_code,
-            &input.failure_summary,
-            &refs,
-        );
-        let mutation = mutation::propose_mutation(&input.run_id, &hypothesis);
+        let hypotheses = hypothesis::generate_hypotheses(&HypothesisPipelineInput {
+            run_id: input.run_id.clone(),
+            failure_code: input.failure_code.clone(),
+            failure_summary: input.failure_summary.clone(),
+            evidence_refs: refs,
+        });
+        let mutation_plan = mutation::propose_mutations(&input.run_id, &hypotheses);
+        let hypothesis = hypotheses
+            .iter()
+            .find(|h| h.id == mutation_plan.selected_hypothesis_id)
+            .cloned()
+            .or_else(|| hypotheses.first().cloned())
+            .ok_or_else(|| {
+                StageLoopError::DeterminismViolation(
+                    "hypothesis pipeline produced no deterministic candidate".to_string(),
+                )
+            })?;
+        let mutation = mutation_plan
+            .proposals
+            .iter()
+            .find(|m| m.hypothesis_id == hypothesis.id)
+            .cloned()
+            .or_else(|| mutation_plan.proposals.first().cloned())
+            .ok_or_else(|| {
+                StageLoopError::DeterminismViolation(
+                    "mutation pipeline produced no deterministic proposal".to_string(),
+                )
+            })?;
 
         let experiment_result = "bounded_experiment_completed".to_string();
         let score_delta = if input.failure_code.contains("transient") {
@@ -192,6 +215,8 @@ impl GodelStageLoopExecutor {
         let run = StageLoopRun {
             stage_order: STAGE_ORDER.to_vec(),
             transitions,
+            hypotheses,
+            mutation_plan,
             hypothesis,
             mutation,
             experiment_result,
@@ -223,6 +248,22 @@ impl GodelStageLoopExecutor {
                     "transition stage mismatch".to_string(),
                 ));
             }
+        }
+        if !run.hypotheses.windows(2).all(|w| w[0].id <= w[1].id) {
+            return Err(StageLoopError::DeterminismViolation(
+                "hypothesis candidates must be sorted lexicographically by hypothesis_id"
+                    .to_string(),
+            ));
+        }
+        if !run
+            .mutation_plan
+            .proposals
+            .windows(2)
+            .all(|w| w[0].id <= w[1].id)
+        {
+            return Err(StageLoopError::DeterminismViolation(
+                "mutation proposals must be sorted lexicographically by mutation_id".to_string(),
+            ));
         }
         Ok(())
     }
@@ -266,6 +307,22 @@ mod tests {
         let left = exec.execute(&input).expect("left run");
         let right = exec.execute(&input).expect("right run");
         assert_eq!(left, right);
+    }
+
+    #[test]
+    fn stage_loop_exposes_deterministic_hypothesis_and_mutation_pipeline() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
+        let run = exec.execute(&fixture_input()).expect("stage loop run");
+        assert!(!run.hypotheses.is_empty());
+        assert!(!run.mutation_plan.proposals.is_empty());
+        assert!(run.hypotheses.windows(2).all(|w| w[0].id <= w[1].id));
+        assert!(run
+            .mutation_plan
+            .proposals
+            .windows(2)
+            .all(|w| w[0].id <= w[1].id));
+        assert_eq!(run.hypothesis.id, run.mutation_plan.selected_hypothesis_id);
+        assert_eq!(run.mutation.hypothesis_id, run.hypothesis.id);
     }
 
     #[test]
