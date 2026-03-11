@@ -1831,7 +1831,10 @@ fn missing_prompt_inputs(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::adl::{AdlDoc, PromptSpec, RunDefaults, RunSpec, WorkflowKind, WorkflowSpec};
+    use crate::adl::{
+        AdlDoc, AgentSpec, DelegationSpec, PromptSpec, RunDefaults, RunSpec, TaskSpec,
+        WorkflowKind, WorkflowSpec,
+    };
     use crate::resolve::AdlResolved;
     use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -1872,6 +1875,27 @@ mod tests {
                 workflow_kind: WorkflowKind::Concurrent,
                 nodes: vec![],
             },
+        }
+    }
+
+    fn minimal_step(id: &str) -> crate::resolve::ResolvedStep {
+        crate::resolve::ResolvedStep {
+            id: id.to_string(),
+            agent: None,
+            provider: None,
+            placement: None,
+            task: None,
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
+            delegation: None,
+            prompt: None,
+            inputs: HashMap::new(),
+            guards: vec![],
+            save_as: None,
+            write_to: None,
+            on_error: None,
+            retry: None,
         }
     }
 
@@ -2150,5 +2174,203 @@ mod tests {
 
         let generic = anyhow::anyhow!("not policy related");
         assert_eq!(stable_failure_kind(&generic), None);
+    }
+
+    #[test]
+    fn scheduler_policy_for_run_returns_none_for_sequential_workflows() {
+        let mut resolved = minimal_resolved();
+        resolved.execution_plan.workflow_kind = WorkflowKind::Sequential;
+        resolved.doc.run.workflow = Some(WorkflowSpec {
+            id: None,
+            kind: WorkflowKind::Sequential,
+            max_concurrency: Some(9),
+            steps: vec![],
+        });
+        assert_eq!(
+            scheduler_policy_for_run(&resolved).expect("scheduler policy"),
+            None
+        );
+    }
+
+    #[test]
+    fn scheduler_policy_for_run_uses_engine_default_for_concurrent_workflows() {
+        let resolved = minimal_resolved();
+        let policy = scheduler_policy_for_run(&resolved)
+            .expect("scheduler policy")
+            .expect("concurrent policy");
+        assert_eq!(policy.0, 4);
+        assert_eq!(policy.1, SchedulerPolicySource::EngineDefault);
+    }
+
+    #[test]
+    fn scheduler_policy_for_run_uses_run_default_when_set() {
+        let mut resolved = minimal_resolved();
+        resolved.doc.run.defaults.max_concurrency = Some(3);
+        let policy = scheduler_policy_for_run(&resolved)
+            .expect("scheduler policy")
+            .expect("concurrent policy");
+        assert_eq!(policy.0, 3);
+        assert_eq!(policy.1, SchedulerPolicySource::RunDefault);
+    }
+
+    #[test]
+    fn scheduler_policy_for_run_uses_workflow_override_when_set() {
+        let mut resolved = minimal_resolved();
+        resolved
+            .doc
+            .run
+            .workflow
+            .as_mut()
+            .expect("workflow")
+            .max_concurrency = Some(6);
+        let policy = scheduler_policy_for_run(&resolved)
+            .expect("scheduler policy")
+            .expect("concurrent policy");
+        assert_eq!(policy.0, 6);
+        assert_eq!(policy.1, SchedulerPolicySource::WorkflowOverride);
+    }
+
+    #[test]
+    fn scheduler_policy_for_run_rejects_zero_parallelism() {
+        let mut resolved = minimal_resolved();
+        resolved.doc.run.defaults.max_concurrency = Some(0);
+        let err = scheduler_policy_for_run(&resolved).expect_err("zero should fail");
+        assert!(err.to_string().contains("must be >= 1"));
+    }
+
+    #[test]
+    fn delegation_trace_target_requires_step_delegation() {
+        let step = minimal_step("s1");
+        let doc = minimal_resolved().doc;
+        assert_eq!(delegation_trace_target(&step, &doc), None);
+    }
+
+    #[test]
+    fn delegation_trace_target_uses_remote_exec_and_unresolved_provider() {
+        let mut step = minimal_step("s1");
+        step.delegation = Some(DelegationSpec::default());
+        let mut doc = minimal_resolved().doc;
+        doc.run.placement = Some(crate::adl::RunPlacementSpec::Mode(
+            crate::adl::PlacementMode::Remote,
+        ));
+        assert_eq!(
+            delegation_trace_target(&step, &doc),
+            Some(("remote_exec", "<unresolved-provider>".to_string()))
+        );
+    }
+
+    #[test]
+    fn effective_prompt_with_defaults_prefers_step_prompt_system() {
+        let mut step = minimal_step("s1");
+        step.prompt = Some(PromptSpec {
+            system: Some("step-system".to_string()),
+            user: Some("u".to_string()),
+            ..Default::default()
+        });
+        let mut doc = minimal_resolved().doc;
+        doc.run.defaults.system = Some("default-system".to_string());
+        let prompt = effective_prompt_with_defaults_from_doc(&step, &doc).expect("prompt");
+        assert_eq!(prompt.system.as_deref(), Some("step-system"));
+    }
+
+    #[test]
+    fn effective_prompt_with_defaults_uses_task_prompt_and_injects_default_system() {
+        let mut step = minimal_step("s1");
+        step.task = Some("task-a".to_string());
+        let mut doc = minimal_resolved().doc;
+        doc.run.defaults.system = Some("default-system".to_string());
+        doc.tasks.insert(
+            "task-a".to_string(),
+            TaskSpec {
+                id: Some("task-a".to_string()),
+                agent_ref: None,
+                inputs: vec![],
+                tool_allowlist: vec![],
+                description: None,
+                prompt: PromptSpec {
+                    user: Some("task-user".to_string()),
+                    ..Default::default()
+                },
+            },
+        );
+        let prompt = effective_prompt_with_defaults_from_doc(&step, &doc).expect("prompt");
+        assert_eq!(prompt.system.as_deref(), Some("default-system"));
+        assert_eq!(prompt.user.as_deref(), Some("task-user"));
+    }
+
+    #[test]
+    fn effective_prompt_with_defaults_uses_agent_prompt_when_task_absent() {
+        let mut step = minimal_step("s1");
+        step.agent = Some("agent-a".to_string());
+        let mut doc = minimal_resolved().doc;
+        doc.agents.insert(
+            "agent-a".to_string(),
+            AgentSpec {
+                id: Some("agent-a".to_string()),
+                provider: "mock".to_string(),
+                model: "m".to_string(),
+                temperature: None,
+                top_k: None,
+                description: None,
+                prompt: Some(PromptSpec {
+                    user: Some("agent-user".to_string()),
+                    ..Default::default()
+                }),
+                tools: vec![],
+            },
+        );
+        let prompt = effective_prompt_with_defaults_from_doc(&step, &doc).expect("prompt");
+        assert_eq!(prompt.user.as_deref(), Some("agent-user"));
+    }
+
+    #[test]
+    fn fingerprint_helpers_match_known_fnv1a_vectors() {
+        assert_eq!(stable_fingerprint_hex(b""), "cbf29ce484222325");
+        assert_eq!(stable_fingerprint_hex(b"abc"), "e71fa2190541574b");
+        assert_eq!(model_output_fingerprint("abc"), "e71fa2190541574b");
+    }
+
+    #[test]
+    fn resume_disposition_reasons_are_deterministic() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let out_dir = std::env::temp_dir().join(format!(
+            "swarm-resume-disposition-{now}-{}",
+            std::process::id()
+        ));
+        std::fs::create_dir_all(&out_dir).expect("create out dir");
+
+        let mut step = minimal_step("s1");
+        step.write_to = Some("out.txt".to_string());
+
+        let missing = resume_disposition_for_step(&step, &out_dir, &HashMap::new())
+            .expect("missing artifact disposition");
+        assert_eq!(
+            missing,
+            ResumeDisposition::Rerun("missing_expected_artifact")
+        );
+
+        let artifact = out_dir.join("out.txt");
+        std::fs::write(&artifact, "hello").expect("write artifact");
+        let mut fingerprints = HashMap::new();
+        fingerprints.insert("s1".to_string(), "deadbeef".to_string());
+        let mismatch = resume_disposition_for_step(&step, &out_dir, &fingerprints)
+            .expect("mismatch disposition");
+        assert_eq!(
+            mismatch,
+            ResumeDisposition::Rerun("invalid_expected_artifact")
+        );
+
+        fingerprints.insert("s1".to_string(), model_output_fingerprint("hello"));
+        let verified = resume_disposition_for_step(&step, &out_dir, &fingerprints)
+            .expect("verified disposition");
+        assert_eq!(
+            verified,
+            ResumeDisposition::Skip("completed_artifact_verified")
+        );
+
+        let _ = std::fs::remove_dir_all(out_dir);
     }
 }
