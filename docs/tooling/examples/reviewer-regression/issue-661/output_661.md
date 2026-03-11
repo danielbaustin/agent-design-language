@@ -49,9 +49,9 @@ Updated `docs/milestones/v0.8/README.md` to be the canonical milestone index wit
 - Tests / checks run:
   - `python3 <README link-check script>`
   - `rg -n "\.adl/docs/v08planning" docs/milestones/v0.8/*.md docs/milestones/v0.8/incubation/*.md`
-  - `cd swarm && cargo fmt --all`
-  - `cd swarm && cargo clippy --workspace --all-targets -- -D warnings`
-  - `cd swarm && cargo test --workspace`
+  - `cargo fmt --all --manifest-path swarm/Cargo.toml`
+  - `cargo clippy --manifest-path swarm/Cargo.toml --workspace --all-targets -- -D warnings`
+  - `cargo test --manifest-path swarm/Cargo.toml --workspace`
 - Results:
   - README link check: `links: 33`, `broken: 0`
   - stale `.adl/docs/v08planning` refs in `docs/milestones/v0.8/`: none
