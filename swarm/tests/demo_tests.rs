@@ -161,3 +161,54 @@ fn demo_b_run_is_quiet_and_writes_artifacts() {
         "expected empty stderr on success, got:\n{stderr}"
     );
 }
+
+#[test]
+fn demo_c_print_plan_works() {
+    let out = run_swarm(&["demo", "demo-c-godel-runtime", "--print-plan"]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("Demo: demo-c-godel-runtime"),
+        "stdout:\n{stdout}"
+    );
+    assert!(stdout.contains("Steps: 3"), "stdout:\n{stdout}");
+    assert!(stdout.contains("0. load"), "stdout:\n{stdout}");
+    assert!(stdout.contains("1. verify"), "stdout:\n{stdout}");
+    assert!(stdout.contains("2. emit"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn demo_c_run_writes_runtime_surface_artifacts() {
+    let out_root = tmp_dir("demo-c-run");
+    let out = run_swarm(&[
+        "demo",
+        "demo-c-godel-runtime",
+        "--run",
+        "--trace",
+        "--out",
+        out_root.to_string_lossy().as_ref(),
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let run_out = out_root.join("demo-c-godel-runtime");
+    assert!(run_out.join("godel_runtime_surface_status.json").is_file());
+    assert!(run_out.join("verification.txt").is_file());
+    assert!(run_out.join("README.md").is_file());
+    assert!(run_out.join("trace.jsonl").is_file());
+
+    let status = fs::read_to_string(run_out.join("godel_runtime_surface_status.json")).unwrap();
+    assert!(
+        status.contains("\"status_version\": 1"),
+        "status:\n{status}"
+    );
+    assert!(status.contains("\"failure\""), "status:\n{status}");
+    assert!(status.contains("\"record\""), "status:\n{status}");
+}
