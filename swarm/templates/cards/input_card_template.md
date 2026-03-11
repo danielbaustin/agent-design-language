@@ -53,7 +53,7 @@ constraints:
 review_surfaces:
   - card_review_checklist.v1
   - card_review_output.v1
-  - card_reviewer_gpt.v1
+  - card_reviewer_gpt.v1.1
 ```
 
 Execution:

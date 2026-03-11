@@ -19,7 +19,10 @@ skeleton, and one explicit path to deterministic verification in `#703`.
    - `tools/transpiler_demo/src/main.rs`
 3. Rust output skeleton (compiled/runtime shape)
    - `demos/rust_output/workflow_runtime.rs`
-4. This explainer
+4. Verification evidence surface
+   - `demos/rust_output/transpiler_verification.v0.8.json`
+   - `docs/milestones/v0.8/RUST_TRANSPILER_VERIFICATION_V0.8.md`
+5. This explainer
    - `docs/demos/rust-transpiler/README.md`
 
 ## Fixture to Rust Mapping
@@ -49,6 +52,7 @@ The scaffold prints:
 - ordered step-to-function mapping
 - `PASS`/`FAIL` order consistency check
 - artifact layout status
+- verification evidence artifact path
 
 No code generation occurs in this demo.
 
