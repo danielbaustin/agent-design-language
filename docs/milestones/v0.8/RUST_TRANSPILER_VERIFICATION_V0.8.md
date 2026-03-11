@@ -58,9 +58,21 @@ For v0.8 verification, adaptive execution is reporting-only and bounded:
 - `adaptive_execution.mode`: `bounded_reporting_only`
 - `adaptive_execution.attempts_executed`: `0`
 - `adaptive_execution.policy_actions`: `[]`
-- `adaptive_execution.notes`: clarifies no autonomous retry loop was executed in WP-12
+- `adaptive_execution.notes`: clarifies no autonomous retry loop was executed
 
 This preserves milestone scope while providing explicit surfaces for later AEE-linked work.
+
+## Implemented vs Illustrative Boundary
+
+Implemented now:
+- deterministic fixture-to-runtime mapping verification command
+- evidence artifact generation and review surface
+- bounded adaptive-execution reporting fields
+
+Illustrative/future work:
+- full transpiler/compiler pipeline
+- autonomous bounded-retry orchestration connected to runtime execution loops
+- policy-learning or cross-run adaptation
 
 ## Acceptance Boundary
 
