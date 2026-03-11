@@ -209,3 +209,6 @@ This example is normative for structure and field ordering.
 
 When the reviewed input card contains a Prompt Spec block, reviewers should populate
 `review_target.prompt_spec_bindings` to make protocol/version alignment explicit.
+
+Canonical mapping reference:
+- `docs/tooling/prompt-review-surface-mapping.md`

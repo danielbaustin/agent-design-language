@@ -31,6 +31,71 @@ section_body() {
   ' "$file"
 }
 
+prompt_spec_yaml() {
+  local file="$1"
+  awk '
+    $0 == "## Prompt Spec" { in_prompt=1; next }
+    in_prompt && /^## / { exit }
+    in_prompt { print }
+  ' "$file" | awk '
+    /^```yaml$/ { in_yaml=1; next }
+    in_yaml && /^```$/ { exit }
+    in_yaml { print }
+  '
+}
+
+prompt_spec_sections() {
+  local yaml="$1"
+  awk '
+    /^inputs:[[:space:]]*$/ { in_inputs=1; next }
+    in_inputs && /^outputs:[[:space:]]*$/ { in_inputs=0; in_sections=0; next }
+    in_inputs && /^  sections:[[:space:]]*$/ { in_sections=1; next }
+    in_sections && /^    -[[:space:]]+/ {
+      line=$0
+      sub(/^[[:space:]]*-[[:space:]]*/, "", line)
+      print line
+      next
+    }
+    in_sections && !/^    / { in_sections=0 }
+  ' <<<"$yaml"
+}
+
+prompt_spec_bool() {
+  local yaml="$1"
+  local key="$2"
+  awk -v k="$key" '
+    /^[[:space:]]*[A-Za-z0-9_]+:[[:space:]]*/ {
+      split($0, parts, ":")
+      field=parts[1]
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", field)
+      if (field == k) {
+        sub(/^[^:]*:[[:space:]]*/, "", $0)
+        val=tolower($0)
+        gsub(/[[:space:]]+/, "", val)
+        if (val == "true" || val == "false") {
+          print val
+          exit
+        }
+      }
+    }
+  ' <<<"$yaml"
+}
+
+section_id_to_header() {
+  case "$1" in
+    goal) echo "Goal" ;;
+    acceptance_criteria) echo "Acceptance Criteria" ;;
+    inputs) echo "Inputs" ;;
+    constraints_policies) echo "Constraints / Policies" ;;
+    system_invariants) echo "System Invariants (must remain true)" ;;
+    reviewer_checklist) echo "Reviewer Checklist (machine-readable hints)" ;;
+    non_goals_out_of_scope) echo "Non-goals / Out of scope" ;;
+    notes_risks) echo "Notes / Risks" ;;
+    instructions_to_agent) echo "Instructions to the Agent" ;;
+    *) echo "" ;;
+  esac
+}
+
 meta_field() {
   local file="$1"
   local key="$2"
@@ -113,14 +178,76 @@ version="$(meta_field "$INPUT" "Version")"
 title="$(meta_field "$INPUT" "Title")"
 branch="$(meta_field "$INPUT" "Branch")"
 
-goal="$(section_body "$INPUT" "Goal" | trim_blank_edges)"
-acceptance="$(section_body "$INPUT" "Acceptance Criteria" | trim_blank_edges)"
-inputs="$(section_body "$INPUT" "Inputs" | trim_blank_edges)"
-constraints="$(section_body "$INPUT" "Constraints / Policies" | trim_blank_edges)"
-invariants="$(section_body "$INPUT" "System Invariants (must remain true)" | trim_blank_edges)"
-checklist="$(section_body "$INPUT" "Reviewer Checklist (machine-readable hints)" | trim_blank_edges)"
-non_goals="$(section_body "$INPUT" "Non-goals / Out of scope" | trim_blank_edges)"
-risks="$(section_body "$INPUT" "Notes / Risks" | trim_blank_edges)"
+prompt_spec="$(prompt_spec_yaml "$INPUT")"
+
+section_ids=()
+while IFS= read -r line; do
+  section_ids+=("$line")
+done < <(prompt_spec_sections "$prompt_spec")
+if [[ "${#section_ids[@]}" -eq 0 ]]; then
+  section_ids=(
+    goal
+    acceptance_criteria
+    inputs
+    constraints_policies
+    system_invariants
+    reviewer_checklist
+    non_goals_out_of_scope
+    notes_risks
+    instructions_to_agent
+  )
+fi
+
+include_system_invariants="$(prompt_spec_bool "$prompt_spec" "include_system_invariants")"
+include_reviewer_checklist="$(prompt_spec_bool "$prompt_spec" "include_reviewer_checklist")"
+if [[ -z "$include_system_invariants" ]]; then
+  include_system_invariants="true"
+fi
+if [[ -z "$include_reviewer_checklist" ]]; then
+  include_reviewer_checklist="true"
+fi
+
+if [[ "$include_system_invariants" == "true" ]]; then
+  has_invariants=0
+  for id in "${section_ids[@]}"; do
+    if [[ "$id" == "system_invariants" ]]; then
+      has_invariants=1
+      break
+    fi
+  done
+  if [[ "$has_invariants" -eq 0 ]]; then
+    section_ids+=("system_invariants")
+  fi
+fi
+
+if [[ "$include_reviewer_checklist" == "true" ]]; then
+  has_checklist=0
+  for id in "${section_ids[@]}"; do
+    if [[ "$id" == "reviewer_checklist" ]]; then
+      has_checklist=1
+      break
+    fi
+  done
+  if [[ "$has_checklist" -eq 0 ]]; then
+    section_ids+=("reviewer_checklist")
+  fi
+fi
+
+ordered_section_ids=()
+for id in "${section_ids[@]}"; do
+  [[ -n "$id" ]] || continue
+  seen=0
+  for existing in "${ordered_section_ids[@]-}"; do
+    if [[ "$existing" == "$id" ]]; then
+      seen=1
+      break
+    fi
+  done
+  if [[ "$seen" -eq 0 ]]; then
+    ordered_section_ids+=("$id")
+  fi
+done
+
 input_ref="$(display_card_ref "$INPUT")"
 
 render_or_na() {
@@ -131,6 +258,39 @@ render_or_na() {
     echo "(not provided)"
   fi
 }
+
+render_section_by_id() {
+  local file="$1"
+  local id="$2"
+  local header
+  header="$(section_id_to_header "$id")"
+  if [[ -z "$header" ]]; then
+    return 0
+  fi
+  local body
+  body="$(section_body "$file" "$header" | trim_blank_edges)"
+  cat <<EOF
+$header
+$(render_or_na "$body")
+EOF
+}
+
+sections_rendered=""
+for id in "${ordered_section_ids[@]-}"; do
+  header="$(section_id_to_header "$id")"
+  [[ -n "$header" ]] || continue
+  if [[ "$id" == "system_invariants" && "$include_system_invariants" != "true" ]]; then
+    continue
+  fi
+  if [[ "$id" == "reviewer_checklist" && "$include_reviewer_checklist" != "true" ]]; then
+    continue
+  fi
+  rendered="$(render_section_by_id "$INPUT" "$id")"
+  if [[ -n "$sections_rendered" ]]; then
+    sections_rendered+=$'\n\n'
+  fi
+  sections_rendered+="$rendered"
+done
 
 prompt="$(
   cat <<EOF
@@ -144,29 +304,7 @@ Context
 - Branch: ${branch:-unknown}
 - Input Card: ${input_ref}
 
-Goal
-$(render_or_na "$goal")
-
-Acceptance Criteria
-$(render_or_na "$acceptance")
-
-Inputs
-$(render_or_na "$inputs")
-
-Constraints / Policies
-$(render_or_na "$constraints")
-
-System Invariants (must remain true)
-$(render_or_na "$invariants")
-
-Reviewer Checklist (machine-readable hints)
-$(render_or_na "$checklist")
-
-Non-goals / Out of scope
-$(render_or_na "$non_goals")
-
-Notes / Risks
-$(render_or_na "$risks")
+${sections_rendered}
 
 Execution Rules
 - Keep changes deterministic and replay-safe.

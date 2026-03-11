@@ -59,7 +59,7 @@ Without these, ADL risks remaining “just” a deterministic workflow engine ra
   - fixture crate
   - transformation workflow
   - verification hooks (`fmt`, `clippy`, `test`)
-  - adaptive retry loop
+  - bounded retry/recovery hooks using explicit `retry.max_attempts` and `on_error` policy
   - replayable evidence bundle
 - Contract hardening required to support the above, including ToolResult metadata and machine-readable validation surfaces.
 
@@ -145,7 +145,7 @@ This enables provider-agnostic, reproducible execution prompt generation and mak
 #### 3. Adaptive execution semantics
 The Rust transpiler demo and related workflows use the Adaptive Execution Engine pattern:
 
-Attempt → Failure → Strategy Selection → Retry → Verification → Convergence or Exhaustion
+Attempt -> Failure -> Bounded Retry Decision -> Retry -> Verification -> Convergence or Exhaustion
 
 Retry behavior must remain bounded, explicit, and traceable.
 
@@ -156,7 +156,7 @@ The flagship Rust transpiler / migration demo is an ADL workflow that:
 - generates a transformation plan and patch
 - applies the patch in sandbox
 - runs `cargo fmt`, `cargo clippy`, and `cargo test`
-- retries with bounded strategies if verification fails
+- retries using bounded runtime retry/on_error hooks if verification fails
 - emits deterministic evidence artifacts and a replayable trace bundle
 
 This demo also serves as the first concrete Gödel substrate because its structure mirrors:

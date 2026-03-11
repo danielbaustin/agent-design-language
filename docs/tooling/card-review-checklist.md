@@ -69,7 +69,7 @@ Each rule has:
 - `CRS-STR-002` (`high`): `Status` is a valid terminal or in-progress value and matches narrative state.
 - `CRS-STR-003` (`medium`): `Execution` metadata is present and non-placeholder.
 - `CRS-STR-004` (`high`): `Artifacts produced` contains explicit repo-relative paths.
-- `CRS-STR-005` (`high`): If input card has `## Prompt Spec`, reviewer/checklist/output protocol bindings are version-compatible (`card_review_checklist.v1`, `card_review_output.v1`, `card_reviewer_gpt.v1.1`).
+- `CRS-STR-005` (`high`): If input card has `## Prompt Spec`, protocol bindings are version-compatible with reviewer/checklist/output surfaces (`card_review_checklist.v1`, `card_review_output.v1`, `card_reviewer_gpt.v1.1`).
 
 ### Acceptance Domain
 
@@ -133,13 +133,12 @@ Required evidence-state classification per finding:
 - `not_applicable`: rule inapplicable for this target
 
 Reviewers must not collapse these states into each other.
-
 ## Prompt Spec Integration Notes
 
 When `CRS-STR-005` applies, reviewers should verify:
 
 - Prompt Spec `prompt_schema` is recognized (`adl.v1`)
-- Prompt Spec `review_surfaces` includes required protocol IDs in canonical order:
+- Prompt Spec `review_surfaces` contains required protocol IDs in canonical order:
   1. `card_review_checklist.v1`
   2. `card_review_output.v1`
   3. `card_reviewer_gpt.v1.1`
@@ -148,6 +147,8 @@ When `CRS-STR-005` applies, reviewers should verify:
   - `review_format_version`
   - `review_metadata.reviewer`
 
+Canonical cross-surface field map:
+- `docs/tooling/prompt-review-surface-mapping.md`
 ## Example Checklist Application (Real ADL Card)
 
 Review target:
