@@ -17,6 +17,7 @@ Related integration items that may follow this chain:
 
 - #668 Prompt generation pipeline order (if used)
 - #716 card-template/convergence follow-up (if used)
+- #761 bounded Prompt Spec execution tooling convergence
 
 ## Why This Order
 
@@ -56,7 +57,10 @@ When multiple authoring tasks are unblocked:
 
 ## v0.8 vs Later Scope
 
-In v0.8, this work remains specification and contract alignment for authoring/reviewer surfaces.
+In v0.8, this work includes specification/contract alignment plus bounded repository tooling surfaces:
+
+- `swarm/tools/lint_prompt_spec.sh` for Prompt Spec linting
+- `swarm/tools/card_prompt.sh` deterministic prompt generation from card + Prompt Spec
 
 Deferred beyond this sequence:
 

@@ -14,6 +14,17 @@ Prompt Spec reduces heuristic parsing and gives a stable contract for automation
 - `constraints`: Safety and determinism constraints the generator must preserve.
 - `review_surfaces`: Reviewer protocols expected to consume outputs.
 
+### Supported `inputs.sections` IDs (v1)
+- `goal`
+- `acceptance_criteria`
+- `inputs`
+- `constraints_policies`
+- `system_invariants`
+- `reviewer_checklist`
+- `non_goals_out_of_scope`
+- `notes_risks`
+- `instructions_to_agent`
+
 ### `review_surfaces` Protocol ID Rules
 - Use dotted version IDs (for example `card_review_output.v1`), not underscore variants.
 - IDs are case-sensitive and must match referenced specs exactly.
@@ -27,6 +38,22 @@ Agents should interpret Prompt Spec as an execution contract:
 - Emit outputs using declared targets and structure.
 
 If Prompt Spec is missing, tooling may fall back to legacy card parsing behavior.
+
+## Repository Execution Surface
+Current repository-controlled execution path:
+
+1. Input card with `## Prompt Spec` block
+2. `swarm/tools/lint_prompt_spec.sh` validates Prompt Spec structure and section IDs
+3. `swarm/tools/card_prompt.sh` consumes Prompt Spec ordering/flags to generate deterministic execution prompt text
+
+Example commands:
+
+```bash
+swarm/tools/lint_prompt_spec.sh --issue 761
+swarm/tools/card_prompt.sh --issue 761 --out /tmp/issue-761.prompt.md
+```
+
+The prompt generator remains bounded to card-template section extraction and deterministic rendering. It is not a full natural-language authoring pipeline.
 
 ## Reviewer System Integration (#649-#651)
 Prompt Spec aligns generation with the reviewer/tooling stack:

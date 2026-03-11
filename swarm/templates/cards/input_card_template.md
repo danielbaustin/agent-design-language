@@ -39,6 +39,9 @@ inputs:
     - constraints_policies
     - system_invariants
     - reviewer_checklist
+    - non_goals_out_of_scope
+    - notes_risks
+    - instructions_to_agent
 outputs:
   output_card: .adl/cards/<issue>/output_<issue>.md
   summary_style: concise_structured
