@@ -53,7 +53,7 @@ Top-level key order MUST be:
 
 - type: map
 - required fields:
-  - `reviewer`: string (`human` | versioned reviewer id, e.g. `card_reviewer_gpt.v1`)
+  - `reviewer`: string (`human` | versioned reviewer id, e.g. `card_reviewer_gpt.v1.1`)
   - `review_time_utc`: string (ISO-8601 UTC)
   - `checklist_version`: string (for #650 checklist, use `card_review_checklist.v1`)
 
