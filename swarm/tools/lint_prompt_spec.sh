@@ -163,4 +163,53 @@ for bool_key in include_system_invariants include_reviewer_checklist disallow_se
   fi
 done
 
+review_surfaces=()
+while IFS= read -r line; do
+  review_surfaces+=("$line")
+done < <(
+  awk '
+    /^review_surfaces:[[:space:]]*$/ { in_review=1; next }
+    in_review && /^[A-Za-z0-9_]+:[[:space:]]*$/ { in_review=0; next }
+    in_review && /^  -[[:space:]]+/ {
+      line=$0
+      sub(/^[[:space:]]*-[[:space:]]*/, "", line)
+      print line
+      next
+    }
+    in_review && !/^  / { in_review=0 }
+  ' <<<"$spec"
+)
+
+[[ "${#review_surfaces[@]}" -gt 0 ]] || die "review_surfaces must include at least one protocol id"
+
+has_checklist=0
+has_output=0
+has_reviewer=0
+for surface in "${review_surfaces[@]}"; do
+  case "$surface" in
+    card_review_checklist.v1) has_checklist=1 ;;
+    card_review_output.v1) has_output=1 ;;
+    card_reviewer_gpt.v1.1) has_reviewer=1 ;;
+  esac
+done
+
+[[ "$has_checklist" -eq 1 ]] || die "review_surfaces missing required protocol id: card_review_checklist.v1"
+[[ "$has_output" -eq 1 ]] || die "review_surfaces missing required protocol id: card_review_output.v1"
+[[ "$has_reviewer" -eq 1 ]] || die "review_surfaces missing required protocol id: card_reviewer_gpt.v1.1"
+
+checklist_pos=-1
+output_pos=-1
+reviewer_pos=-1
+for i in "${!review_surfaces[@]}"; do
+  case "${review_surfaces[$i]}" in
+    card_review_checklist.v1) checklist_pos="$i" ;;
+    card_review_output.v1) output_pos="$i" ;;
+    card_reviewer_gpt.v1.1) reviewer_pos="$i" ;;
+  esac
+done
+
+if [[ "$checklist_pos" -gt "$output_pos" || "$output_pos" -gt "$reviewer_pos" ]]; then
+  die "review_surfaces must appear in canonical order: checklist -> output -> reviewer"
+fi
+
 echo "PASS: Prompt Spec is valid for $INPUT"

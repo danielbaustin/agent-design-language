@@ -65,6 +65,11 @@ Top-level key order MUST be:
   - `output_card_path`: string (repo-relative)
   - `input_card_path`: string (repo-relative)
   - `pr`: string or null
+- optional field:
+  - `prompt_spec_bindings`: map or null with fields:
+    - `prompt_schema`: string
+    - `review_surfaces`: ordered list of protocol IDs
+    - `bindings_validated`: boolean
 
 ### `decision`
 
@@ -185,3 +190,11 @@ This example is normative for structure and field ordering.
 
 - Reviewers MAY include additional keys only under a future version (`card_review_output.v2+`).
 - v1 parsers should reject unknown top-level keys to prevent silent schema drift.
+
+## Prompt Spec Alignment
+
+When the reviewed input card contains a Prompt Spec block, reviewers should populate
+`review_target.prompt_spec_bindings` to make the protocol/version alignment explicit.
+
+Canonical mapping reference:
+- `docs/tooling/prompt-review-surface-mapping.md`

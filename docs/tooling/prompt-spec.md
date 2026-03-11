@@ -72,3 +72,11 @@ Prompt Spec should declare reviewer-facing protocol surfaces using stable IDs:
 - `card_reviewer_gpt.v1.1`: reviewer behavior contract for deterministic card evaluation and YAML-only output.
 
 When these IDs are present in `review_surfaces`, prompt generators and reviewers can coordinate on stable contracts without markdown heuristic coupling.
+
+## Shared Contract Mapping
+
+Canonical field mapping between Prompt Spec, checklist rules, and deterministic review-output fields is defined in:
+
+- `docs/tooling/prompt-review-surface-mapping.md`
+
+That mapping is the source of truth for cross-surface alignment and drift prevention.
