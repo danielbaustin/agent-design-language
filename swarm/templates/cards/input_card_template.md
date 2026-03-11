@@ -39,6 +39,9 @@ inputs:
     - constraints_policies
     - system_invariants
     - reviewer_checklist
+    - non_goals_out_of_scope
+    - notes_risks
+    - instructions_to_agent
 outputs:
   output_card: .adl/cards/<issue>/output_<issue>.md
   summary_style: concise_structured
@@ -50,7 +53,7 @@ constraints:
 review_surfaces:
   - card_review_checklist.v1
   - card_review_output.v1
-  - card_reviewer_gpt_v1
+  - card_reviewer_gpt.v1
 ```
 
 Execution:

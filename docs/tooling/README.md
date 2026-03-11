@@ -5,3 +5,6 @@ This directory documents ADL tooling contracts used by card automation and revie
 ## References
 - [Prompt Spec](prompt-spec.md): machine-readable input-card block defining deterministic prompt generation surfaces and reviewer alignment.
 - [Prompt Spec Protocol Bindings](prompt-spec.md#protocol-bindings): linkage to `card_review_checklist.v1` and `card_review_output.v1` reviewer contracts.
+- Prompt Spec execution tooling:
+  - `swarm/tools/lint_prompt_spec.sh` (Prompt Spec lint/validation)
+  - `swarm/tools/card_prompt.sh` (deterministic prompt generation from cards)
