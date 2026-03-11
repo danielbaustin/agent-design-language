@@ -50,3 +50,37 @@ Each required demo row should provide:
 - Adding new milestone features solely to satisfy demos.
 - Reclassifying deferred v0.9+ autonomy work into v0.8.
 - Replacing issue-level acceptance criteria with this matrix.
+
+## Implemented Bounded Demo Commands
+
+The following demos are implemented as real `adl demo` runtime surfaces with deterministic artifact output.
+
+All commands below are repository-local and require no network:
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-d-godel-obsmem-loop --run --trace --out ./out
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-e-multi-agent-card-pipeline --run --trace --out ./out
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-f-obsmem-retrieval --run --trace --out ./out
+```
+
+### Demo Mapping
+
+- D8-02 (Gödel workflow integration): `demo-d-godel-obsmem-loop`
+  - Exercises bounded stage loop, experiment record persistence, and ObsMem index persistence.
+  - Emits:
+    - `out/demo-d-godel-obsmem-loop/godel_obsmem_demo_summary.json`
+    - `out/demo-d-godel-obsmem-loop/runs/demo-d-run-001/godel/experiment_record.runtime.v1.json`
+    - `out/demo-d-godel-obsmem-loop/runs/demo-d-run-001/godel/obsmem_index_entry.runtime.v1.json`
+- D8-05 (Authoring/reviewer compatibility): `demo-e-multi-agent-card-pipeline`
+  - Exercises deterministic multi-agent card pipeline artifact flow.
+  - Emits:
+    - `out/demo-e-multi-agent-card-pipeline/pipeline/input_card.md`
+    - `out/demo-e-multi-agent-card-pipeline/pipeline/pipeline_manifest.json`
+- D8-03 (ObsMem indexing integration): `demo-f-obsmem-retrieval`
+  - Exercises deterministic retrieval over persisted runtime index entries.
+  - Emits:
+    - `out/demo-f-obsmem-retrieval/obsmem_retrieval_result.json`
+    - `out/demo-f-obsmem-retrieval/runs/demo-f-run-a/godel/obsmem_index_entry.runtime.v1.json`
+    - `out/demo-f-obsmem-retrieval/runs/demo-f-run-b/godel/obsmem_index_entry.runtime.v1.json`
+
+See `docs/demos/v0.8-bounded-critical-demos.md` for a compact runbook.
