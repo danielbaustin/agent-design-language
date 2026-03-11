@@ -24,7 +24,7 @@ The demo demonstrates how ADL can:
 - retry bounded repair strategies when verification fails
 - emit deterministic artifacts and evidence for audit and replay
 
-This showcases ADL’s **Adaptive Execution Engine** and **replayable execution substrate**.
+This showcases ADL’s **bounded AEE runtime hooks** and **replayable execution substrate**.
 
 ---
 
@@ -223,7 +223,7 @@ Example strategies:
 
 Every attempt is recorded in the trace.
 
-This demonstrates the **Sticktoitiveness / Adaptive Execution Engine**.
+This demonstrates bounded Sticktoitiveness behavior in v0.8 (retry/on_error runtime hooks), not a full autonomous AEE strategy engine.
 
 ---
 
@@ -313,7 +313,7 @@ Capabilities demonstrated:
 - traceable artifact production
 - replayable execution
 
-This positions ADL as a framework for **safe autonomous software operations**, not merely prompt-driven code generation.
+This positions ADL as a framework for deterministic, policy-bounded software operations in v0.8, with broader autonomy deferred to later milestones.
 
 ---
 
