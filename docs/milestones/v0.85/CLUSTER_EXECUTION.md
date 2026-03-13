@@ -1,4 +1,4 @@
-# Distributed / Cluster Execution (v0.8 Planning)
+# Distributed / Cluster Execution — v0.85
 
 **Status:** Draft (planning)
 
@@ -6,125 +6,157 @@ This document describes how ADL evolves from a single-machine deterministic runt
 
 > **Determinism is non-negotiable.**
 
-Distributed execution is a v0.8 concern because:
+For v0.85, cluster execution is part of the broader **execution-substrate strengthening** work.
+It sits alongside:
 
-- Replay + auto-retry imply durable execution state.
-- Remote tools/providers imply a trust boundary.
-- Real workloads require concurrency beyond one host.
-- ObsMem and Gödel become dramatically more valuable when runs are executed at scale.
+- dependable execution
+- checkpoint / resume semantics
+- replay and provenance
+- bounded retry / adaptive execution work
+- future trust-policy enforcement across execution boundaries
 
-Related backlog: **#339 [Distributed cluster execution]**.
+Related backlog: **#339 Distributed cluster execution**.
 
 ---
 
-## 1. Goals and non-goals
+## 1. Purpose and milestone framing
+
+Cluster execution matters because ADL is not just a local workflow runner.
+The platform is intended to support:
+
+- deterministic execution at larger scale
+- durable runs with restart / retry behavior
+- trusted remote or isolated executors
+- future Gödel / ObsMem / AEE workloads that benefit from concurrent execution
+
+However, v0.85 is still a **bounded maturity milestone**.
+So this document does **not** commit ADL to a full distributed platform in the current release.
+Instead, it defines the architecture direction, the determinism constraints, and the minimum substrate shape needed so later implementation work does not drift.
+
+---
+
+## 2. Goals and non-goals
 
 ### Goals
 
 1. **Distributed execution without weakening determinism**
-   - Multiple workers may execute steps, but the outcome must be replayable.
-2. **Stable scheduling contract**
-   - Execution order may be parallel where allowed, but decisions must be reproducible from artifacts.
-3. **Secure remote workers**
-   - Signed workers, signed bundles, and explicit trust policies.
-4. **Operational simplicity**
-   - Start with a “good enough” cluster mode (LAN / single region) before multi-region.
+   - Multiple workers may execute steps, but the outcome must still be replayable from artifacts.
 
-### Non-goals (v0.8)
+2. **Stable scheduling contract**
+   - Execution may be parallel where the DAG allows it, but scheduling decisions must remain reproducible.
+
+3. **Explicit trust boundaries**
+   - Remote or isolated workers must be treated as trust-boundary crossings, not just background threads.
+
+4. **Operationally realistic rollout**
+   - Start with a small, inspectable execution model before attempting multi-host scale-out.
+
+5. **Compatibility with dependable execution**
+   - Cluster execution must align with checkpointing, retries, replay bundles, and provenance surfaces.
+
+### Non-goals (v0.85)
 
 - A full serverless platform replacement.
 - Multi-tenant isolation comparable to major cloud providers.
-- Exactly-once execution of external side effects (we instead capture tool boundaries and replay deterministically).
+- Exactly-once guarantees for arbitrary external side effects.
+- A fully production-hardened multi-region control plane.
 
 ---
 
-## 2. Determinism constraints in a distributed system
+## 3. Determinism constraints in a distributed system
 
-Distributed systems introduce nondeterminism via:
+Distributed systems introduce nondeterminism through:
 
 - race conditions (which worker picks up which step)
-- time (timeouts, clock skew)
-- retries (duplicate work)
+- time (timeouts, clock skew, lease expiry)
+- retries (duplicate or overlapping work)
 - non-idempotent side effects
+- network failures and partial commits
 
-ADL’s strategy:
+ADL’s strategy is:
 
 1. **The activation log is the source of truth.**
 2. **All tool boundaries are captured or replay-gated.**
-3. **Scheduling decisions are recorded as artifacts.**
+3. **Scheduling decisions that affect execution are recorded as artifacts.**
 4. **Tie-breaking is deterministic.**
+5. **Workers are execution agents, not scheduling authorities.**
 
 In other words:
 
-> We don’t try to make the world deterministic.
-> We make ADL’s *interpretation of the world* deterministic.
+> We do not try to make the world deterministic.
+> We make ADL’s **interpretation of the world** deterministic.
 
 ---
 
-## 3. Execution model
+## 4. Execution model
 
-### 3.1 Core primitives
+### 4.1 Core primitives
 
-- **Plan**: canonical workflow graph (stable ordering, stable step ids).
+- **Plan**: canonical workflow graph with stable ordering and stable step ids.
 - **Activation**: immutable record of a step attempt.
 - **Lease**: a time-bounded claim by a worker to execute a specific activation.
 - **Work item**: `(run_id, step_id, attempt)` plus required inputs and policy.
-- **Artifact store**: durable store for captured boundary events + outputs.
+- **Artifact bundle**: durable captured record of execution inputs, outputs, logs, and tool-boundary events.
+- **Artifact store**: durable store for activation bundles and derived trace assets.
 
-### 3.2 Central rule
+### 4.2 Central rule
 
-> A step may run on any worker, but it must produce the same activation artifact bundle given the same inputs and captured tool events.
+> A step may run on any worker, but given the same inputs and captured boundary events it must produce the same activation artifact bundle.
+
+That rule is more important than wall-clock ordering.
+
+### 4.3 Coordinator authority
+
+The coordinator is the only component allowed to:
+
+- decide which steps are ready
+- issue leases
+- create new attempts
+- accept or reject commits for an activation
+
+Workers do **not** autonomously change the global schedule.
 
 ---
 
-## 4. Minimal cluster architecture (v0.8)
+## 5. Minimal cluster architecture for v0.85 planning
 
-This is intentionally conservative.
+This document remains intentionally conservative.
 
-For v0.8, “distributed” explicitly means multi-process on a single host.
+The near-term architecture should assume a **small, inspectable coordinator/worker system** whose protocol can later support multi-host execution, even if current implementation remains bounded.
 
-The coordinator/worker protocol must be transport-agnostic so that it can later
-run over a network, but the only supported transport in v0.8 is:
-
-- **Unix domain sockets (stream)**
-
-This provides a real process boundary, real serialization, and realistic
-failure modes (disconnects, partial writes, restarts) without introducing
-multi-host complexity.
-
-### 4.1 Components
+### 5.1 Components
 
 1. **Coordinator** (control plane)
    - Creates runs
    - Maintains the activation log
-   - Computes ready steps from DAG
+   - Computes ready steps from the canonical DAG
    - Issues leases
+   - Applies deterministic tie-break rules
 
 2. **Work queue**
-   - A durable queue of ready work items
-   - Can be implemented with:
-     - SQLite (single-node),
-     - Postgres (small cluster),
-     - or a queue service later.
+   - Durable queue of ready work items
+   - Candidate backends:
+     - SQLite for bounded local / single-node control-plane work
+     - Postgres for later small-cluster evolution
 
 3. **Workers** (data plane)
    - Poll for work
-   - Claim a lease
-   - Execute step in a sandbox
-   - Emit activation bundle
-   - Acknowledge completion
+   - Claim leases
+   - Execute steps in the sandbox contract
+   - Emit activation bundles
+   - Acknowledge completion or failure
 
 4. **Artifact store**
    - Stores:
-     - activation inputs/outputs
+     - activation inputs / outputs
      - tool boundary event captures
      - logs
-     - derived metrics
-   - v0.8 can start with local filesystem paths or S3-compatible storage.
+     - signatures / provenance markers
+     - derived metrics and replay artifacts
 
-### 4.2 Message flow (conceptual)
+### 5.2 Message flow (conceptual)
 
-```
+```text
 Author / CLI
    │
    ▼
@@ -142,18 +174,24 @@ Workers (N)
    └─ write activation bundle + ack
 ```
 
-### 4.3 Protocol v1 (local, Unix domain sockets)
+---
 
-v0.8 defines a minimal, versioned protocol over Unix domain sockets.
+## 6. Protocol direction
 
-Transport characteristics:
+v0.85 does not require a final production network protocol, but it **does** require that the protocol shape be explicit and versioned.
 
-- Stream sockets (Unix domain)
-- Length-prefixed frames (u32 or u64)
-- Canonical serialization (JSON or CBOR, canonical form required)
-- Explicit protocol version field in every top-level message
+### 6.1 Protocol requirements
 
-Core message types (minimum viable set):
+- Versioned top-level messages
+- Canonical serialization
+- Stable activation identity via `(run_id, step_id, attempt)`
+- Explicit lease and lease-deadline semantics
+- Signed or attributable worker identity
+- Explicit result / failure reporting
+
+### 6.2 Minimum message set
+
+Representative message types:
 
 - `RegisterWorker { worker_id, public_key, capabilities }`
 - `PollWork { worker_id, max_items }`
@@ -162,188 +200,236 @@ Core message types (minimum viable set):
 - `ReportFailure { lease_id, classification, error_ref, logs_ref }`
 - `Heartbeat { worker_id, lease_ids[] }`
 
-Determinism requirements:
+### 6.3 Canonical serialization
 
-- `(run_id, step_id, attempt)` is the immutable activation key.
-- The coordinator is the only authority that creates new attempts.
-- All scheduling decisions that affect execution (e.g., lease issuance)
-  must be derivable from artifacts in the activation log.
-- Payload serialization must be canonical to ensure stable hashing.
+Payload serialization must be canonical so that:
+
+- hashing is stable
+- signatures are stable
+- replay artifacts are reviewable
+
+JSON in canonical form or CBOR in canonical form are both plausible.
+The key point is not the format name but the **stability guarantee**.
 
 ---
 
-## 5. Scheduling semantics
+## 7. Scheduling semantics
 
-### 5.1 Deterministic readiness
+### 7.1 Deterministic readiness
 
 Given:
 
-- canonical plan
+- the canonical plan
 - activation log state
 
 The set of ready steps must be computable deterministically.
 
-### 5.2 Parallelism is allowed, ordering is recorded
+### 7.2 Parallelism is allowed; authority is not distributed
 
-Where multiple steps are ready simultaneously, any worker may take them.
+Where multiple steps are ready simultaneously, any worker may execute them **after coordinator lease issuance**.
 
 Determinism is preserved by recording:
 
-- lease issuance order (or a deterministic tie-break key)
+- lease issuance order or deterministic lease keys
 - activation completion records
+- duplicate / rejected commit events where applicable
 
-Replay does not need to reproduce wall-clock ordering; it needs to reproduce:
+Replay does **not** need to reproduce wall-clock timing.
+It needs to reproduce:
 
 - the set of activations
-- the captured tool boundary events
+- the recorded boundary events
+- the resulting artifact bundles
 
-### 5.3 Tie-breakers
+### 7.3 Tie-breakers
 
-When the coordinator has to choose among multiple ready steps for lease issuance, tie-break by:
+When the coordinator must choose among multiple ready steps, tie-break by canonical ordering over:
 
-`(run_id, step_id, attempt)` in canonical ordering.
+`(run_id, step_id, attempt)`
 
-Workers do not choose the schedule; they only claim ready items.
+Additional priority fields are allowed only if they are:
+
+- explicit
+- artifact-derived
+- deterministic
 
 ---
 
-## 6. Retry semantics in a cluster
+## 8. Retry semantics in a cluster
 
-Retries are easy to get wrong in distributed systems.
+Retries are especially easy to get wrong in distributed systems.
 
 Rules:
 
 1. **Only the coordinator creates new attempts.**
 2. **Workers never autonomously retry; they report failure.**
-3. **Lease expiry may create duplicate work; duplicates are resolved by activation log rules.**
+3. **Lease expiry may create overlapping work, but overlap resolution is activation-log governed.**
+4. **Retry policy must remain bounded and inspectable.**
 
 Duplicate execution handling:
 
 - If two workers execute the same `(run_id, step_id, attempt)` due to lease races:
-  - the first commit wins
-  - later commits are rejected and recorded as duplicates
+  - the first valid commit wins
+  - later commits are rejected
+  - the duplicate event is recorded as an artifact
 
-This must be explicit in artifacts so debugging remains deterministic.
-
----
-
-## 7. Trust and signing model
-
-Distributed execution expands the attack surface.
-
-v0.8 requirements:
-
-- Workers have a **runtime identity** (keypair / signing id)
-- Activation bundles are signed by the worker
-- Coordinator verifies signatures before accepting results
-- Policy can restrict which workers may execute which steps
-
-This links directly to the v0.7/v0.8 security envelope work:
-
-- “trusted executor” as a first-class policy dimension
+This is necessary for deterministic debugging and for future AEE / policy learning.
 
 ---
 
-## 8. Sandboxing and remote IO
+## 9. Trust and signing model
 
-Workers must run steps under the same sandbox contract regardless of host:
+Cluster execution expands the trust surface.
 
-- filesystem sandbox (restricted root)
+Minimum requirements for the architecture direction:
+
+- Workers have runtime identity (keypair or equivalent signing identity)
+- Activation bundles are signed or otherwise strongly attributable
+- The coordinator verifies result provenance before accepting commits
+- Policy may restrict which workers may execute which steps
+
+This links directly to ADL’s broader **dependable execution** and **verifiable inference** themes:
+
+- trusted executor as policy dimension
+- attributable execution evidence
+- reviewable provenance at the execution boundary
+
+---
+
+## 10. Sandboxing and remote I/O
+
+Workers must run steps under the same sandbox contract regardless of host.
+
+Relevant controls include:
+
+- filesystem sandbox / restricted root
 - network policy
-- tool allow/deny
-- secret redaction
+- tool allow / deny policy
+- secret redaction rules
+- normalized environment variables where required
 
 To preserve determinism:
 
-- environment variables are normalized
-- timestamps and random seeds are controlled
-- external IO occurs only through tool boundary capture
+- timestamps and random seeds must be controlled where relevant
+- external I/O must cross explicit tool-boundary capture points
+- hidden host-local state must not influence replayable outcomes
 
 ---
 
-## 9. Relationship to "serverless" engines
+## 11. Relationship to dependable execution and verifiable inference
 
-We should resist the temptation to rebuild OpenWhisk/KNative wholesale.
+Cluster execution is not an isolated feature.
+It is part of the trust story for ADL.
 
-ADL’s differentiation is not “run functions at scale.” It is:
+### 11.1 Dependable execution
+
+Cluster mode must still support:
+
+- replayable execution history
+- resumability
+- bounded retry behavior
+- explicit failure semantics
+
+### 11.2 Verifiable inference
+
+If reasoning work or model-driven steps run on distributed workers, the resulting artifacts must still support:
+
+- provenance
+- attributable execution origin
+- reviewable evidence bundles
+- replay / inspection of reasoning-adjacent outputs where applicable
+
+This matters even more once Gödel / AEE / reasoning-graph work begins using richer execution traces.
+
+---
+
+## 12. Relationship to existing substrates
+
+ADL should resist the temptation to rebuild a general-purpose serverless platform from scratch.
+
+ADL’s differentiation is not just “run functions at scale.”
+It is:
 
 - deterministic execution
 - replay
 - provenance
-- controlled learning loops
+- controlled adaptive loops
 
-That said, we can integrate with existing substrates later.
+Candidate future substrates:
 
-### 9.1 Candidate substrates
+- Kubernetes + Jobs
+- Nomad
+- a bounded custom coordinator / worker model
 
-- **Kubernetes + Jobs** (simple, explicit, operationally common)
-- **KNative** (serverless semantics; may fight determinism by emphasizing elasticity + eventing)
-- **Nomad** (simpler than k8s, good for batch)
-- **OpenWhisk** (feature-rich; heavy; rewrite is a multi-year effort)
+The recommended direction is:
 
-v0.8 approach:
-
-> Build a minimal coordinator + worker model that can *optionally* target k8s as an execution backend.
+> Define ADL’s coordinator / worker contract first, then optionally target another substrate later.
 
 ---
 
-## 10. Milestone slicing
+## 13. Milestone slicing
 
-This feature is big. Recommended split:
+### v0.85 (this milestone)
 
-### v0.75 (foundation)
+- Architecture direction documented
+- Determinism constraints made explicit
+- Coordinator / worker / lease model clarified
+- Trust-boundary and provenance requirements identified
+- Relationship to dependable execution, retries, and replay clarified
 
-- Activation log + replay schema frozen
-- Worker identity + signature verification (minimum)
-- Artifact store abstraction
+### v0.9+
 
-### v0.8 (cluster MVP)
+- Bounded cluster MVP implementation
+- Multi-process / multi-worker execution path
+- Queue / coordinator backend hardening
+- Worker registration and signing flows
+- Optional multi-host evolution once artifact and replay semantics are stable
 
-- Coordinator + worker protocol (transport-agnostic by design)
-- Lease + queue semantics
-- Local “mini-cluster” mode (single host, multi-process only):
-  - one coordinator process
-  - N worker processes (same machine)
-- Explicit non-goal for v0.8:
-  - no LAN / multi-host workers yet
-
-### v0.85 / v0.9 (scale)
-
-- LAN / multi-host worker support
-- k8s backend
-- multi-host discovery
-- multi-tenant hardening
+This keeps v0.85 focused on **design clarity and interface stability**, not premature scale claims.
 
 ---
 
-## 11. Acceptance tests (must-haves)
+## 14. Acceptance tests (must-haves for future implementation)
 
-1. **Deterministic replay across hosts**
-   - Run in cluster mode
-   - Replay on a single host
-   - Artifacts match
+1. **Deterministic replay across execution modes**
+   - Run in distributed / clustered mode
+   - Replay in a bounded local mode
+   - Artifact bundles match or differ only in explicitly allowed metadata
 
 2. **Lease race safety**
-   - Intentionally force lease expiries
-   - Verify duplicates are recorded and ignored deterministically
+   - Force lease expiry and overlapping claims
+   - Verify duplicate commits are recorded and rejected deterministically
 
 3. **Trust policy gating**
-   - Disallow an untrusted worker from running a step
+   - Disallow an untrusted worker from executing a protected step
 
-4. **ObsMem ingestion**
+4. **Checkpoint / resume compatibility**
+   - Interrupt coordinator or worker process
+   - Resume without corrupting activation history
+
+5. **ObsMem ingestion**
    - Cluster-produced trace bundle is ingestible and queryable
 
 ---
 
-## 12. Open questions
+## 15. Open questions
 
-- What is the v0.8 default backend for the coordinator log/queue?
-  - SQLite (single host) vs Postgres (small cluster)
-- What is the artifact store default?
-  - filesystem vs S3-compatible
-- When (if ever) do we move from Unix domain sockets (Protocol v1) to
-  a networked transport (e.g., gRPC over TCP) for multi-host support?
+- What is the default bounded backend for the coordinator log / queue?
+  - SQLite first, or Postgres-first for small-cluster realism?
+- What is the default artifact store?
+  - local filesystem vs S3-compatible storage
+- What is the first implementation boundary?
+  - single-host multi-process only, or immediately protocol-ready for multi-host evolution?
+- Which signing / identity mechanism best fits the existing security envelope work?
 
 ---
 
-**End of Distributed / Cluster Execution (v0.8 Planning)**
+## Summary
+
+Distributed / cluster execution is necessary for ADL’s long-term direction, but it must be approached conservatively.
+
+The central rule remains:
+
+> A step may execute anywhere, but ADL must still be able to explain, replay, and verify what happened.
+
+For v0.85, the right outcome is a clear architecture and stable execution contract, not inflated claims of scale.
