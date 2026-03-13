@@ -8,12 +8,48 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 
 - Milestone state: active development (not released).
 - Runtime base release: v0.7.0.
-- v0.8 currently includes both implemented artifacts and planning/spec surfaces; see `RECOVERY_AUDIT_V0.8.md` for repository-truth status.
+- Current repository state includes both bounded implemented runtime/demo surfaces and schema/spec/planning surfaces.
+- The v0.8 packet is not yet ready for third-party handoff; see `INTERNAL_READINESS_REVIEW_V0.8.md` and `RECOVERY_AUDIT_V0.8.md` for current blockers.
 
-## Baseline Freeze Status
+## External Review Quick Start
 
-The v0.8 milestone documentation baseline is frozen for implementation work.
-Subsequent milestone implementation issues should treat this directory as the canonical reference.
+If you are reviewing v0.8 for the first time, start with this split:
+
+### Runnable demos
+
+Run these commands from repository root:
+
+```bash
+cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-c-godel-runtime --run --out ./out
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-d-godel-obsmem-loop --run --trace --out ./out
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-e-multi-agent-card-pipeline --run --trace --out ./out
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-f-obsmem-retrieval --run --trace --out ./out
+```
+
+Review these docs while inspecting runnable output:
+- [DEMOS_V0.8.md](DEMOS_V0.8.md)
+- [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
+- [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
+- [../demos/v0.8-bounded-critical-demos.md](../demos/v0.8-bounded-critical-demos.md)
+
+### Inspect-only review surfaces
+
+These are review surfaces to read or inspect, not commands to run:
+- [CANONICAL_EVIDENCE_VIEW_V1.md](CANONICAL_EVIDENCE_VIEW_V1.md)
+- [MUTATION_FORMAT_V1.md](MUTATION_FORMAT_V1.md)
+- [EVALUATION_PLAN_V1.md](EVALUATION_PLAN_V1.md)
+- [EXPERIMENT_RECORD_V1.md](EXPERIMENT_RECORD_V1.md)
+- [OBSMEM_INDEXING_SURFACES_V1.md](OBSMEM_INDEXING_SURFACES_V1.md)
+- [GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md](GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md)
+- [../../tooling/README.md](../../tooling/README.md)
+
+## Packet Status Note
+
+The v0.8 review packet is materially better aligned than the earlier recovery state, but it still has real reviewer-facing blockers:
+- version/release-status language is not fully reconciled across all reader-facing docs,
+- the final `THIRD_PARTY_REVIEW_V0.8.md` handoff artifact is still absent,
+- some milestone docs remain planning/reference surfaces rather than implemented runtime behavior.
 
 ## Reading Order
 
@@ -27,6 +63,14 @@ Subsequent milestone implementation issues should treat this directory as the ca
 8. [Decisions Log](DECISIONS_V0.8.md)
 9. [Release Plan](RELEASE_PLAN_V0.8.md)
 10. [Release Notes](RELEASE_NOTES_V0.8.md)
+
+## Review-Tail Packet
+
+Use these docs together when checking current v0.8 truth:
+- [RECOVERY_AUDIT_V0.8.md](RECOVERY_AUDIT_V0.8.md)
+- [INTERNAL_READINESS_REVIEW_V0.8.md](INTERNAL_READINESS_REVIEW_V0.8.md)
+- [DOCS_CONVERGENCE_V0.8.md](DOCS_CONVERGENCE_V0.8.md)
+- [DEMOS_V0.8.md](DEMOS_V0.8.md)
 
 ## Vision / Overview
 
@@ -106,16 +150,8 @@ Subsequent milestone implementation issues should treat this directory as the ca
 - v0.8: EPIC-C + EPIC-D (Godel + Authoring)
 - v0.85+: cluster / distributed execution
 
-## Gödel loop diagram
-
-- [GODEL_LOOP_DIAGRAM.md](GODEL_LOOP_DIAGRAM.md)
-
 ## Related Milestones
 
 - [v0.75 milestone docs](../v0.75/)
 - [v0.85 milestone docs](../v0.85/)
-- [GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md](GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md)
-- [godel_experiment_workflow.template.v1.json](godel_experiment_workflow.template.v1.json)
-- [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
-- [STICKTOITTIVENESS.md](STICKTOITTIVENESS.md)
 - [incubation/](incubation/)

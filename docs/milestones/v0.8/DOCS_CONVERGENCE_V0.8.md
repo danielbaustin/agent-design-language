@@ -1,104 +1,74 @@
 # v0.8 Documentation Pass and Review Convergence
 
-This document records the v0.8 docs-convergence pass performed before third-party review.
+This document records the current v0.8 docs-convergence state for the review tail.
 
-It is a documentation handoff artifact for `#707` and does not add runtime scope.
+It is a review-packet status artifact for `#707` and does not add runtime scope.
 
 ## Convergence Outcome
 
-Status: **Converged for review handoff**
+Status: **Partially converged; not yet ready for third-party handoff**
 
 Primary result:
-
-- milestone navigation and core planning surfaces are aligned,
-- schema/workflow/indexing docs are cross-referenced through canonical v0.8 docs,
-- remaining non-blocking gaps are explicitly listed as deferred follow-ups.
+- milestone navigation and core planning surfaces exist and are cross-linked,
+- bounded runtime/demo work is now represented in the packet,
+- recovery-tail docs have been refreshed toward current repository truth,
+- reviewer-facing blockers still remain and must be resolved before external handoff.
 
 ## Surfaces Reviewed
 
-| Surface | Convergence status | Notes |
+| Surface | Current status | Notes |
 |---|---|---|
-| README/navigation index | converged | links and canonical milestones verified |
-| execution/dependency docs | converged | execution order and boundaries aligned |
-| Gödel loop docs/templates | converged | stage ordering and schema references aligned |
-| authoring/reviewer planning docs | converged | sequencing and template-location docs present |
-| bounded AEE + quality gate docs | converged | bounded scope and gate phases explicit in planning docs |
-| demo/review/release-prep docs | converged | demo/release/review surfaces present and cross-linked |
+| README/navigation index | refreshed | navigation is canonical; review packet needs explicit runnable-vs-inspect guidance |
+| recovery audit | refreshed | now reflects bounded implemented runtime/demo surfaces |
+| internal readiness review | refreshed | still useful, but remains a blocker-oriented internal gate |
+| execution/dependency docs | present | useful as planning/reference surfaces |
+| Gödel loop docs/templates | present | schema/template spine exists and is cross-referenced |
+| authoring/reviewer planning docs | present | contract surfaces exist; not all are runtime-implemented |
+| demo/review/release-tail docs | partially converged | runnable-vs-inspect boundary and version truth still need explicit reviewer clarity |
 
-## Per-Document Consistency Audit
+## Current Convergence Truth
 
-All markdown docs under `docs/milestones/v0.8/` and `docs/milestones/v0.8/incubation/` were reviewed for:
-
-- internal link/path validity,
-- milestone-slicing consistency (`v0.75`, `v0.8`, `v0.85+`),
-- canonical-source consistency (no stale pre-canonical planning-path references),
-- path hygiene (no absolute host paths).
-
-Reviewed files:
-
-- `docs/milestones/v0.8/ADAPTIVE_EXECUTION_ENGINE.md`
-- `docs/milestones/v0.8/ARCHITECTURE_V0.8.md`
-- `docs/milestones/v0.8/CANONICAL_EVIDENCE_VIEW_V1.md`
-- `docs/milestones/v0.8/DECISIONS_V0.8.md`
-- `docs/milestones/v0.8/DESIGN_V0.8.md`
-- `docs/milestones/v0.8/DOCS_CONVERGENCE_V0.8.md`
-- `docs/milestones/v0.8/EPIC_AUTHORING_SURFACES_v1.md`
-- `docs/milestones/v0.8/EPIC_MAPPING_v0.8.md`
-- `docs/milestones/v0.8/EVALUATION_PLAN_V1.md`
-- `docs/milestones/v0.8/EXECUTION_ORDER_V0.8.md`
-- `docs/milestones/v0.8/EXPERIMENT_RECORD_V1.md`
-- `docs/milestones/v0.8/GODEL_AGENT_NOTES.md`
-- `docs/milestones/v0.8/GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md`
-- `docs/milestones/v0.8/GODEL_LOOP_DIAGRAM.md`
-- `docs/milestones/v0.8/GODEL_LOOP_INTEGRATION_V0.8.md`
-- `docs/milestones/v0.8/GODEL_SCIENTIFIC_METHOD.md`
-- `docs/milestones/v0.8/LAYER_8_PROVIDER.md`
-- `docs/milestones/v0.8/MEMORY_MODEL_FOR_AI.md`
-- `docs/milestones/v0.8/MILESTONE_CHECKLIST_V0.8.md`
-- `docs/milestones/v0.8/MUTATION_FORMAT_V1.md`
-- `docs/milestones/v0.8/OBSMEM_INDEXING_SURFACES_V1.md`
+### Converged enough to keep as canonical
 - `docs/milestones/v0.8/README.md`
-- `docs/milestones/v0.8/RELEASE_NOTES_V0.8.md`
-- `docs/milestones/v0.8/RELEASE_PLAN_V0.8.md`
-- `docs/milestones/v0.8/RUST_TRANSPILER_DEMO.md`
-- `docs/milestones/v0.8/SPRINT_V0.8.md`
-- `docs/milestones/v0.8/STICKTOITTIVENESS.md`
-- `docs/milestones/v0.8/TOOL_RESULT_CONTRACT_V1.md`
-- `docs/milestones/v0.8/VISION_0.80.md`
-- `docs/milestones/v0.8/WBS_V0.8.md`
-- `docs/milestones/v0.8/incubation/GODEL_AGENT.md`
-- `docs/milestones/v0.8/incubation/OBSMEM_BAYES.md`
-- `docs/milestones/v0.8/incubation/STICKTOITTIVENESS.md`
+- `docs/milestones/v0.8/EXECUTION_ORDER_V0.8.md`
+- `docs/milestones/v0.8/GODEL_SCHEMA_DELIVERY_ORDER_V0.8.md`
+- `docs/milestones/v0.8/BOUNDED_AEE_V1_SCOPE_V0.8.md`
+- schema/spec docs under `docs/milestones/v0.8/`
 
-## Resolved in Convergence Pass
+### Refreshed in this review-tail cycle
+- `docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md`
+- `docs/milestones/v0.8/DOCS_CONVERGENCE_V0.8.md`
+- `docs/milestones/v0.8/INTERNAL_READINESS_REVIEW_V0.8.md`
+- `docs/milestones/v0.8/DEMOS_V0.8.md`
 
-1. Ensured canonical v0.8 navigation references core docs consistently.
-2. Verified cross-doc references used for review/release planning are present.
-3. Confirmed no absolute host-path leakage and no stale pre-canonical planning-path references in audited docs.
-4. Corrected handoff references that pointed to non-existent docs to use existing canonical milestone surfaces.
+### Not yet converged for external handoff
+- version/release-status messaging across reviewer-facing surfaces
+- final third-party review artifact packaging
+- final review packet simplification for an external reader with no prior context
 
-## Deferred / Follow-up Candidates
+## Remaining Reviewer-Facing Blockers
 
-The following remain implementation/review-tail concerns rather than docs-structure blockers:
+1. **Version story is still mixed**
+   - `swarm/Cargo.toml` declares `0.8.0`.
+   - `swarm/README.md` still describes the runtime as `v0.7.0`.
 
-1. Runtime/demo execution verification status for each required matrix row.
-2. Third-party findings triage resolution after `#707`.
-3. Release ceremony finalization after review-tail completion.
+2. **Third-party handoff packet is incomplete**
+   - `docs/milestones/v0.8/THIRD_PARTY_REVIEW_V0.8.md` is still absent.
 
-## Handoff to Third-Party Review (`#707`)
+3. **Review packet still requires a clean external entry flow**
+   - Runnable demos versus inspect-only surfaces must remain explicit anywhere the review packet is handed to a third party.
 
-Reviewers should treat this docs baseline as canonical and use:
+## Handoff Guidance
 
-- `README.md` (navigation)
-- `EXECUTION_ORDER_V0.8.md` (ordering/dependencies)
-- `RUST_TRANSPILER_DEMO.md` (flagship demo contract)
-- `WBS_V0.8.md` + `SPRINT_V0.8.md` (WP coverage and sequencing)
-- `MILESTONE_CHECKLIST_V0.8.md` + `RELEASE_PLAN_V0.8.md` (quality/release gating criteria)
+Do not treat this doc as evidence that v0.8 is fully converged for review.
 
-for milestone-level validation.
+Instead, use it as a status checkpoint:
+- docs packet is materially closer to repository truth,
+- bounded runtime/demo work is now acknowledged,
+- external handoff should wait until the remaining reviewer-facing blockers are resolved.
 
 ## Out of Scope
 
-- implementing review findings,
-- adding new v0.8 features,
-- redefining already accepted schema contracts.
+- implementing new runtime features,
+- adding v0.85 work,
+- declaring review readiness before the remaining blockers are removed.
