@@ -21,22 +21,22 @@ Observed directly from:
 - `docs/milestones/v0.8/RUST_TRANSPILER_DEMO.md`
 - `docs/milestones/v0.8/RUST_TRANSPILER_VERIFICATION_V0.8.md`
 - `README.md`
-- `swarm/README.md`
-- `swarm/Cargo.toml`
-- `swarm/src/demo.rs`
-- `swarm/src/cli/usage.rs`
-- `swarm/src/godel_runtime.rs`
-- `swarm/src/godel/stage_loop.rs`
-- `swarm/src/godel/experiment_record.rs`
-- `swarm/tools/card_prompt.sh`
-- `swarm/tools/lint_prompt_spec.sh`
+- runtime crate `Cargo.toml`
+- runtime crate `README.md`
+- runtime demo module
+- runtime CLI usage module
+- Gödel runtime status module
+- Gödel stage-loop module
+- Gödel experiment-record module
+- card prompt generation script
+- prompt-spec lint script
 
 Validated by:
 
-- `cd swarm && cargo test --workspace`
+- from the runtime crate directory: `cargo test --workspace`
 - `cd tools/transpiler_demo && cargo run --quiet`
-- `rg -n '\{\{[^}]+\}\}' docs/milestones/v0.8 docs/tooling README.md swarm/README.md`
-- `rg -n '\.adl/docs/v08planning|/Users/|/home/' docs/milestones/v0.8 docs/tooling README.md swarm/README.md`
+- `rg -n '\{\{[^}]+\}\}' docs/milestones/v0.8 docs/tooling README.md */README.md`
+- `rg -n '\.adl/docs/v08planning|/Users/|/home/' docs/milestones/v0.8 docs/tooling README.md */README.md`
 
 ## Blockers For External Review
 
@@ -44,9 +44,9 @@ Validated by:
 
 Observed facts:
 
-- `swarm/Cargo.toml` declares `version = "0.8.0"`.
+- The runtime crate manifest declares `version = "0.8.0"`.
 - `README.md` says latest released milestone is `v0.7.0`.
-- `swarm/README.md` says current runtime release is `v0.7.0`.
+- The runtime crate README says current runtime release is `v0.7.0`.
 
 Inferred conclusion:
 
@@ -78,7 +78,7 @@ Observed facts:
 
 - `docs/milestones/v0.8/DEMOS_V0.8.md` calls several required rows "demos" even when they are really doc/spec verification surfaces (`D8-01`, `D8-02`, `D8-03`, `D8-05`).
 - Only the transpiler row (`D8-04`) presents a clearly runnable command.
-- `swarm/src/demo.rs` exposes a real `demo-c-godel-runtime`, but that path is not surfaced as a canonical required demo in `DEMOS_V0.8.md`.
+- The runtime demo module exposes a real `demo-c-godel-runtime`, but that path is not surfaced as a canonical required demo in `DEMOS_V0.8.md`.
 
 Inferred conclusion:
 
@@ -94,7 +94,7 @@ Recommended action:
 
 Observed facts:
 
-- `swarm/src/demo.rs` contains three unrelated demo families, inline artifact templates, file-writing logic, and test helpers.
+- The runtime demo module contains three unrelated demo families, inline artifact templates, file-writing logic, and test helpers.
 
 Inferred conclusion:
 
@@ -108,8 +108,8 @@ Recommended action:
 
 Observed facts:
 
-- `swarm/src/godel_runtime.rs` loads milestone JSON artifacts from `docs/milestones/v0.8/` and validates stage order / cross-links.
-- Actual bounded runtime behavior lives under `swarm/src/godel/`.
+- The Gödel runtime status module loads milestone JSON artifacts from `docs/milestones/v0.8/` and validates stage order / cross-links.
+- Actual bounded runtime behavior lives under the dedicated runtime Gödel modules.
 
 Inferred conclusion:
 
@@ -125,7 +125,7 @@ Recommended action:
 
 Observed facts:
 
-- `swarm/src/cli/usage.rs` mixes current commands with multiple historical example families and compatibility notes in one long help surface.
+- The runtime CLI usage surface mixes current commands with multiple historical example families and compatibility notes in one long help surface.
 
 Inferred conclusion:
 
@@ -139,7 +139,7 @@ Recommended action:
 
 Observed facts:
 
-- `swarm/tools/card_prompt.sh` and `swarm/tools/lint_prompt_spec.sh` parse markdown/YAML structure with `awk` and regex-oriented shell logic.
+- The card prompt and prompt-spec lint scripts parse markdown/YAML structure with `awk` and regex-oriented shell logic.
 
 Inferred conclusion:
 
@@ -153,8 +153,8 @@ Recommended action:
 
 Observed facts:
 
-- `swarm/src/godel/stage_loop.rs`, `swarm/src/godel/experiment_record.rs`, and `swarm/src/godel/obsmem_index.rs` contain real bounded runtime and persistence/indexing code.
-- `cargo test --workspace` passes, including deterministic tests around stage ordering, mutation/hypothesis selection, record persistence, and ObsMem indexing surfaces.
+- The stage-loop, experiment-record, and Gödel index modules contain real bounded runtime and persistence/indexing code.
+- `cargo test --workspace` passes from the runtime crate directory, including deterministic tests around stage ordering, mutation/hypothesis selection, record persistence, and ObsMem indexing surfaces.
 
 Inferred conclusion:
 
@@ -171,7 +171,7 @@ Recommended action:
 Observed facts:
 
 - `docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md` still says large portions of v0.8 runtime integration are missing.
-- Current repo state includes concrete runtime files under `swarm/src/godel/`, `swarm/src/godel_runtime.rs`, and test coverage for them.
+- Current repo state includes concrete runtime Gödel modules and direct test coverage for them.
 
 Inferred conclusion:
 
@@ -214,7 +214,7 @@ Recommended action:
 
 Observed facts:
 
-- `cd swarm && cargo test --workspace` passes.
+- `cargo test --workspace` passes from the runtime crate directory.
 - `cd tools/transpiler_demo && cargo run --quiet` passes and emits a deterministic mapping result.
 - The repo contains real bounded Gödel runtime code, deterministic tests, ObsMem integration surfaces, and a reviewer/tooling contract set under `docs/tooling/`.
 
