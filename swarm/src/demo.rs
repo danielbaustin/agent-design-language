@@ -3,7 +3,6 @@ use std::path::{Path, PathBuf};
 use anyhow::{anyhow, Context, Result};
 
 use crate::godel;
-use crate::godel_runtime;
 use crate::prompt;
 use crate::trace::Trace;
 
@@ -95,8 +94,8 @@ pub fn run_demo(name: &str, out_dir: &Path) -> Result<DemoResult> {
             },
             DEMO_C_GODEL_RUNTIME => match *step_id {
                 "load" => {
-                    let repo_root = godel_runtime::repo_root_from_manifest()?;
-                    let status = godel_runtime::load_v08_surface_status(&repo_root)?;
+                    let repo_root = godel::repo_root_from_manifest()?;
+                    let status = godel::load_v08_surface_status(&repo_root)?;
                     let bytes = serde_json::to_vec_pretty(&status)?;
                     artifacts.push(write_file(
                         out_dir,

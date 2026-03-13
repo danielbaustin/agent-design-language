@@ -104,20 +104,20 @@ Recommended action:
 
 - Split by demo family or artifact responsibility before this grows further. This is not a pre-review blocker by itself, but it is visible structural drift.
 
-### A2. `godel_runtime` is really a milestone-surface validator
+### A2. The Gödel surface-status validator should live inside the canonical module tree
 
 Observed facts:
 
-- The Gödel runtime status module loads milestone JSON artifacts from `docs/milestones/v0.8/` and validates stage order / cross-links.
+- The Gödel surface-status validator loads milestone JSON artifacts from `docs/milestones/v0.8/` and validates stage order / cross-links.
 - Actual bounded runtime behavior lives under the dedicated runtime Gödel modules.
 
 Inferred conclusion:
 
-- The `godel_runtime` name overstates what the module does today. It is a bounded validation/status surface, not the primary Gödel executor.
+- A standalone top-level validator file would overstate what the surface does today. It is a bounded validation/status surface, not the primary Gödel executor.
 
 Recommended action:
 
-- Either rename the module in a later cleanup pass or document the boundary more explicitly in reviewer-facing docs.
+- Keep this validator in the canonical `swarm/src/godel/` module tree and document it as a bounded surface-status helper rather than a primary runtime entrypoint.
 
 ## Code Findings
 
