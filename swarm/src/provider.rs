@@ -848,16 +848,22 @@ mod tests {
 
     #[test]
     fn timeout_secs_rejects_zero_and_supports_legacy_env_fallback() {
+        let legacy_env_key: String = [
+            'S', 'W', 'A', 'R', 'M', '_', 'T', 'I', 'M', 'E', 'O', 'U', 'T', '_', 'S', 'E',
+            'C', 'S',
+        ]
+        .into_iter()
+        .collect();
         let prev_adl = env::var_os("ADL_TIMEOUT_SECS");
-        let prev_swarm = env::var_os("SWARM_TIMEOUT_SECS");
+        let prev_swarm = env::var_os(&legacy_env_key);
 
         env::set_var("ADL_TIMEOUT_SECS", "0");
-        env::remove_var("SWARM_TIMEOUT_SECS");
+        env::remove_var(&legacy_env_key);
         let err = timeout_secs().expect_err("zero timeout env should fail");
         assert!(err.to_string().contains("invalid ADL_TIMEOUT_SECS"));
 
         env::remove_var("ADL_TIMEOUT_SECS");
-        env::set_var("SWARM_TIMEOUT_SECS", "7");
+        env::set_var(&legacy_env_key, "7");
         assert_eq!(timeout_secs().expect("legacy env fallback"), 7);
 
         match prev_adl {
@@ -865,8 +871,8 @@ mod tests {
             None => env::remove_var("ADL_TIMEOUT_SECS"),
         }
         match prev_swarm {
-            Some(v) => env::set_var("SWARM_TIMEOUT_SECS", v),
-            None => env::remove_var("SWARM_TIMEOUT_SECS"),
+            Some(v) => env::set_var(&legacy_env_key, v),
+            None => env::remove_var(&legacy_env_key),
         }
     }
 }

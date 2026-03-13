@@ -1979,7 +1979,7 @@ mod tests {
             .expect("time")
             .as_nanos();
         let out_dir = std::env::temp_dir().join(format!(
-            "swarm-resume-disposition-{now}-{}",
+            "adl-resume-disposition-{now}-{}",
             std::process::id()
         ));
         std::fs::create_dir_all(out_dir.join("nested")).expect("create nested out dir");
