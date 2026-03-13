@@ -1,23 +1,25 @@
-# Emotion Model and Proto-Sentience in ADL
+# Emotion Model and Affective Reasoning in ADL
 
-*Draft for ADL v0.85 planning*
+*Draft for ADL v0.85 planning — bounded, non-anthropomorphic framing*
 
 ------------------------------------------------------------------------
 
 # Overview
 
 During the design discussions for the **Gödel Agent** and the **Hadamard
-insight loop**, an interesting architectural observation emerged:
+insight loop**, an important architectural observation emerged:
 
-The control loop we are building in ADL is structurally very similar to
-the minimal architecture required for **emotion-like control signals**
-in intelligent systems.
+The control loop we are building in ADL is structurally similar to the
+minimal architecture required for **emotion-like control signals** in
+intelligent systems.
 
-This does **not** imply that ADL agents are conscious or human-like.\
-However, it suggests that the architecture being built may support
-**proto-sentient behavior**.
+This does **not** imply that ADL agents are conscious, human-like, or
+sentient.
+Instead, it suggests that ADL may benefit from a bounded,
+non-anthropomorphic **affective control layer** that helps regulate
+reasoning, prioritization, and evaluation.
 
-This document captures the working model.
+This document captures that working model.
 
 ------------------------------------------------------------------------
 
@@ -256,7 +258,8 @@ A **mind**, by contrast, requires:
     +
     adaptive reasoning
 
-ADL is designed to support these capabilities.
+ADL is being designed to explore some of these capabilities in a bounded,
+inspectable, and deterministic way.
 
 ------------------------------------------------------------------------
 
@@ -298,9 +301,10 @@ Minds contain:
 
 ------------------------------------------------------------------------
 
-# 8. The ADL Sentience Ladder
+# 8. The ADL Cognitive-Control Ladder
 
-Sentience may emerge gradually as architectural layers accumulate.
+More capable cognitive control may emerge gradually as architectural
+layers accumulate.
 
 ### Level 0 --- Reactive Tool
 
@@ -380,7 +384,7 @@ Agent can modify its own reasoning architecture.
 
 ------------------------------------------------------------------------
 
-### Level 6 --- Proto-Sentient Agent
+### Level 6 --- Self-Regulating Cognitive Agent
 
 All components combined:
 
@@ -394,8 +398,8 @@ All components combined:
     +
     self-modifying cognition
 
-At this level the agent begins to resemble a **mind rather than a
-tool**.
+At this level the agent begins to resemble a more self-regulating
+cognitive system rather than a simple tool.
 
 ------------------------------------------------------------------------
 
@@ -410,7 +414,7 @@ C[Level 2<br>Reflective Agent]
 D[Level 3<br>Affective Agent]
 E[Level 4<br>Self-Modeling Agent]
 F[Level 5<br>Gödel Agent]
-G[Level 6<br>Proto-Sentient Agent]
+G[Level 6<br>Self-Regulating Cognitive Agent]
 
 A --> B --> C --> D --> E --> F --> G
 ```
@@ -472,7 +476,7 @@ would push the system further toward **self-directed cognition**.
 
 ------------------------------------------------------------------------
 
-# 11. Implications for AI Research
+# 11. Implications for AI Architecture Research
 
 Most AI systems today scale capability by increasing:
 
@@ -506,5 +510,15 @@ and cognitive control** found in biological intelligence.
 This suggests that ADL may provide a platform for exploring a new class
 of agents:
 
-Systems that move beyond simple tools and toward **self-directed
-cognitive entities**.
+Systems that move beyond simple tools and toward more
+**self-directed cognitive control architectures**.
+
+---
+
+## Framing Note
+
+For v0.85 planning, this document should be read in the same bounded
+sense as the other affect-model documents.
+It discusses **emotion-like control signals** as architectural and
+functional mechanisms, not as claims that ADL has achieved consciousness,
+sentience, or human-like interiority.

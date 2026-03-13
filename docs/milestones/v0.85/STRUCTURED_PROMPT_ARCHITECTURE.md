@@ -196,7 +196,7 @@ Examples of bound values:
 - role = editor
 - audience = enterprise buyers
 - style guide = concise formal
-- source document = `draft_v3.md`
+- source document = draft_v3
 - acceptance criteria = `release_checklist.v2`
 
 Bindings are runtime data, not reusable prompt logic.
