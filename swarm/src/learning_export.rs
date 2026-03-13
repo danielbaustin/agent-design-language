@@ -1052,4 +1052,86 @@ mod tests {
             "unexpected: {err}"
         );
     }
+
+    #[test]
+    fn validate_bundle_rel_path_rejects_absolute_windows_and_traversal_paths() {
+        let err = validate_bundle_rel_path("/abs/path.json").expect_err("absolute must fail");
+        assert!(err.to_string().contains("absolute path"));
+
+        let err =
+            validate_bundle_rel_path("runs\\r1\\run.json").expect_err("windows separator fails");
+        assert!(err.to_string().contains("non-canonical path separator"));
+
+        let err = validate_bundle_rel_path("runs/../secret.json").expect_err("traversal fails");
+        assert!(err.to_string().contains("traversal or prefix"));
+
+        validate_bundle_rel_path("runs/r1/run.json").expect("relative path is valid");
+    }
+
+    #[test]
+    fn resolve_export_ids_sorts_and_dedupes_explicit_ids() {
+        let root = std::env::temp_dir().join(format!("learn-ids-{}", std::process::id()));
+        std::fs::create_dir_all(&root).unwrap();
+        let ids = resolve_export_ids(
+            &root,
+            &["r2".to_string(), "r1".to_string(), "r2".to_string()],
+        )
+        .expect("resolve ids");
+        assert_eq!(ids, vec!["r1".to_string(), "r2".to_string()]);
+    }
+
+    #[test]
+    fn discover_run_ids_ignores_non_dirs_and_missing_summary() {
+        let root = std::env::temp_dir().join(format!("learn-discover-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        std::fs::create_dir_all(&root).unwrap();
+        std::fs::write(root.join("not-a-dir"), "x").unwrap();
+        std::fs::create_dir_all(root.join("r-no-summary")).unwrap();
+        std::fs::create_dir_all(root.join("r-ok")).unwrap();
+        std::fs::write(root.join("r-ok").join("run_summary.json"), "{}").unwrap();
+
+        let ids = discover_run_ids(&root).expect("discover run ids");
+        assert_eq!(ids, vec!["r-ok".to_string()]);
+    }
+
+    #[test]
+    fn import_trace_bundle_v2_rejects_missing_or_unsorted_manifest_surfaces() {
+        let root = std::env::temp_dir().join(format!("trace-bundle-errors-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        std::fs::create_dir_all(root.join("trace_bundle_v2")).unwrap();
+
+        let err = import_trace_bundle_v2(&root, "r1").expect_err("manifest missing must fail");
+        assert!(err.to_string().contains("manifest not found"));
+
+        let manifest_path = root.join("trace_bundle_v2").join("manifest.json");
+        std::fs::write(
+            &manifest_path,
+            serde_json::to_vec_pretty(&serde_json::json!({
+                "trace_bundle_version": 999,
+                "run_count": 1,
+                "runs": ["r1"],
+                "files": []
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        let err = import_trace_bundle_v2(&root, "r1").expect_err("bad version must fail");
+        assert!(err.to_string().contains("unsupported trace_bundle_version"));
+
+        std::fs::write(
+            &manifest_path,
+            serde_json::to_vec_pretty(&serde_json::json!({
+                "trace_bundle_version": TRACE_BUNDLE_VERSION,
+                "run_count": 2,
+                "runs": ["r2", "r1"],
+                "files": []
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        let err = import_trace_bundle_v2(&root, "r1").expect_err("unsorted runs must fail");
+        assert!(err
+            .to_string()
+            .contains("runs list is not canonically sorted"));
+    }
 }

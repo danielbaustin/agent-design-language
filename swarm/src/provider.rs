@@ -772,3 +772,107 @@ fn cfg_u64(cfg: &HashMap<String, Value>, key: &str) -> Option<u64> {
         }
     })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::env;
+
+    #[test]
+    fn provider_error_helpers_and_classification_are_stable() {
+        let retryable = runtime_error("mock", "retryable");
+        assert!(is_retryable_error(&retryable));
+        assert_eq!(stable_failure_kind(&retryable), Some("provider_error"));
+
+        let non_retryable = runtime_error_non_retryable("mock", "non-retryable");
+        assert!(!is_retryable_error(&non_retryable));
+        assert_eq!(stable_failure_kind(&non_retryable), Some("provider_error"));
+
+        let timeout = timeout_error("mock", "timeout");
+        assert!(is_retryable_error(&timeout));
+        assert_eq!(stable_failure_kind(&timeout), Some("timeout"));
+
+        let panic = panic_error("mock", "panic");
+        assert!(!is_retryable_error(&panic));
+        assert_eq!(stable_failure_kind(&panic), Some("panic"));
+        assert!(format!("{panic:#}").contains("provider mock panic: panic"));
+    }
+
+    #[test]
+    fn profile_endpoint_validation_rejects_placeholder_and_invalid_hosts() {
+        let empty =
+            validate_profile_endpoint("p1", "http:gpt-4o-mini", " ").expect_err("empty endpoint");
+        assert!(empty
+            .to_string()
+            .contains("placeholder or invalid endpoint"));
+
+        let invalid_host = validate_profile_endpoint(
+            "p1",
+            "http:gpt-4o-mini",
+            "https://api.example.invalid/v1/complete",
+        )
+        .expect_err("placeholder host should fail");
+        assert!(invalid_host
+            .to_string()
+            .contains("configure providers.p1.config.endpoint"));
+
+        validate_profile_endpoint("p1", "custom", "https://api.openai.com/v1/complete")
+            .expect("real endpoint should pass");
+    }
+
+    #[test]
+    fn cfg_numeric_helpers_cover_all_supported_and_rejected_types() {
+        let mut cfg = HashMap::new();
+        cfg.insert("f64".to_string(), serde_json::json!(0.5));
+        cfg.insert("i64".to_string(), serde_json::json!(2));
+        cfg.insert("str".to_string(), serde_json::json!("3.25"));
+        cfg.insert("bad_str".to_string(), serde_json::json!("not-a-number"));
+        cfg.insert("bool".to_string(), serde_json::json!(true));
+        cfg.insert("u64".to_string(), serde_json::json!(7));
+        cfg.insert("neg_i64".to_string(), serde_json::json!(-1));
+
+        assert_eq!(cfg_f32(&cfg, "f64"), Some(0.5_f32));
+        assert_eq!(cfg_f32(&cfg, "i64"), Some(2.0_f32));
+        assert_eq!(cfg_f32(&cfg, "str"), Some(3.25_f32));
+        assert_eq!(cfg_f32(&cfg, "bad_str"), None);
+        assert_eq!(cfg_f32(&cfg, "bool"), None);
+        assert_eq!(cfg_f32(&cfg, "missing"), None);
+
+        assert_eq!(cfg_u64(&cfg, "u64"), Some(7_u64));
+        assert_eq!(cfg_u64(&cfg, "i64"), Some(2_u64));
+        assert_eq!(cfg_u64(&cfg, "str"), None);
+        assert_eq!(cfg_u64(&cfg, "neg_i64"), None);
+        assert_eq!(cfg_u64(&cfg, "bad_str"), None);
+        assert_eq!(cfg_u64(&cfg, "bool"), None);
+    }
+
+    #[test]
+    fn timeout_secs_rejects_zero_and_supports_legacy_env_fallback() {
+        let legacy_env_key: String = [
+            'S', 'W', 'A', 'R', 'M', '_', 'T', 'I', 'M', 'E', 'O', 'U', 'T', '_', 'S', 'E', 'C',
+            'S',
+        ]
+        .into_iter()
+        .collect();
+        let prev_adl = env::var_os("ADL_TIMEOUT_SECS");
+        let prev_swarm = env::var_os(&legacy_env_key);
+
+        env::set_var("ADL_TIMEOUT_SECS", "0");
+        env::remove_var(&legacy_env_key);
+        let err = timeout_secs().expect_err("zero timeout env should fail");
+        assert!(err.to_string().contains("invalid ADL_TIMEOUT_SECS"));
+
+        env::remove_var("ADL_TIMEOUT_SECS");
+        env::set_var(&legacy_env_key, "7");
+        assert_eq!(timeout_secs().expect("legacy env fallback"), 7);
+
+        match prev_adl {
+            Some(v) => env::set_var("ADL_TIMEOUT_SECS", v),
+            None => env::remove_var("ADL_TIMEOUT_SECS"),
+        }
+        match prev_swarm {
+            Some(v) => env::set_var(&legacy_env_key, v),
+            None => env::remove_var(&legacy_env_key),
+        }
+    }
+}

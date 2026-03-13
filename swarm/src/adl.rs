@@ -1738,4 +1738,366 @@ run:
             .to_string()
             .contains("branch 'b1' has empty step symbol"));
     }
+
+    fn baseline_doc() -> AdlDoc {
+        serde_yaml::from_str(
+            r#"
+version: "0.5"
+providers:
+  p1:
+    type: "ollama"
+tools:
+  t1:
+    kind: "builtin"
+agents:
+  a1:
+    provider: "p1"
+    model: "m1"
+tasks:
+  task1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "task1"
+"#,
+        )
+        .expect("baseline doc")
+    }
+
+    #[test]
+    fn validate_rejects_pattern_and_step_guardrail_edges() {
+        let mut doc = baseline_doc();
+        doc.patterns.push(PatternSpec {
+            id: "".to_string(),
+            kind: PatternKind::Linear,
+            steps: vec!["s1".to_string()],
+            fork: None,
+            join: None,
+        });
+        let err = doc.validate().expect_err("empty pattern id should fail");
+        assert!(err.to_string().contains("pattern id must not be empty"));
+
+        let mut doc = baseline_doc();
+        doc.patterns.push(PatternSpec {
+            id: "dup".to_string(),
+            kind: PatternKind::Linear,
+            steps: vec!["s1".to_string()],
+            fork: None,
+            join: None,
+        });
+        doc.patterns.push(PatternSpec {
+            id: "dup".to_string(),
+            kind: PatternKind::Linear,
+            steps: vec!["s1".to_string()],
+            fork: None,
+            join: None,
+        });
+        let err = doc
+            .validate()
+            .expect_err("duplicate pattern id should fail");
+        assert!(err.to_string().contains("duplicate pattern id"));
+
+        let mut doc = baseline_doc();
+        doc.run.workflow.as_mut().expect("workflow").steps[0].id = Some("p::bad".to_string());
+        let err = doc
+            .validate()
+            .expect_err("reserved step id prefix should fail");
+        assert!(err.to_string().contains("reserved compiler prefix"));
+
+        let mut doc = baseline_doc();
+        let step = &mut doc.run.workflow.as_mut().expect("workflow").steps[0];
+        step.save_as = None;
+        step.write_to = Some("out.txt".to_string());
+        let err = doc
+            .validate()
+            .expect_err("write_to without save_as should fail");
+        assert!(err
+            .to_string()
+            .contains("uses write_to but is missing save_as"));
+
+        let mut doc = baseline_doc();
+        let step = &mut doc.run.workflow.as_mut().expect("workflow").steps[0];
+        step.save_as = Some("x".to_string());
+        step.write_to = Some("../escape.txt".to_string());
+        let err = doc.validate().expect_err("parent traversal should fail");
+        assert!(err.to_string().contains("relative path without '..'"));
+
+        let mut doc = baseline_doc();
+        let step = &mut doc.run.workflow.as_mut().expect("workflow").steps[0];
+        step.retry = Some(StepRetry { max_attempts: 0 });
+        let err = doc
+            .validate()
+            .expect_err("retry.max_attempts=0 should fail");
+        assert!(err.to_string().contains("invalid retry.max_attempts=0"));
+    }
+
+    #[test]
+    fn validate_rejects_delegation_policy_and_pattern_ref_conflicts() {
+        let mut doc = baseline_doc();
+        doc.run.delegation_policy = Some(DelegationPolicySpec {
+            default_allow: true,
+            rules: vec![DelegationPolicyRuleSpec {
+                id: "   ".to_string(),
+                action: DelegationActionKind::ToolInvoke,
+                target_id: None,
+                effect: DelegationRuleEffect::Allow,
+                require_approval: false,
+            }],
+        });
+        let err = doc
+            .validate()
+            .expect_err("empty delegation rule id should fail");
+        assert!(err.to_string().contains("id must not be empty"));
+
+        let mut doc = baseline_doc();
+        doc.run.delegation_policy = Some(DelegationPolicySpec {
+            default_allow: true,
+            rules: vec![
+                DelegationPolicyRuleSpec {
+                    id: "r1".to_string(),
+                    action: DelegationActionKind::ToolInvoke,
+                    target_id: None,
+                    effect: DelegationRuleEffect::Allow,
+                    require_approval: false,
+                },
+                DelegationPolicyRuleSpec {
+                    id: "r1".to_string(),
+                    action: DelegationActionKind::ToolInvoke,
+                    target_id: Some(" ".to_string()),
+                    effect: DelegationRuleEffect::Deny,
+                    require_approval: false,
+                },
+            ],
+        });
+        let err = doc
+            .validate()
+            .expect_err("duplicate delegation rule id should fail");
+        assert!(err.to_string().contains("duplicate id 'r1'"));
+
+        let mut doc = baseline_doc();
+        doc.run.pattern_ref = Some("missing-pattern".to_string());
+        let err = doc.validate().expect_err("unknown pattern_ref should fail");
+        assert!(err.to_string().contains("references unknown pattern"));
+
+        let mut doc = baseline_doc();
+        doc.patterns.push(PatternSpec {
+            id: "p1".to_string(),
+            kind: PatternKind::Linear,
+            steps: vec!["s1".to_string()],
+            fork: None,
+            join: None,
+        });
+        doc.run.pattern_ref = Some("p1".to_string());
+        let err = doc
+            .validate()
+            .expect_err("pattern_ref conflicts with workflow should fail");
+        assert!(err
+            .to_string()
+            .contains("cannot be combined with run.workflow_ref or inline run.workflow"));
+    }
+
+    #[test]
+    fn load_from_file_include_validation_and_merge_errors() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let base =
+            std::env::temp_dir().join(format!("adl-include-errors-{now}-{}", std::process::id()));
+        std::fs::create_dir_all(&base).expect("create base");
+
+        let err_doc = base.join("err.yaml");
+
+        std::fs::write(&err_doc, "[]").expect("write seq top-level");
+        let err = AdlDoc::load_from_file(err_doc.to_str().expect("utf8"))
+            .expect_err("non-mapping top-level should fail");
+        let msg = err.to_string();
+        assert!(
+            msg.contains("top-level ADL document must be a mapping")
+                || msg.contains("parse adl yaml")
+                || msg.contains("read/merge adl file"),
+            "unexpected error: {msg}"
+        );
+
+        std::fs::write(
+            &err_doc,
+            r#"
+version: "0.5"
+include: "fragment.yaml"
+run:
+  workflow:
+    steps: []
+"#,
+        )
+        .expect("write include scalar");
+        let err = AdlDoc::load_from_file(err_doc.to_str().expect("utf8"))
+            .expect_err("include scalar should fail");
+        assert!(err.to_string().contains("read/merge adl file"));
+
+        std::fs::write(
+            &err_doc,
+            r#"
+version: "0.5"
+include: [7]
+run:
+  workflow:
+    steps: []
+"#,
+        )
+        .expect("write include non-string entry");
+        let err = AdlDoc::load_from_file(err_doc.to_str().expect("utf8"))
+            .expect_err("include entry non-string should fail");
+        assert!(err.to_string().contains("read/merge adl file"));
+
+        std::fs::write(
+            &err_doc,
+            r#"
+version: "0.5"
+include: ["../escape.yaml"]
+run:
+  workflow:
+    steps: []
+"#,
+        )
+        .expect("write include parent traversal");
+        let err = AdlDoc::load_from_file(err_doc.to_str().expect("utf8"))
+            .expect_err("include parent traversal should fail");
+        assert!(err.to_string().contains("read/merge adl file"));
+
+        let frag = base.join("fragment.yaml");
+        std::fs::write(&frag, "[]").expect("write non-map fragment");
+        std::fs::write(
+            &err_doc,
+            r#"
+version: "0.5"
+include: ["fragment.yaml"]
+run:
+  workflow:
+    steps: []
+"#,
+        )
+        .expect("write include fragment");
+        let err = AdlDoc::load_from_file(err_doc.to_str().expect("utf8"))
+            .expect_err("included non-mapping should fail");
+        assert!(err.to_string().contains("read/merge adl file"));
+
+        std::fs::write(
+            &frag,
+            r#"
+providers:
+  p:
+    type: "ollama"
+"#,
+        )
+        .expect("write provider fragment");
+        std::fs::write(
+            &err_doc,
+            r#"
+version: "0.5"
+include: ["fragment.yaml"]
+providers:
+  p:
+    type: "ollama"
+run:
+  workflow:
+    steps: []
+"#,
+        )
+        .expect("write duplicate provider map id");
+        let err = AdlDoc::load_from_file(err_doc.to_str().expect("utf8"))
+            .expect_err("duplicate map id should fail");
+        assert!(err.to_string().contains("read/merge adl file"));
+
+        std::fs::write(
+            &frag,
+            r#"
+run:
+  workflow:
+    steps: []
+"#,
+        )
+        .expect("write duplicate top-level key fragment");
+        std::fs::write(
+            &err_doc,
+            r#"
+version: "0.5"
+include: ["fragment.yaml"]
+run:
+  workflow:
+    steps: []
+"#,
+        )
+        .expect("write duplicate top-level key main");
+        let err = AdlDoc::load_from_file(err_doc.to_str().expect("utf8"))
+            .expect_err("duplicate top-level key should fail");
+        assert!(err.to_string().contains("read/merge adl file"));
+
+        let _ = std::fs::remove_dir_all(base);
+    }
+
+    #[test]
+    fn runspec_pattern_ref_rejection_and_effective_prompt_priority_edges() {
+        let mut doc = baseline_doc();
+        doc.run.pattern_ref = Some("p1".to_string());
+        let err = doc
+            .run
+            .resolve_workflow(&doc)
+            .expect_err("pattern_ref should reject resolve_workflow");
+        assert!(err
+            .to_string()
+            .contains("cannot be combined with run.workflow_ref"));
+
+        let mut doc = baseline_doc();
+        {
+            let step = &mut doc.run.workflow.as_mut().expect("workflow").steps[0];
+            step.prompt = None;
+            step.task = Some("task1".to_string());
+        }
+        let p_from_task = doc.run.workflow.as_ref().expect("workflow").steps[0]
+            .effective_prompt(&doc)
+            .expect("task prompt")
+            .user
+            .clone();
+        assert_eq!(p_from_task, Some("u".to_string()));
+
+        doc.tasks.clear();
+        doc.agents.get_mut("a1").expect("agent").prompt = Some(PromptSpec {
+            system: Some("sys".to_string()),
+            developer: None,
+            user: Some("agent-user".to_string()),
+            context: None,
+            output: None,
+        });
+        let p_from_agent = doc.run.workflow.as_ref().expect("workflow").steps[0]
+            .effective_prompt(&doc)
+            .expect("agent prompt")
+            .user
+            .clone();
+        assert_eq!(p_from_agent, Some("agent-user".to_string()));
+
+        let empty = StepSpec {
+            id: Some("s2".to_string()),
+            ..StepSpec::default()
+        };
+        assert!(empty.effective_prompt(&doc).is_none());
+    }
+
+    #[test]
+    fn delegation_action_kind_as_str_covers_all_variants() {
+        assert_eq!(DelegationActionKind::ToolInvoke.as_str(), "tool_invoke");
+        assert_eq!(DelegationActionKind::ProviderCall.as_str(), "provider_call");
+        assert_eq!(DelegationActionKind::RemoteExec.as_str(), "remote_exec");
+        assert_eq!(
+            DelegationActionKind::FilesystemRead.as_str(),
+            "filesystem_read"
+        );
+        assert_eq!(
+            DelegationActionKind::FilesystemWrite.as_str(),
+            "filesystem_write"
+        );
+    }
 }

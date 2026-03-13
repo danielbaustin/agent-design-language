@@ -1973,6 +1973,74 @@ mod tests {
     }
 
     #[test]
+    fn resume_disposition_validates_saved_artifacts_and_fingerprints() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let out_dir = std::env::temp_dir().join(format!(
+            "adl-resume-disposition-{now}-{}",
+            std::process::id()
+        ));
+        std::fs::create_dir_all(out_dir.join("nested")).expect("create nested out dir");
+        let artifact = out_dir.join("nested").join("result.txt");
+        std::fs::write(&artifact, "hello").expect("write artifact");
+
+        let step = crate::resolve::ResolvedStep {
+            id: "s1".to_string(),
+            agent: None,
+            provider: None,
+            placement: None,
+            task: None,
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
+            delegation: None,
+            prompt: None,
+            inputs: HashMap::new(),
+            guards: vec![],
+            save_as: Some("saved".to_string()),
+            write_to: Some("nested/result.txt".to_string()),
+            on_error: None,
+            retry: None,
+        };
+
+        let missing = resume_disposition_for_step(&step, &out_dir, &HashMap::new())
+            .expect("missing fingerprint should rerun");
+        assert_eq!(
+            missing,
+            ResumeDisposition::Rerun("missing_output_fingerprint")
+        );
+
+        let mut wrong = HashMap::new();
+        wrong.insert("s1".to_string(), model_output_fingerprint("different"));
+        let mismatch =
+            resume_disposition_for_step(&step, &out_dir, &wrong).expect("mismatch should rerun");
+        assert_eq!(
+            mismatch,
+            ResumeDisposition::Rerun("invalid_expected_artifact")
+        );
+
+        let mut exact = HashMap::new();
+        exact.insert("s1".to_string(), model_output_fingerprint("hello"));
+        let verified =
+            resume_disposition_for_step(&step, &out_dir, &exact).expect("match should skip");
+        assert_eq!(
+            verified,
+            ResumeDisposition::Skip("completed_artifact_verified")
+        );
+
+        std::fs::write(&artifact, vec![0xff, 0xfe, 0xfd]).expect("overwrite with invalid utf8");
+        let err = resume_disposition_for_step(&step, &out_dir, &exact)
+            .expect_err("invalid utf8 should surface artifact read failure");
+        assert!(err
+            .to_string()
+            .contains("failed to read expected resume artifact"));
+
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
     fn effective_max_concurrency_precedence_and_validation() {
         let mut resolved = minimal_resolved();
         assert_eq!(
@@ -2150,5 +2218,156 @@ mod tests {
 
         let generic = anyhow::anyhow!("not policy related");
         assert_eq!(stable_failure_kind(&generic), None);
+    }
+
+    #[test]
+    fn execution_policy_error_display_covers_approval_required_branch() {
+        let err = ExecutionPolicyError {
+            kind: ExecutionPolicyErrorKind::ApprovalRequired,
+            step_id: "s-approve".to_string(),
+            action_kind: "tool".to_string(),
+            target_id: "fs.write".to_string(),
+            rule_id: Some("rule-approval".to_string()),
+        };
+
+        assert_eq!(err.code(), "DELEGATION_POLICY_APPROVAL_REQUIRED");
+        let rendered = err.to_string();
+        assert!(rendered.contains("requires approval"));
+        assert!(rendered.contains("rule_id=rule-approval"));
+    }
+
+    #[test]
+    fn execute_called_workflow_rejects_unknown_workflow() {
+        let resolved = minimal_resolved();
+        let mut tr = crate::trace::Trace::new("run", "wf", "0.8");
+        let caller_state = HashMap::new();
+        let err = execute_called_workflow(
+            "caller",
+            "ns",
+            "missing-workflow",
+            &HashMap::new(),
+            &resolved,
+            &mut tr,
+            false,
+            false,
+            Path::new("."),
+            Path::new("."),
+            &caller_state,
+        )
+        .expect_err("unknown called workflow should fail");
+        assert!(err.to_string().contains("call references unknown workflow"));
+    }
+
+    #[test]
+    fn execute_called_workflow_rejects_missing_state_binding_in_call_with() {
+        let mut resolved = minimal_resolved();
+        resolved.doc.workflows.insert(
+            "callee".to_string(),
+            WorkflowSpec {
+                id: Some("callee".to_string()),
+                kind: WorkflowKind::Sequential,
+                max_concurrency: None,
+                steps: vec![],
+            },
+        );
+
+        let mut tr = crate::trace::Trace::new("run", "wf", "0.8");
+        let mut call_with = HashMap::new();
+        call_with.insert("topic".to_string(), "@state:inputs.missing".to_string());
+        let caller_state = HashMap::new();
+
+        let err = execute_called_workflow(
+            "caller",
+            "ns",
+            "callee",
+            &call_with,
+            &resolved,
+            &mut tr,
+            false,
+            false,
+            Path::new("."),
+            Path::new("."),
+            &caller_state,
+        )
+        .expect_err("missing call.with binding should fail");
+        let text = err.to_string();
+        assert!(text.contains("failed to resolve call.with binding"));
+        assert!(text.contains("caller step"));
+    }
+
+    #[test]
+    fn execute_called_workflow_rejects_write_to_without_save_as() {
+        let mut resolved = minimal_resolved();
+        resolved.doc.workflows.insert(
+            "callee".to_string(),
+            WorkflowSpec {
+                id: Some("callee".to_string()),
+                kind: WorkflowKind::Sequential,
+                max_concurrency: None,
+                steps: vec![crate::adl::StepSpec {
+                    id: Some("writer".to_string()),
+                    write_to: Some("out/result.txt".to_string()),
+                    // This intentionally triggers the write_to/save_as contract.
+                    save_as: None,
+                    ..crate::adl::StepSpec::default()
+                }],
+            },
+        );
+
+        let mut tr = crate::trace::Trace::new("run", "wf", "0.8");
+        let caller_state = HashMap::new();
+        let err = execute_called_workflow(
+            "caller",
+            "ns",
+            "callee",
+            &HashMap::new(),
+            &resolved,
+            &mut tr,
+            false,
+            false,
+            Path::new("."),
+            Path::new("."),
+            &caller_state,
+        )
+        .expect_err("write_to without save_as should fail in called workflow");
+        assert!(err
+            .to_string()
+            .contains("uses write_to but is missing save_as"));
+    }
+
+    #[test]
+    fn execute_called_workflow_nested_call_failure_is_propagated() {
+        let mut resolved = minimal_resolved();
+        resolved.doc.workflows.insert(
+            "parent".to_string(),
+            WorkflowSpec {
+                id: Some("parent".to_string()),
+                kind: WorkflowKind::Sequential,
+                max_concurrency: None,
+                steps: vec![crate::adl::StepSpec {
+                    id: Some("call-child".to_string()),
+                    call: Some("missing-child".to_string()),
+                    ..crate::adl::StepSpec::default()
+                }],
+            },
+        );
+
+        let mut tr = crate::trace::Trace::new("run", "wf", "0.8");
+        let caller_state = HashMap::new();
+        let err = execute_called_workflow(
+            "caller",
+            "ns",
+            "parent",
+            &HashMap::new(),
+            &resolved,
+            &mut tr,
+            false,
+            false,
+            Path::new("."),
+            Path::new("."),
+            &caller_state,
+        )
+        .expect_err("nested call to missing workflow should fail");
+        assert!(err.to_string().contains("unknown workflow"));
     }
 }
