@@ -5,6 +5,8 @@ use anyhow::{anyhow, bail, Context, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+use super::workflow_template::{parse_workflow_template, GodelWorkflowTemplate};
+
 pub const GODEL_RUNTIME_STATUS_VERSION: u32 = 1;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -38,7 +40,8 @@ pub fn load_v08_surface_status(repo_root: &Path) -> Result<GodelRuntimeSurfaceSt
         read_json(&spec_examples_root.join("experiment_index_entry.v1.example.json"))
             .context("load experiment index example")?;
 
-    let stage_order = read_stage_order(&workflow_template)?;
+    let template = parse_workflow_template_value(&workflow_template)?;
+    let stage_order = template.stage_order.clone();
     validate_stage_order(&stage_order)?;
     validate_cross_links(
         &evidence_view,
@@ -84,18 +87,11 @@ fn read_json(path: &Path) -> Result<Value> {
     Ok(parsed)
 }
 
-fn read_stage_order(template: &Value) -> Result<Vec<String>> {
-    let Some(arr) = template.get("stage_order").and_then(Value::as_array) else {
-        bail!("workflow template missing stage_order array");
-    };
-    let mut out = Vec::with_capacity(arr.len());
-    for v in arr {
-        let Some(s) = v.as_str() else {
-            bail!("workflow stage_order must contain strings only");
-        };
-        out.push(s.to_string());
-    }
-    Ok(out)
+fn parse_workflow_template_value(template: &Value) -> Result<GodelWorkflowTemplate> {
+    parse_workflow_template(
+        &serde_json::to_string(template).context("serialize workflow template")?,
+    )
+    .context("parse workflow template")
 }
 
 fn validate_stage_order(stage_order: &[String]) -> Result<()> {
@@ -232,7 +228,40 @@ mod tests {
         std::fs::write(
             docs.join("godel_experiment_workflow.template.v1.json"),
             serde_json::to_vec_pretty(&json!({
+                "template_name": "godel_experiment_workflow",
+                "template_version": 1,
                 "stage_order": ["failure", "hypothesis", "mutation", "experiment", "evaluation", "record"]
+                ,
+                "stages": [
+                    {"stage_id": "failure", "inputs": [], "outputs": ["canonical_evidence_view_ref"], "artifact_contracts": [{"schema_name": "canonical_evidence_view", "schema_version": 1}]},
+                    {"stage_id": "hypothesis", "inputs": ["canonical_evidence_view_ref"], "outputs": ["hypothesis_list_ref"], "artifact_contracts": []},
+                    {"stage_id": "mutation", "inputs": ["hypothesis_list_ref"], "outputs": ["mutation_refs"], "artifact_contracts": [{"schema_name": "mutation", "schema_version": 1}]},
+                    {"stage_id": "experiment", "inputs": ["baseline_run_ref", "mutation_refs"], "outputs": ["candidate_run_refs"], "artifact_contracts": []},
+                    {"stage_id": "evaluation", "inputs": ["candidate_evidence_refs", "mutation_refs", "evaluation_plan_ref"], "outputs": ["evaluation_decision_ref"], "artifact_contracts": [{"schema_name": "evaluation_plan", "schema_version": 1}]},
+                    {"stage_id": "record", "inputs": ["evaluation_decision_ref", "mutation_refs"], "outputs": ["experiment_record_ref"], "artifact_contracts": [{"schema_name": "experiment_record", "schema_version": 1}]}
+                ],
+                "determinism": {
+                    "stage_order_fixed": true,
+                    "input_order_required": true,
+                    "hidden_state_allowed": false,
+                    "tie_break_policy": "lexicographic_ids"
+                },
+                "security_privacy": {
+                    "allow_secrets": false,
+                    "allow_raw_prompts": false,
+                    "allow_tool_args": false,
+                    "allow_absolute_host_paths": false
+                },
+                "replay_audit": {
+                    "replay_compatible": true,
+                    "artifact_references_required": true,
+                    "traceability_required": true
+                },
+                "downstream": {
+                    "obsmem_indexing_ready": true,
+                    "demo_path_ready": true,
+                    "related_issues": [609, 610, 611, 612, 614, 615]
+                }
             }))
             .expect("serialize workflow template"),
         )
@@ -315,13 +344,41 @@ mod tests {
     }
 
     #[test]
-    fn read_stage_order_rejects_missing_and_non_string_values() {
-        let err = read_stage_order(&json!({})).expect_err("missing stage_order must fail");
-        assert!(err.to_string().contains("missing stage_order"));
+    fn parse_workflow_template_rejects_missing_and_non_string_values() {
+        let err =
+            parse_workflow_template_value(&json!({})).expect_err("missing stage_order must fail");
+        assert!(err.to_string().contains("parse workflow template"));
 
-        let err = read_stage_order(&json!({"stage_order": ["failure", 7]}))
-            .expect_err("non-string stage value must fail");
-        assert!(err.to_string().contains("contain strings only"));
+        let err = parse_workflow_template_value(&json!({
+            "template_name": "godel_experiment_workflow",
+            "template_version": 1,
+            "stage_order": ["failure", 7],
+            "stages": [],
+            "determinism": {
+                "stage_order_fixed": true,
+                "input_order_required": true,
+                "hidden_state_allowed": false,
+                "tie_break_policy": "lexicographic_ids"
+            },
+            "security_privacy": {
+                "allow_secrets": false,
+                "allow_raw_prompts": false,
+                "allow_tool_args": false,
+                "allow_absolute_host_paths": false
+            },
+            "replay_audit": {
+                "replay_compatible": true,
+                "artifact_references_required": true,
+                "traceability_required": true
+            },
+            "downstream": {
+                "obsmem_indexing_ready": true,
+                "demo_path_ready": true,
+                "related_issues": [609]
+            }
+        }))
+        .expect_err("non-string stage value must fail");
+        assert!(err.to_string().contains("parse workflow template"));
     }
 
     #[test]
