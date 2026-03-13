@@ -8,18 +8,24 @@ This document supersedes earlier recovery assumptions that predated the current 
 ## Current Repository State
 
 ### Observed facts
-- Canonical v0.8 milestone docs are populated under `docs/milestones/v0.8/`.
-- Root `README.md` presents active development milestone `v0.8` and latest released milestone `v0.7.0`.
-- Runtime manifest `swarm/Cargo.toml` declares `version = "0.8.0"`.
-- Runtime README still presents the current runtime release as `v0.7.0`.
+- Canonical v0.8 docs directory is populated under `docs/milestones/v0.8/` with schema/spec docs, planning docs, and release-tail docs.
+- Root `README.md` presents the latest tagged release as `v0.7.0` and the active development milestone as `v0.8`.
+- Runtime crate manifest is `0.8.0` (`swarm/Cargo.toml`).
+- Runtime README is a reviewer-facing surface for current runtime behavior, but some wording still lags the unreleased-v0.8 story.
 - The repository contains real bounded v0.8 runtime/demo surfaces under `swarm/src/godel/`, `swarm/src/demo.rs`, `tools/transpiler_demo/`, `examples/`, and `demos/`.
 - `cargo test --manifest-path swarm/Cargo.toml --workspace` passes on this branch.
 - `docs/milestones/v0.8/THIRD_PARTY_REVIEW_V0.8.md` is still absent.
+- v0.8 review-tail docs are present but still include pre-refresh recovery/readiness language in several places.
+- Issue/PR state in the review tail is not fully converged:
+  - `#707` open (PR open)
+  - `#708` open (no PR)
+  - `#668` open (no PR)
 
 ### Inferred conclusions
 - v0.8 is no longer a docs-only milestone surface. The repository now contains bounded executable runtime/demo behavior in addition to schema/spec docs.
+- v0.8 documentation surfaces exist and now sit on top of a real bounded runtime/demo base, but the milestone is not yet in a release-ready or external-review-ready state.
+- The correct repository story is: latest tagged release `v0.7.0`, active development milestone `v0.8`, current `main`-branch runtime crate version `0.8.0`.
 - The main remaining reviewer-facing inconsistency is not "missing runtime everywhere" but a mixed review-tail packet: some docs still describe earlier recovery state while others reflect newer bounded implementation.
-- The version story remains inconsistent enough to confuse a third-party reviewer.
 
 ## Implemented Features
 
@@ -52,6 +58,7 @@ The following surfaces are implemented in executable code on this branch:
 ### Inferred conclusions
 - The repository contains enough real v0.8 runtime/demo behavior to justify external review soon.
 - The correct reviewer description is now "bounded implemented runtime plus spec/docs surfaces," not "mostly unimplemented runtime."
+- The milestone still mixes implemented bounded runtime/demo surfaces with spec-only contracts and planning docs.
 
 ## Documentation/Spec-Heavy Surfaces
 
@@ -78,11 +85,22 @@ The following remain primarily schema/spec or planning surfaces:
 ## Remaining Gaps / Missing Review-Tail Work
 
 ### Observed facts
-- `docs/milestones/v0.8/THIRD_PARTY_REVIEW_V0.8.md` is absent.
+- Some v0.8 schema/spec artifacts still do not have full runtime ingestion/execution wiring, including:
+  - `experiment_record.v1`
+  - `canonical_evidence_view.v1`
+  - `mutation.v1`
+  - `evaluation_plan.v1`
+  - `godel_experiment_workflow.template.v1`
+  - `experiment_index_entry.v1`
+  - `tool_result.v1`
+- `docs/milestones/v0.8/DEMOS_V0.8.md` and `docs/milestones/v0.8/QUALITY_GATE_V0.8.md` are still reviewer/planning surfaces rather than fully enforced CI/release gates.
+- Third-party review artifact file `docs/milestones/v0.8/THIRD_PARTY_REVIEW_V0.8.md` is absent on current branch state; issue `#707` remains open.
 - `swarm/README.md` still presents the runtime as a `v0.7.0` release surface while `swarm/Cargo.toml` declares `0.8.0`.
 - Reviewer-entry docs require explicit run-vs-inspect guidance to avoid confusion about which surfaces are runnable demos versus inspect-only review artifacts.
 
 ### Inferred conclusions
+- Remaining v0.8 gaps are about completing and hardening integration, not about proving the milestone has zero executable runtime value.
+- Demo and quality-gate surfaces are documented, but not yet fully enforced as deterministic runtime/CI gates.
 - The primary remaining gaps are review-packet clarity and version-truth alignment, not wholesale absence of runtime work.
 - v0.8 should not be presented as release-ready yet, but it also should not be described as mostly unimplemented.
 
@@ -90,12 +108,15 @@ The following remain primarily schema/spec or planning surfaces:
 
 ### Observed facts
 - `swarm/Cargo.toml` declares `version = "0.8.0"`.
-- Root `README.md` presents:
-  - latest released milestone: `v0.7.0`
-  - active development milestone: `v0.8`
+- Root `README.md` says:
+  - latest released milestone: v0.7.0
+  - active development milestone: v0.8
 - `swarm/README.md` still says `Current runtime release: v0.7.0`.
+- Reviewer-facing v0.8 docs should describe `main` as unreleased v0.8 work on top of the latest tagged v0.7.0 release.
+- v0.8 docs are present and active in repository planning/execution artifacts.
 
 ### Inferred conclusions
+- The coherent version story is available, but every reviewer-facing surface must keep using it consistently.
 - The root README and manifest together describe an unreleased `v0.8` development branch reasonably clearly.
 - The runtime README lags behind that story and remains a direct reviewer-facing inconsistency.
 
@@ -104,13 +125,19 @@ The following remain primarily schema/spec or planning surfaces:
 ### Guiding principle
 Repository truth is authoritative. Review-tail docs should describe the bounded runtime/demo work that exists now while remaining explicit about deferred surfaces and unresolved blockers.
 
-### Minimal current recovery sequence
-1. **Align review-tail docs to current repo truth**
-   - Keep `RECOVERY_AUDIT_V0.8.md`, `DOCS_CONVERGENCE_V0.8.md`, `README.md`, and `INTERNAL_READINESS_REVIEW_V0.8.md` mutually consistent.
-   - Explicitly distinguish runnable demos from inspect-only review surfaces.
+### Minimal deterministic recovery sequence
+1. **Stabilize milestone truth surfaces (docs-only, short cycle)**
+   - Keep README/manifests/reviewer-facing docs aligned on one story:
+     - latest tagged release: `v0.7.0`
+     - active milestone on `main`: `v0.8`
+     - runtime crate version on `main`: `0.8.0`
+   - Avoid release wording that implies v0.8 is already shipped.
 
-2. **Fix version-truth blocker**
+2. **Close review-tail gaps before new feature expansion**
+   - Merge/complete `#707` and `#708` with explicit fixed-vs-deferred findings.
+   - Complete missing planning integration issue `#668` or defer explicitly with rationale.
    - Reconcile `swarm/README.md` with the current `0.8.0` development/runtime story before third-party review claims are made.
+   - Restore or create the final `THIRD_PARTY_REVIEW_V0.8.md` handoff artifact.
 
 3. **Restore / prepare the external review artifact**
    - Add or restore `THIRD_PARTY_REVIEW_V0.8.md` as the final handoff packet once the review-tail docs and version story are aligned.
@@ -120,6 +147,10 @@ Repository truth is authoritative. Review-tail docs should describe the bounded 
    - Keep broader autonomy / learning / future authoring ambitions clearly deferred.
 
 ## Evidence Commands Used
+- `gh` issue/PR metadata queries for issue/merge state and changed-file classification.
+- Repository content checks:
+  - `rg` scans across README/manifests/workflows/runtime/docs
+  - directory/file existence checks under `docs/milestones/v0.8/`
 - `cargo test --manifest-path swarm/Cargo.toml --workspace`
 - `rg` scans across `swarm/`, `demos/`, `examples/`, `tools/`, and `docs/milestones/v0.8/`
 - file existence checks for review-tail packet artifacts

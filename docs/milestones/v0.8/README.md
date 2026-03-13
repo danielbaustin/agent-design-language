@@ -7,8 +7,12 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 ## Current Status
 
 - Milestone state: active development (not released).
-- Runtime base release: v0.7.0.
-- Current repository state includes both bounded implemented runtime/demo surfaces and schema/spec/planning surfaces.
+- Latest tagged runtime release: v0.7.0.
+- Current main-branch runtime crate version: 0.8.0.
+- Runtime base release remains v0.7.0 while `main` carries unreleased v0.8 work.
+- v0.8 currently includes both implemented artifacts and planning/spec surfaces; see `RECOVERY_AUDIT_V0.8.md` for repository-truth status.
+- Current repository state includes bounded implemented runtime/demo surfaces alongside schema/spec/planning surfaces.
+- Review this packet as the unreleased v0.8 `main`-branch state, not as a claim that v0.8 has already shipped.
 - The v0.8 packet is not yet ready for third-party handoff; see `INTERNAL_READINESS_REVIEW_V0.8.md` and `RECOVERY_AUDIT_V0.8.md` for current blockers.
 
 ## External Review Quick Start
