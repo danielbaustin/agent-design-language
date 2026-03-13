@@ -387,6 +387,28 @@ mod tests {
     }
 
     #[test]
+    fn stage_loop_rejects_missing_required_fields() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
+        let mut input = fixture_input();
+        input.failure_summary.clear();
+        let err = exec
+            .execute(&input)
+            .expect_err("empty required fields must be rejected");
+        assert!(err.to_string().contains("must be non-empty"));
+    }
+
+    #[test]
+    fn stage_loop_rejects_windows_style_evidence_paths() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
+        let mut input = fixture_input();
+        input.evidence_refs = vec!["runs\\r1\\activation_log.json".to_string()];
+        let err = exec
+            .execute(&input)
+            .expect_err("windows path separators must be rejected");
+        assert!(err.to_string().contains("safe relative path"));
+    }
+
+    #[test]
     fn stage_loop_transient_failure_branch_sets_zero_improvement() {
         let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
         let mut input = fixture_input();
@@ -419,6 +441,17 @@ mod tests {
         assert!(err
             .to_string()
             .contains("GODEL_STAGE_LOOP_DETERMINISM_VIOLATION"));
+    }
+
+    #[test]
+    fn deterministic_contract_rejects_transition_stage_mismatch() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
+        let mut run = exec.execute(&fixture_input()).expect("stage loop run");
+        run.transitions[1].stage = GodelStage::Mutation;
+        let err = exec
+            .validate_deterministic_contract(&run)
+            .expect_err("must reject stage mismatch");
+        assert!(err.to_string().contains("transition stage mismatch"));
     }
 
     #[test]

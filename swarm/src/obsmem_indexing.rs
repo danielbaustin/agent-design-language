@@ -327,4 +327,92 @@ mod tests {
         assert_eq!(indexed.steps[0].step_id, "s1");
         assert_eq!(indexed.steps[0].event_kind, "step_started");
     }
+
+    #[test]
+    fn indexed_memory_entry_validate_rejects_invalid_order_and_content() {
+        let mut entry = IndexedMemoryEntry {
+            run_id: "r1".to_string(),
+            workflow_id: "wf".to_string(),
+            status: "success".to_string(),
+            failure_code: None,
+            summary: "ok".to_string(),
+            tags: vec!["a".to_string()],
+            steps: vec![
+                IndexedStepContext {
+                    sequence: 2,
+                    step_id: "s2".to_string(),
+                    event_kind: "step_finished".to_string(),
+                    context: "success=true".to_string(),
+                },
+                IndexedStepContext {
+                    sequence: 1,
+                    step_id: "s1".to_string(),
+                    event_kind: "step_started".to_string(),
+                    context: "provider=local".to_string(),
+                },
+            ],
+        };
+        let err = entry
+            .validate()
+            .expect_err("out-of-order sequence must fail");
+        assert!(err.message.contains("ordered by non-decreasing sequence"));
+
+        entry.steps.sort_by_key(|s| s.sequence);
+        entry.summary = "/Users/alice/private".to_string();
+        let err = entry
+            .validate()
+            .expect_err("host-path content must be rejected");
+        assert!(err.message.contains("disallowed host-path"));
+    }
+
+    #[test]
+    fn index_run_from_artifacts_rejects_empty_and_missing_run_inputs() {
+        let tmp = unique_temp_dir("missing-inputs");
+        let err = index_run_from_artifacts(&tmp, "").expect_err("empty run_id must fail");
+        assert!(err.message.contains("run_id must be non-empty"));
+
+        let err =
+            index_run_from_artifacts(&tmp, "missing-run").expect_err("missing files must fail");
+        assert!(err.message.contains("failed reading"));
+    }
+
+    #[test]
+    fn index_run_from_artifacts_requires_workflow_id_and_uses_status_fallback() {
+        let tmp = unique_temp_dir("status-fallback");
+        let run_id = "r3";
+        let run = tmp.join(run_id);
+        std::fs::create_dir_all(run.join("logs")).expect("mkdir logs");
+        std::fs::write(run.join("run_summary.json"), r#"{"run_summary_version":1}"#)
+            .expect("write bad run summary");
+        std::fs::write(run.join("run_status.json"), r#"{"run_status_version":1}"#)
+            .expect("write run_status");
+        std::fs::write(
+            run.join("logs").join("activation_log.json"),
+            serde_json::to_vec_pretty(&serde_json::json!({
+                "activation_log_version": 1,
+                "ordering": "append_only_emission_order",
+                "stable_ids": {
+                    "step_id": "stable",
+                    "delegation_id": "stable",
+                    "run_id": "not replay-stable"
+                },
+                "events": []
+            }))
+            .expect("serialize activation"),
+        )
+        .expect("write activation");
+
+        let err =
+            index_run_from_artifacts(&tmp, run_id).expect_err("missing workflow_id must fail");
+        assert!(err.message.contains("missing workflow_id"));
+
+        std::fs::write(
+            run.join("run_summary.json"),
+            r#"{"run_summary_version":1,"run_id":"r3","workflow_id":"wf-index"}"#,
+        )
+        .expect("repair run summary");
+        let indexed = index_run_from_artifacts(&tmp, run_id).expect("index should succeed");
+        assert_eq!(indexed.status, "unknown");
+        assert!(indexed.summary.contains("overall_status=unknown"));
+    }
 }
