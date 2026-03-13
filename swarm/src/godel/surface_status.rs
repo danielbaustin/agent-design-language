@@ -1,0 +1,461 @@
+use std::fs;
+use std::path::{Path, PathBuf};
+
+use anyhow::{anyhow, bail, Context, Result};
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+
+pub const GODEL_RUNTIME_STATUS_VERSION: u32 = 1;
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct GodelRuntimeSurfaceStatus {
+    pub status_version: u32,
+    pub stage_order: Vec<String>,
+    pub loaded_artifacts: Vec<String>,
+    pub checks: Vec<String>,
+}
+
+pub fn load_v08_surface_status(repo_root: &Path) -> Result<GodelRuntimeSurfaceStatus> {
+    let docs_root = repo_root.join("docs").join("milestones").join("v0.8");
+
+    let workflow_template =
+        read_json(&docs_root.join("godel_experiment_workflow.template.v1.json"))
+            .context("load workflow template")?;
+    let evidence_view = read_json(&docs_root.join("canonical_evidence_view.v1.example.json"))
+        .context("load canonical evidence example")?;
+    let mutation =
+        read_json(&docs_root.join("mutation.v1.example.json")).context("load mutation example")?;
+    let evaluation_plan = read_json(&docs_root.join("evaluation_plan.v1.example.json"))
+        .context("load evaluation plan example")?;
+    let experiment_record = read_json(&docs_root.join("experiment_record.v1.example.json"))
+        .context("load experiment record example")?;
+    let run_summary = read_json(&docs_root.join("run_summary.v1.example.json"))
+        .context("load run summary example")?;
+    let experiment_index = read_json(&docs_root.join("experiment_index_entry.v1.example.json"))
+        .context("load experiment index example")?;
+
+    let stage_order = read_stage_order(&workflow_template)?;
+    validate_stage_order(&stage_order)?;
+    validate_cross_links(
+        &evidence_view,
+        &mutation,
+        &evaluation_plan,
+        &experiment_record,
+    )?;
+    validate_index_and_summary(&run_summary, &experiment_index)?;
+
+    Ok(GodelRuntimeSurfaceStatus {
+        status_version: GODEL_RUNTIME_STATUS_VERSION,
+        stage_order,
+        loaded_artifacts: vec![
+            "docs/milestones/v0.8/godel_experiment_workflow.template.v1.json".to_string(),
+            "docs/milestones/v0.8/canonical_evidence_view.v1.example.json".to_string(),
+            "docs/milestones/v0.8/mutation.v1.example.json".to_string(),
+            "docs/milestones/v0.8/evaluation_plan.v1.example.json".to_string(),
+            "docs/milestones/v0.8/experiment_record.v1.example.json".to_string(),
+            "docs/milestones/v0.8/run_summary.v1.example.json".to_string(),
+            "docs/milestones/v0.8/experiment_index_entry.v1.example.json".to_string(),
+        ],
+        checks: vec![
+            "workflow stage order matches deterministic scientific loop".to_string(),
+            "mutation/evaluation_plan/experiment_record references are consistent".to_string(),
+            "run_summary and experiment_index include deterministic recovery fields".to_string(),
+        ],
+    })
+}
+
+pub fn repo_root_from_manifest() -> Result<PathBuf> {
+    let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let Some(repo_root) = manifest.parent() else {
+        bail!("unable to derive repository root from CARGO_MANIFEST_DIR");
+    };
+    Ok(repo_root.to_path_buf())
+}
+
+fn read_json(path: &Path) -> Result<Value> {
+    let raw =
+        fs::read_to_string(path).with_context(|| format!("failed to read '{}'", path.display()))?;
+    let parsed: Value = serde_json::from_str(&raw)
+        .with_context(|| format!("failed to parse '{}' as JSON", path.display()))?;
+    Ok(parsed)
+}
+
+fn read_stage_order(template: &Value) -> Result<Vec<String>> {
+    let Some(arr) = template.get("stage_order").and_then(Value::as_array) else {
+        bail!("workflow template missing stage_order array");
+    };
+    let mut out = Vec::with_capacity(arr.len());
+    for v in arr {
+        let Some(s) = v.as_str() else {
+            bail!("workflow stage_order must contain strings only");
+        };
+        out.push(s.to_string());
+    }
+    Ok(out)
+}
+
+fn validate_stage_order(stage_order: &[String]) -> Result<()> {
+    let expected = [
+        "failure",
+        "hypothesis",
+        "mutation",
+        "experiment",
+        "evaluation",
+        "record",
+    ];
+    if stage_order != expected {
+        bail!(
+            "unexpected stage order: expected {:?}, got {:?}",
+            expected,
+            stage_order
+        );
+    }
+    Ok(())
+}
+
+fn validate_cross_links(
+    evidence_view: &Value,
+    mutation: &Value,
+    evaluation_plan: &Value,
+    experiment_record: &Value,
+) -> Result<()> {
+    if evidence_view
+        .get("schema_name")
+        .and_then(Value::as_str)
+        .unwrap_or_default()
+        != "canonical_evidence_view"
+    {
+        bail!("canonical evidence example has unexpected schema_name");
+    }
+
+    let mutation_id = mutation
+        .get("mutation_id")
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("mutation example missing mutation_id"))?;
+    if mutation_id.trim().is_empty() {
+        bail!("mutation example mutation_id is empty");
+    }
+    let plan_id = evaluation_plan
+        .get("plan_id")
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("evaluation plan example missing plan_id"))?;
+    if plan_id.trim().is_empty() {
+        bail!("evaluation plan example plan_id is empty");
+    }
+
+    let exp_mutation_id = experiment_record
+        .get("mutation")
+        .and_then(|v| v.get("mutation_id"))
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("experiment record missing mutation.mutation_id"))?;
+    if exp_mutation_id.trim().is_empty() {
+        bail!("experiment record mutation.mutation_id is empty");
+    }
+    let exp_plan_id = experiment_record
+        .get("evaluation_plan")
+        .and_then(|v| v.get("evaluation_plan_id"))
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("experiment record missing evaluation_plan_id"))?;
+    if exp_plan_id.trim().is_empty() {
+        bail!("experiment record evaluation_plan_id is empty");
+    }
+
+    let mutation_plan_schema_name = mutation
+        .get("evaluation_plan_ref")
+        .and_then(|v| v.get("schema_name"))
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("mutation missing evaluation_plan_ref.schema_name"))?;
+    if mutation_plan_schema_name != "evaluation_plan" {
+        bail!("mutation evaluation_plan_ref.schema_name must be evaluation_plan");
+    }
+
+    let eval_schema_name = evaluation_plan
+        .get("schema_name")
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("evaluation plan example missing schema_name"))?;
+    if eval_schema_name != "evaluation_plan" {
+        bail!("evaluation plan example schema_name must be evaluation_plan");
+    }
+
+    Ok(())
+}
+
+fn validate_index_and_summary(run_summary: &Value, experiment_index: &Value) -> Result<()> {
+    if run_summary
+        .get("schema_version")
+        .and_then(Value::as_str)
+        .unwrap_or_default()
+        != "run_summary.v1"
+    {
+        bail!("run summary example missing schema_version=run_summary.v1");
+    }
+    if experiment_index
+        .get("schema_version")
+        .and_then(Value::as_str)
+        .unwrap_or_default()
+        != "experiment_index_entry.v1"
+    {
+        bail!("experiment index example missing schema_version=experiment_index_entry.v1");
+    }
+    if experiment_index.get("improvement_delta").is_none() {
+        bail!("experiment index example missing improvement_delta");
+    }
+    if experiment_index.get("experiment_seed").is_none() {
+        bail!("experiment index example missing experiment_seed");
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+    use std::path::PathBuf;
+
+    fn unique_temp_dir(label: &str) -> PathBuf {
+        static COUNTER: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+        let n = COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let root = std::env::temp_dir().join(format!(
+            "adl-godel-runtime-{label}-pid{}-{n}",
+            std::process::id()
+        ));
+        std::fs::create_dir_all(root.join("docs/milestones/v0.8")).expect("mkdir docs root");
+        root
+    }
+
+    fn write_v08_fixtures(root: &Path) {
+        let docs = root.join("docs/milestones/v0.8");
+        std::fs::write(
+            docs.join("godel_experiment_workflow.template.v1.json"),
+            serde_json::to_vec_pretty(&json!({
+                "stage_order": ["failure", "hypothesis", "mutation", "experiment", "evaluation", "record"]
+            }))
+            .expect("serialize workflow template"),
+        )
+        .expect("write workflow template");
+        std::fs::write(
+            docs.join("canonical_evidence_view.v1.example.json"),
+            serde_json::to_vec_pretty(&json!({
+                "schema_name": "canonical_evidence_view"
+            }))
+            .expect("serialize evidence"),
+        )
+        .expect("write evidence");
+        std::fs::write(
+            docs.join("mutation.v1.example.json"),
+            serde_json::to_vec_pretty(&json!({
+                "mutation_id": "mut:1",
+                "evaluation_plan_ref": {"schema_name": "evaluation_plan"}
+            }))
+            .expect("serialize mutation"),
+        )
+        .expect("write mutation");
+        std::fs::write(
+            docs.join("evaluation_plan.v1.example.json"),
+            serde_json::to_vec_pretty(&json!({
+                "schema_name": "evaluation_plan",
+                "plan_id": "plan:1"
+            }))
+            .expect("serialize plan"),
+        )
+        .expect("write plan");
+        std::fs::write(
+            docs.join("experiment_record.v1.example.json"),
+            serde_json::to_vec_pretty(&json!({
+                "mutation": {"mutation_id": "mut:1"},
+                "evaluation_plan": {"evaluation_plan_id": "plan:1"}
+            }))
+            .expect("serialize record"),
+        )
+        .expect("write record");
+        std::fs::write(
+            docs.join("run_summary.v1.example.json"),
+            serde_json::to_vec_pretty(&json!({
+                "schema_version": "run_summary.v1"
+            }))
+            .expect("serialize run summary"),
+        )
+        .expect("write run summary");
+        std::fs::write(
+            docs.join("experiment_index_entry.v1.example.json"),
+            serde_json::to_vec_pretty(&json!({
+                "schema_version": "experiment_index_entry.v1",
+                "improvement_delta": {"metric": "success_rate"},
+                "experiment_seed": "seed-1"
+            }))
+            .expect("serialize index"),
+        )
+        .expect("write index");
+    }
+
+    #[test]
+    fn loads_and_validates_v08_surfaces() {
+        let repo_root = repo_root_from_manifest().expect("repo root");
+        let status = load_v08_surface_status(&repo_root).expect("status should load");
+        assert_eq!(status.status_version, GODEL_RUNTIME_STATUS_VERSION);
+        assert_eq!(
+            status.stage_order,
+            vec![
+                "failure".to_string(),
+                "hypothesis".to_string(),
+                "mutation".to_string(),
+                "experiment".to_string(),
+                "evaluation".to_string(),
+                "record".to_string(),
+            ]
+        );
+        assert!(status
+            .loaded_artifacts
+            .iter()
+            .all(|p| p.starts_with("docs/milestones/v0.8/")));
+    }
+
+    #[test]
+    fn read_stage_order_rejects_missing_and_non_string_values() {
+        let err = read_stage_order(&json!({})).expect_err("missing stage_order must fail");
+        assert!(err.to_string().contains("missing stage_order"));
+
+        let err = read_stage_order(&json!({"stage_order": ["failure", 7]}))
+            .expect_err("non-string stage value must fail");
+        assert!(err.to_string().contains("contain strings only"));
+    }
+
+    #[test]
+    fn validate_stage_order_rejects_non_canonical_sequence() {
+        let err = validate_stage_order(&[
+            "failure".to_string(),
+            "mutation".to_string(),
+            "hypothesis".to_string(),
+            "experiment".to_string(),
+            "evaluation".to_string(),
+            "record".to_string(),
+        ])
+        .expect_err("out-of-order stages must fail");
+        assert!(err.to_string().contains("unexpected stage order"));
+    }
+
+    #[test]
+    fn validate_cross_links_and_summary_reject_malformed_inputs() {
+        let err = validate_cross_links(
+            &json!({"schema_name": "wrong"}),
+            &json!({"mutation_id": "mut:1", "evaluation_plan_ref": {"schema_name": "evaluation_plan"}}),
+            &json!({"schema_name": "evaluation_plan", "plan_id": "plan:1"}),
+            &json!({"mutation": {"mutation_id": "mut:1"}, "evaluation_plan": {"evaluation_plan_id": "plan:1"}}),
+        )
+        .expect_err("unexpected evidence schema must fail");
+        assert!(err.to_string().contains("unexpected schema_name"));
+
+        let err = validate_index_and_summary(
+            &json!({"schema_version": "run_summary.v1"}),
+            &json!({"schema_version": "experiment_index_entry.v1", "improvement_delta": {}}),
+        )
+        .expect_err("missing experiment_seed must fail");
+        assert!(err.to_string().contains("missing experiment_seed"));
+    }
+
+    #[test]
+    fn validate_cross_links_rejects_empty_ids_and_schema_mismatches() {
+        let evidence = json!({"schema_name": "canonical_evidence_view"});
+        let base_mutation = json!({"mutation_id": "mut:1", "evaluation_plan_ref": {"schema_name": "evaluation_plan"}});
+        let base_plan = json!({"schema_name": "evaluation_plan", "plan_id": "plan:1"});
+        let base_record = json!({"mutation": {"mutation_id": "mut:1"}, "evaluation_plan": {"evaluation_plan_id": "plan:1"}});
+
+        let err = validate_cross_links(
+            &evidence,
+            &json!({"mutation_id": " ", "evaluation_plan_ref": {"schema_name": "evaluation_plan"}}),
+            &base_plan,
+            &base_record,
+        )
+        .expect_err("empty mutation_id must fail");
+        assert!(err.to_string().contains("mutation_id is empty"));
+
+        let err = validate_cross_links(
+            &evidence,
+            &base_mutation,
+            &json!({"schema_name": "evaluation_plan", "plan_id": " "}),
+            &base_record,
+        )
+        .expect_err("empty plan_id must fail");
+        assert!(err.to_string().contains("plan_id is empty"));
+
+        let err = validate_cross_links(
+            &evidence,
+            &base_mutation,
+            &base_plan,
+            &json!({"mutation": {"mutation_id": " "}, "evaluation_plan": {"evaluation_plan_id": "plan:1"}}),
+        )
+        .expect_err("empty experiment record mutation id must fail");
+        assert!(err.to_string().contains("mutation.mutation_id is empty"));
+
+        let err = validate_cross_links(
+            &evidence,
+            &base_mutation,
+            &base_plan,
+            &json!({"mutation": {"mutation_id": "mut:1"}, "evaluation_plan": {"evaluation_plan_id": " "}}),
+        )
+        .expect_err("empty experiment record plan id must fail");
+        assert!(err.to_string().contains("evaluation_plan_id is empty"));
+
+        let err = validate_cross_links(
+            &evidence,
+            &json!({"mutation_id": "mut:1", "evaluation_plan_ref": {"schema_name": "wrong"}}),
+            &base_plan,
+            &base_record,
+        )
+        .expect_err("mutation schema mismatch must fail");
+        assert!(err.to_string().contains("must be evaluation_plan"));
+
+        let err = validate_cross_links(
+            &evidence,
+            &base_mutation,
+            &json!({"schema_name": "wrong", "plan_id": "plan:1"}),
+            &base_record,
+        )
+        .expect_err("evaluation schema mismatch must fail");
+        assert!(err
+            .to_string()
+            .contains("schema_name must be evaluation_plan"));
+    }
+
+    #[test]
+    fn validate_index_and_summary_rejects_schema_mismatches_and_missing_delta() {
+        let err = validate_index_and_summary(
+            &json!({"schema_version": "wrong"}),
+            &json!({"schema_version": "experiment_index_entry.v1", "improvement_delta": {}, "experiment_seed": "seed-1"}),
+        )
+        .expect_err("run summary schema mismatch must fail");
+        assert!(err.to_string().contains("schema_version=run_summary.v1"));
+
+        let err = validate_index_and_summary(
+            &json!({"schema_version": "run_summary.v1"}),
+            &json!({"schema_version": "wrong", "improvement_delta": {}, "experiment_seed": "seed-1"}),
+        )
+        .expect_err("index schema mismatch must fail");
+        assert!(err
+            .to_string()
+            .contains("schema_version=experiment_index_entry.v1"));
+
+        let err = validate_index_and_summary(
+            &json!({"schema_version": "run_summary.v1"}),
+            &json!({"schema_version": "experiment_index_entry.v1", "experiment_seed": "seed-1"}),
+        )
+        .expect_err("missing improvement_delta must fail");
+        assert!(err.to_string().contains("missing improvement_delta"));
+    }
+
+    #[test]
+    fn load_v08_surface_status_errors_when_fixture_is_missing() {
+        let root = unique_temp_dir("missing-fixtures");
+        write_v08_fixtures(&root);
+        std::fs::remove_file(
+            root.join("docs/milestones/v0.8")
+                .join("evaluation_plan.v1.example.json"),
+        )
+        .expect("remove plan fixture");
+
+        let err = load_v08_surface_status(&root).expect_err("missing fixture should fail");
+        assert!(err.to_string().contains("load evaluation plan example"));
+        let _ = std::fs::remove_dir_all(&root);
+    }
+}
