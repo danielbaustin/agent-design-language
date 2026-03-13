@@ -223,6 +223,47 @@ mod tests {
     }
 
     #[test]
+    fn display_and_query_mismatch_paths_are_explicit() {
+        let entry = build_index_entry(&record(), "tool_failure");
+        let no_failure_match = ObsMemIndexQuery {
+            failure_code: "verification_failed".to_string(),
+            hypothesis_id: None,
+            experiment_outcome: None,
+        };
+        assert!(!matches_query(&entry, &no_failure_match));
+
+        let no_hypothesis_match = ObsMemIndexQuery {
+            failure_code: "tool_failure".to_string(),
+            hypothesis_id: Some("hyp:other".to_string()),
+            experiment_outcome: None,
+        };
+        assert!(!matches_query(&entry, &no_hypothesis_match));
+
+        let no_outcome_match = ObsMemIndexQuery {
+            failure_code: "tool_failure".to_string(),
+            hypothesis_id: None,
+            experiment_outcome: Some("reject".to_string()),
+        };
+        assert!(!matches_query(&entry, &no_outcome_match));
+
+        let msg = ObsMemIndexError::Invalid("x".to_string()).to_string();
+        assert!(msg.contains("GODEL_OBSMEM_INDEX_INVALID"));
+    }
+
+    #[test]
+    fn persisted_record_requires_expected_runtime_schema() {
+        let persisted = PersistedExperimentRecord {
+            schema: "experiment_record.runtime.v0".to_string(),
+            record: record(),
+        };
+        let err =
+            build_index_entry_from_persisted(&persisted).expect_err("unexpected schema must fail");
+        assert!(err
+            .to_string()
+            .contains("unexpected experiment record schema"));
+    }
+
+    #[test]
     fn persist_index_entry_writes_expected_runtime_path() {
         let tmp = test_tmp_dir("obsmem-index");
         let entry = build_index_entry(&record(), "tool_failure");
@@ -231,6 +272,25 @@ mod tests {
             rel,
             PathBuf::from("runs/run-746-a/godel/obsmem_index_entry.runtime.v1.json")
         );
+        let _ = std::fs::remove_dir_all(&tmp);
+    }
+
+    #[test]
+    fn persist_index_entry_rejects_invalid_fields_and_disallowed_content() {
+        let tmp = test_tmp_dir("obsmem-index-invalid");
+        let mut entry = build_index_entry(&record(), "tool_failure");
+        entry.run_id.clear();
+        let err = persist_index_entry(&tmp, &entry).expect_err("empty run_id must fail");
+        assert!(err
+            .to_string()
+            .contains("required index fields must be non-empty"));
+
+        let mut entry = build_index_entry(&record(), "tool_failure");
+        entry.index_key = "gho_bad".to_string();
+        let err = persist_index_entry(&tmp, &entry).expect_err("token-like content must fail");
+        assert!(err
+            .to_string()
+            .contains("disallowed host-path or token-like content"));
         let _ = std::fs::remove_dir_all(&tmp);
     }
 }

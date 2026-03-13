@@ -267,4 +267,81 @@ mod tests {
         assert_eq!(left.hits[0].id, "a");
         assert_eq!(left.hits[1].id, "b");
     }
+
+    #[test]
+    fn policy_and_request_validation_reject_invalid_limits() {
+        let policy = RetrievalPolicyV1 {
+            default_limit: 0,
+            required_tags: vec![],
+            required_failure_code: None,
+            order: RetrievalOrder::ScoreDescIdAsc,
+        };
+        let err = policy.validate().expect_err("default limit 0 must fail");
+        assert!(err.message.contains("default_limit must be in 1..=1000"));
+
+        let policy = RetrievalPolicyV1::default();
+        let request = RetrievalRequest {
+            workflow_id: None,
+            failure_code: None,
+            tags: vec![],
+            limit_override: Some(1001),
+        };
+        let err = request
+            .to_query(&policy)
+            .expect_err("limit override above max must fail");
+        assert!(err.message.contains("limit must be in 1..=1000"));
+    }
+
+    #[test]
+    fn apply_policy_supports_id_ascending_order_and_parses_score_edges() {
+        let mut policy = RetrievalPolicyV1 {
+            default_limit: 10,
+            required_tags: vec![],
+            required_failure_code: None,
+            order: RetrievalOrder::IdAsc,
+        };
+        policy.normalize();
+        let request = RetrievalRequest {
+            workflow_id: Some("wf-a".to_string()),
+            failure_code: None,
+            tags: vec![],
+            limit_override: None,
+        };
+        let input = MemoryQueryResult {
+            hits: vec![
+                hit("c", "0", &[]),
+                hit("a", "7.1", &[]),
+                hit("b", "7.05", &[]),
+            ],
+        };
+        let out = apply_policy_to_results(&policy, &request, input).expect("policy result");
+        assert_eq!(
+            out.hits.iter().map(|h| h.id.as_str()).collect::<Vec<_>>(),
+            vec!["a", "b", "c"]
+        );
+
+        // Exercise numeric parsing edge behavior used by score ordering.
+        assert_eq!(parse_score_hundredths("7"), 700);
+        assert_eq!(parse_score_hundredths("7.1"), 710);
+        assert_eq!(parse_score_hundredths("7.05"), 705);
+        assert_eq!(parse_score_hundredths("bad"), 0);
+    }
+
+    #[test]
+    fn apply_policy_allows_empty_filters_and_returns_stable_empty_result() {
+        let policy = RetrievalPolicyV1::default();
+        let request = RetrievalRequest {
+            workflow_id: None,
+            failure_code: None,
+            tags: vec![],
+            limit_override: Some(1),
+        };
+        let result = MemoryQueryResult { hits: vec![] };
+        let left = apply_policy_to_results(&policy, &request, result.clone())
+            .expect("empty filters are valid");
+        let right =
+            apply_policy_to_results(&policy, &request, result).expect("empty filters are valid");
+        assert_eq!(left, right);
+        assert!(left.hits.is_empty());
+    }
 }
