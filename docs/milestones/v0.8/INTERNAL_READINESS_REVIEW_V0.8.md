@@ -7,7 +7,7 @@ Scope: Internal readiness gate before external third-party review
 
 Recommendation: not yet ready for `#707`
 
-The repository contains real bounded v0.8 implementation work, especially in the Gödel runtime scaffolding and transpiler demo thread, but the external review surface is still not coherent enough for a serious third-party pass.
+The repository now presents a coherent version story for `main`, but the external review packet is still not complete enough for a serious third-party pass.
 
 ## Evidence Base
 
@@ -36,41 +36,40 @@ Validated by:
 - from the runtime crate directory: `cargo test --workspace`
 - `cd tools/transpiler_demo && cargo run --quiet`
 - `rg -n '\{\{[^}]+\}\}' docs/milestones/v0.8 docs/tooling README.md */README.md`
-- `rg -n '\.adl/docs/v08planning|/Users/|/home/' docs/milestones/v0.8 docs/tooling README.md */README.md`
+- host-path leakage scan across milestone and tooling docs
 
 ## Blockers For External Review
 
-### Blocker 1: Version story is internally inconsistent
+### Blocker 1: Final third-party review packet artifact is still missing
 
 Observed facts:
 
-- The runtime crate manifest declares `version = "0.8.0"`.
-- `README.md` says latest released milestone is `v0.7.0`.
-- The runtime crate README says current runtime release is `v0.7.0`.
-
-Inferred conclusion:
-
-- An external reviewer cannot tell whether `main` is presenting a released `0.7.0` runtime, an unreleased `0.8.0` runtime, or a mixed milestone branch.
-
-Recommended action:
-
-- Reconcile manifest versioning and release-status language before external review claims are made.
-
-### Blocker 2: Review-readiness docs overstate convergence
-
-Observed facts:
-
-- `docs/milestones/v0.8/DOCS_CONVERGENCE_V0.8.md` says `Status: Converged for review handoff`.
 - `docs/milestones/v0.8/THIRD_PARTY_REVIEW_V0.8.md` is absent on this branch.
-- `docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md` still claims large portions of Gödel runtime work are unimplemented, which is now stale relative to `swarm/src/godel/` and related tests.
+- Review-tail docs exist, but the final external-review artifact itself is still missing.
 
 Inferred conclusion:
 
-- The review-tail documents are no longer aligned with repository truth and currently over-claim readiness while also under-reporting newly landed runtime work.
+- The repo cannot honestly claim the full third-party review packet is ready while its explicit handoff artifact is absent.
 
 Recommended action:
 
-- Refresh the recovery/review packet so it matches the actual current repo before asking a third party to evaluate it.
+- Add or restore the final external-review handoff artifact before making review-readiness claims.
+
+### Blocker 2: Review-readiness docs must stay aligned with the refreshed version story and current repo truth
+
+Observed facts:
+
+- `README.md` presents the latest tagged release as `v0.7.0` and active development as `v0.8`.
+- `swarm/Cargo.toml` declares `version = "0.8.0"`.
+- Reviewer-facing docs must explicitly frame this as unreleased `main`-branch v0.8 work rather than a shipped v0.8 release.
+
+Inferred conclusion:
+
+- Review packet truth now depends on keeping every reviewer-facing surface aligned to the same unreleased-v0.8 story.
+
+Recommended action:
+
+- Keep recovery/readiness docs synchronized with the README/manifest story and avoid slipping back into mixed-release wording.
 
 ### Blocker 3: Demo and review entry surfaces are still confusing
 
@@ -170,8 +169,8 @@ Recommended action:
 
 Observed facts:
 
-- `docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md` still says large portions of v0.8 runtime integration are missing.
-- Current repo state includes concrete runtime Gödel modules and direct test coverage for them.
+- `docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md` began as an earlier recovery snapshot.
+- Current repo state includes concrete runtime Gödel modules and direct test coverage for them, so the audit must stay refreshed if it remains part of the review packet.
 
 Inferred conclusion:
 
@@ -185,8 +184,8 @@ Recommended action:
 
 Observed facts:
 
-- `docs/milestones/v0.8/DOCS_CONVERGENCE_V0.8.md` says the docs are converged for handoff.
-- The branch still lacks a `THIRD_PARTY_REVIEW_V0.8.md` artifact and still has a broken version story.
+- `docs/milestones/v0.8/DOCS_CONVERGENCE_V0.8.md` previously said the docs were converged for handoff.
+- The branch still lacks a `THIRD_PARTY_REVIEW_V0.8.md` artifact.
 
 Inferred conclusion:
 
@@ -228,13 +227,13 @@ Decision: not yet ready for `#707`
 
 Minimum unblock set:
 
-1. Reconcile version-bearing manifests and README/release-status language.
-2. Refresh review-tail docs so recovery/convergence claims match current code and missing artifacts.
+1. Add or restore the final third-party review handoff artifact.
+2. Keep review-tail docs synchronized with the reconciled version story and current code/demo truth.
 3. Clarify the external review entry path by separating runnable demos from doc/spec validation rows.
 
 ## Recommended Next Actions
 
-1. Fix the version story first; it is the fastest high-confidence blocker to remove.
-2. Refresh `RECOVERY_AUDIT_V0.8.md` and `DOCS_CONVERGENCE_V0.8.md` against current runtime truth.
+1. Add or restore `THIRD_PARTY_REVIEW_V0.8.md`.
+2. Refresh `RECOVERY_AUDIT_V0.8.md` and `DOCS_CONVERGENCE_V0.8.md` against current runtime truth whenever the review packet changes again.
 3. Add or restore the missing third-party review packet artifact before calling the repo externally review-ready.
 4. Simplify demo/review navigation so an external reviewer can answer "what do I run?" in one pass.

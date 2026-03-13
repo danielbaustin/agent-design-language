@@ -16,19 +16,25 @@ Badge note:
 
 ## Status
 
-Current runtime release: **v0.7.0**
+Latest tagged runtime release: **v0.7.0**
 
-This README reflects the current v0.7 runtime behavior.
+Current main-branch crate version: **0.8.0**
+
+This README reflects the current `main`-branch runtime surfaces for the active **v0.8** milestone. Treat it as unreleased development documentation layered on top of the latest tagged `v0.7.0` release.
 
 ## v0.7 Naming Migration (Compatibility Window)
 
 - Canonical binaries are `adl` and `adl-remote`.
-- Legacy compatibility shim binaries remain available in v0.7 with deprecation warnings.
-- Canonical env vars use `ADL_*`; legacy compatibility env vars remain supported in v0.7 with deprecation warnings.
+- Legacy compatibility shim binaries were introduced during v0.7 and remain available on `main` during the compatibility window with deprecation warnings.
+- Canonical env vars use `ADL_*`; legacy compatibility env vars remain supported during the compatibility window with deprecation warnings.
 
 ## Features by Release
 
-### v0.7.0 (Current)
+### v0.8 (Current Main Branch, Unreleased)
+
+The current `main` branch carries the `0.8.0` crate version and includes bounded v0.8 runtime/demo surfaces on top of the shipped v0.7 base.
+
+### v0.7.0 (Latest Tagged Release)
 
 * ExecutionPlan-driven runtime execution
 * Deterministic sequential + concurrent fork/join semantics
@@ -64,9 +70,12 @@ This README reflects the current v0.7 runtime behavior.
 ## Documentation Map
 
 - Root repo README: `../README.md`
+- v0.8 milestone docs: `../docs/milestones/v0.8/`
 - v0.7 milestone docs: `../docs/milestones/v0.7/`
 - ADRs: `../docs/adr/`
-- Runnable demos: `../docs/milestones/v0.7/DEMOS_v0.7.md`
+- Runnable demos:
+  - `../docs/milestones/v0.7/DEMOS_v0.7.md` (latest tagged release)
+  - `../docs/milestones/v0.8/DEMOS_V0.8.md` (active milestone review packet)
 - More examples: `examples/README.md`
 
 ## How Swarm Processes ADL (Compiler-like Pipeline)

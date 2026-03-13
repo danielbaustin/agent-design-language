@@ -6,24 +6,24 @@ It is a documentation handoff artifact for `#707` and does not add runtime scope
 
 ## Convergence Outcome
 
-Status: **Converged for review handoff**
+Status: **Partially converged; version story reconciled, final review handoff still pending**
 
 Primary result:
 
 - milestone navigation and core planning surfaces are aligned,
-- schema/workflow/indexing docs are cross-referenced through canonical v0.8 docs,
-- remaining non-blocking gaps are explicitly listed as deferred follow-ups.
+- README/manifests/reviewer-facing status language now describes one unreleased v0.8 main-branch story layered on top of the latest tagged v0.7.0 release,
+- remaining review-tail blockers are explicitly listed rather than treated as non-blocking.
 
 ## Surfaces Reviewed
 
 | Surface | Convergence status | Notes |
 |---|---|---|
-| README/navigation index | converged | links and canonical milestones verified |
+| README/navigation index | partially converged | navigation aligned; reviewer handoff still blocked by remaining review-tail work |
 | execution/dependency docs | converged | execution order and boundaries aligned |
 | Gödel loop docs/templates | converged | stage ordering and schema references aligned |
 | authoring/reviewer planning docs | converged | sequencing and template-location docs present |
 | bounded AEE + quality gate docs | converged | bounded scope and gate phases explicit in planning docs |
-| demo/review/release-prep docs | converged | demo/release/review surfaces present and cross-linked |
+| demo/review/release-prep docs | partially converged | surfaces are present, but final third-party-review packet is still incomplete |
 
 ## Per-Document Consistency Audit
 
@@ -76,18 +76,19 @@ Reviewed files:
 2. Verified cross-doc references used for review/release planning are present.
 3. Confirmed no absolute host-path leakage and no stale pre-canonical planning-path references in audited docs.
 4. Corrected handoff references that pointed to non-existent docs to use existing canonical milestone surfaces.
+5. Reconciled version-bearing reviewer-facing language so `README.md`, `swarm/README.md`, and v0.8 review docs all describe `main` as unreleased v0.8 work on top of the latest tagged v0.7.0 release.
 
 ## Deferred / Follow-up Candidates
 
-The following remain implementation/review-tail concerns rather than docs-structure blockers:
+The following remain real review-tail blockers or follow-up items rather than resolved convergence facts:
 
-1. Runtime/demo execution verification status for each required matrix row.
+1. Final third-party review packet artifact creation/restoration.
 2. Third-party findings triage resolution after `#707`.
 3. Release ceremony finalization after review-tail completion.
 
 ## Handoff to Third-Party Review (`#707`)
 
-Reviewers should treat this docs baseline as canonical and use:
+Reviewers should treat this docs baseline as canonical once the remaining review-tail blockers above are cleared. At that point, use:
 
 - `README.md` (navigation)
 - `EXECUTION_ORDER_V0.8.md` (ordering/dependencies)
