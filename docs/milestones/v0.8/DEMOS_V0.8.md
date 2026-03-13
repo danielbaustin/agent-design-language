@@ -8,6 +8,8 @@ It covers both:
 
 ## Quick Reviewer Split
 
+If you are asking "what do I run?" versus "what do I inspect?", use this split first.
+
 ### Runnable demo commands
 
 Run these commands from repository root:
@@ -40,13 +42,13 @@ Review-surface entries are ordered by:
 
 ## Required Review Surfaces
 
-| Surface ID | Surface Type | Reviewer Action | Scope | Primary Evidence Surface | Canonical Validation Command |
-|---|---|---|---|---|---|
-| D8-01 | inspect_only | Read / inspect | Gödel schema spine | schema/example artifacts under `docs/milestones/v0.8/` | targeted `jq` / path checks |
-| D8-02 | inspect_only_with_runnable_support | Read workflow docs, then optionally run a bounded demo | Gödel workflow integration | `GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md` + template JSON + Demo D artifacts | `cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-d-godel-obsmem-loop --run --trace --out ./out` |
-| D8-03 | inspect_only_with_runnable_support | Read indexing docs, then optionally run a bounded demo | ObsMem indexing integration | `OBSMEM_INDEXING_SURFACES_V1.md` + Demo F artifacts | `cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-f-obsmem-retrieval --run --trace --out ./out` |
-| D8-04 | runnable_demo | Run and inspect output | Rust transpiler flagship | `RUST_TRANSPILER_DEMO.md` + `RUST_TRANSPILER_VERIFICATION_V0.8.md` + transpiler verification JSON | `cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet` |
-| D8-05 | inspect_only_with_runnable_support | Read authoring/reviewer contracts, then optionally run a bounded demo | Authoring/reviewer compatibility | tooling docs/contracts + Demo E artifacts | `cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-e-multi-agent-card-pipeline --run --trace --out ./out` |
+| Surface ID | Surface Type | Reviewer Action | Workstream | Scope | Primary Issue(s) | Primary Evidence Surface | Canonical Validation Command |
+|---|---|---|---|---|---|---|---|
+| D8-01 | inspect_only | Read / inspect | Gödel schema spine | ExperimentRecord + Evidence + Mutation + EvaluationPlan schema alignment | `#609`, `#610`, `#611`, `#612`, `#683` | canonical schema/example artifacts under `docs/milestones/v0.8/` | targeted `jq` / path checks |
+| D8-02 | inspect_only_with_runnable_support | Read workflow docs, then optionally run supporting demo | Gödel workflow integration | Failure -> hypothesis -> mutation -> experiment -> evaluation -> record loop template alignment | `#613`, `#615`, `#616` | `GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md` + `godel_experiment_workflow.template.v1.json` + supporting Demo D runtime artifacts | `cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-d-godel-obsmem-loop --run --trace --out ./out` |
+| D8-03 | inspect_only_with_runnable_support | Read indexing docs, then optionally run supporting demo | ObsMem indexing integration | Run summary + ExperimentRecord-derived indexing surfaces | `#614` | `OBSMEM_INDEXING_SURFACES_V1.md` + supporting Demo F runtime artifacts | `cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-f-obsmem-retrieval --run --trace --out ./out` |
+| D8-04 | runnable_demo | Run and inspect output | Runtime/transpiler flagship | Bounded Rust-first transpiler mapping + deterministic verification evidence | `#702`, `#703`, `#704`, `#759` | `RUST_TRANSPILER_DEMO.md` + `RUST_TRANSPILER_VERIFICATION_V0.8.md` + `demos/rust_output/transpiler_verification.v0.8.json` | `cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet` |
+| D8-05 | inspect_only_with_runnable_support | Read authoring/reviewer contracts, then optionally run supporting demo | Authoring/reviewer compatibility | Prompt spec + reviewer checklist/output contracts and ordering | `#633`, `#650`, `#651`, `#649`, `#667`, `#677` | tooling docs/contracts + supporting Demo E runtime artifacts | `cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-e-multi-agent-card-pipeline --run --trace --out ./out` |
 
 ## Supporting Runnable Demos
 
@@ -58,6 +60,15 @@ Review-surface entries are ordered by:
   - Exercises deterministic card-pipeline artifact flow.
 - `demo-f-obsmem-retrieval`
   - Exercises deterministic retrieval over persisted runtime index entries.
+
+## Required Validation/Evidence Expectations
+
+Each required review surface should provide:
+1. A canonical doc/spec pointer in `docs/milestones/v0.8/`.
+2. Deterministic artifact/evidence references where applicable.
+3. Clear implemented-vs-illustrative boundary notes.
+4. No secrets, tool arguments, raw prompts, or absolute host paths in persisted evidence.
+5. An explicit reviewer action: `run`, `inspect`, or `inspect with runnable support`.
 
 ## Review Notes
 
