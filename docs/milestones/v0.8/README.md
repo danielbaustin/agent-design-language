@@ -10,6 +10,38 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - Runtime base release: v0.7.0.
 - v0.8 currently includes both implemented artifacts and planning/spec surfaces; see `RECOVERY_AUDIT_V0.8.md` for repository-truth status.
 
+## External Review Quick Start
+
+If you are reviewing v0.8 for the first time, use this split first:
+
+### Runnable demos
+
+Run these commands from repository root to exercise implemented bounded demo surfaces:
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-d-godel-obsmem-loop --run --trace --out ./out
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-e-multi-agent-card-pipeline --run --trace --out ./out
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-f-obsmem-retrieval --run --trace --out ./out
+cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet
+```
+
+Use these docs while reviewing runnable demo output:
+- [DEMOS_V0.8.md](DEMOS_V0.8.md)
+- [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
+- [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
+- [../demos/v0.8-bounded-critical-demos.md](../demos/v0.8-bounded-critical-demos.md)
+
+### Inspect-only review surfaces
+
+Read these docs/spec surfaces to review milestone contracts and schema alignment. They are reviewer inspection surfaces, not commands to run:
+- [CANONICAL_EVIDENCE_VIEW_V1.md](CANONICAL_EVIDENCE_VIEW_V1.md)
+- [MUTATION_FORMAT_V1.md](MUTATION_FORMAT_V1.md)
+- [EVALUATION_PLAN_V1.md](EVALUATION_PLAN_V1.md)
+- [EXPERIMENT_RECORD_V1.md](EXPERIMENT_RECORD_V1.md)
+- [OBSMEM_INDEXING_SURFACES_V1.md](OBSMEM_INDEXING_SURFACES_V1.md)
+- [GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md](GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md)
+- [docs/tooling/README.md](../../tooling/README.md)
+
 ## Baseline Freeze Status
 
 The v0.8 milestone documentation baseline is frozen for implementation work.
