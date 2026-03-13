@@ -53,7 +53,7 @@ ObsMem and Gödel depend on this EPIC.
 Implements:
 
 - Architecture §2.6 ObsMem
-- Bayesian model background in `incubation/OBSMEM_BAYES.md`
+- Bayesian model background in `OBSMEM_BAYES.md`
 
 Sub-issues (foundation track):
 

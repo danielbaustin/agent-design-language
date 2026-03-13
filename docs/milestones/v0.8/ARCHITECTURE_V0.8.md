@@ -175,7 +175,7 @@ ObsMem integration provides:
 - Provider/policy analytics
 - Stability metrics
 
-See `incubation/OBSMEM_BAYES.md` for background model details.
+See `OBSMEM_BAYES.md` for background model details.
 
 ---
 
