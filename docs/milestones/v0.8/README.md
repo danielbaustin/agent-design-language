@@ -35,7 +35,7 @@ Review these docs while inspecting runnable output:
 - [DEMOS_V0.8.md](DEMOS_V0.8.md)
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
 - [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
-- [../demos/v0.8-bounded-critical-demos.md](../demos/v0.8-bounded-critical-demos.md)
+- [../../demos/v0.8-bounded-critical-demos.md](../../demos/v0.8-bounded-critical-demos.md)
 
 ### Inspect-only review surfaces
 
@@ -118,7 +118,7 @@ Use these docs together when checking current v0.8 truth:
 
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
 - [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
-- [../demos/v0.8-bounded-critical-demos.md](../demos/v0.8-bounded-critical-demos.md)
+- [../../demos/v0.8-bounded-critical-demos.md](../../demos/v0.8-bounded-critical-demos.md)
 - [STICKTOITTIVENESS.md](STICKTOITTIVENESS.md)
 - [GODEL_AGENT.md](GODEL_AGENT.md)
 - [OBSMEM_BAYES.md](OBSMEM_BAYES.md)
@@ -157,4 +157,3 @@ Use these docs together when checking current v0.8 truth:
 
 - [v0.75 milestone docs](../v0.75/)
 - [v0.85 milestone docs](../v0.85/)
-- [incubation/](incubation/)

@@ -24,7 +24,7 @@ v0.75 is a contract-freeze milestone. Decisions recorded here define the executi
 | D-05 | Failure taxonomy must use stable machine-readable codes | accepted | Memory, reports, and deterministic retrieval require stable classification | Human-readable strings only | Enables consistent indexing and reporting | DESIGN_0.75.md |
 | D-06 | ObsMem ranking must be deterministic (stable scoring + tie-break rules) | accepted | Prevent nondeterministic query results across identical corpora | Rely on embedding ranking only | Reproducible memory queries and CI-testable behavior | DESIGN_0.75.md |
 | D-07 | Hybrid (semantic) retrieval optional; must record embedding model + config | accepted | Embeddings introduce drift risk; configuration must be captured | Always-on semantic retrieval | Controlled nondeterminism boundary; audit-friendly | DESIGN_0.75.md |
-| D-08 | Cluster / distributed execution deferred to v0.85+ | accepted | Infrastructure nondeterminism increases risk before substrate freeze | Ship cluster in v0.8 | Keeps v0.75 and v0.8 coherent and reviewable | VISION_v0.85.md |
+| D-08 | Cluster / distributed execution deferred to v0.85+ | accepted | Infrastructure nondeterminism increases risk before substrate freeze | Ship cluster in v0.8 | Keeps v0.75 and v0.8 coherent and reviewable | [VISION_v0.85.md](../v0.85/VISION_v0.85.md) |
 | D-09 | Gödel layer deferred to v0.8 | accepted | Self-improvement layer requires stable substrate + memory | Implement during v0.75 | Avoids rework and contract churn | VISION_0.80.md |
 | D-10 | No absolute host paths or secrets may be persisted in artifacts or bundles | accepted | Portability + security + determinism | Allow host-relative metadata | Enables reproducible bundles and safe sharing | DESIGN_0.75.md |
 
