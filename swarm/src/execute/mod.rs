@@ -9,17 +9,15 @@ use crate::sandbox;
 use crate::trace::Trace;
 
 mod runner;
-mod workflow_calls;
 
 use runner::{
     emit_delegation_lifecycle_finish, emit_delegation_lifecycle_start,
-    enforce_delegation_policy_for_step_actions, execute_concurrent_deterministic,
-    execute_step_with_retry_core,
+    enforce_delegation_policy_for_step_actions, execute_called_workflow,
+    execute_concurrent_deterministic, execute_step_with_retry_core,
 };
 pub use runner::{
     scheduler_policy_for_run, DELEGATION_POLICY_APPROVAL_REQUIRED_CODE, DELEGATION_POLICY_DENY_CODE,
 };
-use workflow_calls::execute_called_workflow;
 
 /// Replace any input values that start with `@file:<path>` with file contents.
 ///
@@ -854,8 +852,9 @@ fn missing_prompt_inputs(
 
 #[cfg(test)]
 mod tests {
-    use super::runner::{effective_max_concurrency_with_source, effective_step_placement};
-    use super::workflow_calls::resolve_call_binding;
+    use super::runner::{
+        effective_max_concurrency_with_source, effective_step_placement, resolve_call_binding,
+    };
     use super::*;
     use crate::adl::{AdlDoc, PromptSpec, RunDefaults, RunSpec, WorkflowKind, WorkflowSpec};
     use crate::resolve::AdlResolved;
@@ -982,7 +981,7 @@ mod tests {
             .expect("time")
             .as_nanos();
         let out_dir =
-            std::env::temp_dir().join(format!("swarm-write-output-{now}-{}", std::process::id()));
+            std::env::temp_dir().join(format!("adl-write-output-{now}-{}", std::process::id()));
         let path =
             write_output("s1", &out_dir, "nested/result.txt", "hello").expect("write output");
         let written = std::fs::read_to_string(&path).expect("read output");
@@ -1000,7 +999,7 @@ mod tests {
             .expect("time")
             .as_nanos();
         let base = std::env::temp_dir().join(format!(
-            "swarm-write-output-symlink-{now}-{}",
+            "adl-write-output-symlink-{now}-{}",
             std::process::id()
         ));
         let out_dir = base.join("root");
