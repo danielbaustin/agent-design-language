@@ -179,5 +179,5 @@ References must be repository-relative.
 
 ## Canonical Machine-Readable Artifacts
 
-- Schema: `docs/milestones/v0.8/canonical_evidence_view.v1.schema.json`
-- Example: `docs/milestones/v0.8/canonical_evidence_view.v1.example.json`
+- Schema: `adl-spec/schemas/v0.8/canonical_evidence_view.v1.schema.json`
+- Example: `adl-spec/examples/v0.8/canonical_evidence_view.v1.example.json`

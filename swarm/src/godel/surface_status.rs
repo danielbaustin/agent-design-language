@@ -17,23 +17,26 @@ pub struct GodelRuntimeSurfaceStatus {
 }
 
 pub fn load_v08_surface_status(repo_root: &Path) -> Result<GodelRuntimeSurfaceStatus> {
-    let docs_root = repo_root.join("docs").join("milestones").join("v0.8");
+    let spec_examples_root = repo_root.join("adl-spec").join("examples").join("v0.8");
 
     let workflow_template =
-        read_json(&docs_root.join("godel_experiment_workflow.template.v1.json"))
+        read_json(&spec_examples_root.join("godel_experiment_workflow.template.v1.json"))
             .context("load workflow template")?;
-    let evidence_view = read_json(&docs_root.join("canonical_evidence_view.v1.example.json"))
-        .context("load canonical evidence example")?;
-    let mutation =
-        read_json(&docs_root.join("mutation.v1.example.json")).context("load mutation example")?;
-    let evaluation_plan = read_json(&docs_root.join("evaluation_plan.v1.example.json"))
+    let evidence_view =
+        read_json(&spec_examples_root.join("canonical_evidence_view.v1.example.json"))
+            .context("load canonical evidence example")?;
+    let mutation = read_json(&spec_examples_root.join("mutation.v1.example.json"))
+        .context("load mutation example")?;
+    let evaluation_plan = read_json(&spec_examples_root.join("evaluation_plan.v1.example.json"))
         .context("load evaluation plan example")?;
-    let experiment_record = read_json(&docs_root.join("experiment_record.v1.example.json"))
-        .context("load experiment record example")?;
-    let run_summary = read_json(&docs_root.join("run_summary.v1.example.json"))
+    let experiment_record =
+        read_json(&spec_examples_root.join("experiment_record.v1.example.json"))
+            .context("load experiment record example")?;
+    let run_summary = read_json(&spec_examples_root.join("run_summary.v1.example.json"))
         .context("load run summary example")?;
-    let experiment_index = read_json(&docs_root.join("experiment_index_entry.v1.example.json"))
-        .context("load experiment index example")?;
+    let experiment_index =
+        read_json(&spec_examples_root.join("experiment_index_entry.v1.example.json"))
+            .context("load experiment index example")?;
 
     let stage_order = read_stage_order(&workflow_template)?;
     validate_stage_order(&stage_order)?;
@@ -49,13 +52,13 @@ pub fn load_v08_surface_status(repo_root: &Path) -> Result<GodelRuntimeSurfaceSt
         status_version: GODEL_RUNTIME_STATUS_VERSION,
         stage_order,
         loaded_artifacts: vec![
-            "docs/milestones/v0.8/godel_experiment_workflow.template.v1.json".to_string(),
-            "docs/milestones/v0.8/canonical_evidence_view.v1.example.json".to_string(),
-            "docs/milestones/v0.8/mutation.v1.example.json".to_string(),
-            "docs/milestones/v0.8/evaluation_plan.v1.example.json".to_string(),
-            "docs/milestones/v0.8/experiment_record.v1.example.json".to_string(),
-            "docs/milestones/v0.8/run_summary.v1.example.json".to_string(),
-            "docs/milestones/v0.8/experiment_index_entry.v1.example.json".to_string(),
+            "adl-spec/examples/v0.8/godel_experiment_workflow.template.v1.json".to_string(),
+            "adl-spec/examples/v0.8/canonical_evidence_view.v1.example.json".to_string(),
+            "adl-spec/examples/v0.8/mutation.v1.example.json".to_string(),
+            "adl-spec/examples/v0.8/evaluation_plan.v1.example.json".to_string(),
+            "adl-spec/examples/v0.8/experiment_record.v1.example.json".to_string(),
+            "adl-spec/examples/v0.8/run_summary.v1.example.json".to_string(),
+            "adl-spec/examples/v0.8/experiment_index_entry.v1.example.json".to_string(),
         ],
         checks: vec![
             "workflow stage order matches deterministic scientific loop".to_string(),
@@ -220,12 +223,12 @@ mod tests {
             "adl-godel-runtime-{label}-pid{}-{n}",
             std::process::id()
         ));
-        std::fs::create_dir_all(root.join("docs/milestones/v0.8")).expect("mkdir docs root");
+        std::fs::create_dir_all(root.join("adl-spec/examples/v0.8")).expect("mkdir examples root");
         root
     }
 
     fn write_v08_fixtures(root: &Path) {
-        let docs = root.join("docs/milestones/v0.8");
+        let docs = root.join("adl-spec/examples/v0.8");
         std::fs::write(
             docs.join("godel_experiment_workflow.template.v1.json"),
             serde_json::to_vec_pretty(&json!({
@@ -308,7 +311,7 @@ mod tests {
         assert!(status
             .loaded_artifacts
             .iter()
-            .all(|p| p.starts_with("docs/milestones/v0.8/")));
+            .all(|p| p.starts_with("adl-spec/examples/v0.8/")));
     }
 
     #[test]
@@ -449,7 +452,7 @@ mod tests {
         let root = unique_temp_dir("missing-fixtures");
         write_v08_fixtures(&root);
         std::fs::remove_file(
-            root.join("docs/milestones/v0.8")
+            root.join("adl-spec/examples/v0.8")
                 .join("evaluation_plan.v1.example.json"),
         )
         .expect("remove plan fixture");

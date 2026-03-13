@@ -34,10 +34,10 @@ This order is the shared terminology baseline for v0.8 docs.
 |---|---|---|
 | failure | Canonical failure signal/evidence refs | `CANONICAL_EVIDENCE_VIEW_V1.md` (#610) |
 | hypothesis | Hypothesis statement tied to failure/evidence | `GODEL_SCIENTIFIC_METHOD.md` + demo flow (#615) |
-| mutation | Bounded mutation descriptor | `MUTATION_FORMAT_V1.md` (#611), `mutation.v1.json` |
-| experiment | Structured workflow template | `GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md` + `godel_experiment_workflow.template.v1.json` (#613) |
-| evaluation | Deterministic checks and verdict criteria | `EVALUATION_PLAN_V1.md` + `evaluation_plan.v1.json` (#612) |
-| record | Full experiment outcome record | `EXPERIMENT_RECORD_V1.md` + `experiment_record.v1.schema.json` (#609) |
+| mutation | Bounded mutation descriptor | `MUTATION_FORMAT_V1.md` (#611), `adl-spec/schemas/v0.8/mutation.v1.json` |
+| experiment | Structured workflow template | `GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md` + `adl-spec/examples/v0.8/godel_experiment_workflow.template.v1.json` (#613) |
+| evaluation | Deterministic checks and verdict criteria | `EVALUATION_PLAN_V1.md` + `adl-spec/schemas/v0.8/evaluation_plan.v1.json` (#612) |
+| record | Full experiment outcome record | `EXPERIMENT_RECORD_V1.md` + `adl-spec/schemas/v0.8/experiment_record.v1.schema.json` (#609) |
 | indexing | Queryable run/experiment index surfaces | #614 indexing surfaces (`run_summary`, `experiment_index_entry`) |
 
 ## Integration Contract

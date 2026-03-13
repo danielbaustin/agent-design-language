@@ -15,8 +15,8 @@ This is a schema/spec surface only. It does not imply runtime mutation execution
 - `schema_version`: `1`
 
 Canonical machine-readable artifacts:
-- `docs/milestones/v0.8/mutation.v1.json` (JSON Schema)
-- `docs/milestones/v0.8/mutation.v1.example.json` (normative example)
+- `adl-spec/schemas/v0.8/mutation.v1.json` (JSON Schema)
+- `adl-spec/examples/v0.8/mutation.v1.example.json` (normative example)
 
 ## Determinism Contract
 For identical normalized input, a mutation artifact must remain stable in:
