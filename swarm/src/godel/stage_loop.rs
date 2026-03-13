@@ -7,6 +7,7 @@ use super::experiment_record::{self, StageExperimentRecord};
 use super::hypothesis::{self, HypothesisCandidate, HypothesisPipelineInput};
 use super::mutation::{self, MutationPlan, MutationProposal};
 use super::obsmem_index::{self, StageIndexEntry};
+use super::workflow_template::{embedded_v08_workflow_template, GodelWorkflowTemplate};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum GodelStage {
@@ -33,7 +34,7 @@ impl GodelStage {
     }
 }
 
-pub const STAGE_ORDER: [GodelStage; 7] = [
+const FALLBACK_RUNTIME_STAGE_ORDER: [GodelStage; 7] = [
     GodelStage::Failure,
     GodelStage::Hypothesis,
     GodelStage::Mutation,
@@ -42,6 +43,48 @@ pub const STAGE_ORDER: [GodelStage; 7] = [
     GodelStage::Record,
     GodelStage::Indexing,
 ];
+
+fn stage_from_template_id(stage_id: &str) -> Result<GodelStage, StageLoopError> {
+    match stage_id {
+        "failure" => Ok(GodelStage::Failure),
+        "hypothesis" => Ok(GodelStage::Hypothesis),
+        "mutation" => Ok(GodelStage::Mutation),
+        "experiment" => Ok(GodelStage::Experiment),
+        "evaluation" => Ok(GodelStage::Evaluation),
+        "record" => Ok(GodelStage::Record),
+        other => Err(StageLoopError::DeterminismViolation(format!(
+            "workflow template declares unsupported stage '{other}'"
+        ))),
+    }
+}
+
+fn runtime_stage_order_from_template(
+    template: &GodelWorkflowTemplate,
+) -> Result<Vec<GodelStage>, StageLoopError> {
+    let mut runtime_order = Vec::with_capacity(template.stage_order.len() + 1);
+    for stage_id in &template.stage_order {
+        runtime_order.push(stage_from_template_id(stage_id)?);
+    }
+    runtime_order.push(GodelStage::Indexing);
+    Ok(runtime_order)
+}
+
+fn canonical_runtime_stage_order() -> Result<Vec<GodelStage>, StageLoopError> {
+    let template = embedded_v08_workflow_template().map_err(|err| {
+        StageLoopError::DeterminismViolation(format!(
+            "failed to load embedded workflow template: {err}"
+        ))
+    })?;
+    let runtime_order = runtime_stage_order_from_template(&template)?;
+    if runtime_order != FALLBACK_RUNTIME_STAGE_ORDER {
+        return Err(StageLoopError::DeterminismViolation(format!(
+            "embedded workflow template diverged from supported runtime stage order: expected {:?}, got {:?}",
+            FALLBACK_RUNTIME_STAGE_ORDER,
+            runtime_order
+        )));
+    }
+    Ok(runtime_order)
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StageLoopConfig {
@@ -162,15 +205,16 @@ impl GodelStageLoopExecutor {
             ));
         }
         input.validate()?;
+        let stage_order = canonical_runtime_stage_order()?;
 
         let mut transitions = Vec::new();
-        for stage in STAGE_ORDER {
+        for stage in &stage_order {
             transitions.push(StageTransitionEvent {
-                stage,
+                stage: *stage,
                 transition: "entered".to_string(),
             });
             transitions.push(StageTransitionEvent {
-                stage,
+                stage: *stage,
                 transition: "completed".to_string(),
             });
         }
@@ -224,7 +268,7 @@ impl GodelStageLoopExecutor {
         let index_entry = obsmem_index::build_index_entry(&record, &input.failure_code);
 
         let run = StageLoopRun {
-            stage_order: STAGE_ORDER.to_vec(),
+            stage_order,
             transitions,
             hypotheses,
             mutation_plan,
@@ -262,7 +306,7 @@ impl GodelStageLoopExecutor {
     }
 
     fn validate_deterministic_contract(&self, run: &StageLoopRun) -> Result<(), StageLoopError> {
-        if run.stage_order != STAGE_ORDER {
+        if run.stage_order != canonical_runtime_stage_order()? {
             return Err(StageLoopError::DeterminismViolation(
                 "stage order diverged from canonical sequence".to_string(),
             ));
@@ -332,8 +376,11 @@ mod tests {
     fn stage_loop_executes_canonical_stage_sequence() {
         let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
         let run = exec.execute(&fixture_input()).expect("stage loop run");
-        assert_eq!(run.stage_order, STAGE_ORDER);
-        assert_eq!(run.transitions.len(), STAGE_ORDER.len() * 2);
+        assert_eq!(
+            run.stage_order,
+            canonical_runtime_stage_order().expect("template-derived runtime stage order")
+        );
+        assert_eq!(run.transitions.len(), run.stage_order.len() * 2);
         assert_eq!(run.transitions[0].stage, GodelStage::Failure);
         assert_eq!(
             run.transitions.last().expect("final transition").stage,
@@ -547,5 +594,49 @@ mod tests {
             .expect_err("persist should fail against file root");
         assert!(err.to_string().contains("GODEL_STAGE_LOOP_INVALID_INPUT"));
         let _ = std::fs::remove_dir_all(&tmp);
+    }
+
+    #[test]
+    fn template_derived_runtime_stage_order_appends_runtime_managed_indexing() {
+        let template = embedded_v08_workflow_template().expect("template");
+        let runtime_order =
+            runtime_stage_order_from_template(&template).expect("template-derived runtime order");
+        assert_eq!(
+            runtime_order,
+            vec![
+                GodelStage::Failure,
+                GodelStage::Hypothesis,
+                GodelStage::Mutation,
+                GodelStage::Experiment,
+                GodelStage::Evaluation,
+                GodelStage::Record,
+                GodelStage::Indexing,
+            ]
+        );
+    }
+
+    #[test]
+    fn template_derived_runtime_stage_order_rejects_unknown_stage_ids() {
+        let template = GodelWorkflowTemplate {
+            template_name: "godel_experiment_workflow".to_string(),
+            template_version: 1,
+            stage_order: vec!["failure".to_string(), "publish".to_string()],
+            stages: vec![],
+            determinism: embedded_v08_workflow_template()
+                .expect("embedded template")
+                .determinism,
+            security_privacy: embedded_v08_workflow_template()
+                .expect("embedded template")
+                .security_privacy,
+            replay_audit: embedded_v08_workflow_template()
+                .expect("embedded template")
+                .replay_audit,
+            downstream: embedded_v08_workflow_template()
+                .expect("embedded template")
+                .downstream,
+        };
+        let err = runtime_stage_order_from_template(&template)
+            .expect_err("unsupported template stage must fail");
+        assert!(err.to_string().contains("unsupported stage"));
     }
 }

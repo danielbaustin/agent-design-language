@@ -5,7 +5,22 @@ Defines the canonical, deterministic ADL workflow-template contract for the Gode
 
 failure -> hypothesis -> mutation -> experiment -> evaluation -> record
 
-This is a template/spec artifact only. It does not implement runtime execution.
+This is now a bounded executable contract as well as a spec artifact.
+
+In v0.8, the runtime consumes the canonical template to derive the executable Gödel stage sequence for:
+- stage-loop transition ordering
+- runtime/demo stage-order reporting
+- record-stage experiment-record contract validation
+
+The template is authoritative for the six scientific-loop stages:
+
+`failure -> hypothesis -> mutation -> experiment -> evaluation -> record`
+
+The runtime then appends a single explicit runtime-managed suffix stage:
+
+`indexing`
+
+This means the template is not a full standalone execution engine, but it does now directly constrain executable behavior and test outcomes.
 
 ## Scope and Invariants
 - Ordered stages are fixed and explicit.
@@ -129,6 +144,6 @@ Schema integration:
 - #615 (demo path): this template is directly reusable as the canonical workflow skeleton for demo implementation.
 
 ## Non-goals
-- Runtime executor implementation.
+- Replacing the bounded runtime with a fully template-driven execution engine.
 - Mutation strategy optimization algorithms.
 - Autonomous policy expansion beyond bounded contracts.
