@@ -1,0 +1,38 @@
+{
+  "schema_version": "rust_transpiler_verification.v0.8",
+  "workflow_fixture": "examples/workflows/rust_transpiler_demo.yaml",
+  "runtime_skeleton": "demos/rust_output/workflow_runtime.rs",
+  "mapping": {
+    "pairs": [
+      {
+        "index": 1,
+        "workflow_step_id": "step_prepare_input",
+        "rust_function": "step_prepare_input",
+        "status": "PASS"
+      },
+      {
+        "index": 2,
+        "workflow_step_id": "step_normalize_payload",
+        "rust_function": "step_normalize_payload",
+        "status": "PASS"
+      },
+      {
+        "index": 3,
+        "workflow_step_id": "step_finalize_output",
+        "rust_function": "step_finalize_output",
+        "status": "PASS"
+      }
+    ],
+    "order_check": "PASS"
+  },
+  "adaptive_execution": {
+    "mode": "bounded_reporting_only",
+    "attempts_executed": 0,
+    "policy_actions": [],
+    "notes": "WP-12 verification captures adaptive execution evidence fields only; no autonomous retry loop executed."
+  },
+  "validation": {
+    "command": "cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet",
+    "status": "PASS"
+  }
+}

@@ -1,108 +1,40 @@
-# Release Notes Template
-
-## Metadata
-- Product: `{{product_name}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Tag: `{{tag_name}}`
-
-## How To Use
-- Keep statements implementation-accurate and test-validated.
-- Prefer concise bullets over marketing language.
-- Explicitly separate shipped behavior from "What's Next."
-
-# `{{product_name}}` `{{version}}` Release Notes
-
-## Summary
-{{summary_paragraph}}
-
-## Highlights
-- {{highlight_1}}
-- {{highlight_2}}
-- {{highlight_3}}
-
-## What's New In Detail
-
-### {{area_1}}
-- {{detail_1a}}
-- {{detail_1b}}
-
-### {{area_2}}
-- {{detail_2a}}
-- {{detail_2b}}
-
-### {{area_3}}
-- {{detail_3a}}
-- {{detail_3b}}
-
-## Upgrade Notes
-- {{upgrade_note_1}}
-- {{upgrade_note_2}}
-
-## Known Limitations
-- {{limitation_1}}
-- {{limitation_2}}
-
-## Validation Notes
-- {{validation_note_1}}
-- {{validation_note_2}}
-
-## What's Next
-- {{next_1}}
-- {{next_2}}
-
-## Exit Criteria
-- Notes reflect only shipped behavior.
-- Known limitations and future work are explicitly separated.
-- Final text is ready to paste into GitHub Release UI without further editing.
-
-# ADL v0.8 Release Notes
+# ADL v0.8 Release Notes (Draft)
 
 ## Metadata
 - Product: Agent Design Language (ADL)
-- Version: v0.8
-- Release date: TBD
-- Tag: v0.8
+- Milestone: v0.8
+- Release status: Draft / unreleased
+- Tag: TBD
+
+## Scope Truth (Important)
+These are draft release notes for an in-progress milestone.
+They describe intended v0.8 outcomes and currently implemented surfaces, but do not claim that v0.8 is released.
 
 ## Summary
-ADL v0.8 introduces the foundations for self-improving agents using a Gödel-style scientific learning loop. This release formalizes experiment tracking, mutation formats, and agent profile schemas that allow deterministic evaluation and controlled policy evolution. The milestone also consolidates documentation around memory, experimentation, and authoring surfaces while preserving deterministic replay guarantees established in earlier releases.
+v0.8 focuses on controlled experimentation and authoring on top of the released v0.7 runtime foundation. Current repository state includes substantial v0.8 docs/spec work and bounded transpiler demo scaffolding, while key runtime integrations remain in progress.
 
-## Highlights
-- Gödel scientific learning loop foundations (experiment → evaluation → mutation)
-- Canonical schemas for agent profiles and mutations
-- Deterministic experiment and evidence structures
+## What Is Implemented Today (Repository Truth)
+- Canonical v0.8 planning/docs surfaces under `docs/milestones/v0.8/`.
+- Gödel schema/spec artifacts (ExperimentRecord, Evidence View, Mutation, EvaluationPlan, workflow template) as design-stage contracts.
+- Bounded Rust transpiler demo scaffold artifacts:
+  - `examples/workflows/rust_transpiler_demo.yaml`
+  - `tools/transpiler_demo/`
+  - `demos/rust_output/`
 
-## What's New In Detail
-
-### Gödel Scientific Loop Foundations
-- Introduces a documented scientific loop for agents: failure detection → hypothesis → mutation → evaluation.
-- Establishes structured experiment artifacts to support reproducible agent improvement cycles.
-
-### Canonical Experiment Artifacts
-- Defines ExperimentRecord schema for tracking experiments and outcomes.
-- Introduces a Canonical Evidence View to normalize evaluation evidence across runs.
-
-### Agent Policy Evolution Surface
-- Adds `agent_profile.v1` schema describing prompts, routing, planner configuration, memory policy, and executor policy.
-- Adds `mutation.v1` schema for bounded policy mutations applied during experiments.
-
-## Upgrade Notes
-- No breaking runtime changes expected for workflows created in v0.75.
-- The new schemas are introduced as design-stage artifacts and may later move to runtime schema locations.
+## What Is Still In Progress
+- Full runtime integration of v0.8 schema surfaces into execution paths.
+- End-to-end milestone closure across review-tail issues and gates.
+- Final release-candidate validation and ceremony steps.
 
 ## Known Limitations
-- Gödel experiment orchestration is defined but not fully automated yet.
-- Adaptive policy learning loops remain experimental and may evolve in future milestones.
+- Several v0.8 artifacts are currently specification/planning surfaces rather than fully runtime-implemented features.
+- Milestone completion requires additional convergence across docs, review findings, and implementation surfaces.
 
 ## Validation Notes
-- All schema artifacts follow strict JSON Schema definitions.
-- Design documents explicitly define deterministic replay and experiment trace requirements.
+- Use `docs/milestones/v0.8/QUALITY_GATE_V0.8.md` for gate expectations.
+- Use `docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md` for current repository-state reconciliation.
 
-## What's Next
-- Runtime implementation of the Gödel experiment loop.
-- Adaptive policy learning and automated mutation evaluation.
-
-## Exit Criteria
-- Notes reflect only shipped behavior.
-- Known limitations and future work are explicitly separated.
-- Final text is ready to paste into GitHub Release UI without further editing.
+## References
+- `docs/milestones/v0.8/README.md`
+- `docs/milestones/v0.8/RELEASE_PLAN_V0.8.md`
+- `docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md`

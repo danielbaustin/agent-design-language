@@ -20,6 +20,8 @@ pub mod env_compat;
 pub mod execute;
 pub mod execution_plan;
 pub mod failure_taxonomy;
+pub mod godel;
+pub mod godel_runtime;
 pub mod instrumentation;
 pub mod learning_export;
 pub mod learning_guardrails;

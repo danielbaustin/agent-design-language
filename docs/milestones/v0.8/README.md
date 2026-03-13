@@ -4,6 +4,12 @@ This directory is the canonical source of truth for v0.8 milestone documentation
 
 Use this index as the primary navigation surface for v0.8 scope, sequencing, and release readiness.
 
+## Current Status
+
+- Milestone state: active development (not released).
+- Runtime base release: v0.7.0.
+- v0.8 currently includes both implemented artifacts and planning/spec surfaces; see `RECOVERY_AUDIT_V0.8.md` for repository-truth status.
+
 ## Baseline Freeze Status
 
 The v0.8 milestone documentation baseline is frozen for implementation work.
@@ -47,15 +53,25 @@ Subsequent milestone implementation issues should treat this directory as the ca
 - [WBS_V0.8.md](WBS_V0.8.md)
 - [SPRINT_V0.8.md](SPRINT_V0.8.md)
 - [EXECUTION_ORDER_V0.8.md](EXECUTION_ORDER_V0.8.md)
+- [BOUNDED_AEE_V1_SCOPE_V0.8.md](BOUNDED_AEE_V1_SCOPE_V0.8.md)
+- [AUTHORING_DELIVERY_ORDER_V0.8.md](AUTHORING_DELIVERY_ORDER_V0.8.md)
+- [GODEL_HANDOFF_BOUNDARIES_V0.8.md](GODEL_HANDOFF_BOUNDARIES_V0.8.md)
+- [GODEL_SCHEMA_DELIVERY_ORDER_V0.8.md](GODEL_SCHEMA_DELIVERY_ORDER_V0.8.md)
 - [MILESTONE_CHECKLIST_V0.8.md](MILESTONE_CHECKLIST_V0.8.md)
+- [QUALITY_GATE_V0.8.md](QUALITY_GATE_V0.8.md)
+- [DEMOS_V0.8.md](DEMOS_V0.8.md)
+- [CARD_TEMPLATE_LOCATION_V0.8.md](CARD_TEMPLATE_LOCATION_V0.8.md)
 - [DECISIONS_V0.8.md](DECISIONS_V0.8.md)
 - [RELEASE_PLAN_V0.8.md](RELEASE_PLAN_V0.8.md)
 - [RELEASE_NOTES_V0.8.md](RELEASE_NOTES_V0.8.md)
 - [THIRD_PARTY_REVIEW_V0.8.md](THIRD_PARTY_REVIEW_V0.8.md)
+- [DOCS_CONVERGENCE_V0.8.md](DOCS_CONVERGENCE_V0.8.md)
 
 ## Supporting Design Docs and Demo Surfaces
 
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
+- [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
+- [../demos/v0.8-bounded-critical-demos.md](../demos/v0.8-bounded-critical-demos.md)
 - [STICKTOITTIVENESS.md](STICKTOITTIVENESS.md)
 - [incubation/GODEL_AGENT.md](incubation/GODEL_AGENT.md)
 - [incubation/OBSMEM_BAYES.md](incubation/OBSMEM_BAYES.md)

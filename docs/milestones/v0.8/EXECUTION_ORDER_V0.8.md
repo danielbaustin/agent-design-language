@@ -37,6 +37,7 @@ Use these rules whenever multiple items appear runnable at the same time:
 | 0.2 | Reconcile canonical v0.8 doc inconsistencies | #660 | #659 |
 | 0.3 | Canonical index and navigation pass | #661 | #660 |
 | 0.4 | Freeze canonical docs baseline | #662 | #661 |
+| 0.5 | Publish execution order and dependency map | #664 | #662 |
 
 ### Phase 1: Schema Spine
 
@@ -47,6 +48,7 @@ Use these rules whenever multiple items appear runnable at the same time:
 | 1.3 | Mutation format v1 (`WP-04`) | #611 | #662 |
 | 1.4 | EvaluationPlan v1 (`WP-05`) | #612 | #609, #610, #611 |
 | 1.5 | Gödel experiment workflow template (`WP-06`) | #613 | #609, #610, #611, #612 |
+| 1.6 | Gödel schema delivery order + acceptance boundaries | #665 | #609, #610, #611, #612, #613 |
 
 ### Phase 2: Memory + Runtime Contract Hardening
 
@@ -60,23 +62,25 @@ Use these rules whenever multiple items appear runnable at the same time:
 | Order | Item | Issue | Depends on |
 |---|---|---|---|
 | 3.1 | Authoring surfaces v1 (`WP-09`) | #517 | #662 |
-| 3.2 | Prompt automation + reviewer-ready flow (`WP-10`) | TBD | #517, #618 |
+| 3.2 | Authoring-surface delivery order under EPIC #517 | #667 | #517, #665 |
+| 3.3 | Reconcile output card template location and usage | #677 | #667 |
+| 3.4 | Prompt automation + reviewer-ready flow (`WP-10`) | #669 | #517, #618, #677 |
 
 ### Phase 4: Flagship Rust Transpiler Demo
 
 | Order | Item | Issue | Depends on |
 |---|---|---|---|
-| 4.1 | Rust transpiler fixture + scaffold (`WP-11`) | TBD | #613, #517 |
-| 4.2 | Rust transpiler verification + adaptive evidence (`WP-12`) | TBD | #612, #618, WP-10, WP-11 |
+| 4.1 | Workflow / ObsMem / demo handoff boundaries (`WP-11` planning gate) | #666 | #613, #614, #665 |
+| 4.2 | Bounded AEE v1 scope for v0.8 (`WP-12` planning gate) | #669 | #612, #618, #666 |
 
 ### Phase 5: Release Tail
 
 | Order | Item | Issue | Depends on |
 |---|---|---|---|
-| 5.1 | Demo matrix + integration demos (`WP-13`) | TBD | WP-06, WP-07, WP-10, WP-12 |
-| 5.2 | Coverage / quality gate (`WP-14`) | TBD | WP-08 through WP-13 |
-| 5.3 | Docs pass + review convergence (`WP-15`) | TBD | WP-13, WP-14 |
-| 5.4 | 3rd party review pass | TBD | WP-15 docs freeze |
+| 5.1 | Demo matrix + integration demos (`WP-13`) | #704 | WP-06, WP-07, WP-10, WP-12 |
+| 5.2 | Coverage / quality gate (`WP-14`) | #705 | WP-08 through WP-13 |
+| 5.3 | Docs pass + review convergence (`WP-15`) | #706 | WP-13, WP-14 |
+| 5.4 | 3rd party review pass | #707 | WP-15 docs freeze |
 | 5.5 | Review fixes / explicit deferrals | TBD | 3rd party review findings |
 | 5.6 | Release ceremony (`WP-16`) | TBD | WP-15, review convergence |
 
@@ -93,4 +97,3 @@ When starting a v0.8 implementation issue:
 1. Confirm its dependency row in this file is satisfied.
 2. If a dependency issue is `TBD`, create/assign that issue before implementation.
 3. Do not reorder release-tail sequence (`WP-13` -> `WP-14` -> `WP-15` -> review -> `WP-16`).
-

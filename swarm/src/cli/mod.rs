@@ -1889,9 +1889,13 @@ fn real_demo(args: &[String]) -> Result<()> {
     if !demo::known_demo(demo_name) {
         eprintln!("unknown demo: {demo_name}");
         eprintln!(
-            "available demos: {}, {}",
+            "available demos: {}, {}, {}, {}, {}, {}",
             demo::DEMO_A_SAY_MCP,
-            demo::DEMO_B_ONE_COMMAND
+            demo::DEMO_B_ONE_COMMAND,
+            demo::DEMO_C_GODEL_RUNTIME,
+            demo::DEMO_D_GODEL_OBSMEM_LOOP,
+            demo::DEMO_E_MULTI_AGENT_CARD_PIPELINE,
+            demo::DEMO_F_OBSMEM_RETRIEVAL
         );
         std::process::exit(2);
     }
@@ -1999,7 +2003,7 @@ fn real_demo(args: &[String]) -> Result<()> {
     } else if do_trace {
         // Dry-run demo trace
         let mut tr = trace::Trace::new(demo_name, "demo-workflow", "0.3");
-        for step_id in ["brief", "scaffold", "coverage", "game"] {
+        for step_id in demo::plan_steps(demo_name) {
             tr.step_started(step_id, "coordinator", "demo-local", "artifact-task", None);
             tr.prompt_assembled(step_id, "dryrun");
             tr.step_finished(step_id, true);

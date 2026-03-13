@@ -14,6 +14,6 @@ Runtime implementation details belong under `swarm/` and milestone docs.
 
 - Root project entrypoint: `../README.md`
 - Runtime/CLI usage: `../swarm/README.md`
-- Milestone docs (current): `../docs/milestones/v0.6/`
+- Milestone docs (current): `../docs/milestones/v0.8/`
 - ADRs: `../docs/adr/`
 - Spec sub-index: `spec/README.md`

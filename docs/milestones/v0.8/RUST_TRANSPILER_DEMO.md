@@ -1,349 +1,77 @@
-# ADL Demo: Rust Transpiler / Migration Workflow
+# Rust Transpiler Demo (v0.8)
 
+Status: Implemented bounded demo scaffold (not a production compiler)
 
-Status: Planned for v0.8
-Milestone: v0.8
-Not part of v0.75 release scope
+Primary implementation issues:
+- `#702` (fixture + Rust scaffold + runtime skeleton)
+- `#703` (deterministic verification + evidence surface)
+
+Integration/matrix alignment:
+- `#704` (demo-matrix integration)
+- `#759` (docs convergence pass)
+
 ## Purpose
 
-> This demo is planned for v0.8 and is not part of the v0.75 milestone.
-
-This document defines a **flagship ADL demo** showing how deterministic workflows, adaptive execution, verification hooks, and replayable artifacts can be used to safely perform automated code transformations.
-
-The demo demonstrates how ADL can:
-
-- analyze a Rust codebase
-- generate a transformation patch
-- apply the patch
-- verify correctness using Rust tooling
-- retry bounded repair strategies when verification fails
-- emit deterministic artifacts and evidence for audit and replay
-
-This showcases ADL’s **Adaptive Execution Engine** and **replayable execution substrate**.
-
----
-
-# Demo Goals
-
-The Rust transpiler demo should prove that ADL can orchestrate complex engineering workflows while remaining:
-
-- deterministic
-- auditable
-- replayable
-- provider‑agnostic
-
-The demo intentionally resembles a real enterprise migration workflow.
-
-Inputs:
-
-- a small Rust repository (fixture crate)
-- a migration rule or transformation goal
-
-Outputs:
-
-- transformation patch
-- verification results
-- evidence report
-- trace bundle v2
-
----
-
-# Why This Demo Matters
-
-Many "AI coding" demos simply generate code.
-
-This demo shows something different:
-
-ADL provides **structured orchestration** around code generation.
-
-Key capabilities demonstrated:
-
-- policy‑gated retries
-- deterministic replay
-- artifact traceability
-- verification‑driven convergence
-
-In other words, the agent **does not just generate code** — it executes a **reliable engineering process**.
-
----
-
-# Example Transformation
-
-The initial demo should use a deterministic, repeatable migration such as:
-
-## Option A — Error Modernization
-
-Convert ad‑hoc error handling into a typed error enum.
-
-Example transformation:
-
-- detect `Result<T, String>` patterns
-- introduce `enum AppError`
-- update call sites
-
-Verification:
-
-- `cargo fmt`
-- `cargo clippy`
-- `cargo test`
-
-## Option B — API Migration
-
-Replace deprecated API usage with a new API.
-
-Example:
-
-- identify deprecated function usage
-- rewrite calls
-- update imports
-
-Verification ensures the transformation preserves behavior.
-
----
-
-# Demo Architecture
-
-The demo is implemented as a **single ADL workflow** with clearly defined phases.
-
-The workflow emits artifacts at every stage.
-
-## Phase 1 — Intake
-
-Analyze the repository.
-
-Artifacts produced:
-
-repo_inventory.json
-
-Contains:
-
-- crate metadata
-- file list
-- Rust toolchain version
-- detected patterns relevant to the transformation
-
----
-
-## Phase 2 — Transformation Plan
-
-The agent generates a transformation plan describing:
-
-- what changes are required
-- which files will be modified
-- expected compile/test impact
-
-Artifact:
-
-plan.json
-
-This plan is deterministic for the same input repository.
-
----
-
-## Phase 3 — Patch Generation
-
-The workflow generates a patch representing the transformation.
-
-Artifact:
-
-patchset/
-
-Contains:
-
-- patch.diff
-- rationale.md
-
-The patch is hashed and recorded for reproducibility.
-
----
-
-## Phase 4 — Patch Application
-
-The workflow applies the patch inside the sandbox.
-
-Artifacts:
-
-apply_log.txt
-
-And a snapshot of the modified workspace.
-
----
-
-## Phase 5 — Verification
-
-Verification hooks are executed.
-
-Verification steps:
-
-cargo fmt
-
-cargo clippy -- -D warnings
-
-cargo test
-
-Artifacts:
-
-verification/
-
-Contains:
-
-fmt.log
-
-clippy.log
-
-test.log
-
-If all checks pass, the workflow proceeds to final reporting.
-
----
-
-# Adaptive Execution Loop
-
-If verification fails, the workflow enters the **Adaptive Execution loop**.
-
-The loop:
-
-1. Classifies the failure
-2. Selects a repair strategy
-3. Generates a corrective patch
-4. Re‑runs verification
-
-Retry attempts are bounded by policy.
-
-Example strategies:
-
-- compile‑fix
-- lint‑fix
-- test‑fix
-
-Every attempt is recorded in the trace.
-
-This demonstrates the **Sticktoitiveness / Adaptive Execution Engine**.
-
----
-
-# Evidence Report
-
-At completion, the workflow generates a deterministic evidence report.
-
-Artifact:
-
-evidence.json
-
-Contains:
-
-- final outcome
-- patch hash
-- verification results
-- attempt history
-
-The report includes citations pointing to verification logs.
-
----
-
-# Trace Bundle
-
-The entire run produces a **Trace Bundle v2**.
-
-This bundle includes:
-
-- run metadata
-- activation logs
-- artifacts
-- evidence
-
-The bundle can be replayed using the ADL replay engine.
-
-This ensures the demo is:
-
-- deterministic
-- auditable
-- reproducible
-
----
-
-# Repository Layout
-
-Recommended demo structure:
-
-swarm/examples/
-
-v0-8-rust-transpiler-demo.adl.yaml
-
-fixtures/rust-demo-crate/
-
-The fixture crate must be:
-
-- small
-- deterministic
-- compile/test clean before transformation
-
----
-
-# Demo Success Criteria
-
-The demo is considered complete when:
-
-1. The workflow transforms the fixture crate.
-
-2. The crate compiles successfully after transformation.
-
-3. All tests pass.
-
-4. A deterministic evidence report is produced.
-
-5. A replay from the trace bundle reproduces the same outcome.
-
----
-
-# What This Demonstrates About ADL
-
-This demo shows that ADL provides a **reliable engineering workflow layer** around AI.
-
-Capabilities demonstrated:
-
-- deterministic orchestration
-- verification‑driven workflows
-- bounded adaptive retries
-- traceable artifact production
-- replayable execution
-
-This positions ADL as a framework for **safe autonomous software operations**, not merely prompt-driven code generation.
-
----
-
-# Relationship to Gödel Self‑Improvement Experiments
-
-The Rust transpiler demo also serves as the **first practical substrate for Gödel‑style self‑improvement experiments in ADL**.
-
-The workflow structure in this demo mirrors the scientific loop used by the planned Gödel agent system:
-
-1. **Observe** – capture run artifacts and execution traces
-2. **Hypothesize** – generate a candidate modification (patch or improvement)
-3. **Evaluate** – run deterministic verification (tests, lint, compile)
-4. **Accept or Reject** – commit only if evaluation criteria pass
-
-In the Rust transpiler demo:
-
-- The **patch generation step** acts as the mutation/hypothesis.
-- The **verification phase** acts as the deterministic evaluation function.
-- The **Adaptive Execution loop** acts as the bounded search process.
-
-Because all artifacts are captured in the **Trace Bundle v2**, the experiment can be replayed and compared across runs.
-
-This means the same workflow structure can later power:
-
-- Gödel agent proposal evaluation
-- policy optimization experiments
-- automated repair and improvement loops
-
-The key architectural insight is that **ADL does not require a separate "learning system"**.
-
-Instead, learning and improvement are implemented as **ordinary ADL workflows operating over deterministic artifacts**.
-
-The Rust transpiler demo therefore doubles as:
-
-- a developer‑facing demonstration of ADL orchestration
-- a minimal, concrete example of the Gödel experimentation substrate
-
-This dual purpose makes it an ideal flagship demo for the v0.8 roadmap.
+This demo provides a bounded, reviewer-friendly proof surface showing how a minimal ADL workflow fixture maps to a deterministic Rust runtime skeleton.
+
+It is intentionally small and deterministic:
+- one fixture
+- one Rust mapping scaffold
+- one Rust runtime skeleton
+- one verification artifact
+
+## Canonical Demo Surfaces
+
+1. Workflow fixture (input)
+   - `examples/workflows/rust_transpiler_demo.yaml`
+2. Rust-first transpiler scaffold (mapping check)
+   - `tools/transpiler_demo/Cargo.toml`
+   - `tools/transpiler_demo/src/main.rs`
+3. Rust runtime/output skeleton
+   - `demos/rust_output/workflow_runtime.rs`
+4. Verification evidence artifact
+   - `demos/rust_output/transpiler_verification.v0.8.json`
+5. Demo docs
+   - `docs/demos/rust-transpiler/README.md`
+   - `docs/milestones/v0.8/RUST_TRANSPILER_VERIFICATION_V0.8.md`
+
+## Deterministic Execution Surface
+
+Run the bounded verification scaffold:
+
+`cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet`
+
+The scaffold verifies:
+1. fixture path exists
+2. runtime skeleton path exists
+3. ordered workflow steps map one-to-one to ordered Rust runtime functions
+4. mapping result is deterministic (`PASS`/`FAIL`)
+
+## Implemented vs Illustrative Boundary
+
+Implemented now:
+- deterministic fixture-to-runtime mapping check
+- stable evidence artifact path and schema/version fields
+- bounded adaptive-execution reporting fields in evidence (`bounded_reporting_only`)
+
+Illustrative / future work (not implemented in this demo):
+- production transpiler/code-generation pipeline
+- autonomous retry loop or policy learning
+- generalized migration engine across arbitrary repositories
+
+## Reviewer Quick Path
+
+1. Inspect fixture:
+   - `examples/workflows/rust_transpiler_demo.yaml`
+2. Run scaffold command:
+   - `cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet`
+3. Inspect runtime skeleton:
+   - `demos/rust_output/workflow_runtime.rs`
+4. Inspect evidence artifact:
+   - `demos/rust_output/transpiler_verification.v0.8.json`
+5. Verify acceptance boundary:
+   - `docs/milestones/v0.8/RUST_TRANSPILER_VERIFICATION_V0.8.md`
+
+## Scope Notes
+
+This demo is a v0.8 documentation+verification surface for bounded deterministic mapping behavior. It should not be interpreted as a claim that ADL already ships a full Rust transpiler runtime.
