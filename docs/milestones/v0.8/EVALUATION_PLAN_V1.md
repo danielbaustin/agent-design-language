@@ -17,8 +17,8 @@ This is a schema/specification artifact only. Runtime evaluation execution is ou
 - `schema_version`: `1`
 
 Canonical machine-readable artifacts:
-- `docs/milestones/v0.8/evaluation_plan.v1.json`
-- `docs/milestones/v0.8/evaluation_plan.v1.example.json`
+- `adl-spec/schemas/v0.8/evaluation_plan.v1.json`
+- `adl-spec/examples/v0.8/evaluation_plan.v1.example.json`
 
 ## Determinism Contract
 For identical normalized inputs, an EvaluationPlan must produce deterministic evaluation behavior in:

@@ -36,10 +36,12 @@ This spec integrates with:
 Canonical schema file:
 
 - `run_summary.v1.json`
+  - canonical path: `adl-spec/schemas/v0.8/run_summary.v1.json`
 
 Example artifact:
 
 - `run_summary.v1.example.json`
+  - canonical path: `adl-spec/examples/v0.8/run_summary.v1.example.json`
 
 ### Required Fields
 
@@ -69,10 +71,12 @@ Example artifact:
 Canonical schema file:
 
 - `experiment_index_entry.v1.json`
+  - canonical path: `adl-spec/schemas/v0.8/experiment_index_entry.v1.json`
 
 Example artifact:
 
 - `experiment_index_entry.v1.example.json`
+  - canonical path: `adl-spec/examples/v0.8/experiment_index_entry.v1.example.json`
 
 ### Required Fields
 
@@ -141,4 +145,3 @@ These fields enable deterministic retrieval flows:
 - Runtime indexing implementation
 - Semantic/vector ranking implementation
 - Raw trace persistence as index artifacts
-

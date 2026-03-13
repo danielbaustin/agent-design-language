@@ -24,11 +24,11 @@ The demo aligns with:
 ## Deterministic Demo Artifacts
 
 - Failure signal:
-  - `docs/demos/artifacts/godel_failure_signal.v1.example.json`
+  - `adl-spec/examples/v0.8/demos/godel_failure_signal.v1.example.json`
 - Hypothesis:
-  - `docs/demos/artifacts/godel_hypothesis.v1.example.json`
+  - `adl-spec/examples/v0.8/demos/godel_hypothesis.v1.example.json`
 - Experiment proposal:
-  - `docs/demos/artifacts/godel_experiment_proposal.v1.example.json`
+  - `adl-spec/examples/v0.8/demos/godel_experiment_proposal.v1.example.json`
 
 ## Loop Walkthrough
 

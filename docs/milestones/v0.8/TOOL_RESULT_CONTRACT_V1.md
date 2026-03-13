@@ -7,8 +7,8 @@ This contract is schema/spec only for v0.8 and does not imply new runtime execut
 
 ## Schema Identity
 - Schema ID: `tool_result.v1`
-- Canonical schema file: `docs/milestones/v0.8/tool_result.v1.schema.json`
-- Canonical example file: `docs/milestones/v0.8/tool_result.v1.example.json`
+- Canonical schema file: `adl-spec/schemas/v0.8/tool_result.v1.schema.json`
+- Canonical example file: `adl-spec/examples/v0.8/tool_result.v1.example.json`
 
 ## Contract Shape
 
@@ -83,9 +83,9 @@ If sensitive details are needed for debugging, store sanitized references and ha
 
 ## Relationship to v0.8 Gödel Surfaces
 ToolResult v1 is compatible with:
-- `ExperimentRecord` (`experiment_record.v1.schema.json`)
-- `Canonical Evidence View` (`canonical_evidence_view.v1.schema.json`)
-- `EvaluationPlan` (`evaluation_plan.v1.json`)
+- `ExperimentRecord` (`adl-spec/schemas/v0.8/experiment_record.v1.schema.json`)
+- `Canonical Evidence View` (`adl-spec/schemas/v0.8/canonical_evidence_view.v1.schema.json`)
+- `EvaluationPlan` (`adl-spec/schemas/v0.8/evaluation_plan.v1.json`)
 
 It provides an explicit result envelope that downstream evidence/review flows can compare without parsing ad hoc text blobs.
 

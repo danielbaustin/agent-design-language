@@ -41,8 +41,8 @@ Where:
 
 The following machine-readable schema/spec artifacts are canonical for v0.8 design work:
 
-- `docs/milestones/v0.8/agent_profile.v1.json`
-- `docs/milestones/v0.8/mutation.v1.json`
+- `adl-spec/schemas/v0.8/agent_profile.v1.json`
+- `adl-spec/schemas/v0.8/mutation.v1.json`
 
 These are design-stage schema artifacts now and are candidates for later promotion into a runtime schema directory.
 Any historical planning copies are non-canonical; source of truth is `docs/milestones/v0.8/`.
@@ -259,8 +259,8 @@ key structures used by the experimental self‑improvement system.
 
 Canonical locations (v0.8 milestone docs):
 
-- `docs/milestones/v0.8/agent_profile.v1.json`
-- `docs/milestones/v0.8/mutation.v1.json`
+- `adl-spec/schemas/v0.8/agent_profile.v1.json`
+- `adl-spec/schemas/v0.8/mutation.v1.json`
 
 These schemas currently represent **design‑stage artifacts** for the planned
 Gödel evolution surface. They are used to document the structure of:
