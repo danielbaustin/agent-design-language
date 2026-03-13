@@ -1875,6 +1875,27 @@ mod tests {
         }
     }
 
+    fn step_with_write_to(id: &str, write_to: Option<&str>) -> crate::resolve::ResolvedStep {
+        crate::resolve::ResolvedStep {
+            id: id.to_string(),
+            agent: None,
+            provider: None,
+            placement: None,
+            task: None,
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
+            delegation: None,
+            prompt: None,
+            inputs: HashMap::new(),
+            guards: vec![],
+            save_as: Some("saved.output".to_string()),
+            write_to: write_to.map(str::to_string),
+            on_error: None,
+            retry: None,
+        }
+    }
+
     #[test]
     fn resolve_state_inputs_resolves_and_validates_state_bindings() {
         let mut inputs = HashMap::new();
@@ -2218,6 +2239,219 @@ mod tests {
 
         let generic = anyhow::anyhow!("not policy related");
         assert_eq!(stable_failure_kind(&generic), None);
+    }
+
+    #[test]
+    fn scheduler_policy_source_as_str_matches_wire_values() {
+        assert_eq!(
+            SchedulerPolicySource::WorkflowOverride.as_str(),
+            "workflow_override"
+        );
+        assert_eq!(SchedulerPolicySource::RunDefault.as_str(), "run_default");
+        assert_eq!(
+            SchedulerPolicySource::EngineDefault.as_str(),
+            "engine_default"
+        );
+    }
+
+    #[test]
+    fn execution_policy_error_code_covers_all_kinds() {
+        let denied = ExecutionPolicyError {
+            kind: ExecutionPolicyErrorKind::Denied,
+            step_id: "s1".to_string(),
+            action_kind: "provider_call".to_string(),
+            target_id: "default".to_string(),
+            rule_id: None,
+        };
+        assert_eq!(denied.code(), DELEGATION_POLICY_DENY_CODE);
+
+        let approval = ExecutionPolicyError {
+            kind: ExecutionPolicyErrorKind::ApprovalRequired,
+            step_id: "s1".to_string(),
+            action_kind: "provider_call".to_string(),
+            target_id: "default".to_string(),
+            rule_id: None,
+        };
+        assert_eq!(approval.code(), "DELEGATION_POLICY_APPROVAL_REQUIRED");
+    }
+
+    #[test]
+    fn execution_policy_error_display_includes_rule_id_for_denied() {
+        let denied = ExecutionPolicyError {
+            kind: ExecutionPolicyErrorKind::Denied,
+            step_id: "step-a".to_string(),
+            action_kind: "remote_exec".to_string(),
+            target_id: "profile-x".to_string(),
+            rule_id: Some("rule-7".to_string()),
+        };
+        let rendered = denied.to_string();
+        assert!(rendered.contains("denied"));
+        assert!(rendered.contains("rule_id=rule-7"));
+    }
+
+    #[test]
+    fn execution_policy_error_display_handles_approval_without_rule_id() {
+        let approval = ExecutionPolicyError {
+            kind: ExecutionPolicyErrorKind::ApprovalRequired,
+            step_id: "step-b".to_string(),
+            action_kind: "provider_call".to_string(),
+            target_id: "provider-1".to_string(),
+            rule_id: None,
+        };
+        let rendered = approval.to_string();
+        assert!(rendered.contains("requires approval"));
+        assert!(!rendered.contains("rule_id="));
+    }
+
+    #[test]
+    fn pause_reason_for_step_ignores_non_pause_guards() {
+        let mut step = step_with_write_to("s1", None);
+        step.guards.push(crate::adl::GuardSpec {
+            kind: "retry".to_string(),
+            config: HashMap::new(),
+        });
+        assert_eq!(pause_reason_for_step(&step), None);
+    }
+
+    #[test]
+    fn scheduler_policy_for_run_returns_none_for_sequential_workflows() {
+        let mut resolved = minimal_resolved();
+        resolved.execution_plan.workflow_kind = WorkflowKind::Sequential;
+        resolved.doc.run.workflow = Some(WorkflowSpec {
+            id: None,
+            kind: WorkflowKind::Sequential,
+            max_concurrency: None,
+            steps: vec![],
+        });
+        let policy = scheduler_policy_for_run(&resolved).expect("sequential policy");
+        assert!(policy.is_none());
+    }
+
+    #[test]
+    fn effective_max_concurrency_tracks_source_order() {
+        let mut resolved = minimal_resolved();
+        assert_eq!(
+            effective_max_concurrency_with_source(&resolved).expect("engine default"),
+            (
+                DEFAULT_MAX_CONCURRENCY,
+                SchedulerPolicySource::EngineDefault
+            )
+        );
+
+        resolved.doc.run.defaults.max_concurrency = Some(6);
+        assert_eq!(
+            effective_max_concurrency_with_source(&resolved).expect("run default"),
+            (6, SchedulerPolicySource::RunDefault)
+        );
+
+        resolved
+            .doc
+            .run
+            .workflow
+            .as_mut()
+            .expect("workflow")
+            .max_concurrency = Some(3);
+        assert_eq!(
+            effective_max_concurrency_with_source(&resolved).expect("workflow override"),
+            (3, SchedulerPolicySource::WorkflowOverride)
+        );
+    }
+
+    #[test]
+    fn resume_disposition_for_step_skips_when_no_artifact_expected() {
+        let step = step_with_write_to("s1", None);
+        let out_dir = std::env::temp_dir();
+        let completed_outputs = HashMap::new();
+        let disposition =
+            resume_disposition_for_step(&step, &out_dir, &completed_outputs).expect("disposition");
+        assert_eq!(
+            disposition,
+            ResumeDisposition::Skip("completed_no_artifact_expected")
+        );
+    }
+
+    #[test]
+    fn resume_disposition_for_step_reruns_when_expected_artifact_missing() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let out_dir = std::env::temp_dir().join(format!("adl-resume-missing-{now}"));
+        std::fs::create_dir_all(&out_dir).expect("create out_dir");
+        let step = step_with_write_to("s1", Some("outputs/out.txt"));
+        let completed_outputs = HashMap::new();
+        let disposition =
+            resume_disposition_for_step(&step, &out_dir, &completed_outputs).expect("disposition");
+        assert_eq!(
+            disposition,
+            ResumeDisposition::Rerun("missing_expected_artifact")
+        );
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn resume_disposition_for_step_reruns_when_fingerprint_missing() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let out_dir = std::env::temp_dir().join(format!("adl-resume-no-fp-{now}"));
+        let artifact = out_dir.join("outputs/out.txt");
+        std::fs::create_dir_all(artifact.parent().expect("parent")).expect("create parent");
+        std::fs::write(&artifact, "ok").expect("write artifact");
+        let step = step_with_write_to("s1", Some("outputs/out.txt"));
+        let completed_outputs = HashMap::new();
+        let disposition =
+            resume_disposition_for_step(&step, &out_dir, &completed_outputs).expect("disposition");
+        assert_eq!(
+            disposition,
+            ResumeDisposition::Rerun("missing_output_fingerprint")
+        );
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn resume_disposition_for_step_reruns_on_fingerprint_mismatch() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let out_dir = std::env::temp_dir().join(format!("adl-resume-bad-fp-{now}"));
+        let artifact = out_dir.join("outputs/out.txt");
+        std::fs::create_dir_all(artifact.parent().expect("parent")).expect("create parent");
+        std::fs::write(&artifact, "actual").expect("write artifact");
+        let step = step_with_write_to("s1", Some("outputs/out.txt"));
+        let mut completed_outputs = HashMap::new();
+        completed_outputs.insert("s1".to_string(), model_output_fingerprint("expected"));
+        let disposition =
+            resume_disposition_for_step(&step, &out_dir, &completed_outputs).expect("disposition");
+        assert_eq!(
+            disposition,
+            ResumeDisposition::Rerun("invalid_expected_artifact")
+        );
+        let _ = std::fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn resume_disposition_for_step_skips_when_artifact_and_fingerprint_match() {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time")
+            .as_nanos();
+        let out_dir = std::env::temp_dir().join(format!("adl-resume-ok-fp-{now}"));
+        let artifact = out_dir.join("outputs/out.txt");
+        std::fs::create_dir_all(artifact.parent().expect("parent")).expect("create parent");
+        std::fs::write(&artifact, "stable output").expect("write artifact");
+        let step = step_with_write_to("s1", Some("outputs/out.txt"));
+        let mut completed_outputs = HashMap::new();
+        completed_outputs.insert("s1".to_string(), model_output_fingerprint("stable output"));
+        let disposition =
+            resume_disposition_for_step(&step, &out_dir, &completed_outputs).expect("disposition");
+        assert_eq!(
+            disposition,
+            ResumeDisposition::Skip("completed_artifact_verified")
+        );
+        let _ = std::fs::remove_dir_all(out_dir);
     }
 
     #[test]
