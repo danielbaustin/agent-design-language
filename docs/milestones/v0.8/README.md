@@ -120,9 +120,8 @@ Use these docs together when checking current v0.8 truth:
 - [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
 - [../demos/v0.8-bounded-critical-demos.md](../demos/v0.8-bounded-critical-demos.md)
 - [STICKTOITTIVENESS.md](STICKTOITTIVENESS.md)
-- [incubation/GODEL_AGENT.md](incubation/GODEL_AGENT.md)
-- [incubation/OBSMEM_BAYES.md](incubation/OBSMEM_BAYES.md)
-- [incubation/STICKTOITTIVENESS.md](incubation/STICKTOITTIVENESS.md)
+- [GODEL_AGENT.md](GODEL_AGENT.md)
+- [OBSMEM_BAYES.md](OBSMEM_BAYES.md)
 
 ## Canonical Schema/Spec Artifacts (Design Stage)
 
