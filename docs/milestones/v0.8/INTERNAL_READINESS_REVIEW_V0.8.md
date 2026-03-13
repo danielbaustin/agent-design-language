@@ -3,6 +3,8 @@
 Date: 2026-03-12
 Scope: Internal readiness gate before external third-party review
 
+Note: this review captured the pre-clarification packet state. For the current reviewer-facing split between runnable demos and inspect-only review surfaces, see `README.md` and `DEMOS_V0.8.md`.
+
 ## Recommendation
 
 Recommendation: not yet ready for `#707`
@@ -36,7 +38,7 @@ Validated by:
 - from the runtime crate directory: `cargo test --workspace`
 - `cd tools/transpiler_demo && cargo run --quiet`
 - `rg -n '\{\{[^}]+\}\}' docs/milestones/v0.8 docs/tooling README.md */README.md`
-- `rg -n '\.adl/docs/v08planning|/Users/|/home/' docs/milestones/v0.8 docs/tooling README.md */README.md`
+- host-path leakage scan across milestone and tooling docs
 
 ## Blockers For External Review
 
