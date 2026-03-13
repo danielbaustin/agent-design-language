@@ -34,6 +34,9 @@ Examples:
   adl demo demo-a-say-mcp --run --trace --open
   adl demo demo-b-one-command --run --out ./out
   adl demo demo-c-godel-runtime --run --out ./out
+  adl demo demo-d-godel-obsmem-loop --run --trace --out ./out
+  adl demo demo-e-multi-agent-card-pipeline --run --trace --out ./out
+  adl demo demo-f-obsmem-retrieval --run --trace --out ./out
   adl keygen --out-dir ./.keys
   adl sign examples/v0-5-pattern-linear.adl.yaml --key ./.keys/ed25519-private.b64 --out /tmp/signed.adl.yaml
   adl instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format dot
