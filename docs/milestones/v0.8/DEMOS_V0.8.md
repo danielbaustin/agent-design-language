@@ -1,86 +1,68 @@
-# v0.8 Demo Matrix and Integration Demos
+# v0.8 Demo Matrix and Review Surfaces
 
-This document defines the canonical demo matrix for v0.8 milestone review.
+This document defines the canonical review-entry matrix for v0.8 milestone review.
 
-It is an integration-planning surface only. It does not implement demos.
+It covers both:
+- runnable demo surfaces that a reviewer can execute, and
+- inspect-only documentation/specification surfaces that a reviewer should read rather than run.
 
-## Deterministic Ordering Rules
+## Quick Reviewer Split
 
-Demo entries are ordered by:
+### Runnable demo commands
 
-1. required milestone criticality,
-2. demo ID (`D8-01`, `D8-02`, ...),
-3. issue number tie-break.
-
-## Required Demos (Pre-Review / Pre-Release)
-
-These demos are required before third-party review (`#707`) and release convergence.
-
-| Demo ID | Workstream | Scope | Primary Issue(s) | Required Evidence Surface | Canonical Validation Command |
-|---|---|---|---|---|---|
-| D8-01 | Gödel schema spine | ExperimentRecord + Evidence + Mutation + EvaluationPlan schema alignment | `#609`, `#610`, `#611`, `#612`, `#683` | canonical schema/example artifacts under `docs/milestones/v0.8/` | `jq . docs/milestones/v0.8/*.json` (targeted schema/example checks) |
-| D8-02 | Gödel workflow integration | Failure -> hypothesis -> mutation -> experiment -> evaluation -> record loop template alignment | `#613`, `#615`, `#616` | `GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md` + `godel_experiment_workflow.template.v1.json` + demo docs | template/doc cross-reference checks |
-| D8-03 | ObsMem indexing integration | Run summary + ExperimentRecord-derived indexing surfaces | `#614` | indexing surface definitions and retrieval linkage notes | schema/example and link consistency checks |
-| D8-04 | Runtime/transpiler flagship | Bounded Rust-first transpiler mapping + deterministic verification evidence | `#702`, `#703`, `#704`, `#759` | `RUST_TRANSPILER_DEMO.md` + `RUST_TRANSPILER_VERIFICATION_V0.8.md` + `demos/rust_output/transpiler_verification.v0.8.json` | `cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet` |
-| D8-05 | Authoring/reviewer compatibility | Prompt spec + reviewer checklist/output contracts and ordering | `#633`, `#650`, `#651`, `#649`, `#667`, `#677` | tooling docs/contracts + template references | docs/tooling cross-reference checks |
-
-## Supporting Demos (Helpful, Not Release-Blocking Alone)
-
-| Demo ID | Workstream | Scope | Primary Issue(s) | Evidence Surface |
-|---|---|---|---|---|
-| D8-S1 | AEE boundary clarity | Bounded v0.8 adaptive execution scope statement | `#669` | `BOUNDED_AEE_V1_SCOPE_V0.8.md` |
-| D8-S2 | Execution sequencing | Milestone dependency/order check surface | `#664`, `#665`, `#666` | `EXECUTION_ORDER_V0.8.md` + related boundary docs |
-
-## Required Validation/Evidence Expectations
-
-Each required demo row should provide:
-
-1. A canonical doc/spec pointer in `docs/milestones/v0.8/`.
-2. Deterministic artifact/evidence references (schema/example/template/contract).
-3. Clear implemented-vs-illustrative boundary notes where applicable.
-4. No secrets, tool arguments, raw prompts, or absolute host paths in persisted evidence.
-
-## Review Gate Usage
-
-- Use this matrix as the integration-demo checklist for `#706` docs convergence and `#707` third-party review pass.
-- A required demo is considered complete when its evidence surface exists, is cross-linked, and matches milestone scope boundaries.
-
-## Out of Scope
-
-- Adding new milestone features solely to satisfy demos.
-- Reclassifying deferred v0.9+ autonomy work into v0.8.
-- Replacing issue-level acceptance criteria with this matrix.
-
-## Implemented Bounded Demo Commands
-
-The following demos are implemented as real `adl demo` runtime surfaces with deterministic artifact output.
-
-All commands below are repository-local and require no network:
+Run these commands from repository root:
 
 ```bash
+cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-c-godel-runtime --run --out ./out
 cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-d-godel-obsmem-loop --run --trace --out ./out
 cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-e-multi-agent-card-pipeline --run --trace --out ./out
 cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-f-obsmem-retrieval --run --trace --out ./out
 ```
 
-### Demo Mapping
+### Inspect-only review surfaces
 
-- D8-02 (Gödel workflow integration): `demo-d-godel-obsmem-loop`
+Inspect these docs/spec artifacts rather than trying to run them:
+- `docs/milestones/v0.8/CANONICAL_EVIDENCE_VIEW_V1.md`
+- `docs/milestones/v0.8/MUTATION_FORMAT_V1.md`
+- `docs/milestones/v0.8/EVALUATION_PLAN_V1.md`
+- `docs/milestones/v0.8/EXPERIMENT_RECORD_V1.md`
+- `docs/milestones/v0.8/OBSMEM_INDEXING_SURFACES_V1.md`
+- `docs/milestones/v0.8/GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md`
+- `docs/tooling/README.md`
+
+## Deterministic Ordering Rules
+
+Review-surface entries are ordered by:
+1. milestone criticality,
+2. review surface ID (`D8-01`, `D8-02`, ...),
+3. issue number tie-break.
+
+## Required Review Surfaces
+
+| Surface ID | Surface Type | Reviewer Action | Scope | Primary Evidence Surface | Canonical Validation Command |
+|---|---|---|---|---|---|
+| D8-01 | inspect_only | Read / inspect | Gödel schema spine | schema/example artifacts under `docs/milestones/v0.8/` | targeted `jq` / path checks |
+| D8-02 | inspect_only_with_runnable_support | Read workflow docs, then optionally run a bounded demo | Gödel workflow integration | `GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md` + template JSON + Demo D artifacts | `cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-d-godel-obsmem-loop --run --trace --out ./out` |
+| D8-03 | inspect_only_with_runnable_support | Read indexing docs, then optionally run a bounded demo | ObsMem indexing integration | `OBSMEM_INDEXING_SURFACES_V1.md` + Demo F artifacts | `cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-f-obsmem-retrieval --run --trace --out ./out` |
+| D8-04 | runnable_demo | Run and inspect output | Rust transpiler flagship | `RUST_TRANSPILER_DEMO.md` + `RUST_TRANSPILER_VERIFICATION_V0.8.md` + transpiler verification JSON | `cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet` |
+| D8-05 | inspect_only_with_runnable_support | Read authoring/reviewer contracts, then optionally run a bounded demo | Authoring/reviewer compatibility | tooling docs/contracts + Demo E artifacts | `cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-e-multi-agent-card-pipeline --run --trace --out ./out` |
+
+## Supporting Runnable Demos
+
+- `demo-c-godel-runtime`
+  - Exercises the bounded milestone-surface validator and emits `godel_runtime_surface_status.json`.
+- `demo-d-godel-obsmem-loop`
   - Exercises bounded stage loop, experiment record persistence, and ObsMem index persistence.
-  - Emits:
-    - `out/demo-d-godel-obsmem-loop/godel_obsmem_demo_summary.json`
-    - `out/demo-d-godel-obsmem-loop/runs/demo-d-run-001/godel/experiment_record.runtime.v1.json`
-    - `out/demo-d-godel-obsmem-loop/runs/demo-d-run-001/godel/obsmem_index_entry.runtime.v1.json`
-- D8-05 (Authoring/reviewer compatibility): `demo-e-multi-agent-card-pipeline`
-  - Exercises deterministic multi-agent card pipeline artifact flow.
-  - Emits:
-    - `out/demo-e-multi-agent-card-pipeline/pipeline/input_card.md`
-    - `out/demo-e-multi-agent-card-pipeline/pipeline/pipeline_manifest.json`
-- D8-03 (ObsMem indexing integration): `demo-f-obsmem-retrieval`
+- `demo-e-multi-agent-card-pipeline`
+  - Exercises deterministic card-pipeline artifact flow.
+- `demo-f-obsmem-retrieval`
   - Exercises deterministic retrieval over persisted runtime index entries.
-  - Emits:
-    - `out/demo-f-obsmem-retrieval/obsmem_retrieval_result.json`
-    - `out/demo-f-obsmem-retrieval/runs/demo-f-run-a/godel/obsmem_index_entry.runtime.v1.json`
-    - `out/demo-f-obsmem-retrieval/runs/demo-f-run-b/godel/obsmem_index_entry.runtime.v1.json`
 
-See `docs/demos/v0.8-bounded-critical-demos.md` for a compact runbook.
+## Review Notes
+
+- Not every important review surface is a runnable demo.
+- v0.8 should be reviewed as a mix of:
+  - bounded implemented runtime/demo surfaces, and
+  - inspect-only schema/spec/planning surfaces.
+- Reviewers should not infer that every planned surface is runtime-implemented.
