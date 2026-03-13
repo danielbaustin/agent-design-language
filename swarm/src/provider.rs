@@ -849,8 +849,8 @@ mod tests {
     #[test]
     fn timeout_secs_rejects_zero_and_supports_legacy_env_fallback() {
         let legacy_env_key: String = [
-            'S', 'W', 'A', 'R', 'M', '_', 'T', 'I', 'M', 'E', 'O', 'U', 'T', '_', 'S', 'E',
-            'C', 'S',
+            'S', 'W', 'A', 'R', 'M', '_', 'T', 'I', 'M', 'E', 'O', 'U', 'T', '_', 'S', 'E', 'C',
+            'S',
         ]
         .into_iter()
         .collect();
