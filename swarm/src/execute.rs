@@ -2308,7 +2308,7 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .expect("time")
             .as_nanos();
-        let out_dir = std::env::temp_dir().join(format!("swarm-resume-missing-{now}"));
+        let out_dir = std::env::temp_dir().join(format!("adl-resume-missing-{now}"));
         std::fs::create_dir_all(&out_dir).expect("create out_dir");
         let step = step_with_write_to("s1", Some("outputs/out.txt"));
         let completed_outputs = HashMap::new();
@@ -2327,7 +2327,7 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .expect("time")
             .as_nanos();
-        let out_dir = std::env::temp_dir().join(format!("swarm-resume-no-fp-{now}"));
+        let out_dir = std::env::temp_dir().join(format!("adl-resume-no-fp-{now}"));
         let artifact = out_dir.join("outputs/out.txt");
         std::fs::create_dir_all(artifact.parent().expect("parent")).expect("create parent");
         std::fs::write(&artifact, "ok").expect("write artifact");
@@ -2348,7 +2348,7 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .expect("time")
             .as_nanos();
-        let out_dir = std::env::temp_dir().join(format!("swarm-resume-bad-fp-{now}"));
+        let out_dir = std::env::temp_dir().join(format!("adl-resume-bad-fp-{now}"));
         let artifact = out_dir.join("outputs/out.txt");
         std::fs::create_dir_all(artifact.parent().expect("parent")).expect("create parent");
         std::fs::write(&artifact, "actual").expect("write artifact");
@@ -2370,7 +2370,7 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .expect("time")
             .as_nanos();
-        let out_dir = std::env::temp_dir().join(format!("swarm-resume-ok-fp-{now}"));
+        let out_dir = std::env::temp_dir().join(format!("adl-resume-ok-fp-{now}"));
         let artifact = out_dir.join("outputs/out.txt");
         std::fs::create_dir_all(artifact.parent().expect("parent")).expect("create parent");
         std::fs::write(&artifact, "stable output").expect("write artifact");
