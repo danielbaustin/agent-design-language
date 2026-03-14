@@ -7,6 +7,7 @@ use serde_json::Value;
 
 use super::canonical_evidence::load_canonical_evidence;
 use super::experiment_record::load_canonical_record;
+use super::mutation::load_canonical_mutation;
 use super::workflow_template::{parse_workflow_template, GodelWorkflowTemplate};
 
 pub const GODEL_RUNTIME_STATUS_VERSION: u32 = 1;
@@ -33,8 +34,11 @@ pub fn load_v08_surface_status(repo_root: &Path) -> Result<GodelRuntimeSurfaceSt
         .context("load canonical evidence example")?,
     )
     .context("serialize canonical evidence example")?;
-    let mutation = read_json(&spec_examples_root.join("mutation.v1.example.json"))
-        .context("load mutation example")?;
+    let mutation = serde_json::to_value(
+        load_canonical_mutation(&spec_examples_root.join("mutation.v1.example.json"))
+            .context("load mutation example")?,
+    )
+    .context("serialize mutation example")?;
     let evaluation_plan = read_json(&spec_examples_root.join("evaluation_plan.v1.example.json"))
         .context("load evaluation plan example")?;
     let canonical_record_path = spec_examples_root.join("experiment_record.v1.example.json");
@@ -331,8 +335,55 @@ mod tests {
         std::fs::write(
             docs.join("mutation.v1.example.json"),
             serde_json::to_vec_pretty(&json!({
-                "mutation_id": "mut:1",
-                "evaluation_plan_ref": {"schema_name": "evaluation_plan"}
+                "schema_name": "mutation",
+                "schema_version": 1,
+                "mutation_id": "mut_fixture_retry_policy_001",
+                "experiment_id": "exp_fixture_retry_policy_001",
+                "hypothesis_id": "hyp_fixture_retry_policy_001",
+                "mutation_type": "overlay_update",
+                "bounded_scope": ["overlay:run.retry_policy"],
+                "operations": [
+                    {
+                        "op_id": "op_set_retry_max_attempts",
+                        "action": "set",
+                        "target_surface": "workflow_overlay",
+                        "target_pointer": "/run/retry_policy/max_attempts",
+                        "value": 2,
+                        "expected_old_value": 1
+                    }
+                ],
+                "constraints": {
+                    "max_operations": 1,
+                    "policy_gate_required": true,
+                    "sandbox_required": true,
+                    "allow_create_new_paths": false
+                },
+                "comparison": {
+                    "canonical_fingerprint": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+                    "ordering_key": "workflow_overlay.retry_policy.max_attempts"
+                },
+                "safety": {
+                    "allowed_surfaces": ["evaluation_plan", "workflow_overlay"],
+                    "prohibited_surfaces": [
+                        "artifact_validation_strictness",
+                        "security_envelope",
+                        "signing_trust_policy"
+                    ]
+                },
+                "evidence_ref": {
+                    "evidence_id": "ev_fixture_retry_policy_001",
+                    "schema_name": "canonical_evidence_view",
+                    "schema_version": 1
+                },
+                "evaluation_plan_ref": {
+                    "plan_id": "plan_fixture_retry_policy_001",
+                    "schema_name": "evaluation_plan",
+                    "schema_version": 1
+                },
+                "metadata": {
+                    "tags": ["deterministic", "mutation", "retry-policy", "v0.8"],
+                    "created_by": "godel.candidate.generator"
+                }
             }))
             .expect("serialize mutation"),
         )

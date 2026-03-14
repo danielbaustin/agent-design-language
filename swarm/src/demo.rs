@@ -711,6 +711,7 @@ fn run_godel_stage_loop_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         "hypothesis_count": persisted.run.hypotheses.len(),
         "selected_hypothesis_id": persisted.run.hypothesis.id,
         "selected_mutation_id": persisted.run.mutation.id,
+        "canonical_mutation_rel_path": persisted.canonical_mutation_rel_path,
         "evaluation_decision": format!("{:?}", persisted.run.evaluation.decision).to_lowercase(),
         "canonical_evidence_rel_path": persisted.canonical_evidence_rel_path,
         "experiment_record_rel_path": persisted.experiment_record_rel_path,
@@ -721,6 +722,7 @@ fn run_godel_stage_loop_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         "godel_obsmem_demo_summary.json",
         &serde_json::to_string_pretty(&summary)?,
     )?);
+    artifacts.push(out_dir.join("runs/demo-d-run-001/godel/mutation.v1.json"));
     artifacts.push(out_dir.join("runs/demo-d-run-001/godel/canonical_evidence_view.v1.json"));
     artifacts.push(out_dir.join("runs/demo-d-run-001/godel/experiment_record.runtime.v1.json"));
     artifacts.push(out_dir.join("runs/demo-d-run-001/godel/obsmem_index_entry.runtime.v1.json"));
