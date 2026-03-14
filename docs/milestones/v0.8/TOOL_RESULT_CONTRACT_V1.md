@@ -3,7 +3,7 @@
 ## Purpose
 Define a deterministic, replay-safe, and privacy-safe contract for tool execution outputs consumed by ADL workflows and review surfaces.
 
-This contract is schema/spec only for v0.8 and does not imply new runtime execution behavior by itself.
+In current v0.8 runtime code, this contract is enforced at the bounded `adl learn export` command boundary. Successful exports emit a validated `tool_result.v1` sidecar describing the export outcome and its primary artifact reference.
 
 ## Schema Identity
 - Schema ID: `tool_result.v1`
@@ -93,3 +93,12 @@ It provides an explicit result envelope that downstream evidence/review flows ca
 - Defining tool orchestration policy.
 - Implementing runtime adapter refactors.
 - Adding autonomous mutation acceptance.
+
+## Current Runtime Integration
+- Enforced boundary: `adl learn export`
+- Runtime path: `swarm/src/cli/commands.rs` via `real_learn_export`
+- Validation/writing module: `swarm/src/tool_result.rs`
+- Current bounded behavior:
+  - export succeeds as before
+  - command emits a validated `tool_result.v1` sidecar
+  - malformed ToolResult payloads fail with deterministic contract errors before the sidecar is written

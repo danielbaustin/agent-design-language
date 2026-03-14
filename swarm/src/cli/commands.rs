@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use std::path::{Path, PathBuf};
 
-use ::adl::{adl, artifacts, instrumentation, learning_export, resolve, signing};
+use ::adl::{adl, artifacts, instrumentation, learning_export, resolve, signing, tool_result};
 
 use super::usage;
 
@@ -301,6 +301,7 @@ pub(crate) fn real_learn_export(args: &[String]) -> Result<()> {
         artifacts::runs_root().unwrap_or_else(|_| PathBuf::from(".adl").join("runs"))
     });
 
+    let format_kind = tool_result::LearnExportFormat::parse(&format)?;
     let rows = match format.as_str() {
         "jsonl" => {
             let rows = learning_export::export_jsonl(&runs_dir, &run_ids, &out_path)?;
@@ -336,9 +337,13 @@ pub(crate) fn real_learn_export(args: &[String]) -> Result<()> {
         }
     };
 
+    let tool_result_path =
+        tool_result::write_learn_export_tool_result(format_kind, &out_path, rows)?;
+
     if rows == 0 {
         eprintln!("LEARN EXPORT: no runs exported");
     }
+    eprintln!("LEARN EXPORT: tool_result={}", tool_result_path.display());
     Ok(())
 }
 
