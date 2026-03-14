@@ -248,7 +248,7 @@ fn write_run_state_and_load_resume_round_trip() {
         .as_nanos();
     let run_id = format!("run-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
-    let out_dir = std::env::temp_dir().join(format!("swarm-main-out-{now}"));
+    let out_dir = std::env::temp_dir().join(format!("adl-main-out-{now}"));
 
     let mut tr = trace::Trace::new(run_id.clone(), "wf".to_string(), "0.5".to_string());
     tr.step_started("s1", "a1", "p1", "t1", None);
@@ -314,7 +314,7 @@ fn load_resume_state_rejects_non_paused_status() {
         .as_nanos();
     let run_id = format!("run-nonpaused-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
-    let out_dir = std::env::temp_dir().join(format!("swarm-main-nonpaused-{now}"));
+    let out_dir = std::env::temp_dir().join(format!("adl-main-nonpaused-{now}"));
 
     let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
     let run_dir = write_run_state_artifacts(
@@ -350,7 +350,7 @@ fn load_resume_state_rejects_unknown_schema_version() {
         .as_nanos();
     let run_id = format!("run-schema-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
-    let out_dir = std::env::temp_dir().join(format!("swarm-main-schema-{now}"));
+    let out_dir = std::env::temp_dir().join(format!("adl-main-schema-{now}"));
 
     let mut tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
     tr.step_started("s1", "a1", "p1", "t1", None);
@@ -405,7 +405,7 @@ fn load_resume_state_rejects_missing_pause_payload() {
         .as_nanos();
     let run_id = format!("run-missing-pause-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
-    let out_dir = std::env::temp_dir().join(format!("swarm-main-missing-pause-{now}"));
+    let out_dir = std::env::temp_dir().join(format!("adl-main-missing-pause-{now}"));
 
     let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
     let run_dir = write_run_state_artifacts(
@@ -437,7 +437,7 @@ fn load_resume_state_rejects_workflow_mismatch() {
         .as_nanos();
     let run_id = format!("run-wf-mismatch-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
-    let out_dir = std::env::temp_dir().join(format!("swarm-main-wf-mismatch-{now}"));
+    let out_dir = std::env::temp_dir().join(format!("adl-main-wf-mismatch-{now}"));
 
     let pause = execute::PauseState {
         paused_step_id: "s1".to_string(),
@@ -481,7 +481,7 @@ fn load_resume_state_rejects_version_mismatch() {
         .as_nanos();
     let run_id = format!("run-version-mismatch-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
-    let out_dir = std::env::temp_dir().join(format!("swarm-main-version-mismatch-{now}"));
+    let out_dir = std::env::temp_dir().join(format!("adl-main-version-mismatch-{now}"));
 
     let pause = execute::PauseState {
         paused_step_id: "s1".to_string(),
@@ -525,7 +525,7 @@ fn load_resume_state_rejects_execution_plan_mismatch() {
         .as_nanos();
     let run_id = format!("run-plan-mismatch-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
-    let out_dir = std::env::temp_dir().join(format!("swarm-main-plan-mismatch-{now}"));
+    let out_dir = std::env::temp_dir().join(format!("adl-main-plan-mismatch-{now}"));
 
     let pause = execute::PauseState {
         paused_step_id: "s1".to_string(),
