@@ -265,7 +265,7 @@ fn end_to_end_hierarchical_demo_emits_obsmem_artifacts() {
             .get("ordering")
             .and_then(|o| o.get("policy_order"))
             .and_then(serde_json::Value::as_str),
-        Some("score_desc_id_asc")
+        Some("evidence_adjusted_desc_id_asc")
     );
     assert!(
         query_json

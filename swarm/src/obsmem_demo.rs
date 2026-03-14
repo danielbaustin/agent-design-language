@@ -167,7 +167,7 @@ pub fn emit_obsmem_demo_artifacts(runs_root: &Path, run_id: &str) -> Result<ObsM
             format!("run:{run_id}"),
         ],
         required_failure_code: indexed.failure_code.clone(),
-        order: RetrievalOrder::ScoreDescIdAsc,
+        order: RetrievalOrder::EvidenceAdjustedDescIdAsc,
     };
     policy.normalize();
 
@@ -217,7 +217,7 @@ pub fn emit_obsmem_demo_artifacts(runs_root: &Path, run_id: &str) -> Result<ObsM
             limit: query.limit,
         },
         ordering: ObsMemOrderingDescriptor {
-            policy_order: "score_desc_id_asc".to_string(),
+            policy_order: "evidence_adjusted_desc_id_asc".to_string(),
             tie_break_fields: vec![
                 "id".to_string(),
                 "run_id".to_string(),

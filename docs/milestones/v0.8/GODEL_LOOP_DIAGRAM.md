@@ -69,10 +69,10 @@ Future hypothesis search / experiment selection
 
 ## Conceptual framing
 
-This loop is the visual expression of the Gödel–Hadamard–Bayes conceptual framing emerging in ADL:
+This loop is the visual expression of the Gödel–Hadamard–Bayes cognition model emerging in ADL:
 
 - **Gödel** → self-referential system improvement through explicit mutation and experiment records
 - **Hadamard** → hypothesis generation and conceptual search
-- **Bayes** → future-facing evidence-update discipline; v0.8 currently implements deterministic evaluation artifacts rather than a Bayesian runtime layer
+- **Bayes** → bounded deterministic evidence-adjusted retrieval and evidence-based evaluation of experiment outcomes
 
 In ADL v0.8, these ideas are represented through deterministic artifacts and bounded workflows rather than unconstrained autonomous self-modification.

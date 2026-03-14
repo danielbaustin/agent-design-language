@@ -11,6 +11,12 @@ pub enum RetrievalOrder {
     /// retrieved records. It does not perform hidden Bayesian updates or infer
     /// new confidence values from memory hits.
     ScoreDescIdAsc,
+    /// Bounded evidence-adjusted ranking using explicit observed tags/citations.
+    ///
+    /// This is a deterministic, reviewable Bayes-style update surface for v0.8:
+    /// the stored score is treated as the prior and explicit evidence on the
+    /// retrieved record applies a bounded multiplicative adjustment.
+    EvidenceAdjustedDescIdAsc,
     /// Simple deterministic lexical ordering for explicit policy/testing.
     IdAsc,
 }
@@ -138,17 +144,30 @@ pub fn apply_policy_to_results(
                 .is_none_or(|tag| hit.tags.binary_search(tag).is_ok())
     });
 
-    stable_sort_hits(policy.order, &mut result.hits);
+    stable_sort_hits(policy.order, &query, &mut result.hits);
     result.hits.truncate(query.limit);
     Ok(result)
 }
 
-fn stable_sort_hits(order: RetrievalOrder, hits: &mut [MemoryRecord]) {
+fn stable_sort_hits(order: RetrievalOrder, query: &MemoryQuery, hits: &mut [MemoryRecord]) {
     match order {
         RetrievalOrder::ScoreDescIdAsc => {
             hits.sort_by(|a, b| {
                 parse_score_hundredths(&b.score)
                     .cmp(&parse_score_hundredths(&a.score))
+                    .then_with(|| a.id.cmp(&b.id))
+                    .then_with(|| a.run_id.cmp(&b.run_id))
+                    .then_with(|| a.workflow_id.cmp(&b.workflow_id))
+                    .then_with(|| a.payload.cmp(&b.payload))
+            });
+        }
+        RetrievalOrder::EvidenceAdjustedDescIdAsc => {
+            hits.sort_by(|a, b| {
+                evidence_adjusted_score_hundredths(b, query)
+                    .cmp(&evidence_adjusted_score_hundredths(a, query))
+                    .then_with(|| {
+                        parse_score_hundredths(&b.score).cmp(&parse_score_hundredths(&a.score))
+                    })
                     .then_with(|| a.id.cmp(&b.id))
                     .then_with(|| a.run_id.cmp(&b.run_id))
                     .then_with(|| a.workflow_id.cmp(&b.workflow_id))
@@ -164,6 +183,37 @@ fn stable_sort_hits(order: RetrievalOrder, hits: &mut [MemoryRecord]) {
             });
         }
     }
+}
+
+fn evidence_adjusted_score_hundredths(hit: &MemoryRecord, query: &MemoryQuery) -> i64 {
+    let prior = parse_score_hundredths(&hit.score).max(0);
+    let multiplier_percent = evidence_multiplier_percent(hit, query);
+    ((prior + 100) * multiplier_percent) / 100
+}
+
+fn evidence_multiplier_percent(hit: &MemoryRecord, query: &MemoryQuery) -> i64 {
+    let mut percent = 100;
+
+    if has_tag(hit, "status:success") {
+        percent += 35;
+    }
+    if has_tag(hit, "status:failed") || has_tag(hit, "status:failure") {
+        percent -= 15;
+    }
+
+    let shared_query_tags = query.tags.iter().filter(|tag| has_tag(hit, tag)).count() as i64;
+    percent += shared_query_tags.min(4) * 5;
+
+    let citation_boost = (hit.citations.len() as i64).min(3) * 5;
+    percent += citation_boost;
+
+    percent.clamp(25, 200)
+}
+
+fn has_tag(hit: &MemoryRecord, tag: &str) -> bool {
+    hit.tags
+        .binary_search_by(|existing| existing.as_str().cmp(tag))
+        .is_ok()
 }
 
 fn parse_score_hundredths(score: &str) -> i64 {
@@ -364,6 +414,78 @@ mod tests {
         assert_eq!(parse_score_hundredths("7.1"), 710);
         assert_eq!(parse_score_hundredths("7.05"), 705);
         assert_eq!(parse_score_hundredths("bad"), 0);
+    }
+
+    #[test]
+    fn evidence_adjusted_order_uses_explicit_status_and_citations() {
+        let mut policy = RetrievalPolicyV1 {
+            default_limit: 10,
+            required_tags: vec![],
+            required_failure_code: None,
+            order: RetrievalOrder::EvidenceAdjustedDescIdAsc,
+        };
+        policy.normalize();
+
+        let request = RetrievalRequest {
+            workflow_id: Some("wf-a".to_string()),
+            failure_code: None,
+            tags: vec!["workflow:wf-a".to_string()],
+            limit_override: None,
+        };
+
+        let mut strongest = hit("c", "0.80", &["workflow:wf-a", "status:success"]);
+        strongest.citations.push(MemoryCitation {
+            path: "runs/c/activation_log.json".to_string(),
+            hash: "det64:0000000000000002".to_string(),
+        });
+        strongest.citations.push(MemoryCitation {
+            path: "runs/c/run_status.json".to_string(),
+            hash: "det64:0000000000000003".to_string(),
+        });
+
+        let input = MemoryQueryResult {
+            hits: vec![
+                hit("b", "1.00", &["workflow:wf-a", "status:failed"]),
+                hit("a", "1.00", &["workflow:wf-a"]),
+                strongest,
+            ],
+        };
+
+        let out = apply_policy_to_results(&policy, &request, input).expect("policy result");
+        assert_eq!(
+            out.hits.iter().map(|h| h.id.as_str()).collect::<Vec<_>>(),
+            vec!["c", "a", "b"]
+        );
+    }
+
+    #[test]
+    fn evidence_adjusted_order_is_deterministic_for_identical_inputs() {
+        let policy = RetrievalPolicyV1 {
+            default_limit: 10,
+            required_tags: vec![],
+            required_failure_code: None,
+            order: RetrievalOrder::EvidenceAdjustedDescIdAsc,
+        };
+        let request = RetrievalRequest {
+            workflow_id: Some("wf-a".to_string()),
+            failure_code: None,
+            tags: vec!["workflow:wf-a".to_string()],
+            limit_override: None,
+        };
+        let input = MemoryQueryResult {
+            hits: vec![
+                hit("b", "1.00", &["workflow:wf-a", "status:success"]),
+                hit("a", "1.00", &["workflow:wf-a", "status:success"]),
+            ],
+        };
+
+        let left = apply_policy_to_results(&policy, &request, input.clone()).expect("left");
+        let right = apply_policy_to_results(&policy, &request, input).expect("right");
+        assert_eq!(left, right);
+        assert_eq!(
+            left.hits.iter().map(|h| h.id.as_str()).collect::<Vec<_>>(),
+            vec!["a", "b"]
+        );
     }
 
     #[test]
