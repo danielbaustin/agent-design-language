@@ -1313,6 +1313,28 @@ fn cli_internal_learn_export_writes_jsonl() {
     ])
     .expect("learn export");
     assert!(out.exists(), "learn export should emit output file");
+    let tool_result = base.join("learning.jsonl.tool_result.v1.json");
+    assert!(
+        tool_result.exists(),
+        "learn export should emit tool_result sidecar"
+    );
+    let tool_result_json: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&tool_result).expect("read tool_result"))
+            .expect("parse tool_result");
+    assert_eq!(
+        tool_result_json
+            .get("schema_version")
+            .and_then(|v| v.as_str()),
+        Some("tool_result.v1")
+    );
+    assert_eq!(
+        tool_result_json.get("tool_name").and_then(|v| v.as_str()),
+        Some("adl.learn.export")
+    );
+    assert_eq!(
+        tool_result_json.get("status").and_then(|v| v.as_str()),
+        Some("success")
+    );
     let _ = std::fs::remove_dir_all(base);
 }
 

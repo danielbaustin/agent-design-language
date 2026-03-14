@@ -38,4 +38,5 @@ pub mod resolve;
 pub mod sandbox;
 pub mod schema;
 pub mod signing;
+pub mod tool_result;
 pub mod trace;
