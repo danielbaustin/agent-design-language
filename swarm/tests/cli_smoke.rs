@@ -1159,6 +1159,14 @@ fn demo_subcommand_validates_name_and_unknown_flag() {
 }
 
 #[test]
+fn demo_subcommand_requires_out_value() {
+    assert_failure_contains(
+        &run_swarm(&["demo", "demo-a-say-mcp", "--out"]),
+        "--out requires a directory path",
+    );
+}
+
+#[test]
 fn learn_export_jsonl_is_deterministic() {
     let d = unique_test_temp_dir("learn-export");
     let runs = d.join("runs");

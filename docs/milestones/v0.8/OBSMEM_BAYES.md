@@ -4,6 +4,17 @@
 
 This note explains how **Observational Memory (ObsMem)** can support **Bayesian-style reasoning** inside ADL without requiring a full probabilistic programming system.
 
+In current v0.8 repo truth, this is no longer purely conceptual. The runtime
+now includes a bounded deterministic evidence-adjusted retrieval mode in
+`swarm/src/obsmem_retrieval_policy.rs` that:
+
+- treats the stored record score as a prior
+- applies explicit multiplicative evidence adjustments from observed tags and citation count
+- preserves deterministic lexical tie-breaks
+
+It is still intentionally narrow. ADL does not implement a general Bayesian
+inference subsystem or opaque confidence learning loop.
+
 The goal is not to turn ADL into a mathematically heavy inference engine. The goal is to give ADL a disciplined way to:
 
 - remember prior observations
@@ -30,7 +41,7 @@ At a high level:
 In ADL terms:
 
 - ObsMem provides the memory substrate
-- Bayes provides the update discipline
+- Bayes now provides a bounded update discipline for retrieval ordering
 
 This means ADL can move from:
 
@@ -57,6 +68,24 @@ With a Bayesian framing, ObsMem becomes more useful because it can support:
 This supports the broader ADL theme of **verifiable inference**.
 
 ---
+
+## Current v0.8 Boundary
+
+Current repository truth for v0.8 is:
+
+- ObsMem indexing exists for run summaries and experiment records.
+- Structured retrieval exists through deterministic query construction and policy filtering.
+- The retrieval policy now supports two bounded ranking modes:
+  - explicit stored score ordering
+  - evidence-adjusted ordering that multiplies the prior score by explicit status/tag/citation evidence
+- The update rule is deterministic and reviewable; it does not use hidden state or random sampling.
+- ADL still does not implement a general posterior-learning subsystem across runs.
+
+So the bounded v0.8 story is:
+
+- deterministic memory surfaces are implemented now
+- bounded evidence-adjusted ranking is implemented now
+- broader Bayesian learning remains future work
 
 ## Minimal ADL Interpretation of Bayes
 
@@ -89,7 +118,7 @@ Evidence comes from:
 
 The system updates confidence after seeing evidence.
 
-This does not need to be expressed as a mathematically exact posterior probability in early ADL versions. It can be represented as a bounded confidence score or ranking that is updated in a principled way.
+This does not need to be expressed as a mathematically exact posterior probability in early ADL versions. In v0.8 it is represented as a bounded confidence ranking update that starts from the stored score and applies explicit deterministic evidence multipliers.
 
 The important point is:
 
@@ -126,7 +155,15 @@ Prior related cases are retrieved from memory.
 
 ### Bayesian-style Update
 
-Retrieved cases alter the relative confidence of each hypothesis.
+Retrieved cases alter the relative confidence of each hypothesis through a bounded deterministic update rule.
+
+In the current retrieval policy:
+
+- the stored `score` acts as the prior
+- `status:success` boosts confidence
+- `status:failed` reduces confidence
+- matching evidence tags and citation count provide smaller bounded adjustments
+- final ordering remains deterministic with explicit lexical tie-breaks
 
 ### Mutation / Experiment
 
@@ -161,7 +198,7 @@ Useful fields include:
 - confidence after experiment
 - whether the result generalized or only worked in one narrow case
 
-Not all of these need to exist in v0.8, but this is the direction of travel.
+Not all of these fields exist in v0.8, but the current runtime already uses a bounded subset of observable evidence to adjust ranking.
 
 ---
 
@@ -196,14 +233,14 @@ ObsMem retrieval finds four prior similar cases:
 - three succeeded after normalizing transition names
 - one failed because the real problem was a missing state, not a naming mismatch
 
-A bounded Bayesian-style update might do something like this:
+A bounded Bayesian-style update now does something like this:
 
 - raise confidence in the “normalize transition names” hypothesis
 - keep a secondary hypothesis alive for “missing state definition”
 - prefer the normalization mutation first
 - require evaluation before fully adopting the repair pattern
 
-The important thing is not the exact math. The important thing is that the system can explain:
+The important thing is not fancy math. The important thing is that the system can explain:
 
 - what it remembered
 - how that memory changed confidence
@@ -217,7 +254,7 @@ This also matters for the Adaptive Execution Engine.
 
 AEE should not become a vague “adaptive magic” layer. It should have disciplined reasons for changing strategy.
 
-ObsMem + Bayes provides one possible basis for that discipline:
+ObsMem + Bayes now provides one bounded basis for that discipline:
 
 - retrieved prior cases inform confidence
 - confidence informs retry/adapt/escalate decisions
@@ -255,7 +292,7 @@ Near-term ADL use should remain modest.
 ### v0.8
 
 - record and retrieve prior cases through ObsMem
-- preserve enough structure for future confidence updates
+- apply bounded deterministic evidence-adjusted ranking in retrieval policy
 - keep confidence usage bounded and reviewable
 
 ### v0.85
@@ -330,7 +367,7 @@ These questions should remain open for now.
 ## Bottom Line
 
 ObsMem gives ADL memory.
-Bayesian-style updating gives that memory discipline.
+Bounded Bayesian-style updating gives that memory a deterministic evidence-adjustment discipline.
 
 Together they suggest a future in which ADL can:
 

@@ -219,6 +219,10 @@ mod tests {
     }
 
     fn write_fixture_run(root: &Path, run_id: &str) {
+        write_fixture_run_with_status(root, run_id, "failed");
+    }
+
+    fn write_fixture_run_with_status(root: &Path, run_id: &str, overall_status: &str) {
         let run = root.join(run_id);
         std::fs::create_dir_all(run.join("logs")).expect("mkdir logs");
         std::fs::write(
@@ -228,7 +232,9 @@ mod tests {
         .expect("write run_summary");
         std::fs::write(
             run.join("run_status.json"),
-            r#"{"run_status_version":1,"overall_status":"failed","failure_kind":"policy_denied"}"#,
+            format!(
+                r#"{{"run_status_version":1,"overall_status":"{overall_status}","failure_kind":"policy_denied"}}"#
+            ),
         )
         .expect("write run_status");
         std::fs::write(
@@ -381,6 +387,43 @@ mod tests {
             .expect("query with policy");
         assert_eq!(result.hits.len(), 1);
         assert_eq!(result.hits[0].workflow_id, "wf-a");
+    }
+
+    #[test]
+    fn query_with_policy_supports_evidence_adjusted_order() {
+        let tmp = unique_temp_dir("evidence-order");
+        write_fixture_run_with_status(&tmp, "r-success", "success");
+        write_fixture_run_with_status(&tmp, "r-failed", "failed");
+
+        let client = ObsMemInMemory::default();
+        let adapter = ObsMemAdapter::new(client);
+        adapter
+            .index_run_from_artifacts(&tmp, "r-success")
+            .expect("index r-success");
+        adapter
+            .index_run_from_artifacts(&tmp, "r-failed")
+            .expect("index r-failed");
+
+        let mut policy = RetrievalPolicyV1 {
+            default_limit: 10,
+            required_tags: vec!["workflow:wf-a".to_string()],
+            required_failure_code: Some("policy_denied".to_string()),
+            order: crate::obsmem_retrieval_policy::RetrievalOrder::EvidenceAdjustedDescIdAsc,
+        };
+        policy.normalize();
+
+        let request = RetrievalRequest {
+            workflow_id: Some("wf-a".to_string()),
+            failure_code: None,
+            tags: vec![],
+            limit_override: None,
+        };
+
+        let result = adapter
+            .query_with_policy(&policy, &request)
+            .expect("query with evidence-adjusted policy");
+        let ids: Vec<&str> = result.hits.iter().map(|h| h.run_id.as_str()).collect();
+        assert_eq!(ids, vec!["r-success", "r-failed"]);
     }
 
     #[test]

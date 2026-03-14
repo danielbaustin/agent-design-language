@@ -12,7 +12,7 @@ Define the design for **ADL v0.8**, which moves the project from a deterministic
 
 - the first **Gödel scientific loop** artifacts and workflows
 - the first **authoring surfaces** for structured prompt / card driven execution
-- a flagship **Rust transpiler / migration demo** that demonstrates adaptive execution, verification, and replayable evidence
+- a flagship **Rust transpiler demo scaffold** that demonstrates deterministic mapping verification and bounded evidence reporting
 
 The milestone is intended to prove that ADL is not merely a workflow runner, but a framework for **deterministic, auditable, provider-agnostic agent execution and improvement experiments**.
 
@@ -22,7 +22,7 @@ v0.75 establishes deterministic traces, replay, coverage gates, ObsMem integrati
 - a first-class experimental loop for **hypothesis → mutation → evaluation → decision**
 - stable machine-readable artifacts for Gödel-style self-improvement work
 - a tooling path from **structured cards → generated prompts → agent execution → review**
-- a flagship demo that proves ADL can run a serious engineering workflow with bounded retries and explicit evidence
+- a flagship demo surface that proves ADL can present a serious engineering-oriented workflow shape with explicit deterministic evidence
 
 Without these, ADL risks remaining “just” a deterministic workflow engine rather than becoming a programmable **scientific reasoning and software operations framework**.
 
@@ -30,7 +30,7 @@ Without these, ADL risks remaining “just” a deterministic workflow engine ra
 - Introduce the **Gödel scientific method surface** for ADL using deterministic, replayable artifacts.
 - Add the first **machine-readable schemas** for experiments, mutations, and evidence-oriented execution.
 - Establish the first **authoring surfaces v1** so structured cards/prompts can drive execution consistently.
-- Deliver a flagship **Rust transpiler / migration demo** that showcases adaptive execution, verification, and replayable evidence.
+- Deliver a flagship **Rust transpiler demo scaffold** that showcases deterministic mapping verification and explicit bounded evidence surfaces.
 - Keep all new capabilities compatible with v0.75 guarantees: determinism where declared, replayability, security boundaries, and auditability.
 
 ## Non-Goals
@@ -55,12 +55,12 @@ Without these, ADL risks remaining “just” a deterministic workflow engine ra
   - Prompt Spec block for deterministic prompt generation
   - Verification Summary block for output cards
   - card automation tooling that converts cards to execution prompts
-- Rust transpiler / migration demo:
-  - fixture crate
-  - transformation workflow
-  - verification hooks (`fmt`, `clippy`, `test`)
-  - bounded retry/recovery hooks using explicit `retry.max_attempts` and `on_error` policy
-  - replayable evidence bundle
+- Rust transpiler demo scaffold:
+  - workflow fixture
+  - deterministic mapping scaffold
+  - checked-in Rust runtime skeleton
+  - stable verification artifact
+  - explicit bounded evidence-reporting fields
 - Contract hardening required to support the above, including ToolResult metadata and machine-readable validation surfaces.
 
 ### Out of scope
@@ -76,7 +76,7 @@ Without these, ADL risks remaining “just” a deterministic workflow engine ra
 - The system must support **bounded, policy-gated mutations** expressed in a stable machine-readable format.
 - The system must support **evaluation plans** that run deterministic checks and emit reproducible results.
 - The system must support a **card → prompt generation** path that is deterministic for identical cards.
-- The system must provide a **Rust transpiler / migration workflow** that can generate a patch, run verification, retry boundedly, and emit evidence artifacts.
+- The system must provide a **Rust transpiler demo scaffold** that can verify deterministic fixture-to-runtime mapping, emit stable evidence artifacts, and describe its bounded non-production scope explicitly.
 - The system must allow ObsMem to index **run summaries** and **experiment records** in a deterministic, privacy-safe way.
 
 ### Non-functional
@@ -143,21 +143,16 @@ Input cards become structured execution contracts. A prompt generator determinis
 This enables provider-agnostic, reproducible execution prompt generation and makes future reviewer automation feasible.
 
 #### 3. Adaptive execution semantics
-The Rust transpiler demo and related workflows use the Adaptive Execution Engine pattern:
-
-Attempt -> Failure -> Bounded Retry Decision -> Retry -> Verification -> Convergence or Exhaustion
-
-Retry behavior must remain bounded, explicit, and traceable.
+The Rust transpiler demo surface records bounded adaptive-execution evidence fields, but it does not execute an autonomous retry loop in current v0.8 repo truth.
 
 #### 4. Demo semantics
-The flagship Rust transpiler / migration demo is an ADL workflow that:
+The flagship Rust transpiler demo scaffold is a bounded verification surface that:
 
-- analyzes a fixture crate
-- generates a transformation plan and patch
-- applies the patch in sandbox
-- runs `cargo fmt`, `cargo clippy`, and `cargo test`
-- retries using bounded runtime retry/on_error hooks if verification fails
-- emits deterministic evidence artifacts and a replayable trace bundle
+- reads a small workflow fixture
+- inspects a checked-in Rust runtime skeleton
+- verifies one-to-one ordered mapping between workflow steps and Rust functions
+- emits a deterministic verification artifact with bounded adaptive-execution reporting fields
+- explicitly states that patch generation, sandboxed edits, and `cargo fmt` / `cargo clippy` / `cargo test` execution are out of scope for this demo
 
 This demo also serves as the first concrete Gödel substrate because its structure mirrors:
 
@@ -189,13 +184,13 @@ Observe → Hypothesize → Evaluate → Accept/Reject
 - Checks/tests:
   - Schema round-trip tests for experiment-related artifacts where implemented.
   - Determinism tests for canonical evidence generation, prompt generation, and retrieval ordering.
-  - End-to-end tests for the Rust transpiler / migration workflow on a fixture crate.
-  - Replay verification for deterministic Gödel and transpiler experiment runs.
+  - Determinism tests for the Rust transpiler scaffold and verification artifact.
+  - Replay-oriented path hygiene checks for deterministic Gödel and transpiler evidence surfaces.
   - Card automation tests for Input Card → Prompt generation and Output Card → Verification Summary parsing.
 - Success metrics:
   - Experiment artifacts are generated deterministically for identical inputs.
   - Card automation can generate prompts without markdown heuristics beyond the documented schema.
-  - Rust transpiler demo completes successfully on the fixture crate and emits replayable evidence.
+  - Rust transpiler demo scaffold completes successfully on the checked-in fixture and emits stable verification evidence.
   - No secrets, prompts, tool arguments, or host paths leak into trace/evidence artifacts.
 - Rollback/fallback:
   - Keep design-stage schemas and docs canonical under milestone docs if runtime promotion proves premature.
@@ -224,5 +219,5 @@ Treat this as an explicit backlog/follow-on item, not an unbounded v0.8 requirem
 - v0.8 goals, non-goals, and scope boundaries are explicit and consistent with the WBS and sprint plan.
 - The Gödel scientific loop has a first concrete artifact/workflow surface, not just prose design.
 - The card/prompt automation path is documented and minimally implemented.
-- The Rust transpiler / migration demo is specified as a flagship v0.8 deliverable and tied to deterministic evidence/replay.
+- The Rust transpiler demo scaffold is specified as a flagship v0.8 deliverable with explicit bounded scope and deterministic evidence.
 - Major open questions are either resolved in milestone docs or tracked as explicit v0.8 issues.

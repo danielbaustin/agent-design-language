@@ -37,6 +37,9 @@ Review these docs while inspecting runnable output:
 - [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
 - [../../demos/v0.8-bounded-critical-demos.md](../../demos/v0.8-bounded-critical-demos.md)
 
+Scope note:
+- the Rust transpiler runnable surface is a bounded demo scaffold for deterministic fixture-to-runtime mapping verification, not a production transpiler or sandboxed patch/apply workflow.
+
 ### Inspect-only review surfaces
 
 These are review surfaces to read or inspect, not commands to run:

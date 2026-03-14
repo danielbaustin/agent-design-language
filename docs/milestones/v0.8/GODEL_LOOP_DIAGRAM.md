@@ -73,6 +73,6 @@ This loop is the visual expression of the Gödel–Hadamard–Bayes cognition mo
 
 - **Gödel** → self-referential system improvement through explicit mutation and experiment records
 - **Hadamard** → hypothesis generation and conceptual search
-- **Bayes** → evidence-based evaluation of experiment outcomes
+- **Bayes** → bounded deterministic evidence-adjusted retrieval and evidence-based evaluation of experiment outcomes
 
 In ADL v0.8, these ideas are represented through deterministic artifacts and bounded workflows rather than unconstrained autonomous self-modification.

@@ -26,10 +26,10 @@
     "order_check": "PASS"
   },
   "adaptive_execution": {
-    "mode": "bounded_reporting_only",
+    "mode": "bounded_demo_scaffold",
     "attempts_executed": 0,
     "policy_actions": [],
-    "notes": "WP-12 verification captures adaptive execution evidence fields only; no autonomous retry loop executed."
+    "notes": "v0.8 scope is a bounded demo scaffold only: deterministic fixture-to-runtime mapping verification, checked-in runtime skeleton, and stable verification artifact generation. It does not generate patches, apply sandboxed edits, or execute cargo fmt/clippy/test against a fixture crate."
   },
   "validation": {
     "command": "cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet",
