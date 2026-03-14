@@ -249,6 +249,9 @@ fn demo_d_run_writes_godel_obsmem_artifacts() {
     assert!(run_out.join("failure_signal.json").is_file());
     assert!(run_out.join("godel_obsmem_demo_summary.json").is_file());
     assert!(run_out
+        .join("runs/demo-d-run-001/godel/canonical_evidence_view.v1.json")
+        .is_file());
+    assert!(run_out
         .join("runs/demo-d-run-001/godel/experiment_record.runtime.v1.json")
         .is_file());
     assert!(run_out

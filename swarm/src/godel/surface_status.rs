@@ -5,6 +5,7 @@ use anyhow::{anyhow, bail, Context, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+use super::canonical_evidence::load_canonical_evidence;
 use super::experiment_record::load_canonical_record;
 use super::workflow_template::{parse_workflow_template, GodelWorkflowTemplate};
 
@@ -25,9 +26,13 @@ pub fn load_v08_surface_status(repo_root: &Path) -> Result<GodelRuntimeSurfaceSt
     let workflow_template =
         read_json(&spec_examples_root.join("godel_experiment_workflow.template.v1.json"))
             .context("load workflow template")?;
-    let evidence_view =
-        read_json(&spec_examples_root.join("canonical_evidence_view.v1.example.json"))
-            .context("load canonical evidence example")?;
+    let evidence_view = serde_json::to_value(
+        load_canonical_evidence(
+            &spec_examples_root.join("canonical_evidence_view.v1.example.json"),
+        )
+        .context("load canonical evidence example")?,
+    )
+    .context("serialize canonical evidence example")?;
     let mutation = read_json(&spec_examples_root.join("mutation.v1.example.json"))
         .context("load mutation example")?;
     let evaluation_plan = read_json(&spec_examples_root.join("evaluation_plan.v1.example.json"))
@@ -273,7 +278,52 @@ mod tests {
         std::fs::write(
             docs.join("canonical_evidence_view.v1.example.json"),
             serde_json::to_vec_pretty(&json!({
-                "schema_name": "canonical_evidence_view"
+                "schema_name": "canonical_evidence_view",
+                "schema_version": 1,
+                "evidence_view_id": "cev-test-fixture",
+                "run_context": {
+                    "run_id": "run-test-001",
+                    "workflow_id": "wf-godel-loop",
+                    "subject": "workflow:wf-godel-loop",
+                    "variant_label": "fixture"
+                },
+                "canonicalization_profile": {
+                    "profile_name": "godel-evidence-default",
+                    "profile_version": 1,
+                    "volatile_fields_excluded": ["elapsed_ms", "host_paths", "timestamps"]
+                },
+                "failure_codes": ["none"],
+                "verification_results": [],
+                "artifact_hashes": [],
+                "trace_bundle_ref": "runs/run-test-001/trace_bundle_v2.json",
+                "activation_log_ref": "runs/run-test-001/logs/activation_log.json",
+                "comparison_axes": {
+                    "primary_metric": "failure_occurrence",
+                    "direction": "decrease_is_better",
+                    "secondary_metrics": [
+                        {
+                            "metric": "evidence_ref_count",
+                            "direction": "target_match"
+                        }
+                    ]
+                },
+                "privacy": {
+                    "secrets_present": false,
+                    "raw_prompt_or_tool_args_present": false,
+                    "absolute_host_paths_present": false,
+                    "redaction_notes": [
+                        "prompt bodies omitted",
+                        "tool argument payloads omitted"
+                    ]
+                },
+                "derived_metrics": [
+                    {
+                        "metric": "evidence_ref_count",
+                        "value": 1.0,
+                        "unit": "count"
+                    }
+                ],
+                "notes": ["fixture canonical evidence example"]
             }))
             .expect("serialize evidence"),
         )
