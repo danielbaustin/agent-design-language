@@ -1,8 +1,12 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
+use std::fs;
 use std::path::PathBuf;
 
-use ::adl::{artifacts, godel};
+use ::adl::{
+    artifacts, godel, godel::experiment_record::PersistedExperimentRecord,
+    godel::obsmem_index::PersistedStageIndexEntry,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct GodelRunCliSummary {
@@ -13,16 +17,32 @@ struct GodelRunCliSummary {
     obsmem_index_path: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct GodelInspectCliSummary {
+    run_id: String,
+    experiment_record_path: String,
+    obsmem_index_path: String,
+    failure_code: String,
+    workflow_id: String,
+    hypothesis_id: String,
+    mutation_id: String,
+    evaluation_decision: String,
+    improvement_delta: i32,
+    obsmem_index_key: String,
+    experiment_outcome: String,
+}
+
 pub(crate) fn real_godel(args: &[String]) -> Result<()> {
     let Some(cmd) = args.first().map(|s| s.as_str()) else {
         return Err(anyhow::anyhow!(
-            "godel subcommand required (supported: run)"
+            "godel subcommand required (supported: run, inspect)"
         ));
     };
     match cmd {
         "run" => real_godel_run(&args[1..]),
+        "inspect" => real_godel_inspect(&args[1..]),
         other => Err(anyhow::anyhow!(
-            "unknown godel subcommand '{other}' (supported: run)"
+            "unknown godel subcommand '{other}' (supported: run, inspect)"
         )),
     }
 }
@@ -115,6 +135,109 @@ pub(crate) fn real_godel_run(args: &[String]) -> Result<()> {
             .collect(),
         experiment_record_path: result.experiment_record_rel_path.display().to_string(),
         obsmem_index_path: result.obsmem_index_rel_path.display().to_string(),
+    };
+    println!("{}", serde_json::to_string_pretty(&summary)?);
+    Ok(())
+}
+
+pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
+    let mut run_id: Option<String> = None;
+    let mut runs_dir: Option<PathBuf> = None;
+
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--run-id" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!("--run-id requires a value"));
+                };
+                run_id = Some(v.clone());
+                i += 1;
+            }
+            "--runs-dir" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!("--runs-dir requires a directory path"));
+                };
+                runs_dir = Some(PathBuf::from(v));
+                i += 1;
+            }
+            other => {
+                return Err(anyhow::anyhow!(
+                    "unknown godel inspect arg '{other}' (supported: --run-id, --runs-dir)"
+                ));
+            }
+        }
+        i += 1;
+    }
+
+    let run_id = run_id.ok_or_else(|| anyhow::anyhow!("godel inspect requires --run-id <id>"))?;
+    let runs_dir = runs_dir.unwrap_or_else(|| {
+        artifacts::runs_root().unwrap_or_else(|_| PathBuf::from(".adl").join("runs"))
+    });
+
+    let experiment_record_rel = PathBuf::from("runs")
+        .join(&run_id)
+        .join("godel")
+        .join("experiment_record.runtime.v1.json");
+    let obsmem_index_rel = PathBuf::from("runs")
+        .join(&run_id)
+        .join("godel")
+        .join("obsmem_index_entry.runtime.v1.json");
+    let experiment_record_path = runs_dir
+        .join(&run_id)
+        .join("godel")
+        .join("experiment_record.runtime.v1.json");
+    let obsmem_index_path = runs_dir
+        .join(&run_id)
+        .join("godel")
+        .join("obsmem_index_entry.runtime.v1.json");
+
+    let record: PersistedExperimentRecord =
+        serde_json::from_str(&fs::read_to_string(&experiment_record_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_IO: failed to read {}: {err}",
+                experiment_record_rel.display()
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_INVALID: failed to parse {}: {err}",
+                experiment_record_rel.display()
+            )
+        })?;
+
+    let index: PersistedStageIndexEntry =
+        serde_json::from_str(&fs::read_to_string(&obsmem_index_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_IO: failed to read {}: {err}",
+                obsmem_index_rel.display()
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_INVALID: failed to parse {}: {err}",
+                obsmem_index_rel.display()
+            )
+        })?;
+
+    if record.record.run_id != run_id || index.entry.run_id != run_id {
+        return Err(anyhow::anyhow!(
+            "GODEL_INSPECT_INVALID: persisted run_id did not match requested run_id"
+        ));
+    }
+
+    let summary = GodelInspectCliSummary {
+        run_id,
+        experiment_record_path: experiment_record_rel.display().to_string(),
+        obsmem_index_path: obsmem_index_rel.display().to_string(),
+        failure_code: record.record.failure_code.clone(),
+        workflow_id: record.record.workflow_id.clone(),
+        hypothesis_id: record.record.hypothesis_id.clone(),
+        mutation_id: record.record.mutation_id.clone(),
+        evaluation_decision: record.record.evaluation_decision.clone(),
+        improvement_delta: record.record.improvement_delta,
+        obsmem_index_key: index.entry.index_key.clone(),
+        experiment_outcome: index.entry.experiment_outcome.clone(),
     };
     println!("{}", serde_json::to_string_pretty(&summary)?);
     Ok(())
