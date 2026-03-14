@@ -87,6 +87,7 @@ Use these docs together when checking current v0.8 truth:
 ## Architecture
 
 - [ARCHITECTURE_V0.8.md](ARCHITECTURE_V0.8.md)
+- [../../adr/0008-godel-stage-loop-v08.md](../../adr/0008-godel-stage-loop-v08.md)
 - [ADAPTIVE_EXECUTION_ENGINE.md](ADAPTIVE_EXECUTION_ENGINE.md)
 - [MEMORY_MODEL_FOR_AI.md](MEMORY_MODEL_FOR_AI.md)
 - [GODEL_SCIENTIFIC_METHOD.md](GODEL_SCIENTIFIC_METHOD.md)
