@@ -1,290 +1,322 @@
-# [future][EPIC] Adaptive Execution Engine (Deterministic Auto-Retry + Strategy Loop)
+# Sticktoittiveness Decomposition (v0.8)
 
-**Milestone:** v0.8+ (likely v0.9)  
-**Area:** runtime  
-**Status:** Incubation / architectural planning  
-
----
-
-## Summary
-
-Introduce an **Adaptive Execution Engine (AEE)** for ADL:
-
-A deterministic, policy-gated, traceable auto-retry system that enables bounded self-healing execution without weakening security, determinism, or audit guarantees.
-
-This is ADL’s enterprise-grade version of “no-fail” execution — similar in spirit to codex.app’s retry behavior — but:
-
-- Deterministic  
-- Auditable  
-- Replayable  
-- Policy-governed  
-- Security-preserving  
-
-This document captures the architectural intent for v0.8+ and explicitly does **not** modify v0.7 behavior.
+**Status:** Decomposed into bounded implementation slices  
+**Milestone:** v0.8 clarification artifact; future implementation work remains sliced  
+**Area:** runtime / retry / adaptive execution
 
 ---
 
-## Motivation
+## Purpose
 
-Today, ADL steps either:
+This document replaces the earlier "one big future subsystem" framing of
+`Sticktoittiveness`.
 
-- succeed
-- fail
-- retry up to a static `max_attempts`
+Repository truth today is narrower:
 
-What is missing:
+- ADL already has bounded deterministic retry primitives.
+- ADL does **not** have a full retry-strategy engine, persistent adaptive state,
+  or autonomous self-healing subsystem.
 
-> When a step fails, intelligently try another deterministic strategy until success or budget exhaustion.
-
-Codex-like systems feel powerful because they:
-- detect failure,
-- adjust approach,
-- try again,
-- converge.
-
-ADL can implement this in a structured and enterprise-safe way.
+The goal of this document is to break the concept into concrete slices that can
+be implemented, reviewed, and prioritized independently.
 
 ---
 
-## Core Concept
+## Current Repository Truth
 
-### Runtime Control Flow
+The following retry/adaptive surfaces already exist:
 
-```
-execute_step()
-  → run_with_retry_controller()
-      → attempt N
-          → classify failure (stable error code)
-          → evaluate retry policy
-          → compute deterministic strategy mutation
-          → emit trace events
-          → attempt N+1
-```
+1. **Retry attempt bound**
+   - Workflow surface: `retry.max_attempts`
+   - Runtime surfaces:
+     - `swarm/src/adl.rs`
+     - `swarm/src/execute/mod.rs`
+     - `swarm/src/execute/runner.rs`
 
----
+2. **Continuation policy**
+   - Workflow surface: `on_error: continue`
+   - Runtime surfaces:
+     - `swarm/src/adl.rs`
+     - `swarm/src/execute/mod.rs`
+     - `swarm/src/execute/runner.rs`
 
-## Design Constraints
+3. **Retryable vs non-retryable classification**
+   - Runtime surface:
+     - `swarm/src/provider.rs`
 
-The Adaptive Execution Engine must be:
+4. **Deterministic retry accounting and review surfaces**
+   - Runtime/tests surfaces:
+     - `swarm/tests/execute_tests.rs`
+     - `swarm/src/cli/mod.rs`
+     - `swarm/src/learning_export.rs`
 
-### 1) Deterministic
+5. **Deterministic overlay application for retry budget changes**
+   - Runtime/tests surfaces:
+     - `swarm/src/overlay.rs`
+     - `swarm/tests/execute_tests.rs`
 
-- No wall-clock randomness.
-- No nondeterministic UUID generation.
-- Stable `delegation_id` / `attempt_id`.
-- Replay-safe event ordering.
-- Stable serialization.
-
-All retry decisions must be reproducible under identical inputs.
-
----
-
-### 2) Policy-Governed
-
-All retry mutations must pass through:
-
-- Delegation Policy Surface (v0.7 foundation).
-- Security envelope.
-- Sandbox invariants.
-
-No automatic permission escalation.
-
-Retry may never bypass #490 guardrail principles.
+So the repository already implements a **bounded retry substrate**. What is
+missing is the broader multi-slice system that the old "Sticktoittiveness"
+language implied.
 
 ---
 
-### 3) Security-Preserving
+## What Is Not Implemented
 
-Never mutate:
+The following are **not** implemented as current v0.8 runtime behavior:
 
-- Sandbox roots
-- Filesystem permissions
-- Network access rules
-- Delegation allow/deny policies
-- Security envelope invariants
+- deterministic backoff schedules beyond repeated bounded attempts
+- named retry strategies with explicit state transitions
+- persistent strategy state carried across runs
+- runtime mutation of retry strategy based on prior outcomes
+- closed-loop failure-classification feedback that rewrites execution policy
+- autonomous "fix and retry" or patch-application behavior
 
-Retry may only modify:
-
-- Provider selection (if allowed)
-- Provider profile (e.g., strict → escalated)
-- Prompt profile
-- Tool safety flags
-- Retry metadata
-
-Security posture must be monotonic or invariant — never weakened.
+Those belong in smaller slices rather than a single umbrella feature.
 
 ---
 
-### 4) Auditable
+## Bounded Implementation Slices
 
-Trace model must emit attempt lifecycle events:
+### Slice 1: Retry Policy Semantics Baseline
 
-- `StepAttemptStarted`
-- `StepAttemptFailed`
-- `RetryPlanned`
-- `RetryDeniedByPolicy`
-- `StepAttemptSucceeded`
-- `StepRetryExhausted`
+**Purpose**
 
-Events must not log secrets or raw prompt/tool arguments.
+Make the current retry substrate explicit and reviewable as the baseline slice.
 
-All retry decisions must be explainable after the fact.
+**Current status**
 
----
+Partially implemented now.
 
-## Scope (v1 of AEE)
+**What it includes**
 
-### Retry Controller v1
+- `retry.max_attempts`
+- `on_error: continue`
+- deterministic attempt progression
+- retry exhaustion behavior
+- fail-fast default when retry is absent
 
-Add a centralized runtime wrapper:
+**Runtime surfaces**
 
-- `run_with_retry(step, context)`
-- bounded by `max_attempts`
-- deterministic strategy ordering
-- explicit failure taxonomy
-- policy-gated mutation surface
+- `swarm/src/adl.rs`
+- `swarm/src/execute/mod.rs`
+- `swarm/src/execute/runner.rs`
+- `swarm/tests/execute_tests.rs`
+- `swarm/examples/v0-3-on-error-retry.adl.yaml`
 
-This replaces ad-hoc retry loops with a structured controller.
+**Why this is its own slice**
 
----
-
-### Strategy Surface v1
-
-Support a small number of named strategies:
-
-- `conservative_escalation_v1`
-- `fix_and_verify_v1`
-
-Each strategy:
-
-- Is deterministic.
-- Has documented state transitions.
-- Is testable.
-- Is bounded.
-
-No ML-driven adaptation in v1.
+This is the stable base that later slices must build on rather than redefine.
 
 ---
 
-### Failure Taxonomy Expansion
+### Slice 2: Failure Taxonomy and Retry Eligibility
 
-Introduce stable error codes such as:
+**Purpose**
 
-- `tool_exit_nonzero`
-- `compile_error`
-- `test_failure`
-- `provider_timeout`
-- `provider_rate_limited`
-- `sandbox_denied`
-- `policy_denied`
-- `unknown_failure`
+Separate "how many times may we retry?" from "what kinds of failures are even
+retryable?"
 
-Retry decisions must be based on structured codes — never string matching.
+**Current status**
 
----
+Partially implemented now through provider-level retryable classification.
 
-## Configuration Surface (Draft)
+**What exists**
 
-Example YAML:
+- deterministic `is_retryable_error` hook
+- clear 4xx vs 5xx vs timeout behavior in provider tests
 
-```
-retry:
-  max_attempts: 4
-  retryable:
-    - compile_error
-    - test_failure
-    - provider_timeout
-  strategy: conservative_escalation_v1
-  allow_provider_switch: true
-```
+**What remains**
 
-Defaults must remain conservative and secure.
+- stronger stable failure taxonomy across provider/runtime/delegation paths
+- documentation that maps error classes to retry eligibility explicitly
+- reviewable bounded list of retryable categories rather than ad-hoc expansion
 
-Overlay integration (future) must remain opt-in and audit-safe.
+**Primary runtime surfaces**
+
+- `swarm/src/provider.rs`
+- `swarm/tests/provider_tests.rs`
+- `swarm/tests/execute_tests.rs`
+
+**Why this is its own slice**
+
+Eligibility rules can be tightened and tested without changing strategy
+selection or persistence.
 
 ---
 
-## Out of Scope (v1)
+### Slice 3: Deterministic Retry Ordering and Schedule
 
-- ML-driven strategy adaptation
-- Cross-run learning mutation
-- Dynamic sandbox reconfiguration
-- Complex multi-party approval workflows
-- Distributed tracing integration
-- Autonomous policy mutation
+**Purpose**
 
----
+Define what happens between attempts in a deterministic way.
 
-## Relationship to v0.7 Foundations
+**Current status**
 
-Builds on:
+Mostly unimplemented beyond immediate repeated attempts.
 
-- Delegation Policy Surface v1 (#487)
-- Delegation Trace Model v1 (#488)
-- Resilience Surfaces (#491)
-- Sandbox taxonomy (#502)
-- Learning surfaces (#481–#486)
+**What exists**
 
-Must not weaken #490 guardrail invariants.
+- deterministic attempt count progression
+- deterministic attempt ordering
 
-v0.7 provides the audit spine.
-v0.8+ builds adaptive behavior on top of it.
+**What remains**
 
----
+- explicit statement of whether retries are immediate, zero-delay, or follow a
+  bounded static schedule
+- optional bounded schedule representation that is replay-friendly
+- tests proving identical inputs choose identical retry schedule/order
 
-## Acceptance Criteria (EPIC Completion)
+**Likely runtime surfaces**
 
-- Centralized Retry Controller implemented
-- Deterministic strategy engine
-- Trace events integrated
-- Policy gating enforced
-- Deterministic unit + integration tests:
-  - retry success path
-  - retry exhaustion
-  - policy-denied mutation
-  - deterministic replay
-- Documentation finalized under `docs/milestones/v0.8/`
+- `swarm/src/execute/runner.rs`
+- `swarm/src/adl.rs`
+- `swarm/tests/execute_tests.rs`
+
+**Why this is its own slice**
+
+Scheduling rules can be introduced without yet adding strategy mutation or
+persistent state.
 
 ---
 
-## Strategic Value
+### Slice 4: Attempt and Strategy-State Persistence
 
-This capability enables:
+**Purpose**
 
-- Self-healing workflows
-- Reliable demos
-- Enterprise-grade autonomy
-- Competitive differentiation vs CrewAI / AutoGen
-- Foundation for controlled operational intelligence
+Persist enough structured data to explain retry behavior after the run.
 
-This is a major runtime capability and must not be rushed.
+**Current status**
+
+Partially present through attempt counts and learning/export surfaces, but not
+as a dedicated strategy-state subsystem.
+
+**What exists**
+
+- retry counts in score/learning artifacts
+- run-status/evidence surfaces
+- exported learning summaries
+
+**What remains**
+
+- explicit persisted record of selected retry strategy or retry-plan reason
+- stable artifact field(s) for why attempt `N+1` was chosen
+- deterministic trace/evidence linkage for retry planning
+
+**Primary surfaces**
+
+- `swarm/src/cli/mod.rs`
+- `swarm/src/learning_export.rs`
+- trace/run artifact surfaces
+
+**Why this is its own slice**
+
+Persistence can be improved independently of runtime strategy generation.
 
 ---
 
-## Positioning
+### Slice 5: Failure-Classification Feedback Loop
 
-v0.7 ships:
+**Purpose**
 
-- Determinism
-- Policy
-- Trace
-- Learning artifacts
+Turn observed failures into bounded future recommendations rather than
+immediately into autonomous runtime mutation.
 
-v0.8+ adds:
+**Current status**
 
-- Controlled adaptive behavior
+Partially present as reporting/suggestion surfaces, not as closed-loop runtime
+adaptation.
 
-The architecture must preserve:
+**What exists**
 
-> Deterministic core. Adaptive layer on top.
+- retry counts in score summaries
+- suggestion surfaces that can point to safer retry policy changes
+
+**What remains**
+
+- deterministic feedback from observed failure classes to proposed retry policy
+  updates
+- explicit issue/workflow-level artifact describing recommended retry-policy
+  changes
+- separation between recommendation and automatic application
+
+**Primary surfaces**
+
+- `swarm/src/cli/mod.rs`
+- `swarm/src/learning_export.rs`
+- `docs/milestones/v0.8/ADAPTIVE_EXECUTION_ENGINE.md`
+
+**Why this is its own slice**
+
+This keeps the first adaptive loop reviewable and non-autonomous.
 
 ---
 
-## Guiding Principle
+## Recommended Ordering
 
-Codex feels powerful because it retries invisibly.
+Implement in this order:
 
-ADL will be stronger because it retries visibly, deterministically, and safely.
+1. **Retry Policy Semantics Baseline**
+   - primarily documentation/truth-alignment and minor hardening
+2. **Failure Taxonomy and Retry Eligibility**
+   - safest runtime tightening with strong tests
+3. **Deterministic Retry Ordering and Schedule**
+   - bounded runtime behavior change
+4. **Attempt and Strategy-State Persistence**
+   - artifact/trace clarity
+5. **Failure-Classification Feedback Loop**
+   - recommendation surfaces before any automation
 
-Finish v0.7 clean.
-Build adaptation deliberately.
+This ordering keeps the work incremental:
+
+- semantics first
+- classification second
+- scheduling third
+- persistence fourth
+- adaptive feedback last
+
+---
+
+## Relationship to Existing v0.8 Docs
+
+- `ADAPTIVE_EXECUTION_ENGINE.md` describes current bounded runtime truth.
+- `BOUNDED_AEE_V1_SCOPE_V0.8.md` remains the canonical v0.8 scope boundary.
+- This document decomposes the larger `Sticktoittiveness` idea into bounded
+  follow-on slices.
+
+This means:
+
+- `ADAPTIVE_EXECUTION_ENGINE.md` answers "what exists now?"
+- `BOUNDED_AEE_V1_SCOPE_V0.8.md` answers "what is in scope for v0.8?"
+- `STICKTOITTIVENESS.md` now answers "how should the larger future idea be
+  broken down?"
+
+---
+
+## Review Guidance
+
+Reviewers should **not** read this document as a claim that ADL already ships a
+full self-healing runtime.
+
+Reviewers **should** read it as:
+
+- a truthful decomposition of the larger concept,
+- tied to current retry/runtime surfaces,
+- with bounded next implementation slices.
+
+---
+
+## Bottom Line
+
+`Sticktoittiveness` should no longer function as one giant future feature.
+
+For current repository truth, it decomposes into:
+
+1. retry policy semantics baseline
+2. failure taxonomy and retry eligibility
+3. deterministic retry ordering and schedule
+4. attempt and strategy-state persistence
+5. failure-classification feedback loop
+
+That is a reviewable implementation plan. It is smaller, clearer, and better
+aligned with the runtime surfaces ADL already has.
