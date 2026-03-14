@@ -70,13 +70,14 @@ The current `main` branch carries the `0.8.0` crate version and includes bounded
 ## Documentation Map
 
 - Root repo README: `../README.md`
+- Canonical demo index: `../demos/README.md`
 - v0.8 milestone docs: `../docs/milestones/v0.8/`
 - v0.7 milestone docs: `../docs/milestones/v0.7/`
 - ADRs: `../docs/adr/`
 - Runnable demos:
   - `../docs/milestones/v0.7/DEMOS_v0.7.md` (latest tagged release)
   - `../docs/milestones/v0.8/DEMOS_V0.8.md` (active milestone review packet)
-- More examples: `examples/README.md`
+- Crate-local fixture inventory: `examples/README.md`
 
 ## How Swarm Processes ADL (Compiler-like Pipeline)
 
@@ -120,7 +121,7 @@ Using `-q` keeps demo output focused on the ADL plan rather than Cargo build noi
 
 For real `--run` execution, configure provider runtime dependencies (for example local Ollama and any required auth env vars).
 
-For additional runnable examples, see `examples/README.md` and `../docs/milestones/v0.7/DEMOS_v0.7.md`.
+For additional runnable examples, see `../demos/README.md`, `examples/README.md`, and `../docs/milestones/v0.7/DEMOS_v0.7.md`.
 
 ---
 

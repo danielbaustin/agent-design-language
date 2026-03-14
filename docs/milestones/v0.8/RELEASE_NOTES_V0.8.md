@@ -17,9 +17,9 @@ v0.8 focuses on controlled experimentation and authoring on top of the released 
 - Canonical v0.8 planning/docs surfaces under `docs/milestones/v0.8/`.
 - Gödel schema/spec artifacts (ExperimentRecord, Evidence View, Mutation, EvaluationPlan, workflow template) as design-stage contracts.
 - Bounded Rust transpiler demo scaffold artifacts:
-  - `examples/workflows/rust_transpiler_demo.yaml`
+  - `demos/rust-transpiler/workflow/rust_transpiler_demo.yaml`
   - `tools/transpiler_demo/`
-  - `demos/rust_output/`
+  - `demos/rust-transpiler/`
 
 ## What Is Still In Progress
 - Full runtime integration of v0.8 schema surfaces into execution paths.

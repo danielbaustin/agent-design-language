@@ -1,6 +1,6 @@
 // v0.8 bounded Rust transpiler demo output skeleton.
 // This file represents deterministic compiled structure from:
-// examples/workflows/rust_transpiler_demo.yaml
+// demos/rust-transpiler/workflow/rust_transpiler_demo.yaml
 
 #[derive(Debug, Clone)]
 struct WorkflowState {

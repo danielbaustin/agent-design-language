@@ -3,9 +3,9 @@ use std::path::{Path, PathBuf};
 
 use serde::Serialize;
 
-const FIXTURE_REL: &str = "examples/workflows/rust_transpiler_demo.yaml";
-const RUST_OUTPUT_REL: &str = "demos/rust_output/workflow_runtime.rs";
-const VERIFICATION_REL: &str = "demos/rust_output/transpiler_verification.v0.8.json";
+const FIXTURE_REL: &str = "demos/rust-transpiler/workflow/rust_transpiler_demo.yaml";
+const RUST_OUTPUT_REL: &str = "demos/rust-transpiler/output/workflow_runtime.rs";
+const VERIFICATION_REL: &str = "demos/rust-transpiler/output/transpiler_verification.v0.8.json";
 const SURFACE_SCOPE: &str = "bounded_demo_scaffold";
 const BOUNDED_SCOPE_NOTE: &str = "v0.8 scope is a bounded demo scaffold only: deterministic fixture-to-runtime mapping verification, checked-in runtime skeleton, and stable verification artifact generation. It does not generate patches, apply sandboxed edits, or execute cargo fmt/clippy/test against a fixture crate.";
 
