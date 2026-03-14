@@ -17,17 +17,17 @@ The following runtime surfaces exist today:
 
 1. **Deterministic step execution loop**
    - Sequential and bounded-concurrent step scheduling with stable step ordering semantics.
-   - Runtime surface: `swarm/src/execute.rs`.
+   - Runtime surfaces: `swarm/src/execute/mod.rs`, `swarm/src/execute/runner.rs`.
 
 2. **Bounded retry surface (`step.retry.max_attempts`)**
    - Per-step bounded retry count with deterministic attempt progression.
    - Runtime surfaces:
      - `swarm/src/adl.rs` (schema/validation for retry fields)
-     - `swarm/src/execute.rs` (retry loop and attempt handling)
+     - `swarm/src/execute/mod.rs` and `swarm/src/execute/runner.rs` (retry loop and attempt handling)
 
 3. **Failure handling policy (`on_error: continue`)**
    - Explicit policy-controlled continuation behavior after failures.
-   - Runtime surface: `swarm/src/execute.rs`.
+   - Runtime surfaces: `swarm/src/execute/mod.rs`, `swarm/src/execute/runner.rs`.
 
 4. **Retryability classification hook**
    - Retry path selection depends on deterministic retryable vs non-retryable classification.
@@ -36,7 +36,7 @@ The following runtime surfaces exist today:
 5. **Attempt/evidence accounting surfaces**
    - Attempt counts and outcome surfaces emitted via run-status/evidence artifacts.
    - Runtime/tests surfaces:
-     - `swarm/src/execute.rs`
+     - `swarm/src/execute/mod.rs`
      - `swarm/tests/execute_tests.rs`
 
 ## Strategy-loop hook boundary (v0.8)
@@ -75,7 +75,8 @@ AEE behavior is exercised through standard workflow execution surfaces:
 
 Primary code entrypoints:
 
-- `swarm/src/execute.rs`
+- `swarm/src/execute/mod.rs`
+- `swarm/src/execute/runner.rs`
 - `swarm/src/adl.rs`
 - `swarm/src/provider.rs`
 
@@ -106,6 +107,12 @@ Deferred to future milestones (v0.85/v0.9+):
 - richer strategy synthesis,
 - autonomous multi-run optimization,
 - advanced memory-driven strategy selection.
+
+## Relationship to Sticktoittiveness Decomposition
+
+`STICKTOITTIVENESS.md` is the implementation-slice breakdown for future retry
+expansion work. It should be used when opening or prioritizing bounded follow-on
+issues rather than treating "Sticktoittiveness" as one monolithic feature.
 
 ## Summary
 
