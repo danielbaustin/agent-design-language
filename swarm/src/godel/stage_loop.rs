@@ -166,6 +166,7 @@ pub struct StageLoopRun {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StageLoopPersistenceResult {
     pub run: StageLoopRun,
+    pub canonical_evaluation_plan_rel_path: PathBuf,
     pub canonical_mutation_rel_path: PathBuf,
     pub canonical_evidence_rel_path: PathBuf,
     pub experiment_record_rel_path: PathBuf,
@@ -321,6 +322,27 @@ impl GodelStageLoopExecutor {
                         "canonical evidence persistence failed: {err}"
                     ))
                 })?;
+        let canonical_evaluation_plan = evaluation::build_canonical_evaluation_plan(
+            &input.run_id,
+            &input.workflow_id,
+            &input.failure_code,
+            &input.normalized_evidence_refs(),
+            &run.hypothesis,
+            &run.mutation,
+        )
+        .map_err(|err| {
+            StageLoopError::InvalidInput(format!("canonical evaluation plan build failed: {err}"))
+        })?;
+        let canonical_evaluation_plan_rel_path = evaluation::persist_canonical_evaluation_plan(
+            runs_root,
+            &input.run_id,
+            &canonical_evaluation_plan,
+        )
+        .map_err(|err| {
+            StageLoopError::InvalidInput(format!(
+                "canonical evaluation plan persistence failed: {err}"
+            ))
+        })?;
         let experiment_record_rel_path = experiment_record::persist_record(runs_root, &run.record)
             .map_err(|err| {
                 StageLoopError::InvalidInput(format!("experiment record persistence failed: {err}"))
@@ -349,6 +371,7 @@ impl GodelStageLoopExecutor {
 
         Ok(StageLoopPersistenceResult {
             run,
+            canonical_evaluation_plan_rel_path,
             canonical_mutation_rel_path,
             canonical_evidence_rel_path,
             experiment_record_rel_path,
@@ -624,6 +647,10 @@ mod tests {
             .expect("persisted stage loop");
 
         assert_eq!(
+            persisted.canonical_evaluation_plan_rel_path,
+            PathBuf::from("runs/run-745-a/godel/evaluation_plan.v1.json")
+        );
+        assert_eq!(
             persisted.canonical_mutation_rel_path,
             PathBuf::from("runs/run-745-a/godel/mutation.v1.json")
         );
@@ -646,6 +673,9 @@ mod tests {
         assert!(tmp.join("run-745-a/godel/mutation.v1.json").is_file());
         assert!(tmp
             .join("run-745-a/godel/canonical_evidence_view.v1.json")
+            .is_file());
+        assert!(tmp
+            .join("run-745-a/godel/evaluation_plan.v1.json")
             .is_file());
         assert!(tmp
             .join("run-745-a/godel/experiment_record.v1.json")
