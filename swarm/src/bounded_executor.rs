@@ -247,4 +247,52 @@ mod tests {
         let out = run_bounded(4, jobs).expect("run_bounded should succeed");
         assert_eq!(out.len(), 11);
     }
+
+    #[test]
+    fn run_bounded_returns_empty_for_empty_jobs() {
+        let out = run_bounded::<usize>(3, Vec::new()).expect("empty queue should succeed");
+        assert!(out.is_empty());
+    }
+
+    #[test]
+    fn stable_failure_kind_returns_none_for_unrelated_error() {
+        let err = anyhow::anyhow!("not a bounded executor error");
+        assert_eq!(stable_failure_kind(&err), None);
+    }
+
+    #[test]
+    fn stable_failure_kind_maps_invalid_parallelism_to_schema_error() {
+        let err = run_bounded::<usize>(0, vec![]).expect_err("zero parallelism should fail");
+        assert_eq!(stable_failure_kind(&err), Some("schema_error"));
+    }
+
+    #[test]
+    fn stable_failure_kind_maps_worker_panic_to_panic() {
+        let err = BoundedExecutorError::new(
+            BoundedExecutorErrorKind::WorkerPanic,
+            "bounded executor worker panicked",
+        );
+        let wrapped: anyhow::Error = err.into();
+        assert_eq!(stable_failure_kind(&wrapped), Some("panic"));
+    }
+
+    #[test]
+    fn stable_failure_kind_maps_queue_poisoned_to_panic() {
+        let err = BoundedExecutorError::new(
+            BoundedExecutorErrorKind::QueuePoisoned,
+            "queue lock poisoned",
+        );
+        let wrapped: anyhow::Error = err.into();
+        assert_eq!(stable_failure_kind(&wrapped), Some("panic"));
+    }
+
+    #[test]
+    fn stable_failure_kind_maps_output_count_mismatch_to_io_error() {
+        let err = BoundedExecutorError::new(
+            BoundedExecutorErrorKind::OutputCountMismatch,
+            "output count mismatch",
+        );
+        let wrapped: anyhow::Error = err.into();
+        assert_eq!(stable_failure_kind(&wrapped), Some("io_error"));
+    }
 }

@@ -276,4 +276,83 @@ mod tests {
 
         let _ = std::fs::remove_dir_all(paths.run_dir());
     }
+
+    #[test]
+    fn path_accessors_cover_all_canonical_artifact_locations() {
+        let run_id = "artifact-path-accessors";
+        let paths = RunArtifactPaths::for_run(run_id).expect("paths");
+        assert_eq!(paths.run_id(), run_id);
+        assert!(paths
+            .steps_json()
+            .ends_with(".adl/runs/artifact-path-accessors/steps.json"));
+        assert!(paths
+            .pause_state_json()
+            .ends_with(".adl/runs/artifact-path-accessors/pause_state.json"));
+        assert!(paths
+            .run_summary_json()
+            .ends_with(".adl/runs/artifact-path-accessors/run_summary.json"));
+        assert!(paths
+            .activation_log_json()
+            .ends_with(".adl/runs/artifact-path-accessors/logs/activation_log.json"));
+        assert!(paths
+            .scores_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/scores.json"));
+        assert!(paths
+            .suggestions_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/suggestions.json"));
+    }
+
+    #[test]
+    fn runs_root_points_to_repo_adl_runs_directory() {
+        let root = runs_root().expect("runs_root");
+        assert!(
+            root.ends_with(".adl/runs"),
+            "unexpected runs_root: {}",
+            root.display()
+        );
+    }
+
+    #[test]
+    fn runs_root_accessor_matches_global_runs_root() {
+        let paths = RunArtifactPaths::for_run("artifact-runs-root-accessor").expect("paths");
+        assert_eq!(
+            paths.runs_root().to_path_buf(),
+            runs_root().expect("global runs_root")
+        );
+    }
+
+    #[test]
+    fn atomic_write_creates_nested_parent_directories() {
+        let run_id = format!("artifact-parent-create-{}", std::process::id());
+        let paths = RunArtifactPaths::for_run(&run_id).expect("paths");
+        let nested = paths
+            .run_dir()
+            .join("nested")
+            .join("dir")
+            .join("artifact.json");
+
+        atomic_write(&nested, br#"{"ok":true}"#).expect("atomic write with nested parent");
+        let actual = std::fs::read_to_string(&nested).expect("read nested artifact");
+        assert_eq!(actual, r#"{"ok":true}"#);
+
+        let _ = std::fs::remove_dir_all(paths.run_dir());
+    }
+
+    #[test]
+    fn atomic_write_fails_when_parent_is_a_file() {
+        let run_id = format!("artifact-parent-file-{}", std::process::id());
+        let paths = RunArtifactPaths::for_run(&run_id).expect("paths");
+        let file_parent = paths.run_dir().join("not-a-dir");
+        std::fs::create_dir_all(paths.run_dir()).expect("run dir exists");
+        std::fs::write(&file_parent, b"x").expect("create file parent");
+        let target = file_parent.join("child.txt");
+
+        let err = atomic_write(&target, b"hello").expect_err("parent file should fail");
+        assert!(
+            err.to_string().contains("failed to create artifact parent"),
+            "unexpected error: {err:#}"
+        );
+
+        let _ = std::fs::remove_dir_all(paths.run_dir());
+    }
 }
