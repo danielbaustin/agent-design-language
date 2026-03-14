@@ -36,6 +36,7 @@ A secondary problem is documentation fragmentation itself: milestone intent is c
 - Move the Adaptive Execution Engine forward as a major milestone theme rather than continuing to defer it.
 - Establish a bounded affective / emotion-model design surface that can later influence evaluation, priority handling, and adaptive behavior.
 - Reduce milestone-planning ambiguity by making design intent, scope, and validation language consistent across the canonical v0.85 doc set.
+- Finish the milestone with an explicit active-surface `swarm` -> `adl` cutover once the rest of the code and review work has stabilized.
 
 ## Non-Goals
 - Deliver unrestricted autonomy or unconstrained online self-modification.
@@ -54,6 +55,7 @@ A secondary problem is documentation fragmentation itself: milestone intent is c
 - A bounded emotion / affect model design that fits the Gödel–Hadamard–Bayes architecture.
 - Positioning and philosophy docs that clarify why ADL chooses stronger guarantees and explicit artifacts.
 - Milestone-document alignment across the canonical v0.85 planning artifacts, especially design/scope/validation language.
+- Final active-surface identity cutover as documented in `SWARM_REMOVAL_PLANNING.md`, executed only after the major code and review changes for v0.85 are otherwise complete.
 
 ### Out of scope
 - Full production-grade autonomous self-improvement.
@@ -97,6 +99,8 @@ The design principle across all tracks is that ADL should move toward a system w
 - bounded in adaptation and failure modes
 - documented with less ambiguity at the milestone-planning level
 
+The `swarm` -> `adl` repository cutover is intentionally sequenced at the end of the milestone rather than treated as parallel background churn. The repo still carries many path-sensitive `swarm/...` assumptions, so executing the cutover late reduces merge-conflict pressure while substantive runtime, trust, and authoring work is still landing.
+
 ### Interfaces / Data contracts
 - **Queue / checkpoint contracts**: deterministic run identity, queue state, retry state, checkpoint state, and resumability invariants.
 - **Prompt Spec contracts**: explicit authoring fields for actor, model, inputs, outputs, constraints, and review surfaces.
@@ -131,6 +135,8 @@ New or strengthened behavior should obey the following principles:
   - Mitigation: tie dependable execution and verifiable inference to concrete artifacts, replay surfaces, and validation workflows.
 - Risk: milestone documents drift if updates land outside `docs/milestones/v0.85/` instead of being reconciled into the canonical milestone directory.
   - Mitigation: treat this design doc as the alignment anchor for scope, validation, AEE, trust, and affect-model language until a cleanup pass consolidates file locations.
+- Risk: executing the final `swarm` -> `adl` cutover too early creates avoidable branch drift and path-conflict churn across active work.
+  - Mitigation: keep cutover work explicitly late in the milestone and gate it on prior code/review stabilization.
 
 ## Alternatives Considered
 - Option: keep v0.85 narrowly runtime-focused and defer affective/cognitive work.

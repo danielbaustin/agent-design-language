@@ -27,6 +27,8 @@ Before beginning the release process the following must be true:
 
 These steps correspond to the **Release Tail** defined in the milestone sprint plan.
 
+The final active-surface `swarm` -> `adl` cutover is part of that release tail. It should be executed only after the other v0.85 code changes, review findings, and milestone docs have otherwise stabilized.
+
 ---
 
 # 2) Branch and Tag Preparation
@@ -38,6 +40,10 @@ Prepare the repository state for the release.
 - [ ] All intended PRs merged
 - [ ] CI passing
 - [ ] Version strings validated (Cargo manifests / docs if applicable)
+- [ ] Final cutover preconditions confirmed (`SWARM_REMOVAL_PLANNING.md`)
+  - other milestone code changes merged or effectively frozen
+  - review findings resolved or explicitly deferred
+  - cutover branch can proceed without competing path churn
 
 Tag creation:
 
@@ -67,6 +73,7 @@ Confirm that the release is valid and visible.
 - [ ] Documentation links tested
 - [ ] Release notes formatting verified
 - [ ] Repository state confirmed stable
+- [ ] Final `swarm` -> `adl` active-surface cutover completed or explicitly deferred with rationale
 
 If any immediate regression is detected:
 
@@ -82,6 +89,7 @@ Publish the release externally and internally.
 - [ ] GitHub release visible
 - [ ] Roadmap / milestone status updated
 - [ ] Internal project update posted
+- [ ] Cutover/migration note published if the final `swarm` -> `adl` rename lands in this release
 
 Optional (depending on project stage):
 

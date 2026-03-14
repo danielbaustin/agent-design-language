@@ -32,11 +32,13 @@ This WBS aligns the milestone around a small number of work packages that map cl
 | WP-14 | Coverage / quality gate | Reach an acceptable quality gate for the milestone with documented exceptions if needed. | Coverage status, test notes, ratchet/exclusion decisions, and release-quality evidence. | WP-02 through WP-13 | #674 |
 | WP-15 | Docs + review pass (3-step alignment) | Reduce contradictions across milestone docs and complete a bounded review sequence: (1) docs consistent, (2) internal review, (3) external review. | Cleaned milestone docs, internal review notes/findings, external review notes/findings, and aligned release-facing planning artifacts. | WP-01 through WP-14 | #716 |
 | WP-16 | Release ceremony (final validation + tag + notes + cleanup) | Execute the bounded release process for v0.85. | Final validation evidence, release notes, release plan completion, tag, and follow-up cleanup notes. | WP-13, WP-14, WP-15 | #716 |
+| WP-17 | Final `swarm` -> `adl` active-surface cutover | Execute the last repository identity cutover only after the rest of the milestone has stabilized, so repo-wide path churn does not interfere with feature work or review. | `SWARM_REMOVAL_PLANNING.md` execution, active-surface path rename/cutover, compatibility-shim removal, CI/tooling/docs migration, and final guardrail tightening. | WP-13, WP-14, WP-15, WP-16 | follow-up cutover issue |
 
 ## Phasing
 - Phase 1: Planning alignment and design clarity (WP-01, WP-10, WP-11, WP-12)
 - Phase 2: Runtime / trust / authoring execution (WP-02 through WP-09)
 - Phase 3: Demonstration, quality gate, doc alignment, and release (WP-13 through WP-16)
+- Phase 4: Final identity cutover after milestone stabilization (WP-17)
 
 ## Acceptance Criteria by Work Package
 - WP-01 (Design pass) -> The core v0.85 planning docs no longer materially contradict one another on scope, trust, AEE, or affect-model intent.
@@ -53,3 +55,6 @@ This WBS aligns the milestone around a small number of work packages that map cl
 - WP-12 -> Hypothesis engine linkage is clear across the v0.85 conceptual layer and v0.9 implementation planning.
 - WP-13 (Demos) -> At least one coherent integration/demo path exists across major milestone themes.
 - WP-14 (Quality gate) -> Coverage and validation evidence are acceptable for release, or documented exceptions are explicitly justified.
+- WP-15 -> The core v0.85 planning docs no longer materially contradict one another on scope, trust, AEE, affect-model intent, or release sequencing.
+- WP-16 -> Final validation evidence, release notes, and release/tag mechanics are complete and auditable.
+- WP-17 -> Active repository surfaces use `adl` consistently, the top-level runtime directory cutover is complete, and remaining `swarm` references are limited to intentional historical records or explicit compatibility exceptions approved during the cutover.
