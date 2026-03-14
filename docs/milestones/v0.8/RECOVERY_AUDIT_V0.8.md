@@ -47,9 +47,9 @@ The following surfaces are implemented in executable code on this branch:
 - Rust transpiler scaffold surfaces:
   - `tools/transpiler_demo/Cargo.toml`
   - `tools/transpiler_demo/src/main.rs`
-  - `examples/workflows/rust_transpiler_demo.yaml`
-  - `demos/rust_output/workflow_runtime.rs`
-  - `demos/rust_output/transpiler_verification.v0.8.json`
+  - `demos/rust-transpiler/workflow/rust_transpiler_demo.yaml`
+  - `demos/rust-transpiler/output/workflow_runtime.rs`
+  - `demos/rust-transpiler/output/transpiler_verification.v0.8.json`
 - Runtime/demo tests covering bounded v0.8 behavior, including:
   - `swarm/tests/demo_tests.rs`
   - `swarm/tests/obsmem_validation_tests.rs`

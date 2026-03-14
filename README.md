@@ -29,6 +29,9 @@ cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-3-o
 
 ADL includes both low-level matrix demos and story-driven demo packs for first-time users.
 
+Canonical demo entrypoint:
+- `demos/README.md`
+
 Story packs (released in v0.7):
 - `S-01` Determinism You Can Trust
 - `S-02` From Failure to Clarity
@@ -131,7 +134,9 @@ For the deeper milestone docs, start with:
 
 ## Repository Layout
 
+- `demos/`: canonical user-facing demo index, runbooks, and demo docs
 - `swarm/`: Rust reference runtime and CLI
+- `swarm/examples/`: runnable workflow fixtures used by the runtime and tests
 - `adl-spec/`: language-level specification docs
 - `docs/`: contributor workflow and roadmap docs
 - `docs/adr/`: architecture decision records (major technical decisions)

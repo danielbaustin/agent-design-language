@@ -1,59 +1,10 @@
 # ADL Demo Commands
 
-This page lists the v0.3 demo flows with exact commands and expected outcomes.
+Canonical demo discovery now lives under `../demos/README.md`.
 
-## 1) v0.3 Fork/Join Plan-Only Demo
+Use that index for:
+- quickstart runnable demos
+- current v0.8 demo docs and runbooks
+- the Rust transpiler demo surface
 
-File:
-- `swarm/examples/v0-3-concurrency-fork-join.adl.yaml`
-
-Command (from repo root):
-
-```bash
-cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
-```
-
-What to expect:
-- Command succeeds.
-- Plan output includes: `fork.plan`, `fork.branch.alpha`, `fork.branch.beta`, `fork.join`.
-- This is a historical v0.3 plan-shape demo. The current runtime does implement concurrent execution in v0.5.
-
-## 2) v0.3 Remote Provider MVP Demo
-
-Files:
-- `swarm/examples/v0-3-remote-http-provider.adl.yaml`
-- `swarm/examples/v0-3-remote-provider-demo.adl.yaml` (compat alias)
-
-Plan command (from repo root):
-
-```bash
-cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
-```
-
-What to expect:
-- Command succeeds without network dependency.
-- Plan output includes step `remote_summary`.
-
-Run command (requires local mock/endpoint):
-
-```bash
-SWARM_REMOTE_BEARER_TOKEN=demo-token \
-cargo run --manifest-path swarm/Cargo.toml -- swarm/examples/v0-3-remote-http-provider.adl.yaml --run
-```
-
-What to expect:
-- On reachable endpoint: step output + run summary.
-- On failure: clear error for timeout, non-200 response, or missing auth env var.
-
-## 3) v0.8 Gödel Failure -> Hypothesis -> Experiment (Docs Demo)
-
-Files:
-- `docs/demos/godel_failure_hypothesis_experiment.md`
-- `adl-spec/examples/v0.8/demos/godel_failure_signal.v1.example.json`
-- `adl-spec/examples/v0.8/demos/godel_hypothesis.v1.example.json`
-- `adl-spec/examples/v0.8/demos/godel_experiment_proposal.v1.example.json`
-
-What to expect:
-- Deterministic, artifact-driven loop documentation only.
-- Explicit stage flow: failure -> hypothesis -> experiment.
-- Bounded experiment proposal aligned to Mutation v1 and EvaluationPlan v1 references.
+This file remains as a compatibility pointer for older links.

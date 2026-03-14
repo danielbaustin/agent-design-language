@@ -1,7 +1,7 @@
 {
   "schema_version": "rust_transpiler_verification.v0.8",
-  "workflow_fixture": "examples/workflows/rust_transpiler_demo.yaml",
-  "runtime_skeleton": "demos/rust_output/workflow_runtime.rs",
+  "workflow_fixture": "demos/rust-transpiler/workflow/rust_transpiler_demo.yaml",
+  "runtime_skeleton": "demos/rust-transpiler/output/workflow_runtime.rs",
   "mapping": {
     "pairs": [
       {

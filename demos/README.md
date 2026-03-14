@@ -1,0 +1,44 @@
+# ADL Demos
+
+`demos/` is the canonical user-facing entrypoint for finding and running ADL demos from repository root.
+
+## Start Here
+
+If you want the fastest successful demo run:
+
+```bash
+cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-3-fork-join-seq-run.adl.yaml --print-plan
+```
+
+If you want the active v0.8 flagship demo surface:
+
+```bash
+cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet
+```
+
+## Demo Categories
+
+- Runtime workflow demos live in `swarm/examples/`.
+  These are the actual ADL files you can pass to the CLI today.
+- Milestone runbooks and reviewer docs live here in `demos/`.
+- Spec-only example artifacts live in `adl-spec/examples/` and are not the main starting point for runnable demos.
+
+## Recommended Paths
+
+### Quickstart runtime demos
+
+- `swarm/examples/v0-3-fork-join-seq-run.adl.yaml`
+- `swarm/examples/v0-3-on-error-retry.adl.yaml`
+- `swarm/examples/v0-5-primitives-minimal.adl.yaml`
+
+### Active v0.8 demos
+
+- `rust-transpiler/README.md`
+- `v0.8-bounded-critical-demos.md`
+- `godel_failure_hypothesis_experiment.md`
+
+### Historical/runtime fixture inventory
+
+- `../swarm/examples/README.md`
+
+Use that README when you specifically want the full crate-local example inventory. For user-facing demo discovery, start here instead.

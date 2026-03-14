@@ -23,16 +23,16 @@ It is intentionally small and deterministic:
 ## Canonical Demo Surfaces
 
 1. Workflow fixture (input)
-   - `examples/workflows/rust_transpiler_demo.yaml`
+   - `demos/rust-transpiler/workflow/rust_transpiler_demo.yaml`
 2. Rust-first transpiler scaffold (mapping check)
    - `tools/transpiler_demo/Cargo.toml`
    - `tools/transpiler_demo/src/main.rs`
 3. Rust runtime/output skeleton
-   - `demos/rust_output/workflow_runtime.rs`
+   - `demos/rust-transpiler/output/workflow_runtime.rs`
 4. Verification evidence artifact
-   - `demos/rust_output/transpiler_verification.v0.8.json`
+   - `demos/rust-transpiler/output/transpiler_verification.v0.8.json`
 5. Demo docs
-   - `docs/demos/rust-transpiler/README.md`
+   - `demos/rust-transpiler/README.md`
    - `docs/milestones/v0.8/RUST_TRANSPILER_VERIFICATION_V0.8.md`
 
 ## Deterministic Execution Surface
@@ -62,13 +62,13 @@ Illustrative / future work (not implemented in this demo):
 ## Reviewer Quick Path
 
 1. Inspect fixture:
-   - `examples/workflows/rust_transpiler_demo.yaml`
+   - `demos/rust-transpiler/workflow/rust_transpiler_demo.yaml`
 2. Run scaffold command:
    - `cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet`
 3. Inspect runtime skeleton:
-   - `demos/rust_output/workflow_runtime.rs`
+   - `demos/rust-transpiler/output/workflow_runtime.rs`
 4. Inspect evidence artifact:
-   - `demos/rust_output/transpiler_verification.v0.8.json`
+   - `demos/rust-transpiler/output/transpiler_verification.v0.8.json`
 5. Verify acceptance boundary:
    - `docs/milestones/v0.8/RUST_TRANSPILER_VERIFICATION_V0.8.md`
 

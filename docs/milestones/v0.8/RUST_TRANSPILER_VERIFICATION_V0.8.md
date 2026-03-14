@@ -20,9 +20,9 @@ Out of scope:
 
 ## Verification Inputs
 
-- workflow fixture: `examples/workflows/rust_transpiler_demo.yaml`
+- workflow fixture: `demos/rust-transpiler/workflow/rust_transpiler_demo.yaml`
 - transpiler scaffold: `tools/transpiler_demo/Cargo.toml`, `tools/transpiler_demo/src/main.rs`
-- Rust runtime skeleton: `demos/rust_output/workflow_runtime.rs`
+- Rust runtime skeleton: `demos/rust-transpiler/output/workflow_runtime.rs`
 
 ## Deterministic Verification Command
 
@@ -41,7 +41,7 @@ Expected checks:
 
 Canonical evidence artifact:
 
-- `demos/rust_output/transpiler_verification.v0.8.json`
+- `demos/rust-transpiler/output/transpiler_verification.v0.8.json`
 
 The artifact records:
 
