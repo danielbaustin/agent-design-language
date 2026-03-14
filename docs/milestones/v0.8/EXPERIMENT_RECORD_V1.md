@@ -1,10 +1,15 @@
 # ExperimentRecord Schema v1
 
-Status: Canonical design-stage schema/spec for issue #609 (`ExperimentRecord schema v1`)
+Status: Canonical schema/spec with bounded runtime integration in `swarm/src/godel/experiment_record.rs` and `swarm/src/godel/stage_loop.rs`
 
 ## Purpose
 
 `ExperimentRecord v1` is the canonical artifact that captures one baseline-vs-variant experiment outcome in a deterministic, replay-compatible, and indexing-safe form.
+
+Current bounded runtime integration:
+- `GodelStageLoopExecutor::execute_and_persist` now writes a canonical `runs/<run_id>/godel/experiment_record.v1.json` artifact beside the existing runtime record.
+- `load_v08_surface_status` consumes and validates `adl-spec/examples/v0.8/experiment_record.v1.example.json` through the same bounded ExperimentRecord validator used by runtime code.
+- The bounded runtime path still keeps the existing `experiment_record.runtime.v1` artifact for implementation-facing record persistence.
 
 This schema is designed to be strong enough for direct downstream use by:
 - #610 Canonical Evidence View

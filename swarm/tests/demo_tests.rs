@@ -252,6 +252,9 @@ fn demo_d_run_writes_godel_obsmem_artifacts() {
         .join("runs/demo-d-run-001/godel/experiment_record.runtime.v1.json")
         .is_file());
     assert!(run_out
+        .join("runs/demo-d-run-001/godel/experiment_record.v1.json")
+        .is_file());
+    assert!(run_out
         .join("runs/demo-d-run-001/godel/obsmem_index_entry.runtime.v1.json")
         .is_file());
 }
