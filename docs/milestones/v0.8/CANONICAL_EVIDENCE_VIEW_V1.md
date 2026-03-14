@@ -1,12 +1,17 @@
 # Canonical Evidence View v1
 
-Status: Canonical design-stage schema/spec for issue #610 (`Canonical Evidence View`)
+Status: Canonical schema/spec with bounded runtime integration in `swarm/src/godel/canonical_evidence.rs` and `swarm/src/godel/stage_loop.rs`
 
 ## Purpose
 
 `Canonical Evidence View v1` is the deterministic evidence normalization artifact used by the Gödel workflow.
 
 It defines a stable, reviewable representation of evidence for a run/experiment so downstream artifacts can compare outcomes without relying on volatile runtime fields.
+
+Current bounded runtime integration:
+- `GodelStageLoopExecutor::execute_and_persist` now writes `runs/<run_id>/godel/canonical_evidence_view.v1.json` as the canonical failure-stage evidence artifact for the bounded Gödel loop.
+- `load_v08_surface_status` consumes and validates `adl-spec/examples/v0.8/canonical_evidence_view.v1.example.json` through the same canonical evidence validator used by runtime code.
+- The bounded runtime path keeps canonical evidence focused on explicit run context, failure codes, safe repo-relative evidence references, and privacy metadata rather than broader experiment comparison surfaces.
 
 ## Design Invariants
 

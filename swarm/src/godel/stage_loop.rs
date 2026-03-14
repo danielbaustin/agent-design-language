@@ -2,6 +2,7 @@ use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 
+use super::canonical_evidence;
 use super::evaluation::{self, EvaluationOutcome};
 use super::experiment_record::{self, StageExperimentRecord};
 use super::hypothesis::{self, HypothesisCandidate, HypothesisPipelineInput};
@@ -166,6 +167,7 @@ pub struct StageLoopRun {
 pub struct StageLoopPersistenceResult {
     pub run: StageLoopRun,
     pub canonical_mutation_rel_path: PathBuf,
+    pub canonical_evidence_rel_path: PathBuf,
     pub experiment_record_rel_path: PathBuf,
     pub canonical_experiment_record_rel_path: PathBuf,
     pub obsmem_index_rel_path: PathBuf,
@@ -308,6 +310,17 @@ impl GodelStageLoopExecutor {
                         "canonical mutation persistence failed: {err}"
                     ))
                 })?;
+        let canonical_evidence =
+            canonical_evidence::build_canonical_evidence(input).map_err(|err| {
+                StageLoopError::InvalidInput(format!("canonical evidence build failed: {err}"))
+            })?;
+        let canonical_evidence_rel_path =
+            canonical_evidence::persist_canonical_evidence(runs_root, &canonical_evidence)
+                .map_err(|err| {
+                    StageLoopError::InvalidInput(format!(
+                        "canonical evidence persistence failed: {err}"
+                    ))
+                })?;
         let experiment_record_rel_path = experiment_record::persist_record(runs_root, &run.record)
             .map_err(|err| {
                 StageLoopError::InvalidInput(format!("experiment record persistence failed: {err}"))
@@ -337,6 +350,7 @@ impl GodelStageLoopExecutor {
         Ok(StageLoopPersistenceResult {
             run,
             canonical_mutation_rel_path,
+            canonical_evidence_rel_path,
             experiment_record_rel_path,
             canonical_experiment_record_rel_path,
             obsmem_index_rel_path,
@@ -614,6 +628,10 @@ mod tests {
             PathBuf::from("runs/run-745-a/godel/mutation.v1.json")
         );
         assert_eq!(
+            persisted.canonical_evidence_rel_path,
+            PathBuf::from("runs/run-745-a/godel/canonical_evidence_view.v1.json")
+        );
+        assert_eq!(
             persisted.experiment_record_rel_path,
             PathBuf::from("runs/run-745-a/godel/experiment_record.runtime.v1.json")
         );
@@ -626,6 +644,9 @@ mod tests {
             PathBuf::from("runs/run-745-a/godel/obsmem_index_entry.runtime.v1.json")
         );
         assert!(tmp.join("run-745-a/godel/mutation.v1.json").is_file());
+        assert!(tmp
+            .join("run-745-a/godel/canonical_evidence_view.v1.json")
+            .is_file());
         assert!(tmp
             .join("run-745-a/godel/experiment_record.v1.json")
             .is_file());
