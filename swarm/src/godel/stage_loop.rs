@@ -166,6 +166,7 @@ pub struct StageLoopRun {
 pub struct StageLoopPersistenceResult {
     pub run: StageLoopRun,
     pub experiment_record_rel_path: PathBuf,
+    pub canonical_experiment_record_rel_path: PathBuf,
     pub obsmem_index_rel_path: PathBuf,
 }
 
@@ -297,10 +298,28 @@ impl GodelStageLoopExecutor {
             .map_err(|err| {
                 StageLoopError::InvalidInput(format!("obsmem index persistence failed: {err}"))
             })?;
+        let canonical_record = experiment_record::build_canonical_record(
+            runs_root,
+            &run.record,
+            &experiment_record_rel_path,
+            &obsmem_index_rel_path,
+        )
+        .map_err(|err| {
+            StageLoopError::InvalidInput(format!("canonical experiment record build failed: {err}"))
+        })?;
+        let canonical_experiment_record_rel_path =
+            experiment_record::persist_canonical_record(runs_root, &canonical_record).map_err(
+                |err| {
+                    StageLoopError::InvalidInput(format!(
+                        "canonical experiment record persistence failed: {err}"
+                    ))
+                },
+            )?;
 
         Ok(StageLoopPersistenceResult {
             run,
             experiment_record_rel_path,
+            canonical_experiment_record_rel_path,
             obsmem_index_rel_path,
         })
     }
@@ -576,9 +595,16 @@ mod tests {
             PathBuf::from("runs/run-745-a/godel/experiment_record.runtime.v1.json")
         );
         assert_eq!(
+            persisted.canonical_experiment_record_rel_path,
+            PathBuf::from("runs/run-745-a/godel/experiment_record.v1.json")
+        );
+        assert_eq!(
             persisted.obsmem_index_rel_path,
             PathBuf::from("runs/run-745-a/godel/obsmem_index_entry.runtime.v1.json")
         );
+        assert!(tmp
+            .join("run-745-a/godel/experiment_record.v1.json")
+            .is_file());
         let _ = std::fs::remove_dir_all(&tmp);
     }
 
