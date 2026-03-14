@@ -2,6 +2,7 @@ use anyhow::Result;
 
 mod commands;
 mod demo_cmd;
+mod godel_cmd;
 mod open;
 mod run;
 mod run_artifacts;
@@ -11,6 +12,7 @@ mod usage;
 
 use commands::{real_instrument, real_keygen, real_learn, real_sign, real_verify};
 use demo_cmd::real_demo;
+use godel_cmd::real_godel;
 use run::{is_legacy_swarm_invocation, real_resume, run_workflow};
 
 fn usage() -> &'static str {
@@ -54,6 +56,7 @@ fn real_main() -> Result<()> {
 
     match args.first().map(|s| s.as_str()) {
         Some("demo") => real_demo(&args[1..]),
+        Some("godel") => real_godel(&args[1..]),
         Some("keygen") => real_keygen(&args[1..]),
         Some("sign") => real_sign(&args[1..]),
         Some("instrument") => real_instrument(&args[1..]),

@@ -3,6 +3,7 @@ pub fn usage() -> &'static str {
   adl <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--resume <run.json>] [--overlay <overlay.json>] [--out <dir>] [--quiet] [--open]
   adl resume <run_id>
   adl demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
+  adl godel run --run-id <id> --workflow-id <id> --failure-code <code> --failure-summary <text> [--evidence-ref <path> ...] [--runs-dir <dir>]
   adl keygen --out-dir <dir>
   adl sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
   adl instrument <graph|replay|replay-bundle|diff-plan|diff-trace> ...
@@ -37,6 +38,7 @@ Examples:
   adl demo demo-d-godel-obsmem-loop --run --trace --out ./out
   adl demo demo-e-multi-agent-card-pipeline --run --trace --out ./out
   adl demo demo-f-obsmem-retrieval --run --trace --out ./out
+  adl godel run --run-id run-745-a --workflow-id wf-godel-loop --failure-code tool_failure --failure-summary \"step failed with deterministic parse error\" --evidence-ref runs/run-745-a/run_status.json
   adl keygen --out-dir ./.keys
   adl sign examples/v0-5-pattern-linear.adl.yaml --key ./.keys/ed25519-private.b64 --out /tmp/signed.adl.yaml
   adl instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format dot

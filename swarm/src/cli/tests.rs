@@ -1,5 +1,6 @@
 use super::commands::real_learn_export;
 use super::demo_cmd::{is_ci_environment, real_demo};
+use super::godel_cmd::{real_godel, real_godel_run};
 use super::open::{
     detect_platform, open_artifact, open_command_for, select_open_artifact, CommandRunner,
     OpenPlatform, RealCommandRunner,
@@ -186,10 +187,38 @@ fn usage_mentions_v0_4_and_legacy_examples() {
     let text = usage();
     assert!(text.contains("Usage:"));
     assert!(text.contains("adl resume <run_id>"));
+    assert!(text.contains("adl godel run"));
     assert!(text.contains("Examples:"));
     assert!(text.contains("examples/v0-4-demo-fork-join-swarm.adl.yaml"));
     assert!(text.contains("examples/adl-0.1.yaml"));
     assert!(text.contains("--allow-unsigned"));
+}
+
+#[test]
+fn real_godel_validates_subcommand_and_run_args() {
+    let err = real_godel(&[]).expect_err("missing subcommand");
+    assert!(err.to_string().contains("supported: run"));
+
+    let err = real_godel(&["unknown".to_string()]).expect_err("unknown subcommand");
+    assert!(err.to_string().contains("unknown godel subcommand"));
+
+    let err = real_godel_run(&[]).expect_err("missing run-id");
+    assert!(err.to_string().contains("requires --run-id"));
+
+    let err = real_godel_run(&[
+        "--run-id".to_string(),
+        "run-745-a".to_string(),
+        "--workflow-id".to_string(),
+        "wf-godel-loop".to_string(),
+        "--failure-code".to_string(),
+        "tool_failure".to_string(),
+        "--failure-summary".to_string(),
+        "deterministic parse error".to_string(),
+        "--evidence-ref".to_string(),
+        "../bad.json".to_string(),
+    ])
+    .expect_err("unsafe evidence ref should fail");
+    assert!(err.to_string().contains("GODEL_STAGE_LOOP_INVALID_INPUT"));
 }
 
 #[test]
