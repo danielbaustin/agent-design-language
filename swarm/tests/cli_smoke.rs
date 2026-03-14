@@ -535,6 +535,84 @@ fn learn_export_validates_required_and_unknown_args() {
 }
 
 #[test]
+fn godel_run_validates_required_and_unknown_args() {
+    let missing_run_id = run_swarm(&["godel", "run"]);
+    assert!(!missing_run_id.status.success());
+    let stderr_missing = String::from_utf8_lossy(&missing_run_id.stderr);
+    assert!(
+        stderr_missing.contains("godel run requires --run-id <id>"),
+        "stderr:\n{stderr_missing}"
+    );
+
+    let unknown = run_swarm(&["godel", "run", "--bogus", "x"]);
+    assert!(!unknown.status.success());
+    let stderr_unknown = String::from_utf8_lossy(&unknown.stderr);
+    assert!(
+        stderr_unknown.contains("unknown godel run arg"),
+        "stderr:\n{stderr_unknown}"
+    );
+}
+
+#[test]
+fn godel_run_executes_bounded_stage_loop_and_persists_artifacts() {
+    let runs_dir = unique_test_temp_dir("adl-godel-run");
+    let out = run_swarm(&[
+        "godel",
+        "run",
+        "--run-id",
+        "run-745-a",
+        "--workflow-id",
+        "wf-godel-loop",
+        "--failure-code",
+        "tool_failure",
+        "--failure-summary",
+        "step failed with deterministic parse error",
+        "--evidence-ref",
+        "runs/run-745-a/run_status.json",
+        "--evidence-ref",
+        "runs/run-745-a/logs/activation_log.json",
+        "--runs-dir",
+        runs_dir.to_str().unwrap(),
+    ]);
+    assert!(
+        out.status.success(),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let summary: serde_json::Value = serde_json::from_str(&stdout).expect("parse godel summary");
+    assert_eq!(summary["run_id"], "run-745-a");
+    assert_eq!(summary["workflow_id"], "wf-godel-loop");
+    assert_eq!(
+        summary["stage_order"],
+        serde_json::json!([
+            "failure",
+            "hypothesis",
+            "mutation",
+            "experiment",
+            "evaluation",
+            "record",
+            "indexing"
+        ])
+    );
+    assert_eq!(
+        summary["experiment_record_path"],
+        "runs/run-745-a/godel/experiment_record.runtime.v1.json"
+    );
+    assert_eq!(
+        summary["obsmem_index_path"],
+        "runs/run-745-a/godel/obsmem_index_entry.runtime.v1.json"
+    );
+    assert!(runs_dir
+        .join("run-745-a/godel/experiment_record.runtime.v1.json")
+        .is_file());
+    assert!(runs_dir
+        .join("run-745-a/godel/obsmem_index_entry.runtime.v1.json")
+        .is_file());
+}
+
+#[test]
 fn instrument_graph_output_is_stable() {
     let path = fixture_path("examples/v0-5-pattern-fork-join.adl.yaml");
     let out1 = run_swarm(&[
