@@ -613,6 +613,72 @@ fn godel_run_executes_bounded_stage_loop_and_persists_artifacts() {
 }
 
 #[test]
+fn godel_evaluate_validates_required_and_unknown_args() {
+    let missing_failure_code = run_swarm(&["godel", "evaluate"]);
+    assert!(!missing_failure_code.status.success());
+    let stderr_missing = String::from_utf8_lossy(&missing_failure_code.stderr);
+    assert!(
+        stderr_missing.contains("godel evaluate requires --failure-code <code>"),
+        "stderr:\n{stderr_missing}"
+    );
+
+    let unknown = run_swarm(&["godel", "evaluate", "--bogus", "x"]);
+    assert!(!unknown.status.success());
+    let stderr_unknown = String::from_utf8_lossy(&unknown.stderr);
+    assert!(
+        stderr_unknown.contains("unknown godel evaluate arg"),
+        "stderr:\n{stderr_unknown}"
+    );
+}
+
+#[test]
+fn godel_evaluate_produces_deterministic_summary() {
+    let out1 = run_swarm(&[
+        "godel",
+        "evaluate",
+        "--failure-code",
+        "tool_failure",
+        "--experiment-result",
+        "ok",
+        "--score-delta",
+        "1",
+    ]);
+    let out2 = run_swarm(&[
+        "godel",
+        "evaluate",
+        "--failure-code",
+        "tool_failure",
+        "--experiment-result",
+        "ok",
+        "--score-delta",
+        "1",
+    ]);
+    assert!(
+        out1.status.success() && out2.status.success(),
+        "stderr1:\n{}\nstderr2:\n{}",
+        String::from_utf8_lossy(&out1.stderr),
+        String::from_utf8_lossy(&out2.stderr)
+    );
+    assert_eq!(out1.stdout, out2.stdout, "expected deterministic summary");
+
+    let stdout = String::from_utf8_lossy(&out1.stdout);
+    let summary: serde_json::Value =
+        serde_json::from_str(&stdout).expect("parse godel evaluate summary");
+    assert_eq!(summary["failure_code"], "tool_failure");
+    assert_eq!(summary["experiment_result"], "ok");
+    assert_eq!(summary["score_delta"], 1);
+    assert_eq!(summary["decision"], "adopt");
+    assert_eq!(
+        summary["rationale"],
+        "Evaluation for failure_code=tool_failure produced decision=Adopt with score_delta=1."
+    );
+    assert_eq!(
+        summary["evaluation_plan_example"],
+        "adl-spec/examples/v0.8/evaluation_plan.v1.example.json"
+    );
+}
+
+#[test]
 fn instrument_graph_output_is_stable() {
     let path = fixture_path("examples/v0-5-pattern-fork-join.adl.yaml");
     let out1 = run_swarm(&[
