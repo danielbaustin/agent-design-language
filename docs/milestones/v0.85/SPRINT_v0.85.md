@@ -56,9 +56,9 @@ Scope:
 - WP-11 ObsMem integration for reasoning artifacts
 - WP-12 Affective reasoning / evaluation signals
 
-### Release Tail — Demos, Quality Gate, Docs Alignment, Review, Ceremony
+### Release Tail — Demos, Quality Gate, Docs Alignment, Review, Ceremony, Final Cutover
 Goal:
-Stabilize the milestone, validate demonstrations, enforce quality gates, converge documentation, execute internal and external reviews, and perform the release ceremony.
+Stabilize the milestone, validate demonstrations, enforce quality gates, converge documentation, execute internal and external reviews, perform the release ceremony, and then execute the final active-surface `swarm` -> `adl` cutover once the rest of the milestone is settled.
 
 Scope:
 - WP-13 Demo matrix + integration demos
@@ -69,6 +69,9 @@ Scope:
   - Step 3: external review
 - Review findings / fixes
 - WP-16 Release ceremony
+- WP-17 Final `swarm` -> `adl` cutover
+  - run only after other code changes are complete or effectively frozen
+  - use `SWARM_REMOVAL_PLANNING.md` as the execution checklist
 
 ## Work Plan
 | Order | Item | Issue | Owner | Status |
@@ -91,6 +94,7 @@ Scope:
 | 16 | Internal review pass | TBD | Daniel / reviewers | Planned |
 | 17 | External review pass | TBD | Daniel / external reviewer | Planned |
 | 18 | WP-16 Release ceremony | TBD | Daniel / Codex | Planned |
+| 19 | WP-17 Final `swarm` -> `adl` cutover | TBD | Daniel / Codex | Planned |
 
 ## Cadence Expectations
 - Each WP should have its own issue, branch, worktree, and input/output cards.
@@ -98,6 +102,7 @@ Scope:
 - Documentation should converge before formal review begins.
 - Once review begins, milestone docs should remain stable except for explicit review findings.
 - Demos should be runnable with deterministic, CI-friendly commands when possible.
+- The final `swarm` -> `adl` cutover should happen after the milestone’s other code changes have settled, not in parallel with high-churn feature work.
 
 ## Risks / Dependencies
 - Dependency: ongoing runtime refactors

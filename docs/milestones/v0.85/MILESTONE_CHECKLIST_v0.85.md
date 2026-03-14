@@ -54,12 +54,14 @@ The milestone requires both internal and external review before the release cere
 - [ ] Internal review completed
 - [ ] External review completed
 - [ ] Review findings resolved or explicitly deferred
+- [ ] Final `swarm` -> `adl` cutover timing confirmed as end-of-milestone work (`SWARM_REMOVAL_PLANNING.md`)
 
 ---
 
 ## Release Packaging
 
 - [ ] Release notes finalized (`RELEASE_NOTES_v0.85.md`)
+- [ ] Final `swarm` -> `adl` active-surface cutover completed or explicitly deferred with rationale
 - [ ] Tag verified: `v0.85.0`
 - [ ] GitHub Release drafted
 - [ ] Links validated in release body
