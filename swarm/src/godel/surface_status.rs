@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use super::canonical_evidence::load_canonical_evidence;
+use super::experiment_record::load_canonical_record;
 use super::workflow_template::{parse_workflow_template, GodelWorkflowTemplate};
 
 pub const GODEL_RUNTIME_STATUS_VERSION: u32 = 1;
@@ -36,9 +37,12 @@ pub fn load_v08_surface_status(repo_root: &Path) -> Result<GodelRuntimeSurfaceSt
         .context("load mutation example")?;
     let evaluation_plan = read_json(&spec_examples_root.join("evaluation_plan.v1.example.json"))
         .context("load evaluation plan example")?;
-    let experiment_record =
-        read_json(&spec_examples_root.join("experiment_record.v1.example.json"))
-            .context("load experiment record example")?;
+    let canonical_record_path = spec_examples_root.join("experiment_record.v1.example.json");
+    let experiment_record = serde_json::to_value(
+        load_canonical_record(&canonical_record_path)
+            .context("load canonical experiment record example")?,
+    )
+    .context("serialize canonical experiment record example")?;
     let run_summary = read_json(&spec_examples_root.join("run_summary.v1.example.json"))
         .context("load run summary example")?;
     let experiment_index =
