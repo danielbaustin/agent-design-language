@@ -6,6 +6,23 @@ use ::adl::{demo, plan, trace};
 use super::open::{open_artifact, select_open_artifact, RealCommandRunner};
 use super::usage;
 
+fn maybe_open_demo_artifact<R: super::open::CommandRunner>(
+    runner: &R,
+    artifacts: &[PathBuf],
+    quiet: bool,
+    open_is_explicit: bool,
+) {
+    if let Some(path) = select_open_artifact(artifacts) {
+        if let Err(err) = open_artifact(runner, &path) {
+            if open_is_explicit {
+                eprintln!("WARN: failed to open artifact '{}': {err}", path.display());
+            }
+        } else if !quiet {
+            println!("OPEN path={}", path.display());
+        }
+    }
+}
+
 pub(crate) fn real_demo(args: &[String]) -> Result<()> {
     let demo_name = match args.first() {
         Some(name) => name.as_str(),
@@ -123,16 +140,8 @@ pub(crate) fn real_demo(args: &[String]) -> Result<()> {
         };
         let open_is_explicit = open_pref == Some(true);
         if do_open {
-            if let Some(path) = select_open_artifact(&result.artifacts) {
-                let runner = RealCommandRunner;
-                if let Err(err) = open_artifact(&runner, &path) {
-                    if open_is_explicit {
-                        eprintln!("WARN: failed to open artifact '{}': {err}", path.display());
-                    }
-                } else if !quiet {
-                    println!("OPEN path={}", path.display());
-                }
-            }
+            let runner = RealCommandRunner;
+            maybe_open_demo_artifact(&runner, &result.artifacts, quiet, open_is_explicit);
         }
     } else if do_trace {
         let mut tr = trace::Trace::new(demo_name, "demo-workflow", "0.3");
@@ -155,5 +164,81 @@ pub(crate) fn is_ci_environment() -> bool {
             !t.is_empty() && t != "0" && t != "false"
         }
         Err(_) => false,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::is_ci_environment;
+    use super::maybe_open_demo_artifact;
+    use crate::cli::open::CommandRunner;
+    use std::path::PathBuf;
+    use std::sync::{Mutex, MutexGuard, OnceLock};
+
+    static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+
+    fn env_lock() -> MutexGuard<'static, ()> {
+        match ENV_LOCK.get_or_init(|| Mutex::new(())).lock() {
+            Ok(guard) => guard,
+            Err(poisoned) => poisoned.into_inner(),
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingRunner {
+        calls: Mutex<Vec<(String, Vec<String>)>>,
+        fail: bool,
+    }
+
+    impl CommandRunner for RecordingRunner {
+        fn run(&self, program: &str, args: &[String]) -> anyhow::Result<()> {
+            self.calls
+                .lock()
+                .expect("lock")
+                .push((program.to_string(), args.to_vec()));
+            if self.fail {
+                Err(anyhow::anyhow!("runner failure"))
+            } else {
+                Ok(())
+            }
+        }
+    }
+
+    #[test]
+    fn maybe_open_demo_artifact_runs_open_command_for_html_artifact() {
+        let runner = RecordingRunner::default();
+        maybe_open_demo_artifact(
+            &runner,
+            &[PathBuf::from("out/demo/index.html")],
+            true,
+            false,
+        );
+        let calls = runner.calls.lock().expect("lock");
+        assert_eq!(calls.len(), 1);
+    }
+
+    #[test]
+    fn maybe_open_demo_artifact_attempts_explicit_open_even_on_runner_failure() {
+        let runner = RecordingRunner {
+            fail: true,
+            ..Default::default()
+        };
+        maybe_open_demo_artifact(
+            &runner,
+            &[PathBuf::from("out/demo/index.html")],
+            false,
+            true,
+        );
+        let calls = runner.calls.lock().expect("lock");
+        assert_eq!(calls.len(), 1);
+    }
+
+    #[test]
+    fn is_ci_environment_is_false_when_variable_is_absent() {
+        let _guard = env_lock();
+        unsafe {
+            std::env::remove_var("CI");
+        }
+        assert!(!is_ci_environment());
     }
 }

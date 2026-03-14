@@ -1,6 +1,9 @@
 use super::commands::real_learn_export;
 use super::demo_cmd::{is_ci_environment, real_demo};
-use super::open::{open_command_for, select_open_artifact, OpenPlatform};
+use super::open::{
+    detect_platform, open_artifact, open_command_for, select_open_artifact, CommandRunner,
+    OpenPlatform, RealCommandRunner,
+};
 use super::run::{enforce_signature_policy, now_ms};
 use super::run_artifacts::{
     build_run_status, build_run_summary, build_scores_artifact, build_suggestions_artifact,
@@ -59,6 +62,26 @@ impl Drop for EnvGuard {
     }
 }
 
+#[derive(Default)]
+struct RecordingRunner {
+    calls: std::sync::Mutex<Vec<(String, Vec<String>)>>,
+    fail: bool,
+}
+
+impl CommandRunner for RecordingRunner {
+    fn run(&self, program: &str, args: &[String]) -> anyhow::Result<()> {
+        self.calls
+            .lock()
+            .expect("lock")
+            .push((program.to_string(), args.to_vec()));
+        if self.fail {
+            Err(anyhow::anyhow!("runner failure"))
+        } else {
+            Ok(())
+        }
+    }
+}
+
 #[test]
 fn select_open_artifact_prefers_first_html() {
     let artifacts = vec![
@@ -97,6 +120,49 @@ fn open_command_selection_windows() {
             "out/index.html".to_string()
         ]
     );
+}
+
+#[test]
+fn detect_platform_matches_current_target() {
+    if cfg!(target_os = "macos") {
+        assert_eq!(detect_platform(), OpenPlatform::Mac);
+    } else if cfg!(target_os = "windows") {
+        assert_eq!(detect_platform(), OpenPlatform::Windows);
+    } else {
+        assert_eq!(detect_platform(), OpenPlatform::Linux);
+    }
+}
+
+#[test]
+fn open_artifact_uses_runner_with_platform_command() {
+    let runner = RecordingRunner::default();
+    let path = Path::new("out/index.html");
+    open_artifact(&runner, path).expect("open artifact");
+    let calls = runner.calls.lock().expect("lock");
+    assert_eq!(calls.len(), 1);
+    let (program, args) = &calls[0];
+    let (expected_program, expected_args) = open_command_for(detect_platform(), path);
+    assert_eq!(program, &expected_program);
+    assert_eq!(args, &expected_args);
+}
+
+#[test]
+fn open_artifact_propagates_runner_failure() {
+    let runner = RecordingRunner {
+        fail: true,
+        ..Default::default()
+    };
+    let err = open_artifact(&runner, Path::new("out/index.html")).expect_err("runner failure");
+    assert!(err.to_string().contains("runner failure"));
+}
+
+#[cfg(not(target_os = "windows"))]
+#[test]
+fn real_command_runner_surfaces_success_and_failure_status() {
+    let runner = RealCommandRunner;
+    runner.run("true", &[]).expect("true should succeed");
+    let err = runner.run("false", &[]).expect_err("false should fail");
+    assert!(err.to_string().contains("open command 'false' failed"));
 }
 
 #[test]
@@ -1100,6 +1166,54 @@ fn cli_internal_learn_export_writes_jsonl() {
 fn cli_internal_demo_print_plan_path_succeeds() {
     real_demo(&["demo-a-say-mcp".to_string(), "--print-plan".to_string()])
         .expect("known demo should succeed");
+}
+
+#[test]
+fn cli_internal_demo_trace_only_path_succeeds() {
+    real_demo(&["demo-a-say-mcp".to_string(), "--trace".to_string()])
+        .expect("trace-only dry run should succeed");
+}
+
+#[test]
+fn cli_internal_demo_run_no_open_path_succeeds() {
+    real_demo(&[
+        "demo-b-one-command".to_string(),
+        "--run".to_string(),
+        "--no-open".to_string(),
+    ])
+    .expect("demo run with explicit no-open should succeed");
+}
+
+#[test]
+fn cli_internal_demo_help_path_succeeds() {
+    real_demo(&["demo-a-say-mcp".to_string(), "--help".to_string()])
+        .expect("help path should succeed");
+}
+
+#[test]
+fn cli_internal_demo_defaults_to_run_when_no_mode_flag_is_given() {
+    real_demo(&["demo-a-say-mcp".to_string(), "--no-open".to_string()])
+        .expect("default demo invocation should run");
+}
+
+#[test]
+fn cli_internal_demo_run_trace_and_out_path_succeeds() {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("time")
+        .as_nanos();
+    let out_dir = std::env::temp_dir().join(format!("adl-demo-out-{now}"));
+    real_demo(&[
+        "demo-a-say-mcp".to_string(),
+        "--run".to_string(),
+        "--trace".to_string(),
+        "--no-open".to_string(),
+        "--out".to_string(),
+        out_dir.to_string_lossy().to_string(),
+    ])
+    .expect("demo run with trace and explicit out dir should succeed");
+    assert!(out_dir.join("demo-a-say-mcp").exists());
+    let _ = std::fs::remove_dir_all(out_dir);
 }
 
 #[test]
