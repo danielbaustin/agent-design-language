@@ -6,6 +6,8 @@ use serde::Serialize;
 const FIXTURE_REL: &str = "examples/workflows/rust_transpiler_demo.yaml";
 const RUST_OUTPUT_REL: &str = "demos/rust_output/workflow_runtime.rs";
 const VERIFICATION_REL: &str = "demos/rust_output/transpiler_verification.v0.8.json";
+const SURFACE_SCOPE: &str = "bounded_demo_scaffold";
+const BOUNDED_SCOPE_NOTE: &str = "v0.8 scope is a bounded demo scaffold only: deterministic fixture-to-runtime mapping verification, checked-in runtime skeleton, and stable verification artifact generation. It does not generate patches, apply sandboxed edits, or execute cargo fmt/clippy/test against a fixture crate.";
 
 #[derive(Debug, Clone, Serialize)]
 struct MappingPair {
@@ -79,6 +81,40 @@ fn path_from_repo_root(rel: &str) -> PathBuf {
     repo_root.join(rel)
 }
 
+fn build_verification_artifact(
+    pairs: Vec<MappingPair>,
+    same_order: bool,
+) -> VerificationArtifact {
+    VerificationArtifact {
+        schema_version: "rust_transpiler_verification.v0.8".to_string(),
+        workflow_fixture: FIXTURE_REL.to_string(),
+        runtime_skeleton: RUST_OUTPUT_REL.to_string(),
+        mapping: MappingReport {
+            pairs,
+            order_check: if same_order {
+                "PASS".to_string()
+            } else {
+                "FAIL".to_string()
+            },
+        },
+        adaptive_execution: AdaptiveExecutionReport {
+            mode: SURFACE_SCOPE.to_string(),
+            attempts_executed: 0,
+            policy_actions: Vec::new(),
+            notes: BOUNDED_SCOPE_NOTE.to_string(),
+        },
+        validation: ValidationReport {
+            command:
+                "cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet".to_string(),
+            status: if same_order {
+                "PASS".to_string()
+            } else {
+                "FAIL".to_string()
+            },
+        },
+    }
+}
+
 fn main() -> Result<(), String> {
     let fixture_path = path_from_repo_root(FIXTURE_REL);
     let rust_output_path = path_from_repo_root(RUST_OUTPUT_REL);
@@ -145,37 +181,10 @@ fn main() -> Result<(), String> {
     println!("  - fixture exists: PASS");
     println!("  - rust skeleton exists: PASS");
     println!("  - verification artifact emitted: {}", VERIFICATION_REL);
-    println!("note: this scaffold demonstrates deterministic mapping only;");
-    println!("it does not generate Rust code dynamically.");
+    println!("scope decision: {}", SURFACE_SCOPE);
+    println!("note: {}", BOUNDED_SCOPE_NOTE);
 
-    let artifact = VerificationArtifact {
-        schema_version: "rust_transpiler_verification.v0.8".to_string(),
-        workflow_fixture: FIXTURE_REL.to_string(),
-        runtime_skeleton: RUST_OUTPUT_REL.to_string(),
-        mapping: MappingReport {
-            pairs,
-            order_check: if same_order {
-                "PASS".to_string()
-            } else {
-                "FAIL".to_string()
-            },
-        },
-        adaptive_execution: AdaptiveExecutionReport {
-            mode: "bounded_reporting_only".to_string(),
-            attempts_executed: 0,
-            policy_actions: Vec::new(),
-            notes: "WP-12 verification captures adaptive execution evidence fields only; no autonomous retry loop executed.".to_string(),
-        },
-        validation: ValidationReport {
-            command:
-                "cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet".to_string(),
-            status: if same_order {
-                "PASS".to_string()
-            } else {
-                "FAIL".to_string()
-            },
-        },
-    };
+    let artifact = build_verification_artifact(pairs, same_order);
     let bytes = serde_json::to_vec_pretty(&artifact)
         .map_err(|e| format!("failed to serialize verification artifact: {e}"))?;
     fs::write(&verification_path, bytes)
@@ -235,5 +244,33 @@ fn step_finalize_output(normalized_payload: &str) -> String { normalized_payload
         let output = path_from_repo_root(RUST_OUTPUT_REL);
         assert!(fixture.ends_with(Path::new(FIXTURE_REL)));
         assert!(output.ends_with(Path::new(RUST_OUTPUT_REL)));
+    }
+
+    #[test]
+    fn bounded_scope_note_is_explicit_about_demo_limits() {
+        assert!(BOUNDED_SCOPE_NOTE.contains("bounded demo scaffold"));
+        assert!(BOUNDED_SCOPE_NOTE.contains("does not generate patches"));
+        assert!(BOUNDED_SCOPE_NOTE.contains("cargo fmt/clippy/test"));
+    }
+
+    #[test]
+    fn verification_artifact_uses_bounded_demo_scope() {
+        let artifact = build_verification_artifact(
+            vec![MappingPair {
+                index: 1,
+                workflow_step_id: "step_prepare_input".to_string(),
+                rust_function: "step_prepare_input".to_string(),
+                status: "PASS".to_string(),
+            }],
+            true,
+        );
+
+        assert_eq!(artifact.adaptive_execution.mode, SURFACE_SCOPE);
+        assert_eq!(artifact.adaptive_execution.attempts_executed, 0);
+        assert!(artifact
+            .adaptive_execution
+            .notes
+            .contains("deterministic fixture-to-runtime mapping verification"));
+        assert_eq!(artifact.validation.status, "PASS");
     }
 }
