@@ -7,15 +7,26 @@ All notable project-level changes are summarized here by milestone/release.
 Status: In progress.
 
 Summary:
-- Repository-truth reconciliation, milestone docs convergence, and review-tail preparation.
-- Gödel schema/design surfaces and bounded transpiler demo scaffolding.
-- Ongoing work to reconcile planned v0.8 scope with runtime-implemented surfaces.
+- Bounded Godel runtime and demo surfaces now exist on `main`, including the explicit seven-stage loop:
+  `failure -> hypothesis -> mutation -> experiment -> evaluation -> record -> indexing`
+- Canonical runtime artifacts for the Godel review loop are now emitted and validated, including:
+  `mutation.v1`, `canonical_evidence_view.v1`, `evaluation_plan.v1`, and `experiment_record.v1`
+- New user-facing CLI and demo surfaces were added for bounded Godel execution and inspection, alongside the v0.8 demo matrix
+- The Rust transpiler remains a bounded demo scaffold for deterministic fixture-to-runtime verification, not a production transpiler
+- Major review-tail work landed to align milestone docs, schemas, and release-facing repository truth with current implementation
 
 References:
 - `docs/milestones/v0.8/RELEASE_PLAN_V0.8.md`
 - `docs/milestones/v0.8/RELEASE_NOTES_V0.8.md`
 - `docs/milestones/v0.8/MILESTONE_CHECKLIST_V0.8.md`
 - `docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md`
+- `docs/milestones/v0.8/DEMOS_V0.8.md`
+- `docs/milestones/v0.8/GODEL_LOOP_INTEGRATION_V0.8.md`
+
+Not yet claimed in v0.8:
+- fully finished Adaptive Execution Engine behavior
+- unconstrained self-modification or autonomous policy learning
+- production graduation of the Rust transpiler demo
 
 ## v0.75 (Previous Milestone)
 
