@@ -8,7 +8,10 @@ The format is intentionally constrained so mutations can be:
 - evaluated before execution,
 - recorded in experiment artifacts without embedding unconstrained patch language.
 
-This is a schema/spec surface only. It does not imply runtime mutation execution.
+This is now a schema/spec surface with bounded runtime integration.
+The v0.8 Gödel stage loop emits and validates `runs/<run_id>/godel/mutation.v1.json`
+as the canonical mutation artifact for its selected bounded proposal.
+This still does not imply unconstrained runtime mutation execution.
 
 ## Canonical Artifact
 - `schema_name`: `mutation`
@@ -17,6 +20,7 @@ This is a schema/spec surface only. It does not imply runtime mutation execution
 Canonical machine-readable artifacts:
 - `adl-spec/schemas/v0.8/mutation.v1.json` (JSON Schema)
 - `adl-spec/examples/v0.8/mutation.v1.example.json` (normative example)
+- `runs/<run_id>/godel/mutation.v1.json` (bounded runtime artifact emitted by the stage loop)
 
 ## Determinism Contract
 For identical normalized input, a mutation artifact must remain stable in:
