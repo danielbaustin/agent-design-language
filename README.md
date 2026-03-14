@@ -55,6 +55,35 @@ v0.8 status note:
 - The v0.8 milestone currently contains a mix of implemented demo scaffold code and design/spec surfaces.
 - Not all v0.8 planning artifacts are runtime-implemented yet; see `docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md`.
 
+## v0.8 Bounded Godel Runtime
+
+v0.8 adds a bounded Godel scientific loop to the runtime and demo surfaces. In the current implementation, the loop follows seven explicit stages:
+
+1. `failure`
+2. `hypothesis`
+3. `mutation`
+4. `experiment`
+5. `evaluation`
+6. `record`
+7. `indexing`
+
+This is a deterministic, artifact-driven loop rather than an open-ended self-modifying agent. The runtime persists canonical `mutation`, `evaluation_plan`, `experiment_record`, and `canonical_evidence_view` artifacts so the loop can be inspected, replayed, and reviewed without hidden state.
+
+What is implemented now:
+- bounded runtime support for the Godel stage loop in the v0.8 demos
+- canonical artifact emission and validation for the loop's core review surfaces
+- ObsMem integration for indexing and retrieval-backed review flows
+
+What is intentionally not claimed in v0.8:
+- autonomous policy learning
+- unconstrained self-modification
+- a fully finished Adaptive Execution Engine
+
+For the deeper milestone docs, start with:
+- `docs/milestones/v0.8/GODEL_SCIENTIFIC_METHOD.md`
+- `docs/milestones/v0.8/GODEL_LOOP_INTEGRATION_V0.8.md`
+- `docs/milestones/v0.8/DEMOS_V0.8.md`
+
 ## v0.7 Naming Migration (Compatibility Window)
 
 - Canonical Rust crate/package/lib identity is `adl`.
