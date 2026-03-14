@@ -19,7 +19,7 @@ v0.8 is the milestone where ADL moves from deterministic workflow substrate into
 
 1. **Milestone design + schema spine** — finalize the design and define the core Gödel experiment artifacts.
 2. **Experiment runtime + memory integration** — make the schemas usable by deterministic experiment workflows and ObsMem.
-3. **Authoring surfaces + flagship demo** — make structured cards/prompts actionable and demonstrate the system with the Rust transpiler / migration workflow.
+3. **Authoring surfaces + flagship demo** — make structured cards/prompts actionable and demonstrate the system with the Rust transpiler demo scaffold.
 4. **Release tail** — demo matrix, quality gate, docs freeze, 3rd party review, and release ceremony.
 
 The milestone must remain focused on a narrow backbone:
@@ -42,8 +42,8 @@ The milestone must remain focused on a narrow backbone:
 | WP-08 | ToolResult contract hardening | Harden ToolResult metadata and success/error semantics to support evidence, repair loops, and deterministic review surfaces. | Updated ToolResult contract + tests + docs. | WP-03 | #618 |
 | WP-09 | Authoring surfaces v1 (structured cards / prompts) | Establish structured cards as first-class execution contracts and align prompt-generation surfaces. | Authoring surface spec + updated card/prompt docs + initial automation hooks. | WP-01, v0.75 DX work (#629, #630, #633, #634) | #517 |
 | WP-10 | Prompt automation + reviewer-ready execution flow | Convert structured card surfaces into deterministic prompt-generation and reviewer-compatible validation flow. | Card parser / prompt generator / reviewer-facing output integration. | WP-09, WP-08 | TBD |
-| WP-11 | Rust transpiler fixture + workflow scaffold | Create the fixture crate and base ADL workflow for the Rust transpiler / migration demo. | Fixture crate + workflow scaffold + transformation plan artifacts. | WP-06, WP-09 | TBD |
-| WP-12 | Rust transpiler verification + adaptive execution evidence | Add verification hooks, bounded retry/adaptive execution, and replayable evidence artifacts to the Rust transpiler workflow. | Working demo with `fmt` / `clippy` / `test`, evidence bundle, replay proof. | WP-05, WP-08, WP-10, WP-11 | TBD |
+| WP-11 | Rust transpiler fixture + workflow scaffold | Create the minimal fixture and deterministic mapping scaffold for the Rust transpiler demo surface. | Workflow fixture + transpiler scaffold + checked-in runtime skeleton artifacts. | WP-06, WP-09 | TBD |
+| WP-12 | Rust transpiler verification + bounded evidence reporting | Add deterministic verification output and bounded adaptive-execution evidence fields to the transpiler demo scaffold. | Runnable mapping-check demo + verification artifact + scope docs. | WP-05, WP-08, WP-10, WP-11 | TBD |
 | WP-13 | Demo matrix + integration demos | Integrate the flagship demos into a canonical demo matrix: Gödel experiment demo, Rust transpiler demo, and any required supporting demos. | Demo matrix doc, runnable commands, validated artifacts, milestone demo surfaces. | WP-06, WP-07, WP-10, WP-12 | TBD |
 | WP-14 | Coverage / quality gate (ratchet + exclusions) | Establish or extend milestone quality gates so the new v0.8 surfaces meet deterministic coverage and validation expectations. | Coverage/quality policy, gate scripts/CI updates, documented exclusions. | WP-08 through WP-13 | TBD |
 | WP-15 | Documentation pass + review convergence (docs freeze before review) | Finalize and freeze the v0.8 docs package, align all commands/examples, then prepare for formal review. Documentation must be frozen before review begins. | Frozen v0.8 milestone docs package + review handoff artifact. | WP-13, WP-14 | TBD |
@@ -73,7 +73,7 @@ The milestone must remain focused on a narrow backbone:
 - WP-09 -> Structured cards/prompts act as first-class execution contracts.
 - WP-10 -> Card → prompt → execution → reviewer flow is deterministic and machine-friendly.
 - WP-11 -> Rust transpiler fixture and workflow scaffold exist and are runnable.
-- WP-12 -> Rust transpiler demo demonstrates bounded retry, verification, replayable evidence, and adaptive execution.
+- WP-12 -> Rust transpiler demo scaffold demonstrates deterministic mapping verification and bounded evidence reporting without claiming a full migration engine.
 - WP-13 (Demos) -> Canonical demo matrix exists and flagship demos run reproducibly.
 - WP-14 (Quality gate) -> Milestone quality gate is documented, enforced, and reviewable.
 - WP-15 (Docs/review) -> v0.8 docs are complete, aligned, and frozen before review begins.
