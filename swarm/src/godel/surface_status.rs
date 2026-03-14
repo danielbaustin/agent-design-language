@@ -5,6 +5,7 @@ use anyhow::{anyhow, bail, Context, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+use super::evaluation::load_canonical_evaluation_plan;
 use super::experiment_record::load_canonical_record;
 use super::workflow_template::{parse_workflow_template, GodelWorkflowTemplate};
 
@@ -30,8 +31,11 @@ pub fn load_v08_surface_status(repo_root: &Path) -> Result<GodelRuntimeSurfaceSt
             .context("load canonical evidence example")?;
     let mutation = read_json(&spec_examples_root.join("mutation.v1.example.json"))
         .context("load mutation example")?;
-    let evaluation_plan = read_json(&spec_examples_root.join("evaluation_plan.v1.example.json"))
-        .context("load evaluation plan example")?;
+    let evaluation_plan = serde_json::to_value(
+        load_canonical_evaluation_plan(&spec_examples_root.join("evaluation_plan.v1.example.json"))
+            .context("load evaluation plan example")?,
+    )
+    .context("serialize evaluation plan example")?;
     let canonical_record_path = spec_examples_root.join("experiment_record.v1.example.json");
     let experiment_record = serde_json::to_value(
         load_canonical_record(&canonical_record_path)
@@ -291,7 +295,121 @@ mod tests {
             docs.join("evaluation_plan.v1.example.json"),
             serde_json::to_vec_pretty(&json!({
                 "schema_name": "evaluation_plan",
-                "plan_id": "plan:1"
+                "schema_version": 1,
+                "plan_id": "plan_fixture_retry_policy_001",
+                "experiment_id": "exp_fixture_retry_policy_001",
+                "baseline_run_id": "run-baseline-001",
+                "candidate_run_id": "run-candidate-001",
+                "mutation_ref": {
+                    "mutation_id": "mut_fixture_retry_policy_001",
+                    "schema_name": "mutation",
+                    "schema_version": 1
+                },
+                "evidence_inputs": [
+                    {
+                        "evidence_id": "ev_fixture_candidate_001",
+                        "source_artifact": "tmp/runs/run-candidate-001/evidence.json",
+                        "evidence_view_ref": {
+                            "schema_name": "canonical_evidence_view",
+                            "schema_version": 1
+                        },
+                        "selectors": [
+                            "artifact_hashes",
+                            "failure_codes",
+                            "verification_results"
+                        ]
+                    },
+                    {
+                        "evidence_id": "ev_fixture_reference_001",
+                        "source_artifact": "tmp/runs/run-baseline-001/evidence.json",
+                        "evidence_view_ref": {
+                            "schema_name": "canonical_evidence_view",
+                            "schema_version": 1
+                        },
+                        "selectors": [
+                            "artifact_hashes",
+                            "failure_codes",
+                            "verification_results"
+                        ]
+                    }
+                ],
+                "metrics": [
+                    {
+                        "metric_id": "met_failure_rate_delta",
+                        "metric_type": "failure_rate_delta",
+                        "direction": "decrease_is_better",
+                        "aggregation": "latest",
+                        "weight": 0.5,
+                        "threshold": -0.05
+                    },
+                    {
+                        "metric_id": "met_policy_violations",
+                        "metric_type": "policy_violation_count",
+                        "direction": "decrease_is_better",
+                        "aggregation": "sum",
+                        "weight": 0.2,
+                        "threshold": 0
+                    },
+                    {
+                        "metric_id": "met_replay_match",
+                        "metric_type": "deterministic_replay_match",
+                        "direction": "target_match",
+                        "aggregation": "boolean_all",
+                        "weight": 0.3,
+                        "threshold": 1
+                    }
+                ],
+                "decision_rules": [
+                    {
+                        "rule_id": "rule_hard_fail_policy_violations",
+                        "kind": "hard_fail_if",
+                        "precedence": 10,
+                        "metric_id": "met_policy_violations",
+                        "operator": ">",
+                        "target_value": 0,
+                        "on_fail": "reject"
+                    },
+                    {
+                        "rule_id": "rule_threshold_replay_match",
+                        "kind": "threshold_gate",
+                        "precedence": 20,
+                        "metric_id": "met_replay_match",
+                        "operator": "==",
+                        "target_value": 1,
+                        "on_fail": "requires_human_review"
+                    },
+                    {
+                        "rule_id": "rule_weighted_score_gate",
+                        "kind": "weighted_score_gate",
+                        "precedence": 30,
+                        "operator": ">=",
+                        "target_value": 0.7,
+                        "on_fail": "reject"
+                    }
+                ],
+                "outcome_model": {
+                    "decision_order": [
+                        "adopt",
+                        "requires_human_review",
+                        "reject"
+                    ],
+                    "default_decision": "requires_human_review",
+                    "tie_break": "higher_weighted_score"
+                },
+                "experiment_policy": {
+                    "max_hypotheses_per_failure": 3,
+                    "max_parallel_experiments": 1,
+                    "max_experiments_per_hypothesis": 1,
+                    "admission_thresholds": {
+                        "min_evidence_count": 2,
+                        "min_confidence_score": 0.6,
+                        "require_policy_approval": false
+                    }
+                },
+                "metadata": {
+                    "tags": ["deterministic", "godel", "v0.8"],
+                    "created_by": "godel.evaluation.planner"
+                }
             }))
             .expect("serialize plan"),
         )

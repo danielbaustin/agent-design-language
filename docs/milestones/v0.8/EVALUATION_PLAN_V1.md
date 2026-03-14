@@ -10,7 +10,18 @@ It defines:
 - how outcomes are derived and represented,
 - and how experiment expansion is bounded.
 
-This is a schema/specification artifact only. Runtime evaluation execution is out of scope for #612.
+This contract now has bounded runtime integration.
+
+The v0.8 Gödel stage loop persists a canonical `evaluation_plan.v1` artifact at:
+- `runs/<run_id>/godel/evaluation_plan.v1.json`
+
+That bounded runtime path:
+- builds the EvaluationPlan from normalized failure/evidence/hypothesis/mutation inputs,
+- validates it against the canonical schema,
+- persists it as a deterministic runtime artifact,
+- and loads the canonical example through the same validation path in `surface_status`.
+
+This does not add a broad procedural evaluation engine; it keeps the integration limited to deterministic plan production and validation at the stage-loop persistence boundary.
 
 ## Canonical Artifact Identity
 - `schema_name`: `evaluation_plan`

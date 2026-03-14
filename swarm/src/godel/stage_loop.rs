@@ -165,6 +165,7 @@ pub struct StageLoopRun {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StageLoopPersistenceResult {
     pub run: StageLoopRun,
+    pub canonical_evaluation_plan_rel_path: PathBuf,
     pub experiment_record_rel_path: PathBuf,
     pub canonical_experiment_record_rel_path: PathBuf,
     pub obsmem_index_rel_path: PathBuf,
@@ -290,6 +291,27 @@ impl GodelStageLoopExecutor {
         runs_root: &Path,
     ) -> Result<StageLoopPersistenceResult, StageLoopError> {
         let run = self.execute(input)?;
+        let canonical_evaluation_plan = evaluation::build_canonical_evaluation_plan(
+            &input.run_id,
+            &input.workflow_id,
+            &input.failure_code,
+            &input.normalized_evidence_refs(),
+            &run.hypothesis,
+            &run.mutation,
+        )
+        .map_err(|err| {
+            StageLoopError::InvalidInput(format!("canonical evaluation plan build failed: {err}"))
+        })?;
+        let canonical_evaluation_plan_rel_path = evaluation::persist_canonical_evaluation_plan(
+            runs_root,
+            &input.run_id,
+            &canonical_evaluation_plan,
+        )
+        .map_err(|err| {
+            StageLoopError::InvalidInput(format!(
+                "canonical evaluation plan persistence failed: {err}"
+            ))
+        })?;
         let experiment_record_rel_path = experiment_record::persist_record(runs_root, &run.record)
             .map_err(|err| {
                 StageLoopError::InvalidInput(format!("experiment record persistence failed: {err}"))
@@ -318,6 +340,7 @@ impl GodelStageLoopExecutor {
 
         Ok(StageLoopPersistenceResult {
             run,
+            canonical_evaluation_plan_rel_path,
             experiment_record_rel_path,
             canonical_experiment_record_rel_path,
             obsmem_index_rel_path,
@@ -591,6 +614,10 @@ mod tests {
             .expect("persisted stage loop");
 
         assert_eq!(
+            persisted.canonical_evaluation_plan_rel_path,
+            PathBuf::from("runs/run-745-a/godel/evaluation_plan.v1.json")
+        );
+        assert_eq!(
             persisted.experiment_record_rel_path,
             PathBuf::from("runs/run-745-a/godel/experiment_record.runtime.v1.json")
         );
@@ -602,6 +629,9 @@ mod tests {
             persisted.obsmem_index_rel_path,
             PathBuf::from("runs/run-745-a/godel/obsmem_index_entry.runtime.v1.json")
         );
+        assert!(tmp
+            .join("run-745-a/godel/evaluation_plan.v1.json")
+            .is_file());
         assert!(tmp
             .join("run-745-a/godel/experiment_record.v1.json")
             .is_file());
