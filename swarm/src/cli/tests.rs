@@ -1,6 +1,6 @@
 use super::commands::real_learn_export;
 use super::demo_cmd::{is_ci_environment, real_demo};
-use super::godel_cmd::{real_godel, real_godel_inspect, real_godel_run};
+use super::godel_cmd::{real_godel, real_godel_evaluate, real_godel_inspect, real_godel_run};
 use super::open::{
     detect_platform, open_artifact, open_command_for, select_open_artifact, CommandRunner,
     OpenPlatform, RealCommandRunner,
@@ -15,9 +15,13 @@ use super::run_artifacts::{
     PAUSE_STATE_SCHEMA_VERSION,
 };
 use super::{real_instrument, real_keygen, real_learn, real_sign, real_verify, usage};
+use ::adl::godel::experiment_record::{
+    PersistedExperimentRecord, StageExperimentRecord, EXPERIMENT_RECORD_RUNTIME_SCHEMA,
+};
+use ::adl::godel::obsmem_index::{
+    PersistedStageIndexEntry, StageIndexEntry, OBSMEM_INDEX_RUNTIME_SCHEMA,
+};
 use ::adl::{adl, artifacts, execute, failure_taxonomy, instrumentation, resolve, signing, trace};
-use ::adl::godel::experiment_record::{PersistedExperimentRecord, StageExperimentRecord, EXPERIMENT_RECORD_RUNTIME_SCHEMA};
-use ::adl::godel::obsmem_index::{PersistedStageIndexEntry, StageIndexEntry, OBSMEM_INDEX_RUNTIME_SCHEMA};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
@@ -191,6 +195,7 @@ fn usage_mentions_v0_4_and_legacy_examples() {
     assert!(text.contains("adl resume <run_id>"));
     assert!(text.contains("adl godel run"));
     assert!(text.contains("adl godel inspect"));
+    assert!(text.contains("adl godel evaluate"));
     assert!(text.contains("Examples:"));
     assert!(text.contains("examples/v0-4-demo-fork-join-swarm.adl.yaml"));
     assert!(text.contains("examples/adl-0.1.yaml"));
@@ -200,7 +205,9 @@ fn usage_mentions_v0_4_and_legacy_examples() {
 #[test]
 fn real_godel_validates_subcommand_and_run_args() {
     let err = real_godel(&[]).expect_err("missing subcommand");
-    assert!(err.to_string().contains("supported: run, inspect"));
+    assert!(err
+        .to_string()
+        .contains("supported: run, evaluate, inspect"));
 
     let err = real_godel(&["unknown".to_string()]).expect_err("unknown subcommand");
     assert!(err.to_string().contains("unknown godel subcommand"));
@@ -299,6 +306,44 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
     .expect("inspect should succeed");
 
     let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
+fn real_godel_evaluate_validates_args_and_returns_summary() {
+    let err = real_godel_evaluate(&[]).expect_err("missing failure-code");
+    assert!(err.to_string().contains("requires --failure-code"));
+
+    let err = real_godel_evaluate(&[
+        "--failure-code".to_string(),
+        "tool_failure".to_string(),
+        "--experiment-result".to_string(),
+        "mystery".to_string(),
+        "--score-delta".to_string(),
+        "1".to_string(),
+    ])
+    .expect_err("invalid experiment result");
+    assert!(err.to_string().contains("<ok|blocked>"));
+
+    let err = real_godel_evaluate(&[
+        "--failure-code".to_string(),
+        "tool_failure".to_string(),
+        "--experiment-result".to_string(),
+        "ok".to_string(),
+        "--score-delta".to_string(),
+        "nope".to_string(),
+    ])
+    .expect_err("invalid score delta");
+    assert!(err.to_string().contains("valid i32"));
+
+    real_godel_evaluate(&[
+        "--failure-code".to_string(),
+        "tool_failure".to_string(),
+        "--experiment-result".to_string(),
+        "blocked".to_string(),
+        "--score-delta".to_string(),
+        "0".to_string(),
+    ])
+    .expect("evaluate summary");
 }
 
 #[test]

@@ -32,17 +32,28 @@ struct GodelInspectCliSummary {
     experiment_outcome: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct GodelEvaluateCliSummary {
+    failure_code: String,
+    experiment_result: String,
+    score_delta: i32,
+    decision: String,
+    rationale: String,
+    evaluation_plan_example: String,
+}
+
 pub(crate) fn real_godel(args: &[String]) -> Result<()> {
     let Some(cmd) = args.first().map(|s| s.as_str()) else {
         return Err(anyhow::anyhow!(
-            "godel subcommand required (supported: run, inspect)"
+            "godel subcommand required (supported: run, evaluate, inspect)"
         ));
     };
     match cmd {
         "run" => real_godel_run(&args[1..]),
+        "evaluate" => real_godel_evaluate(&args[1..]),
         "inspect" => real_godel_inspect(&args[1..]),
         other => Err(anyhow::anyhow!(
-            "unknown godel subcommand '{other}' (supported: run, inspect)"
+            "unknown godel subcommand '{other}' (supported: run, evaluate, inspect)"
         )),
     }
 }
@@ -238,6 +249,75 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         improvement_delta: record.record.improvement_delta,
         obsmem_index_key: index.entry.index_key.clone(),
         experiment_outcome: index.entry.experiment_outcome.clone(),
+    };
+    println!("{}", serde_json::to_string_pretty(&summary)?);
+    Ok(())
+}
+
+pub(crate) fn real_godel_evaluate(args: &[String]) -> Result<()> {
+    let mut failure_code: Option<String> = None;
+    let mut experiment_result: Option<String> = None;
+    let mut score_delta: Option<i32> = None;
+
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--failure-code" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!("--failure-code requires a value"));
+                };
+                failure_code = Some(v.clone());
+                i += 1;
+            }
+            "--experiment-result" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!("--experiment-result requires a value"));
+                };
+                experiment_result = Some(v.clone());
+                i += 1;
+            }
+            "--score-delta" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!("--score-delta requires an integer"));
+                };
+                score_delta = Some(
+                    v.parse::<i32>()
+                        .map_err(|_| anyhow::anyhow!("--score-delta must be a valid i32"))?,
+                );
+                i += 1;
+            }
+            other => {
+                return Err(anyhow::anyhow!(
+                    "unknown godel evaluate arg '{other}' (supported: --failure-code, --experiment-result, --score-delta)"
+                ));
+            }
+        }
+        i += 1;
+    }
+
+    let failure_code = failure_code
+        .ok_or_else(|| anyhow::anyhow!("godel evaluate requires --failure-code <code>"))?;
+    let experiment_result = experiment_result.ok_or_else(|| {
+        anyhow::anyhow!("godel evaluate requires --experiment-result <ok|blocked>")
+    })?;
+    if !matches!(experiment_result.as_str(), "ok" | "blocked") {
+        return Err(anyhow::anyhow!(
+            "godel evaluate requires --experiment-result <ok|blocked>"
+        ));
+    }
+    let score_delta = score_delta
+        .ok_or_else(|| anyhow::anyhow!("godel evaluate requires --score-delta <int>"))?;
+
+    let outcome =
+        godel::evaluation::evaluate_experiment(&failure_code, &experiment_result, score_delta);
+    let summary = GodelEvaluateCliSummary {
+        failure_code,
+        experiment_result,
+        score_delta,
+        decision: format!("{:?}", outcome.decision).to_lowercase(),
+        rationale: outcome.rationale,
+        evaluation_plan_example: "adl-spec/examples/v0.8/evaluation_plan.v1.example.json"
+            .to_string(),
     };
     println!("{}", serde_json::to_string_pretty(&summary)?);
     Ok(())
