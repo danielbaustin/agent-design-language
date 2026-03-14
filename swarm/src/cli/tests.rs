@@ -1,6 +1,6 @@
 use super::commands::real_learn_export;
 use super::demo_cmd::{is_ci_environment, real_demo};
-use super::godel_cmd::{real_godel, real_godel_evaluate, real_godel_run};
+use super::godel_cmd::{real_godel, real_godel_evaluate, real_godel_inspect, real_godel_run};
 use super::open::{
     detect_platform, open_artifact, open_command_for, select_open_artifact, CommandRunner,
     OpenPlatform, RealCommandRunner,
@@ -15,6 +15,12 @@ use super::run_artifacts::{
     PAUSE_STATE_SCHEMA_VERSION,
 };
 use super::{real_instrument, real_keygen, real_learn, real_sign, real_verify, usage};
+use ::adl::godel::experiment_record::{
+    PersistedExperimentRecord, StageExperimentRecord, EXPERIMENT_RECORD_RUNTIME_SCHEMA,
+};
+use ::adl::godel::obsmem_index::{
+    PersistedStageIndexEntry, StageIndexEntry, OBSMEM_INDEX_RUNTIME_SCHEMA,
+};
 use ::adl::{adl, artifacts, execute, failure_taxonomy, instrumentation, resolve, signing, trace};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::ffi::OsString;
@@ -188,6 +194,7 @@ fn usage_mentions_v0_4_and_legacy_examples() {
     assert!(text.contains("Usage:"));
     assert!(text.contains("adl resume <run_id>"));
     assert!(text.contains("adl godel run"));
+    assert!(text.contains("adl godel inspect"));
     assert!(text.contains("adl godel evaluate"));
     assert!(text.contains("Examples:"));
     assert!(text.contains("examples/v0-4-demo-fork-join-swarm.adl.yaml"));
@@ -198,7 +205,9 @@ fn usage_mentions_v0_4_and_legacy_examples() {
 #[test]
 fn real_godel_validates_subcommand_and_run_args() {
     let err = real_godel(&[]).expect_err("missing subcommand");
-    assert!(err.to_string().contains("supported: run, evaluate"));
+    assert!(err
+        .to_string()
+        .contains("supported: run, evaluate, inspect"));
 
     let err = real_godel(&["unknown".to_string()]).expect_err("unknown subcommand");
     assert!(err.to_string().contains("unknown godel subcommand"));
@@ -220,6 +229,83 @@ fn real_godel_validates_subcommand_and_run_args() {
     ])
     .expect_err("unsafe evidence ref should fail");
     assert!(err.to_string().contains("GODEL_STAGE_LOOP_INVALID_INPUT"));
+}
+
+#[test]
+fn real_godel_inspect_validates_args_and_missing_paths() {
+    let err = real_godel_inspect(&[]).expect_err("missing run-id");
+    assert!(err.to_string().contains("requires --run-id"));
+
+    let err =
+        real_godel_inspect(&["--bogus".to_string(), "x".to_string()]).expect_err("unknown arg");
+    assert!(err.to_string().contains("unknown godel inspect arg"));
+
+    let missing_root =
+        std::env::temp_dir().join(format!("adl-godel-inspect-missing-{}", std::process::id()));
+    let err = real_godel_inspect(&[
+        "--run-id".to_string(),
+        "run-745-a".to_string(),
+        "--runs-dir".to_string(),
+        missing_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("missing artifacts");
+    assert!(err.to_string().contains("GODEL_INSPECT_IO"));
+}
+
+#[test]
+fn real_godel_inspect_reads_persisted_runtime_artifacts() {
+    let base = std::env::temp_dir().join(format!("adl-godel-inspect-ok-{}", std::process::id()));
+    let run_dir = base.join("run-745-a").join("godel");
+    std::fs::create_dir_all(&run_dir).expect("create godel dir");
+
+    let record = PersistedExperimentRecord {
+        schema: EXPERIMENT_RECORD_RUNTIME_SCHEMA.to_string(),
+        record: StageExperimentRecord {
+            run_id: "run-745-a".to_string(),
+            workflow_id: "wf-godel-loop".to_string(),
+            failure_code: "tool_failure".to_string(),
+            hypothesis_id: "hyp:run-745-a:tool_failure:00".to_string(),
+            mutation_id: "mut:run-745-a:tool_failure:00".to_string(),
+            mutation_target_surface: "workflow-step-config".to_string(),
+            evaluation_decision: "adopt".to_string(),
+            evaluation_rationale: "deterministic rationale".to_string(),
+            improvement_delta: 1,
+            evidence_refs: vec!["runs/run-745-a/run_status.json".to_string()],
+        },
+    };
+    let index = PersistedStageIndexEntry {
+        schema: OBSMEM_INDEX_RUNTIME_SCHEMA.to_string(),
+        entry: StageIndexEntry {
+            index_key: "tool_failure:hyp:run-745-a:tool_failure:00:adopt".to_string(),
+            run_id: "run-745-a".to_string(),
+            workflow_id: "wf-godel-loop".to_string(),
+            failure_code: "tool_failure".to_string(),
+            hypothesis_id: "hyp:run-745-a:tool_failure:00".to_string(),
+            mutation_id: "mut:run-745-a:tool_failure:00".to_string(),
+            experiment_outcome: "adopt".to_string(),
+        },
+    };
+
+    std::fs::write(
+        run_dir.join("experiment_record.runtime.v1.json"),
+        serde_json::to_string_pretty(&record).expect("record json"),
+    )
+    .expect("write record");
+    std::fs::write(
+        run_dir.join("obsmem_index_entry.runtime.v1.json"),
+        serde_json::to_string_pretty(&index).expect("index json"),
+    )
+    .expect("write index");
+
+    real_godel_inspect(&[
+        "--run-id".to_string(),
+        "run-745-a".to_string(),
+        "--runs-dir".to_string(),
+        base.to_string_lossy().to_string(),
+    ])
+    .expect("inspect should succeed");
+
+    let _ = std::fs::remove_dir_all(base);
 }
 
 #[test]
