@@ -24,7 +24,7 @@ This WBS aligns the milestone around a small number of work packages that map cl
 | WP-06 | Card Reviewer GPT stabilization | Improve review reliability, YAML/output consistency, and repeatability in card review workflows. | Reviewer prompt/process updates, validation expectations, and output quality improvements. | WP-01, WP-04 | #559 |
 | WP-07 | Dependable execution surfaces | Turn dependable execution from positioning language into explicit runtime/artifact/trust surfaces. | Design and implementation work that ties dependable execution to observable workflow behavior and release validation. | WP-02, WP-03 | #681 |
 | WP-08 | Verifiable inference surfaces | Strengthen evidence-linked outputs, provenance, and replay/report structures so ADL can make serious trust claims. | Reviewable artifacts and documentation for provenance, replay, and inference verification. | WP-02, WP-06, WP-07 | #681 |
-| WP-09 | Adaptive Execution Engine (AEE) bounded progress | Advance AEE from deferred concept to concrete milestone work with bounded policy hooks and strategy-loop progress. | AEE design updates, issue/card work, and explicit bounded-scope deliverables. | WP-02, WP-07 | #716 |
+| WP-09 | Adaptive Execution Engine (AEE) bounded progress | Advance AEE from deferred concept to concrete milestone work with bounded policy hooks and strategy-loop progress. | AEE design updates, issue/card work, explicit bounded-scope deliverables, and the implementation-slice breakdown anchored by `docs/milestones/v0.8/STICKTOITTIVENESS.md`. | WP-02, WP-07 | #716 |
 | WP-10 | Emotion / affect model design | Define a bounded affective reasoning surface that can later influence evaluation, prioritization, and adaptive behavior. | Affective reasoning doc set, emotion/affect design notes, and alignment with Gödel–Hadamard–Bayes work. | WP-01, WP-09 | #716 |
 | WP-11 | Reasoning graph schema direction | Define the schema direction for reasoning graphs, hypothesis records, tension records, and revision-friendly belief lineage. | Reasoning graph schema doc and linked planning material for later v0.9 work. | WP-10 | #716 |
 | WP-12 | Hypothesis engine planning linkage | Connect affective reasoning and reasoning graphs to the planned Gödel hypothesis engine direction. | Planning docs that clarify the v0.85 conceptual role and the v0.9 implementation path. | WP-10, WP-11 | #716 |
@@ -47,7 +47,7 @@ This WBS aligns the milestone around a small number of work packages that map cl
 - WP-06 -> Reviewer outputs are materially more reliable and structurally consistent.
 - WP-07 -> Dependable execution claims are tied to concrete runtime/artifact behavior.
 - WP-08 -> Verifiable inference claims are tied to provenance, replay, and evidence-linked artifacts.
-- WP-09 -> AEE shows concrete bounded progress rather than remaining a deferred concept.
+- WP-09 -> AEE shows concrete bounded progress rather than remaining a deferred concept, and future follow-on work is decomposed into bounded slices rather than tracked as one umbrella subsystem.
 - WP-10 -> The affective reasoning / emotion model is captured as a disciplined design surface, not as vague aspiration.
 - WP-11 -> Reasoning graph schema direction is explicit enough to guide later implementation.
 - WP-12 -> Hypothesis engine linkage is clear across the v0.85 conceptual layer and v0.9 implementation planning.

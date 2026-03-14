@@ -49,7 +49,7 @@ A secondary problem is documentation fragmentation itself: milestone intent is c
 - Cluster / distributed execution planning and initial execution substrate improvements.
 - Prompt Spec completeness and stronger authoring surfaces.
 - Card Reviewer GPT stabilization.
-- Bounded AEE progress: retry policy, adaptation surfaces, strategy loop integration, experiment lifecycle support.
+- Bounded AEE progress: retry policy, adaptation surfaces, strategy loop integration, experiment lifecycle support, and decomposition of larger retry/autonomy concepts into bounded implementation slices.
 - Trust surfaces: dependable execution, verifiable inference, artifact provenance, replayability.
 - A bounded emotion / affect model design that fits the Gödel–Hadamard–Bayes architecture.
 - Positioning and philosophy docs that clarify why ADL chooses stronger guarantees and explicit artifacts.
@@ -101,7 +101,7 @@ The design principle across all tracks is that ADL should move toward a system w
 - **Queue / checkpoint contracts**: deterministic run identity, queue state, retry state, checkpoint state, and resumability invariants.
 - **Prompt Spec contracts**: explicit authoring fields for actor, model, inputs, outputs, constraints, and review surfaces.
 - **Review artifacts**: machine-readable review outputs and consistent card/output structures.
-- **AEE interfaces**: bounded strategy-loop hooks, retry/adaptation policy surfaces, and experiment lifecycle integration points.
+- **AEE interfaces**: bounded strategy-loop hooks, retry/adaptation policy surfaces, experiment lifecycle integration points, and an explicit slice breakdown for follow-on implementation planning (see `docs/milestones/v0.8/STICKTOITTIVENESS.md`).
 - **Emotion / affect surfaces**: explicit state or signal representation for priorities, tensions, and evaluation guidance.
 - **Trust surfaces**: replay bundles, provenance markers, validation artifacts, and evidence-linked output structures.
 - **Planning contracts**: consistent terminology and scope boundaries across design, WBS, decisions, checklist, and release artifacts.
@@ -122,7 +122,7 @@ New or strengthened behavior should obey the following principles:
 - Risk: v0.85 becomes too large by combining runtime, authoring, trust, and cognition work.
   - Mitigation: keep the milestone focused on bounded maturity gains and push broader autonomy or productization to later releases.
 - Risk: AEE scope again slips into future milestones without concrete progress.
-  - Mitigation: make AEE a named centerpiece of v0.85 and require concrete deliverables, not only planning language.
+  - Mitigation: make AEE a named centerpiece of v0.85 and require concrete deliverables, not only planning language, including the bounded follow-on slice map in `docs/milestones/v0.8/STICKTOITTIVENESS.md`.
 - Risk: the emotion model is treated as either too speculative or too vague to matter.
   - Mitigation: define it as a bounded operational substrate for priorities, tensions, and evaluation signals rather than synthetic psychology.
 - Risk: authoring and reviewer improvements remain secondary and continue to bottleneck throughput.
