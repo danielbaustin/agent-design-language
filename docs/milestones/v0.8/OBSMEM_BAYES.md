@@ -4,6 +4,12 @@
 
 This note explains how **Observational Memory (ObsMem)** can support **Bayesian-style reasoning** inside ADL without requiring a full probabilistic programming system.
 
+For v0.8, this document is conceptual and intentionally narrower than the phrase
+“ObsMem + Bayes” may suggest. The current runtime implements deterministic
+ObsMem indexing, retrieval filtering, and explicit score-based ranking. It does
+not implement a general Bayesian update subsystem or hidden confidence
+adjustment in runtime paths.
+
 The goal is not to turn ADL into a mathematically heavy inference engine. The goal is to give ADL a disciplined way to:
 
 - remember prior observations
@@ -30,7 +36,7 @@ At a high level:
 In ADL terms:
 
 - ObsMem provides the memory substrate
-- Bayes provides the update discipline
+- Bayes is a future framing for how evidence updates might later be made more disciplined
 
 This means ADL can move from:
 
@@ -46,7 +52,7 @@ Toward:
 
 Without a disciplined update rule, memory retrieval can become little more than pattern matching theater.
 
-With a Bayesian framing, ObsMem becomes more useful because it can support:
+With a Bayesian framing, ObsMem could eventually support:
 
 - confidence ranking of retrieved prior cases
 - bounded comparison of competing hypotheses
@@ -57,6 +63,23 @@ With a Bayesian framing, ObsMem becomes more useful because it can support:
 This supports the broader ADL theme of **verifiable inference**.
 
 ---
+
+## Current v0.8 Boundary
+
+Current repository truth for v0.8 is:
+
+- ObsMem indexing exists for run summaries and experiment records.
+- ObsMem retrieval exists as deterministic contract queries plus explicit
+  score-based ordering.
+- Retrieval policy filters by workflow, failure code, and tags, then sorts by
+  explicit record score and stable lexical tie-breaks.
+- No runtime path currently computes posterior confidence, prior probability, or
+  Bayesian evidence updates from retrieved cases.
+
+So the bounded v0.8 story is:
+
+- deterministic memory surfaces are implemented now
+- Bayesian-style update remains deferred
 
 ## Minimal ADL Interpretation of Bayes
 
@@ -110,7 +133,9 @@ The Gödel loop already has the right conceptual stages:
 - record
 - indexing
 
-ObsMem + Bayes fits naturally into that loop.
+ObsMem fits naturally into that loop today. Bayesian-style update is a possible
+future refinement to the evaluation/selection portions of the loop, but it is
+not a concrete v0.8 runtime subsystem.
 
 ### Failure
 
@@ -126,7 +151,13 @@ Prior related cases are retrieved from memory.
 
 ### Bayesian-style Update
 
-Retrieved cases alter the relative confidence of each hypothesis.
+Retrieved cases may later alter the relative confidence of each hypothesis.
+
+In current v0.8 code, the implemented behavior stops earlier:
+
+- retrieve prior cases deterministically
+- sort them by explicit score
+- leave any confidence interpretation to future bounded follow-through
 
 ### Mutation / Experiment
 
@@ -146,7 +177,7 @@ This makes the loop cumulative rather than stateless.
 
 ## What ObsMem Should Remember
 
-For Bayesian-style usefulness, ObsMem should not only remember raw artifacts. It should preserve enough structure to support evidence updates.
+For Bayesian-style usefulness, ObsMem should not only remember raw artifacts. It should preserve enough structure to support evidence updates later.
 
 Useful fields include:
 
@@ -196,7 +227,7 @@ ObsMem retrieval finds four prior similar cases:
 - three succeeded after normalizing transition names
 - one failed because the real problem was a missing state, not a naming mismatch
 
-A bounded Bayesian-style update might do something like this:
+A bounded Bayesian-style update might later do something like this:
 
 - raise confidence in the “normalize transition names” hypothesis
 - keep a secondary hypothesis alive for “missing state definition”
@@ -217,7 +248,8 @@ This also matters for the Adaptive Execution Engine.
 
 AEE should not become a vague “adaptive magic” layer. It should have disciplined reasons for changing strategy.
 
-ObsMem + Bayes provides one possible basis for that discipline:
+ObsMem retrieval plus explicit score ordering provides the current v0.8 basis
+for that discipline, while a fuller Bayes-style update remains future-facing:
 
 - retrieved prior cases inform confidence
 - confidence informs retry/adapt/escalate decisions
@@ -256,7 +288,8 @@ Near-term ADL use should remain modest.
 
 - record and retrieve prior cases through ObsMem
 - preserve enough structure for future confidence updates
-- keep confidence usage bounded and reviewable
+- keep retrieval deterministic and reviewable
+- defer Bayesian-style confidence updates rather than implying they already exist
 
 ### v0.85
 
@@ -330,7 +363,8 @@ These questions should remain open for now.
 ## Bottom Line
 
 ObsMem gives ADL memory.
-Bayesian-style updating gives that memory discipline.
+Bayesian-style updating remains a possible future discipline rather than a
+current runtime guarantee.
 
 Together they suggest a future in which ADL can:
 

@@ -5,7 +5,11 @@ use crate::obsmem_contract::{
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RetrievalOrder {
-    /// Canonical default: descending score, then deterministic lexical tie-breaks.
+    /// Canonical default: descending explicit score, then deterministic lexical tie-breaks.
+    ///
+    /// v0.8 note: this is deterministic ranking over scores already present on
+    /// retrieved records. It does not perform hidden Bayesian updates or infer
+    /// new confidence values from memory hits.
     ScoreDescIdAsc,
     /// Simple deterministic lexical ordering for explicit policy/testing.
     IdAsc,
@@ -106,6 +110,9 @@ impl RetrievalRequest {
 ///
 /// For identical inputs and index state, this function must produce identical
 /// result ordering and truncation.
+///
+/// v0.8 boundary: the policy layer filters and sorts explicit retrieval
+/// results, but it does not synthesize posterior confidence or mutate scores.
 pub fn apply_policy_to_results(
     policy: &RetrievalPolicyV1,
     request: &RetrievalRequest,
@@ -266,6 +273,38 @@ mod tests {
         assert_eq!(left.hits.len(), 2);
         assert_eq!(left.hits[0].id, "a");
         assert_eq!(left.hits[1].id, "b");
+    }
+
+    #[test]
+    fn apply_policy_uses_explicit_scores_without_hidden_confidence_updates() {
+        let policy = RetrievalPolicyV1 {
+            default_limit: 3,
+            required_tags: vec![],
+            required_failure_code: None,
+            order: RetrievalOrder::ScoreDescIdAsc,
+        };
+
+        let request = RetrievalRequest {
+            workflow_id: Some("wf-a".to_string()),
+            failure_code: None,
+            tags: vec![],
+            limit_override: None,
+        };
+
+        let input = MemoryQueryResult {
+            hits: vec![
+                hit("b", "0.25", &[]),
+                hit("a", "0.25", &[]),
+                hit("c", "0.90", &[]),
+            ],
+        };
+
+        let output = apply_policy_to_results(&policy, &request, input).expect("apply policy");
+        let ids: Vec<&str> = output.hits.iter().map(|h| h.id.as_str()).collect();
+        let scores: Vec<&str> = output.hits.iter().map(|h| h.score.as_str()).collect();
+
+        assert_eq!(ids, vec!["c", "a", "b"]);
+        assert_eq!(scores, vec!["0.90", "0.25", "0.25"]);
     }
 
     #[test]
