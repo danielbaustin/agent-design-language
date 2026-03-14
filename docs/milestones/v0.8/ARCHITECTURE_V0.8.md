@@ -39,7 +39,7 @@ Replay + Activation Log
         ↓
 Structured Trace Bundles
         ↓
-ObsMem (Bayesian Retrieval)
+ObsMem (Bounded Evidence-Adjusted Retrieval)
         ↓
 Gödel Evaluation + Mutation
         ↓

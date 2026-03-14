@@ -10,16 +10,16 @@ Replay and determinism remain essential properties of the architecture. Experime
 
 - Gödel-style self-improvement loops
 - Hadamard-style hypothesis generation and creative insight
-- Bayesian evaluation of evidence and experiment outcomes
+- bounded Bayesian-style evaluation of evidence and experiment outcomes through deterministic ObsMem retrieval ranking
 
-Together these form what can be thought of as the **Gödel–Hadamard–Bayes cognition loop**. Failures generate hypotheses, hypotheses generate bounded mutations and experiments, experiments produce evidence, and evidence updates the system's understanding of which strategies are effective.
+Together these form what can be thought of as the **Gödel–Hadamard–Bayes cognition loop**. Failures generate hypotheses, hypotheses generate bounded mutations and experiments, experiments produce evidence, and explicit deterministic retrieval evidence can now adjust ranking of remembered prior cases.
 
 ObsMem is the memory substrate that makes this loop possible. It stores the scientific artifacts of the agent's reasoning process: failures, hypotheses, experiments, evaluations, and outcomes. With proper indexing, the system can retrieve prior reasoning and reuse it when encountering similar failures.
 
 This transforms the architecture from a simple agent execution framework into something closer to a scientific discovery engine. The agent is not merely executing workflows; it is accumulating knowledge about which ideas work, which do not, and why.
 
 
-The long-term vision is that the Gödel–Hadamard–Bayes loop, backed by deterministic replay and ObsMem indexing, will allow ADL agents to improve their strategies over time while remaining transparent, inspectable, and scientifically grounded.
+The long-term vision is that the Gödel–Hadamard–Bayes loop, backed by deterministic replay and ObsMem indexing, will allow ADL agents to improve their strategies over time while remaining transparent, inspectable, and scientifically grounded. Current v0.8 repo truth includes bounded evidence-adjusted retrieval, not a broad adaptive learning subsystem.
 
 ---
 
