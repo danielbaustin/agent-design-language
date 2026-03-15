@@ -10,8 +10,7 @@ Use this index as the primary navigation surface for v0.8 scope, sequencing, and
 - Latest tagged runtime release: v0.7.0.
 - Current main-branch runtime crate version: 0.8.0.
 - Runtime base release remains v0.7.0 while `main` carries unreleased v0.8 work.
-- v0.8 currently includes both implemented artifacts and planning/spec surfaces; see `RECOVERY_AUDIT_V0.8.md` for repository-truth status.
-- Current repository state includes bounded implemented runtime/demo surfaces alongside schema/spec/planning surfaces.
+- v0.8 includes bounded implemented runtime/demo surfaces alongside schema/spec/planning surfaces; see `RECOVERY_AUDIT_V0.8.md` for repository-truth status.
 - Review this packet as the unreleased v0.8 `main`-branch state, not as a claim that v0.8 has already shipped.
 - The v0.8 packet is not yet ready for third-party handoff; see `INTERNAL_READINESS_REVIEW_V0.8.md` and `RECOVERY_AUDIT_V0.8.md` for current blockers.
 
@@ -36,9 +35,12 @@ Review these docs while inspecting runnable output:
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
 - [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
 - [../../demos/v0.8-bounded-critical-demos.md](../../demos/v0.8-bounded-critical-demos.md)
+- [../../demos/godel_failure_hypothesis_experiment.md](../../demos/godel_failure_hypothesis_experiment.md)
+- [../../demos/aee-recovery/README.md](../../demos/aee-recovery/README.md)
 
 Scope note:
 - the Rust transpiler runnable surface is a bounded demo scaffold for deterministic fixture-to-runtime mapping verification, not a production transpiler or sandboxed patch/apply workflow.
+- the bounded Gödel CLI and AEE recovery runbooks are current reviewer-facing demo surfaces under `demos/`, not speculative future docs.
 
 ### Inspect-only review surfaces
 
@@ -53,10 +55,10 @@ These are review surfaces to read or inspect, not commands to run:
 
 ## Packet Status Note
 
-The v0.8 review packet is materially better aligned than the earlier recovery state, but it still has real reviewer-facing blockers:
-- version/release-status language is not fully reconciled across all reader-facing docs,
+The v0.8 review packet is materially better aligned than the earlier recovery state and now reflects bounded implemented runtime/demo work. The remaining reviewer-facing blockers are narrower:
 - the final `THIRD_PARTY_REVIEW_V0.8.md` handoff artifact is still absent,
-- some milestone docs remain planning/reference surfaces rather than implemented runtime behavior.
+- the packet still mixes runnable demos, inspect-only schema surfaces, and planning docs that must stay explicitly distinguished for reviewers,
+- final external-review simplification and release-tail packaging are still pending.
 
 ## Reading Order
 

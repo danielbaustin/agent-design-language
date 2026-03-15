@@ -12,6 +12,7 @@ Summary:
 - Canonical runtime artifacts for the Godel review loop are now emitted and validated, including:
   `mutation.v1`, `canonical_evidence_view.v1`, `evaluation_plan.v1`, and `experiment_record.v1`
 - New user-facing CLI and demo surfaces were added for bounded Godel execution and inspection, alongside the v0.8 demo matrix
+- New reviewer-facing demo runbooks under `demos/` cover the bounded Gödel CLI flow and bounded AEE recovery flow
 - The Rust transpiler remains a bounded demo scaffold for deterministic fixture-to-runtime verification, not a production transpiler
 - Major review-tail work landed to align milestone docs, schemas, and release-facing repository truth with current implementation
 
