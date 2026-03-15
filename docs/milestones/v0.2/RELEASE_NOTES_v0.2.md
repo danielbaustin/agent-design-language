@@ -38,8 +38,8 @@ If local provider setup is not ready yet, use the plan command above as the reco
 
 ## More examples
 
-- Examples index: `examples/README.md`
-- Coordinator walkthrough: `examples/v0-2-coordinator-agents-sdk.md`
+- Examples index: `swarm/examples/README.md`
+- Coordinator walkthrough: `swarm/examples/v0-2-coordinator-agents-sdk.md`
 
 ## Key docs
 

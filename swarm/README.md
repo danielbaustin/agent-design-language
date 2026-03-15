@@ -121,7 +121,8 @@ Using `-q` keeps demo output focused on the ADL plan rather than Cargo build noi
 
 For real `--run` execution, configure provider runtime dependencies (for example local Ollama and any required auth env vars).
 
-For additional runnable examples, see `../demos/README.md`, `examples/README.md`, and `../docs/milestones/v0.7/DEMOS_v0.7.md`.
+For additional runnable examples, start with `../demos/README.md`.
+Use `examples/README.md` when you specifically want the full crate-local fixture inventory.
 
 ---
 
