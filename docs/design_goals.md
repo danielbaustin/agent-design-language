@@ -1,6 +1,6 @@
 # Swarm / Agent Design Language (ADL) - Design Goals (Stable Principles)
 
-This document defines the guiding principles behind **Agent Design Language (ADL)** and its reference Rust runtime, `swarm`.
+This document defines the guiding principles behind **Agent Design Language (ADL)** and its reference Rust runtime.
 
 ADL is designed as a *language*, not a framework: a small, explicit, and deterministic way to describe agent workflows that can be parsed, validated, reasoned about, and executed by multiple runtimes.
 
@@ -150,7 +150,7 @@ This allows ADL to be:
 
 ## 8. Conservative by Default
 
-The reference runtime (`swarm`) intentionally prioritizes:
+The reference runtime intentionally prioritizes:
 
 - Strict validation
 - Clear error messages
