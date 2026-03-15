@@ -33,6 +33,8 @@ For the bounded Gödel CLI catch-up surfaces, use the dedicated runbook:
 - `demos/godel_failure_hypothesis_experiment.md`
 - It provides the current repo-root `adl godel run`, `adl godel inspect`, and `adl godel evaluate` sequence against the reorganized demo layout.
 
+These runbooks live under `demos/`, which is now the canonical user-facing demo entrypoint for the active v0.8 review surfaces.
+
 ### Inspect-only review surfaces
 
 Inspect these docs/spec artifacts rather than trying to run them:
@@ -75,6 +77,7 @@ Review-surface entries are ordered by:
   - Exercises bounded retry-policy recovery using a deterministic fail-once provider mock, a retry-budget suggestion, an explicit overlay, and replayable run artifacts.
 - `demos/godel_failure_hypothesis_experiment.md`
   - Exercises the bounded Gödel CLI review flow and the persisted `canonical_evidence_view.v1`, `mutation.v1`, `evaluation_plan.v1`, and `experiment_record.v1` runtime artifacts.
+  - This is also the bounded adaptive execution demo pointer for reviewer follow-through on failure -> hypothesis -> experiment surfaces.
 
 ## Required Validation/Evidence Expectations
 

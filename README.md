@@ -55,7 +55,7 @@ Badge semantics:
 - Project changelog: `CHANGELOG.md`
 
 v0.8 status note:
-- The v0.8 milestone currently contains a mix of implemented demo scaffold code and design/spec surfaces.
+- The v0.8 milestone currently contains bounded implemented runtime, CLI, schema-artifact, and demo surfaces alongside design/spec/planning docs.
 - Not all v0.8 planning artifacts are runtime-implemented yet; see `docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md`.
 
 ## v0.8 Bounded Godel Runtime
@@ -74,8 +74,10 @@ This is a deterministic, artifact-driven loop rather than an open-ended self-mod
 
 What is implemented now:
 - bounded runtime support for the Godel stage loop in the v0.8 demos
+- bounded `adl godel run`, `adl godel inspect`, and `adl godel evaluate` CLI review surfaces
 - canonical artifact emission and validation for the loop's core review surfaces
 - ObsMem integration for indexing and retrieval-backed review flows
+- reviewer-facing runbooks under `demos/` for the bounded Gödel CLI flow and bounded AEE recovery flow
 
 What is intentionally not claimed in v0.8:
 - autonomous policy learning

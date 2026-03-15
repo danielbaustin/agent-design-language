@@ -6,7 +6,7 @@ It is a review-packet status artifact for `#707` and does not add runtime scope.
 
 ## Convergence Outcome
 
-Status: **Partially converged; version story mostly reconciled, final review handoff still pending**
+Status: **Partially converged; repository truth and review packet are aligned enough for internal review, final external handoff still pending**
 
 Primary result:
 
@@ -14,20 +14,21 @@ Primary result:
 - bounded runtime/demo work is now represented in the packet,
 - recovery-tail docs have been refreshed toward current repository truth,
 - README/manifests/reviewer-facing status language now describes one unreleased v0.8 main-branch story layered on top of the latest tagged v0.7.0 release,
+- the current `demos/` runbooks are part of the active review path,
 - remaining review-tail blockers are explicitly listed rather than treated as non-blocking.
 
 ## Surfaces Reviewed
 
 | Surface | Current status | Notes |
 |---|---|---|
-| README/navigation index | partially converged | navigation is canonical, but reviewer handoff is still blocked by remaining review-tail work |
+| README/navigation index | partially converged | navigation is canonical, but reviewer handoff is still blocked by the missing final third-party review artifact |
 | recovery audit | refreshed | now reflects bounded implemented runtime/demo surfaces |
 | internal readiness review | refreshed | still useful, but remains a blocker-oriented internal gate |
 | execution/dependency docs | converged | execution order and boundaries are aligned |
 | Gödel loop docs/templates | converged | stage ordering and schema references are aligned |
 | authoring/reviewer planning docs | converged | sequencing and template-location docs are present |
 | bounded AEE + quality gate docs | converged | bounded scope and gate phases are explicit in planning docs |
-| demo/review/release-tail docs | partially converged | runnable-vs-inspect boundary is clearer, but final handoff is still incomplete |
+| demo/review/release-tail docs | partially converged | runnable-vs-inspect boundary is clearer and `demos/` is current, but final handoff is still incomplete |
 
 ## Current Convergence Truth
 
@@ -43,9 +44,9 @@ Primary result:
 - `docs/milestones/v0.8/DOCS_CONVERGENCE_V0.8.md`
 - `docs/milestones/v0.8/INTERNAL_READINESS_REVIEW_V0.8.md`
 - `docs/milestones/v0.8/DEMOS_V0.8.md`
+- `docs/milestones/v0.8/RELEASE_NOTES_V0.8.md`
 
 ### Not yet converged for external handoff
-- version/release-status messaging across reviewer-facing surfaces
 - final third-party review artifact packaging
 - final review packet simplification for an external reader with no prior context
 
@@ -57,20 +58,17 @@ Primary result:
 4. Corrected handoff references that pointed to non-existent docs to use existing canonical milestone surfaces.
 5. Refreshed the review-tail packet so bounded runtime/demo work is represented explicitly.
 6. Moved reviewer-facing status language toward one unreleased-v0.8 story layered on top of the latest tagged v0.7.0 release.
+7. Updated review/demo docs to point at the current `demos/` runbooks for the bounded Gödel CLI and AEE recovery paths.
 
 ## Remaining Reviewer-Facing Blockers
 
-1. **Version story is still mixed**
-   - `swarm/Cargo.toml` declares `0.8.0`.
-   - `swarm/README.md` still describes the runtime as `v0.7.0`.
-
-2. **Third-party handoff packet is incomplete**
+1. **Third-party handoff packet is incomplete**
    - `docs/milestones/v0.8/THIRD_PARTY_REVIEW_V0.8.md` is still absent.
 
-3. **Review packet still requires a clean external entry flow**
+2. **Review packet still requires a clean external entry flow**
    - Runnable demos versus inspect-only surfaces must remain explicit anywhere the review packet is handed to a third party.
 
-4. **Review-tail closeout is still pending**
+3. **Review-tail closeout is still pending**
    - Third-party findings triage after `#707` and final release-tail cleanup have not been completed yet.
 
 ## Handoff Guidance
