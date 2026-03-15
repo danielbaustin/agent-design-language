@@ -8,9 +8,9 @@ Use this index to find the right source of truth quickly.
 
 - v0.8 milestone docs (active): `milestones/v0.8/`
 - ADRs: `adr/`
+- Codex operating procedure: `codex_playbook.md`
+- Design principles: `design_goals.md`
 - Default workflow guide: `default_workflow.md`
-- Demo command pointers: `demos.md`
-- Reports overview: `reports.md`
 
 ## Milestones
 

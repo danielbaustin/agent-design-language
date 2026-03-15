@@ -12,7 +12,7 @@ Source-of-truth governance: `../CONTRIBUTING.md` (canonical).
 Workflow loop:
 
 ```
-start → cards → execute → review → finish → merge → cleanup
+start -> cards -> execute -> review -> finish -> merge -> cleanup
 ```
 
 Card semantics:
@@ -32,7 +32,7 @@ swarm/tools/pr.sh finish <issue> --title "swarm: <short description>" \
 ```
 
 Recovery (common pitfalls):
-- **Wrong branch:** `git switch main` → `swarm/tools/pr.sh start <issue>`
+- **Wrong branch:** `git switch main` -> `swarm/tools/pr.sh start <issue>`
 - **Finish after manual commit:** `swarm/tools/pr.sh finish ...` still works; it will commit staged changes.
 - **Issue vs PR number confusion:** always use the **issue** number for cards/branches.
 
@@ -40,7 +40,7 @@ Recovery (common pitfalls):
 
 ## ADL Philosophy (Read First)
 
-ADL is not an agent framework implementation detail.  
+ADL is not an agent framework implementation detail.
 ADL is a **blueprint language for agent computation**.
 
 Core principles:
@@ -123,7 +123,7 @@ Codex is ideal for:
 Do NOT:
 
 - Invent new ADL primitives
-- Change ADL semantics “because it seems better”
+- Change ADL semantics "because it seems better"
 - Introduce concurrency early
 - Perform broad renames across repo
 - Rewrite architecture without design doc + acceptance criteria
@@ -188,7 +188,7 @@ Return:
 ## Branch / Commit Hygiene
 
 - One branch per task
-- Prefer 1–3 commits:
+- Prefer 1-3 commits:
   1. Implementation
   2. Tests
   3. Docs (optional)
@@ -232,77 +232,9 @@ A change is complete only if:
 Before editing, Codex must read:
 
 1. `swarm/README.md`
-2. `swarm/DESIGN_GOALS.md`
+2. `docs/design_goals.md`
 3. `swarm/examples/`
 4. `swarm/tests/`
 
 Then identify:
 - Modules to change
-- Tests protecting behavior
-
----
-
-## Context Rehydration Requirement
-
-When starting a session, Codex must confirm context by listing:
-
-- Key files inspected
-- Relevant modules
-- Relevant tests
-
-If unsure, Codex must:
-- Search repo using ripgrep
-- Ask for clarification BEFORE editing
-
----
-
-## ADL Identity Reminder
-
-ADL is closest conceptually to:
-
-- Terraform (declarative infrastructure intent)
-- Kubernetes YAML (desired system state)
-- OpenAPI (machine contract surface)
-
-ADL is NOT:
-- Just an agent runner
-- Just prompt orchestration
-- Just workflow glue
-
-It is a **control plane specification for cognition workflows**.
-
----
-
-## Long-Term Direction
-
-Future ADL versions will likely support:
-
-- Deterministic concurrency models
-- Multi-provider orchestration
-- Local + remote hybrid execution
-- Trace-first debugging workflows
-- Self-hosted upgrade loops (ADL helps evolve ADL)
-
-Codex should help move toward this future **incrementally and safely**.
-
----
-
-CODEX_PLAYBOOK.md must not duplicate feature lists, milestone plans, or release notes.
-
----
-
-## Final Rule
-
-When uncertain:
-
-Prefer:
-- Safety
-- Determinism
-- Tests
-- Small patches
-- Explicit behavior
-
-Over:
-- Cleverness
-- Large rewrites
-- Speculative improvements
