@@ -8,7 +8,9 @@ The more the system evolved, the clearer it became that Rust was not just a lang
 
 ADL is intended to support:
 
+- dependable execution
 - deterministic execution
+- verifiable inference
 - replayable agent workflows
 - explicit contracts between agents
 - inspectable artifacts
@@ -49,15 +51,41 @@ Meanwhile, the advantages of strongly structured systems become more important:
 - predictable execution behavior
 - easier long-term maintenance
 
-For agent infrastructure—especially systems aiming for deterministic execution and replay—these guarantees are extremely valuable.
+For agent infrastructure—especially systems aiming for dependable execution, verifiable inference, deterministic execution, and replay—these guarantees are extremely valuable.
 
 ## Why Rust Aligns With ADL
 
 Rust provides several properties that align directly with ADL’s design goals.
 
+### Dependable Execution
+
+ADL is trying to make execution behavior more dependable before it tries to make agents more powerful. That means more emphasis on:
+
+- compilation before execution
+- explicit workflow contracts
+- replayable artifacts
+- earlier failure detection
+- fewer runtime surprises in the core substrate
+
+Rust is a strong fit for that direction because it helps push errors and ambiguity earlier in the lifecycle, where they can be reviewed and corrected before a workflow runs.
+
 ### Determinism
 
 ADL is built around deterministic workflows and replayable execution. Rust encourages explicit control over state, ownership, and side effects, making deterministic behavior easier to reason about.
+
+### Verifiable Inference
+
+ADL does not only want outputs that look plausible. It wants outputs whose reasoning and evidence can be inspected after the fact.
+
+That is the practical meaning of **verifiable inference** in ADL:
+
+- explicit contracts before execution
+- reviewable artifacts after execution
+- replayable runs
+- evidence-linked outputs
+- bounded, inspectable system behavior
+
+Rust does not create verifiable inference by itself, but it supports the kind of execution substrate in which verifiable inference is more credible. The stronger the guarantees around execution and artifact production, the stronger ADL’s trust claims can be.
 
 ### Reliability
 
@@ -109,11 +137,15 @@ This does not eliminate the value of interpreted languages. They remain useful f
 
 But for the **core substrate of an agent system intended for business use**, stronger guarantees are preferable:
 
+- dependable execution
 - compilation before execution
 - explicit contracts
 - deterministic behavior
 - verifiable artifacts
+- verifiable inference
 - fewer runtime surprises
+
+This is why the decision is architectural rather than ideological. ADL can still benefit from Python, JavaScript, Smalltalk, and other dynamic environments around the edges. But for the core execution substrate, ADL prefers stronger guarantees because they make dependable execution and verifiable inference more believable.
 
 ## Rust and the Gödel–Hadamard–Bayes Loop
 
@@ -144,6 +176,8 @@ This does not mean Rust “creates” intelligence or scientific reasoning by it
 
 In that sense, the choice of Rust is not only about performance or safety. It is also about building an environment in which agent cognition can be made disciplined, observable, scientifically improvable, and credible to organizations that need systems they can trust.
 
+Put more directly: if ADL wants to argue for dependable execution and verifiable inference, it needs a substrate whose failure modes, contracts, and artifact boundaries are explicit enough to support that argument.
+
 ## A Small Experiment That Became Something Larger
 
 What began as a simple exercise—"learn some Rust and avoid Python for a while"—grew into something more significant.
@@ -172,3 +206,5 @@ ADL's Rust-first stance should not be mistaken for hostility toward interpreted 
 The decision to build ADL around Rust is therefore not about declaring one tradition superior to another. It is about choosing the right center of gravity for a specific kind of system. ADL aims to provide deterministic, replayable, inspectable agent infrastructure suitable for serious production environments. For that goal, compilation, explicit contracts, and stronger guarantees before execution are better aligned with the needs of organizations that require reliable systems.
 
 In other words, this is not a language war. It is an architectural choice. Interpreted languages remain excellent tools for exploration, rapid experimentation, and research workflows. Rust simply provides a more appropriate foundation for the core execution substrate that ADL is attempting to build.
+
+That is the central claim of this document: ADL is Rust-first because it is trying to build a system whose execution is more dependable and whose inference is more verifiable, not because it wants to score points in a language debate.
