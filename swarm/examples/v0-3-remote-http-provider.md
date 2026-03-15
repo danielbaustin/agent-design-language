@@ -2,7 +2,6 @@
 
 Files:
 - `swarm/examples/v0-3-remote-http-provider.adl.yaml`
-- `swarm/examples/v0-3-remote-provider-demo.adl.yaml` (compat alias)
 
 ## What it demonstrates
 
