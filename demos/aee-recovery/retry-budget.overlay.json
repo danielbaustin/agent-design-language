@@ -1,0 +1,22 @@
+{
+  "overlay_version": 1,
+  "base_run_id": "v0-3-aee-recovery-initial",
+  "created_by": "issue-847-aee-recovery-demo",
+  "created_from": {
+    "suggestions_version": 1,
+    "artifact_model_version": 1
+  },
+  "changes": [
+    {
+      "id": "increase_retry_budget",
+      "path": "run.workflow.steps.*.retry.max_attempts",
+      "op": "set",
+      "value": 2,
+      "rationale": "Initial run failed on a retryable provider error; bounded recovery increases max_attempts to 2.",
+      "evidence": {
+        "source_run_id": "v0-3-aee-recovery-initial",
+        "suggestion_intent": "increase_step_retry_budget"
+      }
+    }
+  ]
+}
