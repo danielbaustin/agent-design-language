@@ -1,26 +1,26 @@
 
 
-# ObsMem (v0.8) — Bayesian Indexing + Provenance-Aware Retrieval
+# ObsMem (v0.8) - Bayesian Indexing + Provenance-Aware Retrieval
 
 **Status:** Draft (incubation)
 
 ## 0. Executive summary
 
-ObsMem is ADL’s **Observational Memory**: a deterministic, provenance-aware memory system built on **execution traces** (runs, activations, tool boundary events, artifacts).
+ObsMem is ADL's **Observational Memory**: a deterministic, provenance-aware memory system built on **execution traces** (runs, activations, tool boundary events, artifacts).
 
-The key idea in this doc is that ObsMem should not be “just embeddings.” It should include a **Bayesian evidence model** that estimates:
+ObsMem should not be just embeddings. It should include a **Bayesian evidence model** that estimates:
 
 - the probability a retrieved item is relevant/useful
 - the probability the evidence is trustworthy/provable
 - the expected value/cost of using it
 
-…using only **explicit, replayable artifacts**.
+using only **explicit, replayable artifacts**.
 
 This enables smart RAG and operational intelligence:
 
-- “Find the most similar failures to this one and what fixed them.”
-- “Which provider/tool policy yields the best outcomes under my budget?”
-- “Which patterns are stable and should be promoted?”
+- Find the most similar failures to this one and what fixed them.
+- Show which provider or tool policy yields the best outcomes under a given budget.
+- Show which patterns are stable enough to promote.
 
 ## 1. Goals and non-goals
 
@@ -37,7 +37,7 @@ This enables smart RAG and operational intelligence:
 
 ### Non-goals (v0.8)
 
-- A general-purpose “personal memory” system.
+- A general-purpose personal memory system.
 - Autonomous background learning.
 - Training/fine-tuning models inside ObsMem.
 
@@ -97,11 +97,11 @@ Required fields (high level):
 ObsMem will serve at least three consumers:
 
 1. **Runtime / replay debugging**
-   - “Show me similar failures + likely fix patterns.”
+   - Show similar failures and likely fix patterns.
 2. **Authoring refinement**
-   - “Use memory to propose a safer/better workflow plan.”
+   - Use memory to propose a safer or better workflow plan.
 3. **Gödel evaluation**
-   - “Use memory to propose mutations and score stability.”
+   - Use memory to propose mutations and score stability.
 
 ### 4.1 Query types
 
@@ -118,13 +118,13 @@ Every result must include:
 
 - citations: run_id / activation_id / artifact pointer
 - score components: similarity, provenance/trust, recency, cost, stability
-- a short “why this was returned” explanation
+- a short explanation of why this was returned
 
 ## 5. Bayesian evidence model
 
 ### 5.1 Why Bayes here?
 
-Embeddings tell us “similar text,” but ADL needs **actionable evidence**:
+Embeddings tell us what text is similar, but ADL needs **actionable evidence**:
 
 - Is it relevant to *this* failure?
 - Is it trustworthy / reproducible?
@@ -216,7 +216,7 @@ ObsMem should provide a **RAG kit** that produces:
 
 - a deterministic evidence set
 - a prompt context with citations
-- a strict “answer only from evidence” instruction
+- a strict "answer only from evidence" instruction
 
 Key rules:
 
@@ -248,7 +248,7 @@ ObsMem is powerful because it records reality. That increases risk.
 v0.8 requirements:
 
 - Redaction hooks for tool boundary events (e.g., secrets)
-- “Do not index” flags for artifacts
+- do-not-index flags for artifacts
 - Retention policy controls (per-workflow and global)
 
 ## 10. Interfaces (v0.8)
@@ -272,7 +272,7 @@ Current repository state:
 ## 11. Success criteria (v0.8)
 
 1. Index a handful of runs and answer:
-   - “Find similar failures and what fixed them.”
+   - Find similar failures and what fixed them.
 2. Smart RAG returns a response with citations.
 3. Analytics show:
    - cost/latency trends by tool/provider
@@ -285,11 +285,11 @@ Current repository state:
 - Vector store: file-backed vs embedded DB vs external?
 - Which text fields are safe/useful for embeddings?
 - How do we define and encode failure taxonomy consistently across runtime + ObsMem?
-- How do we score “usefulness” of evidence in a way Gödel can consume?
+- How do we score usefulness of evidence in a way Godel can consume?
 
 ---
 
-## Appendix A — Suggested next issues
+## Appendix A - Suggested next issues
 
 These map to the v0.8 architecture EPIC breakdown:
 

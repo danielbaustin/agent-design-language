@@ -1,4 +1,4 @@
-# ADL v0.8 — Vision (Gödel + Authoring Cohesion Release)
+# ADL v0.8 - Vision (Godel + Authoring Cohesion Release)
 
 **Status:** Draft  
 **Depends on:** v0.75 (Deterministic Substrate + ObsMem v1)
@@ -9,16 +9,16 @@ If v0.75 locks the substrate and memory, v0.8 turns that foundation into:
 
 - Controlled self-improvement (Gödel v1)
 - Safe, ergonomic authoring (Authoring Surfaces v1)
-- End‑to‑end deterministic refinement loops
+- End-to-end deterministic refinement loops
 
 v0.8 does **not** expand infrastructure surface area.  
 It integrates and proves the layers built in v0.75.
 
 ---
 
-# One‑Sentence Thesis
+# One-Sentence Thesis
 
-**v0.8 enables replay‑validated self‑improvement and safe workflow authoring on top of a frozen deterministic substrate and memory layer.**
+**v0.8 enables replay-validated self-improvement and safe workflow authoring on top of a frozen deterministic substrate and memory layer.**
 
 ---
 
@@ -34,19 +34,19 @@ We redistributed scope to control milestone size and reduce ceremony overhead.
   - ObsMem v1 (index + retrieval)
 
 - v0.8 now focuses strictly on:
-  - Gödel self‑improvement layer (EPIC‑C)
-  - Authoring Surfaces v1 (EPIC‑D / #517)
+  - Godel self-improvement layer (EPIC-C)
+  - Authoring Surfaces v1 (EPIC-D / #517)
 
 - v0.85 will handle:
   - Distributed / cluster execution
 
-This keeps v0.8 product‑focused instead of infrastructure‑heavy.
+This keeps v0.8 product-focused instead of infrastructure-heavy.
 
 ---
 
 # Scope (What Ships in v0.8)
 
-## EPIC‑C — Gödel v1 (Controlled Self‑Improvement)
+## EPIC-C - Godel v1 (Controlled Self-Improvement)
 
 Gödel operates entirely through deterministic artifacts.
 
@@ -59,9 +59,9 @@ Core loop:
 
 Constraints:
 
-- No in‑place runtime mutation.
+- No in-place runtime mutation.
 - No hidden learning.
-- Every improvement must be replay‑validated.
+- Every improvement must be replay-validated.
 - Every improvement must be inspectable and versioned.
 
 Minimum deliverables:
@@ -74,14 +74,14 @@ Minimum deliverables:
 
 ---
 
-## EPIC‑D — Authoring Surfaces v1
+## EPIC-D - Authoring Surfaces v1
 
 Authoring Surfaces v1 makes ADL usable without writing raw YAML.
 
 Layers:
 
-1. Plain English → Authoring IR (JSON)
-2. Deterministic IR → Canonical ADL YAML
+1. Plain English -> Authoring IR (JSON)
+2. Deterministic IR -> Canonical ADL YAML
 3. Safe defaults injection
 4. Pattern registry integration
 
@@ -97,18 +97,18 @@ Minimum deliverables:
 - Deterministic IR → YAML compiler
 - CLI guided workflow generator
 - Constrained NL→IR generator (experimental)
-- 2–3 example workflows authored via the new surface
+- 2-3 example workflows authored via the new surface
 
 ---
 
-# Non‑Goals (Explicitly Deferred)
+# Non-Goals (Explicitly Deferred)
 
 These belong to v0.85 or later:
 
 - Cluster / distributed execution
 - Multi-host coordination
 - Kubernetes backend
-- Advanced memory training or fine‑tuning
+- Advanced memory training or fine-tuning
 - Major runtime refactors
 
 v0.8 is about integration, not expansion.
@@ -119,14 +119,14 @@ v0.8 is about integration, not expansion.
 
 v0.8 is complete when we can demonstrate:
 
-## Demo 1 — Author → Run → Replay
+## Demo 1 - Author -> Run -> Replay
 
 - Author workflow from plain English.
 - Emit canonical ADL YAML.
 - Run deterministically.
 - Replay and confirm artifact identity.
 
-## Demo 2 — Memory‑Assisted Improvement
+## Demo 2 - Memory-Assisted Improvement
 
 - Run workflow.
 - Ingest trace bundle.
@@ -135,7 +135,7 @@ v0.8 is complete when we can demonstrate:
 - Replay baseline vs mutation.
 - Emit signed overlay.
 
-## Demo 3 — Controlled Evolution
+## Demo 3 - Controlled Evolution
 
 - Apply overlay.
 - Re-run workflow.
@@ -159,7 +159,7 @@ Specifically:
 1. Deterministic execution contract remains frozen.
 2. Trace bundle schema remains versioned and stable.
 3. ObsMem retrieval remains deterministic.
-4. Improvement overlays are append‑only.
+4. Improvement overlays are append-only.
 5. No hidden state outside artifacts.
 
 ---
@@ -178,13 +178,13 @@ v0.8 is DONE when:
 
 # Roadmap Context
 
-- v0.75 — Substrate + Memory (frozen foundation)
-- v0.8  — Gödel + Authoring (cohesion layer)
-- v0.85 — Cluster execution (scale layer)
+- v0.75 - Substrate + Memory (frozen foundation)
+- v0.8  - Godel + Authoring (cohesion layer)
+- v0.85 - Cluster execution (scale layer)
 
 The architectural identity remains:
 
-> ADL is a deterministic execution substrate capable of introspection and controlled self‑improvement.
+> ADL is a deterministic execution substrate capable of introspection and controlled self-improvement.
 
 v0.8 proves that thesis.
 
