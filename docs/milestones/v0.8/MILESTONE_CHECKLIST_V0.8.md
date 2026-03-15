@@ -31,6 +31,10 @@ Status note:
 - [ ] `cargo fmt` passes on release candidate branch
 - [ ] `cargo clippy --all-targets -- -D warnings` passes on release candidate branch
 - [ ] `cargo test` passes on release candidate branch
+- [ ] `bash swarm/tools/check_no_new_legacy_swarm_refs.sh` passes on release candidate branch
+- [ ] `bash tools/check_release_notes_commands.sh` passes on release candidate branch
+- [ ] `bash swarm/tools/demo_smoke_v07_story.sh` passes on release candidate branch
+- [ ] Coverage gates pass (`cargo llvm-cov` + `tools/enforce_coverage_gates.sh`)
 - [ ] CI is green on merge target
 - [ ] v0.8 quality gate status is green (`docs/milestones/v0.8/QUALITY_GATE_V0.8.md`)
 - [ ] No unresolved blocker-grade findings (`docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md` + review artifacts)

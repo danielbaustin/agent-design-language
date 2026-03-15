@@ -1969,7 +1969,9 @@ fn run_v0_3_concurrent_execution_is_deterministic_across_runs() {
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
     let new_path = prepend_path(&base);
     let _path_guard = EnvVarGuard::set("PATH", new_path);
+    let fork_out = Path::new("out").join("fork");
 
+    let _ = fs::remove_dir_all(&fork_out);
     let out1 = run_swarm(&["examples/v0-3-concurrency-fork-join.adl.yaml", "--run"]);
     assert!(
         out1.status.success(),
@@ -1978,6 +1980,7 @@ fn run_v0_3_concurrent_execution_is_deterministic_across_runs() {
         String::from_utf8_lossy(&out1.stderr)
     );
 
+    let _ = fs::remove_dir_all(&fork_out);
     let out2 = run_swarm(&["examples/v0-3-concurrency-fork-join.adl.yaml", "--run"]);
     assert!(
         out2.status.success(),

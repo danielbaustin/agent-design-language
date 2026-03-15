@@ -35,8 +35,44 @@ The v0.8 gate has two phases:
 2. Release docs updated to shipped state:
    - checklist, release plan, release notes.
 3. Canonical required demos marked complete with evidence references.
-4. Quality command suite green at agreed milestone baseline (check/fmt/clippy/test or documented equivalent).
+4. Quality command suite green at agreed milestone baseline.
 5. No unresolved blocker-grade findings in milestone review output.
+
+### Current enforced command suite
+
+The current repository enforces the following v0.8-facing release gate surfaces:
+
+- `cargo fmt --check`
+- `cargo clippy --all-targets -- -D warnings`
+- `cargo test`
+- `bash swarm/tools/check_no_new_legacy_swarm_refs.sh`
+- `bash tools/check_release_notes_commands.sh`
+- `bash swarm/tools/demo_smoke_v07_story.sh`
+- coverage gate enforcement through:
+  - `cargo llvm-cov --workspace --all-features --lcov --output-path lcov.info`
+  - `cargo llvm-cov report --json --summary-only --output-path coverage-summary.json`
+  - `bash tools/enforce_coverage_gates.sh coverage-summary.json`
+
+### Current CI posture
+
+The canonical CI workflow is `.github/workflows/ci.yaml`.
+
+It currently runs two required jobs:
+
+- `adl-ci`
+  - tooling sanity checks
+  - legacy-name guardrail
+  - fmt
+  - clippy
+  - docs command check
+  - test
+  - story-demo smoke
+- `adl-coverage`
+  - workspace coverage generation
+  - workspace line threshold enforcement
+  - per-file line threshold enforcement with documented exclusions
+
+This document is the release-truth reference for those gates; it should match the actual workflow rather than a looser planning summary.
 
 ## Recommended Checks
 
