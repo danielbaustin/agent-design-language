@@ -23,7 +23,7 @@ If a directory contains its own `CONTRIBUTING.md`, it must defer to this file.
 ## Canonical Workflow
 
 Source-of-truth quick links:
-- `swarm/CODEX_PLAYBOOK.md`
+- `docs/codex_playbook.md`
 - `swarm/tools/pr.sh`
 
 Workflow loop:

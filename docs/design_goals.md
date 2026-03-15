@@ -1,4 +1,4 @@
-# Swarm / Agent Design Language (ADL) — Design Goals (Stable Principles)
+# Swarm / Agent Design Language (ADL) - Design Goals (Stable Principles)
 
 This document defines the guiding principles behind **Agent Design Language (ADL)** and its reference Rust runtime, `swarm`.
 
@@ -42,10 +42,10 @@ Execution engines may be adaptive; **planning is not**.
 
 ADL follows a compiler-style pipeline:
 
-1. **Parse** — Load ADL YAML into a structured model
-2. **Validate** — Ensure all references are well-formed
-3. **Resolve** — Bind run → workflow → steps → tasks → agents → providers
-4. **Materialize** — Produce deterministic artifacts:
+1. **Parse** - Load ADL YAML into a structured model
+2. **Validate** - Ensure all references are well-formed
+3. **Resolve** - Bind run -> workflow -> steps -> tasks -> agents -> providers
+4. **Materialize** - Produce deterministic artifacts:
    - Execution plans
    - Assembled prompts
    - Trace events
@@ -61,7 +61,7 @@ ADL strictly separates:
 - **Specification** (YAML documents)
 - **Resolution** (reference binding and validation)
 - **Prompt Assembly** (deterministic text construction)
-- **Execution** (providers, tools, retries — advanced policies and resilience features may evolve over time)
+- **Execution** (providers, tools, retries - advanced policies and resilience features may evolve over time)
 
 This ensures:
 - Clear failure modes

@@ -15,8 +15,8 @@ This file exists only to clarify Swarm-specific expectations and to prevent proc
 Please read:
 
 - `../CONTRIBUTING.md` (canonical workflow + governance)
-- `CODEX_PLAYBOOK.md` (card-based PR workflow)
-- `DESIGN_GOALS.md` (stable principles)
+- `../docs/codex_playbook.md` (card-based PR workflow)
+- `../docs/design_goals.md` (stable principles)
 
 ---
 
