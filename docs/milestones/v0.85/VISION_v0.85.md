@@ -113,7 +113,7 @@ Key objectives:
 - work leasing and task claims
 - retry and backoff policies
 - bounded adaptive execution surfaces
-- clearer transition away from older swarm-oriented execution assumptions
+- clearer transition away from older runtime-oriented execution assumptions
 
 These capabilities move ADL from a workflow specification system toward a **deterministic execution substrate for agent systems**.
 
@@ -125,7 +125,7 @@ The runtime must guarantee:
 - auditable artifacts
 - inspectable execution state
 
-This part of the milestone also clarifies an important direction in the current docs: ADL is shifting away from loosely defined swarm experimentation toward a more disciplined execution model.
+This part of the milestone also clarifies an important direction in the current docs: ADL is shifting away from loosely defined experimental execution framing toward a more disciplined execution model.
 
 ---
 
