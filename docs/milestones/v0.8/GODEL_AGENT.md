@@ -4,13 +4,13 @@
 
 > Paper inspiration: **Gödel Agent: A Self-Referential Agent Framework for Recursive Self-Improvement** (arXiv:2410.04444; Yin et al.).
 >
-> ADL framing: implement the *benefits* (recursive self-improvement) while keeping ADL’s durability + auditability + replayability guarantees.
+> ADL framing: implement the *benefits* (recursive self-improvement) while keeping ADL's durability + auditability + replayability guarantees.
 
 ## Why this exists
 
-The Gödel Agent paper argues that many agent frameworks can’t reach globally good designs because humans freeze too many components (fixed pipelines, fixed meta-optimizers). Their proposal is a self-referential agent that can iteratively modify its own logic guided by high-level objectives.
+The Godel Agent paper argues that many agent frameworks cannot reach globally good designs because humans freeze too many components (fixed pipelines, fixed meta-optimizers). Their proposal is a self-referential agent that can iteratively modify its own logic guided by high-level objectives.
 
-For ADL, the key take-away is **not** “live monkey patching,” but this:
+For ADL, the key point is **not** live monkey patching, but this:
 
 - **Search the agent-design space** (prompts, routing, step graph, memory policy, tool policy).
 - **Evaluate candidates** with an explicit harness.
@@ -18,7 +18,7 @@ For ADL, the key take-away is **not** “live monkey patching,” but this:
 
 ## Design principles (ADL-safe Gödel)
 
-1. **No hidden state:** every “self-change” is an artifact (patch + evaluation + promotion record).
+1. **No hidden state:** every profile change is an artifact (patch + evaluation + promotion record).
 2. **Replayable:** given the same base profile + same eval suite, results are reproducible (or explicitly labeled stochastic).
 3. **Constrained mutation space:** self-improvement operates over *allowed* mutation operators (bounded search space).
 4. **Strict gating:** promotion requires passing invariants + meeting objective criteria.
@@ -27,10 +27,10 @@ For ADL, the key take-away is **not** “live monkey patching,” but this:
 
 ## Terminology
 
-- **Agent Profile**: The configuration/state that defines an agent’s behavior (prompts, policies, routing, knobs).
+- **Agent Profile**: The configuration/state that defines an agent's behavior (prompts, policies, routing, knobs).
 - **Mutation / Patch**: A structured change request applied to a base profile.
 - **Candidate**: A mutated profile + an evaluation run.
-- **Promotion**: Accepting a candidate as the new “best” profile.
+- **Promotion**: Accepting a candidate as the new best profile.
 - **Eval Suite**: A deterministic or controlled set of tasks/benchmarks used to score candidates.
 
 ## Scope
@@ -53,8 +53,8 @@ For ADL, the key take-away is **not** “live monkey patching,” but this:
 
 ### Explicitly out-of-scope (later)
 
-- Runtime self-modifying Rust code / “monkey patching.”
-- Unbounded mutations (“edit any code anywhere”).
+- Runtime self-modifying Rust code or monkey patching.
+- Unbounded mutations such as editing any code anywhere.
 - Complex open-ended evolutionary archives (keep in mind for later, e.g., Darwin Gödel Machine style).
 
 ## High-level architecture
@@ -74,13 +74,13 @@ For ADL, the key take-away is **not** “live monkey patching,” but this:
 All of the above is **artifacted**, so:
 
 - Pause/resume works naturally (ties into v0.6 HITL pause/resume artifacts).
-- “What changed?” is always answerable by reading the patch log.
-- Rollback is “select previous promoted profile.”
+- The patch log always shows what changed.
+- Rollback means selecting a previous promoted profile.
 
 ## Artifacts
 
 > Notes:
-> - Keep these under `out/<run_id>/godel/…` or similar.
+> - Keep these under `out/<run_id>/godel/` or a similar path.
 > - All files are written atomically.
 > - JSON schemas use `deny_unknown_fields` and are versioned.
 
@@ -245,7 +245,7 @@ Suggested components:
 
 ## Safety / security notes
 
-Even with “only profile mutations,” this is a powerful mechanism.
+Even with profile-only mutations, this is a powerful mechanism.
 
 Hard rules:
 
@@ -277,10 +277,10 @@ Hard rules:
   - inside workflow YAML?
   - separate file referenced by workflow?
   - embedded into run-state artifacts?
-- How do we standardize “score_primary” across suites?
+- How do we standardize `score_primary` across suites?
 - How do we manage stochasticity (temperature, provider variability)?
-- Do we want a minimal “archive” (best-of generation) in v0.7, or keep only a linear chain?
+- Do we want a minimal archive (best-of generation) in v0.7, or keep only a linear chain?
 
 ## References
 
-- arXiv:2410.04444 — Gödel Agent: A Self-Referential Agent Framework for Recursive Self-Improvement (Yin et al.).
+- arXiv:2410.04444 - Gödel Agent: A Self-Referential Agent Framework for Recursive Self-Improvement (Yin et al.).

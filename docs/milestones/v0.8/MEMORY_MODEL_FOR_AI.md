@@ -4,51 +4,51 @@
 
 > **Status:** v0.8 planning doc (living)
 >
-> **Purpose:** Define a coherent, implementable memory architecture for ADL agents—covering **Observational Memory (ObsMem)**, reflection (Gödel scientific loop), and adaptive execution.
+> **Purpose:** Define a coherent, implementable memory architecture for ADL agents covering **Observational Memory (ObsMem)**, reflection (Godel scientific loop), and adaptive execution.
 >
 
 >
-> **Acknowledgement:** ADL’s Observational Memory work is directly inspired by the *Observational Memory* feature in the **Mastra** framework (mastra-ai/mastra). We’ve adapted the concept to be **event-native** and grounded in ADL trace bundles, but the original idea and its cost/performance framing were pioneered by Mastra. We consider the Mastra team fellow travelers and gratefully credit their contribution.
+> **Acknowledgement:** ADL's Observational Memory work is directly inspired by the *Observational Memory* feature in the **Mastra** framework (mastra-ai/mastra). We adapted the concept to be **event-native** and grounded in ADL trace bundles, while crediting Mastra for the original idea and its cost/performance framing.
 
 ---
 
 ## TL;DR
 
-Most “agent memory” systems are built on the **conversation fallacy**:
+Most agent memory systems are built on the **conversation fallacy**:
 
-- *conversation → summarize → store text*
+- *conversation -> summarize -> store text*
 
 This produces narrative logs that are:
 
 - lossy,
-- non‑deterministic,
+- non-deterministic,
 - hard to query,
 - hard to replay,
 - and weak at driving learning.
 
-**ADL ObsMem is event‑native and structured**:
+**ADL ObsMem is event-native and structured**:
 
-- *runtime events → observations → tuples → indices → query + retrieval → reflection → (semantic + procedural) updates*
+- *runtime events -> observations -> tuples -> indices -> query + retrieval -> reflection -> (semantic + procedural) updates*
 
 This enables:
 
 - deterministic replay,
 - measurable learning over time,
-- multi‑agent knowledge transfer,
+- multi-agent knowledge transfer,
 - cost reduction via stable prompt prefixes (cache friendly),
-- and tight integration with ADL’s trace bundles.
+- and tight integration with ADL's trace bundles.
 
 ---
 
 ## Design goals
 
-1. **Event‑native memory**: memory is built from *what the agent did/observed*, not from raw chat transcripts.
+1. **Event-native memory**: memory is built from *what the agent did or observed*, not from raw chat transcripts.
 2. **Deterministic and replayable**: memory construction must be reproducible from trace bundles when possible.
 3. **Queryable**: memory must support structured queries (filters, joins, aggregations).
 4. **Composable context**: generate prompt context from layered memory (identity / semantic / episodic / recent).
-5. **Cost‑aware**: maximize stable context prefixes (prompt caching) and minimize tokens.
-6. **Provider‑agnostic**: memory works with any model/provider.
-7. **Safety + integrity**: memory is evidence‑tracked; it should distinguish facts from hypotheses and include provenance.
+5. **Cost-aware**: maximize stable context prefixes (prompt caching) and minimize tokens.
+6. **Provider-agnostic**: memory works with any model/provider.
+7. **Safety + integrity**: memory is evidence-tracked; it should distinguish facts from hypotheses and include provenance.
 
 ---
 
@@ -58,16 +58,16 @@ ADL treats memory as **four distinct layers**, each with a different job:
 
 | Layer | What it is | Question it answers | Where it lives |
 |---|---|---|---|
-| **Working** | The current prompt context | “What am I thinking about now?” | Prompt assembly |
-| **Episodic** | Structured record of experience | “What happened? What did I try?” | ObsMem store |
-| **Semantic** | Consolidated knowledge derived from episodes | “What is true / likely true?” | Knowledge store (derived) |
-| **Procedural** | Skills/strategies derived from reflection | “How should I act next time?” | Policy / strategy store |
+| **Working** | The current prompt context | What am I thinking about now? | Prompt assembly |
+| **Episodic** | Structured record of experience | What happened? What did I try? | ObsMem store |
+| **Semantic** | Consolidated knowledge derived from episodes | What is true or likely true? | Knowledge store (derived) |
+| **Procedural** | Skills/strategies derived from reflection | How should I act next time? | Policy / strategy store |
 
-A powerful agent is not “one memory”. It is **a pipeline from episodic → (semantic + procedural)**.
+A powerful agent is not one memory store. It is **a pipeline from episodic to semantic and procedural memory**.
 
 ---
 
-## High‑level architecture
+## High-level architecture
 
 ```text
                  ┌─────────────────────────────────────┐
@@ -121,9 +121,9 @@ A powerful agent is not “one memory”. It is **a pipeline from episodic → (
 
 ### The conversation fallacy
 
-Systems like “conversation summary memory” (and many RAG memories) store narrative text such as:
+Systems like conversation summary memory, and many RAG memories, store narrative text such as:
 
-- “User asked X; agent tried A, then B.”
+- User asked X; agent tried A, then B.
 
 This is fine for chat UX, but weak for agent cognition.
 
@@ -147,16 +147,16 @@ Therefore **ObsMem must be built from runtime events** (Activation log + trace b
 
 ### Definition
 
-**ObsMem** is ADL’s episodic memory layer: a structured, append‑only record of **observations derived from runtime events**, with provenance.
+**ObsMem** is ADL's episodic memory layer: a structured, append-only record of **observations derived from runtime events**, with provenance.
 
-ObsMem is not just “storage”; it is a contract:
+ObsMem is not just storage; it is a contract:
 
 - what we record,
 - how we index it,
 - how we retrieve it,
 - and how it feeds reflection + adaptive execution.
 
-### Why “observational”
+### Why observational
 
 Because the memory stores *observations about what happened* (evidence) rather than raw transcripts.
 
@@ -189,9 +189,9 @@ ObservationTuple {
 **Key principles:**
 
 1. **Evidence first**: every tuple must link back to trace evidence.
-2. **Structured**: facts are machine‑operable.
-3. **Append‑only**: updates create new tuples; they do not rewrite history.
-4. **Versioned**: schemas evolve; tuples must be forward‑compatible.
+2. **Structured**: facts are machine-operable.
+3. **Append-only**: updates create new tuples; they do not rewrite history.
+4. **Versioned**: schemas evolve; tuples must be forward-compatible.
 
 ---
 
@@ -204,7 +204,7 @@ ADL has a unique advantage: **trace bundles**.
 
 ### Canonical Evidence View
 
-ObsMem should support a canonical “evidence view” for a run:
+ObsMem should support a canonical evidence view for a run:
 
 - activation log entries
 - tool results
@@ -223,17 +223,17 @@ ObsMem needs indices tuned for agent use cases.
 ### Core indices
 
 - **By run_id**: retrieve all observations for a run.
-- **By agent_id**: retrieve agent‑specific history.
+- **By agent_id**: retrieve agent-specific history.
 - **By kind**: failures, tool outcomes, decisions, etc.
 - **By subject**: file path, ticket id, repo path, URL, etc.
 - **By tags**: fast filtering (e.g., `"rust"`, `"borrow_checker"`).
 
 ### Summary surfaces
 
-Two first‑class derived surfaces (mentioned in planning):
+Two first-class derived surfaces (mentioned in planning):
 
 - `run_summary`: concise structured summary of a run
-- `exec_summary`: execution‑centric summary (what happened, what failed, what fixed it)
+- `exec_summary`: execution-centric summary (what happened, what failed, what fixed it)
 
 These can be computed from tuples and stored as derived records.
 
@@ -241,14 +241,14 @@ These can be computed from tuples and stored as derived records.
 
 ## Prompt context assembly
 
-ADL prompt context should be assembled from memory layers in a stable, cache‑friendly structure:
+ADL prompt context should be assembled from memory layers in a stable, cache-friendly structure:
 
 ```text
 [Stable prefix]
   - Agent identity & charter
   - Semantics (high confidence knowledge)
   - Procedural policies (current strategy set)
-  - Long‑lived key observations
+  - Long-lived key observations
 
 [Volatile tail]
   - Recent raw messages / instructions
@@ -260,7 +260,7 @@ ADL prompt context should be assembled from memory layers in a stable, cache‑f
 
 Stable prefixes increase prompt caching hit rates and reduce cost.
 
-> **Note:** Mastra’s Observational Memory demonstrates the economic value of stable windows. ADL should adopt the *cost insight* while keeping ADL’s *event‑native structure*.
+> **Note:** Mastra's Observational Memory demonstrates the economic value of stable windows. ADL should adopt that cost insight while keeping ADL's event-native structure.
 
 ---
 
@@ -321,17 +321,17 @@ The Adaptive Execution Engine is the runtime that:
 - records results in ObsMem,
 - and updates procedural policies (through reflection or online learning).
 
-This is “stick‑to‑itiveness” made portable: **provider‑agnostic persistence**.
+This is stick-to-itiveness made portable: **provider-agnostic persistence**.
 
 ---
 
 ## Comparison: Mastra Observational Memory vs ADL ObsMem
 
-Mastra’s Observational Memory (as referenced in discussion) is a strong example of **conversation compression** and **stable prompt windows**.
+Mastra's Observational Memory (as referenced in discussion) is a strong example of **conversation compression** and **stable prompt windows**.
 
 ### Credit & intent
 
-This document intentionally **credits Mastra** as the originator of the Observational Memory concept (Observer/Reflector, dated compressed log, stable-vs-recent windowing, and the associated prompt-caching economics). ADL’s approach is an implementation variant tailored to our goals (structured tuples, evidence/provenance, deterministic replay), not an attempt to diminish Mastra’s work or business. If you are evaluating memory systems, you should read Mastra’s docs and source first.
+This document intentionally **credits Mastra** as the originator of the Observational Memory concept (Observer/Reflector, dated compressed log, stable-vs-recent windowing, and the associated prompt-caching economics). ADL's approach is an implementation variant tailored to our goals (structured tuples, evidence/provenance, deterministic replay), not an attempt to diminish Mastra's work or business. If you are evaluating memory systems, you should read Mastra's docs and source first.
 
 - Mastra repo: https://github.com/mastra-ai/mastra
 
@@ -351,14 +351,14 @@ This document intentionally **credits Mastra** as the originator of the Observat
 
 ### ADL strengths
 
-- event‑native ingestion (activation log + traces)
+- event-native ingestion (activation log + traces)
 - structured tuples and indices
 - deterministic replay and evidence
 - designed to feed Gödel loop + adaptive execution
 
 ### Synthesis
 
-ADL borrows the *windowing and cache* insight from Mastra while keeping ADL’s core advantage:
+ADL borrows the windowing and cache insight from Mastra while keeping ADL's core advantage:
 
 - **structured episodic memory grounded in evidence**.
 
@@ -373,7 +373,7 @@ For early iterations, a pragmatic store is appropriate.
 Future candidates:
 
 - **DuckDB**: powerful analytical queries
-- **redb**: Rust‑native embedded KV
+- **redb**: Rust-native embedded KV
 - **FoundationDB**: distributed, if/when needed
 
 Key requirement: ability to store tuples + indices + derived summaries.
@@ -418,9 +418,9 @@ Every tuple must include:
 1. **Confidence calibration:** how do we score and update confidence?
 2. **Contradictions:** how do we represent conflicting observations?
 3. **TTL and garbage collection:** which tuples expire and why?
-4. **Cross‑run generalization:** when do episodic facts become semantic facts?
-5. **Multi‑agent sharing:** what is the boundary between private vs shared memory?
-6. **Safety:** what memory items must be redacted or access‑controlled?
+4. **Cross-run generalization:** when do episodic facts become semantic facts?
+5. **Multi-agent sharing:** what is the boundary between private vs shared memory?
+6. **Safety:** what memory items must be redacted or access-controlled?
 
 ---
 
@@ -495,4 +495,4 @@ ADL can:
 - **explain why** (evidence view)
 - **replay and prove** (trace bundles)
 
-This combination—ObsMem + Evidence + Replay + Reflection + Adaptive Execution—is the core of “trust as a platform” for agentic systems.
+This combination - ObsMem + Evidence + Replay + Reflection + Adaptive Execution - is the core of a trustable platform for agentic systems.

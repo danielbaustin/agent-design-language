@@ -1,6 +1,6 @@
 
 
-# ADL v0.8 — EPIC Mapping
+# ADL v0.8 - EPIC Mapping
 
 **Status:** Draft (Living Mapping Document)
 
@@ -25,7 +25,7 @@ It answers:
 
 ---
 
-# 2. EPIC-A — Deterministic Runtime + Replay (v0.75 foundation)
+# 2. EPIC-A - Deterministic Runtime + Replay (v0.75 foundation)
 
 Implements:
 
@@ -35,10 +35,10 @@ Implements:
 
 Sub-epics (conceptual):
 
-- A1 — Deterministic Execution Contract
-- A2 — Activation Log + Replay Runner
-- A3 — Checkpoint / Leasing Scheduler
-- A4 — Failure Taxonomy + Policy Injection
+- A1 - Deterministic Execution Contract
+- A2 - Activation Log + Replay Runner
+- A3 - Checkpoint / Leasing Scheduler
+- A4 - Failure Taxonomy + Policy Injection
 
 Milestone target:
 
@@ -48,7 +48,7 @@ ObsMem and Gödel depend on this EPIC.
 
 ---
 
-# 3. EPIC-B — ObsMem v1 (Operational Memory Foundation)
+# 3. EPIC-B - ObsMem v1 (Operational Memory Foundation)
 
 Implements:
 
@@ -57,10 +57,10 @@ Implements:
 
 Sub-issues (foundation track):
 
-- B1 — Trace Export Bundle v2
-- B2 — Index + Retrieval API v1
-- B3 — Smart RAG over runs
-- B4 — Analytics + reporting
+- B1 - Trace Export Bundle v2
+- B2 - Index + Retrieval API v1
+- B3 - Smart RAG over runs
+- B4 - Analytics + reporting
 
 Dependencies:
 
@@ -72,7 +72,7 @@ Milestone target:
 
 ---
 
-# 4. EPIC-C — Gödel Self-Improvement v1
+# 4. EPIC-C - Godel Self-Improvement v1
 
 Implements:
 
@@ -80,10 +80,10 @@ Implements:
 
 Sub-issues (created via `create_godel_agent_issues_v0.8.sh`):
 
-- G1 — Deterministic Improvement Proposal Engine
-- G2 — Replay-backed Evaluation Harness
-- G3 — Signed Overlay Emission
-- G4 — Artifact Model + Storage Layout
+- G1 - Deterministic Improvement Proposal Engine
+- G2 - Replay-backed Evaluation Harness
+- G3 - Signed Overlay Emission
+- G4 - Artifact Model + Storage Layout
 
 Dependencies:
 
@@ -96,11 +96,11 @@ Milestone target:
 
 ---
 
-# 5. EPIC-D — Authoring Surfaces v1
+# 5. EPIC-D - Authoring Surfaces v1
 
 Primary issue:
 
-- #517 — [v0.8][EPIC] Authoring Surfaces v1
+- #517 - [v0.8][EPIC] Authoring Surfaces v1
 
 Implements:
 
@@ -109,10 +109,10 @@ Implements:
 
 Child issues (authoring track):
 
-- AUTH-1 — NL→ADL Compiler v1
-- AUTH-2 — Interactive Refinement Loop
-- AUTH-3 — Policy Defaults + Budgeting
-- AUTH-4 — Examples + Demo Workflows
+- AUTH-1 - NL->ADL Compiler v1
+- AUTH-2 - Interactive Refinement Loop
+- AUTH-3 - Policy Defaults + Budgeting
+- AUTH-4 - Examples + Demo Workflows
 
 Dependencies:
 
@@ -147,7 +147,7 @@ Important nuance:
 
 # 7. Milestone Strategy
 
-## v0.75 — Infrastructure Lock
+## v0.75 - Infrastructure Lock
 
 Complete:
 
@@ -161,7 +161,7 @@ Do NOT start:
 
 ---
 
-## v0.8 — Product Integration
+## v0.8 - Product Integration
 
 Complete:
 
