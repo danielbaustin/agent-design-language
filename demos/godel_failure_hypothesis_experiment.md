@@ -1,72 +1,106 @@
-# v0.8 Demo: Failure -> Hypothesis -> Experiment
+# v0.8 Demo: Gödel CLI Failure -> Hypothesis -> Experiment
 
 ## Purpose
 
-This demo illustrates the deterministic Gödel scientific loop as documentation artifacts:
+This runbook gives reviewers a deterministic, runnable path through the bounded Gödel CLI surfaces:
 
-1. observed failure
-2. hypothesis from evidence
-3. bounded experiment proposal
+1. `adl godel run`
+2. `adl godel inspect`
+3. `adl godel evaluate`
 
-This is a docs/demo surface only. It does not execute runtime mutation.
+It exercises the failure -> hypothesis -> mutation -> evaluation -> record flow that now persists the bounded v0.8 runtime/schema artifacts.
 
 ## Integration Surfaces
 
 The demo aligns with:
 
-- `docs/milestones/v0.8/EXPERIMENT_RECORD_V1.md` (#609)
-- `docs/milestones/v0.8/CANONICAL_EVIDENCE_VIEW_V1.md` (#610)
-- `docs/milestones/v0.8/MUTATION_FORMAT_V1.md` (#611)
-- `docs/milestones/v0.8/EVALUATION_PLAN_V1.md` (#612)
-- `docs/milestones/v0.8/GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md` (#613)
-- `docs/milestones/v0.8/OBSMEM_INDEXING_SURFACES_V1.md` (#614)
+- `docs/milestones/v0.8/EXPERIMENT_RECORD_V1.md`
+- `docs/milestones/v0.8/CANONICAL_EVIDENCE_VIEW_V1.md`
+- `docs/milestones/v0.8/MUTATION_FORMAT_V1.md`
+- `docs/milestones/v0.8/EVALUATION_PLAN_V1.md`
+- `docs/milestones/v0.8/GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md`
+- `docs/milestones/v0.8/OBSMEM_INDEXING_SURFACES_V1.md`
+- `swarm/src/cli/godel_cmd.rs`
+
+## Commands
+
+Run from repository root.
+
+### 1. Generate the bounded Gödel runtime artifacts
+
+```bash
+rm -rf ./out/godel-cli-demo
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- godel run \
+  --run-id review-godel-cli-001 \
+  --workflow-id wf-godel-loop \
+  --failure-code tool_failure \
+  --failure-summary "deterministic parse failure" \
+  --evidence-ref runs/source-run/run_status.json \
+  --runs-dir ./out/godel-cli-demo/runs
+```
+
+### 2. Inspect the persisted runtime artifacts
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- godel inspect \
+  --run-id review-godel-cli-001 \
+  --runs-dir ./out/godel-cli-demo/runs
+```
+
+### 3. Exercise the bounded evaluator directly
+
+```bash
+cargo run --manifest-path swarm/Cargo.toml --bin adl -- godel evaluate \
+  --failure-code tool_failure \
+  --experiment-result ok \
+  --score-delta 1
+```
 
 ## Deterministic Demo Artifacts
 
-- Failure signal:
-  - `adl-spec/examples/v0.8/demos/godel_failure_signal.v1.example.json`
-- Hypothesis:
-  - `adl-spec/examples/v0.8/demos/godel_hypothesis.v1.example.json`
-- Experiment proposal:
-  - `adl-spec/examples/v0.8/demos/godel_experiment_proposal.v1.example.json`
+- `out/godel-cli-demo/runs/review-godel-cli-001/godel/canonical_evidence_view.v1.json`
+- `out/godel-cli-demo/runs/review-godel-cli-001/godel/mutation.v1.json`
+- `out/godel-cli-demo/runs/review-godel-cli-001/godel/evaluation_plan.v1.json`
+- `out/godel-cli-demo/runs/review-godel-cli-001/godel/experiment_record.v1.json`
+- `out/godel-cli-demo/runs/review-godel-cli-001/godel/experiment_record.runtime.v1.json`
+- `out/godel-cli-demo/runs/review-godel-cli-001/godel/obsmem_index_entry.runtime.v1.json`
 
 ## Loop Walkthrough
 
 ### Stage 1: Failure
 
-The failure artifact records a bounded, deterministic failure summary:
+`adl godel run` starts from a bounded failure description:
 
-- stable identifiers (`run_id`, `workflow_id`, `failure_id`)
-- structured failure class
-- canonical evidence references
+- stable identifiers (`run_id`, `workflow_id`)
+- structured failure class (`failure_code`)
+- canonical evidence references (`--evidence-ref` values)
 
 ### Stage 2: Hypothesis
 
-The hypothesis artifact explains the failure using evidence IDs and deterministic claims:
+The persisted canonical evidence and mutation artifacts capture the deterministic bridge from failure to proposed change:
 
-- one failure class target
-- one explicit causal claim
-- bounded confidence value
-- deterministic links to evidence and prior run references
+- one bounded hypothesis ID
+- one deterministic mutation ID
+- stable references back to the supplied evidence
 
 ### Stage 3: Experiment
 
-The experiment proposal artifact defines a bounded test:
+The evaluation artifacts and CLI summaries expose the bounded decision surface:
 
-- one mutation descriptor (no unconstrained patch language)
 - one evaluation plan reference
-- expected success criteria and stop criteria
-- deterministic ordering fields and stable IDs
+- one deterministic adoption/block decision
+- one persisted experiment record
+- one persisted ObsMem index entry for later retrieval
 
 ## Replay and Audit Notes
 
 - All artifact references are repo-relative.
 - No raw logs, prompts, tool arguments, or secrets are stored.
 - Artifact shape is deterministic for identical input conditions.
-- Runtime execution is intentionally out of scope for this demo.
+- This demo is intentionally bounded to the current CLI/runtime surfaces; it does not claim autonomous runtime mutation execution.
 
 ## Non-goals
 
 - Autonomous hypothesis generation
-- Runtime mutation execution
 - Policy-learning or scheduler changes
+- Cross-run adaptive policy updates

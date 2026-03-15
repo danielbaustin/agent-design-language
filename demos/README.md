@@ -37,6 +37,10 @@ cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet
 - `v0.8-bounded-critical-demos.md`
 - `godel_failure_hypothesis_experiment.md`
 
+Use `godel_failure_hypothesis_experiment.md` for the concrete
+`adl godel run` / `adl godel inspect` / `adl godel evaluate` review path and the
+persisted Gödel schema/runtime artifacts it produces.
+
 ### Historical/runtime fixture inventory
 
 - `../swarm/examples/README.md`

@@ -22,6 +22,10 @@ cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-e-multi-agent-
 cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-f-obsmem-retrieval --run --trace --out ./out
 ```
 
+For the bounded Gödel CLI catch-up surfaces, use the dedicated runbook:
+- `demos/godel_failure_hypothesis_experiment.md`
+- It provides the current repo-root `adl godel run`, `adl godel inspect`, and `adl godel evaluate` sequence against the reorganized demo layout.
+
 ### Inspect-only review surfaces
 
 Inspect these docs/spec artifacts rather than trying to run them:
@@ -60,6 +64,8 @@ Review-surface entries are ordered by:
   - Exercises deterministic card-pipeline artifact flow.
 - `demo-f-obsmem-retrieval`
   - Exercises deterministic retrieval over persisted runtime index entries.
+- `demos/godel_failure_hypothesis_experiment.md`
+  - Exercises the bounded Gödel CLI review flow and the persisted `canonical_evidence_view.v1`, `mutation.v1`, `evaluation_plan.v1`, and `experiment_record.v1` runtime artifacts.
 
 ## Required Validation/Evidence Expectations
 
