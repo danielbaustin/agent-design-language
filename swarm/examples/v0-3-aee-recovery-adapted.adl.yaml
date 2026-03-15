@@ -1,0 +1,28 @@
+version: "0.3"
+
+providers:
+  local_ollama:
+    type: "ollama"
+    config:
+      model: "gemma3:latest"
+
+agents:
+  worker:
+    provider: "local_ollama"
+    model: "gemma3:latest"
+
+tasks:
+  recoverable:
+    prompt:
+      user: "Produce one bounded recovery summary for {{topic}}"
+
+run:
+  name: "v0-3-aee-recovery-adapted"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "recover.summary"
+        agent: "worker"
+        task: "recoverable"
+        inputs:
+          topic: "deterministic retry recovery"

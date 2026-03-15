@@ -22,6 +22,13 @@ cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-e-multi-agent-
 cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-f-obsmem-retrieval --run --trace --out ./out
 ```
 
+For the bounded AEE recovery path, use:
+- `demos/aee-recovery/README.md`
+- It documents the current repo-root failure -> suggestion -> overlay -> recovery flow and the replayable artifacts for both runs.
+
+Bounded Adaptive Execution Demo:
+- `demos/godel_failure_hypothesis_experiment.md`
+
 For the bounded Gödel CLI catch-up surfaces, use the dedicated runbook:
 - `demos/godel_failure_hypothesis_experiment.md`
 - It provides the current repo-root `adl godel run`, `adl godel inspect`, and `adl godel evaluate` sequence against the reorganized demo layout.
@@ -64,6 +71,8 @@ Review-surface entries are ordered by:
   - Exercises deterministic card-pipeline artifact flow.
 - `demo-f-obsmem-retrieval`
   - Exercises deterministic retrieval over persisted runtime index entries.
+- `demos/aee-recovery/README.md`
+  - Exercises bounded retry-policy recovery using a deterministic fail-once provider mock, a retry-budget suggestion, an explicit overlay, and replayable run artifacts.
 - `demos/godel_failure_hypothesis_experiment.md`
   - Exercises the bounded Gödel CLI review flow and the persisted `canonical_evidence_view.v1`, `mutation.v1`, `evaluation_plan.v1`, and `experiment_record.v1` runtime artifacts.
 

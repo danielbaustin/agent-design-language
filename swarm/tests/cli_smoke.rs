@@ -10,6 +10,10 @@ fn fixture_path(rel: &str) -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join(rel)
 }
 
+fn repo_root() -> PathBuf {
+    fixture_path("..")
+}
+
 fn write_temp_adl_yaml() -> PathBuf {
     let yaml_path = fixture_path("tests/fixtures/cli_smoke.adl.yaml");
     let yaml = fs::read_to_string(&yaml_path).expect("read cli_smoke.adl.yaml fixture");
@@ -772,6 +776,145 @@ fn godel_evaluate_produces_deterministic_summary() {
         summary["evaluation_plan_example"],
         "adl-spec/examples/v0.8/evaluation_plan.v1.example.json"
     );
+}
+
+#[test]
+fn bounded_aee_recovery_demo_shows_failure_suggestion_overlay_and_recovery() {
+    let demo_root = unique_test_temp_dir("aee-recovery-demo");
+    let initial_out = demo_root.join("initial");
+    let adapted_out = demo_root.join("adapted");
+    let initial_state = demo_root.join("state-initial");
+    let adapted_state = demo_root.join("state-adapted");
+    let initial_yaml = fixture_path("examples/v0-3-aee-recovery-initial.adl.yaml");
+    let adapted_yaml = fixture_path("examples/v0-3-aee-recovery-adapted.adl.yaml");
+    let overlay = repo_root().join("demos/aee-recovery/retry-budget.overlay.json");
+    let mock = fixture_path("tools/mock_ollama_fail_once.sh");
+    let runs_root = repo_root().join(".adl/runs");
+    let initial_run = runs_root.join("v0-3-aee-recovery-initial");
+    let adapted_run = runs_root.join("v0-3-aee-recovery-adapted");
+
+    let _ = fs::remove_dir_all(&initial_run);
+    let _ = fs::remove_dir_all(&adapted_run);
+    let _ = fs::remove_dir_all(&initial_out);
+    let _ = fs::remove_dir_all(&adapted_out);
+
+    let initial = run_swarm_with_env(
+        &[
+            initial_yaml.to_str().unwrap(),
+            "--run",
+            "--trace",
+            "--out",
+            initial_out.to_str().unwrap(),
+        ],
+        &[
+            ("ADL_OLLAMA_BIN", mock.to_str().unwrap()),
+            ("ADL_AEE_DEMO_STATE_DIR", initial_state.to_str().unwrap()),
+        ],
+    );
+    assert!(
+        !initial.status.success(),
+        "expected initial failure, stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&initial.stdout),
+        String::from_utf8_lossy(&initial.stderr)
+    );
+    let initial_stderr = String::from_utf8_lossy(&initial.stderr);
+    assert!(
+        initial_stderr.contains("attempt 1/1")
+            && initial_stderr.contains("mock aee demo transient failure"),
+        "stderr:\n{initial_stderr}"
+    );
+
+    let suggestions_path = initial_run.join("learning/suggestions.json");
+    let suggestions: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(&suggestions_path).expect("read initial suggestions"),
+    )
+    .expect("parse suggestions");
+    let intents: Vec<&str> = suggestions["suggestions"]
+        .as_array()
+        .expect("suggestions array")
+        .iter()
+        .filter_map(|s| {
+            s.get("proposed_change")
+                .and_then(|p| p.get("intent"))
+                .and_then(|v| v.as_str())
+        })
+        .collect();
+    assert!(
+        intents.contains(&"increase_step_retry_budget"),
+        "suggestions:\n{}",
+        serde_json::to_string_pretty(&suggestions).unwrap()
+    );
+
+    let initial_replay = run_swarm(&[
+        "instrument",
+        "replay",
+        initial_run
+            .join("logs/activation_log.json")
+            .to_str()
+            .unwrap(),
+    ]);
+    assert!(
+        initial_replay.status.success(),
+        "replay stderr:\n{}",
+        String::from_utf8_lossy(&initial_replay.stderr)
+    );
+
+    let adapted = run_swarm_with_env(
+        &[
+            adapted_yaml.to_str().unwrap(),
+            "--run",
+            "--trace",
+            "--overlay",
+            overlay.to_str().unwrap(),
+            "--out",
+            adapted_out.to_str().unwrap(),
+        ],
+        &[
+            ("ADL_OLLAMA_BIN", mock.to_str().unwrap()),
+            ("ADL_AEE_DEMO_STATE_DIR", adapted_state.to_str().unwrap()),
+        ],
+    );
+    assert!(
+        adapted.status.success(),
+        "expected adapted success, stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&adapted.stdout),
+        String::from_utf8_lossy(&adapted.stderr)
+    );
+
+    let overlay_audit = adapted_run.join("learning/overlays/applied_overlay.json");
+    let overlay_source = adapted_run.join("learning/overlays/source_overlay.json");
+    assert!(
+        overlay_audit.is_file(),
+        "missing {}",
+        overlay_audit.display()
+    );
+    assert!(
+        overlay_source.is_file(),
+        "missing {}",
+        overlay_source.display()
+    );
+
+    let summary_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(adapted_run.join("run_summary.json")).unwrap())
+            .expect("parse run_summary");
+    assert_eq!(summary_json["status"], "success");
+
+    let adapted_replay = run_swarm(&[
+        "instrument",
+        "replay",
+        adapted_run
+            .join("logs/activation_log.json")
+            .to_str()
+            .unwrap(),
+    ]);
+    assert!(
+        adapted_replay.status.success(),
+        "replay stderr:\n{}",
+        String::from_utf8_lossy(&adapted_replay.stderr)
+    );
+
+    let _ = fs::remove_dir_all(&initial_run);
+    let _ = fs::remove_dir_all(&adapted_run);
 }
 
 #[test]
