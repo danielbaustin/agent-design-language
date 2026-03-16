@@ -1,6 +1,7 @@
 swarm/issues.csv
 swarm/.local/
 .adl/
+.DS_Store
 
 # Local demo/build artifacts (do not commit)
 out/
