@@ -9,6 +9,7 @@ Branch:
 Context:
 - Issue:
 - PR:
+- Source Issue Card:
 - Docs:
 - Other:
 
@@ -34,8 +35,12 @@ model:
 inputs:
   sections:
     - goal
+    - required_outcome
     - acceptance_criteria
     - inputs
+    - target_files_surfaces
+    - validation_plan
+    - demo_proof_requirements
     - constraints_policies
     - system_invariants
     - reviewer_checklist
@@ -50,6 +55,11 @@ constraints:
   include_reviewer_checklist: true
   disallow_secrets: true
   disallow_absolute_host_paths: true
+automation_hints:
+  source_issue_card_required: true
+  target_files_surfaces_recommended: true
+  validation_plan_required: true
+  required_outcome_type_supported: true
 review_surfaces:
   - card_review_checklist.v1
   - card_review_output.v1
@@ -66,13 +76,36 @@ Execution:
 - Provider:
 - Tools allowed:
 - Sandbox / approvals:
+- Source issue-card slug:
+- Required outcome type:
+- Demo required:
 
 ## Goal
+
+## Required Outcome
+
+- State whether this issue must ship code, docs, tests, demo artifacts, or a combination.
+- If docs-only completion is acceptable, say so explicitly.
+- If a runnable demo or proof surface is required, say so explicitly.
 
 ## Acceptance Criteria
 
 ## Inputs
 - 
+
+## Target Files / Surfaces
+- Likely files, modules, docs, commands, schemas, or artifacts to modify or validate
+
+## Validation Plan
+- Required commands:
+- Required tests:
+- Required artifacts / traces:
+- Required reviewer or demo checks:
+
+## Demo / Proof Requirements
+- Required demo(s):
+- Required proof surface(s):
+- If no demo is required, say why:
 
 ## Constraints / Policies
 - Determinism requirements:
@@ -99,14 +132,20 @@ ci_validation_required: true
 ## Card Automation Hooks (prompt generation)
 - Prompt source fields:
   - Goal
+  - Required Outcome
   - Acceptance Criteria
   - Inputs
+  - Target Files / Surfaces
+  - Validation Plan
+  - Demo / Proof Requirements
   - Constraints / Policies
   - System Invariants
   - Reviewer Checklist
 - Generation requirements:
   - Deterministic output for identical input card content
   - No secrets, tokens, or absolute host paths in generated prompt text
+  - Preserve traceability back to the source issue card
+  - Preserve explicit required-outcome and demo/proof requirements
 
 ## Non-goals / Out of scope
 
@@ -114,5 +153,6 @@ ci_validation_required: true
 
 ## Instructions to the Agent
 - Read this file.
+- Read the linked source issue card before starting work.
 - Do the work described above.
 - Write results to the paired output card file.
