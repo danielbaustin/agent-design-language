@@ -7,12 +7,12 @@
 ## Metadata
 - Milestone: `v0.85`
 - Version: `0.85`
-- Date: `2026-03-10`
+- Date: `2026-03-16`
 - Owner: `Daniel Austin / Agent Logic`
-- Related issues: `#674, #716, #730, #735, #559, #681`
+- Related issues: `#886, #674, #716, #743, #748, #749, #750, #751, #752, #866-#882`
 
 ## Purpose
-Define the major design directions for v0.85, with emphasis on bounded operational maturity, dependable execution, verifiable inference, stronger authoring and review surfaces, Adaptive Execution Engine progress, and an initial affective / emotion-model substrate. This document is intended to anchor scattered milestone planning material into one coherent design statement.
+Define the major design directions for v0.85, with emphasis on bounded operational maturity, dependable execution, verifiable inference, stronger authoring and review surfaces, Adaptive Execution Engine progress, Gödel runtime progress, and a minimal working affective-reasoning substrate. This document anchors the revised four-sprint, twenty-five-work-package milestone structure into one coherent design statement.
 
 ## Problem Statement
 v0.8 established a strong conceptual and architectural substrate for ADL, but the system still lacks several capabilities required for practical, trustworthy use by serious teams.
@@ -20,10 +20,11 @@ v0.8 established a strong conceptual and architectural substrate for ADL, but th
 The main gaps are:
 
 - execution remains stronger conceptually than operationally, especially for queueing, checkpointing, and distributed work
-- review and authoring surfaces are still too manual
+- review and authoring surfaces are still too manual and do not yet provide first-class editors
 - dependable execution and verifiable inference need stronger first-class representation in tooling and documentation
 - the Adaptive Execution Engine (AEE) has been conceptually deferred for several releases and must advance materially in v0.85
-- the emerging emotion / affect model is not yet represented as a disciplined design surface even though it may become important to bounded cognition, evaluation signals, and agent priority handling
+- the emerging emotion / affect model is not yet represented as a disciplined working surface even though it may become important to bounded cognition, evaluation signals, and agent priority handling
+- the Gödel issue set (`#748` through `#752`) exists, but needs to become a first-class milestone track rather than floating beside the work-package structure
 
 v0.85 therefore exists to convert ADL from a compelling substrate into a more usable, scalable, and trustworthy platform.
 
@@ -32,10 +33,12 @@ A secondary problem is documentation fragmentation itself: milestone intent is c
 ## Goals
 - Advance ADL toward a practical execution substrate with deterministic queueing, checkpointing, resumability, and cluster-oriented work distribution.
 - Make dependable execution and verifiable inference explicit design principles across runtime, artifacts, and positioning.
-- Improve authoring and review ergonomics without weakening structure.
+- Improve authoring and review ergonomics without weakening structure, including first real editor surfaces and editing/review GPT assets.
 - Move the Adaptive Execution Engine forward as a major milestone theme rather than continuing to defer it.
-- Establish a bounded affective / emotion-model design surface that can later influence evaluation, priority handling, and adaptive behavior.
+- Elevate Gödel issues `#748` through `#752` into a central milestone track for deterministic hypothesis generation, bounded adaptation, prioritization, cross-workflow learning, and evaluation-report artifacts.
+- Establish a bounded affective / emotion-model surface that is minimal, working, demoable, and able to influence evaluation, priority handling, and adaptive behavior.
 - Reduce milestone-planning ambiguity by making design intent, scope, and validation language consistent across the canonical v0.85 doc set.
+- Align the live issue graph to the revised twenty-five-work-package milestone structure under the `#886` umbrella.
 - Finish the milestone with an explicit active-surface `swarm` -> `adl` cutover once the rest of the code and review work has stabilized.
 
 ## Non-Goals
@@ -47,14 +50,20 @@ A secondary problem is documentation fragmentation itself: milestone intent is c
 ## Scope
 ### In scope
 - Deterministic queue and checkpoint design/implementation work.
+- Queue/checkpoint/steering planning must explicitly treat `#674` as canonical and absorb or supersede placeholder issue `#867`.
 - Cluster / distributed execution planning and initial execution substrate improvements.
 - Prompt Spec completeness and stronger authoring surfaces.
-- Card Reviewer GPT stabilization.
+- First editor surfaces for issue prompts and input/output cards.
+- Editing/review GPT stabilization and reusable review assets.
 - Bounded AEE progress: retry policy, adaptation surfaces, strategy loop integration, experiment lifecycle support.
 - Trust surfaces: dependable execution, verifiable inference, artifact provenance, replayability.
-- A bounded emotion / affect model design that fits the Gödel–Hadamard–Bayes architecture.
+- Gödel runtime progress through issues `#748` through `#752`.
+- A bounded emotion / affect model that fits the Gödel–Hadamard–Bayes architecture and is concrete enough to demo.
+- Reasoning-graph integration with affect and hypothesis behavior.
+- A milestone demo program with multiple runnable proof surfaces, including steering/queueing, HITL/editor/review flow, and affect-plus-Gödel behavior.
 - Positioning and philosophy docs that clarify why ADL chooses stronger guarantees and explicit artifacts.
 - Milestone-document alignment across the canonical v0.85 planning artifacts, especially design/scope/validation language.
+- Explicit split of the milestone endgame into docs consistency, internal review, external review, remediation, release ceremony, and next-milestone planning.
 - Final active-surface identity cutover as documented in `SWARM_REMOVAL_PLANNING.md`, executed only after the major code and review changes for v0.85 are otherwise complete.
 
 ### Out of scope
@@ -68,10 +77,14 @@ A secondary problem is documentation fragmentation itself: milestone intent is c
 ### Functional
 - ADL must support stronger deterministic execution management, including queue/checkpoint/resume surfaces.
 - ADL must improve authoring and validation surfaces for prompts, cards, and workflows.
+- ADL must provide at least initial working editor surfaces for issue prompts and input/output cards.
 - ADL must make review and artifact validation more reliable.
 - ADL must advance bounded adaptive execution so it is materially closer to operational use.
-- ADL must define an initial emotion / affect representation that is compatible with later cognitive work.
+- ADL must advance Gödel runtime behavior through the canonical issue set `#748` through `#752`.
+- ADL must define a minimal working emotion / affect representation that is compatible with later cognitive work.
+- ADL must provide a bounded affect/reasoning/Gödel demo slice that emits legible artifacts.
 - ADL milestone planning documents for v0.85 must present materially consistent scope, trust, AEE, and affect-model intent within the canonical `docs/milestones/v0.85/` directory.
+- ADL milestone planning documents must present one coherent four-sprint, twenty-five-work-package structure with explicit issue-graph alignment.
 
 ### Non-functional
 - Deterministic behavior and reproducible outputs.
@@ -82,14 +95,12 @@ A secondary problem is documentation fragmentation itself: milestone intent is c
 
 ## Proposed Design
 ### Overview
-v0.85 is organized around six mutually reinforcing tracks:
+v0.85 is organized as a four-sprint, twenty-five-work-package program:
 
-1. **Execution substrate** — deterministic queueing, checkpointing, resumability, and cluster execution.
-2. **Authoring surfaces** — Prompt Spec completeness, HTML/card-based authoring, validation and linting.
-3. **Trust and verification** — dependable execution, verifiable inference, replay bundles, and review surfaces.
-4. **Cognitive substrate** — bounded AEE progress, hypothesis/experiment support, and a first affective model.
-5. **Operational maturity** — Card Reviewer GPT stabilization, clearer issue/card workflows, and cleaner milestone documentation.
-6. **Planning coherence** — tighter alignment of design, WBS, decisions, release, and milestone-checklist language across split documentation locations.
+1. **Sprint 1: execution substrate and milestone alignment** — milestone reorganization, deterministic queueing/checkpointing/steering, cluster groundwork, and process cleanup.
+2. **Sprint 2: authoring surfaces and review tooling** — Prompt Spec improvements, first editor surfaces, and stronger editing/review GPT workflows.
+3. **Sprint 3: Gödel, affect, reasoning graphs, and AEE progress** — deterministic hypothesis generation, bounded adaptive Gödel behavior, experiment prioritization, cross-workflow learning, promotion/eval artifacts, affect engine work, reasoning-graph integration, and a runnable affect/Gödel vertical slice.
+4. **Sprint 4: demos, quality, review, release, and next-step planning** — demo program, quality gate, docs consistency, internal review, external review, remediation, release ceremony, and next-milestone planning.
 
 The design principle across all tracks is that ADL should move toward a system whose behavior is increasingly:
 
@@ -101,14 +112,22 @@ The design principle across all tracks is that ADL should move toward a system w
 
 The `swarm` -> `adl` repository cutover is intentionally sequenced at the end of the milestone rather than treated as parallel background churn. The repo still carries many path-sensitive `swarm/...` assumptions, so executing the cutover late reduces merge-conflict pressure while substantive runtime, trust, and authoring work is still landing.
 
+The issue-graph rule for this milestone is:
+
+- every work package must map to one canonical issue
+- every canonical issue should belong to one work package
+- the provisional generated issue set `#866` through `#882` is useful scaffolding, but the canonical milestone structure is the revised twenty-five-work-package model under `#886`
+
 ### Interfaces / Data contracts
 - **Queue / checkpoint contracts**: deterministic run identity, queue state, retry state, checkpoint state, and resumability invariants.
 - **Prompt Spec contracts**: explicit authoring fields for actor, model, inputs, outputs, constraints, and review surfaces.
 - **Review artifacts**: machine-readable review outputs and consistent card/output structures.
 - **AEE interfaces**: bounded strategy-loop hooks, retry/adaptation policy surfaces, and experiment lifecycle integration points.
 - **Emotion / affect surfaces**: explicit state or signal representation for priorities, tensions, and evaluation guidance.
+- **Gödel interfaces**: deterministic hypothesis artifacts, promotion/eval artifacts, prioritization traces, and bounded adaptive-loop state.
 - **Trust surfaces**: replay bundles, provenance markers, validation artifacts, and evidence-linked output structures.
 - **Planning contracts**: consistent terminology and scope boundaries across design, WBS, decisions, checklist, and release artifacts.
+- **Demo contracts**: bounded demos for major runtime, editor, and cognitive surfaces, especially steering/queueing, HITL/editor/review flow, and affect-plus-Gödel behavior.
 
 ### Execution semantics
 The execution semantics for v0.85 remain centered on deterministic workflow behavior.
@@ -116,8 +135,10 @@ The execution semantics for v0.85 remain centered on deterministic workflow beha
 New or strengthened behavior should obey the following principles:
 
 - queue and checkpoint behavior must not weaken deterministic replay guarantees
+- steering behavior must remain replay-compatible and explicitly tied to canonical issue `#674`
 - retry and adaptation must remain bounded, explicit, and policy-driven
 - affective or emotional signals must not become hidden nondeterministic state; they must appear as inspectable inputs to evaluation or prioritization
+- Gödel runtime progress must emit inspectable artifacts rather than remain at the level of conceptual narrative
 - distributed execution must preserve explicit ownership, claims, and resumability semantics
 - authoring improvements must generate more reliable artifacts, not more ambiguous ones
 - milestone-planning updates must reduce source-of-truth ambiguity rather than create additional overlapping statements
@@ -149,15 +170,15 @@ New or strengthened behavior should obey the following principles:
   - Tradeoff: saves time in the short term, but increases confusion about milestone intent and makes later cleanup harder.
 
 ## Validation Plan
-- Checks/tests: milestone issue tree, implementation cards, deterministic validation commands, replay and provenance checks where applicable, reviewer artifact checks, bounded design doc review for the emotion model, and cross-checking of v0.85 planning language across split document locations.
-- Success metrics: v0.85 materially improves execution maturity, reviewer reliability, authoring usability, and AEE concreteness; the emotion model is represented as a disciplined design surface rather than an untracked idea.
+- Checks/tests: milestone issue tree, implementation cards, deterministic validation commands, replay and provenance checks where applicable, reviewer artifact checks, editor/demo verification, bounded design review for the affect model, and cross-checking of v0.85 planning language across split document locations.
+- Success metrics: v0.85 materially improves execution maturity, reviewer reliability, authoring usability, Gödel concreteness, and AEE progress; the affect model is represented as a bounded working substrate rather than an untracked idea.
 - Rollback/fallback: if a sub-track becomes too ambitious, reduce it to explicit design docs and bounded artifacts rather than forcing partial uncontrolled implementation.
 
 ## Exit Criteria
 - Goals/non-goals and scope boundaries are explicit.
 - Validation plan is actionable and referenced by the milestone checklist.
 - Major open questions are resolved or tracked in the decision log.
-- v0.85 clearly advances AEE, reviewer reliability, and authoring maturity.
-- The emotion / affect model has a disciplined design artifact and an agreed bounded role in the architecture.
-- The major v0.85 planning documents no longer materially contradict one another on scope, trust, AEE, or affect-model intent.
+- v0.85 clearly advances AEE, reviewer reliability, authoring maturity, and Gödel runtime capability.
+- The emotion / affect model has a minimal working artifact, a bounded role in the architecture, and a demoable proof path.
+- The major v0.85 planning documents no longer materially contradict one another on scope, trust, AEE, Gödel emphasis, editor expectations, demo expectations, or affect-model intent.
 - The milestone positions ADL to enter v0.9 with nearly all base features in place.

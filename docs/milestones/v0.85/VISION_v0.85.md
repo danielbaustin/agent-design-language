@@ -71,6 +71,22 @@ v0.85 advances ADL in five major areas:
 
 These five areas are not independent. Together they define the current architectural stage of ADL.
 
+## Milestone Shape
+
+The canonical v0.85 structure is now a four-sprint, twenty-five-work-package program:
+
+1. Sprint 1: milestone reorganization and execution substrate
+2. Sprint 2: authoring surfaces and review tooling
+3. Sprint 3: Gödel, affect, reasoning graphs, and AEE/runtime progress
+4. Sprint 4: demos, quality gate, review, release, and next-milestone planning
+
+This structure exists so the milestone produces visible capability, not only planning refinement. In particular:
+
+- `#886` is the umbrella reorganization issue until the issue graph is aligned.
+- `#674` is the canonical queue/checkpoint/steering issue.
+- Gödel issues `#748` through `#752` are central milestone work, not optional extras.
+- the provisional generated issue set `#866` through `#882` is useful scaffolding, but not the final source of truth.
+
 ---
 
 ## Architectural Shape of ADL in v0.85
@@ -138,10 +154,10 @@ v0.85 strengthens the authoring model through:
 - structured prompt improvements
 - Prompt Spec completeness and validation
 - HTML authoring interface work
-- card editor support for input/output cards
+- real editor surfaces for issue prompts and input/output cards
 - workflow visualization
 - linting and validation for ADL artifacts
-- stronger connections between prompts, cards, and review surfaces
+- stronger connections between prompts, cards, review surfaces, and editing/review GPT assets
 
 The goal is to move from raw file editing toward **guided authoring surfaces** that still preserve ADL’s explicitness.
 
@@ -200,6 +216,7 @@ Key capabilities in this area include:
 - bounded mutation mechanisms
 - structured reasoning representations
 - better integration between memory, reasoning, and evaluation
+- concrete progress on Gödel issues `#748` through `#752` as the first meaningful hypothesis-engine milestone
 
 ### Reasoning Graphs
 
@@ -241,6 +258,13 @@ Within the v0.85 doc set, the distinction should become clearer:
 
 Taken together, these documents define a bounded evaluation layer rather than anthropomorphic claims.
 
+v0.85 should also produce a minimal working affect substrate, not only a design framing. The milestone should leave behind:
+
+- a minimal working affect engine with explicit state and update rules
+- emitted artifacts or traces showing affect state in use
+- explicit linkage between affect, reasoning graphs, and Gödel-style hypothesis work
+- a bounded demo where affect changes ranking, evaluation, prioritization, or related reasoning behavior in a legible way
+
 ---
 
 ## 5. Operational Maturity
@@ -250,6 +274,7 @@ To support real-world use, v0.85 must improve operational tooling and milestone 
 Important targets include:
 
 - Card Reviewer GPT stabilization
+- working issue/card editor surfaces
 - improved review workflows
 - better CI validation surfaces
 - clearer milestone documentation
@@ -316,6 +341,18 @@ The AEE is responsible for ensuring that learning and adaptation remain:
 - subordinate to explicit policy constraints
 
 This keeps the system aligned with ADL’s core design philosophy: adaptation must increase capability without dissolving trust.
+
+## Proof Through Demos
+
+The milestone must prove its claims through multiple runnable bounded demos. At minimum, the demo program should include:
+
+- a steering/queueing/checkpoint proof surface
+- a HITL/editor/review workflow proof surface
+- a Gödel hypothesis-engine proof surface
+- an affect-engine proof surface
+- an integrated affect-plus-Gödel proof surface
+
+The purpose of these demos is not marketing polish. They are milestone evidence that the runtime, authoring, trust, and cognitive claims are backed by working behavior.
 
 ---
 

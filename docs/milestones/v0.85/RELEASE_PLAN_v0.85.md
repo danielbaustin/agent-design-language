@@ -8,7 +8,7 @@
 
 ## How To Use
 - Execute sections in order and capture links for each completed step.
-- Keep this document focused on **release mechanics**, not milestone narrative.
+- Keep this document focused on release mechanics, not milestone narrative.
 - Use `RELEASE_NOTES_v0.85.md` for descriptive content.
 - If a blocker appears, stop the process and record it explicitly.
 
@@ -19,15 +19,21 @@
 Before beginning the release process the following must be true:
 
 - [ ] Milestone checklist complete (`MILESTONE_CHECKLIST_v0.85.md`)
+- [ ] Documentation consistency pass completed
 - [ ] Internal review completed
 - [ ] External review completed
-- [ ] Review findings resolved or explicitly deferred
+- [ ] Review findings remediation completed or explicit deferrals recorded
 - [ ] Release notes approved (`RELEASE_NOTES_v0.85.md`)
-- [ ] Go / No‑Go decision recorded in decision log (`DECISIONS_v0.85.md`)
+- [ ] Go / No-Go decision recorded in decision log (`DECISIONS_v0.85.md`)
+- [ ] Required demo proof surfaces reviewed:
+  - steering/queueing/checkpoint
+  - HITL/editor/review flow
+  - Gödel runtime behavior
+  - affect-plus-Gödel/reasoning behavior
 
-These steps correspond to the **Release Tail** defined in the milestone sprint plan.
+These steps correspond to the Sprint 4 closeout path in the milestone plan.
 
-The final active-surface `swarm` -> `adl` cutover is part of that release tail. It should be executed only after the other v0.85 code changes, review findings, and milestone docs have otherwise stabilized.
+The final active-surface `swarm` -> `adl` cutover is part of that closeout path. It should be executed only after the other v0.85 code changes, review findings, and milestone docs have otherwise stabilized.
 
 ---
 
@@ -65,11 +71,11 @@ Create the GitHub release artifact.
 
 ---
 
-# 4) Post‑Release Verification
+# 4) Post-Release Verification
 
 Confirm that the release is valid and visible.
 
-- [ ] Post‑release CI run verified
+- [ ] Post-release CI run verified
 - [ ] Documentation links tested
 - [ ] Release notes formatting verified
 - [ ] Repository state confirmed stable
@@ -98,6 +104,15 @@ Optional (depending on project stage):
 
 ---
 
+# 6) Closeout and Next Milestone Planning
+
+- [ ] Milestone / epic issues closed with release links
+- [ ] Deferred items moved to the next milestone backlog
+- [ ] Next milestone planning docs/templates prepared before milestone closure
+- [ ] Retrospective summary recorded
+
+---
+
 # Exit Criteria
 
 The release process is complete when:
@@ -106,6 +121,8 @@ The release process is complete when:
 - The GitHub Release is published.
 - CI is green after the release.
 - Release notes and links are verified.
+- Required demo proof surfaces have been reviewed as milestone evidence.
 - No unknown critical regressions remain.
+- Next milestone planning is ready before v0.85 is considered fully closed.
 
-At that point the milestone can be considered **successfully shipped**.
+At that point the milestone can be considered successfully shipped.
