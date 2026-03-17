@@ -21,80 +21,91 @@ Deliver v0.85 as the milestone where ADL transitions from an experimental substr
 - verifiable inference surfaces
 - stronger authoring and tooling surfaces
 - bounded Adaptive Execution Engine progress
-- early cognitive substrate work (affect model + reasoning graph foundations)
+- first practical Gödel runtime progress
+- a minimal working affect engine and reasoning-graph integration
+- a stronger demo program that proves the milestone with runnable bounded examples
 
 ## Sprint Structure
-v0.85 is organized into **three implementation sprints plus a release tail**.
+v0.85 is organized into **four explicit sprints**.
 
-### Sprint 1 — Planning Alignment + Runtime Foundations
+### Sprint 1 — Milestone Reorganization + Execution Substrate
 Goal:
-Finalize milestone planning artifacts and begin the core runtime infrastructure improvements required for dependable execution.
+Finalize milestone planning artifacts and begin the core execution-substrate improvements required for dependable execution.
 
 Scope:
-- WP-01 Design pass (planning alignment)
-- WP-02 Runtime reliability improvements
-- WP-03 Deterministic queue / checkpoint surfaces
-- WP-04 Retry / backoff / bounded adaptation surfaces
+- WP-01 Milestone reorganization and docs alignment
+- WP-02 Deterministic queue / checkpoint / steering substrate
+- WP-03 Cluster / distributed execution groundwork
+- WP-04 Prompt Spec completeness for editors
 
-### Sprint 2 — Authoring + Trust Surfaces
+### Sprint 2 — Authoring Surfaces + Review Tooling
 Goal:
-Strengthen the development workflow and improve the trust and verification infrastructure around ADL artifacts.
+Make authoring and review materially easier with real tools.
 
 Scope:
-- WP-05 Prompt Spec completeness improvements
-- WP-06 Authoring and tooling improvements
-- WP-07 Artifact validation and verification improvements
-- WP-08 Review and CI surfaces
+- WP-05 First authoring/editor surfaces
+- WP-06 Editing and review GPT/tooling surfaces
+- WP-07 Dependable execution runtime surfaces
+- WP-08 Verifiable inference runtime surfaces
 
-### Sprint 3 — Cognitive Substrate (Gödel + Affect)
+### Sprint 3 — Gödel, Affect, Reasoning Graphs, and AEE Progress
 Goal:
-Advance the cognitive architecture that supports Gödel-style experimentation and adaptive reasoning.
+Deliver the milestone's major cognitive/runtime leap.
 
 Scope:
-- WP-09 Hypothesis engine foundations
-- WP-10 Reasoning graph schema
-- WP-11 ObsMem integration for reasoning artifacts
-- WP-12 Affective reasoning / evaluation signals
+- WP-09 Adaptive Execution Engine bounded progress
+- WP-10 Deterministic hypothesis generation engine
+- WP-11 Policy-learning and adaptive Gödel loop
+- WP-12 Experiment prioritization and strategy confidence
+- WP-13 Cross-workflow learning and recursive improvement
+- WP-14 Promotion and eval-report artifact loop
+- WP-15 Affect engine core
+- WP-16 Reasoning graph and affect integration
+- WP-17 Affect-plus-Gödel vertical slice
 
-### Release Tail — Demos, Quality Gate, Docs Alignment, Review, Ceremony, Final Cutover
+### Sprint 4 — Demos, Quality Gate, Review, Release, and Next-Milestone Planning
 Goal:
-Stabilize the milestone, validate demonstrations, enforce quality gates, converge documentation, execute internal and external reviews, perform the release ceremony, and then execute the final active-surface `swarm` -> `adl` cutover once the rest of the milestone is settled.
+Prove the milestone, complete review and release work, and plan the next milestone cleanly.
 
 Scope:
-- WP-13 Demo matrix + integration demos
-- WP-14 Coverage / quality gate
-- WP-15 Docs alignment + review sequence
-  - Step 1: docs consistent
-  - Step 2: internal review
-  - Step 3: external review
-- Review findings / fixes
-- WP-16 Release ceremony
-- WP-17 Final `swarm` -> `adl` cutover
-  - run only after other code changes are complete or effectively frozen
-  - use `SWARM_REMOVAL_PLANNING.md` as the execution checklist
+- WP-18 Demo program for v0.85 features
+- WP-19 Coverage / quality gate
+- WP-20 Documentation consistency pass
+- WP-21 Internal review
+- WP-22 External review
+- WP-23 Review findings remediation
+- WP-24 Release ceremony
+- WP-25 Next milestone planning
+- Final `swarm` -> `adl` cutover runs only after the rest of the milestone is stable and should follow `SWARM_REMOVAL_PLANNING.md`
 
 ## Work Plan
 | Order | Item | Issue | Owner | Status |
 |---|---|---|---|---|
-| 1 | WP-01 Design pass (planning alignment) | #674 | Daniel / Codex | Planned |
-| 2 | WP-02 Runtime reliability improvements | TBD | Daniel / Codex | Planned |
-| 3 | WP-03 Deterministic queue / checkpoint surfaces | TBD | Daniel / Codex | Planned |
-| 4 | WP-04 Retry / adaptation surfaces | TBD | Daniel / Codex | Planned |
-| 5 | WP-05 Prompt Spec completeness | #716 | Daniel / Codex | Planned |
-| 6 | WP-06 Authoring / tooling improvements | TBD | Daniel / Codex | Planned |
-| 7 | WP-07 Artifact validation / verification | #729 | Daniel / Codex | Planned |
-| 8 | WP-08 Review and CI surfaces | TBD | Daniel / Codex | Planned |
-| 9 | WP-09 Hypothesis engine foundations | #748 | Daniel / Codex | Planned |
-| 10 | WP-10 Reasoning graph schema | #750 | Daniel / Codex | Planned |
-| 11 | WP-11 ObsMem reasoning integration | #751 | Daniel / Codex | Planned |
-| 12 | WP-12 Affective reasoning model | #752 | Daniel / Codex | Planned |
-| 13 | WP-13 Demo matrix + integration demos | TBD | Daniel / Codex | Planned |
-| 14 | WP-14 Coverage / quality gate | TBD | Daniel / Codex | Planned |
-| 15 | WP-15 Docs alignment + review sequence | TBD | Daniel / Codex | Planned |
-| 16 | Internal review pass | TBD | Daniel / reviewers | Planned |
-| 17 | External review pass | TBD | Daniel / external reviewer | Planned |
-| 18 | WP-16 Release ceremony | TBD | Daniel / Codex | Planned |
-| 19 | WP-17 Final `swarm` -> `adl` cutover | TBD | Daniel / Codex | Planned |
+| 1 | WP-01 Milestone reorganization and docs alignment | #886 | Daniel / Codex | In progress |
+| 2 | WP-02 Deterministic queue / checkpoint / steering substrate | #674 | Daniel / Codex | Planned |
+| 3 | WP-03 Cluster / distributed execution groundwork | #868 provisional remap | Daniel / Codex | Planned |
+| 4 | WP-04 Prompt Spec completeness for editors | #716 / #869 provisional remap | Daniel / Codex | Planned |
+| 5 | WP-05 First authoring/editor surfaces | #870 provisional remap | Daniel / Codex | Planned |
+| 6 | WP-06 Editing and review GPT/tooling surfaces | #871 provisional remap | Daniel / Codex | Planned |
+| 7 | WP-07 Dependable execution runtime surfaces | #872 provisional remap | Daniel / Codex | Planned |
+| 8 | WP-08 Verifiable inference runtime surfaces | #873 provisional remap | Daniel / Codex | Planned |
+| 9 | WP-09 Adaptive Execution Engine bounded progress | #874 provisional remap | Daniel / Codex | Planned |
+| 10 | WP-10 Deterministic hypothesis generation engine | #748 | Daniel / Codex | Planned |
+| 11 | WP-11 Policy-learning and adaptive Gödel loop | #749 | Daniel / Codex | Planned |
+| 12 | WP-12 Experiment prioritization and strategy confidence | #750 | Daniel / Codex | Planned |
+| 13 | WP-13 Cross-workflow learning and recursive improvement | #751 | Daniel / Codex | Planned |
+| 14 | WP-14 Promotion and eval-report artifact loop | #752 | Daniel / Codex | Planned |
+| 15 | WP-15 Affect engine core | #875 provisional remap | Daniel / Codex | Planned |
+| 16 | WP-16 Reasoning graph and affect integration | #876 provisional remap | Daniel / Codex | Planned |
+| 17 | WP-17 Affect-plus-Gödel vertical slice | #877 provisional remap | Daniel / Codex | Planned |
+| 18 | WP-18 Demo program for v0.85 features | #743 / #878 provisional remap | Daniel / Codex | Planned |
+| 19 | WP-19 Coverage / quality gate | #879 provisional remap | Daniel / Codex | Planned |
+| 20 | WP-20 Documentation consistency pass | #880 provisional remap | Daniel / Codex | Planned |
+| 21 | WP-21 Internal review | New follow-on issue under #886 | Daniel / reviewers | Planned |
+| 22 | WP-22 External review | New follow-on issue under #886 | Daniel / external reviewer | Planned |
+| 23 | WP-23 Review findings remediation | New follow-on issue under #886 | Daniel / Codex | Planned |
+| 24 | WP-24 Release ceremony | New follow-on issue under #886 | Daniel / Codex | Planned |
+| 25 | WP-25 Next milestone planning | New follow-on issue under #886 | Daniel / Codex | Planned |
 
 ## Cadence Expectations
 - Each WP should have its own issue, branch, worktree, and input/output cards.
@@ -102,6 +113,7 @@ Scope:
 - Documentation should converge before formal review begins.
 - Once review begins, milestone docs should remain stable except for explicit review findings.
 - Demos should be runnable with deterministic, CI-friendly commands when possible.
+- The milestone should explicitly prove steering/queueing, HITL/editor/review flow, and affect-plus-Gödel behavior through bounded demos.
 - The final `swarm` -> `adl` cutover should happen after the milestone’s other code changes have settled, not in parallel with high-churn feature work.
 
 ## Risks / Dependencies
@@ -119,17 +131,19 @@ Scope:
 
 ## Demo / Review Plan
 - Demo artifacts:
-  - reasoning graph example
-  - hypothesis evaluation loop example
+  - steering / queueing / checkpoint example
   - authoring + verification workflow example
+  - Gödel hypothesis-engine example
+  - affect-engine example
+  - affect-plus-Gödel reasoning example
 
 - Review sequence:
-  1. Internal planning and design convergence
-  2. Documentation alignment
-  3. Internal review
-  4. External review
-  5. Fix findings / explicit deferrals
-  6. Release ceremony
+  1. Documentation consistency pass
+  2. Internal review
+  3. External review
+  4. Fix findings / explicit deferrals
+  5. Release ceremony
+  6. Next milestone planning
 
 - Sign-off owners:
   - Daniel Austin
@@ -141,4 +155,5 @@ Scope:
 - CI is green for merged work.
 - Major v0.85 planning docs are internally consistent.
 - Internal and external reviews are completed before release ceremony.
+- Required demo proof surfaces are present and reviewable.
 - Sprint outcomes are captured in milestone documentation.

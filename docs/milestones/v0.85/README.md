@@ -7,7 +7,35 @@ Use this directory for:
 - milestone design and planning
 - architecture and substrate notes
 - release planning and checklist artifacts
-- v0.85 rationale and schema-direction docs
+- rationale, schema, and execution-model docs that define the public shape of v0.85
+
+## Canonical Milestone Shape
+
+The canonical v0.85 plan is the revised four-sprint, twenty-five-work-package structure being reconciled under issue `#886`.
+
+The most important tracker rules are:
+
+- `#886` is the umbrella milestone-reorganization issue until the issue graph is fully aligned.
+- `#674` is the canonical queue/checkpoint/steering issue.
+- `#867` is placeholder/duplicate queueing material to absorb, supersede, or close in favor of `#674`.
+- Gödel issues `#748` through `#752` are first-class milestone work packages, not side issues.
+- The provisional generated issue set `#866` through `#882` must be absorbed or remapped to fit the canonical twenty-five-work-package structure.
+
+## Required Proof Surfaces
+
+v0.85 is not a docs-only milestone. The canonical plan requires:
+
+- real queue/checkpoint/steering progress with replay-compatible proof surfaces
+- first practical authoring/editor surfaces
+- stronger editing/review tooling
+- first meaningful Gödel hypothesis-engine progress
+- a minimal working affect engine integrated with reasoning/Gödel behavior
+- multiple runnable bounded demos, including:
+  - steering/queueing
+  - HITL/editor/review workflow
+  - affect influencing reasoning or hypothesis behavior
+
+## Canonical Doc Set
 
 The current tracked v0.85 set includes:
 
@@ -19,6 +47,7 @@ The current tracked v0.85 set includes:
 - `EMOTION_MODEL.md`
 - `HUMAN-IN-THE-LOOP-DESIGN-NOTES.MD`
 - `MILESTONE_CHECKLIST_v0.85.md`
+- `MILESTONE_ISSUE_RECONCILIATION_v0.85.md`
 - `REASONING_GRAPH_SCHEMA_V0.85.md`
 - `RELEASE_NOTES_v0.85.md`
 - `RELEASE_PLAN_v0.85.md`

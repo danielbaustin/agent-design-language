@@ -7,9 +7,9 @@
 - Owner: `Daniel Austin / Agent Logic`
 
 ## Purpose
-Ship / no‑ship gate for the v0.85 milestone.
+Ship / no-ship gate for the v0.85 milestone.
 
-This checklist verifies that planning, implementation discipline, quality gates, and release packaging steps have all been satisfied before the release ceremony.
+This checklist verifies that planning, implementation discipline, quality gates, demo proof surfaces, and release packaging steps have all been satisfied before the release ceremony.
 
 Evidence should exist for every checked item.
 
@@ -18,20 +18,37 @@ Evidence should exist for every checked item.
 ## Planning
 
 - [x] Milestone goal defined (`DESIGN_v0.85.md`)
-- [x] Scope + non‑goals documented (`DESIGN_v0.85.md`)
+- [x] Scope + non-goals documented (`DESIGN_v0.85.md`)
 - [x] WBS created and mapped to milestone work (`WBS_v0.85.md`)
 - [x] Decision log initialized (`DECISIONS_v0.85.md`)
 - [x] Sprint plan created (`SPRINT_v0.85.md`)
+- [ ] Four-sprint, twenty-five-work-package structure reflected consistently across canonical milestone docs
+- [ ] Each work package mapped to one canonical issue
+- [ ] Each canonical issue mapped to one work package
+- [ ] `#886` milestone-reorganization work completed or explicitly narrowed
+- [ ] `#674` established as the canonical queue/checkpoint/steering issue and duplicate placeholder `#867` resolved
+- [ ] Gödel issues `#748` through `#752` explicitly mapped into the milestone work-package structure
 
 ---
 
 ## Execution Discipline
 
-- [ ] Each issue has input/output cards under `.adl/cards/<issue>/`
+- [ ] Each canonical issue has input/output cards under `.adl/cards/<issue>/` where required by the workflow
 - [ ] Each burst writes artifacts under `.adl/reports/burst/<timestamp>/`
 - [ ] Draft PR opened for each issue before merge
 - [ ] Transient failures retried and documented
-- [ ] "Green‑only merge" policy followed
+- [ ] "Green-only merge" policy followed
+
+---
+
+## Demo Proof Surfaces
+
+- [ ] Steering/queueing/checkpoint demo exists
+- [ ] HITL/editor/review workflow demo exists
+- [ ] Gödel hypothesis-engine demo exists
+- [ ] Affect-engine demo exists
+- [ ] Affect-plus-Gödel/reasoning demo exists
+- [ ] Demo matrix or playbook ties major new features to bounded runnable demos
 
 ---
 
@@ -42,18 +59,18 @@ Evidence should exist for every checked item.
 - [ ] `cargo test --workspace` passes
 - [ ] CI is green on the merge target
 - [ ] Coverage signal is not red (or exception documented)
-- [ ] No unresolved high‑priority blockers remain
+- [ ] No unresolved high-priority blockers remain
 
 ---
 
 ## Review Sequence
 
-The milestone requires both internal and external review before the release ceremony.
+The milestone requires a clean review sequence before the release ceremony.
 
-- [ ] Milestone docs made internally consistent
+- [ ] Documentation consistency pass completed
 - [ ] Internal review completed
 - [ ] External review completed
-- [ ] Review findings resolved or explicitly deferred
+- [ ] Review findings remediation completed or explicit deferrals recorded
 - [ ] Final `swarm` -> `adl` cutover timing confirmed as end-of-milestone work (`SWARM_REMOVAL_PLANNING.md`)
 
 ---
@@ -69,12 +86,13 @@ The milestone requires both internal and external review before the release cere
 
 ---
 
-## Post‑Release
+## Post-Release
 
 - [ ] Milestone / epic issues closed with release links
 - [ ] Deferred items moved to next milestone backlog
-- [ ] Follow‑up bugs / tech debt captured as issues
+- [ ] Follow-up bugs / tech debt captured as issues
 - [ ] Roadmap / status docs updated
+- [ ] Next milestone planning materials prepared before final milestone closure
 - [ ] Retrospective summary recorded
 
 ---
@@ -83,7 +101,7 @@ The milestone requires both internal and external review before the release cere
 
 The milestone is considered successfully shipped when:
 
-- All required gates are checked, **or**
-- Any remaining exceptions have a documented rationale, owner, and follow‑up issue.
+- All required gates are checked, or
+- Any remaining exceptions have a documented rationale, owner, and follow-up issue.
 
-The milestone should be auditable end‑to‑end using the documents and artifacts referenced above.
+The milestone should be auditable end-to-end using the documents and artifacts referenced above.
