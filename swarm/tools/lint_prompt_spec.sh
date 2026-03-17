@@ -81,6 +81,7 @@ required_top_keys=(
   inputs
   outputs
   constraints
+  automation_hints
   review_surfaces
 )
 
@@ -119,8 +120,12 @@ done < <(
 
 supported_sections=(
   goal
+  required_outcome
   acceptance_criteria
   inputs
+  target_files_surfaces
+  validation_plan
+  demo_proof_requirements
   constraints_policies
   system_invariants
   reviewer_checklist
@@ -160,6 +165,29 @@ for bool_key in include_system_invariants include_reviewer_checklist disallow_se
   fi
   if [[ "$value" != "true" && "$value" != "false" ]]; then
     die "Prompt Spec constraints.${bool_key} must be true|false (found: $value)"
+  fi
+done
+
+for bool_key in source_issue_prompt_required target_files_surfaces_recommended validation_plan_required required_outcome_type_supported; do
+  value="$(awk -v key="$bool_key" '
+    /^[[:space:]]*[A-Za-z0-9_]+:[[:space:]]*/ {
+      split($0, parts, ":")
+      field=parts[1]
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", field)
+      if (field == key) {
+        sub(/^[^:]*:[[:space:]]*/, "", $0)
+        val=tolower($0)
+        gsub(/[[:space:]]+/, "", val)
+        print val
+        exit
+      }
+    }
+  ' <<<"$spec")"
+  if [[ -z "$value" ]]; then
+    die "Prompt Spec missing automation_hints.${bool_key}"
+  fi
+  if [[ "$value" != "true" && "$value" != "false" ]]; then
+    die "Prompt Spec automation_hints.${bool_key} must be true|false (found: $value)"
   fi
 done
 
