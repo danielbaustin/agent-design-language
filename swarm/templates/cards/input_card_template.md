@@ -9,7 +9,7 @@ Branch:
 Context:
 - Issue:
 - PR:
-- Source Issue Card:
+- Source Issue Prompt:
 - Docs:
 - Other:
 
@@ -56,7 +56,7 @@ constraints:
   disallow_secrets: true
   disallow_absolute_host_paths: true
 automation_hints:
-  source_issue_card_required: true
+  source_issue_prompt_required: true
   target_files_surfaces_recommended: true
   validation_plan_required: true
   required_outcome_type_supported: true
@@ -76,7 +76,7 @@ Execution:
 - Provider:
 - Tools allowed:
 - Sandbox / approvals:
-- Source issue-card slug:
+- Source issue-prompt slug:
 - Required outcome type:
 - Demo required:
 
@@ -144,7 +144,7 @@ ci_validation_required: true
 - Generation requirements:
   - Deterministic output for identical input card content
   - No secrets, tokens, or absolute host paths in generated prompt text
-  - Preserve traceability back to the source issue card
+  - Preserve traceability back to the source issue prompt
   - Preserve explicit required-outcome and demo/proof requirements
 
 ## Non-goals / Out of scope
@@ -153,6 +153,6 @@ ci_validation_required: true
 
 ## Instructions to the Agent
 - Read this file.
-- Read the linked source issue card before starting work.
+- Read the linked source issue prompt before starting work.
 - Do the work described above.
 - Write results to the paired output card file.
