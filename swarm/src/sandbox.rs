@@ -688,6 +688,197 @@ mod tests {
     }
 
     #[test]
+    fn normalize_rel_for_display_collapses_curdir_and_preserves_parent_segments() {
+        let path = Path::new("./alpha/./beta/../gamma.txt");
+        assert_eq!(normalize_rel_for_display(path), "alpha/beta/../gamma.txt");
+    }
+
+    #[test]
+    fn normalize_rel_for_display_empty_path_reports_placeholder() {
+        let path = Path::new(".");
+        assert_eq!(normalize_rel_for_display(path), "<empty>");
+    }
+
+    #[test]
+    fn sanitize_requested_path_empty_input_uses_empty_placeholder() {
+        let path = Path::new("");
+        assert_eq!(sanitize_requested_path(path), "sandbox:/<empty>");
+    }
+
+    #[test]
+    fn sanitize_resolved_path_is_relative_when_inside_root() {
+        let root = temp_dir("swarm-sandbox-sanitize-resolved-in-root");
+        let nested = root.join("nested");
+        fs::create_dir_all(&nested).expect("nested");
+        let file = nested.join("out.txt");
+        fs::write(&file, "ok").expect("write");
+
+        let root_canon = root.canonicalize().expect("root canonicalize");
+        let file_canon = file.canonicalize().expect("file canonicalize");
+        assert_eq!(
+            sanitize_resolved_path(&root_canon, &file_canon),
+            "sandbox:/nested/out.txt"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn sanitize_resolved_path_redacts_outside_root() {
+        let root = temp_dir("swarm-sandbox-sanitize-resolved-root");
+        let outside = temp_dir("swarm-sandbox-sanitize-resolved-outside");
+        fs::create_dir_all(&root).expect("root");
+        fs::create_dir_all(&outside).expect("outside");
+
+        let root_canon = root.canonicalize().expect("root canonicalize");
+        let outside_canon = outside.canonicalize().expect("outside canonicalize");
+        assert_eq!(
+            sanitize_resolved_path(&root_canon, &outside_canon),
+            "sandbox:/<outside-root>"
+        );
+
+        let _ = fs::remove_dir_all(root);
+        let _ = fs::remove_dir_all(outside);
+    }
+
+    #[test]
+    fn classify_canonicalize_error_maps_not_found_and_invalid_input() {
+        let not_found = classify_canonicalize_error(
+            "sandbox:/missing.txt",
+            "canonicalize_candidate",
+            std::io::Error::from(std::io::ErrorKind::NotFound),
+        );
+        assert_eq!(not_found.code(), "sandbox_path_not_found");
+        assert_eq!(not_found.requested_path(), Some("sandbox:/missing.txt"));
+
+        let invalid_input = classify_canonicalize_error(
+            "sandbox:/bad",
+            "canonicalize_candidate",
+            std::io::Error::from(std::io::ErrorKind::InvalidInput),
+        );
+        assert_eq!(invalid_input.code(), "sandbox_path_not_canonical");
+        assert_eq!(invalid_input.requested_path(), Some("sandbox:/bad"));
+    }
+
+    #[test]
+    fn classify_canonicalize_error_maps_other_errors_to_io_error() {
+        let err = classify_canonicalize_error(
+            "sandbox:/io",
+            "canonicalize_root",
+            std::io::Error::from(std::io::ErrorKind::PermissionDenied),
+        );
+        assert_eq!(err.code(), "sandbox_io_error");
+        assert!(err.message().contains("canonicalize_root"));
+        assert_eq!(err.requested_path(), Some("sandbox:/io"));
+    }
+
+    #[test]
+    fn classify_metadata_error_maps_not_found_and_other_to_stable_variants() {
+        let missing = classify_metadata_error(
+            "sandbox:/missing",
+            "symlink_metadata",
+            std::io::Error::from(std::io::ErrorKind::NotFound),
+        );
+        assert_eq!(missing.code(), "sandbox_path_not_found");
+        assert_eq!(missing.requested_path(), Some("sandbox:/missing"));
+
+        let denied = classify_metadata_error(
+            "sandbox:/denied",
+            "symlink_metadata",
+            std::io::Error::from(std::io::ErrorKind::PermissionDenied),
+        );
+        assert_eq!(denied.code(), "sandbox_io_error");
+        assert!(denied.message().contains("symlink_metadata"));
+        assert_eq!(denied.requested_path(), Some("sandbox:/denied"));
+    }
+
+    #[test]
+    fn validate_relative_rejects_absolute_and_parent_paths() {
+        let absolute = validate_relative(Path::new("/tmp/outside.txt"))
+            .expect_err("absolute path should be rejected");
+        assert_eq!(absolute.code(), "sandbox_path_denied");
+        assert_eq!(absolute.requested_path(), Some("sandbox:/<absolute>"));
+
+        let parent = validate_relative(Path::new("alpha/../beta.txt"))
+            .expect_err("parent traversal should be rejected");
+        assert_eq!(parent.code(), "sandbox_path_denied");
+        assert_eq!(parent.requested_path(), Some("sandbox:/alpha/../beta.txt"));
+    }
+
+    #[test]
+    fn path_traverses_symlink_returns_false_for_absolute_target_outside_root() {
+        let root = temp_dir("swarm-sandbox-symlink-scan-root");
+        let outside = temp_dir("swarm-sandbox-symlink-scan-outside");
+        fs::create_dir_all(&root).expect("root");
+        fs::create_dir_all(&outside).expect("outside");
+
+        let root_canon = root.canonicalize().expect("root canonicalize");
+        let outside_canon = outside.canonicalize().expect("outside canonicalize");
+        let traverses = path_traverses_symlink(&root_canon, &outside_canon, "sandbox:/candidate")
+            .expect("outside absolute target should not fail scan");
+        assert!(!traverses);
+
+        let _ = fs::remove_dir_all(root);
+        let _ = fs::remove_dir_all(outside);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn resolve_for_write_with_policy_rejects_symlink_in_path() {
+        use std::os::unix::fs as unix_fs;
+
+        let base = temp_dir("swarm-sandbox-write-symlink-policy");
+        let root = base.join("root");
+        let real = root.join("real");
+        fs::create_dir_all(&real).expect("real");
+        unix_fs::symlink(&real, root.join("link")).expect("symlink");
+
+        let err = resolve_relative_path_for_write_within_root_with_policy(
+            &root,
+            Path::new("link/new.txt"),
+            SandboxPathPolicy {
+                allow_symlink_traversal: false,
+            },
+        )
+        .expect_err("symlink traversal should be denied when policy disallows");
+        assert_eq!(err.code(), "sandbox_symlink_disallowed");
+        assert_eq!(err.requested_path(), Some("sandbox:/link/new.txt"));
+
+        let _ = fs::remove_dir_all(base);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn resolve_existing_with_policy_allows_absolute_canonical_target_inside_root() {
+        use std::os::unix::fs as unix_fs;
+
+        let base = temp_dir("swarm-sandbox-existing-abs-symlink");
+        let root = base.join("root");
+        let real = root.join("real");
+        fs::create_dir_all(&real).expect("real");
+        let target = real.join("ok.txt");
+        fs::write(&target, "ok").expect("write");
+        let link = root.join("link");
+        unix_fs::symlink(&real, &link).expect("symlink");
+
+        let abs_candidate = link.join("ok.txt");
+        let resolved = resolve_existing_path_within_root_with_policy(
+            &root,
+            &abs_candidate,
+            SandboxPathPolicy {
+                allow_symlink_traversal: false,
+            },
+        )
+        .expect("absolute candidate should resolve to in-root canonical target");
+        assert_eq!(
+            resolved,
+            target.canonicalize().expect("target canonicalize")
+        );
+
+        let _ = fs::remove_dir_all(base);
+    }
+
+    #[test]
     fn resolve_existing_absolute_outside_root_reports_escape_attempt_with_redacted_path() {
         let root = temp_dir("swarm-sandbox-abs-outside-root");
         fs::create_dir_all(&root).expect("root");
