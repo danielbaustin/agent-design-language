@@ -88,6 +88,11 @@ impl RunArtifactPaths {
         self.logs_dir().join("activation_log.json")
     }
 
+    /// Canonical bounded cluster-groundwork artifact path.
+    pub fn cluster_groundwork_json(&self) -> PathBuf {
+        self.meta_dir().join("cluster_groundwork.json")
+    }
+
     /// Learning artifact directory.
     pub fn learning_dir(&self) -> PathBuf {
         self.run_dir().join("learning")

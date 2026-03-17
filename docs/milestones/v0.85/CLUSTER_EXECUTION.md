@@ -433,3 +433,11 @@ The central rule remains:
 > A step may execute anywhere, but ADL must still be able to explain, replay, and verify what happened.
 
 For v0.85, the right outcome is a clear architecture and stable execution contract, not inflated claims of scale.
+
+The bounded implementation proof surface for v0.85 should therefore remain conservative:
+
+- the current runtime may still execute locally
+- the coordinator / worker / lease contract should still be emitted as a deterministic artifact
+- readiness frontiers, lease ordering, claim ownership, and observed completion state should be reviewable from run artifacts
+
+That artifact-level groundwork is not a full cluster runtime, but it does make the future coordinator / worker substrate explicit and testable without overstating what v0.85 ships.
