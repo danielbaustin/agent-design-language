@@ -1,7 +1,7 @@
 pub fn usage() -> &'static str {
     "Usage:
-  adl <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--resume <run.json>] [--overlay <overlay.json>] [--out <dir>] [--quiet] [--open]
-  adl resume <run_id>
+  adl <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--quiet] [--open]
+  adl resume <run_id> [--steer <steering.json>]
   adl demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
   adl godel run --run-id <id> --workflow-id <id> --failure-code <code> --failure-summary <text> [--evidence-ref <path> ...] [--runs-dir <dir>]
   adl godel inspect --run-id <id> [--runs-dir <dir>]
@@ -18,6 +18,7 @@ Options:
   --trace            Emit trace events (dry-run unless --run)
   --run              Execute the workflow
   --resume <path>    Resume a previously paused run from run.json
+  --steer <path>     Apply a checkpoint-bound steering patch while resuming
   --overlay <path>   Apply overlay v1 config changes (opt-in only)
   --out <dir>        Write step outputs to files under this directory (default: ./out)
   --quiet            Suppress per-step output bodies (--no-step-output also accepted)
@@ -28,6 +29,7 @@ Options:
 
 Examples:
   adl resume hitl-pause-seq
+  adl resume hitl-pause-seq --steer /tmp/steer.json
   ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh adl examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out ./out
   adl examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
   adl examples/v0-3-on-error-retry.adl.yaml --print-plan
@@ -57,10 +59,11 @@ Examples:
 
 pub fn resume_usage() -> &'static str {
     "Usage:
-  adl resume <run_id>
+  adl resume <run_id> [--steer <steering.json>]
 
 Semantics:
   - Loads .adl/runs/<run_id>/pause_state.json
   - Strict validation only: schema_version, status=paused, run_id, execution_plan_hash
+  - Optional steering patch applies only at the resume boundary
   - Resumes only at step boundary (no checkpoint engine, no mid-step resume)"
 }

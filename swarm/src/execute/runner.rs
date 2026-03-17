@@ -480,6 +480,9 @@ pub(super) fn execute_concurrent_deterministic(
     let mut completed: HashSet<String> = resume
         .map(|r| r.completed_step_ids.clone())
         .unwrap_or_default();
+    let steering_history = resume
+        .map(|r| r.steering_history.clone())
+        .unwrap_or_default();
     if let Some(resume) = resume {
         let mut validated_completed = HashSet::new();
         for step in &resolved.steps {
@@ -705,6 +708,7 @@ pub(super) fn execute_concurrent_deterministic(
                     saved_state,
                     completed_outputs,
                 }),
+                steering_history: steering_history.clone(),
             });
         }
     }
@@ -714,6 +718,7 @@ pub(super) fn execute_concurrent_deterministic(
         artifacts,
         records,
         pause: None,
+        steering_history,
     })
 }
 

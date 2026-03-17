@@ -8,8 +8,9 @@ use ::adl::{
 
 use super::open::{open_artifact, select_open_artifact, RealCommandRunner};
 use super::run_artifacts::{
-    load_pause_state_artifact, load_resume_state, resume_state_path_for_run_id,
-    validate_pause_artifact_basic, validate_pause_artifact_for_resume, write_run_state_artifacts,
+    load_pause_state_artifact, load_resume_state, load_steering_patch,
+    resume_state_path_for_run_id, validate_pause_artifact_basic,
+    validate_pause_artifact_for_resume, write_run_state_artifacts,
 };
 use super::{resume_usage, usage};
 
@@ -33,6 +34,7 @@ pub(crate) fn run_workflow(args: &[String]) -> Result<()> {
     let mut do_open = false;
     let mut allow_unsigned = false;
     let mut resume_path: Option<PathBuf> = None;
+    let mut steer_path: Option<PathBuf> = None;
     let mut overlay_path: Option<PathBuf> = None;
 
     let mut i = 1;
@@ -50,6 +52,15 @@ pub(crate) fn run_workflow(args: &[String]) -> Result<()> {
                     std::process::exit(2);
                 };
                 resume_path = Some(PathBuf::from(path));
+                i += 1;
+            }
+            "--steer" => {
+                let Some(path) = args.get(i + 1) else {
+                    eprintln!("--steer requires a path to steering patch JSON");
+                    eprintln!("{}", usage());
+                    std::process::exit(2);
+                };
+                steer_path = Some(PathBuf::from(path));
                 i += 1;
             }
             "--overlay" => {
@@ -89,6 +100,12 @@ pub(crate) fn run_workflow(args: &[String]) -> Result<()> {
 
     let adl_path_str = adl_path.to_str().context("ADL path must be valid UTF-8")?;
     let adl_base_dir: PathBuf = adl_path.parent().unwrap_or(Path::new(".")).to_path_buf();
+
+    if steer_path.is_some() && resume_path.is_none() {
+        return Err(anyhow::anyhow!(
+            "--steer requires --resume <run.json> so steering is only applied at a checkpoint boundary"
+        ));
+    }
 
     let mut doc = match adl::AdlDoc::load_from_file(adl_path_str)
         .with_context(|| format!("failed to load ADL document: {adl_path_str}"))
@@ -166,10 +183,30 @@ pub(crate) fn run_workflow(args: &[String]) -> Result<()> {
         }
 
         let resume_state = match resume_path.as_deref() {
-            Some(path) => Some(load_resume_state(path, &resolved)?),
+            Some(path) => {
+                let mut resume = load_resume_state(path, &resolved)?;
+                if let Some(steer_path) = steer_path.as_deref() {
+                    let (patch, fingerprint) = load_steering_patch(steer_path)?;
+                    let record = execute::apply_steering_patch(&mut resume, &patch, fingerprint)?;
+                    if !quiet {
+                        eprintln!(
+                            "STEER apply sequence={} apply_at={} keys_set={} keys_removed={}",
+                            record.sequence,
+                            record.apply_at,
+                            record.set_state_keys.len(),
+                            record.removed_state_keys.len()
+                        );
+                    }
+                }
+                Some(resume)
+            }
             None => None,
         };
         let resume_completed_ids = resume_state.as_ref().map(|r| r.completed_step_ids.clone());
+        let steering_history = resume_state
+            .as_ref()
+            .map(|r| r.steering_history.clone())
+            .unwrap_or_default();
 
         let result = execute::execute_sequential_with_resume(
             &resolved,
@@ -193,6 +230,7 @@ pub(crate) fn run_workflow(args: &[String]) -> Result<()> {
                     run_finished_ms,
                     "failure",
                     None,
+                    &steering_history,
                     resume_completed_ids.as_ref(),
                     Some(&err),
                 )?;
@@ -231,6 +269,7 @@ pub(crate) fn run_workflow(args: &[String]) -> Result<()> {
             run_finished_ms,
             status,
             pause_state.as_ref(),
+            &result.steering_history,
             resume_completed_ids.as_ref(),
             None,
         )?;
@@ -340,10 +379,32 @@ pub(crate) fn real_resume(args: &[String]) -> Result<()> {
         eprintln!("{}", resume_usage());
         std::process::exit(2);
     };
-    if args.len() > 1 {
-        eprintln!("resume accepts exactly one argument: <run_id>");
-        eprintln!("{}", resume_usage());
-        std::process::exit(2);
+    let mut steer_path: Option<PathBuf> = None;
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--steer" => {
+                let Some(path) = args.get(i + 1) else {
+                    eprintln!("resume --steer requires a path to steering patch JSON");
+                    eprintln!("{}", resume_usage());
+                    std::process::exit(2);
+                };
+                steer_path = Some(PathBuf::from(path));
+                i += 1;
+            }
+            other => {
+                if args.len() > 1 && args.get(1).map(|s| s.as_str()) != Some("--steer") {
+                    eprintln!("resume accepts exactly one argument: <run_id>");
+                } else {
+                    eprintln!(
+                        "resume accepts <run_id> [--steer <steering.json>] (unknown arg: {other})"
+                    );
+                }
+                eprintln!("{}", resume_usage());
+                std::process::exit(2);
+            }
+        }
+        i += 1;
     }
 
     let pause_path = resume_state_path_for_run_id(run_id)?;
@@ -375,7 +436,7 @@ pub(crate) fn real_resume(args: &[String]) -> Result<()> {
     let resolved = resolve::resolve_run(&doc)?;
     validate_pause_artifact_for_resume(&pause_artifact, run_id, &resolved)?;
 
-    let resume_state = execute::ResumeState {
+    let mut resume_state = execute::ResumeState {
         completed_step_ids: pause_artifact
             .pause
             .completed_step_ids
@@ -383,7 +444,19 @@ pub(crate) fn real_resume(args: &[String]) -> Result<()> {
             .collect(),
         saved_state: pause_artifact.pause.saved_state,
         completed_outputs: pause_artifact.pause.completed_outputs,
+        steering_history: pause_artifact.steering_history,
     };
+    if let Some(steer_path) = steer_path.as_deref() {
+        let (patch, fingerprint) = load_steering_patch(steer_path)?;
+        let record = execute::apply_steering_patch(&mut resume_state, &patch, fingerprint)?;
+        eprintln!(
+            "STEER apply sequence={} apply_at={} keys_set={} keys_removed={}",
+            record.sequence,
+            record.apply_at,
+            record.set_state_keys.len(),
+            record.removed_state_keys.len()
+        );
+    }
     let resume_completed_ids = resume_state.completed_step_ids.clone();
 
     let out_dir = PathBuf::from("out");
@@ -423,6 +496,7 @@ pub(crate) fn real_resume(args: &[String]) -> Result<()> {
             "success"
         },
         result.pause.as_ref(),
+        &result.steering_history,
         Some(&resume_completed_ids),
         None,
     )?;

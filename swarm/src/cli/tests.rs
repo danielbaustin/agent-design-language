@@ -492,6 +492,7 @@ fn write_run_state_and_load_resume_round_trip() {
         150,
         "paused",
         Some(&pause),
+        &[],
         None,
         None,
     )
@@ -546,6 +547,7 @@ fn load_resume_state_rejects_non_paused_status() {
         1,
         "success",
         None,
+        &[],
         None,
         None,
     )
@@ -592,6 +594,7 @@ fn load_resume_state_rejects_unknown_schema_version() {
         20,
         "paused",
         Some(&pause),
+        &[],
         None,
         None,
     )
@@ -637,6 +640,7 @@ fn load_resume_state_rejects_missing_pause_payload() {
         1,
         "paused",
         None,
+        &[],
         None,
         None,
     )
@@ -677,6 +681,7 @@ fn load_resume_state_rejects_workflow_mismatch() {
         1,
         "paused",
         Some(&pause),
+        &[],
         None,
         None,
     )
@@ -721,6 +726,7 @@ fn load_resume_state_rejects_version_mismatch() {
         1,
         "paused",
         Some(&pause),
+        &[],
         None,
         None,
     )
@@ -765,6 +771,7 @@ fn load_resume_state_rejects_execution_plan_mismatch() {
         1,
         "paused",
         Some(&pause),
+        &[],
         None,
         None,
     )
@@ -1402,6 +1409,7 @@ fn validate_pause_artifact_basic_rejects_mismatches() {
         status: "paused".to_string(),
         adl_path: "swarm/examples/v0-6-hitl-pause-resume.adl.yaml".to_string(),
         execution_plan_hash: "abc".to_string(),
+        steering_history: Vec::new(),
         pause: execute::PauseState {
             paused_step_id: "s1".to_string(),
             reason: None,

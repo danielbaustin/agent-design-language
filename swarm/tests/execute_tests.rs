@@ -5068,6 +5068,234 @@ run:
 }
 
 #[test]
+fn resume_with_steering_patch_updates_saved_state_and_records_history() {
+    let base = tmp_dir("exec-resume-steer");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+    let paused_case = base.join("paused");
+    fs::create_dir_all(&paused_case).unwrap();
+
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t_fixed:
+    prompt:
+      user: "fixed"
+  t_topic:
+    prompt:
+      user: "topic={{topic}}"
+run:
+  name: "resume-steer"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t_fixed"
+        save_as: "s1"
+        write_to: "s1.txt"
+        guards:
+          - type: pause
+            config:
+              reason: "await steering"
+      - id: "s2"
+        agent: "a"
+        task: "t_topic"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs:
+          topic: "@state:inputs.topic"
+"#;
+    let yaml_path = paused_case.join("resume-steer.yaml");
+    fs::write(&yaml_path, yaml).unwrap();
+
+    let paused = run_swarm_in_dir(&paused_case, &[yaml_path.to_str().unwrap(), "--run"]);
+    assert!(paused.status.success(), "paused run should succeed");
+
+    let steer_path = paused_case.join("steer.json");
+    fs::write(
+        &steer_path,
+        serde_json::to_vec_pretty(&serde_json::json!({
+            "schema_version": "steering_patch.v1",
+            "apply_at": "resume_boundary",
+            "reason": "inject topic",
+            "set_state": { "inputs.topic": "steered-topic" },
+            "remove_state": []
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+
+    let resumed = run_swarm_in_dir(
+        &paused_case,
+        &[
+            "resume",
+            "resume-steer",
+            "--steer",
+            steer_path.to_str().unwrap(),
+        ],
+    );
+    assert!(resumed.status.success(), "resume with steer should succeed");
+    let resumed_stderr = String::from_utf8_lossy(&resumed.stderr);
+    assert!(
+        resumed_stderr.contains("STEER apply sequence=1"),
+        "stderr was:\n{resumed_stderr}"
+    );
+    assert!(
+        resumed_stderr.contains("RESUME step=s1 action=skip"),
+        "stderr was:\n{resumed_stderr}"
+    );
+
+    let resumed_out = fs::read_to_string(paused_case.join("out").join("s2.txt")).unwrap();
+    assert!(
+        resumed_out.contains("steered-topic"),
+        "expected steered output, got:\n{resumed_out}"
+    );
+
+    let run_json: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(repo_runs_dir().join("resume-steer").join("run.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(run_json["steering_history"][0]["sequence"], 1);
+    assert_eq!(
+        run_json["steering_history"][0]["apply_at"],
+        serde_json::json!("resume_boundary")
+    );
+    assert_eq!(
+        run_json["steering_history"][0]["set_state_keys"],
+        serde_json::json!(["inputs.topic"])
+    );
+}
+
+#[test]
+fn run_resume_with_identical_steering_patch_is_deterministic() {
+    let base = tmp_dir("exec-resume-steer-deterministic");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+    let paused_case = base.join("paused");
+    fs::create_dir_all(&paused_case).unwrap();
+
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t_fixed:
+    prompt:
+      user: "fixed"
+  t_topic:
+    prompt:
+      user: "topic={{topic}}"
+run:
+  name: "resume-steer-deterministic"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t_fixed"
+        save_as: "s1"
+        write_to: "s1.txt"
+        guards:
+          - type: pause
+      - id: "s2"
+        agent: "a"
+        task: "t_topic"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs:
+          topic: "@state:inputs.topic"
+"#;
+    let yaml_path = paused_case.join("resume-steer-deterministic.yaml");
+    fs::write(&yaml_path, yaml).unwrap();
+
+    let paused = run_swarm_in_dir(&paused_case, &[yaml_path.to_str().unwrap(), "--run"]);
+    assert!(paused.status.success(), "paused run should succeed");
+    let (run_json_path, _, _) = run_artifact_paths("resume-steer-deterministic");
+    let resume_1 = base.join("resume-1.run.json");
+    let resume_2 = base.join("resume-2.run.json");
+    fs::copy(&run_json_path, &resume_1).unwrap();
+    fs::copy(&run_json_path, &resume_2).unwrap();
+
+    let steer_path = base.join("steer.json");
+    fs::write(
+        &steer_path,
+        serde_json::to_vec_pretty(&serde_json::json!({
+            "schema_version": "steering_patch.v1",
+            "apply_at": "resume_boundary",
+            "reason": "inject topic",
+            "set_state": { "inputs.topic": "deterministic-topic" },
+            "remove_state": []
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+
+    let out_1 = base.join("out-1");
+    let out_2 = base.join("out-2");
+    fs::create_dir_all(&out_1).unwrap();
+    fs::create_dir_all(&out_2).unwrap();
+    fs::copy(paused_case.join("out").join("s1.txt"), out_1.join("s1.txt")).unwrap();
+    fs::copy(paused_case.join("out").join("s1.txt"), out_2.join("s1.txt")).unwrap();
+    let resumed_1 = run_swarm_in_dir(
+        &paused_case,
+        &[
+            yaml_path.to_str().unwrap(),
+            "--run",
+            "--resume",
+            resume_1.to_str().unwrap(),
+            "--steer",
+            steer_path.to_str().unwrap(),
+            "--out",
+            out_1.to_str().unwrap(),
+        ],
+    );
+    let resumed_2 = run_swarm_in_dir(
+        &paused_case,
+        &[
+            yaml_path.to_str().unwrap(),
+            "--run",
+            "--resume",
+            resume_2.to_str().unwrap(),
+            "--steer",
+            steer_path.to_str().unwrap(),
+            "--out",
+            out_2.to_str().unwrap(),
+        ],
+    );
+    assert!(resumed_1.status.success(), "resume #1 should succeed");
+    assert!(resumed_2.status.success(), "resume #2 should succeed");
+
+    let stderr_1 = String::from_utf8_lossy(&resumed_1.stderr);
+    let stderr_2 = String::from_utf8_lossy(&resumed_2.stderr);
+    let output_1 = fs::read_to_string(out_1.join("s2.txt")).unwrap();
+    let output_2 = fs::read_to_string(out_2.join("s2.txt")).unwrap();
+    assert_eq!(output_1, output_2, "resumed output should be deterministic");
+    assert!(
+        output_1.contains("deterministic-topic"),
+        "output_1:\n{output_1}"
+    );
+    assert!(
+        stderr_1.contains("STEER apply sequence=1") && stderr_2.contains("STEER apply sequence=1"),
+        "stderr_1:\n{stderr_1}\n---\nstderr_2:\n{stderr_2}"
+    );
+}
+
+#[test]
 fn run_concurrent_pause_then_resume_is_deterministic() {
     let base = tmp_dir("exec-pause-resume-concurrent");
     let _bin = write_mock_ollama(&base, MockOllamaBehavior::SleepTrackConcurrency);
