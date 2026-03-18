@@ -84,8 +84,12 @@ prompt_spec_bool() {
 section_id_to_header() {
   case "$1" in
     goal) echo "Goal" ;;
+    required_outcome) echo "Required Outcome" ;;
     acceptance_criteria) echo "Acceptance Criteria" ;;
     inputs) echo "Inputs" ;;
+    target_files_surfaces) echo "Target Files / Surfaces" ;;
+    validation_plan) echo "Validation Plan" ;;
+    demo_proof_requirements) echo "Demo / Proof Requirements" ;;
     constraints_policies) echo "Constraints / Policies" ;;
     system_invariants) echo "System Invariants (must remain true)" ;;
     reviewer_checklist) echo "Reviewer Checklist (machine-readable hints)" ;;
@@ -187,8 +191,12 @@ done < <(prompt_spec_sections "$prompt_spec")
 if [[ "${#section_ids[@]}" -eq 0 ]]; then
   section_ids=(
     goal
+    required_outcome
     acceptance_criteria
     inputs
+    target_files_surfaces
+    validation_plan
+    demo_proof_requirements
     constraints_policies
     system_invariants
     reviewer_checklist

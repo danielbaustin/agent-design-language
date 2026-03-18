@@ -71,6 +71,11 @@ Reviewer protocol IDs are versioned and order-sensitive:
 2. output artifact contract
 3. reviewer behavior contract
 
+Prompt Spec contract notes:
+- Supported section IDs and machine-readable field semantics are defined in `docs/tooling/prompt-spec.md`.
+- Missing required Prompt Spec keys or required boolean `automation_hints` fields should fail lint.
+- Prompt generation must preserve declared section order rather than heuristic extraction.
+
 Execution:
 - Agent:
 - Provider:

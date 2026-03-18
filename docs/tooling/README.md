@@ -1,6 +1,11 @@
 # Tooling Docs
 
-This directory documents ADL tooling contracts used by card automation and reviewer flows.
+This directory documents ADL tooling contracts used by structured prompt automation and reviewer flows.
+
+Prompt Spec is the bridge between:
+- structured task prompts (`issue prompts`)
+- structured implementation prompts (`input cards`)
+- structured output records (`output cards`)
 
 ## References
 - [Prompt Spec](prompt-spec.md): machine-readable input-card block defining deterministic prompt generation surfaces and reviewer alignment.
