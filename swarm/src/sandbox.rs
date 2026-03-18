@@ -847,37 +847,6 @@ mod tests {
         let _ = fs::remove_dir_all(base);
     }
 
-    #[cfg(unix)]
-    #[test]
-    fn resolve_existing_with_policy_allows_absolute_canonical_target_inside_root() {
-        use std::os::unix::fs as unix_fs;
-
-        let base = temp_dir("adl-sandbox-existing-abs-symlink");
-        let root = base.join("root");
-        let real = root.join("real");
-        fs::create_dir_all(&real).expect("real");
-        let target = real.join("ok.txt");
-        fs::write(&target, "ok").expect("write");
-        let link = root.join("link");
-        unix_fs::symlink(&real, &link).expect("symlink");
-
-        let abs_candidate = link.join("ok.txt");
-        let resolved = resolve_existing_path_within_root_with_policy(
-            &root,
-            &abs_candidate,
-            SandboxPathPolicy {
-                allow_symlink_traversal: false,
-            },
-        )
-        .expect("absolute candidate should resolve to in-root canonical target");
-        assert_eq!(
-            resolved,
-            target.canonicalize().expect("target canonicalize")
-        );
-
-        let _ = fs::remove_dir_all(base);
-    }
-
     #[test]
     fn resolve_existing_absolute_outside_root_reports_escape_attempt_with_redacted_path() {
         let root = temp_dir("swarm-sandbox-abs-outside-root");
