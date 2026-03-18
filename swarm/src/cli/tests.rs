@@ -1112,6 +1112,7 @@ fn build_scores_and_suggestions_artifacts_are_deterministic() {
             scores_json: None,
             suggestions_json: None,
             overlays_dir: "learning/overlays".to_string(),
+            cluster_groundwork_json: None,
             trace_json: None,
         },
     };

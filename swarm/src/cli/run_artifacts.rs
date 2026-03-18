@@ -11,6 +11,7 @@ pub(crate) const RUN_STATUS_VERSION: u32 = 1;
 pub(crate) const RUN_SUMMARY_VERSION: u32 = 1;
 pub(crate) const SCORES_VERSION: u32 = 1;
 pub(crate) const SUGGESTIONS_VERSION: u32 = 1;
+pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -136,7 +137,43 @@ pub(crate) struct RunSummaryLinks {
     pub(crate) suggestions_json: Option<String>,
     pub(crate) overlays_dir: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) cluster_groundwork_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) trace_json: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ClusterGroundworkArtifact {
+    pub(crate) cluster_groundwork_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) workflow_id: String,
+    pub(crate) coordinator_id: String,
+    pub(crate) worker_id: String,
+    pub(crate) canonical_ordering_key: String,
+    pub(crate) frontier_ordering: String,
+    pub(crate) readiness_frontiers: Vec<ClusterReadyFrontier>,
+    pub(crate) lease_records: Vec<ClusterLeaseRecord>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ClusterReadyFrontier {
+    pub(crate) frontier_index: u32,
+    pub(crate) ready_step_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ClusterLeaseRecord {
+    pub(crate) issued_sequence: u32,
+    pub(crate) lease_id: String,
+    pub(crate) step_id: String,
+    pub(crate) depends_on: Vec<String>,
+    pub(crate) observed_attempts: u32,
+    pub(crate) claim_owner: String,
+    pub(crate) worker_id: String,
+    pub(crate) lease_state: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -309,6 +346,11 @@ pub(crate) fn build_run_summary(
         .strip_prefix(run_paths.run_dir())
         .map(|p| p.display().to_string())
         .unwrap_or_else(|_| "learning/suggestions.json".to_string());
+    let cluster_groundwork_rel = run_paths
+        .cluster_groundwork_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "meta/cluster_groundwork.json".to_string());
 
     RunSummaryArtifact {
         run_summary_version: RUN_SUMMARY_VERSION,
@@ -365,8 +407,116 @@ pub(crate) fn build_run_summary(
                 .strip_prefix(run_paths.run_dir())
                 .map(|p| p.display().to_string())
                 .unwrap_or_else(|_| "learning/overlays".to_string()),
+            cluster_groundwork_json: run_paths
+                .cluster_groundwork_json()
+                .is_file()
+                .then_some(cluster_groundwork_rel),
             trace_json: None,
         },
+    }
+}
+
+pub(crate) fn build_cluster_groundwork_artifact(
+    resolved: &resolve::AdlResolved,
+    steps: &[StepStateArtifact],
+    tr: &trace::Trace,
+) -> ClusterGroundworkArtifact {
+    let mut remaining_deps: BTreeMap<String, BTreeSet<String>> = resolved
+        .execution_plan
+        .nodes
+        .iter()
+        .map(|node| {
+            (
+                node.step_id.clone(),
+                node.depends_on.iter().cloned().collect::<BTreeSet<_>>(),
+            )
+        })
+        .collect();
+    let mut remaining_nodes: BTreeSet<String> =
+        remaining_deps.keys().cloned().collect::<BTreeSet<_>>();
+    let mut readiness_frontiers = Vec::new();
+    while !remaining_nodes.is_empty() {
+        let ready = remaining_nodes
+            .iter()
+            .filter(|step_id| {
+                remaining_deps
+                    .get(step_id.as_str())
+                    .map(|deps| deps.is_empty())
+                    .unwrap_or(false)
+            })
+            .cloned()
+            .collect::<Vec<_>>();
+        if ready.is_empty() {
+            break;
+        }
+        readiness_frontiers.push(ClusterReadyFrontier {
+            frontier_index: readiness_frontiers.len() as u32,
+            ready_step_ids: ready.clone(),
+        });
+        for step_id in &ready {
+            remaining_nodes.remove(step_id);
+        }
+        for deps in remaining_deps.values_mut() {
+            for step_id in &ready {
+                deps.remove(step_id);
+            }
+        }
+    }
+
+    let mut attempts_by_step: BTreeMap<String, u32> = BTreeMap::new();
+    for event in &tr.events {
+        if let trace::TraceEvent::StepStarted { step_id, .. } = event {
+            *attempts_by_step.entry(step_id.clone()).or_insert(0) += 1;
+        }
+    }
+    let status_by_step = steps
+        .iter()
+        .map(|step| (step.step_id.clone(), step.status.clone()))
+        .collect::<BTreeMap<_, _>>();
+    let depends_on_by_step = resolved
+        .execution_plan
+        .nodes
+        .iter()
+        .map(|node| (node.step_id.clone(), node.depends_on.clone()))
+        .collect::<BTreeMap<_, _>>();
+
+    let mut lease_records = Vec::new();
+    let mut issued_sequence: u32 = 0;
+    for frontier in &readiness_frontiers {
+        for step_id in &frontier.ready_step_ids {
+            issued_sequence = issued_sequence.saturating_add(1);
+            let status = status_by_step
+                .get(step_id)
+                .map(|value| value.as_str())
+                .unwrap_or("not_run");
+            let lease_state = match status {
+                "success" => "completed",
+                "failure" => "failed",
+                _ => "planned",
+            };
+            lease_records.push(ClusterLeaseRecord {
+                issued_sequence,
+                lease_id: format!("lease:{}:{}:1", resolved.run_id, step_id),
+                step_id: step_id.clone(),
+                depends_on: depends_on_by_step.get(step_id).cloned().unwrap_or_default(),
+                observed_attempts: attempts_by_step.get(step_id).copied().unwrap_or(0),
+                claim_owner: "adl-coordinator-local".to_string(),
+                worker_id: "adl-worker-local".to_string(),
+                lease_state: lease_state.to_string(),
+            });
+        }
+    }
+
+    ClusterGroundworkArtifact {
+        cluster_groundwork_version: CLUSTER_GROUNDWORK_VERSION,
+        run_id: resolved.run_id.clone(),
+        workflow_id: resolved.workflow_id.clone(),
+        coordinator_id: "adl-coordinator-local".to_string(),
+        worker_id: "adl-worker-local".to_string(),
+        canonical_ordering_key: "(run_id, step_id, attempt)".to_string(),
+        frontier_ordering: "topological_frontier_then_step_id".to_string(),
+        readiness_frontiers,
+        lease_records,
     }
 }
 
@@ -765,6 +915,13 @@ pub(crate) fn write_run_state_artifacts(
     let steps_json = serde_json::to_vec_pretty(&steps).context("serialize steps.json")?;
     let activation_log_path = run_paths.activation_log_json();
     instrumentation::write_trace_artifact(&activation_log_path, &tr.events)?;
+    let cluster_groundwork = build_cluster_groundwork_artifact(resolved, &steps, tr);
+    let cluster_groundwork_json = serde_json::to_vec_pretty(&cluster_groundwork)
+        .context("serialize cluster_groundwork.json")?;
+    artifacts::atomic_write(
+        &run_paths.cluster_groundwork_json(),
+        &cluster_groundwork_json,
+    )?;
     let run_summary = build_run_summary(
         resolved,
         status,

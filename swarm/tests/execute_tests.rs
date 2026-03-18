@@ -2313,6 +2313,7 @@ run:
     let run_summary_path = run_dir.join("run_summary.json");
     let scores_path = run_dir.join("learning").join("scores.json");
     let suggestions_path = run_dir.join("learning").join("suggestions.json");
+    let cluster_groundwork_path = run_dir.join("meta").join("cluster_groundwork.json");
     assert!(
         run_json_path.is_file(),
         "missing {}",
@@ -2338,6 +2339,11 @@ run:
         suggestions_path.is_file(),
         "missing {}",
         suggestions_path.display()
+    );
+    assert!(
+        cluster_groundwork_path.is_file(),
+        "missing {}",
+        cluster_groundwork_path.display()
     );
 
     let run_json: serde_json::Value =
@@ -2387,6 +2393,10 @@ run:
     assert_eq!(summary_json["links"]["steps_json"], "steps.json");
     assert_eq!(summary_json["links"]["outputs_dir"], "outputs");
     assert_eq!(summary_json["links"]["learning_dir"], "learning");
+    assert_eq!(
+        summary_json["links"]["cluster_groundwork_json"],
+        "meta/cluster_groundwork.json"
+    );
     assert!(
         summary_json
             .get("links")
@@ -2455,6 +2465,36 @@ run:
         assert!(proposed_change["intent"].is_string());
         assert!(proposed_change["target"].is_string());
     }
+    let cluster_groundwork_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&cluster_groundwork_path).unwrap()).unwrap();
+    assert_eq!(cluster_groundwork_json["cluster_groundwork_version"], 1);
+    assert_eq!(cluster_groundwork_json["run_id"], run_id);
+    assert_eq!(cluster_groundwork_json["workflow_id"], "workflow");
+    assert_eq!(
+        cluster_groundwork_json["canonical_ordering_key"],
+        "(run_id, step_id, attempt)"
+    );
+    assert_eq!(
+        cluster_groundwork_json["frontier_ordering"],
+        "topological_frontier_then_step_id"
+    );
+    assert_eq!(
+        cluster_groundwork_json["lease_records"][0]["claim_owner"],
+        "adl-coordinator-local"
+    );
+    assert_eq!(
+        cluster_groundwork_json["lease_records"][0]["worker_id"],
+        "adl-worker-local"
+    );
+    assert_eq!(
+        cluster_groundwork_json["lease_records"][0]["lease_state"],
+        "completed"
+    );
+    let cluster_groundwork_raw = fs::read_to_string(&cluster_groundwork_path).unwrap();
+    assert!(
+        !cluster_groundwork_raw.contains(base.to_str().unwrap()),
+        "cluster_groundwork.json must not leak absolute host paths:\n{cluster_groundwork_raw}"
+    );
 
     let _ = fs::remove_dir_all(&run_dir);
 }
@@ -2537,6 +2577,91 @@ run:
     );
 
     let _ = fs::remove_dir_all(&run_dir);
+}
+
+#[test]
+fn cluster_groundwork_artifact_is_byte_stable_across_repeated_identical_runs() {
+    let base = tmp_dir("exec-cluster-groundwork-stability");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::Success);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let run_id = "cluster-groundwork-stable";
+    let run_dir = repo_runs_dir().join(run_id);
+    let _ = fs::remove_dir_all(&run_dir);
+
+    let yaml = format!(
+        r#"
+version: "0.3"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "Echo {{text}}"
+run:
+  name: "{run_id}"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+        save_as: "s1_out"
+        inputs:
+          text: "hello"
+      - id: "s2"
+        agent: "a1"
+        task: "t1"
+        save_as: "s2_out"
+        inputs:
+          text: "@state:s1_out"
+"#
+    );
+    let tmp_yaml = base.join("cluster-groundwork-stable.yaml");
+    fs::write(&tmp_yaml, yaml).unwrap();
+
+    let out1 = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(out1.status.success(), "first run failed");
+    let first = fs::read(run_dir.join("meta").join("cluster_groundwork.json")).unwrap();
+
+    let out2 = run_swarm(&[tmp_yaml.to_string_lossy().as_ref(), "--run"]);
+    assert!(out2.status.success(), "second run failed");
+    let second = fs::read(run_dir.join("meta").join("cluster_groundwork.json")).unwrap();
+
+    assert_eq!(
+        first, second,
+        "cluster_groundwork.json must be byte-stable across repeated identical runs"
+    );
+
+    let cluster_groundwork: serde_json::Value = serde_json::from_slice(&second).unwrap();
+    assert_eq!(
+        cluster_groundwork["readiness_frontiers"][0]["ready_step_ids"],
+        serde_json::json!(["s1"])
+    );
+    assert_eq!(
+        cluster_groundwork["readiness_frontiers"][1]["ready_step_ids"],
+        serde_json::json!(["s2"])
+    );
+    assert_eq!(
+        cluster_groundwork["lease_records"][0]["lease_id"],
+        format!("lease:{run_id}:s1:1")
+    );
+    assert_eq!(
+        cluster_groundwork["lease_records"][1]["lease_id"],
+        format!("lease:{run_id}:s2:1")
+    );
+    assert_eq!(
+        cluster_groundwork["lease_records"][1]["depends_on"],
+        serde_json::json!(["s1"])
+    );
+
+    let _ = fs::remove_dir_all(run_dir);
 }
 
 #[test]
