@@ -7,17 +7,19 @@ Prompt Spec is the bridge between:
 - structured implementation prompts (`input cards`)
 - structured output records (`output cards`)
 
-Tracked public prompt records live under `docs/prompts/`, while `.adl/` remains the temporary draft workspace.
+Tracked public workflow history should live in task-centric record bundles under `docs/records/`, while `.adl/` remains the temporary draft workspace.
 
 ## References
 - [Prompt Spec](prompt-spec.md): machine-readable input-card block defining deterministic prompt generation surfaces and reviewer alignment.
+- [Structured Prompt Contracts](structured-prompt-contracts.md): machine-checkable contracts for Structured Task Prompts, Structured Implementation Prompts, and Structured Output Records.
 - [Prompt Spec Protocol Bindings](prompt-spec.md#protocol-bindings): linkage to `card_review_checklist.v1` and `card_review_output.v1` reviewer contracts.
 - [Prompt/Reviewer Surface Mapping](prompt-review-surface-mapping.md): field-by-field contract map between Prompt Spec, checklist rules, and deterministic review output fields.
 - [Issue Prompt Templates](issue-prompts/README.md): tracked templates and authoring guidance for structured issue prompts used to shape GitHub issues before `pr start`.
-- [Structured Prompt Records](../prompts/README.md): tracked public record homes for Structured Task Prompts, Structured Implementation Prompts, and Structured Output Records.
+- [Public Task Records](../records/README.md): tracked task-centric record homes for canonical STP/SIP/SOR bundles.
 - Prompt Spec execution tooling:
   - `swarm/tools/lint_prompt_spec.sh` (Prompt Spec lint/validation)
   - `swarm/tools/card_prompt.sh` (deterministic prompt generation from cards)
+  - `swarm/tools/validate_structured_prompt.rb` (structured prompt contract validation)
 - [Card Reviewer GPT Instructions](card-reviewer-gpt.md): canonical reviewer behavior and deterministic YAML output contract (`card_reviewer_gpt.v1.1`).
 - [Deterministic Review Output Format](card-review-output-format.md): canonical review artifact schema including finding evidence-state semantics.
 - Reviewer regression fixture (stable):

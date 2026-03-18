@@ -9,7 +9,7 @@ Use this directory for:
 - release planning and checklist artifacts
 - rationale, schema, and execution-model docs that define the public shape of v0.85
 
-Tracked prompt-record history for v0.85 lives under `docs/prompts/v0.85/`, not in this directory. Temporary draft artifacts may still exist in `.adl/`, but they should be reconciled into tracked prompt records before authoritative lifecycle transitions.
+Tracked public task-record history for v0.85 should live under `docs/records/v0.85/tasks/`, not inside `.adl/` or only inside tracker-specific systems. Temporary draft artifacts may still exist in `.adl/`, but they should be reconciled into tracked task bundles before authoritative lifecycle transitions.
 
 ## Canonical Milestone Shape
 

@@ -8,7 +8,7 @@ Run ID:
 Version:
 Title:
 Branch:
-Status: NOT_STARTED | IN_PROGRESS | DONE | FAILED
+Status: NOT_STARTED
 
 Execution:
 - Actor:
@@ -28,21 +28,31 @@ Execution:
 ## Main Repo Integration (REQUIRED)
 - Main-repo paths updated:
 - Worktree-only paths remaining: none | list explicitly
-- Integration method used: `git checkout <branch> -- <path>` | cherry-pick | direct write in main repo | not_applicable
-- Verification performed in main repo:
+- Integration state: worktree_only | pr_open | merged
+- Verification scope: worktree | pr_branch | main_repo
+- Integration method used:
+- Verification performed:
   - `git status`
   - `ls <path>` / equivalent path check
-- Result: PASS | FAIL
+- Result:
 
 Rules:
 - Final artifacts must exist in the main repository, not only in a worktree.
 - Do not leave docs, code, or generated artifacts only under a `adl-wp-*` worktree.
 - Prefer git-aware transfer into the main repo (`git checkout <branch> -- <path>` or commit + cherry-pick).
 - If artifacts exist only in the worktree, the task is NOT complete.
+- `Integration state` describes lifecycle state of the integrated artifact set, not where verification happened.
+- `Verification scope` describes where the verification commands were run.
+- If `Integration method used` is `direct write in main repo`, `Verification scope` should normally be `main_repo` unless the deviation is explained.
 
 ## Validation
 - Tests / checks run:
 - Results:
+
+Validation command/path rules:
+- Prefer repository-relative paths in recorded commands and artifact references.
+- Do not record absolute host paths in output records unless they are explicitly required and justified.
+- `absolute_path_leakage_detected: false` means the final recorded artifact does not contain unjustified absolute host paths.
 
 ## Verification Summary
 ```yaml

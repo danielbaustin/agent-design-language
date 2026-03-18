@@ -8,6 +8,8 @@ The intended model is:
 - input cards: structured implementation prompts used after `pr start`
 - output cards: structured implementation records produced after execution
 
+Issue prompts are an important software/GitHub integration surface, but they are not the universal ontology for ADL. The broader system should remain task-centric so it can support software engineering, writing, research, and other human-creation workflows.
+
 ## Why These Templates Live Here
 
 The repo ignores `.adl/`, which is a good place for generated or work-in-progress bodies, reconciliation manifests, and local authoring experiments.
@@ -21,15 +23,15 @@ But the reusable templates themselves should be tracked so they can:
 So the split is:
 
 - tracked templates and guidance: `docs/tooling/issue-prompts/`
-- tracked public prompt records: `docs/prompts/v0.85/`
+- tracked public task records: `docs/records/v0.85/tasks/`
 - local or generated prompt drafts and manifests: `.adl/`
 
 The important distinction is:
 
 - `docs/tooling/issue-prompts/`
-  - reusable template and authoring-contract layer
-- `docs/prompts/v0.85/stp/`
-  - tracked public Structured Task Prompt record layer
+  - reusable template and authoring-contract layer for GitHub-facing issue prompts
+- `docs/records/v0.85/tasks/`
+  - tracked public task-bundle layer
 - `.adl/`
   - local draft workspace and generated intermediate state
 
@@ -48,7 +50,7 @@ The important distinction is:
 - Prefer exact repo paths in `Repo Inputs` when a prompt depends on specific files or modules.
 - Include demo expectations when the WP requires runnable proof surfaces.
 - Use `Issue-Graph Notes` to record duplicate, supersede, split, merge, or renumber intent explicitly.
-- Treat `.adl/` as draft state and promote canonical public prompt records into `docs/prompts/...` before authoritative lifecycle transitions.
+- Treat `.adl/` as draft state only; promote canonical public artifacts into tracked task bundles before authoritative lifecycle transitions.
 
 ## Transitional Stub Guidance
 
