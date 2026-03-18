@@ -116,6 +116,17 @@ replace_first_line_re() {
   mv "$tmp" "$file"
 }
 
+field_line_value() {
+  local file="$1" key="$2"
+  awk -v k="$key" '
+    $0 ~ ("^" k ":") {
+      sub(/^[^:]*:[[:space:]]*/, "", $0)
+      print
+      exit
+    }
+  ' "$file"
+}
+
 print_next_steps() {
   cat <<'EOF'
 Next steps (human review preserved):
@@ -407,6 +418,13 @@ resolve_output_template() {
   echo "$(repo_root)/$OUTPUT_TEMPLATE"
 }
 
+resolve_structured_prompt_validator() {
+  local validator
+  validator="$(repo_root)/swarm/tools/validate_structured_prompt.rb"
+  [[ -x "$validator" ]] || die "start: missing executable structured prompt validator: $validator"
+  echo "$validator"
+}
+
 issue_version() {
   local issue="$1"
   local v
@@ -521,6 +539,33 @@ seed_output_card() {
   validate_card_header_count "$tmp" "# ADL Output Card" || die "generated output card must contain exactly one '# ADL Output Card' header"
   ensure_nonempty_file "$tmp" || die "generated output card is empty: $tmp"
   mv "$tmp" "$path"
+}
+
+validate_bootstrap_cards() {
+  local issue="$1" branch="$2" in_path="$3" out_path="$4"
+  local validator expected task_id run_id in_branch out_branch
+  validator="$(resolve_structured_prompt_validator)"
+
+  "$validator" --type sip --phase bootstrap --input "$in_path" >/dev/null \
+    || die "start: input card failed bootstrap validation: $in_path"
+  "$validator" --type sor --phase bootstrap --input "$out_path" >/dev/null \
+    || die "start: output card failed bootstrap validation: $out_path"
+
+  expected="issue-$(card_issue_pad "$issue")"
+  task_id="$(field_line_value "$in_path" "Task ID")"
+  run_id="$(field_line_value "$in_path" "Run ID")"
+  [[ "$task_id" == "$expected" ]] || die "start: input card Task ID mismatch (expected $expected, found ${task_id:-<empty>})"
+  [[ "$run_id" == "$expected" ]] || die "start: input card Run ID mismatch (expected $expected, found ${run_id:-<empty>})"
+
+  task_id="$(field_line_value "$out_path" "Task ID")"
+  run_id="$(field_line_value "$out_path" "Run ID")"
+  [[ "$task_id" == "$expected" ]] || die "start: output card Task ID mismatch (expected $expected, found ${task_id:-<empty>})"
+  [[ "$run_id" == "$expected" ]] || die "start: output card Run ID mismatch (expected $expected, found ${run_id:-<empty>})"
+
+  in_branch="$(field_line_value "$in_path" "Branch")"
+  out_branch="$(field_line_value "$out_path" "Branch")"
+  [[ "$in_branch" == "$branch" ]] || die "start: input card branch mismatch (expected $branch, found ${in_branch:-<empty>})"
+  [[ "$out_branch" == "$branch" ]] || die "start: output card branch mismatch (expected $branch, found ${out_branch:-<empty>})"
 }
 
 ensure_nonempty_file() {
@@ -1086,6 +1131,7 @@ cmd_start() {
     note "Output card exists: $out_path"
   fi
   sync_legacy_links_for_issue "$issue" "$ver"
+  validate_bootstrap_cards "$issue" "$branch" "$in_path" "$out_path"
   echo "• Agent:"
   echo "  READ   $in_path"
   echo "  WRITE  $out_path"

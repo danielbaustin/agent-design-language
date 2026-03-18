@@ -4,8 +4,13 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 PR_SH_SRC="$ROOT_DIR/swarm/tools/pr.sh"
 CARD_PATHS_SRC="$ROOT_DIR/swarm/tools/card_paths.sh"
+PROMPT_LINT_SRC="$ROOT_DIR/swarm/tools/lint_prompt_spec.sh"
+PROMPT_VALIDATOR_SRC="$ROOT_DIR/swarm/tools/validate_structured_prompt.rb"
 INPUT_TPL_SRC="$ROOT_DIR/swarm/templates/cards/input_card_template.md"
 OUTPUT_TPL_SRC="$ROOT_DIR/swarm/templates/cards/output_card_template.md"
+STP_CONTRACT_SRC="$ROOT_DIR/swarm/schemas/structured_task_prompt.contract.yaml"
+SIP_CONTRACT_SRC="$ROOT_DIR/swarm/schemas/structured_implementation_prompt.contract.yaml"
+SOR_CONTRACT_SRC="$ROOT_DIR/swarm/schemas/structured_output_record.contract.yaml"
 BASH_BIN="$(command -v bash)"
 
 tmpdir="$(mktemp -d)"
@@ -13,12 +18,18 @@ trap 'rm -rf "$tmpdir"' EXIT
 
 origin="$tmpdir/origin.git"
 repo="$tmpdir/repo"
-mkdir -p "$repo/swarm/tools" "$repo/swarm/templates/cards"
+mkdir -p "$repo/swarm/tools" "$repo/swarm/templates/cards" "$repo/swarm/schemas"
 cp "$PR_SH_SRC" "$repo/swarm/tools/pr.sh"
 cp "$CARD_PATHS_SRC" "$repo/swarm/tools/card_paths.sh"
+cp "$PROMPT_LINT_SRC" "$repo/swarm/tools/lint_prompt_spec.sh"
+cp "$PROMPT_VALIDATOR_SRC" "$repo/swarm/tools/validate_structured_prompt.rb"
 cp "$INPUT_TPL_SRC" "$repo/swarm/templates/cards/input_card_template.md"
 cp "$OUTPUT_TPL_SRC" "$repo/swarm/templates/cards/output_card_template.md"
+cp "$STP_CONTRACT_SRC" "$repo/swarm/schemas/structured_task_prompt.contract.yaml"
+cp "$SIP_CONTRACT_SRC" "$repo/swarm/schemas/structured_implementation_prompt.contract.yaml"
+cp "$SOR_CONTRACT_SRC" "$repo/swarm/schemas/structured_output_record.contract.yaml"
 chmod +x "$repo/swarm/tools/pr.sh"
+chmod +x "$repo/swarm/tools/lint_prompt_spec.sh" "$repo/swarm/tools/validate_structured_prompt.rb"
 
 (
   cd "$repo"

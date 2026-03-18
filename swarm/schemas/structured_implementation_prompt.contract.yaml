@@ -55,6 +55,7 @@ required_sections:
 phases:
   bootstrap:
     allow_blank:
+      - Context.Issue
       - Context.PR
       - Context.Source Issue Prompt
       - Context.Docs
