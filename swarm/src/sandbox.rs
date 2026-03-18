@@ -707,7 +707,7 @@ mod tests {
 
     #[test]
     fn sanitize_resolved_path_is_relative_when_inside_root() {
-        let root = temp_dir("swarm-sandbox-sanitize-resolved-in-root");
+        let root = temp_dir("adl-sandbox-sanitize-resolved-in-root");
         let nested = root.join("nested");
         fs::create_dir_all(&nested).expect("nested");
         let file = nested.join("out.txt");
@@ -725,8 +725,8 @@ mod tests {
 
     #[test]
     fn sanitize_resolved_path_redacts_outside_root() {
-        let root = temp_dir("swarm-sandbox-sanitize-resolved-root");
-        let outside = temp_dir("swarm-sandbox-sanitize-resolved-outside");
+        let root = temp_dir("adl-sandbox-sanitize-resolved-root");
+        let outside = temp_dir("adl-sandbox-sanitize-resolved-outside");
         fs::create_dir_all(&root).expect("root");
         fs::create_dir_all(&outside).expect("outside");
 
@@ -807,8 +807,8 @@ mod tests {
 
     #[test]
     fn path_traverses_symlink_returns_false_for_absolute_target_outside_root() {
-        let root = temp_dir("swarm-sandbox-symlink-scan-root");
-        let outside = temp_dir("swarm-sandbox-symlink-scan-outside");
+        let root = temp_dir("adl-sandbox-symlink-scan-root");
+        let outside = temp_dir("adl-sandbox-symlink-scan-outside");
         fs::create_dir_all(&root).expect("root");
         fs::create_dir_all(&outside).expect("outside");
 
@@ -827,7 +827,7 @@ mod tests {
     fn resolve_for_write_with_policy_rejects_symlink_in_path() {
         use std::os::unix::fs as unix_fs;
 
-        let base = temp_dir("swarm-sandbox-write-symlink-policy");
+        let base = temp_dir("adl-sandbox-write-symlink-policy");
         let root = base.join("root");
         let real = root.join("real");
         fs::create_dir_all(&real).expect("real");
@@ -852,7 +852,7 @@ mod tests {
     fn resolve_existing_with_policy_allows_absolute_canonical_target_inside_root() {
         use std::os::unix::fs as unix_fs;
 
-        let base = temp_dir("swarm-sandbox-existing-abs-symlink");
+        let base = temp_dir("adl-sandbox-existing-abs-symlink");
         let root = base.join("root");
         let real = root.join("real");
         fs::create_dir_all(&real).expect("real");
