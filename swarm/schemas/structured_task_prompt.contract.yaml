@@ -1,0 +1,77 @@
+version: adl.prompt_contract.v1
+artifact: structured_task_prompt
+description: >
+  Machine-checkable contract for authored Structured Task Prompts (STPs).
+fields:
+  issue_card_schema:
+    type: enum
+    values: [adl.issue.v1]
+    required: true
+  wp:
+    type: string
+    required: true
+  slug:
+    type: slug
+    required: true
+  title:
+    type: string
+    required: true
+  labels:
+    type: string_array
+    required: true
+    min_items: 1
+  issue_number:
+    type: integer
+    required: true
+  status:
+    type: enum
+    values: [draft, active, complete]
+    required: true
+  action:
+    type: enum
+    values: [create, edit, close, split, supersede]
+    required: true
+  depends_on:
+    type: string_array
+    required: true
+  milestone_sprint:
+    type: string
+    required: true
+  required_outcome_type:
+    type: string_array
+    required: true
+    min_items: 1
+  repo_inputs:
+    type: string_array
+    required: true
+  canonical_files:
+    type: string_array
+    required: true
+  demo_required:
+    type: boolean
+    required: true
+  demo_names:
+    type: string_array
+    required: true
+  issue_graph_notes:
+    type: string_array
+    required: true
+  pr_start.enabled:
+    type: boolean
+    required: true
+  pr_start.slug:
+    type: slug
+    required: true
+required_sections:
+  - Summary
+  - Goal
+  - Required Outcome
+  - Deliverables
+  - Acceptance Criteria
+  - Repo Inputs
+  - Dependencies
+  - Demo Expectations
+  - Non-goals
+  - Issue-Graph Notes
+  - Notes
+  - Tooling Notes

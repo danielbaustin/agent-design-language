@@ -1,0 +1,73 @@
+version: adl.prompt_contract.v1
+artifact: structured_implementation_prompt
+description: >
+  Machine-checkable contract for Structured Implementation Prompts (SIPs)
+  generated and edited after `pr start`.
+fields:
+  Task ID:
+    type: task_id
+    required: true
+  Run ID:
+    type: task_id
+    required: true
+  Version:
+    type: version
+    required: true
+  Title:
+    type: string
+    required: true
+  Branch:
+    type: branch
+    required: true
+  Context.Issue:
+    type: github_issue_url
+    required: true
+  Context.PR:
+    type: github_pr_url
+    required: false
+  Context.Source Issue Prompt:
+    type: reference
+    required: false
+  Execution.Source issue-prompt slug:
+    type: slug
+    required: false
+  Execution.Required outcome type:
+    type: enum
+    values: [code, docs, tests, demo, combination]
+    required: false
+  Execution.Demo required:
+    type: boolean
+    required: false
+required_sections:
+  - Goal
+  - Required Outcome
+  - Acceptance Criteria
+  - Inputs
+  - Target Files / Surfaces
+  - Validation Plan
+  - Demo / Proof Requirements
+  - Constraints / Policies
+  - System Invariants (must remain true)
+  - Reviewer Checklist (machine-readable hints)
+  - Non-goals / Out of scope
+  - Notes / Risks
+  - Instructions to the Agent
+phases:
+  bootstrap:
+    allow_blank:
+      - Context.PR
+      - Context.Source Issue Prompt
+      - Context.Docs
+      - Context.Other
+      - Execution.Agent
+      - Execution.Provider
+      - Execution.Tools allowed
+      - Execution.Sandbox / approvals
+      - Execution.Source issue-prompt slug
+      - Execution.Required outcome type
+      - Execution.Demo required
+  authored:
+    allow_blank:
+      - Context.PR
+      - Context.Docs
+      - Context.Other
