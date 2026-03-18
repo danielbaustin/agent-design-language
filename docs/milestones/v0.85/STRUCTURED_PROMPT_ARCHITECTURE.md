@@ -12,7 +12,7 @@ As ADL expands into richer agent teams and more diverse workflows, a single card
 
 This document proposes a structured prompt architecture for ADL that treats prompts as first-class, typed, versioned, composable artifacts rather than incidental prose embedded inside cards.
 
-The goal is not to create a unique prompt for every possible situation. The goal is to create a disciplined system for managing reusable prompt structures across roles, tasks, profiles, and runtime bindings.
+The goal is not to create a unique prompt for every possible situation. The goal is to create a disciplined system for managing reusable prompt structures across roles, tasks, profiles, runtime bindings, and public task records that future editors can manage safely.
 
 ---
 
@@ -86,6 +86,29 @@ At a minimum:
 - review artifacts should be able to evaluate prompt selection, prompt compliance, and prompt/output fit separately from general workflow success
 
 This keeps cards focused on workflow intent and outcomes while allowing prompt artifacts to own instruction design, rendering, and evaluation.
+
+### Draft Workspace vs Public Record
+
+ADL should distinguish between:
+
+- `.adl/`
+  - temporary draft workspace
+  - generated intermediate files
+  - editor-local scratch state
+- `docs/records/<scope>/tasks/<task-id>/`
+  - tracked public task bundle
+  - canonical record for review, preservation, and official lifecycle transitions
+
+This separation matters because the next generation of editor tooling should be able to draft locally without treating scratch state as canonical. The public record should remain tracked, reviewable, and suitable for deterministic workflow transitions, preservation, and later signing.
+
+In practical terms:
+
+- draft STPs may begin in `.adl/`
+- official issue creation or reconciliation may project from the task bundle when GitHub is involved
+- generated or refined SIPs may draft locally, but canonical execution briefs should be promotable into tracked task bundles
+- SORs must become tracked public records before final completion is treated as closed and auditable
+
+The workflow is therefore not “ignore `.adl/`,” but “use `.adl/` for drafting and tracked task bundles for authoritative history.”
 
 ---
 
@@ -332,6 +355,18 @@ Suggested fields:
 - `hallucination_risk`
 - `reviewer_notes`
 
+### Task Bundle Identity
+
+The canonical public record should be organized around a stable `task_id`.
+
+That `task_id` should remain valid whether or not the task has:
+
+- a GitHub issue
+- a PR
+- another external tracker id
+
+When external systems exist, they should appear as metadata or projections of the task bundle rather than defining the record layout itself.
+
 ---
 
 ## Relationship to Cards
@@ -393,6 +428,16 @@ Suggested review-artifact prompt fields:
 - `prompt_output_fit_status`
 
 The principle is that cards should reference prompt artifacts by identity and version, while the full reusable prompt content remains outside the card itself.
+
+### Tracked Record Homes
+
+For milestone-scoped workflow records, ADL should maintain tracked public homes such as:
+
+- `docs/records/v0.85/tasks/<task-id>/stp.md`
+- `docs/records/v0.85/tasks/<task-id>/sip.md`
+- `docs/records/v0.85/tasks/<task-id>/sor.md`
+
+The exact scope segment may vary in later milestones or non-milestone workflows, but the architectural rule should remain stable: public workflow history is task-centric. GitHub issues are one possible projection of a task, not the primary ontology.
 
 ---
 
@@ -518,14 +563,18 @@ A practical lifecycle for structured prompts should look like this:
 
 1. define prompt class
 2. define output contract
-3. create prompt spec
-4. compose from fragments
-5. create one or more profiles
-6. run prompt evaluations on representative tasks
-7. promote stable prompts to canonical status
-8. version changes carefully
+3. draft prompt artifact locally when needed
+4. promote authoritative prompt artifact into tracked task-bundle state
+5. create prompt spec
+6. compose from fragments
+7. create one or more profiles
+8. run prompt evaluations on representative tasks
+9. promote stable prompts to canonical status
+10. version changes carefully
 
 This makes prompt design an engineering discipline rather than a collection of ad hoc experiments.
+
+Where GitHub is used, issue creation or reconciliation should be understood as an integration step driven by the task bundle rather than the source of truth itself.
 
 ---
 
