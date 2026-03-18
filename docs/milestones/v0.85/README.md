@@ -9,6 +9,8 @@ Use this directory for:
 - release planning and checklist artifacts
 - rationale, schema, and execution-model docs that define the public shape of v0.85
 
+Tracked prompt-record history for v0.85 lives under `docs/prompts/v0.85/`, not in this directory. Temporary draft artifacts may still exist in `.adl/`, but they should be reconciled into tracked prompt records before authoritative lifecycle transitions.
+
 ## Canonical Milestone Shape
 
 The canonical v0.85 plan is the revised four-sprint, twenty-five-work-package structure being reconciled under issue `#886`.

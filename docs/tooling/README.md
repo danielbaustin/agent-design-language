@@ -7,11 +7,14 @@ Prompt Spec is the bridge between:
 - structured implementation prompts (`input cards`)
 - structured output records (`output cards`)
 
+Tracked public prompt records live under `docs/prompts/`, while `.adl/` remains the temporary draft workspace.
+
 ## References
 - [Prompt Spec](prompt-spec.md): machine-readable input-card block defining deterministic prompt generation surfaces and reviewer alignment.
 - [Prompt Spec Protocol Bindings](prompt-spec.md#protocol-bindings): linkage to `card_review_checklist.v1` and `card_review_output.v1` reviewer contracts.
 - [Prompt/Reviewer Surface Mapping](prompt-review-surface-mapping.md): field-by-field contract map between Prompt Spec, checklist rules, and deterministic review output fields.
 - [Issue Prompt Templates](issue-prompts/README.md): tracked templates and authoring guidance for structured issue prompts used to shape GitHub issues before `pr start`.
+- [Structured Prompt Records](../prompts/README.md): tracked public record homes for Structured Task Prompts, Structured Implementation Prompts, and Structured Output Records.
 - Prompt Spec execution tooling:
   - `swarm/tools/lint_prompt_spec.sh` (Prompt Spec lint/validation)
   - `swarm/tools/card_prompt.sh` (deterministic prompt generation from cards)

@@ -12,7 +12,7 @@ As ADL expands into richer agent teams and more diverse workflows, a single card
 
 This document proposes a structured prompt architecture for ADL that treats prompts as first-class, typed, versioned, composable artifacts rather than incidental prose embedded inside cards.
 
-The goal is not to create a unique prompt for every possible situation. The goal is to create a disciplined system for managing reusable prompt structures across roles, tasks, profiles, and runtime bindings.
+The goal is not to create a unique prompt for every possible situation. The goal is to create a disciplined system for managing reusable prompt structures across roles, tasks, profiles, runtime bindings, and tracked public records that future editors can manage safely.
 
 ---
 
@@ -86,6 +86,28 @@ At a minimum:
 - review artifacts should be able to evaluate prompt selection, prompt compliance, and prompt/output fit separately from general workflow success
 
 This keeps cards focused on workflow intent and outcomes while allowing prompt artifacts to own instruction design, rendering, and evaluation.
+
+### Draft Workspace vs Public Record
+
+ADL should distinguish between:
+
+- `.adl/`
+  - temporary draft workspace
+  - generated intermediate files
+  - editor-local scratch state
+- `docs/prompts/<milestone>/`
+  - tracked public record for prompt artifacts that should be reviewable, auditable, and stable enough for official workflow transitions
+
+This separation matters because the next generation of editor tooling should be able to draft locally without treating scratch state as canonical. The public record should remain tracked, reviewable, and suitable for deterministic lifecycle transitions.
+
+In practical terms:
+
+- draft STPs may begin in `.adl/`
+- official issue creation or reconciliation should promote the canonical STP into tracked docs
+- generated or refined SIPs may draft locally, but canonical execution briefs should be promotable into tracked docs
+- SORs must become tracked public records before final completion is treated as closed and auditable
+
+The workflow is therefore not “ignore `.adl/`,” but “use `.adl/` for drafting and tracked docs for authoritative history.”
 
 ---
 
@@ -394,6 +416,16 @@ Suggested review-artifact prompt fields:
 
 The principle is that cards should reference prompt artifacts by identity and version, while the full reusable prompt content remains outside the card itself.
 
+### Tracked Record Homes
+
+For milestone-scoped workflow records, ADL should maintain tracked public homes such as:
+
+- `docs/prompts/v0.85/stp/`
+- `docs/prompts/v0.85/sip/`
+- `docs/prompts/v0.85/sor/`
+
+The exact milestone segment may vary in later milestones, but the architectural rule should remain stable: reusable templates and public prompt records live in tracked docs, while `.adl/` serves as the local draft and generation workspace.
+
 ---
 
 ## How to Avoid Combinatorial Explosion
@@ -518,12 +550,14 @@ A practical lifecycle for structured prompts should look like this:
 
 1. define prompt class
 2. define output contract
-3. create prompt spec
-4. compose from fragments
-5. create one or more profiles
-6. run prompt evaluations on representative tasks
-7. promote stable prompts to canonical status
-8. version changes carefully
+3. draft prompt artifact locally when needed
+4. promote authoritative prompt artifact into tracked public record
+5. create prompt spec
+6. compose from fragments
+7. create one or more profiles
+8. run prompt evaluations on representative tasks
+9. promote stable prompts to canonical status
+10. version changes carefully
 
 This makes prompt design an engineering discipline rather than a collection of ad hoc experiments.
 

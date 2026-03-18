@@ -21,7 +21,17 @@ But the reusable templates themselves should be tracked so they can:
 So the split is:
 
 - tracked templates and guidance: `docs/tooling/issue-prompts/`
-- local or generated issue prompts and manifests: `.adl/`
+- tracked public prompt records: `docs/prompts/v0.85/`
+- local or generated prompt drafts and manifests: `.adl/`
+
+The important distinction is:
+
+- `docs/tooling/issue-prompts/`
+  - reusable template and authoring-contract layer
+- `docs/prompts/v0.85/stp/`
+  - tracked public Structured Task Prompt record layer
+- `.adl/`
+  - local draft workspace and generated intermediate state
 
 ## Template Set
 
@@ -38,6 +48,7 @@ So the split is:
 - Prefer exact repo paths in `Repo Inputs` when a prompt depends on specific files or modules.
 - Include demo expectations when the WP requires runnable proof surfaces.
 - Use `Issue-Graph Notes` to record duplicate, supersede, split, merge, or renumber intent explicitly.
+- Treat `.adl/` as draft state and promote canonical public prompt records into `docs/prompts/...` before authoritative lifecycle transitions.
 
 ## Transitional Stub Guidance
 
