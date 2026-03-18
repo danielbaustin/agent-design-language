@@ -75,6 +75,36 @@ Examples of enum-constrained values now treated as stable:
 - SOR `Verification scope`
 - SOR `Main Repo Integration.Result`
 
+## Output-Record Integration Semantics
+
+Structured Output Records intentionally separate three related ideas:
+
+- `Integration state`
+  - lifecycle state of the integrated artifact set (`worktree_only`, `pr_open`, `merged`)
+- `Verification scope`
+  - where the verification commands were run (`worktree`, `pr_branch`, `main_repo`)
+- `Worktree-only paths remaining`
+  - whether any required artifacts still exist only outside the main repository path
+
+These fields should not be conflated.
+
+In particular:
+
+- `Integration state: pr_open` does not imply verification happened in a worktree
+- `Integration method used: direct write in main repo` should normally pair with `Verification scope: main_repo`
+- deviations are allowed, but should be explained in the record rather than left ambiguous
+
+## Absolute-Path Policy
+
+Output records should prefer repository-relative paths in validation commands and artifact references.
+
+The intended rule is:
+
+- unjustified absolute host paths should not appear in final recorded validation commands, artifact references, or machine-readable summaries
+- if an absolute path is operationally required, it should be explicitly justified rather than silently recorded
+
+This keeps `absolute_path_leakage_detected: false` meaningful for the final recorded artifact, even when the underlying shell execution may have used host-absolute paths internally.
+
 ## Phase Model
 
 The validator supports bounded lifecycle phases where needed:
