@@ -484,6 +484,7 @@ fn decode_verifying_key_b64(raw_b64: &str) -> Result<VerifyingKey> {
 mod tests {
     use super::*;
     use ed25519_dalek::SigningKey;
+    use std::time::{SystemTime, UNIX_EPOCH};
 
     fn sample_doc() -> adl::AdlDoc {
         let yaml = r#"
@@ -618,5 +619,111 @@ run:
             .expect_err("tamper should fail");
         assert_eq!(err.kind, VerificationErrorKind::SignatureMismatch);
         assert_eq!(err.code, "SIGNATURE_MISMATCH");
+    }
+
+    #[test]
+    fn verification_key_source_parse_and_as_str_are_stable() {
+        assert_eq!(
+            VerificationKeySource::parse(" embedded "),
+            Some(VerificationKeySource::Embedded)
+        );
+        assert_eq!(
+            VerificationKeySource::parse("EXPLICIT_KEY"),
+            Some(VerificationKeySource::ExplicitKey)
+        );
+        assert_eq!(VerificationKeySource::parse("unknown"), None);
+        assert_eq!(VerificationKeySource::Embedded.as_str(), "embedded");
+        assert_eq!(VerificationKeySource::ExplicitKey.as_str(), "explicit_key");
+    }
+
+    #[test]
+    fn verification_profile_canonicalized_normalizes_and_dedupes() {
+        let profile = VerificationProfile {
+            require_signature: true,
+            require_key_id: false,
+            allowed_algs: vec![
+                "  ED25519 ".to_string(),
+                "ed25519".to_string(),
+                "".to_string(),
+            ],
+            allowed_key_sources: vec![
+                VerificationKeySource::ExplicitKey,
+                VerificationKeySource::Embedded,
+                VerificationKeySource::Embedded,
+            ],
+        }
+        .canonicalized();
+        assert_eq!(profile.allowed_algs, vec!["ed25519".to_string()]);
+        assert_eq!(
+            profile.allowed_key_sources,
+            vec![
+                VerificationKeySource::Embedded,
+                VerificationKeySource::ExplicitKey
+            ]
+        );
+    }
+
+    #[test]
+    fn verify_doc_with_profile_currently_requires_signature_even_when_optional() {
+        let doc = sample_doc();
+        let profile = VerificationProfile {
+            require_signature: false,
+            require_key_id: true,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec![VerificationKeySource::Embedded],
+        };
+        let err = verify_doc_with_profile(&doc, None, &profile)
+            .expect_err("current implementation requires an attached signature");
+        assert_eq!(err.kind, VerificationErrorKind::PolicyViolation);
+        assert_eq!(err.code, "SIGN_POLICY_UNSIGNED_REQUIRED");
+    }
+
+    #[test]
+    fn profile_rejects_signed_doc_when_key_source_cannot_be_determined() {
+        let mut doc = sample_doc();
+        doc.signature = Some(adl::SignatureSpec {
+            alg: "ed25519".to_string(),
+            key_id: "dev-local".to_string(),
+            public_key_b64: None,
+            sig_b64: B64.encode([0_u8; 64]),
+            signed_header: default_signed_header(&doc),
+        });
+        let err = verify_doc_with_profile(&doc, None, &VerificationProfile::default())
+            .expect_err("missing key source should fail before signature decode");
+        assert_eq!(err.kind, VerificationErrorKind::PolicyViolation);
+        assert_eq!(err.code, "SIGN_POLICY_MISSING_KEY_SOURCE");
+    }
+
+    #[test]
+    fn malformed_signature_base64_maps_to_stable_code() {
+        let (mut doc, pub_b64) = signed_doc_and_pubkey();
+        let signature = doc.signature.as_mut().expect("signature");
+        signature.public_key_b64 = Some(pub_b64);
+        signature.sig_b64 = "not-base64###".to_string();
+        let err = verify_doc_with_profile(&doc, None, &VerificationProfile::default())
+            .expect_err("invalid base64 signature should fail");
+        assert_eq!(err.kind, VerificationErrorKind::MalformedSignatureMaterial);
+        assert_eq!(err.code, "SIGN_MALFORMED_SIGNATURE");
+    }
+
+    #[test]
+    fn malformed_explicit_public_key_maps_to_stable_code() {
+        let (doc, _pub_b64) = signed_doc_and_pubkey();
+        let unique = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("system time")
+            .as_nanos();
+        let dir = std::env::temp_dir().join(format!("adl-signing-tests-{unique}"));
+        fs::create_dir_all(&dir).expect("create temp dir");
+        let key_path = dir.join("bad-public.b64");
+        fs::write(&key_path, "not-base64").expect("write key");
+
+        let err = verify_doc_with_profile(&doc, Some(&key_path), &VerificationProfile::default())
+            .expect_err("invalid explicit public key should fail");
+        assert_eq!(err.kind, VerificationErrorKind::MalformedSignatureMaterial);
+        assert_eq!(err.code, "SIGN_MALFORMED_PUBLIC_KEY");
+
+        let _ = fs::remove_file(&key_path);
+        let _ = fs::remove_dir(&dir);
     }
 }
