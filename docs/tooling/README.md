@@ -9,12 +9,14 @@ Prompt Spec is the bridge between:
 
 ## References
 - [Prompt Spec](prompt-spec.md): machine-readable input-card block defining deterministic prompt generation surfaces and reviewer alignment.
+- [Structured Prompt Contracts](structured-prompt-contracts.md): machine-checkable contracts for Structured Task Prompts, Structured Implementation Prompts, and Structured Output Records.
 - [Prompt Spec Protocol Bindings](prompt-spec.md#protocol-bindings): linkage to `card_review_checklist.v1` and `card_review_output.v1` reviewer contracts.
 - [Prompt/Reviewer Surface Mapping](prompt-review-surface-mapping.md): field-by-field contract map between Prompt Spec, checklist rules, and deterministic review output fields.
 - [Issue Prompt Templates](issue-prompts/README.md): tracked templates and authoring guidance for structured issue prompts used to shape GitHub issues before `pr start`.
 - Prompt Spec execution tooling:
   - `swarm/tools/lint_prompt_spec.sh` (Prompt Spec lint/validation)
   - `swarm/tools/card_prompt.sh` (deterministic prompt generation from cards)
+  - `swarm/tools/validate_structured_prompt.rb` (structured prompt contract validation)
 - [Card Reviewer GPT Instructions](card-reviewer-gpt.md): canonical reviewer behavior and deterministic YAML output contract (`card_reviewer_gpt.v1.1`).
 - [Deterministic Review Output Format](card-review-output-format.md): canonical review artifact schema including finding evidence-state semantics.
 - Reviewer regression fixture (stable):

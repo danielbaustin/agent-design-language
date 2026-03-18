@@ -8,7 +8,7 @@ Run ID:
 Version:
 Title:
 Branch:
-Status: NOT_STARTED | IN_PROGRESS | DONE | FAILED
+Status: NOT_STARTED
 
 Execution:
 - Actor:
@@ -28,11 +28,13 @@ Execution:
 ## Main Repo Integration (REQUIRED)
 - Main-repo paths updated:
 - Worktree-only paths remaining: none | list explicitly
-- Integration method used: `git checkout <branch> -- <path>` | cherry-pick | direct write in main repo | not_applicable
-- Verification performed in main repo:
+- Integration state:
+- Verification scope:
+- Integration method used:
+- Verification performed:
   - `git status`
   - `ls <path>` / equivalent path check
-- Result: PASS | FAIL
+- Result:
 
 Rules:
 - Final artifacts must exist in the main repository, not only in a worktree.
