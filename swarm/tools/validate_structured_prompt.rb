@@ -10,11 +10,12 @@ require "uri"
 class ValidationError < StandardError; end
 
 ROOT = Pathname(__dir__).join("..", "..").realpath
+SWARM_DIR = Pathname(__dir__).join("..").realpath
 
 TYPE_TO_CONTRACT = {
-  "stp" => ROOT.join("swarm", "schemas", "structured_task_prompt.contract.yaml"),
-  "sip" => ROOT.join("swarm", "schemas", "structured_implementation_prompt.contract.yaml"),
-  "sor" => ROOT.join("swarm", "schemas", "structured_output_record.contract.yaml")
+  "stp" => SWARM_DIR.join("schemas", "structured_task_prompt.contract.yaml"),
+  "sip" => SWARM_DIR.join("schemas", "structured_implementation_prompt.contract.yaml"),
+  "sor" => SWARM_DIR.join("schemas", "structured_output_record.contract.yaml")
 }.freeze
 
 options = {
@@ -244,7 +245,7 @@ begin
   end
 
   if type == "sip"
-    prompt_lint = ROOT.join("swarm", "tools", "lint_prompt_spec.sh")
+    prompt_lint = Pathname(__dir__).join("lint_prompt_spec.sh").realpath
     ok = system(prompt_lint.to_s, "--input", input.to_s, out: File::NULL, err: File::NULL)
     raise ValidationError, "Prompt Spec lint failed for #{input}" unless ok
   end
