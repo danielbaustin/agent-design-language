@@ -29,6 +29,8 @@ pub(crate) struct RunStateArtifact {
     pub(crate) scheduler_max_concurrency: Option<usize>,
     #[serde(default)]
     pub(crate) scheduler_policy_source: Option<String>,
+    #[serde(default)]
+    pub(crate) steering_history: Vec<execute::SteeringRecord>,
     pub(crate) pause: Option<execute::PauseState>,
 }
 
@@ -42,6 +44,8 @@ pub(crate) struct PauseStateArtifact {
     pub(crate) status: String,
     pub(crate) adl_path: String,
     pub(crate) execution_plan_hash: String,
+    #[serde(default)]
+    pub(crate) steering_history: Vec<execute::SteeringRecord>,
     pub(crate) pause: execute::PauseState,
 }
 
@@ -676,6 +680,7 @@ pub(crate) fn write_run_state_artifacts(
     end_ms: u128,
     status: &str,
     pause: Option<&execute::PauseState>,
+    steering_history: &[execute::SteeringRecord],
     resume_completed_step_ids: Option<&HashSet<String>>,
     failure: Option<&anyhow::Error>,
 ) -> Result<PathBuf> {
@@ -752,6 +757,7 @@ pub(crate) fn write_run_state_artifacts(
         execution_plan_hash: execution_plan_hash(&resolved.execution_plan)?,
         scheduler_max_concurrency: scheduler_policy.map(|(v, _)| v),
         scheduler_policy_source: scheduler_policy.map(|(_, source)| source.as_str().to_string()),
+        steering_history: steering_history.to_vec(),
         pause: pause.cloned(),
     };
 
@@ -811,6 +817,7 @@ pub(crate) fn write_run_state_artifacts(
             status: "paused".to_string(),
             adl_path: adl_path.display().to_string(),
             execution_plan_hash: execution_plan_hash(&resolved.execution_plan)?,
+            steering_history: steering_history.to_vec(),
             pause: pause_payload.clone(),
         };
         let pause_json =
@@ -900,6 +907,7 @@ pub(crate) fn load_resume_state(
         completed_step_ids,
         saved_state: pause.saved_state,
         completed_outputs: pause.completed_outputs,
+        steering_history: artifact.steering_history,
     })
 }
 
@@ -913,6 +921,16 @@ pub(crate) fn load_pause_state_artifact(path: &Path) -> Result<PauseStateArtifac
     let artifact: PauseStateArtifact =
         serde_json::from_str(&raw).with_context(|| "failed to parse pause_state.json")?;
     Ok(artifact)
+}
+
+pub(crate) fn load_steering_patch(path: &Path) -> Result<(execute::SteeringPatch, String)> {
+    let raw = std::fs::read(path)
+        .with_context(|| format!("failed to read steering patch '{}'", path.display()))?;
+    let fingerprint = stable_fingerprint_hex(&raw);
+    let patch: execute::SteeringPatch =
+        serde_json::from_slice(&raw).with_context(|| "failed to parse steering patch JSON")?;
+    execute::validate_steering_patch(&patch)?;
+    Ok((patch, fingerprint))
 }
 
 pub(crate) fn validate_pause_artifact_basic(
