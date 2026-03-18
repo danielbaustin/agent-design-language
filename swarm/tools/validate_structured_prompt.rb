@@ -105,6 +105,42 @@ def parse_prompt_card(text)
   { "fields" => fields, "blocks" => blocks, "sections" => parse_markdown_sections(text) }
 end
 
+def section_body(text, heading)
+  match = text.match(/^## #{Regexp.escape(heading)}\n(.*?)(?=^## |\z)/m)
+  match ? match[1].to_s : ""
+end
+
+def bullet_paths(section_text)
+  section_text.lines.map do |line|
+    match = line.match(/^- `([^`]+)`$/)
+    match && match[1]
+  end.compact
+end
+
+def repo_relative_path?(value)
+  return false if blank?(value)
+  return false if value.start_with?("/")
+  return false if value.match?(/\A[A-Za-z]:\\/)
+  return false if value.include?("..")
+
+  true
+end
+
+def placeholder_value?(value)
+  return true if blank?(value)
+
+  placeholders = [
+    "none | list explicitly",
+    "worktree_only | pr_open | merged",
+    "worktree | pr_branch | main_repo",
+    "PASS | FAIL",
+    "PASS | FAIL | PARTIAL | NOT_RUN",
+    "true | false | unknown",
+    "true | false | not_applicable | unknown"
+  ]
+  placeholders.include?(value)
+end
+
 def fetch_path(data, path)
   path.split(".").reduce(data) do |acc, key|
     return nil unless acc.is_a?(Hash)
@@ -211,6 +247,37 @@ def allow_blank_fields(contract, phase)
   contract.fetch("phases", {}).fetch(phase, {}).fetch("allow_blank", [])
 end
 
+def validate_completed_sor!(text, normalized)
+  fields = normalized.fetch("fields", {})
+  blocks = normalized.fetch("blocks", {})
+  execution = blocks.fetch("Execution", {})
+  integration = blocks.fetch("Main Repo Integration", {})
+
+  status = fields["Status"]
+  raise ValidationError, "completed SOR must use terminal Status (DONE or FAILED)" unless %w[DONE FAILED].include?(status)
+
+  %w[Actor Model Provider Start\ Time End\ Time].each do |field|
+    raise ValidationError, "completed SOR missing Execution.#{field}" if blank?(execution[field])
+  end
+
+  %w[Integration\ state Verification\ scope Integration\ method\ used Result].each do |field|
+    value = integration[field]
+    raise ValidationError, "completed SOR missing Main Repo Integration.#{field}" if placeholder_value?(value)
+  end
+
+  worktree_remaining = integration["Worktree-only paths remaining"]
+  raise ValidationError, "completed SOR still contains unresolved worktree placeholder" if placeholder_value?(worktree_remaining)
+
+  artifacts = bullet_paths(section_body(text, "Artifacts produced"))
+  raise ValidationError, "completed SOR must list at least one artifact path" if artifacts.empty?
+  invalid_artifact = artifacts.find { |path| !repo_relative_path?(path) }
+  raise ValidationError, "completed SOR artifact path must be repo-relative: #{invalid_artifact}" if invalid_artifact
+
+  validation_section = section_body(text, "Validation")
+  raise ValidationError, "completed SOR must record validation commands" unless validation_section.include?("- Tests / checks run:")
+  raise ValidationError, "completed SOR must record validation results" unless validation_section.include?("- Results:")
+end
+
 begin
   text = input.read
   normalized = normalized_hash_for(type, text)
@@ -249,6 +316,8 @@ begin
     ok = system(prompt_lint.to_s, "--input", input.to_s, out: File::NULL, err: File::NULL)
     raise ValidationError, "Prompt Spec lint failed for #{input}" unless ok
   end
+
+  validate_completed_sor!(text, normalized) if type == "sor" && options[:phase] == "completed"
 
   puts "PASS: #{type} contract valid for #{input}"
 rescue ValidationError => e
