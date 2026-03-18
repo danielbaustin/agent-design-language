@@ -1,0 +1,55 @@
+---
+review_surface_version: adl.review_surface.v1
+review_target:
+  input_card_path: docs/tooling/examples/reviewer-regression/issue-661/input_661.md
+  output_card_path: docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+decision: PASS
+checks:
+- id: RVS-STR-001
+  domain: structure
+  severity: high
+  status: PASS
+  title: Required output-card sections are present
+  evidence:
+  - path:docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+  notes: All required sections were found.
+- id: RVS-STR-002
+  domain: structure
+  severity: medium
+  status: PASS
+  title: Output-card status is normalized
+  evidence:
+  - path:docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+  notes: Status=DONE
+- id: RVS-STR-003
+  domain: structure
+  severity: medium
+  status: PASS
+  title: Execution metadata is present
+  evidence:
+  - path:docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+  notes: Actor/model/provider/start/end fields are populated.
+- id: RVS-ART-001
+  domain: artifacts
+  severity: high
+  status: PASS
+  title: Artifact paths are explicit and repo-relative
+  evidence:
+  - path:docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+  notes: Artifact list is populated with repo-relative paths.
+- id: RVS-SEC-001
+  domain: security_privacy
+  severity: high
+  status: PASS
+  title: Output card contains no absolute host paths
+  evidence:
+  - path:docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+  notes: No absolute host paths detected.
+- id: RVS-PRM-001
+  domain: validation
+  severity: medium
+  status: PASS
+  title: Prompt-spec review surfaces are in canonical order when present
+  evidence:
+  - path:docs/tooling/examples/reviewer-regression/issue-661/input_661.md
+  notes: No prompt-spec review surfaces were declared.
