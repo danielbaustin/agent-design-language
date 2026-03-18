@@ -258,15 +258,25 @@ sanitize_slug() {
 }
 
 default_repo() {
-  # Derive "owner/repo" from git remote if possible; fallback to current directory name.
-  local url
+  # Derive "owner/repo" from git remote if possible; otherwise use the current repo
+  # name under a deterministic local namespace so generated cards remain schema-valid
+  # even in offline/minimal test repos.
+  local url inferred root base
   url="$(git remote get-url origin 2>/dev/null || true)"
   if [[ "$url" =~ github.com[:/]+([^/]+/[^/.]+)(\.git)?$ ]]; then
     echo "${BASH_REMATCH[1]}"
     return 0
   fi
-  # Fallback: let gh infer from current repo.
-  echo ""
+
+  inferred="$(gh repo view --json nameWithOwner --jq .nameWithOwner 2>/dev/null || true)"
+  if [[ -n "$inferred" ]]; then
+    echo "$inferred"
+    return 0
+  fi
+
+  root="$(repo_root)"
+  base="$(basename "$root")"
+  echo "local/$base"
 }
 
 branch_for_issue() {
@@ -536,6 +546,8 @@ seed_output_card() {
 
   # Default Status if template left it blank.
   replace_first_line_re "$tmp" "^Status:[[:space:]]*$" "Status: NOT_STARTED | IN_PROGRESS | DONE | FAILED"
+  replace_first_line_re "$tmp" "^- Integration state:.*$" "- Integration state: worktree_only"
+  replace_first_line_re "$tmp" "^- Verification scope:.*$" "- Verification scope: worktree"
   validate_card_header_count "$tmp" "# ADL Output Card" || die "generated output card must contain exactly one '# ADL Output Card' header"
   ensure_nonempty_file "$tmp" || die "generated output card is empty: $tmp"
   mv "$tmp" "$path"
