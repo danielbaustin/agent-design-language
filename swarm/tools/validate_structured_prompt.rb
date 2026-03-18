@@ -10,12 +10,12 @@ require "uri"
 class ValidationError < StandardError; end
 
 ROOT = Pathname(__dir__).join("..", "..").realpath
-SWARM_DIR = Pathname(__dir__).join("..").realpath
+TOOLS_ROOT = Pathname(__dir__).join("..").realpath
 
 TYPE_TO_CONTRACT = {
-  "stp" => SWARM_DIR.join("schemas", "structured_task_prompt.contract.yaml"),
-  "sip" => SWARM_DIR.join("schemas", "structured_implementation_prompt.contract.yaml"),
-  "sor" => SWARM_DIR.join("schemas", "structured_output_record.contract.yaml")
+  "stp" => TOOLS_ROOT.join("schemas", "structured_task_prompt.contract.yaml"),
+  "sip" => TOOLS_ROOT.join("schemas", "structured_implementation_prompt.contract.yaml"),
+  "sor" => TOOLS_ROOT.join("schemas", "structured_output_record.contract.yaml")
 }.freeze
 
 options = {
