@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-VALIDATOR="$ROOT_DIR/swarm/tools/validate_structured_prompt.rb"
+VALIDATOR="$ROOT_DIR/swarm/tools/validate_structured_prompt.sh"
 PROMPT_SPEC_LINT="$ROOT_DIR/swarm/tools/lint_prompt_spec.sh"
 
 tmpdir="$(mktemp -d)"

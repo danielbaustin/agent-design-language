@@ -430,7 +430,7 @@ resolve_output_template() {
 
 resolve_structured_prompt_validator() {
   local validator
-  validator="$(repo_root)/swarm/tools/validate_structured_prompt.rb"
+  validator="$(repo_root)/swarm/tools/validate_structured_prompt.sh"
   [[ -x "$validator" ]] || die "start: missing executable structured prompt validator: $validator"
   echo "$validator"
 }
