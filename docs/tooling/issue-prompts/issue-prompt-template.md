@@ -30,7 +30,7 @@ pr_start:
   slug: "replace-me"
 ---
 
-# Issue Prompt
+# Replace Me
 
 ## Summary
 
@@ -99,6 +99,8 @@ State what must be real by the end of this issue.
 ## Tooling Notes
 
 - `title`, `labels`, `milestone_sprint`, `required_outcome_type`, `repo_inputs`, `canonical_files`, and demo metadata are machine-readable in the front matter.
+- The H1 should identify the specific task, usually by reusing the human-readable `title` value or a cleaner version of it.
+- Do not use a generic heading like "Issue Prompt" or "Structured Task Prompt" as the permanent visible title.
 - `pr_start.slug` is the value tooling should pass to:
   - `swarm/tools/pr.sh start <issue> --slug <slug>`
 - `repo_inputs` should stay lightweight coordination metadata; the long-form sections below remain the canonical issue content.
