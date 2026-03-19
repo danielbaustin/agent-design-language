@@ -46,7 +46,7 @@ The current tracked v0.85 set includes:
 - `CLUSTER_EXECUTION.md`
 - `DECISIONS_v0.85.md`
 - `DESIGN_v0.85.md`
-- `EMOTION_MODEL.md`
+- `EMOTION_MODEL.md` (legacy filename; bounded-affect framing)
 - `HUMAN-IN-THE-LOOP-DESIGN-NOTES.MD`
 - `MILESTONE_CHECKLIST_v0.85.md`
 - `MILESTONE_ISSUE_RECONCILIATION_v0.85.md`

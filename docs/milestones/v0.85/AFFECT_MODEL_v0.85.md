@@ -8,8 +8,8 @@ Planning draft for future ADL / Gödel work.
 This document expands the design space around:
 - hypothesis generation
 - reasoning-graph execution
-- affect-like internal signals
-- the role of emotional modeling in better search, prioritization, and self-correction
+- bounded affect internal signals
+- the role of bounded affect modeling in better search, prioritization, and self-correction
 
 It does **not** claim that Gödel is conscious or sentient.
 It does claim that a constrained, explicit internal affect model may improve reasoning quality, prioritization, adaptation, and bounded self-regulation.
@@ -18,7 +18,7 @@ It does claim that a constrained, explicit internal affect model may improve rea
 
 ## 1. Summary
 
-A working hypothesis for Gödel is that a useful “emotional” model is not ornamental; it is functional.
+A working hypothesis for Gödel is that a useful bounded affect model is not ornamental; it is functional.
 
 In biological organisms, emotion appears to serve at least four engineering purposes:
 1. prioritize attention
@@ -28,11 +28,11 @@ In biological organisms, emotion appears to serve at least four engineering purp
 
 Our corresponding ADL / Gödel hypothesis is:
 
-> A deterministic agent can reason better if it carries explicit internal affect-like state that summarizes how current evidence, uncertainty, progress, novelty, and risk should bias its next reasoning moves.
+> A deterministic agent can reason better if it carries explicit bounded affect state that summarizes how current evidence, uncertainty, progress, novelty, and risk should bias its next reasoning moves.
 
 In this frame, “emotion” is not mystical. It is an internal control layer over search and deliberation.
 
-For Gödel, this suggests that affect-like signals should influence:
+For Gödel, this suggests that bounded affect signals should influence:
 - hypothesis ranking
 - branch expansion / pruning
 - confidence calibration
@@ -61,14 +61,14 @@ If every branch is evaluated only by static acceptance checks or scalar confiden
 - “evidence is accumulating against the current plan”
 - “a minority branch is weakly supported now but unusually promising”
 
-Humans often use emotion-like summaries to handle exactly these situations.
+Humans often use compressed internal evaluative summaries to handle exactly these situations.
 A machine analogue can be designed explicitly and instrumented deterministically.
 
 ---
 
 ## 3. Core design claim
 
-We should treat affect-like state as a **reasoning control surface**.
+We should treat bounded affect state as a **reasoning control surface**.
 
 That control surface should be:
 - explicit
@@ -92,7 +92,7 @@ Example classes of source signals:
 - replay instability
 - user / operator corrections
 
-These can be compiled into affect-like summaries that influence the next reasoning step.
+These can be compiled into bounded affect summaries that influence the next reasoning step.
 
 ---
 
@@ -238,7 +238,7 @@ This multi-level model matters because local branch optimism can coexist with gl
 
 ---
 
-## 6. Why an emotional model may improve reasoning
+## 6. Why a bounded affect model may improve reasoning
 
 ### 6.1 Better prioritization under bounded compute
 
@@ -349,7 +349,7 @@ This avoids circular, hard-to-debug behavior.
 
 ## 8. Interaction with the hypothesis engine
 
-The hypothesis engine in v0.85 / v0.9 should use affect-like state as one factor in search control.
+The hypothesis engine in v0.85 / v0.9 should use bounded affect state as one factor in search control.
 
 ### 8.1 Hypothesis proposal
 
@@ -376,7 +376,7 @@ A better ranking function may combine:
 Sustained low confidence plus high tension plus low novelty may justify branch retirement.
 But high tension plus high novelty may justify continued exploration.
 
-This is one of the main reasons affect-like structure is useful: it avoids crude one-dimensional pruning.
+This is one of the main reasons bounded affect structure is useful: it avoids crude one-dimensional pruning.
 
 ### 8.4 Experiment selection
 
@@ -410,7 +410,7 @@ A future query should be able to ask things like:
 - what affect profile predicts successful retries?
 - which curiosity patterns correlate with useful novelty?
 
-This is one bridge between emotion-like modeling and genuine policy learning.
+This is one bridge between bounded affect modeling and genuine policy learning.
 
 ---
 
@@ -438,7 +438,7 @@ v0.85 is the right place to define the conceptual and architectural basis, witho
 ### 11.1 Recommended v0.85 deliverables
 
 1. **Design note / architecture doc**
-   - define affect-like state as a reasoning control layer
+   - define bounded affect state as a reasoning control layer
    - describe interaction with hypothesis generation and ranking
    - describe deterministic update requirements
 

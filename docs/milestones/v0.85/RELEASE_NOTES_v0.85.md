@@ -31,7 +31,7 @@ This milestone prepares the platform for the larger v0.9 phase by tightening pla
 ### Cognitive Architecture Foundations
 - Initial architectural definition of the **Adaptive Execution Engine (AEE)** direction.
 - Early schema direction for **reasoning graphs**.
-- Introduction of a **bounded affect / emotion model** used as a reasoning control surface.
+- Introduction of a **bounded affect model** used as a reasoning control surface.
 
 ## Upgrade Notes
 - v0.85 remains part of the **pre‑v0.9 stabilization track**.

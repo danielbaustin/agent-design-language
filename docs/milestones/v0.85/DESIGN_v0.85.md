@@ -23,7 +23,7 @@ The main gaps are:
 - review and authoring surfaces are still too manual and do not yet provide first-class editors
 - dependable execution and verifiable inference need stronger first-class representation in tooling and documentation
 - the Adaptive Execution Engine (AEE) has been conceptually deferred for several releases and must advance materially in v0.85
-- the emerging emotion / affect model is not yet represented as a disciplined working surface even though it may become important to bounded cognition, evaluation signals, and agent priority handling
+- the emerging bounded affect model is not yet represented as a disciplined working surface even though it may become important to bounded cognition, evaluation signals, and agent priority handling
 - the Gödel issue set (`#748` through `#752`) exists, but needs to become a first-class milestone track rather than floating beside the work-package structure
 
 v0.85 therefore exists to convert ADL from a compelling substrate into a more usable, scalable, and trustworthy platform.
@@ -58,7 +58,7 @@ A secondary problem is documentation fragmentation itself: milestone intent is c
 - Bounded AEE progress: retry policy, adaptation surfaces, strategy loop integration, experiment lifecycle support.
 - Trust surfaces: dependable execution, verifiable inference, artifact provenance, replayability.
 - Gödel runtime progress through issues `#748` through `#752`.
-- A bounded emotion / affect model that fits the Gödel–Hadamard–Bayes architecture and is concrete enough to demo.
+- A bounded affect model that fits the Gödel–Hadamard–Bayes architecture and is concrete enough to demo.
 - Reasoning-graph integration with affect and hypothesis behavior.
 - A milestone demo program with multiple runnable proof surfaces, including steering/queueing, HITL/editor/review flow, and affect-plus-Gödel behavior.
 - Positioning and philosophy docs that clarify why ADL chooses stronger guarantees and explicit artifacts.
@@ -81,7 +81,7 @@ A secondary problem is documentation fragmentation itself: milestone intent is c
 - ADL must make review and artifact validation more reliable.
 - ADL must advance bounded adaptive execution so it is materially closer to operational use.
 - ADL must advance Gödel runtime behavior through the canonical issue set `#748` through `#752`.
-- ADL must define a minimal working emotion / affect representation that is compatible with later cognitive work.
+- ADL must define a minimal working bounded affect representation that is compatible with later cognitive work.
 - ADL must provide a bounded affect/reasoning/Gödel demo slice that emits legible artifacts.
 - ADL milestone planning documents for v0.85 must present materially consistent scope, trust, AEE, and affect-model intent within the canonical `docs/milestones/v0.85/` directory.
 - ADL milestone planning documents must present one coherent four-sprint, twenty-five-work-package structure with explicit issue-graph alignment.
@@ -137,7 +137,7 @@ New or strengthened behavior should obey the following principles:
 - queue and checkpoint behavior must not weaken deterministic replay guarantees
 - steering behavior must remain replay-compatible and explicitly tied to canonical issue `#674`
 - retry and adaptation must remain bounded, explicit, and policy-driven
-- affective or emotional signals must not become hidden nondeterministic state; they must appear as inspectable inputs to evaluation or prioritization
+- bounded affect signals must not become hidden nondeterministic state; they must appear as inspectable inputs to evaluation or prioritization
 - Gödel runtime progress must emit inspectable artifacts rather than remain at the level of conceptual narrative
 - distributed execution must preserve explicit ownership, claims, and resumability semantics
 - authoring improvements must generate more reliable artifacts, not more ambiguous ones
@@ -148,7 +148,7 @@ New or strengthened behavior should obey the following principles:
   - Mitigation: keep the milestone focused on bounded maturity gains and push broader autonomy or productization to later releases.
 - Risk: AEE scope again slips into future milestones without concrete progress.
   - Mitigation: make AEE a named centerpiece of v0.85 and require concrete deliverables, not only planning language.
-- Risk: the emotion model is treated as either too speculative or too vague to matter.
+- Risk: the bounded affect model is treated as either too speculative or too vague to matter.
   - Mitigation: define it as a bounded operational substrate for priorities, tensions, and evaluation signals rather than synthetic psychology.
 - Risk: authoring and reviewer improvements remain secondary and continue to bottleneck throughput.
   - Mitigation: explicitly prioritize Card Reviewer GPT stabilization and Prompt Spec / authoring improvements as milestone work.
@@ -162,7 +162,7 @@ New or strengthened behavior should obey the following principles:
 ## Alternatives Considered
 - Option: keep v0.85 narrowly runtime-focused and defer affective/cognitive work.
   - Tradeoff: would simplify scope, but risks missing an important architectural opportunity and continuing to postpone a promising design area.
-- Option: push the emotion model entirely to v0.9+.
+- Option: push the bounded affect model entirely to v0.9+.
   - Tradeoff: safer in the short term, but loses the chance to shape the cognitive substrate while foundational interfaces are still being designed.
 - Option: prioritize only authoring/UI improvements and defer AEE again.
   - Tradeoff: would improve usability, but would continue a pattern of postponing one of ADL’s most strategically important runtime themes.
@@ -179,6 +179,6 @@ New or strengthened behavior should obey the following principles:
 - Validation plan is actionable and referenced by the milestone checklist.
 - Major open questions are resolved or tracked in the decision log.
 - v0.85 clearly advances AEE, reviewer reliability, authoring maturity, and Gödel runtime capability.
-- The emotion / affect model has a minimal working artifact, a bounded role in the architecture, and a demoable proof path.
+- The bounded affect model has a minimal working artifact, a bounded role in the architecture, and a demoable proof path.
 - The major v0.85 planning documents no longer materially contradict one another on scope, trust, AEE, Gödel emphasis, editor expectations, demo expectations, or affect-model intent.
 - The milestone positions ADL to enter v0.9 with nearly all base features in place.

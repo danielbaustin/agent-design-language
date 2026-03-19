@@ -4,7 +4,7 @@
 
 This document defines the **Affective Reasoning Model** used in ADL planning for v0.85.
 
-The goal is **not to simulate human emotions**, but to introduce a compact internal signal layer that helps guide reasoning, prioritization, and evaluation in adaptive agent systems.
+The goal is **not to simulate human feeling**, but to introduce a compact bounded-affect signal layer that helps guide reasoning, prioritization, and evaluation in adaptive agent systems.
 
 These signals act as **control surfaces for reasoning** inside the Adaptive Execution Engine (AEE) and future Gödel-style hypothesis experimentation.
 
