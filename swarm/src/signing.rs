@@ -645,12 +645,13 @@ run:
             Some(VerificationKeySource::ExplicitKey)
         );
         assert_eq!(VerificationKeySource::parse("ssh"), None);
+        assert_eq!(VerificationKeySource::parse("unknown"), None);
         assert_eq!(VerificationKeySource::Embedded.as_str(), "embedded");
         assert_eq!(VerificationKeySource::ExplicitKey.as_str(), "explicit_key");
     }
 
     #[test]
-    fn verification_profile_canonicalized_sorts_and_dedupes() {
+    fn verification_profile_canonicalized_normalizes_sorts_and_dedupes() {
         let canonical = VerificationProfile {
             require_signature: true,
             require_key_id: false,
@@ -720,6 +721,37 @@ run:
         };
         let err = enforce_verification_profile(&metadata, &VerificationProfile::default())
             .expect_err("signed metadata without key source should fail");
+        assert_eq!(err.kind, VerificationErrorKind::PolicyViolation);
+        assert_eq!(err.code, "SIGN_POLICY_MISSING_KEY_SOURCE");
+    }
+
+    #[test]
+    fn verify_doc_with_profile_currently_requires_signature_even_when_optional() {
+        let doc = sample_doc();
+        let profile = VerificationProfile {
+            require_signature: false,
+            require_key_id: true,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources: vec![VerificationKeySource::Embedded],
+        };
+        let err = verify_doc_with_profile(&doc, None, &profile)
+            .expect_err("current implementation requires an attached signature");
+        assert_eq!(err.kind, VerificationErrorKind::PolicyViolation);
+        assert_eq!(err.code, "SIGN_POLICY_UNSIGNED_REQUIRED");
+    }
+
+    #[test]
+    fn profile_rejects_signed_doc_when_key_source_cannot_be_determined() {
+        let mut doc = sample_doc();
+        doc.signature = Some(adl::SignatureSpec {
+            alg: "ed25519".to_string(),
+            key_id: "dev-local".to_string(),
+            public_key_b64: None,
+            sig_b64: B64.encode([0_u8; 64]),
+            signed_header: default_signed_header(&doc),
+        });
+        let err = verify_doc_with_profile(&doc, None, &VerificationProfile::default())
+            .expect_err("missing key source should fail before signature decode");
         assert_eq!(err.kind, VerificationErrorKind::PolicyViolation);
         assert_eq!(err.code, "SIGN_POLICY_MISSING_KEY_SOURCE");
     }
@@ -865,5 +897,38 @@ run:
             .expect_err("signature length mismatch should fail");
         assert_eq!(err.kind, VerificationErrorKind::MalformedSignatureMaterial);
         assert_eq!(err.code, "SIGN_MALFORMED_SIGNATURE");
+    }
+
+    #[test]
+    fn malformed_signature_base64_maps_to_stable_code() {
+        let (mut doc, pub_b64) = signed_doc_and_pubkey();
+        let signature = doc.signature.as_mut().expect("signature");
+        signature.public_key_b64 = Some(pub_b64);
+        signature.sig_b64 = "not-base64###".to_string();
+        let err = verify_doc_with_profile(&doc, None, &VerificationProfile::default())
+            .expect_err("invalid base64 signature should fail");
+        assert_eq!(err.kind, VerificationErrorKind::MalformedSignatureMaterial);
+        assert_eq!(err.code, "SIGN_MALFORMED_SIGNATURE");
+    }
+
+    #[test]
+    fn malformed_explicit_public_key_maps_to_stable_code() {
+        let (doc, _pub_b64) = signed_doc_and_pubkey();
+        let unique = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("system time")
+            .as_nanos();
+        let dir = std::env::temp_dir().join(format!("adl-signing-tests-{unique}"));
+        fs::create_dir_all(&dir).expect("create temp dir");
+        let key_path = dir.join("bad-public.b64");
+        fs::write(&key_path, "not-base64").expect("write key");
+
+        let err = verify_doc_with_profile(&doc, Some(&key_path), &VerificationProfile::default())
+            .expect_err("invalid explicit public key should fail");
+        assert_eq!(err.kind, VerificationErrorKind::MalformedSignatureMaterial);
+        assert_eq!(err.code, "SIGN_MALFORMED_PUBLIC_KEY");
+
+        let _ = fs::remove_file(&key_path);
+        let _ = fs::remove_dir(&dir);
     }
 }
