@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADL Task Bundle Editor</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">WP-05 Editor Slice</p>
+      <h1>ADL Task Bundle Editor</h1>
+      <p class="lede">
+        A bounded first editor surface for Structured Task Prompts and Structured Implementation Prompts.
+        This editor keeps the public task-bundle model visible while reducing fragile raw markdown editing.
+      </p>
+    </header>
+
+    <section class="panel controls">
+      <div class="control-grid">
+        <label>
+          Artifact Type
+          <select id="artifact-type"></select>
+        </label>
+        <label>
+          Task ID
+          <input id="task-id" type="text" placeholder="task-v085-wp05">
+        </label>
+        <label>
+          Title
+          <input id="title" type="text" placeholder="[v0.85][WP-05] First authoring/editor surfaces">
+        </label>
+        <label>
+          Branch / Slug
+          <input id="branch" type="text" placeholder="codex/870-v085-wp05-first-editor-surfaces">
+        </label>
+      </div>
+      <div class="bundle-path" id="bundle-path"></div>
+    </section>
+
+    <section class="workspace">
+      <section class="panel form-panel">
+        <div class="section-header">
+          <h2>Structured Fields</h2>
+          <p>Fill the required sections. The preview updates as you type.</p>
+        </div>
+        <form id="artifact-form" class="artifact-form"></form>
+      </section>
+
+      <section class="panel preview-panel">
+        <div class="section-header">
+          <h2>Validation</h2>
+          <p>Schema-aware checks for required metadata and section presence.</p>
+        </div>
+        <ul id="validation-list" class="validation-list"></ul>
+        <div class="section-header preview-head">
+          <h2>Rendered Artifact</h2>
+          <button id="copy-preview" type="button">Copy Markdown</button>
+        </div>
+        <pre id="artifact-preview" class="preview"></pre>
+      </section>
+    </section>
+
+    <section class="panel notes">
+      <h2>First Slice Boundaries</h2>
+      <ul>
+        <li>This editor supports STP and SIP first because they are the current highest-friction authoring surfaces.</li>
+        <li>The canonical public record remains a tracked task bundle under <code>docs/records/&lt;scope&gt;/tasks/&lt;task-id&gt;/</code>.</li>
+        <li>Drafts may still begin in <code>.adl/</code>, but the public record should be promoted into a tracked task bundle before authoritative transitions.</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="./task_bundle_editor.js"></script>
+</body>
+</html>
