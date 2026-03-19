@@ -27,7 +27,7 @@ pr_start:
   slug: "replace-me"
 ---
 
-# Issue Prompt Stub
+# Replace Me
 
 ## Summary
 
@@ -76,3 +76,5 @@ State the concrete purpose of this issue in one or two sentences.
 ## Notes
 
 - Keep any additional scope or sequencing notes here.
+- The H1 should identify the specific task, not just the artifact class.
+- Use a temporary task-identifying title even in the stub state; avoid generic headings like "Issue Prompt Stub."
