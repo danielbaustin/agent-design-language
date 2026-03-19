@@ -10,9 +10,17 @@ This is the default contributor path for ADL development:
 ./swarm/tools/pr.sh start <issue_num> --slug <slug>
 ```
 
-Canonical cards:
+Current workflow compatibility paths:
 - `.adl/cards/<issue_num>/input_<issue_num>.md`
 - `.adl/cards/<issue_num>/output_<issue_num>.md`
+
+Canonical local prompt bundle:
+- `.adl/v0.85/tasks/<task-id>__<slug>/stp.stub.md`
+- `.adl/v0.85/tasks/<task-id>__<slug>/stp.md`
+- `.adl/v0.85/tasks/<task-id>__<slug>/sip.md`
+- `.adl/v0.85/tasks/<task-id>__<slug>/sor.md`
+
+Until `pr.sh` is migrated fully, `swarm/tools/sync_task_bundle_prompts.sh` refreshes the canonical local task-bundle view from the current compatibility paths.
 
 Structured Card Templates v2 (required sections):
 - Input card:
@@ -54,5 +62,7 @@ Typical local preflight:
   - Ensure `--paths` only includes intended repo paths; do not include `.adl/cards`.
 - Missing card files:
   - Re-run `pr.sh start <issue_num> --slug <slug>` to seed canonical card paths.
+- Missing local task bundle:
+  - Run `swarm/tools/sync_task_bundle_prompts.sh --scope v0.85` to rebuild `.adl/v0.85/tasks/` from the current compatibility paths.
 - Worktree branch base problems:
   - Update from `origin/main`, then re-run `start`.

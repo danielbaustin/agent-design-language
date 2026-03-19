@@ -17,6 +17,8 @@ start -> cards -> execute -> review -> finish -> merge -> cleanup
 
 Card semantics:
 - Input/output cards are **local-only** trace artifacts under `.adl/cards/` (not committed).
+- The canonical local draft prompt bundle is `.adl/<scope>/tasks/<task-id>__<slug>/`.
+- Until workflow tooling writes that layout directly, `.adl/cards/` and `.adl/issues/...` remain compatibility inputs that should be synced into the canonical bundle view.
 - Templates live under `swarm/templates/cards/` (versioned).
 - Tasks can be non-code; the same card-based trace applies.
 
