@@ -484,6 +484,7 @@ fn decode_verifying_key_b64(raw_b64: &str) -> Result<VerifyingKey> {
 mod tests {
     use super::*;
     use ed25519_dalek::SigningKey;
+    use std::time::{SystemTime, UNIX_EPOCH};
 
     fn sample_doc() -> adl::AdlDoc {
         let yaml = r#"
@@ -526,6 +527,19 @@ run:
             signed_header: header,
         });
         (doc, pub_b64)
+    }
+
+    fn unique_temp_dir(label: &str) -> PathBuf {
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("system time")
+            .as_nanos();
+        let dir = std::env::temp_dir().join(format!(
+            "adl-signing-{label}-{}-{nanos}",
+            std::process::id()
+        ));
+        fs::create_dir_all(&dir).expect("create temp dir");
+        dir
     }
 
     #[test]
@@ -618,5 +632,238 @@ run:
             .expect_err("tamper should fail");
         assert_eq!(err.kind, VerificationErrorKind::SignatureMismatch);
         assert_eq!(err.code, "SIGNATURE_MISMATCH");
+    }
+
+    #[test]
+    fn verification_key_source_parse_and_as_str_are_stable() {
+        assert_eq!(
+            VerificationKeySource::parse(" embedded "),
+            Some(VerificationKeySource::Embedded)
+        );
+        assert_eq!(
+            VerificationKeySource::parse("EXPLICIT_KEY"),
+            Some(VerificationKeySource::ExplicitKey)
+        );
+        assert_eq!(VerificationKeySource::parse("ssh"), None);
+        assert_eq!(VerificationKeySource::Embedded.as_str(), "embedded");
+        assert_eq!(VerificationKeySource::ExplicitKey.as_str(), "explicit_key");
+    }
+
+    #[test]
+    fn verification_profile_canonicalized_sorts_and_dedupes() {
+        let canonical = VerificationProfile {
+            require_signature: true,
+            require_key_id: false,
+            allowed_algs: vec![
+                " Ed25519 ".to_string(),
+                "ed25519".to_string(),
+                "".to_string(),
+                "RSA".to_string(),
+            ],
+            allowed_key_sources: vec![
+                VerificationKeySource::ExplicitKey,
+                VerificationKeySource::Embedded,
+                VerificationKeySource::ExplicitKey,
+            ],
+        }
+        .canonicalized();
+
+        assert_eq!(
+            canonical.allowed_algs,
+            vec!["ed25519".to_string(), "rsa".to_string()]
+        );
+        assert_eq!(
+            canonical.allowed_key_sources,
+            vec![
+                VerificationKeySource::Embedded,
+                VerificationKeySource::ExplicitKey
+            ]
+        );
+    }
+
+    #[test]
+    fn stable_failure_kind_only_matches_verification_errors() {
+        let policy = VerificationError::policy("SIGN_POLICY", "policy error");
+        let verification_anyhow: anyhow::Error = anyhow::Error::new(policy);
+        assert_eq!(
+            stable_failure_kind(&verification_anyhow),
+            Some("verification_failed")
+        );
+
+        let non_verification = anyhow!("not verification");
+        assert_eq!(stable_failure_kind(&non_verification), None);
+    }
+
+    #[test]
+    fn enforce_profile_allows_unsigned_when_signature_not_required() {
+        let metadata = VerificationMetadata {
+            signed: false,
+            key_id: None,
+            alg: None,
+            key_source: None,
+        };
+        let profile = VerificationProfile {
+            require_signature: false,
+            ..VerificationProfile::default()
+        };
+        enforce_verification_profile(&metadata, &profile)
+            .expect("unsigned metadata should be allowed when not required");
+    }
+
+    #[test]
+    fn enforce_profile_rejects_missing_key_source_for_signed_metadata() {
+        let metadata = VerificationMetadata {
+            signed: true,
+            key_id: Some("dev-local"),
+            alg: Some("ed25519"),
+            key_source: None,
+        };
+        let err = enforce_verification_profile(&metadata, &VerificationProfile::default())
+            .expect_err("signed metadata without key source should fail");
+        assert_eq!(err.kind, VerificationErrorKind::PolicyViolation);
+        assert_eq!(err.code, "SIGN_POLICY_MISSING_KEY_SOURCE");
+    }
+
+    #[test]
+    fn enforce_profile_accepts_any_algorithm_and_source_when_lists_are_empty() {
+        let metadata = VerificationMetadata {
+            signed: true,
+            key_id: Some("dev-local"),
+            alg: Some("RSA"),
+            key_source: Some(VerificationKeySource::Embedded),
+        };
+        let profile = VerificationProfile {
+            require_signature: true,
+            require_key_id: false,
+            allowed_algs: vec![],
+            allowed_key_sources: vec![],
+        };
+        enforce_verification_profile(&metadata, &profile)
+            .expect("empty allow lists should not enforce algorithm/key-source restrictions");
+    }
+
+    #[test]
+    fn default_signed_header_prefers_workflow_ref_when_present() {
+        let mut doc = sample_doc();
+        doc.run.workflow_ref = Some("wf-ref".to_string());
+        doc.run.workflow.as_mut().expect("inline workflow").id = Some("inline-id".to_string());
+        let header = default_signed_header(&doc);
+        assert_eq!(header.adl_version, "0.5");
+        assert_eq!(header.workflow_id.as_deref(), Some("wf-ref"));
+    }
+
+    #[test]
+    fn default_signed_header_uses_inline_workflow_id_without_ref() {
+        let mut doc = sample_doc();
+        doc.run.workflow_ref = None;
+        doc.run.workflow.as_mut().expect("inline workflow").id = Some("inline-id".to_string());
+        let header = default_signed_header(&doc);
+        assert_eq!(header.workflow_id.as_deref(), Some("inline-id"));
+    }
+
+    #[test]
+    fn keygen_writes_expected_key_files_and_lengths() {
+        let dir = unique_temp_dir("keygen");
+        let (private_path, public_path) = keygen(&dir).expect("keygen should succeed");
+        let private_raw =
+            fs::read_to_string(&private_path).expect("private key should be readable");
+        let public_raw = fs::read_to_string(&public_path).expect("public key should be readable");
+        let private_bytes = B64
+            .decode(private_raw.trim().as_bytes())
+            .expect("private key base64 should decode");
+        let public_bytes = B64
+            .decode(public_raw.trim().as_bytes())
+            .expect("public key base64 should decode");
+        assert_eq!(private_bytes.len(), 32);
+        assert_eq!(public_bytes.len(), 32);
+    }
+
+    #[test]
+    fn sign_file_and_verify_file_round_trip_with_explicit_key() {
+        let dir = unique_temp_dir("sign-verify-roundtrip");
+        let input = dir.join("workflow.adl.yaml");
+        let signed = dir.join("signed.adl.yaml");
+        fs::write(
+            &input,
+            r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "hello"
+run:
+  name: "demo"
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+"#,
+        )
+        .expect("write input workflow");
+
+        let keys = unique_temp_dir("keys");
+        let (private_path, public_path) = keygen(&keys).expect("keygen should succeed");
+        let output = sign_file(&input, &private_path, "dev-local", Some(&signed))
+            .expect("sign should succeed");
+        assert_eq!(output, signed);
+        verify_file(&signed, Some(&public_path)).expect("verify should succeed");
+    }
+
+    #[test]
+    fn sign_file_rejects_invalid_private_key_material() {
+        let dir = unique_temp_dir("invalid-private-key");
+        let input = dir.join("workflow.adl.yaml");
+        fs::write(
+            &input,
+            r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "hello"
+run:
+  name: "demo"
+  workflow:
+    kind: sequential
+    steps:
+      - id: "s1"
+        agent: "a1"
+        task: "t1"
+"#,
+        )
+        .expect("write input workflow");
+        let bad_private = dir.join("bad-private.b64");
+        fs::write(&bad_private, B64.encode([9_u8; 31])).expect("write malformed private key");
+        let err = sign_file(&input, &bad_private, "dev-local", None)
+            .expect_err("invalid private key length should fail");
+        assert!(err
+            .to_string()
+            .contains("private key must be exactly 32 bytes"));
+    }
+
+    #[test]
+    fn verify_doc_with_profile_rejects_signature_with_wrong_length_bytes() {
+        let (mut doc, _pub_b64) = signed_doc_and_pubkey();
+        doc.signature.as_mut().expect("signature").sig_b64 = B64.encode([1_u8; 63]);
+        let err = verify_doc_with_profile(&doc, None, &VerificationProfile::default())
+            .expect_err("signature length mismatch should fail");
+        assert_eq!(err.kind, VerificationErrorKind::MalformedSignatureMaterial);
+        assert_eq!(err.code, "SIGN_MALFORMED_SIGNATURE");
     }
 }
