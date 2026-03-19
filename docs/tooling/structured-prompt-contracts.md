@@ -29,9 +29,9 @@ These files are the machine-readable source of truth for:
 Use:
 
 ```bash
-swarm/tools/validate_structured_prompt.rb --type stp --input <path>
-swarm/tools/validate_structured_prompt.rb --type sip --phase bootstrap --input <path>
-swarm/tools/validate_structured_prompt.rb --type sor --phase bootstrap --input <path>
+swarm/tools/validate_structured_prompt.sh --type stp --input <path>
+swarm/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input <path>
+swarm/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input <path>
 ```
 
 The validator currently enforces:

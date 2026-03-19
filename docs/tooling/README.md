@@ -19,7 +19,7 @@ Tracked public workflow history should live in task-centric record bundles under
 - Prompt Spec execution tooling:
   - `swarm/tools/lint_prompt_spec.sh` (Prompt Spec lint/validation)
   - `swarm/tools/card_prompt.sh` (deterministic prompt generation from cards)
-  - `swarm/tools/validate_structured_prompt.rb` (structured prompt contract validation)
+  - `swarm/tools/validate_structured_prompt.sh` (structured prompt contract validation)
 - [Card Reviewer GPT Instructions](card-reviewer-gpt.md): canonical reviewer behavior and deterministic YAML output contract (`card_reviewer_gpt.v1.1`).
 - [Deterministic Review Output Format](card-review-output-format.md): canonical review artifact schema including finding evidence-state semantics.
 - Reviewer regression fixture (stable):
