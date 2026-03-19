@@ -295,4 +295,64 @@ mod tests {
         let wrapped: anyhow::Error = err.into();
         assert_eq!(stable_failure_kind(&wrapped), Some("io_error"));
     }
+
+    #[test]
+    fn run_bounded_caps_worker_count_when_parallelism_exceeds_jobs() {
+        let jobs: Vec<Box<dyn FnOnce() -> usize + Send + 'static>> = vec![
+            Box::new(|| 11usize),
+            Box::new(|| 22usize),
+            Box::new(|| 33usize),
+        ];
+        let out = run_bounded(99, jobs).expect("run_bounded should succeed");
+        assert_eq!(out, vec![11, 22, 33]);
+    }
+
+    #[test]
+    fn run_bounded_single_worker_path_is_deterministic() {
+        let jobs: Vec<Box<dyn FnOnce() -> usize + Send + 'static>> = (0..5usize)
+            .map(|i| Box::new(move || i * 2) as Box<dyn FnOnce() -> usize + Send + 'static>)
+            .collect();
+        let out = run_bounded(1, jobs).expect("single worker should execute all jobs");
+        assert_eq!(out, vec![0, 2, 4, 6, 8]);
+    }
+
+    #[test]
+    fn run_bounded_supports_non_copy_outputs_in_order() {
+        let jobs: Vec<Box<dyn FnOnce() -> String + Send + 'static>> = vec![
+            Box::new(|| "alpha".to_string()),
+            Box::new(|| "beta".to_string()),
+            Box::new(|| "gamma".to_string()),
+        ];
+        let out = run_bounded(2, jobs).expect("string jobs should succeed");
+        assert_eq!(out, vec!["alpha", "beta", "gamma"]);
+    }
+
+    #[test]
+    fn bounded_executor_error_display_is_stable() {
+        let err = BoundedExecutorError::new(
+            BoundedExecutorErrorKind::InvalidParallelism,
+            "max_parallel must be >= 1",
+        );
+        assert_eq!(format!("{err}"), "max_parallel must be >= 1");
+    }
+
+    #[test]
+    fn stable_failure_kind_maps_wrapped_queue_poisoned_to_panic() {
+        let err = BoundedExecutorError::new(
+            BoundedExecutorErrorKind::QueuePoisoned,
+            "queue lock poisoned",
+        );
+        let wrapped = anyhow::Error::new(err).context("outer wrapper");
+        assert_eq!(stable_failure_kind(&wrapped), Some("panic"));
+    }
+
+    #[test]
+    fn stable_failure_kind_maps_wrapped_output_count_mismatch_to_io_error() {
+        let err = BoundedExecutorError::new(
+            BoundedExecutorErrorKind::OutputCountMismatch,
+            "output count mismatch",
+        );
+        let wrapped = anyhow::Error::new(err).context("outer wrapper");
+        assert_eq!(stable_failure_kind(&wrapped), Some("io_error"));
+    }
 }
