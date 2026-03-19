@@ -41,6 +41,11 @@ issue_from_input_path() {
   local base
   base="$(basename "$p")"
 
+  if [[ "$p" =~ (^|/)\.adl/[[:alnum:]._-]+/tasks/issue-([0-9]+)__[^/]+/sip\.md$ ]]; then
+    card_issue_normalize "${BASH_REMATCH[2]}"
+    return 0
+  fi
+
   if [[ "$p" =~ (^|/)\.adl/cards/([0-9]+)/input_([0-9]+)\.md$ ]]; then
     [[ "${BASH_REMATCH[2]}" == "${BASH_REMATCH[3]}" ]] || die "Card path mismatch: $p"
     card_issue_normalize "${BASH_REMATCH[2]}"
@@ -52,7 +57,7 @@ issue_from_input_path() {
     return 0
   fi
 
-  die "Could not parse input card path: $p (expected .adl/cards/143/input_143.md or issue-0143__input__v0.3.md)"
+  die "Could not parse input card path: $p (expected canonical .adl/<scope>/tasks/issue-0143__<slug>/sip.md or compatibility .adl/cards/143/input_143.md)"
 }
 
 version_from_card() {

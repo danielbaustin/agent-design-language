@@ -95,6 +95,7 @@ ADL should distinguish between:
   - temporary draft workspace
   - generated intermediate files
   - editor-local scratch state
+  - canonical local task bundles under `.adl/<scope>/tasks/<task-id>__<slug>/`
 - `docs/records/<scope>/tasks/<task-id>/`
   - tracked public task bundle
   - canonical record for review, preservation, and official lifecycle transitions
@@ -104,6 +105,8 @@ This separation matters because the next generation of editor tooling should be 
 In practical terms:
 
 - draft STPs may begin in `.adl/`
+- canonical local draft workflow artifacts should live together under `.adl/<scope>/tasks/<task-id>__<slug>/`
+- compatibility links may continue to exist temporarily under `.adl/cards/<issue>/` while older helper surfaces migrate
 - official issue creation or reconciliation may project from the task bundle when GitHub is involved
 - generated or refined SIPs may draft locally, but canonical execution briefs should be promotable into tracked task bundles
 - SORs must become tracked public records before final completion is treated as closed and auditable

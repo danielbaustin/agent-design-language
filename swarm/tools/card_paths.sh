@@ -31,6 +31,14 @@ cards_root_resolve() {
   echo "$root/.adl/cards"
 }
 
+task_bundles_root_resolve() {
+  local scope="${1:-}"
+  local root
+  root="$(card_primary_checkout_root)"
+  [[ -n "$scope" ]] || { echo "missing scope" >&2; return 1; }
+  echo "$root/.adl/$scope/tasks"
+}
+
 card_issue_normalize() {
   local raw="$1"
   if [[ ! "$raw" =~ ^[0-9]+$ ]]; then
@@ -44,6 +52,57 @@ card_issue_pad() {
   local issue
   issue="$(card_issue_normalize "$1")" || return 1
   printf '%04d' "$issue"
+}
+
+task_issue_id() {
+  local issue
+  issue="$(card_issue_pad "$1")" || return 1
+  echo "issue-$issue"
+}
+
+task_bundle_dir_name() {
+  local issue="$1" slug="$2"
+  [[ -n "$slug" ]] || { echo "missing slug" >&2; return 1; }
+  echo "$(task_issue_id "$issue")__${slug}"
+}
+
+task_bundle_dir_path() {
+  local issue="$1" scope="$2" slug="$3"
+  echo "$(task_bundles_root_resolve "$scope")/$(task_bundle_dir_name "$issue" "$slug")"
+}
+
+task_bundle_first_dir() {
+  local issue="$1" scope="${2:-}"
+  local issue_id root pattern
+  local -a matches=()
+  issue_id="$(task_issue_id "$issue")" || return 1
+  root="$(card_primary_checkout_root)"
+
+  shopt -s nullglob
+  if [[ -n "$scope" ]]; then
+    pattern="$root/.adl/$scope/tasks/${issue_id}__*"
+    matches=($pattern)
+  else
+    matches=("$root"/.adl/*/tasks/"${issue_id}"__*)
+  fi
+  shopt -u nullglob
+
+  if [[ ${#matches[@]} -gt 0 ]]; then
+    printf '%s\n' "${matches[@]}" | LC_ALL=C sort | head -n1
+    return 0
+  fi
+
+  return 1
+}
+
+task_bundle_input_path() {
+  local issue="$1" scope="$2" slug="$3"
+  echo "$(task_bundle_dir_path "$issue" "$scope" "$slug")/sip.md"
+}
+
+task_bundle_output_path() {
+  local issue="$1" scope="$2" slug="$3"
+  echo "$(task_bundle_dir_path "$issue" "$scope" "$slug")/sor.md"
 }
 
 card_dir_path() {
@@ -154,24 +213,89 @@ ensure_canonical_card_from_legacy() {
   fi
 }
 
-resolve_input_card_path() {
-  local issue="$1" ver="${2:-v0.2}"
-  local p_new p_legacy
-  p_new="$(card_input_path "$issue")" || return 1
-  p_legacy="$(card_first_legacy_path input "$issue" "$ver" || true)"
-  if [[ -n "$p_legacy" ]]; then
-    ensure_canonical_card_from_legacy "$p_new" "$p_legacy"
+legacy_compat_link_path() {
+  local kind="$1" issue="$2"
+  case "$kind" in
+    input) card_input_path "$issue" ;;
+    output) card_output_path "$issue" ;;
+    *) echo "invalid card kind: $kind" >&2; return 1 ;;
+  esac
+}
+
+ensure_legacy_card_compat_link() {
+  local kind="$1" issue="$2" canonical="$3"
+  local compat existing migrated
+  compat="$(legacy_compat_link_path "$kind" "$issue")" || return 1
+  mkdir -p "$(dirname "$compat")"
+
+  if [[ -L "$compat" ]]; then
+    rm -f "$compat"
+  elif [[ -e "$compat" ]]; then
+    mkdir -p "$(cards_root_resolve)/_legacy_migrated"
+    migrated="$(next_migration_path "$compat")"
+    mv "$compat" "$migrated"
+    echo "warning: migrated compatibility card path: $compat -> $migrated" >&2
   fi
-  echo "$p_new"
+
+  ln -s "$canonical" "$compat"
+}
+
+resolve_input_card_path() {
+  local issue="$1" ver="${2:-}" slug="${3:-}"
+  local p_new p_legacy bundle_dir compat
+  compat="$(card_input_path "$issue")" || return 1
+
+  if [[ -n "$slug" && -n "$ver" ]]; then
+    p_new="$(task_bundle_input_path "$issue" "$ver" "$slug")"
+    mkdir -p "$(dirname "$p_new")"
+    if [[ ! -e "$p_new" && -f "$compat" && ! -L "$compat" ]]; then
+      cp -f "$compat" "$p_new"
+    fi
+    ensure_legacy_card_compat_link input "$issue" "$p_new"
+    echo "$p_new"
+    return 0
+  fi
+
+  bundle_dir="$(task_bundle_first_dir "$issue" "$ver" || true)"
+  if [[ -n "$bundle_dir" ]]; then
+    ensure_legacy_card_compat_link input "$issue" "$bundle_dir/sip.md"
+    echo "$bundle_dir/sip.md"
+    return 0
+  fi
+
+  p_legacy="$(card_first_legacy_path input "$issue" "${ver:-v0.2}" || true)"
+  if [[ -n "$p_legacy" ]]; then
+    ensure_canonical_card_from_legacy "$compat" "$p_legacy"
+  fi
+  echo "$compat"
 }
 
 resolve_output_card_path() {
-  local issue="$1" ver="${2:-v0.2}"
-  local p_new p_legacy
-  p_new="$(card_output_path "$issue")" || return 1
-  p_legacy="$(card_first_legacy_path output "$issue" "$ver" || true)"
-  if [[ -n "$p_legacy" ]]; then
-    ensure_canonical_card_from_legacy "$p_new" "$p_legacy"
+  local issue="$1" ver="${2:-}" slug="${3:-}"
+  local p_new p_legacy bundle_dir compat
+  compat="$(card_output_path "$issue")" || return 1
+
+  if [[ -n "$slug" && -n "$ver" ]]; then
+    p_new="$(task_bundle_output_path "$issue" "$ver" "$slug")"
+    mkdir -p "$(dirname "$p_new")"
+    if [[ ! -e "$p_new" && -f "$compat" && ! -L "$compat" ]]; then
+      cp -f "$compat" "$p_new"
+    fi
+    ensure_legacy_card_compat_link output "$issue" "$p_new"
+    echo "$p_new"
+    return 0
   fi
-  echo "$p_new"
+
+  bundle_dir="$(task_bundle_first_dir "$issue" "$ver" || true)"
+  if [[ -n "$bundle_dir" ]]; then
+    ensure_legacy_card_compat_link output "$issue" "$bundle_dir/sor.md"
+    echo "$bundle_dir/sor.md"
+    return 0
+  fi
+
+  p_legacy="$(card_first_legacy_path output "$issue" "${ver:-v0.2}" || true)"
+  if [[ -n "$p_legacy" ]]; then
+    ensure_canonical_card_from_legacy "$compat" "$p_legacy"
+  fi
+  echo "$compat"
 }

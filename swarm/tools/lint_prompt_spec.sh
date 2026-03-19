@@ -62,7 +62,7 @@ fi
 
 if [[ -n "$ISSUE" ]]; then
   ISSUE="$(card_issue_normalize "$ISSUE")"
-  INPUT="$(card_input_path "$ISSUE")"
+  INPUT="$(resolve_input_card_path "$ISSUE" "")"
 fi
 
 [[ -f "$INPUT" ]] || die "input card not found: $INPUT"

@@ -58,4 +58,9 @@ export ADL_CARDS_ROOT
 assert_eq "$(canon_path "$(cards_root_resolve)")" "$(canon_path "$repo/custom/cards")"
 assert_eq "$(canon_path "$(dirname "$(card_input_path 144)")")" "$(canon_path "$repo/custom/cards/144")"
 
+canonical_input="$(resolve_input_card_path 145 v0.85 demo-title)"
+canonical_output="$(resolve_output_card_path 145 v0.85 demo-title)"
+assert_eq "$(canon_path "$(dirname "$canonical_input")")/$(basename "$canonical_input")" "$(canon_path "$repo/.adl/v0.85/tasks/issue-0145__demo-title")/sip.md"
+assert_eq "$(canon_path "$(dirname "$canonical_output")")/$(basename "$canonical_output")" "$(canon_path "$repo/.adl/v0.85/tasks/issue-0145__demo-title")/sor.md"
+
 echo "ok"

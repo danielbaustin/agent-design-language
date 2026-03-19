@@ -17,7 +17,7 @@ Use this page when you need to orient quickly in the ADL repo.
 
 ## Workflow Context
 
-Default workflow uses `adl_pr_cycle` with canonical card paths under `.adl/cards/<issue>/`.
+Default workflow uses `adl_pr_cycle` with canonical local task bundles under `.adl/<scope>/tasks/<task-id>__<slug>/`, plus compatibility links under `.adl/cards/<issue>/`.
 
 ## Reading Order
 

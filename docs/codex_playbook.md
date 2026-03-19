@@ -16,7 +16,8 @@ start -> cards -> execute -> review -> finish -> merge -> cleanup
 ```
 
 Card semantics:
-- Input/output cards are **local-only** trace artifacts under `.adl/cards/` (not committed).
+- The canonical local draft prompt bundle lives under `.adl/<scope>/tasks/<task-id>__<slug>/`.
+- Compatibility links remain under `.adl/cards/` for adjacent tooling during migration.
 - Templates live under `swarm/templates/cards/` (versioned).
 - Tasks can be non-code; the same card-based trace applies.
 
@@ -27,8 +28,8 @@ swarm/tools/pr.sh start <issue>
 swarm/tools/pr.sh cards <issue>
 # do the work + tests
 swarm/tools/pr.sh finish <issue> --title "swarm: <short description>" \
-  -f .adl/cards/####/input_####.md \
-  --output-card .adl/cards/####/output_####.md
+  -f .adl/v0.85/tasks/<task-id>__<slug>/sip.md \
+  --output-card .adl/v0.85/tasks/<task-id>__<slug>/sor.md
 ```
 
 Recovery (common pitfalls):

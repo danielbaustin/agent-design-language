@@ -155,6 +155,17 @@ current_branch() {
   git rev-parse --abbrev-ref HEAD
 }
 
+path_relative_to_repo() {
+  local path="$1"
+  local root
+  root="$(repo_root)"
+  if [[ "$path" == "$root/"* ]]; then
+    echo "${path#"$root/"}"
+  else
+    echo "$path"
+  fi
+}
+
 ensure_clean_worktree() {
   if ! git diff --quiet || ! git diff --cached --quiet; then
     die "Working tree is dirty. Commit/stash your changes first."
@@ -451,29 +462,33 @@ ensure_adl_dirs() {
 }
 
 input_card_path() {
-  local issue="$1"
-  card_input_path "$issue" || die "invalid issue number: $issue"
+  local issue="$1" ver="${2:-}" slug="${3:-}"
+  resolve_input_card_path "$issue" "$ver" "$slug" || die "invalid issue number: $issue"
 }
 
 output_card_path() {
-  local issue="$1"
-  card_output_path "$issue" || die "invalid issue number: $issue"
+  local issue="$1" ver="${2:-}" slug="${3:-}"
+  resolve_output_card_path "$issue" "$ver" "$slug" || die "invalid issue number: $issue"
 }
 
 resolve_input_card_path_abs() {
-  local issue="$1" ver="$2"
-  resolve_input_card_path "$issue" "$ver" || die "invalid issue number: $issue"
+  local issue="$1" ver="$2" slug="${3:-}"
+  resolve_input_card_path "$issue" "$ver" "$slug" || die "invalid issue number: $issue"
 }
 
 resolve_output_card_path_abs() {
-  local issue="$1" ver="$2"
-  resolve_output_card_path "$issue" "$ver" || die "invalid issue number: $issue"
+  local issue="$1" ver="$2" slug="${3:-}"
+  resolve_output_card_path "$issue" "$ver" "$slug" || die "invalid issue number: $issue"
 }
 
 sync_legacy_links_for_issue() {
-  # Legacy compatibility links are intentionally disabled to keep cards
-  # canonicalized under .adl/cards/<issue>/ only.
-  :
+  local issue="$1" ver="$2" slug="${3:-}"
+  local in_path out_path
+  [[ -n "$slug" ]] || return 0
+  in_path="$(resolve_input_card_path_abs "$issue" "$ver" "$slug")"
+  out_path="$(resolve_output_card_path_abs "$issue" "$ver" "$slug")"
+  ensure_legacy_card_compat_link input "$issue" "$in_path"
+  ensure_legacy_card_compat_link output "$issue" "$out_path"
 }
 
 render_template() {
@@ -492,7 +507,7 @@ validate_card_header_count() {
 }
 
 seed_input_card() {
-  local path="$1" issue="$2" title="$3" branch="$4" ver="$5"
+  local path="$1" issue="$2" title="$3" branch="$4" ver="$5" output_path_actual="${6:-}"
   local task_id run_id
   task_id="issue-$(card_issue_pad "$issue")"
   run_id="$task_id"
@@ -517,6 +532,12 @@ seed_input_card() {
   if [[ -n "$repo" ]]; then
     issue_url="https://github.com/${repo}/issues/${issue}"
     replace_first_line_re "$tmp" "^- Issue:[[:space:]]*$" "- Issue: $issue_url"
+  fi
+
+  if [[ -n "$output_path_actual" ]]; then
+    output_path_actual="$(path_relative_to_repo "$output_path_actual")"
+    replace_first_line_re "$tmp" "^- Write the output card to the paired .*" "- Write the output record to the paired local task bundle sor.md path."
+    replace_first_line_re "$tmp" "^[[:space:]]*output_card: .*$" "  output_card: $output_path_actual"
   fi
 
   validate_card_header_count "$tmp" "# ADL Input Card" || die "generated input card must contain exactly one '# ADL Input Card' header"
@@ -783,7 +804,7 @@ cmd_card() {
     fi
   fi
   if [[ -z "$out_path" ]]; then
-    out_path="$(input_card_path "$issue")"
+    out_path="$(input_card_path "$issue" "$version" "$slug")"
   fi
   if ensure_nonempty_file "$out_path"; then
     if [[ "$kind" == "input" ]]; then
@@ -796,10 +817,8 @@ cmd_card() {
   fi
   note "Creating input card: $out_path"
   ensure_adl_dirs
-  seed_input_card "$out_path" "$issue" "$title" "$(current_branch)" "$version"
-  if [[ "$out_path" == "$(input_card_path "$issue")" ]]; then
-    sync_legacy_links_for_issue "$issue" "$version"
-  fi
+  seed_input_card "$out_path" "$issue" "$title" "$(current_branch)" "$version" "$(output_card_path "$issue" "$version" "$slug")"
+  sync_legacy_links_for_issue "$issue" "$version" "$slug"
   note "Done."
   echo "$out_path"
 }
@@ -852,9 +871,9 @@ cmd_output() {
     if [[ -n "$out_path" ]]; then
       quick_path="$out_path"
     elif [[ "$target_kind" == "input" ]]; then
-      quick_path="$(input_card_path "$issue")"
+      quick_path="$(input_card_path "$issue" "${version:-}" "${slug:-}")"
     else
-      quick_path="$(output_card_path "$issue")"
+      quick_path="$(output_card_path "$issue" "${version:-}" "${slug:-}")"
     fi
     if ensure_nonempty_file "$quick_path"; then
       echo "$quick_path"
@@ -864,7 +883,7 @@ cmd_output() {
 
   if [[ "$target_kind" == "input" ]]; then
     local input_target
-    input_target="${out_path:-$(input_card_path "$issue")}"
+    input_target="${out_path:-$(input_card_path "$issue" "${version:-$DEFAULT_VERSION}" "${slug:-issue-$issue}")}"
     if ! ensure_nonempty_file "$input_target"; then
       local -a create_args
       create_args=("$issue")
@@ -922,7 +941,7 @@ cmd_output() {
     fi
   fi
   if [[ -z "$out_path" ]]; then
-    out_path="$(output_card_path "$issue")"
+    out_path="$(output_card_path "$issue" "$version" "$slug")"
   fi
   if ensure_nonempty_file "$out_path"; then
     if [[ "$kind" == "output" ]]; then
@@ -936,9 +955,7 @@ cmd_output() {
   note "Creating output card: $out_path"
   ensure_adl_dirs
   seed_output_card "$out_path" "$issue" "$title" "$(current_branch)" "$version"
-  if [[ "$out_path" == "$(output_card_path "$issue")" ]]; then
-    sync_legacy_links_for_issue "$issue" "$version"
-  fi
+  sync_legacy_links_for_issue "$issue" "$version" "$slug"
   note "Done."
   echo "$out_path"
 }
@@ -994,15 +1011,16 @@ cmd_cards() {
 
   ensure_adl_dirs
 
-  local input_path output_path
-  input_path="$(input_card_path "$issue")"
-  output_path="$(output_card_path "$issue")"
+  local input_path output_path cards_slug
+  cards_slug="$(sanitize_slug "$title")"
+  input_path="$(input_card_path "$issue" "$version" "$cards_slug")"
+  output_path="$(output_card_path "$issue" "$version" "$cards_slug")"
 
   if ensure_nonempty_file "$input_path"; then
     note "Input card exists: $input_path"
   else
     note "Creating input card: $input_path"
-    seed_input_card "$input_path" "$issue" "$title" "TBD (run pr.sh start $issue)" "$version"
+    seed_input_card "$input_path" "$issue" "$title" "TBD (run pr.sh start $issue)" "$version" "$output_path"
   fi
 
   if ensure_nonempty_file "$output_path"; then
@@ -1012,7 +1030,7 @@ cmd_cards() {
     seed_output_card "$output_path" "$issue" "$title" "TBD (run pr.sh start $issue)" "$version"
   fi
 
-  sync_legacy_links_for_issue "$issue" "$version"
+  sync_legacy_links_for_issue "$issue" "$version" "$cards_slug"
 
   echo "READ  $input_path"
   echo "WRITE $output_path"
@@ -1127,12 +1145,12 @@ cmd_start() {
     require_cmd gh
     ver="$(issue_version "$issue")"
   fi
-  in_path="$(input_card_path "$issue")"
-  out_path="$(output_card_path "$issue")"
+  in_path="$(input_card_path "$issue" "$ver" "$slug")"
+  out_path="$(output_card_path "$issue" "$ver" "$slug")"
   ensure_adl_dirs
   if ! ensure_nonempty_file "$in_path"; then
     note "Creating input card: $in_path"
-    seed_input_card "$in_path" "$issue" "$title" "$branch" "$ver"
+    seed_input_card "$in_path" "$issue" "$title" "$branch" "$ver" "$out_path"
   else
     note "Input card exists: $in_path"
   fi
@@ -1142,7 +1160,7 @@ cmd_start() {
   else
     note "Output card exists: $out_path"
   fi
-  sync_legacy_links_for_issue "$issue" "$ver"
+  sync_legacy_links_for_issue "$issue" "$ver" "$slug"
   validate_bootstrap_cards "$issue" "$branch" "$in_path" "$out_path"
   echo "• Agent:"
   echo "  READ   $in_path"
@@ -1326,8 +1344,8 @@ cmd_finish() {
   fi
 
   local structured_prompt_validator
-  structured_prompt_validator="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/validate_structured_prompt.rb"
-  if ! ruby "$structured_prompt_validator" --type sor --phase completed --input "$output_path" >/dev/null 2>&1; then
+  structured_prompt_validator="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/validate_structured_prompt.sh"
+  if ! bash "$structured_prompt_validator" --type sor --phase completed --input "$output_path" >/dev/null 2>&1; then
     die "finish: output card failed completed-phase validation: $output_path"
   fi
 
