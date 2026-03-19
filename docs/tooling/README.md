@@ -17,6 +17,7 @@ Tracked public workflow history should live in task-centric record bundles under
 - [Prompt/Reviewer Surface Mapping](prompt-review-surface-mapping.md): field-by-field contract map between Prompt Spec, checklist rules, and deterministic review output fields.
 - [Issue Prompt Templates](issue-prompts/README.md): tracked templates and authoring guidance for structured issue prompts used to shape GitHub issues before `pr start`.
 - [Public Task Records](../records/README.md): tracked task-centric record homes for canonical STP/SIP/SOR bundles.
+- `swarm/tools/sync_task_bundle_prompts.sh`: refresh the canonical local `.adl/<scope>/tasks/<task-id>__<slug>/` bundle layout from current compatibility paths.
 - [Reviewer Output Provenance](reviewer-provenance.md): bounded provenance verification for deterministic review-output artifacts.
 - [Reviewer Surface](reviewer-surface.md): first bounded repo-local review/helper surface with deterministic fixture coverage.
 - Prompt Spec execution tooling:
