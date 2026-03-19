@@ -1,0 +1,102 @@
+review_format_version: card_review_output.v1
+review_metadata:
+  reviewer: card_reviewer_gpt.v1.1
+  review_time_utc: 2026-03-11T00:00:00Z
+  checklist_version: card_review_checklist.v1
+review_target:
+  issue: "#661"
+  output_card_path: docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+  input_card_path: docs/tooling/examples/reviewer-regression/issue-661/input_661.md
+  pr: "#699"
+  prompt_spec_bindings:
+    prompt_schema: adl.v1
+    review_surfaces:
+      - card_review_checklist.v1
+      - card_review_output.v1
+      - card_reviewer_gpt.v1.1
+    bindings_validated: true
+decision: MINOR_FIXES
+summary:
+  status_line: "Output card mostly complete; minor evidence/wording fixes required."
+  failed_rule_count: 2
+  failed_rule_ids:
+    - CRS-SEC-003
+    - CRS-VAL-002
+domain_results:
+  - domain: structure
+    status: PASS
+    failed_rules: []
+  - domain: acceptance
+    status: PASS
+    failed_rules: []
+  - domain: determinism
+    status: PASS
+    failed_rules: []
+  - domain: security_privacy
+    status: PARTIAL
+    failed_rules:
+      - CRS-SEC-003
+  - domain: artifacts
+    status: PASS
+    failed_rules: []
+  - domain: validation
+    status: PARTIAL
+    failed_rules:
+      - CRS-VAL-002
+findings:
+  - rule_id: CRS-SEC-003
+    severity: high
+    evidence_state: contradicted
+    title: "Validation section included host-path command examples"
+    evidence:
+      - path:docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+      - command:scan_host_path_patterns docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+    remediation: "Replace host-specific command paths with repository-relative commands."
+  - rule_id: CRS-VAL-002
+    severity: medium
+    evidence_state: not_evidenced
+    title: "Validation pass/fail wording lacked one explicit command result"
+    evidence:
+      - path:docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+    remediation: "State PASS/FAIL explicitly for each listed validation command."
+  - rule_id: CRS-DET-003
+    severity: low
+    evidence_state: not_applicable
+    title: "Replay impact unchanged for docs-only card pass"
+    evidence:
+      - path:docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+    remediation: "No action required."
+acceptance_criteria:
+  - criterion: "Canonical v0.8 milestone docs updated and navigable"
+    status: met
+    evidence:
+      - path:docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+  - criterion: "Output card contains complete required sections"
+    status: met
+    evidence:
+      - path:docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+determinism_checks:
+  ordering_contract_verified: true
+  replay_impact: unchanged
+  notes: "Docs-only issue; replay surfaces unchanged."
+security_privacy_checks:
+  secrets_present: false
+  raw_prompt_or_tool_args_present: false
+  absolute_host_paths_present: false
+  notes: "No absolute host paths in the persisted review artifact."
+artifact_checks:
+  required_artifacts_present: true
+  schema_change_present: false
+  schema_change_status: not_applicable
+  notes: "No artifact schema changes in this docs-focused fixture."
+validation_checks:
+  required_commands_run: true
+  validation_result: PARTIAL
+  commands:
+    - rg -n "canonical" docs/milestones/v0.8/README.md
+    - cargo test --workspace
+  notes: "One command listed without explicit pass/fail in the reviewed output card."
+follow_ups:
+  - type: fix_now
+    summary: "Normalize validation command text to repo-relative form"
+    reference: "#661"

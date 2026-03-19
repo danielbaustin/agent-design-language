@@ -1,0 +1,47 @@
+review_format_version: card_review_output.v1
+review_metadata:
+  reviewer: card_reviewer_gpt.v1.1
+  review_time_utc: 2026-03-11T00:00:00Z
+  checklist_version: card_review_checklist.v1
+review_target:
+  issue: "#661"
+  output_card_path: /home/alice/agent-design-language/docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+  input_card_path: docs/tooling/examples/reviewer-regression/issue-661/input_661.md
+  pr: "#699"
+decision: PASS
+summary:
+  status_line: "Bad provenance fixture."
+  failed_rule_count: 0
+  failed_rule_ids: []
+domain_results: []
+findings:
+  - rule_id: CRS-SEC-003
+    severity: high
+    evidence_state: contradicted
+    title: "Validation section included host-path command examples"
+    evidence:
+      - command:scan_host_path_patterns docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+      - path:/home/alice/agent-design-language/docs/tooling/examples/reviewer-regression/issue-661/output_661.md
+    remediation: "Replace host-specific command paths with repository-relative commands."
+acceptance_criteria: []
+determinism_checks:
+  ordering_contract_verified: true
+  replay_impact: unchanged
+  notes: "Bad provenance fixture."
+security_privacy_checks:
+  secrets_present: false
+  raw_prompt_or_tool_args_present: false
+  absolute_host_paths_present: false
+  notes: "This intentionally contradicts the artifact content."
+artifact_checks:
+  required_artifacts_present: true
+  schema_change_present: false
+  schema_change_status: not_applicable
+  notes: "Bad provenance fixture."
+validation_checks:
+  required_commands_run: true
+  validation_result: PASS
+  commands:
+    - /home/alice/agent-design-language/swarm/tools/review_card_surface.rb --input foo --output bar
+  notes: "Bad provenance fixture."
+follow_ups: []
