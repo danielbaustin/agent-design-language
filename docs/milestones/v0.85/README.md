@@ -44,6 +44,7 @@ The current tracked v0.85 set includes:
 - `AFFECTIVE_REASONING_MODEL.md`
 - `AFFECT_MODEL_v0.85.md`
 - `CLUSTER_EXECUTION.md`
+- `COGNITIVE_STACK_v0.85.md`
 - `DECISIONS_v0.85.md`
 - `DESIGN_v0.85.md`
 - `EMOTION_MODEL.md`
@@ -61,3 +62,12 @@ The current tracked v0.85 set includes:
 - `WHY_RUST_FOR_ADL.md`
 
 If v0.85 planning material exists elsewhere in a temporary workspace or local draft area, reconcile it into this directory rather than treating that alternate location as authoritative.
+
+## Cognitive Authority
+
+Tracked v0.85 cognitive authority is split into two complementary docs:
+
+- `COGNITIVE_LOOP_MODEL_v0.85.md` is the authoritative loop/flow model.
+- `COGNITIVE_STACK_v0.85.md` is the authoritative internal stack/layer model.
+
+Other tracked v0.85 docs should not define a competing authoritative loop or fractional layer numbering.
