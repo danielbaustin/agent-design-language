@@ -1326,8 +1326,8 @@ cmd_finish() {
   fi
 
   local structured_prompt_validator
-  structured_prompt_validator="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/validate_structured_prompt.rb"
-  if ! ruby "$structured_prompt_validator" --type sor --phase completed --input "$output_path" >/dev/null 2>&1; then
+  structured_prompt_validator="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/validate_structured_prompt.sh"
+  if ! bash "$structured_prompt_validator" --type sor --phase completed --input "$output_path" >/dev/null 2>&1; then
     die "finish: output card failed completed-phase validation: $output_path"
   fi
 

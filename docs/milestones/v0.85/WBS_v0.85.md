@@ -3,80 +3,169 @@
 ## Metadata
 - Milestone: `v0.85`
 - Version: `0.85`
-- Date: `2026-03-16`
+- Date: `2026-03-19`
 - Owner: `Daniel Austin / Agent Logic`
 
-## Summary
-v0.85 is a strengthening milestone focused on bounded operational maturity, stronger trust surfaces, clearer authoring/review workflows, first practical Gödel runtime progress, and a minimal working affective-reasoning substrate.
+## Role Of This Document
 
-This WBS aligns the milestone around a four-sprint, twenty-five-work-package structure that maps design intent to canonical issues, demos, validation, and release readiness. It should be treated as part of the canonical v0.85 planning set under `docs/milestones/v0.85/`.
+This WBS is the canonical execution plan for the remainder of v0.85.
 
-## Work Packages
+Use it to answer:
+- what work remains
+- what artifact or proof surface each work unit must produce
+- which issue owns that work
+- what order the remaining work should happen in
 
-| WP | Package | Description | Deliverable(s) | Dependencies | Related issue(s) |
+Do not treat the mid-flight review document as the execution plan. [MIDFLIGHT_REVIEW_ISSUES.md](/Users/daniel/git/agent-design-language/.adl/docs/v085planning/MIDFLIGHT_REVIEW_ISSUES.md) is now a diagnostic and closure tracker. Execution should flow through this WBS.
+
+## Current Milestone State
+
+What is already landed:
+- `WP-02` deterministic queue, checkpoint, and steering substrate
+- `WP-03` cluster / distributed execution groundwork
+- `WP-04` Prompt Spec completeness for editors
+- `WP-05` first authoring/editor surfaces
+- `WP-06` editing and review tooling surfaces
+- `WP-07` dependable execution runtime surfaces
+- `WP-08` verifiable inference runtime surfaces
+
+What remains active:
+- `WP-01` milestone alignment / close-the-gap work under `#886`
+- `WP-09` through `WP-25`
+- the explicit blocking alignment tranche listed in Section 1
+
+Important rule:
+- every work package or alignment sub-task must end in a concrete artifact, code path, validated doc, tool, demo, or review record
+- no work unit should be satisfiable by description alone unless it is explicitly a bounded alignment deliverable in Section 1
+
+## Working Rules
+
+- Canonical tracker mapping follows [MILESTONE_ISSUE_RECONCILIATION_v0.85.md](/Users/daniel/git/agent-design-language/docs/milestones/v0.85/MILESTONE_ISSUE_RECONCILIATION_v0.85.md).
+- Public record architecture follows [STRUCTURED_PROMPT_ARCHITECTURE.md](/Users/daniel/git/agent-design-language/docs/milestones/v0.85/STRUCTURED_PROMPT_ARCHITECTURE.md).
+- Every active execution issue should have:
+  - a Structured Task Prompt
+  - a Structured Implementation Prompt
+  - a Structured Output Record
+- Alignment tasks must also produce concrete deliverables:
+  - canonical docs
+  - reference repairs
+  - issue-graph cleanup
+  - validation or proof-surface rules
+
+## Remaining Execution Order
+
+1. Close the blocking alignment tranche in Section 1, especially cognitive authority and the WBS/scope rewrite.
+2. Continue core execution from `WP-09` through `WP-17`.
+3. Execute integration/demo work in Section 3.
+4. Finish review/release work in Section 4.
+
+This order is intentional:
+- the repo is already ahead of the old planning model
+- the remaining alignment work exists to keep execution coherent, not to replace execution
+- the WBS should now lead execution sequencing while the mid-flight review doc tracks closure progress
+
+---
+
+## Section 1 — Blocking Alignment Tranche
+
+These items remain execution-blocking because they affect whether the rest of the milestone stays conceptually coherent and reviewable.
+
+| Unit | Status | Canonical issue / anchor | Concrete deliverable | Proof / validation surface |
+|---|---|---|---|---|
+| WP-01 | ACTIVE | `#886` | updated milestone docs, issue graph, and close-the-gap planning set | docs no longer materially contradict issue graph or live execution reality |
+| A1 | OPEN | `#886` follow-on | one authoritative cognitive loop document | exactly one canonical cognitive-loop authority remains |
+| A2 | OPEN | `#886` follow-on | bounded affect terminology normalized across docs | no mixed emotion/affect terminology in canonical docs |
+| A3 | OPEN | `#886` follow-on | stable cognitive stack/layer model | no fractional or conflicting layer numbering remains |
+| A4 | OPEN | `#886` follow-on | unified instinct semantics wording | instinct is described consistently as bounded pressure/fast-prior behavior |
+| A5 | OPEN | `#886` follow-on | repaired cross-document references | no dead or stale canonical references remain |
+| A6 | OPEN | `#886` follow-on | reduced duplicate cognitive model content | no duplicate “authoritative” cognitive sections remain |
+| B3 | PARTIAL | `#886` plus landed authoring/runtime work | milestone-wide artifact and proof-surface discipline | every active WP/issue requires a concrete artifact plus validation/proof path |
+| B4 | PARTIAL | `#886` plus landed terminology/tooling work | terminology harmonization across docs, templates, task bundles, and public records | STP/SIP/SOR terminology is primary and lingering `card` vocabulary is cleanup-only |
+| D1 | ACTIVE | `#927` | rewritten execution-facing WBS | WBS becomes the clearest single place to understand remaining work |
+| D2 | ACTIVE | `#927` | reduced v0.85-critical scope framing inside the WBS/sprint plan | WBS and sprint plan reflect the narrower critical path already emerging in the repo |
+
+Notes:
+- `B3` is one of the highest-value remaining partial items because it determines whether later execution remains artifact- and proof-bound.
+- `B4` now includes template naming, task-bundle naming, public artifact exposure, and lingering `card` vocabulary in tooling/records, not just doc wording.
+- `D1` and `D2` are not speculative planning work. They are the doc surfaces catching up to the execution model already visible in the repo.
+
+---
+
+## Section 2 — Core Execution
+
+These are the primary feature/runtime/tooling work packages. Closed items are retained here so the WBS shows real milestone progress rather than a hypothetical plan.
+
+| WP | Status | Canonical issue | Concrete deliverable | Validation / proof surface | Dependencies |
 |---|---|---|---|---|---|
-| WP-01 | Milestone reorganization and docs alignment | Align the milestone docs, issue graph, sprint structure, and process expectations under the `#886` umbrella issue. | Updated canonical docs, revised milestone structure, issue-reconciliation guidance. | None | #886, old scaffold issue #866 to absorb/supersede |
-| WP-02 | Deterministic queue, checkpoint, and steering substrate | Strengthen queue/checkpoint/resume semantics and make steering replay-compatible without weakening determinism. | Runtime changes, tests, validation commands, and explicit steering/checkpoint semantics. | WP-01 | #674, superseding placeholder #867 |
-| WP-03 | Cluster / distributed execution groundwork | Advance cluster execution planning and initial substrate behavior while preserving explicit ownership, claims, leases, and replay semantics. | Cluster execution updates, bounded implementation/prototype work, explicit ownership/claim/lease/replay semantics. | WP-01, WP-02 | #868 provisional remap issue |
-| WP-04 | Prompt Spec completeness for editors | Improve structured prompt contracts so prompts/cards can be reviewed, generated, and edited more reliably. | Prompt Spec updates, validation/linting expectations, and editor-facing field clarity. | WP-01 | #716, #869 provisional remap issue |
-| WP-05 | First authoring/editor surfaces | Ship real issue/input-card editor surfaces rather than only design notes. | HTML/HPA editor artifacts, preview/validation flow, save/export path compatible with ADL artifacts. | WP-01, WP-04 | #870 provisional remap issue |
-| WP-06 | Editing and review GPT/tooling surfaces | Improve editing/review reliability and repeatability through reusable GPT/prompt assets and workflow integration. | Issue Editor, Card Editor, Card Reviewer GPT/prompt assets, and tighter review workflow integration. | WP-04, WP-05 | #871 provisional remap issue |
-| WP-07 | Dependable execution runtime surfaces | Turn dependable execution into explicit runtime and artifact behavior rather than positioning language. | Runtime artifacts, traces, validations, and docs tied to dependable execution claims. | WP-02, WP-03 | #872 provisional remap issue |
-| WP-08 | Verifiable inference runtime surfaces | Strengthen evidence-linked outputs, provenance, replay/report structures, and reviewability. | Provenance/evidence artifacts, replay/validation support, and concrete trust surfaces. | WP-02, WP-06, WP-07 | #873 provisional remap issue |
-| WP-09 | Adaptive Execution Engine bounded progress | Advance AEE from deferred concept to concrete milestone work with bounded policy hooks and strategy-loop progress. | AEE traces, policy hooks, strategy-loop/adaptation artifacts, and demoable behavior where possible. | WP-02, WP-07, WP-08 | #874 provisional remap issue |
-| WP-10 | Deterministic hypothesis generation engine | Make the first practical Gödel hypothesis engine real and explicit inside the milestone. | Deterministic hypothesis behavior and/or artifacts, code/tests/docs/demos. | WP-09 | #748 |
-| WP-11 | Policy-learning and adaptive Gödel loop | Make bounded policy-learning and adaptive Gödel behavior explicit and testable. | Policy-learning traces, bounded adaptation behavior, and supporting tests/docs/demos. | WP-09, WP-10 | #749 |
-| WP-12 | Experiment prioritization and strategy confidence | Make prioritization, novelty handling, and strategy confidence inspectable and demoable. | Prioritization logic/artifacts, confidence traces, and tests/docs/demos. | WP-10, WP-11 | #750 |
-| WP-13 | Cross-workflow learning and recursive improvement | Make cross-workflow learning and recursive improvement explicit, bounded, and reviewable. | Learning artifacts/behavior, bounded recursive-improvement surfaces, and demos/traces/docs/tests. | WP-10, WP-11, WP-12 | #751 |
-| WP-14 | Promotion and eval-report artifact loop | Turn promotion and evaluation reporting into concrete artifact-bearing workflow surfaces. | Promotion artifacts, evaluation-report artifacts, and tests/docs/demos tied to those outputs. | WP-10 through WP-13 | #752 |
-| WP-15 | Affect engine core | Deliver a minimal working affect engine that is concrete enough to demo and strong enough to evolve later. | Minimal working affect-engine code, affect state model, update rules, artifacts/traces, and a proof path. | WP-09, WP-10 through WP-14 | #875 provisional remap issue |
-| WP-16 | Reasoning graph and affect integration | Integrate reasoning graphs with affect so the system can represent tensions, salience, priorities, contradictions, and lineage in a behaviorally meaningful way. | Reasoning-graph schema docs, artifact examples, affect-linked reasoning graph artifacts/examples, and legible integration surfaces. | WP-15 | #876 provisional remap issue |
-| WP-17 | Affect-plus-Gödel vertical slice | Connect affect, reasoning graphs, and Gödel hypothesis work into a runnable bounded vertical slice. | Runnable demo showing affect changing ranking/hypothesis/evaluation behavior plus emitted artifacts/traces. | WP-10 through WP-16 | #877 provisional remap issue |
-| WP-18 | Demo program for v0.85 features | Prove the milestone through multiple runnable bounded demos rather than only checklists. | Demo matrix/playbook, runnable demos, and explicit linkage between demos and major new features. | WP-02 through WP-17 | #743, #878 provisional remap issue |
-| WP-19 | Coverage / quality gate | Reach an acceptable quality gate for the milestone with documented exceptions if needed. | Coverage status, test notes, ratchet/exclusion decisions, release-quality evidence. | WP-02 through WP-18 | #879 provisional remap issue |
-| WP-20 | Documentation consistency pass | Reduce contradictions across milestone docs and canonical issue bodies before review and release. | Consistent milestone docs and aligned issue/body text. | WP-01 through WP-19 | #880 provisional remap issue |
-| WP-21 | Internal review | Perform internal review as a distinct milestone gate. | Internal review notes/findings and explicit action items. | WP-18 through WP-20 | new follow-on issue under #886 |
-| WP-22 | External review | Perform external review as a distinct milestone gate. | External review notes/findings and explicit action items. | WP-18 through WP-21 | new follow-on issue under #886 |
-| WP-23 | Review findings remediation | Resolve or explicitly defer findings from internal and external review. | Remediation notes, changed artifacts, and tracked deferrals. | WP-21, WP-22 | new follow-on issue under #886 |
-| WP-24 | Release ceremony | Execute the bounded release process for v0.85. | Final validation evidence, release notes, release-plan completion, tag, and follow-up cleanup notes. | WP-19, WP-20, WP-23 | new follow-on issue under #886 |
-| WP-25 | Next milestone planning | Prepare the next milestone before closing v0.85. | Next milestone planning docs/templates and explicit process closeout evidence. | WP-24 | new follow-on issue under #886 |
+| WP-02 Deterministic queue, checkpoint, and steering substrate | LANDED | `#674` | deterministic queue/checkpoint/resume + steering substrate | runtime behavior, replay-safe steering semantics, tests | WP-01 |
+| WP-03 Cluster / distributed execution groundwork | LANDED | `#868` | bounded cluster/distributed groundwork | stable lease/ownership behavior, tests/artifacts | WP-01, WP-02 |
+| WP-04 Prompt Spec completeness for editors | LANDED | `#716` | stronger prompt/spec contracts and authoring validation | prompt lint/validation surfaces and updated docs | WP-01 |
+| WP-05 First authoring/editor surfaces | LANDED | `#870` | first real editor surface | in-repo editor artifact and reviewable usage surface | WP-01, WP-04 |
+| WP-06 Editing and review tooling surfaces | LANDED | `#871` | reusable review/helper tooling | deterministic review helper surface and stable fixture/proof path | WP-04, WP-05 |
+| WP-07 Dependable execution runtime surfaces | LANDED | `#872` | explicit dependable-execution runtime/artifact behavior | completed-phase output validation, refusal path, proof surface | WP-02, WP-03 |
+| WP-08 Verifiable inference runtime surfaces | LANDED | `#873` | provenance/evidence-linked review outputs | deterministic provenance checker and good/bad fixtures | WP-02, WP-06, WP-07 |
+| WP-09 Adaptive Execution Engine bounded progress | OPEN | `#874` | bounded AEE runtime progress with inspectable hooks/artifacts | tests, traces, or demoable strategy-loop behavior | WP-02, WP-07, WP-08 |
+| WP-10 Deterministic hypothesis generation engine | OPEN | `#748` | deterministic Gödel hypothesis engine | code/tests/artifacts showing inspectable deterministic hypothesis generation | WP-09 |
+| WP-11 Policy-learning and adaptive Godel loop | OPEN | `#749` | bounded policy-learning/adaptive loop | traces/tests/artifacts showing explicit adaptation behavior | WP-09, WP-10 |
+| WP-12 Experiment prioritization and strategy confidence | OPEN | `#750` | prioritization and strategy-confidence surfaces | inspectable confidence/prioritization outputs and validation path | WP-10, WP-11 |
+| WP-13 Cross-workflow learning and recursive improvement | OPEN | `#751` | bounded cross-workflow learning surfaces | explicit artifacts or demos of recursive-improvement behavior | WP-10, WP-11, WP-12 |
+| WP-14 Promotion and eval-report artifact loop | OPEN | `#752` | promotion/eval artifact loop | emitted promotion/evaluation artifacts and validation path | WP-10 through WP-13 |
+| WP-15 Affect engine core | OPEN | `#875` | minimal working affect engine | code/traces/state model with explicit update rules and proof path | WP-09, WP-10 through WP-14 |
+| WP-16 Reasoning graph and affect integration | OPEN | `#876` | affect-linked reasoning graph surfaces | artifact/schema/example set proving the integration exists | WP-15 |
+| WP-17 Affect-plus-Godel vertical slice | OPEN | `#877` | runnable affect-plus-Godel slice | bounded runnable demo showing affect changes reasoning/hypothesis behavior | WP-10 through WP-16 |
 
-## Phasing
-- Sprint 1: milestone reorganization and execution substrate (WP-01 through WP-04)
-- Sprint 2: authoring surfaces and review tooling (WP-05 through WP-08)
-- Sprint 3: Gödel, affect, reasoning graphs, and AEE/runtime progress (WP-09 through WP-17)
-- Sprint 4: demos, quality gate, review, release, and next-milestone planning (WP-18 through WP-25)
+Core execution rule:
+- every open item in this section must produce code, a tool, a runnable demo, an emitted artifact set, or a validated runtime behavior
+- docs-only completion is not acceptable here unless explicitly stated in the issue and backed by a concrete validation reason
 
-## Issue-Graph Notes
+---
 
-- `#886` is the umbrella reorganization issue for the milestone until the issue graph fully matches this WBS.
-- `#674` is the canonical queue/checkpoint/steering issue; `#867` is duplicate/placeholder material to absorb, supersede, or close.
-- Gödel issues `#748` through `#752` are the canonical Sprint 3 runtime/cognitive track and should not be treated as side issues.
-- The provisional generated issue set `#866` through `#882` must be renamed, remapped, split, merged, or closed so each work package has one canonical issue and each canonical issue belongs to one work package.
+## Section 3 — Integration and Demos
 
-## Acceptance Criteria by Work Package
-- WP-01 -> The core v0.85 planning docs and issue graph no longer materially contradict one another on scope, sequencing, demos, or issue ownership.
-- WP-02 -> Deterministic queue/checkpoint/steering behavior is documented and validated with explicit commands, tests, or artifacts, and steering remains replay-compatible.
-- WP-03 -> Cluster/distributed execution direction is explicit and bounded; no hidden weakening of replay or ownership semantics.
-- WP-04 -> Prompt Spec expectations are explicit enough to support consistent authoring, editing, and review.
-- WP-05 -> Real editor surfaces exist in-repo and materially improve authoring flow.
-- WP-06 -> Editing/review tools are materially more reliable and structurally consistent.
-- WP-07 -> Dependable execution claims are tied to concrete runtime/artifact behavior.
-- WP-08 -> Verifiable inference claims are tied to provenance, replay, and evidence-linked artifacts.
-- WP-09 -> AEE shows concrete bounded progress rather than remaining a deferred concept.
-- WP-10 -> Deterministic hypothesis-generation behavior is concrete enough to inspect, test, or demo.
-- WP-11 -> Bounded policy-learning/adaptive Gödel behavior is explicit and inspectable.
-- WP-12 -> Prioritization and strategy-confidence behavior is concrete enough to inspect and demo.
-- WP-13 -> Cross-workflow learning/recursive-improvement behavior is bounded and reviewable.
-- WP-14 -> Promotion and evaluation reporting emit concrete artifacts or strongly specified implementation surfaces.
-- WP-15 -> A minimal working affect engine exists with explicit state, update rules, and observable traces.
-- WP-16 -> Reasoning graphs are explicitly integrated with affect in a legible artifact-bearing way.
-- WP-17 -> A runnable bounded affect-plus-Gödel demo slice exists and shows affect changing reasoning or hypothesis behavior.
-- WP-18 -> Multiple runnable demos exist, including steering/queueing, HITL/editor/review flow, and affect-plus-Gödel behavior.
-- WP-19 -> Coverage and validation evidence are acceptable for release, or documented exceptions are explicitly justified.
-- WP-20 -> The milestone docs and canonical issue bodies are internally consistent.
-- WP-21 -> Internal review is completed and findings are recorded.
-- WP-22 -> External review is completed and findings are recorded.
-- WP-23 -> Review findings are resolved or explicitly deferred with ownership.
-- WP-24 -> Final validation evidence, release notes, and release/tag mechanics are complete and auditable.
-- WP-25 -> Next milestone planning materials are ready before v0.85 is considered fully closed.
+These items prove the milestone as a coherent system rather than as isolated features.
+
+| WP | Status | Canonical issue | Concrete deliverable | Validation / proof surface | Dependencies |
+|---|---|---|---|---|---|
+| WP-18 Demo program for v0.85 features | OPEN | `#878` with bounded-demo rule from `#743` | demo matrix/playbook and runnable milestone demos | runnable demos proving steering/queueing, authoring/review flow, and affect-plus-Godel behavior | WP-02 through WP-17 |
+
+Integration rule:
+- demos are evidence, not optional packaging
+- each major milestone claim should have a bounded runnable or replayable proof surface where practical
+
+---
+
+## Section 4 — Review and Release
+
+These items close the milestone with explicit review, release, and handoff evidence.
+
+| WP | Status | Canonical issue | Concrete deliverable | Validation / proof surface | Dependencies |
+|---|---|---|---|---|---|
+| WP-19 Coverage / quality gate | OPEN | `#879` | release-quality evidence and documented exceptions if needed | coverage/test status plus explicit rationale for any exceptions | WP-02 through WP-18 |
+| WP-20 Documentation consistency pass | OPEN | `#880` | milestone docs and canonical issue bodies made internally consistent | review pass showing docs/issues no longer materially contradict execution reality | WP-01 through WP-19 |
+| WP-21 Internal review | OPEN | `#901` | internal review record | recorded findings and action items | WP-18 through WP-20 |
+| WP-22 External review | OPEN | `#902` | external review record | recorded external findings and action items | WP-18 through WP-21 |
+| WP-23 Review findings remediation | OPEN | `#903` | remediations or explicit deferrals | changed artifacts plus tracked deferrals/ownership | WP-21, WP-22 |
+| WP-24 Release ceremony | OPEN | `#881` | release notes, validation evidence, tag/ceremony completion | auditable release record | WP-19, WP-20, WP-23 |
+| WP-25 Next milestone planning | OPEN | `#882` | next milestone planning package | explicit next-milestone planning materials before v0.85 closure | WP-24 |
+
+---
+
+## Current Sprint Interpretation
+
+The old four-sprint model is still useful as a phasing shorthand, but current execution should be understood like this:
+
+- Sprint 1 foundation work: largely landed (`WP-02` through `WP-04`), with `WP-01` still carrying remaining alignment ownership
+- Sprint 2 authoring/runtime tooling work: largely landed (`WP-05` through `WP-08`)
+- current active execution queue: `WP-09` through `WP-17`, while the blocking alignment tranche in Section 1 is closed in parallel
+- closeout queue: `WP-18` through `WP-25`
+
+If this WBS and the issue graph disagree, treat the disagreement as a defect to fix immediately.
+
+## Acceptance Criteria For This WBS
+
+This WBS is in a good state when:
+- it is the clearest single place to understand remaining v0.85 work
+- every remaining unit has a concrete deliverable and a proof/validation surface
+- the issue graph matches the WBS
+- the sprint plan does not materially contradict the WBS
+- the diagnostic mid-flight review doc is no longer required to understand what to execute next
