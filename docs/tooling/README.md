@@ -12,14 +12,17 @@ Tracked public workflow history should live in task-centric record bundles under
 ## References
 - [Prompt Spec](prompt-spec.md): machine-readable input-card block defining deterministic prompt generation surfaces and reviewer alignment.
 - [Structured Prompt Contracts](structured-prompt-contracts.md): machine-checkable contracts for Structured Task Prompts, Structured Implementation Prompts, and Structured Output Records.
+- [Task Bundle Editor](editor/README.md): first bounded editor surface for tracked STP/SIP task-bundle authoring.
 - [Prompt Spec Protocol Bindings](prompt-spec.md#protocol-bindings): linkage to `card_review_checklist.v1` and `card_review_output.v1` reviewer contracts.
 - [Prompt/Reviewer Surface Mapping](prompt-review-surface-mapping.md): field-by-field contract map between Prompt Spec, checklist rules, and deterministic review output fields.
 - [Issue Prompt Templates](issue-prompts/README.md): tracked templates and authoring guidance for structured issue prompts used to shape GitHub issues before `pr start`.
 - [Public Task Records](../records/README.md): tracked task-centric record homes for canonical STP/SIP/SOR bundles.
+- [Reviewer Surface](reviewer-surface.md): first bounded repo-local review/helper surface with deterministic fixture coverage.
 - Prompt Spec execution tooling:
   - `swarm/tools/lint_prompt_spec.sh` (Prompt Spec lint/validation)
   - `swarm/tools/card_prompt.sh` (deterministic prompt generation from cards)
   - `swarm/tools/validate_structured_prompt.sh` (structured prompt contract validation)
+  - `swarm/tools/review_card_surface.rb` (bounded deterministic review helper)
 - [Card Reviewer GPT Instructions](card-reviewer-gpt.md): canonical reviewer behavior and deterministic YAML output contract (`card_reviewer_gpt.v1.1`).
 - [Deterministic Review Output Format](card-review-output-format.md): canonical review artifact schema including finding evidence-state semantics.
 - Reviewer regression fixture (stable):
