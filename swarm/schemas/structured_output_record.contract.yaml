@@ -67,3 +67,9 @@ phases:
       - Main Repo Integration.Verification scope
       - Main Repo Integration.Integration method used
       - Main Repo Integration.Result
+  completed:
+    allow_blank:
+      - Replay Artifacts.Trace bundle path(s)
+      - Replay Artifacts.Run artifact root
+      - Replay Artifacts.Replay command used for verification
+      - Replay Artifacts.Replay result
