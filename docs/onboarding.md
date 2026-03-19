@@ -17,7 +17,7 @@ Use this page when you need to orient quickly in the ADL repo.
 
 ## Workflow Context
 
-Default workflow uses `adl_pr_cycle` with canonical card paths under `.adl/cards/<issue>/`.
+Default workflow currently seeds compatibility card paths under `.adl/cards/<issue>/`, while the canonical local draft prompt bundles live under `.adl/v0.85/tasks/<task-id>__<slug>/`.
 
 ## Reading Order
 
