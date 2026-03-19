@@ -41,6 +41,7 @@ v0.85 is not a docs-only milestone. The canonical plan requires:
 
 The current tracked v0.85 set includes:
 
+- `COGNITIVE_LOOP_MODEL_v0.85.md`
 - `AFFECTIVE_REASONING_MODEL.md`
 - `AFFECT_MODEL_v0.85.md`
 - `CLUSTER_EXECUTION.md`
@@ -61,3 +62,10 @@ The current tracked v0.85 set includes:
 - `WHY_RUST_FOR_ADL.md`
 
 If v0.85 planning material exists elsewhere in a temporary workspace or local draft area, reconcile it into this directory rather than treating that alternate location as authoritative.
+
+## Cognitive Authority
+
+For the tracked v0.85 milestone docs:
+
+- [COGNITIVE_LOOP_MODEL_v0.85.md](/tmp/adl-wp-929/docs/milestones/v0.85/COGNITIVE_LOOP_MODEL_v0.85.md) is the single authoritative cognitive-loop model
+- other docs may summarize or apply that loop, but should not claim competing loop authority
