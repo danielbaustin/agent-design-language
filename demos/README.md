@@ -36,6 +36,7 @@ cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet
 - `rust-transpiler/README.md`
 - `v0.8-bounded-critical-demos.md`
 - `godel_failure_hypothesis_experiment.md`
+- `adaptive_godel_loop_demo.md`
 - `aee-recovery/README.md`
 
 Use `aee-recovery/README.md` for the bounded Adaptive Execution Engine recovery
@@ -47,6 +48,11 @@ Use `godel_failure_hypothesis_experiment.md` for the concrete
 persisted Gödel schema/runtime artifacts it produces, including the
 first-class `godel_hypothesis.v1.json` hypothesis record. For a one-command
 review flow, run `swarm/tools/demo_godel_hypothesis_engine.sh`.
+
+Use `adaptive_godel_loop_demo.md` for the bounded WP-11 policy-learning slice.
+It shows a deterministic policy decision and before/after policy comparison
+derived from the persisted hypothesis artifact. For a one-command review flow,
+run `swarm/tools/demo_adaptive_godel_loop.sh`.
 
 ### Historical/runtime fixture inventory
 
