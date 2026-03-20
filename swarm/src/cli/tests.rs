@@ -376,6 +376,32 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
     ])
     .expect("inspect should succeed");
 
+    std::fs::write(run_dir.join("godel_policy.v1.json"), "{").expect("write invalid policy");
+    let err = real_godel_inspect(&[
+        "--run-id".to_string(),
+        "run-745-a".to_string(),
+        "--runs-dir".to_string(),
+        base.to_string_lossy().to_string(),
+    ])
+    .expect_err("invalid policy artifact should fail");
+    assert!(err.to_string().contains("GODEL_INSPECT_INVALID"));
+
+    std::fs::write(
+        run_dir.join("godel_policy.v1.json"),
+        serde_json::to_string_pretty(&policy).expect("policy json"),
+    )
+    .expect("rewrite policy");
+    std::fs::write(run_dir.join("godel_policy_comparison.v1.json"), "{")
+        .expect("write invalid comparison");
+    let err = real_godel_inspect(&[
+        "--run-id".to_string(),
+        "run-745-a".to_string(),
+        "--runs-dir".to_string(),
+        base.to_string_lossy().to_string(),
+    ])
+    .expect_err("invalid policy comparison artifact should fail");
+    assert!(err.to_string().contains("GODEL_INSPECT_INVALID"));
+
     let _ = std::fs::remove_dir_all(base);
 }
 
