@@ -166,6 +166,7 @@ pub struct StageLoopRun {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StageLoopPersistenceResult {
     pub run: StageLoopRun,
+    pub hypothesis_rel_path: PathBuf,
     pub canonical_evaluation_plan_rel_path: PathBuf,
     pub canonical_mutation_rel_path: PathBuf,
     pub canonical_evidence_rel_path: PathBuf,
@@ -227,6 +228,7 @@ impl GodelStageLoopExecutor {
         let refs = input.normalized_evidence_refs();
         let hypotheses = hypothesis::generate_hypotheses(&HypothesisPipelineInput {
             run_id: input.run_id.clone(),
+            workflow_id: input.workflow_id.clone(),
             failure_code: input.failure_code.clone(),
             failure_summary: input.failure_summary.clone(),
             evidence_refs: refs.clone(),
@@ -294,6 +296,23 @@ impl GodelStageLoopExecutor {
         runs_root: &Path,
     ) -> Result<StageLoopPersistenceResult, StageLoopError> {
         let run = self.execute(input)?;
+        let hypothesis_artifact = hypothesis::build_persisted_hypothesis_artifact(
+            &HypothesisPipelineInput {
+                run_id: input.run_id.clone(),
+                workflow_id: input.workflow_id.clone(),
+                failure_code: input.failure_code.clone(),
+                failure_summary: input.failure_summary.clone(),
+                evidence_refs: input.normalized_evidence_refs(),
+            },
+            &run.hypothesis,
+        );
+        let hypothesis_rel_path =
+            hypothesis::persist_hypothesis_artifact(runs_root, &input.run_id, &hypothesis_artifact)
+                .map_err(|err| {
+                    StageLoopError::InvalidInput(format!(
+                        "hypothesis artifact persistence failed: {err}"
+                    ))
+                })?;
         let canonical_mutation = mutation::build_canonical_mutation(
             &input.run_id,
             &input.workflow_id,
@@ -371,6 +390,7 @@ impl GodelStageLoopExecutor {
 
         Ok(StageLoopPersistenceResult {
             run,
+            hypothesis_rel_path,
             canonical_evaluation_plan_rel_path,
             canonical_mutation_rel_path,
             canonical_evidence_rel_path,
@@ -647,6 +667,10 @@ mod tests {
             .expect("persisted stage loop");
 
         assert_eq!(
+            persisted.hypothesis_rel_path,
+            PathBuf::from("runs/run-745-a/godel/godel_hypothesis.v1.json")
+        );
+        assert_eq!(
             persisted.canonical_evaluation_plan_rel_path,
             PathBuf::from("runs/run-745-a/godel/evaluation_plan.v1.json")
         );
@@ -671,6 +695,9 @@ mod tests {
             PathBuf::from("runs/run-745-a/godel/obsmem_index_entry.runtime.v1.json")
         );
         assert!(tmp.join("run-745-a/godel/mutation.v1.json").is_file());
+        assert!(tmp
+            .join("run-745-a/godel/godel_hypothesis.v1.json")
+            .is_file());
         assert!(tmp
             .join("run-745-a/godel/canonical_evidence_view.v1.json")
             .is_file());

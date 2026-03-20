@@ -13,6 +13,7 @@ struct GodelRunCliSummary {
     run_id: String,
     workflow_id: String,
     stage_order: Vec<String>,
+    hypothesis_path: String,
     experiment_record_path: String,
     obsmem_index_path: String,
 }
@@ -20,11 +21,13 @@ struct GodelRunCliSummary {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct GodelInspectCliSummary {
     run_id: String,
+    hypothesis_path: String,
     experiment_record_path: String,
     obsmem_index_path: String,
     failure_code: String,
     workflow_id: String,
     hypothesis_id: String,
+    hypothesis_claim: String,
     mutation_id: String,
     evaluation_decision: String,
     improvement_delta: i32,
@@ -144,6 +147,7 @@ pub(crate) fn real_godel_run(args: &[String]) -> Result<()> {
             .iter()
             .map(|stage| stage.as_str().to_string())
             .collect(),
+        hypothesis_path: result.hypothesis_rel_path.display().to_string(),
         experiment_record_path: result.experiment_record_rel_path.display().to_string(),
         obsmem_index_path: result.obsmem_index_rel_path.display().to_string(),
     };
@@ -190,10 +194,18 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         .join(&run_id)
         .join("godel")
         .join("experiment_record.runtime.v1.json");
+    let hypothesis_rel = PathBuf::from("runs")
+        .join(&run_id)
+        .join("godel")
+        .join("godel_hypothesis.v1.json");
     let obsmem_index_rel = PathBuf::from("runs")
         .join(&run_id)
         .join("godel")
         .join("obsmem_index_entry.runtime.v1.json");
+    let hypothesis_path = runs_dir
+        .join(&run_id)
+        .join("godel")
+        .join("godel_hypothesis.v1.json");
     let experiment_record_path = runs_dir
         .join(&run_id)
         .join("godel")
@@ -202,6 +214,20 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         .join(&run_id)
         .join("godel")
         .join("obsmem_index_entry.runtime.v1.json");
+
+    let hypothesis: godel::hypothesis::PersistedHypothesisArtifact =
+        serde_json::from_str(&fs::read_to_string(&hypothesis_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_IO: failed to read {}: {err}",
+                hypothesis_rel.display()
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_INVALID: failed to parse {}: {err}",
+                hypothesis_rel.display()
+            )
+        })?;
 
     let record: PersistedExperimentRecord =
         serde_json::from_str(&fs::read_to_string(&experiment_record_path).map_err(|err| {
@@ -239,11 +265,13 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
 
     let summary = GodelInspectCliSummary {
         run_id,
+        hypothesis_path: hypothesis_rel.display().to_string(),
         experiment_record_path: experiment_record_rel.display().to_string(),
         obsmem_index_path: obsmem_index_rel.display().to_string(),
         failure_code: record.record.failure_code.clone(),
         workflow_id: record.record.workflow_id.clone(),
         hypothesis_id: record.record.hypothesis_id.clone(),
+        hypothesis_claim: hypothesis.claim.clone(),
         mutation_id: record.record.mutation_id.clone(),
         evaluation_decision: record.record.evaluation_decision.clone(),
         improvement_delta: record.record.improvement_delta,

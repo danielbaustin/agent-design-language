@@ -18,6 +18,7 @@ use super::{real_instrument, real_keygen, real_learn, real_sign, real_verify, us
 use ::adl::godel::experiment_record::{
     PersistedExperimentRecord, StageExperimentRecord, EXPERIMENT_RECORD_RUNTIME_SCHEMA,
 };
+use ::adl::godel::hypothesis::{PersistedHypothesisArtifact, HYPOTHESIS_ARTIFACT_VERSION};
 use ::adl::godel::obsmem_index::{
     PersistedStageIndexEntry, StageIndexEntry, OBSMEM_INDEX_RUNTIME_SCHEMA,
 };
@@ -285,12 +286,29 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
             experiment_outcome: "adopt".to_string(),
         },
     };
+    let hypothesis = PersistedHypothesisArtifact {
+        artifact_version: HYPOTHESIS_ARTIFACT_VERSION.to_string(),
+        hypothesis_id: "hyp:run-745-a:tool_failure:00".to_string(),
+        run_id: "run-745-a".to_string(),
+        workflow_id: "wf-godel-loop".to_string(),
+        failure_id: "failure:run-745-a:tool_failure".to_string(),
+        failure_class: "tool_failure".to_string(),
+        claim: "Primary hypothesis: failure_code=tool_failure indicates a bounded execution weakness derived from 'deterministic parse failure'.".to_string(),
+        confidence: 0.67,
+        evidence_refs: vec!["runs/run-745-a/run_status.json".to_string()],
+        related_run_refs: vec!["run-745-a".to_string()],
+    };
 
     std::fs::write(
         run_dir.join("experiment_record.runtime.v1.json"),
         serde_json::to_string_pretty(&record).expect("record json"),
     )
     .expect("write record");
+    std::fs::write(
+        run_dir.join("godel_hypothesis.v1.json"),
+        serde_json::to_string_pretty(&hypothesis).expect("hypothesis json"),
+    )
+    .expect("write hypothesis");
     std::fs::write(
         run_dir.join("obsmem_index_entry.runtime.v1.json"),
         serde_json::to_string_pretty(&index).expect("index json"),

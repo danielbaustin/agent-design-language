@@ -8,7 +8,7 @@ This runbook gives reviewers a deterministic, runnable path through the bounded 
 2. `adl godel inspect`
 3. `adl godel evaluate`
 
-It exercises the failure -> hypothesis -> mutation -> evaluation -> record flow that now persists the bounded v0.8 runtime/schema artifacts.
+It exercises the failure -> hypothesis -> mutation -> evaluation -> record flow that now persists the bounded v0.8 runtime/schema artifacts, including a first-class persisted hypothesis artifact.
 
 ## Integration Surfaces
 
@@ -29,14 +29,7 @@ Run from repository root.
 ### 1. Generate the bounded Gödel runtime artifacts
 
 ```bash
-rm -rf ./out/godel-cli-demo
-cargo run --manifest-path swarm/Cargo.toml --bin adl -- godel run \
-  --run-id review-godel-cli-001 \
-  --workflow-id wf-godel-loop \
-  --failure-code tool_failure \
-  --failure-summary "deterministic parse failure" \
-  --evidence-ref runs/source-run/run_status.json \
-  --runs-dir ./out/godel-cli-demo/runs
+swarm/tools/demo_godel_hypothesis_engine.sh
 ```
 
 ### 2. Inspect the persisted runtime artifacts
@@ -58,12 +51,13 @@ cargo run --manifest-path swarm/Cargo.toml --bin adl -- godel evaluate \
 
 ## Deterministic Demo Artifacts
 
-- `out/godel-cli-demo/runs/review-godel-cli-001/godel/canonical_evidence_view.v1.json`
-- `out/godel-cli-demo/runs/review-godel-cli-001/godel/mutation.v1.json`
-- `out/godel-cli-demo/runs/review-godel-cli-001/godel/evaluation_plan.v1.json`
-- `out/godel-cli-demo/runs/review-godel-cli-001/godel/experiment_record.v1.json`
-- `out/godel-cli-demo/runs/review-godel-cli-001/godel/experiment_record.runtime.v1.json`
-- `out/godel-cli-demo/runs/review-godel-cli-001/godel/obsmem_index_entry.runtime.v1.json`
+- `.adl/reports/demo-godel-hypothesis-engine/runs/review-godel-cli-001/godel/canonical_evidence_view.v1.json`
+- `.adl/reports/demo-godel-hypothesis-engine/runs/review-godel-cli-001/godel/godel_hypothesis.v1.json`
+- `.adl/reports/demo-godel-hypothesis-engine/runs/review-godel-cli-001/godel/mutation.v1.json`
+- `.adl/reports/demo-godel-hypothesis-engine/runs/review-godel-cli-001/godel/evaluation_plan.v1.json`
+- `.adl/reports/demo-godel-hypothesis-engine/runs/review-godel-cli-001/godel/experiment_record.v1.json`
+- `.adl/reports/demo-godel-hypothesis-engine/runs/review-godel-cli-001/godel/experiment_record.runtime.v1.json`
+- `.adl/reports/demo-godel-hypothesis-engine/runs/review-godel-cli-001/godel/obsmem_index_entry.runtime.v1.json`
 
 ## Loop Walkthrough
 
@@ -77,9 +71,10 @@ cargo run --manifest-path swarm/Cargo.toml --bin adl -- godel evaluate \
 
 ### Stage 2: Hypothesis
 
-The persisted canonical evidence and mutation artifacts capture the deterministic bridge from failure to proposed change:
+The persisted canonical evidence, hypothesis, and mutation artifacts capture the deterministic bridge from failure to proposed change:
 
 - one bounded hypothesis ID
+- one structured deterministic hypothesis artifact
 - one deterministic mutation ID
 - stable references back to the supplied evidence
 
