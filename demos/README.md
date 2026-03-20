@@ -44,6 +44,10 @@ Use `aee-recovery/README.md` for the bounded Adaptive Execution Engine recovery
 demo: failure, explicit retry-budget recommendation, bounded overlay, and
 successful recovery with replayable artifacts.
 
+Use `swarm/tools/demo_aee_bounded_adaptation.sh` for the one-command v0.85
+bounded adaptation demo that emits `learning/aee_decision.json` as the primary
+adaptive decision artifact.
+
 Use `godel_failure_hypothesis_experiment.md` for the concrete
 `adl godel run` / `adl godel inspect` / `adl godel evaluate` review path and the
 persisted Gödel schema/runtime artifacts it produces, including the

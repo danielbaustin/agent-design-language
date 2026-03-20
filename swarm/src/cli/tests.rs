@@ -7,12 +7,12 @@ use super::open::{
 };
 use super::run::{enforce_signature_policy, now_ms};
 use super::run_artifacts::{
-    build_run_status, build_run_summary, build_scores_artifact, build_suggestions_artifact,
-    classify_failure_kind, execution_plan_hash, load_resume_state, read_scores_if_present,
-    resume_state_path_for_run_id, validate_pause_artifact_basic, write_run_state_artifacts,
-    PauseStateArtifact, RunSummaryArtifact, RunSummaryCounts, RunSummaryLinks, RunSummaryPolicy,
-    ScoresArtifact, ScoresGeneratedFrom, ScoresMetrics, ScoresSummary, StepStateArtifact,
-    PAUSE_STATE_SCHEMA_VERSION,
+    build_aee_decision_artifact, build_run_status, build_run_summary, build_scores_artifact,
+    build_suggestions_artifact, classify_failure_kind, execution_plan_hash, load_resume_state,
+    read_scores_if_present, resume_state_path_for_run_id, validate_pause_artifact_basic,
+    write_run_state_artifacts, PauseStateArtifact, RunSummaryArtifact, RunSummaryCounts,
+    RunSummaryLinks, RunSummaryPolicy, ScoresArtifact, ScoresGeneratedFrom, ScoresMetrics,
+    ScoresSummary, StepStateArtifact, AEE_DECISION_VERSION, PAUSE_STATE_SCHEMA_VERSION,
 };
 use super::{real_instrument, real_keygen, real_learn, real_sign, real_verify, usage};
 use ::adl::godel::experiment_record::{
@@ -240,6 +240,34 @@ fn real_godel_validates_subcommand_and_run_args() {
 }
 
 #[test]
+fn real_godel_run_rejects_missing_value_flags() {
+    let cases = [
+        (vec!["--run-id"], "--run-id requires a value"),
+        (vec!["--workflow-id"], "--workflow-id requires a value"),
+        (vec!["--failure-code"], "--failure-code requires a value"),
+        (
+            vec!["--failure-summary"],
+            "--failure-summary requires a value",
+        ),
+        (
+            vec!["--evidence-ref"],
+            "--evidence-ref requires a relative path",
+        ),
+        (vec!["--runs-dir"], "--runs-dir requires a directory path"),
+    ];
+
+    for (args, needle) in cases {
+        let args = args.into_iter().map(|s| s.to_string()).collect::<Vec<_>>();
+        let err = real_godel_run(&args).expect_err("missing value flag should fail");
+        assert!(
+            err.to_string().contains(needle),
+            "args={args:?}\nerr={}",
+            err
+        );
+    }
+}
+
+#[test]
 fn real_godel_inspect_validates_args_and_missing_paths() {
     let err = real_godel_inspect(&[]).expect_err("missing run-id");
     assert!(err.to_string().contains("requires --run-id"));
@@ -258,6 +286,22 @@ fn real_godel_inspect_validates_args_and_missing_paths() {
     ])
     .expect_err("missing artifacts");
     assert!(err.to_string().contains("GODEL_INSPECT_IO"));
+}
+
+#[test]
+fn real_godel_inspect_rejects_missing_value_flags() {
+    let err = real_godel_inspect(&["--run-id".to_string()]).expect_err("missing run-id value");
+    assert!(err.to_string().contains("--run-id requires a value"));
+
+    let err = real_godel_inspect(&[
+        "--run-id".to_string(),
+        "run-745-a".to_string(),
+        "--runs-dir".to_string(),
+    ])
+    .expect_err("missing runs-dir value");
+    assert!(err
+        .to_string()
+        .contains("--runs-dir requires a directory path"));
 }
 
 #[test]
@@ -439,6 +483,91 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
     ])
     .expect("inspect should succeed");
 
+    let write_all = || {
+        std::fs::write(
+            run_dir.join("experiment_record.runtime.v1.json"),
+            serde_json::to_string_pretty(&record).expect("record json"),
+        )
+        .expect("write record");
+        std::fs::write(
+            run_dir.join("godel_hypothesis.v1.json"),
+            serde_json::to_string_pretty(&hypothesis).expect("hypothesis json"),
+        )
+        .expect("write hypothesis");
+        std::fs::write(
+            run_dir.join("godel_policy.v1.json"),
+            serde_json::to_string_pretty(&policy).expect("policy json"),
+        )
+        .expect("write policy");
+        std::fs::write(
+            run_dir.join("godel_policy_comparison.v1.json"),
+            serde_json::to_string_pretty(&comparison).expect("comparison json"),
+        )
+        .expect("write comparison");
+        std::fs::write(
+            run_dir.join("obsmem_index_entry.runtime.v1.json"),
+            serde_json::to_string_pretty(&index).expect("index json"),
+        )
+        .expect("write index");
+    };
+
+    let parse_cases = [
+        ("godel_hypothesis.v1.json", "{", "GODEL_INSPECT_INVALID"),
+        (
+            "experiment_record.runtime.v1.json",
+            "{",
+            "GODEL_INSPECT_INVALID",
+        ),
+        ("godel_policy.v1.json", "{", "GODEL_INSPECT_INVALID"),
+        (
+            "godel_policy_comparison.v1.json",
+            "{",
+            "GODEL_INSPECT_INVALID",
+        ),
+        (
+            "obsmem_index_entry.runtime.v1.json",
+            "{",
+            "GODEL_INSPECT_INVALID",
+        ),
+    ];
+    for (file_name, invalid_json, needle) in parse_cases {
+        write_all();
+        std::fs::write(run_dir.join(file_name), invalid_json).expect("write invalid json");
+        let err = real_godel_inspect(&[
+            "--run-id".to_string(),
+            "run-745-a".to_string(),
+            "--runs-dir".to_string(),
+            base.to_string_lossy().to_string(),
+        ])
+        .expect_err("invalid runtime artifact should fail");
+        assert!(
+            err.to_string().contains(needle),
+            "file={file_name}\nerr={err}"
+        );
+    }
+
+    write_all();
+    let mut mismatched_index = index.clone();
+    mismatched_index.entry.run_id = "run-745-b".to_string();
+    std::fs::write(
+        run_dir.join("obsmem_index_entry.runtime.v1.json"),
+        serde_json::to_string_pretty(&mismatched_index).expect("mismatched index json"),
+    )
+    .expect("write mismatched index");
+    let err = real_godel_inspect(&[
+        "--run-id".to_string(),
+        "run-745-a".to_string(),
+        "--runs-dir".to_string(),
+        base.to_string_lossy().to_string(),
+    ])
+    .expect_err("mismatched run id should fail");
+    assert!(
+        err.to_string()
+            .contains("persisted run_id did not match requested run_id"),
+        "err={err}"
+    );
+
+    write_all();
     std::fs::write(run_dir.join("godel_experiment_priority.v1.json"), "{")
         .expect("write invalid prioritization");
     let err = real_godel_inspect(&[
@@ -450,6 +579,7 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
     .expect_err("invalid prioritization artifact should fail");
     assert!(err.to_string().contains("GODEL_INSPECT_INVALID"));
 
+    write_all();
     let mut empty_prioritization = prioritization.clone();
     empty_prioritization.ranked_candidates.clear();
     std::fs::write(
@@ -494,6 +624,28 @@ fn real_godel_evaluate_validates_args_and_returns_summary() {
     ])
     .expect_err("invalid score delta");
     assert!(err.to_string().contains("valid i32"));
+
+    let err = real_godel_evaluate(&[
+        "--failure-code".to_string(),
+        "tool_failure".to_string(),
+        "--score-delta".to_string(),
+        "1".to_string(),
+    ])
+    .expect_err("missing experiment result");
+    assert!(err
+        .to_string()
+        .contains("godel evaluate requires --experiment-result <ok|blocked>"));
+
+    let err = real_godel_evaluate(&[
+        "--failure-code".to_string(),
+        "tool_failure".to_string(),
+        "--experiment-result".to_string(),
+        "ok".to_string(),
+    ])
+    .expect_err("missing score delta");
+    assert!(err
+        .to_string()
+        .contains("godel evaluate requires --score-delta <int>"));
 
     real_godel_evaluate(&[
         "--failure-code".to_string(),
@@ -1169,8 +1321,90 @@ fn build_run_summary_sorts_remote_policy_and_tracks_denials() {
         summary.links.suggestions_json.as_deref(),
         Some("learning/suggestions.json")
     );
+    assert_eq!(
+        summary.links.aee_decision_json.as_deref(),
+        Some("learning/aee_decision.json")
+    );
 
     let _ = std::fs::remove_dir_all(run_paths.run_dir());
+}
+
+#[test]
+fn build_aee_decision_artifact_selects_retry_recovery_for_failures() {
+    let summary = RunSummaryArtifact {
+        run_summary_version: 1,
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_id: "aee-decision-run".to_string(),
+        workflow_id: "wf".to_string(),
+        adl_version: "0.85".to_string(),
+        swarm_version: "test".to_string(),
+        status: "failure".to_string(),
+        error_kind: None,
+        counts: RunSummaryCounts {
+            total_steps: 1,
+            completed_steps: 1,
+            failed_steps: 1,
+            provider_call_count: 1,
+            delegation_steps: 0,
+            delegation_requires_verification_steps: 0,
+        },
+        policy: RunSummaryPolicy {
+            security_envelope_enabled: false,
+            signing_required: false,
+            key_id_required: false,
+            verify_allowed_algs: Vec::new(),
+            verify_allowed_key_sources: Vec::new(),
+            sandbox_policy: "centralized_path_resolver_v1".to_string(),
+            security_denials_by_code: BTreeMap::new(),
+        },
+        links: RunSummaryLinks {
+            run_json: "run.json".to_string(),
+            steps_json: "steps.json".to_string(),
+            pause_state_json: None,
+            outputs_dir: "outputs".to_string(),
+            logs_dir: "logs".to_string(),
+            learning_dir: "learning".to_string(),
+            scores_json: None,
+            suggestions_json: None,
+            aee_decision_json: None,
+            overlays_dir: "learning/overlays".to_string(),
+            cluster_groundwork_json: None,
+            trace_json: None,
+        },
+    };
+    let scores = ScoresArtifact {
+        scores_version: 1,
+        run_id: "aee-decision-run".to_string(),
+        generated_from: ScoresGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+        },
+        summary: ScoresSummary {
+            success_ratio: 0.0,
+            failure_count: 1,
+            retry_count: 0,
+            delegation_denied_count: 0,
+            security_denied_count: 0,
+        },
+        metrics: ScoresMetrics {
+            scheduler_max_parallel_observed: 1,
+        },
+    };
+    let suggestions = build_suggestions_artifact(&summary, Some(&scores));
+    let aee_decision = build_aee_decision_artifact(&summary, &suggestions, Some(&scores));
+
+    assert_eq!(aee_decision.aee_decision_version, AEE_DECISION_VERSION);
+    assert_eq!(aee_decision.decision.decision_id, "aee-001");
+    assert_eq!(aee_decision.decision.intent, "increase_step_retry_budget");
+    assert_eq!(
+        aee_decision.decision.decision_kind,
+        "bounded_retry_recovery"
+    );
+    assert_eq!(aee_decision.decision.target, "failed-step-set");
+    assert!(aee_decision
+        .decision
+        .expected_downstream_effect
+        .contains("retry budget"));
 }
 
 #[test]
@@ -1271,6 +1505,7 @@ fn build_scores_and_suggestions_artifacts_are_deterministic() {
             learning_dir: "learning".to_string(),
             scores_json: None,
             suggestions_json: None,
+            aee_decision_json: None,
             overlays_dir: "learning/overlays".to_string(),
             cluster_groundwork_json: None,
             trace_json: None,
