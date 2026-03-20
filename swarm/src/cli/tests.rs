@@ -439,6 +439,32 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
     ])
     .expect("inspect should succeed");
 
+    std::fs::write(run_dir.join("godel_experiment_priority.v1.json"), "{")
+        .expect("write invalid prioritization");
+    let err = real_godel_inspect(&[
+        "--run-id".to_string(),
+        "run-745-a".to_string(),
+        "--runs-dir".to_string(),
+        base.to_string_lossy().to_string(),
+    ])
+    .expect_err("invalid prioritization artifact should fail");
+    assert!(err.to_string().contains("GODEL_INSPECT_INVALID"));
+
+    let mut empty_prioritization = prioritization.clone();
+    empty_prioritization.ranked_candidates.clear();
+    std::fs::write(
+        run_dir.join("godel_experiment_priority.v1.json"),
+        serde_json::to_string_pretty(&empty_prioritization).expect("empty prioritization json"),
+    )
+    .expect("write empty prioritization");
+    real_godel_inspect(&[
+        "--run-id".to_string(),
+        "run-745-a".to_string(),
+        "--runs-dir".to_string(),
+        base.to_string_lossy().to_string(),
+    ])
+    .expect("inspect should succeed with empty ranked candidates");
+
     let _ = std::fs::remove_dir_all(base);
 }
 
