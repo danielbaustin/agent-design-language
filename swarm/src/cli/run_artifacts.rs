@@ -11,6 +11,7 @@ pub(crate) const RUN_STATUS_VERSION: u32 = 1;
 pub(crate) const RUN_SUMMARY_VERSION: u32 = 1;
 pub(crate) const SCORES_VERSION: u32 = 1;
 pub(crate) const SUGGESTIONS_VERSION: u32 = 1;
+pub(crate) const AEE_DECISION_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -135,6 +136,8 @@ pub(crate) struct RunSummaryLinks {
     pub(crate) scores_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) suggestions_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) aee_decision_json: Option<String>,
     pub(crate) overlays_dir: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) cluster_groundwork_json: Option<String>,
@@ -256,6 +259,40 @@ pub(crate) struct SuggestedChangeIntent {
     pub(crate) target: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct AeeDecisionArtifact {
+    pub(crate) aee_decision_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) decision: AeeDecisionRecord,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct AeeDecisionGeneratedFrom {
+    pub(crate) artifact_model_version: u32,
+    pub(crate) run_summary_version: u32,
+    pub(crate) suggestions_version: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) scores_version: Option<u32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct AeeDecisionRecord {
+    pub(crate) decision_id: String,
+    pub(crate) decision_kind: String,
+    pub(crate) selected_suggestion_id: String,
+    pub(crate) category: String,
+    pub(crate) intent: String,
+    pub(crate) target: String,
+    pub(crate) rationale: String,
+    pub(crate) expected_downstream_effect: String,
+    pub(crate) deterministic_selection_rule: String,
+    pub(crate) evidence: SuggestionEvidence,
+}
+
 pub(crate) fn stable_fingerprint_hex(bytes: &[u8]) -> String {
     let mut hash: u64 = 0xcbf29ce484222325;
     for b in bytes {
@@ -346,6 +383,11 @@ pub(crate) fn build_run_summary(
         .strip_prefix(run_paths.run_dir())
         .map(|p| p.display().to_string())
         .unwrap_or_else(|_| "learning/suggestions.json".to_string());
+    let aee_decision_rel = run_paths
+        .aee_decision_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/aee_decision.json".to_string());
     let cluster_groundwork_rel = run_paths
         .cluster_groundwork_json()
         .strip_prefix(run_paths.run_dir())
@@ -397,11 +439,9 @@ pub(crate) fn build_run_summary(
                 .strip_prefix(run_paths.run_dir())
                 .map(|p| p.display().to_string())
                 .unwrap_or_else(|_| "learning".to_string()),
-            scores_json: run_paths.scores_json().is_file().then_some(scores_rel),
-            suggestions_json: run_paths
-                .suggestions_json()
-                .is_file()
-                .then_some(suggestions_rel),
+            scores_json: Some(scores_rel),
+            suggestions_json: Some(suggestions_rel),
+            aee_decision_json: Some(aee_decision_rel),
             overlays_dir: run_paths
                 .overlays_dir()
                 .strip_prefix(run_paths.run_dir())
@@ -820,6 +860,92 @@ pub(crate) fn build_suggestions_artifact(
     }
 }
 
+fn aee_decision_kind_for_intent(intent: &str) -> (&'static str, &'static str) {
+    match intent {
+        "increase_step_retry_budget" => (
+            "bounded_retry_recovery",
+            "raise retry budget for the failed step set on the next bounded run",
+        ),
+        "evaluate_parallelizable_dependencies" => (
+            "bounded_scheduler_review",
+            "review whether the workflow can safely increase bounded parallelism",
+        ),
+        "review_delegation_policy_scope" => (
+            "bounded_delegation_review",
+            "review delegation boundaries before the next bounded run",
+        ),
+        "review_security_policy_expectations" => (
+            "bounded_security_review",
+            "review trust-policy expectations before the next bounded run",
+        ),
+        "review_failure_hotspots" => (
+            "bounded_failure_review",
+            "review failing dependency hotspots before the next bounded run",
+        ),
+        _ => (
+            "bounded_runtime_review",
+            "review bounded runtime signals before the next run",
+        ),
+    }
+}
+
+pub(crate) fn build_aee_decision_artifact(
+    run_summary: &RunSummaryArtifact,
+    suggestions: &SuggestionsArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> AeeDecisionArtifact {
+    let selected = suggestions
+        .suggestions
+        .first()
+        .cloned()
+        .unwrap_or_else(|| SuggestionItem {
+            id: "sug-000".to_string(),
+            category: "stability".to_string(),
+            severity: "info".to_string(),
+            rationale: "No bounded adaptation signals fired; keep current policy state."
+                .to_string(),
+            evidence: SuggestionEvidence {
+                failure_count: 0,
+                retry_count: 0,
+                delegation_denied_count: 0,
+                security_denied_count: 0,
+                success_ratio: 1.0,
+                scheduler_max_parallel_observed: 1,
+            },
+            proposed_change: SuggestedChangeIntent {
+                intent: "maintain_current_policy".to_string(),
+                target: "workflow-runtime".to_string(),
+            },
+        });
+    let (decision_kind, expected_downstream_effect) =
+        aee_decision_kind_for_intent(&selected.proposed_change.intent);
+
+    AeeDecisionArtifact {
+        aee_decision_version: AEE_DECISION_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: suggestions.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        decision: AeeDecisionRecord {
+            decision_id: "aee-001".to_string(),
+            decision_kind: decision_kind.to_string(),
+            selected_suggestion_id: selected.id,
+            category: selected.category,
+            intent: selected.proposed_change.intent,
+            target: selected.proposed_change.target,
+            rationale: selected.rationale,
+            expected_downstream_effect: expected_downstream_effect.to_string(),
+            deterministic_selection_rule:
+                "select the first suggestion emitted by build_suggestions_artifact after stable category ordering"
+                    .to_string(),
+            evidence: selected.evidence,
+        },
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn write_run_state_artifacts(
     resolved: &resolve::AdlResolved,
@@ -958,6 +1084,10 @@ pub(crate) fn write_run_state_artifacts(
     let suggestions = build_suggestions_artifact(&run_summary, Some(&scores_for_suggestions));
     let suggestions_json =
         serde_json::to_vec_pretty(&suggestions).context("serialize suggestions.json")?;
+    let aee_decision =
+        build_aee_decision_artifact(&run_summary, &suggestions, Some(&scores_for_suggestions));
+    let aee_decision_json =
+        serde_json::to_vec_pretty(&aee_decision).context("serialize aee_decision.json")?;
 
     artifacts::atomic_write(&run_paths.run_json(), &run_json)?;
     artifacts::atomic_write(&run_paths.steps_json(), &steps_json)?;
@@ -965,6 +1095,7 @@ pub(crate) fn write_run_state_artifacts(
     artifacts::atomic_write(&run_paths.run_summary_json(), &run_summary_json)?;
     artifacts::atomic_write(&run_paths.scores_json(), &scores_json)?;
     artifacts::atomic_write(&run_paths.suggestions_json(), &suggestions_json)?;
+    artifacts::atomic_write(&run_paths.aee_decision_json(), &aee_decision_json)?;
     if let Some(pause_payload) = pause {
         let pause_artifact = PauseStateArtifact {
             schema_version: PAUSE_STATE_SCHEMA_VERSION.to_string(),
