@@ -9,6 +9,7 @@ use super::hypothesis::{self, HypothesisCandidate, HypothesisPipelineInput};
 use super::mutation::{self, MutationPlan, MutationProposal};
 use super::obsmem_index::{self, StageIndexEntry};
 use super::policy;
+use super::prioritization;
 use super::workflow_template::{embedded_v08_workflow_template, GodelWorkflowTemplate};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -170,6 +171,7 @@ pub struct StageLoopPersistenceResult {
     pub hypothesis_rel_path: PathBuf,
     pub policy_rel_path: PathBuf,
     pub policy_comparison_rel_path: PathBuf,
+    pub prioritization_rel_path: PathBuf,
     pub canonical_evaluation_plan_rel_path: PathBuf,
     pub canonical_mutation_rel_path: PathBuf,
     pub canonical_evidence_rel_path: PathBuf,
@@ -336,6 +338,25 @@ impl GodelStageLoopExecutor {
         .map_err(|err| {
             StageLoopError::InvalidInput(format!("policy comparison persistence failed: {err}"))
         })?;
+        let prioritization_artifact = prioritization::build_prioritization_artifact(
+            &hypothesis_artifact,
+            &hypothesis_rel_path,
+            &policy_artifact,
+            &policy_rel_path,
+        )
+        .map_err(|err| {
+            StageLoopError::InvalidInput(format!("prioritization artifact build failed: {err}"))
+        })?;
+        let prioritization_rel_path = prioritization::persist_prioritization_artifact(
+            runs_root,
+            &input.run_id,
+            &prioritization_artifact,
+        )
+        .map_err(|err| {
+            StageLoopError::InvalidInput(format!(
+                "prioritization artifact persistence failed: {err}"
+            ))
+        })?;
         let canonical_mutation = mutation::build_canonical_mutation(
             &input.run_id,
             &input.workflow_id,
@@ -416,6 +437,7 @@ impl GodelStageLoopExecutor {
             hypothesis_rel_path,
             policy_rel_path,
             policy_comparison_rel_path,
+            prioritization_rel_path,
             canonical_evaluation_plan_rel_path,
             canonical_mutation_rel_path,
             canonical_evidence_rel_path,
@@ -704,6 +726,10 @@ mod tests {
             PathBuf::from("runs/run-745-a/godel/godel_policy_comparison.v1.json")
         );
         assert_eq!(
+            persisted.prioritization_rel_path,
+            PathBuf::from("runs/run-745-a/godel/godel_experiment_priority.v1.json")
+        );
+        assert_eq!(
             persisted.canonical_evaluation_plan_rel_path,
             PathBuf::from("runs/run-745-a/godel/evaluation_plan.v1.json")
         );
@@ -734,6 +760,9 @@ mod tests {
         assert!(tmp.join("run-745-a/godel/godel_policy.v1.json").is_file());
         assert!(tmp
             .join("run-745-a/godel/godel_policy_comparison.v1.json")
+            .is_file());
+        assert!(tmp
+            .join("run-745-a/godel/godel_experiment_priority.v1.json")
             .is_file());
         assert!(tmp
             .join("run-745-a/godel/canonical_evidence_view.v1.json")

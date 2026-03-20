@@ -8,6 +8,7 @@ use ::adl::{
     godel::experiment_record::PersistedExperimentRecord,
     godel::obsmem_index::PersistedStageIndexEntry,
     godel::policy::{PersistedPolicyArtifact, PersistedPolicyComparisonArtifact},
+    godel::prioritization::PersistedPrioritizationArtifact,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -18,16 +19,18 @@ struct GodelRunCliSummary {
     hypothesis_path: String,
     policy_path: String,
     policy_comparison_path: String,
+    prioritization_path: String,
     experiment_record_path: String,
     obsmem_index_path: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 struct GodelInspectCliSummary {
     run_id: String,
     hypothesis_path: String,
     policy_path: String,
     policy_comparison_path: String,
+    prioritization_path: String,
     experiment_record_path: String,
     obsmem_index_path: String,
     failure_code: String,
@@ -38,6 +41,9 @@ struct GodelInspectCliSummary {
     policy_mode_before: String,
     policy_mode_after: String,
     changed_policy_fields: Vec<String>,
+    top_experiment_candidate_id: String,
+    top_experiment_confidence: f64,
+    prioritization_tie_break_rule: String,
     mutation_id: String,
     evaluation_decision: String,
     improvement_delta: i32,
@@ -160,6 +166,7 @@ pub(crate) fn real_godel_run(args: &[String]) -> Result<()> {
         hypothesis_path: result.hypothesis_rel_path.display().to_string(),
         policy_path: result.policy_rel_path.display().to_string(),
         policy_comparison_path: result.policy_comparison_rel_path.display().to_string(),
+        prioritization_path: result.prioritization_rel_path.display().to_string(),
         experiment_record_path: result.experiment_record_rel_path.display().to_string(),
         obsmem_index_path: result.obsmem_index_rel_path.display().to_string(),
     };
@@ -218,6 +225,10 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         .join(&run_id)
         .join("godel")
         .join("godel_policy_comparison.v1.json");
+    let prioritization_rel = PathBuf::from("runs")
+        .join(&run_id)
+        .join("godel")
+        .join("godel_experiment_priority.v1.json");
     let obsmem_index_rel = PathBuf::from("runs")
         .join(&run_id)
         .join("godel")
@@ -234,6 +245,10 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         .join(&run_id)
         .join("godel")
         .join("godel_policy_comparison.v1.json");
+    let prioritization_path = runs_dir
+        .join(&run_id)
+        .join("godel")
+        .join("godel_experiment_priority.v1.json");
     let experiment_record_path = runs_dir
         .join(&run_id)
         .join("godel")
@@ -299,6 +314,20 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
             )
         })?;
 
+    let prioritization: PersistedPrioritizationArtifact =
+        serde_json::from_str(&fs::read_to_string(&prioritization_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_IO: failed to read {}: {err}",
+                prioritization_rel.display()
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_INVALID: failed to parse {}: {err}",
+                prioritization_rel.display()
+            )
+        })?;
+
     let index: PersistedStageIndexEntry =
         serde_json::from_str(&fs::read_to_string(&obsmem_index_path).map_err(|err| {
             anyhow::anyhow!(
@@ -324,6 +353,7 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         hypothesis_path: hypothesis_rel.display().to_string(),
         policy_path: policy_rel.display().to_string(),
         policy_comparison_path: policy_comparison_rel.display().to_string(),
+        prioritization_path: prioritization_rel.display().to_string(),
         experiment_record_path: experiment_record_rel.display().to_string(),
         obsmem_index_path: obsmem_index_rel.display().to_string(),
         failure_code: record.record.failure_code.clone(),
@@ -334,6 +364,17 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         policy_mode_before: comparison.before_policy.policy_mode.clone(),
         policy_mode_after: comparison.after_policy.policy_mode.clone(),
         changed_policy_fields: comparison.changed_fields.clone(),
+        top_experiment_candidate_id: prioritization
+            .ranked_candidates
+            .first()
+            .map(|c| c.candidate_id.clone())
+            .unwrap_or_default(),
+        top_experiment_confidence: prioritization
+            .ranked_candidates
+            .first()
+            .map(|c| c.confidence)
+            .unwrap_or(0.0),
+        prioritization_tie_break_rule: prioritization.tie_break_rule.clone(),
         mutation_id: record.record.mutation_id.clone(),
         evaluation_decision: record.record.evaluation_decision.clone(),
         improvement_delta: record.record.improvement_delta,

@@ -5,6 +5,7 @@ pub mod hypothesis;
 pub mod mutation;
 pub mod obsmem_index;
 pub mod policy;
+pub mod prioritization;
 pub mod stage_loop;
 pub mod surface_status;
 pub mod workflow_template;

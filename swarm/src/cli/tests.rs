@@ -26,6 +26,9 @@ use ::adl::godel::policy::{
     PersistedPolicyArtifact, PersistedPolicyComparisonArtifact, POLICY_ARTIFACT_VERSION,
     POLICY_COMPARISON_ARTIFACT_VERSION,
 };
+use ::adl::godel::prioritization::{
+    PersistedPrioritizationArtifact, PRIORITIZATION_ARTIFACT_VERSION,
+};
 use ::adl::{adl, artifacts, execute, failure_taxonomy, instrumentation, resolve, signing, trace};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::ffi::OsString;
@@ -341,6 +344,61 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         before_policy: policy.before_policy.clone(),
         after_policy: policy.after_policy.clone(),
     };
+    let prioritization = PersistedPrioritizationArtifact {
+        artifact_version: PRIORITIZATION_ARTIFACT_VERSION.to_string(),
+        prioritization_id: "prioritize:run-745-a:tool_failure".to_string(),
+        run_id: "run-745-a".to_string(),
+        workflow_id: "wf-godel-loop".to_string(),
+        hypothesis_id: "hyp:run-745-a:tool_failure:00".to_string(),
+        policy_id: "policy:run-745-a:tool_failure".to_string(),
+        hypothesis_artifact_path: "runs/run-745-a/godel/godel_hypothesis.v1.json".to_string(),
+        policy_artifact_path: "runs/run-745-a/godel/godel_policy.v1.json".to_string(),
+        tie_break_rule: "sort by priority_score desc, then confidence desc, then candidate_id asc"
+            .to_string(),
+        input_candidates: vec![
+            ::adl::godel::prioritization::PrioritizationInputCandidate {
+                candidate_id: "exp:fallback-check".to_string(),
+                strategy: "fallback_surface_probe".to_string(),
+                target_surface: "tool-invocation-config".to_string(),
+            },
+            ::adl::godel::prioritization::PrioritizationInputCandidate {
+                candidate_id: "exp:parser-guardrail".to_string(),
+                strategy: "parser_guardrail_probe".to_string(),
+                target_surface: "tool-invocation-config".to_string(),
+            },
+            ::adl::godel::prioritization::PrioritizationInputCandidate {
+                candidate_id: "exp:retry-budget".to_string(),
+                strategy: "retry_budget_probe".to_string(),
+                target_surface: "tool-invocation-config".to_string(),
+            },
+        ],
+        ranked_candidates: vec![
+            ::adl::godel::prioritization::RankedExperimentCandidate {
+                candidate_id: "exp:retry-budget".to_string(),
+                strategy: "retry_budget_probe".to_string(),
+                target_surface: "tool-invocation-config".to_string(),
+                priority_score: 95,
+                confidence: 0.86,
+                ranking_reason: "deterministic".to_string(),
+            },
+            ::adl::godel::prioritization::RankedExperimentCandidate {
+                candidate_id: "exp:parser-guardrail".to_string(),
+                strategy: "parser_guardrail_probe".to_string(),
+                target_surface: "tool-invocation-config".to_string(),
+                priority_score: 79,
+                confidence: 0.74,
+                ranking_reason: "deterministic".to_string(),
+            },
+            ::adl::godel::prioritization::RankedExperimentCandidate {
+                candidate_id: "exp:fallback-check".to_string(),
+                strategy: "fallback_surface_probe".to_string(),
+                target_surface: "tool-invocation-config".to_string(),
+                priority_score: 68,
+                confidence: 0.68,
+                ranking_reason: "deterministic".to_string(),
+            },
+        ],
+    };
 
     std::fs::write(
         run_dir.join("experiment_record.runtime.v1.json"),
@@ -362,6 +420,11 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         serde_json::to_string_pretty(&comparison).expect("comparison json"),
     )
     .expect("write comparison");
+    std::fs::write(
+        run_dir.join("godel_experiment_priority.v1.json"),
+        serde_json::to_string_pretty(&prioritization).expect("prioritization json"),
+    )
+    .expect("write prioritization");
     std::fs::write(
         run_dir.join("obsmem_index_entry.runtime.v1.json"),
         serde_json::to_string_pretty(&index).expect("index json"),
