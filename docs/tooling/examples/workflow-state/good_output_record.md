@@ -36,8 +36,9 @@ Fixture output record for dependable-execution completed-phase validation.
 - Result: PASS
 
 ## Validation
-- Tests / checks run:
+- Validation commands and their purpose:
   - `bash swarm/tools/validate_structured_prompt.sh --type sor --phase completed --input docs/tooling/examples/workflow-state/good_output_record.md`
+    - verifies the completed-phase fixture remains structurally valid and machine-auditable.
 - Results:
   - pass
 
@@ -67,14 +68,15 @@ verification_summary:
 
 ## Determinism Evidence
 - Determinism tests executed: completed-phase validator
-- Replay verification (same inputs -> same artifacts/order): not applicable
+- Fixtures or scripts used: `docs/tooling/examples/workflow-state/good_output_record.md` as the deterministic fixture input
+- Replay verification (same inputs -> same artifacts/order): rerunning the validator against the same checked-in fixture yields the same validation result
 - Ordering guarantees (sorting / tie-break rules used): fixed section and field ordering
 - Artifact stability notes: fixture is checked in for deterministic reruns
 
 ## Security / Privacy Checks
-- Secret leakage scan performed: yes
-- Prompt / tool argument redaction verified: yes
-- Absolute path leakage check: pass
+- Secret leakage scan performed: yes, by manual inspection of the checked-in fixture
+- Prompt / tool argument redaction verified: yes, by manual inspection of the checked-in fixture
+- Absolute path leakage check: pass, verified by checking that recorded commands and references stay repository-relative
 - Sandbox / policy invariants preserved: yes
 
 ## Replay Artifacts
@@ -84,7 +86,7 @@ verification_summary:
 - Replay result:
 
 ## Artifact Verification
-- Required artifacts present: yes
+- Required artifacts present: yes; the primary proof artifact is `docs/tooling/examples/workflow-state/good_output_record.md`
 - Artifact schema/version checks: completed-phase validator pass
 - Hash/byte-stability checks: not run
 - Missing/optional artifacts and rationale: replay artifacts are not required for this fixture

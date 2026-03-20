@@ -91,8 +91,21 @@ These fields should not be conflated.
 In particular:
 
 - `Integration state: pr_open` does not imply verification happened in a worktree
+- `Integration state: pr_open` should still truthfully report any worktree-only paths remaining
 - `Integration method used: direct write in main repo` should normally pair with `Verification scope: main_repo`
 - deviations are allowed, but should be explained in the record rather than left ambiguous
+
+## Execution-Record Quality Expectations
+
+Structured Output Records are machine-auditable execution records, not narrative summaries.
+
+In practice that means:
+
+- every listed validation command should also say what it verified
+- deterministic scripts or fixtures should be identified as determinism evidence, not merely listed
+- rerunnable deterministic scripts and fixtures count as replay evidence when they reproduce the same result
+- security and privacy checks should state what was checked and how it was checked
+- section headers should not be left empty; if something does not apply, the record should say why
 
 ## Absolute-Path Policy
 

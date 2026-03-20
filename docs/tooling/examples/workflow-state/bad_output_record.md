@@ -35,7 +35,7 @@ Invalid fixture output record for dependable-execution completed-phase validatio
 - Result:
 
 ## Validation
-- Tests / checks run:
+- Validation commands and their purpose:
 - Results:
 
 ## Verification Summary
@@ -64,6 +64,7 @@ verification_summary:
 
 ## Determinism Evidence
 - Determinism tests executed:
+- Fixtures or scripts used:
 - Replay verification (same inputs -> same artifacts/order):
 - Ordering guarantees (sorting / tie-break rules used):
 - Artifact stability notes:
