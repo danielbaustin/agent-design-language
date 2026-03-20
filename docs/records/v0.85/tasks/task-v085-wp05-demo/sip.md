@@ -9,7 +9,7 @@ required_outcome_type: "code"
 demo_required: "true"
 ---
 
-# Structured Implementation Prompt
+# [v0.85][WP-05] First authoring/editor surfaces
 
 ## Summary
 
@@ -47,10 +47,11 @@ Land a static tracked editor that helps a human author STPs and SIPs with less s
 - open the editor HTML locally
 - confirm validation reacts to missing required fields
 - confirm the preview shows the full rendered artifact
+- confirm the workflow action panel prepares a bounded `pr start` command
 
 ## Demo / Proof Requirements
 
-- required proof surface: tracked example STP/SIP pair and editor walkthrough
+- required proof surface: tracked example STP/SIP/SOR bundle and editor walkthrough
 
 ## Constraints / Policies
 
@@ -63,4 +64,4 @@ Land a static tracked editor that helps a human author STPs and SIPs with less s
 
 ## Notes / Risks
 
-- SOR editing is intentionally deferred to later work
+- richer review-flow integration and demo coverage land in later slices

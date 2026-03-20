@@ -8,7 +8,7 @@ action: "edit"
 milestone_sprint: "Sprint 2"
 ---
 
-# Structured Task Prompt
+# [v0.85][WP-05] First authoring/editor surfaces
 
 ## Summary
 
@@ -29,6 +29,7 @@ Provide a bounded human-usable editor for Structured Task Prompts and Structured
 - a user can edit required structured fields without writing raw markdown from scratch
 - the rendered artifact preview updates live
 - the public task-bundle destination is visible while editing
+- the linked workspace keeps STP, SIP, and SOR together as one task bundle
 
 ## Repo Inputs
 
@@ -51,3 +52,4 @@ Provide a bounded human-usable editor for Structured Task Prompts and Structured
 ## Notes
 
 - this is the first tracked public-record example for the editor slice
+- the demo now serves as the canonical proof surface for the bounded editor loop

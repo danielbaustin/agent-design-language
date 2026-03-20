@@ -52,4 +52,4 @@ Bounded review-first execution record linked to the same public task bundle as t
 ## Follow-ups / Deferred work
 
 - add richer SOR validation/provenance display
-- connect review decisions into the next workflow integration slice
+- connect reviewer handoff to the bounded demo and later closeout surfaces

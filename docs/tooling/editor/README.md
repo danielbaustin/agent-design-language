@@ -56,3 +56,12 @@ The editor is intentionally simple:
 ## Why This Is Still Useful
 
 This first slice reduces structural editing fragility without pretending the full editor architecture already exists. It gives users a safer tracked surface than raw markdown-only editing while preserving the public task-bundle model, making the three-card bundle visible as one workspace, and exposing a thin validated path back into the existing control plane.
+
+## Canonical Demo / Proof Surface
+
+The canonical tracked proof surface for this editor slice is:
+
+- `docs/tooling/editor/demo.md`
+- `docs/records/v0.85/tasks/task-v085-wp05-demo/`
+
+Review those together to see the actual supported loop and the remaining manual gaps.
