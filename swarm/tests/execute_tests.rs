@@ -2313,6 +2313,7 @@ run:
     let run_summary_path = run_dir.join("run_summary.json");
     let scores_path = run_dir.join("learning").join("scores.json");
     let suggestions_path = run_dir.join("learning").join("suggestions.json");
+    let aee_decision_path = run_dir.join("learning").join("aee_decision.json");
     let cluster_groundwork_path = run_dir.join("meta").join("cluster_groundwork.json");
     assert!(
         run_json_path.is_file(),
@@ -2339,6 +2340,11 @@ run:
         suggestions_path.is_file(),
         "missing {}",
         suggestions_path.display()
+    );
+    assert!(
+        aee_decision_path.is_file(),
+        "missing {}",
+        aee_decision_path.display()
     );
     assert!(
         cluster_groundwork_path.is_file(),
@@ -2393,6 +2399,15 @@ run:
     assert_eq!(summary_json["links"]["steps_json"], "steps.json");
     assert_eq!(summary_json["links"]["outputs_dir"], "outputs");
     assert_eq!(summary_json["links"]["learning_dir"], "learning");
+    assert_eq!(summary_json["links"]["scores_json"], "learning/scores.json");
+    assert_eq!(
+        summary_json["links"]["suggestions_json"],
+        "learning/suggestions.json"
+    );
+    assert_eq!(
+        summary_json["links"]["aee_decision_json"],
+        "learning/aee_decision.json"
+    );
     assert_eq!(
         summary_json["links"]["cluster_groundwork_json"],
         "meta/cluster_groundwork.json"
@@ -2410,20 +2425,6 @@ run:
             .and_then(|v| v.get("pause_state_json"))
             .is_none(),
         "pause_state_json should be omitted for non-paused runs"
-    );
-    assert!(
-        summary_json
-            .get("links")
-            .and_then(|v| v.get("scores_json"))
-            .is_none(),
-        "scores_json should be omitted when no scores artifact exists"
-    );
-    assert!(
-        summary_json
-            .get("links")
-            .and_then(|v| v.get("suggestions_json"))
-            .is_none(),
-        "suggestions_json should be omitted when no suggestions artifact exists"
     );
     assert!(
         summary_json.get("error_kind").is_none(),
@@ -2465,6 +2466,26 @@ run:
         assert!(proposed_change["intent"].is_string());
         assert!(proposed_change["target"].is_string());
     }
+    let aee_decision_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&aee_decision_path).unwrap()).unwrap();
+    assert_eq!(aee_decision_json["aee_decision_version"], 1);
+    assert_eq!(aee_decision_json["run_id"], run_id);
+    assert_eq!(
+        aee_decision_json["generated_from"]["artifact_model_version"],
+        1
+    );
+    assert_eq!(
+        aee_decision_json["generated_from"]["run_summary_version"],
+        1
+    );
+    assert_eq!(
+        aee_decision_json["generated_from"]["suggestions_version"],
+        1
+    );
+    assert_eq!(aee_decision_json["generated_from"]["scores_version"], 1);
+    assert!(aee_decision_json["decision"]["decision_id"].is_string());
+    assert!(aee_decision_json["decision"]["intent"].is_string());
+    assert!(aee_decision_json["decision"]["deterministic_selection_rule"].is_string());
     let cluster_groundwork_json: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(&cluster_groundwork_path).unwrap()).unwrap();
     assert_eq!(cluster_groundwork_json["cluster_groundwork_version"], 1);
