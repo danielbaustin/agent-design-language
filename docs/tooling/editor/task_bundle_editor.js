@@ -73,9 +73,35 @@ const ARTIFACTS = {
   sor: {
     label: "Structured Output Record",
     extension: "sor.md",
-    cardState: "shell",
-    cardCopy: "Execution/review card is visibly linked now; richer review flow lands in the next slice.",
-    editable: false
+    cardState: "review",
+    cardCopy: "Review-first execution surface for evidence, integration state, and bounded follow-ups.",
+    metadata: [
+      { key: "task_id", label: "Task ID", required: true },
+      { key: "run_id", label: "Run ID", required: true },
+      { key: "version", label: "Version", required: true, defaultValue: "v0.85" },
+      { key: "branch", label: "Branch", required: true },
+      { key: "status", label: "Status", required: true, defaultValue: "IN_PROGRESS" },
+      { key: "integration_state", label: "Integration state", required: true, defaultValue: "pr_open" },
+      { key: "verification_scope", label: "Verification scope", required: true, defaultValue: "worktree" }
+    ],
+    sections: [
+      ["summary_text", "Summary"],
+      ["artifacts_produced", "Artifacts produced"],
+      ["validation", "Validation"],
+      ["primary_proof_surface", "Primary proof surface"],
+      ["artifact_verification", "Artifact Verification"],
+      ["review_focus", "Review focus"],
+      ["follow_ups", "Follow-ups / Deferred work"]
+    ],
+    placeholders: {
+      summary_text: "Bounded review surface for the current task-bundle execution record.",
+      artifacts_produced: "- docs/tooling/editor/index.html\n- docs/tooling/editor/task_bundle_editor.js",
+      validation: "- Required checks executed\n- Reviewer-visible verification surfaced",
+      primary_proof_surface: "- bounded git diff over named files\n- deterministic grep over named files",
+      artifact_verification: "- required artifacts are present\n- schema changes: none",
+      review_focus: "- integration state is clear\n- evidence is visible\n- follow-ups are explicit",
+      follow_ups: "- richer workflow decision loop lands in the next slice"
+    }
   }
 };
 
@@ -87,6 +113,11 @@ const ENUM_RULES = {
   sip: {
     required_outcome_type: ["code", "docs", "tests", "demo", "combination"],
     demo_required: ["true", "false"]
+  },
+  sor: {
+    status: ["NOT_STARTED", "IN_PROGRESS", "DONE", "FAILED"],
+    integration_state: ["worktree_only", "pr_open", "merged"],
+    verification_scope: ["worktree", "pr_branch", "main_repo"]
   }
 };
 
@@ -105,6 +136,14 @@ const FORMAT_HINTS = {
     validation_plan: /Required commands:/,
     demo_requirements: /Required demo\(s\):/,
     constraints: /Determinism requirements:/
+  },
+  sor: {
+    artifacts_produced: /^- /m,
+    validation: /^- /m,
+    primary_proof_surface: /^- /m,
+    artifact_verification: /^- /m,
+    review_focus: /^- /m,
+    follow_ups: /^- /m
   }
 };
 
@@ -185,7 +224,9 @@ function buildForm() {
     `;
     form.append(note);
   } else {
-    editorPanelCopy.textContent = "Fill the required sections. The preview updates as you type.";
+    editorPanelCopy.textContent = currentArtifact === "sor"
+      ? "Review the execution record in a bounded way. The preview updates as you refine evidence, integration, and follow-ups."
+      : "Fill the required sections. The preview updates as you type.";
     artifact.metadata.forEach((field) => {
       form.append(createField(currentArtifact, field.key, field.label, draft.metadata[field.key] || "", false, field.required));
     });
@@ -247,12 +288,6 @@ function gather() {
   if (currentArtifact === "sip" || currentArtifact === "sor") {
     metadata.branch = branchInput.value.trim() || metadata.branch;
   }
-  if (currentArtifact === "sor") {
-    metadata.run_id = taskIdInput.value.trim() || metadata.run_id || "task-id";
-    metadata.version = "v0.85";
-    metadata.status = "IN_PROGRESS";
-  }
-
   return { artifact, metadata, sections };
 }
 
@@ -449,7 +484,9 @@ function fieldLabel(key) {
     status: "Status",
     action: "Action",
     required_outcome_type: "Required Outcome Type",
-    demo_required: "Demo Required"
+    demo_required: "Demo Required",
+    integration_state: "Integration state",
+    verification_scope: "Verification scope"
   };
   return labels[key] || key;
 }
@@ -462,13 +499,25 @@ function sectionLabel(artifact, key) {
 function renderMarkdown({ artifact, metadata, sections }) {
   const heading = titleInput.value.trim() || artifact.label;
   const lines = [renderYaml({ artifact_type: artifact.label, title: titleInput.value.trim(), ...metadata }), "", `# ${heading}`, ""];
-  lines.push("## Summary", "", titleInput.value.trim() || "Replace me.", "");
-
-  if (artifact.editable === false) {
+  if (currentArtifact === "sor") {
+    lines.push("## Summary", "", sections.summary_text || titleInput.value.trim() || "Replace me.", "");
+    lines.push("## Main Repo Integration", "");
+    lines.push(`- Integration state: ${metadata.integration_state || "pr_open"}`);
+    lines.push(`- Verification scope: ${metadata.verification_scope || "worktree"}`);
+    lines.push(`- Branch: ${metadata.branch || branchInput.value.trim()}`);
+    lines.push("");
+    artifact.sections
+      .filter(([key]) => key !== "summary_text")
+      .forEach(([key, label]) => {
+        lines.push(`## ${label}`, "", sections[key] || "", "");
+      });
+  } else if (artifact.editable === false) {
+    lines.push("## Summary", "", titleInput.value.trim() || "Replace me.", "");
     lines.push("## Workspace Role", "", "Visible execution/review card for the linked task bundle shell.", "");
     lines.push("## Current Boundaries", "", "- Visible in the bundle workspace\n- Full review flow deferred to the dedicated SOR/review issue", "");
     lines.push("## Follow-ups", "", "- Add provenance display\n- Add accept / reject / iterate flow", "");
   } else {
+    lines.push("## Summary", "", titleInput.value.trim() || "Replace me.", "");
     artifact.sections.forEach(([key, label]) => {
       lines.push(`## ${label}`, "", sections[key] || "", "");
     });

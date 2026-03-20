@@ -14,7 +14,7 @@ The editor is intentionally simple:
 - supports a linked task-bundle workspace with:
   - `Structured Task Prompt` (STP)
   - `Structured Implementation Prompt` (SIP)
-  - visible `Structured Output Record` (SOR) shell
+  - bounded review-first `Structured Output Record` (SOR) surface
 - exposes one bounded workflow action surface for:
   - `pr start` via `swarm/tools/editor_action.sh`
 
@@ -28,6 +28,10 @@ The editor is intentionally simple:
   - normalized task IDs, run IDs, versions, enums, and booleans
   - placeholder content that still needs real authoring
   - structured section formats for bounded STP/SIP surfaces
+- provides a bounded SOR review surface for:
+  - evidence/proof notes
+  - integration state
+  - artifact verification and deferred follow-ups
 - keeps the canonical tracked destination visible as a task-bundle path under:
   - `docs/records/v0.85/tasks/<task-id>/`
 
@@ -35,7 +39,7 @@ The editor is intentionally simple:
 
 - it does not write files directly
 - it does not replace `pr create`, `pr start`, `pr run`, or `pr finish`
-- it does not yet provide the full SOR review flow
+- it does not yet provide the full SOR decision loop or acceptance workflow
 - it does not yet execute the control plane directly from browser JS
 - it does not yet call the structured-prompt validator directly from the browser
 - it does not attempt full contract completeness for every machine-readable field

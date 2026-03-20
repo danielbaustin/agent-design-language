@@ -6,27 +6,49 @@ run_id: "task-v085-wp05-demo"
 version: "v0.85"
 branch: "codex/870-v085-wp05-first-editor-surfaces"
 status: "IN_PROGRESS"
+integration_state: "pr_open"
+verification_scope: "worktree"
 ---
 
-# Structured Output Record
+# [v0.85][WP-05] First authoring/editor surfaces
 
 ## Summary
 
-Bounded execution/review card linked to the same public task bundle as the STP and SIP examples.
+Bounded review-first execution record linked to the same public task bundle as the STP and SIP examples.
 
-## Workspace Role
+## Main Repo Integration
 
-- visible in the task-bundle workspace shell
-- demonstrates the canonical `sor.md` bundle shape
-- keeps the execution/review artifact linked even before the richer review surface lands
+- Integration state: pr_open
+- Verification scope: worktree
+- Branch: codex/870-v085-wp05-first-editor-surfaces
 
-## Current Boundaries
+## Artifacts produced
 
-- this example is intentionally lightweight
-- richer validation, provenance, and review controls are deferred to later editor/review issues
+- docs/tooling/editor/index.html
+- docs/tooling/editor/task_bundle_editor.js
 
-## Follow-ups
+## Validation
 
-- add full review surface behavior
-- add validation/provenance display
-- add accept / reject / iterate workflow
+- required fields are present in the editor
+- bundle-linked SOR review is visible in the same workspace as STP and SIP
+
+## Primary proof surface
+
+- bounded git diff over named editor files
+- deterministic grep over named editor surfaces
+
+## Artifact Verification
+
+- required artifacts are present
+- schema changes: none
+
+## Review focus
+
+- integration state is explicit
+- evidence is visible inside the task bundle
+- deferred work is clear
+
+## Follow-ups / Deferred work
+
+- add richer SOR validation/provenance display
+- connect review decisions into the next workflow integration slice
