@@ -118,10 +118,34 @@ const taskIdInput = document.getElementById("task-id");
 const titleInput = document.getElementById("title");
 const branchInput = document.getElementById("branch");
 const copyButton = document.getElementById("copy-preview");
+const copyActionButton = document.getElementById("copy-action");
 const editorPanelTitle = document.getElementById("editor-panel-title");
 const editorPanelCopy = document.getElementById("editor-panel-copy");
+const actionSummary = document.getElementById("action-summary");
+const actionCommand = document.getElementById("action-command");
 
 let currentArtifact = "stp";
+const artifactDrafts = {};
+
+function initialDraftFor(artifactKey) {
+  const artifact = ARTIFACTS[artifactKey];
+  const metadata = {};
+  (artifact.metadata || []).forEach((field) => {
+    metadata[field.key] = field.defaultValue || "";
+  });
+  const sections = {};
+  (artifact.sections || []).forEach(([key]) => {
+    sections[key] = artifact.placeholders[key] || "";
+  });
+  return { metadata, sections };
+}
+
+function draftFor(artifactKey) {
+  if (!artifactDrafts[artifactKey]) {
+    artifactDrafts[artifactKey] = initialDraftFor(artifactKey);
+  }
+  return artifactDrafts[artifactKey];
+}
 
 function buildCards() {
   bundleCards.innerHTML = "";
@@ -146,6 +170,7 @@ function buildCards() {
 
 function buildForm() {
   const artifact = ARTIFACTS[currentArtifact];
+  const draft = draftFor(currentArtifact);
   form.innerHTML = "";
   editorPanelTitle.textContent = artifact.label;
 
@@ -162,18 +187,18 @@ function buildForm() {
   } else {
     editorPanelCopy.textContent = "Fill the required sections. The preview updates as you type.";
     artifact.metadata.forEach((field) => {
-      form.append(createField(field.key, field.label, field.defaultValue || "", false, field.required));
+      form.append(createField(currentArtifact, field.key, field.label, draft.metadata[field.key] || "", false, field.required));
     });
 
     artifact.sections.forEach(([key, label]) => {
-      form.append(createField(key, label, artifact.placeholders[key] || "", true, true));
+      form.append(createField(currentArtifact, key, label, draft.sections[key] || "", true, true));
     });
   }
 
   updateAll();
 }
 
-function createField(key, label, initialValue, isTextarea, required) {
+function createField(artifactKey, key, label, initialValue, isTextarea, required) {
   const wrapper = document.createElement("div");
   wrapper.className = "field-group";
 
@@ -189,10 +214,22 @@ function createField(key, label, initialValue, isTextarea, required) {
   if (!isTextarea) {
     input.type = "text";
   }
-  input.addEventListener("input", updateAll);
+  input.addEventListener("input", (event) => {
+    rememberDraftValue(artifactKey, key, event.target.value, isTextarea);
+    updateAll();
+  });
   wrapper.append(input);
 
   return wrapper;
+}
+
+function rememberDraftValue(artifactKey, key, value, isTextarea) {
+  const draft = draftFor(artifactKey);
+  if (isTextarea) {
+    draft.sections[key] = value;
+  } else {
+    draft.metadata[key] = value;
+  }
 }
 
 function gather() {
@@ -241,6 +278,51 @@ function updateBundlePath() {
   const taskId = taskIdInput.value.trim() || "task-id";
   bundleRoot.textContent = `Tracked bundle root: docs/records/v0.85/tasks/${taskId}/`;
   bundleActivePath.textContent = `Active card target: docs/records/v0.85/tasks/${taskId}/${artifact.extension}`;
+}
+
+function deriveStartAction() {
+  const stpDraft = draftFor("stp");
+  const issueNumber = (valueFor("issue_number") || stpDraft.metadata.issue_number || "").trim();
+  const branch = branchInput.value.trim();
+  const branchMatch = branch.match(/^codex\/([0-9]+)-([a-z0-9][a-z0-9-]*)$/);
+
+  if (!issueNumber) {
+    return {
+      ready: false,
+      summary: "Enter a GitHub Issue Number on the STP card to prepare the bounded pr start action.",
+      command: "swarm/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
+    };
+  }
+
+  if (!/^[0-9]+$/.test(issueNumber)) {
+    return {
+      ready: false,
+      summary: "GitHub Issue Number must be numeric before the editor can prepare a pr start command.",
+      command: "swarm/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
+    };
+  }
+
+  if (!branchMatch) {
+    return {
+      ready: false,
+      summary: "Branch must match codex/<issue>-<slug> before the thin pr start adapter can run.",
+      command: "swarm/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
+    };
+  }
+
+  if (branchMatch[1] !== issueNumber) {
+    return {
+      ready: false,
+      summary: "GitHub Issue Number and branch prefix must match before the adapter can invoke pr start safely.",
+      command: "swarm/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
+    };
+  }
+
+  return {
+    ready: true,
+    summary: "Thin control-plane adapter is ready to invoke pr start through the existing validated workflow.",
+    command: `swarm/tools/editor_action.sh start --issue ${issueNumber} --branch ${branch}`
+  };
 }
 
 function validate({ artifact, metadata, sections }) {
@@ -340,6 +422,13 @@ function validate({ artifact, metadata, sections }) {
     results.push({ ok: true, text: "SOR is visibly linked in the workspace shell; richer review behavior is intentionally deferred." });
   }
 
+  const startAction = deriveStartAction();
+  if (currentArtifact === "stp" && startAction.ready) {
+    results.push({ ok: true, text: "Thin pr start adapter command is ready from the editor path." });
+  } else if (currentArtifact === "stp") {
+    results.push({ ok: false, text: "Thin pr start adapter needs matching numeric issue number and codex/<issue>-<slug> branch values." });
+  }
+
   return results;
 }
 
@@ -404,6 +493,11 @@ function updateAll() {
   const results = validate(model);
   renderValidation(results);
   preview.textContent = renderMarkdown(model);
+  const startAction = deriveStartAction();
+  actionSummary.textContent = startAction.summary;
+  actionCommand.textContent = startAction.command;
+  copyActionButton.disabled = !startAction.ready;
+  copyActionButton.textContent = startAction.ready ? "Copy pr start command" : "Fix issue + branch first";
 }
 
 copyButton.addEventListener("click", async () => {
@@ -411,6 +505,17 @@ copyButton.addEventListener("click", async () => {
   copyButton.textContent = "Copied";
   window.setTimeout(() => {
     copyButton.textContent = "Copy Markdown";
+  }, 1200);
+});
+
+copyActionButton.addEventListener("click", async () => {
+  if (copyActionButton.disabled) {
+    return;
+  }
+  await navigator.clipboard.writeText(actionCommand.textContent);
+  copyActionButton.textContent = "Copied";
+  window.setTimeout(() => {
+    copyActionButton.textContent = "Copy pr start command";
   }, 1200);
 });
 

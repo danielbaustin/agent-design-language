@@ -24,6 +24,9 @@ This bounded demo is the proof surface for the first WP-05 task-bundle workspace
    - `docs/records/v0.85/tasks/task-v085-wp05-demo/stp.md`
    - `docs/records/v0.85/tasks/task-v085-wp05-demo/sip.md`
    - `docs/records/v0.85/tasks/task-v085-wp05-demo/sor.md`
+10. Return to the `Structured Task Prompt` card, set a numeric GitHub issue number that matches the branch prefix, and confirm the workflow action panel shows a ready `pr start` command.
+11. Copy the command from the editor and run it from the repo root:
+    - `swarm/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>`
 
 ## Demo Claims
 
@@ -31,5 +34,6 @@ This bounded demo is the proof surface for the first WP-05 task-bundle workspace
 - the editor presents a linked task-bundle workspace rather than isolated artifact editing only
 - the editor supports STP and SIP authoring while keeping SOR visibly linked in the same workspace
 - the editor preview and validation are materially closer to the current STP/SIP contract expectations
+- the editor exposes one bounded validated control-plane action without duplicating workflow logic in browser code
 - the editor keeps the public task-bundle destination visible
 - the editor reduces structural editing fragility by guiding required fields and rendering the final markdown artifact live

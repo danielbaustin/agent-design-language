@@ -15,6 +15,8 @@ The editor is intentionally simple:
   - `Structured Task Prompt` (STP)
   - `Structured Implementation Prompt` (SIP)
   - visible `Structured Output Record` (SOR) shell
+- exposes one bounded workflow action surface for:
+  - `pr start` via `swarm/tools/editor_action.sh`
 
 ## What This First Slice Does
 
@@ -34,10 +36,10 @@ The editor is intentionally simple:
 - it does not write files directly
 - it does not replace `pr create`, `pr start`, `pr run`, or `pr finish`
 - it does not yet provide the full SOR review flow
-- it does not yet invoke the control plane directly
+- it does not yet execute the control plane directly from browser JS
 - it does not yet call the structured-prompt validator directly from the browser
 - it does not attempt full contract completeness for every machine-readable field
 
 ## Why This Is Still Useful
 
-This first slice reduces structural editing fragility without pretending the full editor architecture already exists. It gives users a safer tracked surface than raw markdown-only editing while preserving the public task-bundle model and making the three-card bundle visible as one workspace.
+This first slice reduces structural editing fragility without pretending the full editor architecture already exists. It gives users a safer tracked surface than raw markdown-only editing while preserving the public task-bundle model, making the three-card bundle visible as one workspace, and exposing a thin validated path back into the existing control plane.

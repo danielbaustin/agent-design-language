@@ -128,6 +128,28 @@ textarea {
   margin-bottom: 24px;
 }
 
+.action-panel {
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.action-summary {
+  margin-bottom: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.action-command {
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  overflow: auto;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
 .bundle-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
