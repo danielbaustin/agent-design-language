@@ -8,6 +8,7 @@ use super::experiment_record::{self, StageExperimentRecord};
 use super::hypothesis::{self, HypothesisCandidate, HypothesisPipelineInput};
 use super::mutation::{self, MutationPlan, MutationProposal};
 use super::obsmem_index::{self, StageIndexEntry};
+use super::policy;
 use super::workflow_template::{embedded_v08_workflow_template, GodelWorkflowTemplate};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -167,6 +168,8 @@ pub struct StageLoopRun {
 pub struct StageLoopPersistenceResult {
     pub run: StageLoopRun,
     pub hypothesis_rel_path: PathBuf,
+    pub policy_rel_path: PathBuf,
+    pub policy_comparison_rel_path: PathBuf,
     pub canonical_evaluation_plan_rel_path: PathBuf,
     pub canonical_mutation_rel_path: PathBuf,
     pub canonical_evidence_rel_path: PathBuf,
@@ -313,6 +316,26 @@ impl GodelStageLoopExecutor {
                         "hypothesis artifact persistence failed: {err}"
                     ))
                 })?;
+        let (policy_artifact, policy_comparison_artifact) =
+            policy::build_policy_artifacts(&hypothesis_artifact, &hypothesis_rel_path).map_err(
+                |err| StageLoopError::InvalidInput(format!("policy artifact build failed: {err}")),
+            )?;
+        let policy_rel_path = policy::persist_policy_artifact(
+            runs_root,
+            &input.run_id,
+            &policy_artifact,
+        )
+        .map_err(|err| {
+            StageLoopError::InvalidInput(format!("policy artifact persistence failed: {err}"))
+        })?;
+        let policy_comparison_rel_path = policy::persist_policy_comparison_artifact(
+            runs_root,
+            &input.run_id,
+            &policy_comparison_artifact,
+        )
+        .map_err(|err| {
+            StageLoopError::InvalidInput(format!("policy comparison persistence failed: {err}"))
+        })?;
         let canonical_mutation = mutation::build_canonical_mutation(
             &input.run_id,
             &input.workflow_id,
@@ -391,6 +414,8 @@ impl GodelStageLoopExecutor {
         Ok(StageLoopPersistenceResult {
             run,
             hypothesis_rel_path,
+            policy_rel_path,
+            policy_comparison_rel_path,
             canonical_evaluation_plan_rel_path,
             canonical_mutation_rel_path,
             canonical_evidence_rel_path,
@@ -671,6 +696,14 @@ mod tests {
             PathBuf::from("runs/run-745-a/godel/godel_hypothesis.v1.json")
         );
         assert_eq!(
+            persisted.policy_rel_path,
+            PathBuf::from("runs/run-745-a/godel/godel_policy.v1.json")
+        );
+        assert_eq!(
+            persisted.policy_comparison_rel_path,
+            PathBuf::from("runs/run-745-a/godel/godel_policy_comparison.v1.json")
+        );
+        assert_eq!(
             persisted.canonical_evaluation_plan_rel_path,
             PathBuf::from("runs/run-745-a/godel/evaluation_plan.v1.json")
         );
@@ -697,6 +730,10 @@ mod tests {
         assert!(tmp.join("run-745-a/godel/mutation.v1.json").is_file());
         assert!(tmp
             .join("run-745-a/godel/godel_hypothesis.v1.json")
+            .is_file());
+        assert!(tmp.join("run-745-a/godel/godel_policy.v1.json").is_file());
+        assert!(tmp
+            .join("run-745-a/godel/godel_policy_comparison.v1.json")
             .is_file());
         assert!(tmp
             .join("run-745-a/godel/canonical_evidence_view.v1.json")

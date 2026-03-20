@@ -22,6 +22,10 @@ use ::adl::godel::hypothesis::{PersistedHypothesisArtifact, HYPOTHESIS_ARTIFACT_
 use ::adl::godel::obsmem_index::{
     PersistedStageIndexEntry, StageIndexEntry, OBSMEM_INDEX_RUNTIME_SCHEMA,
 };
+use ::adl::godel::policy::{
+    PersistedPolicyArtifact, PersistedPolicyComparisonArtifact, POLICY_ARTIFACT_VERSION,
+    POLICY_COMPARISON_ARTIFACT_VERSION,
+};
 use ::adl::{adl, artifacts, execute, failure_taxonomy, instrumentation, resolve, signing, trace};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::ffi::OsString;
@@ -298,6 +302,45 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         evidence_refs: vec!["runs/run-745-a/run_status.json".to_string()],
         related_run_refs: vec!["run-745-a".to_string()],
     };
+    let policy = PersistedPolicyArtifact {
+        artifact_version: POLICY_ARTIFACT_VERSION.to_string(),
+        policy_id: "policy:run-745-a:tool_failure".to_string(),
+        run_id: "run-745-a".to_string(),
+        workflow_id: "wf-godel-loop".to_string(),
+        hypothesis_id: "hyp:run-745-a:tool_failure:00".to_string(),
+        hypothesis_artifact_path: "runs/run-745-a/godel/godel_hypothesis.v1.json".to_string(),
+        source_signal: "hypothesis:tool_failure:godel_hypothesis.v1".to_string(),
+        selection_reason: "Deterministic policy update derived from hypothesis_id=hyp:run-745-a:tool_failure:00 and failure_class=tool_failure.".to_string(),
+        before_policy: ::adl::godel::policy::PolicyState {
+            retry_budget: 1,
+            experiment_budget: 1,
+            target_surface: "tool-invocation-config".to_string(),
+            policy_mode: "baseline".to_string(),
+        },
+        after_policy: ::adl::godel::policy::PolicyState {
+            retry_budget: 2,
+            experiment_budget: 2,
+            target_surface: "tool-invocation-config".to_string(),
+            policy_mode: "adaptive_reviewed".to_string(),
+        },
+    };
+    let comparison = PersistedPolicyComparisonArtifact {
+        artifact_version: POLICY_COMPARISON_ARTIFACT_VERSION.to_string(),
+        comparison_id: "cmp:run-745-a:tool_failure".to_string(),
+        run_id: "run-745-a".to_string(),
+        workflow_id: "wf-godel-loop".to_string(),
+        policy_id: "policy:run-745-a:tool_failure".to_string(),
+        hypothesis_id: "hyp:run-745-a:tool_failure:00".to_string(),
+        changed_fields: vec![
+            "experiment_budget".to_string(),
+            "policy_mode".to_string(),
+            "retry_budget".to_string(),
+        ],
+        deterministic_mapping:
+            "stable failure_class -> baseline policy -> bounded policy adjustment".to_string(),
+        before_policy: policy.before_policy.clone(),
+        after_policy: policy.after_policy.clone(),
+    };
 
     std::fs::write(
         run_dir.join("experiment_record.runtime.v1.json"),
@@ -309,6 +352,16 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         serde_json::to_string_pretty(&hypothesis).expect("hypothesis json"),
     )
     .expect("write hypothesis");
+    std::fs::write(
+        run_dir.join("godel_policy.v1.json"),
+        serde_json::to_string_pretty(&policy).expect("policy json"),
+    )
+    .expect("write policy");
+    std::fs::write(
+        run_dir.join("godel_policy_comparison.v1.json"),
+        serde_json::to_string_pretty(&comparison).expect("comparison json"),
+    )
+    .expect("write comparison");
     std::fs::write(
         run_dir.join("obsmem_index_entry.runtime.v1.json"),
         serde_json::to_string_pretty(&index).expect("index json"),

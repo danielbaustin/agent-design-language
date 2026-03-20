@@ -605,6 +605,14 @@ fn godel_run_executes_bounded_stage_loop_and_persists_artifacts() {
         "runs/run-745-a/godel/godel_hypothesis.v1.json"
     );
     assert_eq!(
+        summary["policy_path"],
+        "runs/run-745-a/godel/godel_policy.v1.json"
+    );
+    assert_eq!(
+        summary["policy_comparison_path"],
+        "runs/run-745-a/godel/godel_policy_comparison.v1.json"
+    );
+    assert_eq!(
         summary["experiment_record_path"],
         "runs/run-745-a/godel/experiment_record.runtime.v1.json"
     );
@@ -614,6 +622,12 @@ fn godel_run_executes_bounded_stage_loop_and_persists_artifacts() {
     );
     assert!(runs_dir
         .join("run-745-a/godel/godel_hypothesis.v1.json")
+        .is_file());
+    assert!(runs_dir
+        .join("run-745-a/godel/godel_policy.v1.json")
+        .is_file());
+    assert!(runs_dir
+        .join("run-745-a/godel/godel_policy_comparison.v1.json")
         .is_file());
     assert!(runs_dir
         .join("run-745-a/godel/experiment_record.runtime.v1.json")
@@ -724,6 +738,14 @@ fn godel_inspect_reads_runtime_artifacts_deterministically() {
         "runs/run-745-a/godel/godel_hypothesis.v1.json"
     );
     assert_eq!(
+        summary["policy_path"],
+        "runs/run-745-a/godel/godel_policy.v1.json"
+    );
+    assert_eq!(
+        summary["policy_comparison_path"],
+        "runs/run-745-a/godel/godel_policy_comparison.v1.json"
+    );
+    assert_eq!(
         summary["experiment_record_path"],
         "runs/run-745-a/godel/experiment_record.runtime.v1.json"
     );
@@ -738,6 +760,13 @@ fn godel_inspect_reads_runtime_artifacts_deterministically() {
         .as_str()
         .expect("claim")
         .contains("tool_failure"));
+    assert_eq!(summary["policy_id"], "policy:run-745-a:tool_failure");
+    assert_eq!(summary["policy_mode_before"], "baseline");
+    assert_eq!(summary["policy_mode_after"], "adaptive_reviewed");
+    assert_eq!(
+        summary["changed_policy_fields"],
+        serde_json::json!(["experiment_budget", "policy_mode", "retry_budget"])
+    );
     assert_eq!(summary["evaluation_decision"], "adopt");
     assert_eq!(summary["improvement_delta"], 1);
     assert_eq!(
