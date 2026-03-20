@@ -32,6 +32,10 @@ use ::adl::godel::policy::{
 use ::adl::godel::prioritization::{
     PersistedPrioritizationArtifact, PRIORITIZATION_ARTIFACT_VERSION,
 };
+use ::adl::godel::promotion::{
+    PersistedEvalReportArtifact, PersistedPromotionDecisionArtifact, EVAL_REPORT_ARTIFACT_VERSION,
+    PROMOTION_DECISION_ARTIFACT_VERSION,
+};
 use ::adl::{adl, artifacts, execute, failure_taxonomy, instrumentation, resolve, signing, trace};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::ffi::OsString;
@@ -429,6 +433,38 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
                     .to_string(),
         },
     };
+    let eval_report = PersistedEvalReportArtifact {
+        artifact_version: EVAL_REPORT_ARTIFACT_VERSION.to_string(),
+        evaluation_id: "evaluation:run-745-a:exp:retry-budget".to_string(),
+        run_id: "run-745-a".to_string(),
+        workflow_id: "wf-aee-retry-budget-adaptation".to_string(),
+        hypothesis_id: "hyp:run-745-a:tool_failure:00".to_string(),
+        policy_id: "policy:run-745-a:tool_failure".to_string(),
+        prioritization_id: "prioritize:run-745-a:tool_failure".to_string(),
+        cross_workflow_learning_id: "cross-workflow:run-745-a:exp:retry-budget".to_string(),
+        score: 95,
+        confidence_basis:
+            "failure_class=tool_failure, policy_mode=adaptive_reviewed, ranked_candidate=exp:retry-budget, confidence=0.86".to_string(),
+        report:
+            "Evaluate downstream workflow wf-aee-retry-budget-adaptation using ranked candidate exp:retry-budget and retry budget 2."
+                .to_string(),
+        hypothesis_artifact_path: "runs/run-745-a/godel/godel_hypothesis.v1.json".to_string(),
+        policy_artifact_path: "runs/run-745-a/godel/godel_policy.v1.json".to_string(),
+        prioritization_artifact_path:
+            "runs/run-745-a/godel/godel_experiment_priority.v1.json".to_string(),
+        cross_workflow_artifact_path:
+            "runs/run-745-a/godel/godel_cross_workflow_learning.v1.json".to_string(),
+    };
+    let promotion_decision = PersistedPromotionDecisionArtifact {
+        artifact_version: PROMOTION_DECISION_ARTIFACT_VERSION.to_string(),
+        promotion_id: "promotion:run-745-a:exp:retry-budget".to_string(),
+        run_id: "run-745-a".to_string(),
+        workflow_id: "wf-aee-retry-budget-adaptation".to_string(),
+        evaluation_id: "evaluation:run-745-a:exp:retry-budget".to_string(),
+        decision: "promote".to_string(),
+        decision_reason: "Deterministic threshold decision: score=95 -> promote".to_string(),
+        evaluation_artifact_path: "runs/run-745-a/godel/godel_eval_report.v1.json".to_string(),
+    };
 
     std::fs::write(
         run_dir.join("experiment_record.runtime.v1.json"),
@@ -460,6 +496,16 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         serde_json::to_string_pretty(&cross_workflow).expect("cross-workflow json"),
     )
     .expect("write cross-workflow");
+    std::fs::write(
+        run_dir.join("godel_eval_report.v1.json"),
+        serde_json::to_string_pretty(&eval_report).expect("eval report json"),
+    )
+    .expect("write eval report");
+    std::fs::write(
+        run_dir.join("godel_promotion_decision.v1.json"),
+        serde_json::to_string_pretty(&promotion_decision).expect("promotion json"),
+    )
+    .expect("write promotion decision");
     std::fs::write(
         run_dir.join("obsmem_index_entry.runtime.v1.json"),
         serde_json::to_string_pretty(&index).expect("index json"),

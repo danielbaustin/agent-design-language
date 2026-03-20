@@ -11,6 +11,7 @@ use super::mutation::{self, MutationPlan, MutationProposal};
 use super::obsmem_index::{self, StageIndexEntry};
 use super::policy;
 use super::prioritization;
+use super::promotion;
 use super::workflow_template::{embedded_v08_workflow_template, GodelWorkflowTemplate};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -174,6 +175,8 @@ pub struct StageLoopPersistenceResult {
     pub policy_comparison_rel_path: PathBuf,
     pub prioritization_rel_path: PathBuf,
     pub cross_workflow_rel_path: PathBuf,
+    pub eval_report_rel_path: PathBuf,
+    pub promotion_decision_rel_path: PathBuf,
     pub canonical_evaluation_plan_rel_path: PathBuf,
     pub canonical_mutation_rel_path: PathBuf,
     pub canonical_evidence_rel_path: PathBuf,
@@ -380,6 +383,36 @@ impl GodelStageLoopExecutor {
                 "cross-workflow artifact persistence failed: {err}"
             ))
         })?;
+        let (eval_report_artifact, promotion_decision_artifact) =
+            promotion::build_eval_and_promotion_artifacts(promotion::PromotionInputs {
+                hypothesis: &hypothesis_artifact,
+                hypothesis_artifact_path: &hypothesis_rel_path,
+                policy: &policy_artifact,
+                policy_artifact_path: &policy_rel_path,
+                prioritization: &prioritization_artifact,
+                prioritization_artifact_path: &prioritization_rel_path,
+                cross_workflow: &cross_workflow_artifact,
+                cross_workflow_artifact_path: &cross_workflow_rel_path,
+            })
+            .map_err(|err| {
+                StageLoopError::InvalidInput(format!("promotion/eval artifact build failed: {err}"))
+            })?;
+        let eval_report_rel_path = promotion::persist_eval_report_artifact(
+            runs_root,
+            &input.run_id,
+            &eval_report_artifact,
+        )
+        .map_err(|err| {
+            StageLoopError::InvalidInput(format!("evaluation report persistence failed: {err}"))
+        })?;
+        let promotion_decision_rel_path = promotion::persist_promotion_decision_artifact(
+            runs_root,
+            &input.run_id,
+            &promotion_decision_artifact,
+        )
+        .map_err(|err| {
+            StageLoopError::InvalidInput(format!("promotion decision persistence failed: {err}"))
+        })?;
         let canonical_mutation = mutation::build_canonical_mutation(
             &input.run_id,
             &input.workflow_id,
@@ -462,6 +495,8 @@ impl GodelStageLoopExecutor {
             policy_comparison_rel_path,
             prioritization_rel_path,
             cross_workflow_rel_path,
+            eval_report_rel_path,
+            promotion_decision_rel_path,
             canonical_evaluation_plan_rel_path,
             canonical_mutation_rel_path,
             canonical_evidence_rel_path,
@@ -758,6 +793,14 @@ mod tests {
             PathBuf::from("runs/run-745-a/godel/godel_cross_workflow_learning.v1.json")
         );
         assert_eq!(
+            persisted.eval_report_rel_path,
+            PathBuf::from("runs/run-745-a/godel/godel_eval_report.v1.json")
+        );
+        assert_eq!(
+            persisted.promotion_decision_rel_path,
+            PathBuf::from("runs/run-745-a/godel/godel_promotion_decision.v1.json")
+        );
+        assert_eq!(
             persisted.canonical_evaluation_plan_rel_path,
             PathBuf::from("runs/run-745-a/godel/evaluation_plan.v1.json")
         );
@@ -794,6 +837,12 @@ mod tests {
             .is_file());
         assert!(tmp
             .join("run-745-a/godel/godel_cross_workflow_learning.v1.json")
+            .is_file());
+        assert!(tmp
+            .join("run-745-a/godel/godel_eval_report.v1.json")
+            .is_file());
+        assert!(tmp
+            .join("run-745-a/godel/godel_promotion_decision.v1.json")
             .is_file());
         assert!(tmp
             .join("run-745-a/godel/canonical_evidence_view.v1.json")

@@ -621,6 +621,14 @@ fn godel_run_executes_bounded_stage_loop_and_persists_artifacts() {
         "runs/run-745-a/godel/godel_cross_workflow_learning.v1.json"
     );
     assert_eq!(
+        summary["eval_report_path"],
+        "runs/run-745-a/godel/godel_eval_report.v1.json"
+    );
+    assert_eq!(
+        summary["promotion_decision_path"],
+        "runs/run-745-a/godel/godel_promotion_decision.v1.json"
+    );
+    assert_eq!(
         summary["experiment_record_path"],
         "runs/run-745-a/godel/experiment_record.runtime.v1.json"
     );
@@ -642,6 +650,12 @@ fn godel_run_executes_bounded_stage_loop_and_persists_artifacts() {
         .is_file());
     assert!(runs_dir
         .join("run-745-a/godel/godel_cross_workflow_learning.v1.json")
+        .is_file());
+    assert!(runs_dir
+        .join("run-745-a/godel/godel_eval_report.v1.json")
+        .is_file());
+    assert!(runs_dir
+        .join("run-745-a/godel/godel_promotion_decision.v1.json")
         .is_file());
     assert!(runs_dir
         .join("run-745-a/godel/experiment_record.runtime.v1.json")
@@ -768,6 +782,14 @@ fn godel_inspect_reads_runtime_artifacts_deterministically() {
         "runs/run-745-a/godel/godel_cross_workflow_learning.v1.json"
     );
     assert_eq!(
+        summary["eval_report_path"],
+        "runs/run-745-a/godel/godel_eval_report.v1.json"
+    );
+    assert_eq!(
+        summary["promotion_decision_path"],
+        "runs/run-745-a/godel/godel_promotion_decision.v1.json"
+    );
+    assert_eq!(
         summary["experiment_record_path"],
         "runs/run-745-a/godel/experiment_record.runtime.v1.json"
     );
@@ -815,6 +837,20 @@ fn godel_inspect_reads_runtime_artifacts_deterministically() {
         summary["prioritization_tie_break_rule"],
         "sort by priority_score desc, then confidence desc, then candidate_id asc"
     );
+    assert_eq!(
+        summary["evaluation_id"],
+        "evaluation:run-745-a:exp:retry-budget"
+    );
+    assert_eq!(summary["evaluation_score"], 95);
+    assert_eq!(
+        summary["promotion_id"],
+        "promotion:run-745-a:exp:retry-budget"
+    );
+    assert_eq!(summary["promotion_decision"], "promote");
+    assert!(summary["promotion_reason"]
+        .as_str()
+        .expect("promotion reason")
+        .contains("score=95 -> promote"));
     assert_eq!(summary["evaluation_decision"], "adopt");
     assert_eq!(summary["improvement_delta"], 1);
     assert_eq!(
