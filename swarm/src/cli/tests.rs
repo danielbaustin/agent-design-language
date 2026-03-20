@@ -252,8 +252,14 @@ fn real_godel_run_rejects_missing_value_flags() {
         (vec!["--run-id"], "--run-id requires a value"),
         (vec!["--workflow-id"], "--workflow-id requires a value"),
         (vec!["--failure-code"], "--failure-code requires a value"),
-        (vec!["--failure-summary"], "--failure-summary requires a value"),
-        (vec!["--evidence-ref"], "--evidence-ref requires a relative path"),
+        (
+            vec!["--failure-summary"],
+            "--failure-summary requires a value",
+        ),
+        (
+            vec!["--evidence-ref"],
+            "--evidence-ref requires a relative path",
+        ),
         (vec!["--runs-dir"], "--runs-dir requires a directory path"),
     ];
 
@@ -300,7 +306,9 @@ fn real_godel_inspect_rejects_missing_value_flags() {
         "--runs-dir".to_string(),
     ])
     .expect_err("missing runs-dir value");
-    assert!(err.to_string().contains("--runs-dir requires a directory path"));
+    assert!(err
+        .to_string()
+        .contains("--runs-dir requires a directory path"));
 }
 
 #[test]
@@ -733,10 +741,9 @@ fn real_godel_evaluate_validates_args_and_returns_summary() {
         "1".to_string(),
     ])
     .expect_err("missing experiment result");
-    assert!(
-        err.to_string()
-            .contains("godel evaluate requires --experiment-result <ok|blocked>")
-    );
+    assert!(err
+        .to_string()
+        .contains("godel evaluate requires --experiment-result <ok|blocked>"));
 
     let err = real_godel_evaluate(&[
         "--failure-code".to_string(),
@@ -745,10 +752,9 @@ fn real_godel_evaluate_validates_args_and_returns_summary() {
         "ok".to_string(),
     ])
     .expect_err("missing score delta");
-    assert!(
-        err.to_string()
-            .contains("godel evaluate requires --score-delta <int>")
-    );
+    assert!(err
+        .to_string()
+        .contains("godel evaluate requires --score-delta <int>"));
 
     real_godel_evaluate(&[
         "--failure-code".to_string(),
