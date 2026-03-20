@@ -48,6 +48,12 @@ persisted Gödel schema/runtime artifacts it produces, including the
 first-class `godel_hypothesis.v1.json` hypothesis record. For a one-command
 review flow, run `swarm/tools/demo_godel_hypothesis_engine.sh`.
 
+Use `cross_workflow_learning_demo.md` for the bounded WP-13 review path that
+proves workflow-A prioritization output changes a downstream workflow-B
+decision through the persisted `godel_cross_workflow_learning.v1.json`
+artifact. For a one-command review flow, run
+`swarm/tools/demo_cross_workflow_learning.sh`.
+
 ### Historical/runtime fixture inventory
 
 - `../swarm/examples/README.md`
