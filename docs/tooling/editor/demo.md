@@ -13,8 +13,10 @@ This bounded demo is the proof surface for the first WP-05 task-bundle workspace
 4. Edit the task ID, title, and required sections.
 5. Observe the validation panel:
    - required fields show warnings when blank
-   - valid task IDs and branch values show passing checks
+   - unchanged placeholder content is flagged
+   - valid task IDs, run IDs, versions, branch values, and enum values show passing checks
 6. Review the rendered artifact preview.
+   - confirm the H1 uses the task title rather than a generic artifact-class heading
 7. Switch to `Structured Implementation Prompt` and confirm the active bundle target changes to:
    - `docs/records/v0.85/tasks/<task-id>/sip.md`
 8. Switch to `Structured Output Record` and confirm the SOR card remains visibly linked in the same bundle workspace.
@@ -28,5 +30,6 @@ This bounded demo is the proof surface for the first WP-05 task-bundle workspace
 - the editor is a real tracked repo surface, not a design sketch
 - the editor presents a linked task-bundle workspace rather than isolated artifact editing only
 - the editor supports STP and SIP authoring while keeping SOR visibly linked in the same workspace
+- the editor preview and validation are materially closer to the current STP/SIP contract expectations
 - the editor keeps the public task-bundle destination visible
 - the editor reduces structural editing fragility by guiding required fields and rendering the final markdown artifact live

@@ -21,7 +21,11 @@ The editor is intentionally simple:
 - presents one task bundle as a linked three-card workspace
 - guides a human through the core metadata and section fields
 - previews the rendered markdown artifact live
-- shows schema-aware checks for required fields and section presence
+- shows contract-aware checks for:
+  - required fields and sections
+  - normalized task IDs, run IDs, versions, enums, and booleans
+  - placeholder content that still needs real authoring
+  - structured section formats for bounded STP/SIP surfaces
 - keeps the canonical tracked destination visible as a task-bundle path under:
   - `docs/records/v0.85/tasks/<task-id>/`
 
@@ -32,6 +36,7 @@ The editor is intentionally simple:
 - it does not yet provide the full SOR review flow
 - it does not yet invoke the control plane directly
 - it does not yet call the structured-prompt validator directly from the browser
+- it does not attempt full contract completeness for every machine-readable field
 
 ## Why This Is Still Useful
 
