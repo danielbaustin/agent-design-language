@@ -12,17 +12,14 @@
       <p class="eyebrow">WP-05 Editor Slice</p>
       <h1>ADL Task Bundle Editor</h1>
       <p class="lede">
-        A bounded first editor surface for Structured Task Prompts and Structured Implementation Prompts.
+        A bounded task-bundle workspace shell for Structured Task Prompts, Structured Implementation Prompts,
+        and the first visible Structured Output Record card.
         This editor keeps the public task-bundle model visible while reducing fragile raw markdown editing.
       </p>
     </header>
 
     <section class="panel controls">
       <div class="control-grid">
-        <label>
-          Artifact Type
-          <select id="artifact-type"></select>
-        </label>
         <label>
           Task ID
           <input id="task-id" type="text" placeholder="task-v085-wp05">
@@ -36,14 +33,23 @@
           <input id="branch" type="text" placeholder="codex/870-v085-wp05-first-editor-surfaces">
         </label>
       </div>
-      <div class="bundle-path" id="bundle-path"></div>
+      <div class="bundle-path" id="bundle-root"></div>
+      <div class="bundle-path bundle-path-secondary" id="bundle-active-path"></div>
+    </section>
+
+    <section class="panel bundle-shell">
+      <div class="section-header">
+        <h2>Task Bundle Workspace</h2>
+        <p>Three linked cards, one bounded bundle.</p>
+      </div>
+      <div id="bundle-cards" class="bundle-cards"></div>
     </section>
 
     <section class="workspace">
       <section class="panel form-panel">
         <div class="section-header">
-          <h2>Structured Fields</h2>
-          <p>Fill the required sections. The preview updates as you type.</p>
+          <h2 id="editor-panel-title">Structured Fields</h2>
+          <p id="editor-panel-copy">Fill the required sections. The preview updates as you type.</p>
         </div>
         <form id="artifact-form" class="artifact-form"></form>
       </section>
@@ -65,7 +71,9 @@
     <section class="panel notes">
       <h2>First Slice Boundaries</h2>
       <ul>
-        <li>This editor supports STP and SIP first because they are the current highest-friction authoring surfaces.</li>
+        <li>This issue establishes a task-bundle-native workspace shell with visible STP, SIP, and SOR cards.</li>
+        <li>STP and SIP remain the editable first-slice authoring surfaces in this issue.</li>
+        <li>SOR is visible as a linked bundle card now, with richer review behavior deferred to the next review-surface issue.</li>
         <li>The canonical public record remains a tracked task bundle under <code>docs/records/&lt;scope&gt;/tasks/&lt;task-id&gt;/</code>.</li>
         <li>Drafts may still begin in <code>.adl/</code>, but the public record should be promoted into a tracked task bundle before authoritative transitions.</li>
       </ul>
