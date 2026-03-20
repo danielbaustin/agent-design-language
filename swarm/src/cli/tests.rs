@@ -588,6 +588,16 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         )
         .expect("write cross-workflow");
         std::fs::write(
+            run_dir.join("godel_eval_report.v1.json"),
+            serde_json::to_string_pretty(&eval_report).expect("eval report json"),
+        )
+        .expect("write eval report");
+        std::fs::write(
+            run_dir.join("godel_promotion_decision.v1.json"),
+            serde_json::to_string_pretty(&promotion_decision).expect("promotion decision json"),
+        )
+        .expect("write promotion decision");
+        std::fs::write(
             run_dir.join("obsmem_index_entry.runtime.v1.json"),
             serde_json::to_string_pretty(&index).expect("index json"),
         )
@@ -617,6 +627,12 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
             "{",
             "GODEL_INSPECT_INVALID",
         ),
+        ("godel_eval_report.v1.json", "{", "GODEL_INSPECT_INVALID"),
+        (
+            "godel_promotion_decision.v1.json",
+            "{",
+            "GODEL_INSPECT_INVALID",
+        ),
         (
             "obsmem_index_entry.runtime.v1.json",
             "{",
@@ -635,6 +651,26 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         .expect_err("invalid runtime artifact should fail");
         assert!(
             err.to_string().contains(needle),
+            "file={file_name}\nerr={err}"
+        );
+    }
+
+    let missing_cases = [
+        "godel_eval_report.v1.json",
+        "godel_promotion_decision.v1.json",
+    ];
+    for file_name in missing_cases {
+        write_all();
+        std::fs::remove_file(run_dir.join(file_name)).expect("remove runtime artifact");
+        let err = real_godel_inspect(&[
+            "--run-id".to_string(),
+            "run-745-a".to_string(),
+            "--runs-dir".to_string(),
+            base.to_string_lossy().to_string(),
+        ])
+        .expect_err("missing runtime artifact should fail");
+        assert!(
+            err.to_string().contains("GODEL_INSPECT_IO"),
             "file={file_name}\nerr={err}"
         );
     }
