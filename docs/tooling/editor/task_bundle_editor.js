@@ -162,6 +162,11 @@ const editorPanelTitle = document.getElementById("editor-panel-title");
 const editorPanelCopy = document.getElementById("editor-panel-copy");
 const actionSummary = document.getElementById("action-summary");
 const actionCommand = document.getElementById("action-command");
+const reviewSummary = document.getElementById("review-summary");
+const reviewDecision = document.getElementById("review-decision");
+const reviewChecklist = document.getElementById("review-checklist");
+const reviewNote = document.getElementById("review-note");
+const copyReviewNoteButton = document.getElementById("copy-review-note");
 
 let currentArtifact = "stp";
 const artifactDrafts = {};
@@ -184,6 +189,26 @@ function draftFor(artifactKey) {
     artifactDrafts[artifactKey] = initialDraftFor(artifactKey);
   }
   return artifactDrafts[artifactKey];
+}
+
+function buildArtifactModel(artifactKey) {
+  const artifact = ARTIFACTS[artifactKey];
+  const draft = draftFor(artifactKey);
+  const metadata = {};
+  (artifact.metadata || []).forEach((field) => {
+    metadata[field.key] = draft.metadata[field.key] || "";
+  });
+  const sections = {};
+  (artifact.sections || []).forEach(([key]) => {
+    sections[key] = draft.sections[key] || "";
+  });
+
+  metadata.task_id = taskIdInput.value.trim() || metadata.task_id;
+  if (artifactKey === "sip" || artifactKey === "sor") {
+    metadata.branch = branchInput.value.trim() || metadata.branch;
+  }
+
+  return { artifactKey, artifact, metadata, sections };
 }
 
 function buildCards() {
@@ -274,21 +299,14 @@ function rememberDraftValue(artifactKey, key, value, isTextarea) {
 }
 
 function gather() {
-  const artifact = ARTIFACTS[currentArtifact];
-  const metadata = {};
-  (artifact.metadata || []).forEach((field) => {
-    metadata[field.key] = valueFor(field.key);
+  const model = buildArtifactModel(currentArtifact);
+  (model.artifact.metadata || []).forEach((field) => {
+    model.metadata[field.key] = valueFor(field.key);
   });
-  const sections = {};
-  (artifact.sections || []).forEach(([key]) => {
-    sections[key] = valueFor(key);
+  (model.artifact.sections || []).forEach(([key]) => {
+    model.sections[key] = valueFor(key);
   });
-
-  metadata.task_id = taskIdInput.value.trim() || metadata.task_id;
-  if (currentArtifact === "sip" || currentArtifact === "sor") {
-    metadata.branch = branchInput.value.trim() || metadata.branch;
-  }
-  return { artifact, metadata, sections };
+  return model;
 }
 
 function artifactKey() {
@@ -360,9 +378,9 @@ function deriveStartAction() {
   };
 }
 
-function validate({ artifact, metadata, sections }) {
+function validate(model) {
+  const { artifactKey: modelArtifactKey, artifact, metadata, sections } = model;
   const results = [];
-  const artifactName = artifactKey();
 
   if (looksLikeTaskId(taskIdInput.value.trim())) {
     results.push({ ok: true, text: "Task ID uses the public task-bundle format." });
@@ -376,9 +394,9 @@ function validate({ artifact, metadata, sections }) {
     results.push({ ok: false, text: "Title is required." });
   }
 
-  if ((currentArtifact === "sip" || currentArtifact === "sor") && !/^codex\/[a-z0-9][a-z0-9-]*$/.test(branchInput.value.trim())) {
+  if ((modelArtifactKey === "sip" || modelArtifactKey === "sor") && !/^codex\/[a-z0-9][a-z0-9-]*$/.test(branchInput.value.trim())) {
     results.push({ ok: false, text: "Branch should use the codex/<slug> format for SIP work." });
-  } else if (currentArtifact === "sip" || currentArtifact === "sor") {
+  } else if (modelArtifactKey === "sip" || modelArtifactKey === "sor") {
     results.push({ ok: true, text: "Branch format is valid for the bundle execution surfaces." });
   }
 
@@ -402,19 +420,19 @@ function validate({ artifact, metadata, sections }) {
     results.push({ ok: true, text: "GitHub Issue Number is normalized as an integer." });
   }
 
-  if (currentArtifact === "sip" && !looksLikeTaskId(metadata.run_id || "")) {
+  if (modelArtifactKey === "sip" && !looksLikeTaskId(metadata.run_id || "")) {
     results.push({ ok: false, text: "Run ID should use the same task-id format as Task ID." });
-  } else if (currentArtifact === "sip") {
+  } else if (modelArtifactKey === "sip") {
     results.push({ ok: true, text: "Run ID uses the normalized task-id format." });
   }
 
-  if (currentArtifact === "sip" && !/^v[0-9]+\.[0-9]+$/.test(metadata.version || "")) {
+  if (modelArtifactKey === "sip" && !/^v[0-9]+\.[0-9]+$/.test(metadata.version || "")) {
     results.push({ ok: false, text: "Version should use the vN.N format." });
-  } else if (currentArtifact === "sip") {
+  } else if (modelArtifactKey === "sip") {
     results.push({ ok: true, text: "Version uses the normalized vN.N format." });
   }
 
-  const enumRules = ENUM_RULES[artifactName] || {};
+  const enumRules = ENUM_RULES[modelArtifactKey] || {};
   Object.entries(enumRules).forEach(([fieldKey, allowed]) => {
     const raw = metadata[fieldKey] || "";
     const value = normalizedValue(raw);
@@ -438,7 +456,7 @@ function validate({ artifact, metadata, sections }) {
     }
   });
 
-  const formatHints = FORMAT_HINTS[artifactName] || {};
+  const formatHints = FORMAT_HINTS[modelArtifactKey] || {};
   Object.entries(formatHints).forEach(([key, pattern]) => {
     const value = sections[key] || "";
     if (!value) {
@@ -453,14 +471,14 @@ function validate({ artifact, metadata, sections }) {
 
   results.push({ ok: true, text: "Task bundle keeps STP, SIP, and SOR visible together in one workspace." });
 
-  if (currentArtifact === "sor") {
-    results.push({ ok: true, text: "SOR is visibly linked in the workspace shell; richer review behavior is intentionally deferred." });
+  if (modelArtifactKey === "sor") {
+    results.push({ ok: true, text: "SOR is visibly linked in the workspace shell and participates in the bounded review flow." });
   }
 
   const startAction = deriveStartAction();
-  if (currentArtifact === "stp" && startAction.ready) {
+  if (modelArtifactKey === "stp" && startAction.ready) {
     results.push({ ok: true, text: "Thin pr start adapter command is ready from the editor path." });
-  } else if (currentArtifact === "stp") {
+  } else if (modelArtifactKey === "stp") {
     results.push({ ok: false, text: "Thin pr start adapter needs matching numeric issue number and codex/<issue>-<slug> branch values." });
   }
 
@@ -496,10 +514,10 @@ function sectionLabel(artifact, key) {
   return match ? match[1] : key;
 }
 
-function renderMarkdown({ artifact, metadata, sections }) {
+function renderMarkdown({ artifactKey: modelArtifactKey, artifact, metadata, sections }) {
   const heading = titleInput.value.trim() || artifact.label;
   const lines = [renderYaml({ artifact_type: artifact.label, title: titleInput.value.trim(), ...metadata }), "", `# ${heading}`, ""];
-  if (currentArtifact === "sor") {
+  if (modelArtifactKey === "sor") {
     lines.push("## Summary", "", sections.summary_text || titleInput.value.trim() || "Replace me.", "");
     lines.push("## Main Repo Integration", "");
     lines.push(`- Integration state: ${metadata.integration_state || "pr_open"}`);
@@ -526,6 +544,97 @@ function renderMarkdown({ artifact, metadata, sections }) {
   return lines.join("\n").trimEnd();
 }
 
+function deriveReviewFlow(activeResults) {
+  const sorModel = currentArtifact === "sor" ? gather() : buildArtifactModel("sor");
+  const sorResults = currentArtifact === "sor" ? activeResults : validate(sorModel);
+  const failing = sorResults.filter((item) => !item.ok);
+
+  const checks = [
+    {
+      ok: !!sorModel.sections.primary_proof_surface && sorModel.sections.primary_proof_surface !== ARTIFACTS.sor.placeholders.primary_proof_surface,
+      text: "Primary proof surface is explicitly recorded in the SOR."
+    },
+    {
+      ok: !!sorModel.sections.artifact_verification && sorModel.sections.artifact_verification !== ARTIFACTS.sor.placeholders.artifact_verification,
+      text: "Artifact verification is present and reviewer-visible."
+    },
+    {
+      ok: !!sorModel.sections.review_focus && sorModel.sections.review_focus !== ARTIFACTS.sor.placeholders.review_focus,
+      text: "Review focus is explicit instead of implied."
+    },
+    {
+      ok: !!sorModel.sections.follow_ups && sorModel.sections.follow_ups !== ARTIFACTS.sor.placeholders.follow_ups,
+      text: "Follow-ups / deferred work are captured."
+    },
+    {
+      ok: !!sorModel.metadata.integration_state && !!sorModel.metadata.verification_scope,
+      text: "Integration state and verification scope are both present."
+    },
+    {
+      ok: failing.length === 0,
+      text: "Current SOR validation has no remaining warnings."
+    }
+  ];
+
+  const failedChecks = checks.filter((item) => !item.ok).length;
+  const recommendation = failedChecks === 0
+    ? {
+        status: "ready",
+        label: "Ready for review handoff",
+        summary: "The bounded review loop is coherent: proof, artifact verification, and follow-ups are present, and the SOR surface is ready for reviewer inspection or closeout discussion."
+      }
+    : {
+        status: "iterate",
+        label: "Iterate before handoff",
+        summary: "The editor can now drive the review loop, but the SOR still needs evidence or validation cleanup before it is ready for a bounded handoff."
+      };
+
+  const noteLines = [
+    "## Review Snapshot",
+    "",
+    `- Recommendation: ${recommendation.label}`,
+    `- Integration state: ${sorModel.metadata.integration_state || "pr_open"}`,
+    `- Verification scope: ${sorModel.metadata.verification_scope || "worktree"}`,
+    `- Primary proof surface: ${inlineValue(sorModel.sections.primary_proof_surface)}`,
+    `- Artifact verification: ${inlineValue(sorModel.sections.artifact_verification)}`,
+    `- Review focus: ${inlineValue(sorModel.sections.review_focus)}`,
+    `- Follow-ups: ${inlineValue(sorModel.sections.follow_ups)}`,
+    "",
+    "## Reviewer Guidance",
+    "",
+    recommendation.status === "ready"
+      ? "- Review the proof surface and artifact verification, then use the SOR as the bounded closeout record for the task bundle."
+      : "- Resolve the missing or placeholder review fields, then re-check the SOR before closeout."
+  ];
+
+  return { recommendation, checks, note: noteLines.join("\n") };
+}
+
+function inlineValue(value) {
+  if (!value) {
+    return "missing";
+  }
+  return value
+    .replace(/\n+/g, " ")
+    .replace(/^- /, "")
+    .trim()
+    .slice(0, 140);
+}
+
+function renderReviewFlow(reviewModel) {
+  reviewSummary.textContent = reviewModel.recommendation.summary;
+  reviewDecision.className = `review-decision ${reviewModel.recommendation.status}`;
+  reviewDecision.textContent = reviewModel.recommendation.label;
+  reviewChecklist.innerHTML = "";
+  reviewModel.checks.forEach((item) => {
+    const li = document.createElement("li");
+    li.className = item.ok ? "pass" : "warn";
+    li.textContent = item.text;
+    reviewChecklist.append(li);
+  });
+  reviewNote.textContent = reviewModel.note;
+}
+
 function renderValidation(results) {
   validationList.innerHTML = "";
   results.forEach((result) => {
@@ -540,7 +649,9 @@ function updateAll() {
   updateBundlePath();
   const model = gather();
   const results = validate(model);
+  const reviewModel = deriveReviewFlow(results);
   renderValidation(results);
+  renderReviewFlow(reviewModel);
   preview.textContent = renderMarkdown(model);
   const startAction = deriveStartAction();
   actionSummary.textContent = startAction.summary;
@@ -565,6 +676,14 @@ copyActionButton.addEventListener("click", async () => {
   copyActionButton.textContent = "Copied";
   window.setTimeout(() => {
     copyActionButton.textContent = "Copy pr start command";
+  }, 1200);
+});
+
+copyReviewNoteButton.addEventListener("click", async () => {
+  await navigator.clipboard.writeText(reviewNote.textContent);
+  copyReviewNoteButton.textContent = "Copied";
+  window.setTimeout(() => {
+    copyReviewNoteButton.textContent = "Copy Review Note";
   }, 1200);
 });
 

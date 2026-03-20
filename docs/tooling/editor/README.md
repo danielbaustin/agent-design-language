@@ -17,6 +17,10 @@ The editor is intentionally simple:
   - bounded review-first `Structured Output Record` (SOR) surface
 - exposes one bounded workflow action surface for:
   - `pr start` via `swarm/tools/editor_action.sh`
+- exposes one bounded review-flow surface for:
+  - reviewer checklist
+  - derived review recommendation
+  - copyable review note tied to SOR proof and follow-ups
 
 ## What This First Slice Does
 
@@ -32,6 +36,10 @@ The editor is intentionally simple:
   - evidence/proof notes
   - integration state
   - artifact verification and deferred follow-ups
+- turns the SOR surface into a bounded review loop by:
+  - summarizing whether the SOR is ready for handoff or needs iteration
+  - checking proof, artifact verification, and follow-up coverage
+  - generating a reviewer-facing note without inventing a second review system
 - keeps the canonical tracked destination visible as a task-bundle path under:
   - `docs/records/v0.85/tasks/<task-id>/`
 
@@ -40,6 +48,7 @@ The editor is intentionally simple:
 - it does not write files directly
 - it does not replace `pr create`, `pr start`, `pr run`, or `pr finish`
 - it does not yet provide the full SOR decision loop or acceptance workflow
+- it does not try to replace human review judgment with browser-only automation
 - it does not yet execute the control plane directly from browser JS
 - it does not yet call the structured-prompt validator directly from the browser
 - it does not attempt full contract completeness for every machine-readable field

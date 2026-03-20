@@ -55,6 +55,31 @@
       <button id="copy-action" type="button">Copy pr start command</button>
     </section>
 
+    <section class="panel review-panel">
+      <div class="section-header">
+        <h2>Review Flow</h2>
+        <p>Bounded reviewer-facing loop tied to the SOR proof surface and validation state.</p>
+      </div>
+      <div class="review-grid">
+        <div class="review-block">
+          <h3>Review Recommendation</h3>
+          <p id="review-summary" class="review-summary"></p>
+          <div id="review-decision" class="review-decision"></div>
+        </div>
+        <div class="review-block">
+          <h3>Checklist</h3>
+          <ul id="review-checklist" class="review-checklist"></ul>
+        </div>
+      </div>
+      <div class="review-note-block">
+        <div class="section-header review-note-head">
+          <h3>Review Note</h3>
+          <button id="copy-review-note" type="button">Copy Review Note</button>
+        </div>
+        <pre id="review-note" class="review-note"></pre>
+      </div>
+    </section>
+
     <section class="workspace">
       <section class="panel form-panel">
         <div class="section-header">
@@ -84,6 +109,7 @@
         <li>This issue establishes a task-bundle-native workspace shell with visible STP, SIP, and SOR cards.</li>
         <li>STP and SIP remain the editable first-slice authoring surfaces in this issue.</li>
         <li>SOR now has a bounded review-first surface for evidence, integration state, and follow-up structure.</li>
+        <li>The review flow now turns SOR evidence, proof, and follow-up fields into a reviewer-facing checklist and bounded recommendation.</li>
         <li>The canonical public record remains a tracked task bundle under <code>docs/records/&lt;scope&gt;/tasks/&lt;task-id&gt;/</code>.</li>
         <li>Drafts may still begin in <code>.adl/</code>, but the public record should be promoted into a tracked task bundle before authoritative transitions.</li>
       </ul>
