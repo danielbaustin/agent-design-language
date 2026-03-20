@@ -1,6 +1,6 @@
-# Emotion Model and Affective Reasoning in ADL
+# Bounded Affect Model and Affective Reasoning in ADL
 
-*Draft for ADL v0.85 planning — bounded, non-anthropomorphic framing*
+*Draft for ADL v0.85 planning — legacy filename, bounded non-anthropomorphic framing*
 
 ------------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ During the design discussions for the **Gödel Agent** and the **Hadamard
 insight loop**, an important architectural observation emerged:
 
 The control loop we are building in ADL is structurally similar to the
-minimal architecture required for **emotion-like control signals** in
+minimal architecture required for **bounded affect control signals** in
 intelligent systems.
 
 This does **not** imply that ADL agents are conscious, human-like, or
@@ -23,9 +23,9 @@ This document captures that working model.
 
 ------------------------------------------------------------------------
 
-# 1. A Functional Model of Emotion
+# 1. A Functional Model of Bounded Affect
 
-In both biological and artificial systems, emotions can be understood as
+In both biological and artificial systems, bounded affect can be understood as
 **control signals that regulate cognition and behavior**.
 
 They arise from the interaction of three components:
@@ -44,7 +44,7 @@ goals.
 
 ## Core Variables
 
-A minimal emotional control system can be modeled with:
+A minimal bounded-affect control system can be modeled with:
 
     prediction_error
     uncertainty
@@ -64,7 +64,7 @@ These signals influence how the agent chooses its next strategy.
 
 # 2. Valence--Arousal Model
 
-A convenient representation of emotional state is the **two-axis
+A convenient representation of bounded affect state is the **two-axis
 model**.
 
   Axis      Meaning
@@ -110,7 +110,7 @@ Thus emotion is best understood as **meta-control for cognition**.
 
 The ADL execution loop already contains many of these components.
 
-  Emotion Model     ADL Equivalent
+  Bounded Affect Model   ADL Equivalent
   ----------------- -----------------------
   goals             task cards
   predictions       planning / reasoning
@@ -349,7 +349,7 @@ ADL already operates strongly at this level.
 
 ### Level 3 --- Affective Agent
 
-Add persistent emotional control signals:
+Add persistent bounded-affect control signals:
 
     confidence
     frustration
@@ -428,7 +428,7 @@ This architecture maps naturally to **Popper's model of knowledge**.
   World     Meaning                ADL Example
   --------- ---------------------- --------------------------
   World 1   physical state         execution environment
-  World 2   internal evaluation    affect / emotion signals
+  World 2   internal evaluation    bounded affect signals
   World 3   knowledge structures   plans, tools, strategies
 
 Emotion-like signals live in **World 2**.
@@ -519,6 +519,6 @@ Systems that move beyond simple tools and toward more
 
 For v0.85 planning, this document should be read in the same bounded
 sense as the other affect-model documents.
-It discusses **emotion-like control signals** as architectural and
+It discusses **bounded affect control signals** as architectural and
 functional mechanisms, not as claims that ADL has achieved consciousness,
 sentience, or human-like interiority.
