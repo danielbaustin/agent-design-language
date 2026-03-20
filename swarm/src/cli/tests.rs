@@ -15,6 +15,9 @@ use super::run_artifacts::{
     ScoresSummary, StepStateArtifact, AEE_DECISION_VERSION, PAUSE_STATE_SCHEMA_VERSION,
 };
 use super::{real_instrument, real_keygen, real_learn, real_sign, real_verify, usage};
+use ::adl::godel::cross_workflow::{
+    DownstreamWorkflowDecision, PersistedCrossWorkflowArtifact, CROSS_WORKFLOW_ARTIFACT_VERSION,
+};
 use ::adl::godel::experiment_record::{
     PersistedExperimentRecord, StageExperimentRecord, EXPERIMENT_RECORD_RUNTIME_SCHEMA,
 };
@@ -443,6 +446,33 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
             },
         ],
     };
+    let cross_workflow = PersistedCrossWorkflowArtifact {
+        artifact_version: CROSS_WORKFLOW_ARTIFACT_VERSION.to_string(),
+        learning_id: "cross-workflow:run-745-a:exp:retry-budget".to_string(),
+        source_run_id: "run-745-a".to_string(),
+        source_workflow_id: "wf-godel-loop".to_string(),
+        source_hypothesis_id: "hyp:run-745-a:tool_failure:00".to_string(),
+        source_policy_id: "policy:run-745-a:tool_failure".to_string(),
+        source_prioritization_id: "prioritize:run-745-a:tool_failure".to_string(),
+        source_hypothesis_artifact_path: "runs/run-745-a/godel/godel_hypothesis.v1.json"
+            .to_string(),
+        source_policy_artifact_path: "runs/run-745-a/godel/godel_policy.v1.json".to_string(),
+        source_prioritization_artifact_path:
+            "runs/run-745-a/godel/godel_experiment_priority.v1.json".to_string(),
+        linkage_rule:
+            "consume highest-ranked experiment candidate and map strategy to downstream workflow decision"
+                .to_string(),
+        downstream_decision: DownstreamWorkflowDecision {
+            workflow_id: "wf-aee-retry-budget-adaptation".to_string(),
+            decision_id: "decision:run-745-a:exp:retry-budget".to_string(),
+            selected_candidate_id: "exp:retry-budget".to_string(),
+            selected_strategy: "retry_budget_probe".to_string(),
+            decision_class: "cross_workflow_learning_update".to_string(),
+            expected_behavior_change:
+                "Apply retry budget 2 to downstream recovery workflow for failure_class=tool_failure."
+                    .to_string(),
+        },
+    };
 
     std::fs::write(
         run_dir.join("experiment_record.runtime.v1.json"),
@@ -469,6 +499,11 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         serde_json::to_string_pretty(&prioritization).expect("prioritization json"),
     )
     .expect("write prioritization");
+    std::fs::write(
+        run_dir.join("godel_cross_workflow_learning.v1.json"),
+        serde_json::to_string_pretty(&cross_workflow).expect("cross-workflow json"),
+    )
+    .expect("write cross-workflow");
     std::fs::write(
         run_dir.join("obsmem_index_entry.runtime.v1.json"),
         serde_json::to_string_pretty(&index).expect("index json"),
@@ -505,6 +540,16 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         )
         .expect("write comparison");
         std::fs::write(
+            run_dir.join("godel_experiment_priority.v1.json"),
+            serde_json::to_string_pretty(&prioritization).expect("prioritization json"),
+        )
+        .expect("write prioritization");
+        std::fs::write(
+            run_dir.join("godel_cross_workflow_learning.v1.json"),
+            serde_json::to_string_pretty(&cross_workflow).expect("cross-workflow json"),
+        )
+        .expect("write cross-workflow");
+        std::fs::write(
             run_dir.join("obsmem_index_entry.runtime.v1.json"),
             serde_json::to_string_pretty(&index).expect("index json"),
         )
@@ -521,6 +566,16 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         ("godel_policy.v1.json", "{", "GODEL_INSPECT_INVALID"),
         (
             "godel_policy_comparison.v1.json",
+            "{",
+            "GODEL_INSPECT_INVALID",
+        ),
+        (
+            "godel_experiment_priority.v1.json",
+            "{",
+            "GODEL_INSPECT_INVALID",
+        ),
+        (
+            "godel_cross_workflow_learning.v1.json",
             "{",
             "GODEL_INSPECT_INVALID",
         ),
@@ -594,7 +649,6 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         base.to_string_lossy().to_string(),
     ])
     .expect("inspect should succeed with empty ranked candidates");
-
     let _ = std::fs::remove_dir_all(base);
 }
 

@@ -5,6 +5,7 @@ use std::path::PathBuf;
 
 use ::adl::{
     artifacts, godel,
+    godel::cross_workflow::PersistedCrossWorkflowArtifact,
     godel::experiment_record::PersistedExperimentRecord,
     godel::obsmem_index::PersistedStageIndexEntry,
     godel::policy::{PersistedPolicyArtifact, PersistedPolicyComparisonArtifact},
@@ -20,6 +21,7 @@ struct GodelRunCliSummary {
     policy_path: String,
     policy_comparison_path: String,
     prioritization_path: String,
+    cross_workflow_path: String,
     experiment_record_path: String,
     obsmem_index_path: String,
 }
@@ -31,6 +33,7 @@ struct GodelInspectCliSummary {
     policy_path: String,
     policy_comparison_path: String,
     prioritization_path: String,
+    cross_workflow_path: String,
     experiment_record_path: String,
     obsmem_index_path: String,
     failure_code: String,
@@ -44,6 +47,11 @@ struct GodelInspectCliSummary {
     top_experiment_candidate_id: String,
     top_experiment_confidence: f64,
     prioritization_tie_break_rule: String,
+    cross_workflow_learning_id: String,
+    downstream_workflow_id: String,
+    downstream_decision_id: String,
+    downstream_decision_class: String,
+    downstream_expected_behavior_change: String,
     mutation_id: String,
     evaluation_decision: String,
     improvement_delta: i32,
@@ -167,6 +175,7 @@ pub(crate) fn real_godel_run(args: &[String]) -> Result<()> {
         policy_path: result.policy_rel_path.display().to_string(),
         policy_comparison_path: result.policy_comparison_rel_path.display().to_string(),
         prioritization_path: result.prioritization_rel_path.display().to_string(),
+        cross_workflow_path: result.cross_workflow_rel_path.display().to_string(),
         experiment_record_path: result.experiment_record_rel_path.display().to_string(),
         obsmem_index_path: result.obsmem_index_rel_path.display().to_string(),
     };
@@ -229,6 +238,10 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         .join(&run_id)
         .join("godel")
         .join("godel_experiment_priority.v1.json");
+    let cross_workflow_rel = PathBuf::from("runs")
+        .join(&run_id)
+        .join("godel")
+        .join("godel_cross_workflow_learning.v1.json");
     let obsmem_index_rel = PathBuf::from("runs")
         .join(&run_id)
         .join("godel")
@@ -249,6 +262,10 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         .join(&run_id)
         .join("godel")
         .join("godel_experiment_priority.v1.json");
+    let cross_workflow_path = runs_dir
+        .join(&run_id)
+        .join("godel")
+        .join("godel_cross_workflow_learning.v1.json");
     let experiment_record_path = runs_dir
         .join(&run_id)
         .join("godel")
@@ -327,6 +344,19 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
                 prioritization_rel.display()
             )
         })?;
+    let cross_workflow: PersistedCrossWorkflowArtifact =
+        serde_json::from_str(&fs::read_to_string(&cross_workflow_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_IO: failed to read {}: {err}",
+                cross_workflow_rel.display()
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_INVALID: failed to parse {}: {err}",
+                cross_workflow_rel.display()
+            )
+        })?;
 
     let index: PersistedStageIndexEntry =
         serde_json::from_str(&fs::read_to_string(&obsmem_index_path).map_err(|err| {
@@ -354,6 +384,7 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         policy_path: policy_rel.display().to_string(),
         policy_comparison_path: policy_comparison_rel.display().to_string(),
         prioritization_path: prioritization_rel.display().to_string(),
+        cross_workflow_path: cross_workflow_rel.display().to_string(),
         experiment_record_path: experiment_record_rel.display().to_string(),
         obsmem_index_path: obsmem_index_rel.display().to_string(),
         failure_code: record.record.failure_code.clone(),
@@ -375,6 +406,14 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
             .map(|c| c.confidence)
             .unwrap_or(0.0),
         prioritization_tie_break_rule: prioritization.tie_break_rule.clone(),
+        cross_workflow_learning_id: cross_workflow.learning_id.clone(),
+        downstream_workflow_id: cross_workflow.downstream_decision.workflow_id.clone(),
+        downstream_decision_id: cross_workflow.downstream_decision.decision_id.clone(),
+        downstream_decision_class: cross_workflow.downstream_decision.decision_class.clone(),
+        downstream_expected_behavior_change: cross_workflow
+            .downstream_decision
+            .expected_behavior_change
+            .clone(),
         mutation_id: record.record.mutation_id.clone(),
         evaluation_decision: record.record.evaluation_decision.clone(),
         improvement_delta: record.record.improvement_delta,

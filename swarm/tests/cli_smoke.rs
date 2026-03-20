@@ -617,6 +617,10 @@ fn godel_run_executes_bounded_stage_loop_and_persists_artifacts() {
         "runs/run-745-a/godel/godel_experiment_priority.v1.json"
     );
     assert_eq!(
+        summary["cross_workflow_path"],
+        "runs/run-745-a/godel/godel_cross_workflow_learning.v1.json"
+    );
+    assert_eq!(
         summary["experiment_record_path"],
         "runs/run-745-a/godel/experiment_record.runtime.v1.json"
     );
@@ -635,6 +639,9 @@ fn godel_run_executes_bounded_stage_loop_and_persists_artifacts() {
         .is_file());
     assert!(runs_dir
         .join("run-745-a/godel/godel_experiment_priority.v1.json")
+        .is_file());
+    assert!(runs_dir
+        .join("run-745-a/godel/godel_cross_workflow_learning.v1.json")
         .is_file());
     assert!(runs_dir
         .join("run-745-a/godel/experiment_record.runtime.v1.json")
@@ -757,6 +764,10 @@ fn godel_inspect_reads_runtime_artifacts_deterministically() {
         "runs/run-745-a/godel/godel_experiment_priority.v1.json"
     );
     assert_eq!(
+        summary["cross_workflow_path"],
+        "runs/run-745-a/godel/godel_cross_workflow_learning.v1.json"
+    );
+    assert_eq!(
         summary["experiment_record_path"],
         "runs/run-745-a/godel/experiment_record.runtime.v1.json"
     );
@@ -778,6 +789,26 @@ fn godel_inspect_reads_runtime_artifacts_deterministically() {
         summary["changed_policy_fields"],
         serde_json::json!(["experiment_budget", "policy_mode", "retry_budget"])
     );
+    assert_eq!(
+        summary["cross_workflow_learning_id"],
+        "cross-workflow:run-745-a:exp:retry-budget"
+    );
+    assert_eq!(
+        summary["downstream_workflow_id"],
+        "wf-aee-retry-budget-adaptation"
+    );
+    assert_eq!(
+        summary["downstream_decision_id"],
+        "decision:run-745-a:exp:retry-budget"
+    );
+    assert_eq!(
+        summary["downstream_decision_class"],
+        "cross_workflow_learning_update"
+    );
+    assert!(summary["downstream_expected_behavior_change"]
+        .as_str()
+        .expect("behavior change")
+        .contains("Apply retry budget 2"));
     assert_eq!(summary["top_experiment_candidate_id"], "exp:retry-budget");
     assert_eq!(summary["top_experiment_confidence"], 0.86);
     assert_eq!(

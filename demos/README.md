@@ -38,6 +38,7 @@ cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet
 - `godel_failure_hypothesis_experiment.md`
 - `adaptive_godel_loop_demo.md`
 - `experiment_prioritization_demo.md`
+- `cross_workflow_learning_demo.md`
 - `aee-recovery/README.md`
 
 Use `aee-recovery/README.md` for the bounded Adaptive Execution Engine recovery
@@ -64,6 +65,12 @@ slice. It shows a deterministic ranked experiment output with explicit
 confidence values and stable tie-break behavior derived from the hypothesis and
 policy artifacts. For a one-command review flow, run
 `swarm/tools/demo_experiment_prioritization.sh`.
+
+Use `cross_workflow_learning_demo.md` for the bounded WP-13 review path that
+proves workflow-A prioritization output changes a downstream workflow-B
+decision through the persisted `godel_cross_workflow_learning.v1.json`
+artifact. For a one-command review flow, run
+`swarm/tools/demo_cross_workflow_learning.sh`.
 
 ### Historical/runtime fixture inventory
 
