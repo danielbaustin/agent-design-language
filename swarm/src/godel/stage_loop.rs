@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
 
 use super::canonical_evidence;
+use super::cross_workflow;
 use super::evaluation::{self, EvaluationOutcome};
 use super::experiment_record::{self, StageExperimentRecord};
 use super::hypothesis::{self, HypothesisCandidate, HypothesisPipelineInput};
@@ -172,6 +173,7 @@ pub struct StageLoopPersistenceResult {
     pub policy_rel_path: PathBuf,
     pub policy_comparison_rel_path: PathBuf,
     pub prioritization_rel_path: PathBuf,
+    pub cross_workflow_rel_path: PathBuf,
     pub canonical_evaluation_plan_rel_path: PathBuf,
     pub canonical_mutation_rel_path: PathBuf,
     pub canonical_evidence_rel_path: PathBuf,
@@ -357,6 +359,27 @@ impl GodelStageLoopExecutor {
                 "prioritization artifact persistence failed: {err}"
             ))
         })?;
+        let cross_workflow_artifact = cross_workflow::build_cross_workflow_artifact(
+            &hypothesis_artifact,
+            &hypothesis_rel_path,
+            &policy_artifact,
+            &policy_rel_path,
+            &prioritization_artifact,
+            &prioritization_rel_path,
+        )
+        .map_err(|err| {
+            StageLoopError::InvalidInput(format!("cross-workflow artifact build failed: {err}"))
+        })?;
+        let cross_workflow_rel_path = cross_workflow::persist_cross_workflow_artifact(
+            runs_root,
+            &input.run_id,
+            &cross_workflow_artifact,
+        )
+        .map_err(|err| {
+            StageLoopError::InvalidInput(format!(
+                "cross-workflow artifact persistence failed: {err}"
+            ))
+        })?;
         let canonical_mutation = mutation::build_canonical_mutation(
             &input.run_id,
             &input.workflow_id,
@@ -438,6 +461,7 @@ impl GodelStageLoopExecutor {
             policy_rel_path,
             policy_comparison_rel_path,
             prioritization_rel_path,
+            cross_workflow_rel_path,
             canonical_evaluation_plan_rel_path,
             canonical_mutation_rel_path,
             canonical_evidence_rel_path,
@@ -730,6 +754,10 @@ mod tests {
             PathBuf::from("runs/run-745-a/godel/godel_experiment_priority.v1.json")
         );
         assert_eq!(
+            persisted.cross_workflow_rel_path,
+            PathBuf::from("runs/run-745-a/godel/godel_cross_workflow_learning.v1.json")
+        );
+        assert_eq!(
             persisted.canonical_evaluation_plan_rel_path,
             PathBuf::from("runs/run-745-a/godel/evaluation_plan.v1.json")
         );
@@ -763,6 +791,9 @@ mod tests {
             .is_file());
         assert!(tmp
             .join("run-745-a/godel/godel_experiment_priority.v1.json")
+            .is_file());
+        assert!(tmp
+            .join("run-745-a/godel/godel_cross_workflow_learning.v1.json")
             .is_file());
         assert!(tmp
             .join("run-745-a/godel/canonical_evidence_view.v1.json")

@@ -1,4 +1,5 @@
 pub mod canonical_evidence;
+pub mod cross_workflow;
 pub mod evaluation;
 pub mod experiment_record;
 pub mod hypothesis;
