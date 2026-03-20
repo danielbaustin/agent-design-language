@@ -51,6 +51,7 @@ Rules:
 - `Verification scope` describes where the verification commands were run.
 - `worktree_only` means at least one required path still exists only outside the main repository path.
 - `pr_open` should pair with truthful `Worktree-only paths remaining` content; list those paths when they still exist only in the worktree or say `none` only when the branch contents are fully represented in the main repository path.
+- If `Integration state` is `pr_open`, verify the actual proof artifacts rather than only the containing directory or card path.
 - If `Integration method used` is `direct write in main repo`, `Verification scope` should normally be `main_repo` unless the deviation is explained.
 - If `Verification scope` and `Integration method used` differ in a non-obvious way, explain the difference in one line.
 - Completed output records must not leave `Status` as `NOT_STARTED`.
@@ -67,6 +68,11 @@ Validation command/path rules:
 - Do not list commands without describing their effect.
 
 ## Verification Summary
+
+Rules:
+- Replace the example values below with one actual final value per field.
+- Do not leave pipe-delimited enum menus or placeholder text in a finished record.
+
 ```yaml
 verification_summary:
   validation:
@@ -119,6 +125,7 @@ Rules:
 - Replay result:
 
 ## Artifact Verification
+- Primary proof surface:
 - Required artifacts present:
 - Artifact schema/version checks:
 - Hash/byte-stability checks:

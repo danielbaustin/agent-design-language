@@ -105,6 +105,7 @@ In practice that means:
 - deterministic scripts or fixtures should be identified as determinism evidence, not merely listed
 - rerunnable deterministic scripts and fixtures count as replay evidence when they reproduce the same result
 - security and privacy checks should state what was checked and how it was checked
+- the record should make its primary proof surface easy to identify during review
 - section headers should not be left empty; if something does not apply, the record should say why
 
 ## Absolute-Path Policy
