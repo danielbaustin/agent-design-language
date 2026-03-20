@@ -151,6 +151,25 @@ md_block_field() {
   ' "$file"
 }
 
+md_block_field_has_content() {
+  local file="$1" block="$2" key="$3"
+  awk -v b="$block" -v k="$key" '
+    BEGIN { found=0 }
+    $0 == b ":" || $0 == "## " b { in_block=1; next }
+    in_block && /^## / { exit 1 }
+    in_block && $0 ~ ("^- " k ":[[:space:]]*$") {
+      getline
+      while ($0 ~ /^[[:space:]]*$/) {
+        if (getline <= 0) exit 1
+      }
+      if ($0 ~ /^  / || $0 ~ /^- /) { found=1; exit 0 }
+      exit 1
+    }
+    in_block && $0 ~ ("^- " k ":[[:space:]]*.+$") { found=1; exit 0 }
+    END { if (!found) exit 1 }
+  ' "$file"
+}
+
 require_nonblank() {
   local label="$1" value="$2"
   [[ -n "$(trim "$value")" ]] || die "missing required field: $label"
@@ -273,19 +292,37 @@ validate_sip() {
 }
 
 validate_sor() {
-  local file="$1" v
+  local file="$1" v status start_time end_time integration_state verification_result summary_text actions_line validation_line
   require_sor_sections "$file"
   v="$(trim "$(md_field "$file" "Task ID")")"; require_nonblank "Task ID" "$v"; valid_task_id "$v" || die "Task ID must match issue-0000"
   v="$(trim "$(md_field "$file" "Run ID")")"; require_nonblank "Run ID" "$v"; valid_task_id "$v" || die "Run ID must match issue-0000"
   v="$(trim "$(md_field "$file" "Version")")"; require_nonblank "Version" "$v"; valid_version "$v" || die "Version must match v0.85-style version format"
   v="$(trim "$(md_field "$file" "Title")")"; require_nonblank "Title" "$v"
   v="$(trim "$(md_field "$file" "Branch")")"; require_nonblank "Branch" "$v"; valid_branch "$v" || die "Branch must be a codex/ branch"
-  v="$(trim "$(md_field "$file" "Status")")"; require_nonblank "Status" "$v"; [[ "$v" =~ ^(NOT_STARTED|IN_PROGRESS|DONE|FAILED)$ ]] || die "Status must be one of: NOT_STARTED, IN_PROGRESS, DONE, FAILED"
-  v="$(trim "$(md_block_field "$file" "Execution" "Start Time")")"; [[ -z "$v" || $(valid_iso8601_datetime "$v"; echo $?) -eq 0 ]] || die "Execution.Start Time must be ISO 8601 date-time"
-  v="$(trim "$(md_block_field "$file" "Execution" "End Time")")"; [[ -z "$v" || $(valid_iso8601_datetime "$v"; echo $?) -eq 0 ]] || die "Execution.End Time must be ISO 8601 date-time"
-  v="$(trim "$(md_block_field "$file" "Main Repo Integration (REQUIRED)" "Integration state")")"; [[ -z "$v" || "$v" =~ ^(worktree_only|pr_open|merged)$ ]] || die "Main Repo Integration.Integration state must be one of: worktree_only, pr_open, merged"
+  status="$(trim "$(md_field "$file" "Status")")"; require_nonblank "Status" "$status"; [[ "$status" =~ ^(NOT_STARTED|IN_PROGRESS|DONE|FAILED)$ ]] || die "Status must be one of: NOT_STARTED, IN_PROGRESS, DONE, FAILED"
+  start_time="$(trim "$(md_block_field "$file" "Execution" "Start Time")")"; [[ -z "$start_time" || $(valid_iso8601_datetime "$start_time"; echo $?) -eq 0 ]] || die "Execution.Start Time must be ISO 8601 date-time"
+  end_time="$(trim "$(md_block_field "$file" "Execution" "End Time")")"; [[ -z "$end_time" || $(valid_iso8601_datetime "$end_time"; echo $?) -eq 0 ]] || die "Execution.End Time must be ISO 8601 date-time"
+  integration_state="$(trim "$(md_block_field "$file" "Main Repo Integration (REQUIRED)" "Integration state")")"; [[ -z "$integration_state" || "$integration_state" =~ ^(worktree_only|pr_open|merged)$ ]] || die "Main Repo Integration.Integration state must be one of: worktree_only, pr_open, merged"
   v="$(trim "$(md_block_field "$file" "Main Repo Integration (REQUIRED)" "Verification scope")")"; [[ -z "$v" || "$v" =~ ^(worktree|pr_branch|main_repo)$ ]] || die "Main Repo Integration.Verification scope must be one of: worktree, pr_branch, main_repo"
-  v="$(trim "$(md_block_field "$file" "Main Repo Integration (REQUIRED)" "Result")")"; [[ -z "$v" || "$v" =~ ^(PASS|FAIL)$ ]] || die "Main Repo Integration.Result must be one of: PASS, FAIL"
+  verification_result="$(trim "$(md_block_field "$file" "Main Repo Integration (REQUIRED)" "Result")")"; [[ -z "$verification_result" || "$verification_result" =~ ^(PASS|FAIL)$ ]] || die "Main Repo Integration.Result must be one of: PASS, FAIL"
+
+  if [[ "$PHASE" == "completed" ]]; then
+    [[ "$status" =~ ^(DONE|FAILED)$ ]] || die "completed-phase SOR Status must be DONE or FAILED"
+
+    summary_text="$(awk '/^## Summary$/ { getline; while ($0 ~ /^[[:space:]]*$/) getline; print; exit }' "$file")"
+    actions_line="$(awk '/^## Actions taken$/ { getline; while ($0 ~ /^[[:space:]]*$/) getline; print; exit }' "$file")"
+    validation_line="$(awk '/^## Validation$/ { getline; while ($0 ~ /^[[:space:]]*$/) getline; print; exit }' "$file")"
+
+    [[ -n "$start_time" ]] || die "completed-phase SOR requires Execution.Start Time"
+    [[ -n "$end_time" ]] || die "completed-phase SOR requires Execution.End Time"
+    [[ -n "$(trim "$summary_text")" ]] || die "completed-phase SOR requires non-empty Summary content"
+    [[ -n "$(trim "$actions_line")" && ! "$(trim "$actions_line")" =~ ^-?[[:space:]]*$ ]] || die "completed-phase SOR requires non-empty Actions taken content"
+    [[ -n "$(trim "$validation_line")" && ! "$(trim "$validation_line")" =~ ^-?[[:space:]]*$ ]] || die "completed-phase SOR requires non-empty Validation content"
+    [[ -n "$integration_state" && "$integration_state" != "worktree_only" ]] || die "completed-phase SOR requires Integration state to be pr_open or merged"
+    if [[ -z "$verification_result" ]]; then
+      md_block_field_has_content "$file" "Main Repo Integration (REQUIRED)" "Result" || die "completed-phase SOR requires Main Repo Integration.Result"
+    fi
+  fi
 }
 
 case "$TYPE" in

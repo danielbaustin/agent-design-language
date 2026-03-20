@@ -8,7 +8,7 @@ Run ID:
 Version:
 Title:
 Branch:
-Status: NOT_STARTED
+Status: IN_PROGRESS
 
 Execution:
 - Actor:
@@ -44,6 +44,8 @@ Rules:
 - `Integration state` describes lifecycle state of the integrated artifact set, not where verification happened.
 - `Verification scope` describes where the verification commands were run.
 - If `Integration method used` is `direct write in main repo`, `Verification scope` should normally be `main_repo` unless the deviation is explained.
+- Completed output records must not leave `Status` as `NOT_STARTED`.
+- By `pr finish`, `Status` should normally be `DONE` (or `FAILED` if the run failed and the record is documenting that failure).
 
 ## Validation
 - Tests / checks run:
