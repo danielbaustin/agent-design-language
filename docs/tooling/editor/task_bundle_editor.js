@@ -79,6 +79,35 @@ const ARTIFACTS = {
   }
 };
 
+const ENUM_RULES = {
+  stp: {
+    status: ["draft", "active", "complete"],
+    action: ["create", "edit", "close", "split", "supersede"]
+  },
+  sip: {
+    required_outcome_type: ["code", "docs", "tests", "demo", "combination"],
+    demo_required: ["true", "false"]
+  }
+};
+
+const FORMAT_HINTS = {
+  stp: {
+    required_outcome: /^- /m,
+    acceptance_criteria: /^- /m,
+    repo_inputs: /^- /m,
+    demo_expectations: /(Required demo|^- )/m
+  },
+  sip: {
+    required_outcome: /^- /m,
+    acceptance_criteria: /^- /m,
+    inputs: /^- /m,
+    target_files: /^- /m,
+    validation_plan: /Required commands:/,
+    demo_requirements: /Required demo\(s\):/,
+    constraints: /Determinism requirements:/
+  }
+};
+
 const form = document.getElementById("artifact-form");
 const preview = document.getElementById("artifact-preview");
 const validationList = document.getElementById("validation-list");
@@ -190,6 +219,18 @@ function gather() {
   return { artifact, metadata, sections };
 }
 
+function artifactKey() {
+  return currentArtifact;
+}
+
+function looksLikeTaskId(value) {
+  return /^task-[a-z0-9][a-z0-9-]*$/.test(value);
+}
+
+function normalizedValue(value) {
+  return value.trim().toLowerCase();
+}
+
 function valueFor(id) {
   const el = document.getElementById(id);
   return el ? el.value.trim() : "";
@@ -204,8 +245,9 @@ function updateBundlePath() {
 
 function validate({ artifact, metadata, sections }) {
   const results = [];
+  const artifactName = artifactKey();
 
-  if (/^task-[a-z0-9][a-z0-9-]*$/.test(taskIdInput.value.trim())) {
+  if (looksLikeTaskId(taskIdInput.value.trim())) {
     results.push({ ok: true, text: "Task ID uses the public task-bundle format." });
   } else {
     results.push({ ok: false, text: "Task ID should look like task-v085-wp05 or task-0870." });
@@ -237,6 +279,61 @@ function validate({ artifact, metadata, sections }) {
     }
   });
 
+  if (metadata.issue_number && !/^[0-9]+$/.test(metadata.issue_number)) {
+    results.push({ ok: false, text: "GitHub Issue Number must be numeric when present." });
+  } else if (metadata.issue_number) {
+    results.push({ ok: true, text: "GitHub Issue Number is normalized as an integer." });
+  }
+
+  if (currentArtifact === "sip" && !looksLikeTaskId(metadata.run_id || "")) {
+    results.push({ ok: false, text: "Run ID should use the same task-id format as Task ID." });
+  } else if (currentArtifact === "sip") {
+    results.push({ ok: true, text: "Run ID uses the normalized task-id format." });
+  }
+
+  if (currentArtifact === "sip" && !/^v[0-9]+\.[0-9]+$/.test(metadata.version || "")) {
+    results.push({ ok: false, text: "Version should use the vN.N format." });
+  } else if (currentArtifact === "sip") {
+    results.push({ ok: true, text: "Version uses the normalized vN.N format." });
+  }
+
+  const enumRules = ENUM_RULES[artifactName] || {};
+  Object.entries(enumRules).forEach(([fieldKey, allowed]) => {
+    const raw = metadata[fieldKey] || "";
+    const value = normalizedValue(raw);
+    if (!value) {
+      return;
+    }
+    if (!allowed.includes(value)) {
+      results.push({ ok: false, text: `${fieldLabel(fieldKey)} must be one of: ${allowed.join(", ")}.` });
+    } else {
+      results.push({ ok: true, text: `${fieldLabel(fieldKey)} matches the stabilized contract vocabulary.` });
+    }
+  });
+
+  Object.entries(sections).forEach(([key, value]) => {
+    if (!value) {
+      return;
+    }
+    const placeholder = artifact.placeholders && artifact.placeholders[key];
+    if (placeholder && value === placeholder.trim()) {
+      results.push({ ok: false, text: `${sectionLabel(artifact, key)} still uses its placeholder text and needs real content.` });
+    }
+  });
+
+  const formatHints = FORMAT_HINTS[artifactName] || {};
+  Object.entries(formatHints).forEach(([key, pattern]) => {
+    const value = sections[key] || "";
+    if (!value) {
+      return;
+    }
+    if (!pattern.test(value)) {
+      results.push({ ok: false, text: `${sectionLabel(artifact, key)} should follow the expected structured format for this artifact.` });
+    } else {
+      results.push({ ok: true, text: `${sectionLabel(artifact, key)} follows the expected structured format.` });
+    }
+  });
+
   results.push({ ok: true, text: "Task bundle keeps STP, SIP, and SOR visible together in one workspace." });
 
   if (currentArtifact === "sor") {
@@ -258,8 +355,24 @@ function renderYaml(metadata) {
   return lines.join("\n");
 }
 
+function fieldLabel(key) {
+  const labels = {
+    status: "Status",
+    action: "Action",
+    required_outcome_type: "Required Outcome Type",
+    demo_required: "Demo Required"
+  };
+  return labels[key] || key;
+}
+
+function sectionLabel(artifact, key) {
+  const match = (artifact.sections || []).find(([sectionKey]) => sectionKey === key);
+  return match ? match[1] : key;
+}
+
 function renderMarkdown({ artifact, metadata, sections }) {
-  const lines = [renderYaml({ artifact_type: artifact.label, title: titleInput.value.trim(), ...metadata }), "", `# ${artifact.label}`, ""];
+  const heading = titleInput.value.trim() || artifact.label;
+  const lines = [renderYaml({ artifact_type: artifact.label, title: titleInput.value.trim(), ...metadata }), "", `# ${heading}`, ""];
   lines.push("## Summary", "", titleInput.value.trim() || "Replace me.", "");
 
   if (artifact.editable === false) {
