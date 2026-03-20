@@ -45,6 +45,7 @@ The current tracked v0.85 set includes:
 - `AFFECTIVE_REASONING_MODEL.md`
 - `AFFECT_MODEL_v0.85.md`
 - `CLUSTER_EXECUTION.md`
+- `COGNITIVE_STACK_v0.85.md`
 - `DECISIONS_v0.85.md`
 - `DESIGN_v0.85.md`
 - `EMOTION_MODEL.md` (legacy filename; bounded-affect framing)
@@ -65,7 +66,9 @@ If v0.85 planning material exists elsewhere in a temporary workspace or local dr
 
 ## Cognitive Authority
 
-For the tracked v0.85 milestone docs:
+Tracked v0.85 cognitive authority is split into two complementary docs:
 
-- [COGNITIVE_LOOP_MODEL_v0.85.md](/tmp/adl-wp-929/docs/milestones/v0.85/COGNITIVE_LOOP_MODEL_v0.85.md) is the single authoritative cognitive-loop model
-- other docs may summarize or apply that loop, but should not claim competing loop authority
+- `COGNITIVE_LOOP_MODEL_v0.85.md` is the authoritative loop/flow model.
+- `COGNITIVE_STACK_v0.85.md` is the authoritative internal stack/layer model.
+
+Other tracked v0.85 docs should not define a competing authoritative loop or fractional layer numbering.

@@ -30,7 +30,10 @@ v0.85 therefore exists to convert ADL from a compelling substrate into a more us
 
 A secondary problem is documentation fragmentation itself: milestone intent is currently distributed across multiple directories and partially overlapping planning documents. That fragmentation increases ambiguity around source-of-truth, acceptance criteria, and sequencing. v0.85 should therefore improve not only runtime and authoring maturity, but also milestone-document coherence.
 
-Within the tracked v0.85 doc set, the canonical cognitive loop is defined in [COGNITIVE_LOOP_MODEL_v0.85.md](/tmp/adl-wp-929/docs/milestones/v0.85/COGNITIVE_LOOP_MODEL_v0.85.md).
+For the cognitive substrate specifically, tracked v0.85 docs now rely on:
+
+- `COGNITIVE_LOOP_MODEL_v0.85.md` as the canonical loop/flow model
+- `COGNITIVE_STACK_v0.85.md` as the canonical internal stack/layer model
 
 ## Goals
 - Advance ADL toward a practical execution substrate with deterministic queueing, checkpointing, resumability, and cluster-oriented work distribution.
@@ -146,6 +149,7 @@ New or strengthened behavior should obey the following principles:
 - distributed execution must preserve explicit ownership, claims, and resumability semantics
 - authoring improvements must generate more reliable artifacts, not more ambiguous ones
 - milestone-planning updates must reduce source-of-truth ambiguity rather than create additional overlapping statements
+- cognitive-stack updates must preserve stable layer numbering and avoid fractional-layer semantics
 
 ## Risks and Mitigations
 - Risk: v0.85 becomes too large by combining runtime, authoring, trust, and cognition work.

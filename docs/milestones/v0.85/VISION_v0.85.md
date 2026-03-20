@@ -117,6 +117,13 @@ The Adaptive Execution Engine (AEE), which coordinates bounded adaptation while 
 
 This layered picture should become clear across the entire v0.85 doc set.
 
+Within that higher-level architecture view, the tracked v0.85 docs also use a more detailed internal cognitive-stack view.
+
+- `COGNITIVE_LOOP_MODEL_v0.85.md` defines the authoritative cognitive loop.
+- `COGNITIVE_STACK_v0.85.md` defines the authoritative internal cognitive sub-stack.
+
+Those docs refine the internal bounded-cognition model without replacing the five-layer milestone-scale view above.
+
 ---
 
 ## 1. Execution Substrate
