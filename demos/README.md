@@ -39,6 +39,7 @@ cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet
 - `adaptive_godel_loop_demo.md`
 - `experiment_prioritization_demo.md`
 - `cross_workflow_learning_demo.md`
+- `promotion_eval_loop_demo.md`
 - `aee-recovery/README.md`
 
 Use `aee-recovery/README.md` for the bounded Adaptive Execution Engine recovery
@@ -54,6 +55,12 @@ Use `godel_failure_hypothesis_experiment.md` for the concrete
 persisted Gödel schema/runtime artifacts it produces, including the
 first-class `godel_hypothesis.v1.json` hypothesis record. For a one-command
 review flow, run `swarm/tools/demo_godel_hypothesis_engine.sh`.
+
+Use `promotion_eval_loop_demo.md` for the bounded WP-14 review path that proves
+the prior Gödel artifacts now feed a structured evaluation report and an
+explicit promotion decision through the persisted
+`godel_eval_report.v1.json` and `godel_promotion_decision.v1.json` artifacts.
+For a one-command review flow, run `swarm/tools/demo_promotion_eval_loop.sh`.
 
 Use `adaptive_godel_loop_demo.md` for the bounded WP-11 policy-learning slice.
 It shows a deterministic policy decision and before/after policy comparison

@@ -10,6 +10,7 @@ use ::adl::{
     godel::obsmem_index::PersistedStageIndexEntry,
     godel::policy::{PersistedPolicyArtifact, PersistedPolicyComparisonArtifact},
     godel::prioritization::PersistedPrioritizationArtifact,
+    godel::promotion::{PersistedEvalReportArtifact, PersistedPromotionDecisionArtifact},
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -22,6 +23,8 @@ struct GodelRunCliSummary {
     policy_comparison_path: String,
     prioritization_path: String,
     cross_workflow_path: String,
+    eval_report_path: String,
+    promotion_decision_path: String,
     experiment_record_path: String,
     obsmem_index_path: String,
 }
@@ -34,6 +37,8 @@ struct GodelInspectCliSummary {
     policy_comparison_path: String,
     prioritization_path: String,
     cross_workflow_path: String,
+    eval_report_path: String,
+    promotion_decision_path: String,
     experiment_record_path: String,
     obsmem_index_path: String,
     failure_code: String,
@@ -52,6 +57,11 @@ struct GodelInspectCliSummary {
     downstream_decision_id: String,
     downstream_decision_class: String,
     downstream_expected_behavior_change: String,
+    evaluation_id: String,
+    evaluation_score: u32,
+    promotion_id: String,
+    promotion_decision: String,
+    promotion_reason: String,
     mutation_id: String,
     evaluation_decision: String,
     improvement_delta: i32,
@@ -176,6 +186,8 @@ pub(crate) fn real_godel_run(args: &[String]) -> Result<()> {
         policy_comparison_path: result.policy_comparison_rel_path.display().to_string(),
         prioritization_path: result.prioritization_rel_path.display().to_string(),
         cross_workflow_path: result.cross_workflow_rel_path.display().to_string(),
+        eval_report_path: result.eval_report_rel_path.display().to_string(),
+        promotion_decision_path: result.promotion_decision_rel_path.display().to_string(),
         experiment_record_path: result.experiment_record_rel_path.display().to_string(),
         obsmem_index_path: result.obsmem_index_rel_path.display().to_string(),
     };
@@ -242,6 +254,14 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         .join(&run_id)
         .join("godel")
         .join("godel_cross_workflow_learning.v1.json");
+    let eval_report_rel = PathBuf::from("runs")
+        .join(&run_id)
+        .join("godel")
+        .join("godel_eval_report.v1.json");
+    let promotion_decision_rel = PathBuf::from("runs")
+        .join(&run_id)
+        .join("godel")
+        .join("godel_promotion_decision.v1.json");
     let obsmem_index_rel = PathBuf::from("runs")
         .join(&run_id)
         .join("godel")
@@ -266,6 +286,14 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         .join(&run_id)
         .join("godel")
         .join("godel_cross_workflow_learning.v1.json");
+    let eval_report_path = runs_dir
+        .join(&run_id)
+        .join("godel")
+        .join("godel_eval_report.v1.json");
+    let promotion_decision_path = runs_dir
+        .join(&run_id)
+        .join("godel")
+        .join("godel_promotion_decision.v1.json");
     let experiment_record_path = runs_dir
         .join(&run_id)
         .join("godel")
@@ -357,6 +385,33 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
                 cross_workflow_rel.display()
             )
         })?;
+    let eval_report: PersistedEvalReportArtifact =
+        serde_json::from_str(&fs::read_to_string(&eval_report_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_IO: failed to read {}: {err}",
+                eval_report_rel.display()
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_INVALID: failed to parse {}: {err}",
+                eval_report_rel.display()
+            )
+        })?;
+    let promotion_decision: PersistedPromotionDecisionArtifact = serde_json::from_str(
+        &fs::read_to_string(&promotion_decision_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_IO: failed to read {}: {err}",
+                promotion_decision_rel.display()
+            )
+        })?,
+    )
+    .map_err(|err| {
+        anyhow::anyhow!(
+            "GODEL_INSPECT_INVALID: failed to parse {}: {err}",
+            promotion_decision_rel.display()
+        )
+    })?;
 
     let index: PersistedStageIndexEntry =
         serde_json::from_str(&fs::read_to_string(&obsmem_index_path).map_err(|err| {
@@ -385,6 +440,8 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         policy_comparison_path: policy_comparison_rel.display().to_string(),
         prioritization_path: prioritization_rel.display().to_string(),
         cross_workflow_path: cross_workflow_rel.display().to_string(),
+        eval_report_path: eval_report_rel.display().to_string(),
+        promotion_decision_path: promotion_decision_rel.display().to_string(),
         experiment_record_path: experiment_record_rel.display().to_string(),
         obsmem_index_path: obsmem_index_rel.display().to_string(),
         failure_code: record.record.failure_code.clone(),
@@ -414,6 +471,11 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
             .downstream_decision
             .expected_behavior_change
             .clone(),
+        evaluation_id: eval_report.evaluation_id.clone(),
+        evaluation_score: eval_report.score,
+        promotion_id: promotion_decision.promotion_id.clone(),
+        promotion_decision: promotion_decision.decision.clone(),
+        promotion_reason: promotion_decision.decision_reason.clone(),
         mutation_id: record.record.mutation_id.clone(),
         evaluation_decision: record.record.evaluation_decision.clone(),
         improvement_delta: record.record.improvement_delta,
