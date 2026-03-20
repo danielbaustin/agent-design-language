@@ -48,6 +48,12 @@ persisted Gödel schema/runtime artifacts it produces, including the
 first-class `godel_hypothesis.v1.json` hypothesis record. For a one-command
 review flow, run `swarm/tools/demo_godel_hypothesis_engine.sh`.
 
+Use `promotion_eval_loop_demo.md` for the bounded WP-14 review path that proves
+the prior Gödel artifacts now feed a structured evaluation report and an
+explicit promotion decision through the persisted
+`godel_eval_report.v1.json` and `godel_promotion_decision.v1.json` artifacts.
+For a one-command review flow, run `swarm/tools/demo_promotion_eval_loop.sh`.
+
 ### Historical/runtime fixture inventory
 
 - `../swarm/examples/README.md`
