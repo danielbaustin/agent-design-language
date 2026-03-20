@@ -22,6 +22,10 @@ use ::adl::godel::hypothesis::{PersistedHypothesisArtifact, HYPOTHESIS_ARTIFACT_
 use ::adl::godel::obsmem_index::{
     PersistedStageIndexEntry, StageIndexEntry, OBSMEM_INDEX_RUNTIME_SCHEMA,
 };
+use ::adl::godel::policy::{
+    PersistedPolicyArtifact, PersistedPolicyComparisonArtifact, POLICY_ARTIFACT_VERSION,
+    POLICY_COMPARISON_ARTIFACT_VERSION,
+};
 use ::adl::{adl, artifacts, execute, failure_taxonomy, instrumentation, resolve, signing, trace};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::ffi::OsString;
@@ -233,6 +237,34 @@ fn real_godel_validates_subcommand_and_run_args() {
 }
 
 #[test]
+fn real_godel_run_rejects_missing_value_flags() {
+    let cases = [
+        (vec!["--run-id"], "--run-id requires a value"),
+        (vec!["--workflow-id"], "--workflow-id requires a value"),
+        (vec!["--failure-code"], "--failure-code requires a value"),
+        (
+            vec!["--failure-summary"],
+            "--failure-summary requires a value",
+        ),
+        (
+            vec!["--evidence-ref"],
+            "--evidence-ref requires a relative path",
+        ),
+        (vec!["--runs-dir"], "--runs-dir requires a directory path"),
+    ];
+
+    for (args, needle) in cases {
+        let args = args.into_iter().map(|s| s.to_string()).collect::<Vec<_>>();
+        let err = real_godel_run(&args).expect_err("missing value flag should fail");
+        assert!(
+            err.to_string().contains(needle),
+            "args={args:?}\nerr={}",
+            err
+        );
+    }
+}
+
+#[test]
 fn real_godel_inspect_validates_args_and_missing_paths() {
     let err = real_godel_inspect(&[]).expect_err("missing run-id");
     assert!(err.to_string().contains("requires --run-id"));
@@ -251,6 +283,22 @@ fn real_godel_inspect_validates_args_and_missing_paths() {
     ])
     .expect_err("missing artifacts");
     assert!(err.to_string().contains("GODEL_INSPECT_IO"));
+}
+
+#[test]
+fn real_godel_inspect_rejects_missing_value_flags() {
+    let err = real_godel_inspect(&["--run-id".to_string()]).expect_err("missing run-id value");
+    assert!(err.to_string().contains("--run-id requires a value"));
+
+    let err = real_godel_inspect(&[
+        "--run-id".to_string(),
+        "run-745-a".to_string(),
+        "--runs-dir".to_string(),
+    ])
+    .expect_err("missing runs-dir value");
+    assert!(err
+        .to_string()
+        .contains("--runs-dir requires a directory path"));
 }
 
 #[test]
@@ -298,6 +346,45 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         evidence_refs: vec!["runs/run-745-a/run_status.json".to_string()],
         related_run_refs: vec!["run-745-a".to_string()],
     };
+    let policy = PersistedPolicyArtifact {
+        artifact_version: POLICY_ARTIFACT_VERSION.to_string(),
+        policy_id: "policy:run-745-a:tool_failure".to_string(),
+        run_id: "run-745-a".to_string(),
+        workflow_id: "wf-godel-loop".to_string(),
+        hypothesis_id: "hyp:run-745-a:tool_failure:00".to_string(),
+        hypothesis_artifact_path: "runs/run-745-a/godel/godel_hypothesis.v1.json".to_string(),
+        source_signal: "hypothesis:tool_failure:godel_hypothesis.v1".to_string(),
+        selection_reason: "Deterministic policy update derived from hypothesis_id=hyp:run-745-a:tool_failure:00 and failure_class=tool_failure.".to_string(),
+        before_policy: ::adl::godel::policy::PolicyState {
+            retry_budget: 1,
+            experiment_budget: 1,
+            target_surface: "tool-invocation-config".to_string(),
+            policy_mode: "baseline".to_string(),
+        },
+        after_policy: ::adl::godel::policy::PolicyState {
+            retry_budget: 2,
+            experiment_budget: 2,
+            target_surface: "tool-invocation-config".to_string(),
+            policy_mode: "adaptive_reviewed".to_string(),
+        },
+    };
+    let comparison = PersistedPolicyComparisonArtifact {
+        artifact_version: POLICY_COMPARISON_ARTIFACT_VERSION.to_string(),
+        comparison_id: "cmp:run-745-a:tool_failure".to_string(),
+        run_id: "run-745-a".to_string(),
+        workflow_id: "wf-godel-loop".to_string(),
+        policy_id: "policy:run-745-a:tool_failure".to_string(),
+        hypothesis_id: "hyp:run-745-a:tool_failure:00".to_string(),
+        changed_fields: vec![
+            "experiment_budget".to_string(),
+            "policy_mode".to_string(),
+            "retry_budget".to_string(),
+        ],
+        deterministic_mapping:
+            "stable failure_class -> baseline policy -> bounded policy adjustment".to_string(),
+        before_policy: policy.before_policy.clone(),
+        after_policy: policy.after_policy.clone(),
+    };
 
     std::fs::write(
         run_dir.join("experiment_record.runtime.v1.json"),
@@ -309,6 +396,16 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         serde_json::to_string_pretty(&hypothesis).expect("hypothesis json"),
     )
     .expect("write hypothesis");
+    std::fs::write(
+        run_dir.join("godel_policy.v1.json"),
+        serde_json::to_string_pretty(&policy).expect("policy json"),
+    )
+    .expect("write policy");
+    std::fs::write(
+        run_dir.join("godel_policy_comparison.v1.json"),
+        serde_json::to_string_pretty(&comparison).expect("comparison json"),
+    )
+    .expect("write comparison");
     std::fs::write(
         run_dir.join("obsmem_index_entry.runtime.v1.json"),
         serde_json::to_string_pretty(&index).expect("index json"),
@@ -323,15 +420,89 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
     ])
     .expect("inspect should succeed");
 
-    std::fs::write(run_dir.join("godel_hypothesis.v1.json"), "{").expect("write invalid json");
+    let write_all = || {
+        std::fs::write(
+            run_dir.join("experiment_record.runtime.v1.json"),
+            serde_json::to_string_pretty(&record).expect("record json"),
+        )
+        .expect("write record");
+        std::fs::write(
+            run_dir.join("godel_hypothesis.v1.json"),
+            serde_json::to_string_pretty(&hypothesis).expect("hypothesis json"),
+        )
+        .expect("write hypothesis");
+        std::fs::write(
+            run_dir.join("godel_policy.v1.json"),
+            serde_json::to_string_pretty(&policy).expect("policy json"),
+        )
+        .expect("write policy");
+        std::fs::write(
+            run_dir.join("godel_policy_comparison.v1.json"),
+            serde_json::to_string_pretty(&comparison).expect("comparison json"),
+        )
+        .expect("write comparison");
+        std::fs::write(
+            run_dir.join("obsmem_index_entry.runtime.v1.json"),
+            serde_json::to_string_pretty(&index).expect("index json"),
+        )
+        .expect("write index");
+    };
+
+    let parse_cases = [
+        ("godel_hypothesis.v1.json", "{", "GODEL_INSPECT_INVALID"),
+        (
+            "experiment_record.runtime.v1.json",
+            "{",
+            "GODEL_INSPECT_INVALID",
+        ),
+        ("godel_policy.v1.json", "{", "GODEL_INSPECT_INVALID"),
+        (
+            "godel_policy_comparison.v1.json",
+            "{",
+            "GODEL_INSPECT_INVALID",
+        ),
+        (
+            "obsmem_index_entry.runtime.v1.json",
+            "{",
+            "GODEL_INSPECT_INVALID",
+        ),
+    ];
+    for (file_name, invalid_json, needle) in parse_cases {
+        write_all();
+        std::fs::write(run_dir.join(file_name), invalid_json).expect("write invalid json");
+        let err = real_godel_inspect(&[
+            "--run-id".to_string(),
+            "run-745-a".to_string(),
+            "--runs-dir".to_string(),
+            base.to_string_lossy().to_string(),
+        ])
+        .expect_err("invalid runtime artifact should fail");
+        assert!(
+            err.to_string().contains(needle),
+            "file={file_name}\nerr={err}"
+        );
+    }
+
+    write_all();
+    let mut mismatched_index = index.clone();
+    mismatched_index.entry.run_id = "run-745-b".to_string();
+    std::fs::write(
+        run_dir.join("obsmem_index_entry.runtime.v1.json"),
+        serde_json::to_string_pretty(&mismatched_index).expect("mismatched index json"),
+    )
+    .expect("write mismatched index");
     let err = real_godel_inspect(&[
         "--run-id".to_string(),
         "run-745-a".to_string(),
         "--runs-dir".to_string(),
         base.to_string_lossy().to_string(),
     ])
-    .expect_err("invalid hypothesis artifact should fail");
-    assert!(err.to_string().contains("GODEL_INSPECT_INVALID"));
+    .expect_err("mismatched run id should fail");
+    assert!(
+        err.to_string()
+            .contains("persisted run_id did not match requested run_id"),
+        "err={err}"
+    );
 
     let _ = std::fs::remove_dir_all(base);
 }
@@ -362,6 +533,28 @@ fn real_godel_evaluate_validates_args_and_returns_summary() {
     ])
     .expect_err("invalid score delta");
     assert!(err.to_string().contains("valid i32"));
+
+    let err = real_godel_evaluate(&[
+        "--failure-code".to_string(),
+        "tool_failure".to_string(),
+        "--score-delta".to_string(),
+        "1".to_string(),
+    ])
+    .expect_err("missing experiment result");
+    assert!(err
+        .to_string()
+        .contains("godel evaluate requires --experiment-result <ok|blocked>"));
+
+    let err = real_godel_evaluate(&[
+        "--failure-code".to_string(),
+        "tool_failure".to_string(),
+        "--experiment-result".to_string(),
+        "ok".to_string(),
+    ])
+    .expect_err("missing score delta");
+    assert!(err
+        .to_string()
+        .contains("godel evaluate requires --score-delta <int>"));
 
     real_godel_evaluate(&[
         "--failure-code".to_string(),

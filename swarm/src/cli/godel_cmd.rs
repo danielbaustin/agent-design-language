@@ -4,8 +4,10 @@ use std::fs;
 use std::path::PathBuf;
 
 use ::adl::{
-    artifacts, godel, godel::experiment_record::PersistedExperimentRecord,
+    artifacts, godel,
+    godel::experiment_record::PersistedExperimentRecord,
     godel::obsmem_index::PersistedStageIndexEntry,
+    godel::policy::{PersistedPolicyArtifact, PersistedPolicyComparisonArtifact},
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -14,6 +16,8 @@ struct GodelRunCliSummary {
     workflow_id: String,
     stage_order: Vec<String>,
     hypothesis_path: String,
+    policy_path: String,
+    policy_comparison_path: String,
     experiment_record_path: String,
     obsmem_index_path: String,
 }
@@ -22,12 +26,18 @@ struct GodelRunCliSummary {
 struct GodelInspectCliSummary {
     run_id: String,
     hypothesis_path: String,
+    policy_path: String,
+    policy_comparison_path: String,
     experiment_record_path: String,
     obsmem_index_path: String,
     failure_code: String,
     workflow_id: String,
     hypothesis_id: String,
     hypothesis_claim: String,
+    policy_id: String,
+    policy_mode_before: String,
+    policy_mode_after: String,
+    changed_policy_fields: Vec<String>,
     mutation_id: String,
     evaluation_decision: String,
     improvement_delta: i32,
@@ -148,6 +158,8 @@ pub(crate) fn real_godel_run(args: &[String]) -> Result<()> {
             .map(|stage| stage.as_str().to_string())
             .collect(),
         hypothesis_path: result.hypothesis_rel_path.display().to_string(),
+        policy_path: result.policy_rel_path.display().to_string(),
+        policy_comparison_path: result.policy_comparison_rel_path.display().to_string(),
         experiment_record_path: result.experiment_record_rel_path.display().to_string(),
         obsmem_index_path: result.obsmem_index_rel_path.display().to_string(),
     };
@@ -198,6 +210,14 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         .join(&run_id)
         .join("godel")
         .join("godel_hypothesis.v1.json");
+    let policy_rel = PathBuf::from("runs")
+        .join(&run_id)
+        .join("godel")
+        .join("godel_policy.v1.json");
+    let policy_comparison_rel = PathBuf::from("runs")
+        .join(&run_id)
+        .join("godel")
+        .join("godel_policy_comparison.v1.json");
     let obsmem_index_rel = PathBuf::from("runs")
         .join(&run_id)
         .join("godel")
@@ -206,6 +226,14 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         .join(&run_id)
         .join("godel")
         .join("godel_hypothesis.v1.json");
+    let policy_path = runs_dir
+        .join(&run_id)
+        .join("godel")
+        .join("godel_policy.v1.json");
+    let policy_comparison_path = runs_dir
+        .join(&run_id)
+        .join("godel")
+        .join("godel_policy_comparison.v1.json");
     let experiment_record_path = runs_dir
         .join(&run_id)
         .join("godel")
@@ -243,6 +271,34 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
             )
         })?;
 
+    let policy: PersistedPolicyArtifact =
+        serde_json::from_str(&fs::read_to_string(&policy_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_IO: failed to read {}: {err}",
+                policy_rel.display()
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_INVALID: failed to parse {}: {err}",
+                policy_rel.display()
+            )
+        })?;
+
+    let comparison: PersistedPolicyComparisonArtifact =
+        serde_json::from_str(&fs::read_to_string(&policy_comparison_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_IO: failed to read {}: {err}",
+                policy_comparison_rel.display()
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_INSPECT_INVALID: failed to parse {}: {err}",
+                policy_comparison_rel.display()
+            )
+        })?;
+
     let index: PersistedStageIndexEntry =
         serde_json::from_str(&fs::read_to_string(&obsmem_index_path).map_err(|err| {
             anyhow::anyhow!(
@@ -266,12 +322,18 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
     let summary = GodelInspectCliSummary {
         run_id,
         hypothesis_path: hypothesis_rel.display().to_string(),
+        policy_path: policy_rel.display().to_string(),
+        policy_comparison_path: policy_comparison_rel.display().to_string(),
         experiment_record_path: experiment_record_rel.display().to_string(),
         obsmem_index_path: obsmem_index_rel.display().to_string(),
         failure_code: record.record.failure_code.clone(),
         workflow_id: record.record.workflow_id.clone(),
         hypothesis_id: record.record.hypothesis_id.clone(),
         hypothesis_claim: hypothesis.claim.clone(),
+        policy_id: policy.policy_id.clone(),
+        policy_mode_before: comparison.before_policy.policy_mode.clone(),
+        policy_mode_after: comparison.after_policy.policy_mode.clone(),
+        changed_policy_fields: comparison.changed_fields.clone(),
         mutation_id: record.record.mutation_id.clone(),
         evaluation_decision: record.record.evaluation_decision.clone(),
         improvement_delta: record.record.improvement_delta,
