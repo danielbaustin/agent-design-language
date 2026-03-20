@@ -50,6 +50,8 @@ ADL is aiming at something more rigorous:
 
 In that sense, v0.85 is the milestone where ADL’s **cognitive substrate becomes more explicit**.
 
+Within the tracked v0.85 milestone docs, the authoritative loop definition now lives in [COGNITIVE_LOOP_MODEL_v0.85.md](/tmp/adl-wp-929/docs/milestones/v0.85/COGNITIVE_LOOP_MODEL_v0.85.md).
+
 It does not claim sentience, autonomy, or unrestricted self-modification. Instead, it assembles the practical primitives needed for:
 
 - bounded scientific reasoning
