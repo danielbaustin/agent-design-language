@@ -48,33 +48,41 @@ assert_contains() {
   assert_contains "Usage:" "$card_help_out" "card --help"
 
   in_path="$("$BASH_BIN" swarm/tools/pr.sh card 271 input --no-fetch-issue --slug demo-title)"
-  [[ "$in_path" == *"/.adl/cards/271/input_271.md" ]] || {
+  [[ "$in_path" == *"/.adl/v0.3/tasks/issue-0271__demo-title/sip.md" ]] || {
     echo "assertion failed: unexpected input card path: $in_path" >&2
     exit 1
   }
-  [[ -f ".adl/cards/271/input_271.md" ]] || {
+  [[ -f ".adl/v0.3/tasks/issue-0271__demo-title/sip.md" ]] || {
     echo "assertion failed: expected input card file to exist" >&2
+    exit 1
+  }
+  [[ -L ".adl/cards/271/input_271.md" ]] || {
+    echo "assertion failed: expected input compatibility link to exist" >&2
     exit 1
   }
 
   out_path="$("$BASH_BIN" swarm/tools/pr.sh card 271 output --no-fetch-issue --slug demo-title)"
-  [[ "$out_path" == *"/.adl/cards/271/output_271.md" ]] || {
+  [[ "$out_path" == *"/.adl/v0.3/tasks/issue-0271__demo-title/sor.md" ]] || {
     echo "assertion failed: unexpected output card path via card command: $out_path" >&2
     exit 1
   }
-  [[ -f ".adl/cards/271/output_271.md" ]] || {
+  [[ -f ".adl/v0.3/tasks/issue-0271__demo-title/sor.md" ]] || {
     echo "assertion failed: expected output card file to exist" >&2
+    exit 1
+  }
+  [[ -L ".adl/cards/271/output_271.md" ]] || {
+    echo "assertion failed: expected output compatibility link to exist" >&2
     exit 1
   }
 
   out_path2="$("$BASH_BIN" swarm/tools/pr.sh output 271 output --no-fetch-issue --slug demo-title)"
-  [[ "$out_path2" == *"/.adl/cards/271/output_271.md" ]] || {
+  [[ "$out_path2" == *"/.adl/v0.3/tasks/issue-0271__demo-title/sor.md" ]] || {
     echo "assertion failed: unexpected output card path via output command: $out_path2" >&2
     exit 1
   }
 
   in_path2="$("$BASH_BIN" swarm/tools/pr.sh output 271 input --no-fetch-issue --slug demo-title)"
-  [[ "$in_path2" == *"/.adl/cards/271/input_271.md" ]] || {
+  [[ "$in_path2" == *"/.adl/v0.3/tasks/issue-0271__demo-title/sip.md" ]] || {
     echo "assertion failed: unexpected input card path via output command: $in_path2" >&2
     exit 1
   }

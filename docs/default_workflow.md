@@ -4,12 +4,19 @@ This is the default contributor path for ADL development:
 
 `preflight -> start -> codex -> finish -> report`
 
-## 1) Start Issue Branch + Cards
+## 1) Start Issue Branch + Local Task Bundle
 
 ```bash
 ./swarm/tools/pr.sh start <issue_num> --slug <slug>
 ```
 
+Canonical local task bundle:
+- `.adl/<scope>/tasks/<task-id>__<slug>/stp.stub.md`
+- `.adl/<scope>/tasks/<task-id>__<slug>/stp.md`
+- `.adl/<scope>/tasks/<task-id>__<slug>/sip.md`
+- `.adl/<scope>/tasks/<task-id>__<slug>/sor.md`
+
+Current workflow creates compatibility links under `.adl/cards/<issue_num>/` for adjacent tools that still consume the legacy path shape.
 Current workflow compatibility paths:
 - `.adl/cards/<issue_num>/input_<issue_num>.md`
 - `.adl/cards/<issue_num>/output_<issue_num>.md`
@@ -50,8 +57,8 @@ Typical local preflight:
 ./swarm/tools/pr.sh finish <issue_num> \
   --title "<title>" \
   --paths "<comma-separated paths>" \
-  -f .adl/cards/<issue_num>/input_<issue_num>.md \
-  --output .adl/cards/<issue_num>/output_<issue_num>.md
+  -f .adl/v0.85/tasks/<task-id>__<slug>/sip.md \
+  --output .adl/v0.85/tasks/<task-id>__<slug>/sor.md
 ```
 
 ## Common Pitfalls and Remediations
@@ -59,10 +66,15 @@ Typical local preflight:
 - Dirty worktree at `start`:
   - Commit/stash first, then re-run `pr.sh start`.
 - Wrong paths at `finish`:
+  - Ensure `--paths` only includes intended repo paths; do not include local `.adl` artifacts.
+- Missing local task-bundle artifacts:
+  - Re-run `pr.sh start <issue_num> --slug <slug>` to seed the canonical local task bundle and compatibility links.
   - Ensure `--paths` only includes intended repo paths; do not include `.adl/cards`.
 - Missing card files:
   - Re-run `pr.sh start <issue_num> --slug <slug>` to seed canonical card paths.
 - Missing local task bundle:
   - Run `swarm/tools/sync_task_bundle_prompts.sh --scope v0.85` to rebuild `.adl/v0.85/tasks/` from the current compatibility paths.
+- Missing local task-bundle artifacts:
+  - Re-run `pr.sh start <issue_num> --slug <slug>` to seed the canonical local task bundle and compatibility links.
 - Worktree branch base problems:
   - Update from `origin/main`, then re-run `start`.

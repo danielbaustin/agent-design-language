@@ -133,6 +133,10 @@ display_card_ref() {
   local p="$1"
   local normalized
   normalized="$(echo "$p" | sed 's#\\#/#g')"
+  if [[ "$normalized" =~ (.*/)?(\.adl/[[:alnum:]._-]+/tasks/issue-[0-9]+__[^/]+/sip\.md)$ ]]; then
+    echo "${BASH_REMATCH[2]}"
+    return 0
+  fi
   if [[ "$normalized" =~ (.*/)?(\.adl/cards/[0-9]+/input_[0-9]+\.md)$ ]]; then
     echo "${BASH_REMATCH[2]}"
     return 0
@@ -167,7 +171,7 @@ fi
 
 if [[ -n "$ISSUE" ]]; then
   ISSUE="$(card_issue_normalize "$ISSUE")"
-  INPUT="$(card_input_path "$ISSUE")"
+  INPUT="$(resolve_input_card_path "$ISSUE" "")"
 fi
 
 [[ -f "$INPUT" ]] || die "input card not found: $INPUT"

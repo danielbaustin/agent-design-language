@@ -20,7 +20,7 @@ Context:
 - Do not work on `main`.
 - Only modify files required for the issue.
 - Use repository-relative paths; avoid absolute host paths.
-- Write the output card to the paired `.adl/cards/<issue>/output_<issue>.md` path.
+- Write the output record to the paired local task bundle `sor.md` path.
 - If repository state is unexpected, stop and ask before attempting repository repair.
 
 ## Prompt Spec
@@ -48,7 +48,7 @@ inputs:
     - notes_risks
     - instructions_to_agent
 outputs:
-  output_card: .adl/cards/<issue>/output_<issue>.md
+  output_card: .adl/<scope>/tasks/<task-id>__<slug>/sor.md
   summary_style: concise_structured
 constraints:
   include_system_invariants: true

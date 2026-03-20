@@ -95,6 +95,11 @@ issue_from_input_path() {
   local base
   base="$(basename "$p")"
 
+  if [[ "$p" =~ (^|/)\.adl/[[:alnum:]._-]+/tasks/issue-([0-9]+)__[^/]+/sip\.md$ ]]; then
+    card_issue_normalize "${BASH_REMATCH[2]}"
+    return 0
+  fi
+
   if [[ "$p" =~ (^|/)\.adl/cards/([0-9]+)/input_([0-9]+)\.md$ ]]; then
     [[ "${BASH_REMATCH[2]}" == "${BASH_REMATCH[3]}" ]] || die "Card path mismatch: $p"
     card_issue_normalize "${BASH_REMATCH[2]}"
