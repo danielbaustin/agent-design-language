@@ -48,7 +48,9 @@ adaptive decision artifact.
 
 Use `godel_failure_hypothesis_experiment.md` for the concrete
 `adl godel run` / `adl godel inspect` / `adl godel evaluate` review path and the
-persisted Gödel schema/runtime artifacts it produces.
+persisted Gödel schema/runtime artifacts it produces, including the
+first-class `godel_hypothesis.v1.json` hypothesis record. For a one-command
+review flow, run `swarm/tools/demo_godel_hypothesis_engine.sh`.
 
 ### Historical/runtime fixture inventory
 

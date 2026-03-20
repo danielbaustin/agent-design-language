@@ -601,6 +601,10 @@ fn godel_run_executes_bounded_stage_loop_and_persists_artifacts() {
         ])
     );
     assert_eq!(
+        summary["hypothesis_path"],
+        "runs/run-745-a/godel/godel_hypothesis.v1.json"
+    );
+    assert_eq!(
         summary["experiment_record_path"],
         "runs/run-745-a/godel/experiment_record.runtime.v1.json"
     );
@@ -608,6 +612,9 @@ fn godel_run_executes_bounded_stage_loop_and_persists_artifacts() {
         summary["obsmem_index_path"],
         "runs/run-745-a/godel/obsmem_index_entry.runtime.v1.json"
     );
+    assert!(runs_dir
+        .join("run-745-a/godel/godel_hypothesis.v1.json")
+        .is_file());
     assert!(runs_dir
         .join("run-745-a/godel/experiment_record.runtime.v1.json")
         .is_file());
@@ -713,6 +720,10 @@ fn godel_inspect_reads_runtime_artifacts_deterministically() {
         serde_json::from_str(&stdout).expect("parse godel inspect summary");
     assert_eq!(summary["run_id"], "run-745-a");
     assert_eq!(
+        summary["hypothesis_path"],
+        "runs/run-745-a/godel/godel_hypothesis.v1.json"
+    );
+    assert_eq!(
         summary["experiment_record_path"],
         "runs/run-745-a/godel/experiment_record.runtime.v1.json"
     );
@@ -722,6 +733,11 @@ fn godel_inspect_reads_runtime_artifacts_deterministically() {
     );
     assert_eq!(summary["failure_code"], "tool_failure");
     assert_eq!(summary["workflow_id"], "wf-godel-loop");
+    assert_eq!(summary["hypothesis_id"], "hyp:run-745-a:tool_failure:00");
+    assert!(summary["hypothesis_claim"]
+        .as_str()
+        .expect("claim")
+        .contains("tool_failure"));
     assert_eq!(summary["evaluation_decision"], "adopt");
     assert_eq!(summary["improvement_delta"], 1);
     assert_eq!(
