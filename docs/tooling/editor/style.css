@@ -206,6 +206,11 @@ textarea {
   color: var(--warning);
 }
 
+.bundle-card-status.review {
+  background: #e7ecfb;
+  color: #294a8a;
+}
+
 .workspace {
   display: grid;
   grid-template-columns: minmax(320px, 1fr) minmax(360px, 1fr);
