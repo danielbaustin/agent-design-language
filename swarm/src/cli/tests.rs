@@ -7,12 +7,12 @@ use super::open::{
 };
 use super::run::{enforce_signature_policy, now_ms};
 use super::run_artifacts::{
-    build_run_status, build_run_summary, build_scores_artifact, build_suggestions_artifact,
-    classify_failure_kind, execution_plan_hash, load_resume_state, read_scores_if_present,
-    resume_state_path_for_run_id, validate_pause_artifact_basic, write_run_state_artifacts,
-    PauseStateArtifact, RunSummaryArtifact, RunSummaryCounts, RunSummaryLinks, RunSummaryPolicy,
-    ScoresArtifact, ScoresGeneratedFrom, ScoresMetrics, ScoresSummary, StepStateArtifact,
-    PAUSE_STATE_SCHEMA_VERSION,
+    build_aee_decision_artifact, build_run_status, build_run_summary, build_scores_artifact,
+    build_suggestions_artifact, classify_failure_kind, execution_plan_hash, load_resume_state,
+    read_scores_if_present, resume_state_path_for_run_id, validate_pause_artifact_basic,
+    write_run_state_artifacts, PauseStateArtifact, RunSummaryArtifact, RunSummaryCounts,
+    RunSummaryLinks, RunSummaryPolicy, ScoresArtifact, ScoresGeneratedFrom, ScoresMetrics,
+    ScoresSummary, StepStateArtifact, AEE_DECISION_VERSION, PAUSE_STATE_SCHEMA_VERSION,
 };
 use super::{real_instrument, real_keygen, real_learn, real_sign, real_verify, usage};
 use ::adl::godel::experiment_record::{
@@ -1009,8 +1009,90 @@ fn build_run_summary_sorts_remote_policy_and_tracks_denials() {
         summary.links.suggestions_json.as_deref(),
         Some("learning/suggestions.json")
     );
+    assert_eq!(
+        summary.links.aee_decision_json.as_deref(),
+        Some("learning/aee_decision.json")
+    );
 
     let _ = std::fs::remove_dir_all(run_paths.run_dir());
+}
+
+#[test]
+fn build_aee_decision_artifact_selects_retry_recovery_for_failures() {
+    let summary = RunSummaryArtifact {
+        run_summary_version: 1,
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_id: "aee-decision-run".to_string(),
+        workflow_id: "wf".to_string(),
+        adl_version: "0.85".to_string(),
+        swarm_version: "test".to_string(),
+        status: "failure".to_string(),
+        error_kind: None,
+        counts: RunSummaryCounts {
+            total_steps: 1,
+            completed_steps: 1,
+            failed_steps: 1,
+            provider_call_count: 1,
+            delegation_steps: 0,
+            delegation_requires_verification_steps: 0,
+        },
+        policy: RunSummaryPolicy {
+            security_envelope_enabled: false,
+            signing_required: false,
+            key_id_required: false,
+            verify_allowed_algs: Vec::new(),
+            verify_allowed_key_sources: Vec::new(),
+            sandbox_policy: "centralized_path_resolver_v1".to_string(),
+            security_denials_by_code: BTreeMap::new(),
+        },
+        links: RunSummaryLinks {
+            run_json: "run.json".to_string(),
+            steps_json: "steps.json".to_string(),
+            pause_state_json: None,
+            outputs_dir: "outputs".to_string(),
+            logs_dir: "logs".to_string(),
+            learning_dir: "learning".to_string(),
+            scores_json: None,
+            suggestions_json: None,
+            aee_decision_json: None,
+            overlays_dir: "learning/overlays".to_string(),
+            cluster_groundwork_json: None,
+            trace_json: None,
+        },
+    };
+    let scores = ScoresArtifact {
+        scores_version: 1,
+        run_id: "aee-decision-run".to_string(),
+        generated_from: ScoresGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+        },
+        summary: ScoresSummary {
+            success_ratio: 0.0,
+            failure_count: 1,
+            retry_count: 0,
+            delegation_denied_count: 0,
+            security_denied_count: 0,
+        },
+        metrics: ScoresMetrics {
+            scheduler_max_parallel_observed: 1,
+        },
+    };
+    let suggestions = build_suggestions_artifact(&summary, Some(&scores));
+    let aee_decision = build_aee_decision_artifact(&summary, &suggestions, Some(&scores));
+
+    assert_eq!(aee_decision.aee_decision_version, AEE_DECISION_VERSION);
+    assert_eq!(aee_decision.decision.decision_id, "aee-001");
+    assert_eq!(aee_decision.decision.intent, "increase_step_retry_budget");
+    assert_eq!(
+        aee_decision.decision.decision_kind,
+        "bounded_retry_recovery"
+    );
+    assert_eq!(aee_decision.decision.target, "failed-step-set");
+    assert!(aee_decision
+        .decision
+        .expected_downstream_effect
+        .contains("retry budget"));
 }
 
 #[test]
@@ -1111,6 +1193,7 @@ fn build_scores_and_suggestions_artifacts_are_deterministic() {
             learning_dir: "learning".to_string(),
             scores_json: None,
             suggestions_json: None,
+            aee_decision_json: None,
             overlays_dir: "learning/overlays".to_string(),
             cluster_groundwork_json: None,
             trace_json: None,

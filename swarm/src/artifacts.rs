@@ -108,6 +108,11 @@ impl RunArtifactPaths {
         self.learning_dir().join("suggestions.json")
     }
 
+    /// Bounded Adaptive Execution Engine decision artifact path.
+    pub fn aee_decision_json(&self) -> PathBuf {
+        self.learning_dir().join("aee_decision.json")
+    }
+
     /// Learning overlays directory.
     pub fn overlays_dir(&self) -> PathBuf {
         self.learning_dir().join("overlays")
@@ -305,6 +310,9 @@ mod tests {
         assert!(paths
             .suggestions_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/suggestions.json"));
+        assert!(paths
+            .aee_decision_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/aee_decision.json"));
     }
 
     #[test]
