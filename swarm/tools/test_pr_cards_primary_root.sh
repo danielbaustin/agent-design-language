@@ -37,9 +37,11 @@ chmod +x "$repo/swarm/tools/pr.sh"
   "$BASH_BIN" swarm/tools/pr.sh output 301 --no-fetch-issue --slug linked-worktree >/dev/null
 )
 
-[[ -f "$repo/.adl/cards/301/input_301.md" ]] || { echo "assertion failed: expected primary checkout input card" >&2; exit 1; }
-[[ -f "$repo/.adl/cards/301/output_301.md" ]] || { echo "assertion failed: expected primary checkout output card" >&2; exit 1; }
-[[ ! -f "$worktree/.adl/cards/301/input_301.md" ]] || { echo "assertion failed: unexpected linked worktree input card" >&2; exit 1; }
-[[ ! -f "$worktree/.adl/cards/301/output_301.md" ]] || { echo "assertion failed: unexpected linked worktree output card" >&2; exit 1; }
+[[ -f "$repo/.adl/v0.3/tasks/issue-0301__linked-worktree/sip.md" ]] || { echo "assertion failed: expected primary checkout canonical input card" >&2; exit 1; }
+[[ -f "$repo/.adl/v0.3/tasks/issue-0301__linked-worktree/sor.md" ]] || { echo "assertion failed: expected primary checkout canonical output card" >&2; exit 1; }
+[[ -L "$repo/.adl/cards/301/input_301.md" ]] || { echo "assertion failed: expected primary checkout input compatibility link" >&2; exit 1; }
+[[ -L "$repo/.adl/cards/301/output_301.md" ]] || { echo "assertion failed: expected primary checkout output compatibility link" >&2; exit 1; }
+[[ ! -e "$worktree/.adl/v0.3/tasks/issue-0301__linked-worktree/sip.md" ]] || { echo "assertion failed: unexpected linked worktree canonical input card" >&2; exit 1; }
+[[ ! -e "$worktree/.adl/v0.3/tasks/issue-0301__linked-worktree/sor.md" ]] || { echo "assertion failed: unexpected linked worktree canonical output card" >&2; exit 1; }
 
 echo "pr.sh linked worktree cards root resolution: ok"

@@ -41,13 +41,14 @@ v0.85 is not a docs-only milestone. The canonical plan requires:
 
 The current tracked v0.85 set includes:
 
+- `COGNITIVE_LOOP_MODEL_v0.85.md`
 - `AFFECTIVE_REASONING_MODEL.md`
 - `AFFECT_MODEL_v0.85.md`
 - `CLUSTER_EXECUTION.md`
 - `COGNITIVE_STACK_v0.85.md`
 - `DECISIONS_v0.85.md`
 - `DESIGN_v0.85.md`
-- `EMOTION_MODEL.md`
+- `EMOTION_MODEL.md` (legacy filename; bounded-affect framing)
 - `HUMAN-IN-THE-LOOP-DESIGN-NOTES.MD`
 - `MILESTONE_CHECKLIST_v0.85.md`
 - `MILESTONE_ISSUE_RECONCILIATION_v0.85.md`

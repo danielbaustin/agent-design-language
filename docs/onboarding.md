@@ -17,7 +17,9 @@ Use this page when you need to orient quickly in the ADL repo.
 
 ## Workflow Context
 
+Default workflow uses `adl_pr_cycle` with canonical local task bundles under `.adl/<scope>/tasks/<task-id>__<slug>/`, plus compatibility links under `.adl/cards/<issue>/`.
 Default workflow currently seeds compatibility card paths under `.adl/cards/<issue>/`, while the canonical local draft prompt bundles live under `.adl/v0.85/tasks/<task-id>__<slug>/`.
+The canonical local draft prompt bundles live under `.adl/<scope>/tasks/<task-id>__<slug>/`, and compatibility links under `.adl/cards/<issue>/` remain available during migration.
 
 ## Reading Order
 

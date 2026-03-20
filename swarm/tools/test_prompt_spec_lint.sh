@@ -48,6 +48,11 @@ constraints:
   include_reviewer_checklist: true
   disallow_secrets: true
   disallow_absolute_host_paths: true
+automation_hints:
+  source_issue_prompt_required: true
+  target_files_surfaces_recommended: true
+  validation_plan_required: true
+  required_outcome_type_supported: true
 review_surfaces:
   - card_review_checklist.v1
   - card_review_output.v1
@@ -89,6 +94,11 @@ constraints:
   include_reviewer_checklist: maybe
   disallow_secrets: true
   disallow_absolute_host_paths: true
+automation_hints:
+  source_issue_prompt_required: true
+  target_files_surfaces_recommended: true
+  validation_plan_required: true
+  required_outcome_type_supported: true
 review_surfaces:
   - card_review_checklist.v1
 ```
@@ -135,6 +145,11 @@ constraints:
   include_reviewer_checklist: true
   disallow_secrets: true
   disallow_absolute_host_paths: true
+automation_hints:
+  source_issue_prompt_required: true
+  target_files_surfaces_recommended: true
+  validation_plan_required: true
+  required_outcome_type_supported: true
 review_surfaces:
   - card_review_checklist.v1
   - card_review_output.v1

@@ -17,7 +17,7 @@ v0.85 is intended to **complete and integrate the current architectural doc set*
 This milestone is therefore not just about polish. It is about consolidation and architectural completion across the current planning set, especially in:
 
 - reasoning graphs
-- affect / emotion modeling
+- bounded affect modeling
 - structured prompt and authoring architecture
 - human-in-the-loop design
 - execution substrate evolution
@@ -49,6 +49,8 @@ ADL is aiming at something more rigorous:
 - human oversight as a first-class design feature
 
 In that sense, v0.85 is the milestone where ADL’s **cognitive substrate becomes more explicit**.
+
+Within the tracked v0.85 milestone docs, the authoritative loop definition now lives in [COGNITIVE_LOOP_MODEL_v0.85.md](/tmp/adl-wp-929/docs/milestones/v0.85/COGNITIVE_LOOP_MODEL_v0.85.md).
 
 It does not claim sentience, autonomy, or unrestricted self-modification. Instead, it assembles the practical primitives needed for:
 
@@ -243,9 +245,9 @@ This is important because ADL should not rely only on token-stream reasoning or 
 
 Reasoning graphs are therefore central to ADL’s longer-term cognitive architecture.
 
-### Affect and Emotion Modeling
+### Bounded Affect Modeling
 
-v0.85 also introduces deeper work on an **affect / emotion model**.
+v0.85 also introduces deeper work on a **bounded affect model**.
 
 This is not an attempt to simulate human psychology for its own sake. It is a bounded engineering mechanism for representing:
 

@@ -76,12 +76,20 @@ assert_contains() {
     echo "assertion failed: expected branch in worktree" >&2
     exit 1
   }
-  [[ -f "$repo/.adl/cards/999/input_999.md" ]] || {
-    echo "assertion failed: expected input card" >&2
+  [[ -f "$repo/.adl/v0.3/tasks/issue-0999__test-smoke/sip.md" ]] || {
+    echo "assertion failed: expected canonical input card" >&2
     exit 1
   }
-  [[ -f "$repo/.adl/cards/999/output_999.md" ]] || {
-    echo "assertion failed: expected output card" >&2
+  [[ -f "$repo/.adl/v0.3/tasks/issue-0999__test-smoke/sor.md" ]] || {
+    echo "assertion failed: expected canonical output card" >&2
+    exit 1
+  }
+  [[ -L "$repo/.adl/cards/999/input_999.md" ]] || {
+    echo "assertion failed: expected input compatibility link" >&2
+    exit 1
+  }
+  [[ -L "$repo/.adl/cards/999/output_999.md" ]] || {
+    echo "assertion failed: expected output compatibility link" >&2
     exit 1
   }
 
