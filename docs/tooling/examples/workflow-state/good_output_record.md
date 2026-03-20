@@ -37,7 +37,7 @@ Fixture output record for dependable-execution completed-phase validation.
 
 ## Validation
 - Tests / checks run:
-  - `ruby swarm/tools/validate_structured_prompt.rb --type sor --phase completed --input docs/tooling/examples/workflow-state/good_output_record.md`
+  - `bash swarm/tools/validate_structured_prompt.sh --type sor --phase completed --input docs/tooling/examples/workflow-state/good_output_record.md`
 - Results:
   - pass
 

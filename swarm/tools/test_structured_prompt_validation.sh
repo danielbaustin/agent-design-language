@@ -214,6 +214,61 @@ EOF
 "$VALIDATOR" --type sip --phase bootstrap --input "$tmpdir/sip_valid.md"
 "$VALIDATOR" --type sor --phase bootstrap --input "$tmpdir/sor_valid.md"
 
+cat >"$tmpdir/sor_completed_invalid_status.md" <<'EOF'
+# ADL Output Card
+
+Task ID: issue-0898
+Run ID: issue-0898
+Version: v0.85
+Title: invalid-completed-sor
+Branch: codex/898-valid-sor
+Status: NOT_STARTED
+
+Execution:
+- Actor: codex
+- Model: gpt-5-codex
+- Provider: local workspace
+- Start Time: 2026-03-18T07:00:00Z
+- End Time: 2026-03-18T07:05:00Z
+
+## Summary
+Completed-looking output card with stale status.
+## Artifacts produced
+- docs/tooling/examples/workflow-state/bad_output_record.md
+## Actions taken
+- Recorded a stale status by mistake.
+## Main Repo Integration (REQUIRED)
+- Main-repo paths updated:
+  - docs/tooling/examples/workflow-state/bad_output_record.md
+- Worktree-only paths remaining:
+  - docs/tooling/examples/workflow-state/bad_output_record.md
+- Integration state: pr_open
+- Verification scope: worktree
+- Integration method used: committed on issue branch
+- Verification performed:
+  - `git diff -- docs/tooling/examples/workflow-state/bad_output_record.md`
+- Result: PASS
+## Validation
+- Validation commands and their purpose:
+  - `bash swarm/tools/validate_structured_prompt.sh --type sor --phase completed --input docs/tooling/examples/workflow-state/bad_output_record.md`
+- Results:
+  - fail expected
+## Verification Summary
+x
+## Determinism Evidence
+x
+## Security / Privacy Checks
+x
+## Replay Artifacts
+x
+## Artifact Verification
+x
+## Decisions / Deviations
+x
+## Follow-ups / Deferred work
+x
+EOF
+
 cat >"$tmpdir/sor_invalid.md" <<'EOF'
 # ADL Output Card
 
@@ -269,6 +324,15 @@ rc=$?
 set -e
 if [[ "$rc" -eq 0 ]]; then
   echo "assertion failed: invalid SOR unexpectedly passed validation" >&2
+  exit 1
+fi
+
+set +e
+"$VALIDATOR" --type sor --phase completed --input "$tmpdir/sor_completed_invalid_status.md" >/dev/null 2>&1
+rc=$?
+set -e
+if [[ "$rc" -eq 0 ]]; then
+  echo "assertion failed: completed-phase SOR with NOT_STARTED unexpectedly passed validation" >&2
   exit 1
 fi
 
