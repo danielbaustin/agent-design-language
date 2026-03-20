@@ -47,6 +47,7 @@ Bounded review-first execution record linked to the same public task bundle as t
 - integration state is explicit
 - evidence is visible inside the task bundle
 - deferred work is clear
+- reviewer handoff can be summarized from this SOR without reconstructing the proof surface by hand
 
 ## Follow-ups / Deferred work
 
