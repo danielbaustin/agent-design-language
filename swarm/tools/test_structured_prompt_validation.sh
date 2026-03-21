@@ -214,6 +214,72 @@ EOF
 "$VALIDATOR" --type sip --phase bootstrap --input "$tmpdir/sip_valid.md"
 "$VALIDATOR" --type sor --phase bootstrap --input "$tmpdir/sor_valid.md"
 
+cat >"$tmpdir/stp_absolute_path_invalid.md" <<'EOF'
+---
+issue_card_schema: adl.issue.v1
+wp: "SUB-ISSUE"
+slug: "invalid-absolute-path-stp"
+title: "Invalid absolute path STP"
+labels:
+  - "track:roadmap"
+issue_number: 901
+status: "draft"
+action: "create"
+depends_on:
+  - "#886"
+milestone_sprint: "Sprint 2"
+required_outcome_type:
+  - "docs"
+repo_inputs:
+  - "docs/tooling/prompt-spec.md"
+canonical_files:
+  - ".adl/issues/v0.85/bodies/invalid-absolute-path-stp.md"
+demo_required: false
+demo_names: []
+issue_graph_notes:
+  - "Test note"
+pr_start:
+  enabled: true
+  slug: "invalid-absolute-path-stp"
+---
+
+# Invalid absolute path STP
+
+## Summary
+x
+## Goal
+x
+## Required Outcome
+x
+## Deliverables
+mentions /Users/example
+## Acceptance Criteria
+x
+## Repo Inputs
+x
+## Dependencies
+x
+## Demo Expectations
+x
+## Non-goals
+x
+## Issue-Graph Notes
+x
+## Notes
+x
+## Tooling Notes
+x
+EOF
+
+set +e
+"$VALIDATOR" --type stp --input "$tmpdir/stp_absolute_path_invalid.md" >/dev/null 2>&1
+rc=$?
+set -e
+if [[ "$rc" -eq 0 ]]; then
+  echo "assertion failed: STP with absolute host path unexpectedly passed validation" >&2
+  exit 1
+fi
+
 cat >"$tmpdir/sor_completed_invalid_status.md" <<'EOF'
 # ADL Output Card
 
@@ -333,6 +399,64 @@ rc=$?
 set -e
 if [[ "$rc" -eq 0 ]]; then
   echo "assertion failed: completed-phase SOR with NOT_STARTED unexpectedly passed validation" >&2
+  exit 1
+fi
+
+cat >"$tmpdir/sor_absolute_path_invalid.md" <<'EOF'
+# ADL Output Card
+
+Task ID: issue-0898
+Run ID: issue-0898
+Version: v0.85
+Title: invalid-absolute-path-sor
+Branch: codex/898-valid-sor
+Status: IN_PROGRESS
+
+Execution:
+- Actor:
+- Model:
+- Provider:
+- Start Time:
+- End Time:
+
+## Summary
+contains /Users/example leak
+## Artifacts produced
+x
+## Actions taken
+x
+## Main Repo Integration (REQUIRED)
+- Main-repo paths updated:
+- Worktree-only paths remaining:
+- Integration state: worktree_only
+- Verification scope: worktree
+- Integration method used:
+- Verification performed:
+- Result:
+## Validation
+x
+## Verification Summary
+x
+## Determinism Evidence
+x
+## Security / Privacy Checks
+x
+## Replay Artifacts
+x
+## Artifact Verification
+x
+## Decisions / Deviations
+x
+## Follow-ups / Deferred work
+x
+EOF
+
+set +e
+"$VALIDATOR" --type sor --phase bootstrap --input "$tmpdir/sor_absolute_path_invalid.md" >/dev/null 2>&1
+rc=$?
+set -e
+if [[ "$rc" -eq 0 ]]; then
+  echo "assertion failed: SOR with absolute host path unexpectedly passed validation" >&2
   exit 1
 fi
 
