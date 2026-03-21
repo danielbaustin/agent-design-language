@@ -192,10 +192,18 @@ primary_checkout_root() {
 
 default_worktree_path_for_issue() {
   local issue="$1"
-  local primary parent
+  local primary parent managed_root
   primary="$(primary_checkout_root)"
   parent="$(cd "$primary/.." && pwd -P)"
-  echo "$parent/adl-wp-${issue}"
+  managed_root="${ADL_WORKTREE_ROOT:-}"
+  if [[ -z "$managed_root" ]]; then
+    if [[ "$primary" == "$HOME/git/"* || "$primary" == "$HOME/git" ]]; then
+      managed_root="$HOME/git"
+    else
+      managed_root="$parent"
+    fi
+  fi
+  echo "$managed_root/adl-wp-${issue}"
 }
 
 branch_checked_out_worktree_path() {

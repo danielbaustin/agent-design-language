@@ -104,6 +104,15 @@ assert_contains() {
   out3="$("$BASH_BIN" swarm/tools/pr.sh start 999 --slug test-smoke --no-fetch-issue)"
   assert_contains "Warning: branch 'codex/999-test-smoke' upstream is '<none>'" "$out3" "upstream warning"
 
+  custom_root="$tmpdir/custom-managed"
+  mkdir -p "$custom_root"
+  out4="$(ADL_WORKTREE_ROOT="$custom_root" "$BASH_BIN" swarm/tools/pr.sh start 995 --slug root-override --no-fetch-issue)"
+  assert_contains "WORKTREE $custom_root/adl-wp-995" "$out4" "custom managed root"
+  [[ -d "$custom_root/adl-wp-995" ]] || {
+    echo "assertion failed: expected custom-root worktree" >&2
+    exit 1
+  }
+
   git branch codex/998-collision origin/main
   git worktree add -q "$tmpdir/other-path" codex/998-collision
   set +e

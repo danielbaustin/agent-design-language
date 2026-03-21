@@ -7,6 +7,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 ## What Is Here
 
 - `pr.sh`: canonical issue start/finish workflow helper.
+- `worktree_doctor.sh`, `worktree_prune.sh`: deterministic worktree governance and safe cleanup helpers.
 - `card_prompt.sh`: deterministic input-card parser that generates execution prompts.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
 - `batched_checks.sh`, `preflight_review.sh`: quality/preflight checks.
@@ -21,6 +22,12 @@ From repo root:
 ```bash
 # start issue branch + cards
 ./swarm/tools/pr.sh start <issue_num> --slug <slug>
+
+# inspect worktree status/fate across managed, stale, orphan, and Codex-ephemeral namespaces
+./swarm/tools/worktree_doctor.sh
+
+# dry-run safe cleanup of merged clean worktrees + stale registrations
+./swarm/tools/worktree_prune.sh
 
 # run standard checks
 ./swarm/tools/batched_checks.sh
