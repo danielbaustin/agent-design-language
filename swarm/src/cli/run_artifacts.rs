@@ -138,6 +138,8 @@ pub(crate) struct RunSummaryLinks {
     pub(crate) suggestions_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) aee_decision_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) affect_state_json: Option<String>,
     pub(crate) overlays_dir: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) cluster_groundwork_json: Option<String>,
@@ -265,6 +267,7 @@ pub(crate) struct AeeDecisionArtifact {
     pub(crate) aee_decision_version: u32,
     pub(crate) run_id: String,
     pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) affect_state: AffectStateRef,
     pub(crate) decision: AeeDecisionRecord,
 }
 
@@ -280,6 +283,38 @@ pub(crate) struct AeeDecisionGeneratedFrom {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub(crate) struct AffectStateArtifact {
+    pub(crate) affect_state_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) affect: AffectStateRecord,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct AffectStateRecord {
+    pub(crate) affect_state_id: String,
+    pub(crate) affect_mode: String,
+    pub(crate) urgency_level: String,
+    pub(crate) frustration_level: String,
+    pub(crate) confidence_shift: String,
+    pub(crate) recovery_bias: u32,
+    pub(crate) downstream_priority: String,
+    pub(crate) update_reason: String,
+    pub(crate) deterministic_update_rule: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct AffectStateRef {
+    pub(crate) affect_state_id: String,
+    pub(crate) affect_mode: String,
+    pub(crate) downstream_priority: String,
+    pub(crate) recovery_bias: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct AeeDecisionRecord {
     pub(crate) decision_id: String,
     pub(crate) decision_kind: String,
@@ -290,6 +325,8 @@ pub(crate) struct AeeDecisionRecord {
     pub(crate) rationale: String,
     pub(crate) expected_downstream_effect: String,
     pub(crate) deterministic_selection_rule: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) recommended_retry_budget: Option<u32>,
     pub(crate) evidence: SuggestionEvidence,
 }
 
@@ -388,6 +425,11 @@ pub(crate) fn build_run_summary(
         .strip_prefix(run_paths.run_dir())
         .map(|p| p.display().to_string())
         .unwrap_or_else(|_| "learning/aee_decision.json".to_string());
+    let affect_state_rel = run_paths
+        .affect_state_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/affect_state.v1.json".to_string());
     let cluster_groundwork_rel = run_paths
         .cluster_groundwork_json()
         .strip_prefix(run_paths.run_dir())
@@ -442,6 +484,7 @@ pub(crate) fn build_run_summary(
             scores_json: Some(scores_rel),
             suggestions_json: Some(suggestions_rel),
             aee_decision_json: Some(aee_decision_rel),
+            affect_state_json: Some(affect_state_rel),
             overlays_dir: run_paths
                 .overlays_dir()
                 .strip_prefix(run_paths.run_dir())
@@ -889,9 +932,109 @@ fn aee_decision_kind_for_intent(intent: &str) -> (&'static str, &'static str) {
     }
 }
 
+pub(crate) fn build_affect_state_artifact(
+    run_summary: &RunSummaryArtifact,
+    suggestions: &SuggestionsArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> AffectStateArtifact {
+    let selected = suggestions
+        .suggestions
+        .first()
+        .cloned()
+        .unwrap_or_else(|| SuggestionItem {
+            id: "sug-000".to_string(),
+            category: "stability".to_string(),
+            severity: "info".to_string(),
+            rationale: "No bounded adaptation signals fired; keep current policy state."
+                .to_string(),
+            evidence: SuggestionEvidence {
+                failure_count: 0,
+                retry_count: 0,
+                delegation_denied_count: 0,
+                security_denied_count: 0,
+                success_ratio: 1.0,
+                scheduler_max_parallel_observed: 1,
+            },
+            proposed_change: SuggestedChangeIntent {
+                intent: "maintain_current_policy".to_string(),
+                target: "workflow-runtime".to_string(),
+            },
+        });
+
+    let recovery_bias = if selected.evidence.failure_count > 0
+        || selected.proposed_change.intent == "increase_step_retry_budget"
+    {
+        2
+    } else if selected.evidence.retry_count > 0 {
+        1
+    } else {
+        0
+    };
+
+    let (affect_mode, urgency_level, frustration_level, confidence_shift, downstream_priority) =
+        if recovery_bias >= 2 {
+            (
+                "recovery_focus",
+                "elevated",
+                "high",
+                "reduced",
+                "prefer bounded recovery before broader runtime review",
+            )
+        } else if recovery_bias == 1 {
+            (
+                "watchful_adjustment",
+                "guarded",
+                "moderate",
+                "stable",
+                "stabilize retries before expanding scope",
+            )
+        } else {
+            (
+                "steady_state",
+                "low",
+                "low",
+                "stable",
+                "maintain current bounded runtime policy",
+            )
+        };
+
+    let update_reason = format!(
+        "failure_count={} retry_count={} success_ratio={} selected_intent={}",
+        selected.evidence.failure_count,
+        selected.evidence.retry_count,
+        selected.evidence.success_ratio,
+        selected.proposed_change.intent
+    );
+
+    AffectStateArtifact {
+        affect_state_version: 1,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: suggestions.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        affect: AffectStateRecord {
+            affect_state_id: "affect-001".to_string(),
+            affect_mode: affect_mode.to_string(),
+            urgency_level: urgency_level.to_string(),
+            frustration_level: frustration_level.to_string(),
+            confidence_shift: confidence_shift.to_string(),
+            recovery_bias,
+            downstream_priority: downstream_priority.to_string(),
+            update_reason,
+            deterministic_update_rule:
+                "derive affect mode and recovery bias from the first stable suggestion plus bounded failure and retry evidence"
+                    .to_string(),
+        },
+    }
+}
+
 pub(crate) fn build_aee_decision_artifact(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
+    affect_state: &AffectStateArtifact,
     scores: Option<&ScoresArtifact>,
 ) -> AeeDecisionArtifact {
     let selected = suggestions
@@ -919,6 +1062,17 @@ pub(crate) fn build_aee_decision_artifact(
         });
     let (decision_kind, expected_downstream_effect) =
         aee_decision_kind_for_intent(&selected.proposed_change.intent);
+    let recommended_retry_budget = (selected.proposed_change.intent
+        == "increase_step_retry_budget"
+        && affect_state.affect.recovery_bias >= 2)
+        .then_some(2);
+    let expected_downstream_effect = if let Some(budget) = recommended_retry_budget {
+        format!(
+            "{expected_downstream_effect}; affect-guided recovery bias recommends retry budget max_attempts={budget}"
+        )
+    } else {
+        expected_downstream_effect.to_string()
+    };
 
     AeeDecisionArtifact {
         aee_decision_version: AEE_DECISION_VERSION,
@@ -929,6 +1083,12 @@ pub(crate) fn build_aee_decision_artifact(
             suggestions_version: suggestions.suggestions_version,
             scores_version: scores.map(|value| value.scores_version),
         },
+        affect_state: AffectStateRef {
+            affect_state_id: affect_state.affect.affect_state_id.clone(),
+            affect_mode: affect_state.affect.affect_mode.clone(),
+            downstream_priority: affect_state.affect.downstream_priority.clone(),
+            recovery_bias: affect_state.affect.recovery_bias,
+        },
         decision: AeeDecisionRecord {
             decision_id: "aee-001".to_string(),
             decision_kind: decision_kind.to_string(),
@@ -937,10 +1097,11 @@ pub(crate) fn build_aee_decision_artifact(
             intent: selected.proposed_change.intent,
             target: selected.proposed_change.target,
             rationale: selected.rationale,
-            expected_downstream_effect: expected_downstream_effect.to_string(),
+            expected_downstream_effect,
             deterministic_selection_rule:
-                "select the first suggestion emitted by build_suggestions_artifact after stable category ordering"
+                "select the first suggestion emitted by build_suggestions_artifact after stable category ordering, then apply the deterministic affect-state recovery bias"
                     .to_string(),
+            recommended_retry_budget,
             evidence: selected.evidence,
         },
     }
@@ -1084,8 +1245,16 @@ pub(crate) fn write_run_state_artifacts(
     let suggestions = build_suggestions_artifact(&run_summary, Some(&scores_for_suggestions));
     let suggestions_json =
         serde_json::to_vec_pretty(&suggestions).context("serialize suggestions.json")?;
-    let aee_decision =
-        build_aee_decision_artifact(&run_summary, &suggestions, Some(&scores_for_suggestions));
+    let affect_state =
+        build_affect_state_artifact(&run_summary, &suggestions, Some(&scores_for_suggestions));
+    let affect_state_json =
+        serde_json::to_vec_pretty(&affect_state).context("serialize affect_state.v1.json")?;
+    let aee_decision = build_aee_decision_artifact(
+        &run_summary,
+        &suggestions,
+        &affect_state,
+        Some(&scores_for_suggestions),
+    );
     let aee_decision_json =
         serde_json::to_vec_pretty(&aee_decision).context("serialize aee_decision.json")?;
 
@@ -1095,6 +1264,7 @@ pub(crate) fn write_run_state_artifacts(
     artifacts::atomic_write(&run_paths.run_summary_json(), &run_summary_json)?;
     artifacts::atomic_write(&run_paths.scores_json(), &scores_json)?;
     artifacts::atomic_write(&run_paths.suggestions_json(), &suggestions_json)?;
+    artifacts::atomic_write(&run_paths.affect_state_json(), &affect_state_json)?;
     artifacts::atomic_write(&run_paths.aee_decision_json(), &aee_decision_json)?;
     if let Some(pause_payload) = pause {
         let pause_artifact = PauseStateArtifact {

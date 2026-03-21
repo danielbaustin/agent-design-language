@@ -113,6 +113,11 @@ impl RunArtifactPaths {
         self.learning_dir().join("aee_decision.json")
     }
 
+    /// Affect state artifact path for bounded affect-guided adaptation.
+    pub fn affect_state_json(&self) -> PathBuf {
+        self.learning_dir().join("affect_state.v1.json")
+    }
+
     /// Learning overlays directory.
     pub fn overlays_dir(&self) -> PathBuf {
         self.learning_dir().join("overlays")
@@ -313,6 +318,9 @@ mod tests {
         assert!(paths
             .aee_decision_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/aee_decision.json"));
+        assert!(paths
+            .affect_state_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/affect_state.v1.json"));
     }
 
     #[test]

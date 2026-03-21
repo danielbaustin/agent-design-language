@@ -954,10 +954,18 @@ fn bounded_aee_recovery_demo_shows_failure_suggestion_overlay_and_recovery() {
     );
 
     let suggestions_path = initial_run.join("learning/suggestions.json");
+    let affect_path = initial_run.join("learning/affect_state.v1.json");
+    let decision_path = initial_run.join("learning/aee_decision.json");
     let suggestions: serde_json::Value = serde_json::from_str(
         &fs::read_to_string(&suggestions_path).expect("read initial suggestions"),
     )
     .expect("parse suggestions");
+    let affect_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&affect_path).expect("read affect artifact"))
+            .expect("parse affect artifact");
+    let decision_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&decision_path).expect("read aee decision"))
+            .expect("parse aee decision");
     let intents: Vec<&str> = suggestions["suggestions"]
         .as_array()
         .expect("suggestions array")
@@ -973,6 +981,13 @@ fn bounded_aee_recovery_demo_shows_failure_suggestion_overlay_and_recovery() {
         "suggestions:\n{}",
         serde_json::to_string_pretty(&suggestions).unwrap()
     );
+    assert_eq!(affect_json["affect"]["affect_mode"], "recovery_focus");
+    assert_eq!(affect_json["affect"]["recovery_bias"], 2);
+    assert_eq!(
+        decision_json["affect_state"]["affect_mode"],
+        "recovery_focus"
+    );
+    assert_eq!(decision_json["decision"]["recommended_retry_budget"], 2);
 
     let initial_replay = run_swarm(&[
         "instrument",
@@ -1012,6 +1027,7 @@ fn bounded_aee_recovery_demo_shows_failure_suggestion_overlay_and_recovery() {
 
     let overlay_audit = adapted_run.join("learning/overlays/applied_overlay.json");
     let overlay_source = adapted_run.join("learning/overlays/source_overlay.json");
+    let adapted_affect_path = adapted_run.join("learning/affect_state.v1.json");
     assert!(
         overlay_audit.is_file(),
         "missing {}",
@@ -1021,6 +1037,11 @@ fn bounded_aee_recovery_demo_shows_failure_suggestion_overlay_and_recovery() {
         overlay_source.is_file(),
         "missing {}",
         overlay_source.display()
+    );
+    assert!(
+        adapted_affect_path.is_file(),
+        "missing {}",
+        adapted_affect_path.display()
     );
 
     let summary_json: serde_json::Value =

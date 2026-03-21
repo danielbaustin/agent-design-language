@@ -1460,6 +1460,10 @@ fn build_run_summary_sorts_remote_policy_and_tracks_denials() {
         summary.links.aee_decision_json.as_deref(),
         Some("learning/aee_decision.json")
     );
+    assert_eq!(
+        summary.links.affect_state_json.as_deref(),
+        Some("learning/affect_state.v1.json")
+    );
 
     let _ = std::fs::remove_dir_all(run_paths.run_dir());
 }
@@ -1502,6 +1506,7 @@ fn build_aee_decision_artifact_selects_retry_recovery_for_failures() {
             scores_json: None,
             suggestions_json: None,
             aee_decision_json: None,
+            affect_state_json: None,
             overlays_dir: "learning/overlays".to_string(),
             cluster_groundwork_json: None,
             trace_json: None,
@@ -1526,9 +1531,14 @@ fn build_aee_decision_artifact_selects_retry_recovery_for_failures() {
         },
     };
     let suggestions = build_suggestions_artifact(&summary, Some(&scores));
-    let aee_decision = build_aee_decision_artifact(&summary, &suggestions, Some(&scores));
+    let affect_state =
+        super::run_artifacts::build_affect_state_artifact(&summary, &suggestions, Some(&scores));
+    let aee_decision =
+        build_aee_decision_artifact(&summary, &suggestions, &affect_state, Some(&scores));
 
     assert_eq!(aee_decision.aee_decision_version, AEE_DECISION_VERSION);
+    assert_eq!(affect_state.affect.affect_mode, "recovery_focus");
+    assert_eq!(affect_state.affect.recovery_bias, 2);
     assert_eq!(aee_decision.decision.decision_id, "aee-001");
     assert_eq!(aee_decision.decision.intent, "increase_step_retry_budget");
     assert_eq!(
@@ -1536,10 +1546,128 @@ fn build_aee_decision_artifact_selects_retry_recovery_for_failures() {
         "bounded_retry_recovery"
     );
     assert_eq!(aee_decision.decision.target, "failed-step-set");
+    assert_eq!(aee_decision.affect_state.affect_state_id, "affect-001");
+    assert_eq!(aee_decision.affect_state.affect_mode, "recovery_focus");
+    assert_eq!(aee_decision.decision.recommended_retry_budget, Some(2));
     assert!(aee_decision
         .decision
         .expected_downstream_effect
         .contains("retry budget"));
+    assert!(aee_decision
+        .decision
+        .expected_downstream_effect
+        .contains("affect-guided recovery bias"));
+}
+
+#[test]
+fn build_affect_state_artifact_covers_watchful_and_steady_modes() {
+    let summary = RunSummaryArtifact {
+        run_summary_version: 1,
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_id: "affect-state-run".to_string(),
+        workflow_id: "wf".to_string(),
+        adl_version: "0.85".to_string(),
+        swarm_version: "test".to_string(),
+        status: "success".to_string(),
+        error_kind: None,
+        counts: RunSummaryCounts {
+            total_steps: 1,
+            completed_steps: 1,
+            failed_steps: 0,
+            provider_call_count: 1,
+            delegation_steps: 0,
+            delegation_requires_verification_steps: 0,
+        },
+        policy: RunSummaryPolicy {
+            security_envelope_enabled: false,
+            signing_required: false,
+            key_id_required: false,
+            verify_allowed_algs: Vec::new(),
+            verify_allowed_key_sources: Vec::new(),
+            sandbox_policy: "centralized_path_resolver_v1".to_string(),
+            security_denials_by_code: BTreeMap::new(),
+        },
+        links: RunSummaryLinks {
+            run_json: "run.json".to_string(),
+            steps_json: "steps.json".to_string(),
+            pause_state_json: None,
+            outputs_dir: "outputs".to_string(),
+            logs_dir: "logs".to_string(),
+            learning_dir: "learning".to_string(),
+            scores_json: None,
+            suggestions_json: None,
+            aee_decision_json: None,
+            affect_state_json: None,
+            overlays_dir: "learning/overlays".to_string(),
+            cluster_groundwork_json: None,
+            trace_json: None,
+        },
+    };
+    let generated_from = super::run_artifacts::SuggestionsGeneratedFrom {
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_summary_version: 1,
+        scores_version: Some(1),
+    };
+
+    let watchful = super::run_artifacts::build_affect_state_artifact(
+        &summary,
+        &super::run_artifacts::SuggestionsArtifact {
+            suggestions_version: 1,
+            run_id: "affect-state-run".to_string(),
+            generated_from: generated_from.clone(),
+            suggestions: vec![super::run_artifacts::SuggestionItem {
+                id: "sug-watchful".to_string(),
+                category: "stability".to_string(),
+                severity: "warn".to_string(),
+                rationale: "One retry was needed; keep a guarded posture.".to_string(),
+                evidence: super::run_artifacts::SuggestionEvidence {
+                    failure_count: 0,
+                    retry_count: 1,
+                    delegation_denied_count: 0,
+                    security_denied_count: 0,
+                    success_ratio: 1.0,
+                    scheduler_max_parallel_observed: 1,
+                },
+                proposed_change: super::run_artifacts::SuggestedChangeIntent {
+                    intent: "maintain_current_policy".to_string(),
+                    target: "workflow-runtime".to_string(),
+                },
+            }],
+        },
+        None,
+    );
+    assert_eq!(watchful.affect.affect_mode, "watchful_adjustment");
+    assert_eq!(watchful.affect.recovery_bias, 1);
+
+    let steady = super::run_artifacts::build_affect_state_artifact(
+        &summary,
+        &super::run_artifacts::SuggestionsArtifact {
+            suggestions_version: 1,
+            run_id: "affect-state-run".to_string(),
+            generated_from,
+            suggestions: vec![super::run_artifacts::SuggestionItem {
+                id: "sug-steady".to_string(),
+                category: "stability".to_string(),
+                severity: "info".to_string(),
+                rationale: "No adaptation needed.".to_string(),
+                evidence: super::run_artifacts::SuggestionEvidence {
+                    failure_count: 0,
+                    retry_count: 0,
+                    delegation_denied_count: 0,
+                    security_denied_count: 0,
+                    success_ratio: 1.0,
+                    scheduler_max_parallel_observed: 1,
+                },
+                proposed_change: super::run_artifacts::SuggestedChangeIntent {
+                    intent: "maintain_current_policy".to_string(),
+                    target: "workflow-runtime".to_string(),
+                },
+            }],
+        },
+        None,
+    );
+    assert_eq!(steady.affect.affect_mode, "steady_state");
+    assert_eq!(steady.affect.recovery_bias, 0);
 }
 
 #[test]
@@ -1641,6 +1769,7 @@ fn build_scores_and_suggestions_artifacts_are_deterministic() {
             scores_json: None,
             suggestions_json: None,
             aee_decision_json: None,
+            affect_state_json: None,
             overlays_dir: "learning/overlays".to_string(),
             cluster_groundwork_json: None,
             trace_json: None,
