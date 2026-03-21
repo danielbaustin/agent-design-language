@@ -472,6 +472,13 @@ issue_version() {
   local issue="$1"
   local v
   v="$(gh issue view "$issue" --json labels -q '.labels[].name' 2>/dev/null | sed -n 's/^version://p' | head -n1 || true)"
+  if [[ -z "$v" ]]; then
+    local title
+    title="$(gh issue view "$issue" --json title -q .title 2>/dev/null || true)"
+    if [[ "$title" =~ \[(v[0-9]+\.[0-9]+)\] ]]; then
+      v="${BASH_REMATCH[1]}"
+    fi
+  fi
   if [[ -n "$v" ]]; then
     echo "$v"
   else
@@ -1101,13 +1108,15 @@ cmd_start() {
     [[ -n "$slug" ]] || die "start: --title produced empty slug after sanitization"
     title="$title_arg"
   fi
+  if [[ -z "$title" && "$no_fetch_issue" != "1" ]]; then
+    require_cmd gh
+    note "Fetching issue title via gh…"
+    title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
+  fi
   if [[ -z "$slug" ]]; then
     if [[ "$no_fetch_issue" == "1" ]]; then
       die "start: --slug is required when --no-fetch-issue is set"
     fi
-    require_cmd gh
-    note "Fetching issue title via gh…"
-    title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
     [[ -n "$title" ]] || die "Could not fetch issue #$issue title. Pass --slug or check gh auth/repo."
     slug="$(sanitize_slug "$title")"
   fi
@@ -1261,10 +1270,27 @@ cmd_new() {
     die "new: issue body contains disallowed absolute host path"
   fi
 
-  local labels_csv
+  local labels_csv normalized_labels label
   labels_csv="$labels"
-  if [[ "$labels_csv" != *"version:"* ]]; then
-    labels_csv="${labels_csv},version:${version}"
+  normalized_labels=""
+  IFS=',' read -r -a label_arr <<< "$labels_csv"
+  for label in "${label_arr[@]}"; do
+    label="$(trim_ws "$label")"
+    [[ -n "$label" ]] || continue
+    [[ "$label" == version:* ]] && continue
+    if [[ -z "$normalized_labels" ]]; then
+      normalized_labels="$label"
+    else
+      normalized_labels="${normalized_labels},${label}"
+    fi
+  done
+  labels_csv="$normalized_labels"
+  if [[ -n "$version" ]]; then
+    if [[ -n "$labels_csv" ]]; then
+      labels_csv="${labels_csv},version:${version}"
+    else
+      labels_csv="version:${version}"
+    fi
   fi
 
   local -a gh_args
