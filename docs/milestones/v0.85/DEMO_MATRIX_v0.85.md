@@ -1,255 +1,430 @@
-# Demo Matrix Template
+# ADL v0.85 Demo Matrix
 
-## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-- Related issues / work packages: {{issues_or_wps}}
-
-## Purpose
-Define the canonical milestone demo program: which bounded demos exist, which milestone claims they prove, how to run them, and what artifacts or proof surfaces reviewers should inspect.
-
-## How To Use
-- Use this document for runnable milestone evidence, not for broad feature brainstorming.
-- Keep demo rows and per-demo sections aligned so a reviewer can move from summary -> execution -> proof surface without reconstructing context by hand.
-- Prefer bounded, replayable, copy/paste-friendly commands over aspirational demo descriptions.
-- If a milestone claim cannot yet be shown through a runnable demo, say so explicitly and record the substitute proof surface.
-- Keep names stable across milestones where practical so comparisons remain easy.
-- If a section is not relevant, include a one-line rationale instead of deleting it.
-
-## Scope
-
-In scope for `{{milestone}}`:
-- {{in_scope_demo_area_1}}
-- {{in_scope_demo_area_2}}
-- {{in_scope_demo_area_3}}
-
-Out of scope for `{{milestone}}`:
-- {{out_of_scope_demo_area_1}}
-- {{out_of_scope_demo_area_2}}
-
-## Runtime Preconditions
-
-Working directory:
-
-```bash
-{{working_directory_command}}
-```
-
-Deterministic runtime / provider assumptions:
-
-```bash
-{{runtime_preconditions}}
-```
-
-Additional environment / fixture requirements:
-- {{env_requirement_1}}
-- {{env_requirement_2}}
-
-## Related Docs
-- Design contract: `{{design_doc}}`
-- WBS / milestone mapping: `{{wbs_doc}}`
-- Sprint / execution plan: `{{sprint_doc}}`
-- Release / checklist context: `{{release_or_checklist_doc}}`
-- Other proof-surface docs: {{other_related_docs}}
-
-## Demo Coverage Summary
-
-Use this table as the fast review surface for milestone coverage.
-
-| Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
-|---|---|---|---|---|---|---|---|
-| D1 | {{demo_title_1}} | {{claim_or_wp_1}} | `{{command_stub_1}}` | `{{proof_surface_1}}` | {{success_signal_1}} | {{determinism_note_1}} | {{status_1}} |
-| D2 | {{demo_title_2}} | {{claim_or_wp_2}} | `{{command_stub_2}}` | `{{proof_surface_2}}` | {{success_signal_2}} | {{determinism_note_2}} | {{status_2}} |
-| D3 | {{demo_title_3}} | {{claim_or_wp_3}} | `{{command_stub_3}}` | `{{proof_surface_3}}` | {{success_signal_3}} | {{determinism_note_3}} | {{status_3}} |
-
-Status guidance:
-- `PLANNED` = intended but not yet validated
-- `READY` = runnable and locally validated
-- `BLOCKED` = known dependency or missing proof surface
-- `LANDED` = milestone evidence exists and is ready for review
-
-## Coverage Rules
-- Every major milestone claim should map to a runnable demo or an explicit alternate proof surface.
-- Every demo should name one primary proof surface that a reviewer can inspect directly.
-- Commands should be copy/paste-ready and should not require private local state.
-- Success signals should say what to check, not just “command exits 0”.
-- Determinism / replay notes should explain how stability is judged.
-
-## Demo Details
-
-Repeat one block per demo in the coverage summary.
-
-### {{demo_id_1}}) {{demo_title_1}}
-
-Description:
-- {{demo_description_1}}
-- {{demo_description_1b}}
-
-Milestone claims / work packages covered:
-- {{claim_detail_1a}}
-- {{claim_detail_1b}}
-
-Commands to run:
-
-```bash
-{{demo_commands_1}}
-```
-
-Expected artifacts:
-- `{{artifact_1a}}`
-- `{{artifact_1b}}`
-- `{{artifact_1c}}`
-
-Primary proof surface:
-- `{{primary_proof_surface_1}}`
-
-Secondary proof surfaces:
-- `{{secondary_proof_surface_1a}}`
-- `{{secondary_proof_surface_1b}}`
-
-Expected success signals:
-- {{success_detail_1a}}
-- {{success_detail_1b}}
-
-Determinism / replay notes:
-- {{determinism_detail_1a}}
-- {{determinism_detail_1b}}
-
-Reviewer checks:
-- {{reviewer_check_1a}}
-- {{reviewer_check_1b}}
-
-Known limits / caveats:
-- {{caveat_1}}
+**Status:** Draft  
+**Milestone:** v0.85  
+**Purpose:** Canonical demo and proof-surface matrix for milestone review, release readiness, and external legibility.
 
 ---
 
-### {{demo_id_2}}) {{demo_title_2}}
+## 1. Purpose
 
-Description:
-- {{demo_description_2}}
+This document maps the major claims of ADL `v0.85` to concrete proof surfaces.
 
-Milestone claims / work packages covered:
-- {{claim_detail_2a}}
+For each significant feature band, it identifies either:
+- a **runnable demo**, or
+- an explicit **alternate proof surface** when a full runnable demo is not yet the right primary mechanism.
 
-Commands to run:
+The goal is not to create a vague showcase list. The goal is to make milestone review and release readiness legible.
 
-```bash
-{{demo_commands_2}}
-```
-
-Expected artifacts:
-- `{{artifact_2a}}`
-- `{{artifact_2b}}`
-
-Primary proof surface:
-- `{{primary_proof_surface_2}}`
-
-Expected success signals:
-- {{success_detail_2a}}
-
-Determinism / replay notes:
-- {{determinism_detail_2a}}
-
-Reviewer checks:
-- {{reviewer_check_2a}}
-
-Known limits / caveats:
-- {{caveat_2}}
+This matrix should help reviewers answer:
+- What does `v0.85` actually demonstrate?
+- Which demos are headline milestone demos versus supporting demos?
+- What artifact or record proves a claim if no direct demo is run?
+- What still remains partial or deferred?
 
 ---
 
-### {{demo_id_3}}) {{demo_title_3}}
+## 2. How to Read This Matrix
 
-Description:
-- {{demo_description_3}}
+### Demo Classes
 
-Milestone claims / work packages covered:
-- {{claim_detail_3a}}
+- **Primary demo**: a headline runnable demo that should be shown in milestone review and external explanation.
+- **Supporting demo**: a narrower runnable demo that proves a bounded surface but is not itself the headline narrative.
+- **Alternate proof surface**: an artifact-driven proof surface used when a runnable demo is not the best primary mechanism.
 
-Commands to run:
+### Demo Status
 
-```bash
-{{demo_commands_3}}
-```
+- **Ready**: can be used now for milestone review.
+- **Partial**: useful, but still rough or dependent on adjacent cleanup.
+- **Deferred**: intentionally not a `v0.85` runnable demo surface.
 
-Expected artifacts:
-- `{{artifact_3a}}`
+### Reviewer Rule
 
-Primary proof surface:
-- `{{primary_proof_surface_3}}`
+Every row in this matrix must provide at least one of:
+- a runnable command or playbook, or
+- an explicit artifact/proof surface that a reviewer can inspect.
 
-Expected success signals:
-- {{success_detail_3a}}
+---
 
-Determinism / replay notes:
-- {{determinism_detail_3a}}
+## 3. Demo Coverage Summary
 
-Reviewer checks:
-- {{reviewer_check_3a}}
+| Feature band | Class | Status | Primary surface | Proof artifact / review surface |
+|---|---|---:|---|---|
+| Structured authoring and task artifacts | Primary demo | Ready | Task-bundle / card workflow walkthrough | STP / SIP / SOR bundle and reviewer-visible output records |
+| Dependable execution and verifiable inference | Primary demo | Ready | Output-record and proof-surface walkthrough | Strong SORs, validation evidence, artifact-first review surfaces |
+| AEE bounded adaptation | Primary demo | Ready | `swarm/tools/demo_aee_bounded_adaptation.sh` | `aee_decision.json`, demo README, output card |
+| Affect engine core | Supporting demo | Ready | `swarm/tools/demo_affect_engine.sh` | affect-state artifact, downstream decision change |
+| Reasoning graph + affect integration | Supporting demo | Ready | `swarm/tools/demo_reasoning_graph_affect.sh` | reasoning-graph artifact, before/after comparison |
+| Affect + Gödel vertical slice | Primary demo | Ready | `swarm/tools/demo_affect_godel_vertical_slice.sh` | vertical-slice artifact proving full causal chain |
+| Hypothesis engine | Supporting demo | Ready | `swarm/tools/demo_godel_hypothesis_engine.sh` | structured hypothesis artifact |
+| Policy learning | Supporting demo | Ready | `swarm/tools/demo_adaptive_godel_loop.sh` | policy delta artifact and before/after comparison |
+| Experiment prioritization | Supporting demo | Ready | `swarm/tools/demo_experiment_prioritization.sh` | ranked artifact with tie-break behavior |
+| Cross-workflow learning | Alternate proof surface | Ready | `swarm/tools/demo_cross_workflow_learning.sh` | linked artifact chain across workflows; demos/cross_workflow_learning_demo.md |
+| Promotion / evaluation loop | Supporting demo | Ready | `swarm/tools/demo_promotion_eval_loop.sh` | evaluation artifact plus promotion decision artifact |
+| Review and output-record rigor | Alternate proof surface | Ready | template + output-card review | issues #918, #941, #948 and strong example SORs |
+| Demo/readiness discipline itself | Alternate proof surface | Ready | this document | canonical demo matrix |
 
-Known limits / caveats:
-- {{caveat_3}}
+---
 
-## Cross-Demo Validation
+## 4. Primary Demos
 
-Required baseline validation:
+These are the milestone’s headline demonstrations. They should be the first things shown in a milestone review and the first things referenced externally.
 
-```bash
-{{baseline_validation_commands}}
-```
+### 4.1 Structured Authoring / Task-Bundle Workflow
 
-Cross-demo checks:
-- {{cross_demo_check_1}}
-- {{cross_demo_check_2}}
-- {{cross_demo_check_3}}
+**Class:** Primary demo  
+**Status:** Ready  
+**Why it matters:** ADL’s credibility begins with explicit artifacts and explicit lifecycle control. Without this, the rest of the system looks like ordinary prompt orchestration.
 
-Failure policy:
-- If one demo is blocked, record the blocker and say whether milestone review can proceed with an alternate proof surface.
-- If deterministic behavior is expected but not observed, record the exact unstable artifact or command output.
+**Demo shape:**
+- Walk through one real issue bundle showing:
+  - STP / issue prompt
+  - SIP / input card
+  - SOR / output card
+- Show how the artifacts differ by role.
+- Show one reviewer-ready output record with concrete proof surfaces.
 
-## Determinism Evidence
+**Primary review surfaces:**
+- `.adl/issues/v0.85/bodies/`
+- `.adl/cards/`
+- `.adl/v0.85/tasks/` where available
+- reviewed output cards such as:
+  - `#918`
+  - `#941`
+  - `#958`
 
-Evidence directory / run root:
-- `{{evidence_root}}`
+**Reviewer should look for:**
+- clear separation between intent, execution, and review
+- bounded validation/proof surfaces
+- truthful integration-state language
 
-Repeatability approach:
-- {{repeatability_rule_1}}
-- {{repeatability_rule_2}}
+**Notes:**
+This is partly a walkthrough rather than a single shell script, but it is still a core milestone demo because it explains the substrate.
 
-Normalization rules:
-- {{normalization_rule_1}}
-- {{normalization_rule_2}}
+---
 
-Observed results summary:
-- {{determinism_result_1}}
-- {{determinism_result_2}}
-- {{determinism_result_3}}
+### 4.2 Dependable Execution and Verifiable Inference
 
-## Reviewer Sign-Off Surface
+**Class:** Primary demo  
+**Status:** Ready  
+**Why it matters:** This is one of the clearest ADL differentiators. The system must show that it can produce execution records that are more than plausible prose.
 
-For each demo, the reviewer should be able to answer:
-- What milestone claim does this demo prove?
-- Which command should be run first?
-- Which artifact or trace is the primary proof surface?
-- What deterministic or replay guarantee is being claimed?
-- What caveats or substitutions apply?
+**Demo shape:**
+- Walk through one strong SOR and its proof surfaces.
+- Show artifact-first validation.
+- Show how output review is grounded in emitted artifacts, not just narrative claims.
 
-Review owners:
-- {{review_owner_1}}
-- {{review_owner_2}}
+**Primary review surfaces:**
+- strong SORs from recent work, especially:
+  - `#918`
+  - `#941`
+  - `#958`
+- `docs/tooling/prompt-spec.md`
+- `docs/tooling/structured-prompt-contracts.md`
 
-Review status:
-- {{review_status_note}}
+**Reviewer should look for:**
+- primary proof surface named explicitly
+- validation commands tied to real artifacts
+- clear distinction between worktree state and merged state
+- no placeholder leakage
 
-## Notes
-- {{note_1}}
-- {{note_2}}
+**Notes:**
+This is best demonstrated through reviewed artifacts rather than a theatrical CLI run.
 
-## Exit Criteria
-- The milestone’s major claims are mapped to bounded demos or explicit alternate proof surfaces.
-- Each demo has runnable commands, expected artifacts, and a clear success signal.
-- Determinism / replay expectations are explicit where required.
-- A reviewer can inspect the matrix and locate the primary proof surface for each demo without extra reconstruction work.
+---
+
+### 4.3 AEE Bounded Adaptation
+
+**Class:** Primary demo  
+**Status:** Ready  
+**Command / playbook:**
+- `swarm/tools/demo_aee_bounded_adaptation.sh`
+
+**Primary supporting docs:**
+- `demos/aee-recovery/README.md`
+
+**Expected proof artifacts:**
+- emitted `aee_decision.json` or equivalent run artifact
+- corresponding SOR and validation evidence
+
+**Why it matters:**
+This is the first visible proof that ADL can adapt within bounds rather than behave as a brittle one-shot workflow.
+
+**Reviewer should look for:**
+- bounded retry / recovery behavior
+- deterministic or fixture-driven proof surface
+- artifact evidence that behavior changed for a reason
+
+---
+
+### 4.4 Affect + Gödel Vertical Slice
+
+**Class:** Primary demo  
+**Status:** Ready  
+**Command / playbook:**
+- `swarm/tools/demo_affect_godel_vertical_slice.sh`
+
+**Primary supporting docs:**
+- `demos/affect_godel_vertical_slice_demo.md`
+
+**Expected proof artifacts:**
+- vertical-slice artifact proving:
+  - input condition
+  - affect change
+  - downstream Gödel-stage change
+- corresponding SOR and validation evidence
+
+**Why it matters:**
+This is the most distinctive single `v0.85` demo. It shows that ADL is not only building workflow surfaces but a bounded cognitive stack.
+
+**Reviewer should look for:**
+- explicit causal chain
+- deterministic replay or recheck surface
+- visible downstream change in candidate selection or reasoning outcome
+
+**Notes:**
+This is the best single “why ADL is bigger than a coding assistant” demo in the milestone.
+
+---
+
+## 5. Supporting Demos
+
+These demos are important and runnable, but they support the milestone story rather than carrying it alone.
+
+### 5.1 Affect Engine Core
+
+**Class:** Supporting demo  
+**Status:** Ready  
+**Command / playbook:**
+- `swarm/tools/demo_affect_engine.sh`
+
+**Supporting docs:**
+- `demos/affect_engine_demo.md`
+
+**Expected proof artifacts:**
+- affect-state artifact
+- downstream decision change artifact
+
+**Reviewer should look for:**
+- deterministic affect update path
+- structured emitted affect artifact
+- one concrete downstream behavior change
+
+---
+
+### 5.2 Reasoning Graph + Affect
+
+**Class:** Supporting demo  
+**Status:** Ready  
+**Command / playbook:**
+- `swarm/tools/demo_reasoning_graph_affect.sh`
+
+**Supporting docs:**
+- `demos/reasoning_graph_affect_demo.md`
+
+**Expected proof artifacts:**
+- reasoning-graph artifact
+- before/after or A/B proof of affect-driven graph change
+
+**Reviewer should look for:**
+- actual graph artifact instance
+- deterministic graph computation step
+- graph-derived output changed by affect
+
+---
+
+### 5.3 Hypothesis Engine
+
+**Class:** Supporting demo  
+**Status:** Ready  
+**Primary surface:**
+- `swarm/tools/demo_godel_hypothesis_engine.sh`
+
+**Expected proof artifacts:**
+- structured hypothesis artifact
+- corresponding SOR and validation evidence
+
+**Reviewer should look for:**
+- deterministic hypothesis generation
+- artifact structure, not free-form narrative
+- downstream usability for later stages
+
+---
+
+### 5.4 Policy Learning
+
+**Class:** Supporting demo  
+**Status:** Ready  
+**Primary surface:**
+- `swarm/tools/demo_adaptive_godel_loop.sh`
+
+**Expected proof artifacts:**
+- policy artifact
+- before/after comparison artifact
+
+**Reviewer should look for:**
+- policy update derived from prior artifact or signal
+- clear before/after comparison
+- deterministic proof surface
+
+---
+
+### 5.5 Experiment Prioritization
+
+**Class:** Supporting demo  
+**Status:** Ready  
+**Primary surface:**
+- `swarm/tools/demo_experiment_prioritization.sh`
+
+**Expected proof artifacts:**
+- ranked artifact
+- explicit tie-break behavior
+
+**Reviewer should look for:**
+- deterministic ordering
+- ranked output from defined input set
+- explicit ranking rationale surface
+
+---
+
+### 5.6 Promotion / Evaluation Loop
+
+**Class:** Supporting demo  
+**Status:** Ready  
+**Primary surface:**
+- `swarm/tools/demo_promotion_eval_loop.sh`
+
+**Expected proof artifacts:**
+- evaluation artifact
+- promotion decision artifact
+
+**Reviewer should look for:**
+- deterministic mapping from evaluation to promotion decision
+- clear separation between score/report and promotion outcome
+
+---
+
+## 6. Alternate Proof Surfaces
+
+These are important `v0.85` claims whose best current proof is primarily artifact-driven rather than a headline runnable demo.
+
+### 6.1 Cross-Workflow Learning
+
+**Class:** Alternate proof surface  
+**Status:** Ready  
+**Why not primary demo yet:**
+The value is real, but the proof is clearest through linked artifacts and reviewed outputs rather than a polished standalone showcase.
+
+**Primary proof surfaces:**
+- `swarm/tools/demo_cross_workflow_learning.sh`
+- `demos/cross_workflow_learning_demo.md`
+- output card for `#751`
+- linked artifacts showing workflow A to workflow B effect
+
+**Reviewer should look for:**
+- artifact from one workflow consumed by another
+- modified downstream output or decision
+- deterministic linkage, not just narrative reference
+
+---
+
+### 6.2 Review / SOR Rigor
+
+**Class:** Alternate proof surface  
+**Status:** Ready  
+**Why not primary runnable demo:**
+This is primarily a template, validation, and record-quality improvement area.
+
+**Primary proof surfaces:**
+- issues `#918`, `#941`, `#948`
+- corresponding SORs
+- good/bad template examples
+
+**Reviewer should look for:**
+- proof-surface clarity
+- truthful integration-state language
+- reduced placeholder leakage
+- stronger execution-record standardization
+
+---
+
+### 6.3 Demo Matrix Itself
+
+**Class:** Alternate proof surface  
+**Status:** Ready  
+**Why it matters:**
+This document is itself a release-readiness artifact. It makes the milestone legible as a system rather than a loose collection of completed tickets.
+
+**Reviewer should look for:**
+- no major feature band left unmapped
+- clear distinction between primary demo, supporting demo, and alternate proof surface
+- realistic status language for anything partial or deferred
+
+---
+
+## 7. Deferred or Non-Primary Surfaces
+
+These surfaces matter, but they should not block the milestone demo set from being coherent.
+
+### 7.1 Trace / Signed Replay Substrate
+
+**Status:** Deferred to post-`v0.85` architecture work  
+**Reason:**
+The trace substrate is now recognized as a real architecture gap, but it surfaced too late to be forced into `v0.85` without destabilizing the milestone.
+
+**Current proof surface:**
+- architecture documents
+- bounded replay language in SORs
+- not yet a first-class runnable trace artifact
+
+**Reviewer note:**
+This is not a `v0.85` demo blocker. It is an identified next-layer architecture item.
+
+---
+
+## 8. Suggested Review Order
+
+For milestone review, the most effective order is:
+
+1. Structured authoring and task-bundle workflow  
+2. Dependable execution and verifiable inference  
+3. AEE bounded adaptation  
+4. Affect engine core  
+5. Reasoning graph plus affect  
+6. Affect plus Gödel vertical slice  
+7. Supporting Gödel stages (hypothesis, policy, prioritization, promotion)  
+8. Cross-workflow learning proof surface  
+
+This order starts with substrate credibility, then moves into increasing cognitive distinctiveness.
+
+---
+
+## 9. Milestone Exit Use
+
+This document should be used as part of `v0.85` milestone review.
+
+A reviewer should be able to use it to decide whether:
+- ADL’s major claims for `v0.85` are actually demonstrated
+- the milestone is legible enough for internal review
+- the milestone is legible enough for external review
+- any significant feature band is still missing a proof surface
+
+If a feature has no runnable demo and no alternate proof surface, the matrix is incomplete.
+
+---
+
+## 10. Summary
+
+`v0.85` is not only a feature milestone. It is the point where ADL starts to become legible as a real platform.
+
+This matrix makes that legibility explicit.
+
+It shows that the milestone includes:
+- strong artifact-based workflow discipline
+- stronger review and execution records
+- bounded adaptive execution
+- the first visible Gödel-style learning stages
+- the first bounded affect and reasoning-graph surfaces
+- and one real affect-plus-Gödel vertical slice that begins to express the larger ADL thesis
+
+That is the right demo shape for the milestone.
