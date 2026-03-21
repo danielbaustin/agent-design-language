@@ -12,6 +12,7 @@ pub(crate) const RUN_SUMMARY_VERSION: u32 = 1;
 pub(crate) const SCORES_VERSION: u32 = 1;
 pub(crate) const SUGGESTIONS_VERSION: u32 = 1;
 pub(crate) const AEE_DECISION_VERSION: u32 = 1;
+pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -140,6 +141,8 @@ pub(crate) struct RunSummaryLinks {
     pub(crate) aee_decision_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) affect_state_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) reasoning_graph_json: Option<String>,
     pub(crate) overlays_dir: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) cluster_groundwork_json: Option<String>,
@@ -315,6 +318,59 @@ pub(crate) struct AffectStateRef {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub(crate) struct ReasoningGraphArtifact {
+    pub(crate) reasoning_graph_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) graph: ReasoningGraphRecord,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ReasoningGraphRecord {
+    pub(crate) graph_id: String,
+    pub(crate) dominant_affect_mode: String,
+    pub(crate) ranking_rule: String,
+    pub(crate) selected_path: ReasoningGraphSelection,
+    pub(crate) nodes: Vec<ReasoningGraphNode>,
+    pub(crate) edges: Vec<ReasoningGraphEdge>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ReasoningGraphSelection {
+    pub(crate) selected_node_id: String,
+    pub(crate) selected_intent: String,
+    pub(crate) selected_target: String,
+    pub(crate) graph_derived_output: String,
+    pub(crate) affect_changed_ranking: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ReasoningGraphNode {
+    pub(crate) node_id: String,
+    pub(crate) node_kind: String,
+    pub(crate) label: String,
+    pub(crate) rank: u32,
+    pub(crate) priority_score: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) affect_mode: Option<String>,
+    pub(crate) rationale: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ReasoningGraphEdge {
+    pub(crate) edge_id: String,
+    pub(crate) from: String,
+    pub(crate) to: String,
+    pub(crate) relation: String,
+    pub(crate) rationale: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct AeeDecisionRecord {
     pub(crate) decision_id: String,
     pub(crate) decision_kind: String,
@@ -430,6 +486,11 @@ pub(crate) fn build_run_summary(
         .strip_prefix(run_paths.run_dir())
         .map(|p| p.display().to_string())
         .unwrap_or_else(|_| "learning/affect_state.v1.json".to_string());
+    let reasoning_graph_rel = run_paths
+        .reasoning_graph_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/reasoning_graph.v1.json".to_string());
     let cluster_groundwork_rel = run_paths
         .cluster_groundwork_json()
         .strip_prefix(run_paths.run_dir())
@@ -485,6 +546,7 @@ pub(crate) fn build_run_summary(
             suggestions_json: Some(suggestions_rel),
             aee_decision_json: Some(aee_decision_rel),
             affect_state_json: Some(affect_state_rel),
+            reasoning_graph_json: Some(reasoning_graph_rel),
             overlays_dir: run_paths
                 .overlays_dir()
                 .strip_prefix(run_paths.run_dir())
@@ -1107,6 +1169,154 @@ pub(crate) fn build_aee_decision_artifact(
     }
 }
 
+pub(crate) fn build_reasoning_graph_artifact(
+    run_summary: &RunSummaryArtifact,
+    affect_state: &AffectStateArtifact,
+    aee_decision: &AeeDecisionArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> ReasoningGraphArtifact {
+    let retry_score = if affect_state.affect.recovery_bias >= 2 {
+        92
+    } else if affect_state.affect.recovery_bias == 1 {
+        68
+    } else {
+        22
+    };
+    let maintain_score = if affect_state.affect.recovery_bias == 0 {
+        88
+    } else {
+        36
+    };
+    let failure_signal_score = if aee_decision.decision.evidence.failure_count > 0 {
+        80
+    } else {
+        24
+    };
+
+    let mut action_nodes = [
+        ReasoningGraphNode {
+            node_id: "action.retry_budget".to_string(),
+            node_kind: "action".to_string(),
+            label: "increase retry budget".to_string(),
+            rank: 0,
+            priority_score: retry_score,
+            affect_mode: Some(affect_state.affect.affect_mode.clone()),
+            rationale: format!(
+                "Affect-guided recovery bias {} favors bounded retry recovery.",
+                affect_state.affect.recovery_bias
+            ),
+        },
+        ReasoningGraphNode {
+            node_id: "action.maintain_policy".to_string(),
+            node_kind: "action".to_string(),
+            label: "maintain current policy".to_string(),
+            rank: 0,
+            priority_score: maintain_score,
+            affect_mode: Some(affect_state.affect.affect_mode.clone()),
+            rationale: "Steady-state or low-bias runs preserve the current bounded runtime policy."
+                .to_string(),
+        },
+    ];
+    action_nodes.sort_by(|a, b| {
+        b.priority_score
+            .cmp(&a.priority_score)
+            .then_with(|| a.node_id.cmp(&b.node_id))
+    });
+    for (idx, node) in action_nodes.iter_mut().enumerate() {
+        node.rank = (idx + 1) as u32;
+    }
+
+    let selected_node = action_nodes
+        .iter()
+        .find(|node| {
+            (aee_decision.decision.intent == "increase_step_retry_budget"
+                && node.node_id == "action.retry_budget")
+                || (aee_decision.decision.intent != "increase_step_retry_budget"
+                    && node.node_id == "action.maintain_policy")
+        })
+        .cloned()
+        .unwrap_or_else(|| action_nodes[0].clone());
+
+    let nodes = vec![
+        ReasoningGraphNode {
+            node_id: "evidence.runtime".to_string(),
+            node_kind: "evidence".to_string(),
+            label: "bounded runtime evidence".to_string(),
+            rank: 1,
+            priority_score: failure_signal_score,
+            affect_mode: None,
+            rationale: format!(
+                "failure_count={} retry_count={} success_ratio={}",
+                aee_decision.decision.evidence.failure_count,
+                aee_decision.decision.evidence.retry_count,
+                aee_decision.decision.evidence.success_ratio
+            ),
+        },
+        ReasoningGraphNode {
+            node_id: "affect.current".to_string(),
+            node_kind: "affect".to_string(),
+            label: affect_state.affect.affect_mode.replace('_', " "),
+            rank: 1,
+            priority_score: 100,
+            affect_mode: Some(affect_state.affect.affect_mode.clone()),
+            rationale: affect_state.affect.downstream_priority.clone(),
+        },
+        action_nodes[0].clone(),
+        action_nodes[1].clone(),
+    ];
+
+    let edges = vec![
+        ReasoningGraphEdge {
+            edge_id: "edge-001".to_string(),
+            from: "evidence.runtime".to_string(),
+            to: "affect.current".to_string(),
+            relation: "updates".to_string(),
+            rationale: affect_state.affect.update_reason.clone(),
+        },
+        ReasoningGraphEdge {
+            edge_id: "edge-002".to_string(),
+            from: "affect.current".to_string(),
+            to: "action.retry_budget".to_string(),
+            relation: "prioritizes".to_string(),
+            rationale: "High recovery bias increases retry-budget priority.".to_string(),
+        },
+        ReasoningGraphEdge {
+            edge_id: "edge-003".to_string(),
+            from: "affect.current".to_string(),
+            to: "action.maintain_policy".to_string(),
+            relation: "prioritizes".to_string(),
+            rationale: "Low recovery bias preserves the maintain-current-policy path.".to_string(),
+        },
+    ];
+
+    ReasoningGraphArtifact {
+        reasoning_graph_version: REASONING_GRAPH_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: affect_state.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        graph: ReasoningGraphRecord {
+            graph_id: "reasoning-graph-001".to_string(),
+            dominant_affect_mode: affect_state.affect.affect_mode.clone(),
+            ranking_rule:
+                "sort action nodes by descending priority_score, then lexicographic node_id"
+                    .to_string(),
+            selected_path: ReasoningGraphSelection {
+                selected_node_id: selected_node.node_id,
+                selected_intent: aee_decision.decision.intent.clone(),
+                selected_target: aee_decision.decision.target.clone(),
+                graph_derived_output: aee_decision.decision.expected_downstream_effect.clone(),
+                affect_changed_ranking: affect_state.affect.recovery_bias > 0,
+            },
+            nodes,
+            edges,
+        },
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn write_run_state_artifacts(
     resolved: &resolve::AdlResolved,
@@ -1255,8 +1465,16 @@ pub(crate) fn write_run_state_artifacts(
         &affect_state,
         Some(&scores_for_suggestions),
     );
+    let reasoning_graph = build_reasoning_graph_artifact(
+        &run_summary,
+        &affect_state,
+        &aee_decision,
+        Some(&scores_for_suggestions),
+    );
     let aee_decision_json =
         serde_json::to_vec_pretty(&aee_decision).context("serialize aee_decision.json")?;
+    let reasoning_graph_json =
+        serde_json::to_vec_pretty(&reasoning_graph).context("serialize reasoning_graph.v1.json")?;
 
     artifacts::atomic_write(&run_paths.run_json(), &run_json)?;
     artifacts::atomic_write(&run_paths.steps_json(), &steps_json)?;
@@ -1266,6 +1484,7 @@ pub(crate) fn write_run_state_artifacts(
     artifacts::atomic_write(&run_paths.suggestions_json(), &suggestions_json)?;
     artifacts::atomic_write(&run_paths.affect_state_json(), &affect_state_json)?;
     artifacts::atomic_write(&run_paths.aee_decision_json(), &aee_decision_json)?;
+    artifacts::atomic_write(&run_paths.reasoning_graph_json(), &reasoning_graph_json)?;
     if let Some(pause_payload) = pause {
         let pause_artifact = PauseStateArtifact {
             schema_version: PAUSE_STATE_SCHEMA_VERSION.to_string(),

@@ -118,6 +118,11 @@ impl RunArtifactPaths {
         self.learning_dir().join("affect_state.v1.json")
     }
 
+    /// Affect-linked reasoning graph artifact path.
+    pub fn reasoning_graph_json(&self) -> PathBuf {
+        self.learning_dir().join("reasoning_graph.v1.json")
+    }
+
     /// Learning overlays directory.
     pub fn overlays_dir(&self) -> PathBuf {
         self.learning_dir().join("overlays")
@@ -321,6 +326,9 @@ mod tests {
         assert!(paths
             .affect_state_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/affect_state.v1.json"));
+        assert!(paths
+            .reasoning_graph_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/reasoning_graph.v1.json"));
     }
 
     #[test]

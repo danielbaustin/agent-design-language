@@ -956,6 +956,7 @@ fn bounded_aee_recovery_demo_shows_failure_suggestion_overlay_and_recovery() {
     let suggestions_path = initial_run.join("learning/suggestions.json");
     let affect_path = initial_run.join("learning/affect_state.v1.json");
     let decision_path = initial_run.join("learning/aee_decision.json");
+    let graph_path = initial_run.join("learning/reasoning_graph.v1.json");
     let suggestions: serde_json::Value = serde_json::from_str(
         &fs::read_to_string(&suggestions_path).expect("read initial suggestions"),
     )
@@ -966,6 +967,9 @@ fn bounded_aee_recovery_demo_shows_failure_suggestion_overlay_and_recovery() {
     let decision_json: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(&decision_path).expect("read aee decision"))
             .expect("parse aee decision");
+    let graph_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&graph_path).expect("read reasoning graph"))
+            .expect("parse reasoning graph");
     let intents: Vec<&str> = suggestions["suggestions"]
         .as_array()
         .expect("suggestions array")
@@ -988,6 +992,14 @@ fn bounded_aee_recovery_demo_shows_failure_suggestion_overlay_and_recovery() {
         "recovery_focus"
     );
     assert_eq!(decision_json["decision"]["recommended_retry_budget"], 2);
+    assert_eq!(
+        graph_json["graph"]["dominant_affect_mode"],
+        "recovery_focus"
+    );
+    assert_eq!(
+        graph_json["graph"]["selected_path"]["selected_node_id"],
+        "action.retry_budget"
+    );
 
     let initial_replay = run_swarm(&[
         "instrument",
@@ -1028,6 +1040,7 @@ fn bounded_aee_recovery_demo_shows_failure_suggestion_overlay_and_recovery() {
     let overlay_audit = adapted_run.join("learning/overlays/applied_overlay.json");
     let overlay_source = adapted_run.join("learning/overlays/source_overlay.json");
     let adapted_affect_path = adapted_run.join("learning/affect_state.v1.json");
+    let adapted_graph_path = adapted_run.join("learning/reasoning_graph.v1.json");
     assert!(
         overlay_audit.is_file(),
         "missing {}",
@@ -1043,11 +1056,27 @@ fn bounded_aee_recovery_demo_shows_failure_suggestion_overlay_and_recovery() {
         "missing {}",
         adapted_affect_path.display()
     );
+    assert!(
+        adapted_graph_path.is_file(),
+        "missing {}",
+        adapted_graph_path.display()
+    );
 
     let summary_json: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(adapted_run.join("run_summary.json")).unwrap())
             .expect("parse run_summary");
+    let adapted_graph_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&adapted_graph_path).expect("read adapted graph"))
+            .expect("parse adapted graph");
     assert_eq!(summary_json["status"], "success");
+    assert_eq!(
+        adapted_graph_json["graph"]["dominant_affect_mode"],
+        "steady_state"
+    );
+    assert_eq!(
+        adapted_graph_json["graph"]["selected_path"]["selected_node_id"],
+        "action.maintain_policy"
+    );
 
     let adapted_replay = run_swarm(&[
         "instrument",
