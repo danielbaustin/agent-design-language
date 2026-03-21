@@ -66,7 +66,7 @@ The baseline repo gate must establish the following:
 
 ### Required local command suite
 
-From `swarm/`:
+From the Rust crate directory:
 
 - `cargo fmt --all -- --check`
 - `cargo clippy --all-targets -- -D warnings`
@@ -74,9 +74,9 @@ From `swarm/`:
 
 From the repository root:
 
-- `bash swarm/tools/check_no_new_legacy_swarm_refs.sh`
+- run the legacy-name guardrail script
 - `bash tools/check_release_notes_commands.sh`
-- `bash swarm/tools/demo_smoke_v07_story.sh`
+- run the milestone demo smoke script
 
 These commands mirror the current `adl-ci` job in `.github/workflows/ci.yaml`.
 
@@ -88,10 +88,10 @@ It enforces:
 
 - workspace line coverage threshold: `90%`
 - per-file line coverage threshold: `80%`
-- documented exclusions regex:
-  - `/swarm/src/bin/swarm.rs$`
-  - `/swarm/src/bin/swarm_remote.rs$`
-  - `/swarm/src/obsmem_contract.rs$`
+- documented exclusions regex for:
+  - the legacy CLI binary entrypoint
+  - the legacy remote binary entrypoint
+  - the observation-memory contract module
 
 Coverage enforcement is currently implemented by:
 
