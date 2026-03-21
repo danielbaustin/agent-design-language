@@ -166,6 +166,20 @@ path_relative_to_repo() {
   fi
 }
 
+absolute_host_path_present() {
+  local target="$1"
+  rg -n -e '(^|[^A-Za-z])(\/Users\/|\/home\/|[A-Za-z]:\\)' "$target" >/dev/null 2>&1
+}
+
+issue_card_reference() {
+  local kind="$1" issue="$2"
+  case "$kind" in
+    input) echo ".adl/cards/${issue}/input_${issue}.md" ;;
+    output) echo ".adl/cards/${issue}/output_${issue}.md" ;;
+    *) die "invalid card reference kind: $kind" ;;
+  esac
+}
+
 ensure_clean_worktree() {
   if ! git diff --quiet || ! git diff --cached --quiet; then
     die "Working tree is dirty. Commit/stash your changes first."
@@ -620,6 +634,10 @@ render_pr_body_file() {
   local tmp
   tmp="$(mktemp -t pr_body_XXXXXX.md)"
 
+  local input_ref output_ref
+  input_ref="$(issue_card_reference input "$issue")"
+  output_ref="$(issue_card_reference output "$issue")"
+
   {
     if [[ -n "$close_line" ]]; then
       echo "$close_line"
@@ -627,8 +645,8 @@ render_pr_body_file() {
     fi
 
     echo "Local artifacts (not committed):"
-    echo "- Input card:  $input_path"
-    echo "- Output card: $output_path"
+    echo "- Input card:  $input_ref"
+    echo "- Output card: $output_ref"
     echo "- Idempotency-Key: $fingerprint"
     echo
 
@@ -1229,6 +1247,10 @@ cmd_new() {
     issue_body="$body"
   else
     issue_body=$'## Goal\n-\n\n## Acceptance Criteria\n-'
+  fi
+
+  if absolute_host_path_present <(printf '%s\n' "$issue_body"); then
+    die "new: issue body contains disallowed absolute host path"
   fi
 
   local labels_csv

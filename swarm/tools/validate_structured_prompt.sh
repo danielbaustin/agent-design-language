@@ -65,6 +65,11 @@ valid_github_pr_url() { [[ "$1" =~ ^https://github\.com/[^/]+/[^/]+/pull/[0-9]+$
 valid_reference() { [[ "$1" =~ ^https?://.+$ || "$1" =~ ^[A-Za-z0-9._/-]+$ ]]; }
 valid_iso8601_datetime() { [[ "$1" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]]; }
 
+contains_absolute_host_path() {
+  local file="$1"
+  rg -n -e '(^|[^A-Za-z])(\/Users\/|\/home\/|[A-Za-z]:\\)' "$file" >/dev/null 2>&1
+}
+
 extract_front_matter() {
   local file="$1"
   local first closer
@@ -324,6 +329,8 @@ validate_sor() {
     fi
   fi
 }
+
+contains_absolute_host_path "$INPUT" && die "$TYPE contains disallowed absolute host path"
 
 case "$TYPE" in
   stp) validate_stp "$INPUT" ;;
