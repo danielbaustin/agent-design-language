@@ -5,6 +5,10 @@ use std::path::PathBuf;
 
 use ::adl::{
     artifacts, godel,
+    godel::affect_slice::{
+        build_affect_godel_vertical_slice_artifact, persist_affect_godel_vertical_slice_artifact,
+        AffectSliceInputs, PersistedAffectStateArtifact, PersistedReasoningGraphArtifact,
+    },
     godel::cross_workflow::PersistedCrossWorkflowArtifact,
     godel::experiment_record::PersistedExperimentRecord,
     godel::obsmem_index::PersistedStageIndexEntry,
@@ -79,18 +83,34 @@ struct GodelEvaluateCliSummary {
     evaluation_plan_example: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct GodelAffectSliceCliSummary {
+    initial_run_id: String,
+    adapted_run_id: String,
+    godel_run_id: String,
+    artifact_path: String,
+    baseline_candidate_id: String,
+    initial_selected_candidate_id: String,
+    initial_selected_strategy: String,
+    adapted_selected_candidate_id: String,
+    adapted_selected_strategy: String,
+    changed_output_surface: String,
+    changed_downstream_decision: bool,
+}
+
 pub(crate) fn real_godel(args: &[String]) -> Result<()> {
     let Some(cmd) = args.first().map(|s| s.as_str()) else {
         return Err(anyhow::anyhow!(
-            "godel subcommand required (supported: run, evaluate, inspect)"
+            "godel subcommand required (supported: run, evaluate, inspect, affect-slice)"
         ));
     };
     match cmd {
         "run" => real_godel_run(&args[1..]),
         "evaluate" => real_godel_evaluate(&args[1..]),
         "inspect" => real_godel_inspect(&args[1..]),
+        "affect-slice" => real_godel_affect_slice(&args[1..]),
         other => Err(anyhow::anyhow!(
-            "unknown godel subcommand '{other}' (supported: run, evaluate, inspect)"
+            "unknown godel subcommand '{other}' (supported: run, evaluate, inspect, affect-slice)"
         )),
     }
 }
@@ -550,6 +570,245 @@ pub(crate) fn real_godel_evaluate(args: &[String]) -> Result<()> {
         rationale: outcome.rationale,
         evaluation_plan_example: "adl-spec/examples/v0.8/evaluation_plan.v1.example.json"
             .to_string(),
+    };
+    println!("{}", serde_json::to_string_pretty(&summary)?);
+    Ok(())
+}
+
+pub(crate) fn real_godel_affect_slice(args: &[String]) -> Result<()> {
+    let mut initial_run_id: Option<String> = None;
+    let mut adapted_run_id: Option<String> = None;
+    let mut godel_run_id: Option<String> = None;
+    let mut aee_runs_dir: Option<PathBuf> = None;
+    let mut godel_runs_dir: Option<PathBuf> = None;
+
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--initial-run-id" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!("--initial-run-id requires a value"));
+                };
+                initial_run_id = Some(v.clone());
+                i += 1;
+            }
+            "--adapted-run-id" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!("--adapted-run-id requires a value"));
+                };
+                adapted_run_id = Some(v.clone());
+                i += 1;
+            }
+            "--godel-run-id" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!("--godel-run-id requires a value"));
+                };
+                godel_run_id = Some(v.clone());
+                i += 1;
+            }
+            "--aee-runs-dir" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!("--aee-runs-dir requires a directory path"));
+                };
+                aee_runs_dir = Some(PathBuf::from(v));
+                i += 1;
+            }
+            "--godel-runs-dir" => {
+                let Some(v) = args.get(i + 1) else {
+                    return Err(anyhow::anyhow!(
+                        "--godel-runs-dir requires a directory path"
+                    ));
+                };
+                godel_runs_dir = Some(PathBuf::from(v));
+                i += 1;
+            }
+            other => {
+                return Err(anyhow::anyhow!(
+                    "unknown godel affect-slice arg '{other}' (supported: --initial-run-id, --adapted-run-id, --godel-run-id, --aee-runs-dir, --godel-runs-dir)"
+                ));
+            }
+        }
+        i += 1;
+    }
+
+    let initial_run_id = initial_run_id
+        .ok_or_else(|| anyhow::anyhow!("godel affect-slice requires --initial-run-id <id>"))?;
+    let adapted_run_id = adapted_run_id
+        .ok_or_else(|| anyhow::anyhow!("godel affect-slice requires --adapted-run-id <id>"))?;
+    let godel_run_id = godel_run_id
+        .ok_or_else(|| anyhow::anyhow!("godel affect-slice requires --godel-run-id <id>"))?;
+    let default_runs_root =
+        artifacts::runs_root().unwrap_or_else(|_| PathBuf::from(".adl").join("runs"));
+    let aee_runs_dir = aee_runs_dir.unwrap_or_else(|| default_runs_root.clone());
+    let godel_runs_dir = godel_runs_dir.unwrap_or(default_runs_root);
+
+    let initial_affect_path = aee_runs_dir
+        .join(&initial_run_id)
+        .join("learning")
+        .join("affect_state.v1.json");
+    let initial_graph_path = aee_runs_dir
+        .join(&initial_run_id)
+        .join("learning")
+        .join("reasoning_graph.v1.json");
+    let adapted_affect_path = aee_runs_dir
+        .join(&adapted_run_id)
+        .join("learning")
+        .join("affect_state.v1.json");
+    let adapted_graph_path = aee_runs_dir
+        .join(&adapted_run_id)
+        .join("learning")
+        .join("reasoning_graph.v1.json");
+    let hypothesis_path = godel_runs_dir
+        .join(&godel_run_id)
+        .join("godel")
+        .join("godel_hypothesis.v1.json");
+    let policy_path = godel_runs_dir
+        .join(&godel_run_id)
+        .join("godel")
+        .join("godel_policy.v1.json");
+    let prioritization_path = godel_runs_dir
+        .join(&godel_run_id)
+        .join("godel")
+        .join("godel_experiment_priority.v1.json");
+
+    let initial_affect: PersistedAffectStateArtifact =
+        serde_json::from_str(&fs::read_to_string(&initial_affect_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_AFFECT_SLICE_IO: failed to read runs/{}/learning/affect_state.v1.json: {err}",
+                initial_run_id
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_AFFECT_SLICE_INVALID: failed to parse runs/{}/learning/affect_state.v1.json: {err}",
+                initial_run_id
+            )
+        })?;
+    let initial_graph: PersistedReasoningGraphArtifact =
+        serde_json::from_str(&fs::read_to_string(&initial_graph_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_AFFECT_SLICE_IO: failed to read runs/{}/learning/reasoning_graph.v1.json: {err}",
+                initial_run_id
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_AFFECT_SLICE_INVALID: failed to parse runs/{}/learning/reasoning_graph.v1.json: {err}",
+                initial_run_id
+            )
+        })?;
+    let adapted_affect: PersistedAffectStateArtifact =
+        serde_json::from_str(&fs::read_to_string(&adapted_affect_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_AFFECT_SLICE_IO: failed to read runs/{}/learning/affect_state.v1.json: {err}",
+                adapted_run_id
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_AFFECT_SLICE_INVALID: failed to parse runs/{}/learning/affect_state.v1.json: {err}",
+                adapted_run_id
+            )
+        })?;
+    let adapted_graph: PersistedReasoningGraphArtifact =
+        serde_json::from_str(&fs::read_to_string(&adapted_graph_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_AFFECT_SLICE_IO: failed to read runs/{}/learning/reasoning_graph.v1.json: {err}",
+                adapted_run_id
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_AFFECT_SLICE_INVALID: failed to parse runs/{}/learning/reasoning_graph.v1.json: {err}",
+                adapted_run_id
+            )
+        })?;
+    let hypothesis: godel::hypothesis::PersistedHypothesisArtifact =
+        serde_json::from_str(&fs::read_to_string(&hypothesis_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_AFFECT_SLICE_IO: failed to read runs/{}/godel/godel_hypothesis.v1.json: {err}",
+                godel_run_id
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_AFFECT_SLICE_INVALID: failed to parse runs/{}/godel/godel_hypothesis.v1.json: {err}",
+                godel_run_id
+            )
+        })?;
+    let policy: PersistedPolicyArtifact =
+        serde_json::from_str(&fs::read_to_string(&policy_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_AFFECT_SLICE_IO: failed to read runs/{}/godel/godel_policy.v1.json: {err}",
+                godel_run_id
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+            "GODEL_AFFECT_SLICE_INVALID: failed to parse runs/{}/godel/godel_policy.v1.json: {err}",
+            godel_run_id
+        )
+        })?;
+    let prioritization: PersistedPrioritizationArtifact =
+        serde_json::from_str(&fs::read_to_string(&prioritization_path).map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_AFFECT_SLICE_IO: failed to read runs/{}/godel/godel_experiment_priority.v1.json: {err}",
+                godel_run_id
+            )
+        })?)
+        .map_err(|err| {
+            anyhow::anyhow!(
+                "GODEL_AFFECT_SLICE_INVALID: failed to parse runs/{}/godel/godel_experiment_priority.v1.json: {err}",
+                godel_run_id
+            )
+        })?;
+
+    let hypothesis_artifact_rel = PathBuf::from("runs")
+        .join(&godel_run_id)
+        .join("godel")
+        .join("godel_hypothesis.v1.json");
+    let policy_artifact_rel = PathBuf::from("runs")
+        .join(&godel_run_id)
+        .join("godel")
+        .join("godel_policy.v1.json");
+    let prioritization_artifact_rel = PathBuf::from("runs")
+        .join(&godel_run_id)
+        .join("godel")
+        .join("godel_experiment_priority.v1.json");
+
+    let artifact = build_affect_godel_vertical_slice_artifact(AffectSliceInputs {
+        initial_affect: &initial_affect,
+        initial_graph: &initial_graph,
+        adapted_affect: &adapted_affect,
+        adapted_graph: &adapted_graph,
+        hypothesis: &hypothesis,
+        hypothesis_artifact_path: &hypothesis_artifact_rel,
+        policy: &policy,
+        policy_artifact_path: &policy_artifact_rel,
+        prioritization: &prioritization,
+        prioritization_artifact_path: &prioritization_artifact_rel,
+    })?;
+    let artifact_rel =
+        persist_affect_godel_vertical_slice_artifact(&godel_runs_dir, &godel_run_id, &artifact)?;
+
+    let summary = GodelAffectSliceCliSummary {
+        initial_run_id,
+        adapted_run_id,
+        godel_run_id,
+        artifact_path: artifact_rel.display().to_string(),
+        baseline_candidate_id: artifact.baseline_candidate_id.clone(),
+        initial_selected_candidate_id: artifact
+            .downstream_change
+            .initial_selected_candidate_id
+            .clone(),
+        initial_selected_strategy: artifact.downstream_change.initial_selected_strategy.clone(),
+        adapted_selected_candidate_id: artifact
+            .downstream_change
+            .adapted_selected_candidate_id
+            .clone(),
+        adapted_selected_strategy: artifact.downstream_change.adapted_selected_strategy.clone(),
+        changed_output_surface: artifact.downstream_change.output_surface.clone(),
+        changed_downstream_decision: artifact.downstream_change.changed,
     };
     println!("{}", serde_json::to_string_pretty(&summary)?);
     Ok(())

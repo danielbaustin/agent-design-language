@@ -1,3 +1,4 @@
+pub mod affect_slice;
 pub mod canonical_evidence;
 pub mod cross_workflow;
 pub mod evaluation;

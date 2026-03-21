@@ -79,6 +79,12 @@ decision through the persisted `godel_cross_workflow_learning.v1.json`
 artifact. For a one-command review flow, run
 `swarm/tools/demo_cross_workflow_learning.sh`.
 
+Use `affect_godel_vertical_slice_demo.md` for the bounded WP-17 slice that
+proves an affect transition changes the top Gödel-adjacent strategy ranking
+through the persisted `godel_affect_vertical_slice.v1.json` artifact. For a
+one-command review flow, run
+`swarm/tools/demo_affect_godel_vertical_slice.sh`.
+
 ### Historical/runtime fixture inventory
 
 - `../swarm/examples/README.md`
