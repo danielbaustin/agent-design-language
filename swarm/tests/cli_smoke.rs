@@ -930,7 +930,9 @@ fn godel_evaluate_produces_deterministic_summary() {
 fn affect_godel_vertical_slice_demo_emits_changed_strategy_artifact() {
     let demo_root = unique_test_temp_dir("affect-godel-vertical-slice-demo");
     let script = repo_root().join("swarm/tools/demo_affect_godel_vertical_slice.sh");
+    let runs_root = demo_root.join("aee-runs");
     let out = Command::new("bash")
+        .env("ADL_RUNS_ROOT", &runs_root)
         .arg(&script)
         .arg(&demo_root)
         .output()
@@ -975,7 +977,7 @@ fn bounded_aee_recovery_demo_shows_failure_suggestion_overlay_and_recovery() {
     let adapted_yaml = fixture_path("examples/v0-3-aee-recovery-adapted.adl.yaml");
     let overlay = repo_root().join("demos/aee-recovery/retry-budget.overlay.json");
     let mock = fixture_path("tools/mock_ollama_fail_once.sh");
-    let runs_root = repo_root().join(".adl/runs");
+    let runs_root = demo_root.join("runs");
     let initial_run = runs_root.join("v0-3-aee-recovery-initial");
     let adapted_run = runs_root.join("v0-3-aee-recovery-adapted");
 
@@ -995,6 +997,7 @@ fn bounded_aee_recovery_demo_shows_failure_suggestion_overlay_and_recovery() {
         &[
             ("ADL_OLLAMA_BIN", mock.to_str().unwrap()),
             ("ADL_AEE_DEMO_STATE_DIR", initial_state.to_str().unwrap()),
+            ("ADL_RUNS_ROOT", runs_root.to_str().unwrap()),
         ],
     );
     assert!(
@@ -1085,6 +1088,7 @@ fn bounded_aee_recovery_demo_shows_failure_suggestion_overlay_and_recovery() {
         &[
             ("ADL_OLLAMA_BIN", mock.to_str().unwrap()),
             ("ADL_AEE_DEMO_STATE_DIR", adapted_state.to_str().unwrap()),
+            ("ADL_RUNS_ROOT", runs_root.to_str().unwrap()),
         ],
     );
     assert!(
@@ -1253,6 +1257,7 @@ fn instrument_replay_and_diff_trace_outputs_are_stable() {
 #[test]
 fn run_flag_executes_fixture_with_mock_provider_and_writes_outputs() {
     let out_dir = unique_test_temp_dir("cli-run-mock").join("out");
+    let runs_root = unique_test_temp_dir("cli-run-mock-runs");
     let fixture = fixture_path("examples/v0-6-hitl-no-pause.adl.yaml");
     let mock = fixture_path("tools/mock_ollama_v0_4.sh");
     let out = run_swarm_with_env(
@@ -1263,7 +1268,10 @@ fn run_flag_executes_fixture_with_mock_provider_and_writes_outputs() {
             "--out",
             out_dir.to_str().unwrap(),
         ],
-        &[("ADL_OLLAMA_BIN", mock.to_str().unwrap())],
+        &[
+            ("ADL_OLLAMA_BIN", mock.to_str().unwrap()),
+            ("ADL_RUNS_ROOT", runs_root.to_str().unwrap()),
+        ],
     );
     assert!(
         out.status.success(),
@@ -1278,6 +1286,7 @@ fn run_flag_executes_fixture_with_mock_provider_and_writes_outputs() {
 #[test]
 fn run_flag_honors_no_step_output_alias() {
     let out_dir = unique_test_temp_dir("cli-run-no-step-output").join("out");
+    let runs_root = unique_test_temp_dir("cli-run-no-step-output-runs");
     let fixture = fixture_path("examples/v0-6-hitl-no-pause.adl.yaml");
     let mock = fixture_path("tools/mock_ollama_v0_4.sh");
     let out = run_swarm_with_env(
@@ -1289,7 +1298,10 @@ fn run_flag_honors_no_step_output_alias() {
             "--out",
             out_dir.to_str().unwrap(),
         ],
-        &[("ADL_OLLAMA_BIN", mock.to_str().unwrap())],
+        &[
+            ("ADL_OLLAMA_BIN", mock.to_str().unwrap()),
+            ("ADL_RUNS_ROOT", runs_root.to_str().unwrap()),
+        ],
     );
     assert!(
         out.status.success(),

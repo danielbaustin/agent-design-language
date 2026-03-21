@@ -11,6 +11,8 @@ Ship / no-ship gate for the v0.85 milestone.
 
 This checklist verifies that planning, implementation discipline, quality gates, demo proof surfaces, and release packaging steps have all been satisfied before the release ceremony.
 
+Canonical quality-gate reference: `QUALITY_GATE_v0.85.md`
+
 Evidence should exist for every checked item.
 
 ---
@@ -54,6 +56,7 @@ Evidence should exist for every checked item.
 
 ## Quality Gates
 
+- [ ] Canonical quality gate documented (`QUALITY_GATE_v0.85.md`)
 - [ ] `cargo fmt` passes
 - [ ] `cargo clippy --workspace --all-targets -- -D warnings` passes
 - [ ] `cargo test --workspace` passes
