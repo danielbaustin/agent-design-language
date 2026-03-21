@@ -6,6 +6,7 @@ pub fn usage() -> &'static str {
   adl godel run --run-id <id> --workflow-id <id> --failure-code <code> --failure-summary <text> [--evidence-ref <path> ...] [--runs-dir <dir>]
   adl godel inspect --run-id <id> [--runs-dir <dir>]
   adl godel evaluate --failure-code <code> --experiment-result <ok|blocked> --score-delta <int>
+  adl godel affect-slice --initial-run-id <id> --adapted-run-id <id> --godel-run-id <id> [--aee-runs-dir <dir>] [--godel-runs-dir <dir>]
   adl keygen --out-dir <dir>
   adl sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
   adl instrument <graph|replay|replay-bundle|diff-plan|diff-trace> ...
@@ -45,6 +46,7 @@ Examples:
   adl godel run --run-id run-745-a --workflow-id wf-godel-loop --failure-code tool_failure --failure-summary \"step failed with deterministic parse error\" --evidence-ref runs/run-745-a/run_status.json
   adl godel inspect --run-id run-745-a --runs-dir .adl/runs
   adl godel evaluate --failure-code tool_failure --experiment-result ok --score-delta 1
+  adl godel affect-slice --initial-run-id v0-3-aee-recovery-initial --adapted-run-id v0-3-aee-recovery-adapted --godel-run-id review-godel-affect-001 --aee-runs-dir .adl/runs --godel-runs-dir .adl/reports/demo-affect-godel-vertical-slice/runs
   adl keygen --out-dir ./.keys
   adl sign examples/v0-5-pattern-linear.adl.yaml --key ./.keys/ed25519-private.b64 --out /tmp/signed.adl.yaml
   adl instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format dot

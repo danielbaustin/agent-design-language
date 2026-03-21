@@ -704,6 +704,25 @@ fn godel_evaluate_validates_required_and_unknown_args() {
 }
 
 #[test]
+fn godel_affect_slice_validates_required_and_unknown_args() {
+    let missing_initial = run_swarm(&["godel", "affect-slice"]);
+    assert!(!missing_initial.status.success());
+    let stderr_missing = String::from_utf8_lossy(&missing_initial.stderr);
+    assert!(
+        stderr_missing.contains("godel affect-slice requires --initial-run-id <id>"),
+        "stderr:\n{stderr_missing}"
+    );
+
+    let unknown = run_swarm(&["godel", "affect-slice", "--bogus", "x"]);
+    assert!(!unknown.status.success());
+    let stderr_unknown = String::from_utf8_lossy(&unknown.stderr);
+    assert!(
+        stderr_unknown.contains("unknown godel affect-slice arg"),
+        "stderr:\n{stderr_unknown}"
+    );
+}
+
+#[test]
 fn godel_inspect_reads_runtime_artifacts_deterministically() {
     let runs_dir = unique_test_temp_dir("adl-godel-inspect");
     let run = run_swarm(&[
@@ -905,6 +924,44 @@ fn godel_evaluate_produces_deterministic_summary() {
         summary["evaluation_plan_example"],
         "adl-spec/examples/v0.8/evaluation_plan.v1.example.json"
     );
+}
+
+#[test]
+fn affect_godel_vertical_slice_demo_emits_changed_strategy_artifact() {
+    let demo_root = unique_test_temp_dir("affect-godel-vertical-slice-demo");
+    let script = repo_root().join("swarm/tools/demo_affect_godel_vertical_slice.sh");
+    let out = Command::new("bash")
+        .arg(&script)
+        .arg(&demo_root)
+        .output()
+        .expect("run affect-godel demo");
+    assert!(
+        out.status.success(),
+        "stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let artifact_path =
+        demo_root.join("runs/review-godel-affect-001/godel/godel_affect_vertical_slice.v1.json");
+    assert!(
+        artifact_path.is_file(),
+        "missing {}",
+        artifact_path.display()
+    );
+
+    let artifact: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&artifact_path).expect("read artifact"))
+            .expect("parse artifact");
+    assert_eq!(
+        artifact["downstream_change"]["initial_selected_candidate_id"],
+        "exp:retry-budget"
+    );
+    assert_eq!(
+        artifact["downstream_change"]["adapted_selected_candidate_id"],
+        "exp:maintain-policy"
+    );
+    assert_eq!(artifact["downstream_change"]["changed"], true);
 }
 
 #[test]

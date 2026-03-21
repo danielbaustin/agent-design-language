@@ -1,6 +1,8 @@
 use super::commands::real_learn_export;
 use super::demo_cmd::{is_ci_environment, real_demo};
-use super::godel_cmd::{real_godel, real_godel_evaluate, real_godel_inspect, real_godel_run};
+use super::godel_cmd::{
+    real_godel, real_godel_affect_slice, real_godel_evaluate, real_godel_inspect, real_godel_run,
+};
 use super::open::{
     detect_platform, open_artifact, open_command_for, select_open_artifact, CommandRunner,
     OpenPlatform, RealCommandRunner,
@@ -211,6 +213,7 @@ fn usage_mentions_v0_4_and_legacy_examples() {
     assert!(text.contains("adl godel run"));
     assert!(text.contains("adl godel inspect"));
     assert!(text.contains("adl godel evaluate"));
+    assert!(text.contains("adl godel affect-slice"));
     assert!(text.contains("Examples:"));
     assert!(text.contains("examples/v0-4-demo-fork-join-swarm.adl.yaml"));
     assert!(text.contains("examples/adl-0.1.yaml"));
@@ -222,7 +225,7 @@ fn real_godel_validates_subcommand_and_run_args() {
     let err = real_godel(&[]).expect_err("missing subcommand");
     assert!(err
         .to_string()
-        .contains("supported: run, evaluate, inspect"));
+        .contains("supported: run, evaluate, inspect, affect-slice"));
 
     let err = real_godel(&["unknown".to_string()]).expect_err("unknown subcommand");
     assert!(err.to_string().contains("unknown godel subcommand"));
@@ -309,6 +312,219 @@ fn real_godel_inspect_rejects_missing_value_flags() {
     assert!(err
         .to_string()
         .contains("--runs-dir requires a directory path"));
+}
+
+#[test]
+fn real_godel_affect_slice_rejects_missing_value_flags() {
+    let cases = [
+        (
+            vec!["--initial-run-id"],
+            "--initial-run-id requires a value",
+        ),
+        (
+            vec!["--adapted-run-id"],
+            "--adapted-run-id requires a value",
+        ),
+        (vec!["--godel-run-id"], "--godel-run-id requires a value"),
+        (
+            vec!["--aee-runs-dir"],
+            "--aee-runs-dir requires a directory path",
+        ),
+        (
+            vec!["--godel-runs-dir"],
+            "--godel-runs-dir requires a directory path",
+        ),
+    ];
+
+    for (args, needle) in cases {
+        let args = args.into_iter().map(|s| s.to_string()).collect::<Vec<_>>();
+        let err = real_godel_affect_slice(&args).expect_err("missing value flag should fail");
+        assert!(err.to_string().contains(needle), "err={err}");
+    }
+}
+
+#[test]
+fn real_godel_affect_slice_persists_vertical_slice_artifact() {
+    let base = std::env::temp_dir().join(format!("adl-godel-affect-slice-{}", std::process::id()));
+    let aee_root = base.join("aee-runs");
+    let godel_root = base.join("godel-runs");
+    std::fs::create_dir_all(aee_root.join("v0-3-aee-recovery-initial/learning"))
+        .expect("create initial learning dir");
+    std::fs::create_dir_all(aee_root.join("v0-3-aee-recovery-adapted/learning"))
+        .expect("create adapted learning dir");
+    std::fs::create_dir_all(godel_root.join("run-745-a/godel")).expect("create godel dir");
+
+    std::fs::write(
+        aee_root.join("v0-3-aee-recovery-initial/learning/affect_state.v1.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "run_id": "v0-3-aee-recovery-initial",
+            "affect": {
+                "affect_state_id": "affect-initial",
+                "affect_mode": "recovery_focus",
+                "recovery_bias": 2,
+                "downstream_priority": "retry_recovery",
+                "update_reason": "deterministic failure evidence"
+            }
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    std::fs::write(
+        aee_root.join("v0-3-aee-recovery-initial/learning/reasoning_graph.v1.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "run_id": "v0-3-aee-recovery-initial",
+            "graph": {
+                "dominant_affect_mode": "recovery_focus",
+                "ranking_rule": "sort by priority_score desc, then node_id asc",
+                "selected_path": {
+                    "selected_node_id": "action.retry_budget",
+                    "selected_intent": "increase_step_retry_budget",
+                    "selected_target": "workflow-runtime",
+                    "graph_derived_output": "retry budget experiment",
+                    "affect_changed_ranking": true
+                },
+                "nodes": [
+                    {"node_id": "action.retry_budget", "node_kind": "action", "rank": 1, "priority_score": 92},
+                    {"node_id": "action.maintain_policy", "node_kind": "action", "rank": 2, "priority_score": 36}
+                ]
+            }
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    std::fs::write(
+        aee_root.join("v0-3-aee-recovery-adapted/learning/affect_state.v1.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "run_id": "v0-3-aee-recovery-adapted",
+            "affect": {
+                "affect_state_id": "affect-adapted",
+                "affect_mode": "steady_state",
+                "recovery_bias": 0,
+                "downstream_priority": "maintain_current_policy",
+                "update_reason": "deterministic adapted rerun"
+            }
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    std::fs::write(
+        aee_root.join("v0-3-aee-recovery-adapted/learning/reasoning_graph.v1.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "run_id": "v0-3-aee-recovery-adapted",
+            "graph": {
+                "dominant_affect_mode": "steady_state",
+                "ranking_rule": "sort by priority_score desc, then node_id asc",
+                "selected_path": {
+                    "selected_node_id": "action.maintain_policy",
+                    "selected_intent": "maintain_current_policy",
+                    "selected_target": "workflow-runtime",
+                    "graph_derived_output": "maintain policy review",
+                    "affect_changed_ranking": false
+                },
+                "nodes": [
+                    {"node_id": "action.maintain_policy", "node_kind": "action", "rank": 1, "priority_score": 88},
+                    {"node_id": "action.retry_budget", "node_kind": "action", "rank": 2, "priority_score": 22}
+                ]
+            }
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+
+    std::fs::write(
+        godel_root.join("run-745-a/godel/godel_hypothesis.v1.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "artifact_version": "godel_hypothesis.v1",
+            "hypothesis_id": "hyp:run-745-a:tool_failure:00",
+            "run_id": "run-745-a",
+            "workflow_id": "wf-godel-loop",
+            "failure_id": "failure:run-745-a:tool_failure",
+            "failure_class": "tool_failure",
+            "claim": "Primary hypothesis",
+            "confidence": 0.67,
+            "evidence_refs": ["runs/run-745-a/run_status.json"],
+            "related_run_refs": ["run-745-a"]
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    std::fs::write(
+        godel_root.join("run-745-a/godel/godel_policy.v1.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "artifact_version": "godel_policy.v1",
+            "policy_id": "policy:run-745-a:tool_failure",
+            "run_id": "run-745-a",
+            "workflow_id": "wf-godel-loop",
+            "hypothesis_id": "hyp:run-745-a:tool_failure:00",
+            "hypothesis_artifact_path": "runs/run-745-a/godel/godel_hypothesis.v1.json",
+            "source_signal": "hypothesis:tool_failure:godel_hypothesis.v1",
+            "selection_reason": "Deterministic policy update",
+            "before_policy": {
+                "retry_budget": 1,
+                "experiment_budget": 1,
+                "target_surface": "tool-invocation-config",
+                "policy_mode": "baseline"
+            },
+            "after_policy": {
+                "retry_budget": 2,
+                "experiment_budget": 2,
+                "target_surface": "tool-invocation-config",
+                "policy_mode": "adaptive_reviewed"
+            }
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    std::fs::write(
+        godel_root.join("run-745-a/godel/godel_experiment_priority.v1.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "artifact_version": "godel_experiment_priority.v1",
+            "prioritization_id": "prioritize:run-745-a:tool_failure",
+            "run_id": "run-745-a",
+            "workflow_id": "wf-godel-loop",
+            "hypothesis_id": "hyp:run-745-a:tool_failure:00",
+            "policy_id": "policy:run-745-a:tool_failure",
+            "hypothesis_artifact_path": "runs/run-745-a/godel/godel_hypothesis.v1.json",
+            "policy_artifact_path": "runs/run-745-a/godel/godel_policy.v1.json",
+            "tie_break_rule": "sort by priority_score desc, then confidence desc, then candidate_id asc",
+            "input_candidates": [
+                {"candidate_id": "exp:retry-budget", "strategy": "retry_budget_probe", "target_surface": "tool-invocation-config"}
+            ],
+            "ranked_candidates": [
+                {"candidate_id": "exp:retry-budget", "strategy": "retry_budget_probe", "target_surface": "tool-invocation-config", "priority_score": 95, "confidence": 0.86, "ranking_reason": "deterministic"}
+            ]
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+
+    real_godel_affect_slice(&[
+        "--initial-run-id".to_string(),
+        "v0-3-aee-recovery-initial".to_string(),
+        "--adapted-run-id".to_string(),
+        "v0-3-aee-recovery-adapted".to_string(),
+        "--godel-run-id".to_string(),
+        "run-745-a".to_string(),
+        "--aee-runs-dir".to_string(),
+        aee_root.to_string_lossy().to_string(),
+        "--godel-runs-dir".to_string(),
+        godel_root.to_string_lossy().to_string(),
+    ])
+    .expect("run affect slice");
+
+    let persisted = godel_root.join("run-745-a/godel/godel_affect_vertical_slice.v1.json");
+    assert!(persisted.is_file());
+    let artifact: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&persisted).unwrap()).unwrap();
+    assert_eq!(
+        artifact["downstream_change"]["initial_selected_candidate_id"],
+        "exp:retry-budget"
+    );
+    assert_eq!(
+        artifact["downstream_change"]["adapted_selected_candidate_id"],
+        "exp:maintain-policy"
+    );
+    assert_eq!(artifact["downstream_change"]["changed"], true);
 }
 
 #[test]
