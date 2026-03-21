@@ -39,6 +39,11 @@ Invalid fixture output record for dependable-execution completed-phase validatio
 - Results:
 
 ## Verification Summary
+
+Rules:
+- Replace the example values below with one actual final value per field.
+- Do not leave pipe-delimited enum menus or placeholder text in a finished record.
+
 ```yaml
 verification_summary:
   validation:
@@ -82,6 +87,7 @@ verification_summary:
 - Replay result:
 
 ## Artifact Verification
+- Primary proof surface:
 - Required artifacts present:
 - Artifact schema/version checks:
 - Hash/byte-stability checks:
