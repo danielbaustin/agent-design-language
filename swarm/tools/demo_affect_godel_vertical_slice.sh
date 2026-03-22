@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 OUT_ROOT="${1:-$ROOT/.adl/reports/demo-affect-godel-vertical-slice}"
 GODEL_RUNS_DIR="$OUT_ROOT/runs"
 GODEL_RUN_ID="review-godel-affect-001"
+AEE_RUNS_ROOT="${ADL_RUNS_ROOT:-$ROOT/.adl/runs}"
 
 echo "[affect-godel-demo] root=$ROOT"
 echo "[affect-godel-demo] out=$OUT_ROOT"
@@ -30,7 +31,7 @@ cargo run --manifest-path "$ROOT/swarm/Cargo.toml" --bin adl -- godel affect-sli
   --initial-run-id v0-3-aee-recovery-initial \
   --adapted-run-id v0-3-aee-recovery-adapted \
   --godel-run-id "$GODEL_RUN_ID" \
-  --aee-runs-dir "$ROOT/.adl/runs" \
+  --aee-runs-dir "$AEE_RUNS_ROOT" \
   --godel-runs-dir "$GODEL_RUNS_DIR"
 
 SLICE_PATH="$GODEL_RUNS_DIR/$GODEL_RUN_ID/godel/godel_affect_vertical_slice.v1.json"

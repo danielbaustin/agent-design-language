@@ -86,6 +86,16 @@ impl Drop for EnvGuard {
     }
 }
 
+fn unique_temp_dir(label: &str) -> PathBuf {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("time")
+        .as_nanos();
+    let dir = std::env::temp_dir().join(format!("{label}-{now}-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).expect("create temp dir");
+    dir
+}
+
 #[derive(Default)]
 struct RecordingRunner {
     calls: std::sync::Mutex<Vec<(String, Vec<String>)>>,
@@ -1017,6 +1027,7 @@ fn select_open_artifact_returns_none_without_html() {
 
 #[test]
 fn run_artifacts_root_points_to_repo_adl_runs() {
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", "");
     let root = artifacts::runs_root().expect("run artifacts root");
     let s = root.to_string_lossy();
     assert!(s.ends_with(".adl/runs"), "unexpected path: {s}");
@@ -1132,6 +1143,8 @@ fn write_run_state_and_load_resume_round_trip() {
     let run_id = format!("run-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
     let out_dir = std::env::temp_dir().join(format!("adl-main-out-{now}"));
+    let runs_root = unique_temp_dir("adl-main-runs-roundtrip");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
 
     let mut tr = trace::Trace::new(run_id.clone(), "wf".to_string(), "0.5".to_string());
     tr.step_started("s1", "a1", "p1", "t1", None);
@@ -1199,6 +1212,8 @@ fn load_resume_state_rejects_non_paused_status() {
     let run_id = format!("run-nonpaused-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
     let out_dir = std::env::temp_dir().join(format!("adl-main-nonpaused-{now}"));
+    let runs_root = unique_temp_dir("adl-main-runs-nonpaused");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
 
     let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
     let run_dir = write_run_state_artifacts(
@@ -1236,6 +1251,8 @@ fn load_resume_state_rejects_unknown_schema_version() {
     let run_id = format!("run-schema-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
     let out_dir = std::env::temp_dir().join(format!("adl-main-schema-{now}"));
+    let runs_root = unique_temp_dir("adl-main-runs-schema");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
 
     let mut tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
     tr.step_started("s1", "a1", "p1", "t1", None);
@@ -1292,6 +1309,8 @@ fn load_resume_state_rejects_missing_pause_payload() {
     let run_id = format!("run-missing-pause-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
     let out_dir = std::env::temp_dir().join(format!("adl-main-missing-pause-{now}"));
+    let runs_root = unique_temp_dir("adl-main-runs-missing-pause");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
 
     let tr = trace::Trace::new(run_id, "wf".to_string(), "0.5".to_string());
     let run_dir = write_run_state_artifacts(
@@ -1325,6 +1344,8 @@ fn load_resume_state_rejects_workflow_mismatch() {
     let run_id = format!("run-wf-mismatch-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
     let out_dir = std::env::temp_dir().join(format!("adl-main-wf-mismatch-{now}"));
+    let runs_root = unique_temp_dir("adl-main-runs-wf-mismatch");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
 
     let pause = execute::PauseState {
         paused_step_id: "s1".to_string(),
@@ -1370,6 +1391,8 @@ fn load_resume_state_rejects_version_mismatch() {
     let run_id = format!("run-version-mismatch-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
     let out_dir = std::env::temp_dir().join(format!("adl-main-version-mismatch-{now}"));
+    let runs_root = unique_temp_dir("adl-main-runs-version-mismatch");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
 
     let pause = execute::PauseState {
         paused_step_id: "s1".to_string(),
@@ -1415,6 +1438,8 @@ fn load_resume_state_rejects_execution_plan_mismatch() {
     let run_id = format!("run-plan-mismatch-{now}-{}", std::process::id());
     let resolved = minimal_resolved_for_artifacts(run_id.clone());
     let out_dir = std::env::temp_dir().join(format!("adl-main-plan-mismatch-{now}"));
+    let runs_root = unique_temp_dir("adl-main-runs-plan-mismatch");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
 
     let pause = execute::PauseState {
         paused_step_id: "s1".to_string(),
@@ -1564,6 +1589,8 @@ fn build_run_summary_sorts_remote_policy_and_tracks_denials() {
         .as_nanos();
     let run_id = format!("summary-{now}-{}", std::process::id());
     let mut resolved = minimal_resolved_for_artifacts(run_id);
+    let runs_root = unique_temp_dir("adl-main-runs-summary");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
     resolved.steps.push(resolve::ResolvedStep {
         id: "s2".to_string(),
         agent: Some("a1".to_string()),
@@ -2211,6 +2238,8 @@ fn read_scores_if_present_handles_valid_and_invalid_json() {
         .expect("time")
         .as_nanos();
     let run_id = format!("scores-read-{now}-{}", std::process::id());
+    let runs_root = unique_temp_dir("adl-main-runs-scores");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
     let run_paths = artifacts::RunArtifactPaths::for_run(&run_id).expect("paths");
     run_paths.ensure_layout().expect("layout");
 
@@ -2418,12 +2447,16 @@ fn cli_internal_demo_trace_only_path_succeeds() {
 
 #[test]
 fn cli_internal_demo_run_no_open_path_succeeds() {
+    let out_dir = unique_temp_dir("adl-demo-no-open");
     real_demo(&[
         "demo-b-one-command".to_string(),
         "--run".to_string(),
         "--no-open".to_string(),
+        "--out".to_string(),
+        out_dir.to_string_lossy().to_string(),
     ])
     .expect("demo run with explicit no-open should succeed");
+    let _ = std::fs::remove_dir_all(out_dir);
 }
 
 #[test]
@@ -2434,8 +2467,15 @@ fn cli_internal_demo_help_path_succeeds() {
 
 #[test]
 fn cli_internal_demo_defaults_to_run_when_no_mode_flag_is_given() {
-    real_demo(&["demo-a-say-mcp".to_string(), "--no-open".to_string()])
-        .expect("default demo invocation should run");
+    let out_dir = unique_temp_dir("adl-demo-default-run");
+    real_demo(&[
+        "demo-a-say-mcp".to_string(),
+        "--no-open".to_string(),
+        "--out".to_string(),
+        out_dir.to_string_lossy().to_string(),
+    ])
+    .expect("default demo invocation should run");
+    let _ = std::fs::remove_dir_all(out_dir);
 }
 
 #[test]
@@ -2494,6 +2534,7 @@ fn validate_pause_artifact_basic_rejects_mismatches() {
 
 #[test]
 fn resume_state_path_for_run_id_targets_pause_state_json() {
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", "");
     let path = resume_state_path_for_run_id("demo-run").expect("path");
     let s = path.to_string_lossy();
     assert!(

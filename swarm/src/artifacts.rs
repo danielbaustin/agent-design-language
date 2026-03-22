@@ -168,6 +168,12 @@ impl RunArtifactPaths {
 
 /// Resolve repository run-artifact root (`.adl/runs`).
 pub fn runs_root() -> Result<PathBuf> {
+    if let Some(override_root) = std::env::var_os("ADL_RUNS_ROOT") {
+        let trimmed = override_root.to_string_lossy().trim().to_string();
+        if !trimmed.is_empty() {
+            return Ok(PathBuf::from(trimmed));
+        }
+    }
     let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
     let repo_root = manifest
         .parent()
