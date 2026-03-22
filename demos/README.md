@@ -25,6 +25,31 @@ cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet
 
 ## Recommended Paths
 
+### v0.85 demo program
+
+- `v085_demo_program.md`
+- `steering_queue_checkpoint_demo.md`
+- `hitl_editor_review_demo.md`
+- `godel_hypothesis_engine_demo.md`
+- `aee-recovery/README.md`
+- `affect_godel_vertical_slice_demo.md`
+
+Use `v085_demo_program.md` for the canonical milestone review order.
+
+Use `swarm/tools/demo_steering_queue_checkpoint.sh` for the bounded
+steering/checkpoint/resume proof surface. It emits:
+- `.adl/runs/v0-85-hitl-steering-demo/pause_state.json`
+- `.adl/runs/v0-85-hitl-steering-demo/run.json`
+- `.adl/reports/demo-steering-queue-checkpoint/steer.json`
+
+Use `swarm/tools/demo_hitl_editor_review.sh` for the bounded editor/review
+workflow proof surface. It emits:
+- `.adl/reports/demo-hitl-editor-review/editor_review_demo_manifest.v1.json`
+
+Use `godel_hypothesis_engine_demo.md` for the milestone-facing WP-10 review
+path. For a one-command review flow, run
+`swarm/tools/demo_godel_hypothesis_engine.sh`.
+
 ### Quickstart runtime demos
 
 - `swarm/examples/v0-3-fork-join-seq-run.adl.yaml`

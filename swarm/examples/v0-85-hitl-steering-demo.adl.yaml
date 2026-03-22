@@ -1,0 +1,40 @@
+version: "0.5"
+
+providers:
+  local:
+    type: "ollama"
+
+agents:
+  worker:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  t_fixed:
+    prompt:
+      user: "checkpoint reached"
+  t_topic:
+    prompt:
+      user: "topic={{topic}}"
+
+run:
+  name: "v0-85-hitl-steering-demo"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "worker"
+        task: "t_fixed"
+        save_as: "s1"
+        write_to: "s1.txt"
+        guards:
+          - type: pause
+            config:
+              reason: "await steering"
+      - id: "s2"
+        agent: "worker"
+        task: "t_topic"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs:
+          topic: "@state:inputs.topic"
