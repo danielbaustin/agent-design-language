@@ -10,6 +10,7 @@
 - Execute sections in order and capture links for each completed step.
 - Keep this document focused on release mechanics, not milestone narrative.
 - Use `RELEASE_NOTES_v0.85.md` for descriptive content.
+- Use `QUALITY_GATE_v0.85.md` for the canonical quality-gate definition.
 - If a blocker appears, stop the process and record it explicitly.
 
 ---
@@ -32,6 +33,9 @@ Before beginning the release process the following must be true:
   - affect-plus-Gödel/reasoning behavior
 
 These steps correspond to the Sprint 4 closeout path in the milestone plan.
+
+The canonical quality-gate truth surface for these checks is
+`QUALITY_GATE_v0.85.md`.
 
 The final active-surface `swarm` -> `adl` cutover is part of that closeout path. It should be executed only after the other v0.85 code changes, review findings, and milestone docs have otherwise stabilized.
 

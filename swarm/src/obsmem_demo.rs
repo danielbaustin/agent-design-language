@@ -185,7 +185,7 @@ pub fn emit_obsmem_demo_artifacts(runs_root: &Path, run_id: &str) -> Result<ObsM
         .query_with_policy(&policy, &request)
         .context("query deterministic retrieval results")?;
 
-    let run_paths = RunArtifactPaths::for_run(run_id)?;
+    let run_paths = RunArtifactPaths::for_run_in_root(run_id, runs_root)?;
     run_paths.ensure_layout()?;
 
     let index_summary_path = run_paths.learning_dir().join("obs_mem_index_summary.json");

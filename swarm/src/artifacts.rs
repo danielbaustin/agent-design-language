@@ -23,13 +23,18 @@ struct ArtifactModelMarker {
 impl RunArtifactPaths {
     /// Construct deterministic artifact paths for a run id.
     pub fn for_run(run_id: &str) -> Result<Self> {
+        Self::for_run_in_root(run_id, runs_root()?)
+    }
+
+    /// Construct deterministic artifact paths for a run id under an explicit runs root.
+    pub fn for_run_in_root(run_id: &str, runs_root: impl Into<PathBuf>) -> Result<Self> {
         let run_id = run_id.trim();
         if run_id.is_empty() {
             return Err(anyhow!("run_id must not be empty for artifact paths"));
         }
         Ok(Self {
             run_id: run_id.to_string(),
-            runs_root: runs_root()?,
+            runs_root: runs_root.into(),
         })
     }
 
@@ -168,6 +173,12 @@ impl RunArtifactPaths {
 
 /// Resolve repository run-artifact root (`.adl/runs`).
 pub fn runs_root() -> Result<PathBuf> {
+    if let Some(override_root) = std::env::var_os("ADL_RUNS_ROOT") {
+        let trimmed = override_root.to_string_lossy().trim().to_string();
+        if !trimmed.is_empty() {
+            return Ok(PathBuf::from(trimmed));
+        }
+    }
     let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
     let repo_root = manifest
         .parent()
@@ -213,6 +224,17 @@ pub fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
 mod tests {
     use super::*;
 
+    fn unique_temp_runs_root(label: &str) -> PathBuf {
+        static COUNTER: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+        let n = COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let root = std::env::temp_dir().join(format!(
+            "adl-artifacts-{label}-pid{}-{n}",
+            std::process::id()
+        ));
+        std::fs::create_dir_all(&root).expect("create temp runs root");
+        root
+    }
+
     #[test]
     fn run_paths_are_deterministic_and_timestamp_free() {
         let paths = RunArtifactPaths::for_run("demo-run-1").expect("paths");
@@ -234,7 +256,8 @@ mod tests {
     #[test]
     fn ensure_layout_creates_reserved_learning_and_meta_subtrees() {
         let run_id = format!("artifact-layout-{}", std::process::id());
-        let paths = RunArtifactPaths::for_run(&run_id).expect("paths");
+        let runs_root = unique_temp_runs_root("layout");
+        let paths = RunArtifactPaths::for_run_in_root(&run_id, &runs_root).expect("paths");
         paths.ensure_layout().expect("layout");
         paths.write_model_marker().expect("marker");
 
@@ -268,7 +291,8 @@ mod tests {
     #[test]
     fn atomic_write_overwrites_existing_file_deterministically() {
         let run_id = format!("artifact-atomic-overwrite-{}", std::process::id());
-        let paths = RunArtifactPaths::for_run(&run_id).expect("paths");
+        let runs_root = unique_temp_runs_root("overwrite");
+        let paths = RunArtifactPaths::for_run_in_root(&run_id, &runs_root).expect("paths");
         let target = paths.logs_dir().join("atomic-write.txt");
 
         atomic_write(&target, b"one").expect("first write");
@@ -282,7 +306,8 @@ mod tests {
     #[test]
     fn write_model_marker_contains_expected_version_only() {
         let run_id = format!("artifact-marker-{}", std::process::id());
-        let paths = RunArtifactPaths::for_run(&run_id).expect("paths");
+        let runs_root = unique_temp_runs_root("marker");
+        let paths = RunArtifactPaths::for_run_in_root(&run_id, &runs_root).expect("paths");
         paths.ensure_layout().expect("layout");
         paths.write_model_marker().expect("marker");
 
@@ -353,7 +378,8 @@ mod tests {
     #[test]
     fn atomic_write_creates_nested_parent_directories() {
         let run_id = format!("artifact-parent-create-{}", std::process::id());
-        let paths = RunArtifactPaths::for_run(&run_id).expect("paths");
+        let runs_root = unique_temp_runs_root("parent-create");
+        let paths = RunArtifactPaths::for_run_in_root(&run_id, &runs_root).expect("paths");
         let nested = paths
             .run_dir()
             .join("nested")
@@ -370,7 +396,8 @@ mod tests {
     #[test]
     fn atomic_write_fails_when_parent_is_a_file() {
         let run_id = format!("artifact-parent-file-{}", std::process::id());
-        let paths = RunArtifactPaths::for_run(&run_id).expect("paths");
+        let runs_root = unique_temp_runs_root("parent-file");
+        let paths = RunArtifactPaths::for_run_in_root(&run_id, &runs_root).expect("paths");
         let file_parent = paths.run_dir().join("not-a-dir");
         std::fs::create_dir_all(paths.run_dir()).expect("run dir exists");
         std::fs::write(&file_parent, b"x").expect("create file parent");
