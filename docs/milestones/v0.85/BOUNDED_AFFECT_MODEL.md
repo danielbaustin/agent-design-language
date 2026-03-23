@@ -1,6 +1,6 @@
 # Bounded Affect Model and Affective Reasoning in ADL
 
-*Draft for ADL v0.85 planning — legacy filename, bounded non-anthropomorphic framing*
+*Canonical v0.85 conceptual document — legacy filename retained for now; bounded non-anthropomorphic framing*
 
 ------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ They arise from the interaction of three components:
 When the system compares predicted outcomes with actual outcomes, it
 generates a **prediction error**.
 
-Emotion-like signals arise from interpreting that error relative to
+Bounded-affect signals arise from interpreting that error relative to
 goals.
 
 ------------------------------------------------------------------------
@@ -58,7 +58,7 @@ These produce internal signals such as:
     frustration
     curiosity
 
-These signals influence how the agent chooses its next strategy.
+These bounded-affect signals influence how the agent chooses its next strategy.
 
 ------------------------------------------------------------------------
 
@@ -89,9 +89,9 @@ In artificial systems these axes can be derived from:
 
 ------------------------------------------------------------------------
 
-# 3. Emotional Control of Cognition
+# 3. Bounded-Affect Control of Cognition
 
-Emotion signals influence reasoning.
+Bounded-affect signals influence reasoning.
 
 Example behaviors:
 
@@ -102,7 +102,7 @@ Example behaviors:
   high uncertainty   increase exploration
   repeated success   reduce search depth
 
-Thus emotion is best understood as **meta-control for cognition**.
+Thus bounded affect is best understood as **meta-control for cognition**.
 
 ------------------------------------------------------------------------
 
@@ -116,7 +116,7 @@ The ADL execution loop already contains many of these components.
   predictions       planning / reasoning
   outcomes          execution traces
   comparison        evaluation / scoring
-  learning signal   retry strategy update
+  bounded-affect signal   retry strategy update
 
 The ADL execution cycle:
 
@@ -136,7 +136,7 @@ This loop is structurally identical to a **cognitive feedback loop**.
 
 ------------------------------------------------------------------------
 
-# 5. Emotion Control Loop
+# 5. Bounded-Affect Control Loop
 
 ``` mermaid
 flowchart TD
@@ -158,7 +158,7 @@ F --> G
 G --> B
 ```
 
-Emotion here acts as a **regulator of cognition**.
+Bounded affect here acts as a **regulator of cognition**.
 
 ------------------------------------------------------------------------
 
@@ -349,7 +349,7 @@ ADL already operates strongly at this level.
 
 ### Level 3 --- Affective Agent
 
-Add persistent bounded-affect control signals:
+Add persistent bounded-affect control signals such as:
 
     confidence
     frustration
@@ -428,10 +428,10 @@ This architecture maps naturally to **Popper's model of knowledge**.
   World     Meaning                ADL Example
   --------- ---------------------- --------------------------
   World 1   physical state         execution environment
-  World 2   internal evaluation    bounded affect signals
+  World 2   internal evaluation    bounded-affect signals
   World 3   knowledge structures   plans, tools, strategies
 
-Emotion-like signals live in **World 2**.
+Bounded-affect signals live in **World 2**.
 
 They mediate between:
 
@@ -490,7 +490,7 @@ Specifically:
     +
     internal evaluation
     +
-    affective control
+    bounded affect control
     +
     self-modifying cognition
 
@@ -504,8 +504,11 @@ structured and deterministic way.
 The Gödel--Hadamard loop was originally introduced to support **adaptive
 reasoning and strategy revision**.
 
-However, the architecture also aligns closely with models of **emotion
-and cognitive control** found in biological intelligence.
+However, the architecture also aligns closely with models of **bounded affect and cognitive control** found in biological intelligence.
+## Legacy Filename Note
+
+This document was previously named `EMOTION_MODEL.md` for continuity with earlier planning and review history. The content should be read in bounded-affect terms, and `BOUNDED_AFFECT_MODEL.md` is now the correct canonical filename for the milestone doc set.
+
 
 This suggests that ADL may provide a platform for exploring a new class
 of agents:
