@@ -101,7 +101,7 @@ This directory mixes:
 | `ROAD_TO_v0.95.md` | Master roadmap / convergence doc | `Roadmap-critical` | Keep as the roadmap driver and continue updating | Core roadmap surface for future milestone coverage. |
 | `Revised-issue-planning.md` | Issue-graph restructuring plan | `Planning-only` | Keep as historical planning/admin artifact | Useful history, not a feature doc. |
 | `SPRINT_v0.85.md` | Sprint plan | `Canonical overlap` | Preserve and sync if needed | Canonical milestone support surface. |
-| `SWARM_REMOVAL_PLANNING.md` | Legacy-name/tooling migration planning | `Promotable planning` | Keep as source material; fold remaining parts into tooling migration docs | Partly implemented, still relevant as migration history. |
+| `SWARM_REMOVAL_PLANNING.md` | Tooling migration planning | `Promotable planning` | Keep as source material; fold remaining parts into tooling migration docs | Partly implemented, still relevant as migration history. |
 | `V095_MVP_BOUNDARY.md` | Scope guardrail | `Roadmap-critical` | Keep planning-only, but use to constrain roadmap/promotions | Important boundary control, not a feature spec. |
 | `VISION_v0.85.md` | Milestone vision | `Canonical overlap` | Preserve and sync if needed | Canonical milestone support surface. |
 | `WBS_v0.85.md` | Work breakdown structure | `Canonical overlap` | Preserve and sync if needed | Canonical milestone support surface. |
@@ -192,7 +192,7 @@ architecture docs that should stay aligned with the planning corpus.
 | `RELEASE_PLAN_v0.85.md` | Release plan | `Canonical overlap` | Keep canonical | Milestone support surface. |
 | `SPRINT_v0.85.md` | Sprint plan | `Canonical overlap` | Keep canonical | Milestone support surface. |
 | `STRUCTURED_PROMPT_ARCHITECTURE.md` | Prompt architecture | `Canonical overlap` | Keep canonical and aligned with editor/task-bundle work | Important authoring/control-plane surface. |
-| `SWARM_REMOVAL_PLANNING.md` | Legacy-name/tooling migration doc | `Promotable planning` | Keep canonical for now, but reconcile with later tooling migration docs | Migration/history plus future cleanup. |
+| `SWARM_REMOVAL_PLANNING.md` | Tooling migration doc | `Promotable planning` | Keep canonical for now, but reconcile with later tooling migration docs | Migration/history plus future cleanup. |
 | `VISION_v0.85.md` | Milestone vision | `Canonical overlap` | Keep canonical | Core milestone doc. |
 | `WBS_v0.85.md` | Work breakdown structure | `Canonical overlap` | Keep canonical | Core milestone doc. |
 | `WHY_RUST_FOR_ADL.md` | Rust rationale note | `Deprecated / archive` | Deprecate / do not promote further | Historical rationale only. |
