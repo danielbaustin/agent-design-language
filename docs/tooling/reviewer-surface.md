@@ -17,7 +17,7 @@ It exists to provide:
 Use:
 
 ```bash
-ruby swarm/tools/review_card_surface.rb \
+ruby adl/tools/review_card_surface.rb \
   --input docs/tooling/examples/reviewer-regression/issue-661/input_661.md \
   --output docs/tooling/examples/reviewer-regression/issue-661/output_661.md
 ```
@@ -38,7 +38,7 @@ The first slice checks:
 Use:
 
 ```bash
-bash swarm/tools/test_review_card_surface.sh
+bash adl/tools/test_review_card_surface.sh
 ```
 
 This fixture run compares the tool output against:

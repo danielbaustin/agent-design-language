@@ -16,7 +16,7 @@ The editor is intentionally simple:
   - `Structured Implementation Prompt` (SIP)
   - bounded review-first `Structured Output Record` (SOR) surface
 - exposes one bounded workflow action surface for:
-  - `pr start` via `swarm/tools/editor_action.sh`
+  - `pr start` via `adl/tools/editor_action.sh`
 - exposes one bounded review-flow surface for:
   - reviewer checklist
   - derived review recommendation

@@ -4,7 +4,7 @@
   "experiment_id": "exp-20260308-coverage-floor",
   "experiment_seed": "seed-20260308-coverage-floor-a",
   "comparison_key": {
-    "subject": "swarm/src/coverage.rs",
+    "subject": "adl/src/coverage.rs",
     "baseline_label": "main",
     "variant_label": "mutation-a"
   },
@@ -27,8 +27,8 @@
     "mutation_version": 1,
     "mutation_ref": "artifacts/mutations/mut-20260308-a/mutation.v1.json",
     "scope": [
-      "swarm/src/coverage.rs",
-      "swarm/tests/coverage_behavior.rs"
+      "adl/src/coverage.rs",
+      "adl/tests/coverage_behavior.rs"
     ],
     "change_summary": [
       "add deterministic test for edge threshold",
@@ -123,7 +123,7 @@
   },
   "obsmem_index": {
     "memory_kind": "experiment_record",
-    "index_key": "exp-20260308-coverage-floor::swarm/src/coverage.rs::main::mutation-a",
+    "index_key": "exp-20260308-coverage-floor::adl/src/coverage.rs::main::mutation-a",
     "tags": [
       "adopt",
       "coverage",
@@ -133,7 +133,7 @@
     "facets": {
       "decision_result": "adopt",
       "primary_metric": "coverage_percent",
-      "subject": "swarm/src/coverage.rs"
+      "subject": "adl/src/coverage.rs"
     }
   },
   "policy_approval_ref": "artifacts/policy/policy-decision-20260308-a.json",

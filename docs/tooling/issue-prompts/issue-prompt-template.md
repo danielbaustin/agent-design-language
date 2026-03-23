@@ -102,5 +102,5 @@ State what must be real by the end of this issue.
 - The H1 should identify the specific task, usually by reusing the human-readable `title` value or a cleaner version of it.
 - Do not use a generic heading like "Issue Prompt" or "Structured Task Prompt" as the permanent visible title.
 - `pr_start.slug` is the value tooling should pass to:
-  - `swarm/tools/pr.sh start <issue> --slug <slug>`
+  - `adl/tools/pr.sh start <issue> --slug <slug>`
 - `repo_inputs` should stay lightweight coordination metadata; the long-form sections below remain the canonical issue content.

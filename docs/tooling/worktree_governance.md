@@ -60,13 +60,13 @@ Use the tracked tooling rather than ad hoc shell commands:
 
 ```bash
 # inspect current worktree status and recommended fate
-./swarm/tools/worktree_doctor.sh
+./adl/tools/worktree_doctor.sh
 
 # see what safe cleanup would happen
-./swarm/tools/worktree_prune.sh
+./adl/tools/worktree_prune.sh
 
 # apply only the clearly safe cleanup set
-./swarm/tools/worktree_prune.sh --apply
+./adl/tools/worktree_prune.sh --apply
 ```
 
 The pruning flow is intentionally conservative:

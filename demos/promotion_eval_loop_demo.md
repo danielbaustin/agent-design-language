@@ -12,7 +12,7 @@ It proves a deterministic closure:
 ## Run
 
 ```bash
-bash swarm/tools/demo_promotion_eval_loop.sh
+bash adl/tools/demo_promotion_eval_loop.sh
 ```
 
 ## What To Review

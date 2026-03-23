@@ -7,7 +7,7 @@ This is the default contributor path for ADL development:
 ## 1) Start Issue Branch + Local Task Bundle
 
 ```bash
-./swarm/tools/pr.sh start <issue_num> --slug <slug>
+./adl/tools/pr.sh start <issue_num> --slug <slug>
 ```
 
 Canonical local task bundle:
@@ -27,7 +27,7 @@ Canonical local prompt bundle:
 - `.adl/v0.85/tasks/<task-id>__<slug>/sip.md`
 - `.adl/v0.85/tasks/<task-id>__<slug>/sor.md`
 
-Until `pr.sh` is migrated fully, `swarm/tools/sync_task_bundle_prompts.sh` refreshes the canonical local task-bundle view from the current compatibility paths.
+Until `pr.sh` is migrated fully, `adl/tools/sync_task_bundle_prompts.sh` refreshes the canonical local task-bundle view from the current compatibility paths.
 
 Structured Card Templates v2 (required sections):
 - Input card:
@@ -48,13 +48,13 @@ machine-parsable prompt automation.
 Typical local preflight:
 
 ```bash
-./swarm/tools/batched_checks.sh
+./adl/tools/batched_checks.sh
 ```
 
 ## 3) Finish PR
 
 ```bash
-./swarm/tools/pr.sh finish <issue_num> \
+./adl/tools/pr.sh finish <issue_num> \
   --title "<title>" \
   --paths "<comma-separated paths>" \
   -f .adl/v0.85/tasks/<task-id>__<slug>/sip.md \
@@ -73,7 +73,7 @@ Typical local preflight:
 - Missing card files:
   - Re-run `pr.sh start <issue_num> --slug <slug>` to seed canonical card paths.
 - Missing local task bundle:
-  - Run `swarm/tools/sync_task_bundle_prompts.sh --scope v0.85` to rebuild `.adl/v0.85/tasks/` from the current compatibility paths.
+  - Run `adl/tools/sync_task_bundle_prompts.sh --scope v0.85` to rebuild `.adl/v0.85/tasks/` from the current compatibility paths.
 - Missing local task-bundle artifacts:
   - Re-run `pr.sh start <issue_num> --slug <slug>` to seed the canonical local task bundle and compatibility links.
 - Worktree branch base problems:

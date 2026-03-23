@@ -1,6 +1,6 @@
 # ADL v0.1 example: "Hello (contracts deferred)"
 #
-# This is a minimal runnable example for the swarm v0.1 runtime.
+# This is a minimal runnable example for the ADL v0.1 runtime.
 # It demonstrates:
 # - provider
 # - agent

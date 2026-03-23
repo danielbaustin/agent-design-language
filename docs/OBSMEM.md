@@ -15,7 +15,7 @@ Important scope notes:
 ## Why ObsMem Is External
 
 ADL keeps memory decoupled so core execution/replay remains stable and
-backend-agnostic. Runtime code depends on `swarm::obsmem_contract` and adapter
+backend-agnostic. Runtime code depends on `adl::obsmem_contract` and adapter
 surfaces, not a concrete memory service implementation.
 
 ## Contract and Versioning Expectations

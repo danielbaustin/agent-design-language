@@ -343,7 +343,7 @@ function deriveStartAction() {
     return {
       ready: false,
       summary: "Enter a GitHub Issue Number on the STP card to prepare the bounded pr start action.",
-      command: "swarm/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
+      command: "adl/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
     };
   }
 
@@ -351,7 +351,7 @@ function deriveStartAction() {
     return {
       ready: false,
       summary: "GitHub Issue Number must be numeric before the editor can prepare a pr start command.",
-      command: "swarm/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
+      command: "adl/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
     };
   }
 
@@ -359,7 +359,7 @@ function deriveStartAction() {
     return {
       ready: false,
       summary: "Branch must match codex/<issue>-<slug> before the thin pr start adapter can run.",
-      command: "swarm/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
+      command: "adl/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
     };
   }
 
@@ -367,14 +367,14 @@ function deriveStartAction() {
     return {
       ready: false,
       summary: "GitHub Issue Number and branch prefix must match before the adapter can invoke pr start safely.",
-      command: "swarm/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
+      command: "adl/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
     };
   }
 
   return {
     ready: true,
     summary: "Thin control-plane adapter is ready to invoke pr start through the existing validated workflow.",
-    command: `swarm/tools/editor_action.sh start --issue ${issueNumber} --branch ${branch}`
+    command: `adl/tools/editor_action.sh start --issue ${issueNumber} --branch ${branch}`
   };
 }
 

@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: swarm
+        working-directory: adl
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
@@ -30,7 +30,7 @@ jobs:
         uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2
         with:
           workspaces: |
-            swarm -> target
+            adl -> target
 
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
@@ -53,7 +53,7 @@ jobs:
           # Keep nightly per-file ratchet focused on canonical runtime surfaces.
           # Compatibility shim bins are covered by integration tests and the
           # workspace 90% gate, but are excluded from per-file floor enforcement.
-          EXCLUDE_FROM_FILE_FLOOR_REGEX: "/swarm/src/bin/swarm.rs$|/swarm/src/bin/swarm_remote.rs$|/swarm/src/obsmem_contract.rs$"
+          EXCLUDE_FROM_FILE_FLOOR_REGEX: "/adl/src/obsmem_contract.rs$"
         run: |
           set -euo pipefail
 
@@ -91,7 +91,7 @@ jobs:
 
           per_file_rows="$(jq -r '
             [.data[].files[]
-              | select(.filename | contains("/swarm/src/"))
+              | select(.filename | contains("/adl/src/"))
               | {
                   f:(
                     .filename
@@ -117,14 +117,14 @@ jobs:
           ' coverage-summary.json)"
 
           if [ -z "$per_file_rows" ]; then
-            echo "No per-file rows found for /swarm/src in coverage-summary.json" >&2
+            echo "No per-file rows found for /adl/src in coverage-summary.json" >&2
             exit 1
           fi
 
           : > "$below_path"
           echo "$per_file_rows" | awk -F '\t' -v threshold="$FILE_THRESHOLD" -v exclude_re="$EXCLUDE_FROM_FILE_FLOOR_REGEX" '
             {
-              # Coverage summaries can emit either "swarm/..." or "/swarm/..." paths.
+              # Coverage summaries can emit either "adl/..." or "/adl/..." paths.
               # Check both forms so a single exclusion regex remains deterministic.
               p = $1
               ps = "/" p
@@ -158,7 +158,7 @@ jobs:
             echo
             echo "## Notes"
             echo "- This GitHub Actions workflow is a scheduled watchdog/reporter."
-            echo '- Per-file floor excludes legacy compatibility shim bins (`swarm.rs`, `swarm_remote.rs`); workspace 90% gate remains enforced in CI.'
+            echo '- Per-file floor excludes `adl/src/obsmem_contract.rs`; workspace 90% gate remains enforced in CI.'
             echo "- Code-changing ratchet work (test authoring + PRs) is still handled by Codex automation."
           } > "$report_path"
 
@@ -176,8 +176,8 @@ jobs:
         with:
           name: nightly-coverage-ratchet-report
           path: |
-            swarm/coverage-summary.txt
-            swarm/coverage-summary.json
+            adl/coverage-summary.txt
+            adl/coverage-summary.json
             ${{ steps.report.outputs.report_path }}
           if-no-files-found: error
 

@@ -11,7 +11,7 @@ values, a fixed input candidate set, and a stable tie-break rule.
 From repository root:
 
 ```bash
-swarm/tools/demo_experiment_prioritization.sh
+adl/tools/demo_experiment_prioritization.sh
 ```
 
 The script runs:

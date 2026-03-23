@@ -41,7 +41,7 @@ That is broader than a simple API wrapper.
 
 Based on the current repository state, the following infrastructure appears to be present:
 
-- `swarm/src/provider.rs`
+- `adl/src/provider.rs`
 - integration with execution/runtime surfaces
 - provider-facing logic separated from some higher-level runtime code
 
@@ -324,7 +324,7 @@ This area still leaves important open questions:
 - How much provider capability data should be static versus runtime-discovered?
 - How should ADL record inference traces without overcommitting to exact replay?
 - How should Layer 8 interact with confidence/rationale artifacts from future Gödel/AEE work?
-- What parts of the provider layer belong in `swarm/` versus future crates?
+- What parts of the provider layer belong in `adl/` versus future crates?
 - How should fallback/routing policy be bounded and testable?
 
 These should remain open until the provider layer becomes an explicit milestone target.

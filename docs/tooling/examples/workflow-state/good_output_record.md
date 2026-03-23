@@ -32,12 +32,12 @@ Fixture output record for dependable-execution completed-phase validation.
 - Verification scope: worktree
 - Integration method used: worktree branch committed and opened as draft PR
 - Verification performed:
-  - `bash swarm/tools/validate_structured_prompt.sh --type sor --phase completed --input docs/tooling/examples/workflow-state/good_output_record.md`
+  - `bash adl/tools/validate_structured_prompt.sh --type sor --phase completed --input docs/tooling/examples/workflow-state/good_output_record.md`
 - Result: PASS
 
 ## Validation
 - Validation commands and their purpose:
-  - `bash swarm/tools/validate_structured_prompt.sh --type sor --phase completed --input docs/tooling/examples/workflow-state/good_output_record.md`
+  - `bash adl/tools/validate_structured_prompt.sh --type sor --phase completed --input docs/tooling/examples/workflow-state/good_output_record.md`
     - verifies the completed-phase fixture remains structurally valid and machine-auditable.
 - Results:
   - pass

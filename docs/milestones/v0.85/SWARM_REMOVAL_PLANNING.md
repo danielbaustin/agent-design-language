@@ -11,7 +11,7 @@
 
 ADL has already renamed the package and primary binaries, but the repository still presents a split identity:
 - canonical runtime/package identity is largely `adl`
-- top-level runtime directory is still `swarm/`
+- top-level runtime directory is still `adl/`
 - CI, tooling, docs, examples, tests, and compatibility shims still expose legacy `swarm` naming
 
 That split identity is survivable for current contributors but weakens external credibility. For investors, reviewers, and enterprise evaluators, it reads as an unfinished migration and raises questions about repository discipline, release hygiene, and operational polish.
@@ -41,21 +41,21 @@ Recommended timing:
 
 Repository scan results from current `main`:
 - `129` files still contain `swarm` textual references
-- `150` tracked files currently live under `swarm/`
-- `81` references to `manifest-path swarm/Cargo.toml`
-- `73` references to `swarm/examples`
-- `247` references to `swarm/tools`
-- `51` references to `swarm/src`
+- `150` tracked files currently live under `adl/`
+- `81` references to `manifest-path adl/Cargo.toml`
+- `73` references to `adl/examples`
+- `247` references to `adl/tools`
+- `51` references to `adl/src`
 - `41` references to legacy bins (`swarm`, `swarm-remote`, `CARGO_BIN_EXE_swarm`)
 - `27` references to legacy env vars (`SWARM_*`)
 
 Remaining references by area:
 - `48` files under `docs/milestones/`
-- `29` files under `swarm/tools/`
+- `29` files under `adl/tools/`
 - `14` files under `docs/` outside milestone history
-- `9` files under `swarm/src/`
-- `9` files under `swarm/examples/`
-- `4` files under `swarm/tests/`
+- `9` files under `adl/src/`
+- `9` files under `adl/examples/`
+- `4` files under `adl/tests/`
 - `2` GitHub workflow files
 
 Interpretation:
@@ -68,7 +68,7 @@ Interpretation:
 The repo is not at the start of this migration.
 
 Already complete:
-- package name is `adl` in `swarm/Cargo.toml`
+- package name is `adl` in `adl/Cargo.toml`
 - library name is `adl`
 - primary runtime binary is `adl`
 - remote binary `adl-remote` exists
@@ -76,18 +76,18 @@ Already complete:
 - canonical env vars have mostly moved to `ADL_*`
 
 Still incomplete:
-- runtime directory path is still `swarm/`
-- CI and coverage filters still key off `/swarm/src/`
-- contributor tooling still defaults to `swarm/tools/...`
+- runtime directory path is still `adl/`
+- CI and coverage filters still key off `/adl/src/`
+- contributor tooling still defaults to `adl/tools/...`
 - tests still validate deprecated `swarm` behavior
-- docs and examples still point to `swarm/...` paths extensively
+- docs and examples still point to `adl/...` paths extensively
 - guardrails still explicitly allow legacy references for compatibility
 
 ## Recommended Scope
 
 ### In Scope
 
-- Rename top-level runtime directory from `swarm/` to `adl/`
+- Rename top-level runtime directory from `adl/` to `adl/`
 - Update all active path references:
   - GitHub Actions
   - shell tooling
@@ -163,21 +163,21 @@ Option B creates a lot of editorial churn with limited business return. It shoul
 
 ### 1. Contributor Tooling
 
-The biggest single coupling surface is `swarm/tools/pr.sh`, along with the scripts around it.
+The biggest single coupling surface is `adl/tools/pr.sh`, along with the scripts around it.
 
 Risk:
 - staging defaults
 - path assumptions
 - generated card/template paths
 - help text and examples
-- downstream helper scripts all assume `swarm/tools/...`
+- downstream helper scripts all assume `adl/tools/...`
 
 Impact:
 - breakage here directly hurts daily development flow
 
 ### 2. CI And Coverage Wiring
 
-GitHub Actions still rely on `working-directory: swarm`, `swarm -> target` cache keys, and `/swarm/src/` coverage filters.
+GitHub Actions still rely on `working-directory: swarm`, `swarm -> target` cache keys, and `/adl/src/` coverage filters.
 
 Risk:
 - green local code but red CI
@@ -193,7 +193,7 @@ Risk:
 
 ### 4. Active Docs And Demo Commands
 
-README, onboarding, contributor docs, and demo docs still expose many `swarm/...` commands.
+README, onboarding, contributor docs, and demo docs still expose many `adl/...` commands.
 
 Risk:
 - external reviewers hitting dead commands
@@ -202,16 +202,16 @@ Risk:
 ## Evidence-Backed Hotspots
 
 Files most likely to dominate the cutover:
-- `swarm/tools/pr.sh`
+- `adl/tools/pr.sh`
 - `.github/workflows/ci.yaml`
 - `.github/workflows/nightly-coverage-ratchet.yaml`
 - `README.md`
 - `CONTRIBUTING.md`
 - `docs/onboarding.md`
-- `swarm/src/env_compat.rs`
-- `swarm/src/bin/swarm.rs`
-- `swarm/src/bin/swarm_remote.rs`
-- `swarm/tests/cli_smoke.rs`
+- `adl/src/env_compat.rs`
+- `adl/src/bin/swarm.rs`
+- `adl/src/bin/swarm_remote.rs`
+- `adl/tests/cli_smoke.rs`
 
 These should be treated as explicit review checkpoints, not incidental cleanup.
 
@@ -279,12 +279,12 @@ Deliverable:
 
 ## Validation Checklist
 
-- [ ] `adl/` exists and `swarm/` no longer exists as an active top-level runtime directory
-- [ ] active scripts no longer require `swarm/tools/...`
+- [ ] `adl/` exists and `adl/` no longer exists as an active top-level runtime directory
+- [ ] active scripts no longer require `adl/tools/...`
 - [ ] CI workflows no longer reference `working-directory: swarm`
-- [ ] coverage filters no longer depend on `/swarm/src/`
+- [ ] coverage filters no longer depend on `/adl/src/`
 - [ ] no active tests require `CARGO_BIN_EXE_swarm`
-- [ ] no active docs instruct users to run `swarm/...` paths
+- [ ] no active docs instruct users to run `adl/...` paths
 - [ ] compatibility-only env vars removed or explicitly justified
 - [ ] guardrail fails on new active-surface `swarm` references
 - [ ] historical references, if any, are intentionally preserved and documented

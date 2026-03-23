@@ -12,7 +12,7 @@ learning or unconstrained policy mutation.
 From repository root:
 
 ```bash
-swarm/tools/demo_adaptive_godel_loop.sh
+adl/tools/demo_adaptive_godel_loop.sh
 ```
 
 The script runs:

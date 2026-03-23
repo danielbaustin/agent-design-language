@@ -12,9 +12,9 @@ This document defines the first bounded contract layer for those artifacts so to
 
 ## Canonical Contract Files
 
-- `swarm/schemas/structured_task_prompt.contract.yaml`
-- `swarm/schemas/structured_implementation_prompt.contract.yaml`
-- `swarm/schemas/structured_output_record.contract.yaml`
+- `adl/schemas/structured_task_prompt.contract.yaml`
+- `adl/schemas/structured_implementation_prompt.contract.yaml`
+- `adl/schemas/structured_output_record.contract.yaml`
 
 These files are the machine-readable source of truth for:
 
@@ -29,9 +29,9 @@ These files are the machine-readable source of truth for:
 Use:
 
 ```bash
-swarm/tools/validate_structured_prompt.sh --type stp --input <path>
-swarm/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input <path>
-swarm/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input <path>
+adl/tools/validate_structured_prompt.sh --type stp --input <path>
+adl/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input <path>
+adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input <path>
 ```
 
 The validator currently enforces:
@@ -47,7 +47,7 @@ The validator currently enforces:
 
 For SIP validation, the validator also delegates Prompt Spec validation to:
 
-- `swarm/tools/lint_prompt_spec.sh`
+- `adl/tools/lint_prompt_spec.sh`
 
 ## Field Classification Rules
 

@@ -20,7 +20,7 @@ The demo aligns with:
 - `docs/milestones/v0.8/EVALUATION_PLAN_V1.md`
 - `docs/milestones/v0.8/GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md`
 - `docs/milestones/v0.8/OBSMEM_INDEXING_SURFACES_V1.md`
-- `swarm/src/cli/godel_cmd.rs`
+- `adl/src/cli/godel_cmd.rs`
 
 ## Commands
 
@@ -29,13 +29,13 @@ Run from repository root.
 ### 1. Generate the bounded Gödel runtime artifacts
 
 ```bash
-swarm/tools/demo_godel_hypothesis_engine.sh
+adl/tools/demo_godel_hypothesis_engine.sh
 ```
 
 ### 2. Inspect the persisted runtime artifacts
 
 ```bash
-cargo run --manifest-path swarm/Cargo.toml --bin adl -- godel inspect \
+cargo run --manifest-path adl/Cargo.toml --bin adl -- godel inspect \
   --run-id review-godel-cli-001 \
   --runs-dir ./out/godel-cli-demo/runs
 ```
@@ -43,7 +43,7 @@ cargo run --manifest-path swarm/Cargo.toml --bin adl -- godel inspect \
 ### 3. Exercise the bounded evaluator directly
 
 ```bash
-cargo run --manifest-path swarm/Cargo.toml --bin adl -- godel evaluate \
+cargo run --manifest-path adl/Cargo.toml --bin adl -- godel evaluate \
   --failure-code tool_failure \
   --experiment-result ok \
   --score-delta 1

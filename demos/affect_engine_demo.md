@@ -13,7 +13,7 @@ It proves:
 From repository root:
 
 ```bash
-swarm/tools/demo_affect_engine.sh
+adl/tools/demo_affect_engine.sh
 ```
 
 ## Primary proof artifacts

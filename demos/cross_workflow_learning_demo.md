@@ -11,7 +11,7 @@ It proves a deterministic handoff:
 ## Run
 
 ```bash
-bash swarm/tools/demo_cross_workflow_learning.sh
+bash adl/tools/demo_cross_workflow_learning.sh
 ```
 
 ## What To Review

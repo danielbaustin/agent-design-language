@@ -21,5 +21,5 @@ Use this index to find the right source of truth quickly.
 ## See Also / Canonical Docs
 
 - Root project entrypoint: `../README.md`
-- Runtime/CLI usage: `../swarm/README.md`
+- Runtime/CLI usage: `../adl/README.md`
 - ADL spec entrypoint: `../adl-spec/README.md`

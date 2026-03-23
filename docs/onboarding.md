@@ -5,7 +5,7 @@ Use this page when you need to orient quickly in the ADL repo.
 ## Where to Add or Update Docs
 
 - Project overview: `README.md`
-- Tooling workflow docs: `swarm/tools/README.md`
+- Tooling workflow docs: `adl/tools/README.md`
 - Language docs: `adl-spec/`
 - Contributor planning docs: `docs/`
 
@@ -24,5 +24,5 @@ The canonical local draft prompt bundles live under `.adl/<scope>/tasks/<task-id
 ## Reading Order
 
 1. `README.md`
-2. `swarm/tools/README.md`
+2. `adl/tools/README.md`
 3. `.adl/reports/INDEX.md`

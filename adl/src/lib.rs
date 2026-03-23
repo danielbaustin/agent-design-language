@@ -1,0 +1,41 @@
+//! ADL runtime library crate (`adl`).
+//!
+//! This crate provides the language model (`adl`), resolution/planning (`resolve`,
+//! `execution_plan`), deterministic execution (`execute`), and trust/verification
+//! boundaries (`signing`, `remote_exec`) used by the canonical `adl` CLI and
+//! legacy compatibility shim.
+//!
+//! v0.6 invariants:
+//! - deterministic execution order for ready steps
+//! - bounded concurrency for concurrent execution plans
+//! - optional signature verification with strict enforcement on `--run`
+//! - remote execution MVP where scheduling remains local
+
+pub mod adl;
+pub mod artifacts;
+pub mod bounded_executor;
+pub mod delegation_policy;
+pub mod demo;
+pub mod execute;
+pub mod execution_plan;
+pub mod failure_taxonomy;
+pub mod godel;
+pub mod instrumentation;
+pub mod learning_export;
+pub mod learning_guardrails;
+pub mod obsmem_adapter;
+pub mod obsmem_contract;
+pub mod obsmem_demo;
+pub mod obsmem_indexing;
+pub mod obsmem_retrieval_policy;
+pub mod overlay;
+pub mod plan;
+pub mod prompt;
+pub mod provider;
+pub mod remote_exec;
+pub mod resolve;
+pub mod sandbox;
+pub mod schema;
+pub mod signing;
+pub mod tool_result;
+pub mod trace;

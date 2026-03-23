@@ -11,7 +11,7 @@ This bounded demo shows one concrete causal chain:
 ## Run
 
 ```bash
-bash swarm/tools/demo_affect_godel_vertical_slice.sh
+bash adl/tools/demo_affect_godel_vertical_slice.sh
 ```
 
 ## Proof Surface
