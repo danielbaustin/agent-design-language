@@ -13,6 +13,7 @@
 # - Rust toolchain for `adl/` checks (fmt, clippy, test)
 #
 #   adl/tools/pr.sh help
+#   adl/tools/pr.sh init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v0.85>]
 #   adl/tools/pr.sh start   <issue> [--slug <slug>] [--title "<title>"] [--prefix codex] [--no-fetch-issue]
 #   adl/tools/pr.sh card    <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
 #   adl/tools/pr.sh output  <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
@@ -21,6 +22,7 @@
 #   adl/tools/pr.sh status
 #
 # Examples:
+#   adl/tools/pr.sh init  14 --slug b6-default-system --no-fetch-issue --version v0.85
 #   adl/tools/pr.sh start 14 --slug b6-default-system
 #   adl/tools/pr.sh card  14 --version v0.2
 #   adl/tools/pr.sh card  14 input
@@ -164,6 +166,13 @@ path_relative_to_repo() {
   else
     echo "$path"
   fi
+}
+
+issue_prompt_path_for_issue() {
+  local issue="$1" scope="$2" slug="$3"
+  local root
+  root="$(repo_root)"
+  echo "$root/.adl/issues/$scope/bodies/issue-${issue}-${slug}.md"
 }
 
 absolute_host_path_present() {
@@ -630,6 +639,20 @@ validate_bootstrap_cards() {
   [[ "$out_branch" == "$branch" ]] || die "start: output card branch mismatch (expected $branch, found ${out_branch:-<empty>})"
 }
 
+validate_bootstrap_stp() {
+  local path="$1"
+  local validator
+  validator="$(resolve_structured_prompt_validator)"
+  "$validator" --type stp --input "$path" >/dev/null \
+    || die "init: stp failed validation: $path"
+}
+
+seed_task_bundle_stp() {
+  local source_path="$1" dest_path="$2"
+  mkdir -p "$(dirname "$dest_path")"
+  cp -f "$source_path" "$dest_path"
+}
+
 ensure_nonempty_file() {
   local path="$1"
   [[ -f "$path" ]] || return 1
@@ -1067,6 +1090,95 @@ cmd_cards() {
 
   echo "READ  $input_path"
   echo "WRITE $output_path"
+}
+
+cmd_init() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_init
+    return 0
+  fi
+
+  require_cmd git
+  local issue="${1:-}"; shift || true
+  [[ -n "$issue" ]] || die_with_usage "init: missing <issue> number" usage_init
+  issue="$(normalize_issue_or_die "$issue")"
+
+  local slug=""
+  local no_fetch_issue="0"
+  local title=""
+  local title_arg=""
+  local version=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --slug) slug="$2"; shift 2 ;;
+      --title) title_arg="$2"; shift 2 ;;
+      --no-fetch-issue) no_fetch_issue="1"; shift ;;
+      --version) version="$2"; shift 2 ;;
+      -h|--help) usage_init; return 0 ;;
+      *) die_with_usage "init: unknown arg: $1" usage_init ;;
+    esac
+  done
+
+  local repo
+  repo="$(default_repo)"
+  if [[ -z "$slug" && -n "$title_arg" ]]; then
+    slug="$(sanitize_slug "$title_arg")"
+    [[ -n "$slug" ]] || die "init: --title produced empty slug after sanitization"
+    title="$title_arg"
+  fi
+  if [[ -z "$title" && "$no_fetch_issue" != "1" ]]; then
+    require_cmd gh
+    note "Fetching issue title via gh…"
+    title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
+  fi
+  if [[ -z "$slug" ]]; then
+    if [[ "$no_fetch_issue" == "1" ]]; then
+      die "init: --slug is required when --no-fetch-issue is set"
+    fi
+    [[ -n "$title" ]] || die "Could not fetch issue #$issue title. Pass --slug or check gh auth/repo."
+    slug="$(sanitize_slug "$title")"
+  fi
+  if [[ -z "$title" ]]; then
+    title="$slug"
+  fi
+
+  if [[ -z "$version" ]]; then
+    if [[ "$no_fetch_issue" == "1" ]]; then
+      version="$DEFAULT_VERSION"
+    else
+      version="$(issue_version "$issue")"
+    fi
+  fi
+  [[ -n "$version" ]] || die "init: version must be non-empty"
+
+  local source_path bundle_dir stp_path
+  source_path="$(issue_prompt_path_for_issue "$issue" "$version" "$slug")"
+  bundle_dir="$(task_bundle_dir_path "$issue" "$version" "$slug")"
+  stp_path="$bundle_dir/stp.md"
+
+  [[ -f "$source_path" ]] || die "init: canonical source issue prompt not found: $source_path"
+  validate_bootstrap_stp "$source_path"
+
+  if ensure_nonempty_file "$stp_path"; then
+    note "STP already exists: $stp_path"
+    validate_bootstrap_stp "$stp_path"
+  else
+    note "Initializing task bundle: $bundle_dir"
+    seed_task_bundle_stp "$source_path" "$stp_path"
+    validate_bootstrap_stp "$stp_path"
+  fi
+
+  if [[ -e "$bundle_dir/sip.md" || -e "$bundle_dir/sor.md" ]]; then
+    note "SIP/SOR already exist; pr init leaves them untouched."
+  fi
+
+  echo "• Initialized:"
+  echo "  STP      $(path_relative_to_repo "$stp_path")"
+  echo "  BUNDLE   $(path_relative_to_repo "$bundle_dir")"
+  echo "  SOURCE   $(path_relative_to_repo "$source_path")"
+  echo "  CONTRACT minimum v0.85 init = task-bundle directory + validated stp.md only"
+  note "Done."
 }
 
 cmd_start() {
@@ -1584,6 +1696,7 @@ pr.sh — reduce git/PR thrash while preserving human review
 
 Commands:
   help
+  init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v>]
   new     --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
   start   <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue]
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
@@ -1600,6 +1713,8 @@ Flags:
   (new)     --labels <csv>                    Comma-separated labels (default: track:roadmap,version:v0.3,type:bug,area:tools,epic:v0.3-tooling-git).
   (new)     --version <v0.3>                  Default/fallback version label for new issue/card flow.
   (new)     --no-start                        Only create issue; do not invoke start.
+  (init)    --version <v0.85>                 Override detected version (otherwise inferred from issue labels version:vX.Y)
+  (init)    --no-fetch-issue                  Do not fetch issue title/labels; requires --slug.
   (card)    -f, --file <input_card.md>         Output path for the generated input card (default: <cards_root>/<issue>/input_<issue>.md)
   (output)  -f, --file <output_card.md>        Output path for the generated output card (default: <cards_root>/<issue>/output_<issue>.md)
   (cards)   --version <v0.2>                   Override detected version (otherwise inferred from issue labels version:vX.Y)
@@ -1622,6 +1737,7 @@ Notes:
 
 Examples:
   adl/tools/pr.sh help
+  adl/tools/pr.sh init 17 --slug b6-default-system --no-fetch-issue --version v0.85
   adl/tools/pr.sh new --title "adl: fix timeout handling" --slug timeout-fix
   adl/tools/pr.sh start 17 --slug b6-default-system
   adl/tools/pr.sh card  17 --help
@@ -1640,6 +1756,18 @@ usage_new() {
   cat <<'EOF'
 Usage:
   adl/tools/pr.sh new --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
+EOF
+}
+
+usage_init() {
+  cat <<'EOF'
+Usage:
+  adl/tools/pr.sh init <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v0.85>]
+
+Notes:
+- Initializes the canonical local task-bundle authoring surface for an existing issue-backed task.
+- For v0.85, the minimum initialized artifact set is the task-bundle directory plus a validated stp.md copied from the canonical local issue prompt.
+- Does not create sip.md or sor.md; those remain the responsibility of pr start.
 EOF
 }
 
@@ -1694,6 +1822,7 @@ main() {
   local cmd="${1:-}"; shift || true
   case "$cmd" in
     help) usage ;;
+    init) cmd_init "$@" ;;
     new) cmd_new "$@" ;;
     start) cmd_start "$@" ;;
     finish) cmd_finish "$@" ;;

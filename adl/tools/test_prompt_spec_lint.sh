@@ -65,6 +65,118 @@ EOF
   ./adl/tools/lint_prompt_spec.sh --input .adl/cards/761/input_761.md >/dev/null
 )
 
+cat > "$repo/.adl/cards/761/input_task_bundle_761.md" <<'EOF'
+# ADL Input Card
+
+Task ID: issue-0761
+Run ID: issue-0761
+Version: v0.8
+Title: lint-pass-task-bundle
+Branch: codex/761-lint-pass-task-bundle
+
+Context:
+- Issue: https://github.com/example/repo/issues/761
+- PR:
+- Source Issue Prompt: .adl/issues/v0.85/bodies/issue-0761-v085-task-bundle-example.md
+
+## Prompt Spec
+```yaml
+prompt_schema: adl.v1
+actor:
+  role: execution_agent
+  name: codex
+model:
+  id: gpt-5-codex
+  determinism_mode: stable
+inputs:
+  sections:
+    - goal
+    - acceptance_criteria
+    - inputs
+    - constraints_policies
+    - system_invariants
+    - reviewer_checklist
+outputs:
+  output_card: .adl/v0.85/tasks/issue-0761__v085-task-bundle-example/sor.md
+  summary_style: concise_structured
+constraints:
+  include_system_invariants: true
+  include_reviewer_checklist: true
+  disallow_secrets: true
+  disallow_absolute_host_paths: true
+automation_hints:
+  source_issue_prompt_required: true
+  target_files_surfaces_recommended: true
+  validation_plan_required: true
+  required_outcome_type_supported: true
+review_surfaces:
+  - card_review_checklist.v1
+  - card_review_output.v1
+  - card_reviewer_gpt.v1.1
+```
+EOF
+
+(
+  cd "$repo"
+  ./adl/tools/lint_prompt_spec.sh --input .adl/cards/761/input_task_bundle_761.md >/dev/null
+)
+
+cat > "$repo/.adl/cards/761/input_secret_like_761.md" <<'EOF'
+# ADL Input Card
+
+Task ID: issue-0761
+Run ID: issue-0761
+Version: v0.8
+Title: lint-fail-secret-like
+Branch: codex/761-lint-fail-secret-like
+
+## Prompt Spec
+```yaml
+prompt_schema: adl.v1
+actor:
+  role: execution_agent
+  name: codex
+model:
+  id: gpt-5-codex
+  determinism_mode: stable
+inputs:
+  sections:
+    - goal
+outputs:
+  output_card: .adl/cards/761/output_761.md
+  summary_style: concise_structured
+constraints:
+  include_system_invariants: true
+  include_reviewer_checklist: true
+  disallow_secrets: true
+  disallow_absolute_host_paths: true
+automation_hints:
+  source_issue_prompt_required: true
+  target_files_surfaces_recommended: true
+  validation_plan_required: true
+  required_outcome_type_supported: true
+review_surfaces:
+  - card_review_checklist.v1
+  - card_review_output.v1
+  - card_reviewer_gpt.v1.1
+```
+
+Notes:
+- simulated leaked token sk-ABCDEF12
+EOF
+
+(
+  cd "$repo"
+  set +e
+  ./adl/tools/lint_prompt_spec.sh --input .adl/cards/761/input_secret_like_761.md >/dev/null 2>&1
+  rc=$?
+  set -e
+  if [[ "$rc" -eq 0 ]]; then
+    echo "assertion failed: secret-like token unexpectedly passed lint" >&2
+    exit 1
+  fi
+)
+
 cat > "$repo/.adl/cards/761/input_invalid_761.md" <<'EOF'
 # ADL Input Card
 
