@@ -61,9 +61,12 @@ The current tracked v0.85 set includes:
 - `SWARM_REMOVAL_PLANNING.md`
 - `VISION_v0.85.md`
 - `WBS_v0.85.md`
-- `WHY_RUST_FOR_ADL.md`
 
 If v0.85 planning material exists elsewhere in a temporary workspace or local draft area, reconcile it into this directory rather than treating that alternate location as authoritative.
+
+Retired historical docs may remain in this directory for continuity, but they
+are not part of the active canonical milestone set. `WHY_RUST_FOR_ADL.md` is
+currently retained in that historical-only status.
 
 ## Cognitive Authority
 
