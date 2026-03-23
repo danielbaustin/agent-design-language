@@ -26,6 +26,19 @@ For clarity:
 - later control-plane hardening and richer integrations should support those
   editors, not displace the requirement to ship them
 
+## Command Status For v0.85
+
+This document follows the canonical command-status model in the editing
+five-command execution plan.
+
+| Command | Current state | Repo truth | Notes |
+| --- | --- | --- | --- |
+| `pr init` | missing | no live command in `adl/tools/pr.sh` | planned work, not current behavior |
+| `pr create` | partial / renamed | `pr new` exists, but it is only a rough precursor | do not describe `pr new` as a finished substitute |
+| `pr start` | implemented | active backbone command today | real and mature enough to anchor the current control plane |
+| `pr run` | missing | no live command in `adl/tools/pr.sh` | execution still happens through narrower paths |
+| `pr finish` | implemented | active mature workflow command today | real, but still subject to reliability/polish work |
+
 ## Core Insight
 
 `pr.sh` is no longer just a helper script for branches and worktrees. It is already functioning as the nucleus of the editing system.
@@ -157,7 +170,7 @@ The intended command path is:
 This only becomes a reliable closed loop if validation is enforced at every transition.
 
 
-Operationally, `pr start` and `pr finish` are the active mature workflow commands today. `pr create` is the desired next control-plane command and should be treated as part of the target-state architecture even where today’s implementation is still incomplete.
+Operationally, `pr start` and `pr finish` are the active mature workflow commands today. `pr create` is the desired next control-plane command and should be treated as part of the target-state architecture even where today’s implementation is still incomplete. `pr new` should be understood as the current rough precursor to `pr create`, not as a finished substitute for the target lifecycle command.
 
 The architecture should therefore treat `pr start` as the anchor command for the current system, while `pr create`, execution orchestration, and finish/repair behavior become increasingly formalized around it. This is one reason the longer-term control plane should move into Rust: the backbone command should not remain trapped in brittle bash if it is going to carry more general lifecycle responsibility.
 
