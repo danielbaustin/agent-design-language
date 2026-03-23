@@ -14,7 +14,7 @@ ADL is built for teams that care about determinism and auditability. Documents a
 From repo root:
 
 ```bash
-cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-3-fork-join-seq-run.adl.yaml --print-plan
+cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-fork-join-seq-run.adl.yaml --print-plan
 ```
 
 This prints a deterministic v0.3 fork/join plan with clean output and no provider runtime setup.
@@ -22,7 +22,7 @@ This prints a deterministic v0.3 fork/join plan with clean output and no provide
 If you want a second quick check:
 
 ```bash
-cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
+cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-on-error-retry.adl.yaml --print-plan
 ```
 
 ## Demos (Story-Driven, User-Facing)
@@ -124,7 +124,7 @@ For the deeper milestone docs, start with:
 
 ### v0.4
 
-* Deterministic, no-network demo harness (`swarm/tools/demo_v0_4.sh`)
+* Deterministic, no-network demo harness (`adl/tools/demo_v0_4.sh`)
 * Bounded executor prototype demos
 * Stable artifact emission
 
@@ -137,8 +137,8 @@ For the deeper milestone docs, start with:
 ## Repository Layout
 
 - `demos/`: canonical user-facing demo index, runbooks, and demo docs
-- `swarm/`: Rust reference runtime and CLI
-- `swarm/examples/`: runnable workflow fixtures used by the runtime and tests
+- `adl/`: Rust reference runtime and CLI
+- `adl/examples/`: runnable workflow fixtures used by the runtime and tests
 - `adl-spec/`: language-level specification docs
 - `docs/`: contributor workflow and roadmap docs
 - `docs/adr/`: architecture decision records (major technical decisions)
@@ -150,12 +150,12 @@ For the deeper milestone docs, start with:
 From repo root:
 
 ```bash
-cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
-cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-3-on-error-retry.adl.yaml --print-plan
-cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-3-remote-http-provider.adl.yaml --print-plan
+cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-on-error-retry.adl.yaml --print-plan
+cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-remote-http-provider.adl.yaml --print-plan
 ```
 
-To execute (`--run`) local-provider examples, run from `swarm/` with a local Ollama available.
+To execute (`--run`) local-provider examples, run from `adl/` with a local Ollama available.
 
 ## Legacy v0.4 Demos
 
@@ -164,13 +164,13 @@ These demos are deterministic, non-interactive, and run without network by pinni
 Fork/Join demo (3 branches + deterministic join barrier):
 
 ```bash
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-4-demo-fork-join-swarm.adl.yaml --run --trace --out .adl/reports/demo-v0.4/fork-join-swarm
+ADL_OLLAMA_BIN=adl/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-4-demo-fork-join.adl.yaml --run --trace --out .adl/reports/demo-v0.4/fork-join
 ```
 
 Bounded parallelism stress (8 branch steps with bounded executor):
 
 ```bash
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-4-demo-bounded-parallelism.adl.yaml --run --trace --out .adl/reports/demo-v0.4/bounded-parallelism
+ADL_OLLAMA_BIN=adl/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-4-demo-bounded-parallelism.adl.yaml --run --trace --out .adl/reports/demo-v0.4/bounded-parallelism
 ```
 
 Current engine concurrency is intentionally fixed at `MAX_PARALLEL=4` in v0.4; this demo proves bounded execution at that shipped limit.
@@ -178,13 +178,13 @@ Current engine concurrency is intentionally fixed at `MAX_PARALLEL=4` in v0.4; t
 Deterministic replay (run twice with same command, then compare `replay/join.txt` hash):
 
 ```bash
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path swarm/Cargo.toml --bin adl -- swarm/examples/v0-4-demo-deterministic-replay.adl.yaml --run --trace --out .adl/reports/demo-v0.4/deterministic-replay
+ADL_OLLAMA_BIN=adl/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-4-demo-deterministic-replay.adl.yaml --run --trace --out .adl/reports/demo-v0.4/deterministic-replay
 ```
 
 Run all three demos in sequence:
 
 ```bash
-swarm/tools/demo_v0_4.sh
+adl/tools/demo_v0_4.sh
 ```
 
 ## Why v0.7 Matters
@@ -203,7 +203,7 @@ v0.7.0 proves:
 Default contributor workflow uses `adl_pr_cycle` (`start -> codex -> finish -> report`).
 - Guide: `docs/default_workflow.md`
 - Active milestone docs: `docs/milestones/v0.8/`
-- Tools: `swarm/tools/README.md`
+- Tools: `adl/tools/README.md`
 
 ## License
 

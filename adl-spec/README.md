@@ -2,7 +2,7 @@
 
 Language-level specification materials for Agent Design Language (ADL).
 This directory is the spec entrypoint: normative text, schema artifacts, and examples.
-Runtime implementation details belong under `swarm/` and milestone docs.
+Runtime implementation details belong under `adl/` and milestone docs.
 
 Contributor workflow is governed by the repo-wide `../CONTRIBUTING.md`.
 
@@ -32,7 +32,7 @@ Small clarifications, typo fixes, examples, and explanatory notes that do not ch
 
 This directory is for **language semantics**, invariants, and design intent.
 
-- Runtime implementation details belong under `../swarm/`
+- Runtime implementation details belong under `../adl/`
 - Versioned architecture and release behavior belong under `../docs/milestones/`
 - Cross-cutting architecture decisions belong under `../docs/adr/`
 
@@ -65,7 +65,7 @@ The current unreleased spec milestone remains the initial ADL 1.0 specification 
 ## See Also / Canonical Docs
 
 - Root project entrypoint: `../README.md`
-- Runtime/CLI usage: `../swarm/README.md`
+- Runtime/CLI usage: `../adl/README.md`
 - Contributor workflow: `../CONTRIBUTING.md`
 - Codex operating procedure: `../docs/codex_playbook.md`
 - Design principles: `../docs/design_goals.md`

@@ -17,7 +17,7 @@ It does not claim a finished browser-only workflow platform.
 From repository root:
 
 ```bash
-swarm/tools/demo_hitl_editor_review.sh
+adl/tools/demo_hitl_editor_review.sh
 ```
 
 ## Primary proof artifacts

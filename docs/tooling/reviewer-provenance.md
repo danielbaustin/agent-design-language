@@ -17,7 +17,7 @@ This slice focuses on deterministic review outputs because they already:
 Use:
 
 ```bash
-ruby swarm/tools/verify_review_output_provenance.rb \
+ruby adl/tools/verify_review_output_provenance.rb \
   --review docs/tooling/examples/reviewer-provenance/good_review_output_661.yaml
 ```
 
@@ -35,7 +35,7 @@ ruby swarm/tools/verify_review_output_provenance.rb \
 Use:
 
 ```bash
-bash swarm/tools/test_review_output_provenance.sh
+bash adl/tools/test_review_output_provenance.sh
 ```
 
 The fixture compares:

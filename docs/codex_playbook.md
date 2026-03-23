@@ -21,23 +21,23 @@ Card semantics:
 - The canonical local draft prompt bundle is `.adl/<scope>/tasks/<task-id>__<slug>/`.
 - Until workflow tooling writes that layout directly, `.adl/cards/` and `.adl/issues/...` remain compatibility inputs that should be synced into the canonical bundle view.
 - Compatibility links remain under `.adl/cards/` for adjacent tooling during migration.
-- Templates live under `swarm/templates/cards/` (versioned).
+- Templates live under `adl/templates/cards/` (versioned).
 - Tasks can be non-code; the same card-based trace applies.
 
 Fast path (copy/paste):
 
 ```bash
-swarm/tools/pr.sh start <issue>
-swarm/tools/pr.sh cards <issue>
+adl/tools/pr.sh start <issue>
+adl/tools/pr.sh cards <issue>
 # do the work + tests
-swarm/tools/pr.sh finish <issue> --title "swarm: <short description>" \
+adl/tools/pr.sh finish <issue> --title "adl: <short description>" \
   -f .adl/v0.85/tasks/<task-id>__<slug>/sip.md \
   --output-card .adl/v0.85/tasks/<task-id>__<slug>/sor.md
 ```
 
 Recovery (common pitfalls):
-- **Wrong branch:** `git switch main` -> `swarm/tools/pr.sh start <issue>`
-- **Finish after manual commit:** `swarm/tools/pr.sh finish ...` still works; it will commit staged changes.
+- **Wrong branch:** `git switch main` -> `adl/tools/pr.sh start <issue>`
+- **Finish after manual commit:** `adl/tools/pr.sh finish ...` still works; it will commit staged changes.
 - **Issue vs PR number confusion:** always use the **issue** number for cards/branches.
 
 ---
@@ -148,7 +148,7 @@ Return:
 
 ### 2. Repo Scan
 Identify:
-- Relevant modules in `swarm/src/`
+- Relevant modules in `adl/src/`
 - Existing tests
 - Schema touch points
 - CLI behavior (if relevant)
@@ -235,10 +235,10 @@ A change is complete only if:
 
 Before editing, Codex must read:
 
-1. `swarm/README.md`
+1. `adl/README.md`
 2. `docs/design_goals.md`
-3. `swarm/examples/`
-4. `swarm/tests/`
+3. `adl/examples/`
+4. `adl/tests/`
 
 Then identify:
 - Modules to change

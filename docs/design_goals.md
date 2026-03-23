@@ -14,7 +14,7 @@ It is intentionally version-light and does not enumerate features by release.
 
 For feature lists and shipped behavior, see:
 - Root `README.md` (features by release)
-- `swarm/README.md` (runtime entrypoint and usage)
+- `adl/README.md` (runtime entrypoint and usage)
 - `docs/milestones/v0.6/` (design, sprint, release notes)
 - `docs/adr/` (architecture decisions)
 

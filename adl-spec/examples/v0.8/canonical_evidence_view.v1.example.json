@@ -5,7 +5,7 @@
   "run_context": {
     "run_id": "run-mut-a-001",
     "workflow_id": "workflow-coverage-experiment",
-    "subject": "swarm/src/coverage.rs",
+    "subject": "adl/src/coverage.rs",
     "variant_label": "mutation-a"
   },
   "canonicalization_profile": {

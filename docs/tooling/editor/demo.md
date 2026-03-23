@@ -45,7 +45,7 @@ It does not claim a finished browser-only workflow platform.
    - `docs/records/v0.85/tasks/task-v085-wp05-demo/sor.md`
 12. Return to the `Structured Task Prompt` card, set a numeric GitHub issue number that matches the branch prefix, and confirm the workflow action panel shows a ready `pr start` command.
 13. Copy the command from the editor and run it from the repo root:
-    - `swarm/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>`
+    - `adl/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>`
 14. Copy the review note from the Review Flow panel and confirm it summarizes:
     - the bounded recommendation
     - the current proof surface

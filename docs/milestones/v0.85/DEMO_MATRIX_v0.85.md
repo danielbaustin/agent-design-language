@@ -50,17 +50,17 @@ Every row in this matrix must provide at least one of:
 
 | Feature band | Class | Status | Primary surface | Proof artifact / review surface |
 |---|---|---:|---|---|
-| Steering / queueing / checkpoint / resume | Primary demo | Ready | `swarm/tools/demo_steering_queue_checkpoint.sh` | pause-state artifact, steering patch, resumed run record |
-| HITL editor / review workflow | Primary demo | Ready | `swarm/tools/demo_hitl_editor_review.sh` | editor task-bundle example, review-flow doc, emitted demo manifest |
-| AEE bounded adaptation | Primary demo | Ready | `swarm/tools/demo_aee_bounded_adaptation.sh` | `aee_decision.json`, affect-state artifacts, recovery README |
-| Affect + Gödel vertical slice | Primary demo | Ready | `swarm/tools/demo_affect_godel_vertical_slice.sh` | `godel_affect_vertical_slice.v1.json` proving full causal chain |
-| Hypothesis engine | Primary demo | Ready | `swarm/tools/demo_godel_hypothesis_engine.sh` | `godel_hypothesis.v1.json`, reviewer demo doc |
-| Affect engine core | Supporting demo | Ready | `swarm/tools/demo_affect_engine.sh` | affect-state artifact, downstream AEE decision change |
-| Reasoning graph + affect integration | Supporting demo | Ready | `swarm/tools/demo_reasoning_graph_affect.sh` | reasoning-graph artifact, before/after comparison |
-| Policy learning | Supporting demo | Ready | `swarm/tools/demo_adaptive_godel_loop.sh` | policy delta artifact and before/after comparison |
-| Experiment prioritization | Supporting demo | Ready | `swarm/tools/demo_experiment_prioritization.sh` | ranked artifact with tie-break behavior |
-| Cross-workflow learning | Alternate proof surface | Ready | `swarm/tools/demo_cross_workflow_learning.sh` | linked artifact chain across workflows; `demos/cross_workflow_learning_demo.md` |
-| Promotion / evaluation loop | Supporting demo | Ready | `swarm/tools/demo_promotion_eval_loop.sh` | evaluation artifact plus promotion decision artifact |
+| Steering / queueing / checkpoint / resume | Primary demo | Ready | `adl/tools/demo_steering_queue_checkpoint.sh` | pause-state artifact, steering patch, resumed run record |
+| HITL editor / review workflow | Primary demo | Ready | `adl/tools/demo_hitl_editor_review.sh` | editor task-bundle example, review-flow doc, emitted demo manifest |
+| AEE bounded adaptation | Primary demo | Ready | `adl/tools/demo_aee_bounded_adaptation.sh` | `aee_decision.json`, affect-state artifacts, recovery README |
+| Affect + Gödel vertical slice | Primary demo | Ready | `adl/tools/demo_affect_godel_vertical_slice.sh` | `godel_affect_vertical_slice.v1.json` proving full causal chain |
+| Hypothesis engine | Primary demo | Ready | `adl/tools/demo_godel_hypothesis_engine.sh` | `godel_hypothesis.v1.json`, reviewer demo doc |
+| Affect engine core | Supporting demo | Ready | `adl/tools/demo_affect_engine.sh` | affect-state artifact, downstream AEE decision change |
+| Reasoning graph + affect integration | Supporting demo | Ready | `adl/tools/demo_reasoning_graph_affect.sh` | reasoning-graph artifact, before/after comparison |
+| Policy learning | Supporting demo | Ready | `adl/tools/demo_adaptive_godel_loop.sh` | policy delta artifact and before/after comparison |
+| Experiment prioritization | Supporting demo | Ready | `adl/tools/demo_experiment_prioritization.sh` | ranked artifact with tie-break behavior |
+| Cross-workflow learning | Alternate proof surface | Ready | `adl/tools/demo_cross_workflow_learning.sh` | linked artifact chain across workflows; `demos/cross_workflow_learning_demo.md` |
+| Promotion / evaluation loop | Supporting demo | Ready | `adl/tools/demo_promotion_eval_loop.sh` | evaluation artifact plus promotion decision artifact |
 | Review and output-record rigor | Alternate proof surface | Ready | artifact review walkthrough | issues `#918`, `#941`, `#948`, `#958` and strong SORs |
 | Demo/readiness discipline itself | Alternate proof surface | Ready | `demos/v085_demo_program.md` | canonical demo matrix and milestone checklist |
 
@@ -75,7 +75,7 @@ These are the milestone’s headline demonstrations. They should be the first th
 **Class:** Primary demo  
 **Status:** Ready  
 **Command / playbook:**
-- `swarm/tools/demo_steering_queue_checkpoint.sh`
+- `adl/tools/demo_steering_queue_checkpoint.sh`
 
 **Primary supporting docs:**
 - `demos/steering_queue_checkpoint_demo.md`
@@ -102,7 +102,7 @@ This is the bounded runtime proof that ADL can pause, preserve queue/checkpoint 
 **Class:** Primary demo  
 **Status:** Ready  
 **Command / playbook:**
-- `swarm/tools/demo_hitl_editor_review.sh`
+- `adl/tools/demo_hitl_editor_review.sh`
 
 **Primary supporting docs:**
 - `demos/hitl_editor_review_demo.md`
@@ -129,7 +129,7 @@ This is the best bounded proof that ADL has moved beyond raw markdown hacking in
 **Class:** Primary demo  
 **Status:** Ready  
 **Command / playbook:**
-- `swarm/tools/demo_aee_bounded_adaptation.sh`
+- `adl/tools/demo_aee_bounded_adaptation.sh`
 
 **Primary supporting docs:**
 - `demos/aee-recovery/README.md`
@@ -155,7 +155,7 @@ This is the first visible proof that ADL can adapt within bounds rather than beh
 **Class:** Primary demo  
 **Status:** Ready  
 **Command / playbook:**
-- `swarm/tools/demo_affect_godel_vertical_slice.sh`
+- `adl/tools/demo_affect_godel_vertical_slice.sh`
 
 **Primary supporting docs:**
 - `demos/affect_godel_vertical_slice_demo.md`
@@ -179,7 +179,7 @@ This is the most distinctive single `v0.85` demo. It shows that ADL is not only 
 **Class:** Primary demo  
 **Status:** Ready  
 **Command / playbook:**
-- `swarm/tools/demo_godel_hypothesis_engine.sh`
+- `adl/tools/demo_godel_hypothesis_engine.sh`
 
 **Primary supporting docs:**
 - `demos/godel_hypothesis_engine_demo.md`
@@ -207,7 +207,7 @@ These demos are important and runnable, but they support the milestone story rat
 **Class:** Supporting demo  
 **Status:** Ready  
 **Command / playbook:**
-- `swarm/tools/demo_affect_engine.sh`
+- `adl/tools/demo_affect_engine.sh`
 
 **Supporting docs:**
 - `demos/affect_engine_demo.md`
@@ -229,7 +229,7 @@ These demos are important and runnable, but they support the milestone story rat
 **Class:** Supporting demo  
 **Status:** Ready  
 **Command / playbook:**
-- `swarm/tools/demo_reasoning_graph_affect.sh`
+- `adl/tools/demo_reasoning_graph_affect.sh`
 
 **Supporting docs:**
 - `demos/reasoning_graph_affect_demo.md`
@@ -250,7 +250,7 @@ These demos are important and runnable, but they support the milestone story rat
 **Class:** Supporting demo  
 **Status:** Ready  
 **Command / playbook:**
-- `swarm/tools/demo_adaptive_godel_loop.sh`
+- `adl/tools/demo_adaptive_godel_loop.sh`
 
 **Expected proof artifacts:**
 - `.adl/reports/demo-adaptive-godel-loop/runs/review-godel-policy-001/godel/godel_policy.v1.json`
@@ -268,7 +268,7 @@ These demos are important and runnable, but they support the milestone story rat
 **Class:** Supporting demo  
 **Status:** Ready  
 **Command / playbook:**
-- `swarm/tools/demo_experiment_prioritization.sh`
+- `adl/tools/demo_experiment_prioritization.sh`
 
 **Expected proof artifacts:**
 - `.adl/reports/demo-experiment-prioritization/runs/review-godel-priority-001/godel/godel_experiment_priority.v1.json`
@@ -285,7 +285,7 @@ These demos are important and runnable, but they support the milestone story rat
 **Class:** Supporting demo  
 **Status:** Ready  
 **Command / playbook:**
-- `swarm/tools/demo_promotion_eval_loop.sh`
+- `adl/tools/demo_promotion_eval_loop.sh`
 
 **Expected proof artifacts:**
 - `.adl/reports/demo-promotion-eval-loop/runs/review-godel-promotion-001/godel/godel_eval_report.v1.json`
@@ -306,7 +306,7 @@ These are important `v0.85` claims whose best current proof is primarily artifac
 **Class:** Alternate proof surface  
 **Status:** Ready  
 **Primary proof surfaces:**
-- `swarm/tools/demo_cross_workflow_learning.sh`
+- `adl/tools/demo_cross_workflow_learning.sh`
 - `demos/cross_workflow_learning_demo.md`
 - output card for `#751`
 
@@ -338,11 +338,11 @@ These are important `v0.85` claims whose best current proof is primarily artifac
 
 Recommended milestone review order:
 1. `demos/v085_demo_program.md`
-2. `swarm/tools/demo_steering_queue_checkpoint.sh`
-3. `swarm/tools/demo_hitl_editor_review.sh`
-4. `swarm/tools/demo_aee_bounded_adaptation.sh`
-5. `swarm/tools/demo_affect_godel_vertical_slice.sh`
-6. `swarm/tools/demo_godel_hypothesis_engine.sh`
+2. `adl/tools/demo_steering_queue_checkpoint.sh`
+3. `adl/tools/demo_hitl_editor_review.sh`
+4. `adl/tools/demo_aee_bounded_adaptation.sh`
+5. `adl/tools/demo_affect_godel_vertical_slice.sh`
+6. `adl/tools/demo_godel_hypothesis_engine.sh`
 7. supporting demos as needed for deeper inspection
 
 ---

@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: swarm
+        working-directory: adl
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
@@ -26,22 +26,22 @@ jobs:
         uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2
         with:
           workspaces: |
-            swarm -> target
+            adl -> target
 
       - name: tooling sanity (bash -n)
-        run: bash -n swarm/tools/*.sh
+        run: bash -n adl/tools/*.sh
         working-directory: .
 
       - name: tooling sanity (codex_pr help)
-        run: sh swarm/tools/codex_pr.sh --help
+        run: sh adl/tools/codex_pr.sh --help
         working-directory: .
 
       - name: tooling sanity (codexw help)
-        run: sh swarm/tools/codexw.sh --help
+        run: sh adl/tools/codexw.sh --help
         working-directory: .
 
       - name: guardrail (no new legacy refs)
-        run: bash swarm/tools/check_no_new_legacy_swarm_refs.sh
+        run: bash adl/tools/check_no_new_legacy_swarm_refs.sh
         working-directory: .
 
       - name: fmt
@@ -57,7 +57,7 @@ jobs:
         run: cargo test
 
       - name: demo smoke (S-01..S-05)
-        run: bash swarm/tools/demo_smoke_v07_story.sh
+        run: bash adl/tools/demo_smoke_v07_story.sh
         working-directory: .
 
   adl-coverage:
@@ -66,7 +66,7 @@ jobs:
       contents: read
     defaults:
       run:
-        working-directory: swarm
+        working-directory: adl
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
@@ -81,7 +81,7 @@ jobs:
         uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2
         with:
           workspaces: |
-            swarm -> target
+            adl -> target
 
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
@@ -101,7 +101,7 @@ jobs:
           PER_FILE_LINE_THRESHOLD: "80"
           # Documented exclusion rationale is tracked in
           # docs/milestones/v0.75/COVERAGE_POLICY_0.75.md.
-          EXCLUDE_FROM_FILE_FLOOR_REGEX: "/swarm/src/bin/swarm.rs$|/swarm/src/bin/swarm_remote.rs$|/swarm/src/obsmem_contract.rs$"
+          EXCLUDE_FROM_FILE_FLOOR_REGEX: "/adl/src/obsmem_contract.rs$"
         run: |
           set -eu
           bash tools/enforce_coverage_gates.sh coverage-summary.json
@@ -110,7 +110,7 @@ jobs:
         run: test -s lcov.info && ls -l lcov.info
 
       - name: Verify lcov path from repository root
-        run: test -s swarm/lcov.info && ls -l swarm/lcov.info
+        run: test -s adl/lcov.info && ls -l adl/lcov.info
         working-directory: .
 
       - name: Upload coverage artifact
@@ -118,9 +118,9 @@ jobs:
         with:
           name: adl-coverage-lcov
           path: |
-            swarm/lcov.info
-            swarm/coverage-summary.json
-            swarm/coverage-summary.txt
+            adl/lcov.info
+            adl/coverage-summary.json
+            adl/coverage-summary.txt
           if-no-files-found: error
 
       - name: Upload coverage to Codecov
@@ -128,8 +128,8 @@ jobs:
         uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: swarm/lcov.info
-          flags: swarm
+          files: adl/lcov.info
+          flags: adl
           # Keep CI signal stable during transient Codecov outages; upload is informational.
           fail_ci_if_error: false
           verbose: true

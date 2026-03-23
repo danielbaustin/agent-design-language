@@ -19,7 +19,7 @@ currently landed bounded control surface.
 From repository root:
 
 ```bash
-swarm/tools/demo_steering_queue_checkpoint.sh
+adl/tools/demo_steering_queue_checkpoint.sh
 ```
 
 ## Primary proof artifacts

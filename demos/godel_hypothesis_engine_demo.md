@@ -15,7 +15,7 @@ It demonstrates:
 From repository root:
 
 ```bash
-swarm/tools/demo_godel_hypothesis_engine.sh
+adl/tools/demo_godel_hypothesis_engine.sh
 ```
 
 ## Primary proof artifacts

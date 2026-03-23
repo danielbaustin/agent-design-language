@@ -13,7 +13,7 @@ It proves:
 From repository root:
 
 ```bash
-swarm/tools/demo_reasoning_graph_affect.sh
+adl/tools/demo_reasoning_graph_affect.sh
 ```
 
 ## Primary proof artifacts

@@ -15,10 +15,10 @@ policy learning or open-ended self-healing.
 
 ## Demo Assets
 
-- Initial workflow: `swarm/examples/v0-3-aee-recovery-initial.adl.yaml`
-- Adapted workflow: `swarm/examples/v0-3-aee-recovery-adapted.adl.yaml`
+- Initial workflow: `adl/examples/v0-3-aee-recovery-initial.adl.yaml`
+- Adapted workflow: `adl/examples/v0-3-aee-recovery-adapted.adl.yaml`
 - Bounded recovery overlay: `demos/aee-recovery/retry-budget.overlay.json`
-- Deterministic no-network provider mock: `swarm/tools/mock_ollama_fail_once.sh`
+- Deterministic no-network provider mock: `adl/tools/mock_ollama_fail_once.sh`
 
 ## Run From Repository Root
 
@@ -32,10 +32,10 @@ mkdir -p ./out/aee-recovery
 ### 2. Run the initial failing case
 
 ```bash
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_fail_once.sh \
+ADL_OLLAMA_BIN=adl/tools/mock_ollama_fail_once.sh \
 ADL_AEE_DEMO_STATE_DIR=./out/aee-recovery/state-initial \
-cargo run --manifest-path swarm/Cargo.toml --bin adl -- \
-  swarm/examples/v0-3-aee-recovery-initial.adl.yaml \
+cargo run --manifest-path adl/Cargo.toml --bin adl -- \
+  adl/examples/v0-3-aee-recovery-initial.adl.yaml \
   --run \
   --trace \
   --out ./out/aee-recovery/initial
@@ -56,7 +56,7 @@ Expected outcome:
 cat .adl/runs/v0-3-aee-recovery-initial/learning/suggestions.json
 cat .adl/runs/v0-3-aee-recovery-initial/learning/affect_state.v1.json
 cat .adl/runs/v0-3-aee-recovery-initial/learning/aee_decision.json
-cargo run --manifest-path swarm/Cargo.toml --bin adl -- \
+cargo run --manifest-path adl/Cargo.toml --bin adl -- \
   instrument replay .adl/runs/v0-3-aee-recovery-initial/logs/activation_log.json
 ```
 
@@ -70,10 +70,10 @@ Look for:
 ### 4. Apply the bounded retry overlay and rerun
 
 ```bash
-ADL_OLLAMA_BIN=swarm/tools/mock_ollama_fail_once.sh \
+ADL_OLLAMA_BIN=adl/tools/mock_ollama_fail_once.sh \
 ADL_AEE_DEMO_STATE_DIR=./out/aee-recovery/state-adapted \
-cargo run --manifest-path swarm/Cargo.toml --bin adl -- \
-  swarm/examples/v0-3-aee-recovery-adapted.adl.yaml \
+cargo run --manifest-path adl/Cargo.toml --bin adl -- \
+  adl/examples/v0-3-aee-recovery-adapted.adl.yaml \
   --run \
   --trace \
   --overlay demos/aee-recovery/retry-budget.overlay.json \
@@ -93,7 +93,7 @@ cat .adl/runs/v0-3-aee-recovery-adapted/learning/overlays/applied_overlay.json
 cat .adl/runs/v0-3-aee-recovery-adapted/learning/affect_state.v1.json
 cat .adl/runs/v0-3-aee-recovery-adapted/learning/aee_decision.json
 cat .adl/runs/v0-3-aee-recovery-adapted/run_summary.json
-cargo run --manifest-path swarm/Cargo.toml --bin adl -- \
+cargo run --manifest-path adl/Cargo.toml --bin adl -- \
   instrument replay .adl/runs/v0-3-aee-recovery-adapted/logs/activation_log.json
 ```
 
@@ -122,7 +122,7 @@ Key files:
 From repository root:
 
 ```bash
-swarm/tools/demo_aee_bounded_adaptation.sh
+adl/tools/demo_aee_bounded_adaptation.sh
 ```
 
 This script runs the full bounded adaptation loop and prints the emitted

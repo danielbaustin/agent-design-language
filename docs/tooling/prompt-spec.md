@@ -85,15 +85,15 @@ If Prompt Spec is missing, tooling may fall back to legacy card parsing behavior
 Current repository-controlled execution path:
 
 1. Input card with `## Prompt Spec` block
-2. `swarm/tools/lint_prompt_spec.sh` validates Prompt Spec structure and section IDs
-3. `swarm/tools/card_prompt.sh` consumes Prompt Spec ordering/flags to generate deterministic execution prompt text
+2. `adl/tools/lint_prompt_spec.sh` validates Prompt Spec structure and section IDs
+3. `adl/tools/card_prompt.sh` consumes Prompt Spec ordering/flags to generate deterministic execution prompt text
 4. Output cards preserve the execution record against the same contract surfaces
 
 Example commands:
 
 ```bash
-swarm/tools/lint_prompt_spec.sh --issue 761
-swarm/tools/card_prompt.sh --issue 761 --out /tmp/issue-761.prompt.md
+adl/tools/lint_prompt_spec.sh --issue 761
+adl/tools/card_prompt.sh --issue 761 --out /tmp/issue-761.prompt.md
 ```
 
 The prompt generator remains bounded to card-template section extraction and deterministic rendering. It is not a full natural-language authoring pipeline.
@@ -129,7 +129,7 @@ Canonical ordering for `review_surfaces`:
 3. `card_reviewer_gpt.v1.1`
 
 This ordering keeps protocol dependencies explicit and deterministic.
-`swarm/tools/lint_prompt_spec.sh` enforces required IDs and canonical order.
+`adl/tools/lint_prompt_spec.sh` enforces required IDs and canonical order.
 
 ## Shared Contract Mapping
 

@@ -10,7 +10,7 @@ milestone's strongest claims in a legible order with clear proof surfaces.
 ### 1. Steering / Queueing / Checkpoint
 
 ```bash
-swarm/tools/demo_steering_queue_checkpoint.sh
+adl/tools/demo_steering_queue_checkpoint.sh
 ```
 
 Review:
@@ -23,7 +23,7 @@ Primary proof:
 ### 2. HITL Editor / Review Workflow
 
 ```bash
-swarm/tools/demo_hitl_editor_review.sh
+adl/tools/demo_hitl_editor_review.sh
 ```
 
 Review:
@@ -37,7 +37,7 @@ Primary proof:
 ### 3. AEE Bounded Adaptation
 
 ```bash
-swarm/tools/demo_aee_bounded_adaptation.sh
+adl/tools/demo_aee_bounded_adaptation.sh
 ```
 
 Review:
@@ -50,7 +50,7 @@ Primary proof:
 ### 4. Affect + Gödel Vertical Slice
 
 ```bash
-swarm/tools/demo_affect_godel_vertical_slice.sh
+adl/tools/demo_affect_godel_vertical_slice.sh
 ```
 
 Review:
@@ -62,7 +62,7 @@ Primary proof:
 ### 5. Gödel Hypothesis Engine
 
 ```bash
-swarm/tools/demo_godel_hypothesis_engine.sh
+adl/tools/demo_godel_hypothesis_engine.sh
 ```
 
 Review:
@@ -76,12 +76,12 @@ Primary proof:
 Use these when a reviewer wants deeper inspection of individual bounded
 surfaces:
 
-- `swarm/tools/demo_affect_engine.sh`
-- `swarm/tools/demo_reasoning_graph_affect.sh`
-- `swarm/tools/demo_adaptive_godel_loop.sh`
-- `swarm/tools/demo_experiment_prioritization.sh`
-- `swarm/tools/demo_cross_workflow_learning.sh`
-- `swarm/tools/demo_promotion_eval_loop.sh`
+- `adl/tools/demo_affect_engine.sh`
+- `adl/tools/demo_reasoning_graph_affect.sh`
+- `adl/tools/demo_adaptive_godel_loop.sh`
+- `adl/tools/demo_experiment_prioritization.sh`
+- `adl/tools/demo_cross_workflow_learning.sh`
+- `adl/tools/demo_promotion_eval_loop.sh`
 
 ## Success condition
 

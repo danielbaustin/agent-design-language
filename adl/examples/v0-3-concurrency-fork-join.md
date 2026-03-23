@@ -1,0 +1,57 @@
+# v0.3 Concurrency Fork/Join Example
+
+This example runs in v0.3 using deterministic bounded concurrent fork/join execution.
+
+File:
+- `adl/examples/v0-3-concurrency-fork-join.adl.yaml`
+
+## Commands
+
+From repo root:
+
+```bash
+cargo run -q --manifest-path adl/Cargo.toml -- adl/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
+cargo run -q --manifest-path adl/Cargo.toml -- adl/examples/v0-3-concurrency-fork-join.adl.yaml --run --trace --out out
+```
+
+## Mental Model (v0.3)
+
+- **Fork**: branches are declared as steps in a `workflow.kind: concurrent` workflow.
+- **Branch execution**: ready-step batching is deterministic with lexicographic full step-id ordering and bounded concurrency.
+- **Join**: join step consumes saved branch outputs via `@state:<save_as_key>` and runs only after required inputs are available.
+
+## Artifacts
+
+Run outputs are deterministic and easy to inspect:
+
+- `out/fork/alpha.txt`
+- `out/fork/beta.txt`
+- `out/fork/join.txt`
+
+Run metadata is written under:
+
+- `.adl/runs/<run_id>/run.json`
+- `.adl/runs/<run_id>/steps.json`
+
+## Expected Deterministic Trace Ordering
+
+Expected high-level event order:
+
+1. `StepStarted(fork.plan)`
+2. `PromptAssembled(fork.plan, hash)`
+3. `StepFinished(fork.plan, success)`
+4. `StepStarted(fork.branch.alpha)`
+5. `PromptAssembled(fork.branch.alpha, hash)`
+6. `StepFinished(fork.branch.alpha, success)`
+7. `StepStarted(fork.branch.beta)`
+8. `PromptAssembled(fork.branch.beta, hash)`
+9. `StepFinished(fork.branch.beta, success)`
+10. `StepStarted(fork.join)`
+11. `PromptAssembled(fork.join, hash)`
+12. `StepFinished(fork.join, success)`
+13. `RunFinished(success)`
+
+Notes:
+- Branch execution order is deterministic by lexicographic step id (in this file: `fork.branch.alpha`, then `fork.branch.beta`).
+- Join uses explicit state inputs (`alpha`, `beta`) saved by upstream branch steps.
+- Effective concurrency cap precedence for concurrent workflow runs: workflow override > run default > runtime default (4).

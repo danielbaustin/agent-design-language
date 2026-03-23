@@ -11,12 +11,12 @@ If a directory contains its own `CONTRIBUTING.md`, it must defer to this file.
 ## Repository Structure (High-Level)
 
 - `/adl-spec` — Language semantics and schema definitions
-- `/swarm` — Reference Rust runtime + CLI
+- `/adl` — Reference Rust runtime + CLI
 - `/docs` — Milestone docs, ADRs, and release notes
 
 **Rule of thumb:**
 - If a change affects ADL *meaning* (semantics, versioning, schema intent), propose it in `/adl-spec` first.
-- If a change affects *how Swarm executes* (performance, ergonomics, CLI behavior, provider wiring), it belongs in `/swarm`.
+- If a change affects *how ADL executes* (performance, ergonomics, CLI behavior, provider wiring), it belongs in `/adl`.
 
 ---
 
@@ -24,7 +24,7 @@ If a directory contains its own `CONTRIBUTING.md`, it must defer to this file.
 
 Source-of-truth quick links:
 - `docs/codex_playbook.md`
-- `swarm/tools/pr.sh`
+- `adl/tools/pr.sh`
 
 Workflow loop:
 
@@ -40,10 +40,10 @@ Card semantics:
 Fast path (copy/paste):
 
 ```bash
-swarm/tools/pr.sh start <issue>
+adl/tools/pr.sh start <issue>
 # edit input card
 # implement changes
-swarm/tools/pr.sh finish <issue> --title "<short description>" \
+adl/tools/pr.sh finish <issue> --title "<short description>" \
   -f .adl/cards/####/input_####.md \
   --output-card .adl/cards/####/output_####.md
 ```
@@ -65,7 +65,7 @@ Changes must preserve deterministic semantics unless explicitly version-gated.
 
 ## Testing and Coverage Discipline
 
-Typical local validation from `swarm/`:
+Typical local validation from `adl/`:
 
 ```bash
 cargo fmt --all -- --check
@@ -87,7 +87,7 @@ Tests must remain hermetic (no real network calls, no real providers).
 ## Documentation Responsibilities
 
 - Root `README.md` is the repo entrypoint.
-- `swarm/README.md` is the runtime entrypoint.
+- `adl/README.md` is the runtime entrypoint.
 - Milestone work updates `docs/milestones/<version>/`.
 - Architectural decisions must be captured under `docs/adr/`.
 
