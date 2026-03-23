@@ -1,8 +1,8 @@
 # ADL v0.85 Demo Matrix
 
-**Status:** Draft  
+**Status:** Ready  
 **Milestone:** v0.85  
-**Purpose:** Canonical demo and proof-surface matrix for milestone review, release readiness, and external legibility.
+**Purpose:** Canonical runnable demo and proof-surface matrix for milestone review, release readiness, and external legibility.
 
 ---
 
@@ -11,8 +11,8 @@
 This document maps the major claims of ADL `v0.85` to concrete proof surfaces.
 
 For each significant feature band, it identifies either:
-- a **runnable demo**, or
-- an explicit **alternate proof surface** when a full runnable demo is not yet the right primary mechanism.
+- a runnable demo, or
+- an explicit alternate proof surface when a full runnable demo is not the best primary mechanism.
 
 The goal is not to create a vague showcase list. The goal is to make milestone review and release readiness legible.
 
@@ -28,15 +28,15 @@ This matrix should help reviewers answer:
 
 ### Demo Classes
 
-- **Primary demo**: a headline runnable demo that should be shown in milestone review and external explanation.
-- **Supporting demo**: a narrower runnable demo that proves a bounded surface but is not itself the headline narrative.
-- **Alternate proof surface**: an artifact-driven proof surface used when a runnable demo is not the best primary mechanism.
+- Primary demo: a headline runnable demo that should be shown in milestone review and external explanation.
+- Supporting demo: a narrower runnable demo that proves a bounded surface but is not itself the headline narrative.
+- Alternate proof surface: an artifact-driven proof surface used when a runnable demo is not the best primary mechanism.
 
 ### Demo Status
 
-- **Ready**: can be used now for milestone review.
-- **Partial**: useful, but still rough or dependent on adjacent cleanup.
-- **Deferred**: intentionally not a `v0.85` runnable demo surface.
+- Ready: can be used now for milestone review.
+- Partial: useful, but still rough or dependent on adjacent cleanup.
+- Deferred: intentionally not a `v0.85` runnable demo surface.
 
 ### Reviewer Rule
 
@@ -50,86 +50,77 @@ Every row in this matrix must provide at least one of:
 
 | Feature band | Class | Status | Primary surface | Proof artifact / review surface |
 |---|---|---:|---|---|
-| Structured authoring and task artifacts | Primary demo | Ready | Task-bundle / card workflow walkthrough | STP / SIP / SOR bundle and reviewer-visible output records |
-| Dependable execution and verifiable inference | Primary demo | Ready | Output-record and proof-surface walkthrough | Strong SORs, validation evidence, artifact-first review surfaces |
-| AEE bounded adaptation | Primary demo | Ready | `swarm/tools/demo_aee_bounded_adaptation.sh` | `aee_decision.json`, demo README, output card |
-| Affect engine core | Supporting demo | Ready | `swarm/tools/demo_affect_engine.sh` | affect-state artifact, downstream decision change |
+| Steering / queueing / checkpoint / resume | Primary demo | Ready | `swarm/tools/demo_steering_queue_checkpoint.sh` | pause-state artifact, steering patch, resumed run record |
+| HITL editor / review workflow | Primary demo | Ready | `swarm/tools/demo_hitl_editor_review.sh` | editor task-bundle example, review-flow doc, emitted demo manifest |
+| AEE bounded adaptation | Primary demo | Ready | `swarm/tools/demo_aee_bounded_adaptation.sh` | `aee_decision.json`, affect-state artifacts, recovery README |
+| Affect + Gödel vertical slice | Primary demo | Ready | `swarm/tools/demo_affect_godel_vertical_slice.sh` | `godel_affect_vertical_slice.v1.json` proving full causal chain |
+| Hypothesis engine | Primary demo | Ready | `swarm/tools/demo_godel_hypothesis_engine.sh` | `godel_hypothesis.v1.json`, reviewer demo doc |
+| Affect engine core | Supporting demo | Ready | `swarm/tools/demo_affect_engine.sh` | affect-state artifact, downstream AEE decision change |
 | Reasoning graph + affect integration | Supporting demo | Ready | `swarm/tools/demo_reasoning_graph_affect.sh` | reasoning-graph artifact, before/after comparison |
-| Affect + Gödel vertical slice | Primary demo | Ready | `swarm/tools/demo_affect_godel_vertical_slice.sh` | vertical-slice artifact proving full causal chain |
-| Hypothesis engine | Supporting demo | Ready | `swarm/tools/demo_godel_hypothesis_engine.sh` | structured hypothesis artifact |
 | Policy learning | Supporting demo | Ready | `swarm/tools/demo_adaptive_godel_loop.sh` | policy delta artifact and before/after comparison |
 | Experiment prioritization | Supporting demo | Ready | `swarm/tools/demo_experiment_prioritization.sh` | ranked artifact with tie-break behavior |
-| Cross-workflow learning | Alternate proof surface | Ready | `swarm/tools/demo_cross_workflow_learning.sh` | linked artifact chain across workflows; demos/cross_workflow_learning_demo.md |
+| Cross-workflow learning | Alternate proof surface | Ready | `swarm/tools/demo_cross_workflow_learning.sh` | linked artifact chain across workflows; `demos/cross_workflow_learning_demo.md` |
 | Promotion / evaluation loop | Supporting demo | Ready | `swarm/tools/demo_promotion_eval_loop.sh` | evaluation artifact plus promotion decision artifact |
-| Review and output-record rigor | Alternate proof surface | Ready | template + output-card review | issues #918, #941, #948 and strong example SORs |
-| Demo/readiness discipline itself | Alternate proof surface | Ready | this document | canonical demo matrix |
+| Review and output-record rigor | Alternate proof surface | Ready | artifact review walkthrough | issues `#918`, `#941`, `#948`, `#958` and strong SORs |
+| Demo/readiness discipline itself | Alternate proof surface | Ready | `demos/v085_demo_program.md` | canonical demo matrix and milestone checklist |
 
 ---
 
 ## 4. Primary Demos
 
-These are the milestone’s headline demonstrations. They should be the first things shown in a milestone review and the first things referenced externally.
+These are the milestone’s headline demonstrations. They should be the first things shown in milestone review and the first things referenced externally.
 
-### 4.1 Structured Authoring / Task-Bundle Workflow
+### 4.1 Steering / Queueing / Checkpoint / Resume
 
 **Class:** Primary demo  
 **Status:** Ready  
-**Why it matters:** ADL’s credibility begins with explicit artifacts and explicit lifecycle control. Without this, the rest of the system looks like ordinary prompt orchestration.
+**Command / playbook:**
+- `swarm/tools/demo_steering_queue_checkpoint.sh`
 
-**Demo shape:**
-- Walk through one real issue bundle showing:
-  - STP / issue prompt
-  - SIP / input card
-  - SOR / output card
-- Show how the artifacts differ by role.
-- Show one reviewer-ready output record with concrete proof surfaces.
+**Primary supporting docs:**
+- `demos/steering_queue_checkpoint_demo.md`
 
-**Primary review surfaces:**
-- `.adl/issues/v0.85/bodies/`
-- `.adl/cards/`
-- `.adl/v0.85/tasks/` where available
-- reviewed output cards such as:
-  - `#918`
-  - `#941`
-  - `#958`
+**Expected proof artifacts:**
+- `.adl/runs/v0-85-hitl-steering-demo/pause_state.json`
+- `.adl/runs/v0-85-hitl-steering-demo/run.json`
+- `.adl/reports/demo-steering-queue-checkpoint/steer.json`
+- `.adl/reports/demo-steering-queue-checkpoint/out/s2.txt`
+
+**Why it matters:**
+This is the bounded runtime proof that ADL can pause, preserve queue/checkpoint state, resume, and apply steering at an explicit boundary without hidden mutation.
 
 **Reviewer should look for:**
-- clear separation between intent, execution, and review
-- bounded validation/proof surfaces
-- truthful integration-state language
-
-**Notes:**
-This is partly a walkthrough rather than a single shell script, but it is still a core milestone demo because it explains the substrate.
+- checkpoint state exists before resume
+- steering is explicit and schema-valid
+- resumed output reflects the steered state
+- run record captures steering history deterministically
 
 ---
 
-### 4.2 Dependable Execution and Verifiable Inference
+### 4.2 HITL Editor / Review Workflow
 
 **Class:** Primary demo  
 **Status:** Ready  
-**Why it matters:** This is one of the clearest ADL differentiators. The system must show that it can produce execution records that are more than plausible prose.
+**Command / playbook:**
+- `swarm/tools/demo_hitl_editor_review.sh`
 
-**Demo shape:**
-- Walk through one strong SOR and its proof surfaces.
-- Show artifact-first validation.
-- Show how output review is grounded in emitted artifacts, not just narrative claims.
+**Primary supporting docs:**
+- `demos/hitl_editor_review_demo.md`
+- `docs/tooling/editor/demo.md`
 
-**Primary review surfaces:**
-- strong SORs from recent work, especially:
-  - `#918`
-  - `#941`
-  - `#958`
-- `docs/tooling/prompt-spec.md`
-- `docs/tooling/structured-prompt-contracts.md`
+**Expected proof artifacts:**
+- `docs/records/v0.85/tasks/task-v085-wp05-demo/`
+- `.adl/reports/demo-hitl-editor-review/editor_review_demo_manifest.v1.json`
+- bounded `pr start` dry-run command emitted by the adapter
+
+**Why it matters:**
+This is the best bounded proof that ADL has moved beyond raw markdown hacking into a linked human-in-the-loop authoring and review surface.
 
 **Reviewer should look for:**
-- primary proof surface named explicitly
-- validation commands tied to real artifacts
-- clear distinction between worktree state and merged state
-- no placeholder leakage
-
-**Notes:**
-This is best demonstrated through reviewed artifacts rather than a theatrical CLI run.
+- one linked STP/SIP/SOR workspace
+- visible validation and preview surface
+- bounded control-plane handoff path
+- review-flow guidance tied to proof surfaces rather than side conversation
 
 ---
 
@@ -144,8 +135,10 @@ This is best demonstrated through reviewed artifacts rather than a theatrical CL
 - `demos/aee-recovery/README.md`
 
 **Expected proof artifacts:**
-- emitted `aee_decision.json` or equivalent run artifact
-- corresponding SOR and validation evidence
+- `.adl/runs/v0-3-aee-recovery-initial/learning/aee_decision.json`
+- `.adl/runs/v0-3-aee-recovery-adapted/learning/aee_decision.json`
+- `.adl/runs/v0-3-aee-recovery-initial/learning/affect_state.v1.json`
+- `.adl/runs/v0-3-aee-recovery-adapted/learning/affect_state.v1.json`
 
 **Why it matters:**
 This is the first visible proof that ADL can adapt within bounds rather than behave as a brittle one-shot workflow.
@@ -168,11 +161,8 @@ This is the first visible proof that ADL can adapt within bounds rather than beh
 - `demos/affect_godel_vertical_slice_demo.md`
 
 **Expected proof artifacts:**
-- vertical-slice artifact proving:
-  - input condition
-  - affect change
-  - downstream Gödel-stage change
-- corresponding SOR and validation evidence
+- `.adl/reports/demo-affect-godel-vertical-slice/runs/review-godel-affect-001/godel/godel_affect_vertical_slice.v1.json`
+- associated affect-state and reasoning-graph artifacts for the initial and adapted AEE runs
 
 **Why it matters:**
 This is the most distinctive single `v0.85` demo. It shows that ADL is not only building workflow surfaces but a bounded cognitive stack.
@@ -182,8 +172,29 @@ This is the most distinctive single `v0.85` demo. It shows that ADL is not only 
 - deterministic replay or recheck surface
 - visible downstream change in candidate selection or reasoning outcome
 
-**Notes:**
-This is the best single “why ADL is bigger than a coding assistant” demo in the milestone.
+---
+
+### 4.5 Hypothesis Engine
+
+**Class:** Primary demo  
+**Status:** Ready  
+**Command / playbook:**
+- `swarm/tools/demo_godel_hypothesis_engine.sh`
+
+**Primary supporting docs:**
+- `demos/godel_hypothesis_engine_demo.md`
+
+**Expected proof artifacts:**
+- `.adl/reports/demo-godel-hypothesis-engine/runs/review-godel-cli-001/godel/godel_hypothesis.v1.json`
+- associated canonical evidence, mutation, and evaluation-plan artifacts
+
+**Why it matters:**
+This is the first clean entry point into the bounded Gödel runtime loop and the easiest way to show that the learning surfaces are structured and deterministic.
+
+**Reviewer should look for:**
+- deterministic hypothesis generation
+- structured artifact rather than free-form text
+- direct downstream usability for the later learning stages
 
 ---
 
@@ -202,8 +213,9 @@ These demos are important and runnable, but they support the milestone story rat
 - `demos/affect_engine_demo.md`
 
 **Expected proof artifacts:**
-- affect-state artifact
-- downstream decision change artifact
+- `.adl/runs/v0-3-aee-recovery-initial/learning/affect_state.v1.json`
+- `.adl/runs/v0-3-aee-recovery-adapted/learning/affect_state.v1.json`
+- paired `aee_decision.json` artifacts for the same runs
 
 **Reviewer should look for:**
 - deterministic affect update path
@@ -223,8 +235,8 @@ These demos are important and runnable, but they support the milestone story rat
 - `demos/reasoning_graph_affect_demo.md`
 
 **Expected proof artifacts:**
-- reasoning-graph artifact
-- before/after or A/B proof of affect-driven graph change
+- `.adl/runs/v0-3-aee-recovery-initial/learning/reasoning_graph.v1.json`
+- `.adl/runs/v0-3-aee-recovery-adapted/learning/reasoning_graph.v1.json`
 
 **Reviewer should look for:**
 - actual graph artifact instance
@@ -233,34 +245,16 @@ These demos are important and runnable, but they support the milestone story rat
 
 ---
 
-### 5.3 Hypothesis Engine
+### 5.3 Policy Learning
 
 **Class:** Supporting demo  
 **Status:** Ready  
-**Primary surface:**
-- `swarm/tools/demo_godel_hypothesis_engine.sh`
-
-**Expected proof artifacts:**
-- structured hypothesis artifact
-- corresponding SOR and validation evidence
-
-**Reviewer should look for:**
-- deterministic hypothesis generation
-- artifact structure, not free-form narrative
-- downstream usability for later stages
-
----
-
-### 5.4 Policy Learning
-
-**Class:** Supporting demo  
-**Status:** Ready  
-**Primary surface:**
+**Command / playbook:**
 - `swarm/tools/demo_adaptive_godel_loop.sh`
 
 **Expected proof artifacts:**
-- policy artifact
-- before/after comparison artifact
+- `.adl/reports/demo-adaptive-godel-loop/runs/review-godel-policy-001/godel/godel_policy.v1.json`
+- `.adl/reports/demo-adaptive-godel-loop/runs/review-godel-policy-001/godel/godel_policy_comparison.v1.json`
 
 **Reviewer should look for:**
 - policy update derived from prior artifact or signal
@@ -269,34 +263,33 @@ These demos are important and runnable, but they support the milestone story rat
 
 ---
 
-### 5.5 Experiment Prioritization
+### 5.4 Experiment Prioritization
 
 **Class:** Supporting demo  
 **Status:** Ready  
-**Primary surface:**
+**Command / playbook:**
 - `swarm/tools/demo_experiment_prioritization.sh`
 
 **Expected proof artifacts:**
-- ranked artifact
-- explicit tie-break behavior
+- `.adl/reports/demo-experiment-prioritization/runs/review-godel-priority-001/godel/godel_experiment_priority.v1.json`
 
 **Reviewer should look for:**
 - deterministic ordering
-- ranked output from defined input set
+- ranked output from a defined input set
 - explicit ranking rationale surface
 
 ---
 
-### 5.6 Promotion / Evaluation Loop
+### 5.5 Promotion / Evaluation Loop
 
 **Class:** Supporting demo  
 **Status:** Ready  
-**Primary surface:**
+**Command / playbook:**
 - `swarm/tools/demo_promotion_eval_loop.sh`
 
 **Expected proof artifacts:**
-- evaluation artifact
-- promotion decision artifact
+- `.adl/reports/demo-promotion-eval-loop/runs/review-godel-promotion-001/godel/godel_eval_report.v1.json`
+- `.adl/reports/demo-promotion-eval-loop/runs/review-godel-promotion-001/godel/godel_promotion_decision.v1.json`
 
 **Reviewer should look for:**
 - deterministic mapping from evaluation to promotion decision
@@ -312,14 +305,10 @@ These are important `v0.85` claims whose best current proof is primarily artifac
 
 **Class:** Alternate proof surface  
 **Status:** Ready  
-**Why not primary demo yet:**
-The value is real, but the proof is clearest through linked artifacts and reviewed outputs rather than a polished standalone showcase.
-
 **Primary proof surfaces:**
 - `swarm/tools/demo_cross_workflow_learning.sh`
 - `demos/cross_workflow_learning_demo.md`
 - output card for `#751`
-- linked artifacts showing workflow A to workflow B effect
 
 **Reviewer should look for:**
 - artifact from one workflow consumed by another
@@ -332,99 +321,34 @@ The value is real, but the proof is clearest through linked artifacts and review
 
 **Class:** Alternate proof surface  
 **Status:** Ready  
-**Why not primary runnable demo:**
-This is primarily a template, validation, and record-quality improvement area.
-
 **Primary proof surfaces:**
-- issues `#918`, `#941`, `#948`
-- corresponding SORs
-- good/bad template examples
+- issues `#918`, `#941`, `#948`, `#958`
+- corresponding output cards under `.adl/cards/`
+- `docs/tooling/structured-prompt-contracts.md`
 
 **Reviewer should look for:**
-- proof-surface clarity
+- primary proof surface named explicitly
+- validation tied to real artifacts
 - truthful integration-state language
-- reduced placeholder leakage
-- stronger execution-record standardization
+- no placeholder leakage
 
 ---
 
-### 6.3 Demo Matrix Itself
+## 7. Reviewer Order
 
-**Class:** Alternate proof surface  
-**Status:** Ready  
-**Why it matters:**
-This document is itself a release-readiness artifact. It makes the milestone legible as a system rather than a loose collection of completed tickets.
-
-**Reviewer should look for:**
-- no major feature band left unmapped
-- clear distinction between primary demo, supporting demo, and alternate proof surface
-- realistic status language for anything partial or deferred
-
----
-
-## 7. Deferred or Non-Primary Surfaces
-
-These surfaces matter, but they should not block the milestone demo set from being coherent.
-
-### 7.1 Trace / Signed Replay Substrate
-
-**Status:** Deferred to post-`v0.85` architecture work  
-**Reason:**
-The trace substrate is now recognized as a real architecture gap, but it surfaced too late to be forced into `v0.85` without destabilizing the milestone.
-
-**Current proof surface:**
-- architecture documents
-- bounded replay language in SORs
-- not yet a first-class runnable trace artifact
-
-**Reviewer note:**
-This is not a `v0.85` demo blocker. It is an identified next-layer architecture item.
+Recommended milestone review order:
+1. `demos/v085_demo_program.md`
+2. `swarm/tools/demo_steering_queue_checkpoint.sh`
+3. `swarm/tools/demo_hitl_editor_review.sh`
+4. `swarm/tools/demo_aee_bounded_adaptation.sh`
+5. `swarm/tools/demo_affect_godel_vertical_slice.sh`
+6. `swarm/tools/demo_godel_hypothesis_engine.sh`
+7. supporting demos as needed for deeper inspection
 
 ---
 
-## 8. Suggested Review Order
+## 8. Notes
 
-For milestone review, the most effective order is:
-
-1. Structured authoring and task-bundle workflow  
-2. Dependable execution and verifiable inference  
-3. AEE bounded adaptation  
-4. Affect engine core  
-5. Reasoning graph plus affect  
-6. Affect plus Gödel vertical slice  
-7. Supporting Gödel stages (hypothesis, policy, prioritization, promotion)  
-8. Cross-workflow learning proof surface  
-
-This order starts with substrate credibility, then moves into increasing cognitive distinctiveness.
-
----
-
-## 9. Milestone Exit Use
-
-This document should be used as part of `v0.85` milestone review.
-
-A reviewer should be able to use it to decide whether:
-- ADL’s major claims for `v0.85` are actually demonstrated
-- the milestone is legible enough for internal review
-- the milestone is legible enough for external review
-- any significant feature band is still missing a proof surface
-
-If a feature has no runnable demo and no alternate proof surface, the matrix is incomplete.
-
----
-
-## 10. Summary
-
-`v0.85` is not only a feature milestone. It is the point where ADL starts to become legible as a real platform.
-
-This matrix makes that legibility explicit.
-
-It shows that the milestone includes:
-- strong artifact-based workflow discipline
-- stronger review and execution records
-- bounded adaptive execution
-- the first visible Gödel-style learning stages
-- the first bounded affect and reasoning-graph surfaces
-- and one real affect-plus-Gödel vertical slice that begins to express the larger ADL thesis
-
-That is the right demo shape for the milestone.
+- The matrix is milestone-facing, not a full inventory of every runnable artifact in the repo.
+- Supporting demos remain important even when they are not headline review surfaces.
+- If a demo regresses or becomes non-runnable, this matrix should be updated before milestone review rather than silently drifting.

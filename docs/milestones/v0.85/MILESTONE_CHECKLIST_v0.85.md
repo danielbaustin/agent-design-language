@@ -45,12 +45,12 @@ Evidence should exist for every checked item.
 
 ## Demo Proof Surfaces
 
-- [ ] Steering/queueing/checkpoint demo exists
-- [ ] HITL/editor/review workflow demo exists
-- [ ] Gödel hypothesis-engine demo exists
-- [ ] Affect-engine demo exists
-- [ ] Affect-plus-Gödel/reasoning demo exists
-- [ ] Demo matrix or playbook ties major new features to bounded runnable demos
+- [x] Steering/queueing/checkpoint demo exists
+- [x] HITL/editor/review workflow demo exists
+- [x] Gödel hypothesis-engine demo exists
+- [x] Affect-engine demo exists
+- [x] Affect-plus-Gödel/reasoning demo exists
+- [x] Demo matrix or playbook ties major new features to bounded runnable demos
 
 ---
 

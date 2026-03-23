@@ -1,0 +1,9 @@
+{
+  "schema_version": "steering_patch.v1",
+  "apply_at": "resume_boundary",
+  "reason": "inject topic at checkpoint boundary",
+  "set_state": {
+    "inputs.topic": "steered-topic"
+  },
+  "remove_state": []
+}
