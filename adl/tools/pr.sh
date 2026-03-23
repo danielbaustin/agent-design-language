@@ -180,6 +180,57 @@ absolute_host_path_present() {
   rg -n -e '(^|[^A-Za-z])(\/Users\/|\/home\/|[A-Za-z]:\\)' "$target" >/dev/null 2>&1
 }
 
+extract_front_matter_to_file() {
+  local src="$1" dest="$2"
+  awk '
+    NR == 1 && $0 == "---" { in_fm = 1; next }
+    in_fm && $0 == "---" { exit }
+    in_fm { print }
+  ' "$src" >"$dest"
+}
+
+extract_markdown_body_to_file() {
+  local src="$1" dest="$2"
+  awk '
+    NR == 1 && $0 == "---" { in_fm = 1; next }
+    in_fm && $0 == "---" { in_fm = 0; next }
+    !in_fm { print }
+  ' "$src" >"$dest"
+}
+
+strip_yaml_scalar_quotes() {
+  local v="$1"
+  v="${v#\"}"
+  v="${v%\"}"
+  v="${v#\'}"
+  v="${v%\'}"
+  printf '%s\n' "$v"
+}
+
+stp_scalar_field() {
+  local fm="$1" key="$2"
+  awk -v k="$key" '
+    $0 ~ ("^" k ":") {
+      sub(/^[^:]*:[[:space:]]*/, "", $0)
+      print
+      exit
+    }
+  ' "$fm"
+}
+
+stp_array_items() {
+  local fm="$1" key="$2"
+  awk -v k="$key" '
+    BEGIN { in_arr = 0 }
+    $0 ~ ("^" k ":") { in_arr = 1; next }
+    in_arr && $0 ~ /^[^[:space:]-]/ { exit }
+    in_arr && $0 ~ /^[[:space:]]*-[[:space:]]*/ {
+      sub(/^[[:space:]]*-[[:space:]]*/, "", $0)
+      print
+    }
+  ' "$fm"
+}
+
 issue_card_reference() {
   local kind="$1" issue="$2"
   case "$kind" in
@@ -651,6 +702,78 @@ seed_task_bundle_stp() {
   local source_path="$1" dest_path="$2"
   mkdir -p "$(dirname "$dest_path")"
   cp -f "$source_path" "$dest_path"
+}
+
+stp_issue_number_or_die() {
+  local stp_path="$1" fm issue_num
+  fm="$(mktemp -t prsh_stp_fm_XXXXXX)"
+  extract_front_matter_to_file "$stp_path" "$fm"
+  issue_num="$(strip_yaml_scalar_quotes "$(stp_scalar_field "$fm" "issue_number")")"
+  rm -f "$fm"
+  [[ "$issue_num" =~ ^[0-9]+$ ]] || die "create: STP issue_number must be an integer: $stp_path"
+  printf '%s\n' "$issue_num"
+}
+
+reconcile_issue_from_stp() {
+  local issue="$1" stp_path="$2" repo="$3"
+  local validator fm body title
+  local -a desired_labels current_labels add_labels remove_labels
+  validator="$(resolve_structured_prompt_validator)"
+  "$validator" --type stp --input "$stp_path" >/dev/null \
+    || die "create: stp failed validation: $stp_path"
+
+  local stp_issue
+  stp_issue="$(stp_issue_number_or_die "$stp_path")"
+  [[ "$stp_issue" == "$issue" ]] || die "create: STP issue_number ($stp_issue) does not match requested issue ($issue)"
+
+  fm="$(mktemp -t prsh_create_fm_XXXXXX)"
+  body="$(mktemp -t prsh_create_body_XXXXXX.md)"
+  extract_front_matter_to_file "$stp_path" "$fm"
+  extract_markdown_body_to_file "$stp_path" "$body"
+
+  title="$(strip_yaml_scalar_quotes "$(stp_scalar_field "$fm" "title")")"
+  [[ -n "$title" ]] || die "create: STP title is required: $stp_path"
+  while IFS= read -r line; do
+    desired_labels+=("$(strip_yaml_scalar_quotes "$line")")
+  done < <(stp_array_items "$fm" "labels")
+  while IFS= read -r line; do
+    current_labels+=("$line")
+  done < <(gh issue view "$issue" $(gh_repo_flag "$repo") --json labels -q '.labels[].name' 2>/dev/null || true)
+
+  local existing desired found
+  for desired in "${desired_labels[@]}"; do
+    [[ -n "$desired" ]] || continue
+    found="0"
+    for existing in "${current_labels[@]}"; do
+      if [[ "$existing" == "$desired" ]]; then
+        found="1"
+        break
+      fi
+    done
+    [[ "$found" == "1" ]] || add_labels+=("$desired")
+  done
+
+  for existing in "${current_labels[@]}"; do
+    [[ -n "$existing" ]] || continue
+    found="0"
+    for desired in "${desired_labels[@]}"; do
+      if [[ "$desired" == "$existing" ]]; then
+        found="1"
+        break
+      fi
+    done
+    [[ "$found" == "1" ]] || remove_labels+=("$existing")
+  done
+
+  gh issue edit "$issue" $(gh_repo_flag "$repo") --title "$title" --body-file "$body" >/dev/null
+  for desired in "${add_labels[@]}"; do
+    gh issue edit "$issue" $(gh_repo_flag "$repo") --add-label "$desired" >/dev/null
+  done
+  for existing in "${remove_labels[@]}"; do
+    gh issue edit "$issue" $(gh_repo_flag "$repo") --remove-label "$existing" >/dev/null
+  done
+
+  rm -f "$fm" "$body"
 }
 
 ensure_nonempty_file() {
@@ -1181,6 +1304,43 @@ cmd_init() {
   note "Done."
 }
 
+cmd_create() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_create
+    return 0
+  fi
+
+  if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
+    local issue="$1"
+    shift || true
+    issue="$(normalize_issue_or_die "$issue")"
+
+    local stp_path=""
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        --stp) stp_path="$2"; shift 2 ;;
+        -h|--help) usage_create; return 0 ;;
+        *) die_with_usage "create: unknown arg: $1" usage_create ;;
+      esac
+    done
+
+    [[ -n "$stp_path" ]] || die "create: --stp is required for reconcile mode"
+    [[ -f "$stp_path" ]] || die "create: STP not found: $stp_path"
+    require_cmd gh
+    local repo
+    repo="$(default_repo)"
+    reconcile_issue_from_stp "$issue" "$stp_path" "$repo"
+    echo "ISSUE_NUM=$issue"
+    echo "STP_PATH=$(path_relative_to_repo "$stp_path")"
+    echo "MODE=reconcile"
+    return 0
+  fi
+
+  # v0.85 transition strategy: allow the new lifecycle name to drive the current
+  # issue-creation precursor flow while keeping `pr new` as a compatibility alias.
+  cmd_new "$@"
+}
+
 cmd_start() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
     usage_start
@@ -1697,6 +1857,7 @@ pr.sh — reduce git/PR thrash while preserving human review
 Commands:
   help
   init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v>]
+  create  [<issue> --stp <path>] | [legacy new-issue args]
   new     --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
   start   <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue]
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
@@ -1713,6 +1874,8 @@ Flags:
   (new)     --labels <csv>                    Comma-separated labels (default: track:roadmap,version:v0.3,type:bug,area:tools,epic:v0.3-tooling-git).
   (new)     --version <v0.3>                  Default/fallback version label for new issue/card flow.
   (new)     --no-start                        Only create issue; do not invoke start.
+  (create)  <issue> --stp <path>              Reconcile an existing GitHub issue from a canonical STP.
+  (create)  [legacy new-issue args]           Create path reuses the current precursor semantics during v0.85.
   (init)    --version <v0.85>                 Override detected version (otherwise inferred from issue labels version:vX.Y)
   (init)    --no-fetch-issue                  Do not fetch issue title/labels; requires --slug.
   (card)    -f, --file <input_card.md>         Output path for the generated input card (default: <cards_root>/<issue>/input_<issue>.md)
@@ -1738,6 +1901,7 @@ Notes:
 Examples:
   adl/tools/pr.sh help
   adl/tools/pr.sh init 17 --slug b6-default-system --no-fetch-issue --version v0.85
+  adl/tools/pr.sh create 17 --stp .adl/issues/v0.85/bodies/issue-17-b6-default-system.md
   adl/tools/pr.sh new --title "adl: fix timeout handling" --slug timeout-fix
   adl/tools/pr.sh start 17 --slug b6-default-system
   adl/tools/pr.sh card  17 --help
@@ -1756,6 +1920,22 @@ usage_new() {
   cat <<'EOF'
 Usage:
   adl/tools/pr.sh new --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
+
+Notes:
+- Compatibility alias during v0.85 for the create path now exposed as `pr create`.
+EOF
+}
+
+usage_create() {
+  cat <<'EOF'
+Usage:
+  adl/tools/pr.sh create <issue> --stp <path>
+  adl/tools/pr.sh create --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
+
+Notes:
+- Reconcile mode updates an existing GitHub issue from a canonical STP.
+- Create mode reuses the current `pr new` precursor behavior during v0.85.
+- `pr new` remains a compatibility alias while `pr create` becomes the canonical lifecycle name.
 EOF
 }
 
@@ -1823,6 +2003,7 @@ main() {
   case "$cmd" in
     help) usage ;;
     init) cmd_init "$@" ;;
+    create) cmd_create "$@" ;;
     new) cmd_new "$@" ;;
     start) cmd_start "$@" ;;
     finish) cmd_finish "$@" ;;
