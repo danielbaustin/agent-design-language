@@ -48,8 +48,11 @@ The current tracked v0.85 set includes:
 - `COGNITIVE_STACK_v0.85.md`
 - `DECISIONS_v0.85.md`
 - `DESIGN_v0.85.md`
+- `EDITING_ARCHITECTURE.md`
 - `BOUNDED_AFFECT_MODEL.md` (legacy rename from `EMOTION_MODEL.md`; bounded-affect framing)
+- `HTA_EDITOR_PLANNING.md`
 - `HUMAN-IN-THE-LOOP-DESIGN-NOTES.MD`
+- `LAYER_8_IMPLEMENTATION.md`
 - `MILESTONE_CHECKLIST_v0.85.md`
 - `MILESTONE_ISSUE_RECONCILIATION_v0.85.md`
 - `QUALITY_GATE_v0.85.md`
