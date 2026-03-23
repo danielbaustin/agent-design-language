@@ -192,16 +192,11 @@ primary_checkout_root() {
 
 default_worktree_path_for_issue() {
   local issue="$1"
-  local primary parent managed_root
+  local primary managed_root
   primary="$(primary_checkout_root)"
-  parent="$(cd "$primary/.." && pwd -P)"
   managed_root="${ADL_WORKTREE_ROOT:-}"
   if [[ -z "$managed_root" ]]; then
-    if [[ "$primary" == "$HOME/git/"* || "$primary" == "$HOME/git" ]]; then
-      managed_root="$HOME/git"
-    else
-      managed_root="$parent"
-    fi
+    managed_root="$primary/.worktrees"
   fi
   echo "$managed_root/adl-wp-${issue}"
 }
@@ -1167,6 +1162,7 @@ cmd_start() {
       note "Reusing existing worktree path: $worktree_path"
     else
       note "Creating worktree: $worktree_path"
+      mkdir -p "$(dirname "$worktree_path")"
       run_git_or_die "start: git worktree add '$worktree_path' '$branch'" git worktree add "$worktree_path" "$branch"
     fi
   fi
@@ -1649,7 +1645,7 @@ Usage:
   adl/tools/pr.sh start <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue]
 
 Notes:
-- Creates or reuses issue worktree at ../adl-wp-<issue>.
+- Creates or reuses issue worktree at .worktrees/adl-wp-<issue> by default.
 - Keeps the primary checkout on main.
 EOF
 }

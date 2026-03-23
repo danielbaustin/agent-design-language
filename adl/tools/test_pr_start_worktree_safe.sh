@@ -66,7 +66,7 @@ assert_contains() {
     exit 1
   }
 
-  wt_path="$tmpdir/adl-wp-999"
+  wt_path="$repo/.worktrees/adl-wp-999"
   [[ -d "$wt_path" ]] || {
     echo "assertion failed: expected worktree to exist at $wt_path" >&2
     exit 1

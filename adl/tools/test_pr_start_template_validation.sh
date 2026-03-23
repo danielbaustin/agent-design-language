@@ -57,7 +57,7 @@ assert_contains() {
   cd "$repo"
   "$BASH_BIN" adl/tools/pr.sh start 910 --slug validation-pass --no-fetch-issue >/dev/null
 
-  perl -0pi -e 's/Status: NOT_STARTED/Status: MAYBE/' adl/templates/cards/output_card_template.md
+  perl -0pi -e 's/Status: IN_PROGRESS/Status: MAYBE/' adl/templates/cards/output_card_template.md
 
   set +e
   bad="$("$BASH_BIN" adl/tools/pr.sh start 911 --slug validation-fail --no-fetch-issue 2>&1)"
