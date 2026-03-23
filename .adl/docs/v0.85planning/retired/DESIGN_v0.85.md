@@ -132,7 +132,7 @@ New or strengthened behavior should obey the following principles:
   - Mitigation: explicitly prioritize Card Reviewer GPT stabilization and Prompt Spec / authoring improvements as milestone work.
 - Risk: trust language becomes rhetorical rather than implemented.
   - Mitigation: tie dependable execution and verifiable inference to concrete artifacts, replay surfaces, and validation workflows.
-- Risk: milestone documents continue to diverge across `.adl/docs/v085planning` and `docs/milestones/v0.85`, creating planning drift.
+- Risk: milestone documents continue to diverge across `.adl/docs/v0.85planning` and `docs/milestones/v0.85`, creating planning drift.
   - Mitigation: treat this design doc as the alignment anchor for scope, validation, AEE, trust, and affect-model language until a cleanup pass consolidates file locations.
 
 ## Alternatives Considered
