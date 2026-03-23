@@ -16,7 +16,7 @@ Use it to answer:
 - which issue owns that work
 - what order the remaining work should happen in
 
-Do not treat the mid-flight review document as the execution plan. [MIDFLIGHT_REVIEW_ISSUES.md](/Users/daniel/git/agent-design-language/.adl/docs/v085planning/MIDFLIGHT_REVIEW_ISSUES.md) is now a diagnostic and closure tracker. Execution should flow through this WBS.
+Do not treat the mid-flight review document as the execution plan. [MIDFLIGHT_REVIEW_ISSUES.md](/Users/daniel/git/agent-design-language/.adl/docs/v0.85planning/MIDFLIGHT_REVIEW_ISSUES.md) is now a diagnostic and closure tracker. Execution should flow through this WBS.
 
 ## Current Milestone State
 
