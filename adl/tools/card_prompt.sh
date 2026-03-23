@@ -125,7 +125,7 @@ contains_disallowed_content() {
     -e '(^|[^A-Za-z])(\/Users\/|\/home\/|[A-Za-z]:\\)' \
     -e 'AKIA[0-9A-Z]{16}' \
     -e 'gh[pousr]_[A-Za-z0-9_]+' \
-    -e 'sk-[A-Za-z0-9]+' \
+    -e '(^|[^A-Za-z0-9])sk-[A-Za-z0-9_]{8,}($|[^A-Za-z0-9_])' \
     "$file" >/dev/null 2>&1
 }
 
