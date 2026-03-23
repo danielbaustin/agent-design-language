@@ -115,7 +115,7 @@ The design principle across all tracks is that ADL should move toward a system w
 - bounded in adaptation and failure modes
 - documented with less ambiguity at the milestone-planning level
 
-The authoritative loop model for tracked v0.85 docs is intentionally separated into [COGNITIVE_LOOP_MODEL_v0.85.md](/tmp/adl-wp-929/docs/milestones/v0.85/COGNITIVE_LOOP_MODEL_v0.85.md) so milestone design docs do not need to compete over loop authority.
+The authoritative loop model for tracked v0.85 docs is intentionally separated into [COGNITIVE_LOOP_MODEL_v0.85.md](COGNITIVE_LOOP_MODEL_v0.85.md) so milestone design docs do not need to compete over loop authority.
 
 The `swarm` -> `adl` repository cutover is intentionally sequenced at the end of the milestone rather than treated as parallel background churn. The repo still carries many path-sensitive `swarm/...` assumptions, so executing the cutover late reduces merge-conflict pressure while substantive runtime, trust, and authoring work is still landing.
 

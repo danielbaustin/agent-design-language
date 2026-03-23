@@ -127,10 +127,10 @@ Memory feeds back into bounded affect and future arbitration/execution choices.
 
 ## Relationship To Other v0.85 Docs
 
-- [AFFECT_MODEL_v0.85.md](/tmp/adl-wp-929/docs/milestones/v0.85/AFFECT_MODEL_v0.85.md) defines the bounded affect subsystem in more detail.
-- [AFFECTIVE_REASONING_MODEL.md](/tmp/adl-wp-929/docs/milestones/v0.85/AFFECTIVE_REASONING_MODEL.md) defines the signal model attached to reasoning/evaluation surfaces.
-- [DESIGN_v0.85.md](/tmp/adl-wp-929/docs/milestones/v0.85/DESIGN_v0.85.md) describes how this loop fits the milestone architecture.
-- [VISION_v0.85.md](/tmp/adl-wp-929/docs/milestones/v0.85/VISION_v0.85.md) describes the architectural role of the cognitive substrate at milestone level.
+- [AFFECT_MODEL_v0.85.md](AFFECT_MODEL_v0.85.md) defines the bounded affect subsystem in more detail.
+- [AFFECTIVE_REASONING_MODEL.md](AFFECTIVE_REASONING_MODEL.md) defines the signal model attached to reasoning/evaluation surfaces.
+- [DESIGN_v0.85.md](DESIGN_v0.85.md) describes how this loop fits the milestone architecture.
+- [VISION_v0.85.md](VISION_v0.85.md) describes the architectural role of the cognitive substrate at milestone level.
 
 ## Scope Note
 
