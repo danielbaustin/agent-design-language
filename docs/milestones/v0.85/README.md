@@ -48,7 +48,7 @@ The current tracked v0.85 set includes:
 - `COGNITIVE_STACK_v0.85.md`
 - `DECISIONS_v0.85.md`
 - `DESIGN_v0.85.md`
-- `EMOTION_MODEL.md` (legacy filename; bounded-affect framing)
+- `BOUNDED_AFFECT_MODEL.md` (bounded-affect conceptual framing)
 - `HUMAN-IN-THE-LOOP-DESIGN-NOTES.MD`
 - `MILESTONE_CHECKLIST_v0.85.md`
 - `MILESTONE_ISSUE_RECONCILIATION_v0.85.md`
