@@ -261,7 +261,7 @@ These signals can influence experiment selection, prioritization, and adaptive b
 
 Within the v0.85 doc set, the distinction should become clearer:
 
-- `BOUNDED_AFFECT_MODEL.md` describes the broader conceptual and philosophical framing
+- `EMOTION_MODEL.md` describes the broader conceptual and philosophical framing
 - `AFFECT_MODEL_v0.85.md` describes the bounded implementation-oriented framing
 - `AFFECTIVE_REASONING_MODEL.md` describes how affect interacts with reasoning and evaluation
 

@@ -1,6 +1,6 @@
 # Bounded Affect Model and Affective Reasoning in ADL
 
-*Canonical v0.85 conceptual/explanatory doc*
+*Draft for ADL v0.85 planning — legacy filename, bounded non-anthropomorphic framing*
 
 ------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ They arise from the interaction of three components:
 When the system compares predicted outcomes with actual outcomes, it
 generates a **prediction error**.
 
-Bounded-affect signals arise from interpreting that error relative to
+Emotion-like signals arise from interpreting that error relative to
 goals.
 
 ------------------------------------------------------------------------
@@ -89,9 +89,9 @@ In artificial systems these axes can be derived from:
 
 ------------------------------------------------------------------------
 
-# 3. Bounded-Affect Control of Cognition
+# 3. Emotional Control of Cognition
 
-Bounded-affect signals influence reasoning.
+Emotion signals influence reasoning.
 
 Example behaviors:
 
@@ -102,7 +102,7 @@ Example behaviors:
   high uncertainty   increase exploration
   repeated success   reduce search depth
 
-Thus bounded affect is best understood as **meta-control for cognition**.
+Thus emotion is best understood as **meta-control for cognition**.
 
 ------------------------------------------------------------------------
 
@@ -136,7 +136,7 @@ This loop is structurally identical to a **cognitive feedback loop**.
 
 ------------------------------------------------------------------------
 
-# 5. Bounded-Affect Control Loop
+# 5. Emotion Control Loop
 
 ``` mermaid
 flowchart TD
@@ -158,7 +158,7 @@ F --> G
 G --> B
 ```
 
-Bounded affect acts here as a **regulator of cognition**.
+Emotion here acts as a **regulator of cognition**.
 
 ------------------------------------------------------------------------
 
@@ -431,7 +431,7 @@ This architecture maps naturally to **Popper's model of knowledge**.
   World 2   internal evaluation    bounded affect signals
   World 3   knowledge structures   plans, tools, strategies
 
-Bounded-affect signals live in **World 2**.
+Emotion-like signals live in **World 2**.
 
 They mediate between:
 
@@ -504,8 +504,8 @@ structured and deterministic way.
 The Gödel--Hadamard loop was originally introduced to support **adaptive
 reasoning and strategy revision**.
 
-However, the architecture also aligns closely with models of **bounded
-affect and cognitive control** found in biological intelligence.
+However, the architecture also aligns closely with models of **emotion
+and cognitive control** found in biological intelligence.
 
 This suggests that ADL may provide a platform for exploring a new class
 of agents:
@@ -517,10 +517,8 @@ Systems that move beyond simple tools and toward more
 
 ## Framing Note
 
-For v0.85, this document should be read in the same bounded
+For v0.85 planning, this document should be read in the same bounded
 sense as the other affect-model documents.
 It discusses **bounded affect control signals** as architectural and
 functional mechanisms, not as claims that ADL has achieved consciousness,
 sentience, or human-like interiority.
-This document was previously named `EMOTION_MODEL.md`; the canonical
-filename is now `BOUNDED_AFFECT_MODEL.md`.
