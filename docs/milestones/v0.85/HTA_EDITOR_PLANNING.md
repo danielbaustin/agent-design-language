@@ -15,7 +15,20 @@ Define the **Human Task Artifact (HTA) editor model** for ADL, including:
 
 This document consolidates currently distributed planning into a single **canonical HTA editor architecture**.
 
-For v0.85, the HTA editor must be a **working card-based task-bundle editor**. Visual polish is explicitly secondary to correctness, artifact visibility, and control-plane integration. The editor must operate on all three artifacts together and must be able to call the ADL control-plane commands (`pr init`, `pr create`, `pr start`, `pr run`, `pr finish`) or an equivalent validated control-plane surface.
+For v0.85, the HTA editor must be a **working card-based task-bundle editor**. Visual polish is explicitly secondary to correctness, artifact visibility, and control-plane integration. The editor must operate on all three artifacts together. For v0.85, it may only invoke ADL control-plane commands that actually exist in the repo or documented validated adapter surfaces; full direct browser support for `pr init`, `pr create`, `pr start`, `pr run`, and `pr finish` remains target-state architecture rather than current repo truth.
+
+## Command Status For v0.85
+
+This document follows the canonical command-status model in the editing
+five-command execution plan.
+
+| Command | v0.85 repo truth | Editor implication |
+| --- | --- | --- |
+| `pr init` | not yet implemented as a real command | editor may not claim direct support yet |
+| `pr create` | not yet implemented as a real command; `pr new` is only a rough precursor | editor may not claim direct support yet |
+| `pr start` | implemented and active | editor may expose this through the bounded validated adapter surface |
+| `pr run` | not yet implemented as a real command | editor may not claim direct support yet |
+| `pr finish` | implemented and active | editor may describe finish as part of the workflow model, but should not claim current browser-launched support unless a validated adapter exists |
 
 ---
 
@@ -142,12 +155,10 @@ Capabilities:
 - Clone / branch bundles
 - Link bundles (dependency graph)
 - Surface validation status directly on the cards
-- Provide control-plane action buttons or commands for:
-  - `pr init`
-  - `pr create`
-  - `pr start`
-  - `pr run`
-  - `pr finish`
+- Provide control-plane action buttons or commands only for the subset that
+  actually exists in the repo or through documented validated adapters.
+- For v0.85, this is currently a bounded `pr start`-centric surface, not a
+  full browser-executed five-command loop.
 
 This is the **core HTA editor abstraction**.
 
@@ -171,12 +182,13 @@ Planned phases:
 - Basic validation hooks
 - Task-bundle directory navigation
 - Side-by-side STP / SIP / SOR card visibility
-- Ability to trigger control-plane commands from the editor or a thin integrated command surface
+- Ability to trigger the currently supported bounded control-plane surface from
+  the editor, centered on `pr start`
 
 ### Phase 2 (v0.86)
 - Inline schema validation
 - Structured editing widgets (sections, enums)
-- Stronger command integration (`pr init`, `pr create`, `pr start`, `pr run`, `pr finish`)
+- Stronger command integration as additional lifecycle commands become real
 - Better task-bundle navigation and state display
 
 ### Phase 3 (v0.9+)
@@ -189,15 +201,19 @@ Planned phases:
 
 ## Interaction with Control Plane
 
-Editors integrate with:
+The intended lifecycle model remains:
 
-- `pr init` → create STP stub
-- `pr create` → create issue from STP
-- `pr start` → generate SIP / begin execution
-- `pr run` → execute agent loop
-- `pr finish` → finalize SOR
+- `pr init` → initialize canonical authoring state
+- `pr create` → create or reconcile issue from STP
+- `pr start` → generate SIP / begin execution context
+- `pr run` → execute bounded agent loop
+- `pr finish` → finalize SOR and PR handoff
 
-The HTA editor must not merely document these commands; it must be able to invoke them directly or through a thin validated adapter layer. The near-term goal is a real end-to-end workflow where a user can move from STP editing to execution to SOR review without manually reconstructing the state of the task bundle outside the editor.
+But for v0.85, the editor must not overclaim direct support for commands that
+do not yet exist. The HTA editor may only invoke commands that actually exist
+in the repo or documented validated adapter layers. Today that means a bounded
+adapter centered on `pr start`, with the fuller five-command model preserved as
+target-state architecture.
 
 Editors must:
 
@@ -217,9 +233,10 @@ At least one concrete demo must exist:
 - Validate the STP card
 - Trigger `pr start`
 - Review or refine the SIP card
-- Trigger execution (`pr run` or equivalent control-plane path)
+- Review the bounded execution/review state the current editor slice actually supports
 - Review the resulting SOR card
-- Trigger `pr finish` where appropriate
+- Use shell/control-plane follow-on steps where the browser surface does not yet
+  expose the command directly
 
 Artifacts:
 
@@ -256,9 +273,8 @@ Artifacts:
    - required sections
 
 4. Wire validated control-plane actions into the editor:
-   - `pr start`
-   - `pr run`
-   - `pr finish`
+   - bounded `pr start` support now
+   - richer command integration only as those commands become real
 
 5. Ensure the editor demo works end-to-end on a real task bundle
 
