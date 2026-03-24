@@ -2,32 +2,58 @@
 
 This is the default contributor path for ADL development:
 
-`preflight -> start -> codex -> finish -> report`
+`preflight -> init -> create -> start -> codex -> run_if_required -> finish -> report`
 
-## 1) Start Issue Branch + Local Task Bundle
+Tracked mirror of the local skill contract:
+
+- `docs/tooling/adl_pr_cycle_skill.md`
+
+The five-command control-plane surface is:
+
+- `pr init`
+- `pr create`
+- `pr start`
+- `pr run`
+- `pr finish`
+
+The browser/editor adapter remains narrower:
+
+- browser-direct adapter support exists only for `adl/tools/editor_action.sh start`
+- direct browser/editor execution of `pr init`, `pr create`, `pr run`, and `pr finish` is not part of the v0.85 adapter surface
+
+## 1) Initialize Canonical STP
+
+```bash
+./adl/tools/pr.sh init <issue_num> --slug <slug> --version v0.85
+```
+
+Canonical local task bundle:
+- `.adl/<scope>/tasks/<task-id>__<slug>/stp.md`
+- `.adl/<scope>/tasks/<task-id>__<slug>/`
+
+Minimum v0.85 init contract:
+- canonical task-bundle directory
+- validated `stp.md`
+- no implied SIP/SOR creation yet
+
+## 2) Reconcile GitHub Issue From Canonical STP
+
+```bash
+./adl/tools/pr.sh create <issue_num> --stp .adl/v0.85/tasks/<task-id>__<slug>/stp.md
+```
+
+## 3) Start Issue Branch + Local Cards
 
 ```bash
 ./adl/tools/pr.sh start <issue_num> --slug <slug>
 ```
 
-Canonical local task bundle:
-- `.adl/<scope>/tasks/<task-id>__<slug>/stp.stub.md`
-- `.adl/<scope>/tasks/<task-id>__<slug>/stp.md`
-- `.adl/<scope>/tasks/<task-id>__<slug>/sip.md`
-- `.adl/<scope>/tasks/<task-id>__<slug>/sor.md`
-
-Current workflow creates compatibility links under `.adl/cards/<issue_num>/` for adjacent tools that still consume the legacy path shape.
-Current workflow compatibility paths:
+Compatibility card paths:
 - `.adl/cards/<issue_num>/input_<issue_num>.md`
 - `.adl/cards/<issue_num>/output_<issue_num>.md`
 
-Canonical local prompt bundle:
-- `.adl/v0.85/tasks/<task-id>__<slug>/stp.stub.md`
-- `.adl/v0.85/tasks/<task-id>__<slug>/stp.md`
-- `.adl/v0.85/tasks/<task-id>__<slug>/sip.md`
-- `.adl/v0.85/tasks/<task-id>__<slug>/sor.md`
-
-Until `pr.sh` is migrated fully, `adl/tools/sync_task_bundle_prompts.sh` refreshes the canonical local task-bundle view from the current compatibility paths.
+Preferred execution clone:
+- `.worktrees/adl-wp-<issue_num>`
 
 Structured Card Templates v2 (required sections):
 - Input card:
@@ -43,7 +69,20 @@ Structured Card Templates v2 (required sections):
 These sections are designed to support deterministic replay/security verification and
 machine-parsable prompt automation.
 
-## 2) Implement and Validate
+## 4) Implement
+
+Read the input card, stay inside the issue edit fence, and make the tracked repo changes.
+
+## 5) Run (when the issue requires a bounded runtime proof surface)
+
+```bash
+./adl/tools/pr.sh run <adl-file> [run arguments...]
+```
+
+Use `pr run` when the issue's proof surface requires emitted run artifacts, replay, or bounded runtime execution.
+For docs-only or non-runtime issues, skip `pr run` truthfully and record that in the output card/report rather than inventing a hidden step.
+
+## 6) Validate
 
 Typical local preflight:
 
@@ -51,30 +90,45 @@ Typical local preflight:
 ./adl/tools/batched_checks.sh
 ```
 
-## 3) Finish PR
+Canonical regression proof surface for the implemented five-command story:
+
+```bash
+bash adl/tools/test_five_command_regression_suite.sh
+```
+
+Bounded lifecycle proof/demo:
+
+- `docs/tooling/editor/five_command_demo.md`
+
+## 7) Finish PR
 
 ```bash
 ./adl/tools/pr.sh finish <issue_num> \
   --title "<title>" \
   --paths "<comma-separated paths>" \
-  -f .adl/v0.85/tasks/<task-id>__<slug>/sip.md \
-  --output .adl/v0.85/tasks/<task-id>__<slug>/sor.md
+  -f .adl/cards/<issue_num>/input_<issue_num>.md \
+  --output-card .adl/cards/<issue_num>/output_<issue_num>.md
 ```
+
+## 8) Report
+
+Write a per-issue report under:
+
+- `.adl/reports/pr-cycle/<issue_num>/<timestamp>/report.md`
 
 ## Common Pitfalls and Remediations
 
-- Dirty worktree at `start`:
-  - Commit/stash first, then re-run `pr.sh start`.
+- Dirty repo-local execution clone:
+  - Commit/stash first, then re-run the relevant command from `.worktrees/adl-wp-<issue_num>`.
 - Wrong paths at `finish`:
   - Ensure `--paths` only includes intended repo paths; do not include local `.adl` artifacts.
-- Missing local task-bundle artifacts:
-  - Re-run `pr.sh start <issue_num> --slug <slug>` to seed the canonical local task bundle and compatibility links.
-  - Ensure `--paths` only includes intended repo paths; do not include `.adl/cards`.
+- Missing canonical STP:
+  - Re-run `pr.sh init <issue_num> --slug <slug> --version v0.85`.
+- Stale GitHub issue body:
+  - Re-run `pr.sh create <issue_num> --stp .adl/v0.85/tasks/<task-id>__<slug>/stp.md`.
 - Missing card files:
   - Re-run `pr.sh start <issue_num> --slug <slug>` to seed canonical card paths.
-- Missing local task bundle:
-  - Run `adl/tools/sync_task_bundle_prompts.sh --scope v0.85` to rebuild `.adl/v0.85/tasks/` from the current compatibility paths.
-- Missing local task-bundle artifacts:
-  - Re-run `pr.sh start <issue_num> --slug <slug>` to seed the canonical local task bundle and compatibility links.
+- Browser/editor overclaims:
+  - Use `docs/tooling/editor/command_adapter.md` as the truth boundary; only `start` is browser-direct in v0.85.
 - Worktree branch base problems:
-  - Update from `origin/main`, then re-run `start`.
+  - Update from `origin/main`, then re-run `start` in the repo-local execution clone.

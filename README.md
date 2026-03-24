@@ -200,7 +200,7 @@ v0.7.0 proves:
 
 ## Default Workflow
 
-Default contributor workflow uses `adl_pr_cycle` (`start -> codex -> finish -> report`).
+Default contributor workflow uses `adl_pr_cycle` (`init -> create -> start -> codex -> run_if_required -> finish -> report`).
 - Guide: `docs/default_workflow.md`
 - Active milestone docs: `docs/milestones/v0.8/`
 - Tools: `adl/tools/README.md`
