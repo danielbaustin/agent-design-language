@@ -1606,9 +1606,25 @@ cmd_start() {
   note "Target worktree: $worktree_path"
 
   note "Fetching origin/main…"
-  run_git_or_die "start: fetch origin main" git fetch origin main
+  local fetch_out="" fetch_status=0
+  set +e
+  fetch_out="$(git fetch origin main 2>&1)"
+  fetch_status=$?
+  set -e
+  if [[ "$fetch_status" -ne 0 ]]; then
+    if [[ "$fetch_out" == *".git/index.lock"* ]]; then
+      die_index_lock "start: fetch origin main"
+    fi
+    if git rev-parse --verify --quiet origin/main >/dev/null; then
+      note "Warning: start: fetch origin main failed; reusing existing local origin/main"
+      [[ -n "$fetch_out" ]] && note "$fetch_out"
+    else
+      [[ -n "$fetch_out" ]] && echo "$fetch_out" >&2
+      die "start: fetch origin main failed and origin/main is unavailable locally"
+    fi
+  fi
   if ! git rev-parse --verify --quiet origin/main >/dev/null; then
-    die "start: origin/main not found after fetch; verify remote setup and permissions"
+    die "start: origin/main not available; verify remote setup and permissions"
   fi
 
   # Ensure local branch exists (without switching the caller to it).

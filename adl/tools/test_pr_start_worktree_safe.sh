@@ -113,6 +113,27 @@ assert_contains() {
     exit 1
   }
 
+  fakebin="$tmpdir/fakebin"
+  mkdir -p "$fakebin"
+  cat >"$fakebin/git" <<EOF
+#!/usr/bin/env bash
+if [[ "\$1" == "fetch" && "\$2" == "origin" && "\$3" == "main" ]]; then
+  echo "error: cannot open '.git/FETCH_HEAD': Operation not permitted" >&2
+  exit 1
+fi
+exec "$(command -v git)" "\$@"
+EOF
+  chmod +x "$fakebin/git"
+  out_fetch_fallback="$(PATH="$fakebin:$PATH" "$BASH_BIN" adl/tools/pr.sh start 994 --slug fetch-fallback --no-fetch-issue)"
+  fetch_wt="$repo/.worktrees/adl-wp-994"
+  fetch_wt="$(cd "$fetch_wt" && pwd -P)"
+  assert_contains "start: fetch origin main failed; reusing existing local origin/main" "$out_fetch_fallback" "fetch fallback warning"
+  assert_contains "WORKTREE $fetch_wt" "$out_fetch_fallback" "fetch fallback still creates worktree"
+  [[ -d "$fetch_wt" ]] || {
+    echo "assertion failed: expected fetch-fallback worktree" >&2
+    exit 1
+  }
+
   git branch codex/998-collision origin/main
   git worktree add -q "$tmpdir/other-path" codex/998-collision
   set +e
