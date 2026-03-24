@@ -13,6 +13,7 @@ Tracked public workflow history should live in task-centric record bundles under
 - [Prompt Spec](prompt-spec.md): machine-readable input-card block defining deterministic prompt generation surfaces and reviewer alignment.
 - [Structured Prompt Contracts](structured-prompt-contracts.md): machine-checkable contracts for Structured Task Prompts, Structured Implementation Prompts, and Structured Output Records.
 - [Worktree Governance](worktree_governance.md): canonical policy for managed ADL worktrees, stale registrations, orphan dirs, and Codex-ephemeral worktree handling.
+- [Rust Module Watch List](rust_module_watch_list.md): canonical watch list and maintainability guardrail for large Rust implementation modules.
 - [Task Bundle Editor](editor/README.md): first bounded editor surface for tracked STP/SIP task-bundle authoring.
 - [Prompt Spec Protocol Bindings](prompt-spec.md#protocol-bindings): linkage to `card_review_checklist.v1` and `card_review_output.v1` reviewer contracts.
 - [Prompt/Reviewer Surface Mapping](prompt-review-surface-mapping.md): field-by-field contract map between Prompt Spec, checklist rules, and deterministic review output fields.
@@ -24,6 +25,7 @@ Tracked public workflow history should live in task-centric record bundles under
 - Prompt Spec execution tooling:
   - `adl/tools/lint_prompt_spec.sh` (Prompt Spec lint/validation)
   - `adl/tools/card_prompt.sh` (deterministic prompt generation from cards)
+  - `adl/tools/report_large_rust_modules.sh` (non-blocking Rust implementation-module size report)
   - `adl/tools/validate_structured_prompt.sh` (structured prompt contract validation)
   - `adl/tools/verify_review_output_provenance.rb` (deterministic provenance verification for review-output artifacts)
   - `adl/tools/review_card_surface.rb` (bounded deterministic review helper)
