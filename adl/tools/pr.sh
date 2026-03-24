@@ -15,6 +15,7 @@
 #   adl/tools/pr.sh help
 #   adl/tools/pr.sh init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v0.85>]
 #   adl/tools/pr.sh start   <issue> [--slug <slug>] [--title "<title>"] [--prefix codex] [--no-fetch-issue]
+#   adl/tools/pr.sh run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
 #   adl/tools/pr.sh card    <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
 #   adl/tools/pr.sh output  <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
 #   adl/tools/pr.sh finish  <issue> --title "<title>" [-f <input_card.md>] [--output-card <output_card.md>] [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [--no-open]
@@ -24,6 +25,7 @@
 # Examples:
 #   adl/tools/pr.sh init  14 --slug b6-default-system --no-fetch-issue --version v0.85
 #   adl/tools/pr.sh start 14 --slug b6-default-system
+#   adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml --trace --allow-unsigned
 #   adl/tools/pr.sh card  14 --version v0.2
 #   adl/tools/pr.sh card  14 input
 #   adl/tools/pr.sh card  14 output
@@ -173,6 +175,17 @@ issue_prompt_path_for_issue() {
   local root
   root="$(repo_root)"
   echo "$root/.adl/issues/$scope/bodies/issue-${issue}-${slug}.md"
+}
+
+resolve_repo_relative_path() {
+  local path="$1"
+  local root
+  root="$(repo_root)"
+  if [[ "$path" == /* ]]; then
+    echo "$path"
+  else
+    echo "$root/$path"
+  fi
 }
 
 absolute_host_path_present() {
@@ -820,6 +833,199 @@ render_pr_body_file() {
   } >"$tmp"
 
   echo "$tmp"
+}
+
+extract_plan_value() {
+  local label="$1" plan_output="$2"
+  awk -v prefix="$label" '
+    index($0, prefix) == 1 {
+      print substr($0, length(prefix) + 1)
+      exit
+    }
+  ' <<<"$plan_output"
+}
+
+resolve_runs_root_for_pr_run() {
+  local requested="${1:-}"
+  if [[ -n "$requested" ]]; then
+    resolve_repo_relative_path "$requested"
+    return 0
+  fi
+  if [[ -n "${ADL_RUNS_ROOT:-}" ]]; then
+    resolve_repo_relative_path "$ADL_RUNS_ROOT"
+    return 0
+  fi
+  echo "$(repo_root)/.adl/runs"
+}
+
+assert_run_artifact_contains() {
+  local file="$1" needle="$2" context="$3"
+  [[ -f "$file" ]] || die "run: missing $context artifact: $file"
+  grep -Fq "$needle" "$file" || die "run: $context artifact missing expected content '$needle': $file"
+}
+
+verify_pr_run_artifacts() {
+  local run_root="$1" run_id="$2" workflow_id="$3"
+  local run_json run_status_json run_summary_json
+  run_json="$run_root/run.json"
+  run_status_json="$run_root/run_status.json"
+  run_summary_json="$run_root/run_summary.json"
+
+  [[ -f "$run_json" ]] || die "run: missing canonical run artifact: $run_json"
+  [[ -f "$run_status_json" ]] || die "run: missing canonical run status artifact: $run_status_json"
+  [[ -f "$run_summary_json" ]] || die "run: missing canonical run summary artifact: $run_summary_json"
+
+  assert_run_artifact_contains "$run_json" "\"run_id\": \"$run_id\"" "run.json"
+  assert_run_artifact_contains "$run_status_json" "\"run_id\": \"$run_id\"" "run_status.json"
+  assert_run_artifact_contains "$run_status_json" "\"workflow_id\": \"$workflow_id\"" "run_status.json"
+  assert_run_artifact_contains "$run_summary_json" "\"run_id\": \"$run_id\"" "run_summary.json"
+  assert_run_artifact_contains "$run_summary_json" "\"workflow_id\": \"$workflow_id\"" "run_summary.json"
+}
+
+print_pr_run_summary() {
+  local state="$1" adl_path="$2" run_id="$3" workflow_id="$4" runs_root="$5"
+  local run_root run_json run_status_json run_summary_json
+  run_root="$runs_root/$run_id"
+  run_json="$(path_relative_to_repo "$run_root/run.json")"
+  run_status_json="$(path_relative_to_repo "$run_root/run_status.json")"
+  run_summary_json="$(path_relative_to_repo "$run_root/run_summary.json")"
+  echo "PR RUN $state"
+  echo "  adl_path=$(path_relative_to_repo "$(resolve_repo_relative_path "$adl_path")")"
+  echo "  run_id=$run_id"
+  echo "  workflow_id=$workflow_id"
+  echo "  run_root=$(path_relative_to_repo "$run_root")"
+  echo "  proof_run_json=$run_json"
+  echo "  proof_run_status_json=$run_status_json"
+  echo "  proof_run_summary_json=$run_summary_json"
+}
+
+cmd_run() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_run
+    return 0
+  fi
+
+  local adl_path="${1:-}"
+  [[ -n "$adl_path" ]] || die_with_usage "run: missing <adl.yaml>" usage_run
+  shift || true
+
+  local root adl_abs runs_root
+  root="$(repo_root)"
+  adl_abs="$(resolve_repo_relative_path "$adl_path")"
+  [[ -f "$adl_abs" ]] || die "run: ADL file not found: $adl_path"
+
+  local out_dir=""
+  local runs_root_arg=""
+  local overlay_path=""
+  local resume_path=""
+  local steer_path=""
+  local -a forward_args
+  forward_args=("$adl_abs")
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --print-plan|--print-prompts|--print-prompt|--trace|--quiet|--no-step-output|--open|--allow-unsigned)
+        forward_args+=("$1")
+        shift
+        ;;
+      --resume|--steer|--overlay|--out)
+        [[ $# -ge 2 ]] || die_with_usage "run: $1 requires a value" usage_run
+        if [[ "$1" == "--out" ]]; then
+          out_dir="$(resolve_repo_relative_path "$2")"
+        fi
+        if [[ "$1" == "--overlay" ]]; then
+          overlay_path="$(resolve_repo_relative_path "$2")"
+        fi
+        if [[ "$1" == "--resume" ]]; then
+          resume_path="$(resolve_repo_relative_path "$2")"
+        fi
+        if [[ "$1" == "--steer" ]]; then
+          steer_path="$(resolve_repo_relative_path "$2")"
+        fi
+        case "$1" in
+          --out) forward_args+=("$1" "$out_dir") ;;
+          --overlay) forward_args+=("$1" "$overlay_path") ;;
+          --resume) forward_args+=("$1" "$resume_path") ;;
+          --steer) forward_args+=("$1" "$steer_path") ;;
+        esac
+        shift 2
+        ;;
+      --runs-root)
+        [[ $# -ge 2 ]] || die_with_usage "run: --runs-root requires a value" usage_run
+        runs_root_arg="$2"
+        shift 2
+        ;;
+      -h|--help)
+        usage_run
+        return 0
+        ;;
+      *)
+        die_with_usage "run: unknown arg: $1" usage_run
+        ;;
+    esac
+  done
+
+  runs_root="$(resolve_runs_root_for_pr_run "$runs_root_arg")"
+  mkdir -p "$runs_root"
+  if [[ -n "$out_dir" ]]; then
+    mkdir -p "$(resolve_repo_relative_path "$out_dir")"
+  fi
+
+  local -a plan_args
+  plan_args=("$adl_abs")
+  if [[ -n "$overlay_path" ]]; then
+    plan_args+=("--overlay" "$overlay_path")
+  fi
+
+  local plan_output run_id workflow_id
+  plan_output="$(
+    cd "$root/adl" &&
+      cargo run --quiet --bin adl -- "${plan_args[@]}" --print-plan
+  )" || die "run: failed to resolve ADL execution plan for $adl_path"
+
+  run_id="$(extract_plan_value "Resolved run: " "$plan_output")"
+  workflow_id="$(extract_plan_value "Workflow:     " "$plan_output")"
+  [[ -n "$run_id" ]] || die "run: failed to derive run_id from resolved plan"
+  [[ -n "$workflow_id" ]] || die "run: failed to derive workflow_id from resolved plan"
+
+  local -a exec_args
+  exec_args=("${forward_args[@]}" "--run")
+
+  local normalized_ollama_bin=""
+  if [[ -n "${ADL_OLLAMA_BIN:-}" ]]; then
+    normalized_ollama_bin="$(resolve_repo_relative_path "$ADL_OLLAMA_BIN")"
+  fi
+
+  local run_output run_status
+  set +e
+  if [[ -n "$normalized_ollama_bin" ]]; then
+    run_output="$(
+      cd "$root/adl" &&
+        ADL_OLLAMA_BIN="$normalized_ollama_bin" ADL_RUNS_ROOT="$runs_root" cargo run --quiet --bin adl -- "${exec_args[@]}" 2>&1
+    )"
+    run_status=$?
+  else
+    run_output="$(
+      cd "$root/adl" &&
+        ADL_RUNS_ROOT="$runs_root" cargo run --quiet --bin adl -- "${exec_args[@]}" 2>&1
+    )"
+    run_status=$?
+  fi
+  set -e
+
+  [[ -n "$run_output" ]] && printf '%s\n' "$run_output"
+
+  local run_root
+  run_root="$runs_root/$run_id"
+  verify_pr_run_artifacts "$run_root" "$run_id" "$workflow_id"
+
+  if [[ "$run_status" -eq 0 ]]; then
+    print_pr_run_summary "ok" "$adl_path" "$run_id" "$workflow_id" "$runs_root"
+    return 0
+  fi
+
+  print_pr_run_summary "failed" "$adl_path" "$run_id" "$workflow_id" "$runs_root" >&2
+  return "$run_status"
 }
 
 sha256_file() {
@@ -1855,6 +2061,7 @@ Commands:
   init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v>]
   create  [<issue> --stp <path>] | [legacy new-issue args]
   new     --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
+  run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
   start   <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue]
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
   output  <issue> [input|output] ... [--version <v0.2>] [-f <output_card.md>]
@@ -1874,6 +2081,7 @@ Flags:
   (create)  [legacy new-issue args]           Create path reuses the current precursor semantics during v0.85.
   (init)    --version <v0.85>                 Override detected version (otherwise inferred from issue labels version:vX.Y)
   (init)    --no-fetch-issue                  Do not fetch issue title/labels; requires --slug.
+  (run)     --runs-root <dir>                 Override canonical run artifact root (default: <repo>/.adl/runs or ADL_RUNS_ROOT).
   (card)    -f, --file <input_card.md>         Output path for the generated input card (default: <cards_root>/<issue>/input_<issue>.md)
   (output)  -f, --file <output_card.md>        Output path for the generated output card (default: <cards_root>/<issue>/output_<issue>.md)
   (cards)   --version <v0.2>                   Override detected version (otherwise inferred from issue labels version:vX.Y)
@@ -1888,6 +2096,7 @@ Flags:
 Notes:
 - PRs are created as DRAFT by default to preserve human review.
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
+- run is a bounded v0.85 wrapper over the Rust adl runtime; browser/editor direct invocation remains follow-on work.
 - Runs Rust checks in adl/ by default (fmt, clippy -D warnings, test).
 - finish stages adl/ by default (reduces accidental commits).
 - Templates are stored in adl/templates/cards/ (legacy fallback: .adl/templates/).
@@ -1899,6 +2108,7 @@ Examples:
   adl/tools/pr.sh init 17 --slug b6-default-system --no-fetch-issue --version v0.85
   adl/tools/pr.sh create 17 --stp .adl/issues/v0.85/bodies/issue-17-b6-default-system.md
   adl/tools/pr.sh new --title "adl: fix timeout handling" --slug timeout-fix
+  adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml --trace --allow-unsigned
   adl/tools/pr.sh start 17 --slug b6-default-system
   adl/tools/pr.sh card  17 --help
   adl/tools/pr.sh card  17 --version v0.2
@@ -1958,6 +2168,18 @@ Notes:
 EOF
 }
 
+usage_run() {
+  cat <<'EOF'
+Usage:
+  adl/tools/pr.sh run <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
+
+Notes:
+- This is a bounded v0.85 control-plane wrapper over `cargo run --bin adl -- ...`.
+- The primary proof surface is the canonical run artifact set under `.adl/runs/<run_id>/`.
+- Browser/editor direct invocation remains follow-on work; this command is the truthful supported run path today.
+EOF
+}
+
 usage_card() {
   cat <<'EOF'
 Usage:
@@ -2001,6 +2223,7 @@ main() {
     init) cmd_init "$@" ;;
     create) cmd_create "$@" ;;
     new) cmd_new "$@" ;;
+    run) cmd_run "$@" ;;
     start) cmd_start "$@" ;;
     finish) cmd_finish "$@" ;;
     card) cmd_card "$@" ;;
