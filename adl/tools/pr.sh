@@ -725,7 +725,7 @@ stp_issue_number_or_die() {
 reconcile_issue_from_stp() {
   local issue="$1" stp_path="$2" repo="$3"
   local validator fm body title
-  local -a desired_labels current_labels add_labels remove_labels
+  local -a desired_labels=() current_labels=() add_labels=() remove_labels=()
   validator="$(resolve_structured_prompt_validator)"
   "$validator" --type stp --input "$stp_path" >/dev/null \
     || die "create: stp failed validation: $stp_path"
@@ -749,10 +749,10 @@ reconcile_issue_from_stp() {
   done < <(gh issue view "$issue" $(gh_repo_flag "$repo") --json labels -q '.labels[].name' 2>/dev/null || true)
 
   local existing desired found
-  for desired in "${desired_labels[@]}"; do
+  for desired in "${desired_labels[@]+"${desired_labels[@]}"}"; do
     [[ -n "$desired" ]] || continue
     found="0"
-    for existing in "${current_labels[@]}"; do
+    for existing in "${current_labels[@]+"${current_labels[@]}"}"; do
       if [[ "$existing" == "$desired" ]]; then
         found="1"
         break
@@ -761,10 +761,10 @@ reconcile_issue_from_stp() {
     [[ "$found" == "1" ]] || add_labels+=("$desired")
   done
 
-  for existing in "${current_labels[@]}"; do
+  for existing in "${current_labels[@]+"${current_labels[@]}"}"; do
     [[ -n "$existing" ]] || continue
     found="0"
-    for desired in "${desired_labels[@]}"; do
+    for desired in "${desired_labels[@]+"${desired_labels[@]}"}"; do
       if [[ "$desired" == "$existing" ]]; then
         found="1"
         break
@@ -774,10 +774,10 @@ reconcile_issue_from_stp() {
   done
 
   gh issue edit "$issue" $(gh_repo_flag "$repo") --title "$title" --body-file "$body" >/dev/null
-  for desired in "${add_labels[@]}"; do
+  for desired in "${add_labels[@]+"${add_labels[@]}"}"; do
     gh issue edit "$issue" $(gh_repo_flag "$repo") --add-label "$desired" >/dev/null
   done
-  for existing in "${remove_labels[@]}"; do
+  for existing in "${remove_labels[@]+"${remove_labels[@]}"}"; do
     gh issue edit "$issue" $(gh_repo_flag "$repo") --remove-label "$existing" >/dev/null
   done
 
