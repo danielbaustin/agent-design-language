@@ -5,11 +5,13 @@ This document defines the canonical ADL worktree policy so milestone execution d
 ## Canonical namespaces
 
 - Primary checkout: the normal repository root.
-- Managed ADL issue worktrees: `$HOME/git/adl-wp-<issue>`
-- Optional managed lanes: `$HOME/git/adl-lane-*`
+- Managed ADL execution clones: `.worktrees/adl-wp-<issue>`
+- Optional managed lanes: `.worktrees/adl-lane-*`
 - Codex-ephemeral worktrees: the Codex app worktree namespace
 
 Managed ADL worktrees are the only worktrees that should be used for milestone execution, issue implementation, and PR handoff.
+
+Legacy external clones under `$HOME/git/adl-wp-*` are no longer canonical. If a repo-local replacement exists under `.worktrees/`, the external copy should be treated as a cleanup candidate rather than an execution surface.
 
 ## Status classes
 
@@ -21,6 +23,12 @@ The repository currently needs to distinguish four different classes cleanly:
 - `managed_registered`
   - a registered ADL worktree in the canonical managed namespace
   - fate depends on merge/dirty state
+- `managed_clone`
+  - a repo-local execution clone in `.worktrees/adl-wp-*` or `.worktrees/adl-lane-*`
+  - fate depends on merge/dirty state
+- `managed_scratch`
+  - a repo-local scratch directory under `.worktrees/` that is not an issue or lane clone
+  - fate: remove if clean
 - `stale_registration`
   - git metadata for a worktree that no longer exists on disk
   - fate: prune now
@@ -32,17 +40,24 @@ The repository currently needs to distinguish four different classes cleanly:
 - `orphan_dir`
   - a worktree-looking directory on disk that is not registered in `git worktree list`
   - fate: review, and back up before deletion if it contains meaningful state
+- `legacy_external`
+  - an old external `$HOME/git/adl-wp-*` or `$HOME/git/adl-lane-*` clone outside the canonical `.worktrees/` namespace
+  - fate: remove after replacement if a repo-local clone exists; otherwise review carefully
 
 ## Fate policy
 
 - `keep_primary`
   - keep the primary checkout
 - `keep_active`
-  - keep a registered managed worktree whose branch is still active
+  - keep a registered managed worktree or repo-local managed clone whose branch is still active or intentionally retained for the next queue tranche
 - `keep_dirty_active`
-  - keep and review a dirty managed worktree that is still active
+  - keep and review a dirty managed worktree or repo-local managed clone that is still active
 - `remove_merged_clean`
-  - safe candidate for deletion after branch contents are merged and the worktree is clean
+  - safe candidate for deletion after branch contents are merged and the registered worktree is clean
+- `remove_legacy_replaced`
+  - safe legacy external clone deletion after a repo-local replacement exists and the external clone is clean
+- `remove_scratch_clean`
+  - safe deletion for clean repo-local scratch directories under `.worktrees/`
 - `backup_then_remove`
   - dirty merged worktree or similarly risky local state; capture a patch or tarball before deletion
 - `prune_now`
@@ -77,6 +92,6 @@ The pruning flow is intentionally conservative:
 
 ## Interaction with `pr.sh`
 
-`pr.sh start` should create managed worktrees in the canonical namespace. In a normal ADL checkout under `$HOME/git`, that means `adl-wp-<issue>` directories are created under `$HOME/git`.
+`pr.sh start` should create managed execution clones in the canonical namespace under `.worktrees/`.
 
-If the repository is being exercised in a temporary test checkout outside the normal namespace, `pr.sh` may fall back to the repository parent or an explicit `ADL_WORKTREE_ROOT` override so tests remain hermetic.
+If the repository is being exercised in a temporary test checkout outside the normal namespace, `pr.sh` may still fall back to an explicit `ADL_WORKTREE_ROOT` override so tests remain hermetic.
