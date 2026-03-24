@@ -13,14 +13,65 @@ die() {
 usage() {
   cat <<'USAGE'
 Usage:
+  adl/tools/editor_action.sh contract [--format text|json]
   adl/tools/editor_action.sh start --issue <number> --branch codex/<issue>-<slug> [--slug <slug>] [--dry-run]
 
 Purpose:
   Thin editor-adjacent adapter for bounded control-plane actions.
 
 Current actions:
+  contract Print the supported near-term editor adapter surface.
   start    Validate issue/branch pairing and invoke `adl/tools/pr.sh start`.
 USAGE
+}
+
+emit_contract_text() {
+  cat <<'EOF'
+editor_adapter_schema: editor.command_adapter.v1
+supported_actions:
+  - action: start
+    adapter_entry: adl/tools/editor_action.sh start --issue <number> --branch codex/<issue>-<slug> [--slug <slug>] [--dry-run]
+    maps_to: adl/tools/pr.sh start
+    invocation_mode: thin_adapter
+    browser_direct: false
+    status: supported
+unsupported_browser_direct_actions:
+  - pr init
+  - pr create
+  - pr run
+  - pr finish
+notes:
+  - Browser/editor surfaces may prepare or copy supported commands, but must not claim direct invocation of unsupported lifecycle commands.
+  - The near-term adapter surface is intentionally narrow so browser logic does not duplicate control-plane behavior.
+EOF
+}
+
+emit_contract_json() {
+  cat <<'EOF'
+{
+  "schema_version": "editor.command_adapter.v1",
+  "supported_actions": [
+    {
+      "action": "start",
+      "adapter_entry": "adl/tools/editor_action.sh start --issue <number> --branch codex/<issue>-<slug> [--slug <slug>] [--dry-run]",
+      "maps_to": "adl/tools/pr.sh start",
+      "invocation_mode": "thin_adapter",
+      "browser_direct": false,
+      "status": "supported"
+    }
+  ],
+  "unsupported_browser_direct_actions": [
+    "pr init",
+    "pr create",
+    "pr run",
+    "pr finish"
+  ],
+  "notes": [
+    "Browser/editor surfaces may prepare or copy supported commands, but must not claim direct invocation of unsupported lifecycle commands.",
+    "The near-term adapter surface is intentionally narrow so browser logic does not duplicate control-plane behavior."
+  ]
+}
+EOF
 }
 
 repo_root() {
@@ -48,7 +99,7 @@ ACTION="${1:-}"
 shift || true
 
 case "$ACTION" in
-  start) ;;
+  start|contract) ;;
   -h|--help) usage; exit 0 ;;
   *) die "unsupported action: $ACTION" ;;
 esac
@@ -57,6 +108,7 @@ ISSUE=""
 BRANCH=""
 SLUG=""
 DRY_RUN=false
+FORMAT="text"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -64,10 +116,20 @@ while [[ $# -gt 0 ]]; do
     --branch) BRANCH="$2"; shift 2 ;;
     --slug) SLUG="$2"; shift 2 ;;
     --dry-run) DRY_RUN=true; shift ;;
+    --format) FORMAT="$2"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
     *) die "unknown argument: $1" ;;
   esac
 done
+
+if [[ "$ACTION" == "contract" ]]; then
+  case "$FORMAT" in
+    text) emit_contract_text ;;
+    json) emit_contract_json ;;
+    *) die "--format must be text or json" ;;
+  esac
+  exit 0
+fi
 
 [[ -n "$ISSUE" ]] || die "--issue is required"
 [[ -n "$BRANCH" ]] || die "--branch is required"
