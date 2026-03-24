@@ -66,6 +66,7 @@ The canonical tracked proof surface for this editor slice is:
 
 - `docs/tooling/editor/command_adapter.md`
 - `docs/tooling/editor/demo.md`
+- `docs/tooling/editor/five_command_demo.md`
 - `docs/records/v0.85/tasks/task-v085-wp05-demo/`
 
 Review those together to see the actual supported loop and the remaining manual gaps.

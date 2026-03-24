@@ -89,6 +89,19 @@ x
 x
 EOF
 
+cp "$repo/.adl/issues/v0.85/bodies/issue-42-test-reconcile.md" \
+  "$repo/.adl/issues/v0.85/bodies/issue-43-test-reconcile-no-label-delta.md"
+python3 - "$repo/.adl/issues/v0.85/bodies/issue-43-test-reconcile-no-label-delta.md" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+text = path.read_text()
+text = text.replace("slug: \"test-reconcile\"", "slug: \"test-reconcile-no-label-delta\"")
+text = text.replace("issue_number: 42", "issue_number: 43")
+path.write_text(text)
+PY
+
 cat >"$bindir/gh" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -106,6 +119,10 @@ if [[ "${1:-}" == "issue" && "${2:-}" == "view" ]]; then
   shift 3
   if [[ "$issue" == "42" && "$*" == *"--json labels"* && "$*" == *"-q .labels[].name"* ]]; then
     printf '%s\n' "track:roadmap" "old:remove-me"
+    exit 0
+  fi
+  if [[ "$issue" == "43" && "$*" == *"--json labels"* && "$*" == *"-q .labels[].name"* ]]; then
+    printf '%s\n' "track:roadmap" "version:v0.85" "area:tools"
     exit 0
   fi
 fi
@@ -197,6 +214,23 @@ assert_contains() {
     echo "assertion failed: expected reconcile body file to contain STP markdown body" >&2
     exit 1
   }
+
+  : >"$gh_log"
+  out_reconcile_same_labels="$("$BASH_BIN" adl/tools/pr.sh create 43 --stp .adl/issues/v0.85/bodies/issue-43-test-reconcile-no-label-delta.md)"
+  assert_contains "ISSUE_NUM=43" "$out_reconcile_same_labels" "reconcile same-label issue number"
+  assert_contains "MODE=reconcile" "$out_reconcile_same_labels" "reconcile same-label mode marker"
+  grep -Fq -- 'issue edit 43' "$gh_log" || {
+    echo "assertion failed: expected same-label reconcile path to call gh issue edit" >&2
+    exit 1
+  }
+  if grep -Fq -- '--add-label' "$gh_log"; then
+    echo "assertion failed: expected no add-label operations when labels already match" >&2
+    exit 1
+  fi
+  if grep -Fq -- '--remove-label' "$gh_log"; then
+    echo "assertion failed: expected no remove-label operations when labels already match" >&2
+    exit 1
+  fi
 )
 
 echo "pr.sh create create+reconcile flows: ok"
