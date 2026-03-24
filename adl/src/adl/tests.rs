@@ -1,5 +1,6 @@
 use super::validation::{validate_provider, validate_tool};
 use super::*;
+use super::loading::load_yaml_with_includes;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[test]
@@ -246,6 +247,201 @@ include: ["a.yaml"]
         msg.contains("include cycle detected"),
         "unexpected cycle error: {msg}"
     );
+    let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
+fn load_from_file_rejects_invalid_include_shapes_and_paths() {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("time")
+        .as_nanos();
+    let base =
+        std::env::temp_dir().join(format!("adl-load-invalid-{now}-{}", std::process::id()));
+    std::fs::create_dir_all(&base).expect("create base");
+
+    let root = base.join("root.yaml");
+
+    std::fs::write(
+        &root,
+        r#"
+version: "0.1"
+include: "fragment.yaml"
+run:
+  workflow:
+    steps: []
+"#,
+    )
+    .expect("write invalid include shape");
+    let err = load_yaml_with_includes(&root, &mut Vec::new()).expect_err("include must be a sequence");
+    assert!(err.to_string().contains("include must be a YAML sequence"));
+
+    std::fs::write(
+        &root,
+        r#"
+version: "0.1"
+include: [7]
+run:
+  workflow:
+    steps: []
+"#,
+    )
+    .expect("write non-string include");
+    let err = load_yaml_with_includes(&root, &mut Vec::new())
+        .expect_err("include entries must be strings");
+    assert!(err.to_string().contains("include entries must be strings"));
+
+    std::fs::write(
+        &root,
+        r#"
+version: "0.1"
+include: ["../escape.yaml"]
+run:
+  workflow:
+    steps: []
+"#,
+    )
+    .expect("write parent include");
+    let err = load_yaml_with_includes(&root, &mut Vec::new())
+        .expect_err("include path with parent dir should fail");
+    assert!(err
+        .to_string()
+        .contains("include path must be relative and must not contain '..'"));
+
+    let absolute_include = base.join("fragment.yaml");
+    std::fs::write(
+        &root,
+        format!(
+            r#"
+version: "0.1"
+include: ["{}"]
+run:
+  workflow:
+    steps: []
+"#,
+            absolute_include.display()
+        ),
+    )
+    .expect("write absolute include");
+    let err = load_yaml_with_includes(&root, &mut Vec::new())
+        .expect_err("absolute include path should fail");
+    assert!(err
+        .to_string()
+        .contains("include path must be relative and must not contain '..'"));
+
+    let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
+fn load_from_file_rejects_invalid_include_merge_shapes() {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("time")
+        .as_nanos();
+    let base = std::env::temp_dir().join(format!("adl-load-merge-{now}-{}", std::process::id()));
+    std::fs::create_dir_all(&base).expect("create base");
+
+    let root = base.join("root.yaml");
+    let include = base.join("fragment.yaml");
+
+    std::fs::write(
+        &root,
+        r#"
+version: "0.1"
+include: ["fragment.yaml"]
+run:
+  workflow:
+    steps: []
+"#,
+    )
+    .expect("write root");
+
+    std::fs::write(&include, "[]\n").expect("write non-mapping include");
+    let err = load_yaml_with_includes(&root, &mut Vec::new())
+        .expect_err("included doc must be a mapping");
+    assert!(err
+        .to_string()
+        .contains("top-level ADL document must be a mapping"));
+
+    std::fs::write(
+        &include,
+        r#"
+providers: []
+"#,
+    )
+    .expect("write invalid providers shape");
+    let err = load_yaml_with_includes(&root, &mut Vec::new())
+        .expect_err("providers must be a mapping");
+    assert!(err
+        .to_string()
+        .contains("top-level 'providers' must be a mapping"));
+
+    std::fs::write(
+        &include,
+        r#"
+patterns: {}
+"#,
+    )
+    .expect("write invalid patterns shape");
+    let err = load_yaml_with_includes(&root, &mut Vec::new())
+        .expect_err("patterns must be a sequence");
+    assert!(err
+        .to_string()
+        .contains("top-level 'patterns' must be a sequence"));
+
+    std::fs::write(
+        &include,
+        r#"
+providers:
+  p:
+    type: "ollama"
+"#,
+    )
+    .expect("write provider include");
+    std::fs::write(
+        &root,
+        r#"
+version: "0.1"
+include: ["fragment.yaml"]
+providers:
+  p:
+    type: "ollama"
+run:
+  workflow:
+    steps: []
+"#,
+    )
+    .expect("write duplicate provider root");
+    let err = load_yaml_with_includes(&root, &mut Vec::new())
+        .expect_err("duplicate provider id should fail");
+    assert!(err
+        .to_string()
+        .contains("duplicate providers id 'p' while processing includes"));
+
+    std::fs::write(
+        &include,
+        r#"
+version: "0.1"
+"#,
+    )
+    .expect("write duplicate top-level include");
+    std::fs::write(
+        &root,
+        r#"
+version: "0.2"
+include: ["fragment.yaml"]
+run:
+  workflow:
+    steps: []
+"#,
+    )
+    .expect("write duplicate top-level root");
+    let err = load_yaml_with_includes(&root, &mut Vec::new())
+        .expect_err("duplicate top-level key should fail");
+    assert!(err
+        .to_string()
+        .contains("duplicate top-level key 'version' while processing includes"));
+
     let _ = std::fs::remove_dir_all(base);
 }
 
