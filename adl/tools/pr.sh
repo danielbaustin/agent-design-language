@@ -471,7 +471,7 @@ stage_selected_paths() {
   done
 
   if [[ "$staged_any" != "1" ]]; then
-    die "finish: all provided --paths were empty or gitignored; pass non-ignored paths (e.g. --paths \"adl/tools\")"
+    die "finish: all provided --paths were empty or gitignored; pass non-ignored paths (e.g. --paths \"adl/tools,docs/tooling\")"
   fi
 }
 
@@ -1813,7 +1813,7 @@ cmd_finish() {
   local no_close="0"
   local ready="0"
   local allow_gitignore="0"
-  local paths="adl"
+  local paths="."
   local input_path=""
   local output_path=""
   local no_open="0"
@@ -1927,10 +1927,10 @@ cmd_finish() {
   fi
 
   if [[ "$has_uncommitted" == "1" ]]; then
-    # Stage selected paths (default: adl). Use --paths "adl-spec,adl" or --paths "." to stage everything.
+    # Stage selected paths (default: repo root). Use --paths "adl,docs" to narrow scope explicitly.
     IFS=',' read -r -a path_arr <<< "$paths"
     if [[ ${#path_arr[@]} -eq 0 ]]; then
-      die "finish: --paths resolved to empty; pass e.g. --paths \"adl\""
+      die "finish: --paths resolved to empty; pass e.g. --paths \"adl,docs\""
     fi
 
     note "Staging changes (${paths})…"
@@ -2098,7 +2098,7 @@ Notes:
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - run is a bounded v0.85 wrapper over the Rust adl runtime; browser/editor direct invocation remains follow-on work.
 - Runs Rust checks in adl/ by default (fmt, clippy -D warnings, test).
-- finish stages adl/ by default (reduces accidental commits).
+- finish stages repo-root changes by default (ignored paths remain skipped; use --paths to narrow scope).
 - Templates are stored in adl/templates/cards/ (legacy fallback: .adl/templates/).
 - Cards are stored locally under cards_root and are not committed to git.
   cards_root resolves as: ADL_CARDS_ROOT (if set) else <primary-checkout>/.adl/cards.
@@ -2118,7 +2118,7 @@ Examples:
   adl/tools/pr.sh output 17 input
   adl/tools/pr.sh output 17 output
   adl/tools/pr.sh cards 17 --version v0.2
-  adl/tools/pr.sh finish 17 --title "adl: apply run.defaults.system fallback" -f /abs/cards_root/17/input_17.md --output-card /abs/cards_root/17/output_17.md
+  adl/tools/pr.sh finish 17 --title "adl: apply run.defaults.system fallback" -f .adl/cards/17/input_17.md --output-card .adl/cards/17/output_17.md
 EOF
 }
 
@@ -2213,6 +2213,9 @@ usage_finish() {
   cat <<'EOF'
 Usage:
   adl/tools/pr.sh finish <issue> --title "<title>" [--paths "<p1,p2,...>"] [-f|--file <input_card.md>] [--output-card <output_card.md>] [--no-checks] [--no-open] [--merge]
+
+Notes:
+- By default, finish stages repo-root changes (`.`), which keeps docs and code changes together unless you narrow with `--paths`.
 EOF
 }
 
