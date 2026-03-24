@@ -8,7 +8,9 @@ Usage:
 
 Dry-run by default. Removes only clearly safe cases:
 - stale git worktree registrations (via `git worktree prune`)
-- clean managed worktrees whose branch is already merged into main
+- clean repo-local managed clones whose branch is already merged into main
+- clean legacy external clones that already have repo-local replacements
+- clean repo-local scratch directories
 
 Everything else remains report-only.
 EOF
@@ -48,7 +50,7 @@ while IFS= read -r line; do
   rows+=("$line")
 done < <("$doctor" "${args[@]}")
 
-declare -a remove_registered
+declare -a remove_registered remove_dirs
 prune_needed="no"
 
 for row in "${rows[@]}"; do
@@ -58,7 +60,18 @@ for row in "${rows[@]}"; do
       prune_needed="yes"
       ;;
     remove_merged_clean)
-      remove_registered+=("$path")
+      if [[ "$kind" == "managed_registered" ]]; then
+        remove_registered+=("$path")
+      else
+        remove_dirs+=("$path")
+      fi
+      ;;
+    remove_legacy_replaced|remove_scratch_clean)
+      if [[ "$kind" == "legacy_external_registered" ]]; then
+        remove_registered+=("$path")
+      else
+        remove_dirs+=("$path")
+      fi
       ;;
   esac
 done
@@ -66,12 +79,19 @@ done
 echo "Mode: $mode"
 echo "Repo: $repo"
 echo "Registered clean merged worktrees removable: ${#remove_registered[@]}"
+echo "Directory removals eligible: ${#remove_dirs[@]}"
 echo "Stale/prunable registrations present: $prune_needed"
 echo
 
 if [[ ${#remove_registered[@]} -gt 0 ]]; then
   echo "Registered removals:"
   printf '  %s\n' "${remove_registered[@]}"
+  echo
+fi
+
+if [[ ${#remove_dirs[@]} -gt 0 ]]; then
+  echo "Directory removals:"
+  printf '  %s\n' "${remove_dirs[@]}"
   echo
 fi
 
@@ -90,6 +110,11 @@ echo "Applying cleanup..."
 for path in "${remove_registered[@]}"; do
   echo "git -C $repo worktree remove $path"
   git -C "$repo" worktree remove "$path"
+done
+
+for path in "${remove_dirs[@]}"; do
+  echo "rm -rf $path"
+  rm -rf "$path"
 done
 
 if [[ "$prune_needed" == "yes" ]]; then

@@ -36,11 +36,7 @@ repo="$(cd "$repo" && pwd -P)"
 primary="$repo"
 parent="$(cd "$primary/.." && pwd -P)"
 if [[ -z "$managed_root" ]]; then
-  if [[ "$primary" == "$HOME/git/"* || "$primary" == "$HOME/git" ]]; then
-    managed_root="$HOME/git"
-  else
-    managed_root="$parent"
-  fi
+  managed_root="$repo/.worktrees"
 fi
 [[ -z "$codex_root" ]] && codex_root="$HOME/.codex/worktrees"
 [[ -d "$managed_root" ]] && managed_root="$(cd "$managed_root" && pwd -P)"
@@ -59,6 +55,12 @@ is_foreign_excluded_dir() {
   [[ "$base" =~ ^adl-wp-([0-9]+)$ ]] || return 1
   num="${BASH_REMATCH[1]}"
   (( num >= 2 && num <= 24 ))
+}
+
+is_managed_clone_dir() {
+  local path="$1" base
+  base="$(basename "$path")"
+  [[ "$base" =~ ^adl-wp-([0-9]+)$ ]] || [[ "$base" =~ ^adl-lane-[A-Za-z0-9._-]+$ ]]
 }
 
 branch_short() {
@@ -147,6 +149,27 @@ while IFS= read -r line || [[ -n "$line" ]]; do
           fate="keep_active"
         fi
         notes="managed_root"
+      elif [[ "$path" == "$parent"/adl-wp-* || "$path" == "$parent"/adl-lane-* ]]; then
+        kind="legacy_external_registered"
+        replacement="$managed_root/$(basename "$path")"
+        if [[ "$detached" == "yes" ]]; then
+          if is_head_merged_into_main "$head"; then merged="yes"; else merged="no"; fi
+        elif [[ -n "$local_branch" ]]; then
+          if is_branch_merged_into_main "$local_branch"; then merged="yes"; else merged="no"; fi
+        fi
+        if [[ -d "$replacement" && "$clean" == "clean" ]]; then
+          fate="remove_legacy_replaced"
+          notes="registered_legacy_external_replaced_by_repo_local_clone"
+        elif [[ -d "$replacement" && "$clean" == "dirty" ]]; then
+          fate="backup_then_remove"
+          notes="registered_legacy_external_replaced_by_repo_local_clone"
+        elif [[ "$clean" == "dirty" ]]; then
+          fate="keep_dirty_active"
+          notes="registered_legacy_external_without_repo_local_replacement"
+        else
+          fate="review_other"
+          notes="registered_legacy_external_without_repo_local_replacement"
+        fi
       elif [[ "$path" == /private/tmp/adl-wp-* || "$path" == /tmp/adl-wp-* ]]; then
         kind="temporary_registered"
         fate="prune_now"
@@ -168,7 +191,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
   esac
 done < "$tmp_worktrees"
 
-for pattern in "$managed_root"/adl-wp-* "$managed_root"/adl-lane-*; do
+for pattern in "$managed_root"/* "$parent"/adl-wp-* "$parent"/adl-lane-*; do
   [[ -e "$pattern" ]] || continue
   path="$(cd "$pattern" && pwd -P)"
   if rg -Fxq "$path" "$tmp_registered"; then
@@ -186,6 +209,54 @@ for pattern in "$managed_root"/adl-wp-* "$managed_root"/adl-lane-*; do
     kind="foreign_excluded"
     fate="ignore_foreign"
     notes="excluded_non_adl_project_namespace"
+  elif [[ "$path" == "$managed_root"/* ]] && is_managed_clone_dir "$path"; then
+    kind="managed_clone"
+    if [[ "$branch" != "DETACHED" ]] && is_branch_merged_into_main "$branch"; then
+      merged="yes"
+    elif [[ "$branch" != "DETACHED" ]]; then
+      merged="no"
+    fi
+    if [[ "$clean" == "dirty" ]]; then
+      fate="keep_dirty_active"
+    else
+      fate="keep_active"
+    fi
+    notes="repo_local_execution_clone"
+  elif [[ "$path" == "$managed_root"/* ]]; then
+    kind="managed_scratch"
+    base="$(basename "$path")"
+    if [[ "$base" == adl-wp-* || "$base" == adl-lane-* ]]; then
+      kind="orphan_dir"
+      if [[ "$clean" == "dirty" ]]; then
+        fate="backup_then_remove"
+      else
+        fate="review_orphan"
+      fi
+      notes="noncanonical_repo_local_issue_like_dir"
+    elif [[ "$clean" == "dirty" ]]; then
+      fate="review_orphan"
+      notes="repo_local_non_issue_clone"
+    else
+      fate="remove_scratch_clean"
+      notes="repo_local_non_issue_clone"
+    fi
+  elif [[ "$path" == "$parent"/adl-wp-* || "$path" == "$parent"/adl-lane-* ]]; then
+    kind="legacy_external"
+    replacement="$managed_root/$(basename "$path")"
+    if [[ -d "$replacement" ]]; then
+      if [[ "$clean" == "dirty" ]]; then
+        fate="backup_then_remove"
+      else
+        fate="remove_legacy_replaced"
+      fi
+      notes="replaced_by_repo_local_clone"
+    elif [[ "$clean" == "dirty" ]]; then
+      fate="backup_then_remove"
+      notes="legacy_external_without_repo_local_replacement"
+    else
+      fate="review_orphan_clean"
+      notes="legacy_external_without_repo_local_replacement"
+    fi
   elif [[ "$clean" == "dirty" ]]; then
     fate="backup_then_remove"
   elif [[ "$clean" == "clean" ]]; then

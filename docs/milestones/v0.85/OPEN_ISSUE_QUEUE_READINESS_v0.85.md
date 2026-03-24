@@ -45,7 +45,7 @@ The cleanup covered these open issues:
 - Absolute host-path leakage was removed from the active queue cards.
 - Bootstrap validation now passes for both the SIP and SOR cards of every
   issue in scope.
-- Worktrees exist under `$HOME/git/adl-wp-<issue>` for every issue in scope.
+- Repo-local execution clones exist under `.worktrees/adl-wp-<issue>` for every issue in scope.
 - The Rust queue issues `#1012-#1015` were corrected from stale
   `version:v0.3` labels to `version:v0.85`.
 
@@ -59,7 +59,7 @@ The following local validations passed for every issue in scope:
 Additional queue-mechanics checks that passed:
 
 - issue-body existence under `.adl/issues/v0.85/bodies/`
-- worktree existence under `$HOME/git/adl-wp-<issue>`
+- repo-local execution-clone existence under `.worktrees/adl-wp-<issue>`
 - no `/Users/`, `/private/`, or `/tmp/` path leakage in the active queue cards
 - corrected `version:v0.85` labels on `#1012-#1015`
 
