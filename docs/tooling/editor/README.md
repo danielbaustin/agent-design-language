@@ -17,6 +17,8 @@ The editor is intentionally simple:
   - bounded review-first `Structured Output Record` (SOR) surface
 - exposes one bounded workflow action surface for:
   - `pr start` via `adl/tools/editor_action.sh`
+- defines one explicit near-term adapter contract in:
+  - `docs/tooling/editor/command_adapter.md`
 - exposes one bounded review-flow surface for:
   - reviewer checklist
   - derived review recommendation
@@ -47,6 +49,7 @@ The editor is intentionally simple:
 
 - it does not write files directly
 - it does not replace `pr create`, `pr start`, `pr run`, or `pr finish`
+- it does not imply direct browser invocation for the full five-command lifecycle
 - it does not yet provide the full SOR decision loop or acceptance workflow
 - it does not try to replace human review judgment with browser-only automation
 - it does not yet execute the control plane directly from browser JS
@@ -61,6 +64,7 @@ This first slice reduces structural editing fragility without pretending the ful
 
 The canonical tracked proof surface for this editor slice is:
 
+- `docs/tooling/editor/command_adapter.md`
 - `docs/tooling/editor/demo.md`
 - `docs/records/v0.85/tasks/task-v085-wp05-demo/`
 

@@ -10,6 +10,10 @@ It demonstrates the real workflow that now exists in the repo:
 - prepare a bounded `pr start` action from the editor
 - use the integrated SOR review flow to prepare a reviewer handoff
 
+The canonical near-term adapter contract for this slice is:
+
+- `docs/tooling/editor/command_adapter.md`
+
 It does not claim a finished browser-only workflow platform.
 
 ## Steps
@@ -61,6 +65,8 @@ It does not claim a finished browser-only workflow platform.
 
 ## Still Manual / Out Of Scope
 
+- `pr init` is not launched from the browser in this slice
+- `pr create` is not launched from the browser in this slice
 - `pr run` is not launched from the browser in this slice
 - `pr finish` is not launched from the browser in this slice
 - final review judgment is still human-made
