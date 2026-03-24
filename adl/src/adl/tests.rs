@@ -1,6 +1,6 @@
+use super::loading::load_yaml_with_includes;
 use super::validation::{validate_provider, validate_tool};
 use super::*;
-use super::loading::load_yaml_with_includes;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[test]
@@ -256,8 +256,7 @@ fn load_from_file_rejects_invalid_include_shapes_and_paths() {
         .duration_since(UNIX_EPOCH)
         .expect("time")
         .as_nanos();
-    let base =
-        std::env::temp_dir().join(format!("adl-load-invalid-{now}-{}", std::process::id()));
+    let base = std::env::temp_dir().join(format!("adl-load-invalid-{now}-{}", std::process::id()));
     std::fs::create_dir_all(&base).expect("create base");
 
     let root = base.join("root.yaml");
@@ -273,7 +272,8 @@ run:
 "#,
     )
     .expect("write invalid include shape");
-    let err = load_yaml_with_includes(&root, &mut Vec::new()).expect_err("include must be a sequence");
+    let err =
+        load_yaml_with_includes(&root, &mut Vec::new()).expect_err("include must be a sequence");
     assert!(err.to_string().contains("include must be a YAML sequence"));
 
     std::fs::write(
@@ -370,8 +370,8 @@ providers: []
 "#,
     )
     .expect("write invalid providers shape");
-    let err = load_yaml_with_includes(&root, &mut Vec::new())
-        .expect_err("providers must be a mapping");
+    let err =
+        load_yaml_with_includes(&root, &mut Vec::new()).expect_err("providers must be a mapping");
     assert!(err
         .to_string()
         .contains("top-level 'providers' must be a mapping"));
@@ -383,8 +383,8 @@ patterns: {}
 "#,
     )
     .expect("write invalid patterns shape");
-    let err = load_yaml_with_includes(&root, &mut Vec::new())
-        .expect_err("patterns must be a sequence");
+    let err =
+        load_yaml_with_includes(&root, &mut Vec::new()).expect_err("patterns must be a sequence");
     assert!(err
         .to_string()
         .contains("top-level 'patterns' must be a sequence"));
