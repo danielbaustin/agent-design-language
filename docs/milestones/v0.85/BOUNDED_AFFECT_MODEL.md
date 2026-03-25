@@ -1,10 +1,12 @@
 # Bounded Affect Model and Affective Reasoning in ADL
 
+## Purpose
+
 *Canonical v0.85 conceptual document — legacy filename retained for now; bounded non-anthropomorphic framing*
 
 ------------------------------------------------------------------------
 
-# Overview
+## Overview
 
 During the design discussions for the **Gödel Agent** and the **Hadamard
 insight loop**, an important architectural observation emerged:
@@ -23,7 +25,13 @@ This document captures that working model.
 
 ------------------------------------------------------------------------
 
-# 1. A Functional Model of Bounded Affect
+## Key Capabilities
+
+- N/A - original document is concept- or architecture-heavy; see How It Works for preserved detail.
+
+## How It Works
+
+### 1. A Functional Model of Bounded Affect
 
 In both biological and artificial systems, bounded affect can be understood as
 **control signals that regulate cognition and behavior**.
@@ -42,7 +50,7 @@ goals.
 
 ------------------------------------------------------------------------
 
-## Core Variables
+### Core Variables
 
 A minimal bounded-affect control system can be modeled with:
 
@@ -62,7 +70,7 @@ These bounded-affect signals influence how the agent chooses its next strategy.
 
 ------------------------------------------------------------------------
 
-# 2. Valence--Arousal Model
+### 2. Valence--Arousal Model
 
 A convenient representation of bounded affect state is the **two-axis
 model**.
@@ -89,7 +97,7 @@ In artificial systems these axes can be derived from:
 
 ------------------------------------------------------------------------
 
-# 3. Bounded-Affect Control of Cognition
+### 3. Bounded-Affect Control of Cognition
 
 Bounded-affect signals influence reasoning.
 
@@ -106,7 +114,7 @@ Thus bounded affect is best understood as **meta-control for cognition**.
 
 ------------------------------------------------------------------------
 
-# 4. Mapping to ADL Architecture
+### 4. Mapping to ADL Architecture
 
 The ADL execution loop already contains many of these components.
 
@@ -136,7 +144,7 @@ This loop is structurally identical to a **cognitive feedback loop**.
 
 ------------------------------------------------------------------------
 
-# 5. Bounded-Affect Control Loop
+### 5. Bounded-Affect Control Loop
 
 ``` mermaid
 flowchart TD
@@ -162,7 +170,7 @@ Bounded affect here acts as a **regulator of cognition**.
 
 ------------------------------------------------------------------------
 
-# 6. Gödel--Hadamard Cognitive Loop (ADL)
+### 6. Gödel--Hadamard Cognitive Loop (ADL)
 
 ADL introduces two additional mechanisms.
 
@@ -234,7 +242,7 @@ Mapping to Hadamard:
 
 ------------------------------------------------------------------------
 
-# 7. Tools vs Minds
+### 7. Tools vs Minds
 
 Most current AI systems behave like **tools**.
 
@@ -301,14 +309,14 @@ Minds contain:
 
 ------------------------------------------------------------------------
 
-# 8. The ADL Cognitive-Control Ladder
+### 8. The ADL Cognitive-Control Ladder
 
 More capable cognitive control may emerge gradually as architectural
 layers accumulate.
 
 ### Level 0 --- Reactive Tool
 
-    input → model → output
+input → model → output
 
 Examples:
 
@@ -319,7 +327,7 @@ Examples:
 
 ### Level 1 --- Goal-Directed Agent
 
-    goal
+goal
      ↓
     plan
      ↓
@@ -333,7 +341,7 @@ Examples:
 
 ### Level 2 --- Reflective Agent
 
-    goal
+goal
      ↓
     attempt
      ↓
@@ -421,7 +429,7 @@ A --> B --> C --> D --> E --> F --> G
 
 ------------------------------------------------------------------------
 
-# 9. Popper's Three Worlds Integration
+### 9. Popper's Three Worlds Integration
 
 This architecture maps naturally to **Popper's model of knowledge**.
 
@@ -457,7 +465,7 @@ W2 --> W3
 
 ------------------------------------------------------------------------
 
-# 10. Implications for ADL
+### 10. Implications for ADL
 
 ADL is unusual among agent frameworks because it already includes:
 
@@ -476,7 +484,7 @@ would push the system further toward **self-directed cognition**.
 
 ------------------------------------------------------------------------
 
-# 11. Implications for AI Architecture Research
+### 11. Implications for AI Architecture Research
 
 Most AI systems today scale capability by increasing:
 
@@ -499,16 +507,16 @@ structured and deterministic way.
 
 ------------------------------------------------------------------------
 
-# Conclusion
+### Conclusion
 
 The Gödel--Hadamard loop was originally introduced to support **adaptive
 reasoning and strategy revision**.
 
 However, the architecture also aligns closely with models of **bounded affect and cognitive control** found in biological intelligence.
-## Legacy Filename Note
+
+### Legacy Filename Note
 
 This document was previously named `EMOTION_MODEL.md` for continuity with earlier planning and review history. The content should be read in bounded-affect terms, and `BOUNDED_AFFECT_MODEL.md` is now the correct canonical filename for the milestone doc set.
-
 
 This suggests that ADL may provide a platform for exploring a new class
 of agents:
@@ -518,10 +526,40 @@ Systems that move beyond simple tools and toward more
 
 ---
 
-## Framing Note
+### Framing Note
 
 For v0.85 planning, this document should be read in the same bounded
 sense as the other affect-model documents.
 It discusses **bounded affect control signals** as architectural and
 functional mechanisms, not as claims that ADL has achieved consciousness,
 sentience, or human-like interiority.
+
+## Example / Demo
+
+- Demo, script, command, or proof surface: no dedicated standalone demo is named in this doc; use this document and its related references as the current proof surface.
+- What the reader should expect: this doc currently serves as the primary explanation of the feature and its intended behavior.
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.85
+- Status: Draft
+- Notes: *Canonical v0.85 conceptual document — legacy filename retained for now; bounded non-anthropomorphic framing*; ------------------------------------------------------------------------
+
+## Related Documents
+
+- EMOTION_MODEL.md
+- BOUNDED_AFFECT_MODEL.md
+
+## Future Work
+
+- No dedicated future-work section was present in the original document; any follow-on work remains embedded in the preserved discussion above.
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.
+- *Canonical v0.85 conceptual document — legacy filename retained for now; bounded non-anthropomorphic framing*
+- ------------------------------------------------------------------------

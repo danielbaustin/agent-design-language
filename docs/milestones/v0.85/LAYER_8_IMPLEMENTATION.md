@@ -1,5 +1,3 @@
-
-
 # Layer 8 Provider Implementation
 
 ## Purpose
@@ -17,7 +15,7 @@ For now, the goal of this document is to record:
 
 ---
 
-## Working Definition
+## Overview
 
 The Layer 8 provider is the ADL subsystem responsible for connecting higher-level reasoning and execution surfaces to external inference providers in a bounded, inspectable way.
 
@@ -35,7 +33,18 @@ That is broader than a simple API wrapper.
 
 ---
 
-## Current Repository Status
+## Key Capabilities
+
+- what already exists in the repository
+- what appears partially implemented
+- what is still missing
+- what should likely belong to v0.85 and later milestones
+- structured prompt/inference contracts
+- provider abstraction
+- capability negotiation
+- deterministic prompt construction where applicable
+
+## How It Works
 
 ### What appears to exist now
 
@@ -63,7 +72,7 @@ This is enough to say the Layer 8 groundwork is in place.
 
 ---
 
-## What Does Not Yet Look Finished
+### What Does Not Yet Look Finished
 
 The more ambitious Layer 8 vision appears to remain incomplete.
 
@@ -84,10 +93,6 @@ So the current state is best understood as:
 That distinction matters.
 
 ---
-
-## Current Maturity Assessment
-
-A practical way to describe current maturity is:
 
 ### Implemented or mostly implemented
 
@@ -113,7 +118,7 @@ A fair summary is that the Layer 8 implementation is **foundational but not matu
 
 ---
 
-## Relationship to the Runtime Stack
+### Relationship to the Runtime Stack
 
 The current architecture appears to be evolving toward a stack like this:
 
@@ -131,29 +136,7 @@ This is exactly where Layer 8 belongs.
 
 ---
 
-## Why This Matters
-
-Without a disciplined provider layer, ADL risks having:
-
-- opaque inference behavior
-- model-specific assumptions leaking into runtime logic
-- poor replayability
-- ad hoc prompt construction
-- weak reviewability for reasoning steps
-
-With a disciplined Layer 8 provider, ADL can instead move toward:
-
-- bounded inference contracts
-- explicit provider capability assumptions
-- inspectable prompt/inference artifacts
-- replayable reasoning traces
-- verifiable inference surfaces
-
-This is strategically important because ADL’s public claims are not just about orchestration. They are about **dependable execution** and **verifiable inference**.
-
----
-
-## Relationship to Verifiable Inference
+### Relationship to Verifiable Inference
 
 Layer 8 is one of the places where the claim of **verifiable inference** must become real.
 
@@ -171,7 +154,7 @@ Those questions are central to ADL’s credibility.
 
 ---
 
-## Relationship to the Gödel Loop and ObsMem
+### Relationship to the Gödel Loop and ObsMem
 
 The Layer 8 provider should eventually interact cleanly with:
 
@@ -194,7 +177,7 @@ That is a better design than letting external model behavior leak directly into 
 
 ---
 
-## Relationship to AEE
+### Relationship to AEE
 
 The Adaptive Execution Engine should not depend on vague model improvisation.
 
@@ -208,26 +191,6 @@ If AEE evolves in v0.85+, it will likely need Layer 8 to provide:
 In that sense, Layer 8 is part of the discipline that prevents AEE from becoming “adaptive magic.”
 
 ---
-
-## What v0.8 Likely Needs
-
-For v0.8, the provider layer only needs to be good enough to support:
-
-- stable runtime execution
-- clean provider abstraction
-- bounded integration with the rest of the system
-
-That means the current infrastructure is probably sufficient for v0.8 so long as it remains stable and does not leak too much provider-specific complexity upward.
-
-v0.8 does **not** need the full Layer 8 vision.
-
----
-
-## What v0.85 Should Likely Add
-
-v0.85 is a more natural place for explicit Layer 8 maturation.
-
-Likely near-term goals include:
 
 ### 1. Provider contract definition
 
@@ -256,7 +219,7 @@ Add strong tests for provider behavior, capability flags, and contract complianc
 
 ---
 
-## Suggested v0.85 Deliverables
+### Suggested v0.85 Deliverables
 
 A concrete v0.85 Layer 8 work package could include:
 
@@ -277,7 +240,7 @@ That would move the provider layer from “useful plumbing” to a true Layer 8 
 
 ---
 
-## Design Principles
+### Design Principles
 
 If Layer 8 becomes a mature subsystem, it should follow these principles:
 
@@ -301,7 +264,7 @@ If Layer 8 becomes a mature subsystem, it should follow these principles:
 
 ---
 
-## Proposed Architecture Sketch
+### Proposed Architecture Sketch
 
 A cleaner long-term architecture would look like:
 
@@ -316,7 +279,75 @@ This keeps the reasoning boundary clear and reviewable.
 
 ---
 
-## Open Questions
+### Current Bottom Line
+
+The Layer 8 provider work is best described as:
+
+- **foundational infrastructure exists**
+- **reasoning-provider maturity is still incomplete**
+- **good enough for v0.8 plumbing**
+- **not yet sufficient for the full verifiable-inference vision**
+
+So the current status is not failure. It is partial completion.
+
+The provider abstraction appears to exist and to be wired into the runtime. What remains is the more interesting part: turning that provider layer into a disciplined reasoning boundary with explicit contracts, traces, and capability control.
+
+That is likely a v0.85 and v0.9 story rather than a v0.8 blocker.
+
+## Example / Demo
+
+- Demo, script, command, or proof surface: no dedicated standalone demo is named in this doc; use this document and its related references as the current proof surface.
+- What the reader should expect: this doc currently serves as the primary explanation of the feature and its intended behavior.
+
+## Why It Matters
+
+Without a disciplined provider layer, ADL risks having:
+
+- opaque inference behavior
+- model-specific assumptions leaking into runtime logic
+- poor replayability
+- ad hoc prompt construction
+- weak reviewability for reasoning steps
+
+With a disciplined Layer 8 provider, ADL can instead move toward:
+
+- bounded inference contracts
+- explicit provider capability assumptions
+- inspectable prompt/inference artifacts
+- replayable reasoning traces
+- verifiable inference surfaces
+
+This is strategically important because ADL’s public claims are not just about orchestration. They are about **dependable execution** and **verifiable inference**.
+
+---
+
+## Current Status
+
+- Milestone: v0.85
+- Status: Draft
+- Notes: A practical way to describe current maturity is:
+
+## Related Documents
+
+- N/A - no explicit related docs were named in the original document.
+
+## Future Work
+
+For v0.8, the provider layer only needs to be good enough to support:
+
+- stable runtime execution
+- clean provider abstraction
+- bounded integration with the rest of the system
+
+That means the current infrastructure is probably sufficient for v0.8 so long as it remains stable and does not leak too much provider-specific complexity upward.
+
+v0.8 does **not** need the full Layer 8 vision.
+
+---
+
+v0.85 is a more natural place for explicit Layer 8 maturation.
+
+Likely near-term goals include:
 
 This area still leaves important open questions:
 
@@ -331,17 +362,7 @@ These should remain open until the provider layer becomes an explicit milestone 
 
 ---
 
-## Current Bottom Line
 
-The Layer 8 provider work is best described as:
+## Notes
 
-- **foundational infrastructure exists**
-- **reasoning-provider maturity is still incomplete**
-- **good enough for v0.8 plumbing**
-- **not yet sufficient for the full verifiable-inference vision**
-
-So the current status is not failure. It is partial completion.
-
-The provider abstraction appears to exist and to be wired into the runtime. What remains is the more interesting part: turning that provider layer into a disciplined reasoning boundary with explicit contracts, traces, and capability control.
-
-That is likely a v0.85 and v0.9 story rather than a v0.8 blocker.
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.

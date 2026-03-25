@@ -1,12 +1,6 @@
-
-
 # ADL Moral Resources Subsystem (MRS)
-**Status:** Draft v0.1  
-**Scope:** Core cognitive architecture (v1.0 candidate)
 
----
-
-## 1. Purpose
+## Purpose
 
 The **Moral Resources Subsystem (MRS)** provides the internal structures required for an agent to:
 
@@ -20,35 +14,55 @@ This subsystem operationalizes moral resources as described by Jonathan Glover i
 
 ---
 
-## 2. Design Principles
+## Overview
+
+**Status:** Draft v0.1  
+**Scope:** Core cognitive architecture (v1.0 candidate)
+
+---
+
+## Key Capabilities
+
+- Evaluate actions beyond instrumental success
+- Maintain continuity of moral identity
+- Resist harmful or dehumanizing directives
+- Learn from consequences over time
+- Treat other agents as morally real entities
+
+## How It Works
 
 ### P1 — Non-Optionality
+
 Moral evaluation must **not be bypassable** in execution paths.
 
 ### P2 — Persistence
+
 Moral state must persist across:
 - time
 - sessions
 - task boundaries
 
 ### P3 — Reflexivity
+
 The system must be able to:
 - evaluate its own reasoning
 - revise its moral conclusions
 
 ### P4 — Embodiment (Minimal)
+
 Moral evaluation must include:
 - consequence weighting
 - affective signal (even if synthetic)
 
 ### P5 — Other-Recognition
+
 All agents must be treated as:
 - entities with moral standing
 - not reducible to objects in a graph
 
 ---
 
-## 3. High-Level Architecture
+### 3. High-Level Architecture
 
 ```
                 +----------------------+
@@ -82,7 +96,7 @@ All agents must be treated as:
 
 ---
 
-## 4. Core Components
+### 4. Core Components
 
 ---
 
@@ -252,8 +266,6 @@ Detects contradictions and drift.
 
 ---
 
-## 5. Execution Flow
-
 ### Step-by-Step
 
 1. Task received  
@@ -268,7 +280,7 @@ Detects contradictions and drift.
 
 ---
 
-## 6. ADL Integration Points
+### 6. ADL Integration Points
 
 ---
 
@@ -301,7 +313,7 @@ moral:
 
 ---
 
-## 7. Safety Invariants
+### 7. Safety Invariants
 
 These must be enforced at runtime:
 
@@ -313,7 +325,7 @@ These must be enforced at runtime:
 
 ---
 
-## 8. Minimal Implementation Plan (v0.86 → v1.0)
+### 8. Minimal Implementation Plan (v0.86 → v1.0)
 
 ---
 
@@ -350,7 +362,7 @@ These must be enforced at runtime:
 
 ---
 
-## 9. Open Research Questions
+### 9. Open Research Questions
 
 - Can affect be simulated sufficiently without embodiment?
 - How do we prevent moral rationalization loops?
@@ -359,14 +371,14 @@ These must be enforced at runtime:
 
 ---
 
-## 10. Closing Insight
+### 10. Closing Insight
 
 Moral resources are not alignment constraints.  
 They are **load-bearing components of cognition**.
 
 ---
 
-## 11. Notes for ADL Planning
+### 11. Notes for ADL Planning
 
 - This subsystem should be treated as a **first-class architectural component**
 - Closely linked to:
@@ -374,3 +386,32 @@ They are **load-bearing components of cognition**.
   - Cognitive Stack
   - Freedom Gate
 - Candidate for inclusion in v1.0 even if partial scaffolding appears in v0.86
+
+## Example / Demo
+
+- Demo, script, command, or proof surface: no dedicated standalone demo is named in this doc; use this document and its related references as the current proof surface.
+- What the reader should expect: this doc currently serves as the primary explanation of the feature and its intended behavior.
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.91
+- Status: Draft
+- Notes: **Status:** Draft v0.1; **Scope:** Core cognitive architecture (v1.0 candidate)
+
+## Related Documents
+
+- N/A - no explicit related docs were named in the original document.
+
+## Future Work
+
+- No dedicated future-work section was present in the original document; any follow-on work remains embedded in the preserved discussion above.
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.
+- **Status:** Draft v0.1
+- **Scope:** Core cognitive architecture (v1.0 candidate)

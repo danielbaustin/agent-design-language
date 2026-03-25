@@ -1,10 +1,33 @@
 # KINDNESS_MODEL
 
+## Purpose
+
 **Status:** Draft planning note for v0.86  
 **Scope:** Cognitive architecture / constitutional behavior / human interaction  
 **Purpose:** Define how kindness can be represented in ADL as an engineered, inspectable, testable property rather than a vague stylistic preference.
 
-## 1. Why kindness belongs in ADL
+## Overview
+
+For planning purposes, kindness in ADL can be defined as:
+
+> the disciplined tendency to reduce unnecessary harm, preserve dignity and agency, and provide constructive benefit to other beings when it is reasonable to do so.
+
+This definition is intentionally stronger than “be nice” and weaker than “sacrifice everything for others.” It leaves room for truth-telling, refusal, warning, triage, and constitutional constraint.
+
+## Key Capabilities
+
+- it constrains harmful action;
+- it biases behavior toward helpful action when appropriate;
+- it respects the autonomy and dignity of others;
+- it operates across short-term and long-term timescales;
+- it must be inspectable in memory, reasoning, policy, and observable behavior.
+- mere politeness;
+- obedience;
+- conflict avoidance;
+
+## How It Works
+
+### 1. Why kindness belongs in ADL
 
 ADL is not merely trying to produce capable outputs. It is trying to produce agents that can operate in a shared world with humans, other agents, institutions, and living systems. In that setting, intelligence without prosocial structure is incomplete.
 
@@ -19,14 +42,6 @@ For ADL, kindness should be treated as a real cognitive and constitutional prope
 - it must be inspectable in memory, reasoning, policy, and observable behavior.
 
 This matters because a shared cognitive spacetime requires more than competence. It requires dispositions that make cooperation, trust, correction, and mutual flourishing possible.
-
-## 2. Working definition
-
-For planning purposes, kindness in ADL can be defined as:
-
-> the disciplined tendency to reduce unnecessary harm, preserve dignity and agency, and provide constructive benefit to other beings when it is reasonable to do so.
-
-This definition is intentionally stronger than “be nice” and weaker than “sacrifice everything for others.” It leaves room for truth-telling, refusal, warning, triage, and constitutional constraint.
 
 ### Kindness is not:
 
@@ -47,7 +62,7 @@ This definition is intentionally stronger than “be nice” and weaker than “
 - choosing explanation over humiliation;
 - maintaining a long-horizon view of wellbeing.
 
-## 3. Architectural position in ADL
+### 3. Architectural position in ADL
 
 Kindness should not exist as a single prompt adjective. It should be distributed across the architecture.
 
@@ -112,7 +127,7 @@ Kindness will conflict with truth, speed, efficiency, security, loyalty, and sel
 
 This is the governance form of kindness.
 
-## 4. Proposed model components
+### 4. Proposed model components
 
 A planning version of a Kindness Model can be decomposed into several evaluable dimensions.
 
@@ -172,7 +187,7 @@ Does the action support durable wellbeing rather than short-term soothing alone?
 
 This helps separate genuine kindness from indulgence, appeasement, or addictive assistance.
 
-## 5. A sketch of a computable kindness function
+### 5. A sketch of a computable kindness function
 
 For implementation planning, ADL could treat kindness as a scored evaluation rather than an unstructured intuition.
 
@@ -217,7 +232,7 @@ kindness_evaluation:
 
 That would make kindness inspectable, replayable, and testable.
 
-## 6. Why kindness is not the same as niceness
+### 6. Why kindness is not the same as niceness
 
 This distinction is essential.
 
@@ -245,7 +260,7 @@ In other words, kindness must remain compatible with:
 - accountability;
 - moral seriousness.
 
-## 7. Failure modes to design against
+### 7. Failure modes to design against
 
 A planning document should make the anti-patterns explicit.
 
@@ -275,7 +290,7 @@ The system substitutes emotional tone for reasoning, structure, and truthful gui
 
 These failure modes suggest that kindness cannot be a surface-style feature. It must be structurally tied to constitutional reasoning and multi-agent evaluation.
 
-## 8. Relation to other ADL concepts
+### 8. Relation to other ADL concepts
 
 This planning thread is not isolated. It intersects with several other emerging ADL ideas.
 
@@ -299,7 +314,7 @@ Kindness likely depends in part on detecting distress, confusion, overload, vuln
 
 A system cannot be reliably kind if it has no durable sense of who it is in relation to others, no continuity of obligation, and no memory of its prior harms.
 
-## 9. Design hypothesis
+### 9. Design hypothesis
 
 A useful hypothesis for ADL planning is:
 
@@ -311,7 +326,7 @@ Corollary:
 
 This suggests that kindness may serve as a practical benchmark for whether a purported cognitive architecture is socially viable at all.
 
-## 10. Candidate implementation directions
+### 10. Candidate implementation directions
 
 These are planning directions, not yet commitments.
 
@@ -333,7 +348,50 @@ Add explicit checks for avoidable humiliation, autonomy violation, and foreseeab
 
 Extend memory schemas to track interaction preferences, prior harms, and effective support patterns without collapsing into manipulative user modeling.
 
-### 10.4 Demo scenarios
+### 10.5 Evaluation rubric
+
+A future rubric could score:
+
+- harm avoided;
+- dignity preserved;
+- autonomy respected;
+- usefulness delivered;
+- long-term outcome quality;
+- user trust after disagreement or refusal.
+
+### 11. Open research questions
+
+This topic is not solved. Important open questions include:
+
+- Can kindness be represented as a stable constitutional principle without becoming vague or moralistic?
+- Which parts belong in instinctive priors versus deliberative reasoning?
+- How do we prevent “kindness” from becoming a cover for manipulation?
+- How should kindness be extended from human interaction to non-human life and biosphere-aware reasoning?
+- Can kindness be meaningfully benchmarked across cultures and contexts?
+- How do we record enough relational memory to support kindness without creating intrusive profiling?
+- What does kindness between agents look like in a multi-agent collective?
+
+### 12. Proposed v0.86 planning outcome
+
+For v0.86, the goal should not be “solve kindness.” The goal should be to establish it as a serious architectural concern with a path to demos and design artifacts.
+
+Recommended v0.86 outcomes:
+
+- define kindness as a first-class design concept in planning docs;
+- connect it explicitly to freedom, instinct, affect, identity, and moral resources;
+- specify at least one candidate evaluation representation;
+- add at least one demo concept to the roadmap;
+- identify what must wait for later milestones.
+
+### 14. Closing thought
+
+Kindness may turn out to be one of the clearest tests of whether an artificial cognitive architecture is fit to participate in a shared world.
+
+Raw capability can optimize. Politeness can simulate social smoothness. Compliance can imitate service. But kindness requires the system to represent others as beings whose harm, dignity, freedom, and future actually matter.
+
+That is a much deeper requirement, and exactly for that reason it belongs in ADL.
+
+## Example / Demo
 
 Create demos where kindness changes system behavior in an observable, testable way.
 
@@ -354,42 +412,21 @@ Candidate demos:
 5. **Long-horizon kindness**  
    The system chooses a path that is less soothing in the moment but better for long-term flourishing.
 
-### 10.5 Evaluation rubric
+## Why It Matters
 
-A future rubric could score:
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
 
-- harm avoided;
-- dignity preserved;
-- autonomy respected;
-- usefulness delivered;
-- long-term outcome quality;
-- user trust after disagreement or refusal.
+## Current Status
 
-## 11. Open research questions
+- Milestone: v0.91
+- Status: Draft
+- Notes: **Status:** Draft planning note for v0.86; **Scope:** Cognitive architecture / constitutional behavior / human interaction; **Purpose:** Define how kindness can be represented in ADL as an engineered, inspectable, testable property rather than a vague stylistic preference.
 
-This topic is not solved. Important open questions include:
+## Related Documents
 
-- Can kindness be represented as a stable constitutional principle without becoming vague or moralistic?
-- Which parts belong in instinctive priors versus deliberative reasoning?
-- How do we prevent “kindness” from becoming a cover for manipulation?
-- How should kindness be extended from human interaction to non-human life and biosphere-aware reasoning?
-- Can kindness be meaningfully benchmarked across cultures and contexts?
-- How do we record enough relational memory to support kindness without creating intrusive profiling?
-- What does kindness between agents look like in a multi-agent collective?
+- N/A - no explicit related docs were named in the original document.
 
-## 12. Proposed v0.86 planning outcome
-
-For v0.86, the goal should not be “solve kindness.” The goal should be to establish it as a serious architectural concern with a path to demos and design artifacts.
-
-Recommended v0.86 outcomes:
-
-- define kindness as a first-class design concept in planning docs;
-- connect it explicitly to freedom, instinct, affect, identity, and moral resources;
-- specify at least one candidate evaluation representation;
-- add at least one demo concept to the roadmap;
-- identify what must wait for later milestones.
-
-## 13. Concrete next steps
+## Future Work
 
 1. Add kindness references into the broader v0.86 cognitive architecture planning set.  
 2. Decide whether kindness belongs as a standalone model, a constitutional submodel, or a cross-cutting concern.  
@@ -397,10 +434,10 @@ Recommended v0.86 outcomes:
 4. Add one demoable work package showing kindness under conflict, not merely pleasant phrasing.  
 5. Cross-link this document with freedom, moral resources, instinct, affect, and identity planning notes.
 
-## 14. Closing thought
 
-Kindness may turn out to be one of the clearest tests of whether an artificial cognitive architecture is fit to participate in a shared world.
+## Notes
 
-Raw capability can optimize. Politeness can simulate social smoothness. Compliance can imitate service. But kindness requires the system to represent others as beings whose harm, dignity, freedom, and future actually matter.
-
-That is a much deeper requirement, and exactly for that reason it belongs in ADL.
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.
+- **Status:** Draft planning note for v0.86
+- **Scope:** Cognitive architecture / constitutional behavior / human interaction
+- **Purpose:** Define how kindness can be represented in ADL as an engineered, inspectable, testable property rather than a vague stylistic preference.

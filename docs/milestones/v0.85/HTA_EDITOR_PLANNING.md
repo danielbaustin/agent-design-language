@@ -1,5 +1,3 @@
-
-
 # HTA Editor Planning (v0.85 / v0.86 Bridge)
 
 ## Purpose
@@ -16,7 +14,6 @@ Define the **Human Task Artifact (HTA) editor model** for ADL, including:
 This document consolidates currently distributed planning into a single **canonical HTA editor architecture**.
 
 For v0.85, the HTA editor must be a **working card-based task-bundle editor**. Visual polish is explicitly secondary to correctness, artifact visibility, and control-plane integration. The editor must operate on all three artifacts together. For v0.85, it may only invoke ADL control-plane commands that actually exist in the repo or documented validated adapter surfaces; full direct browser support for `pr init`, `pr create`, `pr start`, `pr run`, and `pr finish` remains target-state architecture rather than current repo truth.
-
 ## Command Status For v0.85
 
 This document follows the canonical command-status model in the editing
@@ -30,60 +27,44 @@ five-command execution plan.
 | `pr run` | not yet implemented as a real command | editor may not claim direct support yet |
 | `pr finish` | implemented and active | editor may describe finish as part of the workflow model, but should not claim current browser-launched support unless a validated adapter exists |
 
----
+## Overview
 
-## Source of Truth
+- **STP (Structured Task Prompt)** → canonical design-layer artifact
+- **SIP (Structured Implementation Prompt)** → canonical implementation-layer artifact
+- **SOR (Structured Output Record)** → canonical execution record
 
-- **STP (Structured Task Prompt)** → canonical design-layer artifact  
-- **SIP (Structured Implementation Prompt)** → canonical implementation-layer artifact  
-- **SOR (Structured Output Record)** → canonical execution record  
-
-- **Task Bundle** → canonical grouping unit for all three artifacts  
-- **Public Record (`docs/records/...`)** → canonical externalized artifact surface  
+- **Task Bundle** → canonical grouping unit for all three artifacts
+- **Public Record (`docs/records/...`)** → canonical externalized artifact surface
 
 Editors must operate on these artifacts **directly**, not on derived or duplicated representations.
 
 ---
 
-## Design Goals
+## Key Capabilities
 
-1. **Direct Artifact Editing**
-   - Editors operate directly on STP / SIP / SOR files
-   - No hidden transformations or shadow state
+- Structured Task Prompt (STP) editing
+- Structured Implementation Prompt (SIP) editing
+- Structured Output Record (SOR) review
+- Task-bundle navigation and manipulation
+- Alignment with task-bundle public artifact model
+- Card-based editing that keeps STP / SIP / SOR visible together as one working bundle
+- **STP (Structured Task Prompt)** → canonical design-layer artifact
+- **SIP (Structured Implementation Prompt)** → canonical implementation-layer artifact
 
-2. **Deterministic Structure**
-   - Enforced schema + section presence
-   - Enumerated metadata fields where possible
-   - No free-form structural drift
+## How It Works
 
-3. **Task-Bundle Native**
-   - Primary unit of navigation = task bundle
-   - Editors understand:
-     - `stp.md`
-     - `sip.md`
-     - `sor.md`
-     - bundle metadata
+### Source of Truth
 
-4. **Proof-Surface Alignment**
-   - Editors must surface:
-     - validation results
-     - provenance links
-     - execution artifacts
-   - Editing and verification are tightly coupled
+- **STP (Structured Task Prompt)** → canonical design-layer artifact
+- **SIP (Structured Implementation Prompt)** → canonical implementation-layer artifact
+- **SOR (Structured Output Record)** → canonical execution record
 
-5. **Public Artifact Compatibility**
-   - Everything editable locally must map cleanly to:
-     - `docs/records/...`
-   - No internal-only formats
+- **Task Bundle** → canonical grouping unit for all three artifacts
+- **Public Record (`docs/records/...`)** → canonical externalized artifact surface
 
-6. **Card-Based End-to-End Control Surface**
-   - The HTA editor presents STP / SIP / SOR as linked cards in one task-bundle workspace
-   - The editor is not just a viewer; it is a control surface for the full ADL execution loop
-   - The editor must be able to trigger validated control-plane actions rather than forcing the user back into ad hoc shell workflows for every step
+Editors must operate on these artifacts **directly**, not on derived or duplicated representations.
 
 ---
-
-## Editor Surfaces
 
 ### 1. STP Editor (Design Surface)
 
@@ -171,13 +152,14 @@ These three cards must stay visibly linked as one task-bundle unit rather than b
 
 ---
 
-## Integration with Zed
+### Integration with Zed
 
 Zed is the preferred near-term host environment.
 
 Planned phases:
 
 ### Phase 1 (v0.85)
+
 - File-based card editor for task bundles
 - Basic validation hooks
 - Task-bundle directory navigation
@@ -186,12 +168,14 @@ Planned phases:
   the editor, centered on `pr start`
 
 ### Phase 2 (v0.86)
+
 - Inline schema validation
 - Structured editing widgets (sections, enums)
 - Stronger command integration as additional lifecycle commands become real
 - Better task-bundle navigation and state display
 
 ### Phase 3 (v0.9+)
+
 - Full HTA-native UI:
   - bundle graph view
   - execution state visualization
@@ -199,7 +183,7 @@ Planned phases:
 
 ---
 
-## Interaction with Control Plane
+### Interaction with Control Plane
 
 The intended lifecycle model remains:
 
@@ -223,7 +207,7 @@ Editors must:
 
 ---
 
-## Demo Plan (v0.85)
+## Example / Demo
 
 At least one concrete demo must exist:
 
@@ -280,18 +264,9 @@ Artifacts:
 
 ---
 
-## Open Questions
+### Summary
 
-- How far to push enum normalization vs flexibility?
-- How to represent bundle graph visually?
-- When to introduce signing / verification in editor UI?
-- How to expose public artifact browsing?
-
----
-
-## Summary
-
-The HTA editor is not “a UI feature.”  
+The HTA editor is not “a UI feature.”
 It is the **primary interface to the ADL control plane**.
 
 For v0.85, this means a working, card-based HTA editor that keeps STP / SIP / SOR linked together and can actually drive the control plane. A visually rough but operational editor is preferable to a polished mockup that cannot execute the ADL loop.
@@ -307,3 +282,80 @@ This is the foundation for:
 - generalized agents
 - public artifact systems
 - verifiable AI workflows
+
+## Design Goals
+
+1. **Direct Artifact Editing**
+   - Editors operate directly on STP / SIP / SOR files
+   - No hidden transformations or shadow state
+
+2. **Deterministic Structure**
+   - Enforced schema + section presence
+   - Enumerated metadata fields where possible
+   - No free-form structural drift
+
+3. **Task-Bundle Native**
+   - Primary unit of navigation = task bundle
+   - Editors understand:
+     - `stp.md`
+     - `sip.md`
+     - `sor.md`
+     - bundle metadata
+
+4. **Proof-Surface Alignment**
+   - Editors must surface:
+     - validation results
+     - provenance links
+     - execution artifacts
+   - Editing and verification are tightly coupled
+
+5. **Public Artifact Compatibility**
+   - Everything editable locally must map cleanly to:
+     - `docs/records/...`
+   - No internal-only formats
+
+6. **Card-Based End-to-End Control Surface**
+   - The HTA editor presents STP / SIP / SOR as linked cards in one task-bundle workspace
+   - The editor is not just a viewer; it is a control surface for the full ADL execution loop
+   - The editor must be able to trigger validated control-plane actions rather than forcing the user back into ad hoc shell workflows for every step
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.85
+- Status: Draft
+- Notes: This document follows the canonical command-status model in the editing
+five-command execution plan.
+
+| Command | v0.85 repo truth | Editor implication |
+| --- | --- | --- |
+| `pr init` | not yet implemented as a real command | editor may not claim direct support yet |
+| `pr create` | not yet implemented as a real command; `pr new` is only a rough precursor | editor may not claim direct support yet |
+| `pr start` | implemented and active | editor may expose this through the bounded validated adapter surface |
+| `pr run` | not yet implemented as a real command | editor may not claim direct support yet |
+| `pr finish` | implemented and active | editor may describe finish as part of the workflow model, but should not claim current browser-launched support unless a validated adapter exists |
+
+---
+
+## Related Documents
+
+- stp.md
+- sip.md
+- sor.md
+- docs/tooling/editor/demo.md
+
+## Future Work
+
+- How far to push enum normalization vs flexibility?
+- How to represent bundle graph visually?
+- When to introduce signing / verification in editor UI?
+- How to expose public artifact browsing?
+
+---
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.

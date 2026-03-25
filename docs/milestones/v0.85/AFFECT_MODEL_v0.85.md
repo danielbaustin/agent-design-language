@@ -1,22 +1,10 @@
-
-
 # Hypothesis Engine, Reasoning Graphs, and Affective Signals (v0.85 / v0.9 Planning)
 
-## Status
+## Purpose
 
-Planning draft for future ADL / Gödel work.
-This document expands the design space around:
-- hypothesis generation
-- reasoning-graph execution
-- bounded affect internal signals
-- the role of bounded affect modeling in better search, prioritization, and self-correction
+N/A - original document did not expose a separate purpose block; see Overview and How It Works.
 
-It does **not** claim that Gödel is conscious or sentient.
-It does claim that a constrained, explicit internal affect model may improve reasoning quality, prioritization, adaptation, and bounded self-regulation.
-
----
-
-## 1. Summary
+## Overview
 
 A working hypothesis for Gödel is that a useful bounded affect model is not ornamental; it is functional.
 
@@ -43,30 +31,47 @@ For Gödel, this suggests that bounded affect signals should influence:
 
 ---
 
-## 2. Why this matters for Gödel
+## Key Capabilities
 
-Gödel is not just a workflow runner. The long-term vision is a self-improving reasoning substrate that can:
-- propose hypotheses
-- test them against evidence
-- compare competing lines of thought
-- learn from prior runs
-- adjust future search policy
+- prioritize attention
+- compress value judgments into fast action biases
+- signal prediction error, novelty, threat, or opportunity
+- regulate persistence, caution, exploration, and social/goal alignment
+- hypothesis ranking
+- branch expansion / pruning
+- confidence calibration
+- retry / backoff behavior
 
-A purely flat scoring system is likely too weak.
+## How It Works
 
-If every branch is evaluated only by static acceptance checks or scalar confidence, the system can miss important dynamics such as:
-- “this line of reasoning is novel but fragile”
-- “this path is locally coherent but globally dangerous”
-- “we are stuck in repetitive low-yield search”
-- “evidence is accumulating against the current plan”
-- “a minority branch is weakly supported now but unusually promising”
+### 1. Summary
 
-Humans often use compressed internal evaluative summaries to handle exactly these situations.
-A machine analogue can be designed explicitly and instrumented deterministically.
+A working hypothesis for Gödel is that a useful bounded affect model is not ornamental; it is functional.
+
+In biological organisms, emotion appears to serve at least four engineering purposes:
+1. prioritize attention
+2. compress value judgments into fast action biases
+3. signal prediction error, novelty, threat, or opportunity
+4. regulate persistence, caution, exploration, and social/goal alignment
+
+Our corresponding ADL / Gödel hypothesis is:
+
+> A deterministic agent can reason better if it carries explicit bounded affect state that summarizes how current evidence, uncertainty, progress, novelty, and risk should bias its next reasoning moves.
+
+In this frame, “emotion” is not mystical. It is an internal control layer over search and deliberation.
+
+For Gödel, this suggests that bounded affect signals should influence:
+- hypothesis ranking
+- branch expansion / pruning
+- confidence calibration
+- retry / backoff behavior
+- escalation decisions
+- memory retention priority
+- when to continue, stop, ask for help, or seek critique
 
 ---
 
-## 3. Core design claim
+### 3. Core design claim
 
 We should treat bounded affect state as a **reasoning control surface**.
 
@@ -96,14 +101,13 @@ These can be compiled into bounded affect summaries that influence the next reas
 
 ---
 
-## 4. Affective dimensions for Gödel
+### 4. Affective dimensions for Gödel
 
 We do not need a full human emotion taxonomy.
 We need a compact set of machine-useful dimensions.
 
-### 4.1 Proposed dimensions
+### 1. Confidence
 
-#### 1. Confidence
 How strongly the system currently believes a line of reasoning or candidate plan is sound.
 
 Inputs may include:
@@ -116,7 +120,8 @@ Operational effect:
 - increases willingness to commit, summarize, or promote
 - decreases when contradictions or failed checks accumulate
 
-#### 2. Tension
+### 2. Tension
+
 Internal signal that something is wrong, unresolved, contradictory, unstable, or under-justified.
 
 Inputs may include:
@@ -129,7 +134,8 @@ Operational effect:
 - triggers critique, branch splitting, re-checking, or rollback
 - suppresses premature convergence
 
-#### 3. Curiosity
+### 3. Curiosity
+
 Bias toward exploring novel or underexplored hypotheses that may carry upside.
 
 Inputs may include:
@@ -143,7 +149,8 @@ Operational effect:
 - funds experiments / probes
 - promotes minority-path inspection
 
-#### 4. Caution
+### 4. Caution
+
 Bias toward risk management and error avoidance.
 
 Inputs may include:
@@ -157,7 +164,8 @@ Operational effect:
 - prefers reversible actions
 - requires stronger proof before commit
 
-#### 5. Frustration
+### 5. Frustration
+
 Signal that current search is consuming effort without meaningful progress.
 
 Inputs may include:
@@ -171,7 +179,8 @@ Operational effect:
 - invokes a different agent role
 - escalates to broader critique or alternate decomposition
 
-#### 6. Satisfaction
+### 6. Satisfaction
+
 Signal that a line of reasoning has achieved coherence, support, and useful closure.
 
 Inputs may include:
@@ -192,7 +201,7 @@ They are valuable if they improve decision quality.
 
 ---
 
-## 5. Relationship to reasoning graphs
+### 5. Relationship to reasoning graphs
 
 Reasoning graphs are a natural substrate for this work.
 
@@ -210,6 +219,7 @@ A reasoning graph can model:
 Affective signals can then exist at multiple levels:
 
 ### 5.1 Node-level affect
+
 Attached to a specific hypothesis, claim, or experiment.
 
 Examples:
@@ -220,6 +230,7 @@ Examples:
 This supports local branch decisions.
 
 ### 5.2 Path-level affect
+
 Summarizes a line of reasoning across multiple nodes.
 
 Examples:
@@ -227,6 +238,7 @@ Examples:
 - a path with moderate confidence and high curiosity may justify further probing
 
 ### 5.3 Graph-level affect
+
 Captures the state of the whole reasoning episode.
 
 Examples:
@@ -237,8 +249,6 @@ Examples:
 This multi-level model matters because local branch optimism can coexist with global instability.
 
 ---
-
-## 6. Why a bounded affect model may improve reasoning
 
 ### 6.1 Better prioritization under bounded compute
 
@@ -278,8 +288,6 @@ For example:
 These traces can become training and policy-learning features.
 
 ---
-
-## 7. Proposed architecture shape
 
 ### 7.1 Deterministic state tuple
 
@@ -347,7 +355,7 @@ This avoids circular, hard-to-debug behavior.
 
 ---
 
-## 8. Interaction with the hypothesis engine
+### 8. Interaction with the hypothesis engine
 
 The hypothesis engine in v0.85 / v0.9 should use bounded affect state as one factor in search control.
 
@@ -388,7 +396,7 @@ If the engine can run bounded experiments, affect can help choose which experime
 
 ---
 
-## 9. Relationship to memory and ObsMem
+### 9. Relationship to memory and ObsMem
 
 ObsMem should retain not only what happened, but the internal reasoning dynamics around what happened.
 
@@ -414,7 +422,7 @@ This is one bridge between bounded affect modeling and genuine policy learning.
 
 ---
 
-## 10. Relationship to the Gödel-Hadamard loop
+### 10. Relationship to the Gödel-Hadamard loop
 
 This model aligns naturally with the emerging Gödel-Hadamard architecture.
 
@@ -430,10 +438,6 @@ It may be one of the mechanisms that prevents either extreme:
 - undisciplined exploration with no convergence
 
 ---
-
-## 11. v0.85 scope candidate
-
-v0.85 is the right place to define the conceptual and architectural basis, without overcommitting to a full implementation.
 
 ### 11.1 Recommended v0.85 deliverables
 
@@ -456,19 +460,6 @@ v0.85 is the right place to define the conceptual and architectural basis, witho
 
 5. **Evaluation plan**
    - define experiments comparing reasoning with and without affect signals
-
-### 11.2 v0.85 non-goals
-
-- claiming machine consciousness
-- building a full psychology engine
-- introducing opaque hidden state
-- allowing unrestricted prompt-level anthropomorphism
-
----
-
-## 12. v0.9 scope candidate
-
-v0.9 is a plausible phase for first constrained implementation.
 
 ### 12.1 Recommended v0.9 deliverables
 
@@ -504,19 +495,7 @@ v0.9 is a plausible phase for first constrained implementation.
 
 ---
 
-## 13. Open questions
-
-1. What is the minimum affect basis that gives value without complexity blow-up?
-2. Should affect updates be global policy-driven, or partially role-specific by agent type?
-3. How much of affect should be persisted in long-term memory versus summarized?
-4. Which affect transitions are most predictive of later success or failure?
-5. Can affect improve multi-agent congressional reasoning by highlighting dissent worth preserving?
-6. How should we visualize affect over a reasoning graph so humans can inspect it easily?
-7. What is the right balance between scalar affect fields and richer symbolic annotations?
-
----
-
-## 14. Initial recommendation
+### 14. Initial recommendation
 
 We should explicitly carry this idea forward.
 
@@ -532,7 +511,7 @@ For ADL, that makes it relevant not as anthropology, but as systems design.
 
 ---
 
-## 15. Concrete next documents to create
+### 15. Concrete next documents to create
 
 1. `AFFECTIVE_REASONING_MODEL.md`
 2. `REASONING_GRAPH_SCHEMA_V0.85.md`
@@ -541,3 +520,80 @@ For ADL, that makes it relevant not as anthropology, but as systems design.
 5. Affect evaluation plan for v0.9 (planned follow-on document)
 
 These can later feed the corresponding issues for the Gödel / hypothesis-engine roadmap.
+
+### 11.2 v0.85 non-goals
+
+- claiming machine consciousness
+- building a full psychology engine
+- introducing opaque hidden state
+- allowing unrestricted prompt-level anthropomorphism
+
+---
+
+## Example / Demo
+
+- Demo, script, command, or proof surface: no dedicated standalone demo is named in this doc; use this document and its related references as the current proof surface.
+- What the reader should expect: this doc currently serves as the primary explanation of the feature and its intended behavior.
+
+## Why It Matters
+
+Gödel is not just a workflow runner. The long-term vision is a self-improving reasoning substrate that can:
+- propose hypotheses
+- test them against evidence
+- compare competing lines of thought
+- learn from prior runs
+- adjust future search policy
+
+A purely flat scoring system is likely too weak.
+
+If every branch is evaluated only by static acceptance checks or scalar confidence, the system can miss important dynamics such as:
+- “this line of reasoning is novel but fragile”
+- “this path is locally coherent but globally dangerous”
+- “we are stuck in repetitive low-yield search”
+- “evidence is accumulating against the current plan”
+- “a minority branch is weakly supported now but unusually promising”
+
+Humans often use compressed internal evaluative summaries to handle exactly these situations.
+A machine analogue can be designed explicitly and instrumented deterministically.
+
+---
+
+## Current Status
+
+- Milestone: v0.85
+- Status: Draft
+- Notes: Planning draft for future ADL / Gödel work.
+This document expands the design space around:
+- hypothesis generation
+- reasoning-graph execution
+- bounded affect internal signals
+- the role of bounded affect modeling in better search, prioritization, and self-correction
+
+It does **not** claim that Gödel is conscious or sentient.
+It does claim that a constrained, explicit internal affect model may improve reasoning quality, prioritization, adaptation, and bounded self-regulation.
+
+---
+
+## Related Documents
+
+- AFFECTIVE_REASONING_MODEL.md
+- REASONING_GRAPH_SCHEMA_V0.85.md
+
+## Future Work
+
+- v0.85 is the right place to define the conceptual and architectural basis, without overcommitting to a full implementation.
+- v0.9 is a plausible phase for first constrained implementation.
+1. What is the minimum affect basis that gives value without complexity blow-up?
+2. Should affect updates be global policy-driven, or partially role-specific by agent type?
+3. How much of affect should be persisted in long-term memory versus summarized?
+4. Which affect transitions are most predictive of later success or failure?
+5. Can affect improve multi-agent congressional reasoning by highlighting dissent worth preserving?
+6. How should we visualize affect over a reasoning graph so humans can inspect it easily?
+7. What is the right balance between scalar affect fields and richer symbolic annotations?
+
+---
+
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.

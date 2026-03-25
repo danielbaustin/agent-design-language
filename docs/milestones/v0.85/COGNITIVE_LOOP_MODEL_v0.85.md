@@ -1,16 +1,12 @@
 # Cognitive Loop Model — v0.85
 
-## Status
-
-Tracked authority for the v0.85 milestone doc set.
-
 ## Purpose
 
 This document is the single authoritative cognitive-loop model for the tracked v0.85 milestone docs.
 
 Other v0.85 docs may summarize or apply parts of the loop, but they should not define a competing authoritative loop model.
 
-## Canonical Cognitive Loop
+## Overview
 
 ```text
 instinct -> bounded affect -> cognitive arbitration -> freedom gate
@@ -24,7 +20,17 @@ This loop is intended to be:
 - replay-compatible
 - policy-governed
 
-## Component Roles
+## Key Capabilities
+
+- bounded
+- inspectable
+- replay-compatible
+- policy-governed
+- creates persistent pressure toward coherence, completion, curiosity, or integrity
+- influences what initially matters before slower reasoning runs
+- does not override governance or policy
+
+## How It Works
 
 ### 1. Instinct
 
@@ -112,7 +118,7 @@ Memory stores:
 
 Memory feeds back into bounded affect and future arbitration/execution choices.
 
-## Design Rules
+### Design Rules
 
 1. Policy supremacy
    - the freedom gate overrides other signals when necessary
@@ -125,15 +131,39 @@ Memory feeds back into bounded affect and future arbitration/execution choices.
 5. Artifact visibility
    - the loop should eventually be legible through emitted artifacts, not only prose
 
-## Relationship To Other v0.85 Docs
+### Relationship To Other v0.85 Docs
 
 - [AFFECT_MODEL_v0.85.md](AFFECT_MODEL_v0.85.md) defines the bounded affect subsystem in more detail.
 - [AFFECTIVE_REASONING_MODEL.md](AFFECTIVE_REASONING_MODEL.md) defines the signal model attached to reasoning/evaluation surfaces.
 - [DESIGN_v0.85.md](DESIGN_v0.85.md) describes how this loop fits the milestone architecture.
 - [VISION_v0.85.md](VISION_v0.85.md) describes the architectural role of the cognitive substrate at milestone level.
 
-## Scope Note
+## Example / Demo
+
+- Demo, script, command, or proof surface: no dedicated standalone demo is named in this doc; use this document and its related references as the current proof surface.
+- What the reader should expect: this doc currently serves as the primary explanation of the feature and its intended behavior.
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.85
+- Status: Draft
+- Notes: Tracked authority for the v0.85 milestone doc set.
+
+## Related Documents
+
+- N/A - no explicit related docs were named in the original document.
+
+## Future Work
 
 This is the authoritative loop model for tracked v0.85 docs only.
 
 Later planning material for v0.86 and beyond may refine the model, but tracked v0.85 docs should reference this document rather than define another canonical loop.
+
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.

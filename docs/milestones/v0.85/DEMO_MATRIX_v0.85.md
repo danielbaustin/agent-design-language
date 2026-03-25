@@ -1,12 +1,6 @@
 # ADL v0.85 Demo Matrix
 
-**Status:** Ready  
-**Milestone:** v0.85  
-**Purpose:** Canonical runnable demo and proof-surface matrix for milestone review, release readiness, and external legibility.
-
----
-
-## 1. Purpose
+## Purpose
 
 This document maps the major claims of ADL `v0.85` to concrete proof surfaces.
 
@@ -24,19 +18,26 @@ This matrix should help reviewers answer:
 
 ---
 
-## 2. How to Read This Matrix
+## Overview
 
-### Demo Classes
+**Status:** Ready
+**Milestone:** v0.85
+**Purpose:** Canonical runnable demo and proof-surface matrix for milestone review, release readiness, and external legibility.
 
-- Primary demo: a headline runnable demo that should be shown in milestone review and external explanation.
-- Supporting demo: a narrower runnable demo that proves a bounded surface but is not itself the headline narrative.
-- Alternate proof surface: an artifact-driven proof surface used when a runnable demo is not the best primary mechanism.
+---
 
-### Demo Status
+## Key Capabilities
 
-- Ready: can be used now for milestone review.
-- Partial: useful, but still rough or dependent on adjacent cleanup.
-- Deferred: intentionally not a `v0.85` runnable demo surface.
+- a runnable demo, or
+- an explicit alternate proof surface when a full runnable demo is not the best primary mechanism.
+- What does `v0.85` actually demonstrate?
+- Which demos are headline milestone demos versus supporting demos?
+- What artifact or record proves a claim if no direct demo is run?
+- What still remains partial or deferred?
+- a runnable command or playbook, or
+- an explicit artifact/proof surface that a reviewer can inspect.
+
+## How It Works
 
 ### Reviewer Rule
 
@@ -70,7 +71,6 @@ Every row in this matrix must provide at least one of:
 ## 4. Primary Demos
 
 These are the milestone’s headline demonstrations. They should be the first things shown in milestone review and the first things referenced externally.
-
 ### 4.1 Steering / Queueing / Checkpoint / Resume
 
 **Class:** Primary demo  
@@ -199,10 +199,6 @@ This is the first clean entry point into the bounded Gödel runtime loop and the
 
 ---
 
-## 5. Supporting Demos
-
-These demos are important and runnable, but they support the milestone story rather than carrying it alone.
-
 ### 5.1 Affect Engine Core
 
 **Class:** Supporting demo  
@@ -298,7 +294,7 @@ These demos are important and runnable, but they support the milestone story rat
 
 ---
 
-## 6. Alternate Proof Surfaces
+### 6. Alternate Proof Surfaces
 
 These are important `v0.85` claims whose best current proof is primarily artifact-driven rather than a headline runnable demo.
 
@@ -367,7 +363,7 @@ Recommended milestone review order:
 
 ---
 
-## 8. Notes
+### 8. Notes
 
 - The matrix is milestone-facing, not a full inventory of every runnable artifact in the repo.
 - Supporting demos remain important even when they are not headline review surfaces.

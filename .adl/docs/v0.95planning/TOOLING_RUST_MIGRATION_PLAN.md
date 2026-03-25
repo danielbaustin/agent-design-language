@@ -1,13 +1,39 @@
 # Tooling Rust Migration Plan (v086planning)
 
-## Metadata
+## Purpose
+
+N/A - original document did not expose a separate purpose block; see Overview and How It Works.
+
+## Overview
+
 - Milestone: `v086planning`
 - Topic: Migrate high-risk workflow tooling out of shell into Rust
 - Date: `2026-03-20`
 - Status: `Planning`
 - Owner: `Daniel Austin / Agent Logic`
 
-## Why This Work Exists
+## Key Capabilities
+
+- Milestone: `v086planning`
+- Topic: Migrate high-risk workflow tooling out of shell into Rust
+- Date: `2026-03-20`
+- Status: `Planning`
+- Owner: `Daniel Austin / Agent Logic`
+- reduce maintenance risk in the workflow control plane
+- remove parsing and validation logic from shell where possible
+- centralize task-bundle and compatibility-path rules in typed Rust code
+
+## How It Works
+
+### Metadata
+
+- Milestone: `v086planning`
+- Topic: Migrate high-risk workflow tooling out of shell into Rust
+- Date: `2026-03-20`
+- Status: `Planning`
+- Owner: `Daniel Austin / Agent Logic`
+
+### Why This Work Exists
 
 ADL's workflow tooling has accumulated a large amount of control-plane logic in
 shell scripts under `swarm/tools/`.
@@ -25,7 +51,7 @@ state transitions, validation rules, and compatibility behavior.
 
 At the moment, that logic is still primarily implemented in Bash.
 
-## Current State Snapshot (2026-03-20)
+### Current State Snapshot (2026-03-20)
 
 Key observations from the current tree:
 - `swarm/tools/pr.sh` is still the central orchestration surface and is `1677`
@@ -46,7 +72,7 @@ Interpretation:
 - task-bundle architecture has made the shell layer more important, not less
 - migration pressure is therefore higher than before
 
-## Executive Summary
+### Executive Summary
 
 Recommendation:
 - create a Rust tooling control plane as a first-class surface
@@ -77,50 +103,6 @@ Recommended migration style:
 - keep behavioral parity visible with existing shell tests
 - replace low-risk deterministic pieces first
 - move stateful git/gh flows only after the shared core is proven
-
-## Goals
-
-### Primary Goals
-
-- reduce maintenance risk in the workflow control plane
-- remove parsing and validation logic from shell where possible
-- centralize task-bundle and compatibility-path rules in typed Rust code
-- preserve current user-facing workflow behavior during migration
-- make future task-bundle/editor workflow work easier to implement safely
-
-### Secondary Goals
-
-- improve cross-platform behavior
-- improve testability of validation and path logic
-- make `pr.sh` smaller until it becomes a wrapper or is removed entirely
-
-## Non-Goals
-
-- rewriting every demo or mock script into Rust
-- changing the workflow model at the same time as the migration
-- renaming repo paths or broader identity cleanup as part of this effort
-- redesigning all review tooling in one pass
-
-## Scope
-
-### In Scope
-
-- shared task-bundle path logic
-- compatibility-link behavior for `.adl/cards/<issue>/...`
-- structured prompt validation
-- prompt-spec linting
-- deterministic prompt generation
-- PR/card workflow commands
-- codex workflow wrapper logic after the shared core is stable
-
-### Out Of Scope
-
-- demo scripts that just call existing commands
-- provider mocks
-- one-off coverage/open convenience wrappers
-- broad doc cleanup beyond what is needed to explain the new tooling path
-
-## Migration Principles
 
 ### 1. Shared Logic Before Orchestration
 
@@ -158,7 +140,7 @@ These are easier to unit test and less risky than git/gh workflows.
 Demos, mocks, and shell smoke tests should remain lightweight unless they block
 development. They are not the main maintenance burden.
 
-## Proposed Architecture
+### Proposed Architecture
 
 Recommended internal split:
 
@@ -198,8 +180,6 @@ Recommended external shape:
 - later:
   - `adl tools codexw ...`
   - `adl tools editor-action ...`
-
-## Phase Plan
 
 ### Phase 0: Decision Lock And Command Shape
 
@@ -322,7 +302,7 @@ Goal:
 - reduce the number of shell-only workflow adapters
 - keep only thin compatibility wrappers where they still add value
 
-## First PR Recommendation
+### First PR Recommendation
 
 The best first implementation slice is:
 
@@ -340,7 +320,7 @@ Why this first:
 - immediate reduction in shell parsing complexity
 - creates the shared foundation for later `pr` migration
 
-## Recommended Review Checkpoints
+### Recommended Review Checkpoints
 
 These should be treated as explicit review gates:
 
@@ -364,8 +344,6 @@ These should be treated as explicit review gates:
   - branch collision failure
   - dirty primary-checkout guardrails
   - relative card path handling in finish flow
-
-## Risks
 
 ### 1. Silent Behavioral Drift
 
@@ -403,7 +381,7 @@ Mitigation:
 - explicitly mark transitional scripts as transitional
 - remove them once the Rust path writes canonical outputs directly
 
-## Success Criteria
+### Success Criteria
 
 This migration should be considered successful when:
 - validation and prompt generation are Rust-owned
@@ -412,7 +390,7 @@ This migration should be considered successful when:
 - shell tooling is reduced to wrappers, demos, mocks, and lightweight harnesses
 - contributor workflow remains stable during the cutover
 
-## Bottom Line
+### Bottom Line
 
 This work should be approached as a control-plane extraction, not a generic
 "rewrite the scripts" exercise.
@@ -428,3 +406,63 @@ The right order is:
 
 If done in that order, the migration reduces risk quickly and sets up the
 task-bundle/editor architecture on a more durable foundation.
+
+### Primary Goals
+
+- reduce maintenance risk in the workflow control plane
+- remove parsing and validation logic from shell where possible
+- centralize task-bundle and compatibility-path rules in typed Rust code
+- preserve current user-facing workflow behavior during migration
+- make future task-bundle/editor workflow work easier to implement safely
+
+### Secondary Goals
+
+- improve cross-platform behavior
+- improve testability of validation and path logic
+- make `pr.sh` smaller until it becomes a wrapper or is removed entirely
+
+### Non-Goals
+
+- rewriting every demo or mock script into Rust
+- changing the workflow model at the same time as the migration
+- renaming repo paths or broader identity cleanup as part of this effort
+- redesigning all review tooling in one pass
+
+## Example / Demo
+
+- Demo, script, command, or proof surface: no dedicated standalone demo is named in this doc; use this document and its related references as the current proof surface.
+- What the reader should expect: this doc currently serves as the primary explanation of the feature and its intended behavior.
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.95
+- Status: Draft
+- Notes: No additional status notes recorded.
+
+## Related Documents
+
+- N/A - no explicit related docs were named in the original document.
+
+## Future Work
+
+- shared task-bundle path logic
+- compatibility-link behavior for `.adl/cards/<issue>/...`
+- structured prompt validation
+- prompt-spec linting
+- deterministic prompt generation
+- PR/card workflow commands
+- codex workflow wrapper logic after the shared core is stable
+
+- demo scripts that just call existing commands
+- provider mocks
+- one-off coverage/open convenience wrappers
+- broad doc cleanup beyond what is needed to explain the new tooling path
+
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.

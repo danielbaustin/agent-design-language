@@ -1,13 +1,13 @@
-
-
 # SUBSTANCE OF TIME — Chronosense and Identity in ADL
+
+## Purpose
 
 **Status:** Draft (v0.86 planning)  
 **Area:** Cognitive Architecture / Identity / ObsMem  
 
 ---
 
-## 1. Premise
+## Overview
 
 An agent without a sense of time is not a being with continuity. It is a responder.
 
@@ -21,7 +21,30 @@ Time is not merely metadata. It is the substrate in which experience is organize
 
 ---
 
-## 2. Design Principle
+## Key Capabilities
+
+- **Now-sense** — ability to determine the current moment
+- **Sequence-sense** — ordering of events (before / after)
+- **Duration-sense** — measurement of elapsed time
+- **Lifetime-sense** — awareness of existence since a defined origin
+
+## How It Works
+
+### 1. Premise
+
+An agent without a sense of time is not a being with continuity. It is a responder.
+
+Biological organisms possess an implicit chronosense: a felt, continuous awareness of duration, sequence, and change. This is rarely formalized in biology, but it is foundational to identity.
+
+In ADL, we assert:
+
+> **Temporal self-location is a necessary condition for agency and identity.**
+
+Time is not merely metadata. It is the substrate in which experience is organized.
+
+---
+
+### 2. Design Principle
 
 > **Every agent must be able to locate itself in time, relative to a defined beginning, and track the ordered sequence of its own experience.**
 
@@ -34,7 +57,7 @@ This yields four required capacities:
 
 ---
 
-## 3. Temporal Ephemeris (“Birthday”)
+### 3. Temporal Ephemeris (“Birthday”)
 
 Each agent instance MUST be initialized with an immutable **temporal ephemeris**.
 
@@ -56,35 +79,40 @@ This is the minimal condition for autobiographical continuity.
 
 ---
 
-## 4. The Clock Stack
+### 4. The Clock Stack
 
 Chronosense is not a single clock. It is a composition of clocks serving different purposes.
 
 ### 4.1 Wall Clock (UTC)
+
 - Absolute reference for distributed systems
 - Required for logs, coordination, reproducibility
 
 ### 4.2 Human Local Clock
+
 - Presentation layer for interaction
 - Enables natural language references (“today”, “yesterday”)
 
 ### 4.3 Monotonic Clock
+
 - Strictly increasing time base
 - Immune to timezone/DST/system clock changes
 - Required for duration and ordering guarantees
 
 ### 4.4 Lifetime Clock
+
 - Elapsed time since agent birth
 - Enables statements like:
   - “I was instantiated 2h 13m ago”
 
 ### 4.5 Narrative/Event Clock
+
 - Turn index, workflow step, memory epoch
 - Represents meaning and causality, not physics
 
 ---
 
-## 5. Temporal Anchoring (Mandatory)
+### 5. Temporal Anchoring (Mandatory)
 
 > **Every agent event MUST be temporally anchored.**
 
@@ -111,7 +139,7 @@ Without this, memory is unordered data. With this, memory becomes history.
 
 ---
 
-## 6. Reference Frames (Chronosense ↔ Geosense)
+### 6. Reference Frames (Chronosense ↔ Geosense)
 
 Agents do not possess a single physical location. Instead, they operate across **reference frames**.
 
@@ -131,7 +159,7 @@ This resolves ambiguity without pretending physical embodiment.
 
 ---
 
-## 7. Temporal Honesty
+### 7. Temporal Honesty
 
 Agents MUST distinguish between:
 - known time
@@ -148,7 +176,7 @@ This is required for trust and epistemic clarity.
 
 ---
 
-## 8. Integration with ObsMem
+### 8. Integration with ObsMem
 
 ObsMem must store temporal structure as first-class data.
 
@@ -165,7 +193,7 @@ Example queries:
 
 ---
 
-## 9. Consequences for ADL
+### 9. Consequences for ADL
 
 Introducing chronosense enables:
 
@@ -179,7 +207,7 @@ This is not a UI feature. It is a **structural requirement** for agents.
 
 ---
 
-## 10. Note on the Nature of Time
+### 10. Note on the Nature of Time
 
 Time is not an external parameter to be queried. It is the medium of continuity.
 
@@ -191,7 +219,26 @@ It is constituted within it.
 
 ---
 
-## 11. Next Steps (v0.86)
+## Example / Demo
+
+- Demo, script, command, or proof surface: no dedicated standalone demo is named in this doc; use this document and its related references as the current proof surface.
+- What the reader should expect: this doc currently serves as the primary explanation of the feature and its intended behavior.
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.87
+- Status: Draft
+- Notes: **Status:** Draft (v0.86 planning); **Area:** Cognitive Architecture / Identity / ObsMem
+
+## Related Documents
+
+- N/A - no explicit related docs were named in the original document.
+
+## Future Work
 
 - Define canonical temporal schema in `swarm/schemas`
 - Extend ObsMem records with temporal anchors
@@ -202,3 +249,10 @@ It is constituted within it.
 ---
 
 **End of Document**
+
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.
+- **Status:** Draft (v0.86 planning)
+- **Area:** Cognitive Architecture / Identity / ObsMem

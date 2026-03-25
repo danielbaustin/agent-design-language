@@ -1,9 +1,5 @@
 # Structured Prompt Architecture for ADL
 
-## Status
-
-Proposed for v0.85.
-
 ## Purpose
 
 ADL currently treats structured prompting primarily through workflow cards such as input cards and output cards. That has worked for the first generation of orchestration patterns, but it is too narrow for the broader multi-agent system ADL is evolving toward.
@@ -16,7 +12,7 @@ The goal is not to create a unique prompt for every possible situation. The goal
 
 ---
 
-## Problem Statement
+## Overview
 
 Today, ADL has strong momentum around card-driven workflow structure, but cards alone do not solve the full prompt-management problem.
 
@@ -55,7 +51,59 @@ If all of these are forced into a single card shape, ADL will either become brit
 
 ---
 
-## Design Goal
+## Key Capabilities
+
+- **Workflow control artifacts**
+- input cards
+- output cards
+- review artifacts
+- run manifests
+- **Role prompts**
+- writer
+- editor
+
+## How It Works
+
+### Problem Statement
+
+Today, ADL has strong momentum around card-driven workflow structure, but cards alone do not solve the full prompt-management problem.
+
+We need to support at least four distinct concerns:
+
+1. **Workflow control artifacts**
+   - input cards
+   - output cards
+   - review artifacts
+   - run manifests
+
+2. **Role prompts**
+   - writer
+   - editor
+   - reviewer
+   - verifier
+   - publisher
+   - planner
+
+3. **Micro-prompts or protocol prompts**
+   - summarize
+   - critique
+   - classify
+   - rewrite
+   - compare
+   - hand off to another agent
+   - emit YAML only
+
+4. **Runtime prompt assembly**
+   - combine reusable fragments into the exact prompt sent to the model
+   - bind task-specific inputs
+   - apply provider/model/runtime constraints
+   - support replay and evaluation
+
+If all of these are forced into a single card shape, ADL will either become brittle or accumulate large opaque prompt blobs that are difficult to reuse, test, diff, validate, and replay.
+
+---
+
+### Design Goal
 
 ADL should manage structured prompts as a separate but related artifact family alongside cards.
 
@@ -124,7 +172,7 @@ The workflow is therefore not “ignore `.adl/`,” but “use `.adl/` for draft
 
 ---
 
-## Core Architectural Principle
+### Core Architectural Principle
 
 Treat prompts as **first-class typed artifacts**.
 
@@ -142,7 +190,7 @@ Human-authored natural language remains essential, but it should live inside typ
 
 ---
 
-## Layered Prompt Model
+### Layered Prompt Model
 
 The recommended model has five layers.
 
@@ -254,7 +302,7 @@ Assembly order should be explicit, canonical, and testable.
 
 ---
 
-## Prompt Artifact Family
+### Prompt Artifact Family
 
 This document proposes six core artifact types.
 
@@ -381,7 +429,7 @@ When external systems exist, they should appear as metadata or projections of th
 
 ---
 
-## Relationship to Cards
+### Relationship to Cards
 
 Cards remain important.
 
@@ -453,7 +501,7 @@ The exact scope segment may vary in later milestones or non-milestone workflows,
 
 ---
 
-## How to Avoid Combinatorial Explosion
+### How to Avoid Combinatorial Explosion
 
 The wrong strategy is to create one prompt file for every possible situation.
 
@@ -479,8 +527,6 @@ Reusable fragments reduce duplication further:
 This makes prompt design more like software architecture and less like ad hoc prompt tinkering.
 
 ---
-
-## What Should Be Structured vs. Freeform
 
 ### Strongly structured
 
@@ -512,7 +558,7 @@ The key rule is that freeform text should live within a typed frame.
 
 ---
 
-## Determinism, Replay, and Evaluation
+### Determinism, Replay, and Evaluation
 
 Because ADL values determinism and replay, prompt management must support exact reconstruction of what happened.
 
@@ -569,7 +615,7 @@ That classification will be important once prompt evolution becomes a routine pa
 
 ---
 
-## Prompt Lifecycle in ADL
+### Prompt Lifecycle in ADL
 
 A practical lifecycle for structured prompts should look like this:
 
@@ -590,7 +636,7 @@ Where GitHub is used, issue creation or reconciliation should be understood as a
 
 ---
 
-## Key Separation of Concerns
+### Key Separation of Concerns
 
 ADL should distinguish four things that are often mixed together in current prompt practice.
 
@@ -630,7 +676,7 @@ Keeping these concerns separate makes prompt behavior easier to reuse, test, and
 
 ---
 
-## Recommended v0.85 Deliverable: Prompt Surfaces v1
+### Recommended v0.85 Deliverable: Prompt Surfaces v1
 
 This document recommends a v0.85 effort called **Prompt Surfaces v1**.
 
@@ -661,7 +707,7 @@ Later follow-on deliverable:
 
 ---
 
-## Suggested Repository Layout
+### Suggested Repository Layout
 
 One reasonable directory shape is:
 
@@ -707,23 +753,7 @@ A reasonable split is:
 
 ---
 
-## Example Conceptual Flow
-
-A workflow step might proceed as follows:
-
-1. workflow selects step type `authoring.write_section`
-2. runtime resolves `PromptSpec` = `writer.first_draft.v1`
-3. runtime applies `PromptProfile` = `strict_enterprise`
-4. runtime binds inputs from outline, notes, style guide, and source documents
-5. assembly renders a canonical prompt in deterministic order
-6. model produces output under a declared output contract
-7. run stores `RenderedPrompt` and `PromptEval` artifacts for replay and analysis
-
-This is the core path from card-driven orchestration toward robust multi-agent prompt infrastructure.
-
----
-
-## Practical Minimal Starting Set
+### Practical Minimal Starting Set
 
 To avoid overdesign, ADL should begin with:
 
@@ -748,7 +778,7 @@ This is enough to create a real structured prompt subsystem without committing p
 
 ---
 
-## Bottom Line
+### Bottom Line
 
 The next stage of ADL should not be “more card types” alone.
 
@@ -768,7 +798,43 @@ Together, they provide the foundation for richer multi-agent orchestration in AD
 
 ---
 
-## Proposed Next Steps
+## Example / Demo
+
+A workflow step might proceed as follows:
+
+1. workflow selects step type `authoring.write_section`
+2. runtime resolves `PromptSpec` = `writer.first_draft.v1`
+3. runtime applies `PromptProfile` = `strict_enterprise`
+4. runtime binds inputs from outline, notes, style guide, and source documents
+5. assembly renders a canonical prompt in deterministic order
+6. model produces output under a declared output contract
+7. run stores `RenderedPrompt` and `PromptEval` artifacts for replay and analysis
+
+This is the core path from card-driven orchestration toward robust multi-agent prompt infrastructure.
+
+---
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.85
+- Status: Draft
+- Notes: Proposed for v0.85.
+
+## Related Documents
+
+- stp.stub.md
+- stp.md
+- sip.md
+- sor.md
+- docs/records/v0.85/tasks/<task-id>/stp.md
+- docs/records/v0.85/tasks/<task-id>/sip.md
+- docs/records/v0.85/tasks/<task-id>/sor.md
+
+## Future Work
 
 1. define `PromptSpec v1`
 2. define `PromptFragment v1`
@@ -782,3 +848,8 @@ Together, they provide the foundation for richer multi-agent orchestration in AD
 10. map the new prompt artifacts onto existing ADL workflow and review surfaces
 
 These steps would turn prompt design in ADL from an implicit craft into an explicit architectural subsystem.
+
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.

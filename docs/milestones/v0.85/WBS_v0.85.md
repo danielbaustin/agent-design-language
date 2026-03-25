@@ -1,12 +1,37 @@
 # ADL Work Breakdown Structure — v0.85
 
-## Metadata
+## Purpose
+
+N/A - original document did not expose a separate purpose block; see Overview and How It Works.
+
+## Overview
+
 - Milestone: `v0.85`
 - Version: `0.85`
 - Date: `2026-03-19`
 - Owner: `Daniel Austin / Agent Logic`
 
-## Role Of This Document
+## Key Capabilities
+
+- Milestone: `v0.85`
+- Version: `0.85`
+- Date: `2026-03-19`
+- Owner: `Daniel Austin / Agent Logic`
+- what work remains
+- what artifact or proof surface each work unit must produce
+- which issue owns that work
+- what order the remaining work should happen in
+
+## How It Works
+
+### Metadata
+
+- Milestone: `v0.85`
+- Version: `0.85`
+- Date: `2026-03-19`
+- Owner: `Daniel Austin / Agent Logic`
+
+### Role Of This Document
 
 This WBS is the canonical execution plan for the remainder of v0.85.
 
@@ -18,7 +43,7 @@ Use it to answer:
 
 Do not treat the mid-flight review document as the execution plan. `MIDFLIGHT_REVIEW_ISSUES.md` in `.adl/docs/v0.85planning/` is now a diagnostic and closure tracker. Execution should flow through this WBS.
 
-## Current Milestone State
+### Current Milestone State
 
 What is already landed:
 - `WP-02` deterministic queue, checkpoint, and steering substrate
@@ -38,7 +63,7 @@ Important rule:
 - every work package or alignment sub-task must end in a concrete artifact, code path, validated doc, tool, demo, or review record
 - no work unit should be satisfiable by description alone unless it is explicitly a bounded alignment deliverable in Section 1
 
-## Working Rules
+### Working Rules
 
 - Canonical tracker mapping follows [MILESTONE_ISSUE_RECONCILIATION_v0.85.md](MILESTONE_ISSUE_RECONCILIATION_v0.85.md).
 - Public record architecture follows [STRUCTURED_PROMPT_ARCHITECTURE.md](STRUCTURED_PROMPT_ARCHITECTURE.md).
@@ -52,7 +77,7 @@ Important rule:
   - issue-graph cleanup
   - validation or proof-surface rules
 
-## Remaining Execution Order
+### Remaining Execution Order
 
 1. Close the blocking alignment tranche in Section 1, especially cognitive authority and the WBS/scope rewrite.
 2. Continue core execution from `WP-09` through `WP-17`.
@@ -66,7 +91,7 @@ This order is intentional:
 
 ---
 
-## Section 1 — Blocking Alignment Tranche
+### Section 1 — Blocking Alignment Tranche
 
 These items remain execution-blocking because they affect whether the rest of the milestone stays conceptually coherent and reviewable.
 
@@ -91,7 +116,7 @@ Notes:
 
 ---
 
-## Section 2 — Core Execution
+### Section 2 — Core Execution
 
 These are the primary feature/runtime/tooling work packages. Closed items are retained here so the WBS shows real milestone progress rather than a hypothetical plan.
 
@@ -150,7 +175,7 @@ These items close the milestone with explicit review, release, and handoff evide
 
 ---
 
-## Current Sprint Interpretation
+### Current Sprint Interpretation
 
 The old four-sprint model is still useful as a phasing shorthand, but current execution should be understood like this:
 
@@ -161,7 +186,7 @@ The old four-sprint model is still useful as a phasing shorthand, but current ex
 
 If this WBS and the issue graph disagree, treat the disagreement as a defect to fix immediately.
 
-## Acceptance Criteria For This WBS
+### Acceptance Criteria For This WBS
 
 This WBS is in a good state when:
 - it is the clearest single place to understand remaining v0.85 work
@@ -169,3 +194,39 @@ This WBS is in a good state when:
 - the issue graph matches the WBS
 - the sprint plan does not materially contradict the WBS
 - the diagnostic mid-flight review doc is no longer required to understand what to execute next
+
+## Example / Demo
+
+These items prove the milestone as a coherent system rather than as isolated features.
+
+| WP | Status | Canonical issue | Concrete deliverable | Validation / proof surface | Dependencies |
+|---|---|---|---|---|---|
+| WP-18 Demo program for v0.85 features | LANDED | `#878` with bounded-demo rule from `#743` | demo matrix/playbook and runnable milestone demos | runnable demos proving steering/queueing, authoring/review flow, five-command editing lifecycle, and affect-plus-Godel behavior | WP-02 through WP-17 |
+
+Integration rule:
+- demos are evidence, not optional packaging
+- each major milestone claim should have a bounded runnable or replayable proof surface where practical
+
+---
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.85
+- Status: Draft
+- Notes: No additional status notes recorded.
+
+## Related Documents
+
+- MIDFLIGHT_REVIEW_ISSUES.md
+
+## Future Work
+
+- No dedicated future-work section was present in the original document; any follow-on work remains embedded in the preserved discussion above.
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.

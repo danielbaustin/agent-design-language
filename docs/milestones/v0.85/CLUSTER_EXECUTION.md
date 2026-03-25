@@ -1,5 +1,7 @@
 # Distributed / Cluster Execution — v0.85
 
+## Purpose
+
 **Status:** Draft (planning)
 
 This document describes how ADL evolves from a single-machine deterministic runtime into a **distributed execution environment** while preserving ADL’s central thesis:
@@ -19,7 +21,7 @@ Related backlog: **#339 Distributed cluster execution**.
 
 ---
 
-## 1. Purpose and milestone framing
+## Overview
 
 Cluster execution matters because ADL is not just a local workflow runner.
 The platform is intended to support:
@@ -35,35 +37,36 @@ Instead, it defines the architecture direction, the determinism constraints, and
 
 ---
 
-## 2. Goals and non-goals
+## Key Capabilities
 
-### Goals
+- dependable execution
+- checkpoint / resume semantics
+- replay and provenance
+- bounded retry / adaptive execution work
+- future trust-policy enforcement across execution boundaries
+- deterministic execution at larger scale
+- durable runs with restart / retry behavior
+- trusted remote or isolated executors
 
-1. **Distributed execution without weakening determinism**
-   - Multiple workers may execute steps, but the outcome must still be replayable from artifacts.
+## How It Works
 
-2. **Stable scheduling contract**
-   - Execution may be parallel where the DAG allows it, but scheduling decisions must remain reproducible.
+### 1. Purpose and milestone framing
 
-3. **Explicit trust boundaries**
-   - Remote or isolated workers must be treated as trust-boundary crossings, not just background threads.
+Cluster execution matters because ADL is not just a local workflow runner.
+The platform is intended to support:
 
-4. **Operationally realistic rollout**
-   - Start with a small, inspectable execution model before attempting multi-host scale-out.
+- deterministic execution at larger scale
+- durable runs with restart / retry behavior
+- trusted remote or isolated executors
+- future Gödel / ObsMem / AEE workloads that benefit from concurrent execution
 
-5. **Compatibility with dependable execution**
-   - Cluster execution must align with checkpointing, retries, replay bundles, and provenance surfaces.
-
-### Non-goals (v0.85)
-
-- A full serverless platform replacement.
-- Multi-tenant isolation comparable to major cloud providers.
-- Exactly-once guarantees for arbitrary external side effects.
-- A fully production-hardened multi-region control plane.
+However, v0.85 is still a **bounded maturity milestone**.
+So this document does **not** commit ADL to a full distributed platform in the current release.
+Instead, it defines the architecture direction, the determinism constraints, and the minimum substrate shape needed so later implementation work does not drift.
 
 ---
 
-## 3. Determinism constraints in a distributed system
+### 3. Determinism constraints in a distributed system
 
 Distributed systems introduce nondeterminism through:
 
@@ -87,8 +90,6 @@ In other words:
 > We make ADL’s **interpretation of the world** deterministic.
 
 ---
-
-## 4. Execution model
 
 ### 4.1 Core primitives
 
@@ -118,7 +119,7 @@ Workers do **not** autonomously change the global schedule.
 
 ---
 
-## 5. Minimal cluster architecture for v0.85 planning
+### 5. Minimal cluster architecture for v0.85 planning
 
 This document remains intentionally conservative.
 
@@ -176,7 +177,7 @@ Workers (N)
 
 ---
 
-## 6. Protocol direction
+### 6. Protocol direction
 
 v0.85 does not require a final production network protocol, but it **does** require that the protocol shape be explicit and versioned.
 
@@ -212,8 +213,6 @@ JSON in canonical form or CBOR in canonical form are both plausible.
 The key point is not the format name but the **stability guarantee**.
 
 ---
-
-## 7. Scheduling semantics
 
 ### 7.1 Deterministic readiness
 
@@ -255,7 +254,7 @@ Additional priority fields are allowed only if they are:
 
 ---
 
-## 8. Retry semantics in a cluster
+### 8. Retry semantics in a cluster
 
 Retries are especially easy to get wrong in distributed systems.
 
@@ -277,7 +276,7 @@ This is necessary for deterministic debugging and for future AEE / policy learni
 
 ---
 
-## 9. Trust and signing model
+### 9. Trust and signing model
 
 Cluster execution expands the trust surface.
 
@@ -296,7 +295,7 @@ This links directly to ADL’s broader **dependable execution** and **verifiable
 
 ---
 
-## 10. Sandboxing and remote I/O
+### 10. Sandboxing and remote I/O
 
 Workers must run steps under the same sandbox contract regardless of host.
 
@@ -316,7 +315,7 @@ To preserve determinism:
 
 ---
 
-## 11. Relationship to dependable execution and verifiable inference
+### 11. Relationship to dependable execution and verifiable inference
 
 Cluster execution is not an isolated feature.
 It is part of the trust story for ADL.
@@ -343,7 +342,7 @@ This matters even more once Gödel / AEE / reasoning-graph work begins using ric
 
 ---
 
-## 12. Relationship to existing substrates
+### 12. Relationship to existing substrates
 
 ADL should resist the temptation to rebuild a general-purpose serverless platform from scratch.
 
@@ -367,8 +366,6 @@ The recommended direction is:
 
 ---
 
-## 13. Milestone slicing
-
 ### v0.85 (this milestone)
 
 - Architecture direction documented
@@ -389,7 +386,7 @@ This keeps v0.85 focused on **design clarity and interface stability**, not prem
 
 ---
 
-## 14. Acceptance tests (must-haves for future implementation)
+### 14. Acceptance tests (must-haves for future implementation)
 
 1. **Deterministic replay across execution modes**
    - Run in distributed / clustered mode
@@ -412,19 +409,7 @@ This keeps v0.85 focused on **design clarity and interface stability**, not prem
 
 ---
 
-## 15. Open questions
-
-- What is the default bounded backend for the coordinator log / queue?
-  - SQLite first, or Postgres-first for small-cluster realism?
-- What is the default artifact store?
-  - local filesystem vs S3-compatible storage
-- What is the first implementation boundary?
-  - single-host multi-process only, or immediately protocol-ready for multi-host evolution?
-- Which signing / identity mechanism best fits the existing security envelope work?
-
----
-
-## Summary
+### Summary
 
 Distributed / cluster execution is necessary for ADL’s long-term direction, but it must be approached conservatively.
 
@@ -441,3 +426,76 @@ The bounded implementation proof surface for v0.85 should therefore remain conse
 - readiness frontiers, lease ordering, claim ownership, and observed completion state should be reviewable from run artifacts
 
 That artifact-level groundwork is not a full cluster runtime, but it does make the future coordinator / worker substrate explicit and testable without overstating what v0.85 ships.
+
+### Goals
+
+1. **Distributed execution without weakening determinism**
+   - Multiple workers may execute steps, but the outcome must still be replayable from artifacts.
+
+2. **Stable scheduling contract**
+   - Execution may be parallel where the DAG allows it, but scheduling decisions must remain reproducible.
+
+3. **Explicit trust boundaries**
+   - Remote or isolated workers must be treated as trust-boundary crossings, not just background threads.
+
+4. **Operationally realistic rollout**
+   - Start with a small, inspectable execution model before attempting multi-host scale-out.
+
+5. **Compatibility with dependable execution**
+   - Cluster execution must align with checkpointing, retries, replay bundles, and provenance surfaces.
+
+### Non-goals (v0.85)
+
+- A full serverless platform replacement.
+- Multi-tenant isolation comparable to major cloud providers.
+- Exactly-once guarantees for arbitrary external side effects.
+- A fully production-hardened multi-region control plane.
+
+---
+
+## Example / Demo
+
+- Demo, script, command, or proof surface: no dedicated standalone demo is named in this doc; use this document and its related references as the current proof surface.
+- What the reader should expect: this doc currently serves as the primary explanation of the feature and its intended behavior.
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.85
+- Status: Draft
+- Notes: **Status:** Draft (planning); This document describes how ADL evolves from a single-machine deterministic runtime into a **distributed execution environment** while preserving ADL’s central thesis:; > **Determinism is non-negotiable.**; For v0.85, cluster execution is part of the broader **execution-substrate strengthening** work.; It sits alongside:; - dependable execution; - checkpoint / resume semantics; - replay and provenance; - bounded retry / adaptive execution work; - future trust-policy enforcement across execution boundaries; Related backlog: **#339 Distributed cluster execution**.
+
+## Related Documents
+
+- N/A - no explicit related docs were named in the original document.
+
+## Future Work
+
+- What is the default bounded backend for the coordinator log / queue?
+  - SQLite first, or Postgres-first for small-cluster realism?
+- What is the default artifact store?
+  - local filesystem vs S3-compatible storage
+- What is the first implementation boundary?
+  - single-host multi-process only, or immediately protocol-ready for multi-host evolution?
+- Which signing / identity mechanism best fits the existing security envelope work?
+
+---
+
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.
+- **Status:** Draft (planning)
+- This document describes how ADL evolves from a single-machine deterministic runtime into a **distributed execution environment** while preserving ADL’s central thesis:
+- > **Determinism is non-negotiable.**
+- For v0.85, cluster execution is part of the broader **execution-substrate strengthening** work.
+- It sits alongside:
+- - dependable execution
+- - checkpoint / resume semantics
+- - replay and provenance
+- - bounded retry / adaptive execution work
+- - future trust-policy enforcement across execution boundaries
+- Related backlog: **#339 Distributed cluster execution**.
