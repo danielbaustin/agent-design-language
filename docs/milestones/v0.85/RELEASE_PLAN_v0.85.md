@@ -29,6 +29,7 @@ Before beginning the release process the following must be true:
 - [ ] Required demo proof surfaces reviewed:
   - steering/queueing/checkpoint
   - HITL/editor/review flow
+  - five-command editing lifecycle
   - Gödel runtime behavior
   - affect-plus-Gödel/reasoning behavior
 

@@ -16,7 +16,7 @@ Use it to answer:
 - which issue owns that work
 - what order the remaining work should happen in
 
-Do not treat the mid-flight review document as the execution plan. [MIDFLIGHT_REVIEW_ISSUES.md](/Users/daniel/git/agent-design-language/.adl/docs/v0.85planning/MIDFLIGHT_REVIEW_ISSUES.md) is now a diagnostic and closure tracker. Execution should flow through this WBS.
+Do not treat the mid-flight review document as the execution plan. `MIDFLIGHT_REVIEW_ISSUES.md` in `.adl/docs/v0.85planning/` is now a diagnostic and closure tracker. Execution should flow through this WBS.
 
 ## Current Milestone State
 
@@ -31,7 +31,7 @@ What is already landed:
 
 What remains active:
 - `WP-01` milestone alignment / close-the-gap work under `#886`
-- `WP-09` through `WP-25`
+- `WP-01`, the blocking alignment tranche, and `WP-19` through `WP-25`
 - the explicit blocking alignment tranche listed in Section 1
 
 Important rule:
@@ -40,8 +40,8 @@ Important rule:
 
 ## Working Rules
 
-- Canonical tracker mapping follows [MILESTONE_ISSUE_RECONCILIATION_v0.85.md](/Users/daniel/git/agent-design-language/docs/milestones/v0.85/MILESTONE_ISSUE_RECONCILIATION_v0.85.md).
-- Public record architecture follows [STRUCTURED_PROMPT_ARCHITECTURE.md](/Users/daniel/git/agent-design-language/docs/milestones/v0.85/STRUCTURED_PROMPT_ARCHITECTURE.md).
+- Canonical tracker mapping follows [MILESTONE_ISSUE_RECONCILIATION_v0.85.md](MILESTONE_ISSUE_RECONCILIATION_v0.85.md).
+- Public record architecture follows [STRUCTURED_PROMPT_ARCHITECTURE.md](STRUCTURED_PROMPT_ARCHITECTURE.md).
 - Every active execution issue should have:
   - a Structured Task Prompt
   - a Structured Implementation Prompt
@@ -104,15 +104,15 @@ These are the primary feature/runtime/tooling work packages. Closed items are re
 | WP-06 Editing and review tooling surfaces | LANDED | `#871` | reusable review/helper tooling | deterministic review helper surface and stable fixture/proof path | WP-04, WP-05 |
 | WP-07 Dependable execution runtime surfaces | LANDED | `#872` | explicit dependable-execution runtime/artifact behavior | completed-phase output validation, refusal path, proof surface | WP-02, WP-03 |
 | WP-08 Verifiable inference runtime surfaces | LANDED | `#873` | provenance/evidence-linked review outputs | deterministic provenance checker and good/bad fixtures | WP-02, WP-06, WP-07 |
-| WP-09 Adaptive Execution Engine bounded progress | OPEN | `#874` | bounded AEE runtime progress with inspectable hooks/artifacts | tests, traces, or demoable strategy-loop behavior | WP-02, WP-07, WP-08 |
-| WP-10 Deterministic hypothesis generation engine | OPEN | `#748` | deterministic Gödel hypothesis engine | code/tests/artifacts showing inspectable deterministic hypothesis generation | WP-09 |
-| WP-11 Policy-learning and adaptive Godel loop | OPEN | `#749` | bounded policy-learning/adaptive loop | traces/tests/artifacts showing explicit adaptation behavior | WP-09, WP-10 |
-| WP-12 Experiment prioritization and strategy confidence | OPEN | `#750` | prioritization and strategy-confidence surfaces | inspectable confidence/prioritization outputs and validation path | WP-10, WP-11 |
-| WP-13 Cross-workflow learning and recursive improvement | OPEN | `#751` | bounded cross-workflow learning surfaces | explicit artifacts or demos of recursive-improvement behavior | WP-10, WP-11, WP-12 |
-| WP-14 Promotion and eval-report artifact loop | OPEN | `#752` | promotion/eval artifact loop | emitted promotion/evaluation artifacts and validation path | WP-10 through WP-13 |
-| WP-15 Affect engine core | OPEN | `#875` | minimal working affect engine | code/traces/state model with explicit update rules and proof path | WP-09, WP-10 through WP-14 |
-| WP-16 Reasoning graph and affect integration | OPEN | `#876` | affect-linked reasoning graph surfaces | artifact/schema/example set proving the integration exists | WP-15 |
-| WP-17 Affect-plus-Godel vertical slice | OPEN | `#877` | runnable affect-plus-Godel slice | bounded runnable demo showing affect changes reasoning/hypothesis behavior | WP-10 through WP-16 |
+| WP-09 Adaptive Execution Engine bounded progress | LANDED | `#874` | bounded AEE runtime progress with inspectable hooks/artifacts | tests, traces, or demoable strategy-loop behavior | WP-02, WP-07, WP-08 |
+| WP-10 Deterministic hypothesis generation engine | LANDED | `#748` | deterministic Gödel hypothesis engine | code/tests/artifacts showing inspectable deterministic hypothesis generation | WP-09 |
+| WP-11 Policy-learning and adaptive Godel loop | LANDED | `#749` | bounded policy-learning/adaptive loop | traces/tests/artifacts showing explicit adaptation behavior | WP-09, WP-10 |
+| WP-12 Experiment prioritization and strategy confidence | LANDED | `#750` | prioritization and strategy-confidence surfaces | inspectable confidence/prioritization outputs and validation path | WP-10, WP-11 |
+| WP-13 Cross-workflow learning and recursive improvement | LANDED | `#751` | bounded cross-workflow learning surfaces | explicit artifacts or demos of recursive-improvement behavior | WP-10, WP-11, WP-12 |
+| WP-14 Promotion and eval-report artifact loop | LANDED | `#752` | promotion/eval artifact loop | emitted promotion/evaluation artifacts and validation path | WP-10 through WP-13 |
+| WP-15 Affect engine core | LANDED | `#875` | minimal working affect engine | code/traces/state model with explicit update rules and proof path | WP-09, WP-10 through WP-14 |
+| WP-16 Reasoning graph and affect integration | LANDED | `#876` | affect-linked reasoning graph surfaces | artifact/schema/example set proving the integration exists | WP-15 |
+| WP-17 Affect-plus-Godel vertical slice | LANDED | `#877` | runnable affect-plus-Godel slice | bounded runnable demo showing affect changes reasoning/hypothesis behavior | WP-10 through WP-16 |
 
 Core execution rule:
 - every open item in this section must produce code, a tool, a runnable demo, an emitted artifact set, or a validated runtime behavior
@@ -126,7 +126,7 @@ These items prove the milestone as a coherent system rather than as isolated fea
 
 | WP | Status | Canonical issue | Concrete deliverable | Validation / proof surface | Dependencies |
 |---|---|---|---|---|---|
-| WP-18 Demo program for v0.85 features | OPEN | `#878` with bounded-demo rule from `#743` | demo matrix/playbook and runnable milestone demos | runnable demos proving steering/queueing, authoring/review flow, and affect-plus-Godel behavior | WP-02 through WP-17 |
+| WP-18 Demo program for v0.85 features | LANDED | `#878` with bounded-demo rule from `#743` | demo matrix/playbook and runnable milestone demos | runnable demos proving steering/queueing, authoring/review flow, five-command editing lifecycle, and affect-plus-Godel behavior | WP-02 through WP-17 |
 
 Integration rule:
 - demos are evidence, not optional packaging
@@ -156,8 +156,8 @@ The old four-sprint model is still useful as a phasing shorthand, but current ex
 
 - Sprint 1 foundation work: largely landed (`WP-02` through `WP-04`), with `WP-01` still carrying remaining alignment ownership
 - Sprint 2 authoring/runtime tooling work: largely landed (`WP-05` through `WP-08`)
-- current active execution queue: `WP-09` through `WP-17`, while the blocking alignment tranche in Section 1 is closed in parallel
-- closeout queue: `WP-18` through `WP-25`
+- core execution work through `WP-18` is landed
+- current active closeout queue: `WP-19` through `WP-25`, while the blocking alignment tranche in Section 1 is closed in parallel
 
 If this WBS and the issue graph disagree, treat the disagreement as a defect to fix immediately.
 

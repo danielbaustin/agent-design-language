@@ -6,6 +6,8 @@ This document captures the revised v0.85 issue-planning model inside the canonic
 
 It exists so the milestone-facing documentation can carry the same issue-reconciliation and work-package intent that was originally developed in local planning notes, without depending on `.adl/` planning files as the only place where that structure exists.
 
+This is now primarily a historical reconciliation record. For the live closeout queue and current milestone status, use `WBS_v0.85.md`, `SPRINT_v0.85.md`, and the GitHub issue tracker.
+
 ## Why This Exists
 
 The earlier v0.85 issue set was directionally coherent but too permissive in several places:
@@ -106,7 +108,7 @@ Expected outputs:
 
 ## Revised Work Package Intent
 
-The canonical twenty-five-work-package structure is defined in [WBS_v0.85.md](/Users/daniel/git/adl-wp-886/docs/milestones/v0.85/WBS_v0.85.md). The most important intent clarifications are:
+The canonical twenty-five-work-package structure is defined in [WBS_v0.85.md](WBS_v0.85.md). The most important intent clarifications are:
 
 - WP-01 is the milestone reorganization and issue-graph alignment pass under `#886`.
 - WP-02 is the deterministic queue/checkpoint/steering substrate under `#674`.
