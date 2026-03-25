@@ -595,6 +595,47 @@ render_template() {
   cat "$tpl"
 }
 
+join_by() {
+  local delimiter="$1"
+  shift || true
+  local first=1 item
+  for item in "$@"; do
+    if [[ "$first" -eq 1 ]]; then
+      printf '%s' "$item"
+      first=0
+    else
+      printf '%s%s' "$delimiter" "$item"
+    fi
+  done
+}
+
+docs_context_value_for_issue_prompt() {
+  local source_path="$1"
+  [[ -f "$source_path" ]] || {
+    printf 'none'
+    return 0
+  }
+
+  local fm tmp item
+  local -a docs=()
+  fm="$(mktemp -t prsh_docs_context_fm_XXXXXX)"
+  extract_front_matter_to_file "$source_path" "$fm"
+  while IFS= read -r item; do
+    item="$(strip_yaml_scalar_quotes "$item")"
+    [[ -n "$item" ]] || continue
+    if [[ "$item" == *.md || "$item" == docs/* || "$item" == .adl/docs/* ]]; then
+      docs+=("$item")
+    fi
+  done < <(stp_array_items "$fm" "repo_inputs")
+  rm -f "$fm"
+
+  if [[ "${#docs[@]}" -eq 0 ]]; then
+    printf 'none'
+  else
+    join_by '; ' "${docs[@]}"
+  fi
+}
+
 validate_card_header_count() {
   # Args: file_path header_line
   local path="$1" header="$2"
@@ -608,7 +649,7 @@ seed_input_card() {
   local task_id run_id
   task_id="issue-$(card_issue_pad "$issue")"
   run_id="$task_id"
-  local tpl tmp repo issue_url
+  local tpl tmp repo issue_url source_path docs_value source_slug
   tpl="$(resolve_input_template)"
   [[ -f "$tpl" ]] || die "missing input card template: $tpl"
 
@@ -628,8 +669,19 @@ seed_input_card() {
   repo="$(default_repo)"
   if [[ -n "$repo" ]]; then
     issue_url="https://github.com/${repo}/issues/${issue}"
-    replace_first_line_re "$tmp" "^- Issue:[[:space:]]*$" "- Issue: $issue_url"
+    replace_first_line_re "$tmp" "^- Issue:.*$" "- Issue: $issue_url"
   fi
+
+  source_slug="$(sanitize_slug "$title")"
+  source_path="$(issue_prompt_path_for_issue "$issue" "$ver" "$source_slug")"
+  if [[ -f "$source_path" ]]; then
+    replace_first_line_re "$tmp" "^- Source Issue Prompt:.*$" "- Source Issue Prompt: $(path_relative_to_repo "$source_path")"
+  elif [[ -n "$issue_url" ]]; then
+    replace_first_line_re "$tmp" "^- Source Issue Prompt:.*$" "- Source Issue Prompt: $issue_url"
+  fi
+  docs_value="$(docs_context_value_for_issue_prompt "$source_path")"
+  replace_first_line_re "$tmp" "^- Docs:.*$" "- Docs: $docs_value"
+  replace_first_line_re "$tmp" "^- Other:.*$" "- Other: none"
 
   if [[ -n "$output_path_actual" ]]; then
     output_path_actual="$(path_relative_to_repo "$output_path_actual")"

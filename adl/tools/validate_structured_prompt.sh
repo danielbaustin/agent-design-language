@@ -64,6 +64,7 @@ valid_github_issue_url() { [[ "$1" =~ ^https://github\.com/[^/]+/[^/]+/issues/[0
 valid_github_pr_url() { [[ "$1" =~ ^https://github\.com/[^/]+/[^/]+/pull/[0-9]+$ ]]; }
 valid_reference() { [[ "$1" =~ ^https?://.+$ || "$1" =~ ^[A-Za-z0-9._/-]+$ ]]; }
 valid_iso8601_datetime() { [[ "$1" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]]; }
+valid_freeform_placeholder() { [[ "$1" == "none" || "$1" == "not_applicable" || "$1" == "n/a" ]]; }
 
 contains_absolute_host_path() {
   local file="$1"
@@ -288,7 +289,9 @@ validate_sip() {
   v="$(trim "$(md_field "$file" "Branch")")"; require_nonblank "Branch" "$v"; valid_branch "$v" || die "Branch must be a codex/ branch"
   v="$(trim "$(md_block_field "$file" "Context" "Issue")")"; require_nonblank "Context.Issue" "$v"; valid_github_issue_url "$v" || die "Context.Issue must be a GitHub issue URL"
   v="$(trim "$(md_block_field "$file" "Context" "PR")")"; [[ -z "$v" || $(valid_github_pr_url "$v"; echo $?) -eq 0 ]] || die "Context.PR must be a GitHub PR URL"
-  v="$(trim "$(md_block_field "$file" "Context" "Source Issue Prompt")")"; [[ -z "$v" || $(valid_reference "$v"; echo $?) -eq 0 ]] || die "Context.Source Issue Prompt must be a repo-relative reference or URL"
+  v="$(trim "$(md_block_field "$file" "Context" "Source Issue Prompt")")"; require_nonblank "Context.Source Issue Prompt" "$v"; valid_reference "$v" || die "Context.Source Issue Prompt must be a repo-relative reference or URL"
+  v="$(trim "$(md_block_field "$file" "Context" "Docs")")"; require_nonblank "Context.Docs" "$v"
+  v="$(trim "$(md_block_field "$file" "Context" "Other")")"; require_nonblank "Context.Other" "$v"
   v="$(trim "$(md_block_field "$file" "Execution" "Source issue-prompt slug")")"; [[ -z "$v" || $(valid_slug "$v"; echo $?) -eq 0 ]] || die "Execution.Source issue-prompt slug must be a normalized slug"
   v="$(trim "$(md_block_field "$file" "Execution" "Required outcome type")")"; [[ -z "$v" || "$v" =~ ^(code|docs|tests|demo|combination)$ ]] || die "Execution.Required outcome type must be one of: code, docs, tests, demo, combination"
   v="$(trim "$(md_block_field "$file" "Execution" "Demo required")")"; [[ -z "$v" || "$v" == "true" || "$v" == "false" ]] || die "Execution.Demo required must be true or false"

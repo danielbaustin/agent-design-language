@@ -9,9 +9,9 @@ Branch:
 Context:
 - Issue:
 - PR:
-- Source Issue Prompt:
-- Docs:
-- Other:
+- Source Issue Prompt: <required repo-relative reference or URL>
+- Docs: <required freeform value or 'none'>
+- Other: <optional note or 'none'>
 
 ## Agent Execution Rules
 - Do not run `pr start`; the branch and worktree already exist.

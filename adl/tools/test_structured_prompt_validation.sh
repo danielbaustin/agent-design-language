@@ -77,9 +77,9 @@ Branch: codex/898-valid-sip
 Context:
 - Issue: https://github.com/danielbaustin/agent-design-language/issues/898
 - PR:
-- Source Issue Prompt:
-- Docs:
-- Other:
+- Source Issue Prompt: .adl/issues/v0.85/bodies/issue-0898-v085-valid-sip.md
+- Docs: docs/tooling/prompt-spec.md
+- Other: none
 
 ## Prompt Spec
 ```yaml
@@ -213,6 +213,107 @@ EOF
 "$VALIDATOR" --type stp --input "$tmpdir/stp_valid.md"
 "$VALIDATOR" --type sip --phase bootstrap --input "$tmpdir/sip_valid.md"
 "$VALIDATOR" --type sor --phase bootstrap --input "$tmpdir/sor_valid.md"
+
+cat >"$tmpdir/sip_blank_context_invalid.md" <<'EOF'
+# ADL Input Card
+
+Task ID: issue-0898
+Run ID: issue-0898
+Version: v0.85
+Title: invalid-blank-context
+Branch: codex/898-invalid-blank-context
+
+Context:
+- Issue: https://github.com/danielbaustin/agent-design-language/issues/898
+- PR:
+- Source Issue Prompt:
+- Docs:
+- Other:
+
+## Prompt Spec
+```yaml
+prompt_schema: adl.v1
+actor:
+  role: execution_agent
+  name: codex
+model:
+  id: gpt-5-codex
+  determinism_mode: stable
+inputs:
+  sections:
+    - goal
+    - required_outcome
+    - acceptance_criteria
+    - inputs
+    - target_files_surfaces
+    - validation_plan
+    - demo_proof_requirements
+    - constraints_policies
+    - system_invariants
+    - reviewer_checklist
+    - non_goals_out_of_scope
+    - notes_risks
+    - instructions_to_agent
+outputs:
+  output_card: .adl/cards/898/output_898.md
+  summary_style: concise_structured
+constraints:
+  include_system_invariants: true
+  include_reviewer_checklist: true
+  disallow_secrets: true
+  disallow_absolute_host_paths: true
+automation_hints:
+  source_issue_prompt_required: true
+  target_files_surfaces_recommended: true
+  validation_plan_required: true
+  required_outcome_type_supported: true
+review_surfaces:
+  - card_review_checklist.v1
+  - card_review_output.v1
+  - card_reviewer_gpt.v1.1
+```
+
+Execution:
+- Agent:
+- Provider:
+- Tools allowed:
+- Sandbox / approvals:
+- Source issue-prompt slug:
+- Required outcome type:
+- Demo required:
+
+## Goal
+x
+## Required Outcome
+x
+## Acceptance Criteria
+x
+## Inputs
+x
+## Target Files / Surfaces
+x
+## Validation Plan
+x
+## Demo / Proof Requirements
+x
+## Constraints / Policies
+x
+## System Invariants (must remain true)
+x
+## Reviewer Checklist (machine-readable hints)
+x
+## Non-goals / Out of scope
+x
+## Notes / Risks
+x
+## Instructions to the Agent
+x
+EOF
+
+if "$VALIDATOR" --type sip --phase bootstrap --input "$tmpdir/sip_blank_context_invalid.md" >/dev/null 2>&1; then
+  echo "expected blank-context SIP to fail validation" >&2
+  exit 1
+fi
 
 cat >"$tmpdir/stp_absolute_path_invalid.md" <<'EOF'
 ---
