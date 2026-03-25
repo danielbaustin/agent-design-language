@@ -1,25 +1,40 @@
 # Documentation Index
 
-This directory is the canonical documentation entrypoint for milestone planning,
-architecture decisions, and contributor/reference docs.
+This directory is the main documentation entrypoint for ADL milestone records, contributor workflow docs, tooling guides, and architecture references.
+
 Use this index to find the right source of truth quickly.
 
-## Core Docs
+## Start Here
 
-- v0.8 milestone docs (active): `milestones/v0.8/`
-- ADRs: `adr/`
-- Codex operating procedure: `codex_playbook.md`
-- Design principles: `design_goals.md`
-- Default workflow guide: `default_workflow.md`
+- Current closure milestone: `milestones/v0.85/`
+- Next active milestone: `milestones/v0.86/`
+- Root project overview: `../README.md`
+- Runtime and CLI guide: `../adl/README.md`
+- Language/spec entrypoint: `../adl-spec/README.md`
+- Default contributor workflow: `default_workflow.md`
 
-## Milestones
+## Milestone Documentation
 
-- Current development milestone: `milestones/v0.8/`
-- Previous milestones: `milestones/v0.75/`, `milestones/v0.7/`, `milestones/v0.6/`
+- Current closure milestone: `milestones/v0.85/`
+- Current planning milestone: `milestones/v0.86/`
+- Recent stable milestone: `milestones/v0.8/`
+- Earlier milestones: `milestones/v0.75/`, `milestones/v0.7/`, `milestones/v0.6/`
 - Historical milestones: `milestones/v0.5/`, `milestones/v0.4/`, `milestones/v0.3/`, `milestones/v0.2/`
 
-## See Also / Canonical Docs
+## Core Contributor and Reference Docs
 
-- Root project entrypoint: `../README.md`
-- Runtime/CLI usage: `../adl/README.md`
-- ADL spec entrypoint: `../adl-spec/README.md`
+- Architecture decisions: `adr/`
+- Default workflow guide: `default_workflow.md`
+- Design goals: `design_goals.md`
+- Codex operating procedure: `codex_playbook.md`
+- Tooling index: `tooling/README.md`
+
+## Demo and Tooling Surfaces
+
+- Canonical demo index: `../demos/README.md`
+- v0.85 demo matrix: `milestones/v0.85/DEMO_MATRIX_v0.85.md`
+- Editor/tooling demo surfaces: `tooling/editor/README.md`
+
+## Notes
+
+Milestone docs should be read as bounded engineering records. They distinguish what has shipped, what is currently being closed out, what is demoable, and what is planned for later milestones.

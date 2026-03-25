@@ -1,15 +1,47 @@
 # Agent Design Language (ADL)
 
-Agent Design Language (ADL) is a deterministic, contract-driven orchestration language for AI systems. It lets you define agents, tasks, providers, delegation metadata, and workflows as structured data — not brittle glue code. ADL elevates orchestration from “prompt wiring” to a reviewable, testable, and reproducible engineering discipline.
+Agent Design Language (ADL) is a deterministic, contract-driven orchestration language for AI systems. It is designed for teams that want AI workflows to be reviewable, testable, reproducible, and auditable, with clear execution semantics and transparent runtime behavior.
 
-ADL is built for teams that care about determinism and auditability. Documents are schema-validated, compiled into a deterministic ExecutionPlan, and executed under explicit concurrency, failure, retry, and signing semantics. Every run emits stable artifacts under `.adl/runs/<run_id>/` to support replay, debugging, and post-mortem analysis.
+ADL lets you define the core pieces of an AI system as structured artifacts:
+- providers
+- tools
+- agents
+- tasks
+- workflows
+- runs
+
+Those artifacts are schema-validated, compiled into a deterministic execution plan, and executed with explicit semantics for concurrency, failure handling, retries, signing, and artifact emission. Every run leaves behind stable review surfaces under `.adl/` so execution can be inspected, replayed, and reviewed with confidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.8-orange)
+![Milestone](https://img.shields.io/badge/milestone-v0.85-orange)
 
+## Why ADL
 
-## Try It Now (Happy Path)
+ADL focuses on making agent systems reliable, inspectable, and suitable for real engineering workflows.
+
+ADL is built for readers and builders who care about:
+- deterministic orchestration with clear runtime behavior
+- explicit workflow contracts and structured execution surfaces
+- stable proof surfaces that support review and debugging
+- bounded, inspectable agent behavior
+- local and enterprise-ready control over execution behavior
+
+If you want AI systems that can survive code review, operations review, and postmortem analysis, ADL is aimed at you.
+
+## What ADL Provides
+
+ADL currently provides:
+- a Rust runtime and CLI for deterministic workflow execution
+- structured workflow, task, and provider definitions
+- deterministic planning and execution semantics
+- bounded concurrency, retries, and failure policies
+- signing and verification surfaces for safer execution
+- remote-execution wiring without giving up local scheduler control
+- bounded scientific / Gödel-style execution loops with reviewable artifacts
+- demo and proof surfaces that are meant to be runnable, inspectable, and falsifiable
+
+## Quick Start
 
 From repo root:
 
@@ -17,193 +49,94 @@ From repo root:
 cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-fork-join-seq-run.adl.yaml --print-plan
 ```
 
-This prints a deterministic v0.3 fork/join plan with clean output and no provider runtime setup.
+This prints a deterministic fork/join execution plan with no provider runtime setup.
 
-If you want a second quick check:
+A second quick check:
 
 ```bash
 cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-on-error-retry.adl.yaml --print-plan
 ```
 
-## Demos (Story-Driven, User-Facing)
+## Current Status
 
-ADL includes both low-level matrix demos and story-driven demo packs for first-time users.
-
-Canonical demo entrypoint:
-- `demos/README.md`
-
-Story packs (released in v0.7):
-- `S-01` Determinism You Can Trust
-- `S-02` From Failure to Clarity
-- `S-03` Portable Learning (Exportable Intelligence)
-- `S-04` Enterprise Trust Boundary (Signed Remote Requests)
-- `S-05` ADL is the Product Name (Compatibility Window)
-
-Canonical demo commands and artifact paths:
-- [v0.7 Demo Matrix (Story-driven section)](docs/milestones/v0.7/DEMOS_v0.7.md#story-driven-demo-packs-user-facing)
-- [v0.8 Demo Matrix (active milestone)](docs/milestones/v0.8/DEMOS_V0.8.md)
-
-Badge semantics:
-- `adl-ci`: main branch CI workflow status
-- `coverage`: Codecov line-coverage signal for `main` (informational; CI still passes if Codecov upload is unavailable)
-- `milestone`: current documentation milestone marker
-
-## Status
-
-- Latest released milestone: **v0.7.0** (tag: `v0.7.0`)
-- Active development milestone: **v0.8**
+- Recent stable milestone: **v0.8**
+- Current closure milestone: **v0.85**
+- Next active milestone: **v0.86**
 - Project changelog: `CHANGELOG.md`
 
-v0.8 status note:
-- The v0.8 milestone currently contains bounded implemented runtime, CLI, schema-artifact, and demo surfaces alongside design/spec/planning docs.
-- Not all v0.8 planning artifacts are runtime-implemented yet; see `docs/milestones/v0.8/RECOVERY_AUDIT_V0.8.md`.
+ADL is in active development. The repository contains both implemented runtime surfaces and milestone/spec/planning documents. The milestone docs should be read as bounded engineering records: they distinguish what has shipped, what is demoable, and what is still planned.
 
-## v0.8 Bounded Godel Runtime
+## Recent Milestones
 
-v0.8 adds a bounded Godel scientific loop to the runtime and demo surfaces. In the current implementation, the loop follows seven explicit stages:
+### v0.85 - Authoring Truth and Demo Proof Surfaces
 
-1. `failure`
-2. `hypothesis`
-3. `mutation`
-4. `experiment`
-5. `evaluation`
-6. `record`
-7. `indexing`
+v0.85 focused on bringing the authoring model, demos, and runtime behavior into a coherent and reliable whole.
 
-This is a deterministic, artifact-driven loop rather than an open-ended self-modifying agent. The runtime persists canonical `mutation`, `evaluation_plan`, `experiment_record`, and `canonical_evidence_view` artifacts so the loop can be inspected, replayed, and reviewed without hidden state.
+Key features:
+- clarified five-command authoring lifecycle (`pr init`, `pr create`, `pr start`, `pr run`, `pr finish`)
+- bounded editor-command adapter aligned to the control plane
+- end-to-end demo and regression proof surfaces for authoring workflows
+- worktree hygiene and queue-mechanics cleanup
+- Rust maintainability improvements (module refactors, test restructuring, guardrails)
 
-What is implemented now:
-- bounded runtime support for the Godel stage loop in the v0.8 demos
-- bounded `adl godel run`, `adl godel inspect`, and `adl godel evaluate` CLI review surfaces
-- canonical artifact emission and validation for the loop's core review surfaces
-- ObsMem integration for indexing and retrieval-backed review flows
-- reviewer-facing runbooks under `demos/` for the bounded Gödel CLI flow and bounded AEE recovery flow
+### v0.8 - Bounded Godel Runtime and Artifact-Centered Review
 
-What is intentionally not claimed in v0.8:
-- autonomous policy learning
-- unconstrained self-modification
-- a fully finished Adaptive Execution Engine
+v0.8 extended ADL into bounded reflective execution with structured artifacts and strong inspection surfaces.
 
-For the deeper milestone docs, start with:
-- `docs/milestones/v0.8/GODEL_SCIENTIFIC_METHOD.md`
-- `docs/milestones/v0.8/GODEL_LOOP_INTEGRATION_V0.8.md`
+Key features:
+- bounded Godel-style scientific loop integrated into runtime
+- canonical artifact emission for mutation, evaluation, and experiment records
+- CLI surfaces for running and inspecting reasoning workflows
+- ObsMem-backed indexing and retrieval-assisted review flows
+- runnable demo and evaluation surfaces for hypothesis-driven execution
+
+### v0.7 - Deterministic Runtime Foundation
+
+v0.7 established the deterministic execution model that underpins the ADL runtime.
+
+Key features:
+- ExecutionPlan-driven runtime
+- deterministic fork/join and concurrency semantics
+- bounded parallelism and explicit retry/failure policies
+- replay-oriented traces and graph export tooling
+- signing and verification surfaces for execution integrity
+
+## Demos and Proof Surfaces
+
+ADL includes both user-facing demos and milestone-specific proof surfaces.
+
+Start here:
+- `demos/README.md`
+
+Important supporting demo/readiness docs:
+- `docs/tooling/editor/README.md`
+- `docs/tooling/editor/five_command_demo.md`
+- `docs/tooling/editor/five_command_regression_suite.md`
+
+For milestone-specific context:
+- `docs/milestones/v0.7/DEMOS_v0.7.md`
 - `docs/milestones/v0.8/DEMOS_V0.8.md`
-
-## v0.7 Naming Migration (Compatibility Window)
-
-- Canonical Rust crate/package/lib identity is `adl`.
-- Canonical CLI/runtime naming is `adl` and `adl-remote`.
-- Legacy compatibility shim commands introduced in v0.7 remain available during the compatibility window with deprecation warnings.
-- Canonical env vars use `ADL_*`; legacy compatibility env vars remain supported during the compatibility window with deprecation warnings.
-
-## Features by Release
-
-### v0.7.0 (Current Release)
-
-* ExecutionPlan-driven runtime execution
-* Deterministic sequential + concurrent fork/join semantics
-* Canonical concurrent ready-step ordering (lexicographic by `step_id`)
-* Deterministic join barrier semantics
-* Bounded parallelism enforcement in runtime
-* Step-level failure policy (`on_error: fail|continue`)
-* Deterministic retries (`retry.max_attempts`, no backoff)
-* Deterministic replay demos + trace diff / graph export tooling
-* Streaming trace events (observational)
-* Human-readable trace timestamps + run/step progress banners
-* Pattern compiler (`linear`, `fork_join`) with deterministic canonical IDs
-* Provider profile registry (predefined profiles)
-* Signing and verification CLI (`keygen`, `sign`, `verify`) with unsigned-run rejection on `--run`
-* Remote execution MVP (`/v1/health`, `/v1/execute`) with local scheduler ownership
-* HITL pause/resume (step-boundary-only) with deterministic, versioned, atomic pause state
-
-### v0.5
-
-* Full primitives support (agents, tasks, providers, workflows)
-* Deterministic plan-only mode
-* Signing canonicalization groundwork
-
-### v0.4
-
-* Deterministic, no-network demo harness (`adl/tools/demo_v0_4.sh`)
-* Bounded executor prototype demos
-* Stable artifact emission
-
-### v0.3
-
-* Fork/join planning semantics
-* Concurrency planning model
-* Plan printing + deterministic ID normalization
+- `docs/milestones/v0.85/DEMO_MATRIX_v0.85.md`
 
 ## Repository Layout
 
-- `demos/`: canonical user-facing demo index, runbooks, and demo docs
 - `adl/`: Rust reference runtime and CLI
 - `adl/examples/`: runnable workflow fixtures used by the runtime and tests
 - `adl-spec/`: language-level specification docs
-- `docs/`: contributor workflow and roadmap docs
-- `docs/adr/`: architecture decision records (major technical decisions)
-- `docs/OBSMEM.md`: user-facing ObsMem boundary and usage guide (v0.75 reference)
-- `.adl/`: cards, reports, and run/report artifacts
-
-## Historical v0.3 Plan-Only Commands
-
-From repo root:
-
-```bash
-cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
-cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-on-error-retry.adl.yaml --print-plan
-cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-remote-http-provider.adl.yaml --print-plan
-```
-
-To execute (`--run`) local-provider examples, run from `adl/` with a local Ollama available.
-
-## Legacy v0.4 Demos
-
-These demos are deterministic, non-interactive, and run without network by pinning the local mock provider binary.
-
-Fork/Join demo (3 branches + deterministic join barrier):
-
-```bash
-ADL_OLLAMA_BIN=adl/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-4-demo-fork-join.adl.yaml --run --trace --out .adl/reports/demo-v0.4/fork-join
-```
-
-Bounded parallelism stress (8 branch steps with bounded executor):
-
-```bash
-ADL_OLLAMA_BIN=adl/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-4-demo-bounded-parallelism.adl.yaml --run --trace --out .adl/reports/demo-v0.4/bounded-parallelism
-```
-
-Current engine concurrency is intentionally fixed at `MAX_PARALLEL=4` in v0.4; this demo proves bounded execution at that shipped limit.
-
-Deterministic replay (run twice with same command, then compare `replay/join.txt` hash):
-
-```bash
-ADL_OLLAMA_BIN=adl/tools/mock_ollama_v0_4.sh cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-4-demo-deterministic-replay.adl.yaml --run --trace --out .adl/reports/demo-v0.4/deterministic-replay
-```
-
-Run all three demos in sequence:
-
-```bash
-adl/tools/demo_v0_4.sh
-```
-
-## Why v0.7 Matters
-
-v0.7.0 proves:
-- Concurrent execution in the real runtime
-- Deterministic replay behavior
-- Bounded parallelism
-- Stable artifacts under concurrency
-- Signed workflow execution defaults for safer `--run` operation
-- Pattern-driven workflow authoring with deterministic expansion
-- Remote execution MVP wiring without giving up local deterministic scheduling
+- `demos/`: canonical user-facing demo index, runbooks, and proof surfaces
+- `docs/`: contributor workflow, roadmap, tooling, and milestone docs
+- `docs/adr/`: architecture decision records
+- `.adl/`: cards, reports, run artifacts, and related authoring surfaces
 
 ## Default Workflow
 
-Default contributor workflow uses `adl_pr_cycle` (`init -> create -> start -> codex -> run_if_required -> finish -> report`).
-- Guide: `docs/default_workflow.md`
-- Active milestone docs: `docs/milestones/v0.8/`
-- Tools: `adl/tools/README.md`
+The default contributor workflow is documented as a bounded authoring cycle.
+
+Start here:
+- `docs/default_workflow.md`
+- `docs/tooling/adl_pr_cycle_skill.md`
+- `adl/tools/README.md`
+
 
 ## License
 
@@ -212,4 +145,4 @@ Apache-2.0
 ## Security
 
 - Security policy: `SECURITY.md`
-- Threat model (v0.7): `docs/security/THREAT_MODEL_v0.7.md`
+- Threat model: `docs/security/THREAT_MODEL_v0.7.md`

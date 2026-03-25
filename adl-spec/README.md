@@ -1,74 +1,123 @@
-# ADL Specification
 
-Language-level specification materials for Agent Design Language (ADL).
-This directory is the spec entrypoint: normative text, schema artifacts, and examples.
-Runtime implementation details belong under `adl/` and milestone docs.
+# ADL Specification (`adl-spec/`)
 
-Contributor workflow is governed by the repo-wide `../CONTRIBUTING.md`.
+This directory is the specification entrypoint for **Agent Design Language (ADL)**. It contains the language-level materials that define ADL as a design and authoring system: normative specification text, schema artifacts, and specification examples.
 
-## Project Status
+The specification is intentionally separate from the Rust runtime in `../adl/`. The goal of this directory is to make the language understandable on its own terms: its semantics, invariants, contracts, and design intent.
 
-- ADL 1.0 remains a **draft** language specification.
-- The specification may still change in incompatible ways.
-- The repository remains intentionally spec-first and author-driven.
+## Why the Specification Matters
 
-Contributions are welcome, but clarity and conceptual coherence take priority over rapid expansion.
+The specification is where ADL’s language model becomes explicit.
+
+It provides:
+- normative language for the core ADL concepts and their semantics
+- schema artifacts that support validation and tooling
+- examples that illustrate the structure of ADL documents
+- a stable reference point for design discussions and future runtime work
+- a way to separate language intent from implementation details
+
+## Current Status
+
+- Specification status: **ADL 1.0 draft**
+- Current closure milestone in the main repo: **v0.85**
+- Next active milestone: **v0.86**
+- Current role of this directory: language and schema reference for the evolving ADL design
+
+The specification is still evolving. Clarity, coherence, and explicit contracts take priority over premature stability.
+
+## Recent Milestone Context
+
+### v0.85 — Authoring Alignment and Documentation Truth
+
+v0.85 focused on making the surrounding authoring model, demos, and documentation surfaces line up cleanly with implemented reality.
+
+Highlights relevant to the spec:
+- stronger repo-wide documentation alignment
+- clearer authoring lifecycle language around structured workflow definition
+- improved proof surfaces and review surfaces for what is actually shipped
+- better separation between reader-facing docs and internal control surfaces
+- more consistent documentation entrypoints across the repository
+
+### v0.8 — Bounded Gödel Runtime and Artifact-Centered Review
+
+v0.8 expanded the broader ADL system into bounded reflective execution with explicit artifact surfaces.
+
+Highlights relevant to the spec:
+- stronger articulation of bounded reasoning loops and reviewable artifacts
+- growing pressure to keep language concepts distinct from runtime implementation details
+- clearer relationship between authored workflow structure and execution/review surfaces
+- improved examples and milestone materials that help ground language design
+- stronger connection between specification intent and runtime proof surfaces
+
+### v0.7 — Deterministic Runtime Foundation
+
+v0.7 established the deterministic runtime base that informs the language’s design constraints.
+
+Highlights relevant to the spec:
+- deterministic execution-plan model
+- explicit concurrency and fork/join semantics
+- bounded retry and failure policy surfaces
+- signing and verification concepts for safer execution
+- replay-oriented traces and review artifacts that reinforce explicit contracts
 
 ## Spec Structure
 
-- Normative spec docs: `spec/`
-- Schema artifacts: `schemas/`
-- Spec examples: `examples/`
-
-## Contributing to the Spec
-
-Use the root [`../CONTRIBUTING.md`](../CONTRIBUTING.md) for branching, review, and PR workflow.
-For Codex-specific execution mechanics, use [`../docs/codex_playbook.md`](../docs/codex_playbook.md).
-
-For substantial changes such as new concepts, abstractions, or major restructuring, open an issue first.
-Small clarifications, typo fixes, examples, and explanatory notes that do not change normative meaning are welcome without extra process.
+- `spec/` — normative specification documents
+- `schemas/` — schema artifacts used by validation/tooling surfaces
+- `examples/` — specification examples illustrating ADL document structure
 
 ## Specification vs Runtime
 
-This directory is for **language semantics**, invariants, and design intent.
+This directory is for **language semantics, invariants, and design intent**.
 
-- Runtime implementation details belong under `../adl/`
-- Versioned architecture and release behavior belong under `../docs/milestones/`
-- Cross-cutting architecture decisions belong under `../docs/adr/`
+Use these boundaries consistently:
+- runtime implementation details belong under `../adl/`
+- versioned milestone and release behavior belong under `../docs/milestones/`
+- cross-cutting architectural decisions belong under `../docs/adr/`
 
-Please avoid adding runtime-specific assumptions to specification text.
+Please avoid adding runtime-specific assumptions to specification text unless they are explicitly part of the language contract.
 
 ## Normative Language
 
-Specification text uses **MUST**, **SHOULD**, and **MAY** as defined in RFC 2119.
+Specification text uses **MUST**, **SHOULD**, and **MAY** in the RFC 2119 sense.
 
-When editing spec documents:
-
-- Be precise about normative requirements
-- Avoid introducing ambiguity
-- Distinguish clearly between normative and non-normative sections
+When editing specification documents:
+- be precise about normative requirements
+- avoid introducing ambiguity
+- distinguish clearly between normative and non-normative statements
+- prefer explicit contracts over inferred behavior
 
 ## Design Philosophy
 
-Spec changes should reinforce these principles:
+Specification work should reinforce these principles:
+- design-time intent over incidental implementation detail
+- explicit contracts instead of implicit assumptions
+- determinism where possible, transparency everywhere
+- failure as a first-class, observable outcome
 
-- **Design-time intent over runtime behavior**
-- **Explicit contracts instead of implicit assumptions**
-- **Determinism where possible, transparency everywhere**
-- **Failure as a first-class, observable outcome**
+## Contributing to the Spec
 
-## Spec Change Notes
+Use the root contributor workflow and repository process for branching, review, and PR handling:
+- `../CONTRIBUTING.md`
+- `../docs/codex_playbook.md`
 
-Spec-specific change history is tracked alongside the main repo history.
-The current unreleased spec milestone remains the initial ADL 1.0 specification structure.
+For substantial changes such as new concepts, abstractions, or major restructuring, open an issue first.
 
-## See Also / Canonical Docs
+Small clarifications, typo fixes, examples, and explanatory notes that do not change normative meaning are welcome without extra process.
 
-- Root project entrypoint: `../README.md`
-- Runtime/CLI usage: `../adl/README.md`
-- Contributor workflow: `../CONTRIBUTING.md`
-- Codex operating procedure: `../docs/codex_playbook.md`
-- Design principles: `../docs/design_goals.md`
-- Milestone docs (current): `../docs/milestones/v0.8/`
-- ADRs: `../docs/adr/`
-- Spec sub-index: `spec/README.md`
+## Documentation Map
+
+For broader project context:
+- root project overview: `../README.md`
+- runtime and CLI guide: `../adl/README.md`
+- documentation index: `../docs/README.md`
+- contributor workflow: `../CONTRIBUTING.md`
+- codex operating procedure: `../docs/codex_playbook.md`
+- design goals: `../docs/design_goals.md`
+- milestone docs: `../docs/milestones/`
+- architecture decisions: `../docs/adr/`
+- spec sub-index: `spec/README.md`
+
+## Notes
+
+This README is meant to orient readers to the role of the specification within the larger ADL repository. It is not itself the normative language specification; it is the entrypoint to that material.
