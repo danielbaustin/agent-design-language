@@ -47,6 +47,7 @@ Evidence should exist for every checked item.
 
 - [x] Steering/queueing/checkpoint demo exists
 - [x] HITL/editor/review workflow demo exists
+- [x] Five-command editing lifecycle proof surface exists
 - [x] Gödel hypothesis-engine demo exists
 - [x] Affect-engine demo exists
 - [x] Affect-plus-Gödel/reasoning demo exists
@@ -74,7 +75,7 @@ The milestone requires a clean review sequence before the release ceremony.
 - [ ] Internal review completed
 - [ ] External review completed
 - [ ] Review findings remediation completed or explicit deferrals recorded
-- [ ] Final `swarm` -> `adl` cutover timing confirmed as end-of-milestone work (`SWARM_REMOVAL_PLANNING.md`)
+- [x] Final `swarm` -> `adl` cutover timing confirmed as end-of-milestone work (`SWARM_REMOVAL_PLANNING.md`)
 
 ---
 
