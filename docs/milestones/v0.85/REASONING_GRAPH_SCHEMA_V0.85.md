@@ -1,5 +1,3 @@
-
-
 # Reasoning Graph Schema — v0.85
 
 ## Purpose
@@ -25,9 +23,24 @@ The v0.85 milestone introduces only the **schema direction**, not a full runtime
 
 ---
 
-# Design Goals
+## Overview
 
-The reasoning graph must satisfy several constraints.
+Reasoning graphs must support deterministic replay.
+
+Given the same inputs, model outputs, and state, the reasoning trace must be reproducible.
+
+## Key Capabilities
+
+- structured reasoning traces
+- hypothesis exploration
+- belief revision
+- deterministic replay
+- adaptive reasoning policies
+- the **Adaptive Execution Engine (AEE)**
+- the **Gödel hypothesis engine**
+- **affective reasoning signals**
+
+## How It Works
 
 ### Deterministic
 
@@ -59,7 +72,7 @@ Nodes must support attachment of **affective reasoning signals**.
 
 ---
 
-# Core Graph Elements
+### Core Graph Elements
 
 The reasoning graph consists of several primary element types.
 
@@ -73,7 +86,7 @@ The reasoning graph consists of several primary element types.
 
 ---
 
-# Node Schema
+### Node Schema
 
 Nodes represent reasoning units.
 
@@ -106,7 +119,7 @@ Nodes may represent:
 
 ---
 
-# Edge Schema
+### Edge Schema
 
 Edges represent reasoning transitions.
 
@@ -130,7 +143,7 @@ Edges capture the **structure of reasoning**.
 
 ---
 
-# Hypothesis Records
+### Hypothesis Records
 
 Hypotheses represent candidate explanations or strategies.
 
@@ -156,7 +169,7 @@ Possible states:
 
 ---
 
-# Evaluation Records
+### Evaluation Records
 
 Evaluations provide evidence regarding hypotheses.
 
@@ -176,7 +189,7 @@ Evaluations allow the graph to represent **reasoning evidence**.
 
 ---
 
-# Revision Events
+### Revision Events
 
 Reasoning systems may update beliefs over time.
 
@@ -195,7 +208,7 @@ These records preserve **belief lineage**.
 
 ---
 
-# Relationship to Observational Memory (ObsMem)
+### Relationship to Observational Memory (ObsMem)
 
 Reasoning graphs may be persisted in **ObsMem**.
 
@@ -209,7 +222,7 @@ Graphs may be stored as serialized structures.
 
 ---
 
-# Relationship to Affective Reasoning
+### Relationship to Affective Reasoning
 
 Each node may include an **affect vector**.
 
@@ -226,7 +239,7 @@ These signals influence reasoning policies.
 
 ---
 
-# Relationship to the Gödel Hypothesis Engine
+### Relationship to the Gödel Hypothesis Engine
 
 The Gödel agent explores alternative reasoning strategies.
 
@@ -240,7 +253,7 @@ This structure allows the system to **reason about reasoning**.
 
 ---
 
-# Determinism Considerations
+### Determinism Considerations
 
 To preserve deterministic replay:
 
@@ -252,7 +265,43 @@ The graph must never depend on hidden state.
 
 ---
 
-# v0.85 Scope
+### Summary
+
+The reasoning graph schema defines the structure used to represent reasoning processes in ADL.
+
+It captures:
+
+- reasoning steps
+- hypotheses
+- evidence
+- belief revisions
+
+This schema provides the foundation for future adaptive reasoning capabilities.
+
+### Design Goals
+
+The reasoning graph must satisfy several constraints.
+
+## Example / Demo
+
+- Demo, script, command, or proof surface: no dedicated standalone demo is named in this doc; use this document and its related references as the current proof surface.
+- What the reader should expect: this doc currently serves as the primary explanation of the feature and its intended behavior.
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.85
+- Status: Draft
+- Notes: No additional status notes recorded.
+
+## Related Documents
+
+- N/A - no explicit related docs were named in the original document.
+
+## Future Work
 
 The v0.85 milestone introduces only:
 
@@ -263,8 +312,6 @@ The v0.85 milestone introduces only:
 No runtime graph engine is required yet.
 
 ---
-
-# Future Work (v0.9+)
 
 Planned work includes:
 
@@ -277,15 +324,7 @@ These features will support a full **Gödel‑style reasoning engine**.
 
 ---
 
-# Summary
 
-The reasoning graph schema defines the structure used to represent reasoning processes in ADL.
+## Notes
 
-It captures:
-
-- reasoning steps
-- hypotheses
-- evidence
-- belief revisions
-
-This schema provides the foundation for future adaptive reasoning capabilities.
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.

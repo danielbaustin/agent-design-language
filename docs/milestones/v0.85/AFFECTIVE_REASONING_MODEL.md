@@ -14,7 +14,7 @@ In short:
 
 ---
 
-# Design Principles
+## Overview
 
 The affect model must satisfy the following constraints:
 
@@ -35,7 +35,38 @@ The affect model must satisfy the following constraints:
 
 ---
 
-# Core Affect Signals
+## Key Capabilities
+
+- **Non-anthropomorphic**
+- **Deterministic friendly**
+- **Compact**
+- **Inspectable**
+- **Composable**
+
+## How It Works
+
+### Design Principles
+
+The affect model must satisfy the following constraints:
+
+1. **Non-anthropomorphic**  
+   Signals represent reasoning states, not simulated feelings.
+
+2. **Deterministic friendly**  
+   Affect signals must not introduce nondeterministic behavior.
+
+3. **Compact**  
+   The model should use a small number of signals that capture useful reasoning dynamics.
+
+4. **Inspectable**  
+   Signals must be observable and explainable during reasoning traces.
+
+5. **Composable**  
+   Signals should attach to reasoning nodes, hypothesis records, and evaluation loops.
+
+---
+
+### Core Affect Signals
 
 The initial v0.85 affect basis consists of six signals.
 
@@ -52,7 +83,7 @@ These signals form a **minimal affective vector** attached to reasoning artifact
 
 ---
 
-# Signal Semantics
+### Signal Semantics
 
 Signals do **not drive behavior directly**.
 
@@ -78,7 +109,7 @@ High confidence + satisfaction
 
 ---
 
-# Integration with Reasoning Graphs
+### Integration with Reasoning Graphs
 
 In later milestones (v0.9), reasoning will be represented using **reasoning graphs**.
 
@@ -104,7 +135,7 @@ This allows reasoning engines to evaluate **both belief state and reasoning dyna
 
 ---
 
-# Relationship to the Adaptive Execution Engine (AEE)
+### Relationship to the Adaptive Execution Engine (AEE)
 
 AEE policies may use affect signals to guide execution.
 
@@ -118,7 +149,7 @@ This enables adaptive reasoning **without abandoning determinism**.
 
 ---
 
-# Relationship to Gödel-style Hypothesis Engines
+### Relationship to Gödel-style Hypothesis Engines
 
 The Gödel hypothesis engine explores alternative reasoning strategies.
 
@@ -133,7 +164,7 @@ Thus the affect layer acts as a **meta-reasoning signal system**.
 
 ---
 
-# Determinism Considerations
+### Determinism Considerations
 
 Affect signals must be derived from:
 
@@ -147,7 +178,39 @@ This preserves ADL's **deterministic replay guarantees**.
 
 ---
 
-# v0.85 Scope
+### Summary
+
+The affective reasoning model provides a compact signal layer that captures reasoning dynamics such as:
+
+• uncertainty
+• contradiction
+• novelty
+• progress
+
+Rather than simulating emotions, the system uses these signals to guide reasoning exploration and evaluation.
+
+This layer forms an important foundation for **adaptive agent reasoning in ADL**.
+
+## Example / Demo
+
+- Demo, script, command, or proof surface: no dedicated standalone demo is named in this doc; use this document and its related references as the current proof surface.
+- What the reader should expect: this doc currently serves as the primary explanation of the feature and its intended behavior.
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.85
+- Status: Draft
+- Notes: No additional status notes recorded.
+
+## Related Documents
+
+- N/A - no explicit related docs were named in the original document.
+
+## Future Work
 
 The v0.85 milestone introduces only:
 
@@ -158,8 +221,6 @@ The v0.85 milestone introduces only:
 No full runtime implementation is required for the milestone.
 
 ---
-
-# Future Work (v0.9+)
 
 Planned extensions include:
 
@@ -172,15 +233,7 @@ These features will support a full **Gödel-style adaptive reasoning system**.
 
 ---
 
-# Summary
 
-The affective reasoning model provides a compact signal layer that captures reasoning dynamics such as:
+## Notes
 
-• uncertainty
-• contradiction
-• novelty
-• progress
-
-Rather than simulating emotions, the system uses these signals to guide reasoning exploration and evaluation.
-
-This layer forms an important foundation for **adaptive agent reasoning in ADL**.
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.

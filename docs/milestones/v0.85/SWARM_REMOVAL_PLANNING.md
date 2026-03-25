@@ -1,24 +1,39 @@
 # Swarm Removal Planning (v0.85)
 
-## Metadata
+## Purpose
+
+N/A - original document did not expose a separate purpose block; see Overview and How It Works.
+
+## Overview
+
 - Milestone: `v0.85`
 - Topic: Final removal of legacy `swarm` identity and directory path
 - Date: `2026-03-13`
 - Status: `Planning`
 - Owner: `Daniel Austin / Agent Logic`
 
-## Why This Matters
+## Key Capabilities
 
-ADL has already renamed the package and primary binaries, but the repository still presents a split identity:
-- canonical runtime/package identity is largely `adl`
-- top-level runtime directory is still `adl/`
-- CI, tooling, docs, examples, tests, and compatibility shims still expose legacy `swarm` naming
+- Milestone: `v0.85`
+- Topic: Final removal of legacy `swarm` identity and directory path
+- Date: `2026-03-13`
+- Status: `Planning`
+- Owner: `Daniel Austin / Agent Logic`
+- Do this in `v0.85` as a dedicated cleanup/cutover workstream.
+- Treat it as an active-surface identity cutover, not a full historical-document rewrite.
+- Remove legacy runtime/tooling compatibility shims as part of the cutover.
 
-That split identity is survivable for current contributors but weakens external credibility. For investors, reviewers, and enterprise evaluators, it reads as an unfinished migration and raises questions about repository discipline, release hygiene, and operational polish.
+## How It Works
 
-This work is not optional if ADL wants a clean, investable presentation.
+### Metadata
 
-## Executive Summary
+- Milestone: `v0.85`
+- Topic: Final removal of legacy `swarm` identity and directory path
+- Date: `2026-03-13`
+- Status: `Planning`
+- Owner: `Daniel Austin / Agent Logic`
+
+### Executive Summary
 
 Recommendation:
 - Do this in `v0.85` as a dedicated cleanup/cutover workstream.
@@ -37,7 +52,7 @@ Recommended timing:
 - after `v0.8` release stabilization
 - before more `v0.85` work lands on top of the old path conventions
 
-## Current State Snapshot (2026-03-13)
+### Current State Snapshot (2026-03-13)
 
 Repository scan results from current `main`:
 - `129` files still contain `swarm` textual references
@@ -63,7 +78,7 @@ Interpretation:
 - the real risk is operational coupling: scripts, CI, tests, path-sensitive commands, and contributor workflow
 - historical milestone docs materially inflate raw grep counts
 
-## What Has Already Been Done
+### What Has Already Been Done
 
 The repo is not at the start of this migration.
 
@@ -83,41 +98,7 @@ Still incomplete:
 - docs and examples still point to `adl/...` paths extensively
 - guardrails still explicitly allow legacy references for compatibility
 
-## Recommended Scope
-
-### In Scope
-
-- Rename top-level runtime directory from `adl/` to `adl/`
-- Update all active path references:
-  - GitHub Actions
-  - shell tooling
-  - README / CONTRIBUTING / onboarding
-  - current demo docs
-  - examples and example docs
-  - tests and fixtures
-  - schema and artifact references
-- Remove compatibility-only runtime shims:
-  - `src/bin/swarm.rs`
-  - `src/bin/swarm_remote.rs`
-- Remove compatibility-only env-var fallback where safe:
-  - `SWARM_OLLAMA_BIN`
-  - `SWARM_TIMEOUT_SECS`
-  - `SWARM_ALLOW_UNSIGNED`
-  - remote signing/bearer-token fallbacks still kept only if explicitly justified
-- Replace the legacy-name guardrail with an active-surface zero-tolerance guardrail
-- Add a migration note that clearly states:
-  - old path -> new path
-  - old command -> new command
-  - old env var -> new env var
-
-### Out Of Scope
-
-- broad editorial rewrite of all historical milestone docs purely for naming consistency
-- rewriting old release artifacts that are intentionally historical
-- large architecture redesign bundled together with the rename
-- any attempt to preserve indefinite dual-path support
-
-## Decision Lock
+### Decision Lock
 
 The following decisions are recommended for acceptance:
 
@@ -126,9 +107,8 @@ The following decisions are recommended for acceptance:
 - **Historical docs policy:** preserve historical milestone docs unless they are directly surfaced to external reviewers and are misleading
 - **Execution model:** one focused cutover branch/PR series, not an opportunistic drip of unrelated edits
 
-## Effort Estimate
-
 ### Recommended Option A
+
 Active surfaces only:
 - runtime directory rename
 - code/tooling/CI/tests/docs/examples cleanup
@@ -142,6 +122,7 @@ Expected calendar:
 - one engineer: `4-6 working days` including validation and review handling
 
 ### Option B
+
 Option A plus rewrite of historical milestone docs and older demo documentation:
 
 Estimated LOE:
@@ -150,7 +131,7 @@ Estimated LOE:
 Expected calendar:
 - one engineer: `1.5 to 2 weeks`
 
-## Why Option A Is Recommended
+### Why Option A Is Recommended
 
 Option A delivers the investment-facing benefit:
 - externally visible identity becomes coherent
@@ -158,8 +139,6 @@ Option A delivers the investment-facing benefit:
 - contributor workflow becomes consistent
 
 Option B creates a lot of editorial churn with limited business return. It should only be done if historical docs are being actively shown to external reviewers or if the repo is being positioned as a polished archival knowledge base.
-
-## Highest-Risk Areas
 
 ### 1. Contributor Tooling
 
@@ -191,15 +170,7 @@ Risk:
 - expected failures after compatibility removal
 - confusion over which tests should be deleted versus renamed
 
-### 4. Active Docs And Demo Commands
-
-README, onboarding, contributor docs, and demo docs still expose many `adl/...` commands.
-
-Risk:
-- external reviewers hitting dead commands
-- polished codebase undermined by obviously stale documentation
-
-## Evidence-Backed Hotspots
+### Evidence-Backed Hotspots
 
 Files most likely to dominate the cutover:
 - `adl/tools/pr.sh`
@@ -214,8 +185,6 @@ Files most likely to dominate the cutover:
 - `adl/tests/cli_smoke.rs`
 
 These should be treated as explicit review checkpoints, not incidental cleanup.
-
-## Proposed Execution Plan
 
 ### Phase 0: Decision And Freeze (0.5 day)
 
@@ -255,15 +224,6 @@ Deliverable:
 Deliverable:
 - no active runtime path still depends on `swarm` compatibility
 
-### Phase 4: Docs And Demo Surface Cleanup (0.5-1 day)
-
-- update active root docs and onboarding docs
-- update current demo/review entry points
-- update active example docs and commands
-
-Deliverable:
-- external reviewer can follow current commands without translation
-
 ### Phase 5: Guardrails And Validation (0.5-1 day)
 
 - tighten grep guardrail
@@ -277,7 +237,7 @@ Deliverable:
 Deliverable:
 - cutover is locked in and hard to regress
 
-## Validation Checklist
+### Validation Checklist
 
 - [ ] `adl/` exists and `adl/` no longer exists as an active top-level runtime directory
 - [ ] active scripts no longer require `adl/tools/...`
@@ -289,7 +249,7 @@ Deliverable:
 - [ ] guardrail fails on new active-surface `swarm` references
 - [ ] historical references, if any, are intentionally preserved and documented
 
-## Risk Register
+### Risk Register
 
 | Risk | Impact | Likelihood | Mitigation |
 |---|---|---|---|
@@ -300,7 +260,7 @@ Deliverable:
 | Historical docs create review noise | Medium | High | Freeze historical docs unless externally surfaced |
 | Rename PR becomes too broad and hard to review | High | Medium | Keep scope disciplined; avoid bundling unrelated cleanup |
 
-## Commercial Framing
+### Commercial Framing
 
 This work is operationally painful but strategically correct.
 
@@ -318,7 +278,7 @@ Conclusion:
 - the commercial upside justifies the cleanup
 - the right way to do it is a focused, active-surface cutover rather than another compatibility extension
 
-## Recommendation
+### Recommendation
 
 Proceed with `Option A` in `v0.85` as a dedicated cutover.
 
@@ -334,3 +294,76 @@ The right target state is simple:
 - `adl/` is the runtime directory
 - `adl` is the only active runtime identity
 - `swarm` survives only in clearly historical documentation, if at all
+
+## Example / Demo
+
+README, onboarding, contributor docs, and demo docs still expose many `adl/...` commands.
+
+Risk:
+- external reviewers hitting dead commands
+- polished codebase undermined by obviously stale documentation
+
+- update active root docs and onboarding docs
+- update current demo/review entry points
+- update active example docs and commands
+
+Deliverable:
+- external reviewer can follow current commands without translation
+
+## Why It Matters
+
+ADL has already renamed the package and primary binaries, but the repository still presents a split identity:
+- canonical runtime/package identity is largely `adl`
+- top-level runtime directory is still `adl/`
+- CI, tooling, docs, examples, tests, and compatibility shims still expose legacy `swarm` naming
+
+That split identity is survivable for current contributors but weakens external credibility. For investors, reviewers, and enterprise evaluators, it reads as an unfinished migration and raises questions about repository discipline, release hygiene, and operational polish.
+
+This work is not optional if ADL wants a clean, investable presentation.
+
+## Current Status
+
+- Milestone: v0.85
+- Status: Draft
+- Notes: No additional status notes recorded.
+
+## Related Documents
+
+- README.md
+- CONTRIBUTING.md
+- docs/onboarding.md
+
+## Future Work
+
+- Rename top-level runtime directory from `adl/` to `adl/`
+- Update all active path references:
+  - GitHub Actions
+  - shell tooling
+  - README / CONTRIBUTING / onboarding
+  - current demo docs
+  - examples and example docs
+  - tests and fixtures
+  - schema and artifact references
+- Remove compatibility-only runtime shims:
+  - `src/bin/swarm.rs`
+  - `src/bin/swarm_remote.rs`
+- Remove compatibility-only env-var fallback where safe:
+  - `SWARM_OLLAMA_BIN`
+  - `SWARM_TIMEOUT_SECS`
+  - `SWARM_ALLOW_UNSIGNED`
+  - remote signing/bearer-token fallbacks still kept only if explicitly justified
+- Replace the legacy-name guardrail with an active-surface zero-tolerance guardrail
+- Add a migration note that clearly states:
+  - old path -> new path
+  - old command -> new command
+  - old env var -> new env var
+
+- broad editorial rewrite of all historical milestone docs purely for naming consistency
+- rewriting old release artifacts that are intentionally historical
+- large architecture redesign bundled together with the rename
+- any attempt to preserve indefinite dual-path support
+
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.

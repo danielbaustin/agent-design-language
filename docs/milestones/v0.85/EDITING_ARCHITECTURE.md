@@ -26,20 +26,7 @@ For clarity:
 - later control-plane hardening and richer integrations should support those
   editors, not displace the requirement to ship them
 
-## Command Status For v0.85
-
-This document follows the canonical command-status model in the editing
-five-command execution plan.
-
-| Command | Current state | Repo truth | Notes |
-| --- | --- | --- | --- |
-| `pr init` | missing | no live command in `adl/tools/pr.sh` | planned work, not current behavior |
-| `pr create` | partial / renamed | `pr new` exists, but it is only a rough precursor | do not describe `pr new` as a finished substitute |
-| `pr start` | implemented | active backbone command today | real and mature enough to anchor the current control plane |
-| `pr run` | missing | no live command in `adl/tools/pr.sh` | execution still happens through narrower paths |
-| `pr finish` | implemented | active mature workflow command today | real, but still subject to reliability/polish work |
-
-## Core Insight
+## Overview
 
 `pr.sh` is no longer just a helper script for branches and worktrees. It is already functioning as the nucleus of the editing system.
 
@@ -50,12 +37,51 @@ Today it effectively manages:
 - implementation execution handoff
 - PR lifecycle completion
 
+The long-term goal is to evolve this into a structured, validated, file-backed control plane. The immediate v0.85 goal is to ship usable editor surfaces while beginning that control-plane evolution without destabilizing the milestone.
+
+A key emerging insight is that `pr start` is likely to become the operational backbone of the editing system. Even if the longer-term lifecycle grows to include additional commands such as `init`, `create`, `run`, and `finish`, `pr start` is the first command that binds an authored task to a concrete execution context. That makes it the natural spine of the near-term control plane.
+
+## Command Status For v0.85
+
+This document follows the canonical command-status model in the editing five-command execution plan.
+
+| Command | Current state | Repo truth | Notes |
+| --- | --- | --- | --- |
+| `pr init` | missing | no live command in `adl/tools/pr.sh` | planned work, not current behavior |
+| `pr create` | partial / renamed | `pr new` exists, but it is only a rough precursor | do not describe `pr new` as a finished substitute |
+| `pr start` | implemented | active backbone command today | real and mature enough to anchor the current control plane |
+| `pr run` | missing | no live command in `adl/tools/pr.sh` | execution still happens through narrower paths |
+| `pr finish` | implemented | active mature workflow command today | real, but still subject to reliability/polish work |
+
+## Key Capabilities
+
+- authoring issues and prompts
+- validating structured artifacts
+- executing workflow commands
+- integrating with GitHub
+- managing card history and lifecycle
+- supporting future editors and UI surfaces
+- working cleanly with Gödel and the Adaptive Execution Engine (AEE)
+- recovering safely from mistakes
+
+## How It Works
+
+### Core Insight
+
+`pr.sh` is no longer just a helper script for branches and worktrees. It is already functioning as the nucleus of the editing system.
+
+Today it effectively manages:
+- issue creation workflows
+- worktree and branch setup
+- input/output card setup
+- implementation execution handoff
+- PR lifecycle completion
 
 The long-term goal is to evolve this into a structured, validated, file-backed control plane. The immediate v0.85 goal is to ship usable editor surfaces while beginning that control-plane evolution without destabilizing the milestone.
 
 A key emerging insight is that `pr start` is likely to become the operational backbone of the editing system. Even if the longer-term lifecycle grows to include additional commands such as `init`, `create`, `run`, and `finish`, `pr start` is the first command that binds an authored task to a concrete execution context. That makes it the natural spine of the near-term control plane.
 
-## Current Problem
+### Current Problem
 
 The current editing workflow is fragile in several ways:
 - artifact structure is only partially enforced
@@ -68,7 +94,7 @@ The current editing workflow is fragile in several ways:
 
 In practice, the workflow already wants stronger contracts.
 
-## Architectural Thesis
+### Architectural Thesis
 
 ADL should have a three-layer editing system:
 
@@ -90,7 +116,6 @@ These contracts define:
 ### Layer 2 - Workflow Control Plane
 
 A command layer that orchestrates the artifact lifecycle and enforces validation at every pass.
-
 
 This is currently centered on `pr.sh`, but should evolve into a proper programmatic subsystem.
 
@@ -117,7 +142,7 @@ This includes:
 
 These surfaces should sit on top of the artifact contracts and workflow control plane, not bypass them.
 
-## Proposed Workflow Model
+### Proposed Workflow Model
 
 The intended file-backed target-state workflow is:
 
@@ -140,7 +165,7 @@ This means the major artifacts become:
 - structured implementation prompt = implementation-layer artifact
 - structured output record = execution-record artifact
 
-## Draft Workspace vs Public Record
+### Draft Workspace vs Public Record
 
 ADL should distinguish between:
 
@@ -155,7 +180,7 @@ ADL should distinguish between:
 
 The important rule is that `.adl/` remains useful, but it is not the durable source of truth. Future editing tools should be able to draft locally while promoting stable artifacts into tracked task bundles before those artifacts become authoritative workflow state.
 
-## Closed-Loop Goal
+### Closed-Loop Goal
 
 The workflow should close the loop without requiring direct manual `gh` usage in normal operation.
 
@@ -169,12 +194,11 @@ The intended command path is:
 
 This only becomes a reliable closed loop if validation is enforced at every transition.
 
-
 Operationally, `pr start` and `pr finish` are the active mature workflow commands today. `pr create` is the desired next control-plane command and should be treated as part of the target-state architecture even where today’s implementation is still incomplete. `pr new` should be understood as the current rough precursor to `pr create`, not as a finished substitute for the target lifecycle command.
 
 The architecture should therefore treat `pr start` as the anchor command for the current system, while `pr create`, execution orchestration, and finish/repair behavior become increasingly formalized around it. This is one reason the longer-term control plane should move into Rust: the backbone command should not remain trapped in brittle bash if it is going to carry more general lifecycle responsibility.
 
-## Why the Editing System Must Be File-Backed
+### Why the Editing System Must Be File-Backed
 
 The architecture should prefer file-backed artifacts over ad hoc inline text.
 
@@ -198,7 +222,7 @@ Near-term canonical homes should look like:
 
 This keeps milestone narrative docs clean while preserving public, reviewable prompt history in a domain-neutral task-bundle form.
 
-## Immediate v0.85 Architectural Direction
+### Immediate v0.85 Architectural Direction
 
 The concrete v0.85 commitment is:
 
@@ -260,7 +284,7 @@ The key sequencing rule is:
 - then continue hardening the control plane underneath them
 - do not defer the editors until after a large control-plane rewrite
 
-## Long-Term Direction: Rust Core
+### Long-Term Direction: Rust Core
 
 The long-term goal is to move the core editing/control-plane logic into Rust.
 
@@ -287,7 +311,7 @@ The Rust core should eventually own:
 - generalized task/execution binding beyond software-repository workflows
 - workflow portability beyond software-development-specific assumptions
 
-## Relationship to UI and Editors
+### Relationship to UI and Editors
 
 The concrete first editor implementation for ADL is simple HTML-based authoring
 tools tracked in the repo.
@@ -323,7 +347,7 @@ In practical v0.85 terms, this means shipping real HTML pages for the first
 editor surfaces, then letting later Zed or other integrations consume the same
 artifact and control-plane model.
 
-## Relationship to Gödel and AEE
+### Relationship to Gödel and AEE
 
 This editing system must be compatible with later cognitive/runtime layers.
 
@@ -337,8 +361,6 @@ If the editing/control plane remains informal, later reasoning systems will have
 So the editing architecture is not separate from Gödel/AEE; it is enabling infrastructure for them.
 
 That is another reason to de-software-development-ify the architecture early. If ADL is meant to become a general-purpose task/execution system, its editing/control plane should describe authored tasks, implementation prompts, execution records, validation, and recovery in general terms rather than baking in assumptions that only make sense for source-code workflows.
-
-## Core Artifact Types
 
 ### Structured Task Prompt
 
@@ -364,7 +386,7 @@ Formal role:
 
 These artifacts should be schema-backed and versioned.
 
-## Source of Truth Model
+### Source of Truth Model
 
 The editing system must make ownership explicit so artifacts do not drift.
 
@@ -379,7 +401,7 @@ Canonical ownership should be:
 
 UI surfaces may refer to these artifacts informally as “cards” where that helps usability, but tracked/tooling terminology should remain stable.
 
-## Source of Truth and Precedence
+### Source of Truth and Precedence
 
 ADL distinguishes **intent** from **state** for issue-graph management.
 
@@ -398,9 +420,8 @@ This yields a transaction model:
 - prompt = proposed transaction
 - manifest = committed state
 
-## Proposed Validation Points
-
 ### `pr create`
+
 Validate:
 - validates that the structured task prompt is locally complete and can be rendered into a GitHub issue (schema, required sections, normalized enums, labels, title/body)
 - validates that the authoritative structured task prompt has been promoted into the tracked public record location before issue creation/reconciliation
@@ -408,6 +429,7 @@ Validate:
 - template/version mismatch where applicable
 
 ### `pr start`
+
 Validate:
 - input card structure
 - required execution metadata
@@ -424,6 +446,7 @@ Validate:
 - template/version mismatch where applicable
 
 ### `pr finish`
+
 Validate:
 - output card structure
 - changed-files summary
@@ -433,21 +456,6 @@ Validate:
 - stale worktree/card mismatch
 - template/version mismatch where applicable
 - graph/artifact mismatch before completion
-
-## Validation Scope Model
-
-Schema validation should explicitly separate machine-readable structure from high-value prose.
-
-In the near term, validation should strongly enforce:
-- machine-readable headers and metadata
-- required section presence
-- normalized enums and vocabulary where defined
-- required links and references
-- version/template compatibility where applicable
-
-Validation should avoid overconstraining high-value prose too early. The goal is to make the workflow reliable without freezing the writing model before the vocabulary and artifact shapes have fully stabilized.
-
-## Immediate New Issues Recommended
 
 ### Issue 1
 
@@ -472,7 +480,7 @@ Modify `pr.sh` so every pass runs validation:
 
 This issue should make validation a required part of the workflow, not an optional human habit.
 
-## Additional Near-Term Work
+### Additional Near-Term Work
 
 A third likely follow-on issue is artifact normalization or migration.
 
@@ -486,35 +494,43 @@ This can follow the first two issues.
 
 Schema adoption will require migration and normalization tooling. Older artifacts may remain valid under legacy versions for some period, and normalization should be incremental rather than blocking. The system should prefer explicit versioning and bounded migration paths over forcing a single disruptive conversion.
 
-## Design Principles
+### Design Principles
 
 The editing architecture should follow these principles:
 
 ### 1. File-backed first
+
 Artifacts should exist as files before they become runtime actions.
 
 ### 1a. Draft locally, promote before authority
+
 Drafting in `.adl/` is acceptable and expected. Official lifecycle transitions should promote authoritative artifacts into tracked public records before they become canonical state.
 
 ### 2. Validation before transition
+
 No major workflow transition should happen without validation.
 
 ### 3. Deterministic artifact lifecycle
+
 The same input artifacts should drive the same workflow transitions.
 
 ### 4. Stable repo-local proof surfaces
+
 Validation must rely on repo-local commands, tests, fixtures, or artifacts wherever possible.
 
 ### 5. Narrow interfaces
+
 Editors, validators, command execution, and GitHub integration should not bleed into one another unnecessarily.
 
 ### 6. Incremental migration
+
 Do not attempt to solve the entire editing system in one milestone leap.
 
 ### 7. Domain portability
+
 The control plane should be framed in general task/execution terms and should avoid unnecessary coupling to software-development-specific assumptions, even when the first implementations are repo- and PR-oriented.
 
-## Near-Term Implementation Slice
+### Near-Term Implementation Slice
 
 A strong first landing zone for this architecture is:
 - define minimal schemas for structured task prompt, structured implementation prompt, and structured output record headers
@@ -523,8 +539,6 @@ A strong first landing zone for this architecture is:
 - prepare `pr create` to use the same validation path once that command is promoted into the active workflow
 
 This slice is intentionally narrow. It is enough to reduce real workflow failures without requiring the full long-term editing system to exist immediately.
-
-## Proposed Build Plan
 
 ### Phase 1 - v0.85 foundation
 
@@ -568,7 +582,7 @@ Build on top:
 
 These editors should treat `.adl/` as working state and tracked task-bundle directories as the publication/canonical layer.
 
-## What Success Looks Like
+### What Success Looks Like
 
 A successful ADL editing system should allow a user to:
 - author an issue prompt in a structured editor
@@ -592,7 +606,7 @@ And it should do this using artifacts that are:
 - reviewable
 - compatible with later cognitive/runtime systems
 
-## Conclusion
+### Conclusion
 
 The current `pr.sh` workflow is not a dead end; it is the seed of the editing system.
 
@@ -606,3 +620,51 @@ The correct path is:
 - put simple editors and GPT tooling on top of that core
 
 This will give ADL a reasonable editing system that supports current milestone work while laying the foundation for a much more reliable authoring, review, and execution architecture that can grow beyond software development.
+
+## Example / Demo
+
+- Demo, script, command, or proof surface: no dedicated standalone demo is named in this doc; use this document and its related references as the current proof surface.
+- What the reader should expect: this doc currently serves as the primary explanation of the feature and its intended behavior.
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.85
+- Status: Draft
+- Notes: This document follows the canonical command-status model in the editing
+five-command execution plan.
+
+| Command | Current state | Repo truth | Notes |
+| --- | --- | --- | --- |
+| `pr init` | missing | no live command in `adl/tools/pr.sh` | planned work, not current behavior |
+| `pr create` | partial / renamed | `pr new` exists, but it is only a rough precursor | do not describe `pr new` as a finished substitute |
+| `pr start` | implemented | active backbone command today | real and mature enough to anchor the current control plane |
+| `pr run` | missing | no live command in `adl/tools/pr.sh` | execution still happens through narrower paths |
+| `pr finish` | implemented | active mature workflow command today | real, but still subject to reliability/polish work |
+
+## Related Documents
+
+- docs/records/<scope>/tasks/<task-id>/stp.md
+- docs/records/<scope>/tasks/<task-id>/sip.md
+- docs/records/<scope>/tasks/<task-id>/sor.md
+
+## Future Work
+
+Schema validation should explicitly separate machine-readable structure from high-value prose.
+
+In the near term, validation should strongly enforce:
+- machine-readable headers and metadata
+- required section presence
+- normalized enums and vocabulary where defined
+- required links and references
+- version/template compatibility where applicable
+
+Validation should avoid overconstraining high-value prose too early. The goal is to make the workflow reliable without freezing the writing model before the vocabulary and artifact shapes have fully stabilized.
+
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.

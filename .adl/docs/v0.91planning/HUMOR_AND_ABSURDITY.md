@@ -1,13 +1,4 @@
-
-
-
 # Humor_AND_ABSURDITY.md
-
-## Status
-
-Draft — v0.86 planning (Roadmap Candidate)
-
----
 
 ## Purpose
 
@@ -17,7 +8,7 @@ This document elevates the concept (previously scattered across AEE and Arbitrat
 
 ---
 
-## Core Thesis
+## Overview
 
 A capable cognitive system must be able to:
 
@@ -29,31 +20,27 @@ In ADL, this must be implemented as a **bounded, inspectable reframing capabilit
 
 ---
 
-## Why This Matters
+## Key Capabilities
 
-Without this capability, systems will:
+- expected structure ≠ observed outcomes
+- repeated failure without new information
+- oscillating or contradictory evaluation signals
+- mutually incompatible constraints
+- persistent disagreement across agents
 
-- loop indefinitely on invalid assumptions
-- escalate cost without improving outcomes
-- fail under contradiction or uncertainty
-- misinterpret failure as insufficient effort rather than incorrect framing
+## How It Works
 
-With this capability, systems can:
+### Core Thesis
 
-- detect mis-specified problems
-- reinterpret tasks at higher levels
-- recover from contradiction
-- maintain coherence under uncertainty
+A capable cognitive system must be able to:
 
-This is required for:
+> detect that its current model of the situation is wrong, incomplete, or inconsistent — and continue operating without collapse.
 
-- robust autonomy
-- higher-order problem solving
-- meaningful convergence behavior (AEE)
+In humans, this is often experienced as **humor**.
+
+In ADL, this must be implemented as a **bounded, inspectable reframing capability**.
 
 ---
-
-## Conceptual Model
 
 ### Absurdity Detection
 
@@ -93,7 +80,7 @@ Constraint:
 
 ---
 
-## Relationship to Humor (Non-Anthropomorphic)
+### Relationship to Humor (Non-Anthropomorphic)
 
 Human humor can be modeled as:
 
@@ -113,7 +100,7 @@ It is an **emergent interpretation** of a deeper mechanism:
 
 ---
 
-## Architectural Placement
+### Architectural Placement
 
 This capability spans multiple components:
 
@@ -135,8 +122,6 @@ This capability spans multiple components:
   - places reframing between evaluation and memory
 
 ---
-
-## Required Primitives
 
 ### 1. Frame Adequacy
 
@@ -174,21 +159,61 @@ justification
 
 ---
 
-## Minimal v0.86 Implementation
+### 1. No Reframing
 
-A bounded implementation must demonstrate:
+- infinite loops
+- wasted compute
+- brittle behavior
 
-1. detection of non-progress or contradiction
-2. computation or approximation of `frame_adequacy_score`
-3. triggering of `reframing_trigger`
-4. execution under a revised frame
-5. artifact output showing the transition
+### 2. Unbounded Reframing
 
-This can be implemented in a constrained domain.
+- loss of task coherence
+- arbitrary reinterpretation
+- non-deterministic behavior
+
+### 3. Hidden Reframing
+
+- loss of inspectability
+- inability to debug or trust system
 
 ---
 
-## Example Scenario (Abstract)
+### Design Constraints
+
+- reframing must be **bounded**
+- reframing must be **observable**
+- reframing must be **justified**
+- reframing must be **linked to evidence** (evaluation signals)
+
+---
+
+### Roadmap Placement
+
+This capability is required for:
+
+- v0.86 (minimal demonstration)
+- v0.9 (refined integration with affect and arbitration)
+- v1.0 (generalized cognitive flexibility)
+
+This is not optional for advanced agents.
+
+---
+
+### Summary
+
+Absurdity detection and reframing provide the system with the ability to:
+
+- recognize when it is solving the wrong problem
+- recover without failure
+- maintain coherence under contradiction
+
+This is a foundational capability for any system approaching:
+
+- robust autonomy
+- higher-order reasoning
+- sentient-like behavior
+
+## Example / Demo
 
 Initial task:
 
@@ -209,58 +234,57 @@ System response:
 
 ---
 
-## Failure Modes
+## Why It Matters
 
-### 1. No Reframing
+Without this capability, systems will:
 
-- infinite loops
-- wasted compute
-- brittle behavior
+- loop indefinitely on invalid assumptions
+- escalate cost without improving outcomes
+- fail under contradiction or uncertainty
+- misinterpret failure as insufficient effort rather than incorrect framing
 
-### 2. Unbounded Reframing
+With this capability, systems can:
 
-- loss of task coherence
-- arbitrary reinterpretation
-- non-deterministic behavior
+- detect mis-specified problems
+- reinterpret tasks at higher levels
+- recover from contradiction
+- maintain coherence under uncertainty
 
-### 3. Hidden Reframing
-
-- loss of inspectability
-- inability to debug or trust system
-
----
-
-## Design Constraints
-
-- reframing must be **bounded**
-- reframing must be **observable**
-- reframing must be **justified**
-- reframing must be **linked to evidence** (evaluation signals)
-
----
-
-## Roadmap Placement
-
-This capability is required for:
-
-- v0.86 (minimal demonstration)
-- v0.9 (refined integration with affect and arbitration)
-- v1.0 (generalized cognitive flexibility)
-
-This is not optional for advanced agents.
-
----
-
-## Summary
-
-Absurdity detection and reframing provide the system with the ability to:
-
-- recognize when it is solving the wrong problem
-- recover without failure
-- maintain coherence under contradiction
-
-This is a foundational capability for any system approaching:
+This is required for:
 
 - robust autonomy
-- higher-order reasoning
-- sentient-like behavior
+- higher-order problem solving
+- meaningful convergence behavior (AEE)
+
+---
+
+## Current Status
+
+- Milestone: v0.91
+- Status: Draft
+- Notes: Draft — v0.86 planning (Roadmap Candidate)
+
+---
+
+## Related Documents
+
+- N/A - no explicit related docs were named in the original document.
+
+## Future Work
+
+A bounded implementation must demonstrate:
+
+1. detection of non-progress or contradiction
+2. computation or approximation of `frame_adequacy_score`
+3. triggering of `reframing_trigger`
+4. execution under a revised frame
+5. artifact output showing the transition
+
+This can be implemented in a constrained domain.
+
+---
+
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.

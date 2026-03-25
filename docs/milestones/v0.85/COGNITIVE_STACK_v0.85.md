@@ -1,9 +1,5 @@
 # Cognitive Stack — v0.85
 
-## Status
-
-Tracked authority for the v0.85 cognitive sub-stack.
-
 ## Purpose
 
 This document defines the authoritative cognitive stack for the tracked v0.85 milestone docs.
@@ -16,22 +12,7 @@ It exists to remove two sources of ambiguity:
 This document does not replace the broader architecture framing in `VISION_v0.85.md`.
 It defines the internal bounded-cognition sub-stack that sits inside that broader architecture.
 
-## Scope Note
-
-The v0.85 doc set now uses two valid but different views:
-
-1. a high-level architecture view
-   - execution
-   - workflow
-   - cognitive
-   - evaluation
-   - adaptive
-2. an internal cognitive sub-stack view
-   - the bounded internal layers that shape cognition, routing, memory, and action
-
-This document is the authority for the second view.
-
-## Canonical Cognitive Stack
+## Overview
 
 ```text
 1. Instinct
@@ -45,7 +26,32 @@ This document is the authority for the second view.
 
 The numbering above is stable for tracked v0.85 docs.
 
-## Layer Roles
+## Key Capabilities
+
+- fractional layer numbering such as "3.5"
+- confusion between the internal cognitive sub-stack and the higher-level milestone architecture view
+- Instinct
+- Bounded Affect
+- Cognitive Arbitration
+- Freedom Gate
+- Reasoning and Reframing
+- Memory (ObsMem)
+
+## How It Works
+
+### Canonical Cognitive Stack
+
+```text
+1. Instinct
+2. Bounded Affect
+3. Cognitive Arbitration
+4. Freedom Gate
+5. Reasoning and Reframing
+6. Memory (ObsMem)
+7. Adaptive Execution and Artifacts
+```
+
+The numbering above is stable for tracked v0.85 docs.
 
 ### 1. Instinct
 
@@ -127,7 +133,7 @@ It includes:
 - emitted artifacts
 - evaluation inputs for later routing and memory updates
 
-## Explicit Numbering Decisions
+### Explicit Numbering Decisions
 
 1. Cognitive arbitration is Layer 3.
    - It is not "Layer 3.5".
@@ -138,7 +144,7 @@ It includes:
 4. Evaluation is a loop function, not a separate numbered stack layer here.
    - In the canonical loop model, evaluation feeds bounded affect, arbitration, and memory.
 
-## Relationship To The Canonical Cognitive Loop
+### Relationship To The Canonical Cognitive Loop
 
 The canonical v0.85 loop is defined in `COGNITIVE_LOOP_MODEL_v0.85.md`.
 
@@ -156,7 +162,7 @@ This stack document complements that loop:
 
 The two views should agree, not compete.
 
-## Relationship To The Higher-Level Architecture View
+### Relationship To The Higher-Level Architecture View
 
 The five-layer architecture in `VISION_v0.85.md` is still valid.
 
@@ -169,7 +175,7 @@ That view describes the milestone at system scale:
 
 This cognitive-stack document describes the internal structure of the bounded cognition part of that system.
 
-## Design Rules
+### Design Rules
 
 1. No fractional layers
    - tracked v0.85 docs should not use numbering such as "3.5"
@@ -180,7 +186,40 @@ This cognitive-stack document describes the internal structure of the bounded co
 4. Compatibility with loop authority
    - the stack must remain compatible with `COGNITIVE_LOOP_MODEL_v0.85.md`
 
-## Scope Boundaries
+## Example / Demo
+
+- Demo, script, command, or proof surface: no dedicated standalone demo is named in this doc; use this document and its related references as the current proof surface.
+- What the reader should expect: this doc currently serves as the primary explanation of the feature and its intended behavior.
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.85
+- Status: Draft
+- Notes: Tracked authority for the v0.85 cognitive sub-stack.
+
+## Related Documents
+
+- VISION_v0.85.md
+- COGNITIVE_LOOP_MODEL_v0.85.md
+
+## Future Work
+
+The v0.85 doc set now uses two valid but different views:
+
+1. a high-level architecture view
+   - execution
+   - workflow
+   - cognitive
+   - evaluation
+   - adaptive
+2. an internal cognitive sub-stack view
+   - the bounded internal layers that shape cognition, routing, memory, and action
+
+This document is the authority for the second view.
 
 This issue does not:
 - implement the stack in runtime code
@@ -190,3 +229,8 @@ This issue does not:
 It does:
 - define stable numbered layers for tracked v0.85 docs
 - give later instinct, bounded-affect, arbitration, and AEE work a consistent reference point
+
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.

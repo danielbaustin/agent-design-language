@@ -1,5 +1,3 @@
-
-
 # Signed Trace Architecture
 
 ## Purpose
@@ -25,7 +23,7 @@ This document defines that missing layer.
 
 ---
 
-## Problem Statement
+## Overview
 
 Today, each ADL run is represented by:
 - `stp.md` — design intent
@@ -53,7 +51,48 @@ This is now a visible architecture gap.
 
 ---
 
-## Core Principle
+## Key Capabilities
+
+- Structured Task Prompts (STP)
+- Structured Implementation Prompts (SIP)
+- Structured Output Records (SOR)
+- stronger execution-record rigor
+- bounded replay language in output cards
+- Trace Query Language (TQL) planning
+- design intent artifacts
+- execution intent artifacts
+
+## How It Works
+
+### Problem Statement
+
+Today, each ADL run is represented by:
+- `stp.md` — design intent
+- `sip.md` — execution intent
+- `sor.md` — execution summary / review record
+
+What is still missing is the **trace substrate**:
+- the ordered record of what the run actually did
+- the emitted event history of control-plane transitions, validations, and artifact production
+- the substrate that later signed replay and TQL should query
+
+The SOR is useful, but it is not the trace.
+
+That distinction matters.
+
+Without a first-class trace artifact, ADL cannot cleanly answer:
+- what commands actually ran, in what order
+- what control-plane events occurred
+- which emitted artifacts were produced at which phase
+- which events are replayable vs merely observable
+- which parts of a run can be revalidated later
+- what exactly would be signed in a signed-trace model
+
+This is now a visible architecture gap.
+
+---
+
+### Core Principle
 
 **The SOR is the review record; the trace is the execution substrate. Replay is a bounded property of trace events, not a claim that the world is reversible.**
 
@@ -68,7 +107,7 @@ It should promise:
 
 ---
 
-## Why This Was Not Fully Caught Earlier
+### Why This Was Not Fully Caught Earlier
 
 The missing trace layer was partially obscured because adjacent work landed first:
 - deterministic workflow structure
@@ -95,8 +134,6 @@ Only after those layers became real did the missing trace substrate become obvio
 That is where the system is now.
 
 ---
-
-## Design Goals
 
 ### 1. Make every run explicitly traceable
 
@@ -159,7 +196,7 @@ without redesigning the entire run model.
 
 ---
 
-## Architectural Model
+### Architectural Model
 
 For each run, ADL should produce four primary artifact layers:
 
@@ -177,7 +214,7 @@ This yields the correct separation of concerns:
 
 ---
 
-## Proposed Task-Bundle Layout
+### Proposed Task-Bundle Layout
 
 Minimum target layout:
 
@@ -207,7 +244,7 @@ A single-record JSON document is less suitable because runs are naturally event 
 
 ---
 
-## Run Identity
+### Run Identity
 
 Each trace must be tied to a concrete run identity.
 
@@ -228,7 +265,7 @@ This aligns with the broader rule:
 
 ---
 
-## Trace Event Model
+### Trace Event Model
 
 Each line in `trace.jsonl` should be a structured event.
 
@@ -255,36 +292,7 @@ Recommended optional fields:
 - `notes`
 - `parent_event_sequence`
 
-### Example event shape
-
-```json
-{
-  "trace_version": "adl.trace.v1",
-  "task_id": "issue-0876",
-  "run_id": "issue-0876",
-  "sequence": 12,
-  "timestamp": "2026-03-20T18:12:11Z",
-  "phase": "validation",
-  "event_type": "command_executed",
-  "actor": "execution_agent",
-  "status": "passed",
-  "tool": "shell",
-  "command": "cargo test graph_affect::tests::ranking_changes",
-  "artifact_refs": [
-    ".adl/v0.85/tasks/issue-0876__v085-wp16-reasoning-graph-affect/sor.md"
-  ],
-  "replay_class": "replayable",
-  "details": {
-    "purpose": "Prove affect changes graph ranking via before/after fixture"
-  }
-}
-```
-
-The example above is illustrative; the architecture does not require this exact event set, but it does require event structure of this kind.
-
----
-
-## Event Types
+### Event Types
 
 The first version should keep event types small and practical.
 
@@ -306,7 +314,7 @@ This is enough to make traces useful without overbuilding a complete process ont
 
 ---
 
-## Phases
+### Phases
 
 Recommended phase vocabulary:
 - `init`
@@ -321,7 +329,7 @@ Not every run must emit every phase. The important property is that phase names 
 
 ---
 
-## Replay Classification
+### Replay Classification
 
 Every trace event should carry a replay classification.
 
@@ -361,7 +369,7 @@ This classification allows ADL to be both honest and useful.
 
 ---
 
-## Replay Manifest
+### Replay Manifest
 
 Each run should emit a `replay_manifest.json` alongside the trace.
 
@@ -377,17 +385,7 @@ Minimum fields:
 - `recheck_commands`
 - `notes`
 
-### Replay scope values
-- `full`
-- `partial`
-- `recheck_only`
-- `none`
-
-For early ADL runs, `partial` or `recheck_only` will be the normal truthful value.
-
----
-
-## SOR Integration
+### SOR Integration
 
 The SOR should stop implying that it is the trace.
 
@@ -407,7 +405,7 @@ This makes the layers clear:
 
 ---
 
-## Control-Plane Integration
+### Control-Plane Integration
 
 The control plane should emit trace events automatically.
 
@@ -434,7 +432,7 @@ This must be automatic. The trace cannot depend on manual narrative reconstructi
 
 ---
 
-## Determinism and Ordering
+### Determinism and Ordering
 
 The trace format itself must be deterministic enough to be useful.
 
@@ -449,24 +447,28 @@ This is especially important because ADL already has strong path-hygiene require
 
 ---
 
-## Signing Strategy
+### Signing Strategy
 
 Signed traces should be introduced in phases.
 
 ### Phase 1 — explicit trace artifact
+
 - emit `trace.jsonl`
 - emit `replay_manifest.json`
 - no signatures yet
 
 ### Phase 2 — digest / hashing
+
 - compute per-trace or per-event digests
 - add `trace_hashes.json` or digest fields
 
 ### Phase 3 — signed trace bundle
+
 - sign the trace bundle or manifest
 - emit `trace.signature.json`
 
 ### Phase 4 — verification tooling
+
 - add verification commands
 - integrate signature checks into review / policy surfaces
 
@@ -474,7 +476,7 @@ This sequencing avoids premature complexity while keeping the architecture hones
 
 ---
 
-## What Should Be Signed Later
+### What Should Be Signed Later
 
 The most practical later target is to sign the **trace manifest + digests**, not arbitrary raw tool output.
 
@@ -490,7 +492,7 @@ This is more stable than trying to sign every raw event as an isolated act in th
 
 ---
 
-## Relationship to Git
+### Relationship to Git
 
 Git remains the canonical mechanism for code state transition and rollback.
 
@@ -508,7 +510,7 @@ Git can often restore file state. It does not by itself explain what happened du
 
 ---
 
-## Relationship to TQL
+### Relationship to TQL
 
 TQL becomes much more powerful once trace artifacts exist.
 
@@ -528,7 +530,7 @@ This is why signed trace architecture and TQL planning belong to the same larger
 
 ---
 
-## Security and Privacy Requirements
+### Security and Privacy Requirements
 
 Trace artifacts must obey the same hygiene rules as other ADL artifacts.
 
@@ -545,38 +547,7 @@ This is a trace substrate, not a surveillance log.
 
 ---
 
-## Non-Goals
-
-This architecture explicitly does **not** require in its first slice:
-- total replay of arbitrary real-world actions
-- full distributed tracing infrastructure
-- signing of every event immediately
-- natural-language querying over arbitrary trace prose
-- replacement of Git as the state substrate
-- a full database layer before repo-local artifacts are proven useful
-
-The goal is a strong first trace substrate, not a complete observability platform.
-
----
-
-## Example Lifecycle
-
-A realistic early lifecycle for one ADL run:
-
-1. `pr run` begins  
-2. trace emits `run_started`  
-3. validation command emits `validator_executed`  
-4. runtime logic emits `artifact_emitted`  
-5. demo step emits `demo_executed`  
-6. `pr finish` emits `run_finished`  
-7. `sor.md` records the summary  
-8. `replay_manifest.json` classifies replayability  
-
-This is enough to turn the run into a real auditable substrate.
-
----
-
-## Minimum v0 Implementation Slice
+### Minimum v0 Implementation Slice
 
 The minimum credible first implementation should do the following:
 
@@ -592,7 +563,7 @@ This is sufficient to make the trace promise real without destabilizing the rest
 
 ---
 
-## Roadmap Position
+### Roadmap Position
 
 This work is correctly placed **after** the current v0.85 milestone band.
 
@@ -612,31 +583,36 @@ So this is not a v0.85 omission in execution. It is a v0.86+ architecture layer 
 
 ---
 
-## Recommended New Issues
+### Recommended New Issues
 
 This document naturally decomposes into a small bounded issue train.
 
 ### Issue A — Explicit per-run trace artifact
+
 - emit `trace.jsonl`
 - normalized event schema
 - repo-relative pathing
 - control-plane integration at `pr run` / `pr finish`
 
 ### Issue B — Replay manifest
+
 - emit `replay_manifest.json`
 - classify events by replayability
 - add replay scope to SOR metadata
 
 ### Issue C — Trace/SOR integration
+
 - SOR references trace presence and replay manifest
 - review surfaces become trace-aware
 
 ### Issue D — Signed trace bundle
+
 - add digests
 - add signature manifest
 - add verification command
 
 ### Issue E — TQL over traces
+
 - query trace events and replay classes
 - integrate with broader TQL work
 
@@ -644,7 +620,7 @@ This is the right bounded rollout path.
 
 ---
 
-## Summary
+### Summary
 
 ADL currently has strong task artifacts and increasingly strong execution records, but it still lacks one critical layer: the first-class execution trace.
 
@@ -669,3 +645,93 @@ The result will be a significantly stronger ADL platform:
 - more queryable
 - more replay-aware
 - and much closer to the signed, reviewable, shared-reality substrate the project has been aiming toward.
+
+### Non-Goals
+
+This architecture explicitly does **not** require in its first slice:
+- total replay of arbitrary real-world actions
+- full distributed tracing infrastructure
+- signing of every event immediately
+- natural-language querying over arbitrary trace prose
+- replacement of Git as the state substrate
+- a full database layer before repo-local artifacts are proven useful
+
+The goal is a strong first trace substrate, not a complete observability platform.
+
+---
+
+## Example / Demo
+
+```json
+{
+  "trace_version": "adl.trace.v1",
+  "task_id": "issue-0876",
+  "run_id": "issue-0876",
+  "sequence": 12,
+  "timestamp": "2026-03-20T18:12:11Z",
+  "phase": "validation",
+  "event_type": "command_executed",
+  "actor": "execution_agent",
+  "status": "passed",
+  "tool": "shell",
+  "command": "cargo test graph_affect::tests::ranking_changes",
+  "artifact_refs": [
+    ".adl/v0.85/tasks/issue-0876__v085-wp16-reasoning-graph-affect/sor.md"
+  ],
+  "replay_class": "replayable",
+  "details": {
+    "purpose": "Prove affect changes graph ranking via before/after fixture"
+  }
+}
+```
+
+The example above is illustrative; the architecture does not require this exact event set, but it does require event structure of this kind.
+
+---
+
+A realistic early lifecycle for one ADL run:
+
+1. `pr run` begins  
+2. trace emits `run_started`  
+3. validation command emits `validator_executed`  
+4. runtime logic emits `artifact_emitted`  
+5. demo step emits `demo_executed`  
+6. `pr finish` emits `run_finished`  
+7. `sor.md` records the summary  
+8. `replay_manifest.json` classifies replayability  
+
+This is enough to turn the run into a real auditable substrate.
+
+---
+
+## Why It Matters
+
+This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+
+## Current Status
+
+- Milestone: v0.93
+- Status: Draft
+- Notes: No additional status notes recorded.
+
+## Related Documents
+
+- stp.md
+- sip.md
+- sor.md
+
+## Future Work
+
+- `full`
+- `partial`
+- `recheck_only`
+- `none`
+
+For early ADL runs, `partial` or `recheck_only` will be the normal truthful value.
+
+---
+
+
+## Notes
+
+- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.
