@@ -1,37 +1,77 @@
-# Tooling Docs
+# Tooling Documentation
 
-This directory documents ADL tooling contracts used by structured prompt automation and reviewer flows.
+This directory is the main entrypoint for ADL tooling guides, prompt-spec references, reviewer surfaces, editor-related proof surfaces, and maintainability utilities.
 
-Prompt Spec is the bridge between:
-- structured task prompts (`issue prompts`)
-- structured implementation prompts (`input cards`)
-- structured output records (`output cards`)
+The goal of this directory is to make ADL’s tooling surfaces understandable and navigable without forcing the reader to learn the entire internal workflow system first.
 
-Tracked public workflow history should live in task-centric record bundles under `docs/records/`, while `.adl/` remains the temporary draft workspace.
+## Start Here
 
-## References
-- [Prompt Spec](prompt-spec.md): machine-readable input-card block defining deterministic prompt generation surfaces and reviewer alignment.
-- [Structured Prompt Contracts](structured-prompt-contracts.md): machine-checkable contracts for Structured Task Prompts, Structured Implementation Prompts, and Structured Output Records.
-- [Worktree Governance](worktree_governance.md): canonical policy for managed ADL worktrees, stale registrations, orphan dirs, and Codex-ephemeral worktree handling.
-- [Rust Module Watch List](rust_module_watch_list.md): canonical watch list and maintainability guardrail for large Rust implementation modules.
-- [Task Bundle Editor](editor/README.md): first bounded editor surface for tracked STP/SIP task-bundle authoring.
-- [Prompt Spec Protocol Bindings](prompt-spec.md#protocol-bindings): linkage to `card_review_checklist.v1` and `card_review_output.v1` reviewer contracts.
-- [Prompt/Reviewer Surface Mapping](prompt-review-surface-mapping.md): field-by-field contract map between Prompt Spec, checklist rules, and deterministic review output fields.
-- [Issue Prompt Templates](issue-prompts/README.md): tracked templates and authoring guidance for structured issue prompts used to shape GitHub issues before `pr start`.
-- [Public Task Records](../records/README.md): tracked task-centric record homes for canonical STP/SIP/SOR bundles.
-- `adl/tools/sync_task_bundle_prompts.sh`: refresh the canonical local `.adl/<scope>/tasks/<task-id>__<slug>/` bundle layout from current compatibility paths.
-- [Reviewer Output Provenance](reviewer-provenance.md): bounded provenance verification for deterministic review-output artifacts.
-- [Reviewer Surface](reviewer-surface.md): first bounded repo-local review/helper surface with deterministic fixture coverage.
-- Prompt Spec execution tooling:
-  - `adl/tools/lint_prompt_spec.sh` (Prompt Spec lint/validation)
-  - `adl/tools/card_prompt.sh` (deterministic prompt generation from cards)
-  - `adl/tools/report_large_rust_modules.sh` (non-blocking Rust implementation-module size report)
-  - `adl/tools/validate_structured_prompt.sh` (structured prompt contract validation)
-  - `adl/tools/verify_review_output_provenance.rb` (deterministic provenance verification for review-output artifacts)
-  - `adl/tools/review_card_surface.rb` (bounded deterministic review helper)
-- [Card Reviewer GPT Instructions](card-reviewer-gpt.md): canonical reviewer behavior and deterministic YAML output contract (`card_reviewer_gpt.v1.1`).
-- [Deterministic Review Output Format](card-review-output-format.md): canonical review artifact schema including finding evidence-state semantics.
-- Reviewer regression fixture (stable):
-  - `docs/tooling/examples/reviewer-regression/issue-661/input_661.md`
-  - `docs/tooling/examples/reviewer-regression/issue-661/output_661.md`
-  - `docs/tooling/examples/reviewer-regression/issue-661/expected_review_output_661.yaml`
+- Prompt-spec and structured prompt surfaces: `prompt-spec.md`
+- Structured prompt contracts: `structured-prompt-contracts.md`
+- Default contributor workflow: `../default_workflow.md`
+- Editor and authoring proof surfaces: `editor/README.md`
+- Root project overview: `../README.md`
+
+## Core Tooling Areas
+
+### Prompt and Card Surfaces
+
+These docs describe the structured prompt surfaces used to shape issues, input cards, output cards, and deterministic reviewer flows.
+
+- [Prompt Spec](prompt-spec.md)
+- [Structured Prompt Contracts](structured-prompt-contracts.md)
+- [Prompt/Reviewer Surface Mapping](prompt-review-surface-mapping.md)
+- [Prompt Spec Protocol Bindings](prompt-spec.md#protocol-bindings)
+- [Issue Prompt Templates](issue-prompts/README.md)
+
+### Reviewer and Validation Surfaces
+
+These docs describe bounded reviewer behavior, deterministic output formats, and provenance/review validation surfaces.
+
+- [Reviewer Surface](reviewer-surface.md)
+- [Reviewer Output Provenance](reviewer-provenance.md)
+- [Card Reviewer GPT Instructions](card-reviewer-gpt.md)
+- [Deterministic Review Output Format](card-review-output-format.md)
+
+Stable reviewer regression fixture:
+- `docs/tooling/examples/reviewer-regression/issue-661/input_661.md`
+- `docs/tooling/examples/reviewer-regression/issue-661/output_661.md`
+- `docs/tooling/examples/reviewer-regression/issue-661/expected_review_output_661.yaml`
+
+### Editor and Authoring Surfaces
+
+These docs describe the bounded editor and authoring surfaces used in the v0.85 authoring/control-plane work.
+
+- [Task Bundle Editor](editor/README.md)
+- `editor/five_command_demo.md`
+- `editor/five_command_regression_suite.md`
+
+### Worktree and Maintainability Surfaces
+
+These docs describe worktree governance, large-module tracking, and related maintenance guidance.
+
+- [Worktree Governance](worktree_governance.md)
+- [Rust Module Watch List](rust_module_watch_list.md)
+- [Public Task Records](../records/README.md)
+
+## Tooling Scripts and Utilities
+
+Important repo-local tooling surfaces include:
+
+- `adl/tools/lint_prompt_spec.sh` — Prompt Spec lint and validation
+- `adl/tools/card_prompt.sh` — deterministic prompt generation from cards
+- `adl/tools/validate_structured_prompt.sh` — structured prompt contract validation
+- `adl/tools/verify_review_output_provenance.rb` — provenance verification for review-output artifacts
+- `adl/tools/review_card_surface.rb` — bounded deterministic review helper
+- `adl/tools/report_large_rust_modules.sh` — non-blocking Rust implementation-module size report
+- `adl/tools/sync_task_bundle_prompts.sh` — refresh canonical local task-bundle prompt layout from compatibility paths
+
+## Current Status
+
+- Current closure milestone: **v0.85**
+- Next active milestone: **v0.86**
+- Role of this directory: tooling/reference entrypoint for prompt, reviewer, editor, and maintenance surfaces
+
+## Notes
+
+Tooling docs should be read as bounded engineering references. They describe the surfaces that support ADL authoring, review, and maintenance without claiming that every internal helper is equally important to every reader.
