@@ -71,6 +71,21 @@ Review:
 Primary proof:
 - `.adl/reports/demo-godel-hypothesis-engine/runs/review-godel-cli-001/godel/godel_hypothesis.v1.json`
 
+### 6. Five-Command Editing Lifecycle
+
+```bash
+adl/tools/demo_five_command_editing.sh
+```
+
+Review:
+- `docs/tooling/editor/five_command_demo.md`
+- `docs/tooling/editor/five_command_regression_suite.md`
+
+Primary proof:
+- five-command editing demo manifest emitted by the script
+- `adl/tools/test_five_command_regression_suite.sh`
+- `adl/tools/test_five_command_editor_truth.sh`
+
 ## Supporting demos
 
 Use these when a reviewer wants deeper inspection of individual bounded
@@ -95,3 +110,7 @@ primary sequence above and understand:
 - bounded learning artifacts
 
 without reconstructing hidden context from the codebase.
+
+## Closeout Read
+
+At the current v0.85 state, no additional bounded demo pass is required before release readiness. The remaining closeout work is documentation consistency, review, remediation if needed, and release packaging rather than creation of new milestone demos.

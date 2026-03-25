@@ -61,8 +61,9 @@ Every row in this matrix must provide at least one of:
 | Experiment prioritization | Supporting demo | Ready | `adl/tools/demo_experiment_prioritization.sh` | ranked artifact with tie-break behavior |
 | Cross-workflow learning | Alternate proof surface | Ready | `adl/tools/demo_cross_workflow_learning.sh` | linked artifact chain across workflows; `demos/cross_workflow_learning_demo.md` |
 | Promotion / evaluation loop | Supporting demo | Ready | `adl/tools/demo_promotion_eval_loop.sh` | evaluation artifact plus promotion decision artifact |
+| Five-command editing lifecycle | Alternate proof surface | Ready | `adl/tools/demo_five_command_editing.sh` | `docs/tooling/editor/five_command_demo.md`, `docs/tooling/editor/five_command_regression_suite.md`, editor truth tests |
 | Review and output-record rigor | Alternate proof surface | Ready | artifact review walkthrough | issues `#918`, `#941`, `#948`, `#958` and strong SORs |
-| Demo/readiness discipline itself | Alternate proof surface | Ready | `demos/v085_demo_program.md` | canonical demo matrix and milestone checklist |
+| Demo/readiness discipline itself | Alternate proof surface | Ready | `demos/v085_demo_program.md` | canonical demo matrix, milestone checklist, and explicit closeout note that no additional bounded demo pass is currently required |
 
 ---
 
@@ -334,6 +335,24 @@ These are important `v0.85` claims whose best current proof is primarily artifac
 
 ---
 
+### 6.3 Five-Command Editing Lifecycle
+
+**Class:** Alternate proof surface  
+**Status:** Ready  
+**Primary proof surfaces:**
+- `adl/tools/demo_five_command_editing.sh`
+- `docs/tooling/editor/five_command_demo.md`
+- `docs/tooling/editor/five_command_regression_suite.md`
+- `adl/tools/test_five_command_regression_suite.sh`
+- `adl/tools/test_five_command_editor_truth.sh`
+
+**Reviewer should look for:**
+- the full five-command lifecycle is demonstrated through the real `adl/tools/pr.sh` command surface
+- the browser/editor claim remains bounded to the documented `pr start` adapter surface
+- the regression suite protects the shipped editing truth rather than a parallel workflow story
+
+---
+
 ## 7. Reviewer Order
 
 Recommended milestone review order:
@@ -343,7 +362,8 @@ Recommended milestone review order:
 4. `adl/tools/demo_aee_bounded_adaptation.sh`
 5. `adl/tools/demo_affect_godel_vertical_slice.sh`
 6. `adl/tools/demo_godel_hypothesis_engine.sh`
-7. supporting demos as needed for deeper inspection
+7. `adl/tools/demo_five_command_editing.sh`
+8. supporting demos as needed for deeper inspection
 
 ---
 
@@ -352,3 +372,4 @@ Recommended milestone review order:
 - The matrix is milestone-facing, not a full inventory of every runnable artifact in the repo.
 - Supporting demos remain important even when they are not headline review surfaces.
 - If a demo regresses or becomes non-runnable, this matrix should be updated before milestone review rather than silently drifting.
+- Current closeout decision: no additional bounded demo pass is required before v0.85 release readiness, because the canonical demo set and the five-command authoring proof surfaces are already present and reviewable in the current repo state.
