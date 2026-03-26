@@ -57,7 +57,7 @@ Evidence should exist for every checked item.
 
 ## Quality Gates
 
-- [ ] Canonical quality gate documented (`QUALITY_GATE_v0.85.md`)
+- [x] Canonical quality gate documented (`QUALITY_GATE_v0.85.md`)
 - [ ] `cargo fmt` passes
 - [ ] `cargo clippy --workspace --all-targets -- -D warnings` passes
 - [ ] `cargo test --workspace` passes
