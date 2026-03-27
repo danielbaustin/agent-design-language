@@ -92,7 +92,7 @@ the primary remaining-roadmap burden:
   card-review contracts
 - first bounded task-bundle editor surface (early slice)
 - tracked public task-record structure plus an initial bounded example bundle
-- partial `swarm` to `adl` naming migration
+- partial legacy-name to `adl` naming migration
 
 ## Explicitly Admitted Remaining Gaps
 
@@ -162,7 +162,7 @@ Issue clusters:
   review packaging
 - milestone convergence:
   Prompt Spec completion, editor/review finishing work, doc and issue-graph
-  reconciliation, and final active-surface `swarm` to `adl` cutover
+  reconciliation, and final active-surface legacy-name to `adl` cutover
 
 Why this belongs here:
 

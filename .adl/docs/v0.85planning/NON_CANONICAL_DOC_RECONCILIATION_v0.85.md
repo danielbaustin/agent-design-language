@@ -110,7 +110,7 @@ This directory mixes:
 | `ROAD_TO_v0.95.md` | Master roadmap / convergence doc | `Roadmap-critical` | Keep as the roadmap driver and continue updating | Core roadmap surface for future milestone coverage. |
 | `Revised-issue-planning.md` | Issue-graph restructuring plan | `Planning-only` | Keep as historical planning/admin artifact | Useful history, not a feature doc. |
 | `SPRINT_v0.85.md` | Sprint plan | `Canonical overlap` | Preserve and sync if needed | Canonical milestone support surface. |
-| `SWARM_REMOVAL_PLANNING.md` | Legacy-name/tooling migration planning | `Canonical overlap` | Keep milestone canon; `.adl` copy retained only as non-canonical redirect/historical source | Partly implemented, still relevant as migration history, but the active v0.85 doc should be read from the milestone directory. |
+| legacy-name migration planning doc | Legacy-name/tooling migration planning | `Canonical overlap` | Keep milestone canon; `.adl` copy retained only as non-canonical redirect/historical source | Partly implemented, still relevant as migration history, but the active `v0.85` doc should be read from the milestone directory. |
 | `V095_MVP_BOUNDARY.md` | Scope guardrail | `Roadmap-critical` | Keep planning-only, but use to constrain roadmap/promotions | Important boundary control, not a feature spec. |
 | `VISION_v0.85.md` | Milestone vision | `Canonical overlap` | Preserve and sync if needed | Canonical milestone support surface. |
 | `WBS_v0.85.md` | Work breakdown structure | `Canonical overlap` | Preserve and sync if needed | Canonical milestone support surface. |
@@ -246,7 +246,7 @@ architecture docs that should stay aligned with the planning corpus.
 | `RELEASE_PLAN_v0.85.md` | Release plan | `Canonical overlap` | Keep canonical | Milestone support surface. |
 | `SPRINT_v0.85.md` | Sprint plan | `Canonical overlap` | Keep canonical | Milestone support surface. |
 | `STRUCTURED_PROMPT_ARCHITECTURE.md` | Prompt architecture | `Canonical overlap` | Keep canonical and aligned with editor/task-bundle work | Important authoring/control-plane surface. |
-| `SWARM_REMOVAL_PLANNING.md` | Legacy-name/tooling migration doc | `Promotable planning` | Keep canonical for now, but reconcile with later tooling migration docs | Migration/history plus future cleanup. |
+| legacy-name migration planning doc | Legacy-name/tooling migration doc | `Promotable planning` | Keep canonical for now, but reconcile with later tooling migration docs | Migration/history plus future cleanup. |
 | `VISION_v0.85.md` | Milestone vision | `Canonical overlap` | Keep canonical | Core milestone doc. |
 | `WBS_v0.85.md` | Work breakdown structure | `Canonical overlap` | Keep canonical | Core milestone doc. |
 | `WHY_RUST_FOR_ADL.md` | Rust rationale note | `Deprecated / archive` | Deprecate / do not promote further | Historical rationale only. |
@@ -277,7 +277,7 @@ Current policy for active duplicate `.adl` copies:
 | `RELEASE_NOTES_v0.85.md` | Different | Canonical wins | Treat `docs/milestones/v0.85/` as source of truth. |
 | `RELEASE_PLAN_v0.85.md` | Different | Canonical wins | Treat `docs/milestones/v0.85/` as source of truth. |
 | `SPRINT_v0.85.md` | Different | Canonical wins | Treat `docs/milestones/v0.85/` as source of truth. |
-| `SWARM_REMOVAL_PLANNING.md` | Same | Canonical milestone doc; `.adl` redirect retained and non-writable | No further reconciliation needed unless the retained `.adl` copy is later retired. |
+| legacy-name migration planning doc | Same | Canonical milestone doc; `.adl` redirect retained and non-writable | No further reconciliation needed unless the retained `.adl` copy is later retired. |
 | `VISION_v0.85.md` | Different | Canonical wins | Treat `docs/milestones/v0.85/` as source of truth. |
 | `WBS_v0.85.md` | Different | Canonical wins | Treat `docs/milestones/v0.85/` as source of truth. |
 | `WHY_RUST_FOR_ADL.md` | Different | Deprecate / do not sync forward | The planning copy is intentionally deprecated. |

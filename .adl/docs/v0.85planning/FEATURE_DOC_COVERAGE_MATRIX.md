@@ -17,7 +17,7 @@ Coverage meanings:
 
 | Roadmap band / feature area | Current governing docs | Coverage | Status | Notes |
 | --- | --- | --- | --- | --- |
-| `v0.85` execution substrate | `CLUSTER_EXECUTION.md`, `SWARM_REMOVAL_PLANNING.md` | `n:1` | covered | Runtime/ops feature area is spread across more than one doc. |
+| `v0.85` execution substrate | `CLUSTER_EXECUTION.md`, legacy-name migration planning doc | `n:1` | covered | Runtime/ops feature area is spread across more than one doc. |
 | `v0.85` dependable execution / verifiable inference | `DESIGN_v0.85.md`, `WBS_v0.85.md`, `DEMO_MATRIX_v0.85.md` | `n:1` | covered | Controlled by milestone docs rather than one deep feature spec. |
 | `v0.85` authoring/editor surfaces | `EDITING_ARCHITECTURE.md`, `HTA_EDITOR_PLANNING.md`, `STRUCTURED_PROMPT_ARCHITECTURE.md` | `n:1` | covered | Strong multi-doc feature area, already promoted to milestone canon. |
 | `v0.85` Layer 8 / provider-contract maturation | `LAYER_8_IMPLEMENTATION.md` | `1:1` | covered | One clear primary feature doc. |
@@ -38,7 +38,7 @@ Coverage meanings:
 
 | Feature area | Primary owner doc | Supporting docs | Follow-up doc needed? | Notes |
 | --- | --- | --- | --- | --- |
-| `v0.85` execution substrate | `CLUSTER_EXECUTION.md` | `SWARM_REMOVAL_PLANNING.md`, milestone PMO docs | no | Multi-surface but adequately bounded for `v0.85`. |
+| `v0.85` execution substrate | `CLUSTER_EXECUTION.md` | legacy-name migration planning doc, milestone PMO docs | no | Multi-surface but adequately bounded for `v0.85`. |
 | `v0.85` authoring/editor surfaces | `EDITING_ARCHITECTURE.md` | `HTA_EDITOR_PLANNING.md`, `STRUCTURED_PROMPT_ARCHITECTURE.md` | no | Strong enough as an `n:1` bundle. |
 | `v0.85` Layer 8 / provider-contract maturation | `LAYER_8_IMPLEMENTATION.md` | milestone PMO docs | no | Clear owner doc exists. |
 | `v0.85` reasoning graph schema | `REASONING_GRAPH_SCHEMA_V0.85.md` | `AFFECTIVE_REASONING_MODEL.md` | no | Schema ownership is clear. |
