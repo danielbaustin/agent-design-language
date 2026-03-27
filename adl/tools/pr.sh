@@ -538,11 +538,12 @@ resolve_structured_prompt_validator() {
 
 issue_version() {
   local issue="$1"
-  local v
-  v="$(gh issue view "$issue" --json labels -q '.labels[].name' 2>/dev/null | sed -n 's/^version://p' | head -n1 || true)"
+  local v repo
+  repo="$(default_repo)"
+  v="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json labels -q '.labels[].name' 2>/dev/null | sed -n 's/^version://p' | head -n1 || true)"
   if [[ -z "$v" ]]; then
     local title
-    title="$(gh issue view "$issue" --json title -q .title 2>/dev/null || true)"
+    title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
     if [[ "$title" =~ \[(v[0-9]+\.[0-9]+)\] ]]; then
       v="${BASH_REMATCH[1]}"
     fi
@@ -1737,23 +1738,32 @@ cmd_start() {
     require_cmd gh
     ver="$(issue_version "$issue")"
   fi
-  in_path="$(input_card_path "$issue" "$ver" "$slug")"
-  out_path="$(output_card_path "$issue" "$ver" "$slug")"
-  ensure_adl_dirs
-  if ! ensure_nonempty_file "$in_path"; then
-    note "Creating input card: $in_path"
-    seed_input_card "$in_path" "$issue" "$title" "$branch" "$ver" "$out_path"
-  else
-    note "Input card exists: $in_path"
-  fi
-  if ! ensure_nonempty_file "$out_path"; then
-    note "Creating output card: $out_path"
-    seed_output_card "$out_path" "$issue" "$title" "$branch" "$ver"
-  else
-    note "Output card exists: $out_path"
-  fi
-  sync_legacy_links_for_issue "$issue" "$ver" "$slug"
-  validate_bootstrap_cards "$issue" "$branch" "$in_path" "$out_path"
+  local start_paths_file
+  start_paths_file="$(mktemp -t prsh_start_paths_XXXXXX)"
+  (
+    cd "$worktree_path"
+    in_path="$(input_card_path "$issue" "$ver" "$slug")"
+    out_path="$(output_card_path "$issue" "$ver" "$slug")"
+    ensure_adl_dirs
+    if ! ensure_nonempty_file "$in_path"; then
+      note "Creating input card: $in_path"
+      seed_input_card "$in_path" "$issue" "$title" "$branch" "$ver" "$out_path"
+    else
+      note "Input card exists: $in_path"
+    fi
+    if ! ensure_nonempty_file "$out_path"; then
+      note "Creating output card: $out_path"
+      seed_output_card "$out_path" "$issue" "$title" "$branch" "$ver"
+    else
+      note "Output card exists: $out_path"
+    fi
+    sync_legacy_links_for_issue "$issue" "$ver" "$slug"
+    validate_bootstrap_cards "$issue" "$branch" "$in_path" "$out_path"
+    printf '%s\n%s\n' "$in_path" "$out_path" >"$start_paths_file"
+  )
+  in_path="$(sed -n '1p' "$start_paths_file")"
+  out_path="$(sed -n '2p' "$start_paths_file")"
+  rm -f "$start_paths_file"
   echo "• Agent:"
   echo "  READ   $in_path"
   echo "  WRITE  $out_path"
