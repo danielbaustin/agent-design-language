@@ -19,8 +19,9 @@ SLUG="five-command-editing-demo"
 TITLE="[v0.85][editor] Five-command editing demo issue"
 ISSUE_BODY="$REPO/.adl/issues/v0.85/bodies/issue-42-five-command-editing-demo.md"
 STP_PATH="$REPO/.adl/v0.85/tasks/issue-0042__five-command-editing-demo/stp.md"
-INPUT_CARD="$REPO/.adl/cards/42/input_42.md"
-OUTPUT_CARD="$REPO/.adl/cards/42/output_42.md"
+BUNDLE_GLOB="issue-0042__five-command-editing-demo"
+INPUT_CARD=""
+OUTPUT_CARD=""
 BRANCH_NAME="codex/42-five-command-editing-demo"
 WORKTREE="$REPO/.worktrees/adl-wp-42"
 GH_LOG="$REPORT_ROOT/gh.log"
@@ -161,6 +162,17 @@ if [[ "${1:-}" == "pr" && "${2:-}" == "list" ]]; then
   exit 0
 fi
 
+if [[ "${1:-}" == "pr" && "${2:-}" == "view" ]]; then
+  shift 2
+  if [[ " $* " == *"--json closingIssuesReferences"* && " $* " == *"-q .closingIssuesReferences[]?.number"* ]]; then
+    echo "42"
+    exit 0
+  fi
+  if [[ " $* " == *"--web"* ]]; then
+    exit 0
+  fi
+fi
+
 if [[ "${1:-}" == "pr" && "${2:-}" == "create" ]]; then
   echo "https://example.test/pr/42"
   exit 0
@@ -199,6 +211,16 @@ export GH_BODY_FILE_CAPTURE="$GH_BODY"
   cd "$REPO"
   "$BASH_BIN" adl/tools/pr.sh start "$ISSUE_NUM" --slug "$SLUG" --no-fetch-issue
 ) | tee "$START_LOG"
+
+BUNDLE_DIR="$(
+  find "$WORKTREE/.adl" -type d -path "*/tasks/$BUNDLE_GLOB" | LC_ALL=C sort | head -n1
+)"
+[[ -n "$BUNDLE_DIR" ]] || {
+  echo "five-command demo: failed to locate task bundle for $BUNDLE_GLOB under $WORKTREE/.adl" >&2
+  exit 1
+}
+INPUT_CARD="$BUNDLE_DIR/sip.md"
+OUTPUT_CARD="$BUNDLE_DIR/sor.md"
 
 git -C "$WORKTREE" config user.name "Demo User"
 git -C "$WORKTREE" config user.email "demo@example.com"
