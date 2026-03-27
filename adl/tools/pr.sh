@@ -14,7 +14,7 @@
 #
 #   adl/tools/pr.sh help
 #   adl/tools/pr.sh init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v0.85>]
-#   adl/tools/pr.sh start   <issue> [--slug <slug>] [--title "<title>"] [--prefix codex] [--no-fetch-issue]
+#   adl/tools/pr.sh start   <issue> [--slug <slug>] [--title "<title>"] [--prefix codex] [--no-fetch-issue] [--version <v0.85>]
 #   adl/tools/pr.sh run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
 #   adl/tools/pr.sh card    <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
 #   adl/tools/pr.sh output  <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
@@ -358,6 +358,26 @@ sanitize_slug() {
   echo "$s"
 }
 
+version_from_title() {
+  local title="$1"
+  if [[ "$title" =~ \[(v[0-9]+\.[0-9]+)\] ]]; then
+    printf '%s\n' "${BASH_REMATCH[1]}"
+  fi
+}
+
+version_from_labels_csv() {
+  local labels_csv="$1" label
+  IFS=',' read -r -a label_arr <<< "$labels_csv"
+  for label in "${label_arr[@]}"; do
+    label="$(trim_ws "$label")"
+    if [[ "$label" =~ ^version:(v[0-9]+\.[0-9]+)$ ]]; then
+      printf '%s\n' "${BASH_REMATCH[1]}"
+      return 0
+    fi
+  done
+  return 1
+}
+
 default_repo() {
   # Derive "owner/repo" from git remote if possible; otherwise use the current repo
   # name under a deterministic local namespace so generated cards remain schema-valid
@@ -544,9 +564,7 @@ issue_version() {
   if [[ -z "$v" ]]; then
     local title
     title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
-    if [[ "$title" =~ \[(v[0-9]+\.[0-9]+)\] ]]; then
-      v="${BASH_REMATCH[1]}"
-    fi
+    v="$(version_from_title "$title" || true)"
   fi
   if [[ -n "$v" ]]; then
     echo "$v"
@@ -1626,6 +1644,7 @@ cmd_start() {
   local no_fetch_issue="0"
   local title=""
   local title_arg=""
+  local version=""
   local branch_preexisting="0"
 
   while [[ $# -gt 0 ]]; do
@@ -1633,6 +1652,7 @@ cmd_start() {
       --prefix) prefix="$2"; shift 2 ;;
       --slug) slug="$2"; shift 2 ;;
       --title) title_arg="$2"; shift 2 ;;
+      --version) version="$2"; shift 2 ;;
       --no-fetch-issue) no_fetch_issue="1"; shift ;;
       -h|--help) usage_start; return 0 ;;
       *) die_with_usage "start: unknown arg: $1" usage_start ;;
@@ -1732,7 +1752,9 @@ cmd_start() {
   ensure_primary_checkout_on_main
 
   local ver in_path out_path
-  if [[ "$no_fetch_issue" == "1" ]]; then
+  if [[ -n "$version" ]]; then
+    ver="$version"
+  elif [[ "$no_fetch_issue" == "1" ]]; then
     ver="$DEFAULT_VERSION"
   else
     require_cmd gh
@@ -1786,7 +1808,7 @@ cmd_new() {
   local body=""
   local body_file=""
   local labels="$DEFAULT_NEW_LABELS"
-  local version="$DEFAULT_VERSION"
+  local version=""
   local no_start="0"
 
   while [[ $# -gt 0 ]]; do
@@ -1804,7 +1826,6 @@ cmd_new() {
   done
 
   [[ -n "$title" ]] || die_with_usage "new: --title is required" usage_new
-  [[ -n "$version" ]] || die "new: --version must be non-empty"
 
   if [[ -n "$body" && -n "$body_file" ]]; then
     die "new: pass only one of --body or --body-file"
@@ -1836,6 +1857,17 @@ cmd_new() {
   if absolute_host_path_present <(printf '%s\n' "$issue_body"); then
     die "new: issue body contains disallowed absolute host path"
   fi
+
+  if [[ -z "$version" ]]; then
+    version="$(version_from_labels_csv "$labels" || true)"
+  fi
+  if [[ -z "$version" ]]; then
+    version="$(version_from_title "$title" || true)"
+  fi
+  if [[ -z "$version" ]]; then
+    version="$DEFAULT_VERSION"
+  fi
+  [[ -n "$version" ]] || die "new: resolved version must be non-empty"
 
   local labels_csv normalized_labels label
   labels_csv="$labels"
@@ -1883,7 +1915,7 @@ cmd_new() {
     return 0
   fi
 
-  cmd_start "$issue_num" --slug "$slug"
+  cmd_start "$issue_num" --slug "$slug" --title "$title" --version "$version"
   echo "BRANCH=codex/${issue_num}-${slug}"
 }
 
@@ -2157,7 +2189,7 @@ Commands:
   create  [<issue> --stp <path>] | [legacy new-issue args]
   new     --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
   run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
-  start   <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue]
+  start   <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>]
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
   output  <issue> [input|output] ... [--version <v0.2>] [-f <output_card.md>]
   cards   <issue> [--version <v0.2>] [--no-fetch-issue]
@@ -2187,6 +2219,7 @@ Flags:
   (finish) --idempotent                         Safe no-op only when existing merged PR matches current finish inputs.
   (card/start) --slug <slug>                   Use an explicit slug instead of fetching the issue title.
   (start)   --title "<title>"                  Optional; accepted for UX symmetry and used to derive slug when --slug is omitted.
+  (start)   --version <v0.85>                  Override detected version when the caller already knows the intended milestone band.
 
 Notes:
 - PRs are created as DRAFT by default to preserve human review.
@@ -2255,11 +2288,12 @@ EOF
 usage_start() {
   cat <<'EOF'
 Usage:
-  adl/tools/pr.sh start <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue]
+  adl/tools/pr.sh start <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>]
 
 Notes:
 - Creates or reuses issue worktree at .worktrees/adl-wp-<issue> by default.
 - Keeps the primary checkout on main.
+- `--version` overrides inferred issue version when the caller already knows the intended milestone band.
 EOF
 }
 

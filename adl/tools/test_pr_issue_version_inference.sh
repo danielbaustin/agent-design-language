@@ -49,6 +49,7 @@ if [[ "${1:-}" == "issue" && "${2:-}" == "view" ]]; then
     exit 1
   fi
   if [[ "$*" == *"--json labels"* && "$*" == *"-q .labels[].name"* ]]; then
+    echo "version:v0.85"
     exit 0
   fi
   if [[ "$*" == *"--json title"* && "$*" == *"-q .title"* ]]; then
@@ -95,13 +96,13 @@ assert_contains() {
   export PATH="$bindir:$PATH"
   export GH_LOG_FILE="$gh_log"
 
-  out="$("$BASH_BIN" adl/tools/pr.sh new \
+  out="$("$BASH_BIN" adl/tools/pr.sh create \
     --title "[v0.85][process] Infer current milestone card version from issue title when labels are missing" \
     --slug v085-process-infer-card-version-from-issue-title \
-    --version v0.85 \
+    --labels "track:roadmap,version:v0.85,type:bug,area:tools" \
     --body "test body")"
 
-  assert_contains "ISSUE_NUM=975" "$out" "new prints issue number"
+  assert_contains "ISSUE_NUM=975" "$out" "create prints issue number"
   [[ -f ".worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" ]] || {
     echo "assertion failed: expected canonical input card under the worktree-local .adl/v0.85/tasks" >&2
     exit 1
@@ -142,6 +143,23 @@ assert_contains() {
     echo "assertion failed: unexpected v0.3 fallback task bundle after start" >&2
     exit 1
   }
+
+  : >"$gh_log"
+  out_title_only="$("$BASH_BIN" adl/tools/pr.sh create \
+    --title "[v0.85][process] Title-only version inference remains stable" \
+    --slug v085-process-title-only-version-inference-remains-stable \
+    --labels "track:roadmap,type:bug,area:tools" \
+    --body "test body" \
+    --no-start)"
+  assert_contains "ISSUE_NUM=975" "$out_title_only" "create no-start prints issue number"
+  grep -Fq -- "--label version:v0.85" "$gh_log" || {
+    echo "assertion failed: expected title-only create to infer version:v0.85" >&2
+    exit 1
+  }
+  if grep -Fq -- "--label version:v0.3" "$gh_log"; then
+    echo "assertion failed: unexpected version:v0.3 label in title-only issue create" >&2
+    exit 1
+  fi
 )
 
-echo "pr.sh new/start title+version inference: ok"
+echo "pr.sh create/start title+version inference: ok"
