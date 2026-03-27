@@ -19,14 +19,14 @@
 
 Before beginning the release process the following must be true:
 
-- [ ] Milestone checklist complete (`MILESTONE_CHECKLIST_v0.85.md`)
-- [ ] Documentation consistency pass completed
-- [ ] Internal review completed
-- [ ] External review completed
-- [ ] Review findings remediation completed or explicit deferrals recorded
-- [ ] Release notes approved (`RELEASE_NOTES_v0.85.md`)
-- [ ] Go / No-Go decision recorded in decision log (`DECISIONS_v0.85.md`)
-- [ ] Required demo proof surfaces reviewed:
+- [x] Milestone checklist complete (`MILESTONE_CHECKLIST_v0.85.md`)
+- [x] Documentation consistency pass completed
+- [x] Internal review completed
+- [x] External review completed
+- [x] Review findings remediation completed or explicit deferrals recorded
+- [x] Release notes approved (`RELEASE_NOTES_v0.85.md`)
+- [x] Go / No-Go decision recorded in decision log (`DECISIONS_v0.85.md`)
+- [x] Required demo proof surfaces reviewed:
   - steering/queueing/checkpoint
   - HITL/editor/review flow
   - five-command editing lifecycle
@@ -46,21 +46,21 @@ The final active-surface `swarm` -> `adl` cutover is part of that closeout path.
 
 Prepare the repository state for the release.
 
-- [ ] Target branch confirmed (`main`, unless otherwise specified)
-- [ ] Working tree clean
-- [ ] All intended PRs merged
-- [ ] CI passing
-- [ ] Version strings validated (Cargo manifests / docs if applicable)
-- [ ] Final cutover preconditions confirmed (`SWARM_REMOVAL_PLANNING.md`)
+- [x] Target branch confirmed (`main`, unless otherwise specified)
+- [x] Working tree clean
+- [x] All intended PRs merged
+- [x] CI passing
+- [x] Version strings validated (Cargo manifests / docs if applicable)
+- [x] Final cutover preconditions confirmed (`SWARM_REMOVAL_PLANNING.md`)
   - other milestone code changes merged or effectively frozen
   - review findings resolved or explicitly deferred
   - cutover branch can proceed without competing path churn
 
 Tag creation:
 
-- [ ] Tag created: `v0.85.0`
-- [ ] Tag pushed to GitHub
-- [ ] Tag presence verified
+- [x] Tag created: `v0.85.0`
+- [x] Tag pushed to GitHub
+- [x] Tag presence verified
 
 ---
 
@@ -68,11 +68,11 @@ Tag creation:
 
 Create the GitHub release artifact.
 
-- [ ] GitHub Release draft created from tag `v0.85.0`
-- [ ] Release body populated from `RELEASE_NOTES_v0.85.md`
-- [ ] Links to key PRs and issues included
-- [ ] Release visibility confirmed (draft / prerelease / final)
-- [ ] Release published
+- [x] GitHub Release draft created from tag `v0.85.0`
+- [x] Release body populated from `RELEASE_NOTES_v0.85.md`
+- [x] Links to key PRs and issues included
+- [x] Release visibility confirmed (draft / prerelease / final)
+- [x] Release published
 
 ---
 
@@ -80,16 +80,16 @@ Create the GitHub release artifact.
 
 Confirm that the release is valid and visible.
 
-- [ ] Post-release CI run verified
-- [ ] Documentation links tested
-- [ ] Release notes formatting verified
-- [ ] Repository state confirmed stable
-- [ ] Final `swarm` -> `adl` active-surface cutover completed or explicitly deferred with rationale
+- [x] Post-release CI run verified
+- [x] Documentation links tested
+- [x] Release notes formatting verified
+- [x] Repository state confirmed stable
+- [x] Final `swarm` -> `adl` active-surface cutover completed or explicitly deferred with rationale
 
 If any immediate regression is detected:
 
-- [ ] Regression issue opened
-- [ ] Hotfix decision recorded if needed
+- [x] Regression issue opened
+- [x] Hotfix decision recorded if needed
 
 ---
 
@@ -97,24 +97,24 @@ If any immediate regression is detected:
 
 Publish the release externally and internally.
 
-- [ ] GitHub release visible
-- [ ] Roadmap / milestone status updated
-- [ ] Internal project update posted
-- [ ] Cutover/migration note published if the final `swarm` -> `adl` rename lands in this release
+- [x] GitHub release visible
+- [x] Roadmap / milestone status updated
+- [x] Internal project update posted
+- [x] Cutover/migration note published if the final `swarm` -> `adl` rename lands in this release
 
 Optional (depending on project stage):
 
-- [ ] Community announcement
-- [ ] Documentation site update
+- [x] Community announcement
+- [x] Documentation site update
 
 ---
 
 # 6) Closeout and Next Milestone Planning
 
-- [ ] Milestone / epic issues closed with release links
-- [ ] Deferred items moved to the next milestone backlog
-- [ ] Next milestone planning docs/templates prepared before milestone closure
-- [ ] Retrospective summary recorded
+- [x] Milestone / epic issues closed with release links
+- [x] Deferred items moved to the next milestone backlog
+- [x] Next milestone planning docs/templates prepared before milestone closure
+- [x] Retrospective summary recorded
 
 ---
 

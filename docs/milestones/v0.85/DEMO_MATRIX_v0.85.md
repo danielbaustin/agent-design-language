@@ -20,8 +20,8 @@ This matrix should help reviewers answer:
 
 ## Overview
 
-**Status:** Ready
-**Milestone:** v0.85
+**Status:** Verified for release closeout (with minor remediation tracked under #903)  
+**Milestone:** v0.85  
 **Purpose:** Canonical runnable demo and proof-surface matrix for milestone review, release readiness, and external legibility.
 
 ---
@@ -51,20 +51,20 @@ Every row in this matrix must provide at least one of:
 
 | Feature band | Class | Status | Primary surface | Proof artifact / review surface |
 |---|---|---:|---|---|
-| Steering / queueing / checkpoint / resume | Primary demo | Ready | `adl/tools/demo_steering_queue_checkpoint.sh` | pause-state artifact, steering patch, resumed run record |
-| HITL editor / review workflow | Primary demo | Ready | `adl/tools/demo_hitl_editor_review.sh` | editor task-bundle example, review-flow doc, emitted demo manifest |
-| AEE bounded adaptation | Primary demo | Ready | `adl/tools/demo_aee_bounded_adaptation.sh` | `aee_decision.json`, affect-state artifacts, recovery README |
-| Affect + Gödel vertical slice | Primary demo | Ready | `adl/tools/demo_affect_godel_vertical_slice.sh` | `godel_affect_vertical_slice.v1.json` proving full causal chain |
-| Hypothesis engine | Primary demo | Ready | `adl/tools/demo_godel_hypothesis_engine.sh` | `godel_hypothesis.v1.json`, reviewer demo doc |
-| Affect engine core | Supporting demo | Ready | `adl/tools/demo_affect_engine.sh` | affect-state artifact, downstream AEE decision change |
-| Reasoning graph + affect integration | Supporting demo | Ready | `adl/tools/demo_reasoning_graph_affect.sh` | reasoning-graph artifact, before/after comparison |
-| Policy learning | Supporting demo | Ready | `adl/tools/demo_adaptive_godel_loop.sh` | policy delta artifact and before/after comparison |
-| Experiment prioritization | Supporting demo | Ready | `adl/tools/demo_experiment_prioritization.sh` | ranked artifact with tie-break behavior |
-| Cross-workflow learning | Alternate proof surface | Ready | `adl/tools/demo_cross_workflow_learning.sh` | linked artifact chain across workflows; `demos/cross_workflow_learning_demo.md` |
-| Promotion / evaluation loop | Supporting demo | Ready | `adl/tools/demo_promotion_eval_loop.sh` | evaluation artifact plus promotion decision artifact |
-| Five-command editing lifecycle | Alternate proof surface | Ready | `adl/tools/demo_five_command_editing.sh` | `docs/tooling/editor/five_command_demo.md`, `docs/tooling/editor/five_command_regression_suite.md`, editor truth tests |
-| Review and output-record rigor | Alternate proof surface | Ready | artifact review walkthrough | issues `#918`, `#941`, `#948`, `#958` and strong SORs |
-| Demo/readiness discipline itself | Alternate proof surface | Ready | `demos/v085_demo_program.md` | canonical demo matrix, milestone checklist, and explicit closeout note that no additional bounded demo pass is currently required |
+| Steering / queueing / checkpoint / resume | Primary demo | Verified | `adl/tools/demo_steering_queue_checkpoint.sh` | pause-state artifact, steering patch, resumed run record |
+| HITL editor / review workflow | Primary demo | Verified | `adl/tools/demo_hitl_editor_review.sh` | editor task-bundle example, review-flow doc, emitted demo manifest |
+| AEE bounded adaptation | Primary demo | Verified | `adl/tools/demo_aee_bounded_adaptation.sh` | `aee_decision.json`, affect-state artifacts, recovery README |
+| Affect + Gödel vertical slice | Primary demo | Verified | `adl/tools/demo_affect_godel_vertical_slice.sh` | `godel_affect_vertical_slice.v1.json` proving full causal chain |
+| Hypothesis engine | Primary demo | Verified | `adl/tools/demo_godel_hypothesis_engine.sh` | `godel_hypothesis.v1.json`, reviewer demo doc |
+| Affect engine core | Supporting demo | Verified | `adl/tools/demo_affect_engine.sh` | affect-state artifact, downstream AEE decision change |
+| Reasoning graph + affect integration | Supporting demo | Verified | `adl/tools/demo_reasoning_graph_affect.sh` | reasoning-graph artifact, before/after comparison |
+| Policy learning | Supporting demo | Verified | `adl/tools/demo_adaptive_godel_loop.sh` | policy delta artifact and before/after comparison |
+| Experiment prioritization | Supporting demo | Verified | `adl/tools/demo_experiment_prioritization.sh` | ranked artifact with tie-break behavior |
+| Cross-workflow learning | Alternate proof surface | Verified | `adl/tools/demo_cross_workflow_learning.sh` | linked artifact chain across workflows; `demos/cross_workflow_learning_demo.md` |
+| Promotion / evaluation loop | Supporting demo | Verified | `adl/tools/demo_promotion_eval_loop.sh` | evaluation artifact plus promotion decision artifact |
+| Five-command editing lifecycle | Alternate proof surface | Verified | `adl/tools/demo_five_command_editing.sh` | `docs/tooling/editor/five_command_demo.md`, `docs/tooling/editor/five_command_regression_suite.md`, editor truth tests |
+| Review and output-record rigor | Alternate proof surface | Verified | artifact review walkthrough | issues `#918`, `#941`, `#948`, `#958` and strong SORs |
+| Demo/readiness discipline itself | Alternate proof surface | Verified | `demos/v085_demo_program.md` | canonical demo matrix, milestone checklist, and explicit closeout note that no additional bounded demo pass is currently required |
 
 ---
 
@@ -368,4 +368,5 @@ Recommended milestone review order:
 - The matrix is milestone-facing, not a full inventory of every runnable artifact in the repo.
 - Supporting demos remain important even when they are not headline review surfaces.
 - If a demo regresses or becomes non-runnable, this matrix should be updated before milestone review rather than silently drifting.
-- Current closeout decision: no additional bounded demo pass is required before v0.85 release readiness, because the canonical demo set and the five-command authoring proof surfaces are already present and reviewable in the current repo state.
+- Release closeout verification: the canonical demo set was executed during the final v0.85 closeout pass, and the matrix now reflects verified proof surfaces rather than assumed readiness.
+- Current closeout decision: no additional bounded demo pass is required before v0.85 release readiness, because the canonical demo set and the five-command authoring proof surfaces have been executed and reviewed for closeout. Minor bugs found during this pass are being handled under #903 rather than expanding scope.
