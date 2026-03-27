@@ -60,6 +60,12 @@ exit 1
 EOF
 chmod +x "$bindir/gh"
 
+canon_path() {
+  local p="$1"
+  mkdir -p "$p"
+  (cd "$p" && pwd -P)
+}
+
 (
   cd "$repo"
   git init -q
@@ -96,20 +102,20 @@ assert_contains() {
     --body "test body")"
 
   assert_contains "ISSUE_NUM=975" "$out" "new prints issue number"
-  [[ -f ".adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" ]] || {
-    echo "assertion failed: expected canonical input card under .adl/v0.85/tasks" >&2
+  [[ -f ".worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" ]] || {
+    echo "assertion failed: expected canonical input card under the worktree-local .adl/v0.85/tasks" >&2
     exit 1
   }
-  [[ -f ".adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sor.md" ]] || {
-    echo "assertion failed: expected canonical output card under .adl/v0.85/tasks" >&2
+  [[ -f ".worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sor.md" ]] || {
+    echo "assertion failed: expected canonical output card under the worktree-local .adl/v0.85/tasks" >&2
     exit 1
   }
-  grep -Fq "Version: v0.85" ".adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" || {
+  grep -Fq "Version: v0.85" ".worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" || {
     echo "assertion failed: expected input card version v0.85" >&2
     exit 1
   }
   grep -Fq "Title: [v0.85][process] Infer current milestone card version from issue title when labels are missing" \
-    ".adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" || {
+    ".worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" || {
     echo "assertion failed: expected preserved issue title in input card" >&2
     exit 1
   }
@@ -121,6 +127,21 @@ assert_contains() {
     echo "assertion failed: unexpected version:v0.3 label in issue create" >&2
     exit 1
   fi
+
+  out_start="$("$BASH_BIN" adl/tools/pr.sh start 975 --slug v085-process-infer-card-version-from-issue-title)"
+  assert_contains "WORKTREE $(canon_path "$repo/.worktrees/adl-wp-975")" "$out_start" "start prints worktree path"
+  [[ -f "$repo/.worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" ]] || {
+    echo "assertion failed: expected start to create input card inside worktree-local v0.85 task bundle" >&2
+    exit 1
+  }
+  [[ -f "$repo/.worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sor.md" ]] || {
+    echo "assertion failed: expected start to create output card inside worktree-local v0.85 task bundle" >&2
+    exit 1
+  }
+  [[ ! -e "$repo/.adl/v0.3/tasks/issue-0975__v085-process-infer-card-version-from-issue-title" ]] || {
+    echo "assertion failed: unexpected v0.3 fallback task bundle after start" >&2
+    exit 1
+  }
 )
 
 echo "pr.sh new/start title+version inference: ok"

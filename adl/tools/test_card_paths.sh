@@ -63,4 +63,18 @@ canonical_output="$(resolve_output_card_path 145 v0.85 demo-title)"
 assert_eq "$(canon_path "$(dirname "$canonical_input")")/$(basename "$canonical_input")" "$(canon_path "$repo/.adl/v0.85/tasks/issue-0145__demo-title")/sip.md"
 assert_eq "$(canon_path "$(dirname "$canonical_output")")/$(basename "$canonical_output")" "$(canon_path "$repo/.adl/v0.85/tasks/issue-0145__demo-title")/sor.md"
 
+git branch -q worktree-test
+mkdir -p "$repo/.worktrees"
+git worktree add -q "$repo/.worktrees/adl-wp-200" worktree-test
+(
+  cd "$repo/.worktrees/adl-wp-200"
+  unset ADL_CARDS_ROOT
+  # shellcheck disable=SC1091
+  source "$repo/adl/tools/card_paths.sh"
+  local_cards_root="$(cards_root_resolve)"
+  local_bundle_path="$(task_bundle_dir_path 200 v0.85 local-scope)"
+  assert_eq "$(canon_path "$local_cards_root")" "$(canon_path "$repo/.worktrees/adl-wp-200/.adl/cards")"
+  assert_eq "$(canon_path "$(dirname "$local_bundle_path")")/$(basename "$local_bundle_path")" "$(canon_path "$repo/.worktrees/adl-wp-200/.adl/v0.85/tasks")/issue-0200__local-scope"
+)
+
 echo "ok"

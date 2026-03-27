@@ -2,16 +2,35 @@
 set -euo pipefail
 
 card_primary_checkout_root() {
-  local common top
+  local common top current_top current_base current_parent
+  current_top="$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)"
+  current_base="$(basename "$current_top")"
+  current_parent="$(basename "$(dirname "$current_top")")"
+
+  # Repo-local execution clones/worktrees under .worktrees/adl-wp-* should keep
+  # their local ADL artifact state inside that execution surface, not spill back
+  # into the shared primary checkout.
+  if [[ "$current_parent" == ".worktrees" && "$current_base" == adl-wp-* ]]; then
+    printf '%s\n' "$current_top"
+    return 0
+  fi
+
   common="$(git rev-parse --git-common-dir 2>/dev/null || true)"
   if [[ -z "$common" ]]; then
-    pwd -P
+    printf '%s\n' "$current_top"
     return 0
   fi
 
   if [[ "$common" != /* ]]; then
-    top="$(git rev-parse --show-toplevel 2>/dev/null || pwd -P)"
+    top="$current_top"
     common="$(cd "$top/$common" && pwd -P)"
+  fi
+
+  # For any non-primary git worktree, keep local ADL artifact state inside the
+  # active worktree rather than redirecting it back into the shared checkout.
+  if [[ "$current_top" != "$(cd "$common/.." && pwd -P)" ]]; then
+    printf '%s\n' "$current_top"
+    return 0
   fi
 
   cd "$common/.." && pwd -P
