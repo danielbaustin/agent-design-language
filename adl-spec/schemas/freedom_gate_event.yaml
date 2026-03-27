@@ -1,0 +1,133 @@
+# Freedom Gate Event Schema
+# version: v0.1
+
+schema: freedom_gate_event
+version: v0.1
+
+description: |
+  A Freedom Gate event represents a single moment of agent choice.
+  It captures the transition from evaluation to commitment,
+  including candidate actions, the selected action, and the
+  minimal context required for traceability and review.
+
+required:
+  - event_id
+  - timestamp
+  - run_id
+  - agent_id
+  - candidate_actions
+  - selected_action
+
+properties:
+
+  event_id:
+    type: string
+    description: Unique identifier for this decision event
+
+  timestamp:
+    type: string
+    format: date-time
+    description: Time at which the decision was made
+
+  run_id:
+    type: string
+    description: ADL run identifier in which this event occurred
+
+  agent_id:
+    type: string
+    description: Identifier of the agent making the decision
+
+  context:
+    type: object
+    description: |
+      Minimal contextual snapshot at decision time.
+      Should be sufficient to understand the situation
+      without reconstructing the entire run.
+
+  candidate_actions:
+    type: array
+    description: |
+      Set of actions considered at the Freedom Gate.
+      Must contain at least one candidate (explicit or implicit).
+    items:
+      type: object
+      required:
+        - action_id
+        - description
+      properties:
+        action_id:
+          type: string
+        description:
+          type: string
+        metadata:
+          type: object
+          description: Optional additional structure for the action
+
+  decision_type:
+    type: string
+    description: |
+      The type of decision made at the Freedom Gate.
+      Helps distinguish forms of agency.
+    enum:
+      - execute
+      - defer
+      - refuse
+      - delegate
+
+  selected_action:
+    type: object
+    description: The action chosen by the agent
+    required:
+      - action_id
+      - description
+    properties:
+      action_id:
+        type: string
+      description:
+        type: string
+      metadata:
+        type: object
+
+  rejected_actions:
+    type: array
+    description: |
+      Actions that were considered but not selected.
+      Optional but recommended for transparency.
+    items:
+      type: object
+      properties:
+        action_id:
+          type: string
+        reason:
+          type: string
+
+  reasoning_summary:
+    type: string
+    description: |
+      Optional high-level explanation of the decision.
+      Should summarize why the selected action was chosen.
+
+  affect_signals:
+    type: object
+    description: |
+      Optional signals representing urgency, priority,
+      or other affective influences on the decision.
+
+  trace_id:
+    type: string
+    description: |
+      Reference to the signed trace or execution trace
+      associated with this decision event
+
+integrity_conditions:
+  - At least one candidate action must exist (explicitly or implicitly)
+  - Exactly one action must be selected
+  - The decision must be timestamped and attributable to an agent
+  - The event must be traceable or reconstructable
+  - The selected_action must correspond to one of the candidate_actions
+
+notes: |
+  This schema defines the atomic unit of agency in ADL.
+  Each event represents a committed choice made by an agent
+  under constraints, and is intended to be observable,
+  reviewable, and attributable.

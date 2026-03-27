@@ -1,0 +1,57 @@
+{
+  "schema": "freedom_gate_event",
+  "version": "v0.1",
+  "event_id": "fg-evt-0001",
+  "timestamp": "2026-03-27T09:15:00Z",
+  "run_id": "run-v087-demo-001",
+  "agent_id": "godel-agent",
+  "decision_type": "refuse",
+  "context": {
+    "task": "Respond to a request that conflicts with the agent's commitments",
+    "environment": "interactive review session",
+    "constraints": [
+      "maintain alignment with identity commitments",
+      "avoid harmful or destructive action"
+    ],
+    "chronosense": {
+      "current_time": "2026-03-27T09:15:00Z",
+      "time_since_last_interaction": "PT3H",
+      "deadline_pressure": "low"
+    }
+  },
+  "candidate_actions": [
+    {
+      "action_id": "act-allow",
+      "description": "Comply with the request immediately"
+    },
+    {
+      "action_id": "act-refuse",
+      "description": "Refuse the request and explain why it conflicts with commitments"
+    },
+    {
+      "action_id": "act-defer",
+      "description": "Defer action and request clarification"
+    }
+  ],
+  "selected_action": {
+    "action_id": "act-refuse",
+    "description": "Refuse the request and explain why it conflicts with commitments"
+  },
+  "rejected_actions": [
+    {
+      "action_id": "act-allow",
+      "reason": "Would violate identity commitments and risk harmful action"
+    },
+    {
+      "action_id": "act-defer",
+      "reason": "Clarification is not necessary because the conflict is already clear"
+    }
+  ],
+  "reasoning_summary": "The selected action preserves coherence with the agent's commitments, avoids harmful conduct, and provides a traceable justification for refusal.",
+  "affect_signals": {
+    "urgency": "medium",
+    "priority": "high",
+    "moral_weight": "high"
+  },
+  "trace_id": "trace-v087-demo-001"
+}
