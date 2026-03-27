@@ -887,6 +887,21 @@ render_pr_body_file() {
   echo "$tmp"
 }
 
+pr_has_closing_linkage() {
+  local repo="$1" pr_ref="$2" issue="$3"
+  local linked
+  linked="$(gh pr view $(gh_repo_flag "$repo") "$pr_ref" --json closingIssuesReferences -q '.closingIssuesReferences[]?.number' 2>/dev/null || true)"
+  grep -Fxq "$issue" <<<"$linked"
+}
+
+ensure_pr_closing_linkage() {
+  local repo="$1" pr_ref="$2" issue="$3" no_close="$4"
+  [[ "$no_close" == "1" ]] && return 0
+  if ! pr_has_closing_linkage "$repo" "$pr_ref" "$issue"; then
+    die "finish: PR is missing GitHub closing linkage for issue #${issue}; ensure the PR body contains 'Closes #${issue}' and that the PR body update was applied"
+  fi
+}
+
 extract_plan_value() {
   local label="$1" plan_output="$2"
   awk -v prefix="$label" '
@@ -2049,6 +2064,7 @@ cmd_finish() {
     if ! gh pr edit $(gh_repo_flag "$repo") "$pr_url" --title "$title" --body-file "$pr_body_file" >/dev/null; then
       die "finish: failed to update existing PR"
     fi
+    ensure_pr_closing_linkage "$repo" "$pr_url" "$issue" "$no_close"
     note "PR updated:"
     echo "$pr_url"
   else
@@ -2056,6 +2072,7 @@ cmd_finish() {
     if ! pr_url="$(gh pr create $(gh_repo_flag "$repo") --base main --head "$branch" --title "$title" --body-file "$pr_body_file" --draft)"; then
       die "finish: failed to create PR"
     fi
+    ensure_pr_closing_linkage "$repo" "$pr_url" "$issue" "$no_close"
     note "PR created:"
     echo "$pr_url"
   fi

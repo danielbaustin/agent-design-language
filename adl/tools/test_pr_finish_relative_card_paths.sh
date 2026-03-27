@@ -43,7 +43,11 @@ if [[ "$1" == "repo" && "$2" == "view" ]]; then
 fi
 if [[ "$1" == "pr" && "$2" == "list" ]]; then
   if [[ " $* " == *" -q "* ]]; then
-    echo ""
+    if [[ "${GH_MOCK_EXISTING_PR:-absent}" == "present" ]]; then
+      echo "https://example.test/pr/1"
+    else
+      echo ""
+    fi
   else
     echo "[]"
   fi
@@ -61,6 +65,24 @@ if [[ "$1" == "pr" && "$2" == "edit" ]]; then
   done
   cp "$body_file" "$TMP_PR_BODY"
   exit 0
+fi
+if [[ "$1" == "pr" && "$2" == "view" ]]; then
+  if [[ " $* " == *" --json closingIssuesReferences "* ]]; then
+    if [[ " $* " == *" -q "* ]]; then
+      if [[ "${GH_MOCK_CLOSING_LINKAGE:-present}" == "present" ]]; then
+        echo '958'
+      else
+        echo ''
+      fi
+    else
+      if [[ "${GH_MOCK_CLOSING_LINKAGE:-present}" == "present" ]]; then
+        echo '{"closingIssuesReferences":[{"number":958}]}'
+      else
+        echo '{"closingIssuesReferences":[]}'
+      fi
+    fi
+    exit 0
+  fi
 fi
 if [[ "$1" == "pr" && "$2" == "create" ]]; then
   body_file=""
@@ -111,6 +133,8 @@ assert_contains() {
 TMP_PR_BODY="$tmpdir/pr_body.md"
 export TMP_PR_BODY
 export PATH="$mockbin:$PATH"
+export GH_MOCK_CLOSING_LINKAGE="present"
+export GH_MOCK_EXISTING_PR="absent"
 
 (
   cd "$repo"
@@ -221,11 +245,37 @@ EOF_SOR
   body="$(cat "$TMP_PR_BODY")"
   assert_contains ".adl/cards/958/input_958.md" "$body"
   assert_contains ".adl/cards/958/output_958.md" "$body"
+  assert_contains "Closes #958" "$body"
   if grep -Eq '/Users/|/private/|/tmp/' <<<"$body"; then
     echo "assertion failed: PR body leaked absolute host path" >&2
     echo "$body" >&2
     exit 1
   fi
+
+  echo "relative body test again" >> "$worktree/adl/tools/README.md"
+  export GH_MOCK_CLOSING_LINKAGE="missing"
+  set +e
+  bad_finish="$(
+    cd "$worktree" &&
+    "$BASH_BIN" adl/tools/pr.sh finish 958 --title "[v0.85][authoring] Prevent Absolute Host Path Leakage in Issues, Cards, and PR Bodies" --paths "adl/tools/README.md" -f "$repo/.adl/cards/958/input_958.md" --output-card "$repo/.adl/cards/958/output_958.md" --no-checks --no-open 2>&1
+  )"
+  status=$?
+  set -e
+  [[ "$status" -ne 0 ]] || {
+    echo "assertion failed: expected finish to fail without GitHub closing linkage" >&2
+    exit 1
+  }
+  assert_contains "finish: PR is missing GitHub closing linkage for issue #958" "$bad_finish"
+
+  echo "relative body test update path" >> "$worktree/adl/tools/README.md"
+  export GH_MOCK_EXISTING_PR="present"
+  export GH_MOCK_CLOSING_LINKAGE="present"
+  (
+    cd "$worktree"
+    "$BASH_BIN" adl/tools/pr.sh finish 958 --title "[v0.85][authoring] Prevent Absolute Host Path Leakage in Issues, Cards, and PR Bodies" --paths "adl/tools/README.md" -f "$repo/.adl/cards/958/input_958.md" --output-card "$repo/.adl/cards/958/output_958.md" --no-checks --no-open >/dev/null
+  )
+  body="$(cat "$TMP_PR_BODY")"
+  assert_contains "Closes #958" "$body"
 
   cat >"$tmpdir/issue_body_bad.md" <<'EOF_BAD'
 ## Goal
