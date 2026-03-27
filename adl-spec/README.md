@@ -66,6 +66,13 @@ Highlights relevant to the spec:
 - `schemas/` — schema artifacts used by validation/tooling surfaces
 - `examples/` — specification examples illustrating ADL document structure
 
+Key current artifacts include:
+- `schemas/adl_constitution.yaml`
+- `schemas/freedom_gate_event.yaml`
+- `examples/delegation_contract.example.yaml`
+- `examples/freedom_gate_event.json`
+- `examples/freedom_gate_event.example.yaml` (alternative example)
+
 ## Specification vs Runtime
 
 This directory is for **language semantics, invariants, and design intent**.
