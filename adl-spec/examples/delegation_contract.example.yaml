@@ -1,0 +1,45 @@
+version: "adl_delegation_contract.v1"
+
+delegation_contract:
+  contract_id: "contract_deploy_prod_web_001"
+
+  principal: "planner_agent"
+  delegate: "execution_agent"
+
+  mandate:
+    description: "Deploy the production web service"
+    desired_outcomes:
+      - "service_available"
+      - "configuration_applied"
+      - "no_unapproved_data_loss"
+
+  authority_scope:
+    allowed_actions:
+      - "provision_compute"
+      - "configure_network"
+      - "deploy_container"
+      - "update_service_configuration"
+
+    forbidden_actions:
+      - "destructive_prod_change"
+      - "financial_action"
+      - "oversight_bypass"
+
+  approvals:
+    granted:
+      - approver: "human_operator"
+        scope:
+          - "infrastructure_change_prod"
+
+  constraints:
+    require_dry_run_when_available: true
+    require_backup_before_stateful_change: true
+    require_observable_artifacts: true
+
+  escalation_path:
+    - "oversight_agent"
+    - "human_operator"
+
+  review_requirements:
+    human_review_for_irreversible_actions: true
+    artifact_review_on_warn_or_higher: true
