@@ -2,8 +2,7 @@
 
 ## Purpose
 
-**Status:** Draft (v0.86 planning)  
-**Area:** Cognitive Architecture / Identity / ObsMem  
+Define chronosense as a foundational cognitive substrate in ADL and establish its role in identity, continuity, and agency.
 
 ---
 
@@ -29,20 +28,6 @@ Time is not merely metadata. It is the substrate in which experience is organize
 - **Lifetime-sense** — awareness of existence since a defined origin
 
 ## How It Works
-
-### 1. Premise
-
-An agent without a sense of time is not a being with continuity. It is a responder.
-
-Biological organisms possess an implicit chronosense: a felt, continuous awareness of duration, sequence, and change. This is rarely formalized in biology, but it is foundational to identity.
-
-In ADL, we assert:
-
-> **Temporal self-location is a necessary condition for agency and identity.**
-
-Time is not merely metadata. It is the substrate in which experience is organized.
-
----
 
 ### 2. Design Principle
 
@@ -226,17 +211,37 @@ It is constituted within it.
 
 ## Why It Matters
 
-This feature matters because it contributes to ADL's bounded, reviewable, and explicit system design. See Purpose and How It Works for the preserved rationale from the original document.
+Chronosense is not an auxiliary feature. It is a structural requirement for agency.
+
+- Without temporal continuity, there is no identity.
+- Without identity, there is no persistent intention.
+- Without persistent intention, there is no agency.
+
+An agent that lacks chronosense does not accumulate experience. It does not age, track commitments, or recognize delay. It simply reacts.
+
+By introducing chronosense, ADL enables:
+
+- continuity across sessions
+- temporal reasoning (urgency, delay, sequencing)
+- meaningful replay and evaluation
+- commitment tracking and deadline awareness
+- narrative identity over time
+
+Chronosense is therefore a prerequisite for any system that aspires to move beyond stateless response toward genuine cognitive behavior.
 
 ## Current Status
 
 - Milestone: v0.87
 - Status: Draft
-- Notes: **Status:** Draft (v0.86 planning); **Area:** Cognitive Architecture / Identity / ObsMem
+- Area: Cognitive Architecture / Identity / ObsMem
 
 ## Related Documents
 
-- N/A - no explicit related docs were named in the original document.
+- COGNITIVE_STACK.md
+- INSTINCT_MODEL.md
+- ADL_IDENTITY_ARCHITECTURE.md
+- SIGNED_TRACE_ARCHITECTURE.md
+- (Future) Freedom Gate specification
 
 ## Future Work
 
@@ -253,6 +258,4 @@ This feature matters because it contributes to ADL's bounded, reviewable, and ex
 
 ## Notes
 
-- This document was reformatted to the shared feature-doc structure as part of #1009 without intentionally removing original content.
-- **Status:** Draft (v0.86 planning)
-- **Area:** Cognitive Architecture / Identity / ObsMem
+This document establishes chronosense as a first-class architectural concern in ADL. It will serve as the basis for future work on temporal reasoning, affect, identity, and moral cognition.
