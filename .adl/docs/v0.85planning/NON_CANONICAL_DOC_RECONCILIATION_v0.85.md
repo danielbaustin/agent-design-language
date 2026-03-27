@@ -268,7 +268,7 @@ Current policy for active duplicate `.adl` copies:
 | File | Sync state | Current disposition | Notes |
 | --- | --- | --- | --- |
 | `AFFECTIVE_REASONING_MODEL.md` | Different | Resolved — canonical only | Canonical wording is already normalized; retire the stale planning duplicate rather than merging it. |
-| `AFFECT_MODEL_v0.85.md` | Different | Move planning copy to `v0.91` planning; no v0.85 merge required right now | Not a duplicate of `AFFECTIVE_REASONING_MODEL.md`; treat as future roadmap-critical planning rather than a v0.85 canonical merge target. |
+| `AFFECT_MODEL_v0.85.md` | Different | Retire the old planning alias in favor of `AFFECT_MODEL_v0.90.md` in `v0.91` planning | Not a duplicate of `AFFECTIVE_REASONING_MODEL.md`; the active future-band planning file is now the renamed `AFFECT_MODEL_v0.90.md`. |
 | `DECISIONS_v0.85.md` | Different | Canonical wins | Treat `docs/milestones/v0.85/` as source of truth. |
 | `DESIGN_v0.85.md` | Different | Canonical wins | Treat `docs/milestones/v0.85/` as source of truth. |
 | `HUMAN-IN-THE-LOOP-DESIGN-NOTES.MD` | Same | Already aligned | No action needed. |

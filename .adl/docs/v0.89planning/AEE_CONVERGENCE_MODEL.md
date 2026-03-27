@@ -370,7 +370,7 @@ structured persistence can substitute for raw model scale.
 
 ## Related Documents
 
-- `AFFECT_MODEL_v0.85.md`
+- `AFFECT_MODEL_v0.90.md`
 - `REASONING_GRAPH_SCHEMA_V0.85.md`
 
 ## Future Work
