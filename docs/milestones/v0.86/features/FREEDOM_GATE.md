@@ -309,7 +309,7 @@ If these conditions are not met, the system is no longer exercising agency, but 
 ## Current Status
 
 - Milestone: v0.87+
-- Status: Draft
+- Status: Tracked feature doc
 - Area: Cognitive Architecture / Identity / Agency
 
 ---

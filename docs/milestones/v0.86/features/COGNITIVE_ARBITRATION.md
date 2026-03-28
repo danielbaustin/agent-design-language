@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft — v0.86 planning
+Tracked feature doc — v0.86
 
 ---
 
