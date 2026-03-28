@@ -1925,7 +1925,7 @@ cmd_start() {
 
   ensure_primary_checkout_on_main
 
-  local ver in_path out_path
+  local ver in_path out_path source_path
   if [[ -n "$version" ]]; then
     ver="$version"
   elif [[ "$no_fetch_issue" == "1" ]]; then
@@ -1934,10 +1934,34 @@ cmd_start() {
     require_cmd gh
     ver="$(issue_version "$issue")"
   fi
+
+  source_path="$(issue_prompt_path_for_issue "$issue" "$ver" "$slug")"
+  if [[ ! -f "$source_path" ]]; then
+    if [[ "$no_fetch_issue" == "1" ]]; then
+      note "Source issue prompt missing; generating offline canonical local issue prompt: $source_path"
+      write_generated_issue_prompt "$source_path" "$issue" "$ver" "$slug" "$title" "version:${ver}" "https://github.com/$(default_repo)/issues/${issue}"
+    fi
+    if [[ ! -f "$source_path" ]]; then
+      note "Source issue prompt missing; generating canonical local issue prompt: $source_path"
+      source_path="$(ensure_source_issue_prompt "$issue" "$ver" "$slug" "$title")"
+    fi
+  fi
+  validate_bootstrap_stp "$source_path"
+
   local start_paths_file
   start_paths_file="$(mktemp -t prsh_start_paths_XXXXXX)"
   (
     cd "$worktree_path"
+    local bundle_dir stp_path
+    bundle_dir="$(task_bundle_dir_path "$issue" "$ver" "$slug")"
+    stp_path="$bundle_dir/stp.md"
+    mkdir -p "$bundle_dir"
+    if ! ensure_nonempty_file "$stp_path"; then
+      note "Creating task-bundle STP: $stp_path"
+      cp "$source_path" "$stp_path"
+    else
+      note "Task-bundle STP exists: $stp_path"
+    fi
     in_path="$(input_card_path "$issue" "$ver" "$slug")"
     out_path="$(output_card_path "$issue" "$ver" "$slug")"
     ensure_adl_dirs
@@ -1954,13 +1978,17 @@ cmd_start() {
       note "Output card exists: $out_path"
     fi
     sync_legacy_links_for_issue "$issue" "$ver" "$slug"
+    validate_bootstrap_stp "$stp_path"
     validate_bootstrap_cards "$issue" "$branch" "$in_path" "$out_path"
-    printf '%s\n%s\n' "$in_path" "$out_path" >"$start_paths_file"
+    printf '%s\n%s\n%s\n' "$stp_path" "$in_path" "$out_path" >"$start_paths_file"
   )
-  in_path="$(sed -n '1p' "$start_paths_file")"
-  out_path="$(sed -n '2p' "$start_paths_file")"
+  local stp_path
+  stp_path="$(sed -n '1p' "$start_paths_file")"
+  in_path="$(sed -n '2p' "$start_paths_file")"
+  out_path="$(sed -n '3p' "$start_paths_file")"
   rm -f "$start_paths_file"
   echo "• Agent:"
+  echo "  STP    $stp_path"
   echo "  READ   $in_path"
   echo "  WRITE  $out_path"
   echo "  WORKTREE $worktree_path"

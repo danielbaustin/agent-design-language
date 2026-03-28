@@ -76,6 +76,10 @@ assert_contains() {
     echo "assertion failed: expected branch in worktree" >&2
     exit 1
   }
+  [[ -f "$wt_path/.adl/v0.86/tasks/issue-0999__test-smoke/stp.md" ]] || {
+    echo "assertion failed: expected canonical stp inside the worktree-local task bundle" >&2
+    exit 1
+  }
   [[ -f "$wt_path/.adl/v0.86/tasks/issue-0999__test-smoke/sip.md" ]] || {
     echo "assertion failed: expected canonical input card inside the worktree-local task bundle" >&2
     exit 1
