@@ -139,17 +139,19 @@ export GH_MOCK_EXISTING_PR="absent"
 (
   cd "$repo"
 
-  "$BASH_BIN" adl/tools/pr.sh start 958 --slug relative-card-paths --no-fetch-issue >/dev/null
+  "$BASH_BIN" adl/tools/pr.sh start 958 --slug relative-card-paths --no-fetch-issue --version v0.85 >/dev/null
+  "$BASH_BIN" adl/tools/pr.sh cards 958 --version v0.85 --no-fetch-issue >/dev/null
   worktree="$repo/.worktrees/adl-wp-958"
   git -C "$worktree" config user.name "Test User"
   git -C "$worktree" config user.email "test@example.com"
+  mkdir -p .adl/cards/958
 
   cat > .adl/cards/958/output_958.md <<'EOF_SOR'
 # ADL Output Card
 
 Task ID: issue-0958
 Run ID: issue-0958
-Version: v0.3
+Version: v0.85
 Title: relative-card-paths
 Branch: codex/958-relative-card-paths
 Status: DONE
@@ -282,14 +284,14 @@ EOF_SOR
 contains /Users/example leak
 EOF_BAD
   set +e
-  bad="$($BASH_BIN adl/tools/pr.sh new --title "bad issue" --body-file "$tmpdir/issue_body_bad.md" --no-start 2>&1)"
+  bad="$($BASH_BIN adl/tools/pr.sh create --title "bad issue" --body-file "$tmpdir/issue_body_bad.md" --no-start 2>&1)"
   status=$?
   set -e
   [[ "$status" -ne 0 ]] || {
-    echo "assertion failed: expected pr.sh new absolute-path guard to fail" >&2
+    echo "assertion failed: expected pr.sh create absolute-path guard to fail" >&2
     exit 1
   }
-  assert_contains "new: issue body contains disallowed absolute host path" "$bad"
+  assert_contains "issue body contains disallowed absolute host path" "$bad"
 )
 
 echo "pr.sh finish/new path hygiene: ok"

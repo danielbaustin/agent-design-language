@@ -41,8 +41,8 @@ CARD_PATHS_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/card_paths.sh"
 # shellcheck disable=SC1090
 source "$CARD_PATHS_LIB"
 
-DEFAULT_VERSION="v0.3"
-DEFAULT_NEW_LABELS="track:roadmap,version:v0.3,type:bug,area:tools,epic:v0.3-tooling-git"
+DEFAULT_VERSION="v0.86"
+DEFAULT_NEW_LABELS="track:roadmap,type:task,area:tools"
 
 
 #
@@ -1623,9 +1623,7 @@ cmd_create() {
     return 0
   fi
 
-  # v0.85 transition strategy: allow the new lifecycle name to drive the current
-  # issue-creation precursor flow while keeping `pr new` as a compatibility alias.
-  cmd_new "$@"
+  create_issue "$@"
 }
 
 cmd_start() {
@@ -1795,12 +1793,7 @@ cmd_start() {
   note "Done."
 }
 
-cmd_new() {
-  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
-    usage_new
-    return 0
-  fi
-
+create_issue() {
   require_cmd gh
 
   local title=""
@@ -1917,6 +1910,14 @@ cmd_new() {
 
   cmd_start "$issue_num" --slug "$slug" --title "$title" --version "$version"
   echo "BRANCH=codex/${issue_num}-${slug}"
+}
+
+cmd_new() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_new
+    return 0
+  fi
+  die "new: retired; use 'adl/tools/pr.sh create --title ...' instead"
 }
 
 cmd_finish() {
@@ -2186,8 +2187,8 @@ pr.sh — reduce git/PR thrash while preserving human review
 Commands:
   help
   init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v>]
-  create  [<issue> --stp <path>] | [legacy new-issue args]
-  new     --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
+  create  <issue> --stp <path>
+  create  --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
   run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
   start   <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>]
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
@@ -2198,14 +2199,13 @@ Commands:
   status
 
 Flags:
-  (new)     --title "<title>"                 Required issue title for gh issue create.
-  (new)     --body "<text>"                   Optional issue body text.
-  (new)     --body-file <path|->              Optional issue body file path ('-' reads stdin).
-  (new)     --labels <csv>                    Comma-separated labels (default: track:roadmap,version:v0.3,type:bug,area:tools,epic:v0.3-tooling-git).
-  (new)     --version <v0.3>                  Default/fallback version label for new issue/card flow.
-  (new)     --no-start                        Only create issue; do not invoke start.
   (create)  <issue> --stp <path>              Reconcile an existing GitHub issue from a canonical STP.
-  (create)  [legacy new-issue args]           Create path reuses the current precursor semantics during v0.85.
+  (create)  --title "<title>"                 Required issue title for gh issue create.
+  (create)  --body "<text>"                   Optional issue body text.
+  (create)  --body-file <path|->              Optional issue body file path ('-' reads stdin).
+  (create)  --labels <csv>                    Comma-separated labels (default: track:roadmap,type:task,area:tools).
+  (create)  --version <v0.86>                 Default/fallback version label for issue/card flow.
+  (create)  --no-start                        Only create issue; do not invoke start.
   (init)    --version <v0.85>                 Override detected version (otherwise inferred from issue labels version:vX.Y)
   (init)    --no-fetch-issue                  Do not fetch issue title/labels; requires --slug.
   (run)     --runs-root <dir>                 Override canonical run artifact root (default: <repo>/.adl/runs or ADL_RUNS_ROOT).
@@ -2235,7 +2235,7 @@ Examples:
   adl/tools/pr.sh help
   adl/tools/pr.sh init 17 --slug b6-default-system --no-fetch-issue --version v0.85
   adl/tools/pr.sh create 17 --stp .adl/issues/v0.85/bodies/issue-17-b6-default-system.md
-  adl/tools/pr.sh new --title "adl: fix timeout handling" --slug timeout-fix
+  adl/tools/pr.sh create --title "adl: fix timeout handling" --slug timeout-fix
   adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml --trace --allow-unsigned
   adl/tools/pr.sh start 17 --slug b6-default-system
   adl/tools/pr.sh card  17 --help
@@ -2253,10 +2253,11 @@ EOF
 usage_new() {
   cat <<'EOF'
 Usage:
-  adl/tools/pr.sh new --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
+  adl/tools/pr.sh new ...
 
 Notes:
-- Compatibility alias during v0.85 for the create path now exposed as `pr create`.
+- `pr new` is retired.
+- Use `adl/tools/pr.sh create --title ...` instead.
 EOF
 }
 
@@ -2268,8 +2269,8 @@ Usage:
 
 Notes:
 - Reconcile mode updates an existing GitHub issue from a canonical STP.
-- Create mode reuses the current `pr new` precursor behavior during v0.85.
-- `pr new` remains a compatibility alias while `pr create` becomes the canonical lifecycle name.
+- Create mode is the canonical issue-creation path.
+- `pr new` is retired and should not be used.
 EOF
 }
 
