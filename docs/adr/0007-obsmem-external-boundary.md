@@ -48,6 +48,6 @@ Trade-offs:
 
 ## Related References
 
-- `docs/OBSMEM.md`
+- `docs/milestones/v0.75/OBSMEM_USER_GUIDE_v0.75.md`
 - `docs/milestones/v0.75/OBSMEM_INTEGRATION_CONTRACT_0.75.md`
 - `docs/milestones/v0.75/DESIGN_0.75.md`
