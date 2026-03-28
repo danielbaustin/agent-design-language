@@ -1,7 +1,7 @@
 # Cognitive Stack v0.86
 
-**Status:** Draft  
-**Version:** v0.86 planning  
+**Status:** Tracked feature doc  
+**Version:** v0.86  
 **Scope:** Architecture synthesis  
 **Related:** instinct model, affect model, ObsMem, reasoning graphs, freedom gate, adaptive execution, Gödel/Hadamard loop
 
@@ -22,7 +22,7 @@ Over time, several architectural needs emerged that collectively resemble a broa
 - persistence
 - internal drives
 
-This document synthesizes those ideas into a single conceptual stack for v0.86 planning.  
+This document synthesizes those ideas into a single conceptual stack for v0.86.  
 This stack also supports a dual-process model of cognition (fast vs slow thinking), with the Cognitive Arbitration Layer determining which path is used.
 
 ---
