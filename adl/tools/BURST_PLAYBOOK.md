@@ -5,7 +5,7 @@ Use this playbook for sequential burst execution.
 ## Sequence
 
 1. Generate a prioritized plan (max 8 issues).
-2. Create child issues with `./adl/tools/pr.sh new --no-start`.
+2. Create child issues with `./adl/tools/pr.sh create --no-start`.
 3. Execute child issues one by one using `adl_pr_cycle` (`init -> create -> start -> codex -> run_if_required -> finish -> report`).
 4. Merge only green PRs.
 5. Write a final summary under `.adl/reports/burst/<timestamp>/final_summary.md`.
