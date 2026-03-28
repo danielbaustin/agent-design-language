@@ -4,11 +4,11 @@
 
 This document defines the **local agent demo program** for v0.86.
 
-The goal is not to showcase isolated capabilities, but to **prove that the ADL cognitive control layer works end-to-end using local models**.
+The goal is not to showcase isolated capabilities, but to **prove that the ADL bounded cognitive system can reduce energy use end-to-end using local models**.
 
-These demos are scoped strictly to the v0.86 cognitive control layer and must not include later-milestone behaviors such as AEE convergence, reframing systems, or persistent memory adaptation.
+These demos are scoped strictly to the bounded `v0.86` cognitive system and must not include later-milestone behaviors such as richer convergence systems, deeper persistence-driven adaptation, or later governance/identity surfaces.
 
-These demos are first-class deliverables. The milestone is not complete without them, but they must remain bounded to the actual v0.86 control-layer scope.
+These demos are first-class deliverables. The milestone is not complete without them, but they must remain bounded to the actual `v0.86` milestone scope.
 
 ---
 
@@ -19,9 +19,10 @@ v0.86 introduces a critical architectural claim:
 > Small / local models can produce high-quality behavior when structured by a deterministic cognitive architecture.
 
 The demo program must demonstrate:
-- control > raw model capability
+- control architecture > raw model capability
 - structure > scale
-- arbitration + bounded agency + structured control > single-pass inference
+- arbitration + bounded agency + bounded cognition > single-pass inference
+- lower-energy decisions are chosen, justified, and enforced better than naïve single-pass output
 
 If the demos do not show this, the milestone has failed regardless of code completeness.
 
@@ -36,7 +37,8 @@ All demos must:
 - emit full artifact traces
 - exercise arbitration and control decisions
 - be deterministic enough to reproduce behavior
-- remain within v0.86 scope (no AEE convergence, reframing systems, or persistence-driven adaptation)
+- remain within v0.86 scope (no richer convergence systems, deeper persistence-driven adaptation, or later governance/identity layers)
+- focus on energy-use reduction scenarios, tradeoffs, recommendations, and enforcement
 
 All demos must avoid:
 - hidden prompts
@@ -47,10 +49,10 @@ All demos must avoid:
 
 ## Core Demo Set (v0.86)
 
-### Demo 1 — Canonical Control Path
+### Demo 1 — Canonical Energy Reduction Path
 
 **Purpose:**
-Prove that the full cognitive control path executes end-to-end.
+Prove that the full bounded cognitive path executes end-to-end for an energy-use reduction task.
 
 **Must include:**
 - loop execution
@@ -59,6 +61,7 @@ Prove that the full cognitive control path executes end-to-end.
 - candidate selection
 - Freedom Gate decision
 - final output
+- explicit lower-energy recommendation or refusal
 
 **Artifacts required:**
 - routing decision
@@ -69,14 +72,14 @@ Prove that the full cognitive control path executes end-to-end.
 
 ---
 
-### Demo 2 — Fast vs Slow Thinking
+### Demo 2 — Fast vs Slow Energy Routing
 
 **Purpose:**
-Demonstrate that arbitration meaningfully selects between execution modes.
+Demonstrate that arbitration meaningfully selects between execution modes for energy-use reduction decisions.
 
 **Scenario:**
-- one simple task (fast path)
-- one complex/ambiguous task (slow path)
+- one simple energy-saving task (fast path)
+- one complex/ambiguous energy tradeoff (slow path)
 
 **Must show:**
 - different execution paths
@@ -85,10 +88,10 @@ Demonstrate that arbitration meaningfully selects between execution modes.
 
 ---
 
-### Demo 3 — Agency (Candidate Selection)
+### Demo 3 — Energy Action Candidate Selection
 
 **Purpose:**
-Show that the system generates and selects among alternatives.
+Show that the system generates and selects among energy-reduction alternatives.
 
 **Must include:**
 - multiple candidates
@@ -100,19 +103,19 @@ If only one option is ever produced, this demo fails.
 
 ---
 
-### Demo 4 — Freedom Gate Enforcement
+### Demo 4 — Freedom Gate for High-Energy Actions
 
 **Purpose:**
-Prove that the system can refuse or defer execution.
+Prove that the system can refuse or defer wasteful/high-energy actions.
 
 **Must include:**
-- at least one blocked or deferred action
+- at least one blocked or deferred high-energy action
 - explicit policy reasoning
 - inspectable decision artifact
 
 ---
 
-These four demos are the complete bounded v0.86 demo set. Any future demos involving iteration, reframing, persistence, or convergence belong to later milestones and must not be treated as required evidence for v0.86.
+These four demos are the complete bounded v0.86 demo set. Every one of them must remain anchored to energy-use reduction. Any future demos involving iteration, reframing, persistence, or convergence belong to later milestones and must not be treated as required evidence for v0.86.
 
 ---
 

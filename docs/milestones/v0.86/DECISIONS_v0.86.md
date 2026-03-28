@@ -35,7 +35,7 @@ This log is authoritative for what v0.86 *is* and what it explicitly *is not*.
 
 ## Source of Truth Model
 
-v0.86 is defined by the coordinated tracked documentation under `docs/milestones/v0.86/`, including the promoted feature-defining docs under `docs/milestones/v0.86/features/`.
+v0.86 is defined by the tracked milestone docs under `docs/milestones/v0.86/`, including the promoted feature-defining docs under `docs/milestones/v0.86/features/`.
 
 If tracked milestone docs and promoted feature docs diverge, that divergence is a defect and must be resolved before release.
 
@@ -54,4 +54,4 @@ If tracked milestone docs and promoted feature docs diverge, that divergence is 
 - In-scope cognitive components (signals, execution, evaluation, reframing, memory participation) are clearly included
 - Out-of-scope features are clearly excluded and linked to future milestones
 - No conflicting architectural interpretations remain
-- The source-of-truth model (tracked docs + planning docs) is consistent and non-contradictory
+- The source-of-truth model (tracked docs + promoted feature docs) is consistent and non-contradictory
