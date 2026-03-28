@@ -8,6 +8,12 @@ Tracked mirror of the local skill contract:
 
 - `docs/tooling/adl_pr_cycle_skill.md`
 
+Install or resync the local skill with:
+
+```bash
+bash adl/tools/install_adl_pr_cycle_skill.sh
+```
+
 The five-command control-plane surface is:
 
 - `pr init`

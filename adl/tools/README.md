@@ -21,6 +21,9 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 From repo root:
 
 ```bash
+# install or resync the local adl_pr_cycle Codex skill from the tracked contract
+bash adl/tools/install_adl_pr_cycle_skill.sh
+
 # start issue branch + cards
 ./adl/tools/pr.sh start <issue_num> --slug <slug>
 
