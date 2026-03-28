@@ -11,8 +11,8 @@ Use this page when you need to orient quickly in the ADL repo.
 
 ## Where Reports Live
 
-- `.adl/reports/burst/<timestamp>/` (burst artifacts)
-- `.adl/reports/pr-cycle/<issue>/<timestamp>/` (per-issue cycle reports)
+- `.adl/reports/burst/<timestamp_utc_z>/` (burst artifacts)
+- `.adl/reports/pr-cycle/<issue>/<timestamp_utc_z>/` (per-issue cycle reports)
 - `.adl/reports/INDEX.md` (report directory orientation)
 
 ## Workflow Context

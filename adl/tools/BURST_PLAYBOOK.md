@@ -8,7 +8,7 @@ Use this playbook for sequential burst execution.
 2. Create child issues with `./adl/tools/pr.sh create --no-start`.
 3. Execute child issues one by one using `adl_pr_cycle` (`init -> create -> start -> codex -> run_if_required -> finish -> report`).
 4. Merge only green PRs.
-5. Write a final summary under `.adl/reports/burst/<timestamp>/final_summary.md`.
+5. Write a final summary under `.adl/reports/burst/<timestamp_utc_z>/final_summary.md`.
    Use `adl/tools/BURST_FINAL_SUMMARY_TEMPLATE.md`.
 
 ## Stop Conditions

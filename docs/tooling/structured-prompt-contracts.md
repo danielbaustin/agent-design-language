@@ -43,7 +43,17 @@ The validator currently enforces:
 - GitHub issue / PR URL formats where those fields are machine-readable
 - boolean normalization
 - selected enum vocabularies
-- ISO 8601 date-time formatting for machine-readable timestamp fields
+- UTC ISO 8601 / RFC3339 date-time formatting with trailing `Z` for machine-readable timestamp fields (`YYYY-MM-DDTHH:MM:SSZ`)
+
+## Timestamp Standard
+
+For active machine-readable timestamp surfaces, ADL uses one house rule:
+
+- UTC ISO 8601 / RFC3339 with trailing `Z`
+- canonical example: `2026-03-28T09:14:00Z`
+- preferred placeholder name in active docs and path conventions: `<timestamp_utc_z>`
+
+This applies to structured prompt execution fields, review metadata, and active report path conventions unless a surface explicitly documents a different historical compatibility rule.
 
 For SIP validation, the validator also delegates Prompt Spec validation to:
 

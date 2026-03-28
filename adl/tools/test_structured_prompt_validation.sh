@@ -494,6 +494,68 @@ if [[ "$rc" -eq 0 ]]; then
   exit 1
 fi
 
+cat >"$tmpdir/sor_offset_timestamp_invalid.md" <<'EOF'
+# ADL Output Card
+
+Task ID: issue-0898
+Run ID: issue-0898
+Version: v0.85
+Title: invalid-offset-sor
+Branch: codex/898-valid-sor
+Status: IN_PROGRESS
+
+Execution:
+- Actor:
+- Model:
+- Provider:
+- Start Time: 2026-03-18T07:00:00+00:00
+- End Time:
+
+## Summary
+x
+## Artifacts produced
+x
+## Actions taken
+x
+## Main Repo Integration (REQUIRED)
+- Main-repo paths updated:
+- Worktree-only paths remaining:
+- Integration state: worktree_only
+- Verification scope:
+- Integration method used:
+- Verification performed:
+- Result:
+## Validation
+x
+## Verification Summary
+x
+## Determinism Evidence
+x
+## Security / Privacy Checks
+x
+## Replay Artifacts
+x
+## Artifact Verification
+x
+## Decisions / Deviations
+x
+## Follow-ups / Deferred work
+x
+EOF
+
+set +e
+offset_err="$("$VALIDATOR" --type sor --phase bootstrap --input "$tmpdir/sor_offset_timestamp_invalid.md" 2>&1)"
+rc=$?
+set -e
+if [[ "$rc" -eq 0 ]]; then
+  echo "assertion failed: SOR with offset timestamp unexpectedly passed validation" >&2
+  exit 1
+fi
+printf '%s' "$offset_err" | grep -Fq "UTC ISO 8601 / RFC3339 with trailing Z" || {
+  echo "assertion failed: expected UTC Z guidance in timestamp validation error" >&2
+  exit 1
+}
+
 set +e
 "$VALIDATOR" --type sor --phase completed --input "$tmpdir/sor_completed_invalid_status.md" >/dev/null 2>&1
 rc=$?

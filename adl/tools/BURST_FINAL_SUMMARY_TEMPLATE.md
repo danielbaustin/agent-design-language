@@ -1,11 +1,11 @@
 # Burst Final Summary Template
 
-Use this structure for `.adl/reports/burst/<timestamp>/final_summary.md`.
+Use this structure for `.adl/reports/burst/<timestamp_utc_z>/final_summary.md`.
 
 ## Run Metadata
 
 - Parent issue:
-- Burst timestamp:
+- Burst timestamp (UTC ISO 8601 / RFC3339 with trailing `Z`):
 - Operator:
 - Mode: sequential
 

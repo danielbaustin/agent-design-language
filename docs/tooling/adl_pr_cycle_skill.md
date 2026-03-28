@@ -40,7 +40,7 @@ The skill now models the real control-plane workflow as:
   - `.adl/cards/<issue_num>/output_<issue_num>.md`
 - Never stage or commit `.adl/**` files.
 - Always emit a report under:
-  - `.adl/reports/pr-cycle/<issue_num>/<timestamp>/report.md`
+  - `.adl/reports/pr-cycle/<issue_num>/<timestamp_utc_z>/report.md`
 
 ## Proof Surface
 

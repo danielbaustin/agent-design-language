@@ -163,7 +163,8 @@ pub struct RunSpec {
     #[serde(default)]
     pub name: Option<String>,
 
-    /// Optional creation time in RFC3339 (e.g. "2026-01-24T10:30:00Z").
+    /// Optional creation time in UTC ISO 8601 / RFC3339 with trailing Z
+    /// (e.g. "2026-01-24T10:30:00Z").
     #[serde(default)]
     pub created_at: Option<String>,
 
