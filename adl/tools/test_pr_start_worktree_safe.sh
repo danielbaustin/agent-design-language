@@ -76,11 +76,11 @@ assert_contains() {
     echo "assertion failed: expected branch in worktree" >&2
     exit 1
   }
-  [[ -f "$wt_path/.adl/v0.3/tasks/issue-0999__test-smoke/sip.md" ]] || {
+  [[ -f "$wt_path/.adl/v0.86/tasks/issue-0999__test-smoke/sip.md" ]] || {
     echo "assertion failed: expected canonical input card inside the worktree-local task bundle" >&2
     exit 1
   }
-  [[ -f "$wt_path/.adl/v0.3/tasks/issue-0999__test-smoke/sor.md" ]] || {
+  [[ -f "$wt_path/.adl/v0.86/tasks/issue-0999__test-smoke/sor.md" ]] || {
     echo "assertion failed: expected canonical output card inside the worktree-local task bundle" >&2
     exit 1
   }
@@ -160,6 +160,20 @@ EOF
   }
   assert_contains "with local changes" "$bad2" "dirty guard message"
   assert_contains "commit/stash there, switch to main, then rerun" "$bad2" "dirty guard remediation"
+
+  git switch -q main
+  rm -f untracked.txt
+  mkdir -p "$(git rev-parse --git-common-dir)/pr-bootstrap.lock"
+  set +e
+  bad3="$("$BASH_BIN" adl/tools/pr.sh start 996 --slug bootstrap-lock --no-fetch-issue 2>&1)"
+  status=$?
+  set -e
+  rm -rf "$(git rev-parse --git-common-dir)/pr-bootstrap.lock"
+  [[ "$status" -ne 0 ]] || {
+    echo "assertion failed: expected bootstrap lock contention to fail" >&2
+    exit 1
+  }
+  assert_contains "another pr.sh bootstrap operation appears to be running" "$bad3" "bootstrap lock message"
 )
 
 echo "pr.sh start worktree-safe/idempotent flows: ok"

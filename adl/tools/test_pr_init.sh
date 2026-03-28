@@ -15,10 +15,13 @@ tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 
 repo="$tmpdir/repo"
+bindir="$tmpdir/bin"
+gh_log="$tmpdir/gh.log"
 mkdir -p \
   "$repo/adl/tools" \
   "$repo/adl/schemas" \
-  "$repo/.adl/issues/v0.85/bodies"
+  "$repo/.adl/issues/v0.85/bodies" \
+  "$bindir"
 
 cp "$PR_SH_SRC" "$repo/adl/tools/pr.sh"
 cp "$CARD_PATHS_SRC" "$repo/adl/tools/card_paths.sh"
@@ -28,6 +31,27 @@ cp "$STP_CONTRACT_SRC" "$repo/adl/schemas/structured_task_prompt.contract.yaml"
 cp "$SIP_CONTRACT_SRC" "$repo/adl/schemas/structured_implementation_prompt.contract.yaml"
 cp "$SOR_CONTRACT_SRC" "$repo/adl/schemas/structured_output_record.contract.yaml"
 chmod +x "$repo/adl/tools/pr.sh" "$repo/adl/tools/lint_prompt_spec.sh" "$repo/adl/tools/validate_structured_prompt.sh"
+
+cat >"$bindir/gh" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+LOG_FILE="${GH_LOG_FILE:?}"
+printf '%s\n' "$*" >>"$LOG_FILE"
+if [[ "${1:-}" == "issue" && "${2:-}" == "view" ]]; then
+  issue="${3:-}"
+  shift 3
+  if [[ "$issue" == "43" && "$*" == *"--json title"* && "$*" == *"-q .title"* ]]; then
+    echo "[v0.86][WP-03] Generated loop prompt"
+    exit 0
+  fi
+  if [[ "$issue" == "43" && "$*" == *"--json labels"* && "$*" == *"-q .labels[].name"* ]]; then
+    printf '%s\n' "track:roadmap" "version:v0.86" "area:docs" "type:design"
+    exit 0
+  fi
+fi
+exit 1
+EOF
+chmod +x "$bindir/gh"
 
 cat >"$repo/.adl/issues/v0.85/bodies/issue-42-test-init.md" <<'EOF'
 ---
@@ -105,10 +129,13 @@ assert_contains() {
 
 (
   cd "$repo"
+  export PATH="$bindir:$PATH"
+  export GH_LOG_FILE="$gh_log"
 
   out1="$("$BASH_BIN" adl/tools/pr.sh init 42 --slug test-init --no-fetch-issue --version v0.85)"
   assert_contains "STP      .adl/v0.85/tasks/issue-0042__test-init/stp.md" "$out1" "stp path"
   assert_contains "CONTRACT minimum v0.85 init = task-bundle directory + validated stp.md only" "$out1" "contract line"
+  assert_contains "STATE    ISSUE_AND_STP_READY" "$out1" "state line"
 
   stp_path="$repo/.adl/v0.85/tasks/issue-0042__test-init/stp.md"
   [[ -f "$stp_path" ]] || {
@@ -131,15 +158,22 @@ assert_contains() {
   out2="$("$BASH_BIN" adl/tools/pr.sh init 42 --slug test-init --no-fetch-issue --version v0.85)"
   assert_contains "STP already exists" "$out2" "idempotent reuse"
 
-  set +e
-  bad="$("$BASH_BIN" adl/tools/pr.sh init 43 --slug missing --no-fetch-issue --version v0.85 2>&1)"
-  status=$?
-  set -e
-  [[ "$status" -ne 0 ]] || {
-    echo "assertion failed: missing source prompt should fail" >&2
+  out3="$("$BASH_BIN" adl/tools/pr.sh init 43 --version v0.86)"
+  assert_contains "Source issue prompt missing; generating canonical local issue prompt" "$out3" "generated source prompt note"
+  assert_contains "STP      .adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/stp.md" "$out3" "generated stp path"
+  assert_contains "SOURCE   .adl/issues/v0.86/bodies/issue-43-v0-86-wp-03-generated-loop-prompt.md" "$out3" "generated source path"
+  [[ -f "$repo/.adl/issues/v0.86/bodies/issue-43-v0-86-wp-03-generated-loop-prompt.md" ]] || {
+    echo "assertion failed: expected generated canonical source issue prompt" >&2
     exit 1
   }
-  assert_contains "canonical source issue prompt not found" "$bad" "missing source failure"
+  [[ -f "$repo/.adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/stp.md" ]] || {
+    echo "assertion failed: expected generated task-bundle stp" >&2
+    exit 1
+  }
+  grep -Fq 'title: "[v0.86][WP-03] Generated loop prompt"' "$repo/.adl/issues/v0.86/bodies/issue-43-v0-86-wp-03-generated-loop-prompt.md" || {
+    echo "assertion failed: expected generated source prompt title" >&2
+    exit 1
+  }
 )
 
 echo "pr.sh init minimal task-bundle initialization: ok"

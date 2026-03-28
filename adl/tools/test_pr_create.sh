@@ -185,8 +185,14 @@ assert_contains() {
     --no-start)"
 
   assert_contains "ISSUE_NUM=1042" "$out_create" "create path issue number"
+  assert_contains "STATE=ISSUE_CREATED" "$out_create" "create state"
+  assert_contains "START_STATE=SKIPPED" "$out_create" "create no-start state"
   grep -Fq "issue create" "$gh_log" || {
     echo "assertion failed: expected create path to call gh issue create" >&2
+    exit 1
+  }
+  [[ -f ".adl/issues/v0.85/bodies/issue-1042-transitional-create-path.md" ]] || {
+    echo "assertion failed: expected create path to generate canonical source issue prompt" >&2
     exit 1
   }
 
