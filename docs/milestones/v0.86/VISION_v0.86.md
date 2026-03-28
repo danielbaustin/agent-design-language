@@ -1,239 +1,279 @@
-# Vision Template
+# ADL v0.86 Vision
 
 ## Metadata
-- Project: `{{project_name}}`
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-- Related issues: {{issues}}
+- Project: `ADL (Agent Design Language)`
+- Milestone: `v0.86`
+- Version: `0.86`
+- Date: `2026-03-27`
+- Owner: `Agent Logic, Inc.`
+- Related issues: `#882, #1071, #1072, #1074, #1075`
 
 ## Purpose
-Define the milestone-level vision for the project: what changes at this stage, why it matters, and which strategic pillars it advances.
+Define the milestone-level vision for v0.86: what changes at this stage, why it matters, and which strategic pillars it advances.
+
+v0.86 is the milestone where ADL begins turning its emerging cognitive architecture into implementable, inspectable system surfaces. The emphasis is on establishing the first *coherent, bounded cognitive system*—including loop, signals, arbitration, and bounded execution—so later milestones can build on a real foundation rather than a partial control layer.
 
 ## How To Use
-- Write this as a milestone vision, not a full design spec.
-- Focus on direction, priorities, and intended outcomes rather than implementation details.
-- Keep the structure stable across milestones so changes in emphasis are easy to compare over time.
-- Prefer concrete milestone framing over vague aspiration.
-- Keep section titles stable unless there is a strong reason to change them.
-- If a section is not relevant, state that briefly rather than deleting the section.
+- Read this as a milestone vision, not a full design spec.
+- Use it to understand the intended shape of v0.86 before reading the design, WBS, or sprint docs.
+- Treat the five goal areas as the milestone’s major strategic buckets, not as promises that every later-roadmap concept will ship here.
+- Use this document to separate what v0.86 must make real from what remains deferred to v0.87+.
 
 ## Overview
 
-Version `{{version}}` is the milestone where `{{project_name}}` evolves from `{{previous_state}}` into `{{target_state}}`.
+Version `0.86` is the milestone where `ADL` evolves from a stabilized execution and authoring substrate into the first explicit **bounded cognitive system**.
 
 This release should establish or strengthen the foundation for:
 
-- {{foundation_1}}
-- {{foundation_2}}
-- {{foundation_3}}
+- bounded cognitive loop control
+- cognitive signals (instinct and affect)
+- inspectable arbitration and fast/slow routing
+- bounded execution (AEE-lite)
+- evaluation signals and termination conditions
+- minimal frame adequacy and reframing
+- initial memory participation (ObsMem-lite)
+- explicit agency surfaces such as the Freedom Gate
+- local demo surfaces that prove the system is real
 
-`{{version}}` focuses on **{{primary_focus}}**.
+`0.86` focuses on **making the first complete cognitive loop real, bounded, and testable**.
 
 The goal is to make the project more useful to:
 
-- {{audience_1}}
-- {{audience_2}}
-- {{audience_3}}
+- system builders working on agent behavior rather than only workflow plumbing
+- reviewers who need inspectable proof surfaces for cognitive claims
+- later milestone work on instinct, convergence, affect, identity, and governance
 
 This milestone should strengthen the architectural or strategic pillars of:
 
-- {{pillar_1}}
-- {{pillar_2}}
-- {{pillar_3}}
-- {{pillar_4}}
+- cognitive control
+- bounded agency
+- inspectable decision-making
+- local proof surfaces
+- roadmap discipline
 
-{{overview_close}}
+v0.86 is therefore a milestone of architectural consolidation: it should give ADL a believable cognitive core without collapsing later milestones back into one oversized design bucket.
 
 ---
 
 # Core Goals
 
-`{{version}}` advances `{{project_name}}` in five major areas:
+`0.86` advances `ADL` in five major areas:
 
-1. {{goal_area_1}}
-2. {{goal_area_2}}
-3. {{goal_area_3}}
-4. {{goal_area_4}}
-5. {{goal_area_5}}
+1. Cognitive loop and stack clarity
+2. Arbitration, routing, and bounded control
+3. Early agency and Freedom Gate surfaces
+4. Tooling and workflow discipline for the new control layer
+5. Milestone legibility, local demos, and implementation truth
 
 ---
 
-# 1. {{goal_area_1}}
+# 1. Cognitive loop and stack clarity
 
-`{{version}}` improves `{{goal_area_1}}` so the project can `{{outcome_1}}`.
+`0.86` improves `cognitive loop and stack clarity` so the project can express a real control model rather than scattered cognitive ideas.
 
 Key objectives:
 
-- {{objective_1a}}
-- {{objective_1b}}
-- {{objective_1c}}
-- {{objective_1d}}
+- make the cognitive loop explicit and inspectable
+- clarify the relationship between loop, stack, and agent control surfaces
+- reduce ambiguity between conceptual docs and implementation-bearing docs
+- define bounded inputs and outputs for the first cognitive layer
+- explicitly align the loop with the canonical cognitive stack and loop documents for this milestone
+- ensure compatibility with fast/slow thinking and cognitive arbitration surfaces
+- integrate cognitive signals (instinct and affect) into the loop as first-class inputs
 
-These capabilities move the project toward **{{strategic_effect_1}}**.
+These capabilities move the project toward **a cognitive architecture that can actually be built and reviewed**.
 
 The system or product should guarantee:
 
-- {{guarantee_1a}}
-- {{guarantee_1b}}
-- {{guarantee_1c}}
+- one coherent cognitive loop story for the milestone
+- one coherent stack/layer story for the milestone
+- no competing definitions of the core cognitive control path
 
 ---
 
-# 2. {{goal_area_2}}
+# 2. Arbitration, routing, and bounded execution
 
-`{{goal_area_2}}` must improve without sacrificing `{{constraint_2}}`.
+`arbitration, routing, and bounded control` must improve without sacrificing determinism, inspectability, or milestone scope discipline.
 
-`{{version}}` introduces or improves:
+`0.86` introduces or improves:
 
-- {{improvement_2a}}
-- {{improvement_2b}}
-- {{improvement_2c}}
-- {{improvement_2d}}
+- cognitive arbitration as a first-class surface
+- fast/slow routing as an explicit control mechanism
+- clearer decision points inside the control loop
+- bounded control behavior that can be demonstrated and reviewed
+- explicit integration with the fast/slow thinking model and cost-aware cognition
+- local demo surfaces that make routing and arbitration reviewable
+- bounded execution loops (AEE-lite)
+- evaluation signals and termination conditions
 
-The goal is to move from `{{before_state_2}}` toward **{{after_state_2}}**.
+The goal is to move from `implicit or scattered cognitive decisions` toward **explicit, inspectable, bounded routing and arbitration**.
 
 These changes should help users:
 
-- {{user_benefit_2a}}
-- {{user_benefit_2b}}
+- understand why one path of reasoning or action was selected over another
+- review the control logic of an agent without needing to infer it from prompts alone
 
 ---
 
-# 3. {{goal_area_3}}
+# 3. Early agency and Freedom Gate surfaces
 
-A central principle of `{{project_name}}` is **{{principle_3}}**.
+A central principle of `ADL` is **that agency must be structured, reviewable, and bounded**.
 
-The project must not merely `{{anti_goal_3}}`. It must `{{desired_behavior_3}}`.
+The project must not merely `run model calls in sequence`. It must `make room for explicit choice, control, and accountable constraint`.
 
-`{{version}}` strengthens this pillar with:
+`0.86` strengthens this pillar with:
 
-- {{capability_3a}}
-- {{capability_3b}}
-- {{capability_3c}}
-- {{capability_3d}}
+- a clearer Freedom Gate surface
+- the first practical boundaries around agent choice
+- stronger relationship between control, constraint, and action
+- groundwork for later instinct and governance layers without prematurely collapsing them into this milestone
 
-This work supports the broader principle of **{{broader_principle_3}}**.
+This work supports the broader principle of **reasoned and inspectable agency rather than opaque automation**.
+
+`0.86` must also ensure that agency is not treated as a metaphor but as an implementable structure, grounded in:
+
+- the Freedom Gate as a real decision boundary
+- bounded candidate selection and action control inside the loop
+- traceable commitment events as part of execution
+- integration of candidate generation, evaluation, and commitment within the loop
 
 The result should make the project more:
 
-- {{quality_3a}}
-- {{quality_3b}}
-- {{quality_3c}}
+- coherent
+- reviewable
+- defensible
 
 ---
 
-# 4. {{goal_area_4}}
+# 4. Cognitive signals, evaluation, and adaptation
 
-`{{version}}` continues development of `{{goal_area_4}}`.
-
-The focus remains on **{{focus_4}}**, not `{{non_goal_4}}`.
+`0.86` introduces the first integrated form of **cognitive signals and adaptive behavior**.
 
 Key capabilities:
 
-- {{capability_4a}}
-- {{capability_4b}}
-- {{capability_4c}}
-- {{capability_4d}}
+- instinct and affect signals as inputs to the loop
+- evaluation signals (progress, contradiction, failure)
+- minimal frame adequacy scoring
+- bounded reframing when the current approach is insufficient
+- observable influence of signals on arbitration and execution
+
+The goal is to move beyond static routing toward **adaptive, signal-driven cognition**, while remaining bounded and inspectable.
+
+These capabilities must be visible in traces, artifacts, and demos.
+
+---
+
+# 5. Tooling and workflow discipline for the cognitive system
+
+`0.86` continues development of `the ADL tool and workflow surface`.
+
+The focus remains on **making the new cognitive-control layer executable, testable, and inspectable**, not adding broad new authoring or UI scope.
+
+Key capabilities:
+
+- normalize active timestamp and related workflow surfaces where needed for the new milestone
+- retire or simplify obsolete workflow commands that no longer fit the intended path
+- keep input/output card discipline aligned with actual implementation work
+- ensure the control-layer docs can be translated into issues, cards, and demos cleanly
+
+This ensures that arbitration, loop execution, and agency surfaces can be demonstrated concretely rather than remaining purely conceptual.
 
 This milestone should help the project better represent or support:
 
-- {{support_4a}}
-- {{support_4b}}
-- {{support_4c}}
+- disciplined implementation sequencing
+- cleaner handoff from planning docs to execution work
+- less friction between roadmap intent and actual delivery
 
-These improvements should guide the system toward `{{desired_state_4}}`.
+These improvements should guide the system toward `a milestone workflow that supports cognitive architecture work without recreating v0.85 planning drag`.
 
 ---
 
-# 5. {{goal_area_5}}
+# 6. Milestone legibility and implementation truth
 
-To support real-world use, `{{version}}` must improve `{{goal_area_5}}`.
+To support real-world progress, `0.86` must improve `roadmap truthfulness and milestone legibility`.
 
 Important targets include:
 
-- {{target_5a}}
-- {{target_5b}}
-- {{target_5c}}
-- {{target_5d}}
+- ensuring v0.86 delivers a complete but bounded cognitive system
+- preserving later milestone space for instinct, convergence, reasoning graphs, affect, identity, and governance
+- ensuring feature docs, workplans, and examples are clearly differentiated
+- avoiding the pattern where concept papers are silently treated as implemented features
+- inclusion of local agent demos that exercise the cognitive loop, arbitration, and Freedom Gate
+- keeping the milestone faithful to the actual v0.86 feature-doc set rather than carrying forward moved work from later milestones
 
 This work should strengthen the development and operating workflow by improving:
 
-- {{workflow_benefit_5a}}
-- {{workflow_benefit_5b}}
-- {{workflow_benefit_5c}}
+- milestone credibility
+- reviewability
+- execution focus
+- alignment between planning docs and runnable demo surfaces
 
-{{close_5}}
+v0.86 should feel smaller and more buildable than the diffuse planning state that preceded it.
 
 ---
 
-# Special Focus: `{{special_focus_title}}`
+# Special Focus: `Freedom Gate and Cognitive Spacetime Direction`
 
-`{{special_focus_title}}` becomes a central focus of `{{version}}`.
+`Freedom Gate and Cognitive Spacetime Direction` becomes a central focus of `0.86`.
 
-Previous releases `{{previous_special_focus_state}}`.
+Previous releases stabilized the repository and made later cognitive work possible, but did not yet give ADL a real milestone centered on cognitive control, agency boundaries, and shared cognitive reality.
 
-`{{version}}` advances this area with:
+`0.86` advances this area with:
 
-- {{special_focus_1}}
-- {{special_focus_2}}
-- {{special_focus_3}}
-- {{special_focus_4}}
+- a stronger Freedom Gate design surface
+- clearer cognitive arbitration and control flow
+- the beginnings of a cognitive spacetime framing for shared agent reality
+- explicit capture of what remains in-scope now versus deferred to later milestones
+- alignment of Freedom Gate decisions with arbitration, loop control, and candidate action selection
+- explicit preparation for later identity, governance, and signed-trace integration
 
-This area is responsible for ensuring that `{{special_focus_scope}}` remain:
+This area is responsible for ensuring that the project’s early cognitive claims remain:
 
-- {{special_quality_1}}
-- {{special_quality_2}}
-- {{special_quality_3}}
+- bounded
+- implementable
+- reviewable
 
-This keeps the project aligned with `{{alignment_principle}}`.
+This keeps the project aligned with `the principle that ADL should turn important cognitive ideas into disciplined engineering surfaces rather than leave them as rhetoric`.
 
 ---
 
 # Milestone Context
 
-`{{previous_milestone}}` represents `{{previous_milestone_significance}}`.
+`v0.85` represents a stabilization and maturity milestone: stronger code organization, cleaner release discipline, better milestone docs, and verified proof surfaces.
 
-From `{{next_phase_start}}` onward the project will likely shift toward:
+From `v0.87` onward the project will deepen and extend:
 
-- {{next_phase_item_1}}
-- {{next_phase_item_2}}
-- {{next_phase_item_3}}
+- richer instinct and affect modeling
+- stronger convergence and adaptive execution
 
-The goal is to have `{{future_goal}}` by **{{future_target_milestone}}**.
+The goal is to have `a coherent, demoable cognitive-agent architecture` by **the later v0.9x milestones leading to MVP convergence**.
 
-`{{version}}` therefore focuses on `{{contextual_focus}}` before that stage.
+`0.86` therefore focuses on `the first believable cognitive control layer` before that stage.
 
 ---
 
 # Long-Term Direction
 
-`{{project_name}}` is being designed as `{{long_term_identity}}`.
+`ADL` is being designed as `a disciplined platform for bounded cognitive agents, not merely a workflow runner around model calls`.
 
 Its long-term goals include:
 
-- {{long_term_goal_1}}
-- {{long_term_goal_2}}
-- {{long_term_goal_3}}
-- {{long_term_goal_4}}
+- explicit and reviewable agency
+- continuity across time, memory, and identity
+- moral and governance-bearing agent behavior
+- multi-agent work that remains inspectable and structurally trustworthy
 
-These principles aim to move the project beyond `{{old_mode}}` toward `{{new_mode}}`.
+These principles aim to move the project beyond `opaque orchestration and prompt glue` toward `cognitive architecture with real engineering contracts`.
 
 ---
 
 # Summary
 
-`{{version}}` is the milestone where `{{project_name}}` becomes:
+`0.86` is the milestone where `ADL` becomes a bounded cognitive system with a complete, inspectable loop, including signals, arbitration, execution, and evaluation.
 
-- {{summary_quality_1}}
-- {{summary_quality_2}}
-- {{summary_quality_3}}
-- {{summary_quality_4}}
+It strengthens `the cognitive loop and stack`, advances `arbitration and routing`, grounds `agency and Freedom Gate surfaces`, and stabilizes `the workflow needed to implement this layer honestly`.
 
-It strengthens `{{summary_strength_1}}`, advances `{{summary_strength_2}}`, improves `{{summary_strength_3}}`, and stabilizes `{{summary_strength_4}}`.
-
-These improvements prepare the project for `{{next_stage}}`.
+These improvements prepare the project for `later milestones on instinct, convergence, reasoning graphs, affect, identity, governance, and MVP convergence`.
 
 ## Exit Criteria
 - The milestone's strategic priorities are explicit and internally consistent.

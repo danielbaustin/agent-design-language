@@ -1,130 +1,195 @@
-# Milestone README Template
+# v0.86 Milestone Docs
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+- Milestone: `v0.86`
+- Version: `0.86`
+- Date: `2026-03-27`
+- Owner: `Daniel Austin / Agent Logic`
 
 ## Purpose
-Provide a single entry point for the milestone: what it is, why it matters, what is included, and how to navigate the canonical documents and artifacts.
+This directory is the canonical tracked documentation set for **v0.86**.
 
-## How To Use
-- Start here before reading individual milestone documents.
-- Use this README to locate the canonical design, execution, and validation surfaces.
-- Keep this document concise and navigational; detailed content belongs in the linked docs.
-- Keep links up to date as files move or are renamed.
+v0.86 is the milestone where ADL establishes its **first working bounded cognitive system**. The milestone is not about landing every later cognitive concept at once. It is about making the full bounded cognitive loop real, bounded, inspectable, and demonstrable.
+
+Use this README as the single entry point for understanding:
+- what v0.86 is
+- what it includes and excludes
+- how the milestone is structured
+- where to find the canonical design, execution, validation, and release surfaces
 
 ## Overview
 
-`{{milestone}}` represents the stage where `{{project_name}}` moves from `{{previous_state}}` to `{{target_state}}`.
+v0.86 moves ADL from repository stabilization into the first explicit **bounded cognitive architecture**.
 
 This milestone focuses on:
-- {{focus_1}}
-- {{focus_2}}
-- {{focus_3}}
+- the canonical cognitive stack
+- the canonical cognitive loop
+- cognitive signals (instinct + affect)
+- cognitive arbitration
+- fast/slow reasoning control
+- bounded agency via candidate selection
+- bounded execution (AEE-lite)
+- evaluation and termination signals
+- minimal reframing / frame adequacy
+- memory participation (ObsMem-lite)
+- Freedom Gate decision control
+- local demos and artifact traces that prove the full cognitive loop is real
 
 Key outcomes:
-- {{outcome_1}}
-- {{outcome_2}}
-- {{outcome_3}}
+- one authoritative bounded cognitive path for the milestone
+- observable signals, arbitration, candidate selection, execution, evaluation, reframing, memory participation, and Freedom Gate behavior
+- runnable local demo proof surfaces for the full loop
+- milestone docs that match implementation truthfully
 
 ## Scope Summary
 
 ### In scope
-- {{in_scope_1}}
-- {{in_scope_2}}
-- {{in_scope_3}}
+- canonical cognitive stack definition
+- canonical cognitive loop definition
+- cognitive signals (instinct + affect)
+- cognitive arbitration and fast/slow routing
+- bounded agency via candidate selection
+- bounded execution (AEE-lite)
+- evaluation and termination signals
+- minimal reframing / frame adequacy
+- memory participation (ObsMem-lite)
+- Freedom Gate (minimal allow / defer / refuse surface)
+- local demos, demo matrix, and structured proof artifacts
+- milestone docs, review surfaces, and release mechanics
 
 ### Out of scope
-- {{out_of_scope_1}}
-- {{out_of_scope_2}}
+- PHI / Φ_ADL metrics
+- advanced AEE convergence or iterative-improvement systems beyond bounded execution
+- advanced reframing or meta-reasoning systems beyond minimal bounded adaptation
+- long-horizon or session-persistent memory systems beyond ObsMem-lite participation
+- richer affect, identity, governance, or signed-trace systems beyond v0.86 bounded scope
 
 ## Document Map
 
 Canonical milestone documents:
+- Vision: `VISION_v0.86.md`
+- Design: `DESIGN_v0.86.md`
+- Work Breakdown Structure (WBS): `WBS_v0.86.md`
+- Sprint plan: `SPRINT_v0.86.md`
+- Decisions log: `DECISIONS_v0.86.md`
+- Demo matrix: `DEMO_MATRIX_v0.86.md`
+- Milestone checklist: `MILESTONE_CHECKLIST_v0.86.md`
+- Release plan: `RELEASE_PLAN_v0.86.md`
+- Release notes: `RELEASE_NOTES_v0.86.md`
 
-- Vision: `{{vision_doc}}`
-- Design: `{{design_doc}}`
-- Work Breakdown Structure (WBS): `{{wbs_doc}}`
-- Sprint plan: `{{sprint_doc}}`
-- Decisions log: `{{decisions_doc}}`
-- Demo matrix: `{{demo_matrix_doc}}`
-- Milestone checklist: `{{checklist_doc}}`
-- Release plan / process: `{{release_process_doc}}`
-- Release notes: `{{release_notes_doc}}`
+Supporting / milestone-defining planning docs:
+- `.adl/docs/v0.86planning/AGENCY_AND_AGENTS.md`
+- `.adl/docs/v0.86planning/COGNITIVE_ARBITRATION.md`
+- `.adl/docs/v0.86planning/COGNITIVE_LOOP_MODEL.md`
+- `.adl/docs/v0.86planning/COGNITIVE_STACK.md`
+- `.adl/docs/v0.86planning/FAST_SLOW_THINKING_MODEL.md`
+- `.adl/docs/v0.86planning/FREEDOM_GATE.md`
+- `.adl/docs/v0.86planning/LOCAL_AGENT_DEMOS.md`
+- `.adl/docs/v0.86planning/CONCEPT_PLANNING_FOR_v0.86.md`
 
-Supporting / domain-specific docs:
-- {{supporting_doc_1}}
-- {{supporting_doc_2}}
-- {{supporting_doc_3}}
+Context / supplementary planning notes:
+- `.adl/docs/v0.86planning/INTELLECTUAL_INFLUENCES.md`
+- `.adl/docs/v0.86planning/VISION_NOTES__INSTINCT_AGENCY_AND_CIVILIZING_LLMS.md`
 
 ## Execution Model
 
-This milestone is executed as a sequence of work packages (WPs):
+This milestone is executed as an ordered set of work packages (WPs):
 
-- WP-01: Design pass (docs + planning)
-- WP-02 - WP-12: Feature and system work
-- WP-13: Demo matrix and integration demos
-- WP-14: Coverage / quality gate
-- WP-15: Docs and review convergence
-- WP-16: Release ceremony
+- `WP-01` design pass (canonical docs + planning)
+- `WP-02` cognitive stack canonicalization
+- `WP-03` cognitive loop canonicalization
+- `WP-04` cognitive signals
+- `WP-05` cognitive arbitration
+- `WP-06` fast / slow thinking paths
+- `WP-07` agency and candidate selection
+- `WP-08` bounded execution (AEE-lite)
+- `WP-09` evaluation signals and termination
+- `WP-10` frame adequacy and reframing
+- `WP-11` memory participation (ObsMem-lite)
+- `WP-12` Freedom Gate (v0.86 minimal)
+- `WP-13` canonical bounded cognitive path
+- `WP-14` artifact schema enforcement
+- `WP-15` local agent demo program
+- `WP-16` demo matrix and review surface
+- `WP-17` coverage / quality gate
+- `WP-18` docs + review pass
+- `WP-19` internal review
+- `WP-20` external / 3rd-party review preparation
+- `WP-21` review findings remediation
+- `WP-22` release ceremony
+- `WP-23` next milestone planning
 
 Execution expectations:
-- Each WP is tracked by an issue and implemented via PRs.
-- Each issue produces structured artifacts (input/output cards, reports).
-- All work merges under green CI and passes quality gates.
+- Every WP is tied to a concrete milestone outcome.
+- Every major milestone claim must map to artifacts, demos, traces, or other reviewable outputs.
+- There must be exactly one authoritative bounded cognitive path for the milestone.
+- If docs and implementation diverge, that divergence is a defect.
 
-## Demo and Validation Surface
+## Demo And Validation Surface
 
 Primary validation is defined in:
-- Demo matrix: `{{demo_matrix_doc}}`
+- `DEMO_MATRIX_v0.86.md`
+
+Primary milestone proof surface:
+- **D1 — Canonical Bounded Cognitive Path**
 
 Additional validation surfaces:
-- Test suite results
-- Generated artifacts under `.adl/runs/`
-- Trace and replay outputs
+- local demo scripts under `adl/tools/`
+- structured artifact outputs under `artifacts/v086/`
+- quality-gate evidence from tests / coverage / CI
+- internal and external review records
 
 Success criteria:
-- {{success_criteria_1}}
-- {{success_criteria_2}}
-- {{success_criteria_3}}
+- the bounded cognitive path is runnable end-to-end
+- signals influence behavior and routing
+- arbitration decisions are visible and reviewable
+- agency is observable through candidate selection
+- bounded execution performs at least one iteration
+- evaluation signals affect behavior or termination
+- reframing/adaptation occurs in at least one case
+- memory participation is visible
+- Freedom Gate behavior is real and inspectable
+- demo matrix and artifacts match actual implementation truthfully
 
-## Determinism and Reproducibility
+## Determinism And Reproducibility
 
 The milestone should demonstrate:
-- Deterministic or bounded-repeatable execution where required
-- Replayable traces and inspectable artifacts
-- Stable command entry points for demos
+- deterministic or bounded-repeatable cognitive behavior where required
+- replayable artifact traces for the local demo program
+- stable command entry points for milestone review
 
 Evidence locations:
-- {{determinism_evidence_path_1}}
-- {{determinism_evidence_path_2}}
+- `artifacts/v086/`
+- `docs/milestones/v0.86/DEMO_MATRIX_v0.86.md`
+- `docs/milestones/v0.86/MILESTONE_CHECKLIST_v0.86.md`
 
-## Risks and Open Questions
+## Risks And Open Questions
 
 Known risks:
-- {{risk_1}}
-- {{risk_2}}
+- conceptual drift between planning docs and runtime implementation
+- demos proving isolated components instead of the integrated cognitive path
+- accidental reintroduction of unbounded later-milestone variants into v0.86
+- artifact schemas drifting across demos, traces, and runtime surfaces
 
 Open questions:
-- {{open_question_1}}
-- {{open_question_2}}
+- what is the minimal long-term stable artifact schema for the cognitive path?
+- how should arbitration confidence be normalized across different local models?
 
 ## Status
 
-Current status: {{status}}
+Current status: **planning aligned / execution ready**
 
-- Planning: {{planning_status}}
-- Execution: {{execution_status}}
-- Validation: {{validation_status}}
-- Release readiness: {{release_status}}
+- Planning: complete
+- Execution: ready to begin
+- Validation: planned via local demo program
+- Release readiness: pending implementation and proof surfaces
 
 ## Exit Criteria
 
 - All canonical milestone documents are complete and internally consistent.
-- All WBS items are implemented or explicitly deferred.
+- All WBS items are implemented or explicitly deferred with clear ownership.
 - Demo matrix is runnable and validated.
-- Quality gates (fmt, clippy, test, CI) are passing.
-- Milestone checklist is complete or exceptions are documented.
+- Quality gates are passing or exceptions are documented.
+- The bounded cognitive path is demonstrable and inspectable end-to-end.
+- Signals, execution, evaluation, reframing, memory participation, and Freedom Gate behavior are visible in proof surfaces.
 - Release artifacts (notes, tag, docs) are ready.
