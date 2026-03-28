@@ -3,7 +3,7 @@
 ## Metadata
 - Milestone: v0.86
 - Version: 0.86
-- Target release date: Target: end of 2-day execution window
+- Target release date: end of 2-day execution window
 - Owner: Daniel Austin
 
 ## Purpose

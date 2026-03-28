@@ -64,7 +64,7 @@ Additional environment / fixture requirements:
 - WBS / milestone mapping: `docs/milestones/v0.86/WBS_v0.86.md`
 - Sprint / execution plan: `docs/milestones/v0.86/SPRINT_v0.86.md`
 - Release / checklist context: `docs/milestones/v0.86/RELEASE_PLAN_v0.86.md`, `docs/milestones/v0.86/MILESTONE_CHECKLIST_v0.86.md`
-- Other proof-surface docs: `.adl/docs/v0.86planning/LOCAL_AGENT_DEMOS.md`
+- Other proof-surface docs: `docs/milestones/v0.86/features/LOCAL_AGENT_DEMOS.md`
 
 ## Demo Coverage Summary
 

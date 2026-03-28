@@ -21,7 +21,7 @@ All of the following must be TRUE before proceeding:
 - [ ] Demo program runs locally and proves the canonical bounded cognitive path
 - [ ] Demo matrix matches actual runnable demos (`DEMO_MATRIX_v0.86.md`)
 - [ ] DESIGN, WBS, and implementation are aligned (no conceptual drift)
-- [ ] All v0.86 milestone-defining planning docs are implemented in at least one execution path and aligned with the tracked docs
+- [ ] All promoted v0.86 feature-defining docs are implemented in at least one execution path and aligned with the tracked docs
 
 ### Explicit GO / NO-GO Questions
 
