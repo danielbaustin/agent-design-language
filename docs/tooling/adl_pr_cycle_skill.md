@@ -66,15 +66,15 @@ Procedure:
    - Prefer executing from .worktrees/adl-wp-<issue_num> when that repo-local clone exists and is writable.
 2) Init
    - Run:
-     ./adl/tools/pr.sh init <issue_num> --slug <slug> [--version <version>]
+     bash ./adl/tools/pr.sh init <issue_num> --slug <slug> [--version <version>]
    - Confirm canonical STP exists at <stp_path>.
 3) Create
    - Run:
-     ./adl/tools/pr.sh create <issue_num> --stp <stp_path>
+     bash ./adl/tools/pr.sh create <issue_num> --stp <stp_path>
    - Confirm GitHub issue/body reconciliation used the canonical STP rather than a parallel source.
 4) Start
    - Run:
-     ./adl/tools/pr.sh start <issue_num> --slug <slug> [--version <version>]
+     bash ./adl/tools/pr.sh start <issue_num> --slug <slug> [--version <version>]
    - Confirm canonical cards exist:
      .adl/cards/<issue_num>/input_<issue_num>.md
      .adl/cards/<issue_num>/output_<issue_num>.md
@@ -84,12 +84,12 @@ Procedure:
    - Tee Codex output to .adl/logs/<issue_num>/codex.log when possible.
 6) Run (conditional, but use the real command surface when required)
    - If the issue's proof surface requires bounded runtime execution, replay, or emitted run artifacts, run:
-     ./adl/tools/pr.sh run ...
+     bash ./adl/tools/pr.sh run ...
      using the documented issue-specific arguments or the provided run_cmd.
    - If the issue is docs-only or otherwise does not require runtime execution, state that explicitly in the report and output card instead of inventing a run step.
 7) Finish
    - Run:
-     ./adl/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>" -f .adl/cards/<issue_num>/input_<issue_num>.md --output-card .adl/cards/<issue_num>/output_<issue_num>.md
+     bash ./adl/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>" -f .adl/cards/<issue_num>/input_<issue_num>.md --output-card .adl/cards/<issue_num>/output_<issue_num>.md
    - If open_pr=false, include --no-open.
    - If merge=true, include --merge only when an open PR already exists or open_pr=true.
 8) Report (always)

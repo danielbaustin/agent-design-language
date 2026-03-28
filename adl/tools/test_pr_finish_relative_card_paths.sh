@@ -83,6 +83,14 @@ if [[ "$1" == "pr" && "$2" == "view" ]]; then
     fi
     exit 0
   fi
+  if [[ " $* " == *" --json body "* ]]; then
+    if [[ "${GH_MOCK_BODY_LINKAGE:-present}" == "missing" ]]; then
+      echo 'body without closing line'
+    else
+      cat "$TMP_PR_BODY"
+    fi
+    exit 0
+  fi
 fi
 if [[ "$1" == "pr" && "$2" == "create" ]]; then
   body_file=""
@@ -256,6 +264,7 @@ EOF_SOR
 
   echo "relative body test again" >> "$worktree/adl/tools/README.md"
   export GH_MOCK_CLOSING_LINKAGE="missing"
+  export GH_MOCK_BODY_LINKAGE="missing"
   set +e
   bad_finish="$(
     cd "$worktree" &&
@@ -268,6 +277,7 @@ EOF_SOR
     exit 1
   }
   assert_contains "finish: PR is missing GitHub closing linkage for issue #958" "$bad_finish"
+  unset GH_MOCK_BODY_LINKAGE
 
   echo "relative body test update path" >> "$worktree/adl/tools/README.md"
   export GH_MOCK_EXISTING_PR="present"

@@ -326,7 +326,7 @@ validate_sor() {
     [[ -n "$(trim "$summary_text")" ]] || die "completed-phase SOR requires non-empty Summary content"
     [[ -n "$(trim "$actions_line")" && ! "$(trim "$actions_line")" =~ ^-?[[:space:]]*$ ]] || die "completed-phase SOR requires non-empty Actions taken content"
     [[ -n "$(trim "$validation_line")" && ! "$(trim "$validation_line")" =~ ^-?[[:space:]]*$ ]] || die "completed-phase SOR requires non-empty Validation content"
-    [[ -n "$integration_state" && "$integration_state" != "worktree_only" ]] || die "completed-phase SOR requires Integration state to be pr_open or merged"
+    [[ -n "$integration_state" ]] || die "completed-phase SOR requires Main Repo Integration.Integration state"
     if [[ -z "$verification_result" ]]; then
       md_block_field_has_content "$file" "Main Repo Integration (REQUIRED)" "Result" || die "completed-phase SOR requires Main Repo Integration.Result"
     fi

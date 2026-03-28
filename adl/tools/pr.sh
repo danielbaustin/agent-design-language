@@ -1069,9 +1069,14 @@ render_pr_body_file() {
 
 pr_has_closing_linkage() {
   local repo="$1" pr_ref="$2" issue="$3"
-  local linked
+  local linked body
   linked="$(gh pr view $(gh_repo_flag "$repo") "$pr_ref" --json closingIssuesReferences -q '.closingIssuesReferences[]?.number' 2>/dev/null || true)"
-  grep -Fxq "$issue" <<<"$linked"
+  if grep -Fxq "$issue" <<<"$linked"; then
+    return 0
+  fi
+
+  body="$(gh pr view $(gh_repo_flag "$repo") "$pr_ref" --json body -q '.body' 2>/dev/null || true)"
+  grep -Eiq "(^|[[:space:][:punct:]])Closes[[:space:]]+#${issue}([[:space:][:punct:]]|$)" <<<"$body"
 }
 
 ensure_pr_closing_linkage() {

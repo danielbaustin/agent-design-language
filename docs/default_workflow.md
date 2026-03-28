@@ -30,7 +30,7 @@ The browser/editor adapter remains narrower:
 ## 1) Initialize Canonical STP
 
 ```bash
-./adl/tools/pr.sh init <issue_num> --slug <slug> --version v0.85
+bash ./adl/tools/pr.sh init <issue_num> --slug <slug> --version v0.85
 ```
 
 Canonical local task bundle:
@@ -45,13 +45,13 @@ Minimum v0.85 init contract:
 ## 2) Reconcile GitHub Issue From Canonical STP
 
 ```bash
-./adl/tools/pr.sh create <issue_num> --stp .adl/v0.85/tasks/<task-id>__<slug>/stp.md
+bash ./adl/tools/pr.sh create <issue_num> --stp .adl/v0.85/tasks/<task-id>__<slug>/stp.md
 ```
 
 ## 3) Start Issue Branch + Local Cards
 
 ```bash
-./adl/tools/pr.sh start <issue_num> --slug <slug>
+bash ./adl/tools/pr.sh start <issue_num> --slug <slug>
 ```
 
 Compatibility card paths:
@@ -82,7 +82,7 @@ Read the input card, stay inside the issue edit fence, and make the tracked repo
 ## 5) Run (when the issue requires a bounded runtime proof surface)
 
 ```bash
-./adl/tools/pr.sh run <adl-file> [run arguments...]
+bash ./adl/tools/pr.sh run <adl-file> [run arguments...]
 ```
 
 Use `pr run` when the issue's proof surface requires emitted run artifacts, replay, or bounded runtime execution.
@@ -109,7 +109,7 @@ Bounded lifecycle proof/demo:
 ## 7) Finish PR
 
 ```bash
-./adl/tools/pr.sh finish <issue_num> \
+bash ./adl/tools/pr.sh finish <issue_num> \
   --title "<title>" \
   --paths "<comma-separated paths>" \
   -f .adl/cards/<issue_num>/input_<issue_num>.md \
