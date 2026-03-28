@@ -30,7 +30,7 @@ v0.86 delivers the first **working bounded cognitive system** for ADL, centered 
 - local demos that prove the integrated system is real
 - documentation and proof surfaces strong enough to support implementation and review
 
-This milestone is not satisfied by concept alignment alone. The milestone-defining planning docs under .adl/docs/v0.86planning/ must be implemented in at least one coherent execution path and aligned with the tracked milestone docs.
+This milestone is not satisfied by concept alignment alone. The promoted feature-defining docs under `docs/milestones/v0.86/features/` must be implemented in at least one coherent execution path and aligned with the tracked milestone docs.
 
 ## Work Packages
 
@@ -81,7 +81,7 @@ The intended order is:
 
 If implementation and docs disagree, treat the disagreement as a defect to fix immediately.
 
-The tracked milestone docs in docs/milestones/v0.86/ together with the milestone-defining planning docs under .adl/docs/v0.86planning/ form the implementation contract for v0.86. Any divergence between them is a defect and must be resolved before release.
+The tracked milestone docs in `docs/milestones/v0.86/`, together with the promoted feature-defining docs under `docs/milestones/v0.86/features/`, form the implementation contract for v0.86. Any divergence between them is a defect and must be resolved before release.
 
 ## Acceptance Mapping
 - WP-01 → All planning docs aligned with the corrected v0.86 planning set
@@ -109,7 +109,7 @@ The tracked milestone docs in docs/milestones/v0.86/ together with the milestone
 - WP-23 → Next milestone plan is ready before closure
 
 ## Exit Criteria
-- All v0.86 milestone-defining planning docs are implemented in at least one execution path and aligned with the tracked milestone docs.
+- All promoted v0.86 feature-defining docs are implemented in at least one execution path and aligned with the tracked milestone docs.
 - End-to-end local demo proves the bounded cognitive system, not partial components.
 - Artifacts are complete, inspectable, and consistent across all major stages.
 - Signals, arbitration, fast/slow routing, agency, bounded execution, evaluation, reframing, memory participation, and Freedom Gate behavior are observable.

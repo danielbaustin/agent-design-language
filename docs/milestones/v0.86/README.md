@@ -7,7 +7,7 @@
 - Owner: `Daniel Austin / Agent Logic`
 
 ## Purpose
-This directory is the canonical tracked documentation set for **v0.86**.
+This directory is the canonical tracked documentation set for **v0.86**, including the promoted feature-defining docs under `docs/milestones/v0.86/features/`.
 
 v0.86 is the milestone where ADL establishes its **first working bounded cognitive system**. The milestone is not about landing every later cognitive concept at once. It is about making the full bounded cognitive loop real, bounded, inspectable, and demonstrable.
 
@@ -77,15 +77,16 @@ Canonical milestone documents:
 - Release plan: `RELEASE_PLAN_v0.86.md`
 - Release notes: `RELEASE_NOTES_v0.86.md`
 
-Supporting / milestone-defining planning docs:
-- `.adl/docs/v0.86planning/AGENCY_AND_AGENTS.md`
-- `.adl/docs/v0.86planning/COGNITIVE_ARBITRATION.md`
-- `.adl/docs/v0.86planning/COGNITIVE_LOOP_MODEL.md`
-- `.adl/docs/v0.86planning/COGNITIVE_STACK.md`
-- `.adl/docs/v0.86planning/FAST_SLOW_THINKING_MODEL.md`
-- `.adl/docs/v0.86planning/FREEDOM_GATE.md`
-- `.adl/docs/v0.86planning/LOCAL_AGENT_DEMOS.md`
-- `.adl/docs/v0.86planning/CONCEPT_PLANNING_FOR_v0.86.md`
+Promoted feature-defining docs:
+- `docs/milestones/v0.86/FEATURE_DOCS_v0.86.md`
+- `docs/milestones/v0.86/features/AGENCY_AND_AGENTS.md`
+- `docs/milestones/v0.86/features/COGNITIVE_ARBITRATION.md`
+- `docs/milestones/v0.86/features/COGNITIVE_LOOP_MODEL.md`
+- `docs/milestones/v0.86/features/COGNITIVE_STACK.md`
+- `docs/milestones/v0.86/features/FAST_SLOW_THINKING_MODEL.md`
+- `docs/milestones/v0.86/features/FREEDOM_GATE.md`
+- `docs/milestones/v0.86/features/LOCAL_AGENT_DEMOS.md`
+- `docs/milestones/v0.86/features/CONCEPT_PLANNING_FOR_v0.86.md`
 
 Context / supplementary planning notes:
 - `.adl/docs/v0.86planning/INTELLECTUAL_INFLUENCES.md`

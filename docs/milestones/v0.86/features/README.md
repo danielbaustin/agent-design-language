@@ -8,7 +8,7 @@ Purpose:
 - support follow-on source-of-truth cleanup after promotion
 
 Source:
-- promoted from `.adl/docs/v0.86planning/` for `#1081`
+- promoted into tracked milestone docs by `#1081`
 
 Promoted docs:
 - `AGENCY_AND_AGENTS.md`

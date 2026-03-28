@@ -21,6 +21,6 @@ The goal is to preserve rich planning content while giving the milestone a git-b
 
 ## Notes
 
-- These tracked copies are promoted from `.adl/docs/v0.86planning/`.
+- These tracked copies were promoted from the `v0.86planning` feature-doc set and now serve as the tracked feature-definition surface for the milestone.
 - Promotion preserves substantive content rather than replacing it with thin summaries.
 - Follow-on source-of-truth cleanup and ownership normalization are handled separately.
