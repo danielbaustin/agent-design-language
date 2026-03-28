@@ -22,5 +22,5 @@ Each report starts with:
 ## Determinism Rules
 
 - Include exactly one `## Next Action` command.
-- Keep timestamps in sortable formats when possible.
+- For active machine-readable timestamps, use UTC ISO 8601 / RFC3339 with trailing `Z` (`YYYY-MM-DDTHH:MM:SSZ`) when timestamps are present.
 - Do not include non-deterministic placeholder text.

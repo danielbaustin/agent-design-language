@@ -114,7 +114,7 @@ Bounded lifecycle proof/demo:
 
 Write a per-issue report under:
 
-- `.adl/reports/pr-cycle/<issue_num>/<timestamp>/report.md`
+- `.adl/reports/pr-cycle/<issue_num>/<timestamp_utc_z>/report.md`
 
 ## Common Pitfalls and Remediations
 

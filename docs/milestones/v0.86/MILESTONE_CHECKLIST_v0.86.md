@@ -24,7 +24,7 @@ This milestone must prove a working **bounded cognitive system**, not just conce
 
 ## Execution Discipline
 - [ ] Each issue has input/output cards under `.adl/cards/<issue>/`
-- [ ] Each burst writes artifacts under `.adl/reports/burst/<timestamp>/`
+- [ ] Each burst writes artifacts under `.adl/reports/burst/<timestamp_utc_z>/`
 - [ ] Draft PR opened for each issue before merge
 - [ ] Transient failures retried and documented
 - [ ] "Green-only merge" policy followed

@@ -9,7 +9,7 @@ usage() {
   cat <<'EOF'
 Usage:
   adl/tools/open_artifact.sh card <issue_num> [input|output]
-  adl/tools/open_artifact.sh burst [latest|<timestamp>]
+  adl/tools/open_artifact.sh burst [latest|<timestamp_utc_z>]
 
 Examples:
   adl/tools/open_artifact.sh card 206 output
