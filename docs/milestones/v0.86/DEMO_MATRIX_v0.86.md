@@ -5,12 +5,10 @@
 - Version: `0.86`
 - Date: `2026-03-27`
 - Owner: `adl`
-- Related issues / work packages: `#882`, `WP-10`, `WP-11`
+- Related issues / work packages: `#882`, `WP-15`, `WP-16`
 
 ## Purpose
 Define the canonical demo program for v0.86: which bounded local demos exist, which milestone claims they prove, how to run them, and which artifacts or proof surfaces reviewers should inspect.
-
-All v0.86 demos must be framed around **energy-use reduction**. The milestone proof is not generic cognition in the abstract; it is bounded cognition applied to identifying, evaluating, and controlling lower-energy choices.
 
 This matrix is not a brainstorming surface. It is the bounded proof plan for the first working bounded cognitive system.
 
@@ -74,11 +72,11 @@ Use this table as the fast review surface for milestone coverage.
 
 | Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
 |---|---|---|---|---|---|---|---|
-| D1 | Canonical Energy Reduction Path | `WP-13` canonical bounded cognitive path; integrated stack + loop + signals + arbitration + execution + evaluation + reframing + memory + Freedom Gate | `adl/tools/demo_v086_control_path.sh` | control-path artifact set + summary output | One run traverses signals -> candidate selection -> arbitration -> fast/slow path -> bounded execution -> evaluation -> reframing -> memory participation -> Freedom Gate -> final lower-energy recommendation or refusal | Fixed local model + stable artifact naming; reruns should preserve the same control-path shape | PLANNED |
-| D2 | Fast vs Slow Energy Routing | `WP-05`, `WP-06` arbitration and fast/slow reasoning paths | `adl/tools/demo_v086_fast_slow.sh` | routing decision artifacts for two energy-reduction scenarios | Simple energy-saving task routes to fast path; complex/ambiguous energy tradeoff routes to slow path | Same scenarios and fixed local config should preserve route choice or explainable justification | PLANNED |
-| D3 | Energy Action Candidate Selection | `WP-07` bounded agency via candidate selection | `adl/tools/demo_v086_candidate_selection.sh` | candidate-set artifact + selected candidate record | Multiple energy-reduction candidates are generated and one is explicitly selected with rationale | Candidate count and selected candidate should be stable enough for review with fixed input | PLANNED |
-| D4 | Freedom Gate for High-Energy Actions | `WP-12` Freedom Gate decision control | `adl/tools/demo_v086_freedom_gate.sh` | Freedom Gate decision event | At least one lower-energy action is allowed and at least one wasteful/high-energy action is deferred or refused | Same blocked/allowed scenarios should preserve gate outcome under fixed inputs | PLANNED |
-| D5 | Energy Review Surface Walkthrough | `WP-15`, `WP-16` local demo program + review surface | `adl/tools/demo_v086_review_surface.sh` | combined demo manifest / review guide / artifact directory | Reviewer can run one command and locate all primary proof surfaces for the energy-reduction demo set | Artifact directory layout and manifest names must remain stable | PLANNED |
+| D1 | Canonical Bounded Cognitive Path | `WP-13` canonical bounded cognitive path; integrated stack + loop + signals + arbitration + execution + evaluation + reframing + memory + Freedom Gate | `adl/tools/demo_v086_control_path.sh` | control-path artifact set + summary output | One run traverses signals -> candidate selection -> arbitration -> fast/slow path -> bounded execution -> evaluation -> reframing -> memory participation -> Freedom Gate -> final recommendation, refusal, or deferral | Fixed local model + stable artifact naming; reruns should preserve the same control-path shape | PLANNED |
+| D2 | Fast vs Slow Routing | `WP-05`, `WP-06` arbitration and fast/slow reasoning paths | `adl/tools/demo_v086_fast_slow.sh` | routing decision artifacts for two bounded scenarios | Simple task routes to fast path; complex/ambiguous task routes to slow path | Same scenarios and fixed local config should preserve route choice or explainable justification | PLANNED |
+| D3 | Agency / Candidate Selection | `WP-07` bounded agency via candidate selection | `adl/tools/demo_v086_candidate_selection.sh` | candidate-set artifact + selected candidate record | Multiple candidates are generated and one is explicitly selected with rationale | Candidate count and selected candidate should be stable enough for review with fixed input | PLANNED |
+| D4 | Freedom Gate Enforcement | `WP-12` Freedom Gate decision control | `adl/tools/demo_v086_freedom_gate.sh` | Freedom Gate decision event | At least one action is allowed and at least one action is deferred or refused | Same blocked/allowed scenarios should preserve gate outcome under fixed inputs | PLANNED |
+| D5 | Full Review Surface Walkthrough | `WP-15`, `WP-16` local demo program + review surface | `adl/tools/demo_v086_review_surface.sh` | combined demo manifest / review guide / artifact directory | Reviewer can run one command and locate all primary proof surfaces for the bounded demo set | Artifact directory layout and manifest names must remain stable | PLANNED |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -99,7 +97,7 @@ Status guidance:
 ### D1) Canonical Bounded Cognitive Path
 
 Description:
-- Proves that the first v0.86 bounded cognitive system executes end-to-end on an energy-use reduction task.
+- Proves that the first v0.86 bounded cognitive system executes end-to-end on a bounded local task.
 - Demonstrates the canonical path rather than isolated subsystem behavior.
 
 Milestone claims / work packages covered:
@@ -150,7 +148,7 @@ Expected success signals:
 - Reframing/adaptation occurs in at least one case
 - Memory participation is visible
 - Freedom Gate decision occurs before final action
-- The final recommendation or refusal is explicitly about reducing energy use
+- The final recommendation, refusal, or deferral is explicit and inspectable
 
 Determinism / replay notes:
 - Replay stability is judged by control-path shape and artifact structure, not byte-for-byte natural-language identity.
@@ -169,8 +167,8 @@ Known limits / caveats:
 ### D2) Fast vs Slow Routing
 
 Description:
-- Demonstrates that arbitration meaningfully distinguishes between fast-path and slow-path reasoning for energy-use reduction decisions.
-- Uses bounded local energy-saving tasks rather than open-ended workloads.
+- Demonstrates that arbitration meaningfully distinguishes between fast-path and slow-path reasoning.
+- Uses bounded local tasks rather than open-ended workloads.
 
 Milestone claims / work packages covered:
 - `WP-05` Cognitive Arbitration
@@ -195,8 +193,8 @@ Secondary proof surfaces:
 - `artifacts/v086/fast_slow/complex_case.json`
 
 Expected success signals:
-- The simple energy-saving case selects the fast path.
-- The complex or ambiguous energy tradeoff case selects the slow path.
+- The simple case selects the fast path.
+- The complex or ambiguous case selects the slow path.
 - The comparison output explains the difference in control behavior.
 
 Determinism / replay notes:
@@ -215,7 +213,7 @@ Known limits / caveats:
 ### D3) Agency / Candidate Selection
 
 Description:
-- Shows that the system generates and selects among bounded energy-reduction alternatives.
+- Shows that the system generates and selects among bounded alternatives.
 - Demonstrates agency as structured selection, not as free-form rhetoric.
 
 Milestone claims / work packages covered:

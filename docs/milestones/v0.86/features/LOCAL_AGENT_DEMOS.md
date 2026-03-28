@@ -4,7 +4,7 @@
 
 This document defines the **local agent demo program** for v0.86.
 
-The goal is not to showcase isolated capabilities, but to **prove that the ADL bounded cognitive system can reduce energy use end-to-end using local models**.
+The goal is not to showcase isolated capabilities, but to **prove that the ADL bounded cognitive system works end-to-end using local models**.
 
 These demos are scoped strictly to the bounded `v0.86` cognitive system and must not include later-milestone behaviors such as richer convergence systems, deeper persistence-driven adaptation, or later governance/identity surfaces.
 
@@ -22,7 +22,7 @@ The demo program must demonstrate:
 - control architecture > raw model capability
 - structure > scale
 - arbitration + bounded agency + bounded cognition > single-pass inference
-- lower-energy decisions are chosen, justified, and enforced better than naïve single-pass output
+- bounded cognitive decisions are chosen, justified, and enforced better than naive single-pass output
 
 If the demos do not show this, the milestone has failed regardless of code completeness.
 
@@ -38,7 +38,7 @@ All demos must:
 - exercise arbitration and control decisions
 - be deterministic enough to reproduce behavior
 - remain within v0.86 scope (no richer convergence systems, deeper persistence-driven adaptation, or later governance/identity layers)
-- focus on energy-use reduction scenarios, tradeoffs, recommendations, and enforcement
+- focus on bounded local scenarios that make cognitive control, tradeoffs, recommendations, and enforcement reviewable
 
 All demos must avoid:
 - hidden prompts
@@ -49,10 +49,10 @@ All demos must avoid:
 
 ## Core Demo Set (v0.86)
 
-### Demo 1 — Canonical Energy Reduction Path
+### Demo 1 — Canonical Bounded Cognitive Path
 
 **Purpose:**
-Prove that the full bounded cognitive path executes end-to-end for an energy-use reduction task.
+Prove that the full bounded cognitive path executes end-to-end for a bounded local task.
 
 **Must include:**
 - loop execution
@@ -61,7 +61,7 @@ Prove that the full bounded cognitive path executes end-to-end for an energy-use
 - candidate selection
 - Freedom Gate decision
 - final output
-- explicit lower-energy recommendation or refusal
+- explicit recommendation, refusal, or deferral
 
 **Artifacts required:**
 - routing decision
@@ -72,14 +72,14 @@ Prove that the full bounded cognitive path executes end-to-end for an energy-use
 
 ---
 
-### Demo 2 — Fast vs Slow Energy Routing
+### Demo 2 — Fast vs Slow Routing
 
 **Purpose:**
-Demonstrate that arbitration meaningfully selects between execution modes for energy-use reduction decisions.
+Demonstrate that arbitration meaningfully selects between execution modes.
 
 **Scenario:**
-- one simple energy-saving task (fast path)
-- one complex/ambiguous energy tradeoff (slow path)
+- one simple task (fast path)
+- one complex/ambiguous task (slow path)
 
 **Must show:**
 - different execution paths
@@ -88,10 +88,10 @@ Demonstrate that arbitration meaningfully selects between execution modes for en
 
 ---
 
-### Demo 3 — Energy Action Candidate Selection
+### Demo 3 — Agency (Candidate Selection)
 
 **Purpose:**
-Show that the system generates and selects among energy-reduction alternatives.
+Show that the system generates and selects among alternatives.
 
 **Must include:**
 - multiple candidates
@@ -103,19 +103,19 @@ If only one option is ever produced, this demo fails.
 
 ---
 
-### Demo 4 — Freedom Gate for High-Energy Actions
+### Demo 4 — Freedom Gate Enforcement
 
 **Purpose:**
-Prove that the system can refuse or defer wasteful/high-energy actions.
+Prove that the system can refuse or defer execution.
 
 **Must include:**
-- at least one blocked or deferred high-energy action
+- at least one blocked or deferred action
 - explicit policy reasoning
 - inspectable decision artifact
 
 ---
 
-These four demos are the complete bounded v0.86 demo set. Every one of them must remain anchored to energy-use reduction. Any future demos involving iteration, reframing, persistence, or convergence belong to later milestones and must not be treated as required evidence for v0.86.
+These four demos are the complete bounded v0.86 demo set. Example domains may include energy-use reduction, but that is not a required milestone-wide framing. Any future demos involving iteration, reframing, persistence, or convergence belong to later milestones and must not be treated as required evidence for v0.86.
 
 ---
 
@@ -138,8 +138,8 @@ Each demo must produce:
 
 This document maps to:
 
-- `WP-10` Local Agent Demo Program
-- `WP-11` Demo Matrix and Review Surface
+- `WP-15` Local Agent Demo Program
+- `WP-16` Demo Matrix and Review Surface
 
 These demos are the **primary proof surface** for:
 - cognitive loop

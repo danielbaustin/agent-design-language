@@ -79,6 +79,7 @@ Canonical milestone documents:
 
 Promoted feature-defining docs:
 - `docs/milestones/v0.86/FEATURE_DOCS_v0.86.md`
+- `docs/milestones/v0.86/FUTURE_FEATURE_HANDOFF_v0.86.md`
 - `docs/milestones/v0.86/features/AGENCY_AND_AGENTS.md`
 - `docs/milestones/v0.86/features/COGNITIVE_ARBITRATION.md`
 - `docs/milestones/v0.86/features/COGNITIVE_LOOP_MODEL.md`
@@ -91,6 +92,10 @@ Promoted feature-defining docs:
 Context / supplementary planning notes:
 - `.adl/docs/v0.86planning/INTELLECTUAL_INFLUENCES.md`
 - `.adl/docs/v0.86planning/VISION_NOTES__INSTINCT_AGENCY_AND_CIVILIZING_LLMS.md`
+
+Interpretation note:
+- promoted feature docs may preserve future-facing architectural context
+- `FUTURE_FEATURE_HANDOFF_v0.86.md` defines which parts remain bounded `v0.86` commitments and which are explicitly handed forward
 
 ## Execution Model
 
