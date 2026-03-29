@@ -15,6 +15,7 @@ pub(crate) const AEE_DECISION_VERSION: u32 = 1;
 pub(crate) const COGNITIVE_SIGNALS_VERSION: u32 = 1;
 pub(crate) const COGNITIVE_ARBITRATION_VERSION: u32 = 1;
 pub(crate) const FAST_SLOW_PATH_VERSION: u32 = 1;
+pub(crate) const AGENCY_SELECTION_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
@@ -146,6 +147,8 @@ pub(crate) struct RunSummaryLinks {
     pub(crate) cognitive_signals_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) fast_slow_path_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) agency_selection_json: Option<String>,
     pub(crate) cognitive_arbitration_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) affect_state_json: Option<String>,
@@ -394,6 +397,31 @@ pub(crate) struct FastSlowPathArtifact {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub(crate) struct AgencySelectionArtifact {
+    pub(crate) agency_selection_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) candidate_generation_basis: String,
+    pub(crate) selection_mode: String,
+    pub(crate) candidate_set: Vec<AgencyCandidateRecord>,
+    pub(crate) selected_candidate_id: String,
+    pub(crate) selected_candidate_reason: String,
+    pub(crate) deterministic_selection_rule: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct AgencyCandidateRecord {
+    pub(crate) candidate_id: String,
+    pub(crate) candidate_kind: String,
+    pub(crate) bounded_action: String,
+    pub(crate) review_requirement: String,
+    pub(crate) execution_priority: u32,
+    pub(crate) rationale: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct ReasoningGraphArtifact {
     pub(crate) reasoning_graph_version: u32,
     pub(crate) run_id: String,
@@ -567,6 +595,11 @@ pub(crate) fn build_run_summary(
         .strip_prefix(run_paths.run_dir())
         .map(|p| p.display().to_string())
         .unwrap_or_else(|_| "learning/fast_slow_path.v1.json".to_string());
+    let agency_selection_rel = run_paths
+        .agency_selection_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/agency_selection.v1.json".to_string());
     let cognitive_arbitration_rel = run_paths
         .cognitive_arbitration_json()
         .strip_prefix(run_paths.run_dir())
@@ -638,6 +671,7 @@ pub(crate) fn build_run_summary(
             aee_decision_json: Some(aee_decision_rel),
             cognitive_signals_json: Some(cognitive_signals_rel),
             fast_slow_path_json: Some(fast_slow_path_rel),
+            agency_selection_json: Some(agency_selection_rel),
             cognitive_arbitration_json: Some(cognitive_arbitration_rel),
             affect_state_json: Some(affect_state_rel),
             reasoning_graph_json: Some(reasoning_graph_rel),
@@ -1488,6 +1522,106 @@ pub(crate) fn build_fast_slow_path_artifact(
     }
 }
 
+pub(crate) fn build_agency_selection_artifact(
+    run_summary: &RunSummaryArtifact,
+    signals: &CognitiveSignalsArtifact,
+    arbitration: &CognitiveArbitrationArtifact,
+    fast_slow_path: &FastSlowPathArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> AgencySelectionArtifact {
+    let (selection_mode, candidate_set, selected_candidate_id, selected_candidate_reason) =
+        match fast_slow_path.selected_path.as_str() {
+            "fast_path" => {
+                let candidate_set = vec![
+                    AgencyCandidateRecord {
+                        candidate_id: "cand-fast-execute".to_string(),
+                        candidate_kind: "direct_execution".to_string(),
+                        bounded_action: "execute selected candidate directly under bounded once semantics".to_string(),
+                        review_requirement: "minimal".to_string(),
+                        execution_priority: 1,
+                        rationale: format!(
+                            "route={} dominant_instinct={} confidence={}",
+                            arbitration.route_selected, signals.instinct.dominant_instinct, arbitration.confidence
+                        ),
+                    },
+                    AgencyCandidateRecord {
+                        candidate_id: "cand-fast-verify".to_string(),
+                        candidate_kind: "bounded_verification".to_string(),
+                        bounded_action: "perform one bounded verification pass before execution".to_string(),
+                        review_requirement: "light".to_string(),
+                        execution_priority: 2,
+                        rationale: "keep a fallback candidate available without changing the primary fast-path commitment".to_string(),
+                    },
+                ];
+                (
+                    "fast_candidate_commitment",
+                    candidate_set,
+                    "cand-fast-execute".to_string(),
+                    "fast path prioritizes direct bounded execution when arbitration confidence is high and failure pressure is absent".to_string(),
+                )
+            }
+            _ => {
+                let candidate_set = vec![
+                    AgencyCandidateRecord {
+                        candidate_id: "cand-slow-review".to_string(),
+                        candidate_kind: "review_and_refine".to_string(),
+                        bounded_action: "review, refine, or veto the current candidate before execution".to_string(),
+                        review_requirement: "verification_required".to_string(),
+                        execution_priority: 1,
+                        rationale: format!(
+                            "route={} dominant_instinct={} risk_class={}",
+                            arbitration.route_selected, signals.instinct.dominant_instinct, arbitration.risk_class
+                        ),
+                    },
+                    AgencyCandidateRecord {
+                        candidate_id: "cand-slow-direct".to_string(),
+                        candidate_kind: "direct_execution".to_string(),
+                        bounded_action: "execute the current candidate without additional refinement".to_string(),
+                        review_requirement: "minimal".to_string(),
+                        execution_priority: 2,
+                        rationale: "retain the direct-execution alternative as a bounded comparator candidate".to_string(),
+                    },
+                    AgencyCandidateRecord {
+                        candidate_id: "cand-slow-defer".to_string(),
+                        candidate_kind: "bounded_deferral".to_string(),
+                        bounded_action: "defer execution and surface the candidate set for later gate/review stages".to_string(),
+                        review_requirement: "review_required".to_string(),
+                        execution_priority: 3,
+                        rationale: "preserve a bounded non-execution option when policy or review pressure remains elevated".to_string(),
+                    },
+                ];
+                (
+                    "slow_candidate_comparison",
+                    candidate_set,
+                    "cand-slow-review".to_string(),
+                    "slow path makes review/refinement the selected candidate when arbitration requires bounded caution".to_string(),
+                )
+            }
+        };
+
+    AgencySelectionArtifact {
+        agency_selection_version: AGENCY_SELECTION_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: arbitration.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        candidate_generation_basis: format!(
+            "path={} route={} candidate_selection_bias={}",
+            fast_slow_path.selected_path, arbitration.route_selected, signals.instinct.candidate_selection_bias
+        ),
+        selection_mode: selection_mode.to_string(),
+        candidate_set,
+        selected_candidate_id,
+        selected_candidate_reason,
+        deterministic_selection_rule:
+            "derive the bounded candidate set and selected candidate from the fast/slow handoff, arbitration route, and instinct bias without hidden initiative state"
+                .to_string(),
+    }
+}
+
 pub(crate) fn build_aee_decision_artifact(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
@@ -1869,10 +2003,19 @@ pub(crate) fn write_run_state_artifacts(
         &cognitive_arbitration,
         Some(&scores_for_suggestions),
     );
+    let agency_selection = build_agency_selection_artifact(
+        &run_summary,
+        &cognitive_signals,
+        &cognitive_arbitration,
+        &fast_slow_path,
+        Some(&scores_for_suggestions),
+    );
     let cognitive_arbitration_json = serde_json::to_vec_pretty(&cognitive_arbitration)
         .context("serialize cognitive_arbitration.v1.json")?;
     let fast_slow_path_json =
         serde_json::to_vec_pretty(&fast_slow_path).context("serialize fast_slow_path.v1.json")?;
+    let agency_selection_json = serde_json::to_vec_pretty(&agency_selection)
+        .context("serialize agency_selection.v1.json")?;
     let aee_decision = build_aee_decision_artifact(
         &run_summary,
         &suggestions,
@@ -1902,12 +2045,14 @@ pub(crate) fn write_run_state_artifacts(
         &cognitive_arbitration_json,
     )?;
     artifacts::atomic_write(&run_paths.fast_slow_path_json(), &fast_slow_path_json)?;
+    artifacts::atomic_write(&run_paths.agency_selection_json(), &agency_selection_json)?;
     artifacts::atomic_write(&run_paths.cognitive_signals_json(), &cognitive_signals_json)?;
     artifacts::atomic_write(
         &run_paths.cognitive_arbitration_json(),
         &cognitive_arbitration_json,
     )?;
     artifacts::atomic_write(&run_paths.fast_slow_path_json(), &fast_slow_path_json)?;
+    artifacts::atomic_write(&run_paths.agency_selection_json(), &agency_selection_json)?;
     artifacts::atomic_write(&run_paths.affect_state_json(), &affect_state_json)?;
     artifacts::atomic_write(&run_paths.aee_decision_json(), &aee_decision_json)?;
     artifacts::atomic_write(&run_paths.reasoning_graph_json(), &reasoning_graph_json)?;
