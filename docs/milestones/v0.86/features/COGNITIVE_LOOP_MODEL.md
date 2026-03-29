@@ -1,5 +1,3 @@
-
-
 # COGNITIVE_LOOP_MODEL.md
 
 ## Status
@@ -12,17 +10,26 @@ Tracked feature doc — v0.86
 
 Define the **authoritative cognitive loop** for ADL v0.86.
 
-This document provides a single, unified view of how Instinct, Affect, Arbitration, Freedom Gate, AEE (execution), Evaluation, Reframing, and Memory interact.
+This document provides a single, unified view of how bounded signals, arbitration, Freedom Gate, execution, evaluation, reframing, and memory participate in the milestone loop.
 
 All component docs must be consistent with this loop.
+
+This doc also preserves richer future-facing context, but the bounded loop defined below is the normative `v0.86` implementation contract.
 
 ---
 
 ## Canonical Cognitive Loop
 
 ```
-instinct → affect → arbitration → freedom_gate → execution (AEE)
-        → evaluation → (reframing?) → memory (ObsMem) → affect
+memory/context read
+  → signal intake (instinct + affect)
+  → arbitration
+  → freedom_gate
+  → execution (AEE-lite)
+  → evaluation
+  → optional reframing
+  → memory write
+  → terminate or begin next bounded pass
 ```
 
 This loop is:
@@ -31,6 +38,17 @@ This loop is:
 - inspectable
 - replayable
 - policy-governed
+
+### v0.86 Loop Interpretation
+
+For `v0.86`, this means:
+
+- memory participates at entry and exit, not as an unbounded background system
+- instinct and affect are bounded signals, not full later-milestone subsystems
+- arbitration emits explicit route decisions
+- execution is bounded (`AEE-lite`), not full convergence machinery
+- evaluation may trigger bounded reframing
+- termination conditions are explicit and artifact-visible
 
 ---
 
@@ -56,7 +74,7 @@ Examples:
 - Provides **weighting signals** for urgency, salience, and persistence
 - Modulates:
   - arbitration decisions
-  - AEE persistence / retry behavior
+  - bounded execution persistence / retry behavior
   - reframing pressure
 
 Affect is **bounded and non-anthropomorphic**.
@@ -76,9 +94,8 @@ Affect is **bounded and non-anthropomorphic**.
   - risk
   - cost
   - affect signals
-  - **frame_adequacy_score**
-- May emit:
-  - **reframing_trigger**
+  - bounded frame-adequacy indicators
+- May emit a bounded reframing trigger when continued execution is low-value
 
 ---
 
@@ -90,9 +107,9 @@ Affect is **bounded and non-anthropomorphic**.
 
 ---
 
-### 5. Execution (AEE)
+### 5. Execution (AEE-lite)
 
-- Performs bounded execution and convergence
+- Performs bounded execution and limited convergence behavior
 - Iterates with:
   - critique
   - refinement
@@ -100,7 +117,7 @@ Affect is **bounded and non-anthropomorphic**.
 - Emits:
   - progress signals
   - failure signals
-  - **frame-related signals**
+  - frame-related signals
 
 ---
 
@@ -124,7 +141,7 @@ These signals feed:
 
 Triggered when:
 
-- **frame_adequacy_score is low**
+- bounded frame adequacy is low
 - repeated non-progress occurs
 - contradictions persist
 
@@ -159,52 +176,6 @@ Feeds back into:
 - arbitration priors
 - future execution strategies
 
----
-
-## Frame Adequacy (Core Primitive)
-
-```
-frame_adequacy_score
-```
-
-Definition:
-
-- A bounded estimate of whether the current problem framing is consistent and productive.
-
-Low adequacy indicators:
-
-- internal contradictions
-- oscillating evaluation
-- repeated non-progress
-- persistent disagreement
-
-Effects:
-
-- may trigger `reframing_trigger`
-- influences arbitration decisions
-- informs AEE termination logic
-
----
-
-## Reframing Trigger
-
-```
-reframing_trigger
-```
-
-Indicates:
-
-- continued execution under current frame is low-value
-
-Possible outcomes:
-
-- task restatement
-- decomposition change
-- clarification request
-- escalation under new frame
-
----
-
 ## AEE Termination Reasons
 
 ```
@@ -222,6 +193,21 @@ Requirements:
 - must be visible in artifacts
 - must be deterministic or explainable
 
+## Frame Adequacy and Reframing Notes
+
+`v0.86` may use bounded frame-adequacy indicators and a bounded reframing trigger, but those should be treated as supporting control primitives, not as a separate full subsystem.
+
+They exist to answer one milestone-critical question:
+
+> should the system continue under the current frame, or is bounded reframing the higher-value action?
+
+For `v0.86`, that judgment must remain:
+
+- explicit
+- inspectable
+- bounded
+- artifact-visible when it affects control flow
+
 ---
 
 ## Artifact Visibility Requirements
@@ -231,8 +217,8 @@ At minimum, the loop must emit artifacts showing:
 - instinct inputs
 - affect signals
 - route_selected
-- frame_adequacy_score
-- reframing_trigger (if any)
+- bounded frame-adequacy signal or note when used
+- reframing trigger (if any)
 - termination_reason
 
 Artifacts must be:
