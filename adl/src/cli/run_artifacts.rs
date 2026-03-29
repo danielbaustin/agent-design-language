@@ -1623,8 +1623,8 @@ pub(crate) fn write_run_state_artifacts(
         serde_json::to_vec_pretty(&suggestions).context("serialize suggestions.json")?;
     let cognitive_signals =
         build_cognitive_signals_artifact(&run_summary, &suggestions, Some(&scores_for_suggestions));
-    let cognitive_signals_json =
-        serde_json::to_vec_pretty(&cognitive_signals).context("serialize cognitive_signals.v1.json")?;
+    let cognitive_signals_json = serde_json::to_vec_pretty(&cognitive_signals)
+        .context("serialize cognitive_signals.v1.json")?;
     let affect_state =
         build_affect_state_artifact(&run_summary, &suggestions, Some(&scores_for_suggestions));
     let affect_state_json =

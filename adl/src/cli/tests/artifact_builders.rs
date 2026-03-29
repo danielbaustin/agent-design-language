@@ -412,7 +412,8 @@ fn build_cognitive_signals_artifact_is_deterministic_and_bounded() {
     };
     let suggestions = build_suggestions_artifact(&summary, Some(&scores));
 
-    let left = run_artifacts::build_cognitive_signals_artifact(&summary, &suggestions, Some(&scores));
+    let left =
+        run_artifacts::build_cognitive_signals_artifact(&summary, &suggestions, Some(&scores));
     let right =
         run_artifacts::build_cognitive_signals_artifact(&summary, &suggestions, Some(&scores));
 
