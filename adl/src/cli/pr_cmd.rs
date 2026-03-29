@@ -854,6 +854,121 @@ mod tests {
     }
 
     #[test]
+    fn infer_repo_from_remote_supports_https_and_ssh() {
+        assert_eq!(
+            infer_repo_from_remote("https://github.com/danielbaustin/agent-design-language.git"),
+            Some("danielbaustin/agent-design-language".to_string())
+        );
+        assert_eq!(
+            infer_repo_from_remote("git@github.com:danielbaustin/agent-design-language.git"),
+            Some("danielbaustin/agent-design-language".to_string())
+        );
+        assert_eq!(
+            infer_repo_from_remote("https://example.com/not-github.git"),
+            None
+        );
+    }
+
+    #[test]
+    fn infer_wp_from_title_extracts_tag_or_defaults() {
+        assert_eq!(
+            infer_wp_from_title("[v0.86][WP-15] Implement local agent demo program"),
+            "WP-15"
+        );
+        assert_eq!(infer_wp_from_title("No work package tag"), "unassigned");
+    }
+
+    #[test]
+    fn infer_required_outcome_type_prefers_docs_tests_and_demo_signals() {
+        assert_eq!(
+            infer_required_outcome_type("track:roadmap,area:docs", "[v0.86][WP-01] Example"),
+            "docs"
+        );
+        assert_eq!(
+            infer_required_outcome_type("track:roadmap,type:test", "[v0.86][WP-01] Example"),
+            "tests"
+        );
+        assert_eq!(
+            infer_required_outcome_type("track:roadmap,area:demo", "[v0.86][WP-01] Example"),
+            "demo"
+        );
+        assert_eq!(
+            infer_required_outcome_type("track:roadmap,area:runtime", "[v0.86][WP-01] Example"),
+            "code"
+        );
+    }
+
+    #[test]
+    fn version_can_be_inferred_from_labels_or_title() {
+        assert_eq!(
+            version_from_labels_csv("track:roadmap,version:v0.86,area:tools"),
+            Some("v0.86".to_string())
+        );
+        assert_eq!(
+            version_from_title("[v0.86][WP-15] Implement local agent demo program"),
+            Some("v0.86".to_string())
+        );
+        assert_eq!(version_from_title("No version title"), None);
+    }
+
+    #[test]
+    fn resolve_issue_body_uses_inline_text_default_and_file() {
+        assert_eq!(
+            resolve_issue_body(Some("custom body".to_string()), None).expect("body"),
+            "custom body"
+        );
+        assert!(resolve_issue_body(None, None)
+            .expect("default body")
+            .contains("## Goal"));
+
+        let dir = unique_temp_dir("adl-pr-body-file");
+        let path = dir.join("body.md");
+        fs::write(&path, "body from file").expect("write body");
+        assert_eq!(
+            resolve_issue_body(None, Some(&path)).expect("file body"),
+            "body from file"
+        );
+    }
+
+    #[test]
+    fn resolve_issue_body_rejects_stdin_and_missing_file() {
+        let err = resolve_issue_body(None, Some(Path::new("-"))).expect_err("stdin unsupported");
+        assert!(err.to_string().contains("--body-file - is not supported"));
+
+        let missing = PathBuf::from("/definitely/missing/body.md");
+        let err = resolve_issue_body(None, Some(&missing)).expect_err("missing file");
+        assert!(err.to_string().contains("--body-file not found"));
+    }
+
+    #[test]
+    fn parse_issue_number_from_url_accepts_issue_url_and_rejects_other_suffixes() {
+        assert_eq!(
+            parse_issue_number_from_url("https://github.com/example/repo/issues/1151")
+                .expect("issue number"),
+            1151
+        );
+        assert!(
+            parse_issue_number_from_url("https://github.com/example/repo/issues/not-a-number")
+                .is_err()
+        );
+    }
+
+    #[test]
+    fn path_relative_to_repo_returns_relative_or_absolute_when_outside_repo() {
+        let repo_root = Path::new("/tmp/example-repo");
+        let inside = Path::new("/tmp/example-repo/.adl/cards/1151/input_1151.md");
+        let outside = Path::new("/var/tmp/elsewhere.md");
+        assert_eq!(
+            path_relative_to_repo(repo_root, inside),
+            ".adl/cards/1151/input_1151.md"
+        );
+        assert_eq!(
+            path_relative_to_repo(repo_root, outside),
+            "/var/tmp/elsewhere.md"
+        );
+    }
+
+    #[test]
     fn parse_init_args_accepts_bootstrap_flags() {
         let parsed = parse_init_args(&[
             "1151".to_string(),
@@ -866,6 +981,12 @@ mod tests {
         assert_eq!(parsed.issue, 1151);
         assert_eq!(parsed.title_arg.as_deref(), Some("Example"));
         assert_eq!(parsed.version.as_deref(), Some("v0.86"));
+    }
+
+    #[test]
+    fn parse_init_args_rejects_unknown_arg() {
+        let err = parse_init_args(&["1151".to_string(), "--bogus".to_string()]).expect_err("err");
+        assert!(err.to_string().contains("init: unknown arg"));
     }
 
     #[test]
@@ -883,6 +1004,25 @@ mod tests {
             }
             other => panic!("unexpected mode: {other:?}"),
         }
+    }
+
+    #[test]
+    fn parse_create_args_requires_title_and_rejects_conflicting_body_flags() {
+        let err = parse_create_args(&["--no-start".to_string()]).expect_err("missing title");
+        assert!(err.to_string().contains("--title is required"));
+
+        let err = parse_create_args(&[
+            "--title".to_string(),
+            "Example".to_string(),
+            "--body".to_string(),
+            "inline".to_string(),
+            "--body-file".to_string(),
+            "body.md".to_string(),
+        ])
+        .expect_err("conflicting body flags");
+        assert!(err
+            .to_string()
+            .contains("only one of --body or --body-file"));
     }
 
     #[test]
