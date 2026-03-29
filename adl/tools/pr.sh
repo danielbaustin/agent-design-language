@@ -261,12 +261,27 @@ acquire_repo_lock() {
   local name="$1"
   local lock_dir
   lock_dir="$(git_common_dir)/${name}.lock"
-  local attempt max_attempts
+  local attempt max_attempts pid_file owner_pid stale_marker
   max_attempts=50
   for ((attempt=1; attempt<=max_attempts; attempt++)); do
     if mkdir "$lock_dir" 2>/dev/null; then
+      printf '%s\n' "$$" >"$lock_dir/pid"
       printf '%s\n' "$lock_dir"
       return 0
+    fi
+    pid_file="$lock_dir/pid"
+    if [[ -f "$pid_file" ]]; then
+      owner_pid="$(tr -d '[:space:]' <"$pid_file" 2>/dev/null || true)"
+      if [[ "$owner_pid" =~ ^[0-9]+$ ]] && ! kill -0 "$owner_pid" 2>/dev/null; then
+        rm -rf "$lock_dir"
+        continue
+      fi
+    else
+      stale_marker="$(find "$lock_dir" -prune -mmin +1 -print -quit 2>/dev/null || true)"
+      if [[ -n "$stale_marker" ]]; then
+        rm -rf "$lock_dir"
+        continue
+      fi
     fi
     sleep 0.1
   done
@@ -942,6 +957,53 @@ seed_task_bundle_stp() {
   local source_path="$1" dest_path="$2"
   mkdir -p "$(dirname "$dest_path")"
   cp -f "$source_path" "$dest_path"
+}
+
+seed_bootstrap_surfaces() {
+  local issue="$1" version="$2" slug="$3" title="$4" branch="$5" source_path="$6"
+  local bundle_dir stp_path in_path out_path
+  bundle_dir="$(task_bundle_dir_path "$issue" "$version" "$slug")"
+  stp_path="$bundle_dir/stp.md"
+  mkdir -p "$bundle_dir"
+  if ! ensure_nonempty_file "$stp_path"; then
+    note "Creating task-bundle STP: $stp_path" >&2
+    seed_task_bundle_stp "$source_path" "$stp_path"
+  else
+    note "Task-bundle STP exists: $stp_path" >&2
+  fi
+
+  in_path="$(input_card_path "$issue" "$version" "$slug")"
+  out_path="$(output_card_path "$issue" "$version" "$slug")"
+  ensure_adl_dirs
+  if ! ensure_nonempty_file "$in_path"; then
+    note "Creating input card: $in_path" >&2
+    seed_input_card "$in_path" "$issue" "$title" "$branch" "$version" "$out_path"
+  else
+    note "Input card exists: $in_path" >&2
+  fi
+  if ! ensure_nonempty_file "$out_path"; then
+    note "Creating output card: $out_path" >&2
+    seed_output_card "$out_path" "$issue" "$title" "$branch" "$version"
+  else
+    note "Output card exists: $out_path" >&2
+  fi
+  sync_legacy_links_for_issue "$issue" "$version" "$slug"
+  validate_bootstrap_stp "$stp_path"
+  validate_bootstrap_cards "$issue" "$branch" "$in_path" "$out_path"
+  printf '%s\n%s\n%s\n' "$stp_path" "$in_path" "$out_path"
+}
+
+resolve_issue_scope_and_slug_from_local_state() {
+  local issue="$1"
+  local first path_remainder scope dir_name slug
+  first="$(task_bundle_first_dir "$issue" || true)"
+  [[ -n "$first" ]] || return 1
+  path_remainder="${first#*"/.adl/"}"
+  scope="${path_remainder%%/*}"
+  dir_name="$(basename "$first")"
+  slug="${dir_name#*__}"
+  [[ -n "$scope" && -n "$slug" && "$slug" != "$dir_name" ]] || return 1
+  printf '%s\n%s\n' "$scope" "$slug"
 }
 
 stp_issue_number_or_die() {
@@ -1953,49 +2015,34 @@ cmd_start() {
   fi
   validate_bootstrap_stp "$source_path"
 
-  local start_paths_file
-  start_paths_file="$(mktemp -t prsh_start_paths_XXXXXX)"
+  local root_paths_file worktree_paths_file root_stp_path root_input_path root_output_path
+  root_paths_file="$(mktemp -t prsh_start_root_paths_XXXXXX)"
+  worktree_paths_file="$(mktemp -t prsh_start_worktree_paths_XXXXXX)"
+
+  note "Seeding root authoring surfaces…"
+  seed_bootstrap_surfaces "$issue" "$ver" "$slug" "$title" "$branch" "$source_path" >"$root_paths_file"
+
   (
     cd "$worktree_path"
-    local bundle_dir stp_path
-    bundle_dir="$(task_bundle_dir_path "$issue" "$ver" "$slug")"
-    stp_path="$bundle_dir/stp.md"
-    mkdir -p "$bundle_dir"
-    if ! ensure_nonempty_file "$stp_path"; then
-      note "Creating task-bundle STP: $stp_path"
-      cp "$source_path" "$stp_path"
-    else
-      note "Task-bundle STP exists: $stp_path"
-    fi
-    in_path="$(input_card_path "$issue" "$ver" "$slug")"
-    out_path="$(output_card_path "$issue" "$ver" "$slug")"
-    ensure_adl_dirs
-    if ! ensure_nonempty_file "$in_path"; then
-      note "Creating input card: $in_path"
-      seed_input_card "$in_path" "$issue" "$title" "$branch" "$ver" "$out_path"
-    else
-      note "Input card exists: $in_path"
-    fi
-    if ! ensure_nonempty_file "$out_path"; then
-      note "Creating output card: $out_path"
-      seed_output_card "$out_path" "$issue" "$title" "$branch" "$ver"
-    else
-      note "Output card exists: $out_path"
-    fi
-    sync_legacy_links_for_issue "$issue" "$ver" "$slug"
-    validate_bootstrap_stp "$stp_path"
-    validate_bootstrap_cards "$issue" "$branch" "$in_path" "$out_path"
-    printf '%s\n%s\n%s\n' "$stp_path" "$in_path" "$out_path" >"$start_paths_file"
+    note "Seeding worktree authoring surfaces…"
+    seed_bootstrap_surfaces "$issue" "$ver" "$slug" "$title" "$branch" "$source_path" >"$worktree_paths_file"
   )
+
   local stp_path
-  stp_path="$(sed -n '1p' "$start_paths_file")"
-  in_path="$(sed -n '2p' "$start_paths_file")"
-  out_path="$(sed -n '3p' "$start_paths_file")"
-  rm -f "$start_paths_file"
+  root_stp_path="$(sed -n '1p' "$root_paths_file")"
+  root_input_path="$(sed -n '2p' "$root_paths_file")"
+  root_output_path="$(sed -n '3p' "$root_paths_file")"
+  stp_path="$(sed -n '1p' "$worktree_paths_file")"
+  in_path="$(sed -n '2p' "$worktree_paths_file")"
+  out_path="$(sed -n '3p' "$worktree_paths_file")"
+  rm -f "$root_paths_file" "$worktree_paths_file"
   echo "• Agent:"
   echo "  STP    $stp_path"
   echo "  READ   $in_path"
   echo "  WRITE  $out_path"
+  echo "  ROOT_STP    $root_stp_path"
+  echo "  ROOT_READ   $root_input_path"
+  echo "  ROOT_WRITE  $root_output_path"
   echo "  WORKTREE $worktree_path"
   echo "  BRANCH $branch"
   echo "  OPEN   ./adl/tools/open_artifact.sh card $issue output"
@@ -2392,6 +2439,85 @@ cmd_status() {
   git status -sb
 }
 
+cmd_ready() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_ready
+    return 0
+  fi
+
+  require_cmd git
+  local issue="${1:-}"; shift || true
+  [[ -n "$issue" ]] || die_with_usage "ready: missing <issue> number" usage_ready
+  issue="$(normalize_issue_or_die "$issue")"
+
+  local slug="" version="" no_fetch_issue="0"
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --slug) slug="$2"; shift 2 ;;
+      --version) version="$2"; shift 2 ;;
+      --no-fetch-issue) no_fetch_issue="1"; shift ;;
+      -h|--help) usage_ready; return 0 ;;
+      *) die_with_usage "ready: unknown arg: $1" usage_ready ;;
+    esac
+  done
+
+  local resolved_scope="" resolved_slug="" parsed
+  if [[ -z "$version" || -z "$slug" ]]; then
+    parsed="$(resolve_issue_scope_and_slug_from_local_state "$issue" || true)"
+    if [[ -n "$parsed" ]]; then
+      resolved_scope="$(sed -n '1p' <<<"$parsed")"
+      resolved_slug="$(sed -n '2p' <<<"$parsed")"
+    fi
+  fi
+  [[ -n "$version" ]] || version="$resolved_scope"
+  if [[ -z "$version" && "$no_fetch_issue" != "1" ]]; then
+    version="$(issue_version "$issue")"
+  fi
+  [[ -n "$version" ]] || version="$DEFAULT_VERSION"
+  [[ -n "$slug" ]] || slug="$resolved_slug"
+  [[ -n "$slug" ]] || die "ready: could not infer slug; pass --slug or run start first"
+
+  local branch worktree_path source_path root_stp root_input root_output wt_stp wt_input wt_output
+  branch="$(branch_for_issue "codex" "$issue" "$slug")"
+  worktree_path="$(default_worktree_path_for_issue "$issue")"
+  source_path="$(issue_prompt_path_for_issue "$issue" "$version" "$slug")"
+  root_stp="$(task_bundle_dir_path "$issue" "$version" "$slug")/stp.md"
+  root_input="$(resolve_input_card_path_abs "$issue" "$version" "$slug")"
+  root_output="$(resolve_output_card_path_abs "$issue" "$version" "$slug")"
+  wt_stp="$worktree_path/.adl/$version/tasks/issue-$(card_issue_pad "$issue")__${slug}/stp.md"
+  wt_input="$worktree_path/.adl/$version/tasks/issue-$(card_issue_pad "$issue")__${slug}/sip.md"
+  wt_output="$worktree_path/.adl/$version/tasks/issue-$(card_issue_pad "$issue")__${slug}/sor.md"
+
+  [[ -f "$source_path" ]] || die "ready: missing canonical source issue prompt: $source_path"
+  validate_bootstrap_stp "$source_path"
+  [[ -f "$root_stp" ]] || die "ready: missing root stp: $root_stp"
+  validate_bootstrap_stp "$root_stp"
+  [[ -d "$worktree_path" ]] || die "ready: missing worktree: $worktree_path"
+  [[ "$(git -C "$worktree_path" rev-parse --abbrev-ref HEAD 2>/dev/null || true)" == "$branch" ]] || die "ready: worktree branch mismatch for $worktree_path"
+  [[ -f "$wt_stp" ]] || die "ready: missing worktree stp: $wt_stp"
+  validate_bootstrap_stp "$wt_stp"
+  [[ -f "$wt_input" ]] || die "ready: missing worktree input card: $wt_input"
+  [[ -f "$wt_output" ]] || die "ready: missing worktree output card: $wt_output"
+  validate_bootstrap_cards "$issue" "$branch" "$wt_input" "$wt_output"
+  [[ -f "$root_input" ]] || die "ready: missing root input card: $root_input"
+  [[ -f "$root_output" ]] || die "ready: missing root output card: $root_output"
+  validate_bootstrap_cards "$issue" "$branch" "$root_input" "$root_output"
+
+  echo "ISSUE=$issue"
+  echo "VERSION=$version"
+  echo "SLUG=$slug"
+  echo "BRANCH=$branch"
+  echo "WORKTREE=$worktree_path"
+  echo "SOURCE=$(path_relative_to_repo "$source_path")"
+  echo "ROOT_STP=$(path_relative_to_repo "$root_stp")"
+  echo "ROOT_INPUT=$(path_relative_to_repo "$root_input")"
+  echo "ROOT_OUTPUT=$(path_relative_to_repo "$root_output")"
+  echo "WT_STP=$(path_relative_to_repo "$wt_stp")"
+  echo "WT_INPUT=$(path_relative_to_repo "$wt_input")"
+  echo "WT_OUTPUT=$(path_relative_to_repo "$wt_output")"
+  echo "READY=PASS"
+}
+
 cmd_open() {
   require_cmd gh
   local repo
@@ -2414,6 +2540,7 @@ Commands:
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
   output  <issue> [input|output] ... [--version <v0.2>] [-f <output_card.md>]
   cards   <issue> [--version <v0.2>] [--no-fetch-issue]
+  ready   <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
   finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
   open
   status
@@ -2559,6 +2686,17 @@ Usage:
 EOF
 }
 
+usage_ready() {
+  cat <<'EOF'
+Usage:
+  adl/tools/pr.sh ready <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
+
+Notes:
+- Verifies that the issue is fully authoring-ready in both the root checkout and the issue worktree.
+- Prints READY=PASS on success and exits non-zero on the first missing or invalid bootstrap surface.
+EOF
+}
+
 usage_finish() {
   cat <<'EOF'
 Usage:
@@ -2578,6 +2716,7 @@ main() {
     new) cmd_new "$@" ;;
     run) cmd_run "$@" ;;
     start) cmd_start "$@" ;;
+    ready) cmd_ready "$@" ;;
     finish) cmd_finish "$@" ;;
     card) cmd_card "$@" ;;
     output) cmd_output "$@" ;;

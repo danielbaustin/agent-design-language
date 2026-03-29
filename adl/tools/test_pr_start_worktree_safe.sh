@@ -71,6 +71,18 @@ assert_contains() {
     echo "assertion failed: expected worktree to exist at $wt_path" >&2
     exit 1
   }
+  [[ -f "$repo/.adl/v0.86/tasks/issue-0999__test-smoke/stp.md" ]] || {
+    echo "assertion failed: expected root canonical stp to exist after start" >&2
+    exit 1
+  }
+  [[ -f "$repo/.adl/cards/999/input_999.md" ]] || {
+    echo "assertion failed: expected root input card to exist after start" >&2
+    exit 1
+  }
+  [[ -f "$repo/.adl/cards/999/output_999.md" ]] || {
+    echo "assertion failed: expected root output card to exist after start" >&2
+    exit 1
+  }
   wt_path="$(cd "$wt_path" && pwd -P)"
   [[ "$(git -C "$wt_path" rev-parse --abbrev-ref HEAD)" == "codex/999-test-smoke" ]] || {
     echo "assertion failed: expected branch in worktree" >&2
@@ -96,6 +108,11 @@ assert_contains() {
     echo "assertion failed: expected output compatibility link" >&2
     exit 1
   }
+
+  ready_out="$("$BASH_BIN" adl/tools/pr.sh ready 999 --slug test-smoke --no-fetch-issue --version v0.86)"
+  assert_contains "READY=PASS" "$ready_out" "ready reports pass"
+  assert_contains "ROOT_INPUT=.adl/v0.86/tasks/issue-0999__test-smoke/sip.md" "$ready_out" "ready prints root input"
+  assert_contains "WT_INPUT=.worktrees/adl-wp-999/.adl/v0.86/tasks/issue-0999__test-smoke/sip.md" "$ready_out" "ready prints worktree input"
 
   out2="$("$BASH_BIN" adl/tools/pr.sh start 999 --slug test-smoke --no-fetch-issue)"
   assert_contains "Reusing existing worktree for branch: $wt_path" "$out2" "start idempotent worktree reuse"
@@ -178,6 +195,12 @@ EOF
     exit 1
   }
   assert_contains "another pr.sh bootstrap operation appears to be running" "$bad3" "bootstrap lock message"
+
+  mkdir -p "$(git rev-parse --git-common-dir)/pr-bootstrap.lock"
+  echo "999999" > "$(git rev-parse --git-common-dir)/pr-bootstrap.lock/pid"
+  stale_lock_out="$("$BASH_BIN" adl/tools/pr.sh start 993 --slug stale-lock-recovery --no-fetch-issue)"
+  stale_wt="$(cd "$repo/.worktrees/adl-wp-993" && pwd -P)"
+  assert_contains "WORKTREE $stale_wt" "$stale_lock_out" "stale lock recovery still starts"
 )
 
 echo "pr.sh start worktree-safe/idempotent flows: ok"
