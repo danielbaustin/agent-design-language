@@ -1027,6 +1027,26 @@ ensure_nonempty_file() {
   return 0
 }
 
+extract_markdown_section() {
+  # Extract the body of a top-level markdown section (## Heading) from a file.
+  local path="$1" heading="$2"
+  awk -v heading="## ${heading}" '
+    $0 == heading { in_section=1; next }
+    in_section && /^## / { exit }
+    in_section { print }
+  ' "$path" | sed '/^[[:space:]]*$/{
+    :a
+    N
+    /^\n*$/d
+    ba
+  }' | sed '${/^[[:space:]]*$/d;}'
+}
+
+extra_pr_body_looks_like_issue_template() {
+  local body="${1:-}"
+  grep -Eqi '(^|[[:space:]])(issue_card_schema:|wp:|pr_start:)([[:space:]]|$)|^## (Goal|Deliverables|Acceptance criteria)$|^---$' <<<"$body"
+}
+
 render_pr_body_file() {
   # Renders a PR body into a temp file and echoes its path.
   # Args: issue close_line input_path output_path extra_body no_checks fingerprint
@@ -1035,9 +1055,16 @@ render_pr_body_file() {
   local tmp
   tmp="$(mktemp -t pr_body_XXXXXX.md)"
 
-  local input_ref output_ref
+  local input_ref output_ref summary_section artifacts_section validation_section
   input_ref="$(issue_card_reference input "$issue")"
   output_ref="$(issue_card_reference output "$issue")"
+  summary_section="$(extract_markdown_section "$output_path" "Summary")"
+  artifacts_section="$(extract_markdown_section "$output_path" "Artifacts produced")"
+  validation_section="$(extract_markdown_section "$output_path" "Validation")"
+
+  if [[ -n "$extra_body" ]] && extra_pr_body_looks_like_issue_template "$extra_body"; then
+    die "finish: --body looks like issue-template/prompt text; use the output card as the PR summary source instead"
+  fi
 
   {
     if [[ -n "$close_line" ]]; then
@@ -1045,23 +1072,40 @@ render_pr_body_file() {
       echo
     fi
 
-    echo "Local artifacts (not committed):"
-    echo "- Input card:  $input_ref"
-    echo "- Output card: $output_ref"
-    echo "- Idempotency-Key: $fingerprint"
-    echo
+    if [[ -n "$summary_section" ]]; then
+      echo "## Summary"
+      echo "$summary_section"
+      echo
+    fi
+
+    if [[ -n "$artifacts_section" ]]; then
+      echo "## Artifacts"
+      echo "$artifacts_section"
+      echo
+    fi
+
+    if [[ -n "$validation_section" ]]; then
+      echo "## Validation"
+      echo "$validation_section"
+      echo
+    elif [[ "$no_checks" != "1" ]]; then
+      echo "## Validation"
+      echo "- cargo fmt"
+      echo "- cargo clippy --all-targets -- -D warnings"
+      echo "- cargo test"
+      echo
+    fi
 
     if [[ -n "$extra_body" ]]; then
+      echo "## Notes"
       echo "$extra_body"
       echo
     fi
 
-    if [[ "$no_checks" != "1" ]]; then
-      echo "Tests:"
-      echo "- cargo fmt"
-      echo "- cargo clippy --all-targets -- -D warnings"
-      echo "- cargo test"
-    fi
+    echo "## Local Artifacts"
+    echo "- Input card:  $input_ref"
+    echo "- Output card: $output_ref"
+    echo "- Idempotency-Key: $fingerprint"
   } >"$tmp"
 
   echo "$tmp"
