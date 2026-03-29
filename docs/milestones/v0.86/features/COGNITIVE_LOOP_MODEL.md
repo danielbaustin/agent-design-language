@@ -50,6 +50,15 @@ For `v0.86`, this means:
 - evaluation may trigger bounded reframing
 - termination conditions are explicit and artifact-visible
 
+The implemented runtime execution surface for this milestone is:
+
+- `bounded_execution.v1.json` records visible bounded execution iterations
+- fast-path execution performs one direct bounded execution iteration
+- slow-path execution performs a bounded review iteration followed by one execution iteration
+- execution exits into an explicit provisional termination state for later evaluation
+
+This milestone does not implement open-ended convergence, adaptive retry loops, or unbounded continuation.
+
 ---
 
 ## Component Roles

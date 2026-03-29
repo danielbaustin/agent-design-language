@@ -133,6 +133,11 @@ impl RunArtifactPaths {
         self.learning_dir().join("agency_selection.v1.json")
     }
 
+    /// Bounded execution artifact path for v0.86 AEE-lite execution state.
+    pub fn bounded_execution_json(&self) -> PathBuf {
+        self.learning_dir().join("bounded_execution.v1.json")
+    }
+
     /// Affect state artifact path for bounded affect-guided adaptation.
     pub fn affect_state_json(&self) -> PathBuf {
         self.learning_dir().join("affect_state.v1.json")
@@ -377,6 +382,9 @@ mod tests {
         assert!(paths
             .agency_selection_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/agency_selection.v1.json"));
+        assert!(paths
+            .bounded_execution_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/bounded_execution.v1.json"));
         assert!(paths
             .affect_state_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/affect_state.v1.json"));

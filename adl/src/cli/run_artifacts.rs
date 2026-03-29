@@ -16,6 +16,7 @@ pub(crate) const COGNITIVE_SIGNALS_VERSION: u32 = 1;
 pub(crate) const COGNITIVE_ARBITRATION_VERSION: u32 = 1;
 pub(crate) const FAST_SLOW_PATH_VERSION: u32 = 1;
 pub(crate) const AGENCY_SELECTION_VERSION: u32 = 1;
+pub(crate) const BOUNDED_EXECUTION_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
@@ -149,6 +150,8 @@ pub(crate) struct RunSummaryLinks {
     pub(crate) fast_slow_path_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) agency_selection_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) bounded_execution_json: Option<String>,
     pub(crate) cognitive_arbitration_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) affect_state_json: Option<String>,
@@ -422,6 +425,31 @@ pub(crate) struct AgencyCandidateRecord {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub(crate) struct BoundedExecutionArtifact {
+    pub(crate) bounded_execution_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) selected_candidate_id: String,
+    pub(crate) selected_path: String,
+    pub(crate) execution_status: String,
+    pub(crate) continuation_state: String,
+    pub(crate) provisional_termination_state: String,
+    pub(crate) iteration_count: u32,
+    pub(crate) iterations: Vec<BoundedExecutionIteration>,
+    pub(crate) deterministic_execution_rule: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct BoundedExecutionIteration {
+    pub(crate) iteration_index: u32,
+    pub(crate) stage: String,
+    pub(crate) action: String,
+    pub(crate) outcome: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct ReasoningGraphArtifact {
     pub(crate) reasoning_graph_version: u32,
     pub(crate) run_id: String,
@@ -600,6 +628,11 @@ pub(crate) fn build_run_summary(
         .strip_prefix(run_paths.run_dir())
         .map(|p| p.display().to_string())
         .unwrap_or_else(|_| "learning/agency_selection.v1.json".to_string());
+    let bounded_execution_rel = run_paths
+        .bounded_execution_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/bounded_execution.v1.json".to_string());
     let cognitive_arbitration_rel = run_paths
         .cognitive_arbitration_json()
         .strip_prefix(run_paths.run_dir())
@@ -672,6 +705,7 @@ pub(crate) fn build_run_summary(
             cognitive_signals_json: Some(cognitive_signals_rel),
             fast_slow_path_json: Some(fast_slow_path_rel),
             agency_selection_json: Some(agency_selection_rel),
+            bounded_execution_json: Some(bounded_execution_rel),
             cognitive_arbitration_json: Some(cognitive_arbitration_rel),
             affect_state_json: Some(affect_state_rel),
             reasoning_graph_json: Some(reasoning_graph_rel),
@@ -1622,6 +1656,68 @@ pub(crate) fn build_agency_selection_artifact(
     }
 }
 
+pub(crate) fn build_bounded_execution_artifact(
+    run_summary: &RunSummaryArtifact,
+    fast_slow_path: &FastSlowPathArtifact,
+    agency_selection: &AgencySelectionArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> BoundedExecutionArtifact {
+    let (execution_status, continuation_state, provisional_termination_state, iterations) =
+        match fast_slow_path.selected_path.as_str() {
+            "fast_path" => (
+                "completed",
+                "stop_after_one",
+                "ready_for_evaluation",
+                vec![BoundedExecutionIteration {
+                    iteration_index: 1,
+                    stage: "execute".to_string(),
+                    action: "execute selected candidate directly".to_string(),
+                    outcome: "bounded_direct_execution_complete".to_string(),
+                }],
+            ),
+            _ => (
+                "completed",
+                "bounded_review_complete",
+                "ready_for_evaluation",
+                vec![
+                    BoundedExecutionIteration {
+                        iteration_index: 1,
+                        stage: "review".to_string(),
+                        action: "review and refine the selected candidate".to_string(),
+                        outcome: "bounded_review_pass_complete".to_string(),
+                    },
+                    BoundedExecutionIteration {
+                        iteration_index: 2,
+                        stage: "execute".to_string(),
+                        action: "execute the reviewed bounded candidate".to_string(),
+                        outcome: "bounded_reviewed_execution_complete".to_string(),
+                    },
+                ],
+            ),
+        };
+
+    BoundedExecutionArtifact {
+        bounded_execution_version: BOUNDED_EXECUTION_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: agency_selection.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        selected_candidate_id: agency_selection.selected_candidate_id.clone(),
+        selected_path: fast_slow_path.selected_path.clone(),
+        execution_status: execution_status.to_string(),
+        continuation_state: continuation_state.to_string(),
+        provisional_termination_state: provisional_termination_state.to_string(),
+        iteration_count: iterations.len() as u32,
+        iterations,
+        deterministic_execution_rule:
+            "derive bounded iteration shape directly from selected path and selected candidate without hidden retry state"
+                .to_string(),
+    }
+}
+
 pub(crate) fn build_aee_decision_artifact(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
@@ -2010,12 +2106,20 @@ pub(crate) fn write_run_state_artifacts(
         &fast_slow_path,
         Some(&scores_for_suggestions),
     );
+    let bounded_execution = build_bounded_execution_artifact(
+        &run_summary,
+        &fast_slow_path,
+        &agency_selection,
+        Some(&scores_for_suggestions),
+    );
     let cognitive_arbitration_json = serde_json::to_vec_pretty(&cognitive_arbitration)
         .context("serialize cognitive_arbitration.v1.json")?;
     let fast_slow_path_json =
         serde_json::to_vec_pretty(&fast_slow_path).context("serialize fast_slow_path.v1.json")?;
     let agency_selection_json = serde_json::to_vec_pretty(&agency_selection)
         .context("serialize agency_selection.v1.json")?;
+    let bounded_execution_json = serde_json::to_vec_pretty(&bounded_execution)
+        .context("serialize bounded_execution.v1.json")?;
     let aee_decision = build_aee_decision_artifact(
         &run_summary,
         &suggestions,
@@ -2046,6 +2150,7 @@ pub(crate) fn write_run_state_artifacts(
     )?;
     artifacts::atomic_write(&run_paths.fast_slow_path_json(), &fast_slow_path_json)?;
     artifacts::atomic_write(&run_paths.agency_selection_json(), &agency_selection_json)?;
+    artifacts::atomic_write(&run_paths.bounded_execution_json(), &bounded_execution_json)?;
     artifacts::atomic_write(&run_paths.cognitive_signals_json(), &cognitive_signals_json)?;
     artifacts::atomic_write(
         &run_paths.cognitive_arbitration_json(),
@@ -2053,6 +2158,7 @@ pub(crate) fn write_run_state_artifacts(
     )?;
     artifacts::atomic_write(&run_paths.fast_slow_path_json(), &fast_slow_path_json)?;
     artifacts::atomic_write(&run_paths.agency_selection_json(), &agency_selection_json)?;
+    artifacts::atomic_write(&run_paths.bounded_execution_json(), &bounded_execution_json)?;
     artifacts::atomic_write(&run_paths.affect_state_json(), &affect_state_json)?;
     artifacts::atomic_write(&run_paths.aee_decision_json(), &aee_decision_json)?;
     artifacts::atomic_write(&run_paths.reasoning_graph_json(), &reasoning_graph_json)?;
