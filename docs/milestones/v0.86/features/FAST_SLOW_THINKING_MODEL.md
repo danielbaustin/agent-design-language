@@ -258,6 +258,20 @@ In ADL:
 
 Therefore, the system must explicitly model:
 
+## Implemented v0.86 Bounded Surface
+
+For `v0.86`, the implemented runtime surface is intentionally narrower than the broader conceptual routing model in this document.
+
+The tracked runtime contract is:
+
+- `cognitive_arbitration.v1.json` records the bounded arbitration route
+- `fast_slow_path.v1.json` records the explicit arbitration-to-path handoff
+- `fast_path` means direct bounded execution with minimal review
+- `slow_path` means bounded review/refinement before execution
+- path selection is deterministic for identical bounded inputs
+
+This milestone does not implement adaptive Bayesian learning, threshold updates, or Gödel-driven routing improvement.
+
 - cost of failure
 - reversibility of actions
 - safety constraints
