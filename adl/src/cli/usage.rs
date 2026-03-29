@@ -3,6 +3,9 @@ pub fn usage() -> &'static str {
   adl <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--quiet] [--open]
   adl resume <run_id> [--steer <steering.json>]
   adl demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
+  adl pr init <issue> [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>]
+  adl pr create <issue> --stp <path>
+  adl pr create --title <title> [--slug <slug>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
   adl godel run --run-id <id> --workflow-id <id> --failure-code <code> --failure-summary <text> [--evidence-ref <path> ...] [--runs-dir <dir>]
   adl godel inspect --run-id <id> [--runs-dir <dir>]
   adl godel evaluate --failure-code <code> --experiment-result <ok|blocked> --score-delta <int>
