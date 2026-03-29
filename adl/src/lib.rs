@@ -14,6 +14,7 @@
 pub mod adl;
 pub mod artifacts;
 pub mod bounded_executor;
+pub mod control_plane;
 pub mod delegation_policy;
 pub mod demo;
 pub mod execute;
