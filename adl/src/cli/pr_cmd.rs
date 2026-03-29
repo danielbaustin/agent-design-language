@@ -800,6 +800,8 @@ fn run_status(program: &str, args: &[&str]) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::env;
+    use std::sync::{Mutex, OnceLock};
     use std::time::{SystemTime, UNIX_EPOCH};
 
     fn unique_temp_dir(label: &str) -> PathBuf {
@@ -810,6 +812,43 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("{label}-{now}-{}", std::process::id()));
         fs::create_dir_all(&dir).expect("create temp dir");
         dir
+    }
+
+    fn env_lock() -> &'static Mutex<()> {
+        static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+        LOCK.get_or_init(|| Mutex::new(()))
+    }
+
+    fn write_executable(path: &Path, content: &str) {
+        fs::write(path, content).expect("write executable");
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mut perms = fs::metadata(path).expect("metadata").permissions();
+            perms.set_mode(0o755);
+            fs::set_permissions(path, perms).expect("chmod");
+        }
+    }
+
+    fn init_git_repo(dir: &Path) {
+        assert!(Command::new("git")
+            .arg("init")
+            .arg("-q")
+            .current_dir(dir)
+            .status()
+            .expect("git init")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "remote",
+                "add",
+                "origin",
+                "https://github.com/danielbaustin/agent-design-language.git"
+            ])
+            .current_dir(dir)
+            .status()
+            .expect("git remote add")
+            .success());
     }
 
     #[test]
@@ -1023,6 +1062,158 @@ mod tests {
         assert!(err
             .to_string()
             .contains("only one of --body or --body-file"));
+    }
+
+    #[test]
+    fn real_pr_init_seeds_stp_from_generated_source_prompt() {
+        let _guard = env_lock().lock().expect("lock");
+        let repo = unique_temp_dir("adl-pr-real-init");
+        init_git_repo(&repo);
+        let prev_dir = env::current_dir().expect("cwd");
+        env::set_current_dir(&repo).expect("chdir");
+
+        let result = real_pr(&[
+            "init".to_string(),
+            "1151".to_string(),
+            "--slug".to_string(),
+            "v0-86-tools-init-test".to_string(),
+            "--title".to_string(),
+            "[v0.86][tools] Init test".to_string(),
+            "--no-fetch-issue".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+        ]);
+
+        env::set_current_dir(prev_dir).expect("restore cwd");
+        result.expect("real_pr init");
+
+        let issue_ref = IssueRef::new(
+            1151,
+            "v0.86".to_string(),
+            "v0-86-tools-init-test".to_string(),
+        )
+        .expect("issue ref");
+        let stp_path = issue_ref.task_bundle_stp_path(&repo);
+        let source_path = issue_ref.issue_prompt_path(&repo);
+        assert!(stp_path.is_file());
+        assert!(source_path.is_file());
+        let stp = fs::read_to_string(&stp_path).expect("read stp");
+        assert!(stp.contains("issue_number: 1151"));
+        assert!(stp.contains("title: \"[v0.86][tools] Init test\""));
+    }
+
+    #[test]
+    fn real_pr_create_no_start_creates_issue_and_source_prompt() {
+        let _guard = env_lock().lock().expect("lock");
+        let repo = unique_temp_dir("adl-pr-real-create");
+        init_git_repo(&repo);
+        let bin_dir = repo.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let gh_log = repo.join("gh.log");
+        let gh_path = bin_dir.join("gh");
+        write_executable(
+            &gh_path,
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2\" = 'issue create' ]; then\n  printf 'https://github.com/danielbaustin/agent-design-language/issues/1158\\n'\n  exit 0\nfi\nexit 1\n",
+                gh_log.display()
+            ),
+        );
+
+        let old_path = env::var("PATH").unwrap_or_default();
+        let prev_dir = env::current_dir().expect("cwd");
+        unsafe {
+            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        }
+        env::set_current_dir(&repo).expect("chdir");
+
+        let result = real_pr(&[
+            "create".to_string(),
+            "--title".to_string(),
+            "[v0.86][tools] Create test".to_string(),
+            "--slug".to_string(),
+            "v0-86-tools-create-test".to_string(),
+            "--body".to_string(),
+            "## Goal\n- test\n\n## Acceptance Criteria\n- works".to_string(),
+            "--labels".to_string(),
+            "track:roadmap,type:task,area:tools,version:v0.86".to_string(),
+            "--no-start".to_string(),
+        ]);
+
+        env::set_current_dir(prev_dir).expect("restore cwd");
+        unsafe {
+            env::set_var("PATH", old_path);
+        }
+        result.expect("real_pr create");
+
+        let issue_ref = IssueRef::new(
+            1158,
+            "v0.86".to_string(),
+            "v0-86-tools-create-test".to_string(),
+        )
+        .expect("issue ref");
+        let source_path = issue_ref.issue_prompt_path(&repo);
+        assert!(source_path.is_file());
+        let source = fs::read_to_string(&source_path).expect("read source");
+        assert!(source.contains("issue_number: 1158"));
+        assert!(source.contains("title: \"[v0.86][tools] Create test\""));
+        let gh_calls = fs::read_to_string(&gh_log).expect("read gh log");
+        assert!(gh_calls.contains("issue create"));
+    }
+
+    #[test]
+    fn real_pr_create_reconcile_updates_issue_via_gh() {
+        let _guard = env_lock().lock().expect("lock");
+        let repo = unique_temp_dir("adl-pr-reconcile");
+        init_git_repo(&repo);
+        let bin_dir = repo.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let gh_log = repo.join("gh.log");
+        let gh_path = bin_dir.join("gh");
+        write_executable(
+            &gh_path,
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2 $5 $6\" = 'issue view --json labels -q' ]; then\n  printf 'track:roadmap\\nversion:v0.86\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'issue edit' ]; then\n  exit 0\nfi\nexit 1\n",
+                gh_log.display()
+            ),
+        );
+
+        let stp_dir = repo.join(".adl/v0.86/tasks/issue-1151__example");
+        fs::create_dir_all(&stp_dir).expect("stp dir");
+        let stp_path = stp_dir.join("stp.md");
+        fs::write(
+            &stp_path,
+            "---\ntitle: \"[v0.86][tools] Reconcile test\"\nlabels:\n  - \"track:roadmap\"\n  - \"type:task\"\n  - \"area:tools\"\n  - \"version:v0.86\"\nissue_number: 1151\n---\n\n# Body\n\nReconcile me.\n",
+        )
+        .expect("write stp");
+
+        let old_path = env::var("PATH").unwrap_or_default();
+        let prev_dir = env::current_dir().expect("cwd");
+        unsafe {
+            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        }
+        env::set_current_dir(&repo).expect("chdir");
+
+        let result = real_pr(&[
+            "create".to_string(),
+            "1151".to_string(),
+            "--stp".to_string(),
+            stp_path.display().to_string(),
+        ]);
+
+        env::set_current_dir(prev_dir).expect("restore cwd");
+        unsafe {
+            env::set_var("PATH", old_path);
+        }
+        result.expect("reconcile");
+
+        let gh_calls = fs::read_to_string(&gh_log).expect("read gh log");
+        assert!(gh_calls.contains("issue edit 1151 -R danielbaustin/agent-design-language --title [v0.86][tools] Reconcile test --body-file"));
+        assert!(gh_calls.contains(
+            "issue edit 1151 -R danielbaustin/agent-design-language --add-label type:task"
+        ));
+        assert!(gh_calls.contains(
+            "issue edit 1151 -R danielbaustin/agent-design-language --add-label area:tools"
+        ));
     }
 
     #[test]
