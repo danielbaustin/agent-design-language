@@ -123,6 +123,11 @@ impl RunArtifactPaths {
         self.learning_dir().join("affect_state.v1.json")
     }
 
+    /// Cognitive signals artifact path for bounded v0.86 signal emission.
+    pub fn cognitive_signals_json(&self) -> PathBuf {
+        self.learning_dir().join("cognitive_signals.v1.json")
+    }
+
     /// Affect-linked reasoning graph artifact path.
     pub fn reasoning_graph_json(&self) -> PathBuf {
         self.learning_dir().join("reasoning_graph.v1.json")
@@ -351,6 +356,9 @@ mod tests {
         assert!(paths
             .affect_state_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/affect_state.v1.json"));
+        assert!(paths
+            .cognitive_signals_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/cognitive_signals.v1.json"));
         assert!(paths
             .reasoning_graph_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/reasoning_graph.v1.json"));

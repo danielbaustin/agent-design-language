@@ -12,6 +12,7 @@ pub(crate) const RUN_SUMMARY_VERSION: u32 = 1;
 pub(crate) const SCORES_VERSION: u32 = 1;
 pub(crate) const SUGGESTIONS_VERSION: u32 = 1;
 pub(crate) const AEE_DECISION_VERSION: u32 = 1;
+pub(crate) const COGNITIVE_SIGNALS_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
@@ -139,6 +140,8 @@ pub(crate) struct RunSummaryLinks {
     pub(crate) suggestions_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) aee_decision_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) cognitive_signals_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) affect_state_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -291,6 +294,40 @@ pub(crate) struct AffectStateArtifact {
     pub(crate) run_id: String,
     pub(crate) generated_from: AeeDecisionGeneratedFrom,
     pub(crate) affect: AffectStateRecord,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct CognitiveSignalsArtifact {
+    pub(crate) cognitive_signals_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) instinct: CognitiveInstinctRecord,
+    pub(crate) affect: CognitiveAffectSignalRecord,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct CognitiveInstinctRecord {
+    pub(crate) instinct_profile_id: String,
+    pub(crate) dominant_instinct: String,
+    pub(crate) completion_pressure: String,
+    pub(crate) integrity_bias: String,
+    pub(crate) curiosity_bias: String,
+    pub(crate) candidate_selection_bias: String,
+    pub(crate) deterministic_update_rule: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct CognitiveAffectSignalRecord {
+    pub(crate) affect_state_id: String,
+    pub(crate) urgency_level: String,
+    pub(crate) salience_level: String,
+    pub(crate) persistence_pressure: String,
+    pub(crate) confidence_shift: String,
+    pub(crate) downstream_influence: String,
+    pub(crate) deterministic_update_rule: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -481,6 +518,11 @@ pub(crate) fn build_run_summary(
         .strip_prefix(run_paths.run_dir())
         .map(|p| p.display().to_string())
         .unwrap_or_else(|_| "learning/aee_decision.json".to_string());
+    let cognitive_signals_rel = run_paths
+        .cognitive_signals_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/cognitive_signals.v1.json".to_string());
     let affect_state_rel = run_paths
         .affect_state_json()
         .strip_prefix(run_paths.run_dir())
@@ -545,6 +587,7 @@ pub(crate) fn build_run_summary(
             scores_json: Some(scores_rel),
             suggestions_json: Some(suggestions_rel),
             aee_decision_json: Some(aee_decision_rel),
+            cognitive_signals_json: Some(cognitive_signals_rel),
             affect_state_json: Some(affect_state_rel),
             reasoning_graph_json: Some(reasoning_graph_rel),
             overlays_dir: run_paths
@@ -1093,6 +1136,129 @@ pub(crate) fn build_affect_state_artifact(
     }
 }
 
+pub(crate) fn build_cognitive_signals_artifact(
+    run_summary: &RunSummaryArtifact,
+    suggestions: &SuggestionsArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> CognitiveSignalsArtifact {
+    let selected = suggestions
+        .suggestions
+        .first()
+        .cloned()
+        .unwrap_or_else(|| SuggestionItem {
+            id: "sug-000".to_string(),
+            category: "stability".to_string(),
+            severity: "info".to_string(),
+            rationale: "No bounded adaptation signals fired; keep current policy state."
+                .to_string(),
+            evidence: SuggestionEvidence {
+                failure_count: 0,
+                retry_count: 0,
+                delegation_denied_count: 0,
+                security_denied_count: 0,
+                success_ratio: 1.0,
+                scheduler_max_parallel_observed: 1,
+            },
+            proposed_change: SuggestedChangeIntent {
+                intent: "maintain_current_policy".to_string(),
+                target: "workflow-runtime".to_string(),
+            },
+        });
+
+    let completion_pressure =
+        if selected.evidence.failure_count > 0 || run_summary.status == "failure" {
+            "elevated"
+        } else if selected.evidence.retry_count > 0 {
+            "guarded"
+        } else {
+            "steady"
+        };
+    let integrity_bias = if selected.evidence.security_denied_count > 0 {
+        "high"
+    } else {
+        "bounded"
+    };
+    let curiosity_bias = if selected.evidence.success_ratio < 1.0 {
+        "active"
+    } else {
+        "low"
+    };
+    let dominant_instinct = if integrity_bias == "high" {
+        "integrity"
+    } else if completion_pressure == "elevated" {
+        "completion"
+    } else if curiosity_bias == "active" {
+        "curiosity"
+    } else {
+        "coherence"
+    };
+    let candidate_selection_bias = match dominant_instinct {
+        "integrity" => "prefer lower-risk constrained candidates",
+        "completion" => "prefer candidates that reduce unfinished work quickly",
+        "curiosity" => "prefer candidates that reduce uncertainty",
+        _ => "prefer candidates that preserve bounded coherence",
+    };
+    let salience_level = if selected.severity == "high" || selected.evidence.failure_count > 0 {
+        "high"
+    } else if selected.evidence.retry_count > 0 {
+        "moderate"
+    } else {
+        "low"
+    };
+    let persistence_pressure = if completion_pressure == "elevated" {
+        "retry_biased"
+    } else if selected.evidence.retry_count > 0 {
+        "stabilize_then_retry"
+    } else {
+        "bounded_once"
+    };
+    let confidence_shift = if selected.evidence.failure_count > 0 {
+        "reduced"
+    } else {
+        "stable"
+    };
+    let downstream_influence = format!(
+        "dominant_instinct={} selected_intent={} failure_count={} retry_count={}",
+        dominant_instinct,
+        selected.proposed_change.intent,
+        selected.evidence.failure_count,
+        selected.evidence.retry_count
+    );
+
+    CognitiveSignalsArtifact {
+        cognitive_signals_version: COGNITIVE_SIGNALS_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: suggestions.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        instinct: CognitiveInstinctRecord {
+            instinct_profile_id: "instinct-001".to_string(),
+            dominant_instinct: dominant_instinct.to_string(),
+            completion_pressure: completion_pressure.to_string(),
+            integrity_bias: integrity_bias.to_string(),
+            curiosity_bias: curiosity_bias.to_string(),
+            candidate_selection_bias: candidate_selection_bias.to_string(),
+            deterministic_update_rule:
+                "derive bounded instinct profile from stable failure, retry, security, and success evidence ordering"
+                    .to_string(),
+        },
+        affect: CognitiveAffectSignalRecord {
+            affect_state_id: "signal-affect-001".to_string(),
+            urgency_level: completion_pressure.to_string(),
+            salience_level: salience_level.to_string(),
+            persistence_pressure: persistence_pressure.to_string(),
+            confidence_shift: confidence_shift.to_string(),
+            downstream_influence,
+            deterministic_update_rule:
+                "derive bounded affect signals from the first stable suggestion plus bounded run summary evidence"
+                    .to_string(),
+        },
+    }
+}
+
 pub(crate) fn build_aee_decision_artifact(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
@@ -1455,6 +1621,10 @@ pub(crate) fn write_run_state_artifacts(
     let suggestions = build_suggestions_artifact(&run_summary, Some(&scores_for_suggestions));
     let suggestions_json =
         serde_json::to_vec_pretty(&suggestions).context("serialize suggestions.json")?;
+    let cognitive_signals =
+        build_cognitive_signals_artifact(&run_summary, &suggestions, Some(&scores_for_suggestions));
+    let cognitive_signals_json =
+        serde_json::to_vec_pretty(&cognitive_signals).context("serialize cognitive_signals.v1.json")?;
     let affect_state =
         build_affect_state_artifact(&run_summary, &suggestions, Some(&scores_for_suggestions));
     let affect_state_json =
@@ -1482,6 +1652,7 @@ pub(crate) fn write_run_state_artifacts(
     artifacts::atomic_write(&run_paths.run_summary_json(), &run_summary_json)?;
     artifacts::atomic_write(&run_paths.scores_json(), &scores_json)?;
     artifacts::atomic_write(&run_paths.suggestions_json(), &suggestions_json)?;
+    artifacts::atomic_write(&run_paths.cognitive_signals_json(), &cognitive_signals_json)?;
     artifacts::atomic_write(&run_paths.affect_state_json(), &affect_state_json)?;
     artifacts::atomic_write(&run_paths.aee_decision_json(), &aee_decision_json)?;
     artifacts::atomic_write(&run_paths.reasoning_graph_json(), &reasoning_graph_json)?;
