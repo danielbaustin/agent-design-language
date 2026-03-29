@@ -14,6 +14,7 @@ pub(crate) const SUGGESTIONS_VERSION: u32 = 1;
 pub(crate) const AEE_DECISION_VERSION: u32 = 1;
 pub(crate) const COGNITIVE_SIGNALS_VERSION: u32 = 1;
 pub(crate) const COGNITIVE_ARBITRATION_VERSION: u32 = 1;
+pub(crate) const FAST_SLOW_PATH_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
@@ -143,6 +144,8 @@ pub(crate) struct RunSummaryLinks {
     pub(crate) aee_decision_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) cognitive_signals_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) fast_slow_path_json: Option<String>,
     pub(crate) cognitive_arbitration_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) affect_state_json: Option<String>,
@@ -373,6 +376,24 @@ pub(crate) struct CognitiveArbitrationArtifact {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub(crate) struct FastSlowPathArtifact {
+    pub(crate) fast_slow_path_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) arbitration_route: String,
+    pub(crate) selected_path: String,
+    pub(crate) path_family: String,
+    pub(crate) handoff_state: String,
+    pub(crate) candidate_strategy: String,
+    pub(crate) review_depth: String,
+    pub(crate) execution_profile: String,
+    pub(crate) termination_expectation: String,
+    pub(crate) path_difference_summary: String,
+    pub(crate) deterministic_handoff_rule: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct ReasoningGraphArtifact {
     pub(crate) reasoning_graph_version: u32,
     pub(crate) run_id: String,
@@ -541,6 +562,11 @@ pub(crate) fn build_run_summary(
         .strip_prefix(run_paths.run_dir())
         .map(|p| p.display().to_string())
         .unwrap_or_else(|_| "learning/cognitive_signals.v1.json".to_string());
+    let fast_slow_path_rel = run_paths
+        .fast_slow_path_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/fast_slow_path.v1.json".to_string());
     let cognitive_arbitration_rel = run_paths
         .cognitive_arbitration_json()
         .strip_prefix(run_paths.run_dir())
@@ -611,6 +637,7 @@ pub(crate) fn build_run_summary(
             suggestions_json: Some(suggestions_rel),
             aee_decision_json: Some(aee_decision_rel),
             cognitive_signals_json: Some(cognitive_signals_rel),
+            fast_slow_path_json: Some(fast_slow_path_rel),
             cognitive_arbitration_json: Some(cognitive_arbitration_rel),
             affect_state_json: Some(affect_state_rel),
             reasoning_graph_json: Some(reasoning_graph_rel),
@@ -1386,6 +1413,81 @@ pub(crate) fn build_cognitive_arbitration_artifact(
     }
 }
 
+pub(crate) fn build_fast_slow_path_artifact(
+    run_summary: &RunSummaryArtifact,
+    arbitration: &CognitiveArbitrationArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> FastSlowPathArtifact {
+    let (
+        selected_path,
+        path_family,
+        handoff_state,
+        candidate_strategy,
+        review_depth,
+        execution_profile,
+        termination_expectation,
+    ) = match arbitration.route_selected.as_str() {
+        "fast" => (
+            "fast_path",
+            "fast",
+            "direct_handoff",
+            "accept first bounded candidate",
+            "minimal",
+            "single_pass_direct_execution",
+            "terminate_on_first_bounded_success_or_policy_block",
+        ),
+        "hybrid" => (
+            "slow_path",
+            "slow",
+            "bounded_recovery_handoff",
+            "compare current candidate against one bounded refinement",
+            "bounded_recovery_review",
+            "review_then_execute_once",
+            "terminate_after_bounded_review_cycle_or_policy_block",
+        ),
+        _ => (
+            "slow_path",
+            "slow",
+            "review_handoff",
+            "validate, refine, or veto the current bounded candidate",
+            "verification_required",
+            "review_and_refine_before_execution",
+            "terminate_after_bounded_review_cycle_or_policy_block",
+        ),
+    };
+    let path_difference_summary = match selected_path {
+        "fast_path" => {
+            "fast_path favors direct execution with minimal review and a single bounded candidate handoff"
+        }
+        _ => {
+            "slow_path requires bounded review/refinement before execution and can revise or veto the current candidate"
+        }
+    };
+
+    FastSlowPathArtifact {
+        fast_slow_path_version: FAST_SLOW_PATH_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: arbitration.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        arbitration_route: arbitration.route_selected.clone(),
+        selected_path: selected_path.to_string(),
+        path_family: path_family.to_string(),
+        handoff_state: handoff_state.to_string(),
+        candidate_strategy: candidate_strategy.to_string(),
+        review_depth: review_depth.to_string(),
+        execution_profile: execution_profile.to_string(),
+        termination_expectation: termination_expectation.to_string(),
+        path_difference_summary: path_difference_summary.to_string(),
+        deterministic_handoff_rule:
+            "derive fast/slow path handoff directly from bounded arbitration route selection without hidden execution-mode state"
+                .to_string(),
+    }
+}
+
 pub(crate) fn build_aee_decision_artifact(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
@@ -1762,8 +1864,15 @@ pub(crate) fn write_run_state_artifacts(
         &affect_state,
         Some(&scores_for_suggestions),
     );
+    let fast_slow_path = build_fast_slow_path_artifact(
+        &run_summary,
+        &cognitive_arbitration,
+        Some(&scores_for_suggestions),
+    );
     let cognitive_arbitration_json = serde_json::to_vec_pretty(&cognitive_arbitration)
         .context("serialize cognitive_arbitration.v1.json")?;
+    let fast_slow_path_json =
+        serde_json::to_vec_pretty(&fast_slow_path).context("serialize fast_slow_path.v1.json")?;
     let aee_decision = build_aee_decision_artifact(
         &run_summary,
         &suggestions,
@@ -1792,11 +1901,13 @@ pub(crate) fn write_run_state_artifacts(
         &run_paths.cognitive_arbitration_json(),
         &cognitive_arbitration_json,
     )?;
+    artifacts::atomic_write(&run_paths.fast_slow_path_json(), &fast_slow_path_json)?;
     artifacts::atomic_write(&run_paths.cognitive_signals_json(), &cognitive_signals_json)?;
     artifacts::atomic_write(
         &run_paths.cognitive_arbitration_json(),
         &cognitive_arbitration_json,
     )?;
+    artifacts::atomic_write(&run_paths.fast_slow_path_json(), &fast_slow_path_json)?;
     artifacts::atomic_write(&run_paths.affect_state_json(), &affect_state_json)?;
     artifacts::atomic_write(&run_paths.aee_decision_json(), &aee_decision_json)?;
     artifacts::atomic_write(&run_paths.reasoning_graph_json(), &reasoning_graph_json)?;

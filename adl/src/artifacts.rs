@@ -123,6 +123,11 @@ impl RunArtifactPaths {
         self.learning_dir().join("cognitive_arbitration.v1.json")
     }
 
+    /// Fast/slow path artifact path for bounded v0.86 route handoff.
+    pub fn fast_slow_path_json(&self) -> PathBuf {
+        self.learning_dir().join("fast_slow_path.v1.json")
+    }
+
     /// Affect state artifact path for bounded affect-guided adaptation.
     pub fn affect_state_json(&self) -> PathBuf {
         self.learning_dir().join("affect_state.v1.json")
@@ -361,6 +366,9 @@ mod tests {
         assert!(paths
             .cognitive_arbitration_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/cognitive_arbitration.v1.json"));
+        assert!(paths
+            .fast_slow_path_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/fast_slow_path.v1.json"));
         assert!(paths
             .affect_state_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/affect_state.v1.json"));
