@@ -1942,6 +1942,11 @@ cmd_start() {
     return 0
   fi
 
+  if rust_pr_delegate_available; then
+    delegate_pr_command_to_rust start "$@"
+    return 0
+  fi
+
   require_cmd git
   local lock_dir=""
   lock_dir="$(acquire_repo_lock "pr-bootstrap")"
@@ -2512,6 +2517,11 @@ cmd_status() {
 cmd_ready() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
     usage_ready
+    return 0
+  fi
+
+  if rust_pr_delegate_available; then
+    delegate_pr_command_to_rust ready "$@"
     return 0
   fi
 
