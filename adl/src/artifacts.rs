@@ -118,6 +118,11 @@ impl RunArtifactPaths {
         self.learning_dir().join("aee_decision.json")
     }
 
+    /// Cognitive arbitration artifact path for bounded v0.86 route selection.
+    pub fn cognitive_arbitration_json(&self) -> PathBuf {
+        self.learning_dir().join("cognitive_arbitration.v1.json")
+    }
+
     /// Affect state artifact path for bounded affect-guided adaptation.
     pub fn affect_state_json(&self) -> PathBuf {
         self.learning_dir().join("affect_state.v1.json")
@@ -353,6 +358,9 @@ mod tests {
         assert!(paths
             .aee_decision_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/aee_decision.json"));
+        assert!(paths
+            .cognitive_arbitration_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/cognitive_arbitration.v1.json"));
         assert!(paths
             .affect_state_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/affect_state.v1.json"));

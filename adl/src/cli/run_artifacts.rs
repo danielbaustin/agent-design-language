@@ -13,6 +13,7 @@ pub(crate) const SCORES_VERSION: u32 = 1;
 pub(crate) const SUGGESTIONS_VERSION: u32 = 1;
 pub(crate) const AEE_DECISION_VERSION: u32 = 1;
 pub(crate) const COGNITIVE_SIGNALS_VERSION: u32 = 1;
+pub(crate) const COGNITIVE_ARBITRATION_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
@@ -142,6 +143,7 @@ pub(crate) struct RunSummaryLinks {
     pub(crate) aee_decision_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) cognitive_signals_json: Option<String>,
+    pub(crate) cognitive_arbitration_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) affect_state_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -355,6 +357,22 @@ pub(crate) struct AffectStateRef {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub(crate) struct CognitiveArbitrationArtifact {
+    pub(crate) cognitive_arbitration_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) route_selected: String,
+    pub(crate) reasoning_mode: String,
+    pub(crate) confidence: String,
+    pub(crate) risk_class: String,
+    pub(crate) applied_constraints: Vec<String>,
+    pub(crate) cost_latency_assumption: String,
+    pub(crate) route_reason: String,
+    pub(crate) deterministic_selection_rule: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct ReasoningGraphArtifact {
     pub(crate) reasoning_graph_version: u32,
     pub(crate) run_id: String,
@@ -523,6 +541,11 @@ pub(crate) fn build_run_summary(
         .strip_prefix(run_paths.run_dir())
         .map(|p| p.display().to_string())
         .unwrap_or_else(|_| "learning/cognitive_signals.v1.json".to_string());
+    let cognitive_arbitration_rel = run_paths
+        .cognitive_arbitration_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/cognitive_arbitration.v1.json".to_string());
     let affect_state_rel = run_paths
         .affect_state_json()
         .strip_prefix(run_paths.run_dir())
@@ -588,6 +611,7 @@ pub(crate) fn build_run_summary(
             suggestions_json: Some(suggestions_rel),
             aee_decision_json: Some(aee_decision_rel),
             cognitive_signals_json: Some(cognitive_signals_rel),
+            cognitive_arbitration_json: Some(cognitive_arbitration_rel),
             affect_state_json: Some(affect_state_rel),
             reasoning_graph_json: Some(reasoning_graph_rel),
             overlays_dir: run_paths
@@ -1259,6 +1283,109 @@ pub(crate) fn build_cognitive_signals_artifact(
     }
 }
 
+pub(crate) fn build_cognitive_arbitration_artifact(
+    run_summary: &RunSummaryArtifact,
+    suggestions: &SuggestionsArtifact,
+    affect_state: &AffectStateArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> CognitiveArbitrationArtifact {
+    let selected = suggestions
+        .suggestions
+        .first()
+        .cloned()
+        .unwrap_or_else(|| SuggestionItem {
+            id: "sug-000".to_string(),
+            category: "stability".to_string(),
+            severity: "info".to_string(),
+            rationale: "No bounded adaptation signals fired; keep current policy state."
+                .to_string(),
+            evidence: SuggestionEvidence {
+                failure_count: 0,
+                retry_count: 0,
+                delegation_denied_count: 0,
+                security_denied_count: 0,
+                success_ratio: 1.0,
+                scheduler_max_parallel_observed: 1,
+            },
+            proposed_change: SuggestedChangeIntent {
+                intent: "maintain_current_policy".to_string(),
+                target: "workflow-runtime".to_string(),
+            },
+        });
+
+    let (route_selected, reasoning_mode) =
+        if selected.evidence.security_denied_count > 0 || selected.evidence.failure_count > 0 {
+            ("slow", "review_heavy")
+        } else if affect_state.affect.recovery_bias >= 2 || selected.evidence.retry_count > 0 {
+            ("hybrid", "bounded_recovery")
+        } else {
+            ("fast", "direct_execution")
+        };
+    let risk_class = if selected.evidence.security_denied_count > 0 {
+        "high"
+    } else if selected.evidence.failure_count > 0 || affect_state.affect.recovery_bias >= 2 {
+        "medium"
+    } else {
+        "low"
+    };
+    let confidence = if route_selected == "fast" {
+        "high"
+    } else if route_selected == "hybrid" {
+        "guarded"
+    } else {
+        "review_required"
+    };
+    let mut applied_constraints = Vec::new();
+    if selected.evidence.security_denied_count > 0 {
+        applied_constraints.push("security_denial_present".to_string());
+    }
+    if selected.evidence.failure_count > 0 {
+        applied_constraints.push("failure_recovery_bias".to_string());
+    }
+    if selected.evidence.retry_count > 0 {
+        applied_constraints.push("retry_budget_pressure".to_string());
+    }
+    if applied_constraints.is_empty() {
+        applied_constraints.push("bounded_default_path".to_string());
+    }
+
+    let cost_latency_assumption = match route_selected {
+        "fast" => "prefer lower-cost low-latency execution when bounded evidence is stable",
+        "hybrid" => "allow bounded extra review when retry or recovery pressure is present",
+        _ => "spend bounded additional cognition when failure or policy risk is present",
+    };
+    let route_reason = format!(
+        "route={} affect_mode={} failure_count={} retry_count={} security_denied_count={} selected_intent={}",
+        route_selected,
+        affect_state.affect.affect_mode,
+        selected.evidence.failure_count,
+        selected.evidence.retry_count,
+        selected.evidence.security_denied_count,
+        selected.proposed_change.intent
+    );
+
+    CognitiveArbitrationArtifact {
+        cognitive_arbitration_version: COGNITIVE_ARBITRATION_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: suggestions.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        route_selected: route_selected.to_string(),
+        reasoning_mode: reasoning_mode.to_string(),
+        confidence: confidence.to_string(),
+        risk_class: risk_class.to_string(),
+        applied_constraints,
+        cost_latency_assumption: cost_latency_assumption.to_string(),
+        route_reason,
+        deterministic_selection_rule:
+            "derive route from stable failure/security/retry evidence ordering plus bounded affect recovery bias"
+                .to_string(),
+    }
+}
+
 pub(crate) fn build_aee_decision_artifact(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
@@ -1629,6 +1756,14 @@ pub(crate) fn write_run_state_artifacts(
         build_affect_state_artifact(&run_summary, &suggestions, Some(&scores_for_suggestions));
     let affect_state_json =
         serde_json::to_vec_pretty(&affect_state).context("serialize affect_state.v1.json")?;
+    let cognitive_arbitration = build_cognitive_arbitration_artifact(
+        &run_summary,
+        &suggestions,
+        &affect_state,
+        Some(&scores_for_suggestions),
+    );
+    let cognitive_arbitration_json = serde_json::to_vec_pretty(&cognitive_arbitration)
+        .context("serialize cognitive_arbitration.v1.json")?;
     let aee_decision = build_aee_decision_artifact(
         &run_summary,
         &suggestions,
@@ -1653,6 +1788,15 @@ pub(crate) fn write_run_state_artifacts(
     artifacts::atomic_write(&run_paths.scores_json(), &scores_json)?;
     artifacts::atomic_write(&run_paths.suggestions_json(), &suggestions_json)?;
     artifacts::atomic_write(&run_paths.cognitive_signals_json(), &cognitive_signals_json)?;
+    artifacts::atomic_write(
+        &run_paths.cognitive_arbitration_json(),
+        &cognitive_arbitration_json,
+    )?;
+    artifacts::atomic_write(&run_paths.cognitive_signals_json(), &cognitive_signals_json)?;
+    artifacts::atomic_write(
+        &run_paths.cognitive_arbitration_json(),
+        &cognitive_arbitration_json,
+    )?;
     artifacts::atomic_write(&run_paths.affect_state_json(), &affect_state_json)?;
     artifacts::atomic_write(&run_paths.aee_decision_json(), &aee_decision_json)?;
     artifacts::atomic_write(&run_paths.reasoning_graph_json(), &reasoning_graph_json)?;
