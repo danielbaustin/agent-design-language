@@ -565,6 +565,57 @@ if [[ "$rc" -eq 0 ]]; then
   exit 1
 fi
 
+cat >"$tmpdir/sor_completed_worktree_only_valid.md" <<'EOF'
+# ADL Output Card
+
+Task ID: issue-0898
+Run ID: issue-0898
+Version: v0.85
+Title: completed-worktree-only-valid-sor
+Branch: codex/898-valid-sor
+Status: DONE
+
+Execution:
+- Actor: codex
+- Model: gpt-5-codex
+- Provider: codex desktop
+- Start Time: 2026-03-18T07:00:00Z
+- End Time: 2026-03-18T07:05:00Z
+
+## Summary
+Completed pre-PR output record for finish validation.
+## Artifacts produced
+x
+## Actions taken
+x
+## Main Repo Integration (REQUIRED)
+- Main-repo paths updated:
+- Worktree-only paths remaining: docs/tooling/example.md
+- Integration state: worktree_only
+- Verification scope: worktree
+- Integration method used: branch pending pr finish
+- Verification performed:
+- Result: PASS
+## Validation
+x
+## Verification Summary
+x
+## Determinism Evidence
+x
+## Security / Privacy Checks
+x
+## Replay Artifacts
+x
+## Artifact Verification
+x
+## Decisions / Deviations
+x
+## Follow-ups / Deferred work
+x
+EOF
+
+"$VALIDATOR" --type sor --phase completed --input "$tmpdir/sor_completed_worktree_only_valid.md" >/dev/null
+
 cat >"$tmpdir/sor_absolute_path_invalid.md" <<'EOF'
 # ADL Output Card
 

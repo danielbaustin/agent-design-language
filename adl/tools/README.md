@@ -25,7 +25,7 @@ From repo root:
 bash adl/tools/install_adl_pr_cycle_skill.sh
 
 # start issue branch + cards
-./adl/tools/pr.sh start <issue_num> --slug <slug>
+bash ./adl/tools/pr.sh start <issue_num> --slug <slug>
 
 # inspect worktree status/fate across managed, stale, orphan, and Codex-ephemeral namespaces
 ./adl/tools/worktree_doctor.sh
@@ -46,7 +46,7 @@ cd ./adl/ && bash tools/enforce_coverage_gates.sh coverage-summary.json
 ./adl/tools/card_prompt.sh --issue <issue_num> --out /tmp/prompt.txt
 
 # finish issue and open/update PR
-./adl/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>"
+bash ./adl/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>"
 ```
 
 ## See Also / Canonical Docs
