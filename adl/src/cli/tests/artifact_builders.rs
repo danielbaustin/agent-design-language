@@ -141,6 +141,10 @@ fn build_run_summary_sorts_remote_policy_and_tracks_denials() {
         Some("learning/bounded_execution.v1.json")
     );
     assert_eq!(
+        summary.links.evaluation_signals_json.as_deref(),
+        Some("learning/evaluation_signals.v1.json")
+    );
+    assert_eq!(
         summary.links.cognitive_arbitration_json.as_deref(),
         Some("learning/cognitive_arbitration.v1.json")
     );
@@ -198,6 +202,7 @@ fn build_aee_decision_artifact_selects_retry_recovery_for_failures() {
             fast_slow_path_json: None,
             agency_selection_json: None,
             bounded_execution_json: None,
+            evaluation_signals_json: None,
             cognitive_arbitration_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
@@ -295,6 +300,7 @@ fn build_affect_state_artifact_covers_watchful_and_steady_modes() {
             fast_slow_path_json: None,
             agency_selection_json: None,
             bounded_execution_json: None,
+            evaluation_signals_json: None,
             cognitive_arbitration_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
@@ -412,6 +418,7 @@ fn build_cognitive_signals_artifact_is_deterministic_and_bounded() {
             fast_slow_path_json: None,
             agency_selection_json: None,
             bounded_execution_json: None,
+            evaluation_signals_json: None,
             cognitive_arbitration_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
@@ -502,6 +509,7 @@ fn build_cognitive_arbitration_artifact_is_deterministic_and_routes_boundedly() 
             fast_slow_path_json: None,
             agency_selection_json: None,
             bounded_execution_json: None,
+            evaluation_signals_json: None,
             cognitive_arbitration_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
@@ -603,6 +611,7 @@ fn build_fast_slow_path_artifact_is_deterministic_and_distinguishes_modes() {
             fast_slow_path_json: None,
             agency_selection_json: None,
             bounded_execution_json: None,
+            evaluation_signals_json: None,
             cognitive_arbitration_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
@@ -748,6 +757,7 @@ fn build_agency_selection_artifact_is_deterministic_and_emits_multiple_candidate
             fast_slow_path_json: None,
             agency_selection_json: None,
             bounded_execution_json: None,
+            evaluation_signals_json: None,
             cognitive_arbitration_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
@@ -918,6 +928,7 @@ fn build_bounded_execution_artifact_is_deterministic_and_shows_iteration_shape()
             fast_slow_path_json: None,
             agency_selection_json: None,
             bounded_execution_json: None,
+            evaluation_signals_json: None,
             cognitive_arbitration_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
@@ -1057,6 +1068,202 @@ fn build_bounded_execution_artifact_is_deterministic_and_shows_iteration_shape()
 }
 
 #[test]
+fn build_evaluation_signals_artifact_is_deterministic_and_emits_termination_reasons() {
+    let mut summary = RunSummaryArtifact {
+        run_summary_version: 1,
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_id: "evaluation-signals-run".to_string(),
+        workflow_id: "wf".to_string(),
+        adl_version: "0.86".to_string(),
+        swarm_version: "test".to_string(),
+        status: "success".to_string(),
+        error_kind: None,
+        counts: RunSummaryCounts {
+            total_steps: 2,
+            completed_steps: 2,
+            failed_steps: 0,
+            provider_call_count: 1,
+            delegation_steps: 0,
+            delegation_requires_verification_steps: 0,
+        },
+        policy: RunSummaryPolicy {
+            security_envelope_enabled: false,
+            signing_required: false,
+            key_id_required: false,
+            verify_allowed_algs: Vec::new(),
+            verify_allowed_key_sources: Vec::new(),
+            sandbox_policy: "centralized_path_resolver_v1".to_string(),
+            security_denials_by_code: BTreeMap::new(),
+        },
+        links: RunSummaryLinks {
+            run_json: "run.json".to_string(),
+            steps_json: "steps.json".to_string(),
+            pause_state_json: None,
+            outputs_dir: "outputs".to_string(),
+            logs_dir: "logs".to_string(),
+            learning_dir: "learning".to_string(),
+            scores_json: None,
+            suggestions_json: None,
+            aee_decision_json: None,
+            cognitive_signals_json: None,
+            fast_slow_path_json: None,
+            agency_selection_json: None,
+            bounded_execution_json: None,
+            evaluation_signals_json: None,
+            cognitive_arbitration_json: None,
+            affect_state_json: None,
+            reasoning_graph_json: None,
+            overlays_dir: "learning/overlays".to_string(),
+            cluster_groundwork_json: None,
+            trace_json: None,
+        },
+    };
+    let success_scores = ScoresArtifact {
+        scores_version: 1,
+        run_id: "evaluation-signals-run".to_string(),
+        generated_from: ScoresGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+        },
+        summary: ScoresSummary {
+            success_ratio: 1.0,
+            failure_count: 0,
+            retry_count: 0,
+            delegation_denied_count: 0,
+            security_denied_count: 0,
+        },
+        metrics: ScoresMetrics {
+            scheduler_max_parallel_observed: 1,
+        },
+    };
+    let success_suggestions = build_suggestions_artifact(&summary, Some(&success_scores));
+    let success_signals = run_artifacts::build_cognitive_signals_artifact(
+        &summary,
+        &success_suggestions,
+        Some(&success_scores),
+    );
+    let success_affect = run_artifacts::build_affect_state_artifact(
+        &summary,
+        &success_suggestions,
+        Some(&success_scores),
+    );
+    let success_arbitration = run_artifacts::build_cognitive_arbitration_artifact(
+        &summary,
+        &success_suggestions,
+        &success_affect,
+        Some(&success_scores),
+    );
+    let success_path = run_artifacts::build_fast_slow_path_artifact(
+        &summary,
+        &success_arbitration,
+        Some(&success_scores),
+    );
+    let success_agency = run_artifacts::build_agency_selection_artifact(
+        &summary,
+        &success_signals,
+        &success_arbitration,
+        &success_path,
+        Some(&success_scores),
+    );
+    let success_execution = run_artifacts::build_bounded_execution_artifact(
+        &summary,
+        &success_path,
+        &success_agency,
+        Some(&success_scores),
+    );
+    let success_left = run_artifacts::build_evaluation_signals_artifact(
+        &summary,
+        &success_path,
+        &success_agency,
+        &success_execution,
+        Some(&success_scores),
+    );
+    let success_right = run_artifacts::build_evaluation_signals_artifact(
+        &summary,
+        &success_path,
+        &success_agency,
+        &success_execution,
+        Some(&success_scores),
+    );
+    assert_eq!(
+        serde_json::to_value(&success_left).expect("success left value"),
+        serde_json::to_value(&success_right).expect("success right value")
+    );
+    assert_eq!(success_left.termination_reason, "success");
+    assert_eq!(success_left.failure_signal, "none");
+
+    summary.status = "failure".to_string();
+    summary.counts.failed_steps = 1;
+    let failure_scores = ScoresArtifact {
+        scores_version: 1,
+        run_id: "evaluation-signals-run".to_string(),
+        generated_from: ScoresGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+        },
+        summary: ScoresSummary {
+            success_ratio: 0.0,
+            failure_count: 1,
+            retry_count: 1,
+            delegation_denied_count: 0,
+            security_denied_count: 0,
+        },
+        metrics: ScoresMetrics {
+            scheduler_max_parallel_observed: 1,
+        },
+    };
+    let failure_suggestions = build_suggestions_artifact(&summary, Some(&failure_scores));
+    let failure_signals = run_artifacts::build_cognitive_signals_artifact(
+        &summary,
+        &failure_suggestions,
+        Some(&failure_scores),
+    );
+    let failure_affect = run_artifacts::build_affect_state_artifact(
+        &summary,
+        &failure_suggestions,
+        Some(&failure_scores),
+    );
+    let failure_arbitration = run_artifacts::build_cognitive_arbitration_artifact(
+        &summary,
+        &failure_suggestions,
+        &failure_affect,
+        Some(&failure_scores),
+    );
+    let failure_path = run_artifacts::build_fast_slow_path_artifact(
+        &summary,
+        &failure_arbitration,
+        Some(&failure_scores),
+    );
+    let failure_agency = run_artifacts::build_agency_selection_artifact(
+        &summary,
+        &failure_signals,
+        &failure_arbitration,
+        &failure_path,
+        Some(&failure_scores),
+    );
+    let failure_execution = run_artifacts::build_bounded_execution_artifact(
+        &summary,
+        &failure_path,
+        &failure_agency,
+        Some(&failure_scores),
+    );
+    let failure_eval = run_artifacts::build_evaluation_signals_artifact(
+        &summary,
+        &failure_path,
+        &failure_agency,
+        &failure_execution,
+        Some(&failure_scores),
+    );
+    assert_eq!(failure_eval.evaluation_signals_version, 1);
+    assert_eq!(failure_eval.termination_reason, "bounded_failure");
+    assert_eq!(failure_eval.contradiction_signal, "present");
+    assert_ne!(
+        success_left.termination_reason,
+        failure_eval.termination_reason
+    );
+}
+
+#[test]
 fn build_reasoning_graph_artifact_changes_selected_path_with_affect() {
     let summary = RunSummaryArtifact {
         run_summary_version: 1,
@@ -1098,6 +1305,7 @@ fn build_reasoning_graph_artifact_changes_selected_path_with_affect() {
             fast_slow_path_json: None,
             agency_selection_json: None,
             bounded_execution_json: None,
+            evaluation_signals_json: None,
             cognitive_arbitration_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
@@ -1193,6 +1401,7 @@ fn build_reasoning_graph_artifact_changes_selected_path_with_affect() {
             fast_slow_path_json: None,
             agency_selection_json: None,
             bounded_execution_json: None,
+            evaluation_signals_json: None,
             cognitive_arbitration_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
@@ -1345,6 +1554,7 @@ fn build_scores_and_suggestions_artifacts_are_deterministic() {
             fast_slow_path_json: None,
             agency_selection_json: None,
             bounded_execution_json: None,
+            evaluation_signals_json: None,
             cognitive_arbitration_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
