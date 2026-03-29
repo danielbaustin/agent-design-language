@@ -57,6 +57,23 @@ struct ReadyArgs {
     no_fetch_issue: bool,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct FinishArgs {
+    issue: u32,
+    title: String,
+    extra_body: Option<String>,
+    paths: String,
+    no_checks: bool,
+    no_close: bool,
+    ready: bool,
+    allow_gitignore: bool,
+    input_path: Option<PathBuf>,
+    output_path: Option<PathBuf>,
+    no_open: bool,
+    merge_mode: bool,
+    idempotent: bool,
+}
+
 #[derive(Debug, Deserialize)]
 struct IssuePromptFrontMatter {
     title: String,
@@ -72,7 +89,7 @@ struct IssuePromptDoc {
 
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
-        bail!("pr requires a subcommand: init | create | start | ready");
+        bail!("pr requires a subcommand: init | create | start | ready | finish");
     };
 
     match subcommand {
@@ -80,6 +97,7 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
         "create" => real_pr_create(&args[1..]),
         "start" => real_pr_start(&args[1..]),
         "ready" => real_pr_ready(&args[1..]),
+        "finish" => real_pr_finish(&args[1..]),
         other => bail!("unknown pr subcommand: {other}"),
     }
 }
@@ -283,6 +301,187 @@ fn real_pr_ready(args: &[String]) -> Result<()> {
     );
     println!("READY=PASS");
     let _ = repo; // keep parity with init/create remote-based inference
+    Ok(())
+}
+
+fn real_pr_finish(args: &[String]) -> Result<()> {
+    let parsed = parse_finish_args(args)?;
+    let repo_root = repo_root()?;
+    let repo = default_repo(&repo_root)?;
+
+    ensure_not_on_main_branch(&repo_root)?;
+
+    let branch = current_branch(&repo_root)?;
+    if !branch.contains(&format!("/{issue}-", issue = parsed.issue)) {
+        bail!(
+            "finish: current branch '{}' does not look like it matches issue #{} (expected */{}-<slug>)",
+            branch,
+            parsed.issue,
+            parsed.issue
+        );
+    }
+
+    let _ = run_status_allow_failure("git", &["fetch", "origin"]);
+
+    let inferred = resolve_issue_scope_and_slug_from_local_state(&repo_root, parsed.issue)?
+        .unwrap_or((
+            DEFAULT_VERSION.to_string(),
+            format!("issue-{}", parsed.issue),
+        ));
+    let issue_ref = IssueRef::new(parsed.issue, inferred.0.clone(), inferred.1.clone())?;
+
+    let input_path = parsed
+        .input_path
+        .clone()
+        .unwrap_or_else(|| issue_ref.task_bundle_input_path(&repo_root));
+    let output_path = parsed
+        .output_path
+        .clone()
+        .unwrap_or_else(|| issue_ref.task_bundle_output_path(&repo_root));
+
+    if !ensure_nonempty_file_path(&input_path)? {
+        bail!("finish: missing input card: {}", input_path.display());
+    }
+    if !ensure_nonempty_file_path(&output_path)? {
+        if !output_path.is_file() {
+            bail!("finish: missing output card: {}", output_path.display());
+        }
+        bail!("finish: output card is empty: {}", output_path.display());
+    }
+    validate_completed_sor(&repo_root, &output_path)?;
+
+    let ahead = commits_ahead_of_origin_main(&repo_root)?;
+    let has_uncommitted = has_uncommitted_changes(&repo_root)?;
+    if !has_uncommitted && ahead == 0 {
+        bail!("No changes detected and branch has no commits ahead of origin/main. Nothing to PR.");
+    }
+
+    if !parsed.no_checks {
+        run_batched_checks_rust(&repo_root)?;
+    }
+
+    if has_uncommitted {
+        stage_selected_paths_rust(&repo_root, &parsed.paths)?;
+        if staged_diff_is_empty(&repo_root)? {
+            bail!(
+                "finish: nothing staged after 'git add' for paths '{}'",
+                parsed.paths
+            );
+        }
+        if !parsed.allow_gitignore && staged_gitignore_change_present(&repo_root)? {
+            bail!("finish: .gitignore changes detected. Revert them or re-run with --allow-gitignore.");
+        }
+    }
+
+    let close_line = if parsed.no_close {
+        None
+    } else {
+        Some(format!("Closes #{}", parsed.issue))
+    };
+    let fingerprint = finish_inputs_fingerprint(
+        &parsed.title,
+        &parsed.paths,
+        &path_relative_to_repo(&repo_root, &input_path),
+        &path_relative_to_repo(&repo_root, &output_path),
+    );
+    let pr_body = render_pr_body(
+        close_line.as_deref(),
+        &input_path,
+        &output_path,
+        parsed.extra_body.as_deref(),
+        parsed.no_checks,
+        &fingerprint,
+        &repo_root,
+    )?;
+    let pr_body_file = write_temp_markdown("pr_body", &pr_body)?;
+
+    let commit_msg = if let Some(close) = &close_line {
+        format!("{} ({close})", parsed.title)
+    } else {
+        parsed.title.clone()
+    };
+
+    if has_uncommitted {
+        run_status(
+            "git",
+            &["-C", path_str(&repo_root)?, "commit", "-m", &commit_msg],
+        )?;
+    }
+
+    let _ = run_status_allow_failure(
+        "git",
+        &["-C", path_str(&repo_root)?, "push", "origin", &branch],
+    )?;
+
+    let pr_url = if let Some(existing) = current_pr_url(&repo, &branch)? {
+        run_status(
+            "gh",
+            &[
+                "pr",
+                "edit",
+                "-R",
+                &repo,
+                &existing,
+                "--title",
+                &parsed.title,
+                "--body-file",
+                path_str(&pr_body_file)?,
+            ],
+        )?;
+        existing
+    } else {
+        let created = run_capture(
+            "gh",
+            &[
+                "pr",
+                "create",
+                "-R",
+                &repo,
+                "--base",
+                "main",
+                "--head",
+                &branch,
+                "--title",
+                &parsed.title,
+                "--body-file",
+                path_str(&pr_body_file)?,
+                "--draft",
+            ],
+        )?;
+        created.trim().to_string()
+    };
+
+    ensure_pr_closing_linkage(&repo, &pr_url, parsed.issue, parsed.no_close)?;
+
+    if parsed.merge_mode {
+        if parsed.ready {
+            let _ = run_status_allow_failure("gh", &["pr", "ready", "-R", &repo, &pr_url])?;
+        }
+        run_status(
+            "gh",
+            &[
+                "pr",
+                "merge",
+                "-R",
+                &repo,
+                "--squash",
+                "--delete-branch",
+                &pr_url,
+            ],
+        )?;
+        println!("{pr_url}");
+        return Ok(());
+    }
+
+    if parsed.ready {
+        let _ = run_status_allow_failure("gh", &["pr", "ready", "-R", &repo, &pr_url])?;
+    }
+
+    if !parsed.no_open {
+        let _ = run_status_allow_failure("open", &[&pr_url])?;
+    }
+
+    println!("{pr_url}");
     Ok(())
 }
 
@@ -662,6 +861,109 @@ fn parse_ready_args(args: &[String]) -> Result<ReadyArgs> {
     Ok(parsed)
 }
 
+fn parse_finish_args(args: &[String]) -> Result<FinishArgs> {
+    let issue = args
+        .first()
+        .ok_or_else(|| anyhow!("finish: missing <issue> number"))?;
+    let issue = issue
+        .parse::<u32>()
+        .with_context(|| format!("finish: invalid issue number: {issue}"))?;
+
+    let mut parsed = FinishArgs {
+        issue,
+        title: String::new(),
+        extra_body: None,
+        paths: ".".to_string(),
+        no_checks: false,
+        no_close: false,
+        ready: false,
+        allow_gitignore: false,
+        input_path: None,
+        output_path: None,
+        no_open: false,
+        merge_mode: false,
+        idempotent: false,
+    };
+
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--title" => {
+                parsed.title = require_value(args, i, "finish", "--title")?;
+                i += 2;
+            }
+            "--body" => {
+                parsed.extra_body = Some(require_value(args, i, "finish", "--body")?);
+                i += 2;
+            }
+            "--paths" => {
+                parsed.paths = require_value(args, i, "finish", "--paths")?;
+                i += 2;
+            }
+            "--no-checks" => {
+                parsed.no_checks = true;
+                i += 1;
+            }
+            "--no-close" => {
+                parsed.no_close = true;
+                i += 1;
+            }
+            "--ready" => {
+                parsed.ready = true;
+                i += 1;
+            }
+            "--allow-gitignore" => {
+                parsed.allow_gitignore = true;
+                i += 1;
+            }
+            "-f" | "--file" | "--input" => {
+                parsed.input_path = Some(PathBuf::from(require_value(
+                    args,
+                    i,
+                    "finish",
+                    args[i].as_str(),
+                )?));
+                i += 2;
+            }
+            "--output" | "--output-card" | "--output-card-file" => {
+                parsed.output_path = Some(PathBuf::from(require_value(
+                    args,
+                    i,
+                    "finish",
+                    args[i].as_str(),
+                )?));
+                i += 2;
+            }
+            "--no-open" => {
+                parsed.no_open = true;
+                i += 1;
+            }
+            "--open" => {
+                parsed.no_open = false;
+                i += 1;
+            }
+            "--merge" | "--auto-merge" => {
+                parsed.merge_mode = true;
+                i += 1;
+            }
+            "--idempotent" => {
+                parsed.idempotent = true;
+                i += 1;
+            }
+            other => bail!("finish: unknown arg: {other}"),
+        }
+    }
+
+    if parsed.title.trim().is_empty() {
+        bail!("finish: --title is required");
+    }
+    if parsed.merge_mode && parsed.no_checks {
+        bail!("finish: --merge requires checks; remove --no-checks");
+    }
+
+    Ok(parsed)
+}
+
 fn require_value(args: &[String], index: usize, cmd: &str, flag: &str) -> Result<String> {
     args.get(index + 1)
         .cloned()
@@ -721,6 +1023,339 @@ fn infer_repo_from_remote(url: &str) -> Option<String> {
     let owner = parts.next()?;
     let repo = parts.next()?;
     Some(format!("{owner}/{repo}"))
+}
+
+fn current_branch(repo_root: &Path) -> Result<String> {
+    Ok(run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "rev-parse",
+            "--abbrev-ref",
+            "HEAD",
+        ],
+    )?
+    .trim()
+    .to_string())
+}
+
+fn ensure_not_on_main_branch(repo_root: &Path) -> Result<()> {
+    let branch = current_branch(repo_root)?;
+    if branch == "main" {
+        bail!("finish: refusing to run on main");
+    }
+    Ok(())
+}
+
+fn ensure_nonempty_file_path(path: &Path) -> Result<bool> {
+    if !path.is_file() {
+        return Ok(false);
+    }
+    let text = fs::read_to_string(path)?;
+    Ok(!text.trim().is_empty())
+}
+
+fn validate_completed_sor(repo_root: &Path, output_path: &Path) -> Result<()> {
+    let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
+    run_status(
+        "bash",
+        &[
+            path_str(&validator)?,
+            "--type",
+            "sor",
+            "--phase",
+            "completed",
+            "--input",
+            path_str(output_path)?,
+        ],
+    )
+    .with_context(|| {
+        format!(
+            "finish: output card failed completed-phase validation: {}",
+            output_path.display()
+        )
+    })
+}
+
+fn has_uncommitted_changes(repo_root: &Path) -> Result<bool> {
+    let unstaged =
+        run_status_allow_failure("git", &["-C", path_str(repo_root)?, "diff", "--quiet"])?;
+    let staged = run_status_allow_failure(
+        "git",
+        &["-C", path_str(repo_root)?, "diff", "--cached", "--quiet"],
+    )?;
+    Ok(!(unstaged && staged))
+}
+
+fn commits_ahead_of_origin_main(repo_root: &Path) -> Result<usize> {
+    let local_origin_main = run_status_allow_failure(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "rev-parse",
+            "--verify",
+            "origin/main",
+        ],
+    )?;
+    if !local_origin_main {
+        return Ok(0);
+    }
+    let count = run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "rev-list",
+            "--count",
+            "origin/main..HEAD",
+        ],
+    )?;
+    Ok(count.trim().parse::<usize>().unwrap_or(0))
+}
+
+fn run_batched_checks_rust(repo_root: &Path) -> Result<()> {
+    let manifest = repo_root.join("adl/Cargo.toml");
+    run_status(
+        "cargo",
+        &[
+            "fmt",
+            "--manifest-path",
+            path_str(&manifest)?,
+            "--all",
+            "--check",
+        ],
+    )?;
+    run_status(
+        "cargo",
+        &[
+            "clippy",
+            "--manifest-path",
+            path_str(&manifest)?,
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings",
+        ],
+    )?;
+    run_status("cargo", &["test", "--manifest-path", path_str(&manifest)?])?;
+    Ok(())
+}
+
+fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<()> {
+    let paths = csv
+        .split(',')
+        .map(str::trim)
+        .filter(|x| !x.is_empty())
+        .collect::<Vec<_>>();
+    if paths.is_empty() {
+        bail!("finish: --paths resolved to empty");
+    }
+    let mut args = vec!["-C", path_str(repo_root)?, "add", "--"];
+    args.extend(paths);
+    run_status("git", &args)
+}
+
+fn staged_diff_is_empty(repo_root: &Path) -> Result<bool> {
+    run_status_allow_failure(
+        "git",
+        &["-C", path_str(repo_root)?, "diff", "--cached", "--quiet"],
+    )
+}
+
+fn staged_gitignore_change_present(repo_root: &Path) -> Result<bool> {
+    Ok(!run_status_allow_failure(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "diff",
+            "--cached",
+            "--quiet",
+            "--",
+            ".gitignore",
+            "adl/.gitignore",
+        ],
+    )?)
+}
+
+fn extract_markdown_section(path: &Path, heading: &str) -> Result<String> {
+    let text = fs::read_to_string(path)?;
+    let marker = format!("## {heading}");
+    let mut in_section = false;
+    let mut out = Vec::new();
+    for line in text.lines() {
+        if line == marker {
+            in_section = true;
+            continue;
+        }
+        if in_section && line.starts_with("## ") {
+            break;
+        }
+        if in_section {
+            out.push(line);
+        }
+    }
+    Ok(out.join("\n").trim().to_string())
+}
+
+fn extra_pr_body_looks_like_issue_template(body: &str) -> bool {
+    let lowered = body.to_lowercase();
+    lowered.contains("issue_card_schema:")
+        || lowered.contains("wp:")
+        || lowered.contains("pr_start:")
+        || lowered.contains("## goal")
+        || lowered.contains("## deliverables")
+        || lowered.contains("\n---\n")
+}
+
+fn render_pr_body(
+    close_line: Option<&str>,
+    input_path: &Path,
+    output_path: &Path,
+    extra_body: Option<&str>,
+    no_checks: bool,
+    fingerprint: &str,
+    repo_root: &Path,
+) -> Result<String> {
+    if let Some(extra) = extra_body {
+        if extra_pr_body_looks_like_issue_template(extra) {
+            bail!("finish: --body looks like issue-template/prompt text; use the output card as the PR summary source instead");
+        }
+    }
+
+    let summary = extract_markdown_section(output_path, "Summary")?;
+    let artifacts = extract_markdown_section(output_path, "Artifacts produced")?;
+    let validation = extract_markdown_section(output_path, "Validation")?;
+    let input_ref = path_relative_to_repo(repo_root, input_path);
+    let output_ref = path_relative_to_repo(repo_root, output_path);
+
+    let mut parts = Vec::new();
+    if let Some(close) = close_line {
+        parts.push(close.to_string());
+        parts.push(String::new());
+    }
+    if !summary.is_empty() {
+        parts.push("## Summary".to_string());
+        parts.push(summary);
+        parts.push(String::new());
+    }
+    if !artifacts.is_empty() {
+        parts.push("## Artifacts".to_string());
+        parts.push(artifacts);
+        parts.push(String::new());
+    }
+    if !validation.is_empty() {
+        parts.push("## Validation".to_string());
+        parts.push(validation);
+        parts.push(String::new());
+    } else if !no_checks {
+        parts.push("## Validation".to_string());
+        parts.push("- cargo fmt".to_string());
+        parts.push("- cargo clippy --all-targets -- -D warnings".to_string());
+        parts.push("- cargo test".to_string());
+        parts.push(String::new());
+    }
+    if let Some(extra) = extra_body {
+        if !extra.trim().is_empty() {
+            parts.push("## Notes".to_string());
+            parts.push(extra.trim().to_string());
+            parts.push(String::new());
+        }
+    }
+    parts.push("## Local Artifacts".to_string());
+    parts.push(format!("- Input card:  {input_ref}"));
+    parts.push(format!("- Output card: {output_ref}"));
+    parts.push(format!("- Idempotency-Key: {fingerprint}"));
+    Ok(parts.join("\n"))
+}
+
+fn finish_inputs_fingerprint(
+    title: &str,
+    paths: &str,
+    input_ref: &str,
+    output_ref: &str,
+) -> String {
+    let mut raw = String::new();
+    raw.push_str(title);
+    raw.push('|');
+    raw.push_str(paths);
+    raw.push('|');
+    raw.push_str(input_ref);
+    raw.push('|');
+    raw.push_str(output_ref);
+    sanitize_slug(&raw)
+}
+
+fn write_temp_markdown(prefix: &str, body: &str) -> Result<PathBuf> {
+    let mut path = std::env::temp_dir();
+    let nanos = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("time")
+        .as_nanos();
+    path.push(format!("{prefix}-{nanos}.md"));
+    fs::write(&path, body)?;
+    Ok(path)
+}
+
+fn current_pr_url(repo: &str, branch: &str) -> Result<Option<String>> {
+    let out = run_capture_allow_failure(
+        "gh",
+        &[
+            "pr", "list", "-R", repo, "--head", branch, "--state", "open", "--json", "url", "--jq",
+            ".[0].url",
+        ],
+    )?;
+    Ok(out
+        .map(|x| x.trim().to_string())
+        .filter(|x| !x.is_empty() && x != "null"))
+}
+
+fn pr_has_closing_linkage(repo: &str, pr_ref: &str, issue: u32) -> Result<bool> {
+    let linked = run_capture_allow_failure(
+        "gh",
+        &[
+            "pr",
+            "view",
+            "-R",
+            repo,
+            pr_ref,
+            "--json",
+            "closingIssuesReferences",
+            "--jq",
+            ".closingIssuesReferences[]?.number",
+        ],
+    )?;
+    if linked
+        .as_deref()
+        .unwrap_or_default()
+        .lines()
+        .any(|line| line.trim() == issue.to_string())
+    {
+        return Ok(true);
+    }
+    let body = run_capture_allow_failure(
+        "gh",
+        &[
+            "pr", "view", "-R", repo, pr_ref, "--json", "body", "--jq", ".body",
+        ],
+    )?
+    .unwrap_or_default();
+    Ok(body.contains(&format!("Closes #{issue}")))
+}
+
+fn ensure_pr_closing_linkage(repo: &str, pr_ref: &str, issue: u32, no_close: bool) -> Result<()> {
+    if no_close {
+        return Ok(());
+    }
+    if !pr_has_closing_linkage(repo, pr_ref, issue)? {
+        bail!(
+            "finish: PR is missing GitHub closing linkage for issue #{}",
+            issue
+        );
+    }
+    Ok(())
 }
 
 fn issue_version(issue: u32, repo: &str) -> Result<Option<String>> {
@@ -2226,5 +2861,74 @@ mod tests {
             }
             other => panic!("unexpected mode: {other:?}"),
         }
+    }
+
+    #[test]
+    fn parse_finish_args_requires_title_and_accepts_finish_flags() {
+        let err = parse_finish_args(&["1153".to_string()]).expect_err("missing title");
+        assert!(err.to_string().contains("--title is required"));
+
+        let parsed = parse_finish_args(&[
+            "1153".to_string(),
+            "--title".to_string(),
+            "Example".to_string(),
+            "--paths".to_string(),
+            "adl,docs".to_string(),
+            "--no-checks".to_string(),
+            "--ready".to_string(),
+            "--no-open".to_string(),
+        ])
+        .expect("parse finish");
+        assert_eq!(parsed.issue, 1153);
+        assert_eq!(parsed.title, "Example");
+        assert_eq!(parsed.paths, "adl,docs");
+        assert!(parsed.no_checks);
+        assert!(parsed.ready);
+        assert!(parsed.no_open);
+    }
+
+    #[test]
+    fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
+        let temp = unique_temp_dir("adl-pr-render-body");
+        fs::create_dir_all(&temp).expect("temp dir");
+        let input = temp.join("input.md");
+        let output = temp.join("output.md");
+        fs::write(&input, "# input\n").expect("write input");
+        fs::write(
+            &output,
+            "# ADL Output Card\n\n## Summary\nsummary text\n\n## Artifacts produced\n- adl/src/cli/pr_cmd.rs\n\n## Validation\n- cargo test\n",
+        )
+        .expect("write output");
+
+        let body = render_pr_body(
+            Some("Closes #1153"),
+            &input,
+            &output,
+            Some("extra notes"),
+            false,
+            "fp-123",
+            &temp,
+        )
+        .expect("render body");
+        assert!(body.contains("Closes #1153"));
+        assert!(body.contains("## Summary"));
+        assert!(body.contains("summary text"));
+        assert!(body.contains("## Artifacts"));
+        assert!(body.contains("adl/src/cli/pr_cmd.rs"));
+        assert!(body.contains("## Validation"));
+        assert!(body.contains("## Notes"));
+        assert!(body.contains("Idempotency-Key: fp-123"));
+
+        let err = render_pr_body(
+            None,
+            &input,
+            &output,
+            Some("issue_card_schema: adl.issue.v1"),
+            false,
+            "fp-123",
+            &temp,
+        )
+        .expect_err("issue template text should be rejected");
+        assert!(err.to_string().contains("issue-template/prompt text"));
     }
 }

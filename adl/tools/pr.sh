@@ -2268,6 +2268,11 @@ cmd_finish() {
     return 0
   fi
 
+  if rust_pr_delegate_available; then
+    delegate_pr_command_to_rust finish "$@"
+    return 0
+  fi
+
   require_cmd git
   require_cmd gh
 
