@@ -138,6 +138,11 @@ impl RunArtifactPaths {
         self.learning_dir().join("bounded_execution.v1.json")
     }
 
+    /// Evaluation-signals artifact path for v0.86 bounded evaluation and termination.
+    pub fn evaluation_signals_json(&self) -> PathBuf {
+        self.learning_dir().join("evaluation_signals.v1.json")
+    }
+
     /// Affect state artifact path for bounded affect-guided adaptation.
     pub fn affect_state_json(&self) -> PathBuf {
         self.learning_dir().join("affect_state.v1.json")
@@ -385,6 +390,9 @@ mod tests {
         assert!(paths
             .bounded_execution_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/bounded_execution.v1.json"));
+        assert!(paths
+            .evaluation_signals_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/evaluation_signals.v1.json"));
         assert!(paths
             .affect_state_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/affect_state.v1.json"));

@@ -202,6 +202,12 @@ Requirements:
 - must be visible in artifacts
 - must be deterministic or explainable
 
+For the implemented `v0.86` runtime surface:
+
+- `bounded_execution.v1.json` records the bounded execution handoff and iteration shape
+- `evaluation_signals.v1.json` records evaluation signals and the explicit `termination_reason`
+- termination is emitted as a bounded control output, not inferred from prose or hidden state
+
 ## Frame Adequacy and Reframing Notes
 
 `v0.86` may use bounded frame-adequacy indicators and a bounded reframing trigger, but those should be treated as supporting control primitives, not as a separate full subsystem.
