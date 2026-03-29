@@ -125,6 +125,10 @@ fn build_run_summary_sorts_remote_policy_and_tracks_denials() {
         Some("learning/aee_decision.json")
     );
     assert_eq!(
+        summary.links.cognitive_signals_json.as_deref(),
+        Some("learning/cognitive_signals.v1.json")
+    );
+    assert_eq!(
         summary.links.affect_state_json.as_deref(),
         Some("learning/affect_state.v1.json")
     );
@@ -174,6 +178,7 @@ fn build_aee_decision_artifact_selects_retry_recovery_for_failures() {
             scores_json: None,
             suggestions_json: None,
             aee_decision_json: None,
+            cognitive_signals_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
             overlays_dir: "learning/overlays".to_string(),
@@ -266,6 +271,7 @@ fn build_affect_state_artifact_covers_watchful_and_steady_modes() {
             scores_json: None,
             suggestions_json: None,
             aee_decision_json: None,
+            cognitive_signals_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
             overlays_dir: "learning/overlays".to_string(),
@@ -341,6 +347,92 @@ fn build_affect_state_artifact_covers_watchful_and_steady_modes() {
 }
 
 #[test]
+fn build_cognitive_signals_artifact_is_deterministic_and_bounded() {
+    let summary = RunSummaryArtifact {
+        run_summary_version: 1,
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_id: "cognitive-signals-run".to_string(),
+        workflow_id: "wf".to_string(),
+        adl_version: "0.86".to_string(),
+        swarm_version: "test".to_string(),
+        status: "failure".to_string(),
+        error_kind: None,
+        counts: RunSummaryCounts {
+            total_steps: 2,
+            completed_steps: 2,
+            failed_steps: 1,
+            provider_call_count: 1,
+            delegation_steps: 0,
+            delegation_requires_verification_steps: 0,
+        },
+        policy: RunSummaryPolicy {
+            security_envelope_enabled: false,
+            signing_required: false,
+            key_id_required: false,
+            verify_allowed_algs: Vec::new(),
+            verify_allowed_key_sources: Vec::new(),
+            sandbox_policy: "centralized_path_resolver_v1".to_string(),
+            security_denials_by_code: BTreeMap::new(),
+        },
+        links: RunSummaryLinks {
+            run_json: "run.json".to_string(),
+            steps_json: "steps.json".to_string(),
+            pause_state_json: None,
+            outputs_dir: "outputs".to_string(),
+            logs_dir: "logs".to_string(),
+            learning_dir: "learning".to_string(),
+            scores_json: None,
+            suggestions_json: None,
+            aee_decision_json: None,
+            cognitive_signals_json: None,
+            affect_state_json: None,
+            reasoning_graph_json: None,
+            overlays_dir: "learning/overlays".to_string(),
+            cluster_groundwork_json: None,
+            trace_json: None,
+        },
+    };
+    let scores = ScoresArtifact {
+        scores_version: 1,
+        run_id: "cognitive-signals-run".to_string(),
+        generated_from: ScoresGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+        },
+        summary: ScoresSummary {
+            success_ratio: 0.0,
+            failure_count: 1,
+            retry_count: 1,
+            delegation_denied_count: 0,
+            security_denied_count: 0,
+        },
+        metrics: ScoresMetrics {
+            scheduler_max_parallel_observed: 1,
+        },
+    };
+    let suggestions = build_suggestions_artifact(&summary, Some(&scores));
+
+    let left =
+        run_artifacts::build_cognitive_signals_artifact(&summary, &suggestions, Some(&scores));
+    let right =
+        run_artifacts::build_cognitive_signals_artifact(&summary, &suggestions, Some(&scores));
+
+    assert_eq!(
+        serde_json::to_value(&left).expect("left value"),
+        serde_json::to_value(&right).expect("right value")
+    );
+    assert_eq!(left.cognitive_signals_version, 1);
+    assert_eq!(left.instinct.dominant_instinct, "completion");
+    assert_eq!(left.instinct.completion_pressure, "elevated");
+    assert_eq!(left.affect.salience_level, "high");
+    assert_eq!(left.affect.confidence_shift, "reduced");
+    assert!(left
+        .affect
+        .downstream_influence
+        .contains("selected_intent=increase_step_retry_budget"));
+}
+
+#[test]
 fn build_reasoning_graph_artifact_changes_selected_path_with_affect() {
     let summary = RunSummaryArtifact {
         run_summary_version: 1,
@@ -378,6 +470,7 @@ fn build_reasoning_graph_artifact_changes_selected_path_with_affect() {
             scores_json: None,
             suggestions_json: None,
             aee_decision_json: None,
+            cognitive_signals_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
             overlays_dir: "learning/overlays".to_string(),
@@ -468,6 +561,7 @@ fn build_reasoning_graph_artifact_changes_selected_path_with_affect() {
             scores_json: None,
             suggestions_json: None,
             aee_decision_json: None,
+            cognitive_signals_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
             overlays_dir: "learning/overlays".to_string(),
@@ -615,6 +709,7 @@ fn build_scores_and_suggestions_artifacts_are_deterministic() {
             scores_json: None,
             suggestions_json: None,
             aee_decision_json: None,
+            cognitive_signals_json: None,
             affect_state_json: None,
             reasoning_graph_json: None,
             overlays_dir: "learning/overlays".to_string(),
