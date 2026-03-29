@@ -8,6 +8,7 @@ pub fn usage() -> &'static str {
   adl pr create --title <title> [--slug <slug>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
   adl pr start <issue> [--prefix <prefix>] [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>]
   adl pr ready <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
+  adl pr finish <issue> --title <title> [--body <text>] [--paths <csv>] [-f|--input <path>] [--output-card <path>] [--no-checks] [--no-close] [--ready] [--merge] [--no-open]
   adl godel run --run-id <id> --workflow-id <id> --failure-code <code> --failure-summary <text> [--evidence-ref <path> ...] [--runs-dir <dir>]
   adl godel inspect --run-id <id> [--runs-dir <dir>]
   adl godel evaluate --failure-code <code> --experiment-result <ok|blocked> --score-delta <int>
