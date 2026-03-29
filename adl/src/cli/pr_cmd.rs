@@ -1,10 +1,14 @@
 use anyhow::{anyhow, bail, Context, Result};
 use serde::Deserialize;
 use std::fs;
+#[cfg(unix)]
+use std::os::unix::fs as unix_fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use ::adl::control_plane::{sanitize_slug, IssueRef};
+use ::adl::control_plane::{
+    card_input_path, card_output_path, resolve_cards_root, sanitize_slug, IssueRef,
+};
 
 const DEFAULT_VERSION: &str = "v0.86";
 const DEFAULT_NEW_LABELS: &str = "track:roadmap,type:task,area:tools";
@@ -35,6 +39,24 @@ enum CreateMode {
     },
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct StartArgs {
+    issue: u32,
+    prefix: String,
+    slug: Option<String>,
+    title_arg: Option<String>,
+    no_fetch_issue: bool,
+    version: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct ReadyArgs {
+    issue: u32,
+    slug: Option<String>,
+    version: Option<String>,
+    no_fetch_issue: bool,
+}
+
 #[derive(Debug, Deserialize)]
 struct IssuePromptFrontMatter {
     title: String,
@@ -50,14 +72,218 @@ struct IssuePromptDoc {
 
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
-        bail!("pr requires a subcommand: init | create");
+        bail!("pr requires a subcommand: init | create | start | ready");
     };
 
     match subcommand {
         "init" => real_pr_init(&args[1..]),
         "create" => real_pr_create(&args[1..]),
+        "start" => real_pr_start(&args[1..]),
+        "ready" => real_pr_ready(&args[1..]),
         other => bail!("unknown pr subcommand: {other}"),
     }
+}
+
+fn real_pr_start(args: &[String]) -> Result<()> {
+    let parsed = parse_start_args(args)?;
+    let repo_root = repo_root()?;
+    let repo = default_repo(&repo_root)?;
+
+    let mut title = parsed.title_arg.clone().unwrap_or_default();
+    let mut slug = parsed.slug.clone().unwrap_or_default();
+    if slug.is_empty() && !title.is_empty() {
+        slug = sanitize_slug(&title);
+        if slug.is_empty() {
+            bail!("start: --title produced empty slug after sanitization");
+        }
+    }
+    if title.is_empty() && !parsed.no_fetch_issue {
+        eprintln!("• Fetching issue title via gh…");
+        title = gh_issue_title(parsed.issue, &repo)?.unwrap_or_default();
+    }
+    if slug.is_empty() {
+        if parsed.no_fetch_issue {
+            bail!("start: --slug is required when --no-fetch-issue is set");
+        }
+        if title.is_empty() {
+            bail!(
+                "Could not fetch issue #{} title. Pass --slug or check gh auth/repo.",
+                parsed.issue
+            );
+        }
+        slug = sanitize_slug(&title);
+    }
+    if title.is_empty() {
+        title = slug.clone();
+    }
+
+    let version = if let Some(version) = parsed.version.clone() {
+        version
+    } else if parsed.no_fetch_issue {
+        DEFAULT_VERSION.to_string()
+    } else {
+        issue_version(parsed.issue, &repo)?.unwrap_or_else(|| DEFAULT_VERSION.to_string())
+    };
+
+    let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
+    let branch = issue_ref.branch_name(&parsed.prefix);
+    let managed_root = std::env::var_os("ADL_WORKTREE_ROOT").map(PathBuf::from);
+    let worktree_path = issue_ref.default_worktree_path(&repo_root, managed_root.as_deref());
+
+    eprintln!("• Target branch: {branch}");
+    eprintln!("• Target worktree: {}", worktree_path.display());
+
+    fetch_origin_main_with_fallback()?;
+    ensure_local_branch_exists(&branch)?;
+    ensure_worktree_for_branch(&worktree_path, &branch)?;
+    ensure_primary_checkout_on_main(&repo_root)?;
+
+    let source_path =
+        ensure_source_issue_prompt(&repo_root, &repo, &issue_ref, &title, None, &version)?;
+    validate_issue_prompt_exists(&source_path)?;
+    validate_bootstrap_stp(&repo_root, &source_path)?;
+
+    let root_stp = ensure_task_bundle_stp(&repo_root, &issue_ref, &source_path)?;
+    let worktree_source = ensure_local_issue_prompt_copy(&worktree_path, &issue_ref, &source_path)?;
+    let worktree_stp = ensure_task_bundle_stp(&worktree_path, &issue_ref, &worktree_source)?;
+
+    let root_paths = ensure_bootstrap_cards(&repo_root, &issue_ref, &title, &branch, &source_path)?;
+    let worktree_paths = ensure_bootstrap_cards(
+        &worktree_path,
+        &issue_ref,
+        &title,
+        &branch,
+        &worktree_source,
+    )?;
+
+    println!("• Agent:");
+    println!("  STP    {}", worktree_stp.display());
+    println!("  READ   {}", worktree_paths.0.display());
+    println!("  WRITE  {}", worktree_paths.1.display());
+    println!("  ROOT_STP    {}", root_stp.display());
+    println!("  ROOT_READ   {}", root_paths.0.display());
+    println!("  ROOT_WRITE  {}", root_paths.1.display());
+    println!("  WORKTREE {}", worktree_path.display());
+    println!("  BRANCH {branch}");
+    println!(
+        "  OPEN   ./adl/tools/open_artifact.sh card {} output",
+        parsed.issue
+    );
+    println!("  STATE  FULLY_STARTED");
+    eprintln!("• Done.");
+    Ok(())
+}
+
+fn real_pr_ready(args: &[String]) -> Result<()> {
+    let parsed = parse_ready_args(args)?;
+    let repo_root = repo_root()?;
+    let repo = default_repo(&repo_root)?;
+
+    let (version, slug) =
+        if let (Some(version), Some(slug)) = (parsed.version.clone(), parsed.slug.clone()) {
+            (version, slug)
+        } else {
+            let inferred = resolve_issue_scope_and_slug_from_local_state(&repo_root, parsed.issue)?;
+            (
+                parsed
+                    .version
+                    .clone()
+                    .or(inferred.as_ref().map(|x| x.0.clone()))
+                    .unwrap_or_else(|| DEFAULT_VERSION.to_string()),
+                parsed
+                    .slug
+                    .clone()
+                    .or(inferred.map(|x| x.1))
+                    .ok_or_else(|| {
+                        anyhow!("ready: could not infer slug; pass --slug or run start first")
+                    })?,
+            )
+        };
+
+    let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
+    let branch = issue_ref.branch_name("codex");
+    let managed_root = std::env::var_os("ADL_WORKTREE_ROOT").map(PathBuf::from);
+    let worktree_path = issue_ref.default_worktree_path(&repo_root, managed_root.as_deref());
+    let source_path = issue_ref.issue_prompt_path(&repo_root);
+    let root_stp = issue_ref.task_bundle_stp_path(&repo_root);
+    let wt_stp = issue_ref.task_bundle_stp_path(&worktree_path);
+
+    let root_bundle_input = issue_ref.task_bundle_input_path(&repo_root);
+    let root_bundle_output = issue_ref.task_bundle_output_path(&repo_root);
+    let wt_bundle_input = issue_ref.task_bundle_input_path(&worktree_path);
+    let wt_bundle_output = issue_ref.task_bundle_output_path(&worktree_path);
+
+    validate_issue_prompt_exists(&source_path)?;
+    validate_bootstrap_stp(&repo_root, &source_path)?;
+    if !root_stp.is_file() {
+        bail!("ready: missing root stp: {}", root_stp.display());
+    }
+    validate_bootstrap_stp(&repo_root, &root_stp)?;
+    if !worktree_path.is_dir() {
+        bail!("ready: missing worktree: {}", worktree_path.display());
+    }
+    let wt_branch = run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(&worktree_path)?,
+            "rev-parse",
+            "--abbrev-ref",
+            "HEAD",
+        ],
+    )?;
+    if wt_branch.trim() != branch {
+        bail!(
+            "ready: worktree branch mismatch for {}",
+            worktree_path.display()
+        );
+    }
+    if !wt_stp.is_file() {
+        bail!("ready: missing worktree stp: {}", wt_stp.display());
+    }
+    validate_bootstrap_stp(&worktree_path, &wt_stp)?;
+    validate_bootstrap_cards(
+        &repo_root,
+        parsed.issue,
+        &branch,
+        &root_bundle_input,
+        &root_bundle_output,
+    )?;
+    validate_bootstrap_cards(
+        &worktree_path,
+        parsed.issue,
+        &branch,
+        &wt_bundle_input,
+        &wt_bundle_output,
+    )?;
+
+    println!("ISSUE={}", parsed.issue);
+    println!("VERSION={version}");
+    println!("SLUG={slug}");
+    println!("BRANCH={branch}");
+    println!("WORKTREE={}", worktree_path.display());
+    println!("SOURCE={}", path_relative_to_repo(&repo_root, &source_path));
+    println!("ROOT_STP={}", path_relative_to_repo(&repo_root, &root_stp));
+    println!(
+        "ROOT_INPUT={}",
+        path_relative_to_repo(&repo_root, &root_bundle_input)
+    );
+    println!(
+        "ROOT_OUTPUT={}",
+        path_relative_to_repo(&repo_root, &root_bundle_output)
+    );
+    println!("WT_STP={}", path_relative_to_repo(&repo_root, &wt_stp));
+    println!(
+        "WT_INPUT={}",
+        path_relative_to_repo(&repo_root, &wt_bundle_input)
+    );
+    println!(
+        "WT_OUTPUT={}",
+        path_relative_to_repo(&repo_root, &wt_bundle_output)
+    );
+    println!("READY=PASS");
+    let _ = repo; // keep parity with init/create remote-based inference
+    Ok(())
 }
 
 fn real_pr_init(args: &[String]) -> Result<()> {
@@ -103,7 +329,8 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     };
 
     let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
-    let source_path = ensure_source_issue_prompt(&repo_root, &repo, &issue_ref, &title, None)?;
+    let source_path =
+        ensure_source_issue_prompt(&repo_root, &repo, &issue_ref, &title, None, &version)?;
     validate_issue_prompt_exists(&source_path)?;
 
     let stp_path = issue_ref.task_bundle_stp_path(&repo_root);
@@ -206,6 +433,7 @@ fn real_pr_create(args: &[String]) -> Result<()> {
                 &issue_ref,
                 &title,
                 Some(&labels_csv),
+                &version,
             )?;
             println!(
                 "SOURCE_PATH={}",
@@ -360,6 +588,80 @@ fn parse_create_args(args: &[String]) -> Result<CreateMode> {
     })
 }
 
+fn parse_start_args(args: &[String]) -> Result<StartArgs> {
+    let issue_raw = args
+        .first()
+        .ok_or_else(|| anyhow!("start: missing <issue> number"))?;
+    let issue = issue_raw
+        .parse::<u32>()
+        .with_context(|| format!("invalid issue number: {issue_raw}"))?;
+    let mut parsed = StartArgs {
+        issue,
+        prefix: "codex".to_string(),
+        slug: None,
+        title_arg: None,
+        no_fetch_issue: false,
+        version: None,
+    };
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--prefix" => {
+                parsed.prefix = require_value(args, i, "start", "--prefix")?;
+                i += 1;
+            }
+            "--slug" => {
+                parsed.slug = Some(require_value(args, i, "start", "--slug")?);
+                i += 1;
+            }
+            "--title" => {
+                parsed.title_arg = Some(require_value(args, i, "start", "--title")?);
+                i += 1;
+            }
+            "--version" => {
+                parsed.version = Some(require_value(args, i, "start", "--version")?);
+                i += 1;
+            }
+            "--no-fetch-issue" => parsed.no_fetch_issue = true,
+            other => bail!("start: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+    Ok(parsed)
+}
+
+fn parse_ready_args(args: &[String]) -> Result<ReadyArgs> {
+    let issue_raw = args
+        .first()
+        .ok_or_else(|| anyhow!("ready: missing <issue> number"))?;
+    let issue = issue_raw
+        .parse::<u32>()
+        .with_context(|| format!("invalid issue number: {issue_raw}"))?;
+    let mut parsed = ReadyArgs {
+        issue,
+        slug: None,
+        version: None,
+        no_fetch_issue: false,
+    };
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--slug" => {
+                parsed.slug = Some(require_value(args, i, "ready", "--slug")?);
+                i += 1;
+            }
+            "--version" => {
+                parsed.version = Some(require_value(args, i, "ready", "--version")?);
+                i += 1;
+            }
+            "--no-fetch-issue" => parsed.no_fetch_issue = true,
+            other => bail!("ready: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+    Ok(parsed)
+}
+
 fn require_value(args: &[String], index: usize, cmd: &str, flag: &str) -> Result<String> {
     args.get(index + 1)
         .cloned()
@@ -369,6 +671,11 @@ fn require_value(args: &[String], index: usize, cmd: &str, flag: &str) -> Result
 fn repo_root() -> Result<PathBuf> {
     let out = run_capture("git", &["rev-parse", "--show-toplevel"])?;
     Ok(PathBuf::from(out.trim()))
+}
+
+fn path_str(path: &Path) -> Result<&str> {
+    path.to_str()
+        .ok_or_else(|| anyhow!("path must be valid utf-8: {}", path.display()))
 }
 
 fn default_repo(repo_root: &Path) -> Result<String> {
@@ -463,12 +770,484 @@ fn gh_issue_title(issue: u32, repo: &str) -> Result<Option<String>> {
         .filter(|value| !value.is_empty()))
 }
 
+fn fetch_origin_main_with_fallback() -> Result<()> {
+    eprintln!("• Fetching origin/main…");
+    let output = Command::new("git")
+        .args(["fetch", "origin", "main"])
+        .output()
+        .with_context(|| "failed to spawn git fetch origin main")?;
+    if output.status.success() {
+        return Ok(());
+    }
+    if run_status_allow_failure("git", &["rev-parse", "--verify", "--quiet", "origin/main"])? {
+        eprintln!("• Warning: start: fetch origin main failed; reusing existing local origin/main");
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        if !stderr.trim().is_empty() {
+            eprintln!("{stderr}");
+        }
+        return Ok(());
+    }
+    bail!("start: fetch origin main failed and origin/main is unavailable locally");
+}
+
+fn ensure_local_branch_exists(branch: &str) -> Result<()> {
+    if run_status_allow_failure(
+        "git",
+        &[
+            "show-ref",
+            "--verify",
+            "--quiet",
+            &format!("refs/heads/{branch}"),
+        ],
+    )? {
+        eprintln!("• Local branch exists; reusing: {branch}");
+        return Ok(());
+    }
+    if run_status_allow_failure(
+        "git",
+        &["ls-remote", "--exit-code", "--heads", "origin", branch],
+    )? {
+        eprintln!("• Branch exists on origin; creating local tracking branch…");
+        run_status(
+            "git",
+            &["branch", "--track", branch, &format!("origin/{branch}")],
+        )?;
+        return Ok(());
+    }
+    eprintln!("• Creating local branch from origin/main…");
+    run_status("git", &["branch", branch, "origin/main"])?;
+    Ok(())
+}
+
+fn branch_checked_out_worktree_path(branch: &str) -> Result<Option<PathBuf>> {
+    let out = run_capture_allow_failure("git", &["worktree", "list", "--porcelain"])?;
+    let Some(out) = out else { return Ok(None) };
+    let mut current_worktree: Option<PathBuf> = None;
+    for line in out.lines() {
+        if let Some(path) = line.strip_prefix("worktree ") {
+            current_worktree = Some(PathBuf::from(path.trim()));
+        } else if let Some(head_branch) = line.strip_prefix("branch refs/heads/") {
+            if head_branch.trim() == branch {
+                return Ok(current_worktree);
+            }
+        }
+    }
+    Ok(None)
+}
+
+fn ensure_worktree_for_branch(worktree_path: &Path, branch: &str) -> Result<()> {
+    if let Some(existing) = branch_checked_out_worktree_path(branch)? {
+        if existing == worktree_path {
+            eprintln!(
+                "• Reusing existing worktree for branch: {}",
+                worktree_path.display()
+            );
+            return Ok(());
+        }
+        bail!(
+            "start: branch '{}' is already checked out in worktree '{}'. Remediation: run commands there or remove it with 'git worktree remove \"{}\"'.",
+            branch,
+            existing.display(),
+            existing.display()
+        );
+    }
+    if !worktree_path.exists() {
+        eprintln!("• Creating worktree: {}", worktree_path.display());
+        if let Some(parent) = worktree_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        run_status(
+            "git",
+            &["worktree", "add", path_str(worktree_path)?, branch],
+        )?;
+        return Ok(());
+    }
+    eprintln!(
+        "• Reusing existing worktree path: {}",
+        worktree_path.display()
+    );
+    Ok(())
+}
+
+fn ensure_primary_checkout_on_main(repo_root: &Path) -> Result<()> {
+    let current = run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "rev-parse",
+            "--abbrev-ref",
+            "HEAD",
+        ],
+    )?;
+    let current = current.trim().to_string();
+    let dirty = !run_status_allow_failure("git", &["-C", path_str(repo_root)?, "diff", "--quiet"])?
+        || !run_status_allow_failure(
+            "git",
+            &["-C", path_str(repo_root)?, "diff", "--cached", "--quiet"],
+        )?
+        || !run_capture(
+            "git",
+            &["-C", path_str(repo_root)?, "status", "--porcelain"],
+        )
+        .unwrap_or_default()
+        .trim()
+        .is_empty();
+    if current != "main" && dirty {
+        bail!(
+            "start: primary checkout ({}) is on '{}' with local changes. Remediation: commit/stash there, switch to main, then rerun.",
+            repo_root.display(),
+            current
+        );
+    }
+    if current != "main" {
+        run_status("git", &["-C", path_str(repo_root)?, "switch", "main"])?;
+    }
+    Ok(())
+}
+
+fn ensure_task_bundle_stp(
+    root: &Path,
+    issue_ref: &IssueRef,
+    source_path: &Path,
+) -> Result<PathBuf> {
+    let stp_path = issue_ref.task_bundle_stp_path(root);
+    if !stp_path.is_file() {
+        if let Some(parent) = stp_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        fs::copy(source_path, &stp_path)?;
+    }
+    validate_bootstrap_stp(root, &stp_path)?;
+    Ok(stp_path)
+}
+
+fn ensure_local_issue_prompt_copy(
+    root: &Path,
+    issue_ref: &IssueRef,
+    canonical_source_path: &Path,
+) -> Result<PathBuf> {
+    let local_source_path = issue_ref.issue_prompt_path(root);
+    if !local_source_path.is_file() {
+        if let Some(parent) = local_source_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        fs::copy(canonical_source_path, &local_source_path)?;
+    }
+    Ok(local_source_path)
+}
+
+fn ensure_bootstrap_cards(
+    root: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+    source_path: &Path,
+) -> Result<(PathBuf, PathBuf)> {
+    let bundle_input = issue_ref.task_bundle_input_path(root);
+    let bundle_output = issue_ref.task_bundle_output_path(root);
+    if let Some(parent) = bundle_input.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    if !bundle_input.is_file() {
+        write_input_card(
+            root,
+            &bundle_input,
+            issue_ref,
+            title,
+            branch,
+            source_path,
+            &bundle_output,
+        )?;
+    }
+    if !bundle_output.is_file() {
+        write_output_card(root, &bundle_output, issue_ref, title, branch)?;
+    }
+
+    let cards_root = resolve_cards_root(root, None);
+    let compat_input = card_input_path(&cards_root, issue_ref.issue_number());
+    let compat_output = card_output_path(&cards_root, issue_ref.issue_number());
+    ensure_symlink(&compat_input, &bundle_input)?;
+    ensure_symlink(&compat_output, &bundle_output)?;
+
+    validate_bootstrap_cards(
+        root,
+        issue_ref.issue_number(),
+        branch,
+        &bundle_input,
+        &bundle_output,
+    )?;
+    Ok((bundle_input, bundle_output))
+}
+
+fn write_input_card(
+    repo_root: &Path,
+    path: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+    source_path: &Path,
+    output_path: &Path,
+) -> Result<()> {
+    let mut text =
+        fs::read_to_string(repo_root.join("adl/templates/cards/input_card_template.md"))?;
+    replace_field_line(
+        &mut text,
+        "Task ID",
+        &format!("issue-{}", issue_ref.padded_issue_number()),
+    );
+    replace_field_line(
+        &mut text,
+        "Run ID",
+        &format!("issue-{}", issue_ref.padded_issue_number()),
+    );
+    replace_field_line(&mut text, "Version", issue_ref.scope());
+    replace_field_line(&mut text, "Title", title);
+    replace_field_line(&mut text, "Branch", branch);
+    replace_exact_line(
+        &mut text,
+        "- Issue:",
+        &format!(
+            "- Issue: https://github.com/{}/issues/{}",
+            default_repo(repo_root)?,
+            issue_ref.issue_number()
+        ),
+    );
+    replace_exact_line(
+        &mut text,
+        "- Source Issue Prompt: <required repo-relative reference or URL>",
+        &format!(
+            "- Source Issue Prompt: {}",
+            path_relative_to_repo(repo_root, source_path)
+        ),
+    );
+    replace_exact_line(
+        &mut text,
+        "- Docs: <required freeform value or 'none'>",
+        "- Docs: none",
+    );
+    replace_exact_line(
+        &mut text,
+        "- Other: <optional note or 'none'>",
+        "- Other: none",
+    );
+    replace_exact_line(
+        &mut text,
+        "  output_card: .adl/<scope>/tasks/<task-id>__<slug>/sor.md",
+        &format!(
+            "  output_card: {}",
+            path_relative_to_repo(repo_root, output_path)
+        ),
+    );
+    fs::write(path, text)?;
+    Ok(())
+}
+
+fn write_output_card(
+    repo_root: &Path,
+    path: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+) -> Result<()> {
+    let mut text =
+        fs::read_to_string(repo_root.join("adl/templates/cards/output_card_template.md"))?;
+    replace_field_line(
+        &mut text,
+        "Task ID",
+        &format!("issue-{}", issue_ref.padded_issue_number()),
+    );
+    replace_field_line(
+        &mut text,
+        "Run ID",
+        &format!("issue-{}", issue_ref.padded_issue_number()),
+    );
+    replace_field_line(&mut text, "Version", issue_ref.scope());
+    replace_field_line(&mut text, "Title", title);
+    replace_field_line(&mut text, "Branch", branch);
+    replace_field_line(&mut text, "Status", "IN_PROGRESS");
+    replace_exact_line(
+        &mut text,
+        "- Integration state: worktree_only | pr_open | merged",
+        "- Integration state: worktree_only",
+    );
+    replace_exact_line(
+        &mut text,
+        "- Verification scope: worktree | pr_branch | main_repo",
+        "- Verification scope: worktree",
+    );
+    fs::write(path, text)?;
+    Ok(())
+}
+
+fn replace_field_line(text: &mut String, label: &str, value: &str) {
+    let prefix = format!("{label}:");
+    let mut out = Vec::new();
+    for line in text.lines() {
+        if line.starts_with(&prefix) {
+            out.push(format!("{prefix} {value}"));
+        } else {
+            out.push(line.to_string());
+        }
+    }
+    *text = out.join("\n");
+    if !text.ends_with('\n') {
+        text.push('\n');
+    }
+}
+
+fn replace_exact_line(text: &mut String, from: &str, to: &str) {
+    let mut out = Vec::new();
+    for line in text.lines() {
+        if line == from {
+            out.push(to.to_string());
+        } else {
+            out.push(line.to_string());
+        }
+    }
+    *text = out.join("\n");
+    if !text.ends_with('\n') {
+        text.push('\n');
+    }
+}
+
+fn ensure_symlink(link_path: &Path, target: &Path) -> Result<()> {
+    if let Some(parent) = link_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    if link_path.exists() || link_path.symlink_metadata().is_ok() {
+        let _ = fs::remove_file(link_path);
+    }
+    #[cfg(unix)]
+    {
+        unix_fs::symlink(target, link_path)?;
+    }
+    #[cfg(not(unix))]
+    {
+        fs::copy(target, link_path)?;
+    }
+    Ok(())
+}
+
+fn validate_bootstrap_stp(repo_root: &Path, path: &Path) -> Result<()> {
+    let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
+    run_status(
+        "bash",
+        &[
+            path_str(&validator)?,
+            "--type",
+            "stp",
+            "--input",
+            path_str(path)?,
+        ],
+    )
+    .with_context(|| format!("init: stp failed validation: {}", path.display()))
+}
+
+fn validate_bootstrap_cards(
+    repo_root: &Path,
+    issue: u32,
+    branch: &str,
+    input_path: &Path,
+    output_path: &Path,
+) -> Result<()> {
+    let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
+    run_status(
+        "bash",
+        &[
+            path_str(&validator)?,
+            "--type",
+            "sip",
+            "--phase",
+            "bootstrap",
+            "--input",
+            path_str(input_path)?,
+        ],
+    )?;
+    run_status(
+        "bash",
+        &[
+            path_str(&validator)?,
+            "--type",
+            "sor",
+            "--phase",
+            "bootstrap",
+            "--input",
+            path_str(output_path)?,
+        ],
+    )?;
+    let expected = format!("issue-{:04}", issue);
+    if field_line_value(input_path, "Task ID")? != expected {
+        bail!("start: input card Task ID mismatch");
+    }
+    if field_line_value(input_path, "Run ID")? != expected {
+        bail!("start: input card Run ID mismatch");
+    }
+    if field_line_value(output_path, "Task ID")? != expected {
+        bail!("start: output card Task ID mismatch");
+    }
+    if field_line_value(output_path, "Run ID")? != expected {
+        bail!("start: output card Run ID mismatch");
+    }
+    if field_line_value(input_path, "Branch")? != branch {
+        bail!("start: input card branch mismatch");
+    }
+    if field_line_value(output_path, "Branch")? != branch {
+        bail!("start: output card branch mismatch");
+    }
+    Ok(())
+}
+
+fn field_line_value(path: &Path, label: &str) -> Result<String> {
+    let prefix = format!("{label}:");
+    let text = fs::read_to_string(path)?;
+    for line in text.lines() {
+        if let Some(rest) = line.strip_prefix(&prefix) {
+            return Ok(rest.trim().to_string());
+        }
+    }
+    Ok(String::new())
+}
+
+fn resolve_issue_scope_and_slug_from_local_state(
+    repo_root: &Path,
+    issue: u32,
+) -> Result<Option<(String, String)>> {
+    let issue_dir = format!("issue-{:04}__", issue);
+    let adl_root = repo_root.join(".adl");
+    if !adl_root.is_dir() {
+        return Ok(None);
+    }
+    let mut matches = Vec::new();
+    for scope_entry in fs::read_dir(&adl_root)? {
+        let scope_entry = scope_entry?;
+        let tasks = scope_entry.path().join("tasks");
+        if !tasks.is_dir() {
+            continue;
+        }
+        for entry in fs::read_dir(&tasks)? {
+            let entry = entry?;
+            let name = entry.file_name();
+            let name = name.to_string_lossy();
+            if let Some(slug) = name.strip_prefix(&issue_dir) {
+                matches.push((
+                    scope_entry.file_name().to_string_lossy().to_string(),
+                    slug.to_string(),
+                ));
+            }
+        }
+    }
+    matches.sort();
+    Ok(matches.into_iter().next())
+}
+
 fn ensure_source_issue_prompt(
     repo_root: &Path,
     repo: &str,
     issue_ref: &IssueRef,
     title: &str,
     labels_csv: Option<&str>,
+    version: &str,
 ) -> Result<PathBuf> {
     let source_path = issue_ref.issue_prompt_path(repo_root);
     if source_path.is_file() {
@@ -476,9 +1255,9 @@ fn ensure_source_issue_prompt(
     }
 
     let labels_csv = if let Some(labels) = labels_csv {
-        labels.to_string()
+        normalize_labels_csv(labels, version)
     } else {
-        run_capture_allow_failure(
+        let fetched = run_capture_allow_failure(
             "gh",
             &[
                 "issue",
@@ -497,7 +1276,13 @@ fn ensure_source_issue_prompt(
         .map(str::trim)
         .filter(|line| !line.is_empty())
         .collect::<Vec<_>>()
-        .join(",")
+        .join(",");
+        let baseline = if fetched.trim().is_empty() {
+            DEFAULT_NEW_LABELS.to_string()
+        } else {
+            fetched
+        };
+        normalize_labels_csv(&baseline, version)
     };
 
     let issue_url = format!(
@@ -797,6 +1582,14 @@ fn run_status(program: &str, args: &[&str]) -> Result<()> {
     Ok(())
 }
 
+fn run_status_allow_failure(program: &str, args: &[&str]) -> Result<bool> {
+    let status = Command::new(program)
+        .args(args)
+        .status()
+        .with_context(|| format!("failed to spawn '{program}'"))?;
+    Ok(status.success())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -849,6 +1642,65 @@ mod tests {
             .status()
             .expect("git remote add")
             .success());
+    }
+
+    fn copy_bootstrap_support_files(repo: &Path) {
+        let workspace_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .expect("workspace root")
+            .to_path_buf();
+        let tools_dir = repo.join("adl/tools");
+        let templates_dir = repo.join("adl/templates/cards");
+        let schemas_dir = repo.join("adl/schemas");
+        fs::create_dir_all(&tools_dir).expect("tools dir");
+        fs::create_dir_all(&templates_dir).expect("templates dir");
+        fs::create_dir_all(&schemas_dir).expect("schemas dir");
+
+        let files = [
+            (
+                workspace_root.join("adl/tools/card_paths.sh"),
+                tools_dir.join("card_paths.sh"),
+            ),
+            (
+                workspace_root.join("adl/tools/validate_structured_prompt.sh"),
+                tools_dir.join("validate_structured_prompt.sh"),
+            ),
+            (
+                workspace_root.join("adl/tools/lint_prompt_spec.sh"),
+                tools_dir.join("lint_prompt_spec.sh"),
+            ),
+            (
+                workspace_root.join("adl/templates/cards/input_card_template.md"),
+                templates_dir.join("input_card_template.md"),
+            ),
+            (
+                workspace_root.join("adl/templates/cards/output_card_template.md"),
+                templates_dir.join("output_card_template.md"),
+            ),
+            (
+                workspace_root.join("adl/schemas/structured_task_prompt.contract.yaml"),
+                schemas_dir.join("structured_task_prompt.contract.yaml"),
+            ),
+            (
+                workspace_root.join("adl/schemas/structured_implementation_prompt.contract.yaml"),
+                schemas_dir.join("structured_implementation_prompt.contract.yaml"),
+            ),
+            (
+                workspace_root.join("adl/schemas/structured_output_record.contract.yaml"),
+                schemas_dir.join("structured_output_record.contract.yaml"),
+            ),
+        ];
+
+        for (src, dst) in files {
+            fs::copy(src, &dst).expect("copy support file");
+            #[cfg(unix)]
+            if dst.extension().is_none() || dst.to_string_lossy().ends_with(".sh") {
+                use std::os::unix::fs::PermissionsExt;
+                let mut perms = fs::metadata(&dst).expect("metadata").permissions();
+                perms.set_mode(0o755);
+                fs::set_permissions(&dst, perms).expect("chmod");
+            }
+        }
     }
 
     #[test]
@@ -1066,7 +1918,7 @@ mod tests {
 
     #[test]
     fn real_pr_init_seeds_stp_from_generated_source_prompt() {
-        let _guard = env_lock().lock().expect("lock");
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
         let repo = unique_temp_dir("adl-pr-real-init");
         init_git_repo(&repo);
         let prev_dir = env::current_dir().expect("cwd");
@@ -1104,7 +1956,7 @@ mod tests {
 
     #[test]
     fn real_pr_create_no_start_creates_issue_and_source_prompt() {
-        let _guard = env_lock().lock().expect("lock");
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
         let repo = unique_temp_dir("adl-pr-real-create");
         init_git_repo(&repo);
         let bin_dir = repo.join("bin");
@@ -1162,7 +2014,7 @@ mod tests {
 
     #[test]
     fn real_pr_create_reconcile_updates_issue_via_gh() {
-        let _guard = env_lock().lock().expect("lock");
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
         let repo = unique_temp_dir("adl-pr-reconcile");
         init_git_repo(&repo);
         let bin_dir = repo.join("bin");
@@ -1214,6 +2066,147 @@ mod tests {
         assert!(gh_calls.contains(
             "issue edit 1151 -R danielbaustin/agent-design-language --add-label area:tools"
         ));
+    }
+
+    #[test]
+    fn real_pr_start_bootstraps_worktree_and_ready_passes() {
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+        let temp = unique_temp_dir("adl-pr-start-ready");
+        let origin = temp.join("origin.git");
+        let repo = temp.join("repo");
+        fs::create_dir_all(&repo).expect("repo dir");
+        copy_bootstrap_support_files(&repo);
+        init_git_repo(&repo);
+        assert!(Command::new("git")
+            .args(["config", "user.name", "Test User"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.email", "test@example.com"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config")
+            .success());
+        assert!(Command::new("git")
+            .args(["add", "-A"])
+            .current_dir(&repo)
+            .status()
+            .expect("git add")
+            .success());
+        assert!(Command::new("git")
+            .args(["commit", "-q", "-m", "init"])
+            .current_dir(&repo)
+            .status()
+            .expect("git commit")
+            .success());
+        assert!(Command::new("git")
+            .args(["branch", "-M", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git branch")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "init",
+                "--bare",
+                "-q",
+                path_str(&origin).expect("origin path")
+            ])
+            .current_dir(&repo)
+            .status()
+            .expect("git init bare")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "remote",
+                "set-url",
+                "origin",
+                path_str(&origin).expect("origin path"),
+            ])
+            .current_dir(&repo)
+            .status()
+            .expect("git remote set-url")
+            .success());
+        assert!(Command::new("git")
+            .args(["push", "-q", "-u", "origin", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git push")
+            .success());
+        assert!(Command::new("git")
+            .args(["fetch", "-q", "origin", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git fetch")
+            .success());
+
+        let prev_dir = env::current_dir().expect("cwd");
+        env::set_current_dir(&repo).expect("chdir");
+
+        real_pr(&[
+            "start".to_string(),
+            "1152".to_string(),
+            "--slug".to_string(),
+            "rust-start-ready-test".to_string(),
+            "--title".to_string(),
+            "[v0.86][tools] Rust start ready test".to_string(),
+            "--no-fetch-issue".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+        ])
+        .expect("real_pr start");
+
+        let ready = real_pr(&[
+            "ready".to_string(),
+            "1152".to_string(),
+            "--slug".to_string(),
+            "rust-start-ready-test".to_string(),
+            "--no-fetch-issue".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+        ]);
+
+        env::set_current_dir(prev_dir).expect("restore cwd");
+        ready.expect("real_pr ready");
+
+        let issue_ref = IssueRef::new(
+            1152,
+            "v0.86".to_string(),
+            "rust-start-ready-test".to_string(),
+        )
+        .expect("issue ref");
+        let worktree = issue_ref.default_worktree_path(&repo, None);
+        assert!(worktree.is_dir());
+        assert_eq!(
+            run_capture(
+                "git",
+                &[
+                    "-C",
+                    path_str(&worktree).expect("wt path"),
+                    "rev-parse",
+                    "--abbrev-ref",
+                    "HEAD"
+                ]
+            )
+            .expect("branch")
+            .trim(),
+            "codex/1152-rust-start-ready-test"
+        );
+        assert!(issue_ref.task_bundle_stp_path(&repo).is_file());
+        assert!(issue_ref.task_bundle_input_path(&repo).is_file());
+        assert!(issue_ref.task_bundle_output_path(&repo).is_file());
+        assert!(issue_ref.task_bundle_stp_path(&worktree).is_file());
+        assert!(issue_ref.task_bundle_input_path(&worktree).is_file());
+        assert!(issue_ref.task_bundle_output_path(&worktree).is_file());
+        let root_cards = resolve_cards_root(&repo, None);
+        assert!(card_input_path(&root_cards, 1152)
+            .symlink_metadata()
+            .is_ok());
+        assert!(card_output_path(&root_cards, 1152)
+            .symlink_metadata()
+            .is_ok());
     }
 
     #[test]
