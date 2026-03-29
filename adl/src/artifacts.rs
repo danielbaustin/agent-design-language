@@ -128,6 +128,11 @@ impl RunArtifactPaths {
         self.learning_dir().join("fast_slow_path.v1.json")
     }
 
+    /// Agency-selection artifact path for bounded v0.86 candidate generation and selection.
+    pub fn agency_selection_json(&self) -> PathBuf {
+        self.learning_dir().join("agency_selection.v1.json")
+    }
+
     /// Affect state artifact path for bounded affect-guided adaptation.
     pub fn affect_state_json(&self) -> PathBuf {
         self.learning_dir().join("affect_state.v1.json")
@@ -369,6 +374,9 @@ mod tests {
         assert!(paths
             .fast_slow_path_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/fast_slow_path.v1.json"));
+        assert!(paths
+            .agency_selection_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/agency_selection.v1.json"));
         assert!(paths
             .affect_state_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/affect_state.v1.json"));

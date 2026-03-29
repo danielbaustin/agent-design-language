@@ -171,6 +171,20 @@ A long chain of calls is not agency.
 
 Agency begins when internal state and internal policy materially participate in action selection.
 
+## Implemented v0.86 Bounded Surface
+
+For `v0.86`, the implemented runtime surface is narrower than the broader long-term agency architecture described here.
+
+The tracked runtime contract is:
+
+- `agency_selection.v1.json` emits a bounded candidate set
+- one candidate is explicitly selected with a deterministic reason
+- fast-path scenarios keep a smaller direct-execution candidate set
+- slow-path scenarios keep a larger review/refinement candidate set
+- the selected candidate is intended for later bounded execution and Freedom Gate stages
+
+This milestone does not implement open-ended initiative, policy continuity across episodes, or identity-bearing agency.
+
 ---
 
 ## What Makes an Agent Different from a Workflow?
