@@ -144,6 +144,17 @@ require_cmd() {
   command -v "$1" >/dev/null 2>&1 || die "Missing required command: $1"
 }
 
+rust_pr_delegate_available() {
+  [[ "${ADL_PR_RUST_DISABLE:-0}" == "1" ]] && return 1
+  command -v cargo >/dev/null 2>&1 || return 1
+  [[ -f "$(repo_root)/adl/Cargo.toml" ]] || return 1
+}
+
+delegate_pr_command_to_rust() {
+  local subcommand="$1"; shift || true
+  cargo run --quiet --manifest-path "$(repo_root)/adl/Cargo.toml" --bin adl -- pr "$subcommand" "$@"
+}
+
 normalize_issue_or_die() {
   local raw="$1"
   local normalized
@@ -1790,6 +1801,11 @@ cmd_init() {
     return 0
   fi
 
+  if rust_pr_delegate_available; then
+    delegate_pr_command_to_rust init "$@"
+    return 0
+  fi
+
   require_cmd git
   local issue="${1:-}"; shift || true
   [[ -n "$issue" ]] || die_with_usage "init: missing <issue> number" usage_init
@@ -1883,6 +1899,11 @@ cmd_init() {
 cmd_create() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
     usage_create
+    return 0
+  fi
+
+  if rust_pr_delegate_available; then
+    delegate_pr_command_to_rust create "$@"
     return 0
   fi
 
