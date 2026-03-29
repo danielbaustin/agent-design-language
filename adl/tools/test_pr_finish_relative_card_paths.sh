@@ -256,6 +256,11 @@ EOF_SOR
   assert_contains ".adl/cards/958/input_958.md" "$body"
   assert_contains ".adl/cards/958/output_958.md" "$body"
   assert_contains "Closes #958" "$body"
+  assert_contains "## Summary" "$body"
+  assert_contains "Finished relative card path test." "$body"
+  assert_contains "## Artifacts" "$body"
+  assert_contains "adl/tools/README.md" "$body"
+  assert_contains "## Validation" "$body"
   if grep -Eq '/Users/|/private/|/tmp/' <<<"$body"; then
     echo "assertion failed: PR body leaked absolute host path" >&2
     echo "$body" >&2
@@ -288,6 +293,20 @@ EOF_SOR
   )
   body="$(cat "$TMP_PR_BODY")"
   assert_contains "Closes #958" "$body"
+
+  bad_finish_body=$'issue_card_schema: adl.issue.v1\nwp: WP-04\npr_start:\n## Goal\nleaked issue template'
+  set +e
+  bad="$(
+    cd "$worktree" &&
+    "$BASH_BIN" adl/tools/pr.sh finish 958 --title "[v0.85][authoring] Prevent Absolute Host Path Leakage in Issues, Cards, and PR Bodies" --paths "adl/tools/README.md" -f "$repo/.adl/cards/958/input_958.md" --output-card "$repo/.adl/cards/958/output_958.md" --no-checks --no-open --body "$bad_finish_body" 2>&1
+  )"
+  status=$?
+  set -e
+  [[ "$status" -ne 0 ]] || {
+    echo "assertion failed: expected finish to reject issue-template body text" >&2
+    exit 1
+  }
+  assert_contains "finish: --body looks like issue-template/prompt text" "$bad"
 
   cat >"$tmpdir/issue_body_bad.md" <<'EOF_BAD'
 ## Goal
