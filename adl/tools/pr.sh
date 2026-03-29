@@ -257,6 +257,11 @@ git_common_dir() {
   git rev-parse --git-common-dir 2>/dev/null || die "Not in a git repo"
 }
 
+issue_bootstrap_lock_name() {
+  local issue="$1"
+  printf 'pr-bootstrap-issue-%s\n' "$issue"
+}
+
 acquire_repo_lock() {
   local name="$1"
   local lock_dir
@@ -1721,7 +1726,7 @@ cmd_cards() {
   done
 
   local lock_dir=""
-  lock_dir="$(acquire_repo_lock "pr-bootstrap")"
+  lock_dir="$(acquire_repo_lock "$(issue_bootstrap_lock_name "$issue")")"
   trap "release_repo_lock '$lock_dir'" RETURN EXIT
 
   local repo
@@ -1786,12 +1791,12 @@ cmd_init() {
   fi
 
   require_cmd git
-  local lock_dir=""
-  lock_dir="$(acquire_repo_lock "pr-bootstrap")"
-  trap "release_repo_lock '$lock_dir'" RETURN EXIT
   local issue="${1:-}"; shift || true
   [[ -n "$issue" ]] || die_with_usage "init: missing <issue> number" usage_init
   issue="$(normalize_issue_or_die "$issue")"
+  local lock_dir=""
+  lock_dir="$(acquire_repo_lock "$(issue_bootstrap_lock_name "$issue")")"
+  trap "release_repo_lock '$lock_dir'" RETURN EXIT
 
   local slug=""
   local no_fetch_issue="0"

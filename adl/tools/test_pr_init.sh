@@ -174,6 +174,130 @@ assert_contains() {
     echo "assertion failed: expected generated source prompt title" >&2
     exit 1
   }
+
+  cat >"$repo/.adl/issues/v0.85/bodies/issue-44-batch-a.md" <<'EOF'
+---
+issue_card_schema: adl.issue.v1
+wp: "authoring"
+slug: "batch-a"
+title: "[v0.85][authoring] Batch A"
+labels:
+  - "track:roadmap"
+  - "version:v0.85"
+issue_number: 44
+status: "draft"
+action: "edit"
+depends_on: []
+milestone_sprint: "Sprint Test"
+required_outcome_type:
+  - "docs"
+repo_inputs: []
+canonical_files: []
+demo_required: false
+demo_names: []
+issue_graph_notes: []
+pr_start:
+  enabled: true
+  slug: "batch-a"
+---
+
+# Batch A
+
+## Summary
+x
+## Goal
+x
+## Required Outcome
+x
+## Deliverables
+x
+## Acceptance Criteria
+x
+## Repo Inputs
+x
+## Dependencies
+x
+## Demo Expectations
+x
+## Non-goals
+x
+## Issue-Graph Notes
+x
+## Notes
+x
+## Tooling Notes
+x
+EOF
+
+  cat >"$repo/.adl/issues/v0.85/bodies/issue-45-batch-b.md" <<'EOF'
+---
+issue_card_schema: adl.issue.v1
+wp: "authoring"
+slug: "batch-b"
+title: "[v0.85][authoring] Batch B"
+labels:
+  - "track:roadmap"
+  - "version:v0.85"
+issue_number: 45
+status: "draft"
+action: "edit"
+depends_on: []
+milestone_sprint: "Sprint Test"
+required_outcome_type:
+  - "docs"
+repo_inputs: []
+canonical_files: []
+demo_required: false
+demo_names: []
+issue_graph_notes: []
+pr_start:
+  enabled: true
+  slug: "batch-b"
+---
+
+# Batch B
+
+## Summary
+x
+## Goal
+x
+## Required Outcome
+x
+## Deliverables
+x
+## Acceptance Criteria
+x
+## Repo Inputs
+x
+## Dependencies
+x
+## Demo Expectations
+x
+## Non-goals
+x
+## Issue-Graph Notes
+x
+## Notes
+x
+## Tooling Notes
+x
+EOF
+
+  "$BASH_BIN" adl/tools/pr.sh init 44 --slug batch-a --no-fetch-issue --version v0.85 >"$tmpdir/init44.out" &
+  pid1=$!
+  "$BASH_BIN" adl/tools/pr.sh init 45 --slug batch-b --no-fetch-issue --version v0.85 >"$tmpdir/init45.out" &
+  pid2=$!
+  wait "$pid1"
+  wait "$pid2"
+
+  [[ -f "$repo/.adl/v0.85/tasks/issue-0044__batch-a/stp.md" ]] || {
+    echo "assertion failed: expected concurrent init for issue 44 to succeed" >&2
+    exit 1
+  }
+  [[ -f "$repo/.adl/v0.85/tasks/issue-0045__batch-b/stp.md" ]] || {
+    echo "assertion failed: expected concurrent init for issue 45 to succeed" >&2
+    exit 1
+  }
 )
 
 echo "pr.sh init minimal task-bundle initialization: ok"

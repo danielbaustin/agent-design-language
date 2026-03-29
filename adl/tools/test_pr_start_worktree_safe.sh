@@ -201,6 +201,22 @@ EOF
   stale_lock_out="$("$BASH_BIN" adl/tools/pr.sh start 993 --slug stale-lock-recovery --no-fetch-issue)"
   stale_wt="$(cd "$repo/.worktrees/adl-wp-993" && pwd -P)"
   assert_contains "WORKTREE $stale_wt" "$stale_lock_out" "stale lock recovery still starts"
+
+  "$BASH_BIN" adl/tools/pr.sh cards 991 --no-fetch-issue --version v0.86 >"$tmpdir/cards991.out" &
+  cards_pid1=$!
+  "$BASH_BIN" adl/tools/pr.sh cards 992 --no-fetch-issue --version v0.86 >"$tmpdir/cards992.out" &
+  cards_pid2=$!
+  wait "$cards_pid1"
+  wait "$cards_pid2"
+
+  [[ -f "$repo/.adl/cards/991/input_991.md" ]] || {
+    echo "assertion failed: expected cards for issue 991 to exist after concurrent cards" >&2
+    exit 1
+  }
+  [[ -f "$repo/.adl/cards/992/input_992.md" ]] || {
+    echo "assertion failed: expected cards for issue 992 to exist after concurrent cards" >&2
+    exit 1
+  }
 )
 
 echo "pr.sh start worktree-safe/idempotent flows: ok"
