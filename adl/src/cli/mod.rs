@@ -5,6 +5,8 @@ mod demo_cmd;
 mod godel_cmd;
 mod open;
 mod pr_cmd;
+mod pr_cmd_args;
+mod pr_cmd_prompt;
 mod run;
 mod run_artifacts;
 #[cfg(test)]
