@@ -478,6 +478,14 @@ pub(crate) struct BoundedExecutionArtifact {
     pub(crate) deterministic_execution_rule: String,
 }
 
+#[derive(Debug, Clone)]
+pub(crate) struct BoundedExecutionState {
+    pub(crate) execution_status: String,
+    pub(crate) continuation_state: String,
+    pub(crate) provisional_termination_state: String,
+    pub(crate) iterations: Vec<BoundedExecutionIteration>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct BoundedExecutionIteration {
@@ -1804,13 +1812,12 @@ pub(crate) fn build_agency_selection_artifact(
     }
 }
 
-pub(crate) fn build_bounded_execution_artifact(
+pub(crate) fn build_bounded_execution_state(
     run_summary: &RunSummaryArtifact,
-    fast_slow_path: &FastSlowPathArtifact,
-    agency_selection: &AgencySelectionArtifact,
+    _fast_slow_path: &FastSlowPathArtifact,
+    _agency_selection: &AgencySelectionArtifact,
     agency_state: &AgencySelectionState,
-    scores: Option<&ScoresArtifact>,
-) -> BoundedExecutionArtifact {
+) -> BoundedExecutionState {
     let (execution_status, continuation_state, provisional_termination_state, iterations) =
         match agency_state.selected_candidate_kind.as_str() {
             "direct_execution" => (
@@ -1856,6 +1863,37 @@ pub(crate) fn build_bounded_execution_artifact(
             ),
         };
 
+    let execution_status = if run_summary.status == "failure" {
+        "completed_with_failure_signal"
+    } else {
+        execution_status
+    };
+    let continuation_state = if run_summary.status == "failure" && iterations.len() > 1 {
+        "bounded_review_complete_with_failure_signal"
+    } else {
+        continuation_state
+    };
+    let provisional_termination_state = if run_summary.status == "failure" {
+        "ready_for_runtime_evaluation"
+    } else {
+        provisional_termination_state
+    };
+
+    BoundedExecutionState {
+        execution_status: execution_status.to_string(),
+        continuation_state: continuation_state.to_string(),
+        provisional_termination_state: provisional_termination_state.to_string(),
+        iterations,
+    }
+}
+
+pub(crate) fn build_bounded_execution_artifact(
+    run_summary: &RunSummaryArtifact,
+    fast_slow_path: &FastSlowPathArtifact,
+    agency_selection: &AgencySelectionArtifact,
+    state: &BoundedExecutionState,
+    scores: Option<&ScoresArtifact>,
+) -> BoundedExecutionArtifact {
     BoundedExecutionArtifact {
         bounded_execution_version: BOUNDED_EXECUTION_VERSION,
         run_id: run_summary.run_id.clone(),
@@ -1867,13 +1905,13 @@ pub(crate) fn build_bounded_execution_artifact(
         },
         selected_candidate_id: agency_selection.selected_candidate_id.clone(),
         selected_path: fast_slow_path.selected_path.clone(),
-        execution_status: execution_status.to_string(),
-        continuation_state: continuation_state.to_string(),
-        provisional_termination_state: provisional_termination_state.to_string(),
-        iteration_count: iterations.len() as u32,
-        iterations,
+        execution_status: state.execution_status.clone(),
+        continuation_state: state.continuation_state.clone(),
+        provisional_termination_state: state.provisional_termination_state.clone(),
+        iteration_count: state.iterations.len() as u32,
+        iterations: state.iterations.clone(),
         deterministic_execution_rule:
-            "derive bounded iteration shape directly from the runtime-selected candidate and selected path without hidden retry state"
+            "derive bounded iteration shape, continuation state, and provisional termination from runtime loop state without hidden retry state"
                 .to_string(),
     }
 }
@@ -2347,11 +2385,17 @@ pub(crate) fn write_run_state_artifacts(
         &agency_selection_state,
         Some(&scores_for_suggestions),
     );
-    let bounded_execution = build_bounded_execution_artifact(
+    let bounded_execution_state = build_bounded_execution_state(
         &run_summary,
         &fast_slow_path,
         &agency_selection,
         &agency_selection_state,
+    );
+    let bounded_execution = build_bounded_execution_artifact(
+        &run_summary,
+        &fast_slow_path,
+        &agency_selection,
+        &bounded_execution_state,
         Some(&scores_for_suggestions),
     );
     let evaluation_control_state = build_evaluation_control_state(&run_summary, &bounded_execution);
