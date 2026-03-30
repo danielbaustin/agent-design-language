@@ -840,14 +840,17 @@ fn build_fast_slow_path_artifact_is_deterministic_and_distinguishes_modes() {
         &success_affect,
         Some(&success_scores),
     );
+    let success_state = run_artifacts::build_fast_slow_path_state(&success_arbitration);
     let fast_left = run_artifacts::build_fast_slow_path_artifact(
         &summary,
         &success_arbitration,
+        &success_state,
         Some(&success_scores),
     );
     let fast_right = run_artifacts::build_fast_slow_path_artifact(
         &summary,
         &success_arbitration,
+        &success_state,
         Some(&success_scores),
     );
     assert_eq!(
@@ -855,6 +858,10 @@ fn build_fast_slow_path_artifact_is_deterministic_and_distinguishes_modes() {
         serde_json::to_value(&fast_right).expect("fast right value")
     );
     assert_eq!(fast_left.selected_path, "fast_path");
+    assert_eq!(
+        fast_left.runtime_branch_taken,
+        "fast_direct_execution_branch"
+    );
     assert_eq!(fast_left.review_depth, "minimal");
     assert_eq!(fast_left.execution_profile, "single_pass_direct_execution");
 
@@ -896,13 +903,16 @@ fn build_fast_slow_path_artifact_is_deterministic_and_distinguishes_modes() {
         &failure_affect,
         Some(&failure_scores),
     );
+    let failure_state = run_artifacts::build_fast_slow_path_state(&failure_arbitration);
     let slow = run_artifacts::build_fast_slow_path_artifact(
         &summary,
         &failure_arbitration,
+        &failure_state,
         Some(&failure_scores),
     );
     assert_eq!(slow.fast_slow_path_version, 1);
     assert_eq!(slow.selected_path, "slow_path");
+    assert_eq!(slow.runtime_branch_taken, "slow_review_refine_branch");
     assert_eq!(slow.review_depth, "verification_required");
     assert_eq!(slow.execution_profile, "review_and_refine_before_execution");
     assert_ne!(
@@ -998,14 +1008,17 @@ fn build_agency_selection_artifact_is_deterministic_and_emits_multiple_candidate
         &success_affect,
         Some(&success_scores),
     );
+    let success_state = run_artifacts::build_fast_slow_path_state(&success_arbitration);
     let success_path = run_artifacts::build_fast_slow_path_artifact(
         &summary,
         &success_arbitration,
+        &success_state,
         Some(&success_scores),
     );
     let success_agency_state = run_artifacts::build_agency_selection_state(
         &success_signals,
         &success_arbitration,
+        &success_state,
         &success_path,
     );
     let fast_left = run_artifacts::build_agency_selection_artifact(
@@ -1035,6 +1048,9 @@ fn build_agency_selection_artifact_is_deterministic_and_emits_multiple_candidate
         success_agency_state.selected_candidate_kind,
         "direct_execution"
     );
+    assert!(fast_left
+        .candidate_generation_basis
+        .contains("runtime_branch=fast_direct_execution_branch"));
 
     summary.status = "failure".to_string();
     summary.counts.failed_steps = 1;
@@ -1074,14 +1090,17 @@ fn build_agency_selection_artifact_is_deterministic_and_emits_multiple_candidate
         &failure_affect,
         Some(&failure_scores),
     );
+    let failure_state = run_artifacts::build_fast_slow_path_state(&failure_arbitration);
     let failure_path = run_artifacts::build_fast_slow_path_artifact(
         &summary,
         &failure_arbitration,
+        &failure_state,
         Some(&failure_scores),
     );
     let failure_agency_state = run_artifacts::build_agency_selection_state(
         &failure_signals,
         &failure_arbitration,
+        &failure_state,
         &failure_path,
     );
     let slow = run_artifacts::build_agency_selection_artifact(
@@ -1190,14 +1209,17 @@ fn build_bounded_execution_artifact_is_deterministic_and_shows_iteration_shape()
         &success_affect,
         Some(&success_scores),
     );
+    let success_state = run_artifacts::build_fast_slow_path_state(&success_arbitration);
     let success_path = run_artifacts::build_fast_slow_path_artifact(
         &summary,
         &success_arbitration,
+        &success_state,
         Some(&success_scores),
     );
     let success_agency_state = run_artifacts::build_agency_selection_state(
         &success_signals,
         &success_arbitration,
+        &success_state,
         &success_path,
     );
     let success_agency = run_artifacts::build_agency_selection_artifact(
@@ -1275,14 +1297,17 @@ fn build_bounded_execution_artifact_is_deterministic_and_shows_iteration_shape()
         &failure_affect,
         Some(&failure_scores),
     );
+    let failure_state = run_artifacts::build_fast_slow_path_state(&failure_arbitration);
     let failure_path = run_artifacts::build_fast_slow_path_artifact(
         &summary,
         &failure_arbitration,
+        &failure_state,
         Some(&failure_scores),
     );
     let failure_agency_state = run_artifacts::build_agency_selection_state(
         &failure_signals,
         &failure_arbitration,
+        &failure_state,
         &failure_path,
     );
     let failure_agency = run_artifacts::build_agency_selection_artifact(
@@ -1401,14 +1426,17 @@ fn build_evaluation_signals_artifact_is_deterministic_and_emits_termination_reas
         &success_affect,
         Some(&success_scores),
     );
+    let success_state = run_artifacts::build_fast_slow_path_state(&success_arbitration);
     let success_path = run_artifacts::build_fast_slow_path_artifact(
         &summary,
         &success_arbitration,
+        &success_state,
         Some(&success_scores),
     );
     let success_agency_state = run_artifacts::build_agency_selection_state(
         &success_signals,
         &success_arbitration,
+        &success_state,
         &success_path,
     );
     let success_agency = run_artifacts::build_agency_selection_artifact(
@@ -1492,14 +1520,17 @@ fn build_evaluation_signals_artifact_is_deterministic_and_emits_termination_reas
         &failure_affect,
         Some(&failure_scores),
     );
+    let failure_state = run_artifacts::build_fast_slow_path_state(&failure_arbitration);
     let failure_path = run_artifacts::build_fast_slow_path_artifact(
         &summary,
         &failure_arbitration,
+        &failure_state,
         Some(&failure_scores),
     );
     let failure_agency_state = run_artifacts::build_agency_selection_state(
         &failure_signals,
         &failure_arbitration,
+        &failure_state,
         &failure_path,
     );
     let failure_agency = run_artifacts::build_agency_selection_artifact(
