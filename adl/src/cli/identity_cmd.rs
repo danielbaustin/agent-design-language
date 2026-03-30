@@ -11,14 +11,19 @@ use ::adl::chronosense::{
 };
 
 pub(crate) fn real_identity(args: &[String]) -> Result<()> {
+    let repo_root = repo_root()?;
+    real_identity_in_repo(args, &repo_root)
+}
+
+fn real_identity_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!("identity requires a subcommand: init | show | now"));
     };
 
     match subcommand {
-        "init" => real_identity_init(&args[1..]),
-        "show" => real_identity_show(&args[1..]),
-        "now" => real_identity_now(&args[1..]),
+        "init" => real_identity_init(repo_root, &args[1..]),
+        "show" => real_identity_show(repo_root, &args[1..]),
+        "now" => real_identity_now(repo_root, &args[1..]),
         "--help" | "-h" | "help" => {
             println!("{}", super::usage::usage());
             Ok(())
@@ -29,8 +34,7 @@ pub(crate) fn real_identity(args: &[String]) -> Result<()> {
     }
 }
 
-fn real_identity_init(args: &[String]) -> Result<()> {
-    let repo_root = repo_root()?;
+fn real_identity_init(repo_root: &Path, args: &[String]) -> Result<()> {
     let mut name: Option<String> = None;
     let mut agent_id = "codex".to_string();
     let mut birthday: Option<String> = None;
@@ -76,7 +80,7 @@ fn real_identity_init(args: &[String]) -> Result<()> {
         i += 1;
     }
 
-    let profile_path = path.unwrap_or_else(|| default_identity_profile_path(&repo_root));
+    let profile_path = path.unwrap_or_else(|| default_identity_profile_path(repo_root));
     if profile_path.exists() && !force {
         return Err(anyhow!(
             "identity profile already exists at {} (pass --force to overwrite)",
@@ -100,16 +104,14 @@ fn real_identity_init(args: &[String]) -> Result<()> {
     Ok(())
 }
 
-fn real_identity_show(args: &[String]) -> Result<()> {
-    let repo_root = repo_root()?;
-    let profile_path = resolve_identity_path(&repo_root, args)?;
+fn real_identity_show(repo_root: &Path, args: &[String]) -> Result<()> {
+    let profile_path = resolve_identity_path(repo_root, args)?;
     let profile = load_identity_profile(&profile_path)?;
     println!("{}", to_string_pretty(&profile)?);
     Ok(())
 }
 
-fn real_identity_now(args: &[String]) -> Result<()> {
-    let repo_root = repo_root()?;
+fn real_identity_now(repo_root: &Path, args: &[String]) -> Result<()> {
     let mut timezone: Option<String> = None;
     let mut path: Option<PathBuf> = None;
     let mut out_path: Option<PathBuf> = None;
@@ -138,7 +140,7 @@ fn real_identity_now(args: &[String]) -> Result<()> {
         i += 1;
     }
 
-    let profile_path = path.unwrap_or_else(|| default_identity_profile_path(&repo_root));
+    let profile_path = path.unwrap_or_else(|| default_identity_profile_path(repo_root));
     let identity = if profile_path.exists() {
         Some(load_identity_profile(&profile_path)?)
     } else {
@@ -255,22 +257,25 @@ mod tests {
 
     #[test]
     fn identity_init_writes_default_profile_and_show_reads_it() {
-        let _guard = TEST_MUTEX.lock().expect("test mutex");
+        let _guard = TEST_MUTEX
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
         let repo = temp_repo("identity-init-show");
-        let prev_dir = env::current_dir().expect("cwd");
-        env::set_current_dir(&repo).expect("chdir");
 
-        real_identity(&[
-            "init".to_string(),
-            "--name".to_string(),
-            "Codex".to_string(),
-            "--birthday".to_string(),
-            "2026-03-30T13:34:00-07:00".to_string(),
-            "--timezone".to_string(),
-            "America/Los_Angeles".to_string(),
-            "--created-by".to_string(),
-            "daniel".to_string(),
-        ])
+        real_identity_in_repo(
+            &[
+                "init".to_string(),
+                "--name".to_string(),
+                "Codex".to_string(),
+                "--birthday".to_string(),
+                "2026-03-30T13:34:00-07:00".to_string(),
+                "--timezone".to_string(),
+                "America/Los_Angeles".to_string(),
+                "--created-by".to_string(),
+                "daniel".to_string(),
+            ],
+            &repo,
+        )
         .expect("identity init");
 
         let profile_path = repo.join("identity/identity_profile.v1.json");
@@ -280,57 +285,58 @@ mod tests {
         assert_eq!(profile.agent_id, "codex");
         assert_eq!(profile.birth_weekday_local, "Monday");
 
-        real_identity(&["show".to_string()]).expect("identity show");
-
-        env::set_current_dir(prev_dir).expect("restore cwd");
+        real_identity_in_repo(&["show".to_string()], &repo).expect("identity show");
     }
 
     #[test]
     fn identity_now_requires_timezone_without_profile() {
-        let _guard = TEST_MUTEX.lock().expect("test mutex");
+        let _guard = TEST_MUTEX
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
         let repo = temp_repo("identity-now");
-        let prev_dir = env::current_dir().expect("cwd");
-        env::set_current_dir(&repo).expect("chdir");
 
-        let err = real_identity(&["now".to_string()]).expect_err("should fail without timezone");
+        let err = real_identity_in_repo(&["now".to_string()], &repo)
+            .expect_err("should fail without timezone");
         assert!(err
             .to_string()
             .contains("identity now requires --timezone <IANA> when no profile exists"));
-
-        env::set_current_dir(prev_dir).expect("restore cwd");
     }
 
     #[test]
     fn identity_now_writes_temporal_context_json() {
-        let _guard = TEST_MUTEX.lock().expect("test mutex");
+        let _guard = TEST_MUTEX
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
         let repo = temp_repo("identity-now-out");
-        let prev_dir = env::current_dir().expect("cwd");
-        env::set_current_dir(&repo).expect("chdir");
 
-        real_identity(&[
-            "init".to_string(),
-            "--name".to_string(),
-            "Codex".to_string(),
-            "--birthday".to_string(),
-            "2026-03-30T13:34:00-07:00".to_string(),
-            "--timezone".to_string(),
-            "America/Los_Angeles".to_string(),
-        ])
+        real_identity_in_repo(
+            &[
+                "init".to_string(),
+                "--name".to_string(),
+                "Codex".to_string(),
+                "--birthday".to_string(),
+                "2026-03-30T13:34:00-07:00".to_string(),
+                "--timezone".to_string(),
+                "America/Los_Angeles".to_string(),
+            ],
+            &repo,
+        )
         .expect("identity init");
 
         let out_path = repo.join(".adl/state/temporal_context.v1.json");
-        real_identity(&[
-            "now".to_string(),
-            "--out".to_string(),
-            out_path.display().to_string(),
-        ])
+        real_identity_in_repo(
+            &[
+                "now".to_string(),
+                "--out".to_string(),
+                out_path.display().to_string(),
+            ],
+            &repo,
+        )
         .expect("identity now");
 
         let json: Value =
             serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
         assert_eq!(json["schema_version"], TEMPORAL_CONTEXT_SCHEMA);
         assert_eq!(json["identity_agent_id"], "codex");
-
-        env::set_current_dir(prev_dir).expect("restore cwd");
     }
 }
