@@ -204,10 +204,15 @@ EOF
   git switch -q main
   rm -f untracked.txt
   mkdir -p "$(git rev-parse --git-common-dir)/pr-bootstrap.lock"
+  sleep 30 &
+  live_lock_pid=$!
+  echo "$live_lock_pid" > "$(git rev-parse --git-common-dir)/pr-bootstrap.lock/pid"
   set +e
   bad3="$("$BASH_BIN" adl/tools/pr.sh start 996 --slug bootstrap-lock --no-fetch-issue 2>&1)"
   status=$?
   set -e
+  kill "$live_lock_pid" 2>/dev/null || true
+  wait "$live_lock_pid" 2>/dev/null || true
   rm -rf "$(git rev-parse --git-common-dir)/pr-bootstrap.lock"
   [[ "$status" -ne 0 ]] || {
     echo "assertion failed: expected bootstrap lock contention to fail" >&2

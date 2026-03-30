@@ -274,16 +274,19 @@ issue_bootstrap_lock_name() {
   printf 'pr-bootstrap-issue-%s\n' "$issue"
 }
 
-acquire_repo_lock() {
-  local name="$1"
+acquire_repo_lock_into() {
+  local name="$1" outvar="$2"
   local lock_dir
   lock_dir="$(git_common_dir)/${name}.lock"
   local attempt max_attempts pid_file owner_pid stale_marker
   max_attempts=50
   for ((attempt=1; attempt<=max_attempts; attempt++)); do
     if mkdir "$lock_dir" 2>/dev/null; then
-      printf '%s\n' "$$" >"$lock_dir/pid"
-      printf '%s\n' "$lock_dir"
+      if ! printf '%s\n' "$$" >"$lock_dir/pid"; then
+        rm -rf "$lock_dir"
+        die "${name}: acquired bootstrap lock but failed to record owner pid at $lock_dir/pid"
+      fi
+      printf -v "$outvar" '%s' "$lock_dir"
       return 0
     fi
     pid_file="$lock_dir/pid"
@@ -303,6 +306,13 @@ acquire_repo_lock() {
     sleep 0.1
   done
   die "${name}: another pr.sh bootstrap operation appears to be running (lock: $lock_dir). Remediation: rerun the command serially after the current bootstrap completes."
+}
+
+acquire_repo_lock() {
+  local name="$1"
+  local lock_dir=""
+  acquire_repo_lock_into "$name" lock_dir
+  printf '%s\n' "$lock_dir"
 }
 
 release_repo_lock() {
@@ -1793,7 +1803,7 @@ cmd_cards() {
   done
 
   local lock_dir=""
-  lock_dir="$(acquire_repo_lock "$(issue_bootstrap_lock_name "$issue")")"
+  acquire_repo_lock_into "$(issue_bootstrap_lock_name "$issue")" lock_dir
   trap "release_repo_lock '$lock_dir'" RETURN EXIT
 
   local repo
@@ -1867,7 +1877,7 @@ cmd_init() {
   [[ -n "$issue" ]] || die_with_usage "init: missing <issue> number" usage_init
   issue="$(normalize_issue_or_die "$issue")"
   local lock_dir=""
-  lock_dir="$(acquire_repo_lock "$(issue_bootstrap_lock_name "$issue")")"
+  acquire_repo_lock_into "$(issue_bootstrap_lock_name "$issue")" lock_dir
   trap "release_repo_lock '$lock_dir'" RETURN EXIT
 
   local slug=""
@@ -2007,7 +2017,7 @@ cmd_start() {
 
   require_cmd git
   local lock_dir=""
-  lock_dir="$(acquire_repo_lock "pr-bootstrap")"
+  acquire_repo_lock_into "pr-bootstrap" lock_dir
   trap "release_repo_lock '$lock_dir'" RETURN EXIT
   local issue="${1:-}"; shift || true
   [[ -n "$issue" ]] || die_with_usage "start: missing <issue> number" usage_start
