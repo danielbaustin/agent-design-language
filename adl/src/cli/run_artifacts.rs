@@ -12,6 +12,12 @@ pub(crate) const RUN_SUMMARY_VERSION: u32 = 1;
 pub(crate) const SCORES_VERSION: u32 = 1;
 pub(crate) const SUGGESTIONS_VERSION: u32 = 1;
 pub(crate) const AEE_DECISION_VERSION: u32 = 1;
+pub(crate) const COGNITIVE_SIGNALS_VERSION: u32 = 1;
+pub(crate) const COGNITIVE_ARBITRATION_VERSION: u32 = 1;
+pub(crate) const FAST_SLOW_PATH_VERSION: u32 = 1;
+pub(crate) const AGENCY_SELECTION_VERSION: u32 = 1;
+pub(crate) const BOUNDED_EXECUTION_VERSION: u32 = 1;
+pub(crate) const EVALUATION_SIGNALS_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
@@ -139,6 +145,17 @@ pub(crate) struct RunSummaryLinks {
     pub(crate) suggestions_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) aee_decision_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) cognitive_signals_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) fast_slow_path_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) agency_selection_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) bounded_execution_json: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) evaluation_signals_json: Option<String>,
+    pub(crate) cognitive_arbitration_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) affect_state_json: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -295,6 +312,54 @@ pub(crate) struct AffectStateArtifact {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub(crate) struct CognitiveSignalsArtifact {
+    pub(crate) cognitive_signals_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) instinct: CognitiveInstinctRecord,
+    pub(crate) affect: CognitiveAffectSignalRecord,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct CognitiveInstinctRecord {
+    pub(crate) instinct_profile_id: String,
+    pub(crate) dominant_instinct: String,
+    pub(crate) completion_pressure: String,
+    pub(crate) integrity_bias: String,
+    pub(crate) curiosity_bias: String,
+    pub(crate) candidate_selection_bias: String,
+    pub(crate) deterministic_update_rule: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct CognitiveAffectSignalRecord {
+    pub(crate) affect_state_id: String,
+    pub(crate) urgency_level: String,
+    pub(crate) salience_level: String,
+    pub(crate) persistence_pressure: String,
+    pub(crate) confidence_shift: String,
+    pub(crate) downstream_influence: String,
+    pub(crate) deterministic_update_rule: String,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct CognitiveSignalsState {
+    pub(crate) dominant_instinct: String,
+    pub(crate) completion_pressure: String,
+    pub(crate) integrity_bias: String,
+    pub(crate) curiosity_bias: String,
+    pub(crate) candidate_selection_bias: String,
+    pub(crate) urgency_level: String,
+    pub(crate) salience_level: String,
+    pub(crate) persistence_pressure: String,
+    pub(crate) confidence_shift: String,
+    pub(crate) downstream_influence: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct AffectStateRecord {
     pub(crate) affect_state_id: String,
     pub(crate) affect_mode: String,
@@ -314,6 +379,161 @@ pub(crate) struct AffectStateRef {
     pub(crate) affect_mode: String,
     pub(crate) downstream_priority: String,
     pub(crate) recovery_bias: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct CognitiveArbitrationArtifact {
+    pub(crate) cognitive_arbitration_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) route_selected: String,
+    pub(crate) reasoning_mode: String,
+    pub(crate) confidence: String,
+    pub(crate) risk_class: String,
+    pub(crate) applied_constraints: Vec<String>,
+    pub(crate) cost_latency_assumption: String,
+    pub(crate) route_reason: String,
+    pub(crate) deterministic_selection_rule: String,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct CognitiveArbitrationState {
+    pub(crate) route_selected: String,
+    pub(crate) reasoning_mode: String,
+    pub(crate) confidence: String,
+    pub(crate) risk_class: String,
+    pub(crate) applied_constraints: Vec<String>,
+    pub(crate) cost_latency_assumption: String,
+    pub(crate) route_reason: String,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct FastSlowPathState {
+    pub(crate) selected_path: String,
+    pub(crate) path_family: String,
+    pub(crate) runtime_branch_taken: String,
+    pub(crate) handoff_state: String,
+    pub(crate) candidate_strategy: String,
+    pub(crate) review_depth: String,
+    pub(crate) execution_profile: String,
+    pub(crate) termination_expectation: String,
+    pub(crate) path_difference_summary: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct FastSlowPathArtifact {
+    pub(crate) fast_slow_path_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) arbitration_route: String,
+    pub(crate) selected_path: String,
+    pub(crate) path_family: String,
+    pub(crate) runtime_branch_taken: String,
+    pub(crate) handoff_state: String,
+    pub(crate) candidate_strategy: String,
+    pub(crate) review_depth: String,
+    pub(crate) execution_profile: String,
+    pub(crate) termination_expectation: String,
+    pub(crate) path_difference_summary: String,
+    pub(crate) deterministic_handoff_rule: String,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct AgencySelectionState {
+    pub(crate) candidate_generation_basis: String,
+    pub(crate) selection_mode: String,
+    pub(crate) candidate_set: Vec<AgencyCandidateRecord>,
+    pub(crate) selected_candidate_id: String,
+    pub(crate) selected_candidate_kind: String,
+    pub(crate) selected_candidate_action: String,
+    pub(crate) selected_candidate_reason: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct AgencySelectionArtifact {
+    pub(crate) agency_selection_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) candidate_generation_basis: String,
+    pub(crate) selection_mode: String,
+    pub(crate) candidate_set: Vec<AgencyCandidateRecord>,
+    pub(crate) selected_candidate_id: String,
+    pub(crate) selected_candidate_reason: String,
+    pub(crate) deterministic_selection_rule: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct AgencyCandidateRecord {
+    pub(crate) candidate_id: String,
+    pub(crate) candidate_kind: String,
+    pub(crate) bounded_action: String,
+    pub(crate) review_requirement: String,
+    pub(crate) execution_priority: u32,
+    pub(crate) rationale: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct BoundedExecutionArtifact {
+    pub(crate) bounded_execution_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) selected_candidate_id: String,
+    pub(crate) selected_path: String,
+    pub(crate) execution_status: String,
+    pub(crate) continuation_state: String,
+    pub(crate) provisional_termination_state: String,
+    pub(crate) iteration_count: u32,
+    pub(crate) iterations: Vec<BoundedExecutionIteration>,
+    pub(crate) deterministic_execution_rule: String,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct BoundedExecutionState {
+    pub(crate) execution_status: String,
+    pub(crate) continuation_state: String,
+    pub(crate) provisional_termination_state: String,
+    pub(crate) iterations: Vec<BoundedExecutionIteration>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct BoundedExecutionIteration {
+    pub(crate) iteration_index: u32,
+    pub(crate) stage: String,
+    pub(crate) action: String,
+    pub(crate) outcome: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct EvaluationSignalsArtifact {
+    pub(crate) evaluation_signals_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) selected_candidate_id: String,
+    pub(crate) selected_path: String,
+    pub(crate) progress_signal: String,
+    pub(crate) contradiction_signal: String,
+    pub(crate) failure_signal: String,
+    pub(crate) termination_reason: String,
+    pub(crate) behavior_effect: String,
+    pub(crate) next_control_action: String,
+    pub(crate) deterministic_evaluation_rule: String,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct EvaluationControlState {
+    pub(crate) progress_signal: String,
+    pub(crate) contradiction_signal: String,
+    pub(crate) failure_signal: String,
+    pub(crate) termination_reason: String,
+    pub(crate) behavior_effect: String,
+    pub(crate) next_control_action: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -481,6 +701,36 @@ pub(crate) fn build_run_summary(
         .strip_prefix(run_paths.run_dir())
         .map(|p| p.display().to_string())
         .unwrap_or_else(|_| "learning/aee_decision.json".to_string());
+    let cognitive_signals_rel = run_paths
+        .cognitive_signals_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/cognitive_signals.v1.json".to_string());
+    let fast_slow_path_rel = run_paths
+        .fast_slow_path_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/fast_slow_path.v1.json".to_string());
+    let agency_selection_rel = run_paths
+        .agency_selection_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/agency_selection.v1.json".to_string());
+    let bounded_execution_rel = run_paths
+        .bounded_execution_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/bounded_execution.v1.json".to_string());
+    let evaluation_signals_rel = run_paths
+        .evaluation_signals_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/evaluation_signals.v1.json".to_string());
+    let cognitive_arbitration_rel = run_paths
+        .cognitive_arbitration_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "learning/cognitive_arbitration.v1.json".to_string());
     let affect_state_rel = run_paths
         .affect_state_json()
         .strip_prefix(run_paths.run_dir())
@@ -545,6 +795,12 @@ pub(crate) fn build_run_summary(
             scores_json: Some(scores_rel),
             suggestions_json: Some(suggestions_rel),
             aee_decision_json: Some(aee_decision_rel),
+            cognitive_signals_json: Some(cognitive_signals_rel),
+            fast_slow_path_json: Some(fast_slow_path_rel),
+            agency_selection_json: Some(agency_selection_rel),
+            bounded_execution_json: Some(bounded_execution_rel),
+            evaluation_signals_json: Some(evaluation_signals_rel),
+            cognitive_arbitration_json: Some(cognitive_arbitration_rel),
             affect_state_json: Some(affect_state_rel),
             reasoning_graph_json: Some(reasoning_graph_rel),
             overlays_dir: run_paths
@@ -1093,6 +1349,690 @@ pub(crate) fn build_affect_state_artifact(
     }
 }
 
+pub(crate) fn build_cognitive_signals_state(
+    run_summary: &RunSummaryArtifact,
+    suggestions: &SuggestionsArtifact,
+    _scores: Option<&ScoresArtifact>,
+) -> CognitiveSignalsState {
+    let selected = suggestions
+        .suggestions
+        .first()
+        .cloned()
+        .unwrap_or_else(|| SuggestionItem {
+            id: "sug-000".to_string(),
+            category: "stability".to_string(),
+            severity: "info".to_string(),
+            rationale: "No bounded adaptation signals fired; keep current policy state."
+                .to_string(),
+            evidence: SuggestionEvidence {
+                failure_count: 0,
+                retry_count: 0,
+                delegation_denied_count: 0,
+                security_denied_count: 0,
+                success_ratio: 1.0,
+                scheduler_max_parallel_observed: 1,
+            },
+            proposed_change: SuggestedChangeIntent {
+                intent: "maintain_current_policy".to_string(),
+                target: "workflow-runtime".to_string(),
+            },
+        });
+
+    let completion_pressure =
+        if selected.evidence.failure_count > 0 || run_summary.status == "failure" {
+            "elevated"
+        } else if selected.evidence.retry_count > 0 {
+            "guarded"
+        } else {
+            "steady"
+        };
+    let integrity_bias = if selected.evidence.security_denied_count > 0 {
+        "high"
+    } else {
+        "bounded"
+    };
+    let curiosity_bias = if selected.evidence.success_ratio < 1.0 {
+        "active"
+    } else {
+        "low"
+    };
+    let dominant_instinct = if integrity_bias == "high" {
+        "integrity"
+    } else if completion_pressure == "elevated" {
+        "completion"
+    } else if curiosity_bias == "active" {
+        "curiosity"
+    } else {
+        "coherence"
+    };
+    let candidate_selection_bias = match dominant_instinct {
+        "integrity" => "prefer lower-risk constrained candidates",
+        "completion" => "prefer candidates that reduce unfinished work quickly",
+        "curiosity" => "prefer candidates that reduce uncertainty",
+        _ => "prefer candidates that preserve bounded coherence",
+    };
+    let salience_level = if selected.severity == "high" || selected.evidence.failure_count > 0 {
+        "high"
+    } else if selected.evidence.retry_count > 0 {
+        "moderate"
+    } else {
+        "low"
+    };
+    let persistence_pressure = if completion_pressure == "elevated" {
+        "retry_biased"
+    } else if selected.evidence.retry_count > 0 {
+        "stabilize_then_retry"
+    } else {
+        "bounded_once"
+    };
+    let confidence_shift = if selected.evidence.failure_count > 0 {
+        "reduced"
+    } else {
+        "stable"
+    };
+    let downstream_influence = format!(
+        "dominant_instinct={} selected_intent={} failure_count={} retry_count={}",
+        dominant_instinct,
+        selected.proposed_change.intent,
+        selected.evidence.failure_count,
+        selected.evidence.retry_count
+    );
+
+    CognitiveSignalsState {
+        dominant_instinct: dominant_instinct.to_string(),
+        completion_pressure: completion_pressure.to_string(),
+        integrity_bias: integrity_bias.to_string(),
+        curiosity_bias: curiosity_bias.to_string(),
+        candidate_selection_bias: candidate_selection_bias.to_string(),
+        urgency_level: completion_pressure.to_string(),
+        salience_level: salience_level.to_string(),
+        persistence_pressure: persistence_pressure.to_string(),
+        confidence_shift: confidence_shift.to_string(),
+        downstream_influence,
+    }
+}
+
+pub(crate) fn build_cognitive_signals_artifact(
+    run_summary: &RunSummaryArtifact,
+    suggestions: &SuggestionsArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> CognitiveSignalsArtifact {
+    let state = build_cognitive_signals_state(run_summary, suggestions, scores);
+
+    CognitiveSignalsArtifact {
+        cognitive_signals_version: COGNITIVE_SIGNALS_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: suggestions.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        instinct: CognitiveInstinctRecord {
+            instinct_profile_id: "instinct-001".to_string(),
+            dominant_instinct: state.dominant_instinct,
+            completion_pressure: state.completion_pressure,
+            integrity_bias: state.integrity_bias,
+            curiosity_bias: state.curiosity_bias,
+            candidate_selection_bias: state.candidate_selection_bias,
+            deterministic_update_rule:
+                "derive bounded instinct profile from stable failure, retry, security, and success evidence ordering"
+                    .to_string(),
+        },
+        affect: CognitiveAffectSignalRecord {
+            affect_state_id: "signal-affect-001".to_string(),
+            urgency_level: state.urgency_level,
+            salience_level: state.salience_level,
+            persistence_pressure: state.persistence_pressure,
+            confidence_shift: state.confidence_shift,
+            downstream_influence: state.downstream_influence,
+            deterministic_update_rule:
+                "derive bounded affect signals from the first stable suggestion plus bounded run summary evidence"
+                    .to_string(),
+        },
+    }
+}
+
+pub(crate) fn build_cognitive_arbitration_state(
+    _run_summary: &RunSummaryArtifact,
+    suggestions: &SuggestionsArtifact,
+    signals: &CognitiveSignalsArtifact,
+    affect_state: &AffectStateArtifact,
+) -> CognitiveArbitrationState {
+    let selected = suggestions
+        .suggestions
+        .first()
+        .cloned()
+        .unwrap_or_else(|| SuggestionItem {
+            id: "sug-000".to_string(),
+            category: "stability".to_string(),
+            severity: "info".to_string(),
+            rationale: "No bounded adaptation signals fired; keep current policy state."
+                .to_string(),
+            evidence: SuggestionEvidence {
+                failure_count: 0,
+                retry_count: 0,
+                delegation_denied_count: 0,
+                security_denied_count: 0,
+                success_ratio: 1.0,
+                scheduler_max_parallel_observed: 1,
+            },
+            proposed_change: SuggestedChangeIntent {
+                intent: "maintain_current_policy".to_string(),
+                target: "workflow-runtime".to_string(),
+            },
+        });
+
+    let (route_selected, reasoning_mode) = if selected.evidence.security_denied_count > 0
+        || selected.evidence.failure_count > 0
+        || signals.instinct.integrity_bias == "reinforced"
+    {
+        ("slow", "review_heavy")
+    } else if affect_state.affect.recovery_bias >= 2
+        || selected.evidence.retry_count > 0
+        || signals.affect.confidence_shift == "reduced"
+        || signals.affect.persistence_pressure == "sustained"
+    {
+        ("hybrid", "bounded_recovery")
+    } else {
+        ("fast", "direct_execution")
+    };
+    let risk_class = if selected.evidence.security_denied_count > 0 {
+        "high"
+    } else if selected.evidence.failure_count > 0 || affect_state.affect.recovery_bias >= 2 {
+        "medium"
+    } else {
+        "low"
+    };
+    let confidence = if route_selected == "fast" {
+        "high"
+    } else if route_selected == "hybrid" {
+        "guarded"
+    } else {
+        "review_required"
+    };
+    let mut applied_constraints = Vec::new();
+    if selected.evidence.security_denied_count > 0 {
+        applied_constraints.push("security_denial_present".to_string());
+    }
+    if selected.evidence.failure_count > 0 {
+        applied_constraints.push("failure_recovery_bias".to_string());
+    }
+    if selected.evidence.retry_count > 0 {
+        applied_constraints.push("retry_budget_pressure".to_string());
+    }
+    if applied_constraints.is_empty() {
+        applied_constraints.push("bounded_default_path".to_string());
+    }
+
+    let cost_latency_assumption = match route_selected {
+        "fast" => "prefer lower-cost low-latency execution when bounded evidence is stable",
+        "hybrid" => "allow bounded extra review when retry or recovery pressure is present",
+        _ => "spend bounded additional cognition when failure or policy risk is present",
+    };
+    let route_reason = format!(
+        "route={} dominant_instinct={} confidence_shift={} affect_mode={} failure_count={} retry_count={} security_denied_count={} selected_intent={}",
+        route_selected,
+        signals.instinct.dominant_instinct,
+        signals.affect.confidence_shift,
+        affect_state.affect.affect_mode,
+        selected.evidence.failure_count,
+        selected.evidence.retry_count,
+        selected.evidence.security_denied_count,
+        selected.proposed_change.intent
+    );
+
+    CognitiveArbitrationState {
+        route_selected: route_selected.to_string(),
+        reasoning_mode: reasoning_mode.to_string(),
+        confidence: confidence.to_string(),
+        risk_class: risk_class.to_string(),
+        applied_constraints,
+        cost_latency_assumption: cost_latency_assumption.to_string(),
+        route_reason,
+    }
+}
+
+pub(crate) fn build_cognitive_arbitration_artifact(
+    run_summary: &RunSummaryArtifact,
+    suggestions: &SuggestionsArtifact,
+    signals: &CognitiveSignalsArtifact,
+    affect_state: &AffectStateArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> CognitiveArbitrationArtifact {
+    let state = build_cognitive_arbitration_state(run_summary, suggestions, signals, affect_state);
+
+    CognitiveArbitrationArtifact {
+        cognitive_arbitration_version: COGNITIVE_ARBITRATION_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: suggestions.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        route_selected: state.route_selected,
+        reasoning_mode: state.reasoning_mode,
+        confidence: state.confidence,
+        risk_class: state.risk_class,
+        applied_constraints: state.applied_constraints,
+        cost_latency_assumption: state.cost_latency_assumption,
+        route_reason: state.route_reason,
+        deterministic_selection_rule:
+            "derive route from runtime signal state, bounded affect recovery bias, and stable failure/security/retry evidence ordering"
+                .to_string(),
+    }
+}
+
+pub(crate) fn build_fast_slow_path_state(
+    arbitration: &CognitiveArbitrationArtifact,
+) -> FastSlowPathState {
+    let (
+        selected_path,
+        path_family,
+        runtime_branch_taken,
+        handoff_state,
+        candidate_strategy,
+        review_depth,
+        execution_profile,
+        termination_expectation,
+    ) = match arbitration.route_selected.as_str() {
+        "fast" => (
+            "fast_path",
+            "fast",
+            "fast_direct_execution_branch",
+            "direct_handoff",
+            "accept first bounded candidate",
+            "minimal",
+            "single_pass_direct_execution",
+            "terminate_on_first_bounded_success_or_policy_block",
+        ),
+        "hybrid" => (
+            "slow_path",
+            "slow",
+            "slow_bounded_recovery_branch",
+            "bounded_recovery_handoff",
+            "compare current candidate against one bounded refinement",
+            "bounded_recovery_review",
+            "review_then_execute_once",
+            "terminate_after_bounded_review_cycle_or_policy_block",
+        ),
+        _ => (
+            "slow_path",
+            "slow",
+            "slow_review_refine_branch",
+            "review_handoff",
+            "validate, refine, or veto the current bounded candidate",
+            "verification_required",
+            "review_and_refine_before_execution",
+            "terminate_after_bounded_review_cycle_or_policy_block",
+        ),
+    };
+    let path_difference_summary = match selected_path {
+        "fast_path" => {
+            "fast_path favors direct execution with minimal review and a single bounded candidate handoff"
+        }
+        _ => {
+            "slow_path requires bounded review/refinement before execution and can revise or veto the current candidate"
+        }
+    };
+
+    FastSlowPathState {
+        selected_path: selected_path.to_string(),
+        path_family: path_family.to_string(),
+        runtime_branch_taken: runtime_branch_taken.to_string(),
+        handoff_state: handoff_state.to_string(),
+        candidate_strategy: candidate_strategy.to_string(),
+        review_depth: review_depth.to_string(),
+        execution_profile: execution_profile.to_string(),
+        termination_expectation: termination_expectation.to_string(),
+        path_difference_summary: path_difference_summary.to_string(),
+    }
+}
+
+pub(crate) fn build_fast_slow_path_artifact(
+    run_summary: &RunSummaryArtifact,
+    arbitration: &CognitiveArbitrationArtifact,
+    state: &FastSlowPathState,
+    scores: Option<&ScoresArtifact>,
+) -> FastSlowPathArtifact {
+    FastSlowPathArtifact {
+        fast_slow_path_version: FAST_SLOW_PATH_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: arbitration.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        arbitration_route: arbitration.route_selected.clone(),
+        selected_path: state.selected_path.clone(),
+        path_family: state.path_family.clone(),
+        runtime_branch_taken: state.runtime_branch_taken.clone(),
+        handoff_state: state.handoff_state.clone(),
+        candidate_strategy: state.candidate_strategy.clone(),
+        review_depth: state.review_depth.clone(),
+        execution_profile: state.execution_profile.clone(),
+        termination_expectation: state.termination_expectation.clone(),
+        path_difference_summary: state.path_difference_summary.clone(),
+        deterministic_handoff_rule:
+            "derive fast/slow path handoff and branch selection directly from bounded arbitration route selection before downstream candidate generation"
+                .to_string(),
+    }
+}
+
+pub(crate) fn build_agency_selection_state(
+    signals: &CognitiveSignalsArtifact,
+    arbitration: &CognitiveArbitrationArtifact,
+    fast_slow_state: &FastSlowPathState,
+    fast_slow_path: &FastSlowPathArtifact,
+) -> AgencySelectionState {
+    let (
+        selection_mode,
+        candidate_set,
+        selected_candidate_id,
+        selected_candidate_kind,
+        selected_candidate_action,
+        selected_candidate_reason,
+    ) = match fast_slow_path.selected_path.as_str() {
+        "fast_path" => {
+            let candidate_set = vec![
+                    AgencyCandidateRecord {
+                        candidate_id: "cand-fast-execute".to_string(),
+                        candidate_kind: "direct_execution".to_string(),
+                        bounded_action: "execute selected candidate directly under bounded once semantics".to_string(),
+                        review_requirement: "minimal".to_string(),
+                        execution_priority: 1,
+                        rationale: format!(
+                            "route={} dominant_instinct={} confidence={}",
+                            arbitration.route_selected, signals.instinct.dominant_instinct, arbitration.confidence
+                        ),
+                    },
+                    AgencyCandidateRecord {
+                        candidate_id: "cand-fast-verify".to_string(),
+                        candidate_kind: "bounded_verification".to_string(),
+                        bounded_action: "perform one bounded verification pass before execution".to_string(),
+                        review_requirement: "light".to_string(),
+                        execution_priority: 2,
+                        rationale: "keep a fallback candidate available without changing the primary fast-path commitment".to_string(),
+                    },
+                ];
+            (
+                    "fast_candidate_commitment",
+                    candidate_set,
+                    "cand-fast-execute".to_string(),
+                    "direct_execution".to_string(),
+                    "execute selected candidate directly under bounded once semantics".to_string(),
+                    "fast path prioritizes direct bounded execution when arbitration confidence is high and failure pressure is absent".to_string(),
+                )
+        }
+        _ => {
+            let candidate_set = vec![
+                    AgencyCandidateRecord {
+                        candidate_id: "cand-slow-review".to_string(),
+                        candidate_kind: "review_and_refine".to_string(),
+                        bounded_action: "review, refine, or veto the current candidate before execution".to_string(),
+                        review_requirement: "verification_required".to_string(),
+                        execution_priority: 1,
+                        rationale: format!(
+                            "route={} dominant_instinct={} risk_class={}",
+                            arbitration.route_selected, signals.instinct.dominant_instinct, arbitration.risk_class
+                        ),
+                    },
+                    AgencyCandidateRecord {
+                        candidate_id: "cand-slow-direct".to_string(),
+                        candidate_kind: "direct_execution".to_string(),
+                        bounded_action: "execute the current candidate without additional refinement".to_string(),
+                        review_requirement: "minimal".to_string(),
+                        execution_priority: 2,
+                        rationale: "retain the direct-execution alternative as a bounded comparator candidate".to_string(),
+                    },
+                    AgencyCandidateRecord {
+                        candidate_id: "cand-slow-defer".to_string(),
+                        candidate_kind: "bounded_deferral".to_string(),
+                        bounded_action: "defer execution and surface the candidate set for later gate/review stages".to_string(),
+                        review_requirement: "review_required".to_string(),
+                        execution_priority: 3,
+                        rationale: "preserve a bounded non-execution option when policy or review pressure remains elevated".to_string(),
+                    },
+                ];
+            (
+                    "slow_candidate_comparison",
+                    candidate_set,
+                    "cand-slow-review".to_string(),
+                    "review_and_refine".to_string(),
+                    "review, refine, or veto the current candidate before execution".to_string(),
+                    "slow path makes review/refinement the selected candidate when arbitration requires bounded caution".to_string(),
+                )
+        }
+    };
+
+    AgencySelectionState {
+        candidate_generation_basis: format!(
+            "path={} runtime_branch={} route={} candidate_selection_bias={}",
+            fast_slow_path.selected_path,
+            fast_slow_state.runtime_branch_taken,
+            arbitration.route_selected,
+            signals.instinct.candidate_selection_bias
+        ),
+        selection_mode: selection_mode.to_string(),
+        candidate_set,
+        selected_candidate_id,
+        selected_candidate_kind,
+        selected_candidate_action,
+        selected_candidate_reason,
+    }
+}
+
+pub(crate) fn build_agency_selection_artifact(
+    run_summary: &RunSummaryArtifact,
+    arbitration: &CognitiveArbitrationArtifact,
+    state: &AgencySelectionState,
+    scores: Option<&ScoresArtifact>,
+) -> AgencySelectionArtifact {
+    AgencySelectionArtifact {
+        agency_selection_version: AGENCY_SELECTION_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: arbitration.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        candidate_generation_basis: state.candidate_generation_basis.clone(),
+        selection_mode: state.selection_mode.clone(),
+        candidate_set: state.candidate_set.clone(),
+        selected_candidate_id: state.selected_candidate_id.clone(),
+        selected_candidate_reason: state.selected_candidate_reason.clone(),
+        deterministic_selection_rule:
+            "derive the bounded candidate set and selected candidate from the already-selected fast/slow runtime branch, arbitration route, and instinct bias without hidden initiative state"
+                .to_string(),
+    }
+}
+
+pub(crate) fn build_bounded_execution_state(
+    run_summary: &RunSummaryArtifact,
+    _fast_slow_path: &FastSlowPathArtifact,
+    _agency_selection: &AgencySelectionArtifact,
+    agency_state: &AgencySelectionState,
+) -> BoundedExecutionState {
+    let (execution_status, continuation_state, provisional_termination_state, iterations) =
+        match agency_state.selected_candidate_kind.as_str() {
+            "direct_execution" => (
+                "completed",
+                "stop_after_one",
+                "ready_for_evaluation",
+                vec![BoundedExecutionIteration {
+                    iteration_index: 1,
+                    stage: "execute".to_string(),
+                    action: agency_state.selected_candidate_action.clone(),
+                    outcome: "bounded_direct_execution_complete".to_string(),
+                }],
+            ),
+            "review_and_refine" => (
+                "completed",
+                "bounded_review_complete",
+                "ready_for_evaluation",
+                vec![
+                    BoundedExecutionIteration {
+                        iteration_index: 1,
+                        stage: "review".to_string(),
+                        action: agency_state.selected_candidate_action.clone(),
+                        outcome: "bounded_review_pass_complete".to_string(),
+                    },
+                    BoundedExecutionIteration {
+                        iteration_index: 2,
+                        stage: "execute".to_string(),
+                        action: "execute the reviewed bounded candidate".to_string(),
+                        outcome: "bounded_reviewed_execution_complete".to_string(),
+                    },
+                ],
+            ),
+            _ => (
+                "completed",
+                "deferred",
+                "ready_for_evaluation",
+                vec![BoundedExecutionIteration {
+                    iteration_index: 1,
+                    stage: "defer".to_string(),
+                    action: agency_state.selected_candidate_action.clone(),
+                    outcome: "bounded_deferral_recorded".to_string(),
+                }],
+            ),
+        };
+
+    let execution_status = if run_summary.status == "failure" {
+        "completed_with_failure_signal"
+    } else {
+        execution_status
+    };
+    let continuation_state = if run_summary.status == "failure" && iterations.len() > 1 {
+        "bounded_review_complete_with_failure_signal"
+    } else {
+        continuation_state
+    };
+    let provisional_termination_state = if run_summary.status == "failure" {
+        "ready_for_runtime_evaluation"
+    } else {
+        provisional_termination_state
+    };
+
+    BoundedExecutionState {
+        execution_status: execution_status.to_string(),
+        continuation_state: continuation_state.to_string(),
+        provisional_termination_state: provisional_termination_state.to_string(),
+        iterations,
+    }
+}
+
+pub(crate) fn build_bounded_execution_artifact(
+    run_summary: &RunSummaryArtifact,
+    fast_slow_path: &FastSlowPathArtifact,
+    agency_selection: &AgencySelectionArtifact,
+    state: &BoundedExecutionState,
+    scores: Option<&ScoresArtifact>,
+) -> BoundedExecutionArtifact {
+    BoundedExecutionArtifact {
+        bounded_execution_version: BOUNDED_EXECUTION_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: agency_selection.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        selected_candidate_id: agency_selection.selected_candidate_id.clone(),
+        selected_path: fast_slow_path.selected_path.clone(),
+        execution_status: state.execution_status.clone(),
+        continuation_state: state.continuation_state.clone(),
+        provisional_termination_state: state.provisional_termination_state.clone(),
+        iteration_count: state.iterations.len() as u32,
+        iterations: state.iterations.clone(),
+        deterministic_execution_rule:
+            "derive bounded iteration shape, continuation state, and provisional termination from runtime loop state without hidden retry state"
+                .to_string(),
+    }
+}
+
+pub(crate) fn build_evaluation_control_state(
+    run_summary: &RunSummaryArtifact,
+    bounded_execution: &BoundedExecutionArtifact,
+) -> EvaluationControlState {
+    let (
+        progress_signal,
+        contradiction_signal,
+        failure_signal,
+        termination_reason,
+        behavior_effect,
+        next_control_action,
+    ) = if run_summary.status == "failure" {
+        (
+            "stalled_progress",
+            "present",
+            "bounded_failure_detected",
+            if bounded_execution.iteration_count > 1 {
+                "bounded_failure"
+            } else {
+                "no_progress"
+            },
+            "emit bounded failure/termination signals for later reframing or policy handling",
+            if bounded_execution.iteration_count > 1 {
+                "handoff_to_reframing"
+            } else {
+                "terminate_with_failure"
+            },
+        )
+    } else {
+        (
+            "steady_progress",
+            "none",
+            "none",
+            "success",
+            "allow bounded execution to terminate cleanly after evaluation confirms progress",
+            "complete_run",
+        )
+    };
+
+    EvaluationControlState {
+        progress_signal: progress_signal.to_string(),
+        contradiction_signal: contradiction_signal.to_string(),
+        failure_signal: failure_signal.to_string(),
+        termination_reason: termination_reason.to_string(),
+        behavior_effect: behavior_effect.to_string(),
+        next_control_action: next_control_action.to_string(),
+    }
+}
+
+pub(crate) fn build_evaluation_signals_artifact(
+    run_summary: &RunSummaryArtifact,
+    fast_slow_path: &FastSlowPathArtifact,
+    agency_selection: &AgencySelectionArtifact,
+    state: &EvaluationControlState,
+    scores: Option<&ScoresArtifact>,
+) -> EvaluationSignalsArtifact {
+    EvaluationSignalsArtifact {
+        evaluation_signals_version: EVALUATION_SIGNALS_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: agency_selection.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        selected_candidate_id: agency_selection.selected_candidate_id.clone(),
+        selected_path: fast_slow_path.selected_path.clone(),
+        progress_signal: state.progress_signal.clone(),
+        contradiction_signal: state.contradiction_signal.clone(),
+        failure_signal: state.failure_signal.clone(),
+        termination_reason: state.termination_reason.clone(),
+        behavior_effect: state.behavior_effect.clone(),
+        next_control_action: state.next_control_action.clone(),
+        deterministic_evaluation_rule:
+            "derive bounded evaluation, termination, and next control action from runtime execution evidence without hidden continuation state"
+                .to_string(),
+    }
+}
+
 pub(crate) fn build_aee_decision_artifact(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
@@ -1455,10 +2395,71 @@ pub(crate) fn write_run_state_artifacts(
     let suggestions = build_suggestions_artifact(&run_summary, Some(&scores_for_suggestions));
     let suggestions_json =
         serde_json::to_vec_pretty(&suggestions).context("serialize suggestions.json")?;
+    let cognitive_signals =
+        build_cognitive_signals_artifact(&run_summary, &suggestions, Some(&scores_for_suggestions));
+    let cognitive_signals_json = serde_json::to_vec_pretty(&cognitive_signals)
+        .context("serialize cognitive_signals.v1.json")?;
     let affect_state =
         build_affect_state_artifact(&run_summary, &suggestions, Some(&scores_for_suggestions));
     let affect_state_json =
         serde_json::to_vec_pretty(&affect_state).context("serialize affect_state.v1.json")?;
+    let cognitive_arbitration = build_cognitive_arbitration_artifact(
+        &run_summary,
+        &suggestions,
+        &cognitive_signals,
+        &affect_state,
+        Some(&scores_for_suggestions),
+    );
+    let fast_slow_state = build_fast_slow_path_state(&cognitive_arbitration);
+    let fast_slow_path = build_fast_slow_path_artifact(
+        &run_summary,
+        &cognitive_arbitration,
+        &fast_slow_state,
+        Some(&scores_for_suggestions),
+    );
+    let agency_selection_state = build_agency_selection_state(
+        &cognitive_signals,
+        &cognitive_arbitration,
+        &fast_slow_state,
+        &fast_slow_path,
+    );
+    let agency_selection = build_agency_selection_artifact(
+        &run_summary,
+        &cognitive_arbitration,
+        &agency_selection_state,
+        Some(&scores_for_suggestions),
+    );
+    let bounded_execution_state = build_bounded_execution_state(
+        &run_summary,
+        &fast_slow_path,
+        &agency_selection,
+        &agency_selection_state,
+    );
+    let bounded_execution = build_bounded_execution_artifact(
+        &run_summary,
+        &fast_slow_path,
+        &agency_selection,
+        &bounded_execution_state,
+        Some(&scores_for_suggestions),
+    );
+    let evaluation_control_state = build_evaluation_control_state(&run_summary, &bounded_execution);
+    let evaluation_signals = build_evaluation_signals_artifact(
+        &run_summary,
+        &fast_slow_path,
+        &agency_selection,
+        &evaluation_control_state,
+        Some(&scores_for_suggestions),
+    );
+    let cognitive_arbitration_json = serde_json::to_vec_pretty(&cognitive_arbitration)
+        .context("serialize cognitive_arbitration.v1.json")?;
+    let fast_slow_path_json =
+        serde_json::to_vec_pretty(&fast_slow_path).context("serialize fast_slow_path.v1.json")?;
+    let agency_selection_json = serde_json::to_vec_pretty(&agency_selection)
+        .context("serialize agency_selection.v1.json")?;
+    let bounded_execution_json = serde_json::to_vec_pretty(&bounded_execution)
+        .context("serialize bounded_execution.v1.json")?;
+    let evaluation_signals_json = serde_json::to_vec_pretty(&evaluation_signals)
+        .context("serialize evaluation_signals.v1.json")?;
     let aee_decision = build_aee_decision_artifact(
         &run_summary,
         &suggestions,
@@ -1482,6 +2483,30 @@ pub(crate) fn write_run_state_artifacts(
     artifacts::atomic_write(&run_paths.run_summary_json(), &run_summary_json)?;
     artifacts::atomic_write(&run_paths.scores_json(), &scores_json)?;
     artifacts::atomic_write(&run_paths.suggestions_json(), &suggestions_json)?;
+    artifacts::atomic_write(&run_paths.cognitive_signals_json(), &cognitive_signals_json)?;
+    artifacts::atomic_write(
+        &run_paths.cognitive_arbitration_json(),
+        &cognitive_arbitration_json,
+    )?;
+    artifacts::atomic_write(&run_paths.fast_slow_path_json(), &fast_slow_path_json)?;
+    artifacts::atomic_write(&run_paths.agency_selection_json(), &agency_selection_json)?;
+    artifacts::atomic_write(&run_paths.bounded_execution_json(), &bounded_execution_json)?;
+    artifacts::atomic_write(
+        &run_paths.evaluation_signals_json(),
+        &evaluation_signals_json,
+    )?;
+    artifacts::atomic_write(&run_paths.cognitive_signals_json(), &cognitive_signals_json)?;
+    artifacts::atomic_write(
+        &run_paths.cognitive_arbitration_json(),
+        &cognitive_arbitration_json,
+    )?;
+    artifacts::atomic_write(&run_paths.fast_slow_path_json(), &fast_slow_path_json)?;
+    artifacts::atomic_write(&run_paths.agency_selection_json(), &agency_selection_json)?;
+    artifacts::atomic_write(&run_paths.bounded_execution_json(), &bounded_execution_json)?;
+    artifacts::atomic_write(
+        &run_paths.evaluation_signals_json(),
+        &evaluation_signals_json,
+    )?;
     artifacts::atomic_write(&run_paths.affect_state_json(), &affect_state_json)?;
     artifacts::atomic_write(&run_paths.aee_decision_json(), &aee_decision_json)?;
     artifacts::atomic_write(&run_paths.reasoning_graph_json(), &reasoning_graph_json)?;

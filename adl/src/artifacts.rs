@@ -118,9 +118,39 @@ impl RunArtifactPaths {
         self.learning_dir().join("aee_decision.json")
     }
 
+    /// Cognitive arbitration artifact path for bounded v0.86 route selection.
+    pub fn cognitive_arbitration_json(&self) -> PathBuf {
+        self.learning_dir().join("cognitive_arbitration.v1.json")
+    }
+
+    /// Fast/slow path artifact path for bounded v0.86 route handoff.
+    pub fn fast_slow_path_json(&self) -> PathBuf {
+        self.learning_dir().join("fast_slow_path.v1.json")
+    }
+
+    /// Agency-selection artifact path for bounded v0.86 candidate generation and selection.
+    pub fn agency_selection_json(&self) -> PathBuf {
+        self.learning_dir().join("agency_selection.v1.json")
+    }
+
+    /// Bounded execution artifact path for v0.86 AEE-lite execution state.
+    pub fn bounded_execution_json(&self) -> PathBuf {
+        self.learning_dir().join("bounded_execution.v1.json")
+    }
+
+    /// Evaluation-signals artifact path for v0.86 bounded evaluation and termination.
+    pub fn evaluation_signals_json(&self) -> PathBuf {
+        self.learning_dir().join("evaluation_signals.v1.json")
+    }
+
     /// Affect state artifact path for bounded affect-guided adaptation.
     pub fn affect_state_json(&self) -> PathBuf {
         self.learning_dir().join("affect_state.v1.json")
+    }
+
+    /// Cognitive signals artifact path for bounded v0.86 signal emission.
+    pub fn cognitive_signals_json(&self) -> PathBuf {
+        self.learning_dir().join("cognitive_signals.v1.json")
     }
 
     /// Affect-linked reasoning graph artifact path.
@@ -349,8 +379,26 @@ mod tests {
             .aee_decision_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/aee_decision.json"));
         assert!(paths
+            .cognitive_arbitration_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/cognitive_arbitration.v1.json"));
+        assert!(paths
+            .fast_slow_path_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/fast_slow_path.v1.json"));
+        assert!(paths
+            .agency_selection_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/agency_selection.v1.json"));
+        assert!(paths
+            .bounded_execution_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/bounded_execution.v1.json"));
+        assert!(paths
+            .evaluation_signals_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/evaluation_signals.v1.json"));
+        assert!(paths
             .affect_state_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/affect_state.v1.json"));
+        assert!(paths
+            .cognitive_signals_json()
+            .ends_with(".adl/runs/artifact-path-accessors/learning/cognitive_signals.v1.json"));
         assert!(paths
             .reasoning_graph_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/reasoning_graph.v1.json"));

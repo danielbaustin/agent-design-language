@@ -9,7 +9,23 @@
 
 ## Overview
 
-This document captures an emerging view of the ADL architecture as a **cognitive stack** rather than merely an orchestration stack.
+This document defines the **authoritative cognitive stack for the tracked v0.86 milestone**.
+
+It also preserves broader architectural context that extends beyond the bounded milestone.
+
+For `v0.86`, the stack must be concrete enough to drive:
+
+- `WP-03` cognitive loop canonicalization
+- `WP-04` bounded cognitive signals
+- `WP-05` cognitive arbitration
+- later bounded execution, evaluation, and demo work
+
+Anything beyond that bounded commitment should be treated as future-facing context, not an unstated implementation obligation.
+
+This document therefore does two jobs:
+
+- it specifies the executable `v0.86` stack contract
+- it preserves the broader architecture synthesis that later milestones will deepen
 
 ADL began as a framework for deterministic, reviewable, multi-agent execution.  
 Over time, several architectural needs emerged that collectively resemble a broader cognitive substrate:
@@ -22,10 +38,106 @@ Over time, several architectural needs emerged that collectively resemble a broa
 - persistence
 - internal drives
 
-This document synthesizes those ideas into a single conceptual stack for v0.86.  
-This stack also supports a dual-process model of cognition (fast vs slow thinking), with the Cognitive Arbitration Layer determining which path is used.
+This document synthesizes those ideas into a single stack description for `v0.86`, while making the bounded executable path explicit.
+
+The bounded `v0.86` stack supports a dual-process model of cognition (fast vs slow thinking), with the Cognitive Arbitration Layer determining which path is used.
 
 ---
+
+## v0.86 Bounded Stack Contract
+
+For implementation purposes, the bounded `v0.86` stack is:
+
+```text
+1. Context / Task Inputs
+2. Cognitive Signal Layer (instinct + affect)
+3. Cognitive Arbitration Layer
+4. Reasoning / Execution Path Layer
+5. Freedom Gate
+6. Evaluation / Reframing Layer
+7. Memory + Artifact Layer
+```
+
+This is the stack contract that `WP-02` makes authoritative for the milestone.
+
+### Layer Meanings
+
+#### 1. Context / Task Inputs
+
+The runtime receives:
+
+- task structure
+- user constraints
+- relevant prior memory reads
+- environmental/runtime context
+
+This is the pre-cognitive input surface for the loop.
+
+#### 2. Cognitive Signal Layer
+
+The system computes bounded internal weighting signals:
+
+- instinct-like priors
+- affect-like salience/urgency weighting
+
+These do not decide action directly. They shape arbitration.
+
+#### 3. Cognitive Arbitration Layer
+
+This layer selects:
+
+- fast path
+- slow path
+- hybrid path
+- defer
+- refuse
+
+It is the milestone’s first explicit routing/control surface.
+
+#### 4. Reasoning / Execution Path Layer
+
+This layer performs the chosen bounded reasoning or execution path.
+
+For `v0.86`, this includes:
+
+- bounded local reasoning
+- bounded execution attempts
+- explicit route-visible control behavior
+
+It does not imply the full later reasoning-graph or long-horizon agency stack.
+
+#### 5. Freedom Gate
+
+This layer applies hard allow/defer/refuse constraints before or during execution.
+
+Policy remains supreme over instinct, affect, and arbitration.
+
+#### 6. Evaluation / Reframing Layer
+
+This layer judges:
+
+- progress
+- bounded failure
+- need for reframing
+- termination conditions
+
+For `v0.86`, reframing is bounded and explicit, not an open-ended recursive cognition system.
+
+#### 7. Memory + Artifact Layer
+
+This layer handles:
+
+- memory read participation at loop entry
+- memory write participation after execution/evaluation
+- artifact-visible traces for review and replay
+
+It is where the milestone becomes inspectable rather than purely conceptual.
+
+## Broader Architecture Context
+
+The sections below preserve the broader architectural synthesis that motivated the bounded stack.
+
+Where a later section describes richer future-facing behavior, the bounded contract above remains authoritative for `v0.86` implementation.
 
 ## Core Claim
 
@@ -76,6 +188,9 @@ Taken together, those layers form a cognitive stack.
 ---
 
 ## Proposed Conceptual Stack
+
+The conceptual stack below is preserved as broader architecture context.
+It should not be read as a second competing required runtime pipeline for `v0.86`.
 
 A current synthesis is:
 

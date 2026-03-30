@@ -53,9 +53,43 @@ if [[ "$1" == "pr" && "$2" == "list" ]]; then
   exit 0
 fi
 if [[ "$1" == "pr" && "$2" == "edit" ]]; then
+  body_file=""
+  while [[ $# -gt 0 ]]; do
+    if [[ "$1" == "--body-file" ]]; then
+      body_file="$2"
+      shift 2
+    else
+      shift
+    fi
+  done
+  [[ -n "$body_file" ]] && cp "$body_file" "$TMP_PR_BODY"
   exit 0
 fi
+if [[ "$1" == "pr" && "$2" == "view" ]]; then
+  if [[ " $* " == *" --json closingIssuesReferences "* ]]; then
+    if [[ " $* " == *" -q "* ]]; then
+      echo '1021'
+    else
+      echo '{"closingIssuesReferences":[{"number":1021}]}'
+    fi
+    exit 0
+  fi
+  if [[ " $* " == *" --json body "* ]]; then
+    cat "$TMP_PR_BODY"
+    exit 0
+  fi
+fi
 if [[ "$1" == "pr" && "$2" == "create" ]]; then
+  body_file=""
+  while [[ $# -gt 0 ]]; do
+    if [[ "$1" == "--body-file" ]]; then
+      body_file="$2"
+      shift 2
+    else
+      shift
+    fi
+  done
+  [[ -n "$body_file" ]] && cp "$body_file" "$TMP_PR_BODY"
   echo "https://example.test/pr/1"
   exit 0
 fi
@@ -92,14 +126,18 @@ assert_contains() {
 }
 
 export PATH="$mockbin:$PATH"
+TMP_PR_BODY="$tmpdir/pr_body.md"
+export TMP_PR_BODY
 
 (
   cd "$repo"
 
   "$BASH_BIN" adl/tools/pr.sh start 1021 --slug finish-default-root --no-fetch-issue >/dev/null
+  "$BASH_BIN" adl/tools/pr.sh cards 1021 --no-fetch-issue >/dev/null
   worktree="$repo/.worktrees/adl-wp-1021"
   git -C "$worktree" config user.name "Test User"
   git -C "$worktree" config user.email "test@example.com"
+  mkdir -p .adl/cards/1021
 
   cat > .adl/cards/1021/output_1021.md <<'EOF_SOR'
 # ADL Output Card
@@ -202,6 +240,13 @@ EOF_SOR
     cd "$worktree"
     "$BASH_BIN" adl/tools/pr.sh finish 1021 --title "[v0.85][authoring] Harden pr finish command behavior" -f "$repo/.adl/cards/1021/input_1021.md" --output-card "$repo/.adl/cards/1021/output_1021.md" --no-checks --no-open >/dev/null
   )
+
+  body="$(cat "$TMP_PR_BODY")"
+  assert_contains "Closes #1021" "$body" "finish keeps closing linkage"
+  assert_contains "## Summary" "$body" "finish renders summary section"
+  assert_contains "Finish default root stages both docs and code paths." "$body" "finish uses output card summary"
+  assert_contains "## Artifacts" "$body" "finish renders artifacts section"
+  assert_contains "docs/tooling/README.md" "$body" "finish lists docs artifact"
 
   changed="$(git -C "$worktree" show --name-only --format=oneline HEAD)"
   assert_contains "adl/tools/README.md" "$changed" "finish stages code path by default"
