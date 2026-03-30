@@ -614,10 +614,9 @@ fn real_pr_init(args: &[String]) -> Result<()> {
 
     let stp_path = issue_ref.task_bundle_stp_path(&repo_root);
     let bundle_dir = issue_ref.task_bundle_dir_path(&repo_root);
-    if stp_path.is_file() {
-        eprintln!("• STP already exists: {}", stp_path.display());
-    } else {
-        eprintln!("• Initializing task bundle: {}", bundle_dir.display());
+    let init_branch = issue_ref.branch_name("codex");
+    eprintln!("• Initializing task bundle: {}", bundle_dir.display());
+    if !stp_path.is_file() {
         if let Some(parent) = stp_path.parent() {
             fs::create_dir_all(parent)?;
         }
@@ -628,16 +627,24 @@ fn real_pr_init(args: &[String]) -> Result<()> {
                 stp_path.display()
             )
         })?;
+    } else {
+        eprintln!("• STP already exists: {}", stp_path.display());
     }
-
-    if bundle_dir.join("sip.md").exists() || bundle_dir.join("sor.md").exists() {
-        eprintln!("• SIP/SOR already exist; pr init leaves them untouched.");
-    }
+    let (bundle_input, bundle_output) =
+        ensure_bootstrap_cards(&repo_root, &issue_ref, &title, &init_branch, &source_path)?;
 
     println!("• Initialized:");
     println!(
         "  STP      {}",
         path_relative_to_repo(&repo_root, &stp_path)
+    );
+    println!(
+        "  READ     {}",
+        path_relative_to_repo(&repo_root, &bundle_input)
+    );
+    println!(
+        "  WRITE    {}",
+        path_relative_to_repo(&repo_root, &bundle_output)
     );
     println!(
         "  BUNDLE   {}",
@@ -647,8 +654,8 @@ fn real_pr_init(args: &[String]) -> Result<()> {
         "  SOURCE   {}",
         path_relative_to_repo(&repo_root, &source_path)
     );
-    println!("  CONTRACT minimum v0.85 init = task-bundle directory + validated stp.md only");
-    println!("  STATE    ISSUE_AND_STP_READY");
+    println!("  CONTRACT minimum v0.86 init = validated source prompt + root stp/sip/sor bundle");
+    println!("  STATE    ISSUE_AND_BUNDLE_READY");
     eprintln!("• Done.");
     Ok(())
 }
@@ -2966,6 +2973,7 @@ verification_summary:
         let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
         let repo = unique_temp_dir("adl-pr-real-init");
         init_git_repo(&repo);
+        copy_bootstrap_support_files(&repo);
         let prev_dir = env::current_dir().expect("cwd");
         env::set_current_dir(&repo).expect("chdir");
 
@@ -2992,8 +3000,12 @@ verification_summary:
         .expect("issue ref");
         let stp_path = issue_ref.task_bundle_stp_path(&repo);
         let source_path = issue_ref.issue_prompt_path(&repo);
+        let sip_path = issue_ref.task_bundle_input_path(&repo);
+        let sor_path = issue_ref.task_bundle_output_path(&repo);
         assert!(stp_path.is_file());
         assert!(source_path.is_file());
+        assert!(sip_path.is_file());
+        assert!(sor_path.is_file());
         let stp = fs::read_to_string(&stp_path).expect("read stp");
         assert!(stp.contains("issue_number: 1151"));
         assert!(stp.contains("title: \"[v0.86][tools] Init test\""));
@@ -3004,6 +3016,7 @@ verification_summary:
         let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
         let repo = unique_temp_dir("adl-pr-real-init-existing");
         init_git_repo(&repo);
+        copy_bootstrap_support_files(&repo);
         let issue_ref = IssueRef::new(
             1151,
             "v0.86".to_string(),
@@ -3011,6 +3024,8 @@ verification_summary:
         )
         .expect("issue ref");
         let stp_path = issue_ref.task_bundle_stp_path(&repo);
+        let sip_path = issue_ref.task_bundle_input_path(&repo);
+        let sor_path = issue_ref.task_bundle_output_path(&repo);
         fs::create_dir_all(stp_path.parent().expect("parent")).expect("bundle dir");
         fs::write(&stp_path, "sentinel\n").expect("write sentinel");
 
@@ -3033,6 +3048,8 @@ verification_summary:
             fs::read_to_string(&stp_path).expect("read stp"),
             "sentinel\n"
         );
+        assert!(sip_path.is_file());
+        assert!(sor_path.is_file());
     }
 
     #[test]

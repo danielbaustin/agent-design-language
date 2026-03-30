@@ -1936,10 +1936,11 @@ cmd_init() {
   fi
   [[ -n "$version" ]] || die "init: version must be non-empty"
 
-  local source_path bundle_dir stp_path
+  local source_path bundle_dir stp_path in_path out_path init_branch
   source_path="$(issue_prompt_path_for_issue "$issue" "$version" "$slug")"
   bundle_dir="$(task_bundle_dir_path "$issue" "$version" "$slug")"
   stp_path="$bundle_dir/stp.md"
+  init_branch="codex/${issue}-${slug}"
 
   if [[ ! -f "$source_path" ]]; then
     note "Source issue prompt missing; generating canonical local issue prompt: $source_path"
@@ -1947,25 +1948,21 @@ cmd_init() {
   fi
   validate_bootstrap_stp "$source_path"
 
-  if ensure_nonempty_file "$stp_path"; then
-    note "STP already exists: $stp_path"
-    validate_bootstrap_stp "$stp_path"
-  else
-    note "Initializing task bundle: $bundle_dir"
-    seed_task_bundle_stp "$source_path" "$stp_path"
-    validate_bootstrap_stp "$stp_path"
-  fi
-
-  if [[ -e "$bundle_dir/sip.md" || -e "$bundle_dir/sor.md" ]]; then
-    note "SIP/SOR already exist; pr init leaves them untouched."
-  fi
+  note "Initializing task bundle: $bundle_dir"
+  {
+    read -r stp_path
+    read -r in_path
+    read -r out_path
+  } < <(seed_bootstrap_surfaces "$issue" "$version" "$slug" "$title" "$init_branch" "$source_path")
 
   echo "• Initialized:"
   echo "  STP      $(path_relative_to_repo "$stp_path")"
+  echo "  READ     $(path_relative_to_repo "$in_path")"
+  echo "  WRITE    $(path_relative_to_repo "$out_path")"
   echo "  BUNDLE   $(path_relative_to_repo "$bundle_dir")"
   echo "  SOURCE   $(path_relative_to_repo "$source_path")"
-  echo "  CONTRACT minimum v0.85 init = task-bundle directory + validated stp.md only"
-  echo "  STATE    ISSUE_AND_STP_READY"
+  echo "  CONTRACT minimum v0.86 init = validated source prompt + root stp/sip/sor bundle"
+  echo "  STATE    ISSUE_AND_BUNDLE_READY"
   note "Done."
 }
 
