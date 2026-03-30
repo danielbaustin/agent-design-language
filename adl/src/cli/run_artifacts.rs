@@ -401,6 +401,17 @@ pub(crate) struct FastSlowPathArtifact {
     pub(crate) deterministic_handoff_rule: String,
 }
 
+#[derive(Debug, Clone)]
+pub(crate) struct AgencySelectionState {
+    pub(crate) candidate_generation_basis: String,
+    pub(crate) selection_mode: String,
+    pub(crate) candidate_set: Vec<AgencyCandidateRecord>,
+    pub(crate) selected_candidate_id: String,
+    pub(crate) selected_candidate_kind: String,
+    pub(crate) selected_candidate_action: String,
+    pub(crate) selected_candidate_reason: String,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct AgencySelectionArtifact {
@@ -1581,17 +1592,21 @@ pub(crate) fn build_fast_slow_path_artifact(
     }
 }
 
-pub(crate) fn build_agency_selection_artifact(
-    run_summary: &RunSummaryArtifact,
+pub(crate) fn build_agency_selection_state(
     signals: &CognitiveSignalsArtifact,
     arbitration: &CognitiveArbitrationArtifact,
     fast_slow_path: &FastSlowPathArtifact,
-    scores: Option<&ScoresArtifact>,
-) -> AgencySelectionArtifact {
-    let (selection_mode, candidate_set, selected_candidate_id, selected_candidate_reason) =
-        match fast_slow_path.selected_path.as_str() {
-            "fast_path" => {
-                let candidate_set = vec![
+) -> AgencySelectionState {
+    let (
+        selection_mode,
+        candidate_set,
+        selected_candidate_id,
+        selected_candidate_kind,
+        selected_candidate_action,
+        selected_candidate_reason,
+    ) = match fast_slow_path.selected_path.as_str() {
+        "fast_path" => {
+            let candidate_set = vec![
                     AgencyCandidateRecord {
                         candidate_id: "cand-fast-execute".to_string(),
                         candidate_kind: "direct_execution".to_string(),
@@ -1612,15 +1627,17 @@ pub(crate) fn build_agency_selection_artifact(
                         rationale: "keep a fallback candidate available without changing the primary fast-path commitment".to_string(),
                     },
                 ];
-                (
+            (
                     "fast_candidate_commitment",
                     candidate_set,
                     "cand-fast-execute".to_string(),
+                    "direct_execution".to_string(),
+                    "execute selected candidate directly under bounded once semantics".to_string(),
                     "fast path prioritizes direct bounded execution when arbitration confidence is high and failure pressure is absent".to_string(),
                 )
-            }
-            _ => {
-                let candidate_set = vec![
+        }
+        _ => {
+            let candidate_set = vec![
                     AgencyCandidateRecord {
                         candidate_id: "cand-slow-review".to_string(),
                         candidate_kind: "review_and_refine".to_string(),
@@ -1649,15 +1666,39 @@ pub(crate) fn build_agency_selection_artifact(
                         rationale: "preserve a bounded non-execution option when policy or review pressure remains elevated".to_string(),
                     },
                 ];
-                (
+            (
                     "slow_candidate_comparison",
                     candidate_set,
                     "cand-slow-review".to_string(),
+                    "review_and_refine".to_string(),
+                    "review, refine, or veto the current candidate before execution".to_string(),
                     "slow path makes review/refinement the selected candidate when arbitration requires bounded caution".to_string(),
                 )
-            }
-        };
+        }
+    };
 
+    AgencySelectionState {
+        candidate_generation_basis: format!(
+            "path={} route={} candidate_selection_bias={}",
+            fast_slow_path.selected_path,
+            arbitration.route_selected,
+            signals.instinct.candidate_selection_bias
+        ),
+        selection_mode: selection_mode.to_string(),
+        candidate_set,
+        selected_candidate_id,
+        selected_candidate_kind,
+        selected_candidate_action,
+        selected_candidate_reason,
+    }
+}
+
+pub(crate) fn build_agency_selection_artifact(
+    run_summary: &RunSummaryArtifact,
+    arbitration: &CognitiveArbitrationArtifact,
+    state: &AgencySelectionState,
+    scores: Option<&ScoresArtifact>,
+) -> AgencySelectionArtifact {
     AgencySelectionArtifact {
         agency_selection_version: AGENCY_SELECTION_VERSION,
         run_id: run_summary.run_id.clone(),
@@ -1667,16 +1708,13 @@ pub(crate) fn build_agency_selection_artifact(
             suggestions_version: arbitration.generated_from.suggestions_version,
             scores_version: scores.map(|value| value.scores_version),
         },
-        candidate_generation_basis: format!(
-            "path={} route={} candidate_selection_bias={}",
-            fast_slow_path.selected_path, arbitration.route_selected, signals.instinct.candidate_selection_bias
-        ),
-        selection_mode: selection_mode.to_string(),
-        candidate_set,
-        selected_candidate_id,
-        selected_candidate_reason,
+        candidate_generation_basis: state.candidate_generation_basis.clone(),
+        selection_mode: state.selection_mode.clone(),
+        candidate_set: state.candidate_set.clone(),
+        selected_candidate_id: state.selected_candidate_id.clone(),
+        selected_candidate_reason: state.selected_candidate_reason.clone(),
         deterministic_selection_rule:
-            "derive the bounded candidate set and selected candidate from the fast/slow handoff, arbitration route, and instinct bias without hidden initiative state"
+            "derive the bounded candidate set and selected candidate before execution from the fast/slow handoff, arbitration route, and instinct bias without hidden initiative state"
                 .to_string(),
     }
 }
@@ -1685,22 +1723,23 @@ pub(crate) fn build_bounded_execution_artifact(
     run_summary: &RunSummaryArtifact,
     fast_slow_path: &FastSlowPathArtifact,
     agency_selection: &AgencySelectionArtifact,
+    agency_state: &AgencySelectionState,
     scores: Option<&ScoresArtifact>,
 ) -> BoundedExecutionArtifact {
     let (execution_status, continuation_state, provisional_termination_state, iterations) =
-        match fast_slow_path.selected_path.as_str() {
-            "fast_path" => (
+        match agency_state.selected_candidate_kind.as_str() {
+            "direct_execution" => (
                 "completed",
                 "stop_after_one",
                 "ready_for_evaluation",
                 vec![BoundedExecutionIteration {
                     iteration_index: 1,
                     stage: "execute".to_string(),
-                    action: "execute selected candidate directly".to_string(),
+                    action: agency_state.selected_candidate_action.clone(),
                     outcome: "bounded_direct_execution_complete".to_string(),
                 }],
             ),
-            _ => (
+            "review_and_refine" => (
                 "completed",
                 "bounded_review_complete",
                 "ready_for_evaluation",
@@ -1708,7 +1747,7 @@ pub(crate) fn build_bounded_execution_artifact(
                     BoundedExecutionIteration {
                         iteration_index: 1,
                         stage: "review".to_string(),
-                        action: "review and refine the selected candidate".to_string(),
+                        action: agency_state.selected_candidate_action.clone(),
                         outcome: "bounded_review_pass_complete".to_string(),
                     },
                     BoundedExecutionIteration {
@@ -1718,6 +1757,17 @@ pub(crate) fn build_bounded_execution_artifact(
                         outcome: "bounded_reviewed_execution_complete".to_string(),
                     },
                 ],
+            ),
+            _ => (
+                "completed",
+                "deferred",
+                "ready_for_evaluation",
+                vec![BoundedExecutionIteration {
+                    iteration_index: 1,
+                    stage: "defer".to_string(),
+                    action: agency_state.selected_candidate_action.clone(),
+                    outcome: "bounded_deferral_recorded".to_string(),
+                }],
             ),
         };
 
@@ -1738,7 +1788,7 @@ pub(crate) fn build_bounded_execution_artifact(
         iteration_count: iterations.len() as u32,
         iterations,
         deterministic_execution_rule:
-            "derive bounded iteration shape directly from selected path and selected candidate without hidden retry state"
+            "derive bounded iteration shape directly from the runtime-selected candidate and selected path without hidden retry state"
                 .to_string(),
     }
 }
@@ -2181,17 +2231,19 @@ pub(crate) fn write_run_state_artifacts(
         &cognitive_arbitration,
         Some(&scores_for_suggestions),
     );
+    let agency_selection_state =
+        build_agency_selection_state(&cognitive_signals, &cognitive_arbitration, &fast_slow_path);
     let agency_selection = build_agency_selection_artifact(
         &run_summary,
-        &cognitive_signals,
         &cognitive_arbitration,
-        &fast_slow_path,
+        &agency_selection_state,
         Some(&scores_for_suggestions),
     );
     let bounded_execution = build_bounded_execution_artifact(
         &run_summary,
         &fast_slow_path,
         &agency_selection,
+        &agency_selection_state,
         Some(&scores_for_suggestions),
     );
     let evaluation_signals = build_evaluation_signals_artifact(
