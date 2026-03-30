@@ -1220,7 +1220,27 @@ fn ensure_nonempty_file_path(path: &Path) -> Result<bool> {
     Ok(!text.trim().is_empty())
 }
 
+fn ensure_output_card_is_started(output_path: &Path) -> Result<()> {
+    let text = fs::read_to_string(output_path)?;
+    let normalized = text.replace("\r\n", "\n");
+    for line in normalized.lines() {
+        let trimmed = line.trim();
+        if let Some(rest) = trimmed.strip_prefix("Status:") {
+            let status = rest.trim();
+            if status.eq_ignore_ascii_case("NOT_STARTED") {
+                bail!(
+                    "finish: output card is still bootstrap state (Status: NOT_STARTED): {}",
+                    output_path.display()
+                );
+            }
+            return Ok(());
+        }
+    }
+    Ok(())
+}
+
 fn validate_completed_sor(repo_root: &Path, output_path: &Path) -> Result<()> {
+    ensure_output_card_is_started(output_path)?;
     let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
     run_status(
         "bash",
@@ -4331,6 +4351,158 @@ verification_summary:
         .expect_err("no changes should fail");
         env::set_current_dir(prev_dir).expect("restore cwd");
         assert!(no_change_err.to_string().contains("Nothing to PR."));
+    }
+
+    #[test]
+    fn real_pr_finish_rejects_not_started_output_card_before_publication() {
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+        let temp = unique_temp_dir("adl-pr-finish-not-started");
+        let origin = temp.join("origin.git");
+        let repo = temp.join("repo");
+        fs::create_dir_all(&repo).expect("repo dir");
+        copy_bootstrap_support_files(&repo);
+        init_git_repo(&repo);
+        assert!(Command::new("git")
+            .args(["config", "user.name", "Test User"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.email", "test@example.com"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config")
+            .success());
+        fs::create_dir_all(repo.join("adl/src")).expect("adl src");
+        fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write source");
+        assert!(Command::new("git")
+            .args(["add", "-A"])
+            .current_dir(&repo)
+            .status()
+            .expect("git add")
+            .success());
+        assert!(Command::new("git")
+            .args(["commit", "-q", "-m", "init"])
+            .current_dir(&repo)
+            .status()
+            .expect("git commit")
+            .success());
+        assert!(Command::new("git")
+            .args(["branch", "-M", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git branch")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "init",
+                "--bare",
+                "-q",
+                path_str(&origin).expect("origin path"),
+            ])
+            .current_dir(&repo)
+            .status()
+            .expect("git init bare")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "remote",
+                "set-url",
+                "origin",
+                path_str(&origin).expect("origin path"),
+            ])
+            .current_dir(&repo)
+            .status()
+            .expect("git remote set-url")
+            .success());
+        assert!(Command::new("git")
+            .args(["push", "-q", "-u", "origin", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git push")
+            .success());
+        assert!(Command::new("git")
+            .args(["checkout", "-q", "-b", "codex/1156-output-card-guard"])
+            .current_dir(&repo)
+            .status()
+            .expect("git checkout")
+            .success());
+
+        let issue_ref =
+            IssueRef::new(1156, "v0.86".to_string(), "output-card-guard".to_string()).expect("ref");
+        let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+        fs::create_dir_all(&bundle_dir).expect("bundle dir");
+        let input = issue_ref.task_bundle_input_path(&repo);
+        let output = issue_ref.task_bundle_output_path(&repo);
+        fs::write(&input, "# ADL Input Card\n\ninput\n").expect("write input");
+        fs::write(
+            &output,
+            r#"# ADL Output Card
+
+Task ID: issue-1156
+Run ID: issue-1156
+Version: v0.86
+Title: output-card-guard
+Branch: codex/1156-output-card-guard
+Status: NOT_STARTED
+"#,
+        )
+        .expect("write output");
+        fs::write(
+            repo.join("adl/src/lib.rs"),
+            "pub fn placeholder() {}\npub fn changed() {}\n",
+        )
+        .expect("write change");
+
+        let bin_dir = temp.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let gh_log = temp.join("gh.log");
+        let gh_path = bin_dir.join("gh");
+        write_executable(
+            &gh_path,
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+                gh_log.display()
+            ),
+        );
+
+        let old_path = env::var("PATH").unwrap_or_default();
+        let prev_dir = env::current_dir().expect("cwd");
+        unsafe {
+            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        }
+        env::set_current_dir(&repo).expect("chdir");
+
+        let err = real_pr(&[
+            "finish".to_string(),
+            "1156".to_string(),
+            "--title".to_string(),
+            "[v0.86][tools] Output card guard".to_string(),
+            "--paths".to_string(),
+            "adl".to_string(),
+            "--input".to_string(),
+            path_relative_to_repo(&repo, &input),
+            "--output".to_string(),
+            path_relative_to_repo(&repo, &output),
+            "--no-checks".to_string(),
+            "--no-open".to_string(),
+        ])
+        .expect_err("NOT_STARTED output card should be rejected");
+
+        env::set_current_dir(prev_dir).expect("restore cwd");
+        unsafe {
+            env::set_var("PATH", old_path);
+        }
+
+        assert!(err
+            .to_string()
+            .contains("output card is still bootstrap state (Status: NOT_STARTED)"));
+        let gh_calls = fs::read_to_string(&gh_log).unwrap_or_default();
+        assert!(
+            !gh_calls.contains("pr create") && !gh_calls.contains("pr edit"),
+            "finish should fail before any PR publication call"
+        );
     }
 
     #[test]
