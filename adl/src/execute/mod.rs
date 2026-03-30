@@ -225,6 +225,7 @@ pub fn execute_sequential_with_resume(
                             .filter(|id| !completed_step_ids.contains(id))
                             .collect::<Vec<_>>();
                         return Ok(ExecutionResult {
+                            runtime_control: derive_runtime_control_state("paused", &records, tr),
                             outputs: outs,
                             artifacts,
                             records,
@@ -325,6 +326,7 @@ pub fn execute_sequential_with_resume(
                         .filter(|id| !completed_step_ids.contains(id))
                         .collect::<Vec<_>>();
                     return Ok(ExecutionResult {
+                        runtime_control: derive_runtime_control_state("paused", &records, tr),
                         outputs: outs,
                         artifacts,
                         records,
@@ -370,6 +372,7 @@ pub fn execute_sequential_with_resume(
     }
 
     Ok(ExecutionResult {
+        runtime_control: derive_runtime_control_state("success", &records, tr),
         outputs: outs,
         artifacts,
         records,

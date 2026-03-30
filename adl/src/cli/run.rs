@@ -231,6 +231,7 @@ pub(crate) fn run_workflow(args: &[String]) -> Result<()> {
                     "failure",
                     None,
                     &steering_history,
+                    &execute::derive_runtime_control_state("failure", &[], &tr),
                     resume_completed_ids.as_ref(),
                     Some(&err),
                 )?;
@@ -270,6 +271,7 @@ pub(crate) fn run_workflow(args: &[String]) -> Result<()> {
             status,
             pause_state.as_ref(),
             &result.steering_history,
+            &result.runtime_control,
             resume_completed_ids.as_ref(),
             None,
         )?;
@@ -499,6 +501,7 @@ pub(crate) fn real_resume(args: &[String]) -> Result<()> {
         },
         result.pause.as_ref(),
         &result.steering_history,
+        &result.runtime_control,
         Some(&resume_completed_ids),
         None,
     )?;

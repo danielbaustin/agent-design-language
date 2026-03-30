@@ -697,6 +697,7 @@ pub(super) fn execute_concurrent_deterministic(
             let mut remaining_step_ids: Vec<String> = pending.iter().cloned().collect();
             remaining_step_ids.sort();
             return Ok(ExecutionResult {
+                runtime_control: derive_runtime_control_state("paused", &records, tr),
                 outputs: outs,
                 artifacts,
                 records,
@@ -714,6 +715,7 @@ pub(super) fn execute_concurrent_deterministic(
     }
 
     Ok(ExecutionResult {
+        runtime_control: derive_runtime_control_state("success", &records, tr),
         outputs: outs,
         artifacts,
         records,

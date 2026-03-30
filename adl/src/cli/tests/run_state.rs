@@ -1,4 +1,8 @@
 use super::*;
+use crate::cli::run_artifacts::{
+    AgencySelectionArtifact, BoundedExecutionArtifact, CognitiveArbitrationArtifact,
+    CognitiveSignalsArtifact, EvaluationSignalsArtifact, FastSlowPathArtifact,
+};
 
 #[test]
 fn select_open_artifact_returns_none_without_html() {
@@ -115,6 +119,97 @@ pub(super) fn minimal_resolved_for_artifacts(run_id: String) -> resolve::AdlReso
     }
 }
 
+fn runtime_control_for(status: &str, tr: &trace::Trace) -> execute::RuntimeControlState {
+    execute::derive_runtime_control_state(status, &[], tr)
+}
+
+fn custom_runtime_control() -> execute::RuntimeControlState {
+    execute::RuntimeControlState {
+        signals: execute::CognitiveSignalsState {
+            dominant_instinct: "integrity".to_string(),
+            completion_pressure: "guarded".to_string(),
+            integrity_bias: "high".to_string(),
+            curiosity_bias: "bounded".to_string(),
+            candidate_selection_bias: "prefer lower-risk constrained candidates".to_string(),
+            urgency_level: "moderate".to_string(),
+            salience_level: "high".to_string(),
+            persistence_pressure: "stabilize_then_retry".to_string(),
+            confidence_shift: "reduced".to_string(),
+            downstream_influence: "custom downstream influence".to_string(),
+        },
+        arbitration: execute::CognitiveArbitrationState {
+            route_selected: "slow".to_string(),
+            reasoning_mode: "review_heavy".to_string(),
+            confidence: "guarded".to_string(),
+            risk_class: "high".to_string(),
+            applied_constraints: vec![
+                "security_denial_present".to_string(),
+                "failure_recovery_bias".to_string(),
+            ],
+            cost_latency_assumption:
+                "spend bounded additional cognition when failure or policy risk is present"
+                    .to_string(),
+            route_reason: "custom arbitration reason".to_string(),
+        },
+        fast_slow: execute::FastSlowPathState {
+            selected_path: "slow_path".to_string(),
+            path_family: "slow".to_string(),
+            runtime_branch_taken: "slow_review_refine_branch".to_string(),
+            handoff_state: "review_handoff".to_string(),
+            candidate_strategy: "validate, refine, or veto the current bounded candidate"
+                .to_string(),
+            review_depth: "verification_required".to_string(),
+            execution_profile: "review_and_refine_before_execution".to_string(),
+            termination_expectation: "terminate_after_bounded_review_cycle_or_policy_block"
+                .to_string(),
+            path_difference_summary: "custom path difference summary".to_string(),
+        },
+        agency: execute::AgencySelectionState {
+            candidate_generation_basis: "custom generation basis".to_string(),
+            selection_mode: "slow_candidate_comparison".to_string(),
+            candidate_set: vec![execute::AgencyCandidateRecord {
+                candidate_id: "cand-custom-review".to_string(),
+                candidate_kind: "review_and_refine".to_string(),
+                bounded_action: "review and refine the candidate".to_string(),
+                review_requirement: "verification_required".to_string(),
+                execution_priority: 1,
+                rationale: "custom rationale".to_string(),
+            }],
+            selected_candidate_id: "cand-custom-review".to_string(),
+            selected_candidate_kind: "review_and_refine".to_string(),
+            selected_candidate_action: "review and refine the candidate".to_string(),
+            selected_candidate_reason: "custom selected candidate reason".to_string(),
+        },
+        bounded_execution: execute::BoundedExecutionState {
+            execution_status: "completed".to_string(),
+            continuation_state: "bounded_review_complete".to_string(),
+            provisional_termination_state: "ready_for_evaluation".to_string(),
+            iterations: vec![
+                execute::BoundedExecutionIteration {
+                    iteration_index: 1,
+                    stage: "review".to_string(),
+                    action: "review the candidate".to_string(),
+                    outcome: "bounded_review_pass_complete".to_string(),
+                },
+                execute::BoundedExecutionIteration {
+                    iteration_index: 2,
+                    stage: "execute".to_string(),
+                    action: "execute the reviewed candidate".to_string(),
+                    outcome: "bounded_reviewed_execution_complete".to_string(),
+                },
+            ],
+        },
+        evaluation: execute::EvaluationControlState {
+            progress_signal: "steady_progress".to_string(),
+            contradiction_signal: "present".to_string(),
+            failure_signal: "none".to_string(),
+            termination_reason: "contradiction_detected".to_string(),
+            behavior_effect: "surface contradiction for bounded follow-up".to_string(),
+            next_control_action: "handoff_to_reframing".to_string(),
+        },
+    }
+}
+
 #[test]
 fn write_run_state_and_load_resume_round_trip() {
     let now = SystemTime::now()
@@ -150,6 +245,7 @@ fn write_run_state_and_load_resume_round_trip() {
         "paused",
         Some(&pause),
         &[],
+        &runtime_control_for("paused", &tr),
         None,
         None,
     )
@@ -185,6 +281,100 @@ fn write_run_state_and_load_resume_round_trip() {
 }
 
 #[test]
+fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("time")
+        .as_nanos();
+    let run_id = format!("runtime-control-{now}-{}", std::process::id());
+    let resolved = minimal_resolved_for_artifacts(run_id.clone());
+    let out_dir = std::env::temp_dir().join(format!("adl-main-runtime-control-{now}"));
+    let runs_root = unique_temp_dir("adl-main-runs-runtime-control");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
+
+    let mut tr = trace::Trace::new(run_id.clone(), "wf".to_string(), "0.5".to_string());
+    tr.step_started("s1", "a1", "p1", "t1", None);
+    tr.step_finished("s1", true);
+
+    let runtime_control = custom_runtime_control();
+    let run_dir = write_run_state_artifacts(
+        &resolved,
+        &tr,
+        Path::new("examples/adl-0.1.yaml"),
+        &out_dir,
+        50,
+        75,
+        "success",
+        None,
+        &[],
+        &runtime_control,
+        None,
+        None,
+    )
+    .expect("write projected runtime-control artifacts");
+
+    let signals: CognitiveSignalsArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("learning/cognitive_signals.v1.json"))
+            .expect("read cognitive signals"),
+    )
+    .expect("parse cognitive signals");
+    assert_eq!(signals.instinct.dominant_instinct, "integrity");
+    assert_eq!(
+        signals.affect.downstream_influence,
+        "custom downstream influence"
+    );
+
+    let arbitration: CognitiveArbitrationArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("learning/cognitive_arbitration.v1.json"))
+            .expect("read cognitive arbitration"),
+    )
+    .expect("parse cognitive arbitration");
+    assert_eq!(arbitration.route_selected, "slow");
+    assert_eq!(arbitration.route_reason, "custom arbitration reason");
+
+    let fast_slow: FastSlowPathArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("learning/fast_slow_path.v1.json"))
+            .expect("read fast slow path"),
+    )
+    .expect("parse fast slow path");
+    assert_eq!(fast_slow.runtime_branch_taken, "slow_review_refine_branch");
+    assert_eq!(
+        fast_slow.path_difference_summary,
+        "custom path difference summary"
+    );
+
+    let agency: AgencySelectionArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("learning/agency_selection.v1.json"))
+            .expect("read agency selection"),
+    )
+    .expect("parse agency selection");
+    assert_eq!(agency.selected_candidate_id, "cand-custom-review");
+    assert_eq!(agency.candidate_generation_basis, "custom generation basis");
+
+    let bounded_execution: BoundedExecutionArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("learning/bounded_execution.v1.json"))
+            .expect("read bounded execution"),
+    )
+    .expect("parse bounded execution");
+    assert_eq!(bounded_execution.iteration_count, 2);
+    assert_eq!(bounded_execution.iterations[1].stage, "execute");
+
+    let evaluation: EvaluationSignalsArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("learning/evaluation_signals.v1.json"))
+            .expect("read evaluation signals"),
+    )
+    .expect("parse evaluation signals");
+    assert_eq!(evaluation.termination_reason, "contradiction_detected");
+    assert_eq!(
+        evaluation.behavior_effect,
+        "surface contradiction for bounded follow-up"
+    );
+
+    let _ = std::fs::remove_dir_all(run_dir);
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
 fn load_resume_state_rejects_non_paused_status() {
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -207,6 +397,7 @@ fn load_resume_state_rejects_non_paused_status() {
         "success",
         None,
         &[],
+        &runtime_control_for("success", &tr),
         None,
         None,
     )
@@ -256,6 +447,7 @@ fn load_resume_state_rejects_unknown_schema_version() {
         "paused",
         Some(&pause),
         &[],
+        &runtime_control_for("paused", &tr),
         None,
         None,
     )
@@ -304,6 +496,7 @@ fn load_resume_state_rejects_missing_pause_payload() {
         "paused",
         None,
         &[],
+        &runtime_control_for("paused", &tr),
         None,
         None,
     )
@@ -347,6 +540,7 @@ fn load_resume_state_rejects_workflow_mismatch() {
         "paused",
         Some(&pause),
         &[],
+        &runtime_control_for("paused", &tr),
         None,
         None,
     )
@@ -394,6 +588,7 @@ fn load_resume_state_rejects_version_mismatch() {
         "paused",
         Some(&pause),
         &[],
+        &runtime_control_for("paused", &tr),
         None,
         None,
     )
@@ -441,6 +636,7 @@ fn load_resume_state_rejects_execution_plan_mismatch() {
         "paused",
         Some(&pause),
         &[],
+        &runtime_control_for("paused", &tr),
         None,
         None,
     )
