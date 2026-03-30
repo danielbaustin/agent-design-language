@@ -653,6 +653,31 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     Ok(())
 }
 
+fn recover_root_bundle_after_start_failure(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    source_path: &Path,
+) -> Result<(PathBuf, PathBuf, PathBuf)> {
+    let stp_path = issue_ref.task_bundle_stp_path(repo_root);
+    if !stp_path.is_file() {
+        if let Some(parent) = stp_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        fs::copy(source_path, &stp_path).with_context(|| {
+            format!(
+                "failed to seed task-bundle stp from '{}' to '{}'",
+                source_path.display(),
+                stp_path.display()
+            )
+        })?;
+    }
+    let branch = issue_ref.branch_name("codex");
+    let (bundle_input, bundle_output) =
+        ensure_bootstrap_cards(repo_root, issue_ref, title, &branch, source_path)?;
+    Ok((stp_path, bundle_input, bundle_output))
+}
+
 fn real_pr_create(args: &[String]) -> Result<()> {
     let mode = parse_create_args(args)?;
     let repo_root = repo_root()?;
@@ -739,10 +764,27 @@ fn real_pr_create(args: &[String]) -> Result<()> {
                 .with_context(|| "failed to delegate create->start handoff to pr.sh")?;
             if !status.success() {
                 println!("START_STATE=FAILED");
+                let (stp_path, bundle_input, bundle_output) =
+                    recover_root_bundle_after_start_failure(
+                        &repo_root,
+                        &issue_ref,
+                        &title,
+                        &source_path,
+                    )?;
+                println!("RECOVERY_STATE=ISSUE_AND_BUNDLE_READY");
+                println!("STP_PATH={}", path_relative_to_repo(&repo_root, &stp_path));
+                println!(
+                    "SIP_PATH={}",
+                    path_relative_to_repo(&repo_root, &bundle_input)
+                );
+                println!(
+                    "SOR_PATH={}",
+                    path_relative_to_repo(&repo_root, &bundle_output)
+                );
                 bail!(
-                    "create: issue created but start failed; issue #{} exists and source prompt is at {}",
+                    "create: issue created and root bundle recovered, but start failed; issue #{} exists and can be resumed from {}",
                     issue_num,
-                    path_relative_to_repo(&repo_root, &source_path)
+                    path_relative_to_repo(&repo_root, &stp_path)
                 );
             }
             println!("START_STATE=STARTED");
@@ -3098,6 +3140,7 @@ verification_summary:
         let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
         let repo = unique_temp_dir("adl-pr-real-create-start-fails");
         init_git_repo(&repo);
+        copy_bootstrap_support_files(&repo);
         let bin_dir = repo.join("bin");
         fs::create_dir_all(&bin_dir).expect("bin dir");
         let gh_log = repo.join("gh.log");
@@ -3138,9 +3181,18 @@ verification_summary:
         unsafe {
             env::set_var("PATH", old_path);
         }
-        assert!(err
-            .to_string()
-            .contains("create: issue created but start failed; issue #1158 exists"));
+        assert!(err.to_string().contains(
+            "create: issue created and root bundle recovered, but start failed; issue #1158 exists"
+        ));
+        let issue_ref = IssueRef::new(
+            1158,
+            "v0.86".to_string(),
+            "v0-86-tools-create-start-failure".to_string(),
+        )
+        .expect("issue ref");
+        assert!(issue_ref.task_bundle_stp_path(&repo).is_file());
+        assert!(issue_ref.task_bundle_input_path(&repo).is_file());
+        assert!(issue_ref.task_bundle_output_path(&repo).is_file());
     }
 
     #[test]

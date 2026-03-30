@@ -237,6 +237,49 @@ assert_contains() {
     echo "assertion failed: expected no remove-label operations when labels already match" >&2
     exit 1
   fi
+
+  real_git="$(command -v git)"
+  cat >"$bindir/git" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "\${1:-}" == "branch" ]]; then
+  echo "fatal: simulated branch creation failure" >&2
+  exit 1
+fi
+exec "$real_git" "\$@"
+EOF
+  chmod +x "$bindir/git"
+
+  set +e
+  out_partial="$(PATH="$bindir:$PATH" "$BASH_BIN" adl/tools/pr.sh create \
+    --title "[v0.85][authoring] Recover create path" \
+    --slug recover-create-path \
+    --version v0.85 \
+    --body "test body" 2>&1)"
+  status=$?
+  set -e
+  [[ "$status" -ne 0 ]] || {
+    echo "assertion failed: expected create to fail when start fails" >&2
+    exit 1
+  }
+  assert_contains "STATE=ISSUE_CREATED" "$out_partial" "partial create issue created"
+  assert_contains "START_STATE=FAILED" "$out_partial" "partial create start failed"
+  assert_contains "RECOVERY_STATE=ISSUE_AND_BUNDLE_READY" "$out_partial" "partial create recovery state"
+  assert_contains "STP_PATH=.adl/v0.85/tasks/issue-1042__recover-create-path/stp.md" "$out_partial" "partial create stp path"
+  assert_contains "SIP_PATH=.adl/v0.85/tasks/issue-1042__recover-create-path/sip.md" "$out_partial" "partial create sip path"
+  assert_contains "SOR_PATH=.adl/v0.85/tasks/issue-1042__recover-create-path/sor.md" "$out_partial" "partial create sor path"
+  [[ -f ".adl/v0.85/tasks/issue-1042__recover-create-path/stp.md" ]] || {
+    echo "assertion failed: expected recovered stp after create/start failure" >&2
+    exit 1
+  }
+  [[ -f ".adl/v0.85/tasks/issue-1042__recover-create-path/sip.md" ]] || {
+    echo "assertion failed: expected recovered sip after create/start failure" >&2
+    exit 1
+  }
+  [[ -f ".adl/v0.85/tasks/issue-1042__recover-create-path/sor.md" ]] || {
+    echo "assertion failed: expected recovered sor after create/start failure" >&2
+    exit 1
+  }
 )
 
 echo "pr.sh create create+reconcile flows: ok"
