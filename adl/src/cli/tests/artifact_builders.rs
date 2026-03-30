@@ -1206,18 +1206,24 @@ fn build_bounded_execution_artifact_is_deterministic_and_shows_iteration_shape()
         &success_agency_state,
         Some(&success_scores),
     );
-    let fast_left = run_artifacts::build_bounded_execution_artifact(
+    let success_state = run_artifacts::build_bounded_execution_state(
         &summary,
         &success_path,
         &success_agency,
         &success_agency_state,
+    );
+    let fast_left = run_artifacts::build_bounded_execution_artifact(
+        &summary,
+        &success_path,
+        &success_agency,
+        &success_state,
         Some(&success_scores),
     );
     let fast_right = run_artifacts::build_bounded_execution_artifact(
         &summary,
         &success_path,
         &success_agency,
-        &success_agency_state,
+        &success_state,
         Some(&success_scores),
     );
     assert_eq!(
@@ -1229,6 +1235,7 @@ fn build_bounded_execution_artifact_is_deterministic_and_shows_iteration_shape()
         fast_left.provisional_termination_state,
         "ready_for_evaluation"
     );
+    assert_eq!(success_state.continuation_state, "stop_after_one");
 
     summary.status = "failure".to_string();
     summary.counts.failed_steps = 1;
@@ -1284,16 +1291,26 @@ fn build_bounded_execution_artifact_is_deterministic_and_shows_iteration_shape()
         &failure_agency_state,
         Some(&failure_scores),
     );
-    let slow = run_artifacts::build_bounded_execution_artifact(
+    let failure_state = run_artifacts::build_bounded_execution_state(
         &summary,
         &failure_path,
         &failure_agency,
         &failure_agency_state,
+    );
+    let slow = run_artifacts::build_bounded_execution_artifact(
+        &summary,
+        &failure_path,
+        &failure_agency,
+        &failure_state,
         Some(&failure_scores),
     );
     assert_eq!(slow.bounded_execution_version, 1);
     assert_eq!(slow.iteration_count, 2);
     assert_eq!(slow.iterations[0].stage, "review");
+    assert_eq!(
+        slow.provisional_termination_state,
+        "ready_for_runtime_evaluation"
+    );
     assert_ne!(fast_left.iteration_count, slow.iteration_count);
 }
 
@@ -1400,11 +1417,17 @@ fn build_evaluation_signals_artifact_is_deterministic_and_emits_termination_reas
         &success_agency_state,
         Some(&success_scores),
     );
-    let success_execution = run_artifacts::build_bounded_execution_artifact(
+    let success_execution_state = run_artifacts::build_bounded_execution_state(
         &summary,
         &success_path,
         &success_agency,
         &success_agency_state,
+    );
+    let success_execution = run_artifacts::build_bounded_execution_artifact(
+        &summary,
+        &success_path,
+        &success_agency,
+        &success_execution_state,
         Some(&success_scores),
     );
     let success_eval_state =
@@ -1485,11 +1508,17 @@ fn build_evaluation_signals_artifact_is_deterministic_and_emits_termination_reas
         &failure_agency_state,
         Some(&failure_scores),
     );
-    let failure_execution = run_artifacts::build_bounded_execution_artifact(
+    let failure_execution_state = run_artifacts::build_bounded_execution_state(
         &summary,
         &failure_path,
         &failure_agency,
         &failure_agency_state,
+    );
+    let failure_execution = run_artifacts::build_bounded_execution_artifact(
+        &summary,
+        &failure_path,
+        &failure_agency,
+        &failure_execution_state,
         Some(&failure_scores),
     );
     let failure_eval_state =
