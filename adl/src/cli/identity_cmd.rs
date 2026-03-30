@@ -242,16 +242,31 @@ mod tests {
             .as_nanos();
         let repo = env::temp_dir().join(format!("adl-{name}-{unique}"));
         fs::create_dir_all(&repo).expect("create repo dir");
-        Command::new("git")
+        let init_status = Command::new("git")
             .arg("init")
             .arg("-b")
             .arg("main")
             .current_dir(&repo)
             .status()
-            .expect("git init")
-            .success()
-            .then_some(())
-            .expect("git init should succeed");
+            .expect("git init");
+        if !init_status.success() {
+            Command::new("git")
+                .arg("init")
+                .current_dir(&repo)
+                .status()
+                .expect("git init fallback")
+                .success()
+                .then_some(())
+                .expect("git init fallback should succeed");
+            Command::new("git")
+                .args(["branch", "-m", "main"])
+                .current_dir(&repo)
+                .status()
+                .expect("git branch -m main fallback")
+                .success()
+                .then_some(())
+                .expect("git branch -m main fallback should succeed");
+        }
         repo
     }
 
