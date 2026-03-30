@@ -397,6 +397,17 @@ pub(crate) struct CognitiveArbitrationArtifact {
     pub(crate) deterministic_selection_rule: String,
 }
 
+#[derive(Debug, Clone)]
+pub(crate) struct CognitiveArbitrationState {
+    pub(crate) route_selected: String,
+    pub(crate) reasoning_mode: String,
+    pub(crate) confidence: String,
+    pub(crate) risk_class: String,
+    pub(crate) applied_constraints: Vec<String>,
+    pub(crate) cost_latency_assumption: String,
+    pub(crate) route_reason: String,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct FastSlowPathArtifact {
@@ -1438,13 +1449,12 @@ pub(crate) fn build_cognitive_signals_artifact(
     }
 }
 
-pub(crate) fn build_cognitive_arbitration_artifact(
-    run_summary: &RunSummaryArtifact,
+pub(crate) fn build_cognitive_arbitration_state(
+    _run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
     signals: &CognitiveSignalsArtifact,
     affect_state: &AffectStateArtifact,
-    scores: Option<&ScoresArtifact>,
-) -> CognitiveArbitrationArtifact {
+) -> CognitiveArbitrationState {
     let selected = suggestions
         .suggestions
         .first()
@@ -1528,6 +1538,26 @@ pub(crate) fn build_cognitive_arbitration_artifact(
         selected.proposed_change.intent
     );
 
+    CognitiveArbitrationState {
+        route_selected: route_selected.to_string(),
+        reasoning_mode: reasoning_mode.to_string(),
+        confidence: confidence.to_string(),
+        risk_class: risk_class.to_string(),
+        applied_constraints,
+        cost_latency_assumption: cost_latency_assumption.to_string(),
+        route_reason,
+    }
+}
+
+pub(crate) fn build_cognitive_arbitration_artifact(
+    run_summary: &RunSummaryArtifact,
+    suggestions: &SuggestionsArtifact,
+    signals: &CognitiveSignalsArtifact,
+    affect_state: &AffectStateArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> CognitiveArbitrationArtifact {
+    let state = build_cognitive_arbitration_state(run_summary, suggestions, signals, affect_state);
+
     CognitiveArbitrationArtifact {
         cognitive_arbitration_version: COGNITIVE_ARBITRATION_VERSION,
         run_id: run_summary.run_id.clone(),
@@ -1537,15 +1567,15 @@ pub(crate) fn build_cognitive_arbitration_artifact(
             suggestions_version: suggestions.suggestions_version,
             scores_version: scores.map(|value| value.scores_version),
         },
-        route_selected: route_selected.to_string(),
-        reasoning_mode: reasoning_mode.to_string(),
-        confidence: confidence.to_string(),
-        risk_class: risk_class.to_string(),
-        applied_constraints,
-        cost_latency_assumption: cost_latency_assumption.to_string(),
-        route_reason,
+        route_selected: state.route_selected,
+        reasoning_mode: state.reasoning_mode,
+        confidence: state.confidence,
+        risk_class: state.risk_class,
+        applied_constraints: state.applied_constraints,
+        cost_latency_assumption: state.cost_latency_assumption,
+        route_reason: state.route_reason,
         deterministic_selection_rule:
-            "derive route from stable failure/security/retry evidence ordering plus bounded affect recovery bias"
+            "derive route from runtime signal state, bounded affect recovery bias, and stable failure/security/retry evidence ordering"
                 .to_string(),
     }
 }
