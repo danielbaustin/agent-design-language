@@ -1999,8 +1999,10 @@ cmd_start() {
   fi
 
   if rust_pr_delegate_available; then
-    delegate_pr_command_to_rust start "$@"
-    return 0
+    if delegate_pr_command_to_rust start "$@"; then
+      return 0
+    fi
+    note "Warning: Rust-owned start failed; falling back to shell implementation."
   fi
 
   require_cmd git
