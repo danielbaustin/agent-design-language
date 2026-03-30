@@ -152,7 +152,7 @@ This first contract layer does not attempt to solve all editing-control-plane va
 
 Deferred work includes:
 
-- full lifecycle enforcement across `pr init`, `pr create`, `pr run`, and `pr finish`
+- full lifecycle enforcement across `pr init`, `pr start`, `pr run`, and `pr finish`
 - migration of all historical artifacts
 - freezing high-value prose beyond section presence and selected stable scalars
 - full schema coverage for every future authoring/editor surface

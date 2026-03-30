@@ -25,7 +25,7 @@ manifest = json.loads(Path("$MANIFEST_PATH").read_text())
 assert manifest["schema_version"] == "five_command_editing_demo.v1"
 assert manifest["demo_entry"] == "bash adl/tools/demo_five_command_editing.sh"
 
-for key in ("pr_init", "pr_create", "editor_adapter", "pr_start", "pr_run", "pr_finish"):
+for key in ("pr_init", "editor_adapter", "pr_start", "pr_run", "pr_finish"):
     path = Path(manifest["step_logs"][key])
     assert path.exists(), f"missing step log: {path}"
 
@@ -42,17 +42,6 @@ print(manifest["step_logs"]["pr_init"])
 PY
 )" || {
   echo "assertion failed: pr init log missing STP path" >&2
-  exit 1
-}
-
-grep -Fq "MODE=reconcile" "$(python3 - <<PY
-import json
-from pathlib import Path
-manifest = json.loads(Path("$MANIFEST_PATH").read_text())
-print(manifest["step_logs"]["pr_create"])
-PY
-)" || {
-  echo "assertion failed: pr create log missing reconcile marker" >&2
   exit 1
 }
 
@@ -96,4 +85,4 @@ if grep -Fq "pr create" "$GH_LOG_PATH"; then
   exit 1
 fi
 
-echo "five-command editing demo: ok"
+echo "editing demo: ok"

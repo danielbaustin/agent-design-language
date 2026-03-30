@@ -8,20 +8,19 @@ Run:
 
 ## What It Covers
 
-The suite protects the shipped five-command surface and its truthful editor claims:
+The suite protects the shipped authoring surface and its truthful editor claims:
 
 1. `pr init`
-2. `pr create`
-3. `pr start`
-4. `pr run`
-5. `pr finish`
+2. `pr start`
+3. `pr run`
+4. `pr finish`
 
 It also verifies:
 
-- the installed `adl_pr_cycle` skill still matches the tracked contract and preserves the real five-command state machine
+- the installed `adl_pr_cycle` skill still matches the tracked contract and preserves the real authoring state machine
 - the browser/editor adapter remains bounded to `pr start`
 - the editor docs do not overclaim direct browser execution for the other commands
-- the bounded five-command demo still emits the expected lifecycle artifacts
+- the bounded demo still emits the expected lifecycle artifacts
 
 ## Suite Components
 

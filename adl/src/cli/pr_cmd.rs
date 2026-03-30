@@ -23,23 +23,6 @@ struct InitArgs {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-enum CreateMode {
-    Reconcile {
-        issue: u32,
-        stp_path: PathBuf,
-    },
-    Create {
-        title: String,
-        slug: Option<String>,
-        body: Option<String>,
-        body_file: Option<PathBuf>,
-        labels: String,
-        version: Option<String>,
-        no_start: bool,
-    },
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
 struct StartArgs {
     issue: u32,
     prefix: String,
@@ -83,6 +66,7 @@ struct FinishArgs {
     idempotent: bool,
 }
 
+#[cfg(test)]
 #[derive(Debug, Deserialize)]
 struct IssuePromptFrontMatter {
     title: String,
@@ -90,6 +74,7 @@ struct IssuePromptFrontMatter {
     issue_number: u32,
 }
 
+#[cfg(test)]
 #[derive(Debug)]
 struct IssuePromptDoc {
     front_matter: IssuePromptFrontMatter,
@@ -111,7 +96,7 @@ struct OpenPullRequest {
 
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
-        bail!("pr requires a subcommand: init | create | start | ready | preflight | finish");
+        bail!("pr requires a subcommand: init | start | ready | preflight | finish");
     };
 
     match subcommand {
@@ -661,145 +646,11 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     Ok(())
 }
 
-fn recover_root_bundle_after_start_failure(
-    repo_root: &Path,
-    issue_ref: &IssueRef,
-    title: &str,
-    source_path: &Path,
-) -> Result<(PathBuf, PathBuf, PathBuf)> {
-    let stp_path = issue_ref.task_bundle_stp_path(repo_root);
-    if !stp_path.is_file() {
-        if let Some(parent) = stp_path.parent() {
-            fs::create_dir_all(parent)?;
-        }
-        fs::copy(source_path, &stp_path).with_context(|| {
-            format!(
-                "failed to seed task-bundle stp from '{}' to '{}'",
-                source_path.display(),
-                stp_path.display()
-            )
-        })?;
-    }
-    let branch = issue_ref.branch_name("codex");
-    let (bundle_input, bundle_output) =
-        ensure_bootstrap_cards(repo_root, issue_ref, title, &branch, source_path)?;
-    Ok((stp_path, bundle_input, bundle_output))
-}
-
 fn real_pr_create(args: &[String]) -> Result<()> {
-    let mode = parse_create_args(args)?;
-    let repo_root = repo_root()?;
-    let repo = default_repo(&repo_root)?;
-
-    match mode {
-        CreateMode::Reconcile { issue, stp_path } => {
-            let doc = load_issue_prompt(&stp_path)?;
-            if doc.front_matter.issue_number != issue {
-                bail!(
-                    "create: STP issue_number ({}) does not match requested issue ({issue})",
-                    doc.front_matter.issue_number
-                );
-            }
-            reconcile_issue(issue, &repo, &doc)?;
-            println!("ISSUE_NUM={issue}");
-            println!("STP_PATH={}", path_relative_to_repo(&repo_root, &stp_path));
-            println!("MODE=reconcile");
-            Ok(())
-        }
-        CreateMode::Create {
-            title,
-            slug,
-            body,
-            body_file,
-            labels,
-            version,
-            no_start,
-        } => {
-            let slug = sanitize_slug(slug.unwrap_or_else(|| title.clone()));
-            if slug.is_empty() {
-                bail!("new: slug is empty after sanitization");
-            }
-
-            let issue_body = resolve_issue_body(body, body_file.as_deref())?;
-            if issue_body.contains("/Users/") || issue_body.contains("/home/") {
-                bail!("new: issue body contains disallowed absolute host path");
-            }
-
-            let version = version
-                .or_else(|| version_from_labels_csv(&labels))
-                .or_else(|| version_from_title(&title))
-                .unwrap_or_else(|| DEFAULT_VERSION.to_string());
-            let labels_csv = normalize_labels_csv(&labels, &version);
-
-            let issue_url = gh_issue_create(&title, &issue_body, &labels_csv)?;
-            let issue_num = parse_issue_number_from_url(&issue_url)?;
-
-            println!("ISSUE_URL={issue_url}");
-            println!("ISSUE_NUM={issue_num}");
-            println!("STATE=ISSUE_CREATED");
-
-            let issue_ref = IssueRef::new(issue_num, version.clone(), slug.clone())?;
-            let source_path = ensure_source_issue_prompt(
-                &repo_root,
-                &repo,
-                &issue_ref,
-                &title,
-                Some(&labels_csv),
-                &version,
-            )?;
-            println!(
-                "SOURCE_PATH={}",
-                path_relative_to_repo(&repo_root, &source_path)
-            );
-
-            if no_start {
-                println!("START_STATE=SKIPPED");
-                return Ok(());
-            }
-
-            let status = Command::new("bash")
-                .arg("./adl/tools/pr.sh")
-                .arg("start")
-                .arg(issue_num.to_string())
-                .arg("--slug")
-                .arg(slug.clone())
-                .arg("--title")
-                .arg(title.clone())
-                .arg("--version")
-                .arg(version.clone())
-                .current_dir(&repo_root)
-                .status()
-                .with_context(|| "failed to delegate create->start handoff to pr.sh")?;
-            if !status.success() {
-                println!("START_STATE=FAILED");
-                let (stp_path, bundle_input, bundle_output) =
-                    recover_root_bundle_after_start_failure(
-                        &repo_root,
-                        &issue_ref,
-                        &title,
-                        &source_path,
-                    )?;
-                println!("RECOVERY_STATE=ISSUE_AND_BUNDLE_READY");
-                println!("STP_PATH={}", path_relative_to_repo(&repo_root, &stp_path));
-                println!(
-                    "SIP_PATH={}",
-                    path_relative_to_repo(&repo_root, &bundle_input)
-                );
-                println!(
-                    "SOR_PATH={}",
-                    path_relative_to_repo(&repo_root, &bundle_output)
-                );
-                bail!(
-                    "create: issue created and root bundle recovered, but start failed; issue #{} exists and can be resumed from {}",
-                    issue_num,
-                    path_relative_to_repo(&repo_root, &stp_path)
-                );
-            }
-            println!("START_STATE=STARTED");
-            println!("BRANCH=codex/{}-{}", issue_num, slug);
-            Ok(())
-        }
-    }
+    let _ = args;
+    bail!(
+        "create: `adl pr create` is retired. Create or reconcile the GitHub issue outside ADL, then run `adl pr init <issue>` followed by `adl pr start <issue>`."
+    )
 }
 
 fn parse_init_args(args: &[String]) -> Result<InitArgs> {
@@ -838,83 +689,6 @@ fn parse_init_args(args: &[String]) -> Result<InitArgs> {
         i += 1;
     }
     Ok(parsed)
-}
-
-fn parse_create_args(args: &[String]) -> Result<CreateMode> {
-    if let Some(first) = args.first() {
-        if let Ok(issue) = first.parse::<u32>() {
-            let mut stp_path: Option<PathBuf> = None;
-            let mut i = 1;
-            while i < args.len() {
-                match args[i].as_str() {
-                    "--stp" => {
-                        stp_path = Some(PathBuf::from(require_value(args, i, "create", "--stp")?));
-                        i += 1;
-                    }
-                    other => bail!("create: unknown arg: {other}"),
-                }
-                i += 1;
-            }
-            let stp_path =
-                stp_path.ok_or_else(|| anyhow!("create: --stp is required for reconcile mode"))?;
-            return Ok(CreateMode::Reconcile { issue, stp_path });
-        }
-    }
-
-    let mut title: Option<String> = None;
-    let mut slug: Option<String> = None;
-    let mut body: Option<String> = None;
-    let mut body_file: Option<PathBuf> = None;
-    let mut labels = DEFAULT_NEW_LABELS.to_string();
-    let mut version: Option<String> = None;
-    let mut no_start = false;
-    let mut i = 0;
-    while i < args.len() {
-        match args[i].as_str() {
-            "--title" => {
-                title = Some(require_value(args, i, "new", "--title")?);
-                i += 1;
-            }
-            "--slug" => {
-                slug = Some(require_value(args, i, "new", "--slug")?);
-                i += 1;
-            }
-            "--body" => {
-                body = Some(require_value(args, i, "new", "--body")?);
-                i += 1;
-            }
-            "--body-file" => {
-                body_file = Some(PathBuf::from(require_value(args, i, "new", "--body-file")?));
-                i += 1;
-            }
-            "--labels" => {
-                labels = require_value(args, i, "new", "--labels")?;
-                i += 1;
-            }
-            "--version" => {
-                version = Some(require_value(args, i, "new", "--version")?);
-                i += 1;
-            }
-            "--no-start" => no_start = true,
-            other => bail!("new: unknown arg: {other}"),
-        }
-        i += 1;
-    }
-
-    let title = title.ok_or_else(|| anyhow!("new: --title is required"))?;
-    if body.is_some() && body_file.is_some() {
-        bail!("new: pass only one of --body or --body-file");
-    }
-
-    Ok(CreateMode::Create {
-        title,
-        slug,
-        body,
-        body_file,
-        labels,
-        version,
-        no_start,
-    })
 }
 
 fn parse_start_args(args: &[String]) -> Result<StartArgs> {
@@ -2224,6 +1998,7 @@ fn infer_required_outcome_type(labels_csv: &str, title: &str) -> &'static str {
     "code"
 }
 
+#[cfg(test)]
 fn version_from_labels_csv(labels_csv: &str) -> Option<String> {
     labels_csv
         .split(',')
@@ -2245,6 +2020,7 @@ fn validate_issue_prompt_exists(path: &Path) -> Result<()> {
     Ok(())
 }
 
+#[cfg(test)]
 fn load_issue_prompt(path: &Path) -> Result<IssuePromptDoc> {
     let text = fs::read_to_string(path)
         .with_context(|| format!("failed to read issue prompt '{}'", path.display()))?;
@@ -2269,87 +2045,7 @@ fn load_issue_prompt(path: &Path) -> Result<IssuePromptDoc> {
     })
 }
 
-fn reconcile_issue(issue: u32, repo: &str, doc: &IssuePromptDoc) -> Result<()> {
-    let desired_labels = doc.front_matter.labels.clone();
-    let current_labels = run_capture_allow_failure(
-        "gh",
-        &[
-            "issue",
-            "view",
-            &issue.to_string(),
-            "-R",
-            repo,
-            "--json",
-            "labels",
-            "-q",
-            ".labels[].name",
-        ],
-    )?
-    .unwrap_or_default()
-    .lines()
-    .map(str::trim)
-    .filter(|line| !line.is_empty())
-    .map(str::to_string)
-    .collect::<Vec<_>>();
-
-    let body_file = std::env::temp_dir().join(format!("adl-pr-create-body-{issue}.md"));
-    fs::write(&body_file, &doc.body)?;
-    run_status(
-        "gh",
-        &[
-            "issue",
-            "edit",
-            &issue.to_string(),
-            "-R",
-            repo,
-            "--title",
-            &doc.front_matter.title,
-            "--body-file",
-            body_file
-                .to_str()
-                .ok_or_else(|| anyhow!("body file path must be utf-8"))?,
-        ],
-    )?;
-
-    for desired in desired_labels
-        .iter()
-        .filter(|label| !current_labels.contains(label))
-    {
-        run_status(
-            "gh",
-            &[
-                "issue",
-                "edit",
-                &issue.to_string(),
-                "-R",
-                repo,
-                "--add-label",
-                desired,
-            ],
-        )?;
-    }
-
-    for current in current_labels
-        .iter()
-        .filter(|label| !desired_labels.contains(label))
-    {
-        run_status(
-            "gh",
-            &[
-                "issue",
-                "edit",
-                &issue.to_string(),
-                "-R",
-                repo,
-                "--remove-label",
-                current,
-            ],
-        )?;
-    }
-    let _ = fs::remove_file(&body_file);
-    Ok(())
-}
-
+#[cfg(test)]
 fn resolve_issue_body(body: Option<String>, body_file: Option<&Path>) -> Result<String> {
     if let Some(path) = body_file {
         if path == Path::new("-") {
@@ -2372,33 +2068,7 @@ fn normalize_labels_csv(labels: &str, version: &str) -> String {
     normalized.join(",")
 }
 
-fn gh_issue_create(title: &str, body: &str, labels_csv: &str) -> Result<String> {
-    let mut cmd = Command::new("gh");
-    cmd.arg("issue")
-        .arg("create")
-        .arg("--title")
-        .arg(title)
-        .arg("--body")
-        .arg(body);
-    for label in labels_csv
-        .split(',')
-        .map(str::trim)
-        .filter(|label| !label.is_empty())
-    {
-        cmd.arg("--label").arg(label);
-    }
-    let output = cmd
-        .output()
-        .with_context(|| "failed to run gh issue create")?;
-    if !output.status.success() {
-        bail!(
-            "gh issue create failed: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-    }
-    Ok(String::from_utf8_lossy(&output.stdout).trim().to_string())
-}
-
+#[cfg(test)]
 fn parse_issue_number_from_url(url: &str) -> Result<u32> {
     let issue = url
         .trim()
@@ -2913,48 +2583,23 @@ verification_summary:
     #[test]
     fn real_pr_dispatch_rejects_missing_and_unknown_subcommands() {
         let err = real_pr(&[]).expect_err("missing subcommand");
-        assert!(err.to_string().contains(
-            "pr requires a subcommand: init | create | start | ready | preflight | finish"
-        ));
+        assert!(err
+            .to_string()
+            .contains("pr requires a subcommand: init | start | ready | preflight | finish"));
 
         let err = real_pr(&["bogus".to_string()]).expect_err("unknown subcommand");
         assert!(err.to_string().contains("unknown pr subcommand: bogus"));
     }
 
     #[test]
-    fn parse_create_args_supports_reconcile_mode() {
-        match parse_create_args(&[
-            "1151".to_string(),
-            "--stp".to_string(),
-            ".adl/v0.86/tasks/example/stp.md".to_string(),
-        ])
-        .expect("parse")
-        {
-            CreateMode::Reconcile { issue, stp_path } => {
-                assert_eq!(issue, 1151);
-                assert_eq!(stp_path, PathBuf::from(".adl/v0.86/tasks/example/stp.md"));
-            }
-            other => panic!("unexpected mode: {other:?}"),
-        }
-    }
-
-    #[test]
-    fn parse_create_args_requires_title_and_rejects_conflicting_body_flags() {
-        let err = parse_create_args(&["--no-start".to_string()]).expect_err("missing title");
-        assert!(err.to_string().contains("--title is required"));
-
-        let err = parse_create_args(&[
+    fn real_pr_create_is_retired() {
+        let err = real_pr(&[
+            "create".to_string(),
             "--title".to_string(),
             "Example".to_string(),
-            "--body".to_string(),
-            "inline".to_string(),
-            "--body-file".to_string(),
-            "body.md".to_string(),
         ])
-        .expect_err("conflicting body flags");
-        assert!(err
-            .to_string()
-            .contains("only one of --body or --body-file"));
+        .expect_err("create should be retired");
+        assert!(err.to_string().contains("`adl pr create` is retired"));
     }
 
     #[test]
@@ -3024,14 +2669,6 @@ verification_summary:
 
         let err = parse_start_args(&["1152".to_string(), "--bogus".to_string()]).expect_err("err");
         assert!(err.to_string().contains("start: unknown arg"));
-    }
-
-    #[test]
-    fn parse_create_args_reconcile_requires_stp() {
-        let err = parse_create_args(&["1151".to_string()]).expect_err("missing stp");
-        assert!(err
-            .to_string()
-            .contains("create: --stp is required for reconcile mode"));
     }
 
     #[test]
@@ -3116,180 +2753,6 @@ verification_summary:
         );
         assert!(sip_path.is_file());
         assert!(sor_path.is_file());
-    }
-
-    #[test]
-    fn real_pr_create_no_start_creates_issue_and_source_prompt() {
-        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
-        let repo = unique_temp_dir("adl-pr-real-create");
-        init_git_repo(&repo);
-        let bin_dir = repo.join("bin");
-        fs::create_dir_all(&bin_dir).expect("bin dir");
-        let gh_log = repo.join("gh.log");
-        let gh_path = bin_dir.join("gh");
-        write_executable(
-            &gh_path,
-            &format!(
-                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2\" = 'issue create' ]; then\n  printf 'https://github.com/danielbaustin/agent-design-language/issues/1158\\n'\n  exit 0\nfi\nexit 1\n",
-                gh_log.display()
-            ),
-        );
-
-        let old_path = env::var("PATH").unwrap_or_default();
-        let prev_dir = env::current_dir().expect("cwd");
-        unsafe {
-            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
-        }
-        env::set_current_dir(&repo).expect("chdir");
-
-        let result = real_pr(&[
-            "create".to_string(),
-            "--title".to_string(),
-            "[v0.86][tools] Create test".to_string(),
-            "--slug".to_string(),
-            "v0-86-tools-create-test".to_string(),
-            "--body".to_string(),
-            "## Goal\n- test\n\n## Acceptance Criteria\n- works".to_string(),
-            "--labels".to_string(),
-            "track:roadmap,type:task,area:tools,version:v0.86".to_string(),
-            "--no-start".to_string(),
-        ]);
-
-        env::set_current_dir(prev_dir).expect("restore cwd");
-        unsafe {
-            env::set_var("PATH", old_path);
-        }
-        result.expect("real_pr create");
-
-        let issue_ref = IssueRef::new(
-            1158,
-            "v0.86".to_string(),
-            "v0-86-tools-create-test".to_string(),
-        )
-        .expect("issue ref");
-        let source_path = issue_ref.issue_prompt_path(&repo);
-        assert!(source_path.is_file());
-        let source = fs::read_to_string(&source_path).expect("read source");
-        assert!(source.contains("issue_number: 1158"));
-        assert!(source.contains("title: \"[v0.86][tools] Create test\""));
-        let gh_calls = fs::read_to_string(&gh_log).expect("read gh log");
-        assert!(gh_calls.contains("issue create"));
-    }
-
-    #[test]
-    fn real_pr_create_with_start_failure_reports_partial_state() {
-        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
-        let repo = unique_temp_dir("adl-pr-real-create-start-fails");
-        init_git_repo(&repo);
-        copy_bootstrap_support_files(&repo);
-        let bin_dir = repo.join("bin");
-        fs::create_dir_all(&bin_dir).expect("bin dir");
-        let gh_log = repo.join("gh.log");
-        let gh_path = bin_dir.join("gh");
-        write_executable(
-            &gh_path,
-            &format!(
-                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2\" = 'issue create' ]; then\n  printf 'https://github.com/danielbaustin/agent-design-language/issues/1158\\n'\n  exit 0\nfi\nexit 1\n",
-                gh_log.display()
-            ),
-        );
-        let tools_dir = repo.join("adl/tools");
-        fs::create_dir_all(&tools_dir).expect("tools dir");
-        write_executable(
-            &tools_dir.join("pr.sh"),
-            "#!/usr/bin/env bash\nset -euo pipefail\nexit 1\n",
-        );
-
-        let old_path = env::var("PATH").unwrap_or_default();
-        let prev_dir = env::current_dir().expect("cwd");
-        unsafe {
-            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
-        }
-        env::set_current_dir(&repo).expect("chdir");
-        let err = real_pr(&[
-            "create".to_string(),
-            "--title".to_string(),
-            "[v0.86][tools] Create start failure".to_string(),
-            "--slug".to_string(),
-            "v0-86-tools-create-start-failure".to_string(),
-            "--body".to_string(),
-            "## Goal\n- test\n\n## Acceptance Criteria\n- works".to_string(),
-            "--labels".to_string(),
-            "track:roadmap,type:task,area:tools,version:v0.86".to_string(),
-        ])
-        .expect_err("create should fail when start delegate fails");
-        env::set_current_dir(prev_dir).expect("restore cwd");
-        unsafe {
-            env::set_var("PATH", old_path);
-        }
-        assert!(err.to_string().contains(
-            "create: issue created and root bundle recovered, but start failed; issue #1158 exists"
-        ));
-        let issue_ref = IssueRef::new(
-            1158,
-            "v0.86".to_string(),
-            "v0-86-tools-create-start-failure".to_string(),
-        )
-        .expect("issue ref");
-        assert!(issue_ref.task_bundle_stp_path(&repo).is_file());
-        assert!(issue_ref.task_bundle_input_path(&repo).is_file());
-        assert!(issue_ref.task_bundle_output_path(&repo).is_file());
-    }
-
-    #[test]
-    fn real_pr_create_reconcile_updates_issue_via_gh() {
-        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
-        let repo = unique_temp_dir("adl-pr-reconcile");
-        init_git_repo(&repo);
-        let bin_dir = repo.join("bin");
-        fs::create_dir_all(&bin_dir).expect("bin dir");
-        let gh_log = repo.join("gh.log");
-        let gh_path = bin_dir.join("gh");
-        write_executable(
-            &gh_path,
-            &format!(
-                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2 $5 $6\" = 'issue view --json labels -q' ]; then\n  printf 'track:roadmap\\nversion:v0.86\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'issue edit' ]; then\n  exit 0\nfi\nexit 1\n",
-                gh_log.display()
-            ),
-        );
-
-        let stp_dir = repo.join(".adl/v0.86/tasks/issue-1151__example");
-        fs::create_dir_all(&stp_dir).expect("stp dir");
-        let stp_path = stp_dir.join("stp.md");
-        fs::write(
-            &stp_path,
-            "---\ntitle: \"[v0.86][tools] Reconcile test\"\nlabels:\n  - \"track:roadmap\"\n  - \"type:task\"\n  - \"area:tools\"\n  - \"version:v0.86\"\nissue_number: 1151\n---\n\n# Body\n\nReconcile me.\n",
-        )
-        .expect("write stp");
-
-        let old_path = env::var("PATH").unwrap_or_default();
-        let prev_dir = env::current_dir().expect("cwd");
-        unsafe {
-            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
-        }
-        env::set_current_dir(&repo).expect("chdir");
-
-        let result = real_pr(&[
-            "create".to_string(),
-            "1151".to_string(),
-            "--stp".to_string(),
-            stp_path.display().to_string(),
-        ]);
-
-        env::set_current_dir(prev_dir).expect("restore cwd");
-        unsafe {
-            env::set_var("PATH", old_path);
-        }
-        result.expect("reconcile");
-
-        let gh_calls = fs::read_to_string(&gh_log).expect("read gh log");
-        assert!(gh_calls.contains("issue edit 1151 -R danielbaustin/agent-design-language --title [v0.86][tools] Reconcile test --body-file"));
-        assert!(gh_calls.contains(
-            "issue edit 1151 -R danielbaustin/agent-design-language --add-label type:task"
-        ));
-        assert!(gh_calls.contains(
-            "issue edit 1151 -R danielbaustin/agent-design-language --add-label area:tools"
-        ));
     }
 
     #[test]
@@ -3595,25 +3058,6 @@ verification_summary:
         assert!(err
             .to_string()
             .contains("ready: could not infer slug; pass --slug or run start first"));
-    }
-
-    #[test]
-    fn parse_create_args_supports_new_issue_mode() {
-        match parse_create_args(&[
-            "--title".to_string(),
-            "Example".to_string(),
-            "--no-start".to_string(),
-        ])
-        .expect("parse")
-        {
-            CreateMode::Create {
-                title, no_start, ..
-            } => {
-                assert_eq!(title, "Example");
-                assert!(no_start);
-            }
-            other => panic!("unexpected mode: {other:?}"),
-        }
     }
 
     #[test]

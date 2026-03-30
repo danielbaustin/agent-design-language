@@ -29,11 +29,10 @@ GH_BODY="$REPORT_ROOT/gh_body.md"
 MANIFEST="$REPORT_ROOT/five_command_editing_demo_manifest.json"
 CONTRACT_JSON="$REPORT_ROOT/editor_adapter_contract.json"
 INIT_LOG="$REPORT_ROOT/01-pr-init.txt"
-CREATE_LOG="$REPORT_ROOT/02-pr-create.txt"
-ADAPTER_LOG="$REPORT_ROOT/03-editor-adapter.txt"
-START_LOG="$REPORT_ROOT/04-pr-start.txt"
-RUN_LOG="$REPORT_ROOT/05-pr-run.txt"
-FINISH_LOG="$REPORT_ROOT/06-pr-finish.txt"
+ADAPTER_LOG="$REPORT_ROOT/02-editor-adapter.txt"
+START_LOG="$REPORT_ROOT/03-pr-start.txt"
+RUN_LOG="$REPORT_ROOT/04-pr-run.txt"
+FINISH_LOG="$REPORT_ROOT/05-pr-finish.txt"
 MOCK_OLLAMA="$ROOT_DIR/adl/tools/mock_ollama_v0_4.sh"
 
 mkdir -p "$MOCKBIN" "$REPORT_ROOT"
@@ -86,7 +85,7 @@ pr_start:
 # Issue Card
 
 ## Summary
-Demonstrate the bounded five-command editing lifecycle truthfully.
+Demonstrate the bounded authoring lifecycle truthfully.
 ## Goal
 Show one honest end-to-end lifecycle over the real command surface.
 ## Required Outcome
@@ -195,11 +194,6 @@ export GH_BODY_FILE_CAPTURE="$GH_BODY"
   "$BASH_BIN" adl/tools/pr.sh init "$ISSUE_NUM" --slug "$SLUG" --no-fetch-issue --version v0.85
 ) | tee "$INIT_LOG"
 
-(
-  cd "$REPO"
-  "$BASH_BIN" adl/tools/pr.sh create "$ISSUE_NUM" --stp "$STP_PATH"
-) | tee "$CREATE_LOG"
-
 {
   echo "# editor adapter dry run"
   "$BASH_BIN" adl/tools/editor_action.sh contract --format json >"$CONTRACT_JSON"
@@ -262,11 +256,11 @@ Execution:
 - End Time: 2026-03-24T00:00:01Z
 
 ## Summary
-Bounded demo record for the five-command editing lifecycle.
+Bounded demo record for the authoring lifecycle.
 ## Artifacts produced
 - docs/tooling/editor/five_command_demo_note.md
 ## Actions taken
-- exercised init/create/start/run/finish in one bounded local demo
+- exercised init/start/run/finish in one bounded local demo
 ## Main Repo Integration (REQUIRED)
 - Tracked paths prepared for main-repo integration:
   - \`docs/tooling/editor/five_command_demo_note.md\`
@@ -281,7 +275,7 @@ Bounded demo record for the five-command editing lifecycle.
 ## Validation
 - Validation commands and their purpose:
   - \`bash adl/tools/demo_five_command_editing.sh\`
-    - proves the bounded five-command lifecycle is runnable through the supported command surface and documented adapter path.
+    - proves the bounded authoring lifecycle is runnable through the supported command surface and documented adapter path.
 - Results:
   - all listed commands passed
 ## Verification Summary
@@ -290,7 +284,7 @@ verification_summary:
   validation:
     status: PASS
     checks_run:
-      - "five-command editing demo"
+      - "authoring lifecycle demo"
   determinism:
     status: PASS
     replay_verified: true
@@ -308,7 +302,7 @@ verification_summary:
       approved: not_applicable
 \`\`\`
 ## Determinism Evidence
-- Determinism tests executed: bounded five-command editing demo
+- Determinism tests executed: bounded authoring lifecycle demo
 - Replay verification (same inputs -> same artifacts/order): yes
 - Ordering guarantees (sorting / tie-break rules used): fixed lifecycle order
 - Artifact stability notes: manifest and per-step transcripts are emitted deterministically
@@ -357,7 +351,6 @@ manifest = {
     "editor_adapter_contract_json": str(Path("$CONTRACT_JSON")),
     "step_logs": {
         "pr_init": str(Path("$INIT_LOG")),
-        "pr_create": str(Path("$CREATE_LOG")),
         "editor_adapter": str(Path("$ADAPTER_LOG")),
         "pr_start": str(Path("$START_LOG")),
         "pr_run": str(Path("$RUN_LOG")),

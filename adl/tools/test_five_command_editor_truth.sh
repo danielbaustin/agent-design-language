@@ -18,17 +18,16 @@ assert_contains() {
 }
 
 assert_contains "  init" "$HELP_OUT" "help lists pr init"
-assert_contains "  create" "$HELP_OUT" "help lists pr create"
 assert_contains "  start" "$HELP_OUT" "help lists pr start"
 assert_contains "  run" "$HELP_OUT" "help lists pr run"
 assert_contains "  finish" "$HELP_OUT" "help lists pr finish"
+if grep -Fq "  create" <<<"$HELP_OUT"; then
+  echo "assertion failed: help must not list pr create" >&2
+  exit 1
+fi
 
 grep -Fq '| `pr init` | yes | no | control-plane only |' "$ROOT_DIR/docs/tooling/editor/command_adapter.md" || {
   echo "assertion failed: command_adapter.md must keep pr init control-plane only" >&2
-  exit 1
-}
-grep -Fq '| `pr create` | yes | no | control-plane only |' "$ROOT_DIR/docs/tooling/editor/command_adapter.md" || {
-  echo "assertion failed: command_adapter.md must keep pr create control-plane only" >&2
   exit 1
 }
 grep -Fq '| `pr start` | yes | yes, via `adl/tools/editor_action.sh start` | supported thin adapter |' "$ROOT_DIR/docs/tooling/editor/command_adapter.md" || {
@@ -48,10 +47,6 @@ grep -Fq -- '- `pr init` is not launched from the browser in this slice' "$ROOT_
   echo "assertion failed: editor demo must keep pr init out of browser scope" >&2
   exit 1
 }
-grep -Fq -- '- `pr create` is not launched from the browser in this slice' "$ROOT_DIR/docs/tooling/editor/demo.md" || {
-  echo "assertion failed: editor demo must keep pr create out of browser scope" >&2
-  exit 1
-}
 grep -Fq -- '- `pr run` is not launched from the browser in this slice' "$ROOT_DIR/docs/tooling/editor/demo.md" || {
   echo "assertion failed: editor demo must keep pr run out of browser scope" >&2
   exit 1
@@ -65,4 +60,4 @@ grep -Fq -- '- the broader lifecycle commands still run through the repo-local c
   exit 1
 }
 
-echo "five-command editor truth checks: ok"
+echo "editor truth checks: ok"

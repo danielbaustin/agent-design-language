@@ -2,7 +2,7 @@
 
 This is the default contributor path for ADL development:
 
-`preflight -> init -> create -> start -> codex -> run_if_required -> finish -> report`
+`preflight -> issue_ready -> init -> start -> codex -> run_if_required -> finish -> report`
 
 Tracked mirror of the local skill contract:
 
@@ -14,10 +14,9 @@ Install or resync the local skill with:
 bash adl/tools/install_adl_pr_cycle_skill.sh
 ```
 
-The five-command control-plane surface is:
+The active control-plane surface is:
 
 - `pr init`
-- `pr create`
 - `pr start`
 - `pr run`
 - `pr finish`
@@ -25,7 +24,7 @@ The five-command control-plane surface is:
 The browser/editor adapter remains narrower:
 
 - browser-direct adapter support exists only for `adl/tools/editor_action.sh start`
-- direct browser/editor execution of `pr init`, `pr create`, `pr run`, and `pr finish` is not part of the v0.85 adapter surface
+- direct browser/editor execution of `pr init`, `pr run`, and `pr finish` is not part of the v0.85 adapter surface
 
 ## 1) Initialize Canonical STP
 
@@ -40,13 +39,16 @@ Canonical local task bundle:
 Minimum v0.85 init contract:
 - canonical task-bundle directory
 - validated `stp.md`
-- no implied SIP/SOR creation yet
+- validated root `sip.md`
+- validated root `sor.md`
 
-## 2) Reconcile GitHub Issue From Canonical STP
+## 2) Confirm GitHub Issue Exists
 
 ```bash
-bash ./adl/tools/pr.sh create <issue_num> --stp .adl/v0.85/tasks/<task-id>__<slug>/stp.md
+gh issue view <issue_num>
 ```
+
+`pr.sh` no longer creates or reconciles GitHub issues. The issue must already exist before kickoff continues.
 
 ## 3) Start Issue Branch + Local Cards
 
@@ -96,7 +98,7 @@ Typical local preflight:
 ./adl/tools/batched_checks.sh
 ```
 
-Canonical regression proof surface for the implemented five-command story:
+Canonical regression proof surface for the implemented editing story:
 
 ```bash
 bash adl/tools/test_five_command_regression_suite.sh

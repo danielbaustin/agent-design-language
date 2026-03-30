@@ -37,7 +37,6 @@ supported_actions:
     status: supported
 unsupported_browser_direct_actions:
   - pr init
-  - pr create
   - pr run
   - pr finish
 notes:
@@ -62,7 +61,6 @@ emit_contract_json() {
   ],
   "unsupported_browser_direct_actions": [
     "pr init",
-    "pr create",
     "pr run",
     "pr finish"
   ],

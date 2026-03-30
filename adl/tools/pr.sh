@@ -1986,43 +1986,8 @@ cmd_init() {
 }
 
 cmd_create() {
-  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
-    usage_create
-    return 0
-  fi
-
-  if rust_pr_delegate_available; then
-    delegate_pr_command_to_rust create "$@"
-    return 0
-  fi
-
-  if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
-    local issue="$1"
-    shift || true
-    issue="$(normalize_issue_or_die "$issue")"
-
-    local stp_path=""
-    while [[ $# -gt 0 ]]; do
-      case "$1" in
-        --stp) stp_path="$2"; shift 2 ;;
-        -h|--help) usage_create; return 0 ;;
-        *) die_with_usage "create: unknown arg: $1" usage_create ;;
-      esac
-    done
-
-    [[ -n "$stp_path" ]] || die "create: --stp is required for reconcile mode"
-    [[ -f "$stp_path" ]] || die "create: STP not found: $stp_path"
-    require_cmd gh
-    local repo
-    repo="$(default_repo)"
-    reconcile_issue_from_stp "$issue" "$stp_path" "$repo"
-    echo "ISSUE_NUM=$issue"
-    echo "STP_PATH=$(path_relative_to_repo "$stp_path")"
-    echo "MODE=reconcile"
-    return 0
-  fi
-
-  create_issue "$@"
+  usage_create >&2
+  return 1
 }
 
 cmd_start() {
@@ -2807,8 +2772,6 @@ pr.sh — reduce git/PR thrash while preserving human review
 Commands:
   help
   init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v>]
-  create  <issue> --stp <path>
-  create  --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
   run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
   start   <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>]
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
@@ -2820,13 +2783,6 @@ Commands:
   status
 
 Flags:
-  (create)  <issue> --stp <path>              Reconcile an existing GitHub issue from a canonical STP.
-  (create)  --title "<title>"                 Required issue title for gh issue create.
-  (create)  --body "<text>"                   Optional issue body text.
-  (create)  --body-file <path|->              Optional issue body file path ('-' reads stdin).
-  (create)  --labels <csv>                    Comma-separated labels (default: track:roadmap,type:task,area:tools).
-  (create)  --version <v0.86>                 Default/fallback version label for issue/card flow.
-  (create)  --no-start                        Only create issue; do not invoke start.
   (init)    --version <v0.85>                 Override detected version (otherwise inferred from issue labels version:vX.Y)
   (init)    --no-fetch-issue                  Do not fetch issue title/labels; requires --slug.
   (run)     --runs-root <dir>                 Override canonical run artifact root (default: <repo>/.adl/runs or ADL_RUNS_ROOT).
@@ -2844,6 +2800,7 @@ Flags:
   (start)   --allow-open-pr-wave               Override the open milestone PR wave guard.
 
 Notes:
+- Issue creation/reconciliation is no longer part of `pr.sh`; create the GitHub issue first, then run `pr init` and `pr start`.
 - PRs are created as DRAFT by default to preserve human review.
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - run is a bounded v0.85 wrapper over the Rust adl runtime; browser/editor direct invocation remains follow-on work.
@@ -2856,8 +2813,6 @@ Notes:
 Examples:
   adl/tools/pr.sh help
   adl/tools/pr.sh init 17 --slug b6-default-system --no-fetch-issue --version v0.85
-  adl/tools/pr.sh create 17 --stp .adl/issues/v0.85/bodies/issue-17-b6-default-system.md
-  adl/tools/pr.sh create --title "adl: fix timeout handling" --slug timeout-fix
   adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml --trace --allow-unsigned
   adl/tools/pr.sh start 17 --slug b6-default-system
   adl/tools/pr.sh preflight 17 --slug b6-default-system --version v0.85
@@ -2880,20 +2835,17 @@ Usage:
 
 Notes:
 - `pr new` is retired.
-- Use `adl/tools/pr.sh create --title ...` instead.
+- Create the GitHub issue first, then use `adl/tools/pr.sh init <issue>` and `adl/tools/pr.sh start <issue>`.
 EOF
 }
 
 usage_create() {
   cat <<'EOF'
-Usage:
-  adl/tools/pr.sh create <issue> --stp <path>
-  adl/tools/pr.sh create --title "<title>" [--slug <slug>] [--body "<text>" | --body-file <path>] [--labels <csv>] [--version <v>] [--no-start]
-
 Notes:
-- Reconcile mode updates an existing GitHub issue from a canonical STP.
-- Create mode is the canonical issue-creation path.
-- `pr new` is retired and should not be used.
+- `pr create` is retired.
+- Create or reconcile the GitHub issue outside `pr.sh`, then run:
+  1. `adl/tools/pr.sh init <issue> [...]`
+  2. `adl/tools/pr.sh start <issue> [...]`
 EOF
 }
 
@@ -2904,8 +2856,8 @@ Usage:
 
 Notes:
 - Initializes the canonical local task-bundle authoring surface for an existing issue-backed task.
-- For v0.85, the minimum initialized artifact set is the task-bundle directory plus a validated stp.md copied from the canonical local issue prompt.
-- Does not create sip.md or sor.md; those remain the responsibility of pr start.
+- Emits and validates the root STP/SIP/SOR bundle before returning success.
+- Fails if the full root task bundle cannot be created cleanly.
 EOF
 }
 

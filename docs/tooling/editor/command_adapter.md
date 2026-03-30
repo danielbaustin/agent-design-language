@@ -24,7 +24,6 @@ The browser/editor may:
 The browser/editor may not claim direct browser invocation of:
 
 - `pr init`
-- `pr create`
 - `pr run`
 - `pr finish`
 
@@ -47,7 +46,6 @@ That means:
 | Lifecycle command | Exists in repo | Browser-direct adapter support in v0.85 | Truthful near-term status |
 | --- | --- | --- | --- |
 | `pr init` | yes | no | control-plane only |
-| `pr create` | yes | no | control-plane only |
 | `pr start` | yes | yes, via `adl/tools/editor_action.sh start` | supported thin adapter |
 | `pr run` | yes | no | control-plane only |
 | `pr finish` | yes | no | control-plane only |

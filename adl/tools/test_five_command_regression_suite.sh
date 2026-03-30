@@ -23,4 +23,4 @@ run_check adl/tools/test_editor_action.sh
 run_check adl/tools/test_demo_five_command_editing.sh
 run_check adl/tools/test_five_command_editor_truth.sh
 
-echo "five-command regression suite: ok"
+echo "authoring regression suite: ok"

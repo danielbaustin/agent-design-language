@@ -38,10 +38,6 @@ cat >"$bindir/gh" <<'EOF'
 set -euo pipefail
 LOG_FILE="${GH_LOG_FILE:?}"
 printf '%s\n' "$*" >>"$LOG_FILE"
-if [[ "${1:-}" == "issue" && "${2:-}" == "create" ]]; then
-  echo "https://github.com/example/repo/issues/975"
-  exit 0
-fi
 if [[ "${1:-}" == "issue" && "${2:-}" == "view" ]]; then
   issue="${3:-}"
   shift 3
@@ -96,36 +92,27 @@ assert_contains() {
   export PATH="$bindir:$PATH"
   export GH_LOG_FILE="$gh_log"
 
-  out="$("$BASH_BIN" adl/tools/pr.sh create \
-    --title "[v0.85][process] Infer current milestone card version from issue title when labels are missing" \
-    --slug v085-process-infer-card-version-from-issue-title \
-    --labels "track:roadmap,version:v0.85,type:bug,area:tools" \
-    --body "test body")"
-
-  assert_contains "ISSUE_NUM=975" "$out" "create prints issue number"
-  [[ -f ".worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" ]] || {
-    echo "assertion failed: expected canonical input card under the worktree-local .adl/v0.85/tasks" >&2
+  out_init="$("$BASH_BIN" adl/tools/pr.sh init 975 --slug v085-process-infer-card-version-from-issue-title)"
+  assert_contains "STATE    ISSUE_AND_BUNDLE_READY" "$out_init" "init ready state"
+  [[ -f ".adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" ]] || {
+    echo "assertion failed: expected canonical input card under the root .adl/v0.85/tasks" >&2
     exit 1
   }
-  [[ -f ".worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sor.md" ]] || {
-    echo "assertion failed: expected canonical output card under the worktree-local .adl/v0.85/tasks" >&2
+  [[ -f ".adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sor.md" ]] || {
+    echo "assertion failed: expected canonical output card under the root .adl/v0.85/tasks" >&2
     exit 1
   }
-  grep -Fq "Version: v0.85" ".worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" || {
+  grep -Fq "Version: v0.85" ".adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" || {
     echo "assertion failed: expected input card version v0.85" >&2
     exit 1
   }
   grep -Fq "Title: [v0.85][process] Infer current milestone card version from issue title when labels are missing" \
-    ".worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" || {
+    ".adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" || {
     echo "assertion failed: expected preserved issue title in input card" >&2
     exit 1
   }
-  grep -Fq -- "--label version:v0.85" "$gh_log" || {
-    echo "assertion failed: expected issue create to use version:v0.85" >&2
-    exit 1
-  }
-  if grep -Fq -- "--label version:v0.3" "$gh_log"; then
-    echo "assertion failed: unexpected version:v0.3 label in issue create" >&2
+  if grep -Fq "v0.3" "$gh_log"; then
+    echo "assertion failed: unexpected v0.3 inference in gh issue view path" >&2
     exit 1
   fi
 
@@ -144,22 +131,6 @@ assert_contains() {
     exit 1
   }
 
-  : >"$gh_log"
-  out_title_only="$("$BASH_BIN" adl/tools/pr.sh create \
-    --title "[v0.85][process] Title-only version inference remains stable" \
-    --slug v085-process-title-only-version-inference-remains-stable \
-    --labels "track:roadmap,type:bug,area:tools" \
-    --body "test body" \
-    --no-start)"
-  assert_contains "ISSUE_NUM=975" "$out_title_only" "create no-start prints issue number"
-  grep -Fq -- "--label version:v0.85" "$gh_log" || {
-    echo "assertion failed: expected title-only create to infer version:v0.85" >&2
-    exit 1
-  }
-  if grep -Fq -- "--label version:v0.3" "$gh_log"; then
-    echo "assertion failed: unexpected version:v0.3 label in title-only issue create" >&2
-    exit 1
-  fi
 )
 
-echo "pr.sh create/start title+version inference: ok"
+echo "pr.sh init/start title+version inference: ok"
