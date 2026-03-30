@@ -1,6 +1,6 @@
 # Five-Command Editing Demo
 
-This is the bounded, truthful proof surface for the full v0.85 five-command editing lifecycle.
+This is the bounded, truthful proof surface for the current v0.85 authoring lifecycle.
 
 Run:
 
@@ -11,11 +11,10 @@ Run:
 The demo exercises, in order:
 
 1. `pr init`
-2. `pr create`
-3. the validated editor adapter dry-run for `pr start`
-4. `pr start`
-5. `pr run`
-6. `pr finish`
+2. the validated editor adapter dry-run for `pr start`
+3. `pr start`
+4. `pr run`
+5. `pr finish`
 
 The adapter surface is truthful to the current editor contract:
 
@@ -43,7 +42,7 @@ The manifest records:
 
 - The demo uses mocked GitHub and mocked model-provider surfaces to keep the proof local and deterministic.
 - The editor/browser adapter remains thin and only prepares the `pr start` action.
-- The demo does not claim direct browser execution for `pr init`, `pr create`, `pr run`, or `pr finish`.
+- The demo does not claim direct browser execution for `pr init`, `pr run`, or `pr finish`.
 - The finish step intentionally uses `--no-checks` so the demo proves lifecycle sequencing and artifact linkage rather than full CI/validation throughput.
 
 ## Why This Counts
@@ -52,4 +51,4 @@ This is not a hidden parallel workflow. It uses the real `adl/tools/pr.sh` comma
 
 - `docs/tooling/editor/command_adapter.md`
 
-So it is a bounded but honest end-to-end proof of the current v0.85 editing story.
+So it is a bounded but honest end-to-end proof of the current v0.85 authoring story.

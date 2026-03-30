@@ -308,19 +308,6 @@ EOF_SOR
   }
   assert_contains "finish: --body looks like issue-template/prompt text" "$bad"
 
-  cat >"$tmpdir/issue_body_bad.md" <<'EOF_BAD'
-## Goal
-contains /Users/example leak
-EOF_BAD
-  set +e
-  bad="$($BASH_BIN adl/tools/pr.sh create --title "bad issue" --body-file "$tmpdir/issue_body_bad.md" --no-start 2>&1)"
-  status=$?
-  set -e
-  [[ "$status" -ne 0 ]] || {
-    echo "assertion failed: expected pr.sh create absolute-path guard to fail" >&2
-    exit 1
-  }
-  assert_contains "issue body contains disallowed absolute host path" "$bad"
 )
 
-echo "pr.sh finish/new path hygiene: ok"
+echo "pr.sh finish path hygiene: ok"

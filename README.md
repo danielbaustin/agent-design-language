@@ -73,7 +73,7 @@ ADL is in active development. The repository contains both implemented runtime s
 v0.85 focused on bringing the authoring model, demos, and runtime behavior into a coherent and reliable whole.
 
 Key features:
-- clarified five-command authoring lifecycle (`pr init`, `pr create`, `pr start`, `pr run`, `pr finish`)
+- clarified authoring lifecycle (`pr init`, `pr start`, `pr run`, `pr finish`)
 - bounded editor-command adapter aligned to the control plane
 - end-to-end demo and regression proof surfaces for authoring workflows
 - worktree hygiene and queue-mechanics cleanup

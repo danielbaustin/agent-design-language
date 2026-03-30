@@ -1,6 +1,6 @@
 ---
 name: adl_pr_cycle
-description: Deterministic Codex.app workflow for the real ADL five-command control plane: pr init, pr create, pr start, pr run, and pr finish, with bounded editor-adapter truth and required reporting.
+description: Deterministic Codex.app workflow for the real ADL authoring control plane: pr init, pr start, pr run, and pr finish, with bounded editor-adapter truth and required reporting.
 ---
 
 # adl_pr_cycle
@@ -34,7 +34,7 @@ Inputs:
 
 Hard guardrails:
 1) Deterministic state machine only:
-   preflight -> init -> create -> start -> codex -> run_if_required -> finish -> report
+   preflight -> issue_ready -> init -> start -> codex -> run_if_required -> finish -> report
 2) Never work on main.
 3) Use the repo-local execution clone when available:
    .worktrees/adl-wp-<issue_num>
@@ -48,7 +48,7 @@ Hard guardrails:
 7) Always produce a report file even on failure.
 8) Browser/editor direct support remains bounded to:
    adl/tools/editor_action.sh start
-   Do not imply direct browser/editor invocation of pr init, pr create, pr run, or pr finish.
+   Do not imply direct browser/editor invocation of pr init, pr run, or pr finish.
 
 Procedure:
 1) Preflight
@@ -68,10 +68,9 @@ Procedure:
    - Run:
      bash ./adl/tools/pr.sh init <issue_num> --slug <slug> [--version <version>]
    - Confirm canonical STP exists at <stp_path>.
-3) Create
-   - Run:
-     bash ./adl/tools/pr.sh create <issue_num> --stp <stp_path>
-   - Confirm GitHub issue/body reconciliation used the canonical STP rather than a parallel source.
+3) Issue-ready check
+   - Confirm the GitHub issue already exists and matches the intended issue_num.
+   - Do not invoke `pr create`; issue creation/reconciliation is outside the ADL command surface.
 4) Start
    - Run:
      bash ./adl/tools/pr.sh start <issue_num> --slug <slug> [--version <version>]
@@ -107,7 +106,7 @@ Procedure:
      - Exactly one next action command
 
 Truth boundaries:
-- The five-command control-plane exists in repo truth.
+- The active authoring control-plane exists in repo truth.
 - The browser/editor adapter remains narrower than the full control plane.
 - Use docs/tooling/editor/command_adapter.md and docs/tooling/editor/five_command_demo.md as the canonical proof surfaces for that boundary.
 - Use bash adl/tools/test_five_command_regression_suite.sh as the canonical regression proof surface for the full implemented lifecycle.

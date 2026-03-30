@@ -48,8 +48,8 @@ The editor is intentionally simple:
 ## What It Does Not Do Yet
 
 - it does not write files directly
-- it does not replace `pr create`, `pr start`, `pr run`, or `pr finish`
-- it does not imply direct browser invocation for the full five-command lifecycle
+- it does not replace `pr start`, `pr run`, or `pr finish`
+- it does not imply direct browser invocation for the full authoring lifecycle
 - it does not yet provide the full SOR decision loop or acceptance workflow
 - it does not try to replace human review judgment with browser-only automation
 - it does not yet execute the control plane directly from browser JS

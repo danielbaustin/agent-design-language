@@ -17,9 +17,8 @@ Use this page when you need to orient quickly in the ADL repo.
 
 ## Workflow Context
 
-Default workflow uses `adl_pr_cycle` with the real five-command control plane:
+Default workflow uses `adl_pr_cycle` with the real authoring control plane:
 - `pr init`
-- `pr create`
 - `pr start`
 - `pr run`
 - `pr finish`
