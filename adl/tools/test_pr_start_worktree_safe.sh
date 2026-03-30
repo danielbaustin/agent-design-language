@@ -217,6 +217,39 @@ EOF
     echo "assertion failed: expected cards for issue 992 to exist after concurrent cards" >&2
     exit 1
   }
+
+  fakegh="$tmpdir/fakegh"
+  mkdir -p "$fakegh"
+  cat >"$fakegh/gh" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "$1" == "pr" && "$2" == "list" ]]; then
+  cat <<'JSON'
+[{"number":1169,"title":"[v0.86][runtime] Sprint 3A: Make WP-06 fast / slow paths drive real runtime behavior","url":"https://example.test/pr/1169","headRefName":"codex/1161-v0-86-runtime-sprint-3a-make-wp-06-fast-slow-paths-drive-real-runtime-behavior","baseRefName":"main","isDraft":true}]
+JSON
+  exit 0
+fi
+exit 1
+EOF
+  chmod +x "$fakegh/gh"
+
+  preflight_out="$(PATH="$fakegh:$PATH" "$BASH_BIN" adl/tools/pr.sh preflight 990 --slug blocked-wave --version v0.86 --no-fetch-issue)"
+  assert_contains "OPEN_PR_COUNT=1" "$preflight_out" "preflight detects open wave"
+  assert_contains "PREFLIGHT=BLOCK" "$preflight_out" "preflight blocks"
+
+  set +e
+  blocked_start="$(PATH="$fakegh:$PATH" "$BASH_BIN" adl/tools/pr.sh start 990 --slug blocked-wave --version v0.86 --no-fetch-issue 2>&1)"
+  status=$?
+  set -e
+  [[ "$status" -ne 0 ]] || {
+    echo "assertion failed: expected start to block on unresolved open PR wave" >&2
+    exit 1
+  }
+  assert_contains "unresolved open PR wave detected for v0.86" "$blocked_start" "start guard message"
+  assert_contains "#1169 [draft]" "$blocked_start" "start guard lists open pr"
+
+  allowed_start="$(PATH="$fakegh:$PATH" "$BASH_BIN" adl/tools/pr.sh start 990 --slug blocked-wave --version v0.86 --no-fetch-issue --allow-open-pr-wave)"
+  assert_contains "STATE  FULLY_STARTED" "$allowed_start" "override bypasses start guard"
 )
 
 echo "pr.sh start worktree-safe/idempotent flows: ok"

@@ -47,6 +47,7 @@ struct StartArgs {
     title_arg: Option<String>,
     no_fetch_issue: bool,
     version: Option<String>,
+    allow_open_pr_wave: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -54,6 +55,14 @@ struct ReadyArgs {
     issue: u32,
     slug: Option<String>,
     version: Option<String>,
+    no_fetch_issue: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct PreflightArgs {
+    issue: u32,
+    version: Option<String>,
+    slug: Option<String>,
     no_fetch_issue: bool,
 }
 
@@ -87,9 +96,22 @@ struct IssuePromptDoc {
     body: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+struct OpenPullRequest {
+    number: u32,
+    title: String,
+    url: String,
+    #[serde(rename = "headRefName")]
+    head_ref_name: String,
+    #[serde(rename = "baseRefName")]
+    base_ref_name: String,
+    #[serde(rename = "isDraft")]
+    is_draft: bool,
+}
+
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
-        bail!("pr requires a subcommand: init | create | start | ready | finish");
+        bail!("pr requires a subcommand: init | create | start | ready | preflight | finish");
     };
 
     match subcommand {
@@ -97,6 +119,7 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
         "create" => real_pr_create(&args[1..]),
         "start" => real_pr_start(&args[1..]),
         "ready" => real_pr_ready(&args[1..]),
+        "preflight" => real_pr_preflight(&args[1..]),
         "finish" => real_pr_finish(&args[1..]),
         other => bail!("unknown pr subcommand: {other}"),
     }
@@ -145,6 +168,14 @@ fn real_pr_start(args: &[String]) -> Result<()> {
 
     let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
     let branch = issue_ref.branch_name(&parsed.prefix);
+    let unresolved = unresolved_milestone_pr_wave(&repo, &version, Some(&branch))?;
+    if !parsed.allow_open_pr_wave && !unresolved.is_empty() {
+        bail!(
+            "start: unresolved open PR wave detected for {}. Resolve or merge these PRs first, or rerun with --allow-open-pr-wave if you are deliberately overriding the guard:\n{}",
+            version,
+            format_open_pr_wave(&unresolved)
+        );
+    }
     let managed_root = std::env::var_os("ADL_WORKTREE_ROOT").map(PathBuf::from);
     let worktree_path = issue_ref.default_worktree_path(&repo_root, managed_root.as_deref());
 
@@ -301,6 +332,55 @@ fn real_pr_ready(args: &[String]) -> Result<()> {
     );
     println!("READY=PASS");
     let _ = repo; // keep parity with init/create remote-based inference
+    Ok(())
+}
+
+fn real_pr_preflight(args: &[String]) -> Result<()> {
+    let parsed = parse_preflight_args(args)?;
+    let repo_root = repo_root()?;
+    let repo = default_repo(&repo_root)?;
+
+    let (version, slug) =
+        if let (Some(version), Some(slug)) = (parsed.version.clone(), parsed.slug.clone()) {
+            (version, slug)
+        } else {
+            let inferred = resolve_issue_scope_and_slug_from_local_state(&repo_root, parsed.issue)?;
+            (
+                parsed
+                    .version
+                    .clone()
+                    .or(inferred.as_ref().map(|x| x.0.clone()))
+                    .unwrap_or_else(|| DEFAULT_VERSION.to_string()),
+                parsed
+                    .slug
+                    .clone()
+                    .or(inferred.map(|x| x.1))
+                    .unwrap_or_else(|| format!("issue-{}", parsed.issue)),
+            )
+        };
+
+    let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug)?;
+    let branch = issue_ref.branch_name("codex");
+    let unresolved = unresolved_milestone_pr_wave(&repo, &version, Some(&branch))?;
+
+    println!("ISSUE={}", parsed.issue);
+    println!("VERSION={version}");
+    println!("BRANCH={branch}");
+    println!("OPEN_PR_COUNT={}", unresolved.len());
+    for pr in &unresolved {
+        println!(
+            "OPEN_PR=#{}|{}|{}|{}",
+            pr.number,
+            pr.head_ref_name,
+            if pr.is_draft { "draft" } else { "ready" },
+            pr.url
+        );
+    }
+    if unresolved.is_empty() {
+        println!("PREFLIGHT=PASS");
+    } else {
+        println!("PREFLIGHT=BLOCK");
+    }
     Ok(())
 }
 
@@ -801,6 +881,7 @@ fn parse_start_args(args: &[String]) -> Result<StartArgs> {
         title_arg: None,
         no_fetch_issue: false,
         version: None,
+        allow_open_pr_wave: false,
     };
     let mut i = 1;
     while i < args.len() {
@@ -822,7 +903,40 @@ fn parse_start_args(args: &[String]) -> Result<StartArgs> {
                 i += 1;
             }
             "--no-fetch-issue" => parsed.no_fetch_issue = true,
+            "--allow-open-pr-wave" => parsed.allow_open_pr_wave = true,
             other => bail!("start: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+    Ok(parsed)
+}
+
+fn parse_preflight_args(args: &[String]) -> Result<PreflightArgs> {
+    let issue_raw = args
+        .first()
+        .ok_or_else(|| anyhow!("preflight: missing <issue> number"))?;
+    let issue = issue_raw
+        .parse::<u32>()
+        .with_context(|| format!("invalid issue number: {issue_raw}"))?;
+    let mut parsed = PreflightArgs {
+        issue,
+        version: None,
+        slug: None,
+        no_fetch_issue: false,
+    };
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--slug" => {
+                parsed.slug = Some(require_value(args, i, "preflight", "--slug")?);
+                i += 1;
+            }
+            "--version" => {
+                parsed.version = Some(require_value(args, i, "preflight", "--version")?);
+                i += 1;
+            }
+            "--no-fetch-issue" => parsed.no_fetch_issue = true,
+            other => bail!("preflight: unknown arg: {other}"),
         }
         i += 1;
     }
@@ -1310,6 +1424,55 @@ fn current_pr_url(repo: &str, branch: &str) -> Result<Option<String>> {
     Ok(out
         .map(|x| x.trim().to_string())
         .filter(|x| !x.is_empty() && x != "null"))
+}
+
+fn unresolved_milestone_pr_wave(
+    repo: &str,
+    version: &str,
+    current_branch: Option<&str>,
+) -> Result<Vec<OpenPullRequest>> {
+    let out = run_capture_allow_failure(
+        "gh",
+        &[
+            "pr",
+            "list",
+            "-R",
+            repo,
+            "--state",
+            "open",
+            "--json",
+            "number,title,url,headRefName,baseRefName,isDraft",
+        ],
+    )?
+    .unwrap_or_else(|| "[]".to_string());
+    let prs: Vec<OpenPullRequest> =
+        serde_json::from_str(&out).with_context(|| "failed to parse gh pr list json")?;
+    let version_tag = format!("[{version}]");
+    Ok(prs
+        .into_iter()
+        .filter(|pr| pr.base_ref_name == "main")
+        .filter(|pr| pr.title.contains(&version_tag))
+        .filter(|pr| {
+            current_branch
+                .map(|branch| pr.head_ref_name != branch)
+                .unwrap_or(true)
+        })
+        .collect())
+}
+
+fn format_open_pr_wave(prs: &[OpenPullRequest]) -> String {
+    prs.iter()
+        .map(|pr| {
+            format!(
+                "- #{} [{}] {} ({})",
+                pr.number,
+                if pr.is_draft { "draft" } else { "ready" },
+                pr.title,
+                pr.url
+            )
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 fn pr_has_closing_linkage(repo: &str, pr_ref: &str, issue: u32) -> Result<bool> {
@@ -2677,9 +2840,9 @@ verification_summary:
     #[test]
     fn real_pr_dispatch_rejects_missing_and_unknown_subcommands() {
         let err = real_pr(&[]).expect_err("missing subcommand");
-        assert!(err
-            .to_string()
-            .contains("pr requires a subcommand: init | create | start | ready | finish"));
+        assert!(err.to_string().contains(
+            "pr requires a subcommand: init | create | start | ready | preflight | finish"
+        ));
 
         let err = real_pr(&["bogus".to_string()]).expect_err("unknown subcommand");
         assert!(err.to_string().contains("unknown pr subcommand: bogus"));
@@ -2742,6 +2905,27 @@ verification_summary:
     }
 
     #[test]
+    fn parse_preflight_args_accepts_flags_and_rejects_unknown_arg() {
+        let parsed = parse_preflight_args(&[
+            "1173".to_string(),
+            "--slug".to_string(),
+            "preflight-test".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+            "--no-fetch-issue".to_string(),
+        ])
+        .expect("parse preflight");
+        assert_eq!(parsed.issue, 1173);
+        assert_eq!(parsed.slug.as_deref(), Some("preflight-test"));
+        assert_eq!(parsed.version.as_deref(), Some("v0.86"));
+        assert!(parsed.no_fetch_issue);
+
+        let err =
+            parse_preflight_args(&["1173".to_string(), "--bogus".to_string()]).expect_err("err");
+        assert!(err.to_string().contains("preflight: unknown arg"));
+    }
+
+    #[test]
     fn parse_start_args_accepts_prefix_and_rejects_unknown_arg() {
         let parsed = parse_start_args(&[
             "1152".to_string(),
@@ -2754,6 +2938,7 @@ verification_summary:
             "--version".to_string(),
             "v0.86".to_string(),
             "--no-fetch-issue".to_string(),
+            "--allow-open-pr-wave".to_string(),
         ])
         .expect("parse start");
         assert_eq!(parsed.issue, 1152);
@@ -2762,6 +2947,7 @@ verification_summary:
         assert_eq!(parsed.title_arg.as_deref(), Some("Start Test"));
         assert_eq!(parsed.version.as_deref(), Some("v0.86"));
         assert!(parsed.no_fetch_issue);
+        assert!(parsed.allow_open_pr_wave);
 
         let err = parse_start_args(&["1152".to_string(), "--bogus".to_string()]).expect_err("err");
         assert!(err.to_string().contains("start: unknown arg"));
@@ -3152,6 +3338,155 @@ verification_summary:
         assert!(card_output_path(&root_cards, 1152)
             .symlink_metadata()
             .is_ok());
+    }
+
+    #[test]
+    fn real_pr_preflight_reports_open_milestone_prs() {
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+        let repo = unique_temp_dir("adl-pr-preflight");
+        init_git_repo(&repo);
+        let bin_dir = repo.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let gh_path = bin_dir.join("gh");
+        write_executable(
+            &gh_path,
+            "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"pr list\" ]]; then\n  cat <<'JSON'\n[{\"number\":1169,\"title\":\"[v0.86][runtime] Sprint 3A: Make WP-06 fast / slow paths drive real runtime behavior\",\"url\":\"https://example.test/pr/1169\",\"headRefName\":\"codex/1161-v0-86-runtime-sprint-3a-make-wp-06-fast-slow-paths-drive-real-runtime-behavior\",\"baseRefName\":\"main\",\"isDraft\":true}]\nJSON\n  exit 0\nfi\nexit 1\n",
+        );
+
+        let old_path = env::var("PATH").unwrap_or_default();
+        let prev_dir = env::current_dir().expect("cwd");
+        unsafe {
+            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        }
+        env::set_current_dir(&repo).expect("chdir");
+
+        let result = real_pr(&[
+            "preflight".to_string(),
+            "1173".to_string(),
+            "--slug".to_string(),
+            "v0-86-tools-preflight".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+            "--no-fetch-issue".to_string(),
+        ]);
+
+        env::set_current_dir(prev_dir).expect("restore cwd");
+        unsafe {
+            env::set_var("PATH", old_path);
+        }
+        result.expect("preflight");
+    }
+
+    #[test]
+    fn real_pr_start_blocks_when_open_milestone_pr_wave_exists() {
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+        let temp = unique_temp_dir("adl-pr-start-blocks-wave");
+        let origin = temp.join("origin.git");
+        let repo = temp.join("repo");
+        fs::create_dir_all(&repo).expect("repo dir");
+        copy_bootstrap_support_files(&repo);
+        init_git_repo(&repo);
+        assert!(Command::new("git")
+            .args(["config", "user.name", "Test User"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.email", "test@example.com"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config")
+            .success());
+        assert!(Command::new("git")
+            .args(["add", "-A"])
+            .current_dir(&repo)
+            .status()
+            .expect("git add")
+            .success());
+        assert!(Command::new("git")
+            .args(["commit", "-q", "-m", "init"])
+            .current_dir(&repo)
+            .status()
+            .expect("git commit")
+            .success());
+        assert!(Command::new("git")
+            .args(["branch", "-M", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git branch")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "init",
+                "--bare",
+                "-q",
+                path_str(&origin).expect("origin path")
+            ])
+            .current_dir(&repo)
+            .status()
+            .expect("git init bare")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "remote",
+                "set-url",
+                "origin",
+                path_str(&origin).expect("origin path"),
+            ])
+            .current_dir(&repo)
+            .status()
+            .expect("git remote set-url")
+            .success());
+        assert!(Command::new("git")
+            .args(["push", "-q", "-u", "origin", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git push")
+            .success());
+        assert!(Command::new("git")
+            .args(["fetch", "-q", "origin", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git fetch")
+            .success());
+
+        let bin_dir = repo.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let gh_path = bin_dir.join("gh");
+        write_executable(
+            &gh_path,
+            "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"pr list\" ]]; then\n  cat <<'JSON'\n[{\"number\":1169,\"title\":\"[v0.86][runtime] Sprint 3A: Make WP-06 fast / slow paths drive real runtime behavior\",\"url\":\"https://example.test/pr/1169\",\"headRefName\":\"codex/1161-v0-86-runtime-sprint-3a-make-wp-06-fast-slow-paths-drive-real-runtime-behavior\",\"baseRefName\":\"main\",\"isDraft\":true}]\nJSON\n  exit 0\nfi\nexit 1\n",
+        );
+
+        let old_path = env::var("PATH").unwrap_or_default();
+        let prev_dir = env::current_dir().expect("cwd");
+        unsafe {
+            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        }
+        env::set_current_dir(&repo).expect("chdir");
+
+        let err = real_pr(&[
+            "start".to_string(),
+            "1173".to_string(),
+            "--slug".to_string(),
+            "v0-86-tools-preflight-guard".to_string(),
+            "--title".to_string(),
+            "[v0.86][tools] Preflight guard".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+            "--no-fetch-issue".to_string(),
+        ])
+        .expect_err("start should block on open PR wave");
+
+        env::set_current_dir(prev_dir).expect("restore cwd");
+        unsafe {
+            env::set_var("PATH", old_path);
+        }
+        assert!(err
+            .to_string()
+            .contains("start: unresolved open PR wave detected for v0.86"));
+        assert!(err.to_string().contains("#1169 [draft]"));
     }
 
     #[test]

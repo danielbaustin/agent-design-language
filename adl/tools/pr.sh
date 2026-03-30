@@ -18,6 +18,7 @@
 #   adl/tools/pr.sh run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
 #   adl/tools/pr.sh card    <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
 #   adl/tools/pr.sh output  <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
+#   adl/tools/pr.sh preflight <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>]
 #   adl/tools/pr.sh finish  <issue> --title "<title>" [-f <input_card.md>] [--output-card <output_card.md>] [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [--no-open]
 #   adl/tools/pr.sh open
 #   adl/tools/pr.sh status
@@ -762,6 +763,61 @@ issue_version() {
     echo "$v"
   else
     echo "$DEFAULT_VERSION"
+  fi
+}
+
+open_milestone_pr_wave_json() {
+  local repo="$1"
+  gh pr list $(gh_repo_flag "$repo") --state open --json number,title,url,headRefName,baseRefName,isDraft 2>/dev/null || echo "[]"
+}
+
+filter_open_milestone_pr_wave() {
+  local version="$1" current_branch="${2:-}"
+  python3 -c '
+import json
+import sys
+
+version = sys.argv[1]
+current_branch = sys.argv[2]
+prs = json.load(sys.stdin)
+tag = f"[{version}]"
+filtered = []
+for pr in prs:
+    if pr.get("baseRefName") != "main":
+        continue
+    if tag not in pr.get("title", ""):
+        continue
+    if current_branch and pr.get("headRefName") == current_branch:
+        continue
+    filtered.append(pr)
+json.dump(filtered, sys.stdout)
+' "$version" "$current_branch"
+}
+
+count_open_milestone_pr_wave() {
+  python3 -c 'import json, sys; print(len(json.load(sys.stdin)))'
+}
+
+render_open_milestone_pr_wave_lines() {
+  python3 -c '
+import json
+import sys
+prs = json.load(sys.stdin)
+for pr in prs:
+    state = "draft" if pr.get("isDraft") else "ready"
+    print("#{} [{}] {} ({})".format(pr["number"], state, pr["title"], pr["url"]))
+'
+}
+
+ensure_no_open_milestone_pr_wave() {
+  local repo="$1" version="$2" current_branch="$3"
+  local filtered count lines
+  filtered="$(open_milestone_pr_wave_json "$repo" | filter_open_milestone_pr_wave "$version" "$current_branch")"
+  count="$(printf '%s' "$filtered" | count_open_milestone_pr_wave)"
+  if [[ "$count" != "0" ]]; then
+    lines="$(printf '%s' "$filtered" | render_open_milestone_pr_wave_lines)"
+    die "start: unresolved open PR wave detected for $version. Resolve or merge these PRs first, or rerun with --allow-open-pr-wave if you are deliberately overriding the guard:
+$lines"
   fi
 }
 
@@ -1961,6 +2017,7 @@ cmd_start() {
   local title=""
   local title_arg=""
   local version=""
+  local allow_open_pr_wave="0"
   local branch_preexisting="0"
 
   while [[ $# -gt 0 ]]; do
@@ -1970,6 +2027,7 @@ cmd_start() {
       --title) title_arg="$2"; shift 2 ;;
       --version) version="$2"; shift 2 ;;
       --no-fetch-issue) no_fetch_issue="1"; shift ;;
+      --allow-open-pr-wave) allow_open_pr_wave="1"; shift ;;
       -h|--help) usage_start; return 0 ;;
       *) die_with_usage "start: unknown arg: $1" usage_start ;;
     esac
@@ -2005,6 +2063,11 @@ cmd_start() {
   branch="$(branch_for_issue "$prefix" "$issue" "$slug")"
   local worktree_path
   worktree_path="$(default_worktree_path_for_issue "$issue")"
+
+  if [[ "$allow_open_pr_wave" != "1" ]]; then
+    require_cmd gh
+    ensure_no_open_milestone_pr_wave "$repo" "$version" "$branch"
+  fi
 
   note "Target branch: $branch"
   note "Target worktree: $worktree_path"
@@ -2603,6 +2666,77 @@ cmd_ready() {
   echo "READY=PASS"
 }
 
+cmd_preflight() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_preflight
+    return 0
+  fi
+
+  if rust_pr_delegate_available; then
+    delegate_pr_command_to_rust preflight "$@"
+    return 0
+  fi
+
+  require_cmd gh
+  local issue="${1:-}"; shift || true
+  [[ -n "$issue" ]] || die_with_usage "preflight: missing <issue> number" usage_preflight
+  issue="$(normalize_issue_or_die "$issue")"
+
+  local slug="" version="" no_fetch_issue="0"
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --slug) slug="$2"; shift 2 ;;
+      --version) version="$2"; shift 2 ;;
+      --no-fetch-issue) no_fetch_issue="1"; shift ;;
+      -h|--help) usage_preflight; return 0 ;;
+      *) die_with_usage "preflight: unknown arg: $1" usage_preflight ;;
+    esac
+  done
+
+  local resolved_scope="" resolved_slug="" parsed
+  if [[ -z "$version" || -z "$slug" ]]; then
+    parsed="$(resolve_issue_scope_and_slug_from_local_state "$issue" || true)"
+    if [[ -n "$parsed" ]]; then
+      resolved_scope="$(sed -n '1p' <<<"$parsed")"
+      resolved_slug="$(sed -n '2p' <<<"$parsed")"
+    fi
+  fi
+  [[ -n "$version" ]] || version="$resolved_scope"
+  if [[ -z "$version" && "$no_fetch_issue" != "1" ]]; then
+    version="$(issue_version "$issue")"
+  fi
+  [[ -n "$version" ]] || version="$DEFAULT_VERSION"
+  [[ -n "$slug" ]] || slug="$resolved_slug"
+  [[ -n "$slug" ]] || slug="issue-$issue"
+
+  local branch repo filtered count
+  branch="$(branch_for_issue "codex" "$issue" "$slug")"
+  repo="$(default_repo)"
+  filtered="$(open_milestone_pr_wave_json "$repo" | filter_open_milestone_pr_wave "$version" "$branch")"
+  count="$(printf '%s' "$filtered" | count_open_milestone_pr_wave)"
+
+  echo "ISSUE=$issue"
+  echo "VERSION=$version"
+  echo "BRANCH=$branch"
+  echo "OPEN_PR_COUNT=$count"
+  while IFS= read -r line; do
+    [[ -n "$line" ]] || continue
+    echo "OPEN_PR=$line"
+  done < <(printf '%s' "$filtered" | python3 -c '
+import json
+import sys
+prs = json.load(sys.stdin)
+for pr in prs:
+    state = "draft" if pr.get("isDraft") else "ready"
+    print("#{}|{}|{}|{}".format(pr["number"], pr["headRefName"], state, pr["url"]))
+')
+  if [[ "$count" == "0" ]]; then
+    echo "PREFLIGHT=PASS"
+  else
+    echo "PREFLIGHT=BLOCK"
+  fi
+}
+
 cmd_open() {
   require_cmd gh
   local repo
@@ -2652,6 +2786,7 @@ Flags:
   (card/start) --slug <slug>                   Use an explicit slug instead of fetching the issue title.
   (start)   --title "<title>"                  Optional; accepted for UX symmetry and used to derive slug when --slug is omitted.
   (start)   --version <v0.85>                  Override detected version when the caller already knows the intended milestone band.
+  (start)   --allow-open-pr-wave               Override the open milestone PR wave guard.
 
 Notes:
 - PRs are created as DRAFT by default to preserve human review.
@@ -2670,6 +2805,7 @@ Examples:
   adl/tools/pr.sh create --title "adl: fix timeout handling" --slug timeout-fix
   adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml --trace --allow-unsigned
   adl/tools/pr.sh start 17 --slug b6-default-system
+  adl/tools/pr.sh preflight 17 --slug b6-default-system --version v0.85
   adl/tools/pr.sh card  17 --help
   adl/tools/pr.sh card  17 --version v0.2
   adl/tools/pr.sh card  17 input
@@ -2721,12 +2857,13 @@ EOF
 usage_start() {
   cat <<'EOF'
 Usage:
-  adl/tools/pr.sh start <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>]
+  adl/tools/pr.sh start <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
 
 Notes:
 - Creates or reuses issue worktree at .worktrees/adl-wp-<issue> by default.
 - Keeps the primary checkout on main.
 - `--version` overrides inferred issue version when the caller already knows the intended milestone band.
+- Refuses to start a later issue when an open PR wave already exists for the same milestone band unless `--allow-open-pr-wave` is passed.
 EOF
 }
 
@@ -2782,6 +2919,17 @@ Notes:
 EOF
 }
 
+usage_preflight() {
+  cat <<'EOF'
+Usage:
+  adl/tools/pr.sh preflight <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
+
+Notes:
+- Reports whether unresolved open PRs already exist for the same milestone/version band.
+- Prints PREFLIGHT=PASS or PREFLIGHT=BLOCK.
+EOF
+}
+
 usage_finish() {
   cat <<'EOF'
 Usage:
@@ -2802,6 +2950,7 @@ main() {
     run) cmd_run "$@" ;;
     start) cmd_start "$@" ;;
     ready) cmd_ready "$@" ;;
+    preflight) cmd_preflight "$@" ;;
     finish) cmd_finish "$@" ;;
     card) cmd_card "$@" ;;
     output) cmd_output "$@" ;;
