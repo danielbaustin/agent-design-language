@@ -274,6 +274,19 @@ EOF
 
   allowed_start="$(PATH="$fakegh:$PATH" "$BASH_BIN" adl/tools/pr.sh start 990 --slug blocked-wave --version v0.86 --no-fetch-issue --allow-open-pr-wave)"
   assert_contains "STATE  FULLY_STARTED" "$allowed_start" "override bypasses start guard"
+
+  chmod 555 "$repo/.git" "$repo/.git/refs" "$repo/.git/refs/heads"
+  set +e
+  metadata_blocked="$("$BASH_BIN" adl/tools/pr.sh start 988 --slug metadata-blocked --no-fetch-issue 2>&1)"
+  status=$?
+  set -e
+  chmod 755 "$repo/.git" "$repo/.git/refs" "$repo/.git/refs/heads"
+  [[ "$status" -ne 0 ]] || {
+    echo "assertion failed: expected start to fail when git metadata is unwritable" >&2
+    exit 1
+  }
+  assert_contains "git metadata directory" "$metadata_blocked" "metadata preflight message"
+  assert_contains "restore write access to git metadata before rerunning" "$metadata_blocked" "metadata remediation"
 )
 
 echo "pr.sh start worktree-safe/idempotent flows: ok"
