@@ -33,19 +33,13 @@ assert_contains() {
   }
 }
 
-set +e
-out="$(
+help_out="$(
   cd "$repo" &&
-  "$BASH_BIN" adl/tools/pr.sh create --title "retired path" 2>&1
+    "$BASH_BIN" adl/tools/pr.sh create --help 2>&1
 )"
-status=$?
-set -e
 
-[[ "$status" -ne 0 ]] || {
-  echo "assertion failed: expected pr.sh create to be unavailable" >&2
-  exit 1
-}
+assert_contains 'adl/tools/pr.sh create --title "<title>"' "$help_out" "create help usage"
+assert_contains 'Creates the GitHub issue only.' "$help_out" "create help semantics"
+assert_contains 'Does not bootstrap the local task bundle or worktree.' "$help_out" "create help no bootstrap"
 
-assert_contains 'Unknown command: create' "$out" "unknown command"
-
-echo "pr.sh create removal: ok"
+echo "pr.sh create help: ok"

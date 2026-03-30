@@ -13,6 +13,7 @@
 # - Rust toolchain for `adl/` checks (fmt, clippy, test)
 #
 #   adl/tools/pr.sh help
+#   adl/tools/pr.sh create  --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v0.85>]
 #   adl/tools/pr.sh init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v0.85>]
 #   adl/tools/pr.sh start   <issue> [--slug <slug>] [--title "<title>"] [--prefix codex] [--no-fetch-issue] [--version <v0.85>]
 #   adl/tools/pr.sh run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
@@ -24,6 +25,7 @@
 #   adl/tools/pr.sh status
 #
 # Examples:
+#   adl/tools/pr.sh create --title "[v0.86][tools] Example task" --labels track:roadmap,type:task,area:tools --version v0.86
 #   adl/tools/pr.sh init  14 --slug b6-default-system --no-fetch-issue --version v0.85
 #   adl/tools/pr.sh start 14 --slug b6-default-system
 #   adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml --trace --allow-unsigned
@@ -1986,8 +1988,17 @@ cmd_init() {
 }
 
 cmd_create() {
-  usage_create >&2
-  return 1
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_create
+    return 0
+  fi
+
+  if rust_pr_delegate_available; then
+    delegate_pr_command_to_rust create "$@"
+    return 0
+  fi
+
+  die "create: Rust control-plane path unavailable; legacy shell create is retired"
 }
 
 cmd_start() {
@@ -2771,8 +2782,8 @@ pr.sh — reduce git/PR thrash while preserving human review
 
 Commands:
   help
+  create  --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v>]
   init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v>]
-  init    --new --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v>]
   run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
   start   <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>]
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
@@ -2784,6 +2795,7 @@ Commands:
   status
 
 Flags:
+  (create)  --version <v0.85>                 Override detected version (otherwise inferred from labels/title).
   (init)    --version <v0.85>                 Override detected version (otherwise inferred from issue labels version:vX.Y)
   (init)    --no-fetch-issue                  Do not fetch issue title/labels; requires --slug.
   (run)     --runs-root <dir>                 Override canonical run artifact root (default: <repo>/.adl/runs or ADL_RUNS_ROOT).
@@ -2801,9 +2813,9 @@ Flags:
   (start)   --allow-open-pr-wave               Override the open milestone PR wave guard.
 
 Notes:
-- `pr init` is the kickoff entrypoint.
-- Use `pr init --new ...` to create a GitHub issue and emit the full root STP/SIP/SOR bundle in one step.
-- Use `pr init <issue> ...` to bootstrap an already-existing issue, then `pr start <issue>` to create or reuse the branch/worktree.
+- `pr create` creates the GitHub issue when issue creation is needed.
+- `pr init <issue> ...` bootstraps the local root STP/SIP/SOR bundle for an existing issue.
+- `pr start <issue> ...` binds the issue to a concrete branch/worktree execution context.
 - PRs are created as DRAFT by default to preserve human review.
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - run is a bounded v0.85 wrapper over the Rust adl runtime; browser/editor direct invocation remains follow-on work.
@@ -2815,8 +2827,8 @@ Notes:
 
 Examples:
   adl/tools/pr.sh help
+  adl/tools/pr.sh create --title "[v0.86][tools] Example issue" --labels "track:roadmap,type:task,area:tools"
   adl/tools/pr.sh init 17 --slug b6-default-system --no-fetch-issue --version v0.85
-  adl/tools/pr.sh init --new --title "[v0.86][tools] Example issue" --labels "track:roadmap,type:task,area:tools"
   adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml --trace --allow-unsigned
   adl/tools/pr.sh start 17 --slug b6-default-system
   adl/tools/pr.sh preflight 17 --slug b6-default-system --version v0.85
@@ -2839,17 +2851,19 @@ Usage:
 
 Notes:
 - `pr new` is retired.
-- Use `adl/tools/pr.sh init --new ...` instead.
+- Use `adl/tools/pr.sh create ...` instead.
 EOF
 }
 
 usage_create() {
   cat <<'EOF'
+Usage:
+  adl/tools/pr.sh create --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v>]
+
 Notes:
-- `pr create` is retired.
-- Use:
-  1. `adl/tools/pr.sh init --new ...` for a brand-new issue, or `adl/tools/pr.sh init <issue> ...` for an existing issue
-  2. `adl/tools/pr.sh start <issue> [...]`
+- Creates the GitHub issue only.
+- Does not bootstrap the local task bundle or worktree.
+- After create, run `adl/tools/pr.sh init <issue> ...` and then `adl/tools/pr.sh start <issue> ...`.
 EOF
 }
 
@@ -2857,11 +2871,10 @@ usage_init() {
   cat <<'EOF'
 Usage:
   adl/tools/pr.sh init <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v0.85>]
-  adl/tools/pr.sh init --new --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v0.85>]
 
 Notes:
 - Initializes the canonical local task-bundle authoring surface.
-- `--new` creates the GitHub issue first, then emits and validates the full root bundle in the same command.
+- Does not create or reconcile the GitHub issue.
 - Emits and validates the root STP/SIP/SOR bundle before returning success.
 - Fails if the full root task bundle cannot be created cleanly.
 EOF
@@ -2957,6 +2970,7 @@ main() {
   local cmd="${1:-}"; shift || true
   case "$cmd" in
     help) usage ;;
+    create) cmd_create "$@" ;;
     init) cmd_init "$@" ;;
     new) cmd_new "$@" ;;
     run) cmd_run "$@" ;;
