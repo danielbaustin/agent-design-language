@@ -61,6 +61,15 @@ impl IssueRef {
             .join(format!("issue-{}-{}.md", self.issue_number, self.slug))
     }
 
+    pub fn legacy_issue_prompt_path(&self, repo_root: &Path) -> PathBuf {
+        repo_root
+            .join(".adl")
+            .join("issues")
+            .join(&self.scope)
+            .join("bodies")
+            .join(format!("issue-{}-{}.md", self.issue_number, self.slug))
+    }
+
     pub fn task_bundle_dir_path(&self, primary_checkout_root: &Path) -> PathBuf {
         primary_checkout_root
             .join(".adl")

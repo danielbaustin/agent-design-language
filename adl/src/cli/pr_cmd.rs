@@ -238,7 +238,7 @@ fn real_pr_ready(args: &[String]) -> Result<()> {
     let branch = issue_ref.branch_name("codex");
     let managed_root = std::env::var_os("ADL_WORKTREE_ROOT").map(PathBuf::from);
     let worktree_path = issue_ref.default_worktree_path(&repo_root, managed_root.as_deref());
-    let source_path = issue_ref.issue_prompt_path(&repo_root);
+    let source_path = resolve_issue_prompt_path(&repo_root, &issue_ref)?;
     let root_stp = issue_ref.task_bundle_stp_path(&repo_root);
     let wt_stp = issue_ref.task_bundle_stp_path(&worktree_path);
 
@@ -276,17 +276,17 @@ fn real_pr_ready(args: &[String]) -> Result<()> {
         bail!("ready: missing worktree stp: {}", wt_stp.display());
     }
     validate_bootstrap_stp(&worktree_path, &wt_stp)?;
-    validate_bootstrap_cards(
+    validate_ready_cards(
         &repo_root,
         parsed.issue,
-        &branch,
+        wt_branch.trim(),
         &root_bundle_input,
         &root_bundle_output,
     )?;
-    validate_bootstrap_cards(
+    validate_ready_cards(
         &worktree_path,
         parsed.issue,
-        &branch,
+        wt_branch.trim(),
         &wt_bundle_input,
         &wt_bundle_output,
     )?;
@@ -1855,6 +1855,35 @@ fn validate_bootstrap_cards(
     Ok(())
 }
 
+fn validate_ready_cards(
+    _repo_root: &Path,
+    issue: u32,
+    actual_branch: &str,
+    input_path: &Path,
+    output_path: &Path,
+) -> Result<()> {
+    let expected = format!("issue-{:04}", issue);
+    if field_line_value(input_path, "Task ID")? != expected {
+        bail!("ready: input card Task ID mismatch");
+    }
+    if field_line_value(input_path, "Run ID")? != expected {
+        bail!("ready: input card Run ID mismatch");
+    }
+    if field_line_value(output_path, "Task ID")? != expected {
+        bail!("ready: output card Task ID mismatch");
+    }
+    if field_line_value(output_path, "Run ID")? != expected {
+        bail!("ready: output card Run ID mismatch");
+    }
+    if !branch_matches_started_state(&field_line_value(input_path, "Branch")?, actual_branch) {
+        bail!("ready: input card branch mismatch");
+    }
+    if !branch_matches_started_state(&field_line_value(output_path, "Branch")?, actual_branch) {
+        bail!("ready: output card branch mismatch");
+    }
+    Ok(())
+}
+
 fn field_line_value(path: &Path, label: &str) -> Result<String> {
     let prefix = format!("{label}:");
     let text = fs::read_to_string(path)?;
@@ -1864,6 +1893,14 @@ fn field_line_value(path: &Path, label: &str) -> Result<String> {
         }
     }
     Ok(String::new())
+}
+
+fn branch_matches_started_state(recorded: &str, actual_branch: &str) -> bool {
+    let recorded = recorded.trim();
+    if recorded == actual_branch {
+        return true;
+    }
+    recorded.starts_with("TBD (run pr.sh start ")
 }
 
 fn resolve_issue_scope_and_slug_from_local_state(
@@ -2030,6 +2067,23 @@ fn validate_issue_prompt_exists(path: &Path) -> Result<()> {
         bail!("missing canonical source issue prompt: {}", path.display());
     }
     Ok(())
+}
+
+fn resolve_issue_prompt_path(repo_root: &Path, issue_ref: &IssueRef) -> Result<PathBuf> {
+    let preferred = issue_ref.issue_prompt_path(repo_root);
+    if preferred.is_file() {
+        return Ok(preferred);
+    }
+
+    let legacy = issue_ref.legacy_issue_prompt_path(repo_root);
+    if legacy.is_file() {
+        return Ok(legacy);
+    }
+
+    bail!(
+        "missing canonical source issue prompt: {}",
+        preferred.display()
+    )
 }
 
 #[cfg(test)]
@@ -2777,6 +2831,7 @@ verification_summary:
             .status()
             .expect("git config")
             .success());
+        fs::write(repo.join("README.md"), "ready branch placeholder\n").expect("write readme");
         assert!(Command::new("git")
             .args(["add", "-A"])
             .current_dir(&repo)
@@ -2955,6 +3010,7 @@ verification_summary:
             .status()
             .expect("git config")
             .success());
+        fs::write(repo.join("README.md"), "ready branch placeholder\n").expect("write readme");
         assert!(Command::new("git")
             .args(["add", "-A"])
             .current_dir(&repo)
@@ -4235,6 +4291,23 @@ Status: NOT_STARTED
     }
 
     #[test]
+    fn resolve_issue_prompt_path_accepts_legacy_issue_bodies_location() {
+        let repo = unique_temp_dir("adl-pr-legacy-prompt-path");
+        let issue_ref = IssueRef::new(1197, "v0.86".to_string(), "legacy-ready-source".to_string())
+            .expect("issue ref");
+        let legacy = issue_ref.legacy_issue_prompt_path(&repo);
+        fs::create_dir_all(legacy.parent().expect("legacy parent")).expect("legacy dir");
+        fs::write(
+            &legacy,
+            "---\nissue_card_schema: adl.issue.v1\n---\n\n# x\n",
+        )
+        .expect("legacy");
+
+        let resolved = resolve_issue_prompt_path(&repo, &issue_ref).expect("resolved");
+        assert_eq!(resolved, legacy);
+    }
+
+    #[test]
     fn real_pr_start_rejects_missing_slug_or_empty_sanitized_title_in_no_fetch_mode() {
         let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
         let repo = unique_temp_dir("adl-pr-start-preconditions");
@@ -4264,6 +4337,130 @@ Status: NOT_STARTED
         assert!(bad_title
             .to_string()
             .contains("start: --title produced empty slug after sanitization"));
+    }
+
+    #[test]
+    fn real_pr_ready_accepts_started_issue_when_output_branch_is_bootstrap_placeholder() {
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+        let repo = unique_temp_dir("adl-pr-ready-branch-placeholder");
+        let origin = repo.join("origin.git");
+        init_git_repo(&repo);
+        copy_bootstrap_support_files(&repo);
+        assert!(Command::new("git")
+            .args(["config", "user.name", "Test User"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.email", "test@example.com"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config")
+            .success());
+        fs::write(repo.join("README.md"), "ready branch placeholder\n").expect("write readme");
+        assert!(Command::new("git")
+            .args(["add", "-A"])
+            .current_dir(&repo)
+            .status()
+            .expect("git add")
+            .success());
+        assert!(Command::new("git")
+            .args(["commit", "-q", "-m", "init"])
+            .current_dir(&repo)
+            .status()
+            .expect("git commit")
+            .success());
+        assert!(Command::new("git")
+            .args(["branch", "-M", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git branch")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "init",
+                "--bare",
+                "-q",
+                path_str(&origin).expect("origin path"),
+            ])
+            .current_dir(&repo)
+            .status()
+            .expect("git init bare")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "remote",
+                "set-url",
+                "origin",
+                path_str(&origin).expect("origin path"),
+            ])
+            .current_dir(&repo)
+            .status()
+            .expect("git remote set-url")
+            .success());
+        assert!(Command::new("git")
+            .args(["push", "-q", "-u", "origin", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git push")
+            .success());
+        assert!(Command::new("git")
+            .args(["fetch", "-q", "origin", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git fetch")
+            .success());
+
+        let prev_dir = env::current_dir().expect("cwd");
+        env::set_current_dir(&repo).expect("chdir");
+
+        real_pr(&[
+            "start".to_string(),
+            "1198".to_string(),
+            "--slug".to_string(),
+            "ready-branch-placeholder".to_string(),
+            "--title".to_string(),
+            "[v0.86][tools] Ready branch placeholder".to_string(),
+            "--no-fetch-issue".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+        ])
+        .expect("real_pr start");
+
+        let issue_ref = IssueRef::new(
+            1198,
+            "v0.86".to_string(),
+            "ready-branch-placeholder".to_string(),
+        )
+        .expect("issue ref");
+        let root_output = issue_ref.task_bundle_output_path(&repo);
+        let worktree = issue_ref.default_worktree_path(&repo, None);
+        let wt_output = issue_ref.task_bundle_output_path(&worktree);
+        for path in [&root_output, &wt_output] {
+            let text = fs::read_to_string(path).expect("sor");
+            fs::write(
+                path,
+                text.replace(
+                    "Branch: codex/1198-ready-branch-placeholder",
+                    "Branch: TBD (run pr.sh start 1198)",
+                ),
+            )
+            .expect("rewrite sor");
+        }
+
+        let ready = real_pr(&[
+            "ready".to_string(),
+            "1198".to_string(),
+            "--slug".to_string(),
+            "ready-branch-placeholder".to_string(),
+            "--no-fetch-issue".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+        ]);
+
+        env::set_current_dir(prev_dir).expect("restore cwd");
+        ready.expect("ready should accept placeholder output branch");
     }
 
     #[cfg(unix)]
