@@ -408,6 +408,19 @@ pub(crate) struct CognitiveArbitrationState {
     pub(crate) route_reason: String,
 }
 
+#[derive(Debug, Clone)]
+pub(crate) struct FastSlowPathState {
+    pub(crate) selected_path: String,
+    pub(crate) path_family: String,
+    pub(crate) runtime_branch_taken: String,
+    pub(crate) handoff_state: String,
+    pub(crate) candidate_strategy: String,
+    pub(crate) review_depth: String,
+    pub(crate) execution_profile: String,
+    pub(crate) termination_expectation: String,
+    pub(crate) path_difference_summary: String,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct FastSlowPathArtifact {
@@ -417,6 +430,7 @@ pub(crate) struct FastSlowPathArtifact {
     pub(crate) arbitration_route: String,
     pub(crate) selected_path: String,
     pub(crate) path_family: String,
+    pub(crate) runtime_branch_taken: String,
     pub(crate) handoff_state: String,
     pub(crate) candidate_strategy: String,
     pub(crate) review_depth: String,
@@ -1602,14 +1616,13 @@ pub(crate) fn build_cognitive_arbitration_artifact(
     }
 }
 
-pub(crate) fn build_fast_slow_path_artifact(
-    run_summary: &RunSummaryArtifact,
+pub(crate) fn build_fast_slow_path_state(
     arbitration: &CognitiveArbitrationArtifact,
-    scores: Option<&ScoresArtifact>,
-) -> FastSlowPathArtifact {
+) -> FastSlowPathState {
     let (
         selected_path,
         path_family,
+        runtime_branch_taken,
         handoff_state,
         candidate_strategy,
         review_depth,
@@ -1619,6 +1632,7 @@ pub(crate) fn build_fast_slow_path_artifact(
         "fast" => (
             "fast_path",
             "fast",
+            "fast_direct_execution_branch",
             "direct_handoff",
             "accept first bounded candidate",
             "minimal",
@@ -1628,6 +1642,7 @@ pub(crate) fn build_fast_slow_path_artifact(
         "hybrid" => (
             "slow_path",
             "slow",
+            "slow_bounded_recovery_branch",
             "bounded_recovery_handoff",
             "compare current candidate against one bounded refinement",
             "bounded_recovery_review",
@@ -1637,6 +1652,7 @@ pub(crate) fn build_fast_slow_path_artifact(
         _ => (
             "slow_path",
             "slow",
+            "slow_review_refine_branch",
             "review_handoff",
             "validate, refine, or veto the current bounded candidate",
             "verification_required",
@@ -1653,6 +1669,25 @@ pub(crate) fn build_fast_slow_path_artifact(
         }
     };
 
+    FastSlowPathState {
+        selected_path: selected_path.to_string(),
+        path_family: path_family.to_string(),
+        runtime_branch_taken: runtime_branch_taken.to_string(),
+        handoff_state: handoff_state.to_string(),
+        candidate_strategy: candidate_strategy.to_string(),
+        review_depth: review_depth.to_string(),
+        execution_profile: execution_profile.to_string(),
+        termination_expectation: termination_expectation.to_string(),
+        path_difference_summary: path_difference_summary.to_string(),
+    }
+}
+
+pub(crate) fn build_fast_slow_path_artifact(
+    run_summary: &RunSummaryArtifact,
+    arbitration: &CognitiveArbitrationArtifact,
+    state: &FastSlowPathState,
+    scores: Option<&ScoresArtifact>,
+) -> FastSlowPathArtifact {
     FastSlowPathArtifact {
         fast_slow_path_version: FAST_SLOW_PATH_VERSION,
         run_id: run_summary.run_id.clone(),
@@ -1663,16 +1698,17 @@ pub(crate) fn build_fast_slow_path_artifact(
             scores_version: scores.map(|value| value.scores_version),
         },
         arbitration_route: arbitration.route_selected.clone(),
-        selected_path: selected_path.to_string(),
-        path_family: path_family.to_string(),
-        handoff_state: handoff_state.to_string(),
-        candidate_strategy: candidate_strategy.to_string(),
-        review_depth: review_depth.to_string(),
-        execution_profile: execution_profile.to_string(),
-        termination_expectation: termination_expectation.to_string(),
-        path_difference_summary: path_difference_summary.to_string(),
+        selected_path: state.selected_path.clone(),
+        path_family: state.path_family.clone(),
+        runtime_branch_taken: state.runtime_branch_taken.clone(),
+        handoff_state: state.handoff_state.clone(),
+        candidate_strategy: state.candidate_strategy.clone(),
+        review_depth: state.review_depth.clone(),
+        execution_profile: state.execution_profile.clone(),
+        termination_expectation: state.termination_expectation.clone(),
+        path_difference_summary: state.path_difference_summary.clone(),
         deterministic_handoff_rule:
-            "derive fast/slow path handoff directly from bounded arbitration route selection without hidden execution-mode state"
+            "derive fast/slow path handoff and branch selection directly from bounded arbitration route selection before downstream candidate generation"
                 .to_string(),
     }
 }
@@ -1680,6 +1716,7 @@ pub(crate) fn build_fast_slow_path_artifact(
 pub(crate) fn build_agency_selection_state(
     signals: &CognitiveSignalsArtifact,
     arbitration: &CognitiveArbitrationArtifact,
+    fast_slow_state: &FastSlowPathState,
     fast_slow_path: &FastSlowPathArtifact,
 ) -> AgencySelectionState {
     let (
@@ -1764,8 +1801,9 @@ pub(crate) fn build_agency_selection_state(
 
     AgencySelectionState {
         candidate_generation_basis: format!(
-            "path={} route={} candidate_selection_bias={}",
+            "path={} runtime_branch={} route={} candidate_selection_bias={}",
             fast_slow_path.selected_path,
+            fast_slow_state.runtime_branch_taken,
             arbitration.route_selected,
             signals.instinct.candidate_selection_bias
         ),
@@ -1799,7 +1837,7 @@ pub(crate) fn build_agency_selection_artifact(
         selected_candidate_id: state.selected_candidate_id.clone(),
         selected_candidate_reason: state.selected_candidate_reason.clone(),
         deterministic_selection_rule:
-            "derive the bounded candidate set and selected candidate before execution from the fast/slow handoff, arbitration route, and instinct bias without hidden initiative state"
+            "derive the bounded candidate set and selected candidate from the already-selected fast/slow runtime branch, arbitration route, and instinct bias without hidden initiative state"
                 .to_string(),
     }
 }
@@ -2334,13 +2372,19 @@ pub(crate) fn write_run_state_artifacts(
         &affect_state,
         Some(&scores_for_suggestions),
     );
+    let fast_slow_state = build_fast_slow_path_state(&cognitive_arbitration);
     let fast_slow_path = build_fast_slow_path_artifact(
         &run_summary,
         &cognitive_arbitration,
+        &fast_slow_state,
         Some(&scores_for_suggestions),
     );
-    let agency_selection_state =
-        build_agency_selection_state(&cognitive_signals, &cognitive_arbitration, &fast_slow_path);
+    let agency_selection_state = build_agency_selection_state(
+        &cognitive_signals,
+        &cognitive_arbitration,
+        &fast_slow_state,
+        &fast_slow_path,
+    );
     let agency_selection = build_agency_selection_artifact(
         &run_summary,
         &cognitive_arbitration,
