@@ -344,19 +344,8 @@ pub(crate) struct CognitiveAffectSignalRecord {
     pub(crate) deterministic_update_rule: String,
 }
 
-#[derive(Debug, Clone)]
-pub(crate) struct CognitiveSignalsState {
-    pub(crate) dominant_instinct: String,
-    pub(crate) completion_pressure: String,
-    pub(crate) integrity_bias: String,
-    pub(crate) curiosity_bias: String,
-    pub(crate) candidate_selection_bias: String,
-    pub(crate) urgency_level: String,
-    pub(crate) salience_level: String,
-    pub(crate) persistence_pressure: String,
-    pub(crate) confidence_shift: String,
-    pub(crate) downstream_influence: String,
-}
+#[cfg(test)]
+pub(crate) type CognitiveSignalsState = execute::CognitiveSignalsState;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -397,29 +386,11 @@ pub(crate) struct CognitiveArbitrationArtifact {
     pub(crate) deterministic_selection_rule: String,
 }
 
-#[derive(Debug, Clone)]
-pub(crate) struct CognitiveArbitrationState {
-    pub(crate) route_selected: String,
-    pub(crate) reasoning_mode: String,
-    pub(crate) confidence: String,
-    pub(crate) risk_class: String,
-    pub(crate) applied_constraints: Vec<String>,
-    pub(crate) cost_latency_assumption: String,
-    pub(crate) route_reason: String,
-}
+#[cfg(test)]
+pub(crate) type CognitiveArbitrationState = execute::CognitiveArbitrationState;
 
-#[derive(Debug, Clone)]
-pub(crate) struct FastSlowPathState {
-    pub(crate) selected_path: String,
-    pub(crate) path_family: String,
-    pub(crate) runtime_branch_taken: String,
-    pub(crate) handoff_state: String,
-    pub(crate) candidate_strategy: String,
-    pub(crate) review_depth: String,
-    pub(crate) execution_profile: String,
-    pub(crate) termination_expectation: String,
-    pub(crate) path_difference_summary: String,
-}
+#[cfg(test)]
+pub(crate) type FastSlowPathState = execute::FastSlowPathState;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -440,16 +411,8 @@ pub(crate) struct FastSlowPathArtifact {
     pub(crate) deterministic_handoff_rule: String,
 }
 
-#[derive(Debug, Clone)]
-pub(crate) struct AgencySelectionState {
-    pub(crate) candidate_generation_basis: String,
-    pub(crate) selection_mode: String,
-    pub(crate) candidate_set: Vec<AgencyCandidateRecord>,
-    pub(crate) selected_candidate_id: String,
-    pub(crate) selected_candidate_kind: String,
-    pub(crate) selected_candidate_action: String,
-    pub(crate) selected_candidate_reason: String,
-}
+#[cfg(test)]
+pub(crate) type AgencySelectionState = execute::AgencySelectionState;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -465,16 +428,7 @@ pub(crate) struct AgencySelectionArtifact {
     pub(crate) deterministic_selection_rule: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub(crate) struct AgencyCandidateRecord {
-    pub(crate) candidate_id: String,
-    pub(crate) candidate_kind: String,
-    pub(crate) bounded_action: String,
-    pub(crate) review_requirement: String,
-    pub(crate) execution_priority: u32,
-    pub(crate) rationale: String,
-}
+pub(crate) type AgencyCandidateRecord = execute::AgencyCandidateRecord;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -492,22 +446,9 @@ pub(crate) struct BoundedExecutionArtifact {
     pub(crate) deterministic_execution_rule: String,
 }
 
-#[derive(Debug, Clone)]
-pub(crate) struct BoundedExecutionState {
-    pub(crate) execution_status: String,
-    pub(crate) continuation_state: String,
-    pub(crate) provisional_termination_state: String,
-    pub(crate) iterations: Vec<BoundedExecutionIteration>,
-}
+pub(crate) type BoundedExecutionState = execute::BoundedExecutionState;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub(crate) struct BoundedExecutionIteration {
-    pub(crate) iteration_index: u32,
-    pub(crate) stage: String,
-    pub(crate) action: String,
-    pub(crate) outcome: String,
-}
+pub(crate) type BoundedExecutionIteration = execute::BoundedExecutionIteration;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -526,15 +467,7 @@ pub(crate) struct EvaluationSignalsArtifact {
     pub(crate) deterministic_evaluation_rule: String,
 }
 
-#[derive(Debug, Clone)]
-pub(crate) struct EvaluationControlState {
-    pub(crate) progress_signal: String,
-    pub(crate) contradiction_signal: String,
-    pub(crate) failure_signal: String,
-    pub(crate) termination_reason: String,
-    pub(crate) behavior_effect: String,
-    pub(crate) next_control_action: String,
-}
+pub(crate) type EvaluationControlState = execute::EvaluationControlState;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -1349,6 +1282,7 @@ pub(crate) fn build_affect_state_artifact(
     }
 }
 
+#[cfg(test)]
 pub(crate) fn build_cognitive_signals_state(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
@@ -1452,13 +1386,22 @@ pub(crate) fn build_cognitive_signals_state(
     }
 }
 
+#[cfg(test)]
 pub(crate) fn build_cognitive_signals_artifact(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
     scores: Option<&ScoresArtifact>,
 ) -> CognitiveSignalsArtifact {
     let state = build_cognitive_signals_state(run_summary, suggestions, scores);
+    build_cognitive_signals_artifact_from_state(run_summary, &state, suggestions, scores)
+}
 
+pub(crate) fn build_cognitive_signals_artifact_from_state(
+    run_summary: &RunSummaryArtifact,
+    state: &execute::CognitiveSignalsState,
+    suggestions: &SuggestionsArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> CognitiveSignalsArtifact {
     CognitiveSignalsArtifact {
         cognitive_signals_version: COGNITIVE_SIGNALS_VERSION,
         run_id: run_summary.run_id.clone(),
@@ -1470,22 +1413,22 @@ pub(crate) fn build_cognitive_signals_artifact(
         },
         instinct: CognitiveInstinctRecord {
             instinct_profile_id: "instinct-001".to_string(),
-            dominant_instinct: state.dominant_instinct,
-            completion_pressure: state.completion_pressure,
-            integrity_bias: state.integrity_bias,
-            curiosity_bias: state.curiosity_bias,
-            candidate_selection_bias: state.candidate_selection_bias,
+            dominant_instinct: state.dominant_instinct.clone(),
+            completion_pressure: state.completion_pressure.clone(),
+            integrity_bias: state.integrity_bias.clone(),
+            curiosity_bias: state.curiosity_bias.clone(),
+            candidate_selection_bias: state.candidate_selection_bias.clone(),
             deterministic_update_rule:
                 "derive bounded instinct profile from stable failure, retry, security, and success evidence ordering"
                     .to_string(),
         },
         affect: CognitiveAffectSignalRecord {
             affect_state_id: "signal-affect-001".to_string(),
-            urgency_level: state.urgency_level,
-            salience_level: state.salience_level,
-            persistence_pressure: state.persistence_pressure,
-            confidence_shift: state.confidence_shift,
-            downstream_influence: state.downstream_influence,
+            urgency_level: state.urgency_level.clone(),
+            salience_level: state.salience_level.clone(),
+            persistence_pressure: state.persistence_pressure.clone(),
+            confidence_shift: state.confidence_shift.clone(),
+            downstream_influence: state.downstream_influence.clone(),
             deterministic_update_rule:
                 "derive bounded affect signals from the first stable suggestion plus bounded run summary evidence"
                     .to_string(),
@@ -1493,6 +1436,7 @@ pub(crate) fn build_cognitive_signals_artifact(
     }
 }
 
+#[cfg(test)]
 pub(crate) fn build_cognitive_arbitration_state(
     _run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
@@ -1593,6 +1537,7 @@ pub(crate) fn build_cognitive_arbitration_state(
     }
 }
 
+#[cfg(test)]
 pub(crate) fn build_cognitive_arbitration_artifact(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
@@ -1601,7 +1546,15 @@ pub(crate) fn build_cognitive_arbitration_artifact(
     scores: Option<&ScoresArtifact>,
 ) -> CognitiveArbitrationArtifact {
     let state = build_cognitive_arbitration_state(run_summary, suggestions, signals, affect_state);
+    build_cognitive_arbitration_artifact_from_state(run_summary, suggestions, &state, scores)
+}
 
+pub(crate) fn build_cognitive_arbitration_artifact_from_state(
+    run_summary: &RunSummaryArtifact,
+    suggestions: &SuggestionsArtifact,
+    state: &execute::CognitiveArbitrationState,
+    scores: Option<&ScoresArtifact>,
+) -> CognitiveArbitrationArtifact {
     CognitiveArbitrationArtifact {
         cognitive_arbitration_version: COGNITIVE_ARBITRATION_VERSION,
         run_id: run_summary.run_id.clone(),
@@ -1611,19 +1564,20 @@ pub(crate) fn build_cognitive_arbitration_artifact(
             suggestions_version: suggestions.suggestions_version,
             scores_version: scores.map(|value| value.scores_version),
         },
-        route_selected: state.route_selected,
-        reasoning_mode: state.reasoning_mode,
-        confidence: state.confidence,
-        risk_class: state.risk_class,
-        applied_constraints: state.applied_constraints,
-        cost_latency_assumption: state.cost_latency_assumption,
-        route_reason: state.route_reason,
+        route_selected: state.route_selected.clone(),
+        reasoning_mode: state.reasoning_mode.clone(),
+        confidence: state.confidence.clone(),
+        risk_class: state.risk_class.clone(),
+        applied_constraints: state.applied_constraints.clone(),
+        cost_latency_assumption: state.cost_latency_assumption.clone(),
+        route_reason: state.route_reason.clone(),
         deterministic_selection_rule:
             "derive route from runtime signal state, bounded affect recovery bias, and stable failure/security/retry evidence ordering"
                 .to_string(),
     }
 }
 
+#[cfg(test)]
 pub(crate) fn build_fast_slow_path_state(
     arbitration: &CognitiveArbitrationArtifact,
 ) -> FastSlowPathState {
@@ -1693,7 +1647,7 @@ pub(crate) fn build_fast_slow_path_state(
 pub(crate) fn build_fast_slow_path_artifact(
     run_summary: &RunSummaryArtifact,
     arbitration: &CognitiveArbitrationArtifact,
-    state: &FastSlowPathState,
+    state: &execute::FastSlowPathState,
     scores: Option<&ScoresArtifact>,
 ) -> FastSlowPathArtifact {
     FastSlowPathArtifact {
@@ -1721,6 +1675,7 @@ pub(crate) fn build_fast_slow_path_artifact(
     }
 }
 
+#[cfg(test)]
 pub(crate) fn build_agency_selection_state(
     signals: &CognitiveSignalsArtifact,
     arbitration: &CognitiveArbitrationArtifact,
@@ -1827,7 +1782,7 @@ pub(crate) fn build_agency_selection_state(
 pub(crate) fn build_agency_selection_artifact(
     run_summary: &RunSummaryArtifact,
     arbitration: &CognitiveArbitrationArtifact,
-    state: &AgencySelectionState,
+    state: &execute::AgencySelectionState,
     scores: Option<&ScoresArtifact>,
 ) -> AgencySelectionArtifact {
     AgencySelectionArtifact {
@@ -1850,6 +1805,7 @@ pub(crate) fn build_agency_selection_artifact(
     }
 }
 
+#[cfg(test)]
 pub(crate) fn build_bounded_execution_state(
     run_summary: &RunSummaryArtifact,
     _fast_slow_path: &FastSlowPathArtifact,
@@ -1954,6 +1910,7 @@ pub(crate) fn build_bounded_execution_artifact(
     }
 }
 
+#[cfg(test)]
 pub(crate) fn build_evaluation_control_state(
     run_summary: &RunSummaryArtifact,
     bounded_execution: &BoundedExecutionArtifact,
@@ -2268,6 +2225,7 @@ pub(crate) fn write_run_state_artifacts(
     status: &str,
     pause: Option<&execute::PauseState>,
     steering_history: &[execute::SteeringRecord],
+    runtime_control: &execute::RuntimeControlState,
     resume_completed_step_ids: Option<&HashSet<String>>,
     failure: Option<&anyhow::Error>,
 ) -> Result<PathBuf> {
@@ -2395,59 +2353,48 @@ pub(crate) fn write_run_state_artifacts(
     let suggestions = build_suggestions_artifact(&run_summary, Some(&scores_for_suggestions));
     let suggestions_json =
         serde_json::to_vec_pretty(&suggestions).context("serialize suggestions.json")?;
-    let cognitive_signals =
-        build_cognitive_signals_artifact(&run_summary, &suggestions, Some(&scores_for_suggestions));
+    let cognitive_signals = build_cognitive_signals_artifact_from_state(
+        &run_summary,
+        &runtime_control.signals,
+        &suggestions,
+        Some(&scores_for_suggestions),
+    );
     let cognitive_signals_json = serde_json::to_vec_pretty(&cognitive_signals)
         .context("serialize cognitive_signals.v1.json")?;
     let affect_state =
         build_affect_state_artifact(&run_summary, &suggestions, Some(&scores_for_suggestions));
     let affect_state_json =
         serde_json::to_vec_pretty(&affect_state).context("serialize affect_state.v1.json")?;
-    let cognitive_arbitration = build_cognitive_arbitration_artifact(
+    let cognitive_arbitration = build_cognitive_arbitration_artifact_from_state(
         &run_summary,
         &suggestions,
-        &cognitive_signals,
-        &affect_state,
+        &runtime_control.arbitration,
         Some(&scores_for_suggestions),
     );
-    let fast_slow_state = build_fast_slow_path_state(&cognitive_arbitration);
     let fast_slow_path = build_fast_slow_path_artifact(
         &run_summary,
         &cognitive_arbitration,
-        &fast_slow_state,
+        &runtime_control.fast_slow,
         Some(&scores_for_suggestions),
-    );
-    let agency_selection_state = build_agency_selection_state(
-        &cognitive_signals,
-        &cognitive_arbitration,
-        &fast_slow_state,
-        &fast_slow_path,
     );
     let agency_selection = build_agency_selection_artifact(
         &run_summary,
         &cognitive_arbitration,
-        &agency_selection_state,
+        &runtime_control.agency,
         Some(&scores_for_suggestions),
-    );
-    let bounded_execution_state = build_bounded_execution_state(
-        &run_summary,
-        &fast_slow_path,
-        &agency_selection,
-        &agency_selection_state,
     );
     let bounded_execution = build_bounded_execution_artifact(
         &run_summary,
         &fast_slow_path,
         &agency_selection,
-        &bounded_execution_state,
+        &runtime_control.bounded_execution,
         Some(&scores_for_suggestions),
     );
-    let evaluation_control_state = build_evaluation_control_state(&run_summary, &bounded_execution);
     let evaluation_signals = build_evaluation_signals_artifact(
         &run_summary,
         &fast_slow_path,
         &agency_selection,
-        &evaluation_control_state,
+        &runtime_control.evaluation,
         Some(&scores_for_suggestions),
     );
     let cognitive_arbitration_json = serde_json::to_vec_pretty(&cognitive_arbitration)
