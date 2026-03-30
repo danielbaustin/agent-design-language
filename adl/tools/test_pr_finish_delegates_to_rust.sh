@@ -20,7 +20,7 @@ touch "$repo/adl/Cargo.toml"
 cat >"$mockbin/cargo" <<'EOF_CARGO'
 #!/usr/bin/env bash
 set -euo pipefail
-printf '%s\n' "$*" > "$TMP_CARGO_ARGS"
+printf '%s\n' "$*" >> "$TMP_CARGO_ARGS"
 EOF_CARGO
 chmod +x "$mockbin/cargo"
 
@@ -38,16 +38,63 @@ TMP_CARGO_ARGS="$tmpdir/cargo_args.txt"
 export TMP_CARGO_ARGS
 export PATH="$mockbin:$PATH"
 
-(
-  cd "$repo"
-  "$BASH_BIN" adl/tools/pr.sh finish 1153 --title "Example" --no-checks --no-open >/dev/null
-)
+run_and_capture() {
+  (
+    cd "$repo"
+    "$BASH_BIN" adl/tools/pr.sh "$@" >/dev/null
+  )
+}
+
+: >"$TMP_CARGO_ARGS"
+run_and_capture init 1151 --slug example --no-fetch-issue --version v0.86
+run_and_capture start 1152 --slug rust-start --no-fetch-issue --version v0.86 --allow-open-pr-wave
+run_and_capture ready 1152 --slug rust-start --no-fetch-issue --version v0.86
+run_and_capture preflight 1152 --slug rust-start --no-fetch-issue --version v0.86
+run_and_capture finish 1153 --title "Example" --no-checks --no-open
 
 args="$(cat "$TMP_CARGO_ARGS")"
+[[ "$args" == *"--bin adl -- pr init 1151 --slug example --no-fetch-issue --version v0.86"* ]] || {
+  echo "assertion failed: expected rust delegation for init" >&2
+  echo "$args" >&2
+  exit 1
+}
+[[ "$args" == *"--bin adl -- pr start 1152 --slug rust-start --no-fetch-issue --version v0.86 --allow-open-pr-wave"* ]] || {
+  echo "assertion failed: expected rust delegation for start" >&2
+  echo "$args" >&2
+  exit 1
+}
+[[ "$args" == *"--bin adl -- pr ready 1152 --slug rust-start --no-fetch-issue --version v0.86"* ]] || {
+  echo "assertion failed: expected rust delegation for ready" >&2
+  echo "$args" >&2
+  exit 1
+}
+[[ "$args" == *"--bin adl -- pr preflight 1152 --slug rust-start --no-fetch-issue --version v0.86"* ]] || {
+  echo "assertion failed: expected rust delegation for preflight" >&2
+  echo "$args" >&2
+  exit 1
+}
 [[ "$args" == *"--bin adl -- pr finish 1153 --title Example --no-checks --no-open"* ]] || {
   echo "assertion failed: expected rust delegation for finish" >&2
   echo "$args" >&2
   exit 1
 }
 
-echo "pr.sh finish Rust delegation: ok"
+set +e
+create_out="$(
+  cd "$repo" &&
+  "$BASH_BIN" adl/tools/pr.sh create --title "retired path" 2>&1
+)"
+create_status=$?
+set -e
+
+[[ "$create_status" -ne 0 ]] || {
+  echo "assertion failed: create should not be exposed by pr.sh" >&2
+  exit 1
+}
+[[ "$create_out" == *"Unknown command: create"* ]] || {
+  echo "assertion failed: create should fail as an unknown command" >&2
+  echo "$create_out" >&2
+  exit 1
+}
+
+echo "pr.sh Rust delegation parity: ok"

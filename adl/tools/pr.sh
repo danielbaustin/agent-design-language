@@ -2952,7 +2952,6 @@ main() {
   case "$cmd" in
     help) usage ;;
     init) cmd_init "$@" ;;
-    create) cmd_create "$@" ;;
     new) cmd_new "$@" ;;
     run) cmd_run "$@" ;;
     start) cmd_start "$@" ;;

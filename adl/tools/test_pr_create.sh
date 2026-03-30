@@ -42,12 +42,10 @@ status=$?
 set -e
 
 [[ "$status" -ne 0 ]] || {
-  echo "assertion failed: expected pr.sh create to be retired" >&2
+  echo "assertion failed: expected pr.sh create to be unavailable" >&2
   exit 1
 }
 
-assert_contains '`pr create` is retired.' "$out" "retired notice"
-assert_contains 'adl/tools/pr.sh init <issue>' "$out" "init guidance"
-assert_contains 'adl/tools/pr.sh start <issue>' "$out" "start guidance"
+assert_contains 'Unknown command: create' "$out" "unknown command"
 
-echo "pr.sh create retirement: ok"
+echo "pr.sh create removal: ok"

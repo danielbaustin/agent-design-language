@@ -133,7 +133,7 @@ Write a per-issue report under:
 - Missing canonical STP:
   - Re-run `pr.sh init <issue_num> --slug <slug> --version v0.85`.
 - Stale GitHub issue body:
-  - Re-run `pr.sh create <issue_num> --stp .adl/v0.85/tasks/<task-id>__<slug>/stp.md`.
+  - Reconcile the GitHub issue outside `pr.sh`, then re-run `pr.sh init <issue_num>` if the local root bundle must be reseeded.
 - Missing card files:
   - Re-run `pr.sh start <issue_num> --slug <slug>` to seed canonical card paths.
 - Browser/editor overclaims:
