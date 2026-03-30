@@ -489,7 +489,18 @@ pub(crate) struct EvaluationSignalsArtifact {
     pub(crate) failure_signal: String,
     pub(crate) termination_reason: String,
     pub(crate) behavior_effect: String,
+    pub(crate) next_control_action: String,
     pub(crate) deterministic_evaluation_rule: String,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct EvaluationControlState {
+    pub(crate) progress_signal: String,
+    pub(crate) contradiction_signal: String,
+    pub(crate) failure_signal: String,
+    pub(crate) termination_reason: String,
+    pub(crate) behavior_effect: String,
+    pub(crate) next_control_action: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1817,19 +1828,17 @@ pub(crate) fn build_bounded_execution_artifact(
     }
 }
 
-pub(crate) fn build_evaluation_signals_artifact(
+pub(crate) fn build_evaluation_control_state(
     run_summary: &RunSummaryArtifact,
-    fast_slow_path: &FastSlowPathArtifact,
-    agency_selection: &AgencySelectionArtifact,
     bounded_execution: &BoundedExecutionArtifact,
-    scores: Option<&ScoresArtifact>,
-) -> EvaluationSignalsArtifact {
+) -> EvaluationControlState {
     let (
         progress_signal,
         contradiction_signal,
         failure_signal,
         termination_reason,
         behavior_effect,
+        next_control_action,
     ) = if run_summary.status == "failure" {
         (
             "stalled_progress",
@@ -1841,6 +1850,11 @@ pub(crate) fn build_evaluation_signals_artifact(
                 "no_progress"
             },
             "emit bounded failure/termination signals for later reframing or policy handling",
+            if bounded_execution.iteration_count > 1 {
+                "handoff_to_reframing"
+            } else {
+                "terminate_with_failure"
+            },
         )
     } else {
         (
@@ -1849,9 +1863,27 @@ pub(crate) fn build_evaluation_signals_artifact(
             "none",
             "success",
             "allow bounded execution to terminate cleanly after evaluation confirms progress",
+            "complete_run",
         )
     };
 
+    EvaluationControlState {
+        progress_signal: progress_signal.to_string(),
+        contradiction_signal: contradiction_signal.to_string(),
+        failure_signal: failure_signal.to_string(),
+        termination_reason: termination_reason.to_string(),
+        behavior_effect: behavior_effect.to_string(),
+        next_control_action: next_control_action.to_string(),
+    }
+}
+
+pub(crate) fn build_evaluation_signals_artifact(
+    run_summary: &RunSummaryArtifact,
+    fast_slow_path: &FastSlowPathArtifact,
+    agency_selection: &AgencySelectionArtifact,
+    state: &EvaluationControlState,
+    scores: Option<&ScoresArtifact>,
+) -> EvaluationSignalsArtifact {
     EvaluationSignalsArtifact {
         evaluation_signals_version: EVALUATION_SIGNALS_VERSION,
         run_id: run_summary.run_id.clone(),
@@ -1863,13 +1895,14 @@ pub(crate) fn build_evaluation_signals_artifact(
         },
         selected_candidate_id: agency_selection.selected_candidate_id.clone(),
         selected_path: fast_slow_path.selected_path.clone(),
-        progress_signal: progress_signal.to_string(),
-        contradiction_signal: contradiction_signal.to_string(),
-        failure_signal: failure_signal.to_string(),
-        termination_reason: termination_reason.to_string(),
-        behavior_effect: behavior_effect.to_string(),
+        progress_signal: state.progress_signal.clone(),
+        contradiction_signal: state.contradiction_signal.clone(),
+        failure_signal: state.failure_signal.clone(),
+        termination_reason: state.termination_reason.clone(),
+        behavior_effect: state.behavior_effect.clone(),
+        next_control_action: state.next_control_action.clone(),
         deterministic_evaluation_rule:
-            "derive bounded evaluation and termination signals from run status plus bounded execution shape without hidden continuation state"
+            "derive bounded evaluation, termination, and next control action from runtime execution evidence without hidden continuation state"
                 .to_string(),
     }
 }
@@ -2269,11 +2302,12 @@ pub(crate) fn write_run_state_artifacts(
         &agency_selection,
         Some(&scores_for_suggestions),
     );
+    let evaluation_control_state = build_evaluation_control_state(&run_summary, &bounded_execution);
     let evaluation_signals = build_evaluation_signals_artifact(
         &run_summary,
         &fast_slow_path,
         &agency_selection,
-        &bounded_execution,
+        &evaluation_control_state,
         Some(&scores_for_suggestions),
     );
     let cognitive_arbitration_json = serde_json::to_vec_pretty(&cognitive_arbitration)

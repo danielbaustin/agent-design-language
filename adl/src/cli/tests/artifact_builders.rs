@@ -1372,18 +1372,20 @@ fn build_evaluation_signals_artifact_is_deterministic_and_emits_termination_reas
         &success_agency,
         Some(&success_scores),
     );
+    let success_eval_state =
+        run_artifacts::build_evaluation_control_state(&summary, &success_execution);
     let success_left = run_artifacts::build_evaluation_signals_artifact(
         &summary,
         &success_path,
         &success_agency,
-        &success_execution,
+        &success_eval_state,
         Some(&success_scores),
     );
     let success_right = run_artifacts::build_evaluation_signals_artifact(
         &summary,
         &success_path,
         &success_agency,
-        &success_execution,
+        &success_eval_state,
         Some(&success_scores),
     );
     assert_eq!(
@@ -1392,6 +1394,7 @@ fn build_evaluation_signals_artifact_is_deterministic_and_emits_termination_reas
     );
     assert_eq!(success_left.termination_reason, "success");
     assert_eq!(success_left.failure_signal, "none");
+    assert_eq!(success_left.next_control_action, "complete_run");
 
     summary.status = "failure".to_string();
     summary.counts.failed_steps = 1;
@@ -1449,16 +1452,19 @@ fn build_evaluation_signals_artifact_is_deterministic_and_emits_termination_reas
         &failure_agency,
         Some(&failure_scores),
     );
+    let failure_eval_state =
+        run_artifacts::build_evaluation_control_state(&summary, &failure_execution);
     let failure_eval = run_artifacts::build_evaluation_signals_artifact(
         &summary,
         &failure_path,
         &failure_agency,
-        &failure_execution,
+        &failure_eval_state,
         Some(&failure_scores),
     );
     assert_eq!(failure_eval.evaluation_signals_version, 1);
     assert_eq!(failure_eval.termination_reason, "bounded_failure");
     assert_eq!(failure_eval.contradiction_signal, "present");
+    assert_eq!(failure_eval.next_control_action, "handoff_to_reframing");
     assert_ne!(
         success_left.termination_reason,
         failure_eval.termination_reason
