@@ -182,6 +182,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     eprintln!("• Target branch: {branch}");
     eprintln!("• Target worktree: {}", worktree_path.display());
 
+    ensure_git_metadata_writable()?;
     fetch_origin_main_with_fallback()?;
     ensure_local_branch_exists(&branch)?;
     ensure_worktree_for_branch(&worktree_path, &branch)?;
@@ -1635,6 +1636,29 @@ fn fetch_origin_main_with_fallback() -> Result<()> {
         return Ok(());
     }
     bail!("start: fetch origin main failed and origin/main is unavailable locally");
+}
+
+fn ensure_git_metadata_writable() -> Result<()> {
+    let git_dir = run_capture("git", &["rev-parse", "--git-common-dir"])?;
+    let git_dir = git_dir.trim();
+    let probe_dir = Path::new(git_dir).join(format!(
+        "adl-git-write-probe-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos()
+    ));
+    match fs::create_dir(&probe_dir) {
+        Ok(()) => {
+            let _ = fs::remove_dir(&probe_dir);
+            Ok(())
+        }
+        Err(err) => bail!(
+            "start: git metadata directory '{}' is not writable, so branch/worktree creation cannot proceed. Remediation: restore write access to git metadata before rerunning. ({err})",
+            git_dir
+        ),
+    }
 }
 
 fn ensure_local_branch_exists(branch: &str) -> Result<()> {
@@ -4643,6 +4667,52 @@ verification_summary:
         assert!(bad_title
             .to_string()
             .contains("start: --title produced empty slug after sanitization"));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn ensure_git_metadata_writable_rejects_unwritable_git_dir() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+        let repo = unique_temp_dir("adl-pr-git-metadata-write");
+        init_git_repo(&repo);
+        let prev_dir = env::current_dir().expect("cwd");
+        env::set_current_dir(&repo).expect("chdir");
+
+        let git_dir = repo.join(".git");
+        let refs_dir = git_dir.join("refs");
+        let heads_dir = refs_dir.join("heads");
+        let git_mode = fs::metadata(&git_dir)
+            .expect("git metadata")
+            .permissions()
+            .mode();
+        let refs_mode = fs::metadata(&refs_dir)
+            .expect("refs metadata")
+            .permissions()
+            .mode();
+        let heads_mode = fs::metadata(&heads_dir)
+            .expect("heads metadata")
+            .permissions()
+            .mode();
+
+        fs::set_permissions(&git_dir, fs::Permissions::from_mode(0o555)).expect("chmod git");
+        fs::set_permissions(&refs_dir, fs::Permissions::from_mode(0o555)).expect("chmod refs");
+        fs::set_permissions(&heads_dir, fs::Permissions::from_mode(0o555)).expect("chmod heads");
+
+        let err = ensure_git_metadata_writable().expect_err("unwritable git dir should fail");
+
+        fs::set_permissions(&heads_dir, fs::Permissions::from_mode(heads_mode))
+            .expect("restore heads");
+        fs::set_permissions(&refs_dir, fs::Permissions::from_mode(refs_mode))
+            .expect("restore refs");
+        fs::set_permissions(&git_dir, fs::Permissions::from_mode(git_mode)).expect("restore git");
+        env::set_current_dir(prev_dir).expect("restore cwd");
+
+        assert!(err.to_string().contains("git metadata directory"));
+        assert!(err
+            .to_string()
+            .contains("restore write access to git metadata before rerunning"));
     }
 
     #[test]

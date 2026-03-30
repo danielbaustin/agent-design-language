@@ -269,6 +269,18 @@ git_common_dir() {
   git rev-parse --git-common-dir 2>/dev/null || die "Not in a git repo"
 }
 
+ensure_git_metadata_writable_or_die() {
+  local context="$1"
+  local git_dir probe_dir
+  git_dir="$(git_common_dir)"
+  probe_dir="${git_dir}/adl-git-write-probe.$$.$RANDOM"
+  if mkdir "$probe_dir" 2>/dev/null; then
+    rmdir "$probe_dir" 2>/dev/null || true
+    return 0
+  fi
+  die "${context}: git metadata directory '$git_dir' is not writable, so branch/worktree creation cannot proceed. Remediation: restore write access to git metadata before rerunning."
+}
+
 repo_lock_root() {
   local root
   root="$(primary_checkout_root)"
@@ -2094,6 +2106,7 @@ cmd_start() {
 
   note "Target branch: $branch"
   note "Target worktree: $worktree_path"
+  ensure_git_metadata_writable_or_die "start"
 
   note "Fetching origin/main…"
   local fetch_out="" fetch_status=0
