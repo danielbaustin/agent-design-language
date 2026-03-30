@@ -10,14 +10,11 @@ use super::pr_cmd_args::{
     parse_finish_args, parse_init_args, parse_preflight_args, parse_ready_args, parse_start_args,
 };
 #[cfg(test)]
+use super::pr_cmd_prompt::{infer_required_outcome_type, infer_wp_from_title, load_issue_prompt};
 use super::pr_cmd_prompt::{
-    infer_required_outcome_type, infer_wp_from_title, load_issue_prompt,
-    parse_issue_number_from_url, resolve_issue_body, version_from_labels_csv,
-};
-use super::pr_cmd_prompt::{
-    normalize_labels_csv, render_generated_issue_prompt, resolve_issue_prompt_path,
-    resolve_issue_scope_and_slug_from_local_state, validate_issue_prompt_exists,
-    version_from_title,
+    normalize_labels_csv, parse_issue_number_from_url, render_generated_issue_prompt,
+    resolve_issue_body, resolve_issue_prompt_path, resolve_issue_scope_and_slug_from_local_state,
+    validate_issue_prompt_exists, version_from_labels_csv, version_from_title,
 };
 use ::adl::control_plane::{
     card_input_path, card_output_path, resolve_cards_root, resolve_primary_checkout_root,
@@ -26,7 +23,6 @@ use ::adl::control_plane::{
 
 const DEFAULT_VERSION: &str = "v0.86";
 const DEFAULT_NEW_LABELS: &str = "track:roadmap,type:task,area:tools";
-
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 struct OpenPullRequest {
     number: u32,
@@ -501,6 +497,7 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     let repo_root = repo_root()?;
     let repo = default_repo(&repo_root)?;
 
+    let mut issue = parsed.issue;
     let mut title = parsed.title_arg.clone().unwrap_or_default();
     let mut slug = parsed.slug.clone().unwrap_or_default();
     if slug.is_empty() && !title.is_empty() {
@@ -510,9 +507,17 @@ fn real_pr_init(args: &[String]) -> Result<()> {
         }
     }
 
-    if title.is_empty() && !parsed.no_fetch_issue {
+    if parsed.new_issue {
+        if title.is_empty() {
+            bail!("init: --new requires --title");
+        }
+    } else if title.is_empty() && !parsed.no_fetch_issue {
         eprintln!("• Fetching issue title via gh…");
-        title = gh_issue_title(parsed.issue, &repo)?.unwrap_or_default();
+        title = gh_issue_title(
+            issue.ok_or_else(|| anyhow!("init: missing <issue> number"))?,
+            &repo,
+        )?
+        .unwrap_or_default();
     }
     if slug.is_empty() {
         if parsed.no_fetch_issue {
@@ -521,7 +526,7 @@ fn real_pr_init(args: &[String]) -> Result<()> {
         if title.is_empty() {
             bail!(
                 "Could not fetch issue #{} title. Pass --slug or check gh auth/repo.",
-                parsed.issue
+                issue.ok_or_else(|| anyhow!("init: missing <issue> number"))?
             );
         }
         slug = sanitize_slug(&title);
@@ -532,15 +537,45 @@ fn real_pr_init(args: &[String]) -> Result<()> {
 
     let version = if let Some(version) = parsed.version.clone() {
         version
+    } else if parsed.new_issue {
+        parsed
+            .labels
+            .as_deref()
+            .and_then(version_from_labels_csv)
+            .or_else(|| version_from_title(&title))
+            .unwrap_or_else(|| DEFAULT_VERSION.to_string())
     } else if parsed.no_fetch_issue {
         DEFAULT_VERSION.to_string()
     } else {
-        issue_version(parsed.issue, &repo)?.unwrap_or_else(|| DEFAULT_VERSION.to_string())
+        issue_version(
+            issue.ok_or_else(|| anyhow!("init: missing <issue> number"))?,
+            &repo,
+        )?
+        .unwrap_or_else(|| DEFAULT_VERSION.to_string())
     };
 
-    let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
-    let source_path =
-        ensure_source_issue_prompt(&repo_root, &repo, &issue_ref, &title, None, &version)?;
+    let normalized_labels = normalize_labels_csv(
+        parsed.labels.as_deref().unwrap_or(DEFAULT_NEW_LABELS),
+        &version,
+    );
+
+    if parsed.new_issue {
+        let body = resolve_issue_body(parsed.body.clone(), parsed.body_file.as_deref())?;
+        let issue_url = gh_issue_create(&repo, &title, &body, &normalized_labels)?;
+        issue = Some(parse_issue_number_from_url(&issue_url)?);
+        eprintln!("• Created GitHub issue: {issue_url}");
+    }
+
+    let issue = issue.ok_or_else(|| anyhow!("init: missing <issue> number"))?;
+    let issue_ref = IssueRef::new(issue, version.clone(), slug.clone())?;
+    let source_path = ensure_source_issue_prompt(
+        &repo_root,
+        &repo,
+        &issue_ref,
+        &title,
+        Some(&normalized_labels),
+        &version,
+    )?;
     validate_issue_prompt_exists(&source_path)?;
 
     let stp_path = issue_ref.task_bundle_stp_path(&repo_root);
@@ -585,6 +620,7 @@ fn real_pr_init(args: &[String]) -> Result<()> {
         "  SOURCE   {}",
         path_relative_to_repo(&repo_root, &source_path)
     );
+    println!("  ISSUE    #{issue}");
     println!("  CONTRACT minimum v0.86 init = validated source prompt + root stp/sip/sor bundle");
     println!("  STATE    ISSUE_AND_BUNDLE_READY");
     eprintln!("• Done.");
@@ -1087,6 +1123,44 @@ fn issue_version(issue: u32, repo: &str) -> Result<Option<String>> {
 
     let title = gh_issue_title(issue, repo)?;
     Ok(title.and_then(|title| version_from_title(&title)))
+}
+
+fn gh_issue_create(repo: &str, title: &str, body: &str, labels_csv: &str) -> Result<String> {
+    let mut cmd = Command::new("gh");
+    cmd.arg("issue")
+        .arg("create")
+        .arg("-R")
+        .arg(repo)
+        .arg("--title")
+        .arg(title)
+        .arg("--body")
+        .arg(body);
+    for label in labels_csv
+        .split(',')
+        .map(str::trim)
+        .filter(|label| !label.is_empty())
+    {
+        cmd.arg("--label").arg(label);
+    }
+    let output = cmd
+        .output()
+        .with_context(|| "failed to spawn gh issue create")?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        bail!(
+            "init: gh issue create failed{}",
+            if stderr.trim().is_empty() {
+                String::new()
+            } else {
+                format!(": {}", stderr.trim())
+            }
+        );
+    }
+    let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if stdout.is_empty() {
+        bail!("init: gh issue create returned empty output");
+    }
+    Ok(stdout)
 }
 
 fn gh_issue_title(issue: u32, repo: &str) -> Result<Option<String>> {
@@ -2159,8 +2233,39 @@ verification_summary:
             "v0.86".to_string(),
         ])
         .expect("parse");
-        assert_eq!(parsed.issue, 1151);
+        assert_eq!(parsed.issue, Some(1151));
         assert_eq!(parsed.title_arg.as_deref(), Some("Example"));
+        assert_eq!(parsed.version.as_deref(), Some("v0.86"));
+    }
+
+    #[test]
+    fn parse_init_args_accepts_new_issue_flags() {
+        let parsed = parse_init_args(&[
+            "--new".to_string(),
+            "--title".to_string(),
+            "[v0.86][tools] New init path".to_string(),
+            "--slug".to_string(),
+            "new-init-path".to_string(),
+            "--body".to_string(),
+            "## Goal\n- test".to_string(),
+            "--labels".to_string(),
+            "track:roadmap,type:task,area:tools".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+        ])
+        .expect("parse");
+        assert!(parsed.new_issue);
+        assert_eq!(parsed.issue, None);
+        assert_eq!(
+            parsed.title_arg.as_deref(),
+            Some("[v0.86][tools] New init path")
+        );
+        assert_eq!(parsed.slug.as_deref(), Some("new-init-path"));
+        assert_eq!(parsed.body.as_deref(), Some("## Goal\n- test"));
+        assert_eq!(
+            parsed.labels.as_deref(),
+            Some("track:roadmap,type:task,area:tools")
+        );
         assert_eq!(parsed.version.as_deref(), Some("v0.86"));
     }
 
@@ -2168,6 +2273,20 @@ verification_summary:
     fn parse_init_args_rejects_unknown_arg() {
         let err = parse_init_args(&["1151".to_string(), "--bogus".to_string()]).expect_err("err");
         assert!(err.to_string().contains("init: unknown arg"));
+    }
+
+    #[test]
+    fn parse_init_args_rejects_conflicting_new_issue_inputs() {
+        let err = parse_init_args(&["1151".to_string(), "--new".to_string()]).expect_err("err");
+        assert!(err
+            .to_string()
+            .contains("init: pass either <issue> or --new, not both"));
+
+        let err = parse_init_args(&["--new".to_string(), "--no-fetch-issue".to_string()])
+            .expect_err("err");
+        assert!(err
+            .to_string()
+            .contains("init: --no-fetch-issue is not used with --new"));
     }
 
     #[test]
@@ -2332,6 +2451,70 @@ verification_summary:
         );
         assert!(sip_path.is_file());
         assert!(sor_path.is_file());
+    }
+
+    #[test]
+    fn real_pr_init_new_creates_issue_and_root_bundle() {
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+        let repo = unique_temp_dir("adl-pr-real-init-new");
+        init_git_repo(&repo);
+        copy_bootstrap_support_files(&repo);
+
+        let bin_dir = repo.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let gh_log = repo.join("gh.log");
+        let gh_path = bin_dir.join("gh");
+        write_executable(
+            &gh_path,
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  printf 'https://github.com/example/repo/issues/1202\\n'\n  exit 0\nfi\nexit 1\n",
+                gh_log.display()
+            ),
+        );
+
+        let old_path = env::var("PATH").unwrap_or_default();
+        let prev_dir = env::current_dir().expect("cwd");
+        unsafe {
+            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        }
+        env::set_current_dir(&repo).expect("chdir");
+
+        let result = real_pr(&[
+            "init".to_string(),
+            "--new".to_string(),
+            "--title".to_string(),
+            "[v0.86][tools] Simplified init path".to_string(),
+            "--slug".to_string(),
+            "v0-86-tools-simplified-init-path".to_string(),
+            "--body".to_string(),
+            "## Goal\n- simplify init".to_string(),
+            "--labels".to_string(),
+            "track:roadmap,type:task,area:tools".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+        ]);
+
+        env::set_current_dir(prev_dir).expect("restore cwd");
+        unsafe {
+            env::set_var("PATH", old_path);
+        }
+        result.expect("real_pr init --new");
+
+        let issue_ref = IssueRef::new(
+            1202,
+            "v0.86".to_string(),
+            "v0-86-tools-simplified-init-path".to_string(),
+        )
+        .expect("issue ref");
+        assert!(issue_ref.issue_prompt_path(&repo).is_file());
+        assert!(issue_ref.task_bundle_stp_path(&repo).is_file());
+        assert!(issue_ref.task_bundle_input_path(&repo).is_file());
+        assert!(issue_ref.task_bundle_output_path(&repo).is_file());
+
+        let gh_calls = fs::read_to_string(&gh_log).expect("gh log");
+        assert!(gh_calls.contains("issue create"));
+        assert!(gh_calls.contains("--label"));
+        assert!(gh_calls.contains("version:v0.86"));
     }
 
     #[test]

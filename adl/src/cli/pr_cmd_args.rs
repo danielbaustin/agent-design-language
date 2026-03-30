@@ -3,9 +3,13 @@ use std::path::PathBuf;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct InitArgs {
-    pub(crate) issue: u32,
+    pub(crate) issue: Option<u32>,
+    pub(crate) new_issue: bool,
     pub(crate) slug: Option<String>,
     pub(crate) title_arg: Option<String>,
+    pub(crate) body: Option<String>,
+    pub(crate) body_file: Option<PathBuf>,
+    pub(crate) labels: Option<String>,
     pub(crate) no_fetch_issue: bool,
     pub(crate) version: Option<String>,
 }
@@ -55,29 +59,56 @@ pub(crate) struct FinishArgs {
 }
 
 pub(crate) fn parse_init_args(args: &[String]) -> Result<InitArgs> {
-    let issue_raw = args
-        .first()
-        .ok_or_else(|| anyhow!("init: missing <issue> number"))?;
-    let issue = issue_raw
-        .parse::<u32>()
-        .with_context(|| format!("invalid issue number: {issue_raw}"))?;
     let mut parsed = InitArgs {
-        issue,
+        issue: None,
+        new_issue: false,
         slug: None,
         title_arg: None,
+        body: None,
+        body_file: None,
+        labels: None,
         no_fetch_issue: false,
         version: None,
     };
 
-    let mut i = 1;
+    let mut i = 0;
+    if let Some(first) = args.first() {
+        if !first.starts_with("--") {
+            parsed.issue = Some(
+                first
+                    .parse::<u32>()
+                    .with_context(|| format!("invalid issue number: {first}"))?,
+            );
+            i = 1;
+        }
+    }
+
     while i < args.len() {
         match args[i].as_str() {
+            "--new" => parsed.new_issue = true,
             "--slug" => {
                 parsed.slug = Some(require_value(args, i, "init", "--slug")?);
                 i += 1;
             }
             "--title" => {
                 parsed.title_arg = Some(require_value(args, i, "init", "--title")?);
+                i += 1;
+            }
+            "--body" => {
+                parsed.body = Some(require_value(args, i, "init", "--body")?);
+                i += 1;
+            }
+            "--body-file" => {
+                parsed.body_file = Some(PathBuf::from(require_value(
+                    args,
+                    i,
+                    "init",
+                    "--body-file",
+                )?));
+                i += 1;
+            }
+            "--labels" => {
+                parsed.labels = Some(require_value(args, i, "init", "--labels")?);
                 i += 1;
             }
             "--no-fetch-issue" => parsed.no_fetch_issue = true,
@@ -89,6 +120,20 @@ pub(crate) fn parse_init_args(args: &[String]) -> Result<InitArgs> {
         }
         i += 1;
     }
+
+    if parsed.new_issue && parsed.issue.is_some() {
+        bail!("init: pass either <issue> or --new, not both");
+    }
+    if !parsed.new_issue && parsed.issue.is_none() {
+        bail!("init: missing <issue> number");
+    }
+    if parsed.body.is_some() && parsed.body_file.is_some() {
+        bail!("init: pass only one of --body or --body-file");
+    }
+    if parsed.new_issue && parsed.no_fetch_issue {
+        bail!("init: --no-fetch-issue is not used with --new");
+    }
+
     Ok(parsed)
 }
 

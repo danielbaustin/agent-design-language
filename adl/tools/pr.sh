@@ -2772,6 +2772,7 @@ pr.sh — reduce git/PR thrash while preserving human review
 Commands:
   help
   init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v>]
+  init    --new --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v>]
   run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
   start   <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>]
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
@@ -2800,7 +2801,9 @@ Flags:
   (start)   --allow-open-pr-wave               Override the open milestone PR wave guard.
 
 Notes:
-- Issue creation/reconciliation is no longer part of `pr.sh`; create the GitHub issue first, then run `pr init` and `pr start`.
+- `pr init` is the kickoff entrypoint.
+- Use `pr init --new ...` to create a GitHub issue and emit the full root STP/SIP/SOR bundle in one step.
+- Use `pr init <issue> ...` to bootstrap an already-existing issue, then `pr start <issue>` to create or reuse the branch/worktree.
 - PRs are created as DRAFT by default to preserve human review.
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - run is a bounded v0.85 wrapper over the Rust adl runtime; browser/editor direct invocation remains follow-on work.
@@ -2813,6 +2816,7 @@ Notes:
 Examples:
   adl/tools/pr.sh help
   adl/tools/pr.sh init 17 --slug b6-default-system --no-fetch-issue --version v0.85
+  adl/tools/pr.sh init --new --title "[v0.86][tools] Example issue" --labels "track:roadmap,type:task,area:tools"
   adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml --trace --allow-unsigned
   adl/tools/pr.sh start 17 --slug b6-default-system
   adl/tools/pr.sh preflight 17 --slug b6-default-system --version v0.85
@@ -2835,7 +2839,7 @@ Usage:
 
 Notes:
 - `pr new` is retired.
-- Create the GitHub issue first, then use `adl/tools/pr.sh init <issue>` and `adl/tools/pr.sh start <issue>`.
+- Use `adl/tools/pr.sh init --new ...` instead.
 EOF
 }
 
@@ -2843,8 +2847,8 @@ usage_create() {
   cat <<'EOF'
 Notes:
 - `pr create` is retired.
-- Create or reconcile the GitHub issue outside `pr.sh`, then run:
-  1. `adl/tools/pr.sh init <issue> [...]`
+- Use:
+  1. `adl/tools/pr.sh init --new ...` for a brand-new issue, or `adl/tools/pr.sh init <issue> ...` for an existing issue
   2. `adl/tools/pr.sh start <issue> [...]`
 EOF
 }
@@ -2853,9 +2857,11 @@ usage_init() {
   cat <<'EOF'
 Usage:
   adl/tools/pr.sh init <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v0.85>]
+  adl/tools/pr.sh init --new --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v0.85>]
 
 Notes:
-- Initializes the canonical local task-bundle authoring surface for an existing issue-backed task.
+- Initializes the canonical local task-bundle authoring surface.
+- `--new` creates the GitHub issue first, then emits and validates the full root bundle in the same command.
 - Emits and validates the root STP/SIP/SOR bundle before returning success.
 - Fails if the full root task bundle cannot be created cleanly.
 EOF

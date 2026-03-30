@@ -4,6 +4,7 @@ pub fn usage() -> &'static str {
   adl resume <run_id> [--steer <steering.json>]
   adl demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
   adl pr init <issue> [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>]
+  adl pr init --new --title <title> [--slug <slug>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>]
   adl pr start <issue> [--prefix <prefix>] [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
   adl pr ready <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
   adl pr preflight <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]

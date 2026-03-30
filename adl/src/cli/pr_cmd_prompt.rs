@@ -1,4 +1,3 @@
-#[cfg(test)]
 use anyhow::{anyhow, Context};
 use anyhow::{bail, Result};
 #[cfg(test)]
@@ -105,7 +104,6 @@ pub(crate) fn infer_required_outcome_type(labels_csv: &str, title: &str) -> &'st
     "code"
 }
 
-#[cfg(test)]
 pub(crate) fn version_from_labels_csv(labels_csv: &str) -> Option<String> {
     labels_csv
         .split(',')
@@ -169,7 +167,6 @@ pub(crate) fn load_issue_prompt(path: &Path) -> Result<IssuePromptDoc> {
     })
 }
 
-#[cfg(test)]
 pub(crate) fn resolve_issue_body(body: Option<String>, body_file: Option<&Path>) -> Result<String> {
     if let Some(path) = body_file {
         if path == Path::new("-") {
@@ -192,7 +189,6 @@ pub(crate) fn normalize_labels_csv(labels: &str, version: &str) -> String {
     normalized.join(",")
 }
 
-#[cfg(test)]
 pub(crate) fn parse_issue_number_from_url(url: &str) -> Result<u32> {
     let issue = url
         .trim()
