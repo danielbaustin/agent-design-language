@@ -130,20 +130,6 @@ pub fn sanitize_slug(raw: impl AsRef<str>) -> String {
 }
 
 pub fn resolve_primary_checkout_root(current_top: &Path, git_common_dir: Option<&Path>) -> PathBuf {
-    let current_base = current_top.file_name().and_then(|name| name.to_str());
-    let current_parent = current_top
-        .parent()
-        .and_then(|parent| parent.file_name())
-        .and_then(|name| name.to_str());
-
-    if current_parent == Some(".worktrees")
-        && current_base
-            .map(|name| name.starts_with("adl-wp-"))
-            .unwrap_or(false)
-    {
-        return current_top.to_path_buf();
-    }
-
     let Some(common_dir) = git_common_dir else {
         return current_top.to_path_buf();
     };
@@ -154,16 +140,31 @@ pub fn resolve_primary_checkout_root(current_top: &Path, git_common_dir: Option<
         current_top.join(common_dir)
     };
 
-    let shared_root = common_abs
-        .parent()
-        .map(Path::to_path_buf)
-        .unwrap_or_else(|| current_top.to_path_buf());
-
-    if current_top != shared_root {
-        return current_top.to_path_buf();
+    if common_abs.file_name().and_then(|name| name.to_str()) == Some(".git") {
+        return common_abs
+            .parent()
+            .map(Path::to_path_buf)
+            .unwrap_or_else(|| current_top.to_path_buf());
     }
 
-    shared_root
+    let worktrees_dir = common_abs.parent();
+    let git_dir = worktrees_dir.and_then(Path::parent);
+    if worktrees_dir
+        .and_then(|path| path.file_name())
+        .and_then(|name| name.to_str())
+        == Some("worktrees")
+        && git_dir
+            .and_then(|path| path.file_name())
+            .and_then(|name| name.to_str())
+            == Some(".git")
+    {
+        return git_dir
+            .and_then(Path::parent)
+            .map(Path::to_path_buf)
+            .unwrap_or_else(|| current_top.to_path_buf());
+    }
+
+    current_top.to_path_buf()
 }
 
 pub fn resolve_cards_root(
@@ -271,13 +272,13 @@ mod tests {
     }
 
     #[test]
-    fn primary_checkout_root_uses_current_worktree_for_repo_local_worktrees() {
+    fn primary_checkout_root_resolves_primary_checkout_for_repo_local_worktrees() {
         let current_top = Path::new("/repo/.worktrees/adl-wp-200");
         let common = Path::new("/repo/.git/worktrees/adl-wp-200");
 
         assert_eq!(
             resolve_primary_checkout_root(current_top, Some(common)),
-            PathBuf::from("/repo/.worktrees/adl-wp-200")
+            PathBuf::from("/repo")
         );
     }
 
