@@ -78,15 +78,22 @@ PY
   exit 1
 }
 
-grep -Fq "PR created:" "$(python3 - <<PY
+GH_LOG_PATH="$(python3 - <<PY
 import json
 from pathlib import Path
 manifest = json.loads(Path("$MANIFEST_PATH").read_text())
-print(manifest["step_logs"]["pr_finish"])
+print(manifest["gh_log"])
 PY
-)" || {
-  echo "assertion failed: pr finish log missing PR creation marker" >&2
+)"
+
+grep -Fq "pr list" "$GH_LOG_PATH" || {
+  echo "assertion failed: gh log missing pr list call" >&2
   exit 1
 }
+
+if grep -Fq "pr create" "$GH_LOG_PATH"; then
+  echo "assertion failed: demo should not open a PR when --no-open is set" >&2
+  exit 1
+fi
 
 echo "five-command editing demo: ok"
