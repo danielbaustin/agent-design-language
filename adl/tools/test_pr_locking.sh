@@ -54,6 +54,10 @@ chmod +x "$repo/adl/tools/pr.sh" "$repo/adl/tools/lint_prompt_spec.sh" "$repo/ad
     echo "$start_out" >&2
     exit 1
   }
+  [[ -d "$repo/.adl/locks" ]] || {
+    echo "assertion failed: expected shared lock root to exist under .adl/locks" >&2
+    exit 1
+  }
 
   cards_out="$("$BASH_BIN" adl/tools/pr.sh cards 981 --no-fetch-issue --version v0.86)"
   [[ "$cards_out" == *"STATE=ISSUE_AND_CARDS_READY"* ]] || {

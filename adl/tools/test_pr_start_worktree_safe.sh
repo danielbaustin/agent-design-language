@@ -203,25 +203,25 @@ EOF
 
   git switch -q main
   rm -f untracked.txt
-  mkdir -p "$(git rev-parse --git-common-dir)/pr-bootstrap.lock"
+  mkdir -p "$repo/.adl/locks/pr-bootstrap.lock"
   sleep 30 &
   live_lock_pid=$!
-  echo "$live_lock_pid" > "$(git rev-parse --git-common-dir)/pr-bootstrap.lock/pid"
+  echo "$live_lock_pid" > "$repo/.adl/locks/pr-bootstrap.lock/pid"
   set +e
   bad3="$("$BASH_BIN" adl/tools/pr.sh start 996 --slug bootstrap-lock --no-fetch-issue 2>&1)"
   status=$?
   set -e
   kill "$live_lock_pid" 2>/dev/null || true
   wait "$live_lock_pid" 2>/dev/null || true
-  rm -rf "$(git rev-parse --git-common-dir)/pr-bootstrap.lock"
+  rm -rf "$repo/.adl/locks/pr-bootstrap.lock"
   [[ "$status" -ne 0 ]] || {
     echo "assertion failed: expected bootstrap lock contention to fail" >&2
     exit 1
   }
   assert_contains "another pr.sh bootstrap operation appears to be running" "$bad3" "bootstrap lock message"
 
-  mkdir -p "$(git rev-parse --git-common-dir)/pr-bootstrap.lock"
-  echo "999999" > "$(git rev-parse --git-common-dir)/pr-bootstrap.lock/pid"
+  mkdir -p "$repo/.adl/locks/pr-bootstrap.lock"
+  echo "999999" > "$repo/.adl/locks/pr-bootstrap.lock/pid"
   stale_lock_out="$("$BASH_BIN" adl/tools/pr.sh start 993 --slug stale-lock-recovery --no-fetch-issue)"
   stale_wt="$(cd "$repo/.worktrees/adl-wp-993" && pwd -P)"
   assert_contains "WORKTREE $stale_wt" "$stale_lock_out" "stale lock recovery still starts"
