@@ -1082,6 +1082,13 @@ seed_bootstrap_surfaces() {
   printf '%s\n%s\n%s\n' "$stp_path" "$in_path" "$out_path"
 }
 
+recover_root_bundle_after_start_failure() {
+  local issue="$1" version="$2" slug="$3" title="$4" source_path="$5"
+  local branch
+  branch="codex/${issue}-${slug}"
+  seed_bootstrap_surfaces "$issue" "$version" "$slug" "$title" "$branch" "$source_path"
+}
+
 resolve_issue_scope_and_slug_from_local_state() {
   local issue="$1"
   local first path_remainder scope dir_name slug
@@ -2325,9 +2332,28 @@ create_issue() {
     return 0
   fi
 
-  if ! cmd_start "$issue_num" --slug "$slug" --title "$title" --version "$version"; then
+  local start_output start_status
+  set +e
+  start_output="$(
+    cmd_start "$issue_num" --slug "$slug" --title "$title" --version "$version" 2>&1
+  )"
+  start_status=$?
+  set -e
+  [[ -n "$start_output" ]] && printf '%s\n' "$start_output"
+
+  if [[ "$start_status" -ne 0 ]]; then
     echo "START_STATE=FAILED"
-    die "create: issue created but start failed; issue #$issue_num exists and source prompt is at $(path_relative_to_repo "$source_path")"
+    local stp_path in_path out_path
+    {
+      read -r stp_path
+      read -r in_path
+      read -r out_path
+    } < <(recover_root_bundle_after_start_failure "$issue_num" "$version" "$slug" "$title" "$source_path")
+    echo "RECOVERY_STATE=ISSUE_AND_BUNDLE_READY"
+    echo "STP_PATH=$(path_relative_to_repo "$stp_path")"
+    echo "SIP_PATH=$(path_relative_to_repo "$in_path")"
+    echo "SOR_PATH=$(path_relative_to_repo "$out_path")"
+    die "create: issue created and root bundle recovered, but start failed; issue #$issue_num exists and can be resumed from $(path_relative_to_repo "$stp_path")"
   fi
   echo "START_STATE=STARTED"
   echo "BRANCH=codex/${issue_num}-${slug}"
