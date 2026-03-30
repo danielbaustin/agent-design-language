@@ -10,9 +10,7 @@ use super::pr_cmd_args::{
     parse_finish_args, parse_init_args, parse_preflight_args, parse_ready_args, parse_start_args,
 };
 #[cfg(test)]
-use super::pr_cmd_prompt::{
-    infer_required_outcome_type, infer_wp_from_title, load_issue_prompt,
-};
+use super::pr_cmd_prompt::{infer_required_outcome_type, infer_wp_from_title, load_issue_prompt};
 use super::pr_cmd_prompt::{
     normalize_labels_csv, parse_issue_number_from_url, render_generated_issue_prompt,
     resolve_issue_body, resolve_issue_prompt_path, resolve_issue_scope_and_slug_from_local_state,
