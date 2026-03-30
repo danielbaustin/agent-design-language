@@ -7,7 +7,8 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use ::adl::control_plane::{
-    card_input_path, card_output_path, resolve_cards_root, sanitize_slug, IssueRef,
+    card_input_path, card_output_path, resolve_cards_root, resolve_primary_checkout_root,
+    sanitize_slug, IssueRef,
 };
 
 const DEFAULT_VERSION: &str = "v0.86";
@@ -210,7 +211,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
 
 fn real_pr_ready(args: &[String]) -> Result<()> {
     let parsed = parse_ready_args(args)?;
-    let repo_root = repo_root()?;
+    let repo_root = primary_checkout_root()?;
     let repo = default_repo(&repo_root)?;
 
     let (version, slug) =
@@ -901,8 +902,22 @@ fn require_value(args: &[String], index: usize, cmd: &str, flag: &str) -> Result
 }
 
 fn repo_root() -> Result<PathBuf> {
-    let out = run_capture("git", &["rev-parse", "--show-toplevel"])?;
-    Ok(PathBuf::from(out.trim()))
+    let current_top = PathBuf::from(run_capture("git", &["rev-parse", "--show-toplevel"])?.trim());
+    Ok(current_top)
+}
+
+fn primary_checkout_root() -> Result<PathBuf> {
+    let current_top = repo_root()?;
+    let common_dir = run_capture_allow_failure("git", &["rev-parse", "--git-common-dir"])?;
+    let common_dir = common_dir
+        .as_deref()
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .map(PathBuf::from);
+    Ok(resolve_primary_checkout_root(
+        &current_top,
+        common_dir.as_deref(),
+    ))
 }
 
 fn path_str(path: &Path) -> Result<&str> {
@@ -2950,6 +2965,113 @@ verification_summary:
         assert!(card_output_path(&root_cards, 1152)
             .symlink_metadata()
             .is_ok());
+    }
+
+    #[test]
+    fn real_pr_ready_succeeds_when_invoked_from_started_worktree() {
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+        let temp = unique_temp_dir("adl-pr-ready-worktree-cwd");
+        let origin = temp.join("origin.git");
+        let repo = temp.join("repo");
+        fs::create_dir_all(&repo).expect("repo dir");
+        copy_bootstrap_support_files(&repo);
+        init_git_repo(&repo);
+        assert!(Command::new("git")
+            .args(["config", "user.name", "Test User"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.email", "test@example.com"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config")
+            .success());
+        fs::write(repo.join("README.md"), "ready from worktree\n").expect("seed file");
+        assert!(Command::new("git")
+            .args(["add", "-A"])
+            .current_dir(&repo)
+            .status()
+            .expect("git add")
+            .success());
+        assert!(Command::new("git")
+            .args(["commit", "-q", "-m", "init"])
+            .current_dir(&repo)
+            .status()
+            .expect("git commit")
+            .success());
+        assert!(Command::new("git")
+            .args(["branch", "-M", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git branch")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "init",
+                "--bare",
+                "-q",
+                path_str(&origin).expect("origin path"),
+            ])
+            .current_dir(&repo)
+            .status()
+            .expect("git init bare")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "remote",
+                "set-url",
+                "origin",
+                path_str(&origin).expect("origin path"),
+            ])
+            .current_dir(&repo)
+            .status()
+            .expect("git remote set-url")
+            .success());
+        assert!(Command::new("git")
+            .args(["push", "-q", "-u", "origin", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git push")
+            .success());
+        assert!(Command::new("git")
+            .args(["fetch", "-q", "origin", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git fetch")
+            .success());
+
+        let prev_dir = env::current_dir().expect("cwd");
+        env::set_current_dir(&repo).expect("chdir");
+        real_pr(&[
+            "start".to_string(),
+            "1198".to_string(),
+            "--slug".to_string(),
+            "ready-worktree-cwd".to_string(),
+            "--title".to_string(),
+            "[v0.86][tools] Ready worktree cwd".to_string(),
+            "--no-fetch-issue".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+        ])
+        .expect("real_pr start");
+        let issue_ref = IssueRef::new(1198, "v0.86", "ready-worktree-cwd").expect("issue ref");
+        let worktree = issue_ref.default_worktree_path(&repo, None);
+        env::set_current_dir(&worktree).expect("chdir worktree");
+
+        let ready = real_pr(&[
+            "ready".to_string(),
+            "1198".to_string(),
+            "--slug".to_string(),
+            "ready-worktree-cwd".to_string(),
+            "--no-fetch-issue".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+        ]);
+
+        env::set_current_dir(prev_dir).expect("restore cwd");
+        ready.expect("ready from worktree");
     }
 
     #[test]
