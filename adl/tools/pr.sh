@@ -269,6 +269,12 @@ git_common_dir() {
   git rev-parse --git-common-dir 2>/dev/null || die "Not in a git repo"
 }
 
+repo_lock_root() {
+  local root
+  root="$(primary_checkout_root)"
+  echo "$root/.adl/locks"
+}
+
 issue_bootstrap_lock_name() {
   local issue="$1"
   printf 'pr-bootstrap-issue-%s\n' "$issue"
@@ -277,7 +283,8 @@ issue_bootstrap_lock_name() {
 acquire_repo_lock_into() {
   local name="$1" outvar="$2"
   local lock_dir
-  lock_dir="$(git_common_dir)/${name}.lock"
+  lock_dir="$(repo_lock_root)/${name}.lock"
+  mkdir -p "$(dirname "$lock_dir")"
   local attempt max_attempts pid_file owner_pid stale_marker
   max_attempts=50
   for ((attempt=1; attempt<=max_attempts; attempt++)); do
