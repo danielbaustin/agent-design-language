@@ -65,6 +65,7 @@ It does not claim a finished browser-only workflow platform.
 
 ## Still Manual / Out Of Scope
 
+- `pr create` is not launched from the browser in this slice
 - `pr init` is not launched from the browser in this slice
 - `pr run` is not launched from the browser in this slice
 - `pr finish` is not launched from the browser in this slice

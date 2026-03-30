@@ -7,7 +7,8 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use super::pr_cmd_args::{
-    parse_finish_args, parse_init_args, parse_preflight_args, parse_ready_args, parse_start_args,
+    parse_create_args, parse_finish_args, parse_init_args, parse_preflight_args, parse_ready_args,
+    parse_start_args,
 };
 #[cfg(test)]
 use super::pr_cmd_prompt::{infer_required_outcome_type, infer_wp_from_title, load_issue_prompt};
@@ -38,10 +39,11 @@ struct OpenPullRequest {
 
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
-        bail!("pr requires a subcommand: init | start | ready | preflight | finish");
+        bail!("pr requires a subcommand: create | init | start | ready | preflight | finish");
     };
 
     match subcommand {
+        "create" => real_pr_create(&args[1..]),
         "init" => real_pr_init(&args[1..]),
         "start" => real_pr_start(&args[1..]),
         "ready" => real_pr_ready(&args[1..]),
@@ -49,6 +51,52 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
         "finish" => real_pr_finish(&args[1..]),
         other => bail!("unknown pr subcommand: {other}"),
     }
+}
+
+fn real_pr_create(args: &[String]) -> Result<()> {
+    let parsed = parse_create_args(args)?;
+    let repo_root = repo_root()?;
+    let repo = default_repo(&repo_root)?;
+
+    let title = parsed.title_arg.clone().unwrap_or_default();
+    let mut slug = parsed.slug.clone().unwrap_or_default();
+    if slug.is_empty() {
+        slug = sanitize_slug(&title);
+    } else {
+        slug = sanitize_slug(&slug);
+    }
+    if slug.is_empty() {
+        bail!("create: slug is empty after sanitization");
+    }
+
+    let version = if let Some(version) = parsed.version.clone() {
+        version
+    } else {
+        parsed
+            .labels
+            .as_deref()
+            .and_then(version_from_labels_csv)
+            .or_else(|| version_from_title(&title))
+            .unwrap_or_else(|| DEFAULT_VERSION.to_string())
+    };
+
+    let normalized_labels = normalize_labels_csv(
+        parsed.labels.as_deref().unwrap_or(DEFAULT_NEW_LABELS),
+        &version,
+    );
+    let body = resolve_issue_body(parsed.body.clone(), parsed.body_file.as_deref())?;
+    let issue_url = gh_issue_create(&repo, &title, &body, &normalized_labels)?;
+    let issue = parse_issue_number_from_url(&issue_url)?;
+
+    println!("• Created:");
+    println!("  ISSUE_URL  {issue_url}");
+    println!("  ISSUE_NUM  {issue}");
+    println!("  VERSION    {version}");
+    println!("  SLUG       {slug}");
+    println!("  NEXT       adl/tools/pr.sh init {issue} --slug {slug} --version {version}");
+    println!("  STATE      ISSUE_CREATED");
+    eprintln!("• Done.");
+    Ok(())
 }
 
 fn real_pr_start(args: &[String]) -> Result<()> {
@@ -497,7 +545,7 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     let repo_root = repo_root()?;
     let repo = default_repo(&repo_root)?;
 
-    let mut issue = parsed.issue;
+    let issue = parsed.issue;
     let mut title = parsed.title_arg.clone().unwrap_or_default();
     let mut slug = parsed.slug.clone().unwrap_or_default();
     if slug.is_empty() && !title.is_empty() {
@@ -507,17 +555,9 @@ fn real_pr_init(args: &[String]) -> Result<()> {
         }
     }
 
-    if parsed.new_issue {
-        if title.is_empty() {
-            bail!("init: --new requires --title");
-        }
-    } else if title.is_empty() && !parsed.no_fetch_issue {
+    if title.is_empty() && !parsed.no_fetch_issue {
         eprintln!("• Fetching issue title via gh…");
-        title = gh_issue_title(
-            issue.ok_or_else(|| anyhow!("init: missing <issue> number"))?,
-            &repo,
-        )?
-        .unwrap_or_default();
+        title = gh_issue_title(issue, &repo)?.unwrap_or_default();
     }
     if slug.is_empty() {
         if parsed.no_fetch_issue {
@@ -526,7 +566,7 @@ fn real_pr_init(args: &[String]) -> Result<()> {
         if title.is_empty() {
             bail!(
                 "Could not fetch issue #{} title. Pass --slug or check gh auth/repo.",
-                issue.ok_or_else(|| anyhow!("init: missing <issue> number"))?
+                issue
             );
         }
         slug = sanitize_slug(&title);
@@ -537,45 +577,14 @@ fn real_pr_init(args: &[String]) -> Result<()> {
 
     let version = if let Some(version) = parsed.version.clone() {
         version
-    } else if parsed.new_issue {
-        parsed
-            .labels
-            .as_deref()
-            .and_then(version_from_labels_csv)
-            .or_else(|| version_from_title(&title))
-            .unwrap_or_else(|| DEFAULT_VERSION.to_string())
     } else if parsed.no_fetch_issue {
         DEFAULT_VERSION.to_string()
     } else {
-        issue_version(
-            issue.ok_or_else(|| anyhow!("init: missing <issue> number"))?,
-            &repo,
-        )?
-        .unwrap_or_else(|| DEFAULT_VERSION.to_string())
+        issue_version(issue, &repo)?.unwrap_or_else(|| DEFAULT_VERSION.to_string())
     };
-
-    let normalized_labels = normalize_labels_csv(
-        parsed.labels.as_deref().unwrap_or(DEFAULT_NEW_LABELS),
-        &version,
-    );
-
-    if parsed.new_issue {
-        let body = resolve_issue_body(parsed.body.clone(), parsed.body_file.as_deref())?;
-        let issue_url = gh_issue_create(&repo, &title, &body, &normalized_labels)?;
-        issue = Some(parse_issue_number_from_url(&issue_url)?);
-        eprintln!("• Created GitHub issue: {issue_url}");
-    }
-
-    let issue = issue.ok_or_else(|| anyhow!("init: missing <issue> number"))?;
     let issue_ref = IssueRef::new(issue, version.clone(), slug.clone())?;
-    let source_path = ensure_source_issue_prompt(
-        &repo_root,
-        &repo,
-        &issue_ref,
-        &title,
-        Some(&normalized_labels),
-        &version,
-    )?;
+    let source_path =
+        ensure_source_issue_prompt(&repo_root, &repo, &issue_ref, &title, None, &version)?;
     validate_issue_prompt_exists(&source_path)?;
 
     let stp_path = issue_ref.task_bundle_stp_path(&repo_root);
@@ -2233,15 +2242,14 @@ verification_summary:
             "v0.86".to_string(),
         ])
         .expect("parse");
-        assert_eq!(parsed.issue, Some(1151));
+        assert_eq!(parsed.issue, 1151);
         assert_eq!(parsed.title_arg.as_deref(), Some("Example"));
         assert_eq!(parsed.version.as_deref(), Some("v0.86"));
     }
 
     #[test]
-    fn parse_init_args_accepts_new_issue_flags() {
-        let parsed = parse_init_args(&[
-            "--new".to_string(),
+    fn parse_create_args_accepts_issue_creation_flags() {
+        let parsed = parse_create_args(&[
             "--title".to_string(),
             "[v0.86][tools] New init path".to_string(),
             "--slug".to_string(),
@@ -2254,8 +2262,6 @@ verification_summary:
             "v0.86".to_string(),
         ])
         .expect("parse");
-        assert!(parsed.new_issue);
-        assert_eq!(parsed.issue, None);
         assert_eq!(
             parsed.title_arg.as_deref(),
             Some("[v0.86][tools] New init path")
@@ -2276,25 +2282,30 @@ verification_summary:
     }
 
     #[test]
-    fn parse_init_args_rejects_conflicting_new_issue_inputs() {
-        let err = parse_init_args(&["1151".to_string(), "--new".to_string()]).expect_err("err");
-        assert!(err
-            .to_string()
-            .contains("init: pass either <issue> or --new, not both"));
+    fn parse_create_args_rejects_missing_title_and_conflicting_body_inputs() {
+        let err = parse_create_args(&[]).expect_err("missing title");
+        assert!(err.to_string().contains("create: --title is required"));
 
-        let err = parse_init_args(&["--new".to_string(), "--no-fetch-issue".to_string()])
-            .expect_err("err");
+        let err = parse_create_args(&[
+            "--title".to_string(),
+            "Example".to_string(),
+            "--body".to_string(),
+            "a".to_string(),
+            "--body-file".to_string(),
+            "body.md".to_string(),
+        ])
+        .expect_err("conflicting body inputs");
         assert!(err
             .to_string()
-            .contains("init: --no-fetch-issue is not used with --new"));
+            .contains("create: pass only one of --body or --body-file"));
     }
 
     #[test]
     fn real_pr_dispatch_rejects_missing_and_unknown_subcommands() {
         let err = real_pr(&[]).expect_err("missing subcommand");
-        assert!(err
-            .to_string()
-            .contains("pr requires a subcommand: init | start | ready | preflight | finish"));
+        assert!(err.to_string().contains(
+            "pr requires a subcommand: create | init | start | ready | preflight | finish"
+        ));
 
         let err = real_pr(&["bogus".to_string()]).expect_err("unknown subcommand");
         assert!(err.to_string().contains("unknown pr subcommand: bogus"));
@@ -2454,9 +2465,9 @@ verification_summary:
     }
 
     #[test]
-    fn real_pr_init_new_creates_issue_and_root_bundle() {
+    fn real_pr_create_creates_issue_without_bootstrapping_bundle() {
         let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
-        let repo = unique_temp_dir("adl-pr-real-init-new");
+        let repo = unique_temp_dir("adl-pr-real-create");
         init_git_repo(&repo);
         copy_bootstrap_support_files(&repo);
 
@@ -2480,8 +2491,7 @@ verification_summary:
         env::set_current_dir(&repo).expect("chdir");
 
         let result = real_pr(&[
-            "init".to_string(),
-            "--new".to_string(),
+            "create".to_string(),
             "--title".to_string(),
             "[v0.86][tools] Simplified init path".to_string(),
             "--slug".to_string(),
@@ -2498,23 +2508,16 @@ verification_summary:
         unsafe {
             env::set_var("PATH", old_path);
         }
-        result.expect("real_pr init --new");
-
-        let issue_ref = IssueRef::new(
-            1202,
-            "v0.86".to_string(),
-            "v0-86-tools-simplified-init-path".to_string(),
-        )
-        .expect("issue ref");
-        assert!(issue_ref.issue_prompt_path(&repo).is_file());
-        assert!(issue_ref.task_bundle_stp_path(&repo).is_file());
-        assert!(issue_ref.task_bundle_input_path(&repo).is_file());
-        assert!(issue_ref.task_bundle_output_path(&repo).is_file());
+        result.expect("real_pr create");
 
         let gh_calls = fs::read_to_string(&gh_log).expect("gh log");
         assert!(gh_calls.contains("issue create"));
         assert!(gh_calls.contains("--label"));
         assert!(gh_calls.contains("version:v0.86"));
+        assert!(
+            !repo.join(".adl/v0.86/tasks").exists(),
+            "create should not bootstrap the local task bundle"
+        );
     }
 
     #[test]

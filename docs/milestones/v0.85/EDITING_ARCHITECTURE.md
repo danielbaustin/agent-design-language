@@ -47,10 +47,10 @@ This document follows the canonical command-status model in the editing five-com
 
 | Command | Current state | Repo truth | Notes |
 | --- | --- | --- | --- |
-| `pr init` | missing | no live command in `adl/tools/pr.sh` | planned work, not current behavior |
-| `pr create` | partial / renamed | `pr new` exists, but it is only a rough precursor | do not describe `pr new` as a finished substitute |
+| `pr init` | implemented | live command in `adl/tools/pr.sh` and `adl pr` | local bootstrap for the canonical root task bundle |
+| `pr create` | implemented | live command in `adl/tools/pr.sh` and `adl pr` | GitHub issue creation/reconciliation command |
 | `pr start` | implemented | active backbone command today | real and mature enough to anchor the current control plane |
-| `pr run` | missing | no live command in `adl/tools/pr.sh` | execution still happens through narrower paths |
+| `pr run` | implemented | live command in `adl/tools/pr.sh` | bounded execution wrapper over the ADL runtime |
 | `pr finish` | implemented | active mature workflow command today | real, but still subject to reliability/polish work |
 
 ## Key Capabilities
@@ -187,14 +187,15 @@ The workflow should close the loop without requiring direct manual `gh` usage in
 The intended command path is:
 - validate authored task
 - `pr create` when issue creation is needed
+- `pr init`
 - `pr start`
-- execution pass
+- `pr run`
 - review/repair loop as needed
 - `pr finish`
 
 This only becomes a reliable closed loop if validation is enforced at every transition.
 
-Operationally, `pr start` and `pr finish` are the active mature workflow commands today. `pr create` is the desired next control-plane command and should be treated as part of the target-state architecture even where today’s implementation is still incomplete. `pr new` should be understood as the current rough precursor to `pr create`, not as a finished substitute for the target lifecycle command.
+Operationally, `pr init`, `pr create`, `pr start`, `pr run`, and `pr finish` now exist as explicit lifecycle commands. The remaining work is to keep their responsibilities non-overlapping and continue migrating their durable control-plane logic into Rust so the bash layer stays thin.
 
 The architecture should therefore treat `pr start` as the anchor command for the current system, while `pr create`, execution orchestration, and finish/repair behavior become increasingly formalized around it. This is one reason the longer-term control plane should move into Rust: the backbone command should not remain trapped in brittle bash if it is going to carry more general lifecycle responsibility.
 
@@ -639,10 +640,10 @@ five-command execution plan.
 
 | Command | Current state | Repo truth | Notes |
 | --- | --- | --- | --- |
-| `pr init` | missing | no live command in `adl/tools/pr.sh` | planned work, not current behavior |
-| `pr create` | partial / renamed | `pr new` exists, but it is only a rough precursor | do not describe `pr new` as a finished substitute |
+| `pr init` | implemented | live command in `adl/tools/pr.sh` and `adl pr` | local bootstrap for the canonical root task bundle |
+| `pr create` | implemented | live command in `adl/tools/pr.sh` and `adl pr` | GitHub issue creation/reconciliation command |
 | `pr start` | implemented | active backbone command today | real and mature enough to anchor the current control plane |
-| `pr run` | missing | no live command in `adl/tools/pr.sh` | execution still happens through narrower paths |
+| `pr run` | implemented | live command in `adl/tools/pr.sh` | bounded execution wrapper over the ADL runtime |
 | `pr finish` | implemented | active mature workflow command today | real, but still subject to reliability/polish work |
 
 ## Related Documents
