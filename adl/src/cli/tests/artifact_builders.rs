@@ -1003,18 +1003,21 @@ fn build_agency_selection_artifact_is_deterministic_and_emits_multiple_candidate
         &success_arbitration,
         Some(&success_scores),
     );
-    let fast_left = run_artifacts::build_agency_selection_artifact(
-        &summary,
+    let success_agency_state = run_artifacts::build_agency_selection_state(
         &success_signals,
         &success_arbitration,
         &success_path,
+    );
+    let fast_left = run_artifacts::build_agency_selection_artifact(
+        &summary,
+        &success_arbitration,
+        &success_agency_state,
         Some(&success_scores),
     );
     let fast_right = run_artifacts::build_agency_selection_artifact(
         &summary,
-        &success_signals,
         &success_arbitration,
-        &success_path,
+        &success_agency_state,
         Some(&success_scores),
     );
     assert_eq!(
@@ -1024,6 +1027,14 @@ fn build_agency_selection_artifact_is_deterministic_and_emits_multiple_candidate
     assert_eq!(fast_left.agency_selection_version, 1);
     assert_eq!(fast_left.candidate_set.len(), 2);
     assert_eq!(fast_left.selected_candidate_id, "cand-fast-execute");
+    assert_eq!(
+        success_agency_state.selected_candidate_id,
+        "cand-fast-execute"
+    );
+    assert_eq!(
+        success_agency_state.selected_candidate_kind,
+        "direct_execution"
+    );
 
     summary.status = "failure".to_string();
     summary.counts.failed_steps = 1;
@@ -1068,15 +1079,23 @@ fn build_agency_selection_artifact_is_deterministic_and_emits_multiple_candidate
         &failure_arbitration,
         Some(&failure_scores),
     );
-    let slow = run_artifacts::build_agency_selection_artifact(
-        &summary,
+    let failure_agency_state = run_artifacts::build_agency_selection_state(
         &failure_signals,
         &failure_arbitration,
         &failure_path,
+    );
+    let slow = run_artifacts::build_agency_selection_artifact(
+        &summary,
+        &failure_arbitration,
+        &failure_agency_state,
         Some(&failure_scores),
     );
     assert_eq!(slow.selected_candidate_id, "cand-slow-review");
     assert!(slow.candidate_set.len() >= 3);
+    assert_eq!(
+        failure_agency_state.selected_candidate_kind,
+        "review_and_refine"
+    );
     assert_ne!(fast_left.selection_mode, slow.selection_mode);
     assert_ne!(
         fast_left.selected_candidate_reason,
@@ -1176,23 +1195,29 @@ fn build_bounded_execution_artifact_is_deterministic_and_shows_iteration_shape()
         &success_arbitration,
         Some(&success_scores),
     );
-    let success_agency = run_artifacts::build_agency_selection_artifact(
-        &summary,
+    let success_agency_state = run_artifacts::build_agency_selection_state(
         &success_signals,
         &success_arbitration,
         &success_path,
+    );
+    let success_agency = run_artifacts::build_agency_selection_artifact(
+        &summary,
+        &success_arbitration,
+        &success_agency_state,
         Some(&success_scores),
     );
     let fast_left = run_artifacts::build_bounded_execution_artifact(
         &summary,
         &success_path,
         &success_agency,
+        &success_agency_state,
         Some(&success_scores),
     );
     let fast_right = run_artifacts::build_bounded_execution_artifact(
         &summary,
         &success_path,
         &success_agency,
+        &success_agency_state,
         Some(&success_scores),
     );
     assert_eq!(
@@ -1248,17 +1273,22 @@ fn build_bounded_execution_artifact_is_deterministic_and_shows_iteration_shape()
         &failure_arbitration,
         Some(&failure_scores),
     );
-    let failure_agency = run_artifacts::build_agency_selection_artifact(
-        &summary,
+    let failure_agency_state = run_artifacts::build_agency_selection_state(
         &failure_signals,
         &failure_arbitration,
         &failure_path,
+    );
+    let failure_agency = run_artifacts::build_agency_selection_artifact(
+        &summary,
+        &failure_arbitration,
+        &failure_agency_state,
         Some(&failure_scores),
     );
     let slow = run_artifacts::build_bounded_execution_artifact(
         &summary,
         &failure_path,
         &failure_agency,
+        &failure_agency_state,
         Some(&failure_scores),
     );
     assert_eq!(slow.bounded_execution_version, 1);
@@ -1359,17 +1389,22 @@ fn build_evaluation_signals_artifact_is_deterministic_and_emits_termination_reas
         &success_arbitration,
         Some(&success_scores),
     );
-    let success_agency = run_artifacts::build_agency_selection_artifact(
-        &summary,
+    let success_agency_state = run_artifacts::build_agency_selection_state(
         &success_signals,
         &success_arbitration,
         &success_path,
+    );
+    let success_agency = run_artifacts::build_agency_selection_artifact(
+        &summary,
+        &success_arbitration,
+        &success_agency_state,
         Some(&success_scores),
     );
     let success_execution = run_artifacts::build_bounded_execution_artifact(
         &summary,
         &success_path,
         &success_agency,
+        &success_agency_state,
         Some(&success_scores),
     );
     let success_eval_state =
@@ -1439,17 +1474,22 @@ fn build_evaluation_signals_artifact_is_deterministic_and_emits_termination_reas
         &failure_arbitration,
         Some(&failure_scores),
     );
-    let failure_agency = run_artifacts::build_agency_selection_artifact(
-        &summary,
+    let failure_agency_state = run_artifacts::build_agency_selection_state(
         &failure_signals,
         &failure_arbitration,
         &failure_path,
+    );
+    let failure_agency = run_artifacts::build_agency_selection_artifact(
+        &summary,
+        &failure_arbitration,
+        &failure_agency_state,
         Some(&failure_scores),
     );
     let failure_execution = run_artifacts::build_bounded_execution_artifact(
         &summary,
         &failure_path,
         &failure_agency,
+        &failure_agency_state,
         Some(&failure_scores),
     );
     let failure_eval_state =
