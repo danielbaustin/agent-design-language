@@ -164,7 +164,7 @@ fi
 
 if [[ "${1:-}" == "pr" && "${2:-}" == "view" ]]; then
   shift 2
-  if [[ " $* " == *"--json closingIssuesReferences"* && " $* " == *"-q .closingIssuesReferences[]?.number"* ]]; then
+  if [[ " $* " == *" --json closingIssuesReferences "* ]]; then
     echo "42"
     exit 0
   fi

@@ -18,6 +18,7 @@ The suite protects the shipped five-command surface and its truthful editor clai
 
 It also verifies:
 
+- the installed `adl_pr_cycle` skill still matches the tracked contract and preserves the real five-command state machine
 - the browser/editor adapter remains bounded to `pr start`
 - the editor docs do not overclaim direct browser execution for the other commands
 - the bounded five-command demo still emits the expected lifecycle artifacts
@@ -27,6 +28,7 @@ It also verifies:
 - `adl/tools/test_pr_init.sh`
 - `adl/tools/test_pr_create.sh`
 - `adl/tools/test_pr_start_template_validation.sh`
+- `adl/tools/test_install_adl_pr_cycle_skill.sh`
 - `adl/tools/test_pr_run.sh`
 - `adl/tools/test_pr_finish_default_stage_root.sh`
 - `adl/tools/test_pr_finish_relative_card_paths.sh`
