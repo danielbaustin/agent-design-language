@@ -101,7 +101,6 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
 
     match subcommand {
         "init" => real_pr_init(&args[1..]),
-        "create" => real_pr_create(&args[1..]),
         "start" => real_pr_start(&args[1..]),
         "ready" => real_pr_ready(&args[1..]),
         "preflight" => real_pr_preflight(&args[1..]),
@@ -644,13 +643,6 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     println!("  STATE    ISSUE_AND_BUNDLE_READY");
     eprintln!("• Done.");
     Ok(())
-}
-
-fn real_pr_create(args: &[String]) -> Result<()> {
-    let _ = args;
-    bail!(
-        "create: `adl pr create` is retired. Create or reconcile the GitHub issue outside ADL, then run `adl pr init <issue>` followed by `adl pr start <issue>`."
-    )
 }
 
 fn parse_init_args(args: &[String]) -> Result<InitArgs> {
@@ -2609,17 +2601,6 @@ verification_summary:
 
         let err = real_pr(&["bogus".to_string()]).expect_err("unknown subcommand");
         assert!(err.to_string().contains("unknown pr subcommand: bogus"));
-    }
-
-    #[test]
-    fn real_pr_create_is_retired() {
-        let err = real_pr(&[
-            "create".to_string(),
-            "--title".to_string(),
-            "Example".to_string(),
-        ])
-        .expect_err("create should be retired");
-        assert!(err.to_string().contains("`adl pr create` is retired"));
     }
 
     #[test]
