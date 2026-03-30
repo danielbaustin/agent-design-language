@@ -344,6 +344,20 @@ pub(crate) struct CognitiveAffectSignalRecord {
     pub(crate) deterministic_update_rule: String,
 }
 
+#[derive(Debug, Clone)]
+pub(crate) struct CognitiveSignalsState {
+    pub(crate) dominant_instinct: String,
+    pub(crate) completion_pressure: String,
+    pub(crate) integrity_bias: String,
+    pub(crate) curiosity_bias: String,
+    pub(crate) candidate_selection_bias: String,
+    pub(crate) urgency_level: String,
+    pub(crate) salience_level: String,
+    pub(crate) persistence_pressure: String,
+    pub(crate) confidence_shift: String,
+    pub(crate) downstream_influence: String,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct AffectStateRecord {
@@ -381,6 +395,17 @@ pub(crate) struct CognitiveArbitrationArtifact {
     pub(crate) cost_latency_assumption: String,
     pub(crate) route_reason: String,
     pub(crate) deterministic_selection_rule: String,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct CognitiveArbitrationState {
+    pub(crate) route_selected: String,
+    pub(crate) reasoning_mode: String,
+    pub(crate) confidence: String,
+    pub(crate) risk_class: String,
+    pub(crate) applied_constraints: Vec<String>,
+    pub(crate) cost_latency_assumption: String,
+    pub(crate) route_reason: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1280,11 +1305,11 @@ pub(crate) fn build_affect_state_artifact(
     }
 }
 
-pub(crate) fn build_cognitive_signals_artifact(
+pub(crate) fn build_cognitive_signals_state(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
-    scores: Option<&ScoresArtifact>,
-) -> CognitiveSignalsArtifact {
+    _scores: Option<&ScoresArtifact>,
+) -> CognitiveSignalsState {
     let selected = suggestions
         .suggestions
         .first()
@@ -1369,6 +1394,27 @@ pub(crate) fn build_cognitive_signals_artifact(
         selected.evidence.retry_count
     );
 
+    CognitiveSignalsState {
+        dominant_instinct: dominant_instinct.to_string(),
+        completion_pressure: completion_pressure.to_string(),
+        integrity_bias: integrity_bias.to_string(),
+        curiosity_bias: curiosity_bias.to_string(),
+        candidate_selection_bias: candidate_selection_bias.to_string(),
+        urgency_level: completion_pressure.to_string(),
+        salience_level: salience_level.to_string(),
+        persistence_pressure: persistence_pressure.to_string(),
+        confidence_shift: confidence_shift.to_string(),
+        downstream_influence,
+    }
+}
+
+pub(crate) fn build_cognitive_signals_artifact(
+    run_summary: &RunSummaryArtifact,
+    suggestions: &SuggestionsArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> CognitiveSignalsArtifact {
+    let state = build_cognitive_signals_state(run_summary, suggestions, scores);
+
     CognitiveSignalsArtifact {
         cognitive_signals_version: COGNITIVE_SIGNALS_VERSION,
         run_id: run_summary.run_id.clone(),
@@ -1380,22 +1426,22 @@ pub(crate) fn build_cognitive_signals_artifact(
         },
         instinct: CognitiveInstinctRecord {
             instinct_profile_id: "instinct-001".to_string(),
-            dominant_instinct: dominant_instinct.to_string(),
-            completion_pressure: completion_pressure.to_string(),
-            integrity_bias: integrity_bias.to_string(),
-            curiosity_bias: curiosity_bias.to_string(),
-            candidate_selection_bias: candidate_selection_bias.to_string(),
+            dominant_instinct: state.dominant_instinct,
+            completion_pressure: state.completion_pressure,
+            integrity_bias: state.integrity_bias,
+            curiosity_bias: state.curiosity_bias,
+            candidate_selection_bias: state.candidate_selection_bias,
             deterministic_update_rule:
                 "derive bounded instinct profile from stable failure, retry, security, and success evidence ordering"
                     .to_string(),
         },
         affect: CognitiveAffectSignalRecord {
             affect_state_id: "signal-affect-001".to_string(),
-            urgency_level: completion_pressure.to_string(),
-            salience_level: salience_level.to_string(),
-            persistence_pressure: persistence_pressure.to_string(),
-            confidence_shift: confidence_shift.to_string(),
-            downstream_influence,
+            urgency_level: state.urgency_level,
+            salience_level: state.salience_level,
+            persistence_pressure: state.persistence_pressure,
+            confidence_shift: state.confidence_shift,
+            downstream_influence: state.downstream_influence,
             deterministic_update_rule:
                 "derive bounded affect signals from the first stable suggestion plus bounded run summary evidence"
                     .to_string(),
@@ -1403,12 +1449,12 @@ pub(crate) fn build_cognitive_signals_artifact(
     }
 }
 
-pub(crate) fn build_cognitive_arbitration_artifact(
-    run_summary: &RunSummaryArtifact,
+pub(crate) fn build_cognitive_arbitration_state(
+    _run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
+    signals: &CognitiveSignalsArtifact,
     affect_state: &AffectStateArtifact,
-    scores: Option<&ScoresArtifact>,
-) -> CognitiveArbitrationArtifact {
+) -> CognitiveArbitrationState {
     let selected = suggestions
         .suggestions
         .first()
@@ -1433,14 +1479,20 @@ pub(crate) fn build_cognitive_arbitration_artifact(
             },
         });
 
-    let (route_selected, reasoning_mode) =
-        if selected.evidence.security_denied_count > 0 || selected.evidence.failure_count > 0 {
-            ("slow", "review_heavy")
-        } else if affect_state.affect.recovery_bias >= 2 || selected.evidence.retry_count > 0 {
-            ("hybrid", "bounded_recovery")
-        } else {
-            ("fast", "direct_execution")
-        };
+    let (route_selected, reasoning_mode) = if selected.evidence.security_denied_count > 0
+        || selected.evidence.failure_count > 0
+        || signals.instinct.integrity_bias == "reinforced"
+    {
+        ("slow", "review_heavy")
+    } else if affect_state.affect.recovery_bias >= 2
+        || selected.evidence.retry_count > 0
+        || signals.affect.confidence_shift == "reduced"
+        || signals.affect.persistence_pressure == "sustained"
+    {
+        ("hybrid", "bounded_recovery")
+    } else {
+        ("fast", "direct_execution")
+    };
     let risk_class = if selected.evidence.security_denied_count > 0 {
         "high"
     } else if selected.evidence.failure_count > 0 || affect_state.affect.recovery_bias >= 2 {
@@ -1475,14 +1527,36 @@ pub(crate) fn build_cognitive_arbitration_artifact(
         _ => "spend bounded additional cognition when failure or policy risk is present",
     };
     let route_reason = format!(
-        "route={} affect_mode={} failure_count={} retry_count={} security_denied_count={} selected_intent={}",
+        "route={} dominant_instinct={} confidence_shift={} affect_mode={} failure_count={} retry_count={} security_denied_count={} selected_intent={}",
         route_selected,
+        signals.instinct.dominant_instinct,
+        signals.affect.confidence_shift,
         affect_state.affect.affect_mode,
         selected.evidence.failure_count,
         selected.evidence.retry_count,
         selected.evidence.security_denied_count,
         selected.proposed_change.intent
     );
+
+    CognitiveArbitrationState {
+        route_selected: route_selected.to_string(),
+        reasoning_mode: reasoning_mode.to_string(),
+        confidence: confidence.to_string(),
+        risk_class: risk_class.to_string(),
+        applied_constraints,
+        cost_latency_assumption: cost_latency_assumption.to_string(),
+        route_reason,
+    }
+}
+
+pub(crate) fn build_cognitive_arbitration_artifact(
+    run_summary: &RunSummaryArtifact,
+    suggestions: &SuggestionsArtifact,
+    signals: &CognitiveSignalsArtifact,
+    affect_state: &AffectStateArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> CognitiveArbitrationArtifact {
+    let state = build_cognitive_arbitration_state(run_summary, suggestions, signals, affect_state);
 
     CognitiveArbitrationArtifact {
         cognitive_arbitration_version: COGNITIVE_ARBITRATION_VERSION,
@@ -1493,15 +1567,15 @@ pub(crate) fn build_cognitive_arbitration_artifact(
             suggestions_version: suggestions.suggestions_version,
             scores_version: scores.map(|value| value.scores_version),
         },
-        route_selected: route_selected.to_string(),
-        reasoning_mode: reasoning_mode.to_string(),
-        confidence: confidence.to_string(),
-        risk_class: risk_class.to_string(),
-        applied_constraints,
-        cost_latency_assumption: cost_latency_assumption.to_string(),
-        route_reason,
+        route_selected: state.route_selected,
+        reasoning_mode: state.reasoning_mode,
+        confidence: state.confidence,
+        risk_class: state.risk_class,
+        applied_constraints: state.applied_constraints,
+        cost_latency_assumption: state.cost_latency_assumption,
+        route_reason: state.route_reason,
         deterministic_selection_rule:
-            "derive route from stable failure/security/retry evidence ordering plus bounded affect recovery bias"
+            "derive route from runtime signal state, bounded affect recovery bias, and stable failure/security/retry evidence ordering"
                 .to_string(),
     }
 }
@@ -2173,6 +2247,7 @@ pub(crate) fn write_run_state_artifacts(
     let cognitive_arbitration = build_cognitive_arbitration_artifact(
         &run_summary,
         &suggestions,
+        &cognitive_signals,
         &affect_state,
         Some(&scores_for_suggestions),
     );
