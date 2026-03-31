@@ -206,6 +206,7 @@ For the implemented `v0.86` runtime surface:
 
 - `bounded_execution.v1.json` records the bounded execution handoff and iteration shape
 - `evaluation_signals.v1.json` records evaluation signals and the explicit `termination_reason`
+- `reframing.v1.json` records `frame_adequacy_score`, `reframing_trigger`, `reframing_reason`, and the bounded re-execution or termination choice
 - termination is emitted as a bounded control output, not inferred from prose or hidden state
 
 ## Frame Adequacy and Reframing Notes
@@ -232,8 +233,9 @@ At minimum, the loop must emit artifacts showing:
 - instinct inputs
 - affect signals
 - route_selected
-- bounded frame-adequacy signal or note when used
+- bounded frame-adequacy signal
 - reframing trigger (if any)
+- reframing reason and bounded re-execution or termination choice
 - termination_reason
 
 Artifacts must be:

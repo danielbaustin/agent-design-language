@@ -1572,6 +1572,274 @@ fn build_evaluation_signals_artifact_is_deterministic_and_emits_termination_reas
 }
 
 #[test]
+fn build_reframing_artifact_is_deterministic_and_distinguishes_triggered_paths() {
+    let success_summary = RunSummaryArtifact {
+        run_summary_version: 1,
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_id: "reframing-run".to_string(),
+        workflow_id: "wf".to_string(),
+        adl_version: "0.86".to_string(),
+        swarm_version: "test".to_string(),
+        status: "success".to_string(),
+        error_kind: None,
+        counts: RunSummaryCounts {
+            total_steps: 2,
+            completed_steps: 2,
+            failed_steps: 0,
+            provider_call_count: 1,
+            delegation_steps: 0,
+            delegation_requires_verification_steps: 0,
+        },
+        policy: RunSummaryPolicy {
+            security_envelope_enabled: false,
+            signing_required: false,
+            key_id_required: false,
+            verify_allowed_algs: Vec::new(),
+            verify_allowed_key_sources: Vec::new(),
+            sandbox_policy: "centralized_path_resolver_v1".to_string(),
+            security_denials_by_code: BTreeMap::new(),
+        },
+        links: RunSummaryLinks {
+            run_json: "run.json".to_string(),
+            steps_json: "steps.json".to_string(),
+            pause_state_json: None,
+            outputs_dir: "outputs".to_string(),
+            logs_dir: "logs".to_string(),
+            learning_dir: "learning".to_string(),
+            scores_json: None,
+            suggestions_json: None,
+            aee_decision_json: None,
+            cognitive_signals_json: None,
+            fast_slow_path_json: None,
+            agency_selection_json: None,
+            bounded_execution_json: None,
+            evaluation_signals_json: None,
+            cognitive_arbitration_json: None,
+            affect_state_json: None,
+            reasoning_graph_json: None,
+            overlays_dir: "learning/overlays".to_string(),
+            cluster_groundwork_json: None,
+            trace_json: None,
+        },
+    };
+    let success_scores = ScoresArtifact {
+        scores_version: 1,
+        run_id: "reframing-run".to_string(),
+        generated_from: ScoresGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+        },
+        summary: ScoresSummary {
+            success_ratio: 1.0,
+            failure_count: 0,
+            retry_count: 0,
+            delegation_denied_count: 0,
+            security_denied_count: 0,
+        },
+        metrics: ScoresMetrics {
+            scheduler_max_parallel_observed: 1,
+        },
+    };
+    let success_suggestions = build_suggestions_artifact(&success_summary, Some(&success_scores));
+    let success_signals = run_artifacts::build_cognitive_signals_artifact(
+        &success_summary,
+        &success_suggestions,
+        Some(&success_scores),
+    );
+    let success_affect = run_artifacts::build_affect_state_artifact(
+        &success_summary,
+        &success_suggestions,
+        Some(&success_scores),
+    );
+    let success_arbitration = run_artifacts::build_cognitive_arbitration_artifact(
+        &success_summary,
+        &success_suggestions,
+        &success_signals,
+        &success_affect,
+        Some(&success_scores),
+    );
+    let success_path_state = run_artifacts::build_fast_slow_path_state(&success_arbitration);
+    let success_path = run_artifacts::build_fast_slow_path_artifact(
+        &success_summary,
+        &success_arbitration,
+        &success_path_state,
+        Some(&success_scores),
+    );
+    let success_agency_state = run_artifacts::build_agency_selection_state(
+        &success_signals,
+        &success_arbitration,
+        &success_path_state,
+        &success_path,
+    );
+    let success_agency = run_artifacts::build_agency_selection_artifact(
+        &success_summary,
+        &success_arbitration,
+        &success_agency_state,
+        Some(&success_scores),
+    );
+
+    let success_reframing = execute::ReframingControlState {
+        frame_adequacy_score: 88,
+        reframing_trigger: "not_triggered".to_string(),
+        reframing_reason: "current_frame_adequate_for_bounded_progress".to_string(),
+        prior_frame: "direct_execution_under_current_frame".to_string(),
+        new_frame: "retain_current_frame".to_string(),
+        reexecution_choice: "no_reframe_required".to_string(),
+        post_reframe_state: "complete_run".to_string(),
+    };
+    let success_left = run_artifacts::build_reframing_artifact(
+        &success_summary,
+        &success_path,
+        &success_agency,
+        &success_reframing,
+        Some(&success_scores),
+    );
+    let success_right = run_artifacts::build_reframing_artifact(
+        &success_summary,
+        &success_path,
+        &success_agency,
+        &success_reframing,
+        Some(&success_scores),
+    );
+    assert_eq!(
+        serde_json::to_value(&success_left).expect("success reframing value"),
+        serde_json::to_value(&success_right).expect("success reframing value")
+    );
+    assert_eq!(success_left.reframing_trigger, "not_triggered");
+    assert_eq!(success_left.frame_adequacy_score, 88);
+
+    let failure_summary = RunSummaryArtifact {
+        run_summary_version: 1,
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_id: "reframing-run".to_string(),
+        workflow_id: "wf".to_string(),
+        adl_version: "0.86".to_string(),
+        swarm_version: "test".to_string(),
+        status: "failure".to_string(),
+        error_kind: None,
+        counts: RunSummaryCounts {
+            total_steps: 2,
+            completed_steps: 1,
+            failed_steps: 1,
+            provider_call_count: 1,
+            delegation_steps: 0,
+            delegation_requires_verification_steps: 0,
+        },
+        policy: RunSummaryPolicy {
+            security_envelope_enabled: false,
+            signing_required: false,
+            key_id_required: false,
+            verify_allowed_algs: Vec::new(),
+            verify_allowed_key_sources: Vec::new(),
+            sandbox_policy: "centralized_path_resolver_v1".to_string(),
+            security_denials_by_code: BTreeMap::new(),
+        },
+        links: RunSummaryLinks {
+            run_json: "run.json".to_string(),
+            steps_json: "steps.json".to_string(),
+            pause_state_json: None,
+            outputs_dir: "outputs".to_string(),
+            logs_dir: "logs".to_string(),
+            learning_dir: "learning".to_string(),
+            scores_json: None,
+            suggestions_json: None,
+            aee_decision_json: None,
+            cognitive_signals_json: None,
+            fast_slow_path_json: None,
+            agency_selection_json: None,
+            bounded_execution_json: None,
+            evaluation_signals_json: None,
+            cognitive_arbitration_json: None,
+            affect_state_json: None,
+            reasoning_graph_json: None,
+            overlays_dir: "learning/overlays".to_string(),
+            cluster_groundwork_json: None,
+            trace_json: None,
+        },
+    };
+    let failure_scores = ScoresArtifact {
+        scores_version: 1,
+        run_id: "reframing-run".to_string(),
+        generated_from: ScoresGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+        },
+        summary: ScoresSummary {
+            success_ratio: 0.0,
+            failure_count: 1,
+            retry_count: 1,
+            delegation_denied_count: 0,
+            security_denied_count: 0,
+        },
+        metrics: ScoresMetrics {
+            scheduler_max_parallel_observed: 1,
+        },
+    };
+    let failure_suggestions = build_suggestions_artifact(&failure_summary, Some(&failure_scores));
+    let failure_signals = run_artifacts::build_cognitive_signals_artifact(
+        &failure_summary,
+        &failure_suggestions,
+        Some(&failure_scores),
+    );
+    let failure_affect = run_artifacts::build_affect_state_artifact(
+        &failure_summary,
+        &failure_suggestions,
+        Some(&failure_scores),
+    );
+    let failure_arbitration = run_artifacts::build_cognitive_arbitration_artifact(
+        &failure_summary,
+        &failure_suggestions,
+        &failure_signals,
+        &failure_affect,
+        Some(&failure_scores),
+    );
+    let failure_path_state = run_artifacts::build_fast_slow_path_state(&failure_arbitration);
+    let failure_path = run_artifacts::build_fast_slow_path_artifact(
+        &failure_summary,
+        &failure_arbitration,
+        &failure_path_state,
+        Some(&failure_scores),
+    );
+    let failure_agency_state = run_artifacts::build_agency_selection_state(
+        &failure_signals,
+        &failure_arbitration,
+        &failure_path_state,
+        &failure_path,
+    );
+    let failure_agency = run_artifacts::build_agency_selection_artifact(
+        &failure_summary,
+        &failure_arbitration,
+        &failure_agency_state,
+        Some(&failure_scores),
+    );
+    let failure_reframing = execute::ReframingControlState {
+        frame_adequacy_score: 28,
+        reframing_trigger: "triggered".to_string(),
+        reframing_reason: "contradiction_detected_after_bounded_execution".to_string(),
+        prior_frame: "review_and_refine_under_current_frame".to_string(),
+        new_frame: "diagnose_and_restructure_before_retry".to_string(),
+        reexecution_choice: "bounded_reframe_and_retry".to_string(),
+        post_reframe_state: "ready_for_reframed_execution".to_string(),
+    };
+    let failure_artifact = run_artifacts::build_reframing_artifact(
+        &failure_summary,
+        &failure_path,
+        &failure_agency,
+        &failure_reframing,
+        Some(&failure_scores),
+    );
+    assert_eq!(failure_artifact.reframing_trigger, "triggered");
+    assert_eq!(
+        failure_artifact.reexecution_choice,
+        "bounded_reframe_and_retry"
+    );
+    assert_ne!(
+        success_left.frame_adequacy_score,
+        failure_artifact.frame_adequacy_score
+    );
+}
+
+#[test]
 fn build_reasoning_graph_artifact_changes_selected_path_with_affect() {
     let summary = RunSummaryArtifact {
         run_summary_version: 1,
