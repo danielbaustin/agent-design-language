@@ -149,13 +149,62 @@ require_cmd() {
 
 rust_pr_delegate_available() {
   [[ "${ADL_PR_RUST_DISABLE:-0}" == "1" ]] && return 1
-  command -v cargo >/dev/null 2>&1 || return 1
   [[ -f "$(repo_root)/adl/Cargo.toml" ]] || return 1
+  if [[ -n "${ADL_PR_RUST_BIN:-}" ]]; then
+    [[ -x "${ADL_PR_RUST_BIN}" ]] || return 1
+    return 0
+  fi
+  local cached_bin
+  cached_bin="$(rust_pr_delegate_cached_bin || true)"
+  if [[ -n "$cached_bin" && -x "$cached_bin" ]]; then
+    return 0
+  fi
+  command -v cargo >/dev/null 2>&1 || return 1
+  return 0
+}
+
+rust_pr_delegate_cached_bin() {
+  local root candidate
+  root="$(repo_root)"
+  candidate="$root/adl/target/debug/adl"
+  [[ -x "$candidate" ]] || return 1
+  rust_pr_delegate_bin_is_fresh "$root" "$candidate" || return 1
+  printf '%s\n' "$candidate"
+}
+
+rust_pr_delegate_bin_is_fresh() {
+  local root="$1" candidate="$2"
+  [[ -x "$candidate" ]] || return 1
+  [[ "$candidate" -nt "$root/adl/Cargo.toml" ]] || return 1
+  if [[ -f "$root/adl/Cargo.lock" && "$root/adl/Cargo.lock" -nt "$candidate" ]]; then
+    return 1
+  fi
+  if [[ -f "$root/adl/build.rs" && "$root/adl/build.rs" -nt "$candidate" ]]; then
+    return 1
+  fi
+  if [[ -d "$root/adl/src" ]]; then
+    if find "$root/adl/src" -type f -newer "$candidate" -print -quit | grep -q .; then
+      return 1
+    fi
+  fi
+  return 0
 }
 
 delegate_pr_command_to_rust() {
   local subcommand="$1"; shift || true
-  cargo run --quiet --manifest-path "$(repo_root)/adl/Cargo.toml" --bin adl -- pr "$subcommand" "$@"
+  local root manifest cached_bin
+  root="$(repo_root)"
+  manifest="$root/adl/Cargo.toml"
+  if [[ -n "${ADL_PR_RUST_BIN:-}" ]]; then
+    "${ADL_PR_RUST_BIN}" pr "$subcommand" "$@"
+    return 0
+  fi
+  cached_bin="$(rust_pr_delegate_cached_bin || true)"
+  if [[ -n "$cached_bin" ]]; then
+    "$cached_bin" pr "$subcommand" "$@"
+    return 0
+  fi
+  cargo run --quiet --manifest-path "$manifest" --bin adl -- pr "$subcommand" "$@"
 }
 
 normalize_issue_or_die() {
