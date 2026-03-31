@@ -235,6 +235,14 @@ mod tests {
 
     static TEST_MUTEX: Lazy<Mutex<()>> = Lazy::new(|| Mutex::new(()));
 
+    fn system_git_bin() -> &'static str {
+        if Path::new("/usr/bin/git").exists() {
+            "/usr/bin/git"
+        } else {
+            "git"
+        }
+    }
+
     fn temp_repo(name: &str) -> PathBuf {
         let unique = SystemTime::now()
             .duration_since(UNIX_EPOCH)
@@ -242,31 +250,14 @@ mod tests {
             .as_nanos();
         let repo = env::temp_dir().join(format!("adl-{name}-{unique}"));
         fs::create_dir_all(&repo).expect("create repo dir");
-        let init_status = Command::new("git")
+        Command::new(system_git_bin())
             .arg("init")
-            .arg("-b")
-            .arg("main")
             .current_dir(&repo)
             .status()
-            .expect("git init");
-        if !init_status.success() {
-            Command::new("git")
-                .arg("init")
-                .current_dir(&repo)
-                .status()
-                .expect("git init fallback")
-                .success()
-                .then_some(())
-                .expect("git init fallback should succeed");
-            Command::new("git")
-                .args(["branch", "-m", "main"])
-                .current_dir(&repo)
-                .status()
-                .expect("git branch -m main fallback")
-                .success()
-                .then_some(())
-                .expect("git branch -m main fallback should succeed");
-        }
+            .expect("git init")
+            .success()
+            .then_some(())
+            .expect("git init should succeed");
         repo
     }
 
@@ -353,5 +344,236 @@ mod tests {
             serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
         assert_eq!(json["schema_version"], TEMPORAL_CONTEXT_SCHEMA);
         assert_eq!(json["identity_agent_id"], "codex");
+    }
+
+    #[test]
+    fn identity_requires_subcommand_and_rejects_unknown_subcommand() {
+        let repo = temp_repo("identity-subcommands");
+
+        let err = real_identity_in_repo(&[], &repo).expect_err("missing subcommand should fail");
+        assert!(err
+            .to_string()
+            .contains("identity requires a subcommand: init | show | now"));
+
+        let err = real_identity_in_repo(&["nope".to_string()], &repo)
+            .expect_err("unknown subcommand should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown identity subcommand 'nope'"));
+    }
+
+    #[test]
+    fn identity_top_level_help_and_subcommand_help_succeed() {
+        let repo = temp_repo("identity-help");
+
+        real_identity_in_repo(&["help".to_string()], &repo).expect("top-level help");
+        real_identity_in_repo(&["init".to_string(), "--help".to_string()], &repo)
+            .expect("init help");
+        real_identity_in_repo(&["now".to_string(), "--help".to_string()], &repo).expect("now help");
+    }
+
+    #[test]
+    fn identity_init_validates_required_and_unknown_args() {
+        let repo = temp_repo("identity-init-errors");
+
+        let err = real_identity_in_repo(
+            &[
+                "init".to_string(),
+                "--birthday".to_string(),
+                "2026-03-30T13:34:00-07:00".to_string(),
+                "--timezone".to_string(),
+                "America/Los_Angeles".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("missing name should fail");
+        assert!(err
+            .to_string()
+            .contains("identity init requires --name <display-name>"));
+
+        let err = real_identity_in_repo(
+            &[
+                "init".to_string(),
+                "--name".to_string(),
+                "Codex".to_string(),
+                "--timezone".to_string(),
+                "America/Los_Angeles".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("missing birthday should fail");
+        assert!(err
+            .to_string()
+            .contains("identity init requires --birthday <RFC3339>"));
+
+        let err = real_identity_in_repo(
+            &[
+                "init".to_string(),
+                "--name".to_string(),
+                "Codex".to_string(),
+                "--birthday".to_string(),
+                "2026-03-30T13:34:00-07:00".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("missing timezone should fail");
+        assert!(err
+            .to_string()
+            .contains("identity init requires --timezone <IANA>"));
+
+        let err = real_identity_in_repo(&["init".to_string(), "--bogus".to_string()], &repo)
+            .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for identity init: --bogus"));
+    }
+
+    #[test]
+    fn identity_init_supports_custom_path_agent_id_and_force() {
+        let _guard = TEST_MUTEX
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        let repo = temp_repo("identity-init-custom-path");
+        let profile_path = repo.join(".adl/state/custom_identity_profile.v1.json");
+
+        real_identity_in_repo(
+            &[
+                "init".to_string(),
+                "--name".to_string(),
+                "Codex".to_string(),
+                "--agent-id".to_string(),
+                "codex-local".to_string(),
+                "--birthday".to_string(),
+                "2026-03-30T13:34:00-07:00".to_string(),
+                "--timezone".to_string(),
+                "America/Los_Angeles".to_string(),
+                "--path".to_string(),
+                profile_path.display().to_string(),
+            ],
+            &repo,
+        )
+        .expect("custom path init");
+
+        let profile = load_identity_profile(&profile_path).expect("profile load");
+        assert_eq!(profile.agent_id, "codex-local");
+
+        let err = real_identity_in_repo(
+            &[
+                "init".to_string(),
+                "--name".to_string(),
+                "Codex".to_string(),
+                "--birthday".to_string(),
+                "2026-03-30T13:34:00-07:00".to_string(),
+                "--timezone".to_string(),
+                "America/Los_Angeles".to_string(),
+                "--path".to_string(),
+                profile_path.display().to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("existing profile without force should fail");
+        assert!(err.to_string().contains("identity profile already exists"));
+
+        real_identity_in_repo(
+            &[
+                "init".to_string(),
+                "--name".to_string(),
+                "Codex".to_string(),
+                "--birthday".to_string(),
+                "2026-03-30T13:34:00-07:00".to_string(),
+                "--timezone".to_string(),
+                "America/Los_Angeles".to_string(),
+                "--path".to_string(),
+                profile_path.display().to_string(),
+                "--force".to_string(),
+            ],
+            &repo,
+        )
+        .expect("force overwrite");
+    }
+
+    #[test]
+    fn identity_show_supports_custom_path_and_rejects_unknown_args() {
+        let _guard = TEST_MUTEX
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        let repo = temp_repo("identity-show-path");
+        let profile_path = repo.join("identity/custom_profile.v1.json");
+
+        real_identity_in_repo(
+            &[
+                "init".to_string(),
+                "--name".to_string(),
+                "Codex".to_string(),
+                "--birthday".to_string(),
+                "2026-03-30T13:34:00-07:00".to_string(),
+                "--timezone".to_string(),
+                "America/Los_Angeles".to_string(),
+                "--path".to_string(),
+                profile_path.display().to_string(),
+            ],
+            &repo,
+        )
+        .expect("seed profile");
+
+        real_identity_in_repo(
+            &[
+                "show".to_string(),
+                "--path".to_string(),
+                profile_path.display().to_string(),
+            ],
+            &repo,
+        )
+        .expect("show custom path");
+
+        let err = real_identity_in_repo(&["show".to_string(), "--bogus".to_string()], &repo)
+            .expect_err("show unknown arg");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for identity show: --bogus"));
+    }
+
+    #[test]
+    fn identity_now_validates_unknown_args_and_missing_out_value() {
+        let repo = temp_repo("identity-now-errors");
+
+        let err = real_identity_in_repo(
+            &[
+                "now".to_string(),
+                "--timezone".to_string(),
+                "America/Los_Angeles".to_string(),
+                "--bogus".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for identity now: --bogus"));
+
+        let err = real_identity_in_repo(
+            &[
+                "now".to_string(),
+                "--timezone".to_string(),
+                "America/Los_Angeles".to_string(),
+                "--out".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("out flag without value should fail");
+        assert!(err.to_string().contains("--out requires a value"));
+    }
+
+    #[test]
+    fn required_value_and_git_capture_report_errors() {
+        let err = required_value(&["--name".to_string()], 0, "--name")
+            .expect_err("missing flag value should fail");
+        assert!(err.to_string().contains("--name requires a value"));
+
+        let err = run_git_capture(&["definitely-not-a-real-subcommand"])
+            .expect_err("invalid git command should fail");
+        assert!(err
+            .to_string()
+            .contains("git definitely-not-a-real-subcommand failed with status"));
     }
 }
