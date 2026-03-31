@@ -155,7 +155,7 @@ export GH_MOCK_EXISTING_PR="absent"
   mkdir -p .adl/cards/958
 
   cat > .adl/cards/958/output_958.md <<'EOF_SOR'
-# ADL Output Card
+# relative-card-paths
 
 Task ID: issue-0958
 Run ID: issue-0958

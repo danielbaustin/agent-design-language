@@ -313,6 +313,7 @@ fn real_pr_ready(args: &[String]) -> Result<()> {
     validate_ready_cards(
         &repo_root,
         parsed.issue,
+        issue_ref.slug(),
         wt_branch.trim(),
         &root_bundle_input,
         &root_bundle_output,
@@ -320,6 +321,7 @@ fn real_pr_ready(args: &[String]) -> Result<()> {
     validate_ready_cards(
         &worktree_path,
         parsed.issue,
+        issue_ref.slug(),
         wt_branch.trim(),
         &wt_bundle_input,
         &wt_bundle_output,
@@ -1526,7 +1528,9 @@ fn ensure_bootstrap_cards(
             &bundle_output,
         )?;
     }
-    if !bundle_output.is_file() {
+    if !bundle_output.is_file()
+        || !output_card_title_matches_slug(&bundle_output, issue_ref.slug())?
+    {
         write_output_card(root, &bundle_output, issue_ref, title, branch)?;
     }
 
@@ -1539,6 +1543,7 @@ fn ensure_bootstrap_cards(
     validate_bootstrap_cards(
         root,
         issue_ref.issue_number(),
+        issue_ref.slug(),
         branch,
         &bundle_input,
         &bundle_output,
@@ -1649,6 +1654,7 @@ fn write_output_card(
 ) -> Result<()> {
     let mut text =
         fs::read_to_string(repo_root.join("adl/templates/cards/output_card_template.md"))?;
+    replace_markdown_h1(&mut text, issue_ref.slug());
     replace_field_line(
         &mut text,
         "Task ID",
@@ -1675,6 +1681,35 @@ fn write_output_card(
     );
     fs::write(path, text)?;
     Ok(())
+}
+
+fn replace_markdown_h1(text: &mut String, value: &str) {
+    let mut replaced = false;
+    let mut out = Vec::new();
+    for line in text.lines() {
+        if !replaced && line.starts_with("# ") {
+            out.push(format!("# {value}"));
+            replaced = true;
+        } else {
+            out.push(line.to_string());
+        }
+    }
+    *text = out.join("\n");
+    if !text.ends_with('\n') {
+        text.push('\n');
+    }
+}
+
+fn output_card_title_matches_slug(path: &Path, slug: &str) -> Result<bool> {
+    let expected = format!("# {slug}");
+    let text = fs::read_to_string(path)?;
+    let header = text
+        .lines()
+        .find(|line| line.starts_with("# "))
+        .unwrap_or_default()
+        .trim()
+        .to_string();
+    Ok(header == expected)
 }
 
 fn replace_field_line(text: &mut String, label: &str, value: &str) {
@@ -1744,6 +1779,7 @@ fn validate_bootstrap_stp(repo_root: &Path, path: &Path) -> Result<()> {
 fn validate_bootstrap_cards(
     repo_root: &Path,
     issue: u32,
+    slug: &str,
     branch: &str,
     input_path: &Path,
     output_path: &Path,
@@ -1792,12 +1828,16 @@ fn validate_bootstrap_cards(
     if field_line_value(output_path, "Branch")? != branch {
         bail!("start: output card branch mismatch");
     }
+    if !output_card_title_matches_slug(output_path, slug)? {
+        bail!("start: output card title mismatch");
+    }
     Ok(())
 }
 
 fn validate_ready_cards(
     _repo_root: &Path,
     issue: u32,
+    slug: &str,
     actual_branch: &str,
     input_path: &Path,
     output_path: &Path,
@@ -1820,6 +1860,9 @@ fn validate_ready_cards(
     }
     if !branch_matches_started_state(&field_line_value(output_path, "Branch")?, actual_branch) {
         bail!("ready: output card branch mismatch");
+    }
+    if !output_card_title_matches_slug(output_path, slug)? {
+        bail!("ready: output card title mismatch");
     }
     validate_authored_prompt_surface("ready", input_path, PromptSurfaceKind::Sip)?;
     Ok(())
@@ -2213,7 +2256,7 @@ mod tests {
 
     fn write_completed_sor_fixture(path: &Path, branch: &str) {
         let body = format!(
-            r#"# ADL Output Card
+            r#"# rust-finish-test
 
 Canonical Template Source: `adl/templates/cards/output_card_template.md`
 Consumed by: `adl/tools/pr.sh` (`OUTPUT_TEMPLATE`) with legacy fallback support for `.adl/templates/output_card_template.md`.
@@ -3417,7 +3460,7 @@ verification_summary:
         fs::write(&input, "# input\n").expect("write input");
         fs::write(
             &output,
-            "# ADL Output Card\n\n## Summary\nsummary text\n\n## Artifacts produced\n- adl/src/cli/pr_cmd.rs\n\n## Validation\n- cargo test\n",
+            "# rust-finish-test\n\n## Summary\nsummary text\n\n## Artifacts produced\n- adl/src/cli/pr_cmd.rs\n\n## Validation\n- cargo test\n",
         )
         .expect("write output");
 
@@ -4256,7 +4299,7 @@ verification_summary:
         );
         fs::write(
             &output,
-            r#"# ADL Output Card
+            r#"# output-card-guard
 
 Task ID: issue-1156
 Run ID: issue-1156

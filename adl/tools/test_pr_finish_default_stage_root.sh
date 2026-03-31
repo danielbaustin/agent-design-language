@@ -140,7 +140,7 @@ export TMP_PR_BODY
   mkdir -p .adl/cards/1021
 
   cat > .adl/cards/1021/output_1021.md <<'EOF_SOR'
-# ADL Output Card
+# finish-default-root
 
 Task ID: issue-1021
 Run ID: issue-1021
