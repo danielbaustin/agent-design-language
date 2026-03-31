@@ -87,35 +87,41 @@ Execution:
 
 ## Goal
 
+Execute the linked issue prompt in this started worktree without rerunning bootstrap commands.
+
 ## Required Outcome
 
-- State whether this issue must ship code, docs, tests, demo artifacts, or a combination.
-- If docs-only completion is acceptable, say so explicitly.
-- If a runnable demo or proof surface is required, say so explicitly.
+- Ship the required outcome type recorded in the linked source issue prompt.
+- Keep the linked issue prompt, repository changes, and output record aligned.
 
 ## Acceptance Criteria
 
+- The implementation satisfies the linked source issue prompt.
+- Validation and proof surfaces named below are completed or explicitly marked not applicable.
+
 ## Inputs
-- 
+- linked source issue prompt
+- root and worktree task bundle cards
+- current repository state for this branch
 
 ## Target Files / Surfaces
-- Likely files, modules, docs, commands, schemas, or artifacts to modify or validate
+- files, docs, tests, commands, schemas, and artifacts named by the linked source issue prompt
 
 ## Validation Plan
-- Required commands:
-- Required tests:
-- Required artifacts / traces:
-- Required reviewer or demo checks:
+- Commands to run: derive the exact command set from the linked issue prompt and repo state; record what actually ran in the output card.
+- Tests to run: execute the smallest proving test set for the required outcome.
+- Artifacts or traces: produce or update the proof surfaces required by the linked issue prompt.
+- Reviewer checks: capture any manual review or demo checks in the output card.
 
 ## Demo / Proof Requirements
-- Required demo(s):
-- Required proof surface(s):
-- If no demo is required, say why:
+- Demo set: follow the linked issue prompt.
+- Proof surfaces: use the proof surfaces named by the linked issue prompt and output card.
+- No-demo rationale: if no demo is required, explain why in the output card.
 
 ## Constraints / Policies
-- Determinism requirements:
-- Security / privacy requirements:
-- Resource limits (time/CPU/memory/network):
+- Determinism: keep behavior stable for identical inputs unless the issue explicitly changes semantics.
+- Security and privacy: do not introduce secrets, tokens, prompts, tool arguments, or absolute host paths.
+- Resource limits: prefer the smallest command and test surface that proves the issue is complete.
 
 ## System Invariants (must remain true)
 - Deterministic execution for identical inputs.
@@ -154,7 +160,12 @@ ci_validation_required: true
 
 ## Non-goals / Out of scope
 
+- unrelated repository repair
+- changing the source issue prompt without recording it explicitly
+
 ## Notes / Risks
+
+- Refine this card if the linked source issue prompt changes materially before implementation begins.
 
 ## Instructions to the Agent
 - Read this file.
