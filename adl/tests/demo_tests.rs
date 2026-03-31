@@ -34,6 +34,11 @@ fn run_demo_v086_candidate_selection(out_dir: &PathBuf) -> std::process::Output 
     Command::new(exe).arg(out_dir).output().unwrap()
 }
 
+fn run_demo_v086_candidate_selection_with_default_dir(cwd: &PathBuf) -> std::process::Output {
+    let exe = env!("CARGO_BIN_EXE_demo_v086_candidate_selection");
+    Command::new(exe).current_dir(cwd).output().unwrap()
+}
+
 fn run_demo_v086_review_surface(out_dir: &PathBuf) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_demo_v086_review_surface");
     Command::new(exe).arg(out_dir).output().unwrap()
@@ -351,6 +356,36 @@ fn demo_v086_candidate_selection_writes_candidates_and_selection() {
         candidates.contains("\"candidate_id\": \"cand-defer\""),
         "candidates:\n{candidates}"
     );
+    assert!(
+        selection.contains("\"selected_candidate_id\": \"cand-review-refine\""),
+        "selection:\n{selection}"
+    );
+    assert!(
+        summary.contains("candidate_count: 3"),
+        "summary:\n{summary}"
+    );
+}
+
+#[test]
+fn demo_v086_candidate_selection_uses_default_output_dir_when_not_provided() {
+    let cwd = tmp_dir("demo-v086-candidate-selection-default");
+    let out = run_demo_v086_candidate_selection_with_default_dir(&cwd);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("artifacts/v086/candidate_selection"),
+        "stdout:\n{stdout}"
+    );
+
+    let out_root = cwd.join("artifacts/v086/candidate_selection");
+    let selection = fs::read_to_string(out_root.join("selection.json")).unwrap();
+    let summary = fs::read_to_string(out_root.join("summary.txt")).unwrap();
+
     assert!(
         selection.contains("\"selected_candidate_id\": \"cand-review-refine\""),
         "selection:\n{selection}"
