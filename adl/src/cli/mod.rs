@@ -1,5 +1,6 @@
 use anyhow::Result;
 
+mod artifact_cmd;
 mod commands;
 mod demo_cmd;
 mod godel_cmd;
@@ -9,11 +10,12 @@ mod pr_cmd;
 mod pr_cmd_args;
 mod pr_cmd_prompt;
 mod run;
-mod run_artifacts;
+pub(crate) mod run_artifacts;
 #[cfg(test)]
 mod tests;
 mod usage;
 
+use artifact_cmd::real_artifact;
 use commands::{real_instrument, real_keygen, real_learn, real_sign, real_verify};
 use demo_cmd::real_demo;
 use godel_cmd::real_godel;
@@ -57,6 +59,7 @@ fn real_main() -> Result<()> {
     }
 
     match args.first().map(|s| s.as_str()) {
+        Some("artifact") => real_artifact(&args[1..]),
         Some("demo") => real_demo(&args[1..]),
         Some("godel") => real_godel(&args[1..]),
         Some("identity") => real_identity(&args[1..]),

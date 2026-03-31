@@ -445,83 +445,176 @@ fn custom_v086_control_path_runtime() -> execute::RuntimeControlState {
 fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
     let runtime = custom_v086_control_path_runtime();
     let mut artifacts = Vec::new();
+    let generated_from = serde_json::json!({
+        "artifact_model_version": 1,
+        "run_summary_version": 1,
+        "suggestions_version": 1,
+        "scores_version": 1
+    });
     let signals = serde_json::json!({
-        "stage": "signals",
-        "dominant_instinct": runtime.signals.dominant_instinct,
-        "completion_pressure": runtime.signals.completion_pressure,
-        "integrity_bias": runtime.signals.integrity_bias,
-        "downstream_influence": runtime.signals.downstream_influence,
+        "cognitive_signals_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
+        "instinct": {
+            "instinct_profile_id": "instinct-001",
+            "dominant_instinct": runtime.signals.dominant_instinct,
+            "completion_pressure": runtime.signals.completion_pressure,
+            "integrity_bias": runtime.signals.integrity_bias,
+            "curiosity_bias": runtime.signals.curiosity_bias,
+            "candidate_selection_bias": runtime.signals.candidate_selection_bias,
+            "deterministic_update_rule": "demo deterministic signal projection"
+        },
+        "affect": {
+            "affect_state_id": "signal-affect-001",
+            "urgency_level": runtime.signals.urgency_level,
+            "salience_level": runtime.signals.salience_level,
+            "persistence_pressure": runtime.signals.persistence_pressure,
+            "confidence_shift": runtime.signals.confidence_shift,
+            "downstream_influence": runtime.signals.downstream_influence,
+            "deterministic_update_rule": "demo deterministic affect projection"
+        }
     });
     let candidate_selection = serde_json::json!({
-        "stage": "candidate_selection",
+        "agency_selection_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
         "candidate_generation_basis": runtime.agency.candidate_generation_basis,
-        "selected_candidate_id": runtime.agency.selected_candidate_id,
-        "selected_candidate_kind": runtime.agency.selected_candidate_kind,
-        "selected_candidate_action": runtime.agency.selected_candidate_action,
-        "selected_candidate_reason": runtime.agency.selected_candidate_reason,
+        "selection_mode": runtime.agency.selection_mode,
         "candidate_set": runtime.agency.candidate_set,
+        "selected_candidate_id": runtime.agency.selected_candidate_id,
+        "selected_candidate_reason": runtime.agency.selected_candidate_reason,
+        "deterministic_selection_rule": "demo deterministic candidate selection"
     });
     let arbitration = serde_json::json!({
-        "stage": "arbitration",
+        "cognitive_arbitration_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
         "route_selected": runtime.arbitration.route_selected,
         "reasoning_mode": runtime.arbitration.reasoning_mode,
         "confidence": runtime.arbitration.confidence,
         "risk_class": runtime.arbitration.risk_class,
-        "route_reason": runtime.arbitration.route_reason,
         "applied_constraints": runtime.arbitration.applied_constraints,
+        "cost_latency_assumption": runtime.arbitration.cost_latency_assumption,
+        "route_reason": runtime.arbitration.route_reason,
+        "deterministic_selection_rule": "demo deterministic arbitration"
     });
     let execution_iterations = serde_json::json!({
-        "stage": "execution",
+        "bounded_execution_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
+        "selected_candidate_id": runtime.agency.selected_candidate_id,
         "selected_path": runtime.fast_slow.selected_path,
-        "runtime_branch_taken": runtime.fast_slow.runtime_branch_taken,
         "execution_status": runtime.bounded_execution.execution_status,
+        "continuation_state": runtime.bounded_execution.continuation_state,
+        "provisional_termination_state": runtime.bounded_execution.provisional_termination_state,
+        "iteration_count": runtime.bounded_execution.iterations.len(),
         "iterations": runtime.bounded_execution.iterations,
+        "deterministic_execution_rule": "demo deterministic bounded execution"
     });
     let evaluation = serde_json::json!({
-        "stage": "evaluation",
+        "evaluation_signals_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
+        "selected_candidate_id": runtime.agency.selected_candidate_id,
+        "selected_path": runtime.fast_slow.selected_path,
         "progress_signal": runtime.evaluation.progress_signal,
         "contradiction_signal": runtime.evaluation.contradiction_signal,
         "failure_signal": runtime.evaluation.failure_signal,
         "termination_reason": runtime.evaluation.termination_reason,
+        "behavior_effect": runtime.evaluation.behavior_effect,
         "next_control_action": runtime.evaluation.next_control_action,
+        "deterministic_evaluation_rule": "demo deterministic evaluation"
     });
     let reframing = serde_json::json!({
-        "stage": "reframing",
+        "reframing_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
+        "selected_candidate_id": runtime.agency.selected_candidate_id,
+        "selected_path": runtime.fast_slow.selected_path,
         "frame_adequacy_score": runtime.reframing.frame_adequacy_score,
         "reframing_trigger": runtime.reframing.reframing_trigger,
         "reframing_reason": runtime.reframing.reframing_reason,
+        "prior_frame": runtime.reframing.prior_frame,
+        "new_frame": runtime.reframing.new_frame,
         "reexecution_choice": runtime.reframing.reexecution_choice,
         "post_reframe_state": runtime.reframing.post_reframe_state,
+        "deterministic_reframing_rule": "demo deterministic reframing"
     });
     let memory = serde_json::json!({
-        "stage": "memory",
-        "read": runtime.memory.read,
-        "write": runtime.memory.write,
+        "control_path_memory_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
+        "read": {
+            "memory_read_version": 1,
+            "run_id": DEMO_G_V086_CONTROL_PATH,
+            "generated_from": generated_from.clone(),
+            "query": runtime.memory.read.query,
+            "read_count": runtime.memory.read.entries.len(),
+            "entries": runtime.memory.read.entries,
+            "retrieval_order": runtime.memory.read.retrieval_order,
+            "influence_summary": runtime.memory.read.influence_summary,
+            "influenced_stage": runtime.memory.read.influenced_stage,
+            "deterministic_read_rule": "demo deterministic memory read"
+        },
+        "write": {
+            "memory_write_version": 1,
+            "run_id": DEMO_G_V086_CONTROL_PATH,
+            "generated_from": generated_from.clone(),
+            "entry_id": runtime.memory.write.entry_id,
+            "content": runtime.memory.write.content,
+            "tags": runtime.memory.write.tags,
+            "logical_timestamp": runtime.memory.write.logical_timestamp,
+            "write_reason": runtime.memory.write.write_reason,
+            "source": runtime.memory.write.source,
+            "deterministic_write_rule": "demo deterministic memory write"
+        }
     });
     let freedom_gate = serde_json::json!({
-        "stage": "freedom_gate",
+        "freedom_gate_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
         "input": runtime.freedom_gate.input,
         "gate_decision": runtime.freedom_gate.gate_decision,
         "reason_code": runtime.freedom_gate.reason_code,
         "decision_reason": runtime.freedom_gate.decision_reason,
+        "selected_action_or_none": runtime.freedom_gate.selected_action_or_none,
         "commitment_blocked": runtime.freedom_gate.commitment_blocked,
+        "deterministic_gate_rule": "demo deterministic freedom gate"
     });
     let final_result = serde_json::json!({
-        "stage": "final_result",
+        "control_path_final_result_version": 1,
         "run_id": DEMO_G_V086_CONTROL_PATH,
-        "route_selected": runtime.arbitration.route_selected,
-        "selected_candidate": runtime.agency.selected_candidate_id,
-        "termination_reason": runtime.evaluation.termination_reason,
-        "gate_decision": runtime.freedom_gate.gate_decision,
+        "route_selected": "slow",
+        "selected_candidate": "cand-custom-review",
+        "termination_reason": "contradiction_detected",
+        "gate_decision": "defer",
         "final_result": "defer",
+        "commitment_blocked": true,
+        "next_control_action": "handoff_to_reframing",
+        "stage_order": [
+            "signals",
+            "candidate_selection",
+            "arbitration",
+            "execution",
+            "evaluation",
+            "reframing",
+            "memory",
+            "freedom_gate",
+            "final_result"
+        ]
     });
     let summary = [
         "v0.86 canonical bounded cognitive path summary",
+        "run_id: demo-g-v086-control-path",
         "stage_order: signals -> candidate_selection -> arbitration -> execution -> evaluation -> reframing -> memory -> freedom_gate -> final_result",
-        "route_selected: slow",
-        "selected_candidate: cand-custom-review",
-        "termination_reason: contradiction_detected",
-        "gate_decision: defer",
+        "signals: instinct=integrity completion_pressure=guarded",
+        "candidate_selection: candidate_id=cand-custom-review rationale=custom selected candidate reason",
+        "arbitration: route=slow reasoning_mode=review_heavy",
+        "execution: status=completed iterations=2",
+        "evaluation: termination_reason=contradiction_detected next_control_action=handoff_to_reframing",
+        "reframing: trigger=triggered choice=bounded_reframe_and_retry",
+        "memory: read_count=1 influenced_stage=reframing write_reason=record_failure_for_future_reframing_context",
+        "freedom_gate: decision=defer reason_code=frame_inadequate commitment_blocked=true",
         "final_result: defer",
     ]
     .join("\n");
