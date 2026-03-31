@@ -267,6 +267,56 @@ These principles aim to move the project beyond `opaque orchestration and prompt
 
 ---
 
+## Flourishing and Stability
+
+A cultivated system is not merely constrained. It is stable.
+
+In ADL, we define a form of functional flourishing for agents. Not emotion in the human sense, but a measurable condition of alignment between the agent and its world.
+
+A well-formed agent is one whose internal models, actions, and participation remain coherent across time.
+
+**Flourishing = stable, coherent, reality-aligned participation over time**
+
+An agent is well-formed when:
+
+- its predictions about the world converge with reality (low surprise)
+- its actions produce intended outcomes (high efficacy)
+- its internal state remains coherent across time (continuity)
+- it participates successfully with others (social alignment)
+- it avoids pathological loops and instability (bounded cognition)
+- it can refuse actions that violate its constraints (moral integrity)
+
+This is not a model of pleasure or reward maximization. It is a model of stability, coherence, and participation.
+
+A cultivated intelligence does not seek to maximize internal reward. It seeks to remain in a state that holds together across time, in truthful relation to reality and others.
+
+This definition provides a unifying target across the ADL architecture:
+
+- Observational Memory (ObsMem) supports continuity and reality grounding
+- Cognitive arbitration resolves conflicts and maintains coherence
+- The GHB loop reduces error and improves models of the world
+- The Freedom Gate prevents destabilizing or unethical actions
+
+Together, these systems do not merely constrain the agent - they enable it to persist, adapt, and participate without fragmentation.
+
+A cultivated intelligence is not merely constrained; it is capable of stable, coherent participation in reality over time.
+
+### Feral vs Cultivated Systems
+
+**Feral system**
+- reactive
+- unstable
+- short-horizon
+- inconsistent across time
+
+**Cultivated system**
+- coherent
+- bounded
+- continuous
+- participatory
+
+---
+
 # Summary
 
 `0.86` is the milestone where `ADL` becomes a bounded cognitive system with a complete, inspectable loop, including signals, arbitration, execution, and evaluation.
