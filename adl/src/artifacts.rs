@@ -148,6 +148,11 @@ impl RunArtifactPaths {
         self.learning_dir().join("reframing.v1.json")
     }
 
+    /// Freedom Gate artifact path for v0.86 bounded commitment decisions.
+    pub fn freedom_gate_json(&self) -> PathBuf {
+        self.learning_dir().join("freedom_gate.v1.json")
+    }
+
     /// Affect state artifact path for bounded affect-guided adaptation.
     pub fn affect_state_json(&self) -> PathBuf {
         self.learning_dir().join("affect_state.v1.json")

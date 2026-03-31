@@ -21,6 +21,7 @@ pub mod demo;
 pub mod execute;
 pub mod execution_plan;
 pub mod failure_taxonomy;
+pub mod freedom_gate;
 pub mod godel;
 pub mod instrumentation;
 pub mod learning_export;

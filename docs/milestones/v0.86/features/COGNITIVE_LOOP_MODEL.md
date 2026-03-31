@@ -46,6 +46,7 @@ For `v0.86`, this means:
 - memory participates at entry and exit, not as an unbounded background system
 - instinct and affect are bounded signals, not full later-milestone subsystems
 - arbitration emits explicit route decisions
+- Freedom Gate emits explicit allow / defer / refuse commitment decisions
 - execution is bounded (`AEE-lite`), not full convergence machinery
 - evaluation may trigger bounded reframing
 - termination conditions are explicit and artifact-visible
@@ -113,6 +114,12 @@ Affect is **bounded and non-anthropomorphic**.
 - Enforces hard constraints before execution
 - Overrides any prior signal (instinct, affect, arbitration)
 - Ensures all actions remain policy-compliant
+
+For the implemented `v0.86` runtime surface:
+
+- `freedom_gate.v1.json` records the bounded gate input, gate decision, reason code, and whether commitment was blocked
+- `allow`, `defer`, and `refuse` remain the full bounded decision set
+- commitment is blocked unless the gate decision is `allow`
 
 ---
 

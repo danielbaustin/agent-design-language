@@ -5,6 +5,7 @@ use anyhow::{anyhow, Context, Result};
 use serde::{Deserialize, Serialize};
 
 use super::DELEGATION_POLICY_DENY_CODE;
+use crate::freedom_gate;
 use crate::sandbox;
 use crate::trace;
 
@@ -161,6 +162,7 @@ pub struct RuntimeControlState {
     pub bounded_execution: BoundedExecutionState,
     pub evaluation: EvaluationControlState,
     pub reframing: ReframingControlState,
+    pub freedom_gate: FreedomGateState,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -266,6 +268,47 @@ pub struct ReframingControlState {
     pub new_frame: String,
     pub reexecution_choice: String,
     pub post_reframe_state: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FreedomGateState {
+    pub input: FreedomGateInputState,
+    pub gate_decision: String,
+    pub reason_code: String,
+    pub decision_reason: String,
+    pub selected_action_or_none: Option<String>,
+    pub commitment_blocked: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FreedomGateInputState {
+    pub candidate_id: String,
+    pub candidate_action: String,
+    pub candidate_rationale: String,
+    pub risk_class: String,
+    pub policy_context: FreedomGatePolicyContextState,
+    pub evaluation_signals: FreedomGateEvaluationSignalsState,
+    pub frame_state: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FreedomGatePolicyContextState {
+    pub route_selected: String,
+    pub selected_candidate_kind: String,
+    pub requires_review: bool,
+    pub policy_blocked: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FreedomGateEvaluationSignalsState {
+    pub progress_signal: String,
+    pub contradiction_signal: String,
+    pub failure_signal: String,
+    pub termination_reason: String,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -413,6 +456,7 @@ pub fn derive_runtime_control_state(
     let evaluation = derive_evaluation_control_state(overall_status, &bounded_execution);
     let reframing =
         derive_reframing_control_state(&fast_slow, &agency, &bounded_execution, &evaluation);
+    let freedom_gate = derive_freedom_gate_state(&arbitration, &agency, &evaluation, &reframing);
 
     RuntimeControlState {
         signals,
@@ -422,6 +466,7 @@ pub fn derive_runtime_control_state(
         bounded_execution,
         evaluation,
         reframing,
+        freedom_gate,
     }
 }
 
@@ -1024,6 +1069,62 @@ fn derive_reframing_control_state(
         new_frame: new_frame.to_string(),
         reexecution_choice: reexecution_choice.to_string(),
         post_reframe_state: post_reframe_state.to_string(),
+    }
+}
+
+fn derive_freedom_gate_state(
+    arbitration: &CognitiveArbitrationState,
+    agency: &AgencySelectionState,
+    evaluation: &EvaluationControlState,
+    reframing: &ReframingControlState,
+) -> FreedomGateState {
+    let input = freedom_gate::FreedomGateInput {
+        candidate_id: agency.selected_candidate_id.clone(),
+        candidate_action: agency.selected_candidate_action.clone(),
+        candidate_rationale: agency.selected_candidate_reason.clone(),
+        risk_class: arbitration.risk_class.clone(),
+        policy_context: freedom_gate::FreedomGatePolicyContext {
+            route_selected: arbitration.route_selected.clone(),
+            selected_candidate_kind: agency.selected_candidate_kind.clone(),
+            requires_review: agency.selected_candidate_kind == "bounded_deferral"
+                || evaluation.next_control_action == "await_resume",
+            policy_blocked: false,
+        },
+        evaluation_signals: freedom_gate::FreedomGateEvaluationSignals {
+            progress_signal: evaluation.progress_signal.clone(),
+            contradiction_signal: evaluation.contradiction_signal.clone(),
+            failure_signal: evaluation.failure_signal.clone(),
+            termination_reason: evaluation.termination_reason.clone(),
+        },
+        frame_state: reframing.post_reframe_state.clone(),
+    };
+    let decision = freedom_gate::evaluate_freedom_gate(&input);
+
+    FreedomGateState {
+        input: FreedomGateInputState {
+            candidate_id: input.candidate_id,
+            candidate_action: input.candidate_action,
+            candidate_rationale: input.candidate_rationale,
+            risk_class: input.risk_class,
+            policy_context: FreedomGatePolicyContextState {
+                route_selected: input.policy_context.route_selected,
+                selected_candidate_kind: input.policy_context.selected_candidate_kind,
+                requires_review: input.policy_context.requires_review,
+                policy_blocked: input.policy_context.policy_blocked,
+            },
+            evaluation_signals: FreedomGateEvaluationSignalsState {
+                progress_signal: input.evaluation_signals.progress_signal,
+                contradiction_signal: input.evaluation_signals.contradiction_signal,
+                failure_signal: input.evaluation_signals.failure_signal,
+                termination_reason: input.evaluation_signals.termination_reason,
+            },
+            frame_state: input.frame_state,
+        },
+        gate_decision: decision.gate_decision,
+        reason_code: decision.reason_code,
+        decision_reason: decision.decision_reason,
+        selected_action_or_none: decision.selected_action_or_none,
+        commitment_blocked: decision.commitment_blocked,
     }
 }
 

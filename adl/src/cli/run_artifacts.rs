@@ -19,6 +19,7 @@ pub(crate) const AGENCY_SELECTION_VERSION: u32 = 1;
 pub(crate) const BOUNDED_EXECUTION_VERSION: u32 = 1;
 pub(crate) const EVALUATION_SIGNALS_VERSION: u32 = 1;
 pub(crate) const REFRAMING_VERSION: u32 = 1;
+pub(crate) const FREEDOM_GATE_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
@@ -489,6 +490,24 @@ pub(crate) struct ReframingArtifact {
 }
 
 pub(crate) type ReframingControlState = execute::ReframingControlState;
+
+pub(crate) type FreedomGateState = execute::FreedomGateState;
+pub(crate) type FreedomGateInputState = execute::FreedomGateInputState;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct FreedomGateArtifact {
+    pub(crate) freedom_gate_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) input: FreedomGateInputState,
+    pub(crate) gate_decision: String,
+    pub(crate) reason_code: String,
+    pub(crate) decision_reason: String,
+    pub(crate) selected_action_or_none: Option<String>,
+    pub(crate) commitment_blocked: bool,
+    pub(crate) deterministic_gate_rule: String,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -2042,6 +2061,33 @@ pub(crate) fn build_reframing_artifact(
     }
 }
 
+pub(crate) fn build_freedom_gate_artifact(
+    run_summary: &RunSummaryArtifact,
+    evaluation_signals: &EvaluationSignalsArtifact,
+    state: &FreedomGateState,
+    scores: Option<&ScoresArtifact>,
+) -> FreedomGateArtifact {
+    FreedomGateArtifact {
+        freedom_gate_version: FREEDOM_GATE_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: evaluation_signals.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        input: state.input.clone(),
+        gate_decision: state.gate_decision.clone(),
+        reason_code: state.reason_code.clone(),
+        decision_reason: state.decision_reason.clone(),
+        selected_action_or_none: state.selected_action_or_none.clone(),
+        commitment_blocked: state.commitment_blocked,
+        deterministic_gate_rule:
+            "derive allow/defer/refuse commitment decisions from execute-owned freedom-gate input state before action commitment and without hidden bypass paths"
+                .to_string(),
+    }
+}
+
 pub(crate) fn build_aee_decision_artifact(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
@@ -2456,6 +2502,12 @@ pub(crate) fn write_run_state_artifacts(
         &runtime_control.reframing,
         Some(&scores_for_suggestions),
     );
+    let freedom_gate = build_freedom_gate_artifact(
+        &run_summary,
+        &evaluation_signals,
+        &runtime_control.freedom_gate,
+        Some(&scores_for_suggestions),
+    );
     let cognitive_arbitration_json = serde_json::to_vec_pretty(&cognitive_arbitration)
         .context("serialize cognitive_arbitration.v1.json")?;
     let fast_slow_path_json =
@@ -2468,6 +2520,8 @@ pub(crate) fn write_run_state_artifacts(
         .context("serialize evaluation_signals.v1.json")?;
     let reframing_json =
         serde_json::to_vec_pretty(&reframing).context("serialize reframing.v1.json")?;
+    let freedom_gate_json =
+        serde_json::to_vec_pretty(&freedom_gate).context("serialize freedom_gate.v1.json")?;
     let aee_decision = build_aee_decision_artifact(
         &run_summary,
         &suggestions,
@@ -2504,6 +2558,7 @@ pub(crate) fn write_run_state_artifacts(
         &evaluation_signals_json,
     )?;
     artifacts::atomic_write(&run_paths.reframing_json(), &reframing_json)?;
+    artifacts::atomic_write(&run_paths.freedom_gate_json(), &freedom_gate_json)?;
     artifacts::atomic_write(&run_paths.cognitive_signals_json(), &cognitive_signals_json)?;
     artifacts::atomic_write(
         &run_paths.cognitive_arbitration_json(),
@@ -2517,6 +2572,7 @@ pub(crate) fn write_run_state_artifacts(
         &evaluation_signals_json,
     )?;
     artifacts::atomic_write(&run_paths.reframing_json(), &reframing_json)?;
+    artifacts::atomic_write(&run_paths.freedom_gate_json(), &freedom_gate_json)?;
     artifacts::atomic_write(&run_paths.affect_state_json(), &affect_state_json)?;
     artifacts::atomic_write(&run_paths.aee_decision_json(), &aee_decision_json)?;
     artifacts::atomic_write(&run_paths.reasoning_graph_json(), &reasoning_graph_json)?;
