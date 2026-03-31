@@ -143,6 +143,11 @@ impl RunArtifactPaths {
         self.learning_dir().join("evaluation_signals.v1.json")
     }
 
+    /// Reframing artifact path for v0.86 bounded frame adequacy and reframing.
+    pub fn reframing_json(&self) -> PathBuf {
+        self.learning_dir().join("reframing.v1.json")
+    }
+
     /// Affect state artifact path for bounded affect-guided adaptation.
     pub fn affect_state_json(&self) -> PathBuf {
         self.learning_dir().join("affect_state.v1.json")

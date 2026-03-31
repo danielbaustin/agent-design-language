@@ -1,4 +1,5 @@
 use super::*;
+use crate::cli::run_artifacts;
 use crate::cli::run_artifacts::{
     AgencySelectionArtifact, BoundedExecutionArtifact, CognitiveArbitrationArtifact,
     CognitiveSignalsArtifact, EvaluationSignalsArtifact, FastSlowPathArtifact,
@@ -123,6 +124,53 @@ fn runtime_control_for(status: &str, tr: &trace::Trace) -> execute::RuntimeContr
     execute::derive_runtime_control_state(status, &[], tr)
 }
 
+#[test]
+fn derive_runtime_control_state_triggers_reframing_on_failure() {
+    let tr = trace::Trace::new(
+        "runtime-reframing-failure".to_string(),
+        "wf".to_string(),
+        "0.86".to_string(),
+    );
+    let records = vec![execute::StepExecutionRecord {
+        step_id: "s1".to_string(),
+        provider_id: "p1".to_string(),
+        status: "failure".to_string(),
+        attempts: 2,
+        output_bytes: 0,
+    }];
+    let runtime_control = execute::derive_runtime_control_state("failure", &records, &tr);
+    assert_eq!(
+        runtime_control.evaluation.next_control_action,
+        "handoff_to_reframing"
+    );
+    assert_eq!(runtime_control.reframing.reframing_trigger, "triggered");
+    assert_eq!(
+        runtime_control.reframing.reexecution_choice,
+        "bounded_reframe_and_retry"
+    );
+    assert!(
+        runtime_control.reframing.frame_adequacy_score < 50,
+        "failure should lower the frame adequacy score"
+    );
+}
+
+#[test]
+fn derive_runtime_control_state_retains_current_frame_on_success() {
+    let tr = trace::Trace::new(
+        "runtime-reframing-success".to_string(),
+        "wf".to_string(),
+        "0.86".to_string(),
+    );
+    let runtime_control = runtime_control_for("success", &tr);
+    assert_eq!(
+        runtime_control.evaluation.next_control_action,
+        "complete_run"
+    );
+    assert_eq!(runtime_control.reframing.reframing_trigger, "not_triggered");
+    assert_eq!(runtime_control.reframing.new_frame, "retain_current_frame");
+    assert_eq!(runtime_control.reframing.post_reframe_state, "complete_run");
+}
+
 fn custom_runtime_control() -> execute::RuntimeControlState {
     execute::RuntimeControlState {
         signals: execute::CognitiveSignalsState {
@@ -206,6 +254,15 @@ fn custom_runtime_control() -> execute::RuntimeControlState {
             termination_reason: "contradiction_detected".to_string(),
             behavior_effect: "surface contradiction for bounded follow-up".to_string(),
             next_control_action: "handoff_to_reframing".to_string(),
+        },
+        reframing: execute::ReframingControlState {
+            frame_adequacy_score: 24,
+            reframing_trigger: "triggered".to_string(),
+            reframing_reason: "contradiction_detected_after_bounded_execution".to_string(),
+            prior_frame: "review_and_refine_under_current_frame".to_string(),
+            new_frame: "diagnose_and_restructure_before_retry".to_string(),
+            reexecution_choice: "bounded_reframe_and_retry".to_string(),
+            post_reframe_state: "ready_for_reframed_execution".to_string(),
         },
     }
 }
@@ -369,6 +426,15 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
         evaluation.behavior_effect,
         "surface contradiction for bounded follow-up"
     );
+
+    let reframing: run_artifacts::ReframingArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("learning/reframing.v1.json"))
+            .expect("read reframing artifact"),
+    )
+    .expect("parse reframing artifact");
+    assert_eq!(reframing.frame_adequacy_score, 24);
+    assert_eq!(reframing.reframing_trigger, "triggered");
+    assert_eq!(reframing.reexecution_choice, "bounded_reframe_and_retry");
 
     let _ = std::fs::remove_dir_all(run_dir);
     let _ = std::fs::remove_dir_all(out_dir);

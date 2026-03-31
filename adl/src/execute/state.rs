@@ -160,6 +160,7 @@ pub struct RuntimeControlState {
     pub agency: AgencySelectionState,
     pub bounded_execution: BoundedExecutionState,
     pub evaluation: EvaluationControlState,
+    pub reframing: ReframingControlState,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -253,6 +254,18 @@ pub struct EvaluationControlState {
     pub termination_reason: String,
     pub behavior_effect: String,
     pub next_control_action: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReframingControlState {
+    pub frame_adequacy_score: u32,
+    pub reframing_trigger: String,
+    pub reframing_reason: String,
+    pub prior_frame: String,
+    pub new_frame: String,
+    pub reexecution_choice: String,
+    pub post_reframe_state: String,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -398,6 +411,8 @@ pub fn derive_runtime_control_state(
     let agency = derive_agency_selection_state(&signals, &arbitration, &fast_slow);
     let bounded_execution = derive_bounded_execution_state(overall_status, &agency);
     let evaluation = derive_evaluation_control_state(overall_status, &bounded_execution);
+    let reframing =
+        derive_reframing_control_state(&fast_slow, &agency, &bounded_execution, &evaluation);
 
     RuntimeControlState {
         signals,
@@ -406,6 +421,7 @@ pub fn derive_runtime_control_state(
         agency,
         bounded_execution,
         evaluation,
+        reframing,
     }
 }
 
@@ -926,6 +942,88 @@ fn derive_evaluation_control_state(
         termination_reason: termination_reason.to_string(),
         behavior_effect: behavior_effect.to_string(),
         next_control_action: next_control_action.to_string(),
+    }
+}
+
+fn derive_reframing_control_state(
+    fast_slow: &FastSlowPathState,
+    agency: &AgencySelectionState,
+    bounded_execution: &BoundedExecutionState,
+    evaluation: &EvaluationControlState,
+) -> ReframingControlState {
+    let prior_frame = match fast_slow.selected_path.as_str() {
+        "fast_path" => "direct_execution_under_current_frame",
+        _ => "review_and_refine_under_current_frame",
+    };
+
+    let (
+        frame_adequacy_score,
+        reframing_trigger,
+        reframing_reason,
+        new_frame,
+        reexecution_choice,
+        post_reframe_state,
+    ) = match evaluation.next_control_action.as_str() {
+        "handoff_to_reframing" => {
+            let reason = if evaluation.contradiction_signal == "present" {
+                "contradiction_detected_after_bounded_execution"
+            } else if evaluation.failure_signal != "none" {
+                "bounded_failure_after_execution"
+            } else {
+                "frame_inadequate_for_bounded_progress"
+            };
+            let score = if bounded_execution.iterations.len() > 1 {
+                28
+            } else {
+                40
+            };
+            (
+                score,
+                "triggered",
+                reason,
+                "diagnose_and_restructure_before_retry",
+                if agency.selected_candidate_kind == "review_and_refine" {
+                    "bounded_reframe_and_retry"
+                } else {
+                    "bounded_reframe_then_review"
+                },
+                "ready_for_reframed_execution",
+            )
+        }
+        "terminate_with_failure" => (
+            36,
+            "not_triggered",
+            "failure_detected_but_retry_budget_not_justified",
+            "retain_current_frame",
+            "terminate_without_reframe",
+            "terminate_with_failure",
+        ),
+        "await_resume" => (
+            58,
+            "not_triggered",
+            "pause_boundary_preserves_current_frame_until_resume",
+            "retain_current_frame",
+            "await_resume",
+            "await_resume",
+        ),
+        _ => (
+            88,
+            "not_triggered",
+            "current_frame_adequate_for_bounded_progress",
+            "retain_current_frame",
+            "no_reframe_required",
+            "complete_run",
+        ),
+    };
+
+    ReframingControlState {
+        frame_adequacy_score,
+        reframing_trigger: reframing_trigger.to_string(),
+        reframing_reason: reframing_reason.to_string(),
+        prior_frame: prior_frame.to_string(),
+        new_frame: new_frame.to_string(),
+        reexecution_choice: reexecution_choice.to_string(),
+        post_reframe_state: post_reframe_state.to_string(),
     }
 }
 

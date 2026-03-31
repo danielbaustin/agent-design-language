@@ -18,6 +18,7 @@ pub(crate) const FAST_SLOW_PATH_VERSION: u32 = 1;
 pub(crate) const AGENCY_SELECTION_VERSION: u32 = 1;
 pub(crate) const BOUNDED_EXECUTION_VERSION: u32 = 1;
 pub(crate) const EVALUATION_SIGNALS_VERSION: u32 = 1;
+pub(crate) const REFRAMING_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
@@ -468,6 +469,26 @@ pub(crate) struct EvaluationSignalsArtifact {
 }
 
 pub(crate) type EvaluationControlState = execute::EvaluationControlState;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ReframingArtifact {
+    pub(crate) reframing_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) selected_candidate_id: String,
+    pub(crate) selected_path: String,
+    pub(crate) frame_adequacy_score: u32,
+    pub(crate) reframing_trigger: String,
+    pub(crate) reframing_reason: String,
+    pub(crate) prior_frame: String,
+    pub(crate) new_frame: String,
+    pub(crate) reexecution_choice: String,
+    pub(crate) post_reframe_state: String,
+    pub(crate) deterministic_reframing_rule: String,
+}
+
+pub(crate) type ReframingControlState = execute::ReframingControlState;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -1990,6 +2011,37 @@ pub(crate) fn build_evaluation_signals_artifact(
     }
 }
 
+pub(crate) fn build_reframing_artifact(
+    run_summary: &RunSummaryArtifact,
+    fast_slow_path: &FastSlowPathArtifact,
+    agency_selection: &AgencySelectionArtifact,
+    state: &ReframingControlState,
+    scores: Option<&ScoresArtifact>,
+) -> ReframingArtifact {
+    ReframingArtifact {
+        reframing_version: REFRAMING_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: agency_selection.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        selected_candidate_id: agency_selection.selected_candidate_id.clone(),
+        selected_path: fast_slow_path.selected_path.clone(),
+        frame_adequacy_score: state.frame_adequacy_score,
+        reframing_trigger: state.reframing_trigger.clone(),
+        reframing_reason: state.reframing_reason.clone(),
+        prior_frame: state.prior_frame.clone(),
+        new_frame: state.new_frame.clone(),
+        reexecution_choice: state.reexecution_choice.clone(),
+        post_reframe_state: state.post_reframe_state.clone(),
+        deterministic_reframing_rule:
+            "derive bounded frame adequacy, reframing trigger, and re-execution choice from execute-owned evaluation and bounded execution state without hidden retry loops"
+                .to_string(),
+    }
+}
+
 pub(crate) fn build_aee_decision_artifact(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
@@ -2397,6 +2449,13 @@ pub(crate) fn write_run_state_artifacts(
         &runtime_control.evaluation,
         Some(&scores_for_suggestions),
     );
+    let reframing = build_reframing_artifact(
+        &run_summary,
+        &fast_slow_path,
+        &agency_selection,
+        &runtime_control.reframing,
+        Some(&scores_for_suggestions),
+    );
     let cognitive_arbitration_json = serde_json::to_vec_pretty(&cognitive_arbitration)
         .context("serialize cognitive_arbitration.v1.json")?;
     let fast_slow_path_json =
@@ -2407,6 +2466,8 @@ pub(crate) fn write_run_state_artifacts(
         .context("serialize bounded_execution.v1.json")?;
     let evaluation_signals_json = serde_json::to_vec_pretty(&evaluation_signals)
         .context("serialize evaluation_signals.v1.json")?;
+    let reframing_json =
+        serde_json::to_vec_pretty(&reframing).context("serialize reframing.v1.json")?;
     let aee_decision = build_aee_decision_artifact(
         &run_summary,
         &suggestions,
@@ -2442,6 +2503,7 @@ pub(crate) fn write_run_state_artifacts(
         &run_paths.evaluation_signals_json(),
         &evaluation_signals_json,
     )?;
+    artifacts::atomic_write(&run_paths.reframing_json(), &reframing_json)?;
     artifacts::atomic_write(&run_paths.cognitive_signals_json(), &cognitive_signals_json)?;
     artifacts::atomic_write(
         &run_paths.cognitive_arbitration_json(),
@@ -2454,6 +2516,7 @@ pub(crate) fn write_run_state_artifacts(
         &run_paths.evaluation_signals_json(),
         &evaluation_signals_json,
     )?;
+    artifacts::atomic_write(&run_paths.reframing_json(), &reframing_json)?;
     artifacts::atomic_write(&run_paths.affect_state_json(), &affect_state_json)?;
     artifacts::atomic_write(&run_paths.aee_decision_json(), &aee_decision_json)?;
     artifacts::atomic_write(&run_paths.reasoning_graph_json(), &reasoning_graph_json)?;
