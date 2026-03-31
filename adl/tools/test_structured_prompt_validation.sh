@@ -162,7 +162,7 @@ x
 EOF
 
 cat >"$tmpdir/sor_valid.md" <<'EOF'
-# ADL Output Card
+# valid-sor
 
 Task ID: issue-0898
 Run ID: issue-0898
@@ -382,7 +382,7 @@ if [[ "$rc" -eq 0 ]]; then
 fi
 
 cat >"$tmpdir/sor_completed_invalid_status.md" <<'EOF'
-# ADL Output Card
+# dependable-execution-fixture
 
 Task ID: issue-0898
 Run ID: issue-0898
@@ -437,7 +437,7 @@ x
 EOF
 
 cat >"$tmpdir/sor_invalid.md" <<'EOF'
-# ADL Output Card
+# dependable-execution-fixture
 
 Task ID: issue-0898
 Run ID: issue-0898
@@ -495,7 +495,7 @@ if [[ "$rc" -eq 0 ]]; then
 fi
 
 cat >"$tmpdir/sor_offset_timestamp_invalid.md" <<'EOF'
-# ADL Output Card
+# dependable-execution-fixture
 
 Task ID: issue-0898
 Run ID: issue-0898
@@ -566,7 +566,7 @@ if [[ "$rc" -eq 0 ]]; then
 fi
 
 cat >"$tmpdir/sor_completed_worktree_only_valid.md" <<'EOF'
-# ADL Output Card
+# dependable-execution-fixture
 
 Task ID: issue-0898
 Run ID: issue-0898
@@ -617,7 +617,7 @@ EOF
 "$VALIDATOR" --type sor --phase completed --input "$tmpdir/sor_completed_worktree_only_valid.md" >/dev/null
 
 cat >"$tmpdir/sor_absolute_path_invalid.md" <<'EOF'
-# ADL Output Card
+# dependable-execution-fixture
 
 Task ID: issue-0898
 Run ID: issue-0898

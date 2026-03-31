@@ -239,7 +239,7 @@ EOF
 git -C "$WORKTREE" add docs/tooling/editor/five_command_demo_note.md
 
 cat >"$OUTPUT_CARD" <<EOF
-# ADL Output Card
+# five-command-editing-demo-issue
 
 Task ID: issue-0042
 Run ID: issue-0042

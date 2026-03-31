@@ -1048,6 +1048,16 @@ validate_card_header_count() {
   [[ "$count" == "1" ]]
 }
 
+replace_first_markdown_h1() {
+  local file="$1" title="$2"
+  replace_first_line_re "$file" '^# .*$' "# $title"
+}
+
+output_card_title_matches_slug() {
+  local path="$1" slug="$2"
+  validate_card_header_count "$path" "# $slug"
+}
+
 seed_input_card() {
   local path="$1" issue="$2" title="$3" branch="$4" ver="$5" output_path_actual="${6:-}"
   local task_id run_id
@@ -1100,9 +1110,10 @@ seed_input_card() {
 
 seed_output_card() {
   local path="$1" issue="$2" title="$3" branch="$4" ver="$5"
-  local task_id run_id
+  local task_id run_id issue_slug
   task_id="issue-$(card_issue_pad "$issue")"
   run_id="$task_id"
+  issue_slug="$(sanitize_slug "$title")"
   local out_tpl tmp
   out_tpl="$(resolve_output_template)"
   [[ -f "$out_tpl" ]] || die "missing output card template: $out_tpl"
@@ -1117,18 +1128,19 @@ seed_output_card() {
   set_field_line "$tmp" "Version" "$ver"
   set_field_line "$tmp" "Title" "$title"
   set_field_line "$tmp" "Branch" "$branch"
+  replace_first_markdown_h1 "$tmp" "$issue_slug"
 
   # Default Status if template left it blank.
   replace_first_line_re "$tmp" "^Status:[[:space:]]*$" "Status: NOT_STARTED | IN_PROGRESS | DONE | FAILED"
   replace_first_line_re "$tmp" "^- Integration state:.*$" "- Integration state: worktree_only"
   replace_first_line_re "$tmp" "^- Verification scope:.*$" "- Verification scope: worktree"
-  validate_card_header_count "$tmp" "# ADL Output Card" || die "generated output card must contain exactly one '# ADL Output Card' header"
+  validate_card_header_count "$tmp" "# $issue_slug" || die "generated output card must contain exactly one '# $issue_slug' header"
   ensure_nonempty_file "$tmp" || die "generated output card is empty: $tmp"
   mv "$tmp" "$path"
 }
 
 validate_bootstrap_cards() {
-  local issue="$1" branch="$2" in_path="$3" out_path="$4"
+  local issue="$1" slug="$2" branch="$3" in_path="$4" out_path="$5"
   local validator expected task_id run_id in_branch out_branch
   validator="$(resolve_structured_prompt_validator)"
 
@@ -1152,6 +1164,7 @@ validate_bootstrap_cards() {
   out_branch="$(field_line_value "$out_path" "Branch")"
   [[ "$in_branch" == "$branch" ]] || die "start: input card branch mismatch (expected $branch, found ${in_branch:-<empty>})"
   [[ "$out_branch" == "$branch" ]] || die "start: output card branch mismatch (expected $branch, found ${out_branch:-<empty>})"
+  output_card_title_matches_slug "$out_path" "$slug" || die "start: output card title mismatch (expected '# $slug')"
 }
 
 validate_bootstrap_stp() {
@@ -1190,7 +1203,7 @@ seed_bootstrap_surfaces() {
   else
     note "Input card exists: $in_path" >&2
   fi
-  if ! ensure_nonempty_file "$out_path"; then
+  if ! ensure_nonempty_file "$out_path" || ! output_card_title_matches_slug "$out_path" "$slug"; then
     note "Creating output card: $out_path" >&2
     seed_output_card "$out_path" "$issue" "$title" "$branch" "$version"
   else
@@ -1198,7 +1211,7 @@ seed_bootstrap_surfaces() {
   fi
   sync_legacy_links_for_issue "$issue" "$version" "$slug"
   validate_bootstrap_stp "$stp_path"
-  validate_bootstrap_cards "$issue" "$branch" "$in_path" "$out_path"
+  validate_bootstrap_cards "$issue" "$slug" "$branch" "$in_path" "$out_path"
   printf '%s\n%s\n%s\n' "$stp_path" "$in_path" "$out_path"
 }
 

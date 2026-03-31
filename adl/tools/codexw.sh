@@ -234,7 +234,7 @@ run_legacy_mode() {
     fi
 
     {
-      echo "# ADL Output Card"
+      echo "# $(printf '%s' "$title" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')"
       echo
       echo "Task ID: ${task_id}"
       echo "Run ID: ${run_id}"

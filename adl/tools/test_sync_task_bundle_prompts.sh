@@ -31,7 +31,7 @@ Task ID: issue-0918
 EOF
 
 cat > "$TMP/.adl/cards/918/output_918.md" <<'EOF'
-# ADL Output Card
+# v085-output-card-template-tightening
 Task ID: issue-0918
 EOF
 

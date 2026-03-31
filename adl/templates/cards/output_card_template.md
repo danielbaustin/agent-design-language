@@ -1,4 +1,4 @@
-# ADL Output Card
+# <issue-slug>
 
 Canonical Template Source: `adl/templates/cards/output_card_template.md`
 Consumed by: `adl/tools/pr.sh` (`OUTPUT_TEMPLATE`) with legacy fallback support for `.adl/templates/output_card_template.md`.
