@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::{anyhow, Context, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::path::{Path, PathBuf};
@@ -2919,6 +2919,158 @@ pub(crate) fn write_run_state_artifacts(
     }
 
     Ok(run_dir)
+}
+
+fn read_required_json_artifact<T>(control_path_dir: &Path, file_name: &str) -> Result<T>
+where
+    T: for<'de> Deserialize<'de>,
+{
+    let path = control_path_dir.join(file_name);
+    let raw = std::fs::read_to_string(&path).with_context(|| {
+        format!(
+            "missing required control-path artifact '{}'",
+            path.display()
+        )
+    })?;
+    serde_json::from_str(&raw)
+        .with_context(|| format!("invalid control-path artifact '{}'", path.display()))
+}
+
+pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Result<()> {
+    if !control_path_dir.exists() {
+        return Err(anyhow!(
+            "control-path artifact root does not exist: {}",
+            control_path_dir.display()
+        ));
+    }
+
+    let signals: CognitiveSignalsArtifact =
+        read_required_json_artifact(control_path_dir, "signals.json")?;
+    let agency: AgencySelectionArtifact =
+        read_required_json_artifact(control_path_dir, "candidate_selection.json")?;
+    let arbitration: CognitiveArbitrationArtifact =
+        read_required_json_artifact(control_path_dir, "arbitration.json")?;
+    let execution: BoundedExecutionArtifact =
+        read_required_json_artifact(control_path_dir, "execution_iterations.json")?;
+    let evaluation: EvaluationSignalsArtifact =
+        read_required_json_artifact(control_path_dir, "evaluation.json")?;
+    let reframing: ReframingArtifact =
+        read_required_json_artifact(control_path_dir, "reframing.json")?;
+    let memory: ControlPathMemoryArtifact =
+        read_required_json_artifact(control_path_dir, "memory.json")?;
+    let freedom_gate: FreedomGateArtifact =
+        read_required_json_artifact(control_path_dir, "freedom_gate.json")?;
+    let final_result: ControlPathFinalResultArtifact =
+        read_required_json_artifact(control_path_dir, "final_result.json")?;
+
+    let summary_path = control_path_dir.join("summary.txt");
+    let summary = std::fs::read_to_string(&summary_path).with_context(|| {
+        format!(
+            "missing required control-path artifact '{}'",
+            summary_path.display()
+        )
+    })?;
+    if summary.trim().is_empty() {
+        return Err(anyhow!(
+            "control-path summary is empty at '{}'",
+            summary_path.display()
+        ));
+    }
+
+    let expected_stage_order = vec![
+        "signals".to_string(),
+        "candidate_selection".to_string(),
+        "arbitration".to_string(),
+        "execution".to_string(),
+        "evaluation".to_string(),
+        "reframing".to_string(),
+        "memory".to_string(),
+        "freedom_gate".to_string(),
+        "final_result".to_string(),
+    ];
+    if final_result.stage_order != expected_stage_order {
+        return Err(anyhow!(
+            "control-path final_result stage_order mismatch: expected {:?}, found {:?}",
+            expected_stage_order,
+            final_result.stage_order
+        ));
+    }
+
+    let run_ids = [
+        signals.run_id.as_str(),
+        agency.run_id.as_str(),
+        arbitration.run_id.as_str(),
+        execution.run_id.as_str(),
+        evaluation.run_id.as_str(),
+        reframing.run_id.as_str(),
+        memory.run_id.as_str(),
+        freedom_gate.run_id.as_str(),
+        final_result.run_id.as_str(),
+    ];
+    let canonical_run_id = final_result.run_id.as_str();
+    if run_ids.iter().any(|run_id| *run_id != canonical_run_id) {
+        return Err(anyhow!(
+            "control-path artifact run_id mismatch under '{}'",
+            control_path_dir.display()
+        ));
+    }
+
+    if final_result.route_selected != arbitration.route_selected {
+        return Err(anyhow!(
+            "control-path final_result route '{}' does not match arbitration route '{}'",
+            final_result.route_selected,
+            arbitration.route_selected
+        ));
+    }
+    if final_result.selected_candidate != agency.selected_candidate_id {
+        return Err(anyhow!(
+            "control-path final_result selected_candidate '{}' does not match candidate_selection '{}'",
+            final_result.selected_candidate,
+            agency.selected_candidate_id
+        ));
+    }
+    if final_result.termination_reason != evaluation.termination_reason {
+        return Err(anyhow!(
+            "control-path final_result termination_reason '{}' does not match evaluation '{}'",
+            final_result.termination_reason,
+            evaluation.termination_reason
+        ));
+    }
+    if final_result.gate_decision != freedom_gate.gate_decision {
+        return Err(anyhow!(
+            "control-path final_result gate_decision '{}' does not match freedom_gate '{}'",
+            final_result.gate_decision,
+            freedom_gate.gate_decision
+        ));
+    }
+    if final_result.next_control_action != evaluation.next_control_action {
+        return Err(anyhow!(
+            "control-path final_result next_control_action '{}' does not match evaluation '{}'",
+            final_result.next_control_action,
+            evaluation.next_control_action
+        ));
+    }
+
+    let required_summary_markers = [
+        "stage_order: signals -> candidate_selection -> arbitration -> execution -> evaluation -> reframing -> memory -> freedom_gate -> final_result".to_string(),
+        format!("candidate_selection: candidate_id={}", agency.selected_candidate_id),
+        format!("arbitration: route={}", arbitration.route_selected),
+        format!("evaluation: termination_reason={}", evaluation.termination_reason),
+        format!("reframing: trigger={}", reframing.reframing_trigger),
+        format!("freedom_gate: decision={}", freedom_gate.gate_decision),
+        format!("final_result: {}", final_result.final_result),
+    ];
+    for marker in required_summary_markers {
+        if !summary.contains(&marker) {
+            return Err(anyhow!(
+                "control-path summary '{}' is missing required marker '{}'",
+                summary_path.display(),
+                marker
+            ));
+        }
+    }
+
+    Ok(())
 }
 
 pub(crate) fn load_resume_state(

@@ -1,3 +1,4 @@
+use super::artifact_cmd::real_artifact;
 use super::commands::real_learn_export;
 use super::demo_cmd::{is_ci_environment, real_demo};
 use super::godel_cmd::{

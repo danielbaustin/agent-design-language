@@ -2,6 +2,7 @@ pub fn usage() -> &'static str {
     "Usage:
   adl <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--quiet] [--open]
   adl resume <run_id> [--steer <steering.json>]
+  adl artifact validate-control-path --root <dir>
   adl demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
   adl identity init --name <display-name> --birthday <rfc3339> --timezone <IANA> [--agent-id <id>] [--created-by <name>] [--force]
   adl identity show [--path <path>]
@@ -40,6 +41,7 @@ Options:
 Examples:
   adl resume hitl-pause-seq
   adl resume hitl-pause-seq --steer /tmp/steer.json
+  adl artifact validate-control-path --root /tmp/adl-v086-control-path-demo/demo-g-v086-control-path
   ADL_OLLAMA_BIN=adl/tools/mock_ollama_v0_4.sh adl examples/v0-4-demo-fork-join.adl.yaml --run --trace --out ./out
   adl examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
   adl examples/v0-3-on-error-retry.adl.yaml --print-plan

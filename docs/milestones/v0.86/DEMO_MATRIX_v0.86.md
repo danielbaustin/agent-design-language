@@ -113,11 +113,13 @@ Milestone claims / work packages covered:
 - WP-11 Memory Participation
 - WP-12 Freedom Gate
 - WP-13 Canonical Bounded Cognitive Path
+- WP-14 Artifact Schema Enforcement
 
 Commands to run:
 
 ```bash
 ./adl/tools/demo_v086_control_path.sh
+./adl/tools/validate_v086_control_path.sh /tmp/adl-v086-control-path-demo/demo-g-v086-control-path
 ```
 
 Expected artifacts:
@@ -148,6 +150,7 @@ Expected success signals:
 - Reframing/adaptation occurs in at least one case
 - Memory participation is visible
 - Freedom Gate decision occurs before final action
+- The schema validator returns `CONTROL_PATH_VALIDATION=PASS` for the canonical artifact set
 - The final recommendation, refusal, or deferral is explicit and inspectable
 
 Determinism / replay notes:

@@ -120,6 +120,7 @@ For the implemented `v0.86` runtime surface:
 
 - `freedom_gate.v1.json` records the bounded gate input, gate decision, reason code, and whether commitment was blocked
 - `control_path/summary.txt` and its sibling control-path JSON artifacts project the full bounded stage order into one reviewer-facing proof surface
+- `adl artifact validate-control-path --root <control_path_dir>` is the bounded enforcement surface for those canonical reviewer artifacts; missing or malformed stage files fail explicitly
 - `allow`, `defer`, and `refuse` remain the full bounded decision set
 - commitment is blocked unless the gate decision is `allow`
 
