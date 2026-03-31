@@ -18,9 +18,9 @@ use super::pr_cmd_prompt::{
     resolve_issue_body, resolve_issue_prompt_path, resolve_issue_scope_and_slug_from_local_state,
     validate_issue_prompt_exists, version_from_labels_csv, version_from_title,
 };
-#[cfg(test)]
-use super::pr_cmd_validate::bootstrap_stub_reason;
-use super::pr_cmd_validate::{validate_authored_prompt_surface, PromptSurfaceKind};
+use super::pr_cmd_validate::{
+    bootstrap_stub_reason, validate_authored_prompt_surface, PromptSurfaceKind,
+};
 use ::adl::control_plane::{
     card_input_path, card_output_path, resolve_cards_root, resolve_primary_checkout_root,
     sanitize_slug, IssueRef,
