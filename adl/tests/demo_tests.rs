@@ -38,7 +38,6 @@ fn run_demo_v086_candidate_selection_with_default_dir(cwd: &PathBuf) -> std::pro
     let exe = env!("CARGO_BIN_EXE_demo_v086_candidate_selection");
     Command::new(exe).current_dir(cwd).output().unwrap()
 }
-
 fn run_demo_v086_review_surface(out_dir: &PathBuf) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_demo_v086_review_surface");
     Command::new(exe).arg(out_dir).output().unwrap()

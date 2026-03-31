@@ -148,6 +148,11 @@ The review-surface demo must additionally produce:
 - one stable demo manifest or index surface
 - one obvious reviewer entry path for the full bounded demo set
 
+Current reviewer entry path:
+- run `./adl/tools/demo_v086_review_surface.sh`
+- inspect `artifacts/v086/review_surface/demo_manifest.json`
+- inspect D1 first via `artifacts/v086/review_surface/d1_control_path/summary.txt`
+
 ---
 
 ## Integration With WBS
