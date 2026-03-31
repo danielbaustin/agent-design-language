@@ -56,6 +56,8 @@ assert_contains() {
 (
   cd "$repo"
   "$BASH_BIN" adl/tools/pr.sh start 910 --slug validation-pass --no-fetch-issue >/dev/null
+  ready_out="$("$BASH_BIN" adl/tools/pr.sh ready 910 --slug validation-pass --no-fetch-issue)"
+  assert_contains "READY=PASS" "$ready_out"
   perl -0pi -e 's/Status: IN_PROGRESS/Status: MAYBE/' ".worktrees/adl-wp-910/adl/templates/cards/output_card_template.md"
   rm -f ".worktrees/adl-wp-910/.adl/v0.86/tasks/issue-0910__validation-pass/sor.md"
 

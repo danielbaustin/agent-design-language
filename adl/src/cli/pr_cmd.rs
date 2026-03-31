@@ -95,6 +95,7 @@ fn real_pr_create(args: &[String]) -> Result<()> {
     } else {
         body.clone()
     };
+    validate_issue_body_for_create(&repo_root, &title, &normalized_labels, &slug, &create_body)?;
     let issue_url = gh_issue_create(&repo, &title, &create_body, &normalized_labels)?;
     let issue = parse_issue_number_from_url(&issue_url)?;
     let issue_ref = IssueRef::new(issue, version.clone(), slug.clone())?;
@@ -115,6 +116,8 @@ fn real_pr_create(args: &[String]) -> Result<()> {
         &issue_url,
         &final_body,
     )?;
+    validate_bootstrap_stp(&repo_root, &source_path)?;
+    validate_authored_prompt_surface("create", &source_path, PromptSurfaceKind::IssuePrompt)?;
     if create_body != final_body {
         gh_issue_edit_body(&repo, issue, &final_body)?;
     }
@@ -1510,7 +1513,9 @@ fn ensure_bootstrap_cards(
     if let Some(parent) = bundle_input.parent() {
         fs::create_dir_all(parent)?;
     }
-    if !bundle_input.is_file() {
+    if !bundle_input.is_file()
+        || prompt_surface_is_bootstrap_stub(&bundle_input, PromptSurfaceKind::Sip)?
+    {
         write_input_card(
             root,
             &bundle_input,
@@ -1538,7 +1543,38 @@ fn ensure_bootstrap_cards(
         &bundle_input,
         &bundle_output,
     )?;
+    validate_authored_prompt_surface("start", &bundle_input, PromptSurfaceKind::Sip)?;
     Ok((bundle_input, bundle_output))
+}
+
+fn prompt_surface_is_bootstrap_stub(path: &Path, kind: PromptSurfaceKind) -> Result<bool> {
+    if !path.is_file() {
+        return Ok(false);
+    }
+    let text = fs::read_to_string(path)?;
+    Ok(bootstrap_stub_reason(&text, kind).is_some())
+}
+
+fn validate_issue_body_for_create(
+    repo_root: &Path,
+    title: &str,
+    labels_csv: &str,
+    slug: &str,
+    body: &str,
+) -> Result<()> {
+    let probe_issue = 999_999;
+    let probe_url = format!(
+        "https://github.com/{}/issues/{probe_issue}",
+        default_repo(repo_root)?
+    );
+    let prompt =
+        render_issue_prompt_from_body(probe_issue, slug, title, labels_csv, &probe_url, body);
+    let temp = write_temp_markdown("issue_body_probe", &prompt)?;
+    validate_bootstrap_stp(repo_root, &temp)
+        .with_context(|| "create: issue body cannot satisfy source-prompt validation")?;
+    validate_authored_prompt_surface("create", &temp, PromptSurfaceKind::IssuePrompt)
+        .with_context(|| "create: issue body is still bootstrap stub content")?;
+    Ok(())
 }
 
 fn write_input_card(
@@ -2760,7 +2796,7 @@ verification_summary:
             "--slug".to_string(),
             "v0-86-tools-simplified-init-path".to_string(),
             "--body".to_string(),
-            "## Goal\n- simplify init".to_string(),
+            "## Summary\n\nTighten lifecycle validation for issue creation.\n\n## Goal\n\nMake create reject bodies that cannot become valid source prompts.\n\n## Required Outcome\n\nThis issue ships tooling code and tests.\n\n## Deliverables\n\n- create-path validation\n\n## Acceptance Criteria\n\n- invalid issue bodies are rejected early\n\n## Repo Inputs\n\n- adl/src/cli/pr_cmd.rs\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- lifecycle redesign\n\n## Issue-Graph Notes\n\n- test fixture\n\n## Notes\n\n- authored test body\n\n## Tooling Notes\n\n- should pass source-prompt validation\n".to_string(),
             "--labels".to_string(),
             "track:roadmap,type:task,area:tools".to_string(),
             "--version".to_string(),
@@ -2784,13 +2820,15 @@ verification_summary:
         );
         let prompt = fs::read_to_string(&source).expect("read source prompt");
         assert!(prompt.contains("issue_number: 1202"));
-        assert!(prompt.contains("## Goal\n- simplify init"));
+        assert!(prompt.contains("## Summary"));
+        assert!(prompt.contains("## Tooling Notes"));
         assert!(
             !repo.join(".adl/v0.86/tasks").exists(),
             "create should not bootstrap the local task bundle"
         );
         let issue_body = fs::read_to_string(&issue_body_log).expect("issue body");
-        assert_eq!(issue_body, "## Goal\n- simplify init");
+        assert!(issue_body.contains("## Summary"));
+        assert!(issue_body.contains("## Tooling Notes"));
     }
 
     #[test]
@@ -2847,6 +2885,53 @@ verification_summary:
         assert!(prompt.contains("issue_number: 1203"));
         assert!(prompt.contains("## Goal"));
         assert!(!prompt.contains("## Goal\n-"));
+    }
+
+    #[test]
+    fn real_pr_create_rejects_issue_body_that_cannot_pass_source_prompt_validation() {
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+        let repo = unique_temp_dir("adl-pr-real-create-invalid-body");
+        init_git_repo(&repo);
+        copy_bootstrap_support_files(&repo);
+
+        let bin_dir = repo.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let gh_path = bin_dir.join("gh");
+        write_executable(
+            &gh_path,
+            "#!/usr/bin/env bash\nset -euo pipefail\nexit 99\n",
+        );
+
+        let old_path = env::var("PATH").unwrap_or_default();
+        let prev_dir = env::current_dir().expect("cwd");
+        unsafe {
+            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        }
+        env::set_current_dir(&repo).expect("chdir");
+
+        let err = real_pr(&[
+            "create".to_string(),
+            "--title".to_string(),
+            "[v0.86][tools] Invalid issue body".to_string(),
+            "--slug".to_string(),
+            "v0-86-tools-invalid-issue-body".to_string(),
+            "--body".to_string(),
+            "## Goal\n\nmissing required sections\n".to_string(),
+            "--labels".to_string(),
+            "track:roadmap,type:task,area:tools".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+        ])
+        .expect_err("invalid issue body should fail before gh issue create");
+
+        env::set_current_dir(prev_dir).expect("restore cwd");
+        unsafe {
+            env::set_var("PATH", old_path);
+        }
+
+        assert!(err
+            .to_string()
+            .contains("create: issue body cannot satisfy source-prompt validation"));
     }
 
     #[test]
@@ -4888,6 +4973,56 @@ Status: NOT_STARTED
         assert_eq!(
             field_line_value(&bundle_output, "Status").expect("output status"),
             "IN_PROGRESS"
+        );
+        let bundle_input_text = fs::read_to_string(&bundle_input).expect("bundle input");
+        assert_eq!(
+            bootstrap_stub_reason(&bundle_input_text, PromptSurfaceKind::Sip),
+            None
+        );
+    }
+
+    #[test]
+    fn ensure_bootstrap_cards_rewrites_existing_bootstrap_stub_input_card() {
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+        let repo = unique_temp_dir("adl-pr-bootstrap-cards-rewrite");
+        init_git_repo(&repo);
+        copy_bootstrap_support_files(&repo);
+
+        let issue_ref = IssueRef::new(
+            1154,
+            "v0.86".to_string(),
+            "rewrite-bootstrap-sip".to_string(),
+        )
+        .expect("ref");
+        let source_path = issue_ref.issue_prompt_path(&repo);
+        fs::create_dir_all(source_path.parent().expect("source parent")).expect("mkdir");
+        fs::write(
+            &source_path,
+            "---\ntitle: \"[v0.86][tools] Rewrite bootstrap SIP\"\nlabels:\n  - \"track:roadmap\"\nissue_number: 1154\n---\n\n## Summary\nx\n## Goal\nx\n## Required Outcome\nx\n## Deliverables\nx\n## Acceptance Criteria\nx\n## Repo Inputs\nx\n## Dependencies\nx\n## Demo Expectations\nx\n## Non-goals\nx\n## Issue-Graph Notes\nx\n## Notes\nx\n## Tooling Notes\nx\n",
+        )
+        .expect("write source");
+
+        let bundle_input = issue_ref.task_bundle_input_path(&repo);
+        fs::create_dir_all(bundle_input.parent().expect("input parent")).expect("mkdir");
+        fs::write(
+            &bundle_input,
+            "# ADL Input Card\n\n## Goal\n\n\n## Required Outcome\n\n- State whether this issue must ship code, docs, tests, demo artifacts, or a combination.\n\n## Acceptance Criteria\n\n\n",
+        )
+        .expect("write stub input");
+
+        let (repaired_input, _) = ensure_bootstrap_cards(
+            &repo,
+            &issue_ref,
+            "[v0.86][tools] Rewrite bootstrap SIP",
+            "codex/1154-rewrite-bootstrap-sip",
+            &source_path,
+        )
+        .expect("bootstrap cards");
+
+        let repaired_text = fs::read_to_string(repaired_input).expect("read repaired input");
+        assert_eq!(
+            bootstrap_stub_reason(&repaired_text, PromptSurfaceKind::Sip),
+            None
         );
     }
 }

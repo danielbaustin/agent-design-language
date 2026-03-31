@@ -123,6 +123,63 @@ replace_first_line_re() {
   mv "$tmp" "$file"
 }
 
+section_has_authored_content() {
+  local file="$1" header="$2"
+  awk -v header="$header" '
+    BEGIN { in_section = 0; found = 0 }
+    {
+      line = $0
+      trimmed = line
+      sub(/^[[:space:]]+/, "", trimmed)
+      sub(/[[:space:]]+$/, "", trimmed)
+      if (trimmed == header) {
+        in_section = 1
+        next
+      }
+      if (in_section && trimmed ~ /^##[[:space:]]+/) {
+        in_section = 0
+      }
+      if (in_section && trimmed != "" && trimmed != "-" && trimmed != "none") {
+        found = 1
+        exit
+      }
+    }
+    END { exit(found ? 0 : 1) }
+  ' "$file"
+}
+
+input_card_is_bootstrap_stub() {
+  local file="$1"
+  [[ -f "$file" ]] || return 1
+  if ! section_has_authored_content "$file" "## Goal"; then
+    return 0
+  fi
+  if ! section_has_authored_content "$file" "## Acceptance Criteria"; then
+    return 0
+  fi
+  local marker
+  while IFS= read -r marker; do
+    [[ -n "$marker" ]] || continue
+    if grep -Fqx -- "$marker" "$file"; then
+      return 0
+    fi
+  done <<'EOF'
+- State whether this issue must ship code, docs, tests, demo artifacts, or a combination.
+- Likely files, modules, docs, commands, schemas, or artifacts to modify or validate
+- Required commands:
+- Required tests:
+- Required artifacts / traces:
+- Required reviewer or demo checks:
+- Required demo(s):
+- Required proof surface(s):
+- If no demo is required, say why:
+- Determinism requirements:
+- Security / privacy requirements:
+- Resource limits (time/CPU/memory/network):
+EOF
+  return 1
+}
+
 field_line_value() {
   local file="$1" key="$2"
   awk -v k="$key" '
@@ -1127,7 +1184,7 @@ seed_bootstrap_surfaces() {
   in_path="$(input_card_path "$issue" "$version" "$slug")"
   out_path="$(output_card_path "$issue" "$version" "$slug")"
   ensure_adl_dirs
-  if ! ensure_nonempty_file "$in_path"; then
+  if ! ensure_nonempty_file "$in_path" || input_card_is_bootstrap_stub "$in_path"; then
     note "Creating input card: $in_path" >&2
     seed_input_card "$in_path" "$issue" "$title" "$branch" "$version" "$out_path"
   else
@@ -2727,9 +2784,11 @@ cmd_ready() {
   [[ -f "$wt_input" ]] || die "ready: missing worktree input card: $wt_input"
   [[ -f "$wt_output" ]] || die "ready: missing worktree output card: $wt_output"
   validate_bootstrap_cards "$issue" "$branch" "$wt_input" "$wt_output"
+  input_card_is_bootstrap_stub "$wt_input" && die "ready: input card is still bootstrap stub content: $wt_input"
   [[ -f "$root_input" ]] || die "ready: missing root input card: $root_input"
   [[ -f "$root_output" ]] || die "ready: missing root output card: $root_output"
   validate_bootstrap_cards "$issue" "$branch" "$root_input" "$root_output"
+  input_card_is_bootstrap_stub "$root_input" && die "ready: input card is still bootstrap stub content: $root_input"
 
   echo "ISSUE=$issue"
   echo "VERSION=$version"
