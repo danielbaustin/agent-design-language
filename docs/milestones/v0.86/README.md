@@ -142,6 +142,7 @@ Primary milestone proof surface:
 Additional validation surfaces:
 - local demo scripts under `adl/tools/`
 - structured artifact outputs under `artifacts/v086/`
+- `D5` review-surface manifest at `artifacts/v086/review_surface/demo_manifest.json`
 - quality-gate evidence from tests / coverage / CI
 - internal and external review records
 
@@ -166,6 +167,7 @@ The milestone should demonstrate:
 
 Evidence locations:
 - `artifacts/v086/`
+- `artifacts/v086/review_surface/demo_manifest.json`
 - `docs/milestones/v0.86/DEMO_MATRIX_v0.86.md`
 - `docs/milestones/v0.86/MILESTONE_CHECKLIST_v0.86.md`
 

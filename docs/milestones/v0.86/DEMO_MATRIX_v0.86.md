@@ -43,20 +43,19 @@ Out of scope for `v0.86`:
 Working directory:
 
 ```bash
-cd /Users/daniel/git/agent-design-language
+cd <repo-root>
 ```
 
-Deterministic runtime / provider assumptions:
+Deterministic runtime assumptions:
 
 ```bash
-# expected local provider surface for v0.86 demos
-ollama serve
-# use fixed local model names/configuration documented by the demo scripts
+# all Sprint 6 review demos are bounded local artifact emitters
+# no external inference provider is required for D1-D5
 ```
 
 Additional environment / fixture requirements:
-- Ollama (or equivalent local inference provider) is installed and reachable.
-- Demo scripts must use milestone-approved local models and fixed runtime defaults.
+- Rust/Cargo toolchain is installed locally.
+- Demo scripts must be run from the repository root or from a checkout where `adl/tools/` is available.
 - Artifact output paths must be stable and documented by the scripts.
 
 ## Related Docs
@@ -73,10 +72,10 @@ Use this table as the fast review surface for milestone coverage.
 | Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
 |---|---|---|---|---|---|---|---|
 | D1 | Canonical Bounded Cognitive Path | `WP-13` canonical bounded cognitive path; integrated stack + loop + signals + arbitration + execution + evaluation + reframing + memory + Freedom Gate | `adl/tools/demo_v086_control_path.sh` | control-path artifact set + summary output | One run traverses signals -> candidate selection -> arbitration -> fast/slow path -> bounded execution -> evaluation -> reframing -> memory participation -> Freedom Gate -> final recommendation, refusal, or deferral | Fixed local model + stable artifact naming; reruns should preserve the same control-path shape | READY |
-| D2 | Fast vs Slow Routing | `WP-05`, `WP-06` arbitration and fast/slow reasoning paths | `adl/tools/demo_v086_fast_slow.sh` | routing decision artifacts for two bounded scenarios | Simple task routes to fast path; complex/ambiguous task routes to slow path | Same scenarios and fixed local config should preserve route choice or explainable justification | PLANNED |
-| D3 | Agency / Candidate Selection | `WP-07` bounded agency via candidate selection | `adl/tools/demo_v086_candidate_selection.sh` | candidate-set artifact + selected candidate record | Multiple candidates are generated and one is explicitly selected with rationale | Candidate count and selected candidate should be stable enough for review with fixed input | PLANNED |
-| D4 | Freedom Gate Enforcement | `WP-12` Freedom Gate decision control | `adl/tools/demo_v086_freedom_gate.sh` | Freedom Gate decision event | At least one action is allowed and at least one action is deferred or refused | Same blocked/allowed scenarios should preserve gate outcome under fixed inputs | PLANNED |
-| D5 | Full Review Surface Walkthrough | `WP-15`, `WP-16` local demo program + review surface | `adl/tools/demo_v086_review_surface.sh` | combined demo manifest / review guide / artifact directory | Reviewer can run one command and locate all primary proof surfaces for the bounded demo set | Artifact directory layout and manifest names must remain stable | PLANNED |
+| D2 | Fast vs Slow Routing | `WP-05`, `WP-06` arbitration and fast/slow reasoning paths | `adl/tools/demo_v086_fast_slow.sh` | routing decision artifacts for two bounded scenarios | Simple task routes to fast path; complex/ambiguous task routes to slow path | Same scenarios and fixed inputs should preserve route choice and branch naming | READY |
+| D3 | Agency / Candidate Selection | `WP-07` bounded agency via candidate selection | `adl/tools/demo_v086_candidate_selection.sh` | candidate-set artifact + selected candidate record | Multiple candidates are generated and one is explicitly selected with rationale | Candidate count, ordering, and selected candidate should remain stable for fixed input | READY |
+| D4 | Freedom Gate Enforcement | `WP-12` Freedom Gate decision control | `adl/tools/demo_v086_freedom_gate.sh` | Freedom Gate decision event | At least one action is allowed and at least one action is refused | Same blocked/allowed scenarios should preserve gate outcome under fixed inputs | READY |
+| D5 | Full Review Surface Walkthrough | `WP-15`, `WP-16` local demo program + review surface | `adl/tools/demo_v086_review_surface.sh` | combined demo manifest / review guide / artifact directory | Reviewer can run one command and locate all primary proof surfaces for the bounded demo set | Artifact directory layout, manifest names, and reviewer entry ordering remain stable | READY |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -119,27 +118,27 @@ Commands to run:
 
 ```bash
 ./adl/tools/demo_v086_control_path.sh
-./adl/tools/validate_v086_control_path.sh /tmp/adl-v086-control-path-demo/demo-g-v086-control-path
+./adl/tools/validate_v086_control_path.sh artifacts/v086/control_path/demo-g-v086-control-path
 ```
 
 Expected artifacts:
-- `artifacts/v086/control_path/candidate_selection.json`
-- `artifacts/v086/control_path/arbitration.json`
-- `artifacts/v086/control_path/freedom_gate.json`
-- `artifacts/v086/control_path/final_result.json`
-- `artifacts/v086/control_path/summary.txt`
-- artifacts/v086/control_path/signals.json
-- artifacts/v086/control_path/execution_iterations.json
-- artifacts/v086/control_path/evaluation.json
-- artifacts/v086/control_path/reframing.json
-- artifacts/v086/control_path/memory.json
+- `artifacts/v086/control_path/demo-g-v086-control-path/signals.json`
+- `artifacts/v086/control_path/demo-g-v086-control-path/candidate_selection.json`
+- `artifacts/v086/control_path/demo-g-v086-control-path/arbitration.json`
+- `artifacts/v086/control_path/demo-g-v086-control-path/execution_iterations.json`
+- `artifacts/v086/control_path/demo-g-v086-control-path/evaluation.json`
+- `artifacts/v086/control_path/demo-g-v086-control-path/reframing.json`
+- `artifacts/v086/control_path/demo-g-v086-control-path/memory.json`
+- `artifacts/v086/control_path/demo-g-v086-control-path/freedom_gate.json`
+- `artifacts/v086/control_path/demo-g-v086-control-path/final_result.json`
+- `artifacts/v086/control_path/demo-g-v086-control-path/summary.txt`
 
 Primary proof surface:
-- `artifacts/v086/control_path/summary.txt`
+- `artifacts/v086/control_path/demo-g-v086-control-path/summary.txt`
 
 Secondary proof surfaces:
-- `artifacts/v086/control_path/arbitration.json`
-- `artifacts/v086/control_path/freedom_gate.json`
+- `artifacts/v086/control_path/demo-g-v086-control-path/arbitration.json`
+- `artifacts/v086/control_path/demo-g-v086-control-path/freedom_gate.json`
 
 Expected success signals:
 - Signals (instinct/affect) are emitted and visible
@@ -286,7 +285,7 @@ Secondary proof surfaces:
 
 Expected success signals:
 - At least one candidate action is allowed.
-- At least one candidate action is deferred or refused.
+- At least one candidate action is refused.
 - The gate decision includes an explicit reason.
 
 Determinism / replay notes:
@@ -322,17 +321,22 @@ Expected artifacts:
 - `artifacts/v086/review_surface/demo_manifest.json`
 - `artifacts/v086/review_surface/README.txt`
 - `artifacts/v086/review_surface/index.txt`
+- `artifacts/v086/review_surface/d1_control_path/summary.txt`
+- `artifacts/v086/review_surface/d2_fast_slow/comparison.txt`
+- `artifacts/v086/review_surface/d3_candidate_selection/selection.json`
+- `artifacts/v086/review_surface/d4_freedom_gate/blocked_case.json`
 
 Primary proof surface:
 - `artifacts/v086/review_surface/demo_manifest.json`
 
 Secondary proof surfaces:
 - `artifacts/v086/review_surface/README.txt`
-- `docs/milestones/v0.86/DEMO_MATRIX_v0.86.md`
+- `artifacts/v086/review_surface/index.txt`
 
 Expected success signals:
 - One command gives the reviewer a stable starting point.
-- The manifest points to all primary demo artifacts.
+- The manifest points to all D1-D4 primary demo artifacts.
+- The README explicitly tells the reviewer to inspect D1 first.
 
 Determinism / replay notes:
 - The manifest layout and referenced artifact names must remain stable.
@@ -373,7 +377,7 @@ Evidence directory / run root:
 - `artifacts/v086/`
 
 Repeatability approach:
-- Run demos with fixed local model names and documented provider configuration.
+- Run demos with fixed inputs and the tracked local scripts.
 - Judge repeatability primarily by control-path shape, artifact structure, and decision outputs.
 
 Normalization rules:
@@ -381,8 +385,8 @@ Normalization rules:
 - Treat path selection, gate outcomes, and missing artifacts as non-normalizable failures.
 
 Observed results summary:
-- `PLANNED` until local validation is complete.
-- Upgrade to `READY` only after bounded reruns preserve the claimed proof surface.
+- `READY` for D1-D5 on the Sprint 6 implementation branch.
+- Bounded reruns preserve the claimed proof surfaces for the tracked local commands.
 - Upgrade to `LANDED` only when the milestone evidence is ready for review.
 
 ## Reviewer Sign-Off Surface
@@ -399,7 +403,7 @@ Review owners:
 - `Internal / external review owners to be assigned during review kickoff`
 
 Review status:
-- Planned for v0.86 implementation and review cycle.
+- Sprint 6 review surfaces implemented; awaiting PR review and merge.
 
 ## Notes
 - The local demo program is a first-class feature for v0.86, not optional polish.
