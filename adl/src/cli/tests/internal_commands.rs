@@ -295,6 +295,40 @@ fn cli_artifact_validate_control_path_accepts_demo_fixture() {
 }
 
 #[test]
+fn cli_artifact_requires_subcommand() {
+    let err = real_artifact(&[]).expect_err("artifact should require a subcommand");
+    assert!(err
+        .to_string()
+        .contains("artifact requires a subcommand: validate-control-path"));
+}
+
+#[test]
+fn cli_artifact_rejects_unknown_subcommand() {
+    let err = real_artifact(&["unknown".to_string()]).expect_err("unknown subcommand");
+    assert!(err
+        .to_string()
+        .contains("unknown artifact subcommand 'unknown'"));
+}
+
+#[test]
+fn cli_artifact_validate_control_path_requires_root_flag() {
+    let err = real_artifact(&["validate-control-path".to_string()])
+        .expect_err("validate-control-path should require --root");
+    assert!(err
+        .to_string()
+        .contains("artifact validate-control-path requires --root <dir>"));
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_unknown_arg() {
+    let err = real_artifact(&["validate-control-path".to_string(), "--bogus".to_string()])
+        .expect_err("validate-control-path should reject unknown args");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for artifact validate-control-path: --bogus"));
+}
+
+#[test]
 fn cli_artifact_validate_control_path_rejects_missing_required_artifact() {
     let out_dir = unique_temp_dir("adl-control-path-validate-fail");
     real_demo(&[
