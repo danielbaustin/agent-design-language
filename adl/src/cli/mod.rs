@@ -9,6 +9,7 @@ mod open;
 mod pr_cmd;
 mod pr_cmd_args;
 mod pr_cmd_prompt;
+mod pr_cmd_validate;
 mod run;
 pub(crate) mod run_artifacts;
 #[cfg(test)]

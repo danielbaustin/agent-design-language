@@ -206,11 +206,11 @@ require_cmd() {
 
 rust_pr_delegate_available() {
   [[ "${ADL_PR_RUST_DISABLE:-0}" == "1" ]] && return 1
-  [[ -f "$(repo_root)/adl/Cargo.toml" ]] || return 1
   if [[ -n "${ADL_PR_RUST_BIN:-}" ]]; then
     [[ -x "${ADL_PR_RUST_BIN}" ]] || return 1
     return 0
   fi
+  [[ -f "$(repo_root)/adl/Cargo.toml" ]] || return 1
   local cached_bin
   cached_bin="$(rust_pr_delegate_cached_bin || true)"
   if [[ -n "$cached_bin" && -x "$cached_bin" ]]; then
@@ -262,6 +262,11 @@ delegate_pr_command_to_rust() {
     return 0
   fi
   cargo run --quiet --manifest-path "$manifest" --bin adl -- pr "$subcommand" "$@"
+}
+
+require_rust_pr_delegate() {
+  rust_pr_delegate_available && return 0
+  die "Rust PR control-plane path unavailable; the five-command lifecycle is Rust-owned."
 }
 
 normalize_issue_or_die() {
@@ -2013,97 +2018,8 @@ cmd_init() {
     usage_init
     return 0
   fi
-
-  if rust_pr_delegate_available; then
-    delegate_pr_command_to_rust init "$@"
-    return 0
-  fi
-
-  require_cmd git
-  local issue="${1:-}"; shift || true
-  [[ -n "$issue" ]] || die_with_usage "init: missing <issue> number" usage_init
-  issue="$(normalize_issue_or_die "$issue")"
-  local lock_dir=""
-  acquire_repo_lock_into "$(issue_bootstrap_lock_name "$issue")" lock_dir
-  trap "release_repo_lock '$lock_dir'" RETURN EXIT
-
-  local slug=""
-  local no_fetch_issue="0"
-  local title=""
-  local title_arg=""
-  local version=""
-
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      --slug) slug="$2"; shift 2 ;;
-      --title) title_arg="$2"; shift 2 ;;
-      --no-fetch-issue) no_fetch_issue="1"; shift ;;
-      --version) version="$2"; shift 2 ;;
-      -h|--help) usage_init; return 0 ;;
-      *) die_with_usage "init: unknown arg: $1" usage_init ;;
-    esac
-  done
-
-  local repo
-  repo="$(default_repo)"
-  if [[ -z "$slug" && -n "$title_arg" ]]; then
-    slug="$(sanitize_slug "$title_arg")"
-    [[ -n "$slug" ]] || die "init: --title produced empty slug after sanitization"
-    title="$title_arg"
-  fi
-  if [[ -z "$title" && "$no_fetch_issue" != "1" ]]; then
-    require_cmd gh
-    note "Fetching issue title via gh…"
-    title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
-  fi
-  if [[ -z "$slug" ]]; then
-    if [[ "$no_fetch_issue" == "1" ]]; then
-      die "init: --slug is required when --no-fetch-issue is set"
-    fi
-    [[ -n "$title" ]] || die "Could not fetch issue #$issue title. Pass --slug or check gh auth/repo."
-    slug="$(sanitize_slug "$title")"
-  fi
-  if [[ -z "$title" ]]; then
-    title="$slug"
-  fi
-
-  if [[ -z "$version" ]]; then
-    if [[ "$no_fetch_issue" == "1" ]]; then
-      version="$DEFAULT_VERSION"
-    else
-      version="$(issue_version "$issue")"
-    fi
-  fi
-  [[ -n "$version" ]] || die "init: version must be non-empty"
-
-  local source_path bundle_dir stp_path in_path out_path init_branch
-  source_path="$(issue_prompt_path_for_issue "$issue" "$version" "$slug")"
-  bundle_dir="$(task_bundle_dir_path "$issue" "$version" "$slug")"
-  stp_path="$bundle_dir/stp.md"
-  init_branch="codex/${issue}-${slug}"
-
-  if [[ ! -f "$source_path" ]]; then
-    note "Source issue prompt missing; generating canonical local issue prompt: $source_path"
-    source_path="$(ensure_source_issue_prompt "$issue" "$version" "$slug" "$title")"
-  fi
-  validate_bootstrap_stp "$source_path"
-
-  note "Initializing task bundle: $bundle_dir"
-  {
-    read -r stp_path
-    read -r in_path
-    read -r out_path
-  } < <(seed_bootstrap_surfaces "$issue" "$version" "$slug" "$title" "$init_branch" "$source_path")
-
-  echo "• Initialized:"
-  echo "  STP      $(path_relative_to_repo "$stp_path")"
-  echo "  READ     $(path_relative_to_repo "$in_path")"
-  echo "  WRITE    $(path_relative_to_repo "$out_path")"
-  echo "  BUNDLE   $(path_relative_to_repo "$bundle_dir")"
-  echo "  SOURCE   $(path_relative_to_repo "$source_path")"
-  echo "  CONTRACT minimum v0.86 init = validated source prompt + root stp/sip/sor bundle"
-  echo "  STATE    ISSUE_AND_BUNDLE_READY"
-  note "Done."
+  require_rust_pr_delegate
+  delegate_pr_command_to_rust init "$@"
 }
 
 cmd_create() {
@@ -2111,13 +2027,8 @@ cmd_create() {
     usage_create
     return 0
   fi
-
-  if rust_pr_delegate_available; then
-    delegate_pr_command_to_rust create "$@"
-    return 0
-  fi
-
-  die "create: Rust control-plane path unavailable; legacy shell create is retired"
+  require_rust_pr_delegate
+  delegate_pr_command_to_rust create "$@"
 }
 
 cmd_start() {
@@ -2125,198 +2036,8 @@ cmd_start() {
     usage_start
     return 0
   fi
-
-  if rust_pr_delegate_available; then
-    if delegate_pr_command_to_rust start "$@"; then
-      return 0
-    fi
-    note "Warning: Rust-owned start failed; falling back to shell implementation."
-  fi
-
-  require_cmd git
-  local lock_dir=""
-  acquire_repo_lock_into "pr-bootstrap" lock_dir
-  trap "release_repo_lock '$lock_dir'" RETURN EXIT
-  local issue="${1:-}"; shift || true
-  [[ -n "$issue" ]] || die_with_usage "start: missing <issue> number" usage_start
-  issue="$(normalize_issue_or_die "$issue")"
-
-  local prefix="codex"
-  local slug=""
-  local no_fetch_issue="0"
-  local title=""
-  local title_arg=""
-  local version=""
-  local allow_open_pr_wave="0"
-  local branch_preexisting="0"
-
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      --prefix) prefix="$2"; shift 2 ;;
-      --slug) slug="$2"; shift 2 ;;
-      --title) title_arg="$2"; shift 2 ;;
-      --version) version="$2"; shift 2 ;;
-      --no-fetch-issue) no_fetch_issue="1"; shift ;;
-      --allow-open-pr-wave) allow_open_pr_wave="1"; shift ;;
-      -h|--help) usage_start; return 0 ;;
-      *) die_with_usage "start: unknown arg: $1" usage_start ;;
-    esac
-  done
-
-  # Default slug: derive from issue title if possible.
-  local repo
-  repo="$(default_repo)"
-  title=""
-  if [[ -z "$slug" && -n "$title_arg" ]]; then
-    # Accept --title on start for CLI symmetry with finish/new and derive a stable slug.
-    slug="$(sanitize_slug "$title_arg")"
-    [[ -n "$slug" ]] || die "start: --title produced empty slug after sanitization"
-    title="$title_arg"
-  fi
-  if [[ -z "$title" && "$no_fetch_issue" != "1" ]]; then
-    require_cmd gh
-    note "Fetching issue title via gh…"
-    title="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json title -q .title 2>/dev/null || true)"
-  fi
-  if [[ -z "$slug" ]]; then
-    if [[ "$no_fetch_issue" == "1" ]]; then
-      die "start: --slug is required when --no-fetch-issue is set"
-    fi
-    [[ -n "$title" ]] || die "Could not fetch issue #$issue title. Pass --slug or check gh auth/repo."
-    slug="$(sanitize_slug "$title")"
-  fi
-  if [[ -z "$title" ]]; then
-    title="$slug"
-  fi
-
-  local branch
-  branch="$(branch_for_issue "$prefix" "$issue" "$slug")"
-  local worktree_path
-  worktree_path="$(default_worktree_path_for_issue "$issue")"
-
-  if [[ "$allow_open_pr_wave" != "1" ]]; then
-    require_cmd gh
-    ensure_no_open_milestone_pr_wave "$repo" "$version" "$branch"
-  fi
-
-  note "Target branch: $branch"
-  note "Target worktree: $worktree_path"
-  ensure_git_metadata_writable_or_die "start"
-
-  note "Fetching origin/main…"
-  local fetch_out="" fetch_status=0
-  set +e
-  fetch_out="$(git fetch origin main 2>&1)"
-  fetch_status=$?
-  set -e
-  if [[ "$fetch_status" -ne 0 ]]; then
-    if [[ "$fetch_out" == *".git/index.lock"* ]]; then
-      die_index_lock "start: fetch origin main"
-    fi
-    if git rev-parse --verify --quiet origin/main >/dev/null; then
-      note "Warning: start: fetch origin main failed; reusing existing local origin/main"
-      [[ -n "$fetch_out" ]] && note "$fetch_out"
-    else
-      [[ -n "$fetch_out" ]] && echo "$fetch_out" >&2
-      die "start: fetch origin main failed and origin/main is unavailable locally"
-    fi
-  fi
-  if ! git rev-parse --verify --quiet origin/main >/dev/null; then
-    die "start: origin/main not available; verify remote setup and permissions"
-  fi
-
-  # Ensure local branch exists (without switching the caller to it).
-  if git show-ref --verify --quiet "refs/heads/$branch"; then
-    branch_preexisting="1"
-    note "Local branch exists; reusing: $branch"
-  elif git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
-    note "Branch exists on origin; creating local tracking branch…"
-    run_git_or_die "start: create local branch '$branch' from origin/$branch" git branch --track "$branch" "origin/$branch"
-  else
-    note "Creating local branch from origin/main…"
-    run_git_or_die "start: create branch '$branch' from origin/main" git branch "$branch" origin/main
-  fi
-
-  if [[ "$branch_preexisting" == "1" ]]; then
-    warn_branch_upstream_not_origin_main "$branch"
-  fi
-
-  local branch_worktree
-  branch_worktree="$(branch_checked_out_worktree_path "$branch" || true)"
-  if [[ -n "$branch_worktree" ]]; then
-    if [[ "$branch_worktree" != "$worktree_path" ]]; then
-      die "start: branch '$branch' is already checked out in worktree '$branch_worktree'. Remediation: run commands there or remove it with 'git worktree remove \"$branch_worktree\"'."
-    fi
-    note "Reusing existing worktree for branch: $worktree_path"
-  else
-    ensure_worktree_path_usable "$worktree_path" "$branch"
-    if [[ -e "$worktree_path" ]]; then
-      note "Reusing existing worktree path: $worktree_path"
-    else
-      note "Creating worktree: $worktree_path"
-      mkdir -p "$(dirname "$worktree_path")"
-      run_git_or_die "start: git worktree add '$worktree_path' '$branch'" git worktree add "$worktree_path" "$branch"
-    fi
-  fi
-
-  ensure_primary_checkout_on_main
-
-  local ver in_path out_path source_path
-  if [[ -n "$version" ]]; then
-    ver="$version"
-  elif [[ "$no_fetch_issue" == "1" ]]; then
-    ver="$DEFAULT_VERSION"
-  else
-    require_cmd gh
-    ver="$(issue_version "$issue")"
-  fi
-
-  source_path="$(issue_prompt_path_for_issue "$issue" "$ver" "$slug")"
-  if [[ ! -f "$source_path" ]]; then
-    if [[ "$no_fetch_issue" == "1" ]]; then
-      note "Source issue prompt missing; generating offline canonical local issue prompt: $source_path"
-      write_generated_issue_prompt "$source_path" "$issue" "$ver" "$slug" "$title" "version:${ver}" "https://github.com/$(default_repo)/issues/${issue}"
-    fi
-    if [[ ! -f "$source_path" ]]; then
-      note "Source issue prompt missing; generating canonical local issue prompt: $source_path"
-      source_path="$(ensure_source_issue_prompt "$issue" "$ver" "$slug" "$title")"
-    fi
-  fi
-  validate_bootstrap_stp "$source_path"
-
-  local root_paths_file worktree_paths_file root_stp_path root_input_path root_output_path
-  root_paths_file="$(mktemp -t prsh_start_root_paths_XXXXXX)"
-  worktree_paths_file="$(mktemp -t prsh_start_worktree_paths_XXXXXX)"
-
-  note "Seeding root authoring surfaces…"
-  seed_bootstrap_surfaces "$issue" "$ver" "$slug" "$title" "$branch" "$source_path" >"$root_paths_file"
-
-  (
-    cd "$worktree_path"
-    note "Seeding worktree authoring surfaces…"
-    seed_bootstrap_surfaces "$issue" "$ver" "$slug" "$title" "$branch" "$source_path" >"$worktree_paths_file"
-  )
-
-  local stp_path
-  root_stp_path="$(sed -n '1p' "$root_paths_file")"
-  root_input_path="$(sed -n '2p' "$root_paths_file")"
-  root_output_path="$(sed -n '3p' "$root_paths_file")"
-  stp_path="$(sed -n '1p' "$worktree_paths_file")"
-  in_path="$(sed -n '2p' "$worktree_paths_file")"
-  out_path="$(sed -n '3p' "$worktree_paths_file")"
-  rm -f "$root_paths_file" "$worktree_paths_file"
-  echo "• Agent:"
-  echo "  STP    $stp_path"
-  echo "  READ   $in_path"
-  echo "  WRITE  $out_path"
-  echo "  ROOT_STP    $root_stp_path"
-  echo "  ROOT_READ   $root_input_path"
-  echo "  ROOT_WRITE  $root_output_path"
-  echo "  WORKTREE $worktree_path"
-  echo "  BRANCH $branch"
-  echo "  OPEN   ./adl/tools/open_artifact.sh card $issue output"
-  echo "  STATE  FULLY_STARTED"
-  note "Done."
+  require_rust_pr_delegate
+  delegate_pr_command_to_rust start "$@"
 }
 
 create_issue() {
@@ -2480,250 +2201,8 @@ cmd_finish() {
     usage_finish
     return 0
   fi
-
-  if rust_pr_delegate_available; then
-    delegate_pr_command_to_rust finish "$@"
-    return 0
-  fi
-
-  require_cmd git
-  require_cmd gh
-
-  local issue="${1:-}"; shift || true
-  [[ -n "$issue" ]] || die_with_usage "finish: missing <issue> number" usage_finish
-  issue="$(normalize_issue_or_die "$issue")"
-
-  local title=""
-  local extra_body=""
-  local no_checks="0"
-  local no_close="0"
-  local ready="0"
-  local allow_gitignore="0"
-  local paths="."
-  local input_path=""
-  local output_path=""
-  local no_open="0"
-  local merge_mode="0"
-  local idempotent="0"
-
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      --title) title="$2"; shift 2 ;;
-      --body) extra_body="$2"; shift 2 ;;
-      --paths) paths="$2"; shift 2 ;;
-      --no-checks) no_checks="1"; shift ;;
-      --no-close) no_close="1"; shift ;;
-      --ready) ready="1"; shift ;;
-      --allow-gitignore) allow_gitignore="1"; shift ;;
-      -f|--file|--input) input_path="$2"; shift 2 ;;
-      --output|--output-card|--output-card-file) output_path="$2"; shift 2 ;;
-      --no-open) no_open="1"; shift ;;
-      --open) no_open="0"; shift ;;
-      --merge|--auto-merge) merge_mode="1"; shift ;;
-      --idempotent) idempotent="1"; shift ;;
-      -h|--help) usage_finish; return 0 ;;
-      *) die_with_usage "finish: unknown arg: $1" usage_finish ;;
-    esac
-  done
-
-  [[ -n "$title" ]] || die_with_usage "finish: --title is required" usage_finish
-  if [[ "$merge_mode" == "1" && "$no_checks" == "1" ]]; then
-    die "finish: --merge requires checks; remove --no-checks"
-  fi
-
-  ensure_not_on_main
-
-  local branch
-  branch="$(current_branch)"
-  if [[ "$branch" != */"${issue}"-* ]]; then
-    die "finish: current branch '$branch' does not look like it matches issue #$issue (expected */${issue}-<slug>). Switch branches or pass the correct issue number."
-  fi
-
-  # Fetch origin so origin/main is up-to-date for ahead check.
-  note "Fetching origin refs…"
-  git fetch origin >/dev/null 2>&1 || true
-
-  local ver
-  ver="$(issue_version "$issue")"
-  if [[ -z "$input_path" ]]; then
-    input_path="$(resolve_input_card_path_abs "$issue" "$ver")"
-  fi
-  if [[ -z "$output_path" ]]; then
-    output_path="$(resolve_output_card_path_abs "$issue" "$ver")"
-  fi
-  [[ -f "$input_path" ]] || die "finish: missing input card: $input_path"
-  if ! ensure_nonempty_file "$output_path"; then
-    if [[ ! -f "$output_path" ]]; then
-      die "finish: missing output card: $output_path"
-    fi
-    die "finish: output card is empty: $output_path"
-  fi
-
-  local structured_prompt_validator
-  structured_prompt_validator="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/validate_structured_prompt.sh"
-  if ! bash "$structured_prompt_validator" --type sor --phase completed --input "$output_path" >/dev/null 2>&1; then
-    die "finish: output card failed completed-phase validation: $output_path"
-  fi
-
-  # Safety: allow finish to proceed if there are commits ahead of origin/main
-  # even when the user already committed manually (working tree clean).
-  local ahead
-  ahead="$(commits_ahead_of_main)"
-
-  local has_uncommitted="0"
-  if ! git diff --quiet || ! git diff --cached --quiet; then
-    has_uncommitted="1"
-  fi
-
-  local branch
-  branch="$(current_branch)"
-
-  local repo
-  repo="$(default_repo)"
-  local fingerprint
-  fingerprint="$(finish_inputs_fingerprint "$title" "$paths" "$input_path" "$output_path")"
-
-  if [[ "$has_uncommitted" == "0" && "$ahead" -eq 0 ]]; then
-    if [[ "$idempotent" == "1" ]]; then
-      local pr_url pr_state pr_title pr_body
-      pr_url="$(current_pr_url "$repo" "$branch")"
-      if [[ -z "$pr_url" ]]; then
-        die "finish: --idempotent requested but no PR exists for this branch"
-      fi
-      pr_state="$(gh pr view $(gh_repo_flag "$repo") "$pr_url" --json state -q .state 2>/dev/null || true)"
-      pr_title="$(gh pr view $(gh_repo_flag "$repo") "$pr_url" --json title -q .title 2>/dev/null || true)"
-      pr_body="$(gh pr view $(gh_repo_flag "$repo") "$pr_url" --json body -q .body 2>/dev/null || true)"
-      [[ "$pr_state" == "MERGED" ]] || die "finish: --idempotent only skips for merged PRs; current state=$pr_state"
-      [[ "$pr_title" == "$title" ]] || die "finish: --idempotent detected changed title; refusing skip"
-      [[ "$pr_body" == *"Idempotency-Key: $fingerprint"* ]] || die "finish: --idempotent fingerprint mismatch; refusing skip"
-      note "Idempotent skip: merged PR already matches current finish inputs."
-      return 0
-    fi
-    die "No changes detected and branch has no commits ahead of origin/main. Nothing to PR. If you already merged, switch branches."
-  fi
-
-  if [[ "$has_uncommitted" == "0" && "$ahead" -gt 0 ]]; then
-    note "No uncommitted changes; will create/update PR using existing commits (ahead of origin/main by ${ahead})."
-  fi
-
-  if [[ "$no_checks" != "1" ]]; then
-    run_batched_checks
-  else
-    note "Skipping checks (--no-checks)"
-  fi
-
-  if [[ "$has_uncommitted" == "1" ]]; then
-    # Stage selected paths (default: repo root). Use --paths "adl,docs" to narrow scope explicitly.
-    IFS=',' read -r -a path_arr <<< "$paths"
-    if [[ ${#path_arr[@]} -eq 0 ]]; then
-      die "finish: --paths resolved to empty; pass e.g. --paths \"adl,docs\""
-    fi
-
-    note "Staging changes (${paths})…"
-    stage_selected_paths "${path_arr[@]}"
-
-    if git diff --cached --quiet; then
-      die "finish: nothing staged after 'git add' for paths '${paths}'. Your paths may be empty/ignored or there were no changes. Either change --paths or commit manually and re-run finish."
-    fi
-
-    if [[ "$allow_gitignore" != "1" ]]; then
-      if ! git diff --cached --quiet -- .gitignore adl/.gitignore 2>/dev/null; then
-        die "finish: .gitignore changes detected. Revert them or re-run with --allow-gitignore."
-      fi
-    fi
-  fi
-
-  local close_line=""
-  if [[ "$no_close" != "1" ]]; then
-    close_line="Closes #${issue}"
-  fi
-
-  local pr_body_file
-  pr_body_file="$(render_pr_body_file "$issue" "$close_line" "$input_path" "$output_path" "$extra_body" "$no_checks" "$fingerprint")"
-  trap 'rm -f "${pr_body_file:-}"' EXIT
-
-  local commit_msg="$title"
-  if [[ -n "$close_line" ]]; then
-    commit_msg="${commit_msg} (${close_line})"
-  fi
-
-  if [[ "$has_uncommitted" == "1" ]]; then
-    note "Committing…"
-    run_git_or_die "finish: git commit" git commit -m "$commit_msg"
-  else
-    note "Skipping commit (working tree clean; using existing commits)."
-  fi
-
-  note "Pushing…"
-  if ! git push -u origin "$branch"; then
-    die "Push failed (likely non-fast-forward due to remote divergence). Try: 'git fetch origin' then 'git push --force-with-lease origin $branch' (if you rebased) or 'git pull --rebase' (if you didn’t)."
-  fi
-
-  local pr_url
-  pr_url="$(current_pr_url "$repo" "$branch")"
-
-  if [[ -n "$pr_url" ]]; then
-    note "Reusing existing open PR…"
-    if ! gh pr edit $(gh_repo_flag "$repo") "$pr_url" --title "$title" --body-file "$pr_body_file" >/dev/null; then
-      die "finish: failed to update existing PR"
-    fi
-    ensure_pr_closing_linkage "$repo" "$pr_url" "$issue" "$no_close"
-    note "PR updated:"
-    echo "$pr_url"
-  else
-    note "Creating PR (draft)…"
-    if ! pr_url="$(gh pr create $(gh_repo_flag "$repo") --base main --head "$branch" --title "$title" --body-file "$pr_body_file" --draft)"; then
-      die "finish: failed to create PR"
-    fi
-    ensure_pr_closing_linkage "$repo" "$pr_url" "$issue" "$no_close"
-    note "PR created:"
-    echo "$pr_url"
-  fi
-
-  note "finish mode: $( [[ "$merge_mode" == "1" ]] && echo "MERGE" || echo "SAFE" )"
-  note "Operating on PR: $pr_url"
-
-  if [[ "$no_open" != "1" ]]; then
-    note "Opening PR in browser…"
-    open_in_browser "$repo" "$pr_url" || true
-  else
-    note "Not opening PR (--no-open)"
-  fi
-  note "Open output card: ./adl/tools/open_artifact.sh card $issue output"
-  note "Open latest burst report: ./adl/tools/open_artifact.sh burst latest"
-
-  if [[ "$merge_mode" == "1" ]]; then
-    if ! git diff --quiet || ! git diff --cached --quiet; then
-      die "finish: --merge requires a clean working tree before merge"
-    fi
-
-    local is_draft="false"
-    is_draft="$(gh pr view $(gh_repo_flag "$repo") "$pr_url" --json isDraft -q .isDraft 2>/dev/null || echo "false")"
-    if [[ "$is_draft" == "true" ]]; then
-      note "Running: gh pr ready $(gh_repo_flag "$repo") $pr_url"
-      gh pr ready $(gh_repo_flag "$repo") "$pr_url"
-    fi
-
-    note "Running: gh pr merge $(gh_repo_flag "$repo") --squash --delete-branch $pr_url"
-    if ! gh pr merge $(gh_repo_flag "$repo") --squash --delete-branch "$pr_url"; then
-      local retry_cmd
-      retry_cmd="gh pr ready $(gh_repo_flag "$repo") \"$pr_url\" && gh pr merge $(gh_repo_flag "$repo") --squash --delete-branch \"$pr_url\""
-      echo "RETRY_COMMAND=$retry_cmd" >&2
-      die "finish: merge failed"
-    fi
-    note "PR merged."
-    return 0
-  fi
-
-  if [[ "$ready" == "1" ]]; then
-    note "Marking PR ready for review…"
-    gh pr ready $(gh_repo_flag "$repo") "$pr_url" >/dev/null
-    note "PR is ready for review."
-  else
-    note "PR is a draft (by design). When you've reviewed, mark it Ready for review in GitHub."
-  fi
-
-  print_next_steps
+  require_rust_pr_delegate
+  delegate_pr_command_to_rust finish "$@"
 }
 
 cmd_status() {
@@ -2737,85 +2216,8 @@ cmd_ready() {
     usage_ready
     return 0
   fi
-
-  if rust_pr_delegate_available; then
-    delegate_pr_command_to_rust ready "$@"
-    return 0
-  fi
-
-  require_cmd git
-  local issue="${1:-}"; shift || true
-  [[ -n "$issue" ]] || die_with_usage "ready: missing <issue> number" usage_ready
-  issue="$(normalize_issue_or_die "$issue")"
-
-  local slug="" version="" no_fetch_issue="0"
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      --slug) slug="$2"; shift 2 ;;
-      --version) version="$2"; shift 2 ;;
-      --no-fetch-issue) no_fetch_issue="1"; shift ;;
-      -h|--help) usage_ready; return 0 ;;
-      *) die_with_usage "ready: unknown arg: $1" usage_ready ;;
-    esac
-  done
-
-  local resolved_scope="" resolved_slug="" parsed
-  if [[ -z "$version" || -z "$slug" ]]; then
-    parsed="$(resolve_issue_scope_and_slug_from_local_state "$issue" || true)"
-    if [[ -n "$parsed" ]]; then
-      resolved_scope="$(sed -n '1p' <<<"$parsed")"
-      resolved_slug="$(sed -n '2p' <<<"$parsed")"
-    fi
-  fi
-  [[ -n "$version" ]] || version="$resolved_scope"
-  if [[ -z "$version" && "$no_fetch_issue" != "1" ]]; then
-    version="$(issue_version "$issue")"
-  fi
-  [[ -n "$version" ]] || version="$DEFAULT_VERSION"
-  [[ -n "$slug" ]] || slug="$resolved_slug"
-  [[ -n "$slug" ]] || die "ready: could not infer slug; pass --slug or run start first"
-
-  local branch worktree_path source_path root_stp root_input root_output wt_stp wt_input wt_output
-  branch="$(branch_for_issue "codex" "$issue" "$slug")"
-  worktree_path="$(default_worktree_path_for_issue "$issue")"
-  source_path="$(issue_prompt_path_for_issue "$issue" "$version" "$slug")"
-  root_stp="$(task_bundle_dir_path "$issue" "$version" "$slug")/stp.md"
-  root_input="$(resolve_input_card_path_abs "$issue" "$version" "$slug")"
-  root_output="$(resolve_output_card_path_abs "$issue" "$version" "$slug")"
-  wt_stp="$worktree_path/.adl/$version/tasks/issue-$(card_issue_pad "$issue")__${slug}/stp.md"
-  wt_input="$worktree_path/.adl/$version/tasks/issue-$(card_issue_pad "$issue")__${slug}/sip.md"
-  wt_output="$worktree_path/.adl/$version/tasks/issue-$(card_issue_pad "$issue")__${slug}/sor.md"
-
-  [[ -f "$source_path" ]] || die "ready: missing canonical source issue prompt: $source_path"
-  validate_bootstrap_stp "$source_path"
-  [[ -f "$root_stp" ]] || die "ready: missing root stp: $root_stp"
-  validate_bootstrap_stp "$root_stp"
-  [[ -d "$worktree_path" ]] || die "ready: missing worktree: $worktree_path"
-  [[ "$(git -C "$worktree_path" rev-parse --abbrev-ref HEAD 2>/dev/null || true)" == "$branch" ]] || die "ready: worktree branch mismatch for $worktree_path"
-  [[ -f "$wt_stp" ]] || die "ready: missing worktree stp: $wt_stp"
-  validate_bootstrap_stp "$wt_stp"
-  [[ -f "$wt_input" ]] || die "ready: missing worktree input card: $wt_input"
-  [[ -f "$wt_output" ]] || die "ready: missing worktree output card: $wt_output"
-  validate_bootstrap_cards "$issue" "$branch" "$wt_input" "$wt_output"
-  input_card_is_bootstrap_stub "$wt_input" && die "ready: input card is still bootstrap stub content: $wt_input"
-  [[ -f "$root_input" ]] || die "ready: missing root input card: $root_input"
-  [[ -f "$root_output" ]] || die "ready: missing root output card: $root_output"
-  validate_bootstrap_cards "$issue" "$branch" "$root_input" "$root_output"
-  input_card_is_bootstrap_stub "$root_input" && die "ready: input card is still bootstrap stub content: $root_input"
-
-  echo "ISSUE=$issue"
-  echo "VERSION=$version"
-  echo "SLUG=$slug"
-  echo "BRANCH=$branch"
-  echo "WORKTREE=$worktree_path"
-  echo "SOURCE=$(path_relative_to_repo "$source_path")"
-  echo "ROOT_STP=$(path_relative_to_repo "$root_stp")"
-  echo "ROOT_INPUT=$(path_relative_to_repo "$root_input")"
-  echo "ROOT_OUTPUT=$(path_relative_to_repo "$root_output")"
-  echo "WT_STP=$(path_relative_to_repo "$wt_stp")"
-  echo "WT_INPUT=$(path_relative_to_repo "$wt_input")"
-  echo "WT_OUTPUT=$(path_relative_to_repo "$wt_output")"
-  echo "READY=PASS"
+  require_rust_pr_delegate
+  delegate_pr_command_to_rust ready "$@"
 }
 
 cmd_preflight() {
@@ -2823,70 +2225,8 @@ cmd_preflight() {
     usage_preflight
     return 0
   fi
-
-  if rust_pr_delegate_available; then
-    delegate_pr_command_to_rust preflight "$@"
-    return 0
-  fi
-
-  require_cmd gh
-  local issue="${1:-}"; shift || true
-  [[ -n "$issue" ]] || die_with_usage "preflight: missing <issue> number" usage_preflight
-  issue="$(normalize_issue_or_die "$issue")"
-
-  local slug="" version="" no_fetch_issue="0"
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      --slug) slug="$2"; shift 2 ;;
-      --version) version="$2"; shift 2 ;;
-      --no-fetch-issue) no_fetch_issue="1"; shift ;;
-      -h|--help) usage_preflight; return 0 ;;
-      *) die_with_usage "preflight: unknown arg: $1" usage_preflight ;;
-    esac
-  done
-
-  local resolved_scope="" resolved_slug="" parsed
-  if [[ -z "$version" || -z "$slug" ]]; then
-    parsed="$(resolve_issue_scope_and_slug_from_local_state "$issue" || true)"
-    if [[ -n "$parsed" ]]; then
-      resolved_scope="$(sed -n '1p' <<<"$parsed")"
-      resolved_slug="$(sed -n '2p' <<<"$parsed")"
-    fi
-  fi
-  [[ -n "$version" ]] || version="$resolved_scope"
-  if [[ -z "$version" && "$no_fetch_issue" != "1" ]]; then
-    version="$(issue_version "$issue")"
-  fi
-  [[ -n "$version" ]] || version="$DEFAULT_VERSION"
-  [[ -n "$slug" ]] || slug="$resolved_slug"
-  [[ -n "$slug" ]] || slug="issue-$issue"
-
-  local branch repo filtered count
-  branch="$(branch_for_issue "codex" "$issue" "$slug")"
-  repo="$(default_repo)"
-  filtered="$(open_milestone_pr_wave_json "$repo" | filter_open_milestone_pr_wave "$version" "$branch")"
-  count="$(printf '%s' "$filtered" | count_open_milestone_pr_wave)"
-
-  echo "ISSUE=$issue"
-  echo "VERSION=$version"
-  echo "BRANCH=$branch"
-  echo "OPEN_PR_COUNT=$count"
-  while IFS= read -r line; do
-    [[ -n "$line" ]] || continue
-    echo "OPEN_PR=$line"
-  done < <(printf '%s' "$filtered" | python3 -c '
-import json
-import sys
-prs = json.load(sys.stdin)
-for pr in prs:
-    state = "draft" if pr.get("isDraft") else "ready"
-    print("#{}|{}|{}|{}".format(pr["number"], pr["headRefName"], state, pr["url"]))
-')
-  if [[ "$count" == "0" ]]; then
-    echo "PREFLIGHT=PASS"
-  else
-    echo "PREFLIGHT=BLOCK"
-  fi
+  require_rust_pr_delegate
+  delegate_pr_command_to_rust preflight "$@"
 }
 
 cmd_open() {

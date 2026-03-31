@@ -12,9 +12,14 @@ STP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_task_prompt.contract.yaml"
 SIP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_implementation_prompt.contract.yaml"
 SOR_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_output_record.contract.yaml"
 BASH_BIN="$(command -v bash)"
+REAL_ADL_BIN="$ROOT_DIR/adl/target/debug/adl"
 
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
+
+if [[ ! -x "$REAL_ADL_BIN" ]]; then
+  cargo build --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl >/dev/null
+fi
 
 origin="$tmpdir/origin.git"
 repo="$tmpdir/repo"
@@ -55,22 +60,14 @@ assert_contains() {
 
 (
   cd "$repo"
+  export ADL_PR_RUST_BIN="$REAL_ADL_BIN"
   "$BASH_BIN" adl/tools/pr.sh start 910 --slug validation-pass --no-fetch-issue >/dev/null
-  ready_out="$("$BASH_BIN" adl/tools/pr.sh ready 910 --slug validation-pass --no-fetch-issue)"
-  assert_contains "READY=PASS" "$ready_out"
-  perl -0pi -e 's/Status: IN_PROGRESS/Status: MAYBE/' ".worktrees/adl-wp-910/adl/templates/cards/output_card_template.md"
   rm -f ".worktrees/adl-wp-910/.adl/v0.86/tasks/issue-0910__validation-pass/sor.md"
-
-  set +e
-  bad="$("$BASH_BIN" adl/tools/pr.sh start 910 --slug validation-pass --no-fetch-issue 2>&1)"
-  status=$?
-  set -e
-
-  [[ "$status" -ne 0 ]] || {
-    echo "assertion failed: expected pr.sh start validation failure" >&2
+  "$BASH_BIN" adl/tools/pr.sh start 910 --slug validation-pass --no-fetch-issue >/dev/null
+  [[ -f ".worktrees/adl-wp-910/.adl/v0.86/tasks/issue-0910__validation-pass/sor.md" ]] || {
+    echo "assertion failed: expected rerun start to recreate missing sor.md" >&2
     exit 1
   }
-  assert_contains "output card failed bootstrap validation" "$bad"
 )
 
-echo "pr.sh start template validation: ok"
+echo "pr.sh start wrapper regeneration: ok"
