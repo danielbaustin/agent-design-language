@@ -1840,6 +1840,144 @@ fn build_reframing_artifact_is_deterministic_and_distinguishes_triggered_paths()
 }
 
 #[test]
+fn build_freedom_gate_artifact_is_deterministic_and_blocks_commitment_when_not_allowed() {
+    let run_summary = RunSummaryArtifact {
+        run_summary_version: 1,
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_id: "freedom-gate-run".to_string(),
+        workflow_id: "wf".to_string(),
+        adl_version: "0.86".to_string(),
+        swarm_version: "test".to_string(),
+        status: "failure".to_string(),
+        error_kind: None,
+        counts: RunSummaryCounts {
+            total_steps: 1,
+            completed_steps: 1,
+            failed_steps: 1,
+            provider_call_count: 1,
+            delegation_steps: 0,
+            delegation_requires_verification_steps: 0,
+        },
+        policy: RunSummaryPolicy {
+            security_envelope_enabled: false,
+            signing_required: false,
+            key_id_required: false,
+            verify_allowed_algs: Vec::new(),
+            verify_allowed_key_sources: Vec::new(),
+            sandbox_policy: "centralized_path_resolver_v1".to_string(),
+            security_denials_by_code: BTreeMap::new(),
+        },
+        links: RunSummaryLinks {
+            run_json: "run.json".to_string(),
+            steps_json: "steps.json".to_string(),
+            pause_state_json: None,
+            outputs_dir: "outputs".to_string(),
+            logs_dir: "logs".to_string(),
+            learning_dir: "learning".to_string(),
+            scores_json: None,
+            suggestions_json: None,
+            aee_decision_json: None,
+            cognitive_signals_json: None,
+            fast_slow_path_json: None,
+            agency_selection_json: None,
+            bounded_execution_json: None,
+            evaluation_signals_json: None,
+            cognitive_arbitration_json: None,
+            affect_state_json: None,
+            reasoning_graph_json: None,
+            overlays_dir: "learning/overlays".to_string(),
+            cluster_groundwork_json: None,
+            trace_json: None,
+        },
+    };
+    let evaluation = run_artifacts::EvaluationSignalsArtifact {
+        evaluation_signals_version: 1,
+        run_id: "freedom-gate-run".to_string(),
+        generated_from: run_artifacts::AeeDecisionGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+            suggestions_version: 1,
+            scores_version: Some(1),
+        },
+        selected_candidate_id: "cand-slow-review".to_string(),
+        selected_path: "slow_path".to_string(),
+        progress_signal: "guarded_progress".to_string(),
+        contradiction_signal: "present".to_string(),
+        failure_signal: "none".to_string(),
+        termination_reason: "contradiction_detected".to_string(),
+        behavior_effect: "surface contradiction for bounded follow-up".to_string(),
+        next_control_action: "handoff_to_reframing".to_string(),
+        deterministic_evaluation_rule: "deterministic".to_string(),
+    };
+    let scores = ScoresArtifact {
+        scores_version: 1,
+        run_id: "freedom-gate-run".to_string(),
+        generated_from: ScoresGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+        },
+        summary: ScoresSummary {
+            success_ratio: 0.0,
+            failure_count: 1,
+            retry_count: 0,
+            delegation_denied_count: 0,
+            security_denied_count: 0,
+        },
+        metrics: ScoresMetrics {
+            scheduler_max_parallel_observed: 1,
+        },
+    };
+    let gate_state = execute::FreedomGateState {
+        input: execute::FreedomGateInputState {
+            candidate_id: "cand-slow-review".to_string(),
+            candidate_action: "review and refine the candidate".to_string(),
+            candidate_rationale: "custom selected candidate reason".to_string(),
+            risk_class: "high".to_string(),
+            policy_context: execute::FreedomGatePolicyContextState {
+                route_selected: "slow".to_string(),
+                selected_candidate_kind: "review_and_refine".to_string(),
+                requires_review: false,
+                policy_blocked: false,
+            },
+            evaluation_signals: execute::FreedomGateEvaluationSignalsState {
+                progress_signal: "guarded_progress".to_string(),
+                contradiction_signal: "present".to_string(),
+                failure_signal: "none".to_string(),
+                termination_reason: "contradiction_detected".to_string(),
+            },
+            frame_state: "ready_for_reframed_execution".to_string(),
+        },
+        gate_decision: "defer".to_string(),
+        reason_code: "frame_inadequate".to_string(),
+        decision_reason: "frame state requires bounded reframing before commitment can be allowed"
+            .to_string(),
+        selected_action_or_none: None,
+        commitment_blocked: true,
+    };
+
+    let left = run_artifacts::build_freedom_gate_artifact(
+        &run_summary,
+        &evaluation,
+        &gate_state,
+        Some(&scores),
+    );
+    let right = run_artifacts::build_freedom_gate_artifact(
+        &run_summary,
+        &evaluation,
+        &gate_state,
+        Some(&scores),
+    );
+    assert_eq!(
+        serde_json::to_value(&left).expect("freedom gate left"),
+        serde_json::to_value(&right).expect("freedom gate right")
+    );
+    assert_eq!(left.gate_decision, "defer");
+    assert_eq!(left.reason_code, "frame_inadequate");
+    assert!(left.commitment_blocked);
+    assert!(left.selected_action_or_none.is_none());
+}
+
+#[test]
 fn build_reasoning_graph_artifact_changes_selected_path_with_affect() {
     let summary = RunSummaryArtifact {
         run_summary_version: 1,

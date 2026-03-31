@@ -19,6 +19,11 @@ fn run_swarm_with_ci(args: &[&str]) -> std::process::Output {
         .unwrap()
 }
 
+fn run_demo_v086_freedom_gate(out_dir: &PathBuf) -> std::process::Output {
+    let exe = env!("CARGO_BIN_EXE_demo_v086_freedom_gate");
+    Command::new(exe).arg(out_dir).output().unwrap()
+}
+
 fn tmp_dir(prefix: &str) -> PathBuf {
     unique_test_temp_dir(prefix)
 }
@@ -227,6 +232,46 @@ fn demo_d_print_plan_works() {
         "stdout:\n{stdout}"
     );
     assert!(stdout.contains("Steps: 3"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn demo_v086_freedom_gate_writes_allowed_and_blocked_cases() {
+    let out_root = tmp_dir("demo-v086-freedom-gate");
+    let out = run_demo_v086_freedom_gate(&out_root);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let allowed = fs::read_to_string(out_root.join("allowed_case.json")).unwrap();
+    let blocked = fs::read_to_string(out_root.join("blocked_case.json")).unwrap();
+    let summary = fs::read_to_string(out_root.join("summary.txt")).unwrap();
+
+    assert!(
+        allowed.contains("\"gate_decision\": \"allow\""),
+        "allowed:\n{allowed}"
+    );
+    assert!(
+        allowed.contains("\"reason_code\": \"policy_allowed\""),
+        "allowed:\n{allowed}"
+    );
+    assert!(
+        blocked.contains("\"gate_decision\": \"refuse\""),
+        "blocked:\n{blocked}"
+    );
+    assert!(
+        blocked.contains("\"reason_code\": \"policy_blocked\""),
+        "blocked:\n{blocked}"
+    );
+    assert!(
+        summary.contains("allowed_case: allow / policy_allowed / commitment_blocked=false"),
+        "summary:\n{summary}"
+    );
+    assert!(
+        summary.contains("blocked_case: refuse / policy_blocked / commitment_blocked=true"),
+        "summary:\n{summary}"
+    );
 }
 
 #[test]

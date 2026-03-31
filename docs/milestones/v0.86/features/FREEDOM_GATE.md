@@ -136,6 +136,12 @@ This event should be:
 - reviewable
 - attributable to the agent
 
+For the implemented `v0.86` bounded runtime surface, the primary emitted proof surface is `freedom_gate.v1.json`, and the milestone demo proof surfaces are:
+
+- `artifacts/v086/freedom_gate/allowed_case.json`
+- `artifacts/v086/freedom_gate/blocked_case.json`
+- `artifacts/v086/freedom_gate/summary.txt`
+
 ---
 
 ## Architectural Role

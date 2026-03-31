@@ -2,7 +2,7 @@ use super::*;
 use crate::cli::run_artifacts;
 use crate::cli::run_artifacts::{
     AgencySelectionArtifact, BoundedExecutionArtifact, CognitiveArbitrationArtifact,
-    CognitiveSignalsArtifact, EvaluationSignalsArtifact, FastSlowPathArtifact,
+    CognitiveSignalsArtifact, EvaluationSignalsArtifact, FastSlowPathArtifact, FreedomGateArtifact,
 };
 
 #[test]
@@ -148,6 +148,8 @@ fn derive_runtime_control_state_triggers_reframing_on_failure() {
         runtime_control.reframing.reexecution_choice,
         "bounded_reframe_and_retry"
     );
+    assert_eq!(runtime_control.freedom_gate.gate_decision, "defer");
+    assert_eq!(runtime_control.freedom_gate.reason_code, "frame_inadequate");
     assert!(
         runtime_control.reframing.frame_adequacy_score < 50,
         "failure should lower the frame adequacy score"
@@ -169,6 +171,8 @@ fn derive_runtime_control_state_retains_current_frame_on_success() {
     assert_eq!(runtime_control.reframing.reframing_trigger, "not_triggered");
     assert_eq!(runtime_control.reframing.new_frame, "retain_current_frame");
     assert_eq!(runtime_control.reframing.post_reframe_state, "complete_run");
+    assert_eq!(runtime_control.freedom_gate.gate_decision, "allow");
+    assert_eq!(runtime_control.freedom_gate.reason_code, "policy_allowed");
 }
 
 fn custom_runtime_control() -> execute::RuntimeControlState {
@@ -263,6 +267,34 @@ fn custom_runtime_control() -> execute::RuntimeControlState {
             new_frame: "diagnose_and_restructure_before_retry".to_string(),
             reexecution_choice: "bounded_reframe_and_retry".to_string(),
             post_reframe_state: "ready_for_reframed_execution".to_string(),
+        },
+        freedom_gate: execute::FreedomGateState {
+            input: execute::FreedomGateInputState {
+                candidate_id: "cand-custom-review".to_string(),
+                candidate_action: "review and refine the candidate".to_string(),
+                candidate_rationale: "custom selected candidate reason".to_string(),
+                risk_class: "high".to_string(),
+                policy_context: execute::FreedomGatePolicyContextState {
+                    route_selected: "slow".to_string(),
+                    selected_candidate_kind: "review_and_refine".to_string(),
+                    requires_review: false,
+                    policy_blocked: false,
+                },
+                evaluation_signals: execute::FreedomGateEvaluationSignalsState {
+                    progress_signal: "steady_progress".to_string(),
+                    contradiction_signal: "present".to_string(),
+                    failure_signal: "none".to_string(),
+                    termination_reason: "contradiction_detected".to_string(),
+                },
+                frame_state: "ready_for_reframed_execution".to_string(),
+            },
+            gate_decision: "defer".to_string(),
+            reason_code: "frame_inadequate".to_string(),
+            decision_reason:
+                "frame state requires bounded reframing before commitment can be allowed"
+                    .to_string(),
+            selected_action_or_none: None,
+            commitment_blocked: true,
         },
     }
 }
@@ -435,6 +467,16 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
     assert_eq!(reframing.frame_adequacy_score, 24);
     assert_eq!(reframing.reframing_trigger, "triggered");
     assert_eq!(reframing.reexecution_choice, "bounded_reframe_and_retry");
+
+    let freedom_gate: FreedomGateArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("learning/freedom_gate.v1.json"))
+            .expect("read freedom gate artifact"),
+    )
+    .expect("parse freedom gate artifact");
+    assert_eq!(freedom_gate.gate_decision, "defer");
+    assert_eq!(freedom_gate.reason_code, "frame_inadequate");
+    assert!(freedom_gate.commitment_blocked);
+    assert_eq!(freedom_gate.input.candidate_id, "cand-custom-review");
 
     let _ = std::fs::remove_dir_all(run_dir);
     let _ = std::fs::remove_dir_all(out_dir);
