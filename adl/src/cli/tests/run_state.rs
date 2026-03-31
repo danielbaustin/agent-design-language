@@ -3,6 +3,7 @@ use crate::cli::run_artifacts;
 use crate::cli::run_artifacts::{
     AgencySelectionArtifact, BoundedExecutionArtifact, CognitiveArbitrationArtifact,
     CognitiveSignalsArtifact, EvaluationSignalsArtifact, FastSlowPathArtifact, FreedomGateArtifact,
+    MemoryReadArtifact, MemoryWriteArtifact,
 };
 
 #[test]
@@ -296,6 +297,45 @@ fn custom_runtime_control() -> execute::RuntimeControlState {
             selected_action_or_none: None,
             commitment_blocked: true,
         },
+        memory: execute::MemoryParticipationState {
+            read: execute::MemoryReadState {
+                query: execute::MemoryQueryState {
+                    workflow_id: "wf".to_string(),
+                    status_filter: "failed".to_string(),
+                    limit: 3,
+                    source: "repo_local_runs_root".to_string(),
+                },
+                entries: vec![execute::MemoryReadEntry {
+                    memory_entry_id: "prev-run::wf".to_string(),
+                    run_id: "prev-run".to_string(),
+                    workflow_id: "wf".to_string(),
+                    summary: "prior failure memory".to_string(),
+                    tags: vec![
+                        "status:failed".to_string(),
+                        "workflow:wf".to_string(),
+                    ],
+                    source: "indexed_run_artifacts".to_string(),
+                }],
+                retrieval_order: "workflow_id_then_run_id_ascending".to_string(),
+                influence_summary:
+                    "prior_failure_memory reinforces bounded reframing for route=slow selected_candidate=cand-custom-review"
+                        .to_string(),
+                influenced_stage: "reframing_decision".to_string(),
+            },
+            write: execute::MemoryWriteState {
+                entry_id: "mem-entry::wf::runtime-control".to_string(),
+                content: "workflow=wf status=failure next_control_action=handoff_to_reframing influence=prior_failure_memory reinforces bounded reframing for route=slow selected_candidate=cand-custom-review".to_string(),
+                tags: vec![
+                    "action:handoff_to_reframing".to_string(),
+                    "candidate:review_and_refine".to_string(),
+                    "status:failure".to_string(),
+                    "workflow:wf".to_string(),
+                ],
+                logical_timestamp: "run:runtime-control".to_string(),
+                write_reason: "record_failure_for_future_reframing_context".to_string(),
+                source: "runtime_control_projection".to_string(),
+            },
+        },
     }
 }
 
@@ -478,8 +518,93 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
     assert!(freedom_gate.commitment_blocked);
     assert_eq!(freedom_gate.input.candidate_id, "cand-custom-review");
 
+    let memory_read: MemoryReadArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("learning/memory_read.v1.json"))
+            .expect("read memory read artifact"),
+    )
+    .expect("parse memory read artifact");
+    assert_eq!(memory_read.read_count, 1);
+    assert_eq!(memory_read.query.status_filter, "failed");
+    assert_eq!(memory_read.influenced_stage, "reframing_decision");
+    assert_eq!(memory_read.entries[0].run_id, "prev-run");
+
+    let memory_write: MemoryWriteArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("learning/memory_write.v1.json"))
+            .expect("read memory write artifact"),
+    )
+    .expect("parse memory write artifact");
+    assert_eq!(memory_write.entry_id, "mem-entry::wf::runtime-control");
+    assert_eq!(
+        memory_write.write_reason,
+        "record_failure_for_future_reframing_context"
+    );
+    assert_eq!(memory_write.logical_timestamp, "run:runtime-control");
+
     let _ = std::fs::remove_dir_all(run_dir);
     let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn derive_runtime_control_state_projects_memory_participation_for_prior_failed_runs() {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("time")
+        .as_nanos();
+    let runs_root = unique_temp_dir("adl-main-runs-memory-participation");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
+
+    let prior_run_id = format!("prior-memory-{now}-{}", std::process::id());
+    let prior_resolved = minimal_resolved_for_artifacts(prior_run_id.clone());
+    let prior_out_dir = std::env::temp_dir().join(format!("adl-main-prior-memory-{now}"));
+    let prior_trace = trace::Trace::new(prior_run_id.clone(), "wf".to_string(), "0.86".to_string());
+    write_run_state_artifacts(
+        &prior_resolved,
+        &prior_trace,
+        Path::new("examples/adl-0.1.yaml"),
+        &prior_out_dir,
+        0,
+        1,
+        "failure",
+        None,
+        &[],
+        &runtime_control_for("failure", &prior_trace),
+        None,
+        None,
+    )
+    .expect("write prior failure artifacts");
+
+    let current_trace = trace::Trace::new(
+        format!("current-memory-{now}-{}", std::process::id()),
+        "wf".to_string(),
+        "0.86".to_string(),
+    );
+    let records = vec![execute::StepExecutionRecord {
+        step_id: "s1".to_string(),
+        provider_id: "p1".to_string(),
+        status: "failure".to_string(),
+        attempts: 1,
+        output_bytes: 0,
+    }];
+    let runtime_control =
+        execute::derive_runtime_control_state("failure", &records, &current_trace);
+
+    assert_eq!(runtime_control.memory.read.query.workflow_id, "wf");
+    assert_eq!(runtime_control.memory.read.query.status_filter, "failed");
+    assert_eq!(
+        runtime_control.memory.read.influenced_stage,
+        "reframing_decision"
+    );
+    assert_eq!(runtime_control.memory.read.entries.len(), 1);
+    assert_eq!(runtime_control.memory.read.entries[0].run_id, prior_run_id);
+    assert!(runtime_control
+        .memory
+        .read
+        .influence_summary
+        .contains("prior_failure_memory reinforces bounded reframing"));
+    assert_eq!(
+        runtime_control.memory.write.write_reason,
+        "record_failure_for_future_reframing_context"
+    );
 }
 
 #[test]
