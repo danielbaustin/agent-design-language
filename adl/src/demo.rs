@@ -2,6 +2,7 @@ use std::path::{Path, PathBuf};
 
 use anyhow::{anyhow, Context, Result};
 
+use crate::execute;
 use crate::godel;
 use crate::prompt;
 use crate::trace::Trace;
@@ -12,6 +13,7 @@ pub const DEMO_C_GODEL_RUNTIME: &str = "demo-c-godel-runtime";
 pub const DEMO_D_GODEL_OBSMEM_LOOP: &str = "demo-d-godel-obsmem-loop";
 pub const DEMO_E_MULTI_AGENT_CARD_PIPELINE: &str = "demo-e-multi-agent-card-pipeline";
 pub const DEMO_F_OBSMEM_RETRIEVAL: &str = "demo-f-obsmem-retrieval";
+pub const DEMO_G_V086_CONTROL_PATH: &str = "demo-g-v086-control-path";
 
 #[derive(Debug, Clone)]
 pub struct DemoResult {
@@ -29,20 +31,22 @@ pub fn known_demo(name: &str) -> bool {
             | DEMO_D_GODEL_OBSMEM_LOOP
             | DEMO_E_MULTI_AGENT_CARD_PIPELINE
             | DEMO_F_OBSMEM_RETRIEVAL
+            | DEMO_G_V086_CONTROL_PATH
     )
 }
 
 pub fn run_demo(name: &str, out_dir: &Path) -> Result<DemoResult> {
     if !known_demo(name) {
         return Err(anyhow!(
-            "unknown demo '{}'; available demos: {}, {}, {}, {}, {}, {}",
+            "unknown demo '{}'; available demos: {}, {}, {}, {}, {}, {}, {}",
             name,
             DEMO_A_SAY_MCP,
             DEMO_B_ONE_COMMAND,
             DEMO_C_GODEL_RUNTIME,
             DEMO_D_GODEL_OBSMEM_LOOP,
             DEMO_E_MULTI_AGENT_CARD_PIPELINE,
-            DEMO_F_OBSMEM_RETRIEVAL
+            DEMO_F_OBSMEM_RETRIEVAL,
+            DEMO_G_V086_CONTROL_PATH
         ));
     }
 
@@ -184,6 +188,15 @@ pub fn run_demo(name: &str, out_dir: &Path) -> Result<DemoResult> {
                 }
                 _ => {}
             },
+            DEMO_G_V086_CONTROL_PATH => match *step_id {
+                "integrate" => {
+                    artifacts.extend(write_v086_control_path_demo(out_dir)?);
+                }
+                "summarize" => {
+                    artifacts.push(write_file(out_dir, "README.md", DEMO_G_README_MD)?);
+                }
+                _ => {}
+            },
             _ => {}
         }
         trace.step_finished(step_id, true);
@@ -207,6 +220,7 @@ pub fn plan_steps(name: &str) -> &'static [&'static str] {
         DEMO_D_GODEL_OBSMEM_LOOP => &["failure", "run", "summarize"],
         DEMO_E_MULTI_AGENT_CARD_PIPELINE => &["writer", "editor", "copyeditor", "publisher"],
         DEMO_F_OBSMEM_RETRIEVAL => &["seed", "query", "emit"],
+        DEMO_G_V086_CONTROL_PATH => &["integrate", "summarize"],
         _ => &[],
     }
 }
@@ -251,8 +265,315 @@ fn steps_for(name: &str) -> &'static [(&'static str, &'static str)] {
             ("query", "Run deterministic ObsMem retrieval query"),
             ("emit", "Emit retrieval summary"),
         ],
+        DEMO_G_V086_CONTROL_PATH => &[
+            (
+                "integrate",
+                "Emit the canonical bounded cognitive path proof surfaces",
+            ),
+            ("summarize", "Emit deterministic control-path summary"),
+        ],
         _ => &[],
     }
+}
+
+fn custom_v086_control_path_runtime() -> execute::RuntimeControlState {
+    execute::RuntimeControlState {
+        signals: execute::CognitiveSignalsState {
+            dominant_instinct: "integrity".to_string(),
+            completion_pressure: "guarded".to_string(),
+            integrity_bias: "high".to_string(),
+            curiosity_bias: "bounded".to_string(),
+            candidate_selection_bias: "prefer lower-risk constrained candidates".to_string(),
+            urgency_level: "moderate".to_string(),
+            salience_level: "high".to_string(),
+            persistence_pressure: "stabilize_then_retry".to_string(),
+            confidence_shift: "reduced".to_string(),
+            downstream_influence: "integrated control path demo".to_string(),
+        },
+        arbitration: execute::CognitiveArbitrationState {
+            route_selected: "slow".to_string(),
+            reasoning_mode: "review_heavy".to_string(),
+            confidence: "guarded".to_string(),
+            risk_class: "high".to_string(),
+            applied_constraints: vec![
+                "security_denial_present".to_string(),
+                "failure_recovery_bias".to_string(),
+            ],
+            cost_latency_assumption:
+                "spend bounded additional cognition when failure or policy risk is present"
+                    .to_string(),
+            route_reason:
+                "integrated path favors slow route when contradiction and policy risk are present"
+                    .to_string(),
+        },
+        fast_slow: execute::FastSlowPathState {
+            selected_path: "slow_path".to_string(),
+            path_family: "slow".to_string(),
+            runtime_branch_taken: "slow_review_refine_branch".to_string(),
+            handoff_state: "review_handoff".to_string(),
+            candidate_strategy: "validate, refine, or veto the current bounded candidate"
+                .to_string(),
+            review_depth: "verification_required".to_string(),
+            execution_profile: "review_and_refine_before_execution".to_string(),
+            termination_expectation: "terminate_after_bounded_review_cycle_or_policy_block"
+                .to_string(),
+            path_difference_summary:
+                "slow path keeps the run review-first and routes contradiction into reframing"
+                    .to_string(),
+        },
+        agency: execute::AgencySelectionState {
+            candidate_generation_basis: "integrated-control-path-scenario".to_string(),
+            selection_mode: "slow_candidate_comparison".to_string(),
+            candidate_set: vec![execute::AgencyCandidateRecord {
+                candidate_id: "cand-custom-review".to_string(),
+                candidate_kind: "review_and_refine".to_string(),
+                bounded_action: "review and refine the candidate".to_string(),
+                review_requirement: "verification_required".to_string(),
+                execution_priority: 1,
+                rationale: "selected for bounded review-heavy remediation".to_string(),
+            }],
+            selected_candidate_id: "cand-custom-review".to_string(),
+            selected_candidate_kind: "review_and_refine".to_string(),
+            selected_candidate_action: "review and refine the candidate".to_string(),
+            selected_candidate_reason: "candidate preserves bounded progress under contradiction"
+                .to_string(),
+        },
+        bounded_execution: execute::BoundedExecutionState {
+            execution_status: "completed".to_string(),
+            continuation_state: "bounded_review_complete".to_string(),
+            provisional_termination_state: "ready_for_evaluation".to_string(),
+            iterations: vec![
+                execute::BoundedExecutionIteration {
+                    iteration_index: 1,
+                    stage: "review".to_string(),
+                    action: "review the candidate".to_string(),
+                    outcome: "bounded_review_pass_complete".to_string(),
+                },
+                execute::BoundedExecutionIteration {
+                    iteration_index: 2,
+                    stage: "execute".to_string(),
+                    action: "execute the reviewed candidate".to_string(),
+                    outcome: "bounded_reviewed_execution_complete".to_string(),
+                },
+            ],
+        },
+        evaluation: execute::EvaluationControlState {
+            progress_signal: "steady_progress".to_string(),
+            contradiction_signal: "present".to_string(),
+            failure_signal: "none".to_string(),
+            termination_reason: "contradiction_detected".to_string(),
+            behavior_effect: "surface contradiction for bounded follow-up".to_string(),
+            next_control_action: "handoff_to_reframing".to_string(),
+        },
+        reframing: execute::ReframingControlState {
+            frame_adequacy_score: 24,
+            reframing_trigger: "triggered".to_string(),
+            reframing_reason: "contradiction_detected_after_bounded_execution".to_string(),
+            prior_frame: "review_and_refine_under_current_frame".to_string(),
+            new_frame: "diagnose_and_restructure_before_retry".to_string(),
+            reexecution_choice: "bounded_reframe_and_retry".to_string(),
+            post_reframe_state: "ready_for_reframed_execution".to_string(),
+        },
+        freedom_gate: execute::FreedomGateState {
+            input: execute::FreedomGateInputState {
+                candidate_id: "cand-custom-review".to_string(),
+                candidate_action: "review and refine the candidate".to_string(),
+                candidate_rationale: "candidate preserves bounded progress under contradiction"
+                    .to_string(),
+                risk_class: "high".to_string(),
+                policy_context: execute::FreedomGatePolicyContextState {
+                    route_selected: "slow".to_string(),
+                    selected_candidate_kind: "review_and_refine".to_string(),
+                    requires_review: false,
+                    policy_blocked: false,
+                },
+                evaluation_signals: execute::FreedomGateEvaluationSignalsState {
+                    progress_signal: "steady_progress".to_string(),
+                    contradiction_signal: "present".to_string(),
+                    failure_signal: "none".to_string(),
+                    termination_reason: "contradiction_detected".to_string(),
+                },
+                frame_state: "ready_for_reframed_execution".to_string(),
+            },
+            gate_decision: "defer".to_string(),
+            reason_code: "frame_inadequate".to_string(),
+            decision_reason:
+                "frame state requires bounded reframing before commitment can be allowed"
+                    .to_string(),
+            selected_action_or_none: None,
+            commitment_blocked: true,
+        },
+        memory: execute::MemoryParticipationState {
+            read: execute::MemoryReadState {
+                query: execute::MemoryQueryState {
+                    workflow_id: "wf".to_string(),
+                    status_filter: "failed".to_string(),
+                    limit: 3,
+                    source: "repo_local_runs_root".to_string(),
+                },
+                entries: vec![execute::MemoryReadEntry {
+                    memory_entry_id: "prev-run::wf".to_string(),
+                    run_id: "prev-run".to_string(),
+                    workflow_id: "wf".to_string(),
+                    summary: "prior failure memory".to_string(),
+                    tags: vec!["status:failed".to_string(), "workflow:wf".to_string()],
+                    source: "indexed_run_artifacts".to_string(),
+                }],
+                retrieval_order: "workflow_id_then_run_id_ascending".to_string(),
+                influence_summary:
+                    "prior_failure_memory reinforces bounded reframing for route=slow selected_candidate=cand-custom-review"
+                        .to_string(),
+                influenced_stage: "reframing_decision".to_string(),
+            },
+            write: execute::MemoryWriteState {
+                entry_id: "mem-entry::wf::runtime-control".to_string(),
+                content: "workflow=wf status=failure next_control_action=handoff_to_reframing influence=prior_failure_memory reinforces bounded reframing for route=slow selected_candidate=cand-custom-review".to_string(),
+                tags: vec![
+                    "action:handoff_to_reframing".to_string(),
+                    "candidate:review_and_refine".to_string(),
+                    "status:failure".to_string(),
+                    "workflow:wf".to_string(),
+                ],
+                logical_timestamp: "run:runtime-control".to_string(),
+                write_reason: "record_failure_for_future_reframing_context".to_string(),
+                source: "runtime_control_projection".to_string(),
+            },
+        },
+    }
+}
+
+fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let runtime = custom_v086_control_path_runtime();
+    let mut artifacts = Vec::new();
+    let signals = serde_json::json!({
+        "stage": "signals",
+        "dominant_instinct": runtime.signals.dominant_instinct,
+        "completion_pressure": runtime.signals.completion_pressure,
+        "integrity_bias": runtime.signals.integrity_bias,
+        "downstream_influence": runtime.signals.downstream_influence,
+    });
+    let candidate_selection = serde_json::json!({
+        "stage": "candidate_selection",
+        "candidate_generation_basis": runtime.agency.candidate_generation_basis,
+        "selected_candidate_id": runtime.agency.selected_candidate_id,
+        "selected_candidate_kind": runtime.agency.selected_candidate_kind,
+        "selected_candidate_action": runtime.agency.selected_candidate_action,
+        "selected_candidate_reason": runtime.agency.selected_candidate_reason,
+        "candidate_set": runtime.agency.candidate_set,
+    });
+    let arbitration = serde_json::json!({
+        "stage": "arbitration",
+        "route_selected": runtime.arbitration.route_selected,
+        "reasoning_mode": runtime.arbitration.reasoning_mode,
+        "confidence": runtime.arbitration.confidence,
+        "risk_class": runtime.arbitration.risk_class,
+        "route_reason": runtime.arbitration.route_reason,
+        "applied_constraints": runtime.arbitration.applied_constraints,
+    });
+    let execution_iterations = serde_json::json!({
+        "stage": "execution",
+        "selected_path": runtime.fast_slow.selected_path,
+        "runtime_branch_taken": runtime.fast_slow.runtime_branch_taken,
+        "execution_status": runtime.bounded_execution.execution_status,
+        "iterations": runtime.bounded_execution.iterations,
+    });
+    let evaluation = serde_json::json!({
+        "stage": "evaluation",
+        "progress_signal": runtime.evaluation.progress_signal,
+        "contradiction_signal": runtime.evaluation.contradiction_signal,
+        "failure_signal": runtime.evaluation.failure_signal,
+        "termination_reason": runtime.evaluation.termination_reason,
+        "next_control_action": runtime.evaluation.next_control_action,
+    });
+    let reframing = serde_json::json!({
+        "stage": "reframing",
+        "frame_adequacy_score": runtime.reframing.frame_adequacy_score,
+        "reframing_trigger": runtime.reframing.reframing_trigger,
+        "reframing_reason": runtime.reframing.reframing_reason,
+        "reexecution_choice": runtime.reframing.reexecution_choice,
+        "post_reframe_state": runtime.reframing.post_reframe_state,
+    });
+    let memory = serde_json::json!({
+        "stage": "memory",
+        "read": runtime.memory.read,
+        "write": runtime.memory.write,
+    });
+    let freedom_gate = serde_json::json!({
+        "stage": "freedom_gate",
+        "input": runtime.freedom_gate.input,
+        "gate_decision": runtime.freedom_gate.gate_decision,
+        "reason_code": runtime.freedom_gate.reason_code,
+        "decision_reason": runtime.freedom_gate.decision_reason,
+        "commitment_blocked": runtime.freedom_gate.commitment_blocked,
+    });
+    let final_result = serde_json::json!({
+        "stage": "final_result",
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "route_selected": runtime.arbitration.route_selected,
+        "selected_candidate": runtime.agency.selected_candidate_id,
+        "termination_reason": runtime.evaluation.termination_reason,
+        "gate_decision": runtime.freedom_gate.gate_decision,
+        "final_result": "defer",
+    });
+    let summary = [
+        "v0.86 canonical bounded cognitive path summary",
+        "stage_order: signals -> candidate_selection -> arbitration -> execution -> evaluation -> reframing -> memory -> freedom_gate -> final_result",
+        "route_selected: slow",
+        "selected_candidate: cand-custom-review",
+        "termination_reason: contradiction_detected",
+        "gate_decision: defer",
+        "final_result: defer",
+    ]
+    .join("\n");
+
+    artifacts.push(write_file(
+        out_dir,
+        "signals.json",
+        &serde_json::to_string_pretty(&signals)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "candidate_selection.json",
+        &serde_json::to_string_pretty(&candidate_selection)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "arbitration.json",
+        &serde_json::to_string_pretty(&arbitration)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "execution_iterations.json",
+        &serde_json::to_string_pretty(&execution_iterations)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "evaluation.json",
+        &serde_json::to_string_pretty(&evaluation)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "reframing.json",
+        &serde_json::to_string_pretty(&reframing)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "memory.json",
+        &serde_json::to_string_pretty(&memory)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "freedom_gate.json",
+        &serde_json::to_string_pretty(&freedom_gate)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "final_result.json",
+        &serde_json::to_string_pretty(&final_result)?,
+    )?);
+    artifacts.push(write_file(out_dir, "summary.txt", &summary)?);
+
+    Ok(artifacts)
 }
 
 fn write_file(out_dir: &Path, rel: &str, contents: &str) -> Result<PathBuf> {
@@ -645,6 +966,40 @@ Primary artifacts:
 - `trace.jsonl`
 "#;
 
+const DEMO_G_README_MD: &str = r#"# D1 Canonical Bounded Cognitive Path
+
+Generated by:
+
+```bash
+cargo run --manifest-path adl/Cargo.toml --bin adl -- demo demo-g-v086-control-path --run --trace --out ./out
+```
+
+This demo emits one stable, reviewer-facing control-path artifact set covering:
+
+- signals
+- candidate selection
+- arbitration
+- bounded execution
+- evaluation
+- reframing
+- memory participation
+- Freedom Gate
+- final result
+
+Primary artifacts:
+- `signals.json`
+- `candidate_selection.json`
+- `arbitration.json`
+- `execution_iterations.json`
+- `evaluation.json`
+- `reframing.json`
+- `memory.json`
+- `freedom_gate.json`
+- `final_result.json`
+- `summary.txt`
+- `trace.jsonl`
+"#;
+
 #[derive(Debug, serde::Serialize)]
 struct CardPipelineManifest {
     schema_version: &'static str,
@@ -1015,6 +1370,30 @@ mod tests {
         assert!(out.join("obsmem_retrieval_result.json").is_file());
         assert!(out.join("README.md").is_file());
         assert!(out.join("trace.jsonl").is_file());
+    }
+
+    #[test]
+    fn run_demo_g_writes_control_path_artifacts() {
+        let out = tmp_dir("demo-g");
+        let result = run_demo(DEMO_G_V086_CONTROL_PATH, &out).unwrap();
+        assert_eq!(result.run_id, DEMO_G_V086_CONTROL_PATH);
+        assert!(out.join("signals.json").is_file());
+        assert!(out.join("candidate_selection.json").is_file());
+        assert!(out.join("arbitration.json").is_file());
+        assert!(out.join("execution_iterations.json").is_file());
+        assert!(out.join("evaluation.json").is_file());
+        assert!(out.join("reframing.json").is_file());
+        assert!(out.join("memory.json").is_file());
+        assert!(out.join("freedom_gate.json").is_file());
+        assert!(out.join("final_result.json").is_file());
+        assert!(out.join("summary.txt").is_file());
+        assert!(out.join("README.md").is_file());
+        assert!(out.join("trace.jsonl").is_file());
+        let summary = std::fs::read_to_string(out.join("summary.txt")).unwrap();
+        assert!(
+            summary.contains("final_result: defer"),
+            "summary was:\n{summary}"
+        );
     }
 
     #[test]

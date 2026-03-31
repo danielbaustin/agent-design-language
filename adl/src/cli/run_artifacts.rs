@@ -22,6 +22,8 @@ pub(crate) const REFRAMING_VERSION: u32 = 1;
 pub(crate) const FREEDOM_GATE_VERSION: u32 = 1;
 pub(crate) const MEMORY_READ_VERSION: u32 = 1;
 pub(crate) const MEMORY_WRITE_VERSION: u32 = 1;
+pub(crate) const CONTROL_PATH_MEMORY_VERSION: u32 = 1;
+pub(crate) const CONTROL_PATH_FINAL_RESULT_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
@@ -544,6 +546,43 @@ pub(crate) struct MemoryWriteArtifact {
     pub(crate) write_reason: String,
     pub(crate) source: String,
     pub(crate) deterministic_write_rule: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ControlPathMemoryArtifact {
+    pub(crate) control_path_memory_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) read: MemoryReadArtifact,
+    pub(crate) write: MemoryWriteArtifact,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ControlPathFinalResultArtifact {
+    pub(crate) control_path_final_result_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) route_selected: String,
+    pub(crate) selected_candidate: String,
+    pub(crate) termination_reason: String,
+    pub(crate) gate_decision: String,
+    pub(crate) final_result: String,
+    pub(crate) commitment_blocked: bool,
+    pub(crate) next_control_action: String,
+    pub(crate) stage_order: Vec<String>,
+}
+
+pub(crate) struct ControlPathSummaryContext<'a> {
+    pub(crate) signals: &'a CognitiveSignalsArtifact,
+    pub(crate) agency: &'a AgencySelectionArtifact,
+    pub(crate) arbitration: &'a CognitiveArbitrationArtifact,
+    pub(crate) execution: &'a BoundedExecutionArtifact,
+    pub(crate) evaluation: &'a EvaluationSignalsArtifact,
+    pub(crate) reframing: &'a ReframingArtifact,
+    pub(crate) memory: &'a ControlPathMemoryArtifact,
+    pub(crate) freedom_gate: &'a FreedomGateArtifact,
+    pub(crate) final_result: &'a ControlPathFinalResultArtifact,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -2179,6 +2218,120 @@ pub(crate) fn build_memory_write_artifact(
     }
 }
 
+pub(crate) fn build_control_path_memory_artifact(
+    run_summary: &RunSummaryArtifact,
+    read: &MemoryReadArtifact,
+    write: &MemoryWriteArtifact,
+) -> ControlPathMemoryArtifact {
+    ControlPathMemoryArtifact {
+        control_path_memory_version: CONTROL_PATH_MEMORY_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: read.generated_from.clone(),
+        read: read.clone(),
+        write: write.clone(),
+    }
+}
+
+pub(crate) fn build_control_path_final_result_artifact(
+    run_summary: &RunSummaryArtifact,
+    arbitration: &CognitiveArbitrationArtifact,
+    agency: &AgencySelectionArtifact,
+    evaluation: &EvaluationSignalsArtifact,
+    freedom_gate: &FreedomGateArtifact,
+) -> ControlPathFinalResultArtifact {
+    let final_result = match freedom_gate.gate_decision.as_str() {
+        "allow" => freedom_gate
+            .selected_action_or_none
+            .clone()
+            .or_else(|| {
+                agency
+                    .candidate_set
+                    .iter()
+                    .find(|candidate| candidate.candidate_id == agency.selected_candidate_id)
+                    .map(|candidate| candidate.bounded_action.clone())
+            })
+            .unwrap_or_else(|| agency.selected_candidate_reason.clone()),
+        "defer" => "defer".to_string(),
+        "refuse" => "refuse".to_string(),
+        other => format!("unrecognized_gate_decision:{other}"),
+    };
+
+    ControlPathFinalResultArtifact {
+        control_path_final_result_version: CONTROL_PATH_FINAL_RESULT_VERSION,
+        run_id: run_summary.run_id.clone(),
+        route_selected: arbitration.route_selected.clone(),
+        selected_candidate: agency.selected_candidate_id.clone(),
+        termination_reason: evaluation.termination_reason.clone(),
+        gate_decision: freedom_gate.gate_decision.clone(),
+        final_result,
+        commitment_blocked: freedom_gate.commitment_blocked,
+        next_control_action: evaluation.next_control_action.clone(),
+        stage_order: vec![
+            "signals".to_string(),
+            "candidate_selection".to_string(),
+            "arbitration".to_string(),
+            "execution".to_string(),
+            "evaluation".to_string(),
+            "reframing".to_string(),
+            "memory".to_string(),
+            "freedom_gate".to_string(),
+            "final_result".to_string(),
+        ],
+    }
+}
+
+pub(crate) fn build_control_path_summary(context: &ControlPathSummaryContext<'_>) -> String {
+    let signals = context.signals;
+    let agency = context.agency;
+    let arbitration = context.arbitration;
+    let execution = context.execution;
+    let evaluation = context.evaluation;
+    let reframing = context.reframing;
+    let memory = context.memory;
+    let freedom_gate = context.freedom_gate;
+    let final_result = context.final_result;
+
+    [
+        "v0.86 canonical bounded cognitive path summary".to_string(),
+        format!("run_id: {}", final_result.run_id),
+        "stage_order: signals -> candidate_selection -> arbitration -> execution -> evaluation -> reframing -> memory -> freedom_gate -> final_result".to_string(),
+        format!(
+            "signals: instinct={} completion_pressure={}",
+            signals.instinct.dominant_instinct, signals.instinct.completion_pressure
+        ),
+        format!(
+            "candidate_selection: candidate_id={} rationale={}",
+            agency.selected_candidate_id, agency.selected_candidate_reason
+        ),
+        format!(
+            "arbitration: route={} reasoning_mode={}",
+            arbitration.route_selected, arbitration.reasoning_mode
+        ),
+        format!(
+            "execution: status={} iterations={}",
+            execution.execution_status, execution.iteration_count
+        ),
+        format!(
+            "evaluation: termination_reason={} next_control_action={}",
+            evaluation.termination_reason, evaluation.next_control_action
+        ),
+        format!(
+            "reframing: trigger={} choice={}",
+            reframing.reframing_trigger, reframing.reexecution_choice
+        ),
+        format!(
+            "memory: read_count={} influenced_stage={} write_reason={}",
+            memory.read.read_count, memory.read.influenced_stage, memory.write.write_reason
+        ),
+        format!(
+            "freedom_gate: decision={} reason_code={} commitment_blocked={}",
+            freedom_gate.gate_decision, freedom_gate.reason_code, freedom_gate.commitment_blocked
+        ),
+        format!("final_result: {}", final_result.final_result),
+    ]
+    .join("\n")
+}
+
 pub(crate) fn build_aee_decision_artifact(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
@@ -2611,6 +2764,26 @@ pub(crate) fn write_run_state_artifacts(
         &runtime_control.memory.write,
         Some(&scores_for_suggestions),
     );
+    let control_path_memory =
+        build_control_path_memory_artifact(&run_summary, &memory_read, &memory_write);
+    let control_path_final_result = build_control_path_final_result_artifact(
+        &run_summary,
+        &cognitive_arbitration,
+        &agency_selection,
+        &evaluation_signals,
+        &freedom_gate,
+    );
+    let control_path_summary = build_control_path_summary(&ControlPathSummaryContext {
+        signals: &cognitive_signals,
+        agency: &agency_selection,
+        arbitration: &cognitive_arbitration,
+        execution: &bounded_execution,
+        evaluation: &evaluation_signals,
+        reframing: &reframing,
+        memory: &control_path_memory,
+        freedom_gate: &freedom_gate,
+        final_result: &control_path_final_result,
+    });
     let cognitive_arbitration_json = serde_json::to_vec_pretty(&cognitive_arbitration)
         .context("serialize cognitive_arbitration.v1.json")?;
     let fast_slow_path_json =
@@ -2629,6 +2802,10 @@ pub(crate) fn write_run_state_artifacts(
         serde_json::to_vec_pretty(&memory_read).context("serialize memory_read.v1.json")?;
     let memory_write_json =
         serde_json::to_vec_pretty(&memory_write).context("serialize memory_write.v1.json")?;
+    let control_path_memory_json = serde_json::to_vec_pretty(&control_path_memory)
+        .context("serialize control_path memory.json")?;
+    let control_path_final_result_json = serde_json::to_vec_pretty(&control_path_final_result)
+        .context("serialize control_path final_result.json")?;
     let aee_decision = build_aee_decision_artifact(
         &run_summary,
         &suggestions,
@@ -2668,6 +2845,43 @@ pub(crate) fn write_run_state_artifacts(
     artifacts::atomic_write(&run_paths.freedom_gate_json(), &freedom_gate_json)?;
     artifacts::atomic_write(&run_paths.memory_read_json(), &memory_read_json)?;
     artifacts::atomic_write(&run_paths.memory_write_json(), &memory_write_json)?;
+    artifacts::atomic_write(
+        &run_paths.control_path_signals_json(),
+        &cognitive_signals_json,
+    )?;
+    artifacts::atomic_write(
+        &run_paths.control_path_candidate_selection_json(),
+        &agency_selection_json,
+    )?;
+    artifacts::atomic_write(
+        &run_paths.control_path_arbitration_json(),
+        &cognitive_arbitration_json,
+    )?;
+    artifacts::atomic_write(
+        &run_paths.control_path_execution_iterations_json(),
+        &bounded_execution_json,
+    )?;
+    artifacts::atomic_write(
+        &run_paths.control_path_evaluation_json(),
+        &evaluation_signals_json,
+    )?;
+    artifacts::atomic_write(&run_paths.control_path_reframing_json(), &reframing_json)?;
+    artifacts::atomic_write(
+        &run_paths.control_path_memory_json(),
+        &control_path_memory_json,
+    )?;
+    artifacts::atomic_write(
+        &run_paths.control_path_freedom_gate_json(),
+        &freedom_gate_json,
+    )?;
+    artifacts::atomic_write(
+        &run_paths.control_path_final_result_json(),
+        &control_path_final_result_json,
+    )?;
+    artifacts::atomic_write(
+        &run_paths.control_path_summary_txt(),
+        control_path_summary.as_bytes(),
+    )?;
     artifacts::atomic_write(&run_paths.cognitive_signals_json(), &cognitive_signals_json)?;
     artifacts::atomic_write(
         &run_paths.cognitive_arbitration_json(),
