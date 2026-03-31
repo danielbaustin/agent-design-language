@@ -153,6 +153,16 @@ impl RunArtifactPaths {
         self.learning_dir().join("freedom_gate.v1.json")
     }
 
+    /// Memory-read artifact path for v0.86 bounded memory participation.
+    pub fn memory_read_json(&self) -> PathBuf {
+        self.learning_dir().join("memory_read.v1.json")
+    }
+
+    /// Memory-write artifact path for v0.86 bounded memory participation.
+    pub fn memory_write_json(&self) -> PathBuf {
+        self.learning_dir().join("memory_write.v1.json")
+    }
+
     /// Affect state artifact path for bounded affect-guided adaptation.
     pub fn affect_state_json(&self) -> PathBuf {
         self.learning_dir().join("affect_state.v1.json")

@@ -1,6 +1,7 @@
 use super::run_state::minimal_resolved_for_artifacts;
 use super::*;
 use crate::cli::run_artifacts;
+use crate::cli::run_artifacts::AeeDecisionGeneratedFrom;
 
 #[test]
 fn build_run_summary_sorts_remote_policy_and_tracks_denials() {
@@ -1837,6 +1838,174 @@ fn build_reframing_artifact_is_deterministic_and_distinguishes_triggered_paths()
         success_left.frame_adequacy_score,
         failure_artifact.frame_adequacy_score
     );
+}
+
+#[test]
+fn build_memory_artifacts_are_deterministic_and_preserve_read_write_semantics() {
+    let run_summary = RunSummaryArtifact {
+        run_summary_version: 1,
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_id: "memory-run".to_string(),
+        workflow_id: "wf".to_string(),
+        adl_version: "0.86".to_string(),
+        swarm_version: "test".to_string(),
+        status: "failure".to_string(),
+        error_kind: None,
+        counts: RunSummaryCounts {
+            total_steps: 1,
+            completed_steps: 1,
+            failed_steps: 1,
+            provider_call_count: 1,
+            delegation_steps: 0,
+            delegation_requires_verification_steps: 0,
+        },
+        policy: RunSummaryPolicy {
+            security_envelope_enabled: false,
+            signing_required: false,
+            key_id_required: false,
+            verify_allowed_algs: Vec::new(),
+            verify_allowed_key_sources: Vec::new(),
+            sandbox_policy: "centralized_path_resolver_v1".to_string(),
+            security_denials_by_code: BTreeMap::new(),
+        },
+        links: RunSummaryLinks {
+            run_json: "run.json".to_string(),
+            steps_json: "steps.json".to_string(),
+            pause_state_json: None,
+            outputs_dir: "outputs".to_string(),
+            logs_dir: "logs".to_string(),
+            learning_dir: "learning".to_string(),
+            scores_json: None,
+            suggestions_json: None,
+            aee_decision_json: None,
+            cognitive_signals_json: None,
+            fast_slow_path_json: None,
+            agency_selection_json: None,
+            bounded_execution_json: None,
+            evaluation_signals_json: None,
+            cognitive_arbitration_json: None,
+            affect_state_json: None,
+            reasoning_graph_json: None,
+            overlays_dir: "learning/overlays".to_string(),
+            cluster_groundwork_json: None,
+            trace_json: None,
+        },
+    };
+    let evaluation = run_artifacts::EvaluationSignalsArtifact {
+        evaluation_signals_version: 1,
+        run_id: "memory-run".to_string(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+            suggestions_version: 1,
+            scores_version: Some(1),
+        },
+        selected_candidate_id: "cand-slow-review".to_string(),
+        selected_path: "slow_path".to_string(),
+        progress_signal: "guarded_progress".to_string(),
+        contradiction_signal: "present".to_string(),
+        failure_signal: "none".to_string(),
+        termination_reason: "contradiction_detected".to_string(),
+        behavior_effect: "surface contradiction for bounded follow-up".to_string(),
+        next_control_action: "handoff_to_reframing".to_string(),
+        deterministic_evaluation_rule: "deterministic".to_string(),
+    };
+    let scores = ScoresArtifact {
+        scores_version: 1,
+        run_id: "memory-run".to_string(),
+        generated_from: ScoresGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+        },
+        summary: ScoresSummary {
+            success_ratio: 0.0,
+            failure_count: 1,
+            retry_count: 0,
+            delegation_denied_count: 0,
+            security_denied_count: 0,
+        },
+        metrics: ScoresMetrics {
+            scheduler_max_parallel_observed: 1,
+        },
+    };
+    let read_state = execute::MemoryReadState {
+        query: execute::MemoryQueryState {
+            workflow_id: "wf".to_string(),
+            status_filter: "failed".to_string(),
+            limit: 3,
+            source: "repo_local_runs_root".to_string(),
+        },
+        entries: vec![execute::MemoryReadEntry {
+            memory_entry_id: "prior-run::wf".to_string(),
+            run_id: "prior-run".to_string(),
+            workflow_id: "wf".to_string(),
+            summary: "prior failed run".to_string(),
+            tags: vec!["status:failed".to_string(), "workflow:wf".to_string()],
+            source: "indexed_run_artifacts".to_string(),
+        }],
+        retrieval_order: "workflow_id_then_run_id_ascending".to_string(),
+        influence_summary:
+            "prior_failure_memory reinforces bounded reframing for route=slow selected_candidate=cand-slow-review"
+                .to_string(),
+        influenced_stage: "reframing_decision".to_string(),
+    };
+    let write_state = execute::MemoryWriteState {
+        entry_id: "mem-entry::wf::memory-run".to_string(),
+        content:
+            "workflow=wf status=failure next_control_action=handoff_to_reframing influence=prior_failure_memory"
+                .to_string(),
+        tags: vec![
+            "action:handoff_to_reframing".to_string(),
+            "candidate:review_and_refine".to_string(),
+            "status:failure".to_string(),
+            "workflow:wf".to_string(),
+        ],
+        logical_timestamp: "run:memory-run".to_string(),
+        write_reason: "record_failure_for_future_reframing_context".to_string(),
+        source: "runtime_control_projection".to_string(),
+    };
+
+    let read_left = run_artifacts::build_memory_read_artifact(
+        &run_summary,
+        &evaluation,
+        &read_state,
+        Some(&scores),
+    );
+    let read_right = run_artifacts::build_memory_read_artifact(
+        &run_summary,
+        &evaluation,
+        &read_state,
+        Some(&scores),
+    );
+    assert_eq!(
+        serde_json::to_value(&read_left).expect("memory read left"),
+        serde_json::to_value(&read_right).expect("memory read right")
+    );
+    assert_eq!(read_left.read_count, 1);
+    assert_eq!(read_left.query.status_filter, "failed");
+    assert_eq!(read_left.influenced_stage, "reframing_decision");
+
+    let write_left = run_artifacts::build_memory_write_artifact(
+        &run_summary,
+        &evaluation,
+        &write_state,
+        Some(&scores),
+    );
+    let write_right = run_artifacts::build_memory_write_artifact(
+        &run_summary,
+        &evaluation,
+        &write_state,
+        Some(&scores),
+    );
+    assert_eq!(
+        serde_json::to_value(&write_left).expect("memory write left"),
+        serde_json::to_value(&write_right).expect("memory write right")
+    );
+    assert_eq!(
+        write_left.write_reason,
+        "record_failure_for_future_reframing_context"
+    );
+    assert_eq!(write_left.logical_timestamp, "run:memory-run");
 }
 
 #[test]

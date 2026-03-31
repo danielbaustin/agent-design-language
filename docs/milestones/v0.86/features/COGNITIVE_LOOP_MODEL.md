@@ -57,6 +57,7 @@ The implemented runtime execution surface for this milestone is:
 - fast-path execution performs one direct bounded execution iteration
 - slow-path execution performs a bounded review iteration followed by one execution iteration
 - execution exits into an explicit provisional termination state for later evaluation
+- memory participation is emitted as explicit bounded read and write artifacts tied to the same run
 
 This milestone does not implement open-ended convergence, adaptive retry loops, or unbounded continuation.
 
@@ -192,6 +193,12 @@ Feeds back into:
 - arbitration priors
 - future execution strategies
 
+For the implemented `v0.86` runtime surface:
+
+- `memory_read.v1.json` records the bounded same-workflow memory query, retrieved entries, retrieval order, and influenced stage
+- `memory_write.v1.json` records the bounded write payload emitted after evaluation/reframing chooses the next control action
+- memory participation remains repo-local and deterministic, not an open-ended background memory subsystem
+
 ## AEE Termination Reasons
 
 ```
@@ -214,6 +221,7 @@ For the implemented `v0.86` runtime surface:
 - `bounded_execution.v1.json` records the bounded execution handoff and iteration shape
 - `evaluation_signals.v1.json` records evaluation signals and the explicit `termination_reason`
 - `reframing.v1.json` records `frame_adequacy_score`, `reframing_trigger`, `reframing_reason`, and the bounded re-execution or termination choice
+- `memory_read.v1.json` and `memory_write.v1.json` record bounded memory participation around the same evaluation/reframing control surface
 - termination is emitted as a bounded control output, not inferred from prose or hidden state
 
 ## Frame Adequacy and Reframing Notes

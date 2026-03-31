@@ -20,6 +20,8 @@ pub(crate) const BOUNDED_EXECUTION_VERSION: u32 = 1;
 pub(crate) const EVALUATION_SIGNALS_VERSION: u32 = 1;
 pub(crate) const REFRAMING_VERSION: u32 = 1;
 pub(crate) const FREEDOM_GATE_VERSION: u32 = 1;
+pub(crate) const MEMORY_READ_VERSION: u32 = 1;
+pub(crate) const MEMORY_WRITE_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
@@ -507,6 +509,41 @@ pub(crate) struct FreedomGateArtifact {
     pub(crate) selected_action_or_none: Option<String>,
     pub(crate) commitment_blocked: bool,
     pub(crate) deterministic_gate_rule: String,
+}
+
+pub(crate) type MemoryReadState = execute::MemoryReadState;
+pub(crate) type MemoryQueryState = execute::MemoryQueryState;
+pub(crate) type MemoryReadEntry = execute::MemoryReadEntry;
+pub(crate) type MemoryWriteState = execute::MemoryWriteState;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct MemoryReadArtifact {
+    pub(crate) memory_read_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) query: MemoryQueryState,
+    pub(crate) read_count: u32,
+    pub(crate) entries: Vec<MemoryReadEntry>,
+    pub(crate) retrieval_order: String,
+    pub(crate) influence_summary: String,
+    pub(crate) influenced_stage: String,
+    pub(crate) deterministic_read_rule: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct MemoryWriteArtifact {
+    pub(crate) memory_write_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) entry_id: String,
+    pub(crate) content: String,
+    pub(crate) tags: Vec<String>,
+    pub(crate) logical_timestamp: String,
+    pub(crate) write_reason: String,
+    pub(crate) source: String,
+    pub(crate) deterministic_write_rule: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -2088,6 +2125,60 @@ pub(crate) fn build_freedom_gate_artifact(
     }
 }
 
+pub(crate) fn build_memory_read_artifact(
+    run_summary: &RunSummaryArtifact,
+    evaluation_signals: &EvaluationSignalsArtifact,
+    state: &MemoryReadState,
+    scores: Option<&ScoresArtifact>,
+) -> MemoryReadArtifact {
+    MemoryReadArtifact {
+        memory_read_version: MEMORY_READ_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: evaluation_signals.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        query: state.query.clone(),
+        read_count: state.entries.len() as u32,
+        entries: state.entries.clone(),
+        retrieval_order: state.retrieval_order.clone(),
+        influence_summary: state.influence_summary.clone(),
+        influenced_stage: state.influenced_stage.clone(),
+        deterministic_read_rule:
+            "derive bounded memory reads from execute-owned runtime state and stable indexed run artifacts without hidden retrieval side effects"
+                .to_string(),
+    }
+}
+
+pub(crate) fn build_memory_write_artifact(
+    run_summary: &RunSummaryArtifact,
+    evaluation_signals: &EvaluationSignalsArtifact,
+    state: &MemoryWriteState,
+    scores: Option<&ScoresArtifact>,
+) -> MemoryWriteArtifact {
+    MemoryWriteArtifact {
+        memory_write_version: MEMORY_WRITE_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: evaluation_signals.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        entry_id: state.entry_id.clone(),
+        content: state.content.clone(),
+        tags: state.tags.clone(),
+        logical_timestamp: state.logical_timestamp.clone(),
+        write_reason: state.write_reason.clone(),
+        source: state.source.clone(),
+        deterministic_write_rule:
+            "derive bounded memory write state from execute-owned runtime control without hidden persistence side effects"
+                .to_string(),
+    }
+}
+
 pub(crate) fn build_aee_decision_artifact(
     run_summary: &RunSummaryArtifact,
     suggestions: &SuggestionsArtifact,
@@ -2508,6 +2599,18 @@ pub(crate) fn write_run_state_artifacts(
         &runtime_control.freedom_gate,
         Some(&scores_for_suggestions),
     );
+    let memory_read = build_memory_read_artifact(
+        &run_summary,
+        &evaluation_signals,
+        &runtime_control.memory.read,
+        Some(&scores_for_suggestions),
+    );
+    let memory_write = build_memory_write_artifact(
+        &run_summary,
+        &evaluation_signals,
+        &runtime_control.memory.write,
+        Some(&scores_for_suggestions),
+    );
     let cognitive_arbitration_json = serde_json::to_vec_pretty(&cognitive_arbitration)
         .context("serialize cognitive_arbitration.v1.json")?;
     let fast_slow_path_json =
@@ -2522,6 +2625,10 @@ pub(crate) fn write_run_state_artifacts(
         serde_json::to_vec_pretty(&reframing).context("serialize reframing.v1.json")?;
     let freedom_gate_json =
         serde_json::to_vec_pretty(&freedom_gate).context("serialize freedom_gate.v1.json")?;
+    let memory_read_json =
+        serde_json::to_vec_pretty(&memory_read).context("serialize memory_read.v1.json")?;
+    let memory_write_json =
+        serde_json::to_vec_pretty(&memory_write).context("serialize memory_write.v1.json")?;
     let aee_decision = build_aee_decision_artifact(
         &run_summary,
         &suggestions,
@@ -2559,6 +2666,8 @@ pub(crate) fn write_run_state_artifacts(
     )?;
     artifacts::atomic_write(&run_paths.reframing_json(), &reframing_json)?;
     artifacts::atomic_write(&run_paths.freedom_gate_json(), &freedom_gate_json)?;
+    artifacts::atomic_write(&run_paths.memory_read_json(), &memory_read_json)?;
+    artifacts::atomic_write(&run_paths.memory_write_json(), &memory_write_json)?;
     artifacts::atomic_write(&run_paths.cognitive_signals_json(), &cognitive_signals_json)?;
     artifacts::atomic_write(
         &run_paths.cognitive_arbitration_json(),
@@ -2573,6 +2682,8 @@ pub(crate) fn write_run_state_artifacts(
     )?;
     artifacts::atomic_write(&run_paths.reframing_json(), &reframing_json)?;
     artifacts::atomic_write(&run_paths.freedom_gate_json(), &freedom_gate_json)?;
+    artifacts::atomic_write(&run_paths.memory_read_json(), &memory_read_json)?;
+    artifacts::atomic_write(&run_paths.memory_write_json(), &memory_write_json)?;
     artifacts::atomic_write(&run_paths.affect_state_json(), &affect_state_json)?;
     artifacts::atomic_write(&run_paths.aee_decision_json(), &aee_decision_json)?;
     artifacts::atomic_write(&run_paths.reasoning_graph_json(), &reasoning_graph_json)?;

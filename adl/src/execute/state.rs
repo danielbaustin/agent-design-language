@@ -5,7 +5,9 @@ use anyhow::{anyhow, Context, Result};
 use serde::{Deserialize, Serialize};
 
 use super::DELEGATION_POLICY_DENY_CODE;
+use crate::artifacts;
 use crate::freedom_gate;
+use crate::obsmem_indexing::index_run_from_artifacts;
 use crate::sandbox;
 use crate::trace;
 
@@ -163,6 +165,7 @@ pub struct RuntimeControlState {
     pub evaluation: EvaluationControlState,
     pub reframing: ReframingControlState,
     pub freedom_gate: FreedomGateState,
+    pub memory: MemoryParticipationState,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -311,6 +314,54 @@ pub struct FreedomGateEvaluationSignalsState {
     pub termination_reason: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MemoryParticipationState {
+    pub read: MemoryReadState,
+    pub write: MemoryWriteState,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MemoryReadState {
+    pub query: MemoryQueryState,
+    pub entries: Vec<MemoryReadEntry>,
+    pub retrieval_order: String,
+    pub influence_summary: String,
+    pub influenced_stage: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MemoryQueryState {
+    pub workflow_id: String,
+    pub status_filter: String,
+    pub limit: u32,
+    pub source: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MemoryReadEntry {
+    pub memory_entry_id: String,
+    pub run_id: String,
+    pub workflow_id: String,
+    pub summary: String,
+    pub tags: Vec<String>,
+    pub source: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MemoryWriteState {
+    pub entry_id: String,
+    pub content: String,
+    pub tags: Vec<String>,
+    pub logical_timestamp: String,
+    pub write_reason: String,
+    pub source: String,
+}
+
 #[derive(Debug, Clone, Copy)]
 struct RuntimeSignalEvidence {
     failure_count: usize,
@@ -457,6 +508,14 @@ pub fn derive_runtime_control_state(
     let reframing =
         derive_reframing_control_state(&fast_slow, &agency, &bounded_execution, &evaluation);
     let freedom_gate = derive_freedom_gate_state(&arbitration, &agency, &evaluation, &reframing);
+    let memory = derive_memory_participation_state(
+        &tr.run_id,
+        &tr.workflow_id,
+        overall_status,
+        &arbitration,
+        &agency,
+        &evaluation,
+    );
 
     RuntimeControlState {
         signals,
@@ -467,6 +526,7 @@ pub fn derive_runtime_control_state(
         evaluation,
         reframing,
         freedom_gate,
+        memory,
     }
 }
 
@@ -1126,6 +1186,142 @@ fn derive_freedom_gate_state(
         selected_action_or_none: decision.selected_action_or_none,
         commitment_blocked: decision.commitment_blocked,
     }
+}
+
+fn derive_memory_participation_state(
+    run_id: &str,
+    workflow_id: &str,
+    overall_status: &str,
+    arbitration: &CognitiveArbitrationState,
+    agency: &AgencySelectionState,
+    evaluation: &EvaluationControlState,
+) -> MemoryParticipationState {
+    let status_filter = if evaluation.next_control_action == "handoff_to_reframing" {
+        "failed"
+    } else {
+        "succeeded"
+    };
+    let limit = 3u32;
+    let entries = load_memory_read_entries(run_id, workflow_id, status_filter, limit as usize);
+    let influence_summary = if entries.is_empty() {
+        "no_prior_memory_hits_available_for_this_workflow".to_string()
+    } else if evaluation.next_control_action == "handoff_to_reframing" {
+        format!(
+            "prior_failure_memory reinforces bounded reframing for route={} selected_candidate={}",
+            arbitration.route_selected, agency.selected_candidate_id
+        )
+    } else {
+        format!(
+            "prior_success_memory reinforces retained bounded frame for route={} selected_candidate={}",
+            arbitration.route_selected, agency.selected_candidate_id
+        )
+    };
+    let influenced_stage = if evaluation.next_control_action == "handoff_to_reframing" {
+        "reframing_decision".to_string()
+    } else {
+        "evaluation_termination".to_string()
+    };
+
+    let read = MemoryReadState {
+        query: MemoryQueryState {
+            workflow_id: workflow_id.to_string(),
+            status_filter: status_filter.to_string(),
+            limit,
+            source: "repo_local_runs_root".to_string(),
+        },
+        entries,
+        retrieval_order: "workflow_id_then_run_id_ascending".to_string(),
+        influence_summary,
+        influenced_stage,
+    };
+
+    let write_reason = if evaluation.next_control_action == "handoff_to_reframing" {
+        "record_failure_for_future_reframing_context"
+    } else if overall_status == "success" {
+        "record_success_for_future_bounded_context"
+    } else {
+        "record_observed_outcome_for_future_context"
+    };
+    let logical_timestamp = format!("run:{run_id}");
+    let mut tags = vec![
+        format!("workflow:{workflow_id}"),
+        format!("status:{overall_status}"),
+        format!("route:{}", arbitration.route_selected),
+        format!("candidate:{}", agency.selected_candidate_kind),
+        format!("action:{}", evaluation.next_control_action),
+    ];
+    tags.sort();
+    tags.dedup();
+    let write = MemoryWriteState {
+        entry_id: format!("mem-entry::{workflow_id}::{run_id}"),
+        content: format!(
+            "workflow={workflow_id} status={overall_status} next_control_action={} influence={}",
+            evaluation.next_control_action, read.influence_summary
+        ),
+        tags,
+        logical_timestamp,
+        write_reason: write_reason.to_string(),
+        source: "runtime_control_projection".to_string(),
+    };
+
+    MemoryParticipationState { read, write }
+}
+
+fn load_memory_read_entries(
+    current_run_id: &str,
+    workflow_id: &str,
+    status_filter: &str,
+    limit: usize,
+) -> Vec<MemoryReadEntry> {
+    let Ok(runs_root) = artifacts::runs_root() else {
+        return Vec::new();
+    };
+    let Ok(read_dir) = std::fs::read_dir(&runs_root) else {
+        return Vec::new();
+    };
+
+    let mut entries = Vec::new();
+    for entry in read_dir.flatten() {
+        let file_type_ok = entry.file_type().map(|ft| ft.is_dir()).unwrap_or(false);
+        if !file_type_ok {
+            continue;
+        }
+        let candidate_run_id = entry.file_name().to_string_lossy().to_string();
+        if candidate_run_id == current_run_id {
+            continue;
+        }
+        let Ok(indexed) = index_run_from_artifacts(&runs_root, &candidate_run_id) else {
+            continue;
+        };
+        if indexed.workflow_id != workflow_id {
+            continue;
+        }
+        let status_matches = match status_filter {
+            "failed" => indexed.status == "failed",
+            "succeeded" => indexed.status == "succeeded",
+            other => indexed.status == other,
+        };
+        if !status_matches {
+            continue;
+        }
+        entries.push(MemoryReadEntry {
+            memory_entry_id: format!("{}::{}", indexed.run_id, indexed.workflow_id),
+            run_id: indexed.run_id,
+            workflow_id: indexed.workflow_id,
+            summary: indexed.summary,
+            tags: indexed.tags,
+            source: "indexed_run_artifacts".to_string(),
+        });
+    }
+
+    entries.sort_by(|a, b| {
+        a.workflow_id
+            .cmp(&b.workflow_id)
+            .then_with(|| a.run_id.cmp(&b.run_id))
+            .then_with(|| a.memory_entry_id.cmp(&b.memory_entry_id))
+    });
+    entries.truncate(limit);
+    entries
 }
 
 pub fn apply_steering_patch(
