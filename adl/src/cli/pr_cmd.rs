@@ -201,10 +201,13 @@ fn real_pr_start(args: &[String]) -> Result<()> {
         ensure_source_issue_prompt(&repo_root, &repo, &issue_ref, &title, None, &version)?;
     validate_issue_prompt_exists(&source_path)?;
     validate_bootstrap_stp(&repo_root, &source_path)?;
+    validate_authored_prompt_surface("start", &source_path, PromptSurfaceKind::IssuePrompt)?;
 
     let root_stp = ensure_task_bundle_stp(&repo_root, &issue_ref, &source_path)?;
     let worktree_source = ensure_local_issue_prompt_copy(&worktree_path, &issue_ref, &source_path)?;
     let worktree_stp = ensure_task_bundle_stp(&worktree_path, &issue_ref, &worktree_source)?;
+    validate_authored_prompt_surface("start", &root_stp, PromptSurfaceKind::Stp)?;
+    validate_authored_prompt_surface("start", &worktree_stp, PromptSurfaceKind::Stp)?;
 
     let root_paths = ensure_bootstrap_cards(&repo_root, &issue_ref, &title, &branch, &source_path)?;
     let worktree_paths = ensure_bootstrap_cards(
@@ -274,10 +277,12 @@ fn real_pr_ready(args: &[String]) -> Result<()> {
 
     validate_issue_prompt_exists(&source_path)?;
     validate_bootstrap_stp(&repo_root, &source_path)?;
+    validate_authored_prompt_surface("ready", &source_path, PromptSurfaceKind::IssuePrompt)?;
     if !root_stp.is_file() {
         bail!("ready: missing root stp: {}", root_stp.display());
     }
     validate_bootstrap_stp(&repo_root, &root_stp)?;
+    validate_authored_prompt_surface("ready", &root_stp, PromptSurfaceKind::Stp)?;
     if !worktree_path.is_dir() {
         bail!("ready: missing worktree: {}", worktree_path.display());
     }
@@ -301,6 +306,7 @@ fn real_pr_ready(args: &[String]) -> Result<()> {
         bail!("ready: missing worktree stp: {}", wt_stp.display());
     }
     validate_bootstrap_stp(&worktree_path, &wt_stp)?;
+    validate_authored_prompt_surface("ready", &wt_stp, PromptSurfaceKind::Stp)?;
     validate_ready_cards(
         &repo_root,
         parsed.issue,
@@ -419,6 +425,8 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
             format!("issue-{}", parsed.issue),
         ));
     let issue_ref = IssueRef::new(parsed.issue, inferred.0.clone(), inferred.1.clone())?;
+    let source_path = resolve_issue_prompt_path(&repo_root, &issue_ref)?;
+    let stp_path = issue_ref.task_bundle_stp_path(&repo_root);
 
     let input_path = parsed
         .input_path
@@ -438,6 +446,12 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
         }
         bail!("finish: output card is empty: {}", output_path.display());
     }
+    validate_issue_prompt_exists(&source_path)?;
+    validate_bootstrap_stp(&repo_root, &source_path)?;
+    validate_bootstrap_stp(&repo_root, &stp_path)?;
+    validate_authored_prompt_surface("finish", &source_path, PromptSurfaceKind::IssuePrompt)?;
+    validate_authored_prompt_surface("finish", &stp_path, PromptSurfaceKind::Stp)?;
+    validate_authored_prompt_surface("finish", &input_path, PromptSurfaceKind::Sip)?;
     validate_completed_sor(&repo_root, &output_path)?;
 
     let ahead = commits_ahead_of_origin_main(&repo_root)?;
@@ -1771,7 +1785,115 @@ fn validate_ready_cards(
     if !branch_matches_started_state(&field_line_value(output_path, "Branch")?, actual_branch) {
         bail!("ready: output card branch mismatch");
     }
+    validate_authored_prompt_surface("ready", input_path, PromptSurfaceKind::Sip)?;
     Ok(())
+}
+
+#[derive(Clone, Copy)]
+enum PromptSurfaceKind {
+    IssuePrompt,
+    Stp,
+    Sip,
+}
+
+impl PromptSurfaceKind {
+    fn label(self) -> &'static str {
+        match self {
+            Self::IssuePrompt => "issue body/source prompt",
+            Self::Stp => "stp",
+            Self::Sip => "sip",
+        }
+    }
+}
+
+fn validate_authored_prompt_surface(
+    phase: &str,
+    path: &Path,
+    kind: PromptSurfaceKind,
+) -> Result<()> {
+    let text = fs::read_to_string(path)?;
+    if let Some(reason) = bootstrap_stub_reason(&text, kind) {
+        bail!(
+            "{phase}: {} is still bootstrap stub content ({reason}): {}",
+            kind.label(),
+            path.display()
+        );
+    }
+    Ok(())
+}
+
+fn bootstrap_stub_reason(text: &str, kind: PromptSurfaceKind) -> Option<&'static str> {
+    let normalized = text.replace("\r\n", "\n");
+    if normalized.contains("## Goal\n-\n\n## Acceptance Criteria\n-") {
+        return Some("placeholder goal/acceptance criteria stub");
+    }
+    if !section_has_authored_content(&normalized, "## Goal") {
+        return Some("empty Goal section");
+    }
+    if !section_has_authored_content(&normalized, "## Acceptance Criteria") {
+        return Some("empty Acceptance Criteria section");
+    }
+
+    match kind {
+        PromptSurfaceKind::IssuePrompt | PromptSurfaceKind::Stp => {
+            let issue_prompt_markers = [
+                "Bootstrap-generated local source prompt for issue #",
+                "Translate the GitHub issue into the canonical local STP/task-bundle flow and refine this prompt before execution as needed.",
+                "Generated by `pr.sh` bootstrap fallback.",
+                "This prompt was generated automatically because the canonical local issue prompt was missing.",
+            ];
+            if issue_prompt_markers
+                .iter()
+                .any(|marker| normalized.contains(marker))
+            {
+                return Some("bootstrap-generated issue prompt template text");
+            }
+        }
+        PromptSurfaceKind::Sip => {
+            let sip_markers = [
+                "- State whether this issue must ship code, docs, tests, demo artifacts, or a combination.",
+                "- Likely files, modules, docs, commands, schemas, or artifacts to modify or validate",
+                "- Required commands:",
+                "- Required tests:",
+                "- Required artifacts / traces:",
+                "- Required reviewer or demo checks:",
+                "- Required demo(s):",
+                "- Required proof surface(s):",
+                "- If no demo is required, say why:",
+                "- Determinism requirements:",
+                "- Security / privacy requirements:",
+                "- Resource limits (time/CPU/memory/network):",
+            ];
+            if normalized
+                .lines()
+                .map(str::trim)
+                .any(|line| sip_markers.contains(&line))
+            {
+                return Some("unrefined SIP template guidance");
+            }
+        }
+    }
+    None
+}
+
+fn section_has_authored_content(text: &str, header: &str) -> bool {
+    let mut in_section = false;
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if trimmed == header {
+            in_section = true;
+            continue;
+        }
+        if in_section {
+            if trimmed.starts_with("## ") {
+                return false;
+            }
+            if !trimmed.is_empty() {
+                return true;
+            }
+        }
+    }
+    false
 }
 
 fn field_line_value(path: &Path, label: &str) -> Result<String> {
@@ -2017,6 +2139,40 @@ mod tests {
                 fs::set_permissions(&dst, perms).expect("chmod");
             }
         }
+    }
+
+    fn write_authored_issue_prompt(repo: &Path, issue_ref: &IssueRef, title: &str) {
+        let path = issue_ref.issue_prompt_path(repo);
+        fs::create_dir_all(path.parent().expect("issue prompt parent")).expect("create body dir");
+        let content = format!(
+            "---\nissue_card_schema: adl.issue.v1\nwp: \"unassigned\"\nslug: \"{slug}\"\ntitle: \"{title}\"\nlabels:\n  - \"track:roadmap\"\n  - \"area:tools\"\n  - \"type:task\"\n  - \"version:v0.86\"\nissue_number: {issue}\nstatus: \"active\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"unplanned\"\nrequired_outcome_type:\n  - \"code\"\nrepo_inputs:\n  - \"https://github.com/example/repo/issues/{issue}\"\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Authored for test coverage.\"\npr_start:\n  enabled: true\n  slug: \"{slug}\"\n---\n\n# {title}\n\n## Summary\n\nAuthored prompt for lifecycle validation tests.\n\n## Goal\n\nMake the issue prompt authored enough that lifecycle commands should accept it.\n\n## Required Outcome\n\nThis test issue ships code only.\n\n## Deliverables\n\n- authored issue prompt content\n\n## Acceptance Criteria\n\n- lifecycle validation accepts this source prompt\n\n## Repo Inputs\n\n- https://github.com/example/repo/issues/{issue}\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- bootstrap placeholder content\n\n## Issue-Graph Notes\n\n- test fixture\n\n## Notes\n\n- generated inside unit tests\n\n## Tooling Notes\n\n- authored fixture, not bootstrap fallback\n",
+            slug = issue_ref.slug(),
+            title = title,
+            issue = issue_ref.issue_number()
+        );
+        fs::write(path, content).expect("write authored prompt");
+    }
+
+    fn write_authored_sip(
+        path: &Path,
+        issue_ref: &IssueRef,
+        title: &str,
+        branch: &str,
+        source_prompt: &Path,
+        repo_root: &Path,
+    ) {
+        let source_rel = path_relative_to_repo(repo_root, source_prompt);
+        let content = format!(
+            "# ADL Input Card\n\nTask ID: {task_id}\nRun ID: {task_id}\nVersion: v0.86\nTitle: {title}\nBranch: {branch}\n\nContext:\n- Issue: https://github.com/example/repo/issues/{issue}\n- PR: none\n- Source Issue Prompt: {source_rel}\n- Docs: none\n- Other: none\n\n## Agent Execution Rules\n- Do not run `pr start`; the branch and worktree already exist.\n- Only modify files required for the issue.\n\n## Prompt Spec\n```yaml\nprompt_schema: adl.v1\nactor:\n  role: execution_agent\n  name: codex\nmodel:\n  id: gpt-5-codex\n  determinism_mode: stable\ninputs:\n  sections:\n    - goal\n    - required_outcome\n    - acceptance_criteria\n    - inputs\n    - target_files_surfaces\n    - validation_plan\n    - demo_proof_requirements\n    - constraints_policies\n    - system_invariants\n    - reviewer_checklist\n    - non_goals_out_of_scope\n    - notes_risks\n    - instructions_to_agent\noutputs:\n  output_card: .adl/v0.86/tasks/{bundle}/sor.md\n  summary_style: concise_structured\nconstraints:\n  include_system_invariants: true\n  include_reviewer_checklist: true\n  disallow_secrets: true\n  disallow_absolute_host_paths: true\nautomation_hints:\n  source_issue_prompt_required: true\n  target_files_surfaces_recommended: true\n  validation_plan_required: true\n  required_outcome_type_supported: true\nreview_surfaces:\n  - card_review_checklist.v1\n  - card_review_output.v1\n  - card_reviewer_gpt.v1.1\n```\n\nExecution:\n- Agent: codex\n- Provider: openai\n- Tools allowed: git, cargo\n- Sandbox / approvals: workspace-write\n- Source issue-prompt slug: {slug}\n- Required outcome type: code\n- Demo required: false\n\n## Goal\n\nBlock lifecycle execution when prompts are still bootstrap stubs.\n\n## Required Outcome\n\n- This issue must ship code and tests.\n\n## Acceptance Criteria\n\n- lifecycle commands reject placeholder prompt content\n\n## Inputs\n- issue body\n- task bundle cards\n\n## Target Files / Surfaces\n- adl/src/cli/pr_cmd.rs\n- adl/tools/pr.sh\n\n## Validation Plan\n- Required commands: cargo test --manifest-path Cargo.toml pr_cmd -- --nocapture\n- Required tests: targeted lifecycle validation coverage\n- Required artifacts / traces: none\n- Required reviewer or demo checks: none\n\n## Demo / Proof Requirements\n- Required demo(s): none\n- Required proof surface(s): command failure behavior and tests\n- If no demo is required, say why: tooling guardrail only\n\n## Constraints / Policies\n- Determinism requirements: stable error messages for the same stub input\n- Security / privacy requirements: no secrets or absolute host paths\n- Resource limits (time/CPU/memory/network): standard local test limits\n\n## System Invariants (must remain true)\n- Deterministic execution for identical inputs.\n- No hidden state or undeclared side effects.\n- Artifacts remain replay-compatible with the replay runner.\n- Trace artifacts contain no secrets, prompts, tool arguments, or absolute host paths.\n- Artifact schema changes are explicit and approved.\n\n## Reviewer Checklist (machine-readable hints)\n```yaml\ndeterminism_required: true\nnetwork_allowed: false\nartifact_schema_change: false\nreplay_required: true\nsecurity_sensitive: true\nci_validation_required: true\n```\n\n## Card Automation Hooks (prompt generation)\n- Prompt source fields:\n  - Goal\n  - Required Outcome\n  - Acceptance Criteria\n- Generation requirements:\n  - Deterministic output for identical input card content\n  - Preserve traceability back to the source issue prompt\n\n## Non-goals / Out of scope\n- rewriting historical issues automatically\n\n## Notes / Risks\n- none\n\n## Instructions to the Agent\n- Read the linked source issue prompt before starting work.\n- Do the work described above.\n- Write results to the paired output card file.\n",
+            task_id = issue_ref.task_issue_id(),
+            title = title,
+            branch = branch,
+            issue = issue_ref.issue_number(),
+            source_rel = source_rel,
+            bundle = issue_ref.task_bundle_dir_name(),
+            slug = issue_ref.slug(),
+        );
+        fs::write(path, content).expect("write authored sip");
     }
 
     fn write_completed_sor_fixture(path: &Path, branch: &str) {
@@ -2770,6 +2926,8 @@ verification_summary:
 
         let prev_dir = env::current_dir().expect("cwd");
         env::set_current_dir(&repo).expect("chdir");
+        let issue_ref = IssueRef::new(1152, "v0.86", "rust-start-ready-test").expect("issue ref");
+        write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust start ready test");
 
         real_pr(&[
             "start".to_string(),
@@ -2784,6 +2942,28 @@ verification_summary:
         ])
         .expect("real_pr start");
 
+        let root_sip = issue_ref.task_bundle_input_path(&repo);
+        let worktree = issue_ref.default_worktree_path(&repo, None);
+        let wt_sip = issue_ref.task_bundle_input_path(&worktree);
+        let source_path = issue_ref.issue_prompt_path(&repo);
+        let branch = "codex/1152-rust-start-ready-test";
+        write_authored_sip(
+            &root_sip,
+            &issue_ref,
+            "[v0.86][tools] Rust start ready test",
+            branch,
+            &source_path,
+            &repo,
+        );
+        write_authored_sip(
+            &wt_sip,
+            &issue_ref,
+            "[v0.86][tools] Rust start ready test",
+            branch,
+            &issue_ref.issue_prompt_path(&worktree),
+            &worktree,
+        );
+
         let ready = real_pr(&[
             "ready".to_string(),
             "1152".to_string(),
@@ -2797,13 +2977,6 @@ verification_summary:
         env::set_current_dir(prev_dir).expect("restore cwd");
         ready.expect("real_pr ready");
 
-        let issue_ref = IssueRef::new(
-            1152,
-            "v0.86".to_string(),
-            "rust-start-ready-test".to_string(),
-        )
-        .expect("issue ref");
-        let worktree = issue_ref.default_worktree_path(&repo, None);
         assert!(worktree.is_dir());
         assert_eq!(
             run_capture(
@@ -2912,6 +3085,8 @@ verification_summary:
 
         let prev_dir = env::current_dir().expect("cwd");
         env::set_current_dir(&repo).expect("chdir");
+        let issue_ref = IssueRef::new(1198, "v0.86", "ready-worktree-cwd").expect("issue ref");
+        write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Ready worktree cwd");
         real_pr(&[
             "start".to_string(),
             "1198".to_string(),
@@ -2924,8 +3099,25 @@ verification_summary:
             "v0.86".to_string(),
         ])
         .expect("real_pr start");
-        let issue_ref = IssueRef::new(1198, "v0.86", "ready-worktree-cwd").expect("issue ref");
         let worktree = issue_ref.default_worktree_path(&repo, None);
+        let root_sip = issue_ref.task_bundle_input_path(&repo);
+        let wt_sip = issue_ref.task_bundle_input_path(&worktree);
+        write_authored_sip(
+            &root_sip,
+            &issue_ref,
+            "[v0.86][tools] Ready worktree cwd",
+            "codex/1198-ready-worktree-cwd",
+            &issue_ref.issue_prompt_path(&repo),
+            &repo,
+        );
+        write_authored_sip(
+            &wt_sip,
+            &issue_ref,
+            "[v0.86][tools] Ready worktree cwd",
+            "codex/1198-ready-worktree-cwd",
+            &issue_ref.issue_prompt_path(&worktree),
+            &worktree,
+        );
         env::set_current_dir(&worktree).expect("chdir worktree");
 
         let ready = real_pr(&[
@@ -3256,9 +3448,19 @@ verification_summary:
             IssueRef::new(1153, "v0.86".to_string(), "rust-finish-test".to_string()).expect("ref");
         let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
         fs::create_dir_all(&bundle_dir).expect("bundle dir");
+        let stp = issue_ref.task_bundle_stp_path(&repo);
         let input = issue_ref.task_bundle_input_path(&repo);
         let output = issue_ref.task_bundle_output_path(&repo);
-        fs::write(&input, "# ADL Input Card\n\ninput\n").expect("write input");
+        write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust finish test");
+        fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+        write_authored_sip(
+            &input,
+            &issue_ref,
+            "[v0.86][tools] Rust finish test",
+            "codex/1153-rust-finish-test",
+            &issue_ref.issue_prompt_path(&repo),
+            &repo,
+        );
         write_completed_sor_fixture(&output, "codex/1153-rust-finish-test");
 
         fs::write(
@@ -3419,9 +3621,19 @@ verification_summary:
         .expect("ref");
         let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
         fs::create_dir_all(&bundle_dir).expect("bundle dir");
+        let stp = issue_ref.task_bundle_stp_path(&repo);
         let input = issue_ref.task_bundle_input_path(&repo);
         let output = issue_ref.task_bundle_output_path(&repo);
-        fs::write(&input, "# ADL Input Card\n\ninput\n").expect("write input");
+        write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust finish test edit");
+        fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+        write_authored_sip(
+            &input,
+            &issue_ref,
+            "[v0.86][tools] Rust finish test edit",
+            "codex/1153-rust-finish-test-edit",
+            &issue_ref.issue_prompt_path(&repo),
+            &repo,
+        );
         write_completed_sor_fixture(&output, "codex/1153-rust-finish-test-edit");
 
         fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write change");
@@ -3787,6 +3999,42 @@ verification_summary:
             .status()
             .expect("git push")
             .success());
+        let issue_ref =
+            IssueRef::new(1153, "v0.86".to_string(), "rust-finish-test".to_string()).expect("ref");
+        let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+        fs::create_dir_all(&bundle_dir).expect("bundle dir");
+        let stp = issue_ref.task_bundle_stp_path(&repo);
+        let input = issue_ref.task_bundle_input_path(&repo);
+        let output = issue_ref.task_bundle_output_path(&repo);
+        write_authored_issue_prompt(&repo, &issue_ref, "Example");
+        fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+        write_authored_sip(
+            &input,
+            &issue_ref,
+            "Example",
+            "codex/1153-rust-finish-test",
+            &issue_ref.issue_prompt_path(&repo),
+            &repo,
+        );
+        write_completed_sor_fixture(&output, "codex/1153-rust-finish-test");
+        assert!(Command::new("git")
+            .args(["add", "-A"])
+            .current_dir(&repo)
+            .status()
+            .expect("git add")
+            .success());
+        assert!(Command::new("git")
+            .args(["commit", "-q", "-m", "seed finish bundle"])
+            .current_dir(&repo)
+            .status()
+            .expect("git commit")
+            .success());
+        assert!(Command::new("git")
+            .args(["push", "-q", "origin", "main"])
+            .current_dir(&repo)
+            .status()
+            .expect("git push")
+            .success());
 
         let prev_dir = env::current_dir().expect("cwd");
         env::set_current_dir(&repo).expect("chdir");
@@ -3816,6 +4064,10 @@ verification_summary:
             "1153".to_string(),
             "--title".to_string(),
             "Example".to_string(),
+            "--input".to_string(),
+            path_relative_to_repo(&repo, &input),
+            "--output".to_string(),
+            path_relative_to_repo(&repo, &output),
             "--no-checks".to_string(),
             "--no-open".to_string(),
         ])
@@ -3904,9 +4156,19 @@ verification_summary:
             IssueRef::new(1156, "v0.86".to_string(), "output-card-guard".to_string()).expect("ref");
         let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
         fs::create_dir_all(&bundle_dir).expect("bundle dir");
+        let stp = issue_ref.task_bundle_stp_path(&repo);
         let input = issue_ref.task_bundle_input_path(&repo);
         let output = issue_ref.task_bundle_output_path(&repo);
-        fs::write(&input, "# ADL Input Card\n\ninput\n").expect("write input");
+        write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Output card guard");
+        fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+        write_authored_sip(
+            &input,
+            &issue_ref,
+            "[v0.86][tools] Output card guard",
+            "codex/1156-output-card-guard",
+            &issue_ref.issue_prompt_path(&repo),
+            &repo,
+        );
         fs::write(
             &output,
             r#"# ADL Output Card
@@ -4404,6 +4666,9 @@ Status: NOT_STARTED
 
         let prev_dir = env::current_dir().expect("cwd");
         env::set_current_dir(&repo).expect("chdir");
+        let issue_ref =
+            IssueRef::new(1198, "v0.86", "ready-branch-placeholder").expect("issue ref");
+        write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Ready branch placeholder");
 
         real_pr(&[
             "start".to_string(),
@@ -4418,14 +4683,26 @@ Status: NOT_STARTED
         ])
         .expect("real_pr start");
 
-        let issue_ref = IssueRef::new(
-            1198,
-            "v0.86".to_string(),
-            "ready-branch-placeholder".to_string(),
-        )
-        .expect("issue ref");
         let root_output = issue_ref.task_bundle_output_path(&repo);
         let worktree = issue_ref.default_worktree_path(&repo, None);
+        let root_sip = issue_ref.task_bundle_input_path(&repo);
+        let wt_sip = issue_ref.task_bundle_input_path(&worktree);
+        write_authored_sip(
+            &root_sip,
+            &issue_ref,
+            "[v0.86][tools] Ready branch placeholder",
+            "codex/1198-ready-branch-placeholder",
+            &issue_ref.issue_prompt_path(&repo),
+            &repo,
+        );
+        write_authored_sip(
+            &wt_sip,
+            &issue_ref,
+            "[v0.86][tools] Ready branch placeholder",
+            "codex/1198-ready-branch-placeholder",
+            &issue_ref.issue_prompt_path(&worktree),
+            &worktree,
+        );
         let wt_output = issue_ref.task_bundle_output_path(&worktree);
         for path in [&root_output, &wt_output] {
             let text = fs::read_to_string(path).expect("sor");
@@ -4451,6 +4728,21 @@ Status: NOT_STARTED
 
         env::set_current_dir(prev_dir).expect("restore cwd");
         ready.expect("ready should accept placeholder output branch");
+    }
+
+    #[test]
+    fn bootstrap_stub_reason_detects_issue_prompt_and_sip_templates() {
+        let issue_prompt = "# x\n\n## Summary\n\nBootstrap-generated local source prompt for issue #1.\n\n## Goal\n\nTranslate the GitHub issue into the canonical local STP/task-bundle flow and refine this prompt before execution as needed.\n\n## Acceptance Criteria\n\n- something\n";
+        assert_eq!(
+            bootstrap_stub_reason(issue_prompt, PromptSurfaceKind::IssuePrompt),
+            Some("bootstrap-generated issue prompt template text")
+        );
+
+        let sip = "# ADL Input Card\n\n## Goal\n\nReal goal\n\n## Acceptance Criteria\n\n- one\n\n## Required Outcome\n\n- State whether this issue must ship code, docs, tests, demo artifacts, or a combination.\n";
+        assert_eq!(
+            bootstrap_stub_reason(sip, PromptSurfaceKind::Sip),
+            Some("unrefined SIP template guidance")
+        );
     }
 
     #[cfg(unix)]
