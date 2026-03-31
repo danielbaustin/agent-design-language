@@ -103,6 +103,51 @@ impl RunArtifactPaths {
         self.run_dir().join("learning")
     }
 
+    /// Canonical integrated control-path proof directory.
+    pub fn control_path_dir(&self) -> PathBuf {
+        self.run_dir().join("control_path")
+    }
+
+    pub fn control_path_signals_json(&self) -> PathBuf {
+        self.control_path_dir().join("signals.json")
+    }
+
+    pub fn control_path_candidate_selection_json(&self) -> PathBuf {
+        self.control_path_dir().join("candidate_selection.json")
+    }
+
+    pub fn control_path_arbitration_json(&self) -> PathBuf {
+        self.control_path_dir().join("arbitration.json")
+    }
+
+    pub fn control_path_execution_iterations_json(&self) -> PathBuf {
+        self.control_path_dir().join("execution_iterations.json")
+    }
+
+    pub fn control_path_evaluation_json(&self) -> PathBuf {
+        self.control_path_dir().join("evaluation.json")
+    }
+
+    pub fn control_path_reframing_json(&self) -> PathBuf {
+        self.control_path_dir().join("reframing.json")
+    }
+
+    pub fn control_path_memory_json(&self) -> PathBuf {
+        self.control_path_dir().join("memory.json")
+    }
+
+    pub fn control_path_freedom_gate_json(&self) -> PathBuf {
+        self.control_path_dir().join("freedom_gate.json")
+    }
+
+    pub fn control_path_final_result_json(&self) -> PathBuf {
+        self.control_path_dir().join("final_result.json")
+    }
+
+    pub fn control_path_summary_txt(&self) -> PathBuf {
+        self.control_path_dir().join("summary.txt")
+    }
+
     /// Learning scores artifact path.
     pub fn scores_json(&self) -> PathBuf {
         self.learning_dir().join("scores.json")
@@ -203,6 +248,10 @@ impl RunArtifactPaths {
             .with_context(|| "failed to create outputs artifact dir".to_string())?;
         std::fs::create_dir_all(self.logs_dir())
             .with_context(|| "failed to create logs artifact dir".to_string())?;
+        std::fs::create_dir_all(self.learning_dir())
+            .with_context(|| "failed to create learning artifact dir".to_string())?;
+        std::fs::create_dir_all(self.control_path_dir())
+            .with_context(|| "failed to create control_path artifact dir".to_string())?;
         std::fs::create_dir_all(self.overlays_dir())
             .with_context(|| "failed to create overlays artifact dir".to_string())?;
         std::fs::create_dir_all(self.meta_dir())
@@ -314,6 +363,7 @@ mod tests {
         assert!(paths.outputs_dir().is_dir());
         assert!(paths.logs_dir().is_dir());
         assert!(paths.learning_dir().is_dir());
+        assert!(paths.control_path_dir().is_dir());
         assert!(paths.overlays_dir().is_dir());
         assert!(paths.meta_dir().is_dir());
         assert!(paths.artifact_model_marker_json().is_file());

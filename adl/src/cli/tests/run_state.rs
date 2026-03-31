@@ -2,8 +2,9 @@ use super::*;
 use crate::cli::run_artifacts;
 use crate::cli::run_artifacts::{
     AgencySelectionArtifact, BoundedExecutionArtifact, CognitiveArbitrationArtifact,
-    CognitiveSignalsArtifact, EvaluationSignalsArtifact, FastSlowPathArtifact, FreedomGateArtifact,
-    MemoryReadArtifact, MemoryWriteArtifact,
+    CognitiveSignalsArtifact, ControlPathFinalResultArtifact, ControlPathMemoryArtifact,
+    EvaluationSignalsArtifact, FastSlowPathArtifact, FreedomGateArtifact, MemoryReadArtifact,
+    MemoryWriteArtifact,
 };
 
 #[test]
@@ -539,6 +540,43 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
         "record_failure_for_future_reframing_context"
     );
     assert_eq!(memory_write.logical_timestamp, "run:runtime-control");
+
+    let control_path_memory: ControlPathMemoryArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("control_path/memory.json"))
+            .expect("read control path memory artifact"),
+    )
+    .expect("parse control path memory artifact");
+    assert_eq!(control_path_memory.read.read_count, 1);
+    assert_eq!(
+        control_path_memory.write.write_reason,
+        "record_failure_for_future_reframing_context"
+    );
+
+    let control_path_final_result: ControlPathFinalResultArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("control_path/final_result.json"))
+            .expect("read control path final result artifact"),
+    )
+    .expect("parse control path final result artifact");
+    assert_eq!(control_path_final_result.route_selected, "slow");
+    assert_eq!(
+        control_path_final_result.selected_candidate,
+        "cand-custom-review"
+    );
+    assert_eq!(control_path_final_result.gate_decision, "defer");
+    assert_eq!(control_path_final_result.final_result, "defer");
+
+    let control_path_summary =
+        std::fs::read_to_string(run_dir.join("control_path/summary.txt")).expect("read summary");
+    assert!(
+        control_path_summary.contains(
+            "stage_order: signals -> candidate_selection -> arbitration -> execution -> evaluation -> reframing -> memory -> freedom_gate -> final_result"
+        ),
+        "summary was:\n{control_path_summary}"
+    );
+    assert!(
+        control_path_summary.contains("freedom_gate: decision=defer"),
+        "summary was:\n{control_path_summary}"
+    );
 
     let _ = std::fs::remove_dir_all(run_dir);
     let _ = std::fs::remove_dir_all(out_dir);
