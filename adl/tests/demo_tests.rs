@@ -24,6 +24,21 @@ fn run_demo_v086_freedom_gate(out_dir: &PathBuf) -> std::process::Output {
     Command::new(exe).arg(out_dir).output().unwrap()
 }
 
+fn run_demo_v086_fast_slow(out_dir: &PathBuf) -> std::process::Output {
+    let exe = env!("CARGO_BIN_EXE_demo_v086_fast_slow");
+    Command::new(exe).arg(out_dir).output().unwrap()
+}
+
+fn run_demo_v086_candidate_selection(out_dir: &PathBuf) -> std::process::Output {
+    let exe = env!("CARGO_BIN_EXE_demo_v086_candidate_selection");
+    Command::new(exe).arg(out_dir).output().unwrap()
+}
+
+fn run_demo_v086_review_surface(out_dir: &PathBuf) -> std::process::Output {
+    let exe = env!("CARGO_BIN_EXE_demo_v086_review_surface");
+    Command::new(exe).arg(out_dir).output().unwrap()
+}
+
 fn tmp_dir(prefix: &str) -> PathBuf {
     unique_test_temp_dir(prefix)
 }
@@ -271,6 +286,124 @@ fn demo_v086_freedom_gate_writes_allowed_and_blocked_cases() {
     assert!(
         summary.contains("blocked_case: refuse / policy_blocked / commitment_blocked=true"),
         "summary:\n{summary}"
+    );
+}
+
+#[test]
+fn demo_v086_fast_slow_writes_fast_and_slow_cases() {
+    let out_root = tmp_dir("demo-v086-fast-slow");
+    let out = run_demo_v086_fast_slow(&out_root);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let simple = fs::read_to_string(out_root.join("simple_case.json")).unwrap();
+    let complex = fs::read_to_string(out_root.join("complex_case.json")).unwrap();
+    let comparison = fs::read_to_string(out_root.join("comparison.txt")).unwrap();
+
+    assert!(
+        simple.contains("\"route_selected\": \"fast\""),
+        "simple:\n{simple}"
+    );
+    assert!(
+        simple.contains("\"selected_path\": \"fast_path\""),
+        "simple:\n{simple}"
+    );
+    assert!(
+        complex.contains("\"route_selected\": \"slow\""),
+        "complex:\n{complex}"
+    );
+    assert!(
+        complex.contains("\"selected_path\": \"slow_path\""),
+        "complex:\n{complex}"
+    );
+    assert!(
+        comparison.contains("simple_case: route=fast"),
+        "comparison:\n{comparison}"
+    );
+    assert!(
+        comparison.contains("complex_case: route=slow"),
+        "comparison:\n{comparison}"
+    );
+}
+
+#[test]
+fn demo_v086_candidate_selection_writes_candidates_and_selection() {
+    let out_root = tmp_dir("demo-v086-candidate-selection");
+    let out = run_demo_v086_candidate_selection(&out_root);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let candidates = fs::read_to_string(out_root.join("candidates.json")).unwrap();
+    let selection = fs::read_to_string(out_root.join("selection.json")).unwrap();
+    let summary = fs::read_to_string(out_root.join("summary.txt")).unwrap();
+
+    assert!(
+        candidates.contains("\"candidate_id\": \"cand-review-refine\""),
+        "candidates:\n{candidates}"
+    );
+    assert!(
+        candidates.contains("\"candidate_id\": \"cand-defer\""),
+        "candidates:\n{candidates}"
+    );
+    assert!(
+        selection.contains("\"selected_candidate_id\": \"cand-review-refine\""),
+        "selection:\n{selection}"
+    );
+    assert!(
+        summary.contains("candidate_count: 3"),
+        "summary:\n{summary}"
+    );
+}
+
+#[test]
+fn demo_v086_review_surface_writes_manifest_and_nested_demo_roots() {
+    let out_root = tmp_dir("demo-v086-review-surface");
+    let out = run_demo_v086_review_surface(&out_root);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let manifest = fs::read_to_string(out_root.join("demo_manifest.json")).unwrap();
+    let readme = fs::read_to_string(out_root.join("README.txt")).unwrap();
+    let index = fs::read_to_string(out_root.join("index.txt")).unwrap();
+
+    assert!(
+        out_root.join("d1_control_path/summary.txt").is_file(),
+        "missing D1 summary"
+    );
+    assert!(
+        out_root.join("d2_fast_slow/comparison.txt").is_file(),
+        "missing D2 comparison"
+    );
+    assert!(
+        out_root
+            .join("d3_candidate_selection/selection.json")
+            .is_file(),
+        "missing D3 selection"
+    );
+    assert!(
+        out_root.join("d4_freedom_gate/blocked_case.json").is_file(),
+        "missing D4 blocked case"
+    );
+    assert!(
+        manifest.contains("\"review_entry_demo\": \"D1\""),
+        "manifest:\n{manifest}"
+    );
+    assert!(
+        readme.contains("Primary entry point: d1_control_path/summary.txt"),
+        "readme:\n{readme}"
+    );
+    assert!(
+        index.contains("D4 -> d4_freedom_gate/blocked_case.json"),
+        "index:\n{index}"
     );
 }
 
