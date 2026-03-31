@@ -11,9 +11,10 @@ use super::pr_cmd_args::{
     parse_start_args,
 };
 #[cfg(test)]
-use super::pr_cmd_prompt::{infer_required_outcome_type, infer_wp_from_title, load_issue_prompt};
+use super::pr_cmd_prompt::load_issue_prompt;
 use super::pr_cmd_prompt::{
-    normalize_labels_csv, parse_issue_number_from_url, render_generated_issue_prompt,
+    infer_required_outcome_type, infer_wp_from_title, normalize_labels_csv,
+    parse_issue_number_from_url, render_generated_issue_body, render_generated_issue_prompt,
     resolve_issue_body, resolve_issue_prompt_path, resolve_issue_scope_and_slug_from_local_state,
     validate_issue_prompt_exists, version_from_labels_csv, version_from_title,
 };
@@ -85,14 +86,48 @@ fn real_pr_create(args: &[String]) -> Result<()> {
         &version,
     );
     let body = resolve_issue_body(parsed.body.clone(), parsed.body_file.as_deref())?;
-    let issue_url = gh_issue_create(&repo, &title, &body, &normalized_labels)?;
+    let create_body = if body.trim().is_empty() {
+        render_generated_issue_body(
+            &title,
+            infer_required_outcome_type_for_create(&normalized_labels, &title),
+            None,
+        )
+    } else {
+        body.clone()
+    };
+    let issue_url = gh_issue_create(&repo, &title, &create_body, &normalized_labels)?;
     let issue = parse_issue_number_from_url(&issue_url)?;
+    let issue_ref = IssueRef::new(issue, version.clone(), slug.clone())?;
+    let final_body = if body.trim().is_empty() {
+        render_generated_issue_body(
+            &title,
+            infer_required_outcome_type_for_create(&normalized_labels, &title),
+            Some(&issue_url),
+        )
+    } else {
+        body
+    };
+    let source_path = write_source_issue_prompt(
+        &repo_root,
+        &issue_ref,
+        &title,
+        &normalized_labels,
+        &issue_url,
+        &final_body,
+    )?;
+    if create_body != final_body {
+        gh_issue_edit_body(&repo, issue, &final_body)?;
+    }
 
     println!("• Created:");
     println!("  ISSUE_URL  {issue_url}");
     println!("  ISSUE_NUM  {issue}");
     println!("  VERSION    {version}");
     println!("  SLUG       {slug}");
+    println!(
+        "  SOURCE     {}",
+        path_relative_to_repo(&repo_root, &source_path)
+    );
     println!("  NEXT       adl/tools/pr.sh init {issue} --slug {slug} --version {version}");
     println!("  STATE      ISSUE_CREATED");
     eprintln!("• Done.");
@@ -1172,6 +1207,73 @@ fn gh_issue_create(repo: &str, title: &str, body: &str, labels_csv: &str) -> Res
     Ok(stdout)
 }
 
+fn gh_issue_edit_body(repo: &str, issue: u32, body: &str) -> Result<()> {
+    let body_file = write_temp_markdown("issue_body", body)?;
+    run_status(
+        "gh",
+        &[
+            "issue",
+            "edit",
+            &issue.to_string(),
+            "-R",
+            repo,
+            "--body-file",
+            path_str(&body_file)?,
+        ],
+    )
+    .with_context(|| format!("create: gh issue edit failed for issue #{issue}"))
+}
+
+fn write_source_issue_prompt(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    labels_csv: &str,
+    issue_url: &str,
+    body: &str,
+) -> Result<PathBuf> {
+    let source_path = issue_ref.issue_prompt_path(repo_root);
+    if let Some(parent) = source_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    let prompt = render_issue_prompt_from_body(
+        issue_ref.issue_number(),
+        issue_ref.slug(),
+        title,
+        labels_csv,
+        issue_url,
+        body,
+    );
+    fs::write(&source_path, prompt)?;
+    Ok(source_path)
+}
+
+fn render_issue_prompt_from_body(
+    issue: u32,
+    slug: &str,
+    title: &str,
+    labels_csv: &str,
+    _issue_url: &str,
+    body: &str,
+) -> String {
+    let wp = infer_wp_from_title(title);
+    let outcome_type = infer_required_outcome_type_for_create(labels_csv, title);
+    let label_lines = labels_csv
+        .split(',')
+        .map(str::trim)
+        .filter(|label| !label.is_empty())
+        .map(|label| format!("  - \"{label}\""))
+        .collect::<Vec<_>>()
+        .join("\n");
+    format!(
+        "---\nissue_card_schema: adl.issue.v1\nwp: \"{wp}\"\nslug: \"{slug}\"\ntitle: \"{title}\"\nlabels:\n{label_lines}\nissue_number: {issue}\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"{outcome_type}\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Bootstrap-generated from GitHub issue metadata because no canonical local issue prompt existed yet.\"\npr_start:\n  enabled: true\n  slug: \"{slug}\"\n---\n\n{body}\n"
+    )
+}
+
+fn infer_required_outcome_type_for_create(labels_csv: &str, title: &str) -> &'static str {
+    infer_required_outcome_type(labels_csv, title)
+}
+
 fn gh_issue_title(issue: u32, repo: &str) -> Result<Option<String>> {
     let out = run_capture_allow_failure(
         "gh",
@@ -2090,7 +2192,12 @@ verification_summary:
             "slug: \"v0-86-tools-implement-rust-owned-pr-init-and-pr-create-workflow-surfaces\""
         ));
         assert!(content.contains("required_outcome_type:\n  - \"code\""));
-        assert!(content.contains("Generated by `pr.sh` bootstrap fallback."));
+        assert!(content.contains(
+            "Bootstrap-generated issue body created from the requested title and labels"
+        ));
+        assert!(content.contains(
+            "This body should be concrete enough that `gh issue view` is usable immediately after creation."
+        ));
     }
 
     #[test]
@@ -2181,9 +2288,7 @@ verification_summary:
             resolve_issue_body(Some("custom body".to_string()), None).expect("body"),
             "custom body"
         );
-        assert!(resolve_issue_body(None, None)
-            .expect("default body")
-            .contains("## Goal"));
+        assert_eq!(resolve_issue_body(None, None).expect("default body"), "");
 
         let dir = unique_temp_dir("adl-pr-body-file");
         let path = dir.join("body.md");
@@ -2474,12 +2579,14 @@ verification_summary:
         let bin_dir = repo.join("bin");
         fs::create_dir_all(&bin_dir).expect("bin dir");
         let gh_log = repo.join("gh.log");
+        let issue_body_log = repo.join("issue_body.log");
         let gh_path = bin_dir.join("gh");
         write_executable(
             &gh_path,
             &format!(
-                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  printf 'https://github.com/example/repo/issues/1202\\n'\n  exit 0\nfi\nexit 1\n",
-                gh_log.display()
+                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  printf 'https://github.com/example/repo/issues/1202\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+                gh_log.display(),
+                issue_body_log.display()
             ),
         );
 
@@ -2514,10 +2621,76 @@ verification_summary:
         assert!(gh_calls.contains("issue create"));
         assert!(gh_calls.contains("--label"));
         assert!(gh_calls.contains("version:v0.86"));
+        let source = repo.join(".adl/v0.86/bodies/issue-1202-v0-86-tools-simplified-init-path.md");
+        assert!(
+            source.is_file(),
+            "create should write the local source prompt"
+        );
+        let prompt = fs::read_to_string(&source).expect("read source prompt");
+        assert!(prompt.contains("issue_number: 1202"));
+        assert!(prompt.contains("## Goal\n- simplify init"));
         assert!(
             !repo.join(".adl/v0.86/tasks").exists(),
             "create should not bootstrap the local task bundle"
         );
+        let issue_body = fs::read_to_string(&issue_body_log).expect("issue body");
+        assert_eq!(issue_body, "## Goal\n- simplify init");
+    }
+
+    #[test]
+    fn real_pr_create_generates_concrete_body_when_none_is_supplied() {
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+        let repo = unique_temp_dir("adl-pr-real-create-generated-body");
+        init_git_repo(&repo);
+        copy_bootstrap_support_files(&repo);
+
+        let bin_dir = repo.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        let issue_body_log = repo.join("issue_body.log");
+        let gh_path = bin_dir.join("gh");
+        write_executable(
+            &gh_path,
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  printf 'https://github.com/example/repo/issues/1203\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+                issue_body_log.display()
+            ),
+        );
+
+        let old_path = env::var("PATH").unwrap_or_default();
+        let prev_dir = env::current_dir().expect("cwd");
+        unsafe {
+            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        }
+        env::set_current_dir(&repo).expect("chdir");
+
+        let result = real_pr(&[
+            "create".to_string(),
+            "--title".to_string(),
+            "[v0.86][tools] Generated issue body".to_string(),
+            "--slug".to_string(),
+            "v0-86-tools-generated-issue-body".to_string(),
+            "--labels".to_string(),
+            "track:roadmap,type:task,area:tools".to_string(),
+            "--version".to_string(),
+            "v0.86".to_string(),
+        ]);
+
+        env::set_current_dir(prev_dir).expect("restore cwd");
+        unsafe {
+            env::set_var("PATH", old_path);
+        }
+        result.expect("real_pr create");
+
+        let issue_body = fs::read_to_string(&issue_body_log).expect("issue body");
+        assert!(issue_body.contains("## Goal"));
+        assert!(issue_body.contains("## Acceptance Criteria"));
+        assert!(!issue_body.contains("## Goal\n-"));
+        assert!(!issue_body.contains("## Acceptance Criteria\n-"));
+        let source = repo.join(".adl/v0.86/bodies/issue-1203-v0-86-tools-generated-issue-body.md");
+        let prompt = fs::read_to_string(&source).expect("read source prompt");
+        assert!(prompt.contains("issue_number: 1203"));
+        assert!(prompt.contains("## Goal"));
+        assert!(!prompt.contains("## Goal\n-"));
     }
 
     #[test]
