@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 use anyhow::{anyhow, Context, Result};
 
 use crate::execute;
+use crate::freedom_gate;
 use crate::godel;
 use crate::prompt;
 use crate::trace::Trace;
@@ -442,7 +443,7 @@ fn custom_v086_control_path_runtime() -> execute::RuntimeControlState {
     }
 }
 
-fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
+pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
     let runtime = custom_v086_control_path_runtime();
     let mut artifacts = Vec::new();
     let generated_from = serde_json::json!({
@@ -665,6 +666,310 @@ fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         &serde_json::to_string_pretty(&final_result)?,
     )?);
     artifacts.push(write_file(out_dir, "summary.txt", &summary)?);
+
+    Ok(artifacts)
+}
+
+pub fn write_v086_fast_slow_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let mut artifacts = Vec::new();
+    let simple_arbitration = execute::CognitiveArbitrationState {
+        route_selected: "fast".to_string(),
+        reasoning_mode: "quick_commit".to_string(),
+        confidence: "high".to_string(),
+        risk_class: "low".to_string(),
+        applied_constraints: vec!["bounded_latency_budget".to_string()],
+        cost_latency_assumption: "prefer minimal deliberation for low-risk local tasks".to_string(),
+        route_reason: "simple bounded summary task remains on the fast path".to_string(),
+    };
+    let simple_path = execute::FastSlowPathState {
+        selected_path: "fast_path".to_string(),
+        path_family: "fast".to_string(),
+        runtime_branch_taken: "fast_direct_execution_branch".to_string(),
+        handoff_state: "direct_commit".to_string(),
+        candidate_strategy: "select highest-confidence direct execution candidate".to_string(),
+        review_depth: "minimal".to_string(),
+        execution_profile: "single_pass_bounded_execution".to_string(),
+        termination_expectation: "terminate_after_direct_execution".to_string(),
+        path_difference_summary: "fast path favors immediate bounded execution with minimal review"
+            .to_string(),
+    };
+    let complex_arbitration = execute::CognitiveArbitrationState {
+        route_selected: "slow".to_string(),
+        reasoning_mode: "review_heavy".to_string(),
+        confidence: "guarded".to_string(),
+        risk_class: "high".to_string(),
+        applied_constraints: vec![
+            "ambiguity_requires_review".to_string(),
+            "contradiction_risk_present".to_string(),
+        ],
+        cost_latency_assumption:
+            "spend bounded additional cognition when ambiguity and contradiction risk are present"
+                .to_string(),
+        route_reason: "complex bounded planning task requires review-first slow routing"
+            .to_string(),
+    };
+    let complex_path = execute::FastSlowPathState {
+        selected_path: "slow_path".to_string(),
+        path_family: "slow".to_string(),
+        runtime_branch_taken: "slow_review_refine_branch".to_string(),
+        handoff_state: "review_handoff".to_string(),
+        candidate_strategy: "compare multiple candidates before commitment".to_string(),
+        review_depth: "verification_required".to_string(),
+        execution_profile: "review_and_refine_before_execution".to_string(),
+        termination_expectation: "terminate_after_review_cycle_or_gate_decision".to_string(),
+        path_difference_summary:
+            "slow path introduces explicit review and refinement before execution".to_string(),
+    };
+
+    let simple_case = serde_json::json!({
+        "scenario": "simple_case",
+        "task": "Summarize one bounded local artifact update",
+        "arbitration": simple_arbitration,
+        "fast_slow_path": simple_path,
+    });
+    let complex_case = serde_json::json!({
+        "scenario": "complex_case",
+        "task": "Diagnose contradiction in a high-risk bounded planning request",
+        "arbitration": complex_arbitration,
+        "fast_slow_path": complex_path,
+    });
+    let comparison = [
+        "Fast vs Slow routing demo comparison",
+        "simple_case: route=fast selected_path=fast_path branch=fast_direct_execution_branch",
+        "complex_case: route=slow selected_path=slow_path branch=slow_review_refine_branch",
+        "difference: the complex case introduces explicit review depth and refinement before commitment",
+    ]
+    .join("\n");
+
+    artifacts.push(write_file(
+        out_dir,
+        "simple_case.json",
+        &serde_json::to_string_pretty(&simple_case)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "complex_case.json",
+        &serde_json::to_string_pretty(&complex_case)?,
+    )?);
+    artifacts.push(write_file(out_dir, "comparison.txt", &comparison)?);
+
+    Ok(artifacts)
+}
+
+pub fn write_v086_candidate_selection_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let mut artifacts = Vec::new();
+    let candidates = vec![
+        execute::AgencyCandidateRecord {
+            candidate_id: "cand-direct-execute".to_string(),
+            candidate_kind: "direct_execution".to_string(),
+            bounded_action: "Apply the bounded update immediately".to_string(),
+            review_requirement: "none".to_string(),
+            execution_priority: 2,
+            rationale: "Fastest path, but lower resilience under contradiction".to_string(),
+        },
+        execute::AgencyCandidateRecord {
+            candidate_id: "cand-review-refine".to_string(),
+            candidate_kind: "review_and_refine".to_string(),
+            bounded_action: "Review and refine before execution".to_string(),
+            review_requirement: "verification_required".to_string(),
+            execution_priority: 1,
+            rationale: "Preferred bounded candidate when contradiction risk is present".to_string(),
+        },
+        execute::AgencyCandidateRecord {
+            candidate_id: "cand-defer".to_string(),
+            candidate_kind: "defer".to_string(),
+            bounded_action: "Defer and request clarification".to_string(),
+            review_requirement: "none".to_string(),
+            execution_priority: 3,
+            rationale: "Safest fallback if the frame remains inadequate".to_string(),
+        },
+    ];
+    let candidates_artifact = serde_json::json!({
+        "agency_selection_version": 1,
+        "run_id": "demo-v086-candidate-selection",
+        "candidate_generation_basis": "bounded local planning scenario with contradiction risk",
+        "selection_mode": "slow_candidate_comparison",
+        "candidate_set": candidates,
+    });
+    let selection_artifact = serde_json::json!({
+        "run_id": "demo-v086-candidate-selection",
+        "selected_candidate_id": "cand-review-refine",
+        "selected_candidate_kind": "review_and_refine",
+        "selected_candidate_action": "Review and refine before execution",
+        "selected_candidate_reason": "candidate preserves bounded progress while handling contradiction explicitly",
+        "deterministic_selection_rule": "prefer lower-risk constrained candidates when contradiction is present",
+    });
+    let summary = [
+        "Candidate selection demo summary",
+        "candidate_count: 3",
+        "selected_candidate_id: cand-review-refine",
+        "selected_candidate_kind: review_and_refine",
+        "selection_reason: candidate preserves bounded progress while handling contradiction explicitly",
+    ]
+    .join("\n");
+
+    artifacts.push(write_file(
+        out_dir,
+        "candidates.json",
+        &serde_json::to_string_pretty(&candidates_artifact)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "selection.json",
+        &serde_json::to_string_pretty(&selection_artifact)?,
+    )?);
+    artifacts.push(write_file(out_dir, "summary.txt", &summary)?);
+
+    Ok(artifacts)
+}
+
+pub fn write_v086_freedom_gate_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let mut artifacts = Vec::new();
+    let allowed = freedom_gate::FreedomGateInput {
+        candidate_id: "cand-allow-execute".to_string(),
+        candidate_action: "execute bounded documentation update".to_string(),
+        candidate_rationale: "low-risk bounded action with sufficient context".to_string(),
+        risk_class: "low".to_string(),
+        policy_context: freedom_gate::FreedomGatePolicyContext {
+            route_selected: "fast".to_string(),
+            selected_candidate_kind: "direct_execution".to_string(),
+            requires_review: false,
+            policy_blocked: false,
+        },
+        evaluation_signals: freedom_gate::FreedomGateEvaluationSignals {
+            progress_signal: "steady_progress".to_string(),
+            contradiction_signal: "none".to_string(),
+            failure_signal: "none".to_string(),
+            termination_reason: "success".to_string(),
+        },
+        frame_state: "complete_run".to_string(),
+    };
+    let blocked = freedom_gate::FreedomGateInput {
+        candidate_id: "cand-block-secret-write".to_string(),
+        candidate_action: "exfiltrate secrets to external host".to_string(),
+        candidate_rationale: "high-energy action intentionally blocked for demo review".to_string(),
+        risk_class: "high".to_string(),
+        policy_context: freedom_gate::FreedomGatePolicyContext {
+            route_selected: "slow".to_string(),
+            selected_candidate_kind: "direct_execution".to_string(),
+            requires_review: false,
+            policy_blocked: true,
+        },
+        evaluation_signals: freedom_gate::FreedomGateEvaluationSignals {
+            progress_signal: "guarded_progress".to_string(),
+            contradiction_signal: "present".to_string(),
+            failure_signal: "none".to_string(),
+            termination_reason: "contradiction_detected".to_string(),
+        },
+        frame_state: "complete_run".to_string(),
+    };
+    let allowed_case = serde_json::json!({
+        "scenario": "allowed_case",
+        "input": allowed,
+        "decision": freedom_gate::evaluate_freedom_gate(&allowed),
+    });
+    let blocked_case = serde_json::json!({
+        "scenario": "blocked_case",
+        "input": blocked,
+        "decision": freedom_gate::evaluate_freedom_gate(&blocked),
+    });
+    let summary = [
+        "Freedom Gate demo summary",
+        "allowed_case: allow / policy_allowed / commitment_blocked=false",
+        "blocked_case: refuse / policy_blocked / commitment_blocked=true",
+    ]
+    .join("\n");
+
+    artifacts.push(write_file(
+        out_dir,
+        "allowed_case.json",
+        &serde_json::to_string_pretty(&allowed_case)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "blocked_case.json",
+        &serde_json::to_string_pretty(&blocked_case)?,
+    )?);
+    artifacts.push(write_file(out_dir, "summary.txt", &summary)?);
+
+    Ok(artifacts)
+}
+
+pub fn write_v086_review_surface_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let mut artifacts = Vec::new();
+    let d1_dir = out_dir.join("d1_control_path");
+    let d2_dir = out_dir.join("d2_fast_slow");
+    let d3_dir = out_dir.join("d3_candidate_selection");
+    let d4_dir = out_dir.join("d4_freedom_gate");
+
+    artifacts.extend(write_v086_control_path_demo(&d1_dir)?);
+    artifacts.extend(write_v086_fast_slow_demo(&d2_dir)?);
+    artifacts.extend(write_v086_candidate_selection_demo(&d3_dir)?);
+    artifacts.extend(write_v086_freedom_gate_demo(&d4_dir)?);
+
+    let manifest = serde_json::json!({
+        "schema_version": "v086_demo_manifest.v1",
+        "review_entry_demo": "D1",
+        "demos": [
+            {
+                "demo_id": "D1",
+                "title": "Canonical Bounded Cognitive Path",
+                "command": "./adl/tools/demo_v086_control_path.sh",
+                "artifact_root": "d1_control_path",
+                "primary_proof_surface": "d1_control_path/summary.txt",
+            },
+            {
+                "demo_id": "D2",
+                "title": "Fast vs Slow Routing",
+                "command": "./adl/tools/demo_v086_fast_slow.sh",
+                "artifact_root": "d2_fast_slow",
+                "primary_proof_surface": "d2_fast_slow/comparison.txt",
+            },
+            {
+                "demo_id": "D3",
+                "title": "Agency / Candidate Selection",
+                "command": "./adl/tools/demo_v086_candidate_selection.sh",
+                "artifact_root": "d3_candidate_selection",
+                "primary_proof_surface": "d3_candidate_selection/selection.json",
+            },
+            {
+                "demo_id": "D4",
+                "title": "Freedom Gate Enforcement",
+                "command": "./adl/tools/demo_v086_freedom_gate.sh",
+                "artifact_root": "d4_freedom_gate",
+                "primary_proof_surface": "d4_freedom_gate/blocked_case.json",
+            }
+        ]
+    });
+    let readme = [
+        "v0.86 Review Surface Walkthrough",
+        "",
+        "Run D1 first if you only inspect one proof surface.",
+        "Primary entry point: d1_control_path/summary.txt",
+        "",
+        "Other primary proof surfaces:",
+        "- D2: d2_fast_slow/comparison.txt",
+        "- D3: d3_candidate_selection/selection.json",
+        "- D4: d4_freedom_gate/blocked_case.json",
+        "",
+        "Use docs/milestones/v0.86/DEMO_MATRIX_v0.86.md for the full review contract.",
+    ]
+    .join("\n");
+    let index = [
+        "D1 -> d1_control_path/summary.txt",
+        "D2 -> d2_fast_slow/comparison.txt",
+        "D3 -> d3_candidate_selection/selection.json",
+        "D4 -> d4_freedom_gate/blocked_case.json",
+    ]
+    .join("\n");
+
+    artifacts.push(write_file(
+        out_dir,
+        "demo_manifest.json",
+        &serde_json::to_string_pretty(&manifest)?,
+    )?);
+    artifacts.push(write_file(out_dir, "README.txt", &readme)?);
+    artifacts.push(write_file(out_dir, "index.txt", &index)?);
 
     Ok(artifacts)
 }

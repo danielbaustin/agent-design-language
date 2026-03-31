@@ -115,7 +115,19 @@ Prove that the system can refuse or defer execution.
 
 ---
 
-These four demos are the complete bounded v0.86 demo set. Example domains may include energy-use reduction, but that is not a required milestone-wide framing. Any future demos involving iteration, reframing, persistence, or convergence belong to later milestones and must not be treated as required evidence for v0.86.
+### Demo 5 — Review Surface Walkthrough
+
+**Purpose:**
+Give reviewers one obvious local entry point for the full v0.86 bounded demo set.
+
+**Must include:**
+- one command that emits a manifest or index for D1-D4
+- stable artifact locations for the bounded demo set
+- one explicit “inspect this first” proof surface for milestone review
+
+---
+
+These five demos are the complete bounded v0.86 demo set. Example domains may include energy-use reduction, but that is not a required milestone-wide framing. Any future demos involving iteration, reframing, persistence, or convergence belong to later milestones and must not be treated as required evidence for v0.86.
 
 ---
 
@@ -131,6 +143,10 @@ Each demo must provide:
 Each demo must produce:
 - structured artifact output (JSON or equivalent)
 - human-readable summary
+
+The review-surface demo must additionally produce:
+- one stable demo manifest or index surface
+- one obvious reviewer entry path for the full bounded demo set
 
 ---
 
@@ -170,6 +186,7 @@ The demo program is successful if:
 - all demos run locally without manual intervention
 - artifacts are complete and inspectable
 - different control behaviors are observable (not cosmetic)
+- the review surface makes it obvious what a reviewer should run and inspect first
 - small models produce structured, controlled behavior
 
 The demo program fails if:

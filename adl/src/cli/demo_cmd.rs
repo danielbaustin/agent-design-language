@@ -40,13 +40,14 @@ pub(crate) fn real_demo(args: &[String]) -> Result<()> {
     if !demo::known_demo(demo_name) {
         eprintln!("unknown demo: {demo_name}");
         eprintln!(
-            "available demos: {}, {}, {}, {}, {}, {}",
+            "available demos: {}, {}, {}, {}, {}, {}, {}",
             demo::DEMO_A_SAY_MCP,
             demo::DEMO_B_ONE_COMMAND,
             demo::DEMO_C_GODEL_RUNTIME,
             demo::DEMO_D_GODEL_OBSMEM_LOOP,
             demo::DEMO_E_MULTI_AGENT_CARD_PIPELINE,
-            demo::DEMO_F_OBSMEM_RETRIEVAL
+            demo::DEMO_F_OBSMEM_RETRIEVAL,
+            demo::DEMO_G_V086_CONTROL_PATH
         );
         std::process::exit(2);
     }
