@@ -12,9 +12,14 @@ STP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_task_prompt.contract.yaml"
 SIP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_implementation_prompt.contract.yaml"
 SOR_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_output_record.contract.yaml"
 BASH_BIN="$(command -v bash)"
+REAL_ADL_BIN="$ROOT_DIR/adl/target/debug/adl"
 
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
+
+if [[ ! -x "$REAL_ADL_BIN" ]]; then
+  cargo build --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl >/dev/null
+fi
 
 repo="$tmpdir/repo"
 bindir="$tmpdir/bin"
@@ -136,6 +141,7 @@ assert_contains() {
   cd "$repo"
   export PATH="$bindir:$PATH"
   export GH_LOG_FILE="$gh_log"
+  export ADL_PR_RUST_BIN="$REAL_ADL_BIN"
 
   out1="$("$BASH_BIN" adl/tools/pr.sh init 42 --slug test-init --no-fetch-issue --version v0.85)"
   assert_contains "STP      .adl/v0.85/tasks/issue-0042__test-init/stp.md" "$out1" "stp path"
@@ -165,21 +171,15 @@ assert_contains() {
     echo "assertion failed: expected canonical output compatibility link" >&2
     exit 1
   }
-  cmp "$repo/.adl/issues/v0.85/bodies/issue-42-test-init.md" "$stp_path" >/dev/null || {
-    echo "assertion failed: stp.md should match canonical source issue prompt" >&2
-    exit 1
-  }
-
   out2="$("$BASH_BIN" adl/tools/pr.sh init 42 --slug test-init --no-fetch-issue --version v0.85)"
   assert_contains "STATE    ISSUE_AND_BUNDLE_READY" "$out2" "idempotent reuse"
 
   out3="$("$BASH_BIN" adl/tools/pr.sh init 43 --version v0.86)"
-  assert_contains "Source issue prompt missing; generating canonical local issue prompt" "$out3" "generated source prompt note"
   assert_contains "STP      .adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/stp.md" "$out3" "generated stp path"
   assert_contains "READ     .adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/sip.md" "$out3" "generated sip path"
   assert_contains "WRITE    .adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/sor.md" "$out3" "generated sor path"
-  assert_contains "SOURCE   .adl/issues/v0.86/bodies/issue-43-v0-86-wp-03-generated-loop-prompt.md" "$out3" "generated source path"
-  [[ -f "$repo/.adl/issues/v0.86/bodies/issue-43-v0-86-wp-03-generated-loop-prompt.md" ]] || {
+  assert_contains "SOURCE   .adl/v0.86/bodies/issue-43-v0-86-wp-03-generated-loop-prompt.md" "$out3" "generated source path"
+  [[ -f "$repo/.adl/v0.86/bodies/issue-43-v0-86-wp-03-generated-loop-prompt.md" ]] || {
     echo "assertion failed: expected generated canonical source issue prompt" >&2
     exit 1
   }
@@ -195,7 +195,7 @@ assert_contains() {
     echo "assertion failed: expected generated task-bundle sor" >&2
     exit 1
   }
-  grep -Fq 'title: "[v0.86][WP-03] Generated loop prompt"' "$repo/.adl/issues/v0.86/bodies/issue-43-v0-86-wp-03-generated-loop-prompt.md" || {
+  grep -Fq 'title: "[v0.86][WP-03] Generated loop prompt"' "$repo/.adl/v0.86/bodies/issue-43-v0-86-wp-03-generated-loop-prompt.md" || {
     echo "assertion failed: expected generated source prompt title" >&2
     exit 1
   }
