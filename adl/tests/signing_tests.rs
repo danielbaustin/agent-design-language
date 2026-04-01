@@ -341,7 +341,7 @@ fn enforce_profile_rejects_disallowed_key_source() {
 }
 
 #[test]
-fn verify_doc_with_profile_rejects_unsigned_when_profile_allows_unsigned_without_sig_material() {
+fn verify_doc_with_profile_allows_unsigned_when_profile_allows_unsigned_without_sig_material() {
     let base = tmp_dir("verify-unsigned-no-sig");
     let unsigned = write_unsigned_fixture(&base);
     let raw = fs::read_to_string(&unsigned).expect("read unsigned doc");
@@ -350,9 +350,8 @@ fn verify_doc_with_profile_rejects_unsigned_when_profile_allows_unsigned_without
         require_signature: false,
         ..VerificationProfile::default()
     };
-    let err = verify_doc_with_profile(&doc, None, &profile).expect_err("unsigned must fail here");
-    assert_eq!(err.kind, VerificationErrorKind::PolicyViolation);
-    assert_eq!(err.code, "SIGN_POLICY_UNSIGNED_REQUIRED");
+    verify_doc_with_profile(&doc, None, &profile)
+        .expect("unsigned document should be allowed when signature is optional");
 }
 
 #[test]
