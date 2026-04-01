@@ -53,6 +53,7 @@ bash ./adl/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>"
 
 - Root project entrypoint: `../../README.md`
 - Runtime/CLI usage: `../README.md`
-- v0.6 milestone docs: `../../docs/milestones/v0.6/`
+- Active milestone docs: `../../docs/milestones/v0.86/`
+- Documentation index: `../../docs/README.md`
 - ADRs: `../../docs/adr/`
 - ADL spec entrypoint: `../../adl-spec/README.md`

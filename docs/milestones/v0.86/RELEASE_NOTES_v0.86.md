@@ -125,8 +125,9 @@ The release is validated by local demos and artifact traces that prove the syste
 
 ## Validation Notes
 
-- Milestone validated via local demo program (`DEMO_MATRIX_v0.86.md`)
+- Local milestone proof surfaces are defined and validated via the demo program in `DEMO_MATRIX_v0.86.md`
 - Primary proof surface is the canonical bounded cognitive path demo (D1)
+- D1-D5 are the canonical reviewer-facing demo set for the milestone tail
 - Validation requires inspection of artifacts, not just command success
 - All major cognitive stages (signals, arbitration, execution, evaluation, reframing, memory, gate) are observable in artifacts
 

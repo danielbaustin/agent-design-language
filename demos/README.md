@@ -10,7 +10,13 @@ If you want the fastest successful demo run:
 cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-fork-join-seq-run.adl.yaml --print-plan
 ```
 
-If you want the active v0.8 flagship demo surface:
+If you want the current `v0.86` milestone review surface:
+
+```bash
+./adl/tools/demo_v086_review_surface.sh
+```
+
+If you want the historical `v0.8` flagship demo surface:
 
 ```bash
 cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet
@@ -24,6 +30,24 @@ cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet
 - Spec-only example artifacts live in `adl-spec/examples/` and are not the main starting point for runnable demos.
 
 ## Recommended Paths
+
+### v0.86 demo program
+
+- `../docs/milestones/v0.86/DEMO_MATRIX_v0.86.md`
+- `../docs/milestones/v0.86/features/LOCAL_AGENT_DEMOS.md`
+
+Use `../docs/milestones/v0.86/DEMO_MATRIX_v0.86.md` for the canonical milestone review order and proof-surface contract.
+
+Use `./adl/tools/demo_v086_review_surface.sh` for the one-command reviewer entry point. It generates:
+- `artifacts/v086/review_surface/demo_manifest.json`
+- `artifacts/v086/review_surface/README.txt`
+- `artifacts/v086/review_surface/index.txt`
+
+Use `./adl/tools/demo_v086_control_path.sh` for the primary bounded cognitive-path proof surface. It generates:
+- `artifacts/v086/control_path/demo-g-v086-control-path/summary.txt`
+- `artifacts/v086/control_path/demo-g-v086-control-path/arbitration.json`
+- `artifacts/v086/control_path/demo-g-v086-control-path/freedom_gate.json`
+- `artifacts/v086/control_path/demo-g-v086-control-path/trace.jsonl`
 
 ### v0.85 demo program
 
@@ -56,7 +80,7 @@ path. For a one-command review flow, run
 - `adl/examples/v0-3-on-error-retry.adl.yaml`
 - `adl/examples/v0-5-primitives-minimal.adl.yaml`
 
-### Active v0.8 demos
+### Historical v0.8 demos
 
 - `rust-transpiler/README.md`
 - `v0.8-bounded-critical-demos.md`

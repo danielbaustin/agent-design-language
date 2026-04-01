@@ -57,6 +57,7 @@ Additional environment / fixture requirements:
 - Rust/Cargo toolchain is installed locally.
 - Demo scripts must be run from the repository root or from a checkout where `adl/tools/` is available.
 - Artifact output paths must be stable and documented by the scripts.
+- `artifacts/v086/` is a generated proof-surface root. It is created by the demo commands below and should not be treated as a preexisting checked-in directory.
 
 ## Related Docs
 - Design contract: `docs/milestones/v0.86/DESIGN_v0.86.md`
