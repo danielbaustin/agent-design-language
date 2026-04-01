@@ -3,7 +3,7 @@
 ## Metadata
 - Product: `Agent Design Language (ADL)`
 - Version: `0.86`
-- Release date: `Pending release gate`
+- Release date: `Pending manual release ceremony`
 - Tag: `v0.86`
 
 ---
@@ -17,6 +17,8 @@ This milestone establishes a coherent, inspectable execution model where agent b
 signals → candidate selection → arbitration → reasoning → bounded execution → evaluation → reframing → memory participation → Freedom Gate
 
 The release is validated by local demos and artifact traces that prove the system executes end-to-end through a canonical bounded cognitive path.
+
+This release-notes file is finalized for manual ceremony use; the remaining manual steps are tag creation and GitHub release drafting/publishing.
 
 ---
 
