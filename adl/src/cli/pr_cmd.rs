@@ -211,6 +211,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
 
     let root_stp = ensure_task_bundle_stp(&repo_root, &issue_ref, &source_path)?;
     let worktree_source = ensure_local_issue_prompt_copy(&worktree_path, &issue_ref, &source_path)?;
+    mirror_adl_templates_into_worktree(&repo_root, &worktree_path)?;
     let worktree_stp = ensure_task_bundle_stp(&worktree_path, &issue_ref, &worktree_source)?;
     validate_authored_prompt_surface("start", &root_stp, PromptSurfaceKind::Stp)?;
     validate_authored_prompt_surface("start", &worktree_stp, PromptSurfaceKind::Stp)?;
@@ -1539,6 +1540,34 @@ fn ensure_local_issue_prompt_copy(
         fs::copy(canonical_source_path, &local_source_path)?;
     }
     Ok(local_source_path)
+}
+
+fn mirror_adl_templates_into_worktree(repo_root: &Path, worktree_root: &Path) -> Result<()> {
+    let source_templates = repo_root.join(".adl/templates");
+    if !source_templates.is_dir() {
+        return Ok(());
+    }
+    let target_templates = worktree_root.join(".adl/templates");
+    copy_directory_contents(&source_templates, &target_templates)
+}
+
+fn copy_directory_contents(source: &Path, target: &Path) -> Result<()> {
+    fs::create_dir_all(target)?;
+    for entry in fs::read_dir(source)? {
+        let entry = entry?;
+        let source_path = entry.path();
+        let target_path = target.join(entry.file_name());
+        let file_type = entry.file_type()?;
+        if file_type.is_dir() {
+            copy_directory_contents(&source_path, &target_path)?;
+        } else if file_type.is_file() {
+            if let Some(parent) = target_path.parent() {
+                fs::create_dir_all(parent)?;
+            }
+            fs::copy(&source_path, &target_path)?;
+        }
+    }
+    Ok(())
 }
 
 fn ensure_bootstrap_cards(
