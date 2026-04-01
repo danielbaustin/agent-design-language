@@ -95,6 +95,40 @@ pub(crate) fn sanitize_pause_adl_path(adl_path: &Path) -> String {
     "external:/<unknown>".to_string()
 }
 
+#[cfg(test)]
+mod tests {
+    use super::sanitize_pause_adl_path;
+    use std::path::Path;
+
+    #[test]
+    fn sanitize_pause_adl_path_normalizes_relative_paths() {
+        let rel = Path::new("./fixtures/../demo/example.adl");
+        assert_eq!(sanitize_pause_adl_path(rel), "fixtures/../demo/example.adl");
+    }
+
+    #[test]
+    fn sanitize_pause_adl_path_relativizes_absolute_paths_inside_cwd() {
+        let cwd = std::env::current_dir().expect("cwd");
+        let path = cwd.join("fixtures").join("resume").join("example.adl");
+        assert_eq!(
+            sanitize_pause_adl_path(&path),
+            "fixtures/resume/example.adl"
+        );
+    }
+
+    #[test]
+    fn sanitize_pause_adl_path_redacts_external_absolute_paths_to_filename() {
+        let path = Path::new("/tmp/external/example.adl");
+        assert_eq!(sanitize_pause_adl_path(path), "external:/example.adl");
+    }
+
+    #[test]
+    fn sanitize_pause_adl_path_handles_root_without_filename() {
+        let path = Path::new("/");
+        assert_eq!(sanitize_pause_adl_path(path), "external:/<unknown>");
+    }
+}
+
 #[derive(Debug, Serialize)]
 pub(crate) struct StepStateArtifact {
     pub(crate) step_id: String,
