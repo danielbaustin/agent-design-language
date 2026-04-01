@@ -42,7 +42,8 @@ This milestone must prove a working **bounded cognitive system**, not just conce
 Sprint 7 gate note (2026-04-01):
 - Local repo-enforced gate commands passed in the `WP-17` worktree.
 - Current GitHub Actions `ci` and nightly coverage runs on `main` are green.
-- This branch is behind `origin/main` and its checked-in `.github/workflows/ci.yaml` still references `tools/check_release_notes_commands.sh`; the actual current script path is `adl/tools/check_release_notes_commands.sh`, which passed locally when invoked directly.
+- Coverage is over the enforced limits: workspace line coverage is `91.50%` against a `90%` threshold, and the per-file gate passed at `>= 80%`.
+- The quality-gate run exposed a workflow-path drift in this branch snapshot: `.github/workflows/ci.yaml` referenced `tools/check_release_notes_commands.sh`, while the actual current script path is `adl/tools/check_release_notes_commands.sh`, which passed locally when invoked directly.
 
 ---
 
