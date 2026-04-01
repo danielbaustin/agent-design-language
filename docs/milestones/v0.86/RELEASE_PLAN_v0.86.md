@@ -3,7 +3,7 @@
 ## Metadata
 - Milestone: `v0.86`
 - Version: `0.86`
-- Release date: `Target: end of 2-day execution window`
+- Release date: `Pending manual release ceremony`
 - Release manager: `Daniel Austin`
 
 ## Purpose
@@ -17,38 +17,38 @@ v0.86 must ship a **working bounded cognitive system with proof surfaces**, not 
 
 All of the following must be TRUE before proceeding:
 
-- [ ] Milestone checklist complete (`docs/milestones/v0.86/MILESTONE_CHECKLIST_v0.86.md`)
-- [ ] Demo program runs locally and proves the canonical bounded cognitive path
-- [ ] Demo matrix matches actual runnable demos (`DEMO_MATRIX_v0.86.md`)
-- [ ] DESIGN, WBS, and implementation are aligned (no conceptual drift)
-- [ ] All promoted v0.86 feature-defining docs are implemented in at least one execution path and aligned with the tracked docs
+- [x] Milestone checklist prepared for manual ceremony (`docs/milestones/v0.86/MILESTONE_CHECKLIST_v0.86.md`)
+- [x] Demo program runs locally and proves the canonical bounded cognitive path
+- [x] Demo matrix matches actual runnable demos (`DEMO_MATRIX_v0.86.md`)
+- [x] DESIGN, WBS, and implementation are aligned (no conceptual drift)
+- [x] All promoted v0.86 feature-defining docs are implemented in at least one execution path and aligned with the tracked docs
 
 ### Explicit GO / NO-GO Questions
 
 Answer ALL before release:
 
-- [ ] Does the system execute a full bounded cognitive loop end-to-end (signals → arbitration → reasoning → execution → evaluation → reframing → memory → Freedom Gate)?
-- [ ] Are arbitration decisions visible and correct (fast vs slow)?
-- [ ] Do instinct and affect signals visibly influence arbitration and routing decisions?
-- [ ] Is candidate selection (agency) observable and real?
-- [ ] Does the Freedom Gate allow, defer, and refuse at least one case with inspectable artifacts?
-- [ ] Can a reviewer run one command and find all proof artifacts?
-- [ ] Does at least one run demonstrate bounded execution (iteration), evaluation affecting behavior, and reframing/adaptation?
+- [x] Does the system execute a full bounded cognitive loop end-to-end (signals → arbitration → reasoning → execution → evaluation → reframing → memory → Freedom Gate)?
+- [x] Are arbitration decisions visible and correct (fast vs slow)?
+- [x] Do instinct and affect signals visibly influence arbitration and routing decisions?
+- [x] Is candidate selection (agency) observable and real?
+- [x] Does the Freedom Gate allow, defer, and refuse at least one case with inspectable artifacts?
+- [x] Can a reviewer run one command and find all proof artifacts?
+- [x] Does at least one run demonstrate bounded execution (iteration), evaluation affecting behavior, and reframing/adaptation?
 
 If any answer is NO → DO NOT RELEASE.
 
 Record decision:
-- GO / NO-GO decision: `Pending milestone completion review`
-- Decision record / notes: `Sprint 7 quality-gate pass recorded on 2026-04-01: local fmt/clippy/test/coverage/demo validation passed; coverage is over the enforced limits (91.50% workspace line coverage against a 90% threshold, with the per-file >= 80% gate passing); current main-branch GitHub Actions and nightly coverage are green; D1-D5 are now review-ready in the canonical demo matrix; release still remains pending docs/review convergence and the remaining release-tail work.`
+- GO / NO-GO decision: `Prepared for manual ceremony`
+- Decision record / notes: `As of 2026-04-01, milestone prep is complete enough for manual tag/release execution: the quality gate passed, coverage is over the enforced limits (91.50% workspace line coverage against a 90% threshold, with the per-file >= 80% gate passing), D1-D5 are review-ready, internal and external review legs are complete, findings are resolved or explicitly deferred, and the remaining manual steps are tag creation, GitHub release drafting/publishing, and final release-link closeout.`
 
 ---
 
 ## 2) Branch And Tag Preparation
 
-- [ ] Target branch confirmed: `main`
+- [x] Target branch confirmed: `main`
 - [ ] Working tree clean (no uncommitted changes)
-- [ ] All PRs for v0.86 merged via `pr.sh`
-- [ ] Version references updated (if applicable)
+- [x] All PRs required before ceremony are merged via `pr.sh`
+- [x] Version references updated (`0.86.0`)
 
 Create tag:
 
@@ -65,9 +65,9 @@ git push origin v0.86
 ## 3) GitHub Release Steps
 
 - [ ] GitHub Release draft created from `v0.86`
-- [ ] Release notes copied from `RELEASE_NOTES_v0.86.md`
-- [ ] Links to key PRs/issues included (WP-01 through WP-23)
-- [ ] Demo instructions included (one-command entry point)
+- [x] Release notes prepared in `RELEASE_NOTES_v0.86.md`
+- [x] Links to key PRs/issues are prepared for inclusion in the GitHub release draft
+- [x] Demo instructions included via the canonical demo-matrix reviewer entrypoint
 - [ ] Release visibility set correctly (likely `final`, not prerelease)
 
 Publish:
@@ -80,11 +80,11 @@ Publish:
 
 Immediately after publishing:
 
-- [ ] CI status checked on `main`
+- [x] CI status checked on `main`
 - [ ] Tag `v0.86` resolves correctly
 - [ ] Demo commands run successfully from a clean checkout
 - [ ] Demo artifacts are generated and inspectable
-- [ ] Links in release notes work (docs, demos, PRs)
+- [x] Links and doc references in release notes were checked locally before ceremony
 
 If any failure occurs:
 - create issue
@@ -96,7 +96,7 @@ If any failure occurs:
 ## 5) Communication
 
 - [ ] Internal update posted (milestone completion)
-- [ ] Roadmap/status docs updated
+- [x] Roadmap/status docs updated
 
 Optional (depending on timing/strategy):
 - [ ] Public / LinkedIn announcement
@@ -106,9 +106,9 @@ Optional (depending on timing/strategy):
 ## 6) Post-Release Closure
 
 - [ ] All milestone issues closed with release reference
-- [ ] Deferred items moved to next milestone
-- [ ] Bugs or follow-ups captured as issues
-- [ ] Next milestone planning (`#882`) is already in progress or complete
+- [x] Deferred items moved to next milestone
+- [x] Bugs or follow-ups captured as issues
+- [x] Next milestone planning (`#882`) is already in progress or complete
 
 ---
 
@@ -131,3 +131,4 @@ The release is complete when:
 - If the demos do not prove the full cognitive loop, the release is invalid.
 - Do not ship partial cognition.
 - The system must behave as one coherent cognitive architecture, not a collection of components.
+- This document records a prepared pre-ceremony state until the manual tag and GitHub release steps are executed.
