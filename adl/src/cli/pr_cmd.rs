@@ -475,7 +475,7 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
     }
 
     if has_uncommitted {
-        stage_selected_paths_rust(&repo_root, &parsed.paths)?;
+        stage_selected_paths_rust(&repo_root, &parsed.paths, parsed.allow_gitignore)?;
         if staged_diff_is_empty(&repo_root)? {
             bail!(
                 "finish: nothing staged after 'git add' for paths '{}'",
@@ -935,7 +935,21 @@ fn run_batched_checks_rust(repo_root: &Path) -> Result<()> {
     Ok(())
 }
 
-fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<()> {
+fn path_is_gitignored(repo_root: &Path, rel_path: &str) -> Result<bool> {
+    run_status_allow_failure(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "check-ignore",
+            "-q",
+            "--",
+            rel_path,
+        ],
+    )
+}
+
+fn stage_selected_paths_rust(repo_root: &Path, csv: &str, allow_gitignore: bool) -> Result<()> {
     let paths = csv
         .split(',')
         .map(str::trim)
@@ -944,9 +958,31 @@ fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<()> {
     if paths.is_empty() {
         bail!("finish: --paths resolved to empty");
     }
-    let mut args = vec!["-C", path_str(repo_root)?, "add", "--"];
-    args.extend(paths);
-    run_status("git", &args)
+    let mut staged_any = false;
+    for rel_path in paths {
+        let full_path = repo_root.join(rel_path);
+        if !full_path.exists() {
+            bail!("finish: path does not exist: {rel_path}");
+        }
+        if path_is_gitignored(repo_root, rel_path)? {
+            if !allow_gitignore {
+                bail!(
+                    "finish: path is gitignored: {rel_path}. Re-run with --allow-gitignore to stage it intentionally."
+                );
+            }
+            run_status(
+                "git",
+                &["-C", path_str(repo_root)?, "add", "-f", "--", rel_path],
+            )?;
+        } else {
+            run_status("git", &["-C", path_str(repo_root)?, "add", "--", rel_path])?;
+        }
+        staged_any = true;
+    }
+    if !staged_any {
+        bail!("finish: --paths resolved to empty");
+    }
+    Ok(())
 }
 
 fn staged_diff_is_empty(repo_root: &Path) -> Result<bool> {
@@ -4179,13 +4215,63 @@ verification_summary:
         fs::write(repo.join("tracked.txt"), "changed\n").expect("modify tracked");
         assert!(has_uncommitted_changes(&repo).expect("dirty"));
 
-        stage_selected_paths_rust(&repo, "tracked.txt").expect("stage");
+        stage_selected_paths_rust(&repo, "tracked.txt", false).expect("stage");
         assert!(!staged_diff_is_empty(&repo).expect("staged diff"));
         assert!(!staged_gitignore_change_present(&repo).expect("no gitignore"));
 
         fs::write(repo.join(".gitignore"), "target\n").expect("write gitignore");
-        stage_selected_paths_rust(&repo, ".gitignore").expect("stage gitignore");
+        stage_selected_paths_rust(&repo, ".gitignore", false).expect("stage gitignore");
         assert!(staged_gitignore_change_present(&repo).expect("gitignore change"));
+    }
+
+    #[test]
+    fn finish_helper_paths_allow_forced_staging_of_gitignored_review_artifact() {
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+        let temp = unique_temp_dir("adl-pr-finish-allow-gitignore");
+        let repo = temp.join("repo");
+        fs::create_dir_all(&repo).expect("repo dir");
+        init_git_repo(&repo);
+        assert!(Command::new("git")
+            .args(["config", "user.name", "Test User"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.email", "test@example.com"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config")
+            .success());
+        fs::create_dir_all(repo.join(".adl/reviews")).expect("reviews dir");
+        fs::write(repo.join(".gitignore"), ".adl/reviews/\n").expect("write gitignore");
+        fs::write(repo.join("README.md"), "base\n").expect("readme");
+        assert!(Command::new("git")
+            .args(["add", "-A"])
+            .current_dir(&repo)
+            .status()
+            .expect("git add")
+            .success());
+        assert!(Command::new("git")
+            .args(["commit", "-q", "-m", "init"])
+            .current_dir(&repo)
+            .status()
+            .expect("git commit")
+            .success());
+
+        let review = repo.join(".adl/reviews/internal.md");
+        fs::write(&review, "review\n").expect("write review");
+
+        let err = stage_selected_paths_rust(&repo, ".adl/reviews/internal.md", false)
+            .expect_err("ignored path should fail without allow flag");
+        assert!(
+            format!("{err:#}").contains("path is gitignored"),
+            "unexpected error: {err:#}"
+        );
+
+        stage_selected_paths_rust(&repo, ".adl/reviews/internal.md", true)
+            .expect("forced stage ignored review");
+        assert!(!staged_diff_is_empty(&repo).expect("staged review diff"));
     }
 
     #[test]
