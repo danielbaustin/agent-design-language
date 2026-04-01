@@ -12,6 +12,7 @@ mod pr_cmd_prompt;
 mod pr_cmd_validate;
 mod run;
 pub(crate) mod run_artifacts;
+mod run_artifacts_types;
 #[cfg(test)]
 mod tests;
 mod usage;
