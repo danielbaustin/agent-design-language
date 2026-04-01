@@ -2068,5 +2068,5 @@ fn run_status_allow_failure(program: &str, args: &[&str]) -> Result<bool> {
 }
 
 #[cfg(test)]
-#[path = "tests/pr_cmd_inline.rs"]
+#[path = "tests/pr_cmd_inline/mod.rs"]
 mod tests;
