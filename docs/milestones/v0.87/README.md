@@ -1,132 +1,159 @@
-
-
-# Milestone README Template
+# Milestone README: v0.87
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+- Milestone: `v0.87`
+- Version: `0.87`
+- Date: `2026`
+- Owner: `adl`
 
 ## Purpose
-Provide a single entry point for the milestone: what it is, why it matters, what is included, and how to navigate the canonical documents and artifacts.
+Provide the single canonical entry point for `v0.87`: what the milestone is, why it matters, what is in scope, how to navigate the canonical docs, and which proof surfaces a reviewer should inspect first.
 
-## How To Use
-- Start here before reading individual milestone documents.
-- Use this README to locate the canonical design, execution, and validation surfaces.
-- Keep this document concise and navigational; detailed content belongs in the linked docs.
-- Keep links up to date as files move or are renamed.
+This README is intentionally concise and navigational. It should help an uninvolved reviewer understand `v0.87` as a **substrate milestone** without reconstructing context from issue threads or chat history.
 
 ## Overview
 
-`{{milestone}}` represents the stage where `{{project_name}}` moves from `{{previous_state}}` to `{{target_state}}`.
+`v0.87` is the milestone where ADL moves from a bounded cognitive system that was proven in pieces in `v0.86` to a more **coherent, deterministic, and externally credible substrate**.
 
 This milestone focuses on:
-- {{focus_1}}
-- {{focus_2}}
-- {{focus_3}}
+- trace as execution truth
+- provider / transport normalization and portability
+- shared ObsMem foundation and trace-linked memory coherence
+- operational skills and control-plane/tooling stabilization
+- reviewer-facing proof surfaces and canonical milestone docs
 
 Key outcomes:
-- {{outcome_1}}
-- {{outcome_2}}
-- {{outcome_3}}
+- a canonical substrate spine: `contracts -> execution -> trace -> review -> documentation`
+- real, bounded proof surfaces for trace, provider portability, shared memory, skills, and control-plane behavior
+- milestone docs and review surfaces that truthfully reflect implementation and are usable by an uninvolved reviewer
 
 ## Scope Summary
 
 ### In scope
-- {{in_scope_1}}
-- {{in_scope_2}}
-- {{in_scope_3}}
+- Trace v1 schema, event model, and runtime/control-surface emission
+- Provider / transport substrate v1 with explicit `vendor`, `transport`, and `model_ref` separation
+- Shared ObsMem foundation tied to execution/trace truth
+- Operational skills substrate and structured review outputs
+- Control-plane / PR tooling stabilization and workflow determinism
+- Demo matrix, docs, review package, and release-tail truth surfaces
 
 ### Out of scope
-- {{out_of_scope_1}}
-- {{out_of_scope_2}}
+- Persistent identity, chronosense, and later `v0.9+` personhood/continuity work
+- PR Demo execution, capability-aware routing, and later governance / delegation / Freedom Gate evolution
+
+## Start Here
+
+If you are new to this milestone, read in this order:
+
+1. `docs/milestones/v0.87/VISION_v0.87.md`
+2. `docs/milestones/v0.87/DESIGN_v0.87.md`
+3. `docs/milestones/v0.87/WBS_v0.87.md`
+4. `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
+5. `docs/milestones/v0.87/MILESTONE_CHECKLIST_v0.87.md`
+
+If you want the fastest reviewer path, jump to:
+- demo matrix: `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
+- milestone checklist: `docs/milestones/v0.87/MILESTONE_CHECKLIST_v0.87.md`
+- release plan: `docs/milestones/v0.87/RELEASE_PLAN_v0.87.md`
 
 ## Document Map
 
 Canonical milestone documents:
-
-- Vision: `{{vision_doc}}`
-- Design: `{{design_doc}}`
-- Work Breakdown Structure (WBS): `{{wbs_doc}}`
-- Sprint plan: `{{sprint_doc}}`
-- Decisions log: `{{decisions_doc}}`
-- Demo matrix: `{{demo_matrix_doc}}`
-- Milestone checklist: `{{checklist_doc}}`
-- Release plan / process: `{{release_process_doc}}`
-- Release notes: `{{release_notes_doc}}`
+- Vision: `docs/milestones/v0.87/VISION_v0.87.md`
+- Design: `docs/milestones/v0.87/DESIGN_v0.87.md`
+- Work Breakdown Structure (WBS): `docs/milestones/v0.87/WBS_v0.87.md`
+- Sprint plan: `docs/milestones/v0.87/SPRINT_v0.87.md`
+- Decisions log: `docs/milestones/v0.87/DECISIONS_v0.87.md`
+- Demo matrix: `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
+- Milestone checklist: `docs/milestones/v0.87/MILESTONE_CHECKLIST_v0.87.md`
+- Release plan: `docs/milestones/v0.87/RELEASE_PLAN_v0.87.md`
+- Release notes: `docs/milestones/v0.87/RELEASE_NOTES_v0.87.md`
 
 Supporting / domain-specific docs:
-- {{supporting_doc_1}}
-- {{supporting_doc_2}}
-- {{supporting_doc_3}}
+- Feature docs index: `docs/milestones/v0.87/FEATURE_DOCS_v0.87.md`
+- Roadmap context: `.adl/docs/roadmaps/ROAD_TO_v0.95.md`
+- Review artifacts: `.adl/reviews/`
 
 ## Execution Model
 
 This milestone is executed as a sequence of work packages (WPs):
 
-- WP-01: Design pass (docs + planning)
-- WP-02 – WP-12: Feature and system work
-- WP-13: Demo matrix and integration demos
-- WP-14: Coverage / quality gate
-- WP-15: Docs and review convergence
-- WP-16: Release ceremony
+- `WP-01`: design pass (docs + planning)
+- `WP-02` – `WP-11`: substrate implementation bands
+- `WP-12`: documentation canonicalization + feature index
+- `WP-13`: demo matrix and integration demos
+- `WP-14`: coverage / quality gate
+- `WP-15`: docs and review convergence
+- `WP-16`: release ceremony
 
 Execution expectations:
-- Each WP is tracked by an issue and implemented via PRs.
-- Each issue produces structured artifacts (input/output cards, reports).
-- All work merges under green CI and passes quality gates.
+- each WP is tracked by one or more issues and implemented through bounded PRs
+- each issue should produce structured input/output cards and validation evidence
+- the milestone should remain substrate-first and should not silently absorb `v0.88+` systems
+- all claims should be backed by runnable demos, artifact roots, review outputs, or release-tail validation
 
 ## Demo and Validation Surface
 
 Primary validation is defined in:
-- Demo matrix: `{{demo_matrix_doc}}`
+- demo matrix: `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
 
-Additional validation surfaces:
-- Test suite results
-- Generated artifacts under `.adl/runs/`
-- Trace and replay outputs
+Primary bounded demos:
+- `D1`: Trace v1 substrate truth
+- `D2`: Provider portability substrate
+- `D3`: Shared ObsMem foundation coherence
+- `D4`: Operational skills substrate
+- `D5`: Control-plane / PR tooling substrate
+- `D6`: Reviewer-facing substrate package
+
+Primary artifact root:
+- `artifacts/v087/`
 
 Success criteria:
-- {{success_criteria_1}}
-- {{success_criteria_2}}
-- {{success_criteria_3}}
+- each major substrate claim maps to a bounded demo or explicit alternate proof surface
+- a reviewer can identify the first command, primary artifact, and expected success signal for each demo
+- no demo inflates later-milestone capabilities that are intentionally out of scope
 
 ## Determinism and Reproducibility
 
-The milestone should demonstrate:
-- Deterministic or bounded-repeatable execution where required
-- Replayable traces and inspectable artifacts
-- Stable command entry points for demos
+`v0.87` should demonstrate:
+- deterministic or bounded-repeatable execution where required
+- stable structured schemas and event vocabularies
+- replayable or inspectable substrate artifacts
+- stable command entry points once demos land
 
 Evidence locations:
-- {{determinism_evidence_path_1}}
-- {{determinism_evidence_path_2}}
+- `artifacts/v087/`
+- issue output cards for implementing/demo/validation issues
+- `.adl/reviews/` for internal review outputs
+
+Determinism notes:
+- determinism for this milestone is judged primarily by stable structure, schemas, event vocabularies, and proof-surface truth
+- timestamps, run IDs, or other documented runtime-generated metadata may vary and should not be treated as failures by themselves
 
 ## Risks and Open Questions
 
 Known risks:
-- {{risk_1}}
-- {{risk_2}}
+- provider and tooling redesign may sprawl if not kept tightly bounded to substrate v1 goals
+- late `v0.86` closeout fixes may temporarily force small roadmap/doc adjustments while `v0.87` planning begins
 
 Open questions:
-- {{open_question_1}}
-- {{open_question_2}}
+- which exact issue sequence should start the first implementation-heavy slice after doc seeding
+- whether trace v1 or control-plane consolidation should land first as the strongest initial substrate proof
+- what the minimum provider set is for a credible portability claim in `v0.87`
 
 ## Status
 
-Current status: {{status}}
+Current status: `PLANNING / EARLY EXECUTION`
 
-- Planning: {{planning_status}}
-- Execution: {{execution_status}}
-- Validation: {{validation_status}}
-- Release readiness: {{release_status}}
+- Planning: canonical doc set seeded and being reviewed
+- Execution: first `v0.87` issue sequence is being prepared
+- Validation: demo matrix and checklist seeded; concrete command surfaces still landing
+- Release readiness: not ready yet; this README describes the intended canonical review path once issues land
 
 ## Exit Criteria
 
 - All canonical milestone documents are complete and internally consistent.
-- All WBS items are implemented or explicitly deferred.
-- Demo matrix is runnable and validated.
-- Quality gates (fmt, clippy, test, CI) are passing.
-- Milestone checklist is complete or exceptions are documented.
-- Release artifacts (notes, tag, docs) are ready.
+- All in-scope WBS items are implemented or explicitly deferred.
+- Demo matrix is runnable and validated or blocked truthfully with alternate proof surfaces.
+- Quality gates, review surfaces, and release-tail evidence are recorded truthfully.
+- A skeptical uninvolved reviewer can use this README to locate the first doc, first command, and primary proof surfaces without additional reconstruction.

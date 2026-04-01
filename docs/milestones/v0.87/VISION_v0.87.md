@@ -1,239 +1,235 @@
-# Vision Template
+# Vision: v0.87
 
 ## Metadata
-- Project: `{{project_name}}`
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-- Related issues: {{issues}}
+- Project: `Agent Design Language (ADL)`
+- Milestone: `v0.87`
+- Version: `0.87`
+- Date: `2026`
+- Owner: `Agent Logic, Inc.`
+- Related issues: TBD
 
 ## Purpose
-Define the milestone-level vision for the project: what changes at this stage, why it matters, and which strategic pillars it advances.
-
-## How To Use
-- Write this as a milestone vision, not a full design spec.
-- Focus on direction, priorities, and intended outcomes rather than implementation details.
-- Keep the structure stable across milestones so changes in emphasis are easy to compare over time.
-- Prefer concrete milestone framing over vague aspiration.
-- Keep section titles stable unless there is a strong reason to change them.
-- If a section is not relevant, state that briefly rather than deleting the section.
+Define the milestone-level vision for v0.87: consolidating the gains of v0.86 into a coherent, reliable, and externally credible system, while preparing the substrate for identity, delegation, and higher-order cognition in v0.9+.
 
 ## Overview
 
-Version `{{version}}` is the milestone where `{{project_name}}` evolves from `{{previous_state}}` into `{{target_state}}`.
+Version `0.87` is the milestone where ADL evolves from a **feature-rich but internally-focused system** into a **cohesive, externally credible cognitive substrate**.
 
 This release should establish or strengthen the foundation for:
 
-- {{foundation_1}}
-- {{foundation_2}}
-- {{foundation_3}}
+- end-to-end system coherence (contracts → execution → review → trace)
+- production-grade reliability of the control plane
+- canonical documentation aligned with actual behavior
 
-`{{version}}` focuses on **{{primary_focus}}**.
+`0.87` focuses on **consolidation, correctness, and architectural alignment**.
 
 The goal is to make the project more useful to:
 
-- {{audience_1}}
-- {{audience_2}}
-- {{audience_3}}
+- developers building real agents on ADL
+- internal contributors extending the system safely
+- external reviewers evaluating ADL as a serious architecture
 
 This milestone should strengthen the architectural or strategic pillars of:
 
-- {{pillar_1}}
-- {{pillar_2}}
-- {{pillar_3}}
-- {{pillar_4}}
+- determinism
+- observability (trace + memory alignment)
+- contract integrity
+- system coherence across surfaces
 
-{{overview_close}}
+This is a **credibility milestone**: the system must behave as described, and be described as it behaves.
 
 ---
 
 # Core Goals
 
-`{{version}}` advances `{{project_name}}` in five major areas:
+`0.87` advances ADL in five major areas:
 
-1. {{goal_area_1}}
-2. {{goal_area_2}}
-3. {{goal_area_3}}
-4. {{goal_area_4}}
-5. {{goal_area_5}}
+1. System Coherence
+2. Contract and Validation Integrity
+3. Review and Verification Surfaces
+4. Documentation Alignment (Canonicalization)
+5. Tooling Stability and Developer Workflow
 
 ---
 
-# 1. {{goal_area_1}}
+# 1. System Coherence
 
-`{{version}}` improves `{{goal_area_1}}` so the project can `{{outcome_1}}`.
+`0.87` improves system coherence so the project can behave as a **single integrated cognitive system**, not a collection of features.
 
 Key objectives:
 
-- {{objective_1a}}
-- {{objective_1b}}
-- {{objective_1c}}
-- {{objective_1d}}
+- align execution, contracts, validation, and trace into a unified flow
+- eliminate inconsistencies between subsystems
+- ensure predictable behavior across all entry points (CLI, runtime, tools)
+- reduce hidden or implicit behavior
 
-These capabilities move the project toward **{{strategic_effect_1}}**.
+These capabilities move the project toward **a deterministic, explainable cognitive substrate**.
 
-The system or product should guarantee:
+The system should guarantee:
 
-- {{guarantee_1a}}
-- {{guarantee_1b}}
-- {{guarantee_1c}}
+- the same input + contracts always produce the same structured behavior
+- trace reflects actual execution, not approximations
+- no silent divergence between components
 
 ---
 
-# 2. {{goal_area_2}}
+# 2. Contract and Validation Integrity
 
-`{{goal_area_2}}` must improve without sacrificing `{{constraint_2}}`.
+Contract integrity must improve without sacrificing developer usability.
 
-`{{version}}` introduces or improves:
+`0.87` introduces or improves:
 
-- {{improvement_2a}}
-- {{improvement_2b}}
-- {{improvement_2c}}
-- {{improvement_2d}}
+- stricter validation paths for inputs, outputs, and schemas
+- elimination of undefined or loosely interpreted fields
+- consistent error handling and reporting
+- clearer boundary between strict and loose modes
 
-The goal is to move from `{{before_state_2}}` toward **{{after_state_2}}**.
+The goal is to move from **"mostly enforced contracts"** toward **fully reliable contract enforcement**.
 
 These changes should help users:
 
-- {{user_benefit_2a}}
-- {{user_benefit_2b}}
+- trust that failures are real and meaningful
+- detect issues earlier in the workflow
 
 ---
 
-# 3. {{goal_area_3}}
+# 3. Review and Verification Surfaces
 
-A central principle of `{{project_name}}` is **{{principle_3}}**.
+A central principle of ADL is **reasoned, inspectable correctness**.
 
-The project must not merely `{{anti_goal_3}}`. It must `{{desired_behavior_3}}`.
+The project must not merely execute workflows. It must **be able to evaluate and justify them**.
 
-`{{version}}` strengthens this pillar with:
+`0.87` strengthens this pillar with:
 
-- {{capability_3a}}
-- {{capability_3b}}
-- {{capability_3c}}
-- {{capability_3d}}
+- standardized review outputs (structured findings, severity, evidence)
+- system-level synthesis in review surfaces
+- explicit trust-boundary analysis
+- alignment between automated review and human reasoning
 
-This work supports the broader principle of **{{broader_principle_3}}**.
+This work supports the broader principle of **Popperian criticism within agent systems**.
 
 The result should make the project more:
 
-- {{quality_3a}}
-- {{quality_3b}}
-- {{quality_3c}}
+- trustworthy
+- auditable
+- self-correcting
 
 ---
 
-# 4. {{goal_area_4}}
+# 4. Documentation Alignment (Canonicalization)
 
-`{{version}}` continues development of `{{goal_area_4}}`.
+`0.87` continues development of documentation as a **first-class system component**.
 
-The focus remains on **{{focus_4}}**, not `{{non_goal_4}}`.
+The focus remains on **accuracy and alignment**, not expansion.
 
 Key capabilities:
 
-- {{capability_4a}}
-- {{capability_4b}}
-- {{capability_4c}}
-- {{capability_4d}}
+- canonical docs reflect actual runtime behavior
+- removal of outdated or duplicated documents
+- consistent structure across milestones
+- explicit linkage between design, vision, and implementation
 
-This milestone should help the project better represent or support:
+This milestone should help the project better represent:
 
-- {{support_4a}}
-- {{support_4b}}
-- {{support_4c}}
+- its true capabilities
+- its architectural intent
+- its operational guarantees
 
-These improvements should guide the system toward `{{desired_state_4}}`.
+These improvements should guide the system toward **documentation as a reliable interface to the system**.
 
 ---
 
-# 5. {{goal_area_5}}
+# 5. Tooling Stability and Developer Workflow
 
-To support real-world use, `{{version}}` must improve `{{goal_area_5}}`.
+To support real-world use, `0.87` must improve developer workflow and tooling reliability.
 
 Important targets include:
 
-- {{target_5a}}
-- {{target_5b}}
-- {{target_5c}}
-- {{target_5d}}
+- stable PR tooling and card workflows
+- predictable worktree and repo interactions
+- reduction of fragile or environment-dependent behavior
+- clearer automation boundaries
 
-This work should strengthen the development and operating workflow by improving:
+This work should strengthen the development workflow by improving:
 
-- {{workflow_benefit_5a}}
-- {{workflow_benefit_5b}}
-- {{workflow_benefit_5c}}
+- reproducibility
+- developer confidence
+- speed of iteration without loss of correctness
 
-{{close_5}}
+This is especially important because a large portion of recent progress has come through tooling.
 
 ---
 
-# Special Focus: `{{special_focus_title}}`
+# Special Focus: System Credibility
 
-`{{special_focus_title}}` becomes a central focus of `{{version}}`.
+System credibility becomes a central focus of `0.87`.
 
-Previous releases `{{previous_special_focus_state}}`.
+Previous releases emphasized rapid capability expansion.
 
-`{{version}}` advances this area with:
+`0.87` advances this area with:
 
-- {{special_focus_1}}
-- {{special_focus_2}}
-- {{special_focus_3}}
-- {{special_focus_4}}
+- elimination of known inconsistencies
+- alignment between claims and behavior
+- stronger guarantees around correctness and trace
+- readiness for external (3rd party) evaluation
 
-This area is responsible for ensuring that `{{special_focus_scope}}` remain:
+This area is responsible for ensuring that **all exposed system surfaces** remain:
 
-- {{special_quality_1}}
-- {{special_quality_2}}
-- {{special_quality_3}}
+- correct
+- consistent
+- explainable
 
-This keeps the project aligned with `{{alignment_principle}}`.
+This keeps the project aligned with **the principle of reasonableness and truthfulness in system design**.
 
 ---
 
 # Milestone Context
 
-`{{previous_milestone}}` represents `{{previous_milestone_significance}}`.
+`v0.86` represents a major expansion in:
 
-From `{{next_phase_start}}` onward the project will likely shift toward:
+- tooling
+- review surfaces
+- validation layers
 
-- {{next_phase_item_1}}
-- {{next_phase_item_2}}
-- {{next_phase_item_3}}
+From `v0.9` onward the project will likely shift toward:
 
-The goal is to have `{{future_goal}}` by **{{future_target_milestone}}**.
+- identity (persistent agents)
+- delegation and Freedom Gate
+- higher-order cognitive structures (Gödel agent, GHB loop)
 
-`{{version}}` therefore focuses on `{{contextual_focus}}` before that stage.
+The goal is to have a **stable, credible substrate** by **v0.9**.
+
+`0.87` therefore focuses on **making the current system solid and trustworthy** before that transition.
 
 ---
 
 # Long-Term Direction
 
-`{{project_name}}` is being designed as `{{long_term_identity}}`.
+ADL is being designed as a **deterministic cognitive architecture for agents**.
 
 Its long-term goals include:
 
-- {{long_term_goal_1}}
-- {{long_term_goal_2}}
-- {{long_term_goal_3}}
-- {{long_term_goal_4}}
+- persistent identity across time
+- safe and reasoned delegation
+- self-improving reasoning systems (GHB loop)
+- distributed cognitive systems with shared reality (CSM)
 
-These principles aim to move the project beyond `{{old_mode}}` toward `{{new_mode}}`.
+These principles aim to move the project beyond **prompt orchestration** toward **engineered proto-sentience with constraints**.
 
 ---
 
 # Summary
 
-`{{version}}` is the milestone where `{{project_name}}` becomes:
+`0.87` is the milestone where ADL becomes:
 
-- {{summary_quality_1}}
-- {{summary_quality_2}}
-- {{summary_quality_3}}
-- {{summary_quality_4}}
+- coherent
+- reliable
+- externally credible
+- aligned with its own architecture
 
-It strengthens `{{summary_strength_1}}`, advances `{{summary_strength_2}}`, improves `{{summary_strength_3}}`, and stabilizes `{{summary_strength_4}}`.
+It strengthens determinism, advances contract integrity, improves review surfaces, and stabilizes tooling.
 
-These improvements prepare the project for `{{next_stage}}`.
+These improvements prepare the project for **identity, delegation, and higher-order cognition in v0.9+**.
 
 ## Exit Criteria
 - The milestone's strategic priorities are explicit and internally consistent.
