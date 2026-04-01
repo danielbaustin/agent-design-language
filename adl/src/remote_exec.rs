@@ -216,7 +216,7 @@ impl std::fmt::Display for RemoteExecuteClientError {
 impl std::error::Error for RemoteExecuteClientError {}
 
 impl RemoteExecuteClientError {
-    fn new(
+    pub(crate) fn new(
         kind: RemoteExecuteClientErrorKind,
         code: impl Into<String>,
         message: impl Into<String>,
@@ -227,6 +227,35 @@ impl RemoteExecuteClientError {
             message: message.into(),
         }
     }
+}
+
+pub fn retryability(err: &anyhow::Error) -> Option<bool> {
+    for cause in err.chain() {
+        if cause.downcast_ref::<SecurityEnvelopeError>().is_some() {
+            return Some(false);
+        }
+        if let Some(remote) = cause.downcast_ref::<RemoteExecuteClientError>() {
+            return Some(match remote.kind {
+                RemoteExecuteClientErrorKind::Timeout
+                | RemoteExecuteClientErrorKind::Unreachable
+                | RemoteExecuteClientErrorKind::BadStatus
+                | RemoteExecuteClientErrorKind::InvalidJson => true,
+                RemoteExecuteClientErrorKind::SchemaViolation => false,
+                RemoteExecuteClientErrorKind::RemoteExecution => {
+                    !matches!(
+                        remote.code.as_str(),
+                        "REMOTE_SCHEMA_VIOLATION"
+                            | "SIGN_POLICY_UNSIGNED_REQUIRED"
+                            | "SIGN_POLICY_MISSING_KEY_ID"
+                            | "SIGN_POLICY_DISALLOWED_ALGORITHM"
+                            | "SIGN_POLICY_DISALLOWED_KEY_SOURCE"
+                            | "SIGN_POLICY_MISSING_KEY_SOURCE"
+                    ) && !remote.code.starts_with("REMOTE_ENVELOPE_")
+                }
+            });
+        }
+    }
+    None
 }
 
 pub fn stable_failure_kind(err: &anyhow::Error) -> Option<&'static str> {

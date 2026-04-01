@@ -167,6 +167,9 @@ pub fn is_retryable_error(err: &anyhow::Error) -> bool {
             );
         }
     }
+    if let Some(retryable) = crate::remote_exec::retryability(err) {
+        return retryable;
+    }
     true
 }
 
@@ -796,6 +799,33 @@ mod tests {
         assert!(!is_retryable_error(&panic));
         assert_eq!(stable_failure_kind(&panic), Some("panic"));
         assert!(format!("{panic:#}").contains("provider mock panic: panic"));
+    }
+
+    #[test]
+    fn remote_retry_classification_distinguishes_deterministic_failures() {
+        let schema = anyhow::Error::new(crate::remote_exec::RemoteExecuteClientError::new(
+            crate::remote_exec::RemoteExecuteClientErrorKind::SchemaViolation,
+            "REMOTE_SCHEMA_VIOLATION",
+            "missing result on ok response",
+        ));
+        assert!(!is_retryable_error(&schema));
+
+        let envelope = anyhow::Error::new(crate::remote_exec::SecurityEnvelopeError::MissingKeyId);
+        assert!(!is_retryable_error(&envelope));
+
+        let remote_schema = anyhow::Error::new(crate::remote_exec::RemoteExecuteClientError::new(
+            crate::remote_exec::RemoteExecuteClientErrorKind::RemoteExecution,
+            "REMOTE_SCHEMA_VIOLATION",
+            "invalid provider config",
+        ));
+        assert!(!is_retryable_error(&remote_schema));
+
+        let timeout = anyhow::Error::new(crate::remote_exec::RemoteExecuteClientError::new(
+            crate::remote_exec::RemoteExecuteClientErrorKind::Timeout,
+            "REMOTE_TIMEOUT",
+            "timed out",
+        ));
+        assert!(is_retryable_error(&timeout));
     }
 
     #[test]

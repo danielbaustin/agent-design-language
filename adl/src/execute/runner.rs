@@ -370,7 +370,11 @@ where
                 }
                 crate::adl::PlacementMode::Remote => {
                     let remote = doc.run.remote.as_ref().ok_or_else(|| {
-                        anyhow!("REMOTE_SCHEMA_VIOLATION: run.remote.endpoint is required when placement=remote")
+                        crate::remote_exec::RemoteExecuteClientError::new(
+                            crate::remote_exec::RemoteExecuteClientErrorKind::SchemaViolation,
+                            "REMOTE_SCHEMA_VIOLATION",
+                            "run.remote.endpoint is required when placement=remote",
+                        )
                     })?;
                     let timeout_ms = remote.timeout_ms.unwrap_or(30_000);
                     let mut req = remote_exec::ExecuteRequest {
