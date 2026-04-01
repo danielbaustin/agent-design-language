@@ -168,14 +168,6 @@ field_line_value() {
   ' "$file"
 }
 
-print_next_steps() {
-  cat <<'EOF'
-Next steps (human review preserved):
-- Open the PR in the browser and do a quick self-review.
-- When satisfied, mark it Ready for review (or keep as draft if you want).
-- Merge via GitHub UI (Squash and merge recommended).
-EOF
-}
 
 require_cmd() {
   command -v "$1" >/dev/null 2>&1 || die "Missing required command: $1"
@@ -290,10 +282,6 @@ resolve_repo_relative_path() {
   fi
 }
 
-absolute_host_path_present() {
-  local target="$1"
-  rg -n -e '(^|[^A-Za-z])(\/Users\/|\/home\/|[A-Za-z]:\\)' "$target" >/dev/null 2>&1
-}
 
 extract_front_matter_to_file() {
   local src="$1" dest="$2"
@@ -355,9 +343,6 @@ issue_card_reference() {
   esac
 }
 
-git_common_dir() {
-  git rev-parse --git-common-dir 2>/dev/null || die "Not in a git repo"
-}
 
 
 repo_lock_root() {
@@ -406,12 +391,6 @@ acquire_repo_lock_into() {
   die "${name}: another pr.sh bootstrap operation appears to be running (lock: $lock_dir). Remediation: rerun the command serially after the current bootstrap completes."
 }
 
-acquire_repo_lock() {
-  local name="$1"
-  local lock_dir=""
-  acquire_repo_lock_into "$name" lock_dir
-  printf '%s\n' "$lock_dir"
-}
 
 release_repo_lock() {
   local lock_dir="${1:-}"
@@ -449,18 +428,6 @@ version_from_title() {
   fi
 }
 
-version_from_labels_csv() {
-  local labels_csv="$1" label
-  IFS=',' read -r -a label_arr <<< "$labels_csv"
-  for label in "${label_arr[@]}"; do
-    label="$(trim_ws "$label")"
-    if [[ "$label" =~ ^version:(v[0-9]+\.[0-9]+)$ ]]; then
-      printf '%s\n' "${BASH_REMATCH[1]}"
-      return 0
-    fi
-  done
-  return 1
-}
 
 infer_required_outcome_type() {
   local labels_csv="$1" title="$2"
@@ -569,24 +536,6 @@ This issue currently defaults to a required outcome type of \`$outcome_type\`. R
 EOF
 }
 
-ensure_source_issue_prompt() {
-  local issue="$1" version="$2" slug="$3" title="$4" labels_csv="${5:-}"
-  local source_path issue_url
-  source_path="$(issue_prompt_path_for_issue "$issue" "$version" "$slug")"
-  if [[ -f "$source_path" ]]; then
-    printf '%s\n' "$source_path"
-    return 0
-  fi
-
-  if [[ -z "$labels_csv" ]]; then
-    local repo
-    repo="$(default_repo)"
-    labels_csv="$(gh issue view "$issue" $(gh_repo_flag "$repo") --json labels -q '.labels[].name' 2>/dev/null | paste -sd, - || true)"
-  fi
-  issue_url="https://github.com/$(default_repo)/issues/${issue}"
-  write_generated_issue_prompt "$source_path" "$issue" "$version" "$slug" "$title" "$labels_csv" "$issue_url"
-  printf '%s\n' "$source_path"
-}
 
 default_repo() {
   # Derive "owner/repo" from git remote if possible; otherwise use the current repo
@@ -610,47 +559,10 @@ default_repo() {
   echo "local/$base"
 }
 
-branch_for_issue() {
-  local prefix="$1" issue="$2" slug="$3"
-  slug="$(sanitize_slug "$slug")"
-  echo "${prefix}/${issue}-${slug}"
-}
 
-ensure_not_on_main() {
-  local b
-  b="$(current_branch)"
-  if [[ "$b" == "main" ]]; then
-    die "You are on main. Use 'start' to create/switch to a feature branch."
-  fi
-}
 
-run_swarm_checks() {
-  note "Running checks in adl/ (fmt, clippy -D warnings, test)…"
-  (
-    cd "$(repo_root)/adl"
-    cargo fmt
-    cargo clippy --all-targets -- -D warnings
-    cargo test
-  )
-}
 
-run_tooling_sanity_checks() {
-  local root
-  root="$(repo_root)"
-  note "Running tooling sanity checks (codex_pr/codexw)…"
-  bash -n "$root/adl/tools/codex_pr.sh"
-  bash -n "$root/adl/tools/codexw.sh"
-  echo "Skipping codex_pr sanity check (no --paths configured)."
-  bash "$root/adl/tools/codexw.sh" --help >/dev/null 2>&1
-  sh "$root/adl/tools/codexw.sh" --help >/dev/null 2>&1
-}
 
-run_batched_checks() {
-  local root
-  root="$(repo_root)"
-  note "Running batched checks via adl/tools/batched_checks.sh…"
-  bash "$root/adl/tools/batched_checks.sh"
-}
 
 gh_repo_flag() {
   local r="$1"
@@ -670,31 +582,10 @@ trim_ws() {
   echo "$s"
 }
 
-is_ignored_path() {
-  # Returns 0 if the path is ignored by git, 1 otherwise.
-  local p="$1"
-  git check-ignore -q -- "$p" >/dev/null 2>&1
-}
 
 
 # ----- pr/branch helpers -----
-commits_ahead_of_main() {
-  # Count commits on HEAD that are not on origin/main.
-  # Returns 0 if origin/main isn't available yet.
-  git rev-list --count origin/main..HEAD 2>/dev/null || echo 0
-}
 
-current_pr_url() {
-  # Returns open PR url for a branch if one exists, else empty.
-  local repo="$1" branch="$2"
-  local url
-  url="$(gh pr list $(gh_repo_flag "$repo") --head "$branch" --state open --json url -q '.[0].url' 2>/dev/null || true)"
-  if [[ -n "$url" ]]; then
-    echo "$url"
-    return 0
-  fi
-  gh pr view $(gh_repo_flag "$repo") --json url -q .url 2>/dev/null || true
-}
 
 # ---------- cards + templates (templates tracked; cards local-only) ----------
 ADL_DIR=".adl"
@@ -755,48 +646,9 @@ issue_version() {
   fi
 }
 
-open_milestone_pr_wave_json() {
-  local repo="$1"
-  gh pr list $(gh_repo_flag "$repo") --state open --json number,title,url,headRefName,baseRefName,isDraft 2>/dev/null || echo "[]"
-}
 
-filter_open_milestone_pr_wave() {
-  local version="$1" current_branch="${2:-}"
-  python3 -c '
-import json
-import sys
 
-version = sys.argv[1]
-current_branch = sys.argv[2]
-prs = json.load(sys.stdin)
-tag = f"[{version}]"
-filtered = []
-for pr in prs:
-    if pr.get("baseRefName") != "main":
-        continue
-    if tag not in pr.get("title", ""):
-        continue
-    if current_branch and pr.get("headRefName") == current_branch:
-        continue
-    filtered.append(pr)
-json.dump(filtered, sys.stdout)
-' "$version" "$current_branch"
-}
 
-count_open_milestone_pr_wave() {
-  python3 -c 'import json, sys; print(len(json.load(sys.stdin)))'
-}
-
-render_open_milestone_pr_wave_lines() {
-  python3 -c '
-import json
-import sys
-prs = json.load(sys.stdin)
-for pr in prs:
-    state = "draft" if pr.get("isDraft") else "ready"
-    print("#{} [{}] {} ({})".format(pr["number"], state, pr["title"], pr["url"]))
-'
-}
 
 
 ensure_adl_dirs() {
@@ -1056,25 +908,7 @@ seed_bootstrap_surfaces() {
   printf '%s\n%s\n%s\n' "$stp_path" "$in_path" "$out_path"
 }
 
-recover_root_bundle_after_start_failure() {
-  local issue="$1" version="$2" slug="$3" title="$4" source_path="$5"
-  local branch
-  branch="codex/${issue}-${slug}"
-  seed_bootstrap_surfaces "$issue" "$version" "$slug" "$title" "$branch" "$source_path"
-}
 
-resolve_issue_scope_and_slug_from_local_state() {
-  local issue="$1"
-  local first path_remainder scope dir_name slug
-  first="$(task_bundle_first_dir "$issue" || true)"
-  [[ -n "$first" ]] || return 1
-  path_remainder="${first#*"/.adl/"}"
-  scope="${path_remainder%%/*}"
-  dir_name="$(basename "$first")"
-  slug="${dir_name#*__}"
-  [[ -n "$scope" && -n "$slug" && "$slug" != "$dir_name" ]] || return 1
-  printf '%s\n%s\n' "$scope" "$slug"
-}
 
 stp_issue_number_or_die() {
   local stp_path="$1" fm issue_num
@@ -1086,67 +920,6 @@ stp_issue_number_or_die() {
   printf '%s\n' "$issue_num"
 }
 
-reconcile_issue_from_stp() {
-  local issue="$1" stp_path="$2" repo="$3"
-  local validator fm body title
-  local -a desired_labels=() current_labels=() add_labels=() remove_labels=()
-  validator="$(resolve_structured_prompt_validator)"
-  "$validator" --type stp --input "$stp_path" >/dev/null \
-    || die "create: stp failed validation: $stp_path"
-
-  local stp_issue
-  stp_issue="$(stp_issue_number_or_die "$stp_path")"
-  [[ "$stp_issue" == "$issue" ]] || die "create: STP issue_number ($stp_issue) does not match requested issue ($issue)"
-
-  fm="$(mktemp -t prsh_create_fm_XXXXXX)"
-  body="$(mktemp -t prsh_create_body_XXXXXX.md)"
-  extract_front_matter_to_file "$stp_path" "$fm"
-  extract_markdown_body_to_file "$stp_path" "$body"
-
-  title="$(strip_yaml_scalar_quotes "$(stp_scalar_field "$fm" "title")")"
-  [[ -n "$title" ]] || die "create: STP title is required: $stp_path"
-  while IFS= read -r line; do
-    desired_labels+=("$(strip_yaml_scalar_quotes "$line")")
-  done < <(stp_array_items "$fm" "labels")
-  while IFS= read -r line; do
-    current_labels+=("$line")
-  done < <(gh issue view "$issue" $(gh_repo_flag "$repo") --json labels -q '.labels[].name' 2>/dev/null || true)
-
-  local existing desired found
-  for desired in "${desired_labels[@]+"${desired_labels[@]}"}"; do
-    [[ -n "$desired" ]] || continue
-    found="0"
-    for existing in "${current_labels[@]+"${current_labels[@]}"}"; do
-      if [[ "$existing" == "$desired" ]]; then
-        found="1"
-        break
-      fi
-    done
-    [[ "$found" == "1" ]] || add_labels+=("$desired")
-  done
-
-  for existing in "${current_labels[@]+"${current_labels[@]}"}"; do
-    [[ -n "$existing" ]] || continue
-    found="0"
-    for desired in "${desired_labels[@]+"${desired_labels[@]}"}"; do
-      if [[ "$desired" == "$existing" ]]; then
-        found="1"
-        break
-      fi
-    done
-    [[ "$found" == "1" ]] || remove_labels+=("$existing")
-  done
-
-  gh issue edit "$issue" $(gh_repo_flag "$repo") --title "$title" --body-file "$body" >/dev/null
-  for desired in "${add_labels[@]+"${add_labels[@]}"}"; do
-    gh issue edit "$issue" $(gh_repo_flag "$repo") --add-label "$desired" >/dev/null
-  done
-  for existing in "${remove_labels[@]+"${remove_labels[@]}"}"; do
-    gh issue edit "$issue" $(gh_repo_flag "$repo") --remove-label "$existing" >/dev/null
-  done
-
-  rm -f "$fm" "$body"
-}
 
 ensure_nonempty_file() {
   local path="$1"
@@ -1179,81 +952,7 @@ extra_pr_body_looks_like_issue_template() {
   grep -Eqi '(^|[[:space:]])(issue_card_schema:|wp:|pr_start:)([[:space:]]|$)|^## (Goal|Deliverables|Acceptance criteria)$|^---$' <<<"$body"
 }
 
-render_pr_body_file() {
-  # Renders a PR body into a temp file and echoes its path.
-  # Args: issue close_line input_path output_path extra_body no_checks fingerprint
-  local issue="$1" close_line="$2" input_path="$3" output_path="$4" extra_body="$5" no_checks="$6" fingerprint="$7"
 
-  local tmp
-  tmp="$(mktemp -t pr_body_XXXXXX.md)"
-
-  local input_ref output_ref summary_section artifacts_section validation_section
-  input_ref="$(issue_card_reference input "$issue")"
-  output_ref="$(issue_card_reference output "$issue")"
-  summary_section="$(extract_markdown_section "$output_path" "Summary")"
-  artifacts_section="$(extract_markdown_section "$output_path" "Artifacts produced")"
-  validation_section="$(extract_markdown_section "$output_path" "Validation")"
-
-  if [[ -n "$extra_body" ]] && extra_pr_body_looks_like_issue_template "$extra_body"; then
-    die "finish: --body looks like issue-template/prompt text; use the output card as the PR summary source instead"
-  fi
-
-  {
-    if [[ -n "$close_line" ]]; then
-      echo "$close_line"
-      echo
-    fi
-
-    if [[ -n "$summary_section" ]]; then
-      echo "## Summary"
-      echo "$summary_section"
-      echo
-    fi
-
-    if [[ -n "$artifacts_section" ]]; then
-      echo "## Artifacts"
-      echo "$artifacts_section"
-      echo
-    fi
-
-    if [[ -n "$validation_section" ]]; then
-      echo "## Validation"
-      echo "$validation_section"
-      echo
-    elif [[ "$no_checks" != "1" ]]; then
-      echo "## Validation"
-      echo "- cargo fmt"
-      echo "- cargo clippy --all-targets -- -D warnings"
-      echo "- cargo test"
-      echo
-    fi
-
-    if [[ -n "$extra_body" ]]; then
-      echo "## Notes"
-      echo "$extra_body"
-      echo
-    fi
-
-    echo "## Local Artifacts"
-    echo "- Input card:  $input_ref"
-    echo "- Output card: $output_ref"
-    echo "- Idempotency-Key: $fingerprint"
-  } >"$tmp"
-
-  echo "$tmp"
-}
-
-pr_has_closing_linkage() {
-  local repo="$1" pr_ref="$2" issue="$3"
-  local linked body
-  linked="$(gh pr view $(gh_repo_flag "$repo") "$pr_ref" --json closingIssuesReferences -q '.closingIssuesReferences[]?.number' 2>/dev/null || true)"
-  if grep -Fxq "$issue" <<<"$linked"; then
-    return 0
-  fi
-
-  body="$(gh pr view $(gh_repo_flag "$repo") "$pr_ref" --json body -q '.body' 2>/dev/null || true)"
-  grep -Eiq "(^|[[:space:][:punct:]])Closes[[:space:]]+#${issue}([[:space:][:punct:]]|$)" <<<"$body"
-}
 
 
 extract_plan_value() {
@@ -1449,30 +1148,8 @@ cmd_run() {
   return "$run_status"
 }
 
-sha256_file() {
-  local path="$1"
-  if command -v shasum >/dev/null 2>&1; then
-    shasum -a 256 "$path" | awk '{print $1}'
-    return 0
-  fi
-  if command -v sha256sum >/dev/null 2>&1; then
-    sha256sum "$path" | awk '{print $1}'
-    return 0
-  fi
-  die "Missing hash command: need shasum or sha256sum"
-}
 
 
-open_in_browser() {
-  # Opens the PR in a browser using gh (preferred) or the OS 'open' command.
-  local repo="$1" pr_ref="$2"
-  if gh pr view $(gh_repo_flag "$repo") "$pr_ref" --web >/dev/null 2>&1; then
-    return 0
-  fi
-  if command -v open >/dev/null 2>&1; then
-    open "$pr_ref" >/dev/null 2>&1 || true
-  fi
-}
 
 cmd_card() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
