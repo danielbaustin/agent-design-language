@@ -2,6 +2,60 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
+## v0.86 (Sprint 7 Closeout In Progress)
+
+Status: Docs/review/release tail in progress.
+
+Summary:
+- ADL now has its first working bounded cognitive system on `main`, centered on one canonical bounded cognitive path:
+  `signals -> candidate selection -> arbitration -> reasoning -> bounded execution -> evaluation -> reframing -> memory participation -> Freedom Gate`
+- Canonical runtime artifacts now cover the bounded cognitive path and related proof surfaces, including:
+  `signals.json`, `candidate_selection.json`, `arbitration.json`, `execution_iterations.json`, `evaluation.json`, `reframing.json`, `memory.json`, `freedom_gate.json`, and `final_result.json`
+- Local demo and review surfaces exist for the integrated milestone proof set:
+  D1 canonical bounded cognitive path, D2 fast/slow routing, D3 candidate selection, D4 Freedom Gate enforcement, and D5 review-surface walkthrough
+- Sprint 7 quality-gate work landed with passing local `fmt`, `clippy`, `test`, coverage, and demo-validation proof
+- Docs, release-tail surfaces, and reviewer entry points are being aligned so milestone truth matches implementation and proof artifacts
+
+References:
+- `docs/milestones/v0.86/README.md`
+- `docs/milestones/v0.86/WBS_v0.86.md`
+- `docs/milestones/v0.86/SPRINT_v0.86.md`
+- `docs/milestones/v0.86/DEMO_MATRIX_v0.86.md`
+- `docs/milestones/v0.86/MILESTONE_CHECKLIST_v0.86.md`
+- `docs/milestones/v0.86/RELEASE_PLAN_v0.86.md`
+- `docs/milestones/v0.86/RELEASE_NOTES_v0.86.md`
+
+Not yet claimed in v0.86:
+- final internal/external review completion and release ceremony closeout
+- later-milestone persistence, identity, governance, signed-trace, or broader AEE convergence work
+- anything beyond the bounded `v0.86` cognitive-system scope
+
+## v0.85 (Planning And Tooling Foundation Milestone)
+
+Status: historical bridge milestone.
+
+Summary:
+- Established the tracked milestone-planning and execution architecture that later `v0.86` work now relies on
+- Landed the core milestone surfaces for `v0.85`, including design, WBS, sprint, checklist, release, and roadmap-tracking docs
+- Defined the editing/control-plane model around structured prompts, issue/task bundles, and the `init/create/start/run/finish` lifecycle
+- Strengthened quality/release discipline and issue reconciliation so later milestone work could be executed in smaller reviewable units
+- Preserved and promoted major planning surfaces for cognition, affect, reasoning, Layer 8/provider work, and future convergence bands
+
+References:
+- `docs/milestones/v0.85/README.md`
+- `docs/milestones/v0.85/DESIGN_v0.85.md`
+- `docs/milestones/v0.85/WBS_v0.85.md`
+- `docs/milestones/v0.85/SPRINT_v0.85.md`
+- `docs/milestones/v0.85/MILESTONE_CHECKLIST_v0.85.md`
+- `docs/milestones/v0.85/RELEASE_PLAN_v0.85.md`
+- `docs/milestones/v0.85/RELEASE_NOTES_v0.85.md`
+- `docs/milestones/v0.85/EDITING_ARCHITECTURE.md`
+
+Not yet claimed in v0.85:
+- the full bounded cognitive system that later lands in `v0.86`
+- later milestone runtime identity, governance, or signed-trace behavior
+- final productionization of the longer-horizon planning concepts documented under the `v0.85` milestone corpus
+
 ## v0.8 (Active Development Milestone)
 
 Status: In progress.

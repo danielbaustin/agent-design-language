@@ -3,7 +3,7 @@
 ## Metadata
 - Milestone: `v0.86`
 - Version: `0.86`
-- Date: `2026-03-27`
+- Date: `2026-04-01`
 - Owner: `Daniel Austin / Agent Logic`
 
 ## Purpose
@@ -141,8 +141,8 @@ Primary milestone proof surface:
 
 Additional validation surfaces:
 - local demo scripts under `adl/tools/`
-- structured artifact outputs under `artifacts/v086/`
-- `D5` review-surface manifest at `artifacts/v086/review_surface/demo_manifest.json`
+- generated artifact outputs under `artifacts/v086/` after running the demo scripts
+- generated `D5` review-surface manifest at `artifacts/v086/review_surface/demo_manifest.json`
 - quality-gate evidence from tests / coverage / CI
 - internal and external review records
 
@@ -166,8 +166,8 @@ The milestone should demonstrate:
 - stable command entry points for milestone review
 
 Evidence locations:
-- `artifacts/v086/`
-- `artifacts/v086/review_surface/demo_manifest.json`
+- generated outputs under `artifacts/v086/`
+- generated review-surface manifest at `artifacts/v086/review_surface/demo_manifest.json`
 - `docs/milestones/v0.86/DEMO_MATRIX_v0.86.md`
 - `docs/milestones/v0.86/MILESTONE_CHECKLIST_v0.86.md`
 
@@ -185,12 +185,12 @@ Open questions:
 
 ## Status
 
-Current status: **planning aligned / execution ready**
+Current status: **implementation landed / Sprint 7 review-and-release tail in progress**
 
 - Planning: complete
-- Execution: ready to begin
-- Validation: planned via local demo program
-- Release readiness: pending implementation and proof surfaces
+- Execution: implemented through the bounded cognitive path, artifact enforcement, and local demo/review surfaces
+- Validation: local demo program and quality-gate proof surfaces are present for D1-D5 and Sprint 7 quality review
+- Release readiness: pending docs/review convergence, review sign-off, and release ceremony closeout
 
 ## Exit Criteria
 

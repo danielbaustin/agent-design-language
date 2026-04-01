@@ -171,6 +171,7 @@ For readers who want the broader context around the runtime:
 - crate-local fixture inventory: `examples/README.md`
 
 Important demo/readiness references:
+- `../docs/milestones/v0.86/DEMO_MATRIX_v0.86.md`
 - `../docs/milestones/v0.8/DEMOS_V0.8.md`
 - `../docs/milestones/v0.85/DEMO_MATRIX_v0.85.md`
 - `../docs/tooling/editor/README.md`

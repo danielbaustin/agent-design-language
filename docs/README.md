@@ -32,7 +32,8 @@ Use this index to find the right source of truth quickly.
 ## Demo and Tooling Surfaces
 
 - Canonical demo index: `../demos/README.md`
-- v0.85 demo matrix: `milestones/v0.85/DEMO_MATRIX_v0.85.md`
+- Active demo matrix: `milestones/v0.86/DEMO_MATRIX_v0.86.md`
+- Historical v0.85 demo matrix: `milestones/v0.85/DEMO_MATRIX_v0.85.md`
 - Editor/tooling demo surfaces: `tooling/editor/README.md`
 
 ## Notes

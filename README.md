@@ -14,7 +14,7 @@ Those artifacts are schema-validated, compiled into a deterministic execution pl
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.85-orange)
+![Milestone](https://img.shields.io/badge/milestone-v0.86-orange)
 
 ## Why ADL
 
@@ -114,6 +114,7 @@ Important supporting demo/readiness docs:
 - `docs/tooling/editor/five_command_regression_suite.md`
 
 For milestone-specific context:
+- `docs/milestones/v0.86/DEMO_MATRIX_v0.86.md`
 - `docs/milestones/v0.7/DEMOS_v0.7.md`
 - `docs/milestones/v0.8/DEMOS_V0.8.md`
 - `docs/milestones/v0.85/DEMO_MATRIX_v0.85.md`

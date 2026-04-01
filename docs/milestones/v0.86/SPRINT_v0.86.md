@@ -3,8 +3,8 @@
 ## Metadata
 - Sprint plan: `v0.86`
 - Milestone: `v0.86`
-- Start date: `Pending sprint kickoff`
-- End date: `Pending sprint completion`
+- Start date: `2026-03-27`
+- End date: `Pending Sprint 7 completion`
 - Owner: `Daniel Austin / Agent Logic`
 
 ## Role Of This Document
