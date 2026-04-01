@@ -26,7 +26,7 @@ It provides:
 - Recent stable runtime milestone: **v0.8**
 - Current closure milestone in the main repo: **v0.85**
 - Next active milestone: **v0.86**
-- Current crate version on `main`: **0.8.0**
+- Current crate version on `main`: **0.86.0**
 
 This README describes the runtime as it exists on the current `main` branch and points to the relevant milestone and demo surfaces in the parent repository.
 
