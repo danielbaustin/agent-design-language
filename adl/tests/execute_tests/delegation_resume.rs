@@ -1084,7 +1084,15 @@ run:
         serde_json::from_str(&fs::read_to_string(&run_json_path).unwrap()).unwrap();
     assert_eq!(run_json["status"], "paused");
 
-    let resumed = run_swarm_in_dir(&paused_case, &["resume", "hitl-roundtrip-cli"]);
+    let resumed = run_swarm_in_dir(
+        &paused_case,
+        &[
+            "resume",
+            "hitl-roundtrip-cli",
+            "--adl",
+            paused_path.to_str().unwrap(),
+        ],
+    );
     assert!(
         resumed.status.success(),
         "resume CLI should succeed\nstdout:\n{}\nstderr:\n{}",
@@ -1180,7 +1188,15 @@ run:
     let paused = run_swarm_in_dir(&paused_case, &[paused_path.to_str().unwrap(), "--run"]);
     assert!(paused.status.success(), "paused run should succeed");
 
-    let resumed = run_swarm_in_dir(&paused_case, &["resume", "resume-skip-verified"]);
+    let resumed = run_swarm_in_dir(
+        &paused_case,
+        &[
+            "resume",
+            "resume-skip-verified",
+            "--adl",
+            paused_path.to_str().unwrap(),
+        ],
+    );
     assert!(resumed.status.success(), "resume should succeed");
     let resumed_stderr = String::from_utf8_lossy(&resumed.stderr);
     assert!(
@@ -1258,7 +1274,15 @@ run:
     assert!(paused.status.success(), "paused run should succeed");
     fs::remove_file(paused_case.join("out").join("s1.txt")).unwrap();
 
-    let resumed = run_swarm_in_dir(&paused_case, &["resume", "resume-rerun-missing"]);
+    let resumed = run_swarm_in_dir(
+        &paused_case,
+        &[
+            "resume",
+            "resume-rerun-missing",
+            "--adl",
+            paused_path.to_str().unwrap(),
+        ],
+    );
     assert!(resumed.status.success(), "resume should succeed");
     let resumed_stderr = String::from_utf8_lossy(&resumed.stderr);
     assert!(
@@ -1343,6 +1367,8 @@ run:
         &[
             "resume",
             "resume-steer",
+            "--adl",
+            yaml_path.to_str().unwrap(),
             "--steer",
             steer_path.to_str().unwrap(),
         ],
@@ -1734,7 +1760,12 @@ run:
         String::from_utf8_lossy(&paused.stderr)
     );
 
-    let resume = run_swarm(&["resume", "hitl-resume-subcommand"]);
+    let resume = run_swarm(&[
+        "resume",
+        "hitl-resume-subcommand",
+        "--adl",
+        paused_path.to_str().unwrap(),
+    ]);
     assert!(
         resume.status.success(),
         "resume subcommand should succeed.\nstdout:\n{}\nstderr:\n{}",
@@ -1786,7 +1817,12 @@ run:
     pause_json["execution_plan_hash"] = serde_json::Value::String("deadbeef".to_string());
     fs::write(&pause_path, serde_json::to_vec_pretty(&pause_json).unwrap()).unwrap();
 
-    let resumed = run_swarm(&["resume", "hitl-resume-subcommand-bad-hash"]);
+    let resumed = run_swarm(&[
+        "resume",
+        "hitl-resume-subcommand-bad-hash",
+        "--adl",
+        paused_path.to_str().unwrap(),
+    ]);
     assert!(
         !resumed.status.success(),
         "resume subcommand should reject hash mismatch"
@@ -1795,6 +1831,64 @@ run:
     assert!(
         stderr.contains("execution plan hash mismatch"),
         "stderr was:\n{stderr}"
+    );
+}
+
+#[test]
+fn resume_subcommand_ignores_tampered_pause_artifact_adl_path_when_explicit_path_is_supplied() {
+    let base = tmp_dir("exec-resume-subcommand-tampered-adl-path");
+    let _bin = write_mock_ollama(&base, MockOllamaBehavior::EchoPrompt);
+    let new_path = prepend_path(&base);
+    let _path_guard = EnvVarGuard::set("PATH", new_path);
+
+    let paused_yaml = r#"
+version: "0.3"
+providers: { local: { type: "ollama" } }
+agents: { a: { provider: "local", model: "phi4-mini" } }
+tasks: { t: { prompt: { user: "step {{n}}" } } }
+run:
+  name: "hitl-resume-subcommand-tampered-adl-path"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "s1"
+        agent: "a"
+        task: "t"
+        save_as: "s1"
+        write_to: "s1.txt"
+        inputs: { n: "1" }
+        guards: [ { type: pause } ]
+      - id: "s2"
+        agent: "a"
+        task: "t"
+        save_as: "s2"
+        write_to: "s2.txt"
+        inputs: { n: "2" }
+"#;
+    let paused_path = base.join("paused-resume-subcommand-tampered-adl-path.yaml");
+    fs::write(&paused_path, paused_yaml).unwrap();
+
+    let paused = run_swarm(&[paused_path.to_str().unwrap(), "--run"]);
+    assert!(paused.status.success(), "paused run should succeed");
+
+    let pause_path = pause_state_path("hitl-resume-subcommand-tampered-adl-path");
+    let mut pause_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&pause_path).unwrap()).unwrap();
+    pause_json["adl_path"] =
+        serde_json::Value::String(base.join("tampered-other.yaml").display().to_string());
+    fs::write(&pause_path, serde_json::to_vec_pretty(&pause_json).unwrap()).unwrap();
+
+    let resumed = run_swarm(&[
+        "resume",
+        "hitl-resume-subcommand-tampered-adl-path",
+        "--adl",
+        paused_path.to_str().unwrap(),
+    ]);
+    assert!(
+        resumed.status.success(),
+        "resume should ignore tampered pause_state adl_path when explicit --adl is supplied.\nstdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&resumed.stdout),
+        String::from_utf8_lossy(&resumed.stderr)
     );
 }
 

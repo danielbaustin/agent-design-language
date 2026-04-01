@@ -1,4 +1,5 @@
 use super::*;
+use crate::cli::resume_usage;
 
 #[test]
 fn select_open_artifact_prefers_first_html() {
@@ -102,8 +103,9 @@ fn is_ci_environment_treats_falsey_values_as_false() {
 #[test]
 fn usage_mentions_v0_4_and_legacy_examples() {
     let text = usage();
+    let resume_text = resume_usage();
     assert!(text.contains("Usage:"));
-    assert!(text.contains("adl resume <run_id>"));
+    assert!(resume_text.contains("adl resume <run_id> --adl <path>"));
     assert!(text.contains("adl godel run"));
     assert!(text.contains("adl godel inspect"));
     assert!(text.contains("adl godel evaluate"));
