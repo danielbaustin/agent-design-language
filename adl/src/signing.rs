@@ -271,12 +271,9 @@ pub fn verify_doc_with_profile(
     };
     enforce_verification_profile(&metadata, &profile)?;
 
-    let sig = doc.signature.as_ref().ok_or_else(|| {
-        VerificationError::policy(
-            "SIGN_POLICY_UNSIGNED_REQUIRED",
-            "workflow is unsigned and verification profile requires signature",
-        )
-    })?;
+    let Some(sig) = doc.signature.as_ref() else {
+        return Ok(());
+    };
 
     let public = if let Some(path) = public_key_path {
         load_verifying_key(path).map_err(|err| {
@@ -726,7 +723,7 @@ run:
     }
 
     #[test]
-    fn verify_doc_with_profile_currently_requires_signature_even_when_optional() {
+    fn verify_doc_with_profile_allows_unsigned_when_signature_is_optional() {
         let doc = sample_doc();
         let profile = VerificationProfile {
             require_signature: false,
@@ -734,10 +731,8 @@ run:
             allowed_algs: vec!["ed25519".to_string()],
             allowed_key_sources: vec![VerificationKeySource::Embedded],
         };
-        let err = verify_doc_with_profile(&doc, None, &profile)
-            .expect_err("current implementation requires an attached signature");
-        assert_eq!(err.kind, VerificationErrorKind::PolicyViolation);
-        assert_eq!(err.code, "SIGN_POLICY_UNSIGNED_REQUIRED");
+        verify_doc_with_profile(&doc, None, &profile)
+            .expect("unsigned document should be allowed when signature is optional");
     }
 
     #[test]
