@@ -64,6 +64,38 @@ pub(crate) struct PauseStateArtifact {
     pub(crate) pause: execute::PauseState,
 }
 
+fn normalize_pause_adl_ref(path: &Path) -> String {
+    let mut parts = Vec::new();
+    for component in path.components() {
+        match component {
+            std::path::Component::CurDir => {}
+            std::path::Component::Normal(part) => parts.push(part.to_string_lossy().to_string()),
+            std::path::Component::ParentDir => parts.push("..".to_string()),
+            std::path::Component::RootDir | std::path::Component::Prefix(_) => {}
+        }
+    }
+    if parts.is_empty() {
+        "<unknown>".to_string()
+    } else {
+        parts.join("/")
+    }
+}
+
+fn sanitize_pause_adl_path(adl_path: &Path) -> String {
+    if !adl_path.is_absolute() {
+        return normalize_pause_adl_ref(adl_path);
+    }
+    if let Ok(cwd) = std::env::current_dir() {
+        if let Ok(rel) = adl_path.strip_prefix(&cwd) {
+            return normalize_pause_adl_ref(rel);
+        }
+    }
+    if let Some(file_name) = adl_path.file_name() {
+        return format!("external:/{}", file_name.to_string_lossy());
+    }
+    "external:/<unknown>".to_string()
+}
+
 #[derive(Debug, Serialize)]
 pub(crate) struct StepStateArtifact {
     pub(crate) step_id: String,
@@ -2908,7 +2940,7 @@ pub(crate) fn write_run_state_artifacts(
             workflow_id: resolved.workflow_id.clone(),
             version: resolved.doc.version.clone(),
             status: "paused".to_string(),
-            adl_path: adl_path.display().to_string(),
+            adl_path: sanitize_pause_adl_path(adl_path),
             execution_plan_hash: execution_plan_hash(&resolved.execution_plan)?,
             steering_history: steering_history.to_vec(),
             pause: pause_payload.clone(),

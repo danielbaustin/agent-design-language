@@ -406,6 +406,68 @@ fn write_run_state_and_load_resume_round_trip() {
         run_dir.join("pause_state.json").exists(),
         "paused runs must persist pause_state.json"
     );
+    let pause_artifact =
+        run_artifacts::load_pause_state_artifact(&run_dir.join("pause_state.json"))
+            .expect("load pause state");
+    assert_eq!(pause_artifact.adl_path, "examples/adl-0.1.yaml");
+    let _ = std::fs::remove_dir_all(run_dir);
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn write_run_state_artifacts_sanitizes_external_absolute_adl_path_in_pause_state() {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("time")
+        .as_nanos();
+    let run_id = format!("pause-sanitize-{now}-{}", std::process::id());
+    let resolved = minimal_resolved_for_artifacts(run_id.clone());
+    let out_dir = std::env::temp_dir().join(format!("adl-main-out-sanitize-{now}"));
+    let runs_root = unique_temp_dir("adl-main-runs-pause-sanitize");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
+
+    let mut tr = trace::Trace::new(run_id.clone(), "wf".to_string(), "0.5".to_string());
+    tr.step_started("s1", "a1", "p1", "t1", None);
+    tr.step_finished("s1", true);
+
+    let pause = execute::PauseState {
+        paused_step_id: "s1".to_string(),
+        reason: Some("review".to_string()),
+        completed_step_ids: vec!["s1".to_string()],
+        remaining_step_ids: vec![],
+        saved_state: HashMap::new(),
+        completed_outputs: HashMap::new(),
+    };
+
+    let absolute_adl = std::env::temp_dir().join("adl-sensitive-host-path-demo.adl.yaml");
+    let run_dir = write_run_state_artifacts(
+        &resolved,
+        &tr,
+        &absolute_adl,
+        &out_dir,
+        100,
+        150,
+        "paused",
+        Some(&pause),
+        &[],
+        &runtime_control_for("paused", &tr),
+        None,
+        None,
+    )
+    .expect("write run artifacts");
+
+    let pause_artifact =
+        run_artifacts::load_pause_state_artifact(&run_dir.join("pause_state.json"))
+            .expect("load pause state");
+    assert_eq!(
+        pause_artifact.adl_path,
+        "external:/adl-sensitive-host-path-demo.adl.yaml"
+    );
+    assert!(
+        !pause_artifact.adl_path.starts_with('/'),
+        "pause artifact should not retain raw host absolute paths"
+    );
+
     let _ = std::fs::remove_dir_all(run_dir);
     let _ = std::fs::remove_dir_all(out_dir);
 }
