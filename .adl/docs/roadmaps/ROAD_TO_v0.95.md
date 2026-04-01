@@ -161,7 +161,7 @@ This is deliberate:
 Use the major versions as architectural umbrellas:
 
 - `v0.86` = bounded cognitive system band
-- `v0.87` = operational + trace + shared-memory substrate band
+- `v0.87` = operational + trace + provider + shared-memory substrate band
 - `v0.88` = persistence, instinct, aptitudes, and bounded agency band
 - `v0.89` = AEE 1.0 convergence and security/threat modeling band
 - `v0.90` = reasoning graph, signed trace, and trace query band
@@ -204,7 +204,7 @@ Why this belongs here:
 | `v0.86` | cognitive agent with arbitration + instinct + freedom gate |
 | `v0.87` | traceable / inspectable agent with provider portability, shared memory, and operational skill substrate |
 | `v0.88` | agent shows persistence over time with instinct influence |
-| `v0.89` | agent shows AEE convergence under explicit security/threat constraints |
+| `v0.89` | agent shows AEE convergence and Freedom Gate v2 under explicit security/threat constraints |
 | `v0.90` | PR Demo prototype: reasoning graph + signed trace + query |
 | `v0.91` | agent exhibits affect + kindness + bounded humor |
 | `v0.92` | PR Demo: agent maintains identity across runs |
@@ -239,10 +239,10 @@ Why this belongs here:
   convergence, and reasoning-graph work
 - the proof surface is concrete and demoable
 
-### v0.87 - Operational, Trace, and Shared Memory Substrate Band
+### v0.87 - Operational, Trace, Provider, and Shared Memory Substrate Band
 
 Theme:
-make the system coherent across execution, memory, inspection, and demo planning before deeper persistence and convergence work.
+make the system coherent across execution, provider portability, memory, inspection, and demo planning before deeper persistence and convergence work.
 
 Sub-milestones:
 
@@ -259,8 +259,9 @@ Sub-milestones:
 
 - `v0.87.3`:
   shared ObsMem foundation
-  shared memory substrate across runs, structured retrieval integration, and
-  early persistence/indexing discipline
+  shared memory substrate across runs, structured retrieval integration, early
+  persistence/indexing discipline, and the first bounded path toward shared
+  social memory built on trace, replay, and ObsMem
 
 - `v0.87.4`:
   operational skills + demo planning substrate
@@ -318,9 +319,10 @@ Sub-milestones:
   convergence state
 
 - `v0.89.2`:
-  retry/adaptation loop
+  retry/adaptation loop + Freedom Gate v2
   visible adaptation behavior within bounded retries using the stabilized trace
-  and shared-memory substrate
+  and shared-memory substrate, plus a stronger Freedom Gate with richer
+  bounded refusal / deferral / escalation behavior
 
 - `v0.89.3`:
   AEE 1.0 demo
@@ -332,8 +334,9 @@ Why this belongs here:
 
 - AEE is a core ADL subsystem, not an optional later add-on
 - the first version is already being established in the bounded cognitive system band and should continue forward rather than stall
-- later milestones may integrate with AEE, govern it, or rely on it, but they should not still be defining what AEE fundamentally is
-- stable trace, shared memory, and persistence signals make `v0.89` the right point to deliver AEE 1.0 rather than a placeholder convergence story
+- Freedom Gate v2 belongs with AEE 1.0 because bounded adaptation without a stronger action boundary leaves the control story incomplete
+- later milestones may integrate with AEE and Freedom Gate, govern them, or rely on them, but they should not still be defining what those subsystems fundamentally are
+- stable trace, provider portability, shared memory, and persistence signals make `v0.89` the right point to deliver AEE 1.0 rather than a placeholder convergence story
 
 ### v0.90 - Reasoning Graph, Signed Trace, and Trace Query Band
 
@@ -377,8 +380,8 @@ Sub-milestones:
 
 - `v0.91.2`:
   moral cognition surfaces
-  kindness model, moral resources subsystem, and inspectable moral-evaluation
-  surfaces
+  kindness model, moral resources subsystem, wellbeing-oriented moral framing,
+  and inspectable moral-evaluation surfaces
 
 - `v0.91.3`:
   affect + moral vertical slice
@@ -390,6 +393,8 @@ Why this belongs here:
 - affect and moral cognition are a coherent band and should be readable as such
 - reasoning graphs have already been moved earlier into Gödel work
 - this keeps the milestone to three meaningful slices instead of five thin ones
+- broader cultivation / flourishing framing can live here as supporting
+  planning context without creating a separate milestone domain
 
 Relevant planning inputs:
 
@@ -416,7 +421,7 @@ Sub-milestones:
 - `v0.92.3`:
   continuity bridge
   temporal continuity hooks and the bridge from cognitive continuity to
-  identity-bearing agents
+  identity-bearing agents, including stable names as anchors of continuity
 
 Why this belongs here:
 
@@ -427,6 +432,8 @@ Why this belongs here:
   replay/trust/accountability substrate and should land before richer
   policy/governance layers, but full Layer 8 provider-contract maturation is
   deferred to the final hardening band
+- names and continuity need to become explicit before richer social and civic
+  layers can be made serious
 
 ### v0.93 - Governance and Delegation Band
 
@@ -447,7 +454,8 @@ Sub-milestones:
 - `v0.93.3`:
   social contract and rights/duties
   enforceable social contract surfaces, rights/duties articulation, and
-  governed delegation boundaries
+  governed delegation boundaries, with room for later reputation, relationship,
+  trust, and citizenship interpretation on top of the substrate
 
 Why this belongs here:
 
@@ -457,6 +465,9 @@ Why this belongs here:
   stack
 - this keeps v0.93 focused on governed autonomy rather than mixing provenance
   and governance again
+- reputation, trust, relationship, and citizenship are best understood as
+  higher-order social/governance surfaces built on identity, trace, and
+  constitutional delegation rather than as separate earlier milestone bands
 
 ### v0.95 - MVP Convergence, Tooling Migration, and Optional Zed Band
 
@@ -563,7 +574,7 @@ The core reasoning is:
 - `v0.87` should land the operational, trace, provider, shared-memory, and demo-planning substrate before deeper persistence and convergence work
 - cognitive control should land before bounded agency, and bounded agency before AEE 1.0 convergence
 - the Freedom Gate belongs with first cognition-control surfaces, not as a late add-on
-- AEE is core and should become real in `v0.89`, before the reasoning/provenance stack deepens
+- AEE is core and should become real in `v0.89`, together with Freedom Gate v2, before the reasoning/provenance stack deepens
 - reasoning-graph artifacts, signed trace completion, and query belong together rather than being spread across later bands
 - affect and moral cognition should form one readable milestone band rather than many thin slices
 - identity substrate should come before governance and delegation
@@ -578,7 +589,7 @@ The intended dependency flow is:
 2. `v0.86.1` to `v0.86.3` bounded cognitive system
 3. `v0.87.1` to `v0.87.4` operational, trace, provider, shared-memory, and demo-planning substrate
 4. `v0.88.1` to `v0.88.3` persistence, instinct, aptitudes, and bounded agency
-5. `v0.89.1` to `v0.89.3` AEE 1.0 convergence and security/threat modeling
+5. `v0.89.1` to `v0.89.3` AEE 1.0 convergence, Freedom Gate v2, and security/threat modeling
 6. `v0.90.1` to `v0.90.3` reasoning graph, signed trace completion, and trace query
 7. `v0.91.1` to `v0.91.3` affect and moral cognition
 8. `v0.92.1` to `v0.92.3` identity, continuity, and capability substrate
@@ -594,7 +605,7 @@ Each major milestone should have an explicit demo obligation tied to the runtime
 
 - `v0.87`: define the canonical demo catalog for `v0.87` through `v0.95`, including prototype, milestone-proof, investor-facing, and PR Demo classes
 - `v0.88`: first persistence / continuity demo and first bounded agency-over-time demo
-- `v0.89`: first real AEE 1.0 convergence demo
+- `v0.89`: first real AEE 1.0 convergence demo plus Freedom Gate v2 control demo
 - `v0.90`: first proto PR Demo plus reasoning/provenance demo
 - `v0.91`: affect + moral cognition vertical slice demo
 - `v0.92`: first real PR Demo with persistent identities across runs
@@ -618,7 +629,7 @@ Staging plan:
 Why not earlier:
 
 - `v0.88` supplies persistence / chronosense and bounded agency
-- `v0.89` supplies AEE 1.0 adaptive behavior
+- `v0.89` supplies AEE 1.0 adaptive behavior and Freedom Gate v2
 - `v0.90` supplies inspectable reasoning/provenance and signed-trace completion
 - `v0.92` supplies persistent identity across runs
 
