@@ -174,10 +174,29 @@ pub enum SecurityEnvelopeError {
     ///
     /// Recovery: use sandbox-relative normalized paths.
     PathTraversal { path: String },
+    /// Requested path could not be resolved because the sandbox target/root was missing.
+    ///
+    /// Recovery: create the sandbox root or the relevant ancestor under it.
+    PathNotFound { path: String },
+    /// Requested path could not be canonicalized in a deterministic/safe way.
+    ///
+    /// Recovery: normalize the sandbox root/path and retry.
+    PathNotCanonical { path: String },
+    /// Requested path was rejected because the sandbox policy disallows symlink traversal.
+    ///
+    /// Recovery: remove the symlinked component or change policy intentionally.
+    SymlinkDisallowed { path: String },
     /// Requested path resolves outside sandbox root via symlink traversal.
     ///
     /// Recovery: constrain symlink targets to sandbox root.
     SymlinkEscape { path: String },
+    /// Requested path failed sandbox validation due to a filesystem I/O error.
+    ///
+    /// Recovery: inspect filesystem permissions/state and retry.
+    SandboxIoError {
+        path: String,
+        operation: &'static str,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -292,7 +311,11 @@ impl SecurityEnvelopeError {
             Self::DisallowedKeySource { .. } => "REMOTE_ENVELOPE_DISALLOWED_KEY_SOURCE",
             Self::MissingKeySource => "REMOTE_ENVELOPE_MISSING_KEY_SOURCE",
             Self::PathTraversal { .. } => "REMOTE_ENVELOPE_PATH_TRAVERSAL",
+            Self::PathNotFound { .. } => "REMOTE_ENVELOPE_PATH_NOT_FOUND",
+            Self::PathNotCanonical { .. } => "REMOTE_ENVELOPE_PATH_NOT_CANONICAL",
+            Self::SymlinkDisallowed { .. } => "REMOTE_ENVELOPE_SYMLINK_DISALLOWED",
             Self::SymlinkEscape { .. } => "REMOTE_ENVELOPE_SYMLINK_ESCAPE",
+            Self::SandboxIoError { .. } => "REMOTE_ENVELOPE_SANDBOX_IO_ERROR",
         }
     }
 
@@ -332,8 +355,20 @@ impl SecurityEnvelopeError {
             Self::PathTraversal { path } => format!(
                 "remote security envelope rejected requested path with traversal/absolute components: '{path}'"
             ),
+            Self::PathNotFound { path } => format!(
+                "remote security envelope rejected requested path because the sandbox target/root was not found: '{path}'"
+            ),
+            Self::PathNotCanonical { path } => format!(
+                "remote security envelope rejected requested path because sandbox canonicalization failed deterministically: '{path}'"
+            ),
+            Self::SymlinkDisallowed { path } => format!(
+                "remote security envelope rejected requested path because symlink traversal is disabled by sandbox policy: '{path}'"
+            ),
             Self::SymlinkEscape { path } => format!(
                 "remote security envelope rejected requested path escaping sandbox root via symlink/canonicalization: '{path}'"
+            ),
+            Self::SandboxIoError { path, operation } => format!(
+                "remote security envelope rejected requested path because sandbox validation hit an IO error during {operation}: '{path}'"
             ),
         }
     }
@@ -664,13 +699,43 @@ pub fn validate_security_envelope(
             std::path::Path::new(rel),
         );
         if let Err(err) = resolved {
-            return Err(match err.code() {
-                "sandbox_path_denied" => SecurityEnvelopeError::PathTraversal { path: rel.clone() },
-                _ => SecurityEnvelopeError::SymlinkEscape { path: rel.clone() },
-            });
+            return Err(map_sandbox_path_error(rel, &err));
         }
     }
     Ok(())
+}
+
+fn map_sandbox_path_error(
+    requested_path: &str,
+    err: &sandbox::SandboxPathError,
+) -> SecurityEnvelopeError {
+    match err {
+        sandbox::SandboxPathError::PathDenied { .. } => SecurityEnvelopeError::PathTraversal {
+            path: requested_path.to_string(),
+        },
+        sandbox::SandboxPathError::PathNotFound { .. } => SecurityEnvelopeError::PathNotFound {
+            path: requested_path.to_string(),
+        },
+        sandbox::SandboxPathError::PathNotCanonical { .. } => {
+            SecurityEnvelopeError::PathNotCanonical {
+                path: requested_path.to_string(),
+            }
+        }
+        sandbox::SandboxPathError::SymlinkDisallowed { .. } => {
+            SecurityEnvelopeError::SymlinkDisallowed {
+                path: requested_path.to_string(),
+            }
+        }
+        sandbox::SandboxPathError::EscapeAttempt { .. } => SecurityEnvelopeError::SymlinkEscape {
+            path: requested_path.to_string(),
+        },
+        sandbox::SandboxPathError::IoError { operation, .. } => {
+            SecurityEnvelopeError::SandboxIoError {
+                path: requested_path.to_string(),
+                operation,
+            }
+        }
+    }
 }
 
 impl ExecuteResponse {
@@ -1592,6 +1657,63 @@ mod tests {
         assert_eq!(err.code, "REMOTE_ENVELOPE_SYMLINK_ESCAPE");
 
         let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn security_envelope_rejects_missing_sandbox_root_as_not_found() {
+        let missing_root = std::env::temp_dir().join("adl-remote-env-missing-root-does-not-exist");
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: false,
+            require_key_id: false,
+            signed: false,
+            key_id: None,
+            signature_alg: None,
+            key_source: None,
+            request_signature: None,
+            allowed_algs: vec![],
+            allowed_key_sources: vec![],
+            sandbox_root: Some(missing_root.display().to_string()),
+            requested_paths: vec!["out.txt".to_string()],
+        });
+        let response = execute_request(&req);
+        assert!(!response.ok);
+        let err = response.error.expect("error");
+        assert_eq!(err.code, "REMOTE_ENVELOPE_PATH_NOT_FOUND");
+    }
+
+    #[test]
+    fn sandbox_mapping_preserves_distinct_failure_classes() {
+        let requested = "out.txt";
+
+        let not_canonical = map_sandbox_path_error(
+            requested,
+            &sandbox::SandboxPathError::PathNotCanonical {
+                requested_path: "sandbox:/out.txt".to_string(),
+            },
+        );
+        assert_eq!(not_canonical.code(), "REMOTE_ENVELOPE_PATH_NOT_CANONICAL");
+
+        let symlink_disallowed = map_sandbox_path_error(
+            requested,
+            &sandbox::SandboxPathError::SymlinkDisallowed {
+                requested_path: "sandbox:/out.txt".to_string(),
+                resolved_path: Some("sandbox:/real/out.txt".to_string()),
+            },
+        );
+        assert_eq!(
+            symlink_disallowed.code(),
+            "REMOTE_ENVELOPE_SYMLINK_DISALLOWED"
+        );
+
+        let io_error = map_sandbox_path_error(
+            requested,
+            &sandbox::SandboxPathError::IoError {
+                requested_path: "sandbox:/out.txt".to_string(),
+                operation: "canonicalize_root",
+            },
+        );
+        assert_eq!(io_error.code(), "REMOTE_ENVELOPE_SANDBOX_IO_ERROR");
     }
 
     #[test]
