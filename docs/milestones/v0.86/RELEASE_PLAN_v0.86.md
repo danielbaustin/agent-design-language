@@ -39,7 +39,7 @@ If any answer is NO → DO NOT RELEASE.
 
 Record decision:
 - GO / NO-GO decision: `Pending milestone completion review`
-- Decision record / notes: `To be recorded at release gate`
+- Decision record / notes: `Sprint 7 quality-gate pass recorded on 2026-04-01: local fmt/clippy/test/coverage/demo validation passed; coverage is over the enforced limits (91.50% workspace line coverage against a 90% threshold, with the per-file >= 80% gate passing); current main-branch GitHub Actions and nightly coverage are green; release still remains pending the docs/review/release-tail work and the still-planned D2/D3/D5 demo surfaces.`
 
 ---
 

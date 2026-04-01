@@ -32,12 +32,18 @@ This milestone must prove a working **bounded cognitive system**, not just conce
 ---
 
 ## Quality Gates
-- [ ] `cargo fmt` passes
-- [ ] `cargo clippy --all-targets -- -D warnings` passes
-- [ ] `cargo test` passes
-- [ ] CI is green on the merge target
-- [ ] Coverage signal is not red (or exception documented)
+- [x] `cargo fmt` passes
+- [x] `cargo clippy --all-targets -- -D warnings` passes
+- [x] `cargo test` passes
+- [x] CI is green on the merge target
+- [x] Coverage signal is not red (or exception documented)
 - [ ] No unresolved high-priority blockers
+
+Sprint 7 gate note (2026-04-01):
+- Local repo-enforced gate commands passed in the `WP-17` worktree.
+- Current GitHub Actions `ci` and nightly coverage runs on `main` are green.
+- Coverage is over the enforced limits: workspace line coverage is `91.50%` against a `90%` threshold, and the per-file gate passed at `>= 80%`.
+- The quality-gate run exposed a workflow-path drift in this branch snapshot: `.github/workflows/ci.yaml` referenced `tools/check_release_notes_commands.sh`, while the actual current script path is `adl/tools/check_release_notes_commands.sh`, which passed locally when invoked directly.
 
 ---
 
@@ -78,10 +84,10 @@ This milestone must prove a working **bounded cognitive system**, not just conce
 ---
 
 ## Demo / Proof Surface
-- [ ] At least one local agent demo exercises the full bounded cognitive system
-- [ ] Demo proves signals, arbitration, fast/slow reasoning, candidate selection, bounded execution, evaluation, reframing, memory participation, and Freedom Gate
-- [ ] Demo matrix is accurate and reviewable
-- [ ] Reviewers can run one obvious command and inspect outputs
+- [x] At least one local agent demo exercises the full bounded cognitive system
+- [x] Demo proves signals, arbitration, fast/slow reasoning, candidate selection, bounded execution, evaluation, reframing, memory participation, and Freedom Gate
+- [x] Demo matrix is accurate and reviewable
+- [x] Reviewers can run one obvious command and inspect outputs
 
 ---
 

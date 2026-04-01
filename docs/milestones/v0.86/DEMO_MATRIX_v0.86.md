@@ -3,7 +3,7 @@
 ## Metadata
 - Milestone: `v0.86`
 - Version: `0.86`
-- Date: `2026-03-27`
+- Date: `2026-04-01`
 - Owner: `adl`
 - Related issues / work packages: `#882`, `WP-15`, `WP-16`
 
@@ -163,6 +163,7 @@ Reviewer checks:
 
 Known limits / caveats:
 - This demo proves the v0.86 bounded cognitive system only; it does not prove later-milestone affect, PHI, or identity behavior.
+- The validator must point at the emitted demo root `artifacts/v086/control_path/demo-g-v086-control-path`, not the parent `artifacts/v086/control_path/` directory.
 
 ---
 
