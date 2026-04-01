@@ -180,7 +180,9 @@ pub fn resolve_run(doc: &adl::AdlDoc) -> Result<AdlResolved> {
         .with_context(|| "failed to expand provider profiles")?;
     let _version = parse_version(&doc.version)?;
 
-    let run_id = doc.run.name.clone().unwrap_or_else(|| "run".to_string());
+    let run_id =
+        crate::artifacts::validate_run_id_path_segment(doc.run.name.as_deref().unwrap_or("run"))
+            .with_context(|| "run.name must resolve to a safe artifact path segment")?;
 
     if let Some(pattern_ref) = doc.run.pattern_ref.as_ref() {
         let registry = execution_plan::PatternRegistry::new(&doc.patterns)
@@ -439,6 +441,14 @@ mod tests {
         doc.version = "0.3".to_string();
         let resolved = resolve_run(&doc).expect("v0.3 should resolve for parse/plan");
         assert_eq!(resolved.doc.version, "0.3");
+    }
+
+    #[test]
+    fn resolve_run_rejects_unsafe_run_name_for_artifact_paths() {
+        let mut doc = minimal_doc();
+        doc.run.name = Some("../escape".to_string());
+        let err = resolve_run(&doc).expect_err("unsafe run name must fail");
+        assert!(err.to_string().contains("safe artifact path segment"));
     }
 
     #[test]

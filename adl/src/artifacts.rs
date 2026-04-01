@@ -5,6 +5,29 @@ use serde::Serialize;
 
 pub const ARTIFACT_MODEL_VERSION: u32 = 1;
 
+pub fn validate_run_id_path_segment(run_id: &str) -> Result<String> {
+    let trimmed = run_id.trim();
+    if trimmed.is_empty() {
+        return Err(anyhow!("run_id must not be empty for artifact paths"));
+    }
+    if trimmed == "." || trimmed == ".." {
+        return Err(anyhow!(
+            "run_id must be a safe path segment, not '.' or '..'"
+        ));
+    }
+    if trimmed.contains('/') || trimmed.contains('\\') {
+        return Err(anyhow!(
+            "run_id must be a safe path segment and must not contain path separators"
+        ));
+    }
+    if trimmed.contains(':') {
+        return Err(anyhow!(
+            "run_id must be a safe path segment and must not contain drive-like ':' prefixes"
+        ));
+    }
+    Ok(trimmed.to_string())
+}
+
 /// Canonical run artifact path builder.
 ///
 /// Produces deterministic, timestamp-free paths under `.adl/runs/<run_id>/`.
@@ -28,12 +51,9 @@ impl RunArtifactPaths {
 
     /// Construct deterministic artifact paths for a run id under an explicit runs root.
     pub fn for_run_in_root(run_id: &str, runs_root: impl Into<PathBuf>) -> Result<Self> {
-        let run_id = run_id.trim();
-        if run_id.is_empty() {
-            return Err(anyhow!("run_id must not be empty for artifact paths"));
-        }
+        let run_id = validate_run_id_path_segment(run_id)?;
         Ok(Self {
-            run_id: run_id.to_string(),
+            run_id,
             runs_root: runs_root.into(),
         })
     }
@@ -377,6 +397,17 @@ mod tests {
             err.to_string().contains("run_id must not be empty"),
             "unexpected error: {err}"
         );
+    }
+
+    #[test]
+    fn for_run_rejects_traversal_separator_and_drive_like_run_ids() {
+        for bad in ["..", "a/b", "a\\b", "/tmp/run", "C:\\run"] {
+            let err = RunArtifactPaths::for_run(bad).expect_err("unsafe run_id should fail");
+            assert!(
+                err.to_string().contains("safe path segment"),
+                "unexpected error for '{bad}': {err}"
+            );
+        }
     }
 
     #[test]

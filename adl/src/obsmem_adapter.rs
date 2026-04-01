@@ -78,18 +78,15 @@ pub fn build_write_request_from_run_artifacts(
     runs_root: &Path,
     run_id: &str,
 ) -> Result<MemoryWriteRequest, ObsMemContractError> {
-    if run_id.trim().is_empty() {
-        return Err(ObsMemContractError::new(
-            ObsMemContractErrorCode::InvalidRequest,
-            "run_id must be non-empty",
-        ));
-    }
+    let safe_run_id = crate::artifacts::validate_run_id_path_segment(run_id).map_err(|err| {
+        ObsMemContractError::new(ObsMemContractErrorCode::InvalidRequest, err.to_string())
+    })?;
 
-    let run_dir = runs_root.join(run_id);
+    let run_dir = runs_root.join(&safe_run_id);
     let run_summary_path = run_dir.join("run_summary.json");
     let run_status_path = run_dir.join("run_status.json");
     let activation_log_path = run_dir.join("logs").join("activation_log.json");
-    let indexed = index_run_from_artifacts(runs_root, run_id)?;
+    let indexed = index_run_from_artifacts(runs_root, &safe_run_id)?;
 
     let workflow_id = indexed.workflow_id;
     let failure_code = indexed.failure_code;
@@ -99,25 +96,25 @@ pub fn build_write_request_from_run_artifacts(
     let mut citations = Vec::new();
     citations.push(citation_for_path(
         &run_summary_path,
-        format!("runs/{run_id}/run_summary.json"),
+        format!("runs/{safe_run_id}/run_summary.json"),
     )?);
     citations.push(citation_for_path(
         &run_status_path,
-        format!("runs/{run_id}/run_status.json"),
+        format!("runs/{safe_run_id}/run_status.json"),
     )?);
     citations.push(citation_for_path(
         &activation_log_path,
-        format!("runs/{run_id}/logs/activation_log.json"),
+        format!("runs/{safe_run_id}/logs/activation_log.json"),
     )?);
 
     // Contract requires a relative trace-bundle pointer; WP-08 uses a stable
     // contract anchor and WP-09 will wire full bundle indexing flow.
     let mut req = MemoryWriteRequest {
         contract_version: OBSMEM_CONTRACT_VERSION,
-        run_id: run_id.to_string(),
+        run_id: safe_run_id.clone(),
         workflow_id: workflow_id.to_string(),
         trace_bundle_rel_path: "trace_bundle_v2/manifest.json".to_string(),
-        activation_log_rel_path: format!("runs/{run_id}/logs/activation_log.json"),
+        activation_log_rel_path: format!("runs/{safe_run_id}/logs/activation_log.json"),
         failure_code,
         summary,
         tags,
@@ -269,6 +266,14 @@ mod tests {
             a.activation_log_rel_path,
             "runs/r1/logs/activation_log.json".to_string()
         );
+    }
+
+    #[test]
+    fn build_write_request_from_artifacts_rejects_unsafe_run_id_path_segments() {
+        let tmp = unique_temp_dir("unsafe-run-id");
+        let err = build_write_request_from_run_artifacts(&tmp, "../escape")
+            .expect_err("unsafe run_id must fail");
+        assert!(err.message.contains("safe path segment"));
     }
 
     #[test]

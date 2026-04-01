@@ -239,8 +239,9 @@ pub fn export_trace_bundle_v2(
 
     let mut file_entries = Vec::new();
     for run_id in &ids {
-        let src_run_dir = runs_root.join(run_id);
-        let out_run_dir = runs_root_out.join(run_id);
+        let safe_run_id = artifacts::validate_run_id_path_segment(run_id)?;
+        let src_run_dir = runs_root.join(&safe_run_id);
+        let out_run_dir = runs_root_out.join(&safe_run_id);
         std::fs::create_dir_all(&out_run_dir)
             .with_context(|| format!("create bundle run dir '{}'", out_run_dir.display()))?;
 
@@ -256,7 +257,7 @@ pub fn export_trace_bundle_v2(
                 &bundle_root,
                 &src_run_dir.join(rel),
                 &out_run_dir.join(rel),
-                &format!("runs/{run_id}/{rel}"),
+                &format!("runs/{safe_run_id}/{rel}"),
                 &mut file_entries,
             )?;
         }
@@ -268,7 +269,7 @@ pub fn export_trace_bundle_v2(
                     &bundle_root,
                     &src,
                     &out_run_dir.join(rel),
-                    &format!("runs/{run_id}/{rel}"),
+                    &format!("runs/{safe_run_id}/{rel}"),
                     &mut file_entries,
                 )?;
             }
@@ -278,7 +279,7 @@ pub fn export_trace_bundle_v2(
         let status: JsonValue = read_json(&src_run_dir.join("run_status.json"))?;
         let metadata = TraceBundleRunMetadataV2 {
             trace_bundle_run_version: TRACE_BUNDLE_VERSION,
-            run_id: run_id.to_string(),
+            run_id: safe_run_id.clone(),
             workflow_id: summary
                 .get("workflow_id")
                 .and_then(|v| v.as_str())
@@ -307,7 +308,7 @@ pub fn export_trace_bundle_v2(
         write_trace_bundle_json(
             &bundle_root,
             &out_run_dir.join("metadata.json"),
-            &format!("runs/{run_id}/metadata.json"),
+            &format!("runs/{safe_run_id}/metadata.json"),
             &metadata,
             &mut file_entries,
         )?;
@@ -587,7 +588,8 @@ fn discover_run_ids(runs_root: &Path) -> Result<Vec<String>> {
 }
 
 fn load_dataset_row(runs_root: &Path, run_id: &str) -> Result<DatasetRowV1> {
-    let run_dir = runs_root.join(run_id);
+    let safe_run_id = artifacts::validate_run_id_path_segment(run_id)?;
+    let run_dir = runs_root.join(&safe_run_id);
     let run_summary_path = run_dir.join("run_summary.json");
     let steps_path = run_dir.join("steps.json");
     let scores_path = run_dir.join("learning").join("scores.json");
@@ -683,7 +685,7 @@ fn load_dataset_row(runs_root: &Path, run_id: &str) -> Result<DatasetRowV1> {
 
     Ok(DatasetRowV1 {
         dataset_version: DATASET_VERSION,
-        run_id: run_id.to_string(),
+        run_id: safe_run_id,
         workflow_id,
         adl_version,
         swarm_version,
@@ -1078,6 +1080,16 @@ mod tests {
         )
         .expect("resolve ids");
         assert_eq!(ids, vec!["r1".to_string(), "r2".to_string()]);
+    }
+
+    #[test]
+    fn export_jsonl_rejects_unsafe_explicit_run_id_path_segment() {
+        let root = std::env::temp_dir().join(format!("learn-unsafe-{}", std::process::id()));
+        let out = root.join("out.jsonl");
+        std::fs::create_dir_all(&root).unwrap();
+        let err = export_jsonl(&root, &["../escape".to_string()], &out)
+            .expect_err("unsafe explicit run_id must fail");
+        assert!(err.to_string().contains("safe path segment"));
     }
 
     #[test]

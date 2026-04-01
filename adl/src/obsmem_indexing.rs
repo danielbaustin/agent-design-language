@@ -91,14 +91,11 @@ pub fn index_run_from_artifacts(
     runs_root: &Path,
     run_id: &str,
 ) -> Result<IndexedMemoryEntry, ObsMemContractError> {
-    if run_id.trim().is_empty() {
-        return Err(ObsMemContractError::new(
-            ObsMemContractErrorCode::InvalidRequest,
-            "run_id must be non-empty",
-        ));
-    }
+    let safe_run_id = crate::artifacts::validate_run_id_path_segment(run_id).map_err(|err| {
+        ObsMemContractError::new(ObsMemContractErrorCode::InvalidRequest, err.to_string())
+    })?;
 
-    let run_dir = runs_root.join(run_id);
+    let run_dir = runs_root.join(&safe_run_id);
     let run_summary_path = run_dir.join("run_summary.json");
     let run_status_path = run_dir.join("run_status.json");
     let activation_log_path = run_dir.join("logs").join("activation_log.json");
@@ -145,7 +142,7 @@ pub fn index_run_from_artifacts(
     }
 
     let mut tags = vec![
-        format!("run:{run_id}"),
+        format!("run:{safe_run_id}"),
         format!("workflow:{workflow_id}"),
         format!("status:{status}"),
         format!("step_context_count:{}", steps.len()),
@@ -161,7 +158,7 @@ pub fn index_run_from_artifacts(
     );
 
     let mut entry = IndexedMemoryEntry {
-        run_id: run_id.to_string(),
+        run_id: safe_run_id,
         workflow_id,
         status,
         failure_code,
@@ -369,11 +366,19 @@ mod tests {
     fn index_run_from_artifacts_rejects_empty_and_missing_run_inputs() {
         let tmp = unique_temp_dir("missing-inputs");
         let err = index_run_from_artifacts(&tmp, "").expect_err("empty run_id must fail");
-        assert!(err.message.contains("run_id must be non-empty"));
+        assert!(err.message.contains("run_id must not be empty"));
 
         let err =
             index_run_from_artifacts(&tmp, "missing-run").expect_err("missing files must fail");
         assert!(err.message.contains("failed reading"));
+    }
+
+    #[test]
+    fn index_run_from_artifacts_rejects_unsafe_run_id_path_segments() {
+        let tmp = unique_temp_dir("unsafe-run-id");
+        let err = index_run_from_artifacts(&tmp, "../escape")
+            .expect_err("unsafe run_id must fail before filesystem access");
+        assert!(err.message.contains("safe path segment"));
     }
 
     #[test]
