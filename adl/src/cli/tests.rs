@@ -39,7 +39,7 @@ use ::adl::godel::promotion::{
     PersistedEvalReportArtifact, PersistedPromotionDecisionArtifact, EVAL_REPORT_ARTIFACT_VERSION,
     PROMOTION_DECISION_ARTIFACT_VERSION,
 };
-use ::adl::{adl, artifacts, execute, failure_taxonomy, instrumentation, resolve, signing, trace};
+use ::adl::{adl, artifacts, execute, instrumentation, resolve, signing, trace};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
