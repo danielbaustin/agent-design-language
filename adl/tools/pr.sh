@@ -60,29 +60,6 @@ die_with_usage() {
   exit 1
 }
 
-die_index_lock() {
-  local context="$1"
-  die "$context failed due to .git/index.lock. Remediation: ensure no other git process is running, then remove stale lock with 'rm -f .git/index.lock', and rerun the same command."
-}
-
-run_git_or_die() {
-  local context="$1"
-  shift
-  local out status
-  set +e
-  out="$("$@" 2>&1)"
-  status=$?
-  set -e
-  if [[ "$status" -eq 0 ]]; then
-    [[ -n "$out" ]] && echo "$out"
-    return 0
-  fi
-  if [[ "$out" == *".git/index.lock"* ]]; then
-    die_index_lock "$context"
-  fi
-  [[ -n "$out" ]] && echo "$out" >&2
-  die "$context failed"
-}
 #
 # Replace the first line that begins with "<Key>:" with "<Key>: <Value>".
 # Portable (no GNU/BSD sed -i differences).
@@ -382,17 +359,6 @@ git_common_dir() {
   git rev-parse --git-common-dir 2>/dev/null || die "Not in a git repo"
 }
 
-ensure_git_metadata_writable_or_die() {
-  local context="$1"
-  local git_dir probe_dir
-  git_dir="$(git_common_dir)"
-  probe_dir="${git_dir}/adl-git-write-probe.$$.$RANDOM"
-  if mkdir "$probe_dir" 2>/dev/null; then
-    rmdir "$probe_dir" 2>/dev/null || true
-    return 0
-  fi
-  die "${context}: git metadata directory '$git_dir' is not writable, so branch/worktree creation cannot proceed. Remediation: restore write access to git metadata before rerunning."
-}
 
 repo_lock_root() {
   local root
@@ -453,102 +419,11 @@ release_repo_lock() {
   rm -rf "$lock_dir"
 }
 
-ensure_clean_worktree() {
-  if ! git diff --quiet || ! git diff --cached --quiet; then
-    die "Working tree is dirty. Commit/stash your changes first."
-  fi
-}
 
 primary_checkout_root() {
   card_primary_checkout_root
 }
 
-default_worktree_path_for_issue() {
-  local issue="$1"
-  local primary managed_root
-  primary="$(primary_checkout_root)"
-  managed_root="${ADL_WORKTREE_ROOT:-}"
-  if [[ -z "$managed_root" ]]; then
-    managed_root="$primary/.worktrees"
-  fi
-  echo "$managed_root/adl-wp-${issue}"
-}
-
-branch_checked_out_worktree_path() {
-  local target_branch="$1"
-  local wt="" br=""
-  while IFS= read -r line; do
-    case "$line" in
-      worktree\ *)
-        wt="${line#worktree }"
-        br=""
-        ;;
-      branch\ refs/heads/*)
-        br="${line#branch refs/heads/}"
-        if [[ "$br" == "$target_branch" && -n "$wt" ]]; then
-          echo "$wt"
-          return 0
-        fi
-        ;;
-    esac
-  done < <(git worktree list --porcelain)
-  return 1
-}
-
-warn_branch_upstream_not_origin_main() {
-  local branch="$1"
-  local upstream
-  upstream="$(git for-each-ref --format='%(upstream:short)' "refs/heads/$branch" 2>/dev/null || true)"
-  if [[ "$upstream" != "origin/main" ]]; then
-    note "Warning: branch '$branch' upstream is '${upstream:-<none>}' (not origin/main)."
-    note "Remediation (optional): git branch --set-upstream-to=origin/main \"$branch\""
-  fi
-}
-
-ensure_primary_checkout_on_main() {
-  local primary current
-  primary="$(primary_checkout_root)"
-  current="$(git -C "$primary" rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
-  [[ -n "$current" ]] || return 0
-  if [[ "$current" == "main" ]]; then
-    return 0
-  fi
-
-  if [[ -n "$(git -C "$primary" status --porcelain 2>/dev/null || true)" ]]; then
-    die "start: primary checkout ($primary) is on '$current' with local changes. Remediation: commit/stash there, switch to main, then rerun."
-  fi
-
-  note "Switching primary checkout back to main: $primary"
-  run_git_or_die "start: switch primary checkout to main" git -C "$primary" switch main
-}
-
-ensure_worktree_path_usable() {
-  local path="$1" branch="$2"
-
-  if [[ ! -e "$path" ]]; then
-    return 0
-  fi
-
-  if [[ ! -d "$path" ]]; then
-    die "start: worktree path exists but is not a directory: $path. Remediation: move/remove that path, then rerun."
-  fi
-
-  if ! git -C "$path" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    die "start: worktree path already exists and is not a git worktree: $path. Remediation: use an empty path or remove/move this directory."
-  fi
-
-  local shared wt_branch current_common
-  shared="$(git -C "$path" rev-parse --git-common-dir 2>/dev/null || true)"
-  current_common="$(git rev-parse --git-common-dir 2>/dev/null || true)"
-  wt_branch="$(git -C "$path" rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
-
-  if [[ -z "$shared" || -z "$current_common" || "$shared" != "$current_common" ]]; then
-    die "start: path '$path' belongs to a different repository. Remediation: choose a different worktree path."
-  fi
-  if [[ "$wt_branch" != "$branch" ]]; then
-    die "start: worktree path '$path' is already on branch '$wt_branch' (expected '$branch'). Remediation: remove that worktree or use its current branch."
-  fi
-}
 
 sanitize_slug() {
   # Lowercase, keep alnum+dash, collapse dashes.
@@ -801,34 +676,6 @@ is_ignored_path() {
   git check-ignore -q -- "$p" >/dev/null 2>&1
 }
 
-stage_selected_paths() {
-  # Stage a comma-split list of paths, skipping paths that are gitignored.
-  # This avoids `git add` failing when an ignored path is explicitly passed.
-  local -a arr=("$@")
-  local staged_any="0"
-
-  for p in "${arr[@]}"; do
-    p="$(trim_ws "$p")"
-    [[ -z "$p" ]] && continue
-
-    if is_ignored_path "$p"; then
-      note "Skipping ignored path: $p"
-      continue
-    fi
-
-    # Stage the path. If the path doesn't exist but is listed in --paths, fail fast.
-    if [[ ! -e "$p" ]]; then
-      die "finish: path does not exist: $p"
-    fi
-
-    run_git_or_die "finish: git add for path '$p'" git add -A -- "$p"
-    staged_any="1"
-  done
-
-  if [[ "$staged_any" != "1" ]]; then
-    die "finish: all provided --paths were empty or gitignored; pass non-ignored paths (e.g. --paths \"adl/tools,docs/tooling\")"
-  fi
-}
 
 # ----- pr/branch helpers -----
 commits_ahead_of_main() {
@@ -951,17 +798,6 @@ for pr in prs:
 '
 }
 
-ensure_no_open_milestone_pr_wave() {
-  local repo="$1" version="$2" current_branch="$3"
-  local filtered count lines
-  filtered="$(open_milestone_pr_wave_json "$repo" | filter_open_milestone_pr_wave "$version" "$current_branch")"
-  count="$(printf '%s' "$filtered" | count_open_milestone_pr_wave)"
-  if [[ "$count" != "0" ]]; then
-    lines="$(printf '%s' "$filtered" | render_open_milestone_pr_wave_lines)"
-    die "start: unresolved open PR wave detected for $version. Resolve or merge these PRs first, or rerun with --allow-open-pr-wave if you are deliberately overriding the guard:
-$lines"
-  fi
-}
 
 ensure_adl_dirs() {
   mkdir -p "$(cards_root_resolve)"
@@ -1419,13 +1255,6 @@ pr_has_closing_linkage() {
   grep -Eiq "(^|[[:space:][:punct:]])Closes[[:space:]]+#${issue}([[:space:][:punct:]]|$)" <<<"$body"
 }
 
-ensure_pr_closing_linkage() {
-  local repo="$1" pr_ref="$2" issue="$3" no_close="$4"
-  [[ "$no_close" == "1" ]] && return 0
-  if ! pr_has_closing_linkage "$repo" "$pr_ref" "$issue"; then
-    die "finish: PR is missing GitHub closing linkage for issue #${issue}; ensure the PR body contains 'Closes #${issue}' and that the PR body update was applied"
-  fi
-}
 
 extract_plan_value() {
   local label="$1" plan_output="$2"
@@ -1633,19 +1462,6 @@ sha256_file() {
   die "Missing hash command: need shasum or sha256sum"
 }
 
-finish_inputs_fingerprint() {
-  local title="$1" paths="$2" input_path="$3" output_path="$4"
-  local in_hash out_hash
-  in_hash="$(sha256_file "$input_path")"
-  out_hash="$(sha256_file "$output_path")"
-  local payload
-  payload="title=$title|paths=$paths|input=$in_hash|output=$out_hash"
-  if command -v shasum >/dev/null 2>&1; then
-    printf '%s' "$payload" | shasum -a 256 | awk '{print $1}'
-    return 0
-  fi
-  printf '%s' "$payload" | sha256sum | awk '{print $1}'
-}
 
 open_in_browser() {
   # Opens the PR in a browser using gh (preferred) or the OS 'open' command.
@@ -2040,161 +1856,6 @@ cmd_start() {
   delegate_pr_command_to_rust start "$@"
 }
 
-create_issue() {
-  require_cmd gh
-
-  local title=""
-  local slug=""
-  local body=""
-  local body_file=""
-  local labels="$DEFAULT_NEW_LABELS"
-  local version=""
-  local no_start="0"
-
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      --title) title="$2"; shift 2 ;;
-      --slug) slug="$2"; shift 2 ;;
-      --body) body="$2"; shift 2 ;;
-      --body-file) body_file="$2"; shift 2 ;;
-      --labels) labels="$2"; shift 2 ;;
-      --version) version="$2"; shift 2 ;;
-      --no-start) no_start="1"; shift ;;
-      -h|--help) usage_new; return 0 ;;
-      *) die_with_usage "new: unknown arg: $1" usage_new ;;
-    esac
-  done
-
-  [[ -n "$title" ]] || die_with_usage "new: --title is required" usage_new
-
-  if [[ -n "$body" && -n "$body_file" ]]; then
-    die "new: pass only one of --body or --body-file"
-  fi
-  if [[ -n "$body_file" && "$body_file" != "-" && ! -f "$body_file" ]]; then
-    die "new: --body-file not found: $body_file"
-  fi
-
-  if [[ -z "$slug" ]]; then
-    slug="$(sanitize_slug "$title")"
-  else
-    slug="$(sanitize_slug "$slug")"
-  fi
-  [[ -n "$slug" ]] || die "new: slug is empty after sanitization"
-
-  local issue_body
-  if [[ -n "$body_file" ]]; then
-    if [[ "$body_file" == "-" ]]; then
-      issue_body="$(cat)"
-    else
-      issue_body="$(cat "$body_file")"
-    fi
-  elif [[ -n "$body" ]]; then
-    issue_body="$body"
-  else
-    issue_body=$'## Goal\n-\n\n## Acceptance Criteria\n-'
-  fi
-
-  if absolute_host_path_present <(printf '%s\n' "$issue_body"); then
-    die "new: issue body contains disallowed absolute host path"
-  fi
-
-  if [[ -z "$version" ]]; then
-    version="$(version_from_labels_csv "$labels" || true)"
-  fi
-  if [[ -z "$version" ]]; then
-    version="$(version_from_title "$title" || true)"
-  fi
-  if [[ -z "$version" ]]; then
-    version="$DEFAULT_VERSION"
-  fi
-  [[ -n "$version" ]] || die "new: resolved version must be non-empty"
-
-  local labels_csv normalized_labels label
-  labels_csv="$labels"
-  normalized_labels=""
-  IFS=',' read -r -a label_arr <<< "$labels_csv"
-  for label in "${label_arr[@]}"; do
-    label="$(trim_ws "$label")"
-    [[ -n "$label" ]] || continue
-    [[ "$label" == version:* ]] && continue
-    if [[ -z "$normalized_labels" ]]; then
-      normalized_labels="$label"
-    else
-      normalized_labels="${normalized_labels},${label}"
-    fi
-  done
-  labels_csv="$normalized_labels"
-  if [[ -n "$version" ]]; then
-    if [[ -n "$labels_csv" ]]; then
-      labels_csv="${labels_csv},version:${version}"
-    else
-      labels_csv="version:${version}"
-    fi
-  fi
-
-  local -a gh_args
-  gh_args=(issue create --title "$title" --body "$issue_body")
-  IFS=',' read -r -a label_arr <<< "$labels_csv"
-  for label in "${label_arr[@]}"; do
-    label="$(trim_ws "$label")"
-    [[ -n "$label" ]] || continue
-    gh_args+=(--label "$label")
-  done
-
-  local issue_url
-  issue_url="$(gh "${gh_args[@]}")"
-  [[ -n "$issue_url" ]] || die "new: gh issue create returned empty output"
-  local issue_num
-  issue_num="${issue_url##*/}"
-  [[ "$issue_num" =~ ^[0-9]+$ ]] || die "new: failed to parse issue number from URL: $issue_url"
-
-  echo "ISSUE_URL=$issue_url"
-  echo "ISSUE_NUM=$issue_num"
-  echo "STATE=ISSUE_CREATED"
-
-  local source_path
-  source_path="$(ensure_source_issue_prompt "$issue_num" "$version" "$slug" "$title" "$labels_csv")"
-  echo "SOURCE_PATH=$(path_relative_to_repo "$source_path")"
-
-  if [[ "$no_start" == "1" ]]; then
-    echo "START_STATE=SKIPPED"
-    return 0
-  fi
-
-  local start_output start_status
-  set +e
-  start_output="$(
-    cmd_start "$issue_num" --slug "$slug" --title "$title" --version "$version" 2>&1
-  )"
-  start_status=$?
-  set -e
-  [[ -n "$start_output" ]] && printf '%s\n' "$start_output"
-
-  if [[ "$start_status" -ne 0 ]]; then
-    echo "START_STATE=FAILED"
-    local stp_path in_path out_path
-    {
-      read -r stp_path
-      read -r in_path
-      read -r out_path
-    } < <(recover_root_bundle_after_start_failure "$issue_num" "$version" "$slug" "$title" "$source_path")
-    echo "RECOVERY_STATE=ISSUE_AND_BUNDLE_READY"
-    echo "STP_PATH=$(path_relative_to_repo "$stp_path")"
-    echo "SIP_PATH=$(path_relative_to_repo "$in_path")"
-    echo "SOR_PATH=$(path_relative_to_repo "$out_path")"
-    die "create: issue created and root bundle recovered, but start failed; issue #$issue_num exists and can be resumed from $(path_relative_to_repo "$stp_path")"
-  fi
-  echo "START_STATE=STARTED"
-  echo "BRANCH=codex/${issue_num}-${slug}"
-}
-
-cmd_new() {
-  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
-    usage_new
-    return 0
-  fi
-  die "new: retired; use 'adl/tools/pr.sh create --title ...' instead"
-}
 
 cmd_finish() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
@@ -2302,17 +1963,6 @@ Examples:
   adl/tools/pr.sh output 17 output
   adl/tools/pr.sh cards 17 --version v0.2
   adl/tools/pr.sh finish 17 --title "adl: apply run.defaults.system fallback" -f .adl/cards/17/input_17.md --output-card .adl/cards/17/output_17.md
-EOF
-}
-
-usage_new() {
-  cat <<'EOF'
-Usage:
-  adl/tools/pr.sh new ...
-
-Notes:
-- `pr new` is retired.
-- Use `adl/tools/pr.sh create ...` instead.
 EOF
 }
 
@@ -2433,7 +2083,6 @@ main() {
     help) usage ;;
     create) cmd_create "$@" ;;
     init) cmd_init "$@" ;;
-    new) cmd_new "$@" ;;
     run) cmd_run "$@" ;;
     start) cmd_start "$@" ;;
     ready) cmd_ready "$@" ;;
