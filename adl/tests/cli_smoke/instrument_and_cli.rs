@@ -171,7 +171,13 @@ fn demo_command_accepts_no_open_flag_for_print_plan() {
 
 #[test]
 fn resume_unknown_run_id_fails_with_pause_state_message() {
-    let out = run_adl(&["resume", "does-not-exist-475"]);
+    let fixture = fixture_path("examples/v0-5-pattern-linear.adl.yaml");
+    let out = run_adl(&[
+        "resume",
+        "does-not-exist-475",
+        "--adl",
+        fixture.to_str().unwrap(),
+    ]);
     assert!(!out.status.success(), "resume should fail");
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert!(

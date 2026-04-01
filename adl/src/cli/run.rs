@@ -381,10 +381,20 @@ pub(crate) fn real_resume(args: &[String]) -> Result<()> {
         eprintln!("{}", resume_usage());
         std::process::exit(2);
     };
+    let mut adl_path: Option<PathBuf> = None;
     let mut steer_path: Option<PathBuf> = None;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
+            "--adl" => {
+                let Some(path) = args.get(i + 1) else {
+                    eprintln!("resume --adl requires a path to the ADL document");
+                    eprintln!("{}", resume_usage());
+                    std::process::exit(2);
+                };
+                adl_path = Some(PathBuf::from(path));
+                i += 1;
+            }
             "--steer" => {
                 let Some(path) = args.get(i + 1) else {
                     eprintln!("resume --steer requires a path to steering patch JSON");
@@ -395,11 +405,16 @@ pub(crate) fn real_resume(args: &[String]) -> Result<()> {
                 i += 1;
             }
             other => {
-                if args.len() > 1 && args.get(1).map(|s| s.as_str()) != Some("--steer") {
-                    eprintln!("resume accepts exactly one argument: <run_id>");
+                if args.len() > 1
+                    && args
+                        .iter()
+                        .skip(1)
+                        .all(|arg| arg != "--adl" && arg != "--steer")
+                {
+                    eprintln!("resume requires <run_id> plus --adl <path>");
                 } else {
                     eprintln!(
-                        "resume accepts <run_id> [--steer <steering.json>] (unknown arg: {other})"
+                        "resume accepts <run_id> --adl <path> [--steer <steering.json>] (unknown arg: {other})"
                     );
                 }
                 eprintln!("{}", resume_usage());
@@ -408,7 +423,6 @@ pub(crate) fn real_resume(args: &[String]) -> Result<()> {
         }
         i += 1;
     }
-
     let pause_path = resume_state_path_for_run_id(run_id)?;
     if !pause_path.exists() {
         return Err(anyhow::anyhow!(
@@ -417,13 +431,19 @@ pub(crate) fn real_resume(args: &[String]) -> Result<()> {
             pause_path.display()
         ));
     }
+    let Some(adl_path) = adl_path else {
+        eprintln!(
+            "resume requires --adl <path> so the ADL document comes from a trusted explicit source"
+        );
+        eprintln!("{}", resume_usage());
+        std::process::exit(2);
+    };
     let pause_artifact = load_pause_state_artifact(&pause_path)?;
     validate_pause_artifact_basic(&pause_artifact, run_id)?;
 
-    let adl_path = PathBuf::from(&pause_artifact.adl_path);
     let adl_path_str = adl_path
         .to_str()
-        .context("resume ADL path from pause state must be valid UTF-8")?;
+        .context("resume ADL path must be valid UTF-8")?;
     let adl_base_dir: PathBuf = adl_path.parent().unwrap_or(Path::new(".")).to_path_buf();
     let doc = adl::AdlDoc::load_from_file(adl_path_str).with_context(|| {
         format!(

@@ -72,10 +72,12 @@ Examples:
 
 pub fn resume_usage() -> &'static str {
     "Usage:
-  adl resume <run_id> [--steer <steering.json>]
+  adl resume <run_id> --adl <path> [--steer <steering.json>]
 
 Semantics:
   - Loads .adl/runs/<run_id>/pause_state.json
+  - Uses the explicit --adl path as the trusted document source for resume
+  - Treats pause_state.json path fields as untrusted observational metadata only
   - Strict validation only: schema_version, status=paused, run_id, execution_plan_hash
   - Optional steering patch applies only at the resume boundary
   - Resumes only at step boundary (no checkpoint engine, no mid-step resume)"

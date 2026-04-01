@@ -340,7 +340,7 @@ fn verify_requires_path_arg() {
 }
 
 #[test]
-fn resume_requires_exactly_one_run_id() {
+fn resume_requires_run_id_and_explicit_adl_path() {
     let none = run_adl(&["resume"]);
     assert_eq!(
         none.status.code(),
@@ -354,16 +354,16 @@ fn resume_requires_exactly_one_run_id() {
         "stderr:\n{stderr_none}"
     );
 
-    let many = run_adl(&["resume", "a", "b"]);
+    let many = run_adl(&["resume", "a"]);
     assert_eq!(
         many.status.code(),
-        Some(2),
+        Some(1),
         "stderr:\n{}",
         String::from_utf8_lossy(&many.stderr)
     );
     let stderr_many = String::from_utf8_lossy(&many.stderr);
     assert!(
-        stderr_many.contains("resume accepts exactly one argument"),
+        stderr_many.contains("pause state not found"),
         "stderr:\n{stderr_many}"
     );
 }
