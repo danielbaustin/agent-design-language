@@ -2,7 +2,10 @@ use super::runner::{
     effective_max_concurrency_with_source, effective_step_placement, resolve_call_binding,
 };
 use super::*;
-use crate::adl::{AdlDoc, PromptSpec, RunDefaults, RunSpec, WorkflowKind, WorkflowSpec};
+use crate::adl::{
+    AdlDoc, PlacementMode, PromptSpec, RunDefaults, RunPlacementSpec, RunSpec, StepRetry,
+    WorkflowKind, WorkflowSpec,
+};
 use crate::resolve::AdlResolved;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -64,6 +67,30 @@ fn step_with_write_to(id: &str, write_to: Option<&str>) -> crate::resolve::Resol
         write_to: write_to.map(str::to_string),
         on_error: None,
         retry: None,
+    }
+}
+
+fn remote_retry_step(max_attempts: u32) -> crate::resolve::ResolvedStep {
+    crate::resolve::ResolvedStep {
+        id: "remote-step".to_string(),
+        agent: None,
+        provider: Some("p1".to_string()),
+        placement: Some(PlacementMode::Remote),
+        task: None,
+        call: None,
+        with: HashMap::new(),
+        as_ns: None,
+        delegation: None,
+        prompt: Some(PromptSpec {
+            user: Some("hello".to_string()),
+            ..Default::default()
+        }),
+        inputs: HashMap::new(),
+        guards: vec![],
+        save_as: None,
+        write_to: None,
+        on_error: None,
+        retry: Some(StepRetry { max_attempts }),
     }
 }
 
@@ -329,6 +356,44 @@ fn pause_reason_for_step_detects_pause_guard_and_optional_reason() {
     assert_eq!(
         pause_reason_for_step(&step),
         Some(Some("needs review".to_string()))
+    );
+}
+
+#[test]
+fn execute_step_with_retry_does_not_retry_remote_schema_violation() {
+    let mut doc = minimal_resolved().doc;
+    doc.providers.insert(
+        "p1".to_string(),
+        crate::adl::ProviderSpec {
+            id: None,
+            profile: None,
+            kind: "http".to_string(),
+            base_url: None,
+            default_model: None,
+            config: HashMap::new(),
+        },
+    );
+    doc.run.placement = Some(RunPlacementSpec::Mode(PlacementMode::Remote));
+    doc.run.remote = None;
+    let step = remote_retry_step(3);
+
+    let failure = execute_step_with_retry_core(
+        &step,
+        &doc,
+        "run-1",
+        "wf-1",
+        &HashMap::new(),
+        std::path::Path::new("."),
+        false,
+        |_| {},
+    )
+    .expect_err("remote schema violation should fail");
+
+    assert_eq!(failure.attempts, 1);
+    assert!(
+        failure.err.to_string().contains("REMOTE_SCHEMA_VIOLATION"),
+        "unexpected error: {:#}",
+        failure.err
     );
 }
 
