@@ -138,26 +138,28 @@ This design does not require:
 
 The desired user-facing model is:
 
-- `adl pr create`
-- `adl pr start`
-- `adl pr finish`
-- `adl pr doctor`
-- optional: `adl pr open`
+- `adl pr init`
+- qualitative STP/SIP review before execution
+- `adl pr run`
+- review / closeout
+- `adl pr doctor` as an orthogonal diagnostic and bounded-repair surface
 
-Command meanings:
+Workflow meanings:
 
-- `create`
-  - create a GitHub issue and canonical local source prompt
-- `start`
-  - ensure the issue is fully bootstrapped for execution
-  - includes what is currently split across `init` and `start`
-- `finish`
-  - validate, stage, commit, push, and create or update the PR
+- `init`
+  - full mechanical bootstrap for a planned issue
+  - create or reconcile the issue record, source prompt, and root STP/SIP/SOR bundle
+- qualitative review
+  - humans or review skills refine STP and SIP before execution
+- `run`
+  - create or reuse branch/worktree at the last responsible moment
+  - sync the prepared task bundle into the execution context
+  - execute the task, write the SOR, and open the PR
+- review / closeout
+  - review the SOR and PR before merge or issue closure
 - `doctor`
   - report readiness and repairable workflow drift
-  - absorbs the current `ready`, `preflight`, and most of `status`
-- `open`
-  - convenience browser action only
+  - remains available throughout the lifecycle rather than being a separate workflow phase
 
 ### Compatibility Shape
 
@@ -170,8 +172,9 @@ During migration:
 
 Examples:
 
-- `init` becomes an alias for `start --bootstrap-only` or a deprecated synonym
-  during transition
+- `create` remains as a compatibility path while bootstrap semantics settle,
+  but the long-term public model should collapse new-issue bootstrap into `init`
+- `start` becomes a compatibility shim during transition rather than the long-term public binder
 - `ready` and `preflight` become aliases for `doctor`
 - `card`, `output`, and `cards` become either hidden maintenance commands or
   internal Rust helpers rather than prominent user commands
@@ -236,11 +239,11 @@ Recommended internal Rust split:
   - readiness inspection
   - bounded repair logic
 - `cli/pr/commands`
-  - `create`
-  - `start`
-  - `finish`
+  - `init`
+  - `run`
+  - `finish` during transition where explicit closeout remains separate
   - `doctor`
-  - `open`
+  - compatibility shims for `create` and `start`
 
 The main architectural rule is:
 
@@ -255,28 +258,27 @@ The main architectural rule is:
 2. Normalize slug and version.
 3. Create GitHub issue.
 4. Write canonical local source issue prompt.
-5. Print next-step guidance.
+5. Bootstrap the root STP, SIP, and SOR bundle.
+6. Print next-step guidance for qualitative review.
 
-### `start`
+### `init`
+
+1. Resolve existing issue title, slug, and version.
+2. Ensure the canonical source prompt exists.
+3. Ensure the root task-bundle surfaces exist.
+4. Stop before branch and worktree creation.
+5. Print next-step guidance for qualitative review.
+
+### `run`
 
 1. Resolve issue title, slug, and version.
 2. Validate milestone-wave policy.
 3. Ensure branch and worktree.
 4. Ensure canonical source prompt exists.
-5. Ensure root and worktree bootstrap surfaces exist.
+5. Sync the prepared root task bundle into the worktree-local execution context.
 6. Validate authored readiness for execution.
-7. Print worktree, branch, and artifact locations.
-
-### `finish`
-
-1. Resolve canonical workflow surfaces.
-2. Run checks.
-3. Stage selected paths.
-4. Commit if needed.
-5. Push branch.
-6. Create or update PR.
-7. Ensure closing linkage.
-8. Optionally mark ready/open/merge.
+7. Execute the task and write the SOR.
+8. Open or update the PR.
 
 ### `doctor`
 
@@ -290,17 +292,19 @@ The main architectural rule is:
 
 ## Specific Simplifications
 
-### 1. Merge `init` Into `start`
+### 1. Collapse New-Issue Bootstrap Into `init`
 
-The current `init` and `start` split creates extra states and duplicate logic.
+The current `create` and `init` split is mostly mechanical overhead when the
+slug, title, labels, and version are already known.
 
 Recommended rule:
 
-- `start` is the single command for “make this issue executable”
+- `init` becomes the public bootstrap command
+- new-issue creation is one mode of `init`, not a separate long-term workflow step
 
 Optional compatibility:
 
-- keep `init` as a deprecated alias for one release window
+- keep `create` as a deprecated or expert-level compatibility alias during transition
 
 ### 2. Replace `ready`, `preflight`, and `status` With `doctor`
 
@@ -423,14 +427,16 @@ Success criteria:
 Rust becomes the sole implementation for:
 
 - `create`
-- `start`
+- `init`
+- `run` issue-mode binding
 - `finish`
 - `ready`
 - `preflight`
 
 Then remove shell fallbacks for:
 
-- `start`
+- `init`
+- `run` issue-mode binding
 - `finish`
 - `ready`
 - `preflight`
@@ -445,8 +451,8 @@ Success criteria:
 Decide for each remaining shell-owned command:
 
 - `run`
-  - keep as a separate wrapper if it is really an ADL runtime convenience
-  - otherwise move to Rust and keep one CLI surface
+  - keep issue-mode binding as the public lifecycle surface
+  - keep the ADL runtime convenience path only if it remains genuinely distinct
 - `card`
 - `output`
 - `cards`
@@ -458,24 +464,23 @@ Recommended outcomes:
 - `open` may remain trivial shell or move to Rust
 - `status`, `ready`, and `preflight` converge into `doctor`
 - `card`, `output`, and `cards` move to Rust and become secondary commands
-- `run` is evaluated separately because it is adjacent but not identical to PR
-  lifecycle control
+- `run` keeps one clear issue-mode lifecycle meaning for branch/worktree binding
 
 ### Phase 4: Collapse Public Command Surface
 
 Public docs and examples should converge on:
 
-- `create`
-- `start`
-- `finish`
+- `init`
+- qualitative review
+- `run`
+- review / closeout
 - `doctor`
-- `open`
 
 Compatibility aliases remain temporarily.
 
 Success criteria:
 
-- new users can learn the workflow from four main commands
+- new users can learn the workflow from four clear steps plus one diagnostic command
 - implementation no longer revolves around historical subcommand sprawl
 
 ### Phase 5: Shrink Or Remove Shell Compatibility Layer
@@ -502,7 +507,7 @@ Prefer tests at three levels:
   - PR body rendering
 - integration tests
   - fake `git` and `gh` process boundaries
-  - full `create`, `start`, `finish`, and `doctor` flows
+  - full `init`, `run`, compatibility-shim, and `doctor` flows
 - compatibility tests
   - `adl/tools/pr.sh ...` still maps correctly to Rust commands
 
@@ -518,6 +523,7 @@ Recommended policy:
 
 - keep old commands as aliases before removing them
 - print migration hints for deprecated commands
+- keep direct skill-authoring detail in a separate planning doc so this document stays architectural
 - update docs and examples in parallel with code changes
 - prefer one command-shape change per PR wave rather than a giant cutover
 
