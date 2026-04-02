@@ -6,7 +6,7 @@
 - Status: `planned`
 - Owner: `Daniel Austin / Agent Logic`
 - Doc Role: `primary`
-- Supporting Docs: `docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
+- Supporting Docs: `docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`, `docs/milestones/v0.87planning/PR_TOOLING_SKILLS.md`
 - Feature Types: `architecture`, `policy`, `artifact`
 - Proof Modes: `tests`, `review`
 
@@ -71,6 +71,7 @@ simplification effort.
   - PR lifecycle command surface and compatibility policy
 - Related / supporting docs:
   - `docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
+  - `docs/milestones/v0.87planning/PR_TOOLING_SKILLS.md`
 
 ## Overview
 
@@ -79,10 +80,12 @@ the workflow to a few user-facing intents.
 
 Key capabilities:
 - thin-shell delegation from `adl/tools/pr.sh` into Rust `adl pr`
-- a reduced command model centered on `create`, `start`, `finish`, and
-  `doctor`
+- a reduced workflow model centered on full mechanical bootstrap, qualitative
+  card review, execution-time worktree binding, and review/closeout
 - one authoritative implementation of path rules, bootstrap rules, readiness
   checks, and PR lifecycle policy
+- a preserved `doctor` feature for readiness, drift detection, and bounded
+  repair
 
 This feature should be understood as control-plane consolidation rather than
 simple tooling cleanup. It establishes a stable execution surface for all
@@ -125,28 +128,34 @@ thin shell entrypoint.
   - readiness and drift diagnostics from `doctor`
 - Interfaces (APIs, CLI, files, schemas):
   - `adl/tools/pr.sh`
-  - `adl pr create`
-  - `adl pr start`
-  - `adl pr finish`
+  - `adl pr init`
+  - `adl pr run`
+  - `adl pr finish` during compatibility and closeout transition
   - `adl pr doctor`
-  - optional `adl pr open`
-  - legacy aliases for `init`, `ready`, and `preflight` during migration
+  - compatibility support for `create`, `start`, `ready`, and `preflight`
+    during migration
 - Invariants (must always hold):
   - Rust is the sole owner of canonical PR lifecycle behavior
   - shell compatibility layers do not reimplement workflow policy
   - canonical path rules have exactly one authoritative implementation
   - readiness inspection is consolidated under `doctor`
+  - worktree creation is delayed until execution time in the intended model
   - human review remains preserved through draft-oriented PR flow unless
     explicitly overridden
 
-### Command Semantics
+### Workflow Semantics
 
-- `create`
-  - initializes issue-level artifacts and task-bundle scaffolding
-- `start`
-  - creates or reuses worktree/branch and transitions into active execution
-- `finish`
-  - validates outputs, stages changes, and completes PR lifecycle steps
+- `init`
+  - full mechanical bootstrap for a planned issue
+  - creates or reconciles the issue record and root STP, SIP, and SOR bundle
+- qualitative review
+  - humans or bounded review skills refine STP and SIP before execution
+- `run`
+  - creates or reuses the branch/worktree at the last responsible moment
+  - syncs the prepared task bundle into execution context
+  - performs the task, writes the SOR, and opens the PR
+- review / closeout
+  - SOR and PR review happen before merge or issue closeout
 - `doctor`
   - reports readiness, detects workflow drift, surfaces deprecated usage,
     and provides migration guidance
@@ -165,16 +174,12 @@ existing workflow artifacts are created, validated, and reconciled.
 
 This is an artifact-bearing workflow feature, so execution flow applies.
 
-1. A user invokes `adl/tools/pr.sh` or `adl pr`.
+1. A user or bounded skill bootstraps the issue mechanically through `adl/tools/pr.sh` or `adl pr`.
 2. The thin shell wrapper delegates to Rust `adl pr`.
-3. The Rust control plane resolves the requested lifecycle intent:
-   - `create`
-   - `start`
-   - `finish`
-   - `doctor`
-4. Rust applies canonical path rules, bootstrap rules, and readiness checks.
-5. Rust performs the required side effects through `git` and `gh`.
-6. Rust reports workflow state, readiness, drift diagnostics, and migration hints back to the user.
+3. Rust creates or reconciles the issue record and root task bundle without forcing an early worktree.
+4. Humans or review skills refine STP and SIP qualitatively.
+5. `run` binds execution context at the last responsible moment, does the work, writes the SOR, and opens the PR.
+6. Review and closeout happen against the draft PR and SOR, with `doctor` available throughout for diagnostics and bounded repair.
 
 ## Determinism and Constraints
 
@@ -230,7 +235,7 @@ manual review of the simplified command surface.
 ### Tests
 - Test surfaces:
   - unit tests for slug normalization, path resolution, and command alias rules
-  - integration tests for `create`, `start`, `finish`, and `doctor`
+  - integration tests for `init`, `run`, compatibility shims, and `doctor`
   - compatibility tests verifying `pr.sh` delegates correctly
 
 ### Review / Proof Surface
@@ -243,11 +248,14 @@ manual review of the simplified command surface.
 ## Acceptance Criteria
 
 - Functional correctness (what must work):
-  - `create`, `start`, `finish`, and `doctor` are sufficient to represent the
-    primary PR lifecycle
-  - `preflight` and `ready` are absorbed into `doctor` via compatibility aliases
-    during migration
-  - `init` is merged into `start` conceptually and operationally
+  - full issue bootstrap can happen mechanically without forcing immediate
+    worktree creation
+  - qualitative STP and SIP review is an explicit workflow step before
+    execution
+  - `run` is the execution-time binder and the preferred public path for
+    branch/worktree creation
+  - `doctor` remains available as the readiness and drift diagnostic surface
+  - compatibility commands map predictably during migration
 - Determinism / replay correctness:
   - canonical path, slug, and branch derivations remain stable
   - readiness reporting remains stable for identical repository state
@@ -272,8 +280,9 @@ manual review of the simplified command surface.
 ## Future Work
 
 - Follow-ups / extensions:
-  - decide whether `run` remains a separate wrapper or moves into the same Rust
-    command surface
+  - implement the actual four workflow skills from the planning doc
+  - decide whether `finish` remains a distinct public command or becomes part of
+    the review / closeout operating pattern
   - decide whether `card`, `output`, and `cards` remain expert-level commands or
     become internal helpers only
 - Known gaps / deferrals:
@@ -294,4 +303,6 @@ The key simplification decisions are:
 - Rust owns the PR lifecycle behavior
 - `adl/tools/pr.sh` becomes a thin compatibility shim
 - `preflight`, `ready`, and most of `status` collapse into `doctor`
-- `start` absorbs the current `init` behavior
+- full mechanical bootstrap and execution-time binding become separate concerns
+- direct skill-authoring detail lives in the planning doc rather than this
+  product-facing feature doc
