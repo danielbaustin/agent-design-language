@@ -6,7 +6,7 @@
 - Status: `planned`
 - Owner: `Daniel Austin / Agent Logic`
 - Doc Role: `primary`
-- Supporting Docs: `docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`, `docs/milestones/v0.87planning/PR_TOOLING_SKILLS.md`
+- Supporting Docs: `docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`, `.adl/docs/v0.87planning/PR_TOOLING_SKILLS.md`
 - Feature Types: `architecture`, `policy`, `artifact`
 - Proof Modes: `tests`, `review`
 
@@ -71,7 +71,7 @@ simplification effort.
   - PR lifecycle command surface and compatibility policy
 - Related / supporting docs:
   - `docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
-  - `docs/milestones/v0.87planning/PR_TOOLING_SKILLS.md`
+  - `.adl/docs/v0.87planning/PR_TOOLING_SKILLS.md`
 
 ## Overview
 
