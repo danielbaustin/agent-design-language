@@ -37,13 +37,10 @@ Observed in the repository as of `2026-03-31`:
 - `adl/tools/card_paths.sh` is about `320` lines.
 - `adl/src/cli/pr_cmd.rs` is about `5071` lines.
 - `pr.sh` already delegates several lifecycle commands to Rust when available:
-  - `create`
   - `init`
-  - `start`
-  - `ready`
-  - `preflight`
+  - `doctor`
+  - compatibility aliases for `create`, `start`, `ready`, and `preflight`
   - `finish`
-- `create` no longer has a real shell fallback.
 - `run`, `card`, `output`, `cards`, `status`, and `open` still live in shell.
 - path/domain logic already exists in both shell and Rust.
 
@@ -87,15 +84,12 @@ That is product logic, not glue.
 
 The current interface includes:
 
-- `create`
 - `init`
-- `start`
 - `run`
 - `card`
 - `output`
 - `cards`
-- `ready`
-- `preflight`
+- `doctor`
 - `finish`
 - `open`
 - `status`
@@ -172,10 +166,12 @@ During migration:
 
 Examples:
 
-- `create` remains as a compatibility path while bootstrap semantics settle,
-  but the long-term public model should collapse new-issue bootstrap into `init`
-- `start` becomes a compatibility shim during transition rather than the long-term public binder
-- `ready` and `preflight` become aliases for `doctor`
+- `create` remains only as a temporary compatibility alias while the public
+  bootstrap model collapses into `init`
+- `start` remains only as a temporary compatibility alias while `run` becomes
+  the execution-time binder
+- `ready`, `preflight`, and most `status` checks become aliases or views over
+  `doctor`
 - `card`, `output`, and `cards` become either hidden maintenance commands or
   internal Rust helpers rather than prominent user commands
 
@@ -243,7 +239,7 @@ Recommended internal Rust split:
   - `run`
   - `finish` during transition where explicit closeout remains separate
   - `doctor`
-  - compatibility shims for `create` and `start`
+  - compatibility shims for `create`, `start`, `ready`, and `preflight`
 
 The main architectural rule is:
 
@@ -252,22 +248,14 @@ The main architectural rule is:
 
 ## Simplified Control Flow
 
-### `create`
-
-1. Parse title, labels, optional body inputs.
-2. Normalize slug and version.
-3. Create GitHub issue.
-4. Write canonical local source issue prompt.
-5. Bootstrap the root STP, SIP, and SOR bundle.
-6. Print next-step guidance for qualitative review.
-
 ### `init`
 
-1. Resolve existing issue title, slug, and version.
-2. Ensure the canonical source prompt exists.
-3. Ensure the root task-bundle surfaces exist.
-4. Stop before branch and worktree creation.
-5. Print next-step guidance for qualitative review.
+1. Parse or resolve issue identity, slug, labels, and version.
+2. Create or reconcile the GitHub issue record when needed.
+3. Ensure the canonical source prompt exists.
+4. Ensure the root task-bundle surfaces exist.
+5. Stop before branch and worktree creation.
+6. Print next-step guidance for qualitative review.
 
 ### `run`
 
@@ -294,8 +282,8 @@ The main architectural rule is:
 
 ### 1. Collapse New-Issue Bootstrap Into `init`
 
-The current `create` and `init` split is mostly mechanical overhead when the
-slug, title, labels, and version are already known.
+The current `create`/`init` split is mostly mechanical overhead when the slug,
+title, labels, and version are already known.
 
 Recommended rule:
 
@@ -426,20 +414,19 @@ Success criteria:
 
 Rust becomes the sole implementation for:
 
-- `create`
 - `init`
 - `run` issue-mode binding
 - `finish`
-- `ready`
-- `preflight`
+- `doctor`
+- compatibility aliases for `create`, `start`, `ready`, and `preflight`
 
 Then remove shell fallbacks for:
 
 - `init`
 - `run` issue-mode binding
 - `finish`
-- `ready`
-- `preflight`
+- `doctor`
+- compatibility alias dispatch
 
 Success criteria:
 
@@ -531,6 +518,8 @@ Suggested readiness-command alias policy:
 
 - `preflight` invokes `doctor` and prints a deprecation note
 - `ready` invokes `doctor` and prints a deprecation note
+- `status` retains narrow PR/reporting behavior only where it does not duplicate
+  `doctor`
 
 ## Risks
 
@@ -565,7 +554,8 @@ Recommended decisions:
 
 - Rust is the long-term owner of PR tooling behavior.
 - `adl/tools/pr.sh` becomes a compatibility shim, not a workflow engine.
-- `init` should be merged into `start`.
+- `create` should collapse into `init` as a public bootstrap concern.
+- `run` should replace `start` as the public execution-time binder.
 - `ready`, `preflight`, and `status` should converge into `doctor`.
 - `card`, `output`, and `cards` should be demoted from core lifecycle commands.
 - canonical path and workflow rules must have exactly one implementation owner.
@@ -575,7 +565,8 @@ Recommended decisions:
 This effort is successful when:
 
 - `pr.sh` is tiny and contains almost no business logic
-- users mostly learn and use four main commands
+- users mostly learn and use `init`, qualitative review, `run`, review/closeout,
+  and `doctor`
 - Rust owns all lifecycle rules and state transitions
 - path logic exists in one authoritative implementation
 - the command surface is easier to remember and the code is easier to change
