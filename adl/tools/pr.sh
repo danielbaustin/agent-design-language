@@ -1025,6 +1025,13 @@ cmd_run() {
     return 0
   fi
 
+  if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
+    require_rust_pr_delegate
+    note "Issue-mode run: binding execution context for issue $1"
+    delegate_pr_command_to_rust start "$@"
+    return 0
+  fi
+
   local adl_path="${1:-}"
   [[ -n "$adl_path" ]] || die_with_usage "run: missing <adl.yaml>" usage_run
   shift || true
@@ -1489,14 +1496,14 @@ cmd_cards() {
     note "Input card exists: $input_path"
   else
     note "Creating input card: $input_path"
-    seed_input_card "$input_path" "$issue" "$title" "TBD (run pr.sh start $issue)" "$version" "$output_path"
+    seed_input_card "$input_path" "$issue" "$title" "TBD (run pr.sh run $issue)" "$version" "$output_path"
   fi
 
   if ensure_nonempty_file "$output_path"; then
     note "Output card exists: $output_path"
   else
     note "Creating output card: $output_path"
-    seed_output_card "$output_path" "$issue" "$title" "TBD (run pr.sh start $issue)" "$version"
+    seed_output_card "$output_path" "$issue" "$title" "TBD (run pr.sh run $issue)" "$version"
   fi
 
   sync_legacy_links_for_issue "$issue" "$version" "$cards_slug"
@@ -1530,6 +1537,7 @@ cmd_start() {
     return 0
   fi
   require_rust_pr_delegate
+  note "Deprecated compatibility path: prefer 'adl/tools/pr.sh run <issue> ...' for execution-context binding."
   delegate_pr_command_to_rust start "$@"
 }
 
@@ -1583,6 +1591,7 @@ Commands:
   help
   create  --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v>]
   init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v>]
+  run     <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
   run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
   start   <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>]
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
@@ -1597,7 +1606,8 @@ Flags:
   (create)  --version <v0.85>                 Override detected version (otherwise inferred from labels/title).
   (init)    --version <v0.85>                 Override detected version (otherwise inferred from issue labels version:vX.Y)
   (init)    --no-fetch-issue                  Do not fetch issue title/labels; requires --slug.
-  (run)     --runs-root <dir>                 Override canonical run artifact root (default: <repo>/.adl/runs or ADL_RUNS_ROOT).
+  (run issue-mode) same flags as `start`; preferred public execution-context binder.
+  (run adl-mode) --runs-root <dir>            Override canonical run artifact root (default: <repo>/.adl/runs or ADL_RUNS_ROOT).
   (card)    -f, --file <input_card.md>         Output path for the generated input card (default: <cards_root>/<issue>/input_<issue>.md)
   (output)  -f, --file <output_card.md>        Output path for the generated output card (default: <cards_root>/<issue>/output_<issue>.md)
   (cards)   --version <v0.2>                   Override detected version (otherwise inferred from issue labels version:vX.Y)
@@ -1612,9 +1622,10 @@ Flags:
   (start)   --allow-open-pr-wave               Override the open milestone PR wave guard.
 
 Notes:
-- `pr create` creates the GitHub issue when issue creation is needed.
-- `pr init <issue> ...` bootstraps the local root STP/SIP/SOR bundle for an existing issue.
-- `pr start <issue> ...` binds the issue to a concrete branch/worktree execution context.
+- `pr create` creates the GitHub issue and bootstraps the local root STP/SIP/SOR bundle for a new issue.
+- `pr init <issue> ...` bootstraps the same local root bundle for an issue that already exists.
+- `pr run <issue> ...` is the preferred public execution-context binder for issue work.
+- `pr start <issue> ...` remains as a compatibility shim over the same Rust binding path.
 - PRs are created as DRAFT by default to preserve human review.
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - run is a bounded v0.85 wrapper over the Rust adl runtime; browser/editor direct invocation remains follow-on work.
@@ -1628,6 +1639,7 @@ Examples:
   adl/tools/pr.sh help
   adl/tools/pr.sh create --title "[v0.86][tools] Example issue" --labels "track:roadmap,type:task,area:tools"
   adl/tools/pr.sh init 17 --slug b6-default-system --no-fetch-issue --version v0.85
+  adl/tools/pr.sh run 17 --slug b6-default-system --version v0.85
   adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml --trace --allow-unsigned
   adl/tools/pr.sh start 17 --slug b6-default-system
   adl/tools/pr.sh preflight 17 --slug b6-default-system --version v0.85
@@ -1649,9 +1661,9 @@ Usage:
   adl/tools/pr.sh create --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v>]
 
 Notes:
-- Creates the GitHub issue only.
-- Does not bootstrap the local task bundle or worktree.
-- After create, run `adl/tools/pr.sh init <issue> ...` and then `adl/tools/pr.sh start <issue> ...`.
+- Creates the GitHub issue and bootstraps the local root STP/SIP/SOR bundle.
+- Does not create the branch or worktree execution context.
+- After create, do qualitative STP/SIP review and then run `adl/tools/pr.sh run <issue> ...`.
 EOF
 }
 
@@ -1674,6 +1686,7 @@ Usage:
   adl/tools/pr.sh start <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
 
 Notes:
+- Deprecated compatibility shim. Prefer `adl/tools/pr.sh run <issue> ...`.
 - Creates or reuses issue worktree at .worktrees/adl-wp-<issue> by default.
 - Keeps the primary checkout on main.
 - `--version` overrides inferred issue version when the caller already knows the intended milestone band.
@@ -1684,12 +1697,16 @@ EOF
 usage_run() {
   cat <<'EOF'
 Usage:
+  adl/tools/pr.sh run <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
   adl/tools/pr.sh run <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
 
 Notes:
-- This is a bounded v0.85 control-plane wrapper over `cargo run --bin adl -- ...`.
-- The primary proof surface is the canonical run artifact set under `.adl/runs/<run_id>/`.
-- Browser/editor direct invocation remains follow-on work; this command is the truthful supported run path today.
+- Issue mode:
+  - preferred public binder for execution-time branch and worktree creation
+  - delegates to the Rust PR control-plane binder
+- ADL file mode:
+  - bounded v0.85 control-plane wrapper over `cargo run --bin adl -- ...`
+  - primary proof surface is the canonical run artifact set under `.adl/runs/<run_id>/`
 EOF
 }
 

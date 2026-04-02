@@ -388,7 +388,7 @@ fn real_pr_init_existing_stp_is_left_untouched() {
 }
 
 #[test]
-fn real_pr_create_creates_issue_without_bootstrapping_bundle() {
+fn real_pr_create_creates_issue_and_bootstraps_root_bundle() {
     let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
     let repo = unique_temp_dir("adl-pr-real-create");
     init_git_repo(&repo);
@@ -449,8 +449,19 @@ fn real_pr_create_creates_issue_without_bootstrapping_bundle() {
     assert!(prompt.contains("## Summary"));
     assert!(prompt.contains("## Tooling Notes"));
     assert!(
-        !repo.join(".adl/v0.86/tasks").exists(),
-        "create should not bootstrap the local task bundle"
+        repo.join(".adl/v0.86/tasks/issue-1202__v0-86-tools-simplified-init-path/stp.md")
+            .is_file(),
+        "create should bootstrap the root stp"
+    );
+    assert!(
+        repo.join(".adl/v0.86/tasks/issue-1202__v0-86-tools-simplified-init-path/sip.md")
+            .is_file(),
+        "create should bootstrap the root sip"
+    );
+    assert!(
+        repo.join(".adl/v0.86/tasks/issue-1202__v0-86-tools-simplified-init-path/sor.md")
+            .is_file(),
+        "create should bootstrap the root sor"
     );
     let issue_body = fs::read_to_string(&issue_body_log).expect("issue body");
     assert!(issue_body.contains("## Summary"));
