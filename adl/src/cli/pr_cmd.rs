@@ -124,6 +124,8 @@ fn real_pr_create(args: &[String]) -> Result<()> {
     if create_body != final_body {
         gh_issue_edit_body(&repo, issue, &final_body)?;
     }
+    let (stp_path, bundle_input, bundle_output, bundle_dir) =
+        bootstrap_root_task_bundle(&repo_root, &issue_ref, &title, &source_path)?;
 
     println!("• Created:");
     println!("  ISSUE_URL  {issue_url}");
@@ -134,8 +136,24 @@ fn real_pr_create(args: &[String]) -> Result<()> {
         "  SOURCE     {}",
         path_relative_to_repo(&repo_root, &source_path)
     );
-    println!("  NEXT       adl/tools/pr.sh init {issue} --slug {slug} --version {version}");
-    println!("  STATE      ISSUE_CREATED");
+    println!(
+        "  STP        {}",
+        path_relative_to_repo(&repo_root, &stp_path)
+    );
+    println!(
+        "  READ       {}",
+        path_relative_to_repo(&repo_root, &bundle_input)
+    );
+    println!(
+        "  WRITE      {}",
+        path_relative_to_repo(&repo_root, &bundle_output)
+    );
+    println!(
+        "  BUNDLE     {}",
+        path_relative_to_repo(&repo_root, &bundle_dir)
+    );
+    println!("  NEXT       qualitative STP/SIP review, then adl/tools/pr.sh run {issue} --slug {slug} --version {version}");
+    println!("  STATE      ISSUE_AND_BUNDLE_READY");
     eprintln!("• Done.");
     Ok(())
 }
@@ -144,6 +162,11 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     let parsed = parse_start_args(args)?;
     let repo_root = repo_root()?;
     let repo = default_repo(&repo_root)?;
+
+    eprintln!(
+        "• Deprecated compatibility path: prefer `adl/tools/pr.sh run {}` for execution-context binding.",
+        parsed.issue
+    );
 
     let mut title = parsed.title_arg.clone().unwrap_or_default();
     let mut slug = parsed.slug.clone().unwrap_or_default();
@@ -679,27 +702,8 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     let source_path =
         ensure_source_issue_prompt(&repo_root, &repo, &issue_ref, &title, None, &version)?;
     validate_issue_prompt_exists(&source_path)?;
-
-    let stp_path = issue_ref.task_bundle_stp_path(&repo_root);
-    let bundle_dir = issue_ref.task_bundle_dir_path(&repo_root);
-    let init_branch = issue_ref.branch_name("codex");
-    eprintln!("• Initializing task bundle: {}", bundle_dir.display());
-    if !stp_path.is_file() {
-        if let Some(parent) = stp_path.parent() {
-            fs::create_dir_all(parent)?;
-        }
-        fs::copy(&source_path, &stp_path).with_context(|| {
-            format!(
-                "failed to seed task-bundle stp from '{}' to '{}'",
-                source_path.display(),
-                stp_path.display()
-            )
-        })?;
-    } else {
-        eprintln!("• STP already exists: {}", stp_path.display());
-    }
-    let (bundle_input, bundle_output) =
-        ensure_bootstrap_cards(&repo_root, &issue_ref, &title, &init_branch, &source_path)?;
+    let (stp_path, bundle_input, bundle_output, bundle_dir) =
+        bootstrap_root_task_bundle(&repo_root, &issue_ref, &title, &source_path)?;
 
     println!("• Initialized:");
     println!(
@@ -727,6 +731,35 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     println!("  STATE    ISSUE_AND_BUNDLE_READY");
     eprintln!("• Done.");
     Ok(())
+}
+
+fn bootstrap_root_task_bundle(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    source_path: &Path,
+) -> Result<(PathBuf, PathBuf, PathBuf, PathBuf)> {
+    let stp_path = issue_ref.task_bundle_stp_path(repo_root);
+    let bundle_dir = issue_ref.task_bundle_dir_path(repo_root);
+    let init_branch = issue_ref.branch_name("codex");
+    eprintln!("• Initializing task bundle: {}", bundle_dir.display());
+    if !stp_path.is_file() {
+        if let Some(parent) = stp_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        fs::copy(source_path, &stp_path).with_context(|| {
+            format!(
+                "failed to seed task-bundle stp from '{}' to '{}'",
+                source_path.display(),
+                stp_path.display()
+            )
+        })?;
+    } else {
+        eprintln!("• STP already exists: {}", stp_path.display());
+    }
+    let (bundle_input, bundle_output) =
+        ensure_bootstrap_cards(repo_root, issue_ref, title, &init_branch, source_path)?;
+    Ok((stp_path, bundle_input, bundle_output, bundle_dir))
 }
 
 fn repo_root() -> Result<PathBuf> {

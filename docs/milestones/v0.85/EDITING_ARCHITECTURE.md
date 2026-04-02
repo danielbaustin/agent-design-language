@@ -39,7 +39,7 @@ Today it effectively manages:
 
 The long-term goal is to evolve this into a structured, validated, file-backed control plane. The immediate v0.85 goal is to ship usable editor surfaces while beginning that control-plane evolution without destabilizing the milestone.
 
-A key emerging insight is that `pr start` is likely to become the operational backbone of the editing system. Even if the longer-term lifecycle grows to include additional commands such as `init`, `create`, `run`, and `finish`, `pr start` is the first command that binds an authored task to a concrete execution context. That makes it the natural spine of the near-term control plane.
+A key emerging insight is that the public lifecycle should distinguish clearly between mechanical bootstrap and execution-context binding. New issues should not require a separate `create` then `init` ceremony, and branch/worktree binding should happen at execution time rather than during early authoring.
 
 ## Command Status For v0.85
 
@@ -47,10 +47,10 @@ This document follows the canonical command-status model in the editing five-com
 
 | Command | Current state | Repo truth | Notes |
 | --- | --- | --- | --- |
-| `pr init` | implemented | live command in `adl/tools/pr.sh` and `adl pr` | local bootstrap for the canonical root task bundle |
-| `pr create` | implemented | live command in `adl/tools/pr.sh` and `adl pr` | GitHub issue creation/reconciliation command |
-| `pr start` | implemented | active backbone command today | real and mature enough to anchor the current control plane |
-| `pr run` | implemented | live command in `adl/tools/pr.sh` | bounded execution wrapper over the ADL runtime |
+| `pr init` | implemented | live command in `adl/tools/pr.sh` and `adl pr` | bootstrap for the canonical root task bundle when the issue already exists |
+| `pr create` | implemented | live command in `adl/tools/pr.sh` and `adl pr` | GitHub issue creation plus root-bundle bootstrap for new issues |
+| `pr start` | compatibility | deprecated public step | compatibility shim for older execution-context binding flows |
+| `pr run` | implemented | live command in `adl/tools/pr.sh` | preferred public binder for issue execution context plus the existing ADL runtime wrapper |
 | `pr finish` | implemented | active mature workflow command today | real, but still subject to reliability/polish work |
 
 ## Key Capabilities
@@ -119,7 +119,7 @@ A command layer that orchestrates the artifact lifecycle and enforces validation
 
 This is currently centered on `pr.sh`, but should evolve into a proper programmatic subsystem.
 
-In the near term, the most important command in that subsystem is `pr start`, because it turns a validated authored task into a bound execution context with a worktree, branch, implementation prompt, and output-record expectations. Over time, other lifecycle commands may expand around it, but `pr start` is the clearest candidate for the first strong Rust control-plane command.
+In the near term, the most important command boundary in that subsystem is the transition from reviewed root cards into a bound execution context with a worktree, branch, implementation prompt, and output-record expectations. That boundary should live under `pr run`, not require a separate public `pr start` step before qualitative review is done.
 
 The control plane should manage:
 - issue creation
@@ -149,15 +149,14 @@ The intended file-backed target-state workflow is:
 1. Author structured task prompt
 2. Validate the structured task prompt locally
 3. Promote the authoritative structured task prompt into tracked public task-bundle records
-4. Run `pr create` when issue creation is needed
-5. Create or reconcile the GitHub issue from the tracked structured task prompt when GitHub is part of the workflow
-6. Run `pr start`
-7. Create or reconcile the bound execution context and paired implementation artifacts
-8. Author/refine structured implementation prompt
-9. Promote authoritative implementation/output artifacts into tracked public records at the lifecycle points where they become official
-10. Run the execution pass
-11. Review structured output record and evidence
-12. Either revise the structured implementation prompt for another pass or run `pr finish`
+4. Run `pr create` when issue creation is needed, or `pr init` when the issue already exists
+5. Review and refine the root STP/SIP authoring surfaces
+6. Run `pr run` to create or reconcile the bound execution context and paired implementation artifacts
+7. Author/refine structured implementation prompt if the execution step requires it
+8. Promote authoritative implementation/output artifacts into tracked public records at the lifecycle points where they become official
+9. Run the execution pass
+10. Review structured output record and evidence
+11. Either revise the structured implementation prompt for another pass or run `pr finish`
 
 This means the major artifacts become:
 - structured task prompt = design-layer artifact
@@ -186,18 +185,17 @@ The workflow should close the loop without requiring direct manual `gh` usage in
 
 The intended command path is:
 - validate authored task
-- `pr create` when issue creation is needed
-- `pr init`
-- `pr start`
+- `pr create` for new issues or `pr init` for issues that already exist
+- qualitative STP/SIP review
 - `pr run`
 - review/repair loop as needed
 - `pr finish`
 
 This only becomes a reliable closed loop if validation is enforced at every transition.
 
-Operationally, `pr init`, `pr create`, `pr start`, `pr run`, and `pr finish` now exist as explicit lifecycle commands. The remaining work is to keep their responsibilities non-overlapping and continue migrating their durable control-plane logic into Rust so the bash layer stays thin.
+Operationally, `pr create`, `pr init`, `pr run`, and `pr finish` are the public lifecycle surface we actually want. `pr start` remains only as a compatibility shim while the older flow is retired. The remaining work is to keep those responsibilities non-overlapping and continue migrating their durable control-plane logic into Rust so the bash layer stays thin.
 
-The architecture should therefore treat `pr start` as the anchor command for the current system, while `pr create`, execution orchestration, and finish/repair behavior become increasingly formalized around it. This is one reason the longer-term control plane should move into Rust: the backbone command should not remain trapped in brittle bash if it is going to carry more general lifecycle responsibility.
+The architecture should therefore treat the reviewed root bundle as the anchor artifact for the current system, while `pr create`/`pr init` handle mechanical bootstrap and `pr run` handles execution binding. This is one reason the longer-term control plane should move into Rust: the backbone lifecycle transitions should not remain trapped in brittle bash.
 
 ### Why the Editing System Must Be File-Backed
 
@@ -640,10 +638,10 @@ five-command execution plan.
 
 | Command | Current state | Repo truth | Notes |
 | --- | --- | --- | --- |
-| `pr init` | implemented | live command in `adl/tools/pr.sh` and `adl pr` | local bootstrap for the canonical root task bundle |
-| `pr create` | implemented | live command in `adl/tools/pr.sh` and `adl pr` | GitHub issue creation/reconciliation command |
-| `pr start` | implemented | active backbone command today | real and mature enough to anchor the current control plane |
-| `pr run` | implemented | live command in `adl/tools/pr.sh` | bounded execution wrapper over the ADL runtime |
+| `pr init` | implemented | live command in `adl/tools/pr.sh` and `adl pr` | bootstrap for the canonical root task bundle when the issue already exists |
+| `pr create` | implemented | live command in `adl/tools/pr.sh` and `adl pr` | GitHub issue creation plus root-bundle bootstrap for new issues |
+| `pr start` | compatibility | deprecated public step | compatibility shim for older execution-context binding flows |
+| `pr run` | implemented | live command in `adl/tools/pr.sh` | preferred public binder for issue execution context plus the existing ADL runtime wrapper |
 | `pr finish` | implemented | active mature workflow command today | real, but still subject to reliability/polish work |
 
 ## Related Documents

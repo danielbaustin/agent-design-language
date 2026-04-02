@@ -39,7 +39,7 @@ help_out="$(
 )"
 
 assert_contains 'adl/tools/pr.sh create --title "<title>"' "$help_out" "create help usage"
-assert_contains 'Creates the GitHub issue only.' "$help_out" "create help semantics"
-assert_contains 'Does not bootstrap the local task bundle or worktree.' "$help_out" "create help no bootstrap"
+assert_contains 'Creates the GitHub issue and bootstraps the local root STP/SIP/SOR bundle.' "$help_out" "create help semantics"
+assert_contains 'Does not create the branch or worktree execution context.' "$help_out" "create help no worktree"
 
 echo "pr.sh create help: ok"
