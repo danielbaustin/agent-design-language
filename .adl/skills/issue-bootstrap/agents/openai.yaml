@@ -1,0 +1,3 @@
+display_name: Issue Bootstrap
+short_description: Create and bootstrap an issue for the PR lifecycle
+default_prompt: Create or bootstrap a tracked issue, seed the root task bundle, validate it, and stop before branch or worktree creation. Treat this as the mechanical bootstrap step that hands off to qualitative review and later issue-mode run.
