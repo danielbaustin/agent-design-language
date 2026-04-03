@@ -1,146 +1,68 @@
-# Feature Document Template
-
-## Metadata
-- Feature Name: `{{feature_name}}`
-- Milestone Target: `{{milestone}}`
-- Status: `{{status}}` (draft | planned | in-progress | complete)
-- Owner: `{{owner}}`
-- Doc Role: `{{doc_role}}` (primary | supporting)
-- Supporting Docs: `{{supporting_docs}}` (list of related feature docs)
-- Feature Types: `{{feature_types}}` (list: runtime | artifact | policy | architecture)
-- Proof Modes: `{{proof_modes}}` (list: demo | tests | schema | replay | review)
-
-## Template Rules
-
-- Every section must be completed or explicitly marked `N/A` with a brief justification.
-- Sections such as Execution Flow, Demo, Tests, or Schema Validation may be `N/A` for non-runtime or non-artifact features, but must state why.
+# Feature Documents: v0.87
 
 ## Purpose
 
-Describe what this feature is, why it exists, and what problem it solves.
+Provide the canonical index for the promoted `v0.87` feature documents.
 
-## Context
+This page is an index, not a template. The feature-doc template lives in:
+- `.adl/templates/FEATURE_DOC_TEMPLATE.md`
 
-- Related milestone: `{{milestone}}`
-- Related issues: `{{issues}}`
-- Dependencies: `{{dependencies}}`
+The documents listed here are the milestone-owned feature surfaces that support the `v0.87` substrate claim set.
 
-Explain how this feature fits into the broader ADL architecture and roadmap.
+## Coverage Model
 
-## Coverage / Ownership
+- This page indexes promoted `v0.87` feature docs.
+- It does not replace the feature docs themselves.
+- Future design notes under `.adl/docs/TBD/` are not milestone feature docs unless they are explicitly promoted here.
 
-Describe how this document participates in the coverage model.
+## Promoted Feature Documents
 
-- Primary owner doc: {{primary_owner_doc}}
-- Covered surfaces:
-  - {{surface_1}}
-  - {{surface_2}}
-- Related / supporting docs:
-  - {{supporting_doc_1}}
+### Control Plane / Operational Substrate
+- `docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
+- `docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
+- `docs/milestones/v0.87/features/OPERATIONAL_SKILLS_SUBSTRATE.md`
+- `docs/milestones/v0.87/features/PREFLIGHT_CHECK_SKILL.md`
+- `docs/milestones/v0.87/features/PR_TOOLING_SKILLS.md`
+- `docs/milestones/v0.87/features/REVIEW_SURFACE_FORMALIZATION.md`
 
-## Overview
+### Provider Substrate
+- `docs/milestones/v0.87/features/PROVIDER_SUBSTRATE_FEATURE.md`
 
-Provide a concise description of the feature’s behavior and responsibilities.
+### Trace Substrate
+- `docs/milestones/v0.87/features/TRACE_SCHEMA_V1.md`
+- `docs/milestones/v0.87/features/TRACE_RUNTIME_EMISSION.md`
+- `docs/milestones/v0.87/features/TRACE_ARTIFACT_MODEL.md`
+- `docs/milestones/v0.87/features/TRACE_VALIDATION_AND_REVIEW.md`
+- `docs/milestones/v0.87/features/TRACE_REVIEW_PIPELINE.md`
 
-Key capabilities:
-- {{capability_1}}
-- {{capability_2}}
-- {{capability_3}}
+### Shared Memory / Trace Coherence
+- `docs/milestones/v0.87/features/SHARED_OBSMEM_IMPLEMENTATION.md`
+- `docs/milestones/v0.87/features/TRACE_OBSMEM_INGESTION.md`
 
-## Design
+## Feature-Doc to WBS Mapping
 
-### Core Concepts
+| Work Package | Primary Feature Surface(s) |
+| --- | --- |
+| WP-02 | `TRACE_SCHEMA_V1.md` |
+| WP-03 | `TRACE_RUNTIME_EMISSION.md`, `TRACE_ARTIFACT_MODEL.md` |
+| WP-04 | `PROVIDER_SUBSTRATE_FEATURE.md` |
+| WP-06 | `SHARED_OBSMEM_IMPLEMENTATION.md` |
+| WP-07 | `TRACE_OBSMEM_INGESTION.md` |
+| WP-08 | `OPERATIONAL_SKILLS_SUBSTRATE.md`, `PREFLIGHT_CHECK_SKILL.md` |
+| WP-09 | `PR_TOOLING_SIMPLIFICATION_FEATURE.md`, `PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`, `PR_TOOLING_SKILLS.md` |
+| WP-10 | `PREFLIGHT_CHECK_SKILL.md`, `PR_TOOLING_SKILLS.md` |
+| WP-11 | `REVIEW_SURFACE_FORMALIZATION.md`, `TRACE_VALIDATION_AND_REVIEW.md`, `TRACE_REVIEW_PIPELINE.md` |
 
-Describe the main concepts, abstractions, or entities introduced by this feature.
+## Not Included Here
 
-- {{concept_1}}
-- {{concept_2}}
+The following are intentionally not treated as promoted `v0.87` feature docs:
+- future design notes that remain under `.adl/docs/TBD/`
+- historical or superseded design notes
+- milestone planning docs (`README`, `VISION`, `DESIGN`, `WBS`, `SPRINT`, `DECISIONS`)
 
-### Architecture
+## Status
 
-Explain how the feature is structured and how it integrates with existing systems.
+Current status: `partial but real`
 
-- Inputs (explicit sources / triggers):
-  - {{input_1}}
-- Outputs (artifacts / side effects):
-  - {{output_1}}
-- Interfaces (APIs, CLI, files, schemas):
-  - {{interface_1}}
-- Invariants (must always hold):
-  - {{invariant_1}}
-
-### Data / Artifacts
-
-Describe any artifacts, schemas, or persistent data structures.
-
-- {{artifact_1}}
-- {{artifact_2}}
-
-## Execution Flow
-
-If this is a runtime or artifact-bearing feature, describe the execution flow. If not, state "N/A" and explain why.
-
-1. {{step_1}}
-2. {{step_2}}
-3. {{step_3}}
-
-## Determinism and Constraints
-
-- Determinism guarantees (what must be repeatable and how):
-  - {{determinism_1}}
-- Constraints (performance, ordering, limits):
-  - {{constraint_1}}
-
-## Integration Points
-
-List integrations generically; include only what applies.
-
-| System / Surface | Integration Type | Description |
-| --- | --- | --- |
-| {{system_1}} | {{type}} (read/write/trigger/observe) | {{description}} |
-| {{system_2}} | {{type}} | {{description}} |
-
-Common systems (use if applicable): Gödel, AEE, ObsMem, Identity, Governance, Trace, Authoring, Providers.
-
-## Validation
-
-Describe all validation modes required for this feature. Not all features require demos.
-
-### Demo (if applicable)
-- Demo script(s): {{demo_script}}
-- Expected behavior: {{expected_behavior}}
-
-### Deterministic / Replay
-- Replay requirements: {{replay_requirements}}
-- Determinism guarantees: {{determinism_1}}
-
-### Schema / Artifact Validation
-- Schemas involved: {{schema_1}}
-- Artifact checks: {{artifact_check_1}}
-
-### Tests
-- Test surfaces: {{test_surface_1}}
-
-### Review / Proof Surface
-- Review method (manual/automated): {{review_method}}
-- Evidence location: {{proof_surface}}
-
-## Acceptance Criteria
-
-- Functional correctness (what must work): {{criteria_1}}
-- Determinism / replay correctness: {{criteria_2}}
-- Validation completeness (tests/schema/demo/review as applicable): {{criteria_3}}
-
-## Risks
-
-- Primary risks (failure modes): {{risk_1}}
-- Mitigations: {{mitigation_1}}
-
-## Future Work
-
-- Follow-ups / extensions: {{future_1}}
-- Known gaps / deferrals: {{future_2}}
-
-## Notes
-
-Additional notes, assumptions, or references.
+- The milestone has a real promoted feature-doc set under `docs/milestones/v0.87/features/`.
+- Some future-facing design work still remains in `.adl/docs/TBD/` and is not yet part of the canonical `v0.87` feature-doc surface.

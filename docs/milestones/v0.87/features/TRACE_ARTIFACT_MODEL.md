@@ -27,6 +27,10 @@ This is the **feature-owner doc** for artifact handling in `v0.87`.
 
 > Trace describes execution. Artifacts contain execution payloads.
 
+Artifacts are the material substrate of execution; trace provides its temporal
+and causal structure. Together they form the complete representation of agent
+experience.
+
 Execution truth is the combination of:
 - trace (structure, decisions, causality)
 - artifacts (inputs, outputs, data)
@@ -59,6 +63,9 @@ artifacts/<run_id>/<scope>/<artifact_id>.<ext>
 - paths MUST be deterministic
 - artifacts MUST be immutable once written
 - artifact IDs MUST be unique within a run
+- artifact identity SHOULD be derivable from deterministic context (for example
+  event_id, role, index)
+- content hashing MAY be used for integrity validation
 
 ### Scope Examples
 
@@ -82,6 +89,9 @@ Common types:
 
 Type information MAY be included in trace event fields.
 
+When multiple artifacts are associated with a single event, their semantic role
+MUST be explicit (for example input, output, intermediate).
+
 ## Artifact References
 
 Trace events reference artifacts via fields such as:
@@ -95,6 +105,8 @@ Trace events reference artifacts via fields such as:
 - references MUST be resolvable
 - references MUST point to existing artifacts
 - references MUST be stable across review and replay
+- artifact references MUST correspond to the emitting event's temporal context
+- artifacts are considered part of the event's temporal anchor by association
 
 ## Write Semantics
 
@@ -105,6 +117,8 @@ Artifacts MUST be written **before** the trace event that references them.
 - no dangling references
 - write must succeed before event emission
 - failures MUST produce ERROR events
+- artifact writes MUST be atomic (no partial files visible)
+- failed writes MUST NOT leave partially readable artifacts
 
 ## Read Semantics
 
@@ -144,6 +158,8 @@ Replay system MUST:
 - follow trace order
 - load artifacts at each step
 - reconstruct decision flow
+- artifact loading MUST follow monotonic_order
+- artifacts MUST NOT be accessed out of temporal order during replay
 
 ## Validation Requirements
 
@@ -171,6 +187,8 @@ Artifacts are essential for understanding model behavior.
 - artifacts MAY be large
 - runtime SHOULD avoid copying large payloads unnecessarily
 - compression MAY be applied (future)
+- implementations SHOULD support streaming or chunking for large artifacts
+  (future-compatible)
 
 ## Security Considerations
 

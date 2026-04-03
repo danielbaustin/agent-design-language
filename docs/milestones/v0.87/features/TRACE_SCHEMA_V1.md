@@ -35,6 +35,7 @@ This is the **feature-owner doc** for trace schema in `v0.87`.
 Required fields:
 - `event_id`: string (UUID or stable unique id)
 - `timestamp`: string (ISO-8601)
+- `temporal_anchor`: object (see Chronosense alignment; required for temporal grounding)
 - `event_type`: enum (see below)
 - `trace_id`: string
 - `run_id`: string
@@ -80,6 +81,33 @@ Optional fields (but recommended when applicable):
 - `contract_id`: string
 - `result`: enum (`pass`, `fail`)
 - `details`: object
+
+### TemporalAnchor (Chronosense Alignment)
+
+The `temporal_anchor` field aligns Trace with the Chronosense model and MUST
+capture objective temporal grounding for every event.
+
+Required fields:
+- `observed_at_utc`: string (ISO-8601; canonical wall-clock time)
+- `monotonic_order`: integer (strictly increasing within a run)
+- `agent_age`: string (duration since agent birth / temporal ephemeris)
+
+Optional but strongly recommended:
+- `observed_at_local`: string (localized timestamp for interaction frame)
+- `prior_event_delta`: string (duration since previous event in same span)
+- `turn_index`: integer (narrative/event clock index)
+- `temporal_confidence`: enum (`high`, `medium`, `low`)
+
+Notes:
+- `timestamp` and `observed_at_utc` SHOULD be identical unless explicitly justified
+- `monotonic_order` MUST NOT decrease within a run
+- `agent_age` MUST be derived from the agent's temporal ephemeris (birth)
+
+This structure separates:
+- absolute time (UTC)
+- monotonic ordering
+- lifetime-relative time
+- optional narrative/event time
 
 ## Event Vocabulary (v1)
 
@@ -130,9 +158,88 @@ MUST include:
 
 ## Ordering Guarantees
 
+Trace ordering is not merely a serialization concern. It establishes the
+agent's grounding in time and enables higher-order reasoning.
+
+Chronosense requirement:
+- Ordering MUST be consistent across both `timestamp` and `monotonic_order`
+- In case of clock skew or ambiguity, `monotonic_order` is authoritative for sequencing
+
+### Structural Ordering
+
 - Events MUST be totally ordered within a span
 - Cross-span ordering is defined by timestamps + parent relationships
 - Timestamps MUST be monotonic within a span
+
+This ensures that execution can be reconstructed deterministically.
+
+### Relative Duration and Temporal Structure
+
+Trace MUST also preserve relative temporal relationships, not just ordering:
+
+- Systems SHOULD capture or allow derivation of:
+  - duration between events
+  - latency of operations (model/tool/skill)
+  - elapsed time across spans
+- Temporal adjacency and gaps MUST be inferable from timestamps
+
+This enables reasoning about:
+- sequencing vs concurrency
+- delay, staleness, and responsiveness
+- temporal clustering of events
+
+Without duration, ordering is insufficient for meaningful temporal reasoning.
+
+### Grounding in Spacetime
+
+Together, ordering and duration ground the agent in a coherent temporal frame:
+
+- The trace defines the agent's trajectory through events
+- Each event is located in a shared temporal coordinate system
+- The agent is not stateless; it exists as a temporally extended process
+
+This is a prerequisite for:
+- replay
+- evaluation
+- identity continuity
+
+### Implications for Causal Reasoning
+
+Explicit temporal structure enables causal interpretation:
+
+- Earlier events can be evaluated as potential causes of later events
+- Decision to action to outcome chains become inspectable
+- Counterfactual reasoning becomes possible when alternatives are recorded via `DECISION` and `REVISION`
+
+Trace therefore supports:
+- causal attribution
+- dependency analysis
+- debugging of reasoning paths
+
+### Epistemic Coherence and Reasonableness
+
+A well-formed trace provides a basis for evaluating reasonableness:
+
+- Decisions must be temporally situated relative to their inputs
+- Outcomes must follow from prior context in a coherent sequence
+- Incoherent or contradictory sequences become detectable
+
+This aligns with a coherence theory of truth:
+- correctness is evaluated not only locally (per event)
+- but globally (across the temporal structure of the trace)
+
+### Persistence of Identity
+
+Temporal continuity in trace underwrites identity:
+
+- The agent's identity is constituted by its sequence of events over time
+- Persistent spans and runs define continuity across operations
+- Without ordered and temporally grounded events, identity collapses into stateless reactions
+
+Trace is therefore not just logging. It is the structural basis for:
+- continuity
+- accountability
+- historical memory integration (via ObsMem)
 
 ## Artifact References
 
@@ -146,15 +253,16 @@ MUST include:
 A trace is **valid (v1)** if:
 
 1. All required fields are present for every event
-2. All event types are from the canonical vocabulary
-3. Span tree is well-formed (single root, no orphan spans)
-4. Required subtype fields are present:
+2. All events MUST include a valid `temporal_anchor` with required fields
+3. All event types are from the canonical vocabulary
+4. Span tree is well-formed (single root, no orphan spans)
+5. Required subtype fields are present:
    - MODEL_INVOCATION → `provider`
    - ERROR → `error`
    - CONTRACT_VALIDATION → `contract_validation`
    - DECISION / APPROVAL / REJECTION / REVISION → `decision_context`
-5. Artifact references resolve
-6. No missing required lifecycle events:
+6. Artifact references resolve
+7. No missing required lifecycle events:
    - at least one `RUN_START` and `RUN_END`
 
 ## Minimal Completeness Requirements
@@ -166,6 +274,7 @@ For a run to be review-valid:
 - All contract checks MUST emit `CONTRACT_VALIDATION`
 - All failures MUST emit `ERROR`
 - All control decisions SHOULD emit `DECISION` (required for complex flows)
+- All events MUST include chronosense-compliant temporal anchors (UTC + monotonic + lifetime)
 
 ## Validation Surface
 

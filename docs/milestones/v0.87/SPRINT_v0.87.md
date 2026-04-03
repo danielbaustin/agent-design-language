@@ -23,10 +23,10 @@ This sprint should leave `v0.87` with:
 ## Work Plan
 | Order | Item | Issue | Owner | Status |
 |---|---|---|---|---|
-| 1 | Seed and align canonical `v0.87` milestone docs | `#1252` | `Daniel / Codex.app` | `planned` |
-| 2 | Evaluate and scope ADL git/control-plane consolidation for `v0.87` | `#1192` | `Daniel / Codex.app` | `planned` |
-| 3 | Create first trace/provider/shared-memory/skills substrate issues from the canonical docs | `TBD` | `Daniel` | `planned` |
-| 4 | Start the first foundational substrate implementation slice (prefer trace v1 or control-plane ownership surface) | `TBD` | `Daniel / Codex.app` | `planned` |
+| 1 | Lock the canonical milestone docs and issue map | `#1292` | `Daniel / Codex.app` | `in progress` |
+| 2 | Seed the Sprint 1 substrate tranche: trace schema, provider substrate, shared-memory foundation | `#1293`, `#1295`, `#1297` | `Daniel / Codex.app` | `bootstrapped` |
+| 3 | Seed the Sprint 2 tranche: trace linkage, portability, memory coherence, skills, control-plane, review | `#1294`, `#1296`, `#1298`, `#1299`, `#1300`, `#1301`, `#1302` | `Daniel / Codex.app` | `bootstrapped` |
+| 4 | Begin the first foundational implementation slice from the seeded tranche | `#1293` or `#1300` | `Daniel / Codex.app` | `ready` |
 
 ## Cadence Expectations
 - Use issue cards (`input` / `output`) for every execution item.
