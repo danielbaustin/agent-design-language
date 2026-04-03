@@ -41,6 +41,10 @@ Key outcomes:
 - Persistent identity, chronosense, and later `v0.9+` personhood/continuity work
 - PR Demo execution, capability-aware routing, and later governance / delegation / Freedom Gate evolution
 
+Clarification:
+- Future continuity, chronosense, runtime-environment, Shepherd, and mental-time-travel design notes under `.adl/docs/TBD/` are design exploration for later bands unless explicitly promoted into the `v0.87` milestone doc set.
+- `v0.87` may define bounded substrate hooks that later continuity work depends on, but it does not claim full continuity-bearing identity as an implemented milestone surface.
+
 ## Start Here
 
 If you are new to this milestone, read in this order:
@@ -71,6 +75,7 @@ Canonical milestone documents:
 
 Supporting / domain-specific docs:
 - Feature docs index: `docs/milestones/v0.87/FEATURE_DOCS_v0.87.md`
+- Promoted feature docs: `docs/milestones/v0.87/features/`
 - Roadmap context: `.adl/docs/roadmaps/ROAD_TO_v0.95.md`
 - Review artifacts: `.adl/reviews/`
 
@@ -143,10 +148,10 @@ Open questions:
 
 ## Status
 
-Current status: `PLANNING / EARLY EXECUTION`
+Current status: `PLANNING COMPLETE / EXECUTION READY`
 
-- Planning: canonical doc set seeded and being reviewed
-- Execution: first `v0.87` issue sequence is being prepared
+- Planning: canonical doc set seeded and under active reconciliation
+- Execution: Sprint 1 and Sprint 2 issue tranche (`#1292`–`#1302`) exists, is bootstrapped, and is worktree-ready
 - Validation: demo matrix and checklist seeded; concrete command surfaces still landing
 - Release readiness: not ready yet; this README describes the intended canonical review path once issues land
 

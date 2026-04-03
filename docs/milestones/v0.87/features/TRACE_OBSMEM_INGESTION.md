@@ -127,10 +127,80 @@ ObsMem records MUST preserve temporal order.
 
 - timestamps preserved
 - ordering derivable from trace
+- temporal_anchor fields MUST be preserved without loss
+- multiple clock representations MUST remain distinguishable
 
 This supports:
 - replay-like reasoning
 - causal analysis
+
+### Chronosense Integration
+
+ObsMem ingestion MUST preserve and expose chronosense as a first-class property
+of memory.
+
+Chronosense refers to an agent's ability to situate events in time in a way
+that is meaningful for reasoning.
+
+At a basic level, this means understanding what happened before and after what.
+
+More formally, chronosense consists of three coupled aspects:
+
+1. Ordering: the sequence of events
+2. Duration: the relative spacing between events
+3. Anchoring: grounding events in shared temporal reference frames
+
+Ingestion MUST preserve all three aspects where available.
+
+### Chronosense Model Alignment
+
+Chronosense in ObsMem MUST align with the Substance of Time model.
+
+This includes preserving multiple temporal frames simultaneously:
+
+- wall-clock time (UTC / shared reference)
+- monotonic order (strict execution ordering)
+- lifetime-relative time (`agent_age` since temporal ephemeris)
+- narrative or event time (`turn_index`, workflow step)
+
+These frames MUST remain internally consistent and mappable across ingestion.
+Loss of any one frame degrades temporal reasoning capability.
+
+### Requirements
+
+- temporal ordering MUST be reconstructible from ObsMem
+- relative durations SHOULD be preserved when present in trace
+- temporal anchors (UTC, local, agent_age, monotonic order) MUST be retained
+
+### Implications
+
+Chronosense is not only about ordering. It enables:
+
+- causal reasoning by distinguishing sequence from causation
+- reasonableness checks about whether outcomes follow plausibly from prior states
+- coherence-based validation across time
+- identity persistence through temporally ordered memory
+
+Without chronosense, ObsMem degenerates into unordered records.
+With it, ObsMem becomes a temporally grounded cognitive substrate.
+
+### Subjective Temporal Modeling (Forward-Compatible)
+
+While v1 ingestion focuses on objective temporal anchoring, the system SHOULD
+remain compatible with future extensions that incorporate subjective temporal
+signals.
+
+These may include:
+- event density
+- attention-weighted duration
+- episodic grouping
+- reconstructed or simulated time
+
+ObsMem MUST NOT assume that all temporal reasoning is derived solely from clock
+time.
+
+This keeps the ingestion surface compatible with future cognitive layers that
+model mind time in addition to physical time.
 
 ## Determinism Requirements
 

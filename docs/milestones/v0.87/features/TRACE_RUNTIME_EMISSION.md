@@ -142,6 +142,7 @@ Each emitted event MUST:
 2. Include correct span and parent references
 3. Include required subtype fields
 4. Reference artifacts instead of embedding payloads
+5. Include a valid `temporal_anchor` block conforming to chronosense requirements
 
 ## Artifact Interaction
 
@@ -174,6 +175,69 @@ For every `MODEL_INVOCATION`:
 Allowed variability:
 - timestamps
 - run_id / trace_id
+
+## Temporal Anchoring (Chronosense)
+
+Every emitted TraceEvent MUST include sufficient temporal anchoring to
+reconstruct ordering and relative duration.
+
+### Required Temporal Fields
+
+Each event MUST include, directly or via a standard block:
+
+```yaml
+temporal_anchor:
+  observed_at_utc: <timestamp>
+  monotonic_order: <int>
+  agent_age: <duration>
+  prior_event_delta: <duration>
+```
+
+Requirements:
+- `observed_at_utc` is REQUIRED
+- `monotonic_order` is REQUIRED and strictly increasing across the entire run
+- `agent_age` is REQUIRED and derived from the agent or session start
+- `prior_event_delta` is OPTIONAL but strongly recommended when a prior event exists in the same span
+
+### Emission Rules
+
+- `observed_at_utc` MUST be recorded at emission time
+- `timestamp` and `observed_at_utc` SHOULD be identical unless explicitly justified
+- `monotonic_order` MUST be strictly increasing across the entire run
+- `agent_age` MUST be derived from the agent's temporal ephemeris using a monotonic clock source
+- `prior_event_delta` SHOULD be computed when a prior event exists in the same span
+- Events MUST NOT be emitted without valid timestamps
+
+### Determinism and Replay
+
+- Temporal structure (ordering, monotonic_order) MUST be deterministic under replay
+- `monotonic_order` MUST be preserved exactly under replay
+- Wall-clock timestamps MAY vary, but ordering MUST NOT
+- Implementations SHOULD preserve or simulate consistent ordering during replay
+
+### Latency and Duration Capture
+
+For applicable events (`MODEL_INVOCATION`, `TOOL_INVOCATION`,
+`SKILL_EXECUTION`):
+
+- systems SHOULD capture:
+  - start and end timestamps
+  - operation latency
+- duration MUST be inferable from emitted data
+
+### Validation
+
+- Emission without valid temporal anchoring is a schema violation
+- Such events MUST fail validation or be rejected by the runtime
+
+### Rationale
+
+Temporal anchoring operationalizes chronosense at runtime:
+
+- enables causal reasoning
+- supports recency and staleness analysis
+- grounds identity in a continuous temporal trajectory
+- ensures traces are evaluable without inference
 
 ## Failure Handling
 
