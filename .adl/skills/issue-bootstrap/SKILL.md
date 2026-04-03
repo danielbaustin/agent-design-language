@@ -51,7 +51,7 @@ Treat `create` and `init` as two command shapes for the same bounded bootstrap p
 - `create` when a new GitHub issue must be created
 - `init` when the issue already exists
 
-Do not teach `create` as a later workflow step, and do not teach `start` as the public execution binder.
+Do not teach `create` as a later workflow step. Teach qualitative review first, then issue-mode `run` as the binder.
 
 ## Entry Conditions
 
@@ -97,8 +97,9 @@ If no slug is given, derive one from the title using the repo's normal slug rule
 2. Prefer the Rust-owned path when available.
 3. For new issues:
    - create the GitHub issue correctly
-   - ensure the canonical local source issue prompt exists
-4. Run the bootstrap/init phase:
+   - ensure the canonical local source issue prompt and root bundle exist
+4. For existing issues:
+   - run the bootstrap/init phase
    - seed the task-bundle `stp.md`
    - seed the initial `sip.md`
    - seed the initial `sor.md`
@@ -177,7 +178,7 @@ It must not:
 - run `pr finish`
 
 The immediate handoff is to qualitative card review.
-Only after that does the later run skill bind branch/worktree execution context.
+Only after that does issue-mode `run` bind branch/worktree execution context.
 
 ## Parallelism
 

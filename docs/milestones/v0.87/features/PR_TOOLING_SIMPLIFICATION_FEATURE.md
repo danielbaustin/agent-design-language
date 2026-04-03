@@ -132,7 +132,7 @@ thin shell entrypoint.
   - `adl pr run`
   - `adl pr finish` during compatibility and closeout transition
   - `adl pr doctor`
-  - compatibility support for `create`, `start`, `ready`, and `preflight`
+  - compatibility support for `create`, `ready`, and `preflight`
     during migration
 - Invariants (must always hold):
   - Rust is the sole owner of canonical PR lifecycle behavior
