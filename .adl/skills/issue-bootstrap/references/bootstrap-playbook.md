@@ -75,7 +75,7 @@ Ask these questions after bootstrap:
 - Does the slug match the canonical path layout?
 - Do the source prompt and bundle point at the same issue identity?
 - Did any expected bootstrap surface fail to appear?
-- Did the operation accidentally broaden into start/worktree behavior?
+- Did the operation accidentally broaden into branch/worktree behavior?
 - Did the process remain mechanical rather than silently editing review content?
 
 ## Parallel Safety
@@ -99,8 +99,6 @@ Current command truth:
 - use `adl pr init` or `adl/tools/pr.sh init` when the issue already exists
 - hand off to qualitative review after bootstrap
 - only after review does issue-mode `pr run` bind branch and worktree context
-
-Do not teach `pr start` as the public execution binder for this workflow.
 
 ## Failure Handling
 

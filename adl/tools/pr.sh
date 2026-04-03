@@ -15,7 +15,7 @@
 #   adl/tools/pr.sh help
 #   adl/tools/pr.sh create  --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v0.85>]
 #   adl/tools/pr.sh init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v0.85>]
-#   adl/tools/pr.sh start   <issue> [--slug <slug>] [--title "<title>"] [--prefix codex] [--no-fetch-issue] [--version <v0.85>]
+#   adl/tools/pr.sh run     <issue> [--slug <slug>] [--title "<title>"] [--prefix codex] [--no-fetch-issue] [--version <v0.85>] [--allow-open-pr-wave]
 #   adl/tools/pr.sh run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
 #   adl/tools/pr.sh card    <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
 #   adl/tools/pr.sh output  <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
@@ -27,7 +27,7 @@
 # Examples:
 #   adl/tools/pr.sh create --title "[v0.86][tools] Example task" --labels track:roadmap,type:task,area:tools --version v0.86
 #   adl/tools/pr.sh init  14 --slug b6-default-system --no-fetch-issue --version v0.85
-#   adl/tools/pr.sh start 14 --slug b6-default-system
+#   adl/tools/pr.sh run 14 --slug b6-default-system --version v0.85
 #   adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml --trace --allow-unsigned
 #   adl/tools/pr.sh card  14 --version v0.2
 #   adl/tools/pr.sh card  14 input
@@ -502,7 +502,7 @@ This issue currently defaults to a required outcome type of \`$outcome_type\`. R
 ## Acceptance Criteria
 
 - the issue title and labels are reflected in the local source prompt
-- the task can proceed through \`pr init\`, \`pr start\`, and card editing without manual bootstrap repair
+- the task can proceed through \`pr init\`, issue-mode \`pr run\`, and card editing without manual bootstrap repair
 
 ## Repo Inputs
 
@@ -1593,7 +1593,6 @@ Commands:
   init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v>]
   run     <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
   run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
-  start   <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>]
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
   output  <issue> [input|output] ... [--version <v0.2>] [-f <output_card.md>]
   cards   <issue> [--version <v0.2>] [--no-fetch-issue]
@@ -1606,7 +1605,7 @@ Flags:
   (create)  --version <v0.85>                 Override detected version (otherwise inferred from labels/title).
   (init)    --version <v0.85>                 Override detected version (otherwise inferred from issue labels version:vX.Y)
   (init)    --no-fetch-issue                  Do not fetch issue title/labels; requires --slug.
-  (run issue-mode) same flags as `start`; preferred public execution-context binder.
+  (run issue-mode) --slug <slug> --title "<title>" --prefix <pfx> --no-fetch-issue --version <v> --allow-open-pr-wave
   (run adl-mode) --runs-root <dir>            Override canonical run artifact root (default: <repo>/.adl/runs or ADL_RUNS_ROOT).
   (card)    -f, --file <input_card.md>         Output path for the generated input card (default: <cards_root>/<issue>/input_<issue>.md)
   (output)  -f, --file <output_card.md>        Output path for the generated output card (default: <cards_root>/<issue>/output_<issue>.md)
@@ -1616,16 +1615,16 @@ Flags:
   (finish) --output-card <output_card.md>          REQUIRED: output card path (must exist)
   (finish) --merge                              Opt-in: ready + squash-merge + delete branch.
   (finish) --idempotent                         Safe no-op only when existing merged PR matches current finish inputs.
-  (card/start) --slug <slug>                   Use an explicit slug instead of fetching the issue title.
-  (start)   --title "<title>"                  Optional; accepted for UX symmetry and used to derive slug when --slug is omitted.
-  (start)   --version <v0.85>                  Override detected version when the caller already knows the intended milestone band.
-  (start)   --allow-open-pr-wave               Override the open milestone PR wave guard.
+  (card/run) --slug <slug>                     Use an explicit slug instead of fetching the issue title.
+  (run)     --title "<title>"                  Optional; accepted for UX symmetry and used to derive slug when --slug is omitted.
+  (run)     --version <v0.85>                  Override detected version when the caller already knows the intended milestone band.
+  (run)     --allow-open-pr-wave               Override the open milestone PR wave guard.
 
 Notes:
 - `pr create` creates the GitHub issue and bootstraps the local root STP/SIP/SOR bundle for a new issue.
 - `pr init <issue> ...` bootstraps the same local root bundle for an issue that already exists.
 - `pr run <issue> ...` is the preferred public execution-context binder for issue work.
-- `pr start <issue> ...` remains as a compatibility shim over the same Rust binding path.
+- `pr start <issue> ...` remains only as a legacy alias over the same Rust binding path and is no longer part of the taught public flow.
 - PRs are created as DRAFT by default to preserve human review.
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - run is a bounded v0.85 wrapper over the Rust adl runtime; browser/editor direct invocation remains follow-on work.
@@ -1641,7 +1640,6 @@ Examples:
   adl/tools/pr.sh init 17 --slug b6-default-system --no-fetch-issue --version v0.85
   adl/tools/pr.sh run 17 --slug b6-default-system --version v0.85
   adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml --trace --allow-unsigned
-  adl/tools/pr.sh start 17 --slug b6-default-system
   adl/tools/pr.sh preflight 17 --slug b6-default-system --version v0.85
   adl/tools/pr.sh card  17 --help
   adl/tools/pr.sh card  17 --version v0.2

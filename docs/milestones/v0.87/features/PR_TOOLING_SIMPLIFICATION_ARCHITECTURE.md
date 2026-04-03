@@ -39,7 +39,7 @@ Observed in the repository as of `2026-03-31`:
 - `pr.sh` already delegates several lifecycle commands to Rust when available:
   - `create`
   - `init`
-  - `start`
+  - legacy alias `start`
   - `ready`
   - `preflight`
   - `finish`
@@ -89,7 +89,7 @@ The current interface includes:
 
 - `create`
 - `init`
-- `start`
+- legacy alias `start`
 - `run`
 - `card`
 - `output`
@@ -174,7 +174,6 @@ Examples:
 
 - `create` remains as a compatibility path while bootstrap semantics settle,
   but the long-term public model should collapse new-issue bootstrap into `init`
-- `start` becomes a compatibility shim during transition rather than the long-term public binder
 - `ready` and `preflight` become aliases for `doctor`
 - `card`, `output`, and `cards` become either hidden maintenance commands or
   internal Rust helpers rather than prominent user commands
@@ -243,7 +242,7 @@ Recommended internal Rust split:
   - `run`
   - `finish` during transition where explicit closeout remains separate
   - `doctor`
-  - compatibility shims for `create` and `start`
+  - compatibility shims for `create`, `ready`, and `preflight`
 
 The main architectural rule is:
 
@@ -565,7 +564,7 @@ Recommended decisions:
 
 - Rust is the long-term owner of PR tooling behavior.
 - `adl/tools/pr.sh` becomes a compatibility shim, not a workflow engine.
-- `init` should be merged into `start`.
+- `start` should be retired from the taught public lifecycle and retained only as a narrow legacy alias while callers migrate.
 - `ready`, `preflight`, and `status` should converge into `doctor`.
 - `card`, `output`, and `cards` should be demoted from core lifecycle commands.
 - canonical path and workflow rules must have exactly one implementation owner.
