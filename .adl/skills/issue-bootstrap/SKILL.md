@@ -97,8 +97,9 @@ If no slug is given, derive one from the title using the repo's normal slug rule
 2. Prefer the Rust-owned path when available.
 3. For new issues:
    - create the GitHub issue correctly
-   - ensure the canonical local source issue prompt exists
-4. Run the bootstrap/init phase:
+   - ensure the canonical local source issue prompt and root bundle are created by the bootstrap path
+4. For existing issues:
+   - run the bootstrap/init phase
    - seed the task-bundle `stp.md`
    - seed the initial `sip.md`
    - seed the initial `sor.md`

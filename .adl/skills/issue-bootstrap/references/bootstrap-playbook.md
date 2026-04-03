@@ -37,7 +37,7 @@ Expected path:
 1. create the GitHub issue
 2. capture issue number and URL
 3. generate or seed the canonical source issue prompt
-4. run the init/bootstrap phase
+4. ensure the root task bundle exists for the new issue
 5. validate the result
 6. stop
 
