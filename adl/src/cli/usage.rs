@@ -19,7 +19,7 @@ pub fn usage() -> &'static str {
   adl godel affect-slice --initial-run-id <id> --adapted-run-id <id> --godel-run-id <id> [--aee-runs-dir <dir>] [--godel-runs-dir <dir>]
   adl keygen --out-dir <dir>
   adl sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]
-  adl instrument <graph|replay|replay-bundle|diff-plan|diff-trace|trace-schema|validate-trace-v1> ...
+  adl instrument <graph|replay|replay-bundle|diff-plan|diff-trace|trace-schema|validate-trace-v1|provider-substrate|provider-substrate-schema> ...
   adl learn export --format <jsonl|bundle-v1|trace-bundle-v2> [--runs-dir <dir>] [--run-id <id> ...] --out <path>
   adl verify <adl.yaml> [--key <public_key_path>]
 
@@ -67,6 +67,8 @@ Examples:
   adl instrument diff-trace /tmp/trace-a.json /tmp/trace-b.json
   adl instrument trace-schema
   adl instrument validate-trace-v1 /tmp/trace-v1.json
+  adl instrument provider-substrate examples/v0-6-provider-profile-delegation.adl.yaml
+  adl instrument provider-substrate-schema
   adl learn export --format bundle-v1 --runs-dir .adl/runs --out /tmp/learning-bundle
   adl learn export --format trace-bundle-v2 --runs-dir .adl/runs --out /tmp/trace-bundle
   adl verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"

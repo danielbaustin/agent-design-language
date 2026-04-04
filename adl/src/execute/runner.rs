@@ -349,13 +349,13 @@ where
 
             let model_output = match placement {
                 crate::adl::PlacementMode::Local => {
-                    let prov =
-                        provider::build_provider(spec, model_override).with_context(|| {
-                            format!(
-                                "failed to build provider '{}' for step '{}'",
-                                provider_id, step_id
-                            )
-                        })?;
+                    let prov = provider::build_provider_for_id(provider_id, spec, model_override)
+                        .with_context(|| {
+                        format!(
+                            "failed to build provider '{}' for step '{}'",
+                            provider_id, step_id
+                        )
+                    })?;
                     let mut on_chunk = |chunk: &str| {
                         if capture_stream_chunks && !chunk.is_empty() {
                             attempt_stream_chunks.push(chunk.to_string());

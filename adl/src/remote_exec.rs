@@ -930,18 +930,20 @@ fn execute_request(req: &ExecuteRequest) -> ExecuteResponse {
         );
     }
 
-    let prov =
-        match provider::build_provider(&req.step.provider_spec, req.step.model_override.as_deref())
-        {
-            Ok(p) => p,
-            Err(err) => {
-                return ExecuteResponse::err(
-                    req,
-                    "REMOTE_SCHEMA_VIOLATION",
-                    format!("invalid provider config: {err}"),
-                )
-            }
-        };
+    let prov = match provider::build_provider_for_id(
+        &req.step.provider,
+        &req.step.provider_spec,
+        req.step.model_override.as_deref(),
+    ) {
+        Ok(p) => p,
+        Err(err) => {
+            return ExecuteResponse::err(
+                req,
+                "REMOTE_SCHEMA_VIOLATION",
+                format!("invalid provider config: {err}"),
+            )
+        }
+    };
 
     match prov.complete(&req.step.prompt) {
         Ok(output) => ExecuteResponse::ok(req, output),
