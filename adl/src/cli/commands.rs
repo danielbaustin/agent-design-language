@@ -1,7 +1,10 @@
 use anyhow::{Context, Result};
 use std::path::{Path, PathBuf};
 
-use ::adl::{adl, artifacts, instrumentation, learning_export, resolve, signing, tool_result};
+use ::adl::{
+    adl, artifacts, instrumentation, learning_export, resolve, signing, tool_result,
+    trace_schema_v1,
+};
 
 use super::usage;
 
@@ -129,7 +132,7 @@ pub(crate) fn real_verify(args: &[String]) -> Result<()> {
 pub(crate) fn real_instrument(args: &[String]) -> Result<()> {
     let Some(cmd) = args.first().map(|s| s.as_str()) else {
         eprintln!(
-            "instrument requires one of: graph | replay | replay-bundle | diff-plan | diff-trace"
+            "instrument requires one of: graph | replay | replay-bundle | diff-plan | diff-trace | trace-schema | validate-trace-v1"
         );
         std::process::exit(2);
     };
@@ -229,6 +232,33 @@ pub(crate) fn real_instrument(args: &[String]) -> Result<()> {
             let right_events = instrumentation::load_trace_artifact(Path::new(right))?;
             let diff = instrumentation::diff_traces(&left_events, &right_events);
             println!("{}", serde_json::to_string_pretty(&diff)?);
+        }
+        "trace-schema" => {
+            if args.len() > 1 {
+                eprintln!("instrument trace-schema accepts no additional arguments");
+                std::process::exit(2);
+            }
+            println!("{}", trace_schema_v1::trace_schema_v1_json()?);
+        }
+        "validate-trace-v1" => {
+            let Some(path) = args.get(1) else {
+                eprintln!("instrument validate-trace-v1 requires <trace-v1.json>");
+                std::process::exit(2);
+            };
+            if args.len() > 2 {
+                eprintln!("instrument validate-trace-v1 accepts exactly <trace-v1.json>");
+                std::process::exit(2);
+            }
+            let raw = std::fs::read_to_string(path)
+                .with_context(|| format!("failed reading trace schema v1 file '{path}'"))?;
+            let value: serde_json::Value = serde_json::from_str(&raw)
+                .with_context(|| format!("failed parsing '{path}' as json"))?;
+            let envelope = trace_schema_v1::validate_trace_event_envelope_v1_value(&value)?;
+            println!(
+                "TRACE_SCHEMA_V1 ok schema_version={} events={}",
+                envelope.schema_version,
+                envelope.events.len()
+            );
         }
         _ => return Err(anyhow::anyhow!("unknown instrument subcommand '{cmd}'")),
     }

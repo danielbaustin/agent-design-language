@@ -42,3 +42,4 @@ pub mod schema;
 pub mod signing;
 pub mod tool_result;
 pub mod trace;
+pub mod trace_schema_v1;
