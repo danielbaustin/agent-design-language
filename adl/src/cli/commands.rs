@@ -238,8 +238,7 @@ pub(crate) fn real_instrument(args: &[String]) -> Result<()> {
                 eprintln!("instrument trace-schema accepts no additional arguments");
                 std::process::exit(2);
             }
-            let schema = trace_schema_v1::schema_json()?;
-            println!("{schema}");
+            println!("{}", trace_schema_v1::trace_schema_v1_json()?);
         }
         "validate-trace-v1" => {
             let Some(path) = args.get(1) else {
@@ -250,8 +249,16 @@ pub(crate) fn real_instrument(args: &[String]) -> Result<()> {
                 eprintln!("instrument validate-trace-v1 accepts exactly <trace-v1.json>");
                 std::process::exit(2);
             }
-            trace_schema_v1::load_and_validate_trace(path)?;
-            println!("TRACE_V1 ok path={path}");
+            let raw = std::fs::read_to_string(path)
+                .with_context(|| format!("failed reading trace schema v1 file '{path}'"))?;
+            let value: serde_json::Value = serde_json::from_str(&raw)
+                .with_context(|| format!("failed parsing '{path}' as json"))?;
+            let envelope = trace_schema_v1::validate_trace_event_envelope_v1_value(&value)?;
+            println!(
+                "TRACE_SCHEMA_V1 ok schema_version={} events={}",
+                envelope.schema_version,
+                envelope.events.len()
+            );
         }
         "provider-substrate" => {
             let Some(path) = args.get(1) else {

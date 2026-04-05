@@ -404,7 +404,9 @@ impl OllamaProvider {
         let temperature = cfg_f32(&spec.config, "temperature");
 
         Ok(Self {
-            model: target.provider_model_id.clone(),
+            // Local CLI execution has no separate provider-native model identifier surface,
+            // so the stable model_ref is the runtime model we should actually invoke.
+            model: target.model_ref.clone(),
             temperature,
         })
     }
