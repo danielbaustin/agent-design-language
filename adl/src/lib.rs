@@ -35,6 +35,7 @@ pub mod overlay;
 pub mod plan;
 pub mod prompt;
 pub mod provider;
+pub mod provider_substrate;
 pub mod remote_exec;
 pub mod resolve;
 pub mod sandbox;

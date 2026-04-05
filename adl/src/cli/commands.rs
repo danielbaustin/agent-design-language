@@ -2,8 +2,8 @@ use anyhow::{Context, Result};
 use std::path::{Path, PathBuf};
 
 use ::adl::{
-    adl, artifacts, instrumentation, learning_export, resolve, signing, tool_result,
-    trace_schema_v1,
+    adl, artifacts, instrumentation, learning_export, provider_substrate, resolve, signing,
+    tool_result, trace_schema_v1,
 };
 
 use super::usage;
@@ -132,7 +132,7 @@ pub(crate) fn real_verify(args: &[String]) -> Result<()> {
 pub(crate) fn real_instrument(args: &[String]) -> Result<()> {
     let Some(cmd) = args.first().map(|s| s.as_str()) else {
         eprintln!(
-            "instrument requires one of: graph | replay | replay-bundle | diff-plan | diff-trace | trace-schema | validate-trace-v1"
+            "instrument requires one of: graph | replay | replay-bundle | diff-plan | diff-trace | trace-schema | validate-trace-v1 | provider-substrate | provider-substrate-schema"
         );
         std::process::exit(2);
     };
@@ -260,6 +260,29 @@ pub(crate) fn real_instrument(args: &[String]) -> Result<()> {
                 envelope.events.len()
             );
         }
+        "provider-substrate" => {
+            let Some(path) = args.get(1) else {
+                eprintln!("instrument provider-substrate requires <adl.yaml>");
+                std::process::exit(2);
+            };
+            if args.len() > 2 {
+                eprintln!("instrument provider-substrate accepts exactly one <adl.yaml>");
+                std::process::exit(2);
+            }
+            let doc = load_adl_doc(Path::new(path))?;
+            let manifest = provider_substrate::provider_substrate_manifest_v1(&doc)?;
+            println!("{}", serde_json::to_string_pretty(&manifest)?);
+        }
+        "provider-substrate-schema" => {
+            if args.len() > 1 {
+                eprintln!("instrument provider-substrate-schema accepts no extra args");
+                std::process::exit(2);
+            }
+            println!(
+                "{}",
+                provider_substrate::provider_substrate_schema_v1_json()?
+            );
+        }
         _ => return Err(anyhow::anyhow!("unknown instrument subcommand '{cmd}'")),
     }
 
@@ -378,9 +401,13 @@ pub(crate) fn real_learn_export(args: &[String]) -> Result<()> {
 }
 
 pub(crate) fn resolve_execution_plan(path: &Path) -> Result<::adl::execution_plan::ExecutionPlan> {
-    let path_str = path.to_str().context("path must be valid UTF-8")?;
-    let doc = adl::AdlDoc::load_from_file(path_str)
-        .with_context(|| format!("failed to load ADL document: {}", path.display()))?;
+    let doc = load_adl_doc(path)?;
     let resolved = resolve::resolve_run(&doc)?;
     Ok(resolved.execution_plan)
+}
+
+fn load_adl_doc(path: &Path) -> Result<adl::AdlDoc> {
+    let path_str = path.to_str().context("path must be valid UTF-8")?;
+    adl::AdlDoc::load_from_file(path_str)
+        .with_context(|| format!("failed to load ADL document: {}", path.display()))
 }

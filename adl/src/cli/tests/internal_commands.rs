@@ -95,6 +95,12 @@ fn cli_internal_instrument_variants_succeed() {
         fixture.to_string_lossy().to_string(),
     ])
     .expect("diff-plan");
+    real_instrument(&[
+        "provider-substrate".to_string(),
+        fixture.to_string_lossy().to_string(),
+    ])
+    .expect("provider-substrate");
+    real_instrument(&["provider-substrate-schema".to_string()]).expect("provider-substrate-schema");
 
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)

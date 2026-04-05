@@ -12,6 +12,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use crate::adl;
+use crate::provider_substrate::{self, ProviderInvocationTargetV1};
 
 /// A minimal blocking provider interface for v0.1.
 pub trait Provider: Send + Sync {
@@ -349,11 +350,37 @@ pub fn build_provider(
     spec: &adl::ProviderSpec,
     model_override: Option<&str>,
 ) -> Result<Box<dyn Provider>> {
-    let kind = spec.kind.trim().to_lowercase();
-    match kind.as_str() {
-        "ollama" => Ok(Box::new(OllamaProvider::from_spec(spec, model_override)?)),
-        "http" => Ok(Box::new(HttpProvider::from_spec(spec)?)),
-        other => Err(unknown_kind(other)),
+    build_provider_for_id(
+        spec.id.as_deref().unwrap_or("<anonymous-provider>"),
+        spec,
+        model_override,
+    )
+}
+
+pub fn build_provider_for_id(
+    provider_id: &str,
+    spec: &adl::ProviderSpec,
+    model_override: Option<&str>,
+) -> Result<Box<dyn Provider>> {
+    match spec.kind.trim() {
+        "http" | "http_remote" | "ollama" | "local_ollama" | "mock" => {}
+        other => return Err(unknown_kind(other)),
+    }
+
+    let target =
+        provider_substrate::provider_invocation_target_v1(provider_id, spec, model_override)
+            .with_context(|| format!("normalize provider substrate for '{provider_id}'"))?;
+    match target.transport {
+        provider_substrate::ProviderTransportV1::Http => {
+            Ok(Box::new(HttpProvider::from_target(spec, &target)?))
+        }
+        provider_substrate::ProviderTransportV1::LocalCli
+        | provider_substrate::ProviderTransportV1::InProcess => match target.provider_kind.as_str()
+        {
+            "ollama" | "local_ollama" => Ok(Box::new(OllamaProvider::from_target(spec, &target)?)),
+            "mock" => Err(unknown_kind("mock")),
+            other => Err(unknown_kind(other)),
+        },
     }
 }
 
@@ -367,20 +394,26 @@ pub struct OllamaProvider {
 
 impl OllamaProvider {
     pub fn from_spec(spec: &adl::ProviderSpec, model_override: Option<&str>) -> Result<Self> {
-        // Your schema exposes `config`; we interpret it as a generic map
-        // that may contain `model` and `temperature`.
-        let cfg = &spec.config;
+        let target = provider_substrate::provider_invocation_target_v1(
+            spec.id.as_deref().unwrap_or("<anonymous-provider>"),
+            spec,
+            model_override,
+        )?;
+        Self::from_target(spec, &target)
+    }
 
-        let model = model_override
-            .map(str::trim)
-            .filter(|m| !m.is_empty())
-            .or_else(|| cfg_str(cfg, "model"))
-            .unwrap_or("llama3.1:8b")
-            .to_string();
+    pub fn from_target(
+        spec: &adl::ProviderSpec,
+        target: &ProviderInvocationTargetV1,
+    ) -> Result<Self> {
+        let temperature = cfg_f32(&spec.config, "temperature");
 
-        let temperature = cfg_f32(cfg, "temperature");
-
-        Ok(Self { model, temperature })
+        Ok(Self {
+            // Local CLI execution has no separate provider-native model identifier surface,
+            // so the stable model_ref is the runtime model we should actually invoke.
+            model: target.model_ref.clone(),
+            temperature,
+        })
     }
 
     fn complete_streaming(
@@ -552,10 +585,6 @@ fn ollama_bin() -> PathBuf {
         .unwrap_or_else(|| PathBuf::from("ollama"))
 }
 
-fn cfg_str<'a>(cfg: &'a HashMap<String, Value>, key: &str) -> Option<&'a str> {
-    cfg.get(key).and_then(|v| v.as_str())
-}
-
 fn cfg_f32(cfg: &HashMap<String, Value>, key: &str) -> Option<f32> {
     cfg.get(key).and_then(|v| {
         if let Some(f) = v.as_f64() {
@@ -585,10 +614,23 @@ struct HttpAuth {
 
 impl HttpProvider {
     pub fn from_spec(spec: &adl::ProviderSpec) -> Result<Self> {
-        let cfg = &spec.config;
+        let target = provider_substrate::provider_invocation_target_v1(
+            spec.id.as_deref().unwrap_or("<anonymous-provider>"),
+            spec,
+            None,
+        )?;
+        Self::from_target(spec, &target)
+    }
 
-        let endpoint = cfg_str(cfg, "endpoint")
-            .map(|s| s.to_string())
+    pub fn from_target(
+        spec: &adl::ProviderSpec,
+        target: &ProviderInvocationTargetV1,
+    ) -> Result<Self> {
+        let cfg = &spec.config;
+        let endpoint = target
+            .endpoint
+            .clone()
+            .or_else(|| target.base_url.clone())
             .ok_or_else(|| {
                 invalid_config(
                     "http",
@@ -679,8 +721,6 @@ impl Provider for HttpProvider {
 
         let body = serde_json::json!({ "prompt": prompt });
 
-        // Map timeout vs. other request failures into stable, user-facing error messages.
-        // This keeps tests and CLI output deterministic while still surfacing the underlying cause.
         let resp = match req.json(&body).send() {
             Ok(resp) => resp,
             Err(err) => {
