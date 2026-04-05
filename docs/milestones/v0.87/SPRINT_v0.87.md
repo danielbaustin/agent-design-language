@@ -1,61 +1,176 @@
 # Sprint Plan: v0.87
 
 ## Metadata
-- Sprint: `v0.87-s1`
 - Milestone: `v0.87`
+- Sprint sequence: `v0.87-s1`, `v0.87-s2`, `v0.87-s3`
 - Start date: `2026`
 - End date: `TBD`
 - Owner: `adl`
 
-## Sprint Goal
-Establish the first executable slice of `v0.87` by locking the canonical milestone docs and beginning the substrate work that everything else depends on: trace v1, provider/transport substrate planning, and control-plane/tooling stabilization.
+## Milestone Sprint Model
 
-This sprint should leave `v0.87` with:
-- canonical docs that match the roadmap
-- a clear first work sequence for trace, provider, and operational substrate work
-- at least one real implementation slice underway or completed in the foundational substrate band
+`v0.87` is not a single-sprint milestone. It is a three-sprint execution plan:
 
-## Planned Scope
-- Canonicalize the milestone doc set for `v0.87` (vision, design, WBS, sprint, checklist, demo matrix, release plan, release notes, decisions, feature-doc index)
-- Begin the trace/provider/control-plane substrate sequence with issue-ready planning and the first implementation slice
-- Keep scope tightly bounded to foundational substrate work; do not pull `v0.88+` systems into this sprint
+- Sprint 1: canonicalization and first substrate slices
+- Sprint 2: substrate expansion and convergence across trace, provider, shared memory, skills, tooling, and review
+- Sprint 3: documentation convergence, demos, quality gate, review package, and release closeout
 
-## Work Plan
+The purpose of this file is to describe the sprint sequence for the whole milestone, not just the first kickoff tranche.
+
+## Milestone Goal
+
+Move ADL from the bounded cognitive proof in `v0.86` to a coherent, deterministic, reviewer-legible substrate in `v0.87`.
+
+This milestone should leave ADL with:
+- canonical docs that truthfully describe the milestone
+- a real Trace v1 substrate
+- a real provider/transport substrate and compatibility path
+- a real shared-memory foundation tied back to execution truth
+- operational skills and review surfaces as executable substrate features
+- stable control-plane/workflow surfaces
+- demo, quality, docs, and release-tail proof for an uninvolved reviewer
+
+## Sprint Overview
+
+| Sprint | Purpose | WPs | Current status |
+|---|---|---|---|
+| `v0.87-s1` | Lock the canonical milestone surfaces and land the first substrate slices | `WP-01`, `WP-02`, `WP-04`, `WP-06` | active / partially implemented |
+| `v0.87-s2` | Expand and connect the substrate across trace, provider, memory, skills, tooling, and review | `WP-03`, `WP-05`, `WP-07`, `WP-08`, `WP-09`, `WP-10`, `WP-11` | seeded / underway |
+| `v0.87-s3` | Converge docs, demos, quality gates, review package, and release tail | `WP-12`, `WP-13`, `WP-14`, `WP-15`, `WP-16` | planned |
+
+## Sprint 1
+
+### Goal
+Establish the first executable slice of `v0.87` by locking the canonical milestone docs and landing the earliest foundational substrate work.
+
+### Scope
+- canonical milestone docs and issue map
+- Trace v1 schema and event model
+- provider / transport substrate v1
+- shared ObsMem foundation
+
+### Work Packages
 | Order | Item | Issue | Owner | Status |
 |---|---|---|---|---|
-| 1 | Lock the canonical milestone docs and issue map | `#1292` | `Daniel / Codex.app` | `in progress` |
-| 2 | Seed the Sprint 1 substrate tranche: trace schema, provider substrate, shared-memory foundation | `#1293`, `#1295`, `#1297` | `Daniel / Codex.app` | `bootstrapped` |
-| 3 | Seed the Sprint 2 tranche: trace linkage, portability, memory coherence, skills, control-plane, review | `#1294`, `#1296`, `#1298`, `#1299`, `#1300`, `#1301`, `#1302` | `Daniel / Codex.app` | `bootstrapped` |
-| 4 | Begin the first foundational implementation slice from the seeded tranche | `#1293` or `#1300` | `Daniel / Codex.app` | `ready` |
+| 1 | Lock the canonical milestone docs and issue map | `#1292` | `Daniel / Codex.app` | merged |
+| 2 | Trace v1 schema + event model | `#1293` | `Daniel / Codex.app` | PR open |
+| 3 | Provider / transport substrate v1 | `#1295` | `Daniel / Codex.app` | PR open |
+| 4 | Shared ObsMem foundation | `#1297` | `Daniel / Codex.app` | PR open |
+
+### Exit Criteria
+- canonical `v0.87` milestone docs are aligned to the roadmap and seeded execution plan
+- Trace v1 schema exists as a real implementation surface
+- provider substrate v1 exists as a real implementation surface
+- shared ObsMem foundation exists as a real implementation surface
+
+## Sprint 2
+
+### Goal
+Expand the foundational substrate into a connected milestone surface: runtime trace export, provider portability, trace-memory coherence, operational skills, control-plane consolidation, tooling hardening, and review formalization.
+
+### Scope
+- trace instrumentation and artifact linkage
+- provider portability and config compatibility
+- trace-to-memory coherence
+- operational skills substrate
+- PR tooling / control-plane consolidation
+- tooling hardening and workflow stability
+- review-surface formalization
+
+### Work Packages
+| Order | Item | Issue | Owner | Status |
+|---|---|---|---|---|
+| 1 | Trace instrumentation + artifact linkage | `#1294` | `Daniel / Codex.app` | PR open |
+| 2 | Provider portability + config compatibility | `#1296` | `Daniel / Codex.app` | ready |
+| 3 | Trace-to-memory coherence | `#1298` | `Daniel / Codex.app` | ready |
+| 4 | Operational skills substrate | `#1299` | `Daniel / Codex.app` | ready |
+| 5 | PR tooling / control-plane consolidation | `#1300` | `Daniel / Codex.app` | ready |
+| 6 | Tooling hardening + workflow stability | `#1301` | `Daniel / Codex.app` | ready |
+| 7 | Review-surface formalization | `#1302` | `Daniel / Codex.app` | ready |
+
+### Exit Criteria
+- runtime Trace v1 export and artifact linkage are real and reviewable
+- provider substrate is threaded through real config and compatibility surfaces
+- memory entries can be tied back to execution truth
+- at least one real operational skill path exists
+- control-plane/tooling behavior is more centralized and stable
+- review outputs use a real substrate contract
+
+## Sprint 3
+
+### Goal
+Converge the milestone into a reviewer-legible package with truthful demos, quality gates, docs, review outputs, and release closeout.
+
+### Scope
+- docs canonicalization and feature index truth
+- demo matrix execution and integration demos
+- quality gate and coverage posture
+- docs / review convergence
+- release ceremony and milestone handoff
+
+### Work Packages
+| Order | Item | Issue | Owner | Status |
+|---|---|---|---|---|
+| 1 | Documentation canonicalization + feature index | `WP-12` | `Daniel / Codex.app` | not yet issued |
+| 2 | Demo matrix + integration demos | `WP-13` | `Daniel / Codex.app` | not yet issued |
+| 3 | Coverage / quality gate | `WP-14` | `Daniel / Codex.app` | not yet issued |
+| 4 | Docs + review pass | `WP-15` | `Daniel / Codex.app` | not yet issued |
+| 5 | Release ceremony | `WP-16` | `Daniel / Codex.app` | not yet issued |
+
+### Exit Criteria
+- canonical docs truthfully describe the implemented milestone
+- demo matrix is runnable or explicitly blocked with alternate proof surfaces
+- quality posture is recorded with real commands and justified exceptions
+- docs and review surfaces are coherent for an uninvolved reviewer
+- release-tail validation and handoff are complete
+
+## Current Execution Status
+
+As of this plan revision:
+- Sprint 1 is in active implementation
+- Sprint 2 is seeded, preflighted, and partially underway
+- Sprint 3 is defined at the WBS level but not yet issued in detail
+
+Current issue/PR posture:
+- `#1292` merged
+- `#1293`, `#1294`, `#1295`, and `#1297` have active PRs
+- `#1296`, `#1298`, `#1299`, `#1300`, `#1301`, and `#1302` are bootstrapped and execution-ready
 
 ## Cadence Expectations
 - Use issue cards (`input` / `output`) for every execution item.
 - Keep each issue mergeable, narrow, and truthfully documented.
-- Prefer substrate-first sequencing: trace → provider → shared memory → skills/tooling.
-- Use draft PRs until checks pass and proof surfaces are reviewable.
-- Run required quality gates (`fmt`, `clippy`, `test`, and any validator/demo command relevant to the changed substrate surface).
+- Prefer substrate-first sequencing:
+  - Sprint 1: schema + provider + shared-memory foundation
+  - Sprint 2: linkage + compatibility + skills + tooling + review
+  - Sprint 3: docs + demos + quality + release tail
+- Run required quality gates (`fmt`, `clippy`, `test`, and any validator/demo command relevant to the changed surface).
+- Record proof surfaces as they land instead of reconstructing them later from memory.
 
 ## Risks / Dependencies
-- Dependency: `v0.86` Sprint 7 closeout must finish cleanly enough that `v0.87` docs are not immediately invalidated.
-  - Risk: late `v0.86` fixes may force doc or roadmap churn.
-  - Mitigation: keep `v0.87` sprint-1 scope on foundational substrate work and update canonical docs only after closeout truth is stable.
+- Dependency: late `v0.86` fallout can still force local doc and workflow adjustments.
+  - Risk: milestone docs drift while early `v0.87` work is underway.
+  - Mitigation: keep canonical docs synchronized to the issue spine and real PR state.
 
-- Dependency: provider/transport redesign touches core architectural surfaces.
-  - Risk: vague scope or over-expansion into later capability-routing work.
-  - Mitigation: keep sprint scope at provider substrate v1 only: vendor/transport/model separation, `model_ref`, compatibility path, and issue decomposition.
+- Dependency: trace, provider, and memory work are tightly coupled.
+  - Risk: later WP ownership gets blurred and issues silently absorb adjacent scope.
+  - Mitigation: keep WP boundaries explicit and record follow-ons instead of widening patches.
 
 - Dependency: tooling/control-plane work can sprawl.
-  - Risk: PR/worktree fixes turn into a broad rewrite.
-  - Mitigation: prefer bounded consolidation slices that reduce shell ownership and improve determinism without redesigning the whole workflow layer at once.
+  - Risk: bounded workflow fixes turn into a broad rewrite.
+  - Mitigation: keep Sprint 2 control-plane work as narrow consolidation and hardening slices.
 
 ## Demo / Review Plan
-- Demo artifact: `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md` plus at least one first substrate proof surface (likely trace or tooling-oriented)
-- Review date: `TBD`
+- Primary demo artifact: `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
+- Reviewer entry surfaces:
+  - `docs/milestones/v0.87/README.md`
+  - `docs/milestones/v0.87/WBS_v0.87.md`
+  - `docs/milestones/v0.87/FEATURE_DOCS_v0.87.md`
+  - `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
 - Sign-off owners: `Daniel Austin`, `Codex.app`, internal review before wider exposure
 
-## Exit Criteria
+## Milestone Exit Criteria
 - Canonical `v0.87` milestone docs are filled, internally consistent, and aligned with the roadmap.
-- The first `v0.87` issue sequence is explicit for trace, provider, shared memory, and operational/control-plane work.
-- At least one foundational substrate implementation slice is underway or completed with traceable issue/PR surfaces.
+- All three milestone sprints are described truthfully in this file.
+- The issue sequence is explicit for the foundational and convergence substrate work.
+- Sprint 3 release-tail work is defined before release closeout begins.
 - Scope remains bounded to `v0.87` substrate work; no silent pull-forward of `v0.88+` systems.
-- Sprint summary and any deferrals are captured truthfully in milestone docs.
