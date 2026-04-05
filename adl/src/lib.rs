@@ -31,6 +31,7 @@ pub mod obsmem_contract;
 pub mod obsmem_demo;
 pub mod obsmem_indexing;
 pub mod obsmem_retrieval_policy;
+pub mod obsmem_store;
 pub mod overlay;
 pub mod plan;
 pub mod prompt;

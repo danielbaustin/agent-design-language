@@ -1,17 +1,14 @@
 use std::path::{Path, PathBuf};
-use std::sync::{Arc, Mutex};
 
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 
 use crate::artifacts::{self, atomic_write, RunArtifactPaths};
 use crate::obsmem_adapter::ObsMemAdapter;
-use crate::obsmem_contract::{
-    MemoryQuery, MemoryQueryResult, MemoryRecord, MemoryWriteAck, MemoryWriteRequest, ObsMemClient,
-    ObsMemContractError,
-};
+use crate::obsmem_contract::{MemoryRecord, MemoryWriteAck};
 use crate::obsmem_indexing::index_run_from_artifacts;
 use crate::obsmem_retrieval_policy::{RetrievalOrder, RetrievalPolicyV1, RetrievalRequest};
+use crate::obsmem_store::FileObsMemClient;
 
 pub const OBS_MEM_INDEX_SUMMARY_VERSION: u32 = 1;
 pub const OBS_MEM_QUERY_RESULT_VERSION: u32 = 1;
@@ -19,6 +16,7 @@ pub const OBS_MEM_QUERY_RESULT_VERSION: u32 = 1;
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct ObsMemDemoArtifacts {
+    pub shared_store: PathBuf,
     pub index_summary: PathBuf,
     pub query_result: PathBuf,
 }
@@ -64,78 +62,6 @@ struct ObsMemQueryResultArtifact {
     entries: Vec<MemoryRecord>,
 }
 
-#[derive(Clone, Default)]
-struct ObsMemInMemory {
-    writes: Arc<Mutex<Vec<MemoryWriteRequest>>>,
-}
-
-impl ObsMemClient for ObsMemInMemory {
-    fn write_entry(
-        &self,
-        request: &MemoryWriteRequest,
-    ) -> Result<MemoryWriteAck, ObsMemContractError> {
-        request.validate()?;
-        let mut normalized = request.clone();
-        normalized.normalize();
-
-        let mut writes = self.writes.lock().expect("writes lock");
-        writes.push(normalized.clone());
-        writes.sort_by(|a, b| {
-            a.run_id
-                .cmp(&b.run_id)
-                .then_with(|| a.workflow_id.cmp(&b.workflow_id))
-                .then_with(|| a.summary.cmp(&b.summary))
-        });
-
-        let idx = writes
-            .iter()
-            .position(|e| e == &normalized)
-            .expect("entry exists");
-        Ok(MemoryWriteAck {
-            entry_id: format!("mem-{idx:04}"),
-            accepted: true,
-        })
-    }
-
-    fn query(&self, query: &MemoryQuery) -> Result<MemoryQueryResult, ObsMemContractError> {
-        let mut q = query.clone();
-        q.normalize();
-        q.validate()?;
-
-        let writes = self.writes.lock().expect("writes lock");
-        let mut hits: Vec<MemoryRecord> = writes
-            .iter()
-            .filter(|e| {
-                q.workflow_id
-                    .as_ref()
-                    .is_none_or(|wid| wid == &e.workflow_id)
-                    && q.failure_code
-                        .as_ref()
-                        .is_none_or(|fc| e.failure_code.as_ref() == Some(fc))
-                    && q.tags.iter().all(|t| e.tags.binary_search(t).is_ok())
-            })
-            .map(|e| MemoryRecord {
-                id: format!("{}::{}", e.run_id, e.workflow_id),
-                run_id: e.run_id.clone(),
-                workflow_id: e.workflow_id.clone(),
-                tags: e.tags.clone(),
-                payload: e.summary.clone(),
-                score: "1.00".to_string(),
-                citations: e.citations.clone(),
-            })
-            .collect();
-
-        hits.sort_by(|a, b| {
-            a.id.cmp(&b.id)
-                .then_with(|| a.run_id.cmp(&b.run_id))
-                .then_with(|| a.workflow_id.cmp(&b.workflow_id))
-                .then_with(|| a.payload.cmp(&b.payload))
-        });
-        hits.truncate(q.limit);
-        Ok(MemoryQueryResult { hits })
-    }
-}
-
 pub fn maybe_emit_obsmem_demo_artifacts(run_id: &str) -> Result<Option<ObsMemDemoArtifacts>> {
     // ObsMem demo integration pipeline (env-gated).
     // Enabled only when ADL_OBSMEM_DEMO=1 to keep default runtime behavior unchanged.
@@ -154,7 +80,8 @@ pub fn emit_obsmem_demo_artifacts(runs_root: &Path, run_id: &str) -> Result<ObsM
     let indexed = index_run_from_artifacts(runs_root, run_id)
         .with_context(|| format!("index run artifacts for '{run_id}'"))?;
 
-    let client = ObsMemInMemory::default();
+    let shared_store_path = runs_root.join("_shared").join("obsmem_store.v1.json");
+    let client = FileObsMemClient::new(&shared_store_path);
     let adapter = ObsMemAdapter::new(client);
     let write_ack = adapter
         .index_run_from_artifacts(runs_root, run_id)
@@ -241,6 +168,7 @@ pub fn emit_obsmem_demo_artifacts(runs_root: &Path, run_id: &str) -> Result<ObsM
     )?;
 
     Ok(ObsMemDemoArtifacts {
+        shared_store: shared_store_path,
         index_summary: index_summary_path,
         query_result: query_result_path,
     })
@@ -318,9 +246,12 @@ mod tests {
         let first_query = std::fs::read(&first.query_result).expect("read query first");
 
         let second = emit_obsmem_demo_artifacts(&runs_root, run_id).expect("second");
+        let first_store = std::fs::read(&first.shared_store).expect("read store first");
+        let second_store = std::fs::read(&second.shared_store).expect("read store second");
         let second_index = std::fs::read(&second.index_summary).expect("read index second");
         let second_query = std::fs::read(&second.query_result).expect("read query second");
 
+        assert_eq!(first_store, second_store);
         assert_eq!(first_index, second_index);
         assert_eq!(first_query, second_query);
     }
