@@ -273,4 +273,101 @@ mod tests {
         let store: ObsMemStoreFile = serde_json::from_slice(&bytes).expect("parse store");
         assert_eq!(store.entries.len(), 1);
     }
+
+    #[test]
+    fn file_store_query_filters_by_workflow_failure_and_tags_and_truncates() {
+        let root = unique_temp_dir("query-filter");
+        let store_path = root.join("_shared/obsmem_store.v1.json");
+        let client = FileObsMemClient::new(&store_path);
+
+        let mut same_workflow = request("run-a", "alpha");
+        same_workflow.tags.push("topic:memory".to_string());
+        same_workflow.normalize();
+        client.write_entry(&same_workflow).expect("write alpha");
+
+        let mut same_workflow_2 = request("run-b", "beta");
+        same_workflow_2.tags.push("topic:memory".to_string());
+        same_workflow_2.normalize();
+        client.write_entry(&same_workflow_2).expect("write beta");
+
+        let mut different_failure = request("run-c", "gamma");
+        different_failure.failure_code = Some("other_failure".to_string());
+        different_failure.normalize();
+        client.write_entry(&different_failure).expect("write gamma");
+
+        let mut different_workflow = request("run-d", "delta");
+        different_workflow.workflow_id = "wf-other".to_string();
+        different_workflow.normalize();
+        client
+            .write_entry(&different_workflow)
+            .expect("write delta");
+
+        let result = client
+            .query(&MemoryQuery {
+                contract_version: OBSMEM_CONTRACT_VERSION,
+                workflow_id: Some("wf-shared".to_string()),
+                failure_code: Some("tool_failure".to_string()),
+                tags: vec![
+                    "status:failed".to_string(),
+                    "workflow:wf-shared".to_string(),
+                    "topic:memory".to_string(),
+                ],
+                limit: 1,
+            })
+            .expect("query");
+
+        assert_eq!(result.hits.len(), 1);
+        assert_eq!(result.hits[0].run_id, "run-a");
+        assert_eq!(result.hits[0].payload, "alpha");
+    }
+
+    #[test]
+    fn file_store_rejects_malformed_json_store() {
+        let root = unique_temp_dir("malformed");
+        let store_path = root.join("_shared/obsmem_store.v1.json");
+        fs::create_dir_all(store_path.parent().expect("parent")).expect("mkdir");
+        fs::write(&store_path, b"{not-json").expect("write malformed");
+
+        let client = FileObsMemClient::new(&store_path);
+        let err = client
+            .query(&MemoryQuery {
+                contract_version: OBSMEM_CONTRACT_VERSION,
+                workflow_id: None,
+                failure_code: None,
+                tags: Vec::new(),
+                limit: 10,
+            })
+            .expect_err("malformed store should fail");
+
+        assert_eq!(err.code, ObsMemContractErrorCode::BackendUnavailable);
+        assert!(err.message.contains("failed parsing ObsMem store"));
+    }
+
+    #[test]
+    fn file_store_rejects_unsupported_schema_version() {
+        let root = unique_temp_dir("schema-mismatch");
+        let store_path = root.join("_shared/obsmem_store.v1.json");
+        fs::create_dir_all(store_path.parent().expect("parent")).expect("mkdir");
+        let raw = serde_json::to_vec_pretty(&serde_json::json!({
+            "schema_name": OBSMEM_STORE_SCHEMA_NAME,
+            "schema_version": 999,
+            "entries": [],
+        }))
+        .expect("serialize");
+        fs::write(&store_path, raw).expect("write schema mismatch");
+
+        let client = FileObsMemClient::new(&store_path);
+        let err = client
+            .query(&MemoryQuery {
+                contract_version: OBSMEM_CONTRACT_VERSION,
+                workflow_id: None,
+                failure_code: None,
+                tags: Vec::new(),
+                limit: 10,
+            })
+            .expect_err("schema mismatch should fail");
+
+        assert_eq!(err.code, ObsMemContractErrorCode::BackendUnavailable);
+        assert!(err.message.contains("unsupported ObsMem store schema"));
+    }
 }
