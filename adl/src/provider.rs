@@ -362,6 +362,11 @@ pub fn build_provider_for_id(
     spec: &adl::ProviderSpec,
     model_override: Option<&str>,
 ) -> Result<Box<dyn Provider>> {
+    match spec.kind.trim() {
+        "http" | "http_remote" | "ollama" | "local_ollama" | "mock" => {}
+        other => return Err(unknown_kind(other)),
+    }
+
     let target =
         provider_substrate::provider_invocation_target_v1(provider_id, spec, model_override)
             .with_context(|| format!("normalize provider substrate for '{provider_id}'"))?;
