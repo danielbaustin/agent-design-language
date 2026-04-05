@@ -1,4 +1,7 @@
 use super::*;
+use ::adl::trace_schema_v1::{
+    validate_trace_event_envelope_v1, TraceEventEnvelopeV1, TraceEventTypeV1,
+};
 
 #[test]
 fn write_run_state_and_load_resume_round_trip() {
@@ -57,6 +60,25 @@ fn write_run_state_and_load_resume_round_trip() {
         run_dir.join("meta/ARTIFACT_MODEL.json").is_file(),
         "artifact model v1 requires version marker"
     );
+    assert!(
+        run_dir.join("logs/trace_v1.json").is_file(),
+        "wp-03 requires canonical trace_v1.json artifact"
+    );
+
+    let trace_v1: TraceEventEnvelopeV1 = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("logs/trace_v1.json")).expect("read trace_v1.json"),
+    )
+    .expect("parse trace_v1.json");
+    validate_trace_event_envelope_v1(&trace_v1).expect("trace v1 must validate");
+    let event_types: Vec<TraceEventTypeV1> = trace_v1
+        .events
+        .iter()
+        .map(|event| event.event_type.clone())
+        .collect();
+    assert!(event_types.contains(&TraceEventTypeV1::RunStart));
+    assert!(event_types.contains(&TraceEventTypeV1::StepStart));
+    assert!(event_types.contains(&TraceEventTypeV1::StepEnd));
+    assert!(event_types.contains(&TraceEventTypeV1::RunEnd));
 
     let resume =
         load_resume_state(&run_dir.join("run.json"), &resolved).expect("load resume state");

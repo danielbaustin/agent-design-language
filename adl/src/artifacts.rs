@@ -113,6 +113,11 @@ impl RunArtifactPaths {
         self.logs_dir().join("activation_log.json")
     }
 
+    /// Canonical Trace v1 artifact path.
+    pub fn trace_v1_json(&self) -> PathBuf {
+        self.logs_dir().join("trace_v1.json")
+    }
+
     /// Canonical bounded cluster-groundwork artifact path.
     pub fn cluster_groundwork_json(&self) -> PathBuf {
         self.meta_dir().join("cluster_groundwork.json")
@@ -470,6 +475,9 @@ mod tests {
         assert!(paths
             .activation_log_json()
             .ends_with(".adl/runs/artifact-path-accessors/logs/activation_log.json"));
+        assert!(paths
+            .trace_v1_json()
+            .ends_with(".adl/runs/artifact-path-accessors/logs/trace_v1.json"));
         assert!(paths
             .scores_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/scores.json"));
