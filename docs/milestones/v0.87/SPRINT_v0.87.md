@@ -13,7 +13,7 @@
 
 - Sprint 1: canonicalization and first substrate slices
 - Sprint 2: substrate expansion and convergence across trace, provider, shared memory, skills, tooling, and review
-- Sprint 3: documentation convergence, demos, quality gate, review package, and release closeout
+- Sprint 3: documentation convergence, demos, quality gate, internal review, 3rd party review, and release closeout
 
 The purpose of this file is to describe the sprint sequence for the whole milestone, not just the first kickoff tranche.
 
@@ -36,7 +36,7 @@ This milestone should leave ADL with:
 |---|---|---|---|
 | `v0.87-s1` | Lock the canonical milestone surfaces and land the first substrate slices | `WP-01`, `WP-02`, `WP-04`, `WP-06` | active / partially implemented |
 | `v0.87-s2` | Expand and connect the substrate across trace, provider, memory, skills, tooling, and review | `WP-03`, `WP-05`, `WP-07`, `WP-08`, `WP-09`, `WP-10`, `WP-11` | seeded / underway |
-| `v0.87-s3` | Converge docs, demos, quality gates, review package, and release tail | `WP-12`, `WP-13`, `WP-14`, `WP-15`, `WP-16` | planned |
+| `v0.87-s3` | Converge docs, demos, quality gates, internal review, 3rd party review, and release tail | `WP-12`, `WP-13`, `WP-14`, `WP-15`, `WP-15A`, `WP-16` | planned |
 
 ## Sprint 1
 
@@ -99,13 +99,14 @@ Expand the foundational substrate into a connected milestone surface: runtime tr
 ## Sprint 3
 
 ### Goal
-Converge the milestone into a reviewer-legible package with truthful demos, quality gates, docs, review outputs, and release closeout.
+Converge the milestone into a reviewer-legible package with truthful demos, quality gates, docs, internal review outputs, 3rd party review readiness, and release closeout.
 
 ### Scope
 - docs canonicalization and feature index truth
 - demo matrix execution and integration demos
 - quality gate and coverage posture
-- docs / review convergence
+- docs / internal review convergence
+- 3rd party review pass and resulting follow-up capture
 - release ceremony and milestone handoff
 
 ### Work Packages
@@ -114,14 +115,16 @@ Converge the milestone into a reviewer-legible package with truthful demos, qual
 | 1 | Documentation canonicalization + feature index | `WP-12` | `Daniel / Codex.app` | not yet issued |
 | 2 | Demo matrix + integration demos | `WP-13` | `Daniel / Codex.app` | not yet issued |
 | 3 | Coverage / quality gate | `WP-14` | `Daniel / Codex.app` | not yet issued |
-| 4 | Docs + review pass | `WP-15` | `Daniel / Codex.app` | not yet issued |
-| 5 | Release ceremony | `WP-16` | `Daniel / Codex.app` | not yet issued |
+| 4 | Docs + internal review pass | `WP-15` | `Daniel / Codex.app` | not yet issued |
+| 5 | 3rd party review pass | `WP-15A` | `Daniel / Codex.app` | not yet issued |
+| 6 | Release ceremony | `WP-16` | `Daniel / Codex.app` | not yet issued |
 
 ### Exit Criteria
 - canonical docs truthfully describe the implemented milestone
 - demo matrix is runnable or explicitly blocked with alternate proof surfaces
 - quality posture is recorded with real commands and justified exceptions
-- docs and review surfaces are coherent for an uninvolved reviewer
+- docs and internal review surfaces are coherent for an uninvolved reviewer
+- 3rd party review is completed or explicitly recorded with bounded follow-up disposition
 - release-tail validation and handoff are complete
 
 ## Current Execution Status
@@ -166,11 +169,12 @@ Current issue/PR posture:
   - `docs/milestones/v0.87/WBS_v0.87.md`
   - `docs/milestones/v0.87/FEATURE_DOCS_v0.87.md`
   - `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
-- Sign-off owners: `Daniel Austin`, `Codex.app`, internal review before wider exposure
+- Sign-off owners: `Daniel Austin`, `Codex.app`, internal review, and 3rd party review before release closeout
 
 ## Milestone Exit Criteria
 - Canonical `v0.87` milestone docs are filled, internally consistent, and aligned with the roadmap.
 - All three milestone sprints are described truthfully in this file.
 - The issue sequence is explicit for the foundational and convergence substrate work.
 - Sprint 3 release-tail work is defined before release closeout begins.
+- Internal review and 3rd party review are both completed or explicitly dispositioned before release closeout.
 - Scope remains bounded to `v0.87` substrate work; no silent pull-forward of `v0.88+` systems.
