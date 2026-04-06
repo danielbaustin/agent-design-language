@@ -36,6 +36,7 @@ The WBS below preserves mergeable slices, explicit dependencies, and a clean rel
 | WP-13 | Demo matrix + integration demos | Define and implement the milestone’s primary proof surfaces, including substrate demos for trace/provider/shared-memory/skills and the planned PR Demo preparation surfaces for later milestones. | `v0.87` demo matrix plus runnable integration demos with clear proof claims. | WP-03, WP-05, WP-07, WP-08, WP-11 | TBD |
 | WP-14 | Coverage / quality gate (ratchet + exclusions) | Enforce truthful quality posture for the milestone, including tests, validators, coverage/ratchet posture, and concrete command surfaces for auditing substrate correctness. | Final `v0.87` quality/coverage gate record with explicit exceptions if any. | WP-02 through WP-13 | TBD |
 | WP-15 | Docs + review pass (repo-wide alignment) | Converge milestone docs, proof surfaces, review artifacts, and entry-point docs so an internal/external reviewer can understand the implemented `v0.87` substrate truthfully. | Reviewed and aligned docs/review surface package for `v0.87`. | WP-12, WP-13, WP-14 | TBD |
+| WP-15A | 3rd-party review | Conduct external / 3rd-party review of the `v0.87` milestone, capture findings, and ensure all issues are either resolved or explicitly dispositioned before release closeout. | External review findings and disposition record for milestone closeout. | WP-15 | TBD |
 | WP-16 | Release ceremony (final validation + tag + notes + cleanup) | Perform final release-tail work for `v0.87`: validation evidence, checklist/release-note alignment, closeout record, and clean handoff into the next roadmap slice. | `v0.87` release-closeout package with final validation and milestone handoff. | WP-15 | TBD |
 
 ## Sequencing
@@ -59,6 +60,7 @@ The WBS below preserves mergeable slices, explicit dependencies, and a clean rel
 - WP-13 (Demos) -> `v0.87` has clear integration demos proving trace, provider portability, shared memory, and operational substrate behavior.
 - WP-14 (Quality gate) -> The milestone has a truthful, auditable quality/coverage posture with explicit command surfaces and justified exceptions.
 - WP-15 (Docs/review) -> Docs, proof surfaces, and review artifacts converge into a reviewer-legible, contradiction-free package.
+- WP-15A (3rd-party review) -> External review findings are captured and every finding is either resolved or explicitly dispositioned before release closeout.
 - WP-16 (Release ceremony) -> Final validation, release-tail docs, and milestone handoff are explicit, truthful, and auditable.
 
 ## Exit Criteria
