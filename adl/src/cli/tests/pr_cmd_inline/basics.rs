@@ -245,12 +245,14 @@ fn parse_doctor_args_accepts_modes_and_rejects_unknown_arg() {
         "v0.87".to_string(),
         "--mode".to_string(),
         "full".to_string(),
+        "--json".to_string(),
         "--no-fetch-issue".to_string(),
     ])
     .expect("parse doctor");
     assert_eq!(parsed.issue, 1174);
     assert_eq!(parsed.slug.as_deref(), Some("doctor-test"));
     assert_eq!(parsed.version.as_deref(), Some("v0.87"));
+    assert!(parsed.json);
     assert!(parsed.no_fetch_issue);
     assert_eq!(parsed.mode, DoctorMode::Full);
 
@@ -271,12 +273,14 @@ fn parse_ready_args_accepts_flags_and_rejects_unknown_arg() {
         "ready-test".to_string(),
         "--version".to_string(),
         "v0.86".to_string(),
+        "--json".to_string(),
         "--no-fetch-issue".to_string(),
     ])
     .expect("parse ready");
     assert_eq!(parsed.issue, 1152);
     assert_eq!(parsed.slug.as_deref(), Some("ready-test"));
     assert_eq!(parsed.version.as_deref(), Some("v0.86"));
+    assert!(parsed.json);
     assert!(parsed.no_fetch_issue);
 
     let err = parse_ready_args(&["1152".to_string(), "--bogus".to_string()]).expect_err("err");
@@ -291,12 +295,14 @@ fn parse_preflight_args_accepts_flags_and_rejects_unknown_arg() {
         "preflight-test".to_string(),
         "--version".to_string(),
         "v0.86".to_string(),
+        "--json".to_string(),
         "--no-fetch-issue".to_string(),
     ])
     .expect("parse preflight");
     assert_eq!(parsed.issue, 1173);
     assert_eq!(parsed.slug.as_deref(), Some("preflight-test"));
     assert_eq!(parsed.version.as_deref(), Some("v0.86"));
+    assert!(parsed.json);
     assert!(parsed.no_fetch_issue);
 
     let err = parse_preflight_args(&["1173".to_string(), "--bogus".to_string()]).expect_err("err");

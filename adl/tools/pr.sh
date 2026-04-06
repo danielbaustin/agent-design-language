@@ -19,8 +19,8 @@
 #   adl/tools/pr.sh run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
 #   adl/tools/pr.sh card    <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
 #   adl/tools/pr.sh output  <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
-#   adl/tools/pr.sh doctor  <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>] [--mode full|ready|preflight]
-#   adl/tools/pr.sh preflight <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>]
+#   adl/tools/pr.sh doctor  <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>] [--mode full|ready|preflight] [--json]
+#   adl/tools/pr.sh preflight <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>] [--json]
 #   adl/tools/pr.sh finish  <issue> --title "<title>" [-f <input_card.md>] [--output-card <output_card.md>] [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [--no-open]
 #   adl/tools/pr.sh open
 #   adl/tools/pr.sh status
@@ -1608,8 +1608,9 @@ Commands:
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
   output  <issue> [input|output] ... [--version <v0.2>] [-f <output_card.md>]
   cards   <issue> [--version <v0.2>] [--no-fetch-issue]
-  doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight]
-  ready   <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
+  doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
+  ready   <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--json]
+  preflight <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--json]
   finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
   open
   status
@@ -1655,7 +1656,7 @@ Examples:
   adl/tools/pr.sh init 17 --slug b6-default-system --no-fetch-issue --version v0.85
   adl/tools/pr.sh run 17 --slug b6-default-system --version v0.85
   adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml --trace --allow-unsigned
-  adl/tools/pr.sh doctor 17 --slug b6-default-system --version v0.85
+  adl/tools/pr.sh doctor 17 --slug b6-default-system --version v0.85 --json
   adl/tools/pr.sh preflight 17 --slug b6-default-system --version v0.85
   adl/tools/pr.sh card  17 --help
   adl/tools/pr.sh card  17 --version v0.2
@@ -1756,37 +1757,40 @@ EOF
 usage_ready() {
   cat <<'EOF'
 Usage:
-  adl/tools/pr.sh ready <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
+  adl/tools/pr.sh ready <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--json]
 
 Notes:
 - Deprecated compatibility alias over `doctor --mode ready`.
 - Verifies that the issue is fully authoring-ready in both the root checkout and the issue worktree.
 - Prints READY=PASS on success and exits non-zero on the first missing or invalid bootstrap surface.
+- `--json` emits the stable `adl.pr.doctor.v1` machine-readable result.
 EOF
 }
 
 usage_preflight() {
   cat <<'EOF'
 Usage:
-  adl/tools/pr.sh preflight <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
+  adl/tools/pr.sh preflight <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--json]
 
 Notes:
 - Deprecated compatibility alias over `doctor --mode preflight`.
 - Reports whether unresolved open PRs already exist for the same milestone/version band.
 - Prints PREFLIGHT=PASS or PREFLIGHT=BLOCK.
+- `--json` emits the stable `adl.pr.doctor.v1` machine-readable result.
 EOF
 }
 
 usage_doctor() {
   cat <<'EOF'
 Usage:
-  adl/tools/pr.sh doctor <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight]
+  adl/tools/pr.sh doctor <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
 
 Notes:
 - Canonical readiness and drift diagnostic surface.
 - `--mode full` reports both milestone-wave preflight and worktree/card readiness.
 - `--mode ready` runs only the started-worktree readiness checks.
 - `--mode preflight` runs only the milestone-wave conflict/open-PR check.
+- `--json` emits the stable `adl.pr.doctor.v1` machine-readable result for automation.
 EOF
 }
 

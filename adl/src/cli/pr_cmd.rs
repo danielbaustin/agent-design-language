@@ -1,5 +1,5 @@
 use anyhow::{anyhow, bail, Context, Result};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::fs;
 #[cfg(unix)]
 use std::os::unix::fs as unix_fs;
@@ -39,6 +39,57 @@ struct OpenPullRequest {
     base_ref_name: String,
     #[serde(rename = "isDraft")]
     is_draft: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+struct DoctorPreflightJsonPullRequest {
+    number: u32,
+    head_ref_name: String,
+    state: &'static str,
+    url: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct DoctorPreflightResult {
+    open_pr_count: usize,
+    open_prs: Vec<DoctorPreflightJsonPullRequest>,
+    status: &'static str,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct DoctorReadyResult {
+    worktree: String,
+    source: String,
+    root_stp: String,
+    root_input: String,
+    root_output: String,
+    wt_stp: String,
+    wt_input: String,
+    wt_output: String,
+    status: &'static str,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+struct DoctorJsonOutput {
+    schema: &'static str,
+    issue: u32,
+    version: String,
+    slug: String,
+    branch: String,
+    mode: &'static str,
+    preflight_status: &'static str,
+    open_pr_count: usize,
+    open_prs: Vec<DoctorPreflightJsonPullRequest>,
+    ready_status: Option<&'static str>,
+    worktree: Option<String>,
+    source: Option<String>,
+    root_stp: Option<String>,
+    root_input: Option<String>,
+    root_output: Option<String>,
+    wt_stp: Option<String>,
+    wt_input: Option<String>,
+    wt_output: Option<String>,
+    doctor_status: &'static str,
 }
 
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
@@ -284,6 +335,7 @@ fn real_pr_ready(args: &[String]) -> Result<()> {
             slug: parsed.slug,
             no_fetch_issue: parsed.no_fetch_issue,
             mode: DoctorMode::Ready,
+            json: parsed.json,
         },
         "ready",
     )
@@ -304,6 +356,7 @@ fn real_pr_preflight(args: &[String]) -> Result<()> {
             slug: parsed.slug,
             no_fetch_issue: parsed.no_fetch_issue,
             mode: DoctorMode::Preflight,
+            json: parsed.json,
         },
         "preflight",
     )
@@ -512,43 +565,59 @@ fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
     let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
     let branch = issue_ref.branch_name("codex");
 
-    println!("ISSUE={}", parsed.issue);
-    println!("VERSION={version}");
-    println!("SLUG={slug}");
-    println!("BRANCH={branch}");
-
-    let preflight_ok = run_doctor_preflight(&repo, &version, &branch)?;
-    let ready_ok = match parsed.mode {
+    let preflight = run_doctor_preflight(&repo, &version, &branch)?;
+    let ready = match parsed.mode {
         DoctorMode::Preflight => None,
         DoctorMode::Ready | DoctorMode::Full => {
             Some(run_doctor_ready(&repo_root, &issue_ref, &branch)?)
         }
     };
-
-    match parsed.mode {
-        DoctorMode::Preflight => {
-            println!("DOCTOR_MODE=preflight");
-            println!(
-                "DOCTOR_STATUS={}",
-                if preflight_ok { "PASS" } else { "BLOCK" }
-            );
-        }
-        DoctorMode::Ready => {
-            println!("DOCTOR_MODE=ready");
-            println!(
-                "DOCTOR_STATUS={}",
-                if ready_ok.unwrap_or(false) {
-                    "PASS"
-                } else {
-                    "BLOCK"
-                }
-            );
-        }
+    let mode = doctor_mode_name(&parsed.mode);
+    let doctor_status = match parsed.mode {
+        DoctorMode::Preflight => preflight.status,
+        DoctorMode::Ready => ready.as_ref().map(|x| x.status).unwrap_or("BLOCK"),
         DoctorMode::Full => {
-            println!("DOCTOR_MODE=full");
-            let full_ok = preflight_ok && ready_ok.unwrap_or(false);
-            println!("DOCTOR_STATUS={}", if full_ok { "PASS" } else { "BLOCK" });
+            if preflight.status == "PASS" && ready.as_ref().map(|x| x.status) == Some("PASS") {
+                "PASS"
+            } else {
+                "BLOCK"
+            }
         }
+    };
+
+    if parsed.json {
+        print_json(&DoctorJsonOutput {
+            schema: "adl.pr.doctor.v1",
+            issue: parsed.issue,
+            version,
+            slug,
+            branch,
+            mode,
+            preflight_status: preflight.status,
+            open_pr_count: preflight.open_pr_count,
+            open_prs: preflight.open_prs,
+            ready_status: ready.as_ref().map(|x| x.status),
+            worktree: ready.as_ref().map(|x| x.worktree.clone()),
+            source: ready.as_ref().map(|x| x.source.clone()),
+            root_stp: ready.as_ref().map(|x| x.root_stp.clone()),
+            root_input: ready.as_ref().map(|x| x.root_input.clone()),
+            root_output: ready.as_ref().map(|x| x.root_output.clone()),
+            wt_stp: ready.as_ref().map(|x| x.wt_stp.clone()),
+            wt_input: ready.as_ref().map(|x| x.wt_input.clone()),
+            wt_output: ready.as_ref().map(|x| x.wt_output.clone()),
+            doctor_status,
+        })?;
+    } else {
+        println!("ISSUE={}", parsed.issue);
+        println!("VERSION={version}");
+        println!("SLUG={slug}");
+        println!("BRANCH={branch}");
+        print_doctor_preflight_text(&preflight);
+        if let Some(ready) = &ready {
+            print_doctor_ready_text(ready);
+        }
+        println!("DOCTOR_MODE={mode}");
+        println!("DOCTOR_STATUS={doctor_status}");
     }
     Ok(())
 }
@@ -584,28 +653,37 @@ fn resolve_doctor_scope_and_slug(
     Ok((version, slug))
 }
 
-fn run_doctor_preflight(repo: &str, version: &str, branch: &str) -> Result<bool> {
+fn run_doctor_preflight(repo: &str, version: &str, branch: &str) -> Result<DoctorPreflightResult> {
     let unresolved = unresolved_milestone_pr_wave(repo, version, Some(branch))?;
-    println!("OPEN_PR_COUNT={}", unresolved.len());
-    for pr in &unresolved {
-        println!(
-            "OPEN_PR=#{}|{}|{}|{}",
-            pr.number,
-            pr.head_ref_name,
-            if pr.is_draft { "draft" } else { "ready" },
-            pr.url
-        );
-    }
-    if unresolved.is_empty() {
-        println!("PREFLIGHT=PASS");
-        Ok(true)
+    let open_prs = unresolved
+        .iter()
+        .map(|pr| DoctorPreflightJsonPullRequest {
+            number: pr.number,
+            head_ref_name: pr.head_ref_name.clone(),
+            state: if pr.is_draft { "draft" } else { "ready" },
+            url: pr.url.clone(),
+        })
+        .collect::<Vec<_>>();
+    if open_prs.is_empty() {
+        Ok(DoctorPreflightResult {
+            open_pr_count: 0,
+            open_prs,
+            status: "PASS",
+        })
     } else {
-        println!("PREFLIGHT=BLOCK");
-        Ok(false)
+        Ok(DoctorPreflightResult {
+            open_pr_count: open_prs.len(),
+            open_prs,
+            status: "BLOCK",
+        })
     }
 }
 
-fn run_doctor_ready(repo_root: &Path, issue_ref: &IssueRef, branch: &str) -> Result<bool> {
+fn run_doctor_ready(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    branch: &str,
+) -> Result<DoctorReadyResult> {
     let worktree_path = issue_ref.default_worktree_path(
         repo_root,
         std::env::var_os("ADL_WORKTREE_ROOT")
@@ -669,28 +747,56 @@ fn run_doctor_ready(repo_root: &Path, issue_ref: &IssueRef, branch: &str) -> Res
         &wt_bundle_output,
     )?;
 
-    println!("WORKTREE={}", worktree_path.display());
-    println!("SOURCE={}", path_relative_to_repo(repo_root, &source_path));
-    println!("ROOT_STP={}", path_relative_to_repo(repo_root, &root_stp));
+    Ok(DoctorReadyResult {
+        worktree: path_relative_to_repo(repo_root, &worktree_path),
+        source: path_relative_to_repo(repo_root, &source_path),
+        root_stp: path_relative_to_repo(repo_root, &root_stp),
+        root_input: path_relative_to_repo(repo_root, &root_bundle_input),
+        root_output: path_relative_to_repo(repo_root, &root_bundle_output),
+        wt_stp: path_relative_to_repo(repo_root, &wt_stp),
+        wt_input: path_relative_to_repo(repo_root, &wt_bundle_input),
+        wt_output: path_relative_to_repo(repo_root, &wt_bundle_output),
+        status: "PASS",
+    })
+}
+
+fn doctor_mode_name(mode: &DoctorMode) -> &'static str {
+    match mode {
+        DoctorMode::Full => "full",
+        DoctorMode::Ready => "ready",
+        DoctorMode::Preflight => "preflight",
+    }
+}
+
+fn print_doctor_preflight_text(preflight: &DoctorPreflightResult) {
+    println!("OPEN_PR_COUNT={}", preflight.open_pr_count);
+    for pr in &preflight.open_prs {
+        println!(
+            "OPEN_PR=#{}|{}|{}|{}",
+            pr.number, pr.head_ref_name, pr.state, pr.url
+        );
+    }
+    println!("PREFLIGHT={}", preflight.status);
+}
+
+fn print_doctor_ready_text(ready: &DoctorReadyResult) {
+    println!("WORKTREE={}", ready.worktree);
+    println!("SOURCE={}", ready.source);
+    println!("ROOT_STP={}", ready.root_stp);
+    println!("ROOT_INPUT={}", ready.root_input);
+    println!("ROOT_OUTPUT={}", ready.root_output);
+    println!("WT_STP={}", ready.wt_stp);
+    println!("WT_INPUT={}", ready.wt_input);
+    println!("WT_OUTPUT={}", ready.wt_output);
+    println!("READY={}", ready.status);
+}
+
+fn print_json<T: Serialize>(value: &T) -> Result<()> {
     println!(
-        "ROOT_INPUT={}",
-        path_relative_to_repo(repo_root, &root_bundle_input)
+        "{}",
+        serde_json::to_string_pretty(value).context("failed to serialize pr command json")?
     );
-    println!(
-        "ROOT_OUTPUT={}",
-        path_relative_to_repo(repo_root, &root_bundle_output)
-    );
-    println!("WT_STP={}", path_relative_to_repo(repo_root, &wt_stp));
-    println!(
-        "WT_INPUT={}",
-        path_relative_to_repo(repo_root, &wt_bundle_input)
-    );
-    println!(
-        "WT_OUTPUT={}",
-        path_relative_to_repo(repo_root, &wt_bundle_output)
-    );
-    println!("READY=PASS");
-    Ok(true)
+    Ok(())
 }
 
 fn sync_completed_output_review_surfaces(

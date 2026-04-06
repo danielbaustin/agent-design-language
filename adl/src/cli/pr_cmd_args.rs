@@ -37,6 +37,7 @@ pub(crate) struct ReadyArgs {
     pub(crate) slug: Option<String>,
     pub(crate) version: Option<String>,
     pub(crate) no_fetch_issue: bool,
+    pub(crate) json: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -45,6 +46,7 @@ pub(crate) struct PreflightArgs {
     pub(crate) version: Option<String>,
     pub(crate) slug: Option<String>,
     pub(crate) no_fetch_issue: bool,
+    pub(crate) json: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -61,6 +63,7 @@ pub(crate) struct DoctorArgs {
     pub(crate) slug: Option<String>,
     pub(crate) no_fetch_issue: bool,
     pub(crate) mode: DoctorMode,
+    pub(crate) json: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -231,6 +234,7 @@ pub(crate) fn parse_preflight_args(args: &[String]) -> Result<PreflightArgs> {
         version: None,
         slug: None,
         no_fetch_issue: false,
+        json: false,
     };
     let mut i = 1;
     while i < args.len() {
@@ -244,6 +248,7 @@ pub(crate) fn parse_preflight_args(args: &[String]) -> Result<PreflightArgs> {
                 i += 1;
             }
             "--no-fetch-issue" => parsed.no_fetch_issue = true,
+            "--json" => parsed.json = true,
             other => bail!("preflight: unknown arg: {other}"),
         }
         i += 1;
@@ -264,6 +269,7 @@ pub(crate) fn parse_doctor_args(args: &[String]) -> Result<DoctorArgs> {
         slug: None,
         no_fetch_issue: false,
         mode: DoctorMode::Full,
+        json: false,
     };
     let mut i = 1;
     while i < args.len() {
@@ -287,6 +293,7 @@ pub(crate) fn parse_doctor_args(args: &[String]) -> Result<DoctorArgs> {
                 i += 1;
             }
             "--no-fetch-issue" => parsed.no_fetch_issue = true,
+            "--json" => parsed.json = true,
             other => bail!("doctor: unknown arg: {other}"),
         }
         i += 1;
@@ -306,6 +313,7 @@ pub(crate) fn parse_ready_args(args: &[String]) -> Result<ReadyArgs> {
         slug: None,
         version: None,
         no_fetch_issue: false,
+        json: false,
     };
     let mut i = 1;
     while i < args.len() {
@@ -319,6 +327,7 @@ pub(crate) fn parse_ready_args(args: &[String]) -> Result<ReadyArgs> {
                 i += 1;
             }
             "--no-fetch-issue" => parsed.no_fetch_issue = true,
+            "--json" => parsed.json = true,
             other => bail!("ready: unknown arg: {other}"),
         }
         i += 1;
