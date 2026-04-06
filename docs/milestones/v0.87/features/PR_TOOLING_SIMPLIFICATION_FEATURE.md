@@ -138,7 +138,8 @@ thin shell entrypoint.
   - Rust is the sole owner of canonical PR lifecycle behavior
   - shell compatibility layers do not reimplement workflow policy
   - canonical path rules have exactly one authoritative implementation
-  - readiness inspection is consolidated under `doctor`
+- readiness inspection is consolidated under `doctor`
+- in current repo truth, `doctor` is the canonical diagnostic surface and `ready` / `preflight` remain as deprecated compatibility aliases
   - worktree creation is delayed until execution time in the intended model
   - human review remains preserved through draft-oriented PR flow unless
     explicitly overridden

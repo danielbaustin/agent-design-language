@@ -227,12 +227,40 @@ fn parse_create_args_rejects_missing_title_and_conflicting_body_inputs() {
 #[test]
 fn real_pr_dispatch_rejects_missing_and_unknown_subcommands() {
     let err = real_pr(&[]).expect_err("missing subcommand");
-    assert!(err
-        .to_string()
-        .contains("pr requires a subcommand: create | init | start | ready | preflight | finish"));
+    assert!(err.to_string().contains(
+        "pr requires a subcommand: create | init | start | doctor | ready | preflight | finish"
+    ));
 
     let err = real_pr(&["bogus".to_string()]).expect_err("unknown subcommand");
     assert!(err.to_string().contains("unknown pr subcommand: bogus"));
+}
+
+#[test]
+fn parse_doctor_args_accepts_modes_and_rejects_unknown_arg() {
+    let parsed = parse_doctor_args(&[
+        "1174".to_string(),
+        "--slug".to_string(),
+        "doctor-test".to_string(),
+        "--version".to_string(),
+        "v0.87".to_string(),
+        "--mode".to_string(),
+        "full".to_string(),
+        "--no-fetch-issue".to_string(),
+    ])
+    .expect("parse doctor");
+    assert_eq!(parsed.issue, 1174);
+    assert_eq!(parsed.slug.as_deref(), Some("doctor-test"));
+    assert_eq!(parsed.version.as_deref(), Some("v0.87"));
+    assert!(parsed.no_fetch_issue);
+    assert_eq!(parsed.mode, DoctorMode::Full);
+
+    let err = parse_doctor_args(&[
+        "1174".to_string(),
+        "--mode".to_string(),
+        "bogus".to_string(),
+    ])
+    .expect_err("err");
+    assert!(err.to_string().contains("doctor: unsupported mode"));
 }
 
 #[test]

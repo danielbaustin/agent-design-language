@@ -19,6 +19,7 @@
 #   adl/tools/pr.sh run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
 #   adl/tools/pr.sh card    <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
 #   adl/tools/pr.sh output  <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
+#   adl/tools/pr.sh doctor  <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>] [--mode full|ready|preflight]
 #   adl/tools/pr.sh preflight <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>]
 #   adl/tools/pr.sh finish  <issue> --title "<title>" [-f <input_card.md>] [--output-card <output_card.md>] [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [--no-open]
 #   adl/tools/pr.sh open
@@ -1563,6 +1564,7 @@ cmd_ready() {
     return 0
   fi
   require_rust_pr_delegate
+  note "Deprecated compatibility path: prefer 'adl/tools/pr.sh doctor <issue> --mode ready ...'."
   delegate_pr_command_to_rust ready "$@"
 }
 
@@ -1572,7 +1574,17 @@ cmd_preflight() {
     return 0
   fi
   require_rust_pr_delegate
+  note "Deprecated compatibility path: prefer 'adl/tools/pr.sh doctor <issue> --mode preflight ...'."
   delegate_pr_command_to_rust preflight "$@"
+}
+
+cmd_doctor() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_doctor
+    return 0
+  fi
+  require_rust_pr_delegate
+  delegate_pr_command_to_rust doctor "$@"
 }
 
 cmd_open() {
@@ -1596,6 +1608,7 @@ Commands:
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
   output  <issue> [input|output] ... [--version <v0.2>] [-f <output_card.md>]
   cards   <issue> [--version <v0.2>] [--no-fetch-issue]
+  doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight]
   ready   <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
   finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
   open
@@ -1624,7 +1637,9 @@ Notes:
 - `pr create` creates the GitHub issue and bootstraps the local root STP/SIP/SOR bundle for a new issue.
 - `pr init <issue> ...` bootstraps the same local root bundle for an issue that already exists.
 - `pr run <issue> ...` is the preferred public execution-context binder for issue work.
+- `pr doctor <issue> ...` is the preferred public readiness and drift diagnostic surface.
 - `pr start <issue> ...` remains only as a legacy alias over the same Rust binding path and is no longer part of the taught public flow.
+- `pr ready` and `pr preflight` remain only as deprecated compatibility aliases over `pr doctor`.
 - PRs are created as DRAFT by default to preserve human review.
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - run is a bounded v0.85 wrapper over the Rust adl runtime; browser/editor direct invocation remains follow-on work.
@@ -1640,6 +1655,7 @@ Examples:
   adl/tools/pr.sh init 17 --slug b6-default-system --no-fetch-issue --version v0.85
   adl/tools/pr.sh run 17 --slug b6-default-system --version v0.85
   adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml --trace --allow-unsigned
+  adl/tools/pr.sh doctor 17 --slug b6-default-system --version v0.85
   adl/tools/pr.sh preflight 17 --slug b6-default-system --version v0.85
   adl/tools/pr.sh card  17 --help
   adl/tools/pr.sh card  17 --version v0.2
@@ -1743,6 +1759,7 @@ Usage:
   adl/tools/pr.sh ready <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
 
 Notes:
+- Deprecated compatibility alias over `doctor --mode ready`.
 - Verifies that the issue is fully authoring-ready in both the root checkout and the issue worktree.
 - Prints READY=PASS on success and exits non-zero on the first missing or invalid bootstrap surface.
 EOF
@@ -1754,8 +1771,22 @@ Usage:
   adl/tools/pr.sh preflight <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
 
 Notes:
+- Deprecated compatibility alias over `doctor --mode preflight`.
 - Reports whether unresolved open PRs already exist for the same milestone/version band.
 - Prints PREFLIGHT=PASS or PREFLIGHT=BLOCK.
+EOF
+}
+
+usage_doctor() {
+  cat <<'EOF'
+Usage:
+  adl/tools/pr.sh doctor <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight]
+
+Notes:
+- Canonical readiness and drift diagnostic surface.
+- `--mode full` reports both milestone-wave preflight and worktree/card readiness.
+- `--mode ready` runs only the started-worktree readiness checks.
+- `--mode preflight` runs only the milestone-wave conflict/open-PR check.
 EOF
 }
 
@@ -1777,6 +1808,7 @@ main() {
     init) cmd_init "$@" ;;
     run) cmd_run "$@" ;;
     start) cmd_start "$@" ;;
+    doctor) cmd_doctor "$@" ;;
     ready) cmd_ready "$@" ;;
     preflight) cmd_preflight "$@" ;;
     finish) cmd_finish "$@" ;;

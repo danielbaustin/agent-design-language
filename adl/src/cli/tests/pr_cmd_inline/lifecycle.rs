@@ -182,6 +182,134 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
 }
 
 #[test]
+fn real_pr_doctor_full_succeeds_when_invoked_from_started_worktree() {
+    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let temp = unique_temp_dir("adl-pr-doctor-worktree-cwd");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "doctor from worktree\n").expect("seed file");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref = IssueRef::new(1197, "v0.86", "doctor-worktree-cwd").expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Doctor worktree cwd");
+    real_pr(&[
+        "start".to_string(),
+        "1197".to_string(),
+        "--slug".to_string(),
+        "doctor-worktree-cwd".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Doctor worktree cwd".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr start");
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    let root_sip = issue_ref.task_bundle_input_path(&repo);
+    let wt_sip = issue_ref.task_bundle_input_path(&worktree);
+    write_authored_sip(
+        &root_sip,
+        &issue_ref,
+        "[v0.86][tools] Doctor worktree cwd",
+        "codex/1197-doctor-worktree-cwd",
+        &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_sip(
+        &wt_sip,
+        &issue_ref,
+        "[v0.86][tools] Doctor worktree cwd",
+        "codex/1197-doctor-worktree-cwd",
+        &issue_ref.issue_prompt_path(&worktree),
+        &worktree,
+    );
+    env::set_current_dir(&worktree).expect("chdir worktree");
+
+    let doctor = real_pr(&[
+        "doctor".to_string(),
+        "1197".to_string(),
+        "--slug".to_string(),
+        "doctor-worktree-cwd".to_string(),
+        "--mode".to_string(),
+        "full".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    doctor.expect("doctor from worktree");
+}
+
+#[test]
 fn real_pr_ready_succeeds_when_invoked_from_started_worktree() {
     let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
     let temp = unique_temp_dir("adl-pr-ready-worktree-cwd");
