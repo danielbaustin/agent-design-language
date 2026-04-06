@@ -259,10 +259,9 @@ pub(super) fn validate_provider(provider_id: &str, provider: &ProviderSpec) -> R
         if !provider.kind.trim().is_empty()
             || provider.base_url.is_some()
             || provider.default_model.is_some()
-            || !provider.config.is_empty()
         {
             return Err(anyhow!(
-                "providers.{provider_id} uses profile and explicit provider fields together (remove type/base_url/default_model/config when profile is set)"
+                "providers.{provider_id} uses profile and explicit provider identity fields together (remove type/base_url/default_model when profile is set; config remains available for bounded compatibility overrides)"
             ));
         }
         return Ok(());

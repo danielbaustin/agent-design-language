@@ -26,6 +26,7 @@ ADL_OLLAMA_BIN=tools/mock_ollama_v0_4.sh cargo run -q --bin adl -- examples/v0-6
 - v0.3: concurrency, retry, bounded AEE recovery, remote provider (`v0-3-*`)
 - v0.5: primitives, patterns, remote execution MVP (`v0-5-*`)
 - v0.6: HITL pause/resume, profiles, delegation, instrumentation demos
+- v0.7: provider portability / HTTP profile compatibility proof surface
 
 ## See Also / Canonical Docs
 

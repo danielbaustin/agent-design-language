@@ -1,0 +1,40 @@
+version: "0.5"
+
+providers:
+  portable_http:
+    profile: "http:gpt-4.1-mini"
+    config:
+      endpoint: "https://api.openai.com/v1/complete"
+      auth:
+        type: bearer
+        env: ADL_REMOTE_BEARER_TOKEN
+      headers:
+        X-Client: "adl-v0.87-portability"
+      timeout_secs: 15
+      model_ref: "reasoning/default"
+      provider_model_id: "gpt-4.1-mini-2026-03-01"
+
+agents:
+  writer:
+    provider: "portable_http"
+    model: "reasoning/default"
+
+tasks:
+  summarize:
+    prompt:
+      user: |
+        Summarize the following content in 3 bullets.
+
+        Content:
+        {{content}}
+
+run:
+  name: "v0-7-provider-portability-http-profile"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "portable_summary"
+        agent: "writer"
+        task: "summarize"
+        inputs:
+          content: "ADL v0.87 provider portability demo input."

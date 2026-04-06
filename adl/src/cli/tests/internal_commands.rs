@@ -95,9 +95,11 @@ fn cli_internal_instrument_variants_succeed() {
         fixture.to_string_lossy().to_string(),
     ])
     .expect("diff-plan");
+    let provider_fixture = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("examples/v0-7-provider-portability-http-profile.adl.yaml");
     real_instrument(&[
         "provider-substrate".to_string(),
-        fixture.to_string_lossy().to_string(),
+        provider_fixture.to_string_lossy().to_string(),
     ])
     .expect("provider-substrate");
     real_instrument(&["provider-substrate-schema".to_string()]).expect("provider-substrate-schema");

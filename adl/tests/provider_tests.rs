@@ -829,7 +829,7 @@ run:
     let err = expand_provider_profiles(&doc).expect_err("profile + explicit fields must fail");
     assert!(
         err.to_string()
-            .contains("profile and explicit provider fields together"),
+            .contains("profile and explicit provider identity fields together"),
         "{err:#}"
     );
 }
@@ -878,7 +878,7 @@ run:
 }
 
 #[test]
-fn expand_provider_profiles_rejects_placeholder_http_endpoint_profiles() {
+fn expand_provider_profiles_rejects_http_profile_without_endpoint_override() {
     let doc = adl_doc_from_yaml(
         r#"
 version: "0.5"
@@ -912,19 +912,62 @@ run:
 }
 
 #[test]
-fn resolve_run_accepts_explicit_valid_http_endpoint() {
+fn expand_provider_profiles_accepts_http_profile_with_endpoint_override() {
     let doc = adl_doc_from_yaml(
         r#"
 version: "0.5"
 providers:
   p1:
-    type: "http"
+    profile: "http:gpt-4o-mini"
+    config:
+      endpoint: "https://api.openai.com/v1/complete"
+      headers:
+        X-Client: "adl-test"
+      timeout_secs: 12
+agents:
+  a1:
+    provider: "p1"
+    model: "gpt-4o-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - agent: "a1"
+        task: "t1"
+"#,
+    );
+    let expanded = expand_provider_profiles(&doc).expect("profile expansion should succeed");
+    let provider = &expanded.providers["p1"];
+    assert_eq!(provider.kind, "http");
+    assert_eq!(provider.default_model.as_deref(), Some("gpt-4o-mini"));
+    assert_eq!(
+        provider.config.get("endpoint").and_then(|v| v.as_str()),
+        Some("https://api.openai.com/v1/complete")
+    );
+    assert_eq!(
+        provider.config.get("timeout_secs").and_then(|v| v.as_u64()),
+        Some(12)
+    );
+}
+
+#[test]
+fn resolve_run_accepts_http_profile_with_valid_endpoint_override() {
+    let doc = adl_doc_from_yaml(
+        r#"
+version: "0.5"
+providers:
+  p1:
+    profile: "http:gpt-4o-mini"
     config:
       endpoint: "https://api.openai.com/v1/complete"
 agents:
   a1:
     provider: "p1"
-    model: "gpt-4o-mini"
+    model: "reasoning/default"
 tasks:
   t1:
     prompt:
@@ -943,4 +986,5 @@ run:
         1,
         "expected exactly one resolved step"
     );
+    assert_eq!(resolved.doc.providers["p1"].kind, "http");
 }
