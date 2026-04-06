@@ -912,7 +912,7 @@ run:
         .expect_err("profile + explicit provider fields should fail");
     assert!(
         err.to_string()
-            .contains("profile and explicit provider fields together"),
+            .contains("profile and explicit provider identity fields together"),
         "{err:#}"
     );
 }

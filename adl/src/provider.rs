@@ -302,13 +302,9 @@ pub fn expand_provider_profiles(doc: &adl::AdlDoc) -> Result<adl::AdlDoc> {
             continue;
         };
 
-        if !spec.kind.trim().is_empty()
-            || spec.base_url.is_some()
-            || spec.default_model.is_some()
-            || !spec.config.is_empty()
-        {
+        if !spec.kind.trim().is_empty() || spec.base_url.is_some() || spec.default_model.is_some() {
             return Err(anyhow!(
-                "providers.{provider_id} uses profile and explicit provider fields together (remove type/base_url/default_model/config when profile is set)"
+                "providers.{provider_id} uses profile and explicit provider identity fields together (remove type/base_url/default_model when profile is set; config remains available for bounded compatibility overrides)"
             ));
         }
 
@@ -321,10 +317,15 @@ pub fn expand_provider_profiles(doc: &adl::AdlDoc) -> Result<adl::AdlDoc> {
             ));
         };
 
-        let mut config = HashMap::new();
+        let mut config = spec.config.clone();
         if let Some(endpoint) = preset.endpoint {
-            validate_profile_endpoint(&provider_id, profile_name, endpoint)?;
-            config.insert("endpoint".to_string(), Value::String(endpoint.to_string()));
+            match config.get("endpoint").and_then(|v| v.as_str()) {
+                Some(explicit) => validate_profile_endpoint(&provider_id, profile_name, explicit)?,
+                None => {
+                    validate_profile_endpoint(&provider_id, profile_name, endpoint)?;
+                    config.insert("endpoint".to_string(), Value::String(endpoint.to_string()));
+                }
+            }
         }
 
         expanded.providers.insert(

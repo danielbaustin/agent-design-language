@@ -136,6 +136,21 @@ This ensures:
 - trace consistency
 - portability across providers
 
+## Profile Compatibility Layer
+
+`v0.87` profile-based providers may carry bounded runtime config overrides where
+the substrate still needs concrete execution details from the deployment surface.
+
+This is especially important for HTTP-backed common-provider profiles:
+- the profile should carry the bounded canonical provider family + default model
+- runtime config may still supply concrete endpoint, auth, headers, timeout, and
+  explicit `provider_model_id` compatibility values
+- canonical `model_ref` remains the ADL-stable identity surface and must stay
+  distinct from raw provider-native model identifiers
+
+Compatibility overrides are acceptable when they are explicit and reviewable.
+They are not a license to collapse back into provider-native canonical config.
+
 ## Invocation Contract
 
 Provider invocation must be:
