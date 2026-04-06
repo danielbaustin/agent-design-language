@@ -173,6 +173,7 @@ impl ObsMemClient for FileObsMemClient {
                 payload: entry.summary.clone(),
                 score: "1.00".to_string(),
                 citations: entry.citations.clone(),
+                trace_event_refs: entry.trace_event_refs.clone(),
             })
             .collect();
         hits.sort_by(|a, b| {
@@ -221,6 +222,12 @@ mod tests {
             citations: vec![MemoryCitation {
                 path: format!("runs/{run_id}/run_summary.json"),
                 hash: "det64:0000000000000001".to_string(),
+            }],
+            trace_event_refs: vec![crate::obsmem_contract::MemoryTraceRef {
+                event_sequence: 0,
+                event_kind: "step_finished".to_string(),
+                step_id: Some("s1".to_string()),
+                delegation_id: None,
             }],
         };
         request.normalize();

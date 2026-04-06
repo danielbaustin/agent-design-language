@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 
 use crate::instrumentation::{load_trace_artifact, TraceEventNormalized};
-use crate::obsmem_contract::{ObsMemContractError, ObsMemContractErrorCode};
+use crate::obsmem_contract::{MemoryTraceRef, ObsMemContractError, ObsMemContractErrorCode};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IndexedStepContext {
@@ -24,6 +24,7 @@ pub struct IndexedMemoryEntry {
     pub summary: String,
     pub tags: Vec<String>,
     pub steps: Vec<IndexedStepContext>,
+    pub trace_event_refs: Vec<MemoryTraceRef>,
 }
 
 impl IndexedMemoryEntry {
@@ -43,6 +44,19 @@ impl IndexedMemoryEntry {
                 && a.event_kind == b.event_kind
                 && a.context == b.context
         });
+        self.trace_event_refs.sort_by(|a, b| {
+            a.event_sequence
+                .cmp(&b.event_sequence)
+                .then_with(|| a.event_kind.cmp(&b.event_kind))
+                .then_with(|| a.step_id.cmp(&b.step_id))
+                .then_with(|| a.delegation_id.cmp(&b.delegation_id))
+        });
+        self.trace_event_refs.dedup_by(|a, b| {
+            a.event_sequence == b.event_sequence
+                && a.event_kind == b.event_kind
+                && a.step_id == b.step_id
+                && a.delegation_id == b.delegation_id
+        });
     }
 
     pub fn validate(&self) -> Result<(), ObsMemContractError> {
@@ -50,6 +64,12 @@ impl IndexedMemoryEntry {
             return Err(ObsMemContractError::new(
                 ObsMemContractErrorCode::InvalidRequest,
                 "indexed memory entry requires non-empty run_id and workflow_id",
+            ));
+        }
+        if self.trace_event_refs.is_empty() {
+            return Err(ObsMemContractError::new(
+                ObsMemContractErrorCode::InvalidRequest,
+                "indexed memory entry requires at least one trace event reference",
             ));
         }
         if self.summary.trim().is_empty() {
@@ -141,11 +161,18 @@ pub fn index_run_from_artifacts(
         }
     }
 
+    let trace_event_refs: Vec<MemoryTraceRef> = trace
+        .iter()
+        .enumerate()
+        .filter_map(|(sequence, event)| to_trace_ref(sequence, event))
+        .collect();
+
     let mut tags = vec![
         format!("run:{safe_run_id}"),
         format!("workflow:{workflow_id}"),
         format!("status:{status}"),
         format!("step_context_count:{}", steps.len()),
+        format!("trace_ref_count:{}", trace_event_refs.len()),
     ];
     if let Some(code) = failure_code.as_deref() {
         tags.push(format!("failure:{code}"));
@@ -165,10 +192,139 @@ pub fn index_run_from_artifacts(
         summary,
         tags,
         steps,
+        trace_event_refs,
     };
     entry.normalize();
     entry.validate()?;
     Ok(entry)
+}
+
+fn to_trace_ref(sequence: usize, event: &TraceEventNormalized) -> Option<MemoryTraceRef> {
+    match event {
+        TraceEventNormalized::SchedulerPolicy { .. } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "scheduler_policy".to_string(),
+            step_id: None,
+            delegation_id: None,
+        }),
+        TraceEventNormalized::RunFailed { .. } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "run_failed".to_string(),
+            step_id: None,
+            delegation_id: None,
+        }),
+        TraceEventNormalized::RunFinished { .. } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "run_finished".to_string(),
+            step_id: None,
+            delegation_id: None,
+        }),
+        TraceEventNormalized::StepStarted { step_id, .. } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "step_started".to_string(),
+            step_id: Some(step_id.clone()),
+            delegation_id: None,
+        }),
+        TraceEventNormalized::PromptAssembled { step_id, .. } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "prompt_assembled".to_string(),
+            step_id: Some(step_id.clone()),
+            delegation_id: None,
+        }),
+        TraceEventNormalized::StepOutputChunk { step_id, .. } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "step_output_chunk".to_string(),
+            step_id: Some(step_id.clone()),
+            delegation_id: None,
+        }),
+        TraceEventNormalized::DelegationRequested {
+            delegation_id,
+            step_id,
+            ..
+        } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "delegation_requested".to_string(),
+            step_id: Some(step_id.clone()),
+            delegation_id: Some(delegation_id.clone()),
+        }),
+        TraceEventNormalized::DelegationPolicyEvaluated {
+            delegation_id,
+            step_id,
+            ..
+        } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "delegation_policy_evaluated".to_string(),
+            step_id: Some(step_id.clone()),
+            delegation_id: Some(delegation_id.clone()),
+        }),
+        TraceEventNormalized::DelegationApproved {
+            delegation_id,
+            step_id,
+        } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "delegation_approved".to_string(),
+            step_id: Some(step_id.clone()),
+            delegation_id: Some(delegation_id.clone()),
+        }),
+        TraceEventNormalized::DelegationDenied {
+            delegation_id,
+            step_id,
+            ..
+        } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "delegation_denied".to_string(),
+            step_id: Some(step_id.clone()),
+            delegation_id: Some(delegation_id.clone()),
+        }),
+        TraceEventNormalized::DelegationDispatched {
+            delegation_id,
+            step_id,
+            ..
+        } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "delegation_dispatched".to_string(),
+            step_id: Some(step_id.clone()),
+            delegation_id: Some(delegation_id.clone()),
+        }),
+        TraceEventNormalized::DelegationResultReceived {
+            delegation_id,
+            step_id,
+            ..
+        } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "delegation_result_received".to_string(),
+            step_id: Some(step_id.clone()),
+            delegation_id: Some(delegation_id.clone()),
+        }),
+        TraceEventNormalized::DelegationCompleted {
+            delegation_id,
+            step_id,
+            ..
+        } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "delegation_completed".to_string(),
+            step_id: Some(step_id.clone()),
+            delegation_id: Some(delegation_id.clone()),
+        }),
+        TraceEventNormalized::StepFinished { step_id, .. } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "step_finished".to_string(),
+            step_id: Some(step_id.clone()),
+            delegation_id: None,
+        }),
+        TraceEventNormalized::CallEntered { caller_step_id, .. } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "call_entered".to_string(),
+            step_id: Some(caller_step_id.clone()),
+            delegation_id: None,
+        }),
+        TraceEventNormalized::CallExited { caller_step_id, .. } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "call_exited".to_string(),
+            step_id: Some(caller_step_id.clone()),
+            delegation_id: None,
+        }),
+    }
 }
 
 fn to_step_context(sequence: usize, event: &TraceEventNormalized) -> Option<IndexedStepContext> {
@@ -348,6 +504,12 @@ mod tests {
                     context: "provider=local".to_string(),
                 },
             ],
+            trace_event_refs: vec![MemoryTraceRef {
+                event_sequence: 0,
+                event_kind: "step_started".to_string(),
+                step_id: Some("s1".to_string()),
+                delegation_id: None,
+            }],
         };
         let err = entry
             .validate()
@@ -401,7 +563,16 @@ mod tests {
                     "delegation_id": "stable",
                     "run_id": "not replay-stable"
                 },
-                "events": []
+                "events": [
+                    {
+                        "kind": "StepStarted",
+                        "step_id": "s1",
+                        "agent_id": "a",
+                        "provider_id": "local",
+                        "task_id": "t",
+                        "delegation_json": null
+                    }
+                ]
             }))
             .expect("serialize activation"),
         )

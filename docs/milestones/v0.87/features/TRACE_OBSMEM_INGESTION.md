@@ -78,6 +78,8 @@ Trace events are transformed into **ObsMem records**.
 - transformation MUST be deterministic
 - mapping MUST be explicit per event type
 - no implicit inference in v1
+- derived memory records MUST preserve explicit trace-event references using
+  event IDs or a deterministic equivalent
 
 ### Example Mapping
 
@@ -228,6 +230,9 @@ ObsMem MUST remain traceable back to source trace.
 
 - each record MUST include trace reference (event_id or equivalent)
 - reviewer MUST be able to trace memory → execution
+- in the v0.87 runtime contract, that equivalent is a stable list of
+  `trace_event_refs` carrying event sequence, event kind, and bounded step or
+  delegation identity
 
 ## Non-Goals (v1)
 

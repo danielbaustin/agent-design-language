@@ -29,6 +29,8 @@ struct ObsMemIndexSummaryArtifact {
     workflow_id: String,
     indexed_entry_count: usize,
     step_context_count: usize,
+    trace_event_ref_count: usize,
+    trace_event_refs: Vec<crate::obsmem_contract::MemoryTraceRef>,
     source_artifacts: Vec<String>,
     tags: Vec<String>,
     write_ack: MemoryWriteAck,
@@ -124,6 +126,8 @@ pub fn emit_obsmem_demo_artifacts(runs_root: &Path, run_id: &str) -> Result<ObsM
         workflow_id: indexed.workflow_id.clone(),
         indexed_entry_count: 1,
         step_context_count: indexed.steps.len(),
+        trace_event_ref_count: indexed.trace_event_refs.len(),
+        trace_event_refs: indexed.trace_event_refs.clone(),
         source_artifacts: vec![
             format!("runs/{run_id}/run_summary.json"),
             format!("runs/{run_id}/run_status.json"),

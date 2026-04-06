@@ -338,7 +338,11 @@ fn derive_runtime_control_state_projects_memory_participation_for_prior_failed_r
     let prior_run_id = format!("prior-memory-{now}-{}", std::process::id());
     let prior_resolved = minimal_resolved_for_artifacts(prior_run_id.clone());
     let prior_out_dir = std::env::temp_dir().join(format!("adl-main-prior-memory-{now}"));
-    let prior_trace = trace::Trace::new(prior_run_id.clone(), "wf".to_string(), "0.86".to_string());
+    let mut prior_trace =
+        trace::Trace::new(prior_run_id.clone(), "wf".to_string(), "0.86".to_string());
+    prior_trace.step_started("s1", "agent", "local", "task", None);
+    prior_trace.step_finished("s1", false);
+    prior_trace.run_failed("prior failure");
     write_run_state_artifacts(
         &prior_resolved,
         &prior_trace,

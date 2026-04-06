@@ -87,6 +87,11 @@ Each shared ObsMem record should minimally include:
 - `artifact_refs` (if payloads are external)
 - `summary` or structured observation fields
 
+For the bounded `v0.87` substrate, the runtime contract uses a deterministic
+`trace_event_refs` array as the concrete "event_id or equivalent" surface.
+Each item records the event sequence plus bounded step/delegation identity so a
+reviewer can walk from memory back to execution truth without hidden inference.
+
 ### Example record types
 - `obs.model_call`
 - `obs.decision`
@@ -221,6 +226,11 @@ Primary proof surface:
 
 Secondary proof surface:
 - `artifacts/v087/shared_obsmem/trace_links.json`
+
+For the current in-repo runtime/demo implementation, the equivalent proof lives
+in the ObsMem learning artifacts where each returned entry carries
+`trace_event_refs` and the index summary reports the trace-reference set used to
+justify the stored record.
 
 ## Acceptance Criteria
 
