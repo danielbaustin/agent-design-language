@@ -48,6 +48,22 @@ pub(crate) struct PreflightArgs {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) enum DoctorMode {
+    Full,
+    Ready,
+    Preflight,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct DoctorArgs {
+    pub(crate) issue: u32,
+    pub(crate) version: Option<String>,
+    pub(crate) slug: Option<String>,
+    pub(crate) no_fetch_issue: bool,
+    pub(crate) mode: DoctorMode,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct FinishArgs {
     pub(crate) issue: u32,
     pub(crate) title: String,
@@ -229,6 +245,49 @@ pub(crate) fn parse_preflight_args(args: &[String]) -> Result<PreflightArgs> {
             }
             "--no-fetch-issue" => parsed.no_fetch_issue = true,
             other => bail!("preflight: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+    Ok(parsed)
+}
+
+pub(crate) fn parse_doctor_args(args: &[String]) -> Result<DoctorArgs> {
+    let issue_raw = args
+        .first()
+        .ok_or_else(|| anyhow!("doctor: missing <issue> number"))?;
+    let issue = issue_raw
+        .parse::<u32>()
+        .with_context(|| format!("invalid issue number: {issue_raw}"))?;
+    let mut parsed = DoctorArgs {
+        issue,
+        version: None,
+        slug: None,
+        no_fetch_issue: false,
+        mode: DoctorMode::Full,
+    };
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--slug" => {
+                parsed.slug = Some(require_value(args, i, "doctor", "--slug")?);
+                i += 1;
+            }
+            "--version" => {
+                parsed.version = Some(require_value(args, i, "doctor", "--version")?);
+                i += 1;
+            }
+            "--mode" => {
+                let mode = require_value(args, i, "doctor", "--mode")?;
+                parsed.mode = match mode.as_str() {
+                    "full" => DoctorMode::Full,
+                    "ready" => DoctorMode::Ready,
+                    "preflight" => DoctorMode::Preflight,
+                    other => bail!("doctor: unsupported mode: {other}"),
+                };
+                i += 1;
+            }
+            "--no-fetch-issue" => parsed.no_fetch_issue = true,
+            other => bail!("doctor: unknown arg: {other}"),
         }
         i += 1;
     }

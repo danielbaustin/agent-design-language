@@ -49,6 +49,7 @@ run_and_capture() {
 run_and_capture create --title "[v0.86][tools] Example" --slug example-create --version v0.86
 run_and_capture init 1151 --slug example --no-fetch-issue --version v0.86
 run_and_capture start 1152 --slug rust-start --no-fetch-issue --version v0.86 --allow-open-pr-wave
+run_and_capture doctor 1152 --slug rust-start --no-fetch-issue --version v0.86 --mode full
 run_and_capture ready 1152 --slug rust-start --no-fetch-issue --version v0.86
 run_and_capture preflight 1152 --slug rust-start --no-fetch-issue --version v0.86
 run_and_capture finish 1153 --title "Example" --no-checks --no-open
@@ -66,6 +67,11 @@ args="$(cat "$TMP_CARGO_ARGS")"
 }
 [[ "$args" == *"--bin adl -- pr start 1152 --slug rust-start --no-fetch-issue --version v0.86 --allow-open-pr-wave"* ]] || {
   echo "assertion failed: expected rust delegation for start" >&2
+  echo "$args" >&2
+  exit 1
+}
+[[ "$args" == *"--bin adl -- pr doctor 1152 --slug rust-start --no-fetch-issue --version v0.86 --mode full"* ]] || {
+  echo "assertion failed: expected rust delegation for doctor" >&2
   echo "$args" >&2
   exit 1
 }

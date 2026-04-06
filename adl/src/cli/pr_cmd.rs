@@ -7,8 +7,8 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use super::pr_cmd_args::{
-    parse_create_args, parse_finish_args, parse_init_args, parse_preflight_args, parse_ready_args,
-    parse_start_args,
+    parse_create_args, parse_doctor_args, parse_finish_args, parse_init_args, parse_preflight_args,
+    parse_ready_args, parse_start_args, DoctorArgs, DoctorMode,
 };
 #[cfg(test)]
 use super::pr_cmd_prompt::load_issue_prompt;
@@ -43,13 +43,16 @@ struct OpenPullRequest {
 
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
-        bail!("pr requires a subcommand: create | init | start | ready | preflight | finish");
+        bail!(
+            "pr requires a subcommand: create | init | start | doctor | ready | preflight | finish"
+        );
     };
 
     match subcommand {
         "create" => real_pr_create(&args[1..]),
         "init" => real_pr_init(&args[1..]),
         "start" => real_pr_start(&args[1..]),
+        "doctor" => real_pr_doctor(&args[1..]),
         "ready" => real_pr_ready(&args[1..]),
         "preflight" => real_pr_preflight(&args[1..]),
         "finish" => real_pr_finish(&args[1..]),
@@ -267,169 +270,48 @@ fn real_pr_start(args: &[String]) -> Result<()> {
 }
 
 fn real_pr_ready(args: &[String]) -> Result<()> {
+    eprintln!(
+        "• Deprecated compatibility path: prefer `adl/tools/pr.sh doctor {} --mode ready ...`.",
+        args.first()
+            .cloned()
+            .unwrap_or_else(|| "<issue>".to_string())
+    );
     let parsed = parse_ready_args(args)?;
-    let repo_root = primary_checkout_root()?;
-    let repo = default_repo(&repo_root)?;
-
-    let (version, slug) =
-        if let (Some(version), Some(slug)) = (parsed.version.clone(), parsed.slug.clone()) {
-            (version, slug)
-        } else {
-            let inferred = resolve_issue_scope_and_slug_from_local_state(&repo_root, parsed.issue)?;
-            (
-                parsed
-                    .version
-                    .clone()
-                    .or(inferred.as_ref().map(|x| x.0.clone()))
-                    .unwrap_or_else(|| DEFAULT_VERSION.to_string()),
-                parsed
-                    .slug
-                    .clone()
-                    .or(inferred.map(|x| x.1))
-                    .ok_or_else(|| {
-                        anyhow!("ready: could not infer slug; pass --slug or run start first")
-                    })?,
-            )
-        };
-
-    let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
-    let branch = issue_ref.branch_name("codex");
-    let managed_root = std::env::var_os("ADL_WORKTREE_ROOT").map(PathBuf::from);
-    let worktree_path = issue_ref.default_worktree_path(&repo_root, managed_root.as_deref());
-    let source_path = resolve_issue_prompt_path(&repo_root, &issue_ref)?;
-    let root_stp = issue_ref.task_bundle_stp_path(&repo_root);
-    let wt_stp = issue_ref.task_bundle_stp_path(&worktree_path);
-
-    let root_bundle_input = issue_ref.task_bundle_input_path(&repo_root);
-    let root_bundle_output = issue_ref.task_bundle_output_path(&repo_root);
-    let wt_bundle_input = issue_ref.task_bundle_input_path(&worktree_path);
-    let wt_bundle_output = issue_ref.task_bundle_output_path(&worktree_path);
-
-    validate_issue_prompt_exists(&source_path)?;
-    validate_bootstrap_stp(&repo_root, &source_path)?;
-    validate_authored_prompt_surface("ready", &source_path, PromptSurfaceKind::IssuePrompt)?;
-    if !root_stp.is_file() {
-        bail!("ready: missing root stp: {}", root_stp.display());
-    }
-    validate_bootstrap_stp(&repo_root, &root_stp)?;
-    validate_authored_prompt_surface("ready", &root_stp, PromptSurfaceKind::Stp)?;
-    if !worktree_path.is_dir() {
-        bail!("ready: missing worktree: {}", worktree_path.display());
-    }
-    let wt_branch = run_capture(
-        "git",
-        &[
-            "-C",
-            path_str(&worktree_path)?,
-            "rev-parse",
-            "--abbrev-ref",
-            "HEAD",
-        ],
-    )?;
-    if wt_branch.trim() != branch {
-        bail!(
-            "ready: worktree branch mismatch for {}",
-            worktree_path.display()
-        );
-    }
-    if !wt_stp.is_file() {
-        bail!("ready: missing worktree stp: {}", wt_stp.display());
-    }
-    validate_bootstrap_stp(&worktree_path, &wt_stp)?;
-    validate_authored_prompt_surface("ready", &wt_stp, PromptSurfaceKind::Stp)?;
-    validate_ready_cards(
-        &repo_root,
-        parsed.issue,
-        issue_ref.slug(),
-        wt_branch.trim(),
-        &root_bundle_input,
-        &root_bundle_output,
-    )?;
-    validate_ready_cards(
-        &worktree_path,
-        parsed.issue,
-        issue_ref.slug(),
-        wt_branch.trim(),
-        &wt_bundle_input,
-        &wt_bundle_output,
-    )?;
-
-    println!("ISSUE={}", parsed.issue);
-    println!("VERSION={version}");
-    println!("SLUG={slug}");
-    println!("BRANCH={branch}");
-    println!("WORKTREE={}", worktree_path.display());
-    println!("SOURCE={}", path_relative_to_repo(&repo_root, &source_path));
-    println!("ROOT_STP={}", path_relative_to_repo(&repo_root, &root_stp));
-    println!(
-        "ROOT_INPUT={}",
-        path_relative_to_repo(&repo_root, &root_bundle_input)
-    );
-    println!(
-        "ROOT_OUTPUT={}",
-        path_relative_to_repo(&repo_root, &root_bundle_output)
-    );
-    println!("WT_STP={}", path_relative_to_repo(&repo_root, &wt_stp));
-    println!(
-        "WT_INPUT={}",
-        path_relative_to_repo(&repo_root, &wt_bundle_input)
-    );
-    println!(
-        "WT_OUTPUT={}",
-        path_relative_to_repo(&repo_root, &wt_bundle_output)
-    );
-    println!("READY=PASS");
-    let _ = repo; // keep parity with init/create remote-based inference
-    Ok(())
+    run_doctor(
+        DoctorArgs {
+            issue: parsed.issue,
+            version: parsed.version,
+            slug: parsed.slug,
+            no_fetch_issue: parsed.no_fetch_issue,
+            mode: DoctorMode::Ready,
+        },
+        "ready",
+    )
 }
 
 fn real_pr_preflight(args: &[String]) -> Result<()> {
+    eprintln!(
+        "• Deprecated compatibility path: prefer `adl/tools/pr.sh doctor {} --mode preflight ...`.",
+        args.first()
+            .cloned()
+            .unwrap_or_else(|| "<issue>".to_string())
+    );
     let parsed = parse_preflight_args(args)?;
-    let repo_root = repo_root()?;
-    let repo = default_repo(&repo_root)?;
+    run_doctor(
+        DoctorArgs {
+            issue: parsed.issue,
+            version: parsed.version,
+            slug: parsed.slug,
+            no_fetch_issue: parsed.no_fetch_issue,
+            mode: DoctorMode::Preflight,
+        },
+        "preflight",
+    )
+}
 
-    let (version, slug) =
-        if let (Some(version), Some(slug)) = (parsed.version.clone(), parsed.slug.clone()) {
-            (version, slug)
-        } else {
-            let inferred = resolve_issue_scope_and_slug_from_local_state(&repo_root, parsed.issue)?;
-            (
-                parsed
-                    .version
-                    .clone()
-                    .or(inferred.as_ref().map(|x| x.0.clone()))
-                    .unwrap_or_else(|| DEFAULT_VERSION.to_string()),
-                parsed
-                    .slug
-                    .clone()
-                    .or(inferred.map(|x| x.1))
-                    .unwrap_or_else(|| format!("issue-{}", parsed.issue)),
-            )
-        };
-
-    let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug)?;
-    let branch = issue_ref.branch_name("codex");
-    let unresolved = unresolved_milestone_pr_wave(&repo, &version, Some(&branch))?;
-
-    println!("ISSUE={}", parsed.issue);
-    println!("VERSION={version}");
-    println!("BRANCH={branch}");
-    println!("OPEN_PR_COUNT={}", unresolved.len());
-    for pr in &unresolved {
-        println!(
-            "OPEN_PR=#{}|{}|{}|{}",
-            pr.number,
-            pr.head_ref_name,
-            if pr.is_draft { "draft" } else { "ready" },
-            pr.url
-        );
-    }
-    if unresolved.is_empty() {
-        println!("PREFLIGHT=PASS");
-    } else {
-        println!("PREFLIGHT=BLOCK");
-    }
-    Ok(())
+fn real_pr_doctor(args: &[String]) -> Result<()> {
+    let parsed = parse_doctor_args(args)?;
+    run_doctor(parsed, "doctor")
 }
 
 fn real_pr_finish(args: &[String]) -> Result<()> {
@@ -621,6 +503,194 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
 
     println!("{pr_url}");
     Ok(())
+}
+
+fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
+    let repo_root = primary_checkout_root()?;
+    let repo = default_repo(&repo_root)?;
+    let (version, slug) = resolve_doctor_scope_and_slug(&repo_root, &parsed, label)?;
+    let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
+    let branch = issue_ref.branch_name("codex");
+
+    println!("ISSUE={}", parsed.issue);
+    println!("VERSION={version}");
+    println!("SLUG={slug}");
+    println!("BRANCH={branch}");
+
+    let preflight_ok = run_doctor_preflight(&repo, &version, &branch)?;
+    let ready_ok = match parsed.mode {
+        DoctorMode::Preflight => None,
+        DoctorMode::Ready | DoctorMode::Full => {
+            Some(run_doctor_ready(&repo_root, &issue_ref, &branch)?)
+        }
+    };
+
+    match parsed.mode {
+        DoctorMode::Preflight => {
+            println!("DOCTOR_MODE=preflight");
+            println!(
+                "DOCTOR_STATUS={}",
+                if preflight_ok { "PASS" } else { "BLOCK" }
+            );
+        }
+        DoctorMode::Ready => {
+            println!("DOCTOR_MODE=ready");
+            println!(
+                "DOCTOR_STATUS={}",
+                if ready_ok.unwrap_or(false) {
+                    "PASS"
+                } else {
+                    "BLOCK"
+                }
+            );
+        }
+        DoctorMode::Full => {
+            println!("DOCTOR_MODE=full");
+            let full_ok = preflight_ok && ready_ok.unwrap_or(false);
+            println!("DOCTOR_STATUS={}", if full_ok { "PASS" } else { "BLOCK" });
+        }
+    }
+    Ok(())
+}
+
+fn resolve_doctor_scope_and_slug(
+    repo_root: &Path,
+    parsed: &DoctorArgs,
+    label: &str,
+) -> Result<(String, String)> {
+    if let (Some(version), Some(slug)) = (parsed.version.clone(), parsed.slug.clone()) {
+        return Ok((version, slug));
+    }
+    let inferred = resolve_issue_scope_and_slug_from_local_state(repo_root, parsed.issue)?;
+    let version = parsed
+        .version
+        .clone()
+        .or(inferred.as_ref().map(|x| x.0.clone()))
+        .unwrap_or_else(|| DEFAULT_VERSION.to_string());
+    let slug = match parsed.mode {
+        DoctorMode::Preflight => parsed
+            .slug
+            .clone()
+            .or(inferred.map(|x| x.1))
+            .unwrap_or_else(|| format!("issue-{}", parsed.issue)),
+        DoctorMode::Ready | DoctorMode::Full => parsed.slug.clone().or(inferred.map(|x| x.1)).ok_or_else(|| {
+            if label == "ready" {
+                anyhow!("ready: could not infer slug; pass --slug or run start first")
+            } else {
+                anyhow!("doctor: could not infer slug for readiness check; pass --slug or create the execution context first")
+            }
+        })?,
+    };
+    Ok((version, slug))
+}
+
+fn run_doctor_preflight(repo: &str, version: &str, branch: &str) -> Result<bool> {
+    let unresolved = unresolved_milestone_pr_wave(repo, version, Some(branch))?;
+    println!("OPEN_PR_COUNT={}", unresolved.len());
+    for pr in &unresolved {
+        println!(
+            "OPEN_PR=#{}|{}|{}|{}",
+            pr.number,
+            pr.head_ref_name,
+            if pr.is_draft { "draft" } else { "ready" },
+            pr.url
+        );
+    }
+    if unresolved.is_empty() {
+        println!("PREFLIGHT=PASS");
+        Ok(true)
+    } else {
+        println!("PREFLIGHT=BLOCK");
+        Ok(false)
+    }
+}
+
+fn run_doctor_ready(repo_root: &Path, issue_ref: &IssueRef, branch: &str) -> Result<bool> {
+    let worktree_path = issue_ref.default_worktree_path(
+        repo_root,
+        std::env::var_os("ADL_WORKTREE_ROOT")
+            .map(PathBuf::from)
+            .as_deref(),
+    );
+    let source_path = resolve_issue_prompt_path(repo_root, issue_ref)?;
+    let root_stp = issue_ref.task_bundle_stp_path(repo_root);
+    let wt_stp = issue_ref.task_bundle_stp_path(&worktree_path);
+    let root_bundle_input = issue_ref.task_bundle_input_path(repo_root);
+    let root_bundle_output = issue_ref.task_bundle_output_path(repo_root);
+    let wt_bundle_input = issue_ref.task_bundle_input_path(&worktree_path);
+    let wt_bundle_output = issue_ref.task_bundle_output_path(&worktree_path);
+
+    validate_issue_prompt_exists(&source_path)?;
+    validate_bootstrap_stp(repo_root, &source_path)?;
+    validate_authored_prompt_surface("doctor", &source_path, PromptSurfaceKind::IssuePrompt)?;
+    if !root_stp.is_file() {
+        bail!("doctor: missing root stp: {}", root_stp.display());
+    }
+    validate_bootstrap_stp(repo_root, &root_stp)?;
+    validate_authored_prompt_surface("doctor", &root_stp, PromptSurfaceKind::Stp)?;
+    if !worktree_path.is_dir() {
+        bail!("doctor: missing worktree: {}", worktree_path.display());
+    }
+    let wt_branch = run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(&worktree_path)?,
+            "rev-parse",
+            "--abbrev-ref",
+            "HEAD",
+        ],
+    )?;
+    if wt_branch.trim() != branch {
+        bail!(
+            "doctor: worktree branch mismatch for {}",
+            worktree_path.display()
+        );
+    }
+    if !wt_stp.is_file() {
+        bail!("doctor: missing worktree stp: {}", wt_stp.display());
+    }
+    validate_bootstrap_stp(&worktree_path, &wt_stp)?;
+    validate_authored_prompt_surface("doctor", &wt_stp, PromptSurfaceKind::Stp)?;
+    validate_ready_cards(
+        repo_root,
+        issue_ref.issue_number(),
+        issue_ref.slug(),
+        wt_branch.trim(),
+        &root_bundle_input,
+        &root_bundle_output,
+    )?;
+    validate_ready_cards(
+        &worktree_path,
+        issue_ref.issue_number(),
+        issue_ref.slug(),
+        wt_branch.trim(),
+        &wt_bundle_input,
+        &wt_bundle_output,
+    )?;
+
+    println!("WORKTREE={}", worktree_path.display());
+    println!("SOURCE={}", path_relative_to_repo(repo_root, &source_path));
+    println!("ROOT_STP={}", path_relative_to_repo(repo_root, &root_stp));
+    println!(
+        "ROOT_INPUT={}",
+        path_relative_to_repo(repo_root, &root_bundle_input)
+    );
+    println!(
+        "ROOT_OUTPUT={}",
+        path_relative_to_repo(repo_root, &root_bundle_output)
+    );
+    println!("WT_STP={}", path_relative_to_repo(repo_root, &wt_stp));
+    println!(
+        "WT_INPUT={}",
+        path_relative_to_repo(repo_root, &wt_bundle_input)
+    );
+    println!(
+        "WT_OUTPUT={}",
+        path_relative_to_repo(repo_root, &wt_bundle_output)
+    );
+    println!("READY=PASS");
+    Ok(true)
 }
 
 fn sync_completed_output_review_surfaces(
