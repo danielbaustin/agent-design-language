@@ -50,8 +50,9 @@ run_and_capture create --title "[v0.86][tools] Example" --slug example-create --
 run_and_capture init 1151 --slug example --no-fetch-issue --version v0.86
 run_and_capture start 1152 --slug rust-start --no-fetch-issue --version v0.86 --allow-open-pr-wave
 run_and_capture doctor 1152 --slug rust-start --no-fetch-issue --version v0.86 --mode full
-run_and_capture ready 1152 --slug rust-start --no-fetch-issue --version v0.86
-run_and_capture preflight 1152 --slug rust-start --no-fetch-issue --version v0.86
+run_and_capture ready 1152 --slug rust-start --no-fetch-issue --version v0.86 --json
+run_and_capture preflight 1152 --slug rust-start --no-fetch-issue --version v0.86 --json
+run_and_capture doctor 1152 --slug rust-start --no-fetch-issue --version v0.86 --mode full --json
 run_and_capture finish 1153 --title "Example" --no-checks --no-open
 
 args="$(cat "$TMP_CARGO_ARGS")"
@@ -75,13 +76,18 @@ args="$(cat "$TMP_CARGO_ARGS")"
   echo "$args" >&2
   exit 1
 }
-[[ "$args" == *"--bin adl -- pr ready 1152 --slug rust-start --no-fetch-issue --version v0.86"* ]] || {
+[[ "$args" == *"--bin adl -- pr ready 1152 --slug rust-start --no-fetch-issue --version v0.86 --json"* ]] || {
   echo "assertion failed: expected rust delegation for ready" >&2
   echo "$args" >&2
   exit 1
 }
-[[ "$args" == *"--bin adl -- pr preflight 1152 --slug rust-start --no-fetch-issue --version v0.86"* ]] || {
+[[ "$args" == *"--bin adl -- pr preflight 1152 --slug rust-start --no-fetch-issue --version v0.86 --json"* ]] || {
   echo "assertion failed: expected rust delegation for preflight" >&2
+  echo "$args" >&2
+  exit 1
+}
+[[ "$args" == *"--bin adl -- pr doctor 1152 --slug rust-start --no-fetch-issue --version v0.86 --mode full --json"* ]] || {
+  echo "assertion failed: expected rust delegation for doctor" >&2
   echo "$args" >&2
   exit 1
 }

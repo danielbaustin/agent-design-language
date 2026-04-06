@@ -350,10 +350,10 @@ To preserve useful `preflight` behavior without preserving a separate command,
 
 - `adl pr doctor`
   - default human-readable readiness report
+- `adl pr doctor --json`
+  - machine-readable readiness output for skills and automation
 - `adl pr doctor --strict`
   - exit non-zero on any blocking readiness issue
-- `adl pr doctor --json`
-  - machine-readable readiness output
 - `adl pr doctor --repair`
   - apply only bounded mechanical repairs that are clearly safe
 

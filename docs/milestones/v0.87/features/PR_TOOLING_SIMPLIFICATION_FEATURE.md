@@ -160,6 +160,7 @@ thin shell entrypoint.
 - `doctor`
   - reports readiness, detects workflow drift, surfaces deprecated usage,
     and provides migration guidance
+  - supports a machine-readable `--json` result for automation and skill callers
 
 ### Data / Artifacts
 
@@ -170,6 +171,8 @@ existing workflow artifacts are created, validated, and reconciled.
 - task-bundle artifacts under `.adl/.../tasks/...`
 - compatibility card locations under `.adl/cards/...`
 - deprecation and compatibility behavior for CLI entrypoints
+- machine-readable `doctor --json` diagnostics, with compatibility alias support
+  through `ready --json` and `preflight --json`
 
 ## Execution Flow
 
