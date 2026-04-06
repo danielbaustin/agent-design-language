@@ -233,7 +233,7 @@ fn parse_score_hundredths(score: &str) -> i64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::obsmem_contract::{MemoryCitation, MemoryQueryResult, MemoryRecord};
+    use crate::obsmem_contract::{MemoryCitation, MemoryQueryResult, MemoryRecord, MemoryTraceRef};
 
     fn hit(id: &str, score: &str, tags: &[&str]) -> MemoryRecord {
         let mut t: Vec<String> = tags.iter().map(|s| (*s).to_string()).collect();
@@ -249,6 +249,12 @@ mod tests {
             citations: vec![MemoryCitation {
                 path: format!("runs/{id}/run_summary.json"),
                 hash: "det64:0000000000000001".to_string(),
+            }],
+            trace_event_refs: vec![MemoryTraceRef {
+                event_sequence: 0,
+                event_kind: "step_finished".to_string(),
+                step_id: Some("s1".to_string()),
+                delegation_id: None,
             }],
         }
     }

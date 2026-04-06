@@ -92,6 +92,7 @@ pub fn build_write_request_from_run_artifacts(
     let failure_code = indexed.failure_code;
     let summary = indexed.summary;
     let tags = indexed.tags;
+    let trace_event_refs = indexed.trace_event_refs;
 
     let mut citations = Vec::new();
     citations.push(citation_for_path(
@@ -119,6 +120,7 @@ pub fn build_write_request_from_run_artifacts(
         summary,
         tags,
         citations,
+        trace_event_refs,
     };
 
     req.normalize();
@@ -207,6 +209,7 @@ mod tests {
                     payload: e.summary.clone(),
                     score: "1.0".to_string(),
                     citations: e.citations.clone(),
+                    trace_event_refs: e.trace_event_refs.clone(),
                 })
                 .collect();
             hits.sort_by(|a, b| a.id.cmp(&b.id));
@@ -236,7 +239,7 @@ mod tests {
         .expect("write run_status");
         std::fs::write(
             run.join("logs").join("activation_log.json"),
-            r#"{"activation_log_version":1,"ordering":"append_only_emission_order","stable_ids":{"step_id":"x","delegation_id":"x","run_id":"x"},"events":[]}"#,
+            r#"{"activation_log_version":1,"ordering":"append_only_emission_order","stable_ids":{"step_id":"x","delegation_id":"x","run_id":"x"},"events":[{"kind":"StepStarted","step_id":"s1","agent_id":"a","provider_id":"local","task_id":"t","delegation_json":null},{"kind":"StepFinished","step_id":"s1","success":true}]}"#,
         )
         .expect("write activation log");
     }

@@ -2,7 +2,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use ::adl::obsmem_contract::{MemoryCitation, MemoryQueryResult, MemoryRecord};
+use ::adl::obsmem_contract::{MemoryCitation, MemoryQueryResult, MemoryRecord, MemoryTraceRef};
 use ::adl::obsmem_indexing::index_run_from_artifacts;
 use ::adl::obsmem_retrieval_policy::{
     apply_policy_to_results, RetrievalOrder, RetrievalPolicyV1, RetrievalRequest,
@@ -96,6 +96,12 @@ fn make_record(id: &str, score: &str, tags: &[&str], workflow_id: &str) -> Memor
             path: format!("runs/{id}/run_summary.json"),
             hash: "det64:0000000000000001".to_string(),
         }],
+        trace_event_refs: vec![MemoryTraceRef {
+            event_sequence: 0,
+            event_kind: "step_finished".to_string(),
+            step_id: Some("s1".to_string()),
+            delegation_id: None,
+        }],
     }
 }
 
@@ -111,6 +117,7 @@ fn indexing_pipeline_produces_deterministic_entries_with_stable_sequence() {
     assert!(!left.workflow_id.trim().is_empty());
     assert!(!left.summary.trim().is_empty());
     assert!(left.tags.binary_search(&"run:run-a".to_string()).is_ok());
+    assert!(!left.trace_event_refs.is_empty());
     assert!(left
         .steps
         .iter()
@@ -280,6 +287,16 @@ fn end_to_end_hierarchical_demo_emits_obsmem_artifacts() {
             .and_then(serde_json::Value::as_array)
             .is_some(),
         "entries missing"
+    );
+    assert!(
+        query_json
+            .get("entries")
+            .and_then(serde_json::Value::as_array)
+            .and_then(|entries| entries.first())
+            .and_then(|entry| entry.get("trace_event_refs"))
+            .and_then(serde_json::Value::as_array)
+            .is_some_and(|refs| !refs.is_empty()),
+        "trace_event_refs missing from query entries"
     );
 
     for forbidden in ["/Users/", "/home/", "gho_", "sk-"] {

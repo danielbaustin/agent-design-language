@@ -13,6 +13,17 @@ pub struct MemoryCitation {
     pub hash: String,
 }
 
+/// Deterministic reference back to the trace event(s) that support a memory
+/// record. v0.87 uses event sequence plus bounded identity fields as the
+/// "event_id or equivalent" coherence contract.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct MemoryTraceRef {
+    pub event_sequence: usize,
+    pub event_kind: String,
+    pub step_id: Option<String>,
+    pub delegation_id: Option<String>,
+}
+
 /// Contract payload used to write a normalized run summary into ObsMem.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MemoryWriteRequest {
@@ -25,6 +36,7 @@ pub struct MemoryWriteRequest {
     pub summary: String,
     pub tags: Vec<String>,
     pub citations: Vec<MemoryCitation>,
+    pub trace_event_refs: Vec<MemoryTraceRef>,
 }
 
 impl MemoryWriteRequest {
@@ -37,6 +49,19 @@ impl MemoryWriteRequest {
             .sort_by(|a, b| a.path.cmp(&b.path).then_with(|| a.hash.cmp(&b.hash)));
         self.citations
             .dedup_by(|a, b| a.path == b.path && a.hash == b.hash);
+        self.trace_event_refs.sort_by(|a, b| {
+            a.event_sequence
+                .cmp(&b.event_sequence)
+                .then_with(|| a.event_kind.cmp(&b.event_kind))
+                .then_with(|| a.step_id.cmp(&b.step_id))
+                .then_with(|| a.delegation_id.cmp(&b.delegation_id))
+        });
+        self.trace_event_refs.dedup_by(|a, b| {
+            a.event_sequence == b.event_sequence
+                && a.event_kind == b.event_kind
+                && a.step_id == b.step_id
+                && a.delegation_id == b.delegation_id
+        });
     }
 
     /// Validate request semantics and privacy guards for contract ingestion.
@@ -76,10 +101,22 @@ impl MemoryWriteRequest {
                 ));
             }
         }
+        for trace_ref in &self.trace_event_refs {
+            if trace_ref.event_kind.trim().is_empty() {
+                return Err(ObsMemContractError::new(
+                    ObsMemContractErrorCode::InvalidRequest,
+                    "trace event refs require non-empty event_kind",
+                ));
+            }
+        }
 
         let text = format!(
-            "{}\n{}\n{:?}\n{:?}",
-            self.summary, self.trace_bundle_rel_path, self.tags, self.citations
+            "{}\n{}\n{:?}\n{:?}\n{:?}",
+            self.summary,
+            self.trace_bundle_rel_path,
+            self.tags,
+            self.citations,
+            self.trace_event_refs
         );
         if text.contains("/Users/")
             || text.contains("/home/")
@@ -157,6 +194,7 @@ pub struct MemoryRecord {
     pub payload: String,
     pub score: String,
     pub citations: Vec<MemoryCitation>,
+    pub trace_event_refs: Vec<MemoryTraceRef>,
 }
 
 /// Query response wrapper for deterministic hit lists.
@@ -308,6 +346,7 @@ mod tests {
                     payload: e.summary.clone(),
                     score: "1.0".to_string(),
                     citations: e.citations.clone(),
+                    trace_event_refs: e.trace_event_refs.clone(),
                 })
                 .collect();
 
@@ -336,6 +375,12 @@ mod tests {
             citations: vec![MemoryCitation {
                 path: "trace_bundle_v2/runs/run-001/steps.json".to_string(),
                 hash: "abc123".to_string(),
+            }],
+            trace_event_refs: vec![MemoryTraceRef {
+                event_sequence: 1,
+                event_kind: "step_finished".to_string(),
+                step_id: Some("s1".to_string()),
+                delegation_id: None,
             }],
         }
     }
