@@ -22,8 +22,8 @@ use super::pr_cmd_validate::{
     bootstrap_stub_reason, validate_authored_prompt_surface, PromptSurfaceKind,
 };
 use ::adl::control_plane::{
-    card_input_path, card_output_path, resolve_cards_root, resolve_primary_checkout_root,
-    sanitize_slug, IssueRef,
+    card_input_path, card_output_path, card_stp_path, resolve_cards_root,
+    resolve_primary_checkout_root, sanitize_slug, IssueRef,
 };
 
 const DEFAULT_VERSION: &str = "v0.86";
@@ -306,11 +306,11 @@ fn real_pr_start(args: &[String]) -> Result<()> {
 
     println!("• Agent:");
     println!("  STP    {}", worktree_stp.display());
-    println!("  READ   {}", worktree_paths.0.display());
-    println!("  WRITE  {}", worktree_paths.1.display());
+    println!("  READ   {}", worktree_paths.1.display());
+    println!("  WRITE  {}", worktree_paths.2.display());
     println!("  ROOT_STP    {}", root_stp.display());
-    println!("  ROOT_READ   {}", root_paths.0.display());
-    println!("  ROOT_WRITE  {}", root_paths.1.display());
+    println!("  ROOT_READ   {}", root_paths.1.display());
+    println!("  ROOT_WRITE  {}", root_paths.2.display());
     println!("  WORKTREE {}", worktree_path.display());
     println!("  BRANCH {branch}");
     println!(
@@ -967,7 +967,7 @@ fn bootstrap_root_task_bundle(
     } else {
         eprintln!("• STP already exists: {}", stp_path.display());
     }
-    let (bundle_input, bundle_output) =
+    let (_, bundle_input, bundle_output) =
         ensure_bootstrap_cards(repo_root, issue_ref, title, &init_branch, source_path)?;
     Ok((stp_path, bundle_input, bundle_output, bundle_dir))
 }
@@ -1819,11 +1819,16 @@ fn ensure_bootstrap_cards(
     title: &str,
     branch: &str,
     source_path: &Path,
-) -> Result<(PathBuf, PathBuf)> {
+) -> Result<(PathBuf, PathBuf, PathBuf)> {
+    let bundle_stp = issue_ref.task_bundle_stp_path(root);
     let bundle_input = issue_ref.task_bundle_input_path(root);
     let bundle_output = issue_ref.task_bundle_output_path(root);
+    let bundle_stp_created = !bundle_stp.is_file();
     if let Some(parent) = bundle_input.parent() {
         fs::create_dir_all(parent)?;
+    }
+    if bundle_stp_created {
+        validate_authored_prompt_surface("start", &bundle_stp, PromptSurfaceKind::Stp)?;
     }
     if !bundle_input.is_file()
         || prompt_surface_is_bootstrap_stub(&bundle_input, PromptSurfaceKind::Sip)?
@@ -1849,8 +1854,10 @@ fn ensure_bootstrap_cards(
     }
 
     let cards_root = resolve_cards_root(root, None);
+    let compat_stp = card_stp_path(&cards_root, issue_ref.issue_number());
     let compat_input = card_input_path(&cards_root, issue_ref.issue_number());
     let compat_output = card_output_path(&cards_root, issue_ref.issue_number());
+    ensure_symlink(&compat_stp, &bundle_stp)?;
     ensure_symlink(&compat_input, &bundle_input)?;
     ensure_symlink(&compat_output, &bundle_output)?;
 
@@ -1863,7 +1870,7 @@ fn ensure_bootstrap_cards(
         &bundle_output,
     )?;
     validate_authored_prompt_surface("start", &bundle_input, PromptSurfaceKind::Sip)?;
-    Ok((bundle_input, bundle_output))
+    Ok((bundle_stp, bundle_input, bundle_output))
 }
 
 fn prompt_surface_is_bootstrap_stub(path: &Path, kind: PromptSurfaceKind) -> Result<bool> {

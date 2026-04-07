@@ -167,6 +167,10 @@ assert_contains() {
     echo "assertion failed: expected canonical input compatibility link" >&2
     exit 1
   }
+  [[ -L "$repo/.adl/cards/42/stp_42.md" ]] || {
+    echo "assertion failed: expected canonical stp compatibility link" >&2
+    exit 1
+  }
   [[ -L "$repo/.adl/cards/42/output_42.md" ]] || {
     echo "assertion failed: expected canonical output compatibility link" >&2
     exit 1
@@ -193,6 +197,18 @@ assert_contains() {
   }
   [[ -f "$repo/.adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/sor.md" ]] || {
     echo "assertion failed: expected generated task-bundle sor" >&2
+    exit 1
+  }
+  [[ -L "$repo/.adl/cards/43/stp_43.md" ]] || {
+    echo "assertion failed: expected generated stp compatibility link" >&2
+    exit 1
+  }
+  [[ -L "$repo/.adl/cards/43/input_43.md" ]] || {
+    echo "assertion failed: expected generated input compatibility link" >&2
+    exit 1
+  }
+  [[ -L "$repo/.adl/cards/43/output_43.md" ]] || {
+    echo "assertion failed: expected generated output compatibility link" >&2
     exit 1
   }
   grep -Fq 'title: "[v0.86][WP-03] Generated loop prompt"' "$repo/.adl/v0.86/bodies/issue-43-v0-86-wp-03-generated-loop-prompt.md" || {

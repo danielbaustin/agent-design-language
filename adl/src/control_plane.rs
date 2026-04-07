@@ -195,6 +195,10 @@ pub fn card_input_path(cards_root: &Path, issue_number: u32) -> PathBuf {
     card_dir_path(cards_root, issue_number).join(format!("input_{issue_number}.md"))
 }
 
+pub fn card_stp_path(cards_root: &Path, issue_number: u32) -> PathBuf {
+    card_dir_path(cards_root, issue_number).join(format!("stp_{issue_number}.md"))
+}
+
 pub fn card_output_path(cards_root: &Path, issue_number: u32) -> PathBuf {
     card_dir_path(cards_root, issue_number).join(format!("output_{issue_number}.md"))
 }
@@ -316,6 +320,10 @@ mod tests {
         assert_eq!(
             card_input_path(Path::new("/repo/.adl/cards"), 1125),
             PathBuf::from("/repo/.adl/cards/1125/input_1125.md")
+        );
+        assert_eq!(
+            card_stp_path(Path::new("/repo/.adl/cards"), 1125),
+            PathBuf::from("/repo/.adl/cards/1125/stp_1125.md")
         );
         assert_eq!(
             card_output_path(Path::new("/repo/.adl/cards"), 1125),

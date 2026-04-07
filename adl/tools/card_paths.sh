@@ -136,6 +136,12 @@ card_input_path() {
   echo "$(cards_root_resolve)/${issue}/input_${issue}.md"
 }
 
+card_stp_path() {
+  local issue
+  issue="$(card_issue_normalize "$1")" || return 1
+  echo "$(cards_root_resolve)/${issue}/stp_${issue}.md"
+}
+
 card_output_path() {
   local issue
   issue="$(card_issue_normalize "$1")" || return 1

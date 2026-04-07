@@ -624,8 +624,15 @@ fn ensure_bootstrap_cards_creates_bundle_and_compat_links() {
             "---\ntitle: \"[v0.86][tools] Bootstrap cards\"\nlabels:\n  - \"track:roadmap\"\nissue_number: 1153\n---\n\n# Body\n",
         )
         .expect("write source");
+    let stp_path = issue_ref.task_bundle_stp_path(&repo);
+    fs::create_dir_all(stp_path.parent().expect("stp parent")).expect("mkdir");
+    fs::write(
+        &stp_path,
+        "---\nissue_card_schema: adl.issue.v1\nwp: \"tools\"\nslug: \"rust-finish-test\"\ntitle: \"[v0.86][tools] Bootstrap cards\"\nlabels:\n  - \"track:roadmap\"\n  - \"version:v0.86\"\nissue_number: 1153\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Sprint Test\"\nrequired_outcome_type:\n  - \"code\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes: []\npr_start:\n  enabled: true\n  slug: \"rust-finish-test\"\n---\n\n# Bootstrap cards\n\n## Summary\nx\n## Goal\nx\n## Required Outcome\nx\n## Deliverables\nx\n## Acceptance Criteria\nx\n## Repo Inputs\nx\n## Dependencies\nx\n## Demo Expectations\nx\n## Non-goals\nx\n## Issue-Graph Notes\nx\n## Notes\nx\n## Tooling Notes\nx\n",
+    )
+    .expect("write stp");
 
-    let (bundle_input, bundle_output) = ensure_bootstrap_cards(
+    let (bundle_stp, bundle_input, bundle_output) = ensure_bootstrap_cards(
         &repo,
         &issue_ref,
         "[v0.86][tools] Bootstrap cards",
@@ -634,10 +641,14 @@ fn ensure_bootstrap_cards_creates_bundle_and_compat_links() {
     )
     .expect("bootstrap cards");
 
+    assert!(bundle_stp.is_file());
     assert!(bundle_input.is_file());
     assert!(bundle_output.is_file());
-    let compat_input = card_input_path(&resolve_cards_root(&repo, None), 1153);
-    let compat_output = card_output_path(&resolve_cards_root(&repo, None), 1153);
+    let cards_root = resolve_cards_root(&repo, None);
+    let compat_stp = card_stp_path(&cards_root, 1153);
+    let compat_input = card_input_path(&cards_root, 1153);
+    let compat_output = card_output_path(&cards_root, 1153);
+    assert!(compat_stp.symlink_metadata().is_ok());
     assert!(compat_input.symlink_metadata().is_ok());
     assert!(compat_output.symlink_metadata().is_ok());
     assert_eq!(
@@ -675,6 +686,13 @@ fn ensure_bootstrap_cards_rewrites_existing_bootstrap_stub_input_card() {
             "---\ntitle: \"[v0.86][tools] Rewrite bootstrap SIP\"\nlabels:\n  - \"track:roadmap\"\nissue_number: 1154\n---\n\n## Summary\nx\n## Goal\nx\n## Required Outcome\nx\n## Deliverables\nx\n## Acceptance Criteria\nx\n## Repo Inputs\nx\n## Dependencies\nx\n## Demo Expectations\nx\n## Non-goals\nx\n## Issue-Graph Notes\nx\n## Notes\nx\n## Tooling Notes\nx\n",
         )
         .expect("write source");
+    let stp_path = issue_ref.task_bundle_stp_path(&repo);
+    fs::create_dir_all(stp_path.parent().expect("stp parent")).expect("mkdir");
+    fs::write(
+        &stp_path,
+        "---\nissue_card_schema: adl.issue.v1\nwp: \"tools\"\nslug: \"rewrite-bootstrap-sip\"\ntitle: \"[v0.86][tools] Rewrite bootstrap SIP\"\nlabels:\n  - \"track:roadmap\"\n  - \"version:v0.86\"\nissue_number: 1154\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Sprint Test\"\nrequired_outcome_type:\n  - \"code\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes: []\npr_start:\n  enabled: true\n  slug: \"rewrite-bootstrap-sip\"\n---\n\n# Rewrite bootstrap SIP\n\n## Summary\nx\n## Goal\nx\n## Required Outcome\nx\n## Deliverables\nx\n## Acceptance Criteria\nx\n## Repo Inputs\nx\n## Dependencies\nx\n## Demo Expectations\nx\n## Non-goals\nx\n## Issue-Graph Notes\nx\n## Notes\nx\n## Tooling Notes\nx\n",
+    )
+    .expect("write stp");
 
     let bundle_input = issue_ref.task_bundle_input_path(&repo);
     fs::create_dir_all(bundle_input.parent().expect("input parent")).expect("mkdir");
@@ -684,7 +702,7 @@ fn ensure_bootstrap_cards_rewrites_existing_bootstrap_stub_input_card() {
         )
         .expect("write stub input");
 
-    let (repaired_input, _) = ensure_bootstrap_cards(
+    let (_, repaired_input, _) = ensure_bootstrap_cards(
         &repo,
         &issue_ref,
         "[v0.86][tools] Rewrite bootstrap SIP",
