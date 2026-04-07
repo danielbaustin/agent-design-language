@@ -12,7 +12,7 @@ This document supersedes earlier recovery assumptions that predated the current 
 - Root `README.md` presents the latest tagged release as `v0.7.0` and the active development milestone as `v0.8`.
 - Runtime crate manifest is `0.8.0` (`swarm/Cargo.toml`).
 - Runtime README is a reviewer-facing surface for current runtime behavior and now matches the unreleased-v0.8 development story.
-- The repository contains real bounded v0.8 runtime/demo surfaces under `swarm/src/godel/`, `swarm/src/demo.rs`, `tools/transpiler_demo/`, `examples/`, and `demos/`.
+- The repository contains real bounded v0.8 runtime/demo surfaces under `swarm/src/godel/`, `swarm/src/demo.rs`, `examples/transpiler_demo/`, `examples/`, and `demos/`.
 - `cargo test --manifest-path swarm/Cargo.toml --workspace` passes on this branch.
 - `docs/milestones/v0.8/THIRD_PARTY_REVIEW_V0.8.md` is still absent.
 - v0.8 review-tail docs are present and now reflect the catch-up implementation wave more accurately, but some final handoff packaging is still pending.
@@ -52,8 +52,8 @@ The following surfaces are implemented in executable code on this branch:
   - `demos/godel_failure_hypothesis_experiment.md`
   - `demos/aee-recovery/README.md`
 - Rust transpiler scaffold surfaces:
-  - `tools/transpiler_demo/Cargo.toml`
-  - `tools/transpiler_demo/src/main.rs`
+  - `examples/transpiler_demo/Cargo.toml`
+  - `examples/transpiler_demo/src/main.rs`
   - `demos/rust-transpiler/workflow/rust_transpiler_demo.yaml`
   - `demos/rust-transpiler/output/workflow_runtime.rs`
   - `demos/rust-transpiler/output/transpiler_verification.v0.8.json`

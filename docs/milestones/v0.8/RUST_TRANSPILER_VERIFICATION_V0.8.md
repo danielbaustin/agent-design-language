@@ -21,14 +21,14 @@ Out of scope:
 ## Verification Inputs
 
 - workflow fixture: `demos/rust-transpiler/workflow/rust_transpiler_demo.yaml`
-- transpiler scaffold: `tools/transpiler_demo/Cargo.toml`, `tools/transpiler_demo/src/main.rs`
+- transpiler scaffold: `examples/transpiler_demo/Cargo.toml`, `examples/transpiler_demo/src/main.rs`
 - Rust runtime skeleton: `demos/rust-transpiler/output/workflow_runtime.rs`
 
 ## Deterministic Verification Command
 
 Run:
 
-`cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet`
+`cargo run --manifest-path examples/transpiler_demo/Cargo.toml --quiet`
 
 Expected checks:
 

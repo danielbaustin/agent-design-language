@@ -15,8 +15,8 @@ skeleton, and one explicit path to deterministic verification in `#703`.
 1. Workflow fixture (input contract)
    - `demos/rust-transpiler/workflow/rust_transpiler_demo.yaml`
 2. Rust transpiler scaffold (mapping demonstration entrypoint)
-   - `tools/transpiler_demo/Cargo.toml`
-   - `tools/transpiler_demo/src/main.rs`
+   - `examples/transpiler_demo/Cargo.toml`
+   - `examples/transpiler_demo/src/main.rs`
 3. Rust output skeleton (compiled/runtime shape)
    - `demos/rust-transpiler/output/workflow_runtime.rs`
 4. Verification evidence surface
@@ -44,7 +44,7 @@ The Rust skeleton mirrors this one-to-one:
 
 Run:
 
-`cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet`
+`cargo run --manifest-path examples/transpiler_demo/Cargo.toml --quiet`
 
 The scaffold prints:
 
