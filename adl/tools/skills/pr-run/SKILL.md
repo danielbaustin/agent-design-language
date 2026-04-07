@@ -1,6 +1,6 @@
 ---
 name: pr-run
-description: Execute a prepared issue after doctor/readiness review. Use when an issue is structurally ready, should bind or confirm its execution branch and worktree, then perform the bounded implementation work, validations, and truthful output recording without silently finishing or janitoring the PR.
+description: Execute a prepared issue after doctor review. Use when an issue is structurally ready, should bind or confirm its execution branch and worktree, then perform the bounded implementation work, validations, and truthful output recording without silently finishing or janitoring the PR.
 ---
 
 # PR Run
@@ -24,7 +24,6 @@ This skill should track the repository's canonical PR tooling docs.
 At the moment, the canonical repo docs are:
 - `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
 - `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
-- `/Users/daniel/git/agent-design-language/.adl/docs/v0.87planning/promoted/PR_TOOLING_SKILLS.md`
 
 Within this skill bundle, the operational details live in:
 - `references/run-playbook.md`
@@ -38,7 +37,7 @@ The intended workflow model treats `run` as the execution-time binder and implem
 
 Current repo truth:
 1. issue creation/bootstrap is handled earlier by `pr-init`
-2. doctor/readiness review happens before execution
+2. doctor review happens before execution
 3. `pr run` is the branch/worktree binding and implementation surface
 4. later truthful closeout/publication belongs to `pr-finish`
 5. in-flight PR monitoring and blocker response belong to `pr-janitor`
@@ -85,7 +84,7 @@ Useful additional inputs:
 - stp_path
 - sip_path
 - sor_path
-- doctor_result or explicit readiness status
+- doctor_result or explicit doctor status
 - validation policy
 - branch binding policy
 - worktree policy
@@ -95,7 +94,7 @@ If there is no concrete target, stop and report `blocked`.
 ## Quick Start
 
 1. Resolve the concrete issue target.
-2. Confirm doctor/readiness status before implementation.
+2. Confirm doctor status before implementation.
 3. Bind or confirm the issue branch and worktree using repo-native `run` behavior.
 4. Verify that the worktree-local STP, SIP, and SOR execution bundle now exists.
 5. Read the source prompt, STP, SIP, and current output card.
@@ -122,7 +121,8 @@ If multiple surfaces disagree materially on issue identity, report `blocked`.
 
 Before implementation:
 - prefer an explicit prior doctor result when available
-- otherwise run the repo-native readiness checks needed to confirm the issue is structurally ready
+- otherwise run the repo-native doctor JSON surface first to confirm the issue is structurally ready
+- fall back to compatibility readiness/preflight checks only when the canonical doctor surface is unavailable
 
 Execution-readiness and scheduling/preflight should be distinguished the same way `pr-ready` distinguishes them.
 
@@ -239,10 +239,14 @@ Unsafe parallel examples:
 ## Preferred Commands
 
 Prefer repo-native control-plane commands such as:
+- `adl/tools/pr.sh doctor --json`
+- `adl pr doctor --json`
 - `adl/tools/pr.sh run`
 - `adl pr run`
 - `adl/tools/pr.sh ready`
 - `adl/tools/pr.sh preflight`
+- `adl pr ready`
+- `adl pr preflight`
 
 Use the repo's existing templates, validators, and path logic. Prefer the repository control plane over manual git branching when possible.
 

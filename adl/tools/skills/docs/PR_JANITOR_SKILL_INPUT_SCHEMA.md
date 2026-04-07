@@ -250,7 +250,7 @@ The caller is responsible for:
 The skill is responsible for:
 - resolving only the PR progress diagnosis implied by the validated target
 - applying only the interventions allowed by policy
-- returning an explicit progress classification and handoff state
+- returning an explicit progress classification, repair outcome, and handoff state
 
 ### Sub-Agent Invocation Guidance
 
@@ -303,7 +303,7 @@ family.
 3. Caller invokes the skill only if validation passes.
 4. The skill diagnoses the selected PR target and optionally applies bounded
    blocker-driven fixes if policy allows.
-5. The skill emits a structured janitor result and follow-up state.
+5. The skill emits a structured janitor result with explicit repair outcome and follow-up state.
 
 ## Determinism and Constraints
 

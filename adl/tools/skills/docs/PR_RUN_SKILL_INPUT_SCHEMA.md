@@ -45,7 +45,7 @@ and portable across:
 
 The current `pr-run` skill already distinguishes a real execution problem:
 - resolve one prepared issue target
-- confirm or reuse doctor-style readiness
+- confirm or reuse doctor-backed readiness
 - create or reuse branch/worktree only at execution time
 - perform bounded implementation work
 - validate truthfully and stop before janitor/finish
@@ -96,6 +96,7 @@ Key capabilities:
 - deterministic target selection
 - validation before sub-agent spawn or ADL admission
 - clear separation between structural readiness and temporary preflight gating
+- canonical consumption of doctor JSON before write-bearing execution
 - late branch/worktree binding at execution time
 - better error reporting when target or execution authority is ambiguous
 
@@ -247,7 +248,7 @@ Callers must validate all of the following before skill invocation:
 4. `policy.stop_after_execution` is `true`
 5. `policy.validation_mode` is explicit
 6. if `policy.require_doctor_check` is `true`, the caller must provide enough
-   context for a doctor/readiness check or a previously known ready target
+   context for a doctor-backed readiness check or a previously known ready target
 7. at least one of `policy.allow_binding_create` or
    `policy.allow_binding_reuse` must be `true`
 8. any provided paths must be repo-relative or absolute and must identify only
@@ -316,7 +317,7 @@ family.
 1. Caller assembles candidate `pr-run` inputs.
 2. Caller validates the input object against `pr_run.v1`.
 3. Caller invokes the skill only if validation passes.
-4. The skill confirms or derives readiness.
+4. The skill confirms or derives readiness, consuming doctor JSON first when available.
 5. The skill creates or reuses branch/worktree only at execution time.
 6. The skill performs bounded implementation work.
 7. The skill emits a structured run result and handoff status.
@@ -394,7 +395,7 @@ skill invocation tests.
 ## Risks
 
 - Risk:
-  - callers may try to bypass doctor/readiness intent and use `pr-run` as an
+  - callers may try to bypass doctor-backed readiness intent and use `pr-run` as an
     unbounded execution entrypoint
   - Mitigation:
     - keep `require_doctor_check` explicit and default-compatible with the

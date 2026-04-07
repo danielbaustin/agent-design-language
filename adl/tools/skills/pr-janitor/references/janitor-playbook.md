@@ -5,7 +5,6 @@ Use this file after the main skill triggers and you are ready to monitor or inte
 Planning basis:
 - `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
 - `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
-- `/Users/daniel/git/agent-design-language/.adl/docs/v0.87planning/promoted/PR_TOOLING_SKILLS.md`
 
 If the repo relocates those docs, follow the relocated canonical copies instead of these exact paths.
 
@@ -85,5 +84,6 @@ If the process fails or remains blocked:
 - report the target PR
 - report the current checks/conflict/review state that was actually observed
 - report any action attempted
+- record whether no repair was attempted, a repair was attempted and succeeded, or a repair was attempted and did not resolve the blocker
 - report the exact next handoff needed
 - stop without widening scope

@@ -1,6 +1,6 @@
 ---
 name: pr-ready
-description: Check PR workflow readiness and drift for an issue, task bundle, branch, or worktree. Use when the user wants to know whether a task is ready to begin, whether workflow state is broken or incomplete, or when small bounded mechanical repairs should be applied automatically without widening into implementation work.
+description: Diagnose PR workflow readiness and drift for an issue, task bundle, branch, or worktree. Use when the user wants a doctor-style readiness result, wants to know whether workflow state is broken or incomplete, or wants small bounded mechanical repairs applied automatically without widening into implementation work.
 ---
 
 # PR Ready
@@ -9,7 +9,7 @@ This skill owns the cross-cutting diagnostic and bounded-repair surface for the 
 
 Its job is to:
 - inspect workflow readiness and drift
-- classify the target's execution readiness as `ready`, `ready_with_repairs`, or `blocked`
+- classify the target's doctor/readiness result as `ready`, `ready_with_repairs`, or `blocked`
 - apply only very small, clearly safe mechanical repairs when allowed
 - emit a structured readiness result
 - stop before qualitative review, implementation, or broad repository repair
@@ -23,27 +23,26 @@ This skill should track the repository's canonical PR tooling docs.
 At the moment, the canonical repo docs are:
 - `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
 - `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
-- `/Users/daniel/git/agent-design-language/.adl/docs/v0.87planning/promoted/PR_TOOLING_SKILLS.md`
-- `/Users/daniel/git/agent-design-language/.adl/docs/v0.87planning/promoted/PREFLIGHT_CHECK_SKILL.md`
+- `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PREFLIGHT_CHECK_SKILL.md`
 
 Within this skill bundle, the operational details live in:
 - `references/ready-playbook.md`
 - `references/output-contract.md`
 
-If those docs move, prefer the moved tracked canonical copies over stale path references. Do not silently invent a new ready model from memory when the repo docs have changed.
+If those docs move, prefer the moved tracked canonical copies over stale path references. Do not silently invent a new doctor/readiness model from memory when the repo docs have changed.
 
 ## Current Compatibility Model
 
-The intended workflow model treats `ready` as the execution-readiness phase surface, with `preflight` as a narrower compatibility gate.
+The intended workflow model treats `doctor` as the canonical automation surface, with `ready` and `preflight` as compatibility aliases.
 
 Current repo truth:
-1. `ready` is the target public readiness model
-2. compatibility surfaces still include `pr ready` and `pr preflight`
-3. `ready` validates execution-readiness surfaces for an existing worktree/task context
-4. `preflight` checks milestone/open-PR blocking state
-5. the skill may combine repo-native commands and direct inspection to produce one ready-style result
+1. `doctor --json` is the canonical structured readiness surface
+2. compatibility surfaces may still include `pr ready` and `pr preflight`
+3. doctor validates execution-readiness surfaces for an existing worktree/task context
+4. preflight-compatible checks still report milestone/open-PR blocking state
+5. the skill may combine doctor output, compatibility aliases, and direct inspection to produce one readiness result
 
-Do not collapse `preflight` into the main status. It is a separate gate input to the `ready` surface.
+Do not collapse preflight into the main status. It is a separate gate input to the doctor/readiness result.
 
 ## Entry Conditions
 
@@ -90,7 +89,9 @@ If there is no concrete target, stop and report `blocked` with the missing targe
 ## Quick Start
 
 1. Resolve the concrete target context.
-2. Prefer repo-native readiness commands in this order:
+2. Prefer repo-native diagnostic commands in this order:
+   - `adl/tools/pr.sh doctor --json`
+   - `adl pr doctor --json`
    - `adl/tools/pr.sh ready`
    - `adl pr ready`
    - `adl/tools/pr.sh preflight`
@@ -197,24 +198,25 @@ Unsafe parallel examples:
 ## Preferred Commands
 
 Prefer repo-native control-plane commands such as:
+- `adl/tools/pr.sh doctor --json`
+- `adl pr doctor --json`
 - `adl/tools/pr.sh ready`
 - `adl/tools/pr.sh preflight`
 - `adl pr ready`
 - `adl pr preflight`
 
 Command-order rule:
+- prefer `doctor --json` first when the surface exists
 - if the shell compatibility surface exists, prefer `adl/tools/pr.sh ready` before falling back to direct inspection
 - do not skip to manual inspection merely because a built `adl` binary is absent
-- use direct inspection only when the repo-native readiness/preflight paths are unavailable or fail to produce a usable result
-
-When the canonical `adl pr doctor` surface becomes available, prefer it over compatibility commands.
+- use direct inspection only when the repo-native doctor/readiness/preflight paths are unavailable or fail to produce a usable result
 
 It is acceptable for this skill to combine:
-- repo-native readiness/preflight commands
+- repo-native doctor/readiness/preflight commands
 - direct file inspection
 - direct git/worktree inspection
 
-to produce one ready-style result.
+to produce one doctor-style readiness result.
 
 ## Output
 

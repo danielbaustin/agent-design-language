@@ -20,7 +20,7 @@
 This feature defines a stable, explicit input schema for invoking the
 `pr-ready` skill.
 
-Today the doctor skill can be described loosely in prose, but loose prose is
+Today the readiness phase can be described loosely in prose, but loose prose is
 not a durable control-plane contract. It makes target selection ambiguous,
 blurs the difference between diagnosis and repair, and makes it harder for
 callers to validate whether enough context is present before execution.
@@ -48,6 +48,10 @@ problem:
 - optionally apply tiny bounded repairs
 - stop before bootstrap, qualitative review, or implementation
 
+For automation, the canonical machine surface is doctor JSON. The phase remains
+named `pr-ready`, but the structured execution contract should consume doctor
+output first and use `ready` / `preflight` only as compatibility aliases.
+
 But the current contract expresses target selection only through optional
 fields. This feature makes the target modes and validation rules explicit so
 callers can validate inputs before invocation.
@@ -67,7 +71,7 @@ can easily cause wrong-surface inspection or unsafe repair attempts.
 This document covers the input schema of the `pr-ready` skill.
 
 - Covered surfaces:
-  - ready invocation payload
+  - readiness invocation payload
   - target-selection argument validation
   - repair-mode policy validation
   - compatibility expectations for sub-agent prompting
@@ -92,6 +96,7 @@ Key capabilities:
 - validation before sub-agent spawn or ADL admission
 - clear separation between diagnosis-only and bounded-repair execution
 - consistent issue, task-bundle, branch, and worktree targeting
+- canonical consumption of doctor JSON when available
 - better error reporting when the target is incomplete or ambiguous
 
 ## Design
@@ -166,7 +171,7 @@ Expected behavior:
 - resolve the issue-centered workflow surfaces
 - inspect readiness and drift
 - optionally apply tiny bounded repairs if policy allows
-- emit one structured doctor result
+- emit one structured readiness result
 
 #### `diagnose_task_bundle`
 
@@ -185,7 +190,7 @@ Optional:
 Expected behavior:
 - inspect the bundle directly
 - reconcile identity/path expectations from the bundle outward
-- emit one structured doctor result
+- emit one structured readiness result
 
 #### `diagnose_branch`
 
@@ -204,7 +209,7 @@ Optional:
 Expected behavior:
 - inspect branch-to-issue traceability
 - infer related bundle/worktree context only if policy permits
-- emit one structured doctor result
+- emit one structured readiness result
 
 #### `diagnose_worktree`
 
@@ -224,7 +229,7 @@ Optional:
 Expected behavior:
 - inspect worktree readiness directly
 - validate branch/worktree/bundle coherence
-- emit one structured doctor result
+- emit one structured readiness result
 
 ### Validation Rules
 
@@ -307,12 +312,12 @@ family.
 
 ## Execution Flow
 
-1. Caller assembles candidate doctor inputs.
+1. Caller assembles candidate readiness inputs.
 2. Caller validates the input object against `pr_ready.v1`.
 3. Caller invokes the skill only if validation passes.
 4. The skill diagnoses the selected target and optionally applies tiny bounded
    repairs if policy allows.
-5. The skill emits a structured doctor result and handoff state.
+5. The skill consumes doctor JSON when available, falls back to compatibility aliases when needed, and emits a structured readiness result and handoff state.
 
 ## Determinism and Constraints
 
@@ -337,7 +342,7 @@ family.
 ## Validation
 
 This feature is validated by schema review, caller-side validation behavior, and
-doctor invocation tests.
+readiness invocation tests.
 
 ### Demo (if applicable)
 - Demo script(s): `N/A`

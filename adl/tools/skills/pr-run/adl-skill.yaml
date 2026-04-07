@@ -89,13 +89,15 @@ execution:
     - "merge"
     - "closeout"
   preferred_commands:
+    - "adl/tools/pr.sh doctor --json"
+    - "adl pr doctor --json"
+    - "adl/tools/pr.sh run"
+    - "adl pr run"
     - "adl/tools/pr.sh ready"
     - "adl/tools/pr.sh preflight"
-    - "adl/tools/pr.sh run"
     - "adl pr ready"
     - "adl pr preflight"
-    - "adl pr run"
-  preferred_path: "repo_native_run_surface_plus_issue_scoped_implementation"
+  preferred_path: "consume_doctor_json_first_then_run_with_compatibility_fallbacks"
   repair_policy: "doctor_checks_must_precede_execution_and_issue_scope_must_remain_bounded"
   invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
 boundaries:

@@ -5,7 +5,6 @@ Use this file after the main skill triggers and you are ready to execute an issu
 Planning basis:
 - `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
 - `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
-- `/Users/daniel/git/agent-design-language/.adl/docs/v0.87planning/promoted/PR_TOOLING_SKILLS.md`
 
 If the repo relocates those docs, follow the relocated canonical copies instead of these exact paths.
 
@@ -41,7 +40,8 @@ If targets disagree materially, report `blocked`.
 
 Before implementation:
 - prefer an explicit doctor result if available
-- otherwise run repo-native readiness checks
+- otherwise run the repo-native doctor JSON surface first
+- fall back to compatibility readiness checks only when doctor is unavailable
 
 Decision rule:
 - if execution readiness is `blocked`, stop
@@ -50,6 +50,14 @@ Decision rule:
 
 Default stance:
 - stop on a blocked preflight gate unless the caller explicitly wants to run under override
+
+Preferred diagnostic order:
+1. `adl/tools/pr.sh doctor --json`
+2. `adl pr doctor --json`
+3. `adl/tools/pr.sh ready`
+4. `adl pr ready`
+5. `adl/tools/pr.sh preflight`
+6. `adl pr preflight`
 
 ## Binding Checklist
 

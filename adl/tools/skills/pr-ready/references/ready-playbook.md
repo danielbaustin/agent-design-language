@@ -1,12 +1,11 @@
 # PR Ready Playbook
 
-Use this file after the main skill triggers and you are ready to execute the `pr ready` step.
+Use this file after the main skill triggers and you are ready to execute the doctor/readiness step.
 
 Planning basis:
 - `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
 - `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`
-- `/Users/daniel/git/agent-design-language/.adl/docs/v0.87planning/promoted/PR_TOOLING_SKILLS.md`
-- `/Users/daniel/git/agent-design-language/.adl/docs/v0.87planning/promoted/PREFLIGHT_CHECK_SKILL.md`
+- `/Users/daniel/git/agent-design-language/docs/milestones/v0.87/features/PREFLIGHT_CHECK_SKILL.md`
 
 If the repo relocates those docs, follow the relocated canonical copies instead of these exact paths.
 
@@ -79,24 +78,29 @@ Not allowed:
 
 ## Compatibility Note
 
-Current repo-native command truth still includes:
+Current repo-native command truth is:
+- `doctor --json` is the canonical automation surface
 - `ready`
 - `preflight`
 
-The skill should treat these as compatibility inputs to the target `ready` surface, not as the final public model.
+The skill should treat `ready` and `preflight` as compatibility inputs to the doctor/readiness result, not as the final automation model.
 
 When helpful:
+- use `adl/tools/pr.sh doctor --json` first for the canonical machine-readable diagnostic result
+- use `adl pr doctor --json` when that is the available canonical binary surface
 - use `adl/tools/pr.sh ready` first for worktree/execution-readiness when the shell surface exists
 - use `adl pr ready` when that is the available canonical binary surface
 - use `adl/tools/pr.sh preflight` or `adl pr preflight` for milestone/open-PR blocking state
 - combine them into one structured ready result
 
 Fallback order:
-1. `adl/tools/pr.sh ready`
-2. `adl pr ready`
-3. `adl/tools/pr.sh preflight`
-4. `adl pr preflight`
-5. direct inspection only if the repo-native surfaces are unavailable or unusable
+1. `adl/tools/pr.sh doctor --json`
+2. `adl pr doctor --json`
+3. `adl/tools/pr.sh ready`
+4. `adl pr ready`
+5. `adl/tools/pr.sh preflight`
+6. `adl pr preflight`
+7. direct inspection only if the repo-native surfaces are unavailable or unusable
 
 When `ready` and `preflight` disagree:
 - keep the main status tied to execution readiness

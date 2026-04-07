@@ -105,6 +105,7 @@ outputs:
     - "target"
     - "checks_summary"
     - "conflict_status"
+    - "repair_outcome"
     - "actions_taken"
     - "actions_recommended"
     - "review_required"

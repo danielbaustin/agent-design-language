@@ -88,11 +88,13 @@ execution:
     - "implementation"
     - "pr_finish"
   preferred_commands:
+    - "adl/tools/pr.sh doctor --json"
+    - "adl pr doctor --json"
     - "adl/tools/pr.sh ready"
     - "adl/tools/pr.sh preflight"
     - "adl pr ready"
     - "adl pr preflight"
-  preferred_path: "repo_native_doctor_or_compatibility_readiness_commands_plus_direct_inspection"
+  preferred_path: "doctor_json_first_then_compatibility_aliases_then_direct_inspection"
   repair_policy: "allow_only_small_bounded_mechanical_repairs_when_unambiguous"
   invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
 boundaries:
