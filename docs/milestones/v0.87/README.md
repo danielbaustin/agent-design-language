@@ -76,7 +76,7 @@ Canonical milestone documents:
 Supporting / domain-specific docs:
 - Feature docs index: `docs/milestones/v0.87/FEATURE_DOCS_v0.87.md`
 - Promoted feature docs: `docs/milestones/v0.87/features/`
-- Roadmap context: `.adl/docs/roadmaps/ROAD_TO_v0.95.md`
+- Roadmap context: `docs/milestones/v0.85/features/ROAD_TO_v0.95.md`
 - Review artifacts: `.adl/reviews/`
 
 ## Execution Model

@@ -290,7 +290,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
 
     let root_stp = ensure_task_bundle_stp(&repo_root, &issue_ref, &source_path)?;
     let worktree_source = ensure_local_issue_prompt_copy(&worktree_path, &issue_ref, &source_path)?;
-    mirror_adl_templates_into_worktree(&repo_root, &worktree_path)?;
+    mirror_docs_templates_into_worktree(&repo_root, &worktree_path)?;
     let worktree_stp = ensure_task_bundle_stp(&worktree_path, &issue_ref, &worktree_source)?;
     validate_authored_prompt_surface("start", &root_stp, PromptSurfaceKind::Stp)?;
     validate_authored_prompt_surface("start", &worktree_stp, PromptSurfaceKind::Stp)?;
@@ -1785,12 +1785,12 @@ fn ensure_local_issue_prompt_copy(
     Ok(local_source_path)
 }
 
-fn mirror_adl_templates_into_worktree(repo_root: &Path, worktree_root: &Path) -> Result<()> {
-    let source_templates = repo_root.join(".adl/templates");
+fn mirror_docs_templates_into_worktree(repo_root: &Path, worktree_root: &Path) -> Result<()> {
+    let source_templates = repo_root.join("docs/templates");
     if !source_templates.is_dir() {
         return Ok(());
     }
-    let target_templates = worktree_root.join(".adl/templates");
+    let target_templates = worktree_root.join("docs/templates");
     copy_directory_contents(&source_templates, &target_templates)
 }
 

@@ -1,5 +1,6 @@
 adl/issues.csv
 adl/.local/
+# Internal ADL workspace state stays local; publish canonical docs/templates under docs/.
 .adl/
 .DS_Store
 
