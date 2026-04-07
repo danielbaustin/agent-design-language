@@ -69,3 +69,15 @@ bash ./adl/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>"
 - Documentation index: `../../docs/README.md`
 - ADRs: `../../docs/adr/`
 - ADL spec entrypoint: `../../adl-spec/README.md`
+
+## Retired In v0.87 Cleanup
+
+The following low-confidence legacy residue was retired during the bounded `adl/tools`
+cleanup because it no longer backed the live PR control plane, active demos, or
+current regression-test surfaces:
+
+- `BURST_PLAYBOOK.md`
+- `REPORT_SCHEMA.md`
+- `default.rules.profiles.example`
+- `demo_v0_4.sh`
+- `pr_smoke.sh`

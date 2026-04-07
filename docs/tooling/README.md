@@ -75,3 +75,15 @@ Important repo-local tooling surfaces include:
 ## Notes
 
 Tooling docs should be read as bounded engineering references. They describe the surfaces that support ADL authoring, review, and maintenance without claiming that every internal helper is equally important to every reader.
+
+## Current Retirement Boundary
+
+The active `adl/tools` surface intentionally excludes a small set of retired legacy
+residue that no longer supports the live PR workflow, current demos, or active
+regression tests. The `v0.87` bounded cleanup retired:
+
+- `BURST_PLAYBOOK.md`
+- `REPORT_SCHEMA.md`
+- `default.rules.profiles.example`
+- `demo_v0_4.sh`
+- `pr_smoke.sh`
