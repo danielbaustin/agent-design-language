@@ -38,7 +38,9 @@ The intended workflow model treats `doctor` as the canonical automation surface,
 Current repo truth:
 1. `doctor --json` is the canonical structured readiness surface
 2. compatibility surfaces may still include `pr ready` and `pr preflight`
-3. doctor validates execution-readiness surfaces for an existing worktree/task context
+3. doctor reports lifecycle-aware readiness:
+   - pre-run issues may be ready before a worktree exists
+   - run-bound issues must still validate the bound worktree/task context
 4. preflight-compatible checks still report milestone/open-PR blocking state
 5. the skill may combine doctor output, compatibility aliases, and direct inspection to produce one readiness result
 
@@ -108,8 +110,9 @@ If there is no concrete target, stop and report `blocked` with the missing targe
    - `ready_with_repairs`
    - `blocked`
 7. Report preflight or scheduling gates separately from execution readiness when the issue structure itself is sound.
-8. Apply only clearly safe bounded repairs if permitted.
-9. Emit a structured readiness result and stop.
+8. Treat missing worktree before `pr-run` as expected pre-run state when the root bundle is authored and execution has not yet been bound.
+9. Apply only clearly safe bounded repairs if permitted.
+10. Emit a structured readiness result and stop.
 
 ## Workflow
 

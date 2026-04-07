@@ -1761,7 +1761,9 @@ Usage:
 
 Notes:
 - Deprecated compatibility alias over `doctor --mode ready`.
-- Verifies that the issue is fully authoring-ready in both the root checkout and the issue worktree.
+- Reports structural execution-readiness.
+- Pre-run issues may pass without a bound worktree when the root bundle is authored and execution has not started yet.
+- Started issues still validate the issue worktree and started-worktree cards strictly.
 - Prints READY=PASS on success and exits non-zero on the first missing or invalid bootstrap surface.
 - `--json` emits the stable `adl.pr.doctor.v1` machine-readable result.
 EOF
@@ -1787,8 +1789,10 @@ Usage:
 
 Notes:
 - Canonical readiness and drift diagnostic surface.
-- `--mode full` reports both milestone-wave preflight and worktree/card readiness.
-- `--mode ready` runs only the started-worktree readiness checks.
+- `--mode full` reports milestone-wave preflight plus lifecycle-aware readiness.
+- `--mode ready` reports structural execution-readiness for both pre-run and run-bound issues.
+- Pre-run issues may be reported as ready without a worktree when execution has not yet been bound.
+- Run-bound issues still validate the bound worktree and cards strictly.
 - `--mode preflight` runs only the milestone-wave conflict/open-PR check.
 - `--json` emits the stable `adl.pr.doctor.v1` machine-readable result for automation.
 EOF

@@ -58,14 +58,15 @@ struct DoctorPreflightResult {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct DoctorReadyResult {
-    worktree: String,
+    lifecycle_state: &'static str,
+    worktree: Option<String>,
     source: String,
     root_stp: String,
     root_input: String,
     root_output: String,
-    wt_stp: String,
-    wt_input: String,
-    wt_output: String,
+    wt_stp: Option<String>,
+    wt_input: Option<String>,
+    wt_output: Option<String>,
     status: &'static str,
 }
 
@@ -80,6 +81,7 @@ struct DoctorJsonOutput {
     preflight_status: &'static str,
     open_pr_count: usize,
     open_prs: Vec<DoctorPreflightJsonPullRequest>,
+    lifecycle_state: Option<&'static str>,
     ready_status: Option<&'static str>,
     worktree: Option<String>,
     source: Option<String>,
@@ -596,15 +598,16 @@ fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
             preflight_status: preflight.status,
             open_pr_count: preflight.open_pr_count,
             open_prs: preflight.open_prs,
+            lifecycle_state: ready.as_ref().map(|x| x.lifecycle_state),
             ready_status: ready.as_ref().map(|x| x.status),
-            worktree: ready.as_ref().map(|x| x.worktree.clone()),
+            worktree: ready.as_ref().and_then(|x| x.worktree.clone()),
             source: ready.as_ref().map(|x| x.source.clone()),
             root_stp: ready.as_ref().map(|x| x.root_stp.clone()),
             root_input: ready.as_ref().map(|x| x.root_input.clone()),
             root_output: ready.as_ref().map(|x| x.root_output.clone()),
-            wt_stp: ready.as_ref().map(|x| x.wt_stp.clone()),
-            wt_input: ready.as_ref().map(|x| x.wt_input.clone()),
-            wt_output: ready.as_ref().map(|x| x.wt_output.clone()),
+            wt_stp: ready.as_ref().and_then(|x| x.wt_stp.clone()),
+            wt_input: ready.as_ref().and_then(|x| x.wt_input.clone()),
+            wt_output: ready.as_ref().and_then(|x| x.wt_output.clone()),
             doctor_status,
         })?;
     } else {
@@ -706,7 +709,28 @@ fn run_doctor_ready(
     }
     validate_bootstrap_stp(repo_root, &root_stp)?;
     validate_authored_prompt_surface("doctor", &root_stp, PromptSurfaceKind::Stp)?;
+    validate_initialized_cards(
+        issue_ref.issue_number(),
+        issue_ref.slug(),
+        &root_bundle_input,
+        &root_bundle_output,
+    )?;
     if !worktree_path.is_dir() {
+        let root_branch = field_line_value(&root_bundle_input, "Branch")?;
+        if branch_indicates_unbound_state(&root_branch) {
+            return Ok(DoctorReadyResult {
+                lifecycle_state: "pre_run",
+                worktree: None,
+                source: path_relative_to_repo(repo_root, &source_path),
+                root_stp: path_relative_to_repo(repo_root, &root_stp),
+                root_input: path_relative_to_repo(repo_root, &root_bundle_input),
+                root_output: path_relative_to_repo(repo_root, &root_bundle_output),
+                wt_stp: None,
+                wt_input: None,
+                wt_output: None,
+                status: "PASS",
+            });
+        }
         bail!("doctor: missing worktree: {}", worktree_path.display());
     }
     let wt_branch = run_capture(
@@ -748,14 +772,15 @@ fn run_doctor_ready(
     )?;
 
     Ok(DoctorReadyResult {
-        worktree: path_relative_to_repo(repo_root, &worktree_path),
+        lifecycle_state: "run_bound",
+        worktree: Some(path_relative_to_repo(repo_root, &worktree_path)),
         source: path_relative_to_repo(repo_root, &source_path),
         root_stp: path_relative_to_repo(repo_root, &root_stp),
         root_input: path_relative_to_repo(repo_root, &root_bundle_input),
         root_output: path_relative_to_repo(repo_root, &root_bundle_output),
-        wt_stp: path_relative_to_repo(repo_root, &wt_stp),
-        wt_input: path_relative_to_repo(repo_root, &wt_bundle_input),
-        wt_output: path_relative_to_repo(repo_root, &wt_bundle_output),
+        wt_stp: Some(path_relative_to_repo(repo_root, &wt_stp)),
+        wt_input: Some(path_relative_to_repo(repo_root, &wt_bundle_input)),
+        wt_output: Some(path_relative_to_repo(repo_root, &wt_bundle_output)),
         status: "PASS",
     })
 }
@@ -780,14 +805,23 @@ fn print_doctor_preflight_text(preflight: &DoctorPreflightResult) {
 }
 
 fn print_doctor_ready_text(ready: &DoctorReadyResult) {
-    println!("WORKTREE={}", ready.worktree);
+    println!("LIFECYCLE_STATE={}", ready.lifecycle_state);
+    if let Some(worktree) = &ready.worktree {
+        println!("WORKTREE={worktree}");
+    }
     println!("SOURCE={}", ready.source);
     println!("ROOT_STP={}", ready.root_stp);
     println!("ROOT_INPUT={}", ready.root_input);
     println!("ROOT_OUTPUT={}", ready.root_output);
-    println!("WT_STP={}", ready.wt_stp);
-    println!("WT_INPUT={}", ready.wt_input);
-    println!("WT_OUTPUT={}", ready.wt_output);
+    if let Some(wt_stp) = &ready.wt_stp {
+        println!("WT_STP={wt_stp}");
+    }
+    if let Some(wt_input) = &ready.wt_input {
+        println!("WT_INPUT={wt_input}");
+    }
+    if let Some(wt_output) = &ready.wt_output {
+        println!("WT_OUTPUT={wt_output}");
+    }
     println!("READY={}", ready.status);
 }
 
@@ -1803,11 +1837,15 @@ fn ensure_bootstrap_cards(
             source_path,
             &bundle_output,
         )?;
+    } else if field_line_value(&bundle_input, "Branch")?.trim() != branch {
+        replace_field_line_in_file(&bundle_input, "Branch", branch)?;
     }
     if !bundle_output.is_file()
         || !output_card_title_matches_slug(&bundle_output, issue_ref.slug())?
     {
         write_output_card(root, &bundle_output, issue_ref, title, branch)?;
+    } else if field_line_value(&bundle_output, "Branch")?.trim() != branch {
+        replace_field_line_in_file(&bundle_output, "Branch", branch)?;
     }
 
     let cards_root = resolve_cards_root(root, None);
@@ -2019,6 +2057,13 @@ fn replace_exact_line(text: &mut String, from: &str, to: &str) {
     }
 }
 
+fn replace_field_line_in_file(path: &Path, label: &str, value: &str) -> Result<()> {
+    let mut text = fs::read_to_string(path)?;
+    replace_field_line(&mut text, label, value);
+    fs::write(path, text)?;
+    Ok(())
+}
+
 fn ensure_symlink(link_path: &Path, target: &Path) -> Result<()> {
     if let Some(parent) = link_path.parent() {
         fs::create_dir_all(parent)?;
@@ -2144,6 +2189,32 @@ fn validate_ready_cards(
     Ok(())
 }
 
+fn validate_initialized_cards(
+    issue: u32,
+    slug: &str,
+    input_path: &Path,
+    output_path: &Path,
+) -> Result<()> {
+    let expected = format!("issue-{:04}", issue);
+    if field_line_value(input_path, "Task ID")? != expected {
+        bail!("doctor: input card Task ID mismatch");
+    }
+    if field_line_value(input_path, "Run ID")? != expected {
+        bail!("doctor: input card Run ID mismatch");
+    }
+    if field_line_value(output_path, "Task ID")? != expected {
+        bail!("doctor: output card Task ID mismatch");
+    }
+    if field_line_value(output_path, "Run ID")? != expected {
+        bail!("doctor: output card Run ID mismatch");
+    }
+    if !output_card_title_matches_slug(output_path, slug)? {
+        bail!("doctor: output card title mismatch");
+    }
+    validate_authored_prompt_surface("doctor", input_path, PromptSurfaceKind::Sip)?;
+    Ok(())
+}
+
 fn field_line_value(path: &Path, label: &str) -> Result<String> {
     let prefix = format!("{label}:");
     let text = fs::read_to_string(path)?;
@@ -2161,6 +2232,14 @@ fn branch_matches_started_state(recorded: &str, actual_branch: &str) -> bool {
         return true;
     }
     recorded.starts_with("TBD (run pr.sh start ")
+}
+
+fn branch_indicates_unbound_state(recorded: &str) -> bool {
+    let recorded = recorded.trim();
+    recorded.is_empty()
+        || recorded.eq_ignore_ascii_case("not bound yet")
+        || recorded.starts_with("TBD (run pr.sh start ")
+        || recorded.starts_with("TBD (run pr.sh run ")
 }
 
 fn ensure_source_issue_prompt(
