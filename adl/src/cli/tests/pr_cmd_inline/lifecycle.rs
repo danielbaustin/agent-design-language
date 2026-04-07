@@ -173,6 +173,7 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
         "# canonical feature doc template\n"
     );
     let root_cards = resolve_cards_root(&repo, None);
+    assert!(card_stp_path(&root_cards, 1152).symlink_metadata().is_ok());
     assert!(card_input_path(&root_cards, 1152)
         .symlink_metadata()
         .is_ok());

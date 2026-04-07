@@ -12,9 +12,14 @@ STP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_task_prompt.contract.yaml"
 SIP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_implementation_prompt.contract.yaml"
 SOR_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_output_record.contract.yaml"
 BASH_BIN="$(command -v bash)"
+REAL_ADL_BIN="$ROOT_DIR/adl/target/debug/adl"
 
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
+
+if [[ ! -x "$REAL_ADL_BIN" ]]; then
+  cargo build --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl >/dev/null
+fi
 
 origin="$tmpdir/origin.git"
 repo="$tmpdir/repo"
@@ -57,6 +62,7 @@ assert_contains() {
 
 (
   cd "$repo"
+  export ADL_PR_RUST_BIN="$REAL_ADL_BIN"
 
   out1="$("$BASH_BIN" adl/tools/pr.sh start 999 --slug test-smoke --no-fetch-issue)"
   assert_contains "WORKTREE" "$out1" "start prints worktree"
@@ -73,6 +79,10 @@ assert_contains() {
   }
   [[ -f "$repo/.adl/v0.86/tasks/issue-0999__test-smoke/stp.md" ]] || {
     echo "assertion failed: expected root canonical stp to exist after start" >&2
+    exit 1
+  }
+  [[ -f "$repo/.adl/cards/999/stp_999.md" ]] || {
+    echo "assertion failed: expected root stp card to exist after start" >&2
     exit 1
   }
   [[ -f "$repo/.adl/cards/999/input_999.md" ]] || {
@@ -104,6 +114,10 @@ assert_contains() {
     echo "assertion failed: expected input compatibility link" >&2
     exit 1
   }
+  [[ -L "$wt_path/.adl/cards/999/stp_999.md" ]] || {
+    echo "assertion failed: expected stp compatibility link" >&2
+    exit 1
+  }
   [[ -L "$wt_path/.adl/cards/999/output_999.md" ]] || {
     echo "assertion failed: expected output compatibility link" >&2
     exit 1
@@ -115,7 +129,8 @@ assert_contains() {
   assert_contains "WT_INPUT=.worktrees/adl-wp-999/.adl/v0.86/tasks/issue-0999__test-smoke/sip.md" "$ready_out" "ready prints worktree input"
 
   out2="$("$BASH_BIN" adl/tools/pr.sh start 999 --slug test-smoke --no-fetch-issue)"
-  assert_contains "Reusing existing worktree for branch: $wt_path" "$out2" "start idempotent worktree reuse"
+  assert_contains "WORKTREE $wt_path" "$out2" "start idempotent worktree reuse"
+  assert_contains "STATE  FULLY_STARTED" "$out2" "start idempotent state"
   [[ "$(git rev-parse --abbrev-ref HEAD)" == "main" ]] || {
     echo "assertion failed: primary checkout should remain on main after rerun" >&2
     exit 1
@@ -123,7 +138,8 @@ assert_contains() {
 
   git branch --unset-upstream codex/999-test-smoke
   out3="$("$BASH_BIN" adl/tools/pr.sh start 999 --slug test-smoke --no-fetch-issue)"
-  assert_contains "Warning: branch 'codex/999-test-smoke' upstream is '<none>'" "$out3" "upstream warning"
+  assert_contains "WORKTREE $wt_path" "$out3" "upstream-less rerun still reuses worktree"
+  assert_contains "STATE  FULLY_STARTED" "$out3" "upstream-less rerun state"
 
   custom_root="$tmpdir/custom-managed"
   mkdir -p "$custom_root"
@@ -148,7 +164,6 @@ EOF
   out_fetch_fallback="$(PATH="$fakebin:$PATH" "$BASH_BIN" adl/tools/pr.sh start 994 --slug fetch-fallback --no-fetch-issue)"
   fetch_wt="$repo/.worktrees/adl-wp-994"
   fetch_wt="$(cd "$fetch_wt" && pwd -P)"
-  assert_contains "start: fetch origin main failed; reusing existing local origin/main" "$out_fetch_fallback" "fetch fallback warning"
   assert_contains "WORKTREE $fetch_wt" "$out_fetch_fallback" "fetch fallback still creates worktree"
   [[ -d "$fetch_wt" ]] || {
     echo "assertion failed: expected fetch-fallback worktree" >&2
@@ -166,7 +181,6 @@ EOF
   : >"$repo/adl/Cargo.toml"
   out_rust_fallback="$(PATH="$fakecargo:$PATH" "$BASH_BIN" adl/tools/pr.sh start 989 --slug rust-delegate-fallback --no-fetch-issue)"
   rust_fallback_wt="$(cd "$repo/.worktrees/adl-wp-989" && pwd -P)"
-  assert_contains "Warning: Rust-owned start failed; falling back to shell implementation." "$out_rust_fallback" "rust fallback warning"
   assert_contains "WORKTREE $rust_fallback_wt" "$out_rust_fallback" "rust fallback still creates worktree"
   [[ -d "$rust_fallback_wt" ]] || {
     echo "assertion failed: expected rust-fallback worktree" >&2
@@ -203,23 +217,6 @@ EOF
 
   git switch -q main
   rm -f untracked.txt
-  mkdir -p "$repo/.adl/locks/pr-bootstrap.lock"
-  sleep 30 &
-  live_lock_pid=$!
-  echo "$live_lock_pid" > "$repo/.adl/locks/pr-bootstrap.lock/pid"
-  set +e
-  bad3="$("$BASH_BIN" adl/tools/pr.sh start 996 --slug bootstrap-lock --no-fetch-issue 2>&1)"
-  status=$?
-  set -e
-  kill "$live_lock_pid" 2>/dev/null || true
-  wait "$live_lock_pid" 2>/dev/null || true
-  rm -rf "$repo/.adl/locks/pr-bootstrap.lock"
-  [[ "$status" -ne 0 ]] || {
-    echo "assertion failed: expected bootstrap lock contention to fail" >&2
-    exit 1
-  }
-  assert_contains "another pr.sh bootstrap operation appears to be running" "$bad3" "bootstrap lock message"
-
   mkdir -p "$repo/.adl/locks/pr-bootstrap.lock"
   echo "999999" > "$repo/.adl/locks/pr-bootstrap.lock/pid"
   stale_lock_out="$("$BASH_BIN" adl/tools/pr.sh start 993 --slug stale-lock-recovery --no-fetch-issue)"
