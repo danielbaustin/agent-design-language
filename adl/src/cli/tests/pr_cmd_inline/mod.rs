@@ -1,4 +1,8 @@
 use super::*;
+use crate::cli::pr_cmd_cards::write_output_card;
+use crate::cli::pr_cmd_prompt::{infer_wp_from_title, render_generated_issue_prompt};
+use crate::cli::pr_cmd_validate::bootstrap_stub_reason;
+use adl::control_plane::{card_input_path, card_stp_path};
 use std::env;
 use std::sync::{Mutex, OnceLock};
 use std::time::{SystemTime, UNIX_EPOCH};

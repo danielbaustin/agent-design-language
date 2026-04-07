@@ -1,8 +1,6 @@
 use anyhow::{anyhow, bail, Context, Result};
 use serde::{Deserialize, Serialize};
 use std::fs;
-#[cfg(unix)]
-use std::os::unix::fs as unix_fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -10,20 +8,24 @@ use super::pr_cmd_args::{
     parse_create_args, parse_doctor_args, parse_finish_args, parse_init_args, parse_preflight_args,
     parse_ready_args, parse_start_args, DoctorArgs, DoctorMode,
 };
+use super::pr_cmd_cards::{
+    branch_indicates_unbound_state, ensure_bootstrap_cards, ensure_local_issue_prompt_copy,
+    ensure_source_issue_prompt, ensure_symlink, ensure_task_bundle_stp, field_line_value,
+    mirror_docs_templates_into_worktree, path_relative_to_repo, validate_bootstrap_stp,
+    validate_initialized_cards, validate_issue_body_for_create, validate_ready_cards,
+    write_source_issue_prompt,
+};
 #[cfg(test)]
 use super::pr_cmd_prompt::load_issue_prompt;
 use super::pr_cmd_prompt::{
-    infer_required_outcome_type, infer_wp_from_title, normalize_labels_csv,
-    parse_issue_number_from_url, render_generated_issue_body, render_generated_issue_prompt,
-    resolve_issue_body, resolve_issue_prompt_path, resolve_issue_scope_and_slug_from_local_state,
-    validate_issue_prompt_exists, version_from_labels_csv, version_from_title,
+    infer_required_outcome_type, normalize_labels_csv, parse_issue_number_from_url,
+    render_generated_issue_body, resolve_issue_body, resolve_issue_prompt_path,
+    resolve_issue_scope_and_slug_from_local_state, validate_issue_prompt_exists,
+    version_from_labels_csv, version_from_title,
 };
-use super::pr_cmd_validate::{
-    bootstrap_stub_reason, validate_authored_prompt_surface, PromptSurfaceKind,
-};
+use super::pr_cmd_validate::{validate_authored_prompt_surface, PromptSurfaceKind};
 use ::adl::control_plane::{
-    card_input_path, card_output_path, card_stp_path, resolve_cards_root,
-    resolve_primary_checkout_root, sanitize_slug, IssueRef,
+    card_output_path, resolve_cards_root, resolve_primary_checkout_root, sanitize_slug, IssueRef,
 };
 
 const DEFAULT_VERSION: &str = "v0.86";
@@ -282,8 +284,15 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     ensure_worktree_for_branch(&worktree_path, &branch)?;
     ensure_primary_checkout_on_main(&repo_root)?;
 
-    let source_path =
-        ensure_source_issue_prompt(&repo_root, &repo, &issue_ref, &title, None, &version)?;
+    let source_path = ensure_source_issue_prompt(
+        &repo_root,
+        &repo,
+        &issue_ref,
+        &title,
+        None,
+        &version,
+        DEFAULT_NEW_LABELS,
+    )?;
     validate_issue_prompt_exists(&source_path)?;
     validate_bootstrap_stp(&repo_root, &source_path)?;
     validate_authored_prompt_surface("start", &source_path, PromptSurfaceKind::IssuePrompt)?;
@@ -909,8 +918,15 @@ fn real_pr_init(args: &[String]) -> Result<()> {
         issue_version(issue, &repo)?.unwrap_or_else(|| DEFAULT_VERSION.to_string())
     };
     let issue_ref = IssueRef::new(issue, version.clone(), slug.clone())?;
-    let source_path =
-        ensure_source_issue_prompt(&repo_root, &repo, &issue_ref, &title, None, &version)?;
+    let source_path = ensure_source_issue_prompt(
+        &repo_root,
+        &repo,
+        &issue_ref,
+        &title,
+        None,
+        &version,
+        DEFAULT_NEW_LABELS,
+    )?;
     validate_issue_prompt_exists(&source_path)?;
     let (stp_path, bundle_input, bundle_output, bundle_dir) =
         bootstrap_root_task_bundle(&repo_root, &issue_ref, &title, &source_path)?;
@@ -1525,52 +1541,6 @@ fn gh_issue_edit_body(repo: &str, issue: u32, body: &str) -> Result<()> {
     .with_context(|| format!("create: gh issue edit failed for issue #{issue}"))
 }
 
-fn write_source_issue_prompt(
-    repo_root: &Path,
-    issue_ref: &IssueRef,
-    title: &str,
-    labels_csv: &str,
-    issue_url: &str,
-    body: &str,
-) -> Result<PathBuf> {
-    let source_path = issue_ref.issue_prompt_path(repo_root);
-    if let Some(parent) = source_path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    let prompt = render_issue_prompt_from_body(
-        issue_ref.issue_number(),
-        issue_ref.slug(),
-        title,
-        labels_csv,
-        issue_url,
-        body,
-    );
-    fs::write(&source_path, prompt)?;
-    Ok(source_path)
-}
-
-fn render_issue_prompt_from_body(
-    issue: u32,
-    slug: &str,
-    title: &str,
-    labels_csv: &str,
-    _issue_url: &str,
-    body: &str,
-) -> String {
-    let wp = infer_wp_from_title(title);
-    let outcome_type = infer_required_outcome_type_for_create(labels_csv, title);
-    let label_lines = labels_csv
-        .split(',')
-        .map(str::trim)
-        .filter(|label| !label.is_empty())
-        .map(|label| format!("  - \"{label}\""))
-        .collect::<Vec<_>>()
-        .join("\n");
-    format!(
-        "---\nissue_card_schema: adl.issue.v1\nwp: \"{wp}\"\nslug: \"{slug}\"\ntitle: \"{title}\"\nlabels:\n{label_lines}\nissue_number: {issue}\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"{outcome_type}\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Bootstrap-generated from GitHub issue metadata because no canonical local issue prompt existed yet.\"\npr_start:\n  enabled: false\n  slug: \"{slug}\"\n---\n\n{body}\n"
-    )
-}
-
 fn infer_required_outcome_type_for_create(labels_csv: &str, title: &str) -> &'static str {
     infer_required_outcome_type(labels_csv, title)
 }
@@ -1752,569 +1722,6 @@ fn ensure_primary_checkout_on_main(repo_root: &Path) -> Result<()> {
         run_status("git", &["-C", path_str(repo_root)?, "switch", "main"])?;
     }
     Ok(())
-}
-
-fn ensure_task_bundle_stp(
-    root: &Path,
-    issue_ref: &IssueRef,
-    source_path: &Path,
-) -> Result<PathBuf> {
-    let stp_path = issue_ref.task_bundle_stp_path(root);
-    if !stp_path.is_file() {
-        if let Some(parent) = stp_path.parent() {
-            fs::create_dir_all(parent)?;
-        }
-        fs::copy(source_path, &stp_path)?;
-    }
-    validate_bootstrap_stp(root, &stp_path)?;
-    Ok(stp_path)
-}
-
-fn ensure_local_issue_prompt_copy(
-    root: &Path,
-    issue_ref: &IssueRef,
-    canonical_source_path: &Path,
-) -> Result<PathBuf> {
-    let local_source_path = issue_ref.issue_prompt_path(root);
-    if !local_source_path.is_file() {
-        if let Some(parent) = local_source_path.parent() {
-            fs::create_dir_all(parent)?;
-        }
-        fs::copy(canonical_source_path, &local_source_path)?;
-    }
-    Ok(local_source_path)
-}
-
-fn mirror_docs_templates_into_worktree(repo_root: &Path, worktree_root: &Path) -> Result<()> {
-    let source_templates = repo_root.join("docs/templates");
-    if !source_templates.is_dir() {
-        return Ok(());
-    }
-    let target_templates = worktree_root.join("docs/templates");
-    copy_directory_contents(&source_templates, &target_templates)
-}
-
-fn copy_directory_contents(source: &Path, target: &Path) -> Result<()> {
-    fs::create_dir_all(target)?;
-    for entry in fs::read_dir(source)? {
-        let entry = entry?;
-        let source_path = entry.path();
-        let target_path = target.join(entry.file_name());
-        let file_type = entry.file_type()?;
-        if file_type.is_dir() {
-            copy_directory_contents(&source_path, &target_path)?;
-        } else if file_type.is_file() {
-            if let Some(parent) = target_path.parent() {
-                fs::create_dir_all(parent)?;
-            }
-            fs::copy(&source_path, &target_path)?;
-        }
-    }
-    Ok(())
-}
-
-fn ensure_bootstrap_cards(
-    root: &Path,
-    issue_ref: &IssueRef,
-    title: &str,
-    branch: &str,
-    source_path: &Path,
-) -> Result<(PathBuf, PathBuf, PathBuf)> {
-    let bundle_stp = issue_ref.task_bundle_stp_path(root);
-    let bundle_input = issue_ref.task_bundle_input_path(root);
-    let bundle_output = issue_ref.task_bundle_output_path(root);
-    let bundle_stp_created = !bundle_stp.is_file();
-    if let Some(parent) = bundle_input.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    if bundle_stp_created {
-        validate_authored_prompt_surface("start", &bundle_stp, PromptSurfaceKind::Stp)?;
-    }
-    if !bundle_input.is_file()
-        || prompt_surface_is_bootstrap_stub(&bundle_input, PromptSurfaceKind::Sip)?
-    {
-        write_input_card(
-            root,
-            &bundle_input,
-            issue_ref,
-            title,
-            branch,
-            source_path,
-            &bundle_output,
-        )?;
-    } else if field_line_value(&bundle_input, "Branch")?.trim() != branch {
-        replace_field_line_in_file(&bundle_input, "Branch", branch)?;
-    }
-    if !bundle_output.is_file()
-        || !output_card_title_matches_slug(&bundle_output, issue_ref.slug())?
-    {
-        write_output_card(root, &bundle_output, issue_ref, title, branch)?;
-    } else if field_line_value(&bundle_output, "Branch")?.trim() != branch {
-        replace_field_line_in_file(&bundle_output, "Branch", branch)?;
-    }
-
-    let cards_root = resolve_cards_root(root, None);
-    let compat_stp = card_stp_path(&cards_root, issue_ref.issue_number());
-    let compat_input = card_input_path(&cards_root, issue_ref.issue_number());
-    let compat_output = card_output_path(&cards_root, issue_ref.issue_number());
-    ensure_symlink(&compat_stp, &bundle_stp)?;
-    ensure_symlink(&compat_input, &bundle_input)?;
-    ensure_symlink(&compat_output, &bundle_output)?;
-
-    validate_bootstrap_cards(
-        root,
-        issue_ref.issue_number(),
-        issue_ref.slug(),
-        branch,
-        &bundle_input,
-        &bundle_output,
-    )?;
-    validate_authored_prompt_surface("start", &bundle_input, PromptSurfaceKind::Sip)?;
-    Ok((bundle_stp, bundle_input, bundle_output))
-}
-
-fn prompt_surface_is_bootstrap_stub(path: &Path, kind: PromptSurfaceKind) -> Result<bool> {
-    if !path.is_file() {
-        return Ok(false);
-    }
-    let text = fs::read_to_string(path)?;
-    Ok(bootstrap_stub_reason(&text, kind).is_some())
-}
-
-fn validate_issue_body_for_create(
-    repo_root: &Path,
-    title: &str,
-    labels_csv: &str,
-    slug: &str,
-    body: &str,
-) -> Result<()> {
-    let probe_issue = 999_999;
-    let probe_url = format!(
-        "https://github.com/{}/issues/{probe_issue}",
-        default_repo(repo_root)?
-    );
-    let prompt =
-        render_issue_prompt_from_body(probe_issue, slug, title, labels_csv, &probe_url, body);
-    let temp = write_temp_markdown("issue_body_probe", &prompt)?;
-    validate_bootstrap_stp(repo_root, &temp)
-        .with_context(|| "create: issue body cannot satisfy source-prompt validation")?;
-    validate_authored_prompt_surface("create", &temp, PromptSurfaceKind::IssuePrompt)
-        .with_context(|| "create: issue body is still bootstrap stub content")?;
-    Ok(())
-}
-
-fn write_input_card(
-    repo_root: &Path,
-    path: &Path,
-    issue_ref: &IssueRef,
-    title: &str,
-    branch: &str,
-    source_path: &Path,
-    output_path: &Path,
-) -> Result<()> {
-    let mut text =
-        fs::read_to_string(repo_root.join("adl/templates/cards/input_card_template.md"))?;
-    replace_field_line(
-        &mut text,
-        "Task ID",
-        &format!("issue-{}", issue_ref.padded_issue_number()),
-    );
-    replace_field_line(
-        &mut text,
-        "Run ID",
-        &format!("issue-{}", issue_ref.padded_issue_number()),
-    );
-    replace_field_line(&mut text, "Version", issue_ref.scope());
-    replace_field_line(&mut text, "Title", title);
-    replace_field_line(&mut text, "Branch", branch);
-    replace_exact_line(
-        &mut text,
-        "- Issue:",
-        &format!(
-            "- Issue: https://github.com/{}/issues/{}",
-            default_repo(repo_root)?,
-            issue_ref.issue_number()
-        ),
-    );
-    replace_exact_line(
-        &mut text,
-        "- Source Issue Prompt: <required repo-relative reference or URL>",
-        &format!(
-            "- Source Issue Prompt: {}",
-            path_relative_to_repo(repo_root, source_path)
-        ),
-    );
-    replace_exact_line(
-        &mut text,
-        "- Docs: <required freeform value or 'none'>",
-        "- Docs: none",
-    );
-    replace_exact_line(
-        &mut text,
-        "- Other: <optional note or 'none'>",
-        "- Other: none",
-    );
-    replace_exact_line(
-        &mut text,
-        "  output_card: .adl/<scope>/tasks/<task-id>__<slug>/sor.md",
-        &format!(
-            "  output_card: {}",
-            path_relative_to_repo(repo_root, output_path)
-        ),
-    );
-    fs::write(path, text)?;
-    Ok(())
-}
-
-fn write_output_card(
-    repo_root: &Path,
-    path: &Path,
-    issue_ref: &IssueRef,
-    title: &str,
-    branch: &str,
-) -> Result<()> {
-    let mut text =
-        fs::read_to_string(repo_root.join("adl/templates/cards/output_card_template.md"))?;
-    replace_markdown_h1(&mut text, issue_ref.slug());
-    replace_field_line(
-        &mut text,
-        "Task ID",
-        &format!("issue-{}", issue_ref.padded_issue_number()),
-    );
-    replace_field_line(
-        &mut text,
-        "Run ID",
-        &format!("issue-{}", issue_ref.padded_issue_number()),
-    );
-    replace_field_line(&mut text, "Version", issue_ref.scope());
-    replace_field_line(&mut text, "Title", title);
-    replace_field_line(&mut text, "Branch", branch);
-    replace_field_line(&mut text, "Status", "IN_PROGRESS");
-    replace_exact_line(
-        &mut text,
-        "- Integration state: worktree_only | pr_open | merged",
-        "- Integration state: worktree_only",
-    );
-    replace_exact_line(
-        &mut text,
-        "- Verification scope: worktree | pr_branch | main_repo",
-        "- Verification scope: worktree",
-    );
-    fs::write(path, text)?;
-    Ok(())
-}
-
-fn replace_markdown_h1(text: &mut String, value: &str) {
-    let mut replaced = false;
-    let mut out = Vec::new();
-    for line in text.lines() {
-        if !replaced && line.starts_with("# ") {
-            out.push(format!("# {value}"));
-            replaced = true;
-        } else {
-            out.push(line.to_string());
-        }
-    }
-    *text = out.join("\n");
-    if !text.ends_with('\n') {
-        text.push('\n');
-    }
-}
-
-fn output_card_title_matches_slug(path: &Path, slug: &str) -> Result<bool> {
-    let expected = format!("# {slug}");
-    let text = fs::read_to_string(path)?;
-    let header = text
-        .lines()
-        .find(|line| line.starts_with("# "))
-        .unwrap_or_default()
-        .trim()
-        .to_string();
-    Ok(header == expected)
-}
-
-fn replace_field_line(text: &mut String, label: &str, value: &str) {
-    let prefix = format!("{label}:");
-    let mut out = Vec::new();
-    for line in text.lines() {
-        if line.starts_with(&prefix) {
-            out.push(format!("{prefix} {value}"));
-        } else {
-            out.push(line.to_string());
-        }
-    }
-    *text = out.join("\n");
-    if !text.ends_with('\n') {
-        text.push('\n');
-    }
-}
-
-fn replace_exact_line(text: &mut String, from: &str, to: &str) {
-    let mut out = Vec::new();
-    for line in text.lines() {
-        if line == from {
-            out.push(to.to_string());
-        } else {
-            out.push(line.to_string());
-        }
-    }
-    *text = out.join("\n");
-    if !text.ends_with('\n') {
-        text.push('\n');
-    }
-}
-
-fn replace_field_line_in_file(path: &Path, label: &str, value: &str) -> Result<()> {
-    let mut text = fs::read_to_string(path)?;
-    replace_field_line(&mut text, label, value);
-    fs::write(path, text)?;
-    Ok(())
-}
-
-fn ensure_symlink(link_path: &Path, target: &Path) -> Result<()> {
-    if let Some(parent) = link_path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    if link_path.exists() || link_path.symlink_metadata().is_ok() {
-        let _ = fs::remove_file(link_path);
-    }
-    #[cfg(unix)]
-    {
-        unix_fs::symlink(target, link_path)?;
-    }
-    #[cfg(not(unix))]
-    {
-        fs::copy(target, link_path)?;
-    }
-    Ok(())
-}
-
-fn validate_bootstrap_stp(repo_root: &Path, path: &Path) -> Result<()> {
-    let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
-    run_status(
-        "bash",
-        &[
-            path_str(&validator)?,
-            "--type",
-            "stp",
-            "--input",
-            path_str(path)?,
-        ],
-    )
-    .with_context(|| format!("init: stp failed validation: {}", path.display()))
-}
-
-fn validate_bootstrap_cards(
-    repo_root: &Path,
-    issue: u32,
-    slug: &str,
-    branch: &str,
-    input_path: &Path,
-    output_path: &Path,
-) -> Result<()> {
-    let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
-    run_status(
-        "bash",
-        &[
-            path_str(&validator)?,
-            "--type",
-            "sip",
-            "--phase",
-            "bootstrap",
-            "--input",
-            path_str(input_path)?,
-        ],
-    )?;
-    run_status(
-        "bash",
-        &[
-            path_str(&validator)?,
-            "--type",
-            "sor",
-            "--phase",
-            "bootstrap",
-            "--input",
-            path_str(output_path)?,
-        ],
-    )?;
-    let expected = format!("issue-{:04}", issue);
-    if field_line_value(input_path, "Task ID")? != expected {
-        bail!("start: input card Task ID mismatch");
-    }
-    if field_line_value(input_path, "Run ID")? != expected {
-        bail!("start: input card Run ID mismatch");
-    }
-    if field_line_value(output_path, "Task ID")? != expected {
-        bail!("start: output card Task ID mismatch");
-    }
-    if field_line_value(output_path, "Run ID")? != expected {
-        bail!("start: output card Run ID mismatch");
-    }
-    if field_line_value(input_path, "Branch")? != branch {
-        bail!("start: input card branch mismatch");
-    }
-    if field_line_value(output_path, "Branch")? != branch {
-        bail!("start: output card branch mismatch");
-    }
-    if !output_card_title_matches_slug(output_path, slug)? {
-        bail!("start: output card title mismatch");
-    }
-    Ok(())
-}
-
-fn validate_ready_cards(
-    _repo_root: &Path,
-    issue: u32,
-    slug: &str,
-    actual_branch: &str,
-    input_path: &Path,
-    output_path: &Path,
-) -> Result<()> {
-    let expected = format!("issue-{:04}", issue);
-    if field_line_value(input_path, "Task ID")? != expected {
-        bail!("ready: input card Task ID mismatch");
-    }
-    if field_line_value(input_path, "Run ID")? != expected {
-        bail!("ready: input card Run ID mismatch");
-    }
-    if field_line_value(output_path, "Task ID")? != expected {
-        bail!("ready: output card Task ID mismatch");
-    }
-    if field_line_value(output_path, "Run ID")? != expected {
-        bail!("ready: output card Run ID mismatch");
-    }
-    if !branch_matches_started_state(&field_line_value(input_path, "Branch")?, actual_branch) {
-        bail!("ready: input card branch mismatch");
-    }
-    if !branch_matches_started_state(&field_line_value(output_path, "Branch")?, actual_branch) {
-        bail!("ready: output card branch mismatch");
-    }
-    if !output_card_title_matches_slug(output_path, slug)? {
-        bail!("ready: output card title mismatch");
-    }
-    validate_authored_prompt_surface("ready", input_path, PromptSurfaceKind::Sip)?;
-    Ok(())
-}
-
-fn validate_initialized_cards(
-    issue: u32,
-    slug: &str,
-    input_path: &Path,
-    output_path: &Path,
-) -> Result<()> {
-    let expected = format!("issue-{:04}", issue);
-    if field_line_value(input_path, "Task ID")? != expected {
-        bail!("doctor: input card Task ID mismatch");
-    }
-    if field_line_value(input_path, "Run ID")? != expected {
-        bail!("doctor: input card Run ID mismatch");
-    }
-    if field_line_value(output_path, "Task ID")? != expected {
-        bail!("doctor: output card Task ID mismatch");
-    }
-    if field_line_value(output_path, "Run ID")? != expected {
-        bail!("doctor: output card Run ID mismatch");
-    }
-    if !output_card_title_matches_slug(output_path, slug)? {
-        bail!("doctor: output card title mismatch");
-    }
-    validate_authored_prompt_surface("doctor", input_path, PromptSurfaceKind::Sip)?;
-    Ok(())
-}
-
-fn field_line_value(path: &Path, label: &str) -> Result<String> {
-    let prefix = format!("{label}:");
-    let text = fs::read_to_string(path)?;
-    for line in text.lines() {
-        if let Some(rest) = line.strip_prefix(&prefix) {
-            return Ok(rest.trim().to_string());
-        }
-    }
-    Ok(String::new())
-}
-
-fn branch_matches_started_state(recorded: &str, actual_branch: &str) -> bool {
-    let recorded = recorded.trim();
-    if recorded == actual_branch {
-        return true;
-    }
-    recorded.starts_with("TBD (run pr.sh start ")
-}
-
-fn branch_indicates_unbound_state(recorded: &str) -> bool {
-    let recorded = recorded.trim();
-    recorded.is_empty()
-        || recorded.eq_ignore_ascii_case("not bound yet")
-        || recorded.starts_with("TBD (run pr.sh start ")
-        || recorded.starts_with("TBD (run pr.sh run ")
-}
-
-fn ensure_source_issue_prompt(
-    repo_root: &Path,
-    repo: &str,
-    issue_ref: &IssueRef,
-    title: &str,
-    labels_csv: Option<&str>,
-    version: &str,
-) -> Result<PathBuf> {
-    let source_path = issue_ref.issue_prompt_path(repo_root);
-    if source_path.is_file() {
-        return Ok(source_path);
-    }
-
-    let labels_csv = if let Some(labels) = labels_csv {
-        normalize_labels_csv(labels, version)
-    } else {
-        let fetched = run_capture_allow_failure(
-            "gh",
-            &[
-                "issue",
-                "view",
-                &issue_ref.issue_number().to_string(),
-                "-R",
-                repo,
-                "--json",
-                "labels",
-                "-q",
-                ".labels[].name",
-            ],
-        )?
-        .unwrap_or_default()
-        .lines()
-        .map(str::trim)
-        .filter(|line| !line.is_empty())
-        .collect::<Vec<_>>()
-        .join(",");
-        let baseline = if fetched.trim().is_empty() {
-            DEFAULT_NEW_LABELS.to_string()
-        } else {
-            fetched
-        };
-        normalize_labels_csv(&baseline, version)
-    };
-
-    let issue_url = format!(
-        "https://github.com/{repo}/issues/{}",
-        issue_ref.issue_number()
-    );
-    let content = render_generated_issue_prompt(
-        issue_ref.issue_number(),
-        issue_ref.slug(),
-        title,
-        &labels_csv,
-        &issue_url,
-    );
-    if let Some(parent) = source_path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    fs::write(&source_path, content)?;
-    Ok(source_path)
-}
-
-fn path_relative_to_repo(repo_root: &Path, path: &Path) -> String {
-    path.strip_prefix(repo_root)
-        .map(|relative| relative.display().to_string())
-        .unwrap_or_else(|_| path.display().to_string())
 }
 
 fn run_capture(program: &str, args: &[&str]) -> Result<String> {

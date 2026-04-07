@@ -8,6 +8,7 @@ mod identity_cmd;
 mod open;
 mod pr_cmd;
 mod pr_cmd_args;
+mod pr_cmd_cards;
 mod pr_cmd_prompt;
 mod pr_cmd_validate;
 mod run;
