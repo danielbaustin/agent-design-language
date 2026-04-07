@@ -1,0 +1,3 @@
+display_name: PR Run
+short_description: Bind and execute an issue
+default_prompt: Execute a prepared issue by binding its branch/worktree, performing the bounded work, validating it, and updating the execution record truthfully.

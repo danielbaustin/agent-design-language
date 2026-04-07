@@ -1,0 +1,3 @@
+display_name: PR Ready
+short_description: Check readiness and workflow drift
+default_prompt: Inspect an issue or task workflow, report whether it is ready or blocked, report preflight separately, apply only safe bounded repairs if allowed, and stop.

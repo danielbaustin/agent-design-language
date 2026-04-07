@@ -240,6 +240,17 @@ If absent:
 
 This preserves Codex compatibility while enabling stronger ADL semantics.
 
+### Canonical in-repo skills root for `v0.87`
+
+For the bounded `v0.87` substrate, the canonical tracked in-repo skills root is:
+
+- `adl/tools/skills/`
+
+The first packaged bundles should live there so they can be:
+- reviewed in-repo
+- installed into local Codex skills roots deterministically
+- reused by main agents and sub-agents without inventing ad hoc layouts
+
 ## Execution Contract
 
 Each skill execution should have a bounded contract:
@@ -292,16 +303,41 @@ This is more important than making wording identical.
 
 The initial `v0.87` substrate should support at least the following bounded workflow-oriented skills:
 
-- `preflight-check`
-  - determines readiness to begin an issue/task
-- `card-review`
-  - reviews issue cards for truth, completeness, and scope discipline
-- `repo-review` or equivalent bounded review surface
+- `pr-init`
+  - creates or reconciles the issue bootstrap surfaces and stops before execution
+- `pr-ready`
+  - determines structural execution readiness and reports preflight state separately
+- `pr-run`
+  - performs the bounded implementation step after readiness is established
+- `pr-finish`
+  - performs truthful closeout, staging, and PR publication/update after execution
+- `pr-janitor`
+  - watches the in-flight PR for failures, conflicts, and blocked review state after finish/publication
+- `repo-code-review` or equivalent bounded review surface
   - produces structured findings over code/repo state
-- bounded bootstrap/recovery helper flows
-  - recover from safe, known workflow-state problems
+
+`pr-init -> pr-ready -> pr-run -> pr-finish` is the canonical phase chain.
+`pr-janitor` is a support skill for the in-flight PR period, not the terminal phase itself.
 
 These are substrate skills, not later cognitive/social skills.
+
+## Exercise-Derived Guardrails
+
+The bounded end-to-end exercise on issue `1335` exposed a few substrate gaps that this feature now needs to make explicit:
+
+- `pr-ready` must prefer repo-native readiness commands before manual inspection.
+  The preferred order is:
+  - `adl/tools/pr.sh ready`
+  - `adl pr ready`
+  - `adl/tools/pr.sh preflight`
+  - `adl pr preflight`
+  - direct inspection only as a last resort
+- `pr-run` must not report successful execution-context binding unless the worktree-local execution bundle is actually present.
+  After binding, the worktree-local `stp.md`, `sip.md`, and `sor.md` must exist or the run should stop as `blocked` or `failed`.
+- `pr-finish` needs a first-class skill contract.
+  The control plane already has a real finish surface, but the operational skill family also needs a truthful closeout/publish contract so end-to-end execution does not stop at a substrate gap.
+- support-skill actions must not silently pollute unrelated issues or PR-wave state.
+  Accidental side branches or PRs should be surfaced as workflow failures, not treated as invisible background noise.
 
 ## Safety and Repair Boundaries
 
@@ -365,6 +401,13 @@ The operational skills substrate is acceptable for `v0.87` when:
 - the skill produces a stable, reviewable output shape
 - sub-agent use is supported conceptually and does not contradict the packaging/invocation model
 
+For the first bounded substrate proof, the repo should package a small real skill family rather than a single one-off prompt file. In practice, the initial family can remain narrow:
+- `pr-init`
+- `pr-ready`
+- `pr-run`
+- `pr-finish`
+- `pr-janitor`
+
 ## Open Questions
 
 - Should `adl-skill.yaml` be required eventually, or remain optional?
@@ -382,7 +425,7 @@ The operational skills substrate is acceptable for `v0.87` when:
 ## Next Steps
 
 Derive or align the following docs/features from this substrate:
-- concrete initial skill docs (`preflight-check`, `card-review`, etc.)
+- concrete initial skill docs (`pr-ready`, card review, etc.)
 - output template / schema doc
 - skills demo surface for `v0.87`
 - later control-plane and trace integration work

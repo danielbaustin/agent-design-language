@@ -12,9 +12,14 @@ STP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_task_prompt.contract.yaml"
 SIP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_implementation_prompt.contract.yaml"
 SOR_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_output_record.contract.yaml"
 BASH_BIN="$(command -v bash)"
+REAL_ADL_BIN="$ROOT_DIR/adl/target/debug/adl"
 
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
+
+if [[ ! -x "$REAL_ADL_BIN" ]]; then
+  cargo build --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl >/dev/null
+fi
 
 origin="$tmpdir/origin.git"
 repo="$tmpdir/repo"
@@ -128,6 +133,7 @@ assert_contains() {
 export PATH="$mockbin:$PATH"
 TMP_PR_BODY="$tmpdir/pr_body.md"
 export TMP_PR_BODY
+export ADL_PR_RUST_BIN="$REAL_ADL_BIN"
 
 (
   cd "$repo"

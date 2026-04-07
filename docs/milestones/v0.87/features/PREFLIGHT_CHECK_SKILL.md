@@ -1,11 +1,11 @@
 
 
 ---
-name: preflight-check
+name: pr-ready
 description: Verify issue, task-bundle, worktree, branch, and card readiness before implementation begins. Use when starting issue work, when execution readiness is uncertain, or when the workflow state may be broken or incomplete.
 ---
 
-# Preflight Check
+# PR Ready
 
 ## Purpose
 
@@ -28,6 +28,9 @@ This is a **procedural execution skill**.
 Default mode:
 - `auto-apply` for very small, clearly bounded readiness repairs
 - otherwise `findings-only`
+
+Canonical packaged bundle for `v0.87`:
+- `adl/tools/skills/pr-ready/`
 
 ## Invocation
 
@@ -71,15 +74,15 @@ Useful additional inputs:
 ### Conflicting skills
 
 Potentially overlapping skills:
-- `issue-bootstrap`
+- `pr-init`
 - `card-review`
 - `pr-janitor`
 - `worktree-hygiene`
 
 ### Preferred-over rules
 
-- Prefer `preflight-check` over broader review skills when the immediate question is readiness.
-- Prefer `issue-bootstrap` when the task bundle does not exist at all and full bootstrap is required.
+- Prefer `pr-ready` over broader review skills when the immediate question is execution readiness.
+- Prefer `pr-init` when the task bundle does not exist at all and full bootstrap is required.
 - Prefer `card-review` when the workflow exists but content quality/truthfulness is the main question.
 - Prefer `worktree-hygiene` when the main problem is repository/worktree cleanup rather than issue readiness.
 
@@ -154,6 +157,17 @@ Verify:
 - demo/proof requirement state is explicit where needed
 - no obviously blocking placeholder/bootstrap text remains in critical execution surfaces
 
+### 6. Preferred command order
+
+Prefer repo-native readiness commands before manual inspection:
+- `adl/tools/pr.sh ready`
+- `adl pr ready`
+- `adl/tools/pr.sh preflight`
+- `adl pr preflight`
+
+Use direct inspection only after the repo-native readiness surfaces are unavailable or fail to produce a usable result.
+Do not skip straight to manual inspection merely because a built `adl` binary is absent if the shell compatibility surface still exists.
+
 ## Allowed Actions
 
 This skill may:
@@ -174,21 +188,24 @@ This skill must not:
 
 1. Identify the target issue/task context.
 2. Locate the relevant workflow surfaces.
-3. Check issue/task/branch/worktree consistency.
-4. Check core readiness surfaces for presence and obvious structural integrity.
-5. Distinguish:
+3. Prefer repo-native ready/preflight commands in the documented order before falling back to manual inspection.
+4. Check issue/task/branch/worktree consistency.
+5. Check core readiness surfaces for presence and obvious structural integrity.
+6. Distinguish execution readiness from current preflight state:
    - ready
    - ready with small bounded repairs
    - blocked
-6. Apply only clearly safe mechanical fixes if permitted.
-7. Emit a structured readiness result.
-8. Stop at the handoff boundary.
+7. Apply only clearly safe mechanical fixes if permitted.
+8. Emit a structured readiness result.
+9. Stop at the handoff boundary.
 
 ## Outputs
 
 Where practical, emit a structured output with fields such as:
 
 - `status` (`ready`, `ready_with_repairs`, `blocked`)
+- `execution_readiness`
+- `preflight_status`
 - `findings`
 - `actions_taken`
 - `actions_recommended`
@@ -229,7 +246,7 @@ Common failure modes:
 ## Escalation / Handoff
 
 Handoff targets may include:
-- `issue-bootstrap` when structure is missing entirely
+- `pr-init` when structure is missing entirely
 - `card-review` when content quality/truthfulness is the main problem
 - `worktree-hygiene` when the repo/worktree state is the real blocker
 - a human reviewer when ambiguity is material

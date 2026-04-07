@@ -1,0 +1,67 @@
+version: "0.1"
+kind: "adl-skill"
+id: "repo-code-review"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  intent:
+    - "repo_review"
+    - "risk_assessment"
+    - "release_readiness_review"
+  required_inputs:
+    - "repo_root_or_target_path"
+  optional_inputs:
+    - "branch"
+    - "diff_base"
+    - "changed_paths"
+    - "review_depth"
+  stop_if_missing:
+    - "repo_root_or_target_path"
+execution:
+  mode: "findings_only"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: true
+  test_policy: "run_targeted_local_tests_when_bounded"
+  docs_policy: "docs_support_code_review_but_do_not_dominate_when_executable_code_exists"
+  config_policy: "always_review_manifests_dependency_build_toolchain_ci_and_lockfile_surfaces"
+  permitted_scripts:
+    - path: "scripts/repo_inventory.py"
+      interpreter: "python3"
+      read_only: true
+      allowed_args:
+        - "<repo-root>"
+  preferred_read_order:
+    - "top_level_manifests"
+    - "dependency_and_build_config"
+    - "entrypoints"
+    - "core_runtime"
+    - "largest_code_files"
+    - "stateful_or_security_sensitive_code"
+    - "tests"
+boundaries:
+  ignore_by_default:
+    - "node_modules/**"
+    - ".git/**"
+    - "dist/**"
+    - "build/**"
+    - "target/**"
+    - "coverage/**"
+  review_generated_code_only_if_requested: true
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-repo-review.md"
+  required_sections:
+    - "findings"
+    - "assumptions"
+    - "coverage_summary"
+    - "validation_performed"
+    - "manifest_and_config_reviewed"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  manifest_declares_executables: true

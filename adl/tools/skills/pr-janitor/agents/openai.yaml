@@ -1,0 +1,4 @@
+display_name: PR Janitor
+short_description: Watch PR progress and triage blockers
+default_prompt: Monitor a PR, diagnose failed checks or conflicts, apply only bounded blocker-driven fixes when justified, and stop with a truthful progress result.
+preferred_model: gpt-5.4

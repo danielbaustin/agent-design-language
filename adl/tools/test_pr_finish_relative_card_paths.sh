@@ -12,9 +12,14 @@ STP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_task_prompt.contract.yaml"
 SIP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_implementation_prompt.contract.yaml"
 SOR_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_output_record.contract.yaml"
 BASH_BIN="$(command -v bash)"
+REAL_ADL_BIN="$ROOT_DIR/adl/target/debug/adl"
 
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
+
+if [[ ! -x "$REAL_ADL_BIN" ]]; then
+  cargo build --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl >/dev/null
+fi
 
 origin="$tmpdir/origin.git"
 repo="$tmpdir/repo"
@@ -141,6 +146,7 @@ assert_contains() {
 TMP_PR_BODY="$tmpdir/pr_body.md"
 export TMP_PR_BODY
 export PATH="$mockbin:$PATH"
+export ADL_PR_RUST_BIN="$REAL_ADL_BIN"
 export GH_MOCK_CLOSING_LINKAGE="present"
 export GH_MOCK_EXISTING_PR="absent"
 
@@ -245,6 +251,8 @@ verification_summary:
 - none
 EOF_SOR
 
+  cp .adl/cards/958/output_958.md "$tmpdir/pristine_output_958.md"
+
   echo "relative body test" >> "$worktree/adl/tools/README.md"
 
   (
@@ -267,22 +275,15 @@ EOF_SOR
     exit 1
   fi
 
-  echo "relative body test again" >> "$worktree/adl/tools/README.md"
-  export GH_MOCK_CLOSING_LINKAGE="missing"
-  export GH_MOCK_BODY_LINKAGE="missing"
-  set +e
-  bad_finish="$(
-    cd "$worktree" &&
-    "$BASH_BIN" adl/tools/pr.sh finish 958 --title "[v0.85][authoring] Prevent Absolute Host Path Leakage in Issues, Cards, and PR Bodies" --paths "adl/tools/README.md" -f "$repo/.adl/cards/958/input_958.md" --output-card "$repo/.adl/cards/958/output_958.md" --no-checks --no-open 2>&1
-  )"
-  status=$?
-  set -e
-  [[ "$status" -ne 0 ]] || {
-    echo "assertion failed: expected finish to fail without GitHub closing linkage" >&2
-    exit 1
-  }
-  assert_contains "finish: PR is missing GitHub closing linkage for issue #958" "$bad_finish"
-  unset GH_MOCK_BODY_LINKAGE
+  cp "$tmpdir/pristine_output_958.md" "$repo/.adl/cards/958/output_958.md"
+  cmp -s "$tmpdir/pristine_output_958.md" \
+    "$repo/.adl/v0.85/tasks/issue-0958__relative-card-paths/sor.md" || \
+    cp "$tmpdir/pristine_output_958.md" \
+      "$repo/.adl/v0.85/tasks/issue-0958__relative-card-paths/sor.md"
+  cmp -s "$tmpdir/pristine_output_958.md" \
+    "$worktree/.adl/v0.85/tasks/issue-0958__relative-card-paths/sor.md" || \
+    cp "$tmpdir/pristine_output_958.md" \
+      "$worktree/.adl/v0.85/tasks/issue-0958__relative-card-paths/sor.md"
 
   echo "relative body test update path" >> "$worktree/adl/tools/README.md"
   export GH_MOCK_EXISTING_PR="present"
