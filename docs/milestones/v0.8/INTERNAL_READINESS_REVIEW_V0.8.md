@@ -22,7 +22,7 @@ Observed directly from:
 - `docs/milestones/v0.8/RUST_TRANSPILER_VERIFICATION_V0.8.md`
 - `README.md`
 - `swarm/Cargo.toml`
-- runtime/demo surfaces under `swarm/src/godel/`, `swarm/src/demo.rs`, `tools/transpiler_demo/`, `examples/`, and `demos/`
+- runtime/demo surfaces under `swarm/src/godel/`, `swarm/src/demo.rs`, `examples/transpiler_demo/`, `examples/`, and `demos/`
 - `demos/godel_failure_hypothesis_experiment.md`
 - `demos/aee-recovery/README.md`
 
@@ -32,7 +32,7 @@ Validated by:
 - file existence/path checks for current review-packet docs and runnable demo surfaces
 
 - from the runtime crate directory: `cargo test --workspace`
-- `cd tools/transpiler_demo && cargo run --quiet`
+- `cd examples/transpiler_demo && cargo run --quiet`
 - `rg -n '\{\{[^}]+\}\}' docs/milestones/v0.8 docs/tooling README.md */README.md`
 - host-path leakage scan across milestone and tooling docs
 
@@ -41,7 +41,7 @@ Validated by:
 ### Observed facts
 - `cargo test --manifest-path swarm/Cargo.toml --workspace` passes on this branch.
 - The repo contains real bounded Gödel runtime code, deterministic tests, ObsMem integration surfaces, and runnable demo paths.
-- The transpiler scaffold remains runnable under `tools/transpiler_demo/`.
+- The transpiler scaffold remains runnable under `examples/transpiler_demo/`.
 
 ### Inferred conclusion
 - v0.8 has enough real implementation to justify serious external review soon.

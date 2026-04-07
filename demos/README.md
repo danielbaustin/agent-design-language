@@ -19,7 +19,7 @@ If you want the current `v0.86` milestone review surface:
 If you want the historical `v0.8` flagship demo surface:
 
 ```bash
-cargo run --manifest-path tools/transpiler_demo/Cargo.toml --quiet
+cargo run --manifest-path examples/transpiler_demo/Cargo.toml --quiet
 ```
 
 ## Demo Categories

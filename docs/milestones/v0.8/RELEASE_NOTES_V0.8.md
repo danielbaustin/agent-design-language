@@ -47,7 +47,7 @@ This milestone remains intentionally bounded: it does not claim autonomous polic
 
 ### Bounded Rust Transpiler Scaffold
 - v0.8 includes a deterministic transpiler demo scaffold and verification flow:
-  - `tools/transpiler_demo/`
+  - `examples/transpiler_demo/`
   - `demos/rust-transpiler/workflow/rust_transpiler_demo.yaml`
   - `demos/rust-transpiler/output/`
 - This remains a bounded demo surface, not a production transpiler pipeline.
