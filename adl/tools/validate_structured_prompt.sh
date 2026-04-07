@@ -57,7 +57,7 @@ strip_quotes() {
 
 valid_slug() { [[ "$1" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; }
 valid_task_id() { [[ "$1" =~ ^issue-[0-9]{4}$ ]]; }
-valid_version() { [[ "$1" =~ ^v[0-9]+\.[0-9]+$ ]]; }
+valid_version() { [[ "$1" =~ ^v[0-9]+\.[0-9]+(\.[0-9]+)*$ ]]; }
 valid_branch() { [[ "$1" =~ ^codex/[a-z0-9][a-z0-9-]*$ ]]; }
 valid_bool() { [[ "$1" == "true" || "$1" == "false" ]]; }
 valid_github_issue_url() { [[ "$1" =~ ^https://github\.com/[^/]+/[^/]+/issues/[0-9]+$ ]]; }
@@ -284,7 +284,7 @@ validate_sip() {
   require_sip_sections "$file"
   v="$(trim "$(md_field "$file" "Task ID")")"; require_nonblank "Task ID" "$v"; valid_task_id "$v" || die "Task ID must match issue-0000"
   v="$(trim "$(md_field "$file" "Run ID")")"; require_nonblank "Run ID" "$v"; valid_task_id "$v" || die "Run ID must match issue-0000"
-  v="$(trim "$(md_field "$file" "Version")")"; require_nonblank "Version" "$v"; valid_version "$v" || die "Version must match v0.85-style version format"
+  v="$(trim "$(md_field "$file" "Version")")"; require_nonblank "Version" "$v"; valid_version "$v" || die "Version must match milestone version format (for example v0.85 or v0.87.1)"
   v="$(trim "$(md_field "$file" "Title")")"; require_nonblank "Title" "$v"
   v="$(trim "$(md_field "$file" "Branch")")"; require_nonblank "Branch" "$v"; valid_branch "$v" || die "Branch must be a codex/ branch"
   v="$(trim "$(md_block_field "$file" "Context" "Issue")")"; require_nonblank "Context.Issue" "$v"; valid_github_issue_url "$v" || die "Context.Issue must be a GitHub issue URL"
@@ -304,7 +304,7 @@ validate_sor() {
   require_sor_sections "$file"
   v="$(trim "$(md_field "$file" "Task ID")")"; require_nonblank "Task ID" "$v"; valid_task_id "$v" || die "Task ID must match issue-0000"
   v="$(trim "$(md_field "$file" "Run ID")")"; require_nonblank "Run ID" "$v"; valid_task_id "$v" || die "Run ID must match issue-0000"
-  v="$(trim "$(md_field "$file" "Version")")"; require_nonblank "Version" "$v"; valid_version "$v" || die "Version must match v0.85-style version format"
+  v="$(trim "$(md_field "$file" "Version")")"; require_nonblank "Version" "$v"; valid_version "$v" || die "Version must match milestone version format (for example v0.85 or v0.87.1)"
   v="$(trim "$(md_field "$file" "Title")")"; require_nonblank "Title" "$v"
   v="$(trim "$(md_field "$file" "Branch")")"; require_nonblank "Branch" "$v"; valid_branch "$v" || die "Branch must be a codex/ branch"
   status="$(trim "$(md_field "$file" "Status")")"; require_nonblank "Status" "$status"; [[ "$status" =~ ^(NOT_STARTED|IN_PROGRESS|DONE|FAILED)$ ]] || die "Status must be one of: NOT_STARTED, IN_PROGRESS, DONE, FAILED"

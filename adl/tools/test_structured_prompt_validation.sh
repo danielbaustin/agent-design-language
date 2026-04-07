@@ -214,6 +214,14 @@ EOF
 "$VALIDATOR" --type sip --phase bootstrap --input "$tmpdir/sip_valid.md"
 "$VALIDATOR" --type sor --phase bootstrap --input "$tmpdir/sor_valid.md"
 
+cp "$tmpdir/sip_valid.md" "$tmpdir/sip_dot_version_valid.md"
+perl -0pi -e 's/Version: v0\.85/Version: v0.87.1/' "$tmpdir/sip_dot_version_valid.md"
+"$VALIDATOR" --type sip --phase bootstrap --input "$tmpdir/sip_dot_version_valid.md"
+
+cp "$tmpdir/sor_valid.md" "$tmpdir/sor_dot_version_valid.md"
+perl -0pi -e 's/Version: v0\.85/Version: v0.87.1/' "$tmpdir/sor_dot_version_valid.md"
+"$VALIDATOR" --type sor --phase bootstrap --input "$tmpdir/sor_dot_version_valid.md"
+
 cat >"$tmpdir/sip_blank_context_invalid.md" <<'EOF'
 # ADL Input Card
 

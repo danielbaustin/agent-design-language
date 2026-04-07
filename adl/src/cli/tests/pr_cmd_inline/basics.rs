@@ -99,6 +99,10 @@ fn version_can_be_inferred_from_labels_or_title() {
         version_from_title("[v0.86][WP-15] Implement local agent demo program"),
         Some("v0.86".to_string())
     );
+    assert_eq!(
+        version_from_title("[v0.87.1][tools] Support dot suffixed milestone versions"),
+        Some("v0.87.1".to_string())
+    );
     assert_eq!(version_from_title("No version title"), None);
 }
 
@@ -197,6 +201,22 @@ fn parse_create_args_accepts_issue_creation_flags() {
         Some("track:roadmap,type:task,area:tools")
     );
     assert_eq!(parsed.version.as_deref(), Some("v0.86"));
+}
+
+#[test]
+fn parse_create_args_accepts_dot_suffixed_version() {
+    let parsed = parse_create_args(&[
+        "--title".to_string(),
+        "[v0.87.1][tools] Dot suffixed milestone support".to_string(),
+        "--version".to_string(),
+        "v0.87.1".to_string(),
+    ])
+    .expect("parse");
+    assert_eq!(
+        parsed.title_arg.as_deref(),
+        Some("[v0.87.1][tools] Dot suffixed milestone support")
+    );
+    assert_eq!(parsed.version.as_deref(), Some("v0.87.1"));
 }
 
 #[test]
