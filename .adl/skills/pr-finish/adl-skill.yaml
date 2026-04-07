@@ -1,0 +1,60 @@
+version: "0.1"
+kind: "adl-skill"
+id: "pr-finish"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "pr_finish.v1"
+    reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/PR_FINISH_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "finish_issue"
+      - "finish_branch"
+      - "finish_worktree"
+  intent:
+    - "issue_closeout"
+    - "pr_publication"
+    - "finish_phase"
+  required_inputs:
+    - "repo_root"
+    - "title"
+  require_one_of:
+    - "issue_number"
+    - "branch"
+    - "worktree_path"
+execution:
+  mode: "auto_apply"
+  allow_code_edits: true
+  allow_network: true
+  allow_subagents: false
+  parallelism_policy: "parallel_across_distinct_issues_only"
+  workflow_role: "finish"
+  preferred_commands:
+    - "adl/tools/pr.sh finish"
+    - "adl pr finish"
+  preferred_path: "repo_native_finish_surface"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  writes_limited_to:
+    - "issue-scoped repository files"
+    - ".adl/**"
+    - "issue worktree surfaces"
+  must_not_write:
+    - "unrelated issue worktrees"
+    - "unrelated task bundles"
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-pr-finish.md"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
