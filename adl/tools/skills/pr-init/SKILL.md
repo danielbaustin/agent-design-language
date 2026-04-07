@@ -29,6 +29,9 @@ Within this skill bundle, the operational details live in:
 - `references/init-playbook.md`
 - `references/output-contract.md`
 
+The canonical caller-facing invocation template lives at:
+- `/Users/daniel/git/agent-design-language/docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
+
 If those docs move, prefer the moved tracked canonical copies over stale path references. Do not silently invent a new workflow model from memory when the repo docs have changed.
 
 ## Current Compatibility Model
@@ -87,6 +90,10 @@ For deterministic ADL execution, also prefer an explicit issue-metadata policy:
 - how labels are chosen or normalized
 - whether body content is user-authored or bootstrap-generated
 
+When the caller can provide structured input, prefer the tracked invocation
+template in:
+- `/Users/daniel/git/agent-design-language/docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
+
 If no slug is given, derive one from the title using the repo's normal slug rules.
 
 ## Quick Start
@@ -94,18 +101,20 @@ If no slug is given, derive one from the title using the repo's normal slug rule
 1. Resolve whether the request is:
    - `bootstrap-existing-issue`
    - `create-and-bootstrap-new-issue`
-2. Prefer the Rust-owned path when available.
-3. For new issues:
+2. If using structured invocation, start from the canonical tracked template
+   rather than writing the payload from scratch.
+3. Prefer the Rust-owned path when available.
+4. For new issues:
    - create the GitHub issue correctly
    - ensure the canonical local source issue prompt and root bundle exist
-4. For existing issues:
+5. For existing issues:
    - run the bootstrap/init phase
    - seed the task-bundle `stp.md`
    - seed the initial `sip.md`
    - seed the initial `sor.md`
    - ensure canonical compatibility links exist when the repo expects them
-5. Validate the resulting surfaces mechanically.
-6. Emit a structured readiness result for qualitative card review and stop.
+6. Validate the resulting surfaces mechanically.
+7. Emit a structured readiness result for qualitative card review and stop.
 
 ## Workflow
 
@@ -198,6 +207,9 @@ Prefer repo-native control-plane commands such as:
 - `adl/tools/pr.sh init`
 - `adl pr create`
 - `adl pr init`
+
+For caller payload shape, prefer the canonical tracked template:
+- `/Users/daniel/git/agent-design-language/docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
 
 Use existing templates, validation helpers, and path logic from the repository. Do not recreate bundle contents manually unless the repo-native path is unavailable and the user explicitly wants a fallback.
 

@@ -6,7 +6,7 @@
 - Status: `proposed`
 - Owner: `Daniel Austin / Agent Logic`
 - Doc Role: `primary`
-- Supporting Docs: `adl/tools/skills/pr-init/SKILL.md`, `adl/tools/skills/pr-init/adl-skill.yaml`, `docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
+- Supporting Docs: `adl/tools/skills/pr-init/SKILL.md`, `adl/tools/skills/pr-init/adl-skill.yaml`, `docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`, `docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
 - Feature Types: `schema`, `policy`, `artifact`
 - Proof Modes: `review`, `tests`
 
@@ -39,6 +39,7 @@ validate-able, and portable across:
   - `adl/tools/skills/pr-init/SKILL.md`
   - `adl/tools/skills/pr-init/adl-skill.yaml`
   - `adl/tools/skills/pr-init/references/output-contract.md`
+  - `docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
   - `docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
 
 The current `pr-init` skill already distinguishes two real execution
@@ -72,6 +73,7 @@ This document covers the input schema of the `pr-init` skill.
 - Related / supporting docs:
   - `adl/tools/skills/pr-init/SKILL.md`
   - `adl/tools/skills/pr-init/adl-skill.yaml`
+  - `docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
   - `docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_FEATURE.md`
 
 ## Overview
@@ -225,6 +227,9 @@ The skill is responsible for:
 Sub-agent prompts should embed the structured payload directly rather than
 describing the task loosely in prose.
 
+The canonical caller template now lives at:
+- `docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
+
 Recommended shape:
 
 ```yaml
@@ -251,6 +256,9 @@ policy:
 
 This keeps the invocation inspectable and makes failure reasons easier to
 attribute to input validation versus skill execution.
+
+For day-to-day use, prefer copying the tracked template and only changing the
+issue-specific fields rather than rewriting this example from memory.
 
 ## Data / Artifacts
 
