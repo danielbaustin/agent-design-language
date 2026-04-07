@@ -1,5 +1,6 @@
 use anyhow::{anyhow, bail, Context, Result};
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -159,6 +160,7 @@ fn real_pr_create(args: &[String]) -> Result<()> {
     validate_issue_body_for_create(&repo_root, &title, &normalized_labels, &slug, &create_body)?;
     let issue_url = gh_issue_create(&repo, &title, &create_body, &normalized_labels)?;
     let issue = parse_issue_number_from_url(&issue_url)?;
+    ensure_issue_labels(&repo, issue, &normalized_labels)?;
     let issue_ref = IssueRef::new(issue, version.clone(), slug.clone())?;
     let final_body = if body.trim().is_empty() {
         render_generated_issue_body(
@@ -1522,6 +1524,53 @@ fn gh_issue_create(repo: &str, title: &str, body: &str, labels_csv: &str) -> Res
         bail!("init: gh issue create returned empty output");
     }
     Ok(stdout)
+}
+
+fn issue_label_names(issue: u32, repo: &str) -> Result<Vec<String>> {
+    let labels = run_capture_allow_failure(
+        "gh",
+        &[
+            "issue",
+            "view",
+            &issue.to_string(),
+            "-R",
+            repo,
+            "--json",
+            "labels",
+            "-q",
+            ".labels[].name",
+        ],
+    )?
+    .unwrap_or_default();
+    Ok(labels
+        .lines()
+        .map(str::trim)
+        .filter(|label| !label.is_empty())
+        .map(ToString::to_string)
+        .collect())
+}
+
+fn ensure_issue_labels(repo: &str, issue: u32, labels_csv: &str) -> Result<()> {
+    let expected: BTreeSet<String> = labels_csv
+        .split(',')
+        .map(str::trim)
+        .filter(|label| !label.is_empty())
+        .map(ToString::to_string)
+        .collect();
+    if expected.is_empty() {
+        bail!("create: expected at least one label for tracked issue creation");
+    }
+
+    let actual: BTreeSet<String> = issue_label_names(issue, repo)?.into_iter().collect();
+    let missing: Vec<String> = expected.difference(&actual).cloned().collect();
+    if !missing.is_empty() {
+        bail!(
+            "create: issue #{} is missing expected labels after gh issue create: {}",
+            issue,
+            missing.join(", ")
+        );
+    }
+    Ok(())
 }
 
 fn gh_issue_edit_body(repo: &str, issue: u32, body: &str) -> Result<()> {
