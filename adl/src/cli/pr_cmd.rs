@@ -178,7 +178,6 @@ fn real_pr_create(args: &[String]) -> Result<()> {
         &final_body,
     )?;
     validate_bootstrap_stp(&repo_root, &source_path)?;
-    validate_authored_prompt_surface("create", &source_path, PromptSurfaceKind::IssuePrompt)?;
     if create_body != final_body {
         gh_issue_edit_body(&repo, issue, &final_body)?;
     }

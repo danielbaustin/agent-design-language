@@ -27,6 +27,18 @@ fn render_generated_issue_prompt_preserves_bootstrap_contract() {
 }
 
 #[test]
+fn render_generated_issue_prompt_is_detected_as_bootstrap_stub() {
+    let content = render_generated_issue_prompt(
+        1153,
+        "v0-86-tools-replace-bootstrap-stub",
+        "[v0.86][tools] Replace bootstrap stub",
+        "track:roadmap,type:task,area:tools,version:v0.86",
+        "https://github.com/example/repo/issues/1153",
+    );
+    assert!(bootstrap_stub_reason(&content, PromptSurfaceKind::IssuePrompt).is_some());
+}
+
+#[test]
 fn load_issue_prompt_parses_front_matter_and_body() {
     let dir = unique_temp_dir("adl-pr-load-prompt");
     let path = dir.join("issue.md");
