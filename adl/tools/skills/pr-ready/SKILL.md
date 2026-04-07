@@ -89,26 +89,27 @@ If there is no concrete target, stop and report `blocked` with the missing targe
 ## Quick Start
 
 1. Resolve the concrete target context.
-2. Prefer repo-native diagnostic commands in this order:
+2. Prefer the canonical doctor path first:
    - `adl/tools/pr.sh doctor --json`
    - `adl pr doctor --json`
+3. Use compatibility aliases only when the canonical doctor surface is unavailable:
    - `adl/tools/pr.sh ready`
    - `adl pr ready`
    - `adl/tools/pr.sh preflight`
    - `adl pr preflight`
-   - direct inspection only as a last resort
-3. Inspect the relevant workflow surfaces:
+4. Use direct inspection only as a last resort.
+5. Inspect the relevant workflow surfaces:
    - issue/task identity
    - source prompt, STP, SIP, SOR
    - branch and worktree state
    - milestone/open-PR preflight state if relevant
-4. Distinguish:
+6. Distinguish:
    - `ready`
    - `ready_with_repairs`
    - `blocked`
-5. Report preflight or scheduling gates separately from execution readiness when the issue structure itself is sound.
-5. Apply only clearly safe bounded repairs if permitted.
-6. Emit a structured readiness result and stop.
+7. Report preflight or scheduling gates separately from execution readiness when the issue structure itself is sound.
+8. Apply only clearly safe bounded repairs if permitted.
+9. Emit a structured readiness result and stop.
 
 ## Workflow
 
@@ -197,9 +198,11 @@ Unsafe parallel examples:
 
 ## Preferred Commands
 
-Prefer repo-native control-plane commands such as:
+Canonical machine surface:
 - `adl/tools/pr.sh doctor --json`
 - `adl pr doctor --json`
+
+Compatibility aliases:
 - `adl/tools/pr.sh ready`
 - `adl/tools/pr.sh preflight`
 - `adl pr ready`

@@ -85,7 +85,7 @@ execution:
     - "silent_merge"
     - "silent_closeout"
     - "unreviewed_scope_expansion"
-  preferred_path: "pr_metadata_plus_local_branch_state_plus_bounded_validation"
+  preferred_path: "validated_structured_input_plus_pr_metadata_surface_plus_local_branch_state_plus_bounded_validation"
   repair_policy: "allow_only_blocker_driven_bounded_fixes_when_justified"
   invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
 boundaries:

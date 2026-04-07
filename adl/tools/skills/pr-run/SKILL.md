@@ -94,14 +94,15 @@ If there is no concrete target, stop and report `blocked`.
 ## Quick Start
 
 1. Resolve the concrete issue target.
-2. Confirm doctor status before implementation.
-3. Bind or confirm the issue branch and worktree using repo-native `run` behavior.
-4. Verify that the worktree-local STP, SIP, and SOR execution bundle now exists.
-5. Read the source prompt, STP, SIP, and current output card.
-6. Perform only the bounded work required for the issue.
-7. Run the smallest truthful validation set.
-8. Update the output card or execution record truthfully.
-9. Stop before janitor/closeout.
+2. Confirm doctor status before implementation, using doctor JSON first.
+3. Use compatibility readiness/preflight aliases only if the canonical doctor surface is unavailable.
+4. Bind or confirm the issue branch and worktree using repo-native `run` behavior.
+5. Verify that the worktree-local STP, SIP, and SOR execution bundle now exists.
+6. Read the source prompt, STP, SIP, and current output card.
+7. Perform only the bounded work required for the issue.
+8. Run the smallest truthful validation set.
+9. Update the output card or execution record truthfully.
+10. Stop before janitor/closeout.
 
 ## Workflow
 
@@ -238,11 +239,15 @@ Unsafe parallel examples:
 
 ## Preferred Commands
 
-Prefer repo-native control-plane commands such as:
+Canonical machine surface:
 - `adl/tools/pr.sh doctor --json`
 - `adl pr doctor --json`
+
+Execution surface:
 - `adl/tools/pr.sh run`
 - `adl pr run`
+
+Compatibility aliases:
 - `adl/tools/pr.sh ready`
 - `adl/tools/pr.sh preflight`
 - `adl pr ready`
