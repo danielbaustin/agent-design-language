@@ -5,7 +5,7 @@
 Provide the canonical index for the promoted `v0.87` feature documents.
 
 This page is an index, not a template. The feature-doc template lives in:
-- `.adl/templates/FEATURE_DOC_TEMPLATE.md`
+- `docs/templates/FEATURE_DOC_TEMPLATE.md`
 
 The documents listed here are the milestone-owned feature surfaces that support the `v0.87` substrate claim set.
 

@@ -79,7 +79,7 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1152, "v0.86", "rust-start-ready-test").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust start ready test");
-    let local_templates = repo.join(".adl/templates");
+    let local_templates = repo.join("docs/templates");
     fs::create_dir_all(local_templates.join("nested")).expect("create local templates");
     fs::write(
         local_templates.join("README_TEMPLATE.md"),
@@ -163,12 +163,12 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
     assert!(issue_ref.task_bundle_input_path(&worktree).is_file());
     assert!(issue_ref.task_bundle_output_path(&worktree).is_file());
     assert_eq!(
-        fs::read_to_string(worktree.join(".adl/templates/README_TEMPLATE.md"))
+        fs::read_to_string(worktree.join("docs/templates/README_TEMPLATE.md"))
             .expect("read mirrored template"),
         "# canonical readme template\n"
     );
     assert_eq!(
-        fs::read_to_string(worktree.join(".adl/templates/nested/FEATURE_DOC_TEMPLATE.md"))
+        fs::read_to_string(worktree.join("docs/templates/nested/FEATURE_DOC_TEMPLATE.md"))
             .expect("read mirrored nested template"),
         "# canonical feature doc template\n"
     );
