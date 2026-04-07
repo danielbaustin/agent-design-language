@@ -21,8 +21,11 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 From repo root:
 
 ```bash
-# install or resync the canonical operational skill bundles into $CODEX_HOME/skills
+# install or resync the canonical operational skill bundles into $CODEX_HOME/skills (default: copy mode)
 bash adl/tools/install_adl_operational_skills.sh
+
+# install the same bundles as symlinks so Codex reads the tracked repo copies directly
+ADL_OPERATIONAL_SKILLS_INSTALL_MODE=symlink bash adl/tools/install_adl_operational_skills.sh
 
 # install or resync the legacy adl_pr_cycle compatibility skill from the tracked contract
 bash adl/tools/install_adl_pr_cycle_skill.sh
