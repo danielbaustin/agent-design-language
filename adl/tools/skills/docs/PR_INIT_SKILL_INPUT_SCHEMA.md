@@ -152,15 +152,19 @@ Required:
 Optional:
 - `issue.slug`
 - `issue.version`
-- `issue.labels`
 - `issue.body`
 - `issue.body_file`
+
+Required for tracked issue creation:
+- `issue.labels`
 
 Disallowed:
 - `issue.number` as the primary driver of mode selection
 
 Expected behavior:
 - create the GitHub issue
+- require explicit repo-standard labels for tracked issue creation
+- verify the created issue actually carries those labels
 - capture the created issue number and URL
 - seed the canonical local source prompt and root bundle
 - validate mechanical bootstrap
@@ -206,8 +210,8 @@ Callers must validate all of the following before skill invocation:
 5. `policy.stop_after_bootstrap` is `true`
 6. if `issue.slug` is omitted, `policy.allow_slug_derivation` must be `true`
 7. if `issue.version` is omitted, `policy.version_source` must allow inference
-8. if `issue.labels` are omitted for new-issue creation, `policy.label_source`
-   must allow inference or normalization
+8. if `mode = create_and_bootstrap`, `issue.labels` must be present
+9. if `mode = create_and_bootstrap`, `policy.label_source` must be `explicit`
 
 ### Caller Responsibilities
 
@@ -220,6 +224,7 @@ The caller is responsible for:
 The skill is responsible for:
 - executing the bootstrap step truthfully
 - applying only the inference allowed by policy
+- verifying label application after tracked issue creation
 - returning exact created/resolved identities and paths
 
 ### Sub-Agent Invocation Guidance

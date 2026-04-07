@@ -125,6 +125,7 @@ Minimum:
 - one of:
   - `issue.number`
   - `issue.title`
+- for new tracked issues, explicit `issue.labels`
 
 Structured schema:
 
@@ -142,6 +143,13 @@ Structured schema:
 - `adl/tools/pr.sh init`
 - `adl pr create`
 - `adl pr init`
+
+For `create_and_bootstrap`, the expected machine-safe path is:
+
+- pass explicit repo-standard labels
+- create the issue
+- verify the created issue actually carries those labels
+- only then continue with source-prompt and root-bundle bootstrap
 
 ### Output And Stop Boundary
 

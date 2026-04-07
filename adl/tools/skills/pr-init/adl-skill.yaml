@@ -29,6 +29,7 @@ admission:
       create_and_bootstrap:
         required_issue_fields:
           - "title"
+          - "labels"
       bootstrap_existing_issue:
         required_issue_fields:
           - "number"
@@ -59,6 +60,8 @@ admission:
     - "at_most_one_of_issue.body_and_issue.body_file_may_be_set"
     - "policy.stop_after_bootstrap_must_be_true"
     - "slug_omission_requires_policy.allow_slug_derivation_true"
+    - "create_and_bootstrap_requires_explicit_issue.labels"
+    - "create_and_bootstrap_requires_policy.label_source_explicit"
 execution:
   mode: "auto_apply"
   allow_code_edits: false
@@ -78,7 +81,7 @@ execution:
     - "adl pr create"
     - "adl pr init"
   preferred_path: "rust_owned_control_plane_when_available"
-  validation_policy: "must_verify_issue_source_prompt_root_bundle_and_no_branch_or_worktree_side_effects"
+  validation_policy: "must_verify_issue_labels_source_prompt_root_bundle_and_no_branch_or_worktree_side_effects"
 boundaries:
   writes_limited_to:
     - ".adl/**"

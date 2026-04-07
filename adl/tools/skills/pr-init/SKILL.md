@@ -82,7 +82,7 @@ For new issue creation, prefer:
 - title
 - slug, if explicitly supplied
 - version or milestone scope, if known
-- labels, if known
+- labels matching the repo-standard tracked issue set
 - issue body or body file, if the user provides one
 
 For deterministic ADL execution, also prefer an explicit issue-metadata policy:
@@ -106,6 +106,8 @@ If no slug is given, derive one from the title using the repo's normal slug rule
 3. Prefer the Rust-owned path when available.
 4. For new issues:
    - create the GitHub issue correctly
+   - pass explicit repo-standard labels rather than relying on label inference
+   - verify the created issue actually has the expected labels before continuing
    - ensure the canonical local source issue prompt and root bundle exist
 5. For existing issues:
    - run the bootstrap/init phase
@@ -131,7 +133,9 @@ Use one of these modes:
 
 For `create_and_bootstrap`:
 - prefer the repository's standard issue-creation path
+- require explicit labels for tracked issue creation
 - create the GitHub issue with the correct title, labels, version, and body inputs
+- verify the created issue carries the requested labels before treating bootstrap as successful
 - capture the resulting issue number and URL
 - ensure the canonical local source prompt is generated or written in the expected location
 
@@ -156,6 +160,7 @@ Do not qualitatively rewrite STP or SIP content in this step beyond the mechanic
 
 Validation must confirm:
 - the GitHub issue exists or was created successfully
+- new tracked issues have the expected labels after creation
 - the canonical source issue prompt exists
 - the expected task-bundle directory exists
 - `stp.md`, `sip.md`, and `sor.md` exist in the bundle

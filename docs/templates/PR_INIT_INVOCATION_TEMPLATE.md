@@ -35,7 +35,7 @@ issue:
   title: null | "[v0.87][tools] Example issue"
   slug: null | "example-issue"
   version: null | "v0.87"
-  labels: null | "track:roadmap,type:task,area:tools"
+  labels: "track:roadmap,type:task,area:tools" | "<explicit repo-standard labels>"
   body: null | "<inline issue body>"
   body_file: null | "path/to/body.md"
 
@@ -57,11 +57,13 @@ Minimum practical payload:
 - `mode: create_and_bootstrap`
 - `repo_root`
 - `issue.title`
+- `issue.labels`
 - `policy.stop_after_bootstrap: true`
 
 Typical choices:
 - `issue.number: null`
 - `policy.body_source: generated` when you want the control plane to generate the first readable body
+- `policy.label_source: explicit` for tracked issue creation
 
 ### `bootstrap_existing_issue`
 
@@ -153,7 +155,9 @@ Before invocation, confirm:
 - exactly one mode contract is satisfied
 - at most one of `issue.body` and `issue.body_file` is set
 - `policy.stop_after_bootstrap` is `true`
-- any omitted slug/version/labels are allowed to be inferred by policy
+- any omitted slug/version are allowed to be inferred by policy
+- `create_and_bootstrap` includes explicit repo-standard labels
+- `create_and_bootstrap` uses `policy.label_source: explicit`
 
 ## Related Docs
 
