@@ -6,7 +6,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 
 ## What Is Here
 
-- `pr.sh`: canonical issue start/finish workflow helper.
+- `pr.sh`: canonical issue init/ready/run/finish workflow helper.
 - `worktree_doctor.sh`, `worktree_prune.sh`: deterministic worktree governance and safe cleanup helpers.
 - `card_prompt.sh`: deterministic input-card parser that generates execution prompts.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
@@ -21,11 +21,20 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 From repo root:
 
 ```bash
-# install or resync the local adl_pr_cycle Codex skill from the tracked contract
+# install or resync the canonical operational skill bundles into $CODEX_HOME/skills
+bash adl/tools/install_adl_operational_skills.sh
+
+# install or resync the legacy adl_pr_cycle compatibility skill from the tracked contract
 bash adl/tools/install_adl_pr_cycle_skill.sh
 
-# start issue branch + cards
-bash ./adl/tools/pr.sh start <issue_num> --slug <slug>
+# bootstrap the local root task bundle for an existing issue
+bash ./adl/tools/pr.sh init <issue_num> --slug <slug>
+
+# inspect structural readiness separately from current preflight gates
+bash ./adl/tools/pr.sh ready <issue_num> --slug <slug>
+
+# bind execution context at the last responsible moment
+bash ./adl/tools/pr.sh run <issue_num> --slug <slug>
 
 # inspect worktree status/fate across managed, stale, orphan, and Codex-ephemeral namespaces
 ./adl/tools/worktree_doctor.sh
@@ -53,7 +62,7 @@ bash ./adl/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>"
 
 - Root project entrypoint: `../../README.md`
 - Runtime/CLI usage: `../README.md`
-- Active milestone docs: `../../docs/milestones/v0.86/`
+- Active milestone docs: `../../docs/milestones/v0.87/`
 - Documentation index: `../../docs/README.md`
 - ADRs: `../../docs/adr/`
 - ADL spec entrypoint: `../../adl-spec/README.md`

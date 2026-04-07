@@ -19,9 +19,9 @@ assert_contains() {
 
 assert_contains "  create" "$HELP_OUT" "help lists pr create"
 assert_contains "  init" "$HELP_OUT" "help lists pr init"
-assert_contains "  start" "$HELP_OUT" "help lists pr start"
 assert_contains "  run" "$HELP_OUT" "help lists pr run"
 assert_contains "  finish" "$HELP_OUT" "help lists pr finish"
+assert_contains 'pr start <issue> ...` remains only as a legacy alias' "$HELP_OUT" "help documents pr start as legacy alias"
 
 grep -Fq '| `pr create` | yes | no | control-plane only |' "$ROOT_DIR/docs/tooling/editor/command_adapter.md" || {
   echo "assertion failed: command_adapter.md must keep pr create control-plane only" >&2

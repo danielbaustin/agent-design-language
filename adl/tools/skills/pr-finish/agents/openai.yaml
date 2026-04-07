@@ -1,0 +1,3 @@
+display_name: PR Finish
+short_description: Truthful issue closeout and PR publication
+default_prompt: Finish a prepared issue by validating the output record, staging the intended paths, and publishing or updating the draft PR.

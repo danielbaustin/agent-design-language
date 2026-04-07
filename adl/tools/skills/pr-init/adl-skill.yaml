@@ -1,0 +1,106 @@
+version: "0.1"
+kind: "adl-skill"
+id: "pr-init"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "pr_init.v1"
+    reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/PR_INIT_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "issue"
+      - "policy"
+    mode_enum:
+      - "create_and_bootstrap"
+      - "bootstrap_existing_issue"
+    policy_fields:
+      - "version_source"
+      - "label_source"
+      - "body_source"
+      - "allow_slug_derivation"
+      - "stop_after_bootstrap"
+    mode_requirements:
+      create_and_bootstrap:
+        required_issue_fields:
+          - "title"
+      bootstrap_existing_issue:
+        required_issue_fields:
+          - "number"
+  intent:
+    - "issue_creation"
+    - "issue_bootstrap"
+    - "pr_init_bootstrap"
+  required_inputs:
+    - "repo_root"
+  optional_inputs:
+    - "issue_number"
+    - "title"
+    - "slug"
+    - "version"
+    - "labels"
+    - "body"
+    - "body_file"
+  stop_if_missing:
+    - "repo_root"
+  require_one_of:
+    - "issue_number"
+    - "title"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_pr_init.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "exactly_one_mode_contract_must_be_satisfied"
+    - "at_most_one_of_issue.body_and_issue.body_file_may_be_set"
+    - "policy.stop_after_bootstrap_must_be_true"
+    - "slug_omission_requires_policy.allow_slug_derivation_true"
+execution:
+  mode: "auto_apply"
+  allow_code_edits: false
+  allow_network: true
+  allow_subagents: false
+  parallelism_policy: "parallel_across_distinct_issue_targets_only"
+  workflow_step: "step_1_pr_init"
+  stop_before:
+    - "qualitative_stp_sip_review"
+    - "branch_creation"
+    - "worktree_creation"
+    - "implementation"
+    - "pr_finish"
+  preferred_commands:
+    - "adl/tools/pr.sh create"
+    - "adl/tools/pr.sh init"
+    - "adl pr create"
+    - "adl pr init"
+  preferred_path: "rust_owned_control_plane_when_available"
+  validation_policy: "must_verify_issue_source_prompt_root_bundle_and_no_branch_or_worktree_side_effects"
+boundaries:
+  writes_limited_to:
+    - ".adl/**"
+    - "GitHub issue body and metadata for the created issue"
+  must_not_write:
+    - "worktrees/**"
+    - ".git/worktrees/**"
+  stop_on_partial_failure: true
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-pr-init.md"
+  required_sections:
+    - "status"
+    - "mode"
+    - "issue"
+    - "paths"
+    - "validation"
+    - "next_step"
+    - "handoff"
+    - "notes"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  manifest_declares_executables: false

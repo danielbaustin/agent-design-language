@@ -1,0 +1,123 @@
+version: "0.1"
+kind: "adl-skill"
+id: "pr-ready"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "pr_ready.v1"
+    reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/PR_READY_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "diagnose_issue"
+      - "diagnose_task_bundle"
+      - "diagnose_branch"
+      - "diagnose_worktree"
+    policy_fields:
+      - "repair_mode"
+      - "allow_target_inference"
+      - "include_preflight_checks"
+      - "include_worktree_checks"
+      - "stop_after_diagnosis"
+    mode_requirements:
+      diagnose_issue:
+        required_target_fields:
+          - "issue_number"
+      diagnose_task_bundle:
+        required_target_fields:
+          - "task_bundle_path"
+      diagnose_branch:
+        required_target_fields:
+          - "branch"
+      diagnose_worktree:
+        required_target_fields:
+          - "worktree_path"
+  intent:
+    - "workflow_readiness_check"
+    - "preflight_check"
+    - "doctor_check"
+    - "workflow_drift_diagnosis"
+  required_inputs:
+    - "repo_root"
+  optional_inputs:
+    - "issue_number"
+    - "task_bundle_path"
+    - "branch"
+    - "worktree_path"
+    - "slug"
+    - "version"
+    - "source_prompt_path"
+    - "stp_path"
+    - "sip_path"
+    - "sor_path"
+    - "expected_pr_state"
+    - "repair_mode"
+  stop_if_missing:
+    - "repo_root"
+  require_one_of:
+    - "issue_number"
+    - "task_bundle_path"
+    - "branch"
+    - "worktree_path"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_pr_ready.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "exactly_one_primary_target_should_drive_the_mode"
+    - "policy.stop_after_diagnosis_must_be_true"
+    - "policy.repair_mode_must_be_explicit"
+    - "paths_must_identify_only_one_intended_target_context"
+execution:
+  mode: "auto_apply"
+  allow_code_edits: false
+  allow_network: true
+  allow_subagents: false
+  parallelism_policy: "parallel_across_distinct_targets_only"
+  workflow_role: "readiness"
+  stop_before:
+    - "qualitative_card_review"
+    - "bootstrap_creation"
+    - "implementation"
+    - "pr_finish"
+  preferred_commands:
+    - "adl/tools/pr.sh ready"
+    - "adl/tools/pr.sh preflight"
+    - "adl pr ready"
+    - "adl pr preflight"
+  preferred_path: "repo_native_doctor_or_compatibility_readiness_commands_plus_direct_inspection"
+  repair_policy: "allow_only_small_bounded_mechanical_repairs_when_unambiguous"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  writes_limited_to:
+    - ".adl/**"
+    - "small local readiness metadata or path repairs only"
+  must_not_write:
+    - "worktrees/** as execution bootstrap"
+    - ".git/worktrees/** as execution bootstrap"
+  stop_on_partial_failure: true
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-pr-ready.md"
+  required_sections:
+    - "status"
+    - "execution_readiness"
+    - "preflight_status"
+    - "target"
+    - "findings"
+    - "actions_taken"
+    - "actions_recommended"
+    - "validation_performed"
+    - "handoff_state"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  manifest_declares_executables: false

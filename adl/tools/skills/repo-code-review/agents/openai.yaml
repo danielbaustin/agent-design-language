@@ -1,0 +1,3 @@
+display_name: Repo Code Review
+short_description: Review a repository for bugs and risks
+default_prompt: Review this repository with a findings-first code review mindset and prioritize correctness, regressions, security risks, and missing tests.

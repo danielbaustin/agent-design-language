@@ -1,0 +1,114 @@
+version: "0.1"
+kind: "adl-skill"
+id: "pr-janitor"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "pr_janitor.v1"
+    reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/PR_JANITOR_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "watch_pr"
+      - "watch_pr_url"
+      - "watch_branch_pr"
+      - "watch_issue_pr"
+    policy_fields:
+      - "repair_mode"
+      - "allow_pr_inference"
+      - "monitor_checks"
+      - "monitor_conflicts"
+      - "monitor_review_state"
+      - "stop_after_janitor_pass"
+    mode_requirements:
+      watch_pr:
+        required_target_fields:
+          - "pr_number"
+      watch_pr_url:
+        required_target_fields:
+          - "pr_url"
+      watch_branch_pr:
+        required_target_fields:
+          - "branch"
+      watch_issue_pr:
+        required_target_fields:
+          - "issue_number"
+  intent:
+    - "pr_progress_watch"
+    - "ci_failure_triage"
+    - "merge_conflict_triage"
+    - "review_blocker_followup"
+  required_inputs:
+    - "repo_root"
+  optional_inputs:
+    - "pr_number"
+    - "pr_url"
+    - "branch"
+    - "issue_number"
+    - "expected_checks"
+    - "expected_pr_state"
+    - "repair_mode"
+    - "review_standard"
+  stop_if_missing:
+    - "repo_root"
+  require_one_of:
+    - "pr_number"
+    - "pr_url"
+    - "branch"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_pr_janitor.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "exactly_one_primary_pr_target_should_drive_the_mode"
+    - "policy.stop_after_janitor_pass_must_be_true"
+    - "policy.repair_mode_must_be_explicit"
+    - "at_least_one_monitor_surface_must_be_enabled"
+    - "selectors_must_identify_only_one_intended_pr_target"
+execution:
+  mode: "propose_and_apply_bounded_fixes"
+  allow_code_edits: true
+  allow_network: true
+  allow_subagents: false
+  preferred_model: "gpt-5.4"
+  preferred_reasoning_effort: "medium"
+  parallelism_policy: "avoid_parallel_writes_to_same_pr_branch"
+  workflow_role: "pr_in_flight_monitor_and_janitor"
+  stop_before:
+    - "silent_merge"
+    - "silent_closeout"
+    - "unreviewed_scope_expansion"
+  preferred_path: "pr_metadata_plus_local_branch_state_plus_bounded_validation"
+  repair_policy: "allow_only_blocker_driven_bounded_fixes_when_justified"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  writes_limited_to:
+    - "current PR branch when blocker-driven and justified"
+    - ".adl/** notes or progress artifacts if explicitly used"
+  must_not_write:
+    - "main branch directly"
+    - "merge/close state without explicit approval"
+  stop_on_partial_failure: true
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-pr-janitor.md"
+  required_sections:
+    - "status"
+    - "target"
+    - "checks_summary"
+    - "conflict_status"
+    - "actions_taken"
+    - "actions_recommended"
+    - "review_required"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  manifest_declares_executables: false

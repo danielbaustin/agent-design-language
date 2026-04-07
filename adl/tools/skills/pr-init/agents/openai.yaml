@@ -1,0 +1,3 @@
+display_name: PR Init
+short_description: Initialize an issue for the PR lifecycle
+default_prompt: Create or initialize a tracked issue, seed the root task bundle, validate it, and stop before branch or worktree creation. Treat this as the mechanical init step that hands off to qualitative review and later issue-mode run.
