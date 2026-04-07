@@ -13,7 +13,7 @@
 
 - Sprint 1: canonicalization and first substrate slices
 - Sprint 2: substrate expansion and convergence across trace, provider, shared memory, skills, tooling, and review
-- Sprint 3: documentation convergence, demos, quality gate, internal review, 3rd party review, and release closeout
+- Sprint 3: documentation convergence, demos, quality gate, internal review, 3rd party review, release closeout, and next-milestone planning
 
 The purpose of this file is to describe the sprint sequence for the whole milestone, not just the first kickoff tranche.
 
@@ -36,7 +36,7 @@ This milestone should leave ADL with:
 |---|---|---|---|
 | `v0.87-s1` | Lock the canonical milestone surfaces and land the first substrate slices | `WP-01`, `WP-02`, `WP-04`, `WP-06` | active / partially implemented |
 | `v0.87-s2` | Expand and connect the substrate across trace, provider, memory, skills, tooling, and review | `WP-03`, `WP-05`, `WP-07`, `WP-08`, `WP-09`, `WP-10`, `WP-11` | seeded / underway |
-| `v0.87-s3` | Converge docs, demos, quality gates, internal review, 3rd party review, and release tail | `WP-12`, `WP-13`, `WP-14`, `WP-15`, `WP-15A`, `WP-16` | planned |
+| `v0.87-s3` | Converge docs, demos, quality gates, internal review, 3rd party review, release tail, and next-milestone planning | `WP-12`, `WP-13`, `WP-14`, `WP-15`, `WP-15A`, `WP-16`, `WP-17` | planned |
 
 ## Sprint 1
 
@@ -99,7 +99,7 @@ Expand the foundational substrate into a connected milestone surface: runtime tr
 ## Sprint 3
 
 ### Goal
-Converge the milestone into a reviewer-legible package with truthful demos, quality gates, docs, internal review outputs, 3rd party review readiness, and release closeout.
+Converge the milestone into a reviewer-legible package with truthful demos, quality gates, docs, internal review outputs, 3rd party review readiness, release closeout, and an explicit next-milestone planning handoff.
 
 ### Scope
 - docs canonicalization and feature index truth
@@ -108,6 +108,7 @@ Converge the milestone into a reviewer-legible package with truthful demos, qual
 - docs / internal review convergence
 - 3rd party review pass and resulting follow-up capture
 - release ceremony and milestone handoff
+- canonical `v0.87.1` milestone shell and planning package before `v0.87` closes
 
 ### Work Packages
 | Order | Item | Issue | Owner | Status |
@@ -118,6 +119,7 @@ Converge the milestone into a reviewer-legible package with truthful demos, qual
 | 4 | Docs + internal review pass | `WP-15` | `Daniel / Codex.app` | not yet issued |
 | 5 | 3rd party review pass | `WP-15A` | `Daniel / Codex.app` | not yet issued |
 | 6 | Release ceremony | `WP-16` | `Daniel / Codex.app` | not yet issued |
+| 7 | Next milestone planning (`v0.87.1`) | `#1354` | `Daniel / Codex.app` | merged |
 
 ### Exit Criteria
 - canonical docs truthfully describe the implemented milestone
@@ -126,13 +128,14 @@ Converge the milestone into a reviewer-legible package with truthful demos, qual
 - docs and internal review surfaces are coherent for an uninvolved reviewer
 - 3rd party review is completed or explicitly recorded with bounded follow-up disposition
 - release-tail validation and handoff are complete
+- the canonical `v0.87.1` milestone shell exists before `v0.87` closes
 
 ## Current Execution Status
 
 As of this plan revision:
 - Sprint 1 is in active implementation
 - Sprint 2 is seeded, preflighted, and partially underway
-- Sprint 3 is defined at the WBS level but not yet issued in detail
+- Sprint 3 is defined at the WBS level and includes the next-milestone planning handoff, though most release-tail issues are not yet issued in detail
 
 Current issue/PR posture:
 - `#1292` merged
@@ -145,7 +148,7 @@ Current issue/PR posture:
 - Prefer substrate-first sequencing:
   - Sprint 1: schema + provider + shared-memory foundation
   - Sprint 2: linkage + compatibility + skills + tooling + review
-  - Sprint 3: docs + demos + quality + release tail
+  - Sprint 3: docs + demos + quality + release tail + next-milestone planning
 - Run required quality gates (`fmt`, `clippy`, `test`, and any validator/demo command relevant to the changed surface).
 - Record proof surfaces as they land instead of reconstructing them later from memory.
 
@@ -177,4 +180,5 @@ Current issue/PR posture:
 - The issue sequence is explicit for the foundational and convergence substrate work.
 - Sprint 3 release-tail work is defined before release closeout begins.
 - Internal review and 3rd party review are both completed or explicitly dispositioned before release closeout.
+- The `v0.87.1` planning shell exists before `v0.87` is considered fully closed.
 - Scope remains bounded to `v0.87` substrate work; no silent pull-forward of `v0.88+` systems.
