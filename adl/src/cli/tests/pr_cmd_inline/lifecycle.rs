@@ -182,6 +182,127 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
 }
 
 #[test]
+fn real_pr_doctor_full_reports_pre_run_ready_without_worktree() {
+    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let temp = unique_temp_dir("adl-pr-doctor-pre-run");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "doctor pre-run\n").expect("seed file");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref = IssueRef::new(1196, "v0.86", "doctor-pre-run").expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Doctor pre-run");
+    real_pr(&[
+        "init".to_string(),
+        "1196".to_string(),
+        "--slug".to_string(),
+        "doctor-pre-run".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Doctor pre-run".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr init");
+
+    let root_sip = issue_ref.task_bundle_input_path(&repo);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    write_authored_sip(
+        &root_sip,
+        &issue_ref,
+        "[v0.86][tools] Doctor pre-run",
+        "not bound yet",
+        &source_path,
+        &repo,
+    );
+
+    let doctor = real_pr(&[
+        "doctor".to_string(),
+        "1196".to_string(),
+        "--slug".to_string(),
+        "doctor-pre-run".to_string(),
+        "--mode".to_string(),
+        "full".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+        "--json".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    doctor.expect("doctor pre-run");
+    assert!(!issue_ref.default_worktree_path(&repo, None).exists());
+}
+
+#[test]
 fn real_pr_doctor_full_succeeds_when_invoked_from_started_worktree() {
     let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
     let temp = unique_temp_dir("adl-pr-doctor-worktree-cwd");
@@ -307,6 +428,129 @@ fn real_pr_doctor_full_succeeds_when_invoked_from_started_worktree() {
 
     env::set_current_dir(prev_dir).expect("restore cwd");
     doctor.expect("doctor from worktree");
+}
+
+#[test]
+fn real_pr_start_rewrites_unbound_root_input_card_branch() {
+    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let temp = unique_temp_dir("adl-pr-start-rewrites-unbound");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "start rewrites unbound root card\n").expect("seed file");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref = IssueRef::new(1199, "v0.86", "start-rewrites-unbound").expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Start rewrites unbound");
+    real_pr(&[
+        "init".to_string(),
+        "1199".to_string(),
+        "--slug".to_string(),
+        "start-rewrites-unbound".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Start rewrites unbound".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr init");
+
+    let root_sip = issue_ref.task_bundle_input_path(&repo);
+    let mut root_sip_text = fs::read_to_string(&root_sip).expect("read root sip");
+    root_sip_text = root_sip_text.replace(
+        "Branch: codex/1199-start-rewrites-unbound",
+        "Branch: not bound yet",
+    );
+    fs::write(&root_sip, root_sip_text).expect("rewrite root sip branch");
+
+    let start = real_pr(&[
+        "start".to_string(),
+        "1199".to_string(),
+        "--slug".to_string(),
+        "start-rewrites-unbound".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Start rewrites unbound".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    start.expect("real_pr start after unbound root card");
+    assert_eq!(
+        field_line_value(&root_sip, "Branch").expect("root branch"),
+        "codex/1199-start-rewrites-unbound"
+    );
+    assert!(issue_ref
+        .task_bundle_input_path(&issue_ref.default_worktree_path(&repo, None))
+        .is_file());
 }
 
 #[test]

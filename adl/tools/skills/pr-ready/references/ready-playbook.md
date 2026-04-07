@@ -43,7 +43,7 @@ Check where applicable:
 - source prompt presence
 - STP/SIP/SOR presence
 - compatibility card links
-- branch/worktree presence and branch match
+- branch/worktree presence and branch match when execution has already been bound
 - obvious bootstrap placeholder drift in execution-critical surfaces
 - open milestone PR blocking state if preflight gating is relevant
 
@@ -82,6 +82,11 @@ Current repo-native command truth is:
 - `doctor --json` is the canonical automation surface
 - `ready`
 - `preflight`
+
+Lifecycle note:
+- a missing worktree is not automatically blocking before `pr-run`
+- if the root bundle is authored and execution has not yet been bound, report a pre-run ready state instead of failing on missing worktree
+- once execution is bound, missing or mismatched worktree state remains blocking
 
 The skill should treat `ready` and `preflight` as compatibility inputs to the doctor/readiness result, not as the final automation model.
 
