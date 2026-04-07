@@ -195,6 +195,125 @@ fn issue_version_prefers_labels_and_falls_back_to_title() {
 }
 
 #[test]
+fn ensure_source_issue_prompt_replaces_existing_bootstrap_stub_when_github_body_is_authored() {
+    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let repo = unique_temp_dir("adl-pr-replace-bootstrap-stub");
+    init_git_repo(&repo);
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = repo.join("gh.log");
+    write_executable(
+        &bin_dir.join("gh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json body -q .body\"* ]]; then\n  cat <<'EOF'\n---\nissue_card_schema: adl.issue.v1\nwp: \"unassigned\"\nslug: \"v0-86-tools-replace-bootstrap-stub\"\ntitle: \"[v0.86][tools] Replace bootstrap stub\"\nlabels:\n  - \"track:roadmap\"\n  - \"type:task\"\n  - \"area:tools\"\n  - \"version:v0.86\"\nstatus: \"active\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"code\"\nrepo_inputs:\n  - \"adl/src/cli/pr_cmd.rs\"\ncanonical_files:\n  - \"adl/src/cli/pr_cmd.rs\"\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"GitHub-authored body should replace the local stub.\"\npr_start:\n  enabled: false\n  slug: \"v0-86-tools-replace-bootstrap-stub\"\n---\n\n# [v0.86][tools] Replace bootstrap stub\n\n## Summary\n\nAuthored GitHub issue body should win over the local bootstrap stub.\n\n## Goal\n\nPreserve the authored issue body locally.\n\n## Acceptance Criteria\n\n- replace the bootstrap stub\n- keep the authored body intact\nEOF\n  exit 0\nfi\nexit 1\n",
+            gh_log.display()
+        ),
+    );
+
+    let issue_ref = IssueRef::new(
+        1153,
+        "v0.86".to_string(),
+        "v0-86-tools-replace-bootstrap-stub".to_string(),
+    )
+    .expect("issue ref");
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    if let Some(parent) = source_path.parent() {
+        fs::create_dir_all(parent).expect("source parent");
+    }
+    fs::write(
+        &source_path,
+        render_generated_issue_prompt(
+            1153,
+            "v0-86-tools-replace-bootstrap-stub",
+            "[v0.86][tools] Replace bootstrap stub",
+            "track:roadmap,type:task,area:tools,version:v0.86",
+            "https://github.com/owner/repo/issues/1153",
+        ),
+    )
+    .expect("write stub prompt");
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let source = ensure_source_issue_prompt(
+        &repo,
+        "owner/repo",
+        &issue_ref,
+        "[v0.86][tools] Replace bootstrap stub",
+        Some("track:roadmap,type:task,area:tools"),
+        "v0.86",
+        "track:roadmap,type:task,area:tools",
+    )
+    .expect("ensure source prompt");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let prompt = fs::read_to_string(&source).expect("read prompt");
+    assert!(prompt.contains("issue_number: 1153"));
+    assert!(prompt.contains("Authored GitHub issue body should win over the local bootstrap stub."));
+    assert!(prompt.contains("Preserve the authored issue body locally."));
+    assert!(prompt.contains("replace the bootstrap stub"));
+    assert!(!prompt
+        .contains("Bootstrap-generated issue body created from the requested title and labels"));
+    let gh_log = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(gh_log.contains("issue view 1153 -R owner/repo --json body -q .body"));
+}
+
+#[test]
+fn ensure_source_issue_prompt_preserves_authored_front_matter_from_github_body() {
+    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let repo = unique_temp_dir("adl-pr-preserve-authored-front-matter");
+    init_git_repo(&repo);
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    write_executable(
+        &bin_dir.join("gh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$*\" == *\"issue view 1152 -R owner/repo --json body -q .body\"* ]]; then\n  cat <<'EOF'\n---\nissue_card_schema: adl.issue.v1\nwp: \"unassigned\"\nslug: \"v0-86-tools-preserve-authored-front-matter\"\ntitle: \"[v0.86][tools] Preserve authored front matter\"\nlabels:\n  - \"track:roadmap\"\n  - \"type:task\"\n  - \"area:tools\"\n  - \"version:v0.86\"\nstatus: \"active\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"code\"\nrepo_inputs:\n  - \"adl/src/cli/pr_cmd.rs\"\ncanonical_files:\n  - \"adl/src/cli/pr_cmd.rs\"\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Authored on GitHub first.\"\npr_start:\n  enabled: false\n  slug: \"v0-86-tools-preserve-authored-front-matter\"\n---\n\n# [v0.86][tools] Preserve authored front matter\n\n## Summary\n\nAuthored issue body with front matter from GitHub.\n\n## Goal\n\nKeep this authored structure during bootstrap.\n\n## Acceptance Criteria\n\n- preserve authored front matter\n- inject issue number locally\nEOF\n  exit 0\nfi\nexit 1\n",
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let issue_ref = IssueRef::new(
+        1152,
+        "v0.86".to_string(),
+        "v0-86-tools-preserve-authored-front-matter".to_string(),
+    )
+    .expect("issue ref");
+    let source = ensure_source_issue_prompt(
+        &repo,
+        "owner/repo",
+        &issue_ref,
+        "[v0.86][tools] Preserve authored front matter",
+        Some("track:roadmap,type:task,area:tools"),
+        "v0.86",
+        "track:roadmap,type:task,area:tools",
+    )
+    .expect("ensure source prompt");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let prompt = fs::read_to_string(&source).expect("read prompt");
+    assert!(prompt.contains("issue_number: 1152"));
+    assert!(prompt.contains("status: active"));
+    assert!(prompt.contains("Authored issue body with front matter from GitHub."));
+    assert!(prompt.contains("Keep this authored structure during bootstrap."));
+    assert!(prompt.contains("preserve authored front matter"));
+    assert!(!prompt
+        .contains("Bootstrap-generated issue body created from the requested title and labels"));
+}
+
+#[test]
 fn current_pr_url_filters_empty_and_null_results() {
     let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
     let temp = unique_temp_dir("adl-pr-current-url");

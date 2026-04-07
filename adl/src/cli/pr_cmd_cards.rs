@@ -1,4 +1,5 @@
 use anyhow::{anyhow, bail, Context, Result};
+use serde_yaml::Value;
 use std::fs;
 #[cfg(unix)]
 use std::os::unix::fs as unix_fs;
@@ -10,7 +11,8 @@ use super::pr_cmd_prompt::{
     render_generated_issue_prompt,
 };
 use super::pr_cmd_validate::{
-    bootstrap_stub_reason, validate_authored_prompt_surface, PromptSurfaceKind,
+    bootstrap_stub_reason, placeholder_issue_body_reason, validate_authored_prompt_surface,
+    PromptSurfaceKind,
 };
 use ::adl::control_plane::{
     card_input_path, card_output_path, card_stp_path, resolve_cards_root, IssueRef,
@@ -160,8 +162,9 @@ pub(crate) fn validate_issue_body_for_create(
     let temp = write_temp_markdown("issue_body_probe", &prompt)?;
     validate_bootstrap_stp(repo_root, &temp)
         .with_context(|| "create: issue body cannot satisfy source-prompt validation")?;
-    validate_authored_prompt_surface("create", &temp, PromptSurfaceKind::IssuePrompt)
-        .with_context(|| "create: issue body is still bootstrap stub content")?;
+    if let Some(reason) = placeholder_issue_body_reason(body) {
+        bail!("create: issue body is still bootstrap stub content ({reason})");
+    }
     Ok(())
 }
 
@@ -269,10 +272,6 @@ pub(crate) fn ensure_source_issue_prompt(
     default_new_labels: &str,
 ) -> Result<PathBuf> {
     let source_path = issue_ref.issue_prompt_path(repo_root);
-    if source_path.is_file() {
-        return Ok(source_path);
-    }
-
     let labels_csv = if let Some(labels) = labels_csv {
         normalize_labels_csv(labels, version)
     } else {
@@ -308,18 +307,77 @@ pub(crate) fn ensure_source_issue_prompt(
         "https://github.com/{repo}/issues/{}",
         issue_ref.issue_number()
     );
-    let content = render_generated_issue_prompt(
+    let generated_prompt = render_generated_issue_prompt(
         issue_ref.issue_number(),
         issue_ref.slug(),
         title,
         &labels_csv,
         &issue_url,
     );
+
+    if source_path.is_file() {
+        let existing = fs::read_to_string(&source_path)?;
+        if existing != generated_prompt {
+            return Ok(source_path);
+        }
+    }
+
+    if let Some(body) = fetch_issue_body(repo, issue_ref.issue_number())? {
+        let prompt = render_issue_prompt_from_body(
+            issue_ref.issue_number(),
+            issue_ref.slug(),
+            title,
+            &labels_csv,
+            &issue_url,
+            &body,
+        );
+        if bootstrap_stub_reason(&prompt, PromptSurfaceKind::IssuePrompt).is_none() {
+            if let Some(parent) = source_path.parent() {
+                fs::create_dir_all(parent)?;
+            }
+            fs::write(&source_path, prompt)?;
+            return Ok(source_path);
+        }
+    }
+
+    if source_path.is_file() {
+        return Ok(source_path);
+    }
+
     if let Some(parent) = source_path.parent() {
         fs::create_dir_all(parent)?;
     }
-    fs::write(&source_path, content)?;
+    fs::write(&source_path, generated_prompt)?;
     Ok(source_path)
+}
+
+fn fetch_issue_body(repo: &str, issue: u32) -> Result<Option<String>> {
+    let output = match Command::new("gh")
+        .args([
+            "issue",
+            "view",
+            &issue.to_string(),
+            "-R",
+            repo,
+            "--json",
+            "body",
+            "-q",
+            ".body",
+        ])
+        .output()
+    {
+        Ok(output) => output,
+        Err(_) => return Ok(None),
+    };
+    if !output.status.success() {
+        return Ok(None);
+    }
+    let body = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if body.is_empty() || body.eq_ignore_ascii_case("null") {
+        Ok(None)
+    } else {
+        Ok(Some(body))
+    }
 }
 
 pub(crate) fn path_relative_to_repo(repo_root: &Path, path: &Path) -> String {
@@ -336,6 +394,10 @@ fn render_issue_prompt_from_body(
     _issue_url: &str,
     body: &str,
 ) -> String {
+    if let Some(prompt) = render_issue_prompt_from_authored_front_matter(issue, body) {
+        return prompt;
+    }
+
     let wp = infer_wp_from_title(title);
     let outcome_type = infer_required_outcome_type(labels_csv, title);
     let label_lines = labels_csv
@@ -346,8 +408,30 @@ fn render_issue_prompt_from_body(
         .collect::<Vec<_>>()
         .join("\n");
     format!(
-        "---\nissue_card_schema: adl.issue.v1\nwp: \"{wp}\"\nslug: \"{slug}\"\ntitle: \"{title}\"\nlabels:\n{label_lines}\nissue_number: {issue}\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"{outcome_type}\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Bootstrap-generated from GitHub issue metadata because no canonical local issue prompt existed yet.\"\npr_start:\n  enabled: false\n  slug: \"{slug}\"\n---\n\n{body}\n"
+        "---\nissue_card_schema: adl.issue.v1\nwp: \"{wp}\"\nslug: \"{slug}\"\ntitle: \"{title}\"\nlabels:\n{label_lines}\nissue_number: {issue}\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"{outcome_type}\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Mirrored from the authored GitHub issue body during bootstrap/init.\"\npr_start:\n  enabled: false\n  slug: \"{slug}\"\n---\n\n{body}\n"
     )
+}
+
+fn render_issue_prompt_from_authored_front_matter(issue: u32, body: &str) -> Option<String> {
+    let normalized = body.replace("\r\n", "\n");
+    let stripped = normalized.trim().strip_prefix("---\n")?;
+    let (front_matter, markdown_body) = stripped.split_once("\n---\n")?;
+    let mut value: Value = serde_yaml::from_str(front_matter).ok()?;
+    let mapping = value.as_mapping_mut()?;
+    if !mapping.contains_key(Value::String("issue_card_schema".to_string())) {
+        return None;
+    }
+
+    mapping.insert(
+        Value::String("issue_number".to_string()),
+        serde_yaml::to_value(issue).ok()?,
+    );
+
+    let front_matter = serde_yaml::to_string(&value).ok()?;
+    Some(format!(
+        "---\n{front_matter}---\n\n{}\n",
+        markdown_body.trim_start()
+    ))
 }
 
 fn copy_directory_contents(source: &Path, target: &Path) -> Result<()> {
