@@ -38,7 +38,7 @@ The normal workflow is:
 
 Tracked skill bundles live under:
 
-- [`adl/tools/skills`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-1299/adl/tools/skills)
+- `adl/tools/skills`
 
 Each skill bundle typically contains:
 
@@ -58,7 +58,7 @@ For deterministic use, prefer structured invocation over loose prose.
 The general pattern is:
 
 ```yaml
-Use $<skill-name> at /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1299/adl/tools/skills/<skill-name>/SKILL.md with this validated input:
+Use $<skill-name> at /Users/daniel/git/agent-design-language/adl/tools/skills/<skill-name>/SKILL.md with this validated input:
 
 skill_input_schema: <schema-id>
 mode: <mode>
@@ -128,7 +128,7 @@ Minimum:
 
 Structured schema:
 
-- [`PR_INIT_SKILL_INPUT_SCHEMA.md`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-1299/adl/tools/skills/docs/PR_INIT_SKILL_INPUT_SCHEMA.md)
+- `adl/tools/skills/docs/PR_INIT_SKILL_INPUT_SCHEMA.md`
 - schema id: `pr_init.v1`
 
 ### Supported Modes
@@ -163,8 +163,11 @@ It must stop before:
 
 ### Example Invocation
 
+Canonical template:
+- `docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
+
 ```yaml
-Use $pr-init at /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1299/adl/tools/skills/pr-init/SKILL.md with this validated input:
+Use $pr-init at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-init/SKILL.md with this validated input:
 
 skill_input_schema: pr_init.v1
 mode: create_and_bootstrap
@@ -226,7 +229,7 @@ Minimum:
 
 Structured schema:
 
-- [`PR_READY_SKILL_INPUT_SCHEMA.md`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-1299/adl/tools/skills/docs/PR_READY_SKILL_INPUT_SCHEMA.md)
+- `adl/tools/skills/docs/PR_READY_SKILL_INPUT_SCHEMA.md`
 - schema id: `pr_ready.v1`
 
 ### Supported Modes
@@ -273,7 +276,7 @@ It must stop before:
 ### Example Invocation
 
 ```yaml
-Use $pr-ready at /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1299/adl/tools/skills/pr-ready/SKILL.md with this validated input:
+Use $pr-ready at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-ready/SKILL.md with this validated input:
 
 skill_input_schema: pr_ready.v1
 mode: diagnose_issue
@@ -341,7 +344,7 @@ Minimum:
 
 Structured schema:
 
-- [`PR_RUN_SKILL_INPUT_SCHEMA.md`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-1299/adl/tools/skills/docs/PR_RUN_SKILL_INPUT_SCHEMA.md)
+- `adl/tools/skills/docs/PR_RUN_SKILL_INPUT_SCHEMA.md`
 - schema id: `pr_run.v1`
 
 ### Supported Modes
@@ -385,7 +388,7 @@ It must stop before:
 ### Example Invocation
 
 ```yaml
-Use $pr-run at /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1299/adl/tools/skills/pr-run/SKILL.md with this validated input:
+Use $pr-run at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-run/SKILL.md with this validated input:
 
 skill_input_schema: pr_run.v1
 mode: run_issue
@@ -456,7 +459,7 @@ Minimum:
 
 Structured schema:
 
-- [`PR_JANITOR_SKILL_INPUT_SCHEMA.md`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-1299/adl/tools/skills/docs/PR_JANITOR_SKILL_INPUT_SCHEMA.md)
+- `adl/tools/skills/docs/PR_JANITOR_SKILL_INPUT_SCHEMA.md`
 - schema id: `pr_janitor.v1`
 
 ### Supported Modes
@@ -493,7 +496,7 @@ It must stop before:
 ### Example Invocation
 
 ```yaml
-Use $pr-janitor at /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1299/adl/tools/skills/pr-janitor/SKILL.md with this validated input:
+Use $pr-janitor at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-janitor/SKILL.md with this validated input:
 
 skill_input_schema: pr_janitor.v1
 mode: watch_pr
@@ -549,8 +552,8 @@ Do not use it for:
 
 Use the tracked finish schema and skill contract:
 
-- [`PR_FINISH_SKILL_INPUT_SCHEMA.md`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-1299/adl/tools/skills/docs/PR_FINISH_SKILL_INPUT_SCHEMA.md)
-- [`pr-finish/SKILL.md`](/Users/daniel/git/agent-design-language/.worktrees/adl-wp-1299/adl/tools/skills/pr-finish/SKILL.md)
+- `adl/tools/skills/docs/PR_FINISH_SKILL_INPUT_SCHEMA.md`
+- `adl/tools/skills/pr-finish/SKILL.md`
 
 ### Output And Stop Boundary
 
@@ -619,7 +622,7 @@ This skill is findings-only and must not edit code.
 ### Example Invocation
 
 ```yaml
-Use $repo-code-review at /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1299/adl/tools/skills/repo-code-review/SKILL.md to review /Users/daniel/git/agent-design-language. Review the executable codebase first, include manifests and build configuration, run targeted local tests only when bounded and relevant, and write the review to .adl/reviews/<timestamp>-repo-review.md.
+Use $repo-code-review at /Users/daniel/git/agent-design-language/adl/tools/skills/repo-code-review/SKILL.md to review /Users/daniel/git/agent-design-language. Review the executable codebase first, include manifests and build configuration, run targeted local tests only when bounded and relevant, and write the review to .adl/reviews/<timestamp>-repo-review.md.
 ```
 
 ## Choosing The Right Skill
