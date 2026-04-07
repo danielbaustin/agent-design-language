@@ -14,11 +14,16 @@ fn render_generated_issue_prompt_preserves_bootstrap_contract() {
         "slug: \"v0-86-tools-implement-rust-owned-pr-init-and-pr-create-workflow-surfaces\""
     ));
     assert!(content.contains("required_outcome_type:\n  - \"code\""));
+    assert!(content.contains("pr_start:\n  enabled: false"));
     assert!(content
         .contains("Bootstrap-generated issue body created from the requested title and labels"));
     assert!(content.contains(
-            "This body should be concrete enough that `gh issue view` is usable immediately after creation."
+            "This body should be concrete enough that `gh issue view` is useful immediately after creation."
         ));
+    assert!(content.contains(
+        "Default next steps should follow `pr-ready` and `pr-run`, not the older `pr start` path."
+    ));
+    assert!(!content.contains("Refine this issue into a bounded, reviewable ADL task"));
 }
 
 #[test]
@@ -571,11 +576,17 @@ fn real_pr_create_generates_concrete_body_when_none_is_supplied() {
     assert!(issue_body.contains("## Acceptance Criteria"));
     assert!(!issue_body.contains("## Goal\n-"));
     assert!(!issue_body.contains("## Acceptance Criteria\n-"));
+    assert!(issue_body
+        .contains("the issue body is concrete enough to review before any manual refinement pass"));
+    assert!(issue_body.contains(
+        "Default next steps should follow `pr-ready` and `pr-run`, not the older `pr start` path."
+    ));
     let source = repo.join(".adl/v0.86/bodies/issue-1203-v0-86-tools-generated-issue-body.md");
     let prompt = fs::read_to_string(&source).expect("read source prompt");
     assert!(prompt.contains("issue_number: 1203"));
     assert!(prompt.contains("## Goal"));
     assert!(!prompt.contains("## Goal\n-"));
+    assert!(prompt.contains("pr_start:\n  enabled: false"));
 }
 
 #[test]
