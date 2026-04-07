@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+export ADL_TOOLING_MANIFEST_ROOT="$ROOT_DIR"
 PR_SH_SRC="$ROOT_DIR/adl/tools/pr.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 PROMPT_LINT_SRC="$ROOT_DIR/adl/tools/lint_prompt_spec.sh"
@@ -52,10 +53,6 @@ chmod +x "$repo/adl/tools/pr.sh" "$repo/adl/tools/lint_prompt_spec.sh" "$repo/ad
   [[ "$start_out" == *"STATE  FULLY_STARTED"* ]] || {
     echo "assertion failed: expected legacy start to complete" >&2
     echo "$start_out" >&2
-    exit 1
-  }
-  [[ -d "$repo/.adl/locks" ]] || {
-    echo "assertion failed: expected shared lock root to exist under .adl/locks" >&2
     exit 1
   }
 

@@ -59,6 +59,7 @@ fn copy_bootstrap_support_files(repo: &Path) {
         .parent()
         .expect("workspace root")
         .to_path_buf();
+    env::set_var("ADL_TOOLING_MANIFEST_ROOT", &workspace_root);
     let tools_dir = repo.join("adl/tools");
     let templates_dir = repo.join("adl/templates/cards");
     let schemas_dir = repo.join("adl/schemas");

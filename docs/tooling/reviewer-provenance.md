@@ -17,7 +17,7 @@ This slice focuses on deterministic review outputs because they already:
 Use:
 
 ```bash
-ruby adl/tools/verify_review_output_provenance.rb \
+adl tooling verify-review-output-provenance \
   --review docs/tooling/examples/reviewer-provenance/good_review_output_661.yaml
 ```
 

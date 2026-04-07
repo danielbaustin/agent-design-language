@@ -8,7 +8,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 
 - `pr.sh`: canonical issue init/ready/run/finish workflow helper.
 - `worktree_doctor.sh`, `worktree_prune.sh`: deterministic worktree governance and safe cleanup helpers.
-- `card_prompt.sh`: deterministic input-card parser that generates execution prompts.
+- `adl tooling ...`: Rust-owned tooling surface for prompt/card/review validation helpers, with legacy wrapper scripts preserved at the historical `adl/tools/*` paths.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
 - `batched_checks.sh`, `preflight_review.sh`: quality/preflight checks.
 - `enforce_coverage_gates.sh`: deterministic coverage threshold enforcement (workspace + per-file).
@@ -55,7 +55,7 @@ cd ./adl/ && bash tools/enforce_coverage_gates.sh coverage-summary.json
 ./adl/tools/report_large_rust_modules.sh
 
 # generate deterministic execution prompt from an input card
-./adl/tools/card_prompt.sh --issue <issue_num> --out /tmp/prompt.txt
+adl tooling card-prompt --issue <issue_num> --out /tmp/prompt.txt
 
 # finish issue and open/update PR
 bash ./adl/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>"
