@@ -325,4 +325,18 @@ Derive or align the following from this doc:
 - trace review report surfaces
 - issue output-card conventions for embedding or linking findings
 
+## First Implementation Surface
+
+The first bounded `v0.87` implementation surface for this contract is:
+- `docs/tooling/review-surface-format.md`
+- `adl/tools/skills/repo-code-review/references/output-contract.md`
+- `adl/tools/verify_repo_review_contract.rb`
+- `adl/tools/test_repo_review_contract.sh`
+
+This gives `WP-11` one real review surface that is:
+- human-readable
+- deterministic enough to validate locally
+- structurally aligned with the canonical review sections
+ 
+
 Review surface formalization makes ADL review outputs consistent, comparable, and credible enough for real internal and external evaluation.

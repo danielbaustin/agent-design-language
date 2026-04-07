@@ -52,6 +52,22 @@ Use P4 and P5 sparingly:
 
 Do not report speculative, aesthetic, or preference-only comments as P4/P5.
 
+## Output Shape
+
+Write the review using the canonical section order from:
+- `docs/tooling/review-surface-format.md`
+
+For repo review, always include:
+- `Metadata`
+- `Scope`
+- `Findings`
+- `System-Level Assessment`
+- `Recommended Action Plan`
+- `Follow-ups / Deferred Work`
+- `Final Assessment`
+
+Findings remain first in substance, but the artifact must still include the metadata and scope sections ahead of them.
+
 ## Evidence Standard
 
 Prefer:
