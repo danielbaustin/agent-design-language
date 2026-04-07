@@ -66,12 +66,12 @@ Use this table as the fast review surface for milestone coverage.
 
 | Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
 |---|---|---|---|---|---|---|---|
-| D1 | Trace v1 substrate truth | `WP-02`, `WP-03` | `TBD: trace v1 demo command` | `artifacts/v087/trace_v1/...` | stable structured trace events emitted for major control points | event vocabulary and structure should be stable even if timestamps vary | PLANNED |
-| D2 | Provider portability substrate | `WP-04`, `WP-05` | `TBD: provider substrate demo command` | `artifacts/v087/provider_portability/...` | one agent/config surface can target multiple providers through the new substrate without brittle provider-native core strings | compare normalized config/output surfaces across provider targets | PLANNED |
-| D3 | Shared ObsMem foundation coherence | `WP-06`, `WP-07` | `TBD: shared obsmem demo command` | `artifacts/v087/shared_obsmem/...` | shared-memory entry creation/retrieval can be tied back to execution/trace truth | replay judged by stable memory schema and trace-linkage, not by identical timestamps | PLANNED |
-| D4 | Operational skills substrate | `WP-08`, `WP-11` | `TBD: skill demo command` | `artifacts/v087/skills/...` | a bounded operational skill produces structured findings/output using the canonical output family | output schema and required sections should remain stable | PLANNED |
-| D5 | Control-plane / PR tooling substrate | `WP-09`, `WP-10` | `TBD: control-plane demo command` | `artifacts/v087/control_plane/...` | bounded workflow/control-plane command executes deterministically and records a truthful operational surface | replay judged by command surface, output structure, and workflow semantics | PLANNED |
-| D6 | Reviewer-facing substrate package | `WP-12`, `WP-13`, `WP-15` | `TBD: review-surface package command or checklist flow` | `docs/milestones/v0.87/README.md` plus linked proof surfaces | an uninvolved reviewer can locate the milestone docs, first command, and primary proof surfaces without guesswork | stability is judged by legibility and proof-surface consistency across reruns | PLANNED |
+| D1 | Trace v1 substrate truth | `WP-02`, `WP-03` | `bash adl/tools/demo_v087_trace_truth.sh` | `artifacts/v087/trace_v1/runs/v0-6-hitl-no-pause-demo/logs/trace_v1.json` | stable structured trace events and run artifacts are emitted from a mock-provider-backed run | event vocabulary and structure should be stable even if timestamps vary | READY |
+| D2 | Provider portability substrate | `WP-04`, `WP-05` | `bash adl/tools/demo_v087_provider_portability.sh` | `artifacts/v087/provider_portability/provider_substrate_manifest.v1.json` | one canonical config surface resolves into a normalized provider substrate manifest without brittle provider-native leakage | compare normalized config and printed plan surfaces across reruns | READY |
+| D3 | Shared ObsMem foundation coherence | `WP-06`, `WP-07` | `bash adl/tools/demo_v087_shared_obsmem.sh` | `artifacts/v087/shared_obsmem/demo-f-obsmem-retrieval/obsmem_retrieval_result.json` | bounded shared-memory retrieval is tied to persisted ObsMem artifacts and trace output | replay judged by stable memory schema and trace-linkage, not by identical timestamps | READY |
+| D4 | Operational skills substrate | `WP-08`, `WP-11` | `bash adl/tools/demo_v087_operational_skills.sh` | `artifacts/v087/skills/skills_inventory.txt` | a bounded operational skill substrate is installed, enumerated, and validated through the tracked skills root | output schema and required sections should remain stable | READY |
+| D5 | Control-plane / PR tooling substrate | `WP-09`, `WP-10` | `bash adl/tools/demo_v087_control_plane.sh` | `artifacts/v087/control_plane/runs/v0-4-demo-deterministic-replay/run_summary.json` | the repo-owned control-plane run surface drives a deterministic workflow and emits truthful run-state artifacts | replay judged by command surface, output structure, and workflow semantics | READY |
+| D6 | Reviewer-facing substrate package | `WP-12`, `WP-13`, `WP-15` | `bash adl/tools/demo_v087_reviewer_package.sh` | `artifacts/v087/reviewer_package/reviewer_package_manifest.txt` | an uninvolved reviewer can locate the canonical docs and validated review-surface examples from one bounded manifest | stability is judged by legibility and proof-surface consistency across reruns | READY |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -102,20 +102,20 @@ Milestone claims / work packages covered:
 Commands to run:
 
 ```bash
-TBD: trace v1 demo command
+bash adl/tools/demo_v087_trace_truth.sh
 ```
 
 Expected artifacts:
-- `artifacts/v087/trace_v1/trace.jsonl`
 - `artifacts/v087/trace_v1/README.md`
-- `artifacts/v087/trace_v1/summary.json`
+- `artifacts/v087/trace_v1/runs/v0-6-hitl-no-pause-demo/logs/trace_v1.json`
+- `artifacts/v087/trace_v1/runs/v0-6-hitl-no-pause-demo/run_summary.json`
 
 Primary proof surface:
-- `artifacts/v087/trace_v1/trace.jsonl`
+- `artifacts/v087/trace_v1/runs/v0-6-hitl-no-pause-demo/logs/trace_v1.json`
 
 Secondary proof surfaces:
-- `artifacts/v087/trace_v1/summary.json`
-- linked output card / validator notes for the implementing issue
+- `artifacts/v087/trace_v1/runs/v0-6-hitl-no-pause-demo/run_summary.json`
+- `artifacts/v087/trace_v1/out/`
 
 Expected success signals:
 - major control decisions appear as stable structured event types
@@ -138,7 +138,7 @@ Known limits / caveats:
 
 Description:
 - prove that provider configuration is now modeled through explicit vendor / transport / model separation
-- show that the same higher-level authoring/config surface can target multiple common providers through the substrate
+- show that the higher-level authoring/config surface resolves into a normalized provider substrate manifest without brittle provider-native leakage in the canonical config layer
 
 Milestone claims / work packages covered:
 - provider / transport substrate v1 is real and usable
@@ -147,23 +147,23 @@ Milestone claims / work packages covered:
 Commands to run:
 
 ```bash
-TBD: provider substrate demo command
+bash adl/tools/demo_v087_provider_portability.sh
 ```
 
 Expected artifacts:
 - `artifacts/v087/provider_portability/README.md`
-- `artifacts/v087/provider_portability/config_normalized.json`
-- `artifacts/v087/provider_portability/provider_results.json`
+- `artifacts/v087/provider_portability/provider_substrate_manifest.v1.json`
+- `artifacts/v087/provider_portability/print_plan.txt`
 
 Primary proof surface:
-- `artifacts/v087/provider_portability/provider_results.json`
+- `artifacts/v087/provider_portability/provider_substrate_manifest.v1.json`
 
 Secondary proof surfaces:
-- `artifacts/v087/provider_portability/config_normalized.json`
-- implementing issue notes describing tested provider targets and compatibility expectations
+- `artifacts/v087/provider_portability/print_plan.txt`
+- `adl/examples/v0-7-provider-portability-http-profile.adl.yaml`
 
 Expected success signals:
-- one canonical config surface resolves cleanly through the substrate to multiple provider targets
+- one canonical config surface resolves cleanly through the substrate into an inspectable normalized manifest
 - provider/model attribution is explicit and structurally consistent
 
 Determinism / replay notes:
@@ -192,20 +192,21 @@ Milestone claims / work packages covered:
 Commands to run:
 
 ```bash
-TBD: shared obsmem demo command
+bash adl/tools/demo_v087_shared_obsmem.sh
 ```
 
 Expected artifacts:
-- `artifacts/v087/shared_obsmem/README.md`
-- `artifacts/v087/shared_obsmem/memory_entries.json`
-- `artifacts/v087/shared_obsmem/trace_links.json`
+- `artifacts/v087/shared_obsmem/demo-f-obsmem-retrieval/README.md`
+- `artifacts/v087/shared_obsmem/demo-f-obsmem-retrieval/obsmem_retrieval_result.json`
+- `artifacts/v087/shared_obsmem/demo-f-obsmem-retrieval/trace.jsonl`
 
 Primary proof surface:
-- `artifacts/v087/shared_obsmem/memory_entries.json`
+- `artifacts/v087/shared_obsmem/demo-f-obsmem-retrieval/obsmem_retrieval_result.json`
 
 Secondary proof surfaces:
-- `artifacts/v087/shared_obsmem/trace_links.json`
-- implementing issue notes describing the bounded indexing/retrieval rules used
+- `artifacts/v087/shared_obsmem/demo-f-obsmem-retrieval/trace.jsonl`
+- `artifacts/v087/shared_obsmem/demo-f-obsmem-retrieval/runs/demo-f-run-a/godel/obsmem_index_entry.runtime.v1.json`
+- `artifacts/v087/shared_obsmem/demo-f-obsmem-retrieval/runs/demo-f-run-b/godel/obsmem_index_entry.runtime.v1.json`
 
 Expected success signals:
 - shared-memory entries are created/retrieved through a bounded, inspectable interface
@@ -227,42 +228,42 @@ Known limits / caveats:
 ### D4) Operational skills substrate
 
 Description:
-- prove that an operational skill can be invoked through the new substrate and produce structured review/operational output
-- show that the skill output family is stable enough for real workflow use and later review surfaces
+- prove that the tracked operational skills bundle exists as a real reusable substrate in-repo
+- show that the skills root is installable, enumerable, and backed by canonical guidance rather than ad hoc local prompts
 
 Milestone claims / work packages covered:
 - operational skills substrate is real and bounded
-- review output structure is canonical rather than ad hoc
+- the tracked skills root and install surface are canonical rather than ad hoc
 
 Commands to run:
 
 ```bash
-TBD: skill demo command
+bash adl/tools/demo_v087_operational_skills.sh
 ```
 
 Expected artifacts:
 - `artifacts/v087/skills/README.md`
-- `artifacts/v087/skills/skill_output.yaml`
-- `artifacts/v087/skills/findings.json`
+- `artifacts/v087/skills/skills_inventory.txt`
+- `artifacts/v087/skills/install_check.txt`
 
 Primary proof surface:
-- `artifacts/v087/skills/skill_output.yaml`
+- `artifacts/v087/skills/skills_inventory.txt`
 
 Secondary proof surfaces:
-- `artifacts/v087/skills/findings.json`
-- implementing issue notes describing the invoked skill and why it is the bounded proof case for `v0.87`
+- `artifacts/v087/skills/install_check.txt`
+- `adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md`
 
 Expected success signals:
-- the invoked skill produces structured findings/output with required sections present
-- the result is usable as a real operational/review surface rather than freeform prose
+- the tracked skill set is present, installable, and enumerated deterministically
+- the guide and inventory together make the substrate reviewable without hidden local context
 
 Determinism / replay notes:
 - output schema and required sections should remain stable across reruns
 - content may vary if the underlying proof surface changes; schema drift is the primary failure condition
 
 Reviewer checks:
-- confirm that the skill output includes findings/evidence/next-step structure rather than only a summary narrative
-- confirm that the skill is bounded and deterministic enough to qualify as a substrate surface, not a freeform assistant interaction
+- confirm that the tracked skills root contains the bounded workflow skills promised by the milestone
+- confirm that the install check and inventory are enough to review the substrate without relying on an untracked local skills directory
 
 Known limits / caveats:
 - this proves the first operational skill substrate, not the full future skill catalog
@@ -282,20 +283,23 @@ Milestone claims / work packages covered:
 Commands to run:
 
 ```bash
-TBD: control-plane demo command
+bash adl/tools/demo_v087_control_plane.sh
 ```
 
 Expected artifacts:
 - `artifacts/v087/control_plane/README.md`
-- `artifacts/v087/control_plane/operation_log.txt`
-- `artifacts/v087/control_plane/result.json`
+- `artifacts/v087/control_plane/run_log.txt`
+- `artifacts/v087/control_plane/runs/v0-4-demo-deterministic-replay/run.json`
+- `artifacts/v087/control_plane/runs/v0-4-demo-deterministic-replay/run_status.json`
+- `artifacts/v087/control_plane/runs/v0-4-demo-deterministic-replay/run_summary.json`
 
 Primary proof surface:
-- `artifacts/v087/control_plane/result.json`
+- `artifacts/v087/control_plane/runs/v0-4-demo-deterministic-replay/run_summary.json`
 
 Secondary proof surfaces:
-- `artifacts/v087/control_plane/operation_log.txt`
-- implementing issue notes describing the command contract and expected workflow behavior
+- `artifacts/v087/control_plane/runs/v0-4-demo-deterministic-replay/run.json`
+- `artifacts/v087/control_plane/runs/v0-4-demo-deterministic-replay/run_status.json`
+- `artifacts/v087/control_plane/run_log.txt`
 
 Expected success signals:
 - the command surface behaves deterministically and reports a truthful bounded operational result
@@ -327,20 +331,23 @@ Milestone claims / work packages covered:
 Commands to run:
 
 ```bash
-TBD: review-surface package command or checklist flow
+bash adl/tools/demo_v087_reviewer_package.sh
 ```
 
 Expected artifacts:
+- `artifacts/v087/reviewer_package/reviewer_package_manifest.txt`
+- `artifacts/v087/reviewer_package/review_contract_check.txt`
 - `docs/milestones/v0.87/README.md`
 - `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
-- linked implementing issue output cards and artifact roots
 
 Primary proof surface:
-- `docs/milestones/v0.87/README.md`
+- `artifacts/v087/reviewer_package/reviewer_package_manifest.txt`
 
 Secondary proof surfaces:
+- `artifacts/v087/reviewer_package/review_contract_check.txt`
 - `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
-- implementing issue output cards for the milestone tail review/docs work
+- `docs/tooling/review-surface-format.md`
+- `docs/tooling/examples/repo-review/good_repo_review.md`
 
 Expected success signals:
 - a reviewer can identify the first command, first doc, and primary proof surface for each major substrate band
@@ -361,7 +368,7 @@ Known limits / caveats:
 Required baseline validation:
 
 ```bash
-TBD: baseline validation commands for v0.87 once the first substrate demos land
+bash adl/tools/demo_v087_suite.sh
 ```
 
 Cross-demo checks:
@@ -388,9 +395,9 @@ Normalization rules:
 - do not normalize away structural drift in schemas, event vocabularies, or command/result surfaces
 
 Observed results summary:
-- initial state: all demos are `PLANNED`
-- update each demo row and detailed section as issues land and local validation occurs
-- use output cards as the canonical place to record concrete rerun evidence for each landed demo
+- current state: D1 through D6 are `READY` through bounded repo-local commands
+- each demo now has a concrete command and proof surface under `artifacts/v087/`
+- use output cards as the canonical place to record rerun evidence as the remaining Sprint 3 closeout issues land
 
 ## Reviewer Sign-Off Surface
 
@@ -407,7 +414,7 @@ Review owners:
 - internal ADL review before wider exposure
 
 Review status:
-- `v0.87` demo program seeded; concrete command surfaces and statuses should be updated issue-by-issue as substrate work lands.
+- `v0.87` demo program is now backed by concrete repo-local command surfaces and proof artifacts.
 
 ## Notes
 - `v0.87` is a substrate milestone. Demo claims should stay honest and bounded to that reality.

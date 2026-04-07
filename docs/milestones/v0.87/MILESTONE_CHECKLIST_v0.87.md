@@ -19,6 +19,12 @@ This checklist ensures that `v0.87`:
 
 No item is considered complete without **artifact-backed verification**.
 
+Bounded review path:
+
+```bash
+bash adl/tools/demo_v087_suite.sh
+```
+
 ---
 
 ## 1. Trace v1 (Ground Truth)
@@ -130,6 +136,7 @@ No item is considered complete without **artifact-backed verification**.
 - [ ] All demos run end-to-end
 - [ ] All demos produce artifacts
 - [ ] No demo depends on hidden setup
+- [ ] Demo entrypoints remain aligned with `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md` and `demos/v087_demo_program.md`
 
 ---
 

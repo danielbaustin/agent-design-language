@@ -22,6 +22,12 @@ If you want the historical `v0.8` flagship demo surface:
 cargo run --manifest-path examples/transpiler_demo/Cargo.toml --quiet
 ```
 
+If you want the current `v0.87` substrate demo program:
+
+```bash
+bash adl/tools/demo_v087_suite.sh
+```
+
 ## Demo Categories
 
 - Runtime workflow demos live in `adl/examples/`.
@@ -30,6 +36,23 @@ cargo run --manifest-path examples/transpiler_demo/Cargo.toml --quiet
 - Spec-only example artifacts live in `adl-spec/examples/` and are not the main starting point for runnable demos.
 
 ## Recommended Paths
+
+### v0.87 demo program
+
+- `v087_demo_program.md`
+- `../docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
+
+Use `v087_demo_program.md` for the canonical `v0.87` demo order and bounded
+repo-local commands.
+
+Use `bash adl/tools/demo_v087_suite.sh` for the one-command substrate review
+path. It populates:
+- `artifacts/v087/trace_v1/`
+- `artifacts/v087/provider_portability/`
+- `artifacts/v087/shared_obsmem/`
+- `artifacts/v087/skills/`
+- `artifacts/v087/control_plane/`
+- `artifacts/v087/reviewer_package/`
 
 ### v0.86 demo program
 

@@ -57,6 +57,7 @@ If you are new to this milestone, read in this order:
 
 If you want the fastest reviewer path, jump to:
 - demo matrix: `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
+- demo runbook: `demos/v087_demo_program.md`
 - milestone checklist: `docs/milestones/v0.87/MILESTONE_CHECKLIST_v0.87.md`
 - release plan: `docs/milestones/v0.87/RELEASE_PLAN_v0.87.md`
 
@@ -76,6 +77,7 @@ Canonical milestone documents:
 Supporting / domain-specific docs:
 - Feature docs index: `docs/milestones/v0.87/FEATURE_DOCS_v0.87.md`
 - Promoted feature docs: `docs/milestones/v0.87/features/`
+- Demo runbook: `demos/v087_demo_program.md`
 - Roadmap context: `docs/milestones/v0.85/features/ROAD_TO_v0.95.md`
 - Review artifacts: `.adl/reviews/`
 
@@ -152,7 +154,7 @@ Current status: `PLANNING COMPLETE / EXECUTION READY`
 
 - Planning: canonical doc set seeded and under active reconciliation
 - Execution: Sprint 1 and Sprint 2 issue tranche (`#1292`–`#1302`) exists, is bootstrapped, and is worktree-ready
-- Validation: demo matrix and checklist seeded; concrete command surfaces still landing
+- Validation: concrete D1-D6 demo command surfaces now exist under `adl/tools/demo_v087_*.sh`
 - Release readiness: not ready yet; this README describes the intended canonical review path once issues land
 
 ## Exit Criteria

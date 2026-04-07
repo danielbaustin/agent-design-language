@@ -132,6 +132,15 @@ Rules:
 - Success is **inspection-based**, not just exit codes
 - Determinism judged by **structure, not identical bytes**
 
+Current bounded review path:
+
+```bash
+bash adl/tools/demo_v087_suite.sh
+```
+
+Canonical runbook:
+- `demos/v087_demo_program.md`
+
 ---
 
 ## Execution Plan
