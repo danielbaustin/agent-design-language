@@ -12,9 +12,14 @@ STP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_task_prompt.contract.yaml"
 SIP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_implementation_prompt.contract.yaml"
 SOR_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_output_record.contract.yaml"
 BASH_BIN="$(command -v bash)"
+REAL_ADL_BIN="$ROOT_DIR/adl/target/debug/adl"
 
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
+
+if [[ ! -x "$REAL_ADL_BIN" ]]; then
+  cargo build --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl >/dev/null
+fi
 
 origin="$tmpdir/origin.git"
 repo="$tmpdir/repo"
@@ -41,15 +46,22 @@ printf '%s\n' "$*" >>"$LOG_FILE"
 if [[ "${1:-}" == "issue" && "${2:-}" == "view" ]]; then
   issue="${3:-}"
   shift 3
-  if [[ "$issue" != "975" ]]; then
+  if [[ "$issue" != "975" && "$issue" != "976" ]]; then
     exit 1
   fi
-  if [[ "$*" == *"--json labels"* && "$*" == *"-q .labels[].name"* ]]; then
+  if [[ "$issue" == "975" && "$*" == *"--json labels"* && "$*" == *"-q .labels[].name"* ]]; then
     echo "version:v0.85"
     exit 0
   fi
-  if [[ "$*" == *"--json title"* && "$*" == *"-q .title"* ]]; then
+  if [[ "$issue" == "976" && "$*" == *"--json labels"* && "$*" == *"-q .labels[].name"* ]]; then
+    exit 0
+  fi
+  if [[ "$issue" == "975" && "$*" == *"--json title"* && "$*" == *"-q .title"* ]]; then
     echo "[v0.85][process] Infer current milestone card version from issue title when labels are missing"
+    exit 0
+  fi
+  if [[ "$issue" == "976" && "$*" == *"--json title"* && "$*" == *"-q .title"* ]]; then
+    echo "[v0.87.1][process] Infer dot suffixed milestone card version from issue title when labels are missing"
     exit 0
   fi
 fi
@@ -91,6 +103,7 @@ assert_contains() {
   cd "$repo"
   export PATH="$bindir:$PATH"
   export GH_LOG_FILE="$gh_log"
+  export ADL_PR_RUST_BIN="$REAL_ADL_BIN"
 
   out_init="$("$BASH_BIN" adl/tools/pr.sh init 975 --slug v085-process-infer-card-version-from-issue-title)"
   assert_contains "STATE    ISSUE_AND_BUNDLE_READY" "$out_init" "init ready state"
@@ -128,6 +141,28 @@ assert_contains() {
   }
   [[ ! -e "$repo/.adl/v0.3/tasks/issue-0975__v085-process-infer-card-version-from-issue-title" ]] || {
     echo "assertion failed: unexpected v0.3 fallback task bundle after start" >&2
+    exit 1
+  }
+
+  out_init_dot="$("$BASH_BIN" adl/tools/pr.sh init 976 --slug v0871-process-infer-dot-suffixed-version-from-title)"
+  assert_contains "STATE    ISSUE_AND_BUNDLE_READY" "$out_init_dot" "dot-suffixed init ready state"
+  [[ -f ".adl/v0.87.1/tasks/issue-0976__v0871-process-infer-dot-suffixed-version-from-title/sip.md" ]] || {
+    echo "assertion failed: expected canonical input card under the root .adl/v0.87.1/tasks" >&2
+    exit 1
+  }
+  grep -Fq "Version: v0.87.1" ".adl/v0.87.1/tasks/issue-0976__v0871-process-infer-dot-suffixed-version-from-title/sip.md" || {
+    echo "assertion failed: expected input card version v0.87.1" >&2
+    exit 1
+  }
+
+  out_start_dot="$("$BASH_BIN" adl/tools/pr.sh start 976 --slug v0871-process-infer-dot-suffixed-version-from-title)"
+  assert_contains "WORKTREE $(canon_path "$repo/.worktrees/adl-wp-976")" "$out_start_dot" "dot-suffixed start prints worktree path"
+  [[ -f "$repo/.worktrees/adl-wp-976/.adl/v0.87.1/tasks/issue-0976__v0871-process-infer-dot-suffixed-version-from-title/sip.md" ]] || {
+    echo "assertion failed: expected start to create input card inside worktree-local v0.87.1 task bundle" >&2
+    exit 1
+  }
+  [[ ! -e "$repo/.adl/v0.3/tasks/issue-0976__v0871-process-infer-dot-suffixed-version-from-title" ]] || {
+    echo "assertion failed: unexpected v0.3 fallback task bundle for dot-suffixed version after start" >&2
     exit 1
   }
 

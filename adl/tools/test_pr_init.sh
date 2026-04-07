@@ -58,6 +58,14 @@ if [[ "${1:-}" == "issue" && "${2:-}" == "view" ]]; then
     printf '%s\n' "track:roadmap" "version:v0.86" "area:docs" "type:design"
     exit 0
   fi
+  if [[ "$issue" == "46" && "$*" == *"--json title"* && "$*" == *"-q .title"* ]]; then
+    echo "[v0.87.1][tools] Dot suffixed milestone prompt"
+    exit 0
+  fi
+  if [[ "$issue" == "46" && "$*" == *"--json labels"* && "$*" == *"-q .labels[].name"* ]]; then
+    printf '%s\n' "track:roadmap" "version:v0.87.1" "area:tools" "type:task"
+    exit 0
+  fi
 fi
 exit 1
 EOF
@@ -213,6 +221,24 @@ assert_contains() {
   }
   grep -Fq 'title: "[v0.86][WP-03] Generated loop prompt"' "$repo/.adl/v0.86/bodies/issue-43-v0-86-wp-03-generated-loop-prompt.md" || {
     echo "assertion failed: expected generated source prompt title" >&2
+    exit 1
+  }
+
+  out4="$("$BASH_BIN" adl/tools/pr.sh init 46)"
+  assert_contains "STP      .adl/v0.87.1/tasks/issue-0046__v0-87-1-tools-dot-suffixed-milestone-prompt/stp.md" "$out4" "dot-suffixed stp path"
+  assert_contains "READ     .adl/v0.87.1/tasks/issue-0046__v0-87-1-tools-dot-suffixed-milestone-prompt/sip.md" "$out4" "dot-suffixed sip path"
+  assert_contains "WRITE    .adl/v0.87.1/tasks/issue-0046__v0-87-1-tools-dot-suffixed-milestone-prompt/sor.md" "$out4" "dot-suffixed sor path"
+  assert_contains "SOURCE   .adl/v0.87.1/bodies/issue-46-v0-87-1-tools-dot-suffixed-milestone-prompt.md" "$out4" "dot-suffixed source path"
+  [[ -f "$repo/.adl/v0.87.1/bodies/issue-46-v0-87-1-tools-dot-suffixed-milestone-prompt.md" ]] || {
+    echo "assertion failed: expected generated dot-suffixed source issue prompt" >&2
+    exit 1
+  }
+  [[ -f "$repo/.adl/v0.87.1/tasks/issue-0046__v0-87-1-tools-dot-suffixed-milestone-prompt/sip.md" ]] || {
+    echo "assertion failed: expected dot-suffixed task-bundle sip" >&2
+    exit 1
+  }
+  grep -Fq "Version: v0.87.1" "$repo/.adl/v0.87.1/tasks/issue-0046__v0-87-1-tools-dot-suffixed-milestone-prompt/sip.md" || {
+    echo "assertion failed: expected dot-suffixed version in generated sip" >&2
     exit 1
   }
 

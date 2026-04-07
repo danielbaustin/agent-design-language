@@ -13,9 +13,9 @@
 # - Rust toolchain for `adl/` checks (fmt, clippy, test)
 #
 #   adl/tools/pr.sh help
-#   adl/tools/pr.sh create  --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v0.85>]
-#   adl/tools/pr.sh init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v0.85>]
-#   adl/tools/pr.sh run     <issue> [--slug <slug>] [--title "<title>"] [--prefix codex] [--no-fetch-issue] [--version <v0.85>] [--allow-open-pr-wave]
+#   adl/tools/pr.sh create  --title "<title>" [--slug <slug>] [--body "<markdown>" | --body-file <path>] [--labels <csv>] [--version <v0.85|v0.87.1>]
+#   adl/tools/pr.sh init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v0.85|v0.87.1>]
+#   adl/tools/pr.sh run     <issue> [--slug <slug>] [--title "<title>"] [--prefix codex] [--no-fetch-issue] [--version <v0.85|v0.87.1>] [--allow-open-pr-wave]
 #   adl/tools/pr.sh run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
 #   adl/tools/pr.sh card    <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
 #   adl/tools/pr.sh output  <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
@@ -424,7 +424,7 @@ infer_wp_from_title() {
 
 version_from_title() {
   local title="$1"
-  if [[ "$title" =~ \[(v[0-9]+\.[0-9]+)\] ]]; then
+  if [[ "$title" =~ \[(v[0-9]+\.[0-9]+(\.[0-9]+)*)\] ]]; then
     printf '%s\n' "${BASH_REMATCH[1]}"
   fi
 }
@@ -1616,8 +1616,8 @@ Commands:
   status
 
 Flags:
-  (create)  --version <v0.85>                 Override detected version (otherwise inferred from labels/title).
-  (init)    --version <v0.85>                 Override detected version (otherwise inferred from issue labels version:vX.Y)
+  (create)  --version <v0.85|v0.87.1>         Override detected version (otherwise inferred from labels/title).
+  (init)    --version <v0.85|v0.87.1>         Override detected version (otherwise inferred from issue labels or title version:vX.Y[.Z...])
   (init)    --no-fetch-issue                  Do not fetch issue title/labels; requires --slug.
   (run issue-mode) --slug <slug> --title "<title>" --prefix <pfx> --no-fetch-issue --version <v> --allow-open-pr-wave
   (run adl-mode) --runs-root <dir>            Override canonical run artifact root (default: <repo>/.adl/runs or ADL_RUNS_ROOT).
@@ -1631,7 +1631,7 @@ Flags:
   (finish) --idempotent                         Safe no-op only when existing merged PR matches current finish inputs.
   (card/run) --slug <slug>                     Use an explicit slug instead of fetching the issue title.
   (run)     --title "<title>"                  Optional; accepted for UX symmetry and used to derive slug when --slug is omitted.
-  (run)     --version <v0.85>                  Override detected version when the caller already knows the intended milestone band.
+  (run)     --version <v0.85|v0.87.1>          Override detected version when the caller already knows the intended milestone band.
   (run)     --allow-open-pr-wave               Override the open milestone PR wave guard.
 
 Notes:
@@ -1685,7 +1685,7 @@ EOF
 usage_init() {
   cat <<'EOF'
 Usage:
-  adl/tools/pr.sh init <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v0.85>]
+  adl/tools/pr.sh init <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v0.85|v0.87.1>]
 
 Notes:
 - Initializes the canonical local task-bundle authoring surface.

@@ -426,10 +426,10 @@ function validate(model) {
     results.push({ ok: true, text: "Run ID uses the normalized task-id format." });
   }
 
-  if (modelArtifactKey === "sip" && !/^v[0-9]+\.[0-9]+$/.test(metadata.version || "")) {
-    results.push({ ok: false, text: "Version should use the vN.N format." });
+  if (modelArtifactKey === "sip" && !/^v[0-9]+\.[0-9]+(\.[0-9]+)*$/.test(metadata.version || "")) {
+    results.push({ ok: false, text: "Version should use the milestone format vN.N or vN.N.P." });
   } else if (modelArtifactKey === "sip") {
-    results.push({ ok: true, text: "Version uses the normalized vN.N format." });
+    results.push({ ok: true, text: "Version uses the normalized milestone version format." });
   }
 
   const enumRules = ENUM_RULES[modelArtifactKey] || {};
