@@ -34,6 +34,12 @@ If you want the local Codex CLI + Ollama operational-skills demo:
 bash adl/tools/demo_codex_ollama_operational_skills.sh --dry-run
 ```
 
+If you want the bounded Claude + ChatGPT tea discussion demo:
+
+```bash
+bash adl/tools/demo_v0871_multi_agent_discussion.sh
+```
+
 ## Demo Categories
 
 - Runtime workflow demos live in `adl/examples/`.
@@ -51,6 +57,7 @@ bash adl/tools/demo_codex_ollama_operational_skills.sh --dry-run
 ### v0.87.1 Codex CLI + Ollama operational-skills demo
 
 - `v0.87.1/codex_ollama_operational_skills_demo.md`
+- `v0.87.1/claude_chatgpt_multi_agent_discussion_demo.md`
 
 Use `v0.87.1/codex_ollama_operational_skills_demo.md` for a bounded local demo
 that installs the tracked skills into a demo-local `CODEX_HOME`, points Codex
@@ -59,6 +66,11 @@ local bundle fixture.
 
 Use `bash adl/tools/demo_codex_ollama_operational_skills.sh --dry-run` to
 prepare the prompt, workspace, and manifest without invoking a local model.
+
+Use `v0.87.1/claude_chatgpt_multi_agent_discussion_demo.md` for a bounded
+multi-agent runtime demo that keeps Claude and ChatGPT as two explicit named
+agents over five sequential turns and emits a transcript plus runtime proof
+artifacts.
 
 Use `v0.87/v087_demo_program.md` for the canonical `v0.87` demo order and bounded
 repo-local commands.

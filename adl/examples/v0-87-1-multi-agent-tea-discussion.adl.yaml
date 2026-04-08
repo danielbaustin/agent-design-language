@@ -1,0 +1,114 @@
+version: "0.5"
+
+providers:
+  chatgpt_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8791/chatgpt"
+      timeout_secs: 10
+  claude_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8791/claude"
+      timeout_secs: 10
+
+agents:
+  chatgpt_host:
+    provider: "chatgpt_local"
+    model: "gpt-5.4-demo"
+  claude_guest:
+    provider: "claude_local"
+    model: "claude-3-7-sonnet-demo"
+
+tasks:
+  chatgpt_opening:
+    prompt:
+      user: |
+        DEMO_ID: v0-87-1-multi-agent-tea-discussion
+        TURN_ID: 01
+        SPEAKER: ChatGPT
+        TOPIC: Runtime-backed multi-agent discussion over tea.
+        INSTRUCTIONS: Open the conversation warmly. Mention why a bounded five-step workflow is reviewer-friendly.
+  claude_reply:
+    prompt:
+      user: |
+        DEMO_ID: v0-87-1-multi-agent-tea-discussion
+        TURN_ID: 02
+        SPEAKER: Claude
+        TOPIC: Runtime-backed multi-agent discussion over tea.
+        PREVIOUS_TURN_START
+        {{turn_01}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Reply warmly, acknowledge the prior turn, and add one observation about explicit saved state.
+  chatgpt_reflection:
+    prompt:
+      user: |
+        DEMO_ID: v0-87-1-multi-agent-tea-discussion
+        TURN_ID: 03
+        SPEAKER: ChatGPT
+        TOPIC: Runtime-backed multi-agent discussion over tea.
+        PREVIOUS_TURN_START
+        {{turn_02}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Reflect on the value of trace and review artifacts without claiming a general conversation runtime.
+  claude_refinement:
+    prompt:
+      user: |
+        DEMO_ID: v0-87-1-multi-agent-tea-discussion
+        TURN_ID: 04
+        SPEAKER: Claude
+        TOPIC: Runtime-backed multi-agent discussion over tea.
+        PREVIOUS_TURN_START
+        {{turn_03}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Tighten the claim. Emphasize that this demo is turn-based and bounded.
+  chatgpt_toast:
+    prompt:
+      user: |
+        DEMO_ID: v0-87-1-multi-agent-tea-discussion
+        TURN_ID: 05
+        SPEAKER: ChatGPT
+        TOPIC: Runtime-backed multi-agent discussion over tea.
+        PREVIOUS_TURN_START
+        {{turn_04}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Close with a short tea toast and restate the bounded proof: two named agents, five explicit turns, one real runtime path.
+
+run:
+  name: "v0-87-1-multi-agent-tea-discussion"
+  workflow:
+    kind: sequential
+    steps:
+      - id: "discussion.chatgpt.opening"
+        agent: "chatgpt_host"
+        task: "chatgpt_opening"
+        save_as: "turn_01"
+        write_to: "discussion/01-chatgpt-opening.md"
+      - id: "discussion.claude.reply"
+        agent: "claude_guest"
+        task: "claude_reply"
+        inputs:
+          turn_01: "@state:turn_01"
+        save_as: "turn_02"
+        write_to: "discussion/02-claude-reply.md"
+      - id: "discussion.chatgpt.reflection"
+        agent: "chatgpt_host"
+        task: "chatgpt_reflection"
+        inputs:
+          turn_02: "@state:turn_02"
+        save_as: "turn_03"
+        write_to: "discussion/03-chatgpt-reflection.md"
+      - id: "discussion.claude.refinement"
+        agent: "claude_guest"
+        task: "claude_refinement"
+        inputs:
+          turn_03: "@state:turn_03"
+        save_as: "turn_04"
+        write_to: "discussion/04-claude-refinement.md"
+      - id: "discussion.chatgpt.toast"
+        agent: "chatgpt_host"
+        task: "chatgpt_toast"
+        inputs:
+          turn_04: "@state:turn_04"
+        save_as: "turn_05"
+        write_to: "discussion/05-chatgpt-toast.md"
