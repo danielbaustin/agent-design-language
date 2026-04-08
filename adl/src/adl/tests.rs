@@ -474,6 +474,45 @@ fn validate_provider_http_requires_endpoint() {
 }
 
 #[test]
+fn validate_provider_http_rejects_plaintext_remote_endpoint() {
+    let mut config = HashMap::new();
+    config.insert(
+        "endpoint".to_string(),
+        serde_json::json!("http://api.example.com/v1/complete"),
+    );
+    let provider = ProviderSpec {
+        id: None,
+        profile: None,
+        kind: "http".to_string(),
+        base_url: None,
+        default_model: None,
+        config,
+    };
+    let err = validate_provider("p1", &provider).expect_err("plain http should fail");
+    assert!(err
+        .to_string()
+        .contains("plaintext http:// is only allowed for localhost/loopback test endpoints"));
+}
+
+#[test]
+fn validate_provider_http_allows_loopback_plaintext_for_local_harnesses() {
+    let mut config = HashMap::new();
+    config.insert(
+        "endpoint".to_string(),
+        serde_json::json!("http://127.0.0.1:8787/complete"),
+    );
+    let provider = ProviderSpec {
+        id: None,
+        profile: None,
+        kind: "http".to_string(),
+        base_url: None,
+        default_model: None,
+        config,
+    };
+    validate_provider("p1", &provider).expect("loopback http should remain allowed");
+}
+
+#[test]
 fn validate_provider_profile_rejects_empty_value() {
     let provider = ProviderSpec {
         id: None,

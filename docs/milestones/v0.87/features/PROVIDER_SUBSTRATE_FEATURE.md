@@ -221,6 +221,12 @@ The provider substrate must ensure:
 - provider differences are normalized at the boundary
 - trace remains consistent across providers
 
+### Remote Transport Boundary
+
+- the remote `http` / `http_remote` provider surface is HTTPS-only for real remote endpoints
+- plaintext `http://` is not a supported remote transport
+- local loopback `http://localhost`, `http://127.0.0.1`, and `http://[::1]` remain allowed for local test harnesses and development fixtures
+
 This enables:
 - swapping providers without breaking contracts
 - reproducible execution surfaces
