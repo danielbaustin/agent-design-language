@@ -73,6 +73,10 @@ Key current artifacts include:
 - `examples/freedom_gate_event.json`
 - `examples/freedom_gate_event.example.yaml` (alternative example)
 
+Historical and repo-wide reference materials live outside `adl-spec/`:
+- v0.2 schema draft history: `../docs/milestones/v0.2/ADL_v0.2_Schema_Extensions.md`
+- repository license: `../LICENSE`
+
 ## Specification vs Runtime
 
 This directory is for **language semantics, invariants, and design intent**.
@@ -116,6 +120,7 @@ Small clarifications, typo fixes, examples, and explanatory notes that do not ch
 
 For broader project context:
 - root project overview: `../README.md`
+- repository license: `../LICENSE`
 - runtime and CLI guide: `../adl/README.md`
 - documentation index: `../docs/README.md`
 - contributor workflow: `../CONTRIBUTING.md`

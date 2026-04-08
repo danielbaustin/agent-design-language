@@ -14,7 +14,7 @@ echo "[steering-demo] out=$OUT_ROOT"
 
 rm -rf "$OUT_ROOT" "$ROOT/.adl/runs/$RUN_ID"
 mkdir -p "$OUT_DIR"
-cp "$ROOT/demos/steering_queue_checkpoint_patch.json" "$STEER_PATH"
+cp "$ROOT/demos/v0.85/steering_queue_checkpoint_patch.json" "$STEER_PATH"
 
 echo "[steering-demo] step 1: execute until the checkpoint boundary"
 ADL_OLLAMA_BIN="$ROOT/adl/tools/mock_ollama_v0_4.sh" \

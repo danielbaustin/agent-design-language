@@ -136,7 +136,7 @@ bash adl/tools/demo_v087_suite.sh
 - [ ] All demos run end-to-end
 - [ ] All demos produce artifacts
 - [ ] No demo depends on hidden setup
-- [ ] Demo entrypoints remain aligned with `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md` and `demos/v087_demo_program.md`
+- [ ] Demo entrypoints remain aligned with `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md` and `demos/v0.87/v087_demo_program.md`
 
 ---
 

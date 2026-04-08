@@ -25,8 +25,8 @@ It is intentionally small and deterministic:
 1. Workflow fixture (input)
    - `demos/rust-transpiler/workflow/rust_transpiler_demo.yaml`
 2. Rust-first transpiler scaffold (mapping check)
-   - `examples/transpiler_demo/Cargo.toml`
-   - `examples/transpiler_demo/src/main.rs`
+   - `demos/transpiler_demo/Cargo.toml`
+   - `demos/transpiler_demo/src/main.rs`
 3. Rust runtime/output skeleton
    - `demos/rust-transpiler/output/workflow_runtime.rs`
 4. Verification evidence artifact
@@ -39,7 +39,7 @@ It is intentionally small and deterministic:
 
 Run the bounded verification scaffold:
 
-`cargo run --manifest-path examples/transpiler_demo/Cargo.toml --quiet`
+`cargo run --manifest-path demos/transpiler_demo/Cargo.toml --quiet`
 
 The scaffold verifies:
 1. fixture path exists
@@ -64,7 +64,7 @@ Illustrative / future work (not implemented in this demo):
 1. Inspect fixture:
    - `demos/rust-transpiler/workflow/rust_transpiler_demo.yaml`
 2. Run scaffold command:
-   - `cargo run --manifest-path examples/transpiler_demo/Cargo.toml --quiet`
+   - `cargo run --manifest-path demos/transpiler_demo/Cargo.toml --quiet`
 3. Inspect runtime skeleton:
    - `demos/rust-transpiler/output/workflow_runtime.rs`
 4. Inspect evidence artifact:

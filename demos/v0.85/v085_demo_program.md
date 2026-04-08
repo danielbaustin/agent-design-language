@@ -14,7 +14,7 @@ adl/tools/demo_steering_queue_checkpoint.sh
 ```
 
 Review:
-- `demos/steering_queue_checkpoint_demo.md`
+- `demos/v0.85/steering_queue_checkpoint_demo.md`
 
 Primary proof:
 - `.adl/runs/v0-85-hitl-steering-demo/pause_state.json`
@@ -27,7 +27,7 @@ adl/tools/demo_hitl_editor_review.sh
 ```
 
 Review:
-- `demos/hitl_editor_review_demo.md`
+- `demos/v0.85/hitl_editor_review_demo.md`
 - `docs/tooling/editor/demo.md`
 
 Primary proof:
@@ -54,7 +54,7 @@ adl/tools/demo_affect_godel_vertical_slice.sh
 ```
 
 Review:
-- `demos/affect_godel_vertical_slice_demo.md`
+- `demos/v0.85/affect_godel_vertical_slice_demo.md`
 
 Primary proof:
 - `.adl/reports/demo-affect-godel-vertical-slice/runs/review-godel-affect-001/godel/godel_affect_vertical_slice.v1.json`
@@ -66,7 +66,7 @@ adl/tools/demo_godel_hypothesis_engine.sh
 ```
 
 Review:
-- `demos/godel_hypothesis_engine_demo.md`
+- `demos/v0.85/godel_hypothesis_engine_demo.md`
 
 Primary proof:
 - `.adl/reports/demo-godel-hypothesis-engine/runs/review-godel-cli-001/godel/godel_hypothesis.v1.json`

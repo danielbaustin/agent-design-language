@@ -40,14 +40,14 @@ This milestone remains intentionally bounded: it does not claim autonomous polic
 ### Demos And Reviewer Runbooks
 - Canonical user-facing demo index is under `demos/README.md`.
 - v0.8 reviewer runbooks include:
-  - `demos/godel_failure_hypothesis_experiment.md`
+  - `demos/v0.8/godel_failure_hypothesis_experiment.md`
   - `demos/aee-recovery/README.md`
   - `demos/rust-transpiler/README.md`
   - `docs/milestones/v0.8/DEMOS_V0.8.md`
 
 ### Bounded Rust Transpiler Scaffold
 - v0.8 includes a deterministic transpiler demo scaffold and verification flow:
-  - `examples/transpiler_demo/`
+  - `demos/transpiler_demo/`
   - `demos/rust-transpiler/workflow/rust_transpiler_demo.yaml`
   - `demos/rust-transpiler/output/`
 - This remains a bounded demo surface, not a production transpiler pipeline.
