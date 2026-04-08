@@ -63,6 +63,17 @@ Additional environment / fixture requirements:
 - Release / checklist context: `docs/milestones/v0.87.1/MILESTONE_CHECKLIST_v0.87.1.md`
 - Other proof-surface docs: Trace v1 artifacts and runtime outputs from v0.87
 
+## Provider Family Demo / Test Issue Map
+
+These family-level issues seed the provider proof surfaces that later demo work can implement:
+
+| Provider family | Scope | Issue |
+|---|---|---|
+| local Ollama | bounded local provider demo plus acceptance coverage for `ollama` / `local_ollama` | `#1485` |
+| bounded HTTP | bounded generic remote HTTP demo plus acceptance coverage for `http` / `http_remote` | `#1486` |
+| mock | no-network mock provider demo plus acceptance coverage | `#1487` |
+| ChatGPT | `chatgpt:` family demo plus acceptance coverage using the current setup flow | `#1488` |
+
 ## Demo Coverage Summary
 
 Use this table as the fast review surface for milestone coverage.
