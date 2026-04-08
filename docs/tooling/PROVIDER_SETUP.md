@@ -43,3 +43,6 @@ Example:
 adl provider setup chatgpt
 adl provider setup openai --out ./.adl/provider-setup/openai
 ```
+
+Loopback demo note:
+- the `v0.87.1` bounded HTTP family demo uses `http://127.0.0.1:8787/complete` with a dummy bearer token as a local proof path for the ADL completion contract
