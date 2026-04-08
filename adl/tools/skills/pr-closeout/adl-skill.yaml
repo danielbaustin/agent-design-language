@@ -33,9 +33,11 @@ admission:
           - "issue_number"
       closeout_pr:
         required_target_fields:
+          - "issue_number"
           - "pr_number"
       closeout_worktree:
         required_target_fields:
+          - "issue_number"
           - "worktree_path"
   intent:
     - "issue_post_merge_closeout"

@@ -35,7 +35,7 @@ The normal workflow is:
 4. `pr-run`
 5. `pr-janitor`
 6. `pr-finish`
-7. `pr-closeout`
+7. `pr-closeout` after the PR outcome or explicit non-PR closure disposition is settled
 
 `repo-code-review` is cross-cutting rather than phase-specific.
 
