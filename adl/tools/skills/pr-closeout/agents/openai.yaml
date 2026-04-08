@@ -1,0 +1,3 @@
+display_name: PR Closeout
+short_description: Finalize local issue state after merge or closure
+default_prompt: Help me close out an issue after its PR has merged or been intentionally closed.

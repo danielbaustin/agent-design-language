@@ -27,6 +27,7 @@ Current repo truth:
 3. `pr-run` performs the bounded implementation work
 4. `pr-finish` performs truthful closeout and PR publication/update
 5. `pr-janitor` monitors the in-flight PR after publication
+6. `pr-closeout` finalizes the local issue state after merge or intentional closure
 
 ## Required Inputs
 
@@ -96,6 +97,7 @@ This skill must not:
 
 The normal handoff is to:
 - `pr-janitor`
+- `pr-closeout` after merge or intentional closure is known
 - human review
 - explicit merge/closeout direction
 
