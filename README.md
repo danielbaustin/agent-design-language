@@ -80,6 +80,9 @@ Key features:
 - completed Sprint 3 release-tail work for documentation convergence, review, quality gate, and release closeout
 - explicit handoff into `v0.87.1` for the next runtime-completion milestone
 
+Scope boundary:
+- `v0.87` does not claim persistent identity, chronosense, or full agency continuity; those remain future-milestone work beyond this substrate release
+
 ### v0.86 - Bounded Cognitive System and Reviewable Proof Surfaces
 
 v0.86 established ADL's first working bounded cognitive system on `main`.
