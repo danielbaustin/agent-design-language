@@ -39,11 +39,12 @@ The WBS below preserves mergeable slices, explicit dependencies, and a clean rel
 | WP-15A | 3rd-party review | Conduct external / 3rd-party review of the `v0.87` milestone, capture findings, and ensure all issues are either resolved or explicitly dispositioned before release closeout. | External review findings and disposition record for milestone closeout. | WP-15 | #1349 |
 | WP-16 | Release ceremony (final validation + tag + notes + cleanup) | Perform final release-tail work for `v0.87`: validation evidence, checklist/release-note alignment, closeout record, and clean handoff into the next roadmap slice. | `v0.87` release-closeout package with final validation and milestone handoff. | WP-15 | #1350 |
 | WP-17 | Next milestone planning (`v0.87.1`) | Prepare the canonical tracked planning package for `v0.87.1` before `v0.87` closes, including the next milestone shell, sprint/WBS framing, and the initial docs needed for runtime-completion work to begin from a coherent public surface. | Canonical `v0.87.1` milestone shell and planning package ready before `v0.87` closeout. | WP-15, WP-16 | #1354 |
+| WP-18 | Review findings remediation | Resolve accepted internal and 3rd-party review findings, or record bounded explicit deferrals with owners, before final release closeout. | Truthful remediation/disposition record for accepted review findings ahead of milestone closeout. | WP-15, WP-15A | #1414 |
 
 ## Sequencing
 - Phase 1: Canonical planning + substrate definition (`WP-01` through `WP-04`)
 - Phase 2: Shared substrate implementation and workflow hardening (`WP-05` through `WP-11`)
-- Phase 3: Canonical docs, demos, quality gate, review alignment, release tail, and next-milestone handoff (`WP-12` through `WP-17`)
+- Phase 3: Canonical docs, demos, quality gate, review alignment, remediation, release tail, and next-milestone handoff (`WP-12` through `WP-18`)
 
 ## Acceptance Mapping
 - WP-01 (Design pass) -> Canonical milestone docs are filled, internally consistent, and aligned to the roadmap-defined `v0.87` substrate.
@@ -64,6 +65,7 @@ The WBS below preserves mergeable slices, explicit dependencies, and a clean rel
 - WP-15A (3rd-party review) -> External review findings are captured and every finding is either resolved or explicitly dispositioned before release closeout.
 - WP-16 (Release ceremony) -> Final validation, release-tail docs, and milestone handoff are explicit, truthful, and auditable.
 - WP-17 (Next milestone planning) -> `v0.87.1` canonical milestone docs exist before `v0.87` closeout and provide a coherent tracked starting point for runtime-completion work.
+- WP-18 (Review remediation) -> Accepted review findings are either remediated or explicitly deferred with ownership before milestone closeout.
 
 ## Exit Criteria
 - Every in-scope `v0.87` requirement maps to at least one WBS item.

@@ -107,19 +107,21 @@ Converge the milestone into a reviewer-legible package with truthful demos, qual
 - quality gate and coverage posture
 - docs / internal review convergence
 - 3rd party review pass and resulting follow-up capture
+- review findings remediation
 - release ceremony and milestone handoff
 - canonical `v0.87.1` milestone shell and planning package before `v0.87` closes
 
 ### Work Packages
 | Order | Item | Issue | Owner | Status |
 |---|---|---|---|---|
-| 1 | Documentation canonicalization + feature index | `#1345` | `Daniel / Codex.app` | started |
-| 2 | Demo matrix + integration demos | `#1346` | `Daniel / Codex.app` | merged |
-| 3 | Coverage / quality gate | `#1347` | `Daniel / Codex.app` | open |
+| 1 | Documentation canonicalization + feature index | `#1345` | `Daniel / Codex.app` | closed |
+| 2 | Demo matrix + integration demos | `#1346` | `Daniel / Codex.app` | closed |
+| 3 | Coverage / quality gate | `#1347` | `Daniel / Codex.app` | closed |
 | 4 | Docs + internal review pass | `#1348` | `Daniel / Codex.app` | open |
 | 5 | 3rd party review pass | `#1349` | `Daniel / Codex.app` | open |
 | 6 | Release ceremony | `#1350` | `Daniel / Codex.app` | open |
-| 7 | Next milestone planning (`v0.87.1`) | `#1354` | `Daniel / Codex.app` | merged |
+| 7 | Next milestone planning (`v0.87.1`) | `#1354` | `Daniel / Codex.app` | closed |
+| 8 | Review findings remediation | `#1414` | `Daniel / Codex.app` | open |
 
 ### Exit Criteria
 - canonical docs truthfully describe the implemented milestone
@@ -127,6 +129,7 @@ Converge the milestone into a reviewer-legible package with truthful demos, qual
 - quality posture is recorded with real commands and justified exceptions
 - docs and internal review surfaces are coherent for an uninvolved reviewer
 - 3rd party review is completed or explicitly recorded with bounded follow-up disposition
+- accepted review findings are remediated or explicitly deferred
 - release-tail validation and handoff are complete
 - the canonical `v0.87.1` milestone shell exists before `v0.87` closes
 
@@ -135,13 +138,12 @@ Converge the milestone into a reviewer-legible package with truthful demos, qual
 As of this plan revision:
 - Sprint 1 is implemented and closed at the issue level
 - Sprint 2 is implemented and closed at the issue level
-- Sprint 3 is live: `#1345`, `#1347`, `#1348`, `#1349`, and `#1350` are open, `#1346` is closed, and `#1354` completed the next-milestone planning handoff
+- Sprint 3 is live: `#1345`, `#1346`, `#1347`, and `#1354` are closed; `#1348`, `#1349`, `#1414`, and `#1350` remain open in the review/remediation/release tail
 
 Current issue posture:
 - `#1292` through `#1302` are closed
-- `#1345` is started
-- `#1346` is closed
-- `#1347`, `#1348`, `#1349`, and `#1350` are open
+- `#1345`, `#1346`, and `#1347` are closed
+- `#1348`, `#1349`, `#1414`, and `#1350` are open
 - `#1354` is closed
 
 ## Cadence Expectations
@@ -182,5 +184,6 @@ Current issue posture:
 - The issue sequence is explicit for the foundational and convergence substrate work.
 - Sprint 3 release-tail work is defined before release closeout begins.
 - Internal review and 3rd party review are both completed or explicitly dispositioned before release closeout.
+- Accepted review findings are remediated or explicitly deferred before release closeout.
 - The `v0.87.1` planning shell exists before `v0.87` is considered fully closed.
 - Scope remains bounded to `v0.87` substrate work; no silent pull-forward of `v0.88+` systems.
