@@ -150,12 +150,12 @@ Resolution notes:
 
 ## Status
 
-Current status: `SPRINT 3 CONVERGENCE IN PROGRESS`
+Current status: `SPRINT 3 REVIEW / RELEASE TAIL IN PROGRESS`
 
 - Planning: canonical doc set exists and is now being reconciled against landed implementation truth
 - Execution: Sprint 1 and Sprint 2 issues (`#1292`–`#1302`) are closed; Sprint 3 is active
 - Validation: concrete D1-D6 demo command surfaces exist under `adl/tools/demo_v087_*.sh`, and the demo/runbook package landed under `#1346`
-- Release readiness: not ready yet; docs/review/coverage/release-tail work remains open under `#1345`, `#1347`, `#1348`, `#1349`, and `#1350`
+- Release readiness: not ready yet; `#1345`, `#1346`, `#1347`, and `#1354` are closed, while `#1348`, `#1349`, `#1414`, and `#1350` remain open in the review/remediation/release tail
 
 ## Exit Criteria
 
