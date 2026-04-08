@@ -78,7 +78,7 @@ Shared wrapper helper:
 | Provider family | Scope | Issue |
 |---|---|---|
 | local Ollama | bounded local provider demo plus acceptance coverage for `ollama` / `local_ollama` | `#1485` |
-| bounded HTTP | bounded generic remote HTTP demo plus acceptance coverage for `http` / `http_remote` | `#1486` |
+| bounded HTTP | bounded generic remote HTTP demo plus acceptance coverage for `http` / `http_remote`; canonical command `bash adl/tools/demo_v0871_provider_http.sh` | `#1486` |
 | mock | no-network mock provider demo plus acceptance coverage; canonical command `bash adl/tools/demo_v0871_provider_mock.sh` | `#1487` |
 | ChatGPT | `chatgpt:` family demo plus acceptance coverage using the current setup flow | `#1488` |
 

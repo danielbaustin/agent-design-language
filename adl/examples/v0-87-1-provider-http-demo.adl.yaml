@@ -1,0 +1,30 @@
+version: "0.5"
+
+providers:
+  bounded_http_demo:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8787/complete"
+      timeout_secs: 10
+      auth:
+        type: bearer
+        env: ADL_REMOTE_BEARER_TOKEN
+
+agents:
+  http_writer:
+    provider: "bounded_http_demo"
+    model: "bounded-http-demo"
+
+tasks:
+  echo_marker:
+    prompt:
+      user: "HTTP_PROVIDER_DEMO_OK"
+
+run:
+  name: "v0-87-1-provider-http-demo"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "http_echo"
+        agent: "http_writer"
+        task: "echo_marker"
