@@ -14,7 +14,7 @@ Those artifacts are schema-validated, compiled into a deterministic execution pl
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.87-orange)
+![Milestone](https://img.shields.io/badge/milestone-v0.87%20complete-brightgreen)
 
 ## Why ADL
 
@@ -60,9 +60,9 @@ cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-on-er
 ## Current Status
 
 - Recent stable milestone: **v0.8**
-- Current closure milestone: **v0.87** _(Sprint 3 convergence in progress)_
+- Most recently completed milestone: **v0.87**
 - Previous closure milestone: **v0.86**
-- Next planned milestone shell: **v0.87.1**
+- Next planned milestone: **v0.87.1**
 - Project changelog: `CHANGELOG.md`
 
 ADL is in active development. The repository contains both implemented runtime surfaces and milestone/spec/planning documents. The milestone docs should be read as bounded engineering records: they distinguish what has shipped, what is demoable, and what is still planned.
@@ -71,14 +71,14 @@ ADL is in active development. The repository contains both implemented runtime s
 
 ### v0.87 - Substrate Convergence and Reviewer-Facing Milestone Truth
 
-v0.87 focuses on turning the bounded cognitive proof from v0.86 into a coherent, deterministic, and reviewer-legible substrate milestone.
+v0.87 completed the turn from the bounded cognitive proof in v0.86 into a coherent, deterministic, and reviewer-legible substrate milestone.
 
 Key features:
 - trace, provider, shared-memory, skills, and control-plane work aligned under one canonical milestone spine
 - promoted feature docs and milestone docs reconciled against the real implementation and issue sequence
 - bounded demo and reviewer proof surfaces for trace, provider portability, shared ObsMem, skills, and control-plane behavior
-- active Sprint 3 release-tail work for documentation convergence, review, quality gate, and release closeout
-- explicit handoff into the `v0.87.1` planning shell for runtime-completion work
+- completed Sprint 3 release-tail work for documentation convergence, review, quality gate, and release closeout
+- explicit handoff into `v0.87.1` for the next runtime-completion milestone
 
 ### v0.86 - Bounded Cognitive System and Reviewable Proof Surfaces
 
