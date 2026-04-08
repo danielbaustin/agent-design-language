@@ -28,6 +28,12 @@ If you want the current `v0.87` substrate demo program:
 bash adl/tools/demo_v087_suite.sh
 ```
 
+If you want the local Codex CLI + Ollama operational-skills demo:
+
+```bash
+bash adl/tools/demo_codex_ollama_operational_skills.sh --dry-run
+```
+
 ## Demo Categories
 
 - Runtime workflow demos live in `adl/examples/`.
@@ -41,6 +47,18 @@ bash adl/tools/demo_v087_suite.sh
 
 - `v0.87/v087_demo_program.md`
 - `../docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
+
+### v0.87.1 Codex CLI + Ollama operational-skills demo
+
+- `v0.87.1/codex_ollama_operational_skills_demo.md`
+
+Use `v0.87.1/codex_ollama_operational_skills_demo.md` for a bounded local demo
+that installs the tracked skills into a demo-local `CODEX_HOME`, points Codex
+CLI at a local Ollama model, and runs the editor skills against a prepared
+local bundle fixture.
+
+Use `bash adl/tools/demo_codex_ollama_operational_skills.sh --dry-run` to
+prepare the prompt, workspace, and manifest without invoking a local model.
 
 Use `v0.87/v087_demo_program.md` for the canonical `v0.87` demo order and bounded
 repo-local commands.
