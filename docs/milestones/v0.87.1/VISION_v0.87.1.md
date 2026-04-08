@@ -5,15 +5,15 @@
 - Milestone: `v0.87.1`
 - Version: `v0.87.1`
 - Date: `2026-04-06`
-- Owner: `TBD`
-- Related issues: #1354
+- Owner: `Daniel Austin / Agent Logic`
+- Related issues: `#1354`, `#1415`
 
 ## Purpose
 Define the milestone-level vision for the project: what changes at this stage, why it matters, and which strategic pillars it advances.
 
 ## Status
 
-This document is intentionally seeded as a milestone shell. It records the intended direction of `v0.87.1` without pretending the detailed runtime plan has already been promoted or implemented.
+This document defines the milestone-level direction for a real runtime-completion milestone. It should read as the strategic frame for a large implementation milestone, not as a placeholder shell.
 
 ## How To Use
 - Write this as a milestone vision, not a full design spec.
@@ -25,13 +25,15 @@ This document is intentionally seeded as a milestone shell. It records the inten
 
 ## Overview
 
-Version `v0.87.1` is the milestone where `ADL` evolves from a seeded execution substrate into a first-class runtime-completion surface.
+Version `v0.87.1` is the milestone where `ADL` evolves from a seeded execution substrate into a first-class runtime-completion system.
 
 This release should establish or strengthen the foundation for:
 
 - runtime-environment execution as a first-class system concern
-- lifecycle and execution-boundary clarity
+- lifecycle and execution-boundary completion
 - durable local-runtime resilience as a public milestone goal
+- operator and review surfaces that make the runtime externally legible
+- demo-backed proof that the runtime is real
 
 `v0.87.1` focuses on **runtime completion**.
 
@@ -43,201 +45,202 @@ The goal is to make the project more useful to:
 
 This milestone should strengthen the architectural or strategic pillars of:
 
-- {{pillar_1}}
-- {{pillar_2}}
-- {{pillar_3}}
-- {{pillar_4}}
-
-{{overview_close}}
+- deterministic runtime completion
+- execution boundaries and lifecycle clarity
+- trace-aligned runtime observability
+- local runtime resilience
+- operator and review surface quality
 
 ---
 
 # Core Goals
 
-`{{version}}` advances `{{project_name}}` in five major areas:
+`v0.87.1` advances `ADL` in five major areas:
 
-1. {{goal_area_1}}
-2. {{goal_area_2}}
-3. {{goal_area_3}}
-4. {{goal_area_4}}
-5. {{goal_area_5}}
+1. Runtime Environment Completion
+2. Execution Boundaries & Lifecycle
+3. Deterministic Trace-Aligned Execution
+4. Local Runtime Resilience
+5. Operator & Review Surfaces
 
 ---
 
-# 1. {{goal_area_1}}
+# 1. Runtime Environment Completion
 
-`{{version}}` improves `{{goal_area_1}}` so the project can `{{outcome_1}}`.
+`v0.87.1` improves Runtime Environment Completion so the project can execute ADL workflows reliably within a well-defined runtime environment.
 
 Key objectives:
 
-- {{objective_1a}}
-- {{objective_1b}}
-- {{objective_1c}}
-- {{objective_1d}}
+- define runtime entrypoints and environment contracts
+- standardize runtime configuration and invocation patterns
+- ensure consistent environment setup across local runs
+- align runtime behavior with trace emission
+- turn the runtime into a demonstrable public milestone surface
 
-These capabilities move the project toward **{{strategic_effect_1}}**.
+These capabilities move the project toward **a complete, reproducible runtime surface**.
 
 The system or product should guarantee:
 
-- {{guarantee_1a}}
-- {{guarantee_1b}}
-- {{guarantee_1c}}
+- stable runtime entrypoints
+- consistent environment initialization
+- predictable execution semantics
+- reviewer-legible proof of runtime behavior
 
 ---
 
-# 2. {{goal_area_2}}
+# 2. Execution Boundaries & Lifecycle
 
-`{{goal_area_2}}` must improve without sacrificing `{{constraint_2}}`.
+Execution Boundaries & Lifecycle must improve without sacrificing determinism.
 
-`{{version}}` introduces or improves:
+`v0.87.1` introduces or improves:
 
-- {{improvement_2a}}
-- {{improvement_2b}}
-- {{improvement_2c}}
-- {{improvement_2d}}
+- explicit execution boundaries for all runs
+- defined agent lifecycle phases (init, execute, complete, teardown)
+- boundary enforcement at runtime edges
+- lifecycle hooks aligned with trace
 
-The goal is to move from `{{before_state_2}}` toward **{{after_state_2}}**.
+The goal is to move from implicit, loosely defined execution flow toward **explicit, bounded, lifecycle-driven execution**.
 
 These changes should help users:
 
-- {{user_benefit_2a}}
-- {{user_benefit_2b}}
+- understand where and how execution occurs
+- reason about failures and boundaries
 
 ---
 
-# 3. {{goal_area_3}}
+# 3. Deterministic Trace-Aligned Execution
 
-A central principle of `{{project_name}}` is **{{principle_3}}**.
+A central principle of `ADL` is **determinism with observable truth**.
 
-The project must not merely `{{anti_goal_3}}`. It must `{{desired_behavior_3}}`.
+The project must not merely rely on implicit or non-reproducible behavior. It must produce identical outcomes given identical inputs with trace as ground truth.
 
-`{{version}}` strengthens this pillar with:
+`v0.87.1` strengthens this pillar with:
 
-- {{capability_3a}}
-- {{capability_3b}}
-- {{capability_3c}}
-- {{capability_3d}}
+- trace emission integrated with runtime phases
+- alignment between execution steps and trace artifacts
+- replayability of bounded runs
+- clear mapping from runtime actions to trace records
 
-This work supports the broader principle of **{{broader_principle_3}}**.
+This work supports the broader principle of **trace as authoritative narrative of execution**.
 
 The result should make the project more:
 
-- {{quality_3a}}
-- {{quality_3b}}
-- {{quality_3c}}
+- reproducible
+- auditable
+- explainable
 
 ---
 
-# 4. {{goal_area_4}}
+# 4. Local Runtime Resilience
 
-`{{version}}` continues development of `{{goal_area_4}}`.
+`v0.87.1` continues development of Local Runtime Resilience.
 
-The focus remains on **{{focus_4}}**, not `{{non_goal_4}}`.
+The focus remains on **stability and recovery in local environments**, not distributed or cloud-scale orchestration.
 
 Key capabilities:
 
-- {{capability_4a}}
-- {{capability_4b}}
-- {{capability_4c}}
-- {{capability_4d}}
+- graceful failure handling
+- restartability of bounded runs
+- isolation of failing components
+- minimal state corruption on failure
 
 This milestone should help the project better represent or support:
 
-- {{support_4a}}
-- {{support_4b}}
-- {{support_4c}}
+- developer iteration
+- reliable demos
+- predictable local execution
 
-These improvements should guide the system toward `{{desired_state_4}}`.
+These improvements should guide the system toward resilient local runtime suitable for development and demonstration.
 
 ---
 
-# 5. {{goal_area_5}}
+# 5. Operator & Review Surfaces
 
-To support real-world use, `{{version}}` must improve `{{goal_area_5}}`.
+To support real-world use, `v0.87.1` must improve Operator & Review Surfaces.
 
 Important targets include:
 
-- {{target_5a}}
-- {{target_5b}}
-- {{target_5c}}
-- {{target_5d}}
+- clear runtime invocation surfaces
+- standardized demo and execution scripts
+- artifact organization for review
+- consistent output surfaces for verification
 
 This work should strengthen the development and operating workflow by improving:
 
-- {{workflow_benefit_5a}}
-- {{workflow_benefit_5b}}
-- {{workflow_benefit_5c}}
-
-{{close_5}}
+- easier validation of milestone capabilities
+- reduced operator error
+- faster review cycles
+- stronger external credibility of the runtime milestone
 
 ---
 
-# Special Focus: `{{special_focus_title}}`
+# Special Focus: `Runtime Completion`
 
-`{{special_focus_title}}` becomes a central focus of `{{version}}`.
+`Runtime Completion` becomes a central focus of `v0.87.1`.
 
-Previous releases `{{previous_special_focus_state}}`.
+Previous releases established trace v1 and the initial runtime substrate.
 
-`{{version}}` advances this area with:
+`v0.87.1` advances this area with:
 
-- {{special_focus_1}}
-- {{special_focus_2}}
-- {{special_focus_3}}
-- {{special_focus_4}}
+- complete runtime environment definition
+- unify execution, trace, and lifecycle
+- ensure bounded, deterministic runs
+- expose stable operator surfaces
+- prove the runtime through multiple bounded demos and review artifacts
 
-This area is responsible for ensuring that `{{special_focus_scope}}` remain:
+This area is responsible for ensuring that runtime execution and lifecycle remain:
 
-- {{special_quality_1}}
-- {{special_quality_2}}
-- {{special_quality_3}}
+- deterministic
+- bounded
+- observable
 
-This keeps the project aligned with `{{alignment_principle}}`.
+This keeps the project aligned with substrate-level governance.
 
 ---
 
 # Milestone Context
 
-`{{previous_milestone}}` represents `{{previous_milestone_significance}}`.
+`v0.87` represents established trace v1, provider substrate, and operational skills.
 
-From `{{next_phase_start}}` onward the project will likely shift toward:
+From `v0.88` onward the project will likely shift toward:
 
-- {{next_phase_item_1}}
-- {{next_phase_item_2}}
-- {{next_phase_item_3}}
+- chronosense and identity
+- instinct and bounded agency
+- temporal schema and continuity
 
-The goal is to have `{{future_goal}}` by **{{future_target_milestone}}**.
+The goal is to have a coherent, persistent cognitive system by **v0.92**.
 
-`{{version}}` therefore focuses on `{{contextual_focus}}` before that stage.
+`v0.87.1` therefore focuses on completing the runtime substrate before layering cognitive features, and on doing so through a real implementation milestone with substantial code, demos, and review surfaces.
 
 ---
 
 # Long-Term Direction
 
-`{{project_name}}` is being designed as `{{long_term_identity}}`.
+`ADL` is being designed as a deterministic runtime environment for cognitive agents.
 
 Its long-term goals include:
 
-- {{long_term_goal_1}}
-- {{long_term_goal_2}}
-- {{long_term_goal_3}}
-- {{long_term_goal_4}}
+- enable reliable agent execution
+- support multi-agent reasoning systems
+- provide traceable and auditable cognition
+- establish a substrate for governed agency
 
-These principles aim to move the project beyond `{{old_mode}}` toward `{{new_mode}}`.
+These principles aim to move the project beyond ad-hoc, model-centric execution toward substrate-governed, deterministic orchestration.
 
 ---
 
 # Summary
 
-`{{version}}` is the milestone where `{{project_name}}` becomes:
+`v0.87.1` is the milestone where `ADL` becomes:
 
-- {{summary_quality_1}}
-- {{summary_quality_2}}
-- {{summary_quality_3}}
-- {{summary_quality_4}}
+- runnable
+- bounded
+- deterministic
+- reviewable
 
-It strengthens `{{summary_strength_1}}`, advances `{{summary_strength_2}}`, improves `{{summary_strength_3}}`, and stabilizes `{{summary_strength_4}}`.
+It strengthens runtime completeness, advances execution clarity, improves trace alignment, stabilizes local resilience, and makes the runtime externally reviewable through a substantial demo and proof program.
 
-These improvements prepare the project for `{{next_stage}}`.
+These improvements prepare the project for higher-level cognitive features (identity, instinct, continuity).
 
 ## Exit Criteria
 - The milestone's strategic priorities are explicit and internally consistent.
