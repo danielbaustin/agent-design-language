@@ -36,11 +36,11 @@ This milestone is not satisfied by a public shell alone. It requires substantial
 | WP-13 | Demo matrix + integration demos | Define and implement the milestone demo program across runtime environment, lifecycle, resilience, operator, and review surfaces | Real demo matrix and runnable runtime demos with clear proof claims | WP-04, WP-05, WP-06, WP-08 | `#1462` |
 | WP-14 | Coverage / quality gate (ratchet + exclusions) | Establish truthful quality posture for the runtime milestone, including tests, validators, demos, and justified exceptions | Auditable quality/coverage posture for the runtime-completion milestone | WP-02 through WP-13 | `#1463` |
 | WP-15 | Docs + review pass (repo-wide alignment) | Converge milestone docs, runtime proof surfaces, and reviewer entry docs so an uninvolved reviewer can understand the implemented runtime truthfully | Reviewed and aligned docs/review package for `v0.87.1` | WP-13, WP-14 | `#1464` |
-| WP-16 | Internal review | Perform bounded internal review of milestone truth, runtime behavior, and proof surfaces | Internal review record with actionable findings | WP-15 | TBD |
-| WP-17 | External / 3rd-party review preparation | Prepare `v0.87.1` for external review legibility and proof-surface clarity | External-review-ready package for the runtime milestone | WP-16 | TBD |
-| WP-18 | Review findings remediation | Remediate accepted review findings or record explicit bounded deferrals with ownership before closeout | Updated artifacts plus tracked deferrals/ownership | WP-16, WP-17 | TBD |
-| WP-19 | Next milestone planning | Prepare the next milestone planning package before `v0.87.1` closeout | Explicit next-milestone planning materials and tracked follow-on work | WP-18 | TBD |
-| WP-20 | Release ceremony (final validation + tag + notes + cleanup) | Perform final validation, release-note alignment, cleanup, and milestone closeout for the runtime milestone | Ready-to-merge runtime milestone state and release artifacts | WP-19 | TBD |
+| WP-16 | Internal review | Perform bounded internal review of milestone truth, runtime behavior, and proof surfaces | Internal review record with actionable findings | WP-15 | `#1494` |
+| WP-17 | External / 3rd-party review preparation | Prepare `v0.87.1` for external review legibility and proof-surface clarity | External-review-ready package for the runtime milestone | WP-16 | `#1495` |
+| WP-18 | Review findings remediation | Remediate accepted review findings or record explicit bounded deferrals with ownership before closeout | Updated artifacts plus tracked deferrals/ownership | WP-16, WP-17 | `#1496` |
+| WP-19 | Next milestone planning | Prepare the next milestone planning package before `v0.87.1` closeout | Explicit next-milestone planning materials and tracked follow-on work | WP-18 | `#1497` |
+| WP-20 | Release ceremony (final validation + tag + notes + cleanup) | Perform final validation, release-note alignment, cleanup, and milestone closeout for the runtime milestone | Ready-to-merge runtime milestone state and release artifacts | WP-19 | `#1498` |
 
 ## Sequencing
 - Phase 1: WP-01..WP-08 (runtime foundations, lifecycle, resilience, operator and review surfaces)
