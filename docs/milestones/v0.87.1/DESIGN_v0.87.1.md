@@ -5,7 +5,7 @@
 - Version: `v0.87.1`
 - Date: `2026-04-06`
 - Owner: `Daniel Austin / Agent Logic`
-- Related issues: `#1354`, `#1415`
+- Related issues: `#1354`, `#1415`, `#1435`
 
 ## Purpose
 Define what we are building, why, and how we validate it — concisely, with links to issues/PRs.
@@ -63,7 +63,7 @@ This milestone is executed as a large implementation-and-proof milestone. Work p
   - Mitigation: enforce cross-document review and alignment continuously during execution
 
 ## Alternatives Considered
-- Option: keep `v0.87.1` as a docs-first seed shell only
+- Option: keep `v0.87.1` as a planning-only documentation milestone
   - Tradeoff: lowers immediate pressure but fails to deliver the runtime milestone the roadmap now needs
 - Option: fold runtime completion back into `v0.87`
   - Tradeoff: avoids a sub-milestone but muddies the already-bounded `v0.87` closeout

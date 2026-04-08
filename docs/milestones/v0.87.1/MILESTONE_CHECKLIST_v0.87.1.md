@@ -13,8 +13,10 @@ Ship/no-ship gate for the milestone. Check items only when evidence exists.
 - [ ] Milestone goal defined (`docs/milestones/v0.87.1/VISION_v0.87.1.md`)
 - [ ] Scope + non-goals documented (`docs/milestones/v0.87.1/VISION_v0.87.1.md`)
 - [ ] WBS created and mapped to issues (`docs/milestones/v0.87.1/WBS_v0.87.1.md`)
+- [ ] Feature-doc index is present and aligned to the promoted runtime feature set (`docs/milestones/v0.87.1/FEATURE_DOCS_v0.87.1.md`)
 - [ ] Decision log initialized (`docs/milestones/v0.87.1/DECISIONS_v0.87.1.md`)
 - [ ] Sprint plan created (`docs/milestones/v0.87.1/SPRINT_v0.87.1.md`)
+- [ ] Sprint 1 runtime-foundation issues are created and mapped in WBS / sprint docs (`#1435` through `#1442`)
 
 ## Execution Discipline
 - [ ] Each issue has input/output cards under `.adl/cards/<issue>/`

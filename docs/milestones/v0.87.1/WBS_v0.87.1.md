@@ -14,21 +14,21 @@
 - Reserve the final WPs for the release tail in this order: demos, quality/coverage gate, docs/review convergence, internal review, external review preparation, review-findings remediation or explicit deferral capture, next-milestone planning, and release ceremony.
 
 ## WBS Summary
-`v0.87.1` is the runtime-completion milestone for ADL. It is the point where the runtime stops being a seeded planning surface and becomes a full implementation target with real execution lifecycle, deterministic trace alignment, local resilience, operator surfaces, review surfaces, and runnable demos.
+`v0.87.1` is the runtime-completion milestone for ADL. It is the point where the runtime moves from early planning into a full implementation target with real execution lifecycle, deterministic trace alignment, local resilience, operator surfaces, review surfaces, and runnable demos.
 
 This milestone is not satisfied by a public shell alone. It requires substantial runtime implementation, strong proof surfaces, and the full review-and-release tail needed for a large substrate milestone.
 
 ## Work Packages
 | ID | Work Package | Description | Deliverable | Dependencies | Issue |
 |---|---|---|---|---|---|
-| WP-01 | Design pass (milestone docs + planning) | Align canonical `v0.87.1` docs, planning, and roadmap framing for the runtime-completion milestone | Complete canonical milestone docs aligned to runtime completion scope | none | TBD |
-| WP-02 | Runtime environment completion | Define and implement the first authoritative runtime-environment surface for `v0.87.1`, including entrypoints, env contracts, and configuration expectations | Working runtime environment substrate and docs that match it | WP-01 | TBD |
-| WP-03 | Execution boundaries & lifecycle | Implement and document explicit lifecycle phases and runtime boundaries (`init`, `execute`, `complete`, `teardown`) | Bounded lifecycle model with real implementation and review surfaces | WP-01, WP-02 | TBD |
-| WP-04 | Trace-aligned runtime execution | Align runtime lifecycle phases with Trace v1 events, artifacts, and replay expectations | Runtime execution mapped coherently to trace/proof surfaces | WP-02, WP-03 | TBD |
-| WP-05 | Local runtime resilience + Shepherd preservation | Implement local failure handling, restartability, bounded recovery semantics, and Shepherd preservation behavior for interrupted or failed runtime work | Resilient local runtime behaviors and documented Shepherd guarantees | WP-02, WP-03 | TBD |
-| WP-06 | Operator surfaces | Standardize invocation patterns, runtime commands, demo scripts, and artifact layout | Stable operator entrypoints and reviewable artifact conventions | WP-02, WP-03 | TBD |
-| WP-07 | Runtime state / persistence discipline | Define and implement state, restart, continuity, and cleanup discipline for bounded local runs | Inspectable runtime state/persistence surface with deterministic cleanup and continuity behavior | WP-03, WP-05 | TBD |
-| WP-08 | Runtime review surfaces | Standardize runtime review outputs, inspection surfaces, and verification artifacts | Reviewable runtime output surfaces for internal and external inspection | WP-04, WP-06, WP-07 | TBD |
+| WP-01 | Design pass (milestone docs + planning) | Align canonical `v0.87.1` docs, planning, and roadmap framing for the runtime-completion milestone | Complete canonical milestone docs aligned to runtime completion scope | none | `#1435` |
+| WP-02 | Runtime environment completion | Define and implement the first authoritative runtime-environment surface for `v0.87.1`, including entrypoints, env contracts, and configuration expectations | Working runtime environment substrate and docs that match it | WP-01 | `#1436` |
+| WP-03 | Execution boundaries & lifecycle | Implement and document explicit lifecycle phases and runtime boundaries (`init`, `execute`, `complete`, `teardown`) | Bounded lifecycle model with real implementation and review surfaces | WP-01, WP-02 | `#1437` |
+| WP-04 | Trace-aligned runtime execution | Align runtime lifecycle phases with Trace v1 events, artifacts, and replay expectations | Runtime execution mapped coherently to trace/proof surfaces | WP-02, WP-03 | `#1438` |
+| WP-05 | Local runtime resilience + Shepherd preservation | Implement local failure handling, restartability, bounded recovery semantics, and Shepherd preservation behavior for interrupted or failed runtime work | Resilient local runtime behaviors and documented Shepherd guarantees | WP-02, WP-03 | `#1439` |
+| WP-06 | Operator surfaces | Standardize invocation patterns, runtime commands, demo scripts, and artifact layout | Stable operator entrypoints and reviewable artifact conventions | WP-02, WP-03 | `#1440` |
+| WP-07 | Runtime state / persistence discipline | Define and implement state, restart, continuity, and cleanup discipline for bounded local runs | Inspectable runtime state/persistence surface with deterministic cleanup and continuity behavior | WP-03, WP-05 | `#1441` |
+| WP-08 | Runtime review surfaces | Standardize runtime review outputs, inspection surfaces, and verification artifacts | Reviewable runtime output surfaces for internal and external inspection | WP-04, WP-06, WP-07 | `#1442` |
 | WP-09 | Cross-document consistency pass | Enforce agreement between VISION, DESIGN, WBS, SPRINT, CHECKLIST, README, and promoted runtime surfaces | No contradictions across milestone docs and implementation claims | WP-02..WP-08 | TBD |
 | WP-10 | Acceptance criteria finalization | Define measurable acceptance criteria for each WP and the overall runtime-completion milestone | Completed Acceptance Mapping section with runtime-specific proof expectations | WP-09 | TBD |
 | WP-11 | Sprint plan alignment | Ensure SPRINT doc reflects WBS sequencing, review tail, and release structure | Updated SPRINT with explicit implementation and review phases | WP-01, WP-10 | TBD |

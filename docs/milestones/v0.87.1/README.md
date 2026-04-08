@@ -135,10 +135,10 @@ Open questions:
 
 ## Status
 
-Current status: planning active / implementation not yet started
+Current status: planning active / Sprint 1 issue set created / implementation not yet started
 
 - Planning: active
-- Execution: not started
+- Execution: Sprint 1 issues `#1435` through `#1442` are authored and readying; implementation not yet started
 - Validation: milestone structure and planning direction in progress
 - Release readiness: not started
 
