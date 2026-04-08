@@ -12,7 +12,7 @@ Source-of-truth governance: `../CONTRIBUTING.md` (canonical).
 Workflow loop:
 
 ```
-start -> cards -> execute -> review -> finish -> merge -> cleanup
+init -> ready -> run -> review -> finish -> merge -> cleanup
 ```
 
 Card semantics:
@@ -21,14 +21,18 @@ Card semantics:
 - The canonical local draft prompt bundle is `.adl/<scope>/tasks/<task-id>__<slug>/`.
 - Until workflow tooling writes that layout directly, `.adl/cards/` and `.adl/issues/...` remain compatibility inputs that should be synced into the canonical bundle view.
 - Compatibility links remain under `.adl/cards/` for adjacent tooling during migration.
+- GitHub issue state is the source of truth for whether a card is active or complete.
+- Active/current issue cards stay flat under `.adl/cards/<issue>/` while the milestone is in flight.
+- Closed/completed cards may be archived under `.adl/cards/completed/<milestone>/<issue>/` after or as part of milestone closeout so the active top-level card list stays workable.
 - Templates live under `adl/templates/cards/` (versioned).
 - Tasks can be non-code; the same card-based trace applies.
 
 Fast path (copy/paste):
 
 ```bash
-adl/tools/pr.sh start <issue>
-adl/tools/pr.sh cards <issue>
+adl/tools/pr.sh init <issue>
+adl/tools/pr.sh ready <issue>
+adl/tools/pr.sh run <issue>
 # do the work + tests
 adl/tools/pr.sh finish <issue> --title "adl: <short description>" \
   -f .adl/v0.85/tasks/<task-id>__<slug>/sip.md \
@@ -36,7 +40,7 @@ adl/tools/pr.sh finish <issue> --title "adl: <short description>" \
 ```
 
 Recovery (common pitfalls):
-- **Wrong branch:** `git switch main` -> `adl/tools/pr.sh start <issue>`
+- **Wrong branch:** `git switch main` -> rerun the appropriate `pr run <issue>` bind step
 - **Finish after manual commit:** `adl/tools/pr.sh finish ...` still works; it will commit staged changes.
 - **Issue vs PR number confusion:** always use the **issue** number for cards/branches.
 
