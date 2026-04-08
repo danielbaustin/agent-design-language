@@ -284,7 +284,7 @@ mod tests {
         )
         .expect("identity init");
 
-        let profile_path = repo.join("identity/identity_profile.v1.json");
+        let profile_path = repo.join("adl/identity/identity_profile.v1.json");
         assert!(profile_path.is_file(), "profile should exist");
 
         let profile = load_identity_profile(&profile_path).expect("profile load");

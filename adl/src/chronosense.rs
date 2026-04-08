@@ -112,7 +112,10 @@ impl TemporalContext {
 }
 
 pub fn default_identity_profile_path(repo_root: &Path) -> PathBuf {
-    repo_root.join("identity").join("identity_profile.v1.json")
+    repo_root
+        .join("adl")
+        .join("identity")
+        .join("identity_profile.v1.json")
 }
 
 pub fn write_identity_profile(path: &Path, profile: &IdentityProfile) -> Result<()> {
@@ -225,7 +228,7 @@ mod tests {
         let path = default_identity_profile_path(Path::new("/repo"));
         assert_eq!(
             path,
-            PathBuf::from("/repo/identity/identity_profile.v1.json")
+            PathBuf::from("/repo/adl/identity/identity_profile.v1.json")
         );
     }
 }
