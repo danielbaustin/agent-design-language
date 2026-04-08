@@ -7,6 +7,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 ## What Is Here
 
 - `pr.sh`: canonical issue init/ready/run/finish workflow helper.
+- `demo_v0871_operator_surface.sh`: canonical `v0.87.1` operator-surface proof wrapper for runtime bring-up and artifact inspection.
 - `worktree_doctor.sh`, `worktree_prune.sh`: deterministic worktree governance and safe cleanup helpers.
 - `adl tooling ...`: Rust-owned tooling surface for prompt/card/review validation helpers, with legacy wrapper scripts preserved at the historical `adl/tools/*` paths.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.

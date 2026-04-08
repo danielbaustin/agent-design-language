@@ -111,6 +111,15 @@ Boundary correctness for `v0.87.1` means:
 - workflow-call and completion transitions are observable
 - pause and failure remain distinguishable from success
 
+## Operator Inspection Consequence
+
+Because boundary visibility is part of the runtime contract, the operator surface for `v0.87.1` must expose the canonical trace artifact directly. For this milestone that means operator-facing demos and docs should point reviewers to:
+- `runtime_environment.json` for runtime-root truth
+- `run_summary.json` and `run_status.json` for run disposition
+- `logs/trace_v1.json` for explicit boundary evidence
+
+The operator surface should not require a reviewer to discover boundary proof indirectly through unrelated helper artifacts.
+
 ## Out of Scope
 
 This milestone does not attempt to finalize:

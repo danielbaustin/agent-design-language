@@ -66,6 +66,7 @@ Important repo-local tooling surfaces include:
 - `adl tooling validate-structured-prompt` — structured prompt contract validation
 - `adl tooling verify-review-output-provenance` — provenance verification for review-output artifacts
 - `adl tooling review-card-surface` — bounded deterministic review helper
+- `bash adl/tools/demo_v0871_operator_surface.sh` — canonical `v0.87.1` operator-surface demo for runtime bring-up and proof-surface inspection
 - `adl/tools/*.sh` wrappers remain available as compatibility entrypoints over the Rust-owned commands
 - `adl/tools/report_large_rust_modules.sh` — non-blocking Rust implementation-module size report
 - `adl/tools/sync_task_bundle_prompts.sh` — refresh canonical local task-bundle prompt layout from compatibility paths
@@ -76,9 +77,18 @@ preferred public control-plane surface.
 
 ## Current Status
 
-- Current closure milestone: **v0.85**
-- Next active milestone: **v0.86**
+- Current closure milestone: **v0.87**
+- Next active milestone: **v0.87.1**
 - Role of this directory: tooling/reference entrypoint for prompt, reviewer, editor, and maintenance surfaces
+
+## Runtime Operator Surface
+
+For `v0.87.1`, the bounded runtime operator contract is:
+- one canonical runtime invocation path via `bash adl/tools/pr.sh run <adl-file> ...`
+- one canonical runtime-root marker at `runtime_environment.json`
+- one canonical per-run inspection set rooted at `run_summary.json`, `run_status.json`, and `logs/trace_v1.json`
+
+Use `bash adl/tools/demo_v0871_operator_surface.sh` as the smallest repo-local proof of that operator surface.
 
 ## Notes
 
