@@ -37,6 +37,7 @@ Options:
   --open             Open the first written HTML artifact after a successful run
   --no-open          Disable artifact auto-open for demo runs
   --allow-unsigned   Allow running unsigned workflows (dev-only override)
+  -V, --version      Show the ADL CLI version
   -h, --help         Show this help
 
 Examples:

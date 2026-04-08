@@ -283,8 +283,4 @@ They ensure that all execution is:
 - observable
 - secure
 
-<<<<<<< HEAD
 They are the mechanism by which ADL enforces its Secure Execution Model in practice.
-=======
-They are the mechanism by which ADL enforces its Secure Execution Model in practice.
->>>>>>> 6762024 (docs: align v0.87.1 planning to runtime milestone)
