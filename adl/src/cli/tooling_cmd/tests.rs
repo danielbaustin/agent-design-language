@@ -686,10 +686,7 @@ items:
     assert_eq!(mapping_seq_len(&mapping, "items"), 2);
     assert!(mapping_mapping(&mapping, "nested").is_ok());
     assert!(mapping_mapping(&mapping, "missing").is_err());
-    assert_eq!(
-        ensure_bool(&mapping, "flag", "flag must be bool").expect("bool key"),
-        true
-    );
+    assert!(ensure_bool(&mapping, "flag", "flag must be bool").expect("bool key"));
     assert!(ensure_bool(&mapping, "missing", "flag must be bool").is_err());
 }
 
