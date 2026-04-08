@@ -57,7 +57,7 @@ If you are new to this milestone, read in this order:
 
 If you want the fastest reviewer path, jump to:
 - demo matrix: `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
-- demo runbook: `demos/v087_demo_program.md`
+- demo runbook: `demos/v0.87/v087_demo_program.md`
 - milestone checklist: `docs/milestones/v0.87/MILESTONE_CHECKLIST_v0.87.md`
 - release plan: `docs/milestones/v0.87/RELEASE_PLAN_v0.87.md`
 
@@ -77,7 +77,7 @@ Canonical milestone documents:
 Supporting / domain-specific docs:
 - Feature docs index: `docs/milestones/v0.87/FEATURE_DOCS_v0.87.md`
 - Promoted feature docs: `docs/milestones/v0.87/features/`
-- Demo runbook: `demos/v087_demo_program.md`
+- Demo runbook: `demos/v0.87/v087_demo_program.md`
 - Roadmap context: `docs/milestones/v0.85/features/ROAD_TO_v0.95.md`
 - Review artifacts: `.adl/reviews/`
 

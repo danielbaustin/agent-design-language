@@ -105,7 +105,7 @@ fn build_verification_artifact(
         },
         validation: ValidationReport {
             command:
-                "cargo run --manifest-path examples/transpiler_demo/Cargo.toml --quiet".to_string(),
+                "cargo run --manifest-path demos/transpiler_demo/Cargo.toml --quiet".to_string(),
             status: if same_order {
                 "PASS".to_string()
             } else {

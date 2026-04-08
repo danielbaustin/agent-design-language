@@ -60,11 +60,11 @@ Every row in this matrix must provide at least one of:
 | Reasoning graph + affect integration | Supporting demo | Verified | `adl/tools/demo_reasoning_graph_affect.sh` | reasoning-graph artifact, before/after comparison |
 | Policy learning | Supporting demo | Verified | `adl/tools/demo_adaptive_godel_loop.sh` | policy delta artifact and before/after comparison |
 | Experiment prioritization | Supporting demo | Verified | `adl/tools/demo_experiment_prioritization.sh` | ranked artifact with tie-break behavior |
-| Cross-workflow learning | Alternate proof surface | Verified | `adl/tools/demo_cross_workflow_learning.sh` | linked artifact chain across workflows; `demos/cross_workflow_learning_demo.md` |
+| Cross-workflow learning | Alternate proof surface | Verified | `adl/tools/demo_cross_workflow_learning.sh` | linked artifact chain across workflows; `demos/v0.85/cross_workflow_learning_demo.md` |
 | Promotion / evaluation loop | Supporting demo | Verified | `adl/tools/demo_promotion_eval_loop.sh` | evaluation artifact plus promotion decision artifact |
 | Five-command editing lifecycle | Alternate proof surface | Verified | `adl/tools/demo_five_command_editing.sh` | `docs/tooling/editor/five_command_demo.md`, `docs/tooling/editor/five_command_regression_suite.md`, editor truth tests |
 | Review and output-record rigor | Alternate proof surface | Verified | artifact review walkthrough | issues `#918`, `#941`, `#948`, `#958` and strong SORs |
-| Demo/readiness discipline itself | Alternate proof surface | Verified | `demos/v085_demo_program.md` | canonical demo matrix, milestone checklist, and explicit closeout note that no additional bounded demo pass is currently required |
+| Demo/readiness discipline itself | Alternate proof surface | Verified | `demos/v0.85/v085_demo_program.md` | canonical demo matrix, milestone checklist, and explicit closeout note that no additional bounded demo pass is currently required |
 
 ---
 
@@ -79,7 +79,7 @@ These are the milestone’s headline demonstrations. They should be the first th
 - `adl/tools/demo_steering_queue_checkpoint.sh`
 
 **Primary supporting docs:**
-- `demos/steering_queue_checkpoint_demo.md`
+- `demos/v0.85/steering_queue_checkpoint_demo.md`
 
 **Expected proof artifacts:**
 - `.adl/runs/v0-85-hitl-steering-demo/pause_state.json`
@@ -106,7 +106,7 @@ This is the bounded runtime proof that ADL can pause, preserve queue/checkpoint 
 - `adl/tools/demo_hitl_editor_review.sh`
 
 **Primary supporting docs:**
-- `demos/hitl_editor_review_demo.md`
+- `demos/v0.85/hitl_editor_review_demo.md`
 - `docs/tooling/editor/demo.md`
 
 **Expected proof artifacts:**
@@ -159,7 +159,7 @@ This is the first visible proof that ADL can adapt within bounds rather than beh
 - `adl/tools/demo_affect_godel_vertical_slice.sh`
 
 **Primary supporting docs:**
-- `demos/affect_godel_vertical_slice_demo.md`
+- `demos/v0.85/affect_godel_vertical_slice_demo.md`
 
 **Expected proof artifacts:**
 - `.adl/reports/demo-affect-godel-vertical-slice/runs/review-godel-affect-001/godel/godel_affect_vertical_slice.v1.json`
@@ -183,7 +183,7 @@ This is the most distinctive single `v0.85` demo. It shows that ADL is not only 
 - `adl/tools/demo_godel_hypothesis_engine.sh`
 
 **Primary supporting docs:**
-- `demos/godel_hypothesis_engine_demo.md`
+- `demos/v0.85/godel_hypothesis_engine_demo.md`
 
 **Expected proof artifacts:**
 - `.adl/reports/demo-godel-hypothesis-engine/runs/review-godel-cli-001/godel/godel_hypothesis.v1.json`
@@ -207,7 +207,7 @@ This is the first clean entry point into the bounded Gödel runtime loop and the
 - `adl/tools/demo_affect_engine.sh`
 
 **Supporting docs:**
-- `demos/affect_engine_demo.md`
+- `demos/v0.85/affect_engine_demo.md`
 
 **Expected proof artifacts:**
 - `.adl/runs/v0-3-aee-recovery-initial/learning/affect_state.v1.json`
@@ -229,7 +229,7 @@ This is the first clean entry point into the bounded Gödel runtime loop and the
 - `adl/tools/demo_reasoning_graph_affect.sh`
 
 **Supporting docs:**
-- `demos/reasoning_graph_affect_demo.md`
+- `demos/v0.85/reasoning_graph_affect_demo.md`
 
 **Expected proof artifacts:**
 - `.adl/runs/v0-3-aee-recovery-initial/learning/reasoning_graph.v1.json`
@@ -304,7 +304,7 @@ These are important `v0.85` claims whose best current proof is primarily artifac
 **Status:** Ready  
 **Primary proof surfaces:**
 - `adl/tools/demo_cross_workflow_learning.sh`
-- `demos/cross_workflow_learning_demo.md`
+- `demos/v0.85/cross_workflow_learning_demo.md`
 - output card for `#751`
 
 **Reviewer should look for:**
@@ -352,7 +352,7 @@ These are important `v0.85` claims whose best current proof is primarily artifac
 ## 7. Reviewer Order
 
 Recommended milestone review order:
-1. `demos/v085_demo_program.md`
+1. `demos/v0.85/v085_demo_program.md`
 2. `adl/tools/demo_steering_queue_checkpoint.sh`
 3. `adl/tools/demo_hitl_editor_review.sh`
 4. `adl/tools/demo_aee_bounded_adaptation.sh`

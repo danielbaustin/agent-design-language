@@ -19,7 +19,7 @@ If you want the current `v0.86` milestone review surface:
 If you want the historical `v0.8` flagship demo surface:
 
 ```bash
-cargo run --manifest-path examples/transpiler_demo/Cargo.toml --quiet
+cargo run --manifest-path demos/transpiler_demo/Cargo.toml --quiet
 ```
 
 If you want the current `v0.87` substrate demo program:
@@ -39,10 +39,10 @@ bash adl/tools/demo_v087_suite.sh
 
 ### v0.87 demo program
 
-- `v087_demo_program.md`
+- `v0.87/v087_demo_program.md`
 - `../docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
 
-Use `v087_demo_program.md` for the canonical `v0.87` demo order and bounded
+Use `v0.87/v087_demo_program.md` for the canonical `v0.87` demo order and bounded
 repo-local commands.
 
 Use `bash adl/tools/demo_v087_suite.sh` for the one-command substrate review
@@ -74,14 +74,14 @@ Use `./adl/tools/demo_v086_control_path.sh` for the primary bounded cognitive-pa
 
 ### v0.85 demo program
 
-- `v085_demo_program.md`
-- `steering_queue_checkpoint_demo.md`
-- `hitl_editor_review_demo.md`
-- `godel_hypothesis_engine_demo.md`
+- `v0.85/v085_demo_program.md`
+- `v0.85/steering_queue_checkpoint_demo.md`
+- `v0.85/hitl_editor_review_demo.md`
+- `v0.85/godel_hypothesis_engine_demo.md`
 - `aee-recovery/README.md`
-- `affect_godel_vertical_slice_demo.md`
+- `v0.85/affect_godel_vertical_slice_demo.md`
 
-Use `v085_demo_program.md` for the canonical milestone review order.
+Use `v0.85/v085_demo_program.md` for the canonical milestone review order.
 
 Use `adl/tools/demo_steering_queue_checkpoint.sh` for the bounded
 steering/checkpoint/resume proof surface. It emits:
@@ -93,7 +93,7 @@ Use `adl/tools/demo_hitl_editor_review.sh` for the bounded editor/review
 workflow proof surface. It emits:
 - `.adl/reports/demo-hitl-editor-review/editor_review_demo_manifest.v1.json`
 
-Use `godel_hypothesis_engine_demo.md` for the milestone-facing WP-10 review
+Use `v0.85/godel_hypothesis_engine_demo.md` for the milestone-facing WP-10 review
 path. For a one-command review flow, run
 `adl/tools/demo_godel_hypothesis_engine.sh`.
 
@@ -106,12 +106,12 @@ path. For a one-command review flow, run
 ### Historical v0.8 demos
 
 - `rust-transpiler/README.md`
-- `v0.8-bounded-critical-demos.md`
-- `godel_failure_hypothesis_experiment.md`
-- `adaptive_godel_loop_demo.md`
-- `experiment_prioritization_demo.md`
-- `cross_workflow_learning_demo.md`
-- `promotion_eval_loop_demo.md`
+- `v0.8/v0.8-bounded-critical-demos.md`
+- `v0.8/godel_failure_hypothesis_experiment.md`
+- `v0.85/adaptive_godel_loop_demo.md`
+- `v0.85/experiment_prioritization_demo.md`
+- `v0.85/cross_workflow_learning_demo.md`
+- `v0.85/promotion_eval_loop_demo.md`
 - `aee-recovery/README.md`
 
 Use `aee-recovery/README.md` for the bounded Adaptive Execution Engine recovery
@@ -122,36 +122,36 @@ Use `adl/tools/demo_aee_bounded_adaptation.sh` for the one-command v0.85
 bounded adaptation demo that emits `learning/aee_decision.json` as the primary
 adaptive decision artifact.
 
-Use `godel_failure_hypothesis_experiment.md` for the concrete
+Use `v0.8/godel_failure_hypothesis_experiment.md` for the concrete
 `adl godel run` / `adl godel inspect` / `adl godel evaluate` review path and the
 persisted Gödel schema/runtime artifacts it produces, including the
 first-class `godel_hypothesis.v1.json` hypothesis record. For a one-command
 review flow, run `adl/tools/demo_godel_hypothesis_engine.sh`.
 
-Use `promotion_eval_loop_demo.md` for the bounded WP-14 review path that proves
+Use `v0.85/promotion_eval_loop_demo.md` for the bounded WP-14 review path that proves
 the prior Gödel artifacts now feed a structured evaluation report and an
 explicit promotion decision through the persisted
 `godel_eval_report.v1.json` and `godel_promotion_decision.v1.json` artifacts.
 For a one-command review flow, run `adl/tools/demo_promotion_eval_loop.sh`.
 
-Use `adaptive_godel_loop_demo.md` for the bounded WP-11 policy-learning slice.
+Use `v0.85/adaptive_godel_loop_demo.md` for the bounded WP-11 policy-learning slice.
 It shows a deterministic policy decision and before/after policy comparison
 derived from the persisted hypothesis artifact. For a one-command review flow,
 run `adl/tools/demo_adaptive_godel_loop.sh`.
 
-Use `experiment_prioritization_demo.md` for the bounded WP-12 prioritization
+Use `v0.85/experiment_prioritization_demo.md` for the bounded WP-12 prioritization
 slice. It shows a deterministic ranked experiment output with explicit
 confidence values and stable tie-break behavior derived from the hypothesis and
 policy artifacts. For a one-command review flow, run
 `adl/tools/demo_experiment_prioritization.sh`.
 
-Use `cross_workflow_learning_demo.md` for the bounded WP-13 review path that
+Use `v0.85/cross_workflow_learning_demo.md` for the bounded WP-13 review path that
 proves workflow-A prioritization output changes a downstream workflow-B
 decision through the persisted `godel_cross_workflow_learning.v1.json`
 artifact. For a one-command review flow, run
 `adl/tools/demo_cross_workflow_learning.sh`.
 
-Use `affect_godel_vertical_slice_demo.md` for the bounded WP-17 slice that
+Use `v0.85/affect_godel_vertical_slice_demo.md` for the bounded WP-17 slice that
 proves an affect transition changes the top Gödel-adjacent strategy ranking
 through the persisted `godel_affect_vertical_slice.v1.json` artifact. For a
 one-command review flow, run

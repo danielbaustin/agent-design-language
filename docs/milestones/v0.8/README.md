@@ -23,7 +23,7 @@ If you are reviewing v0.8 for the first time, start with this split:
 Run these commands from repository root:
 
 ```bash
-cargo run --manifest-path examples/transpiler_demo/Cargo.toml --quiet
+cargo run --manifest-path demos/transpiler_demo/Cargo.toml --quiet
 cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-c-godel-runtime --run --out ./out
 cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-d-godel-obsmem-loop --run --trace --out ./out
 cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-e-multi-agent-card-pipeline --run --trace --out ./out
@@ -34,8 +34,8 @@ Review these docs while inspecting runnable output:
 - [DEMOS_V0.8.md](DEMOS_V0.8.md)
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
 - [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
-- [../../demos/v0.8-bounded-critical-demos.md](../../demos/v0.8-bounded-critical-demos.md)
-- [../../demos/godel_failure_hypothesis_experiment.md](../../demos/godel_failure_hypothesis_experiment.md)
+- [../../demos/v0.8/v0.8-bounded-critical-demos.md](../../demos/v0.8/v0.8-bounded-critical-demos.md)
+- [../../demos/v0.8/godel_failure_hypothesis_experiment.md](../../demos/v0.8/godel_failure_hypothesis_experiment.md)
 - [../../demos/aee-recovery/README.md](../../demos/aee-recovery/README.md)
 
 Scope note:
@@ -124,7 +124,7 @@ Use these docs together when checking current v0.8 truth:
 
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
 - [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
-- [../../demos/v0.8-bounded-critical-demos.md](../../demos/v0.8-bounded-critical-demos.md)
+- [../../demos/v0.8/v0.8-bounded-critical-demos.md](../../demos/v0.8/v0.8-bounded-critical-demos.md)
 - [STICKTOITTIVENESS.md](STICKTOITTIVENESS.md)
 - [GODEL_AGENT.md](GODEL_AGENT.md)
 - [OBSMEM_BAYES.md](OBSMEM_BAYES.md)

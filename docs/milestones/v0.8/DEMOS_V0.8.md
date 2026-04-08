@@ -15,7 +15,7 @@ If you are asking "what do I run?" versus "what do I inspect?", use this split f
 Run these commands from repository root:
 
 ```bash
-cargo run --manifest-path examples/transpiler_demo/Cargo.toml --quiet
+cargo run --manifest-path demos/transpiler_demo/Cargo.toml --quiet
 cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-c-godel-runtime --run --out ./out
 cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-d-godel-obsmem-loop --run --trace --out ./out
 cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-e-multi-agent-card-pipeline --run --trace --out ./out
@@ -27,10 +27,10 @@ For the bounded AEE recovery path, use:
 - It documents the current repo-root failure -> suggestion -> overlay -> recovery flow and the replayable artifacts for both runs.
 
 Bounded Adaptive Execution Demo:
-- `demos/godel_failure_hypothesis_experiment.md`
+- `demos/v0.8/godel_failure_hypothesis_experiment.md`
 
 For the bounded Gödel CLI catch-up surfaces, use the dedicated runbook:
-- `demos/godel_failure_hypothesis_experiment.md`
+- `demos/v0.8/godel_failure_hypothesis_experiment.md`
 - It provides the current repo-root `adl godel run`, `adl godel inspect`, and `adl godel evaluate` sequence against the reorganized demo layout.
 
 These runbooks live under `demos/`, which is now the canonical user-facing demo entrypoint for the active v0.8 review surfaces.
@@ -60,7 +60,7 @@ Review-surface entries are ordered by:
 | D8-01 | inspect_only | Read / inspect | Gödel schema spine | ExperimentRecord + Evidence + Mutation + EvaluationPlan schema alignment | `#609`, `#610`, `#611`, `#612`, `#683` | canonical schema/example artifacts under `adl-spec/` | targeted `jq` / path checks |
 | D8-02 | inspect_only_with_runnable_support | Read workflow docs, then optionally run supporting demo | Gödel workflow integration | Failure -> hypothesis -> mutation -> experiment -> evaluation -> record loop template alignment | `#613`, `#615`, `#616` | `GODEL_EXPERIMENT_WORKFLOW_TEMPLATE_V1.md` + `adl-spec/examples/v0.8/godel_experiment_workflow.template.v1.json` + supporting Demo D runtime artifacts | `cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-d-godel-obsmem-loop --run --trace --out ./out` |
 | D8-03 | inspect_only_with_runnable_support | Read indexing docs, then optionally run supporting demo | ObsMem indexing integration | Run summary + ExperimentRecord-derived indexing surfaces | `#614` | `OBSMEM_INDEXING_SURFACES_V1.md` + supporting Demo F runtime artifacts | `cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-f-obsmem-retrieval --run --trace --out ./out` |
-| D8-04 | runnable_demo | Run and inspect output | Runtime/transpiler flagship | Bounded Rust-first transpiler demo scaffold: deterministic mapping verification + stable evidence artifact | `#702`, `#703`, `#704`, `#759` | `RUST_TRANSPILER_DEMO.md` + `RUST_TRANSPILER_VERIFICATION_V0.8.md` + `demos/rust-transpiler/output/transpiler_verification.v0.8.json` | `cargo run --manifest-path examples/transpiler_demo/Cargo.toml --quiet` |
+| D8-04 | runnable_demo | Run and inspect output | Runtime/transpiler flagship | Bounded Rust-first transpiler demo scaffold: deterministic mapping verification + stable evidence artifact | `#702`, `#703`, `#704`, `#759` | `RUST_TRANSPILER_DEMO.md` + `RUST_TRANSPILER_VERIFICATION_V0.8.md` + `demos/rust-transpiler/output/transpiler_verification.v0.8.json` | `cargo run --manifest-path demos/transpiler_demo/Cargo.toml --quiet` |
 | D8-05 | inspect_only_with_runnable_support | Read authoring/reviewer contracts, then optionally run supporting demo | Authoring/reviewer compatibility | Prompt spec + reviewer checklist/output contracts and ordering | `#633`, `#650`, `#651`, `#649`, `#667`, `#677` | tooling docs/contracts + supporting Demo E runtime artifacts | `cargo run --manifest-path swarm/Cargo.toml --bin adl -- demo demo-e-multi-agent-card-pipeline --run --trace --out ./out` |
 
 ## Supporting Runnable Demos
@@ -75,7 +75,7 @@ Review-surface entries are ordered by:
   - Exercises deterministic retrieval over persisted runtime index entries.
 - `demos/aee-recovery/README.md`
   - Exercises bounded retry-policy recovery using a deterministic fail-once provider mock, a retry-budget suggestion, an explicit overlay, and replayable run artifacts.
-- `demos/godel_failure_hypothesis_experiment.md`
+- `demos/v0.8/godel_failure_hypothesis_experiment.md`
   - Exercises the bounded Gödel CLI review flow and the persisted `canonical_evidence_view.v1`, `mutation.v1`, `evaluation_plan.v1`, and `experiment_record.v1` runtime artifacts.
   - This is also the bounded adaptive execution demo pointer for reviewer follow-through on failure -> hypothesis -> experiment surfaces.
 

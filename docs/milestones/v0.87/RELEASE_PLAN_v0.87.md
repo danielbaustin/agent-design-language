@@ -139,7 +139,7 @@ bash adl/tools/demo_v087_suite.sh
 ```
 
 Canonical runbook:
-- `demos/v087_demo_program.md`
+- `demos/v0.87/v087_demo_program.md`
 
 ---
 

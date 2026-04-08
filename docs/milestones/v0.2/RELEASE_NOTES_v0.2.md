@@ -43,6 +43,6 @@ If local provider setup is not ready yet, use the plan command above as the reco
 
 ## Key docs
 
-- v0.2 schema extensions: `../adl-spec/ADL_v0.2_Schema_Extensions.md`
+- v0.2 schema extensions: `ADL_v0.2_Schema_Extensions.md`
 - ADL spec index: `../adl-spec/spec/README.md`
 - Provider implementation reference: `src/provider.rs`

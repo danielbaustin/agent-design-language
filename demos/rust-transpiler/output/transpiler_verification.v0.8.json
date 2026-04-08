@@ -32,7 +32,7 @@
     "notes": "v0.8 scope is a bounded demo scaffold only: deterministic fixture-to-runtime mapping verification, checked-in runtime skeleton, and stable verification artifact generation. It does not generate patches, apply sandboxed edits, or execute cargo fmt/clippy/test against a fixture crate."
   },
   "validation": {
-    "command": "cargo run --manifest-path examples/transpiler_demo/Cargo.toml --quiet",
+    "command": "cargo run --manifest-path demos/transpiler_demo/Cargo.toml --quiet",
     "status": "PASS"
   }
 }
