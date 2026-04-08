@@ -2,7 +2,7 @@ use ::adl::adl;
 use ::adl::provider::build_provider;
 
 mod helpers;
-use helpers::EnvVarGuard;
+use helpers::{unique_test_temp_dir, EnvVarGuard};
 
 fn provider_spec_from_yaml(yaml: &str) -> adl::ProviderSpec {
     serde_yaml::from_str::<adl::ProviderSpec>(yaml).expect("failed to parse ProviderSpec YAML")
@@ -10,6 +10,7 @@ fn provider_spec_from_yaml(yaml: &str) -> adl::ProviderSpec {
 
 #[test]
 fn build_provider_accepts_local_ollama_kind() {
+    let _temp_dir = unique_test_temp_dir("local-ollama-provider");
     let spec = provider_spec_from_yaml(
         r#"
 type: local_ollama
