@@ -71,7 +71,7 @@ pub(super) fn real_validate_structured_prompt(args: &[String]) -> Result<()> {
     let text = fs::read_to_string(&input)?;
     match prompt_type.as_str() {
         "stp" => validate_stp_text(&text)?,
-        "sip" => validate_sip_text(&text, &input)?,
+        "sip" => validate_sip_text(&text, &input, phase.as_deref())?,
         "sor" => validate_sor_text(&text, phase.as_deref())?,
         _ => bail!("unsupported --type: {}", prompt_type),
     }
@@ -376,7 +376,7 @@ pub(super) fn validate_stp_text(text: &str) -> Result<()> {
     Ok(())
 }
 
-pub(super) fn validate_sip_text(text: &str, path: &Path) -> Result<()> {
+pub(super) fn validate_sip_text(text: &str, path: &Path, phase: Option<&str>) -> Result<()> {
     for section in [
         "Goal",
         "Required Outcome",
@@ -413,9 +413,20 @@ pub(super) fn validate_sip_text(text: &str, path: &Path) -> Result<()> {
         !markdown_field(text, "Title").unwrap_or_default().is_empty(),
         "missing required field: Title"
     );
+    let branch = markdown_field(text, "Branch").unwrap_or_default();
+    let branch_ok = if phase == Some("bootstrap") {
+        valid_branch(&branch) || branch.eq_ignore_ascii_case("not bound yet")
+    } else {
+        valid_branch(&branch)
+    };
     ensure!(
-        valid_branch(&markdown_field(text, "Branch").unwrap_or_default()),
-        "Branch must be a codex/ branch"
+        branch_ok,
+        "Branch must be a codex/ branch{}",
+        if phase == Some("bootstrap") {
+            " or `not bound yet` in bootstrap phase"
+        } else {
+            ""
+        }
     );
     let issue = markdown_block_field(text, "Context", "Issue").unwrap_or_default();
     ensure!(
