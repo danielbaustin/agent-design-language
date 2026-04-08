@@ -30,6 +30,7 @@ ADL_OLLAMA_BIN=tools/mock_ollama_v0_4.sh cargo run -q --bin adl -- examples/v0-6
 - v0.87.1: no-network mock provider family proof (`v0-87-1-provider-mock-demo.adl.yaml`)
 - v0.87.1: bounded HTTP family proof (`v0-87-1-provider-http-demo.adl.yaml`)
 - v0.87.1: local Ollama family proof (`v0-87-1-provider-local-ollama-demo.adl.yaml`)
+- v0.87.1: ChatGPT family proof (`v0-87-1-provider-chatgpt-demo.adl.yaml`)
 
 ## See Also / Canonical Docs
 

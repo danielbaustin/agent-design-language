@@ -1,0 +1,34 @@
+version: "0.5"
+
+providers:
+  chatgpt_primary:
+    profile: "chatgpt:gpt-5.4"
+    config:
+      endpoint: "http://127.0.0.1:8787/complete"
+      auth:
+        type: bearer
+        env: OPENAI_API_KEY
+      headers:
+        X-Client: "adl-chatgpt-demo"
+      timeout_secs: 15
+      model_ref: "gpt-5.4"
+      provider_model_id: "gpt-5.4"
+
+agents:
+  chatgpt_agent:
+    provider: "chatgpt_primary"
+    model: "gpt-5.4"
+
+tasks:
+  echo_marker:
+    prompt:
+      user: "CHATGPT_PROVIDER_DEMO_OK"
+
+run:
+  name: "v0-87-1-provider-chatgpt-demo"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "chatgpt_echo"
+        agent: "chatgpt_agent"
+        task: "echo_marker"
