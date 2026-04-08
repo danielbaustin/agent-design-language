@@ -9,6 +9,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `pr.sh`: canonical issue init/ready/run/finish workflow helper.
 - `demo_v0871_operator_surface.sh`: canonical `v0.87.1` operator-surface proof wrapper for runtime bring-up and artifact inspection.
 - `demo_v0871_runtime_state.sh`: canonical `v0.87.1` runtime-state proof wrapper for paused-vs-completed persistence inspection.
+- `normalize_adl_cards.sh`: repairs `.adl/cards/<issue>/` compatibility links and materializes missing bootstrap `sor.md` files for existing task bundles.
 - `worktree_doctor.sh`, `worktree_prune.sh`: deterministic worktree governance and safe cleanup helpers.
 - `adl tooling ...`: Rust-owned tooling surface for prompt/card/review validation helpers, with legacy wrapper scripts preserved at the historical `adl/tools/*` paths.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
@@ -31,6 +32,9 @@ ADL_OPERATIONAL_SKILLS_INSTALL_MODE=symlink bash adl/tools/install_adl_operation
 
 # install or resync the legacy adl_pr_cycle compatibility skill from the tracked contract
 bash adl/tools/install_adl_pr_cycle_skill.sh
+
+# normalize compatibility card links for existing task bundles
+bash adl/tools/normalize_adl_cards.sh --root "$(pwd)" --version v0.87.1
 
 # bootstrap the local root task bundle for an existing issue
 bash ./adl/tools/pr.sh init <issue_num> --slug <slug>
