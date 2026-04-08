@@ -866,7 +866,8 @@ fn structured_prompt_validators_accept_canonical_cards() {
     let sor = valid_sor_text();
 
     validate_stp_text(&stp).expect("canonical STP should validate");
-    validate_sip_text(&sip, Path::new("sip.md")).expect("canonical SIP should validate");
+    validate_sip_text(&sip, Path::new("sip.md"), Some("bootstrap"))
+        .expect("canonical SIP should validate");
     validate_sor_text(&sor, Some("completed")).expect("canonical SOR should validate");
 
     assert!(markdown_has_heading(&stp, "Summary"));
@@ -885,6 +886,22 @@ fn structured_prompt_validators_accept_canonical_cards() {
         "Done."
     );
     assert!(split_front_matter(&stp).is_ok());
+}
+
+#[test]
+fn structured_prompt_sip_validator_accepts_not_bound_yet_only_in_bootstrap_phase() {
+    let sip = valid_sip_text(1431, Path::new("/Users/daniel/git/agent-design-language"))
+        .replace(
+            "Branch: codex/1431-tooling-test",
+            "Branch: not bound yet",
+        );
+
+    validate_sip_text(&sip, Path::new("sip.md"), Some("bootstrap"))
+        .expect("bootstrap SIP should accept not bound yet");
+
+    let err = validate_sip_text(&sip, Path::new("sip.md"), None)
+        .expect_err("non-bootstrap SIP should still reject not bound yet");
+    assert!(err.to_string().contains("codex/ branch"));
 }
 
 #[test]

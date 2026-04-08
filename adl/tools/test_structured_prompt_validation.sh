@@ -323,6 +323,113 @@ if "$VALIDATOR" --type sip --phase bootstrap --input "$tmpdir/sip_blank_context_
   exit 1
 fi
 
+cat >"$tmpdir/sip_bootstrap_not_bound_yet_valid.md" <<'EOF'
+# ADL Input Card
+
+Task ID: issue-1431
+Run ID: issue-1431
+Version: v0.87.1
+Title: bootstrap-pre-run-sip
+Branch: not bound yet
+
+Context:
+- Issue: https://github.com/danielbaustin/agent-design-language/issues/1431
+- PR:
+- Source Issue Prompt: .adl/v0.87.1/bodies/issue-1431-bootstrap-pre-run-sip.md
+- Docs: docs/tooling/prompt-spec.md
+- Other: none
+
+## Prompt Spec
+```yaml
+prompt_schema: adl.v1
+actor:
+  role: execution_agent
+  name: codex
+model:
+  id: gpt-5-codex
+  determinism_mode: stable
+inputs:
+  sections:
+    - goal
+    - required_outcome
+    - acceptance_criteria
+    - inputs
+    - target_files_surfaces
+    - validation_plan
+    - demo_proof_requirements
+    - constraints_policies
+    - system_invariants
+    - reviewer_checklist
+    - non_goals_out_of_scope
+    - notes_risks
+    - instructions_to_agent
+outputs:
+  output_card: .adl/cards/1431/output_1431.md
+  summary_style: concise_structured
+constraints:
+  include_system_invariants: true
+  include_reviewer_checklist: true
+  disallow_secrets: true
+  disallow_absolute_host_paths: true
+automation_hints:
+  source_issue_prompt_required: true
+  target_files_surfaces_recommended: true
+  validation_plan_required: true
+  required_outcome_type_supported: true
+review_surfaces:
+  - card_review_checklist.v1
+  - card_review_output.v1
+  - card_reviewer_gpt.v1.1
+```
+
+Execution:
+- Agent:
+- Provider:
+- Tools allowed:
+- Sandbox / approvals:
+- Source issue-prompt slug:
+- Required outcome type:
+- Demo required:
+
+## Goal
+x
+## Required Outcome
+x
+## Acceptance Criteria
+x
+## Inputs
+x
+## Target Files / Surfaces
+x
+## Validation Plan
+x
+## Demo / Proof Requirements
+x
+## Constraints / Policies
+x
+## System Invariants (must remain true)
+x
+## Reviewer Checklist (machine-readable hints)
+x
+## Non-goals / Out of scope
+x
+## Notes / Risks
+x
+## Instructions to the Agent
+x
+EOF
+
+"$VALIDATOR" --type sip --phase bootstrap --input "$tmpdir/sip_bootstrap_not_bound_yet_valid.md"
+
+set +e
+"$VALIDATOR" --type sip --input "$tmpdir/sip_bootstrap_not_bound_yet_valid.md" >/dev/null 2>&1
+rc=$?
+set -e
+if [[ "$rc" -eq 0 ]]; then
+  echo "expected bootstrap-style SIP without --phase to fail validation" >&2
+  exit 1
+fi
+
 cat >"$tmpdir/stp_absolute_path_invalid.md" <<'EOF'
 ---
 issue_card_schema: adl.issue.v1
