@@ -23,7 +23,7 @@ use common::{
     absolutize, contains_absolute_host_path_in_text, contains_secret_like_token, ensure_file,
     ensure_no_absolute_host_path, ensure_no_disallowed_content, ensure_sorted_pointers,
     is_normalized_slug, is_repo_relative, normalize_issue, pointer_sort_key, repo_relative_display,
-    repo_root, valid_branch, valid_github_issue_url, valid_github_pr_url, valid_iso8601_datetime,
+    valid_branch, valid_github_issue_url, valid_github_pr_url, valid_iso8601_datetime,
     valid_reference, valid_task_id, valid_version,
 };
 #[cfg(test)]

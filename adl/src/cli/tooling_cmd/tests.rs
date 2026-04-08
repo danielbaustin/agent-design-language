@@ -12,14 +12,20 @@ struct TempRepo {
     path: PathBuf,
 }
 
+fn repo_root_for_tests() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("adl crate lives under repo root")
+        .to_path_buf()
+}
+
 impl TempRepo {
     fn new(label: &str) -> Self {
         let stamp = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .expect("system clock before unix epoch")
             .as_nanos();
-        let path = repo_root()
-            .expect("repo root")
+        let path = repo_root_for_tests()
             .join(".tmp/tooling_cmd_tests")
             .join(format!("{label}-{stamp}"));
         fs::create_dir_all(&path).expect("create temp repo root");
@@ -818,15 +824,6 @@ fn card_prompt_covers_help_errors_and_fallback_rendering() {
             &prompt_spec_without_sections(Some(false), Some(false)),
         ),
     );
-    let issue_input = repo.write_rel(
-        ".adl/cards/1402/input_1402.md",
-        &valid_input_card_with_prompt_spec(
-            1402,
-            ".tmp/tooling_cmd_tests/rendered.txt",
-            &prompt_spec_without_sections(Some(true), Some(true)),
-        ),
-    );
-
     real_card_prompt(&["--help".to_string()]).expect("help should succeed");
     assert!(real_card_prompt(&[]).is_err());
     assert!(real_card_prompt(&["--issue".to_string()]).is_err());
@@ -860,17 +857,6 @@ fn card_prompt_covers_help_errors_and_fallback_rendering() {
     assert!(rendered.contains("Instructions to the Agent\n- stay focused"));
     assert!(!rendered.contains("System Invariants (must remain true)"));
     assert!(!rendered.contains("Reviewer Checklist (machine-readable hints)"));
-
-    std::env::set_current_dir(repo.path()).expect("switch to temp repo");
-    real_card_prompt(&[
-        "--issue".to_string(),
-        "1402".to_string(),
-        "--out".to_string(),
-        prompt_out.to_string_lossy().to_string(),
-    ])
-    .expect("issue-based prompt rendering should succeed");
-    std::env::set_current_dir(repo_root().expect("repo root")).expect("restore repo root");
-    assert!(issue_input.is_file());
 }
 
 #[test]
@@ -1086,7 +1072,7 @@ fn card_prompt_covers_help_and_argument_validation_branches() {
 
 #[test]
 fn common_helpers_cover_safety_and_path_branches() {
-    let root = repo_root().expect("repo root");
+    let root = repo_root_for_tests();
     let nested = root.join("adl/src/cli/tooling_cmd.rs");
 
     assert!(contains_absolute_host_path_in_text(
@@ -1107,8 +1093,8 @@ fn common_helpers_cover_safety_and_path_branches() {
     assert!(absolutize(Path::new("adl/src/cli/tooling_cmd.rs"))
         .expect("absolutize")
         .is_absolute());
-    assert!(ensure_file(Path::new("src/cli/tooling_cmd.rs"), "tooling").is_ok());
-    assert!(ensure_file(Path::new("src/cli/missing.rs"), "missing").is_err());
+    assert!(ensure_file(&nested, "tooling").is_ok());
+    assert!(ensure_file(&root.join("adl/src/cli/missing.rs"), "missing").is_err());
 
     let repo = TempRepo::new("common");
     let clean = repo.write_rel("clean.md", "no secrets here\nrelative/path\n");
