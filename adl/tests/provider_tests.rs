@@ -955,6 +955,71 @@ run:
 }
 
 #[test]
+fn expand_provider_profiles_accepts_chatgpt_profile_with_endpoint_override() {
+    let doc = adl_doc_from_yaml(
+        r#"
+version: "0.5"
+providers:
+  p1:
+    profile: "chatgpt:gpt-5.4"
+    config:
+      endpoint: "https://api.openai.com/v1/complete"
+      auth:
+        type: "bearer"
+        env: "OPENAI_API_KEY"
+      timeout_secs: 20
+agents:
+  a1:
+    provider: "p1"
+    model: "gpt-5.4"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - agent: "a1"
+        task: "t1"
+"#,
+    );
+    let expanded = expand_provider_profiles(&doc).expect("profile expansion should succeed");
+    let provider = &expanded.providers["p1"];
+    assert_eq!(provider.kind, "http");
+    assert_eq!(provider.profile.as_deref(), Some("chatgpt:gpt-5.4"));
+    assert_eq!(provider.default_model.as_deref(), Some("gpt-5.4"));
+    assert_eq!(
+        provider.config.get("endpoint").and_then(|v| v.as_str()),
+        Some("https://api.openai.com/v1/complete")
+    );
+    assert_eq!(
+        provider
+            .config
+            .get("auth")
+            .and_then(|v| v.get("env"))
+            .and_then(|v| v.as_str()),
+        Some("OPENAI_API_KEY")
+    );
+}
+
+#[test]
+fn provider_profile_names_include_chatgpt_family() {
+    let names = provider_profile_names();
+    for required in [
+        "chatgpt:gpt-5.4",
+        "chatgpt:gpt-5.4-mini",
+        "chatgpt:gpt-5.3-codex",
+        "chatgpt:gpt-5.2",
+    ] {
+        assert!(
+            names.iter().any(|name| name == required),
+            "missing provider profile {required}"
+        );
+    }
+}
+
+#[test]
 fn resolve_run_accepts_http_profile_with_valid_endpoint_override() {
     let doc = adl_doc_from_yaml(
         r#"

@@ -277,6 +277,22 @@ fn provider_profile_registry() -> BTreeMap<&'static str, ProviderProfilePreset> 
             },
         );
     }
+    // ChatGPT-facing presets (same bounded HTTP substrate, distinct profile family)
+    for (name, model) in [
+        ("chatgpt:gpt-5.4", "gpt-5.4"),
+        ("chatgpt:gpt-5.4-mini", "gpt-5.4-mini"),
+        ("chatgpt:gpt-5.3-codex", "gpt-5.3-codex"),
+        ("chatgpt:gpt-5.2", "gpt-5.2"),
+    ] {
+        m.insert(
+            name,
+            ProviderProfilePreset {
+                kind: "http",
+                default_model: Some(model),
+                endpoint: Some(HTTP_PROFILE_PLACEHOLDER_ENDPOINT),
+            },
+        );
+    }
     m
 }
 

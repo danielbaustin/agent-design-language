@@ -148,6 +148,14 @@ This is especially important for HTTP-backed common-provider profiles:
 - canonical `model_ref` remains the ADL-stable identity surface and must stay
   distinct from raw provider-native model identifiers
 
+Current bounded HTTP-backed profile families include:
+- generic `http:` presets for provider-agnostic remote model examples
+- `chatgpt:` presets for the named ChatGPT GPT-5 family surface used in repo workflows
+
+The `chatgpt:` family still expands into the same bounded HTTP substrate. The
+separate profile prefix exists to make the operator-facing model family explicit
+without changing transport semantics.
+
 Compatibility overrides are acceptable when they are explicit and reviewable.
 They are not a license to collapse back into provider-native canonical config.
 
