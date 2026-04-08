@@ -19,17 +19,6 @@ fn repo_root_for_tests() -> PathBuf {
         .to_path_buf()
 }
 
-fn repo_rel_for_tests(path: &Path) -> String {
-    path.strip_prefix(repo_root_for_tests())
-        .expect("test path should live under repo root")
-        .to_string_lossy()
-        .to_string()
-}
-
-fn crate_rel_for_tests(path: &Path) -> String {
-    format!("../{}", repo_rel_for_tests(path))
-}
-
 impl TempRepo {
     fn new(label: &str) -> Self {
         let stamp = SystemTime::now()
@@ -804,9 +793,9 @@ fn tooling_dispatch_and_help_paths_cover_public_entrypoint() {
     real_tooling(&[
         "review-card-surface".to_string(),
         "--input".to_string(),
-        crate_rel_for_tests(&input),
+        input.to_string_lossy().to_string(),
         "--output".to_string(),
-        crate_rel_for_tests(&output),
+        output.to_string_lossy().to_string(),
     ])
     .expect("review surface dispatch should succeed");
     real_tooling(&[
@@ -921,9 +910,9 @@ fn review_commands_validate_and_render_expected_surfaces() {
     );
     assert!(real_review_card_surface(&[
         "--input".to_string(),
-        crate_rel_for_tests(&input),
+        input.to_string_lossy().to_string(),
         "--output".to_string(),
-        crate_rel_for_tests(&output),
+        output.to_string_lossy().to_string(),
     ])
     .is_ok());
 
@@ -1029,9 +1018,9 @@ fn tooling_dispatch_routes_public_subcommands() {
     assert!(real_tooling(&[
         "review-card-surface".to_string(),
         "--input".to_string(),
-        crate_rel_for_tests(&input),
+        input.to_string_lossy().to_string(),
         "--output".to_string(),
-        crate_rel_for_tests(&output),
+        output.to_string_lossy().to_string(),
     ])
     .is_ok());
     assert!(real_tooling(&[
