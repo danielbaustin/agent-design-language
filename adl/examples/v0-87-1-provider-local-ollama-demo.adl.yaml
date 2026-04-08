@@ -1,0 +1,26 @@
+version: "0.5"
+
+providers:
+  local_ollama_demo:
+    type: "local_ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  local_writer:
+    provider: "local_ollama_demo"
+    model: "phi4-mini"
+
+tasks:
+  echo_marker:
+    prompt:
+      user: "LOCAL_OLLAMA_PROVIDER_DEMO_OK"
+
+run:
+  name: "v0-87-1-provider-local-ollama-demo"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "local_ollama_echo"
+        agent: "local_writer"
+        task: "echo_marker"
