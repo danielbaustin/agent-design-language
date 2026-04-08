@@ -9,6 +9,28 @@ use crate::provider;
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
+pub enum CapabilityModeV1 {
+    Native,
+    PromptBased,
+    SemanticFallback,
+    None,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+pub struct CapabilitySupportV1 {
+    pub supported: bool,
+    pub mode: CapabilityModeV1,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+pub struct ProviderCapabilitiesV1 {
+    pub tool_calling: CapabilitySupportV1,
+    pub structured_json: CapabilitySupportV1,
+    pub semantic_tool_fallback: CapabilitySupportV1,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
 pub enum ProviderTransportV1 {
     Http,
     LocalCli,
@@ -31,6 +53,7 @@ pub struct ProviderSubstrateV1 {
     pub default_model_ref: Option<String>,
     #[serde(default)]
     pub provider_default_model_id: Option<String>,
+    pub capabilities: ProviderCapabilitiesV1,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -47,6 +70,7 @@ pub struct ProviderInvocationTargetV1 {
     pub base_url: Option<String>,
     pub model_ref: String,
     pub provider_model_id: String,
+    pub capabilities: ProviderCapabilitiesV1,
 }
 
 fn cfg_str<'a>(cfg: &'a HashMap<String, Value>, key: &str) -> Option<&'a str> {
@@ -62,6 +86,27 @@ fn normalize_vendor_token(raw: &str) -> Option<String> {
         .chars()
         .all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == '_' || ch == '-');
     valid.then_some(token)
+}
+
+fn parse_capability_mode(raw: &str) -> Option<CapabilityModeV1> {
+    match raw.trim().to_lowercase().as_str() {
+        "native" => Some(CapabilityModeV1::Native),
+        "prompt_based" | "prompt-based" => Some(CapabilityModeV1::PromptBased),
+        "semantic_fallback" | "semantic-fallback" => Some(CapabilityModeV1::SemanticFallback),
+        "none" => Some(CapabilityModeV1::None),
+        _ => None,
+    }
+}
+
+fn capability_override(cfg: &HashMap<String, Value>, key: &str) -> Option<CapabilitySupportV1> {
+    let caps = cfg.get("capabilities")?.as_object()?;
+    let entry = caps.get(key)?.as_object()?;
+    let supported = entry.get("supported")?.as_bool()?;
+    let mode = entry
+        .get("mode")
+        .and_then(|v| v.as_str())
+        .and_then(parse_capability_mode)?;
+    Some(CapabilitySupportV1 { supported, mode })
 }
 
 fn infer_vendor(spec: &adl::ProviderSpec) -> String {
@@ -126,6 +171,92 @@ fn infer_transport(spec: &adl::ProviderSpec) -> Result<ProviderTransportV1> {
     }
 }
 
+fn infer_capability_defaults(
+    transport: &ProviderTransportV1,
+    vendor: &str,
+    model_ref: Option<&str>,
+) -> ProviderCapabilitiesV1 {
+    let model = model_ref.unwrap_or("").trim().to_lowercase();
+    let native_tool_calling = match transport {
+        ProviderTransportV1::Http | ProviderTransportV1::InProcess => CapabilitySupportV1 {
+            supported: true,
+            mode: CapabilityModeV1::Native,
+        },
+        ProviderTransportV1::LocalCli => {
+            let native_supported = model.contains("gpt-oss")
+                || model.contains("qwen3-coder")
+                || model.contains("qwen2.5-coder");
+            if native_supported {
+                CapabilitySupportV1 {
+                    supported: true,
+                    mode: CapabilityModeV1::Native,
+                }
+            } else {
+                CapabilitySupportV1 {
+                    supported: false,
+                    mode: CapabilityModeV1::None,
+                }
+            }
+        }
+    };
+
+    let structured_json = match transport {
+        ProviderTransportV1::Http | ProviderTransportV1::InProcess => CapabilitySupportV1 {
+            supported: true,
+            mode: CapabilityModeV1::Native,
+        },
+        ProviderTransportV1::LocalCli => {
+            if native_tool_calling.supported {
+                CapabilitySupportV1 {
+                    supported: true,
+                    mode: CapabilityModeV1::Native,
+                }
+            } else {
+                CapabilitySupportV1 {
+                    supported: true,
+                    mode: CapabilityModeV1::PromptBased,
+                }
+            }
+        }
+    };
+
+    let semantic_tool_fallback = match transport {
+        ProviderTransportV1::LocalCli if vendor == "ollama" => CapabilitySupportV1 {
+            supported: true,
+            mode: CapabilityModeV1::SemanticFallback,
+        },
+        _ => CapabilitySupportV1 {
+            supported: false,
+            mode: CapabilityModeV1::None,
+        },
+    };
+
+    ProviderCapabilitiesV1 {
+        tool_calling: native_tool_calling,
+        structured_json,
+        semantic_tool_fallback,
+    }
+}
+
+fn provider_capabilities_v1(
+    spec: &adl::ProviderSpec,
+    transport: &ProviderTransportV1,
+    vendor: &str,
+    model_ref: Option<&str>,
+) -> ProviderCapabilitiesV1 {
+    let mut caps = infer_capability_defaults(transport, vendor, model_ref);
+    if let Some(v) = capability_override(&spec.config, "tool_calling") {
+        caps.tool_calling = v;
+    }
+    if let Some(v) = capability_override(&spec.config, "structured_json") {
+        caps.structured_json = v;
+    }
+    if let Some(v) = capability_override(&spec.config, "semantic_tool_fallback") {
+        caps.semantic_tool_fallback = v;
+    }
+    caps
+}
+
 fn default_model_ref(spec: &adl::ProviderSpec) -> Option<String> {
     cfg_str(&spec.config, "model_ref")
         .map(ToString::to_string)
@@ -145,16 +276,24 @@ pub fn provider_substrate_v1(
     spec: &adl::ProviderSpec,
 ) -> Result<ProviderSubstrateV1> {
     let transport = infer_transport(spec)?;
+    let vendor = infer_vendor(spec);
+    let default_model_ref = default_model_ref(spec);
     Ok(ProviderSubstrateV1 {
         provider_id: provider_id.to_string(),
         provider_kind: spec.kind.trim().to_string(),
-        vendor: infer_vendor(spec),
-        transport,
+        vendor: vendor.clone(),
+        transport: transport.clone(),
         profile: spec.profile.clone(),
         endpoint: cfg_str(&spec.config, "endpoint").map(ToString::to_string),
         base_url: spec.base_url.clone(),
-        default_model_ref: default_model_ref(spec),
+        default_model_ref: default_model_ref.clone(),
         provider_default_model_id: default_provider_model_id(spec),
+        capabilities: provider_capabilities_v1(
+            spec,
+            &transport,
+            &vendor,
+            default_model_ref.as_deref(),
+        ),
     })
 }
 
@@ -164,6 +303,8 @@ pub fn provider_invocation_target_v1(
     model_override: Option<&str>,
 ) -> Result<ProviderInvocationTargetV1> {
     let substrate = provider_substrate_v1(provider_id, spec)?;
+    let transport = substrate.transport.clone();
+    let vendor = substrate.vendor.clone();
     let model_ref = model_override
         .map(str::trim)
         .filter(|v| !v.is_empty())
@@ -176,6 +317,7 @@ pub fn provider_invocation_target_v1(
         .map(ToString::to_string)
         .or_else(|| cfg_str(&spec.config, "model").map(ToString::to_string))
         .unwrap_or_else(|| model_ref.clone());
+    let capabilities = provider_capabilities_v1(spec, &transport, &vendor, Some(&model_ref));
 
     Ok(ProviderInvocationTargetV1 {
         provider_id: substrate.provider_id,
@@ -187,6 +329,7 @@ pub fn provider_invocation_target_v1(
         base_url: substrate.base_url,
         model_ref,
         provider_model_id,
+        capabilities,
     })
 }
 
@@ -272,6 +415,67 @@ mod tests {
         assert_eq!(target.transport, ProviderTransportV1::LocalCli);
         assert_eq!(target.model_ref, "phi4-mini");
         assert_eq!(target.provider_model_id, "phi4-mini-provider-native");
+    }
+
+    #[test]
+    fn provider_substrate_marks_gpt_oss_ollama_as_tool_capable() {
+        let mut spec = provider_spec("ollama");
+        spec.default_model = Some("gpt-oss:latest".to_string());
+
+        let substrate = provider_substrate_v1("local", &spec).expect("substrate");
+        assert_eq!(substrate.vendor, "ollama");
+        assert!(substrate.capabilities.tool_calling.supported);
+        assert_eq!(
+            substrate.capabilities.tool_calling.mode,
+            CapabilityModeV1::Native
+        );
+        assert!(substrate.capabilities.semantic_tool_fallback.supported);
+    }
+
+    #[test]
+    fn provider_substrate_marks_deepseek_ollama_for_semantic_fallback() {
+        let mut spec = provider_spec("ollama");
+        spec.default_model = Some("deepseek-r1:latest".to_string());
+
+        let substrate = provider_substrate_v1("local", &spec).expect("substrate");
+        assert_eq!(substrate.vendor, "ollama");
+        assert!(!substrate.capabilities.tool_calling.supported);
+        assert_eq!(
+            substrate.capabilities.tool_calling.mode,
+            CapabilityModeV1::None
+        );
+        assert!(substrate.capabilities.structured_json.supported);
+        assert_eq!(
+            substrate.capabilities.structured_json.mode,
+            CapabilityModeV1::PromptBased
+        );
+        assert!(substrate.capabilities.semantic_tool_fallback.supported);
+        assert_eq!(
+            substrate.capabilities.semantic_tool_fallback.mode,
+            CapabilityModeV1::SemanticFallback
+        );
+    }
+
+    #[test]
+    fn provider_substrate_honors_explicit_capability_overrides() {
+        let mut spec = provider_spec("ollama");
+        spec.default_model = Some("deepseek-r1:latest".to_string());
+        spec.config.insert(
+            "capabilities".to_string(),
+            json!({
+                "tool_calling": { "supported": true, "mode": "native" },
+                "structured_json": { "supported": true, "mode": "native" },
+                "semantic_tool_fallback": { "supported": false, "mode": "none" }
+            }),
+        );
+
+        let substrate = provider_substrate_v1("local", &spec).expect("substrate");
+        assert!(substrate.capabilities.tool_calling.supported);
+        assert_eq!(
+            substrate.capabilities.tool_calling.mode,
+            CapabilityModeV1::Native
+        );
+        assert!(!substrate.capabilities.semantic_tool_fallback.supported);
     }
 
     #[test]

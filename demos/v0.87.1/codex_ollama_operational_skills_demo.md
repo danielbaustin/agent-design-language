@@ -24,6 +24,8 @@ This demo proves:
   `sip-editor` skills to a prepared local bundle fixture
 - the Codex run can be bounded to the copied fixture workspace rather than the
   live repository root
+- the runtime can distinguish a native tool-capable local model from a
+  non-tool local model and select the appropriate execution mode
 
 This demo does **not** claim:
 
@@ -48,13 +50,16 @@ ollama pull gpt-oss:latest
 If you want a different local model, override `CODEX_OLLAMA_MODEL`.
 
 DeepSeek remains an important target model for this demo, but current Ollama
-DeepSeek variants may reject Codex tool calls with a provider-side
-`does not support tools` error. The demo script now reports that failure
-cleanly, while the most reliable local baseline is still a tool-capable model
-such as `gpt-oss:latest`.
+DeepSeek variants do not expose the same native tool-calling surface here. The
+demo now models that explicitly through a capability declaration plus a runtime
+semantic fallback path, while the most reliable native-tool baseline is still a
+tool-capable model such as `gpt-oss:latest`.
 
 If your local Ollama API is not on the default host, set `OLLAMA_HOST` or
 `OLLAMA_HOST_URL` before running the demo script.
+
+If you need a longer or shorter semantic-fallback wait window for a slower
+local model, set `ADL_OLLAMA_GENERATE_TIMEOUT_SECS`.
 
 ## Fastest Smoke Path
 
@@ -95,7 +100,14 @@ The script will:
 3. generate a Codex prompt that explicitly invokes:
    - `stp-editor`
    - `sip-editor`
-4. run:
+4. resolve the model capability profile from
+   `adl/tools/local_model_capabilities.v1.json`
+5. choose one of two execution modes:
+   - `native_tool_calling` for tool-capable local models such as `gpt-oss:latest`
+   - `semantic_tool_fallback` for non-tool local models such as `deepseek-r1:latest`
+6. run the bounded edit path appropriate to that capability mode
+
+For the native tool path, the script runs:
 
 ```bash
 codex exec \
@@ -112,8 +124,14 @@ codex exec \
   ...
 ```
 
-5. validate the edited `stp.md` and bootstrap-phase `sip.md`
-6. write artifacts under `artifacts/v0871/codex_ollama_skills/`
+For the semantic fallback path, the runtime sends a bounded prompt directly to
+the local model, expects one strict JSON object containing full replacement
+`stp.md` and `sip.md` content, validates it, and then applies the file writes
+deterministically. The Ollama generate request is time-bounded so non-tool
+models fail clearly instead of appearing to hang forever.
+
+7. validate the edited `stp.md` and bootstrap-phase `sip.md`
+8. write artifacts under `artifacts/v0871/codex_ollama_skills/`
 
 Before the model call, the script checks the Ollama HTTP API directly at
 `/api/tags` rather than depending on the `ollama` CLI.
@@ -128,6 +146,10 @@ Because this fixture is intentionally pre-run, the script validates the SIP
 with `--phase bootstrap` after the edit rather than requiring a bound
 execution branch.
 
+The capability declaration is explicit in
+`adl/tools/local_model_capabilities.v1.json`, and the run manifest records both
+the selected capability profile and the execution mode that was used.
+
 ## Artifact Layout
 
 Primary artifact root:
@@ -138,6 +160,8 @@ Key files:
 
 - `demo_manifest.json`
 - `codex_prompt.md`
+- `semantic_tool_fallback_prompt.md` when fallback mode is selected
+- `semantic_tool_fallback_parsed.json` when fallback mode is selected
 - `codex_events.jsonl`
 - `codex_stdout.log`
 - `codex_last_message.md`
@@ -168,6 +192,7 @@ without requiring live GitHub issue creation or a full PR lifecycle.
 - On machines where the local Ollama service is unavailable, the dry-run path
   still proves the install, prompt, fixture, and manifest surfaces.
 - If the local model struggles, the dry-run path still proves the install and
-  prompt-preparation surfaces.
+  prompt-preparation surfaces, and the fallback path still records the
+  capability distinction explicitly.
 - The fixture is intentionally card-focused because card editing is one of the
   most frequent bounded tasks in the operational workflow.

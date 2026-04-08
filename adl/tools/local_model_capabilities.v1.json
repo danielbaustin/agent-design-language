@@ -1,0 +1,47 @@
+{
+  "schema_name": "local_model_capabilities.v1",
+  "schema_version": 1,
+  "profiles": [
+    {
+      "profile_id": "ollama_gpt_oss_native_tools",
+      "provider": "ollama",
+      "model_globs": [
+        "gpt-oss:*"
+      ],
+      "reason": "known_tool_capable_local_model",
+      "capabilities": {
+        "native_tool_calling": true,
+        "semantic_tool_fallback": true,
+        "structured_output_mode": "native_json"
+      }
+    },
+    {
+      "profile_id": "ollama_qwen_coder_native_tools",
+      "provider": "ollama",
+      "model_globs": [
+        "qwen3-coder:*",
+        "qwen2.5-coder:*"
+      ],
+      "reason": "known_tool_capable_local_model",
+      "capabilities": {
+        "native_tool_calling": true,
+        "semantic_tool_fallback": true,
+        "structured_output_mode": "native_json"
+      }
+    },
+    {
+      "profile_id": "ollama_deepseek_semantic_fallback",
+      "provider": "ollama",
+      "model_globs": [
+        "deepseek-r1:*",
+        "deepseek-coder:*"
+      ],
+      "reason": "non_tool_local_model_requires_runtime_fallback",
+      "capabilities": {
+        "native_tool_calling": false,
+        "semantic_tool_fallback": true,
+        "structured_output_mode": "prompt_json"
+      }
+    }
+  ]
+}
