@@ -352,5 +352,5 @@ mod delegation_resume;
 mod materialize_inputs;
 #[path = "execute_tests/run_flows.rs"]
 mod run_flows;
-#[path = "execute_tests/runtime_artifacts.rs"]
+#[path = "execute_tests/runtime_artifacts/mod.rs"]
 mod runtime_artifacts;
