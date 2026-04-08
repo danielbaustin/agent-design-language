@@ -47,7 +47,7 @@ Current repo truth:
 
 Skill-model boundary:
 - this skill covers only Step 1: `pr init`
-- later qualitative STP/SIP editing is a separate skill or human-review phase
+- later qualitative STP/SIP editing belongs to helper-card review via `stp-editor`, `sip-editor`, or a human-review phase
 - later execution-time branch/worktree creation belongs to the run skill
 
 Treat `create` and `init` as two command shapes for the same bounded bootstrap phase:
@@ -183,6 +183,10 @@ This step may confirm bootstrap completeness, but it must not perform the deeper
 ### 5. Stop Boundary
 
 This skill must stop after bootstrap creation and validation of the root bundle.
+
+It may recommend:
+- `stp-editor` for bounded STP cleanup after bootstrap
+- `sip-editor` for truthful pre-run SIP normalization after bootstrap
 
 It must not:
 - create or switch branches

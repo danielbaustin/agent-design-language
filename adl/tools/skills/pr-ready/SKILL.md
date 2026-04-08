@@ -163,6 +163,7 @@ Allowed bounded repairs include only small mechanical actions such as:
 - correcting an unambiguous local path/reference drift
 - normalizing trivial readiness metadata drift
 - reporting a deterministic canonical path when the wrong one was referenced
+- invoking `stp-editor` or `sip-editor` for bounded card cleanup when the readiness blocker is card-local rather than workflow-orchestration state
 
 Do not auto-apply if the repair would:
 - invent missing semantics
@@ -183,6 +184,8 @@ It must not:
 
 The normal handoff is to one of:
 - `pr-init`
+- `stp-editor`
+- `sip-editor`
 - qualitative card review
 - issue-mode `pr run`
 - a human reviewer

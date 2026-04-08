@@ -1,0 +1,3 @@
+display_name: SOR Editor
+short_description: Normalize truthful SOR output cards
+default_prompt: Help me normalize an SOR output card so it truthfully reflects execution and validation state.

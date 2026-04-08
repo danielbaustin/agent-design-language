@@ -20,6 +20,9 @@ The tracked skill set is:
 - `pr-janitor`
 - `pr-finish`
 - `repo-code-review`
+- `stp-editor`
+- `sip-editor`
+- `sor-editor`
 
 ## Workflow Shape
 
@@ -33,6 +36,11 @@ The normal workflow is:
 6. `pr-finish`
 
 `repo-code-review` is cross-cutting rather than phase-specific.
+
+The three editor skills are helper skills:
+- `stp-editor` for bounded `stp.md` cleanup
+- `sip-editor` for truthful `sip.md` cleanup
+- `sor-editor` for truthful `sor.md` cleanup
 
 ## Where The Skills Live
 
@@ -82,9 +90,176 @@ The current automation model is:
 - `pr-run` consumes doctor-backed readiness and performs bounded execution
 - `pr-janitor` watches a PR in flight and handles bounded blocker remediation
 - `pr-finish` handles truthful closeout/publication
+- editor skills may be called by lifecycle skills when the blocker is card-local rather than lifecycle-orchestration state
 
 `ready` and `preflight` are compatibility aliases that may still exist in repo
 surfaces, but doctor JSON is the canonical structured automation surface.
+
+## Helper Card Editors
+
+These are not top-level lifecycle phases. They are narrow helper skills used to
+reduce recurring card failures:
+
+- `stp-editor`
+  - tightens goal, scope, acceptance criteria, and validation wording in
+    `stp.md`
+  - does not create execution state or author result claims
+- `sip-editor`
+  - normalizes truthful lifecycle state in `sip.md`
+  - does not create the branch/worktree itself or claim execution completion
+- `sor-editor`
+  - normalizes truthful execution and integration state in `sor.md`
+  - does not invent validation or publish the PR itself
+
+Use them when the problem is primarily the card surface, not the wider
+lifecycle step.
+
+## How To Use The Editor Skills
+
+The editor skills are best used as small helper passes, not as standalone issue
+orchestration.
+
+Use this rule of thumb:
+
+- if the issue or branch state itself is wrong, use the lifecycle skill
+- if the card is the thing that is wrong, use the matching editor skill
+
+Practical mapping:
+
+- use `stp-editor` when the task card is vague, contradictory, or not
+  execution-ready
+- use `sip-editor` when lifecycle truth is wrong in the input card, especially
+  branch/worktree state, target surfaces, or validation-plan drift
+- use `sor-editor` when the output card is blocking finish because the summary,
+  integration wording, or validation claims are not truthful
+
+Good patterns:
+
+- `pr-init` finishes, then `stp-editor` and/or `sip-editor` clean the new root
+  cards before qualitative review
+- `pr-ready` diagnoses drift, then hands a card-local problem to
+  `stp-editor` or `sip-editor`
+- `pr-run` does the implementation, then uses `sor-editor` to normalize the
+  in-flight execution record
+- `pr-finish` uses `sor-editor` only when the finish blocker is output-card
+  truthfulness
+
+Bad patterns:
+
+- using `stp-editor` to change issue scope
+- using `sip-editor` to create a branch or worktree
+- using `sor-editor` to invent validation that was never run
+- using any editor skill as a substitute for `pr-init`, `pr-ready`, `pr-run`,
+  or `pr-finish`
+
+### Quick Selector
+
+If the failure looks like this, use:
+
+- “the STP is sloppy / contradictory / not clear enough”: `stp-editor`
+- “the SIP says the wrong branch, wrong lifecycle phase, or wrong targets”:
+  `sip-editor`
+- “the SOR still has placeholders or overclaims validation/integration”:
+  `sor-editor`
+
+If you are unsure, run `pr-ready` first. If `pr-ready` says the blocker is
+card-local, then hand off to the relevant editor.
+
+### What To Supply To An Editor Skill
+
+Keep editor invocations narrow. The more they look like a bounded patch request
+against one card, the better they behave.
+
+Always provide:
+
+- `repo_root`
+- the one card path being edited
+- the lifecycle phase or integration state when that truth matters
+- any concrete evidence the editor needs to stay truthful
+
+Good supporting evidence:
+
+- the source issue prompt path
+- the issue number
+- the bound branch and worktree path when the issue is already running
+- the exact commands actually run
+- the exact tracked paths changed
+- review comments or finish errors that explain what is wrong
+
+Avoid vague prompts like:
+
+- “clean this card up”
+- “make this ready”
+- “fix whatever is wrong”
+
+Prefer prompts like:
+
+- “normalize the SIP to truthful `run_bound` state for issue `1419`”
+- “normalize the SOR so validation claims match the commands actually run”
+- “tighten the STP acceptance criteria without changing issue scope”
+
+### What Success Looks Like
+
+Each editor should leave the card:
+
+- structurally valid
+- free of placeholders and enum-menu leakage
+- truthful about lifecycle state
+- aligned with the linked issue prompt
+- bounded to the card surface it owns
+
+The editors should not:
+
+- invent new repo state
+- silently widen issue scope
+- claim work happened when it did not
+- replace the need for the lifecycle skills
+
+### Common Recipes
+
+Recipe: bootstrap then qualitative cleanup
+
+1. Run `pr-init`.
+2. Inspect the new root cards.
+3. If the STP is vague, run `stp-editor`.
+4. If the SIP has pre-run truth drift, run `sip-editor`.
+5. Then do qualitative review or move into `pr-ready`.
+
+Recipe: readiness blocked by card drift
+
+1. Run `pr-ready`.
+2. If the repo state is fine but the card is wrong:
+   - use `stp-editor` for STP wording/scope/acceptance-criteria problems
+   - use `sip-editor` for lifecycle-truth or target-surface problems
+3. Re-run `pr-ready`.
+
+Recipe: execution completed, output record still messy
+
+1. Run `pr-run` and complete the actual work.
+2. If the SOR has placeholders or overstated validation/integration claims, run
+   `sor-editor`.
+3. Revalidate the SOR.
+4. Continue to `pr-finish`.
+
+Recipe: finish blocked by card wording
+
+1. Run `pr-finish`.
+2. If finish says the output card is inconsistent or incomplete, do not widen
+   back into implementation.
+3. Use `sor-editor` with the actual executed commands and changed paths.
+4. Re-run `pr-finish`.
+
+### Editor Output Expectations
+
+In practice, you should expect each editor to tell you:
+
+- which card it edited
+- what kind of truth or structure problem it corrected
+- what it refused to change
+- whether another lifecycle step should run next
+
+That makes the editors easy to chain without letting them silently absorb
+workflow control.
 
 ## Skill Details
 
@@ -567,6 +742,237 @@ Use the tracked finish schema and skill contract:
 
 `pr-finish` is the closeout/publication boundary. It should not reopen broad
 implementation work or silently replace `pr-janitor`.
+
+## `stp-editor`
+
+### Purpose
+
+`stp-editor` is the bounded helper skill for `stp.md`.
+
+It:
+
+- tightens goal, required outcome, acceptance criteria, and scope wording
+- removes placeholders and contradictory planning text
+- keeps the STP aligned with the source issue prompt
+- stops before SIP/SOR editing or lifecycle orchestration
+
+### When To Use It
+
+Use `stp-editor` when:
+
+- the STP is structurally weak or hard to execute from
+- acceptance criteria or validation wording need tightening
+- the blocker is card-local rather than workflow-orchestration state
+
+Do not use it for:
+
+- creating branches/worktrees
+- claiming execution results
+- rewriting SIP or SOR content
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- `target.stp_path`
+
+Structured schema:
+
+- `adl/tools/skills/docs/STP_EDITOR_SKILL_INPUT_SCHEMA.md`
+- schema id: `stp_editor.v1`
+
+### Example Invocation
+
+```yaml
+Use $stp-editor at /Users/daniel/git/agent-design-language/adl/tools/skills/stp-editor/SKILL.md with this validated input:
+
+skill_input_schema: stp_editor.v1
+mode: tighten_for_review
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  stp_path: .adl/v0.87.1/tasks/issue-1419__v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces/stp.md
+  issue_number: 1419
+  source_prompt_path: .adl/v0.87.1/bodies/issue-1419-v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces.md
+policy:
+  preserve_issue_intent: true
+  stop_after_edit: true
+  allow_scope_reframing: false
+```
+
+### Typical Uses
+
+- after `pr-init`, when the root STP exists but still needs qualitative cleanup
+- after review feedback that says the task scope or acceptance criteria are
+  unclear
+- before `pr-ready`, when the STP is the only thing preventing a clean
+  readiness pass
+
+### Caller Notes
+
+- `pr-init` may hand off here after mechanical bootstrap
+- `pr-ready` may hand off here when the issue is structurally fine but the STP
+  text is not
+- `pr-run` should only hand off here if STP wording drift is blocking correct
+  execution understanding
+
+## `sip-editor`
+
+### Purpose
+
+`sip-editor` is the bounded helper skill for `sip.md`.
+
+It:
+
+- normalizes truthful lifecycle state
+- fixes branch/worktree drift in the card
+- tightens target surfaces and validation-plan wording
+- stops before implementation or output-card authoring
+
+### When To Use It
+
+Use `sip-editor` when:
+
+- a SIP is blocking `pr-ready` or `pr-run`
+- the card reflects the wrong lifecycle phase
+- placeholders or stale execution assumptions need cleanup
+
+Do not use it for:
+
+- creating the branch/worktree itself
+- claiming finished work
+- writing the final output record
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- `target.sip_path`
+
+Structured schema:
+
+- `adl/tools/skills/docs/SIP_EDITOR_SKILL_INPUT_SCHEMA.md`
+- schema id: `sip_editor.v1`
+
+### Example Invocation
+
+```yaml
+Use $sip-editor at /Users/daniel/git/agent-design-language/adl/tools/skills/sip-editor/SKILL.md with this validated input:
+
+skill_input_schema: sip_editor.v1
+mode: repair_lifecycle_drift
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  sip_path: .adl/v0.87.1/tasks/issue-1419__v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces/sip.md
+  issue_number: 1419
+  branch: codex/1419-v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces
+  worktree_path: /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1419
+  source_prompt_path: .adl/v0.87.1/bodies/issue-1419-v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces.md
+policy:
+  lifecycle_state: run_bound
+  preserve_issue_intent: true
+  stop_after_edit: true
+```
+
+### Typical Uses
+
+- after `pr-init`, to convert a mechanically seeded SIP into truthful pre-run
+  state
+- during `pr-ready`, when the issue is ready except for card drift
+- during `pr-run`, when the worktree exists but the SIP still claims the wrong
+  branch, phase, or target surfaces
+
+### Caller Notes
+
+- `pr-init` can hand off here for truthful pre-run normalization
+- `pr-ready` should prefer this skill when the blocker is SIP truth, not repo
+  state
+- `pr-run` can use this to repair run-bound SIP drift, but should not widen
+  into STP or SOR editing from here
+
+## `sor-editor`
+
+### Purpose
+
+`sor-editor` is the bounded helper skill for `sor.md`.
+
+It:
+
+- normalizes truthful execution and integration wording
+- removes placeholders and enum-menu leakage
+- aligns validation claims with checks actually run
+- stops before PR publication or merge
+
+### When To Use It
+
+Use `sor-editor` when:
+
+- the output card is blocking `pr-finish`
+- the integration wording overstates branch/main/PR reality
+- validation claims need to be normalized to actual evidence
+
+Do not use it for:
+
+- inventing missing validation
+- merging or publishing the PR itself
+- widening issue scope
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- `target.sor_path`
+
+Structured schema:
+
+- `adl/tools/skills/docs/SOR_EDITOR_SKILL_INPUT_SCHEMA.md`
+- schema id: `sor_editor.v1`
+
+### Example Invocation
+
+```yaml
+Use $sor-editor at /Users/daniel/git/agent-design-language/adl/tools/skills/sor-editor/SKILL.md with this validated input:
+
+skill_input_schema: sor_editor.v1
+mode: prepare_for_finish
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  sor_path: .adl/v0.87.1/tasks/issue-1419__v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces/sor.md
+  issue_number: 1419
+  branch: codex/1419-v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces
+  worktree_path: /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1419
+  pr_number: null
+evidence:
+  commands_run:
+    - bash adl/tools/test_card_editor_skill_contracts.sh
+  changed_paths:
+    - adl/tools/skills/stp-editor/SKILL.md
+    - adl/tools/skills/sip-editor/SKILL.md
+    - adl/tools/skills/sor-editor/SKILL.md
+policy:
+  integration_state: worktree_only
+  preserve_issue_intent: true
+  stop_after_edit: true
+```
+
+### Typical Uses
+
+- near the end of `pr-run`, when the execution record exists but is not yet
+  truthful enough for finish
+- during `pr-finish`, when publication is blocked by output-card wording rather
+  than actual branch state
+- after review comments that call out placeholders, wrong integration wording,
+  or validation overclaims
+
+### Caller Notes
+
+- `pr-run` should use this for truthful in-flight output-card cleanup
+- `pr-finish` should use this when the finish blocker is card truth and nothing
+  else
+- if the problem is missing validation evidence rather than wording, run the
+  missing validation first and only then come back to `sor-editor`
 
 ## `repo-code-review`
 
