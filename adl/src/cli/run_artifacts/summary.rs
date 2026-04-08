@@ -348,6 +348,8 @@ pub(crate) fn build_run_status(
     let failure_kind = failure.and_then(classify_failure_kind);
     let (resilience_classification, continuity_status, preservation_status, shepherd_decision) =
         derive_resilience_status(overall_status, failure_kind, pause);
+    let (persistence_mode, cleanup_disposition, resume_guard, state_artifacts) =
+        derive_persistence_discipline(overall_status, pause);
 
     RunStatusArtifact {
         run_status_version: RUN_STATUS_VERSION,
@@ -367,11 +369,53 @@ pub(crate) fn build_run_status(
         continuity_status: Some(continuity_status.to_string()),
         preservation_status: Some(preservation_status.to_string()),
         shepherd_decision: Some(shepherd_decision.to_string()),
+        persistence_mode: persistence_mode.to_string(),
+        cleanup_disposition: cleanup_disposition.to_string(),
+        resume_guard: resume_guard.to_string(),
+        state_artifacts,
         attempt_counts_by_step: attempts_by_step,
         effective_max_concurrency: scheduler_policy.map(|(value, _)| value),
         effective_max_concurrency_source: scheduler_policy
             .map(|(_, source)| source.as_str().to_string()),
     }
+}
+
+fn derive_persistence_discipline(
+    overall_status: &str,
+    pause: Option<&execute::PauseState>,
+) -> (&'static str, &'static str, &'static str, Vec<String>) {
+    let mut state_artifacts = vec![
+        "run.json".to_string(),
+        "steps.json".to_string(),
+        "run_status.json".to_string(),
+        "logs/trace_v1.json".to_string(),
+    ];
+
+    if pause.is_some() {
+        state_artifacts.push("pause_state.json".to_string());
+        return (
+            "checkpoint_resume_state",
+            "retain_pause_state",
+            "execution_plan_hash_match_required",
+            state_artifacts,
+        );
+    }
+
+    if overall_status == "failed" {
+        return (
+            "review_preserved_state",
+            "retain_for_review",
+            "resume_not_permitted",
+            state_artifacts,
+        );
+    }
+
+    (
+        "completed_run_record",
+        "no_resume_state_retained",
+        "not_applicable",
+        state_artifacts,
+    )
 }
 
 fn derive_resilience_status(

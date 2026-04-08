@@ -372,6 +372,9 @@ In `v0.87.1`, this requirement becomes concrete through bounded runtime artifact
   - `continuity_status`
   - `preservation_status`
   - `shepherd_decision`
+  - `persistence_mode`
+  - `cleanup_disposition`
+  - `resume_guard`
 - `pause_state.json` when interruption remains recoverable
 
 These surfaces make the local preservation stance explicit:
@@ -383,6 +386,12 @@ These surfaces make the local preservation stance explicit:
 ### Lifecycle-Aware Runtime Management
 
 The runtime must distinguish between active execution, quiescence, suspension, interruption, and resumption.
+
+In `v0.87.1`, that distinction is not only conceptual. It is also reflected in the persisted state contract:
+
+- resumable interruption retains `pause_state.json`
+- completed runs keep the bounded run record without resumable state
+- review-preserved failures keep state for inspection while refusing false continuity
 
 ### Respect for Agent Boundaries
 

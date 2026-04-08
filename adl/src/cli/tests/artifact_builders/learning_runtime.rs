@@ -836,6 +836,18 @@ fn build_run_status_tracks_attempts_and_resume_completed_steps() {
         status.shepherd_decision.as_deref(),
         Some("operator_review_required")
     );
+    assert_eq!(status.persistence_mode, "review_preserved_state");
+    assert_eq!(status.cleanup_disposition, "retain_for_review");
+    assert_eq!(status.resume_guard, "resume_not_permitted");
+    assert_eq!(
+        status.state_artifacts,
+        vec![
+            "run.json".to_string(),
+            "steps.json".to_string(),
+            "run_status.json".to_string(),
+            "logs/trace_v1.json".to_string(),
+        ]
+    );
     assert!(
         status.effective_max_concurrency.is_none() || status.effective_max_concurrency == Some(4)
     );
@@ -887,6 +899,19 @@ fn build_run_status_marks_paused_runs_as_resumable_interruption() {
     assert_eq!(
         status.shepherd_decision.as_deref(),
         Some("preserve_and_resume")
+    );
+    assert_eq!(status.persistence_mode, "checkpoint_resume_state");
+    assert_eq!(status.cleanup_disposition, "retain_pause_state");
+    assert_eq!(status.resume_guard, "execution_plan_hash_match_required");
+    assert_eq!(
+        status.state_artifacts,
+        vec![
+            "run.json".to_string(),
+            "steps.json".to_string(),
+            "run_status.json".to_string(),
+            "logs/trace_v1.json".to_string(),
+            "pause_state.json".to_string(),
+        ]
     );
 }
 
@@ -944,6 +969,9 @@ fn build_run_status_refuses_resume_for_replay_invariant_corruption() {
         Some("inspection_only")
     );
     assert_eq!(status.shepherd_decision.as_deref(), Some("refuse_resume"));
+    assert_eq!(status.persistence_mode, "review_preserved_state");
+    assert_eq!(status.cleanup_disposition, "retain_for_review");
+    assert_eq!(status.resume_guard, "resume_not_permitted");
 
     let _ = std::fs::remove_file(&bad_trace_path);
 }
