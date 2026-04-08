@@ -19,6 +19,7 @@ run_check adl/tools/test_pr_finish_delegates_to_rust.sh
 run_check adl/tools/test_pr_start_template_validation.sh
 run_check adl/tools/test_install_adl_pr_cycle_skill.sh
 run_check adl/tools/test_install_adl_operational_skills.sh
+run_check adl/tools/test_pr_init_skill_contracts.sh
 run_check adl/tools/test_card_editor_skill_contracts.sh
 run_check adl/tools/test_pr_closeout_skill_contracts.sh
 run_check adl/tools/test_pr_run.sh

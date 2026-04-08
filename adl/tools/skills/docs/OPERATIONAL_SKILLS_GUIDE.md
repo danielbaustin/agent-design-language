@@ -291,6 +291,7 @@ It:
 - seeds the root `stp.md`, `sip.md`, and `sor.md`
 - validates that the bootstrap surfaces exist and are mechanically complete
 - stops before branch/worktree creation or implementation
+- handles exactly one issue target per invocation
 
 ### When To Use It
 
@@ -351,6 +352,7 @@ Expected output includes:
 - `stp.md`, `sip.md`, `sor.md` paths
 - validation result
 - handoff state for qualitative review
+- if bootstrap is interrupted after issue creation, a `partial` result that names the created issue and the exact missing bundle surfaces
 
 It must stop before:
 
@@ -358,6 +360,18 @@ It must stop before:
 - branch creation
 - worktree creation
 - implementation
+
+### Multi-Issue Bootstrap Pattern
+
+If you are bootstrapping many issues:
+
+- use one `pr-init` invocation per issue
+- prefer one sub-agent per issue when parallelizing
+- wait for one structured `pr-init` result per issue
+- aggregate those per-issue results outside the skill
+
+Do not ask one long-running `pr-init` invocation to bootstrap many issues as a
+single batch.
 
 ### Example Invocation
 

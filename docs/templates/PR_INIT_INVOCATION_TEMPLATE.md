@@ -18,6 +18,7 @@ This template is a caller artifact. It does not replace the underlying schema in
 - Use repo-root-stable paths in examples.
 - Make the stop boundary explicit.
 - Do not imply branch creation, worktree creation, or implementation work in this template.
+- Carry exactly one issue target per invocation.
 
 ## Canonical Invocation Envelope
 
@@ -146,6 +147,25 @@ It must not continue into:
 - `pr run`
 - implementation
 - `pr finish`
+
+## Multi-Issue Bootstrap Rule
+
+If you need many issues bootstrapped:
+
+- do not batch many issues into one `pr-init` invocation
+- create one validated payload per issue
+- prefer one sub-agent per issue when running in parallel
+- aggregate the per-issue results outside the skill
+
+This keeps completion semantics clear and avoids one long-running sub-agent
+being mistaken for a partial or hung bootstrap when several issues are created
+successfully.
+
+If one sub-agent times out or returns early:
+
+- treat that issue as a per-issue `partial` bootstrap result
+- inspect which surfaces exist for that issue
+- re-run only that issue’s `pr-init` invocation rather than repeating the whole batch
 
 ## Caller Checklist
 

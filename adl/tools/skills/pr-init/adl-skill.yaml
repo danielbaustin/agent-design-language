@@ -57,6 +57,7 @@ admission:
     - "skill_input_schema_must_equal_pr_init.v1_when_structured_input_is_used"
     - "mode_must_match_supported_enum"
     - "exactly_one_mode_contract_must_be_satisfied"
+    - "exactly_one_issue_target_per_invocation"
     - "at_most_one_of_issue.body_and_issue.body_file_may_be_set"
     - "policy.stop_after_bootstrap_must_be_true"
     - "slug_omission_requires_policy.allow_slug_derivation_true"
@@ -66,7 +67,7 @@ execution:
   mode: "auto_apply"
   allow_code_edits: false
   allow_network: true
-  allow_subagents: false
+  allow_subagents: true
   parallelism_policy: "parallel_across_distinct_issue_targets_only"
   workflow_step: "step_1_pr_init"
   stop_before:
@@ -81,6 +82,7 @@ execution:
     - "adl pr create"
     - "adl pr init"
   preferred_path: "rust_owned_control_plane_when_available"
+  invocation_pattern: "one_issue_per_invocation_parent_aggregates_multi_issue_results"
   validation_policy: "must_verify_issue_labels_source_prompt_root_bundle_and_no_branch_or_worktree_side_effects"
 boundaries:
   writes_limited_to:

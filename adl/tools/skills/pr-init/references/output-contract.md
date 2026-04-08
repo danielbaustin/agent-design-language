@@ -2,6 +2,10 @@
 
 When ADL expects structured `pr-init` output, use this shape.
 
+This contract describes exactly one issue target per invocation.
+If a caller bootstraps many issues, each issue should produce its own result and
+the parent should aggregate them outside the skill.
+
 ```yaml
 status: complete | partial | blocked | failed
 mode: create_and_bootstrap | bootstrap_existing_issue
@@ -45,7 +49,9 @@ notes:
 - If `status: complete`, all required bootstrap surfaces must be present and both `branch_created` and `worktree_created` must be `false`.
 - If `status: complete`, `ready_for_card_review` should normally be `true` and `ready_for_execution` should normally be `false`.
 - If the issue exists but one or more bundle surfaces are missing, use `partial` or `blocked`, not `complete`.
+- If a subagent or caller times out after issue creation but before all bootstrap surfaces are verified, use `partial` and report the exact created issue identity plus the exact missing surfaces.
 - If bootstrap output is obviously contradictory or not ready for the next step, use `blocked`.
+- Do not report multiple issues in one `pr-init` result.
 - Report exact paths when they are known.
 - Do not claim readiness for issue-mode `pr run` or execution unless a later qualitative review step has actually been completed.
 
