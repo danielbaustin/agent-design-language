@@ -53,6 +53,93 @@ impl Drop for TempRepo {
     }
 }
 
+fn write_runtime_review_fixture(repo: &TempRepo) -> PathBuf {
+    let root = repo_root_for_tests();
+    let review_root = repo.path().join("runtime-review");
+    fs::create_dir_all(&review_root).expect("review root");
+
+    let review_readme = repo.write_rel(
+        "runtime-review/README.md",
+        "# D8\n\nPrimary proof surface:\n- `demo_manifest.json`\n\nSecondary proof surfaces:\n- `operator`\n\nReviewer walkthrough:\n- Review D6 first for the canonical operator entrypoint.\n- Then inspect D7 for persistence, pause-state, and continuity evidence.\n",
+    );
+    let operator_readme = repo.write_rel("operator/README.md", "# operator\n");
+    let operator_summary = repo.write_rel("operator/runtime/runs/demo/run_summary.json", "{}\n");
+    let operator_status = repo.write_rel("operator/runtime/runs/demo/run_status.json", "{}\n");
+    let operator_trace = repo.write_rel("operator/runtime/runs/demo/logs/trace_v1.json", "{}\n");
+    let runtime_state_readme = repo.write_rel("runtime_state/README.md", "# runtime state\n");
+    let paused_status = repo.write_rel("runtime_state/runtime/runs/paused/run_status.json", "{}\n");
+    let paused_pause = repo.write_rel("runtime_state/runtime/runs/paused/pause_state.json", "{}\n");
+    let paused_trace = repo.write_rel(
+        "runtime_state/runtime/runs/paused/logs/trace_v1.json",
+        "{}\n",
+    );
+    let complete_status = repo.write_rel(
+        "runtime_state/runtime/runs/complete/run_status.json",
+        "{}\n",
+    );
+    let complete_trace = repo.write_rel(
+        "runtime_state/runtime/runs/complete/logs/trace_v1.json",
+        "{}\n",
+    );
+    let runtime_marker = repo.write_rel("runtime_state/runtime/runtime_environment.json", "{}\n");
+    let manifest_path = review_root.join("demo_manifest.json");
+
+    let rel = |path: &Path| repo_relative_display(&root, path).expect("repo relative fixture path");
+    let manifest = format!(
+        concat!(
+            "{{\n",
+            "  \"review_surface_version\": \"adl.runtime_review_surface.v1\",\n",
+            "  \"milestone\": \"v0.87.1\",\n",
+            "  \"demo_id\": \"D8\",\n",
+            "  \"review_root\": \"{review_root}\",\n",
+            "  \"review_readme\": \"{review_readme}\",\n",
+            "  \"primary_proof_surface\": \"{manifest_path}\",\n",
+            "  \"demo_packages\": [\n",
+            "    {{\n",
+            "      \"demo_id\": \"D6\",\n",
+            "      \"title\": \"Operator Invocation Surface\",\n",
+            "      \"review_readme\": \"{operator_readme}\",\n",
+            "      \"primary_proof_surface\": \"{operator_summary}\",\n",
+            "      \"secondary_proof_surfaces\": [\n",
+            "        \"{operator_status}\",\n",
+            "        \"{operator_trace}\"\n",
+            "      ]\n",
+            "    }},\n",
+            "    {{\n",
+            "      \"demo_id\": \"D7\",\n",
+            "      \"title\": \"Runtime State / Persistence Discipline\",\n",
+            "      \"review_readme\": \"{runtime_state_readme}\",\n",
+            "      \"primary_proof_surface\": \"{paused_status}\",\n",
+            "      \"secondary_proof_surfaces\": [\n",
+            "        \"{paused_pause}\",\n",
+            "        \"{paused_trace}\",\n",
+            "        \"{complete_status}\",\n",
+            "        \"{complete_trace}\",\n",
+            "        \"{runtime_marker}\"\n",
+            "      ]\n",
+            "    }}\n",
+            "  ]\n",
+            "}}\n"
+        ),
+        review_root = rel(&review_root),
+        review_readme = rel(&review_readme),
+        manifest_path = rel(&manifest_path),
+        operator_readme = rel(&operator_readme),
+        operator_summary = rel(&operator_summary),
+        operator_status = rel(&operator_status),
+        operator_trace = rel(&operator_trace),
+        runtime_state_readme = rel(&runtime_state_readme),
+        paused_status = rel(&paused_status),
+        paused_pause = rel(&paused_pause),
+        paused_trace = rel(&paused_trace),
+        complete_status = rel(&complete_status),
+        complete_trace = rel(&complete_trace),
+        runtime_marker = rel(&runtime_marker),
+    );
+    fs::write(&manifest_path, manifest).expect("write runtime review manifest");
+    review_root
+}
+
 fn valid_prompt_spec_yaml() -> String {
     r#"prompt_schema: adl.v1
 actor:
@@ -929,6 +1016,12 @@ fn review_commands_validate_and_render_expected_surfaces() {
         output.to_string_lossy().to_string(),
     ])
     .is_ok());
+    let review_root = write_runtime_review_fixture(&repo);
+    assert!(real_review_runtime_surface(&[
+        "--review-root".to_string(),
+        review_root.to_string_lossy().to_string(),
+    ])
+    .is_ok());
 
     let input_ref = display_card_ref(&input).expect("display reference should be derived");
     assert!(input_ref.ends_with("input.md"));
@@ -1094,6 +1187,13 @@ fn tooling_dispatch_routes_public_subcommands() {
         input.to_string_lossy().to_string(),
         "--output".to_string(),
         output.to_string_lossy().to_string(),
+    ])
+    .is_ok());
+    let review_root = write_runtime_review_fixture(&repo);
+    assert!(real_tooling(&[
+        "review-runtime-surface".to_string(),
+        "--review-root".to_string(),
+        review_root.to_string_lossy().to_string(),
     ])
     .is_ok());
     assert!(real_tooling(&[

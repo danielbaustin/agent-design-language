@@ -15,7 +15,7 @@ mod structured_prompt;
 
 use card_prompt::real_card_prompt;
 use review_contract::{real_verify_repo_review_contract, real_verify_review_output_provenance};
-use review_surface::real_review_card_surface;
+use review_surface::{real_review_card_surface, real_review_runtime_surface};
 use structured_prompt::{real_lint_prompt_spec, real_validate_structured_prompt};
 
 #[cfg(test)]
@@ -42,7 +42,7 @@ use structured_prompt::{
 pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "tooling requires a subcommand: card-prompt | lint-prompt-spec | validate-structured-prompt | review-card-surface | verify-review-output-provenance | verify-repo-review-contract"
+            "tooling requires a subcommand: card-prompt | lint-prompt-spec | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract"
         ));
     };
 
@@ -51,6 +51,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
         "lint-prompt-spec" => real_lint_prompt_spec(&args[1..]),
         "validate-structured-prompt" => real_validate_structured_prompt(&args[1..]),
         "review-card-surface" => real_review_card_surface(&args[1..]),
+        "review-runtime-surface" => real_review_runtime_surface(&args[1..]),
         "verify-review-output-provenance" => real_verify_review_output_provenance(&args[1..]),
         "verify-repo-review-contract" => real_verify_repo_review_contract(&args[1..]),
         "--help" | "-h" | "help" => {
@@ -58,7 +59,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown tooling subcommand '{subcommand}' (expected card-prompt | lint-prompt-spec | validate-structured-prompt | review-card-surface | verify-review-output-provenance | verify-repo-review-contract)"
+            "unknown tooling subcommand '{subcommand}' (expected card-prompt | lint-prompt-spec | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract)"
         )),
     }
 }
@@ -70,6 +71,7 @@ adl tooling lint-prompt-spec --issue <number>\n\
 adl tooling lint-prompt-spec --input <path>\n\
 adl tooling validate-structured-prompt --type <stp|sip|sor> --input <path> [--phase <phase>]\n\
 adl tooling review-card-surface --input <input.md> --output <output.md>\n\
+adl tooling review-runtime-surface --review-root <dir>\n\
 adl tooling verify-review-output-provenance --review <yaml>\n\
 adl tooling verify-repo-review-contract --review <markdown>"
 }

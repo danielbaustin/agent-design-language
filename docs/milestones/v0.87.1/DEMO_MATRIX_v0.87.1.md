@@ -88,7 +88,7 @@ Use this table as the fast review surface for milestone coverage.
 | D5 | Restartability And Recovery | `WP-05`, `WP-07` resilience + state discipline | `adl/tools/demo_v0871_restartability.sh` | restart/recovery artifact set | Bounded run can resume or restart under documented rules | Restart behavior should remain stable under fixed state | PLANNED |
 | D6 | Operator Invocation Surface | `WP-06` operator surfaces | `bash adl/tools/demo_v0871_operator_surface.sh` | `artifacts/v0871/operator_surface/runtime/runs/v0-4-demo-deterministic-replay/run_summary.json` | Operator entrypoints are clear, stable, and reviewer-usable, with one canonical runtime-root proof set | Same command contract should preserve invocation shape and artifact naming | READY |
 | D7 | Runtime State / Persistence Discipline | `WP-07` state / persistence discipline | `bash adl/tools/demo_v0871_runtime_state.sh` | `artifacts/v0871/runtime_state/runtime/runs/v0-6-hitl-pause-demo/run_status.json` | State is inspectable, bounded, and cleaned up deterministically across paused and completed runs | Stable inputs should preserve persistence classification, cleanup disposition, and state artifact inventory | READY |
-| D8 | Review Surface Walkthrough | `WP-08` runtime review surfaces | `adl/tools/demo_v0871_review_surface.sh` | review manifest / guide | Reviewer can locate primary proof surfaces from one entrypoint | Artifact layout and manifest names remain stable | PLANNED |
+| D8 | Review Surface Walkthrough | `WP-08` runtime review surfaces | `bash adl/tools/demo_v0871_review_surface.sh` | `artifacts/v0871/review_surface/demo_manifest.json` and `artifacts/v0871/review_surface/README.md` | Reviewer can locate primary D6 and D7 proof surfaces from one entrypoint | Manifest layout, reviewer guidance, and package ordering remain stable | READY |
 | D9 | Integrated Runtime Path | `WP-02` through `WP-08` integrated runtime completion | `adl/tools/demo_v0871_integrated_runtime.sh` | integrated runtime artifact set | One run demonstrates the authoritative runtime path end-to-end | Replay judged by control-path and artifact-shape stability | PLANNED |
 | D10 | Docs-To-Runtime Consistency Check | `WP-09`, `WP-15` docs/review convergence | `adl/tools/demo_v0871_docs_review.sh` | reviewer entry surfaces | Reviewer can move from docs to runtime proof without contradiction | Navigation and proof mapping should remain stable | PLANNED |
 | D11 | Quality Gate Walkthrough | `WP-14` quality gate | `adl/tools/demo_v0871_quality_gate.sh` | quality-gate record | Tests, validators, and coverage posture are reviewable in one place | Same repo state should preserve gate outcome | PLANNED |
@@ -125,6 +125,43 @@ Status guidance:
 ## Demo Details
 
 Per-demo detail sections will be filled as the runtime milestone opens. This matrix already defines the bounded demo inventory the milestone is expected to implement and review.
+
+### D8) Review Surface Walkthrough
+
+Description:
+- Provides one obvious reviewer entry point for the milestone runtime proof set.
+- Bundles the canonical D6 and D7 proof surfaces and points to the primary runtime artifacts.
+
+Commands to run:
+
+```bash
+bash adl/tools/demo_v0871_review_surface.sh
+adl tooling review-runtime-surface --review-root artifacts/v0871/review_surface
+```
+
+Expected artifacts:
+- `artifacts/v0871/review_surface/demo_manifest.json`
+- `artifacts/v0871/review_surface/README.md`
+- `artifacts/v0871/review_surface/index.txt`
+- `artifacts/v0871/operator_surface/runtime/runs/v0-4-demo-deterministic-replay/run_summary.json`
+- `artifacts/v0871/runtime_state/runtime/runs/v0-6-hitl-pause-demo/run_status.json`
+
+Primary proof surface:
+- `artifacts/v0871/review_surface/demo_manifest.json`
+
+Secondary proof surfaces:
+- `artifacts/v0871/review_surface/README.md`
+- `artifacts/v0871/operator_surface/README.md`
+- `artifacts/v0871/runtime_state/README.md`
+
+Expected success signals:
+- One command gives the reviewer a stable starting point.
+- The manifest points to the D6 and D7 primary proof artifacts.
+- The README explicitly tells the reviewer to inspect D6 first.
+
+Determinism / replay notes:
+- The manifest layout, reviewer guidance, and referenced artifact names must remain stable.
+- This is a review-oriented proof surface; it depends on the bounded correctness of D6 and D7 rather than replacing their subsystem validations.
 
 ## Cross-Demo Validation
 

@@ -31,11 +31,11 @@ It does not attempt to complete the richer higher-order systems planned for late
 | Feature doc | Primary concern | Main WPs |
 |---|---|---|
 | `features/ADL_RUNTIME_ENVIRONMENT.md` | runtime environment surface and contracts | `WP-02`, `WP-06` |
-| `features/ADL_RUNTIME_ENVIRONMENT_ARCHITECTURE.md` | runtime environment architecture and integration shape | `WP-02`, `WP-04`, `WP-08` |
+| `features/ADL_RUNTIME_ENVIRONMENT_ARCHITECTURE.md` | runtime environment architecture and integration shape, including runtime reviewable trace proof paths | `WP-02`, `WP-04`, `WP-08` |
 | `features/AGENT_LIFECYCLE.md` | lifecycle states, transitions, and continuity rules | `WP-03`, `WP-04`, `WP-07` |
 | `features/EXECUTION_BOUNDARIES.md` | explicit execution-boundary enforcement and control points | `WP-03`, `WP-04`, `WP-06` |
 | `features/LOCAL_RUNTIME_RESILIENCE.md` | local failure handling, restartability, and resilience guarantees | `WP-05`, `WP-07` |
-| `features/SHEPHERD_RUNTIME_MODEL.md` | preservation, recovery, and runtime stewardship model | `WP-05`, `WP-07`, `WP-08` |
+| `features/SHEPHERD_RUNTIME_MODEL.md` | preservation, recovery, runtime stewardship model, and reviewer-facing recovery evidence | `WP-05`, `WP-07`, `WP-08` |
 
 ## Review Guidance
 - Treat the README, WBS, sprint plan, and demo matrix as the milestone-level planning surface.

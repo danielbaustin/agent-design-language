@@ -66,7 +66,9 @@ Important repo-local tooling surfaces include:
 - `adl tooling validate-structured-prompt` — structured prompt contract validation
 - `adl tooling verify-review-output-provenance` — provenance verification for review-output artifacts
 - `adl tooling review-card-surface` — bounded deterministic review helper
+- `adl tooling review-runtime-surface` — deterministic validator for the `v0.87.1` runtime review package
 - `bash adl/tools/demo_v0871_operator_surface.sh` — canonical `v0.87.1` operator-surface demo for runtime bring-up and proof-surface inspection
+- `bash adl/tools/demo_v0871_review_surface.sh` — canonical `v0.87.1` reviewer walkthrough package across operator and runtime-state proof roots
 - `adl/tools/*.sh` wrappers remain available as compatibility entrypoints over the Rust-owned commands
 - `adl/tools/report_large_rust_modules.sh` — non-blocking Rust implementation-module size report
 - `adl/tools/sync_task_bundle_prompts.sh` — refresh canonical local task-bundle prompt layout from compatibility paths
@@ -89,6 +91,16 @@ For `v0.87.1`, the bounded runtime operator contract is:
 - one canonical per-run inspection set rooted at `run_summary.json`, `run_status.json`, and `logs/trace_v1.json`
 
 Use `bash adl/tools/demo_v0871_operator_surface.sh` as the smallest repo-local proof of that operator surface.
+
+## Runtime Review Surface
+
+For `v0.87.1`, the bounded runtime reviewer contract is:
+- one canonical walkthrough command via `bash adl/tools/demo_v0871_review_surface.sh`
+- one canonical package manifest at `artifacts/v0871/review_surface/demo_manifest.json`
+- one canonical reviewer guide at `artifacts/v0871/review_surface/README.md`
+- one stable package ordering rooted in D6 operator proof and D7 runtime-state proof
+
+Use `adl tooling review-runtime-surface --review-root artifacts/v0871/review_surface` to validate that review package deterministically.
 
 ## Notes
 
