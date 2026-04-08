@@ -16,6 +16,7 @@ pub(crate) mod run_artifacts;
 mod run_artifacts_types;
 #[cfg(test)]
 mod tests;
+mod tooling_cmd;
 mod usage;
 
 use artifact_cmd::real_artifact;
@@ -25,6 +26,7 @@ use godel_cmd::real_godel;
 use identity_cmd::real_identity;
 use pr_cmd::real_pr;
 use run::{real_resume, run_workflow};
+use tooling_cmd::real_tooling;
 
 fn usage() -> &'static str {
     usage::usage()
@@ -71,6 +73,7 @@ fn real_main() -> Result<()> {
         Some("sign") => real_sign(&args[1..]),
         Some("instrument") => real_instrument(&args[1..]),
         Some("learn") => real_learn(&args[1..]),
+        Some("tooling") => real_tooling(&args[1..]),
         Some("verify") => real_verify(&args[1..]),
         Some("resume") => real_resume(&args[1..]),
         _ => run_workflow(&args),

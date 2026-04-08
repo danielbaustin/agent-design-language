@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+export ADL_TOOLING_MANIFEST_ROOT="$ROOT_DIR"
 LINT_SCRIPT="$ROOT_DIR/adl/tools/lint_prompt_spec.sh"
 CARD_PATHS_LIB="$ROOT_DIR/adl/tools/card_paths.sh"
 

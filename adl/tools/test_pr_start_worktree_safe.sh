@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+export ADL_TOOLING_MANIFEST_ROOT="$ROOT_DIR"
 PR_SH_SRC="$ROOT_DIR/adl/tools/pr.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 PROMPT_LINT_SRC="$ROOT_DIR/adl/tools/lint_prompt_spec.sh"
@@ -177,8 +178,6 @@ EOF
 exit 1
 EOF
   chmod +x "$fakecargo/cargo"
-  mkdir -p "$repo/adl"
-  : >"$repo/adl/Cargo.toml"
   out_rust_fallback="$(PATH="$fakecargo:$PATH" "$BASH_BIN" adl/tools/pr.sh start 989 --slug rust-delegate-fallback --no-fetch-issue)"
   rust_fallback_wt="$(cd "$repo/.worktrees/adl-wp-989" && pwd -P)"
   assert_contains "WORKTREE $rust_fallback_wt" "$out_rust_fallback" "rust fallback still creates worktree"
@@ -186,7 +185,6 @@ EOF
     echo "assertion failed: expected rust-fallback worktree" >&2
     exit 1
   }
-  rm -f "$repo/adl/Cargo.toml"
 
   git branch codex/998-collision origin/main
   git worktree add -q "$tmpdir/other-path" codex/998-collision

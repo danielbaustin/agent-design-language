@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+export ADL_TOOLING_MANIFEST_ROOT="$ROOT_DIR"
 PR_SH_SRC="$ROOT_DIR/adl/tools/pr.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 PROMPT_LINT_SRC="$ROOT_DIR/adl/tools/lint_prompt_spec.sh"
@@ -154,7 +155,6 @@ export GH_MOCK_EXISTING_PR="absent"
   cd "$repo"
 
   "$BASH_BIN" adl/tools/pr.sh start 958 --slug relative-card-paths --no-fetch-issue --version v0.85 >/dev/null
-  "$BASH_BIN" adl/tools/pr.sh cards 958 --version v0.85 --no-fetch-issue >/dev/null
   worktree="$repo/.worktrees/adl-wp-958"
   git -C "$worktree" config user.name "Test User"
   git -C "$worktree" config user.email "test@example.com"
@@ -251,6 +251,10 @@ verification_summary:
 - none
 EOF_SOR
 
+  cmp -s .adl/cards/958/output_958.md .adl/v0.85/tasks/issue-0958__relative-card-paths/sor.md || \
+    cp .adl/cards/958/output_958.md .adl/v0.85/tasks/issue-0958__relative-card-paths/sor.md
+  cmp -s .adl/cards/958/output_958.md "$worktree/.adl/v0.85/tasks/issue-0958__relative-card-paths/sor.md" || \
+    cp .adl/cards/958/output_958.md "$worktree/.adl/v0.85/tasks/issue-0958__relative-card-paths/sor.md"
   cp .adl/cards/958/output_958.md "$tmpdir/pristine_output_958.md"
 
   echo "relative body test" >> "$worktree/adl/tools/README.md"

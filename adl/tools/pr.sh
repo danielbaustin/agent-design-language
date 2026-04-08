@@ -180,7 +180,7 @@ rust_pr_delegate_available() {
     [[ -x "${ADL_PR_RUST_BIN}" ]] || return 1
     return 0
   fi
-  [[ -f "$(repo_root)/adl/Cargo.toml" ]] || return 1
+  [[ -f "$(rust_pr_delegate_root)/adl/Cargo.toml" ]] || return 1
   local cached_bin
   cached_bin="$(rust_pr_delegate_cached_bin || true)"
   if [[ -n "$cached_bin" && -x "$cached_bin" ]]; then
@@ -190,9 +190,21 @@ rust_pr_delegate_available() {
   return 0
 }
 
+rust_pr_delegate_root() {
+  if [[ -n "${ADL_PR_MANIFEST_ROOT:-}" && -f "${ADL_PR_MANIFEST_ROOT}/adl/Cargo.toml" ]]; then
+    printf '%s\n' "${ADL_PR_MANIFEST_ROOT}"
+    return 0
+  fi
+  if [[ -n "${ADL_TOOLING_MANIFEST_ROOT:-}" && -f "${ADL_TOOLING_MANIFEST_ROOT}/adl/Cargo.toml" ]]; then
+    printf '%s\n' "${ADL_TOOLING_MANIFEST_ROOT}"
+    return 0
+  fi
+  repo_root
+}
+
 rust_pr_delegate_cached_bin() {
   local root candidate
-  root="$(repo_root)"
+  root="$(rust_pr_delegate_root)"
   candidate="$root/adl/target/debug/adl"
   [[ -x "$candidate" ]] || return 1
   rust_pr_delegate_bin_is_fresh "$root" "$candidate" || return 1
@@ -220,7 +232,7 @@ rust_pr_delegate_bin_is_fresh() {
 delegate_pr_command_to_rust() {
   local subcommand="$1"; shift || true
   local root manifest cached_bin
-  root="$(repo_root)"
+  root="$(rust_pr_delegate_root)"
   manifest="$root/adl/Cargo.toml"
   if [[ -n "${ADL_PR_RUST_BIN:-}" ]]; then
     "${ADL_PR_RUST_BIN}" pr "$subcommand" "$@"

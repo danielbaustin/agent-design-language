@@ -330,7 +330,7 @@ Derive or align the following from this doc:
 The first bounded `v0.87` implementation surface for this contract is:
 - `docs/tooling/review-surface-format.md`
 - `adl/tools/skills/repo-code-review/references/output-contract.md`
-- `adl/tools/verify_repo_review_contract.rb`
+- `adl tooling verify-repo-review-contract`
 - `adl/tools/test_repo_review_contract.sh`
 
 This gives `WP-11` one real review surface that is:

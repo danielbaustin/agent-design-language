@@ -855,7 +855,8 @@ fn sync_completed_output_review_surfaces(
         repo_root.join(completed_output_path)
     };
     let canonical_root_output = issue_ref.task_bundle_output_path(primary_root);
-    let copied_to_root = normalized_output_path != canonical_root_output;
+    let copied_to_root =
+        !(same_filesystem_target(&normalized_output_path, &canonical_root_output)?);
     if copied_to_root {
         if let Some(parent) = canonical_root_output.parent() {
             fs::create_dir_all(parent)?;
@@ -874,6 +875,18 @@ fn sync_completed_output_review_surfaces(
     let review_output = card_output_path(&cards_root, issue_ref.issue_number());
     ensure_symlink(&review_output, &canonical_root_output)?;
     Ok(())
+}
+
+fn same_filesystem_target(left: &Path, right: &Path) -> Result<bool> {
+    if left == right {
+        return Ok(true);
+    }
+    if left.exists() && right.exists() {
+        let left_canonical = fs::canonicalize(left)?;
+        let right_canonical = fs::canonicalize(right)?;
+        return Ok(left_canonical == right_canonical);
+    }
+    Ok(false)
 }
 
 fn real_pr_init(args: &[String]) -> Result<()> {

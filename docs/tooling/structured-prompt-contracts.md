@@ -29,9 +29,9 @@ These files are the machine-readable source of truth for:
 Use:
 
 ```bash
-adl/tools/validate_structured_prompt.sh --type stp --input <path>
-adl/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input <path>
-adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input <path>
+adl tooling validate-structured-prompt --type stp --input <path>
+adl tooling validate-structured-prompt --type sip --phase bootstrap --input <path>
+adl tooling validate-structured-prompt --type sor --phase bootstrap --input <path>
 ```
 
 The validator currently enforces:
@@ -57,7 +57,7 @@ This applies to structured prompt execution fields, review metadata, and active 
 
 For SIP validation, the validator also delegates Prompt Spec validation to:
 
-- `adl/tools/lint_prompt_spec.sh`
+- `adl tooling lint-prompt-spec`
 
 ## Field Classification Rules
 

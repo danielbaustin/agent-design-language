@@ -17,7 +17,7 @@ It exists to provide:
 Use:
 
 ```bash
-ruby adl/tools/review_card_surface.rb \
+adl tooling review-card-surface \
   --input docs/tooling/examples/reviewer-regression/issue-661/input_661.md \
   --output docs/tooling/examples/reviewer-regression/issue-661/output_661.md
 ```

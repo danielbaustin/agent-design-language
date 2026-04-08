@@ -58,11 +58,12 @@ These docs describe worktree governance, large-module tracking, and related main
 
 Important repo-local tooling surfaces include:
 
-- `adl/tools/lint_prompt_spec.sh` — Prompt Spec lint and validation
-- `adl/tools/card_prompt.sh` — deterministic prompt generation from cards
-- `adl/tools/validate_structured_prompt.sh` — structured prompt contract validation
-- `adl/tools/verify_review_output_provenance.rb` — provenance verification for review-output artifacts
-- `adl/tools/review_card_surface.rb` — bounded deterministic review helper
+- `adl tooling lint-prompt-spec` — Prompt Spec lint and validation
+- `adl tooling card-prompt` — deterministic prompt generation from cards
+- `adl tooling validate-structured-prompt` — structured prompt contract validation
+- `adl tooling verify-review-output-provenance` — provenance verification for review-output artifacts
+- `adl tooling review-card-surface` — bounded deterministic review helper
+- `adl/tools/*` wrappers remain available as compatibility entrypoints over the Rust-owned commands
 - `adl/tools/report_large_rust_modules.sh` — non-blocking Rust implementation-module size report
 - `adl/tools/sync_task_bundle_prompts.sh` — refresh canonical local task-bundle prompt layout from compatibility paths
 
