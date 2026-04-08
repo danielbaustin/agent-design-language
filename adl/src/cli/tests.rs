@@ -17,7 +17,10 @@ use super::run_artifacts::{
     RunSummaryLinks, RunSummaryPolicy, ScoresArtifact, ScoresGeneratedFrom, ScoresMetrics,
     ScoresSummary, StepStateArtifact, AEE_DECISION_VERSION, PAUSE_STATE_SCHEMA_VERSION,
 };
-use super::{dispatch_args, real_instrument, real_keygen, real_learn, real_sign, real_verify, usage, version_text};
+use super::{
+    dispatch_args, real_instrument, real_keygen, real_learn, real_sign, real_verify, usage,
+    version_text,
+};
 use ::adl::godel::cross_workflow::{
     DownstreamWorkflowDecision, PersistedCrossWorkflowArtifact, CROSS_WORKFLOW_ARTIFACT_VERSION,
 };
