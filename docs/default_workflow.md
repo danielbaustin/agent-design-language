@@ -119,6 +119,10 @@ bash ./adl/tools/pr.sh finish <issue_num> \
   --output-card .adl/cards/<issue_num>/output_<issue_num>.md
 ```
 
+Finish should only open or update the PR after the SOR is finalized, and the finalized output record should be published onto the tracked review surface under:
+
+- `docs/records/<scope>/tasks/issue-<padded_issue>/sor.md`
+
 ## 8) Report
 
 Write a per-issue report under:

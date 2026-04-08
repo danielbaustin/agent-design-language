@@ -440,7 +440,8 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
     validate_authored_prompt_surface("finish", &stp_path, PromptSurfaceKind::Stp)?;
     validate_authored_prompt_surface("finish", &input_path, PromptSurfaceKind::Sip)?;
     validate_completed_sor(&repo_root, &output_path)?;
-    sync_completed_output_review_surfaces(&repo_root, &primary_root, &issue_ref, &output_path)?;
+    let tracked_review_output =
+        sync_completed_output_review_surfaces(&repo_root, &primary_root, &issue_ref, &output_path)?;
 
     let ahead = commits_ahead_of_origin_main(&repo_root)?;
     let has_uncommitted = has_uncommitted_changes(&repo_root)?;
@@ -454,6 +455,7 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
 
     if has_uncommitted {
         stage_selected_paths_rust(&repo_root, &parsed.paths)?;
+        stage_explicit_path_rust(&repo_root, &tracked_review_output)?;
         if staged_diff_is_empty(&repo_root)? {
             bail!(
                 "finish: nothing staged after 'git add' for paths '{}'",
@@ -1130,7 +1132,7 @@ fn sync_completed_output_review_surfaces(
     primary_root: &Path,
     issue_ref: &IssueRef,
     completed_output_path: &Path,
-) -> Result<()> {
+) -> Result<PathBuf> {
     let normalized_output_path = if completed_output_path.is_absolute() {
         completed_output_path.to_path_buf()
     } else {
@@ -1153,10 +1155,27 @@ fn sync_completed_output_review_surfaces(
         validate_completed_sor(repo_root, &canonical_root_output)?;
     }
 
+    let tracked_review_output = issue_ref.public_task_record_output_path(repo_root);
+    let copied_to_tracked =
+        !(same_filesystem_target(&normalized_output_path, &tracked_review_output)?);
+    if copied_to_tracked {
+        if let Some(parent) = tracked_review_output.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        fs::copy(&normalized_output_path, &tracked_review_output).with_context(|| {
+            format!(
+                "finish: failed to sync completed output card '{}' to tracked review surface '{}'",
+                normalized_output_path.display(),
+                tracked_review_output.display()
+            )
+        })?;
+        validate_completed_sor(repo_root, &tracked_review_output)?;
+    }
+
     let cards_root = resolve_cards_root(primary_root, None);
     let review_output = card_output_path(&cards_root, issue_ref.issue_number());
     ensure_symlink(&review_output, &canonical_root_output)?;
-    Ok(())
+    Ok(tracked_review_output)
 }
 
 fn same_filesystem_target(left: &Path, right: &Path) -> Result<bool> {
@@ -1503,6 +1522,13 @@ fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<()> {
     let mut args = vec!["-C", path_str(repo_root)?, "add", "--"];
     args.extend(paths);
     run_status("git", &args)
+}
+
+fn stage_explicit_path_rust(repo_root: &Path, path: &Path) -> Result<()> {
+    run_status(
+        "git",
+        &["-C", path_str(repo_root)?, "add", "--", path_str(path)?],
+    )
 }
 
 fn staged_diff_is_empty(repo_root: &Path) -> Result<bool> {
