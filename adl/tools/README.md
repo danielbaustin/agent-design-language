@@ -16,7 +16,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `open_artifact.sh`: convenience opener for cards/reports.
 - `update_reports_index.sh`, `update_latest_reports.sh`: report index maintenance.
 
-## Common Commands
+## Canonical Workflow Commands
 
 From repo root:
 
@@ -33,8 +33,8 @@ bash adl/tools/install_adl_pr_cycle_skill.sh
 # bootstrap the local root task bundle for an existing issue
 bash ./adl/tools/pr.sh init <issue_num> --slug <slug>
 
-# inspect structural readiness separately from current preflight gates
-bash ./adl/tools/pr.sh ready <issue_num> --slug <slug>
+# inspect readiness and workflow drift through the canonical doctor surface
+bash ./adl/tools/pr.sh doctor <issue_num> --slug <slug> --mode full --json
 
 # bind execution context at the last responsible moment
 bash ./adl/tools/pr.sh run <issue_num> --slug <slug>
@@ -60,6 +60,17 @@ adl tooling card-prompt --issue <issue_num> --out /tmp/prompt.txt
 # finish issue and open/update PR
 bash ./adl/tools/pr.sh finish <issue_num> --title "<title>" --paths "<paths>"
 ```
+
+## Compatibility / Maintenance Surfaces
+
+The repo still carries a few compatibility and maintenance entrypoints, but they
+are not the preferred public workflow:
+
+- `pr ready` and `pr preflight` remain deprecated aliases over `pr doctor`
+- `pr start` remains a narrow compatibility alias over the same Rust-backed
+  execution-context binding path as `pr run`
+- `pr card`, `pr output`, `pr cards`, `pr open`, and `pr status` remain
+  maintenance-oriented helpers rather than the taught workflow surface
 
 ## See Also / Canonical Docs
 
