@@ -17,7 +17,7 @@ use super::run_artifacts::{
     RunSummaryLinks, RunSummaryPolicy, ScoresArtifact, ScoresGeneratedFrom, ScoresMetrics,
     ScoresSummary, StepStateArtifact, AEE_DECISION_VERSION, PAUSE_STATE_SCHEMA_VERSION,
 };
-use super::{real_instrument, real_keygen, real_learn, real_sign, real_verify, usage};
+use super::{dispatch_args, real_instrument, real_keygen, real_learn, real_sign, real_verify, usage, version_text};
 use ::adl::godel::cross_workflow::{
     DownstreamWorkflowDecision, PersistedCrossWorkflowArtifact, CROSS_WORKFLOW_ARTIFACT_VERSION,
 };
@@ -122,3 +122,10 @@ mod godel;
 mod internal_commands;
 mod open_usage;
 mod run_state;
+
+#[test]
+fn top_level_version_flag_is_handled_before_workflow_dispatch() {
+    dispatch_args(&["--version".to_string()]).expect("version flag should succeed");
+    dispatch_args(&["-V".to_string()]).expect("short version flag should succeed");
+    assert_eq!(version_text(), env!("CARGO_PKG_VERSION"));
+}

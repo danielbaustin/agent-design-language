@@ -36,6 +36,10 @@ fn resume_usage() -> &'static str {
     usage::resume_usage()
 }
 
+fn version_text() -> &'static str {
+    env!("CARGO_PKG_VERSION")
+}
+
 fn print_error_chain(err: &anyhow::Error) {
     eprintln!("Error: {err}");
 
@@ -57,9 +61,17 @@ pub fn run_main() {
 
 fn real_main() -> Result<()> {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    dispatch_args(&args)
+}
 
+fn dispatch_args(args: &[String]) -> Result<()> {
     if matches!(args.first().map(|s| s.as_str()), Some("--help" | "-h")) {
         println!("{}", usage());
+        return Ok(());
+    }
+
+    if matches!(args.first().map(|s| s.as_str()), Some("--version" | "-V")) {
+        println!("{}", version_text());
         return Ok(());
     }
 
