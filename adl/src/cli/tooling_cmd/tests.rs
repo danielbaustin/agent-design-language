@@ -1,4 +1,9 @@
 use super::*;
+use crate::cli::tooling_cmd::common::{
+    ensure_bool, is_repo_review_finding_title, mapping_bool, mapping_contains, mapping_mapping,
+    mapping_seq_len, mapping_string, repo_review_finding_sort_key, resolve_issue_or_input_arg,
+};
+use serde_yaml::Mapping;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -443,6 +448,105 @@ security_privacy_checks:
     )
 }
 
+fn prompt_spec_without_sections(
+    include_system_invariants: Option<bool>,
+    include_reviewer_checklist: Option<bool>,
+) -> String {
+    let mut lines = vec![
+        "prompt_schema: adl.v1".to_string(),
+        "actor:".to_string(),
+        "  role: execution_agent".to_string(),
+        "  name: codex".to_string(),
+        "model:".to_string(),
+        "  id: gpt-5-codex".to_string(),
+        "  determinism_mode: stable".to_string(),
+        "inputs: {}".to_string(),
+        "outputs:".to_string(),
+        "  output_card: .adl/cards/1374/output_1374.md".to_string(),
+        "  summary_style: concise_structured".to_string(),
+        "constraints:".to_string(),
+        format!(
+            "  include_system_invariants: {}",
+            include_system_invariants.unwrap_or(true)
+        ),
+        format!(
+            "  include_reviewer_checklist: {}",
+            include_reviewer_checklist.unwrap_or(true)
+        ),
+        "  disallow_secrets: true".to_string(),
+        "  disallow_absolute_host_paths: true".to_string(),
+        "automation_hints:".to_string(),
+        "  source_issue_prompt_required: true".to_string(),
+        "  target_files_surfaces_recommended: true".to_string(),
+        "  validation_plan_required: true".to_string(),
+        "  required_outcome_type_supported: true".to_string(),
+        "review_surfaces:".to_string(),
+        "  - card_review_checklist.v1".to_string(),
+        "  - card_review_output.v1".to_string(),
+        "  - card_reviewer_gpt.v1.1".to_string(),
+    ];
+    lines.push(String::new());
+    lines.join("\n")
+}
+
+fn valid_input_card_with_prompt_spec(issue: u32, out_rel: &str, prompt_spec_yaml: &str) -> String {
+    format!(
+        r#"# ADL Input Card
+
+Task ID: issue-{issue:04}
+Run ID: issue-{issue:04}
+Version: v0.87
+Title: tooling test
+Branch: codex/{issue}-tooling-test
+
+## Goal
+ship it
+
+## Required Outcome
+test
+
+## Acceptance Criteria
+- keep behavior stable
+
+## Inputs
+- card
+
+## Target Files / Surfaces
+- adl/src/cli/tooling_cmd.rs
+
+## Validation Plan
+- cargo test
+
+## Demo / Proof Requirements
+- none
+
+## Constraints / Policies
+- no scope creep
+
+## System Invariants (must remain true)
+- deterministic
+
+## Reviewer Checklist (machine-readable hints)
+- check evidence
+
+## Non-goals / Out of scope
+- no product changes
+
+## Notes / Risks
+- low
+
+## Instructions to the Agent
+- stay focused
+
+## Prompt Spec
+```yaml
+{prompt_spec_yaml}
+```
+"#
+    )
+    .replace(".adl/cards/1374/output_1374.md", out_rel)
+}
+
 #[test]
 fn helper_validators_cover_expected_shapes() {
     assert!(is_repo_relative("docs/tooling/prompt-spec.md"));
@@ -505,6 +609,91 @@ fn helper_validators_cover_expected_shapes() {
 }
 
 #[test]
+fn common_helpers_cover_argument_and_content_guards() {
+    let repo = TempRepo::new("common");
+    let clean = repo.write_rel("clean.txt", "safe text");
+    let secret = repo.write_rel("secret.txt", "token gho_1234567890");
+    let host_path = repo.write_rel("host-path.txt", "/Users/daniel/secrets.txt");
+
+    assert_eq!(
+        resolve_issue_or_input_arg(&["--input".to_string(), clean.to_string_lossy().to_string(),])
+            .expect("input path should resolve"),
+        clean
+    );
+    assert!(resolve_issue_or_input_arg(&["--help".to_string()])
+        .unwrap()
+        .as_os_str()
+        .is_empty());
+    assert!(resolve_issue_or_input_arg(&[]).is_err());
+    assert!(resolve_issue_or_input_arg(&[
+        "--issue".to_string(),
+        "12".to_string(),
+        "--input".to_string(),
+        clean.to_string_lossy().to_string(),
+    ])
+    .is_err());
+    assert!(normalize_issue("abc").is_err());
+
+    let absolute_clean = absolutize(&clean).expect("absolute path");
+    assert!(absolute_clean.is_absolute());
+    assert_eq!(
+        repo_relative_display(repo.path(), &clean).expect("repo relative display"),
+        "clean.txt"
+    );
+
+    ensure_file(&clean, "clean file").expect("file should exist");
+    assert!(ensure_file(&repo.path().join("missing.txt"), "missing file").is_err());
+    ensure_no_disallowed_content(&clean, "clean file").expect("safe content");
+    assert!(ensure_no_disallowed_content(&secret, "secret file").is_err());
+    assert!(ensure_no_disallowed_content(&host_path, "host path file").is_err());
+    ensure_no_absolute_host_path(&clean, "sip").expect("no absolute paths");
+    assert!(ensure_no_absolute_host_path(&host_path, "sip").is_err());
+
+    assert!(contains_secret_like_token("prefix sk-abcdefgh"));
+    assert!(contains_secret_like_token("ghs_1234567890"));
+    assert!(!contains_secret_like_token("mask sk_short"));
+    assert!(contains_absolute_host_path_in_text("/tmp/example"));
+    assert!(!contains_absolute_host_path_in_text("relative/path"));
+
+    assert!(is_repo_review_finding_title("1. [P2] Useful finding"));
+    assert!(!is_repo_review_finding_title("- [P2] Useful finding"));
+    assert_eq!(
+        repo_review_finding_sort_key("2. [P3] later"),
+        (3, "2. [P3] later".to_string())
+    );
+}
+
+#[test]
+fn common_mapping_helpers_cover_yaml_access_patterns() {
+    let mapping: Mapping = serde_yaml::from_str(
+        r#"
+flag: true
+name: demo
+count: 7
+nested:
+  key: value
+items:
+  - one
+  - two
+"#,
+    )
+    .expect("mapping yaml");
+
+    assert!(mapping_contains(&mapping, "flag"));
+    assert_eq!(mapping_string(&mapping, "name"), Some("demo".to_string()));
+    assert_eq!(mapping_string(&mapping, "count"), Some("7".to_string()));
+    assert_eq!(mapping_bool(&mapping, "flag"), Some(true));
+    assert_eq!(mapping_seq_len(&mapping, "items"), 2);
+    assert!(mapping_mapping(&mapping, "nested").is_ok());
+    assert!(mapping_mapping(&mapping, "missing").is_err());
+    assert_eq!(
+        ensure_bool(&mapping, "flag", "flag must be bool").expect("bool key"),
+        true
+    );
+    assert!(ensure_bool(&mapping, "missing", "flag must be bool").is_err());
+}
+
+#[test]
 fn prompt_spec_validation_accepts_canonical_spec() {
     let spec = valid_prompt_spec_yaml();
     validate_prompt_spec(&spec).expect("canonical prompt spec should validate");
@@ -540,6 +729,151 @@ fn prompt_spec_validation_accepts_canonical_spec() {
     ))
     .expect("prompt spec block should extract");
     assert!(extracted.contains("prompt_schema: adl.v1"));
+}
+
+#[test]
+fn tooling_dispatch_and_help_paths_cover_public_entrypoint() {
+    let repo = TempRepo::new("dispatch");
+    let input = repo.write_rel(
+        ".tmp/tooling_cmd_tests/input.md",
+        &valid_input_card_text(1374, ".tmp/tooling_cmd_tests/output.md"),
+    );
+    let output = repo.write_rel(".tmp/tooling_cmd_tests/output.md", &valid_sor_text());
+    let review = repo.write_rel(".tmp/tooling_cmd_tests/review.md", &valid_review_markdown());
+    let review_output = repo.write_rel(
+        ".tmp/tooling_cmd_tests/review-output.yaml",
+        &valid_review_output_yaml(repo.path()),
+    );
+    let stp = repo.write_rel(".tmp/tooling_cmd_tests/stp.md", &valid_stp_text());
+    let sip = repo.write_rel(
+        ".tmp/tooling_cmd_tests/sip.md",
+        &valid_sip_text(1374, repo.path()),
+    );
+    let prompt_out = repo.path().join("prompt.txt");
+
+    assert!(real_tooling(&[]).is_err());
+    real_tooling(&["help".to_string()]).expect("help should succeed");
+    assert!(real_tooling(&["unknown".to_string()]).is_err());
+
+    real_tooling(&[
+        "card-prompt".to_string(),
+        "--input".to_string(),
+        input.to_string_lossy().to_string(),
+        "--out".to_string(),
+        prompt_out.to_string_lossy().to_string(),
+    ])
+    .expect("card-prompt dispatch should succeed");
+    assert!(prompt_out.is_file());
+
+    real_tooling(&[
+        "lint-prompt-spec".to_string(),
+        "--input".to_string(),
+        input.to_string_lossy().to_string(),
+    ])
+    .expect("lint dispatch should succeed");
+    real_tooling(&[
+        "validate-structured-prompt".to_string(),
+        "--type".to_string(),
+        "stp".to_string(),
+        "--input".to_string(),
+        stp.to_string_lossy().to_string(),
+    ])
+    .expect("stp dispatch should succeed");
+    real_tooling(&[
+        "validate-structured-prompt".to_string(),
+        "--type".to_string(),
+        "sip".to_string(),
+        "--input".to_string(),
+        sip.to_string_lossy().to_string(),
+    ])
+    .expect("sip dispatch should succeed");
+    real_tooling(&[
+        "review-card-surface".to_string(),
+        "--input".to_string(),
+        input.to_string_lossy().to_string(),
+        "--output".to_string(),
+        output.to_string_lossy().to_string(),
+    ])
+    .expect("review surface dispatch should succeed");
+    real_tooling(&[
+        "verify-review-output-provenance".to_string(),
+        "--review".to_string(),
+        review_output.to_string_lossy().to_string(),
+    ])
+    .expect("review output provenance dispatch should succeed");
+    real_tooling(&[
+        "verify-repo-review-contract".to_string(),
+        "--review".to_string(),
+        review.to_string_lossy().to_string(),
+    ])
+    .expect("repo review contract dispatch should succeed");
+}
+
+#[test]
+fn card_prompt_covers_help_errors_and_fallback_rendering() {
+    let repo = TempRepo::new("card-prompt");
+    let prompt_out = repo.path().join("rendered.txt");
+    let fallback_input = repo.write_rel(
+        ".tmp/tooling_cmd_tests/fallback-input.md",
+        &valid_input_card_with_prompt_spec(
+            1402,
+            ".tmp/tooling_cmd_tests/rendered.txt",
+            &prompt_spec_without_sections(Some(false), Some(false)),
+        ),
+    );
+    let issue_input = repo.write_rel(
+        ".adl/cards/1402/input_1402.md",
+        &valid_input_card_with_prompt_spec(
+            1402,
+            ".tmp/tooling_cmd_tests/rendered.txt",
+            &prompt_spec_without_sections(Some(true), Some(true)),
+        ),
+    );
+
+    real_card_prompt(&["--help".to_string()]).expect("help should succeed");
+    assert!(real_card_prompt(&[]).is_err());
+    assert!(real_card_prompt(&["--issue".to_string()]).is_err());
+    assert!(real_card_prompt(&["--input".to_string()]).is_err());
+    assert!(real_card_prompt(&["--out".to_string()]).is_err());
+    assert!(real_card_prompt(&["--bogus".to_string()]).is_err());
+    assert!(real_card_prompt(&[
+        "--issue".to_string(),
+        "1402".to_string(),
+        "--input".to_string(),
+        fallback_input.to_string_lossy().to_string(),
+    ])
+    .is_err());
+    assert!(real_card_prompt(&[
+        "--input".to_string(),
+        repo.path().join("missing.md").to_string_lossy().to_string(),
+    ])
+    .is_err());
+
+    real_card_prompt(&[
+        "--input".to_string(),
+        fallback_input.to_string_lossy().to_string(),
+        "--out".to_string(),
+        prompt_out.to_string_lossy().to_string(),
+    ])
+    .expect("render fallback prompt");
+    let rendered = fs::read_to_string(&prompt_out).expect("rendered prompt text");
+    assert!(rendered.contains("Work Prompt"));
+    assert!(rendered.contains("Input Card:"));
+    assert!(rendered.contains("Goal\nship it"));
+    assert!(rendered.contains("Instructions to the Agent\n- stay focused"));
+    assert!(!rendered.contains("System Invariants (must remain true)"));
+    assert!(!rendered.contains("Reviewer Checklist (machine-readable hints)"));
+
+    std::env::set_current_dir(repo.path()).expect("switch to temp repo");
+    real_card_prompt(&[
+        "--issue".to_string(),
+        "1402".to_string(),
+        "--out".to_string(),
+        prompt_out.to_string_lossy().to_string(),
+    ])
+    .expect("issue-based prompt rendering should succeed");
+    std::env::set_current_dir(repo_root().expect("repo root")).expect("restore repo root");
+    assert!(issue_input.is_file());
 }
 
 #[test]
