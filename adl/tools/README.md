@@ -78,7 +78,9 @@ are not the preferred public workflow:
 - Runtime/CLI usage: `../README.md`
 - Operational skills guide: `skills/docs/OPERATIONAL_SKILLS_GUIDE.md`
   - includes concrete usage patterns for `pr-init`, `pr-ready`, `pr-run`,
-    `pr-janitor`, `pr-finish`, and the helper card editors
+    `pr-janitor`, `pr-finish`, `pr-closeout`, and the helper card editors
+  - when touching `stp.md`, `sip.md`, or `sor.md`, use the matching editor
+    skill explicitly rather than doing ad hoc card edits
 - Active milestone docs: `../../docs/milestones/v0.87/`
 - Documentation index: `../../docs/README.md`
 - ADRs: `../../docs/adr/`

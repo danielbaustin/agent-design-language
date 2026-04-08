@@ -128,6 +128,12 @@ Use this rule of thumb:
 - if the issue or branch state itself is wrong, use the lifecycle skill
 - if the card is the thing that is wrong, use the matching editor skill
 
+Current operator rule:
+
+- if you are treating an `stp.md`, `sip.md`, or `sor.md` as ready/final, run the
+  matching editor skill explicitly rather than relying on ad hoc manual card
+  edits
+
 Practical mapping:
 
 - use `stp-editor` when the task card is vague, contradictory, or not
