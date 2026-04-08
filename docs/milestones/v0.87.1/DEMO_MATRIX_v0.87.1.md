@@ -61,11 +61,16 @@ Additional environment / fixture requirements:
 - WBS / milestone mapping: `docs/milestones/v0.87.1/WBS_v0.87.1.md`
 - Sprint / execution plan: `docs/milestones/v0.87.1/SPRINT_v0.87.1.md`
 - Release / checklist context: `docs/milestones/v0.87.1/MILESTONE_CHECKLIST_v0.87.1.md`
+- Shared provider proof governance: `docs/tooling/PROVIDER_DEMO_SURFACES.md`
 - Other proof-surface docs: Trace v1 artifacts and runtime outputs from v0.87
 
 ## Provider Family Demo / Test Issue Map
 
 These family-level issues seed the provider proof surfaces that later demo work can implement:
+
+Shared doc ownership:
+- use `docs/tooling/PROVIDER_DEMO_SURFACES.md` for shared provider demo proof-surface rules
+- keep family-specific run instructions and proof caveats in the family wrapper outputs, not in this matrix
 
 | Provider family | Scope | Issue |
 |---|---|---|
