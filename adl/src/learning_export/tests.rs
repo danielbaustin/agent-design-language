@@ -133,6 +133,11 @@ fn export_trace_bundle_v2_requires_activation_log() {
         r#"{"run_status_version":1,"run_id":"r1","workflow_id":"wf","overall_status":"succeeded","completed_steps":["s1"],"pending_steps":[],"attempt_counts_by_step":{"s1":1}}"#,
     )
     .unwrap();
+    std::fs::write(
+        run_dir.join("logs").join("trace_v1.json"),
+        r#"{"schema_version":"trace.v1","events":[{"event_id":"trace-v1-0001","timestamp":"2026-03-01T00:00:00.000Z","event_type":"RUN_START","trace_id":"r1","run_id":"r1","span_id":"run:r1","parent_span_id":null,"actor":{"type":"agent","id":"wf"},"scope":{"level":"run","name":"wf"},"inputs_ref":"artifacts/r1/run.json","outputs_ref":"artifacts/r1/logs/trace_v1.json","artifact_ref":"artifacts/r1/run.json","decision_context":null,"provider":null,"error":null,"contract_validation":null},{"event_id":"trace-v1-0002","timestamp":"2026-03-01T00:00:01.000Z","event_type":"RUN_END","trace_id":"r1","run_id":"r1","span_id":"run:r1","parent_span_id":null,"actor":{"type":"agent","id":"wf"},"scope":{"level":"run","name":"wf"},"inputs_ref":"artifacts/r1/run.json","outputs_ref":"artifacts/r1/steps.json","artifact_ref":"artifacts/r1/logs/trace_v1.json","decision_context":{"context":"run completion","outcome":"success","rationale":null},"provider":null,"error":null,"contract_validation":null}]}"#,
+    )
+    .unwrap();
 
     let out = base.join("out");
     let err = export_trace_bundle_v2(&runs_root, &[], &out)
@@ -173,6 +178,11 @@ fn export_trace_bundle_v2_is_deterministic_and_manifest_hashes_match() {
     std::fs::write(
         run_dir.join("logs").join("activation_log.json"),
         r#"{"activation_log_version":1,"ordering":"append_only_emission_order","stable_ids":{"step_id":"replay_stable_with_same_plan","delegation_id":"replay_stable_with_same_activation_log","run_id":"run_scoped_not_cross_run_stable"},"events":[{"RunStarted":{"ts":"2026-03-01T00:00:00.000Z","run_id":"r1","workflow_id":"wf","version":"0.75"}}]}"#,
+    )
+    .unwrap();
+    std::fs::write(
+        run_dir.join("logs").join("trace_v1.json"),
+        r#"{"schema_version":"trace.v1","events":[{"event_id":"trace-v1-0001","timestamp":"2026-03-01T00:00:00.000Z","event_type":"RUN_START","trace_id":"r1","run_id":"r1","span_id":"run:r1","parent_span_id":null,"actor":{"type":"agent","id":"wf"},"scope":{"level":"run","name":"wf"},"inputs_ref":"artifacts/r1/run.json","outputs_ref":"artifacts/r1/logs/trace_v1.json","artifact_ref":"artifacts/r1/run.json","decision_context":null,"provider":null,"error":null,"contract_validation":null},{"event_id":"trace-v1-0002","timestamp":"2026-03-01T00:00:01.000Z","event_type":"RUN_END","trace_id":"r1","run_id":"r1","span_id":"run:r1","parent_span_id":null,"actor":{"type":"agent","id":"wf"},"scope":{"level":"run","name":"wf"},"inputs_ref":"artifacts/r1/run.json","outputs_ref":"artifacts/r1/steps.json","artifact_ref":"artifacts/r1/logs/trace_v1.json","decision_context":{"context":"run completion","outcome":"success","rationale":null},"provider":null,"error":null,"contract_validation":null}]}"#,
     )
     .unwrap();
     std::fs::write(
@@ -242,12 +252,24 @@ fn import_trace_bundle_v2_accepts_valid_bundle_and_returns_activation_log_path()
         r#"{"activation_log_version":1,"ordering":"append_only_emission_order","stable_ids":{"step_id":"replay_stable_with_same_plan","delegation_id":"replay_stable_with_same_activation_log","run_id":"run_scoped_not_cross_run_stable"},"events":[{"RunStarted":{"ts":"2026-03-01T00:00:00.000Z","run_id":"r1","workflow_id":"wf","version":"0.75"}}]}"#,
     )
     .unwrap();
+    std::fs::write(
+        run_dir.join("logs").join("trace_v1.json"),
+        r#"{"schema_version":"trace.v1","events":[{"event_id":"trace-v1-0001","timestamp":"2026-03-01T00:00:00.000Z","event_type":"RUN_START","trace_id":"r1","run_id":"r1","span_id":"run:r1","parent_span_id":null,"actor":{"type":"agent","id":"wf"},"scope":{"level":"run","name":"wf"},"inputs_ref":"artifacts/r1/run.json","outputs_ref":"artifacts/r1/logs/trace_v1.json","artifact_ref":"artifacts/r1/run.json","decision_context":null,"provider":null,"error":null,"contract_validation":null},{"event_id":"trace-v1-0002","timestamp":"2026-03-01T00:00:01.000Z","event_type":"RUN_END","trace_id":"r1","run_id":"r1","span_id":"run:r1","parent_span_id":null,"actor":{"type":"agent","id":"wf"},"scope":{"level":"run","name":"wf"},"inputs_ref":"artifacts/r1/run.json","outputs_ref":"artifacts/r1/steps.json","artifact_ref":"artifacts/r1/logs/trace_v1.json","decision_context":{"context":"run completion","outcome":"success","rationale":null},"provider":null,"error":null,"contract_validation":null}]}"#,
+    )
+    .unwrap();
     let out = base.join("bundle");
     export_trace_bundle_v2(&runs_root, &[], &out).unwrap();
 
     let imported = import_trace_bundle_v2(&out.join("trace_bundle_v2"), "r1").unwrap();
     assert_eq!(imported.run_id, "r1");
     assert!(imported.activation_log_path.is_file());
+    assert!(out
+        .join("trace_bundle_v2")
+        .join("runs")
+        .join("r1")
+        .join("logs")
+        .join("trace_v1.json")
+        .is_file());
     assert!(imported
         .activation_log_path
         .ends_with("trace_bundle_v2/runs/r1/logs/activation_log.json"));
@@ -281,6 +303,11 @@ fn import_trace_bundle_v2_rejects_manifest_hash_mismatch() {
     std::fs::write(
         run_dir.join("logs").join("activation_log.json"),
         r#"{"activation_log_version":1,"ordering":"append_only_emission_order","stable_ids":{"step_id":"x","delegation_id":"x","run_id":"x"},"events":[]}"#,
+    )
+    .unwrap();
+    std::fs::write(
+        run_dir.join("logs").join("trace_v1.json"),
+        r#"{"schema_version":"trace.v1","events":[{"event_id":"trace-v1-0001","timestamp":"2026-03-01T00:00:00.000Z","event_type":"RUN_START","trace_id":"r1","run_id":"r1","span_id":"run:r1","parent_span_id":null,"actor":{"type":"agent","id":"wf"},"scope":{"level":"run","name":"wf"},"inputs_ref":"artifacts/r1/run.json","outputs_ref":"artifacts/r1/logs/trace_v1.json","artifact_ref":"artifacts/r1/run.json","decision_context":null,"provider":null,"error":null,"contract_validation":null},{"event_id":"trace-v1-0002","timestamp":"2026-03-01T00:00:01.000Z","event_type":"RUN_END","trace_id":"r1","run_id":"r1","span_id":"run:r1","parent_span_id":null,"actor":{"type":"agent","id":"wf"},"scope":{"level":"run","name":"wf"},"inputs_ref":"artifacts/r1/run.json","outputs_ref":"artifacts/r1/steps.json","artifact_ref":"artifacts/r1/logs/trace_v1.json","decision_context":{"context":"run completion","outcome":"success","rationale":null},"provider":null,"error":null,"contract_validation":null}]}"#,
     )
     .unwrap();
     let out = base.join("bundle");

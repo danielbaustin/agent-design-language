@@ -168,12 +168,9 @@ run:
         summary_json["links"]["cluster_groundwork_json"],
         "meta/cluster_groundwork.json"
     );
-    assert!(
-        summary_json
-            .get("links")
-            .and_then(|v| v.get("trace_json"))
-            .is_none(),
-        "trace_json should be omitted when tracing is disabled"
+    assert_eq!(
+        summary_json["links"]["trace_json"], "logs/trace_v1.json",
+        "trace_json should point at the canonical runtime trace artifact"
     );
     assert!(
         summary_json

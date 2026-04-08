@@ -154,6 +154,10 @@ fn build_run_summary_sorts_remote_policy_and_tracks_denials() {
         summary.links.reasoning_graph_json.as_deref(),
         Some("learning/reasoning_graph.v1.json")
     );
+    assert_eq!(
+        summary.links.trace_json.as_deref(),
+        Some("logs/trace_v1.json")
+    );
 
     let _ = std::fs::remove_dir_all(run_paths.run_dir());
 }

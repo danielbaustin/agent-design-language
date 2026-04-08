@@ -71,7 +71,7 @@ Use this table as the fast review surface for milestone coverage.
 |---|---|---|---|---|---|---|---|
 | D1 | Runtime Environment Bring-Up | `WP-02` runtime environment completion | `adl/tools/demo_v0871_runtime_environment.sh` | `.adl/runtime_environment.json` plus a bounded `.adl/runs/<run_id>/` artifact set | Runtime environment initializes cleanly with documented contracts | Stable env inputs should preserve artifact shape | PLANNED |
 | D2 | Lifecycle Phases And Boundaries | `WP-03` execution boundaries and lifecycle | `adl/tools/demo_v0871_lifecycle.sh` | lifecycle phase trace / summary | `init -> execute -> complete/teardown` is explicit and reviewable | Fixed scenario should preserve lifecycle phase ordering | PLANNED |
-| D3 | Trace-Aligned Runtime Execution | `WP-04` trace-aligned runtime execution | `adl/tools/demo_v0871_trace_runtime.sh` | runtime trace artifact set | Runtime actions map coherently to trace events and outputs | Replay should preserve execution-to-trace shape | PLANNED |
+| D3 | Trace-Aligned Runtime Execution | `WP-04` trace-aligned runtime execution | `adl/tools/demo_v0871_trace_runtime.sh` | `logs/trace_v1.json`, `run_summary.json`, and trace bundle export surfaces | Runtime actions map coherently to trace events, linked artifacts, and replay bundle outputs | Replay should preserve execution-to-trace shape | PLANNED |
 | D4 | Local Failure Handling | `WP-05` local runtime resilience | `adl/tools/demo_v0871_resilience_failure.sh` | failure-handling artifact set | Failure is bounded, explained, and leaves inspectable artifacts | Same induced failure should preserve failure classification | PLANNED |
 | D4A | Shepherd Preservation And Recovery | `WP-05`, `WP-07` Shepherd preservation + continuity discipline | `adl/tools/demo_v0871_shepherd_recovery.sh` | Shepherd recovery artifact set | Interrupted work is preserved, resumed, or dispositioned under explicit runtime rules | Fixed interruption scenario should preserve preservation and recovery classification | PLANNED |
 | D5 | Restartability And Recovery | `WP-05`, `WP-07` resilience + state discipline | `adl/tools/demo_v0871_restartability.sh` | restart/recovery artifact set | Bounded run can resume or restart under documented rules | Restart behavior should remain stable under fixed state | PLANNED |
@@ -99,7 +99,7 @@ Status guidance:
 ## Demo -> Feature Mapping
 - `D1` -> `ADL_RUNTIME_ENVIRONMENT.md`, `ADL_RUNTIME_ENVIRONMENT_ARCHITECTURE.md`
 - `D2` -> `AGENT_LIFECYCLE.md`, `EXECUTION_BOUNDARIES.md`
-- `D3` -> `ADL_RUNTIME_ENVIRONMENT_ARCHITECTURE.md`, `AGENT_LIFECYCLE.md`
+- `D3` -> `ADL_RUNTIME_ENVIRONMENT_ARCHITECTURE.md`, `AGENT_LIFECYCLE.md`, Trace v1 artifact and replay-bundle surfaces
 - `D4` -> `LOCAL_RUNTIME_RESILIENCE.md`
 - `D4A` -> `SHEPHERD_RUNTIME_MODEL.md`, `LOCAL_RUNTIME_RESILIENCE.md`
 - `D5` -> `LOCAL_RUNTIME_RESILIENCE.md`, `SHEPHERD_RUNTIME_MODEL.md`, `AGENT_LIFECYCLE.md`

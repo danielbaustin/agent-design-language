@@ -84,6 +84,7 @@ pub fn export_trace_bundle_v2(
             "run_summary.json",
             "run_status.json",
             "logs/activation_log.json",
+            "logs/trace_v1.json",
         ];
         for rel in required {
             copy_trace_bundle_file(
@@ -322,6 +323,7 @@ fn required_trace_bundle_files(run_id: &str) -> Vec<String> {
         "run_summary.json",
         "run_status.json",
         "logs/activation_log.json",
+        "logs/trace_v1.json",
     ]
     .iter()
     .map(|rel| format!("runs/{run_id}/{rel}"))

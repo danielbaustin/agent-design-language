@@ -8,6 +8,8 @@ use serde_json::Value as JsonValue;
 pub enum TraceEventTypeV1 {
     RunStart,
     RunEnd,
+    LifecyclePhase,
+    ExecutionBoundary,
     StepStart,
     StepEnd,
     ModelInvocation,
