@@ -8,6 +8,7 @@ use super::open::{
     detect_platform, open_artifact, open_command_for, select_open_artifact, CommandRunner,
     OpenPlatform, RealCommandRunner,
 };
+use super::provider_cmd::real_provider;
 use super::run::{enforce_signature_policy, now_ms};
 use super::run_artifacts::{
     build_aee_decision_artifact, build_run_status, build_run_summary, build_scores_artifact,
@@ -131,4 +132,20 @@ fn top_level_version_flag_is_handled_before_workflow_dispatch() {
     dispatch_args(&["--version".to_string()]).expect("version flag should succeed");
     dispatch_args(&["-V".to_string()]).expect("short version flag should succeed");
     assert_eq!(version_text(), env!("CARGO_PKG_VERSION"));
+}
+
+#[test]
+fn provider_setup_dispatch_path_succeeds() {
+    let temp = unique_temp_dir("provider-setup-dispatch");
+    real_provider(&[
+        "setup".to_string(),
+        "chatgpt".to_string(),
+        "--out".to_string(),
+        temp.display().to_string(),
+        "--force".to_string(),
+    ])
+    .expect("provider setup dispatch should succeed");
+    assert!(temp.join("provider.adl.yaml").exists());
+    assert!(temp.join(".env.example").exists());
+    assert!(temp.join("README.md").exists());
 }

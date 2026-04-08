@@ -11,6 +11,7 @@ mod pr_cmd_args;
 mod pr_cmd_cards;
 mod pr_cmd_prompt;
 mod pr_cmd_validate;
+mod provider_cmd;
 mod run;
 pub(crate) mod run_artifacts;
 mod run_artifacts_types;
@@ -25,6 +26,7 @@ use demo_cmd::real_demo;
 use godel_cmd::real_godel;
 use identity_cmd::real_identity;
 use pr_cmd::real_pr;
+use provider_cmd::real_provider;
 use run::{real_resume, run_workflow};
 use tooling_cmd::real_tooling;
 
@@ -80,6 +82,7 @@ fn dispatch_args(args: &[String]) -> Result<()> {
         Some("demo") => real_demo(&args[1..]),
         Some("godel") => real_godel(&args[1..]),
         Some("identity") => real_identity(&args[1..]),
+        Some("provider") => real_provider(&args[1..]),
         Some("pr") => real_pr(&args[1..]),
         Some("keygen") => real_keygen(&args[1..]),
         Some("sign") => real_sign(&args[1..]),

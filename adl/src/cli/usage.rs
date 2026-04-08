@@ -7,6 +7,7 @@ pub fn usage() -> &'static str {
   adl identity init --name <display-name> --birthday <rfc3339> --timezone <IANA> [--agent-id <id>] [--created-by <name>] [--force]
   adl identity show [--path <path>]
   adl identity now [--timezone <IANA>] [--path <identity-profile>] [--out <path>]
+  adl provider setup <family> [--out <dir>] [--force]
   adl pr create --title <title> [--slug <slug>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>]
   adl pr init <issue> [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>]
   adl pr run <issue> [--prefix <prefix>] [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
@@ -56,6 +57,8 @@ Examples:
   adl demo demo-d-godel-obsmem-loop --run --trace --out ./out
   adl demo demo-e-multi-agent-card-pipeline --run --trace --out ./out
   adl demo demo-f-obsmem-retrieval --run --trace --out ./out
+  adl provider setup chatgpt
+  adl provider setup anthropic --out ./.adl/provider-setup/anthropic
   adl godel run --run-id run-745-a --workflow-id wf-godel-loop --failure-code tool_failure --failure-summary \"step failed with deterministic parse error\" --evidence-ref runs/run-745-a/run_status.json
   adl godel inspect --run-id run-745-a --runs-dir .adl/runs
   adl godel evaluate --failure-code tool_failure --experiment-result ok --score-delta 1
