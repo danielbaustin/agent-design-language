@@ -39,6 +39,7 @@ pub mod provider;
 pub mod provider_substrate;
 pub mod remote_exec;
 pub mod resolve;
+pub mod runtime_environment;
 pub mod sandbox;
 pub mod schema;
 pub mod signing;

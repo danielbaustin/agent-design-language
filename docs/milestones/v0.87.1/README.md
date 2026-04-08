@@ -32,6 +32,11 @@ Key outcomes:
 - canonical milestone documents that truthfully describe the runtime
 - a runnable demo program and review package proving the runtime is real
 - a stable public surface for later chronosense and bounded-agency work
+- one authoritative runtime-environment bring-up/configuration contract:
+  - `adl::runtime_environment::RuntimeEnvironment`
+  - default runtime root `.adl/`
+  - default run-artifact root `.adl/runs/`
+  - runtime marker `.adl/runtime_environment.json`
 
 ## Scope Summary
 
