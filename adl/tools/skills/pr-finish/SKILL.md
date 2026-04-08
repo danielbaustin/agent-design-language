@@ -15,6 +15,8 @@ Its job is to:
 - emit a structured finish result
 - stop before silent merge or issue closure unless explicitly directed
 
+When finish is blocked by output-card truth drift, this skill may invoke `sor-editor` for bounded SOR normalization before retrying finish.
+
 This is a procedural execution skill with write side effects.
 
 ## Current Compatibility Model

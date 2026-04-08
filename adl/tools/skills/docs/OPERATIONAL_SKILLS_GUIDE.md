@@ -20,6 +20,9 @@ The tracked skill set is:
 - `pr-janitor`
 - `pr-finish`
 - `repo-code-review`
+- `stp-editor`
+- `sip-editor`
+- `sor-editor`
 
 ## Workflow Shape
 
@@ -33,6 +36,11 @@ The normal workflow is:
 6. `pr-finish`
 
 `repo-code-review` is cross-cutting rather than phase-specific.
+
+The three editor skills are helper skills:
+- `stp-editor` for bounded `stp.md` cleanup
+- `sip-editor` for truthful `sip.md` cleanup
+- `sor-editor` for truthful `sor.md` cleanup
 
 ## Where The Skills Live
 
@@ -82,9 +90,29 @@ The current automation model is:
 - `pr-run` consumes doctor-backed readiness and performs bounded execution
 - `pr-janitor` watches a PR in flight and handles bounded blocker remediation
 - `pr-finish` handles truthful closeout/publication
+- editor skills may be called by lifecycle skills when the blocker is card-local rather than lifecycle-orchestration state
 
 `ready` and `preflight` are compatibility aliases that may still exist in repo
 surfaces, but doctor JSON is the canonical structured automation surface.
+
+## Helper Card Editors
+
+These are not top-level lifecycle phases. They are narrow helper skills used to
+reduce recurring card failures:
+
+- `stp-editor`
+  - tightens goal, scope, acceptance criteria, and validation wording in
+    `stp.md`
+  - does not create execution state or author result claims
+- `sip-editor`
+  - normalizes truthful lifecycle state in `sip.md`
+  - does not create the branch/worktree itself or claim execution completion
+- `sor-editor`
+  - normalizes truthful execution and integration state in `sor.md`
+  - does not invent validation or publish the PR itself
+
+Use them when the problem is primarily the card surface, not the wider
+lifecycle step.
 
 ## Skill Details
 
@@ -567,6 +595,188 @@ Use the tracked finish schema and skill contract:
 
 `pr-finish` is the closeout/publication boundary. It should not reopen broad
 implementation work or silently replace `pr-janitor`.
+
+## `stp-editor`
+
+### Purpose
+
+`stp-editor` is the bounded helper skill for `stp.md`.
+
+It:
+
+- tightens goal, required outcome, acceptance criteria, and scope wording
+- removes placeholders and contradictory planning text
+- keeps the STP aligned with the source issue prompt
+- stops before SIP/SOR editing or lifecycle orchestration
+
+### When To Use It
+
+Use `stp-editor` when:
+
+- the STP is structurally weak or hard to execute from
+- acceptance criteria or validation wording need tightening
+- the blocker is card-local rather than workflow-orchestration state
+
+Do not use it for:
+
+- creating branches/worktrees
+- claiming execution results
+- rewriting SIP or SOR content
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- `target.stp_path`
+
+Structured schema:
+
+- `adl/tools/skills/docs/STP_EDITOR_SKILL_INPUT_SCHEMA.md`
+- schema id: `stp_editor.v1`
+
+### Example Invocation
+
+```yaml
+Use $stp-editor at /Users/daniel/git/agent-design-language/adl/tools/skills/stp-editor/SKILL.md with this validated input:
+
+skill_input_schema: stp_editor.v1
+mode: tighten_for_review
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  stp_path: .adl/v0.87.1/tasks/issue-1419__v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces/stp.md
+  issue_number: 1419
+  source_prompt_path: .adl/v0.87.1/bodies/issue-1419-v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces.md
+policy:
+  preserve_issue_intent: true
+  stop_after_edit: true
+  allow_scope_reframing: false
+```
+
+## `sip-editor`
+
+### Purpose
+
+`sip-editor` is the bounded helper skill for `sip.md`.
+
+It:
+
+- normalizes truthful lifecycle state
+- fixes branch/worktree drift in the card
+- tightens target surfaces and validation-plan wording
+- stops before implementation or output-card authoring
+
+### When To Use It
+
+Use `sip-editor` when:
+
+- a SIP is blocking `pr-ready` or `pr-run`
+- the card reflects the wrong lifecycle phase
+- placeholders or stale execution assumptions need cleanup
+
+Do not use it for:
+
+- creating the branch/worktree itself
+- claiming finished work
+- writing the final output record
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- `target.sip_path`
+
+Structured schema:
+
+- `adl/tools/skills/docs/SIP_EDITOR_SKILL_INPUT_SCHEMA.md`
+- schema id: `sip_editor.v1`
+
+### Example Invocation
+
+```yaml
+Use $sip-editor at /Users/daniel/git/agent-design-language/adl/tools/skills/sip-editor/SKILL.md with this validated input:
+
+skill_input_schema: sip_editor.v1
+mode: repair_lifecycle_drift
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  sip_path: .adl/v0.87.1/tasks/issue-1419__v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces/sip.md
+  issue_number: 1419
+  branch: codex/1419-v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces
+  worktree_path: /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1419
+  source_prompt_path: .adl/v0.87.1/bodies/issue-1419-v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces.md
+policy:
+  lifecycle_state: run_bound
+  preserve_issue_intent: true
+  stop_after_edit: true
+```
+
+## `sor-editor`
+
+### Purpose
+
+`sor-editor` is the bounded helper skill for `sor.md`.
+
+It:
+
+- normalizes truthful execution and integration wording
+- removes placeholders and enum-menu leakage
+- aligns validation claims with checks actually run
+- stops before PR publication or merge
+
+### When To Use It
+
+Use `sor-editor` when:
+
+- the output card is blocking `pr-finish`
+- the integration wording overstates branch/main/PR reality
+- validation claims need to be normalized to actual evidence
+
+Do not use it for:
+
+- inventing missing validation
+- merging or publishing the PR itself
+- widening issue scope
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- `target.sor_path`
+
+Structured schema:
+
+- `adl/tools/skills/docs/SOR_EDITOR_SKILL_INPUT_SCHEMA.md`
+- schema id: `sor_editor.v1`
+
+### Example Invocation
+
+```yaml
+Use $sor-editor at /Users/daniel/git/agent-design-language/adl/tools/skills/sor-editor/SKILL.md with this validated input:
+
+skill_input_schema: sor_editor.v1
+mode: prepare_for_finish
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  sor_path: .adl/v0.87.1/tasks/issue-1419__v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces/sor.md
+  issue_number: 1419
+  branch: codex/1419-v0-87-1-tools-add-dedicated-card-editor-skills-for-stp-sip-and-sor-surfaces
+  worktree_path: /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1419
+  pr_number: null
+evidence:
+  commands_run:
+    - bash adl/tools/test_card_editor_skill_contracts.sh
+  changed_paths:
+    - adl/tools/skills/stp-editor/SKILL.md
+    - adl/tools/skills/sip-editor/SKILL.md
+    - adl/tools/skills/sor-editor/SKILL.md
+policy:
+  integration_state: worktree_only
+  preserve_issue_intent: true
+  stop_after_edit: true
+```
 
 ## `repo-code-review`
 

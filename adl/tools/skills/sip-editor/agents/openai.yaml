@@ -1,0 +1,3 @@
+display_name: SIP Editor
+short_description: Normalize truthful SIP input cards
+default_prompt: Help me normalize an SIP input card so it reflects truthful workflow state.

@@ -15,6 +15,11 @@ Its job is to:
 - update the execution record/output card truthfully
 - stop before PR monitoring, janitoring, merge, or closeout
 
+When bounded card cleanup is needed, this skill may compose with:
+- `stp-editor` for STP drift that blocks execution understanding
+- `sip-editor` for truthful run-bound SIP normalization
+- `sor-editor` for truthful in-flight output-card updates
+
 This is an execution skill. It is allowed to write code, docs, tests, and related issue-scoped artifacts when the issue requires them.
 
 ## Design Basis
@@ -204,6 +209,8 @@ Update the output card or execution record truthfully:
 - validation
 - determinism/security notes where relevant
 - follow-ups or deferred work
+
+When the primary work needed here is bounded output-card normalization rather than broader implementation, prefer `sor-editor` over ad hoc card surgery.
 
 Do not claim:
 - `DONE` if the branch does not actually reflect the completed issue state

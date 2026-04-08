@@ -8,7 +8,7 @@ trap 'rm -rf "${tmpdir}"' EXIT
 assert_skill_bundle() {
   local root="$1"
 
-  for skill in pr-init pr-ready pr-run pr-finish pr-janitor repo-code-review; do
+  for skill in pr-init pr-ready pr-run pr-finish pr-janitor repo-code-review stp-editor sip-editor sor-editor; do
     [[ -d "${root}/skills/${skill}" ]]
   done
 
@@ -18,6 +18,9 @@ assert_skill_bundle() {
   [[ -f "${root}/skills/pr-finish/SKILL.md" ]]
   [[ -f "${root}/skills/pr-janitor/SKILL.md" ]]
   [[ -f "${root}/skills/repo-code-review/SKILL.md" ]]
+  [[ -f "${root}/skills/stp-editor/SKILL.md" ]]
+  [[ -f "${root}/skills/sip-editor/SKILL.md" ]]
+  [[ -f "${root}/skills/sor-editor/SKILL.md" ]]
 
   grep -Fq "qualitative card review" "${root}/skills/pr-init/SKILL.md"
   grep -Fq "execution_readiness" "${root}/skills/pr-ready/references/output-contract.md"
@@ -25,6 +28,9 @@ assert_skill_bundle() {
   grep -Fq "truthful closeout" "${root}/skills/pr-finish/SKILL.md"
   grep -Fq "failed checks or merge conflicts" "${root}/skills/pr-janitor/SKILL.md"
   grep -Fq "findings-first" "${root}/skills/repo-code-review/SKILL.md"
+  grep -Fq "bounded editing of \`stp.md\`" "${root}/skills/stp-editor/SKILL.md"
+  grep -Fq "truthful lifecycle state" "${root}/skills/sip-editor/SKILL.md"
+  grep -Fq "truthful execution and integration state" "${root}/skills/sor-editor/SKILL.md"
 }
 
 export CODEX_HOME="${tmpdir}/codex-home-copy"
