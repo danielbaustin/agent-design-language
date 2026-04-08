@@ -81,7 +81,7 @@ verification_summary:
       - "cargo clippy --manifest-path adl/Cargo.toml --all-targets -- -D warnings"
   determinism:
     status: PASS
-    replay_verified: true
+    replay_verified: false
     ordering_guarantees_verified: true
   security_privacy:
     status: PASS
@@ -105,7 +105,7 @@ verification_summary:
   - the focused `runtime_environment` unit tests in `adl/src/runtime_environment.rs`
   - the run-state regression in `adl/src/cli/tests/run_state/basics.rs`
 - Replay verification (same inputs -> same artifacts/order):
-  - the runtime-environment tests recheck the same root-resolution rules and sanitized marker output for fixed inputs
+  - not directly proven with a repeated-run replay fixture; the focused tests prove stable root-resolution and marker-shape behavior for fixed inputs
 - Ordering guarantees (sorting / tie-break rules used):
   - root selection follows a fixed precedence of `ADL_RUNTIME_ROOT` / `ADL_RUNS_ROOT` overrides before repo-local defaults
 - Artifact stability notes:
@@ -129,7 +129,7 @@ verification_summary:
 - Replay command used for verification:
   - the focused runtime-environment and run-state regression commands listed above
 - Replay result:
-  - passed; the same fixed inputs preserved root-selection and marker-shape behavior
+  - not directly replay-verified; the focused tests support bounded deterministic behavior for root selection and marker shape
 
 ## Artifact Verification
 - Primary proof surface:
