@@ -3,6 +3,8 @@ use std::path::{Path, PathBuf};
 use anyhow::{anyhow, Context, Result};
 use serde::Serialize;
 
+use crate::runtime_environment::RuntimeEnvironment;
+
 pub const ARTIFACT_MODEL_VERSION: u32 = 1;
 
 pub fn validate_run_id_path_segment(run_id: &str) -> Result<String> {
@@ -265,6 +267,11 @@ impl RunArtifactPaths {
 
     /// Ensure canonical directory layout exists for this run.
     pub fn ensure_layout(&self) -> Result<()> {
+        if let Ok(runtime_environment) = RuntimeEnvironment::current() {
+            if runtime_environment.runs_root() == self.runs_root.as_path() {
+                runtime_environment.ensure_layout()?;
+            }
+        }
         let run_dir = self.run_dir();
         std::fs::create_dir_all(&run_dir).with_context(|| {
             format!("failed to create run artifact dir '{}'", run_dir.display())
@@ -297,17 +304,7 @@ impl RunArtifactPaths {
 
 /// Resolve repository run-artifact root (`.adl/runs`).
 pub fn runs_root() -> Result<PathBuf> {
-    if let Some(override_root) = std::env::var_os("ADL_RUNS_ROOT") {
-        let trimmed = override_root.to_string_lossy().trim().to_string();
-        if !trimmed.is_empty() {
-            return Ok(PathBuf::from(trimmed));
-        }
-    }
-    let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let repo_root = manifest
-        .parent()
-        .context("failed to derive repo root from CARGO_MANIFEST_DIR")?;
-    Ok(repo_root.join(".adl").join("runs"))
+    Ok(RuntimeEnvironment::current()?.runs_root().to_path_buf())
 }
 
 /// Atomically write bytes to a file using same-directory temp + rename.

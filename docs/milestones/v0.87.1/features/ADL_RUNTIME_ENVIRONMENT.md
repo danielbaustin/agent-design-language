@@ -4,15 +4,15 @@
 
 The ADL runtime environment is not merely an execution engine. It is the **environment in which agents exist**.
 
-This environment provides the fundamental conditions required for cognition:
+This environment provides the bounded substrate conditions later runtime layers depend on:
 
-- time (chronosense)
-- memory (ObsMem)
-- identity continuity
+- runtime root and run-artifact roots
 - causal structure (trace)
-- interaction with other agents
+- persistence primitives
+- execution context
+- future hooks for richer temporal and identity layers
 
-Agents are not simply executed within the runtime—they are **born into it, operate within it, and persist through it**.
+Agents are not merely executed within the runtime. They operate inside a persistent local substrate with explicit artifact roots and continuity primitives.
 
 ---
 
@@ -21,11 +21,12 @@ Agents are not simply executed within the runtime—they are **born into it, ope
 To avoid overlap with adjacent documents, the ADL runtime environment is defined as the **substrate layer** only. It provides conditions, not policies or lifecycle decisions.
 
 **Runtime Environment (this document) owns:**
-- temporal substrate (chronosense clocks and ordering)
+- runtime root and environment bring-up contract
+- run-artifact roots and layout
 - causal substrate (trace emission and linkage)
 - persistence primitives (checkpointing, storage surfaces)
-- identity anchoring primitives (IDs, ephemeris hooks)
 - execution context (process/container/runtime host)
+- bounded identity and temporal hooks needed by later layers
 
 **Runtime Environment does NOT own:**
 - agent lifecycle policy (creation, suspension, termination semantics)
@@ -53,45 +54,41 @@ ADL treats runtime as an **environment**:
 
 > A structured, persistent, causal space in which cognition unfolds.
 
-This shift is essential because ADL agents are not passive computations—they are **active cognitive entities with continuity over time**.
+This shift matters because ADL is building toward continuity-bearing agents and needs explicit substrate contracts before richer lifecycle and Shepherd behavior can exist safely.
 
 ---
 
-## Cognitive Spacetime (Practical Form)
+## v0.87.1 Runtime Contract
 
-The runtime environment is the first practical implementation of what we have described as a **cognitive spacetime manifold**.
+For `v0.87.1`, the runtime environment becomes concrete as one authoritative local contract:
 
-In concrete terms, the runtime provides:
+- runtime root:
+  - default `.adl/`
+  - override via `ADL_RUNTIME_ROOT`
 
-- **Temporal ordering**
-  - every event is timestamped
-  - agents experience ordered time (chronosense)
+- run-artifact root:
+  - default `.adl/runs/`
+  - override via `ADL_RUNS_ROOT`
 
-- **Causal traceability**
-  - all actions are part of a trace
-  - reasoning can be replayed and inspected
+- runtime marker:
+  - `.adl/runtime_environment.json`
+  - records the active runtime root/runs-root mode without leaking absolute host paths
 
-- **State persistence**
-  - cognitive state can survive interruption
-  - partial reasoning is preserved
+- per-run layout:
+  - `.adl/runs/<run_id>/run.json`
+  - `.adl/runs/<run_id>/steps.json`
+  - `.adl/runs/<run_id>/logs/`
+  - `.adl/runs/<run_id>/learning/`
+  - `.adl/runs/<run_id>/control_path/`
+  - `.adl/runs/<run_id>/meta/`
 
-- **Identity anchoring**
-  - agents maintain continuity across runs
-  - identity is not tied to a single process
+This milestone does **not** claim full chronosense, persistent identity, or full agency continuity. It establishes the bounded substrate primitives those later systems require.
 
 ---
 
 ## Birth and Presence
 
-From the perspective of an agent:
-
-- The runtime is where it is instantiated (birth)
-- The runtime is where it perceives time
-- The runtime is where it acts
-
-This leads to a simple but powerful statement:
-
-> The runtime environment is the world in which agents exist.
+From the perspective of the implementation, the runtime is where bring-up happens, where artifacts are rooted, and where bounded execution state becomes inspectable.
 
 ---
 
@@ -105,10 +102,10 @@ Because the runtime is an environment:
 
 This directly motivates:
 
-- the Shepherd model (care and continuity)
+- the lifecycle layer
+- the Shepherd layer
 - persistence and checkpointing
-- identity and chronosense
-- distributed evolution (future milestones)
+- later identity and chronosense systems
 
 ---
 
@@ -128,6 +125,7 @@ To maintain a clean architecture:
 
 ### Runtime Environment (this doc)
 - provides the substrate both of the above depend on
+- defines the local runtime-root and run-artifact contract
 - does not impose lifecycle or recovery policy
 
 This separation ensures:
@@ -141,6 +139,6 @@ This separation ensures:
 
 The ADL runtime environment is:
 
-> A persistent, causal, time-aware environment in which cognitive agents exist, evolve, and maintain continuity.
+> A bounded local substrate with explicit runtime roots, causal artifacts, and persistence primitives on which later cognitive-runtime layers can depend.
 
-It is not a container for computation—it is the **condition for cognition**.
+It is not just a container for computation. It is the runtime contract the rest of the milestone builds on.

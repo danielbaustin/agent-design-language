@@ -13,7 +13,7 @@ It establishes:
 - what it owns
 - what it does not own
 - how adjacent documents relate to it
-- how continuity, chronosense, memory, and recovery fit together at the architectural level
+- how runtime roots, persistence, and later continuity layers fit together at the architectural level
 
 This document should be treated as the top-level framing document for the runtime environment.
 
@@ -67,6 +67,8 @@ It emphasizes that the system provides the conditions within which cognition unf
 The runtime environment is the **substrate layer** of the system.
 
 It provides:
+- runtime root and bring-up contract
+- run-artifact roots and marker surfaces
 - time
 - trace
 - persistence surfaces
@@ -88,9 +90,31 @@ Those responsibilities belong to adjacent, more specialized layers.
 
 ## What the Runtime Environment Owns
 
-The ADL runtime environment owns the substrate primitives required for continuity-bearing cognition.
+The ADL runtime environment owns the substrate primitives required for bounded local runtime bring-up and later continuity-bearing cognition.
 
-### 1. Temporal substrate
+## v0.87.1 Authoritative Bring-Up Surface
+
+In `v0.87.1`, the runtime environment becomes one concrete implementation contract:
+
+- `adl::runtime_environment::RuntimeEnvironment`
+- default runtime root: `.adl/`
+- default run-artifact root: `.adl/runs/`
+- optional env overrides:
+  - `ADL_RUNTIME_ROOT`
+  - `ADL_RUNS_ROOT`
+- runtime marker:
+  - `.adl/runtime_environment.json`
+
+This is the authoritative bring-up/configuration surface for this milestone. Later lifecycle, trace, resilience, and review work should reuse it rather than inventing separate runtime-root logic.
+
+### 1. Runtime roots and environment configuration
+
+The runtime provides:
+- one authoritative runtime root
+- one authoritative run-artifact root
+- deterministic run directory layout
+- a marker surface describing active root selection without leaking host-specific absolute paths
+### 2. Temporal substrate
 
 The runtime provides the conditions required for chronosense:
 - wall-clock time
@@ -101,7 +125,7 @@ The runtime provides the conditions required for chronosense:
 
 The runtime does not define all chronosense semantics, but it must provide the clocks and event structure that make chronosense possible.
 
-### 2. Causal substrate
+### 3. Causal substrate
 
 The runtime owns trace emission surfaces and the execution context that makes causal reconstruction possible.
 
@@ -112,7 +136,7 @@ This includes:
 - artifact linkage
 - temporal anchors
 
-### 3. Persistence primitives
+### 4. Persistence primitives
 
 The runtime provides:
 - storage surfaces
@@ -123,15 +147,17 @@ The runtime provides:
 
 It owns the primitives, not all higher-order policy around how they are used.
 
-### 4. Identity anchoring primitives
+### 5. Identity and temporal hooks
 
-The runtime provides the primitive anchors needed for continuity, including:
+The runtime may expose the primitive hooks needed for later continuity work, including:
 - stable IDs
 - temporal ephemeris hooks (`agent_birth`)
 - run/session identity surfaces
 - binding points for trace and memory continuity
 
-### 5. Execution context
+`v0.87.1` does not claim the full higher-order chronosense or persistent identity systems here; it establishes the substrate those systems will consume later.
+
+### 6. Execution context
 
 The runtime provides the bounded local or distributed execution context in which agents actually operate.
 
@@ -191,6 +217,7 @@ The runtime/environment/lifecycle/Shepherd cluster should be read as a layered s
 ### Runtime Environment Architecture (this document)
 
 Owns:
+- runtime root and run-artifact contract
 - substrate conditions
 - clocks
 - trace primitives
@@ -227,22 +254,19 @@ This separation must remain explicit.
 
 ---
 
-## Runtime Environment and Chronosense
+## Runtime Environment and Later Chronosense / Identity Work
 
-Chronosense is not identical to the runtime environment, but the runtime environment is the first place chronosense becomes real.
+Chronosense and richer identity continuity are downstream layers, not completed `v0.87.1` claims.
 
-The runtime must provide:
-- temporal ephemeris hooks
-- clock stack support
-- temporal anchors on events
-- stable ordering guarantees
-- reference-frame surfaces
-
-Without these, chronosense becomes aspirational rather than structural.
+For this milestone, the runtime environment must provide only the bounded substrate those layers will need later:
+- deterministic run and artifact roots
+- stable run/session IDs
+- trace ordering surfaces
+- persistence primitives
 
 So the relationship is:
-- `CHRONOSENSE_AND_IDENTITY.md` defines what temporal continuity means
-- the runtime environment provides the substrate that makes it implementable
+- later chronosense/identity docs define the higher-order continuity semantics
+- the runtime environment provides the concrete local substrate they can build on
 
 ---
 
