@@ -67,6 +67,14 @@ if [[ "${1:-}" == "issue" && "${2:-}" == "view" ]]; then
     printf '%s\n' "track:roadmap" "version:v0.87.1" "area:tools" "type:task"
     exit 0
   fi
+  if [[ "$issue" == "47" && "$*" == *"--json title"* && "$*" == *"-q .title"* ]]; then
+    echo "[v0.87.1][tools] Add post-merge issue closeout skill for PR workflow"
+    exit 0
+  fi
+  if [[ "$issue" == "47" && "$*" == *"--json labels"* && "$*" == *"-q .labels[].name"* ]]; then
+    printf '%s\n' "track:roadmap" "version:v0.87.1" "area:tools" "type:task"
+    exit 0
+  fi
 fi
 exit 1
 EOF
@@ -240,6 +248,22 @@ assert_contains() {
   }
   grep -Fq "Version: v0.87.1" "$repo/.adl/v0.87.1/tasks/issue-0046__v0-87-1-tools-dot-suffixed-milestone-prompt/sip.md" || {
     echo "assertion failed: expected dot-suffixed version in generated sip" >&2
+    exit 1
+  }
+
+  out5="$("$BASH_BIN" adl/tools/pr.sh init 47)"
+  workflow_source="$repo/.adl/v0.87.1/bodies/issue-47-v0-87-1-tools-add-post-merge-issue-closeout-skill-for-pr-workflow.md"
+  assert_contains "SOURCE   .adl/v0.87.1/bodies/issue-47-v0-87-1-tools-add-post-merge-issue-closeout-skill-for-pr-workflow.md" "$out5" "workflow-skill source path"
+  grep -Fq "Bootstrap-generated workflow-skill issue body created from the requested title and labels" "$workflow_source" || {
+    echo "assertion failed: expected workflow-skill bootstrap summary" >&2
+    exit 1
+  }
+  grep -Fq 'adl/tools/skills' "$workflow_source" || {
+    echo "assertion failed: expected workflow-skill repo input guidance" >&2
+    exit 1
+  }
+  grep -Fq 'the generated prompt identifies this as a workflow-skill/tooling issue rather than a generic bootstrap task' "$workflow_source" || {
+    echo "assertion failed: expected workflow-skill acceptance criteria" >&2
     exit 1
   }
 
