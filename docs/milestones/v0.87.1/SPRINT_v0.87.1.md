@@ -52,14 +52,14 @@ Goal:
 Establish canonical milestone truth, runtime environment, lifecycle, trace alignment, resilience, and operator surfaces.
 
 Current scope:
-- `WP-01` design pass
-- `WP-02` runtime environment completion
-- `WP-03` execution boundaries and lifecycle
-- `WP-04` trace-aligned runtime execution
-- `WP-05` local runtime resilience + Shepherd preservation
-- `WP-06` operator surfaces
-- `WP-07` runtime state / persistence discipline
-- `WP-08` runtime review surfaces
+- `WP-01` design pass - `#1435`
+- `WP-02` runtime environment completion - `#1436`
+- `WP-03` execution boundaries and lifecycle - `#1437`
+- `WP-04` trace-aligned runtime execution - `#1438`
+- `WP-05` local runtime resilience + Shepherd preservation - `#1439`
+- `WP-06` operator surfaces - `#1440`
+- `WP-07` runtime state / persistence discipline - `#1441`
+- `WP-08` runtime review surfaces - `#1442`
 
 Proof surfaces:
 - one authoritative runtime-environment surface
@@ -109,7 +109,7 @@ Proof surfaces:
 - Use issue cards (`input`/`output`) for each item.
 - Keep changes scoped per issue; use draft PRs until checks pass.
 - Run required quality gates (`fmt`, `clippy`, `test`, demo validators, and milestone review checks) for the changed surfaces.
-- Issue references may remain `TBD` while `v0.87.1` is being finalized in planning, but they must be filled as the milestone opens.
+- Sprint 1 issue references are now assigned; later WPs may remain `TBD` until their planning pass opens.
 
 ## Risks / Dependencies
 - Dependency: upstream v0.87 artifacts (trace, provider, skills) remain stable

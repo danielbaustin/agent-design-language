@@ -6,7 +6,7 @@
 - Version: `v0.87.1`
 - Date: `2026-04-06`
 - Owner: `Daniel Austin / Agent Logic`
-- Related issues: `#1354`, `#1415`
+- Related issues: `#1354`, `#1415`, `#1435`
 
 ## Purpose
 Define the milestone-level vision for the project: what changes at this stage, why it matters, and which strategic pillars it advances.
