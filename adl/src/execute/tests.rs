@@ -94,6 +94,19 @@ fn remote_retry_step(max_attempts: u32) -> crate::resolve::ResolvedStep {
     }
 }
 
+fn steering_patch() -> SteeringPatch {
+    let mut set_state = HashMap::new();
+    set_state.insert("next.input".to_string(), "ready".to_string());
+
+    SteeringPatch {
+        schema_version: STEERING_PATCH_SCHEMA_VERSION.to_string(),
+        apply_at: STEERING_APPLY_AT_RESUME_BOUNDARY.to_string(),
+        reason: Some("operator update".to_string()),
+        set_state,
+        remove_state: vec![],
+    }
+}
+
 #[test]
 fn resolve_state_inputs_resolves_and_validates_state_bindings() {
     let mut inputs = HashMap::new();
@@ -117,6 +130,124 @@ fn resolve_state_inputs_resolves_and_validates_state_bindings() {
     assert!(missing_err
         .to_string()
         .contains("references missing saved state"));
+}
+
+#[test]
+fn validate_steering_patch_rejects_invalid_shapes() {
+    let mut patch = steering_patch();
+    patch.schema_version = "steering_patch.v0".to_string();
+    let schema_err = validate_steering_patch(&patch).expect_err("schema mismatch should fail");
+    assert!(schema_err.to_string().contains("schema_version mismatch"));
+
+    let mut patch = steering_patch();
+    patch.apply_at = "after_step".to_string();
+    let apply_err = validate_steering_patch(&patch).expect_err("apply_at mismatch should fail");
+    assert!(apply_err.to_string().contains("apply_at must be"));
+
+    let mut patch = steering_patch();
+    patch.set_state.clear();
+    patch.remove_state = vec!["   ".to_string()];
+    let empty_remove_err =
+        validate_steering_patch(&patch).expect_err("empty remove_state key should fail");
+    assert!(empty_remove_err
+        .to_string()
+        .contains("contains an empty key"));
+
+    let mut patch = steering_patch();
+    patch.set_state.clear();
+    patch.remove_state = vec!["dup".to_string(), " dup ".to_string()];
+    let duplicate_remove_err =
+        validate_steering_patch(&patch).expect_err("duplicate remove_state keys should fail");
+    assert!(duplicate_remove_err
+        .to_string()
+        .contains("contains duplicate key 'dup'"));
+
+    let mut patch = steering_patch();
+    patch.set_state.clear();
+    patch
+        .set_state
+        .insert("  ".to_string(), "value".to_string());
+    let empty_set_err =
+        validate_steering_patch(&patch).expect_err("empty set_state key should fail");
+    assert!(empty_set_err
+        .to_string()
+        .contains("set_state contains an empty key"));
+
+    let mut patch = steering_patch();
+    patch.remove_state = vec!["next.input".to_string()];
+    let overlap_err =
+        validate_steering_patch(&patch).expect_err("overlapping set/remove keys should fail");
+    assert!(overlap_err
+        .to_string()
+        .contains("cannot appear in both set_state and remove_state"));
+
+    let mut patch = steering_patch();
+    patch.set_state.clear();
+    patch.remove_state.clear();
+    let empty_err = validate_steering_patch(&patch).expect_err("empty patch should fail");
+    assert!(empty_err
+        .to_string()
+        .contains("must set or remove at least one"));
+}
+
+#[test]
+fn apply_steering_patch_updates_resume_state_and_records_sorted_keys() {
+    let mut resume = ResumeState {
+        completed_step_ids: HashSet::new(),
+        saved_state: HashMap::from([
+            ("keep".to_string(), "present".to_string()),
+            ("remove.me".to_string(), "old".to_string()),
+            ("trimmed.remove".to_string(), "old".to_string()),
+        ]),
+        completed_outputs: HashMap::new(),
+        steering_history: vec![SteeringRecord {
+            sequence: 1,
+            apply_at: STEERING_APPLY_AT_RESUME_BOUNDARY.to_string(),
+            reason: Some("earlier update".to_string()),
+            payload_fingerprint: "fp-old".to_string(),
+            set_state_keys: vec!["a".to_string()],
+            removed_state_keys: vec![],
+        }],
+    };
+    let mut patch = steering_patch();
+    patch.set_state = HashMap::from([
+        (" z.last ".to_string(), "final".to_string()),
+        ("a.first".to_string(), "fresh".to_string()),
+    ]);
+    patch.remove_state = vec![" remove.me ".to_string(), "trimmed.remove".to_string()];
+
+    let record = apply_steering_patch(&mut resume, &patch, "fp-new".to_string())
+        .expect("patch should apply");
+
+    assert_eq!(
+        resume.saved_state.get("keep").map(String::as_str),
+        Some("present")
+    );
+    assert_eq!(
+        resume.saved_state.get("a.first").map(String::as_str),
+        Some("fresh")
+    );
+    assert_eq!(
+        resume.saved_state.get("z.last").map(String::as_str),
+        Some("final")
+    );
+    assert!(!resume.saved_state.contains_key("remove.me"));
+    assert!(!resume.saved_state.contains_key("trimmed.remove"));
+
+    assert_eq!(record.sequence, 2);
+    assert_eq!(record.payload_fingerprint, "fp-new");
+    assert_eq!(record.reason.as_deref(), Some("operator update"));
+    assert_eq!(
+        record.set_state_keys,
+        vec![" z.last ".to_string(), "a.first".to_string()]
+    );
+    assert_eq!(
+        record.removed_state_keys,
+        vec![" remove.me ".to_string(), "trimmed.remove".to_string()]
+    );
+
+    assert_eq!(resume.steering_history.len(), 2);
+    assert_eq!(resume.steering_history.last(), Some(&record));
 }
 
 #[test]
