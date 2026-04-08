@@ -201,6 +201,18 @@ pub fn index_run_from_artifacts(
 
 fn to_trace_ref(sequence: usize, event: &TraceEventNormalized) -> Option<MemoryTraceRef> {
     match event {
+        TraceEventNormalized::LifecyclePhaseEntered { .. } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "lifecycle_phase_entered".to_string(),
+            step_id: None,
+            delegation_id: None,
+        }),
+        TraceEventNormalized::ExecutionBoundaryCrossed { .. } => Some(MemoryTraceRef {
+            event_sequence: sequence,
+            event_kind: "execution_boundary_crossed".to_string(),
+            step_id: None,
+            delegation_id: None,
+        }),
         TraceEventNormalized::SchedulerPolicy { .. } => Some(MemoryTraceRef {
             event_sequence: sequence,
             event_kind: "scheduler_policy".to_string(),

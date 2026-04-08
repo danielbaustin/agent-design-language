@@ -89,6 +89,38 @@ run:
         stdout.contains("CallExited caller_step=call_two status=success"),
         "stdout was:\n{stdout}"
     );
+    assert!(
+        stdout.contains("LifecyclePhaseEntered phase=init"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("LifecyclePhaseEntered phase=execute"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("ExecutionBoundaryCrossed boundary=runtime_init state=fresh_start"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("ExecutionBoundaryCrossed boundary=workflow_call state=entered"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("ExecutionBoundaryCrossed boundary=workflow_call state=success"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("ExecutionBoundaryCrossed boundary=run_completion state=success"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("LifecyclePhaseEntered phase=complete"),
+        "stdout was:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("LifecyclePhaseEntered phase=teardown"),
+        "stdout was:\n{stdout}"
+    );
 }
 
 #[test]

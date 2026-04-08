@@ -86,6 +86,19 @@ pub fn execute_sequential_with_resume(
             ));
         }
     }
+    tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Init);
+    tr.execution_boundary_crossed(
+        ExecutionBoundary::RuntimeInit,
+        if resume.is_some() {
+            "resume"
+        } else {
+            "fresh_start"
+        },
+    );
+    if resume.is_some() {
+        tr.execution_boundary_crossed(ExecutionBoundary::Resume, "entered");
+    }
+    tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Execute);
     if is_concurrent {
         return execute_concurrent_deterministic(
             resolved,
@@ -249,6 +262,8 @@ pub fn execute_sequential_with_resume(
                     let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
                     progress_step_done(emit_progress, tr, &step_id, false, duration_ms);
                     tr.run_failed(&err.to_string());
+                    tr.execution_boundary_crossed(ExecutionBoundary::RunCompletion, "failure");
+                    tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Teardown);
                     return Err(err);
                 }
             }
@@ -325,6 +340,8 @@ pub fn execute_sequential_with_resume(
                         .map(|s| s.id.clone())
                         .filter(|id| !completed_step_ids.contains(id))
                         .collect::<Vec<_>>();
+                    tr.execution_boundary_crossed(ExecutionBoundary::Pause, "entered");
+                    tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Teardown);
                     return Ok(ExecutionResult {
                         runtime_control: derive_runtime_control_state("paused", &records, tr),
                         outputs: outs,
@@ -363,6 +380,8 @@ pub fn execute_sequential_with_resume(
                     continue;
                 }
                 tr.run_failed(&failure.err.to_string());
+                tr.execution_boundary_crossed(ExecutionBoundary::RunCompletion, "failure");
+                tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Teardown);
                 return Err(failure.err.context(format!(
                     "step '{}' failed (attempt {}/{}, max_attempts={})",
                     step_id, failure.attempts, max_attempts, max_attempts
@@ -371,6 +390,9 @@ pub fn execute_sequential_with_resume(
         }
     }
 
+    tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Complete);
+    tr.execution_boundary_crossed(ExecutionBoundary::RunCompletion, "success");
+    tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Teardown);
     Ok(ExecutionResult {
         runtime_control: derive_runtime_control_state("success", &records, tr),
         outputs: outs,

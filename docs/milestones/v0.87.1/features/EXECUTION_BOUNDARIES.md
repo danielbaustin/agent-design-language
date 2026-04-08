@@ -1,286 +1,122 @@
-
-
 # ADL Execution Boundaries
 
 ## Status
 Active milestone feature for `v0.87.1` runtime completion
 
----
+## Purpose
 
-## 1. Overview
+Execution boundaries define where `v0.87.1` requires control transfer to be explicit, observable, and reviewable.
 
-Execution boundaries define the **explicit security and control points** within the ADL runtime where execution must be:
+For this milestone, a boundary is in scope when:
+- control crosses a meaningful runtime handoff
+- the handoff must be visible in trace output
+- later trace, resilience, operator, and review work will depend on that visibility
 
-- validated
-- authorized
-- observed
-- recorded
+This is a bounded runtime-control feature. It does not attempt to finalize long-term identity, chronosense, or full agency continuity semantics.
 
-Every meaningful transition in ADL occurs across a boundary. These boundaries are the **enforcement surface** for:
+## Core Principle
 
-- Capability Model (CBAC)
-- Policy Engine
-- Trace emission
-- Identity attribution
+No meaningful runtime control transition should remain implicit.
 
-> **Principle:** No execution crosses a boundary without validation, authorization, and trace.
+For `v0.87.1`, that means:
+- boundary names are explicit
+- trace records boundary crossings
+- success, failure, pause, and workflow-call transitions are distinguishable
 
----
+## In-Scope Boundaries
 
-## 2. Design Goals
+### 1. Runtime-init boundary
 
-### 2.1 Primary Goals
+When execution context is first bound, the runtime crosses the `runtime_init` boundary.
 
-- Eliminate implicit execution paths
-- Define all control transitions explicitly
-- Enforce capability and policy checks at every boundary
-- Ensure full trace coverage
-- Preserve agent identity and delegation structure
+Requirements:
+- classify startup as fresh-start vs resume
+- expose the transition in trace
 
-### 2.2 Non-Goals
+Trace proof:
+- `ExecutionBoundaryCrossed boundary=runtime_init state=fresh_start`
+- `ExecutionBoundaryCrossed boundary=runtime_init state=resume`
 
-- Implicit or hidden execution transitions
-- Direct access to underlying execution substrates (models, tools, memory)
+### 2. Resume boundary
 
----
+Resumed execution must be marked explicitly.
 
-## 3. Boundary Model
+Requirements:
+- resumed work must not be silently presented as a fresh run
+- resume classification must be visible in trace
 
-An execution boundary is any transition where:
+Trace proof:
+- `ExecutionBoundaryCrossed boundary=resume state=entered`
 
-- control passes between components
-- authority changes
-- data crosses abstraction layers
+### 3. Workflow-call boundary
 
-Each boundary MUST enforce:
+Nested workflow calls are explicit control transfers.
 
-1. **Contract validation**
-2. **Capability check (CBAC)**
-3. **Policy evaluation**
-4. **Trace emission**
-5. **Identity attribution**
+Requirements:
+- entering the called workflow is explicit
+- exiting the called workflow is explicit
+- success vs failure stays visible
 
----
+Trace proof:
+- `ExecutionBoundaryCrossed boundary=workflow_call state=entered`
+- `CallEntered ...`
+- `ExecutionBoundaryCrossed boundary=workflow_call state=success|failure`
+- `CallExited ...`
 
-## 4. Core Execution Boundaries
+### 4. Pause boundary
 
-### 4.1 User → Agent Boundary
+Pause is an execution boundary, not an accidental partial completion.
 
-This is the primary user-facing boundary.
+Requirements:
+- a pause-capable run must emit an explicit pause boundary
+- downstream surfaces can distinguish paused from completed
 
-Allowed operations:
+Trace proof:
+- `ExecutionBoundaryCrossed boundary=pause state=entered`
 
-- `agent.invoke`
-- `workflow.run`
+### 5. Run-completion boundary
 
-Not allowed:
+Final run disposition must be explicit.
 
-- direct `model.invoke`
-- direct `tool.execute`
+Requirements:
+- success and failure are explicit boundary outcomes
+- completion is not inferred only from process termination
 
-#### Enforcement:
+Trace proof:
+- `ExecutionBoundaryCrossed boundary=run_completion state=success`
+- `ExecutionBoundaryCrossed boundary=run_completion state=failure`
 
-- Validate request structure
-- Enforce that invocation targets an agent or workflow
-- Reject attempts to bypass agent layer
-- Emit trace event (`AGENT_INVOCATION`)
+## Relationship to Existing Step and Delegation Trace
 
-#### Security Property:
+`v0.87.1` already had explicit lower-level execution trace such as:
+- `StepStarted`
+- `StepFinished`
+- delegation policy evaluation
+- delegation dispatch/result/completion
 
-Preserves agent identity and ensures all work is delegated through governed ADL actors.
+This feature does not replace those surfaces.
 
----
+Instead, it adds the missing runtime-level boundary vocabulary above them so the runtime has:
+- lifecycle phases
+- runtime boundaries
+- step/delegation trace
 
-### 4.2 Agent → Skill Boundary
+all in one coherent model.
 
-Agents delegate work to skills.
-
-#### Enforcement:
-
-- Validate skill contract
-- Resolve required capabilities
-- Emit trace (`SKILL_INVOCATION`)
-
-#### Security Property:
-
-Ensures that agent behavior is decomposed into explicit, traceable units.
-
----
-
-### 4.3 Skill → Model Boundary
-
-Skills invoke models through providers.
-
-#### Enforcement:
-
-- Require `model.invoke` capability
-- Validate input/output schema
-- Enforce provider constraints
-- Emit trace (`MODEL_INVOCATION`)
-
-#### Security Property:
-
-Prevents direct model access and ensures all model use is mediated and attributable.
-
----
-
-### 4.4 Skill → Tool Boundary
-
-Skills invoke tools.
-
-#### Enforcement:
-
-- Require `tool.execute` capability
-- Validate inputs
-- Capture outputs as artifacts
-- Emit trace (`TOOL_INVOCATION`)
-
-#### Security Property:
-
-Ensures tools are used only within declared permissions and are fully observable.
-
----
-
-### 4.5 Skill → Memory Boundary
-
-Skills access memory systems (ObsMem, etc.).
-
-#### Enforcement:
-
-- Require `memory.read` / `memory.write`
-- Validate scope and constraints
-- Emit trace (`MEMORY_ACCESS`)
-
-#### Security Property:
-
-Prevents implicit context injection and enforces data access control.
-
----
-
-### 4.6 Runtime → Provider Boundary
-
-ADL runtime communicates with external providers.
-
-#### Enforcement:
-
-- Validate provider identity
-- Enforce capability compatibility
-- Capture provider metadata
-- Emit trace (`PROVIDER_CALL`)
-
-#### Security Property:
-
-Ensures external execution is attributable and controlled.
-
----
-
-## 5. Boundary Enforcement Pipeline
-
-Each boundary follows a strict pipeline:
-
-1. Input validation
-2. Contract validation
-3. Capability resolution
-4. Policy evaluation
-5. Execution
-6. Trace emission
-7. Artifact recording (if applicable)
-
-Failure at any stage:
-
-- halts execution
-- emits failure trace
-
----
-
-## 6. Identity Preservation
-
-Boundaries must preserve identity:
-
-- User identity → Agent identity → Execution identity
-
-No boundary may:
-
-- strip identity
-- replace identity implicitly
-- allow identity bypass
-
-This ensures:
-
-- continuity of agents
-- correct attribution of actions
-
----
-
-## 7. Deny-by-Default Model
-
-All boundaries operate under deny-by-default:
-
-- No capability → no execution
-- No contract → no execution
-- No trace → invalid execution
-
----
-
-## 8. Trace Requirements
-
-Every boundary crossing MUST emit trace events including:
-
-- boundary type
-- actor
-- capabilities evaluated
-- decision outcome
-- references to artifacts
-
----
-
-## 9. Failure Modes
-
-Defined failure conditions:
-
-- Contract validation failure
-- Capability denial
-- Policy rejection
-- Identity mismatch
-- Attempted boundary bypass
-
-All failures MUST be:
-
-- visible in trace
-- attributable
-
----
-
-## 10. Security Properties
-
-Execution boundaries guarantee:
-
-- No hidden execution paths
-- No bypass of agent abstraction
-- Full observability of execution
-- Strong identity preservation
-- Enforced least privilege
-
----
-
-## 11. Future Work
-
-- Boundary-specific policy rules
-- Cross-agent boundary enforcement
-- Distributed execution boundaries
-- Integration with signed trace
-
----
-
-## 12. Conclusion
-
-Execution boundaries define the **control surface of the ADL runtime**.
-
-They ensure that all execution is:
-
-- explicit
-- governed
-- observable
-- secure
-
-They are the mechanism by which ADL enforces its Secure Execution Model in practice.
+## Validation Expectations
+
+Boundary correctness for `v0.87.1` means:
+- the in-scope boundaries emit deterministic trace lines
+- the same inputs preserve the same boundary ordering
+- workflow-call and completion transitions are observable
+- pause and failure remain distinguishable from success
+
+## Out of Scope
+
+This milestone does not attempt to finalize:
+- distributed boundary semantics
+- remote multi-host runtime governance
+- full capability-policy architecture for all future substrates
+- persistent identity semantics across machine restarts
+
+Those can build later on the bounded runtime boundary surface established here.

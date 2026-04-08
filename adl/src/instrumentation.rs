@@ -30,6 +30,13 @@ pub struct GraphExport {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "kind", deny_unknown_fields)]
 pub enum TraceEventNormalized {
+    LifecyclePhaseEntered {
+        phase: String,
+    },
+    ExecutionBoundaryCrossed {
+        boundary: String,
+        state: String,
+    },
     SchedulerPolicy {
         max_concurrency: usize,
         source: String,
@@ -336,6 +343,8 @@ pub fn replay_trace(events: &[TraceEventNormalized]) -> TraceReplay {
 
     for ev in events {
         match ev {
+            TraceEventNormalized::LifecyclePhaseEntered { .. }
+            | TraceEventNormalized::ExecutionBoundaryCrossed { .. } => {}
             TraceEventNormalized::StepStarted { step_id, .. } => {
                 step_started_order.push(step_id.clone())
             }
@@ -447,6 +456,17 @@ pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized
     events
         .iter()
         .map(|ev| match ev {
+            TraceEvent::LifecyclePhaseEntered { phase, .. } => {
+                TraceEventNormalized::LifecyclePhaseEntered {
+                    phase: phase.as_str().to_string(),
+                }
+            }
+            TraceEvent::ExecutionBoundaryCrossed {
+                boundary, state, ..
+            } => TraceEventNormalized::ExecutionBoundaryCrossed {
+                boundary: boundary.as_str().to_string(),
+                state: state.clone(),
+            },
             TraceEvent::SchedulerPolicy {
                 max_concurrency,
                 source,
@@ -613,6 +633,12 @@ pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized
 
 pub fn format_normalized_event(ev: &TraceEventNormalized) -> String {
     match ev {
+        TraceEventNormalized::LifecyclePhaseEntered { phase } => {
+            format!("LifecyclePhaseEntered phase={phase}")
+        }
+        TraceEventNormalized::ExecutionBoundaryCrossed { boundary, state } => {
+            format!("ExecutionBoundaryCrossed boundary={boundary} state={state}")
+        }
         TraceEventNormalized::SchedulerPolicy {
             max_concurrency,
             source,

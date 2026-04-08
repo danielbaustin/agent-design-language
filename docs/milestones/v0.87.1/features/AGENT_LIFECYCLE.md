@@ -1,247 +1,170 @@
-# Agent Lifecycle in the ADL Runtime Environment
+# Agent Lifecycle in the ADL Runtime
 
-## Position in Architecture
+## Status
+Active milestone feature for `v0.87.1` runtime completion
 
-This document defines the **state model of an agent over time** within the ADL Runtime Environment.
+## Purpose
 
-- The **runtime environment** defines the execution substrate, persistence mechanisms, and system-level guarantees.
-- The **agent lifecycle** defines the **states and transitions** an agent undergoes within that environment.
-- The **Shepherd runtime model** defines how continuity is actively maintained and repaired across interruptions.
+This document defines the bounded runtime lifecycle that `v0.87.1` must make explicit in code, trace output, and tests.
 
-This document therefore:
-- **does define** lifecycle states, transitions, and invariants
-- **does not define** runtime infrastructure or persistence implementation
-- **does not define** recovery or intervention policies
+The lifecycle in scope for this milestone is a runtime control model:
+- explicit phases
+- explicit boundaries
+- deterministic ordering
+- trace visibility
 
-All lifecycle semantics are **grounded in chronosense** and must be interpreted as a **temporal trajectory**, not a procedural script.
+This document does not claim:
+- persistent identity across restarts
+- chronosense
+- full agency continuity
 
----
+Those remain future-milestone work. `v0.87.1` only establishes the local runtime lifecycle substrate they may later build on.
 
-## Core Principle
+## Authoritative Lifecycle Phases
 
-Agents are not executed; they are **brought into existence within an environment and persist through time**.
+The runtime lifecycle for `v0.87.1` has four explicit phases:
 
-The lifecycle is therefore not a simple start/stop process model. It is a model of **continuity, interruption, and resumption of cognition**.
+1. `init`
+2. `execute`
+3. `complete`
+4. `teardown`
 
----
+These phases are runtime phases, not philosophical states of agent being.
 
-## Lifecycle Phases
+## Phase Semantics
 
-The following phases are **agent states over time**, not procedural steps. An agent may transition between them non-linearly depending on runtime conditions.
+### `init`
 
-### 1. Instantiation (Birth)
+The runtime establishes the execution context before step work begins.
 
-- Agent is created within the runtime environment
-- Assigned identity (persistent identifier)
-- Bound to initial context (task, inputs, contracts)
+In scope:
+- runtime root selection
+- run-artifact root availability
+- resume-vs-fresh-start classification
+- execution-plan bring-up
 
-Key properties:
-- Identity begins here
-- Chronosense starts (first timestamp)
+Observable proof:
+- `LifecyclePhaseEntered phase=init`
+- `ExecutionBoundaryCrossed boundary=runtime_init ...`
 
----
+### `execute`
 
-### 2. Active Cognition
+The runtime performs bounded workflow execution.
 
-- Agent performs reasoning using ADL patterns (DAG execution)
-- Engages in:
-  - compression (π)
-  - propagation (ϕ)
-  - reconstruction (ρ)
+In scope:
+- sequential or concurrent step scheduling
+- provider delegation
+- workflow calls
+- step-level trace emission
+- pause eligibility
 
-- May spawn internal structures:
-  - fork/join reasoning branches
-  - debate or tree-of-thought variants
+Observable proof:
+- `LifecyclePhaseEntered phase=execute`
+- existing step, delegation, and call trace events
 
-Important:
-> These are **cognitive processes**, not new agents.
+### `complete`
 
----
+The runtime has reached a successful bounded completion state.
 
-### 3. Suspension (Interruption)
+In scope:
+- all required execution work for the current run finished successfully
+- success is explicit rather than inferred from process exit
 
-This is the critical addition.
+Observable proof:
+- `LifecyclePhaseEntered phase=complete`
+- `ExecutionBoundaryCrossed boundary=run_completion state=success`
 
-Causes:
-- runtime failure
-- resource exhaustion
-- external pause
-- arbitration decision
+### `teardown`
 
-Characteristics:
-- cognition is **interrupted**, not terminated
-- partial state exists:
-  - compressed representations
-  - intermediate reasoning
-  - trace
+The runtime exits the active execution phase and hands off to artifact/reporting surfaces.
 
----
+In scope:
+- post-execution closeout of the active run phase
+- teardown after success
+- teardown after failure
+- teardown after pause
 
-### 4. Persistence
+Observable proof:
+- `LifecyclePhaseEntered phase=teardown`
 
-- State is captured and stored:
-  - ObsMem linkage
-  - trace snapshots
-  - cognitive checkpoints
+## Explicit Runtime Boundaries
 
-Goal:
-> Preserve *meaning*, not just data.
+`v0.87.1` makes the following boundaries explicit:
 
-Note:
-- This section defines the requirement that state be preservable.
-- The **mechanism of persistence is owned by the runtime environment**, not the lifecycle model.
+### Runtime-init boundary
 
----
+The runtime moves from unresolved entry state into an initialized execution context.
 
-### 5. Resumption (Continuation)
+Observable proof:
+- `ExecutionBoundaryCrossed boundary=runtime_init state=fresh_start`
+- or `ExecutionBoundaryCrossed boundary=runtime_init state=resume`
 
-- Agent resumes from persisted state
-- Identity remains continuous
-- Chronosense reflects elapsed time
+### Resume boundary
 
-Key requirement:
-- No “reset to zero”
-- No loss of reasoning trajectory
+Resumed work is explicitly marked as resumed rather than silently treated as a fresh run.
 
-Note:
-- The lifecycle defines that resumption must preserve identity and temporal continuity.
-- The **mechanism by which this is achieved (e.g., recovery, repair, arbitration) is defined elsewhere (Shepherd model)**.
+Observable proof:
+- `ExecutionBoundaryCrossed boundary=resume state=entered`
 
----
+### Workflow-call boundary
 
-### 6. Completion / Quiescence
+Cross-workflow control transfer is explicit.
 
-- Agent completes task or reaches stable state
-- Produces outputs
-- May remain available for future activation
+Observable proof:
+- `ExecutionBoundaryCrossed boundary=workflow_call state=entered`
+- `CallEntered ...`
+- `ExecutionBoundaryCrossed boundary=workflow_call state=success|failure`
+- `CallExited ...`
 
-Not death—more like:
-- resting state
-- dormant cognition
+### Pause boundary
 
----
+Pause is a boundary, not an implicit partial success.
 
-## Fork/Join Semantics
+Observable proof:
+- `ExecutionBoundaryCrossed boundary=pause state=entered`
 
-Fork/join is a **reasoning pattern**, not a lifecycle boundary.
+### Run-completion boundary
 
-- Fork:
-  - creates parallel cognitive branches
-  - explores alternative compressed states
+Final success or failure is explicit.
 
-- Join:
-  - recombines results
-  - performs higher-level compression
+Observable proof:
+- `ExecutionBoundaryCrossed boundary=run_completion state=success`
+- or `ExecutionBoundaryCrossed boundary=run_completion state=failure`
 
-Important distinction:
+## Invariants
 
-> A forked branch is not a new agent—it is a **temporary cognitive trajectory** within a single agent identity.
+The bounded lifecycle must preserve:
 
----
+- deterministic phase ordering for identical inputs
+- no hidden phase transitions
+- no hidden boundary crossings
+- explicit trace visibility for lifecycle entry and completion boundaries
+- replay-safe artifact behavior
+- no secrets or absolute host-path leakage in trace output
 
-## Failure Semantics
+## Out of Scope
 
-Traditional systems:
-- failure = termination
+This lifecycle document does not define:
+- distributed lifecycle semantics
+- identity persistence beyond the local bounded runtime
+- temporal self-modeling or chronosense
+- Shepherd preservation and repair policy
+- richer agency-continuity semantics
 
-ADL:
-- failure = **interruption of cognition**
+Those belong to later `v0.87.1` and future milestone work.
 
-Therefore:
+## Code Surfaces
 
-- restart is insufficient
-- we require:
-  - state recovery
-  - identity continuity
-  - trace preservation
+The authoritative implementation surfaces for this milestone are:
+- `adl/src/execute/state/contracts.rs`
+- `adl/src/execute/mod.rs`
+- `adl/src/execute/runner.rs`
+- `adl/src/trace.rs`
 
-Note:
-- Lifecycle defines failure as a state transition (interruption).
-- Handling and recovery from failure are **not lifecycle responsibilities**.
+## Validation Expectations
 
----
-
-## Identity Continuity
-
-Identity must survive:
-
-- process restarts
-- machine restarts (future)
-- distributed execution (future milestone)
-
-This implies:
-
-- identity is **external to any single process**
-- lifecycle is **environment-bound**, not process-bound
-
----
-
-## Temporal Grounding (Chronosense Integration)
-
-The agent lifecycle is fundamentally temporal.
-
-Each phase MUST be grounded in chronosense:
-
-- Instantiation defines `agent_birth`
-- Active cognition advances `agent_age`
-- Suspension introduces temporal gaps
-- Persistence records temporal state
-- Resumption must reconcile elapsed time
-
-Key requirements:
-
-- No lifecycle transition may occur without temporal anchoring
-- The agent MUST be able to situate itself in its own timeline
-- Lifecycle transitions MUST preserve ordering and duration semantics
-
-Implication:
-
-> The lifecycle is not a sequence of states—it is a continuous trajectory through time.
-
----
-
-## Lifecycle Invariants
-
-The following invariants MUST hold across all lifecycle transitions:
-
-### Identity Invariance
-- Agent identity MUST remain stable across all phases
-- No lifecycle transition may implicitly create a new identity
-
-### Temporal Continuity
-- Chronosense MUST remain continuous across transitions
-- `agent_age` MUST NOT reset or regress
-- Temporal gaps MUST be explicitly represented, not silently collapsed
-
-### Causal Continuity
-- Prior reasoning and trace MUST remain accessible after resumption
-- No transition may discard causal history without explicit acknowledgment
-
-### State Coherence
-- Persisted state MUST be internally consistent
-- Resumed state MUST correspond to a valid prior lifecycle state
-
-### Non-duplication of Identity
-- Fork/join reasoning MUST NOT result in multiple independent agent identities
-- Parallel cognition remains within a single identity trajectory
-
-These invariants define lifecycle correctness as **continuity over time**, not successful execution of steps.
-
----
-
-## Lifecycle Validation
-
-Lifecycle behavior MUST be validated against continuity constraints:
-
-- transitions must preserve identity
-- temporal anchors must remain consistent
-- no implicit resets of agent_age
-- no loss of causal history
-
-Lifecycle violations include:
-
-- restarting without continuity
-- losing prior reasoning state
-- temporal discontinuities between phases
-
-Lifecycle correctness is therefore not procedural—it is **temporal and causal coherence over time**.
+Lifecycle correctness for `v0.87.1` means:
+- the phases exist explicitly in code
+- the major runtime boundaries emit trace events
+- integration tests observe the bounded lifecycle ordering
+- docs and runtime trace vocabulary use the same lifecycle terms

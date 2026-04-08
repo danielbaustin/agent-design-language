@@ -539,6 +539,8 @@ pub(super) fn execute_concurrent_deterministic(
         if ready_ids.is_empty() {
             let mut unresolved: Vec<String> = pending.iter().cloned().collect();
             unresolved.sort();
+            tr.execution_boundary_crossed(ExecutionBoundary::RunCompletion, "failure");
+            tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Teardown);
             return Err(anyhow!(
                 "no dependency-ready steps remain (possible unsatisfied join/state deps): {}",
                 unresolved.join(", ")
@@ -691,6 +693,8 @@ pub(super) fn execute_concurrent_deterministic(
                         continue;
                     }
                     tr.run_failed(&err.to_string());
+                    tr.execution_boundary_crossed(ExecutionBoundary::RunCompletion, "failure");
+                    tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Teardown);
                     return Err(anyhow!("step '{}' failed: {:#}", step_id, err));
                 }
             }
@@ -700,6 +704,8 @@ pub(super) fn execute_concurrent_deterministic(
             completed_step_ids.sort();
             let mut remaining_step_ids: Vec<String> = pending.iter().cloned().collect();
             remaining_step_ids.sort();
+            tr.execution_boundary_crossed(ExecutionBoundary::Pause, "entered");
+            tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Teardown);
             return Ok(ExecutionResult {
                 runtime_control: derive_runtime_control_state("paused", &records, tr),
                 outputs: outs,
@@ -718,6 +724,9 @@ pub(super) fn execute_concurrent_deterministic(
         }
     }
 
+    tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Complete);
+    tr.execution_boundary_crossed(ExecutionBoundary::RunCompletion, "success");
+    tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Teardown);
     Ok(ExecutionResult {
         runtime_control: derive_runtime_control_state("success", &records, tr),
         outputs: outs,
