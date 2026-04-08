@@ -13,6 +13,7 @@ Its job is to:
 - seed the initial root task bundle surfaces
 - validate that the issue is ready for the next lifecycle step
 - stop at the mechanical bootstrap boundary before branch creation, worktree creation, or implementation work
+- handle exactly one issue target per invocation
 
 This is an execution skill, not a review-only skill.
 Keep mechanical work separate from qualitative review.
@@ -101,22 +102,26 @@ If no slug is given, derive one from the title using the repo's normal slug rule
 1. Resolve whether the request is:
    - `bootstrap-existing-issue`
    - `create-and-bootstrap-new-issue`
-2. If using structured invocation, start from the canonical tracked template
+2. If the caller needs multiple issues bootstrapped:
+   - use one `pr-init` invocation per issue
+   - prefer one subagent per issue when parallelizing
+   - aggregate completion outside the skill instead of asking one invocation to bootstrap many issues
+3. If using structured invocation, start from the canonical tracked template
    rather than writing the payload from scratch.
-3. Prefer the Rust-owned path when available.
-4. For new issues:
+4. Prefer the Rust-owned path when available.
+5. For new issues:
    - create the GitHub issue correctly
    - pass explicit repo-standard labels rather than relying on label inference
    - verify the created issue actually has the expected labels before continuing
    - ensure the canonical local source issue prompt and root bundle exist
-5. For existing issues:
+6. For existing issues:
    - run the bootstrap/init phase
    - seed the task-bundle `stp.md`
    - seed the initial `sip.md`
    - seed the initial `sor.md`
    - ensure canonical compatibility links exist when the repo expects them
-6. Validate the resulting surfaces mechanically.
-7. Emit a structured readiness result for qualitative card review and stop.
+7. Validate the resulting surfaces mechanically.
+8. Emit a structured readiness result for qualitative card review and stop.
 
 ## Workflow
 
@@ -128,6 +133,9 @@ Use one of these modes:
   - use when the user gives a title or asks to create a new issue
 - `bootstrap_existing_issue`
   - use when the user already has an issue number and only wants the bundle/bootstrap step
+
+Exactly one issue target is allowed per invocation.
+If the caller has many issues, they must invoke this skill once per issue.
 
 ### 2. Create or Resolve the GitHub Issue
 
@@ -208,6 +216,13 @@ Parallel execution is allowed only when each invocation has a disjoint target su
 - different task-bundle directories
 
 Within one `pr init` run, keep the operations serialized.
+Do not batch multiple issues into one invocation.
+
+Recommended multi-issue pattern:
+- parent agent validates one `pr_init.v1` payload per issue
+- spawn one subagent per issue
+- each subagent returns one per-issue `pr-init` result
+- parent agent aggregates the results after all subagents finish
 
 ## Preferred Commands
 
@@ -242,6 +257,9 @@ Default success result should make these explicit:
 - validation status
 - next step: qualitative card review
 - later-step handoff after review: issue-mode `pr run`
+
+For multi-issue workflows, this output describes one issue only.
+The caller must aggregate multiple per-issue results outside the skill.
 
 ## Failure Modes
 

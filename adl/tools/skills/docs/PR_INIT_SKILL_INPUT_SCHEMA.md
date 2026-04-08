@@ -93,6 +93,7 @@ Key capabilities:
 - clear separation between required and inferred fields
 - consistent new-issue versus existing-issue behavior
 - better error reporting when inputs are incomplete
+- one issue target per invocation, even when many issues are bootstrapped in parallel
 
 ## Design
 
@@ -212,6 +213,7 @@ Callers must validate all of the following before skill invocation:
 7. if `issue.version` is omitted, `policy.version_source` must allow inference
 8. if `mode = create_and_bootstrap`, `issue.labels` must be present
 9. if `mode = create_and_bootstrap`, `policy.label_source` must be `explicit`
+10. exactly one issue target is carried per invocation payload
 
 ### Caller Responsibilities
 
@@ -220,6 +222,8 @@ The caller is responsible for:
 - validating it before invocation
 - rejecting incomplete or contradictory input early
 - passing the validated object to the sub-agent or ADL executor
+- spawning one sub-agent per issue when bootstrapping many issues in parallel
+- aggregating per-issue results outside the skill rather than batching many issues into one invocation
 
 The skill is responsible for:
 - executing the bootstrap step truthfully
@@ -265,6 +269,9 @@ attribute to input validation versus skill execution.
 For day-to-day use, prefer copying the tracked template and only changing the
 issue-specific fields rather than rewriting this example from memory.
 
+For multi-issue bootstrap, do not ask one sub-agent to create many issues in a
+single `pr-init` invocation. Use one validated payload per issue.
+
 ## Data / Artifacts
 
 This feature introduces an invocation schema, not a new workflow artifact
@@ -279,9 +286,11 @@ family.
 1. Caller assembles candidate `pr-init` inputs.
 2. Caller validates the input object against `pr_init.v1`.
 3. Caller invokes the skill only if validation passes.
-4. The skill executes the mechanical bootstrap step.
-5. The skill emits a structured result and handoff status for qualitative card
+4. If many issues are being bootstrapped, caller fans out one invocation per issue.
+5. The skill executes the mechanical bootstrap step.
+6. The skill emits a structured result and handoff status for qualitative card
    review.
+7. Caller aggregates the per-issue results after all issue-targeted invocations finish.
 
 ## Determinism and Constraints
 
@@ -302,6 +311,7 @@ family.
 | --- | --- | --- |
 | `adl/tools/skills/pr-init/` | read | Defines the skill contract that this schema feeds. |
 | sub-agent spawn prompt | trigger | Receives the validated structured payload rather than loose prose. |
+| multi-issue parent coordinator | aggregate | Fans out one payload per issue and collects one result per issue. |
 | future ADL admission layer | read/validate | Can reject invalid invocation objects before execution. |
 | GitHub issue bootstrap flow | read/write | Consumes validated issue metadata only after admission succeeds. |
 
@@ -357,6 +367,7 @@ skill invocation tests.
   - the schema is documented in one canonical place
   - the `pr-init` skill can be invoked from a validated structured payload
   - sub-agent use no longer depends on “just pass a text string”
+  - multi-issue bootstrap no longer depends on one long-running ambiguous batch invocation
 
 ## Risks
 
