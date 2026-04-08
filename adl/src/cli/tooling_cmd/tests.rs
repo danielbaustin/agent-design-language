@@ -648,3 +648,144 @@ fn validate_structured_prompt_accepts_all_three_prompt_types() {
     ])
     .is_ok());
 }
+
+#[test]
+fn tooling_dispatch_accepts_help_and_rejects_unknown_subcommands() {
+    assert!(real_tooling(&["help".to_string()]).is_ok());
+    assert!(real_tooling(&["--help".to_string()]).is_ok());
+    assert!(real_tooling(&[]).is_err());
+    assert!(real_tooling(&["unknown-subcommand".to_string()]).is_err());
+}
+
+#[test]
+fn tooling_dispatch_routes_public_subcommands() {
+    let repo = TempRepo::new("dispatch");
+    let input = repo.write_rel(
+        ".tmp/tooling_cmd_tests/input.md",
+        &valid_input_card_text(1374, ".tmp/tooling_cmd_tests/output.md"),
+    );
+    let output = repo.write_rel(".tmp/tooling_cmd_tests/output.md", &valid_sor_text());
+    let review = repo.write_rel(".tmp/tooling_cmd_tests/review.md", &valid_review_markdown());
+    let review_output = repo.write_rel(
+        ".tmp/tooling_cmd_tests/review-output.yaml",
+        &valid_review_output_yaml(repo.path()),
+    );
+    let prompt_out = repo.path().join("prompt.txt");
+
+    assert!(real_tooling(&[
+        "card-prompt".to_string(),
+        "--input".to_string(),
+        input.to_string_lossy().to_string(),
+        "--out".to_string(),
+        prompt_out.to_string_lossy().to_string(),
+    ])
+    .is_ok());
+    assert!(prompt_out.is_file());
+
+    assert!(real_tooling(&[
+        "lint-prompt-spec".to_string(),
+        "--input".to_string(),
+        input.to_string_lossy().to_string(),
+    ])
+    .is_ok());
+    assert!(real_tooling(&[
+        "validate-structured-prompt".to_string(),
+        "--type".to_string(),
+        "sor".to_string(),
+        "--input".to_string(),
+        output.to_string_lossy().to_string(),
+        "--phase".to_string(),
+        "completed".to_string(),
+    ])
+    .is_ok());
+    assert!(real_tooling(&[
+        "review-card-surface".to_string(),
+        "--input".to_string(),
+        input.to_string_lossy().to_string(),
+        "--output".to_string(),
+        output.to_string_lossy().to_string(),
+    ])
+    .is_ok());
+    assert!(real_tooling(&[
+        "verify-review-output-provenance".to_string(),
+        "--review".to_string(),
+        review_output.to_string_lossy().to_string(),
+    ])
+    .is_ok());
+    assert!(real_tooling(&[
+        "verify-repo-review-contract".to_string(),
+        "--review".to_string(),
+        review.to_string_lossy().to_string(),
+    ])
+    .is_ok());
+}
+
+#[test]
+fn card_prompt_covers_help_and_argument_validation_branches() {
+    let repo = TempRepo::new("card-prompt");
+    let input = repo.write_rel(
+        ".tmp/tooling_cmd_tests/input.md",
+        &valid_input_card_text(1374, ".tmp/tooling_cmd_tests/output.md"),
+    );
+    let out = repo.path().join("prompt.txt");
+
+    assert!(real_card_prompt(&["--help".to_string()]).is_ok());
+    assert!(real_card_prompt(&[
+        "--input".to_string(),
+        input.to_string_lossy().to_string(),
+        "--out".to_string(),
+        out.to_string_lossy().to_string(),
+    ])
+    .is_ok());
+    assert!(out.is_file());
+
+    assert!(real_card_prompt(&[]).is_err());
+    assert!(real_card_prompt(&[
+        "--issue".to_string(),
+        "1374".to_string(),
+        "--input".to_string(),
+        input.to_string_lossy().to_string(),
+    ])
+    .is_err());
+    assert!(real_card_prompt(&["--issue".to_string()]).is_err());
+    assert!(real_card_prompt(&["--input".to_string()]).is_err());
+    assert!(real_card_prompt(&["--out".to_string()]).is_err());
+    assert!(real_card_prompt(&["--bogus".to_string()]).is_err());
+}
+
+#[test]
+fn common_helpers_cover_safety_and_path_branches() {
+    let root = repo_root().expect("repo root");
+    let nested = root.join("adl/src/cli/tooling_cmd.rs");
+
+    assert!(contains_absolute_host_path_in_text(
+        "/Users/example/project"
+    ));
+    assert!(!contains_absolute_host_path_in_text("relative/path"));
+    assert!(contains_secret_like_token("prefix sk-abcdefgh suffix"));
+    assert!(contains_secret_like_token("ghp_exampletoken"));
+    assert!(!contains_secret_like_token("sk-short"));
+
+    assert_eq!(normalize_issue("1402").expect("issue"), 1402);
+    assert!(normalize_issue("14x2").is_err());
+
+    assert_eq!(
+        repo_relative_display(&root, &nested).expect("repo relative"),
+        "adl/src/cli/tooling_cmd.rs"
+    );
+    assert!(absolutize(Path::new("adl/src/cli/tooling_cmd.rs"))
+        .expect("absolutize")
+        .is_absolute());
+    assert!(ensure_file(Path::new("src/cli/tooling_cmd.rs"), "tooling").is_ok());
+    assert!(ensure_file(Path::new("src/cli/missing.rs"), "missing").is_err());
+
+    let repo = TempRepo::new("common");
+    let clean = repo.write_rel("clean.md", "no secrets here\nrelative/path\n");
+    let secret = repo.write_rel("secret.md", "token ghp_secretvalue\n");
+    let abs = repo.write_rel("abs.md", "/Users/daniel/private\n");
+
+    assert!(ensure_no_disallowed_content(&clean, "clean").is_ok());
+    assert!(ensure_no_disallowed_content(&secret, "secret").is_err());
+    assert!(ensure_no_absolute_host_path(&clean, "sip").is_ok());
+    assert!(ensure_no_absolute_host_path(&abs, "sip").is_err());
+}
