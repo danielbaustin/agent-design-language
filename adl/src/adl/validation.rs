@@ -270,15 +270,19 @@ pub(super) fn validate_provider(provider_id: &str, provider: &ProviderSpec) -> R
     match provider.kind.as_str() {
         "ollama" | "local_ollama" | "mock" => Ok(()),
         "http" | "http_remote" => {
-            let endpoint_ok = provider.base_url.is_some()
-                || provider
-                    .config
-                    .get("endpoint")
-                    .and_then(|v| v.as_str())
-                    .is_some();
-            if !endpoint_ok {
+            let endpoint = provider
+                .base_url
+                .as_deref()
+                .or_else(|| provider.config.get("endpoint").and_then(|v| v.as_str()));
+            let Some(endpoint) = endpoint else {
                 return Err(anyhow!(
                     "providers.{provider_id} kind '{}' requires base_url or config.endpoint",
+                    provider.kind
+                ));
+            };
+            if !crate::provider::is_allowed_remote_endpoint(endpoint) {
+                return Err(anyhow!(
+                    "providers.{provider_id} kind '{}' requires an https:// base_url or config.endpoint; plaintext http:// is only allowed for localhost/loopback test endpoints",
                     provider.kind
                 ));
             }

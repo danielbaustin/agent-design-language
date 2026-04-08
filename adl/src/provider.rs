@@ -49,7 +49,7 @@ impl ProviderError {
             provider: None,
             message: format!(
                 "provider kind '{kind}' is not supported (supported: ollama, http). \
-Set providers.<id>.type to one of: ollama, http."
+Set providers.<id>.type to one of: ollama, http. The remote 'http' surface is HTTPS-only."
             ),
         }
     }
@@ -211,7 +211,21 @@ fn validate_profile_endpoint(provider_id: &str, profile_name: &str, endpoint: &s
             profile_name
         ));
     }
+    if !is_allowed_remote_endpoint(trimmed) {
+        return Err(anyhow!(
+            "providers.{provider_id}.profile '{}' must use an https:// endpoint; plaintext http:// is only allowed for localhost/loopback test endpoints",
+            profile_name
+        ));
+    }
     Ok(())
+}
+
+pub(crate) fn is_allowed_remote_endpoint(endpoint: &str) -> bool {
+    let normalized = endpoint.trim().to_ascii_lowercase();
+    normalized.starts_with("https://")
+        || normalized.starts_with("http://localhost")
+        || normalized.starts_with("http://127.0.0.1")
+        || normalized.starts_with("http://[::1]")
 }
 
 fn provider_profile_registry() -> BTreeMap<&'static str, ProviderProfilePreset> {
@@ -654,6 +668,12 @@ impl HttpProvider {
                     "config.endpoint is required (set providers.<id>.config.endpoint)",
                 )
             })?;
+        if !is_allowed_remote_endpoint(&endpoint) {
+            return Err(invalid_config(
+                "http",
+                "config.endpoint must use https://; plaintext http:// is only allowed for localhost/loopback test endpoints",
+            ));
+        }
 
         let timeout_secs = cfg_u64(cfg, "timeout_secs");
 
@@ -905,6 +925,23 @@ mod tests {
 
         validate_profile_endpoint("p1", "custom", "https://api.openai.com/v1/complete")
             .expect("real endpoint should pass");
+    }
+
+    #[test]
+    fn profile_endpoint_validation_rejects_plain_http() {
+        let err = validate_profile_endpoint(
+            "p1",
+            "http:gpt-4o-mini",
+            "http://api.example.com/v1/complete",
+        )
+        .expect_err("plain http should fail");
+        assert!(err.to_string().contains("must use an https:// endpoint"));
+    }
+
+    #[test]
+    fn profile_endpoint_validation_allows_loopback_http_for_local_harnesses() {
+        validate_profile_endpoint("p1", "http:gpt-4o-mini", "http://127.0.0.1:8787/complete")
+            .expect("loopback http should remain allowed");
     }
 
     #[test]

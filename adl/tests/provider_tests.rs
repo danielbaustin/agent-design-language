@@ -396,6 +396,25 @@ config:
 }
 
 #[test]
+fn http_provider_rejects_plaintext_remote_endpoint() {
+    let spec = provider_spec_from_yaml(
+        r#"
+type: http
+config:
+  endpoint: "http://api.example.com/v1/complete"
+"#,
+    );
+
+    let err = match build_provider(&spec, None) {
+        Ok(_) => panic!("plain remote http should fail"),
+        Err(err) => err,
+    };
+    assert!(err
+        .to_string()
+        .contains("plaintext http:// is only allowed for localhost/loopback test endpoints"));
+}
+
+#[test]
 fn http_provider_non_200_response() {
     let server = match std::net::TcpListener::bind("127.0.0.1:0") {
         Ok(s) => s,
