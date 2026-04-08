@@ -365,6 +365,21 @@ Recovery must restore more than liveness. It must restore enough state for coher
 
 What is preserved cannot be limited to low-level runtime details. It must include compressed cognitive state, trace continuity, and active context.
 
+In `v0.87.1`, this requirement becomes concrete through bounded runtime artifacts rather than a standalone Shepherd daemon. The minimum inspectable surfaces are:
+
+- `run_status.json`
+  - `resilience_classification`
+  - `continuity_status`
+  - `preservation_status`
+  - `shepherd_decision`
+- `pause_state.json` when interruption remains recoverable
+
+These surfaces make the local preservation stance explicit:
+
+- interruption should preserve resumability
+- corruption should refuse false continuity
+- crash/failure should preserve state for review rather than blindly replace the run
+
 ### Lifecycle-Aware Runtime Management
 
 The runtime must distinguish between active execution, quiescence, suspension, interruption, and resumption.

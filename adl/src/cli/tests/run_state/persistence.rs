@@ -2,6 +2,7 @@ use super::*;
 use ::adl::trace_schema_v1::{
     validate_trace_event_envelope_v1, TraceEventEnvelopeV1, TraceEventTypeV1,
 };
+use serde_json::Value as JsonValue;
 
 #[test]
 fn write_run_state_and_load_resume_round_trip() {
@@ -91,6 +92,26 @@ fn write_run_state_and_load_resume_round_trip() {
         load_resume_state(&run_dir.join("run.json"), &resolved).expect("load resume state");
     assert!(resume.completed_step_ids.contains("s1"));
     assert_eq!(resume.saved_state.get("k").map(String::as_str), Some("v"));
+    let run_status: JsonValue = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("run_status.json")).expect("read run_status.json"),
+    )
+    .expect("parse run_status.json");
+    assert_eq!(
+        run_status.get("resilience_classification"),
+        Some(&JsonValue::String("interruption".to_string()))
+    );
+    assert_eq!(
+        run_status.get("continuity_status"),
+        Some(&JsonValue::String("resume_ready".to_string()))
+    );
+    assert_eq!(
+        run_status.get("preservation_status"),
+        Some(&JsonValue::String("pause_state_preserved".to_string()))
+    );
+    assert_eq!(
+        run_status.get("shepherd_decision"),
+        Some(&JsonValue::String("preserve_and_resume".to_string()))
+    );
     assert!(
         run_dir.join("pause_state.json").exists(),
         "paused runs must persist pause_state.json"

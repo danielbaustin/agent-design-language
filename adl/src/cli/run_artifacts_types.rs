@@ -153,6 +153,14 @@ pub(crate) struct RunStatusArtifact {
     pub(crate) pending_steps: Vec<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) started_steps: Option<Vec<String>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) resilience_classification: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) continuity_status: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) preservation_status: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) shepherd_decision: Option<String>,
     pub(crate) attempt_counts_by_step: BTreeMap<String, u32>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) effective_max_concurrency: Option<usize>,

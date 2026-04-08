@@ -149,6 +149,7 @@ pub(crate) fn write_run_state_artifacts(
         overall_status,
         &steps,
         failure,
+        pause,
         &resume_completed,
     );
     let run_summary_json =

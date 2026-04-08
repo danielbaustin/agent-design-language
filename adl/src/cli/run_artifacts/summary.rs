@@ -308,6 +308,7 @@ pub(crate) fn build_run_status(
     overall_status: &str,
     steps: &[StepStateArtifact],
     failure: Option<&anyhow::Error>,
+    pause: Option<&execute::PauseState>,
     resume_completed_step_ids: &BTreeSet<String>,
 ) -> RunStatusArtifact {
     let mut completed_steps: BTreeSet<String> = resume_completed_step_ids.clone();
@@ -344,13 +345,16 @@ pub(crate) fn build_run_status(
     }
 
     let scheduler_policy = execute::scheduler_policy_for_run(resolved).ok().flatten();
+    let failure_kind = failure.and_then(classify_failure_kind);
+    let (resilience_classification, continuity_status, preservation_status, shepherd_decision) =
+        derive_resilience_status(overall_status, failure_kind, pause);
 
     RunStatusArtifact {
         run_status_version: RUN_STATUS_VERSION,
         run_id: resolved.run_id.clone(),
         workflow_id: resolved.workflow_id.clone(),
         overall_status: overall_status.to_string(),
-        failure_kind: failure.and_then(classify_failure_kind).map(str::to_string),
+        failure_kind: failure_kind.map(str::to_string),
         failed_step_id,
         completed_steps: completed_steps.into_iter().collect(),
         pending_steps: pending_steps.into_iter().collect(),
@@ -359,11 +363,54 @@ pub(crate) fn build_run_status(
         } else {
             Some(started_set.into_iter().collect())
         },
+        resilience_classification: Some(resilience_classification.to_string()),
+        continuity_status: Some(continuity_status.to_string()),
+        preservation_status: Some(preservation_status.to_string()),
+        shepherd_decision: Some(shepherd_decision.to_string()),
         attempt_counts_by_step: attempts_by_step,
         effective_max_concurrency: scheduler_policy.map(|(value, _)| value),
         effective_max_concurrency_source: scheduler_policy
             .map(|(_, source)| source.as_str().to_string()),
     }
+}
+
+fn derive_resilience_status(
+    overall_status: &str,
+    failure_kind: Option<&str>,
+    pause: Option<&execute::PauseState>,
+) -> (&'static str, &'static str, &'static str, &'static str) {
+    if pause.is_some() {
+        return (
+            "interruption",
+            "resume_ready",
+            "pause_state_preserved",
+            "preserve_and_resume",
+        );
+    }
+
+    if overall_status == "failed" {
+        if matches!(failure_kind, Some("replay_invariant_violation")) {
+            return (
+                "corruption",
+                "continuity_refused",
+                "inspection_only",
+                "refuse_resume",
+            );
+        }
+        return (
+            "crash",
+            "continuity_unverified",
+            "preserved_for_review",
+            "operator_review_required",
+        );
+    }
+
+    (
+        "not_applicable",
+        "continuous",
+        "no_preservation_needed",
+        "none",
+    )
 }
 
 pub(crate) fn compute_retry_count(tr: &trace::Trace) -> usize {
