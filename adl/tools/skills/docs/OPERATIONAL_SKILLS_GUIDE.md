@@ -1180,9 +1180,9 @@ For a standard issue lifecycle:
 2. perform qualitative STP/SIP review
 3. run `pr-ready`
 4. run `pr-run`
-5. open the draft PR
+5. run `pr-finish` for truthful closeout/publication and draft-PR preparation
 6. run `pr-janitor` as needed while the PR is in flight
-7. run `pr-finish` for truthful closeout/publication
+7. run `pr-closeout` after the PR outcome or explicit non-PR closure disposition is settled
 
 For repo-wide review:
 
