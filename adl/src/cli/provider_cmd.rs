@@ -277,6 +277,14 @@ mod tests {
     }
 
     #[test]
+    fn provider_help_paths_succeed() {
+        let repo = temp_repo("help");
+        real_provider_in_repo(&["help".to_string()], &repo).expect("help should succeed");
+        real_provider_in_repo(&["--help".to_string()], &repo).expect("--help should succeed");
+        real_provider_in_repo(&["-h".to_string()], &repo).expect("-h should succeed");
+    }
+
+    #[test]
     fn provider_setup_writes_expected_bundle_for_chatgpt() {
         let repo = temp_repo("chatgpt");
         real_provider_in_repo(&["setup".to_string(), "chatgpt".to_string()], &repo)
@@ -336,6 +344,42 @@ mod tests {
     }
 
     #[test]
+    fn provider_setup_validates_setup_args() {
+        let repo = temp_repo("bad-args");
+
+        real_provider_in_repo(&["setup".to_string(), "--help".to_string()], &repo)
+            .expect("setup help should succeed");
+
+        let err = real_provider_in_repo(&["setup".to_string()], &repo)
+            .expect_err("missing family should fail");
+        assert!(err.to_string().contains("provider setup requires <family>"));
+
+        let err = real_provider_in_repo(
+            &[
+                "setup".to_string(),
+                "chatgpt".to_string(),
+                "--bogus".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for provider setup: --bogus"));
+
+        let err = real_provider_in_repo(
+            &[
+                "setup".to_string(),
+                "chatgpt".to_string(),
+                "--out".to_string(),
+            ],
+            &repo,
+        )
+        .expect_err("missing out value should fail");
+        assert!(err.to_string().contains("--out requires a value"));
+    }
+
+    #[test]
     fn provider_setup_rejects_unknown_family() {
         let repo = temp_repo("unknown-family");
         let err = real_provider_in_repo(&["setup".to_string(), "bogus".to_string()], &repo)
@@ -343,5 +387,54 @@ mod tests {
         assert!(err
             .to_string()
             .contains("unsupported provider setup family"));
+    }
+
+    #[test]
+    fn provider_setup_supports_all_declared_families() {
+        let families = [
+            ("chatgpt", "chatgpt:gpt-5.4", "OPENAI_API_KEY"),
+            ("openai", "http:gpt-4.1-mini", "OPENAI_API_KEY"),
+            ("anthropic", "http:claude-3-7-sonnet", "ANTHROPIC_API_KEY"),
+            ("gemini", "http:gemini-2.0-flash", "GEMINI_API_KEY"),
+            ("deepseek", "http:deepseek-chat", "DEEPSEEK_API_KEY"),
+            (
+                "generic-http",
+                "http:gpt-4.1-mini",
+                "ADL_REMOTE_BEARER_TOKEN",
+            ),
+        ];
+
+        for (family, profile, env_var) in families {
+            let template = template_for_family(family).expect("family should resolve");
+            assert_eq!(template.profile, profile);
+            assert_eq!(template.env_var, env_var);
+
+            let provider_yaml = render_provider_yaml(template);
+            let env_example = render_env_example(template);
+            let readme = render_readme(template);
+
+            assert!(provider_yaml.contains(profile));
+            assert!(env_example.contains(env_var));
+            assert!(readme.contains(template.family));
+            assert!(readme.contains("completion-style HTTP contract"));
+        }
+    }
+
+    #[test]
+    fn real_provider_uses_repo_root_for_default_output() {
+        let repo_root = repo_root().expect("repo root should resolve");
+        let out = repo_root.join(".adl/provider-setup/deepseek");
+        if out.exists() {
+            fs::remove_dir_all(&out).expect("remove stale output");
+        }
+
+        real_provider(&["setup".to_string(), "deepseek".to_string()])
+            .expect("top-level provider entrypoint should succeed");
+
+        assert!(out.join("provider.adl.yaml").exists());
+        assert!(out.join(".env.example").exists());
+        assert!(out.join("README.md").exists());
+
+        fs::remove_dir_all(out).expect("cleanup generated output");
     }
 }
