@@ -99,6 +99,46 @@ pub const MATERIALIZE_INPUT_MAX_FILE_BYTES: u64 = 512 * 1024;
 pub(crate) const DEFAULT_MAX_CONCURRENCY: usize = 4;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RuntimeLifecyclePhase {
+    Init,
+    Execute,
+    Complete,
+    Teardown,
+}
+
+impl RuntimeLifecyclePhase {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Init => "init",
+            Self::Execute => "execute",
+            Self::Complete => "complete",
+            Self::Teardown => "teardown",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ExecutionBoundary {
+    RuntimeInit,
+    WorkflowCall,
+    Pause,
+    Resume,
+    RunCompletion,
+}
+
+impl ExecutionBoundary {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::RuntimeInit => "runtime_init",
+            Self::WorkflowCall => "workflow_call",
+            Self::Pause => "pause",
+            Self::Resume => "resume",
+            Self::RunCompletion => "run_completion",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SchedulerPolicySource {
     WorkflowOverride,
     RunDefault,

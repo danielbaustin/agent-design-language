@@ -5,8 +5,8 @@ mod steering;
 
 pub(crate) use contracts::DEFAULT_MAX_CONCURRENCY;
 pub use contracts::{
-    materialize_inputs, ExecutionResult, SchedulerPolicySource, StepExecutionRecord, StepOutput,
-    MATERIALIZE_INPUT_MAX_FILE_BYTES,
+    materialize_inputs, ExecutionBoundary, ExecutionResult, RuntimeLifecyclePhase,
+    SchedulerPolicySource, StepExecutionRecord, StepOutput, MATERIALIZE_INPUT_MAX_FILE_BYTES,
 };
 pub use policy::{stable_failure_kind, ExecutionPolicyError, ExecutionPolicyErrorKind};
 pub use runtime_control::{

@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 use crate::adl::DelegationSpec;
+use crate::execute::{ExecutionBoundary, RuntimeLifecyclePhase};
 
 #[derive(Debug, Clone)]
 pub struct Trace {
@@ -18,6 +19,17 @@ pub struct Trace {
 
 #[derive(Debug, Clone)]
 pub enum TraceEvent {
+    LifecyclePhaseEntered {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        phase: RuntimeLifecyclePhase,
+    },
+    ExecutionBoundaryCrossed {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        boundary: ExecutionBoundary,
+        state: String,
+    },
     SchedulerPolicy {
         ts_ms: u128,
         elapsed_ms: u128,
@@ -137,6 +149,28 @@ pub enum TraceEvent {
 impl TraceEvent {
     pub fn summarize(&self) -> String {
         match self {
+            TraceEvent::LifecyclePhaseEntered {
+                ts_ms,
+                elapsed_ms,
+                phase,
+            } => format!(
+                "{} (+{}ms) LifecyclePhaseEntered phase={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                phase.as_str()
+            ),
+            TraceEvent::ExecutionBoundaryCrossed {
+                ts_ms,
+                elapsed_ms,
+                boundary,
+                state,
+            } => format!(
+                "{} (+{}ms) ExecutionBoundaryCrossed boundary={} state={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                boundary.as_str(),
+                state
+            ),
             TraceEvent::SchedulerPolicy {
                 ts_ms,
                 elapsed_ms,
@@ -402,6 +436,27 @@ impl Trace {
             .unwrap_or(0)
     }
 
+    pub fn lifecycle_phase_entered(&mut self, phase: RuntimeLifecyclePhase) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::LifecyclePhaseEntered {
+            ts_ms,
+            elapsed_ms,
+            phase,
+        });
+    }
+
+    pub fn execution_boundary_crossed(&mut self, boundary: ExecutionBoundary, state: &str) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::ExecutionBoundaryCrossed {
+            ts_ms,
+            elapsed_ms,
+            boundary,
+            state: state.to_string(),
+        });
+    }
+
     pub fn step_started(
         &mut self,
         step_id: &str,
@@ -617,6 +672,7 @@ impl Trace {
         callee_workflow_id: &str,
         namespace: &str,
     ) {
+        self.execution_boundary_crossed(ExecutionBoundary::WorkflowCall, "entered");
         let elapsed_ms = self.run_started_instant.elapsed().as_millis();
         let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
         self.events.push(TraceEvent::CallEntered {
@@ -629,6 +685,7 @@ impl Trace {
     }
 
     pub fn call_exited(&mut self, caller_step_id: &str, status: &str, namespace: &str) {
+        self.execution_boundary_crossed(ExecutionBoundary::WorkflowCall, status);
         let elapsed_ms = self.run_started_instant.elapsed().as_millis();
         let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
         self.events.push(TraceEvent::CallExited {
@@ -858,7 +915,38 @@ mod tests {
         let mut tr = Trace::new("run-3", "workflow-3", "0.5");
         tr.call_entered("parent", "child", "ns");
         tr.call_exited("parent", "success", "ns");
-        assert_eq!(tr.events.len(), 2);
+        assert_eq!(tr.events.len(), 4);
+    }
+
+    #[test]
+    fn trace_records_runtime_lifecycle_and_boundary_events() {
+        let mut tr = Trace::new("run-life", "workflow-life", "0.87.1");
+        tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Init);
+        tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Execute);
+        tr.execution_boundary_crossed(ExecutionBoundary::RuntimeInit, "fresh_start");
+        tr.execution_boundary_crossed(ExecutionBoundary::RunCompletion, "success");
+        tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Complete);
+        tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Teardown);
+
+        let lines: Vec<String> = tr.events.iter().map(TraceEvent::summarize).collect();
+        assert!(lines
+            .iter()
+            .any(|line| line.contains("LifecyclePhaseEntered phase=init")));
+        assert!(lines
+            .iter()
+            .any(|line| line.contains("LifecyclePhaseEntered phase=execute")));
+        assert!(lines.iter().any(|line| line
+            .contains("ExecutionBoundaryCrossed boundary=runtime_init state=fresh_start")));
+        assert!(lines
+            .iter()
+            .any(|line| line
+                .contains("ExecutionBoundaryCrossed boundary=run_completion state=success")));
+        assert!(lines
+            .iter()
+            .any(|line| line.contains("LifecyclePhaseEntered phase=complete")));
+        assert!(lines
+            .iter()
+            .any(|line| line.contains("LifecyclePhaseEntered phase=teardown")));
     }
 
     #[test]
