@@ -112,6 +112,30 @@ fn write_run_state_and_load_resume_round_trip() {
         run_status.get("shepherd_decision"),
         Some(&JsonValue::String("preserve_and_resume".to_string()))
     );
+    assert_eq!(
+        run_status.get("persistence_mode"),
+        Some(&JsonValue::String("checkpoint_resume_state".to_string()))
+    );
+    assert_eq!(
+        run_status.get("cleanup_disposition"),
+        Some(&JsonValue::String("retain_pause_state".to_string()))
+    );
+    assert_eq!(
+        run_status.get("resume_guard"),
+        Some(&JsonValue::String(
+            "execution_plan_hash_match_required".to_string()
+        ))
+    );
+    assert_eq!(
+        run_status.get("state_artifacts"),
+        Some(&JsonValue::Array(vec![
+            JsonValue::String("run.json".to_string()),
+            JsonValue::String("steps.json".to_string()),
+            JsonValue::String("run_status.json".to_string()),
+            JsonValue::String("logs/trace_v1.json".to_string()),
+            JsonValue::String("pause_state.json".to_string()),
+        ]))
+    );
     assert!(
         run_dir.join("pause_state.json").exists(),
         "paused runs must persist pause_state.json"
@@ -456,6 +480,22 @@ fn load_resume_state_rejects_non_paused_status() {
     assert!(
         !run_dir.join("pause_state.json").exists(),
         "non-paused runs must not emit pause_state.json"
+    );
+    let run_status: JsonValue = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("run_status.json")).expect("read run_status.json"),
+    )
+    .expect("parse run_status.json");
+    assert_eq!(
+        run_status.get("persistence_mode"),
+        Some(&JsonValue::String("completed_run_record".to_string()))
+    );
+    assert_eq!(
+        run_status.get("cleanup_disposition"),
+        Some(&JsonValue::String("no_resume_state_retained".to_string()))
+    );
+    assert_eq!(
+        run_status.get("resume_guard"),
+        Some(&JsonValue::String("not_applicable".to_string()))
     );
     let _ = std::fs::remove_dir_all(run_dir);
     let _ = std::fs::remove_dir_all(out_dir);

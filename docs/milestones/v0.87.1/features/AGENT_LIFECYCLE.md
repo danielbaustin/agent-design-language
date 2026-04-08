@@ -168,3 +168,18 @@ Lifecycle correctness for `v0.87.1` means:
 - the major runtime boundaries emit trace events
 - integration tests observe the bounded lifecycle ordering
 - docs and runtime trace vocabulary use the same lifecycle terms
+
+## Runtime State Consequence
+
+The lifecycle surface must also make runtime persistence discipline inspectable.
+
+In `v0.87.1`, the authoritative lifecycle-state proof surfaces are:
+
+- `run_status.json`
+  - `continuity_status`
+  - `persistence_mode`
+  - `cleanup_disposition`
+  - `resume_guard`
+- `pause_state.json` for recoverable interruption cases
+
+This remains a bounded local runtime contract. It does not claim persistent identity, chronosense, or full agency continuity.

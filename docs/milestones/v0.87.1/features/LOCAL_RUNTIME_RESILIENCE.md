@@ -335,6 +335,10 @@ In `v0.87.1`, local resilience is made inspectable through the canonical run art
   - `continuity_status`
   - `preservation_status`
   - `shepherd_decision`
+  - `persistence_mode`
+  - `cleanup_disposition`
+  - `resume_guard`
+  - `state_artifacts`
 - `pause_state.json` for resumable interruption cases
 - `logs/trace_v1.json` and `run_summary.json` as the causal and reviewer-facing proof surfaces
 

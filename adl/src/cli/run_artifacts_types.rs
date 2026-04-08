@@ -161,6 +161,10 @@ pub(crate) struct RunStatusArtifact {
     pub(crate) preservation_status: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) shepherd_decision: Option<String>,
+    pub(crate) persistence_mode: String,
+    pub(crate) cleanup_disposition: String,
+    pub(crate) resume_guard: String,
+    pub(crate) state_artifacts: Vec<String>,
     pub(crate) attempt_counts_by_step: BTreeMap<String, u32>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) effective_max_concurrency: Option<usize>,
