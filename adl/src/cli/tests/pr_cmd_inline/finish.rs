@@ -422,9 +422,12 @@ fn real_pr_finish_syncs_completed_output_to_root_bundle_and_review_mirror() {
 
     let root_text = fs::read_to_string(&root_output).expect("root output text");
     let compat_text = fs::read_to_string(&compat_output).expect("compat output text");
+    let tracked_output = issue_ref.public_task_record_output_path(&worktree);
+    let tracked_text = fs::read_to_string(&tracked_output).expect("tracked output text");
     assert!(root_text.contains("Status: DONE"));
     assert!(root_text.contains("codex/1153-rust-finish-sync"));
     assert_eq!(root_text, compat_text);
+    assert_eq!(root_text, tracked_text);
 }
 
 #[test]

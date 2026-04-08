@@ -9,8 +9,9 @@ This skill owns the closeout and publication phase of the PR workflow.
 
 Its job is to:
 - confirm the issue has completed its bounded execution work
-- validate the output record and finish inputs truthfully
+- validate and, when needed, normalize the output record before PR publication
 - stage only the intended tracked paths
+- ensure the finalized SOR is published on the tracked review surface
 - create or update the reviewable PR surface
 - emit a structured finish result
 - stop before silent merge or issue closure unless explicitly directed
@@ -76,6 +77,7 @@ If multiple surfaces disagree materially, report `blocked`.
 Before closeout:
 - confirm the issue work actually exists on the branch/worktree
 - confirm the output record exists and is not still a bootstrap stub
+- confirm the output record is finalized before any PR create/update action
 - confirm the intended staged paths are explicit or deterministically derived
 - confirm validation claims in the output record are truthful
 

@@ -8,6 +8,8 @@ target:
   worktree_path: <path or null>
 finish_state:
   output_record_present: true | false
+  sor_finalized_before_pr_open: true | false
+  tracked_review_surface_published: true | false
   staged_paths_validated: true | false
   pr_state: created | updated | blocked
 findings:

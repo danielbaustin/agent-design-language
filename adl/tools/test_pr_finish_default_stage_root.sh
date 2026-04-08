@@ -139,6 +139,88 @@ export ADL_PR_RUST_BIN="$REAL_ADL_BIN"
 (
   cd "$repo"
 
+  mkdir -p .adl/v0.86/bodies
+  cat > .adl/v0.86/bodies/issue-1021-finish-default-root.md <<'EOF_PROMPT'
+---
+issue_card_schema: adl.issue.v1
+wp: "unassigned"
+slug: "finish-default-root"
+title: "[v0.85][authoring] Harden pr finish command behavior"
+labels:
+  - "track:roadmap"
+  - "area:tools"
+  - "type:task"
+  - "version:v0.86"
+issue_number: 1021
+status: "active"
+action: "edit"
+depends_on: []
+milestone_sprint: "unplanned"
+required_outcome_type:
+  - "code"
+repo_inputs:
+  - "https://github.com/example/repo/issues/1021"
+canonical_files: []
+demo_required: false
+demo_names: []
+issue_graph_notes:
+  - "Authored shell test fixture."
+pr_start:
+  enabled: true
+  slug: "finish-default-root"
+---
+
+# [v0.85][authoring] Harden pr finish command behavior
+
+## Summary
+
+Authored prompt for finish-shell regression coverage.
+
+## Goal
+
+Provide authored prompt content so lifecycle setup can proceed.
+
+## Required Outcome
+
+This test issue ships code only.
+
+## Deliverables
+
+- authored issue prompt content
+
+## Acceptance Criteria
+
+- lifecycle setup accepts this prompt
+
+## Repo Inputs
+
+- https://github.com/example/repo/issues/1021
+
+## Dependencies
+
+- none
+
+## Demo Expectations
+
+- none
+
+## Non-goals
+
+- bootstrap placeholder content
+
+## Issue-Graph Notes
+
+- shell regression fixture
+
+## Notes
+
+- generated inside shell tests
+
+## Tooling Notes
+
+- authored fixture, not bootstrap fallback
+EOF_PROMPT
+
   "$BASH_BIN" adl/tools/pr.sh start 1021 --slug finish-default-root --no-fetch-issue >/dev/null
   "$BASH_BIN" adl/tools/pr.sh cards 1021 --no-fetch-issue >/dev/null
   worktree="$repo/.worktrees/adl-wp-1021"
@@ -258,6 +340,7 @@ EOF_SOR
   changed="$(git -C "$worktree" show --name-only --format=oneline HEAD)"
   assert_contains "adl/tools/README.md" "$changed" "finish stages code path by default"
   assert_contains "docs/tooling/README.md" "$changed" "finish stages docs path by default"
+  assert_contains "docs/records/v0.86/tasks/issue-1021/sor.md" "$changed" "finish stages tracked sor review surface"
 )
 
 echo "pr.sh finish default repo-root staging: ok"
