@@ -42,6 +42,6 @@ validation_checks:
   required_commands_run: true
   validation_result: PASS
   commands:
-    - /home/alice/agent-design-language/adl/tools/review_card_surface.rb --input foo --output bar
+    - /home/alice/agent-design-language/adl/tools/review_card_surface.sh --input foo --output bar
   notes: "Bad provenance fixture."
 follow_ups: []
