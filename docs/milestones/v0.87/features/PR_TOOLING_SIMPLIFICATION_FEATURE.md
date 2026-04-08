@@ -3,7 +3,7 @@
 ## Metadata
 - Feature Name: `PR Tooling Simplification`
 - Milestone Target: `v0.87`
-- Status: `planned`
+- Status: `promoted`
 - Owner: `Daniel Austin / Agent Logic`
 - Doc Role: `primary`
 - Supporting Docs: `docs/milestones/v0.87/features/PR_TOOLING_SIMPLIFICATION_ARCHITECTURE.md`, `docs/milestones/v0.87/features/PR_TOOLING_SKILLS.md`

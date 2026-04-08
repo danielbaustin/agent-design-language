@@ -4,7 +4,7 @@
 
 ## Metadata
 - Owner: `adl`
-- Status: `draft`
+- Status: `promoted`
 - Target milestone: `v0.87`
 - Purpose: Define the bounded implementation scope for shared ObsMem in `v0.87` as a real substrate layer tied to trace and review surfaces.
 

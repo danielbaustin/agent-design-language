@@ -24,13 +24,36 @@ It provides:
 ## Current Status
 
 - Recent stable runtime milestone: **v0.8**
-- Current closure milestone in the main repo: **v0.85**
-- Next active milestone: **v0.86**
+- Current closure milestone in the main repo: **v0.87** _(Sprint 3 convergence in progress)_
+- Previous closure milestone in the main repo: **v0.86**
+- Next planned milestone shell: **v0.87.1**
 - Current crate version on `main`: **0.86.0**
 
 This README describes the runtime as it exists on the current `main` branch and points to the relevant milestone and demo surfaces in the parent repository.
 
 ## Recent Runtime Milestones
+
+### v0.87 — Substrate Convergence and Reviewer-Facing Runtime Truth
+
+v0.87 focuses on making the runtime-adjacent substrate legible and deterministic across trace, provider portability, shared memory, skills, and control-plane proof surfaces.
+
+Highlights:
+- trace, provider, shared-memory, skills, and control-plane work aligned under one canonical milestone spine
+- promoted milestone feature docs and review surfaces reconciled with the actual runtime-adjacent issue sequence
+- bounded demo and reviewer proof surfaces for trace, provider portability, shared ObsMem, skills, and control-plane behavior
+- active Sprint 3 closeout work for docs, review, quality gate, and release packaging
+- explicit handoff into the `v0.87.1` runtime-completion planning shell
+
+### v0.86 — Bounded Cognitive System and Runtime Proof Surfaces
+
+v0.86 established the first working bounded cognitive system on `main`.
+
+Highlights:
+- one canonical bounded cognitive path from signals through Freedom Gate
+- canonical runtime artifacts for the bounded cognitive path and related proof surfaces
+- local demo and review surfaces for the integrated milestone proof set
+- Sprint 7 quality-gate work with passing local `fmt`, `clippy`, `test`, coverage, and demo-validation proof
+- runtime docs and reviewer entry points aligned toward milestone truth
 
 ### v0.85 — Authoring Alignment and Runtime Proof Surfaces
 
@@ -164,6 +187,8 @@ This transport boundary is intended for trusted infrastructure and bounded deplo
 For readers who want the broader context around the runtime:
 - root repo README: `../README.md`
 - canonical demo index: `../demos/README.md`
+- v0.87 milestone docs: `../docs/milestones/v0.87/`
+- v0.86 milestone docs: `../docs/milestones/v0.86/`
 - v0.85 milestone docs: `../docs/milestones/v0.85/`
 - v0.8 milestone docs: `../docs/milestones/v0.8/`
 - v0.7 milestone docs: `../docs/milestones/v0.7/`
@@ -171,6 +196,7 @@ For readers who want the broader context around the runtime:
 - crate-local fixture inventory: `examples/README.md`
 
 Important demo/readiness references:
+- `../docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
 - `../docs/milestones/v0.86/DEMO_MATRIX_v0.86.md`
 - `../docs/milestones/v0.8/DEMOS_V0.8.md`
 - `../docs/milestones/v0.85/DEMO_MATRIX_v0.85.md`

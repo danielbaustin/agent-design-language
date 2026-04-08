@@ -2,10 +2,10 @@
 issue_prompt_schema: adl.issue.v1
 wp: "WP-XX"
 slug: "replace-me"
-title: "[v0.85][WP-XX] Replace Me"
+title: "[v0.87][WP-XX] Replace Me"
 labels:
   - "track:roadmap"
-  - "version:v0.85"
+  - "version:v0.87"
   - "type:task"
   - "area:runtime"
 issue_number:

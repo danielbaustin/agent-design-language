@@ -10,7 +10,7 @@ If you want the fastest successful demo run:
 cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-fork-join-seq-run.adl.yaml --print-plan
 ```
 
-If you want the current `v0.86` milestone review surface:
+If you want the `v0.86` bounded cognitive review surface:
 
 ```bash
 ./adl/tools/demo_v086_review_surface.sh

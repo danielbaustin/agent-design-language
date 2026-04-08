@@ -4,9 +4,9 @@
 
 ## Metadata
 - Owner: `adl`
-- Status: `draft`
+- Status: `promoted`
 - Target milestone: `v0.87`
-- Work package: `WP-12`
+- Work package: `WP-04`
 - Purpose: Define the canonical provider substrate for ADL in `v0.87`, including declarative capability, deterministic invocation, and trace-integrated execution.
 
 ## Purpose

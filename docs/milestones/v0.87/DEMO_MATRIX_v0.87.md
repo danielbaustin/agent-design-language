@@ -5,7 +5,7 @@
 - Version: `0.87`
 - Date: `2026`
 - Owner: `adl`
-- Related issues / work packages: `WP-02` through `WP-16` (issue numbers TBD)
+- Related issues / work packages: `#1293` through `#1302`, `#1345` through `#1350`
 
 ## Purpose
 Define the canonical milestone demo program for `v0.87`: which bounded demos exist, which substrate claims they prove, how to run them, and what artifacts or proof surfaces reviewers should inspect.

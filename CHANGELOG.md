@@ -2,6 +2,33 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
+## v0.87 (Sprint 3 Convergence In Progress)
+
+Status: Docs/review/quality/release tail in progress.
+
+Summary:
+- ADL now has a real `v0.87` substrate milestone on `main`, centered on the canonical milestone spine:
+  `contracts -> execution -> trace -> review -> documentation`
+- The milestone’s promoted feature-doc set now covers trace, provider portability, shared ObsMem, operational skills, control-plane behavior, and reviewer-facing proof surfaces as canonical `v0.87` docs
+- Canonical `v0.87` milestone docs now reflect the real Sprint 1 / Sprint 2 implementation sequence and the active Sprint 3 closeout issues
+- The bounded `v0.87` demo and reviewer package exists through the demo matrix, runbook, and `demo_v087_suite.sh` entry surfaces
+- The next-milestone planning shell for `v0.87.1` now exists as an explicit handoff target for runtime-completion work
+
+References:
+- `docs/milestones/v0.87/README.md`
+- `docs/milestones/v0.87/WBS_v0.87.md`
+- `docs/milestones/v0.87/SPRINT_v0.87.md`
+- `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
+- `docs/milestones/v0.87/FEATURE_DOCS_v0.87.md`
+- `docs/milestones/v0.87/MILESTONE_CHECKLIST_v0.87.md`
+- `docs/milestones/v0.87/RELEASE_PLAN_v0.87.md`
+- `docs/milestones/v0.87/RELEASE_NOTES_v0.87.md`
+
+Not yet claimed in v0.87:
+- final docs/review convergence and 3rd-party review closeout
+- final release ceremony completion
+- later-milestone continuity, chronosense, governance, signed-trace, or broader runtime-completion work that belongs to `v0.87.1+`
+
 ## v0.86 (Sprint 7 Closeout In Progress)
 
 Status: Docs/review/release tail in progress.

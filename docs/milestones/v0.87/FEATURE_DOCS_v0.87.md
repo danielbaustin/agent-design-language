@@ -62,7 +62,7 @@ The following are intentionally not treated as promoted `v0.87` feature docs:
 
 ## Status
 
-Current status: `partial but real`
+Current status: `canonical promoted set`
 
 - The milestone has a real promoted feature-doc set under `docs/milestones/v0.87/features/`.
 - Some future-facing design work still remains in `.adl/docs/TBD/` and is not yet part of the canonical `v0.87` feature-doc surface.

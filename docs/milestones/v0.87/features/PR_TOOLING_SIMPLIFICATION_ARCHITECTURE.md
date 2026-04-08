@@ -5,7 +5,7 @@
 - Topic: simplify and shrink the PR lifecycle tooling
 - Milestone Target: `v0.87`
 - Date: `2026-03-31`
-- Status: `Planning`
+- Status: `promoted`
 - Scope: `adl/tools/pr.sh`, `adl/tools/card_paths.sh`, and Rust `adl pr`
 
 ## Why This Document Exists

@@ -5,7 +5,7 @@ This directory is the tracked home for reusable issue-prompt templates and autho
 The intended model is:
 
 - issue prompts: structured design prompts used to create or edit GitHub issues
-- input cards: structured implementation prompts used after `pr start`
+- input cards: structured implementation prompts used after an issue enters run phase
 - output cards: structured implementation records produced after execution
 
 Issue prompts are an important software/GitHub integration surface, but they are not the universal ontology for ADL. The broader system should remain task-centric so it can support software engineering, writing, research, and other human-creation workflows.
@@ -23,15 +23,15 @@ But the reusable templates themselves should be tracked so they can:
 So the split is:
 
 - tracked templates and guidance: `docs/tooling/issue-prompts/`
-- tracked public task records: `docs/records/v0.85/tasks/`
+- tracked public task records: versioned task-record directories under `docs/records/`
 - local or generated prompt drafts and manifests: `.adl/`
 
 The important distinction is:
 
 - `docs/tooling/issue-prompts/`
   - reusable template and authoring-contract layer for GitHub-facing issue prompts
-- `docs/records/v0.85/tasks/`
-  - tracked public task-bundle layer
+- `docs/records/`
+  - tracked public task-bundle layer, organized by milestone/version where applicable
 - `.adl/`
   - local draft workspace and generated intermediate state
 

@@ -28,14 +28,14 @@ This milestone is a substrate/consolidation milestone. The decisions recorded he
 | D-09 | Keep `v0.87` bounded and do not silently pull `v0.88+` systems forward. | accepted | The roadmap now has explicit homes for chronosense, aptitudes, AEE 1.0, Freedom Gate v2, identity, governance, and PR Demo execution. Pulling them forward would collapse milestone discipline. | Opportunistically absorb later systems during implementation. | Protects roadmap coherence and makes handoff into later milestones cleaner. | `docs/milestones/v0.85/features/ROAD_TO_v0.95.md` |
 | D-10 | Require reviewer-facing proof surfaces and artifact-backed demos for milestone credibility. | accepted | `v0.87` is intended to support internal and external evaluation. Claims must be inspectable through real artifact roots, demo surfaces, and review outputs. | Rely on prose descriptions or partially specified proof surfaces. | Raises the bar for milestone truthfulness and improves reviewer experience. | `docs/milestones/v0.87/MILESTONE_CHECKLIST_v0.87.md` |
 
-## Open Questions
-- Which exact issue sequence should be used for the first substrate implementation slice after the canonical docs land? (Owner: `Daniel Austin`) (Issue: `TBD`)
-- Should trace v1 or control-plane consolidation be the very first implementation-heavy slice once sprint 1 planning is complete? (Owner: `Daniel Austin`) (Issue: `TBD`)
-- What is the minimum provider set required to claim provider portability credibly in `v0.87` demos? (Owner: `Daniel Austin`) (Issue: `TBD`)
-- Which initial operational skills are mandatory for the first bounded substrate proof in `v0.87`? (Owner: `Daniel Austin`) (Issue: `TBD`)
+## Resolution Notes
+- The first substrate execution slice used the canonical `v0.87` issue spine under `#1293` through `#1302`, following the doc-lock issue `#1292`.
+- Trace v1 landed ahead of control-plane consolidation in the execution sequence; trace schema and runtime work started in Sprint 1 (`#1293`, `#1294`) and control-plane consolidation followed in Sprint 2 (`#1300`, `#1301`).
+- Provider portability claims for `v0.87` are bounded to the provider substrate and compatibility surfaces captured under `#1295` and `#1296`; later capability-aware routing remains out of scope.
+- The first bounded operational-skill proof for `v0.87` is carried by the skills/control-plane sequence under `#1299`, `#1300`, and `#1301`, rather than a broad generalized skills platform claim.
 
 ## Exit Criteria
 - All milestone-critical architectural and scope decisions are logged with rationale.
 - Deferred alternatives and intentionally later-milestone work are explicitly represented.
-- Open questions that affect execution order or milestone truth have owners and tracking hooks.
+- Resolution notes that affected execution order or milestone truth are recorded with the issue spine that settled them.
 - The recorded decisions align with the roadmap, design, WBS, sprint plan, demo matrix, and release plan.

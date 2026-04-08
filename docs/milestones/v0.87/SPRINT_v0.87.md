@@ -36,7 +36,7 @@ This milestone should leave ADL with:
 |---|---|---|---|
 | `v0.87-s1` | Lock the canonical milestone surfaces and land the first substrate slices | `WP-01`, `WP-02`, `WP-04`, `WP-06` | active / partially implemented |
 | `v0.87-s2` | Expand and connect the substrate across trace, provider, memory, skills, tooling, and review | `WP-03`, `WP-05`, `WP-07`, `WP-08`, `WP-09`, `WP-10`, `WP-11` | seeded / underway |
-| `v0.87-s3` | Converge docs, demos, quality gates, internal review, 3rd party review, release tail, and next-milestone planning | `WP-12`, `WP-13`, `WP-14`, `WP-15`, `WP-15A`, `WP-16`, `WP-17` | planned |
+| `v0.87-s3` | Converge docs, demos, quality gates, internal review, 3rd party review, release tail, and next-milestone planning | `WP-12`, `WP-13`, `WP-14`, `WP-15`, `WP-15A`, `WP-16`, `WP-17` | active |
 
 ## Sprint 1
 
@@ -52,10 +52,10 @@ Establish the first executable slice of `v0.87` by locking the canonical milesto
 ### Work Packages
 | Order | Item | Issue | Owner | Status |
 |---|---|---|---|---|
-| 1 | Lock the canonical milestone docs and issue map | `#1292` | `Daniel / Codex.app` | merged |
-| 2 | Trace v1 schema + event model | `#1293` | `Daniel / Codex.app` | PR open |
-| 3 | Provider / transport substrate v1 | `#1295` | `Daniel / Codex.app` | PR open |
-| 4 | Shared ObsMem foundation | `#1297` | `Daniel / Codex.app` | PR open |
+| 1 | Lock the canonical milestone docs and issue map | `#1292` | `Daniel / Codex.app` | closed |
+| 2 | Trace v1 schema + event model | `#1293` | `Daniel / Codex.app` | closed |
+| 3 | Provider / transport substrate v1 | `#1295` | `Daniel / Codex.app` | closed |
+| 4 | Shared ObsMem foundation | `#1297` | `Daniel / Codex.app` | closed |
 
 ### Exit Criteria
 - canonical `v0.87` milestone docs are aligned to the roadmap and seeded execution plan
@@ -80,13 +80,13 @@ Expand the foundational substrate into a connected milestone surface: runtime tr
 ### Work Packages
 | Order | Item | Issue | Owner | Status |
 |---|---|---|---|---|
-| 1 | Trace instrumentation + artifact linkage | `#1294` | `Daniel / Codex.app` | PR open |
-| 2 | Provider portability + config compatibility | `#1296` | `Daniel / Codex.app` | ready |
-| 3 | Trace-to-memory coherence | `#1298` | `Daniel / Codex.app` | ready |
-| 4 | Operational skills substrate | `#1299` | `Daniel / Codex.app` | ready |
-| 5 | PR tooling / control-plane consolidation | `#1300` | `Daniel / Codex.app` | ready |
-| 6 | Tooling hardening + workflow stability | `#1301` | `Daniel / Codex.app` | ready |
-| 7 | Review-surface formalization | `#1302` | `Daniel / Codex.app` | ready |
+| 1 | Trace instrumentation + artifact linkage | `#1294` | `Daniel / Codex.app` | closed |
+| 2 | Provider portability + config compatibility | `#1296` | `Daniel / Codex.app` | closed |
+| 3 | Trace-to-memory coherence | `#1298` | `Daniel / Codex.app` | closed |
+| 4 | Operational skills substrate | `#1299` | `Daniel / Codex.app` | closed |
+| 5 | PR tooling / control-plane consolidation | `#1300` | `Daniel / Codex.app` | closed |
+| 6 | Tooling hardening + workflow stability | `#1301` | `Daniel / Codex.app` | closed |
+| 7 | Review-surface formalization | `#1302` | `Daniel / Codex.app` | closed |
 
 ### Exit Criteria
 - runtime Trace v1 export and artifact linkage are real and reviewable
@@ -113,12 +113,12 @@ Converge the milestone into a reviewer-legible package with truthful demos, qual
 ### Work Packages
 | Order | Item | Issue | Owner | Status |
 |---|---|---|---|---|
-| 1 | Documentation canonicalization + feature index | `WP-12` | `Daniel / Codex.app` | not yet issued |
-| 2 | Demo matrix + integration demos | `WP-13` | `Daniel / Codex.app` | not yet issued |
-| 3 | Coverage / quality gate | `WP-14` | `Daniel / Codex.app` | not yet issued |
-| 4 | Docs + internal review pass | `WP-15` | `Daniel / Codex.app` | not yet issued |
-| 5 | 3rd party review pass | `WP-15A` | `Daniel / Codex.app` | not yet issued |
-| 6 | Release ceremony | `WP-16` | `Daniel / Codex.app` | not yet issued |
+| 1 | Documentation canonicalization + feature index | `#1345` | `Daniel / Codex.app` | started |
+| 2 | Demo matrix + integration demos | `#1346` | `Daniel / Codex.app` | merged |
+| 3 | Coverage / quality gate | `#1347` | `Daniel / Codex.app` | open |
+| 4 | Docs + internal review pass | `#1348` | `Daniel / Codex.app` | open |
+| 5 | 3rd party review pass | `#1349` | `Daniel / Codex.app` | open |
+| 6 | Release ceremony | `#1350` | `Daniel / Codex.app` | open |
 | 7 | Next milestone planning (`v0.87.1`) | `#1354` | `Daniel / Codex.app` | merged |
 
 ### Exit Criteria
@@ -133,14 +133,16 @@ Converge the milestone into a reviewer-legible package with truthful demos, qual
 ## Current Execution Status
 
 As of this plan revision:
-- Sprint 1 is in active implementation
-- Sprint 2 is seeded, preflighted, and partially underway
-- Sprint 3 is defined at the WBS level and includes the next-milestone planning handoff, though most release-tail issues are not yet issued in detail
+- Sprint 1 is implemented and closed at the issue level
+- Sprint 2 is implemented and closed at the issue level
+- Sprint 3 is live: `#1345`, `#1347`, `#1348`, `#1349`, and `#1350` are open, `#1346` is closed, and `#1354` completed the next-milestone planning handoff
 
-Current issue/PR posture:
-- `#1292` merged
-- `#1293`, `#1294`, `#1295`, and `#1297` have active PRs
-- `#1296`, `#1298`, `#1299`, `#1300`, `#1301`, and `#1302` are bootstrapped and execution-ready
+Current issue posture:
+- `#1292` through `#1302` are closed
+- `#1345` is started
+- `#1346` is closed
+- `#1347`, `#1348`, `#1349`, and `#1350` are open
+- `#1354` is closed
 
 ## Cadence Expectations
 - Use issue cards (`input` / `output`) for every execution item.

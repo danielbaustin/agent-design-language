@@ -137,25 +137,25 @@ Determinism notes:
 - determinism for this milestone is judged primarily by stable structure, schemas, event vocabularies, and proof-surface truth
 - timestamps, run IDs, or other documented runtime-generated metadata may vary and should not be treated as failures by themselves
 
-## Risks and Open Questions
+## Risks and Resolution Notes
 
 Known risks:
 - provider and tooling redesign may sprawl if not kept tightly bounded to substrate v1 goals
-- late `v0.86` closeout fixes may temporarily force small roadmap/doc adjustments while `v0.87` planning begins
+- late cleanup and release-tail fixes may still force small roadmap/doc adjustments while Sprint 3 converges
 
-Open questions:
-- which exact issue sequence should start the first implementation-heavy slice after doc seeding
-- whether trace v1 or control-plane consolidation should land first as the strongest initial substrate proof
-- what the minimum provider set is for a credible portability claim in `v0.87`
+Resolution notes:
+- the first implementation-heavy slice followed the `#1293` through `#1302` issue spine after the canonical doc-lock issue `#1292`
+- trace v1 landed before control-plane consolidation in the milestone execution order
+- provider portability claims in `v0.87` remain bounded to the provider substrate and compatibility surfaces landed under `#1295` and `#1296`
 
 ## Status
 
-Current status: `PLANNING COMPLETE / EXECUTION READY`
+Current status: `SPRINT 3 CONVERGENCE IN PROGRESS`
 
-- Planning: canonical doc set seeded and under active reconciliation
-- Execution: Sprint 1 and Sprint 2 issue tranche (`#1292`–`#1302`) exists, is bootstrapped, and is worktree-ready
-- Validation: concrete D1-D6 demo command surfaces now exist under `adl/tools/demo_v087_*.sh`
-- Release readiness: not ready yet; this README describes the intended canonical review path once issues land
+- Planning: canonical doc set exists and is now being reconciled against landed implementation truth
+- Execution: Sprint 1 and Sprint 2 issues (`#1292`–`#1302`) are closed; Sprint 3 is active
+- Validation: concrete D1-D6 demo command surfaces exist under `adl/tools/demo_v087_*.sh`, and the demo/runbook package landed under `#1346`
+- Release readiness: not ready yet; docs/review/coverage/release-tail work remains open under `#1345`, `#1347`, `#1348`, `#1349`, and `#1350`
 
 ## Exit Criteria
 

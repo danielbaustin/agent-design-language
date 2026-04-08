@@ -4,7 +4,7 @@
 
 ## Metadata
 - Owner: `adl`
-- Status: `draft`
+- Status: `promoted`
 - Target milestone: `v0.87`
 - Work package: `WP-11`
 - Purpose: Define the canonical review surface for ADL so findings, evidence, and action guidance are emitted in a bounded, deterministic, and reviewer-usable form.

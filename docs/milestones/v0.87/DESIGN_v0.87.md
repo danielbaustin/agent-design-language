@@ -5,7 +5,7 @@
 - Version: `0.87`
 - Date: `2026`
 - Owner: `adl`
-- Related issues: TBD
+- Related issues: `#1292-#1302`, `#1345-#1350`, `#1354`
 
 ## Purpose
 Define the integrated design for v0.87 as the milestone that **consolidates, aligns, and stabilizes** the ADL cognitive substrate following the expansion of v0.86.
