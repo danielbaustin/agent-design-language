@@ -48,8 +48,8 @@ impl ProviderError {
             kind: ProviderErrorKind::UnknownKind,
             provider: None,
             message: format!(
-                "provider kind '{kind}' is not supported (supported: ollama, http). \
-Set providers.<id>.type to one of: ollama, http. The remote 'http' surface is HTTPS-only."
+                "provider kind '{kind}' is not supported (supported: ollama, local_ollama, mock, http, http_remote). \
+Set providers.<id>.type to one of: ollama, local_ollama, mock, http, http_remote. The remote 'http' surface is HTTPS-only."
             ),
         }
     }
@@ -409,9 +409,29 @@ pub fn build_provider_for_id(
         | provider_substrate::ProviderTransportV1::InProcess => match target.provider_kind.as_str()
         {
             "ollama" | "local_ollama" => Ok(Box::new(OllamaProvider::from_target(spec, &target)?)),
-            "mock" => Err(unknown_kind("mock")),
+            "mock" => Ok(Box::new(MockProvider::from_target(&target))),
             other => Err(unknown_kind(other)),
         },
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct MockProvider {
+    model: String,
+}
+
+impl MockProvider {
+    pub fn from_target(target: &ProviderInvocationTargetV1) -> Self {
+        Self {
+            model: target.model_ref.clone(),
+        }
+    }
+}
+
+impl Provider for MockProvider {
+    fn complete(&self, prompt: &str) -> Result<String> {
+        let _model = &self.model;
+        Ok(prompt.to_string())
     }
 }
 
