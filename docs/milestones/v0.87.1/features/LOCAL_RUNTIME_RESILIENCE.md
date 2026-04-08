@@ -326,6 +326,21 @@ For the local runtime to qualify as resilient, it should provide at least:
 7. **Shepherd-mediated recovery**
    - restart decisions are governed, not blind
 
+## v0.87.1 Concrete Preservation Surface
+
+In `v0.87.1`, local resilience is made inspectable through the canonical run artifacts already emitted by the runtime:
+
+- `run_status.json`
+  - `resilience_classification`
+  - `continuity_status`
+  - `preservation_status`
+  - `shepherd_decision`
+- `pause_state.json` for resumable interruption cases
+- `logs/trace_v1.json` and `run_summary.json` as the causal and reviewer-facing proof surfaces
+
+This milestone does not claim a full checkpoint engine or higher-order identity system.
+It does require that local interruption, corruption, and review-before-resume cases become explicit in these bounded artifact surfaces rather than remaining implicit runtime behavior.
+
 ---
 
 ## What Local Runtime Resilience Is Not
