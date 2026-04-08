@@ -88,6 +88,6 @@ fn dispatch_args(args: &[String]) -> Result<()> {
         Some("tooling") => real_tooling(&args[1..]),
         Some("verify") => real_verify(&args[1..]),
         Some("resume") => real_resume(&args[1..]),
-        _ => run_workflow(&args),
+        _ => run_workflow(args),
     }
 }
