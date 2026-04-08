@@ -18,18 +18,18 @@ ADL v0.2 expands the reference runtime and examples while preserving the determi
 
 ## Flagship demo (copy/paste)
 
-Run from the `swarm/` directory.
+Run from the `adl/` directory.
 
 Inspect the coordinator plan (no provider call required):
 
 ```bash
-cargo run --bin swarm -- examples/v0-2-coordinator-agents-sdk.adl.yaml --print-plan
+cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --print-plan
 ```
 
 Run the coordinator workflow (requires local Ollama provider setup):
 
 ```bash
-cargo run --bin adl -- examples/v0-2-coordinator-agents-sdk.adl.yaml --run --trace --out examples/out
+cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --run --trace --out examples/out
 ```
 
 If local provider setup is not ready yet, use the plan command above as the recommended quickstart and track demo UX polish in the following issues:
@@ -38,8 +38,8 @@ If local provider setup is not ready yet, use the plan command above as the reco
 
 ## More examples
 
-- Examples index: `swarm/examples/README.md`
-- Coordinator walkthrough: `swarm/examples/v0-2-coordinator-agents-sdk.md`
+- Examples index: `adl/examples/README.md`
+- Coordinator walkthrough: `adl/examples/v0-2-coordinator-agents-sdk.md`
 
 ## Key docs
 
