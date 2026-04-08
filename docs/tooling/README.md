@@ -66,7 +66,7 @@ Important repo-local tooling surfaces include:
 - `adl tooling validate-structured-prompt` — structured prompt contract validation
 - `adl tooling verify-review-output-provenance` — provenance verification for review-output artifacts
 - `adl tooling review-card-surface` — bounded deterministic review helper
-- `adl/tools/*` wrappers remain available as compatibility entrypoints over the Rust-owned commands
+- `adl/tools/*.sh` wrappers remain available as compatibility entrypoints over the Rust-owned commands
 - `adl/tools/report_large_rust_modules.sh` — non-blocking Rust implementation-module size report
 - `adl/tools/sync_task_bundle_prompts.sh` — refresh canonical local task-bundle prompt layout from compatibility paths
 

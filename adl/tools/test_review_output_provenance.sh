@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 export ADL_TOOLING_MANIFEST_ROOT="$ROOT"
-VERIFY="$ROOT/adl/tools/verify_review_output_provenance.rb"
+VERIFY="$ROOT/adl/tools/verify_review_output_provenance.sh"
 GOOD="$ROOT/docs/tooling/examples/reviewer-provenance/good_review_output_661.yaml"
 BAD="$ROOT/docs/tooling/examples/reviewer-provenance/bad_review_output_661.yaml"
 
