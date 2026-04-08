@@ -974,3 +974,264 @@ fn real_pr_ready_requires_slug_when_local_state_missing() {
         .to_string()
         .contains("ready: could not infer slug; pass --slug or run start first"));
 }
+
+#[test]
+fn real_pr_doctor_reconciles_closed_completed_issue_bundle_without_worktree() {
+    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let temp = unique_temp_dir("adl-pr-doctor-closed-issue-reconcile");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "doctor closed reconcile\n").expect("seed file");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref = IssueRef::new(
+        1410,
+        "v0.87",
+        "v0-87-tools-finalize-local-task-bundle-closeout-when-issues-are-actually-closed",
+    )
+    .expect("issue ref");
+    write_authored_issue_prompt(
+        &repo,
+        &issue_ref,
+        "[v0.87][tools] Finalize local task-bundle closeout when issues are actually closed",
+    );
+    real_pr(&[
+        "init".to_string(),
+        "1410".to_string(),
+        "--slug".to_string(),
+        issue_ref.slug().to_string(),
+        "--title".to_string(),
+        "[v0.87][tools] Finalize local task-bundle closeout when issues are actually closed"
+            .to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.87".to_string(),
+    ])
+    .expect("real_pr init");
+
+    let canonical_bundle = issue_ref.task_bundle_dir_path(&repo);
+    let duplicate_bundle = repo
+        .join(".adl")
+        .join("v0.87")
+        .join("tasks")
+        .join("issue-1410__closeout-drift-legacy");
+    fs::rename(&canonical_bundle, &duplicate_bundle).expect("move bundle to duplicate");
+
+    let duplicate_sip = duplicate_bundle.join("sip.md");
+    write_authored_sip(
+        &duplicate_sip,
+        &issue_ref,
+        "[v0.87][tools] Finalize local task-bundle closeout when issues are actually closed",
+        "codex/1410-v0-87-tools-finalize-local-task-bundle-closeout-when-issues-are-actually-closed",
+        &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+
+    fs::write(
+        duplicate_bundle.join("sor.md"),
+        r#"# v0-87-tools-finalize-local-task-bundle-closeout-when-issues-are-actually-closed
+
+Task ID: issue-1410
+Run ID: issue-1410
+Version: v0.87
+Title: [v0.87][tools] Finalize local task-bundle closeout when issues are actually closed
+Branch: codex/1410-v0-87-tools-finalize-local-task-bundle-closeout-when-issues-are-actually-closed
+Status: IN_PROGRESS
+
+Execution:
+- Actor: codex
+- Model: gpt-5-codex
+- Provider: local test harness
+- Start Time: 2026-04-07T00:00:00Z
+- End Time: 2026-04-07T00:05:00Z
+
+## Summary
+Closed issue bundle drift was repaired.
+## Artifacts produced
+- adl/src/cli/pr_cmd.rs
+## Actions taken
+- Reconciled a stale local closeout record.
+## Main Repo Integration (REQUIRED)
+- Tracked paths prepared for main-repo integration:
+  - `adl/src/cli/pr_cmd.rs`
+- Worktree-only paths remaining: `adl/src/cli/pr_cmd.rs`
+- Integration state: pr_open
+- Verification scope: worktree
+- Integration method used: branch-local tracked edits committed and prepared for PR
+- Verification performed:
+  - `git diff -- adl/src/cli/pr_cmd.rs`
+    - verifies the tracked change intended for the PR.
+- Result: PASS
+## Validation
+- Validation commands and their purpose:
+  - `bash adl/tools/validate_structured_prompt.sh --type sor --phase completed --input .adl/v0.87/tasks/issue-1410__closeout-drift-legacy/sor.md`
+    - verifies this completed execution record remains structurally valid.
+- Results:
+  - all listed commands passed
+## Verification Summary
+```yaml
+verification_summary:
+  validation:
+    status: PASS
+    checks_run:
+      - "completed SOR validation"
+  determinism:
+    status: PASS
+    replay_verified: not_applicable
+    ordering_guarantees_verified: not_applicable
+  security_privacy:
+    status: PASS
+    secrets_leakage_detected: false
+    prompt_or_tool_arg_leakage_detected: false
+    absolute_path_leakage_detected: false
+  artifacts:
+    status: PASS
+    required_artifacts_present: true
+    schema_changes:
+      present: false
+      approved: not_applicable
+```
+## Determinism Evidence
+- Determinism tests executed: completed SOR validation
+- Replay verification (same inputs -> same artifacts/order): not applicable
+- Ordering guarantees (sorting / tie-break rules used): not applicable
+- Artifact stability notes: not applicable
+## Security / Privacy Checks
+- Secret leakage scan performed: manual inspection
+- Prompt / tool argument redaction verified: yes
+- Absolute path leakage check: repo-relative paths only
+- Sandbox / policy invariants preserved: yes
+## Replay Artifacts
+- Trace bundle path(s): not applicable
+- Run artifact root: not applicable
+- Replay command used for verification: not applicable
+- Replay result: not applicable
+## Artifact Verification
+- Primary proof surface: `.adl/v0.87/tasks/issue-1410__closeout-drift-legacy/sor.md`
+- Required artifacts present: true
+- Artifact schema/version checks: completed-phase SOR validation passed
+- Hash/byte-stability checks: not performed
+- Missing/optional artifacts and rationale: no runtime trace required for this tooling issue
+## Decisions / Deviations
+- none
+## Follow-ups / Deferred work
+- none
+"#,
+    )
+    .expect("write stale sor");
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_path = bin_dir.join("gh");
+    write_executable(
+        &gh_path,
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"pr list\" ]]; then\n  echo '[]'\n  exit 0\nfi\nif [[ \"$1 $2 $3 $4\" == \"issue view 1410 -R\" ]]; then\n  echo '{\"state\":\"CLOSED\",\"stateReason\":\"COMPLETED\"}'\n  exit 0\nfi\nexit 1\n",
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let doctor = real_pr(&[
+        "doctor".to_string(),
+        "1410".to_string(),
+        "--slug".to_string(),
+        issue_ref.slug().to_string(),
+        "--mode".to_string(),
+        "full".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.87".to_string(),
+        "--json".to_string(),
+    ]);
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    doctor.expect("doctor closed reconcile");
+
+    let canonical_output = issue_ref.task_bundle_output_path(&repo);
+    let canonical_text = fs::read_to_string(&canonical_output).expect("read canonical sor");
+    assert!(
+        canonical_bundle.is_dir(),
+        "canonical bundle should exist after reconciliation"
+    );
+    assert!(
+        !duplicate_bundle.exists(),
+        "duplicate bundle should be removed after reconciliation"
+    );
+    assert!(canonical_text.contains("Status: DONE"));
+    assert!(canonical_text.contains("- Integration state: merged"));
+    assert!(canonical_text.contains("- Verification scope: main_repo"));
+    assert!(canonical_text.contains("- Worktree-only paths remaining: none"));
+    assert!(!issue_ref.default_worktree_path(&repo, None).exists());
+}

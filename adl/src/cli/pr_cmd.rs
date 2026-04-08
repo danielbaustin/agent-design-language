@@ -44,6 +44,13 @@ struct OpenPullRequest {
     is_draft: bool,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+struct GithubIssueLifecycleState {
+    state: String,
+    #[serde(rename = "stateReason")]
+    state_reason: Option<String>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 struct DoctorPreflightJsonPullRequest {
     number: u32,
@@ -581,7 +588,7 @@ fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
     let ready = match parsed.mode {
         DoctorMode::Preflight => None,
         DoctorMode::Ready | DoctorMode::Full => {
-            Some(run_doctor_ready(&repo_root, &issue_ref, &branch)?)
+            Some(run_doctor_ready(&repo_root, &repo, &issue_ref, &branch)?)
         }
     };
     let mode = doctor_mode_name(&parsed.mode);
@@ -694,6 +701,7 @@ fn run_doctor_preflight(repo: &str, version: &str, branch: &str) -> Result<Docto
 
 fn run_doctor_ready(
     repo_root: &Path,
+    repo: &str,
     issue_ref: &IssueRef,
     branch: &str,
 ) -> Result<DoctorReadyResult> {
@@ -710,15 +718,39 @@ fn run_doctor_ready(
     let root_bundle_output = issue_ref.task_bundle_output_path(repo_root);
     let wt_bundle_input = issue_ref.task_bundle_input_path(&worktree_path);
     let wt_bundle_output = issue_ref.task_bundle_output_path(&worktree_path);
+    let closed_completed = issue_is_closed_and_completed(issue_ref.issue_number(), repo)?;
 
     validate_issue_prompt_exists(&source_path)?;
     validate_bootstrap_stp(repo_root, &source_path)?;
     validate_authored_prompt_surface("doctor", &source_path, PromptSurfaceKind::IssuePrompt)?;
+    if closed_completed {
+        reconcile_closed_completed_issue_bundle(repo_root, issue_ref, &root_bundle_output)?;
+    }
     if !root_stp.is_file() {
         bail!("doctor: missing root stp: {}", root_stp.display());
     }
     validate_bootstrap_stp(repo_root, &root_stp)?;
     validate_authored_prompt_surface("doctor", &root_stp, PromptSurfaceKind::Stp)?;
+    if closed_completed {
+        validate_initialized_cards(
+            issue_ref.issue_number(),
+            issue_ref.slug(),
+            &root_bundle_input,
+            &root_bundle_output,
+        )?;
+        return Ok(DoctorReadyResult {
+            lifecycle_state: "closed",
+            worktree: None,
+            source: path_relative_to_repo(repo_root, &source_path),
+            root_stp: path_relative_to_repo(repo_root, &root_stp),
+            root_input: path_relative_to_repo(repo_root, &root_bundle_input),
+            root_output: path_relative_to_repo(repo_root, &root_bundle_output),
+            wt_stp: None,
+            wt_input: None,
+            wt_output: None,
+            status: "PASS",
+        });
+    }
     validate_initialized_cards(
         issue_ref.issue_number(),
         issue_ref.slug(),
@@ -821,6 +853,228 @@ fn run_doctor_ready(
         wt_output: Some(path_relative_to_repo(repo_root, &wt_bundle_output)),
         status: "PASS",
     })
+}
+
+fn issue_is_closed_and_completed(issue: u32, repo: &str) -> Result<bool> {
+    let Some(raw) = run_capture_allow_failure(
+        "gh",
+        &[
+            "issue",
+            "view",
+            &issue.to_string(),
+            "-R",
+            repo,
+            "--json",
+            "state,stateReason",
+        ],
+    )?
+    else {
+        return Ok(false);
+    };
+    let trimmed = raw.trim();
+    if trimmed.is_empty() {
+        return Ok(false);
+    }
+    let state: GithubIssueLifecycleState =
+        serde_json::from_str(trimmed).context("failed to parse gh issue state json")?;
+    Ok(state.state == "CLOSED" && state.state_reason.as_deref() == Some("COMPLETED"))
+}
+
+fn reconcile_closed_completed_issue_bundle(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    canonical_output: &Path,
+) -> Result<()> {
+    let bundle_dir = issue_ref.task_bundle_dir_path(repo_root);
+    if let Some(parent) = bundle_dir.parent() {
+        fs::create_dir_all(parent)?;
+    }
+
+    let duplicates = matching_task_bundle_dirs(repo_root, issue_ref)?;
+    if !bundle_dir.exists() {
+        if let Some(existing) = duplicates.first() {
+            fs::rename(existing, &bundle_dir).with_context(|| {
+                format!(
+                    "doctor: failed to reconcile duplicate task bundle '{}' into canonical '{}'",
+                    existing.display(),
+                    bundle_dir.display()
+                )
+            })?;
+        } else {
+            fs::create_dir_all(&bundle_dir)?;
+        }
+    }
+
+    if !ensure_nonempty_file_path(canonical_output)? {
+        for duplicate in matching_task_bundle_dirs(repo_root, issue_ref)? {
+            if duplicate == bundle_dir {
+                continue;
+            }
+            let candidate = duplicate.join("sor.md");
+            if ensure_nonempty_file_path(&candidate)? {
+                fs::copy(&candidate, canonical_output).with_context(|| {
+                    format!(
+                        "doctor: failed to restore canonical sor from duplicate '{}'",
+                        candidate.display()
+                    )
+                })?;
+                break;
+            }
+        }
+
+        if !ensure_nonempty_file_path(canonical_output)? {
+            let cards_root = resolve_cards_root(repo_root, None);
+            let review_output = card_output_path(&cards_root, issue_ref.issue_number());
+            if ensure_nonempty_file_path(&review_output)? {
+                fs::copy(&review_output, canonical_output).with_context(|| {
+                    format!(
+                        "doctor: failed to restore canonical sor from review card '{}'",
+                        review_output.display()
+                    )
+                })?;
+            }
+        }
+    }
+
+    if !ensure_nonempty_file_path(canonical_output)? {
+        bail!(
+            "doctor: closed issue is missing canonical sor: {}",
+            canonical_output.display()
+        );
+    }
+
+    normalize_closed_completed_output_card(canonical_output)?;
+    validate_completed_sor(repo_root, canonical_output)?;
+
+    for duplicate in matching_task_bundle_dirs(repo_root, issue_ref)? {
+        if duplicate != bundle_dir {
+            fs::remove_dir_all(&duplicate).with_context(|| {
+                format!(
+                    "doctor: failed to remove duplicate closed task bundle '{}'",
+                    duplicate.display()
+                )
+            })?;
+        }
+    }
+
+    let cards_root = resolve_cards_root(repo_root, None);
+    let review_output = card_output_path(&cards_root, issue_ref.issue_number());
+    ensure_symlink(&review_output, canonical_output)?;
+    Ok(())
+}
+
+fn matching_task_bundle_dirs(repo_root: &Path, issue_ref: &IssueRef) -> Result<Vec<PathBuf>> {
+    let tasks_dir = repo_root.join(".adl").join(issue_ref.scope()).join("tasks");
+    if !tasks_dir.is_dir() {
+        return Ok(Vec::new());
+    }
+    let prefix = format!("{}__", issue_ref.task_issue_id());
+    let mut matches = Vec::new();
+    for entry in fs::read_dir(&tasks_dir)? {
+        let entry = entry?;
+        if !entry.file_type()?.is_dir() {
+            continue;
+        }
+        let name = entry.file_name();
+        let name = name.to_string_lossy();
+        if name.starts_with(&prefix) {
+            matches.push(entry.path());
+        }
+    }
+    matches.sort();
+    Ok(matches)
+}
+
+fn normalize_closed_completed_output_card(path: &Path) -> Result<()> {
+    let mut text = fs::read_to_string(path)?;
+    replace_field_line_in_text(&mut text, "Status", "DONE");
+    replace_first_exact_line(
+        &mut text,
+        "- Integration state: worktree_only | pr_open | merged",
+        "- Integration state: merged",
+    );
+    replace_first_exact_line(
+        &mut text,
+        "- Integration state: worktree_only",
+        "- Integration state: merged",
+    );
+    replace_first_exact_line(
+        &mut text,
+        "- Integration state: pr_open",
+        "- Integration state: merged",
+    );
+    replace_first_exact_line(
+        &mut text,
+        "- Verification scope: worktree | pr_branch | main_repo",
+        "- Verification scope: main_repo",
+    );
+    replace_first_exact_line(
+        &mut text,
+        "- Verification scope: worktree",
+        "- Verification scope: main_repo",
+    );
+    replace_first_exact_line(
+        &mut text,
+        "- Verification scope: pr_branch",
+        "- Verification scope: main_repo",
+    );
+    replace_first_prefixed_line(
+        &mut text,
+        "- Worktree-only paths remaining:",
+        "- Worktree-only paths remaining: none",
+    );
+    fs::write(path, text)?;
+    Ok(())
+}
+
+fn replace_field_line_in_text(text: &mut String, label: &str, value: &str) {
+    let prefix = format!("{label}:");
+    let mut out = Vec::new();
+    for line in text.lines() {
+        if line.starts_with(&prefix) {
+            out.push(format!("{prefix} {value}"));
+        } else {
+            out.push(line.to_string());
+        }
+    }
+    *text = out.join("\n");
+    if !text.ends_with('\n') {
+        text.push('\n');
+    }
+}
+
+fn replace_first_exact_line(text: &mut String, from: &str, to: &str) {
+    let mut out = Vec::new();
+    let mut replaced = false;
+    for line in text.lines() {
+        if !replaced && line == from {
+            out.push(to.to_string());
+            replaced = true;
+        } else {
+            out.push(line.to_string());
+        }
+    }
+    *text = out.join("\n");
+    if !text.ends_with('\n') {
+        text.push('\n');
+    }
+}
+
+fn replace_first_prefixed_line(text: &mut String, prefix: &str, to: &str) {
+    let mut out = Vec::new();
+    let mut replaced = false;
+    for line in text.lines() {
+        if !replaced && line.starts_with(prefix) {
+            out.push(to.to_string());
+            replaced = true;
+        } else {
+            out.push(line.to_string());
+        }
+    }
+    *text = out.join("\n");
+    if !text.ends_with('\n') {
+        text.push('\n');
+    }
 }
 
 fn doctor_mode_name(mode: &DoctorMode) -> &'static str {
