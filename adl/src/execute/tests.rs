@@ -149,7 +149,9 @@ fn validate_steering_patch_rejects_invalid_shapes() {
     patch.remove_state = vec!["   ".to_string()];
     let empty_remove_err =
         validate_steering_patch(&patch).expect_err("empty remove_state key should fail");
-    assert!(empty_remove_err.to_string().contains("contains an empty key"));
+    assert!(empty_remove_err
+        .to_string()
+        .contains("contains an empty key"));
 
     let mut patch = steering_patch();
     patch.set_state.clear();
@@ -162,10 +164,14 @@ fn validate_steering_patch_rejects_invalid_shapes() {
 
     let mut patch = steering_patch();
     patch.set_state.clear();
-    patch.set_state.insert("  ".to_string(), "value".to_string());
+    patch
+        .set_state
+        .insert("  ".to_string(), "value".to_string());
     let empty_set_err =
         validate_steering_patch(&patch).expect_err("empty set_state key should fail");
-    assert!(empty_set_err.to_string().contains("set_state contains an empty key"));
+    assert!(empty_set_err
+        .to_string()
+        .contains("set_state contains an empty key"));
 
     let mut patch = steering_patch();
     patch.remove_state = vec!["next.input".to_string()];
@@ -213,7 +219,10 @@ fn apply_steering_patch_updates_resume_state_and_records_sorted_keys() {
     let record = apply_steering_patch(&mut resume, &patch, "fp-new".to_string())
         .expect("patch should apply");
 
-    assert_eq!(resume.saved_state.get("keep").map(String::as_str), Some("present"));
+    assert_eq!(
+        resume.saved_state.get("keep").map(String::as_str),
+        Some("present")
+    );
     assert_eq!(
         resume.saved_state.get("a.first").map(String::as_str),
         Some("fresh")
