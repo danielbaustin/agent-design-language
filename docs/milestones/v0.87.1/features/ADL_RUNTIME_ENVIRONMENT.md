@@ -84,6 +84,26 @@ For `v0.87.1`, the runtime environment becomes concrete as one authoritative loc
 
 This milestone does **not** claim full chronosense, persistent identity, or full agency continuity. It establishes the bounded substrate primitives those later systems require.
 
+## v0.87.1 Operator Surface
+
+For `WP-06`, the runtime environment also needs one operator-facing entrypoint that makes the bounded substrate inspectable without tribal knowledge.
+
+The canonical operator surface for this milestone is:
+
+```bash
+ADL_RUNTIME_ROOT=<runtime-root> \
+ADL_OLLAMA_BIN=adl/tools/mock_ollama_v0_4.sh \
+bash adl/tools/pr.sh run <adl-file> --trace --allow-unsigned --out <step-output-dir>
+```
+
+The authoritative proof surfaces from that operator path are:
+- `<runtime-root>/runtime_environment.json`
+- `<runtime-root>/runs/<run_id>/run_summary.json`
+- `<runtime-root>/runs/<run_id>/run_status.json`
+- `<runtime-root>/runs/<run_id>/logs/trace_v1.json`
+
+This keeps operator bring-up aligned with the runtime substrate contract rather than inventing separate artifact conventions for demos, reviewers, and local inspection.
+
 ---
 
 ## Birth and Presence
