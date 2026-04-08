@@ -618,6 +618,12 @@ fn bootstrap_stub_reason_detects_issue_prompt_and_sip_templates() {
         Some("bootstrap-generated issue prompt template text")
     );
 
+    let workflow_skill_prompt = "# x\n\n## Summary\n\nBootstrap-generated workflow-skill issue body created from the requested title and labels so the issue starts with a concrete first draft instead of a generic bootstrap stub.\n\n## Goal\n\nDefine one bounded workflow-skill or tooling-surface change in the tracked PR workflow substrate and make the resulting source prompt/STP concrete enough for qualitative review before execution.\n\n## Acceptance Criteria\n\n- the generated prompt identifies this as a workflow-skill/tooling issue rather than a generic bootstrap task\n";
+    assert_eq!(
+        bootstrap_stub_reason(workflow_skill_prompt, PromptSurfaceKind::IssuePrompt),
+        Some("bootstrap-generated issue prompt template text")
+    );
+
     let sip = "# ADL Input Card\n\n## Goal\n\nReal goal\n\n## Acceptance Criteria\n\n- one\n\n## Required Outcome\n\n- State whether this issue must ship code, docs, tests, demo artifacts, or a combination.\n";
     assert_eq!(
         bootstrap_stub_reason(sip, PromptSurfaceKind::Sip),
