@@ -52,12 +52,20 @@ grep -Fq '$sip-editor' "$PROMPT_FILE" || {
   echo "assertion failed: prompt does not reference sip-editor" >&2
   exit 1
 }
-grep -Fq 'deepseek-r1:8b' "$MANIFEST_FILE" || {
-  echo "assertion failed: manifest does not record default deepseek model" >&2
+grep -Fq 'gpt-oss:latest' "$MANIFEST_FILE" || {
+  echo "assertion failed: manifest does not record default tool-capable model" >&2
   exit 1
 }
 grep -Fq '"codex_working_root"' "$MANIFEST_FILE" || {
   echo "assertion failed: manifest does not record codex working root" >&2
+  exit 1
+}
+grep -Fq 'Do not use absolute host paths.' "$PROMPT_FILE" || {
+  echo "assertion failed: prompt does not reinforce relative-path execution" >&2
+  exit 1
+}
+grep -Fq 'Edit only those two files with apply_patch.' "$PROMPT_FILE" || {
+  echo "assertion failed: prompt does not direct explicit bounded editing" >&2
   exit 1
 }
 

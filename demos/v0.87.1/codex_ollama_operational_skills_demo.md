@@ -2,7 +2,7 @@
 
 This is a bounded, operator-facing demo for running the tracked operational
 skills through Codex CLI against a local OSS provider, with Ollama as the
-intended default and `deepseek-r1:8b` as the default model name.
+intended default and a tool-capable local model as the default execution path.
 
 It is intentionally smaller than the full issue lifecycle. The proof target is:
 
@@ -30,7 +30,7 @@ This demo does **not** claim:
 - full GitHub issue bootstrap
 - PR publication
 - full `pr-init -> pr-ready -> pr-run -> pr-finish -> pr-closeout` automation
-- that every skill behaves identically across all local OSS models
+- that every Ollama model supports Codex tool calling equally well
 
 ## Prerequisites
 
@@ -39,13 +39,19 @@ This demo does **not** claim:
 - the target local model pulled in Ollama
 - repository checked out locally
 
-Suggested model:
+Suggested baseline model:
 
 ```bash
-ollama pull deepseek-r1:8b
+ollama pull gpt-oss:latest
 ```
 
 If you want a different local model, override `CODEX_OLLAMA_MODEL`.
+
+DeepSeek remains an important target model for this demo, but current Ollama
+DeepSeek variants may reject Codex tool calls with a provider-side
+`does not support tools` error. The demo script now reports that failure
+cleanly, while the most reliable local baseline is still a tool-capable model
+such as `gpt-oss:latest`.
 
 If your local Ollama API is not on the default host, set `OLLAMA_HOST` or
 `OLLAMA_HOST_URL` before running the demo script.
@@ -71,7 +77,13 @@ No model call is made in dry-run mode.
 ## Full Demo Run
 
 ```bash
-CODEX_OLLAMA_MODEL=deepseek-r1:8b \
+bash adl/tools/demo_codex_ollama_operational_skills.sh
+```
+
+To probe DeepSeek explicitly:
+
+```bash
+CODEX_OLLAMA_MODEL=deepseek-r1:latest \
 bash adl/tools/demo_codex_ollama_operational_skills.sh
 ```
 
@@ -90,22 +102,31 @@ codex exec \
   --full-auto \
   --oss \
   --local-provider ollama \
-  --model deepseek-r1:8b \
+  --model gpt-oss:latest \
   --cd <artifact-root>/workspace \
+  --sandbox workspace-write \
   --skip-git-repo-check \
+  --add-dir <artifact-root>/workspace \
+  --add-dir <artifact-root> \
   --add-dir <repo-root> \
   ...
 ```
 
-5. validate the edited `stp.md` and `sip.md`
+5. validate the edited `stp.md` and bootstrap-phase `sip.md`
 6. write artifacts under `artifacts/v0871/codex_ollama_skills/`
 
 Before the model call, the script checks the Ollama HTTP API directly at
 `/api/tags` rather than depending on the `ollama` CLI.
 
-The Codex working root is the copied fixture workspace. The live repository
-root is added only as a reference surface so the demo stays bounded to fixture
-edits.
+The Codex working root is the copied fixture workspace. The prompt uses
+fixture-relative paths only and explicitly tells the model to read with shell
+commands and edit just the two target files with `apply_patch`. The live
+repository root is added only as a reference surface so the demo stays bounded
+to fixture edits.
+
+Because this fixture is intentionally pre-run, the script validates the SIP
+with `--phase bootstrap` after the edit rather than requiring a bound
+execution branch.
 
 ## Artifact Layout
 
