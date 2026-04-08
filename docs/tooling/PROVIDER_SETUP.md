@@ -11,6 +11,10 @@ Current supported families:
 - `deepseek`
 - `http`
 
+Related shared proof-surface docs:
+- `docs/tooling/PROVIDER_DEMO_SURFACES.md`
+- `docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`
+
 Default output location:
 - `.adl/provider-setup/<family>/`
 
@@ -30,6 +34,8 @@ Important transport note:
   - response JSON with `{"output": "..."}`
 - raw vendor-native endpoints may need an adapter or compatibility gateway if
   they do not expose that exact contract directly
+- provider-family demos should keep setup instructions here and keep family-specific
+  runtime proof steps in their own wrapper surfaces
 
 Example:
 
