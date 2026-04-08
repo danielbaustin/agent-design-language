@@ -72,6 +72,9 @@ Shared doc ownership:
 - use `docs/tooling/PROVIDER_DEMO_SURFACES.md` for shared provider demo proof-surface rules
 - keep family-specific run instructions and proof caveats in the family wrapper outputs, not in this matrix
 
+Shared wrapper helper:
+- `adl/tools/provider_demo_common.sh` owns the small common README/proof-surface scaffolding used by provider-family demo wrappers.
+
 | Provider family | Scope | Issue |
 |---|---|---|
 | local Ollama | bounded local provider demo plus acceptance coverage for `ollama` / `local_ollama` | `#1485` |
