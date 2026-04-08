@@ -114,6 +114,153 @@ reduce recurring card failures:
 Use them when the problem is primarily the card surface, not the wider
 lifecycle step.
 
+## How To Use The Editor Skills
+
+The editor skills are best used as small helper passes, not as standalone issue
+orchestration.
+
+Use this rule of thumb:
+
+- if the issue or branch state itself is wrong, use the lifecycle skill
+- if the card is the thing that is wrong, use the matching editor skill
+
+Practical mapping:
+
+- use `stp-editor` when the task card is vague, contradictory, or not
+  execution-ready
+- use `sip-editor` when lifecycle truth is wrong in the input card, especially
+  branch/worktree state, target surfaces, or validation-plan drift
+- use `sor-editor` when the output card is blocking finish because the summary,
+  integration wording, or validation claims are not truthful
+
+Good patterns:
+
+- `pr-init` finishes, then `stp-editor` and/or `sip-editor` clean the new root
+  cards before qualitative review
+- `pr-ready` diagnoses drift, then hands a card-local problem to
+  `stp-editor` or `sip-editor`
+- `pr-run` does the implementation, then uses `sor-editor` to normalize the
+  in-flight execution record
+- `pr-finish` uses `sor-editor` only when the finish blocker is output-card
+  truthfulness
+
+Bad patterns:
+
+- using `stp-editor` to change issue scope
+- using `sip-editor` to create a branch or worktree
+- using `sor-editor` to invent validation that was never run
+- using any editor skill as a substitute for `pr-init`, `pr-ready`, `pr-run`,
+  or `pr-finish`
+
+### Quick Selector
+
+If the failure looks like this, use:
+
+- “the STP is sloppy / contradictory / not clear enough”: `stp-editor`
+- “the SIP says the wrong branch, wrong lifecycle phase, or wrong targets”:
+  `sip-editor`
+- “the SOR still has placeholders or overclaims validation/integration”:
+  `sor-editor`
+
+If you are unsure, run `pr-ready` first. If `pr-ready` says the blocker is
+card-local, then hand off to the relevant editor.
+
+### What To Supply To An Editor Skill
+
+Keep editor invocations narrow. The more they look like a bounded patch request
+against one card, the better they behave.
+
+Always provide:
+
+- `repo_root`
+- the one card path being edited
+- the lifecycle phase or integration state when that truth matters
+- any concrete evidence the editor needs to stay truthful
+
+Good supporting evidence:
+
+- the source issue prompt path
+- the issue number
+- the bound branch and worktree path when the issue is already running
+- the exact commands actually run
+- the exact tracked paths changed
+- review comments or finish errors that explain what is wrong
+
+Avoid vague prompts like:
+
+- “clean this card up”
+- “make this ready”
+- “fix whatever is wrong”
+
+Prefer prompts like:
+
+- “normalize the SIP to truthful `run_bound` state for issue `1419`”
+- “normalize the SOR so validation claims match the commands actually run”
+- “tighten the STP acceptance criteria without changing issue scope”
+
+### What Success Looks Like
+
+Each editor should leave the card:
+
+- structurally valid
+- free of placeholders and enum-menu leakage
+- truthful about lifecycle state
+- aligned with the linked issue prompt
+- bounded to the card surface it owns
+
+The editors should not:
+
+- invent new repo state
+- silently widen issue scope
+- claim work happened when it did not
+- replace the need for the lifecycle skills
+
+### Common Recipes
+
+Recipe: bootstrap then qualitative cleanup
+
+1. Run `pr-init`.
+2. Inspect the new root cards.
+3. If the STP is vague, run `stp-editor`.
+4. If the SIP has pre-run truth drift, run `sip-editor`.
+5. Then do qualitative review or move into `pr-ready`.
+
+Recipe: readiness blocked by card drift
+
+1. Run `pr-ready`.
+2. If the repo state is fine but the card is wrong:
+   - use `stp-editor` for STP wording/scope/acceptance-criteria problems
+   - use `sip-editor` for lifecycle-truth or target-surface problems
+3. Re-run `pr-ready`.
+
+Recipe: execution completed, output record still messy
+
+1. Run `pr-run` and complete the actual work.
+2. If the SOR has placeholders or overstated validation/integration claims, run
+   `sor-editor`.
+3. Revalidate the SOR.
+4. Continue to `pr-finish`.
+
+Recipe: finish blocked by card wording
+
+1. Run `pr-finish`.
+2. If finish says the output card is inconsistent or incomplete, do not widen
+   back into implementation.
+3. Use `sor-editor` with the actual executed commands and changed paths.
+4. Re-run `pr-finish`.
+
+### Editor Output Expectations
+
+In practice, you should expect each editor to tell you:
+
+- which card it edited
+- what kind of truth or structure problem it corrected
+- what it refused to change
+- whether another lifecycle step should run next
+
+That makes the editors easy to chain without letting them silently absorb
+workflow control.
+
 ## Skill Details
 
 ## `pr-init`
@@ -653,6 +800,22 @@ policy:
   allow_scope_reframing: false
 ```
 
+### Typical Uses
+
+- after `pr-init`, when the root STP exists but still needs qualitative cleanup
+- after review feedback that says the task scope or acceptance criteria are
+  unclear
+- before `pr-ready`, when the STP is the only thing preventing a clean
+  readiness pass
+
+### Caller Notes
+
+- `pr-init` may hand off here after mechanical bootstrap
+- `pr-ready` may hand off here when the issue is structurally fine but the STP
+  text is not
+- `pr-run` should only hand off here if STP wording drift is blocking correct
+  execution understanding
+
 ## `sip-editor`
 
 ### Purpose
@@ -711,6 +874,22 @@ policy:
   preserve_issue_intent: true
   stop_after_edit: true
 ```
+
+### Typical Uses
+
+- after `pr-init`, to convert a mechanically seeded SIP into truthful pre-run
+  state
+- during `pr-ready`, when the issue is ready except for card drift
+- during `pr-run`, when the worktree exists but the SIP still claims the wrong
+  branch, phase, or target surfaces
+
+### Caller Notes
+
+- `pr-init` can hand off here for truthful pre-run normalization
+- `pr-ready` should prefer this skill when the blocker is SIP truth, not repo
+  state
+- `pr-run` can use this to repair run-bound SIP drift, but should not widen
+  into STP or SOR editing from here
 
 ## `sor-editor`
 
@@ -777,6 +956,23 @@ policy:
   preserve_issue_intent: true
   stop_after_edit: true
 ```
+
+### Typical Uses
+
+- near the end of `pr-run`, when the execution record exists but is not yet
+  truthful enough for finish
+- during `pr-finish`, when publication is blocked by output-card wording rather
+  than actual branch state
+- after review comments that call out placeholders, wrong integration wording,
+  or validation overclaims
+
+### Caller Notes
+
+- `pr-run` should use this for truthful in-flight output-card cleanup
+- `pr-finish` should use this when the finish blocker is card truth and nothing
+  else
+- if the problem is missing validation evidence rather than wording, run the
+  missing validation first and only then come back to `sor-editor`
 
 ## `repo-code-review`
 

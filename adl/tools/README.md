@@ -76,6 +76,9 @@ are not the preferred public workflow:
 
 - Root project entrypoint: `../../README.md`
 - Runtime/CLI usage: `../README.md`
+- Operational skills guide: `skills/docs/OPERATIONAL_SKILLS_GUIDE.md`
+  - includes concrete usage patterns for `pr-init`, `pr-ready`, `pr-run`,
+    `pr-janitor`, `pr-finish`, and the helper card editors
 - Active milestone docs: `../../docs/milestones/v0.87/`
 - Documentation index: `../../docs/README.md`
 - ADRs: `../../docs/adr/`
