@@ -1,0 +1,24 @@
+version: "0.5"
+
+providers:
+  local_mock:
+    profile: "mock:echo-v1"
+
+agents:
+  mock_writer:
+    provider: "local_mock"
+    model: "echo-v1"
+
+tasks:
+  echo_marker:
+    prompt:
+      user: "MOCK_PROVIDER_DEMO_OK"
+
+run:
+  name: "v0-87-1-provider-mock-demo"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "mock_echo"
+        agent: "mock_writer"
+        task: "echo_marker"
