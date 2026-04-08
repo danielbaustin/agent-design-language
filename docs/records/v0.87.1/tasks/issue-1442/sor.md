@@ -40,21 +40,10 @@ Added one bounded `v0.87.1` runtime review walkthrough package and one determini
 
 ## Main Repo Integration (REQUIRED)
 - Main-repo paths updated: none yet
-- Worktree-only paths remaining:
-  - `adl/src/cli/tooling_cmd.rs`
-  - `adl/src/cli/tooling_cmd/review_surface.rs`
-  - `adl/src/cli/tooling_cmd/tests.rs`
-  - `adl/src/cli/usage.rs`
-  - `adl/tools/demo_v0871_review_surface.sh`
-  - `adl/tools/test_demo_v0871_review_surface.sh`
-  - `docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`
-  - `docs/milestones/v0.87.1/FEATURE_DOCS_v0.87.1.md`
-  - `docs/tooling/README.md`
-  - `docs/tooling/review-surface-format.md`
-  - `docs/tooling/reviewer-surface.md`
-- Integration state: worktree_only
-- Verification scope: worktree
-- Integration method used: bounded worktree update pending successful `pr finish`
+- Worktree-only paths remaining: none
+- Integration state: pr_open
+- Verification scope: pr_branch
+- Integration method used: bounded branch update published via `pr finish` and opened as draft PR `#1506`
 - Verification performed:
   - `git diff --check`
   - `cargo fmt --manifest-path adl/Cargo.toml --all --check`
