@@ -891,10 +891,7 @@ fn structured_prompt_validators_accept_canonical_cards() {
 #[test]
 fn structured_prompt_sip_validator_accepts_not_bound_yet_only_in_bootstrap_phase() {
     let sip = valid_sip_text(1431, Path::new("/Users/daniel/git/agent-design-language"))
-        .replace(
-            "Branch: codex/1431-tooling-test",
-            "Branch: not bound yet",
-        );
+        .replace("Branch: codex/1431-tooling-test", "Branch: not bound yet");
 
     validate_sip_text(&sip, Path::new("sip.md"), Some("bootstrap"))
         .expect("bootstrap SIP should accept not bound yet");
