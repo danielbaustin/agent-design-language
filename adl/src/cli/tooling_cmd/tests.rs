@@ -932,6 +932,65 @@ fn review_commands_validate_and_render_expected_surfaces() {
 }
 
 #[test]
+fn review_contract_accepts_explicit_no_material_findings() {
+    let repo = TempRepo::new("review-no-findings");
+    let review = repo.write_rel(
+        ".tmp/tooling_cmd_tests/review.md",
+        &valid_review_markdown().replace(
+            "1. [P1] Example finding.\n2. [P3] Example finding.",
+            "No material findings.",
+        ),
+    );
+
+    assert!(real_verify_repo_review_contract(&[
+        "--review".to_string(),
+        review.to_string_lossy().to_string(),
+    ])
+    .is_ok());
+}
+
+#[test]
+fn review_contract_rejects_missing_findings_signal_and_output_provenance_catches_host_paths() {
+    let repo = TempRepo::new("review-errors");
+    let review = repo.write_rel(
+        ".tmp/tooling_cmd_tests/review.md",
+        &valid_review_markdown().replace(
+            "1. [P1] Example finding.\n2. [P3] Example finding.",
+            "Narrative only.",
+        ),
+    );
+    let review_output = repo.write_rel(
+        ".tmp/tooling_cmd_tests/review-output.yaml",
+        &valid_review_output_yaml(repo.path())
+            .replace("cargo test --quiet", "cat /Users/daniel/secrets.txt"),
+    );
+
+    let review_err = real_verify_repo_review_contract(&[
+        "--review".to_string(),
+        review.to_string_lossy().to_string(),
+    ])
+    .expect_err("missing finding signal should fail");
+    assert!(review_err
+        .to_string()
+        .contains("Findings must contain explicit findings or 'No material findings.'"));
+
+    assert!(real_verify_review_output_provenance(&[
+        "--review".to_string(),
+        review_output.to_string_lossy().to_string(),
+    ])
+    .is_err());
+}
+
+#[test]
+fn review_contract_help_paths_and_unknown_args_are_handled() {
+    assert!(real_verify_repo_review_contract(&["--help".to_string()]).is_err());
+    assert!(real_verify_review_output_provenance(&["--help".to_string()]).is_err());
+
+    assert!(real_verify_repo_review_contract(&["--unknown".to_string()]).is_err());
+    assert!(real_verify_review_output_provenance(&["--unknown".to_string()]).is_err());
+}
+
+#[test]
 fn validate_structured_prompt_accepts_all_three_prompt_types() {
     let repo = TempRepo::new("structured");
     let stp = repo.write_rel(".tmp/tooling_cmd_tests/stp.md", &valid_stp_text());
