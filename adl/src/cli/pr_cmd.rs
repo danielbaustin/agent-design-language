@@ -725,9 +725,21 @@ fn run_doctor_ready(
         &root_bundle_input,
         &root_bundle_output,
     )?;
+    let root_input_body = fs::read_to_string(&root_bundle_input).with_context(|| {
+        format!(
+            "doctor: read root input card: {}",
+            root_bundle_input.display()
+        )
+    })?;
+    let root_branch = field_line_value(&root_bundle_input, "Branch")?;
+    let root_indicates_pre_run = branch_indicates_unbound_state(&root_branch)
+        || root_input_body.contains(
+            "This issue is not started yet; do not assume a branch or worktree already exists.",
+        )
+        || root_input_body
+            .contains("Do not assume a branch or worktree already exists before `pr run`.");
     if !worktree_path.is_dir() {
-        let root_branch = field_line_value(&root_bundle_input, "Branch")?;
-        if branch_indicates_unbound_state(&root_branch) {
+        if root_indicates_pre_run {
             return Ok(DoctorReadyResult {
                 lifecycle_state: "pre_run",
                 worktree: None,
@@ -742,6 +754,22 @@ fn run_doctor_ready(
             });
         }
         bail!("doctor: missing worktree: {}", worktree_path.display());
+    }
+    if root_indicates_pre_run
+        && (!wt_stp.is_file() || !wt_bundle_input.is_file() || !wt_bundle_output.is_file())
+    {
+        return Ok(DoctorReadyResult {
+            lifecycle_state: "pre_run",
+            worktree: None,
+            source: path_relative_to_repo(repo_root, &source_path),
+            root_stp: path_relative_to_repo(repo_root, &root_stp),
+            root_input: path_relative_to_repo(repo_root, &root_bundle_input),
+            root_output: path_relative_to_repo(repo_root, &root_bundle_output),
+            wt_stp: None,
+            wt_input: None,
+            wt_output: None,
+            status: "PASS",
+        });
     }
     let wt_branch = run_capture(
         "git",
