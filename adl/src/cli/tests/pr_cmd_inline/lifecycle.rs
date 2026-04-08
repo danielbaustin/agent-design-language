@@ -304,6 +304,137 @@ fn real_pr_doctor_full_reports_pre_run_ready_without_worktree() {
 }
 
 #[test]
+fn real_pr_doctor_full_accepts_pre_run_analysis_issue_with_partial_worktree_residue() {
+    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let temp = unique_temp_dir("adl-pr-doctor-pre-run-partial-worktree");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "doctor pre-run partial worktree\n").expect("seed file");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref = IssueRef::new(1393, "v0.86", "doctor-pre-run-analysis").expect("issue ref");
+    write_authored_issue_prompt(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Doctor pre-run analysis issue",
+    );
+    real_pr(&[
+        "init".to_string(),
+        "1393".to_string(),
+        "--slug".to_string(),
+        "doctor-pre-run-analysis".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Doctor pre-run analysis issue".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr init");
+
+    let root_sip = issue_ref.task_bundle_input_path(&repo);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    let not_started_sip = format!(
+        "# ADL Input Card\n\nTask ID: issue-1393\nRun ID: issue-1393\nVersion: v0.86\nTitle: [v0.86][tools] Doctor pre-run analysis issue\nBranch: codex/1393-doctor-pre-run-analysis\n\nContext:\n- Issue: https://github.com/example/repo/issues/1393\n- PR: none\n- Source Issue Prompt: {source_rel}\n- Docs: none\n- Other: none\n\n## Agent Execution Rules\n- This issue is not started yet; do not assume a branch or worktree already exists.\n- Do not run `pr start`; use the current issue-mode `pr run` flow only if execution later becomes necessary.\n\n## Prompt Spec\n```yaml\nprompt_schema: adl.v1\nactor:\n  role: execution_agent\n  name: codex\nmodel:\n  id: gpt-5-codex\n  determinism_mode: stable\ninputs:\n  sections:\n    - goal\n    - required_outcome\n    - acceptance_criteria\n    - inputs\n    - target_files_surfaces\n    - validation_plan\n    - demo_proof_requirements\n    - constraints_policies\n    - system_invariants\n    - reviewer_checklist\n    - non_goals_out_of_scope\n    - notes_risks\n    - instructions_to_agent\noutputs:\n  output_card: .adl/v0.86/tasks/{bundle}/sor.md\n  summary_style: concise_structured\nconstraints:\n  include_system_invariants: true\n  include_reviewer_checklist: true\n  disallow_secrets: true\n  disallow_absolute_host_paths: true\nautomation_hints:\n  source_issue_prompt_required: true\n  target_files_surfaces_recommended: true\n  validation_plan_required: true\n  required_outcome_type_supported: true\nreview_surfaces:\n  - card_review_checklist.v1\n  - card_review_output.v1\n  - card_reviewer_gpt.v1.1\n```\n\n## Goal\n\nAnalyze a pre-run issue without requiring a bound worktree.\n\n## Required Outcome\n\n- doctor should report truthful pre-run readiness\n\n## Acceptance Criteria\n\n- pre-run analysis issues do not fail solely on missing worktree-bound cards\n\n## Inputs\n- source issue prompt\n- root cards\n\n## Target Files / Surfaces\n- adl/src/cli/pr_cmd.rs\n- adl/src/cli/tests/pr_cmd_inline/lifecycle.rs\n\n## Validation Plan\n- Required commands: cargo test --manifest-path Cargo.toml pr_cmd -- --nocapture\n- Required tests: targeted lifecycle coverage\n- Required artifacts / traces: none\n- Required reviewer or demo checks: none\n\n## Demo / Proof Requirements\n- Required demo(s): none\n- Required proof surface(s): doctor output and tests\n- If no demo is required, say why: lifecycle defect only\n\n## Constraints / Policies\n- Determinism requirements: stable doctor classification for identical pre-run state\n- Security / privacy requirements: no secrets or absolute host paths\n- Resource limits (time/CPU/memory/network): standard local test limits\n\n## System Invariants (must remain true)\n- Deterministic execution for identical inputs.\n- No hidden state or undeclared side effects.\n- Artifacts remain replay-compatible with the replay runner.\n- Trace artifacts contain no secrets, prompts, tool arguments, or absolute host paths.\n- Artifact schema changes are explicit and approved.\n\n## Reviewer Checklist (machine-readable hints)\n```yaml\ndeterminism_required: true\nnetwork_allowed: false\nartifact_schema_change: false\nreplay_required: true\nsecurity_sensitive: true\nci_validation_required: true\n```\n\n## Non-goals / Out of scope\n- binding execution context for this analysis issue\n\n## Notes / Risks\n- none\n\n## Instructions to the Agent\n- Read the linked source issue prompt before starting work.\n- Write results to the paired output card file.\n",
+        source_rel = path_relative_to_repo(&repo, &source_path),
+        bundle = issue_ref.task_bundle_dir_name(),
+    );
+    fs::write(&root_sip, not_started_sip).expect("write not-started root sip");
+
+    let partial_worktree = issue_ref.default_worktree_path(&repo, None);
+    let partial_bundle = issue_ref.task_bundle_dir_path(&partial_worktree);
+    fs::create_dir_all(&partial_bundle).expect("partial worktree bundle dir");
+    fs::copy(
+        issue_ref.task_bundle_stp_path(&repo),
+        issue_ref.task_bundle_stp_path(&partial_worktree),
+    )
+    .expect("copy stp into partial worktree");
+
+    let doctor = real_pr(&[
+        "doctor".to_string(),
+        "1393".to_string(),
+        "--slug".to_string(),
+        "doctor-pre-run-analysis".to_string(),
+        "--mode".to_string(),
+        "full".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+        "--json".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    doctor.expect("doctor pre-run partial worktree");
+}
+
+#[test]
 fn real_pr_doctor_full_succeeds_when_invoked_from_started_worktree() {
     let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
     let temp = unique_temp_dir("adl-pr-doctor-worktree-cwd");
