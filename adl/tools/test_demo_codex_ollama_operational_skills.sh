@@ -60,6 +60,14 @@ grep -Fq '"codex_working_root"' "$MANIFEST_FILE" || {
   echo "assertion failed: manifest does not record codex working root" >&2
   exit 1
 }
+grep -Fq '"capability_manifest"' "$MANIFEST_FILE" || {
+  echo "assertion failed: manifest does not record capability manifest path" >&2
+  exit 1
+}
+grep -Fq '"execution_mode": "native_tool_calling"' "$MANIFEST_FILE" || {
+  echo "assertion failed: manifest does not record native tool execution mode" >&2
+  exit 1
+}
 grep -Fq 'Do not use absolute host paths.' "$PROMPT_FILE" || {
   echo "assertion failed: prompt does not reinforce relative-path execution" >&2
   exit 1
