@@ -10,6 +10,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `demo_v0871_operator_surface.sh`: canonical `v0.87.1` operator-surface proof wrapper for runtime bring-up and artifact inspection.
 - `demo_v0871_runtime_state.sh`: canonical `v0.87.1` runtime-state proof wrapper for paused-vs-completed persistence inspection.
 - `normalize_adl_cards.sh`: repairs `.adl/cards/<issue>/` compatibility links and materializes missing bootstrap `sor.md` files for existing task bundles.
+- `demo_v0871_multi_agent_discussion.sh`: canonical `v0.87.1` bounded multi-agent discussion proof wrapper for a five-turn Claude + ChatGPT runtime demo.
 - `worktree_doctor.sh`, `worktree_prune.sh`: deterministic worktree governance and safe cleanup helpers.
 - `adl tooling ...`: Rust-owned tooling surface for prompt/card/review validation helpers, with legacy wrapper scripts preserved at the historical `adl/tools/*` paths.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
@@ -35,6 +36,9 @@ bash adl/tools/install_adl_pr_cycle_skill.sh
 
 # normalize compatibility card links for existing task bundles
 bash adl/tools/normalize_adl_cards.sh --root "$(pwd)" --version v0.87.1
+
+# run the bounded Claude + ChatGPT discussion demo through the real runtime
+bash adl/tools/demo_v0871_multi_agent_discussion.sh
 
 # bootstrap the local root task bundle for an existing issue
 bash ./adl/tools/pr.sh init <issue_num> --slug <slug>
