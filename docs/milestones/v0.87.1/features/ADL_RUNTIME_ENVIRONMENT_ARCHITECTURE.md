@@ -107,6 +107,11 @@ In `v0.87.1`, the runtime environment becomes one concrete implementation contra
 
 This is the authoritative bring-up/configuration surface for this milestone. Later lifecycle, trace, resilience, and review work should reuse it rather than inventing separate runtime-root logic.
 
+The runtime reviewable trace proof path for this milestone should converge on:
+- `logs/trace_v1.json` as the canonical exported runtime trace artifact
+- `run_summary.json` as the reviewer-facing index that links to that trace artifact
+- trace-bundle export surfaces that preserve `trace_v1.json` alongside the activation log for replay and review
+
 ### 1. Runtime roots and environment configuration
 
 The runtime provides:

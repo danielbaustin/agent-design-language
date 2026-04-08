@@ -436,6 +436,80 @@ fn build_trace_v1_envelope(
 
     for event in &tr.events {
         match event {
+            trace::TraceEvent::LifecyclePhaseEntered { ts_ms, phase, .. } => push_trace_v1_event(
+                &mut events,
+                &mut next_id,
+                TraceEventV1 {
+                    event_id: String::new(),
+                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    event_type: TraceEventTypeV1::LifecyclePhase,
+                    trace_id: trace_id.clone(),
+                    run_id: resolved.run_id.clone(),
+                    span_id: format!("run:{}:phase:{}", resolved.run_id, phase.as_str()),
+                    parent_span_id: Some(root_span_id.clone()),
+                    actor: TraceActorV1 {
+                        r#type: TraceActorTypeV1::System,
+                        id: "runtime".to_string(),
+                    },
+                    scope: TraceScopeV1 {
+                        level: TraceScopeLevelV1::Run,
+                        name: phase.as_str().to_string(),
+                    },
+                    inputs_ref: Some(run_ref.clone()),
+                    outputs_ref: Some(activation_log_ref.clone()),
+                    artifact_ref: Some(activation_log_ref.clone()),
+                    decision_context: Some(TraceDecisionContextV1 {
+                        context: "runtime lifecycle phase".to_string(),
+                        outcome: phase.as_str().to_string(),
+                        rationale: None,
+                    }),
+                    provider: None,
+                    error: None,
+                    contract_validation: None,
+                },
+            ),
+            trace::TraceEvent::ExecutionBoundaryCrossed {
+                ts_ms,
+                boundary,
+                state,
+                ..
+            } => push_trace_v1_event(
+                &mut events,
+                &mut next_id,
+                TraceEventV1 {
+                    event_id: String::new(),
+                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    event_type: TraceEventTypeV1::ExecutionBoundary,
+                    trace_id: trace_id.clone(),
+                    run_id: resolved.run_id.clone(),
+                    span_id: format!(
+                        "run:{}:boundary:{}:{}",
+                        resolved.run_id,
+                        boundary.as_str(),
+                        state
+                    ),
+                    parent_span_id: Some(root_span_id.clone()),
+                    actor: TraceActorV1 {
+                        r#type: TraceActorTypeV1::System,
+                        id: "runtime".to_string(),
+                    },
+                    scope: TraceScopeV1 {
+                        level: TraceScopeLevelV1::Run,
+                        name: boundary.as_str().to_string(),
+                    },
+                    inputs_ref: Some(run_ref.clone()),
+                    outputs_ref: Some(activation_log_ref.clone()),
+                    artifact_ref: Some(activation_log_ref.clone()),
+                    decision_context: Some(TraceDecisionContextV1 {
+                        context: "execution boundary".to_string(),
+                        outcome: state.clone(),
+                        rationale: None,
+                    }),
+                    provider: None,
+                    error: None,
+                    contract_validation: None,
+                },
+            ),
             trace::TraceEvent::StepStarted {
                 ts_ms,
                 step_id,

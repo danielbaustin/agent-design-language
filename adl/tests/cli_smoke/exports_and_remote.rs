@@ -305,6 +305,11 @@ fn learn_export_trace_bundle_v2_is_deterministic_and_sanitized() {
         r#"{"activation_log_version":1,"ordering":"append_only_emission_order","stable_ids":{"step_id":"replay_stable_with_same_plan","delegation_id":"replay_stable_with_same_activation_log","run_id":"run_scoped_not_cross_run_stable"},"events":[{"RunStarted":{"ts":"2026-03-01T00:00:00.000Z","run_id":"r1","workflow_id":"wf","version":"0.75"}}]}"#,
     )
     .unwrap();
+    fs::write(
+        run.join("logs").join("trace_v1.json"),
+        r#"{"schema_version":"trace.v1","events":[{"event_id":"trace-v1-0001","timestamp":"2026-03-01T00:00:00.000Z","event_type":"RUN_START","trace_id":"r1","run_id":"r1","span_id":"run:r1","parent_span_id":null,"actor":{"type":"agent","id":"wf"},"scope":{"level":"run","name":"wf"},"inputs_ref":"artifacts/r1/run.json","outputs_ref":"artifacts/r1/logs/trace_v1.json","artifact_ref":"artifacts/r1/run.json","decision_context":null,"provider":null,"error":null,"contract_validation":null},{"event_id":"trace-v1-0002","timestamp":"2026-03-01T00:00:01.000Z","event_type":"RUN_END","trace_id":"r1","run_id":"r1","span_id":"run:r1","parent_span_id":null,"actor":{"type":"agent","id":"wf"},"scope":{"level":"run","name":"wf"},"inputs_ref":"artifacts/r1/run.json","outputs_ref":"artifacts/r1/steps.json","artifact_ref":"artifacts/r1/logs/trace_v1.json","decision_context":{"context":"run completion","outcome":"success","rationale":null},"provider":null,"error":null,"contract_validation":null}]}"#,
+    )
+    .unwrap();
 
     let out1 = d.join("trace-bundle-1");
     let out2 = d.join("trace-bundle-2");
@@ -352,6 +357,7 @@ fn learn_export_trace_bundle_v2_is_deterministic_and_sanitized() {
         "runs/r1/metadata.json",
         "runs/r1/run_summary.json",
         "runs/r1/logs/activation_log.json",
+        "runs/r1/logs/trace_v1.json",
     ] {
         all_json.push_str(&fs::read_to_string(out1.join("trace_bundle_v2").join(rel)).unwrap());
         all_json.push('\n');

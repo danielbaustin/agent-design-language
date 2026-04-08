@@ -122,6 +122,11 @@ pub(crate) fn build_run_summary(
         .strip_prefix(run_paths.run_dir())
         .map(|p| p.display().to_string())
         .unwrap_or_else(|_| "meta/cluster_groundwork.json".to_string());
+    let trace_rel = run_paths
+        .trace_v1_json()
+        .strip_prefix(run_paths.run_dir())
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| "logs/trace_v1.json".to_string());
 
     RunSummaryArtifact {
         run_summary_version: RUN_SUMMARY_VERSION,
@@ -188,7 +193,7 @@ pub(crate) fn build_run_summary(
                 .cluster_groundwork_json()
                 .is_file()
                 .then_some(cluster_groundwork_rel),
-            trace_json: None,
+            trace_json: Some(trace_rel),
         },
     }
 }

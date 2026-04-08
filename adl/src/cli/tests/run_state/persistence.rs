@@ -16,8 +16,13 @@ fn write_run_state_and_load_resume_round_trip() {
     let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
 
     let mut tr = trace::Trace::new(run_id.clone(), "wf".to_string(), "0.5".to_string());
+    tr.lifecycle_phase_entered(execute::RuntimeLifecyclePhase::Init);
+    tr.execution_boundary_crossed(execute::ExecutionBoundary::RuntimeInit, "fresh_start");
+    tr.lifecycle_phase_entered(execute::RuntimeLifecyclePhase::Execute);
     tr.step_started("s1", "a1", "p1", "t1", None);
     tr.step_finished("s1", true);
+    tr.execution_boundary_crossed(execute::ExecutionBoundary::Pause, "entered");
+    tr.lifecycle_phase_entered(execute::RuntimeLifecyclePhase::Teardown);
 
     let pause = execute::PauseState {
         paused_step_id: "s1".to_string(),
@@ -76,6 +81,8 @@ fn write_run_state_and_load_resume_round_trip() {
         .map(|event| event.event_type.clone())
         .collect();
     assert!(event_types.contains(&TraceEventTypeV1::RunStart));
+    assert!(event_types.contains(&TraceEventTypeV1::LifecyclePhase));
+    assert!(event_types.contains(&TraceEventTypeV1::ExecutionBoundary));
     assert!(event_types.contains(&TraceEventTypeV1::StepStart));
     assert!(event_types.contains(&TraceEventTypeV1::StepEnd));
     assert!(event_types.contains(&TraceEventTypeV1::RunEnd));
