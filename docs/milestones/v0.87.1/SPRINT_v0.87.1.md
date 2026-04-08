@@ -73,13 +73,13 @@ Goal:
 Prove the runtime through integrated demos, quality gates, and doc/review convergence.
 
 Current scope:
-- `WP-09` cross-document consistency pass
-- `WP-10` acceptance criteria finalization
-- `WP-11` sprint plan alignment
-- `WP-12` checklist / release-gate completion
-- `WP-13` demo matrix and integration demos
-- `WP-14` coverage / quality gate
-- `WP-15` docs + review pass
+- `WP-09` cross-document consistency pass - `#1458`
+- `WP-10` acceptance criteria finalization - `#1459`
+- `WP-11` sprint plan alignment - `#1460`
+- `WP-12` checklist / release-gate completion - `#1461`
+- `WP-13` demo matrix and integration demos - `#1462`
+- `WP-14` coverage / quality gate - `#1463`
+- `WP-15` docs + review pass - `#1464`
 
 Proof surfaces:
 - canonical docs no longer contradict the runtime implementation
@@ -109,7 +109,7 @@ Proof surfaces:
 - Use issue cards (`input`/`output`) for each item.
 - Keep changes scoped per issue; use draft PRs until checks pass.
 - Run required quality gates (`fmt`, `clippy`, `test`, demo validators, and milestone review checks) for the changed surfaces.
-- Sprint 1 issue references are now assigned; later WPs may remain `TBD` until their planning pass opens.
+- Sprint 1 and Sprint 2 issue references are now assigned; later review-tail WPs may remain `TBD` until their planning pass opens.
 
 ## Risks / Dependencies
 - Dependency: upstream v0.87 artifacts (trace, provider, skills) remain stable
