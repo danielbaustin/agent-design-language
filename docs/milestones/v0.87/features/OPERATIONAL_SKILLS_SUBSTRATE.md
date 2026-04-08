@@ -4,7 +4,7 @@
 
 ## Metadata
 - Owner: `adl`
-- Status: `draft`
+- Status: `promoted`
 - Target milestone: `v0.87`
 - Purpose: Define the first real operational skills substrate for ADL and establish the bridge between ADL-native skills and Codex-compatible skill packaging.
 

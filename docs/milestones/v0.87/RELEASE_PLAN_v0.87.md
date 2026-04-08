@@ -6,7 +6,7 @@
 - Target window: `TBD`
 - Release type: **Substrate consolidation release**
 - Owner: `adl`
-- Status: `PLANNING`
+- Status: `SPRINT 3 CONVERGENCE IN PROGRESS`
 
 ---
 

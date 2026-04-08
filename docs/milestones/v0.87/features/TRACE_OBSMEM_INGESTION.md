@@ -5,7 +5,7 @@
 
 ## Metadata
 - Owner: `adl`
-- Status: `draft`
+- Status: `promoted`
 - Target milestone: `v0.87`
 - Parent: `TRACE_SYSTEM_ARCHITECTURE.md`
 - Depends on:

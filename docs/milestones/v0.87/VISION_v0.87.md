@@ -6,7 +6,7 @@
 - Version: `0.87`
 - Date: `2026`
 - Owner: `Agent Logic, Inc.`
-- Related issues: TBD
+- Related issues: `#1292-#1302`, `#1345-#1350`, `#1354`
 
 ## Purpose
 Define the milestone-level vision for v0.87: consolidating the gains of v0.86 into a coherent, reliable, and externally credible system, while preparing the substrate for identity, delegation, and higher-order cognition in v0.9+.
