@@ -31,7 +31,7 @@ def build_output(agent: str, prompt: str) -> str:
             "# Turn 1 - ChatGPT\n\n"
             "ChatGPT sets out a careful pot of Earl Grey and proposes a bounded "
             "five-turn discussion because a small explicit workflow is easier to "
-            "review than a vague swarm. The topic stays narrow: "
+            "review than a vague multi-agent abstraction. The topic stays narrow: "
             f"{topic}"
         )
     if agent == "claude" and turn_id == "02":
