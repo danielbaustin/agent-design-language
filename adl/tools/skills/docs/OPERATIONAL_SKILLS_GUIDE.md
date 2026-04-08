@@ -19,6 +19,7 @@ The tracked skill set is:
 - `pr-run`
 - `pr-janitor`
 - `pr-finish`
+- `pr-closeout`
 - `repo-code-review`
 - `stp-editor`
 - `sip-editor`
@@ -34,6 +35,7 @@ The normal workflow is:
 4. `pr-run`
 5. `pr-janitor`
 6. `pr-finish`
+7. `pr-closeout`
 
 `repo-code-review` is cross-cutting rather than phase-specific.
 
@@ -90,6 +92,8 @@ The current automation model is:
 - `pr-run` consumes doctor-backed readiness and performs bounded execution
 - `pr-janitor` watches a PR in flight and handles bounded blocker remediation
 - `pr-finish` handles truthful closeout/publication
+- `pr-closeout` handles post-merge or post-closure local finalization
+- `pr-closeout` also covers truthful no-PR closure dispositions like superseded, duplicate, or docs-only-closed issues
 - editor skills may be called by lifecycle skills when the blocker is card-local rather than lifecycle-orchestration state
 
 `ready` and `preflight` are compatibility aliases that may still exist in repo
@@ -143,6 +147,11 @@ Good patterns:
   in-flight execution record
 - `pr-finish` uses `sor-editor` only when the finish blocker is output-card
   truthfulness
+- after merge or intentional closure is confirmed, `pr-closeout` finalizes the
+  cards and prunes the worktree
+- if the issue closed without a PR because it was superseded, duplicated, or
+  intentionally resolved without code publication, `pr-closeout` records that
+  disposition and the relevant follow-on links before pruning
 
 Bad patterns:
 
@@ -743,6 +752,95 @@ Use the tracked finish schema and skill contract:
 `pr-finish` is the closeout/publication boundary. It should not reopen broad
 implementation work or silently replace `pr-janitor`.
 
+## `pr-closeout`
+
+### Purpose
+
+`pr-closeout` owns truthful local finalization after a PR is merged or
+intentionally closed.
+
+It:
+
+- verifies the final PR/issue closure state
+- finalizes STP, SIP, and SOR truth
+- reconciles root/worktree card state when needed
+- confirms no required artifacts remain only in the worktree
+- prunes the worktree safely
+
+### When To Use It
+
+Use `pr-closeout` when:
+
+- the PR outcome is already known
+- publication and review are over
+- the remaining work is local workflow truth and cleanup
+
+Do not use it for:
+
+- publishing or updating a draft PR
+- CI triage while a PR is still in flight
+- new implementation work
+- repo-wide archival chores
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- one of:
+  - `target.issue_number`
+  - `target.pr_number`
+  - `target.worktree_path`
+- explicit `policy.closure_outcome`
+
+Structured schema:
+
+- `adl/tools/skills/docs/PR_CLOSEOUT_SKILL_INPUT_SCHEMA.md`
+- schema id: `pr_closeout.v1`
+
+### Example Invocation
+
+```yaml
+Use $pr-closeout at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-closeout/SKILL.md with this validated input:
+
+skill_input_schema: pr_closeout.v1
+mode: closeout_issue
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  issue_number: 1443
+  pr_number: 1433
+  branch: codex/1443-v0-87-1-tools-add-post-merge-issue-closeout-skill-for-pr-workflow
+  worktree_path: /Users/daniel/git/agent-design-language/.worktrees/adl-wp-1443
+  root_stp_path: .adl/v0.87.1/tasks/issue-1443__v0-87-1-tools-add-post-merge-issue-closeout-skill-for-pr-workflow/stp.md
+  root_sip_path: .adl/v0.87.1/tasks/issue-1443__v0-87-1-tools-add-post-merge-issue-closeout-skill-for-pr-workflow/sip.md
+  root_sor_path: .adl/v0.87.1/tasks/issue-1443__v0-87-1-tools-add-post-merge-issue-closeout-skill-for-pr-workflow/sor.md
+  wt_stp_path: .adl/v0.87.1/tasks/issue-1443__v0-87-1-tools-add-post-merge-issue-closeout-skill-for-pr-workflow/stp.md
+  wt_sip_path: .adl/v0.87.1/tasks/issue-1443__v0-87-1-tools-add-post-merge-issue-closeout-skill-for-pr-workflow/sip.md
+  wt_sor_path: .adl/v0.87.1/tasks/issue-1443__v0-87-1-tools-add-post-merge-issue-closeout-skill-for-pr-workflow/sor.md
+policy:
+  closure_outcome: merged
+  sync_root_bundle: true
+  prune_worktree: true
+  delete_local_branch: false
+  stop_after_closeout: true
+```
+
+### Typical Uses
+
+- after `pr-janitor` confirms the PR has merged and there are no remaining
+  blocker states
+- after an intentionally closed PR where the issue still needs final truthful
+  local cleanup
+- when the cards are complete but the worktree and root bundle still need final
+  reconciliation
+
+### Caller Notes
+
+- `pr-finish` should not absorb this phase
+- `pr-janitor` may recommend this phase once the PR outcome is settled
+- use `stp-editor`, `sip-editor`, or `sor-editor` only when the closeout
+  blocker is card-local rather than closure-state ambiguity
+
 ## `stp-editor`
 
 ### Purpose
@@ -1053,6 +1151,8 @@ Use this quick selector:
   - `pr-janitor`
 - need to finalize closeout/publication:
   - `pr-finish`
+- need to finalize local issue state after merge/closure:
+  - `pr-closeout`
 - need a broad findings-first code review:
   - `repo-code-review`
 

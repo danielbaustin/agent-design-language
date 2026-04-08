@@ -1,0 +1,85 @@
+version: "0.1"
+kind: "adl-skill"
+id: "pr-closeout"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "pr_closeout.v1"
+    reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/PR_CLOSEOUT_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "closeout_issue"
+      - "closeout_pr"
+      - "closeout_worktree"
+    policy_fields:
+      - "closure_outcome"
+      - "closure_references"
+      - "sync_root_bundle"
+      - "prune_worktree"
+      - "delete_local_branch"
+      - "stop_after_closeout"
+    mode_requirements:
+      closeout_issue:
+        required_target_fields:
+          - "issue_number"
+      closeout_pr:
+        required_target_fields:
+          - "pr_number"
+      closeout_worktree:
+        required_target_fields:
+          - "worktree_path"
+  intent:
+    - "issue_post_merge_closeout"
+    - "card_finalization"
+    - "artifact_reconciliation"
+    - "worktree_cleanup"
+  required_inputs:
+    - "repo_root"
+  require_one_of:
+    - "issue_number"
+    - "pr_number"
+    - "worktree_path"
+    - "branch"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_pr_closeout.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "policy.stop_after_closeout_must_be_true"
+    - "policy.closure_outcome_must_be_explicit"
+    - "policy.closure_references_must_be_present_when_closure_outcome_is_superseded_or_duplicate"
+execution:
+  mode: "auto_apply"
+  allow_code_edits: true
+  allow_network: true
+  allow_subagents: false
+  parallelism_policy: "parallel_across_distinct_closed_issues_only"
+  workflow_role: "post_merge_closeout"
+  stop_before:
+    - "repo_wide_cleanup"
+    - "archival_automation"
+  preferred_path: "validated_structured_input_then_issue_closure_verification_then_card_reconciliation_then_prune"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  writes_limited_to:
+    - "issue-scoped repository files"
+    - ".adl/**"
+    - "issue worktree surfaces"
+  must_not_write:
+    - "main branch directly outside the issue surface"
+    - "unrelated worktrees"
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-pr-closeout.md"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true

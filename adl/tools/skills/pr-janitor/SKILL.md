@@ -155,6 +155,7 @@ It must not:
 Normal handoff targets include:
 - `repo-code-review`
 - `pr-ready`
+- `pr-closeout` when the PR outcome is settled and only truthful local closeout remains
 - a human reviewer
 - a focused implementation/fix task
 
