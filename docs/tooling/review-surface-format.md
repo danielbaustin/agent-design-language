@@ -1,8 +1,8 @@
 # ADL Review Surface Format
 
-Status: Draft (v0.87)
+Status: Active
 Applies to: human-authored and skill-generated review artifacts
-Primary milestone feature: `docs/milestones/v0.87/features/REVIEW_SURFACE_FORMALIZATION.md`
+Primary milestone features: `docs/milestones/v0.87/features/REVIEW_SURFACE_FORMALIZATION.md`, `docs/milestones/v0.87.1/features/ADL_RUNTIME_ENVIRONMENT_ARCHITECTURE.md`
 
 ## Purpose
 
@@ -18,6 +18,7 @@ This is the shared contract for review artifacts such as:
 - card reviews
 - trace or demo reviews
 - internal and external readiness reviews
+- runtime review walkthrough packages
 
 ## Canonical Major Sections
 
@@ -145,6 +146,29 @@ Fix Direction: <bounded repair direction>
 - if a review contains no material findings, that absence must be explicit
 - no absolute host paths
 - no secrets, raw prompts, or raw tool arguments
+
+## Runtime Review Package Profile
+
+For bounded runtime review walkthroughs such as `v0.87.1 D8`, the review package profile is:
+
+- one assembled review root
+- one primary manifest for the walkthrough package
+- one human-readable README that tells the reviewer which proof surface to inspect first
+- stable package ordering for the bounded demo surfaces included in the walkthrough
+
+The first runtime package profile uses:
+
+- `artifacts/v0871/review_surface/demo_manifest.json`
+- `artifacts/v0871/review_surface/README.md`
+- `adl tooling review-runtime-surface --review-root <dir>`
+
+This profile remains structurally compatible with the broader review-surface contract:
+
+- fixed identity/version fields
+- explicit proof-surface pointers
+- deterministic package ordering
+- repo-relative references only
+- stable reviewer guidance
 
 ## First v0.87 Implementation Surface
 

@@ -1,6 +1,6 @@
 # Reviewer Surface
 
-This document describes the first bounded repo-local review helper introduced for WP-06.
+This document describes the bounded reviewer entry surfaces that make ADL runtime and card-review artifacts inspectable without reconstructing proof roots by hand.
 
 ## Purpose
 
@@ -11,8 +11,9 @@ It exists to provide:
 - a concrete repo-local review/helper surface
 - a fixed subset of checklist-aware review behavior
 - a stable fixture and deterministic review run
+- one bounded runtime reviewer entrypoint for `v0.87.1`
 
-## Current Entry Point
+## Current Entry Points
 
 Use:
 
@@ -22,7 +23,14 @@ adl tooling review-card-surface \
   --output docs/tooling/examples/reviewer-regression/issue-661/output_661.md
 ```
 
-## Current Checks
+For the `v0.87.1` runtime reviewer walkthrough, use:
+
+```bash
+bash adl/tools/demo_v0871_review_surface.sh
+adl tooling review-runtime-surface --review-root artifacts/v0871/review_surface
+```
+
+## Card Review Checks
 
 The first slice checks:
 
@@ -33,7 +41,18 @@ The first slice checks:
 - absence of absolute host paths in the output card
 - canonical Prompt Spec review-surface ordering when present
 
-## Deterministic Fixture
+## Runtime Review Checks
+
+The `v0.87.1` runtime review surface checks:
+
+- one canonical D8 manifest and README exist
+- manifest identity fields are normalized
+- manifest paths are explicit and repo-relative
+- the bounded D6 and D7 package entry ordering is stable
+- referenced runtime proof surfaces exist
+- the review package contains no absolute host paths
+
+## Deterministic Fixtures
 
 Use:
 
@@ -44,6 +63,16 @@ bash adl/tools/test_review_card_surface.sh
 This fixture run compares the tool output against:
 
 - `docs/tooling/examples/reviewer-surface/issue-661/expected_review_surface_output_661.yaml`
+
+For the runtime reviewer walkthrough, use:
+
+```bash
+bash adl/tools/test_demo_v0871_review_surface.sh
+```
+
+This fixture run builds the D8 review package and validates it with:
+
+- `adl tooling review-runtime-surface --review-root <assembled review root>`
 
 ## Scope Notes
 
