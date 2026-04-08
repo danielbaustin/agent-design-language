@@ -58,6 +58,9 @@ These docs describe worktree governance, large-module tracking, and related main
 
 Important repo-local tooling surfaces include:
 
+- `adl/tools/pr.sh doctor` / `adl pr doctor` — canonical PR readiness and drift diagnostics
+- `adl/tools/pr.sh run` / `adl pr run` — canonical execution-context binder
+- `adl/tools/pr.sh finish` / `adl pr finish` — canonical publication / PR open-update path
 - `adl tooling lint-prompt-spec` — Prompt Spec lint and validation
 - `adl tooling card-prompt` — deterministic prompt generation from cards
 - `adl tooling validate-structured-prompt` — structured prompt contract validation
@@ -66,6 +69,10 @@ Important repo-local tooling surfaces include:
 - `adl/tools/*` wrappers remain available as compatibility entrypoints over the Rust-owned commands
 - `adl/tools/report_large_rust_modules.sh` — non-blocking Rust implementation-module size report
 - `adl/tools/sync_task_bundle_prompts.sh` — refresh canonical local task-bundle prompt layout from compatibility paths
+
+Deprecated compatibility aliases such as `pr ready`, `pr preflight`, and
+`pr start` may still appear in older tests or docs, but they are not the
+preferred public control-plane surface.
 
 ## Current Status
 

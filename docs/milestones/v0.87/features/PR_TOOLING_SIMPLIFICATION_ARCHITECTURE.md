@@ -175,7 +175,8 @@ Examples:
 - `create` remains as a compatibility path while bootstrap semantics settle,
   but the long-term public model should collapse new-issue bootstrap into `init`
 - `ready` and `preflight` become aliases for `doctor`
-- the bounded consolidation target for WP-09 is to make that aliasing true in the live control plane, not only in docs
+- the bounded consolidation target after the Rust helper rewrites is to keep
+  those aliases functioning without teaching them as first-class commands
 - `card`, `output`, and `cards` become either hidden maintenance commands or
   internal Rust helpers rather than prominent user commands
 

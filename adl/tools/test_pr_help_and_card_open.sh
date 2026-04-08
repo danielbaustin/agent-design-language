@@ -43,6 +43,9 @@ assert_contains() {
 
   help_out="$("$BASH_BIN" adl/tools/pr.sh help)"
   assert_contains "Commands:" "$help_out" "help alias"
+  assert_contains "Compatibility / maintenance commands:" "$help_out" "compatibility section"
+  assert_contains "  run     <issue>" "$help_out" "canonical run help"
+  assert_contains "  doctor  <issue>" "$help_out" "canonical doctor help"
   if grep -Fq "  new     " <<<"$help_out"; then
     echo "assertion failed: help should not advertise retired pr new command" >&2
     exit 1

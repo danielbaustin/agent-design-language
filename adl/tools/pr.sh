@@ -1617,13 +1617,15 @@ Commands:
   init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v>]
   run     <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
   run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
+  doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
+  finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
+
+Compatibility / maintenance commands:
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
   output  <issue> [input|output] ... [--version <v0.2>] [-f <output_card.md>]
   cards   <issue> [--version <v0.2>] [--no-fetch-issue]
-  doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
   ready   <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--json]
   preflight <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--json]
-  finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
   open
   status
 
@@ -1653,6 +1655,7 @@ Notes:
 - `pr doctor <issue> ...` is the preferred public readiness and drift diagnostic surface.
 - `pr start <issue> ...` remains only as a legacy alias over the same Rust binding path and is no longer part of the taught public flow.
 - `pr ready` and `pr preflight` remain only as deprecated compatibility aliases over `pr doctor`.
+- `card`, `output`, `cards`, `open`, and `status` are maintenance-oriented compatibility surfaces rather than the preferred workflow entrypoints.
 - PRs are created as DRAFT by default to preserve human review.
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - run is a bounded v0.85 wrapper over the Rust adl runtime; browser/editor direct invocation remains follow-on work.
