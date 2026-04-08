@@ -4,14 +4,14 @@ use super::*;
 fn render_generated_issue_prompt_preserves_bootstrap_contract() {
     let content = render_generated_issue_prompt(
         1151,
-        "v0-86-tools-implement-rust-owned-pr-init-and-pr-create-workflow-surfaces",
-        "[v0.86][tools] Implement Rust-owned pr init and pr create workflow surfaces",
+        "v0-86-tools-implement-rust-owned-pr-init-and-pr-create-control-plane-surfaces",
+        "[v0.86][tools] Implement Rust-owned pr init and pr create control-plane surfaces",
         "track:roadmap,type:task,area:tooling,version:v0.86",
         "https://github.com/example/repo/issues/1151",
     );
     assert!(content.contains("issue_number: 1151"));
     assert!(content.contains(
-        "slug: \"v0-86-tools-implement-rust-owned-pr-init-and-pr-create-workflow-surfaces\""
+        "slug: \"v0-86-tools-implement-rust-owned-pr-init-and-pr-create-control-plane-surfaces\""
     ));
     assert!(content.contains("required_outcome_type:\n  - \"code\""));
     assert!(content.contains("pr_start:\n  enabled: false"));
