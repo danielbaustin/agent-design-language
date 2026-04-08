@@ -92,11 +92,11 @@ Goal:
 Review the completed runtime milestone, remediate findings, release it, and prepare the next milestone.
 
 Current scope:
-- `WP-16` internal review
-- `WP-17` external / 3rd-party review preparation
-- `WP-18` review findings remediation
-- `WP-19` next milestone planning
-- `WP-20` release ceremony
+- `WP-16` internal review - `#1494`
+- `WP-17` external / 3rd-party review preparation - `#1495`
+- `WP-18` review findings remediation - `#1496`
+- `WP-19` next milestone planning - `#1497`
+- `WP-20` release ceremony - `#1498`
 
 Proof surfaces:
 - internal review findings are recorded and actionable
@@ -109,7 +109,7 @@ Proof surfaces:
 - Use issue cards (`input`/`output`) for each item.
 - Keep changes scoped per issue; use draft PRs until checks pass.
 - Run required quality gates (`fmt`, `clippy`, `test`, demo validators, and milestone review checks) for the changed surfaces.
-- Sprint 1 and Sprint 2 issue references are now assigned; later review-tail WPs may remain `TBD` until their planning pass opens.
+- Sprint 1, Sprint 2, and Sprint 3 issue references are now assigned; Sprint 3 remains review-ready until those issues enter run phase.
 
 ## Risks / Dependencies
 - Dependency: upstream v0.87 artifacts (trace, provider, skills) remain stable
