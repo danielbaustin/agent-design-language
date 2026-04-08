@@ -96,8 +96,20 @@ pub(super) fn resolve_input_card_path(issue: u32) -> Result<PathBuf> {
 }
 
 pub(super) fn repo_root() -> Result<PathBuf> {
+    #[cfg(test)]
+    {
+        Ok(Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .expect("adl crate lives under repo root")
+            .to_path_buf())
+    }
+
+    #[cfg(not(test))]
     let root = git_output(&["rev-parse", "--show-toplevel"])?;
-    Ok(PathBuf::from(root))
+    #[cfg(not(test))]
+    {
+        Ok(PathBuf::from(root))
+    }
 }
 
 pub(super) fn git_output(args: &[&str]) -> Result<String> {
