@@ -19,13 +19,35 @@ It provides:
 ## Current Status
 
 - Specification status: **ADL 1.0 draft**
-- Current closure milestone in the main repo: **v0.85**
-- Next active milestone: **v0.86**
+- Current closure milestone in the main repo: **v0.87** _(Sprint 3 convergence in progress)_
+- Previous closure milestone in the main repo: **v0.86**
+- Next planned milestone shell: **v0.87.1**
 - Current role of this directory: language and schema reference for the evolving ADL design
 
 The specification is still evolving. Clarity, coherence, and explicit contracts take priority over premature stability.
 
 ## Recent Milestone Context
+
+### v0.87 — Substrate Convergence and Reviewer-Facing Documentation Truth
+
+v0.87 focuses on making the broader ADL substrate coherent, deterministic, and externally credible.
+
+Highlights relevant to the spec:
+- stronger repo-wide documentation alignment around the active milestone spine
+- clearer separation between canonical promoted feature docs, milestone docs, and later planning work
+- improved reviewer-facing proof surfaces for trace, provider, shared-memory, skills, and control-plane claims
+- bounded handoff into the `v0.87.1` planning shell without inflating current spec/runtime claims
+- continued pressure to keep language semantics distinct from milestone execution details
+
+### v0.86 — Bounded Cognitive System and Reviewable Proof Surfaces
+
+v0.86 established the first working bounded cognitive system on `main`.
+
+Highlights relevant to the spec:
+- stronger articulation of bounded cognition and reviewable proof surfaces
+- clearer boundaries between language-level concepts and runtime-specific implementation details
+- better examples and milestone materials that ground language design in shipped behavior
+- stronger connection between specification intent and runtime proof surfaces
 
 ### v0.85 — Authoring Alignment and Documentation Truth
 

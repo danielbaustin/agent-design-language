@@ -2,7 +2,7 @@
 
 This is the default contributor path for ADL development:
 
-`preflight -> issue_ready -> init -> start -> codex -> run_if_required -> finish -> report`
+`issue creation/bootstrap -> pr ready -> pr run -> codex -> run_if_required -> pr finish -> report`
 
 Tracked mirror of the local skill contract:
 
@@ -17,26 +17,26 @@ bash adl/tools/install_adl_pr_cycle_skill.sh
 The active control-plane surface is:
 
 - `pr init`
-- `pr start`
+- `pr ready`
 - `pr run`
 - `pr finish`
 
 The browser/editor adapter remains narrower:
 
-- browser-direct adapter support exists only for `adl/tools/editor_action.sh start`
-- direct browser/editor execution of `pr init`, `pr run`, and `pr finish` is not part of the v0.85 adapter surface
+- browser-direct adapter support remains narrower than the full repo-native control plane
+- direct browser/editor execution of `pr ready`, `pr run`, and `pr finish` is not the canonical workflow surface
 
 ## 1) Initialize Canonical STP
 
 ```bash
-bash ./adl/tools/pr.sh init <issue_num> --slug <slug> --version v0.85
+bash ./adl/tools/pr.sh init <issue_num> --slug <slug> --version v0.87
 ```
 
 Canonical local task bundle:
 - `.adl/<scope>/tasks/<task-id>__<slug>/stp.md`
 - `.adl/<scope>/tasks/<task-id>__<slug>/`
 
-Minimum v0.85 init contract:
+Minimum init contract:
 - canonical task-bundle directory
 - validated `stp.md`
 - validated root `sip.md`
@@ -50,10 +50,11 @@ gh issue view <issue_num>
 
 `pr.sh` no longer creates or reconciles GitHub issues. The issue must already exist before kickoff continues.
 
-## 3) Start Issue Branch + Local Cards
+## 3) Confirm Readiness And Bind Run Phase
 
 ```bash
-bash ./adl/tools/pr.sh start <issue_num> --slug <slug>
+bash ./adl/tools/pr.sh ready <issue_num> --slug <slug> --version v0.87
+bash ./adl/tools/pr.sh run <issue_num> --slug <slug> --version v0.87
 ```
 
 Compatibility card paths:
@@ -131,12 +132,12 @@ Write a per-issue report under:
 - Wrong paths at `finish`:
   - Ensure `--paths` only includes intended repo paths; do not include local `.adl` artifacts.
 - Missing canonical STP:
-  - Re-run `pr.sh init <issue_num> --slug <slug> --version v0.85`.
+  - Re-run `pr.sh init <issue_num> --slug <slug> --version v0.87`.
 - Stale GitHub issue body:
   - Reconcile the GitHub issue outside `pr.sh`, then re-run `pr.sh init <issue_num>` if the local root bundle must be reseeded.
 - Missing card files:
-  - Re-run `pr.sh start <issue_num> --slug <slug>` to seed canonical card paths.
+  - Re-run `pr.sh init <issue_num>` to reseed root bundle surfaces, then `pr.sh run <issue_num>` to bind the execution worktree if the issue is entering run phase.
 - Browser/editor overclaims:
-  - Use `docs/tooling/editor/command_adapter.md` as the truth boundary; only `start` is browser-direct in v0.85.
+  - Use `docs/tooling/editor/command_adapter.md` as the truth boundary; do not treat browser/editor entrypoints as the canonical repo-native execution path.
 - Worktree branch base problems:
-  - Update from `origin/main`, then re-run `start` in the repo-local execution clone.
+  - Update from `origin/main`, then re-run `run` in the repo-local execution clone.

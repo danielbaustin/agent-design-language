@@ -23,7 +23,7 @@ Default workflow uses `adl_pr_cycle` with the real authoring control plane:
 - `pr run`
 - `pr finish`
 
-Canonical local STPs live under `.adl/v0.85/tasks/<task-id>__<slug>/`, compatibility cards live under `.adl/cards/<issue>/`, and repo-local execution clones live under `.worktrees/adl-wp-<issue>/`.
+Canonical local STPs live under `.adl/<version>/tasks/<task-id>__<slug>/`, compatibility cards live under `.adl/cards/<issue>/`, and repo-local execution clones live under `.worktrees/adl-wp-<issue>/`.
 GitHub issue state is the source of truth for whether a card is active or complete. Active/current cards stay flat under `.adl/cards/<issue>/` while milestone work is in flight; completed cards may be archived later under `.adl/cards/completed/<milestone>/<issue>/`.
 The browser/editor adapter remains narrower than the full control plane; execution work should follow the `pr ready` -> `pr run` path rather than the older `pr start` model.
 
