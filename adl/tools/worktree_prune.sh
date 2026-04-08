@@ -107,15 +107,19 @@ fi
 
 echo "Applying cleanup..."
 
-for path in "${remove_registered[@]}"; do
-  echo "git -C $repo worktree remove $path"
-  git -C "$repo" worktree remove "$path"
-done
+if (( ${#remove_registered[@]} > 0 )); then
+  for path in "${remove_registered[@]}"; do
+    echo "git -C $repo worktree remove $path"
+    git -C "$repo" worktree remove "$path"
+  done
+fi
 
-for path in "${remove_dirs[@]}"; do
-  echo "rm -rf $path"
-  rm -rf "$path"
-done
+if (( ${#remove_dirs[@]} > 0 )); then
+  for path in "${remove_dirs[@]}"; do
+    echo "rm -rf $path"
+    rm -rf "$path"
+  done
+fi
 
 if [[ "$prune_needed" == "yes" ]]; then
   echo "git -C $repo worktree prune --verbose"
