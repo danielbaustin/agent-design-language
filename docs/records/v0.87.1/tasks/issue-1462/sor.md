@@ -41,20 +41,10 @@ Added a canonical `v0.87.1` WP-13 demo-suite entrypoint that runs the currently 
 
 ## Main Repo Integration (REQUIRED)
 - Main-repo paths updated: none yet
-- Worktree-only paths remaining:
-  - `adl/tools/demo_v0871_suite.sh`
-  - `adl/tools/test_demo_v0871_suite.sh`
-  - `adl/tools/demo_v0871_review_surface.sh`
-  - `adl/tools/demo_v0871_provider_http.sh`
-  - `adl/tools/demo_v0871_provider_chatgpt.sh`
-  - `adl/examples/v0-87-1-provider-chatgpt-demo.adl.yaml`
-  - `adl/tools/README.md`
-  - `demos/README.md`
-  - `docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`
-  - `docs/milestones/v0.87.1/FEATURE_DOCS_v0.87.1.md`
-- Integration state: worktree_only
-- Verification scope: worktree
-- Integration method used: bounded implementation in the issue worktree before `pr finish`
+- Worktree-only paths remaining: none
+- Integration state: pr_open
+- Verification scope: pr_branch
+- Integration method used: bounded branch update published via `pr finish` and opened as draft PR `#1517`
 - Verification performed:
   - `bash -n adl/tools/demo_v0871_suite.sh adl/tools/test_demo_v0871_suite.sh adl/tools/demo_v0871_review_surface.sh adl/tools/demo_v0871_provider_http.sh adl/tools/demo_v0871_provider_chatgpt.sh`
   - `bash adl/tools/test_demo_v0871_provider_http.sh`
