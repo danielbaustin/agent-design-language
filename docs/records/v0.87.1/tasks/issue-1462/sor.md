@@ -16,7 +16,7 @@ Execution:
 
 ## Summary
 
-Added a canonical `v0.87.1` WP-13 demo-suite entrypoint that runs the currently implemented provider, operator, runtime-state, runtime-review, and bounded multi-agent proof surfaces from one command. The demo matrix now has a real D0 suite row and records planned-but-not-run demos explicitly instead of overclaiming future runtime proof.
+Added a canonical `v0.87.1` WP-13 demo-suite entrypoint that runs the currently implemented provider, operator, runtime-state, runtime-review, and bounded multi-agent proof surfaces from one command. The demo matrix now has a real D0 suite row, an explicit demo issue inventory, and planned-but-not-run rows so reviewers can find every demo surface without overclaiming future runtime proof.
 
 ## Artifacts produced
 - `adl/tools/demo_v0871_suite.sh`
@@ -37,6 +37,7 @@ Added a canonical `v0.87.1` WP-13 demo-suite entrypoint that runs the currently 
 - fixed the bounded HTTP and ChatGPT provider shim scripts to use reusable loopback sockets for repeated suite execution
 - moved the ChatGPT demo shim to a distinct loopback port so it does not collide with the bounded HTTP demo
 - updated the demo matrix with a READY D0 suite row, D0 detail section, cross-demo validation command, and truthful planned-not-run notes
+- added a demo issue inventory to the matrix covering `#1467`, `#1485`-`#1488`, `#1490`, `#1491`, `#1500`-`#1502`, and `#1507`-`#1509`
 - updated demo discovery docs so reviewers can find the suite from `adl/tools/README.md`, `demos/README.md`, and the feature-doc index
 
 ## Main Repo Integration (REQUIRED)
@@ -146,6 +147,7 @@ verification_summary:
 - Artifact schema/version checks: suite manifest uses `adl.v0871.demo_suite.v1`; runtime review package uses `adl.runtime_review_surface.v1`
 - Hash/byte-stability checks: not run
 - Missing/optional artifacts and rationale: planned demo rows remain in `planned_not_run` until specialized wrappers land
+- Demo inventory caveat: `#1500`-`#1502` are recorded as in-progress follow-ons and are not claimed by D0 until their implementation branches land
 
 ## Decisions / Deviations
 - Kept WP-13 focused on one canonical suite over implemented proof surfaces rather than pretending all planned demo rows are already runnable.

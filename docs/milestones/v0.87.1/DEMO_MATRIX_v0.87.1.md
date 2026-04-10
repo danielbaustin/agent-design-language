@@ -64,22 +64,42 @@ Additional environment / fixture requirements:
 - Shared provider proof governance: `docs/tooling/PROVIDER_DEMO_SURFACES.md`
 - Other proof-surface docs: Trace v1 artifacts and runtime outputs from v0.87
 
+## Demo Issue Inventory
+
+Use this inventory as the canonical reviewer map for demo work completed during `v0.87.1`. If a demo issue is not listed here or linked from a row below, reviewers should treat that as a documentation bug.
+
+| Issue | Demo / proof surface | Matrix location | Status |
+|---|---|---|---|
+| `#1467` | Codex CLI + Ollama operational-skills demo | Adjacent operational-skills demo; see `demos/v0.87.1/codex_ollama_operational_skills_demo.md` and `bash adl/tools/demo_codex_ollama_operational_skills.sh` | READY |
+| `#1485` | local Ollama provider demo + acceptance test | Provider family map, D0 suite provider package | READY |
+| `#1486` | bounded HTTP provider demo + acceptance test | Provider family map, D0 suite provider package | READY |
+| `#1487` | mock provider demo + acceptance test | Provider family map, D0 suite provider package | READY |
+| `#1488` | ChatGPT provider demo + acceptance test | Provider family map, D0 suite provider package | READY |
+| `#1490` | Claude + ChatGPT multi-agent discussion demo | D13 | READY |
+| `#1491` | bounded Claude + ChatGPT discussion workflow demo | D13 | READY |
+| `#1500` | first-class Claude provider-family parity with ChatGPT profiles | Follow-on provider-family expansion; not included in D0 until landed | IN_PROGRESS |
+| `#1501` | conversation-native multi-agent turn primitives | Follow-on runtime primitive expansion for D13-class demos; not included in D0 until landed | IN_PROGRESS |
+| `#1502` | transcript artifact contract for multi-agent discussion demos | Follow-on transcript contract for D13-class demos; not included in D0 until landed | IN_PROGRESS |
+| `#1507` | shared provider demo harness | Provider family map shared wrapper helper | READY |
+| `#1508` | provider demo proof-surface governance | Provider family map shared doc ownership | READY |
+| `#1509` | mock provider family runnable in provider substrate | Provider family map mock row, D0 suite provider package | READY |
+
 ## Provider Family Demo / Test Issue Map
 
 These family-level issues seed the provider proof surfaces that later demo work can implement:
 
 Shared doc ownership:
-- use `docs/tooling/PROVIDER_DEMO_SURFACES.md` for shared provider demo proof-surface rules
+- use `docs/tooling/PROVIDER_DEMO_SURFACES.md` for shared provider demo proof-surface rules (`#1508`)
 - keep family-specific run instructions and proof caveats in the family wrapper outputs, not in this matrix
 
 Shared wrapper helper:
-- `adl/tools/provider_demo_common.sh` owns the small common README/proof-surface scaffolding used by provider-family demo wrappers.
+- `adl/tools/provider_demo_common.sh` owns the small common README/proof-surface scaffolding used by provider-family demo wrappers (`#1507`).
 
 | Provider family | Scope | Issue |
 |---|---|---|
 | local Ollama | bounded local provider demo plus acceptance coverage for `ollama` / `local_ollama`; canonical command `bash adl/tools/demo_v0871_provider_local_ollama.sh` | `#1485` |
 | bounded HTTP | bounded generic remote HTTP demo plus acceptance coverage for `http` / `http_remote`; canonical command `bash adl/tools/demo_v0871_provider_http.sh` | `#1486` |
-| mock | no-network mock provider demo plus acceptance coverage; canonical command `bash adl/tools/demo_v0871_provider_mock.sh` | `#1487` |
+| mock | no-network mock provider demo plus acceptance coverage and provider-substrate runnable proof; canonical command `bash adl/tools/demo_v0871_provider_mock.sh` | `#1487`, `#1509` |
 | ChatGPT | `chatgpt:` family demo plus acceptance coverage using the current setup flow; canonical command `bash adl/tools/demo_v0871_provider_chatgpt.sh` | `#1488` |
 
 ## Demo Coverage Summary
@@ -102,7 +122,7 @@ Use this table as the fast review surface for milestone coverage.
 | D10 | Docs-To-Runtime Consistency Check | `WP-09`, `WP-15` docs/review convergence | `adl/tools/demo_v0871_docs_review.sh` | reviewer entry surfaces | Reviewer can move from docs to runtime proof without contradiction | Navigation and proof mapping should remain stable | PLANNED |
 | D11 | Quality Gate Walkthrough | `WP-14` quality gate | `adl/tools/demo_v0871_quality_gate.sh` | quality-gate record | Tests, validators, and coverage posture are reviewable in one place | Same repo state should preserve gate outcome | PLANNED |
 | D12 | Release Review Package | `WP-16` through `WP-20` review/remediation/planning/release tail | `adl/tools/demo_v0871_release_review_package.sh` | release review package | Review, remediation, planning, and release artifacts are coherent and navigable | Package layout and key entrypoints remain stable | PLANNED |
-| D13 | Claude + ChatGPT Tea Discussion | bounded multi-agent runtime discussion proof | `bash adl/tools/demo_v0871_multi_agent_discussion.sh` | `artifacts/v0871/multi_agent_discussion/transcript.md` | Reviewer can inspect five explicit turns, two named agents, runtime turn metadata, the transcript contract, and the paired runtime trace/summaries | Fixed shim outputs should preserve transcript shape and turn ordering | READY |
+| D13 | Claude + ChatGPT Tea Discussion | bounded multi-agent runtime discussion proof (`#1490`, `#1491`, `#1501`, `#1502`) | `bash adl/tools/demo_v0871_multi_agent_discussion.sh` | `artifacts/v0871/multi_agent_discussion/transcript.md` | Reviewer can inspect five explicit turns, two named agents, runtime turn metadata, the transcript contract, and the paired runtime trace/summaries | Fixed shim outputs should preserve transcript shape and turn ordering | READY |
 | D13L | Live Claude + ChatGPT Tea Discussion | live-provider companion proof for D13 | `bash adl/tools/demo_v0871_real_multi_agent_discussion.sh` | `artifacts/v0871/real_multi_agent_discussion/provider_invocations.json` plus `transcript.md` | Reviewer can inspect real OpenAI and Anthropic invocation metadata, five explicit turns, runtime turn metadata, and transcript contract proof without secret leakage | Live model text is non-deterministic; runtime artifact shape, turn ordering, and accepted contract shape remain stable | READY |
 
 Provider demo wrappers also archive successful bounded runtime roots into `.adl/trace-archive/milestones/v0.87.1/runs/<run_id>/` and print that canonical archive location. The original `artifacts/v0871/.../runtime/runs/<run_id>/` proof surfaces remain the immediate demo outputs; the archive is the durable local trace index for later review/export.
@@ -135,7 +155,7 @@ Status guidance:
 - `D10` -> `FEATURE_DOCS_v0.87.1.md` and all promoted `v0.87.1` runtime feature docs
 - `D11` -> milestone review and validation surfaces derived from the promoted runtime feature set
 - `D12` -> review, remediation, planning, and release surfaces for the runtime milestone
-- `D13` -> bounded multi-agent runtime demo evidence for later conversation/runtime follow-on work
+- `D13` -> bounded multi-agent runtime demo evidence for later conversation/runtime follow-on work (`#1490`, `#1491`, `#1501`, `#1502`)
 - `D13L` -> live provider evidence that the bounded D13 shape can call real OpenAI and Anthropic models through the current ADL HTTP completion boundary
 
 ## Demo Details
@@ -176,6 +196,7 @@ Expected success signals:
 - The suite exits successfully.
 - The manifest includes provider packages, D8, and D13.
 - The manifest includes `planned_not_run` entries for demo rows that are still planned.
+- The demo issue inventory above names every `v0.87.1` demo/proof issue so reviewers can find demos that are not part of the D0 runtime suite.
 
 Determinism / replay notes:
 - The suite uses bounded local provider shims and mock providers.
