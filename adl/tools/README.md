@@ -11,6 +11,8 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `demo_v0871_runtime_state.sh`: canonical `v0.87.1` runtime-state proof wrapper for paused-vs-completed persistence inspection.
 - `normalize_adl_cards.sh`: repairs `.adl/cards/<issue>/` compatibility links and materializes missing bootstrap `sor.md` files for existing task bundles.
 - `demo_v0871_multi_agent_discussion.sh`: canonical `v0.87.1` bounded multi-agent discussion proof wrapper for a five-turn Claude + ChatGPT runtime demo.
+- `demo_v0871_real_multi_agent_discussion.sh`: live-provider companion demo that calls real OpenAI and Anthropic APIs through a local ADL completion adapter using operator-managed keys.
+- `real_multi_agent_provider_adapter.py`: local adapter that translates ADL's bounded HTTP completion contract to vendor-native OpenAI and Anthropic calls without recording secret material.
 - `validate_multi_agent_transcript.py`: validates the bounded multi-agent transcript artifact contract for the D13 discussion demo.
 - `worktree_doctor.sh`, `worktree_prune.sh`: deterministic worktree governance and safe cleanup helpers.
 - `archive_run_artifacts.sh`: dry-run/apply helper that inventories local run roots and copies unique run artifacts into `.adl/trace-archive/milestones/<milestone>/runs/`.
@@ -41,6 +43,9 @@ bash adl/tools/normalize_adl_cards.sh --root "$(pwd)" --version v0.87.1
 
 # run the bounded Claude + ChatGPT discussion demo through the real runtime
 bash adl/tools/demo_v0871_multi_agent_discussion.sh
+
+# run the live-provider Claude + ChatGPT discussion demo using $HOME/keys/openai.key and $HOME/keys/claude.key
+bash adl/tools/demo_v0871_real_multi_agent_discussion.sh
 
 # validate the generated bounded multi-agent transcript artifact
 python3 adl/tools/validate_multi_agent_transcript.py artifacts/v0871/multi_agent_discussion/transcript.md

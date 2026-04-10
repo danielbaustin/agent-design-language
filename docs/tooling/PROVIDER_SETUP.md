@@ -54,3 +54,9 @@ ChatGPT demo note:
 
 Claude family note:
 - the first-class Claude setup surface uses `claude:claude-3-7-sonnet` plus the same bounded ADL completion contract; it is distinct from the generic `anthropic` compatibility setup so Claude can be referenced symmetrically with ChatGPT in multi-agent workflows
+
+Live multi-agent demo note:
+- `adl/tools/demo_v0871_real_multi_agent_discussion.sh` is the operator-run live-provider companion to the deterministic multi-agent demo
+- it reads `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` from the environment when set, otherwise from `$HOME/keys/openai.key` and `$HOME/keys/claude.key`
+- it starts a local adapter that bridges ADL's current `{"prompt": "..."} -> {"output": "..."}` HTTP contract to vendor-native OpenAI and Anthropic APIs
+- generated artifacts record provider family/model/status metadata only; they must not include secret values or raw credential headers
