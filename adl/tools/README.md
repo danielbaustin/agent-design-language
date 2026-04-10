@@ -15,7 +15,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `real_multi_agent_provider_adapter.py`: local adapter that translates ADL's bounded HTTP completion contract to vendor-native OpenAI and Anthropic calls without recording secret material.
 - `validate_multi_agent_transcript.py`: validates the bounded multi-agent transcript artifact contract for the D13 discussion demo.
 - `worktree_doctor.sh`, `worktree_prune.sh`: deterministic worktree governance and safe cleanup helpers.
-- `archive_run_artifacts.sh`: dry-run/apply helper that inventories local run roots and copies unique run artifacts into `.adl/trace-archive/milestones/<milestone>/runs/`.
+- `archive_run_artifacts.sh`: dry-run/apply helper that inventories local run roots, copies unique run artifacts into `.adl/trace-archive/milestones/<milestone>/runs/`, and can move archived active `.adl/runs` entries into `.adl/trace-archive/source-roots/`.
 - `adl tooling ...`: Rust-owned tooling surface for prompt/card/review validation helpers, with legacy wrapper scripts preserved at the historical `adl/tools/*` paths.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
 - `batched_checks.sh`, `preflight_review.sh`: quality/preflight checks.
@@ -70,6 +70,9 @@ bash ./adl/tools/pr.sh run <issue_num> --slug <slug>
 
 # copy unique run artifacts into .adl/trace-archive/milestones/
 ./adl/tools/archive_run_artifacts.sh --include-worktrees --apply
+
+# copy unique run artifacts, then clear active .adl/runs by preserving source dirs under .adl/trace-archive/source-roots/
+./adl/tools/archive_run_artifacts.sh --include-worktrees --apply --prune-active-runs
 
 # run standard checks
 ./adl/tools/batched_checks.sh
