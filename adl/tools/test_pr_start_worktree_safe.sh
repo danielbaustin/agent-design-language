@@ -61,10 +61,99 @@ assert_contains() {
   }
 }
 
+seed_issue_prompt() {
+  local issue="$1" slug="$2" path
+  path=".adl/v0.86/bodies/issue-${issue}-${slug}.md"
+  mkdir -p "$(dirname "$path")"
+  cat >"$path" <<EOF
+---
+issue_card_schema: adl.issue.v1
+wp: "test"
+slug: "${slug}"
+title: "[v0.86][tools] ${slug}"
+labels:
+  - "track:roadmap"
+  - "type:task"
+  - "area:tools"
+  - "version:v0.86"
+issue_number: ${issue}
+status: "active"
+action: "edit"
+depends_on: []
+milestone_sprint: "test"
+required_outcome_type:
+  - "code"
+repo_inputs: []
+canonical_files:
+  - "adl/tools/pr.sh"
+demo_required: false
+demo_names: []
+issue_graph_notes:
+  - "Test fixture prompt for worktree-safe lifecycle coverage."
+pr_start:
+  enabled: false
+  slug: "${slug}"
+---
+
+# [v0.86][tools] ${slug}
+
+## Summary
+
+Exercise the issue worktree lifecycle with an authored prompt surface.
+
+## Goal
+
+Create or reuse the requested issue worktree without switching the primary checkout away from the user's current branch.
+
+## Required Outcome
+
+The lifecycle command should bind the issue worktree from origin/main and leave the primary checkout untouched.
+
+## Deliverables
+
+- issue worktree
+- root and worktree task bundles
+
+## Acceptance Criteria
+
+- The command prints the expected worktree and branch.
+- The primary checkout remains on its original branch.
+
+## Repo Inputs
+
+- local test fixture
+
+## Dependencies
+
+- none
+
+## Demo Expectations
+
+- No demo is required for this tooling fixture.
+
+## Non-goals
+
+- real GitHub issue mutation
+
+## Issue-Graph Notes
+
+- This is a local test-only issue prompt.
+
+## Notes
+
+- Keep this fixture concrete so lifecycle validation does not reject it as a stub.
+
+## Tooling Notes
+
+- Use origin/main as the branch base for worktree creation.
+EOF
+}
+
 (
   cd "$repo"
   export ADL_PR_RUST_BIN="$REAL_ADL_BIN"
 
+  seed_issue_prompt 999 test-smoke
   out1="$("$BASH_BIN" adl/tools/pr.sh start 999 --slug test-smoke --no-fetch-issue)"
   assert_contains "WORKTREE" "$out1" "start prints worktree"
   assert_contains "BRANCH codex/999-test-smoke" "$out1" "start prints branch"
@@ -144,6 +233,7 @@ assert_contains() {
 
   custom_root="$tmpdir/custom-managed"
   mkdir -p "$custom_root"
+  seed_issue_prompt 995 root-override
   out4="$(ADL_WORKTREE_ROOT="$custom_root" "$BASH_BIN" adl/tools/pr.sh start 995 --slug root-override --no-fetch-issue)"
   assert_contains "WORKTREE $custom_root/adl-wp-995" "$out4" "custom managed root"
   [[ -d "$custom_root/adl-wp-995" ]] || {
@@ -162,6 +252,7 @@ fi
 exec "$(command -v git)" "\$@"
 EOF
   chmod +x "$fakebin/git"
+  seed_issue_prompt 994 fetch-fallback
   out_fetch_fallback="$(PATH="$fakebin:$PATH" "$BASH_BIN" adl/tools/pr.sh start 994 --slug fetch-fallback --no-fetch-issue)"
   fetch_wt="$repo/.worktrees/adl-wp-994"
   fetch_wt="$(cd "$fetch_wt" && pwd -P)"
@@ -178,6 +269,7 @@ EOF
 exit 1
 EOF
   chmod +x "$fakecargo/cargo"
+  seed_issue_prompt 989 rust-delegate-fallback
   out_rust_fallback="$(PATH="$fakecargo:$PATH" "$BASH_BIN" adl/tools/pr.sh start 989 --slug rust-delegate-fallback --no-fetch-issue)"
   rust_fallback_wt="$(cd "$repo/.worktrees/adl-wp-989" && pwd -P)"
   assert_contains "WORKTREE $rust_fallback_wt" "$out_rust_fallback" "rust fallback still creates worktree"
@@ -202,21 +294,24 @@ EOF
   git branch codex/997-guardrail origin/main
   git switch -q -c codex/996-dirty origin/main
   echo "keep-me" > untracked.txt
-  set +e
-  bad2="$("$BASH_BIN" adl/tools/pr.sh start 997 --slug guardrail --no-fetch-issue 2>&1)"
-  status=$?
-  set -e
-  [[ "$status" -ne 0 ]] || {
-    echo "assertion failed: expected dirty primary checkout guard to fail" >&2
+  seed_issue_prompt 997 guardrail
+  out_dirty="$("$BASH_BIN" adl/tools/pr.sh start 997 --slug guardrail --no-fetch-issue)"
+  dirty_wt="$(cd "$repo/.worktrees/adl-wp-997" && pwd -P)"
+  assert_contains "WORKTREE $dirty_wt" "$out_dirty" "dirty primary checkout still starts issue worktree"
+  [[ "$(git rev-parse --abbrev-ref HEAD)" == "codex/996-dirty" ]] || {
+    echo "assertion failed: primary checkout should stay on the user's dirty branch" >&2
     exit 1
   }
-  assert_contains "with local changes" "$bad2" "dirty guard message"
-  assert_contains "commit/stash there, switch to main, then rerun" "$bad2" "dirty guard remediation"
+  [[ -f untracked.txt ]] || {
+    echo "assertion failed: dirty primary checkout file should remain untouched" >&2
+    exit 1
+  }
 
   git switch -q main
   rm -f untracked.txt
   mkdir -p "$repo/.adl/locks/pr-bootstrap.lock"
   echo "999999" > "$repo/.adl/locks/pr-bootstrap.lock/pid"
+  seed_issue_prompt 993 stale-lock-recovery
   stale_lock_out="$("$BASH_BIN" adl/tools/pr.sh start 993 --slug stale-lock-recovery --no-fetch-issue)"
   stale_wt="$(cd "$repo/.worktrees/adl-wp-993" && pwd -P)"
   assert_contains "WORKTREE $stale_wt" "$stale_lock_out" "stale lock recovery still starts"
@@ -267,6 +362,7 @@ EOF
   assert_contains "unresolved open PR wave detected for v0.86" "$blocked_start" "start guard message"
   assert_contains "#1169 [draft]" "$blocked_start" "start guard lists open pr"
 
+  seed_issue_prompt 990 blocked-wave
   allowed_start="$(PATH="$fakegh:$PATH" "$BASH_BIN" adl/tools/pr.sh start 990 --slug blocked-wave --version v0.86 --no-fetch-issue --allow-open-pr-wave)"
   assert_contains "STATE  FULLY_STARTED" "$allowed_start" "override bypasses start guard"
 

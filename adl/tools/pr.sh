@@ -1812,7 +1812,7 @@ Usage:
 Notes:
 - Deprecated compatibility shim. Prefer `adl/tools/pr.sh run <issue> ...`.
 - Creates or reuses issue worktree at .worktrees/adl-wp-<issue> by default.
-- Keeps the primary checkout on main.
+- Leaves the primary checkout on its current branch.
 - `--version` overrides inferred issue version when the caller already knows the intended milestone band.
 - Refuses to start a later issue when an open PR wave already exists for the same milestone band unless `--allow-open-pr-wave` is passed.
 EOF
