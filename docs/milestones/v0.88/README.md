@@ -1,10 +1,10 @@
-# Milestone README Template
+# v0.88 Milestone README
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+- Milestone: `v0.88`
+- Version: `v0.88`
+- Date: `TBD`
+- Owner: `Daniel Austin`
 
 ## Purpose
 Provide a single entry point for the milestone: what it is, why it matters, what is included, and how to navigate the canonical documents and artifacts.
@@ -17,47 +17,47 @@ Provide a single entry point for the milestone: what it is, why it matters, what
 
 ## Overview
 
-`{{milestone}}` represents the stage where `{{project_name}}` moves from `{{previous_state}}` to `{{target_state}}`.
+`v0.88` represents the stage where `ADL` moves from `TBD during v0.88 planning` to `TBD during v0.88 planning`.
 
 This milestone focuses on:
-- {{focus_1}}
-- {{focus_2}}
-- {{focus_3}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 Key outcomes:
-- {{outcome_1}}
-- {{outcome_2}}
-- {{outcome_3}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Scope Summary
 
 ### In scope
-- {{in_scope_1}}
-- {{in_scope_2}}
-- {{in_scope_3}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ### Out of scope
-- {{out_of_scope_1}}
-- {{out_of_scope_2}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Document Map
 
 Canonical milestone documents:
 
-- Vision: `{{vision_doc}}`
-- Design: `{{design_doc}}`
-- Work Breakdown Structure (WBS): `{{wbs_doc}}`
-- Sprint plan: `{{sprint_doc}}`
-- Decisions log: `{{decisions_doc}}`
-- Demo matrix: `{{demo_matrix_doc}}`
-- Milestone checklist: `{{checklist_doc}}`
-- Release plan / process: `{{release_process_doc}}`
-- Release notes: `{{release_notes_doc}}`
+- Vision: `docs/milestones/v0.88/VISION_v0.88.md`
+- Design: `docs/milestones/v0.88/DESIGN_v0.88.md`
+- Work Breakdown Structure (WBS): `docs/milestones/v0.88/WBS_v0.88.md`
+- Sprint plan: `docs/milestones/v0.88/SPRINT_v0.88.md`
+- Decisions log: `docs/milestones/v0.88/DECISIONS_v0.88.md`
+- Demo matrix: `docs/milestones/v0.88/DEMO_MATRIX_v0.88.md`
+- Milestone checklist: `docs/milestones/v0.88/MILESTONE_CHECKLIST_v0.88.md`
+- Release plan / process: `docs/milestones/v0.88/RELEASE_PLAN_v0.88.md`
+- Release notes: `docs/milestones/v0.88/RELEASE_NOTES_v0.88.md`
 
 Supporting / domain-specific docs:
-- {{supporting_doc_1}}
-- {{supporting_doc_2}}
-- {{supporting_doc_3}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Execution Model
 
@@ -78,7 +78,7 @@ Execution expectations:
 ## Demo and Validation Surface
 
 Primary validation is defined in:
-- Demo matrix: `{{demo_matrix_doc}}`
+- Demo matrix: `docs/milestones/v0.88/DEMO_MATRIX_v0.88.md`
 
 Additional validation surfaces:
 - Test suite results
@@ -86,9 +86,9 @@ Additional validation surfaces:
 - Trace and replay outputs
 
 Success criteria:
-- {{success_criteria_1}}
-- {{success_criteria_2}}
-- {{success_criteria_3}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Determinism and Reproducibility
 
@@ -98,27 +98,27 @@ The milestone should demonstrate:
 - Stable command entry points for demos
 
 Evidence locations:
-- {{determinism_evidence_path_1}}
-- {{determinism_evidence_path_2}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Risks and Open Questions
 
 Known risks:
-- {{risk_1}}
-- {{risk_2}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 Open questions:
-- {{open_question_1}}
-- {{open_question_2}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Status
 
-Current status: {{status}}
+Current status: TBD during v0.88 planning
 
-- Planning: {{planning_status}}
-- Execution: {{execution_status}}
-- Validation: {{validation_status}}
-- Release readiness: {{release_status}}
+- Planning: TBD during v0.88 planning
+- Execution: TBD during v0.88 planning
+- Validation: TBD during v0.88 planning
+- Release readiness: TBD during v0.88 planning
 
 ## Exit Criteria
 

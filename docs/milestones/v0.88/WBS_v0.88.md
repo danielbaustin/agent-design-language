@@ -1,10 +1,10 @@
-# Work Breakdown Structure (WBS) Template
+# Work Breakdown Structure (WBS) - v0.88
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+- Milestone: `v0.88`
+- Version: `v0.88`
+- Date: `TBD`
+- Owner: `Daniel Austin`
 
 ## How To Use
 - Break work into independently-mergeable issues.
@@ -14,50 +14,50 @@
 - Reserve the final WPs for the release tail in this order: `WP-13` demos, `WP-14` quality/coverage gate, `WP-15` docs/review convergence, `WP-16` release ceremony.
 
 ## WBS Summary
-{{wbs_summary}}
+TBD during v0.88 planning
 
 ## Work Packages
 | ID | Work Package | Description | Deliverable | Dependencies | Issue |
 |---|---|---|---|---|---|
-| WP-01 | Design pass (milestone docs + planning) | {{description_01}} | {{deliverable_01}} | {{deps_01}} | {{issue_01}} |
-| WP-02 | {{package_02}} | {{description_02}} | {{deliverable_02}} | {{deps_02}} | {{issue_02}} |
-| WP-03 | {{package_03}} | {{description_03}} | {{deliverable_03}} | {{deps_03}} | {{issue_03}} |
-| WP-04 | {{package_04}} | {{description_04}} | {{deliverable_04}} | {{deps_04}} | {{issue_04}} |
-| WP-05 | {{package_05}} | {{description_05}} | {{deliverable_05}} | {{deps_05}} | {{issue_05}} |
-| WP-06 | {{package_06}} | {{description_06}} | {{deliverable_06}} | {{deps_06}} | {{issue_06}} |
-| WP-07 | {{package_07}} | {{description_07}} | {{deliverable_07}} | {{deps_07}} | {{issue_07}} |
-| WP-08 | {{package_08}} | {{description_08}} | {{deliverable_08}} | {{deps_08}} | {{issue_08}} |
-| WP-09 | {{package_09}} | {{description_09}} | {{deliverable_09}} | {{deps_09}} | {{issue_09}} |
-| WP-10 | {{package_10}} | {{description_10}} | {{deliverable_10}} | {{deps_10}} | {{issue_10}} |
-| WP-11 | {{package_11}} | {{description_11}} | {{deliverable_11}} | {{deps_11}} | {{issue_11}} |
-| WP-12 | {{package_12}} | {{description_12}} | {{deliverable_12}} | {{deps_12}} | {{issue_12}} |
-| WP-13 | Demo matrix + integration demos | {{description_13}} | {{deliverable_13}} | {{deps_13}} | {{issue_13}} |
-| WP-14 | Coverage / quality gate (ratchet + exclusions) | {{description_14}} | {{deliverable_14}} | {{deps_14}} | {{issue_14}} |
-| WP-15 | Docs + review pass (repo-wide alignment) | {{description_15}} | {{deliverable_15}} | {{deps_15}} | {{issue_15}} |
-| WP-16 | Release ceremony (final validation + tag + notes + cleanup) | {{description_16}} | {{deliverable_16}} | {{deps_16}} | {{issue_16}} |
+| WP-01 | Design pass (milestone docs + planning) | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-02 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-03 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-04 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-05 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-06 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-07 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-08 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-09 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-10 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-11 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-12 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-13 | Demo matrix + integration demos | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-14 | Coverage / quality gate (ratchet + exclusions) | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-15 | Docs + review pass (repo-wide alignment) | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| WP-16 | Release ceremony (final validation + tag + notes + cleanup) | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
 
 ## Sequencing
-- Phase 1: {{phase_1}}
-- Phase 2: {{phase_2}}
-- Phase 3: {{phase_3}}
+- Phase 1: TBD during v0.88 planning
+- Phase 2: TBD during v0.88 planning
+- Phase 3: TBD during v0.88 planning
 
 ## Acceptance Mapping
-- WP-01 (Design pass) -> {{acceptance_criteria_01}}
-- WP-02 -> {{acceptance_criteria_02}}
-- WP-03 -> {{acceptance_criteria_03}}
-- WP-04 -> {{acceptance_criteria_04}}
-- WP-05 -> {{acceptance_criteria_05}}
-- WP-06 -> {{acceptance_criteria_06}}
-- WP-07 -> {{acceptance_criteria_07}}
-- WP-08 -> {{acceptance_criteria_08}}
-- WP-09 -> {{acceptance_criteria_09}}
-- WP-10 -> {{acceptance_criteria_10}}
-- WP-11 -> {{acceptance_criteria_11}}
-- WP-12 -> {{acceptance_criteria_12}}
-- WP-13 (Demos) -> {{acceptance_criteria_13}}
-- WP-14 (Quality gate) -> {{acceptance_criteria_14}}
-- WP-15 (Docs/review) -> {{acceptance_criteria_15}}
-- WP-16 (Release ceremony) -> {{acceptance_criteria_16}}
+- WP-01 (Design pass) -> TBD during v0.88 planning
+- WP-02 -> TBD during v0.88 planning
+- WP-03 -> TBD during v0.88 planning
+- WP-04 -> TBD during v0.88 planning
+- WP-05 -> TBD during v0.88 planning
+- WP-06 -> TBD during v0.88 planning
+- WP-07 -> TBD during v0.88 planning
+- WP-08 -> TBD during v0.88 planning
+- WP-09 -> TBD during v0.88 planning
+- WP-10 -> TBD during v0.88 planning
+- WP-11 -> TBD during v0.88 planning
+- WP-12 -> TBD during v0.88 planning
+- WP-13 (Demos) -> TBD during v0.88 planning
+- WP-14 (Quality gate) -> TBD during v0.88 planning
+- WP-15 (Docs/review) -> TBD during v0.88 planning
+- WP-16 (Release ceremony) -> TBD during v0.88 planning
 
 ## Exit Criteria
 - Every in-scope requirement maps to at least one WBS item.
