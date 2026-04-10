@@ -12,7 +12,7 @@ Define the canonical milestone demo program: which bounded demos exist, which mi
 
 ## Status
 
-This is the planned proof program for a large runtime-completion milestone. The runtime demo set is expected to include roughly a dozen bounded demos spanning execution environment, lifecycle, trace alignment, resilience, operator surfaces, and reviewer entry artifacts.
+This is the canonical bounded proof program for the runtime-completion milestone. The runtime demo set now includes runnable bounded demos spanning execution environment, lifecycle, trace alignment, resilience, operator surfaces, review-tail packaging, and reviewer entry artifacts.
 
 ## How To Use
 - Use this document for runnable milestone evidence, not for broad feature brainstorming.
@@ -120,20 +120,20 @@ Use this table as the fast review surface for milestone coverage.
 
 | Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
 |---|---|---|---|---|---|---|---|
-| D0 | Milestone Demo Suite | `WP-13` demo matrix + integrated proof entrypoint | `bash adl/tools/demo_v0871_suite.sh` | `artifacts/v0871/suite/demo_manifest.json` | One command runs the CI-safe provider, operator, runtime-state, review-surface, and bounded multi-agent proof surfaces | Suite manifest ordering is stable; planned-but-not-run rows are recorded explicitly instead of overclaimed; live-provider proof remains D13L | READY |
-| D1 | Runtime Environment Bring-Up | `WP-02` runtime environment completion | `adl/tools/demo_v0871_runtime_environment.sh` | `.adl/runtime_environment.json` plus a bounded `.adl/runs/<run_id>/` artifact set | Runtime environment initializes cleanly with documented contracts | Stable env inputs should preserve artifact shape | PLANNED |
-| D2 | Lifecycle Phases And Boundaries | `WP-03` execution boundaries and lifecycle | `adl/tools/demo_v0871_lifecycle.sh` | lifecycle phase trace / summary | `init -> execute -> complete/teardown` is explicit and reviewable | Fixed scenario should preserve lifecycle phase ordering | PLANNED |
-| D3 | Trace-Aligned Runtime Execution | `WP-04` trace-aligned runtime execution | `adl/tools/demo_v0871_trace_runtime.sh` | `logs/trace_v1.json`, `run_summary.json`, and trace bundle export surfaces | Runtime actions map coherently to trace events, linked artifacts, and replay bundle outputs | Replay should preserve execution-to-trace shape | PLANNED |
-| D4 | Local Failure Handling | `WP-05` local runtime resilience | `adl/tools/demo_v0871_resilience_failure.sh` | `run_status.json`, `run_summary.json`, and `logs/trace_v1.json` | Failure is bounded, explained, and leaves inspectable artifacts | Same induced failure should preserve failure classification | PLANNED |
-| D4A | Shepherd Preservation And Recovery | `WP-05`, `WP-07` Shepherd preservation + continuity discipline | `adl/tools/demo_v0871_shepherd_recovery.sh` | `run_status.json`, `pause_state.json`, and `logs/trace_v1.json` | Interrupted work is preserved, resumed, or dispositioned under explicit runtime rules | Fixed interruption scenario should preserve preservation and recovery classification | PLANNED |
-| D5 | Restartability And Recovery | `WP-05`, `WP-07` resilience + state discipline | `adl/tools/demo_v0871_restartability.sh` | restart/recovery artifact set | Bounded run can resume or restart under documented rules | Restart behavior should remain stable under fixed state | PLANNED |
+| D0 | Milestone Demo Suite | `WP-13` demo matrix + integrated proof entrypoint | `bash adl/tools/demo_v0871_suite.sh` | `artifacts/v0871/suite/demo_manifest.json` | One command runs the bounded runtime, provider-family, operator/review-surface, review-tail, and bounded multi-agent proof surfaces | Suite manifest ordering is stable across bounded local and mock inputs; live-provider proof remains D13L | READY |
+| D1 | Runtime Environment Bring-Up | `WP-02` runtime environment completion | `bash adl/tools/demo_v0871_runtime_environment.sh` | `artifacts/v0871/runtime_environment/runtime/runtime_environment.json` | Runtime environment initializes cleanly with documented contracts and emits the canonical deterministic replay run root under the declared runtime root | Stable env inputs preserve runtime-environment artifact shape and bounded run-root structure | READY |
+| D2 | Lifecycle Phases And Boundaries | `WP-03` execution boundaries and lifecycle | `bash adl/tools/demo_v0871_lifecycle.sh` | `artifacts/v0871/lifecycle/lifecycle_summary.json` | `init -> runtime_init -> execute -> complete -> run_completion -> teardown` is explicit and reviewable from one bounded summary | Fixed scenario preserves lifecycle phase ordering and boundary classification | READY |
+| D3 | Trace-Aligned Runtime Execution | `WP-04` trace-aligned runtime execution | `bash adl/tools/demo_v0871_trace_runtime.sh` | `artifacts/v0871/trace_runtime/trace_bundle_manifest.json` | Runtime actions map coherently to emitted trace events, run summary, and archived trace-bundle surfaces | Replay preserves execution-to-trace shape and archive bundle structure for the bounded run | READY |
+| D4 | Local Failure Handling | `WP-05` local runtime resilience | `bash adl/tools/demo_v0871_resilience_failure.sh` | `artifacts/v0871/resilience_failure/failure_summary.json` | Failure is bounded, explained, and leaves inspectable failure classification plus trace artifacts | Same induced failure preserves failure classification and review disposition | READY |
+| D4A | Shepherd Preservation And Recovery | `WP-05`, `WP-07` Shepherd preservation + continuity discipline | `bash adl/tools/demo_v0871_shepherd_recovery.sh` | `artifacts/v0871/shepherd_recovery/shepherd_recovery_summary.json` | Interrupted work is preserved and classified for resume under explicit runtime rules | Fixed interruption scenario preserves preservation and recovery classification | READY |
+| D5 | Restartability And Recovery | `WP-05`, `WP-07` resilience + state discipline | `bash adl/tools/demo_v0871_restartability.sh` | `artifacts/v0871/restartability/restartability_summary.json` | Bounded run can resume or restart under documented guardrails | Restart behavior remains stable under fixed paused-state inputs and resume guards | READY |
 | D6 | Operator Invocation Surface | `WP-06` operator surfaces | `bash adl/tools/demo_v0871_operator_surface.sh` | `artifacts/v0871/operator_surface/runtime/runs/v0-4-demo-deterministic-replay/run_summary.json` plus `run_manifest.json` | Operator entrypoints are clear, stable, and reviewer-usable, with one canonical runtime-root proof set | Same command contract should preserve invocation shape and artifact naming | READY |
 | D7 | Runtime State / Persistence Discipline | `WP-07` state / persistence discipline | `bash adl/tools/demo_v0871_runtime_state.sh` | `artifacts/v0871/runtime_state/runtime/runs/v0-6-hitl-pause-demo/run_status.json` | State is inspectable, bounded, and cleaned up deterministically across paused and completed runs | Stable inputs should preserve persistence classification, cleanup disposition, and state artifact inventory | READY |
 | D8 | Review Surface Walkthrough | `WP-08` runtime review surfaces | `bash adl/tools/demo_v0871_review_surface.sh` | `artifacts/v0871/review_surface/demo_manifest.json` and `artifacts/v0871/review_surface/README.md` | Reviewer can locate primary D6 and D7 proof surfaces from one entrypoint | Manifest layout, reviewer guidance, and package ordering remain stable | READY |
-| D9 | Integrated Runtime Path | `WP-02` through `WP-08` integrated runtime completion | `adl/tools/demo_v0871_integrated_runtime.sh` | integrated runtime artifact set | One run demonstrates the authoritative runtime path end-to-end | Replay judged by control-path and artifact-shape stability | PLANNED |
-| D10 | Docs-To-Runtime Consistency Check | `WP-09`, `WP-15` docs/review convergence | `adl/tools/demo_v0871_docs_review.sh` | reviewer entry surfaces | Reviewer can move from docs to runtime proof without contradiction | Navigation and proof mapping should remain stable | PLANNED |
-| D11 | Quality Gate Walkthrough | `WP-14` quality gate | `adl/tools/demo_v0871_quality_gate.sh` | quality-gate record | Tests, validators, and coverage posture are reviewable in one place | Same repo state should preserve gate outcome | PLANNED |
-| D12 | Release Review Package | `WP-16` through `WP-20` review/remediation/planning/release tail | `adl/tools/demo_v0871_release_review_package.sh` | release review package | Review, remediation, planning, and release artifacts are coherent and navigable | Package layout and key entrypoints remain stable | PLANNED |
+| D9 | Integrated Runtime Path | `WP-02` through `WP-08` integrated runtime completion | `bash adl/tools/demo_v0871_integrated_runtime.sh` | `artifacts/v0871/integrated_runtime/demo_manifest.json` | One run demonstrates the authoritative bounded runtime path from D1 through D8 end-to-end | Replay is judged by package ordering and proof-surface shape stability across the integrated manifest | READY |
+| D10 | Docs-To-Runtime Consistency Check | `WP-09`, `WP-15` docs/review convergence | `bash adl/tools/demo_v0871_docs_review.sh` | `artifacts/v0871/docs_review/docs_review_manifest.json` | Reviewer can move from promoted runtime docs to integrated proof surfaces without contradiction | Navigation and proof mapping remain stable for the bounded docs-to-proof map | READY |
+| D11 | Quality Gate Walkthrough | `WP-14` quality gate | `bash adl/tools/demo_v0871_quality_gate.sh` | `artifacts/v0871/quality_gate/quality_gate_record.json` | Tests, validators, and bounded demo checks are reviewable in one place with per-check logs | Same repo state should preserve gate outcome and log inventory | READY |
+| D12 | Release Review Package | `WP-16` through `WP-20` review/remediation/planning/release tail | `bash adl/tools/demo_v0871_release_review_package.sh` | `artifacts/v0871/release_review_package/release_review_package_manifest.json` | Review, remediation, planning, and release artifacts are coherent and navigable from one package root | Package layout and key entrypoints remain stable for the bounded release-review surface | READY |
 | D13 | Claude + ChatGPT Tea Discussion | bounded multi-agent runtime discussion proof (`#1490`, `#1491`, `#1501`, `#1502`) | `bash adl/tools/demo_v0871_multi_agent_discussion.sh` | `artifacts/v0871/multi_agent_discussion/transcript.md` | Reviewer can inspect five explicit turns, two named agents, runtime turn metadata, the transcript contract, and the paired runtime trace/summaries | Fixed shim outputs should preserve transcript shape and turn ordering | READY |
 | D13L | Live Claude + ChatGPT Tea Discussion | live-provider companion proof for D13 (`#1500`, `#1501`, `#1502`, `#1533`) | `bash adl/tools/demo_v0871_real_multi_agent_discussion.sh` | `artifacts/v0871/real_multi_agent_discussion/provider_invocations.json` plus `transcript.md` | Reviewer can inspect real OpenAI and Anthropic invocation metadata, five explicit turns, runtime turn metadata, and transcript contract proof without secret leakage when valid operator credentials and provider account credit are available | Live model text is non-deterministic; runtime artifact shape, turn ordering, accepted contract shape, and non-secret invocation metadata remain stable | READY_WITH_OPERATOR_CREDENTIALS |
 
@@ -174,15 +174,14 @@ Status guidance:
 
 ## Demo Details
 
-Per-demo detail sections are filled as runnable proof surfaces land. Planned rows remain visible, but they are not treated as implemented until a command, proof surface, and validation check exist.
+Per-demo detail sections below describe the runnable bounded proof surfaces for the milestone. Live-provider surfaces remain explicitly scoped where operator-managed credentials are required.
 
 ### D0) Milestone Demo Suite
 
 Description:
-- Provides the canonical WP-13 entrypoint for the currently implemented `v0.87.1` proof surfaces.
-- Runs provider-family demos, the runtime review walkthrough, and the bounded multi-agent discussion demo.
+- Provides the canonical WP-13 entrypoint for the bounded `v0.87.1` proof surfaces.
+- Runs the bounded runtime rows D1-D5 and D9-D12, the provider-family demos, the runtime review walkthrough, and the bounded multi-agent discussion demo.
 - Deliberately excludes the live D13L provider demo from the default suite because it depends on operator-managed OpenAI and Anthropic credentials.
-- Records planned-but-not-run demo rows explicitly in the suite manifest rather than overclaiming coverage.
 
 Commands to run:
 
@@ -194,6 +193,8 @@ Expected artifacts:
 - `artifacts/v0871/suite/demo_manifest.json`
 - `artifacts/v0871/suite/README.md`
 - `artifacts/v0871/suite/index.txt`
+- bounded runtime proof roots under `artifacts/v0871/suite/runtime_environment`, `lifecycle`, `trace_runtime`, `resilience_failure`, `shepherd_recovery`, `restartability`
+- integrated/review-tail proof roots under `artifacts/v0871/suite/integrated_runtime`, `docs_review`, `quality_gate`, `release_review_package`
 - provider proof roots under `artifacts/v0871/suite/provider_*`
 - review proof roots under `artifacts/v0871/suite/review_surface`
 - multi-agent proof roots under `artifacts/v0871/suite/multi_agent_discussion`
@@ -210,13 +211,12 @@ Secondary proof surfaces:
 
 Expected success signals:
 - The suite exits successfully.
-- The manifest includes provider packages, D8, and D13.
+- The manifest includes D1-D5, D8-D13, and the provider-family packages.
 - D13L is discoverable from this matrix and `demos/v0.87.1/real_chatgpt_claude_multi_agent_discussion_demo.md`, but is not required for the CI-safe D0 suite.
-- The manifest includes `planned_not_run` entries for demo rows that are still planned.
 - The demo issue inventory above names every `v0.87.1` demo/proof issue so reviewers can find demos that are not part of the D0 runtime suite.
 
 Determinism / replay notes:
-- The suite uses bounded local provider shims and mock providers.
+- The suite uses bounded local provider shims, mock providers, and controlled repo-local runtime inputs.
 - Proof-surface ordering in the manifest and index is stable.
 - The suite does not claim full byte-for-byte replay for all generated artifacts.
 - Live-provider output is intentionally outside the D0 determinism claim and is scoped by the D13L row.
@@ -289,8 +289,8 @@ Normalization rules:
 
 Observed results summary:
 - D0 is locally validated by `bash adl/tools/test_demo_v0871_suite.sh`.
-- D6, D7, D8, D13, and the provider-family proof roots are included in the current suite.
-- D1-D5 and D9-D12 remain planned rows until their specialized wrappers land.
+- D1-D5, D6, D7, D8, D9-D13, and the provider-family proof roots are included in the current suite or its integrated review surfaces.
+- D13L remains the only live-provider companion row outside the default bounded suite.
 
 ## Reviewer Sign-Off Surface
 

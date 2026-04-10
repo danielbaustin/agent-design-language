@@ -45,24 +45,38 @@ grep -Fq '"demo_id": "D8"' "$MANIFEST" || {
   echo "assertion failed: D8 package missing" >&2
   exit 1
 }
+grep -Fq '"demo_id": "D1"' "$MANIFEST" || {
+  echo "assertion failed: D1 package missing" >&2
+  exit 1
+}
+grep -Fq '"demo_id": "D12"' "$MANIFEST" || {
+  echo "assertion failed: D12 package missing" >&2
+  exit 1
+}
 grep -Fq '"demo_id": "D13"' "$MANIFEST" || {
   echo "assertion failed: D13 package missing" >&2
   exit 1
 }
-grep -Fq '"demo_id": "D1"' "$MANIFEST" || {
-  echo "assertion failed: planned-not-run D1 entry missing" >&2
+if grep -Fq 'planned_not_run' "$MANIFEST"; then
+  echo "assertion failed: stale planned-not-run section present" >&2
   exit 1
-}
-grep -Fq 'planned_not_run' "$MANIFEST" || {
-  echo "assertion failed: planned-not-run section missing" >&2
-  exit 1
-}
+fi
 grep -Fq 'canonical WP-13 integration entrypoint' "$README_FILE" || {
   echo "assertion failed: suite README missing WP-13 scope note" >&2
   exit 1
 }
 
 for required in \
+  "$OUT_DIR/runtime_environment/runtime/runtime_environment.json" \
+  "$OUT_DIR/lifecycle/lifecycle_summary.json" \
+  "$OUT_DIR/trace_runtime/trace_bundle_manifest.json" \
+  "$OUT_DIR/resilience_failure/failure_summary.json" \
+  "$OUT_DIR/shepherd_recovery/shepherd_recovery_summary.json" \
+  "$OUT_DIR/restartability/restartability_summary.json" \
+  "$OUT_DIR/integrated_runtime/demo_manifest.json" \
+  "$OUT_DIR/docs_review/docs_review_manifest.json" \
+  "$OUT_DIR/quality_gate/quality_gate_record.json" \
+  "$OUT_DIR/release_review_package/release_review_package_manifest.json" \
   "$OUT_DIR/provider_local_ollama/runtime/runs/v0-87-1-provider-local-ollama-demo/run_summary.json" \
   "$OUT_DIR/provider_http/runtime/runs/v0-87-1-provider-http-demo/run_summary.json" \
   "$OUT_DIR/provider_mock/runtime/runs/v0-87-1-provider-mock-demo/run_summary.json" \
