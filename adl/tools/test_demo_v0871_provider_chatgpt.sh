@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+TMPDIR_ROOT="$(mktemp -d)"
+trap 'rm -rf "$TMPDIR_ROOT"' EXIT
+
+ARTIFACT_ROOT="$TMPDIR_ROOT/artifacts"
+RUN_ID="v0-87-1-provider-chatgpt-demo"
+RUNTIME_ROOT="$ARTIFACT_ROOT/runtime"
+RUN_ROOT="$RUNTIME_ROOT/runs/$RUN_ID"
+README_FILE="$ARTIFACT_ROOT/README.md"
+SUMMARY_FILE="$RUN_ROOT/run_summary.json"
+STATUS_FILE="$RUN_ROOT/run_status.json"
+TRACE_FILE="$RUN_ROOT/logs/trace_v1.json"
+LOG_FILE="$ARTIFACT_ROOT/run_log.txt"
+SERVER_LOG="$ARTIFACT_ROOT/chatgpt_adapter.log"
+
+(
+  cd "$ROOT_DIR"
+  bash adl/tools/demo_v0871_provider_chatgpt.sh "$ARTIFACT_ROOT" >/dev/null
+)
+
+[[ -f "$README_FILE" ]] || {
+  echo "assertion failed: README missing" >&2
+  exit 1
+}
+[[ -f "$SUMMARY_FILE" ]] || {
+  echo "assertion failed: run_summary.json missing" >&2
+  exit 1
+}
+[[ -f "$STATUS_FILE" ]] || {
+  echo "assertion failed: run_status.json missing" >&2
+  exit 1
+}
+[[ -f "$TRACE_FILE" ]] || {
+  echo "assertion failed: trace_v1.json missing" >&2
+  exit 1
+}
+[[ -f "$LOG_FILE" ]] || {
+  echo "assertion failed: run_log.txt missing" >&2
+  exit 1
+}
+[[ -f "$SERVER_LOG" ]] || {
+  echo "assertion failed: chatgpt_adapter.log missing" >&2
+  exit 1
+}
+
+grep -Fq '"run_id": "v0-87-1-provider-chatgpt-demo"' "$SUMMARY_FILE" || {
+  echo "assertion failed: run_summary.json missing run_id" >&2
+  exit 1
+}
+grep -Fq '"overall_status": "succeeded"' "$STATUS_FILE" || {
+  echo "assertion failed: run_status.json missing succeeded status" >&2
+  exit 1
+}
+grep -Fq 'CHATGPT_PROVIDER_DEMO_OK' "$LOG_FILE" || {
+  echo "assertion failed: run_log.txt missing ChatGPT provider output" >&2
+  exit 1
+}
+grep -Fq 'OPENAI_API_KEY=chatgpt-demo-token' "$README_FILE" || {
+  echo "assertion failed: README missing ChatGPT setup note" >&2
+  exit 1
+}
+
+echo "demo_v0871_provider_chatgpt: ok"

@@ -46,3 +46,6 @@ adl provider setup openai --out ./.adl/provider-setup/openai
 
 Loopback demo note:
 - the `v0.87.1` bounded HTTP family demo uses `http://127.0.0.1:8787/complete` with a dummy bearer token as a local proof path for the ADL completion contract
+
+ChatGPT demo note:
+- the `v0.87.1` ChatGPT family demo uses the `chatgpt:gpt-5.4` profile plus a local bounded completion adapter on `http://127.0.0.1:8787/complete`; it proves the current setup/profile surface, not a raw vendor-native endpoint
