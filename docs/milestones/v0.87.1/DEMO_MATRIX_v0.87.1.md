@@ -135,14 +135,14 @@ Use this table as the fast review surface for milestone coverage.
 | D11 | Quality Gate Walkthrough | `WP-14` quality gate | `bash adl/tools/demo_v0871_quality_gate.sh` | `artifacts/v0871/quality_gate/quality_gate_record.json` | Tests, validators, and bounded demo checks are reviewable in one place with per-check logs | Same repo state should preserve gate outcome and log inventory | READY |
 | D12 | Release Review Package | `WP-16` through `WP-20` review/remediation/planning/release tail | `bash adl/tools/demo_v0871_release_review_package.sh` | `artifacts/v0871/release_review_package/release_review_package_manifest.json` | Review, remediation, planning, and release artifacts are coherent and navigable from one package root | Package layout and key entrypoints remain stable for the bounded release-review surface | READY |
 | D13 | Claude + ChatGPT Tea Discussion | bounded multi-agent runtime discussion proof (`#1490`, `#1491`, `#1501`, `#1502`) | `bash adl/tools/demo_v0871_multi_agent_discussion.sh` | `artifacts/v0871/multi_agent_discussion/transcript.md` | Reviewer can inspect five explicit turns, two named agents, runtime turn metadata, the transcript contract, and the paired runtime trace/summaries | Fixed shim outputs should preserve transcript shape and turn ordering | READY |
-| D13L | Live Claude + ChatGPT Tea Discussion | live-provider companion proof for D13 (`#1500`, `#1501`, `#1502`, `#1533`) | `bash adl/tools/demo_v0871_real_multi_agent_discussion.sh` | `artifacts/v0871/real_multi_agent_discussion/provider_invocations.json` plus `transcript.md` | Reviewer can inspect real OpenAI and Anthropic invocation metadata, five explicit turns, runtime turn metadata, and transcript contract proof without secret leakage when valid operator credentials and provider account credit are available | Live model text is non-deterministic; runtime artifact shape, turn ordering, accepted contract shape, and non-secret invocation metadata remain stable | READY_WITH_OPERATOR_CREDENTIALS |
+| D13L | Live Claude + ChatGPT Tea Discussion | live-provider companion proof for D13 (`#1500`, `#1501`, `#1502`, `#1533`) | `bash adl/tools/demo_v0871_real_multi_agent_discussion.sh` | `artifacts/v0871/real_multi_agent_discussion/provider_invocations.json` plus `transcript.md` | Reviewer can inspect real OpenAI and Anthropic invocation metadata, five explicit turns, runtime turn metadata, and transcript contract proof without secret leakage when valid operator credentials and provider account credit are available; a no-credential test skip is a bounded non-proving disposition, not live-provider proof | Live model text is non-deterministic; runtime artifact shape, turn ordering, accepted contract shape, and non-secret invocation metadata remain stable | READY_WITH_OPERATOR_CREDENTIALS |
 
 Provider demo wrappers also archive successful bounded runtime roots into `.adl/trace-archive/milestones/v0.87.1/runs/<run_id>/` and print that canonical archive location (`#1520`, `#1521`). The original `artifacts/v0871/.../runtime/runs/<run_id>/` proof surfaces remain the immediate demo outputs; the archive is the durable local trace index for later review/export.
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
 - `READY` = runnable and locally validated
-- `READY_WITH_OPERATOR_CREDENTIALS` = runnable with operator-managed live-provider credentials and active provider account access; not required for CI-safe demo-suite validation
+- `READY_WITH_OPERATOR_CREDENTIALS` = runnable with operator-managed live-provider credentials and active provider account access; missing-credential skips remain non-proving and do not satisfy the live-provider proof claim; not required for CI-safe demo-suite validation
 - `BLOCKED` = known dependency or missing proof surface
 - `LANDED` = milestone evidence exists and is ready for review
 
@@ -213,6 +213,7 @@ Expected success signals:
 - The suite exits successfully.
 - The manifest includes D1-D5, D8-D13, and the provider-family packages.
 - D13L is discoverable from this matrix and `demos/v0.87.1/real_chatgpt_claude_multi_agent_discussion_demo.md`, but is not required for the CI-safe D0 suite.
+- A skipped no-credential validation run for D13L is acceptable for bounded local ergonomics, but reviewers should treat it as an explicit non-proof disposition until a credentialed pass produces the live-provider artifacts named in the D13L row.
 - The demo issue inventory above names every `v0.87.1` demo/proof issue so reviewers can find demos that are not part of the D0 runtime suite.
 
 Determinism / replay notes:

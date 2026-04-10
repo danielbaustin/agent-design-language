@@ -224,6 +224,10 @@ What this proves:
 - real OpenAI and Anthropic calls through ADL's current local HTTP completion adapter boundary
 - five sequential turns with saved-state handoff, runtime conversation metadata, and transcript contract validation
 
+Proof boundary:
+- This command is the credentialed live-provider proof path for D13L.
+- If operator credentials are unavailable, use \`adl/tools/test_demo_v0871_real_multi_agent_discussion.sh\`; its skip path is explicitly non-proving and does not satisfy the live-provider proof claim on its own.
+
 Primary proof surfaces:
 - \`$TRANSCRIPT\`
 - \`$INVOCATIONS\`

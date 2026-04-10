@@ -5,11 +5,31 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-$HOME/keys/openai.key}"
 ANTHROPIC_KEY_FILE="${ADL_ANTHROPIC_KEY_FILE:-$HOME/keys/claude.key}"
 
+emit_disposition() {
+  local status="$1"
+  local reason="$2"
+  python3 - "$status" "$reason" <<'PY'
+import json
+import sys
+
+status, reason = sys.argv[1:3]
+payload = {
+    "demo_id": "D13L",
+    "validation_disposition": status,
+    "reason": reason,
+    "credentialed_proof": status == "credentialed_proof_passed",
+}
+print("ADL_VALIDATION_DISPOSITION=" + json.dumps(payload, sort_keys=True), file=sys.stderr)
+PY
+}
+
 if [[ -z "${OPENAI_API_KEY:-}" && ! -s "$OPENAI_KEY_FILE" ]]; then
+  emit_disposition "skipped_non_proving" "missing_openai_credentials"
   echo "SKIP: missing OPENAI_API_KEY and $OPENAI_KEY_FILE" >&2
   exit 0
 fi
 if [[ -z "${ANTHROPIC_API_KEY:-}" && ! -s "$ANTHROPIC_KEY_FILE" ]]; then
+  emit_disposition "skipped_non_proving" "missing_anthropic_credentials"
   echo "SKIP: missing ANTHROPIC_API_KEY and $ANTHROPIC_KEY_FILE" >&2
   exit 0
 fi
@@ -87,4 +107,5 @@ if grep -R -E 'Authorization:|Bearer |x-api-key' "$OUT_DIR" >/dev/null 2>&1; the
   exit 1
 fi
 
+emit_disposition "credentialed_proof_passed" "live_provider_artifacts_verified"
 echo "demo_v0871_real_multi_agent_discussion: ok"
