@@ -9,8 +9,9 @@
 
 ## How To Use
 - Keep scope small enough to finish with green CI and merged PRs.
-- List work items in planned execution order.
+- List work items in planned execution order and keep that order aligned to the WBS dependency chain.
 - Track blockers here (not scattered chat notes).
+- Use the WBS Acceptance Mapping as the canonical definition of what each phase is proving.
 
 ## Role Of This Document
 
@@ -23,6 +24,7 @@ This document must remain fully consistent with:
 - the milestone vision
 - the milestone design
 - the milestone README
+- the release-tail issue graph and acceptance contract
 
 Any divergence is a defect and must be corrected immediately.
 
@@ -34,6 +36,7 @@ Any divergence is a defect and must be corrected immediately.
 - Keep all canonical documents aligned continuously.
 - Do not defer consistency work to the end.
 - Treat runtime completion as the milestone center of gravity.
+- Do not start a downstream sprint slice until the documented handoff gate for the current slice is satisfied.
 
 ## Sprint Goal
 Complete the first full runtime milestone for ADL: execution environment, lifecycle, trace alignment, resilience, operator surfaces, demos, review, release, and handoff.
@@ -68,6 +71,13 @@ Proof surfaces:
 - local resilience, Shepherd preservation, and restart semantics visible in implementation or artifacts
 - stable operator entrypoints and review surfaces
 
+Execution order:
+- `#1435` establishes canonical milestone truth before implementation slices begin.
+- `#1436` through `#1442` then execute in dependency order so later lifecycle, trace, resilience, state, and review work consume one runtime substrate instead of inventing parallel ones.
+
+Handoff gate to Sprint 2:
+- Sprint 1 exits only when the runtime foundation issues have landed and the milestone docs can truthfully describe the implemented runtime surfaces consumed by WP-09 through WP-12.
+
 ### Sprint 2 - Convergence, Demos, And Quality
 Goal:
 Prove the runtime through integrated demos, quality gates, and doc/review convergence.
@@ -87,6 +97,21 @@ Proof surfaces:
 - quality posture is auditable
 - reviewer entry surfaces are coherent for an uninvolved reviewer
 
+Execution order:
+- Convergence gate: `#1458` then `#1459`
+  - `#1458` removes cross-document contradictions.
+  - `#1459` finalizes the measurable acceptance contract that the rest of Sprint 2 must consume.
+- Planning and release-surface gate: `#1460` then `#1461`
+  - `#1460` aligns sprint sequencing to the accepted WBS dependency order and release-tail structure.
+  - `#1461` turns that order into an executable checklist and release-gate surface.
+- Integrated proof and reviewer-convergence gate: `#1462` then `#1463` then `#1464`
+  - `#1462` defines and validates the milestone demo program against the accepted runtime claims.
+  - `#1463` records the auditable quality posture for the implemented runtime and demo surfaces.
+  - `#1464` converges reviewer entry docs only after demo and quality evidence are already concrete.
+
+Handoff gate to Sprint 3:
+- Sprint 2 exits only when docs, checklist/release gates, demo coverage, quality posture, and reviewer entry surfaces all point back to the same accepted runtime truth.
+
 ### Sprint 3 - Review, Release, And Handoff
 Goal:
 Review the completed runtime milestone, remediate findings, release it, and prepare the next milestone.
@@ -105,11 +130,21 @@ Proof surfaces:
 - release artifacts are complete
 - next-milestone planning package exists before closeout
 
+Execution order:
+- `#1494` records internal findings against the converged runtime proof package.
+- `#1495` prepares the external review surface after internal review has exposed obvious defects.
+- `#1496` remediates accepted findings or records explicit deferrals before release work begins.
+- `#1497` prepares next-milestone planning before release closeout so follow-on work is captured while the review context is still fresh.
+- `#1498` performs the final release ceremony only after the planning package and remediation state are explicit.
+
+Release-tail rule:
+- Sprint 3 must preserve the WBS release-tail order `internal review -> external review prep -> findings remediation -> next milestone planning -> release ceremony` without collapsing those steps into one undocumented closeout pass.
+
 ## Cadence Expectations
 - Use issue cards (`input`/`output`) for each item.
 - Keep changes scoped per issue; use draft PRs until checks pass.
 - Run required quality gates (`fmt`, `clippy`, `test`, demo validators, and milestone review checks) for the changed surfaces.
-- Sprint 1, Sprint 2, and Sprint 3 issue references are now assigned; Sprint 3 remains review-ready until those issues enter run phase.
+- Sprint 1, Sprint 2, and Sprint 3 issue references are now assigned; later sprints should remain review-ready until their documented handoff gates are satisfied.
 
 ## Risks / Dependencies
 - Dependency: upstream v0.87 artifacts (trace, provider, skills) remain stable
@@ -123,6 +158,7 @@ Proof surfaces:
 ## Demo / Review Plan
 - Demo artifact: milestone doc walkthrough (VISION → DESIGN → WBS → SPRINT → CHECKLIST)
 - Primary runtime proof program: `docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`
+- Acceptance anchor: `docs/milestones/v0.87.1/WBS_v0.87.1.md`
 - Review date: TBD
 - Sign-off owners: Daniel Austin, internal review, 3rd party reviewer
 
