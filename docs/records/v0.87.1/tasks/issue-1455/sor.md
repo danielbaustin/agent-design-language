@@ -43,15 +43,11 @@ Created the full `v0.87.1` Sprint 2 issue set (`#1458` through `#1464`), correct
 - synced the corrected `#1455` GitHub issue title/body to match the authored local source prompt
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated:
-  - `docs/milestones/v0.87.1/WBS_v0.87.1.md`
-  - `docs/milestones/v0.87.1/SPRINT_v0.87.1.md`
-- Worktree-only paths remaining:
-  - `docs/milestones/v0.87.1/WBS_v0.87.1.md`
-  - `docs/milestones/v0.87.1/SPRINT_v0.87.1.md`
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1465.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1465.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: issue worktree edits pending commit/PR publication
+- Integration method used: issue branch/worktree changes were published and merged via PR #1465.
 - Verification performed:
   - `git status --short` verified only the intended tracked milestone-doc paths were changed for issue `#1455`, aside from one unrelated unstaged worktree-local template diff that was intentionally left unstaged.
   - `git diff -- docs/milestones/v0.87.1/WBS_v0.87.1.md docs/milestones/v0.87.1/SPRINT_v0.87.1.md` verified the tracked diff is exactly the Sprint 2 issue-number assignment update.

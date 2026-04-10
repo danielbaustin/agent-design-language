@@ -43,11 +43,11 @@ Added a first-class `claude:` provider/profile family alongside the existing `ch
 - added focused Rust coverage in `adl/tests/provider_tests.rs` and existing provider command/substrate test modules
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet; tracked changes are present on the issue branch/worktree pending `pr finish`
-- Worktree-only paths remaining: `adl/src/provider.rs`, `adl/src/provider_substrate.rs`, `adl/src/cli/provider_cmd.rs`, `adl/src/cli/usage.rs`, `adl/tests/provider_tests.rs`, `docs/tooling/PROVIDER_SETUP.md`
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1522.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1522.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: issue branch/worktree edits before PR publication
+- Integration method used: issue branch/worktree changes were published and merged via PR #1522.
 - Verification performed:
   - `cargo test --manifest-path adl/Cargo.toml provider_profile_registry_includes_first_class_claude_profiles -- --nocapture`
     - verified the internal provider profile registry exposes the first-class Claude profiles

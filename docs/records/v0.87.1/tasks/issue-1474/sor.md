@@ -40,11 +40,11 @@ Added a user-facing `adl provider setup <family>` flow that generates local prov
 - added regression coverage for direct command dispatch and setup bundle generation
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: `adl/src/cli/provider_cmd.rs`, `adl/src/cli/mod.rs`, `adl/src/cli/usage.rs`, `adl/src/cli/tests.rs`, `docs/tooling/PROVIDER_SETUP.md`
-- Worktree-only paths remaining: none
-- Integration state: pr_open
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1476.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1476.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: worktree implementation on the issue branch, to be published through the PR opened by `pr finish`
+- Integration method used: issue branch/worktree changes were published and merged via PR #1476.
 - Verification performed:
   - `git status --short`
     - verified the diff is bounded to the five intended tracked paths

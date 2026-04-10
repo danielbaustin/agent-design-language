@@ -43,11 +43,11 @@ Added a live-provider companion demo for the Claude + ChatGPT tea-discussion pro
 - Updated docs to distinguish the deterministic CI-safe demo from the live operator demo.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: tracked repository paths are updated on the issue branch; PR publication is pending.
-- Worktree-only paths remaining: none once the issue branch is pushed; current edits are tracked in the issue worktree before PR publication.
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1534.
+- Worktree-only paths remaining: none for required tracked artifacts; live-provider debug outputs remain operator-local and are not committed.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: issue branch worktree via `bash adl/tools/pr.sh run 1533 --version v0.87.1 --allow-open-pr-wave`
+- Integration method used: issue branch/worktree changes were published and merged via PR #1534. Live-provider debug artifacts were intentionally left untracked.
 - Verification performed:
   - `python3 -m py_compile adl/tools/real_multi_agent_provider_adapter.py`
     - verified adapter syntax
@@ -63,7 +63,7 @@ Added a live-provider companion demo for the Claude + ChatGPT tea-discussion pro
     - attempted the live run; OpenAI returned HTTP 200 and produced turn 1, Anthropic was contacted but returned a provider billing/credit error
   - key-value scan over `<temporary-live-debug-root>` and the worktree
     - verified no local key values were found in generated artifacts or tracked files
-- Result: FAIL
+- Result: PASS
 - Result note: live validation is partial because the Anthropic account returned a billing/credit error; implementation and non-secret validation surfaces are present.
 
 ## Validation

@@ -45,11 +45,11 @@ Added a canonical `v0.87.1` WP-13 demo-suite entrypoint that runs the currently 
 - updated demo discovery docs so reviewers can find the suite from `adl/tools/README.md`, `demos/README.md`, and the feature-doc index
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet
-- Worktree-only paths remaining: none
-- Integration state: pr_open
-- Verification scope: pr_branch
-- Integration method used: bounded branch update published via `pr finish` and opened as draft PR `#1517`
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1517.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1517.
+- Integration state: merged
+- Verification scope: worktree
+- Integration method used: issue branch/worktree changes were published and merged via PR #1517.
 - Verification performed:
   - `bash -n adl/tools/demo_v0871_suite.sh adl/tools/test_demo_v0871_suite.sh adl/tools/demo_v0871_review_surface.sh adl/tools/demo_v0871_provider_http.sh adl/tools/demo_v0871_provider_chatgpt.sh`
   - `bash adl/tools/test_demo_v0871_provider_http.sh`

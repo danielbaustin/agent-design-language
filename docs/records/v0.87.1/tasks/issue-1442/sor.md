@@ -39,11 +39,11 @@ Added one bounded `v0.87.1` runtime review walkthrough package and one determini
 - aligned the runtime feature index and tooling docs so the review-surface vocabulary matches the implemented D8 contract
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet
-- Worktree-only paths remaining: none
-- Integration state: pr_open
-- Verification scope: pr_branch
-- Integration method used: bounded branch update published via `pr finish` and opened as draft PR `#1506`
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1506.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1506.
+- Integration state: merged
+- Verification scope: worktree
+- Integration method used: issue branch/worktree changes were published and merged via PR #1506.
 - Verification performed:
   - `git diff --check`
   - `cargo fmt --manifest-path adl/Cargo.toml --all --check`

@@ -38,21 +38,11 @@ This branch completes a bounded execution-boundary and lifecycle pass for the v0
 - Validated the runtime and lifecycle behavior with focused tests and lint/format checks.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet
-- Worktree-only paths remaining:
-  - `adl/src/execute/mod.rs`
-  - `adl/src/execute/runner.rs`
-  - `adl/src/execute/state/contracts.rs`
-  - `adl/src/execute/state/mod.rs`
-  - `adl/src/instrumentation.rs`
-  - `adl/src/obsmem_indexing.rs`
-  - `adl/src/trace.rs`
-  - `adl/tests/execute_tests/delegation_resume.rs`
-  - `docs/milestones/v0.87.1/features/AGENT_LIFECYCLE.md`
-  - `docs/milestones/v0.87.1/features/EXECUTION_BOUNDARIES.md`
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1466.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1466.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: direct edits in the bound issue worktree
+- Integration method used: issue branch/worktree changes were published and merged via PR #1466.
 - Verification performed:
   - `git status --short` to confirm the branch is still worktree-only and not published to main
   - `cargo fmt --manifest-path adl/Cargo.toml --all --check` to verify formatting

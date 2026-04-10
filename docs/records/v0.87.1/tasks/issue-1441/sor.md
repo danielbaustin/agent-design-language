@@ -34,23 +34,11 @@ Implemented the bounded WP-07 persistence contract by making `run_status.json` e
 - updated milestone docs to point at the real persisted state contract
 
 ## Main Repo Integration (REQUIRED)
-
-- Main-repo paths updated: none yet
-- Worktree-only paths remaining:
-  - `adl/src/cli/run_artifacts/summary.rs`
-  - `adl/src/cli/run_artifacts_types.rs`
-  - `adl/src/cli/tests/artifact_builders/learning_runtime.rs`
-  - `adl/src/cli/tests/run_state/persistence.rs`
-  - `adl/tools/demo_v0871_runtime_state.sh`
-  - `adl/tools/test_demo_v0871_runtime_state.sh`
-  - `adl/tools/README.md`
-  - `docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`
-  - `docs/milestones/v0.87.1/features/AGENT_LIFECYCLE.md`
-  - `docs/milestones/v0.87.1/features/LOCAL_RUNTIME_RESILIENCE.md`
-  - `docs/milestones/v0.87.1/features/SHEPHERD_RUNTIME_MODEL.md`
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1492.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1492.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: bounded worktree update pending `pr finish`
+- Integration method used: issue branch/worktree changes were published and merged via PR #1492.
 - Verification performed:
   - `git diff --check`
   - `bash adl/tools/test_demo_v0871_runtime_state.sh`

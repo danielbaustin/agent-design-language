@@ -27,12 +27,11 @@ Published the already-reviewed truth correction for the tracked `issue-1436` SOR
 - kept the repository diff strictly bounded to the existing issue-1436 record correction
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet
-- Worktree-only paths remaining:
-  - `docs/records/v0.87.1/tasks/issue-1436/sor.md`
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1482.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1482.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: bounded worktree update pending `pr finish`
+- Integration method used: issue branch/worktree changes were published and merged via PR #1482.
 - Verification performed:
   - `git diff --check`
   - `git diff -- docs/records/v0.87.1/tasks/issue-1436/sor.md`

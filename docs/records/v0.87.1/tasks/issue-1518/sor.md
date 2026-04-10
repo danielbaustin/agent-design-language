@@ -46,12 +46,11 @@ Added a safe run-artifact archive helper that inventories local ADL run roots, c
 - Preserved 282 unique run artifacts under `.adl/trace-archive/milestones/` and recorded 6,503 duplicate source entries as `duplicate-skipped` in the manifest.
 
 ## Main Repo Integration (REQUIRED)
-
-- Main-repo paths updated: `adl/tools/archive_run_artifacts.sh`, `adl/tools/test_archive_run_artifacts.sh`, `adl/tools/README.md`
-- Worktree-only paths remaining: none for tracked changes; the local runtime archive under `.adl/trace-archive/` is intentionally untracked local operator data
-- Integration state: pr_open
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1524.
+- Worktree-only paths remaining: none for required tracked artifacts; the local runtime archive under `.adl/trace-archive/` remains intentionally untracked operator data.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: issue worktree changes prepared for PR; local `.adl/trace-archive` generated in the primary checkout because the source data lives there and `.adl` remains untracked
+- Integration method used: issue branch/worktree changes were published and merged via PR #1524. Local archive data was intentionally left untracked.
 - Verification performed:
   - `git status --short` confirmed the tracked worktree change set is limited to the new tool, test, and README update.
   - `find .adl/trace-archive/milestones -mindepth 3 -maxdepth 3 -type d | wc -l` from the primary checkout confirmed the local archive contains 281 run directories after the first apply pass.

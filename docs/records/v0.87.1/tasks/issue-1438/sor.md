@@ -38,21 +38,11 @@ Implemented a trace-aligned runtime execution pass for `v0.87.1` and aligned the
 - validated the worktree with focused tests, formatting, and lint checks only
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet
-- Worktree-only paths remaining:
-  - `adl/src/trace_schema_v1.rs`
-  - `adl/src/cli/run_artifacts/runtime.rs`
-  - `adl/src/cli/run_artifacts/summary.rs`
-  - `adl/src/learning_export/trace_bundle_v2.rs`
-  - `adl/src/cli/tests/run_state/persistence.rs`
-  - `adl/src/cli/tests/artifact_builders/summary.rs`
-  - `adl/src/learning_export/tests.rs`
-  - `adl/tests/cli_smoke/instrument_and_cli.rs`
-  - `docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`
-  - `docs/milestones/v0.87.1/features/ADL_RUNTIME_ENVIRONMENT_ARCHITECTURE.md`
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1471.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1471.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: direct write in bound issue worktree
+- Integration method used: issue branch/worktree changes were published and merged via PR #1471.
 - Verification performed:
   - `git status --short` to confirm the branch is still worktree-only
   - `ls`/`sed` path checks to confirm the tracked SOR path and updated artifact surfaces exist

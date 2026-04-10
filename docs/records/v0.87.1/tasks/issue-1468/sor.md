@@ -46,11 +46,11 @@ Created the four family-level provider demo/test issues and local task bundles f
 - added a `Provider Family Demo / Test Issue Map` section to the `v0.87.1` demo matrix
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: `docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`
-- Worktree-only paths remaining: none
-- Integration state: pr_open
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1489.
+- Worktree-only paths remaining: none for required tracked artifacts; local issue/card bootstrap surfaces remain compatibility workflow state outside the tracked SOR record.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: worktree implementation for tracked demo-matrix changes plus root-checkout issue/card creation for the new local bundles
+- Integration method used: issue branch/worktree changes were published and merged via PR #1489. Local issue/card bootstrap surfaces were intentionally not promoted as tracked SOR records.
 - Verification performed:
   - `git status --short`
     - verified the tracked diff in the worktree is limited to the intended demo-matrix update

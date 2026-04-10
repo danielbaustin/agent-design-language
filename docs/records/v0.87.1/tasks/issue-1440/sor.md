@@ -34,18 +34,11 @@ Added one canonical `v0.87.1` operator-surface demo wrapper and regression test,
 - refreshed the tooling docs so they point to the current milestone status and operator-surface entrypoint
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet
-- Worktree-only paths remaining:
-  - `adl/tools/demo_v0871_operator_surface.sh`
-  - `adl/tools/test_demo_v0871_operator_surface.sh`
-  - `adl/tools/README.md`
-  - `docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`
-  - `docs/milestones/v0.87.1/features/ADL_RUNTIME_ENVIRONMENT.md`
-  - `docs/milestones/v0.87.1/features/EXECUTION_BOUNDARIES.md`
-  - `docs/tooling/README.md`
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1484.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1484.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: bounded worktree update pending `pr finish`
+- Integration method used: issue branch/worktree changes were published and merged via PR #1484.
 - Verification performed:
   - `git diff --check`
   - `bash adl/tools/test_demo_v0871_operator_surface.sh`

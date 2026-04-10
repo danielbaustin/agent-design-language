@@ -37,20 +37,11 @@ Tightened the finish workflow so a completed SOR is published onto a tracked rev
 - updated the finish skill contract and default workflow docs so they teach SOR finalization before PR open and tracked review-surface publication
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet
-- Worktree-only paths remaining:
-  - `adl/src/cli/pr_cmd.rs`
-  - `adl/src/control_plane.rs`
-  - `adl/src/cli/tests/pr_cmd_inline/finish.rs`
-  - `adl/tools/card_paths.sh`
-  - `adl/tools/test_pr_finish_default_stage_root.sh`
-  - `adl/tools/skills/pr-finish/SKILL.md`
-  - `adl/tools/skills/pr-finish/references/output-contract.md`
-  - `docs/default_workflow.md`
-  - `docs/records/README.md`
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1452.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1452.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: bounded worktree update pending `pr finish`
+- Integration method used: issue branch/worktree changes were published and merged via PR #1452.
 - Verification performed:
   - `cargo test --manifest-path adl/Cargo.toml real_pr_finish -- --nocapture`
   - `bash adl/tools/test_pr_finish_default_stage_root.sh`
