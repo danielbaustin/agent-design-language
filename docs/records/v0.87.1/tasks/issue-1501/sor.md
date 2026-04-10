@@ -39,6 +39,7 @@ Implemented bounded conversation turn metadata for ADL workflow steps. The runti
 - added validation for empty turn ids, empty speakers, zero sequences, self-referential responses, and duplicate turn ids
 - added focused tests for resolution, validation, and runtime artifact emission
 - updated the D13 demo and docs to describe bounded turn metadata rather than a full conversation platform
+- added janitor follow-up tests for each conversation validation rejection branch after GitHub coverage reported `adl/src/adl/validation.rs` below the per-file floor
 
 ## Main Repo Integration (REQUIRED)
 - Main-repo paths updated: tracked repository paths are updated on the issue branch via the pending PR
@@ -55,6 +56,8 @@ Implemented bounded conversation turn metadata for ADL workflow steps. The runti
     - verified runtime `steps.json` records conversation metadata for executed steps
   - `bash adl/tools/test_demo_v0871_multi_agent_discussion.sh`
     - verified the multi-agent demo still runs and exposes conversation metadata in runtime artifacts
+  - `cargo test --manifest-path adl/Cargo.toml conversation --test adl_tests -- --nocapture`
+    - verified every conversation validation rejection branch added for the coverage repair
 - Result: PASS
 
 ## Validation
@@ -66,9 +69,12 @@ Implemented bounded conversation turn metadata for ADL workflow steps. The runti
   - verified runtime artifact emission for turn metadata
 - `bash adl/tools/test_demo_v0871_multi_agent_discussion.sh`
   - verified the D13 demo still passes with runtime-visible conversation metadata
+- `cargo test --manifest-path adl/Cargo.toml conversation --test adl_tests -- --nocapture`
+  - verified the post-PR janitor coverage repair tests for conversation metadata validation
 - Results:
   - focused Rust tests pass
   - focused demo test passes
+  - post-PR janitor validation tests pass
   - no generated runtime artifacts were checked into the repository
 
 ## Verification Summary
@@ -82,6 +88,7 @@ verification_summary:
       - cargo test --manifest-path adl/Cargo.toml conversation_turn -- --nocapture
       - cargo test --manifest-path adl/Cargo.toml run_writes_run_state_artifacts -- --nocapture
       - bash adl/tools/test_demo_v0871_multi_agent_discussion.sh
+      - cargo test --manifest-path adl/Cargo.toml conversation --test adl_tests -- --nocapture
   determinism:
     status: PASS
     replay_verified: true
@@ -128,6 +135,7 @@ verification_summary:
 ## Decisions / Deviations
 
 - Used `--allow-open-pr-wave` because issue `1501` was intentionally executed while milestone PRs `#1522` and `#1517` were open.
+- GitHub coverage initially failed because `adl/src/adl/validation.rs` fell below the per-file coverage floor; janitor repair added focused tests without changing production behavior.
 - Kept conversation metadata descriptive only; this issue does not infer execution dependencies from `responds_to`.
 - Avoided transcript artifact contract work because issue `1502` owns that follow-on.
 
