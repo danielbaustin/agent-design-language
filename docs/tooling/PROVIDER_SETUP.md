@@ -30,11 +30,15 @@ The generated bundle is intentionally local-only:
 - users are expected to copy/fill a local env file and source it before running ADL
 
 Important transport note:
+- `openai` and `anthropic` now use Rust-native provider adapters by default:
+  - `type: "openai"` targets the OpenAI Responses API unless `config.endpoint` is explicitly overridden
+  - `type: "anthropic"` targets the Anthropic Messages API unless `config.endpoint` is explicitly overridden
 - ADL's bounded HTTP provider expects a completion-style contract:
   - request JSON with `{"prompt": "..."}`
   - response JSON with `{"output": "..."}`
 - raw vendor-native endpoints may need an adapter or compatibility gateway if
-  they do not expose that exact contract directly
+  they do not expose that exact contract directly; this applies to HTTP/profile
+  families such as `chatgpt`, `claude`, `gemini`, `deepseek`, and `http`
 - provider-family demos should keep setup instructions here and keep family-specific
   runtime proof steps in their own wrapper surfaces
 
@@ -60,3 +64,7 @@ Live multi-agent demo note:
 - it reads `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` from the environment when set, otherwise from `$HOME/keys/openai.key` and `$HOME/keys/claude.key`
 - it starts a local adapter that bridges ADL's current `{"prompt": "..."} -> {"output": "..."}` HTTP contract to vendor-native OpenAI and Anthropic APIs
 - generated artifacts record provider family/model/status metadata only; they must not include secret values or raw credential headers
+
+v0.88 native provider demo note:
+- `bash adl/tools/demo_v088_real_multi_agent_discussion.sh` demonstrates direct Rust-native OpenAI and Anthropic runtime invocation using operator-managed keys from environment variables or `$HOME/keys`
+- generated demo artifacts record provider family, model, HTTP status, and prompt/output character counts, but never raw secret values or Authorization headers

@@ -1,0 +1,152 @@
+version: "0.5"
+
+providers:
+  live_openai:
+    type: "openai"
+    config:
+      provider_model_id: "gpt-4o-mini"
+      max_output_tokens: 220
+      timeout_secs: 90
+  live_anthropic:
+    type: "anthropic"
+    config:
+      provider_model_id: "claude-3-5-haiku-latest"
+      max_tokens: 220
+      timeout_secs: 90
+
+agents:
+  chatgpt_host:
+    provider: "live_openai"
+    model: "gpt-4o-mini"
+  claude_guest:
+    provider: "live_anthropic"
+    model: "claude-3-5-haiku-latest"
+
+tasks:
+  chatgpt_opening:
+    prompt:
+      user: |
+        You are ChatGPT in a short ADL live-provider demo.
+
+        Write exactly one concise Markdown section with this heading:
+        # Turn 1 - ChatGPT
+
+        Discuss runtime-backed multi-agent collaboration over tea.
+        Mention that this is a bounded five-turn reviewer demo.
+  claude_reply:
+    prompt:
+      user: |
+        You are Claude in a short ADL live-provider demo.
+
+        Previous turn:
+        {{turn_01}}
+
+        Write exactly one concise Markdown section with this heading:
+        # Turn 2 - Claude
+
+        Reply warmly, acknowledge ChatGPT's turn, and mention explicit saved state.
+  chatgpt_reflection:
+    prompt:
+      user: |
+        You are ChatGPT in a short ADL live-provider demo.
+
+        Previous turn:
+        {{turn_02}}
+
+        Write exactly one concise Markdown section with this heading:
+        # Turn 3 - ChatGPT
+
+        Reflect on trace and review artifacts without claiming a general conversation runtime.
+  claude_refinement:
+    prompt:
+      user: |
+        You are Claude in a short ADL live-provider demo.
+
+        Previous turn:
+        {{turn_03}}
+
+        Write exactly one concise Markdown section with this heading:
+        # Turn 4 - Claude
+
+        Tighten the claim and emphasize that this proof is turn-based and bounded.
+  chatgpt_toast:
+    prompt:
+      user: |
+        You are ChatGPT in a short ADL live-provider demo.
+
+        Previous turn:
+        {{turn_04}}
+
+        Write exactly one concise Markdown section with this heading:
+        # Turn 5 - ChatGPT
+
+        Close with a short tea toast and include this exact phrase:
+        two named live providers, five explicit turns
+
+run:
+  name: "v0-88-real-multi-agent-tea-discussion"
+  workflow:
+    kind: sequential
+    steps:
+      - id: "discussion.chatgpt.opening"
+        agent: "chatgpt_host"
+        task: "chatgpt_opening"
+        conversation:
+          id: "turn_01"
+          speaker: "ChatGPT"
+          sequence: 1
+          thread_id: "live_tea_discussion"
+        save_as: "turn_01"
+        write_to: "discussion/01-chatgpt-opening.md"
+      - id: "discussion.claude.reply"
+        agent: "claude_guest"
+        task: "claude_reply"
+        conversation:
+          id: "turn_02"
+          speaker: "Claude"
+          sequence: 2
+          thread_id: "live_tea_discussion"
+          responds_to: "turn_01"
+        inputs:
+          turn_01: "@state:turn_01"
+        save_as: "turn_02"
+        write_to: "discussion/02-claude-reply.md"
+      - id: "discussion.chatgpt.reflection"
+        agent: "chatgpt_host"
+        task: "chatgpt_reflection"
+        conversation:
+          id: "turn_03"
+          speaker: "ChatGPT"
+          sequence: 3
+          thread_id: "live_tea_discussion"
+          responds_to: "turn_02"
+        inputs:
+          turn_02: "@state:turn_02"
+        save_as: "turn_03"
+        write_to: "discussion/03-chatgpt-reflection.md"
+      - id: "discussion.claude.refinement"
+        agent: "claude_guest"
+        task: "claude_refinement"
+        conversation:
+          id: "turn_04"
+          speaker: "Claude"
+          sequence: 4
+          thread_id: "live_tea_discussion"
+          responds_to: "turn_03"
+        inputs:
+          turn_03: "@state:turn_03"
+        save_as: "turn_04"
+        write_to: "discussion/04-claude-refinement.md"
+      - id: "discussion.chatgpt.toast"
+        agent: "chatgpt_host"
+        task: "chatgpt_toast"
+        conversation:
+          id: "turn_05"
+          speaker: "ChatGPT"
+          sequence: 5
+          thread_id: "live_tea_discussion"
+          responds_to: "turn_04"
+        inputs:
+          turn_04: "@state:turn_04"
+        save_as: "turn_05"
+        write_to: "discussion/05-chatgpt-toast.md"

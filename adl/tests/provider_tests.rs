@@ -10,7 +10,7 @@ use ::adl::provider::{
 };
 
 mod helpers;
-use helpers::{unique_test_temp_dir, EnvVarGuard};
+use helpers::{unique_test_temp_dir, EnvVarGuard, EnvVarGuardMulti};
 
 fn write_executable(path: &Path, contents: &str) -> io::Result<()> {
     fs::write(path, contents)?;
@@ -33,6 +33,59 @@ fn block_incoming_localhost() -> EnvVarGuard {
     }
     new_val.push_str("127.0.0.1,localhost");
     EnvVarGuard::set(key, new_val)
+}
+
+fn localhost_and_auth_env_guard(key: &str, value: &str) -> EnvVarGuardMulti {
+    let old = std::env::var("NO_PROXY").ok();
+    let mut no_proxy = old.clone().unwrap_or_default();
+    if !no_proxy.is_empty() && !no_proxy.ends_with(',') {
+        no_proxy.push(',');
+    }
+    no_proxy.push_str("127.0.0.1,localhost");
+    EnvVarGuard::set_many(&[
+        ("NO_PROXY", std::ffi::OsStr::new(&no_proxy)),
+        (key, std::ffi::OsStr::new(value)),
+    ])
+}
+
+fn read_http_request(stream: &mut std::net::TcpStream) -> String {
+    stream
+        .set_read_timeout(Some(std::time::Duration::from_secs(5)))
+        .expect("set read timeout");
+    let mut bytes = Vec::new();
+    let mut buf = [0u8; 1024];
+    let header_end = loop {
+        let n = stream.read(&mut buf).expect("read request chunk");
+        assert!(n > 0, "client closed before sending complete headers");
+        bytes.extend_from_slice(&buf[..n]);
+        if let Some(pos) = bytes.windows(4).position(|window| window == b"\r\n\r\n") {
+            break pos + 4;
+        }
+    };
+
+    let headers = String::from_utf8_lossy(&bytes[..header_end]).to_string();
+    if headers.lines().any(|line| {
+        line.to_ascii_lowercase()
+            .starts_with("expect: 100-continue")
+    }) {
+        stream
+            .write_all(b"HTTP/1.1 100 Continue\r\n\r\n")
+            .expect("write continue response");
+    }
+    let content_length = headers
+        .lines()
+        .find_map(|line| {
+            let (name, value) = line.split_once(':')?;
+            name.eq_ignore_ascii_case("content-length")
+                .then(|| value.trim().parse::<usize>().expect("valid content length"))
+        })
+        .unwrap_or(0);
+    while bytes.len() < header_end + content_length {
+        let n = stream.read(&mut buf).expect("read request body");
+        assert!(n > 0, "client closed before sending complete body");
+        bytes.extend_from_slice(&buf[..n]);
+    }
+    String::from_utf8_lossy(&bytes).to_string()
 }
 
 fn make_mock_ollama_success(dir: &Path) -> io::Result<PathBuf> {
@@ -426,6 +479,123 @@ config:
     let p = build_provider(&spec, None).expect("build_provider failed");
     let out = p.complete("hello").expect("http provider should succeed");
     assert_eq!(out, "OK");
+}
+
+#[test]
+fn openai_provider_translates_native_response() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+    let _env_guard = localhost_and_auth_env_guard("ADL_TEST_OPENAI_KEY", "test-openai-token");
+
+    std::thread::spawn(move || {
+        let (mut stream, _) = server.accept().unwrap();
+        let request = read_http_request(&mut stream);
+        assert!(request.to_ascii_lowercase().contains("authorization:"));
+        assert!(request.contains("Bearer test-openai-token"));
+        assert!(request.contains("\"model\":\"gpt-test\""));
+        assert!(request.contains("\"input\":\"hello openai\""));
+        let body = r#"{"output_text":"OPENAI_NATIVE_OK"}"#;
+        let resp = format!(
+            "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        let _ = stream.write_all(resp.as_bytes());
+    });
+
+    let spec = provider_spec_from_yaml(&format!(
+        r#"
+type: openai
+config:
+  endpoint: "http://{addr}/v1/responses"
+  provider_model_id: "gpt-test"
+  auth:
+    type: bearer
+    env: ADL_TEST_OPENAI_KEY
+"#
+    ));
+
+    let p = build_provider(&spec, None).expect("openai provider should build");
+    let out = p
+        .complete("hello openai")
+        .expect("openai provider should succeed");
+    assert_eq!(out, "OPENAI_NATIVE_OK");
+}
+
+#[test]
+fn anthropic_provider_translates_native_response() {
+    let server = match std::net::TcpListener::bind("127.0.0.1:0") {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => return,
+        Err(e) => panic!("failed to bind local test server: {e}"),
+    };
+    let addr = server.local_addr().unwrap();
+    let _env_guard = localhost_and_auth_env_guard("ADL_TEST_ANTHROPIC_KEY", "test-anthropic-token");
+
+    std::thread::spawn(move || {
+        let (mut stream, _) = server.accept().unwrap();
+        let request = read_http_request(&mut stream);
+        assert!(request.to_ascii_lowercase().contains("x-api-key:"));
+        assert!(request.contains("test-anthropic-token"));
+        assert!(request
+            .to_ascii_lowercase()
+            .contains("anthropic-version: 2023-06-01"));
+        assert!(request.contains("\"model\":\"claude-test\""));
+        assert!(request.contains("\"content\":\"hello claude\""));
+        let body = r#"{"content":[{"type":"text","text":"ANTHROPIC_NATIVE_OK"}]}"#;
+        let resp = format!(
+            "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        let _ = stream.write_all(resp.as_bytes());
+    });
+
+    let spec = provider_spec_from_yaml(&format!(
+        r#"
+type: anthropic
+config:
+  endpoint: "http://{addr}/v1/messages"
+  provider_model_id: "claude-test"
+  auth:
+    type: bearer
+    env: ADL_TEST_ANTHROPIC_KEY
+"#
+    ));
+
+    let p = build_provider(&spec, None).expect("anthropic provider should build");
+    let out = p
+        .complete("hello claude")
+        .expect("anthropic provider should succeed");
+    assert_eq!(out, "ANTHROPIC_NATIVE_OK");
+}
+
+#[test]
+fn native_provider_missing_auth_env_is_sanitized() {
+    let _env_guard = EnvVarGuard::unset("ADL_TEST_MISSING_OPENAI_KEY");
+    let spec = provider_spec_from_yaml(
+        r#"
+type: openai
+config:
+  provider_model_id: "gpt-test"
+  auth:
+    type: bearer
+    env: ADL_TEST_MISSING_OPENAI_KEY
+"#,
+    );
+
+    let p = build_provider(&spec, None).expect("openai provider should build");
+    let err = p
+        .complete("hello")
+        .expect_err("missing auth env should fail");
+    let msg = format!("{err:#}");
+    assert!(msg.contains("missing required auth env var"));
+    assert!(msg.contains("ADL_TEST_MISSING_OPENAI_KEY"));
+    assert!(!msg.contains("Bearer"));
 }
 
 #[test]

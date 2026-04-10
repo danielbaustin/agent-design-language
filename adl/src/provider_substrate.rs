@@ -156,6 +156,8 @@ fn infer_vendor(spec: &adl::ProviderSpec) -> String {
     match spec.kind.trim() {
         "ollama" | "local_ollama" => "ollama".to_string(),
         "mock" => "mock".to_string(),
+        "openai" => "openai".to_string(),
+        "anthropic" => "anthropic".to_string(),
         "http" | "http_remote" => "generic_http".to_string(),
         other if !other.is_empty() => other.to_lowercase(),
         _ => "unknown".to_string(),
@@ -164,7 +166,7 @@ fn infer_vendor(spec: &adl::ProviderSpec) -> String {
 
 fn infer_transport(spec: &adl::ProviderSpec) -> Result<ProviderTransportV1> {
     match spec.kind.trim() {
-        "http" | "http_remote" => Ok(ProviderTransportV1::Http),
+        "http" | "http_remote" | "openai" | "anthropic" => Ok(ProviderTransportV1::Http),
         "ollama" | "local_ollama" => Ok(ProviderTransportV1::LocalCli),
         "mock" => Ok(ProviderTransportV1::InProcess),
         other => Err(anyhow!(
@@ -405,6 +407,25 @@ mod tests {
             substrate.default_model_ref.as_deref(),
             Some("claude-3-7-sonnet-latest")
         );
+    }
+
+    #[test]
+    fn provider_substrate_accepts_native_openai_and_anthropic_kinds() {
+        let mut openai = provider_spec("openai");
+        openai.default_model = Some("gpt-test".to_string());
+        let openai_substrate =
+            provider_substrate_v1("openai_primary", &openai).expect("openai substrate");
+        assert_eq!(openai_substrate.vendor, "openai");
+        assert_eq!(openai_substrate.transport, ProviderTransportV1::Http);
+        assert_eq!(openai_substrate.provider_kind, "openai");
+
+        let mut anthropic = provider_spec("anthropic");
+        anthropic.default_model = Some("claude-test".to_string());
+        let anthropic_substrate =
+            provider_substrate_v1("anthropic_primary", &anthropic).expect("anthropic substrate");
+        assert_eq!(anthropic_substrate.vendor, "anthropic");
+        assert_eq!(anthropic_substrate.transport, ProviderTransportV1::Http);
+        assert_eq!(anthropic_substrate.provider_kind, "anthropic");
     }
 
     #[test]

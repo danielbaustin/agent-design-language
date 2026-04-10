@@ -87,13 +87,14 @@ fn real_provider_setup(repo_root: &Path, args: &[String]) -> Result<()> {
 
 struct ProviderSetupTemplate {
     family: &'static str,
-    profile: &'static str,
+    profile: Option<&'static str>,
+    kind: Option<&'static str>,
     env_var: &'static str,
     provider_id: &'static str,
     agent_id: &'static str,
     model_ref: &'static str,
     provider_model_id: &'static str,
-    endpoint_hint: &'static str,
+    endpoint_hint: Option<&'static str>,
     notes: &'static str,
 }
 
@@ -102,79 +103,86 @@ fn template_for_family(family: &str) -> Result<&'static ProviderSetupTemplate> {
     let template = match normalized.as_str() {
         "chatgpt" => &ProviderSetupTemplate {
             family: "chatgpt",
-            profile: "chatgpt:gpt-5.4",
+            profile: Some("chatgpt:gpt-5.4"),
+            kind: None,
             env_var: "OPENAI_API_KEY",
             provider_id: "chatgpt_primary",
             agent_id: "chatgpt_agent",
             model_ref: "gpt-5.4",
             provider_model_id: "gpt-5.4",
-            endpoint_hint: "https://api.example.invalid/v1/complete",
+            endpoint_hint: Some("https://api.example.invalid/v1/complete"),
             notes: "Use this when you want the ChatGPT/GPT-5 family surface. Keep the endpoint pointed at an ADL-compatible completion endpoint and supply your own OpenAI key through the generated env file.",
         },
         "claude" => &ProviderSetupTemplate {
             family: "claude",
-            profile: "claude:claude-3-7-sonnet",
+            profile: Some("claude:claude-3-7-sonnet"),
+            kind: None,
             env_var: "ANTHROPIC_API_KEY",
             provider_id: "claude_primary",
             agent_id: "claude_agent",
             model_ref: "claude-3-7-sonnet",
             provider_model_id: "claude-3-7-sonnet-latest",
-            endpoint_hint: "https://api.example.invalid/v1/complete",
+            endpoint_hint: Some("https://api.example.invalid/v1/complete"),
             notes: "Use this when you want the first-class Claude family surface. Keep the endpoint pointed at an ADL-compatible completion endpoint and supply your Anthropic credential through the generated env file.",
         },
         "openai" => &ProviderSetupTemplate {
             family: "openai",
-            profile: "http:gpt-4.1-mini",
+            profile: None,
+            kind: Some("openai"),
             env_var: "OPENAI_API_KEY",
             provider_id: "openai_primary",
             agent_id: "openai_agent",
             model_ref: "reasoning/default",
             provider_model_id: "gpt-4.1-mini",
-            endpoint_hint: "https://api.example.invalid/v1/complete",
-            notes: "Use this for the generic HTTP/OpenAI-style profile family. The endpoint must still satisfy ADL's bounded prompt/output HTTP contract.",
+            endpoint_hint: None,
+            notes: "Use this for the Rust-native OpenAI provider path. The default endpoint is OpenAI's Responses API; override config.endpoint only for tests or a trusted compatible endpoint.",
         },
         "anthropic" => &ProviderSetupTemplate {
             family: "anthropic",
-            profile: "http:claude-3-7-sonnet",
+            profile: None,
+            kind: Some("anthropic"),
             env_var: "ANTHROPIC_API_KEY",
             provider_id: "anthropic_primary",
             agent_id: "anthropic_agent",
             model_ref: "reasoning/default",
-            provider_model_id: "claude-3-7-sonnet-latest",
-            endpoint_hint: "https://api.example.invalid/v1/complete",
-            notes: "Use this with an ADL-compatible HTTP endpoint that fronts Anthropic-compatible models. The generated auth env name is only a credential hook; ADL does not assume a vendor-native transport.",
+            provider_model_id: "claude-3-5-haiku-latest",
+            endpoint_hint: None,
+            notes: "Use this for the Rust-native Anthropic provider path. The default endpoint is Anthropic's Messages API; override config.endpoint only for tests or a trusted compatible endpoint.",
         },
         "gemini" => &ProviderSetupTemplate {
             family: "gemini",
-            profile: "http:gemini-2.0-flash",
+            profile: Some("http:gemini-2.0-flash"),
+            kind: None,
             env_var: "GEMINI_API_KEY",
             provider_id: "gemini_primary",
             agent_id: "gemini_agent",
             model_ref: "reasoning/default",
             provider_model_id: "gemini-2.0-flash",
-            endpoint_hint: "https://api.example.invalid/v1/complete",
+            endpoint_hint: Some("https://api.example.invalid/v1/complete"),
             notes: "Use this with an ADL-compatible HTTP endpoint that fronts Gemini-compatible models. The generated env file is local-only and should not be committed.",
         },
         "deepseek" => &ProviderSetupTemplate {
             family: "deepseek",
-            profile: "http:deepseek-chat",
+            profile: Some("http:deepseek-chat"),
+            kind: None,
             env_var: "DEEPSEEK_API_KEY",
             provider_id: "deepseek_primary",
             agent_id: "deepseek_agent",
             model_ref: "reasoning/default",
             provider_model_id: "deepseek-chat",
-            endpoint_hint: "https://api.example.invalid/v1/complete",
+            endpoint_hint: Some("https://api.example.invalid/v1/complete"),
             notes: "Use this with an ADL-compatible HTTP endpoint that fronts DeepSeek-compatible models.",
         },
         "http" | "generic-http" => &ProviderSetupTemplate {
             family: "http",
-            profile: "http:gpt-4.1-mini",
+            profile: Some("http:gpt-4.1-mini"),
+            kind: None,
             env_var: "ADL_REMOTE_BEARER_TOKEN",
             provider_id: "portable_http",
             agent_id: "http_agent",
             model_ref: "reasoning/default",
             provider_model_id: "gpt-4.1-mini",
-            endpoint_hint: "https://api.example.invalid/v1/complete",
+            endpoint_hint: Some("https://api.example.invalid/v1/complete"),
             notes: "Use this as a provider-agnostic bounded HTTP setup. Replace the endpoint and token env var with the ones your remote gateway expects.",
         },
         other => {
@@ -187,11 +195,20 @@ fn template_for_family(family: &str) -> Result<&'static ProviderSetupTemplate> {
 }
 
 fn render_provider_yaml(template: &ProviderSetupTemplate) -> String {
+    let provider_identity = match (template.profile, template.kind) {
+        (Some(profile), None) => format!("profile: \"{profile}\""),
+        (None, Some(kind)) => format!("type: \"{kind}\""),
+        _ => unreachable!("provider setup templates must declare exactly one identity surface"),
+    };
+    let endpoint_line = template
+        .endpoint_hint
+        .map(|endpoint| format!("      endpoint: \"{endpoint}\"\n"))
+        .unwrap_or_default();
     format!(
-        "version: \"0.5\"\n\nproviders:\n  {provider_id}:\n    profile: \"{profile}\"\n    config:\n      endpoint: \"{endpoint_hint}\"\n      auth:\n        type: bearer\n        env: {env_var}\n      headers:\n        X-Client: \"adl-provider-setup\"\n      timeout_secs: 15\n      model_ref: \"{model_ref}\"\n      provider_model_id: \"{provider_model_id}\"\n\nagents:\n  {agent_id}:\n    provider: \"{provider_id}\"\n    model: \"{model_ref}\"\n\n# Merge this provider/agent snippet into your workflow file.\n",
+        "version: \"0.5\"\n\nproviders:\n  {provider_id}:\n    {provider_identity}\n    config:\n{endpoint_line}      auth:\n        type: bearer\n        env: {env_var}\n      headers:\n        X-Client: \"adl-provider-setup\"\n      timeout_secs: 15\n      model_ref: \"{model_ref}\"\n      provider_model_id: \"{provider_model_id}\"\n\nagents:\n  {agent_id}:\n    provider: \"{provider_id}\"\n    model: \"{model_ref}\"\n\n# Merge this provider/agent snippet into your workflow file.\n",
         provider_id = template.provider_id,
-        profile = template.profile,
-        endpoint_hint = template.endpoint_hint,
+        provider_identity = provider_identity,
+        endpoint_line = endpoint_line,
         env_var = template.env_var,
         model_ref = template.model_ref,
         provider_model_id = template.provider_model_id,
@@ -207,10 +224,22 @@ fn render_env_example(template: &ProviderSetupTemplate) -> String {
 }
 
 fn render_readme(template: &ProviderSetupTemplate) -> String {
+    let transport_note = if template.kind.is_some() {
+        "- This family uses ADL's Rust-native provider adapter for its vendor API.\n- Leave `config.endpoint` unset for the default vendor endpoint unless you are testing against a trusted compatible endpoint."
+    } else {
+        "- ADL's bounded HTTP provider expects a completion-style HTTP contract: request body with `{\"prompt\": ...}`, response body with `{\"output\": ...}`.\n- Raw vendor-native endpoints may require a compatibility gateway or adapter if they do not expose that contract directly."
+    };
+    let endpoint_step = if template.kind.is_some() {
+        "2. Leave `config.endpoint` unset unless you are testing against a trusted compatible endpoint."
+    } else {
+        "2. Set `config.endpoint` in `provider.adl.yaml` to a real ADL-compatible completion endpoint."
+    };
     format!(
-        "# Provider setup: {family}\n\nThis bundle gives you a local starting point for configuring the `{family}` provider family.\n\nFiles:\n- `provider.adl.yaml`: mergeable ADL provider/agent snippet\n- `.env.example`: local env template for your credential\n\nSteps:\n1. Copy `.env.example` to a local untracked env file and put your real credential in `{env_var}`.\n2. Set `config.endpoint` in `provider.adl.yaml` to a real ADL-compatible completion endpoint.\n3. Merge the provider/agent snippet into your workflow file.\n4. Source your local env file before running ADL.\n\nImportant:\n- ADL's bounded HTTP provider expects a completion-style HTTP contract: request body with `{{\"prompt\": ...}}`, response body with `{{\"output\": ...}}`.\n- Raw vendor-native endpoints may require a compatibility gateway or adapter if they do not expose that contract directly.\n- No secrets are stored by this command; the generated env file is only a local template.\n\nNotes:\n{notes}\n",
+        "# Provider setup: {family}\n\nThis bundle gives you a local starting point for configuring the `{family}` provider family.\n\nFiles:\n- `provider.adl.yaml`: mergeable ADL provider/agent snippet\n- `.env.example`: local env template for your credential\n\nSteps:\n1. Copy `.env.example` to a local untracked env file and put your real credential in `{env_var}`.\n{endpoint_step}\n3. Merge the provider/agent snippet into your workflow file.\n4. Source your local env file before running ADL.\n\nImportant:\n{transport_note}\n- No secrets are stored by this command; the generated env file is only a local template.\n\nNotes:\n{notes}\n",
         family = template.family,
         env_var = template.env_var,
+        endpoint_step = endpoint_step,
+        transport_note = transport_note,
         notes = template.notes
     )
 }
@@ -422,32 +451,47 @@ mod tests {
     #[test]
     fn provider_setup_supports_all_declared_families() {
         let families = [
-            ("chatgpt", "chatgpt:gpt-5.4", "OPENAI_API_KEY"),
-            ("claude", "claude:claude-3-7-sonnet", "ANTHROPIC_API_KEY"),
-            ("openai", "http:gpt-4.1-mini", "OPENAI_API_KEY"),
-            ("anthropic", "http:claude-3-7-sonnet", "ANTHROPIC_API_KEY"),
-            ("gemini", "http:gemini-2.0-flash", "GEMINI_API_KEY"),
-            ("deepseek", "http:deepseek-chat", "DEEPSEEK_API_KEY"),
+            ("chatgpt", "profile: \"chatgpt:gpt-5.4\"", "OPENAI_API_KEY"),
+            (
+                "claude",
+                "profile: \"claude:claude-3-7-sonnet\"",
+                "ANTHROPIC_API_KEY",
+            ),
+            ("openai", "type: \"openai\"", "OPENAI_API_KEY"),
+            ("anthropic", "type: \"anthropic\"", "ANTHROPIC_API_KEY"),
+            (
+                "gemini",
+                "profile: \"http:gemini-2.0-flash\"",
+                "GEMINI_API_KEY",
+            ),
+            (
+                "deepseek",
+                "profile: \"http:deepseek-chat\"",
+                "DEEPSEEK_API_KEY",
+            ),
             (
                 "generic-http",
-                "http:gpt-4.1-mini",
+                "profile: \"http:gpt-4.1-mini\"",
                 "ADL_REMOTE_BEARER_TOKEN",
             ),
         ];
 
-        for (family, profile, env_var) in families {
+        for (family, provider_identity, env_var) in families {
             let template = template_for_family(family).expect("family should resolve");
-            assert_eq!(template.profile, profile);
             assert_eq!(template.env_var, env_var);
 
             let provider_yaml = render_provider_yaml(template);
             let env_example = render_env_example(template);
             let readme = render_readme(template);
 
-            assert!(provider_yaml.contains(profile));
+            assert!(provider_yaml.contains(provider_identity));
             assert!(env_example.contains(env_var));
             assert!(readme.contains(template.family));
-            assert!(readme.contains("completion-style HTTP contract"));
+            if template.kind.is_some() {
+                assert!(readme.contains("Rust-native provider adapter"));
+            } else {
+                assert!(readme.contains("completion-style HTTP contract"));
+            }
         }
     }
 
