@@ -37,6 +37,8 @@ Key outcomes:
   - default runtime root `.adl/`
   - default run-artifact root `.adl/runs/`
   - runtime marker `.adl/runtime_environment.json`
+  - per-run provenance marker `run_manifest.json`
+  - local trace archive `.adl/trace-archive/milestones/<milestone>/runs/<run_id>/`
 
 ## Scope Summary
 

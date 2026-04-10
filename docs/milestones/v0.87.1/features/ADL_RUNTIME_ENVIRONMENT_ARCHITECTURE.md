@@ -110,7 +110,9 @@ This is the authoritative bring-up/configuration surface for this milestone. Lat
 The runtime reviewable trace proof path for this milestone should converge on:
 - `logs/trace_v1.json` as the canonical exported runtime trace artifact
 - `run_summary.json` as the reviewer-facing index that links to that trace artifact
+- `run_manifest.json` as the privacy-safe provenance record for milestone, demo/provider context, runtime-root source, and generated artifact inventory
 - trace-bundle export surfaces that preserve `trace_v1.json` alongside the activation log for replay and review
+- `.adl/trace-archive/milestones/<milestone>/runs/<run_id>/` as the local archive location for demo/provider traces copied from bounded runtime roots
 
 ### 1. Runtime roots and environment configuration
 
@@ -119,6 +121,7 @@ The runtime provides:
 - one authoritative run-artifact root
 - deterministic run directory layout
 - a marker surface describing active root selection without leaking host-specific absolute paths
+- archive-aware discovery so flat `.adl/runs/<run_id>` and milestone-organized trace archives can both be exported
 ### 2. Temporal substrate
 
 The runtime provides the conditions required for chronosense:

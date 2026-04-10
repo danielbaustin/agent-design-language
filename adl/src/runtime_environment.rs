@@ -14,7 +14,7 @@ pub enum RuntimePathSource {
 }
 
 impl RuntimePathSource {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
             Self::RepoDefault => "repo_default",
             Self::EnvOverride => "env_override",

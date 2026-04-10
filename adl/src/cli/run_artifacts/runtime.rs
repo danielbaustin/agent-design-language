@@ -12,11 +12,13 @@ use super::summary::{
 };
 use super::ControlPathSummaryContext;
 use super::*;
+use ::adl::runtime_environment::RuntimeEnvironment;
 use ::adl::trace_schema_v1::{
     validate_trace_event_envelope_v1, ContractValidationResultV1, TraceActorTypeV1, TraceActorV1,
     TraceContractValidationV1, TraceDecisionContextV1, TraceErrorV1, TraceEventEnvelopeV1,
     TraceEventTypeV1, TraceEventV1, TraceScopeLevelV1, TraceScopeV1,
 };
+use serde::Serialize;
 use serde_json::json;
 
 #[allow(clippy::too_many_arguments)]
@@ -305,6 +307,10 @@ pub(crate) fn write_run_state_artifacts(
     artifacts::atomic_write(&run_paths.trace_v1_json(), &trace_v1_json)?;
     artifacts::atomic_write(&run_paths.run_status_json(), &run_status_json)?;
     artifacts::atomic_write(&run_paths.run_summary_json(), &run_summary_json)?;
+    let run_manifest = build_run_manifest(resolved, status, &run_paths);
+    let run_manifest_json =
+        serde_json::to_vec_pretty(&run_manifest).context("serialize run_manifest.json")?;
+    artifacts::atomic_write(&run_paths.run_manifest_json(), &run_manifest_json)?;
     artifacts::atomic_write(&run_paths.scores_json(), &scores_json)?;
     artifacts::atomic_write(&run_paths.suggestions_json(), &suggestions_json)?;
     artifacts::atomic_write(&run_paths.cognitive_signals_json(), &cognitive_signals_json)?;
@@ -397,6 +403,111 @@ pub(crate) fn write_run_state_artifacts(
     }
 
     Ok(run_dir)
+}
+
+#[derive(Debug, Serialize)]
+struct RunManifestV1 {
+    schema_version: &'static str,
+    run_id: String,
+    workflow_id: String,
+    adl_version: String,
+    status: String,
+    milestone: String,
+    issue: Option<String>,
+    pr: Option<String>,
+    demo: Option<String>,
+    provider_ids: Vec<String>,
+    runtime_root_source: String,
+    runs_root_source: String,
+    runs_root: String,
+    trace_status: String,
+    generated_artifacts: Vec<String>,
+}
+
+fn build_run_manifest(
+    resolved: &resolve::AdlResolved,
+    status: &str,
+    run_paths: &artifacts::RunArtifactPaths,
+) -> RunManifestV1 {
+    let mut provider_ids: Vec<String> = resolved
+        .steps
+        .iter()
+        .filter_map(|step| step.provider.as_ref())
+        .cloned()
+        .collect();
+    provider_ids.sort();
+    provider_ids.dedup();
+
+    let (runtime_root_source, runs_root_source, runs_root) = RuntimeEnvironment::current()
+        .ok()
+        .map(|env| {
+            let runs_root = if env.runs_root() == run_paths.runs_root() {
+                if let Ok(relative) = env.runs_root().strip_prefix(env.repo_root()) {
+                    relative.display().to_string()
+                } else {
+                    "external_runs_root".to_string()
+                }
+            } else {
+                "explicit_runs_root".to_string()
+            };
+            (
+                env.runtime_root_source().as_str().to_string(),
+                env.runs_root_source().as_str().to_string(),
+                runs_root,
+            )
+        })
+        .unwrap_or_else(|| {
+            (
+                "unknown".to_string(),
+                "unknown".to_string(),
+                "unknown_runs_root".to_string(),
+            )
+        });
+
+    RunManifestV1 {
+        schema_version: "trace_run_manifest.v1",
+        run_id: resolved.run_id.clone(),
+        workflow_id: resolved.workflow_id.clone(),
+        adl_version: resolved.doc.version.clone(),
+        status: status.to_string(),
+        milestone: trimmed_env("ADL_MILESTONE")
+            .unwrap_or_else(|| version_to_milestone(&resolved.doc.version)),
+        issue: trimmed_env("ADL_ISSUE_ID"),
+        pr: trimmed_env("ADL_PR_ID"),
+        demo: trimmed_env("ADL_DEMO_NAME"),
+        provider_ids,
+        runtime_root_source,
+        runs_root_source,
+        runs_root,
+        trace_status: "captured".to_string(),
+        generated_artifacts: vec![
+            "run.json".to_string(),
+            "steps.json".to_string(),
+            "run_status.json".to_string(),
+            "run_summary.json".to_string(),
+            "run_manifest.json".to_string(),
+            "logs/activation_log.json".to_string(),
+            "logs/trace_v1.json".to_string(),
+        ],
+    }
+}
+
+fn version_to_milestone(version: &str) -> String {
+    let trimmed = version.trim();
+    if trimmed.is_empty() {
+        "unclassified".to_string()
+    } else if trimmed.starts_with('v') {
+        trimmed.to_string()
+    } else {
+        format!("v{trimmed}")
+    }
+}
+
+fn trimmed_env(key: &str) -> Option<String> {
+    std::env::var(key)
+        .ok()
+        .map(|value| value.trim().to_string())
+        .filter(|value| !value.is_empty())
 }
 
 fn build_trace_v1_envelope(

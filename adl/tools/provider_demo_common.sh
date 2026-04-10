@@ -43,3 +43,23 @@ provider_demo_print_proof_surfaces() {
     done <<<"$secondaries"
   fi
 }
+
+provider_demo_archive_trace() {
+  local out_dir="$1"
+  local run_id="$2"
+  local repo_root
+  repo_root="$(provider_demo_repo_root)"
+  local archive_root="$repo_root/.adl/trace-archive"
+  local archive_run="$archive_root/milestones/v0.87.1/runs/$run_id"
+  local log="$out_dir/trace_archive.log"
+
+  "$repo_root/adl/tools/archive_run_artifacts.sh" \
+    --repo-root "$repo_root" \
+    --archive-root "$archive_root" \
+    --apply >"$log"
+
+  echo "Canonical trace archive:"
+  echo "  $archive_run"
+  echo "  $archive_root/MANIFEST.tsv"
+  printf '%s\n' "$archive_run" >"$out_dir/trace_archive_path.txt"
+}

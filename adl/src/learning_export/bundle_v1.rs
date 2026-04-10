@@ -5,8 +5,8 @@ use std::path::Path;
 
 use crate::artifacts;
 
-use super::dataset::load_dataset_row;
-use super::shared::{resolve_export_ids, stable_fingerprint_hex, validate_export_payload_safety};
+use super::dataset::load_dataset_row_from_dir;
+use super::shared::{resolve_export_runs, stable_fingerprint_hex, validate_export_payload_safety};
 use super::BUNDLE_VERSION;
 
 #[derive(Debug, Serialize)]
@@ -43,7 +43,7 @@ struct BundleFileEntry {
 /// adl learn export --format bundle --runs-dir .adl/runs --out /tmp/learning-bundle
 /// ```
 pub fn export_bundle_v1(runs_root: &Path, run_ids: &[String], out_dir: &Path) -> Result<usize> {
-    let ids = resolve_export_ids(runs_root, run_ids)?;
+    let runs = resolve_export_runs(runs_root, run_ids)?;
     let bundle_root = out_dir.join("learning_export_v1");
     let runs_root_out = bundle_root.join("runs");
 
@@ -55,8 +55,11 @@ pub fn export_bundle_v1(runs_root: &Path, run_ids: &[String], out_dir: &Path) ->
         .with_context(|| format!("create bundle runs root '{}'", runs_root_out.display()))?;
 
     let mut file_entries = Vec::new();
-    for run_id in &ids {
-        let row = load_dataset_row(runs_root, run_id)?;
+    let mut exported_ids = Vec::new();
+    for run in &runs {
+        let row = load_dataset_row_from_dir(&run.run_dir, &run.run_id)?;
+        let run_id = &run.run_id;
+        exported_ids.push(run_id.clone());
         let run_dir = runs_root_out.join(run_id);
         std::fs::create_dir_all(&run_dir)
             .with_context(|| format!("create bundle run dir '{}'", run_dir.display()))?;
@@ -109,8 +112,8 @@ pub fn export_bundle_v1(runs_root: &Path, run_ids: &[String], out_dir: &Path) ->
     file_entries.sort_by(|a, b| a.path.cmp(&b.path));
     let manifest = BundleManifestV1 {
         bundle_version: BUNDLE_VERSION,
-        run_count: ids.len(),
-        runs: ids,
+        run_count: exported_ids.len(),
+        runs: exported_ids,
         files: file_entries,
     };
     let manifest_path = bundle_root.join("manifest.json");
