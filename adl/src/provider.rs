@@ -307,6 +307,20 @@ fn provider_profile_registry() -> BTreeMap<&'static str, ProviderProfilePreset> 
             },
         );
     }
+    // Claude-facing presets (same bounded HTTP substrate, distinct profile family)
+    for (name, model) in [
+        ("claude:claude-3-7-sonnet", "claude-3-7-sonnet-latest"),
+        ("claude:claude-3-5-haiku", "claude-3-5-haiku-latest"),
+    ] {
+        m.insert(
+            name,
+            ProviderProfilePreset {
+                kind: "http",
+                default_model: Some(model),
+                endpoint: Some(HTTP_PROFILE_PLACEHOLDER_ENDPOINT),
+            },
+        );
+    }
     m
 }
 
@@ -962,6 +976,20 @@ mod tests {
     fn profile_endpoint_validation_allows_loopback_http_for_local_harnesses() {
         validate_profile_endpoint("p1", "http:gpt-4o-mini", "http://127.0.0.1:8787/complete")
             .expect("loopback http should remain allowed");
+    }
+
+    #[test]
+    fn provider_profile_registry_includes_first_class_claude_profiles() {
+        let names = provider_profile_names();
+        assert!(names.contains(&"claude:claude-3-7-sonnet".to_string()));
+        assert!(names.contains(&"claude:claude-3-5-haiku".to_string()));
+
+        let preset = provider_profile_registry()
+            .get("claude:claude-3-7-sonnet")
+            .copied()
+            .expect("claude sonnet preset");
+        assert_eq!(preset.kind, "http");
+        assert_eq!(preset.default_model, Some("claude-3-7-sonnet-latest"));
     }
 
     #[test]

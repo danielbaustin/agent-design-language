@@ -58,6 +58,7 @@ Examples:
   adl demo demo-e-multi-agent-card-pipeline --run --trace --out ./out
   adl demo demo-f-obsmem-retrieval --run --trace --out ./out
   adl provider setup chatgpt
+  adl provider setup claude
   adl provider setup anthropic --out ./.adl/provider-setup/anthropic
   adl godel run --run-id run-745-a --workflow-id wf-godel-loop --failure-code tool_failure --failure-summary \"step failed with deterministic parse error\" --evidence-ref runs/run-745-a/run_status.json
   adl godel inspect --run-id run-745-a --runs-dir .adl/runs

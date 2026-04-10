@@ -5,6 +5,7 @@ remote provider family.
 
 Current supported families:
 - `chatgpt`
+- `claude`
 - `openai`
 - `anthropic`
 - `gemini`
@@ -41,6 +42,7 @@ Example:
 
 ```bash
 adl provider setup chatgpt
+adl provider setup claude
 adl provider setup openai --out ./.adl/provider-setup/openai
 ```
 
@@ -49,3 +51,6 @@ Loopback demo note:
 
 ChatGPT demo note:
 - the `v0.87.1` ChatGPT family demo uses the `chatgpt:gpt-5.4` profile plus a local bounded completion adapter on `http://127.0.0.1:8787/complete`; it proves the current setup/profile surface, not a raw vendor-native endpoint
+
+Claude family note:
+- the first-class Claude setup surface uses `claude:claude-3-7-sonnet` plus the same bounded ADL completion contract; it is distinct from the generic `anthropic` compatibility setup so Claude can be referenced symmetrically with ChatGPT in multi-agent workflows
