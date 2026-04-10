@@ -48,26 +48,37 @@ This milestone is not satisfied by a public shell alone. It requires substantial
 - Phase 3: WP-13..WP-20 (demos, quality, docs/review, internal review, external review prep, remediation, next-milestone planning, and release)
 
 ## Acceptance Mapping
-- WP-01 (Design pass) -> milestone docs are aligned and explicit about the runtime-completion milestone
-- WP-02 -> runtime environment surface exists in docs and implementation
-- WP-03 -> lifecycle phases are explicit, bounded, and implemented
-- WP-04 -> runtime execution maps coherently to trace artifacts and replay expectations
-- WP-05 -> local runtime resilience, failure handling, and Shepherd preservation expectations are real and reviewable
-- WP-06 -> operator surfaces are stable and reviewer-usable
-- WP-07 -> state/persistence and continuity semantics are deterministic and inspectable
-- WP-08 -> runtime review surfaces exist and are usable for milestone inspection
-- WP-09 -> no contradictions remain across docs and implementation claims
-- WP-10 -> measurable acceptance criteria are defined for each WP and the milestone overall
-- WP-11 -> sprint sequencing mirrors the WBS and review tail
-- WP-12 -> checklist and release-gate surfaces are complete and actionable
-- WP-13 (Demos) -> runtime demos prove the major milestone claims
-- WP-14 (Quality gate) -> tests, demos, and quality-gate posture are truthful and auditable
-- WP-15 (Docs/review) -> docs and reviewer entry surfaces converge around actual runtime truth
-- WP-16 (Internal review) -> internal review findings are recorded and actionable
-- WP-17 (External review prep) -> external review package is legible and runnable
-- WP-18 (Review findings remediation) -> accepted review findings are remediated or explicitly deferred with owner and rationale
-- WP-19 (Next milestone planning) -> next-milestone planning materials exist before closeout
-- WP-20 (Release ceremony) -> milestone is validated, cleaned up, and releasable
+Use this section as the canonical acceptance contract for `v0.87.1`. Downstream demo, checklist, quality, review, and release-tail work should point back here rather than creating independent definitions of done.
+
+| WP | Acceptance criteria | Required proof surface / gate |
+|---|---|---|
+| WP-01 | Canonical milestone docs exist, agree that `v0.87.1` is the runtime-completion milestone, and name the non-goals that remain future work. | `README.md`, `VISION_v0.87.1.md`, `DESIGN_v0.87.1.md`, `WBS_v0.87.1.md`, `SPRINT_v0.87.1.md`, `DECISIONS_v0.87.1.md`, and `MILESTONE_CHECKLIST_v0.87.1.md` are reviewed together. |
+| WP-02 | Runtime environment entrypoints, environment contract, configuration expectations, and runtime artifact roots are implemented and documented. | Runtime environment implementation, promoted feature docs, tests, and demo/review artifacts for the environment surface. |
+| WP-03 | Runtime lifecycle phases and execution boundaries are explicit in implementation, docs, and trace/review surfaces. | Lifecycle/boundary implementation, promoted feature docs, tests, and traceable runtime summaries showing bounded phase transitions. |
+| WP-04 | Runtime execution emits Trace v1-aligned events and artifacts with replay-aware proof expectations. | Trace-aligned runtime implementation, trace/replay validation, runtime proof artifacts, and demo rows that name exact proof roots. |
+| WP-05 | Local failure handling, restartability, bounded recovery, and Shepherd preservation behavior are implemented or explicitly dispositioned with reviewer-visible evidence. | Resilience and Shepherd implementation, tests, promoted feature docs, and failure/recovery proof artifacts. |
+| WP-06 | Operator-facing commands and demo entrypoints are stable, documented, and runnable from the repository root. | Operator command docs, demo scripts, validation output, and artifact layout records. |
+| WP-07 | Runtime state, persistence, continuity, and cleanup behavior are deterministic enough for bounded local review and do not imply future identity or agency-continuity claims. | State/persistence implementation, cleanup validation, feature docs, and runtime-state demo/review artifacts. |
+| WP-08 | Runtime review surfaces let an uninvolved reviewer locate, inspect, and validate primary runtime outputs without reconstructing context from issue history. | Runtime review artifacts, reviewer entry docs, demo matrix links, and inspection commands. |
+| WP-09 | Canonical docs and implementation-facing claims have no known contradictions after the cross-document consistency pass. | Updated milestone docs plus the WP-09 SOR and focused contradiction/stale-language scans. |
+| WP-10 | This acceptance mapping gives each WP measurable criteria and points to the proof surfaces later gates must use. | Updated WBS acceptance mapping plus linked checklist, demo, feature-doc, and release-plan references. |
+| WP-11 | Sprint sequencing mirrors the WBS dependency order and separates runtime foundation, convergence, demos, quality, review, remediation, planning, and release-tail work. | `SPRINT_v0.87.1.md` aligned to this WBS and issue graph. |
+| WP-12 | Checklist and release-gate surfaces can be executed as a ship/no-ship review, with each exception requiring owner, due date, and disposition. | `MILESTONE_CHECKLIST_v0.87.1.md`, `RELEASE_PLAN_v0.87.1.md`, and release-tail issue cards. |
+| WP-13 | Demo matrix lists every milestone demo/proof issue, distinguishes CI-safe from credential-gated evidence, and provides runnable commands plus primary proof surfaces. | `DEMO_MATRIX_v0.87.1.md`, D0 suite results, D13/D13L disposition, and per-demo proof artifacts. |
+| WP-14 | Quality posture is auditable: required checks pass or each exception is explicitly justified, owned, and tracked. | CI/local validation records, quality/coverage issue output, and documented exclusions or deferrals. |
+| WP-15 | Docs and reviewer entry surfaces converge on implemented runtime truth and do not overclaim future systems. | Docs/review pass output, reviewer package entrypoints, and stale-claim scans. |
+| WP-16 | Internal review records concrete findings, severity, ownership, and whether each finding is accepted, rejected, or deferred. | Internal review record and linked issue/PR findings. |
+| WP-17 | External review preparation produces a legible package that identifies what to run, what to inspect, and what is intentionally out of scope. | External review package, demo/review entrypoints, and proof-surface navigation. |
+| WP-18 | Accepted review findings are remediated before release or deferred with explicit rationale, owner, and follow-up issue. | Changed artifacts, remediation SORs, and tracked deferral issues. |
+| WP-19 | Next milestone planning exists before release closeout and captures follow-on work that `v0.87.1` deliberately does not complete. | Next-milestone planning docs, WBS/sprint seeds, and follow-on issues. |
+| WP-20 | Release ceremony validates the final state, publishes release artifacts, and leaves the repository/milestone clean for the next tranche. | Final checklist, release notes, tag/release records, post-release verification, and closeout notes. |
+
+## Milestone-Level Acceptance
+- Runtime completion is accepted only when WP-02 through WP-08 are implemented, documented, and represented in runnable or reviewable proof surfaces.
+- Convergence is accepted only when WP-09 through WP-12 align the docs, acceptance contract, sprint plan, checklist, and release gates without contradictory definitions of done.
+- Demo coverage is accepted only when WP-13 names every milestone demo/proof issue, marks non-CI or credential-gated surfaces truthfully, and gives reviewers runnable commands or explicit substitute proof surfaces.
+- Quality and review are accepted only when WP-14 through WP-18 have passing evidence or explicit owner-bound deferrals for every remaining exception.
+- Release closeout is accepted only when WP-19 planning exists before release and WP-20 records the final validation, release, and cleanup state.
 
 ## Exit Criteria
 - Every in-scope requirement maps to at least one WBS item.

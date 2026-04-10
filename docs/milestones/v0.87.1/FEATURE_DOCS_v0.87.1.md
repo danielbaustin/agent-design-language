@@ -41,6 +41,7 @@ It does not attempt to complete the richer higher-order systems planned for late
 - Treat the README, WBS, sprint plan, and demo matrix as the milestone-level planning surface.
 - Treat the files in `features/` as the promoted runtime architecture and behavior surface.
 - Treat `bash adl/tools/demo_v0871_suite.sh` as the current WP-13 demo-suite entrypoint for implemented proof surfaces.
+- Treat the WBS Acceptance Mapping as the canonical acceptance contract; feature docs should supply proof surfaces for those criteria, not introduce separate definitions of done.
 - Any contradiction between milestone planning docs and these feature docs is a defect and must be resolved before review closeout.
 
 ## Exit Criteria

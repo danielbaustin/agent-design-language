@@ -148,6 +148,7 @@ Status guidance:
 
 ## Coverage Rules
 - Every major milestone claim should map to a runnable demo or an explicit alternate proof surface.
+- Demo coverage should be reviewed against the WBS Acceptance Mapping before internal review.
 - Every demo should name one primary proof surface that a reviewer can inspect directly.
 - Commands should be copy/paste-ready and should not require private local state.
 - Success signals should say what to check, not just “command exits 0”.
