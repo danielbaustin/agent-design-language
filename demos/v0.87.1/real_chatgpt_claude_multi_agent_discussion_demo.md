@@ -7,6 +7,14 @@ The deterministic demo remains the CI-safe proof surface. This live demo proves
 that the same bounded multi-agent shape can call real OpenAI and Anthropic
 models through ADL's current local HTTP completion boundary.
 
+Proof boundary:
+- A credentialed run that completes and writes the named invocation/transcript
+  artifacts is the proving path for D13L.
+- A no-credential run of
+  `adl/tools/test_demo_v0871_real_multi_agent_discussion.sh` may exit
+  successfully for local ergonomics, but that outcome is an explicit
+  non-proving skip disposition rather than live-provider proof.
+
 ## Command
 
 ```bash

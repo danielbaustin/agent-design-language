@@ -61,9 +61,11 @@ Claude family note:
 
 Live multi-agent demo note:
 - `adl/tools/demo_v0871_real_multi_agent_discussion.sh` is the operator-run live-provider companion to the deterministic multi-agent demo
+- `adl/tools/test_demo_v0871_real_multi_agent_discussion.sh` preserves local ergonomics by exiting successfully when operator credentials are unavailable, but it now emits an explicit machine-readable non-proving skip disposition instead of implying live-provider proof
 - it reads `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` from the environment when set, or from explicit operator-selected key-file overrides when provided
 - it starts a local adapter that bridges ADL's current `{"prompt": "..."} -> {"output": "..."}` HTTP contract to vendor-native OpenAI and Anthropic APIs
 - generated artifacts record provider family/model/status metadata only; they must not include secret values or raw credential headers
+- a real D13L proof claim requires the credentialed path to complete and write the invocation/transcript artifacts named in the demo matrix
 
 v0.88 native provider demo note:
 - `bash adl/tools/demo_v088_real_multi_agent_discussion.sh` demonstrates direct Rust-native OpenAI and Anthropic runtime invocation using operator-managed keys from environment variables or explicit key-file overrides

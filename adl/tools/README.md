@@ -12,7 +12,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `demo_v0871_suite.sh`: canonical `v0.87.1` WP-13 demo-suite entrypoint for the implemented provider, operator, runtime-state, review-surface, and multi-agent proof surfaces.
 - `normalize_adl_cards.sh`: repairs `.adl/cards/<issue>/` compatibility links and materializes missing bootstrap `sor.md` files for existing task bundles.
 - `demo_v0871_multi_agent_discussion.sh`: canonical `v0.87.1` bounded multi-agent discussion proof wrapper for a five-turn Claude + ChatGPT runtime demo.
-- `demo_v0871_real_multi_agent_discussion.sh`: live-provider companion demo that calls real OpenAI and Anthropic APIs through a local ADL completion adapter using operator-managed keys.
+- `demo_v0871_real_multi_agent_discussion.sh`: live-provider companion demo that calls real OpenAI and Anthropic APIs through a local ADL completion adapter using operator-managed keys; a missing-credentials skip in the paired test is a non-proving disposition, not live-provider proof.
 - `real_multi_agent_provider_adapter.py`: local adapter that translates ADL's bounded HTTP completion contract to vendor-native OpenAI and Anthropic calls without recording secret material.
 - `validate_multi_agent_transcript.py`: validates the bounded multi-agent transcript artifact contract for the D13 discussion demo.
 - `worktree_doctor.sh`, `worktree_prune.sh`: deterministic worktree governance and safe cleanup helpers.
