@@ -290,7 +290,6 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     fetch_origin_main_with_fallback()?;
     ensure_local_branch_exists(&branch)?;
     ensure_worktree_for_branch(&worktree_path, &branch)?;
-    ensure_primary_checkout_on_main(&repo_root)?;
 
     let source_path = ensure_source_issue_prompt(
         &repo_root,
@@ -2053,43 +2052,6 @@ fn ensure_worktree_for_branch(worktree_path: &Path, branch: &str) -> Result<()> 
         "• Reusing existing worktree path: {}",
         worktree_path.display()
     );
-    Ok(())
-}
-
-fn ensure_primary_checkout_on_main(repo_root: &Path) -> Result<()> {
-    let current = run_capture(
-        "git",
-        &[
-            "-C",
-            path_str(repo_root)?,
-            "rev-parse",
-            "--abbrev-ref",
-            "HEAD",
-        ],
-    )?;
-    let current = current.trim().to_string();
-    let dirty = !run_status_allow_failure("git", &["-C", path_str(repo_root)?, "diff", "--quiet"])?
-        || !run_status_allow_failure(
-            "git",
-            &["-C", path_str(repo_root)?, "diff", "--cached", "--quiet"],
-        )?
-        || !run_capture(
-            "git",
-            &["-C", path_str(repo_root)?, "status", "--porcelain"],
-        )
-        .unwrap_or_default()
-        .trim()
-        .is_empty();
-    if current != "main" && dirty {
-        bail!(
-            "start: primary checkout ({}) is on '{}' with local changes. Remediation: commit/stash there, switch to main, then rerun.",
-            repo_root.display(),
-            current
-        );
-    }
-    if current != "main" {
-        run_status("git", &["-C", path_str(repo_root)?, "switch", "main"])?;
-    }
     Ok(())
 }
 

@@ -676,64 +676,6 @@ fn ensure_git_metadata_writable_rejects_unwritable_git_dir() {
 }
 
 #[test]
-fn ensure_primary_checkout_on_main_handles_dirty_and_clean_non_main_states() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
-    let repo = unique_temp_dir("adl-pr-primary-main");
-    init_git_repo(&repo);
-    assert!(Command::new("git")
-        .args(["config", "user.name", "Test User"])
-        .current_dir(&repo)
-        .status()
-        .expect("git config")
-        .success());
-    assert!(Command::new("git")
-        .args(["config", "user.email", "test@example.com"])
-        .current_dir(&repo)
-        .status()
-        .expect("git config")
-        .success());
-    fs::write(repo.join("README.md"), "hello\n").expect("write readme");
-    assert!(Command::new("git")
-        .args(["add", "README.md"])
-        .current_dir(&repo)
-        .status()
-        .expect("git add")
-        .success());
-    assert!(Command::new("git")
-        .args(["commit", "-q", "-m", "init"])
-        .current_dir(&repo)
-        .status()
-        .expect("git commit")
-        .success());
-    assert!(Command::new("git")
-        .args(["branch", "-M", "main"])
-        .current_dir(&repo)
-        .status()
-        .expect("git branch")
-        .success());
-    assert!(Command::new("git")
-        .args(["checkout", "-q", "-b", "codex/1153-test"])
-        .current_dir(&repo)
-        .status()
-        .expect("git checkout")
-        .success());
-
-    fs::write(repo.join("README.md"), "dirty\n").expect("dirty write");
-    let err = ensure_primary_checkout_on_main(&repo).expect_err("dirty non-main should fail");
-    assert!(err.to_string().contains("with local changes"));
-
-    assert!(Command::new("git")
-        .args(["restore", "README.md"])
-        .current_dir(&repo)
-        .status()
-        .expect("git restore")
-        .success());
-    ensure_primary_checkout_on_main(&repo).expect("clean non-main should switch");
-    let branch = current_branch(&repo).expect("branch");
-    assert_eq!(branch, "main");
-}
-
-#[test]
 fn ensure_bootstrap_cards_creates_bundle_and_compat_links() {
     let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
     let repo = unique_temp_dir("adl-pr-bootstrap-cards");
