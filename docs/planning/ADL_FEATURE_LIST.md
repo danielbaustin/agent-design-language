@@ -125,7 +125,10 @@ provenance stack.
 ADL already has remote/provider execution surfaces and early trust-policy
 guardrails. Provider and transport correctness are now being treated as a
 platform substrate, with v0.87 and v0.92 carrying the deeper portability and
-capability-contract work.
+capability-contract work. This substrate defines what providers are capable of
+in principle. A later aptitude layer (v0.88) will distinguish which agents or
+providers are actually well-suited and reliable for specific bounded task
+families.
 
 ### Human-in-the-Loop Control
 
@@ -174,16 +177,18 @@ the roadmap schedules stronger AEE/Godel convergence through `v0.89`.
 
 ### ObsMem Indexing and Retrieval
 
-ADL already has ObsMem indexing and retrieval demo surfaces, plus the first
-shared-memory direction from v0.87. This is the memory foundation that later
+ADL already has ObsMem indexing and retrieval demo surfaces, including shared
+memory surfaces from v0.87. This is the memory foundation that later
 persistence, identity, and continuity features will build on.
 
 ### Bounded Cognitive Path
 
-ADL already has a bounded cognitive-system proof path from `v0.86`. The current
-implemented baseline covers signals, candidate selection, arbitration,
-reasoning, bounded execution, evaluation, reframing, memory participation, and
-Freedom Gate behavior.
+ADL already has an end-to-end bounded cognitive-system proof path from v0.86.
+This includes observable stages such as signal intake, candidate selection,
+arbitration, reasoning, bounded execution, evaluation, reframing, memory
+participation, and Freedom Gate behavior. The key point is that this is not
+just theory--it is a runnable, inspectable cognitive loop with artifacts and
+demo surfaces.
 
 ### Trace, Provider, Shared Memory, and Skills Substrate
 
@@ -202,17 +207,22 @@ currently implemented or materially present surfaces:
   platform surface rather than a generic replay note.
 - **Provider/transport portability**: provider/model/transport separation is a
   distinct platform capability, not just remote execution.
-- **Operational skills substrate**: ADL now has skill/control-plane planning and
-  proof surfaces that matter for repeatable operator workflows.
+- **Operational skills substrate**: ADL now includes a real operational skills
+  substrate that constrains execution into bounded, repeatable surfaces. This is
+  not just a supporting feature; it is a primary mechanism for reducing error,
+  improving determinism, and stabilizing the control plane. By replacing
+  fragile free-form prompting with structured skill invocation, ADL
+  significantly improves reliability and execution quality across workflows.
 - **Five-command control plane**: `pr init/create/start/run/finish` deserves
   explicit feature-list treatment because it is the spine of the authoring and
   execution lifecycle.
 - **Runtime environment and lifecycle work**: v0.87.1 makes runtime
   environment, lifecycle, resilience, and operator surfaces a first-class next
   feature band.
-- **Freedom Gate baseline**: this is more specific than generic cognitive
-  control and should be named because it is one of ADL's clearest bounded-agency
-  mechanisms.
+- **Freedom Gate baseline**: a bounded Freedom Gate surface already exists as
+  part of the v0.86 cognitive system. This is more specific than generic
+  cognitive control and should be named explicitly. Later work (v0.89) expands
+  and formalizes this into Freedom Gate v2 with stronger governance alignment.
 - **Demo catalog discipline**: ADL treats demos as a feature-legibility system,
   not only as release evidence.
 
@@ -221,9 +231,12 @@ currently implemented or materially present surfaces:
 ### v0.87.1 - Runtime Completion
 
 The next milestone completes the local runtime environment, lifecycle,
-resilience, operator, state, and review surfaces. This is where ADL turns the
-recent substrate work into a stronger runtime completion story that can support
-larger cognitive and governance layers.
+resilience, operator, state, and review surfaces. More importantly, it
+represents a stabilization phase where ADL transitions from an architecturally
+correct system to a reliably usable one. This includes hardening deterministic
+execution, improving tool and skill reliability, stabilizing the control-plane
+lifecycle, and materially reducing execution errors through bounded operational
+surfaces.
 
 ### v0.88 - Persistence, Instinct, Aptitudes, and Bounded Agency
 
