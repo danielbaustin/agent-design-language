@@ -97,6 +97,7 @@ fn run_executes_compiled_pattern_fork_join_happy_path() {
             with: HashMap::new(),
             as_ns: None,
             delegation: None,
+            conversation: None,
             prompt: None,
             inputs: HashMap::new(),
             guards: vec![],

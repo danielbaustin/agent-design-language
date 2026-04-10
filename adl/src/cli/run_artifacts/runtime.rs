@@ -84,6 +84,16 @@ pub(crate) fn write_run_state_artifacts(
             step_id: step.id.clone(),
             agent_id,
             provider_id,
+            conversation: step
+                .conversation
+                .as_ref()
+                .map(|turn| ConversationTurnArtifact {
+                    id: turn.id.clone(),
+                    speaker: turn.speaker.clone(),
+                    sequence: turn.sequence,
+                    thread_id: turn.thread_id.clone(),
+                    responds_to: turn.responds_to.clone(),
+                }),
             status,
             output_artifact_path,
         });

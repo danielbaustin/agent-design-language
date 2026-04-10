@@ -469,6 +469,84 @@ run:
 }
 
 #[test]
+fn resolve_preserves_conversation_turn_metadata() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - id: "discussion.opening"
+        agent: "a1"
+        task: "t1"
+        conversation:
+          id: "turn_01"
+          speaker: "ChatGPT"
+          sequence: 1
+          thread_id: "tea_discussion"
+"#;
+    let doc = parse_doc(yaml);
+    let resolved = resolve::resolve_run(&doc).expect("resolve");
+    let turn = resolved.steps[0]
+        .conversation
+        .as_ref()
+        .expect("conversation metadata");
+    assert_eq!(turn.id, "turn_01");
+    assert_eq!(turn.speaker, "ChatGPT");
+    assert_eq!(turn.sequence, Some(1));
+    assert_eq!(turn.thread_id.as_deref(), Some("tea_discussion"));
+}
+
+#[test]
+fn validate_rejects_invalid_conversation_turn_metadata() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  local:
+    type: "ollama"
+agents:
+  a1:
+    provider: "local"
+    model: "phi4-mini"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    kind: sequential
+    steps:
+      - id: "discussion.bad"
+        agent: "a1"
+        task: "t1"
+        conversation:
+          id: "turn_01"
+          speaker: ""
+          sequence: 0
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml parse");
+    let err = doc
+        .validate()
+        .expect_err("invalid conversation metadata must fail");
+    assert!(
+        err.to_string()
+            .contains("conversation.speaker must not be empty"),
+        "unexpected error: {err:#}"
+    );
+}
+
+#[test]
 fn resolve_and_plan_round_trip_step_delegation() {
     let yaml = r#"
 version: "0.5"

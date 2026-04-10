@@ -154,6 +154,7 @@ impl AdlDoc {
         }
 
         let workflow = self.run.resolve_workflow(self)?;
+        let mut conversation_turn_ids = std::collections::HashSet::new();
         for (idx, step) in workflow.steps.iter().enumerate() {
             let step_id = step
                 .id
@@ -219,6 +220,39 @@ impl AdlDoc {
                     return Err(anyhow!(
                         "step '{}' has invalid retry.max_attempts=0 (must be >= 1)",
                         step_id
+                    ));
+                }
+            }
+
+            if let Some(turn) = step.conversation.as_ref() {
+                if turn.id.trim().is_empty() {
+                    return Err(anyhow!(
+                        "step '{}' conversation.id must not be empty",
+                        step_id
+                    ));
+                }
+                if turn.speaker.trim().is_empty() {
+                    return Err(anyhow!(
+                        "step '{}' conversation.speaker must not be empty",
+                        step_id
+                    ));
+                }
+                if matches!(turn.sequence, Some(0)) {
+                    return Err(anyhow!(
+                        "step '{}' conversation.sequence must be >= 1",
+                        step_id
+                    ));
+                }
+                if turn.responds_to.as_deref() == Some(turn.id.as_str()) {
+                    return Err(anyhow!(
+                        "step '{}' conversation.responds_to must not reference the same turn id",
+                        step_id
+                    ));
+                }
+                if !conversation_turn_ids.insert(turn.id.clone()) {
+                    return Err(anyhow!(
+                        "duplicate conversation turn id '{}' (must be unique per workflow)",
+                        turn.id
                     ));
                 }
             }

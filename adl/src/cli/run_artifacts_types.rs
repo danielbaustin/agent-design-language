@@ -134,8 +134,23 @@ pub(crate) struct StepStateArtifact {
     pub(crate) step_id: String,
     pub(crate) agent_id: String,
     pub(crate) provider_id: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) conversation: Option<ConversationTurnArtifact>,
     pub(crate) status: String,
     pub(crate) output_artifact_path: Option<String>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ConversationTurnArtifact {
+    pub(crate) id: String,
+    pub(crate) speaker: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) sequence: Option<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) thread_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) responds_to: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

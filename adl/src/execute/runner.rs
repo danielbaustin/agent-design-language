@@ -999,6 +999,7 @@ fn resolved_step_from_raw_step(
         with: step.with.clone(),
         as_ns: step.as_ns.clone(),
         delegation: step.delegation.clone(),
+        conversation: step.conversation.clone(),
         prompt: step.prompt.clone(),
         inputs: step.inputs.clone(),
         guards: step.guards.clone(),
