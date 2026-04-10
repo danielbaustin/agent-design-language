@@ -40,11 +40,11 @@ Fixed the tracked PR execution path that switched the primary checkout to `main`
 - Updated start command help text to state that the primary checkout remains on its current branch.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: `adl/src/cli/pr_cmd.rs`, `adl/src/cli/tests/pr_cmd_inline/repo_helpers.rs`, `adl/tools/pr.sh`, `adl/tools/test_pr_cards_primary_root.sh`, `adl/tools/test_pr_start_worktree_safe.sh`
-- Worktree-only paths remaining: none for tracked changes; local ignored `.adl` task cards remain untracked workflow state by design.
-- Integration state: pr_open
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1531.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1531.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: issue worktree branch prepared for PR
+- Integration method used: issue branch/worktree changes were published and merged via PR #1531.
 - Verification performed:
   - `git status --short --branch`
   - focused validation commands listed below

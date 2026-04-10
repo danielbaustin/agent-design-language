@@ -48,14 +48,11 @@ tracked planning source of truth.
   whitespace safety.
 
 ## Main Repo Integration (REQUIRED)
-
-- Main-repo paths updated: `docs/planning/ADL_FEATURE_LIST.md`,
-  `docs/planning/README.md`, `docs/milestones/v0.75/ADL_FEATURE_LIST.md`,
-  `docs/records/v0.87.1/tasks/issue-1525/sor.md`
-- Worktree-only paths remaining: none for tracked artifacts
-- Integration state: pr_open
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1530.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1530.
+- Integration state: merged
 - Verification scope: main_repo
-- Integration method used: direct write in current branch
+- Integration method used: issue branch/worktree changes were published and merged via PR #1530.
 - Verification performed:
   - `test -s docs/planning/ADL_FEATURE_LIST.md`
   - `test -s docs/planning/README.md`

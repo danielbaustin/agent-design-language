@@ -39,19 +39,11 @@ Implemented an explicit local resilience and Shepherd preservation contract by e
 - Updated the WP-05 docs and demo matrix so they point at the concrete `run_status.json`, `pause_state.json`, and `logs/trace_v1.json` proof surfaces.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none
-- Worktree-only paths remaining:
-  - `adl/src/cli/run_artifacts_types.rs`
-  - `adl/src/cli/run_artifacts/summary.rs`
-  - `adl/src/cli/run_artifacts/runtime.rs`
-  - `adl/src/cli/tests/artifact_builders/learning_runtime.rs`
-  - `adl/src/cli/tests/run_state/persistence.rs`
-  - `docs/milestones/v0.87.1/features/LOCAL_RUNTIME_RESILIENCE.md`
-  - `docs/milestones/v0.87.1/features/SHEPHERD_RUNTIME_MODEL.md`
-  - `docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1475.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1475.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: direct edits in the bound issue worktree pending `pr finish` publication
+- Integration method used: issue branch/worktree changes were published and merged via PR #1475.
 - Verification performed:
   - `git status --short`
   - targeted file reads of the changed code and docs surfaces

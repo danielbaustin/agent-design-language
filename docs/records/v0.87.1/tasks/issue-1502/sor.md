@@ -42,11 +42,11 @@ Formalized the bounded multi-agent transcript artifact contract for the `v0.87.1
 - updated docs so reviewers can discover and run the contract validation path
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: tracked repository paths are updated on the issue branch via the pending PR
-- Worktree-only paths remaining: none once the issue branch is pushed; current edits are tracked in the issue worktree before PR publication
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1526.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1526.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: issue branch worktree via `bash adl/tools/pr.sh run 1502 --allow-open-pr-wave`
+- Integration method used: issue branch/worktree changes were published and merged via PR #1526.
 - Verification performed:
   - `python3 adl/tools/validate_multi_agent_transcript.py --help`
     - verified the validator entrypoint and documented arguments are available

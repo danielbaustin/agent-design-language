@@ -34,11 +34,11 @@ Implemented the trace/run provenance and archive/discovery work for #1519, #1520
 - Updated targeted tests and docs.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: tracked code, shell helpers, tests, and docs on the issue branch.
-- Worktree-only paths remaining: ignored local demo output under a temporary output directory and ignored worktree `.adl/trace-archive` smoke output only.
-- Integration state: pr_open
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1536.
+- Worktree-only paths remaining: none for required tracked artifacts; ignored demo output and `.adl/trace-archive` smoke artifacts remain untracked operator data by design.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: issue worktree branch plus `pr finish` publication.
+- Integration method used: issue branch/worktree changes were published and merged via PR #1536. Local smoke/archive outputs were intentionally left untracked.
 - Verification performed:
   - `git status --short`
   - `git diff --stat`

@@ -42,21 +42,11 @@ Fixed the `pr init`/`pr create` card bootstrap path so pre-run task bundles no l
 - Adjusted the version-inference shell fixture to use authored source prompts before start, keeping that test focused on version/path inference rather than bootstrap-stub rejection.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated:
-  - `adl/schemas/structured_implementation_prompt.contract.yaml`
-  - `adl/src/cli/pr_cmd.rs`
-  - `adl/src/cli/pr_cmd_cards.rs`
-  - `adl/src/cli/tests/pr_cmd_inline/lifecycle.rs`
-  - `adl/src/cli/tooling_cmd/structured_prompt.rs`
-  - `adl/src/cli/tooling_cmd/tests.rs`
-  - `adl/templates/cards/input_card_template.md`
-  - `adl/tools/pr.sh`
-  - `adl/tools/test_pr_init.sh`
-  - `adl/tools/test_pr_issue_version_inference.sh`
-- Worktree-only paths remaining: none; all required changes are in tracked repository paths on this branch.
-- Integration state: pr_open
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1532.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1532.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: branch-local tracked edits prepared for draft PR publication through the repo-native finish flow.
+- Integration method used: issue branch/worktree changes were published and merged via PR #1532.
 - Verification performed:
   - `git status --short`
   - `git diff --name-only`

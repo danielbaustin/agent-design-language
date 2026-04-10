@@ -31,11 +31,11 @@ Added a dedicated `chatgpt:` provider-profile family for the requested GPT-5 mod
 - documented the new `chatgpt:` family as a distinct operator-facing profile family over the same HTTP transport substrate
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: `adl/src/provider.rs`, `adl/tests/provider_tests.rs`, `docs/milestones/v0.87/features/PROVIDER_SUBSTRATE_FEATURE.md`
-- Worktree-only paths remaining: none
-- Integration state: pr_open
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1472.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1472.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: worktree implementation on the issue branch, to be published through the PR opened by `pr finish`
+- Integration method used: issue branch/worktree changes were published and merged via PR #1472.
 - Verification performed:
   - `git status --short`
     - verified the diff is bounded to the three intended tracked paths

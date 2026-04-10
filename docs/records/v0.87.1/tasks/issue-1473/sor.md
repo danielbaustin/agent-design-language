@@ -41,15 +41,11 @@ Applied the new mode to the primary local runtime data after validation. The pri
 - Confirmed `.adl/runs` was reduced from 60 top-level run directories to no top-level run directories, with only `README.md` and `_shared/` remaining.
 
 ## Main Repo Integration (REQUIRED)
-
-- Main-repo paths updated:
-  - `adl/tools/archive_run_artifacts.sh`
-  - `adl/tools/test_archive_run_artifacts.sh`
-  - `adl/tools/README.md`
-- Worktree-only paths remaining: none for tracked changes; the local `.adl/trace-archive` and `.adl/runs` cleanup artifacts are intentionally untracked local operator data.
-- Integration state: pr_open
-- Verification scope: pr_branch
-- Integration method used: issue worktree branch for tracked changes, direct local helper execution for untracked `.adl` runtime data.
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1539.
+- Worktree-only paths remaining: none for required tracked artifacts; local ignored `.adl/trace-archive` and `.adl/runs` cleanup artifacts remain untracked operator data by design.
+- Integration state: merged
+- Verification scope: worktree
+- Integration method used: issue branch/worktree changes were published and merged via PR #1539. Local untracked runtime cleanup data was intentionally not committed.
 - Verification performed:
   - `git status --short --branch` in the issue worktree confirmed only the three intended tracked files changed before finish.
   - `find .adl/runs -mindepth 1 -maxdepth 1 -type d | wc -l` in the primary checkout confirmed the active run directory count before cleanup.

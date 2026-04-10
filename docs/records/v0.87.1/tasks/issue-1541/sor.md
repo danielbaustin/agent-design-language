@@ -30,11 +30,11 @@ Applied the reviewed ADL feature-list wording through a tracked issue branch aft
 - verified all reviewed snippets are present in `docs/planning/ADL_FEATURE_LIST.md`
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet; the tracked docs change is on the issue branch for PR review
-- Worktree-only paths remaining: `docs/planning/ADL_FEATURE_LIST.md`, `.adl/v0.87.1/tasks/issue-1541__v0-87-1-docs-apply-adl-feature-list-review-wording/sor.md`
-- Integration state: pr_open
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1543.
+- Worktree-only paths remaining: none for required tracked artifacts; local ignored `.adl` task cards remain untracked workflow state by design.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: normal ADL issue branch/worktree flow, with PR publication pending through `pr finish`
+- Integration method used: issue branch/worktree changes were published and merged via PR #1543. Local ignored task-card surfaces were intentionally not promoted as tracked artifacts.
 - Verification performed:
   - `git diff -- docs/planning/ADL_FEATURE_LIST.md` verified the branch diff is bounded to the requested Bounded Cognitive Path wording correction
   - `python3` snippet verification checked that all reviewed replacement/append text is present in `docs/planning/ADL_FEATURE_LIST.md`

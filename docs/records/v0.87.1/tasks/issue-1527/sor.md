@@ -40,21 +40,11 @@ Seeded the tracked `docs/milestones/v0.88/` planning shell from the canonical mi
 - Preserved scope by avoiding substantive v0.88 planning content, feature commitments, issue sequencing, or release-date claims.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated:
-  - `docs/milestones/v0.88/README.md`
-  - `docs/milestones/v0.88/VISION_v0.88.md`
-  - `docs/milestones/v0.88/DESIGN_v0.88.md`
-  - `docs/milestones/v0.88/WBS_v0.88.md`
-  - `docs/milestones/v0.88/SPRINT_v0.88.md`
-  - `docs/milestones/v0.88/DEMO_MATRIX_v0.88.md`
-  - `docs/milestones/v0.88/MILESTONE_CHECKLIST_v0.88.md`
-  - `docs/milestones/v0.88/RELEASE_PLAN_v0.88.md`
-  - `docs/milestones/v0.88/RELEASE_NOTES_v0.88.md`
-  - `docs/milestones/v0.88/DECISIONS_v0.88.md`
-- Worktree-only paths remaining: none; all required changes are in tracked repository paths on this branch and will be published through the repo-native finish flow.
-- Integration state: pr_open
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1535.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1535.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: branch-local tracked edits prepared for draft PR publication through the repo-native finish flow.
+- Integration method used: issue branch/worktree changes were published and merged via PR #1535.
 - Verification performed:
   - `git status --short`
   - `git diff --stat`

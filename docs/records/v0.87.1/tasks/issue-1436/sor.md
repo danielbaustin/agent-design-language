@@ -36,18 +36,11 @@ Added one authoritative local runtime-environment contract in Rust and aligned t
 - removed a flaky duplicate CLI-side marker assertion and kept the behavior covered by focused `runtime_environment` unit tests
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet
-- Worktree-only paths remaining:
-  - `adl/src/runtime_environment.rs`
-  - `adl/src/artifacts.rs`
-  - `adl/src/lib.rs`
-  - `docs/milestones/v0.87.1/features/ADL_RUNTIME_ENVIRONMENT.md`
-  - `docs/milestones/v0.87.1/features/ADL_RUNTIME_ENVIRONMENT_ARCHITECTURE.md`
-  - `docs/milestones/v0.87.1/README.md`
-  - `docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1456.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1456.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: bounded worktree update pending `pr finish`
+- Integration method used: issue branch/worktree changes were published and merged via PR #1456.
 - Verification performed:
   - `git status --short`
   - `cargo fmt --manifest-path adl/Cargo.toml --all --check`

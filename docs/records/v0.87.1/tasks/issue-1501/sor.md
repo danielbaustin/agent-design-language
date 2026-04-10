@@ -42,11 +42,11 @@ Implemented bounded conversation turn metadata for ADL workflow steps. The runti
 - added janitor follow-up tests for each conversation validation rejection branch after GitHub coverage reported `adl/src/adl/validation.rs` below the per-file floor
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: tracked repository paths are updated on the issue branch via the pending PR
-- Worktree-only paths remaining: none once the issue branch is pushed; current edits are tracked in the issue worktree before PR publication
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1523.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1523.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: issue branch worktree via `bash adl/tools/pr.sh run 1501 --allow-open-pr-wave`
+- Integration method used: issue branch/worktree changes were published and merged via PR #1523.
 - Verification performed:
   - `cargo fmt --manifest-path adl/Cargo.toml --all`
     - verified Rust formatting for the modified crate files

@@ -41,11 +41,11 @@ Made the remote provider transport boundary explicit: real remote endpoints must
 - updated the canonical provider substrate feature doc to state the HTTPS-only remote transport boundary
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: `adl/src/adl/tests.rs`, `adl/src/adl/validation.rs`, `adl/src/provider.rs`, `adl/tests/provider_tests.rs`, `docs/milestones/v0.87/features/PROVIDER_SUBSTRATE_FEATURE.md`
-- Worktree-only paths remaining: none
-- Integration state: pr_open
+- Main-repo paths updated: tracked repository paths from this issue are present on main via merged PR #1481.
+- Worktree-only paths remaining: none for required tracked artifacts; issue branch changes have merged to main via PR #1481.
+- Integration state: merged
 - Verification scope: worktree
-- Integration method used: worktree implementation on the issue branch, to be published through the PR opened by `pr finish`
+- Integration method used: issue branch/worktree changes were published and merged via PR #1481.
 - Verification performed:
   - `git status --short`
     - verified the diff is bounded to the five intended tracked paths
