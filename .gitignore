@@ -11,3 +11,7 @@ issue-*.sh
 
 # Local worktrees (generated)
 .worktrees/
+
+# Issue SORs are canonical in .adl task bundles, not under docs/records issue mirrors.
+docs/records/v*/tasks/issue-*/
+docs/records/v*/CLOSED_ISSUE_RECORD_HYGIENE_*.md

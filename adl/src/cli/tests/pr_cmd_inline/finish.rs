@@ -239,7 +239,7 @@ fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
 }
 
 #[test]
-fn real_pr_finish_syncs_completed_output_to_root_bundle_and_review_mirror() {
+fn real_pr_finish_syncs_completed_output_to_root_bundle_and_cards_surface() {
     let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
     let temp = unique_temp_dir("adl-pr-finish-sync-output");
     let origin = temp.join("origin.git");
@@ -422,12 +422,9 @@ fn real_pr_finish_syncs_completed_output_to_root_bundle_and_review_mirror() {
 
     let root_text = fs::read_to_string(&root_output).expect("root output text");
     let compat_text = fs::read_to_string(&compat_output).expect("compat output text");
-    let tracked_output = issue_ref.public_task_record_output_path(&worktree);
-    let tracked_text = fs::read_to_string(&tracked_output).expect("tracked output text");
     assert!(root_text.contains("Status: DONE"));
     assert!(root_text.contains("codex/1153-rust-finish-sync"));
     assert_eq!(root_text, compat_text);
-    assert_eq!(root_text, tracked_text);
 }
 
 #[test]

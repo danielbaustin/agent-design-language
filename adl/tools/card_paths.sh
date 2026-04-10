@@ -124,18 +124,6 @@ task_bundle_output_path() {
   echo "$(task_bundle_dir_path "$issue" "$scope" "$slug")/sor.md"
 }
 
-public_task_record_dir_path() {
-  local issue="$1" scope="$2"
-  local root
-  root="$(card_primary_checkout_root)"
-  echo "$root/docs/records/$scope/tasks/$(task_issue_id "$issue")"
-}
-
-public_task_record_output_path() {
-  local issue="$1" scope="$2"
-  echo "$(public_task_record_dir_path "$issue" "$scope")/sor.md"
-}
-
 card_dir_path() {
   local issue
   issue="$(card_issue_normalize "$1")" || return 1
