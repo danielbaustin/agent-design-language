@@ -10,22 +10,24 @@
 - Keep statements implementation-accurate and test-validated.
 - Prefer concise bullets over marketing language.
 - Explicitly separate shipped behavior from "What's Next."
+- Treat these notes as a pre-release draft until the checklist, review, remediation, planning, and release ceremony gates are complete.
 
 # `ADL` `v0.87.1` Release Notes
 
 ## Summary
-`v0.87.1` completes the first full runtime milestone for ADL. It turns the seeded execution substrate from `v0.87` into a coherent runtime system with explicit lifecycle boundaries, trace-aligned execution, local resilience, operator surfaces, review surfaces, and a substantial demo-backed proof program.
+`v0.87.1` is the release vehicle for ADL's first full runtime milestone. It turns the seeded execution substrate from `v0.87` into a coherent runtime system with explicit lifecycle boundaries, trace-aligned execution, local resilience, operator surfaces, review surfaces, and a substantial demo-backed proof program; final release wording remains pending until the open milestone gates are complete or explicitly deferred.
 
 ## Highlights
 - Runtime environment and lifecycle completion surfaces landed for `v0.87.1`
 - Deterministic trace-aligned runtime and local resilience surfaces are part of the milestone scope
-- Review, checklist, demo-matrix, and release surfaces are aligned to a real runtime implementation milestone
+- Demo-matrix proof surfaces are aligned to a real runtime implementation milestone, while checklist, review, and release surfaces remain release-gated until their work packages close
 
 ## What's New In Detail
 
 ### Runtime Completion Milestone
 - Established `v0.87.1` as the milestone for runtime completion rather than a documentation-only follow-on
 - Aligned the canonical milestone docs (`VISION`, `DESIGN`, `WBS`, `SPRINT`, `DEMO_MATRIX`, `MILESTONE_CHECKLIST`, `RELEASE_PLAN`, `DECISIONS`, `RELEASE_NOTES`) to the real runtime implementation path
+- Kept release-note claims pre-release scoped until the remaining milestone tail issues are complete or explicitly dispositioned
 
 ### Runtime Scope
 - Framed `v0.87.1` around runtime environment, execution boundaries, lifecycle, trace alignment, local resilience, operator surfaces, and runtime review surfaces
@@ -42,6 +44,7 @@
 ## Known Limitations
 - Final release text must be updated from actual landed runtime behavior before publish
 - Some runtime surfaces may still be intentionally deferred if bounded follow-on issues are recorded explicitly
+- The milestone is not release-complete until checklist, quality, review, remediation, next-milestone planning, and release ceremony gates are closed
 
 ## Validation Notes
 - Validation for this release must cover milestone docs, runtime demos, review surfaces, and standard repository quality gates

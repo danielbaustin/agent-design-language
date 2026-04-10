@@ -86,7 +86,8 @@ Primary promoted feature docs:
 This milestone is executed as a sequence of work packages (WPs):
 
 - WP-01: Design pass (docs + planning)
-- WP-02 - WP-12: Runtime implementation, lifecycle completion, operator surfaces, and validation work
+- WP-02 - WP-08: Runtime implementation, lifecycle completion, operator surfaces, and review surfaces
+- WP-09 - WP-12: Cross-document consistency, acceptance, sprint alignment, and release-gate preparation
 - WP-13: Demo matrix and integration demos
 - WP-14: Coverage / quality gate
 - WP-15: Docs and review convergence
@@ -137,17 +138,17 @@ Known risks:
 - under-specifying the runtime proof surface so review happens against fragments instead of the integrated system
 
 Open questions:
-- which runtime feature docs should be promoted first as implementation lands
-- how much of the runtime review package should be demo-driven versus artifact-driven
+- the final acceptance, quality, review, and release-tail gates remain open until `WP-10` through `WP-20` land or are explicitly deferred
+- planned demo rows that are not part of the CI-safe D0 suite must remain explicitly dispositioned rather than implied as shipped
 
 ## Status
 
-Current status: planning active / Sprint 1 issue set created / implementation not yet started
+Current status: runtime foundations and demo proof surfaces landed; milestone convergence and release-tail gates remain active
 
-- Planning: active
-- Execution: Sprint 1 issues `#1435` through `#1442` are authored and readying; implementation not yet started
-- Validation: milestone structure and planning direction in progress
-- Release readiness: not started
+- Planning: active for acceptance, checklist, review, next-milestone, and release-tail closure
+- Execution: Sprint 1 runtime-foundation issues `#1435` through `#1442` are closed, WP-13 `#1462` is closed, and `#1458` through `#1461` are the active Sprint 2 convergence gates
+- Validation: demo matrix and runtime proof surfaces exist, with quality/review/release validation still pending in `#1463` through `#1498`
+- Release readiness: not ready until checklist, review, remediation, next-milestone planning, and release ceremony issues are complete or explicitly deferred
 
 ## Exit Criteria
 
