@@ -12,6 +12,9 @@ the real ADL runtime. It keeps the shape simple:
 - saved-state handoff between turns
 - a reviewer-facing transcript assembled from runtime outputs
 
+The transcript follows the bounded contract in
+`docs/tooling/MULTI_AGENT_TRANSCRIPT_ARTIFACT_CONTRACT.md`.
+
 The tone is intentionally light, but the proof surface is technical and auditable.
 
 ## Scope Boundary
@@ -53,6 +56,7 @@ bash adl/tools/demo_v0871_multi_agent_discussion.sh
 ## Secondary Proof Surfaces
 
 - `artifacts/v0871/multi_agent_discussion/runtime/runs/v0-87-1-multi-agent-tea-discussion/logs/trace_v1.json`
+- `artifacts/v0871/multi_agent_discussion/transcript_contract.json`
 - `artifacts/v0871/multi_agent_discussion/demo_manifest.json`
 - `artifacts/v0871/multi_agent_discussion/run_log.txt`
 - `artifacts/v0871/multi_agent_discussion/provider_server.log`
@@ -63,6 +67,7 @@ The demo is successful when:
 
 - the transcript contains five turns
 - ChatGPT and Claude are explicit and distinguishable
+- the transcript satisfies the bounded multi-agent transcript contract
 - the runtime emits the normal run-summary and trace surfaces
 - the final transcript/toast still states the bounded proof honestly
 

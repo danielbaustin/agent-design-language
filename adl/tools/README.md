@@ -11,6 +11,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `demo_v0871_runtime_state.sh`: canonical `v0.87.1` runtime-state proof wrapper for paused-vs-completed persistence inspection.
 - `normalize_adl_cards.sh`: repairs `.adl/cards/<issue>/` compatibility links and materializes missing bootstrap `sor.md` files for existing task bundles.
 - `demo_v0871_multi_agent_discussion.sh`: canonical `v0.87.1` bounded multi-agent discussion proof wrapper for a five-turn Claude + ChatGPT runtime demo.
+- `validate_multi_agent_transcript.py`: validates the bounded multi-agent transcript artifact contract for the D13 discussion demo.
 - `worktree_doctor.sh`, `worktree_prune.sh`: deterministic worktree governance and safe cleanup helpers.
 - `archive_run_artifacts.sh`: dry-run/apply helper that inventories local run roots and copies unique run artifacts into `.adl/trace-archive/milestones/<milestone>/runs/`.
 - `adl tooling ...`: Rust-owned tooling surface for prompt/card/review validation helpers, with legacy wrapper scripts preserved at the historical `adl/tools/*` paths.
@@ -40,6 +41,9 @@ bash adl/tools/normalize_adl_cards.sh --root "$(pwd)" --version v0.87.1
 
 # run the bounded Claude + ChatGPT discussion demo through the real runtime
 bash adl/tools/demo_v0871_multi_agent_discussion.sh
+
+# validate the generated bounded multi-agent transcript artifact
+python3 adl/tools/validate_multi_agent_transcript.py artifacts/v0871/multi_agent_discussion/transcript.md
 
 # bootstrap the local root task bundle for an existing issue
 bash ./adl/tools/pr.sh init <issue_num> --slug <slug>

@@ -10,6 +10,7 @@ RUN_ID="v0-87-1-multi-agent-tea-discussion"
 PORT=8791
 SERVER_LOG="$OUT_DIR/provider_server.log"
 TRANSCRIPT="$OUT_DIR/transcript.md"
+TRANSCRIPT_CONTRACT="$OUT_DIR/transcript_contract.json"
 MANIFEST="$OUT_DIR/demo_manifest.json"
 README_OUT="$OUT_DIR/README.md"
 
@@ -74,11 +75,68 @@ for file in \
   cat "$file" >>"$TRANSCRIPT"
 done
 
-python3 - "$MANIFEST" "$TRANSCRIPT" "$RUNS_ROOT/$RUN_ID/run_summary.json" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" <<'PY'
+python3 - "$TRANSCRIPT_CONTRACT" <<'PY'
 import json
 import sys
 
-manifest_path, transcript, run_summary, trace_path = sys.argv[1:5]
+contract_path = sys.argv[1]
+payload = {
+    "schema_version": "multi_agent_discussion_transcript.v1",
+    "transcript_path": "transcript.md",
+    "turn_count": 5,
+    "turns": [
+        {
+            "turn_id": "turn_01",
+            "ordinal": 1,
+            "speaker": "ChatGPT",
+            "heading": "# Turn 1 - ChatGPT",
+            "source_output": "out/discussion/01-chatgpt-opening.md",
+        },
+        {
+            "turn_id": "turn_02",
+            "ordinal": 2,
+            "speaker": "Claude",
+            "heading": "# Turn 2 - Claude",
+            "source_output": "out/discussion/02-claude-reply.md",
+        },
+        {
+            "turn_id": "turn_03",
+            "ordinal": 3,
+            "speaker": "ChatGPT",
+            "heading": "# Turn 3 - ChatGPT",
+            "source_output": "out/discussion/03-chatgpt-reflection.md",
+        },
+        {
+            "turn_id": "turn_04",
+            "ordinal": 4,
+            "speaker": "Claude",
+            "heading": "# Turn 4 - Claude",
+            "source_output": "out/discussion/04-claude-refinement.md",
+        },
+        {
+            "turn_id": "turn_05",
+            "ordinal": 5,
+            "speaker": "ChatGPT",
+            "heading": "# Turn 5 - ChatGPT",
+            "source_output": "out/discussion/05-chatgpt-toast.md",
+        },
+    ],
+    "companion_artifacts": {
+        "demo_manifest": "demo_manifest.json",
+        "run_summary": "runtime/runs/v0-87-1-multi-agent-tea-discussion/run_summary.json",
+        "trace": "runtime/runs/v0-87-1-multi-agent-tea-discussion/logs/trace_v1.json",
+    },
+}
+with open(contract_path, "w", encoding="utf-8") as fh:
+    json.dump(payload, fh, indent=2)
+    fh.write("\n")
+PY
+
+python3 - "$MANIFEST" "$TRANSCRIPT" "$TRANSCRIPT_CONTRACT" "$RUNS_ROOT/$RUN_ID/run_summary.json" "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" <<'PY'
+import json
+import sys
+
+manifest_path, transcript, transcript_contract, run_summary, trace_path = sys.argv[1:6]
 payload = {
     "demo_id": "v0.87.1.multi_agent_discussion",
     "title": "Claude + ChatGPT multi-agent tea discussion demo",
@@ -91,6 +149,7 @@ payload = {
     "steps": 5,
     "proof_surfaces": {
         "transcript": transcript,
+        "transcript_contract": transcript_contract,
         "run_summary": run_summary,
         "trace": trace_path,
     },
@@ -120,6 +179,7 @@ Primary proof surfaces:
 
 Secondary proof surfaces:
 - \`$RUNS_ROOT/$RUN_ID/logs/trace_v1.json\`
+- \`$TRANSCRIPT_CONTRACT\`
 - \`$OUT_DIR/run_log.txt\`
 - \`$MANIFEST\`
 - \`$SERVER_LOG\`
