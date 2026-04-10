@@ -909,6 +909,38 @@ run:
 }
 
 #[test]
+fn validate_accepts_native_openai_and_anthropic_provider_kinds() {
+    let yaml = r#"
+version: "0.5"
+providers:
+  openai_primary:
+    type: "openai"
+    config:
+      provider_model_id: "gpt-test"
+  anthropic_primary:
+    type: "anthropic"
+    config:
+      provider_model_id: "claude-test"
+agents:
+  a1:
+    provider: "openai_primary"
+    model: "gpt-test"
+tasks:
+  t1:
+    prompt:
+      user: "u"
+run:
+  workflow:
+    steps:
+      - task: "t1"
+        agent: "a1"
+"#;
+    let doc: AdlDoc = serde_yaml::from_str(yaml).expect("yaml parse");
+    doc.validate()
+        .expect("native OpenAI/Anthropic provider kinds should validate");
+}
+
+#[test]
 fn validate_rejects_both_workflow_ref_and_inline_workflow() {
     let yaml = r#"
 version: "0.5"
