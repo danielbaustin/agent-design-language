@@ -13,6 +13,7 @@ Ship/no-ship gate for the milestone. Check items only when evidence exists.
 - [ ] Milestone goal defined (`docs/milestones/v0.87.1/VISION_v0.87.1.md`)
 - [ ] Scope + non-goals documented (`docs/milestones/v0.87.1/VISION_v0.87.1.md`)
 - [ ] WBS created and mapped to issues (`docs/milestones/v0.87.1/WBS_v0.87.1.md`)
+- [ ] WBS acceptance mapping finalized and used as the canonical done contract for downstream demo, checklist, quality, review, and release-tail gates (`docs/milestones/v0.87.1/WBS_v0.87.1.md`)
 - [ ] Feature-doc index is present and aligned to the promoted runtime feature set (`docs/milestones/v0.87.1/FEATURE_DOCS_v0.87.1.md`)
 - [ ] Decision log initialized (`docs/milestones/v0.87.1/DECISIONS_v0.87.1.md`)
 - [ ] Sprint plan created (`docs/milestones/v0.87.1/SPRINT_v0.87.1.md`)
@@ -34,9 +35,11 @@ Ship/no-ship gate for the milestone. Check items only when evidence exists.
 - [ ] Coverage signal is not red (or exception documented)
 - [ ] No unresolved high-priority blockers (tracked via GitHub issues for v0.87.1)
 - [ ] Runtime demo program passes or each non-passing demo has an explicit bounded disposition
+- [ ] Quality, demo, and review exceptions map back to a WBS acceptance criterion and include owner-bound disposition
 
 ## Review Surfaces
 - [ ] Demo matrix finalized (`docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`)
+- [ ] Demo matrix coverage reviewed against WBS acceptance criteria before internal review
 - [ ] Internal review complete
 - [ ] External / 3rd-party review package prepared
 - [ ] Accepted findings remediated or explicitly deferred with owner and rationale

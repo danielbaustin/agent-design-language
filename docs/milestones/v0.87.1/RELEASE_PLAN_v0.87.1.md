@@ -13,6 +13,7 @@
 
 ## 1) Release Readiness
 - [ ] Milestone checklist complete (`docs/milestones/v0.87.1/MILESTONE_CHECKLIST_v0.87.1.md`)
+- [ ] WBS acceptance mapping reviewed against demo, quality, review, and release-tail evidence (`docs/milestones/v0.87.1/WBS_v0.87.1.md`)
 - [ ] Release notes approved (`docs/milestones/v0.87.1/RELEASE_NOTES_v0.87.1.md`)
 - [ ] Go/no-go decision recorded (`docs/milestones/v0.87.1/DECISIONS_v0.87.1.md` or milestone issue thread)
 - [ ] Internal review and external review-prep outcomes dispositioned
