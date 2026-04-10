@@ -100,12 +100,90 @@ assert_contains() {
   }
 }
 
+write_authored_source_prompt() {
+  local path="$1" issue="$2" version="$3" slug="$4" title="$5"
+  mkdir -p "$(dirname "$path")"
+  cat >"$path" <<EOF
+---
+issue_card_schema: adl.issue.v1
+wp: "process"
+slug: "$slug"
+title: "$title"
+labels:
+  - "track:roadmap"
+  - "version:$version"
+issue_number: $issue
+status: "draft"
+action: "edit"
+depends_on: []
+milestone_sprint: "Test sprint"
+required_outcome_type:
+  - "tests"
+repo_inputs:
+  - "adl/tools/pr.sh"
+canonical_files: []
+demo_required: false
+demo_names: []
+issue_graph_notes:
+  - "Test fixture for version inference lifecycle coverage."
+pr_start:
+  enabled: false
+  slug: "$slug"
+---
+
+# Issue Card
+
+## Summary
+Test fixture for version inference lifecycle coverage.
+
+## Goal
+Verify issue version inference across init and start.
+
+## Required Outcome
+The lifecycle commands keep the inferred version in the task bundle paths.
+
+## Deliverables
+- version-specific task bundle surfaces
+
+## Acceptance Criteria
+- init writes the expected versioned root bundle
+- start writes the expected versioned worktree bundle
+
+## Repo Inputs
+- adl/tools/pr.sh
+
+## Dependencies
+- none
+
+## Demo Expectations
+No demo required; tooling lifecycle fixture only.
+
+## Non-goals
+- production issue creation
+
+## Issue-Graph Notes
+- none
+
+## Notes
+- none
+
+## Tooling Notes
+- authored fixture avoids bootstrap-stub rejection during start.
+EOF
+}
+
 (
   cd "$repo"
   export PATH="$bindir:$PATH"
   export GH_LOG_FILE="$gh_log"
   export ADL_PR_RUST_BIN="$REAL_ADL_BIN"
 
+  write_authored_source_prompt \
+    ".adl/v0.85/bodies/issue-975-v085-process-infer-card-version-from-issue-title.md" \
+    975 \
+    "v0.85" \
+    "v085-process-infer-card-version-from-issue-title" \
+    "[v0.85][process] Infer current milestone card version from issue title when labels are missing"
   out_init="$("$BASH_BIN" adl/tools/pr.sh init 975 --slug v085-process-infer-card-version-from-issue-title)"
   assert_contains "STATE    ISSUE_AND_BUNDLE_READY" "$out_init" "init ready state"
   [[ -f ".adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" ]] || {
@@ -118,6 +196,14 @@ assert_contains() {
   }
   grep -Fq "Version: v0.85" ".adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" || {
     echo "assertion failed: expected input card version v0.85" >&2
+    exit 1
+  }
+  grep -Fq "Branch: not bound yet" ".adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" || {
+    echo "assertion failed: expected init input card to stay pre-run/unbound" >&2
+    exit 1
+  }
+  ! grep -Fq "the branch and worktree already exist" ".adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" || {
+    echo "assertion failed: init input card must not imply branch/worktree exists" >&2
     exit 1
   }
   grep -Fq "Title: [v0.85][process] Infer current milestone card version from issue title when labels are missing" \
@@ -136,6 +222,16 @@ assert_contains() {
     echo "assertion failed: expected start to create input card inside worktree-local v0.85 task bundle" >&2
     exit 1
   }
+  grep -Fq "Branch: codex/975-v085-process-infer-card-version-from-issue-title" \
+    "$repo/.worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" || {
+    echo "assertion failed: expected start input card to be run-bound" >&2
+    exit 1
+  }
+  grep -Fq "the branch and worktree already exist" \
+    "$repo/.worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sip.md" || {
+    echo "assertion failed: expected start input card to use run-bound wording" >&2
+    exit 1
+  }
   [[ -f "$repo/.worktrees/adl-wp-975/.adl/v0.85/tasks/issue-0975__v085-process-infer-card-version-from-issue-title/sor.md" ]] || {
     echo "assertion failed: expected start to create output card inside worktree-local v0.85 task bundle" >&2
     exit 1
@@ -145,6 +241,12 @@ assert_contains() {
     exit 1
   }
 
+  write_authored_source_prompt \
+    ".adl/v0.87.1/bodies/issue-976-v0871-process-infer-dot-suffixed-version-from-title.md" \
+    976 \
+    "v0.87.1" \
+    "v0871-process-infer-dot-suffixed-version-from-title" \
+    "[v0.87.1][process] Infer dot suffixed milestone card version from issue title when labels are missing"
   out_init_dot="$("$BASH_BIN" adl/tools/pr.sh init 976 --slug v0871-process-infer-dot-suffixed-version-from-title)"
   assert_contains "STATE    ISSUE_AND_BUNDLE_READY" "$out_init_dot" "dot-suffixed init ready state"
   [[ -f ".adl/v0.87.1/tasks/issue-0976__v0871-process-infer-dot-suffixed-version-from-title/sip.md" ]] || {
@@ -153,6 +255,10 @@ assert_contains() {
   }
   grep -Fq "Version: v0.87.1" ".adl/v0.87.1/tasks/issue-0976__v0871-process-infer-dot-suffixed-version-from-title/sip.md" || {
     echo "assertion failed: expected input card version v0.87.1" >&2
+    exit 1
+  }
+  grep -Fq "Branch: not bound yet" ".adl/v0.87.1/tasks/issue-0976__v0871-process-infer-dot-suffixed-version-from-title/sip.md" || {
+    echo "assertion failed: expected dot-suffixed init input card to stay pre-run/unbound" >&2
     exit 1
   }
 

@@ -14,7 +14,8 @@ Context:
 - Other: <optional note or 'none'>
 
 ## Agent Execution Rules
-- Do not run `pr start`; the branch and worktree already exist.
+- This issue is not started yet; do not assume a branch or worktree already exists.
+- Do not run `pr start`; use the current issue-mode `pr run` flow only if execution later becomes necessary.
 - Do not delete or recreate cards.
 - Do not switch branches unless explicitly instructed.
 - Do not work on `main`.
@@ -87,36 +88,38 @@ Execution:
 
 ## Goal
 
-Execute the linked issue prompt in this started worktree without rerunning bootstrap commands.
+Prepare the linked issue prompt and review surfaces for truthful pre-run review before execution is bound.
 
 ## Required Outcome
 
-- Ship the required outcome type recorded in the linked source issue prompt.
-- Keep the linked issue prompt, repository changes, and output record aligned.
+- Keep the linked issue prompt, input card, and output record aligned for review.
+- Preserve truthful lifecycle state until `pr run` binds the branch and worktree.
 
 ## Acceptance Criteria
 
-- The implementation satisfies the linked source issue prompt.
-- Validation and proof surfaces named below are completed or explicitly marked not applicable.
+- The linked source issue prompt is reviewable and structurally valid.
+- The card bundle does not imply a branch or worktree exists before `pr run`.
+- Validation and proof expectations are recorded or explicitly marked not applicable.
 
 ## Inputs
 - linked source issue prompt
-- root and worktree task bundle cards
-- current repository state for this branch
+- root task bundle cards
+- current repository state before execution binding
 
 ## Target Files / Surfaces
-- files, docs, tests, commands, schemas, and artifacts named by the linked source issue prompt
+- files, docs, tests, commands, schemas, and artifacts named by the linked source issue prompt, once execution is bound
 
 ## Validation Plan
-- Commands to run: derive the exact command set from the linked issue prompt and repo state; record what actually ran in the output card.
-- Tests to run: execute the smallest proving test set for the required outcome.
-- Artifacts or traces: produce or update the proof surfaces required by the linked issue prompt.
-- Reviewer checks: capture any manual review or demo checks in the output card.
+- Commands to run before execution: structured prompt/card validation only, unless the source issue prompt explicitly requires a pre-run proof.
+- Commands to run during execution: derive the exact command set from the linked issue prompt and repo state after `pr run` binds the worktree.
+- Tests to run: execute the smallest proving test set for the required outcome during execution.
+- Artifacts or traces: produce or update the proof surfaces required by the linked issue prompt during execution.
+- Reviewer checks: capture any manual review or demo checks in the output card after execution.
 
 ## Demo / Proof Requirements
 - Demo set: follow the linked issue prompt.
-- Proof surfaces: use the proof surfaces named by the linked issue prompt and output card.
-- No-demo rationale: if no demo is required, explain why in the output card.
+- Proof surfaces: use the proof surfaces named by the linked issue prompt and output card once execution is bound.
+- No-demo rationale: if no demo is required, explain why in the output card during execution.
 
 ## Constraints / Policies
 - Determinism: keep behavior stable for identical inputs unless the issue explicitly changes semantics.
@@ -165,10 +168,11 @@ ci_validation_required: true
 
 ## Notes / Risks
 
-- Refine this card if the linked source issue prompt changes materially before implementation begins.
+- Refine this card if the linked source issue prompt changes materially before execution begins.
 
 ## Instructions to the Agent
 - Read this file.
 - Read the linked source issue prompt before starting work.
-- Do the work described above.
-- Write results to the paired output card file.
+- Do not create a branch or worktree from this card alone.
+- When execution is approved, run the repo-native issue-mode `pr run` flow and then perform the work described above.
+- Write results to the paired output card file during execution.

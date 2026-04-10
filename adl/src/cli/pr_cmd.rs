@@ -1282,7 +1282,7 @@ fn bootstrap_root_task_bundle(
 ) -> Result<(PathBuf, PathBuf, PathBuf, PathBuf)> {
     let stp_path = issue_ref.task_bundle_stp_path(repo_root);
     let bundle_dir = issue_ref.task_bundle_dir_path(repo_root);
-    let init_branch = issue_ref.branch_name("codex");
+    let init_branch = "not bound yet";
     eprintln!("• Initializing task bundle: {}", bundle_dir.display());
     if !stp_path.is_file() {
         if let Some(parent) = stp_path.parent() {
@@ -1299,7 +1299,7 @@ fn bootstrap_root_task_bundle(
         eprintln!("• STP already exists: {}", stp_path.display());
     }
     let (_, bundle_input, bundle_output) =
-        ensure_bootstrap_cards(repo_root, issue_ref, title, &init_branch, source_path)?;
+        ensure_bootstrap_cards(repo_root, issue_ref, title, init_branch, source_path)?;
     Ok((stp_path, bundle_input, bundle_output, bundle_dir))
 }
 

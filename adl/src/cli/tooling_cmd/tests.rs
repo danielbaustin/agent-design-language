@@ -989,6 +989,17 @@ fn structured_prompt_sip_validator_accepts_not_bound_yet_only_in_bootstrap_phase
 }
 
 #[test]
+fn structured_prompt_sor_validator_accepts_not_bound_yet_only_in_bootstrap_phase() {
+    let sor = valid_sor_text().replace("Branch: codex/1374-tooling-test", "Branch: not bound yet");
+
+    validate_sor_text(&sor, Some("bootstrap")).expect("bootstrap SOR should accept not bound yet");
+
+    let err = validate_sor_text(&sor, Some("completed"))
+        .expect_err("completed SOR should still reject not bound yet");
+    assert!(err.to_string().contains("codex/ branch"));
+}
+
+#[test]
 fn review_commands_validate_and_render_expected_surfaces() {
     let repo = TempRepo::new("review");
     let input = repo.write_rel(
