@@ -15,6 +15,16 @@ cd "$ROOT_DIR"
 
 echo "Running v0.87.1 milestone demo suite..."
 
+bash adl/tools/demo_v0871_runtime_environment.sh "$ARTIFACT_ROOT/runtime_environment" >/dev/null
+bash adl/tools/demo_v0871_lifecycle.sh "$ARTIFACT_ROOT/lifecycle" >/dev/null
+bash adl/tools/demo_v0871_trace_runtime.sh "$ARTIFACT_ROOT/trace_runtime" >/dev/null
+bash adl/tools/demo_v0871_resilience_failure.sh "$ARTIFACT_ROOT/resilience_failure" >/dev/null
+bash adl/tools/demo_v0871_shepherd_recovery.sh "$ARTIFACT_ROOT/shepherd_recovery" >/dev/null
+bash adl/tools/demo_v0871_restartability.sh "$ARTIFACT_ROOT/restartability" >/dev/null
+bash adl/tools/demo_v0871_integrated_runtime.sh "$ARTIFACT_ROOT/integrated_runtime" >/dev/null
+bash adl/tools/demo_v0871_docs_review.sh "$ARTIFACT_ROOT/docs_review" >/dev/null
+bash adl/tools/demo_v0871_quality_gate.sh "$ARTIFACT_ROOT/quality_gate" >/dev/null
+bash adl/tools/demo_v0871_release_review_package.sh "$ARTIFACT_ROOT/release_review_package" >/dev/null
 bash adl/tools/demo_v0871_provider_local_ollama.sh "$ARTIFACT_ROOT/provider_local_ollama" >/dev/null
 bash adl/tools/demo_v0871_provider_http.sh "$ARTIFACT_ROOT/provider_http" >/dev/null
 bash adl/tools/demo_v0871_provider_mock.sh "$ARTIFACT_ROOT/provider_mock" >/dev/null
@@ -52,6 +62,115 @@ payload = {
     "primary_proof_surface": rel(manifest_path),
     "review_readme": rel(os.path.join(artifact_root, "README.md")),
     "demo_packages": [
+        package(
+            "D1",
+            "Runtime Environment Bring-Up",
+            "runtime_environment",
+            "runtime_environment/runtime/runtime_environment.json",
+            [
+                "runtime_environment/runtime/runs/v0-4-demo-deterministic-replay/run_summary.json",
+                "runtime_environment/runtime/runs/v0-4-demo-deterministic-replay/run_status.json",
+                "runtime_environment/runtime/runs/v0-4-demo-deterministic-replay/logs/trace_v1.json",
+            ],
+        ),
+        package(
+            "D2",
+            "Lifecycle Phases And Boundaries",
+            "lifecycle",
+            "lifecycle/lifecycle_summary.json",
+            [
+                "lifecycle/runtime/runs/v0-4-demo-deterministic-replay/run_summary.json",
+                "lifecycle/runtime/runs/v0-4-demo-deterministic-replay/logs/trace_v1.json",
+                "lifecycle/README.md",
+            ],
+        ),
+        package(
+            "D3",
+            "Trace-Aligned Runtime Execution",
+            "trace_runtime",
+            "trace_runtime/trace_bundle_manifest.json",
+            [
+                "trace_runtime/runtime/runs/v0-4-demo-deterministic-replay/run_summary.json",
+                "trace_runtime/runtime/runs/v0-4-demo-deterministic-replay/logs/trace_v1.json",
+                "trace_runtime/README.md",
+            ],
+        ),
+        package(
+            "D4",
+            "Local Failure Handling",
+            "resilience_failure",
+            "resilience_failure/failure_summary.json",
+            [
+                "resilience_failure/runtime/runs/v0-87-1-failure-missing-file/run_status.json",
+                "resilience_failure/runtime/runs/v0-87-1-failure-missing-file/logs/trace_v1.json",
+                "resilience_failure/README.md",
+            ],
+        ),
+        package(
+            "D4A",
+            "Shepherd Preservation And Recovery",
+            "shepherd_recovery",
+            "shepherd_recovery/shepherd_recovery_summary.json",
+            [
+                "shepherd_recovery/runtime/runs/v0-6-hitl-pause-demo/run_status.json",
+                "shepherd_recovery/runtime/runs/v0-6-hitl-pause-demo/pause_state.json",
+                "shepherd_recovery/README.md",
+            ],
+        ),
+        package(
+            "D5",
+            "Restartability And Recovery",
+            "restartability",
+            "restartability/restartability_summary.json",
+            [
+                "restartability/runtime/runs/v0-6-hitl-pause-demo/run_status.json",
+                "restartability/runtime/runs/v0-6-hitl-pause-demo/pause_state.json",
+                "restartability/README.md",
+            ],
+        ),
+        package(
+            "D9",
+            "Integrated runtime path",
+            "integrated_runtime",
+            "integrated_runtime/demo_manifest.json",
+            [
+                "integrated_runtime/d3_trace_runtime/trace_bundle_manifest.json",
+                "integrated_runtime/d8_review_surface/demo_manifest.json",
+                "integrated_runtime/README.md",
+            ],
+        ),
+        package(
+            "D10",
+            "Docs-to-runtime consistency check",
+            "docs_review",
+            "docs_review/docs_review_manifest.json",
+            [
+                "docs_review/integrated_runtime/demo_manifest.json",
+                "docs_review/README.md",
+            ],
+        ),
+        package(
+            "D11",
+            "Quality gate walkthrough",
+            "quality_gate",
+            "quality_gate/quality_gate_record.json",
+            [
+                "quality_gate/fmt.log",
+                "quality_gate/runtime_rows.log",
+                "quality_gate/README.md",
+            ],
+        ),
+        package(
+            "D12",
+            "Release review package",
+            "release_review_package",
+            "release_review_package/release_review_package_manifest.json",
+            [
+                "release_review_package/docs_review/docs_review_manifest.json",
+                "release_review_package/quality_gate/quality_gate_record.json",
+                "release_review_package/README.md",
+            ],
+        ),
         package(
             "P1",
             "Local Ollama provider family",
@@ -119,18 +238,6 @@ payload = {
             ],
         ),
     ],
-    "planned_not_run": [
-        {"demo_id": "D1", "reason": "runtime environment specialized wrapper remains a later demo-row implementation"},
-        {"demo_id": "D2", "reason": "lifecycle specialized wrapper remains a later demo-row implementation"},
-        {"demo_id": "D3", "reason": "trace-aligned specialized wrapper remains a later demo-row implementation"},
-        {"demo_id": "D4", "reason": "failure-handling specialized wrapper remains a later demo-row implementation"},
-        {"demo_id": "D4A", "reason": "Shepherd specialized wrapper remains a later demo-row implementation"},
-        {"demo_id": "D5", "reason": "restartability specialized wrapper remains a later demo-row implementation"},
-        {"demo_id": "D9", "reason": "integrated runtime path remains a planned follow-on demo"},
-        {"demo_id": "D10", "reason": "docs-to-runtime consistency check remains a review-tail demo"},
-        {"demo_id": "D11", "reason": "quality gate walkthrough remains a review-tail demo"},
-        {"demo_id": "D12", "reason": "release review package remains a release-tail demo"},
-    ],
 }
 
 with open(manifest_path, "w", encoding="utf-8") as fh:
@@ -151,6 +258,16 @@ Primary proof surface:
 - `artifacts/v0871/suite/demo_manifest.json`
 
 What this suite runs:
+- D1 runtime environment bring-up
+- D2 lifecycle phases and boundaries
+- D3 trace-aligned runtime execution
+- D4 local failure handling
+- D4A Shepherd preservation and recovery
+- D5 restartability and recovery
+- D9 integrated runtime path
+- D10 docs-to-runtime consistency check
+- D11 quality-gate walkthrough
+- D12 release review package
 - local Ollama provider-family proof
 - bounded HTTP provider-family proof
 - mock provider-family proof
@@ -159,10 +276,10 @@ What this suite runs:
 - D13 bounded Claude + ChatGPT multi-agent discussion proof
 
 Scope note:
-- This suite is the canonical WP-13 integration entrypoint for proof surfaces that
-  are already implemented and locally runnable.
-- Planned demo rows remain listed in the manifest as `planned_not_run` instead of
-  being overclaimed.
+- This suite is the canonical WP-13 integration entrypoint for the bounded,
+  locally runnable `v0.87.1` proof surfaces.
+- The live-provider D13L proof remains out of scope for the default suite because
+  it depends on operator-managed credentials and provider account access.
 EOF
 
 python3 - "$ROOT_DIR" "$ARTIFACT_ROOT" "$INDEX" <<'PY'
@@ -175,6 +292,16 @@ def rel(path: str) -> str:
     return os.path.relpath(os.path.join(artifact_root, path), root_dir)
 
 rows = [
+    ("D1", "runtime_environment/runtime/runtime_environment.json"),
+    ("D2", "lifecycle/lifecycle_summary.json"),
+    ("D3", "trace_runtime/trace_bundle_manifest.json"),
+    ("D4", "resilience_failure/failure_summary.json"),
+    ("D4A", "shepherd_recovery/shepherd_recovery_summary.json"),
+    ("D5", "restartability/restartability_summary.json"),
+    ("D9", "integrated_runtime/demo_manifest.json"),
+    ("D10", "docs_review/docs_review_manifest.json"),
+    ("D11", "quality_gate/quality_gate_record.json"),
+    ("D12", "release_review_package/release_review_package_manifest.json"),
     ("P1", "provider_local_ollama/runtime/runs/v0-87-1-provider-local-ollama-demo/run_summary.json"),
     ("P2", "provider_http/runtime/runs/v0-87-1-provider-http-demo/run_summary.json"),
     ("P3", "provider_mock/runtime/runs/v0-87-1-provider-mock-demo/run_summary.json"),
