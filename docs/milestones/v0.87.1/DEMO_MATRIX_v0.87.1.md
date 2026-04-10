@@ -102,6 +102,7 @@ Use this table as the fast review surface for milestone coverage.
 | D11 | Quality Gate Walkthrough | `WP-14` quality gate | `adl/tools/demo_v0871_quality_gate.sh` | quality-gate record | Tests, validators, and coverage posture are reviewable in one place | Same repo state should preserve gate outcome | PLANNED |
 | D12 | Release Review Package | `WP-16` through `WP-20` review/remediation/planning/release tail | `adl/tools/demo_v0871_release_review_package.sh` | release review package | Review, remediation, planning, and release artifacts are coherent and navigable | Package layout and key entrypoints remain stable | PLANNED |
 | D13 | Claude + ChatGPT Tea Discussion | bounded multi-agent runtime discussion proof | `bash adl/tools/demo_v0871_multi_agent_discussion.sh` | `artifacts/v0871/multi_agent_discussion/transcript.md` | Reviewer can inspect five explicit turns, two named agents, runtime turn metadata, the transcript contract, and the paired runtime trace/summaries | Fixed shim outputs should preserve transcript shape and turn ordering | READY |
+| D13L | Live Claude + ChatGPT Tea Discussion | live-provider companion proof for D13 | `bash adl/tools/demo_v0871_real_multi_agent_discussion.sh` | `artifacts/v0871/real_multi_agent_discussion/provider_invocations.json` plus `transcript.md` | Reviewer can inspect real OpenAI and Anthropic invocation metadata, five explicit turns, runtime turn metadata, and transcript contract proof without secret leakage | Live model text is non-deterministic; runtime artifact shape, turn ordering, and accepted contract shape remain stable | READY |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -131,6 +132,7 @@ Status guidance:
 - `D11` -> milestone review and validation surfaces derived from the promoted runtime feature set
 - `D12` -> review, remediation, planning, and release surfaces for the runtime milestone
 - `D13` -> bounded multi-agent runtime demo evidence for later conversation/runtime follow-on work
+- `D13L` -> live provider evidence that the bounded D13 shape can call real OpenAI and Anthropic models through the current ADL HTTP completion boundary
 
 ## Demo Details
 
