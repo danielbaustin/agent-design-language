@@ -10,7 +10,7 @@ RUNS_ROOT="$RUNTIME_ROOT/runs"
 STEP_OUT="$OUT_DIR/out"
 RUN_ID="v0-87-1-provider-chatgpt-demo"
 EXAMPLE="adl/examples/v0-87-1-provider-chatgpt-demo.adl.yaml"
-PORT=8787
+PORT=8788
 TOKEN="${OPENAI_API_KEY:-chatgpt-demo-token}"
 SERVER_LOG="$OUT_DIR/chatgpt_adapter.log"
 
@@ -27,6 +27,9 @@ import sys
 
 port = int(sys.argv[1])
 token = sys.argv[2]
+
+class ReusableTCPServer(socketserver.TCPServer):
+    allow_reuse_address = True
 
 class Handler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
@@ -54,7 +57,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         return
 
-with socketserver.TCPServer(("127.0.0.1", port), Handler) as httpd:
+with ReusableTCPServer(("127.0.0.1", port), Handler) as httpd:
     httpd.handle_request()
 PY
 SERVER_PID=$!

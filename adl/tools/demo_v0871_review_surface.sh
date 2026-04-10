@@ -3,8 +3,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 OUT_DIR="${1:-$ROOT_DIR/artifacts/v0871/review_surface}"
-OPERATOR_ROOT="$ROOT_DIR/artifacts/v0871/operator_surface"
-RUNTIME_STATE_ROOT="$ROOT_DIR/artifacts/v0871/runtime_state"
+OPERATOR_ROOT="${V0871_OPERATOR_ROOT:-$ROOT_DIR/artifacts/v0871/operator_surface}"
+RUNTIME_STATE_ROOT="${V0871_RUNTIME_STATE_ROOT:-$ROOT_DIR/artifacts/v0871/runtime_state}"
 MANIFEST_FILE="$OUT_DIR/demo_manifest.json"
 README_FILE="$OUT_DIR/README.md"
 INDEX_FILE="$OUT_DIR/index.txt"

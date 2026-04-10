@@ -4,7 +4,7 @@ providers:
   chatgpt_primary:
     profile: "chatgpt:gpt-5.4"
     config:
-      endpoint: "http://127.0.0.1:8787/complete"
+      endpoint: "http://127.0.0.1:8788/complete"
       auth:
         type: bearer
         env: OPENAI_API_KEY

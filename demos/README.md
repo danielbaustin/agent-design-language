@@ -40,6 +40,12 @@ If you want the bounded Claude + ChatGPT tea discussion demo:
 bash adl/tools/demo_v0871_multi_agent_discussion.sh
 ```
 
+If you want the current `v0.87.1` milestone demo-suite proof package:
+
+```bash
+bash adl/tools/demo_v0871_suite.sh
+```
+
 ## Demo Categories
 
 - Runtime workflow demos live in `adl/examples/`.
@@ -58,6 +64,10 @@ bash adl/tools/demo_v0871_multi_agent_discussion.sh
 
 - `v0.87.1/codex_ollama_operational_skills_demo.md`
 - `v0.87.1/claude_chatgpt_multi_agent_discussion_demo.md`
+
+Use `bash adl/tools/demo_v0871_suite.sh` for the canonical WP-13 demo-suite
+entrypoint. It runs the currently implemented `v0.87.1` proof surfaces and
+writes a suite manifest at `artifacts/v0871/suite/demo_manifest.json`.
 
 Use `v0.87.1/codex_ollama_operational_skills_demo.md` for a bounded local demo
 that installs the tracked skills into a demo-local `CODEX_HOME`, points Codex

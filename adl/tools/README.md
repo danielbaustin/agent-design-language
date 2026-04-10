@@ -9,6 +9,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `pr.sh`: canonical issue init/ready/run/finish workflow helper.
 - `demo_v0871_operator_surface.sh`: canonical `v0.87.1` operator-surface proof wrapper for runtime bring-up and artifact inspection.
 - `demo_v0871_runtime_state.sh`: canonical `v0.87.1` runtime-state proof wrapper for paused-vs-completed persistence inspection.
+- `demo_v0871_suite.sh`: canonical `v0.87.1` WP-13 demo-suite entrypoint for the implemented provider, operator, runtime-state, review-surface, and multi-agent proof surfaces.
 - `normalize_adl_cards.sh`: repairs `.adl/cards/<issue>/` compatibility links and materializes missing bootstrap `sor.md` files for existing task bundles.
 - `demo_v0871_multi_agent_discussion.sh`: canonical `v0.87.1` bounded multi-agent discussion proof wrapper for a five-turn Claude + ChatGPT runtime demo.
 - `demo_v0871_real_multi_agent_discussion.sh`: live-provider companion demo that calls real OpenAI and Anthropic APIs through a local ADL completion adapter using operator-managed keys.
@@ -49,6 +50,9 @@ bash adl/tools/demo_v0871_real_multi_agent_discussion.sh
 
 # validate the generated bounded multi-agent transcript artifact
 python3 adl/tools/validate_multi_agent_transcript.py artifacts/v0871/multi_agent_discussion/transcript.md
+
+# run the current v0.87.1 milestone demo-suite proof package
+bash adl/tools/demo_v0871_suite.sh
 
 # bootstrap the local root task bundle for an existing issue
 bash ./adl/tools/pr.sh init <issue_num> --slug <slug>
