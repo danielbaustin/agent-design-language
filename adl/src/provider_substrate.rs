@@ -119,6 +119,8 @@ fn infer_vendor(spec: &adl::ProviderSpec) -> String {
             match family {
                 "ollama" => return "ollama".to_string(),
                 "mock" => return "mock".to_string(),
+                "chatgpt" => return "openai".to_string(),
+                "claude" => return "anthropic".to_string(),
                 "http" => {}
                 _ => {}
             }
@@ -383,6 +385,26 @@ mod tests {
         assert_eq!(substrate.vendor, "openai");
         assert_eq!(substrate.transport, ProviderTransportV1::Http);
         assert_eq!(substrate.default_model_ref.as_deref(), Some("gpt-4.1-mini"));
+    }
+
+    #[test]
+    fn provider_substrate_infers_first_class_claude_profile_vendor() {
+        let mut spec = provider_spec("http");
+        spec.profile = Some("claude:claude-3-7-sonnet".to_string());
+        spec.config.insert(
+            "endpoint".to_string(),
+            json!("http://127.0.0.1:8787/complete"),
+        );
+        spec.default_model = Some("claude-3-7-sonnet-latest".to_string());
+
+        let substrate = provider_substrate_v1("claude_primary", &spec).expect("substrate");
+        assert_eq!(substrate.provider_id, "claude_primary");
+        assert_eq!(substrate.vendor, "anthropic");
+        assert_eq!(substrate.transport, ProviderTransportV1::Http);
+        assert_eq!(
+            substrate.default_model_ref.as_deref(),
+            Some("claude-3-7-sonnet-latest")
+        );
     }
 
     #[test]

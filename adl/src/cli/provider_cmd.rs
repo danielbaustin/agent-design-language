@@ -111,6 +111,17 @@ fn template_for_family(family: &str) -> Result<&'static ProviderSetupTemplate> {
             endpoint_hint: "https://api.example.invalid/v1/complete",
             notes: "Use this when you want the ChatGPT/GPT-5 family surface. Keep the endpoint pointed at an ADL-compatible completion endpoint and supply your own OpenAI key through the generated env file.",
         },
+        "claude" => &ProviderSetupTemplate {
+            family: "claude",
+            profile: "claude:claude-3-7-sonnet",
+            env_var: "ANTHROPIC_API_KEY",
+            provider_id: "claude_primary",
+            agent_id: "claude_agent",
+            model_ref: "claude-3-7-sonnet",
+            provider_model_id: "claude-3-7-sonnet-latest",
+            endpoint_hint: "https://api.example.invalid/v1/complete",
+            notes: "Use this when you want the first-class Claude family surface. Keep the endpoint pointed at an ADL-compatible completion endpoint and supply your Anthropic credential through the generated env file.",
+        },
         "openai" => &ProviderSetupTemplate {
             family: "openai",
             profile: "http:gpt-4.1-mini",
@@ -168,7 +179,7 @@ fn template_for_family(family: &str) -> Result<&'static ProviderSetupTemplate> {
         },
         other => {
             return Err(anyhow!(
-                "unsupported provider setup family '{other}' (supported: chatgpt, openai, anthropic, gemini, deepseek, http)"
+                "unsupported provider setup family '{other}' (supported: chatgpt, claude, openai, anthropic, gemini, deepseek, http)"
             ))
         }
     };
@@ -303,6 +314,25 @@ mod tests {
     }
 
     #[test]
+    fn provider_setup_writes_expected_bundle_for_claude() {
+        let repo = temp_repo("claude");
+        real_provider_in_repo(&["setup".to_string(), "claude".to_string()], &repo)
+            .expect("claude setup should succeed");
+
+        let out = repo.join(".adl/provider-setup/claude");
+        let provider_text =
+            fs::read_to_string(out.join("provider.adl.yaml")).expect("provider yaml");
+        let env_text = fs::read_to_string(out.join(".env.example")).expect("env example");
+        let readme = fs::read_to_string(out.join("README.md")).expect("readme");
+
+        assert!(provider_text.contains("profile: \"claude:claude-3-7-sonnet\""));
+        assert!(provider_text.contains("provider: \"claude_primary\""));
+        assert!(provider_text.contains("env: ANTHROPIC_API_KEY"));
+        assert!(env_text.contains("ANTHROPIC_API_KEY=replace-me"));
+        assert!(readme.contains("first-class Claude family surface"));
+    }
+
+    #[test]
     fn provider_setup_supports_explicit_out_and_force() {
         let repo = temp_repo("out-force");
         let out = repo.join("custom/provider-setup/openai");
@@ -393,6 +423,7 @@ mod tests {
     fn provider_setup_supports_all_declared_families() {
         let families = [
             ("chatgpt", "chatgpt:gpt-5.4", "OPENAI_API_KEY"),
+            ("claude", "claude:claude-3-7-sonnet", "ANTHROPIC_API_KEY"),
             ("openai", "http:gpt-4.1-mini", "OPENAI_API_KEY"),
             ("anthropic", "http:claude-3-7-sonnet", "ANTHROPIC_API_KEY"),
             ("gemini", "http:gemini-2.0-flash", "GEMINI_API_KEY"),
