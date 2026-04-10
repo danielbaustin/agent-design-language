@@ -21,6 +21,7 @@ pub(super) fn minimal_resolved_for_artifacts(run_id: String) -> resolve::AdlReso
             with: HashMap::new(),
             as_ns: None,
             delegation: None,
+            conversation: None,
             prompt: Some(adl::PromptSpec {
                 user: Some("u".to_string()),
                 ..Default::default()

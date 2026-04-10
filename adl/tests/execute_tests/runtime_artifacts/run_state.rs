@@ -48,6 +48,11 @@ run:
         write_to: "s1.txt"
         inputs:
           text: "hello"
+        conversation:
+          id: "turn_01"
+          speaker: "ChatGPT"
+          sequence: 1
+          thread_id: "tea_discussion"
 "#
     );
 
@@ -123,6 +128,10 @@ run:
     assert_eq!(steps[0]["step_id"], "s1");
     assert_eq!(steps[0]["status"], "success");
     assert_eq!(steps[0]["provider_id"], "local");
+    assert_eq!(steps[0]["conversation"]["id"], "turn_01");
+    assert_eq!(steps[0]["conversation"]["speaker"], "ChatGPT");
+    assert_eq!(steps[0]["conversation"]["sequence"], 1);
+    assert_eq!(steps[0]["conversation"]["thread_id"], "tea_discussion");
     assert_eq!(steps[0]["output_artifact_path"], "s1.txt");
 
     let run_status_json: serde_json::Value =

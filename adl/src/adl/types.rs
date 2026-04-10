@@ -317,6 +317,32 @@ pub struct WorkflowSpec {
     pub steps: Vec<StepSpec>,
 }
 
+/// Optional conversation turn metadata for a workflow step.
+///
+/// The runtime treats this as audit metadata: it records speaker/turn semantics
+/// without changing scheduler ordering or saved-state dependency behavior.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ConversationTurnSpec {
+    /// Stable turn id within the workflow, e.g. "turn_01".
+    pub id: String,
+
+    /// Human-readable speaker label for this turn.
+    pub speaker: String,
+
+    /// Optional 1-based turn sequence for reviewer-facing ordering.
+    #[serde(default)]
+    pub sequence: Option<u32>,
+
+    /// Optional conversation/thread id for grouping turns.
+    #[serde(default)]
+    pub thread_id: Option<String>,
+
+    /// Optional prior turn id this turn responds to.
+    #[serde(default)]
+    pub responds_to: Option<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum WorkflowKind {
@@ -371,6 +397,10 @@ pub struct StepSpec {
     /// Optional delegation metadata for audit/trace surfaces.
     #[serde(default)]
     pub delegation: Option<DelegationSpec>,
+
+    /// Optional conversation turn metadata for multi-agent discussion workflows.
+    #[serde(default)]
+    pub conversation: Option<ConversationTurnSpec>,
 
     /// Inline prompt override.
     #[serde(default)]

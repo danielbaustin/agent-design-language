@@ -25,6 +25,7 @@ fn build_run_summary_sorts_remote_policy_and_tracks_denials() {
             escalation_target: None,
             tags: vec!["b".to_string(), "a".to_string()],
         }),
+        conversation: None,
         prompt: Some(adl::PromptSpec {
             user: Some("u".to_string()),
             ..Default::default()
@@ -60,6 +61,7 @@ fn build_run_summary_sorts_remote_policy_and_tracks_denials() {
             step_id: "s1".to_string(),
             agent_id: "a1".to_string(),
             provider_id: "p1".to_string(),
+            conversation: None,
             status: "success".to_string(),
             output_artifact_path: Some("out/s1.txt".to_string()),
         },
@@ -67,6 +69,7 @@ fn build_run_summary_sorts_remote_policy_and_tracks_denials() {
             step_id: "s2".to_string(),
             agent_id: "a1".to_string(),
             provider_id: "p1".to_string(),
+            conversation: None,
             status: "failure".to_string(),
             output_artifact_path: None,
         },
@@ -74,6 +77,7 @@ fn build_run_summary_sorts_remote_policy_and_tracks_denials() {
             step_id: "s3".to_string(),
             agent_id: "a1".to_string(),
             provider_id: "p1".to_string(),
+            conversation: None,
             status: "not_run".to_string(),
             output_artifact_path: None,
         },

@@ -82,11 +82,22 @@ run:
       - id: "discussion.chatgpt.opening"
         agent: "chatgpt_host"
         task: "chatgpt_opening"
+        conversation:
+          id: "turn_01"
+          speaker: "ChatGPT"
+          sequence: 1
+          thread_id: "tea_discussion"
         save_as: "turn_01"
         write_to: "discussion/01-chatgpt-opening.md"
       - id: "discussion.claude.reply"
         agent: "claude_guest"
         task: "claude_reply"
+        conversation:
+          id: "turn_02"
+          speaker: "Claude"
+          sequence: 2
+          thread_id: "tea_discussion"
+          responds_to: "turn_01"
         inputs:
           turn_01: "@state:turn_01"
         save_as: "turn_02"
@@ -94,6 +105,12 @@ run:
       - id: "discussion.chatgpt.reflection"
         agent: "chatgpt_host"
         task: "chatgpt_reflection"
+        conversation:
+          id: "turn_03"
+          speaker: "ChatGPT"
+          sequence: 3
+          thread_id: "tea_discussion"
+          responds_to: "turn_02"
         inputs:
           turn_02: "@state:turn_02"
         save_as: "turn_03"
@@ -101,6 +118,12 @@ run:
       - id: "discussion.claude.refinement"
         agent: "claude_guest"
         task: "claude_refinement"
+        conversation:
+          id: "turn_04"
+          speaker: "Claude"
+          sequence: 4
+          thread_id: "tea_discussion"
+          responds_to: "turn_03"
         inputs:
           turn_03: "@state:turn_03"
         save_as: "turn_04"
@@ -108,6 +131,12 @@ run:
       - id: "discussion.chatgpt.toast"
         agent: "chatgpt_host"
         task: "chatgpt_toast"
+        conversation:
+          id: "turn_05"
+          speaker: "ChatGPT"
+          sequence: 5
+          thread_id: "tea_discussion"
+          responds_to: "turn_04"
         inputs:
           turn_04: "@state:turn_04"
         save_as: "turn_05"
