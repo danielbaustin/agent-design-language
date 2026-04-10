@@ -77,6 +77,7 @@ Examples:
   adl instrument provider-substrate-schema
   adl learn export --format bundle-v1 --runs-dir .adl/runs --out /tmp/learning-bundle
   adl learn export --format trace-bundle-v2 --runs-dir .adl/runs --out /tmp/trace-bundle
+  adl learn export --format trace-bundle-v2 --runs-dir .adl/trace-archive --out /tmp/archived-trace-bundle
   adl tooling lint-prompt-spec --issue 761
   adl tooling card-prompt --issue 761 --out /tmp/issue-761.prompt.md
   adl verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"

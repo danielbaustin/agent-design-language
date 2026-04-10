@@ -77,10 +77,16 @@ For `v0.87.1`, the runtime environment becomes concrete as one authoritative loc
 - per-run layout:
   - `.adl/runs/<run_id>/run.json`
   - `.adl/runs/<run_id>/steps.json`
+  - `.adl/runs/<run_id>/run_manifest.json`
   - `.adl/runs/<run_id>/logs/`
   - `.adl/runs/<run_id>/learning/`
   - `.adl/runs/<run_id>/control_path/`
   - `.adl/runs/<run_id>/meta/`
+
+- trace archive:
+  - `.adl/trace-archive/MANIFEST.tsv`
+  - `.adl/trace-archive/milestones/<milestone>/runs/<run_id>/`
+  - demo/provider wrappers copy bounded runtime roots into this archive after successful local runs
 
 This milestone does **not** claim full chronosense, persistent identity, or full agency continuity. It establishes the bounded substrate primitives those later systems require.
 
@@ -100,7 +106,9 @@ The authoritative proof surfaces from that operator path are:
 - `<runtime-root>/runtime_environment.json`
 - `<runtime-root>/runs/<run_id>/run_summary.json`
 - `<runtime-root>/runs/<run_id>/run_status.json`
+- `<runtime-root>/runs/<run_id>/run_manifest.json`
 - `<runtime-root>/runs/<run_id>/logs/trace_v1.json`
+- `.adl/trace-archive/milestones/<milestone>/runs/<run_id>/` when a demo/provider wrapper archives the proof run
 
 This keeps operator bring-up aligned with the runtime substrate contract rather than inventing separate artifact conventions for demos, reviewers, and local inspection.
 

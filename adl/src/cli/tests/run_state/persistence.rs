@@ -70,6 +70,33 @@ fn write_run_state_and_load_resume_round_trip() {
         run_dir.join("logs/trace_v1.json").is_file(),
         "wp-03 requires canonical trace_v1.json artifact"
     );
+    assert!(
+        run_dir.join("run_manifest.json").is_file(),
+        "trace provenance requires canonical run_manifest.json artifact"
+    );
+    let run_manifest: JsonValue = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("run_manifest.json"))
+            .expect("read run_manifest.json"),
+    )
+    .expect("parse run_manifest.json");
+    assert_eq!(
+        run_manifest.get("schema_version").and_then(|v| v.as_str()),
+        Some("trace_run_manifest.v1")
+    );
+    assert_eq!(
+        run_manifest.get("milestone").and_then(|v| v.as_str()),
+        Some("v0.5")
+    );
+    assert_eq!(
+        run_manifest.get("runs_root").and_then(|v| v.as_str()),
+        Some("external_runs_root")
+    );
+    assert!(
+        !run_manifest
+            .to_string()
+            .contains(&runs_root.to_string_lossy().to_string()),
+        "run manifest must not leak absolute override runs root"
+    );
 
     let trace_v1: TraceEventEnvelopeV1 = serde_json::from_str(
         &std::fs::read_to_string(run_dir.join("logs/trace_v1.json")).expect("read trace_v1.json"),

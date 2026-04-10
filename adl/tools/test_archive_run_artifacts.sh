@@ -17,6 +17,7 @@ printf '{}\n' >"$TMP/.adl/reports/demo-example/runs/review-godel-demo/run_status
 
 mkdir -p "$TMP/artifacts/v0871/provider_mock/runtime/runs/v0-87-1-provider-mock-demo/logs"
 printf '{}\n' >"$TMP/artifacts/v0871/provider_mock/runtime/runs/v0-87-1-provider-mock-demo/run_summary.json"
+printf '{"schema_version":"trace_run_manifest.v1","milestone":"v0.87.1"}\n' >"$TMP/artifacts/v0871/provider_mock/runtime/runs/v0-87-1-provider-mock-demo/run_manifest.json"
 printf '{}\n' >"$TMP/artifacts/v0871/provider_mock/runtime/runs/v0-87-1-provider-mock-demo/logs/trace_v1.json"
 
 "$ROOT/adl/tools/archive_run_artifacts.sh" --repo-root "$TMP" >/tmp/adl-archive-dry-run.out
@@ -26,6 +27,7 @@ printf '{}\n' >"$TMP/artifacts/v0871/provider_mock/runtime/runs/v0-87-1-provider
 grep -q $'v0-3-demo\tv0.3' "$TMP/.adl/trace-archive/MANIFEST.tsv"
 grep -q $'retry-success\tunclassified' "$TMP/.adl/trace-archive/MANIFEST.tsv"
 grep -q $'v0-87-1-provider-mock-demo\tv0.87.1' "$TMP/.adl/trace-archive/MANIFEST.tsv"
+grep -q $'v0-87-1-provider-mock-demo\tv0.87.1\t.adl/trace-archive/milestones/v0.87.1/runs/v0-87-1-provider-mock-demo\twould-copy\t3\tyes\tyes\tyes' "$TMP/.adl/trace-archive/MANIFEST.tsv"
 
 "$ROOT/adl/tools/archive_run_artifacts.sh" --repo-root "$TMP" --apply >/tmp/adl-archive-apply.out
 

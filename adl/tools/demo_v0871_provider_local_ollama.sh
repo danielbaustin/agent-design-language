@@ -21,6 +21,8 @@ echo "Running v0.87.1 local-Ollama provider demo..."
 ADL_RUNTIME_ROOT="$RUNTIME_ROOT" \
 ADL_RUNS_ROOT="$RUNS_ROOT" \
 ADL_OLLAMA_BIN="${ADL_OLLAMA_BIN:-$DEFAULT_OLLAMA_BIN}" \
+ADL_MILESTONE="v0.87.1" \
+ADL_DEMO_NAME="provider_local_ollama" \
   cargo run --quiet --manifest-path adl/Cargo.toml --bin adl -- \
     "$EXAMPLE" \
     --run \
@@ -29,10 +31,15 @@ ADL_OLLAMA_BIN="${ADL_OLLAMA_BIN:-$DEFAULT_OLLAMA_BIN}" \
     --out "$STEP_OUT" \
     | tee "$OUT_DIR/run_log.txt"
 
-SECONDARY_PROOF_SURFACES="$(printf '%s\n%s\n%s' \
+provider_demo_archive_trace "$OUT_DIR" "$RUN_ID"
+ARCHIVE_RUN=".adl/trace-archive/milestones/v0.87.1/runs/$RUN_ID"
+
+SECONDARY_PROOF_SURFACES="$(printf '%s\n%s\n%s\n%s\n%s' \
   "$RUNS_ROOT/$RUN_ID/run_status.json" \
   "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json" \
-  "$OUT_DIR/run_log.txt")"
+  "$OUT_DIR/run_log.txt" \
+  "$ARCHIVE_RUN/run_manifest.json" \
+  "$ARCHIVE_RUN/logs/trace_v1.json")"
 
 provider_demo_write_readme \
   "$OUT_DIR" \

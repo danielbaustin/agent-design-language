@@ -100,6 +100,11 @@ impl RunArtifactPaths {
         self.run_dir().join("run_status.json")
     }
 
+    /// Canonical run provenance manifest path.
+    pub fn run_manifest_json(&self) -> PathBuf {
+        self.run_dir().join("run_manifest.json")
+    }
+
     /// Output artifact directory.
     pub fn outputs_dir(&self) -> PathBuf {
         self.run_dir().join("outputs")
@@ -364,6 +369,9 @@ mod tests {
         assert!(paths
             .run_status_json()
             .ends_with(".adl/runs/demo-run-1/run_status.json"));
+        assert!(paths
+            .run_manifest_json()
+            .ends_with(".adl/runs/demo-run-1/run_manifest.json"));
         assert!(paths
             .artifact_model_marker_json()
             .ends_with(".adl/runs/demo-run-1/meta/ARTIFACT_MODEL.json"));

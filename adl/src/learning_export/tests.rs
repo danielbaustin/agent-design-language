@@ -40,6 +40,63 @@ fn export_jsonl_deterministic_for_fixture_runs() {
 }
 
 #[test]
+fn export_jsonl_discovers_milestone_archive_runs() {
+    let base = std::env::temp_dir().join(format!("learn-export-archive-{}", std::process::id()));
+    let archive_root = base.join(".adl").join("trace-archive");
+    let run_dir = archive_root
+        .join("milestones")
+        .join("v0.87.1")
+        .join("runs")
+        .join("v0-87-1-provider-mock-demo");
+    std::fs::create_dir_all(run_dir.join("learning")).unwrap();
+    std::fs::write(
+        run_dir.join("run_summary.json"),
+        r#"{"workflow_id":"wf","adl_version":"0.87.1","swarm_version":"0.87.1","status":"success"}"#,
+    )
+    .unwrap();
+    std::fs::write(
+        run_dir.join("steps.json"),
+        r#"[{"step_id":"s1","provider_id":"mock","status":"success"}]"#,
+    )
+    .unwrap();
+
+    let out = base.join("learning.jsonl");
+    let rows = export_jsonl(&archive_root, &[], &out).unwrap();
+    assert_eq!(rows, 1);
+    let exported = std::fs::read_to_string(&out).unwrap();
+    assert!(exported.contains("\"run_id\":\"v0-87-1-provider-mock-demo\""));
+
+    let discovered = discover_run_ids(&archive_root).unwrap();
+    assert_eq!(discovered, vec!["v0-87-1-provider-mock-demo"]);
+
+    let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
+fn export_reports_duplicate_archive_run_ids_clearly() {
+    let base = std::env::temp_dir().join(format!("learn-export-duplicate-{}", std::process::id()));
+    let archive_root = base.join(".adl").join("trace-archive");
+    for milestone in ["v0.87", "v0.87.1"] {
+        let run_dir = archive_root
+            .join("milestones")
+            .join(milestone)
+            .join("runs")
+            .join("shared-run");
+        std::fs::create_dir_all(&run_dir).unwrap();
+        std::fs::write(run_dir.join("run_summary.json"), "{}").unwrap();
+    }
+
+    let err = resolve_export_ids(&archive_root, &[]).expect_err("duplicate run ids should fail");
+    assert!(
+        err.to_string()
+            .contains("ambiguous across run archive locations"),
+        "unexpected error: {err}"
+    );
+
+    let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
 fn export_bundle_v1_is_deterministic_and_path_safe() {
     let base = std::env::temp_dir().join(format!("learn-bundle-{}", std::process::id()));
     let runs_root = base.join("runs");
@@ -345,7 +402,10 @@ fn validate_bundle_rel_path_rejects_absolute_windows_and_traversal_paths() {
 #[test]
 fn resolve_export_ids_sorts_and_dedupes_explicit_ids() {
     let root = std::env::temp_dir().join(format!("learn-ids-{}", std::process::id()));
-    std::fs::create_dir_all(&root).unwrap();
+    std::fs::create_dir_all(root.join("r1")).unwrap();
+    std::fs::create_dir_all(root.join("r2")).unwrap();
+    std::fs::write(root.join("r1").join("run_summary.json"), "{}").unwrap();
+    std::fs::write(root.join("r2").join("run_summary.json"), "{}").unwrap();
     let ids = resolve_export_ids(
         &root,
         &["r2".to_string(), "r1".to_string(), "r2".to_string()],

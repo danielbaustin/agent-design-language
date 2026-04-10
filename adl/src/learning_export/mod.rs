@@ -24,11 +24,11 @@ pub use trace_bundle_v2::{export_trace_bundle_v2, import_trace_bundle_v2, Import
 /// adl learn export --format jsonl --runs-dir .adl/runs --out /tmp/learning.jsonl
 /// ```
 pub fn export_jsonl(runs_root: &Path, run_ids: &[String], out_file: &Path) -> Result<usize> {
-    let mut ids = shared::resolve_export_ids(runs_root, run_ids)?;
+    let mut runs = shared::resolve_export_runs(runs_root, run_ids)?;
 
     let mut lines = Vec::new();
-    for run_id in ids.drain(..) {
-        let row = dataset::load_dataset_row(runs_root, &run_id)?;
+    for run in runs.drain(..) {
+        let row = dataset::load_dataset_row_from_dir(&run.run_dir, &run.run_id)?;
         lines.push(serde_json::to_string(&row).context("serialize dataset row")?);
     }
 

@@ -86,6 +86,17 @@ stat_mtime() {
 infer_milestone() {
   local run_id="$1"
   local root="$2"
+  local manifest="$root/$run_id/run_manifest.json"
+
+  if [[ -f "$manifest" ]]; then
+    local from_manifest
+    from_manifest="$(sed -n 's/^[[:space:]]*"milestone"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$manifest" | head -1)"
+    if [[ -n "$from_manifest" ]]; then
+      printf '%s' "$from_manifest"
+      return 0
+    fi
+  fi
+
   local text="$run_id $root"
 
   if [[ "$text" =~ v0-87-1|v0871|v0\.87\.1 ]]; then
@@ -175,7 +186,7 @@ tmp_manifest="$(mktemp "${TMPDIR:-/tmp}/adl-run-archive.XXXXXX")"
 tmp_seen="$(mktemp "${TMPDIR:-/tmp}/adl-run-archive-seen.XXXXXX")"
 trap 'rm -f "$tmp_manifest" "$tmp_seen"' EXIT
 
-printf 'source_root\tsource_kind\trun_id\tmilestone\tarchive_path\tstatus\tknown_artifact_count\thas_run_summary\thas_trace\tmtime_epoch\n' >"$tmp_manifest"
+printf 'source_root\tsource_kind\trun_id\tmilestone\tarchive_path\tstatus\tknown_artifact_count\thas_run_summary\thas_run_manifest\thas_trace\tmtime_epoch\n' >"$tmp_manifest"
 
 seen=0
 copied=0
@@ -228,10 +239,15 @@ while IFS= read -r runs_root; do
 
     known_artifact_count=0
     has_summary="no"
+    has_manifest="no"
     has_trace="no"
     [[ -f "$run_dir/run.json" ]] && known_artifact_count=$((known_artifact_count + 1))
     [[ -f "$run_dir/run_status.json" ]] && known_artifact_count=$((known_artifact_count + 1))
     [[ -f "$run_dir/steps.json" ]] && known_artifact_count=$((known_artifact_count + 1))
+    if [[ -f "$run_dir/run_manifest.json" ]]; then
+      has_manifest="yes"
+      known_artifact_count=$((known_artifact_count + 1))
+    fi
     if [[ -f "$run_dir/run_summary.json" ]]; then
       has_summary="yes"
       known_artifact_count=$((known_artifact_count + 1))
@@ -242,7 +258,7 @@ while IFS= read -r runs_root; do
     fi
     mtime="$(stat_mtime "$run_dir")"
 
-    printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
       "$(relpath "$runs_root")" \
       "$source_kind" \
       "$run_id" \
@@ -251,6 +267,7 @@ while IFS= read -r runs_root; do
       "$status" \
       "$known_artifact_count" \
       "$has_summary" \
+      "$has_manifest" \
       "$has_trace" \
       "$mtime" >>"$tmp_manifest"
   done < <(find "$runs_root" -mindepth 1 -maxdepth 1 -type d -print 2>/dev/null | sort)
@@ -278,6 +295,7 @@ unique_candidates="$(wc -l <"$tmp_seen" | tr -d ' ')"
   printf '\n## Files\n\n'
   printf '%s\n' '- `MANIFEST.tsv`: run-level source, milestone, archive path, and artifact-presence inventory'
   printf '%s\n' '- `milestones/<milestone>/runs/<run-id>/`: copied run artifacts when `--apply` is used'
+  printf '%s\n' '- `run_manifest.json`: preferred source for milestone/provenance classification when present'
   printf '\nThis tool copies run artifacts only. It does not delete or prune source directories.\n'
   printf 'When duplicate `milestone + run-id` entries exist, the first discovered copy is selected and later sources remain recorded as `duplicate-skipped` in `MANIFEST.tsv`.\n'
 } >"$archive_root/README.md"

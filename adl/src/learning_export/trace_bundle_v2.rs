@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 use crate::artifacts;
 
 use super::shared::{
-    read_json, resolve_export_ids, stable_fingerprint_hex, validate_bundle_rel_path,
+    read_json, resolve_export_runs, stable_fingerprint_hex, validate_bundle_rel_path,
     validate_export_payload_safety,
 };
 use super::TRACE_BUNDLE_VERSION;
@@ -59,7 +59,7 @@ pub fn export_trace_bundle_v2(
     run_ids: &[String],
     out_dir: &Path,
 ) -> Result<usize> {
-    let ids = resolve_export_ids(runs_root, run_ids)?;
+    let runs = resolve_export_runs(runs_root, run_ids)?;
     let bundle_root = out_dir.join("trace_bundle_v2");
     let runs_root_out = bundle_root.join("runs");
 
@@ -71,10 +71,12 @@ pub fn export_trace_bundle_v2(
         .with_context(|| format!("create bundle runs root '{}'", runs_root_out.display()))?;
 
     let mut file_entries = Vec::new();
-    for run_id in &ids {
-        let safe_run_id = artifacts::validate_run_id_path_segment(run_id)?;
-        let src_run_dir = runs_root.join(&safe_run_id);
+    let mut exported_ids = Vec::new();
+    for run in &runs {
+        let safe_run_id = artifacts::validate_run_id_path_segment(&run.run_id)?;
+        let src_run_dir = &run.run_dir;
         let out_run_dir = runs_root_out.join(&safe_run_id);
+        exported_ids.push(safe_run_id.clone());
         std::fs::create_dir_all(&out_run_dir)
             .with_context(|| format!("create bundle run dir '{}'", out_run_dir.display()))?;
 
@@ -96,7 +98,11 @@ pub fn export_trace_bundle_v2(
             )?;
         }
 
-        for rel in ["learning/scores.json", "learning/suggestions.json"] {
+        for rel in [
+            "run_manifest.json",
+            "learning/scores.json",
+            "learning/suggestions.json",
+        ] {
             let src = src_run_dir.join(rel);
             if src.is_file() {
                 copy_trace_bundle_file(
@@ -151,8 +157,8 @@ pub fn export_trace_bundle_v2(
     file_entries.sort_by(|a, b| a.path.cmp(&b.path));
     let manifest = TraceBundleManifestV2 {
         trace_bundle_version: TRACE_BUNDLE_VERSION,
-        run_count: ids.len(),
-        runs: ids,
+        run_count: exported_ids.len(),
+        runs: exported_ids,
         files: file_entries,
     };
     let manifest_bytes =

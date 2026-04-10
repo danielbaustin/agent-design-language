@@ -42,9 +42,8 @@ pub struct SuggestionsSummary {
     pub categories: Vec<String>,
 }
 
-pub(super) fn load_dataset_row(runs_root: &Path, run_id: &str) -> Result<DatasetRowV1> {
+pub(super) fn load_dataset_row_from_dir(run_dir: &Path, run_id: &str) -> Result<DatasetRowV1> {
     let safe_run_id = artifacts::validate_run_id_path_segment(run_id)?;
-    let run_dir = runs_root.join(&safe_run_id);
     let run_summary_path = run_dir.join("run_summary.json");
     let steps_path = run_dir.join("steps.json");
     let scores_path = run_dir.join("learning").join("scores.json");
