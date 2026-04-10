@@ -16,17 +16,19 @@ Execution:
 
 ## Summary
 
-Restored the empty ADL feature-list surface by creating a durable tracked
-feature status document at `docs/milestones/v0.75/ADL_FEATURE_LIST.md`.
+Restored the empty ADL feature-list surface and promoted it to a durable
+cross-milestone planning document at `docs/planning/ADL_FEATURE_LIST.md`.
 
 The document now includes implementation status, implemented features missing
 from the prior narrative, and scheduled completion milestones through `v0.95`.
-The ignored `.adl/docs/v0.75planning/ADL_FEATURE_LIST.md` file was also
-restored as a pointer to the tracked source of truth.
+The old v0.75 milestone path and ignored `.adl` planning path now point to the
+tracked planning source of truth.
 
 ## Artifacts produced
 
-- `docs/milestones/v0.75/ADL_FEATURE_LIST.md`
+- `docs/planning/ADL_FEATURE_LIST.md`
+- `docs/planning/README.md`
+- `docs/milestones/v0.75/ADL_FEATURE_LIST.md` compatibility pointer
 - `.adl/docs/v0.75planning/ADL_FEATURE_LIST.md` local planning pointer
 - GitHub issue `#1525`
 - Local task bundle `.adl/v0.87.1/tasks/issue-1525__feature-status-list/`
@@ -38,6 +40,8 @@ restored as a pointer to the tracked source of truth.
 - Created branch `codex/1525-feature-status-list`.
 - Initialized the ADL task bundle with `adl/tools/pr.sh init`.
 - Rebuilt the tracked feature-list document with conservative status language.
+- Promoted the feature list into `docs/planning/` for ongoing milestone updates.
+- Converted the old v0.75 feature-list file into a compatibility pointer.
 - Restored the ignored `.adl` planning file as a pointer to the durable tracked
   document.
 - Ran validation checks for non-empty files, expected status headings, and
@@ -45,15 +49,19 @@ restored as a pointer to the tracked source of truth.
 
 ## Main Repo Integration (REQUIRED)
 
-- Main-repo paths updated: `docs/milestones/v0.75/ADL_FEATURE_LIST.md`
+- Main-repo paths updated: `docs/planning/ADL_FEATURE_LIST.md`,
+  `docs/planning/README.md`, `docs/milestones/v0.75/ADL_FEATURE_LIST.md`,
+  `docs/records/v0.87.1/tasks/issue-1525/sor.md`
 - Worktree-only paths remaining: none for tracked artifacts
-- Integration state: worktree_only
+- Integration state: pr_open
 - Verification scope: main_repo
 - Integration method used: direct write in current branch
 - Verification performed:
+  - `test -s docs/planning/ADL_FEATURE_LIST.md`
+  - `test -s docs/planning/README.md`
   - `test -s docs/milestones/v0.75/ADL_FEATURE_LIST.md`
   - `test -s .adl/docs/v0.75planning/ADL_FEATURE_LIST.md`
-  - `rg -n "Feature Status Matrix|Implemented Features Missing|v0.95|Zed Integration|Trace v1 substrate|Control-plane lifecycle" docs/milestones/v0.75/ADL_FEATURE_LIST.md .adl/docs/v0.75planning/ADL_FEATURE_LIST.md`
+  - `rg -n "Feature Status Matrix|Implemented Features Missing|v0.95|Zed Integration|Trace v1 substrate|Control-plane lifecycle" docs/planning/ADL_FEATURE_LIST.md`
   - `git diff --check`
   - `git status --short --untracked-files=all`
 - Result: PASS
@@ -61,11 +69,13 @@ restored as a pointer to the tracked source of truth.
 ## Validation
 
 - Validation commands and their purpose:
-  - `test -s docs/milestones/v0.75/ADL_FEATURE_LIST.md`: verified the tracked feature list is no longer empty.
+  - `test -s docs/planning/ADL_FEATURE_LIST.md`: verified the tracked planning feature list exists and is non-empty.
+  - `test -s docs/planning/README.md`: verified the planning directory has a tracked index.
+  - `test -s docs/milestones/v0.75/ADL_FEATURE_LIST.md`: verified the old milestone path remains non-empty as a pointer.
   - `test -s .adl/docs/v0.75planning/ADL_FEATURE_LIST.md`: verified the local planning copy is no longer empty.
-  - `rg -n ...`: verified the restored docs contain feature status, missing implemented features, v0.95 scheduling, Zed status, trace, and control-plane entries.
+  - `rg -n ...`: verified the planning doc contains feature status, missing implemented features, v0.95 scheduling, Zed status, trace, and control-plane entries.
   - `git diff --check`: verified no whitespace errors in tracked changes.
-  - `git status --short --untracked-files=all`: verified the tracked diff is limited to the feature-list doc.
+  - `git status --short --untracked-files=all`: verified the tracked diff is limited to planning-doc promotion and this updated output record.
 - Results: PASS
 
 ## Verification Summary
@@ -75,6 +85,8 @@ verification_summary:
   validation:
     status: PASS
     checks_run:
+      - "test -s docs/planning/ADL_FEATURE_LIST.md"
+      - "test -s docs/planning/README.md"
       - "test -s docs/milestones/v0.75/ADL_FEATURE_LIST.md"
       - "test -s .adl/docs/v0.75planning/ADL_FEATURE_LIST.md"
       - "rg feature-status anchors in restored docs"
@@ -121,7 +133,7 @@ verification_summary:
 
 ## Artifact Verification
 
-- Primary proof surface: `docs/milestones/v0.75/ADL_FEATURE_LIST.md`
+- Primary proof surface: `docs/planning/ADL_FEATURE_LIST.md`
 - Required artifacts present: yes.
 - Artifact schema/version checks: not applicable; no schema changes.
 - Hash/byte-stability checks: not run; markdown content was manually reviewed through grep/status checks.
@@ -129,11 +141,12 @@ verification_summary:
 
 ## Decisions / Deviations
 
-- The requested `.adl/docs/v0.75planning/ADL_FEATURE_LIST.md` file is ignored by git, so the durable feature list was restored in tracked form at `docs/milestones/v0.75/ADL_FEATURE_LIST.md`.
+- The requested `.adl/docs/v0.75planning/ADL_FEATURE_LIST.md` file is ignored by git, so the durable feature list was restored in tracked form at `docs/planning/ADL_FEATURE_LIST.md`.
+- The previous tracked v0.75 milestone feature-list path now points to the planning copy.
 - The ignored `.adl` file was restored as a pointer to avoid future silent divergence.
 - `adl/tools/pr.sh run 1525 ...` was attempted, but it refused because the target branch was already checked out in the current main checkout. Work continued safely in the active branch.
-- No PR was opened from this planning-thread finish attempt.
+- PR `#1530` is open for this issue, and the planning-directory promotion is being added to the same branch.
 
 ## Follow-ups / Deferred work
 
-- Optionally run `adl/tools/pr.sh finish 1525 --title "Restore ADL feature list with status and target milestones" --paths "docs/milestones/v0.75/ADL_FEATURE_LIST.md" -f .adl/cards/1525/input_1525.md --output-card .adl/cards/1525/output_1525.md` to open the PR.
+- Update `docs/planning/ADL_FEATURE_LIST.md` after each milestone closes so it remains the canonical feature-status surface.
