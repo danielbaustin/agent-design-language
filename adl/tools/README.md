@@ -13,6 +13,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `demo_v0871_multi_agent_discussion.sh`: canonical `v0.87.1` bounded multi-agent discussion proof wrapper for a five-turn Claude + ChatGPT runtime demo.
 - `validate_multi_agent_transcript.py`: validates the bounded multi-agent transcript artifact contract for the D13 discussion demo.
 - `worktree_doctor.sh`, `worktree_prune.sh`: deterministic worktree governance and safe cleanup helpers.
+- `archive_run_artifacts.sh`: dry-run/apply helper that inventories local run roots and copies unique run artifacts into `.adl/trace-archive/milestones/<milestone>/runs/`.
 - `adl tooling ...`: Rust-owned tooling surface for prompt/card/review validation helpers, with legacy wrapper scripts preserved at the historical `adl/tools/*` paths.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
 - `batched_checks.sh`, `preflight_review.sh`: quality/preflight checks.
@@ -58,6 +59,12 @@ bash ./adl/tools/pr.sh run <issue_num> --slug <slug>
 
 # dry-run safe cleanup of merged clean worktrees + stale registrations
 ./adl/tools/worktree_prune.sh
+
+# inventory local run artifacts without deleting or moving the source data
+./adl/tools/archive_run_artifacts.sh --include-worktrees
+
+# copy unique run artifacts into .adl/trace-archive/milestones/
+./adl/tools/archive_run_artifacts.sh --include-worktrees --apply
 
 # run standard checks
 ./adl/tools/batched_checks.sh

@@ -8,6 +8,7 @@ the real ADL runtime. It keeps the shape simple:
 - one sequential ADL workflow
 - two named agents
 - five explicit turns
+- runtime-visible conversation turn metadata
 - saved-state handoff between turns
 - a reviewer-facing transcript assembled from runtime outputs
 
@@ -18,9 +19,11 @@ The tone is intentionally light, but the proof surface is technical and auditabl
 
 ## Scope Boundary
 
-This demo proves a bounded turn-based multi-agent workflow. It does **not** claim:
+This demo proves a bounded turn-based multi-agent workflow with explicit runtime
+metadata for turn id, speaker, sequence, thread, and response linkage. It does
+**not** claim:
 
-- a conversation-native runtime abstraction
+- a full conversation-platform runtime abstraction
 - free-form autonomous agent chat
 - direct vendor-native Claude or ChatGPT transport integration
 

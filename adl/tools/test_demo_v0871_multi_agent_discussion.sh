@@ -16,6 +16,7 @@ TRANSCRIPT="$OUT_DIR/transcript.md"
 TRANSCRIPT_CONTRACT="$OUT_DIR/transcript_contract.json"
 MANIFEST="$OUT_DIR/demo_manifest.json"
 SUMMARY="$OUT_DIR/runtime/runs/v0-87-1-multi-agent-tea-discussion/run_summary.json"
+STEPS="$OUT_DIR/runtime/runs/v0-87-1-multi-agent-tea-discussion/steps.json"
 TRACE="$OUT_DIR/runtime/runs/v0-87-1-multi-agent-tea-discussion/logs/trace_v1.json"
 FIRST_TURN="$OUT_DIR/out/discussion/01-chatgpt-opening.md"
 LAST_TURN="$OUT_DIR/out/discussion/05-chatgpt-toast.md"
@@ -34,6 +35,10 @@ LAST_TURN="$OUT_DIR/out/discussion/05-chatgpt-toast.md"
 }
 [[ -f "$SUMMARY" ]] || {
   echo "assertion failed: run summary missing" >&2
+  exit 1
+}
+[[ -f "$STEPS" ]] || {
+  echo "assertion failed: steps artifact missing" >&2
   exit 1
 }
 [[ -f "$TRACE" ]] || {
@@ -67,6 +72,14 @@ grep -Fq '"execution_mode": "runtime_http_compatibility_demo"' "$MANIFEST" || {
 }
 grep -Fq '"schema_version": "multi_agent_discussion_transcript.v1"' "$TRANSCRIPT_CONTRACT" || {
   echo "assertion failed: transcript contract missing schema version" >&2
+  exit 1
+}
+grep -Fq '"conversation"' "$STEPS" || {
+  echo "assertion failed: steps artifact missing conversation metadata" >&2
+  exit 1
+}
+grep -Fq '"speaker": "Claude"' "$STEPS" || {
+  echo "assertion failed: steps artifact missing Claude turn speaker" >&2
   exit 1
 }
 grep -Fq "five explicit turns" "$LAST_TURN" || {
