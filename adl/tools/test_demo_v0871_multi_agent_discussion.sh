@@ -13,6 +13,7 @@ OUT_DIR="$TMPDIR_ROOT/artifacts"
 )
 
 TRANSCRIPT="$OUT_DIR/transcript.md"
+TRANSCRIPT_CONTRACT="$OUT_DIR/transcript_contract.json"
 MANIFEST="$OUT_DIR/demo_manifest.json"
 SUMMARY="$OUT_DIR/runtime/runs/v0-87-1-multi-agent-tea-discussion/run_summary.json"
 TRACE="$OUT_DIR/runtime/runs/v0-87-1-multi-agent-tea-discussion/logs/trace_v1.json"
@@ -25,6 +26,10 @@ LAST_TURN="$OUT_DIR/out/discussion/05-chatgpt-toast.md"
 }
 [[ -f "$MANIFEST" ]] || {
   echo "assertion failed: manifest missing" >&2
+  exit 1
+}
+[[ -f "$TRANSCRIPT_CONTRACT" ]] || {
+  echo "assertion failed: transcript contract missing" >&2
   exit 1
 }
 [[ -f "$SUMMARY" ]] || {
@@ -60,9 +65,18 @@ grep -Fq '"execution_mode": "runtime_http_compatibility_demo"' "$MANIFEST" || {
   echo "assertion failed: manifest missing execution mode" >&2
   exit 1
 }
+grep -Fq '"schema_version": "multi_agent_discussion_transcript.v1"' "$TRANSCRIPT_CONTRACT" || {
+  echo "assertion failed: transcript contract missing schema version" >&2
+  exit 1
+}
 grep -Fq "five explicit turns" "$LAST_TURN" || {
   echo "assertion failed: final turn missing bounded proof summary" >&2
   exit 1
 }
+
+python3 "$ROOT_DIR/adl/tools/validate_multi_agent_transcript.py" \
+  "$TRANSCRIPT" \
+  --contract "$TRANSCRIPT_CONTRACT" \
+  >/dev/null
 
 echo "demo_v0871_multi_agent_discussion: ok"
