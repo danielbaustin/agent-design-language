@@ -28,6 +28,9 @@ import sys
 port = int(sys.argv[1])
 token = sys.argv[2]
 
+class ReusableTCPServer(socketserver.TCPServer):
+    allow_reuse_address = True
+
 class Handler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         if self.path != "/complete":
@@ -54,7 +57,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         return
 
-with socketserver.TCPServer(("127.0.0.1", port), Handler) as httpd:
+with ReusableTCPServer(("127.0.0.1", port), Handler) as httpd:
     httpd.handle_request()
 PY
 SERVER_PID=$!

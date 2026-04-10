@@ -88,6 +88,7 @@ Use this table as the fast review surface for milestone coverage.
 
 | Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
 |---|---|---|---|---|---|---|---|
+| D0 | Milestone Demo Suite | `WP-13` demo matrix + integrated proof entrypoint | `bash adl/tools/demo_v0871_suite.sh` | `artifacts/v0871/suite/demo_manifest.json` | One command runs the currently implemented provider, operator, runtime-state, review-surface, and multi-agent proof surfaces | Suite manifest ordering is stable; planned-but-not-run rows are recorded explicitly instead of overclaimed | READY |
 | D1 | Runtime Environment Bring-Up | `WP-02` runtime environment completion | `adl/tools/demo_v0871_runtime_environment.sh` | `.adl/runtime_environment.json` plus a bounded `.adl/runs/<run_id>/` artifact set | Runtime environment initializes cleanly with documented contracts | Stable env inputs should preserve artifact shape | PLANNED |
 | D2 | Lifecycle Phases And Boundaries | `WP-03` execution boundaries and lifecycle | `adl/tools/demo_v0871_lifecycle.sh` | lifecycle phase trace / summary | `init -> execute -> complete/teardown` is explicit and reviewable | Fixed scenario should preserve lifecycle phase ordering | PLANNED |
 | D3 | Trace-Aligned Runtime Execution | `WP-04` trace-aligned runtime execution | `adl/tools/demo_v0871_trace_runtime.sh` | `logs/trace_v1.json`, `run_summary.json`, and trace bundle export surfaces | Runtime actions map coherently to trace events, linked artifacts, and replay bundle outputs | Replay should preserve execution-to-trace shape | PLANNED |
@@ -120,6 +121,7 @@ Status guidance:
 - Determinism / replay notes should explain how stability is judged.
 
 ## Demo -> Feature Mapping
+- `D0` -> canonical `v0.87.1` demo-suite entrypoint for currently implemented proof surfaces
 - `D1` -> `ADL_RUNTIME_ENVIRONMENT.md`, `ADL_RUNTIME_ENVIRONMENT_ARCHITECTURE.md`
 - `D2` -> `AGENT_LIFECYCLE.md`, `EXECUTION_BOUNDARIES.md`
 - `D3` -> `ADL_RUNTIME_ENVIRONMENT_ARCHITECTURE.md`, `AGENT_LIFECYCLE.md`, Trace v1 artifact and replay-bundle surfaces
@@ -138,7 +140,47 @@ Status guidance:
 
 ## Demo Details
 
-Per-demo detail sections will be filled as the runtime milestone opens. This matrix already defines the bounded demo inventory the milestone is expected to implement and review.
+Per-demo detail sections are filled as runnable proof surfaces land. Planned rows remain visible, but they are not treated as implemented until a command, proof surface, and validation check exist.
+
+### D0) Milestone Demo Suite
+
+Description:
+- Provides the canonical WP-13 entrypoint for the currently implemented `v0.87.1` proof surfaces.
+- Runs provider-family demos, the runtime review walkthrough, and the bounded multi-agent discussion demo.
+- Records planned-but-not-run demo rows explicitly in the suite manifest rather than overclaiming coverage.
+
+Commands to run:
+
+```bash
+bash adl/tools/demo_v0871_suite.sh
+```
+
+Expected artifacts:
+- `artifacts/v0871/suite/demo_manifest.json`
+- `artifacts/v0871/suite/README.md`
+- `artifacts/v0871/suite/index.txt`
+- provider proof roots under `artifacts/v0871/suite/provider_*`
+- review proof roots under `artifacts/v0871/suite/review_surface`
+- multi-agent proof roots under `artifacts/v0871/suite/multi_agent_discussion`
+
+Primary proof surface:
+- `artifacts/v0871/suite/demo_manifest.json`
+
+Secondary proof surfaces:
+- `artifacts/v0871/suite/README.md`
+- `artifacts/v0871/suite/index.txt`
+- `artifacts/v0871/suite/review_surface/demo_manifest.json`
+- `artifacts/v0871/suite/multi_agent_discussion/transcript.md`
+
+Expected success signals:
+- The suite exits successfully.
+- The manifest includes provider packages, D8, and D13.
+- The manifest includes `planned_not_run` entries for demo rows that are still planned.
+
+Determinism / replay notes:
+- The suite uses bounded local provider shims and mock providers.
+- Proof-surface ordering in the manifest and index is stable.
+- The suite does not claim full byte-for-byte replay for all generated artifacts.
 
 ### D8) Review Surface Walkthrough
 
@@ -186,6 +228,7 @@ cargo build
 ```
 
 Cross-demo checks:
+- `bash adl/tools/test_demo_v0871_suite.sh` should pass for the canonical WP-13 suite
 - the integrated runtime path must be consistent with the specialized demo rows
 - reviewer entry surfaces must point to real demo proof roots
 - the runtime demo set should remain bounded, deterministic, and reviewable
@@ -206,7 +249,9 @@ Normalization rules:
 - none required
 
 Observed results summary:
-- planned; to be filled with real demo outcomes as `v0.87.1` lands
+- D0 is locally validated by `bash adl/tools/test_demo_v0871_suite.sh`.
+- D6, D7, D8, D13, and the provider-family proof roots are included in the current suite.
+- D1-D5 and D9-D12 remain planned rows until their specialized wrappers land.
 
 ## Reviewer Sign-Off Surface
 
