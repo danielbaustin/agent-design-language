@@ -853,6 +853,64 @@ replace_first_markdown_h1() {
   replace_first_line_re "$file" '^# .*$' "# $title"
 }
 
+branch_indicates_unbound_state() {
+  local branch="${1:-}"
+  [[ -z "$branch" || "$branch" == "not bound yet" || "$branch" == TBD\ \(run\ pr.sh\ start\ * || "$branch" == TBD\ \(run\ pr.sh\ run\ * ]]
+}
+
+remove_exact_line() {
+  local file="$1" target="$2"
+  local tmp
+  tmp="$(mktemp -t prsh_remove_line_XXXXXX)"
+  grep -Fvx -- "$target" "$file" >"$tmp" || true
+  mv "$tmp" "$file"
+}
+
+deduplicate_exact_line() {
+  local file="$1" target="$2"
+  local tmp
+  tmp="$(mktemp -t prsh_dedupe_line_XXXXXX)"
+  awk -v target="$target" '
+    $0 == target {
+      if (seen) {
+        next
+      }
+      seen = 1
+    }
+    { print }
+  ' "$file" >"$tmp"
+  mv "$tmp" "$file"
+}
+
+apply_input_card_lifecycle() {
+  local file="$1" branch="$2"
+  branch_indicates_unbound_state "$branch" && return 0
+
+  replace_first_line_re "$file" '^- This issue is not started yet; do not assume a branch or worktree already exists\.$' '- Do not run `pr start`; the branch and worktree already exist.'
+  replace_first_line_re "$file" '^- Do not run `pr start`; use the current issue-mode `pr run` flow only if execution later becomes necessary\.$' '- Do not delete or recreate cards.'
+  deduplicate_exact_line "$file" '- Do not delete or recreate cards.'
+  replace_first_line_re "$file" '^Prepare the linked issue prompt and review surfaces for truthful pre-run review before execution is bound\.$' 'Execute the linked issue prompt in this started worktree without rerunning bootstrap commands.'
+  replace_first_line_re "$file" '^- Keep the linked issue prompt, input card, and output record aligned for review\.$' '- Ship the required outcome type recorded in the linked source issue prompt.'
+  replace_first_line_re "$file" '^- Preserve truthful lifecycle state until `pr run` binds the branch and worktree\.$' '- Keep the linked issue prompt, repository changes, and output record aligned.'
+  replace_first_line_re "$file" '^- The linked source issue prompt is reviewable and structurally valid\.$' '- The implementation satisfies the linked source issue prompt.'
+  replace_first_line_re "$file" '^- The card bundle does not imply a branch or worktree exists before `pr run`\.$' '- Validation and proof surfaces named below are completed or explicitly marked not applicable.'
+  remove_exact_line "$file" '- Validation and proof expectations are recorded or explicitly marked not applicable.'
+  replace_first_line_re "$file" '^- root task bundle cards$' '- root and worktree task bundle cards'
+  replace_first_line_re "$file" '^- current repository state before execution binding$' '- current repository state for this branch'
+  replace_first_line_re "$file" '^- files, docs, tests, commands, schemas, and artifacts named by the linked source issue prompt, once execution is bound$' '- files, docs, tests, commands, schemas, and artifacts named by the linked source issue prompt'
+  replace_first_line_re "$file" '^- Commands to run before execution: structured prompt/card validation only, unless the source issue prompt explicitly requires a pre-run proof\.$' '- Commands to run: derive the exact command set from the linked issue prompt and repo state; record what actually ran in the output card.'
+  replace_first_line_re "$file" '^- Commands to run during execution: derive the exact command set from the linked issue prompt and repo state after `pr run` binds the worktree\.$' '- Tests to run: execute the smallest proving test set for the required outcome.'
+  replace_first_line_re "$file" '^- Tests to run: execute the smallest proving test set for the required outcome during execution\.$' '- Artifacts or traces: produce or update the proof surfaces required by the linked issue prompt.'
+  replace_first_line_re "$file" '^- Artifacts or traces: produce or update the proof surfaces required by the linked issue prompt during execution\.$' '- Reviewer checks: capture any manual review or demo checks in the output card.'
+  remove_exact_line "$file" '- Reviewer checks: capture any manual review or demo checks in the output card after execution.'
+  replace_first_line_re "$file" '^- Proof surfaces: use the proof surfaces named by the linked issue prompt and output card once execution is bound\.$' '- Proof surfaces: use the proof surfaces named by the linked issue prompt and output card.'
+  replace_first_line_re "$file" '^- No-demo rationale: if no demo is required, explain why in the output card during execution\.$' '- No-demo rationale: if no demo is required, explain why in the output card.'
+  replace_first_line_re "$file" '^- Refine this card if the linked source issue prompt changes materially before execution begins\.$' '- Refine this card if the linked source issue prompt changes materially before implementation begins.'
+  remove_exact_line "$file" '- Do not create a branch or worktree from this card alone.'
+  replace_first_line_re "$file" '^- When execution is approved, run the repo-native issue-mode `pr run` flow and then perform the work described above\.$' '- Do the work described above.'
+  replace_first_line_re "$file" '^- Write results to the paired output card file during execution\.$' '- Write results to the paired output card file.'
+}
+
 output_card_title_matches_slug() {
   local path="$1" slug="$2"
   validate_card_header_count "$path" "# $slug"
@@ -902,6 +960,7 @@ seed_input_card() {
     replace_first_line_re "$tmp" "^- Write the output card to the paired .*" "- Write the output record to the paired local task bundle sor.md path."
     replace_first_line_re "$tmp" "^[[:space:]]*output_card: .*$" "  output_card: $output_path_actual"
   fi
+  apply_input_card_lifecycle "$tmp" "$branch"
 
   validate_card_header_count "$tmp" "# ADL Input Card" || die "generated input card must contain exactly one '# ADL Input Card' header"
   ensure_nonempty_file "$tmp" || die "generated input card is empty: $tmp"
@@ -1396,7 +1455,7 @@ cmd_card() {
   fi
   note "Creating input card: $out_path"
   ensure_adl_dirs
-  seed_input_card "$out_path" "$issue" "$title" "$(current_branch)" "$version" "$(output_card_path "$issue" "$version" "$slug")"
+  seed_input_card "$out_path" "$issue" "$title" "not bound yet" "$version" "$(output_card_path "$issue" "$version" "$slug")"
   sync_legacy_links_for_issue "$issue" "$version" "$slug"
   note "Done."
   echo "$out_path"
@@ -1603,14 +1662,14 @@ cmd_cards() {
     note "Input card exists: $input_path"
   else
     note "Creating input card: $input_path"
-    seed_input_card "$input_path" "$issue" "$title" "TBD (run pr.sh run $issue)" "$version" "$output_path"
+    seed_input_card "$input_path" "$issue" "$title" "not bound yet" "$version" "$output_path"
   fi
 
   if ensure_nonempty_file "$output_path"; then
     note "Output card exists: $output_path"
   else
     note "Creating output card: $output_path"
-    seed_output_card "$output_path" "$issue" "$title" "TBD (run pr.sh run $issue)" "$version"
+    seed_output_card "$output_path" "$issue" "$title" "not bound yet" "$version"
   fi
 
   sync_legacy_links_for_issue "$issue" "$version" "$cards_slug"

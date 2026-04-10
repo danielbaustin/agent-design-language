@@ -2,7 +2,7 @@ version: adl.prompt_contract.v1
 artifact: structured_implementation_prompt
 description: >
   Machine-checkable contract for Structured Implementation Prompts (SIPs)
-  generated and edited after `pr start`.
+  generated before `pr run` and edited after execution binding.
 fields:
   Task ID:
     type: task_id

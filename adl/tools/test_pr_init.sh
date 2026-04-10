@@ -176,6 +176,14 @@ assert_contains() {
     echo "assertion failed: expected sip.md to exist" >&2
     exit 1
   }
+  grep -Fq "Branch: not bound yet" "$repo/.adl/v0.85/tasks/issue-0042__test-init/sip.md" || {
+    echo "assertion failed: expected init SIP to remain pre-run/unbound" >&2
+    exit 1
+  }
+  ! grep -Fq "the branch and worktree already exist" "$repo/.adl/v0.85/tasks/issue-0042__test-init/sip.md" || {
+    echo "assertion failed: init SIP must not imply branch/worktree exists" >&2
+    exit 1
+  }
   [[ -f "$repo/.adl/v0.85/tasks/issue-0042__test-init/sor.md" ]] || {
     echo "assertion failed: expected sor.md to exist" >&2
     exit 1
@@ -210,6 +218,10 @@ assert_contains() {
   }
   [[ -f "$repo/.adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/sip.md" ]] || {
     echo "assertion failed: expected generated task-bundle sip" >&2
+    exit 1
+  }
+  grep -Fq "Branch: not bound yet" "$repo/.adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/sip.md" || {
+    echo "assertion failed: expected generated init SIP to remain pre-run/unbound" >&2
     exit 1
   }
   [[ -f "$repo/.adl/v0.86/tasks/issue-0043__v0-86-wp-03-generated-loop-prompt/sor.md" ]] || {
@@ -248,6 +260,10 @@ assert_contains() {
   }
   grep -Fq "Version: v0.87.1" "$repo/.adl/v0.87.1/tasks/issue-0046__v0-87-1-tools-dot-suffixed-milestone-prompt/sip.md" || {
     echo "assertion failed: expected dot-suffixed version in generated sip" >&2
+    exit 1
+  }
+  grep -Fq "Branch: not bound yet" "$repo/.adl/v0.87.1/tasks/issue-0046__v0-87-1-tools-dot-suffixed-milestone-prompt/sip.md" || {
+    echo "assertion failed: expected dot-suffixed init SIP to remain pre-run/unbound" >&2
     exit 1
   }
 

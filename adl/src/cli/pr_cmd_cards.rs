@@ -520,8 +520,123 @@ fn write_input_card(
             path_relative_to_repo(repo_root, output_path)
         ),
     );
+    apply_input_card_lifecycle(&mut text, branch);
     fs::write(path, text)?;
     Ok(())
+}
+
+fn apply_input_card_lifecycle(text: &mut String, branch: &str) {
+    if branch_indicates_unbound_state(branch) {
+        return;
+    }
+    replace_exact_line(
+        text,
+        "- This issue is not started yet; do not assume a branch or worktree already exists.",
+        "- Do not run `pr start`; the branch and worktree already exist.",
+    );
+    replace_exact_line(
+        text,
+        "- Do not run `pr start`; use the current issue-mode `pr run` flow only if execution later becomes necessary.",
+        "- Do not delete or recreate cards.",
+    );
+    deduplicate_exact_line(text, "- Do not delete or recreate cards.");
+    replace_exact_line(
+        text,
+        "Prepare the linked issue prompt and review surfaces for truthful pre-run review before execution is bound.",
+        "Execute the linked issue prompt in this started worktree without rerunning bootstrap commands.",
+    );
+    replace_exact_line(
+        text,
+        "- Keep the linked issue prompt, input card, and output record aligned for review.",
+        "- Ship the required outcome type recorded in the linked source issue prompt.",
+    );
+    replace_exact_line(
+        text,
+        "- Preserve truthful lifecycle state until `pr run` binds the branch and worktree.",
+        "- Keep the linked issue prompt, repository changes, and output record aligned.",
+    );
+    replace_exact_line(
+        text,
+        "- The linked source issue prompt is reviewable and structurally valid.",
+        "- The implementation satisfies the linked source issue prompt.",
+    );
+    replace_exact_line(
+        text,
+        "- The card bundle does not imply a branch or worktree exists before `pr run`.",
+        "- Validation and proof surfaces named below are completed or explicitly marked not applicable.",
+    );
+    remove_exact_line(
+        text,
+        "- Validation and proof expectations are recorded or explicitly marked not applicable.",
+    );
+    replace_exact_line(
+        text,
+        "- root task bundle cards",
+        "- root and worktree task bundle cards",
+    );
+    replace_exact_line(
+        text,
+        "- current repository state before execution binding",
+        "- current repository state for this branch",
+    );
+    replace_exact_line(
+        text,
+        "- files, docs, tests, commands, schemas, and artifacts named by the linked source issue prompt, once execution is bound",
+        "- files, docs, tests, commands, schemas, and artifacts named by the linked source issue prompt",
+    );
+    replace_exact_line(
+        text,
+        "- Commands to run before execution: structured prompt/card validation only, unless the source issue prompt explicitly requires a pre-run proof.",
+        "- Commands to run: derive the exact command set from the linked issue prompt and repo state; record what actually ran in the output card.",
+    );
+    replace_exact_line(
+        text,
+        "- Commands to run during execution: derive the exact command set from the linked issue prompt and repo state after `pr run` binds the worktree.",
+        "- Tests to run: execute the smallest proving test set for the required outcome.",
+    );
+    replace_exact_line(
+        text,
+        "- Tests to run: execute the smallest proving test set for the required outcome during execution.",
+        "- Artifacts or traces: produce or update the proof surfaces required by the linked issue prompt.",
+    );
+    replace_exact_line(
+        text,
+        "- Artifacts or traces: produce or update the proof surfaces required by the linked issue prompt during execution.",
+        "- Reviewer checks: capture any manual review or demo checks in the output card.",
+    );
+    remove_exact_line(
+        text,
+        "- Reviewer checks: capture any manual review or demo checks in the output card after execution.",
+    );
+    replace_exact_line(
+        text,
+        "- Proof surfaces: use the proof surfaces named by the linked issue prompt and output card once execution is bound.",
+        "- Proof surfaces: use the proof surfaces named by the linked issue prompt and output card.",
+    );
+    replace_exact_line(
+        text,
+        "- No-demo rationale: if no demo is required, explain why in the output card during execution.",
+        "- No-demo rationale: if no demo is required, explain why in the output card.",
+    );
+    replace_exact_line(
+        text,
+        "- Refine this card if the linked source issue prompt changes materially before execution begins.",
+        "- Refine this card if the linked source issue prompt changes materially before implementation begins.",
+    );
+    remove_exact_line(
+        text,
+        "- Do not create a branch or worktree from this card alone.",
+    );
+    replace_exact_line(
+        text,
+        "- When execution is approved, run the repo-native issue-mode `pr run` flow and then perform the work described above.",
+        "- Do the work described above.",
+    );
+    replace_exact_line(
+        text,
+        "- Write results to the paired output card file during execution.",
+        "- Write results to the paired output card file.",
+    );
 }
 
 pub(crate) fn write_output_card(
@@ -615,6 +730,37 @@ fn replace_exact_line(text: &mut String, from: &str, to: &str) {
         } else {
             out.push(line.to_string());
         }
+    }
+    *text = out.join("\n");
+    if !text.ends_with('\n') {
+        text.push('\n');
+    }
+}
+
+fn remove_exact_line(text: &mut String, target: &str) {
+    let mut out = Vec::new();
+    for line in text.lines() {
+        if line != target {
+            out.push(line.to_string());
+        }
+    }
+    *text = out.join("\n");
+    if !text.ends_with('\n') {
+        text.push('\n');
+    }
+}
+
+fn deduplicate_exact_line(text: &mut String, target: &str) {
+    let mut seen = false;
+    let mut out = Vec::new();
+    for line in text.lines() {
+        if line == target {
+            if seen {
+                continue;
+            }
+            seen = true;
+        }
+        out.push(line.to_string());
     }
     *text = out.join("\n");
     if !text.ends_with('\n') {

@@ -502,9 +502,20 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
         !markdown_field(text, "Title").unwrap_or_default().is_empty(),
         "missing required field: Title"
     );
+    let branch = markdown_field(text, "Branch").unwrap_or_default();
+    let branch_ok = if phase == Some("bootstrap") {
+        valid_branch(&branch) || branch.eq_ignore_ascii_case("not bound yet")
+    } else {
+        valid_branch(&branch)
+    };
     ensure!(
-        valid_branch(&markdown_field(text, "Branch").unwrap_or_default()),
-        "Branch must be a codex/ branch"
+        branch_ok,
+        "Branch must be a codex/ branch{}",
+        if phase == Some("bootstrap") {
+            " or `not bound yet` in bootstrap phase"
+        } else {
+            ""
+        }
     );
     let status = markdown_field(text, "Status").unwrap_or_default();
     ensure!(
