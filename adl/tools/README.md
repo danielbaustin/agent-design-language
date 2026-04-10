@@ -44,7 +44,7 @@ bash adl/tools/normalize_adl_cards.sh --root "$(pwd)" --version v0.87.1
 # run the bounded Claude + ChatGPT discussion demo through the real runtime
 bash adl/tools/demo_v0871_multi_agent_discussion.sh
 
-# run the live-provider Claude + ChatGPT discussion demo using $HOME/keys/openai.key and $HOME/keys/claude.key
+# run the live-provider Claude + ChatGPT discussion demo using env vars or explicit key-file overrides
 bash adl/tools/demo_v0871_real_multi_agent_discussion.sh
 
 # validate the generated bounded multi-agent transcript artifact

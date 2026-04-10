@@ -61,10 +61,10 @@ Claude family note:
 
 Live multi-agent demo note:
 - `adl/tools/demo_v0871_real_multi_agent_discussion.sh` is the operator-run live-provider companion to the deterministic multi-agent demo
-- it reads `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` from the environment when set, otherwise from `$HOME/keys/openai.key` and `$HOME/keys/claude.key`
+- it reads `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` from the environment when set, or from explicit operator-selected key-file overrides when provided
 - it starts a local adapter that bridges ADL's current `{"prompt": "..."} -> {"output": "..."}` HTTP contract to vendor-native OpenAI and Anthropic APIs
 - generated artifacts record provider family/model/status metadata only; they must not include secret values or raw credential headers
 
 v0.88 native provider demo note:
-- `bash adl/tools/demo_v088_real_multi_agent_discussion.sh` demonstrates direct Rust-native OpenAI and Anthropic runtime invocation using operator-managed keys from environment variables or `$HOME/keys`
-- generated demo artifacts record provider family, model, HTTP status, and prompt/output character counts, but never raw secret values or Authorization headers
+- `bash adl/tools/demo_v088_real_multi_agent_discussion.sh` demonstrates direct Rust-native OpenAI and Anthropic runtime invocation using operator-managed keys from environment variables or explicit key-file overrides
+- generated demo artifacts record provider family, model, HTTP status, and prompt/output character counts, but never raw secret values, key-file paths, or Authorization headers

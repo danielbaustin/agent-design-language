@@ -10,7 +10,7 @@ providers:
   live_anthropic:
     type: "anthropic"
     config:
-      provider_model_id: "claude-3-5-haiku-latest"
+      provider_model_id: "claude-haiku-4-5-20251001"
       max_tokens: 220
       timeout_secs: 90
 
@@ -20,7 +20,7 @@ agents:
     model: "gpt-4o-mini"
   claude_guest:
     provider: "live_anthropic"
-    model: "claude-3-5-haiku-latest"
+    model: "claude-haiku-4-5-20251001"
 
 tasks:
   chatgpt_opening:

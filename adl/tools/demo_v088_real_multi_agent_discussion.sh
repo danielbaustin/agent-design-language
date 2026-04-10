@@ -12,17 +12,17 @@ TRANSCRIPT_CONTRACT="$OUT_DIR/transcript_contract.json"
 MANIFEST="$OUT_DIR/demo_manifest.json"
 INVOCATIONS="$OUT_DIR/provider_invocations.json"
 README_OUT="$OUT_DIR/README.md"
-OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-$HOME/keys/openai.key}"
-ANTHROPIC_KEY_FILE="${ADL_ANTHROPIC_KEY_FILE:-$HOME/keys/claude.key}"
+OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-}"
+ANTHROPIC_KEY_FILE="${ADL_ANTHROPIC_KEY_FILE:-}"
 
 load_key() {
   local env_name="$1"
-  local key_file="$2"
+  local key_file="${2:-}"
   if [[ -n "${!env_name:-}" ]]; then
     return 0
   fi
-  if [[ ! -s "$key_file" ]]; then
-    echo "missing required key file for $env_name: $key_file" >&2
+  if [[ -z "$key_file" || ! -s "$key_file" ]]; then
+    echo "missing required credential source for $env_name; set $env_name or the matching ADL_*_KEY_FILE override" >&2
     return 1
   fi
   local key_value=""
@@ -41,10 +41,38 @@ load_key() {
     break
   done <"$key_file"
   if [[ -z "$key_value" ]]; then
-    echo "empty required key file for $env_name: $key_file" >&2
+    echo "empty required credential source for $env_name" >&2
     return 1
   fi
   export "$env_name=$key_value"
+}
+
+sanitize_generated_artifacts() {
+  export ADL_SANITIZE_OUT_DIR="$OUT_DIR"
+  export ADL_SANITIZE_OUT_REAL
+  ADL_SANITIZE_OUT_REAL="$(cd "$OUT_DIR" && pwd -P)"
+  export ADL_SANITIZE_ROOT_DIR="$ROOT_DIR"
+  export ADL_SANITIZE_ROOT_REAL
+  ADL_SANITIZE_ROOT_REAL="$(cd "$ROOT_DIR" && pwd -P)"
+  export ADL_SANITIZE_OPENAI_KEY_FILE="$OPENAI_KEY_FILE"
+  export ADL_SANITIZE_ANTHROPIC_KEY_FILE="$ANTHROPIC_KEY_FILE"
+  find "$OUT_DIR" -type f \( -name '*.json' -o -name '*.md' -o -name '*.txt' \) -print0 |
+    xargs -0 perl -0pi -e '
+      for my $name (qw(
+        ADL_SANITIZE_OUT_REAL
+        ADL_SANITIZE_OUT_DIR
+        ADL_SANITIZE_ROOT_REAL
+        ADL_SANITIZE_ROOT_DIR
+        ADL_SANITIZE_OPENAI_KEY_FILE
+        ADL_SANITIZE_ANTHROPIC_KEY_FILE
+      )) {
+        my $value = $ENV{$name} // "";
+        next if $value eq "";
+        my $replacement = $name =~ /KEY_FILE/ ? "<credential_file>" :
+          ($name =~ /ROOT/ ? "<repo_root>" : "<output_dir>");
+        s/\Q$value\E/$replacement/g;
+      }
+    '
 }
 
 load_key OPENAI_API_KEY "$OPENAI_KEY_FILE"
@@ -106,14 +134,14 @@ cat >"$MANIFEST" <<EOF
   "title": "Rust-native live ChatGPT + Claude multi-agent tea discussion demo",
   "execution_mode": "runtime_native_live_providers",
   "provider_mode": "rust_native_openai_and_anthropic",
-  "credential_policy": "operator_env_or_home_keys_no_secret_material_recorded",
+  "credential_policy": "operator_env_or_explicit_key_file_no_secret_material_recorded",
   "steps": 5,
   "proof_surfaces": {
-    "transcript": "$TRANSCRIPT",
-    "transcript_contract": "$TRANSCRIPT_CONTRACT",
-    "provider_invocations": "$INVOCATIONS",
-    "run_summary": "$RUNS_ROOT/$RUN_ID/run_summary.json",
-    "trace": "$RUNS_ROOT/$RUN_ID/logs/trace_v1.json"
+    "transcript": "transcript.md",
+    "transcript_contract": "transcript_contract.json",
+    "provider_invocations": "provider_invocations.json",
+    "run_summary": "runtime/runs/$RUN_ID/run_summary.json",
+    "trace": "runtime/runs/$RUN_ID/logs/trace_v1.json"
   }
 }
 EOF
@@ -129,8 +157,8 @@ bash adl/tools/demo_v088_real_multi_agent_discussion.sh
 
 Credential loading:
 - Uses \`OPENAI_API_KEY\` and \`ANTHROPIC_API_KEY\` when already set.
-- Otherwise reads local operator-managed keys from \`\\\$HOME/keys/openai.key\` and \`\\\$HOME/keys/claude.key\`.
-- Secret values and raw Authorization headers are not written to generated artifacts.
+- Otherwise reads operator-selected key files only when \`ADL_OPENAI_KEY_FILE\` and \`ADL_ANTHROPIC_KEY_FILE\` are set.
+- Secret values, key-file paths, and raw Authorization headers are not written to generated artifacts.
 
 What this proves:
 - one ADL runtime workflow with two named live provider families
@@ -138,9 +166,9 @@ What this proves:
 - five sequential turns with saved-state handoff, runtime conversation metadata, and transcript contract validation
 
 Primary proof surfaces:
-- \`$TRANSCRIPT\`
-- \`$INVOCATIONS\`
-- \`$RUNS_ROOT/$RUN_ID/run_summary.json\`
+- \`transcript.md\`
+- \`provider_invocations.json\`
+- \`runtime/runs/$RUN_ID/run_summary.json\`
 EOF
 
 python3 "$ROOT_DIR/adl/tools/validate_multi_agent_transcript.py" \
@@ -148,8 +176,10 @@ python3 "$ROOT_DIR/adl/tools/validate_multi_agent_transcript.py" \
   --contract "$TRANSCRIPT_CONTRACT" \
   >/dev/null
 
-echo "Rust-native live multi-agent discussion proof surface:"
-echo "  $TRANSCRIPT"
-echo "  $INVOCATIONS"
-echo "  $RUNS_ROOT/$RUN_ID/run_summary.json"
-echo "  $RUNS_ROOT/$RUN_ID/logs/trace_v1.json"
+sanitize_generated_artifacts
+
+echo "Rust-native live multi-agent discussion proof surface under the output directory:"
+echo "  transcript.md"
+echo "  provider_invocations.json"
+echo "  runtime/runs/$RUN_ID/run_summary.json"
+echo "  runtime/runs/$RUN_ID/logs/trace_v1.json"
