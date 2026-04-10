@@ -40,6 +40,8 @@ Implemented Rust-native OpenAI and Anthropic provider adapters for the ADL runti
 - Added loopback unit tests for native OpenAI and Anthropic request translation, representative response parsing, missing-auth handling, and provider substrate validation.
 - Updated `adl provider setup openai` and `adl provider setup anthropic` to emit native provider snippets instead of generic bounded HTTP gateway snippets.
 - Added a shell-only live demo wrapper for key loading, runtime execution, transcript assembly, manifest generation, and artifact leak checks.
+- Updated the v0.88 live demo Anthropic model to `claude-haiku-4-5-20251001` after live validation showed the previous Haiku names were rejected by the operator's Anthropic API surface.
+- Removed hard-coded local key-file defaults and sanitized generated proof artifacts so they do not record operator-local paths or credential-file locations.
 
 ## Main Repo Integration (REQUIRED)
 - Main-repo paths updated: tracked repository paths are updated on the issue branch and will be published by the finish-created PR.
@@ -79,9 +81,10 @@ Rules:
   - `cargo test --manifest-path adl/Cargo.toml provider_setup -- --nocapture` verified provider setup templates, including native OpenAI/Anthropic output.
   - `cargo run --quiet --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-88-real-multi-agent-tea-discussion.adl.yaml --print-plan --allow-unsigned` verified the new demo resolves to five ordered runtime steps.
   - `env -u OPENAI_API_KEY -u ANTHROPIC_API_KEY ADL_OPENAI_KEY_FILE=<missing> ADL_ANTHROPIC_KEY_FILE=<missing> bash adl/tools/test_demo_v088_real_multi_agent_discussion.sh` verified the live demo test skips cleanly when credentials are unavailable.
-  - `bash adl/tools/demo_v088_real_multi_agent_discussion.sh <temporary local artifact directory>` exercised the real live-provider path with local operator-managed keys.
-- Results: formatting and targeted Rust tests passed; the real live-provider run successfully completed the OpenAI turn and then stopped at the Anthropic API boundary with a sanitized non-retryable insufficient-credits response.
-- Post-rebase retry result: after the operator attempted to add Anthropic API credits, the live demo was retried and still stopped at the Anthropic API boundary with the same sanitized insufficient-credits response; OpenAI turn execution still succeeded and the generated artifact secret scan still returned no matches.
+  - `ADL_OPENAI_KEY_FILE=<operator key file> ADL_ANTHROPIC_KEY_FILE=<operator key file> bash adl/tools/demo_v088_real_multi_agent_discussion.sh <temporary local artifact directory>` exercised the real live-provider path with operator-managed keys.
+  - `ADL_OPENAI_KEY_FILE=<operator key file> ADL_ANTHROPIC_KEY_FILE=<operator key file> bash adl/tools/test_demo_v088_real_multi_agent_discussion.sh` verified the real live-provider path and generated artifact leak checks through the repo test wrapper.
+- Results: formatting and targeted Rust tests passed; the real live-provider run initially completed the OpenAI turn and then stopped at the Anthropic API boundary with sanitized account/model errors. After switching the demo to `claude-haiku-4-5-20251001` and using an operator-provided Anthropic key-file override, the five-turn live demo completed successfully with three OpenAI invocations and two Anthropic invocations.
+- Post-rebase retry result: live validation showed the older Haiku model aliases returned `404 Not Found`; `claude-haiku-4-5-20251001` completed successfully.
 
 Validation command/path rules:
 - Prefer repository-relative paths in recorded commands and artifact references.
@@ -94,7 +97,7 @@ Validation command/path rules:
 ```yaml
 verification_summary:
   validation:
-    status: PARTIAL
+    status: PASS
     checks_run:
       - "cargo fmt --manifest-path adl/Cargo.toml --all --check"
       - "cargo clippy --manifest-path adl/Cargo.toml --all-targets -- -D warnings"
@@ -105,7 +108,8 @@ verification_summary:
       - "cargo test --manifest-path adl/Cargo.toml provider_setup -- --nocapture"
       - "cargo run --quiet --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-88-real-multi-agent-tea-discussion.adl.yaml --print-plan --allow-unsigned"
       - "env -u OPENAI_API_KEY -u ANTHROPIC_API_KEY ADL_OPENAI_KEY_FILE=<missing> ADL_ANTHROPIC_KEY_FILE=<missing> bash adl/tools/test_demo_v088_real_multi_agent_discussion.sh"
-      - "bash adl/tools/demo_v088_real_multi_agent_discussion.sh <temporary local artifact directory>"
+      - "ADL_OPENAI_KEY_FILE=<operator key file> ADL_ANTHROPIC_KEY_FILE=<operator key file> bash adl/tools/demo_v088_real_multi_agent_discussion.sh <temporary local artifact directory>"
+      - "ADL_OPENAI_KEY_FILE=<operator key file> ADL_ANTHROPIC_KEY_FILE=<operator key file> bash adl/tools/test_demo_v088_real_multi_agent_discussion.sh"
   determinism:
     status: PASS
     replay_verified: true
@@ -136,10 +140,10 @@ Rules:
 - If a script or fixture can be rerun to reproduce the same result, that counts as replay and should be described that way.
 
 ## Security / Privacy Checks
-- Secret leakage scan performed: grep-based scan of generated local live-demo artifacts for Authorization headers, bearer header material, `x-api-key`, and key-shaped tokens returned no matches.
+- Secret leakage scan performed: grep-based scan of generated local live-demo artifacts for Authorization headers, bearer header material, `x-api-key`, key-file paths, local absolute artifact paths, and key-shaped tokens returned no matches after artifact sanitization.
 - Prompt / tool argument redaction verified: provider invocation records store provider family, model, status, timestamp, and character counts only; they do not store prompts, outputs, keys, or raw request headers.
 - Absolute path leakage check: this output card uses repository-relative paths and replaces temporary local artifact roots with explicit placeholders.
-- Sandbox / policy invariants preserved: secrets were loaded only from environment variables or local operator-managed key files and were never printed; CI-safe test behavior skips when credentials are absent.
+- Sandbox / policy invariants preserved: secrets were loaded only from environment variables or explicit operator-managed key-file overrides and were never printed; CI-safe test behavior skips when credentials are absent.
 
 Rules:
 - State what was checked and how it was checked.
@@ -149,14 +153,14 @@ Rules:
 - Trace bundle path(s): generated during the local live run under the temporary artifact root; not committed because live-provider artifacts are operator-local and credential-adjacent.
 - Run artifact root: temporary local artifact directory used for operator validation; not a repository artifact.
 - Replay command used for verification: `cargo run --quiet --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-88-real-multi-agent-tea-discussion.adl.yaml --print-plan --allow-unsigned`.
-- Replay result: PASS for deterministic plan replay; live execution PARTIAL because Anthropic returned insufficient account credits after OpenAI completed turn 1.
+- Replay result: PASS for deterministic plan replay; live execution PASS after the Anthropic model was updated to `claude-haiku-4-5-20251001`.
 
 ## Artifact Verification
 - Primary proof surface: `adl/examples/v0-88-real-multi-agent-tea-discussion.adl.yaml`, `adl/tools/demo_v088_real_multi_agent_discussion.sh`, `adl/tools/test_demo_v088_real_multi_agent_discussion.sh`, and `demos/v0.88/real_chatgpt_claude_multi_agent_discussion_demo.md`.
 - Required artifacts present: true; all required tracked implementation and documentation artifacts exist on the issue branch.
 - Artifact schema/version checks: native provider invocation records use `adl.native_provider_invocations.v1`; transcript contract uses the existing `multi_agent_discussion_transcript.v1` shape.
 - Hash/byte-stability checks: not applicable to live model text outputs; deterministic code/test artifacts are source-controlled and stable under git diff.
-- Missing/optional artifacts and rationale: a complete five-turn live transcript was not produced because the local Anthropic account returned an insufficient-credits API error; this is an external account-state block, not a Rust adapter or orchestration failure.
+- Missing/optional artifacts and rationale: complete five-turn live transcript artifacts were produced in a temporary operator-local artifact directory; they are not committed because they are live-provider outputs and are model-dependent.
 
 ## Decisions / Deviations
 
@@ -167,8 +171,7 @@ Rules:
 ## Follow-ups / Deferred work
 
 - Consider a later profile migration issue if `chatgpt:` and `claude:` should expand directly to native vendor provider kinds.
-- Re-run the full live demo when the local Anthropic account has sufficient API credits.
-- The live demo was retried after an attempted Anthropic credit update; the account still reported insufficient API credits.
+- Continue keeping live-provider artifacts local-only because they are model-dependent and credential-adjacent.
 
 Global rule:
 - No section header may be left empty.

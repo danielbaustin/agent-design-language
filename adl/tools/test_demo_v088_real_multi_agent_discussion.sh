@@ -2,15 +2,15 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-$HOME/keys/openai.key}"
-ANTHROPIC_KEY_FILE="${ADL_ANTHROPIC_KEY_FILE:-$HOME/keys/claude.key}"
+OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-}"
+ANTHROPIC_KEY_FILE="${ADL_ANTHROPIC_KEY_FILE:-}"
 
-if [[ -z "${OPENAI_API_KEY:-}" && ! -s "$OPENAI_KEY_FILE" ]]; then
-  echo "SKIP: missing OPENAI_API_KEY and $OPENAI_KEY_FILE" >&2
+if [[ -z "${OPENAI_API_KEY:-}" && ( -z "$OPENAI_KEY_FILE" || ! -s "$OPENAI_KEY_FILE" ) ]]; then
+  echo "SKIP: missing OPENAI_API_KEY or ADL_OPENAI_KEY_FILE" >&2
   exit 0
 fi
-if [[ -z "${ANTHROPIC_API_KEY:-}" && ! -s "$ANTHROPIC_KEY_FILE" ]]; then
-  echo "SKIP: missing ANTHROPIC_API_KEY and $ANTHROPIC_KEY_FILE" >&2
+if [[ -z "${ANTHROPIC_API_KEY:-}" && ( -z "$ANTHROPIC_KEY_FILE" || ! -s "$ANTHROPIC_KEY_FILE" ) ]]; then
+  echo "SKIP: missing ANTHROPIC_API_KEY or ADL_ANTHROPIC_KEY_FILE" >&2
   exit 0
 fi
 
@@ -84,6 +84,10 @@ if [[ -n "${ANTHROPIC_API_KEY:-}" ]] && grep -R -F "$ANTHROPIC_API_KEY" "$OUT_DI
 fi
 if grep -R -E 'Authorization:|Bearer |x-api-key' "$OUT_DIR" >/dev/null 2>&1; then
   echo "assertion failed: credential header material leaked into artifacts" >&2
+  exit 1
+fi
+if grep -R -E '/Users/|/private/tmp|/tmp/|HOME/keys|openai\.key|claude\.key' "$OUT_DIR" >/dev/null 2>&1; then
+  echo "assertion failed: local file path leaked into generated artifacts" >&2
   exit 1
 fi
 

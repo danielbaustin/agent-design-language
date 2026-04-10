@@ -145,7 +145,7 @@ fn template_for_family(family: &str) -> Result<&'static ProviderSetupTemplate> {
             provider_id: "anthropic_primary",
             agent_id: "anthropic_agent",
             model_ref: "reasoning/default",
-            provider_model_id: "claude-3-5-haiku-latest",
+            provider_model_id: "claude-haiku-4-5-20251001",
             endpoint_hint: None,
             notes: "Use this for the Rust-native Anthropic provider path. The default endpoint is Anthropic's Messages API; override config.endpoint only for tests or a trusted compatible endpoint.",
         },
