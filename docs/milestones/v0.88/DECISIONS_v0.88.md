@@ -1,10 +1,10 @@
-# Decisions Template
+# Decisions - v0.88
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+- Milestone: `v0.88`
+- Version: `v0.88`
+- Date: `TBD`
+- Owner: `Daniel Austin`
 
 ## Purpose
 Capture significant decisions (architecture, scope, process) at the time they are made.
@@ -17,12 +17,12 @@ Capture significant decisions (architecture, scope, process) at the time they ar
 ## Decision Log
 | ID | Decision | Status | Rationale | Alternatives | Impact | Link |
 |---|---|---|---|---|---|---|
-| D-01 | {{decision_1}} | {{status_1}} | {{rationale_1}} | {{alternatives_1}} | {{impact_1}} | {{link_1}} |
-| D-02 | {{decision_2}} | {{status_2}} | {{rationale_2}} | {{alternatives_2}} | {{impact_2}} | {{link_2}} |
+| D-01 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| D-02 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
 
 ## Open Questions
-- {{open_question_1}} (Owner: {{owner_oq1}}) (Issue: {{issue_oq1}})
-- {{open_question_2}} (Owner: {{owner_oq2}}) (Issue: {{issue_oq2}})
+- TBD during v0.88 planning (Owner: TBD during v0.88 planning) (Issue: TBD during v0.88 planning)
+- TBD during v0.88 planning (Owner: TBD during v0.88 planning) (Issue: TBD during v0.88 planning)
 
 ## Exit Criteria
 - All milestone-critical decisions are logged with a rationale.

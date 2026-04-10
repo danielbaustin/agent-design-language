@@ -1,55 +1,55 @@
-# Release Notes Template
+# Release Notes - v0.88
 
 ## Metadata
-- Product: `{{product_name}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Tag: `{{tag_name}}`
+- Product: `ADL`
+- Version: `v0.88`
+- Release date: `TBD`
+- Tag: `v0.88`
 
 ## How To Use
 - Keep statements implementation-accurate and test-validated.
 - Prefer concise bullets over marketing language.
 - Explicitly separate shipped behavior from "What's Next."
 
-# `{{product_name}}` `{{version}}` Release Notes
+# `ADL` `v0.88` Release Notes
 
 ## Summary
-{{summary_paragraph}}
+TBD during v0.88 planning
 
 ## Highlights
-- {{highlight_1}}
-- {{highlight_2}}
-- {{highlight_3}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## What's New In Detail
 
-### {{area_1}}
-- {{detail_1a}}
-- {{detail_1b}}
+### Area TBD 1
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-### {{area_2}}
-- {{detail_2a}}
-- {{detail_2b}}
+### Area TBD 2
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-### {{area_3}}
-- {{detail_3a}}
-- {{detail_3b}}
+### Area TBD 3
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Upgrade Notes
-- {{upgrade_note_1}}
-- {{upgrade_note_2}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Known Limitations
-- {{limitation_1}}
-- {{limitation_2}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Validation Notes
-- {{validation_note_1}}
-- {{validation_note_2}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## What's Next
-- {{next_1}}
-- {{next_2}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Exit Criteria
 - Notes reflect only shipped behavior.

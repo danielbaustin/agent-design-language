@@ -1,11 +1,11 @@
-# Sprint Template
+# Sprint Plan - v0.88
 
 ## Metadata
-- Sprint: `{{sprint_id}}`
-- Milestone: `{{milestone}}`
-- Start date: `{{start_date}}`
-- End date: `{{end_date}}`
-- Owner: `{{owner}}`
+- Sprint: `v0.88 Sprint TBD`
+- Milestone: `v0.88`
+- Start date: `TBD`
+- End date: `TBD`
+- Owner: `Daniel Austin`
 
 ## How To Use
 - Keep scope small enough to finish with green CI and merged PRs.
@@ -13,19 +13,19 @@
 - Track blockers here (not scattered chat notes).
 
 ## Sprint Goal
-{{sprint_goal}}
+TBD during v0.88 planning
 
 ## Planned Scope
-- {{scope_item_1}}
-- {{scope_item_2}}
-- {{scope_item_3}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Work Plan
 | Order | Item | Issue | Owner | Status |
 |---|---|---|---|---|
-| 1 | {{work_item_1}} | {{issue_1}} | {{owner_1}} | {{status_1}} |
-| 2 | {{work_item_2}} | {{issue_2}} | {{owner_2}} | {{status_2}} |
-| 3 | {{work_item_3}} | {{issue_3}} | {{owner_3}} | {{status_3}} |
+| 1 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| 2 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| 3 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
 
 ## Cadence Expectations
 - Use issue cards (`input`/`output`) for each item.
@@ -33,14 +33,14 @@
 - Run required quality gates (fmt/clippy/test) for code changes.
 
 ## Risks / Dependencies
-- Dependency: {{dependency_1}}
-  - Risk: {{risk_1}}
-  - Mitigation: {{mitigation_1}}
+- Dependency: TBD during v0.88 planning
+  - Risk: TBD during v0.88 planning
+  - Mitigation: TBD during v0.88 planning
 
 ## Demo / Review Plan
-- Demo artifact: {{demo_artifact}}
-- Review date: {{review_date}}
-- Sign-off owners: {{signoff_owners}}
+- Demo artifact: TBD during v0.88 planning
+- Review date: TBD during v0.88 planning
+- Sign-off owners: TBD during v0.88 planning
 
 ## Exit Criteria
 - All planned scope items completed or explicitly deferred with rationale.

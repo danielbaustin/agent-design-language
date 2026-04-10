@@ -1,12 +1,12 @@
-# Vision Template
+# Vision - v0.88
 
 ## Metadata
-- Project: `{{project_name}}`
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-- Related issues: {{issues}}
+- Project: `ADL`
+- Milestone: `v0.88`
+- Version: `v0.88`
+- Date: `TBD`
+- Owner: `Daniel Austin`
+- Related issues: TBD during v0.88 planning
 
 ## Purpose
 Define the milestone-level vision for the project: what changes at this stage, why it matters, and which strategic pillars it advances.
@@ -21,219 +21,219 @@ Define the milestone-level vision for the project: what changes at this stage, w
 
 ## Overview
 
-Version `{{version}}` is the milestone where `{{project_name}}` evolves from `{{previous_state}}` into `{{target_state}}`.
+Version `v0.88` is the milestone where `ADL` evolves from `TBD during v0.88 planning` into `TBD during v0.88 planning`.
 
 This release should establish or strengthen the foundation for:
 
-- {{foundation_1}}
-- {{foundation_2}}
-- {{foundation_3}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-`{{version}}` focuses on **{{primary_focus}}**.
+`v0.88` focuses on **TBD during v0.88 planning**.
 
 The goal is to make the project more useful to:
 
-- {{audience_1}}
-- {{audience_2}}
-- {{audience_3}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 This milestone should strengthen the architectural or strategic pillars of:
 
-- {{pillar_1}}
-- {{pillar_2}}
-- {{pillar_3}}
-- {{pillar_4}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-{{overview_close}}
+TBD during v0.88 planning
 
 ---
 
 # Core Goals
 
-`{{version}}` advances `{{project_name}}` in five major areas:
+`v0.88` advances `ADL` in five major areas:
 
-1. {{goal_area_1}}
-2. {{goal_area_2}}
-3. {{goal_area_3}}
-4. {{goal_area_4}}
-5. {{goal_area_5}}
+1. TBD during v0.88 planning
+2. TBD during v0.88 planning
+3. TBD during v0.88 planning
+4. TBD during v0.88 planning
+5. TBD during v0.88 planning
 
 ---
 
-# 1. {{goal_area_1}}
+# 1. Goal Area TBD 1
 
-`{{version}}` improves `{{goal_area_1}}` so the project can `{{outcome_1}}`.
+`v0.88` improves `TBD during v0.88 planning` so the project can `TBD during v0.88 planning`.
 
 Key objectives:
 
-- {{objective_1a}}
-- {{objective_1b}}
-- {{objective_1c}}
-- {{objective_1d}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-These capabilities move the project toward **{{strategic_effect_1}}**.
+These capabilities move the project toward **TBD during v0.88 planning**.
 
 The system or product should guarantee:
 
-- {{guarantee_1a}}
-- {{guarantee_1b}}
-- {{guarantee_1c}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ---
 
-# 2. {{goal_area_2}}
+# 2. Goal Area TBD 2
 
-`{{goal_area_2}}` must improve without sacrificing `{{constraint_2}}`.
+`TBD during v0.88 planning` must improve without sacrificing `TBD during v0.88 planning`.
 
-`{{version}}` introduces or improves:
+`v0.88` introduces or improves:
 
-- {{improvement_2a}}
-- {{improvement_2b}}
-- {{improvement_2c}}
-- {{improvement_2d}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-The goal is to move from `{{before_state_2}}` toward **{{after_state_2}}**.
+The goal is to move from `TBD during v0.88 planning` toward **TBD during v0.88 planning**.
 
 These changes should help users:
 
-- {{user_benefit_2a}}
-- {{user_benefit_2b}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ---
 
-# 3. {{goal_area_3}}
+# 3. Goal Area TBD 3
 
-A central principle of `{{project_name}}` is **{{principle_3}}**.
+A central principle of `ADL` is **TBD during v0.88 planning**.
 
-The project must not merely `{{anti_goal_3}}`. It must `{{desired_behavior_3}}`.
+The project must not merely `TBD during v0.88 planning`. It must `TBD during v0.88 planning`.
 
-`{{version}}` strengthens this pillar with:
+`v0.88` strengthens this pillar with:
 
-- {{capability_3a}}
-- {{capability_3b}}
-- {{capability_3c}}
-- {{capability_3d}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-This work supports the broader principle of **{{broader_principle_3}}**.
+This work supports the broader principle of **TBD during v0.88 planning**.
 
 The result should make the project more:
 
-- {{quality_3a}}
-- {{quality_3b}}
-- {{quality_3c}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ---
 
-# 4. {{goal_area_4}}
+# 4. Goal Area TBD 4
 
-`{{version}}` continues development of `{{goal_area_4}}`.
+`v0.88` continues development of `TBD during v0.88 planning`.
 
-The focus remains on **{{focus_4}}**, not `{{non_goal_4}}`.
+The focus remains on **TBD during v0.88 planning**, not `TBD during v0.88 planning`.
 
 Key capabilities:
 
-- {{capability_4a}}
-- {{capability_4b}}
-- {{capability_4c}}
-- {{capability_4d}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 This milestone should help the project better represent or support:
 
-- {{support_4a}}
-- {{support_4b}}
-- {{support_4c}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-These improvements should guide the system toward `{{desired_state_4}}`.
+These improvements should guide the system toward `TBD during v0.88 planning`.
 
 ---
 
-# 5. {{goal_area_5}}
+# 5. Goal Area TBD 5
 
-To support real-world use, `{{version}}` must improve `{{goal_area_5}}`.
+To support real-world use, `v0.88` must improve `TBD during v0.88 planning`.
 
 Important targets include:
 
-- {{target_5a}}
-- {{target_5b}}
-- {{target_5c}}
-- {{target_5d}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 This work should strengthen the development and operating workflow by improving:
 
-- {{workflow_benefit_5a}}
-- {{workflow_benefit_5b}}
-- {{workflow_benefit_5c}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-{{close_5}}
+TBD during v0.88 planning
 
 ---
 
-# Special Focus: `{{special_focus_title}}`
+# Special Focus: TBD during v0.88 planning
 
-`{{special_focus_title}}` becomes a central focus of `{{version}}`.
+`TBD during v0.88 planning` becomes a central focus of `v0.88`.
 
-Previous releases `{{previous_special_focus_state}}`.
+Previous releases `TBD during v0.88 planning`.
 
-`{{version}}` advances this area with:
+`v0.88` advances this area with:
 
-- {{special_focus_1}}
-- {{special_focus_2}}
-- {{special_focus_3}}
-- {{special_focus_4}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-This area is responsible for ensuring that `{{special_focus_scope}}` remain:
+This area is responsible for ensuring that `TBD during v0.88 planning` remain:
 
-- {{special_quality_1}}
-- {{special_quality_2}}
-- {{special_quality_3}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-This keeps the project aligned with `{{alignment_principle}}`.
+This keeps the project aligned with `TBD during v0.88 planning`.
 
 ---
 
 # Milestone Context
 
-`{{previous_milestone}}` represents `{{previous_milestone_significance}}`.
+`TBD during v0.88 planning` represents `TBD during v0.88 planning`.
 
-From `{{next_phase_start}}` onward the project will likely shift toward:
+From `TBD during v0.88 planning` onward the project will likely shift toward:
 
-- {{next_phase_item_1}}
-- {{next_phase_item_2}}
-- {{next_phase_item_3}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-The goal is to have `{{future_goal}}` by **{{future_target_milestone}}**.
+The goal is to have `TBD during v0.88 planning` by **TBD during v0.88 planning**.
 
-`{{version}}` therefore focuses on `{{contextual_focus}}` before that stage.
+`v0.88` therefore focuses on `TBD during v0.88 planning` before that stage.
 
 ---
 
 # Long-Term Direction
 
-`{{project_name}}` is being designed as `{{long_term_identity}}`.
+`ADL` is being designed as `TBD during v0.88 planning`.
 
 Its long-term goals include:
 
-- {{long_term_goal_1}}
-- {{long_term_goal_2}}
-- {{long_term_goal_3}}
-- {{long_term_goal_4}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-These principles aim to move the project beyond `{{old_mode}}` toward `{{new_mode}}`.
+These principles aim to move the project beyond `TBD during v0.88 planning` toward `TBD during v0.88 planning`.
 
 ---
 
 # Summary
 
-`{{version}}` is the milestone where `{{project_name}}` becomes:
+`v0.88` is the milestone where `ADL` becomes:
 
-- {{summary_quality_1}}
-- {{summary_quality_2}}
-- {{summary_quality_3}}
-- {{summary_quality_4}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-It strengthens `{{summary_strength_1}}`, advances `{{summary_strength_2}}`, improves `{{summary_strength_3}}`, and stabilizes `{{summary_strength_4}}`.
+It strengthens `TBD during v0.88 planning`, advances `TBD during v0.88 planning`, improves `TBD during v0.88 planning`, and stabilizes `TBD during v0.88 planning`.
 
-These improvements prepare the project for `{{next_stage}}`.
+These improvements prepare the project for `TBD during v0.88 planning`.
 
 ## Exit Criteria
 - The milestone's strategic priorities are explicit and internally consistent.

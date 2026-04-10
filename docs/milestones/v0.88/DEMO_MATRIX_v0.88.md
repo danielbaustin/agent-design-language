@@ -1,11 +1,11 @@
-# Demo Matrix Template
+# Demo Matrix - v0.88
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-- Related issues / work packages: {{issues_or_wps}}
+- Milestone: `v0.88`
+- Version: `v0.88`
+- Date: `TBD`
+- Owner: `Daniel Austin`
+- Related issues / work packages: TBD during v0.88 planning
 
 ## Purpose
 Define the canonical milestone demo program: which bounded demos exist, which milestone claims they prove, how to run them, and what artifacts or proof surfaces reviewers should inspect.
@@ -20,39 +20,39 @@ Define the canonical milestone demo program: which bounded demos exist, which mi
 
 ## Scope
 
-In scope for `{{milestone}}`:
-- {{in_scope_demo_area_1}}
-- {{in_scope_demo_area_2}}
-- {{in_scope_demo_area_3}}
+In scope for `v0.88`:
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
-Out of scope for `{{milestone}}`:
-- {{out_of_scope_demo_area_1}}
-- {{out_of_scope_demo_area_2}}
+Out of scope for `v0.88`:
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Runtime Preconditions
 
 Working directory:
 
 ```bash
-{{working_directory_command}}
+TBD during v0.88 planning
 ```
 
 Deterministic runtime / provider assumptions:
 
 ```bash
-{{runtime_preconditions}}
+TBD during v0.88 planning
 ```
 
 Additional environment / fixture requirements:
-- {{env_requirement_1}}
-- {{env_requirement_2}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Related Docs
-- Design contract: `{{design_doc}}`
-- WBS / milestone mapping: `{{wbs_doc}}`
-- Sprint / execution plan: `{{sprint_doc}}`
-- Release / checklist context: `{{release_or_checklist_doc}}`
-- Other proof-surface docs: {{other_related_docs}}
+- Design contract: `docs/milestones/v0.88/DESIGN_v0.88.md`
+- WBS / milestone mapping: `docs/milestones/v0.88/WBS_v0.88.md`
+- Sprint / execution plan: `docs/milestones/v0.88/SPRINT_v0.88.md`
+- Release / checklist context: `docs/milestones/v0.88/MILESTONE_CHECKLIST_v0.88.md`
+- Other proof-surface docs: TBD during v0.88 planning
 
 ## Demo Coverage Summary
 
@@ -60,9 +60,9 @@ Use this table as the fast review surface for milestone coverage.
 
 | Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
 |---|---|---|---|---|---|---|---|
-| D1 | {{demo_title_1}} | {{claim_or_wp_1}} | `{{command_stub_1}}` | `{{proof_surface_1}}` | {{success_signal_1}} | {{determinism_note_1}} | {{status_1}} |
-| D2 | {{demo_title_2}} | {{claim_or_wp_2}} | `{{command_stub_2}}` | `{{proof_surface_2}}` | {{success_signal_2}} | {{determinism_note_2}} | {{status_2}} |
-| D3 | {{demo_title_3}} | {{claim_or_wp_3}} | `{{command_stub_3}}` | `{{proof_surface_3}}` | {{success_signal_3}} | {{determinism_note_3}} | {{status_3}} |
+| D1 | TBD during v0.88 planning | TBD during v0.88 planning | `TBD during v0.88 planning` | `TBD during v0.88 planning` | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| D2 | TBD during v0.88 planning | TBD during v0.88 planning | `TBD during v0.88 planning` | `TBD during v0.88 planning` | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
+| D3 | TBD during v0.88 planning | TBD during v0.88 planning | `TBD during v0.88 planning` | `TBD during v0.88 planning` | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -81,130 +81,130 @@ Status guidance:
 
 Repeat one block per demo in the coverage summary.
 
-### {{demo_id_1}}) {{demo_title_1}}
+### D1) Demo TBD
 
 Description:
-- {{demo_description_1}}
-- {{demo_description_1b}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 Milestone claims / work packages covered:
-- {{claim_detail_1a}}
-- {{claim_detail_1b}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 Commands to run:
 
 ```bash
-{{demo_commands_1}}
+TBD during v0.88 planning
 ```
 
 Expected artifacts:
-- `{{artifact_1a}}`
-- `{{artifact_1b}}`
-- `{{artifact_1c}}`
+- `TBD during v0.88 planning`
+- `TBD during v0.88 planning`
+- `TBD during v0.88 planning`
 
 Primary proof surface:
-- `{{primary_proof_surface_1}}`
+- `TBD during v0.88 planning`
 
 Secondary proof surfaces:
-- `{{secondary_proof_surface_1a}}`
-- `{{secondary_proof_surface_1b}}`
+- `TBD during v0.88 planning`
+- `TBD during v0.88 planning`
 
 Expected success signals:
-- {{success_detail_1a}}
-- {{success_detail_1b}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 Determinism / replay notes:
-- {{determinism_detail_1a}}
-- {{determinism_detail_1b}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 Reviewer checks:
-- {{reviewer_check_1a}}
-- {{reviewer_check_1b}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 Known limits / caveats:
-- {{caveat_1}}
+- TBD during v0.88 planning
 
 ---
 
-### {{demo_id_2}}) {{demo_title_2}}
+### D2) Demo TBD
 
 Description:
-- {{demo_description_2}}
+- TBD during v0.88 planning
 
 Milestone claims / work packages covered:
-- {{claim_detail_2a}}
+- TBD during v0.88 planning
 
 Commands to run:
 
 ```bash
-{{demo_commands_2}}
+TBD during v0.88 planning
 ```
 
 Expected artifacts:
-- `{{artifact_2a}}`
-- `{{artifact_2b}}`
+- `TBD during v0.88 planning`
+- `TBD during v0.88 planning`
 
 Primary proof surface:
-- `{{primary_proof_surface_2}}`
+- `TBD during v0.88 planning`
 
 Expected success signals:
-- {{success_detail_2a}}
+- TBD during v0.88 planning
 
 Determinism / replay notes:
-- {{determinism_detail_2a}}
+- TBD during v0.88 planning
 
 Reviewer checks:
-- {{reviewer_check_2a}}
+- TBD during v0.88 planning
 
 Known limits / caveats:
-- {{caveat_2}}
+- TBD during v0.88 planning
 
 ---
 
-### {{demo_id_3}}) {{demo_title_3}}
+### D3) Demo TBD
 
 Description:
-- {{demo_description_3}}
+- TBD during v0.88 planning
 
 Milestone claims / work packages covered:
-- {{claim_detail_3a}}
+- TBD during v0.88 planning
 
 Commands to run:
 
 ```bash
-{{demo_commands_3}}
+TBD during v0.88 planning
 ```
 
 Expected artifacts:
-- `{{artifact_3a}}`
+- `TBD during v0.88 planning`
 
 Primary proof surface:
-- `{{primary_proof_surface_3}}`
+- `TBD during v0.88 planning`
 
 Expected success signals:
-- {{success_detail_3a}}
+- TBD during v0.88 planning
 
 Determinism / replay notes:
-- {{determinism_detail_3a}}
+- TBD during v0.88 planning
 
 Reviewer checks:
-- {{reviewer_check_3a}}
+- TBD during v0.88 planning
 
 Known limits / caveats:
-- {{caveat_3}}
+- TBD during v0.88 planning
 
 ## Cross-Demo Validation
 
 Required baseline validation:
 
 ```bash
-{{baseline_validation_commands}}
+TBD during v0.88 planning
 ```
 
 Cross-demo checks:
-- {{cross_demo_check_1}}
-- {{cross_demo_check_2}}
-- {{cross_demo_check_3}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 Failure policy:
 - If one demo is blocked, record the blocker and say whether milestone review can proceed with an alternate proof surface.
@@ -213,20 +213,20 @@ Failure policy:
 ## Determinism Evidence
 
 Evidence directory / run root:
-- `{{evidence_root}}`
+- `TBD during v0.88 planning`
 
 Repeatability approach:
-- {{repeatability_rule_1}}
-- {{repeatability_rule_2}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 Normalization rules:
-- {{normalization_rule_1}}
-- {{normalization_rule_2}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 Observed results summary:
-- {{determinism_result_1}}
-- {{determinism_result_2}}
-- {{determinism_result_3}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Reviewer Sign-Off Surface
 
@@ -238,15 +238,15 @@ For each demo, the reviewer should be able to answer:
 - What caveats or substitutions apply?
 
 Review owners:
-- {{review_owner_1}}
-- {{review_owner_2}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 Review status:
-- {{review_status_note}}
+- TBD during v0.88 planning
 
 ## Notes
-- {{note_1}}
-- {{note_2}}
+- TBD during v0.88 planning
+- TBD during v0.88 planning
 
 ## Exit Criteria
 - The milestone’s major claims are mapped to bounded demos or explicit alternate proof surfaces.

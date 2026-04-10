@@ -1,20 +1,20 @@
-# Milestone Checklist Template
+# Milestone Checklist - v0.88
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Target release date: `{{target_release_date}}`
-- Owner: `{{owner}}`
+- Milestone: `v0.88`
+- Version: `v0.88`
+- Target release date: `TBD`
+- Owner: `Daniel Austin`
 
 ## Purpose
 Ship/no-ship gate for the milestone. Check items only when evidence exists.
 
 ## Planning
-- [ ] Milestone goal defined (`{{goal_doc_link}}`)
-- [ ] Scope + non-goals documented (`{{scope_doc_link}}`)
-- [ ] WBS created and mapped to issues (`{{wbs_link}}`)
-- [ ] Decision log initialized (`{{decisions_link}}`)
-- [ ] Sprint plan created (`{{sprint_plan_link}}`)
+- [ ] Milestone goal defined (`docs/milestones/v0.88/VISION_v0.88.md`)
+- [ ] Scope + non-goals documented (`docs/milestones/v0.88/DESIGN_v0.88.md`)
+- [ ] WBS created and mapped to issues (`docs/milestones/v0.88/WBS_v0.88.md`)
+- [ ] Decision log initialized (`docs/milestones/v0.88/DECISIONS_v0.88.md`)
+- [ ] Sprint plan created (`docs/milestones/v0.88/SPRINT_v0.88.md`)
 
 ## Execution Discipline
 - [ ] Each issue has input/output cards under `.adl/cards/<issue>/`
@@ -28,13 +28,13 @@ Ship/no-ship gate for the milestone. Check items only when evidence exists.
 - [ ] `cargo clippy --all-targets -- -D warnings` passes
 - [ ] `cargo test` passes
 - [ ] CI is green on the merge target
-- [ ] Coverage signal is not red (or exception documented) (`{{coverage_link_or_note}}`)
-- [ ] No unresolved high-priority blockers (`{{blocker_report_link}}`)
+- [ ] Coverage signal is not red (or exception documented) (`TBD during v0.88 planning`)
+- [ ] No unresolved high-priority blockers (`TBD during v0.88 planning`)
 
 ## Release Packaging
-- [ ] Release notes finalized (`{{release_notes_link}}`)
-- [ ] Tag verified: `{{tag_name}}`
-- [ ] GitHub Release drafted (`{{release_draft_link}}`)
+- [ ] Release notes finalized (`docs/milestones/v0.88/RELEASE_NOTES_v0.88.md`)
+- [ ] Tag verified: `v0.88`
+- [ ] GitHub Release drafted (`TBD during v0.88 planning`)
 - [ ] Links validated in release body
 - [ ] Release published
 
@@ -42,8 +42,8 @@ Ship/no-ship gate for the milestone. Check items only when evidence exists.
 - [ ] Milestone/epic issues closed with release links
 - [ ] Deferred items moved to next milestone backlog
 - [ ] Follow-up bugs/tech debt captured as issues
-- [ ] Roadmap/status docs updated (`{{roadmap_update_link}}`)
-- [ ] Retrospective summary recorded (`{{retro_link}}`)
+- [ ] Roadmap/status docs updated (`TBD during v0.88 planning`)
+- [ ] Retrospective summary recorded (`TBD during v0.88 planning`)
 
 ## Exit Criteria
 - All required gates are checked, or each exception has an owner + due date.
