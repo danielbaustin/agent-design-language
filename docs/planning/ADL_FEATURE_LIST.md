@@ -187,7 +187,7 @@ ADL already has an end-to-end bounded cognitive-system proof path from v0.86.
 This includes observable stages such as signal intake, candidate selection,
 arbitration, reasoning, bounded execution, evaluation, reframing, memory
 participation, and Freedom Gate behavior. The key point is that this is not
-just theory--it is a runnable, inspectable cognitive loop with artifacts and
+just theory—it is a runnable, inspectable cognitive loop with artifacts and
 demo surfaces.
 
 ### Trace, Provider, Shared Memory, and Skills Substrate
