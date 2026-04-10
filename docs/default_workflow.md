@@ -119,9 +119,9 @@ bash ./adl/tools/pr.sh finish <issue_num> \
   --output-card .adl/cards/<issue_num>/output_<issue_num>.md
 ```
 
-Finish should only open or update the PR after the SOR is finalized, and the finalized output record should be published onto the tracked review surface under:
+Finish should only open or update the PR after the SOR is finalized, and the finalized output record should be synced to the canonical task bundle under:
 
-- `docs/records/<scope>/tasks/issue-<padded_issue>/sor.md`
+- `.adl/<scope>/tasks/issue-<padded_issue>__<slug>/sor.md`
 
 ## 8) Report
 

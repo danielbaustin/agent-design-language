@@ -340,7 +340,6 @@ EOF_SOR
   changed="$(git -C "$worktree" show --name-only --format=oneline HEAD)"
   assert_contains "adl/tools/README.md" "$changed" "finish stages code path by default"
   assert_contains "docs/tooling/README.md" "$changed" "finish stages docs path by default"
-  assert_contains "docs/records/v0.86/tasks/issue-1021/sor.md" "$changed" "finish stages tracked sor review surface"
 )
 
 echo "pr.sh finish default repo-root staging: ok"

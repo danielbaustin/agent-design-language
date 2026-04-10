@@ -93,20 +93,6 @@ impl IssueRef {
             .join("sor.md")
     }
 
-    pub fn public_task_record_dir_path(&self, checkout_root: &Path) -> PathBuf {
-        checkout_root
-            .join("docs")
-            .join("records")
-            .join(&self.scope)
-            .join("tasks")
-            .join(self.task_issue_id())
-    }
-
-    pub fn public_task_record_output_path(&self, checkout_root: &Path) -> PathBuf {
-        self.public_task_record_dir_path(checkout_root)
-            .join("sor.md")
-    }
-
     pub fn branch_name(&self, prefix: &str) -> String {
         format!("{prefix}/{}-{}", self.issue_number, self.slug)
     }
@@ -258,14 +244,6 @@ mod tests {
             PathBuf::from(
                 "/repo/.adl/v0.86/tasks/issue-1150__implement-rust-control-plane-core-models"
             )
-        );
-        assert_eq!(
-            issue.public_task_record_dir_path(repo_root),
-            PathBuf::from("/repo/docs/records/v0.86/tasks/issue-1150")
-        );
-        assert_eq!(
-            issue.public_task_record_output_path(repo_root),
-            PathBuf::from("/repo/docs/records/v0.86/tasks/issue-1150/sor.md")
         );
         assert_eq!(
             issue.branch_name("codex"),
