@@ -71,18 +71,24 @@ Use this inventory as the canonical reviewer map for demo work completed during 
 | Issue | Demo / proof surface | Matrix location | Status |
 |---|---|---|---|
 | `#1467` | Codex CLI + Ollama operational-skills demo | Adjacent operational-skills demo; see `demos/v0.87.1/codex_ollama_operational_skills_demo.md` and `bash adl/tools/demo_codex_ollama_operational_skills.sh` | READY |
+| `#1468` | provider demo/test issue and card set | Provider family map planning lineage | READY |
 | `#1485` | local Ollama provider demo + acceptance test | Provider family map, D0 suite provider package | READY |
 | `#1486` | bounded HTTP provider demo + acceptance test | Provider family map, D0 suite provider package | READY |
 | `#1487` | mock provider demo + acceptance test | Provider family map, D0 suite provider package | READY |
 | `#1488` | ChatGPT provider demo + acceptance test | Provider family map, D0 suite provider package | READY |
 | `#1490` | Claude + ChatGPT multi-agent discussion demo | D13 | READY |
 | `#1491` | bounded Claude + ChatGPT discussion workflow demo | D13 | READY |
-| `#1500` | first-class Claude provider-family parity with ChatGPT profiles | Follow-on provider-family expansion; not included in D0 until landed | IN_PROGRESS |
-| `#1501` | conversation-native multi-agent turn primitives | Follow-on runtime primitive expansion for D13-class demos; not included in D0 until landed | IN_PROGRESS |
-| `#1502` | transcript artifact contract for multi-agent discussion demos | Follow-on transcript contract for D13-class demos; not included in D0 until landed | IN_PROGRESS |
+| `#1500` | first-class Claude provider-family parity with ChatGPT profiles | D13 and D13L provider-family support | READY |
+| `#1501` | conversation-native multi-agent turn primitives | D13 and D13L turn metadata / runtime primitive support | READY |
+| `#1502` | transcript artifact contract for multi-agent discussion demos | D13 and D13L transcript contract / validator support | READY |
 | `#1507` | shared provider demo harness | Provider family map shared wrapper helper | READY |
 | `#1508` | provider demo proof-surface governance | Provider family map shared doc ownership | READY |
 | `#1509` | mock provider family runnable in provider substrate | Provider family map mock row, D0 suite provider package | READY |
+| `#1518` | scattered run artifact inventory and consolidation | Trace/archive review context for generated demo outputs | READY |
+| `#1519` | trace run manifest and provenance capture | D6, D13, D13L runtime proof surfaces include manifest/provenance context | READY |
+| `#1520` | canonical trace archive routing for demo/provider traces | Provider wrappers and runtime demos print durable archive roots | READY |
+| `#1521` | milestone-organized run discovery and export | Review/export support for archived v0.87.1 demo runs | READY |
+| `#1533` | real ChatGPT + Claude multi-agent provider demo | D13L live-provider companion proof | READY_WITH_OPERATOR_CREDENTIALS |
 
 ## Provider Family Demo / Test Issue Map
 
@@ -95,12 +101,18 @@ Shared doc ownership:
 Shared wrapper helper:
 - `adl/tools/provider_demo_common.sh` owns the small common README/proof-surface scaffolding used by provider-family demo wrappers (`#1507`).
 
+Supporting provider infrastructure:
+- ChatGPT provider profiles are tracked by `#1469`.
+- Operator-entered provider credential setup is tracked by `#1474`.
+- HTTPS-only remote transport discipline is tracked by `#1477`.
+
 | Provider family | Scope | Issue |
 |---|---|---|
 | local Ollama | bounded local provider demo plus acceptance coverage for `ollama` / `local_ollama`; canonical command `bash adl/tools/demo_v0871_provider_local_ollama.sh` | `#1485` |
 | bounded HTTP | bounded generic remote HTTP demo plus acceptance coverage for `http` / `http_remote`; canonical command `bash adl/tools/demo_v0871_provider_http.sh` | `#1486` |
 | mock | no-network mock provider demo plus acceptance coverage and provider-substrate runnable proof; canonical command `bash adl/tools/demo_v0871_provider_mock.sh` | `#1487`, `#1509` |
 | ChatGPT | `chatgpt:` family demo plus acceptance coverage using the current setup flow; canonical command `bash adl/tools/demo_v0871_provider_chatgpt.sh` | `#1488` |
+| Claude | provider-family parity used by the bounded and live multi-agent discussion proofs; canonical live command `bash adl/tools/demo_v0871_real_multi_agent_discussion.sh` | `#1500`, `#1533` |
 
 ## Demo Coverage Summary
 
@@ -108,7 +120,7 @@ Use this table as the fast review surface for milestone coverage.
 
 | Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
 |---|---|---|---|---|---|---|---|
-| D0 | Milestone Demo Suite | `WP-13` demo matrix + integrated proof entrypoint | `bash adl/tools/demo_v0871_suite.sh` | `artifacts/v0871/suite/demo_manifest.json` | One command runs the currently implemented provider, operator, runtime-state, review-surface, and multi-agent proof surfaces | Suite manifest ordering is stable; planned-but-not-run rows are recorded explicitly instead of overclaimed | READY |
+| D0 | Milestone Demo Suite | `WP-13` demo matrix + integrated proof entrypoint | `bash adl/tools/demo_v0871_suite.sh` | `artifacts/v0871/suite/demo_manifest.json` | One command runs the CI-safe provider, operator, runtime-state, review-surface, and bounded multi-agent proof surfaces | Suite manifest ordering is stable; planned-but-not-run rows are recorded explicitly instead of overclaimed; live-provider proof remains D13L | READY |
 | D1 | Runtime Environment Bring-Up | `WP-02` runtime environment completion | `adl/tools/demo_v0871_runtime_environment.sh` | `.adl/runtime_environment.json` plus a bounded `.adl/runs/<run_id>/` artifact set | Runtime environment initializes cleanly with documented contracts | Stable env inputs should preserve artifact shape | PLANNED |
 | D2 | Lifecycle Phases And Boundaries | `WP-03` execution boundaries and lifecycle | `adl/tools/demo_v0871_lifecycle.sh` | lifecycle phase trace / summary | `init -> execute -> complete/teardown` is explicit and reviewable | Fixed scenario should preserve lifecycle phase ordering | PLANNED |
 | D3 | Trace-Aligned Runtime Execution | `WP-04` trace-aligned runtime execution | `adl/tools/demo_v0871_trace_runtime.sh` | `logs/trace_v1.json`, `run_summary.json`, and trace bundle export surfaces | Runtime actions map coherently to trace events, linked artifacts, and replay bundle outputs | Replay should preserve execution-to-trace shape | PLANNED |
@@ -123,13 +135,14 @@ Use this table as the fast review surface for milestone coverage.
 | D11 | Quality Gate Walkthrough | `WP-14` quality gate | `adl/tools/demo_v0871_quality_gate.sh` | quality-gate record | Tests, validators, and coverage posture are reviewable in one place | Same repo state should preserve gate outcome | PLANNED |
 | D12 | Release Review Package | `WP-16` through `WP-20` review/remediation/planning/release tail | `adl/tools/demo_v0871_release_review_package.sh` | release review package | Review, remediation, planning, and release artifacts are coherent and navigable | Package layout and key entrypoints remain stable | PLANNED |
 | D13 | Claude + ChatGPT Tea Discussion | bounded multi-agent runtime discussion proof (`#1490`, `#1491`, `#1501`, `#1502`) | `bash adl/tools/demo_v0871_multi_agent_discussion.sh` | `artifacts/v0871/multi_agent_discussion/transcript.md` | Reviewer can inspect five explicit turns, two named agents, runtime turn metadata, the transcript contract, and the paired runtime trace/summaries | Fixed shim outputs should preserve transcript shape and turn ordering | READY |
-| D13L | Live Claude + ChatGPT Tea Discussion | live-provider companion proof for D13 | `bash adl/tools/demo_v0871_real_multi_agent_discussion.sh` | `artifacts/v0871/real_multi_agent_discussion/provider_invocations.json` plus `transcript.md` | Reviewer can inspect real OpenAI and Anthropic invocation metadata, five explicit turns, runtime turn metadata, and transcript contract proof without secret leakage | Live model text is non-deterministic; runtime artifact shape, turn ordering, and accepted contract shape remain stable | READY |
+| D13L | Live Claude + ChatGPT Tea Discussion | live-provider companion proof for D13 (`#1500`, `#1501`, `#1502`, `#1533`) | `bash adl/tools/demo_v0871_real_multi_agent_discussion.sh` | `artifacts/v0871/real_multi_agent_discussion/provider_invocations.json` plus `transcript.md` | Reviewer can inspect real OpenAI and Anthropic invocation metadata, five explicit turns, runtime turn metadata, and transcript contract proof without secret leakage when valid operator credentials and provider account credit are available | Live model text is non-deterministic; runtime artifact shape, turn ordering, accepted contract shape, and non-secret invocation metadata remain stable | READY_WITH_OPERATOR_CREDENTIALS |
 
-Provider demo wrappers also archive successful bounded runtime roots into `.adl/trace-archive/milestones/v0.87.1/runs/<run_id>/` and print that canonical archive location. The original `artifacts/v0871/.../runtime/runs/<run_id>/` proof surfaces remain the immediate demo outputs; the archive is the durable local trace index for later review/export.
+Provider demo wrappers also archive successful bounded runtime roots into `.adl/trace-archive/milestones/v0.87.1/runs/<run_id>/` and print that canonical archive location (`#1520`, `#1521`). The original `artifacts/v0871/.../runtime/runs/<run_id>/` proof surfaces remain the immediate demo outputs; the archive is the durable local trace index for later review/export.
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
 - `READY` = runnable and locally validated
+- `READY_WITH_OPERATOR_CREDENTIALS` = runnable with operator-managed live-provider credentials and active provider account access; not required for CI-safe demo-suite validation
 - `BLOCKED` = known dependency or missing proof surface
 - `LANDED` = milestone evidence exists and is ready for review
 
@@ -156,7 +169,7 @@ Status guidance:
 - `D11` -> milestone review and validation surfaces derived from the promoted runtime feature set
 - `D12` -> review, remediation, planning, and release surfaces for the runtime milestone
 - `D13` -> bounded multi-agent runtime demo evidence for later conversation/runtime follow-on work (`#1490`, `#1491`, `#1501`, `#1502`)
-- `D13L` -> live provider evidence that the bounded D13 shape can call real OpenAI and Anthropic models through the current ADL HTTP completion boundary
+- `D13L` -> live provider evidence that the bounded D13 shape can call real OpenAI and Anthropic models through the current ADL HTTP completion boundary (`#1533`)
 
 ## Demo Details
 
@@ -167,6 +180,7 @@ Per-demo detail sections are filled as runnable proof surfaces land. Planned row
 Description:
 - Provides the canonical WP-13 entrypoint for the currently implemented `v0.87.1` proof surfaces.
 - Runs provider-family demos, the runtime review walkthrough, and the bounded multi-agent discussion demo.
+- Deliberately excludes the live D13L provider demo from the default suite because it depends on operator-managed OpenAI and Anthropic credentials.
 - Records planned-but-not-run demo rows explicitly in the suite manifest rather than overclaiming coverage.
 
 Commands to run:
@@ -182,6 +196,7 @@ Expected artifacts:
 - provider proof roots under `artifacts/v0871/suite/provider_*`
 - review proof roots under `artifacts/v0871/suite/review_surface`
 - multi-agent proof roots under `artifacts/v0871/suite/multi_agent_discussion`
+- durable trace/archive copies under `.adl/trace-archive/milestones/v0.87.1/runs/<run_id>/` when the underlying demo wrappers archive runtime roots
 
 Primary proof surface:
 - `artifacts/v0871/suite/demo_manifest.json`
@@ -195,6 +210,7 @@ Secondary proof surfaces:
 Expected success signals:
 - The suite exits successfully.
 - The manifest includes provider packages, D8, and D13.
+- D13L is discoverable from this matrix and `demos/v0.87.1/real_chatgpt_claude_multi_agent_discussion_demo.md`, but is not required for the CI-safe D0 suite.
 - The manifest includes `planned_not_run` entries for demo rows that are still planned.
 - The demo issue inventory above names every `v0.87.1` demo/proof issue so reviewers can find demos that are not part of the D0 runtime suite.
 
@@ -202,6 +218,7 @@ Determinism / replay notes:
 - The suite uses bounded local provider shims and mock providers.
 - Proof-surface ordering in the manifest and index is stable.
 - The suite does not claim full byte-for-byte replay for all generated artifacts.
+- Live-provider output is intentionally outside the D0 determinism claim and is scoped by the D13L row.
 
 ### D8) Review Surface Walkthrough
 

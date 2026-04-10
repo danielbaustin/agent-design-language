@@ -16,7 +16,7 @@ Execution:
 
 ## Summary
 
-Added a canonical `v0.87.1` WP-13 demo-suite entrypoint that runs the currently implemented provider, operator, runtime-state, runtime-review, and bounded multi-agent proof surfaces from one command. The demo matrix now has a real D0 suite row, an explicit demo issue inventory, and planned-but-not-run rows so reviewers can find every demo surface without overclaiming future runtime proof.
+Added a canonical `v0.87.1` WP-13 demo-suite entrypoint that runs the currently implemented provider, operator, runtime-state, runtime-review, and bounded multi-agent proof surfaces from one command. After the remaining demo issues landed, refreshed the demo matrix against the completed issue list so reviewers can find every completed `v0.87.1` demo/proof surface, including trace/archive support and the credential-gated live ChatGPT + Claude companion demo, without overclaiming what the CI-safe suite runs.
 
 ## Artifacts produced
 - `adl/tools/demo_v0871_suite.sh`
@@ -38,6 +38,10 @@ Added a canonical `v0.87.1` WP-13 demo-suite entrypoint that runs the currently 
 - moved the ChatGPT demo shim to a distinct loopback port so it does not collide with the bounded HTTP demo
 - updated the demo matrix with a READY D0 suite row, D0 detail section, cross-demo validation command, and truthful planned-not-run notes
 - added a demo issue inventory to the matrix covering `#1467`, `#1485`-`#1488`, `#1490`, `#1491`, `#1500`-`#1502`, and `#1507`-`#1509`
+- rebased the branch over current `origin/main`, preserving the merged live-provider and trace/archive demo work
+- refreshed the demo issue inventory to mark `#1500`-`#1502` READY and add `#1468`, `#1518`-`#1521`, and `#1533`
+- added D13L as a credential-gated live ChatGPT + Claude proof surface while keeping the default D0 suite CI-safe and bounded
+- added provider-infrastructure references for `#1469`, `#1474`, and `#1477` so reviewer navigation aligns with the completed issue list
 - updated demo discovery docs so reviewers can find the suite from `adl/tools/README.md`, `demos/README.md`, and the feature-doc index
 
 ## Main Repo Integration (REQUIRED)
@@ -51,7 +55,10 @@ Added a canonical `v0.87.1` WP-13 demo-suite entrypoint that runs the currently 
   - `bash adl/tools/test_demo_v0871_provider_http.sh`
   - `bash adl/tools/test_demo_v0871_provider_chatgpt.sh`
   - `bash adl/tools/test_demo_v0871_suite.sh`
+  - `ADL_OPENAI_KEY_FILE=.adl/nonexistent-openai.key ADL_ANTHROPIC_KEY_FILE=.adl/nonexistent-claude.key bash adl/tools/test_demo_v0871_real_multi_agent_discussion.sh`
   - `bash adl/tools/test_demo_v0871_review_surface.sh`
+  - `for issue in 1467 1468 1485 1486 1487 1488 1490 1491 1500 1501 1502 1507 1508 1509 1518 1519 1520 1521 1533; do rg -q "#$issue" docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md || echo "missing #$issue"; done`
+  - `rg -n 'IN_PROGRESS|<<<<<<<|=======|>>>>>>>' docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md || true`
   - `git diff --check`
   - `cargo fmt --manifest-path adl/Cargo.toml --all --check`
 - Result: PASS
@@ -70,6 +77,9 @@ Added a canonical `v0.87.1` WP-13 demo-suite entrypoint that runs the currently 
   - bounded HTTP provider demo regression passed
   - ChatGPT provider demo regression passed
   - WP-13 suite regression passed
+  - live-provider no-key skip path passed with a clear skip result
+  - matrix completed-issue inventory check passed
+  - matrix stale in-progress/conflict-marker scan passed
   - D8 review-surface regression passed
   - diff hygiene passed
   - Rust formatting check passed
@@ -85,7 +95,10 @@ verification_summary:
       - "bash adl/tools/test_demo_v0871_provider_http.sh"
       - "bash adl/tools/test_demo_v0871_provider_chatgpt.sh"
       - "bash adl/tools/test_demo_v0871_suite.sh"
+      - "ADL_OPENAI_KEY_FILE=.adl/nonexistent-openai.key ADL_ANTHROPIC_KEY_FILE=.adl/nonexistent-claude.key bash adl/tools/test_demo_v0871_real_multi_agent_discussion.sh"
       - "bash adl/tools/test_demo_v0871_review_surface.sh"
+      - "completed issue inventory presence check for #1467, #1468, #1485-#1488, #1490, #1491, #1500-#1502, #1507-#1509, #1518-#1521, and #1533"
+      - "matrix stale IN_PROGRESS/conflict-marker scan"
       - "git diff --check"
       - "cargo fmt --manifest-path adl/Cargo.toml --all --check"
   determinism:
@@ -147,13 +160,16 @@ verification_summary:
 - Artifact schema/version checks: suite manifest uses `adl.v0871.demo_suite.v1`; runtime review package uses `adl.runtime_review_surface.v1`
 - Hash/byte-stability checks: not run
 - Missing/optional artifacts and rationale: planned demo rows remain in `planned_not_run` until specialized wrappers land
-- Demo inventory caveat: `#1500`-`#1502` are recorded as in-progress follow-ons and are not claimed by D0 until their implementation branches land
+- Demo inventory caveat: D13L is recorded as `READY_WITH_OPERATOR_CREDENTIALS` because it depends on operator-managed live-provider credentials and active provider account access; it is intentionally not claimed by the CI-safe D0 suite
 
 ## Decisions / Deviations
 - Kept WP-13 focused on one canonical suite over implemented proof surfaces rather than pretending all planned demo rows are already runnable.
 - Fixed provider wrapper loopback behavior because the suite exposed a real rapid-run collision between provider-family demos.
+- Treated D13L as a live-provider companion rather than adding it to D0 because the default suite must remain runnable without external provider credentials.
+- Recorded the local live-provider validation attempt truthfully: the command reached the OpenAI turn, then stopped on an external Anthropic billing/credit response, so the matrix uses credential-gated status rather than CI-safe READY.
 - Did not commit generated `artifacts/` output; the suite remains a reproducible proof generator rather than a checked-in artifact dump.
 
 ## Follow-ups / Deferred work
 - D1-D5 and D9-D12 remain planned rows until their specialized wrappers and validations land.
 - Later review-tail issues should use `bash adl/tools/demo_v0871_suite.sh` as the default demo proof entrypoint.
+- Reviewers who want D13L should run `bash adl/tools/test_demo_v0871_real_multi_agent_discussion.sh` only with valid OpenAI and Anthropic credentials plus active provider account access.
