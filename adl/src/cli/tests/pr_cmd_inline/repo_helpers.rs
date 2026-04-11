@@ -366,6 +366,84 @@ fn ensure_source_issue_prompt_preserves_authored_front_matter_from_github_body()
 }
 
 #[test]
+fn real_pr_init_repairs_missing_version_metadata_on_github_issue() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-init-metadata-parity");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            "https://github.com/owner/repo.git",
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote add")
+        .success());
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = repo.join("gh.log");
+    let title_state = repo.join("gh-title.txt");
+    let labels_state = repo.join("gh-labels.txt");
+    write_executable(
+        &bin_dir.join("gh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nTITLE_FILE='{}'\nLABELS_FILE='{}'\nread_title() {{ if [[ -f \"$TITLE_FILE\" ]]; then cat \"$TITLE_FILE\"; else printf '[tools] Metadata parity\\n'; fi; }}\nread_labels() {{ if [[ -f \"$LABELS_FILE\" ]]; then cat \"$LABELS_FILE\"; else printf 'track:roadmap\\ntype:task\\narea:tools\\n'; fi; }}\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json title -q .title\"* ]]; then\n  read_title\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json labels -q .labels[].name\"* ]]; then\n  read_labels\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json body -q .body\"* ]]; then\n  cat <<'EOF'\n## Summary\n\nRepair missing version metadata during init.\n\n## Goal\n\nKeep GitHub issue metadata aligned with the canonical local prompt.\n\n## Required Outcome\n\nThis issue ships tooling code and tests.\n\n## Deliverables\n\n- metadata parity enforcement\n\n## Acceptance Criteria\n\n- init repairs the missing version title prefix and version label\n\n## Repo Inputs\n\n- adl/src/cli/pr_cmd.rs\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- broader tracker redesign\n\n## Issue-Graph Notes\n\n- regression fixture\n\n## Notes\n\n- none\n\n## Tooling Notes\n\n- ensure bootstrap is truthful\nEOF\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity\"* ]]; then\n  printf '%s\\n' '[v0.87.1][tools] Metadata parity' > \"$TITLE_FILE\"\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* && \"$*\" == *\"--add-label\"* ]]; then\n  cat <<'EOF' > \"$LABELS_FILE\"\ntrack:roadmap\ntype:task\narea:tools\nversion:v0.87.1\nEOF\n  exit 0\nfi\nexit 1\n",
+            gh_log.display(),
+            title_state.display(),
+            labels_state.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    real_pr(&[
+        "init".to_string(),
+        "1153".to_string(),
+        "--slug".to_string(),
+        "v0-87-1-tools-metadata-parity".to_string(),
+        "--version".to_string(),
+        "v0.87.1".to_string(),
+    ])
+    .expect("real_pr init");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    assert_eq!(
+        fs::read_to_string(&title_state).expect("title state"),
+        "[v0.87.1][tools] Metadata parity\n"
+    );
+    let labels = fs::read_to_string(&labels_state).expect("labels state");
+    assert!(labels.contains("version:v0.87.1"));
+
+    let issue_ref = IssueRef::new(
+        1153,
+        "v0.87.1".to_string(),
+        "v0-87-1-tools-metadata-parity".to_string(),
+    )
+    .expect("issue ref");
+    let prompt = fs::read_to_string(issue_ref.issue_prompt_path(&repo)).expect("read prompt");
+    assert!(prompt.contains("title: \"[v0.87.1][tools] Metadata parity\""));
+
+    let gh_log = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(
+        gh_log.contains("issue edit 1153 -R owner/repo --title [v0.87.1][tools] Metadata parity")
+    );
+    assert!(gh_log.contains("issue edit 1153 -R owner/repo --add-label version:v0.87.1"));
+}
+
+#[test]
 fn current_pr_url_filters_empty_and_null_results() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-current-url");

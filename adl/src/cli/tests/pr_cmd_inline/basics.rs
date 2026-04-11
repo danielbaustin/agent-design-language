@@ -107,6 +107,62 @@ fn normalize_labels_csv_replaces_version_label() {
 }
 
 #[test]
+fn normalize_issue_title_for_version_adds_or_replaces_prefix() {
+    assert_eq!(
+        normalize_issue_title_for_version("[tools] Example", "v0.87.1"),
+        "[v0.87.1][tools] Example"
+    );
+    assert_eq!(
+        normalize_issue_title_for_version("[v0.86][tools] Example", "v0.87.1"),
+        "[v0.87.1][tools] Example"
+    );
+    assert_eq!(
+        normalize_issue_title_for_version("[v0.87.1][tools] Example", "v0.87.1"),
+        "[v0.87.1][tools] Example"
+    );
+}
+
+#[test]
+fn ensure_no_duplicate_issue_identities_rejects_duplicate_prompt_or_task_bundle() {
+    let repo = unique_temp_dir("adl-pr-duplicate-identities");
+    let issue_ref = IssueRef::new(
+        1153,
+        "v0.87.1".to_string(),
+        "v0-87-1-tools-metadata-parity".to_string(),
+    )
+    .expect("issue ref");
+
+    let canonical_body = issue_ref.issue_prompt_path(&repo);
+    let canonical_task = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(canonical_body.parent().expect("body parent")).expect("body dir");
+    fs::create_dir_all(&canonical_task).expect("task dir");
+    fs::write(
+        &canonical_body,
+        "---\ntitle: \"x\"\nlabels:\n  - \"version:v0.87.1\"\nissue_number: 1153\n---\n\n# x\n",
+    )
+    .expect("write canonical body");
+
+    let duplicate_body = repo.join(".adl/v0.87.1/bodies/issue-1153-metadata-parity-legacy.md");
+    let duplicate_task = repo.join(".adl/v0.87.1/tasks/issue-1153__metadata-parity-legacy");
+    fs::create_dir_all(duplicate_body.parent().expect("dup body parent")).expect("dup body dir");
+    fs::create_dir_all(&duplicate_task).expect("dup task dir");
+    fs::write(
+        &duplicate_body,
+        "---\ntitle: \"y\"\nlabels:\n  - \"version:v0.87.1\"\nissue_number: 1153\n---\n\n# y\n",
+    )
+    .expect("write dup body");
+
+    let err = ensure_no_duplicate_issue_identities(&repo, &issue_ref)
+        .expect_err("duplicates should fail");
+    assert!(err
+        .to_string()
+        .contains("duplicate local issue identities detected"));
+    assert!(err
+        .to_string()
+        .contains("issue-1153-metadata-parity-legacy"));
+}
+
+#[test]
 fn infer_repo_from_remote_supports_https_and_ssh() {
     assert_eq!(
         infer_repo_from_remote("https://github.com/danielbaustin/agent-design-language.git"),
@@ -518,7 +574,7 @@ fn real_pr_create_creates_issue_and_bootstraps_root_bundle() {
     write_executable(
             &gh_path,
             &format!(
-                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  printf 'https://github.com/example/repo/issues/1202\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  printf 'https://github.com/example/repo/issues/1202\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Simplified init path\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
                 gh_log.display(),
                 issue_body_log.display()
             ),
@@ -596,7 +652,7 @@ fn real_pr_create_fails_when_created_issue_is_missing_requested_labels() {
     let gh_path = bin_dir.join("gh");
     write_executable(
         &gh_path,
-        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  printf 'https://github.com/example/repo/issues/1204\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  printf 'track:roadmap\\ntype:task\\nversion:v0.86\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  printf 'https://github.com/example/repo/issues/1204\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Missing labels\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
     );
 
     let old_path = env::var("PATH").unwrap_or_default();
@@ -624,9 +680,9 @@ fn real_pr_create_fails_when_created_issue_is_missing_requested_labels() {
         env::set_var("PATH", old_path);
     }
 
-    assert!(err.to_string().contains(
-        "create: issue #1204 is missing expected labels after gh issue create: area:tools"
-    ));
+    assert!(err
+        .to_string()
+        .contains("create: issue #1204 metadata drift remains after parity enforcement: missing labels: area:tools"));
 }
 
 #[test]
@@ -643,7 +699,7 @@ fn real_pr_create_generates_concrete_body_when_none_is_supplied() {
     write_executable(
             &gh_path,
             &format!(
-                "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  printf 'https://github.com/example/repo/issues/1203\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+                "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  printf 'https://github.com/example/repo/issues/1203\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Generated issue body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
                 issue_body_log.display()
             ),
         );

@@ -287,7 +287,56 @@ fn issue_label_names(issue: u32, repo: &str) -> Result<Vec<String>> {
         .collect())
 }
 
-pub(super) fn ensure_issue_labels(repo: &str, issue: u32, labels_csv: &str) -> Result<()> {
+fn gh_issue_edit_title(repo: &str, issue: u32, title: &str) -> Result<()> {
+    run_status(
+        "gh",
+        &[
+            "issue",
+            "edit",
+            &issue.to_string(),
+            "-R",
+            repo,
+            "--title",
+            title,
+        ],
+    )
+    .with_context(|| format!("create: gh issue edit title failed for issue #{issue}"))
+}
+
+fn gh_issue_add_labels(repo: &str, issue: u32, labels: &[String]) -> Result<()> {
+    if labels.is_empty() {
+        return Ok(());
+    }
+    let issue_s = issue.to_string();
+    let mut args = vec!["issue", "edit", issue_s.as_str(), "-R", repo];
+    for label in labels {
+        args.push("--add-label");
+        args.push(label);
+    }
+    run_status("gh", &args)
+        .with_context(|| format!("create: gh issue add labels failed for issue #{issue}"))
+}
+
+fn gh_issue_remove_labels(repo: &str, issue: u32, labels: &[String]) -> Result<()> {
+    if labels.is_empty() {
+        return Ok(());
+    }
+    let issue_s = issue.to_string();
+    let mut args = vec!["issue", "edit", issue_s.as_str(), "-R", repo];
+    for label in labels {
+        args.push("--remove-label");
+        args.push(label);
+    }
+    run_status("gh", &args)
+        .with_context(|| format!("create: gh issue remove labels failed for issue #{issue}"))
+}
+
+pub(super) fn ensure_issue_metadata_parity(
+    repo: &str,
+    issue: u32,
+    expected_title: &str,
+    labels_csv: &str,
+) -> Result<()> {
     let expected: BTreeSet<String> = labels_csv
         .split(',')
         .map(str::trim)
@@ -298,13 +347,57 @@ pub(super) fn ensure_issue_labels(repo: &str, issue: u32, labels_csv: &str) -> R
         bail!("create: expected at least one label for tracked issue creation");
     }
 
+    let current_title = gh_issue_title(issue, repo)?.unwrap_or_default();
+    if current_title != expected_title {
+        gh_issue_edit_title(repo, issue, expected_title)?;
+    }
+
     let actual: BTreeSet<String> = issue_label_names(issue, repo)?.into_iter().collect();
     let missing: Vec<String> = expected.difference(&actual).cloned().collect();
+    let stale_versions: Vec<String> = actual
+        .iter()
+        .filter(|label| label.starts_with("version:") && !expected.contains(*label))
+        .cloned()
+        .collect();
+
     if !missing.is_empty() {
+        gh_issue_add_labels(repo, issue, &missing)?;
+    }
+    if !stale_versions.is_empty() {
+        gh_issue_remove_labels(repo, issue, &stale_versions)?;
+    }
+
+    let final_title = gh_issue_title(issue, repo)?.unwrap_or_default();
+    if final_title != expected_title {
         bail!(
-            "create: issue #{} is missing expected labels after gh issue create: {}",
+            "create: issue #{} title mismatch after metadata parity enforcement: expected '{}', got '{}'",
             issue,
-            missing.join(", ")
+            expected_title,
+            final_title
+        );
+    }
+    let final_labels: BTreeSet<String> = issue_label_names(issue, repo)?.into_iter().collect();
+    let final_missing: Vec<String> = expected.difference(&final_labels).cloned().collect();
+    let final_stale_versions: Vec<String> = final_labels
+        .iter()
+        .filter(|label| label.starts_with("version:") && !expected.contains(*label))
+        .cloned()
+        .collect();
+    if !final_missing.is_empty() || !final_stale_versions.is_empty() {
+        let mut problems = Vec::new();
+        if !final_missing.is_empty() {
+            problems.push(format!("missing labels: {}", final_missing.join(", ")));
+        }
+        if !final_stale_versions.is_empty() {
+            problems.push(format!(
+                "unexpected version labels: {}",
+                final_stale_versions.join(", ")
+            ));
+        }
+        bail!(
+            "create: issue #{} metadata drift remains after parity enforcement: {}",
+            issue,
+            problems.join("; ")
         );
     }
     Ok(())

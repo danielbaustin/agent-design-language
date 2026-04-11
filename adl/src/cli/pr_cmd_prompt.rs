@@ -51,7 +51,103 @@ pub(crate) fn resolve_issue_scope_and_slug_from_local_state(
         }
     }
     matches.sort();
+    if matches.len() > 1 {
+        let candidates = matches
+            .iter()
+            .map(|(version, slug)| format!("{version}:{slug}"))
+            .collect::<Vec<_>>()
+            .join(", ");
+        bail!(
+            "duplicate local task-bundle identities detected for issue #{}: {}",
+            issue,
+            candidates
+        );
+    }
     Ok(matches.into_iter().next())
+}
+
+pub(crate) fn normalize_issue_title_for_version(title: &str, version: &str) -> String {
+    let trimmed = title.trim();
+    if trimmed.is_empty() {
+        return trimmed.to_string();
+    }
+    let expected_prefix = format!("[{version}]");
+    if trimmed.starts_with(&expected_prefix) {
+        return trimmed.to_string();
+    }
+    if let Some(rest) = trimmed.strip_prefix("[v") {
+        if let Some(end) = rest.find(']') {
+            return format!("{expected_prefix}{}", &rest[end + 1..]);
+        }
+    }
+    format!("{expected_prefix}{trimmed}")
+}
+
+pub(crate) fn ensure_no_duplicate_issue_identities(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<()> {
+    let adl_root = repo_root.join(".adl");
+    if !adl_root.is_dir() {
+        return Ok(());
+    }
+
+    let body_prefix = format!("issue-{:04}-", issue_ref.issue_number());
+    let task_prefix = format!("issue-{:04}__", issue_ref.issue_number());
+    let canonical_body = issue_ref.issue_prompt_path(repo_root);
+    let canonical_bundle = issue_ref.task_bundle_dir_path(repo_root);
+    let mut duplicates = Vec::new();
+
+    for scope_entry in fs::read_dir(&adl_root)? {
+        let scope_entry = scope_entry?;
+        let scope_path = scope_entry.path();
+
+        let bodies = scope_path.join("bodies");
+        if bodies.is_dir() {
+            for entry in fs::read_dir(&bodies)? {
+                let entry = entry?;
+                let path = entry.path();
+                let name = entry.file_name().to_string_lossy().to_string();
+                if name.starts_with(&body_prefix) && path != canonical_body {
+                    duplicates.push(path);
+                }
+            }
+        }
+
+        let tasks = scope_path.join("tasks");
+        if tasks.is_dir() {
+            for entry in fs::read_dir(&tasks)? {
+                let entry = entry?;
+                let path = entry.path();
+                let name = entry.file_name().to_string_lossy().to_string();
+                if name.starts_with(&task_prefix) && path != canonical_bundle {
+                    duplicates.push(path);
+                }
+            }
+        }
+    }
+
+    duplicates.sort();
+    duplicates.dedup();
+    if duplicates.is_empty() {
+        return Ok(());
+    }
+
+    let rendered = duplicates
+        .iter()
+        .map(|path| {
+            path.strip_prefix(repo_root)
+                .unwrap_or(path)
+                .display()
+                .to_string()
+        })
+        .collect::<Vec<_>>()
+        .join(", ");
+    bail!(
+        "duplicate local issue identities detected for issue #{}; keep one canonical prompt/task bundle only: {}",
+        issue_ref.issue_number(),
+        rendered
+    );
 }
 
 pub(crate) fn render_generated_issue_prompt(
