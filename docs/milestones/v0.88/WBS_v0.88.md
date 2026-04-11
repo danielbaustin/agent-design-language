@@ -29,7 +29,7 @@ After those feature bands, the milestone follows the same demo / quality / revie
 | WP-09 | PHI-style integration metrics | define bounded engineering metrics for integration, irreducibility, coupling, and adaptive depth in ADL systems | metric definitions, comparison runner or fixture set, and reviewable outputs | `WP-02` through `WP-08` | execution issue to be seeded |
 | WP-10 | Instinct model | define bounded instinct as an explicit cognitive substrate | runtime-facing instinct contract, bounded semantics, and acceptance tests | `WP-01` | execution issue to be seeded |
 | WP-11 | Instinct runtime surface and bounded agency hook | make instinct visible in runtime declaration, routing, prioritization, trace, and demo proof | implementation slice, trace/artifact evidence, and bounded-agency proof case | `WP-10` | execution issue to be seeded |
-| WP-12 | Paper Sonata flagship demo | implement a bounded investor-/reviewer-facing multi-agent manuscript demo with durable artifacts and truthful runtime proof | bounded runner, synthetic fixture packet, stable artifact tree, and smoke/validation path | `WP-02` through `WP-11` | execution issue to be seeded; follow-on backlog `#1609` |
+| WP-12 | Paper Sonata flagship demo | implement a bounded investor-/reviewer-facing multi-agent manuscript demo with durable artifacts and truthful runtime proof | bounded runner, synthetic fixture packet, stable artifact tree, and smoke/validation path | `WP-02` through `WP-11` | execution issue to be seeded; protected local follow-on planning retained |
 | WP-13 | Demo matrix + integration demos | define and implement the primary proof surfaces for temporal, PHI, instinct, and Paper Sonata bands | runnable demo entrypoints, validated artifacts, and reviewer-facing demo matrix | `WP-02` through `WP-12` | execution issue to be seeded; supporting pull-in `#1618` |
 | WP-14 | Coverage / quality gate | enforce milestone quality and coverage posture | green quality gate | `WP-13` | closeout issue to be seeded |
 | WP-15 | Docs + review pass | converge reviewer-facing docs against delivered proof | reviewer-ready package | `WP-13`, `WP-14` | closeout issue to be seeded |
@@ -42,7 +42,7 @@ After those feature bands, the milestone follows the same demo / quality / revie
 Issue-column note:
 - `WP-01` is already represented by tracked planning/package issues.
 - `WP-02` through `WP-20` intentionally await the real execution and closeout issue wave.
-- `#1614`, `#1618`, and `#1609` are supporting backlog items, not substitutes for the milestone's main work-package issues.
+- `#1614` and `#1618` are supporting backlog items, not substitutes for the milestone's main work-package issues.
 
 ## Exit Criteria
 - every tracked `v0.88` feature doc maps to at least one WBS item

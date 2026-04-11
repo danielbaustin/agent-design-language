@@ -30,7 +30,7 @@ Accepted supporting backlog pull-ins for execution planning:
 - `#1618` bounded comparative-demo / positioning slice
 
 Related bounded demo follow-on retained in backlog:
-- `#1609` finish `Paper Sonata` beyond the initial `v0.88` flagship slice
+- protected local follow-on planning deepens `Paper Sonata` beyond the initial `v0.88` flagship slice
 
 Planning/package issues that established this tracked feature set:
 - `#1527`
