@@ -1,0 +1,26 @@
+version: "0.5"
+
+providers:
+  local_mock:
+    profile: "mock:echo-v1"
+
+agents:
+  quickstart_writer:
+    provider: "local_mock"
+    model: "echo-v1"
+
+tasks:
+  emit_runtime_marker:
+    prompt:
+      user: "ADL_MINIMAL_RUNTIME_DEMO_OK"
+
+run:
+  name: "v0-87-1-minimal-runtime-demo"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "minimal_runtime.emit_marker"
+        agent: "quickstart_writer"
+        task: "emit_runtime_marker"
+        save_as: "runtime_marker"
+        write_to: "quickstart/runtime_marker.txt"
