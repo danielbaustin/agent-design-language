@@ -31,10 +31,12 @@ surfaces, and planning-only work are called out as such.
 
 ## Current Repo Status
 
-As of the current planning state, the repo describes `v0.87` as the most
-recently completed milestone and `v0.87.1` as the next planned milestone. The
-feature list below therefore treats `v0.7` through `v0.87` as the implemented
-baseline and uses the `ROAD_TO_v0.95` milestone sequence for remaining work.
+As of the current planning state, the repo treats `v0.87` as the most recently
+completed milestone, `v0.87.1` as the active release-tail completion band, and
+`v0.88` as the next major planned milestone. The feature list below therefore
+treats `v0.7` through `v0.87` as the implemented baseline, recognizes the
+runtime-completion work of `v0.87.1`, and uses the `ROAD_TO_v0.95` milestone
+sequence for the remaining major feature bands.
 
 ## Feature Status Matrix
 
@@ -62,7 +64,7 @@ baseline and uses the `ROAD_TO_v0.95` milestone sequence for remaining work.
 | Shared ObsMem foundation | Implemented baseline | v0.87 shared-memory docs | Deepen with persistence/identity |
 | Runtime environment and lifecycle completion | Partially implemented | v0.87.1 planning and runtime docs | v0.87.1 |
 | Local runtime resilience / Shepherd preservation | Partially implemented | v0.87.1 planning docs | v0.87.1 |
-| Persistence, instinct, aptitudes, bounded agency | Planned | v0.88 planning docs | v0.88 |
+| Chronosense substrate, execution posture/cost reviewability, PHI metrics, instinct, and bounded agency | Planned | v0.88 milestone planning docs and promoted feature package | v0.88 |
 | AEE 1.0 convergence | Partially implemented | AEE recovery/demo surfaces and planning | v0.89 |
 | Freedom Gate v2 | Implemented baseline | v0.86 Freedom Gate proof surfaces | v0.89 |
 | Reasoning graph baseline | Partially implemented | planning/schema/proof surfaces | v0.90 |
@@ -238,12 +240,23 @@ execution, improving tool and skill reliability, stabilizing the control-plane
 lifecycle, and materially reducing execution errors through bounded operational
 surfaces.
 
-### v0.88 - Persistence, Instinct, Aptitudes, and Bounded Agency
+### v0.88 - Chronosense, Execution Posture, PHI, Instinct, and Bounded Agency
 
-`v0.88` is scheduled to make persistence over time, chronosense, instinct,
-aptitudes, and bounded agency more concrete. This is the point where ADL should
-start to feel less like isolated execution and more like an agent substrate
-with continuity and shaped priorities.
+`v0.88` is scheduled to make chronosense and temporal continuity real as a
+bounded substrate, connect execution posture to realized cost and trace, add a
+bounded engineering interpretation of PHI-style integration metrics, and make
+instinct and bounded agency more concrete. This is also the milestone where ADL
+should gain a flagship public-facing multi-agent proof surface through the
+bounded `Paper Sonata` demo.
+
+This is the point where ADL should start to feel less like isolated execution
+and more like an agent substrate with continuity, shaped priorities, visible
+execution posture, and stronger internal structure.
+
+Note:
+- aptitude is no longer treated as a core `v0.88` milestone commitment
+- the active aptitude band now belongs with the later learning/governance
+  transition around `v0.89`
 
 ### v0.89 - AEE 1.0 and Freedom Gate v2
 
