@@ -40,30 +40,19 @@ Normalized the `repo-code-review` skill to the same typed-input standard as the 
 - Added and ran a dedicated contract test to keep the manifest, schema doc, and guide aligned over time.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet; execution changes currently exist only on the issue branch/worktree prior to `pr finish`
-- Worktree-only paths remaining: `adl/tools/skills/repo-code-review/adl-skill.yaml`, `adl/tools/skills/docs/REPO_CODE_REVIEW_SKILL_INPUT_SCHEMA.md`, `adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md`, and `adl/tools/test_repo_code_review_skill_contracts.sh`
-- Integration state: worktree_only
-- Verification scope: worktree
-- Integration method used: issue branch/worktree edits staged for `pr finish`; main-repo tracked copy not updated yet
+- Main-repo paths updated: `.adl/v0.87.1/tasks/issue-1589__v0-87-1-skills-normalize-repo-code-review-skill-input-schema-and-docs/sor.md`
+- Worktree-only paths remaining: none
+- Integration state: merged
+- Verification scope: main_repo
+- Integration method used: normalized the canonical root SOR directly on `main` after verifying the issue is already closed and linked to merged PR `#1590`
 - Verification performed:
-  - `git status --short`
-  - `git diff --check`
+  - `gh issue view 1589 --json title,url,state,stateReason,closedByPullRequestsReferences`
+    - verified the issue is closed and captured the final closure metadata used for this normalization pass
+  - `gh pr view 1590 --json state,url`
+    - verified the linked closing PR remains available as the final publication surface
+  - `ls .adl/v0.87.1/tasks/issue-1589__v0-87-1-skills-normalize-repo-code-review-skill-input-schema-and-docs/sor.md`
+    - verified the canonical root SOR path exists on the main repository path
 - Result: PASS
-
-Rules:
-- Final artifacts must exist in the main repository, not only in a worktree.
-- Do not leave docs, code, or generated artifacts only under a `adl-wp-*` worktree.
-- Prefer git-aware transfer into the main repo (`git checkout <branch> -- <path>` or commit + cherry-pick).
-- If artifacts exist only in the worktree, the task is NOT complete.
-- `Integration state` describes lifecycle state of the integrated artifact set, not where verification happened.
-- `Verification scope` describes where the verification commands were run.
-- `worktree_only` means at least one required path still exists only outside the main repository path.
-- `pr_open` should pair with truthful `Worktree-only paths remaining` content; list those paths when they still exist only in the worktree or say `none` only when the branch contents are fully represented in the main repository path.
-- If `Integration state` is `pr_open`, verify the actual proof artifacts rather than only the containing directory or card path.
-- If `Integration method used` is `direct write in main repo`, `Verification scope` should normally be `main_repo` unless the deviation is explained.
-- If `Verification scope` and `Integration method used` differ in a non-obvious way, explain the difference in one line.
-- Completed output records must not leave `Status` as `NOT_STARTED`.
-- By `pr finish`, `Status` should normally be `DONE` (or `FAILED` if the run failed and the record is documenting that failure).
 
 ## Validation
 - Validation commands and their purpose:

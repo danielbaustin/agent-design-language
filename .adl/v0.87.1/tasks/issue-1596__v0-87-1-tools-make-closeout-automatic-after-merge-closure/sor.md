@@ -45,32 +45,19 @@ Added a real Rust-owned `adl pr closeout` surface, reused the same closeout life
 - Taught `adl/tools/pr.sh` and the operator docs about the new `closeout` command and the automatic control-plane-triggered closeout behavior.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet; branch-local tracked edits are prepared for PR publication only
-- Worktree-only paths remaining: `adl/src/cli/pr_cmd.rs`, `adl/src/cli/pr_cmd/doctor.rs`, `adl/src/cli/pr_cmd/lifecycle.rs`, `adl/src/cli/pr_cmd_args.rs`, `adl/src/cli/tests/pr_cmd_inline/basics.rs`, `adl/src/cli/tests/pr_cmd_inline/lifecycle.rs`, `adl/src/cli/usage.rs`, `adl/tools/pr.sh`, `adl/tools/skills/pr-closeout/SKILL.md`, `adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md`
-- Integration state: pr_open
-- Verification scope: worktree
-- Integration method used: branch-local tracked edits validated in the issue worktree and prepared for `pr finish`
+- Main-repo paths updated: `.adl/v0.87.1/tasks/issue-1596__v0-87-1-tools-make-closeout-automatic-after-merge-closure/sor.md`
+- Worktree-only paths remaining: none
+- Integration state: merged
+- Verification scope: main_repo
+- Integration method used: normalized the canonical root SOR directly on `main` after verifying the issue is already closed and linked to merged PR `#1601`
 - Verification performed:
-  - `git status --short`
-    - verified the bounded closeout-related tracked paths on the issue branch.
-  - `git diff --check`
-    - verified the final diff is clean and publication-safe.
+  - `gh issue view 1596 --json title,url,state,stateReason,closedByPullRequestsReferences`
+    - verified the issue is closed and captured the final closure metadata used for this normalization pass
+  - `gh pr view 1601 --json state,url`
+    - verified the linked closing PR remains available as the final publication surface
+  - `ls .adl/v0.87.1/tasks/issue-1596__v0-87-1-tools-make-closeout-automatic-after-merge-closure/sor.md`
+    - verified the canonical root SOR path exists on the main repository path
 - Result: PASS
-
-Rules:
-- Final artifacts must exist in the main repository, not only in a worktree.
-- Do not leave docs, code, or generated artifacts only under a `adl-wp-*` worktree.
-- Prefer git-aware transfer into the main repo (`git checkout <branch> -- <path>` or commit + cherry-pick).
-- If artifacts exist only in the worktree, the task is NOT complete.
-- `Integration state` describes lifecycle state of the integrated artifact set, not where verification happened.
-- `Verification scope` describes where the verification commands were run.
-- `worktree_only` means at least one required path still exists only outside the main repository path.
-- `pr_open` should pair with truthful `Worktree-only paths remaining` content; list those paths when they still exist only in the worktree or say `none` only when the branch contents are fully represented in the main repository path.
-- If `Integration state` is `pr_open`, verify the actual proof artifacts rather than only the containing directory or card path.
-- If `Integration method used` is `direct write in main repo`, `Verification scope` should normally be `main_repo` unless the deviation is explained.
-- If `Verification scope` and `Integration method used` differ in a non-obvious way, explain the difference in one line.
-- Completed output records must not leave `Status` as `NOT_STARTED`.
-- By `pr finish`, `Status` should normally be `DONE` (or `FAILED` if the run failed and the record is documenting that failure).
 
 ## Validation
 - Validation commands and their purpose:
