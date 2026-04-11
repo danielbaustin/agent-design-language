@@ -118,7 +118,7 @@ Review the completed runtime milestone, remediate findings, release it, and prep
 
 Current scope:
 - `WP-16` internal review - `#1494`
-- `WP-17` external / 3rd-party review preparation - `#1495`
+- `WP-17` external / 3rd-party review - `#1495`
 - `WP-18` review findings remediation - `#1496`
 - `WP-19` next milestone planning - `#1497`
 - `WP-20` release ceremony - `#1498`
@@ -132,7 +132,7 @@ Proof surfaces:
 
 Execution order:
 - `#1494` records internal findings against the converged runtime proof package.
-- `#1495` prepares the external review surface after internal review has exposed obvious defects.
+- `#1495` executes the external / 3rd-party review against the converged runtime package after internal review has exposed obvious defects.
 - `#1496` remediates accepted findings or records explicit deferrals before release work begins.
 - `#1497` prepares next-milestone planning before release closeout so follow-on work is captured while the review context is still fresh.
 - `#1498` performs the final release ceremony only after the planning package and remediation state are explicit.

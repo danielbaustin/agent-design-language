@@ -149,7 +149,7 @@ Known risks:
 - under-specifying the runtime proof surface so review happens against fragments instead of the integrated system
 
 Open questions:
-- the final acceptance, quality, review, and release-tail gates remain open until `WP-10` through `WP-20` land or are explicitly deferred
+- the remaining external review, remediation, next-milestone planning, and release gates remain open until `WP-17` through `WP-20` land or are explicitly deferred
 - planned demo rows that are not part of the CI-safe D0 suite must remain explicitly dispositioned rather than implied as shipped
 
 ## Status
@@ -158,7 +158,7 @@ Current status: runtime foundations and demo proof surfaces landed; milestone co
 
 - Planning: canonical milestone docs, WBS, sprint, checklist, release plan, release notes, and feature-doc index all exist; remaining planning work is the release-tail closure package
 - Execution: Sprint 1 and Sprint 2 implementation/proof issues `#1435` through `#1464` are closed
-- Validation: demo matrix and runtime proof surfaces exist, with review/remediation/planning/release validation still active in `#1494` through `#1498`
+- Validation: demo matrix and runtime proof surfaces exist, with external review, remediation, planning, and release validation still active in `#1495` through `#1498`
 - Release readiness: not ready until checklist, review, remediation, next-milestone planning, and release ceremony issues are complete or explicitly deferred
 
 ## Exit Criteria

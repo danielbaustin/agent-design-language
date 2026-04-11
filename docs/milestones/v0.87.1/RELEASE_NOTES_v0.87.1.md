@@ -35,7 +35,7 @@
 
 ### Proof, Review, And Release Discipline
 - Defined a substantial runtime demo program and reviewer entry surfaces for the milestone
-- Preserved explicit internal review, external review preparation, remediation, next-milestone planning, and release ceremony steps in the closeout tail
+- Preserved explicit internal review, external review, remediation, next-milestone planning, and release ceremony steps in the closeout tail
 
 ## Upgrade Notes
 - `v0.87.1` is expected to ship real runtime implementation and proof surfaces, so upgrade notes should be finalized from the actual landed behavior before release
