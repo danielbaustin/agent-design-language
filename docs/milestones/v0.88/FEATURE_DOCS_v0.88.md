@@ -3,7 +3,7 @@
 ## Metadata
 - Milestone: `v0.88`
 - Version: `v0.88`
-- Date: `2026-04-10`
+- Date: `2026-04-11`
 - Owner: `Daniel Austin`
 
 ## Purpose
@@ -13,22 +13,15 @@ This page defines the bounded public feature-doc package for `v0.88`. It is an i
 
 ## Scope Interpretation
 
-`v0.88` is the chronosense and temporal-substrate milestone.
+`v0.88` has two real tracked feature bands:
+- temporal / chronosense substrate
+- instinct / bounded-agency substrate
 
-The promoted package covers:
-- chronosense as a foundational cognitive substrate
-- temporal anchors and schema contracts
-- continuity and identity semantics tied to time
-- temporal query and retrieval behavior
-- commitments and deadlines as first-class temporal records
-- bounded temporal causality and explanation
-- execution-policy and cost semantics tied back to trace
-
-This package does not yet include:
-- cross-agent temporal alignment
-- timeline forks and counterfactuals
-- temporal accountability and social/governance interpretation
-- instinct, aptitude, or broader constitutional/governance systems planned for later milestones
+This package intentionally excludes:
+- historical aptitude planning copies
+- exploratory PHI metrics work
+- helper cluster maps and planning notes
+- later social/governance temporal systems
 
 ## Feature Index
 
@@ -39,10 +32,21 @@ This package does not yet include:
 | `features/CHRONOSENSE_AND_IDENTITY.md` | continuity, interruption, resumption, identity semantics | `WP-04` |
 | `features/TEMPORAL_QUERY_AND_RETRIEVAL.md` | time-aware retrieval and staleness-aware querying | `WP-05` |
 | `features/COMMITMENTS_AND_DEADLINES.md` | future obligations, deadline states, missed-commitment visibility | `WP-06` |
-| `features/TEMPORAL_CAUSALITY_AND_EXPLANATION.md` | bounded order/dependency/explanation surface | `WP-07` |
+| `features/TEMPORAL_CAUSALITY_AND_EXPLANATION.md` | bounded order / dependency / explanation surface | `WP-07` |
 | `features/ADL_COST_MODEL.md` | execution mode, realized cost, and economics | `WP-08` |
+| `features/INSTINCT_MODEL.md` | bounded instinct as a cognitive substrate | `WP-09` |
+| `features/INSTINCT_RUNTIME_SURFACE.md` | runtime declaration, influence, and proof surface for instinct | `WP-10` |
+
+## Local Planning Inputs Not Promoted
+
+The following remain local planning material and should not be treated as public `v0.88` feature commitments yet:
+- `.adl/docs/v0.88planning/APTITUDE_MODEL.md`
+- `.adl/docs/v0.88planning/PHI_METRICS_FOR_ADL.md`
+- `.adl/docs/v0.88planning/TEMPORAL_CLUSTER_MAP.md`
+- `.adl/docs/v0.88planning/RUNTIME_PROVIDER_AND_ECONOMICS_CLUSTER_MAP.md`
+- `.adl/docs/v0.88planning/WP_INSTINCT_AND_BOUNDED_AGENCY.md`
 
 ## Review Guidance
-- Treat `README.md`, `DESIGN_v0.88.md`, and `WBS_v0.88.md` as the milestone planning shell.
-- Treat the files in `features/` as the promoted feature surface for the current `v0.88` package boundary.
-- Treat contradictions between the planning shell and the promoted feature docs as defects to resolve before implementation planning advances.
+- Treat `README.md`, `VISION_v0.88.md`, `DESIGN_v0.88.md`, `WBS_v0.88.md`, and `SPRINT_v0.88.md` as the milestone planning shell.
+- Treat the files in `features/` as the canonical tracked feature surface.
+- Treat contradictions between the planning shell and the promoted feature docs as defects.

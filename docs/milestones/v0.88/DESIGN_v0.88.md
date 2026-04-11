@@ -3,58 +3,87 @@
 ## Metadata
 - Milestone: `v0.88`
 - Version: `v0.88`
-- Date: `2026-04-10`
+- Date: `2026-04-11`
 - Owner: `Daniel Austin`
-- Related issues: `#1527`, `#1579`
+- Related issues: `#1527`, `#1579`, `#1497`
 
 ## Purpose
-Define the milestone design boundary for the `v0.88` chronosense package.
+Define the milestone design boundary for the `v0.88` package.
 
 ## Problem Statement
 
-ADL has accumulated substantial planning around time, continuity, identity, and cost-aware execution, but until now that work has lived primarily in local planning docs. The tracked milestone shell did not expose a coherent public feature set, leaving `v0.88` hard to review and easy to misread as an empty placeholder milestone.
+The tracked `v0.88` milestone shell was seeded correctly, but it underrepresented the actual local planning package.
+
+That left two defects:
+- the tracked milestone read like a thin pre-execution shell instead of a coherent next-milestone package
+- real planned `v0.88` feature surfaces, especially instinct and bounded-agency docs, remained local-only even though they belong to the milestone boundary
+
+The design task for `v0.88` is therefore to define one bounded public package without sweeping in every exploratory planning note.
 
 ## Goals
-- define a bounded public `v0.88` package for chronosense and temporal substrate work
-- make temporal schema, continuity, retrieval, commitment, causality, and cost-policy surfaces reviewable in tracked docs
-- tie execution-policy and cost semantics back to trace-level reviewability
+- define one coherent public `v0.88` package for temporal / chronosense and instinct / bounded-agency work
+- make the tracked milestone shell match the intended scope of the promoted feature set
+- preserve the prior closeout pattern used in `v0.86` and `v0.87` instead of inventing a new process layer
+- keep local-only exploratory planning notes out of tracked canon unless they are ready to be treated as real milestone promises
 
 ## Non-Goals
-- final implementation sequencing for every downstream `v0.88` issue
-- broader governance, instinct, aptitude, or multi-agent society systems
-- later temporal features such as cross-agent alignment, forks, or accountability
+- promoting every file from `.adl/docs/v0.88planning/` into tracked docs
+- treating historical or exploratory planning copies as canonical feature docs
+- finalizing later-band work such as cross-agent temporal alignment, temporal accountability, or full aptitude benchmarking
+- claiming implementation completion before the `v0.88` issue wave exists
 
 ## Scope
 
 ### In scope
-- chronosense as foundational temporal self-location
-- canonical temporal schema and anchor contracts
-- continuity and identity semantics grounded in time
-- temporal query/retrieval and staleness-aware access
-- commitments and deadlines as persistent temporal records
-- bounded temporal causality and explanation
-- execution mode / compute policy and realized cost semantics
+- chronosense and temporal structure
+- continuity and identity semantics
+- temporal query and retrieval
+- commitments and deadlines
+- temporal causality and explanation
+- execution policy and cost model semantics
+- instinct model
+- instinct runtime surface
+- bounded-agency proof expectations tied back to instinct
 
 ### Out of scope
-- cross-agent temporal alignment
-- counterfactual branch/timeline semantics
-- full temporal accountability and reputation interpretation
-- broader higher-order constitutional and social systems
+- historical aptitude planning copies
+- exploratory PHI metrics as canonical milestone commitments
+- helper cluster-map docs
+- later social/governance temporal work
+- full persistent identity guarantees
 
 ## Proposed Design
 
-The promoted `v0.88` package is organized as one coherent temporal band:
+The promoted `v0.88` package is organized as two bounded feature bands.
 
-- `SUBSTANCE_OF_TIME.md` defines why chronosense matters
-- `TEMPORAL_SCHEMA_V01.md` defines the canonical temporal and execution-policy fields
-- `CHRONOSENSE_AND_IDENTITY.md` defines continuity and identity semantics
-- `TEMPORAL_QUERY_AND_RETRIEVAL.md` defines time-aware retrieval behavior
-- `COMMITMENTS_AND_DEADLINES.md` defines future obligations and deadline states
-- `TEMPORAL_CAUSALITY_AND_EXPLANATION.md` defines bounded explanatory causality
-- `ADL_COST_MODEL.md` defines execution mode, realized cost, and economics
+### Temporal / Chronosense Band
+- `SUBSTANCE_OF_TIME.md`
+- `TEMPORAL_SCHEMA_V01.md`
+- `CHRONOSENSE_AND_IDENTITY.md`
+- `TEMPORAL_QUERY_AND_RETRIEVAL.md`
+- `COMMITMENTS_AND_DEADLINES.md`
+- `TEMPORAL_CAUSALITY_AND_EXPLANATION.md`
+- `ADL_COST_MODEL.md`
+
+### Instinct / Bounded-Agency Band
+- `INSTINCT_MODEL.md`
+- `INSTINCT_RUNTIME_SURFACE.md`
+
+### Local Planning Inputs, Not Canonical Tracked Features
+- `APTITUDE_MODEL.md`
+- `PHI_METRICS_FOR_ADL.md`
+- `TEMPORAL_CLUSTER_MAP.md`
+- `RUNTIME_PROVIDER_AND_ECONOMICS_CLUSTER_MAP.md`
+- `WP_INSTINCT_AND_BOUNDED_AGENCY.md`
 
 ## Validation Plan
 - promoted docs exist under `docs/milestones/v0.88/features/`
-- `FEATURE_DOCS_v0.88.md` indexes the promoted set
-- milestone shell docs point to the promoted package truthfully
-- placeholder-heavy shell wording is replaced with bounded milestone truth
+- `FEATURE_DOCS_v0.88.md` indexes the promoted set truthfully
+- milestone shell docs no longer contradict the promoted package or the intended closeout pattern
+- tracked docs clearly separate canonical feature docs from local-only planning notes
+
+## Exit Criteria
+- goals and non-goals are explicit
+- tracked `v0.88` docs are internally coherent
+- feature-doc coverage matches intended milestone scope
+- the planning package is strong enough to seed the real issue wave without another structural rewrite

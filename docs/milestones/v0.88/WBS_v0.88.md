@@ -3,26 +3,42 @@
 ## Metadata
 - Milestone: `v0.88`
 - Version: `v0.88`
-- Date: `2026-04-10`
+- Date: `2026-04-11`
 - Owner: `Daniel Austin`
 
 ## WBS Summary
 
-`v0.88` is the chronosense and temporal-substrate milestone. The work breaks into one completed planning/package-establishment band, a set of core temporal feature bands, then the usual demo/review/release tail.
+`v0.88` delivers two bounded substrate bands:
+- temporal / chronosense
+- instinct / bounded agency
+
+After those feature bands, the milestone follows the same demo / quality / review / release tail used in `v0.86` and `v0.87`.
 
 ## Work Packages
 
 | ID | Work Package | Description | Deliverable | Dependencies | Issue |
 |---|---|---|---|---|---|
-| WP-01 | Planning shell + promoted feature package | seed the milestone shell and promote the bounded `v0.88` feature docs into tracked surfaces | milestone shell + feature-doc index + promoted docs | none | `#1527`, `#1579` |
+| WP-01 | Canonical planning package | reconcile the tracked `v0.88` shell, promoted feature index, and milestone structure so issue seeding can start from one truthful public surface | coherent milestone docs + promoted feature set | none | `#1527`, `#1579`, `#1497` |
 | WP-02 | Chronosense foundation | establish the conceptual chronosense substrate | `SUBSTANCE_OF_TIME.md` aligned work | `WP-01` | pending |
-| WP-03 | Temporal schema | define and implement temporal anchors and schema contracts | `TEMPORAL_SCHEMA_V01.md` aligned work | `WP-01` | pending |
-| WP-04 | Continuity and identity semantics | ground identity and resumption in temporal continuity | `CHRONOSENSE_AND_IDENTITY.md` aligned work | `WP-02`, `WP-03` | pending |
+| WP-03 | Temporal schema | define temporal anchors, clocks, and execution-policy trace hooks | `TEMPORAL_SCHEMA_V01.md` aligned work | `WP-01` | pending |
+| WP-04 | Continuity and identity semantics | ground continuity, interruption, resumption, and identity semantics in temporal structure | `CHRONOSENSE_AND_IDENTITY.md` aligned work | `WP-02`, `WP-03` | pending |
 | WP-05 | Temporal query and retrieval | make time-aware retrieval and staleness queryable | `TEMPORAL_QUERY_AND_RETRIEVAL.md` aligned work | `WP-03` | pending |
-| WP-06 | Commitments and deadlines | represent future obligations and missed commitments as first-class records | `COMMITMENTS_AND_DEADLINES.md` aligned work | `WP-03`, `WP-05` | pending |
-| WP-07 | Temporal causality and explanation | define bounded causal/explanatory review surfaces | `TEMPORAL_CAUSALITY_AND_EXPLANATION.md` aligned work | `WP-03`, `WP-05` | pending |
-| WP-08 | Execution policy and cost model | tie execution mode and realized cost back to trace | `ADL_COST_MODEL.md` aligned work | `WP-03` | pending |
-| WP-13 | Demo matrix + integration demos | run the demo/proof surface | validated demos | later planning | pending |
-| WP-14 | Coverage / quality gate | enforce milestone quality and coverage posture | green quality gate | `WP-13` | pending |
-| WP-15 | Docs + review pass | converge reviewer-facing docs against delivered proof | reviewer-ready package | `WP-13`, `WP-14` | pending |
-| WP-16 | Release ceremony | final validation, notes, tag, cleanup | release package | `WP-15` | pending |
+| WP-06 | Commitments and deadlines | represent future obligations and missed commitments as first-class temporal records | `COMMITMENTS_AND_DEADLINES.md` aligned work | `WP-03`, `WP-05` | pending |
+| WP-07 | Temporal causality and explanation | define bounded causal / explanatory review surfaces | `TEMPORAL_CAUSALITY_AND_EXPLANATION.md` aligned work | `WP-03`, `WP-05` | pending |
+| WP-08 | Execution policy and cost model | tie execution mode and realized cost back to trace reviewability | `ADL_COST_MODEL.md` aligned work | `WP-03` | pending |
+| WP-09 | Instinct model | define bounded instinct as an explicit cognitive substrate | `INSTINCT_MODEL.md` aligned work | `WP-01` | pending |
+| WP-10 | Instinct runtime surface and bounded agency hook | make instinct visible in runtime declaration, routing, prioritization, trace, and demo proof | `INSTINCT_RUNTIME_SURFACE.md` aligned work | `WP-09` | pending |
+| WP-11 | Demo matrix + integration demos | define and implement the primary proof surfaces for temporal and instinct bands | validated demos and reviewer-facing demo matrix | `WP-02` through `WP-10` | pending |
+| WP-12 | Coverage / quality gate | enforce milestone quality and coverage posture | green quality gate | `WP-11` | pending |
+| WP-13 | Docs + review pass | converge reviewer-facing docs against delivered proof | reviewer-ready package | `WP-11`, `WP-12` | pending |
+| WP-14 | Internal review | perform bounded internal review of milestone truth and proof surfaces | internal review record | `WP-13` | pending |
+| WP-15 | 3rd-party review | perform external review of the milestone package and capture findings | 3rd-party review record | `WP-13`, `WP-14` | pending |
+| WP-16 | Review findings remediation | resolve or explicitly defer accepted review findings | remediation record | `WP-14`, `WP-15` | pending |
+| WP-17 | Release ceremony | final validation, notes, tag, cleanup, and closeout record | release package | `WP-16` | pending |
+| WP-18 | Next milestone planning | prepare the next milestone planning package before `v0.88` closeout | next-milestone package | `WP-17` | pending |
+
+## Exit Criteria
+- every tracked `v0.88` feature doc maps to at least one WBS item
+- the instinct / bounded-agency band is no longer missing from tracked milestone truth
+- the release tail uses the normal `v0.86` / `v0.87` pattern with no extra invented steps
+- the planning package is strong enough to seed the real issue wave without another structural rewrite
