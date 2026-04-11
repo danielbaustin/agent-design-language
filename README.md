@@ -1,6 +1,6 @@
 # Agent Design Language (ADL)
 
-Agent Design Language (ADL) is a deterministic, contract-driven orchestration language for AI systems. It is designed for teams that want AI workflows to be reviewable, testable, reproducible, and auditable, with clear execution semantics and transparent runtime behavior.
+Agent Design Language (ADL) is a deterministic, contract-driven orchestration language for AI systems. It is built for teams that want AI workflows to be reviewable, testable, reproducible, and auditable, with clear execution semantics and transparent runtime behavior.
 
 ADL lets you define the core pieces of an AI system as structured artifacts:
 - providers
@@ -10,7 +10,7 @@ ADL lets you define the core pieces of an AI system as structured artifacts:
 - workflows
 - runs
 
-Those artifacts are schema-validated, compiled into a deterministic execution plan, and executed with explicit semantics for concurrency, failure handling, retries, signing, and artifact emission. Every run leaves behind stable review surfaces under `.adl/` so execution can be inspected, replayed, and reviewed with confidence.
+Those artifacts are schema-validated, compiled into a deterministic execution plan, and executed with explicit semantics for concurrency, failure handling, retries, signing, and artifact emission. Every run leaves behind stable review surfaces under `.adl/`, so execution can be inspected, replayed, and reviewed with confidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
@@ -18,7 +18,7 @@ Those artifacts are schema-validated, compiled into a deterministic execution pl
 
 ## Why ADL
 
-ADL focuses on making agent systems reliable, inspectable, and suitable for real engineering workflows.
+ADL focuses on making agent systems reliable, inspectable, and usable in real engineering workflows.
 
 ADL is built for readers and builders who care about:
 - deterministic orchestration with clear runtime behavior
@@ -39,39 +39,63 @@ ADL currently provides:
 - signing and verification surfaces for safer execution
 - remote-execution wiring without giving up local scheduler control
 - bounded scientific / Gödel-style execution loops with reviewable artifacts
-- demo and proof surfaces that are meant to be runnable, inspectable, and falsifiable
+- runnable demo and proof surfaces that are meant to be inspectable and falsifiable
 
 ## Quick Start
 
 From repo root:
 
 ```bash
-cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-fork-join-seq-run.adl.yaml --print-plan
+cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --print-plan
 ```
 
-This prints a deterministic fork/join execution plan with no provider runtime setup.
+This prints a deterministic one-step execution plan using the built-in mock provider profile, so it does not require credentials or local model setup.
 
-A second quick check:
+If you want the same minimal demo to actually run and emit trace/artifact output:
 
 ```bash
-cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-on-error-retry.adl.yaml --print-plan
+cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --run --trace --allow-unsigned
+```
+
+If you want the current milestone proof package:
+
+```bash
+bash adl/tools/demo_v0871_suite.sh
+```
+
+If you want the completed substrate milestone demo suite:
+
+```bash
+bash adl/tools/demo_v087_suite.sh
+```
+
+If you want a bounded local operational-skills demo:
+
+```bash
+bash adl/tools/demo_codex_ollama_operational_skills.sh --dry-run
+```
+
+If you want a bounded multi-agent discussion demo:
+
+```bash
+bash adl/tools/demo_v0871_multi_agent_discussion.sh
 ```
 
 ## Current Status
 
-- Current active milestone: **v0.87.1**
-- Recent stable milestone: **v0.8**
+- Active milestone: **v0.87.1**
+- Current crate version on `main`: **0.87.1**
 - Most recently completed milestone: **v0.87**
-- Previous closure milestone: **v0.86**
+- Previous completed milestone: **v0.86**
 - Project changelog: `CHANGELOG.md`
 
-ADL is in active development. The repository contains both implemented runtime surfaces and milestone/spec/planning documents. The milestone docs should be read as bounded engineering records: they distinguish what has shipped, what is under active review/closeout, what is demoable, and what is still planned.
+ADL is in active development. This repository contains both implemented runtime surfaces and milestone/spec/planning documents. Read the milestone docs as bounded engineering records: they distinguish what has shipped, what is under active review or closeout, what is demoable, and what is still planned.
 
 ## Recent Milestones
 
 ### v0.87.1 - Runtime Completion and Reviewer-Facing Proof Package
 
-v0.87.1 is the current active milestone. The implementation and bounded demo program are in place, and the remaining work is the docs/review/quality/release tail that makes the runtime package reviewable without oral reconstruction.
+v0.87.1 is the current active milestone. The implementation and bounded demo program are in place, and the remaining work is the docs, review, quality, and release tail that makes the runtime package reviewable without oral reconstruction.
 
 Key features:
 - runtime environment, lifecycle, execution-boundary, and resilience surfaces promoted into one canonical milestone package
@@ -89,7 +113,7 @@ Key features:
 - promoted feature docs and milestone docs reconciled against the real implementation and issue sequence
 - bounded demo and reviewer proof surfaces for trace, provider portability, shared ObsMem, skills, and control-plane behavior
 - completed Sprint 3 release-tail work for documentation convergence, review, quality gate, and release closeout
-- explicit handoff into `v0.87.1` for the runtime-completion milestone that now sits in the review/release tail
+- explicit handoff into `v0.87.1` for the runtime-completion milestone now moving through review and release closeout
 
 ### v0.86 - Bounded Cognitive System and Reviewable Proof Surfaces
 
