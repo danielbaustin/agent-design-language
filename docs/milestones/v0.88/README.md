@@ -35,6 +35,7 @@ Key outcomes:
 - a promoted feature-doc package that includes both temporal and instinct surfaces
 - a WBS and sprint plan that follow the same closeout pattern used in `v0.86` and `v0.87`
 - clear separation between tracked milestone canon and local-only exploratory planning notes
+- explicit scope closure so execution can start without further milestone reshaping
 
 ## Scope Summary
 
@@ -101,10 +102,11 @@ The milestone should not invent an extra process sprint beyond that established 
 
 ## Status
 
-Current status: **tracked planning package reconciled; execution issue wave pending**
+Current status: **tracked planning package reconciled; scope closed; execution issue wave pending**
 
 - Planning package: active
 - Promoted feature package: present
+- Scope shape: closed for `v0.88`; only accepted backlog pull-ins are the `#1614` temporal/deadline slice and `#1618` bounded comparative-demo direction
 - Issue wave: not yet seeded for the substantive `v0.88` work packages
 - Demo/review/release surfaces: seeded and aligned to the normal milestone pattern, but not yet populated with implementation evidence
 

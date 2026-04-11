@@ -26,6 +26,7 @@ The design task for `v0.88` is therefore to define one bounded public package wi
 - preserve the prior closeout pattern used in `v0.86` and `v0.87` instead of inventing a new process layer
 - keep local-only exploratory planning notes out of tracked canon unless they are ready to be treated as real milestone promises
 - ensure every major milestone claim maps to eventual runtime, trace, demo, or review surfaces
+- close scope cleanly so execution issue seeding can proceed without further milestone expansion
 
 ## Non-Goals
 - promoting every file from `.adl/docs/v0.88planning/` into tracked docs
@@ -52,6 +53,10 @@ The design task for `v0.88` is therefore to define one bounded public package wi
 - helper cluster-map docs
 - later social/governance temporal work
 - full persistent identity guarantees
+
+### Accepted bounded pull-ins
+- the temporal/deadline pressure slice from `SENSE_OF_URGENCY_AND_TASK_PRIORITIZATION.md` via backlog issue `#1614`
+- the bounded comparative-demo / positioning slice from `DEEP_AGENTS_AND_ADL.md` via backlog issue `#1618`
 
 ## Requirements
 
@@ -198,6 +203,7 @@ The expected milestone flow is:
 - milestone planning docs no longer contradict the promoted package or the intended closeout pattern
 - tracked docs clearly separate canonical feature docs from local-only planning notes
 - eventual implementation issues and demo issues can be derived directly from the WBS without additional scope rewrites
+- the planning package explicitly states that scope closure has been reached
 
 ## Exit Criteria
 - goals and non-goals are explicit

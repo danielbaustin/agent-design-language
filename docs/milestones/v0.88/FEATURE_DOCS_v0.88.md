@@ -25,6 +25,10 @@ This package intentionally excludes:
 - helper cluster maps and planning notes
 - later social/governance temporal systems
 
+Accepted supporting backlog pull-ins for execution planning:
+- `#1614` temporal/deadline pressure slice
+- `#1618` bounded comparative-demo / positioning slice
+
 ## Feature Index
 
 | Feature doc | Primary concern | Main WPs |
