@@ -25,7 +25,9 @@ use super::pr_cmd_prompt::{
     resolve_issue_scope_and_slug_from_local_state, validate_issue_prompt_exists,
     version_from_labels_csv, version_from_title,
 };
-use super::pr_cmd_validate::{validate_authored_prompt_surface, PromptSurfaceKind};
+use super::pr_cmd_validate::{
+    validate_authored_prompt_surface, validate_milestone_doc_drift_for_finish, PromptSurfaceKind,
+};
 use ::adl::control_plane::{
     card_output_path, resolve_cards_root, resolve_primary_checkout_root, sanitize_slug, IssueRef,
 };
@@ -415,6 +417,9 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
         bail!("finish: .gitignore changes detected. Revert them or re-run with --allow-gitignore.");
     }
 
+    let changed_paths = finish_changed_paths(&repo_root, has_uncommitted)?;
+    validate_milestone_doc_drift_for_finish(&repo_root, issue_ref.scope(), &changed_paths)?;
+
     let close_line = if parsed.no_close {
         None
     } else {
@@ -567,6 +572,35 @@ fn real_pr_closeout(args: &[String]) -> Result<()> {
         )
     );
     Ok(())
+}
+
+fn finish_changed_paths(repo_root: &Path, has_uncommitted: bool) -> Result<Vec<String>> {
+    let args = if has_uncommitted {
+        vec![
+            "-C",
+            path_str(repo_root)?,
+            "diff",
+            "--cached",
+            "--name-only",
+            "--diff-filter=ACMR",
+        ]
+    } else {
+        vec![
+            "-C",
+            path_str(repo_root)?,
+            "diff",
+            "--name-only",
+            "--diff-filter=ACMR",
+            "origin/main...HEAD",
+        ]
+    };
+    let out = run_capture("git", &args)?;
+    Ok(out
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty())
+        .map(ToString::to_string)
+        .collect())
 }
 
 fn print_json<T: Serialize>(value: &T) -> Result<()> {
