@@ -151,7 +151,93 @@ pub(super) fn closeout_closed_completed_issue_bundle(
     canonical_output: &Path,
 ) -> Result<()> {
     reconcile_closed_completed_issue_bundle(primary_root, issue_ref, canonical_output)?;
+    ensure_closed_completed_issue_bundle_truth(primary_root, issue_ref, canonical_output)
+        .with_context(|| {
+            format!(
+                "closeout: canonical closed-issue sor truth drift remains for issue #{}",
+                issue_ref.issue_number()
+            )
+        })?;
     prune_issue_worktree(repo_root, primary_root, issue_ref)
+}
+
+pub(super) fn ensure_closed_completed_issue_bundle_truth(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    canonical_output: &Path,
+) -> Result<()> {
+    let bundle_dir = issue_ref.task_bundle_dir_path(repo_root);
+    let duplicates = matching_task_bundle_dirs(repo_root, issue_ref)?;
+    let duplicate_paths = duplicates
+        .iter()
+        .filter(|path| **path != bundle_dir)
+        .map(|path| path.display().to_string())
+        .collect::<Vec<_>>();
+
+    let mut mismatches = Vec::new();
+    if !duplicate_paths.is_empty() {
+        mismatches.push(format!(
+            "duplicate or superseded task bundles present: {}",
+            duplicate_paths.join(", ")
+        ));
+    }
+    if !ensure_nonempty_file_path(canonical_output)? {
+        mismatches.push("missing canonical sor.md".to_string());
+    } else {
+        let text = fs::read_to_string(canonical_output)?;
+        check_required_field(&text, "Status:", "DONE", "Status", &mut mismatches);
+        check_required_field(
+            &text,
+            "- Integration state:",
+            "merged",
+            "Integration state",
+            &mut mismatches,
+        );
+        check_required_field(
+            &text,
+            "- Verification scope:",
+            "main_repo",
+            "Verification scope",
+            &mut mismatches,
+        );
+        check_required_field(
+            &text,
+            "- Worktree-only paths remaining:",
+            "none",
+            "Worktree-only paths remaining",
+            &mut mismatches,
+        );
+    }
+
+    if !mismatches.is_empty() {
+        bail!(
+            "canonical closed-issue sor truth drift at {}: {}",
+            canonical_output.display(),
+            mismatches.join("; ")
+        );
+    }
+    Ok(())
+}
+
+fn check_required_field(
+    text: &str,
+    prefix: &str,
+    expected: &str,
+    label: &str,
+    mismatches: &mut Vec<String>,
+) {
+    match text
+        .lines()
+        .find(|line| line.starts_with(prefix))
+        .map(|line| line[prefix.len()..].trim().to_string())
+    {
+        Some(actual) if actual == expected => {}
+        Some(actual) => mismatches.push(format!(
+            "{} expected '{}' but found '{}'",
+            label, expected, actual
+        )),
+        None => mismatches.push(format!("{} is missing", label)),
+    }
 }
 
 fn matching_task_bundle_dirs(repo_root: &Path, issue_ref: &IssueRef) -> Result<Vec<PathBuf>> {
@@ -597,6 +683,54 @@ mod tests {
         assert!(text.contains("- Integration state: merged"));
         assert!(text.contains("- Verification scope: main_repo"));
         assert!(text.contains("- Worktree-only paths remaining: none"));
+    }
+
+    #[test]
+    fn ensure_closed_completed_issue_bundle_truth_rejects_stale_fields_and_duplicates() {
+        let temp = temp_dir("adl-pr-lifecycle-truth-drift");
+        let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+        let canonical_dir = issue_ref.task_bundle_dir_path(&temp);
+        let duplicate_dir = temp
+            .join(".adl")
+            .join("v0.87")
+            .join("tasks")
+            .join("issue-1410__legacy-slug");
+        fs::create_dir_all(&canonical_dir).expect("canonical dir");
+        fs::create_dir_all(&duplicate_dir).expect("duplicate dir");
+        let output = canonical_dir.join("sor.md");
+        fs::write(
+            &output,
+            "Status: IN_PROGRESS\n- Integration state: pr_open\n- Verification scope: worktree\n- Worktree-only paths remaining: adl/src/foo.rs\n",
+        )
+        .expect("write stale output");
+
+        let err = ensure_closed_completed_issue_bundle_truth(&temp, &issue_ref, &output)
+            .expect_err("stale truth should fail");
+        let rendered = err.to_string();
+        assert!(rendered.contains("canonical closed-issue sor truth drift"));
+        assert!(rendered.contains("duplicate or superseded task bundles present"));
+        assert!(rendered.contains("Status expected 'DONE' but found 'IN_PROGRESS'"));
+        assert!(rendered.contains("Integration state expected 'merged' but found 'pr_open'"));
+        assert!(rendered.contains("Verification scope expected 'main_repo' but found 'worktree'"));
+        assert!(rendered
+            .contains("Worktree-only paths remaining expected 'none' but found 'adl/src/foo.rs'"));
+    }
+
+    #[test]
+    fn ensure_closed_completed_issue_bundle_truth_accepts_normalized_bundle() {
+        let temp = temp_dir("adl-pr-lifecycle-truth-clean");
+        let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+        let canonical_dir = issue_ref.task_bundle_dir_path(&temp);
+        fs::create_dir_all(&canonical_dir).expect("canonical dir");
+        let output = canonical_dir.join("sor.md");
+        fs::write(
+            &output,
+            "Status: DONE\n- Integration state: merged\n- Verification scope: main_repo\n- Worktree-only paths remaining: none\n",
+        )
+        .expect("write normalized output");
+
+        ensure_closed_completed_issue_bundle_truth(&temp, &issue_ref, &output)
+            .expect("normalized truth should pass");
     }
 
     #[test]

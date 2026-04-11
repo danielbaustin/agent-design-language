@@ -444,7 +444,25 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
     validate_authored_prompt_surface("finish", &stp_path, PromptSurfaceKind::Stp)?;
     validate_authored_prompt_surface("finish", &input_path, PromptSurfaceKind::Sip)?;
     validate_completed_sor(&repo_root, &output_path)?;
-    lifecycle::sync_completed_output_surfaces(&repo_root, &primary_root, &issue_ref, &output_path)?;
+    let canonical_output = lifecycle::sync_completed_output_surfaces(
+        &repo_root,
+        &primary_root,
+        &issue_ref,
+        &output_path,
+    )?;
+    if lifecycle::issue_is_closed_and_completed(parsed.issue, &repo)? {
+        lifecycle::ensure_closed_completed_issue_bundle_truth(
+            &primary_root,
+            &issue_ref,
+            &canonical_output,
+        )
+        .with_context(|| {
+            format!(
+                "finish: closed issue #{} has stale canonical sor truth; run closeout normalization before publication",
+                parsed.issue
+            )
+        })?;
+    }
 
     if !parsed.no_checks {
         run_batched_checks_rust(&repo_root)?;
