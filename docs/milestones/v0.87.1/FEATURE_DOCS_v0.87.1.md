@@ -22,6 +22,7 @@ Provide one canonical index for the promoted `v0.87.1` feature docs so reviewers
 - execution-boundary enforcement
 - trace alignment
 - local resilience and Shepherd preservation
+- bounded capability-aware local-model execution for the operational-skills demo path
 - operator and review surfaces
 
 It does not attempt to complete the richer higher-order systems planned for later milestones, including broader chronosense, identity, instinct, and bounded-agency layers beyond the runtime primitives required here.
@@ -34,6 +35,7 @@ It does not attempt to complete the richer higher-order systems planned for late
 | `features/ADL_RUNTIME_ENVIRONMENT_ARCHITECTURE.md` | runtime environment architecture and integration shape, including runtime reviewable trace proof paths | `WP-02`, `WP-04`, `WP-08` |
 | `features/AGENT_LIFECYCLE.md` | lifecycle states, transitions, and continuity rules | `WP-03`, `WP-04`, `WP-07` |
 | `features/EXECUTION_BOUNDARIES.md` | explicit execution-boundary enforcement and control points | `WP-03`, `WP-04`, `WP-06` |
+| `features/LOCAL_MODEL_CAPABILITY_AWARE_EXECUTION.md` | capability-aware local-model execution and semantic-tool fallback for the bounded operational-skills demo path | `WP-06`, `WP-13` |
 | `features/LOCAL_RUNTIME_RESILIENCE.md` | local failure handling, restartability, and resilience guarantees | `WP-05`, `WP-07` |
 | `features/SHEPHERD_RUNTIME_MODEL.md` | preservation, recovery, runtime stewardship model, and reviewer-facing recovery evidence | `WP-05`, `WP-07`, `WP-08` |
 
