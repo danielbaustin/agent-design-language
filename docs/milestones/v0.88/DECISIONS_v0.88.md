@@ -3,28 +3,13 @@
 ## Metadata
 - Milestone: `v0.88`
 - Version: `v0.88`
-- Date: `TBD`
+- Date: `2026-04-10`
 - Owner: `Daniel Austin`
 
-## Purpose
-Capture significant decisions (architecture, scope, process) at the time they are made.
+## Decisions
 
-## How To Use
-- Add one row per decision.
-- Prefer links to issues/PRs over long prose.
-- Keep status current: `accepted`, `rejected`, `deferred`, `superseded`.
-
-## Decision Log
-| ID | Decision | Status | Rationale | Alternatives | Impact | Link |
-|---|---|---|---|---|---|---|
-| D-01 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| D-02 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-
-## Open Questions
-- TBD during v0.88 planning (Owner: TBD during v0.88 planning) (Issue: TBD during v0.88 planning)
-- TBD during v0.88 planning (Owner: TBD during v0.88 planning) (Issue: TBD during v0.88 planning)
-
-## Exit Criteria
-- All milestone-critical decisions are logged with a rationale.
-- Deferred/rejected/superseded options are explicitly recorded.
-- Open questions have owners and tracking links.
+| ID | Decision | Why | Status | Date | Issue |
+|---|---|---|---|---|---|
+| D-01 | Consolidate `v0.88.1` back into `v0.88` | the temporal cost-policy follow-on was too small and conceptually belongs with the core temporal substrate | accepted | `2026-04-10` | local planning pass |
+| D-02 | Promote a bounded seven-doc `v0.88` feature package | the tracked milestone shell needed a real reviewer-visible package without sweeping in unrelated planning docs | accepted | `2026-04-10` | `#1579` |
+| D-03 | Treat execution policy as part of the temporal schema/cost story | cost must be interpretable in light of requested execution posture, not only raw spend | accepted | `2026-04-10` | `#1579` |

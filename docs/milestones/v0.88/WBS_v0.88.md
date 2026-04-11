@@ -3,63 +3,26 @@
 ## Metadata
 - Milestone: `v0.88`
 - Version: `v0.88`
-- Date: `TBD`
+- Date: `2026-04-10`
 - Owner: `Daniel Austin`
 
-## How To Use
-- Break work into independently-mergeable issues.
-- Keep each item measurable and testable.
-- Include deliverables + dependencies + issue links.
-- `WP-01` is **always** the milestone **design pass** (canonical docs + WBS + decisions + sprint plan + checklist).
-- Reserve the final WPs for the release tail in this order: `WP-13` demos, `WP-14` quality/coverage gate, `WP-15` docs/review convergence, `WP-16` release ceremony.
-
 ## WBS Summary
-TBD during v0.88 planning
+
+`v0.88` is the chronosense and temporal-substrate milestone. The work breaks into one completed planning/package-establishment band, a set of core temporal feature bands, then the usual demo/review/release tail.
 
 ## Work Packages
+
 | ID | Work Package | Description | Deliverable | Dependencies | Issue |
 |---|---|---|---|---|---|
-| WP-01 | Design pass (milestone docs + planning) | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-02 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-03 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-04 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-05 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-06 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-07 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-08 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-09 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-10 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-11 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-12 | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-13 | Demo matrix + integration demos | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-14 | Coverage / quality gate (ratchet + exclusions) | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-15 | Docs + review pass (repo-wide alignment) | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-| WP-16 | Release ceremony (final validation + tag + notes + cleanup) | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning | TBD during v0.88 planning |
-
-## Sequencing
-- Phase 1: TBD during v0.88 planning
-- Phase 2: TBD during v0.88 planning
-- Phase 3: TBD during v0.88 planning
-
-## Acceptance Mapping
-- WP-01 (Design pass) -> TBD during v0.88 planning
-- WP-02 -> TBD during v0.88 planning
-- WP-03 -> TBD during v0.88 planning
-- WP-04 -> TBD during v0.88 planning
-- WP-05 -> TBD during v0.88 planning
-- WP-06 -> TBD during v0.88 planning
-- WP-07 -> TBD during v0.88 planning
-- WP-08 -> TBD during v0.88 planning
-- WP-09 -> TBD during v0.88 planning
-- WP-10 -> TBD during v0.88 planning
-- WP-11 -> TBD during v0.88 planning
-- WP-12 -> TBD during v0.88 planning
-- WP-13 (Demos) -> TBD during v0.88 planning
-- WP-14 (Quality gate) -> TBD during v0.88 planning
-- WP-15 (Docs/review) -> TBD during v0.88 planning
-- WP-16 (Release ceremony) -> TBD during v0.88 planning
-
-## Exit Criteria
-- Every in-scope requirement maps to at least one WBS item.
-- Every WBS item has an owner, issue reference, and concrete deliverable.
-- Dependency order is explicit enough to execute deterministically.
+| WP-01 | Planning shell + promoted feature package | seed the milestone shell and promote the bounded `v0.88` feature docs into tracked surfaces | milestone shell + feature-doc index + promoted docs | none | `#1527`, `#1579` |
+| WP-02 | Chronosense foundation | establish the conceptual chronosense substrate | `SUBSTANCE_OF_TIME.md` aligned work | `WP-01` | pending |
+| WP-03 | Temporal schema | define and implement temporal anchors and schema contracts | `TEMPORAL_SCHEMA_V01.md` aligned work | `WP-01` | pending |
+| WP-04 | Continuity and identity semantics | ground identity and resumption in temporal continuity | `CHRONOSENSE_AND_IDENTITY.md` aligned work | `WP-02`, `WP-03` | pending |
+| WP-05 | Temporal query and retrieval | make time-aware retrieval and staleness queryable | `TEMPORAL_QUERY_AND_RETRIEVAL.md` aligned work | `WP-03` | pending |
+| WP-06 | Commitments and deadlines | represent future obligations and missed commitments as first-class records | `COMMITMENTS_AND_DEADLINES.md` aligned work | `WP-03`, `WP-05` | pending |
+| WP-07 | Temporal causality and explanation | define bounded causal/explanatory review surfaces | `TEMPORAL_CAUSALITY_AND_EXPLANATION.md` aligned work | `WP-03`, `WP-05` | pending |
+| WP-08 | Execution policy and cost model | tie execution mode and realized cost back to trace | `ADL_COST_MODEL.md` aligned work | `WP-03` | pending |
+| WP-13 | Demo matrix + integration demos | run the demo/proof surface | validated demos | later planning | pending |
+| WP-14 | Coverage / quality gate | enforce milestone quality and coverage posture | green quality gate | `WP-13` | pending |
+| WP-15 | Docs + review pass | converge reviewer-facing docs against delivered proof | reviewer-ready package | `WP-13`, `WP-14` | pending |
+| WP-16 | Release ceremony | final validation, notes, tag, cleanup | release package | `WP-15` | pending |

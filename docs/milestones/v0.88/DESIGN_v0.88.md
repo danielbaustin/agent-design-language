@@ -3,72 +3,58 @@
 ## Metadata
 - Milestone: `v0.88`
 - Version: `v0.88`
-- Date: `TBD`
+- Date: `2026-04-10`
 - Owner: `Daniel Austin`
-- Related issues: TBD during v0.88 planning
+- Related issues: `#1527`, `#1579`
 
 ## Purpose
-Define what we are building, why, and how we validate it — concisely, with links to issues/PRs.
+Define the milestone design boundary for the `v0.88` chronosense package.
 
 ## Problem Statement
-TBD during v0.88 planning
+
+ADL has accumulated substantial planning around time, continuity, identity, and cost-aware execution, but until now that work has lived primarily in local planning docs. The tracked milestone shell did not expose a coherent public feature set, leaving `v0.88` hard to review and easy to misread as an empty placeholder milestone.
 
 ## Goals
-- TBD during v0.88 planning
-- TBD during v0.88 planning
+- define a bounded public `v0.88` package for chronosense and temporal substrate work
+- make temporal schema, continuity, retrieval, commitment, causality, and cost-policy surfaces reviewable in tracked docs
+- tie execution-policy and cost semantics back to trace-level reviewability
 
 ## Non-Goals
-- TBD during v0.88 planning
-- TBD during v0.88 planning
+- final implementation sequencing for every downstream `v0.88` issue
+- broader governance, instinct, aptitude, or multi-agent society systems
+- later temporal features such as cross-agent alignment, forks, or accountability
 
 ## Scope
+
 ### In scope
-- TBD during v0.88 planning
-- TBD during v0.88 planning
+- chronosense as foundational temporal self-location
+- canonical temporal schema and anchor contracts
+- continuity and identity semantics grounded in time
+- temporal query/retrieval and staleness-aware access
+- commitments and deadlines as persistent temporal records
+- bounded temporal causality and explanation
+- execution mode / compute policy and realized cost semantics
 
 ### Out of scope
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-## Requirements
-### Functional
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-### Non-functional
-- Deterministic behavior and reproducible outputs.
-- Clear failure semantics and observability.
-- TBD during v0.88 planning
+- cross-agent temporal alignment
+- counterfactual branch/timeline semantics
+- full temporal accountability and reputation interpretation
+- broader higher-order constitutional and social systems
 
 ## Proposed Design
-### Overview
-TBD during v0.88 planning
 
-### Interfaces / Data contracts
-- TBD during v0.88 planning
-- TBD during v0.88 planning
+The promoted `v0.88` package is organized as one coherent temporal band:
 
-### Execution semantics
-TBD during v0.88 planning
-
-## Risks and Mitigations
-- Risk: TBD during v0.88 planning
-  - Mitigation: TBD during v0.88 planning
-- Risk: TBD during v0.88 planning
-  - Mitigation: TBD during v0.88 planning
-
-## Alternatives Considered
-- Option: TBD during v0.88 planning
-  - Tradeoff: TBD during v0.88 planning
-- Option: TBD during v0.88 planning
-  - Tradeoff: TBD during v0.88 planning
+- `SUBSTANCE_OF_TIME.md` defines why chronosense matters
+- `TEMPORAL_SCHEMA_V01.md` defines the canonical temporal and execution-policy fields
+- `CHRONOSENSE_AND_IDENTITY.md` defines continuity and identity semantics
+- `TEMPORAL_QUERY_AND_RETRIEVAL.md` defines time-aware retrieval behavior
+- `COMMITMENTS_AND_DEADLINES.md` defines future obligations and deadline states
+- `TEMPORAL_CAUSALITY_AND_EXPLANATION.md` defines bounded explanatory causality
+- `ADL_COST_MODEL.md` defines execution mode, realized cost, and economics
 
 ## Validation Plan
-- Checks/tests: TBD during v0.88 planning
-- Success metrics: TBD during v0.88 planning
-- Rollback/fallback: TBD during v0.88 planning
-
-## Exit Criteria
-- Goals/non-goals and scope boundaries are explicit.
-- Validation plan is actionable and referenced by the milestone checklist.
-- Major open questions are resolved or tracked in the decision log.
+- promoted docs exist under `docs/milestones/v0.88/features/`
+- `FEATURE_DOCS_v0.88.md` indexes the promoted set
+- milestone shell docs point to the promoted package truthfully
+- placeholder-heavy shell wording is replaced with bounded milestone truth
