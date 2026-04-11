@@ -1,4 +1,5 @@
 use super::*;
+use ::adl::control_plane::resolve_primary_checkout_root;
 use serde::Deserialize;
 use std::collections::BTreeSet;
 use std::path::Path;
@@ -154,12 +155,7 @@ pub(super) fn attach_pr_janitor(
     let command_path = std::env::var("ADL_PR_JANITOR_CMD")
         .ok()
         .filter(|value| !value.trim().is_empty())
-        .unwrap_or_else(|| {
-            repo_root
-                .join("adl/tools/attach_pr_janitor.sh")
-                .display()
-                .to_string()
-        });
+        .unwrap_or_else(|| helper_command_path(repo_root, "adl/tools/attach_pr_janitor.sh"));
     let output = Command::new(&command_path)
         .arg("--repo-root")
         .arg(repo_root)
@@ -191,6 +187,73 @@ pub(super) fn attach_pr_janitor(
         );
     }
     Ok(())
+}
+
+pub(super) fn attach_post_merge_closeout(
+    repo_root: &Path,
+    repo: &str,
+    issue: u32,
+    branch: &str,
+    pr_url: &str,
+) -> Result<()> {
+    if std::env::var("ADL_POST_MERGE_CLOSEOUT_DISABLE")
+        .ok()
+        .as_deref()
+        == Some("1")
+    {
+        return Ok(());
+    }
+
+    let command_path = std::env::var("ADL_POST_MERGE_CLOSEOUT_CMD")
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+        .unwrap_or_else(|| {
+            helper_command_path(repo_root, "adl/tools/attach_post_merge_closeout.sh")
+        });
+    let output = Command::new(&command_path)
+        .arg("--repo-root")
+        .arg(repo_root)
+        .arg("--repo")
+        .arg(repo)
+        .arg("--issue")
+        .arg(issue.to_string())
+        .arg("--branch")
+        .arg(branch)
+        .arg("--pr-url")
+        .arg(pr_url)
+        .output()
+        .with_context(|| {
+            format!("finish: failed to spawn post-merge closeout command '{command_path}'")
+        })?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        bail!(
+            "finish: post-merge closeout auto-attach failed for issue #{} and PR '{}': {}{}",
+            issue,
+            pr_url,
+            stderr.trim(),
+            if stdout.trim().is_empty() {
+                String::new()
+            } else {
+                format!(" (stdout: {})", stdout.trim())
+            }
+        );
+    }
+    Ok(())
+}
+
+fn helper_command_path(repo_root: &Path, relative: &str) -> String {
+    let direct = repo_root.join(relative);
+    if direct.is_file() {
+        return direct.display().to_string();
+    }
+    let primary_root = resolve_primary_checkout_root(repo_root, None);
+    let fallback = primary_root.join(relative);
+    if fallback.is_file() {
+        return fallback.display().to_string();
+    }
+    direct.display().to_string()
 }
 
 pub(super) fn issue_version(issue: u32, repo: &str) -> Result<Option<String>> {

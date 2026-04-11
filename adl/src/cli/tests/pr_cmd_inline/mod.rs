@@ -88,6 +88,10 @@ fn copy_bootstrap_support_files(repo: &Path) {
             tools_dir.join("check_no_tracked_adl_issue_record_residue.sh"),
         ),
         (
+            workspace_root.join("adl/tools/attach_post_merge_closeout.sh"),
+            tools_dir.join("attach_post_merge_closeout.sh"),
+        ),
+        (
             workspace_root.join("adl/templates/cards/input_card_template.md"),
             templates_dir.join("input_card_template.md"),
         ),

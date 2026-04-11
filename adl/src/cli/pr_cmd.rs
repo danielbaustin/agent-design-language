@@ -50,9 +50,9 @@ use self::git_support::{
 #[cfg(test)]
 use self::github::pr_has_closing_linkage;
 use self::github::{
-    attach_pr_janitor, current_pr_url, ensure_issue_metadata_parity, ensure_pr_closing_linkage,
-    format_open_pr_wave, gh_issue_create, gh_issue_edit_body, gh_issue_title, issue_version,
-    unresolved_milestone_pr_wave,
+    attach_post_merge_closeout, attach_pr_janitor, current_pr_url, ensure_issue_metadata_parity,
+    ensure_pr_closing_linkage, format_open_pr_wave, gh_issue_create, gh_issue_edit_body,
+    gh_issue_title, issue_version, unresolved_milestone_pr_wave,
 };
 
 const DEFAULT_VERSION: &str = "v0.86";
@@ -604,13 +604,14 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
     }
 
     attach_pr_janitor(
-        &repo_root,
+        &primary_root,
         &repo,
         parsed.issue,
         &branch,
         &pr_url,
         if parsed.ready { "ready" } else { "draft" },
     )?;
+    attach_post_merge_closeout(&primary_root, &repo, parsed.issue, &branch, &pr_url)?;
 
     if !parsed.no_open {
         let _ = run_status_allow_failure("open", &[&pr_url])?;
