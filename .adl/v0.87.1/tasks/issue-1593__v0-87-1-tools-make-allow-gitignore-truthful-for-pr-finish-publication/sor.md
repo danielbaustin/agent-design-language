@@ -38,30 +38,19 @@ Clarified the `pr finish` contract so `--allow-gitignore` only covers staged ign
 - Opened PR `#1606` stacked on PR `#1599` so the contract cleanup is reviewed against the runtime fix it describes.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: tracked repository paths are updated on the issue branch via PR 1606
+- Main-repo paths updated: `.adl/v0.87.1/tasks/issue-1593__v0-87-1-tools-make-allow-gitignore-truthful-for-pr-finish-publication/sor.md`
 - Worktree-only paths remaining: none
-- Integration state: pr_open
-- Verification scope: worktree
-- Integration method used: committed on the issue branch, pushed to origin, and opened as stacked PR `#1606`
+- Integration state: merged
+- Verification scope: main_repo
+- Integration method used: normalized the canonical root SOR directly on `main` after verifying the issue is already closed and linked to merged PR `#1606`
 - Verification performed:
-  - `git status --short` to confirm the branch was clean after the publish commit
-  - `git ls-files adl/src/cli/pr_cmd.rs adl/src/cli/tests/pr_cmd_inline/finish.rs adl/tools/pr.sh` to verify the tracked proof surface is present on the issue branch
+  - `gh issue view 1593 --json title,url,state,stateReason,closedByPullRequestsReferences`
+    - verified the issue is closed and captured the final closure metadata used for this normalization pass
+  - `gh pr view 1606 --json state,url`
+    - verified the linked closing PR remains available as the final publication surface
+  - `ls .adl/v0.87.1/tasks/issue-1593__v0-87-1-tools-make-allow-gitignore-truthful-for-pr-finish-publication/sor.md`
+    - verified the canonical root SOR path exists on the main repository path
 - Result: PASS
-
-Rules:
-- Final artifacts must exist in the main repository, not only in a worktree.
-- Do not leave docs, code, or generated artifacts only under a `adl-wp-*` worktree.
-- Prefer git-aware transfer into the main repo (`git checkout <branch> -- <path>` or commit + cherry-pick).
-- If artifacts exist only in the worktree, the task is NOT complete.
-- `Integration state` describes lifecycle state of the integrated artifact set, not where verification happened.
-- `Verification scope` describes where the verification commands were run.
-- `worktree_only` means at least one required path still exists only outside the main repository path.
-- `pr_open` should pair with truthful `Worktree-only paths remaining` content; list those paths when they still exist only in the worktree or say `none` only when the branch contents are fully represented in the main repository path.
-- If `Integration state` is `pr_open`, verify the actual proof artifacts rather than only the containing directory or card path.
-- If `Integration method used` is `direct write in main repo`, `Verification scope` should normally be `main_repo` unless the deviation is explained.
-- If `Verification scope` and `Integration method used` differ in a non-obvious way, explain the difference in one line.
-- Completed output records must not leave `Status` as `NOT_STARTED`.
-- By `pr finish`, `Status` should normally be `DONE` (or `FAILED` if the run failed and the record is documenting that failure).
 
 ## Validation
 - Validation commands and their purpose:
