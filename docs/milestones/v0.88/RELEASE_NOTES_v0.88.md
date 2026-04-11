@@ -28,6 +28,6 @@ Planning/package issues already represented:
 ## Scope Notes
 - Scope is closed for `v0.88`.
 - The only accepted supporting backlog pull-ins are `#1614` and `#1618`.
-- `#1609` remains the explicit follow-on backlog issue for deepening `Paper Sonata`
+- protected local follow-on planning remains for deepening `Paper Sonata`
   beyond the bounded `v0.88` slice.
 - The actual `WP-02` through `WP-20` implementation and closeout issue wave still needs to be created from the canonical planning package.

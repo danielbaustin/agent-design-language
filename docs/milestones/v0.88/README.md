@@ -103,7 +103,7 @@ Accepted supporting backlog pull-ins:
 - `#1618` bounded comparative-demo / positioning follow-on
 
 Related follow-on demo backlog:
-- `#1609` finish `Paper Sonata` beyond the bounded `v0.88` flagship slice
+- protected local follow-on planning deepens `Paper Sonata` beyond the bounded `v0.88` flagship slice
 
 ## Execution Model
 
