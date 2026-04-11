@@ -106,7 +106,7 @@ This is not meant to deliver unconstrained autonomy. It is meant to define:
 - the runtime / substrate completion work of `v0.87.1`
 - the later governance, identity, and social-system milestones
 
-It is a consolidation milestone, but it should still prepare real executable work, demos, and proof surfaces rather than stopping at shell documents.
+It is a consolidation milestone, but it should still prepare real executable work, demos, and proof surfaces rather than stopping at planning-package documents.
 
 ## Summary
 

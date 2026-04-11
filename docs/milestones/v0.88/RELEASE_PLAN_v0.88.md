@@ -13,7 +13,7 @@ The current tracked work for `v0.88` is:
 - canonical planning-package reconciliation
 - promoted temporal / chronosense feature package
 - promoted instinct / bounded-agency feature package
-- milestone-shell normalization to the standard ADL closeout pattern
+- milestone planning-package normalization to the standard ADL closeout pattern
 
 ## Intended Closeout Sequence
 
@@ -24,5 +24,5 @@ When implementation begins, `v0.88` should close using the same bounded sequence
 - internal review
 - 3rd-party review
 - review findings remediation
-- release ceremony
 - next milestone planning
+- release ceremony

@@ -18,7 +18,7 @@ After those feature bands, the milestone follows the same demo / quality / revie
 
 | ID | Work Package | Description | Deliverable | Dependencies | Issue |
 |---|---|---|---|---|---|
-| WP-01 | Canonical planning package | reconcile the tracked `v0.88` shell, promoted feature index, and milestone structure so issue seeding can start from one truthful public surface | coherent milestone docs + promoted feature set | none | `#1527`, `#1579`, `#1497` |
+| WP-01 | Canonical planning package | reconcile the tracked `v0.88` planning package, promoted feature index, and milestone structure so issue seeding can start from one truthful public surface | coherent milestone docs + promoted feature set | none | `#1527`, `#1579`, `#1497` |
 | WP-02 | Chronosense foundation | establish the conceptual chronosense substrate | `SUBSTANCE_OF_TIME.md` aligned work | `WP-01` | pending |
 | WP-03 | Temporal schema | define temporal anchors, clocks, and execution-policy trace hooks | `TEMPORAL_SCHEMA_V01.md` aligned work | `WP-01` | pending |
 | WP-04 | Continuity and identity semantics | ground continuity, interruption, resumption, and identity semantics in temporal structure | `CHRONOSENSE_AND_IDENTITY.md` aligned work | `WP-02`, `WP-03` | pending |
@@ -35,8 +35,8 @@ After those feature bands, the milestone follows the same demo / quality / revie
 | WP-15 | Internal review | perform bounded internal review of milestone truth and proof surfaces | internal review record | `WP-14` | pending |
 | WP-16 | 3rd-party review | perform external review of the milestone package and capture findings | 3rd-party review record | `WP-14`, `WP-15` | pending |
 | WP-17 | Review findings remediation | resolve or explicitly defer accepted review findings | remediation record | `WP-15`, `WP-16` | pending |
-| WP-18 | Release ceremony | final validation, notes, tag, cleanup, and closeout record | release package | `WP-17` | pending |
-| WP-19 | Next milestone planning | prepare the next milestone planning package before `v0.88` closeout | next-milestone package | `WP-18` | pending |
+| WP-18 | Next milestone planning | prepare the next milestone planning package before `v0.88` closeout | next-milestone package | `WP-17` | pending |
+| WP-19 | Release ceremony | final validation, notes, tag, cleanup, and closeout record | release package | `WP-17`, `WP-18` | pending |
 
 ## Exit Criteria
 - every tracked `v0.88` feature doc maps to at least one WBS item

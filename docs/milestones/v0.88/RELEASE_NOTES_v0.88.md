@@ -4,7 +4,7 @@
 
 Pre-release planning state.
 
-`v0.88` now has an established tracked planning shell and promoted feature-doc package, but it does not yet have implementation-complete release notes.
+`v0.88` now has an established tracked planning package and promoted feature-doc package, but it does not yet have implementation-complete release notes.
 
 ## Current Public Package
 - chronosense / substance-of-time foundation

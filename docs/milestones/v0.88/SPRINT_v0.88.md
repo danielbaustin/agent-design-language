@@ -42,7 +42,7 @@ Establish the canonical `v0.88` package and land the temporal / chronosense subs
 ### Exit Criteria
 - the tracked `v0.88` package is internally coherent
 - the full temporal band is represented in both docs and WBS
-- no placeholder-only shell language remains
+- no placeholder-only planning-package language remains
 
 ## Sprint 2
 
@@ -64,7 +64,7 @@ Execute the PHI metrics and instinct / bounded-agency bands and connect them to 
 ## Sprint 3
 
 ### Goal
-Close the milestone using the normal ADL pattern: demos, quality gate, docs/review, internal review, 3rd-party review, remediation, release ceremony, and next-milestone planning.
+Close the milestone using the normal ADL pattern: demos, quality gate, docs/review, internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony.
 
 ### Scope
 - demo matrix + integration demos
@@ -73,8 +73,8 @@ Close the milestone using the normal ADL pattern: demos, quality gate, docs/revi
 - internal review
 - 3rd-party review
 - review findings remediation
-- release ceremony
 - next milestone planning
+- release ceremony
 
 ### Exit Criteria
 - reviewer-facing docs match delivered proof surfaces

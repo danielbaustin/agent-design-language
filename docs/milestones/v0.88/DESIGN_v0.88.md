@@ -12,17 +12,17 @@ Define the milestone design boundary for the `v0.88` package.
 
 ## Problem Statement
 
-The tracked `v0.88` milestone shell was seeded correctly, but it underrepresented the actual local planning package.
+The tracked `v0.88` milestone docs were seeded correctly, but they underrepresented the actual local planning package.
 
 That left two defects:
-- the tracked milestone read like a thin pre-execution shell instead of a coherent next-milestone package
+- the tracked milestone read like a thin pre-execution package instead of a coherent next-milestone package
 - real planned `v0.88` feature surfaces, especially instinct and bounded-agency docs, remained local-only even though they belong to the milestone boundary
 
 The design task for `v0.88` is therefore to define one bounded public package without sweeping in every exploratory planning note.
 
 ## Goals
 - define one coherent public `v0.88` package for temporal / chronosense and instinct / bounded-agency work
-- make the tracked milestone shell match the intended scope of the promoted feature set
+- make the tracked milestone package match the intended scope of the promoted feature set
 - preserve the prior closeout pattern used in `v0.86` and `v0.87` instead of inventing a new process layer
 - keep local-only exploratory planning notes out of tracked canon unless they are ready to be treated as real milestone promises
 
@@ -80,7 +80,7 @@ The promoted `v0.88` package is organized as two bounded feature bands.
 ## Validation Plan
 - promoted docs exist under `docs/milestones/v0.88/features/`
 - `FEATURE_DOCS_v0.88.md` indexes the promoted set truthfully
-- milestone shell docs no longer contradict the promoted package or the intended closeout pattern
+- milestone planning docs no longer contradict the promoted package or the intended closeout pattern
 - tracked docs clearly separate canonical feature docs from local-only planning notes
 
 ## Exit Criteria

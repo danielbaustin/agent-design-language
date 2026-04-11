@@ -30,7 +30,7 @@ This milestone centers on:
 - bounded agency hooks that remain deterministic, inspectable, and policy-constrained
 
 Key outcomes:
-- one coherent tracked `v0.88` planning shell
+- one coherent tracked `v0.88` planning package
 - a promoted feature-doc package that includes both temporal and instinct surfaces
 - a WBS and sprint plan that follow the same closeout pattern used in `v0.86` and `v0.87`
 - clear separation between tracked milestone canon and local-only exploratory planning notes
@@ -92,7 +92,7 @@ Local planning docs intentionally not promoted yet:
 `v0.88` should follow the same closeout structure used in `v0.86` and `v0.87`:
 - bounded feature work packages first
 - demo and proof surfaces next
-- quality gate, docs/review convergence, internal review, 3rd-party review, remediation, release ceremony, and next-milestone planning last
+- quality gate, docs/review convergence, internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony last
 
 The milestone should not invent an extra process sprint beyond that established pattern.
 
@@ -100,7 +100,7 @@ The milestone should not invent an extra process sprint beyond that established 
 
 Current status: **tracked planning package reconciled; execution issue wave pending**
 
-- Planning shell: active
+- Planning package: active
 - Promoted feature package: present
 - Issue wave: not yet seeded for the substantive `v0.88` work packages
 - Demo/review/release surfaces: seeded and aligned to the normal milestone pattern, but not yet populated with implementation evidence

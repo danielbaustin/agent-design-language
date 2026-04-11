@@ -46,6 +46,6 @@ The following remain local planning material and should not be treated as public
 - `.adl/docs/v0.88planning/WP_INSTINCT_AND_BOUNDED_AGENCY.md`
 
 ## Review Guidance
-- Treat `README.md`, `VISION_v0.88.md`, `DESIGN_v0.88.md`, `WBS_v0.88.md`, and `SPRINT_v0.88.md` as the milestone planning shell.
+- Treat `README.md`, `VISION_v0.88.md`, `DESIGN_v0.88.md`, `WBS_v0.88.md`, and `SPRINT_v0.88.md` as the milestone planning package.
 - Treat the files in `features/` as the canonical tracked feature surface.
-- Treat contradictions between the planning shell and the promoted feature docs as defects.
+- Treat contradictions between the planning package and the promoted feature docs as defects.
