@@ -52,7 +52,7 @@ These docs describe worktree governance, large-module tracking, and related main
 
 - [Worktree Governance](worktree_governance.md)
 - [Rust Module Watch List](rust_module_watch_list.md)
-- [Public Task Records](../records/README.md)
+- [Historical Public Task Records](../records/README.md)
 
 ## Tooling Scripts and Utilities
 

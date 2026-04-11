@@ -82,7 +82,7 @@ The external `v0.86` review specifically named the following three files as
 oversized but justified by current complexity. That follow-up has now been
 partially discharged by the `v0.87.1` refactor wave:
 
-| Path | Current LoC | External review posture | 1289 disposition |
+| Path | Current LoC | External review posture | Current disposition |
 |---|---:|---|---|
 | `adl/src/cli/pr_cmd.rs` | 889 | non-blocking maintainability concern | materially reduced by `#1562`; keep on watch list at `Watch` to prevent scope regrowth |
 | `adl/src/demo.rs` | 855 | non-blocking maintainability concern | materially reduced by `#1561`; keep on watch list at `Watch` while the new façade stabilizes |

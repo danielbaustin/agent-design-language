@@ -157,8 +157,8 @@ Open questions:
 Current status: runtime foundations and demo proof surfaces landed; milestone convergence and release-tail gates remain active
 
 - Planning: canonical milestone docs, WBS, sprint, checklist, release plan, release notes, and feature-doc index all exist; remaining planning work is the release-tail closure package
-- Execution: Sprint 1 and Sprint 2 implementation/proof issues `#1435` through `#1462` are closed except for the still-open Sprint 2 tail issues `#1463` and `#1464`
-- Validation: demo matrix and runtime proof surfaces exist, with quality/review/release validation still pending in `#1463` through `#1498`
+- Execution: Sprint 1 and Sprint 2 implementation/proof issues `#1435` through `#1464` are closed
+- Validation: demo matrix and runtime proof surfaces exist, with review/remediation/planning/release validation still active in `#1494` through `#1498`
 - Release readiness: not ready until checklist, review, remediation, next-milestone planning, and release ceremony issues are complete or explicitly deferred
 
 ## Exit Criteria

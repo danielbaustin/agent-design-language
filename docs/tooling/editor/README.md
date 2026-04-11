@@ -42,7 +42,7 @@ The editor is intentionally simple:
   - summarizing whether the SOR is ready for handoff or needs iteration
   - checking proof, artifact verification, and follow-up coverage
   - generating a reviewer-facing note without inventing a second review system
-- keeps the canonical tracked destination visible as a task-bundle path under:
+- keeps the historical tracked demo destination visible as a v0.85 task-bundle path under:
   - `docs/records/v0.85/tasks/<task-id>/`
 
 ## What It Does Not Do Yet
@@ -58,11 +58,11 @@ The editor is intentionally simple:
 
 ## Why This Is Still Useful
 
-This first slice reduces structural editing fragility without pretending the full editor architecture already exists. It gives users a safer tracked surface than raw markdown-only editing while preserving the public task-bundle model, making the three-card bundle visible as one workspace, and exposing a thin validated path back into the existing control plane.
+This first slice reduces structural editing fragility without pretending the full editor architecture already exists. It preserves the historical v0.85 public task-bundle model as a tracked proof surface, makes the three-card bundle visible as one workspace, and exposes a thin validated path back into the control plane without claiming that `docs/records/` is still the live canonical workflow destination.
 
 ## Canonical Demo / Proof Surface
 
-The canonical tracked proof surface for this editor slice is:
+The historical tracked proof surface for this editor slice is:
 
 - `docs/tooling/editor/command_adapter.md`
 - `docs/tooling/editor/demo.md`
