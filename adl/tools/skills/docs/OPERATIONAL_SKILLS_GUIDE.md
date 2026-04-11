@@ -1120,14 +1120,45 @@ Do not use it for:
 
 Minimum:
 
-- `repo_root_or_target_path`
+- `repo_root`
+- structured invocation should use `skill_input_schema: repo_code_review.v1`
 
 Optional:
 
+- `target_path`
 - `branch`
 - `diff_base`
 - `changed_paths`
 - `review_depth`
+
+### Input Schema
+
+Canonical schema:
+
+- `adl/tools/skills/docs/REPO_CODE_REVIEW_SKILL_INPUT_SCHEMA.md`
+
+Schema id:
+
+- `repo_code_review.v1`
+
+Structured invocation shape:
+
+```yaml
+skill_input_schema: repo_code_review.v1
+mode: review_repository | review_path | review_branch | review_diff
+repo_root: /absolute/path
+target:
+  target_path: <path or null>
+  branch: <string or null>
+  diff_base: <string or null>
+  changed_paths:
+    - <path>
+policy:
+  review_depth: quick | standard | deep
+  include_generated_code: true | false
+  write_review_artifact: true | false
+  stop_after_review: true
+```
 
 ### Review Standard
 
@@ -1154,7 +1185,21 @@ This skill is findings-only and must not edit code.
 ### Example Invocation
 
 ```yaml
-Use $repo-code-review at /Users/daniel/git/agent-design-language/adl/tools/skills/repo-code-review/SKILL.md to review /Users/daniel/git/agent-design-language. Review the executable codebase first, include manifests and build configuration, run targeted local tests only when bounded and relevant, and write the review to .adl/reviews/<timestamp>-repo-review.md.
+Use $repo-code-review at /Users/daniel/git/agent-design-language/adl/tools/skills/repo-code-review/SKILL.md with:
+skill_input_schema: repo_code_review.v1
+mode: review_repository
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  target_path: null
+  branch: null
+  diff_base: null
+  changed_paths: []
+policy:
+  review_depth: standard
+  include_generated_code: false
+  write_review_artifact: true
+  stop_after_review: true
+Review the executable codebase first, include manifests and build configuration, run targeted local tests only when bounded and relevant, and write the review to .adl/reviews/<timestamp>-repo-review.md.
 ```
 
 ## Choosing The Right Skill

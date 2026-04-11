@@ -7,19 +7,63 @@ codex_compat:
     - "name"
     - "description"
 admission:
+  input_schema:
+    id: "repo_code_review.v1"
+    reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/REPO_CODE_REVIEW_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "review_repository"
+      - "review_path"
+      - "review_branch"
+      - "review_diff"
+    policy_fields:
+      - "review_depth"
+      - "include_generated_code"
+      - "write_review_artifact"
+      - "stop_after_review"
+    mode_requirements:
+      review_repository:
+        required_target_fields: []
+      review_path:
+        required_target_fields:
+          - "target_path"
+      review_branch:
+        required_target_fields:
+          - "branch"
+      review_diff:
+        required_target_fields:
+          - "diff_base"
   intent:
     - "repo_review"
     - "risk_assessment"
     - "release_readiness_review"
   required_inputs:
-    - "repo_root_or_target_path"
+    - "repo_root"
   optional_inputs:
+    - "target_path"
     - "branch"
     - "diff_base"
     - "changed_paths"
     - "review_depth"
+    - "include_generated_code"
+    - "write_review_artifact"
   stop_if_missing:
-    - "repo_root_or_target_path"
+    - "repo_root"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_repo_code_review.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "review_path_requires_target.target_path"
+    - "review_branch_requires_target.branch"
+    - "review_diff_requires_target.diff_base"
+    - "target.changed_paths_must_be_a_path_list_when_present"
+    - "policy.review_depth_must_be_explicit"
+    - "policy.stop_after_review_must_be_true"
 execution:
   mode: "findings_only"
   allow_code_edits: false
@@ -42,6 +86,7 @@ execution:
     - "largest_code_files"
     - "stateful_or_security_sensitive_code"
     - "tests"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
 boundaries:
   ignore_by_default:
     - "node_modules/**"
