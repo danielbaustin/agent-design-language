@@ -29,6 +29,11 @@ Accepted supporting backlog pull-ins for execution planning:
 - `#1614` temporal/deadline pressure slice
 - `#1618` bounded comparative-demo / positioning slice
 
+Planning/package issues that established this tracked feature set:
+- `#1527`
+- `#1579`
+- `#1497`
+
 ## Feature Index
 
 | Feature doc | Primary concern | Main WPs |
@@ -58,3 +63,4 @@ The following remain local planning material and should not be treated as public
 - Treat `README.md`, `VISION_v0.88.md`, `DESIGN_v0.88.md`, `WBS_v0.88.md`, and `SPRINT_v0.88.md` as the milestone planning package.
 - Treat the files in `features/` as the canonical tracked feature surface.
 - Treat contradictions between the planning package and the promoted feature docs as defects.
+- Treat supporting backlog issues as bounded inputs to execution planning, not as replacements for the main `v0.88` work-package issue wave.

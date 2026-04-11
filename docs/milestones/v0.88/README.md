@@ -91,6 +91,20 @@ Local planning docs intentionally not promoted yet:
 - later-band learning / skills planning: `.adl/docs/v0.89planning/APTITUDE_MODEL.md`
 - helper maps and planning notes: `.adl/docs/v0.88planning/TEMPORAL_CLUSTER_MAP.md`, `.adl/docs/v0.88planning/RUNTIME_PROVIDER_AND_ECONOMICS_CLUSTER_MAP.md`, `.adl/docs/v0.88planning/WP_INSTINCT_AND_BOUNDED_AGENCY.md`
 
+## Issue Map
+
+Tracked planning/package issues already reflected in this milestone:
+- `#1527` initial `v0.88` planning shell and milestone scaffolding
+- `#1579` promotion of the bounded tracked `v0.88` feature-doc package
+- `#1497` canonical next-milestone planning reconciliation and scope closure
+
+Accepted supporting backlog pull-ins:
+- `#1614` bounded temporal/deadline pressure follow-on
+- `#1618` bounded comparative-demo / positioning follow-on
+
+Related follow-on demo backlog:
+- `#1609` finish `Paper Sonata` beyond the bounded `v0.88` flagship slice
+
 ## Execution Model
 
 `v0.88` should follow the same closeout structure used in `v0.86` and `v0.87`:
@@ -107,7 +121,7 @@ Current status: **tracked planning package reconciled; scope closed; execution i
 - Planning package: active
 - Promoted feature package: present
 - Scope shape: closed for `v0.88`; only accepted backlog pull-ins are the `#1614` temporal/deadline slice and `#1618` bounded comparative-demo direction
-- Issue wave: not yet seeded for the substantive `v0.88` work packages
+- Issue wave: substantive `WP-02` through `WP-20` execution issues still need to be created from this package
 - Demo/review/release surfaces: seeded and aligned to the normal milestone pattern, but not yet populated with implementation evidence
 
 ## Exit Criteria

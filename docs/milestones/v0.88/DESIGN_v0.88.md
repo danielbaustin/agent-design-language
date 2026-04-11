@@ -203,6 +203,7 @@ The expected milestone flow is:
 - milestone planning docs no longer contradict the promoted package or the intended closeout pattern
 - tracked docs clearly separate canonical feature docs from local-only planning notes
 - eventual implementation issues and demo issues can be derived directly from the WBS without additional scope rewrites
+- the issue map distinguishes completed planning/package issues from the still-pending execution and closeout issue wave
 - the planning package explicitly states that scope closure has been reached
 
 ## Exit Criteria

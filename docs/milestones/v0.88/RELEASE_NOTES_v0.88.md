@@ -6,6 +6,11 @@ Pre-release planning state.
 
 `v0.88` now has an established tracked planning package and promoted feature-doc package, but it does not yet have implementation-complete release notes.
 
+Planning/package issues already represented:
+- `#1527`
+- `#1579`
+- `#1497`
+
 ## Current Public Package
 - chronosense / substance-of-time foundation
 - temporal schema and anchors
@@ -18,3 +23,8 @@ Pre-release planning state.
 - instinct model
 - instinct runtime surface
 - Paper Sonata flagship demo
+
+## Scope Notes
+- Scope is closed for `v0.88`.
+- The only accepted supporting backlog pull-ins are `#1614` and `#1618`.
+- The actual `WP-02` through `WP-20` implementation and closeout issue wave still needs to be created from the canonical planning package.

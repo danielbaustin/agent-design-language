@@ -19,25 +19,30 @@ After those feature bands, the milestone follows the same demo / quality / revie
 | ID | Work Package | Description | Deliverable | Dependencies | Issue |
 |---|---|---|---|---|---|
 | WP-01 | Canonical planning package | reconcile the tracked `v0.88` planning package, promoted feature index, and milestone structure so issue seeding can start from one truthful public surface | coherent milestone docs + promoted feature set | none | `#1527`, `#1579`, `#1497` |
-| WP-02 | Chronosense foundation | establish the conceptual chronosense substrate | `SUBSTANCE_OF_TIME.md` aligned work | `WP-01` | pending |
-| WP-03 | Temporal schema | define temporal anchors, clocks, and execution-policy trace hooks | `TEMPORAL_SCHEMA_V01.md` aligned work | `WP-01` | pending |
-| WP-04 | Continuity and identity semantics | ground continuity, interruption, resumption, and identity semantics in temporal structure | `CHRONOSENSE_AND_IDENTITY.md` aligned work | `WP-02`, `WP-03` | pending |
-| WP-05 | Temporal query and retrieval | make time-aware retrieval and staleness queryable | `TEMPORAL_QUERY_AND_RETRIEVAL.md` aligned work | `WP-03` | pending |
-| WP-06 | Commitments and deadlines | represent future obligations and missed commitments as first-class temporal records | `COMMITMENTS_AND_DEADLINES.md` aligned work | `WP-03`, `WP-05` | pending |
-| WP-07 | Temporal causality and explanation | define bounded causal / explanatory review surfaces | `TEMPORAL_CAUSALITY_AND_EXPLANATION.md` aligned work | `WP-03`, `WP-05` | pending |
-| WP-08 | Execution policy and cost model | tie execution mode and realized cost back to trace reviewability | `ADL_COST_MODEL.md` aligned work | `WP-03` | pending |
-| WP-09 | PHI-style integration metrics | define bounded engineering metrics for integration, irreducibility, coupling, and adaptive depth in ADL systems | `PHI_METRICS_FOR_ADL.md` aligned work | `WP-02` through `WP-08` | pending |
-| WP-10 | Instinct model | define bounded instinct as an explicit cognitive substrate | `INSTINCT_MODEL.md` aligned work | `WP-01` | pending |
-| WP-11 | Instinct runtime surface and bounded agency hook | make instinct visible in runtime declaration, routing, prioritization, trace, and demo proof | `INSTINCT_RUNTIME_SURFACE.md` aligned work | `WP-10` | pending |
-| WP-12 | Paper Sonata flagship demo | implement a bounded investor-/reviewer-facing multi-agent manuscript demo with durable artifacts and truthful runtime proof | `PAPER_SONATA_DEMO.md` aligned work plus bounded runner / fixtures | `WP-02` through `WP-11` | pending |
-| WP-13 | Demo matrix + integration demos | define and implement the primary proof surfaces for temporal, PHI, instinct, and Paper Sonata bands | validated demos and reviewer-facing demo matrix | `WP-02` through `WP-12` | pending |
-| WP-14 | Coverage / quality gate | enforce milestone quality and coverage posture | green quality gate | `WP-13` | pending |
-| WP-15 | Docs + review pass | converge reviewer-facing docs against delivered proof | reviewer-ready package | `WP-13`, `WP-14` | pending |
-| WP-16 | Internal review | perform bounded internal review of milestone truth and proof surfaces | internal review record | `WP-15` | pending |
-| WP-17 | 3rd-party review | perform external review of the milestone package and capture findings | 3rd-party review record | `WP-15`, `WP-16` | pending |
-| WP-18 | Review findings remediation | resolve or explicitly defer accepted review findings | remediation record | `WP-16`, `WP-17` | pending |
-| WP-19 | Next milestone planning | prepare the next milestone planning package before `v0.88` closeout | next-milestone package | `WP-18` | pending |
-| WP-20 | Release ceremony | final validation, notes, tag, cleanup, and closeout record | release package | `WP-18`, `WP-19` | pending |
+| WP-02 | Chronosense foundation | establish the conceptual chronosense substrate | `SUBSTANCE_OF_TIME.md` aligned work | `WP-01` | execution issue to be seeded |
+| WP-03 | Temporal schema | define temporal anchors, clocks, and execution-policy trace hooks | `TEMPORAL_SCHEMA_V01.md` aligned work | `WP-01` | execution issue to be seeded |
+| WP-04 | Continuity and identity semantics | ground continuity, interruption, resumption, and identity semantics in temporal structure | `CHRONOSENSE_AND_IDENTITY.md` aligned work | `WP-02`, `WP-03` | execution issue to be seeded |
+| WP-05 | Temporal query and retrieval | make time-aware retrieval and staleness queryable | `TEMPORAL_QUERY_AND_RETRIEVAL.md` aligned work | `WP-03` | execution issue to be seeded |
+| WP-06 | Commitments and deadlines | represent future obligations and missed commitments as first-class temporal records | `COMMITMENTS_AND_DEADLINES.md` aligned work | `WP-03`, `WP-05` | execution issue to be seeded; bounded pull-in `#1614` |
+| WP-07 | Temporal causality and explanation | define bounded causal / explanatory review surfaces | `TEMPORAL_CAUSALITY_AND_EXPLANATION.md` aligned work | `WP-03`, `WP-05` | execution issue to be seeded |
+| WP-08 | Execution policy and cost model | tie execution mode and realized cost back to trace reviewability | `ADL_COST_MODEL.md` aligned work | `WP-03` | execution issue to be seeded |
+| WP-09 | PHI-style integration metrics | define bounded engineering metrics for integration, irreducibility, coupling, and adaptive depth in ADL systems | `PHI_METRICS_FOR_ADL.md` aligned work | `WP-02` through `WP-08` | execution issue to be seeded |
+| WP-10 | Instinct model | define bounded instinct as an explicit cognitive substrate | `INSTINCT_MODEL.md` aligned work | `WP-01` | execution issue to be seeded |
+| WP-11 | Instinct runtime surface and bounded agency hook | make instinct visible in runtime declaration, routing, prioritization, trace, and demo proof | `INSTINCT_RUNTIME_SURFACE.md` aligned work | `WP-10` | execution issue to be seeded |
+| WP-12 | Paper Sonata flagship demo | implement a bounded investor-/reviewer-facing multi-agent manuscript demo with durable artifacts and truthful runtime proof | `PAPER_SONATA_DEMO.md` aligned work plus bounded runner / fixtures | `WP-02` through `WP-11` | execution issue to be seeded; follow-on backlog `#1609` |
+| WP-13 | Demo matrix + integration demos | define and implement the primary proof surfaces for temporal, PHI, instinct, and Paper Sonata bands | validated demos and reviewer-facing demo matrix | `WP-02` through `WP-12` | execution issue to be seeded; supporting pull-in `#1618` |
+| WP-14 | Coverage / quality gate | enforce milestone quality and coverage posture | green quality gate | `WP-13` | closeout issue to be seeded |
+| WP-15 | Docs + review pass | converge reviewer-facing docs against delivered proof | reviewer-ready package | `WP-13`, `WP-14` | closeout issue to be seeded |
+| WP-16 | Internal review | perform bounded internal review of milestone truth and proof surfaces | internal review record | `WP-15` | closeout issue to be seeded |
+| WP-17 | 3rd-party review | perform external review of the milestone package and capture findings | 3rd-party review record | `WP-15`, `WP-16` | closeout issue to be seeded |
+| WP-18 | Review findings remediation | resolve or explicitly defer accepted review findings | remediation record | `WP-16`, `WP-17` | closeout issue to be seeded |
+| WP-19 | Next milestone planning | prepare the next milestone planning package before `v0.88` closeout | next-milestone package | `WP-18` | closeout issue to be seeded |
+| WP-20 | Release ceremony | final validation, notes, tag, cleanup, and closeout record | release package | `WP-18`, `WP-19` | closeout issue to be seeded |
+
+Issue-column note:
+- `WP-01` is already represented by tracked planning/package issues.
+- `WP-02` through `WP-20` intentionally await the real execution and closeout issue wave.
+- `#1614`, `#1618`, and `#1609` are supporting backlog items, not substitutes for the milestone's main work-package issues.
 
 ## Exit Criteria
 - every tracked `v0.88` feature doc maps to at least one WBS item
