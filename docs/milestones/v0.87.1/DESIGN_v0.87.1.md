@@ -54,7 +54,7 @@ This milestone implements runtime completion as a real, bounded system surface. 
 - review contract: demos, quality-gate surfaces, and review artifacts must be sufficient for internal and external review
 
 ### Execution semantics
-This milestone is executed as a large implementation-and-proof milestone. Work proceeds by completing runtime surfaces, proving them through a bounded demo program, converging docs and review surfaces, then closing with internal review, external review preparation, remediation, release, and next-milestone handoff.
+This milestone is executed as a large implementation-and-proof milestone. Work proceeds by completing runtime surfaces, proving them through a bounded demo program, converging docs and review surfaces, then closing with internal review, external review, remediation, release, and next-milestone handoff.
 
 ## Risks and Mitigations
 - Risk: runtime surfaces land piecemeal without one coherent integrated path
