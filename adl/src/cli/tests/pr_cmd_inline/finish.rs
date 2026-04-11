@@ -71,7 +71,7 @@ fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
 
 #[test]
 fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-create");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -240,7 +240,7 @@ fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
 
 #[test]
 fn real_pr_finish_syncs_completed_output_to_root_bundle_and_cards_surface() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-sync-output");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -429,7 +429,7 @@ fn real_pr_finish_syncs_completed_output_to_root_bundle_and_cards_surface() {
 
 #[test]
 fn real_pr_finish_accepts_primary_checkout_issue_prompt_without_worktree_local_copy() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-primary-prompt");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -619,7 +619,7 @@ fn real_pr_finish_accepts_primary_checkout_issue_prompt_without_worktree_local_c
 
 #[test]
 fn real_pr_finish_updates_existing_pr_and_marks_ready() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-edit");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -778,7 +778,7 @@ fn real_pr_finish_updates_existing_pr_and_marks_ready() {
 
 #[test]
 fn finish_helper_paths_cover_nonempty_and_staged_checks() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-finish-helpers");
     init_git_repo(&repo);
     assert!(Command::new("git")
@@ -831,7 +831,7 @@ fn finish_helper_paths_cover_nonempty_and_staged_checks() {
 
 #[test]
 fn finish_helper_paths_cover_ahead_count_and_batch_checks() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-batch-checks");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -946,7 +946,7 @@ fn finish_helper_paths_cover_ahead_count_and_batch_checks() {
 
 #[test]
 fn finish_helper_paths_cover_pr_lookup_and_closing_linkage() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-gh-helpers");
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
@@ -1003,7 +1003,7 @@ fn finish_helper_paths_cover_pr_lookup_and_closing_linkage() {
 
 #[test]
 fn real_pr_finish_rejects_main_and_no_changes_paths() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-errors");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -1158,7 +1158,7 @@ fn real_pr_finish_rejects_main_and_no_changes_paths() {
 
 #[test]
 fn real_pr_finish_rejects_not_started_output_card_before_publication() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-not-started");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");

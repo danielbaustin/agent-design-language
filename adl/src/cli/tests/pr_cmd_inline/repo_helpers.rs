@@ -1,8 +1,60 @@
 use super::*;
 
 #[test]
+fn issue_create_repo_requires_github_origin_remote() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-create-repo-guard");
+    assert!(Command::new("git")
+        .arg("init")
+        .arg("-q")
+        .current_dir(&repo)
+        .status()
+        .expect("git init")
+        .success());
+
+    let err = issue_create_repo(&repo).expect_err("missing origin should fail");
+    assert!(err
+        .to_string()
+        .contains("refusing to infer the GitHub issue target from ambient gh context"));
+
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "add",
+            "origin",
+            "https://gitlab.example.com/example/repo.git"
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote add")
+        .success());
+
+    let err = issue_create_repo(&repo).expect_err("non-github origin should fail");
+    assert!(err
+        .to_string()
+        .contains("refusing to infer the GitHub issue target from ambient gh context"));
+
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            "https://github.com/example/repo.git"
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+
+    assert_eq!(
+        issue_create_repo(&repo).expect("github origin"),
+        "example/repo"
+    );
+}
+
+#[test]
 fn default_repo_falls_back_to_local_name_when_remote_and_gh_are_unavailable() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-default-repo-fallback");
     assert!(Command::new("git")
         .arg("init")
@@ -40,7 +92,7 @@ fn default_repo_falls_back_to_local_name_when_remote_and_gh_are_unavailable() {
 
 #[test]
 fn default_repo_uses_gh_repo_when_remote_is_unparseable() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-default-repo-gh");
     assert!(Command::new("git")
         .arg("init")
@@ -75,7 +127,7 @@ fn default_repo_uses_gh_repo_when_remote_is_unparseable() {
 
 #[test]
 fn fetch_origin_main_with_fallback_reuses_local_origin_main_and_errors_when_missing() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-fetch-fallback");
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
@@ -106,7 +158,7 @@ fn fetch_origin_main_with_fallback_reuses_local_origin_main_and_errors_when_miss
 
 #[test]
 fn ensure_worktree_for_branch_rejects_branch_checked_out_elsewhere() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-worktree-conflict");
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
@@ -130,7 +182,7 @@ fn ensure_worktree_for_branch_rejects_branch_checked_out_elsewhere() {
 
 #[test]
 fn ensure_local_branch_exists_covers_existing_remote_and_new_branch_paths() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-ensure-branch");
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
@@ -163,7 +215,7 @@ fn ensure_local_branch_exists_covers_existing_remote_and_new_branch_paths() {
 
 #[test]
 fn issue_version_prefers_labels_and_falls_back_to_title() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-issue-version");
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
@@ -196,7 +248,7 @@ fn issue_version_prefers_labels_and_falls_back_to_title() {
 
 #[test]
 fn ensure_source_issue_prompt_replaces_existing_bootstrap_stub_when_github_body_is_authored() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-replace-bootstrap-stub");
     init_git_repo(&repo);
 
@@ -266,7 +318,7 @@ fn ensure_source_issue_prompt_replaces_existing_bootstrap_stub_when_github_body_
 
 #[test]
 fn ensure_source_issue_prompt_preserves_authored_front_matter_from_github_body() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-preserve-authored-front-matter");
     init_git_repo(&repo);
 
@@ -315,7 +367,7 @@ fn ensure_source_issue_prompt_preserves_authored_front_matter_from_github_body()
 
 #[test]
 fn current_pr_url_filters_empty_and_null_results() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-current-url");
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
@@ -355,7 +407,7 @@ fn current_pr_url_filters_empty_and_null_results() {
 
 #[test]
 fn branch_checked_out_worktree_path_returns_none_without_match() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-worktree-none");
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
@@ -379,7 +431,7 @@ fn branch_checked_out_worktree_path_returns_none_without_match() {
 
 #[test]
 fn ensure_worktree_for_branch_reuses_matching_path_and_creates_new_one() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-worktree-reuse-create");
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
@@ -442,7 +494,7 @@ fn resolve_issue_prompt_path_accepts_legacy_issue_bodies_location() {
 
 #[test]
 fn real_pr_start_rejects_missing_slug_or_empty_sanitized_title_in_no_fetch_mode() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-start-preconditions");
     init_git_repo(&repo);
     let prev_dir = env::current_dir().expect("cwd");
@@ -474,7 +526,7 @@ fn real_pr_start_rejects_missing_slug_or_empty_sanitized_title_in_no_fetch_mode(
 
 #[test]
 fn real_pr_ready_accepts_started_issue_when_output_branch_is_bootstrap_placeholder() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-ready-branch-placeholder");
     let origin = repo.join("origin.git");
     init_git_repo(&repo);
@@ -636,7 +688,7 @@ fn bootstrap_stub_reason_detects_issue_prompt_and_sip_templates() {
 fn ensure_git_metadata_writable_rejects_unwritable_git_dir() {
     use std::os::unix::fs::PermissionsExt;
 
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-git-metadata-write");
     init_git_repo(&repo);
     let prev_dir = env::current_dir().expect("cwd");
@@ -677,7 +729,7 @@ fn ensure_git_metadata_writable_rejects_unwritable_git_dir() {
 
 #[test]
 fn ensure_bootstrap_cards_creates_bundle_and_compat_links() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-bootstrap-cards");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
@@ -735,7 +787,7 @@ fn ensure_bootstrap_cards_creates_bundle_and_compat_links() {
 
 #[test]
 fn ensure_bootstrap_cards_rewrites_existing_bootstrap_stub_input_card() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-bootstrap-cards-rewrite");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
