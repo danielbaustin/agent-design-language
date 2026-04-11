@@ -19,7 +19,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `archive_run_artifacts.sh`: dry-run/apply helper that inventories local run roots, copies unique run artifacts into `.adl/trace-archive/milestones/<milestone>/runs/`, and can move archived active `.adl/runs` entries into `.adl/trace-archive/source-roots/`.
 - `adl tooling ...`: Rust-owned tooling surface for prompt/card/review validation helpers, with legacy wrapper scripts preserved at the historical `adl/tools/*` paths.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
-- `batched_checks.sh`, `preflight_review.sh`: quality/preflight checks.
+- `batched_checks.sh`, `preflight_review.sh`: quality/preflight checks, including the repo-code-review skill contract guard.
 - `enforce_coverage_gates.sh`: deterministic coverage threshold enforcement (workspace + per-file).
 - `report_large_rust_modules.sh`: non-blocking Rust implementation-module size report for maintainability review.
 - `open_artifact.sh`: convenience opener for cards/reports.
