@@ -3,7 +3,7 @@
 ## Metadata
 - Milestone: `v0.88`
 - Sprint sequence: `v0.88-s1`, `v0.88-s2`, `v0.88-s3`
-- Start date: `2026`
+- Start date: `TBD (execution not started)`
 - End date: `TBD`
 - Owner: `Daniel Austin`
 
@@ -20,9 +20,9 @@ This keeps the closeout flow consistent with `v0.86` and `v0.87`.
 
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
-| `v0.88-s1` | lock canonical milestone truth and execute the temporal substrate | `WP-01` through `WP-08` | planning package ready; execution issues pending |
-| `v0.88-s2` | execute PHI metrics, instinct / bounded-agency work, and the Paper Sonata flagship demo | `WP-09`, `WP-10`, `WP-11`, `WP-12`, `WP-13` | planning only |
-| `v0.88-s3` | converge docs, quality, review, release, and next-milestone planning | `WP-14` through `WP-20` | planning only |
+| `v0.88-s1` | lock canonical milestone truth and execute the temporal substrate | `WP-01` through `WP-08` | `WP-01` complete; execution issues pending for the rest |
+| `v0.88-s2` | execute PHI metrics, instinct / bounded-agency work, and the Paper Sonata flagship demo | `WP-09`, `WP-10`, `WP-11`, `WP-12`, `WP-13` | not started; issue seeding next |
+| `v0.88-s3` | converge docs, quality, review, release, and next-milestone planning | `WP-14` through `WP-20` | not started; follows implementation and demo proof |
 
 ## Sprint 1
 

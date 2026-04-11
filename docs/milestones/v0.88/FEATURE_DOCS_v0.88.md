@@ -29,6 +29,9 @@ Accepted supporting backlog pull-ins for execution planning:
 - `#1614` temporal/deadline pressure slice
 - `#1618` bounded comparative-demo / positioning slice
 
+Related bounded demo follow-on retained in backlog:
+- `#1609` finish `Paper Sonata` beyond the initial `v0.88` flagship slice
+
 Planning/package issues that established this tracked feature set:
 - `#1527`
 - `#1579`
@@ -64,3 +67,4 @@ The following remain local planning material and should not be treated as public
 - Treat the files in `features/` as the canonical tracked feature surface.
 - Treat contradictions between the planning package and the promoted feature docs as defects.
 - Treat supporting backlog issues as bounded inputs to execution planning, not as replacements for the main `v0.88` work-package issue wave.
+- Treat the feature docs as engineering commitments: each one should eventually resolve to code, tests, artifacts, demos, or explicit defer records rather than lingering as standalone design prose.

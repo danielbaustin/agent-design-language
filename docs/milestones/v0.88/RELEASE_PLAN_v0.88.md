@@ -10,10 +10,10 @@
 `v0.88` is not in release-tail execution yet.
 
 The current tracked work for `v0.88` is:
-- canonical planning-package reconciliation
+- canonical milestone reconciliation
 - promoted temporal / chronosense feature package
 - promoted instinct / bounded-agency feature package
-- milestone planning-package normalization to the standard ADL closeout pattern
+- milestone closeout structure aligned to the standard ADL pattern
 
 ## Purpose
 

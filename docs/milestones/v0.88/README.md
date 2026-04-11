@@ -121,7 +121,7 @@ Current status: **tracked planning package reconciled; scope closed; execution i
 - Planning package: active
 - Promoted feature package: present
 - Scope shape: closed for `v0.88`; only accepted backlog pull-ins are the `#1614` temporal/deadline slice and `#1618` bounded comparative-demo direction
-- Issue wave: substantive `WP-02` through `WP-20` execution issues still need to be created from this package
+- Issue wave: substantive `WP-02` through `WP-20` work-package issues still need to be created from this package, and they must promise real code, tests, artifacts, or demos rather than more scope-shaping work
 - Demo/review/release surfaces: seeded and aligned to the normal milestone pattern, but not yet populated with implementation evidence
 
 ## Exit Criteria
