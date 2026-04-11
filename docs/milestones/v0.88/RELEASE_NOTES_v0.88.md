@@ -1,57 +1,16 @@
 # Release Notes - v0.88
 
-## Metadata
-- Product: `ADL`
-- Version: `v0.88`
-- Release date: `TBD`
-- Tag: `v0.88`
+## Status
 
-## How To Use
-- Keep statements implementation-accurate and test-validated.
-- Prefer concise bullets over marketing language.
-- Explicitly separate shipped behavior from "What's Next."
+Pre-release planning state.
 
-# `ADL` `v0.88` Release Notes
+`v0.88` has an established tracked milestone shell and promoted feature-doc package, but it does not yet have implementation-complete release notes.
 
-## Summary
-TBD during v0.88 planning
-
-## Highlights
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-## What's New In Detail
-
-### Area TBD 1
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-### Area TBD 2
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-### Area TBD 3
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-## Upgrade Notes
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-## Known Limitations
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-## Validation Notes
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-## What's Next
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-## Exit Criteria
-- Notes reflect only shipped behavior.
-- Known limitations and future work are explicitly separated.
-- Final text is ready to paste into GitHub Release UI without further editing.
+## Current Public Package
+- chronosense / substance-of-time foundation
+- temporal schema and anchors
+- continuity and identity semantics
+- temporal query and retrieval
+- commitments and deadlines
+- temporal causality and explanation
+- execution policy and cost model

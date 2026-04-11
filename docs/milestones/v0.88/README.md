@@ -3,49 +3,46 @@
 ## Metadata
 - Milestone: `v0.88`
 - Version: `v0.88`
-- Date: `TBD`
+- Date: `2026-04-10`
 - Owner: `Daniel Austin`
 
 ## Purpose
-Provide a single entry point for the milestone: what it is, why it matters, what is included, and how to navigate the canonical documents and artifacts.
-
-## How To Use
-- Start here before reading individual milestone documents.
-- Use this README to locate the canonical design, execution, and validation surfaces.
-- Keep this document concise and navigational; detailed content belongs in the linked docs.
-- Keep links up to date as files move or are renamed.
+Provide the public tracked entry point for the `v0.88` milestone.
 
 ## Overview
 
-`v0.88` represents the stage where `ADL` moves from `TBD during v0.88 planning` to `TBD during v0.88 planning`.
+`v0.88` is the chronosense milestone for `ADL`.
+
+It promotes the first coherent temporal-substrate package into the tracked milestone surface. The milestone defines how ADL should reason about temporal continuity, represent time explicitly in trace, connect identity to continuity, and carry execution-policy / cost semantics as part of a reviewable runtime model.
 
 This milestone focuses on:
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-Key outcomes:
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-- TBD during v0.88 planning
+- chronosense as a structural requirement for agency and continuity
+- temporal schema and anchor contracts
+- time-aware retrieval, commitments, and bounded causal explanation
+- execution-policy and cost semantics tied back to trace reviewability
 
 ## Scope Summary
 
 ### In scope
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-- TBD during v0.88 planning
+- chronosense and temporal self-location as foundational cognitive substrate
+- temporal anchors, clocks, and execution-policy trace hooks
+- continuity and identity semantics grounded in time
+- temporal query and retrieval behavior
+- commitment/deadline lifecycle semantics
+- bounded temporal causality and explanation
+- execution-mode / cost-model semantics
 
 ### Out of scope
-- TBD during v0.88 planning
-- TBD during v0.88 planning
+- cross-agent temporal alignment
+- timeline forks and counterfactual reasoning
+- temporal accountability, trust, and broader social/governance interpretation
+- instinct, aptitude, and later constitutional/governance systems
 
 ## Document Map
 
-Canonical milestone documents:
-
 - Vision: `docs/milestones/v0.88/VISION_v0.88.md`
 - Design: `docs/milestones/v0.88/DESIGN_v0.88.md`
+- Feature index: `docs/milestones/v0.88/FEATURE_DOCS_v0.88.md`
 - Work Breakdown Structure (WBS): `docs/milestones/v0.88/WBS_v0.88.md`
 - Sprint plan: `docs/milestones/v0.88/SPRINT_v0.88.md`
 - Decisions log: `docs/milestones/v0.88/DECISIONS_v0.88.md`
@@ -54,77 +51,11 @@ Canonical milestone documents:
 - Release plan / process: `docs/milestones/v0.88/RELEASE_PLAN_v0.88.md`
 - Release notes: `docs/milestones/v0.88/RELEASE_NOTES_v0.88.md`
 
-Supporting / domain-specific docs:
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-- TBD during v0.88 planning
+## Current Status
 
-## Execution Model
+Current status: `promoted feature package; implementation planning still in progress`
 
-This milestone is executed as a sequence of work packages (WPs):
-
-- WP-01: Design pass (docs + planning)
-- WP-02 - WP-12: Feature and system work
-- WP-13: Demo matrix and integration demos
-- WP-14: Coverage / quality gate
-- WP-15: Docs and review convergence
-- WP-16: Release ceremony
-
-Execution expectations:
-- Each WP is tracked by an issue and implemented via PRs.
-- Each issue produces structured artifacts (input/output cards, reports).
-- All work merges under green CI and passes quality gates.
-
-## Demo and Validation Surface
-
-Primary validation is defined in:
-- Demo matrix: `docs/milestones/v0.88/DEMO_MATRIX_v0.88.md`
-
-Additional validation surfaces:
-- Test suite results
-- Generated artifacts under `.adl/runs/`
-- Trace and replay outputs
-
-Success criteria:
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-## Determinism and Reproducibility
-
-The milestone should demonstrate:
-- Deterministic or bounded-repeatable execution where required
-- Replayable traces and inspectable artifacts
-- Stable command entry points for demos
-
-Evidence locations:
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-## Risks and Open Questions
-
-Known risks:
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-Open questions:
-- TBD during v0.88 planning
-- TBD during v0.88 planning
-
-## Status
-
-Current status: TBD during v0.88 planning
-
-- Planning: TBD during v0.88 planning
-- Execution: TBD during v0.88 planning
-- Validation: TBD during v0.88 planning
-- Release readiness: TBD during v0.88 planning
-
-## Exit Criteria
-
-- All canonical milestone documents are complete and internally consistent.
-- All WBS items are implemented or explicitly deferred.
-- Demo matrix is runnable and validated.
-- Quality gates (fmt, clippy, test, CI) are passing.
-- Milestone checklist is complete or exceptions are documented.
-- Release artifacts (notes, tag, docs) are ready.
+- Planning shell: active
+- Promoted feature package: present
+- Execution wave: not yet scheduled
+- Validation and release surfaces: seeded, not yet populated with implementation evidence
