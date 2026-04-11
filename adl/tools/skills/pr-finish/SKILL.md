@@ -27,7 +27,7 @@ Current repo truth:
 2. `pr-ready` determines structural readiness
 3. `pr-run` performs the bounded implementation work
 4. `pr-finish` performs truthful closeout and PR publication/update
-5. `pr-janitor` monitors the in-flight PR after publication
+5. `pr-janitor` is auto-attached after publication through the repo hook and monitors the in-flight PR
 6. `pr-closeout` finalizes the local issue state after merge or intentional closure
 
 ## Required Inputs

@@ -47,8 +47,8 @@ use self::git_support::{
 #[cfg(test)]
 use self::github::pr_has_closing_linkage;
 use self::github::{
-    current_pr_url, ensure_issue_labels, ensure_pr_closing_linkage, format_open_pr_wave,
-    gh_issue_create, gh_issue_edit_body, gh_issue_title, issue_version,
+    attach_pr_janitor, current_pr_url, ensure_issue_labels, ensure_pr_closing_linkage,
+    format_open_pr_wave, gh_issue_create, gh_issue_edit_body, gh_issue_title, issue_version,
     unresolved_milestone_pr_wave,
 };
 
@@ -525,6 +525,15 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
     if parsed.ready {
         let _ = run_status_allow_failure("gh", &["pr", "ready", "-R", &repo, &pr_url])?;
     }
+
+    attach_pr_janitor(
+        &repo_root,
+        &repo,
+        parsed.issue,
+        &branch,
+        &pr_url,
+        if parsed.ready { "ready" } else { "draft" },
+    )?;
 
     if !parsed.no_open {
         let _ = run_status_allow_failure("open", &[&pr_url])?;
