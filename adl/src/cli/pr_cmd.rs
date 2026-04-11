@@ -20,7 +20,8 @@ use super::pr_cmd_cards::{
 #[cfg(test)]
 use super::pr_cmd_prompt::load_issue_prompt;
 use super::pr_cmd_prompt::{
-    infer_required_outcome_type, normalize_labels_csv, parse_issue_number_from_url,
+    ensure_no_duplicate_issue_identities, infer_required_outcome_type,
+    normalize_issue_title_for_version, normalize_labels_csv, parse_issue_number_from_url,
     render_generated_issue_body, resolve_issue_body, resolve_issue_prompt_path,
     resolve_issue_scope_and_slug_from_local_state, validate_issue_prompt_exists,
     version_from_labels_csv, version_from_title,
@@ -49,7 +50,7 @@ use self::git_support::{
 #[cfg(test)]
 use self::github::pr_has_closing_linkage;
 use self::github::{
-    attach_pr_janitor, current_pr_url, ensure_issue_labels, ensure_pr_closing_linkage,
+    attach_pr_janitor, current_pr_url, ensure_issue_metadata_parity, ensure_pr_closing_linkage,
     format_open_pr_wave, gh_issue_create, gh_issue_edit_body, gh_issue_title, issue_version,
     unresolved_milestone_pr_wave,
 };
@@ -81,10 +82,10 @@ fn real_pr_create(args: &[String]) -> Result<()> {
     let repo_root = repo_root()?;
     let repo = issue_create_repo(&repo_root)?;
 
-    let title = parsed.title_arg.clone().unwrap_or_default();
+    let raw_title = parsed.title_arg.clone().unwrap_or_default();
     let mut slug = parsed.slug.clone().unwrap_or_default();
     if slug.is_empty() {
-        slug = sanitize_slug(&title);
+        slug = sanitize_slug(&raw_title);
     } else {
         slug = sanitize_slug(&slug);
     }
@@ -99,9 +100,16 @@ fn real_pr_create(args: &[String]) -> Result<()> {
             .labels
             .as_deref()
             .and_then(version_from_labels_csv)
-            .or_else(|| version_from_title(&title))
+            .or_else(|| version_from_title(&raw_title))
             .unwrap_or_else(|| DEFAULT_VERSION.to_string())
     };
+    let title = normalize_issue_title_for_version(&raw_title, &version);
+    if parsed.slug.as_deref().unwrap_or_default().trim().is_empty() {
+        slug = sanitize_slug(&title);
+        if slug.is_empty() {
+            bail!("create: title produced empty slug after normalization");
+        }
+    }
 
     let normalized_labels = normalize_labels_csv(
         parsed.labels.as_deref().unwrap_or(DEFAULT_NEW_LABELS),
@@ -120,8 +128,9 @@ fn real_pr_create(args: &[String]) -> Result<()> {
     validate_issue_body_for_create(&repo_root, &title, &normalized_labels, &slug, &create_body)?;
     let issue_url = gh_issue_create(&repo, &title, &create_body, &normalized_labels)?;
     let issue = parse_issue_number_from_url(&issue_url)?;
-    ensure_issue_labels(&repo, issue, &normalized_labels)?;
+    ensure_issue_metadata_parity(&repo, issue, &title, &normalized_labels)?;
     let issue_ref = IssueRef::new(issue, version.clone(), slug.clone())?;
+    ensure_no_duplicate_issue_identities(&repo_root, &issue_ref)?;
     let final_body = if body.trim().is_empty() {
         render_generated_issue_body(
             &title,
@@ -222,8 +231,49 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     } else {
         issue_version(parsed.issue, &repo)?.unwrap_or_else(|| DEFAULT_VERSION.to_string())
     };
+    title = normalize_issue_title_for_version(&title, &version);
+    if parsed.slug.as_deref().unwrap_or_default().trim().is_empty() {
+        slug = sanitize_slug(&title);
+        if slug.is_empty() {
+            bail!("start: title produced empty slug after normalization");
+        }
+    }
+    let fetched_labels = if parsed.no_fetch_issue {
+        String::new()
+    } else {
+        run_capture_allow_failure(
+            "gh",
+            &[
+                "issue",
+                "view",
+                &parsed.issue.to_string(),
+                "-R",
+                &repo,
+                "--json",
+                "labels",
+                "-q",
+                ".labels[].name",
+            ],
+        )?
+        .unwrap_or_default()
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty())
+        .collect::<Vec<_>>()
+        .join(",")
+    };
+    let normalized_labels = normalize_labels_csv(
+        if fetched_labels.trim().is_empty() {
+            DEFAULT_NEW_LABELS
+        } else {
+            &fetched_labels
+        },
+        &version,
+    );
 
     let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
+    ensure_issue_metadata_parity(&repo, parsed.issue, &title, &normalized_labels)?;
+    ensure_no_duplicate_issue_identities(&repo_root, &issue_ref)?;
     let branch = issue_ref.branch_name(&parsed.prefix);
     let unresolved = unresolved_milestone_pr_wave(&repo, &version, Some(&branch))?;
     if !parsed.allow_open_pr_wave && !unresolved.is_empty() {
@@ -664,7 +714,48 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     } else {
         issue_version(issue, &repo)?.unwrap_or_else(|| DEFAULT_VERSION.to_string())
     };
+    title = normalize_issue_title_for_version(&title, &version);
+    if parsed.slug.as_deref().unwrap_or_default().trim().is_empty() {
+        slug = sanitize_slug(&title);
+        if slug.is_empty() {
+            bail!("init: title produced empty slug after normalization");
+        }
+    }
+    let fetched_labels = if parsed.no_fetch_issue {
+        String::new()
+    } else {
+        run_capture_allow_failure(
+            "gh",
+            &[
+                "issue",
+                "view",
+                &issue.to_string(),
+                "-R",
+                &repo,
+                "--json",
+                "labels",
+                "-q",
+                ".labels[].name",
+            ],
+        )?
+        .unwrap_or_default()
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty())
+        .collect::<Vec<_>>()
+        .join(",")
+    };
+    let normalized_labels = normalize_labels_csv(
+        if fetched_labels.trim().is_empty() {
+            DEFAULT_NEW_LABELS
+        } else {
+            &fetched_labels
+        },
+        &version,
+    );
     let issue_ref = IssueRef::new(issue, version.clone(), slug.clone())?;
+    ensure_issue_metadata_parity(&repo, issue, &title, &normalized_labels)?;
+    ensure_no_duplicate_issue_identities(&repo_root, &issue_ref)?;
     let source_path = ensure_source_issue_prompt(
         &repo_root,
         &repo,

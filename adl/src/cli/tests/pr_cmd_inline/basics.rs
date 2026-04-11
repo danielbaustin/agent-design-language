@@ -107,6 +107,62 @@ fn normalize_labels_csv_replaces_version_label() {
 }
 
 #[test]
+fn normalize_issue_title_for_version_adds_or_replaces_prefix() {
+    assert_eq!(
+        normalize_issue_title_for_version("[tools] Example", "v0.87.1"),
+        "[v0.87.1][tools] Example"
+    );
+    assert_eq!(
+        normalize_issue_title_for_version("[v0.86][tools] Example", "v0.87.1"),
+        "[v0.87.1][tools] Example"
+    );
+    assert_eq!(
+        normalize_issue_title_for_version("[v0.87.1][tools] Example", "v0.87.1"),
+        "[v0.87.1][tools] Example"
+    );
+}
+
+#[test]
+fn ensure_no_duplicate_issue_identities_rejects_duplicate_prompt_or_task_bundle() {
+    let repo = unique_temp_dir("adl-pr-duplicate-identities");
+    let issue_ref = IssueRef::new(
+        1153,
+        "v0.87.1".to_string(),
+        "v0-87-1-tools-metadata-parity".to_string(),
+    )
+    .expect("issue ref");
+
+    let canonical_body = issue_ref.issue_prompt_path(&repo);
+    let canonical_task = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(canonical_body.parent().expect("body parent")).expect("body dir");
+    fs::create_dir_all(&canonical_task).expect("task dir");
+    fs::write(
+        &canonical_body,
+        "---\ntitle: \"x\"\nlabels:\n  - \"version:v0.87.1\"\nissue_number: 1153\n---\n\n# x\n",
+    )
+    .expect("write canonical body");
+
+    let duplicate_body = repo.join(".adl/v0.87.1/bodies/issue-1153-metadata-parity-legacy.md");
+    let duplicate_task = repo.join(".adl/v0.87.1/tasks/issue-1153__metadata-parity-legacy");
+    fs::create_dir_all(duplicate_body.parent().expect("dup body parent")).expect("dup body dir");
+    fs::create_dir_all(&duplicate_task).expect("dup task dir");
+    fs::write(
+        &duplicate_body,
+        "---\ntitle: \"y\"\nlabels:\n  - \"version:v0.87.1\"\nissue_number: 1153\n---\n\n# y\n",
+    )
+    .expect("write dup body");
+
+    let err = ensure_no_duplicate_issue_identities(&repo, &issue_ref)
+        .expect_err("duplicates should fail");
+    assert!(err
+        .to_string()
+        .contains("duplicate local issue identities detected"));
+    assert!(err
+        .to_string()
+        .contains("issue-1153-metadata-parity-legacy"));
+}
+
+#[test]
 fn infer_repo_from_remote_supports_https_and_ssh() {
     assert_eq!(
         infer_repo_from_remote("https://github.com/danielbaustin/agent-design-language.git"),
