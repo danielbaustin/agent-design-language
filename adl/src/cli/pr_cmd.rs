@@ -39,8 +39,9 @@ use self::git_support::{branch_checked_out_worktree_path, infer_repo_from_remote
 use self::git_support::{
     commits_ahead_of_origin_main, current_branch, default_repo, ensure_git_metadata_writable,
     ensure_local_branch_exists, ensure_not_on_main_branch, ensure_worktree_for_branch,
-    fetch_origin_main_with_fallback, has_uncommitted_changes, path_str, primary_checkout_root,
-    repo_root, run_capture, run_capture_allow_failure, run_status, run_status_allow_failure,
+    fetch_origin_main_with_fallback, has_uncommitted_changes, issue_create_repo, path_str,
+    primary_checkout_root, repo_root, run_capture, run_capture_allow_failure, run_status,
+    run_status_allow_failure,
 };
 #[cfg(test)]
 use self::github::pr_has_closing_linkage;
@@ -74,7 +75,7 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
 fn real_pr_create(args: &[String]) -> Result<()> {
     let parsed = parse_create_args(args)?;
     let repo_root = repo_root()?;
-    let repo = default_repo(&repo_root)?;
+    let repo = issue_create_repo(&repo_root)?;
 
     let title = parsed.title_arg.clone().unwrap_or_default();
     let mut slug = parsed.slug.clone().unwrap_or_default();

@@ -281,6 +281,7 @@ fn same_filesystem_target(left: &Path, right: &Path) -> Result<bool> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cli::tests::env_lock;
     use std::env;
     use std::os::unix::fs::PermissionsExt;
     use std::time::{SystemTime, UNIX_EPOCH};
@@ -305,6 +306,7 @@ mod tests {
 
     #[test]
     fn issue_is_closed_and_completed_parses_completed_state() {
+        let _guard = env_lock();
         let temp = temp_dir("adl-pr-lifecycle-gh");
         let bin_dir = temp.join("bin");
         fs::create_dir_all(&bin_dir).expect("bin dir");

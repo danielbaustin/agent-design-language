@@ -2,7 +2,7 @@ use super::*;
 
 #[test]
 fn real_pr_start_bootstraps_worktree_and_ready_passes() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-start-ready");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -184,7 +184,7 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
 
 #[test]
 fn real_pr_doctor_full_reports_pre_run_ready_without_worktree() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-doctor-pre-run");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -305,7 +305,7 @@ fn real_pr_doctor_full_reports_pre_run_ready_without_worktree() {
 
 #[test]
 fn real_pr_doctor_full_accepts_pre_run_analysis_issue_with_partial_worktree_residue() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-doctor-pre-run-partial-worktree");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -436,7 +436,7 @@ fn real_pr_doctor_full_accepts_pre_run_analysis_issue_with_partial_worktree_resi
 
 #[test]
 fn real_pr_doctor_full_succeeds_when_invoked_from_started_worktree() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-doctor-worktree-cwd");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -564,7 +564,7 @@ fn real_pr_doctor_full_succeeds_when_invoked_from_started_worktree() {
 
 #[test]
 fn real_pr_start_rewrites_unbound_root_input_card_branch() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-start-rewrites-unbound");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -685,7 +685,7 @@ fn real_pr_start_rewrites_unbound_root_input_card_branch() {
 
 #[test]
 fn real_pr_ready_succeeds_when_invoked_from_started_worktree() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-ready-worktree-cwd");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -811,7 +811,7 @@ fn real_pr_ready_succeeds_when_invoked_from_started_worktree() {
 
 #[test]
 fn real_pr_preflight_reports_open_milestone_prs() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-preflight");
     init_git_repo(&repo);
     let bin_dir = repo.join("bin");
@@ -848,7 +848,7 @@ fn real_pr_preflight_reports_open_milestone_prs() {
 
 #[test]
 fn real_pr_start_blocks_when_open_milestone_pr_wave_exists() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-start-blocks-wave");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -961,7 +961,7 @@ fn real_pr_start_blocks_when_open_milestone_pr_wave_exists() {
 
 #[test]
 fn real_pr_ready_requires_slug_when_local_state_missing() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-ready-missing-slug");
     init_git_repo(&repo);
     let prev_dir = env::current_dir().expect("cwd");
@@ -975,7 +975,7 @@ fn real_pr_ready_requires_slug_when_local_state_missing() {
 
 #[test]
 fn real_pr_doctor_reconciles_closed_completed_issue_bundle_without_worktree() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-doctor-closed-issue-reconcile");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");

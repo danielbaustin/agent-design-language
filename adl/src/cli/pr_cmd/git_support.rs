@@ -60,6 +60,22 @@ pub(super) fn default_repo(repo_root: &Path) -> Result<String> {
     Ok(format!("local/{base}"))
 }
 
+pub(super) fn issue_create_repo(repo_root: &Path) -> Result<String> {
+    let remote = run_capture_allow_failure(
+        "git",
+        &["-C", path_str(repo_root)?, "remote", "get-url", "origin"],
+    )?;
+    if let Some(url) = remote {
+        if let Some(inferred) = infer_repo_from_remote(&url) {
+            return Ok(inferred);
+        }
+    }
+
+    bail!(
+        "create: refusing to infer the GitHub issue target from ambient gh context; configure git origin with a GitHub owner/repo remote before running create"
+    )
+}
+
 pub(super) fn infer_repo_from_remote(url: &str) -> Option<String> {
     let trimmed = url.trim();
     let candidate = trimmed

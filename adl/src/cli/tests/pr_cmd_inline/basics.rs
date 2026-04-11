@@ -404,7 +404,7 @@ fn parse_start_args_accepts_prefix_and_rejects_unknown_arg() {
 
 #[test]
 fn real_pr_init_seeds_stp_from_generated_source_prompt() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-real-init");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
@@ -447,7 +447,7 @@ fn real_pr_init_seeds_stp_from_generated_source_prompt() {
 
 #[test]
 fn real_pr_init_existing_stp_is_left_untouched() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-real-init-existing");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
@@ -488,7 +488,7 @@ fn real_pr_init_existing_stp_is_left_untouched() {
 
 #[test]
 fn real_pr_create_creates_issue_and_bootstraps_root_bundle() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-real-create");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
@@ -569,7 +569,7 @@ fn real_pr_create_creates_issue_and_bootstraps_root_bundle() {
 
 #[test]
 fn real_pr_create_fails_when_created_issue_is_missing_requested_labels() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-real-create-missing-labels");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
@@ -614,7 +614,7 @@ fn real_pr_create_fails_when_created_issue_is_missing_requested_labels() {
 
 #[test]
 fn real_pr_create_generates_concrete_body_when_none_is_supplied() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-real-create-generated-body");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
@@ -676,7 +676,7 @@ fn real_pr_create_generates_concrete_body_when_none_is_supplied() {
 
 #[test]
 fn real_pr_create_rejects_issue_body_that_cannot_pass_source_prompt_validation() {
-    let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
+    let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-real-create-invalid-body");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
@@ -719,4 +719,64 @@ fn real_pr_create_rejects_issue_body_that_cannot_pass_source_prompt_validation()
     assert!(err
         .to_string()
         .contains("create: issue body cannot satisfy source-prompt validation"));
+}
+
+#[test]
+fn real_pr_create_rejects_missing_origin_before_spawning_gh_issue_create() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-real-create-no-origin");
+    assert!(Command::new("git")
+        .arg("init")
+        .arg("-q")
+        .current_dir(&repo)
+        .status()
+        .expect("git init")
+        .success());
+    copy_bootstrap_support_files(&repo);
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = repo.join("gh.log");
+    write_executable(
+        &bin_dir.join("gh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            gh_log.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    let err = real_pr(&[
+        "create".to_string(),
+        "--title".to_string(),
+        "[v0.87.1][tools] Guard create repo target".to_string(),
+        "--slug".to_string(),
+        "v0-87-1-tools-guard-create-repo-target".to_string(),
+        "--body".to_string(),
+        "## Summary\n\nGuard issue creation against ambient repo inference.\n\n## Goal\n\nRequire a real GitHub origin before issue creation.\n\n## Required Outcome\n\nThis issue ships tooling code and tests.\n\n## Deliverables\n\n- create-path guard\n\n## Acceptance Criteria\n\n- create fails before gh issue create when origin is missing\n\n## Repo Inputs\n\n- adl/src/cli/pr_cmd.rs\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- broader lifecycle redesign\n\n## Issue-Graph Notes\n\n- regression test\n\n## Notes\n\n- none\n\n## Tooling Notes\n\n- gh should not be spawned on this path\n".to_string(),
+        "--labels".to_string(),
+        "track:roadmap,type:task,area:tools".to_string(),
+        "--version".to_string(),
+        "v0.87.1".to_string(),
+    ])
+    .expect_err("missing origin should fail before gh issue create");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    assert!(err
+        .to_string()
+        .contains("refusing to infer the GitHub issue target from ambient gh context"));
+    assert!(
+        !gh_log.exists(),
+        "gh should not be spawned when origin is missing"
+    );
 }

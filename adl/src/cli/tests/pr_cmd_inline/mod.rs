@@ -2,9 +2,9 @@ use super::*;
 use crate::cli::pr_cmd_cards::write_output_card;
 use crate::cli::pr_cmd_prompt::{infer_wp_from_title, render_generated_issue_prompt};
 use crate::cli::pr_cmd_validate::bootstrap_stub_reason;
+use crate::cli::tests::env_lock as cli_env_lock;
 use adl::control_plane::{card_input_path, card_stp_path};
 use std::env;
-use std::sync::{Mutex, OnceLock};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 fn unique_temp_dir(label: &str) -> PathBuf {
@@ -17,9 +17,8 @@ fn unique_temp_dir(label: &str) -> PathBuf {
     dir
 }
 
-fn env_lock() -> &'static Mutex<()> {
-    static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
-    LOCK.get_or_init(|| Mutex::new(()))
+fn env_lock() -> std::sync::MutexGuard<'static, ()> {
+    cli_env_lock()
 }
 
 fn write_executable(path: &Path, content: &str) {
@@ -46,7 +45,7 @@ fn init_git_repo(dir: &Path) {
             "remote",
             "add",
             "origin",
-            "https://github.com/danielbaustin/agent-design-language.git"
+            "https://github.com/owner/repo.git"
         ])
         .current_dir(dir)
         .status()
