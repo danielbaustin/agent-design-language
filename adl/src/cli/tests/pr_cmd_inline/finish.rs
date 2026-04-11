@@ -1354,7 +1354,7 @@ fn real_pr_finish_rejects_main_and_does_not_report_no_pr_when_bundle_sync_change
         .expect("git checkout")
         .success());
     let mut touched_output = fs::read_to_string(&output).expect("read output");
-    touched_output.push_str("\n");
+    touched_output.push('\n');
     fs::write(&output, touched_output).expect("touch output");
 
     let bin_dir = temp.join("bin");
