@@ -1717,6 +1717,15 @@ cmd_finish() {
   delegate_pr_command_to_rust finish "$@"
 }
 
+cmd_closeout() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_closeout
+    return 0
+  fi
+  require_rust_pr_delegate
+  delegate_pr_command_to_rust closeout "$@"
+}
+
 cmd_status() {
   require_cmd git
   note "Branch: $(current_branch)"
@@ -1772,6 +1781,7 @@ Commands:
   run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
   doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
   finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
+  closeout <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
 
 Compatibility / maintenance commands:
   card    <issue> [input|output] ... [--version <v0.2>] [-f <input_card.md>]
@@ -1806,6 +1816,7 @@ Notes:
 - `pr init <issue> ...` bootstraps the same local root bundle for an issue that already exists.
 - `pr run <issue> ...` is the preferred public execution-context binder for issue work.
 - `pr doctor <issue> ...` is the preferred public readiness and drift diagnostic surface.
+- `pr closeout <issue> ...` finalizes a closed issue locally and safely prunes its execution worktree when possible.
 - `pr start <issue> ...` remains only as a legacy alias over the same Rust binding path and is no longer part of the taught public flow.
 - `pr ready` and `pr preflight` remain only as deprecated compatibility aliases over `pr doctor`.
 - `card`, `output`, `cards`, `open`, and `status` are maintenance-oriented compatibility surfaces rather than the preferred workflow entrypoints.
@@ -1976,6 +1987,18 @@ Notes:
 EOF
 }
 
+usage_closeout() {
+  cat <<'EOF'
+Usage:
+  adl/tools/pr.sh closeout <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
+
+Behavior:
+- verifies the issue is already CLOSED/COMPLETED
+- reconciles the canonical task bundle and closed-output truth
+- prunes the matching issue worktree when it is safe to do so
+EOF
+}
+
 main() {
   local cmd="${1:-}"; shift || true
   case "$cmd" in
@@ -1988,6 +2011,7 @@ main() {
     ready) cmd_ready "$@" ;;
     preflight) cmd_preflight "$@" ;;
     finish) cmd_finish "$@" ;;
+    closeout) cmd_closeout "$@" ;;
     card) cmd_card "$@" ;;
     output) cmd_output "$@" ;;
     output-card) cmd_output "$@" ;;

@@ -208,7 +208,8 @@ fn run_doctor_ready(
     validate_bootstrap_stp(repo_root, &source_path)?;
     validate_authored_prompt_surface("doctor", &source_path, PromptSurfaceKind::IssuePrompt)?;
     if closed_completed {
-        lifecycle::reconcile_closed_completed_issue_bundle(
+        lifecycle::closeout_closed_completed_issue_bundle(
+            repo_root,
             repo_root,
             issue_ref,
             &root_bundle_output,

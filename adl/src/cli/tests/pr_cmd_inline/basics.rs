@@ -39,6 +39,23 @@ fn render_generated_issue_prompt_is_detected_as_bootstrap_stub() {
 }
 
 #[test]
+fn parse_closeout_args_accepts_expected_flags() {
+    let parsed = parse_closeout_args(&[
+        "1596".to_string(),
+        "--slug".to_string(),
+        "closeout-test".to_string(),
+        "--version".to_string(),
+        "v0.87.1".to_string(),
+        "--no-fetch-issue".to_string(),
+    ])
+    .expect("parse closeout");
+    assert_eq!(parsed.issue, 1596);
+    assert_eq!(parsed.slug.as_deref(), Some("closeout-test"));
+    assert_eq!(parsed.version.as_deref(), Some("v0.87.1"));
+    assert!(parsed.no_fetch_issue);
+}
+
+#[test]
 fn render_generated_issue_prompt_uses_workflow_skill_bootstrap_template_for_tools_skill_titles() {
     let content = render_generated_issue_prompt(
         1443,

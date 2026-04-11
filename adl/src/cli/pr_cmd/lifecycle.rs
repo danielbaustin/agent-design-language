@@ -1,7 +1,10 @@
 use super::*;
 use serde::Deserialize;
+use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::thread;
+use std::time::Duration;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 struct GithubIssueLifecycleState {
@@ -33,6 +36,29 @@ pub(super) fn issue_is_closed_and_completed(issue: u32, repo: &str) -> Result<bo
     let state: GithubIssueLifecycleState =
         serde_json::from_str(trimmed).context("failed to parse gh issue state json")?;
     Ok(state.state == "CLOSED" && state.state_reason.as_deref() == Some("COMPLETED"))
+}
+
+pub(super) fn ensure_issue_closed_completed_for_closeout(issue: u32, repo: &str) -> Result<()> {
+    if !issue_is_closed_and_completed(issue, repo)? {
+        bail!(
+            "closeout: issue #{} is not closed with COMPLETED state yet; refusing automatic closeout",
+            issue
+        );
+    }
+    Ok(())
+}
+
+pub(super) fn wait_for_issue_closed_and_completed(issue: u32, repo: &str) -> Result<()> {
+    for _ in 0..10 {
+        if issue_is_closed_and_completed(issue, repo)? {
+            return Ok(());
+        }
+        thread::sleep(Duration::from_millis(500));
+    }
+    bail!(
+        "finish: issue #{} did not reach CLOSED/COMPLETED state after merge; closeout cannot proceed automatically",
+        issue
+    );
 }
 
 pub(super) fn reconcile_closed_completed_issue_bundle(
@@ -116,6 +142,16 @@ pub(super) fn reconcile_closed_completed_issue_bundle(
     let review_output = card_output_path(&cards_root, issue_ref.issue_number());
     ensure_symlink(&review_output, canonical_output)?;
     Ok(())
+}
+
+pub(super) fn closeout_closed_completed_issue_bundle(
+    repo_root: &Path,
+    primary_root: &Path,
+    issue_ref: &IssueRef,
+    canonical_output: &Path,
+) -> Result<()> {
+    reconcile_closed_completed_issue_bundle(primary_root, issue_ref, canonical_output)?;
+    prune_issue_worktree(repo_root, primary_root, issue_ref)
 }
 
 fn matching_task_bundle_dirs(repo_root: &Path, issue_ref: &IssueRef) -> Result<Vec<PathBuf>> {
@@ -278,6 +314,44 @@ fn same_filesystem_target(left: &Path, right: &Path) -> Result<bool> {
     Ok(false)
 }
 
+fn prune_issue_worktree(repo_root: &Path, primary_root: &Path, issue_ref: &IssueRef) -> Result<()> {
+    let worktree_path = issue_ref.default_worktree_path(
+        primary_root,
+        std::env::var_os("ADL_WORKTREE_ROOT")
+            .map(PathBuf::from)
+            .as_deref(),
+    );
+    if !worktree_path.is_dir() {
+        return Ok(());
+    }
+    if has_uncommitted_changes(&worktree_path)? {
+        bail!(
+            "closeout: refusing to prune dirty worktree '{}'",
+            worktree_path.display()
+        );
+    }
+    let current_dir = env::current_dir().context("closeout: determine current directory")?;
+    if current_dir.starts_with(&worktree_path) {
+        env::set_current_dir(primary_root).with_context(|| {
+            format!(
+                "closeout: failed to leave worktree '{}' before pruning",
+                worktree_path.display()
+            )
+        })?;
+    }
+    run_status(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "worktree",
+            "remove",
+            path_str(&worktree_path)?,
+        ],
+    )?;
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -304,6 +378,86 @@ mod tests {
         fs::set_permissions(path, perms).expect("chmod");
     }
 
+    fn init_repo_with_origin(repo: &Path, origin: &Path) {
+        fs::create_dir_all(repo).expect("repo dir");
+        assert!(Command::new("git")
+            .args(["init", "-q"])
+            .current_dir(repo)
+            .status()
+            .expect("git init")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "remote",
+                "add",
+                "origin",
+                path_str(origin).expect("origin path")
+            ])
+            .current_dir(repo)
+            .status()
+            .expect("git remote add")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.name", "Test User"])
+            .current_dir(repo)
+            .status()
+            .expect("git config name")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.email", "test@example.com"])
+            .current_dir(repo)
+            .status()
+            .expect("git config email")
+            .success());
+        fs::write(repo.join("README.md"), "seed\n").expect("seed readme");
+        assert!(Command::new("git")
+            .args(["add", "-A"])
+            .current_dir(repo)
+            .status()
+            .expect("git add")
+            .success());
+        assert!(Command::new("git")
+            .args(["commit", "-q", "-m", "init"])
+            .current_dir(repo)
+            .status()
+            .expect("git commit")
+            .success());
+        assert!(Command::new("git")
+            .args(["branch", "-M", "main"])
+            .current_dir(repo)
+            .status()
+            .expect("git branch")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "init",
+                "--bare",
+                "-q",
+                path_str(origin).expect("origin path")
+            ])
+            .current_dir(repo)
+            .status()
+            .expect("git init bare")
+            .success());
+        assert!(Command::new("git")
+            .args([
+                "remote",
+                "set-url",
+                "origin",
+                path_str(origin).expect("origin path"),
+            ])
+            .current_dir(repo)
+            .status()
+            .expect("git remote set-url")
+            .success());
+        assert!(Command::new("git")
+            .args(["push", "-q", "-u", "origin", "main"])
+            .current_dir(repo)
+            .status()
+            .expect("git push")
+            .success());
+    }
+
     #[test]
     fn issue_is_closed_and_completed_parses_completed_state() {
         let _guard = env_lock();
@@ -325,6 +479,82 @@ mod tests {
             env::set_var("PATH", old_path);
         }
         assert!(result);
+    }
+
+    #[test]
+    fn issue_is_closed_and_completed_returns_false_for_empty_or_open_state() {
+        let _guard = env_lock();
+        let temp = temp_dir("adl-pr-lifecycle-gh-open");
+        let bin_dir = temp.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        write_executable(
+            &bin_dir.join("gh"),
+            "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"${1:-}\" == \"issue\" ]]; then\n  printf '{\"state\":\"OPEN\",\"stateReason\":null}\\n'\nfi\n",
+        );
+        let old_path = env::var("PATH").unwrap_or_default();
+        unsafe {
+            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        }
+
+        let result = issue_is_closed_and_completed(1410, "owner/repo").expect("open state");
+
+        unsafe {
+            env::set_var("PATH", old_path);
+        }
+        assert!(!result);
+    }
+
+    #[test]
+    fn ensure_issue_closed_completed_for_closeout_rejects_unfinished_issue() {
+        let _guard = env_lock();
+        let temp = temp_dir("adl-pr-lifecycle-closeout-guard");
+        let bin_dir = temp.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        write_executable(
+            &bin_dir.join("gh"),
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '{\"state\":\"CLOSED\",\"stateReason\":\"NOT_PLANNED\"}\\n'\n",
+        );
+        let old_path = env::var("PATH").unwrap_or_default();
+        unsafe {
+            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        }
+
+        let err = ensure_issue_closed_completed_for_closeout(1410, "owner/repo")
+            .expect_err("should reject unfinished closeout");
+
+        unsafe {
+            env::set_var("PATH", old_path);
+        }
+        assert!(err
+            .to_string()
+            .contains("is not closed with COMPLETED state yet"));
+    }
+
+    #[test]
+    fn wait_for_issue_closed_and_completed_succeeds_after_retry() {
+        let _guard = env_lock();
+        let temp = temp_dir("adl-pr-lifecycle-closeout-wait");
+        let bin_dir = temp.join("bin");
+        let counter = temp.join("counter.txt");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        write_executable(
+            &bin_dir.join("gh"),
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\ncounter=\"{}\"\ncount=0\nif [[ -f \"$counter\" ]]; then\n  count=$(cat \"$counter\")\nfi\ncount=$((count + 1))\nprintf '%s' \"$count\" > \"$counter\"\nif [[ \"$count\" -lt 2 ]]; then\n  printf '{{\"state\":\"OPEN\",\"stateReason\":null}}\\n'\nelse\n  printf '{{\"state\":\"CLOSED\",\"stateReason\":\"COMPLETED\"}}\\n'\nfi\n",
+                counter.display()
+            ),
+        );
+        let old_path = env::var("PATH").unwrap_or_default();
+        unsafe {
+            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        }
+
+        wait_for_issue_closed_and_completed(1410, "owner/repo").expect("wait succeeds");
+
+        unsafe {
+            env::set_var("PATH", old_path);
+        }
+        assert_eq!(fs::read_to_string(&counter).expect("counter"), "2");
     }
 
     #[test]
@@ -380,5 +610,47 @@ mod tests {
         assert!(same_filesystem_target(&left, &left).expect("same path"));
         assert!(same_filesystem_target(&left, &right).expect("same target"));
         assert!(!same_filesystem_target(&left, &temp.join("missing.txt")).expect("missing"));
+    }
+
+    #[test]
+    fn prune_issue_worktree_noops_when_worktree_is_missing() {
+        let _guard = env_lock();
+        let temp = temp_dir("adl-pr-lifecycle-prune-missing");
+        let repo = temp.join("repo");
+        let origin = temp.join("origin.git");
+        init_repo_with_origin(&repo, &origin);
+        let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+
+        prune_issue_worktree(&repo, &repo, &issue_ref).expect("missing worktree is fine");
+    }
+
+    #[test]
+    fn prune_issue_worktree_rejects_dirty_worktree() {
+        let _guard = env_lock();
+        let temp = temp_dir("adl-pr-lifecycle-prune-dirty");
+        let repo = temp.join("repo");
+        let origin = temp.join("origin.git");
+        init_repo_with_origin(&repo, &origin);
+        let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+        let worktree = issue_ref.default_worktree_path(&repo, None);
+
+        assert!(Command::new("git")
+            .args([
+                "-C",
+                path_str(&repo).expect("repo path"),
+                "worktree",
+                "add",
+                path_str(&worktree).expect("worktree path"),
+                "-b",
+                "codex/1410-canonical-slug",
+                "main",
+            ])
+            .status()
+            .expect("git worktree add")
+            .success());
+        fs::write(worktree.join("DIRTY.txt"), "dirty\n").expect("dirty file");
+
+        prune_issue_worktree(&repo, &repo, &issue_ref).expect_err("dirty worktree rejected");
+        assert!(worktree.is_dir());
     }
 }

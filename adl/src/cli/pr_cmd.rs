@@ -7,8 +7,8 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use super::pr_cmd_args::{
-    parse_create_args, parse_doctor_args, parse_finish_args, parse_init_args, parse_preflight_args,
-    parse_ready_args, parse_start_args, DoctorArgs, DoctorMode,
+    parse_closeout_args, parse_create_args, parse_doctor_args, parse_finish_args, parse_init_args,
+    parse_preflight_args, parse_ready_args, parse_start_args, DoctorArgs, DoctorMode,
 };
 use super::pr_cmd_cards::{
     branch_indicates_unbound_state, ensure_bootstrap_cards, ensure_local_issue_prompt_copy,
@@ -57,7 +57,7 @@ const DEFAULT_NEW_LABELS: &str = "track:roadmap,type:task,area:tools";
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
         bail!(
-            "pr requires a subcommand: create | init | start | doctor | ready | preflight | finish"
+            "pr requires a subcommand: create | init | start | doctor | ready | preflight | finish | closeout"
         );
     };
 
@@ -69,6 +69,7 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
         "ready" => real_pr_ready(&args[1..]),
         "preflight" => real_pr_preflight(&args[1..]),
         "finish" => real_pr_finish(&args[1..]),
+        "closeout" => real_pr_closeout(&args[1..]),
         other => bail!("unknown pr subcommand: {other}"),
     }
 }
@@ -510,6 +511,13 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
                 &pr_url,
             ],
         )?;
+        lifecycle::wait_for_issue_closed_and_completed(parsed.issue, &repo)?;
+        lifecycle::closeout_closed_completed_issue_bundle(
+            &repo_root,
+            &primary_root,
+            &issue_ref,
+            &output_path,
+        )?;
         println!("{pr_url}");
         return Ok(());
     }
@@ -523,6 +531,41 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
     }
 
     println!("{pr_url}");
+    Ok(())
+}
+
+fn real_pr_closeout(args: &[String]) -> Result<()> {
+    let parsed = parse_closeout_args(args)?;
+    let repo_root = repo_root()?;
+    let primary_root = primary_checkout_root()?;
+    let repo = default_repo(&primary_root)?;
+    let inferred = resolve_issue_scope_and_slug_from_local_state(&primary_root, parsed.issue)?
+        .unwrap_or((
+            parsed
+                .version
+                .clone()
+                .unwrap_or_else(|| DEFAULT_VERSION.to_string()),
+            parsed
+                .slug
+                .clone()
+                .unwrap_or_else(|| format!("issue-{}", parsed.issue)),
+        ));
+    let issue_ref = IssueRef::new(parsed.issue, inferred.0, inferred.1)?;
+    let output_path = issue_ref.task_bundle_output_path(&primary_root);
+    lifecycle::ensure_issue_closed_completed_for_closeout(parsed.issue, &repo)?;
+    lifecycle::closeout_closed_completed_issue_bundle(
+        &repo_root,
+        &primary_root,
+        &issue_ref,
+        &output_path,
+    )?;
+    println!(
+        "{}",
+        path_relative_to_repo(
+            &primary_root,
+            &issue_ref.task_bundle_dir_path(&primary_root)
+        )
+    );
     Ok(())
 }
 
