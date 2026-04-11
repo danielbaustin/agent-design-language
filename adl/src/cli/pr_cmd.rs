@@ -1,5 +1,6 @@
 use anyhow::{anyhow, bail, Context, Result};
 use serde::Serialize;
+use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 #[cfg(test)]
@@ -390,27 +391,27 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
     validate_completed_sor(&repo_root, &output_path)?;
     lifecycle::sync_completed_output_surfaces(&repo_root, &primary_root, &issue_ref, &output_path)?;
 
-    let ahead = commits_ahead_of_origin_main(&repo_root)?;
-    let has_uncommitted = has_uncommitted_changes(&repo_root)?;
-    if !has_uncommitted && ahead == 0 {
-        bail!("No changes detected and branch has no commits ahead of origin/main. Nothing to PR.");
-    }
-
     if !parsed.no_checks {
         run_batched_checks_rust(&repo_root)?;
     }
 
-    if has_uncommitted {
-        stage_selected_paths_rust(&repo_root, &parsed.paths)?;
-        if staged_diff_is_empty(&repo_root)? {
-            bail!(
-                "finish: nothing staged after 'git add' for paths '{}'",
-                parsed.paths
-            );
+    let canonical_publish_paths = canonical_finish_bundle_paths(
+        &repo_root,
+        &source_path,
+        &stp_path,
+        &input_path,
+        &output_path,
+    )?;
+
+    stage_selected_paths_rust(&repo_root, &parsed.paths, &canonical_publish_paths)?;
+    let has_uncommitted = has_uncommitted_changes(&repo_root)?;
+    let ahead = commits_ahead_of_origin_main(&repo_root)?;
+    if staged_diff_is_empty(&repo_root)? {
+        if !has_uncommitted && ahead == 0 {
+            bail!("No changes detected and branch has no commits ahead of origin/main. Nothing to PR.");
         }
-        if !parsed.allow_gitignore && staged_gitignore_change_present(&repo_root)? {
-            bail!("finish: .gitignore changes detected. Revert them or re-run with --allow-gitignore.");
-        }
+    } else if !parsed.allow_gitignore && staged_gitignore_change_present(&repo_root)? {
+        bail!("finish: .gitignore changes detected. Revert them or re-run with --allow-gitignore.");
     }
 
     let close_line = if parsed.no_close {
@@ -724,7 +725,31 @@ fn run_batched_checks_rust(repo_root: &Path) -> Result<()> {
     Ok(())
 }
 
-fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<()> {
+fn canonical_finish_bundle_paths(
+    repo_root: &Path,
+    source_path: &Path,
+    stp_path: &Path,
+    input_path: &Path,
+    output_path: &Path,
+) -> Result<Vec<String>> {
+    let mut out = BTreeSet::new();
+    for path in [source_path, stp_path, input_path, output_path] {
+        let normalized = if path.is_absolute() {
+            path.to_path_buf()
+        } else {
+            repo_root.join(path)
+        };
+        if !normalized.exists() {
+            continue;
+        }
+        if let Ok(relative) = normalized.strip_prefix(repo_root) {
+            out.insert(relative.to_string_lossy().into_owned());
+        }
+    }
+    Ok(out.into_iter().collect())
+}
+
+fn stage_selected_paths_rust(repo_root: &Path, csv: &str, force_paths: &[String]) -> Result<()> {
     let paths = csv
         .split(',')
         .map(str::trim)
@@ -735,7 +760,15 @@ fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<()> {
     }
     let mut args = vec!["-C", path_str(repo_root)?, "add", "--"];
     args.extend(paths);
-    run_status("git", &args)
+    run_status("git", &args)?;
+
+    if !force_paths.is_empty() {
+        let mut force_args = vec!["-C", path_str(repo_root)?, "add", "-f", "--"];
+        force_args.extend(force_paths.iter().map(String::as_str));
+        run_status("git", &force_args)?;
+    }
+
+    Ok(())
 }
 
 fn staged_diff_is_empty(repo_root: &Path) -> Result<bool> {
