@@ -17,3 +17,4 @@
 | D-05 | Promote instinct docs into tracked `v0.88` canon | instinct / bounded-agency surfaces were still part of local `v0.88planning` truth and left the tracked milestone incomplete | accepted | `2026-04-11` | `#1497` |
 | D-06 | Keep historical / exploratory planning notes local-only for now | aptitude historical copies, helper maps, and work-package notes are not yet public feature commitments | accepted | `2026-04-11` | `#1497` |
 | D-07 | Use the normal `v0.86` / `v0.87` closeout pattern for `v0.88` | the milestone should not add an extra process sprint or a new release-tail shape | accepted | `2026-04-11` | `#1497` |
+| D-08 | Add Paper Sonata to `v0.88` as a bounded flagship demo | the milestone needs one memorable public-facing proof surface that showcases temporal continuity, artifact truth, and bounded multi-agent orchestration | accepted | `2026-04-11` | `#1497`, `#1609` |

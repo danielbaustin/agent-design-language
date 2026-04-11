@@ -29,14 +29,15 @@ After those feature bands, the milestone follows the same demo / quality / revie
 | WP-09 | PHI-style integration metrics | define bounded engineering metrics for integration, irreducibility, coupling, and adaptive depth in ADL systems | `PHI_METRICS_FOR_ADL.md` aligned work | `WP-02` through `WP-08` | pending |
 | WP-10 | Instinct model | define bounded instinct as an explicit cognitive substrate | `INSTINCT_MODEL.md` aligned work | `WP-01` | pending |
 | WP-11 | Instinct runtime surface and bounded agency hook | make instinct visible in runtime declaration, routing, prioritization, trace, and demo proof | `INSTINCT_RUNTIME_SURFACE.md` aligned work | `WP-10` | pending |
-| WP-12 | Demo matrix + integration demos | define and implement the primary proof surfaces for temporal, PHI, and instinct bands | validated demos and reviewer-facing demo matrix | `WP-02` through `WP-11` | pending |
-| WP-13 | Coverage / quality gate | enforce milestone quality and coverage posture | green quality gate | `WP-12` | pending |
-| WP-14 | Docs + review pass | converge reviewer-facing docs against delivered proof | reviewer-ready package | `WP-12`, `WP-13` | pending |
-| WP-15 | Internal review | perform bounded internal review of milestone truth and proof surfaces | internal review record | `WP-14` | pending |
-| WP-16 | 3rd-party review | perform external review of the milestone package and capture findings | 3rd-party review record | `WP-14`, `WP-15` | pending |
-| WP-17 | Review findings remediation | resolve or explicitly defer accepted review findings | remediation record | `WP-15`, `WP-16` | pending |
-| WP-18 | Next milestone planning | prepare the next milestone planning package before `v0.88` closeout | next-milestone package | `WP-17` | pending |
-| WP-19 | Release ceremony | final validation, notes, tag, cleanup, and closeout record | release package | `WP-17`, `WP-18` | pending |
+| WP-12 | Paper Sonata flagship demo | implement a bounded investor-/reviewer-facing multi-agent manuscript demo with durable artifacts and truthful runtime proof | `PAPER_SONATA_DEMO.md` aligned work plus bounded runner / fixtures | `WP-02` through `WP-11` | pending |
+| WP-13 | Demo matrix + integration demos | define and implement the primary proof surfaces for temporal, PHI, instinct, and Paper Sonata bands | validated demos and reviewer-facing demo matrix | `WP-02` through `WP-12` | pending |
+| WP-14 | Coverage / quality gate | enforce milestone quality and coverage posture | green quality gate | `WP-13` | pending |
+| WP-15 | Docs + review pass | converge reviewer-facing docs against delivered proof | reviewer-ready package | `WP-13`, `WP-14` | pending |
+| WP-16 | Internal review | perform bounded internal review of milestone truth and proof surfaces | internal review record | `WP-15` | pending |
+| WP-17 | 3rd-party review | perform external review of the milestone package and capture findings | 3rd-party review record | `WP-15`, `WP-16` | pending |
+| WP-18 | Review findings remediation | resolve or explicitly defer accepted review findings | remediation record | `WP-16`, `WP-17` | pending |
+| WP-19 | Next milestone planning | prepare the next milestone planning package before `v0.88` closeout | next-milestone package | `WP-18` | pending |
+| WP-20 | Release ceremony | final validation, notes, tag, cleanup, and closeout record | release package | `WP-18`, `WP-19` | pending |
 
 ## Exit Criteria
 - every tracked `v0.88` feature doc maps to at least one WBS item

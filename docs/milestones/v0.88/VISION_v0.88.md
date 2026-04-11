@@ -24,6 +24,7 @@ What `v0.88` should make real is something more disciplined and more useful:
 - a system that can explain not only what it did, but what posture it took while doing it
 - a system whose behavior can be compared in terms of coupling, integration, and bounded internal structure
 - a system where instinct begins to exist as a real, inspectable pressure on behavior rather than a metaphor in a concept paper
+- a system that can demonstrate all of that through one memorable flagship workflow, not only through abstract substrate claims
 
 This is the milestone of **cohesive cognition**.
 
@@ -53,6 +54,7 @@ It is the milestone where ADL should become:
 - more internally interpretable
 - more honest about what shapes behavior
 - more prepared for later identity and governance work
+- more capable of showing its value in a form that investors, reviewers, and the public can immediately grasp
 
 ## Strategic Direction
 
@@ -144,6 +146,20 @@ This milestone should leave us with proof surfaces that let a reviewer say:
 - yes, instinct affects behavior in at least one real and policy-bounded case
 
 That is the standard.
+
+### 6. A Flagship Demo Worth Showing Publicly
+
+`v0.88` should not rely only on substrate demos that make sense mainly to people already deep in the repo.
+
+It should also produce one strong, bounded showcase:
+
+- a multi-agent workflow
+- a recognizable high-value task
+- durable intermediate artifacts
+- a final package that looks serious
+- runtime truth strong enough to compare favorably against opaque big-company demos
+
+That is why `Paper Sonata` belongs here.
 
 ## Milestone Context
 

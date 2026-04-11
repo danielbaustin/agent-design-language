@@ -51,6 +51,7 @@ This milestone must prove a real temporal / PHI / instinct package with runnable
 - [ ] Demo matrix is accurate and points to real commands
 - [ ] Reviewers can find the intended proof artifacts easily
 - [ ] Major milestone claims map to trace, artifacts, or demo outputs
+- [ ] Paper Sonata is strong enough to function as a flagship public-facing demo
 
 ## Quality Gates
 - [ ] formatting / lint gates pass

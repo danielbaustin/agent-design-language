@@ -21,3 +21,4 @@
 | D5 | PHI-style integration metrics | comparative proof surface for low / medium / high integration profiles | PHI review artifact | planned |
 | D6 | instinct declaration and influence | trace / artifact proof that instinct settings are explicit and inspectable | instinct runtime artifact | planned |
 | D7 | bounded agency under instinct | proof that instinct affects routing or prioritization while remaining deterministic and policy-bounded | bounded-agency demo artifact | planned |
+| D8 | Paper Sonata flagship demo | bounded multi-agent manuscript assembly with durable artifacts, explicit role handoffs, and truthful runtime evidence | paper-sonata manifest, manuscript package, and trace bundle | planned |

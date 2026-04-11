@@ -17,6 +17,9 @@ This page defines the bounded public feature-doc package for `v0.88`. It is an i
 - temporal / chronosense substrate
 - instinct / bounded-agency substrate
 
+It also has one flagship bounded demo surface:
+- Paper Sonata
+
 This package intentionally excludes:
 - later-band aptitude and learning / skills planning
 - helper cluster maps and planning notes
@@ -36,6 +39,8 @@ This package intentionally excludes:
 | `features/PHI_METRICS_FOR_ADL.md` | engineering metrics for integration, irreducibility, and coupling | `WP-09` |
 | `features/INSTINCT_MODEL.md` | bounded instinct as a cognitive substrate | `WP-10` |
 | `features/INSTINCT_RUNTIME_SURFACE.md` | runtime declaration, influence, and proof surface for instinct | `WP-11` |
+| `features/PAPER_SONATA_DEMO.md` | flagship multi-agent manuscript-assembly demo with truthful runtime evidence | `WP-12` |
+| `features/PAPER_SONATA_IMPLEMENTATION_PLAN.md` | bounded implementation plan for the Paper Sonata flagship demo | `WP-12` |
 
 ## Local Planning Inputs Not Promoted
 

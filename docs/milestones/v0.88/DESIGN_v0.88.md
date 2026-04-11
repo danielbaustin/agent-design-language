@@ -63,6 +63,7 @@ The design task for `v0.88` is therefore to define one bounded public package wi
 - define PHI-style integration metrics as an engineering comparison surface for low-, medium-, and high-integration execution paths
 - define instinct as a bounded runtime influence with inspectable declaration and observable downstream effect
 - define at least one bounded-agency proof path where instinct affects prioritization or routing without escaping policy control
+- define one flagship multi-agent demo that ties temporal continuity, artifact truth, and bounded orchestration together in a public-facing showcase
 - define the demo and artifact surfaces required to prove the milestone truthfully
 
 ### Non-functional
@@ -89,6 +90,10 @@ The promoted `v0.88` package is organized as two bounded feature bands.
 - `INSTINCT_MODEL.md`
 - `INSTINCT_RUNTIME_SURFACE.md`
 
+### Flagship Demo Surface
+- `PAPER_SONATA_DEMO.md`
+- `PAPER_SONATA_IMPLEMENTATION_PLAN.md`
+
 ### Local Planning Inputs, Not Canonical Tracked Features
 - `v0.89planning/APTITUDE_MODEL.md` as later-band learning / skills planning
 - `TEMPORAL_CLUSTER_MAP.md`
@@ -101,12 +106,15 @@ The promoted `v0.88` package is organized as two bounded feature bands.
 
 temporal structure -> continuity semantics -> temporal retrieval / commitments -> execution policy and cost reviewability -> PHI-style integration comparison -> instinct-sensitive routing or prioritization -> bounded proof artifacts
 
+The flagship public-facing expression of that story should be `Paper Sonata`: a bounded research-writing workflow where role handoffs, artifact flow, and runtime truth are all visible.
+
 That means the milestone should deliver a runtime and review story where:
 - time is explicit in the execution model
 - continuity can be reasoned about from traceable temporal structure
 - execution mode and realized cost are visible together
 - integration can be discussed without pretending to solve consciousness
 - instinct is real enough to affect behavior but still bounded by policy and determinism
+- one memorable flagship demo makes the milestone legible to audiences beyond internal reviewers
 
 ### Core Design Principles
 

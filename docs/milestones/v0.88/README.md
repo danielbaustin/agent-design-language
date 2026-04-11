@@ -28,6 +28,7 @@ This milestone centers on:
 - bounded PHI-style integration metrics as an engineering evaluation surface
 - instinct as a bounded runtime influence
 - bounded agency hooks that remain deterministic, inspectable, and policy-constrained
+- a flagship multi-agent demo that can showcase the milestone publicly
 
 Key outcomes:
 - one coherent tracked `v0.88` planning package
@@ -82,6 +83,8 @@ Promoted feature-defining docs:
 - `features/PHI_METRICS_FOR_ADL.md`
 - `features/INSTINCT_MODEL.md`
 - `features/INSTINCT_RUNTIME_SURFACE.md`
+- `features/PAPER_SONATA_DEMO.md`
+- `features/PAPER_SONATA_IMPLEMENTATION_PLAN.md`
 
 Local planning docs intentionally not promoted yet:
 - later-band learning / skills planning: `.adl/docs/v0.89planning/APTITUDE_MODEL.md`

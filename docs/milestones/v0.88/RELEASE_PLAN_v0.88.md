@@ -28,10 +28,11 @@ This is not just a reminder that a release will happen later. When the milestone
 All of the following must be true before ceremony:
 
 - [ ] milestone checklist is fully updated and honest
-- [ ] implementation issue wave for `WP-02` through `WP-12` is complete or explicitly deferred
+- [ ] implementation issue wave for `WP-02` through `WP-13` is complete or explicitly deferred
 - [ ] demo matrix rows map to real runnable commands and proof artifacts
 - [ ] docs, WBS, demos, and implementation agree on the same bounded milestone
 - [ ] PHI, instinct, temporal schema, and execution-policy/cost claims are each proven in at least one reviewable surface
+- [ ] Paper Sonata is strong enough to act as a flagship public-facing demo without overclaiming autonomy
 
 ### Explicit GO / NO-GO Questions
 
@@ -42,6 +43,7 @@ Answer all before release:
 - [ ] Is requested execution policy visibly related to realized cost?
 - [ ] Do PHI-style metrics produce a bounded, useful comparison rather than rhetoric?
 - [ ] Does instinct visibly affect routing or prioritization while remaining policy-bounded?
+- [ ] Is Paper Sonata strong enough to show publicly as a serious ADL multi-agent demo?
 - [ ] Can a reviewer find the milestone proof commands and artifacts from the demo matrix alone?
 
 If any answer is NO, do not release.

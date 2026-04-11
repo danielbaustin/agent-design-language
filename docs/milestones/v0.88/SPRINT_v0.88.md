@@ -11,7 +11,7 @@
 
 `v0.88` is a three-sprint execution plan:
 - Sprint 1: canonical package + temporal substrate
-- Sprint 2: PHI metrics plus instinct / bounded-agency execution and integration
+- Sprint 2: PHI metrics, instinct / bounded-agency execution, and the Paper Sonata flagship demo
 - Sprint 3: demos, quality, review, release, and handoff
 
 This keeps the closeout flow consistent with `v0.86` and `v0.87`.
@@ -21,8 +21,8 @@ This keeps the closeout flow consistent with `v0.86` and `v0.87`.
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
 | `v0.88-s1` | lock canonical milestone truth and execute the temporal substrate | `WP-01` through `WP-08` | planning package ready; execution issues pending |
-| `v0.88-s2` | execute PHI metrics plus instinct / bounded-agency work and integrate it with demos | `WP-09`, `WP-10`, `WP-11`, `WP-12` | planning only |
-| `v0.88-s3` | converge docs, quality, review, release, and next-milestone planning | `WP-13` through `WP-19` | planning only |
+| `v0.88-s2` | execute PHI metrics, instinct / bounded-agency work, and the Paper Sonata flagship demo | `WP-09`, `WP-10`, `WP-11`, `WP-12`, `WP-13` | planning only |
+| `v0.88-s3` | converge docs, quality, review, release, and next-milestone planning | `WP-14` through `WP-20` | planning only |
 
 ## Sprint 1
 
@@ -47,18 +47,20 @@ Establish the canonical `v0.88` package and land the temporal / chronosense subs
 ## Sprint 2
 
 ### Goal
-Execute the PHI metrics and instinct / bounded-agency bands and connect them to proof surfaces.
+Execute the PHI metrics and instinct / bounded-agency bands and land the Paper Sonata flagship demo as a memorable proof surface.
 
 ### Scope
 - PHI-style integration metrics
 - instinct model
 - instinct runtime surface
 - bounded agency proof path
-- demo matrix integration for PHI-sensitive and instinct-sensitive behavior
+- Paper Sonata flagship demo
+- demo matrix integration for PHI-sensitive, instinct-sensitive, and flagship multi-agent behavior
 
 ### Exit Criteria
 - PHI metrics are a tracked, explicit, inspectable milestone surface
 - instinct is a tracked, explicit, inspectable milestone surface
+- Paper Sonata is strong enough to function as a reviewer-facing and investor-facing milestone demo
 - at least one planned proof path shows how instinct affects routing or prioritization without escaping policy bounds
 
 ## Sprint 3

@@ -17,3 +17,4 @@ Pre-release planning state.
 - PHI-style integration metrics
 - instinct model
 - instinct runtime surface
+- Paper Sonata flagship demo
