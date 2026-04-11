@@ -18,7 +18,11 @@ fn unique_temp_dir(label: &str) -> PathBuf {
 }
 
 fn env_lock() -> std::sync::MutexGuard<'static, ()> {
-    cli_env_lock()
+    let guard = cli_env_lock();
+    unsafe {
+        env::set_var("ADL_PR_JANITOR_DISABLE", "1");
+    }
+    guard
 }
 
 fn write_executable(path: &Path, content: &str) {

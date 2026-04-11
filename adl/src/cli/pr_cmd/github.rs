@@ -1,6 +1,7 @@
 use super::*;
 use serde::Deserialize;
 use std::collections::BTreeSet;
+use std::path::Path;
 use std::process::Command;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
@@ -133,6 +134,60 @@ pub(super) fn ensure_pr_closing_linkage(
             pr_ref,
             issue,
             issue
+        );
+    }
+    Ok(())
+}
+
+pub(super) fn attach_pr_janitor(
+    repo_root: &Path,
+    repo: &str,
+    issue: u32,
+    branch: &str,
+    pr_url: &str,
+    expected_pr_state: &str,
+) -> Result<()> {
+    if std::env::var("ADL_PR_JANITOR_DISABLE").ok().as_deref() == Some("1") {
+        return Ok(());
+    }
+
+    let command_path = std::env::var("ADL_PR_JANITOR_CMD")
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+        .unwrap_or_else(|| {
+            repo_root
+                .join("adl/tools/attach_pr_janitor.sh")
+                .display()
+                .to_string()
+        });
+    let output = Command::new(&command_path)
+        .arg("--repo-root")
+        .arg(repo_root)
+        .arg("--repo")
+        .arg(repo)
+        .arg("--issue")
+        .arg(issue.to_string())
+        .arg("--branch")
+        .arg(branch)
+        .arg("--pr-url")
+        .arg(pr_url)
+        .arg("--expected-pr-state")
+        .arg(expected_pr_state)
+        .output()
+        .with_context(|| format!("finish: failed to spawn PR janitor command '{command_path}'"))?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        bail!(
+            "finish: PR janitor auto-attach failed for issue #{} and PR '{}': {}{}",
+            issue,
+            pr_url,
+            stderr.trim(),
+            if stdout.trim().is_empty() {
+                String::new()
+            } else {
+                format!(" (stdout: {})", stdout.trim())
+            }
         );
     }
     Ok(())

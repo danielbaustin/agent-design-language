@@ -34,6 +34,7 @@ The normal workflow is:
 3. `pr-ready`
 4. `pr-run`
 5. `pr-janitor`
+   - the repo finish path should auto-attach the janitor hook after PR publication so in-flight monitoring starts without an extra manual step
 6. `pr-finish`
 7. `pr-closeout` after the PR outcome or explicit non-PR closure disposition is settled
 
@@ -92,6 +93,7 @@ The current automation model is:
 - `pr-run` consumes doctor-backed readiness and performs bounded execution
 - `pr-janitor` watches a PR in flight and handles bounded blocker remediation
 - `pr-closeout` may now be triggered automatically by the repo control plane once merge or explicit closed/completed state is settled and safe
+- the repo-native finish flow may attach the janitor hook automatically after PR publication
 - `pr-finish` handles truthful closeout/publication
 - `pr-closeout` handles post-merge or post-closure local finalization
 - `pr-closeout` also covers truthful no-PR closure dispositions like superseded, duplicate, or docs-only-closed issues
