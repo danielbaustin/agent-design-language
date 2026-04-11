@@ -6,7 +6,7 @@
 - Owner: `adl`
 - Status: `promoted`
 - Target milestone: `v0.87`
-- Parent: `TRACE_SYSTEM_ARCHITECTURE.md`
+- Parent: `docs/architecture/TRACE_SYSTEM_ARCHITECTURE.md`
 - Depends on: `TRACE_SCHEMA_V1.md`
 
 ## Purpose
