@@ -50,7 +50,7 @@ Ship/no-ship gate for the milestone. Check items only when evidence exists.
 ## Review Surfaces
 - [ ] Demo matrix finalized (`docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`)
 - [ ] Demo matrix coverage reviewed against WBS acceptance criteria before internal review
-- [ ] Internal review complete
+- [x] Internal review complete (`docs/milestones/v0.87.1/INTERNAL_REVIEW_v0.87.1.md`, `#1494`)
 - [ ] External / 3rd-party review complete
 - [ ] Accepted findings remediated or explicitly deferred with owner and rationale
 - [ ] Sprint 3 review-tail order remains intact: internal review -> external / 3rd-party review -> findings remediation -> next milestone planning -> release ceremony
