@@ -21,6 +21,7 @@ This milestone must prove a real temporal / PHI / instinct package with runnable
 
 ## Execution Readiness
 - [ ] Core implementation issue wave created
+- [ ] Each implementation issue promises concrete code, tests, artifacts, or demos rather than doc-only alignment
 - [ ] Demo / proof plan populated with runnable commands
 - [ ] Review-tail issues created and linked
 

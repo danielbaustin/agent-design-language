@@ -29,6 +29,7 @@ All of the following must be true before ceremony:
 
 - [ ] milestone checklist is fully updated and honest
 - [ ] implementation issue wave for `WP-02` through `WP-13` is complete or explicitly deferred
+- [ ] each completed implementation WP produced concrete code, tests, artifacts, demos, or an explicit defer record
 - [ ] demo matrix rows map to real runnable commands and proof artifacts
 - [ ] docs, WBS, demos, and implementation agree on the same bounded milestone
 - [ ] PHI, instinct, temporal schema, and execution-policy/cost claims are each proven in at least one reviewable surface

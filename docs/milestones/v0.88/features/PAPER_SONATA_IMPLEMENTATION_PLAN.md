@@ -80,6 +80,15 @@ Add a bounded test or smoke path that ensures:
 - the artifact layout remains stable
 - the manifest is coherent
 
+## Minimum Concrete Outputs
+
+The first real implementation should not ship unless it produces all of:
+- one runnable entrypoint
+- one fixture packet checked into the repo
+- one stable output tree with role-attributable intermediate artifacts
+- one manifest that enumerates stages and outputs
+- one smoke/test path that fails if the artifact contract drifts
+
 ## Key Risks
 
 - the demo becomes overly ambitious and stalls
