@@ -604,14 +604,14 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
     }
 
     attach_pr_janitor(
-        &primary_root,
+        &repo_root,
         &repo,
         parsed.issue,
         &branch,
         &pr_url,
         if parsed.ready { "ready" } else { "draft" },
     )?;
-    attach_post_merge_closeout(&primary_root, &repo, parsed.issue, &branch, &pr_url)?;
+    attach_post_merge_closeout(&repo_root, &repo, parsed.issue, &branch, &pr_url)?;
 
     if !parsed.no_open {
         let _ = run_status_allow_failure("open", &[&pr_url])?;

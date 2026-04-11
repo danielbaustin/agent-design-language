@@ -25,7 +25,7 @@ Execution:
 
 ## Summary
 
-Added automatic post-merge closeout attachment to the normal `pr finish` publication path so merged issues can normalize their canonical `.adl` bundle without a separate manual cleanup pass. Added a repo-native watcher script, finish-path regression coverage, and a bounded shell test that proves merged PR plus closed/completed issue state triggers automatic closeout and emits a reviewable summary artifact.
+Added automatic post-merge closeout attachment to the normal `pr finish` publication path so merged issues can normalize their canonical `.adl` bundle without a separate manual cleanup pass. Added a repo-native watcher script, finish-path regression coverage, a bounded shell test that proves merged PR plus closed/completed issue state triggers automatic closeout and emits a reviewable summary artifact, and a small follow-up fix so live publication resolves the helper from the issue branch/worktree surface.
 
 ## Artifacts produced
 - `adl/tools/attach_post_merge_closeout.sh`
@@ -38,17 +38,19 @@ Added automatic post-merge closeout attachment to the normal `pr finish` publica
 - added a summary artifact for automatic normalization outcomes so the result is reviewable
 - added a finish regression for closeout auto-attach failure and preserved the normal draft-PR publication path
 - added a shell success-path test for the watcher script
+- repaired the live `finish` helper attachment path after publication so the post-merge watcher is resolved from the issue execution surface instead of the non-updated primary checkout
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: not yet; changes are currently in the issue worktree branch pending PR publication
-- Worktree-only paths remaining: `adl/tools/attach_post_merge_closeout.sh`, `adl/tools/test_attach_post_merge_closeout.sh`, `adl/src/cli/pr_cmd.rs`, `adl/src/cli/pr_cmd/github.rs`, `adl/src/cli/tests/pr_cmd_inline/finish.rs`
-- Integration state: worktree_only
-- Verification scope: worktree
-- Integration method used: managed issue worktree execution before repo-native `pr finish` publication
+- Main-repo paths updated: tracked repository paths are updated on the issue branch via PR 1638
+- Worktree-only paths remaining: none
+- Integration state: pr_open
+- Verification scope: pr_branch
+- Integration method used: managed issue worktree with repo-native `pr finish` publication followed by a bounded branch fix and PR update
 - Verification performed:
-  - `git status --short` verified the exact changed surfaces are limited to the issue worktree paths listed above
-  - `git diff --check` verified there are no whitespace or patch-integrity defects in the worktree changes
-- Result: FAIL
+  - `gh pr list --head codex/1632-add-post-merge-automatic-closeout-normalization-for-canonical-adl-issue-bundles --json number,url,state,isDraft` verified PR 1638 is open on the issue branch
+  - `git status --short` verified the branch is clean after the publication correction
+  - `git diff --check` verified there are no whitespace or patch-integrity defects in the final branch state
+- Result: PASS
 
 Rules:
 - Final artifacts must exist in the main repository, not only in a worktree.
@@ -70,8 +72,10 @@ Rules:
   - `cargo fmt --manifest-path adl/Cargo.toml --all` verified formatting for the touched Rust sources
   - `cargo test --manifest-path adl/Cargo.toml real_pr_finish_fails_when_post_merge_closeout_auto_attach_fails -- --nocapture` verified finish fails loudly when post-merge closeout auto-attach cannot be started
   - `cargo test --manifest-path adl/Cargo.toml real_pr_finish_creates_draft_pr_and_commits_branch_changes -- --nocapture` verified the normal draft PR publication path still succeeds with the new post-merge closeout attach
+  - `cargo test --manifest-path adl/Cargo.toml real_pr_finish_accepts_primary_checkout_issue_prompt_without_worktree_local_copy -- --nocapture` verified the helper resolution remains correct when finish runs from a worktree whose primary checkout owns the canonical prompt
   - `bash adl/tools/test_attach_post_merge_closeout.sh` verified the watcher triggers `pr closeout` after merged PR plus `CLOSED/COMPLETED` issue truth and writes a summary artifact
   - `bash -n adl/tools/attach_post_merge_closeout.sh adl/tools/test_attach_post_merge_closeout.sh` verified shell syntax for the new helper and its test
+  - `bash adl/tools/pr.sh finish 1632 --title "[v0.87.1][tools] Add post-merge automatic closeout normalization for canonical .adl issue bundles"` verified the full repo-native validation sweep and publication path, surfacing the live helper-resolution defect that was then corrected on the branch
   - `git diff --check` verified no patch-integrity defects remain in the worktree
 - Results: PASS; all targeted validation completed successfully for the new automatic post-merge closeout path
 
@@ -95,8 +99,10 @@ verification_summary:
       - "cargo fmt --manifest-path adl/Cargo.toml --all"
       - "cargo test --manifest-path adl/Cargo.toml real_pr_finish_fails_when_post_merge_closeout_auto_attach_fails -- --nocapture"
       - "cargo test --manifest-path adl/Cargo.toml real_pr_finish_creates_draft_pr_and_commits_branch_changes -- --nocapture"
+      - "cargo test --manifest-path adl/Cargo.toml real_pr_finish_accepts_primary_checkout_issue_prompt_without_worktree_local_copy -- --nocapture"
       - "bash adl/tools/test_attach_post_merge_closeout.sh"
       - "bash -n adl/tools/attach_post_merge_closeout.sh adl/tools/test_attach_post_merge_closeout.sh"
+      - "bash adl/tools/pr.sh finish 1632 --title \"[v0.87.1][tools] Add post-merge automatic closeout normalization for canonical .adl issue bundles\""
       - "git diff --check"
   determinism:
     status: PASS
