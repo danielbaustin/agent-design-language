@@ -91,6 +91,7 @@ The current automation model is:
 - the canonical machine-readable diagnostic surface is doctor JSON
 - `pr-run` consumes doctor-backed readiness and performs bounded execution
 - `pr-janitor` watches a PR in flight and handles bounded blocker remediation
+- `pr-closeout` may now be triggered automatically by the repo control plane once merge or explicit closed/completed state is settled and safe
 - `pr-finish` handles truthful closeout/publication
 - `pr-closeout` handles post-merge or post-closure local finalization
 - `pr-closeout` also covers truthful no-PR closure dispositions like superseded, duplicate, or docs-only-closed issues

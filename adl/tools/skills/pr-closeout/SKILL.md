@@ -30,6 +30,8 @@ Current repo truth:
 5. `pr-janitor` monitors the in-flight PR until human review and merge/closure settle
 6. `pr-closeout` finalizes the local issue state after that PR outcome is known
 
+The repo control plane may now trigger the same closeout behavior automatically after merge or explicit closed/completed state when the lifecycle evidence is unambiguous.
+
 This skill is intentionally later than `pr-finish`.
 
 ## Required Inputs

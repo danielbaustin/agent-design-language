@@ -83,6 +83,14 @@ pub(crate) struct FinishArgs {
     pub(crate) idempotent: bool,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct CloseoutArgs {
+    pub(crate) issue: u32,
+    pub(crate) slug: Option<String>,
+    pub(crate) version: Option<String>,
+    pub(crate) no_fetch_issue: bool,
+}
+
 pub(crate) fn parse_init_args(args: &[String]) -> Result<InitArgs> {
     let issue_raw = args
         .first()
@@ -435,6 +443,38 @@ pub(crate) fn parse_finish_args(args: &[String]) -> Result<FinishArgs> {
         bail!("finish: --merge requires checks; remove --no-checks");
     }
 
+    Ok(parsed)
+}
+
+pub(crate) fn parse_closeout_args(args: &[String]) -> Result<CloseoutArgs> {
+    let issue_raw = args
+        .first()
+        .ok_or_else(|| anyhow!("closeout: missing <issue> number"))?;
+    let issue = issue_raw
+        .parse::<u32>()
+        .with_context(|| format!("invalid issue number: {issue_raw}"))?;
+    let mut parsed = CloseoutArgs {
+        issue,
+        slug: None,
+        version: None,
+        no_fetch_issue: false,
+    };
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--slug" => {
+                parsed.slug = Some(require_value(args, i, "closeout", "--slug")?);
+                i += 1;
+            }
+            "--version" => {
+                parsed.version = Some(require_value(args, i, "closeout", "--version")?);
+                i += 1;
+            }
+            "--no-fetch-issue" => parsed.no_fetch_issue = true,
+            other => bail!("closeout: unknown arg: {other}"),
+        }
+        i += 1;
+    }
     Ok(parsed)
 }
 

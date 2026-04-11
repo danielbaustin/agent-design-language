@@ -14,6 +14,7 @@ pub fn usage() -> &'static str {
   adl pr run <adl.yaml> [--trace] [--allow-unsigned] [--runs-root <dir>] [--out <dir>]
   adl pr doctor <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
   adl pr finish <issue> --title <title> [--body <text>] [--paths <csv>] [-f|--input <path>] [--output-card <path>] [--no-checks] [--no-close] [--ready] [--merge] [--no-open]
+  adl pr closeout <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
   adl godel run --run-id <id> --workflow-id <id> --failure-code <code> --failure-summary <text> [--evidence-ref <path> ...] [--runs-dir <dir>]
   adl godel inspect --run-id <id> [--runs-dir <dir>]
   adl godel evaluate --failure-code <code> --experiment-result <ok|blocked> --score-delta <int>

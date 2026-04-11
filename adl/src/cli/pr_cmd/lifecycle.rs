@@ -1,7 +1,10 @@
 use super::*;
 use serde::Deserialize;
+use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::thread;
+use std::time::Duration;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 struct GithubIssueLifecycleState {
@@ -33,6 +36,29 @@ pub(super) fn issue_is_closed_and_completed(issue: u32, repo: &str) -> Result<bo
     let state: GithubIssueLifecycleState =
         serde_json::from_str(trimmed).context("failed to parse gh issue state json")?;
     Ok(state.state == "CLOSED" && state.state_reason.as_deref() == Some("COMPLETED"))
+}
+
+pub(super) fn ensure_issue_closed_completed_for_closeout(issue: u32, repo: &str) -> Result<()> {
+    if !issue_is_closed_and_completed(issue, repo)? {
+        bail!(
+            "closeout: issue #{} is not closed with COMPLETED state yet; refusing automatic closeout",
+            issue
+        );
+    }
+    Ok(())
+}
+
+pub(super) fn wait_for_issue_closed_and_completed(issue: u32, repo: &str) -> Result<()> {
+    for _ in 0..10 {
+        if issue_is_closed_and_completed(issue, repo)? {
+            return Ok(());
+        }
+        thread::sleep(Duration::from_millis(500));
+    }
+    bail!(
+        "finish: issue #{} did not reach CLOSED/COMPLETED state after merge; closeout cannot proceed automatically",
+        issue
+    );
 }
 
 pub(super) fn reconcile_closed_completed_issue_bundle(
@@ -116,6 +142,16 @@ pub(super) fn reconcile_closed_completed_issue_bundle(
     let review_output = card_output_path(&cards_root, issue_ref.issue_number());
     ensure_symlink(&review_output, canonical_output)?;
     Ok(())
+}
+
+pub(super) fn closeout_closed_completed_issue_bundle(
+    repo_root: &Path,
+    primary_root: &Path,
+    issue_ref: &IssueRef,
+    canonical_output: &Path,
+) -> Result<()> {
+    reconcile_closed_completed_issue_bundle(primary_root, issue_ref, canonical_output)?;
+    prune_issue_worktree(repo_root, primary_root, issue_ref)
 }
 
 fn matching_task_bundle_dirs(repo_root: &Path, issue_ref: &IssueRef) -> Result<Vec<PathBuf>> {
@@ -276,6 +312,44 @@ fn same_filesystem_target(left: &Path, right: &Path) -> Result<bool> {
         return Ok(left_canonical == right_canonical);
     }
     Ok(false)
+}
+
+fn prune_issue_worktree(repo_root: &Path, primary_root: &Path, issue_ref: &IssueRef) -> Result<()> {
+    let worktree_path = issue_ref.default_worktree_path(
+        primary_root,
+        std::env::var_os("ADL_WORKTREE_ROOT")
+            .map(PathBuf::from)
+            .as_deref(),
+    );
+    if !worktree_path.is_dir() {
+        return Ok(());
+    }
+    if has_uncommitted_changes(&worktree_path)? {
+        bail!(
+            "closeout: refusing to prune dirty worktree '{}'",
+            worktree_path.display()
+        );
+    }
+    let current_dir = env::current_dir().context("closeout: determine current directory")?;
+    if current_dir.starts_with(&worktree_path) {
+        env::set_current_dir(primary_root).with_context(|| {
+            format!(
+                "closeout: failed to leave worktree '{}' before pruning",
+                worktree_path.display()
+            )
+        })?;
+    }
+    run_status(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "worktree",
+            "remove",
+            path_str(&worktree_path)?,
+        ],
+    )?;
+    Ok(())
 }
 
 #[cfg(test)]

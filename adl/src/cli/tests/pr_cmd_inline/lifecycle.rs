@@ -1186,6 +1186,23 @@ verification_summary:
     )
     .expect("write stale sor");
 
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    assert!(Command::new("git")
+        .args([
+            "worktree",
+            "add",
+            "-q",
+            "-b",
+            "codex/1410-v0-87-tools-finalize-local-task-bundle-closeout-when-issues-are-actually-closed",
+            path_str(&worktree).expect("worktree path"),
+            "origin/main",
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git worktree add")
+        .success());
+    assert!(worktree.is_dir(), "closeout fixture worktree should exist");
+
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
     let gh_path = bin_dir.join("gh");
@@ -1231,5 +1248,5 @@ verification_summary:
     assert!(canonical_text.contains("- Integration state: merged"));
     assert!(canonical_text.contains("- Verification scope: main_repo"));
     assert!(canonical_text.contains("- Worktree-only paths remaining: none"));
-    assert!(!issue_ref.default_worktree_path(&repo, None).exists());
+    assert!(!worktree.exists());
 }
