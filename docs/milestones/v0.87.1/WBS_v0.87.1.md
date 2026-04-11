@@ -11,7 +11,7 @@
 - Keep each item measurable and testable.
 - Include deliverables + dependencies + issue links.
 - `WP-01` is **always** the milestone **design pass** (canonical docs + WBS + decisions + sprint plan + checklist).
-- Reserve the final WPs for the release tail in this order: demos, quality/coverage gate, docs/review convergence, internal review, external review preparation, review-findings remediation or explicit deferral capture, next-milestone planning, and release ceremony.
+- Reserve the final WPs for the release tail in this order: demos, quality/coverage gate, docs/review convergence, internal review, external / 3rd-party review, review-findings remediation or explicit deferral capture, next-milestone planning, and release ceremony.
 
 ## WBS Summary
 `v0.87.1` is the runtime-completion milestone for ADL. It is the point where the runtime moves from early planning into a full implementation target with real execution lifecycle, deterministic trace alignment, local resilience, operator surfaces, review surfaces, and runnable demos.
@@ -37,7 +37,7 @@ This milestone is not satisfied by a public shell alone. It requires substantial
 | WP-14 | Coverage / quality gate (ratchet + exclusions) | Establish truthful quality posture for the runtime milestone, including tests, validators, demos, and justified exceptions | Auditable quality/coverage posture for the runtime-completion milestone | WP-02 through WP-13 | `#1463` |
 | WP-15 | Docs + review pass (repo-wide alignment) | Converge milestone docs, runtime proof surfaces, and reviewer entry docs so an uninvolved reviewer can understand the implemented runtime truthfully | Reviewed and aligned docs/review package for `v0.87.1` | WP-13, WP-14 | `#1464` |
 | WP-16 | Internal review | Perform bounded internal review of milestone truth, runtime behavior, and proof surfaces | Internal review record with actionable findings | WP-15 | `#1494` |
-| WP-17 | External / 3rd-party review preparation | Prepare `v0.87.1` for external review legibility and proof-surface clarity | External-review-ready package for the runtime milestone | WP-16 | `#1495` |
+| WP-17 | External / 3rd-party review | Execute the external review leg against the stabilized `v0.87.1` proof package and capture findings or a clean review result | Completed external review record for the runtime milestone | WP-16 | `#1495` |
 | WP-18 | Review findings remediation | Remediate accepted review findings or record explicit bounded deferrals with ownership before closeout | Updated artifacts plus tracked deferrals/ownership | WP-16, WP-17 | `#1496` |
 | WP-19 | Next milestone planning | Prepare the next milestone planning package before `v0.87.1` closeout | Explicit next-milestone planning materials and tracked follow-on work | WP-18 | `#1497` |
 | WP-20 | Release ceremony (final validation + tag + notes + cleanup) | Perform final validation, release-note alignment, cleanup, and milestone closeout for the runtime milestone | Ready-to-merge runtime milestone state and release artifacts | WP-19 | `#1498` |
@@ -45,7 +45,7 @@ This milestone is not satisfied by a public shell alone. It requires substantial
 ## Sequencing
 - Phase 1: WP-01..WP-08 (runtime foundations, lifecycle, resilience, operator and review surfaces)
 - Phase 2: WP-09..WP-12 (alignment, acceptance, sprint, checklist, and release-gate preparation)
-- Phase 3: WP-13..WP-20 (demos, quality, docs/review, internal review, external review prep, remediation, next-milestone planning, and release)
+- Phase 3: WP-13..WP-20 (demos, quality, docs/review, internal review, external / 3rd-party review, remediation, next-milestone planning, and release)
 
 ## Acceptance Mapping
 Use this section as the canonical acceptance contract for `v0.87.1`. Downstream demo, checklist, quality, review, and release-tail work should point back here rather than creating independent definitions of done.
@@ -68,7 +68,7 @@ Use this section as the canonical acceptance contract for `v0.87.1`. Downstream 
 | WP-14 | Quality posture is auditable: required checks pass or each exception is explicitly justified, owned, and tracked. | CI/local validation records, quality/coverage issue output, and documented exclusions or deferrals. |
 | WP-15 | Docs and reviewer entry surfaces converge on implemented runtime truth and do not overclaim future systems. | Docs/review pass output, reviewer package entrypoints, and stale-claim scans. |
 | WP-16 | Internal review records concrete findings, severity, ownership, and whether each finding is accepted, rejected, or deferred. | Internal review record and linked issue/PR findings. |
-| WP-17 | External review preparation produces a legible package that identifies what to run, what to inspect, and what is intentionally out of scope. | External review package, demo/review entrypoints, and proof-surface navigation. |
+| WP-17 | External / 3rd-party review is completed against a legible package that identifies what to run, what to inspect, and what is intentionally out of scope. | External review record, demo/review entrypoints, and proof-surface navigation. |
 | WP-18 | Accepted review findings are remediated before release or deferred with explicit rationale, owner, and follow-up issue. | Changed artifacts, remediation SORs, and tracked deferral issues. |
 | WP-19 | Next milestone planning exists before release closeout and captures follow-on work that `v0.87.1` deliberately does not complete. | Next-milestone planning docs, WBS/sprint seeds, and follow-on issues. |
 | WP-20 | Release ceremony validates the final state, publishes release artifacts, and leaves the repository/milestone clean for the next tranche. | Final checklist, release notes, tag/release records, post-release verification, and closeout notes. |

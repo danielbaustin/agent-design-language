@@ -2,17 +2,45 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.87 (Sprint 3 Convergence In Progress)
+## v0.87.1 (Runtime Completion Review Tail In Progress)
 
-Status: Docs/review/quality/release tail in progress.
+Status: Runtime implementation and bounded demo program landed; docs/review/quality/release tail in progress.
+
+Summary:
+- ADL now has a real `v0.87.1` runtime-completion milestone on `main`, centered on one coherent runtime package:
+  `runtime environment -> lifecycle -> execution boundaries -> trace alignment -> resilience -> operator/review surfaces`
+- The promoted `v0.87.1` feature-doc set now covers the runtime environment, lifecycle, execution boundaries, resilience, Shepherd preservation, and bounded capability-aware local-model execution
+- The bounded `v0.87.1` demo suite and reviewer package now exist through `demo_v0871_suite.sh`, the D8 review walkthrough, the D10 docs-to-runtime check, the D11 quality-gate walkthrough, and the D12 release-review package
+- Provider-family and multi-agent proof surfaces now distinguish CI-safe bounded proof from the credential-gated D13L live-provider companion path
+- Trace/archive provenance surfaces now include run manifests and milestone-organized durable archive roots for later review/export
+
+References:
+- `docs/milestones/v0.87.1/README.md`
+- `docs/milestones/v0.87.1/WBS_v0.87.1.md`
+- `docs/milestones/v0.87.1/SPRINT_v0.87.1.md`
+- `docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`
+- `docs/milestones/v0.87.1/FEATURE_DOCS_v0.87.1.md`
+- `docs/milestones/v0.87.1/MILESTONE_CHECKLIST_v0.87.1.md`
+- `docs/milestones/v0.87.1/RELEASE_PLAN_v0.87.1.md`
+- `docs/milestones/v0.87.1/RELEASE_NOTES_v0.87.1.md`
+
+Not yet claimed in v0.87.1:
+- final quality-gate closeout
+- internal review, external / 3rd-party review, and accepted-findings remediation completion
+- release ceremony completion
+- later-milestone chronosense, identity, governance, instinct, or broader bounded-agency systems beyond the runtime primitives landed here
+
+## v0.87 (Completed Substrate Convergence Milestone)
+
+Status: Completed.
 
 Summary:
 - ADL now has a real `v0.87` substrate milestone on `main`, centered on the canonical milestone spine:
   `contracts -> execution -> trace -> review -> documentation`
 - The milestone’s promoted feature-doc set now covers trace, provider portability, shared ObsMem, operational skills, control-plane behavior, and reviewer-facing proof surfaces as canonical `v0.87` docs
-- Canonical `v0.87` milestone docs now reflect the real Sprint 1 / Sprint 2 implementation sequence and the active Sprint 3 closeout issues
+- Canonical `v0.87` milestone docs now reflect the real implementation sequence and release-tail closeout that completed the milestone
 - The bounded `v0.87` demo and reviewer package exists through the demo matrix, runbook, and `demo_v087_suite.sh` entry surfaces
-- The next-milestone planning shell for `v0.87.1` now exists as an explicit handoff target for runtime-completion work
+- The next-milestone handoff into `v0.87.1` was established as the runtime-completion follow-on
 
 References:
 - `docs/milestones/v0.87/README.md`
@@ -25,8 +53,6 @@ References:
 - `docs/milestones/v0.87/RELEASE_NOTES_v0.87.md`
 
 Not yet claimed in v0.87:
-- final docs/review convergence and 3rd-party review closeout
-- final release ceremony completion
 - later-milestone continuity, chronosense, governance, signed-trace, or broader runtime-completion work that belongs to `v0.87.1+`
 
 ## v0.86 (Sprint 7 Closeout In Progress)
