@@ -24,6 +24,7 @@ This milestone focuses on:
 - lifecycle and execution-boundary completion
 - deterministic trace-aligned runtime observability
 - local runtime resilience, Shepherd preservation, and failure handling
+- bounded capability-aware local-model execution for the operational-skills demo path
 - operator and review surfaces for real execution and review
 - multiple runnable demos and proof surfaces for the runtime
 
@@ -78,6 +79,7 @@ Primary promoted feature docs:
 - `features/ADL_RUNTIME_ENVIRONMENT_ARCHITECTURE.md`
 - `features/AGENT_LIFECYCLE.md`
 - `features/EXECUTION_BOUNDARIES.md`
+- `features/LOCAL_MODEL_CAPABILITY_AWARE_EXECUTION.md`
 - `features/LOCAL_RUNTIME_RESILIENCE.md`
 - `features/SHEPHERD_RUNTIME_MODEL.md`
 
