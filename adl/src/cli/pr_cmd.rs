@@ -272,7 +272,9 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     );
 
     let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
-    ensure_issue_metadata_parity(&repo, parsed.issue, &title, &normalized_labels)?;
+    if !parsed.no_fetch_issue {
+        ensure_issue_metadata_parity(&repo, parsed.issue, &title, &normalized_labels)?;
+    }
     ensure_no_duplicate_issue_identities(&repo_root, &issue_ref)?;
     let branch = issue_ref.branch_name(&parsed.prefix);
     let unresolved = unresolved_milestone_pr_wave(&repo, &version, Some(&branch))?;
@@ -754,7 +756,9 @@ fn real_pr_init(args: &[String]) -> Result<()> {
         &version,
     );
     let issue_ref = IssueRef::new(issue, version.clone(), slug.clone())?;
-    ensure_issue_metadata_parity(&repo, issue, &title, &normalized_labels)?;
+    if !parsed.no_fetch_issue {
+        ensure_issue_metadata_parity(&repo, issue, &title, &normalized_labels)?;
+    }
     ensure_no_duplicate_issue_identities(&repo_root, &issue_ref)?;
     let source_path = ensure_source_issue_prompt(
         &repo_root,
