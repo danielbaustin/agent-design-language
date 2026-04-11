@@ -27,6 +27,7 @@ ADL_OLLAMA_BIN=tools/mock_ollama_v0_4.sh cargo run -q --bin adl -- examples/v0-6
 - v0.5: primitives, patterns, remote execution MVP (`v0-5-*`)
 - v0.6: HITL pause/resume, profiles, delegation, instrumentation demos
 - v0.7: provider portability / HTTP profile compatibility proof surface
+- v0.87.1: minimal no-network runtime quickstart (`v0-87-1-minimal-runtime-demo.adl.yaml`)
 - v0.87.1: no-network mock provider family proof (`v0-87-1-provider-mock-demo.adl.yaml`)
 - v0.87.1: bounded HTTP family proof (`v0-87-1-provider-http-demo.adl.yaml`)
 - v0.87.1: local Ollama family proof (`v0-87-1-provider-local-ollama-demo.adl.yaml`)
