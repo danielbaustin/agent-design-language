@@ -4,10 +4,12 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT_DIR/adl"
 
-release_notes="../docs/milestones/v0.86/RELEASE_NOTES_v0.86.md"
-demo_matrix_ref="DEMO_MATRIX_v0.86.md"
-tag_ref='Tag: `v0.86`'
-release_gate_ref='Release date: `Pending manual release ceremony`'
+release_notes="../docs/milestones/v0.87.1/RELEASE_NOTES_v0.87.1.md"
+demo_matrix_ref="DEMO_MATRIX_v0.87.1.md"
+tag_ref='Tag: `v0.87.1`'
+release_gate_ref='Release date: `Pending release gate`'
+quality_gate_ref='docs/milestones/v0.87.1/QUALITY_GATE_v0.87.1.md'
+checklist_ref='checklist, review, remediation, planning, and release ceremony gates'
 v02_release_notes="../docs/milestones/v0.2/RELEASE_NOTES_v0.2.md"
 v02_run_dir_ref='Run from the `adl/` directory.'
 v02_plan_cmd='cargo run -- examples/v0-2-coordinator-agents-sdk.adl.yaml --print-plan'
@@ -26,6 +28,16 @@ fi
 
 if ! grep -Fq "$release_gate_ref" "$release_notes"; then
   echo "missing pre-ceremony release-date note in $release_notes: $release_gate_ref" >&2
+  exit 1
+fi
+
+if ! grep -Fq "$checklist_ref" "$release_notes"; then
+  echo "missing release-tail gate note in $release_notes: $checklist_ref" >&2
+  exit 1
+fi
+
+if [ ! -f "../docs/milestones/v0.87.1/QUALITY_GATE_v0.87.1.md" ]; then
+  echo "missing canonical quality gate doc: $quality_gate_ref" >&2
   exit 1
 fi
 

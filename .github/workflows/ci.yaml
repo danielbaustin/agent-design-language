@@ -104,7 +104,7 @@ jobs:
           WORKSPACE_LINE_THRESHOLD: "90"
           PER_FILE_LINE_THRESHOLD: "80"
           # Documented exclusion rationale is tracked in
-          # docs/milestones/v0.75/COVERAGE_POLICY_0.75.md.
+          # docs/milestones/v0.87.1/QUALITY_GATE_v0.87.1.md.
           EXCLUDE_FROM_FILE_FLOOR_REGEX: "/adl/src/obsmem_contract.rs$"
         run: |
           set -eu
