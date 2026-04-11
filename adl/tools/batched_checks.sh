@@ -36,6 +36,7 @@ bash -n "$ROOT/adl/tools/codex_pr.sh"
 bash -n "$ROOT/adl/tools/codexw.sh"
 echo "Skipping codex_pr sanity check (no --paths configured)."
 sh "$ROOT/adl/tools/codexw.sh" --help >/dev/null 2>&1
+run_step "repo-code-review contract check" bash "$ROOT/adl/tools/test_repo_code_review_skill_contracts.sh"
 
 echo "• Running adl checks (batched)…"
 (
