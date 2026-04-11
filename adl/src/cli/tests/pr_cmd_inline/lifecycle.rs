@@ -1543,7 +1543,5 @@ fn real_pr_closeout_refuses_issue_that_is_not_completed() {
     env::set_current_dir(prev_dir).expect("restore cwd");
 
     let err = closeout.expect_err("closeout should refuse unfinished issue");
-    assert!(err
-        .to_string()
-        .contains("refusing automatic closeout"));
+    assert!(err.to_string().contains("refusing automatic closeout"));
 }
