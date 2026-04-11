@@ -19,14 +19,25 @@ It provides:
 ## Current Status
 
 - Specification status: **ADL 1.0 draft**
-- Current closure milestone in the main repo: **v0.87** _(Sprint 3 convergence in progress)_
+- Current active milestone in the main repo: **v0.87.1**
+- Most recently completed closure milestone in the main repo: **v0.87**
 - Previous closure milestone in the main repo: **v0.86**
-- Next planned milestone shell: **v0.87.1**
 - Current role of this directory: language and schema reference for the evolving ADL design
 
 The specification is still evolving. Clarity, coherence, and explicit contracts take priority over premature stability.
 
 ## Recent Milestone Context
+
+- stronger pressure to keep language semantics distinct from the now-active `v0.87.1` runtime-completion execution tail
+
+### v0.87.1 — Runtime Completion And Review Tail
+
+v0.87.1 is the active implementation-and-review milestone. It is not primarily a spec milestone, but it matters here because it sharpens the boundary between language semantics and runtime-specific proof surfaces.
+
+Highlights relevant to the spec:
+- runtime-completion docs and feature surfaces are now concrete enough that spec text must avoid accidentally claiming runtime-specific behavior as language law
+- reviewer-facing proof surfaces make it easier to distinguish implemented runtime truth from later language/planning work
+- the milestone keeps chronosense, identity, governance, and broader cognitive semantics explicitly out of current shipped runtime claims
 
 ### v0.87 — Substrate Convergence and Reviewer-Facing Documentation Truth
 
@@ -36,7 +47,7 @@ Highlights relevant to the spec:
 - stronger repo-wide documentation alignment around the active milestone spine
 - clearer separation between canonical promoted feature docs, milestone docs, and later planning work
 - improved reviewer-facing proof surfaces for trace, provider, shared-memory, skills, and control-plane claims
-- bounded handoff into the `v0.87.1` planning shell without inflating current spec/runtime claims
+- bounded handoff into `v0.87.1` without inflating current spec/runtime claims
 - continued pressure to keep language semantics distinct from milestone execution details
 
 ### v0.86 — Bounded Cognitive System and Reviewable Proof Surfaces

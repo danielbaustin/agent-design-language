@@ -94,7 +94,7 @@ This milestone is executed as a sequence of work packages (WPs):
 - WP-14: Coverage / quality gate
 - WP-15: Docs and review convergence
 - WP-16: Internal review
-- WP-17: External / 3rd-party review preparation
+- WP-17: External / 3rd-party review
 - WP-18: Review findings remediation
 - WP-19: Next milestone planning
 - WP-20: Release ceremony
@@ -103,6 +103,15 @@ Execution expectations:
 - Each WP is tracked by an issue and implemented through bounded PRs where needed.
 - Each issue should produce structured artifacts (input/output cards, reports) when execution begins.
 - This milestone is implementation-heavy and should culminate in a demonstrable runtime, not just planning alignment.
+
+## Reviewer Start Here
+
+If you are reviewing `v0.87.1` cold, start in this order:
+
+- `FEATURE_DOCS_v0.87.1.md` for the bounded promoted runtime surface
+- `DEMO_MATRIX_v0.87.1.md` for the canonical proof program and D0/D13L disposition
+- `docs/tooling/reviewer-surface.md` for the D8 walkthrough validator and review package contract
+- `RELEASE_PLAN_v0.87.1.md` and `MILESTONE_CHECKLIST_v0.87.1.md` for the still-open quality/review/release-tail gates
 
 ## Demo and Validation Surface
 
@@ -147,8 +156,8 @@ Open questions:
 
 Current status: runtime foundations and demo proof surfaces landed; milestone convergence and release-tail gates remain active
 
-- Planning: active for acceptance, checklist, review, next-milestone, and release-tail closure
-- Execution: Sprint 1 runtime-foundation issues `#1435` through `#1442` are closed, WP-13 `#1462` is closed, and `#1458` through `#1461` are the active Sprint 2 convergence gates
+- Planning: canonical milestone docs, WBS, sprint, checklist, release plan, release notes, and feature-doc index all exist; remaining planning work is the release-tail closure package
+- Execution: Sprint 1 and Sprint 2 implementation/proof issues `#1435` through `#1462` are closed except for the still-open Sprint 2 tail issues `#1463` and `#1464`
 - Validation: demo matrix and runtime proof surfaces exist, with quality/review/release validation still pending in `#1463` through `#1498`
 - Release readiness: not ready until checklist, review, remediation, next-milestone planning, and release ceremony issues are complete or explicitly deferred
 

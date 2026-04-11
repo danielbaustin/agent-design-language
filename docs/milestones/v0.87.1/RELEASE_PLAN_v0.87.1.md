@@ -23,7 +23,7 @@
 - [ ] Demo matrix coverage and quality posture reviewed before review-tail closeout (`docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`, `#1463`)
 - [ ] Release notes approved (`docs/milestones/v0.87.1/RELEASE_NOTES_v0.87.1.md`)
 - [ ] Go/no-go decision recorded (`docs/milestones/v0.87.1/DECISIONS_v0.87.1.md` or milestone issue thread)
-- [ ] Internal review and external review-prep outcomes dispositioned
+- [ ] Internal review and external / 3rd-party review outcomes dispositioned
 - [ ] Accepted findings remediated or explicitly deferred with owner, rationale, and follow-up issue before release ceremony begins
 - [ ] Next-milestone planning package prepared before release closeout
 

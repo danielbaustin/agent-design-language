@@ -14,7 +14,7 @@ Those artifacts are schema-validated, compiled into a deterministic execution pl
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.87%20complete-brightgreen)
+![Milestone](https://img.shields.io/badge/milestone-v0.87.1%20active-blue)
 
 ## Why ADL
 
@@ -59,15 +59,26 @@ cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-3-on-er
 
 ## Current Status
 
+- Current active milestone: **v0.87.1**
 - Recent stable milestone: **v0.8**
 - Most recently completed milestone: **v0.87**
 - Previous closure milestone: **v0.86**
-- Next planned milestone: **v0.87.1**
 - Project changelog: `CHANGELOG.md`
 
-ADL is in active development. The repository contains both implemented runtime surfaces and milestone/spec/planning documents. The milestone docs should be read as bounded engineering records: they distinguish what has shipped, what is demoable, and what is still planned.
+ADL is in active development. The repository contains both implemented runtime surfaces and milestone/spec/planning documents. The milestone docs should be read as bounded engineering records: they distinguish what has shipped, what is under active review/closeout, what is demoable, and what is still planned.
 
 ## Recent Milestones
+
+### v0.87.1 - Runtime Completion and Reviewer-Facing Proof Package
+
+v0.87.1 is the current active milestone. The implementation and bounded demo program are in place, and the remaining work is the docs/review/quality/release tail that makes the runtime package reviewable without oral reconstruction.
+
+Key features:
+- runtime environment, lifecycle, execution-boundary, and resilience surfaces promoted into one canonical milestone package
+- bounded demo suite and reviewer walkthrough package for runtime, provider, quality-gate, and release-tail proof surfaces
+- explicit trace/run-manifest/archive surfaces for review and export
+- credential-gated live-provider companion proof kept explicit as non-CI reviewer evidence rather than implied as default proof
+- active handoff into internal review, external / 3rd-party review, remediation, and release
 
 ### v0.87 - Substrate Convergence and Reviewer-Facing Milestone Truth
 
@@ -78,7 +89,7 @@ Key features:
 - promoted feature docs and milestone docs reconciled against the real implementation and issue sequence
 - bounded demo and reviewer proof surfaces for trace, provider portability, shared ObsMem, skills, and control-plane behavior
 - completed Sprint 3 release-tail work for documentation convergence, review, quality gate, and release closeout
-- explicit handoff into `v0.87.1` for the next runtime-completion milestone
+- explicit handoff into `v0.87.1` for the runtime-completion milestone that now sits in the review/release tail
 
 ### v0.86 - Bounded Cognitive System and Reviewable Proof Surfaces
 

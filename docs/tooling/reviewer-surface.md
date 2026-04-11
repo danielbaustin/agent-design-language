@@ -30,6 +30,12 @@ bash adl/tools/demo_v0871_review_surface.sh
 adl tooling review-runtime-surface --review-root artifacts/v0871/review_surface
 ```
 
+For the broader milestone reviewer package, pair that walkthrough with:
+
+- `docs/milestones/v0.87.1/FEATURE_DOCS_v0.87.1.md`
+- `docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`
+- `docs/milestones/v0.87.1/README.md`
+
 ## Card Review Checks
 
 The first slice checks:

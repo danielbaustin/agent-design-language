@@ -22,6 +22,12 @@ If you want the historical `v0.8` flagship demo surface:
 cargo run --manifest-path demos/transpiler_demo/Cargo.toml --quiet
 ```
 
+If you want the current `v0.87.1` milestone demo-suite proof package:
+
+```bash
+bash adl/tools/demo_v0871_suite.sh
+```
+
 If you want the current `v0.87` substrate demo program:
 
 ```bash
@@ -38,12 +44,6 @@ If you want the bounded Claude + ChatGPT tea discussion demo:
 
 ```bash
 bash adl/tools/demo_v0871_multi_agent_discussion.sh
-```
-
-If you want the current `v0.87.1` milestone demo-suite proof package:
-
-```bash
-bash adl/tools/demo_v0871_suite.sh
 ```
 
 ## Demo Categories
@@ -68,6 +68,10 @@ bash adl/tools/demo_v0871_suite.sh
 Use `bash adl/tools/demo_v0871_suite.sh` for the canonical WP-13 demo-suite
 entrypoint. It runs the currently implemented `v0.87.1` proof surfaces and
 writes a suite manifest at `artifacts/v0871/suite/demo_manifest.json`.
+
+Treat that suite as the current reviewer starting point for the milestone.
+It is the default bounded proof package. The live-provider D13L companion proof
+remains explicit and credential-gated rather than part of the default suite.
 
 Use `v0.87.1/codex_ollama_operational_skills_demo.md` for a bounded local demo
 that installs the tracked skills into a demo-local `CODEX_HOME`, points Codex

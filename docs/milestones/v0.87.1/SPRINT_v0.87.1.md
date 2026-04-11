@@ -46,7 +46,7 @@ Complete the first full runtime milestone for ADL: execution environment, lifecy
 - deterministic trace-aligned execution and review surfaces
 - local runtime resilience, Shepherd preservation, and state discipline
 - operator surfaces and a large multi-demo proof program
-- docs/review convergence, internal review, external review prep, remediation, release, and next-milestone handoff
+- docs/review convergence, internal review, external / 3rd-party review, remediation, release, and next-milestone handoff
 
 ## Sprint Structure
 
@@ -138,7 +138,7 @@ Execution order:
 - `#1498` performs the final release ceremony only after the planning package and remediation state are explicit.
 
 Release-tail rule:
-- Sprint 3 must preserve the WBS release-tail order `internal review -> external review prep -> findings remediation -> next milestone planning -> release ceremony` without collapsing those steps into one undocumented closeout pass.
+- Sprint 3 must preserve the WBS release-tail order `internal review -> external / 3rd-party review -> findings remediation -> next milestone planning -> release ceremony` without collapsing those steps into one undocumented closeout pass.
 
 ## Cadence Expectations
 - Use issue cards (`input`/`output`) for each item.

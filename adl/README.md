@@ -23,15 +23,25 @@ It provides:
 
 ## Current Status
 
+- Current active milestone in the main repo: **v0.87.1**
 - Recent stable runtime milestone: **v0.8**
-- Current closure milestone in the main repo: **v0.87** _(Sprint 3 convergence in progress)_
+- Most recently completed runtime milestone in the main repo: **v0.87**
 - Previous closure milestone in the main repo: **v0.86**
-- Next planned milestone shell: **v0.87.1**
-- Current crate version on `main`: **0.86.0**
+- Current crate version on `main`: **0.87.1**
 
 This README describes the runtime as it exists on the current `main` branch and points to the relevant milestone and demo surfaces in the parent repository.
 
 ## Recent Runtime Milestones
+
+### v0.87.1 — Runtime Completion And Reviewer-Facing Proof Package
+
+v0.87.1 is the active runtime milestone. The runtime-completion implementation and bounded demo program are landed; the remaining work is the quality/docs/review/release tail that makes the package externally reviewable.
+
+Highlights:
+- runtime environment, lifecycle, execution-boundary, resilience, and review surfaces promoted into one canonical milestone package
+- bounded runtime, provider, quality-gate, and release-review demo surfaces for reviewer navigation
+- explicit run manifest and trace-archive surfaces for provenance and later review/export
+- live-provider companion proof kept explicit as credential-gated reviewer evidence rather than default CI proof
 
 ### v0.87 — Substrate Convergence and Reviewer-Facing Runtime Truth
 
@@ -42,7 +52,7 @@ Highlights:
 - promoted milestone feature docs and review surfaces reconciled with the actual runtime-adjacent issue sequence
 - bounded demo and reviewer proof surfaces for trace, provider portability, shared ObsMem, skills, and control-plane behavior
 - active Sprint 3 closeout work for docs, review, quality gate, and release packaging
-- explicit handoff into the `v0.87.1` runtime-completion planning shell
+- explicit handoff into the `v0.87.1` runtime-completion milestone now being carried through review and release-tail closeout
 
 ### v0.86 — Bounded Cognitive System and Runtime Proof Surfaces
 
