@@ -25,6 +25,7 @@ This milestone centers on:
 - continuity and identity semantics grounded in time
 - time-aware retrieval, commitments, and bounded temporal explanation
 - execution-policy and cost semantics carried in trace
+- bounded PHI-style integration metrics as an engineering evaluation surface
 - instinct as a bounded runtime influence
 - bounded agency hooks that remain deterministic, inspectable, and policy-constrained
 
@@ -44,6 +45,7 @@ Key outcomes:
 - commitments and deadlines
 - bounded temporal causality and explanation
 - execution mode / cost model semantics
+- PHI-style engineering metrics for integrated cognition
 - instinct as a bounded, inspectable runtime influence
 - bounded agency proof surfaces where instinct affects routing or prioritization
 
@@ -77,12 +79,12 @@ Promoted feature-defining docs:
 - `features/COMMITMENTS_AND_DEADLINES.md`
 - `features/TEMPORAL_CAUSALITY_AND_EXPLANATION.md`
 - `features/ADL_COST_MODEL.md`
+- `features/PHI_METRICS_FOR_ADL.md`
 - `features/INSTINCT_MODEL.md`
 - `features/INSTINCT_RUNTIME_SURFACE.md`
 
 Local planning docs intentionally not promoted yet:
-- historical / transitional: `.adl/docs/v0.88planning/APTITUDE_MODEL.md`
-- exploratory metrics: `.adl/docs/v0.88planning/PHI_METRICS_FOR_ADL.md`
+- later-band learning / skills planning: `.adl/docs/v0.89planning/APTITUDE_MODEL.md`
 - helper maps and planning notes: `.adl/docs/v0.88planning/TEMPORAL_CLUSTER_MAP.md`, `.adl/docs/v0.88planning/RUNTIME_PROVIDER_AND_ECONOMICS_CLUSTER_MAP.md`, `.adl/docs/v0.88planning/WP_INSTINCT_AND_BOUNDED_AGENCY.md`
 
 ## Execution Model

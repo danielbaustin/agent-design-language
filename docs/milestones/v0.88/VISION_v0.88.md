@@ -19,6 +19,7 @@ This milestone should establish or strengthen:
 - chronosense as a first-class substrate
 - continuity and identity semantics grounded in temporal structure
 - execution-policy and cost semantics that are reviewable in trace
+- bounded integration metrics for comparing simple, cognitive, and adaptive ADL systems
 - instinct as a bounded runtime influence rather than a rhetorical idea
 - bounded agency proof surfaces that remain deterministic and policy-governed
 
@@ -44,7 +45,8 @@ This milestone strengthens the architectural pillars of:
 2. Continuity and identity semantics
 3. Time-aware retrieval and commitments
 4. Execution policy and cost reviewability
-5. Instinct and bounded agency
+5. PHI-style integration metrics
+6. Instinct and bounded agency
 
 ## Goal Area: Chronosense and Temporal Structure
 
@@ -79,6 +81,15 @@ Execution should not be evaluated only by output. It should also be interpretabl
 - temporal footprint
 
 `v0.88` therefore links execution mode and cost semantics back to trace reviewability.
+
+## Goal Area: PHI-Style Integration Metrics
+
+`v0.88` also introduces a bounded engineering interpretation of `Φ_ADL`.
+
+The purpose is not metaphysics. The purpose is to give ADL a structured way to talk about:
+- low-integration vs high-integration cognition
+- when memory, policy, replay, instinct, and feedback materially change system behavior
+- how different runtime paths compare in coupling, continuity, and adaptive depth
 
 ## Goal Area: Instinct and Bounded Agency
 

@@ -11,7 +11,7 @@
 
 `v0.88` is a three-sprint execution plan:
 - Sprint 1: canonical package + temporal substrate
-- Sprint 2: instinct / bounded-agency execution and integration
+- Sprint 2: PHI metrics plus instinct / bounded-agency execution and integration
 - Sprint 3: demos, quality, review, release, and handoff
 
 This keeps the closeout flow consistent with `v0.86` and `v0.87`.
@@ -21,8 +21,8 @@ This keeps the closeout flow consistent with `v0.86` and `v0.87`.
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
 | `v0.88-s1` | lock canonical milestone truth and execute the temporal substrate | `WP-01` through `WP-08` | planning package ready; execution issues pending |
-| `v0.88-s2` | execute instinct / bounded-agency work and integrate it with demos | `WP-09`, `WP-10`, `WP-11` | planning only |
-| `v0.88-s3` | converge docs, quality, review, release, and next-milestone planning | `WP-12` through `WP-18` | planning only |
+| `v0.88-s2` | execute PHI metrics plus instinct / bounded-agency work and integrate it with demos | `WP-09`, `WP-10`, `WP-11`, `WP-12` | planning only |
+| `v0.88-s3` | converge docs, quality, review, release, and next-milestone planning | `WP-13` through `WP-19` | planning only |
 
 ## Sprint 1
 
@@ -47,15 +47,17 @@ Establish the canonical `v0.88` package and land the temporal / chronosense subs
 ## Sprint 2
 
 ### Goal
-Execute the instinct / bounded-agency band and connect it to proof surfaces.
+Execute the PHI metrics and instinct / bounded-agency bands and connect them to proof surfaces.
 
 ### Scope
+- PHI-style integration metrics
 - instinct model
 - instinct runtime surface
 - bounded agency proof path
-- demo matrix integration for instinct-sensitive behavior
+- demo matrix integration for PHI-sensitive and instinct-sensitive behavior
 
 ### Exit Criteria
+- PHI metrics are a tracked, explicit, inspectable milestone surface
 - instinct is a tracked, explicit, inspectable milestone surface
 - at least one planned proof path shows how instinct affects routing or prioritization without escaping policy bounds
 

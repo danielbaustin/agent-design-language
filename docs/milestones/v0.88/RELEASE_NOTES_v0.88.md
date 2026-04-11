@@ -14,5 +14,6 @@ Pre-release planning state.
 - commitments and deadlines
 - temporal causality and explanation
 - execution policy and cost model
+- PHI-style integration metrics
 - instinct model
 - instinct runtime surface

@@ -18,5 +18,6 @@
 | D2 | continuity and identity | continuity / resumption review surface | continuity proof artifact | planned |
 | D3 | temporal retrieval and commitments | retrieval/query plus open-commitment proof | query / commitment artifact | planned |
 | D4 | execution policy and cost | policy-aware trace/cost review surface | cost / policy artifact | planned |
-| D5 | instinct declaration and influence | trace / artifact proof that instinct settings are explicit and inspectable | instinct runtime artifact | planned |
-| D6 | bounded agency under instinct | proof that instinct affects routing or prioritization while remaining deterministic and policy-bounded | bounded-agency demo artifact | planned |
+| D5 | PHI-style integration metrics | comparative proof surface for low / medium / high integration profiles | PHI review artifact | planned |
+| D6 | instinct declaration and influence | trace / artifact proof that instinct settings are explicit and inspectable | instinct runtime artifact | planned |
+| D7 | bounded agency under instinct | proof that instinct affects routing or prioritization while remaining deterministic and policy-bounded | bounded-agency demo artifact | planned |

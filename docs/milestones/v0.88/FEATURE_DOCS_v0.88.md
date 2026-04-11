@@ -18,8 +18,7 @@ This page defines the bounded public feature-doc package for `v0.88`. It is an i
 - instinct / bounded-agency substrate
 
 This package intentionally excludes:
-- historical aptitude planning copies
-- exploratory PHI metrics work
+- later-band aptitude and learning / skills planning
 - helper cluster maps and planning notes
 - later social/governance temporal systems
 
@@ -34,14 +33,14 @@ This package intentionally excludes:
 | `features/COMMITMENTS_AND_DEADLINES.md` | future obligations, deadline states, missed-commitment visibility | `WP-06` |
 | `features/TEMPORAL_CAUSALITY_AND_EXPLANATION.md` | bounded order / dependency / explanation surface | `WP-07` |
 | `features/ADL_COST_MODEL.md` | execution mode, realized cost, and economics | `WP-08` |
-| `features/INSTINCT_MODEL.md` | bounded instinct as a cognitive substrate | `WP-09` |
-| `features/INSTINCT_RUNTIME_SURFACE.md` | runtime declaration, influence, and proof surface for instinct | `WP-10` |
+| `features/PHI_METRICS_FOR_ADL.md` | engineering metrics for integration, irreducibility, and coupling | `WP-09` |
+| `features/INSTINCT_MODEL.md` | bounded instinct as a cognitive substrate | `WP-10` |
+| `features/INSTINCT_RUNTIME_SURFACE.md` | runtime declaration, influence, and proof surface for instinct | `WP-11` |
 
 ## Local Planning Inputs Not Promoted
 
 The following remain local planning material and should not be treated as public `v0.88` feature commitments yet:
-- `.adl/docs/v0.88planning/APTITUDE_MODEL.md`
-- `.adl/docs/v0.88planning/PHI_METRICS_FOR_ADL.md`
+- `.adl/docs/v0.89planning/APTITUDE_MODEL.md`
 - `.adl/docs/v0.88planning/TEMPORAL_CLUSTER_MAP.md`
 - `.adl/docs/v0.88planning/RUNTIME_PROVIDER_AND_ECONOMICS_CLUSTER_MAP.md`
 - `.adl/docs/v0.88planning/WP_INSTINCT_AND_BOUNDED_AGENCY.md`

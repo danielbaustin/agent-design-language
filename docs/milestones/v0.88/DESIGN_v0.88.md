@@ -41,6 +41,7 @@ The design task for `v0.88` is therefore to define one bounded public package wi
 - commitments and deadlines
 - temporal causality and explanation
 - execution policy and cost model semantics
+- PHI-style engineering metrics for integration and irreducibility
 - instinct model
 - instinct runtime surface
 - bounded-agency proof expectations tied back to instinct
@@ -64,17 +65,17 @@ The promoted `v0.88` package is organized as two bounded feature bands.
 - `COMMITMENTS_AND_DEADLINES.md`
 - `TEMPORAL_CAUSALITY_AND_EXPLANATION.md`
 - `ADL_COST_MODEL.md`
+- `PHI_METRICS_FOR_ADL.md`
 
 ### Instinct / Bounded-Agency Band
 - `INSTINCT_MODEL.md`
 - `INSTINCT_RUNTIME_SURFACE.md`
 
 ### Local Planning Inputs, Not Canonical Tracked Features
-- `APTITUDE_MODEL.md`
-- `PHI_METRICS_FOR_ADL.md`
+- `v0.89planning/APTITUDE_MODEL.md` as later-band learning / skills planning
 - `TEMPORAL_CLUSTER_MAP.md`
 - `RUNTIME_PROVIDER_AND_ECONOMICS_CLUSTER_MAP.md`
-- `WP_INSTINCT_AND_BOUNDED_AGENCY.md`
+- `WP_INSTINCT_AND_BOUNDED_AGENCY.md` as the local WP note that fed the instinct docs and WBS shape
 
 ## Validation Plan
 - promoted docs exist under `docs/milestones/v0.88/features/`
