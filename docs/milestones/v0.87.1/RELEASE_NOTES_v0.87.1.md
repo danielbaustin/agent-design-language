@@ -26,7 +26,7 @@
 
 ### Runtime Completion Milestone
 - Established `v0.87.1` as the milestone for runtime completion rather than a documentation-only follow-on
-- Aligned the canonical milestone docs (`VISION`, `DESIGN`, `WBS`, `SPRINT`, `DEMO_MATRIX`, `MILESTONE_CHECKLIST`, `RELEASE_PLAN`, `DECISIONS`, `RELEASE_NOTES`) to the real runtime implementation path
+- Aligned the canonical milestone docs (`VISION`, `DESIGN`, `WBS`, `SPRINT`, `DEMO_MATRIX`, `MILESTONE_CHECKLIST`, `RELEASE_PLAN`, `DECISIONS`, `RELEASE_NOTES`) to the real runtime implementation path, including `docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`
 - Kept release-note claims pre-release scoped until the remaining milestone tail issues are complete or explicitly dispositioned
 
 ### Runtime Scope

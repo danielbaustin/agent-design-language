@@ -35,12 +35,14 @@ Ship/no-ship gate for the milestone. Check items only when evidence exists.
 - [ ] No downstream sprint slice starts before the prior sprint handoff gate is satisfied (`docs/milestones/v0.87.1/SPRINT_v0.87.1.md`)
 
 ## Quality Gates
+- [ ] Canonical quality gate documented and current (`docs/milestones/v0.87.1/QUALITY_GATE_v0.87.1.md`)
 - [ ] `cargo fmt` passes
 - [ ] `cargo clippy --all-targets -- -D warnings` passes
 - [ ] `cargo test` passes
 - [ ] CI is green on the merge target
-- [ ] Coverage signal is not red (or exception documented)
+- [ ] Coverage signal is not red (or exception documented) and matches the current documented thresholds/exclusions (`docs/milestones/v0.87.1/QUALITY_GATE_v0.87.1.md`)
 - [ ] No unresolved high-priority blockers (tracked via GitHub issues for v0.87.1)
+- [ ] D11 quality-gate walkthrough is current and reviewable (`docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`, `artifacts/v0871/quality_gate/quality_gate_record.json`)
 - [ ] Runtime demo program passes or each non-passing demo has an explicit bounded disposition
 - [ ] Quality, demo, and review exceptions map back to a WBS acceptance criterion and include owner-bound disposition
 - [ ] Any accepted quality exception records owner, due date, and disposition before release work proceeds

@@ -17,10 +17,11 @@
 - Do not treat "known but acceptable" as implicit approval; unresolved exceptions must be visible in the release-tail record.
 
 ## 1) Release Readiness
+- [ ] Canonical quality gate reviewed and aligned with CI / docs / demo posture (`docs/milestones/v0.87.1/QUALITY_GATE_v0.87.1.md`)
 - [ ] Milestone checklist complete (`docs/milestones/v0.87.1/MILESTONE_CHECKLIST_v0.87.1.md`)
 - [ ] WBS acceptance mapping reviewed against demo, quality, review, and release-tail evidence (`docs/milestones/v0.87.1/WBS_v0.87.1.md`)
 - [ ] Sprint sequencing and handoff gates reviewed against the release-tail issue order (`docs/milestones/v0.87.1/SPRINT_v0.87.1.md`)
-- [ ] Demo matrix coverage and quality posture reviewed before review-tail closeout (`docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`, `#1463`)
+- [ ] Demo matrix coverage and quality posture reviewed before review-tail closeout (`docs/milestones/v0.87.1/DEMO_MATRIX_v0.87.1.md`, `docs/milestones/v0.87.1/QUALITY_GATE_v0.87.1.md`, `#1463`)
 - [ ] Release notes approved (`docs/milestones/v0.87.1/RELEASE_NOTES_v0.87.1.md`)
 - [ ] Go/no-go decision recorded (`docs/milestones/v0.87.1/DECISIONS_v0.87.1.md` or milestone issue thread)
 - [ ] Internal review and external review-prep outcomes dispositioned
