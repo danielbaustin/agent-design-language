@@ -9,111 +9,192 @@
 - Related issues: `#1527`, `#1579`, `#1497`
 
 ## Purpose
-Define the milestone-level vision for `v0.88`: what changes here, why it matters, and which strategic pillars it advances.
+Define the milestone-level vision for `v0.88`: what kind of system this milestone is trying to make possible, why that matters, and how it prepares the next stage of ADL.
 
 ## Overview
 
-`v0.88` is the milestone where ADL stops treating time and instinct as scattered planning themes and starts treating them as bounded architectural surfaces.
+`v0.88` is the milestone where ADL begins to gain a more believable inner life.
 
-This milestone should establish or strengthen:
-- chronosense as a first-class substrate
-- continuity and identity semantics grounded in temporal structure
-- execution-policy and cost semantics that are reviewable in trace
-- bounded integration metrics for comparing simple, cognitive, and adaptive ADL systems
-- instinct as a bounded runtime influence rather than a rhetorical idea
-- bounded agency proof surfaces that remain deterministic and policy-governed
+Not consciousness. Not mythology. Not grand claims.
 
-`v0.88` focuses on **cohesive cognition**.
+What `v0.88` should make real is something more disciplined and more useful:
 
-The goal is to make the project more useful to:
-- developers building reliable agent runtimes
-- reviewers trying to understand how ADL reasons over time
-- future milestone planning that depends on a stable substrate for identity, governance, and society
+- a system that can situate execution in time
+- a system whose continuity can be reasoned about instead of merely assumed
+- a system that can explain not only what it did, but what posture it took while doing it
+- a system whose behavior can be compared in terms of coupling, integration, and bounded internal structure
+- a system where instinct begins to exist as a real, inspectable pressure on behavior rather than a metaphor in a concept paper
 
-This milestone strengthens the architectural pillars of:
-- determinism and replayability
-- trace as ground truth
-- temporal continuity as a substrate concern
-- explicit bounded influences on decision-making
-- reviewer-legible proof surfaces
+This is the milestone of **cohesive cognition**.
 
-## Core Goals
+`v0.87.1` completed a large amount of runtime and provider work. That gave ADL a stronger outer shell: execution, providers, trace, demos, tooling, review. `v0.88` should give that shell a more coherent interior.
 
-`v0.88` advances ADL in five major areas:
+The project should come out of this milestone feeling less like a set of surfaces and more like a system with a legible internal orientation.
 
-1. Chronosense and temporal structure
-2. Continuity and identity semantics
-3. Time-aware retrieval and commitments
-4. Execution policy and cost reviewability
-5. PHI-style integration metrics
-6. Instinct and bounded agency
+## Why This Milestone Matters
 
-## Goal Area: Chronosense and Temporal Structure
+ADL is headed toward identity, governance, delegation, constitutional structure, and richer multi-agent systems.
 
-`v0.88` makes time architectural rather than incidental.
+Those later milestones only make sense if we first make three things more real:
 
-Key objectives:
-- define the core chronosense substrate
-- define temporal anchors, clocks, and field contracts
-- ensure trace carries the minimum temporal structure needed for review and later runtime work
+- **time**
+- **integration**
+- **bounded motive pressure**
 
-## Goal Area: Continuity and Identity Semantics
+Without a serious temporal substrate, continuity is fake.
+Without a way to talk about integration, cognitive structure remains hand-wavy.
+Without bounded instinct, agency remains theatrical.
 
-This milestone clarifies what it means for an agent to persist across interruption, resumption, and ordered experience.
+`v0.88` matters because it addresses all three without trying to solve everything at once.
 
-Key objectives:
-- define continuity in terms of temporal structure
-- separate interruption from termination
-- prepare the substrate for later persistent-identity milestones without overclaiming them now
+It is the milestone where ADL should become:
 
-## Goal Area: Time-Aware Retrieval and Commitments
+- more temporally explicit
+- more internally interpretable
+- more honest about what shapes behavior
+- more prepared for later identity and governance work
 
-`v0.88` introduces a bounded public surface for:
-- temporal query and retrieval
-- staleness and interval reasoning
-- commitments, deadlines, and missed-obligation visibility
+## Strategic Direction
 
-## Goal Area: Execution Policy and Cost Reviewability
+The deeper ambition of ADL is not to orchestrate prompts more cleverly. It is to build systems whose behavior can be:
 
-Execution should not be evaluated only by output. It should also be interpretable in terms of:
-- requested execution posture
-- realized cost
-- temporal footprint
+- structured
+- inspected
+- criticized
+- trusted
+- improved
 
-`v0.88` therefore links execution mode and cost semantics back to trace reviewability.
+`v0.88` strengthens that ambition by pushing on a simple but powerful idea:
 
-## Goal Area: PHI-Style Integration Metrics
+> cognition becomes more meaningful when time, cost, integration, and motive pressure are all visible together.
 
-`v0.88` also introduces a bounded engineering interpretation of `Φ_ADL`.
+This milestone should therefore move ADL toward a runtime that can answer questions like:
 
-The purpose is not metaphysics. The purpose is to give ADL a structured way to talk about:
-- low-integration vs high-integration cognition
-- when memory, policy, replay, instinct, and feedback materially change system behavior
-- how different runtime paths compare in coupling, continuity, and adaptive depth
+- what happened, and when?
+- what persisted across interruption?
+- what commitments were active?
+- what execution posture was chosen?
+- what did that posture cost?
+- how integrated was the path that produced this result?
+- what instinctive pressure, if any, shaped the route?
 
-## Goal Area: Instinct and Bounded Agency
+If ADL can answer those questions in bounded and reviewable ways, it becomes a much stronger architecture for the milestones that follow.
 
-`v0.88` also introduces the first public bounded instinct package.
+## Core Vision Areas
 
-This is not meant to deliver unconstrained autonomy. It is meant to define:
-- instinct as structured, bounded bias
-- inspectable influence on prioritization or routing
-- deterministic and policy-constrained agency hooks
+### 1. Chronosense As Architectural Reality
+
+Time should stop being a loose annotation and become part of the system’s structural truth.
+
+`v0.88` should make temporal anchors, continuity, commitments, deadlines, retrieval, and explanation feel like parts of one architectural band.
+
+The system should begin to behave like something that can locate itself in ordered experience, not merely emit timestamped artifacts.
+
+### 2. Execution Posture As Reviewable Behavior
+
+Execution is not just output plus latency.
+
+Different runs carry different postures:
+- efficient
+- fast
+- deterministic
+- exploratory
+
+`v0.88` should make those postures legible enough that reviewers can see both the requested stance and the realized cost. That is important not only for engineering, but for later governance and policy work. A system cannot be governed well if its execution posture is invisible.
+
+### 3. Integration Without Mysticism
+
+`PHI` enters this milestone not as a metaphysical wager but as an engineering curiosity worth operationalizing carefully.
+
+We want a bounded way to ask:
+
+- how coupled was this path?
+- how much did memory, policy, feedback, or instinct materially matter?
+- when is a system acting like a set of independent steps, and when is it acting like something more integrated?
+
+That is useful even if we refuse grandiose claims. In fact, it is useful precisely because we refuse them.
+
+### 4. Instinct As Bounded Pressure
+
+ADL has talked for a while about instinct, motivation, and agency. `v0.88` is where instinct should begin to become real enough to matter.
+
+Not unbounded freedom.
+Not opaque self-direction.
+
+What we want here is something smaller and stronger:
+
+- bounded directional pressure
+- visible influence
+- policy-constrained routing or prioritization
+- inspectable proof that motive pressure exists without escaping control
+
+That would be a major step forward, because it would mean agency in ADL is no longer merely conceptual.
+
+### 5. Proof Surfaces That Make These Claims Defensible
+
+If `v0.88` succeeds, it will not succeed because the docs sound smart.
+
+It will succeed because the demos, artifacts, trace surfaces, and review package make the milestone claims legible and testable.
+
+This milestone should leave us with proof surfaces that let a reviewer say:
+
+- yes, temporal structure is visible
+- yes, execution posture and cost are visible together
+- yes, integration can be discussed in a bounded way
+- yes, instinct affects behavior in at least one real and policy-bounded case
+
+That is the standard.
 
 ## Milestone Context
 
-`v0.88` sits between:
-- the runtime / substrate completion work of `v0.87.1`
-- the later governance, identity, and social-system milestones
+`v0.88` sits in a very important position in the roadmap.
 
-It is a consolidation milestone, but it should still prepare real executable work, demos, and proof surfaces rather than stopping at planning-package documents.
+Behind it is the heavy stabilization and runtime completion work of `v0.87` and `v0.87.1`.
+
+Ahead of it are the more dangerous and more ambitious bands:
+- learning and aptitude
+- governance and reasonableness
+- delegation and negotiation
+- identity continuity
+- social and constitutional systems
+
+This milestone should not absorb those later bands. It should make them more buildable by strengthening the substrate they depend on.
+
+That is why `v0.88` should feel focused rather than sprawling.
+
+## Long-Term Direction
+
+ADL is trying to become a serious cognitive architecture: one where the inner structure of behavior is not hidden behind output text.
+
+The long-term direction includes:
+
+- persistent identity across time
+- policy-shaped execution
+- structured delegation
+- constitutional control
+- inspectable social cognition
+
+`v0.88` is not the milestone that delivers those things.
+
+It is the milestone that makes them more believable.
+
+By the end of `v0.88`, ADL should feel like a system that has:
+
+- a better sense of time
+- a better language for internal integration
+- a first believable surface for bounded motive pressure
+
+That is enough. It is also a lot.
 
 ## Summary
 
-`v0.88` is the milestone where ADL becomes:
-- more temporally explicit
-- more continuous in its identity model
-- more reviewable in execution-policy and cost behavior
-- more structurally honest about instinct and bounded agency
+`v0.88` is the milestone where ADL stops treating inner structure as implication and starts treating it as architecture.
 
-It prepares the project for later identity, governance, and multi-agent work by making the underlying substrate clearer, tighter, and more executable.
+It should make the project:
+
+- more temporally grounded
+- more reviewable in execution posture and cost
+- more capable of discussing integration honestly
+- more serious about instinct as a bounded force in runtime behavior
+
+If `v0.87` was about credibility of the system’s outer surfaces, `v0.88` should be about credibility of its inner ones.
