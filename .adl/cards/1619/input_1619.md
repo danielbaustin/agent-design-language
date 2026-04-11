@@ -1,1 +1,0 @@
-/Users/daniel/git/agent-design-language/.worktrees/adl-wp-1619/.adl/v0.88/tasks/issue-1619__refresh-adl-feature-list-v088-truth/sip.md
