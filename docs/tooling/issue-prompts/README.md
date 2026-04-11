@@ -34,6 +34,7 @@ The important distinction is:
   - historical tracked task-bundle examples, organized by milestone/version where applicable
 - `.adl/`
   - local draft workspace, generated intermediate state, and the current canonical task-bundle / issue-record surface
+  - tracked `.adl/.../bodies/issue-*` and `.adl/.../tasks/issue-*` residue is not allowed; preserve any intentional historical/public examples under `docs/records/` instead
 
 ## Template Set
 

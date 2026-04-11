@@ -900,6 +900,9 @@ fn validate_completed_sor(repo_root: &Path, output_path: &Path) -> Result<()> {
 
 fn run_batched_checks_rust(repo_root: &Path) -> Result<()> {
     let manifest = repo_root.join("adl/Cargo.toml");
+    let tracked_residue_guard =
+        repo_root.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh");
+    run_status("bash", &[path_str(&tracked_residue_guard)?])?;
     run_status(
         "cargo",
         &[

@@ -1238,12 +1238,16 @@ fn finish_helper_paths_cover_ahead_count_and_batch_checks() {
     let temp = unique_temp_dir("adl-pr-finish-batch-checks");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
-    fs::create_dir_all(repo.join("adl")).expect("adl dir");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
     fs::write(
         repo.join("adl/Cargo.toml"),
         "[package]\nname='adl'\nversion='0.1.0'\n",
     )
     .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
     init_git_repo(&repo);
     assert!(Command::new("git")
         .args(["config", "user.name", "Test User"])

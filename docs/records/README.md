@@ -1,13 +1,14 @@
 # Historical Public Task Records
 
-This directory preserves the tracked public task-record surfaces that were
-published as part of the `v0.85` editor/control-plane work.
+This directory preserves tracked historical/public task-record surfaces.
 
 These records remain useful as:
 
 - historical proof surfaces
 - reviewable editor/demo fixtures
 - stable examples of the earlier public task-bundle model
+- an archive home for legacy tracked issue-record residue that should no longer
+  live under `.adl/`
 
 They are not the current canonical issue-record surface for the active PR
 workflow.
