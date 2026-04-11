@@ -184,3 +184,194 @@ pub(super) fn verify_execute_request_signature_v1(
         .map_err(|_| SecurityEnvelopeError::RequestSignatureMismatch)?;
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+    use std::sync::{Mutex, OnceLock};
+
+    use base64::Engine;
+    use ed25519_dalek::SigningKey;
+
+    use super::{
+        attach_request_signature, canonical_request_bytes, maybe_attach_request_signature_from_env,
+        sign_execute_request_v1, verify_execute_request_signature_v1, ExecuteRequest,
+        ExecuteSecurityEnvelope, RemoteRequestSignatureV1, SecurityEnvelopeError, B64,
+        REMOTE_REQUEST_SIGNATURE_ALG_ED25519, REMOTE_REQUEST_SIGNATURE_SCHEMA_V1,
+    };
+    use crate::adl::ProviderSpec;
+    use crate::remote_exec::{ExecuteInputsPayload, ExecuteStepPayload};
+
+    fn base_request() -> ExecuteRequest {
+        ExecuteRequest {
+            protocol_version: "0.1".to_string(),
+            run_id: "run-1".to_string(),
+            workflow_id: "wf-1".to_string(),
+            step_id: "step-1".to_string(),
+            step: ExecuteStepPayload {
+                kind: "agent".to_string(),
+                provider: "provider".to_string(),
+                prompt: "hello".to_string(),
+                tools: vec!["web".to_string()],
+                provider_spec: ProviderSpec {
+                    id: None,
+                    profile: None,
+                    kind: "openai".to_string(),
+                    base_url: None,
+                    default_model: None,
+                    config: HashMap::new(),
+                },
+                model_override: None,
+            },
+            inputs: ExecuteInputsPayload::default(),
+            timeout_ms: 1_000,
+            security: None,
+        }
+    }
+
+    fn env_lock() -> &'static Mutex<()> {
+        static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+        LOCK.get_or_init(|| Mutex::new(()))
+    }
+
+    #[test]
+    fn canonical_request_bytes_omit_signature_and_sort_keys() {
+        let mut req = base_request();
+        req.inputs.inputs.insert("b".to_string(), "2".to_string());
+        req.inputs.inputs.insert("a".to_string(), "1".to_string());
+        req.security = Some(ExecuteSecurityEnvelope {
+            signed: true,
+            signature_alg: Some("ed25519".to_string()),
+            request_signature: Some(RemoteRequestSignatureV1 {
+                schema_version: REMOTE_REQUEST_SIGNATURE_SCHEMA_V1.to_string(),
+                alg: REMOTE_REQUEST_SIGNATURE_ALG_ED25519.to_string(),
+                key_id: Some("key-1".to_string()),
+                public_key_b64: Some("pub".to_string()),
+                sig_b64: "sig".to_string(),
+            }),
+            ..ExecuteSecurityEnvelope::default()
+        });
+
+        let canonical = canonical_request_bytes(&req).unwrap();
+        let rendered = String::from_utf8(canonical.clone()).unwrap();
+        assert!(rendered.contains("\"a\":\"1\",\"b\":\"2\""));
+        let parsed: serde_json::Value = serde_json::from_slice(&canonical).unwrap();
+        assert_eq!(
+            parsed["security"]["request_signature"],
+            serde_json::Value::Null
+        );
+    }
+
+    #[test]
+    fn maybe_attach_request_signature_from_env_requires_key_when_policy_demands_it() {
+        let _guard = env_lock().lock().unwrap();
+        std::env::remove_var("ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64");
+        std::env::remove_var("ADL_REMOTE_REQUEST_SIGNING_KEY_ID");
+
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            ..ExecuteSecurityEnvelope::default()
+        });
+
+        let err = maybe_attach_request_signature_from_env(&mut req).unwrap_err();
+        assert!(err.to_string().contains("REMOTE_REQUEST_SIGNATURE_MISSING"));
+    }
+
+    #[test]
+    fn maybe_attach_request_signature_from_env_attaches_signature_and_env_metadata() {
+        let _guard = env_lock().lock().unwrap();
+        let signing = SigningKey::from_bytes(&[7_u8; 32]);
+        std::env::set_var(
+            "ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64",
+            B64.encode(signing.to_bytes()),
+        );
+        std::env::set_var("ADL_REMOTE_REQUEST_SIGNING_KEY_ID", "env-key");
+
+        let mut req = base_request();
+        req.security = Some(ExecuteSecurityEnvelope {
+            require_signature: true,
+            ..ExecuteSecurityEnvelope::default()
+        });
+
+        maybe_attach_request_signature_from_env(&mut req).unwrap();
+        let security = req.security.as_ref().unwrap();
+        assert!(security.signed);
+        assert_eq!(security.key_id.as_deref(), Some("env-key"));
+        assert_eq!(
+            security.signature_alg.as_deref(),
+            Some(REMOTE_REQUEST_SIGNATURE_ALG_ED25519)
+        );
+        assert_eq!(security.key_source.as_deref(), Some("embedded"));
+        assert!(security.request_signature.is_some());
+
+        std::env::remove_var("ADL_REMOTE_REQUEST_SIGNING_PRIVATE_KEY_B64");
+        std::env::remove_var("ADL_REMOTE_REQUEST_SIGNING_KEY_ID");
+    }
+
+    #[test]
+    fn sign_and_verify_round_trip_succeeds() {
+        let mut req = base_request();
+        let private_key_b64 = B64.encode([9_u8; 32]);
+        attach_request_signature(&mut req, &private_key_b64, Some("key-9")).unwrap();
+
+        let signature = req
+            .security
+            .as_ref()
+            .and_then(|security| security.request_signature.clone())
+            .unwrap();
+        verify_execute_request_signature_v1(&req, &signature).unwrap();
+    }
+
+    #[test]
+    fn verify_execute_request_signature_rejects_malformed_variants() {
+        let req = base_request();
+        let private_key_b64 = B64.encode([11_u8; 32]);
+        let good = sign_execute_request_v1(&req, &private_key_b64, Some("key-11")).unwrap();
+
+        let wrong_schema = RemoteRequestSignatureV1 {
+            schema_version: "wrong".to_string(),
+            ..good.clone()
+        };
+        assert!(matches!(
+            verify_execute_request_signature_v1(&req, &wrong_schema),
+            Err(SecurityEnvelopeError::MalformedRequestSignature { .. })
+        ));
+
+        let wrong_alg = RemoteRequestSignatureV1 {
+            alg: "rsa".to_string(),
+            ..good.clone()
+        };
+        assert!(matches!(
+            verify_execute_request_signature_v1(&req, &wrong_alg),
+            Err(SecurityEnvelopeError::UnsupportedRequestSignatureAlgorithm { .. })
+        ));
+
+        let missing_pub = RemoteRequestSignatureV1 {
+            public_key_b64: None,
+            ..good.clone()
+        };
+        assert!(matches!(
+            verify_execute_request_signature_v1(&req, &missing_pub),
+            Err(SecurityEnvelopeError::MalformedRequestSignature { .. })
+        ));
+
+        let bad_pub_b64 = RemoteRequestSignatureV1 {
+            public_key_b64: Some("@@@".to_string()),
+            ..good.clone()
+        };
+        assert!(matches!(
+            verify_execute_request_signature_v1(&req, &bad_pub_b64),
+            Err(SecurityEnvelopeError::MalformedRequestSignature { .. })
+        ));
+
+        let bad_sig_b64 = RemoteRequestSignatureV1 {
+            sig_b64: "@@@".to_string(),
+            ..good
+        };
+        assert!(matches!(
+            verify_execute_request_signature_v1(&req, &bad_sig_b64),
+            Err(SecurityEnvelopeError::MalformedRequestSignature { .. })
+        ));
+    }
+}

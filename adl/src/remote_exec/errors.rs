@@ -222,3 +222,177 @@ impl std::fmt::Display for SecurityEnvelopeError {
 }
 
 impl std::error::Error for SecurityEnvelopeError {}
+
+#[cfg(test)]
+mod tests {
+    use anyhow::{anyhow, Error};
+
+    use super::{
+        retryability, stable_failure_kind, RemoteExecuteClientError, RemoteExecuteClientErrorKind,
+        SecurityEnvelopeError,
+    };
+
+    #[test]
+    fn security_envelope_error_code_and_message_cover_policy_variants() {
+        let unsupported = SecurityEnvelopeError::UnsupportedRequestSignatureAlgorithm {
+            alg: "rsa".to_string(),
+        };
+        assert_eq!(
+            unsupported.code(),
+            "REMOTE_REQUEST_SIGNATURE_UNSUPPORTED_ALGORITHM"
+        );
+        assert!(unsupported
+            .message()
+            .contains("unsupported signature algorithm 'rsa'"));
+
+        let disallowed_alg = SecurityEnvelopeError::DisallowedAlgorithm {
+            alg: "ed448".to_string(),
+        };
+        assert_eq!(
+            disallowed_alg.code(),
+            "REMOTE_ENVELOPE_DISALLOWED_ALGORITHM"
+        );
+        assert!(disallowed_alg.message().contains("ed448"));
+
+        let disallowed_source = SecurityEnvelopeError::DisallowedKeySource {
+            key_source: "vault".to_string(),
+        };
+        assert_eq!(
+            disallowed_source.code(),
+            "REMOTE_ENVELOPE_DISALLOWED_KEY_SOURCE"
+        );
+        assert!(disallowed_source.message().contains("vault"));
+
+        let missing_source = SecurityEnvelopeError::MissingKeySource;
+        assert_eq!(missing_source.code(), "REMOTE_ENVELOPE_MISSING_KEY_SOURCE");
+        assert!(missing_source.message().contains("missing key source"));
+    }
+
+    #[test]
+    fn security_envelope_error_code_and_message_cover_path_variants() {
+        let traversal = SecurityEnvelopeError::PathTraversal {
+            path: "../etc/passwd".to_string(),
+        };
+        assert_eq!(traversal.code(), "REMOTE_ENVELOPE_PATH_TRAVERSAL");
+        assert!(traversal.message().contains("../etc/passwd"));
+
+        let not_found = SecurityEnvelopeError::PathNotFound {
+            path: "missing".to_string(),
+        };
+        assert_eq!(not_found.code(), "REMOTE_ENVELOPE_PATH_NOT_FOUND");
+        assert!(not_found
+            .message()
+            .contains("sandbox target/root was not found"));
+
+        let not_canonical = SecurityEnvelopeError::PathNotCanonical {
+            path: "foo".to_string(),
+        };
+        assert_eq!(not_canonical.code(), "REMOTE_ENVELOPE_PATH_NOT_CANONICAL");
+        assert!(not_canonical.message().contains("canonicalization failed"));
+
+        let symlink_disallowed = SecurityEnvelopeError::SymlinkDisallowed {
+            path: "link".to_string(),
+        };
+        assert_eq!(
+            symlink_disallowed.code(),
+            "REMOTE_ENVELOPE_SYMLINK_DISALLOWED"
+        );
+        assert!(symlink_disallowed
+            .message()
+            .contains("symlink traversal is disabled"));
+
+        let symlink_escape = SecurityEnvelopeError::SymlinkEscape {
+            path: "escape".to_string(),
+        };
+        assert_eq!(symlink_escape.code(), "REMOTE_ENVELOPE_SYMLINK_ESCAPE");
+        assert!(symlink_escape.message().contains("escaping sandbox root"));
+
+        let io_error = SecurityEnvelopeError::SandboxIoError {
+            path: "target".to_string(),
+            operation: "canonicalize",
+        };
+        assert_eq!(io_error.code(), "REMOTE_ENVELOPE_SANDBOX_IO_ERROR");
+        assert!(io_error.message().contains("canonicalize"));
+    }
+
+    #[test]
+    fn retryability_distinguishes_remote_error_kinds() {
+        let timeout = Error::new(RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::Timeout,
+            "REMOTE_TIMEOUT",
+            "timed out",
+        ));
+        assert_eq!(retryability(&timeout), Some(true));
+
+        let schema = Error::new(RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::SchemaViolation,
+            "REMOTE_SCHEMA_VIOLATION",
+            "bad payload",
+        ));
+        assert_eq!(retryability(&schema), Some(false));
+
+        let retryable_remote = Error::new(RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::RemoteExecution,
+            "REMOTE_PROVIDER_FAILURE",
+            "backend error",
+        ));
+        assert_eq!(retryability(&retryable_remote), Some(true));
+
+        let policy_remote = Error::new(RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::RemoteExecution,
+            "SIGN_POLICY_MISSING_KEY_SOURCE",
+            "policy denied",
+        ));
+        assert_eq!(retryability(&policy_remote), Some(false));
+
+        let envelope_remote = Error::new(RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::RemoteExecution,
+            "REMOTE_ENVELOPE_PATH_TRAVERSAL",
+            "path rejected",
+        ));
+        assert_eq!(retryability(&envelope_remote), Some(false));
+
+        let policy = Error::new(SecurityEnvelopeError::MissingKeySource);
+        assert_eq!(retryability(&policy), Some(false));
+
+        let unrelated = anyhow!("plain outer error");
+        assert_eq!(retryability(&unrelated), None);
+    }
+
+    #[test]
+    fn stable_failure_kind_maps_policy_transport_and_remote_variants() {
+        let policy = Error::new(SecurityEnvelopeError::UnsignedRequestRequired);
+        assert_eq!(stable_failure_kind(&policy), Some("policy_denied"));
+
+        let timeout = Error::new(RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::Timeout,
+            "REMOTE_TIMEOUT",
+            "timed out",
+        ));
+        assert_eq!(stable_failure_kind(&timeout), Some("timeout"));
+
+        let schema = Error::new(RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::SchemaViolation,
+            "REMOTE_SCHEMA_VIOLATION",
+            "schema",
+        ));
+        assert_eq!(stable_failure_kind(&schema), Some("schema_error"));
+
+        let io = Error::new(RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::BadStatus,
+            "REMOTE_BAD_STATUS",
+            "bad status",
+        ));
+        assert_eq!(stable_failure_kind(&io), Some("io_error"));
+
+        let provider = Error::new(RemoteExecuteClientError::new(
+            RemoteExecuteClientErrorKind::RemoteExecution,
+            "REMOTE_PROVIDER_FAILURE",
+            "backend",
+        ));
+        assert_eq!(stable_failure_kind(&provider), Some("provider_error"));
+
+        let unrelated = anyhow!("plain outer error");
+        assert_eq!(stable_failure_kind(&unrelated), None);
+    }
+}
