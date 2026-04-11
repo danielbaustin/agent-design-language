@@ -1613,8 +1613,11 @@ fn real_pr_finish_rejects_staged_gitignore_changes_without_allow_flag() {
     let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
     fs::create_dir_all(&bundle_dir).expect("bundle dir");
     write_authored_issue_prompt(&repo, &issue_ref, "Example");
-    fs::copy(issue_ref.issue_prompt_path(&repo), issue_ref.task_bundle_stp_path(&repo))
-        .expect("seed stp");
+    fs::copy(
+        issue_ref.issue_prompt_path(&repo),
+        issue_ref.task_bundle_stp_path(&repo),
+    )
+    .expect("seed stp");
     write_authored_sip(
         &issue_ref.task_bundle_input_path(&repo),
         &issue_ref,
