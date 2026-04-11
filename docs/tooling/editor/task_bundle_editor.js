@@ -329,8 +329,8 @@ function valueFor(id) {
 function updateBundlePath() {
   const artifact = ARTIFACTS[currentArtifact];
   const taskId = taskIdInput.value.trim() || "task-id";
-  bundleRoot.textContent = `Tracked bundle root: docs/records/v0.85/tasks/${taskId}/`;
-  bundleActivePath.textContent = `Active card target: docs/records/v0.85/tasks/${taskId}/${artifact.extension}`;
+  bundleRoot.textContent = `Historical demo bundle root: docs/records/v0.85/tasks/${taskId}/`;
+  bundleActivePath.textContent = `Historical demo card target: docs/records/v0.85/tasks/${taskId}/${artifact.extension}`;
 }
 
 function deriveStartAction() {

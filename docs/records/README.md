@@ -1,18 +1,23 @@
-# Public Task Records
+# Historical Public Task Records
 
-This directory is the tracked home for ADL's public task records.
+This directory preserves the tracked public task-record surfaces that were
+published as part of the `v0.85` editor/control-plane work.
 
-These records are meant to be:
+These records remain useful as:
 
-- reviewable
-- auditable
-- stable enough for deterministic workflow transitions
-- preservable for later replay, signing, and Gödel/AEE consumption
+- historical proof surfaces
+- reviewable editor/demo fixtures
+- stable examples of the earlier public task-bundle model
 
-The canonical organizing unit is the task, not the GitHub issue.
+They are not the current canonical issue-record surface for the active PR
+workflow.
 
-External trackers such as GitHub may project or mirror a task, but they are integrations rather than the core ontology.
+Current repo truth:
 
-Local `.adl/` artifacts may still be used for drafting and generation, but the public record belongs here once an artifact becomes authoritative.
+- canonical issue/task execution records live under `.adl/`
+- `docs/records/` remains only for explicitly tracked historical/public examples
+- GitHub issues and PRs are integrations over that workflow rather than the
+  canonical record store
 
-For the current PR workflow, a completed `sor.md` should be published here before or as part of PR open/update rather than living only under ignored `.adl/` paths.
+External reviewers should treat this directory as historical tracked proof, not
+as the live destination for new STP/SIP/SOR publication.

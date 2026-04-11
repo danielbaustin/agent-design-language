@@ -66,7 +66,3 @@ Live multi-agent demo note:
 - it starts a local adapter that bridges ADL's current `{"prompt": "..."} -> {"output": "..."}` HTTP contract to vendor-native OpenAI and Anthropic APIs
 - generated artifacts record provider family/model/status metadata only; they must not include secret values or raw credential headers
 - a real D13L proof claim requires the credentialed path to complete and write the invocation/transcript artifacts named in the demo matrix
-
-v0.88 native provider demo note:
-- `bash adl/tools/demo_v088_real_multi_agent_discussion.sh` demonstrates direct Rust-native OpenAI and Anthropic runtime invocation using operator-managed keys from environment variables or explicit key-file overrides
-- generated demo artifacts record provider family, model, HTTP status, and prompt/output character counts, but never raw secret values, key-file paths, or Authorization headers

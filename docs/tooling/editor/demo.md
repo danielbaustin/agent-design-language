@@ -31,7 +31,7 @@ It does not claim a finished browser-only workflow platform.
    - valid task IDs, run IDs, versions, branch values, and enum values show passing checks
 6. Review the rendered artifact preview.
    - confirm the H1 uses the task title rather than a generic artifact-class heading
-7. Switch to `Structured Implementation Prompt` and confirm the active bundle target changes to:
+7. Switch to `Structured Implementation Prompt` and confirm the historical demo bundle target changes to:
    - `docs/records/v0.85/tasks/<task-id>/sip.md`
 8. Switch to `Structured Output Record` and confirm the SOR card remains visibly linked in the same bundle workspace.
 9. Edit the SOR review fields and confirm the surface now supports:
@@ -43,7 +43,7 @@ It does not claim a finished browser-only workflow platform.
    - a bounded recommendation
    - a reviewer checklist tied to the SOR proof surface
    - a copyable review note that summarizes review focus and follow-ups
-11. Compare the preview output with the tracked example bundle:
+11. Compare the preview output with the tracked historical example bundle:
    - `docs/records/v0.85/tasks/task-v085-wp05-demo/stp.md`
    - `docs/records/v0.85/tasks/task-v085-wp05-demo/sip.md`
    - `docs/records/v0.85/tasks/task-v085-wp05-demo/sor.md`

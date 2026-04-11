@@ -23,17 +23,17 @@ But the reusable templates themselves should be tracked so they can:
 So the split is:
 
 - tracked templates and guidance: `docs/tooling/issue-prompts/`
-- tracked public task records: versioned task-record directories under `docs/records/`
-- local or generated prompt drafts and manifests: `.adl/`
+- historical tracked public task-record examples: versioned directories under `docs/records/`
+- live local/generated prompt drafts and canonical task execution records: `.adl/`
 
 The important distinction is:
 
 - `docs/tooling/issue-prompts/`
   - reusable template and authoring-contract layer for GitHub-facing issue prompts
 - `docs/records/`
-  - tracked public task-bundle layer, organized by milestone/version where applicable
+  - historical tracked task-bundle examples, organized by milestone/version where applicable
 - `.adl/`
-  - local draft workspace and generated intermediate state
+  - local draft workspace, generated intermediate state, and the current canonical task-bundle / issue-record surface
 
 ## Template Set
 
@@ -50,7 +50,7 @@ The important distinction is:
 - Prefer exact repo paths in `Repo Inputs` when a prompt depends on specific files or modules.
 - Include demo expectations when the WP requires runnable proof surfaces.
 - Use `Issue-Graph Notes` to record duplicate, supersede, split, merge, or renumber intent explicitly.
-- Treat `.adl/` as draft state only; promote canonical public artifacts into tracked task bundles before authoritative lifecycle transitions.
+- Treat `.adl/` as the live execution surface for current workflow state; use `docs/records/` only when intentionally preserving a tracked historical/public example.
 
 ## Transitional Stub Guidance
 
