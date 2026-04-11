@@ -128,3 +128,213 @@ fn section_has_authored_content(text: &str, header: &str) -> bool {
     }
     false
 }
+
+pub(crate) fn validate_milestone_doc_drift_for_finish(
+    repo_root: &Path,
+    scope: &str,
+    changed_paths: &[String],
+) -> Result<()> {
+    let milestone_prefix = format!("docs/milestones/{scope}/");
+    if !changed_paths
+        .iter()
+        .any(|path| path.starts_with(&milestone_prefix))
+    {
+        return Ok(());
+    }
+
+    let milestone_root = repo_root.join("docs").join("milestones").join(scope);
+    let readme = milestone_root.join("README.md");
+    ensure_nonempty_doc(&readme, "finish: milestone README missing or empty")?;
+
+    let readme_text = fs::read_to_string(&readme)?;
+    for relative in extract_section_backtick_paths(&readme_text, "Canonical milestone documents:") {
+        ensure_doc_link_target(&milestone_root, &relative)?;
+    }
+    for relative in extract_section_backtick_paths(&readme_text, "Primary promoted feature docs:") {
+        ensure_doc_link_target(&milestone_root, &relative)?;
+    }
+
+    let feature_index = milestone_root.join(format!("FEATURE_DOCS_{scope}.md"));
+    if feature_index.is_file() {
+        ensure_nonempty_doc(&feature_index, "finish: feature-doc index is empty")?;
+        let feature_text = fs::read_to_string(&feature_index)?;
+        for relative in extract_all_backtick_feature_paths(&feature_text) {
+            ensure_doc_link_target(&milestone_root, &relative)?;
+        }
+    }
+
+    for relative in changed_paths
+        .iter()
+        .filter(|path| path.starts_with(&milestone_prefix) && path.ends_with(".md"))
+    {
+        let path = repo_root.join(relative);
+        let text = fs::read_to_string(&path)?;
+        let normalized = text.to_ascii_lowercase();
+        let placeholder_markers = [
+            "bootstrap-generated",
+            "placeholder stub",
+            "canonical readme template",
+            "canonical feature doc template",
+            "lorem ipsum",
+        ];
+        if placeholder_markers
+            .iter()
+            .any(|marker| normalized.contains(marker))
+        {
+            bail!(
+                "finish: milestone-doc drift check failed for '{}': placeholder/template text remains in the tracked milestone package",
+                relative
+            );
+        }
+    }
+
+    Ok(())
+}
+
+fn ensure_nonempty_doc(path: &Path, message: &str) -> Result<()> {
+    if !path.is_file() {
+        bail!("{message}: {}", path.display());
+    }
+    let text = fs::read_to_string(path)?;
+    if text.trim().is_empty() {
+        bail!("{message}: {}", path.display());
+    }
+    Ok(())
+}
+
+fn ensure_doc_link_target(milestone_root: &Path, relative: &str) -> Result<()> {
+    let candidate = milestone_root.join(relative);
+    if !candidate.is_file() {
+        bail!(
+            "finish: milestone-doc drift check failed; referenced path '{}' is missing from '{}'",
+            relative,
+            milestone_root.display()
+        );
+    }
+    Ok(())
+}
+
+fn extract_section_backtick_paths(text: &str, header: &str) -> Vec<String> {
+    let mut in_section = false;
+    let mut paths = Vec::new();
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if trimmed == header {
+            in_section = true;
+            continue;
+        }
+        if !in_section {
+            continue;
+        }
+        if trimmed.is_empty() {
+            break;
+        }
+        if !trimmed.starts_with('-') {
+            break;
+        }
+        paths.extend(extract_backtick_paths(trimmed));
+    }
+    paths
+}
+
+fn extract_all_backtick_feature_paths(text: &str) -> Vec<String> {
+    text.lines()
+        .flat_map(|line| extract_backtick_paths(line.trim()))
+        .filter(|path| path.starts_with("features/") && path.ends_with(".md"))
+        .collect()
+}
+
+fn extract_backtick_paths(line: &str) -> Vec<String> {
+    let mut paths = Vec::new();
+    let mut remainder = line;
+    while let Some(start) = remainder.find('`') {
+        let tail = &remainder[start + 1..];
+        let Some(end) = tail.find('`') else {
+            break;
+        };
+        let candidate = tail[..end].trim();
+        if !candidate.is_empty() && candidate.ends_with(".md") {
+            paths.push(candidate.to_string());
+        }
+        remainder = &tail[end + 1..];
+    }
+    paths
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::env;
+    use std::fs;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn temp_dir(prefix: &str) -> std::path::PathBuf {
+        let mut path = env::temp_dir();
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos();
+        path.push(format!("{prefix}-{}-{nanos}", std::process::id()));
+        fs::create_dir_all(&path).expect("create temp dir");
+        path
+    }
+
+    #[test]
+    fn milestone_doc_drift_check_rejects_missing_feature_doc_links() {
+        let repo = temp_dir("adl-milestone-drift-fail");
+        let milestone_root = repo.join("docs/milestones/v0.87.1");
+        let features_dir = milestone_root.join("features");
+        fs::create_dir_all(&features_dir).expect("features dir");
+        fs::write(
+            milestone_root.join("README.md"),
+            "# README\n\nCanonical milestone documents:\n- Feature-doc index: `FEATURE_DOCS_v0.87.1.md`\n\nPrimary promoted feature docs:\n- `features/REAL.md`\n",
+        )
+        .expect("write readme");
+        fs::write(
+            milestone_root.join("FEATURE_DOCS_v0.87.1.md"),
+            "# Feature Docs\n\n- `features/MISSING.md`\n",
+        )
+        .expect("write feature docs");
+        fs::write(features_dir.join("REAL.md"), "# Real feature\n").expect("write real feature");
+
+        let err = validate_milestone_doc_drift_for_finish(
+            &repo,
+            "v0.87.1",
+            &[String::from(
+                "docs/milestones/v0.87.1/FEATURE_DOCS_v0.87.1.md",
+            )],
+        )
+        .expect_err("missing feature doc should fail");
+        assert!(err
+            .to_string()
+            .contains("referenced path 'features/MISSING.md'"));
+    }
+
+    #[test]
+    fn milestone_doc_drift_check_accepts_coherent_milestone_package() {
+        let repo = temp_dir("adl-milestone-drift-pass");
+        let milestone_root = repo.join("docs/milestones/v0.87.1");
+        let features_dir = milestone_root.join("features");
+        fs::create_dir_all(&features_dir).expect("features dir");
+        fs::write(
+            milestone_root.join("README.md"),
+            "# README\n\nCanonical milestone documents:\n- Feature-doc index: `FEATURE_DOCS_v0.87.1.md`\n\nPrimary promoted feature docs:\n- `features/REAL.md`\n",
+        )
+        .expect("write readme");
+        fs::write(
+            milestone_root.join("FEATURE_DOCS_v0.87.1.md"),
+            "# Feature Docs\n\n- `features/REAL.md`\n",
+        )
+        .expect("write feature docs");
+        fs::write(features_dir.join("REAL.md"), "# Real feature\n").expect("write real feature");
+
+        validate_milestone_doc_drift_for_finish(
+            &repo,
+            "v0.87.1",
+            &[String::from(
+                "docs/milestones/v0.87.1/FEATURE_DOCS_v0.87.1.md",
+            )],
+        )
+        .expect("coherent milestone package should pass");
+    }
+}
