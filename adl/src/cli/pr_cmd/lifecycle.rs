@@ -277,3 +277,106 @@ fn same_filesystem_target(left: &Path, right: &Path) -> Result<bool> {
     }
     Ok(false)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::env;
+    use std::os::unix::fs::PermissionsExt;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn temp_dir(prefix: &str) -> PathBuf {
+        let mut path = env::temp_dir();
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos();
+        path.push(format!("{prefix}-{}-{nanos}", std::process::id()));
+        fs::create_dir_all(&path).expect("create temp dir");
+        path
+    }
+
+    fn write_executable(path: &Path, body: &str) {
+        fs::write(path, body).expect("write executable");
+        let mut perms = fs::metadata(path).expect("metadata").permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(path, perms).expect("chmod");
+    }
+
+    #[test]
+    fn issue_is_closed_and_completed_parses_completed_state() {
+        let temp = temp_dir("adl-pr-lifecycle-gh");
+        let bin_dir = temp.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        write_executable(
+            &bin_dir.join("gh"),
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '{\"state\":\"CLOSED\",\"stateReason\":\"COMPLETED\"}\\n'\n",
+        );
+        let old_path = env::var("PATH").unwrap_or_default();
+        unsafe {
+            env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        }
+
+        let result = issue_is_closed_and_completed(1410, "owner/repo").expect("completed state");
+
+        unsafe {
+            env::set_var("PATH", old_path);
+        }
+        assert!(result);
+    }
+
+    #[test]
+    fn matching_task_bundle_dirs_returns_sorted_prefix_matches() {
+        let repo = temp_dir("adl-pr-lifecycle-bundles");
+        let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+        let tasks_dir = repo.join(".adl").join("v0.87").join("tasks");
+        fs::create_dir_all(tasks_dir.join("issue-1410__z-slug")).expect("dir 1");
+        fs::create_dir_all(tasks_dir.join("issue-1410__a-slug")).expect("dir 2");
+        fs::create_dir_all(tasks_dir.join("issue-999__other")).expect("dir 3");
+
+        let matches = matching_task_bundle_dirs(&repo, &issue_ref).expect("matches");
+        let names = matches
+            .iter()
+            .map(|path| {
+                path.file_name()
+                    .and_then(|name| name.to_str())
+                    .unwrap()
+                    .to_string()
+            })
+            .collect::<Vec<_>>();
+
+        assert_eq!(names, vec!["issue-1410__a-slug", "issue-1410__z-slug"]);
+    }
+
+    #[test]
+    fn normalize_closed_completed_output_card_rewrites_status_and_integration_fields() {
+        let temp = temp_dir("adl-pr-lifecycle-output");
+        let output = temp.join("sor.md");
+        fs::write(
+            &output,
+            "Status: IN_PROGRESS\n- Integration state: worktree_only\n- Verification scope: worktree\n- Worktree-only paths remaining: adl/src/foo.rs\n",
+        )
+        .expect("write output");
+
+        normalize_closed_completed_output_card(&output).expect("normalize");
+        let text = fs::read_to_string(&output).expect("read output");
+
+        assert!(text.contains("Status: DONE"));
+        assert!(text.contains("- Integration state: merged"));
+        assert!(text.contains("- Verification scope: main_repo"));
+        assert!(text.contains("- Worktree-only paths remaining: none"));
+    }
+
+    #[test]
+    fn same_filesystem_target_detects_equivalent_paths() {
+        let temp = temp_dir("adl-pr-lifecycle-same-target");
+        let left = temp.join("left.txt");
+        let right = temp.join("right.txt");
+        fs::write(&left, "hello\n").expect("write left");
+        std::os::unix::fs::symlink(&left, &right).expect("symlink");
+
+        assert!(same_filesystem_target(&left, &left).expect("same path"));
+        assert!(same_filesystem_target(&left, &right).expect("same target"));
+        assert!(!same_filesystem_target(&left, &temp.join("missing.txt")).expect("missing"));
+    }
+}
