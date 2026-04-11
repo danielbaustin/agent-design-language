@@ -414,7 +414,9 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
             bail!("No changes detected and branch has no commits ahead of origin/main. Nothing to PR.");
         }
     } else if !parsed.allow_gitignore && staged_gitignore_change_present(&repo_root)? {
-        bail!("finish: .gitignore changes detected. Revert them or re-run with --allow-gitignore.");
+        bail!(
+            "finish: staged .gitignore or adl/.gitignore changes detected. Revert them or re-run with --allow-gitignore. Canonical issue bundle files are staged automatically."
+        );
     }
 
     let changed_paths = finish_changed_paths(&repo_root, has_uncommitted)?;

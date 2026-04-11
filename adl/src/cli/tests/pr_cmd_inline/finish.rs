@@ -13,6 +13,7 @@ fn parse_finish_args_requires_title_and_accepts_finish_flags() {
         "adl,docs".to_string(),
         "--no-checks".to_string(),
         "--ready".to_string(),
+        "--allow-gitignore".to_string(),
         "--no-open".to_string(),
     ])
     .expect("parse finish");
@@ -21,6 +22,7 @@ fn parse_finish_args_requires_title_and_accepts_finish_flags() {
     assert_eq!(parsed.paths, "adl,docs");
     assert!(parsed.no_checks);
     assert!(parsed.ready);
+    assert!(parsed.allow_gitignore);
     assert!(parsed.no_open);
 }
 
@@ -1575,6 +1577,136 @@ fn real_pr_finish_rejects_main_and_does_not_report_no_pr_when_bundle_sync_change
         env::set_var("PATH", old_path);
     }
     assert!(!bundle_sync_err.to_string().contains("Nothing to PR."));
+}
+
+#[test]
+fn real_pr_finish_rejects_staged_gitignore_changes_without_allow_flag() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-gitignore-guard");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    fs::create_dir_all(repo.join("adl/src")).expect("adl src");
+    fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write source");
+    let issue_ref =
+        IssueRef::new(1153, "v0.86".to_string(), "rust-finish-test".to_string()).expect("ref");
+    let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&bundle_dir).expect("bundle dir");
+    write_authored_issue_prompt(&repo, &issue_ref, "Example");
+    fs::copy(issue_ref.issue_prompt_path(&repo), issue_ref.task_bundle_stp_path(&repo))
+        .expect("seed stp");
+    write_authored_sip(
+        &issue_ref.task_bundle_input_path(&repo),
+        &issue_ref,
+        "Example",
+        "codex/1153-rust-finish-test",
+        &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_completed_sor_fixture(
+        &issue_ref.task_bundle_output_path(&repo),
+        "codex/1153-rust-finish-test",
+    );
+    let cards_root = resolve_cards_root(&repo, None);
+    let compat_output = card_output_path(&cards_root, 1153);
+    ensure_symlink(&compat_output, &issue_ref.task_bundle_output_path(&repo))
+        .expect("compat symlink");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["checkout", "-q", "-b", "codex/1153-rust-finish-test"])
+        .current_dir(&repo)
+        .status()
+        .expect("git checkout")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("write gitignore");
+    assert!(Command::new("git")
+        .args(["add", ".gitignore"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add gitignore")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let err = real_pr(&[
+        "finish".to_string(),
+        "1153".to_string(),
+        "--title".to_string(),
+        "Example".to_string(),
+        "--input".to_string(),
+        path_relative_to_repo(&repo, &issue_ref.task_bundle_input_path(&repo)),
+        "--output".to_string(),
+        path_relative_to_repo(&repo, &issue_ref.task_bundle_output_path(&repo)),
+        "--no-checks".to_string(),
+        "--no-open".to_string(),
+    ])
+    .expect_err("gitignore guard should block finish");
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    assert!(err
+        .to_string()
+        .contains("staged .gitignore or adl/.gitignore changes detected"));
+    assert!(err
+        .to_string()
+        .contains("Canonical issue bundle files are staged automatically"));
 }
 
 #[test]
