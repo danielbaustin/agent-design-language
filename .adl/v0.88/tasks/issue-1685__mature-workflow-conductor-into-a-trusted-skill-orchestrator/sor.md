@@ -21,10 +21,10 @@ Execution:
 - Model: gpt-5-codex
 - Provider: OpenAI
 - Start Time: 2026-04-12T13:56:31Z
-- End Time: 2026-04-12T22:53:39Z
+- End Time: 2026-04-12T22:56:07Z
 
 ## Summary
-Matured the workflow-conductor into a more trusted skill orchestrator by adding bounded blocker classification, explicit continue/ask-operator/stop handoff intent, safer worktree disambiguation, and stronger behavioral proof against real and fixture-driven repo states.
+Matured the workflow-conductor into a more trusted skill orchestrator by adding bounded blocker classification, explicit continue/ask-operator/stop handoff intent, safer worktree disambiguation, and stronger behavioral proof against real and fixture-driven repo states. Published for review in PR `#1688`.
 
 ## Artifacts produced
 - `adl/tools/skills/workflow-conductor/scripts/route_workflow.py`
@@ -41,13 +41,16 @@ Matured the workflow-conductor into a more trusted skill orchestrator by adding 
 - Expanded behavioral tests to cover policy-stop outcomes, open-PR-wave finish escalation, PR blocker classification, healthy-PR wait handling, and disambiguated worktree routing.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: tracked repository paths are updated on the issue branch via PR 1687
+- Main-repo paths updated: tracked repository paths are updated on the issue branch via PR 1688
 - Worktree-only paths remaining: none
 - Integration state: pr_open
 - Verification scope: worktree
-- Integration method used: `pr finish` commit + push on the bound issue branch
+- Integration method used: `pr finish` validation followed by manual commit + push + PR creation because unrelated tracked legacy `.adl` residue on `main` blocked the publication guard
 - Verification performed:
-  - `bash adl/tools/pr.sh finish 1685 --title "[v0.88][tools] Mature workflow-conductor into a trusted skill orchestrator" --paths "adl/tools/skills/workflow-conductor,adl/tools/skills/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md,adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md,adl/tools/test_workflow_conductor_skill_contracts.sh"` validated, committed, pushed, and opened PR `#1687`.
+  - `bash adl/tools/pr.sh finish 1685 --title "[v0.88][tools] Mature workflow-conductor into a trusted skill orchestrator" --paths "adl/tools/skills/workflow-conductor,adl/tools/skills/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md,adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md,adl/tools/test_workflow_conductor_skill_contracts.sh"` validated the issue bundle and publication inputs before stopping on unrelated tracked legacy `.adl` residue from another issue.
+  - `git add ... && git add -f .adl/v0.88/.../issue-1685... && git commit` recorded the intended tracked changes plus the canonical issue bundle on the issue branch.
+  - `git push -u origin codex/1685-mature-workflow-conductor-into-a-trusted-skill-orchestrator` published the issue branch.
+  - `gh pr create --base main --head codex/1685-mature-workflow-conductor-into-a-trusted-skill-orchestrator --title "[v0.88][tools] Mature workflow-conductor into a trusted skill orchestrator"` opened PR `#1688` with closing linkage for issue `#1685`.
   - `git status --short --branch` verified the branch was clean after publication.
 - Result: PASS
 
@@ -151,6 +154,7 @@ Rules:
 - Added bounded blocker-family reporting instead of trying to make the conductor fully autonomous over every failure surface.
 - Allowed `route_worktree` to accept `target.issue_number` as a disambiguator because real issue worktrees can legitimately contain more than one task bundle during milestone work.
 - Kept healthy open PRs in human-review state rather than treating them as janitor work, which preserves the conductor’s thin stop boundary.
+- Accepted a manual publication deviation after `pr finish` proved the issue bundle but was blocked by unrelated tracked legacy `.adl` residue on `main`; this did not change the issue-scoped implementation payload.
 
 ## Follow-ups / Deferred work
 - The conductor is materially better at routing and escalation, but deeper automatic lifecycle chaining still depends on the underlying lifecycle skills and janitor surfaces remaining truthful.
