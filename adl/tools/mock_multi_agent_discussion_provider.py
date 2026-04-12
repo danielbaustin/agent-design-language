@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+import argparse
 import json
 import re
 import sys
+from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 
@@ -108,10 +110,17 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> int:
-    port = 8791
-    if len(sys.argv) > 1:
-        port = int(sys.argv[1])
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    parser = argparse.ArgumentParser(
+        description="Run the bounded local compatibility provider for the multi-agent discussion demo."
+    )
+    parser.add_argument("port", nargs="?", type=int, default=8791)
+    parser.add_argument("--port-file", type=Path)
+    args = parser.parse_args()
+
+    server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
+    if args.port_file:
+        args.port_file.parent.mkdir(parents=True, exist_ok=True)
+        args.port_file.write_text(f"{server.server_address[1]}\n", encoding="utf-8")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

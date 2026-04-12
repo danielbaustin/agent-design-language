@@ -254,6 +254,7 @@ def main() -> int:
         description="Run a local ADL completion adapter backed by live model APIs."
     )
     parser.add_argument("--port", type=int, default=8792)
+    parser.add_argument("--port-file", type=Path)
     parser.add_argument("--metadata", type=Path, required=True)
     parser.add_argument("--openai-model", default=os.getenv("ADL_LIVE_OPENAI_MODEL", DEFAULT_OPENAI_MODEL))
     parser.add_argument(
@@ -276,6 +277,9 @@ def main() -> int:
     adapter.write_metadata()
     handler = make_handler(adapter)
     server = http.server.ThreadingHTTPServer(("127.0.0.1", args.port), handler)
+    if args.port_file:
+        args.port_file.parent.mkdir(parents=True, exist_ok=True)
+        args.port_file.write_text(f"{server.server_address[1]}\n", encoding="utf-8")
     server.serve_forever()
     return 0
 

@@ -15,7 +15,7 @@
 # `ADL` `v0.87.1` Release Notes
 
 ## Summary
-`v0.87.1` is the release vehicle for ADL's first full runtime milestone. It turns the seeded execution substrate from `v0.87` into a coherent runtime system with explicit lifecycle boundaries, trace-aligned execution, local resilience, operator surfaces, review surfaces, and a substantial demo-backed proof program; final release wording remains pending until the open milestone gates are complete or explicitly deferred.
+`v0.87.1` is the release vehicle for ADL's first full runtime milestone. The milestone work has turned the seeded execution substrate from `v0.87` into a coherent runtime system with explicit lifecycle boundaries, trace-aligned execution, local resilience, operator surfaces, review surfaces, and a substantial bounded proof program; final release wording remains pending until the open milestone gates are complete or explicitly deferred.
 
 ## Highlights
 - Runtime environment and lifecycle completion surfaces landed for `v0.87.1`
