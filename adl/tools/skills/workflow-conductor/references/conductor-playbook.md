@@ -57,3 +57,11 @@ If policy requires:
 the conductor should record compliance or explicit blocker-driven bypass.
 
 Never silently downgrade a required policy to an optional one.
+
+## Deterministic Helper
+
+The bundle may use a small deterministic route-selection helper to evaluate
+synthetic or real state snapshots. That helper must:
+- only select the next skill
+- never perform the selected skill's underlying work
+- remain bounded to routing/compliance facts

@@ -29,6 +29,8 @@ It must not replace:
 
 It must stop after routing and compliance recording rather than reimplementing the selected skill's underlying work.
 
+The bundle may include small deterministic helpers for routing evaluation and test fixtures, but those helpers exist to support the stop-boundary contract, not to silently turn the conductor into a second execution engine.
+
 ## Design Basis
 
 This skill should track the repository's canonical operational skill family and
