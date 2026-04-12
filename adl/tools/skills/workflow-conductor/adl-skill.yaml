@@ -57,6 +57,7 @@ admission:
     - "branch"
     - "worktree_path"
     - "pr_number"
+    - "observed_state.subagent_assigned"
     - "slug"
     - "version"
     - "doctor_result"
@@ -89,9 +90,9 @@ execution:
   allow_subagents: true
   workflow_role: "conductor"
   preferred_commands:
-    - "adl/tools/pr.sh doctor --json"
-    - "adl/tools/open_artifact.sh"
+    - "python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <validated-json>"
     - "python3 adl/tools/skills/workflow-conductor/scripts/select_next_skill.py"
+    - "adl/tools/open_artifact.sh"
   preferred_path: "inspect_state_then_route_without_executing_the_selected_skill"
   invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
 boundaries:

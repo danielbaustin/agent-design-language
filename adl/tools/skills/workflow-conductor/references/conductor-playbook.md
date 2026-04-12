@@ -8,6 +8,7 @@ The conductor should:
 - inspect the current issue/workflow state
 - choose the next appropriate ADL skill
 - apply skill/editor/subagent policy
+- write one bounded routing artifact
 - stop after routing and compliance recording
 
 It should not perform the selected skill's underlying work.
@@ -21,6 +22,7 @@ Prefer the strongest available state evidence in this order:
 3. explicit branch/worktree state
 4. explicit PR state
 5. bounded issue metadata
+6. explicit observed operator state such as subagent assignment
 
 ## Preferred Skill Selection
 
@@ -32,6 +34,7 @@ Prefer the strongest available state evidence in this order:
 - issue ready for execution or binding -> `pr-run`
 - execution done, publication needed -> `pr-finish`
 - PR in flight with checks/conflicts/review blockers -> `pr-janitor`
+- PR open and healthy -> no janitor; hand off to review/wait state
 - merged or intentionally closed issue/PR -> `pr-closeout`
 
 ## Resume Rule
@@ -57,6 +60,7 @@ If policy requires:
 the conductor should record compliance or explicit blocker-driven bypass.
 
 Never silently downgrade a required policy to an optional one.
+If required policy fails and no explicit bypass is allowed, return `blocked`.
 
 ## Deterministic Helper
 
@@ -65,3 +69,8 @@ synthetic or real state snapshots. That helper must:
 - only select the next skill
 - never perform the selected skill's underlying work
 - remain bounded to routing/compliance facts
+
+The bundle may also use a route-only collection entrypoint to derive those
+state snapshots from a real issue, task bundle, branch, worktree, or PR.
+That collector must remain read-mostly, except for writing the declared routing
+artifact.

@@ -25,6 +25,8 @@ policy:
   bypass_without_explicit_blocker: false
   allow_phase_inference: true
   stop_after_routing: true
+observed_state:
+  subagent_assigned: true | false
 ```
 
 ## Purpose
@@ -35,6 +37,7 @@ The conductor should:
 - inspect the current state
 - select the next skill
 - apply workflow policy
+- write one bounded routing artifact
 - stop after routing
 
 It should not perform the selected skill's implementation work.
@@ -83,6 +86,9 @@ If editor skills are required, the conductor should prefer:
 
 when the blocker is card-local.
 
+Observed operator/runtime facts such as `observed_state.subagent_assigned`
+belong in the input payload rather than being guessed by the conductor.
+
 ## Example Invocation
 
 ```yaml
@@ -103,6 +109,8 @@ policy:
   bypass_without_explicit_blocker: false
   allow_phase_inference: true
   stop_after_routing: true
+observed_state:
+  subagent_assigned: true
 ```
 
 ## Stop Boundary
@@ -110,6 +118,7 @@ policy:
 The conductor must stop after:
 - phase/editor selection
 - policy application
+- routing-artifact emission
 - workflow-compliance recording
 
 It must not:
