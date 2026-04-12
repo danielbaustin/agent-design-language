@@ -264,6 +264,49 @@ Likely adjacent docs:
 
 ---
 
+## Runtime-facing Ownership
+
+For `v0.88`, this feature owns the bounded temporal query contract and proof surface over
+the runtime retrieval layer that already exists.
+
+Primary owned surfaces:
+- `adl::chronosense::TemporalQueryRetrievalContract`
+- `adl::execute::state::runtime_control::MemoryQueryState`
+- `adl::obsmem_contract::MemoryQuery`
+- `adl::obsmem_retrieval_policy::RetrievalPolicyV1`
+- `adl identity retrieval`
+
+This `v0.88` slice does not claim a full temporal index yet.
+It makes temporal query and retrieval semantics explicit and reviewable against the current
+memory/query/runtime surfaces.
+
+---
+
+## Bounded Acceptance Criteria
+
+`WP-05` is complete for `v0.88` when:
+- the repo exposes a bounded, reviewable temporal query/retrieval contract
+- relative-order, interval, staleness, continuity, and commitment-state query classes are named explicitly
+- the contract is tied to the real existing retrieval surfaces rather than abstract future APIs
+- deterministic retrieval ordering and continuity/staleness inputs are explicit
+- a proof hook emits the contract as a repo-local artifact
+- tests cover the contract and proof-hook surface
+
+This milestone does not require:
+- a full temporal index over every runtime artifact
+- distributed temporal synchronization
+- full commitment retrieval implementation
+- causality or branch-timeline reasoning
+
+---
+
+## Proof Hook
+
+- Command: `adl identity retrieval --out .adl/state/temporal_query_retrieval_v1.json`
+- Output: `.adl/state/temporal_query_retrieval_v1.json`
+
+---
+
 ## Summary
 
 Temporal query and retrieval make time operational inside ADL.

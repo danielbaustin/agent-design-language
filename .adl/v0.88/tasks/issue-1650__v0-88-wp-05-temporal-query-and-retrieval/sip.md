@@ -1,15 +1,15 @@
 # ADL Input Card
 
-Task ID: issue-1648
-Run ID: issue-1648
+Task ID: issue-1650
+Run ID: issue-1650
 Version: v0.88
-Title: [v0.88][WP-04] Continuity and identity semantics
-Branch: codex/1648-v0-88-wp-04-continuity-and-identity-semantics
+Title: [v0.88][WP-05] Temporal query and retrieval
+Branch: codex/1650-v0-88-wp-05-temporal-query-and-retrieval
 
 Context:
-- Issue: https://github.com/danielbaustin/agent-design-language/issues/1648
+- Issue: https://github.com/danielbaustin/agent-design-language/issues/1650
 - PR:
-- Source Issue Prompt: .adl/v0.88/bodies/issue-1648-v0-88-wp-04-continuity-and-identity-semantics.md
+- Source Issue Prompt: .adl/v0.88/bodies/issue-1650-v0-88-wp-05-temporal-query-and-retrieval.md
 - Docs: none
 - Other: none
 
@@ -48,7 +48,7 @@ inputs:
     - notes_risks
     - instructions_to_agent
 outputs:
-  output_card: .adl/v0.88/tasks/issue-1648__v0-88-wp-04-continuity-and-identity-semantics/sor.md
+  output_card: .adl/v0.88/tasks/issue-1650__v0-88-wp-05-temporal-query-and-retrieval/sor.md
   summary_style: concise_structured
 constraints:
   include_system_invariants: true
