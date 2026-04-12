@@ -7,7 +7,7 @@ use std::process::Command;
 
 use ::adl::chronosense::{
     default_identity_profile_path, load_identity_profile, write_identity_profile,
-    ChronosenseFoundation, IdentityProfile, TemporalContext,
+    ChronosenseFoundation, IdentityProfile, TemporalContext, TemporalSchemaContract,
 };
 
 pub(crate) fn real_identity(args: &[String]) -> Result<()> {
@@ -18,7 +18,7 @@ pub(crate) fn real_identity(args: &[String]) -> Result<()> {
 fn real_identity_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "identity requires a subcommand: init | show | now | foundation"
+            "identity requires a subcommand: init | show | now | foundation | schema"
         ));
     };
 
@@ -27,12 +27,13 @@ fn real_identity_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
         "show" => real_identity_show(repo_root, &args[1..]),
         "now" => real_identity_now(repo_root, &args[1..]),
         "foundation" => real_identity_foundation(repo_root, &args[1..]),
+        "schema" => real_identity_schema(repo_root, &args[1..]),
         "--help" | "-h" | "help" => {
             println!("{}", super::usage::usage());
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown identity subcommand '{subcommand}' (expected init | show | now | foundation)"
+            "unknown identity subcommand '{subcommand}' (expected init | show | now | foundation | schema)"
         )),
     }
 }
@@ -219,6 +220,55 @@ fn real_identity_foundation(repo_root: &Path, args: &[String]) -> Result<()> {
             )
         })?;
         println!("CHRONOSENSE_FOUNDATION_PATH={}", resolved.display());
+    } else {
+        println!("{json}");
+    }
+
+    Ok(())
+}
+
+fn real_identity_schema(repo_root: &Path, args: &[String]) -> Result<()> {
+    let mut out_path: Option<PathBuf> = None;
+
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--out" => {
+                out_path = Some(PathBuf::from(required_value(args, i, "--out")?));
+                i += 1;
+            }
+            "--help" | "-h" => {
+                println!("{}", super::usage::usage());
+                return Ok(());
+            }
+            other => return Err(anyhow!("unknown arg for identity schema: {other}")),
+        }
+        i += 1;
+    }
+
+    let schema = TemporalSchemaContract::v01();
+    let json = to_string_pretty(&schema)?;
+
+    if let Some(out) = out_path {
+        let resolved = if out.is_absolute() {
+            out
+        } else {
+            repo_root.join(out)
+        };
+        let Some(parent) = resolved.parent() else {
+            return Err(anyhow!(
+                "identity schema --out path must have a parent directory"
+            ));
+        };
+        fs::create_dir_all(parent)
+            .with_context(|| format!("failed to create output directory {}", parent.display()))?;
+        fs::write(&resolved, json.as_bytes()).with_context(|| {
+            format!(
+                "failed to write temporal schema artifact to {}",
+                resolved.display()
+            )
+        })?;
+        println!("TEMPORAL_SCHEMA_PATH={}", resolved.display());
     } else {
         println!("{json}");
     }
@@ -437,7 +487,7 @@ mod tests {
         let err = real_identity_in_repo(&[], &repo).expect_err("missing subcommand should fail");
         assert!(err
             .to_string()
-            .contains("identity requires a subcommand: init | show | now | foundation"));
+            .contains("identity requires a subcommand: init | show | now | foundation | schema"));
 
         let err = real_identity_in_repo(&["nope".to_string()], &repo)
             .expect_err("unknown subcommand should fail");
@@ -456,6 +506,8 @@ mod tests {
         real_identity_in_repo(&["now".to_string(), "--help".to_string()], &repo).expect("now help");
         real_identity_in_repo(&["foundation".to_string(), "--help".to_string()], &repo)
             .expect("foundation help");
+        real_identity_in_repo(&["schema".to_string(), "--help".to_string()], &repo)
+            .expect("schema help");
     }
 
     #[test]
@@ -661,6 +713,53 @@ mod tests {
             .contains("unknown arg for identity foundation: --bogus"));
 
         let err = real_identity_in_repo(&["foundation".to_string(), "--out".to_string()], &repo)
+            .expect_err("out flag without value should fail");
+        assert!(err.to_string().contains("--out requires a value"));
+    }
+
+    #[test]
+    fn identity_schema_writes_temporal_schema_contract_json() {
+        let _guard = TEST_MUTEX
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        let repo = temp_repo("identity-schema");
+        let out_path = repo.join(".adl/state/temporal_schema_v01.json");
+
+        real_identity_in_repo(
+            &[
+                "schema".to_string(),
+                "--out".to_string(),
+                ".adl/state/temporal_schema_v01.json".to_string(),
+            ],
+            &repo,
+        )
+        .expect("identity schema");
+
+        let json: Value =
+            serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
+        assert_eq!(json["schema_version"], "temporal_schema.v0_1");
+        assert_eq!(
+            json["proof_hook_output_path"],
+            ".adl/state/temporal_schema_v01.json"
+        );
+        assert!(json["execution_policy_trace_hooks"]
+            .as_array()
+            .expect("array")
+            .iter()
+            .any(|value| value == "run_state.v1.duration_ms"));
+    }
+
+    #[test]
+    fn identity_schema_validates_unknown_args_and_missing_out_value() {
+        let repo = temp_repo("identity-schema-errors");
+
+        let err = real_identity_in_repo(&["schema".to_string(), "--bogus".to_string()], &repo)
+            .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for identity schema: --bogus"));
+
+        let err = real_identity_in_repo(&["schema".to_string(), "--out".to_string()], &repo)
             .expect_err("out flag without value should fail");
         assert!(err.to_string().contains("--out requires a value"));
     }

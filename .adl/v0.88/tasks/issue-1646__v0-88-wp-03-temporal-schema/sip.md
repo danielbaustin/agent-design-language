@@ -1,15 +1,15 @@
 # ADL Input Card
 
-Task ID: issue-1644
-Run ID: issue-1644
+Task ID: issue-1646
+Run ID: issue-1646
 Version: v0.88
-Title: [v0.88][WP-02] Chronosense foundation
-Branch: codex/1644-v0-88-wp-02-chronosense-foundation
+Title: [v0.88][WP-03] Temporal schema
+Branch: codex/1646-v0-88-wp-03-temporal-schema
 
 Context:
-- Issue: https://github.com/danielbaustin/agent-design-language/issues/1644
+- Issue: https://github.com/danielbaustin/agent-design-language/issues/1646
 - PR:
-- Source Issue Prompt: .adl/v0.88/bodies/issue-1644-v0-88-wp-02-chronosense-foundation.md
+- Source Issue Prompt: .adl/v0.88/bodies/issue-1646-v0-88-wp-03-temporal-schema.md
 - Docs: none
 - Other: none
 
@@ -48,7 +48,7 @@ inputs:
     - notes_risks
     - instructions_to_agent
 outputs:
-  output_card: .adl/v0.88/tasks/issue-1644__v0-88-wp-02-chronosense-foundation/sor.md
+  output_card: .adl/v0.88/tasks/issue-1646__v0-88-wp-03-temporal-schema/sor.md
   summary_style: concise_structured
 constraints:
   include_system_invariants: true
