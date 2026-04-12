@@ -43,6 +43,7 @@ Stable reviewer regression fixture:
 These docs describe the bounded editor and authoring surfaces used in the v0.85 authoring/control-plane work.
 
 - [Task Bundle Editor](editor/README.md)
+- [Milestone Dashboard](milestone-dashboard/README.md)
 - `editor/five_command_demo.md`
 - `editor/five_command_regression_suite.md`
 
