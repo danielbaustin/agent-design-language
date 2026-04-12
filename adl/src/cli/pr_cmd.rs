@@ -48,10 +48,12 @@ use self::git_support::{
     run_status_allow_failure,
 };
 #[cfg(test)]
+use self::github::ensure_pr_closing_linkage;
+#[cfg(test)]
 use self::github::pr_has_closing_linkage;
 use self::github::{
     attach_post_merge_closeout, attach_pr_janitor, current_pr_url, ensure_issue_metadata_parity,
-    ensure_pr_closing_linkage, format_open_pr_wave, gh_issue_create, gh_issue_edit_body,
+    ensure_or_repair_pr_closing_linkage, format_open_pr_wave, gh_issue_create, gh_issue_edit_body,
     gh_issue_title, issue_version, unresolved_milestone_pr_wave,
 };
 
@@ -570,7 +572,13 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
         created.trim().to_string()
     };
 
-    ensure_pr_closing_linkage(&repo, &pr_url, parsed.issue, parsed.no_close)?;
+    let _closing_linkage_repaired = ensure_or_repair_pr_closing_linkage(
+        &repo,
+        &pr_url,
+        parsed.issue,
+        parsed.no_close,
+        &pr_body_file,
+    )?;
 
     if parsed.merge_mode {
         if parsed.ready {

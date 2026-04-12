@@ -140,6 +140,35 @@ pub(super) fn ensure_pr_closing_linkage(
     Ok(())
 }
 
+pub(super) fn ensure_or_repair_pr_closing_linkage(
+    repo: &str,
+    pr_ref: &str,
+    issue: u32,
+    no_close: bool,
+    desired_body_file: &Path,
+) -> Result<bool> {
+    if no_close {
+        return Ok(false);
+    }
+    if pr_has_closing_linkage(repo, pr_ref, issue)? {
+        return Ok(false);
+    }
+    run_status(
+        "gh",
+        &[
+            "pr",
+            "edit",
+            "-R",
+            repo,
+            pr_ref,
+            "--body-file",
+            path_str(desired_body_file)?,
+        ],
+    )?;
+    ensure_pr_closing_linkage(repo, pr_ref, issue, no_close)?;
+    Ok(true)
+}
+
 pub(super) fn attach_pr_janitor(
     repo_root: &Path,
     repo: &str,

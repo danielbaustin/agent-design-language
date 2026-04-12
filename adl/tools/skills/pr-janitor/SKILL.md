@@ -134,6 +134,7 @@ Allowed bounded interventions may include:
 - rerunning or re-verifying the smallest relevant local checks
 - preparing a focused fix for a clear CI failure
 - refreshing branch state or conflict remediation when the intended resolution is unambiguous
+- refreshing PR metadata or the PR event when a linkage-only guardrail failure is caused by stale GitHub payload state
 - updating truthful PR progress notes or result output
 
 Do not auto-apply if the intervention would:
@@ -203,6 +204,7 @@ Default result should make these explicit:
 Common failure modes:
 - wrong PR targeted
 - stale or incomplete check interpretation
+- stale GitHub pull_request payloads that disagree with the live PR body
 - merge conflict diagnosis without clear safe resolution
 - silently treating substantive review feedback as mechanical
 - over-fixing beyond the actual blocker

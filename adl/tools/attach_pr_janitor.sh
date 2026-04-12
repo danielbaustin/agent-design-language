@@ -78,6 +78,7 @@ policy:
   monitor_checks: true
   monitor_conflicts: true
   monitor_review_state: true
+  monitor_linkage_guardrail: true
   stop_after_janitor_pass: true
 EOF
 
@@ -88,7 +89,7 @@ Use \$pr-janitor at $REPO_ROOT/adl/tools/skills/pr-janitor/SKILL.md with this va
 $(cat "$INPUT_FILE")
 \`\`\`
 
-Run one bounded janitor pass for this newly opened PR. Stop after the janitor pass and write a concise status summary.
+Run one bounded janitor pass for this newly opened PR. If the only failing signal is the issue-closing-linkage guardrail, verify live PR metadata first and treat stale event payloads as metadata-refresh work rather than product-code work. Stop after the janitor pass and write a concise status summary.
 EOF
 
 nohup codex exec \
