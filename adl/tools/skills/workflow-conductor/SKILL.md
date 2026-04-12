@@ -12,7 +12,7 @@ Its job is to:
 - choose the next appropriate lifecycle or editor skill
 - ensure card-local work is routed to the matching editor skill
 - apply explicit skill/subagent execution policy
-- record workflow-compliance outcomes and stop
+- record workflow-compliance outcomes, emit a bounded routing artifact, and stop
 
 This skill must remain lightweight.
 
@@ -94,13 +94,14 @@ If there is no concrete target, stop and report `blocked`.
    - task bundle paths
    - branch/worktree state
    - PR state
+   - observed subagent assignment state
 3. Determine whether the next step is:
    - lifecycle routing
    - card-editor routing
    - blocked/no-op reporting
 4. Apply the declared skill/subagent policy.
 5. Select the next skill.
-6. Record the workflow-compliance result.
+6. Record the workflow-compliance result and write the routing artifact.
 7. Stop before performing the selected skill's underlying work.
 
 ## Routing Model
@@ -119,6 +120,7 @@ Preferred next-skill mapping:
 Important rule:
 - treat partially completed early steps as normal state, not corruption
 - the conductor should resume from the next truthful step instead of restarting bootstrap by reflex
+- healthy open PRs should normally hand off to human review/waiting state rather than janitor unless there is an actual blocker
 
 ## Policy Model
 
@@ -129,6 +131,7 @@ This skill should enforce policy when supplied, including:
 - `bypass_without_explicit_blocker`
 - `required_skill_by_phase`
 - `required_card_skill_by_type`
+- observed subagent assignment state
 
 If policy and repo reality conflict:
 - prefer truthful `blocked` output over hidden fallback
@@ -138,6 +141,7 @@ If policy and repo reality conflict:
 This skill must stop after:
 - selecting the next skill
 - recording compliance and routing facts
+- writing the bounded routing artifact
 - surfacing any blocker that prevents safe routing
 
 It must not:
@@ -154,3 +158,4 @@ Return a concise structured result including:
 - policy/compliance result
 - whether subagent assignment is required
 - whether the target should continue, stop, or ask for operator confirmation
+- the artifact path or equivalent routing-proof surface when one is written

@@ -29,4 +29,6 @@ actions_taken:
   - <routing or policy action>
 handoff_state:
   next_phase: pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | sor-editor | human_review | blocked
+artifact:
+  path: <path or null>
 ```

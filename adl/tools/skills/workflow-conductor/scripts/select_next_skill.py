@@ -43,10 +43,14 @@ def evaluate(payload):
         selected_phase = "editor"
         skill_name = editor_for(card_blocker)
         editor_skill = skill_name
-    elif pr_state == "open":
+    elif pr_state in ("open_with_blockers", "open_failing", "open_conflicted", "review_changes_requested"):
         detected_phase = "pr_in_flight"
         selected_phase = "janitor"
         skill_name = "pr-janitor"
+    elif pr_state in ("open_clean", "open_unknown", "open_draft"):
+        detected_phase = "pr_in_flight"
+        selected_phase = "blocked"
+        skill_name = "none"
     elif pr_state in ("merged", "intentionally_closed", "closed_no_pr", "superseded", "duplicate"):
         detected_phase = "closed_out"
         selected_phase = "closeout"
@@ -67,20 +71,50 @@ def evaluate(payload):
 
     bypasses = []
     policy_result = "PASS"
+    blocked_by_policy = False
     if subagent_requirement == "required" and not subagent_assigned:
         policy_result = "FAIL"
         bypasses.append({"component": "subagent_requirement", "reason": "required_but_not_assigned"})
+        blocked_by_policy = True
     elif subagent_requirement == "recommended" and not subagent_assigned:
         policy_result = "PARTIAL"
         bypasses.append({"component": "subagent_requirement", "reason": "recommended_but_not_assigned"})
     elif subagent_requirement == "forbidden" and subagent_assigned:
         policy_result = "FAIL"
         bypasses.append({"component": "subagent_requirement", "reason": "forbidden_but_assigned"})
+        blocked_by_policy = True
+
+    required_skill_by_phase = policy.get("required_skill_by_phase", {})
+    expected_skill = required_skill_by_phase.get(selected_phase)
+    if expected_skill and skill_name not in ("none", expected_skill):
+        policy_result = "FAIL"
+        blocked_by_policy = True
+        bypasses.append({"component": "required_skill_by_phase", "reason": "selected_skill_mismatch"})
+
+    required_card_skill_by_type = policy.get("required_card_skill_by_type", {})
+    if card_blocker in required_card_skill_by_type and editor_skill != required_card_skill_by_type.get(card_blocker):
+        policy_result = "FAIL"
+        blocked_by_policy = True
+        bypasses.append({"component": "required_card_skill_by_type", "reason": "selected_editor_mismatch"})
+
+    if card_blocker in ("stp", "sip", "sor") and policy.get("card_editor_skills_required", True) and editor_skill == "none":
+        policy_result = "FAIL"
+        blocked_by_policy = True
+        bypasses.append({"component": "card_editor_skills_required", "reason": "card_blocker_not_routed_to_editor"})
+
+    if skill_name == "none" and policy.get("skills_required", True) and selected_phase != "blocked":
+        policy_result = "FAIL"
+        blocked_by_policy = True
+        bypasses.append({"component": "skills_required", "reason": "no_skill_selected"})
 
     next_phase = skill_name if skill_name != "none" else "human_review"
+    status = "done" if skill_name != "none" else "blocked"
+    if blocked_by_policy and not policy.get("bypass_without_explicit_blocker", False):
+        status = "blocked"
+        next_phase = "blocked"
 
     return {
-        "status": "done" if skill_name != "none" else "blocked",
+        "status": status,
         "target": {
             "issue_number": target.get("issue_number"),
             "task_bundle_path": target.get("task_bundle_path"),

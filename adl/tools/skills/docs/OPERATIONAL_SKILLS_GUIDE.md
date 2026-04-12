@@ -120,6 +120,7 @@ It:
 - selects the next correct lifecycle or editor skill
 - applies skill/editor/subagent policy
 - records workflow-compliance facts
+- writes one bounded routing artifact
 - stops before performing the selected skill's underlying work
 
 ### When To Use It
@@ -147,9 +148,10 @@ Minimum:
   - `target.task_bundle_path`
   - `target.branch`
   - `target.worktree_path`
-  - `target.pr_number`
+- `target.pr_number`
 - explicit routing `mode`
 - explicit `policy`
+- optional `observed_state.subagent_assigned`
 
 Structured schema:
 
@@ -176,6 +178,8 @@ policy:
   bypass_without_explicit_blocker: false
   allow_phase_inference: true
   stop_after_routing: true
+observed_state:
+  subagent_assigned: true
 ```
 
 ### Typical Uses
@@ -183,12 +187,14 @@ policy:
 - after issue bootstrap, when the operator wants the repo to detect whether `pr-ready`, `pr-run`, or an editor skill is next
 - when the issue should resume from partially completed early steps rather than restart from bootstrap
 - when explicit skill/subagent policy should be enforced consistently
+- when the operator wants a written routing artifact under `.adl/reviews/` instead of ephemeral console output
 
 ### Caller Notes
 
 - `workflow-conductor` is deliberately thin
 - it should route into `pr-*` or editor skills rather than reimplementing them
 - it is the best place to apply the execution-policy ideas for required skills, card editors, and subagents
+- the preferred route-only entrypoint is `python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <validated-json>`
 
 `ready` and `preflight` are compatibility aliases that may still exist in repo
 surfaces, but doctor JSON is the canonical structured automation surface.
