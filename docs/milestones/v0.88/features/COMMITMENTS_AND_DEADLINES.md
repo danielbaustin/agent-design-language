@@ -212,6 +212,48 @@ This document does not define:
 
 ---
 
+## Runtime-facing Ownership
+
+For `v0.88`, this feature owns the bounded commitment/deadline contract and proof surface.
+
+Primary owned surfaces:
+- `adl::chronosense::CommitmentDeadlineContract`
+- `adl::chronosense::CommitmentLifecycleContract`
+- `adl::chronosense::DeadlineSemanticsContract`
+- `adl::chronosense::MissedCommitmentDetectionContract`
+- `adl identity commitments`
+
+This `v0.88` slice does not claim full scheduling or negotiation machinery.
+It makes commitment and deadline semantics explicit and reviewable against the temporal
+contracts already introduced in the earlier sprint work.
+
+---
+
+## Bounded Acceptance Criteria
+
+`WP-06` is complete for `v0.88` when:
+- the repo exposes a bounded, reviewable commitment/deadline contract
+- commitment lifecycle states, open/terminal distinctions, and missed-state visibility are explicit
+- deadline frames are named explicitly rather than implied as one universal clock
+- persistence/history requirements are visible in the contract
+- a proof hook emits the contract as a repo-local artifact
+- tests cover the contract and proof-hook surface
+
+This milestone does not require:
+- calendar integration
+- automation scheduling
+- social negotiation over commitments
+- full trust or reputation interpretation
+
+---
+
+## Proof Hook
+
+- Command: `adl identity commitments --out .adl/state/commitment_deadline_semantics_v1.json`
+- Output: `.adl/state/commitment_deadline_semantics_v1.json`
+
+---
+
 ## Summary
 
 Commitments and deadlines give ADL a way to represent the future as an inspectable
