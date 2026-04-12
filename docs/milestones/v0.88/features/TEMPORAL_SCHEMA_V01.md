@@ -25,6 +25,42 @@ This document specifies:
 
 This is a schema-oriented companion to `CHRONOSENSE_AND_IDENTITY.md`.
 
+## Runtime-facing Ownership
+
+`WP-03` owns the bounded schema contract that later temporal work should cite rather than
+restate:
+
+- `adl::chronosense::TemporalSchemaContract`
+- `adl::chronosense::TemporalAnchorSchema`
+- `adl::chronosense::ExecutionPolicySchema`
+- `adl::chronosense::ExecutionRealizationSchema`
+- `adl::chronosense::CostVectorSchema`
+- `adl identity schema`
+
+This issue does not complete continuity validation, retrieval semantics, commitments,
+causality, or economic interpretation. It defines the canonical field contract they should
+build on.
+
+## Bounded Acceptance Criteria
+
+The temporal schema is considered present for `v0.88` when all of the following are true:
+
+- the repo exposes one canonical schema artifact covering objective anchors, subjective time,
+  execution-policy anchors, execution-realization anchors, and cost anchors
+- the schema explicitly names the trace/runtime surfaces that current execution review can join
+  against
+- the schema is serializable through a bounded proof-hook command
+- later temporal docs can cite this contract without inventing duplicate field sets
+
+## Proof Hook
+
+The bounded proof hook for this issue is:
+
+`adl identity schema --out .adl/state/temporal_schema_v01.json`
+
+That artifact is intentionally contract-shaped. It proves that `WP-03` has made the temporal
+schema concrete and reviewable without overclaiming later continuity or governance behavior.
+
 ---
 
 ## Overview
