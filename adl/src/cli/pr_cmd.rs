@@ -492,6 +492,7 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
     }
 
     stage_selected_paths_rust(&repo_root, &parsed.paths)?;
+    ensure_no_staged_issue_bundle_mutations(&repo_root, &issue_ref)?;
     let has_uncommitted = has_uncommitted_changes(&repo_root)?;
     let ahead = commits_ahead_of_origin_main(&repo_root)?;
     if staged_diff_is_empty(&repo_root)? {
@@ -1015,6 +1016,74 @@ fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<()> {
     args.extend(paths);
     run_status("git", &args)?;
     Ok(())
+}
+
+fn ensure_no_staged_issue_bundle_mutations(repo_root: &Path, issue_ref: &IssueRef) -> Result<()> {
+    let staged = run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "diff",
+            "--cached",
+            "--name-status",
+            "--find-renames",
+            "--",
+            ".adl",
+        ],
+    )?;
+    let mut active_issue_paths = Vec::new();
+    let mut foreign_issue_paths = Vec::new();
+    for line in staged
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty())
+    {
+        let mut fields = line.split('\t');
+        let _status = fields.next();
+        for path in fields {
+            let Some(issue_number) = issue_bundle_issue_number_from_repo_relative(path) else {
+                continue;
+            };
+            if issue_number == issue_ref.issue_number() {
+                active_issue_paths.push(path.to_string());
+            } else {
+                foreign_issue_paths.push(path.to_string());
+            }
+        }
+    }
+
+    if !foreign_issue_paths.is_empty() {
+        foreign_issue_paths.sort();
+        foreign_issue_paths.dedup();
+        bail!(
+            "finish: staged .adl task-bundle changes for non-active issues detected: {}. Keep .adl bundles local-only and unstage them before publication.",
+            foreign_issue_paths.join(", ")
+        );
+    }
+    if !active_issue_paths.is_empty() {
+        active_issue_paths.sort();
+        active_issue_paths.dedup();
+        bail!(
+            "finish: staged canonical .adl issue-bundle paths detected: {}. Keep .adl bundles local-only and unstage them before publication.",
+            active_issue_paths.join(", ")
+        );
+    }
+
+    Ok(())
+}
+
+fn issue_bundle_issue_number_from_repo_relative(path: &str) -> Option<u32> {
+    let marker = "/tasks/issue-";
+    let start = path.find(marker)? + marker.len();
+    let digits = path[start..]
+        .chars()
+        .take_while(|ch| ch.is_ascii_digit())
+        .collect::<String>();
+    if digits.is_empty() {
+        return None;
+    }
+    digits.parse().ok()
 }
 
 fn staged_diff_is_empty(repo_root: &Path) -> Result<bool> {

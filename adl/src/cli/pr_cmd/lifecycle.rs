@@ -73,22 +73,35 @@ pub(super) fn reconcile_closed_completed_issue_bundle(
 
     let duplicates = matching_task_bundle_dirs(repo_root, issue_ref)?;
     if !bundle_dir.exists() {
-        if let Some(existing) = duplicates.first() {
-            fs::rename(existing, &bundle_dir).with_context(|| {
-                format!(
-                    "doctor: failed to reconcile duplicate task bundle '{}' into canonical '{}'",
-                    existing.display(),
-                    bundle_dir.display()
-                )
-            })?;
-        } else {
-            fs::create_dir_all(&bundle_dir)?;
+        fs::create_dir_all(&bundle_dir)?;
+    }
+
+    for relative in ["stp.md", "sip.md", "sor.md"] {
+        let canonical_path = bundle_dir.join(relative);
+        if ensure_nonempty_file_path(&canonical_path)? {
+            continue;
+        }
+        for duplicate in &duplicates {
+            if *duplicate == bundle_dir {
+                continue;
+            }
+            let candidate = duplicate.join(relative);
+            if ensure_nonempty_file_path(&candidate)? {
+                fs::copy(&candidate, &canonical_path).with_context(|| {
+                    format!(
+                        "doctor: failed to restore canonical bundle file '{}' from duplicate '{}'",
+                        canonical_path.display(),
+                        candidate.display()
+                    )
+                })?;
+                break;
+            }
         }
     }
 
     if !ensure_nonempty_file_path(canonical_output)? {
-        for duplicate in matching_task_bundle_dirs(repo_root, issue_ref)? {
-            if duplicate == bundle_dir {
+        for duplicate in &duplicates {
+            if *duplicate == bundle_dir {
                 continue;
             }
             let candidate = duplicate.join("sor.md");
@@ -127,17 +140,6 @@ pub(super) fn reconcile_closed_completed_issue_bundle(
     normalize_closed_completed_output_card(canonical_output)?;
     validate_completed_sor(repo_root, canonical_output)?;
 
-    for duplicate in matching_task_bundle_dirs(repo_root, issue_ref)? {
-        if duplicate != bundle_dir {
-            fs::remove_dir_all(&duplicate).with_context(|| {
-                format!(
-                    "doctor: failed to remove duplicate closed task bundle '{}'",
-                    duplicate.display()
-                )
-            })?;
-        }
-    }
-
     let cards_root = resolve_cards_root(repo_root, None);
     let review_output = card_output_path(&cards_root, issue_ref.issue_number());
     ensure_symlink(&review_output, canonical_output)?;
@@ -167,18 +169,12 @@ pub(super) fn ensure_closed_completed_issue_bundle_truth(
     canonical_output: &Path,
 ) -> Result<()> {
     let bundle_dir = issue_ref.task_bundle_dir_path(repo_root);
-    let duplicates = matching_task_bundle_dirs(repo_root, issue_ref)?;
-    let duplicate_paths = duplicates
-        .iter()
-        .filter(|path| **path != bundle_dir)
-        .map(|path| path.display().to_string())
-        .collect::<Vec<_>>();
 
     let mut mismatches = Vec::new();
-    if !duplicate_paths.is_empty() {
+    if !bundle_dir.is_dir() {
         mismatches.push(format!(
-            "duplicate or superseded task bundles present: {}",
-            duplicate_paths.join(", ")
+            "missing canonical task bundle directory: {}",
+            bundle_dir.display()
         ));
     }
     if !ensure_nonempty_file_path(canonical_output)? {
@@ -686,7 +682,7 @@ mod tests {
     }
 
     #[test]
-    fn ensure_closed_completed_issue_bundle_truth_rejects_stale_fields_and_duplicates() {
+    fn ensure_closed_completed_issue_bundle_truth_rejects_stale_fields() {
         let temp = temp_dir("adl-pr-lifecycle-truth-drift");
         let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
         let canonical_dir = issue_ref.task_bundle_dir_path(&temp);
@@ -708,7 +704,6 @@ mod tests {
             .expect_err("stale truth should fail");
         let rendered = err.to_string();
         assert!(rendered.contains("canonical closed-issue sor truth drift"));
-        assert!(rendered.contains("duplicate or superseded task bundles present"));
         assert!(rendered.contains("Status expected 'DONE' but found 'IN_PROGRESS'"));
         assert!(rendered.contains("Integration state expected 'merged' but found 'pr_open'"));
         assert!(rendered.contains("Verification scope expected 'main_repo' but found 'worktree'"));
@@ -731,6 +726,34 @@ mod tests {
 
         ensure_closed_completed_issue_bundle_truth(&temp, &issue_ref, &output)
             .expect("normalized truth should pass");
+    }
+
+    #[test]
+    fn ensure_closed_completed_issue_bundle_truth_accepts_normalized_bundle_with_duplicate() {
+        let temp = temp_dir("adl-pr-lifecycle-truth-clean-duplicate");
+        let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+        let canonical_dir = issue_ref.task_bundle_dir_path(&temp);
+        let duplicate_dir = temp
+            .join(".adl")
+            .join("v0.87")
+            .join("tasks")
+            .join("issue-1410__legacy-slug");
+        fs::create_dir_all(&canonical_dir).expect("canonical dir");
+        fs::create_dir_all(&duplicate_dir).expect("duplicate dir");
+        let output = canonical_dir.join("sor.md");
+        fs::write(
+            &output,
+            "Status: DONE\n- Integration state: merged\n- Verification scope: main_repo\n- Worktree-only paths remaining: none\n",
+        )
+        .expect("write normalized output");
+        fs::write(
+            duplicate_dir.join("sor.md"),
+            "Status: DONE\n- Integration state: merged\n- Verification scope: main_repo\n- Worktree-only paths remaining: none\n",
+        )
+        .expect("write duplicate output");
+
+        ensure_closed_completed_issue_bundle_truth(&temp, &issue_ref, &output)
+            .expect("normalized truth should pass with preserved duplicate");
     }
 
     #[test]
