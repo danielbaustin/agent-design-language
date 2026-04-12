@@ -73,10 +73,10 @@ Treat that suite as the current reviewer starting point for the milestone.
 It is the default bounded proof package. The live-provider D13L companion proof
 remains explicit and credential-gated rather than part of the default suite.
 
-Use `v0.87.1/codex_ollama_operational_skills_demo.md` for a bounded local demo
-that installs the tracked skills into a demo-local `CODEX_HOME`, points Codex
-CLI at a local Ollama model, and runs the editor skills against a prepared
-local bundle fixture.
+Use `v0.87.1/codex_ollama_operational_skills_demo.md` for a bounded demo that
+installs the tracked skills into a demo-local `CODEX_HOME`, points Codex CLI at
+an Ollama-backed model on the default local host or a configured remote host,
+and runs the editor skills against a prepared local bundle fixture.
 
 Use `bash adl/tools/demo_codex_ollama_operational_skills.sh --dry-run` to
 prepare the prompt, workspace, and manifest without invoking a local model.
