@@ -14,6 +14,7 @@ scratch.
 
 The tracked skill set is:
 
+- `workflow-conductor`
 - `pr-init`
 - `pr-ready`
 - `pr-run`
@@ -29,6 +30,7 @@ The tracked skill set is:
 
 The normal workflow is:
 
+0. `workflow-conductor` when the operator wants one bounded front door that chooses the next skill and resumes from current state
 1. `pr-init`
 2. qualitative card review
 3. `pr-ready`
@@ -39,6 +41,7 @@ The normal workflow is:
 7. `pr-closeout` after the PR outcome or explicit non-PR closure disposition is settled
 
 `repo-code-review` is cross-cutting rather than phase-specific.
+`workflow-conductor` is an orchestration front door rather than a lifecycle phase.
 
 The three editor skills are helper skills:
 - `stp-editor` for bounded `stp.md` cleanup
@@ -86,6 +89,7 @@ For `pr-init`, the payload uses `issue:` instead of `target:`.
 
 The current automation model is:
 
+- `workflow-conductor` may inspect current issue/workflow state and route to the next correct lifecycle or editor skill without reimplementing that skill
 - `pr-init` creates or initializes the issue and root bundle
 - qualitative card review happens separately
 - `pr-ready` is the readiness phase
@@ -98,6 +102,93 @@ The current automation model is:
 - `pr-closeout` handles post-merge or post-closure local finalization
 - `pr-closeout` also covers truthful no-PR closure dispositions like superseded, duplicate, or docs-only-closed issues
 - editor skills may be called by lifecycle skills when the blocker is card-local rather than lifecycle-orchestration state
+
+The conductor should be especially useful when:
+- initial workflow steps are only partially complete
+- the operator wants one bounded entrypoint
+- skill/subagent policy should be applied explicitly instead of by memory
+
+## `workflow-conductor`
+
+### Purpose
+
+`workflow-conductor` is the lightweight front door for the operational skill family.
+
+It:
+
+- inspects the current issue/workflow state
+- selects the next correct lifecycle or editor skill
+- applies skill/editor/subagent policy
+- records workflow-compliance facts
+- stops before performing the selected skill's underlying work
+
+### When To Use It
+
+Use `workflow-conductor` when:
+
+- the next correct ADL skill is not obvious from the current state
+- the issue may need to resume from partially completed early steps
+- the operator wants one bounded entrypoint that still respects the modular skill family
+
+Do not use it for:
+
+- directly executing implementation work
+- replacing the lifecycle skills
+- bypassing editor skills
+- broad multi-issue orchestration
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- one of:
+  - `target.issue_number`
+  - `target.task_bundle_path`
+  - `target.branch`
+  - `target.worktree_path`
+  - `target.pr_number`
+- explicit routing `mode`
+- explicit `policy`
+
+Structured schema:
+
+- `adl/tools/skills/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md`
+- schema id: `workflow_conductor.v1`
+
+### Example Invocation
+
+```yaml
+Use $workflow-conductor at /Users/daniel/git/agent-design-language/adl/tools/skills/workflow-conductor/SKILL.md with this validated input:
+
+skill_input_schema: workflow_conductor.v1
+mode: route_issue
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  issue_number: 1647
+  slug: add-lightweight-workflow-conductor-skill
+  version: v0.88
+  source_prompt_path: .adl/v0.88/bodies/issue-1647-add-lightweight-workflow-conductor-skill.md
+policy:
+  skills_required: true
+  card_editor_skills_required: true
+  subagent_requirement: required
+  bypass_without_explicit_blocker: false
+  allow_phase_inference: true
+  stop_after_routing: true
+```
+
+### Typical Uses
+
+- after issue bootstrap, when the operator wants the repo to detect whether `pr-ready`, `pr-run`, or an editor skill is next
+- when the issue should resume from partially completed early steps rather than restart from bootstrap
+- when explicit skill/subagent policy should be enforced consistently
+
+### Caller Notes
+
+- `workflow-conductor` is deliberately thin
+- it should route into `pr-*` or editor skills rather than reimplementing them
+- it is the best place to apply the execution-policy ideas for required skills, card editors, and subagents
 
 `ready` and `preflight` are compatibility aliases that may still exist in repo
 surfaces, but doctor JSON is the canonical structured automation surface.
