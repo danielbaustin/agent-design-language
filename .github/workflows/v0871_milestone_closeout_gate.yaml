@@ -1,0 +1,20 @@
+name: v0.87.1 Milestone Closeout Gate
+
+on:
+  workflow_dispatch:
+
+jobs:
+  closed-issue-sor-truth:
+    name: Closed Issue SOR Truth
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run v0.87.1 closed-issue SOR truth gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash adl/tools/check_milestone_closed_issue_sor_truth.sh --version v0.87.1

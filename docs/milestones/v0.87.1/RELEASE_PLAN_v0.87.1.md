@@ -18,6 +18,7 @@
 
 ## 1) Release Readiness
 - [ ] Canonical quality gate reviewed and aligned with CI / docs / demo posture (`docs/milestones/v0.87.1/QUALITY_GATE_v0.87.1.md`)
+- [ ] Closed-issue SOR truth gate passes for `v0.87.1` (`bash adl/tools/check_milestone_closed_issue_sor_truth.sh --version v0.87.1` locally or the `v0.87.1 Milestone Closeout Gate` workflow)
 - [ ] Milestone checklist complete (`docs/milestones/v0.87.1/MILESTONE_CHECKLIST_v0.87.1.md`)
 - [ ] WBS acceptance mapping reviewed against demo, quality, review, and release-tail evidence (`docs/milestones/v0.87.1/WBS_v0.87.1.md`)
 - [ ] Sprint sequencing and handoff gates reviewed against the release-tail issue order (`docs/milestones/v0.87.1/SPRINT_v0.87.1.md`)
