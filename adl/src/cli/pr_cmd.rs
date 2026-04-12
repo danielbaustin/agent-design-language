@@ -465,6 +465,8 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
     validate_authored_prompt_surface("finish", &stp_path, PromptSurfaceKind::Stp)?;
     validate_authored_prompt_surface("finish", &input_path, PromptSurfaceKind::Sip)?;
     validate_completed_sor(&repo_root, &output_path)?;
+    ensure_issue_surfaces_are_local_only(&repo_root, &primary_root, &issue_ref, &source_path)?;
+
     let canonical_output = lifecycle::sync_completed_output_surfaces(
         &repo_root,
         &primary_root,
@@ -489,15 +491,7 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
         run_batched_checks_rust(&repo_root)?;
     }
 
-    let canonical_publish_paths = canonical_finish_bundle_paths(
-        &repo_root,
-        &source_path,
-        &stp_path,
-        &input_path,
-        &output_path,
-    )?;
-
-    stage_selected_paths_rust(&repo_root, &parsed.paths, &canonical_publish_paths)?;
+    stage_selected_paths_rust(&repo_root, &parsed.paths)?;
     let has_uncommitted = has_uncommitted_changes(&repo_root)?;
     let ahead = commits_ahead_of_origin_main(&repo_root)?;
     if staged_diff_is_empty(&repo_root)? {
@@ -957,31 +951,58 @@ fn run_batched_checks_rust(repo_root: &Path) -> Result<()> {
     Ok(())
 }
 
-fn canonical_finish_bundle_paths(
+fn ensure_issue_surfaces_are_local_only(
     repo_root: &Path,
+    primary_root: &Path,
+    issue_ref: &IssueRef,
     source_path: &Path,
-    stp_path: &Path,
-    input_path: &Path,
-    output_path: &Path,
-) -> Result<Vec<String>> {
-    let mut out = BTreeSet::new();
-    for path in [source_path, stp_path, input_path, output_path] {
-        let normalized = if path.is_absolute() {
-            path.to_path_buf()
-        } else {
-            repo_root.join(path)
-        };
-        if !normalized.exists() {
-            continue;
-        }
-        if let Ok(relative) = normalized.strip_prefix(repo_root) {
-            out.insert(relative.to_string_lossy().into_owned());
-        }
+) -> Result<()> {
+    let tracked = tracked_issue_surface_paths(repo_root, primary_root, issue_ref, source_path)?;
+    if tracked.is_empty() {
+        return Ok(());
     }
-    Ok(out.into_iter().collect())
+    bail!(
+        "finish: canonical .adl issue surfaces must remain local-only; untrack these paths before publication: {}",
+        tracked.join(", ")
+    );
 }
 
-fn stage_selected_paths_rust(repo_root: &Path, csv: &str, force_paths: &[String]) -> Result<()> {
+fn tracked_issue_surface_paths(
+    repo_root: &Path,
+    primary_root: &Path,
+    issue_ref: &IssueRef,
+    source_path: &Path,
+) -> Result<Vec<String>> {
+    let mut tracked = BTreeSet::new();
+    let root_stp = issue_ref.task_bundle_stp_path(primary_root);
+    let root_input = issue_ref.task_bundle_input_path(primary_root);
+    let root_output = issue_ref.task_bundle_output_path(primary_root);
+    for path in [source_path, &root_stp, &root_input, &root_output] {
+        let Some(repo_relative) = path
+            .strip_prefix(primary_root)
+            .ok()
+            .map(|value| value.to_string_lossy().into_owned())
+        else {
+            continue;
+        };
+        if run_status_allow_failure(
+            "git",
+            &[
+                "-C",
+                path_str(repo_root)?,
+                "ls-files",
+                "--error-unmatch",
+                "--",
+                &repo_relative,
+            ],
+        )? {
+            tracked.insert(repo_relative);
+        }
+    }
+    Ok(tracked.into_iter().collect())
+}
+
+fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<()> {
     let paths = csv
         .split(',')
         .map(str::trim)
@@ -993,13 +1014,6 @@ fn stage_selected_paths_rust(repo_root: &Path, csv: &str, force_paths: &[String]
     let mut args = vec!["-C", path_str(repo_root)?, "add", "--"];
     args.extend(paths);
     run_status("git", &args)?;
-
-    if !force_paths.is_empty() {
-        let mut force_args = vec!["-C", path_str(repo_root)?, "add", "-f", "--"];
-        force_args.extend(force_paths.iter().map(String::as_str));
-        run_status("git", &force_args)?;
-    }
-
     Ok(())
 }
 
