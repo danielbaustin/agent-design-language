@@ -57,6 +57,7 @@ Ship/no-ship gate for the milestone. Check items only when evidence exists.
 
 ## Release Packaging
 - [ ] Release readiness reviewed in the order documented by `docs/milestones/v0.87.1/RELEASE_PLAN_v0.87.1.md`
+- [ ] Closed-issue SOR truth gate passes for `v0.87.1` before ceremony/closure (`bash adl/tools/check_milestone_closed_issue_sor_truth.sh --version v0.87.1` or the `v0.87.1 Milestone Closeout Gate` workflow)
 - [ ] Release notes finalized (`docs/milestones/v0.87.1/RELEASE_NOTES_v0.87.1.md`)
 - [ ] Tag verified: `v0.87.1`
 - [ ] GitHub Release drafted (GitHub Releases UI)
