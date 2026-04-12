@@ -21,13 +21,14 @@ Execution:
 - Model: gpt-5-codex
 - Provider: OpenAI
 - Start Time: 2026-04-12T19:10:00Z
-- End Time: 2026-04-12T19:35:54Z
+- End Time: 2026-04-12T19:48:38Z
 
 ## Summary
-Implemented a route-only workflow-conductor entrypoint that derives live routing state from real repo surfaces, writes a bounded routing artifact, blocks on hard policy failures, and proves realistic handoff behavior with stronger contract tests.
+Implemented a route-only workflow-conductor entrypoint that derives live routing state from real repo surfaces, writes a bounded routing artifact, blocks on hard policy failures, proves realistic handoff behavior with stronger contract tests, and is now published for review in PR `#1682`.
 
 ## Artifacts produced
 - `adl/tools/skills/workflow-conductor/scripts/route_workflow.py`
+- `.gitignore` Python-bytecode ignore rules
 - updated workflow-conductor contract, playbook, schema, and operator-guide docs
 - expanded `adl/tools/test_workflow_conductor_skill_contracts.sh`
 - local routing artifact proof at `.adl/reviews/workflow-conductor-1679-check.md`
@@ -39,16 +40,17 @@ Implemented a route-only workflow-conductor entrypoint that derives live routing
 - Split healthy open-PR state from blocker-driven in-flight PR state so janitor is only selected when the PR actually needs janitor work.
 - Added bounded routing-artifact emission and exposed the artifact path in the structured result.
 - Extended contract tests to cover route-issue, route-task-bundle editor routing, route-finish, worktree-output-driven finish routing, blocked policy behavior, and PR janitor/closeout/review-wait cases.
+- Removed tracked `__pycache__/*.pyc` artifacts from the branch and added repo ignore rules so future Python skill runs do not stage bytecode by accident.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet
-- Worktree-only paths remaining: `adl/tools/skills/workflow-conductor/SKILL.md`, `adl/tools/skills/workflow-conductor/adl-skill.yaml`, `adl/tools/skills/workflow-conductor/references/conductor-playbook.md`, `adl/tools/skills/workflow-conductor/references/output-contract.md`, `adl/tools/skills/workflow-conductor/scripts/select_next_skill.py`, `adl/tools/skills/workflow-conductor/scripts/route_workflow.py`, `adl/tools/skills/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md`, `adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md`, `adl/tools/test_workflow_conductor_skill_contracts.sh`
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths are updated on the issue branch via PR 1682
+- Worktree-only paths remaining: none
+- Integration state: pr_open
 - Verification scope: worktree
-- Integration method used: direct edits on the issue branch worktree
+- Integration method used: `pr finish` commit + push, followed by a cleanup commit on the same issue branch
 - Verification performed:
-  - `git status --short` verified the intended tracked skill files are the only modified tracked paths in the issue worktree.
-  - `find adl/tools/skills/workflow-conductor -maxdepth 3 -type f | sort` verified the new route entrypoint is present in the skill bundle.
+  - `bash adl/tools/pr.sh finish 1679 --title "[v0.88][tools] Make workflow-conductor derive live routing state and prove real repo handoffs" --paths "adl/tools/skills/workflow-conductor,adl/tools/skills/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md,adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md,adl/tools/test_workflow_conductor_skill_contracts.sh"` validated, committed, pushed, and opened PR `#1682`.
+  - `git status --short --branch` after the bytecode cleanup verified the branch contained only the intended follow-up cleanup changes before the final push.
 - Result: PASS
 
 Rules:
@@ -71,6 +73,7 @@ Rules:
   - `python3 -m py_compile adl/tools/skills/workflow-conductor/scripts/route_workflow.py adl/tools/skills/workflow-conductor/scripts/select_next_skill.py` verified the conductor Python entrypoints parse cleanly.
   - `bash adl/tools/test_workflow_conductor_skill_contracts.sh` verified deterministic selection, policy blocking, routing-artifact emission, realistic fixture-driven route collection, and bounded PR-state routing behavior.
   - `python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <tmp-input> --artifact-path .adl/reviews/workflow-conductor-1679-check.md` verified the new route-only entrypoint against the live issue worktree for `#1679`.
+  - `python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <tmp-input> --artifact-path .adl/reviews/workflow-conductor-1679-finish-check.md` verified that a completed worktree-local `sor.md` now drives the conductor to `pr-finish` rather than `pr-run` or a false PR-wait state.
   - `git diff --check` verified no whitespace or patch-format errors remain in the changed tracked files.
 - Results: all listed validation commands passed.
 
@@ -94,6 +97,7 @@ verification_summary:
       - "python3 -m py_compile adl/tools/skills/workflow-conductor/scripts/route_workflow.py adl/tools/skills/workflow-conductor/scripts/select_next_skill.py"
       - "bash adl/tools/test_workflow_conductor_skill_contracts.sh"
       - "python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <tmp-input> --artifact-path .adl/reviews/workflow-conductor-1679-check.md"
+      - "python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <tmp-input> --artifact-path .adl/reviews/workflow-conductor-1679-finish-check.md"
       - "git diff --check"
   determinism:
     status: PASS
@@ -115,7 +119,7 @@ verification_summary:
 ## Determinism Evidence
 - Determinism tests executed: reran the conductor contract test after each routing/policy change and reran the live `route_workflow.py` invocation for the same `#1679` worktree input.
 - Fixtures or scripts used: `adl/tools/test_workflow_conductor_skill_contracts.sh`, including fixture repos and mocked `gh`/`pr.sh` surfaces, plus `adl/tools/skills/workflow-conductor/scripts/route_workflow.py`.
-- Replay verification (same inputs -> same artifacts/order): identical fixture inputs produce the same selected skill and artifact path shape, and the live `#1679` worktree route invocation repeatedly selected `pr-run` from the same run-bound state before output-card completion.
+- Replay verification (same inputs -> same artifacts/order): identical fixture inputs produce the same selected skill and artifact path shape, the live `#1679` worktree route invocation selected `pr-run` before output-card completion, and the same invocation selected `pr-finish` once the completed `sor.md` became part of the collected state.
 - Ordering guarantees (sorting / tie-break rules used): route collection sorts candidate task-bundle/body matches before selecting and fails on ambiguous duplicate canonical surfaces rather than choosing nondeterministically.
 - Artifact stability notes: the routing artifact content is derived from the structured result fields only and is stable for identical collected state.
 
@@ -137,12 +141,12 @@ Rules:
 ## Replay Artifacts
 - Trace bundle path(s): not applicable; this issue did not generate a runtime trace bundle.
 - Run artifact root: `.adl/reviews/workflow-conductor-1679-check.md`
-- Replay command used for verification: reran `python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <tmp-input> --artifact-path .adl/reviews/workflow-conductor-1679-check.md`
-- Replay result: pass; the route entrypoint reproduced the same `run_bound -> pr-run` handoff for the live `#1679` worktree before finish.
+- Replay command used for verification: reran `python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <tmp-input> --artifact-path .adl/reviews/workflow-conductor-1679-check.md` and `python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <tmp-input> --artifact-path .adl/reviews/workflow-conductor-1679-finish-check.md`
+- Replay result: pass; the route entrypoint reproduced the same `run_bound -> pr-run` handoff before output-card completion and the same `execution_done -> pr-finish` handoff after the completed `sor.md` was present.
 
 ## Artifact Verification
 - Primary proof surface: `adl/tools/test_workflow_conductor_skill_contracts.sh` plus the live artifact `.adl/reviews/workflow-conductor-1679-check.md`
-- Required artifacts present: yes; the new route entrypoint, updated contract/docs, and expanded conductor contract test are all present in the issue worktree.
+- Required artifacts present: yes; the new route entrypoint, updated contract/docs, expanded conductor contract test, and `.gitignore` cleanup are all present on the issue branch.
 - Artifact schema/version checks: the skill manifest still declares `workflow_conductor.v1`, and the updated schema/guide examples include `observed_state.subagent_assigned` for explicit policy observation.
 - Hash/byte-stability checks: not run as a separate hash step; deterministic rerun behavior was verified through repeated identical route/test results.
 - Missing/optional artifacts and rationale: no separate demo artifact is required for this bounded tooling issue.
@@ -151,6 +155,7 @@ Rules:
 - Added an explicit route-only entrypoint script instead of overloading `select_next_skill.py` with both state collection and artifact writing so the pure selector remains usable in deterministic fixture tests.
 - Treated healthy open PRs as `human_review` handoff rather than auto-janitor to avoid overreach from fuzzy PR state.
 - Taught worktree/task-bundle routing to honor `sor.md` `Status: DONE` as a finish handoff signal so the conductor can advance from execution to publication without requiring a separate hidden state machine.
+- Treated doctor open-PR-wave scheduling state as separate from issue-specific PR state so the conductor does not mistake another issue's open PR for this issue being already in janitor/review mode.
 
 ## Follow-ups / Deferred work
 - The conductor can now derive live repo state and write its routing artifact, but full automatic lifecycle chaining still depends on the underlying lifecycle skills remaining truthful and merge-ready.
