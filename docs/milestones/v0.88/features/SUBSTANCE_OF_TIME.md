@@ -16,6 +16,43 @@ Use the surrounding docs as follows:
 - `COMMITMENTS_AND_DEADLINES.md` owns commitment/deadline lifecycle semantics
 - `TEMPORAL_CAUSALITY_AND_EXPLANATION.md` owns bounded causality and explanation surfaces
 
+## Runtime-facing Ownership
+
+This foundation owns the bounded runtime substrate required for the rest of the `v0.88`
+temporal band to build on:
+
+- `adl::chronosense::IdentityProfile`
+- `adl::chronosense::TemporalContext`
+- `adl::chronosense::ChronosenseFoundation`
+- `adl identity init`
+- `adl identity now`
+- `adl identity foundation`
+
+Within `WP-02`, these surfaces are enough to make chronosense inspectable as a runtime band
+without implying that continuity semantics, temporal schema, commitments, retrieval, or
+causality are already complete.
+
+## Bounded Acceptance Criteria
+
+The chronosense foundation is considered present for `v0.88` when all of the following are
+true:
+
+- temporal self-location is represented by explicit runtime surfaces rather than only prose
+- the repo can record a repo-local identity profile and derive a present-tense temporal context
+- the foundation artifact states its own scope boundary and proof hook
+- downstream temporal work can cite this document and the emitted foundation artifact without
+  restating chronosense from scratch
+
+## Proof Hook
+
+The bounded proof hook for this foundation is:
+
+`adl identity foundation --out .adl/state/chronosense_foundation.v1.json`
+
+That artifact is intentionally narrow. It proves that the repo exposes a reviewable chronosense
+foundation contract and names the owned runtime surfaces, required capabilities, and scope
+boundary for `WP-02`.
+
 ---
 
 ## Overview
@@ -243,9 +280,9 @@ Chronosense is therefore a prerequisite for any system that aspires to move beyo
 
 ## Current Status
 
-- Milestone: v0.87
-- Status: Draft
-- Area: Cognitive Architecture / Identity / ObsMem
+- Milestone: v0.88
+- Status: Active foundation surface for `WP-02`
+- Area: Runtime / Temporal substrate
 
 ## Related Documents
 
@@ -257,11 +294,11 @@ Chronosense is therefore a prerequisite for any system that aspires to move beyo
 
 ## Future Work
 
-- Define canonical temporal schema in `swarm/schemas`
-- Extend ObsMem records with temporal anchors
-- Add runtime enforcement: every event must include temporal metadata
-- Introduce `agent_birth` at workflow/session initialization
-- Add temporal queries to retrieval layer
+- Define the canonical temporal schema in `TEMPORAL_SCHEMA_V01.md`
+- Extend temporal grounding from the foundation artifact into continuity semantics
+- Add runtime enforcement that later event surfaces carry temporal anchors where required
+- Introduce richer temporal queries and continuity-aware retrieval
+- Connect commitments, deadlines, and temporal explanation to this substrate
 
 ---
 

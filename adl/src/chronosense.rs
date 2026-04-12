@@ -7,6 +7,7 @@ use std::path::{Path, PathBuf};
 
 pub const IDENTITY_PROFILE_SCHEMA: &str = "identity_profile.v1";
 pub const TEMPORAL_CONTEXT_SCHEMA: &str = "temporal_context.v1";
+pub const CHRONOSENSE_FOUNDATION_SCHEMA: &str = "chronosense_foundation.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IdentityProfile {
@@ -34,6 +35,16 @@ pub struct TemporalContext {
     pub identity_agent_id: Option<String>,
     pub identity_display_name: Option<String>,
     pub age_days_since_birthday: Option<i64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ChronosenseFoundation {
+    pub schema_version: String,
+    pub owned_runtime_surfaces: Vec<String>,
+    pub required_capabilities: Vec<String>,
+    pub proof_hook_command: String,
+    pub proof_hook_output_path: String,
+    pub scope_boundary: String,
 }
 
 impl IdentityProfile {
@@ -108,6 +119,34 @@ impl TemporalContext {
             identity_display_name: identity.map(|profile| profile.display_name.clone()),
             age_days_since_birthday,
         })
+    }
+}
+
+impl ChronosenseFoundation {
+    pub fn bounded_v088() -> Self {
+        Self {
+            schema_version: CHRONOSENSE_FOUNDATION_SCHEMA.to_string(),
+            owned_runtime_surfaces: vec![
+                "adl::chronosense::IdentityProfile".to_string(),
+                "adl::chronosense::TemporalContext".to_string(),
+                "adl identity init".to_string(),
+                "adl identity now".to_string(),
+                "adl identity foundation".to_string(),
+            ],
+            required_capabilities: vec![
+                "now_sense".to_string(),
+                "sequence_sense".to_string(),
+                "duration_sense".to_string(),
+                "lifetime_sense".to_string(),
+            ],
+            proof_hook_command:
+                "adl identity foundation --out .adl/state/chronosense_foundation.v1.json"
+                    .to_string(),
+            proof_hook_output_path: ".adl/state/chronosense_foundation.v1.json".to_string(),
+            scope_boundary:
+                "bounded chronosense substrate only; continuity semantics, temporal schema, commitments, retrieval, and causality remain downstream work"
+                    .to_string(),
+        }
     }
 }
 
@@ -230,5 +269,30 @@ mod tests {
             path,
             PathBuf::from("/repo/adl/identity/identity_profile.v1.json")
         );
+    }
+
+    #[test]
+    fn chronosense_foundation_is_bounded_and_reviewable() {
+        let foundation = ChronosenseFoundation::bounded_v088();
+
+        assert_eq!(foundation.schema_version, CHRONOSENSE_FOUNDATION_SCHEMA);
+        assert!(foundation
+            .owned_runtime_surfaces
+            .contains(&"adl identity foundation".to_string()));
+        assert_eq!(
+            foundation.required_capabilities,
+            vec![
+                "now_sense".to_string(),
+                "sequence_sense".to_string(),
+                "duration_sense".to_string(),
+                "lifetime_sense".to_string(),
+            ]
+        );
+        assert!(foundation
+            .proof_hook_command
+            .contains("chronosense_foundation.v1.json"));
+        assert!(foundation
+            .scope_boundary
+            .contains("bounded chronosense substrate"));
     }
 }
