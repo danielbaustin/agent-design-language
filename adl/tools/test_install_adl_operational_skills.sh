@@ -8,10 +8,11 @@ trap 'rm -rf "${tmpdir}"' EXIT
 assert_skill_bundle() {
   local root="$1"
 
-  for skill in pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review stp-editor sip-editor sor-editor; do
+  for skill in workflow-conductor pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review stp-editor sip-editor sor-editor; do
     [[ -d "${root}/skills/${skill}" ]]
   done
 
+  [[ -f "${root}/skills/workflow-conductor/SKILL.md" ]]
   [[ -f "${root}/skills/pr-init/SKILL.md" ]]
   [[ -f "${root}/skills/pr-ready/SKILL.md" ]]
   [[ -f "${root}/skills/pr-run/SKILL.md" ]]
@@ -23,6 +24,7 @@ assert_skill_bundle() {
   [[ -f "${root}/skills/sip-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sor-editor/SKILL.md" ]]
 
+  grep -Fq "thin orchestrator" "${root}/skills/workflow-conductor/SKILL.md"
   grep -Fq "qualitative card review" "${root}/skills/pr-init/SKILL.md"
   grep -Fq "execution_readiness" "${root}/skills/pr-ready/references/output-contract.md"
   grep -Fq "perform the bounded implementation work" "${root}/skills/pr-run/SKILL.md"

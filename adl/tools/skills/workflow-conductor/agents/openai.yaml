@@ -1,0 +1,3 @@
+display_name: Workflow Conductor
+short_description: Route one issue or workflow target to the correct next ADL skill
+default_prompt: Help me determine the next correct ADL workflow skill for this issue and record the routing/compliance result.
