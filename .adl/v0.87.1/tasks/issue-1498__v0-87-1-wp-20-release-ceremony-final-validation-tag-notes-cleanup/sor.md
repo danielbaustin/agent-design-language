@@ -124,3 +124,5 @@ verification_summary:
 - Run the final `v0.87.1` release ceremony validation pass on the `#1498` branch.
 - Create/push the `v0.87.1` tag only after the final preflight is green.
 - Draft/publish the GitHub Release only after final release-note validation is complete.
+
+Closes #1498
