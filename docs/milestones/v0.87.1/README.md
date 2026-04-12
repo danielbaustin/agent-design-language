@@ -149,17 +149,17 @@ Known risks:
 - under-specifying the runtime proof surface so review happens against fragments instead of the integrated system
 
 Open questions:
-- the remaining external review, remediation, next-milestone planning, and release gates remain open until `WP-17` through `WP-20` land or are explicitly deferred
+- the release ceremony gate remains open until `WP-20` records the final validation, tag, release, and cleanup state
 - planned demo rows that are not part of the CI-safe D0 suite must remain explicitly dispositioned rather than implied as shipped
 
 ## Status
 
-Current status: runtime foundations and demo proof surfaces landed; milestone convergence and release-tail gates remain active
+Current status: runtime foundations, demo proof surfaces, review, remediation, and next-milestone planning are complete; the final release ceremony gate remains active
 
-- Planning: canonical milestone docs, WBS, sprint, checklist, release plan, release notes, and feature-doc index all exist; remaining planning work is the release-tail closure package
+- Planning: canonical milestone docs, WBS, sprint, checklist, release plan, release notes, and feature-doc index all exist; next-milestone planning is closed and the remaining work is the final release ceremony package
 - Execution: Sprint 1 and Sprint 2 implementation/proof issues `#1435` through `#1464` are closed
-- Validation: demo matrix and runtime proof surfaces exist, with external review, remediation, planning, and release validation still active in `#1495` through `#1498`
-- Release readiness: not ready until checklist, review, remediation, next-milestone planning, and release ceremony issues are complete or explicitly deferred
+- Validation: demo matrix and runtime proof surfaces exist; `#1495`, `#1496`, and `#1497` are closed, and final release validation remains active in `#1498`
+- Release readiness: not ready until the checklist and final release ceremony actions in `#1498` are complete or explicitly deferred
 
 ## Exit Criteria
 

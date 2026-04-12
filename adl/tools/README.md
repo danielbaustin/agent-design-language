@@ -17,6 +17,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `validate_multi_agent_transcript.py`: validates the bounded multi-agent transcript artifact contract for the D13 discussion demo.
 - `worktree_doctor.sh`, `worktree_prune.sh`: deterministic worktree governance and safe cleanup helpers.
 - `archive_run_artifacts.sh`: dry-run/apply helper that inventories local run roots, copies unique run artifacts into `.adl/trace-archive/milestones/<milestone>/runs/`, and can move archived active `.adl/runs` entries into `.adl/trace-archive/source-roots/`.
+- `release_ceremony.sh`: canonical release-tail preflight and ceremony wrapper for milestone tag and GitHub Release execution, safe by default and only mutating release state when explicit flags are passed.
 - `adl tooling ...`: Rust-owned tooling surface for prompt/card/review validation helpers, with legacy wrapper scripts preserved at the historical `adl/tools/*` paths.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
 - `batched_checks.sh`, `preflight_review.sh`: quality/preflight checks, including the repo-code-review skill contract guard.
@@ -77,6 +78,15 @@ bash ./adl/tools/pr.sh run <issue_num> --slug <slug>
 
 # copy unique run artifacts, then clear active .adl/runs by preserving source dirs under .adl/trace-archive/source-roots/
 ./adl/tools/archive_run_artifacts.sh --include-worktrees --apply --prune-active-runs
+
+# run release-ceremony preflight for a milestone without mutating tags/releases
+./adl/tools/release_ceremony.sh --version v0.87.1
+
+# create and push the milestone tag after the preflight gates are truly green
+./adl/tools/release_ceremony.sh --version v0.87.1 --create-tag --push-tag
+
+# create a draft GitHub Release from the milestone release notes
+./adl/tools/release_ceremony.sh --version v0.87.1 --draft-release
 
 # run standard checks
 ./adl/tools/batched_checks.sh
