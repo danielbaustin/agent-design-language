@@ -38,6 +38,12 @@ def run_command(args, cwd: Path):
     )
 
 
+def read_text(path: Path):
+    if not path or not path.exists():
+        return ""
+    return path.read_text(encoding="utf-8")
+
+
 def parse_task_bundle_identity(bundle: Path):
     match = re.match(r"issue-(\d+)__(.+)", bundle.name)
     if not match:
@@ -136,6 +142,18 @@ def parse_doctor_output(raw: str):
     raise ValueError("doctor output did not contain JSON")
 
 
+def frontmatter_value(text: str, key: str):
+    if not text.startswith("---\n"):
+        return None
+    lines = text.splitlines()
+    for line in lines[1:]:
+        if line == "---":
+            break
+        if line.startswith(f"{key}:"):
+            return line.split(":", 1)[1].strip().strip('"').strip("'")
+    return None
+
+
 def doctor_snapshot(repo_root: Path, issue_number: int, slug: str, version: str):
     command = [
         "bash",
@@ -175,6 +193,30 @@ def classify_doctor_state(doctor):
     if doctor_status not in {"PASS", "WARN", "BLOCK"}:
         return "doctor_failed_or_inconclusive"
     return "none"
+
+
+def gh_child_issue_wave_state(repo_root: Path, parent_issue_number: int):
+    result = run_command(
+        ["gh", "issue", "list", "--state", "all", "--limit", "200", "--json", "number,state,body,title"],
+        repo_root,
+    )
+    if result.returncode != 0 or not result.stdout.strip():
+        return None
+    try:
+        issues = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return None
+    children = []
+    needle = f"child of #{parent_issue_number}"
+    for issue in issues:
+        body = issue.get("body") or ""
+        if needle in body.lower():
+            children.append(issue)
+    if not children:
+        return None
+    if all(issue.get("state") == "CLOSED" for issue in children):
+        return "satisfied_by_child_issue_wave"
+    return "active_child_issue_wave"
 
 
 def classify_pr_state(pr):
@@ -238,6 +280,24 @@ def gather_issue_surface(repo_root: Path, issue_number: int):
     return bundle, source_prompt, identity
 
 
+def issue_tracker_state(repo_root: Path, bundle: Path, source_prompt: Path, issue_number: int):
+    texts = [read_text(source_prompt)]
+    if bundle:
+        texts.append(read_text(bundle / "stp.md"))
+    wp_value = None
+    title = None
+    for text in texts:
+        if not wp_value:
+            wp_value = frontmatter_value(text, "wp")
+        if not title:
+            title = frontmatter_value(text, "title")
+    is_tracker_like = bool(wp_value and wp_value != "unassigned") or bool(title and "[WP-" in title)
+    if not is_tracker_like:
+        return "none"
+    gh_state = gh_child_issue_wave_state(repo_root, issue_number)
+    return gh_state or "none"
+
+
 def collect_route_issue(repo_root: Path, payload):
     target = payload.get("target", {})
     issue_number = int(target["issue_number"])
@@ -269,6 +329,14 @@ def collect_route_issue(repo_root: Path, payload):
         workflow["evidence_used"].append("missing_root_bundle")
         return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
+    tracker_state = issue_tracker_state(repo_root, bundle, source_prompt, issue_number)
+    if tracker_state == "satisfied_by_child_issue_wave":
+        workflow["blocker_class"] = "satisfied_by_child_issue_wave"
+        workflow["evidence_used"].append("child_issue_wave")
+    elif tracker_state == "active_child_issue_wave":
+        workflow["blocker_class"] = "active_child_issue_wave"
+        workflow["evidence_used"].append("child_issue_wave")
+
     doctor = doctor_snapshot(
         repo_root,
         issue_number,
@@ -278,7 +346,9 @@ def collect_route_issue(repo_root: Path, payload):
     if doctor:
         workflow["lifecycle_state"] = doctor.get("lifecycle_state", "unknown")
         workflow["ready_state"] = doctor.get("ready_status", "unknown").lower()
-        workflow["blocker_class"] = classify_doctor_state(doctor)
+        doctor_blocker = classify_doctor_state(doctor)
+        if workflow["blocker_class"] == "none":
+            workflow["blocker_class"] = doctor_blocker
         workflow["evidence_used"].append("doctor_json")
         if doctor.get("worktree"):
             resolved_target.setdefault("worktree_path", doctor["worktree"])

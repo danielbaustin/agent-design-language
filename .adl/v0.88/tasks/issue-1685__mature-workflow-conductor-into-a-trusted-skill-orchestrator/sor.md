@@ -24,7 +24,7 @@ Execution:
 - End Time: 2026-04-12T22:56:07Z
 
 ## Summary
-Matured the workflow-conductor into a more trusted skill orchestrator by adding bounded blocker classification, explicit continue/ask-operator/stop handoff intent, safer worktree disambiguation, and stronger behavioral proof against real and fixture-driven repo states. Published for review in PR `#1688`.
+Matured the workflow-conductor into a more trusted skill orchestrator by adding bounded blocker classification, explicit continue/ask-operator/stop handoff intent, safer worktree disambiguation, child-wave satisfaction detection for tracker issues, and stronger behavioral proof against real and fixture-driven repo states. Published for review in PR `#1688`.
 
 ## Artifacts produced
 - `adl/tools/skills/workflow-conductor/scripts/route_workflow.py`
@@ -37,6 +37,7 @@ Matured the workflow-conductor into a more trusted skill orchestrator by adding 
 - Added explicit blocker classification to the conductor result so known doctor and PR failure families are recorded instead of being flattened into generic blocked state.
 - Added explicit handoff intent and escalation reasons so the conductor now distinguishes `continue`, `ask_operator`, and `stop` outcomes.
 - Taught `route_worktree` to disambiguate multi-bundle worktrees by issue number instead of failing reflexively on any extra bundle presence.
+- Added a bounded tracker/WP check that detects when closed child issues already mark the acceptance surface as satisfied and routes to human review instead of `pr-run`.
 - Tightened the docs and output contract so the skill’s behavior and its stated stop-boundary model now match.
 - Expanded behavioral tests to cover policy-stop outcomes, open-PR-wave finish escalation, PR blocker classification, healthy-PR wait handling, and disambiguated worktree routing.
 
@@ -72,7 +73,7 @@ Rules:
 ## Validation
 - Validation commands and their purpose:
   - `python3 -m py_compile adl/tools/skills/workflow-conductor/scripts/route_workflow.py adl/tools/skills/workflow-conductor/scripts/select_next_skill.py` verified the conductor Python entrypoints parse cleanly after the maturity changes.
-  - `bash adl/tools/test_workflow_conductor_skill_contracts.sh` verified deterministic skill selection, explicit policy-stop behavior, open-PR-wave escalation, PR blocker classification, and disambiguated worktree routing.
+  - `bash adl/tools/test_workflow_conductor_skill_contracts.sh` verified deterministic skill selection, explicit policy-stop behavior, open-PR-wave escalation, PR blocker classification, disambiguated worktree routing, and tracker-child-wave satisfaction detection.
   - `python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <tmp-input> --artifact-path .adl/reviews/workflow-conductor-1685-post-implementation.md` verified the live issue worktree routes cleanly with an explicit issue-number disambiguator.
   - `git diff --check` verified there are no whitespace or malformed patch artifacts in the tracked changes.
 - Results: all listed validation commands passed.
@@ -116,7 +117,7 @@ verification_summary:
 ```
 
 ## Determinism Evidence
-- Determinism tests executed: reran the conductor contract suite after the blocker-class, escalation, and worktree-disambiguation changes, then reran the live route entrypoint for the same `#1685` worktree target.
+- Determinism tests executed: reran the conductor contract suite after the blocker-class, escalation, worktree-disambiguation, and tracker-child-wave changes, then reran the live route entrypoint for the same `#1685` worktree target.
 - Fixtures or scripts used: `adl/tools/test_workflow_conductor_skill_contracts.sh` and `adl/tools/skills/workflow-conductor/scripts/route_workflow.py`.
 - Replay verification (same inputs -> same artifacts/order): identical fixture inputs produce the same selected skill, blocker class, and continuation result, and the live `#1685` worktree invocation reproducibly writes the same bounded routing artifact shape for the same collected state.
 - Ordering guarantees (sorting / tie-break rules used): route collection sorts candidate canonical surfaces and now uses explicit `issue_number` disambiguation for multi-bundle worktrees rather than choosing nondeterministically.
@@ -153,6 +154,7 @@ Rules:
 ## Decisions / Deviations
 - Added bounded blocker-family reporting instead of trying to make the conductor fully autonomous over every failure surface.
 - Allowed `route_worktree` to accept `target.issue_number` as a disambiguator because real issue worktrees can legitimately contain more than one task bundle during milestone work.
+- Used only explicit `child of #<parent>` issue-graph notes plus closed child issue state as the tracker-satisfaction signal, so the conductor stays conservative instead of guessing that a tracker "looks done."
 - Kept healthy open PRs in human-review state rather than treating them as janitor work, which preserves the conductor’s thin stop boundary.
 - Accepted a manual publication deviation after `pr finish` proved the issue bundle but was blocked by unrelated tracked legacy `.adl` residue on `main`; this did not change the issue-scoped implementation payload.
 

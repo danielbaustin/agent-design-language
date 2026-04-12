@@ -74,6 +74,7 @@ Known cases that should normally produce `ask_operator`:
 - open PR wave blocks that need an explicit override
 - healthy open PRs that are waiting for review rather than janitor work
 - doctor output that is missing or too inconsistent to support confident routing
+- tracker or WP issues whose acceptance already appears satisfied by a closed child-issue wave
 
 ## Deterministic Helper
 

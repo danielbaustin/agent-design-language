@@ -9,8 +9,8 @@ target:
   worktree_path: <path or null>
   pr_number: <u32 or null>
 workflow_state:
-  detected_phase: bootstrap_missing | card_local_blocker | pre_run | run_bound | execution_done | pr_in_flight | closed_out | unknown
-  blocker_class: none | open_pr_wave_only | doctor_failed_or_inconclusive | review_changes_requested | merge_conflict | checks_failed | merge_blocked | healthy_pr_waiting
+  detected_phase: bootstrap_missing | card_local_blocker | pre_run | run_bound | execution_done | pr_in_flight | closed_out | already_satisfied | tracker_in_flight | unknown
+  blocker_class: none | open_pr_wave_only | doctor_failed_or_inconclusive | review_changes_requested | merge_conflict | checks_failed | merge_blocked | healthy_pr_waiting | satisfied_by_child_issue_wave | active_child_issue_wave
   evidence_used:
     - <doctor_json_or_path_or_state_surface>
 selected_skill:
@@ -31,7 +31,7 @@ actions_taken:
 handoff_state:
   next_phase: pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | sor-editor | human_review | blocked
   continuation: continue | ask_operator | stop
-  escalation_reason: none | operator_override_required | ambiguous_live_state | healthy_pr_waiting | manual_review_required | policy_block
+  escalation_reason: none | operator_override_required | ambiguous_live_state | healthy_pr_waiting | manual_review_required | policy_block | child_issue_wave_satisfied | child_issue_wave_active
 artifact:
   path: <path or null>
 ```

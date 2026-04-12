@@ -28,6 +28,7 @@ grep -Fq "requires \`target.issue_number\`" "${skills_root}/docs/WORKFLOW_CONDUC
 grep -Fq "classify known blocker families" "${skills_root}/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md"
 grep -Fq "workflow-conductor" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 grep -Fq "resume from partially completed early steps" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
+grep -Fq "child issue wave already appears to cover the acceptance surface" "${skills_root}/workflow-conductor/SKILL.md"
 
 cat >"${tmpdir}/bootstrap_missing.json" <<'EOF'
 {
@@ -189,6 +190,11 @@ JSON
 {"schema":"adl.pr.doctor.v1","issue":2004,"version":"v0.88","slug":"route-finish","branch":"codex/2004-route-finish","mode":"full","preflight_status":"BLOCK","open_pr_count":1,"open_prs":[{"number":9999,"head_ref_name":"codex/other-open-wave","state":"ready","url":"https://example.test/pr/9999"}],"lifecycle_state":"execution_done","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2004-route-finish.md","root_stp":".adl/v0.88/tasks/issue-2004__route-finish/stp.md","root_input":".adl/v0.88/tasks/issue-2004__route-finish/sip.md","root_output":".adl/v0.88/tasks/issue-2004__route-finish/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"doctor_status":"BLOCK"}
 JSON
     ;;
+  2006)
+    cat <<'JSON'
+{"schema":"adl.pr.doctor.v1","issue":2006,"version":"v0.88","slug":"route-tracker-stop","branch":"codex/2006-route-tracker-stop","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"pre_run","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2006-route-tracker-stop.md","root_stp":".adl/v0.88/tasks/issue-2006__route-tracker-stop/stp.md","root_input":".adl/v0.88/tasks/issue-2006__route-tracker-stop/sip.md","root_output":".adl/v0.88/tasks/issue-2006__route-tracker-stop/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"doctor_status":"PASS"}
+JSON
+    ;;
   *)
     exit 1
     ;;
@@ -212,6 +218,17 @@ touch "${fixture_repo}/.adl/v0.88/tasks/issue-2004__route-finish/stp.md"
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-2004__route-finish/sip.md"
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-2004__route-finish/sor.md"
 touch "${fixture_repo}/.adl/v0.88/bodies/issue-2004-route-finish.md"
+
+mkdir -p "${fixture_repo}/.adl/v0.88/tasks/issue-2006__route-tracker-stop"
+cat >"${fixture_repo}/.adl/v0.88/tasks/issue-2006__route-tracker-stop/stp.md" <<'EOF'
+---
+wp: WP-20
+title: '[v0.88][WP-20] Route tracker stop'
+---
+EOF
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2006__route-tracker-stop/sip.md"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2006__route-tracker-stop/sor.md"
+touch "${fixture_repo}/.adl/v0.88/bodies/issue-2006-route-tracker-stop.md"
 
 mkdir -p "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2005__route-worktree-finish"
 touch "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2005__route-worktree-finish/stp.md"
@@ -340,6 +357,28 @@ cat >"${tmpdir}/route_worktree_disambiguated.json" <<EOF
 }
 EOF
 
+cat >"${tmpdir}/route_tracker_satisfied.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_issue",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "issue_number": 2006
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
 mock_bin="${tmpdir}/mock-bin"
 mkdir -p "${mock_bin}"
 cat >"${mock_bin}/gh" <<'EOF'
@@ -348,6 +387,15 @@ set -euo pipefail
 if [[ "$1" == "pr" && "$2" == "view" && "$3" == "3001" ]]; then
   cat <<'JSON'
 {"state":"OPEN","isDraft":false,"reviewDecision":"CHANGES_REQUESTED","mergeStateStatus":"BLOCKED","headRefName":"codex/3001-pr-blocked","statusCheckRollup":[{"status":"COMPLETED","conclusion":"FAILURE"}]}
+JSON
+  exit 0
+fi
+if [[ "$1" == "issue" && "$2" == "list" ]]; then
+  cat <<'JSON'
+[
+  {"number":2011,"state":"CLOSED","title":"child-a","body":"## Issue-Graph Notes\n- child of #2006"},
+  {"number":2012,"state":"CLOSED","title":"child-b","body":"## Issue-Graph Notes\n- child of #2006"}
+]
 JSON
   exit 0
 fi
@@ -474,6 +522,7 @@ python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "$
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_finish.json" --artifact-path ".adl/reviews/route-finish.md" >"${tmpdir}/route_finish.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_worktree_finish.json" --artifact-path ".adl/reviews/route-worktree-finish.md" >"${tmpdir}/route_worktree_finish.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_worktree_disambiguated.json" --artifact-path ".adl/reviews/route-worktree-disambiguated.md" >"${tmpdir}/route_worktree_disambiguated.out.json"
+PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_tracker_satisfied.json" --artifact-path ".adl/reviews/route-tracker-satisfied.md" >"${tmpdir}/route_tracker_satisfied.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_blocked.json" --artifact-path ".adl/reviews/route-pr-blocked.md" >"${tmpdir}/route_pr_blocked.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_merged.json" --artifact-path ".adl/reviews/route-pr-merged.md" >"${tmpdir}/route_pr_merged.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_clean.json" --artifact-path ".adl/reviews/route-pr-clean.md" >"${tmpdir}/route_pr_clean.out.json"
@@ -506,6 +555,13 @@ assert route_finish["selected_skill"]["skill_name"] == "pr-finish"
 assert route_finish["workflow_state"]["blocker_class"] == "open_pr_wave_only"
 assert route_finish["handoff_state"]["continuation"] == "ask_operator"
 assert route_finish["handoff_state"]["escalation_reason"] == "operator_override_required"
+
+route_tracker_satisfied = load("route_tracker_satisfied.out.json")
+assert route_tracker_satisfied["selected_skill"]["skill_name"] == "none"
+assert route_tracker_satisfied["workflow_state"]["blocker_class"] == "satisfied_by_child_issue_wave"
+assert route_tracker_satisfied["handoff_state"]["next_phase"] == "human_review"
+assert route_tracker_satisfied["handoff_state"]["continuation"] == "ask_operator"
+assert route_tracker_satisfied["handoff_state"]["escalation_reason"] == "child_issue_wave_satisfied"
 
 route_worktree_finish = load("route_worktree_finish.out.json")
 assert route_worktree_finish["selected_skill"]["skill_name"] == "pr-finish"

@@ -159,5 +159,6 @@ Return a concise structured result including:
 - whether subagent assignment is required
 - whether the target should continue, stop, or ask for operator confirmation
 - bounded blocker classification for known doctor/PR failure families
+- bounded tracker/umbrella satisfaction detection when a child issue wave already appears to cover the acceptance surface
 - explicit escalation reason when the conductor should not continue silently
 - the artifact path or equivalent routing-proof surface when one is written
