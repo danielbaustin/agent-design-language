@@ -29,6 +29,44 @@ Without chronosense:
 
 Chronosense is therefore a foundational layer of the ADL cognitive architecture.
 
+## Runtime-facing Ownership
+
+`WP-04` owns the bounded continuity and identity semantics contract layered on top of the
+chronosense foundation and temporal schema:
+
+- `adl::chronosense::ContinuitySemanticsContract`
+- `run_status.v1.continuity_status`
+- `run_status.v1.preservation_status`
+- `run_status.v1.shepherd_decision`
+- `adl identity continuity`
+
+This issue does not complete retrieval semantics, commitment semantics, causality, or broader
+governance logic. It defines the runtime continuity states and resumption rules that later work
+must honor.
+
+## Bounded Acceptance Criteria
+
+Continuity and identity semantics are considered present for `v0.88` when all of the following
+are true:
+
+- the repo exposes one canonical contract naming valid continuity, preservation, and Shepherd
+  decision states
+- interruption, crash, corruption, and continuous completion are distinguishable in the runtime
+  semantics surface
+- resumption permission is explicitly tied to continuity status and required guards
+- the proof artifact can be emitted without claiming broader memory, retrieval, or commitment
+  completion
+
+## Proof Hook
+
+The bounded proof hook for this issue is:
+
+`adl identity continuity --out .adl/state/continuity_semantics_v1.json`
+
+That artifact is intentionally contract-shaped. It proves that `WP-04` has made continuity and
+identity semantics inspectable as runtime behavior without pretending that all downstream
+temporal work is done.
+
 ---
 
 ## Core Definition
