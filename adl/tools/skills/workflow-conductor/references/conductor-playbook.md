@@ -8,6 +8,7 @@ The conductor should:
 - inspect the current issue/workflow state
 - choose the next appropriate ADL skill
 - apply skill/editor/subagent policy
+- classify known blocker families when doctor or PR evidence makes them clear
 - write one bounded routing artifact
 - stop after routing and compliance recording
 
@@ -61,6 +62,18 @@ the conductor should record compliance or explicit blocker-driven bypass.
 
 Never silently downgrade a required policy to an optional one.
 If required policy fails and no explicit bypass is allowed, return `blocked`.
+
+## Escalation Rule
+
+The conductor should return explicit handoff intent:
+- `continue` when the next skill is clear and safe to hand off
+- `ask_operator` when repo truth indicates an override or ambiguous live state
+- `stop` when policy prevents safe continuation
+
+Known cases that should normally produce `ask_operator`:
+- open PR wave blocks that need an explicit override
+- healthy open PRs that are waiting for review rather than janitor work
+- doctor output that is missing or too inconsistent to support confident routing
 
 ## Deterministic Helper
 

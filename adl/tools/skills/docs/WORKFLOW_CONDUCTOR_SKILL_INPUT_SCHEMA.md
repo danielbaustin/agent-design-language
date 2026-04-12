@@ -38,6 +38,7 @@ The conductor should:
 - select the next skill
 - apply workflow policy
 - write one bounded routing artifact
+- classify known blocker families from doctor or PR state when safe
 - stop after routing
 
 It should not perform the selected skill's implementation work.
@@ -68,6 +69,7 @@ It should not perform the selected skill's implementation work.
   - requires `target.branch`
 - `route_worktree`
   - requires `target.worktree_path`
+  - may also include `target.issue_number` to disambiguate a multi-bundle worktree
 - `route_pr`
   - requires `target.pr_number`
 

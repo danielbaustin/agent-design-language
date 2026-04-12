@@ -18,12 +18,14 @@ trap 'rm -rf "${tmpdir}"' EXIT
 grep -Fq "thin orchestrator" "${skills_root}/workflow-conductor/SKILL.md"
 grep -Fq "stop after routing and compliance recording" "${skills_root}/workflow-conductor/SKILL.md"
 grep -Fq "writes one bounded routing artifact" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
+grep -Fq 'continue`, `ask_operator`, or `stop`' "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 grep -Fq 'id: "workflow_conductor.v1"' "${skills_root}/workflow-conductor/adl-skill.yaml"
 grep -Fq 'reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md"' "${skills_root}/workflow-conductor/adl-skill.yaml"
 grep -Fq "policy.stop_after_routing_must_be_true" "${skills_root}/workflow-conductor/adl-skill.yaml"
 grep -Fq "python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <validated-json>" "${skills_root}/workflow-conductor/adl-skill.yaml"
 grep -Fq "route_issue" "${skills_root}/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md"
 grep -Fq "requires \`target.issue_number\`" "${skills_root}/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md"
+grep -Fq "classify known blocker families" "${skills_root}/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md"
 grep -Fq "workflow-conductor" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 grep -Fq "resume from partially completed early steps" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 
@@ -153,6 +155,7 @@ assert resume["workflow_compliance"]["policy_result"] == "PASS"
 janitor = load("pr_in_flight.out.json")
 assert janitor["selected_skill"]["skill_name"] == "pr-janitor"
 assert janitor["workflow_compliance"]["policy_result"] == "PARTIAL"
+assert janitor["handoff_state"]["continuation"] == "continue"
 
 required_missing = load("required_subagent_missing.out.json")
 assert required_missing["selected_skill"]["skill_name"] == "pr-run"
@@ -160,6 +163,8 @@ assert required_missing["workflow_compliance"]["policy_result"] == "FAIL"
 assert required_missing["workflow_compliance"]["bypasses"][0]["reason"] == "required_but_not_assigned"
 assert required_missing["status"] == "blocked"
 assert required_missing["handoff_state"]["next_phase"] == "blocked"
+assert required_missing["handoff_state"]["continuation"] == "stop"
+assert required_missing["handoff_state"]["escalation_reason"] == "policy_block"
 PY
 
 fixture_repo="${tmpdir}/fixture-repo"
@@ -216,6 +221,10 @@ Task ID: issue-2005
 Status: DONE
 EOF
 touch "${fixture_repo}/.adl/v0.88/bodies/issue-2005-route-worktree-finish.md"
+mkdir -p "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2999__extra-worktree-bundle"
+touch "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2999__extra-worktree-bundle/stp.md"
+touch "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2999__extra-worktree-bundle/sip.md"
+touch "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2999__extra-worktree-bundle/sor.md"
 
 cat >"${tmpdir}/route_issue.json" <<EOF
 {
@@ -308,6 +317,29 @@ cat >"${tmpdir}/route_worktree_finish.json" <<EOF
 }
 EOF
 
+cat >"${tmpdir}/route_worktree_disambiguated.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_worktree",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "issue_number": 2005,
+    "worktree_path": "${fixture_repo}/.worktrees/adl-wp-2005"
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
 mock_bin="${tmpdir}/mock-bin"
 mkdir -p "${mock_bin}"
 cat >"${mock_bin}/gh" <<'EOF'
@@ -316,6 +348,12 @@ set -euo pipefail
 if [[ "$1" == "pr" && "$2" == "view" && "$3" == "3001" ]]; then
   cat <<'JSON'
 {"state":"OPEN","isDraft":false,"reviewDecision":"CHANGES_REQUESTED","mergeStateStatus":"BLOCKED","headRefName":"codex/3001-pr-blocked","statusCheckRollup":[{"status":"COMPLETED","conclusion":"FAILURE"}]}
+JSON
+  exit 0
+fi
+if [[ "$1" == "pr" && "$2" == "view" && "$3" == "3004" ]]; then
+  cat <<'JSON'
+{"state":"OPEN","isDraft":false,"reviewDecision":null,"mergeStateStatus":"BLOCKED","headRefName":"codex/3004-pr-linkage-only","statusCheckRollup":[{"status":"COMPLETED","conclusion":"SUCCESS"}]}
 JSON
   exit 0
 fi
@@ -336,10 +374,12 @@ EOF
 chmod +x "${mock_bin}/gh"
 
 mkdir -p "${fixture_repo}/.adl/v0.88/tasks/issue-3001__pr-blocked" "${fixture_repo}/.adl/v0.88/tasks/issue-3002__pr-merged" "${fixture_repo}/.adl/v0.88/tasks/issue-3003__pr-clean"
+mkdir -p "${fixture_repo}/.adl/v0.88/tasks/issue-3004__pr-linkage-only"
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-3001__pr-blocked/stp.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3001__pr-blocked/sip.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3001__pr-blocked/sor.md"
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-3002__pr-merged/stp.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3002__pr-merged/sip.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3002__pr-merged/sor.md"
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-3003__pr-clean/stp.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3003__pr-clean/sip.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3003__pr-clean/sor.md"
-touch "${fixture_repo}/.adl/v0.88/bodies/issue-3001-pr-blocked.md" "${fixture_repo}/.adl/v0.88/bodies/issue-3002-pr-merged.md" "${fixture_repo}/.adl/v0.88/bodies/issue-3003-pr-clean.md"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-3004__pr-linkage-only/stp.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3004__pr-linkage-only/sip.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3004__pr-linkage-only/sor.md"
+touch "${fixture_repo}/.adl/v0.88/bodies/issue-3001-pr-blocked.md" "${fixture_repo}/.adl/v0.88/bodies/issue-3002-pr-merged.md" "${fixture_repo}/.adl/v0.88/bodies/issue-3003-pr-clean.md" "${fixture_repo}/.adl/v0.88/bodies/issue-3004-pr-linkage-only.md"
 
 cat >"${tmpdir}/route_pr_blocked.json" <<EOF
 {
@@ -407,13 +447,37 @@ cat >"${tmpdir}/route_pr_clean.json" <<EOF
 }
 EOF
 
+cat >"${tmpdir}/route_pr_linkage_only.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_pr",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "pr_number": 3004
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_issue.json" --artifact-path ".adl/reviews/route-issue.md" >"${tmpdir}/route_issue.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_task_bundle.json" --artifact-path ".adl/reviews/route-task-bundle.md" >"${tmpdir}/route_task_bundle.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_finish.json" --artifact-path ".adl/reviews/route-finish.md" >"${tmpdir}/route_finish.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_worktree_finish.json" --artifact-path ".adl/reviews/route-worktree-finish.md" >"${tmpdir}/route_worktree_finish.out.json"
+python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_worktree_disambiguated.json" --artifact-path ".adl/reviews/route-worktree-disambiguated.md" >"${tmpdir}/route_worktree_disambiguated.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_blocked.json" --artifact-path ".adl/reviews/route-pr-blocked.md" >"${tmpdir}/route_pr_blocked.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_merged.json" --artifact-path ".adl/reviews/route-pr-merged.md" >"${tmpdir}/route_pr_merged.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_clean.json" --artifact-path ".adl/reviews/route-pr-clean.md" >"${tmpdir}/route_pr_clean.out.json"
+PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_linkage_only.json" --artifact-path ".adl/reviews/route-pr-linkage-only.md" >"${tmpdir}/route_pr_linkage_only.out.json"
 
 python3 - "$tmpdir" "$fixture_repo" <<'PY'
 import json
@@ -439,12 +503,20 @@ assert (repo / ".adl/reviews/route-task-bundle.md").exists()
 
 route_finish = load("route_finish.out.json")
 assert route_finish["selected_skill"]["skill_name"] == "pr-finish"
+assert route_finish["workflow_state"]["blocker_class"] == "open_pr_wave_only"
+assert route_finish["handoff_state"]["continuation"] == "ask_operator"
+assert route_finish["handoff_state"]["escalation_reason"] == "operator_override_required"
 
 route_worktree_finish = load("route_worktree_finish.out.json")
 assert route_worktree_finish["selected_skill"]["skill_name"] == "pr-finish"
 
+route_worktree_disambiguated = load("route_worktree_disambiguated.out.json")
+assert route_worktree_disambiguated["selected_skill"]["skill_name"] == "pr-finish"
+assert route_worktree_disambiguated["target"]["issue_number"] == 2005
+
 route_pr_blocked = load("route_pr_blocked.out.json")
 assert route_pr_blocked["selected_skill"]["skill_name"] == "pr-janitor"
+assert route_pr_blocked["workflow_state"]["blocker_class"] == "review_changes_requested"
 
 route_pr_merged = load("route_pr_merged.out.json")
 assert route_pr_merged["selected_skill"]["skill_name"] == "pr-closeout"
@@ -452,6 +524,13 @@ assert route_pr_merged["selected_skill"]["skill_name"] == "pr-closeout"
 route_pr_clean = load("route_pr_clean.out.json")
 assert route_pr_clean["selected_skill"]["skill_name"] == "none"
 assert route_pr_clean["handoff_state"]["next_phase"] == "human_review"
+assert route_pr_clean["workflow_state"]["blocker_class"] == "none"
+assert route_pr_clean["handoff_state"]["continuation"] == "ask_operator"
+assert route_pr_clean["handoff_state"]["escalation_reason"] == "healthy_pr_waiting"
+
+route_pr_linkage_only = load("route_pr_linkage_only.out.json")
+assert route_pr_linkage_only["selected_skill"]["skill_name"] == "pr-janitor"
+assert route_pr_linkage_only["workflow_state"]["blocker_class"] == "merge_blocked"
 PY
 
 echo "PASS test_workflow_conductor_skill_contracts"

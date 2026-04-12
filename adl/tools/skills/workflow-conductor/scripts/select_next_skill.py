@@ -26,6 +26,7 @@ def evaluate(payload):
     lifecycle_state = workflow.get("lifecycle_state", "unknown")
     ready_state = workflow.get("ready_state", "unknown")
     pr_state = workflow.get("pr_state", "none")
+    blocker_class = workflow.get("blocker_class", "none")
     subagent_assigned = bool(workflow.get("subagent_assigned", False))
     subagent_requirement = policy.get("subagent_requirement", "optional")
 
@@ -33,41 +34,76 @@ def evaluate(payload):
     skill_name = "none"
     editor_skill = "none"
     detected_phase = lifecycle_state
+    continuation = "ask_operator"
+    escalation_reason = "manual_review_required"
 
     if not bootstrap_present:
         detected_phase = "bootstrap_missing"
         selected_phase = "init"
         skill_name = "pr-init"
+        continuation = "continue"
+        escalation_reason = "none"
     elif card_blocker in ("stp", "sip", "sor"):
         detected_phase = "card_local_blocker"
         selected_phase = "editor"
         skill_name = editor_for(card_blocker)
         editor_skill = skill_name
-    elif pr_state in ("open_with_blockers", "open_failing", "open_conflicted", "review_changes_requested"):
+        continuation = "continue"
+        escalation_reason = "none"
+    elif pr_state in (
+        "open_with_blockers",
+        "open_failing",
+        "open_conflicted",
+        "review_changes_requested",
+        "open_linkage_only",
+        "open_checks_failed",
+        "open_merge_conflict",
+    ):
         detected_phase = "pr_in_flight"
         selected_phase = "janitor"
         skill_name = "pr-janitor"
-    elif pr_state in ("open_clean", "open_unknown", "open_draft"):
+        continuation = "continue"
+        escalation_reason = "none"
+    elif pr_state in ("open_clean", "open_unknown", "open_draft", "open_waiting_for_review"):
         detected_phase = "pr_in_flight"
         selected_phase = "blocked"
         skill_name = "none"
+        continuation = "ask_operator"
+        escalation_reason = "healthy_pr_waiting"
     elif pr_state in ("merged", "intentionally_closed", "closed_no_pr", "superseded", "duplicate"):
         detected_phase = "closed_out"
         selected_phase = "closeout"
         skill_name = "pr-closeout"
+        continuation = "continue"
+        escalation_reason = "none"
     elif lifecycle_state == "execution_done":
         selected_phase = "finish"
         skill_name = "pr-finish"
+        continuation = "continue"
+        escalation_reason = "none"
     elif lifecycle_state == "run_bound":
         selected_phase = "run"
         skill_name = "pr-run"
+        continuation = "continue"
+        escalation_reason = "none"
     elif lifecycle_state == "pre_run":
         if ready_state == "pass":
             selected_phase = "run"
             skill_name = "pr-run"
+            continuation = "continue"
+            escalation_reason = "none"
         else:
             selected_phase = "ready"
             skill_name = "pr-ready"
+            continuation = "continue"
+            escalation_reason = "none"
+
+    if blocker_class in ("open_pr_wave_only", "doctor_failed_or_inconclusive"):
+        continuation = "ask_operator"
+        if blocker_class == "open_pr_wave_only" and skill_name in ("pr-run", "pr-finish"):
+            escalation_reason = "operator_override_required"
+        elif blocker_class == "doctor_failed_or_inconclusive":
+            escalation_reason = "ambiguous_live_state"
 
     bypasses = []
     policy_result = "PASS"
@@ -112,6 +148,8 @@ def evaluate(payload):
     if blocked_by_policy and not policy.get("bypass_without_explicit_blocker", False):
         status = "blocked"
         next_phase = "blocked"
+        continuation = "stop"
+        escalation_reason = "policy_block"
 
     return {
         "status": status,
@@ -124,6 +162,7 @@ def evaluate(payload):
         },
         "workflow_state": {
             "detected_phase": detected_phase,
+            "blocker_class": blocker_class,
             "evidence_used": workflow.get("evidence_used", []),
         },
         "selected_skill": {
@@ -142,6 +181,8 @@ def evaluate(payload):
         "actions_taken": [f"selected {skill_name} from detected phase {detected_phase}"],
         "handoff_state": {
             "next_phase": next_phase,
+            "continuation": continuation,
+            "escalation_reason": escalation_reason,
         },
     }
 
