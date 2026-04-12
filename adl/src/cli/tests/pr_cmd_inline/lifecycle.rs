@@ -814,12 +814,19 @@ fn real_pr_preflight_reports_open_milestone_prs() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-preflight");
     init_git_repo(&repo);
+    let issue_ref = IssueRef::new(
+        1173,
+        "v0.86".to_string(),
+        "v0-86-tools-preflight".to_string(),
+    )
+    .expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Preflight");
     let bin_dir = repo.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
     let gh_path = bin_dir.join("gh");
     write_executable(
             &gh_path,
-            "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"pr list\" ]]; then\n  cat <<'JSON'\n[{\"number\":1169,\"title\":\"[v0.86][runtime] Sprint 3A: Make WP-06 fast / slow paths drive real runtime behavior\",\"url\":\"https://example.test/pr/1169\",\"headRefName\":\"codex/1161-v0-86-runtime-sprint-3a-make-wp-06-fast-slow-paths-drive-real-runtime-behavior\",\"baseRefName\":\"main\",\"isDraft\":true}]\nJSON\n  exit 0\nfi\nexit 1\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"pr list\" ]]; then\n  cat <<'JSON'\n[{\"number\":1169,\"title\":\"[v0.86][tools] Keep tools queue busy\",\"url\":\"https://example.test/pr/1169\",\"headRefName\":\"codex/1161-v0-86-tools-keep-tools-queue-busy\",\"baseRefName\":\"main\",\"isDraft\":true}]\nJSON\n  exit 0\nfi\nexit 1\n",
         );
 
     let old_path = env::var("PATH").unwrap_or_default();
@@ -920,13 +927,20 @@ fn real_pr_start_blocks_when_open_milestone_pr_wave_exists() {
         .status()
         .expect("git fetch")
         .success());
+    let issue_ref = IssueRef::new(
+        1173,
+        "v0.86".to_string(),
+        "v0-86-tools-preflight-guard".to_string(),
+    )
+    .expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Preflight guard");
 
     let bin_dir = repo.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
     let gh_path = bin_dir.join("gh");
     write_executable(
             &gh_path,
-            "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"pr list\" ]]; then\n  cat <<'JSON'\n[{\"number\":1169,\"title\":\"[v0.86][runtime] Sprint 3A: Make WP-06 fast / slow paths drive real runtime behavior\",\"url\":\"https://example.test/pr/1169\",\"headRefName\":\"codex/1161-v0-86-runtime-sprint-3a-make-wp-06-fast-slow-paths-drive-real-runtime-behavior\",\"baseRefName\":\"main\",\"isDraft\":true}]\nJSON\n  exit 0\nfi\nexit 1\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"pr list\" ]]; then\n  cat <<'JSON'\n[{\"number\":1169,\"title\":\"[v0.86][tools] Keep tools queue busy\",\"url\":\"https://example.test/pr/1169\",\"headRefName\":\"codex/1161-v0-86-tools-keep-tools-queue-busy\",\"baseRefName\":\"main\",\"isDraft\":true}]\nJSON\n  exit 0\nfi\nexit 1\n",
         );
 
     let old_path = env::var("PATH").unwrap_or_default();
@@ -947,7 +961,7 @@ fn real_pr_start_blocks_when_open_milestone_pr_wave_exists() {
         "v0.86".to_string(),
         "--no-fetch-issue".to_string(),
     ])
-    .expect_err("start should block on open PR wave");
+    .expect_err("start should block on same-queue open PR");
 
     env::set_current_dir(prev_dir).expect("restore cwd");
     unsafe {
@@ -955,8 +969,121 @@ fn real_pr_start_blocks_when_open_milestone_pr_wave_exists() {
     }
     assert!(err
         .to_string()
-        .contains("start: unresolved open PR wave detected for v0.86"));
+        .contains("start: unresolved open PR queue detected for v0.86 [tools:inferred]"));
     assert!(err.to_string().contains("#1169 [draft]"));
+}
+
+#[test]
+fn real_pr_preflight_allows_cross_queue_open_prs() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-preflight-cross-queue-allow");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
+        ])
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    fs::write(repo.join("README.md"), "# test\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "README.md"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+    let issue_ref = IssueRef::new(
+        1173,
+        "v0.86".to_string(),
+        "v0-86-tools-preflight-guard".to_string(),
+    )
+    .expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Preflight guard");
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_path = bin_dir.join("gh");
+    write_executable(
+        &gh_path,
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"pr list\" ]]; then\n  cat <<'JSON'\n[{\"number\":1169,\"title\":\"[v0.86][WP-06] Runtime demo lane\",\"url\":\"https://example.test/pr/1169\",\"headRefName\":\"codex/1161-v0-86-wp-06-runtime-demo-lane\",\"baseRefName\":\"main\",\"isDraft\":true}]\nJSON\n  exit 0\nfi\nexit 1\n",
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    real_pr(&[
+        "preflight".to_string(),
+        "1173".to_string(),
+        "--slug".to_string(),
+        "v0-86-tools-preflight-guard".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+        "--no-fetch-issue".to_string(),
+    ])
+    .expect("preflight should allow cross-queue open pr");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
 }
 
 #[test]

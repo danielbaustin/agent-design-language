@@ -1,4 +1,5 @@
 use super::*;
+use crate::cli::pr_cmd_prompt::infer_workflow_queue;
 use ::adl::control_plane::resolve_primary_checkout_root;
 use serde::Deserialize;
 use std::collections::BTreeSet;
@@ -16,6 +17,8 @@ pub(super) struct OpenPullRequest {
     pub(super) base_ref_name: String,
     #[serde(rename = "isDraft")]
     pub(super) is_draft: bool,
+    #[serde(skip)]
+    pub(super) queue: Option<String>,
 }
 
 pub(super) fn current_pr_url(repo: &str, branch: &str) -> Result<Option<String>> {
@@ -41,6 +44,7 @@ pub(super) fn current_pr_url(repo: &str, branch: &str) -> Result<Option<String>>
 pub(super) fn unresolved_milestone_pr_wave(
     repo: &str,
     version: &str,
+    target_queue: &str,
     exclude_branch: Option<&str>,
 ) -> Result<Vec<OpenPullRequest>> {
     let out = run_capture_allow_failure(
@@ -64,10 +68,19 @@ pub(super) fn unresolved_milestone_pr_wave(
         .into_iter()
         .filter(|pr| pr.base_ref_name == "main")
         .filter(|pr| pr.title.contains(&version_tag))
+        .map(|mut pr| {
+            pr.queue = infer_workflow_queue(&pr.title, "", None).map(str::to_string);
+            pr
+        })
         .filter(|pr| {
             exclude_branch
                 .map(|branch| pr.head_ref_name != branch)
                 .unwrap_or(true)
+        })
+        .filter(|pr| {
+            pr.queue
+                .as_deref()
+                .is_none_or(|queue| queue == target_queue)
         })
         .collect())
 }
@@ -79,7 +92,10 @@ pub(super) fn format_open_pr_wave(prs: &[OpenPullRequest]) -> String {
                 "- #{} [{}] {} ({})",
                 pr.number,
                 if pr.is_draft { "draft" } else { "ready" },
-                pr.title,
+                match pr.queue.as_deref() {
+                    Some(queue) => format!("[queue={queue}] {}", pr.title),
+                    None => format!("[queue=unknown] {}", pr.title),
+                },
                 pr.url
             )
         })

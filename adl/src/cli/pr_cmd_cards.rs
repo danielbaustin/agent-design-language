@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use super::pr_cmd_prompt::{
-    infer_required_outcome_type, infer_wp_from_title, normalize_labels_csv,
+    infer_required_outcome_type, infer_workflow_queue, infer_wp_from_title, normalize_labels_csv,
     render_generated_issue_prompt,
 };
 use super::pr_cmd_validate::{
@@ -399,6 +399,7 @@ fn render_issue_prompt_from_body(
     }
 
     let wp = infer_wp_from_title(title);
+    let queue = infer_workflow_queue(title, labels_csv, Some(&wp)).unwrap_or("wp");
     let outcome_type = infer_required_outcome_type(labels_csv, title);
     let label_lines = labels_csv
         .split(',')
@@ -408,7 +409,7 @@ fn render_issue_prompt_from_body(
         .collect::<Vec<_>>()
         .join("\n");
     format!(
-        "---\nissue_card_schema: adl.issue.v1\nwp: \"{wp}\"\nslug: \"{slug}\"\ntitle: \"{title}\"\nlabels:\n{label_lines}\nissue_number: {issue}\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"{outcome_type}\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Mirrored from the authored GitHub issue body during bootstrap/init.\"\npr_start:\n  enabled: false\n  slug: \"{slug}\"\n---\n\n{body}\n"
+        "---\nissue_card_schema: adl.issue.v1\nwp: \"{wp}\"\nqueue: \"{queue}\"\nslug: \"{slug}\"\ntitle: \"{title}\"\nlabels:\n{label_lines}\nissue_number: {issue}\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"{outcome_type}\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Mirrored from the authored GitHub issue body during bootstrap/init.\"\npr_start:\n  enabled: false\n  slug: \"{slug}\"\n---\n\n{body}\n"
     )
 }
 

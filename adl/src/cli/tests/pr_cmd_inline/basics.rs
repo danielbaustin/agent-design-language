@@ -188,6 +188,31 @@ fn infer_wp_from_title_extracts_tag_or_defaults() {
 }
 
 #[test]
+fn infer_workflow_queue_prefers_explicit_signals_and_tags() {
+    assert_eq!(
+        infer_workflow_queue(
+            "[v0.86][WP-15] Implement local agent demo program",
+            "",
+            None
+        ),
+        Some("wp")
+    );
+    assert_eq!(
+        infer_workflow_queue("[v0.88][tools] Repair workflow conductor", "", None),
+        Some("tools")
+    );
+    assert_eq!(
+        infer_workflow_queue("[v0.88] Example", "track:roadmap,area:docs", None),
+        Some("docs")
+    );
+    assert_eq!(
+        infer_workflow_queue("[v0.88] Example", "", Some("review")),
+        Some("review")
+    );
+    assert_eq!(infer_workflow_queue("No queue signals", "", None), None);
+}
+
+#[test]
 fn infer_required_outcome_type_prefers_docs_tests_and_demo_signals() {
     assert_eq!(
         infer_required_outcome_type("track:roadmap,area:docs", "[v0.86][WP-01] Example"),

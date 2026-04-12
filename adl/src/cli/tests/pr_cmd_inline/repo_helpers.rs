@@ -571,6 +571,22 @@ fn resolve_issue_prompt_path_accepts_legacy_issue_bodies_location() {
 }
 
 #[test]
+fn resolve_issue_prompt_workflow_queue_rejects_missing_and_uninferrable_queue() {
+    let repo = unique_temp_dir("adl-pr-missing-workflow-queue");
+    let prompt = repo.join("issue.md");
+    fs::write(
+        &prompt,
+        "---\nissue_card_schema: adl.issue.v1\nwp: \"unassigned\"\nslug: \"no-queue\"\ntitle: \"Plain issue title\"\nlabels:\n  - \"track:roadmap\"\n  - \"version:v0.88\"\nissue_number: 1\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending\"\nrequired_outcome_type:\n  - \"code\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes: []\npr_start:\n  enabled: false\n  slug: \"no-queue\"\n---\n\n# Plain issue title\n\n## Summary\nx\n## Goal\nx\n## Required Outcome\nx\n## Deliverables\nx\n## Acceptance Criteria\nx\n## Repo Inputs\nx\n## Dependencies\nx\n## Demo Expectations\nx\n## Non-goals\nx\n## Issue-Graph Notes\nx\n## Notes\nx\n## Tooling Notes\nx\n",
+    )
+    .expect("prompt");
+
+    let err = resolve_issue_prompt_workflow_queue(&prompt).expect_err("missing queue should fail");
+    assert!(err
+        .to_string()
+        .contains("missing or invalid workflow queue"));
+}
+
+#[test]
 fn real_pr_start_rejects_missing_slug_or_empty_sanitized_title_in_no_fetch_mode() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-start-preconditions");

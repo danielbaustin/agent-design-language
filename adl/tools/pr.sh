@@ -1809,7 +1809,7 @@ Flags:
   (card/run) --slug <slug>                     Use an explicit slug instead of fetching the issue title.
   (run)     --title "<title>"                  Optional; accepted for UX symmetry and used to derive slug when --slug is omitted.
   (run)     --version <v0.85|v0.87.1>          Override detected version when the caller already knows the intended milestone band.
-  (run)     --allow-open-pr-wave               Override the open milestone PR wave guard.
+  (run)     --allow-open-pr-wave               Override the same-queue open milestone PR guard.
 
 Notes:
 - `pr create` creates the GitHub issue and bootstraps the local root STP/SIP/SOR bundle for a new issue.
@@ -1885,7 +1885,7 @@ Notes:
 - Creates or reuses issue worktree at .worktrees/adl-wp-<issue> by default.
 - Leaves the primary checkout on its current branch.
 - `--version` overrides inferred issue version when the caller already knows the intended milestone band.
-- Refuses to start a later issue when an open PR wave already exists for the same milestone band unless `--allow-open-pr-wave` is passed.
+- Refuses to start a later issue when an open PR already exists in the same milestone queue unless `--allow-open-pr-wave` is passed.
 EOF
 }
 
