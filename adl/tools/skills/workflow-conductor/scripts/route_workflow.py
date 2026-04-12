@@ -38,6 +38,12 @@ def run_command(args, cwd: Path):
     )
 
 
+def read_text(path: Path):
+    if not path or not path.exists():
+        return ""
+    return path.read_text(encoding="utf-8")
+
+
 def parse_task_bundle_identity(bundle: Path):
     match = re.match(r"issue-(\d+)__(.+)", bundle.name)
     if not match:
@@ -136,6 +142,18 @@ def parse_doctor_output(raw: str):
     raise ValueError("doctor output did not contain JSON")
 
 
+def frontmatter_value(text: str, key: str):
+    if not text.startswith("---\n"):
+        return None
+    lines = text.splitlines()
+    for line in lines[1:]:
+        if line == "---":
+            break
+        if line.startswith(f"{key}:"):
+            return line.split(":", 1)[1].strip().strip('"').strip("'")
+    return None
+
+
 def doctor_snapshot(repo_root: Path, issue_number: int, slug: str, version: str):
     command = [
         "bash",
@@ -157,6 +175,80 @@ def doctor_snapshot(repo_root: Path, issue_number: int, slug: str, version: str)
         return parse_doctor_output(result.stdout)
     except ValueError:
         return None
+
+
+def classify_doctor_state(doctor):
+    if not doctor:
+        return "doctor_missing"
+    doctor_status = str(doctor.get("doctor_status", "unknown")).upper()
+    preflight_status = str(doctor.get("preflight_status", "unknown")).upper()
+    open_pr_count = int(doctor.get("open_pr_count", 0) or 0)
+    lifecycle_state = doctor.get("lifecycle_state", "unknown")
+
+    if doctor_status == "BLOCK" and preflight_status == "BLOCK" and open_pr_count > 0:
+        if lifecycle_state == "execution_done":
+            return "open_pr_wave_only"
+        if lifecycle_state in {"pre_run", "run_bound"}:
+            return "open_pr_wave_only"
+    if doctor_status not in {"PASS", "WARN", "BLOCK"}:
+        return "doctor_failed_or_inconclusive"
+    return "none"
+
+
+def gh_child_issue_wave_state(repo_root: Path, parent_issue_number: int):
+    result = run_command(
+        ["gh", "issue", "list", "--state", "all", "--limit", "200", "--json", "number,state,body,title"],
+        repo_root,
+    )
+    if result.returncode != 0 or not result.stdout.strip():
+        return None
+    try:
+        issues = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return None
+    children = []
+    needle = f"child of #{parent_issue_number}"
+    for issue in issues:
+        body = issue.get("body") or ""
+        if needle in body.lower():
+            children.append(issue)
+    if not children:
+        return None
+    if all(issue.get("state") == "CLOSED" for issue in children):
+        return "satisfied_by_child_issue_wave"
+    return "active_child_issue_wave"
+
+
+def classify_pr_state(pr):
+    state = pr.get("state")
+    review = pr.get("reviewDecision")
+    merge_state = pr.get("mergeStateStatus")
+    checks = summarize_checks(pr.get("statusCheckRollup"))
+
+    pr_state = "open_unknown"
+    blocker_class = "none"
+    if state == "MERGED":
+        pr_state = "merged"
+    elif state == "CLOSED":
+        pr_state = "intentionally_closed"
+    elif review == "CHANGES_REQUESTED":
+        pr_state = "review_changes_requested"
+        blocker_class = "review_changes_requested"
+    elif merge_state == "DIRTY":
+        pr_state = "open_merge_conflict"
+        blocker_class = "merge_conflict"
+    elif checks == "blocked":
+        pr_state = "open_checks_failed"
+        blocker_class = "checks_failed"
+    elif merge_state == "BLOCKED":
+        pr_state = "open_with_blockers"
+        blocker_class = "merge_blocked"
+    elif pr.get("isDraft") or checks == "pending":
+        pr_state = "open_draft"
+    else:
+        pr_state = "open_clean"
+
+    return pr_state, blocker_class
 
 
 def infer_card_blocker(bundle: Path):
@@ -188,6 +280,24 @@ def gather_issue_surface(repo_root: Path, issue_number: int):
     return bundle, source_prompt, identity
 
 
+def issue_tracker_state(repo_root: Path, bundle: Path, source_prompt: Path, issue_number: int):
+    texts = [read_text(source_prompt)]
+    if bundle:
+        texts.append(read_text(bundle / "stp.md"))
+    wp_value = None
+    title = None
+    for text in texts:
+        if not wp_value:
+            wp_value = frontmatter_value(text, "wp")
+        if not title:
+            title = frontmatter_value(text, "title")
+    is_tracker_like = bool(wp_value and wp_value != "unassigned") or bool(title and "[WP-" in title)
+    if not is_tracker_like:
+        return "none"
+    gh_state = gh_child_issue_wave_state(repo_root, issue_number)
+    return gh_state or "none"
+
+
 def collect_route_issue(repo_root: Path, payload):
     target = payload.get("target", {})
     issue_number = int(target["issue_number"])
@@ -202,6 +312,7 @@ def collect_route_issue(repo_root: Path, payload):
         "lifecycle_state": "unknown",
         "ready_state": "unknown",
         "pr_state": "none",
+        "blocker_class": "none",
         "subagent_assigned": bool(observed.get("subagent_assigned", False)),
         "evidence_used": [],
     }
@@ -218,6 +329,14 @@ def collect_route_issue(repo_root: Path, payload):
         workflow["evidence_used"].append("missing_root_bundle")
         return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
+    tracker_state = issue_tracker_state(repo_root, bundle, source_prompt, issue_number)
+    if tracker_state == "satisfied_by_child_issue_wave":
+        workflow["blocker_class"] = "satisfied_by_child_issue_wave"
+        workflow["evidence_used"].append("child_issue_wave")
+    elif tracker_state == "active_child_issue_wave":
+        workflow["blocker_class"] = "active_child_issue_wave"
+        workflow["evidence_used"].append("child_issue_wave")
+
     doctor = doctor_snapshot(
         repo_root,
         issue_number,
@@ -227,6 +346,9 @@ def collect_route_issue(repo_root: Path, payload):
     if doctor:
         workflow["lifecycle_state"] = doctor.get("lifecycle_state", "unknown")
         workflow["ready_state"] = doctor.get("ready_status", "unknown").lower()
+        doctor_blocker = classify_doctor_state(doctor)
+        if workflow["blocker_class"] == "none":
+            workflow["blocker_class"] = doctor_blocker
         workflow["evidence_used"].append("doctor_json")
         if doctor.get("worktree"):
             resolved_target.setdefault("worktree_path", doctor["worktree"])
@@ -254,6 +376,7 @@ def collect_route_task_bundle(repo_root: Path, payload):
         "lifecycle_state": "pre_run",
         "ready_state": "unknown",
         "pr_state": "none",
+        "blocker_class": "none",
         "subagent_assigned": bool(observed.get("subagent_assigned", False)),
         "evidence_used": ["task_bundle_path"],
     }
@@ -294,6 +417,7 @@ def collect_route_branch(repo_root: Path, payload):
         "lifecycle_state": "pre_run",
         "ready_state": "unknown",
         "pr_state": "none",
+        "blocker_class": "none",
         "subagent_assigned": bool(payload.get("observed_state", {}).get("subagent_assigned", False)),
         "evidence_used": ["branch", "canonical_bundle"],
     }
@@ -308,14 +432,28 @@ def collect_route_branch(repo_root: Path, payload):
     if doctor:
         workflow["lifecycle_state"] = doctor.get("lifecycle_state", "unknown")
         workflow["ready_state"] = doctor.get("ready_status", "unknown").lower()
+        workflow["blocker_class"] = classify_doctor_state(doctor)
         workflow["evidence_used"].append("doctor_json")
     return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
 
-def find_worktree_bundle(worktree_root: Path):
+def find_worktree_bundle(worktree_root: Path, issue_number=None):
     matches = sorted(worktree_root.glob(".adl/*/tasks/issue-*__*"))
     if not matches:
         return None
+    if issue_number is not None:
+        filtered = []
+        for path in matches:
+            identity = parse_task_bundle_identity(path)
+            if identity and identity["issue_number"] == int(issue_number):
+                filtered.append(path)
+        if len(filtered) == 1:
+            return filtered[0]
+        if len(filtered) > 1:
+            fail(
+                f"workflow-conductor: multiple task bundles found in worktree for issue {issue_number}: "
+                + ", ".join(str(path) for path in filtered)
+            )
     if len(matches) > 1:
         fail(
             "workflow-conductor: multiple task bundles found in worktree: "
@@ -329,7 +467,7 @@ def collect_route_worktree(repo_root: Path, payload):
     worktree = Path(target["worktree_path"])
     if not worktree.is_absolute():
         worktree = repo_root / worktree
-    bundle = find_worktree_bundle(worktree)
+    bundle = find_worktree_bundle(worktree, target.get("issue_number"))
     if bundle is None:
         fail("workflow-conductor: could not find a task bundle in the worktree")
     identity = parse_task_bundle_identity(bundle)
@@ -352,6 +490,7 @@ def collect_route_worktree(repo_root: Path, payload):
         "lifecycle_state": "run_bound",
         "ready_state": "pass",
         "pr_state": "none",
+        "blocker_class": "none",
         "subagent_assigned": bool(payload.get("observed_state", {}).get("subagent_assigned", False)),
         "evidence_used": ["worktree_path", "task_bundle_path"],
     }
@@ -364,6 +503,7 @@ def collect_route_worktree(repo_root: Path, payload):
         if workflow["lifecycle_state"] != "execution_done" or doctor_lifecycle == "execution_done":
             workflow["lifecycle_state"] = doctor_lifecycle
         workflow["ready_state"] = doctor.get("ready_status", "unknown").lower()
+        workflow["blocker_class"] = classify_doctor_state(doctor)
         workflow["evidence_used"].append("doctor_json")
     return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
@@ -416,23 +556,11 @@ def collect_route_pr(repo_root: Path, payload):
         "lifecycle_state": "execution_done",
         "ready_state": "pass",
         "pr_state": "open_unknown",
+        "blocker_class": "none",
         "subagent_assigned": bool(payload.get("observed_state", {}).get("subagent_assigned", False)),
         "evidence_used": ["gh_pr"],
     }
-    state = pr.get("state")
-    review = pr.get("reviewDecision")
-    merge_state = pr.get("mergeStateStatus")
-    checks = summarize_checks(pr.get("statusCheckRollup"))
-    if state == "MERGED":
-        workflow["pr_state"] = "merged"
-    elif state == "CLOSED":
-        workflow["pr_state"] = "intentionally_closed"
-    elif checks == "blocked" or merge_state in {"DIRTY", "BLOCKED"} or review == "CHANGES_REQUESTED":
-        workflow["pr_state"] = "open_with_blockers"
-    elif pr.get("isDraft") or checks == "pending":
-        workflow["pr_state"] = "open_unknown"
-    else:
-        workflow["pr_state"] = "open_clean"
+    workflow["pr_state"], workflow["blocker_class"] = classify_pr_state(pr)
     return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
 
@@ -446,8 +574,14 @@ def collect_state(payload):
     specified = [field for field in PRIMARY_TARGET_FIELDS.values() if target.get(field) not in (None, "")]
     if primary not in specified:
         fail(f"workflow-conductor: mode {mode} requires target.{primary}")
-    if len(specified) > 1 and primary not in {"issue_number"}:
-        fail("workflow-conductor: exactly one primary target should drive the mode")
+    allowed_secondary_targets = {
+        "route_worktree": {"issue_number"},
+    }
+    allowed = allowed_secondary_targets.get(mode, set())
+    if len(specified) > 1:
+        extras = {field for field in specified if field != primary}
+        if not extras.issubset(allowed):
+            fail("workflow-conductor: exactly one primary target should drive the mode")
 
     if mode == "route_issue":
         return collect_route_issue(repo_root, payload)
@@ -481,6 +615,7 @@ def render_markdown(result):
         "",
         "## workflow_state",
         f"- detected_phase: {workflow.get('detected_phase')}",
+        f"- blocker_class: {workflow.get('blocker_class')}",
         f"- evidence_used: {', '.join(workflow.get('evidence_used', [])) or 'none'}",
         "",
         "## selected_skill",
@@ -496,6 +631,8 @@ def render_markdown(result):
         "",
         "## handoff_state",
         f"- next_phase: {handoff.get('next_phase')}",
+        f"- continuation: {handoff.get('continuation')}",
+        f"- escalation_reason: {handoff.get('escalation_reason')}",
         "",
     ]
     return "\n".join(lines)

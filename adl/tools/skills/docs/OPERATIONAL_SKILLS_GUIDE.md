@@ -194,6 +194,7 @@ observed_state:
 - `workflow-conductor` is deliberately thin
 - it should route into `pr-*` or editor skills rather than reimplementing them
 - it is the best place to apply the execution-policy ideas for required skills, card editors, and subagents
+- it should return explicit `continue`, `ask_operator`, or `stop` handoff intent rather than leaving escalation implicit
 - the preferred route-only entrypoint is `python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <validated-json>`
 
 `ready` and `preflight` are compatibility aliases that may still exist in repo
