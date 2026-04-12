@@ -24,7 +24,7 @@ Execution:
 - End Time: 2026-04-12T23:49:43Z
 
 ## Summary
-Updated the existing Codex CLI + Ollama operational-skills demo so it truthfully supports a configured remote Ollama host at the demo-wrapper layer, including raw-host normalization (`OLLAMA_HOST=192.168.68.73`), clearer operator/docs language, and bounded host-configuration tests.
+Updated the existing Codex CLI + Ollama operational-skills demo so it truthfully supports a configured remote Ollama host at the demo-wrapper layer, including raw-host normalization (`OLLAMA_HOST=192.168.68.73`), clearer operator/docs language, and bounded host-configuration tests. Published for review in PR `#1693`.
 
 ## Artifacts produced
 - `adl/tools/demo_codex_ollama_operational_skills.sh`
@@ -41,13 +41,16 @@ Updated the existing Codex CLI + Ollama operational-skills demo so it truthfully
 - Verified live reachability of the remote Ollama host at `192.168.68.73:11434` and confirmed it advertises models including `gpt-oss:latest`.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: tracked repository paths are updated on the issue branch via PR 1692
+- Main-repo paths updated: tracked repository paths are updated on the issue branch via PR 1693
 - Worktree-only paths remaining: none
 - Integration state: pr_open
 - Verification scope: worktree
-- Integration method used: `pr finish` commit + push on the bound issue branch
+- Integration method used: `pr finish` validation followed by manual commit + push + PR creation because unrelated tracked legacy `.adl` residue on `main` blocked the publication guard
 - Verification performed:
-  - `bash adl/tools/pr.sh finish 1691 --title "[v0.88][demo] Let the Codex CLI + Ollama demo target a remote Ollama host" --paths "adl/tools/demo_codex_ollama_operational_skills.sh,adl/tools/test_demo_codex_ollama_operational_skills.sh,adl/tools/test_demo_codex_ollama_semantic_fallback.sh,demos/v0.87.1/codex_ollama_operational_skills_demo.md,demos/README.md"` validated, committed, pushed, and opened PR `#1692`.
+  - `bash adl/tools/pr.sh finish 1691 --title "[v0.88][demo] Let the Codex CLI + Ollama demo target a remote Ollama host" --paths "adl/tools/demo_codex_ollama_operational_skills.sh,adl/tools/test_demo_codex_ollama_operational_skills.sh,adl/tools/test_demo_codex_ollama_semantic_fallback.sh,demos/v0.87.1/codex_ollama_operational_skills_demo.md,demos/README.md"` validated the issue bundle and publication inputs before stopping on unrelated tracked legacy `.adl` residue from other issues.
+  - `git add ... && git add -f .adl/v0.88/.../issue-1691... && git commit` recorded the intended tracked changes plus the canonical issue bundle on the issue branch.
+  - `git push -u origin codex/1691-v0-88-demo-let-the-codex-cli-ollama-demo-target-a-remote-ollama-host` published the issue branch.
+  - `gh pr create --base main --head codex/1691-v0-88-demo-let-the-codex-cli-ollama-demo-target-a-remote-ollama-host --title "[v0.88][demo] Let the Codex CLI + Ollama demo target a remote Ollama host"` opened PR `#1693` with closing linkage for issue `#1691`.
   - `git status --short --branch` verified the branch was clean after publication.
 - Result: PASS
 
@@ -152,6 +155,7 @@ Rules:
 ## Decisions / Deviations
 - Kept remote-host support strictly at the demo-wrapper layer and did not touch `adl/src/provider.rs` or claim first-class runtime remote Ollama support.
 - Normalized raw host input (`192.168.68.73`) into a full URL so the common operator shorthand works without requiring a more complex environment contract.
+- Accepted a manual publication deviation after `pr finish` proved the issue bundle but was blocked by unrelated tracked legacy `.adl` residue on `main`; this did not change the issue-scoped implementation payload.
 
 ## Follow-ups / Deferred work
 - First-class remote Ollama provider transport in the ADL runtime remains a separate future backlog item and is intentionally not addressed by this demo issue.
