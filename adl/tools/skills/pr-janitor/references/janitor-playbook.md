@@ -62,6 +62,7 @@ Allowed:
 - rerun or locally reproduce the smallest relevant failing check
 - prepare a focused blocker-driven fix
 - resolve an unambiguous conflict when the intended resolution is clear
+- repair or refresh PR metadata when the only failure is a linkage-style guardrail and live PR truth already looks correct
 - record truthful PR progress output
 
 Not allowed:
@@ -87,3 +88,10 @@ If the process fails or remains blocked:
 - record whether no repair was attempted, a repair was attempted and succeeded, or a repair was attempted and did not resolve the blocker
 - report the exact next handoff needed
 - stop without widening scope
+
+## Linkage Guardrail Special Case
+
+If the only failing check is the issue-closing-linkage guardrail:
+1. inspect the live PR body and closing-issue metadata first
+2. if live PR truth is still wrong, repair the PR metadata in-bounds
+3. if live PR truth is already correct, treat the failure as stale-event recovery and use the smallest refresh path rather than changing product code

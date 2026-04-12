@@ -1808,6 +1808,57 @@ fn real_pr_finish_rejects_main_and_does_not_report_no_pr_when_bundle_sync_change
 }
 
 #[test]
+fn ensure_or_repair_pr_closing_linkage_repairs_live_pr_body() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-repair-linkage");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = temp.join("gh.log");
+    let state_body = temp.join("pr_body.txt");
+    fs::write(&state_body, "Refs #1153\n").expect("seed body");
+    let gh_path = bin_dir.join("gh");
+    write_executable(
+        &gh_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2\" = 'pr view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'closingIssuesReferences'; then\n    if grep -q 'Closes #1153' '{}'; then\n      printf '1153\\n'\n    fi\n    exit 0\n  fi\n  if printf '%s ' \"$@\" | grep -q ' --json body '; then\n    cat '{}'\n    exit 0\n  fi\nfi\nif [ \"$1 $2\" = 'pr edit' ]; then\n  body_file=''\n  while [ $# -gt 0 ]; do\n    if [ \"$1\" = '--body-file' ]; then\n      body_file=\"$2\"\n      shift 2\n    else\n      shift\n    fi\n  done\n  cp \"$body_file\" '{}'\n  exit 0\nfi\nexit 1\n",
+            gh_log.display(),
+            state_body.display(),
+            state_body.display(),
+            state_body.display()
+        ),
+    );
+
+    let body_file = temp.join("desired.md");
+    fs::write(&body_file, "Closes #1153\n\n## Summary\nrepaired\n").expect("desired body");
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_entries = env::split_paths(&old_path).collect::<Vec<_>>();
+    let mut new_entries = vec![bin_dir.clone()];
+    new_entries.extend(old_entries);
+    unsafe {
+        env::set_var("PATH", env::join_paths(new_entries).expect("join PATH"));
+    }
+
+    ensure_or_repair_pr_closing_linkage(
+        "danielbaustin/agent-design-language",
+        "https://github.com/danielbaustin/agent-design-language/pull/1159",
+        1153,
+        false,
+        &body_file,
+    )
+    .expect("repair should succeed");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let repaired = fs::read_to_string(&state_body).expect("read repaired body");
+    assert!(repaired.contains("Closes #1153"));
+    let gh_calls = fs::read_to_string(&gh_log).expect("read gh log");
+    assert!(gh_calls.contains("pr edit -R danielbaustin/agent-design-language https://github.com/danielbaustin/agent-design-language/pull/1159 --body-file"));
+}
+
+#[test]
 fn real_pr_finish_rejects_staged_gitignore_changes_without_allow_flag() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-gitignore-guard");

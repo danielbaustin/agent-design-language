@@ -5,6 +5,21 @@ EVENT_NAME="${GITHUB_EVENT_NAME:-}"
 EVENT_PATH="${GITHUB_EVENT_PATH:-}"
 HEAD_REF="${GITHUB_HEAD_REF:-}"
 
+body_has_linkage() {
+  local issue="$1"
+  python3 -c '
+import re
+import sys
+
+issue = sys.argv[1]
+body = sys.stdin.read()
+pattern = re.compile(rf"\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#?{re.escape(issue)}\b", re.IGNORECASE)
+if pattern.search(body):
+    raise SystemExit(0)
+raise SystemExit(1)
+' "$issue"
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --event-name)
@@ -71,19 +86,48 @@ print(body)
 PY
 )"
 
-if python3 -c '
-import re
-import sys
-
-issue = sys.argv[1]
-body = sys.stdin.read()
-pattern = re.compile(rf"\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#?{re.escape(issue)}\b", re.IGNORECASE)
-if pattern.search(body):
-    raise SystemExit(0)
-raise SystemExit(1)
-' "$ISSUE_NUMBER" <<<"$PR_BODY"; then
+if body_has_linkage "$ISSUE_NUMBER" <<<"$PR_BODY"; then
   echo "closing linkage OK for issue #$ISSUE_NUMBER"
   exit 0
+fi
+
+if command -v gh >/dev/null 2>&1; then
+  LIVE_REPO="$(
+    python3 - "$EVENT_PATH" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+data = json.loads(Path(sys.argv[1]).read_text())
+repo = data.get("repository", {}).get("full_name") or ""
+print(repo)
+PY
+  )"
+  LIVE_PR="$(
+    python3 - "$EVENT_PATH" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+data = json.loads(Path(sys.argv[1]).read_text())
+pr = data.get("pull_request", {}).get("number") or ""
+print(pr)
+PY
+  )"
+  if [[ -n "$LIVE_REPO" && -n "$LIVE_PR" ]]; then
+    LIVE_LINKED="$(
+      gh pr view "$LIVE_PR" -R "$LIVE_REPO" --json closingIssuesReferences --jq '.closingIssuesReferences[]?.number' 2>/dev/null || true
+    )"
+    if grep -Fxq "$ISSUE_NUMBER" <<<"$LIVE_LINKED"; then
+      echo "closing linkage OK for issue #$ISSUE_NUMBER via live PR truth"
+      exit 0
+    fi
+    LIVE_BODY="$(gh pr view "$LIVE_PR" -R "$LIVE_REPO" --json body --jq '.body' 2>/dev/null || true)"
+    if [[ -n "$LIVE_BODY" ]] && body_has_linkage "$ISSUE_NUMBER" <<<"$LIVE_BODY"; then
+      echo "closing linkage OK for issue #$ISSUE_NUMBER via live PR body"
+      exit 0
+    fi
+  fi
 fi
 
 echo "ERROR: PR body for branch '$HEAD_REF' is missing closing linkage for issue #$ISSUE_NUMBER" >&2
