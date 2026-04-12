@@ -15,6 +15,14 @@ pub(crate) struct IssuePromptFrontMatter {
     pub(crate) issue_number: u32,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct WorkflowQueueResolution {
+    pub(crate) queue: String,
+    pub(crate) source: &'static str,
+}
+
+const VALID_WORKFLOW_QUEUES: &[&str] = &["wp", "tools", "demo", "docs", "review", "release"];
+
 #[cfg(test)]
 #[derive(Debug)]
 pub(crate) struct IssuePromptDoc {
@@ -158,6 +166,7 @@ pub(crate) fn render_generated_issue_prompt(
     issue_url: &str,
 ) -> String {
     let wp = infer_wp_from_title(title);
+    let queue = infer_workflow_queue(title, labels_csv, Some(&wp)).unwrap_or("wp");
     let outcome_type = infer_required_outcome_type(labels_csv, title);
     let label_lines = labels_csv
         .split(',')
@@ -169,7 +178,7 @@ pub(crate) fn render_generated_issue_prompt(
     let body = render_generated_issue_body(title, outcome_type, Some(issue_url));
 
     format!(
-        "---\nissue_card_schema: adl.issue.v1\nwp: \"{wp}\"\nslug: \"{slug}\"\ntitle: \"{title}\"\nlabels:\n{label_lines}\nissue_number: {issue}\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"{outcome_type}\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Bootstrap-generated from GitHub issue metadata because no canonical local issue prompt existed yet.\"\npr_start:\n  enabled: false\n  slug: \"{slug}\"\n---\n\n{body}\n"
+        "---\nissue_card_schema: adl.issue.v1\nwp: \"{wp}\"\nqueue: \"{queue}\"\nslug: \"{slug}\"\ntitle: \"{title}\"\nlabels:\n{label_lines}\nissue_number: {issue}\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"{outcome_type}\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Bootstrap-generated from GitHub issue metadata because no canonical local issue prompt existed yet.\"\npr_start:\n  enabled: false\n  slug: \"{slug}\"\n---\n\n{body}\n"
     )
 }
 
@@ -227,6 +236,120 @@ pub(crate) fn infer_wp_from_title(title: &str) -> String {
         }
     }
     "unassigned".to_string()
+}
+
+fn normalize_workflow_queue(value: &str) -> Option<String> {
+    let lowered = value.trim().to_lowercase();
+    VALID_WORKFLOW_QUEUES
+        .iter()
+        .copied()
+        .find(|candidate| *candidate == lowered)
+        .map(str::to_string)
+}
+
+pub(crate) fn infer_workflow_queue(
+    title: &str,
+    labels_csv: &str,
+    wp_hint: Option<&str>,
+) -> Option<&'static str> {
+    if title.to_lowercase().contains("[wp-") {
+        return Some("wp");
+    }
+    if let Some(wp) = wp_hint.and_then(normalize_workflow_queue) {
+        return VALID_WORKFLOW_QUEUES
+            .iter()
+            .copied()
+            .find(|candidate| *candidate == wp);
+    }
+    let lowered = format!("{} {}", labels_csv.to_lowercase(), title.to_lowercase());
+    if lowered.contains("area:tools") || lowered.contains("[tools]") {
+        return Some("tools");
+    }
+    if lowered.contains("area:demo") || lowered.contains("[demo]") {
+        return Some("demo");
+    }
+    if lowered.contains("area:docs")
+        || lowered.contains("type:docs")
+        || lowered.contains("[docs]")
+        || lowered.contains("type:design")
+    {
+        return Some("docs");
+    }
+    if lowered.contains("area:review") || lowered.contains("[review]") {
+        return Some("review");
+    }
+    if lowered.contains("area:release") || lowered.contains("[release]") {
+        return Some("release");
+    }
+    None
+}
+
+pub(crate) fn resolve_issue_prompt_workflow_queue(path: &Path) -> Result<WorkflowQueueResolution> {
+    let text = fs::read_to_string(path)
+        .with_context(|| format!("queue: failed to read issue prompt: {}", path.display()))?;
+    let normalized = text.replace("\r\n", "\n");
+    let stripped = normalized.trim().strip_prefix("---\n").ok_or_else(|| {
+        anyhow!(
+            "queue: missing YAML front matter opener: {}",
+            path.display()
+        )
+    })?;
+    let (front_matter, _) = stripped.split_once("\n---\n").ok_or_else(|| {
+        anyhow!(
+            "queue: missing YAML front matter closer: {}",
+            path.display()
+        )
+    })?;
+    let value: serde_yaml::Value = serde_yaml::from_str(front_matter).with_context(|| {
+        format!(
+            "queue: failed to parse YAML front matter for issue prompt: {}",
+            path.display()
+        )
+    })?;
+    let mapping = value.as_mapping().ok_or_else(|| {
+        anyhow!(
+            "queue: issue prompt front matter is not a mapping: {}",
+            path.display()
+        )
+    })?;
+    let queue = mapping
+        .get(serde_yaml::Value::String("queue".to_string()))
+        .and_then(|value| value.as_str())
+        .and_then(normalize_workflow_queue);
+    if let Some(queue) = queue {
+        return Ok(WorkflowQueueResolution {
+            queue,
+            source: "explicit",
+        });
+    }
+    let title = mapping
+        .get(serde_yaml::Value::String("title".to_string()))
+        .and_then(|value| value.as_str())
+        .ok_or_else(|| anyhow!("queue: missing title in issue prompt: {}", path.display()))?;
+    let wp = mapping
+        .get(serde_yaml::Value::String("wp".to_string()))
+        .and_then(|value| value.as_str());
+    let labels_csv = mapping
+        .get(serde_yaml::Value::String("labels".to_string()))
+        .and_then(|value| value.as_sequence())
+        .map(|labels| {
+            labels
+                .iter()
+                .filter_map(|value| value.as_str())
+                .collect::<Vec<_>>()
+                .join(",")
+        })
+        .unwrap_or_default();
+    let inferred = infer_workflow_queue(title, &labels_csv, wp).ok_or_else(|| {
+        anyhow!(
+            "queue: missing or invalid workflow queue in {} and could not infer one from title/labels",
+            path.display()
+        )
+    })?;
+    Ok(WorkflowQueueResolution {
+        queue: inferred.to_string(),
+        source: "inferred",
+    })
 }
 
 pub(crate) fn infer_required_outcome_type(labels_csv: &str, title: &str) -> &'static str {

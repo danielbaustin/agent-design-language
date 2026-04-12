@@ -339,7 +339,7 @@ EOF
 set -euo pipefail
 if [[ "$1" == "pr" && "$2" == "list" ]]; then
   cat <<'JSON'
-[{"number":1169,"title":"[v0.86][runtime] Sprint 3A: Make WP-06 fast / slow paths drive real runtime behavior","url":"https://example.test/pr/1169","headRefName":"codex/1161-v0-86-runtime-sprint-3a-make-wp-06-fast-slow-paths-drive-real-runtime-behavior","baseRefName":"main","isDraft":true}]
+[{"number":1169,"title":"[v0.86][tools] Keep tools queue busy","url":"https://example.test/pr/1169","headRefName":"codex/1161-v0-86-tools-keep-tools-queue-busy","baseRefName":"main","isDraft":true}]
 JSON
   exit 0
 fi
@@ -347,6 +347,7 @@ exit 1
 EOF
   chmod +x "$fakegh/gh"
 
+  seed_issue_prompt 990 blocked-wave
   preflight_out="$(PATH="$fakegh:$PATH" "$BASH_BIN" adl/tools/pr.sh preflight 990 --slug blocked-wave --version v0.86 --no-fetch-issue)"
   assert_contains "OPEN_PR_COUNT=1" "$preflight_out" "preflight detects open wave"
   assert_contains "PREFLIGHT=BLOCK" "$preflight_out" "preflight blocks"
@@ -359,12 +360,29 @@ EOF
     echo "assertion failed: expected start to block on unresolved open PR wave" >&2
     exit 1
   }
-  assert_contains "unresolved open PR wave detected for v0.86" "$blocked_start" "start guard message"
+  assert_contains "unresolved open PR queue detected for v0.86 [tools:inferred]" "$blocked_start" "start guard message"
   assert_contains "#1169 [draft]" "$blocked_start" "start guard lists open pr"
+  assert_contains "[queue=tools]" "$blocked_start" "start guard shows queue"
 
-  seed_issue_prompt 990 blocked-wave
   allowed_start="$(PATH="$fakegh:$PATH" "$BASH_BIN" adl/tools/pr.sh start 990 --slug blocked-wave --version v0.86 --no-fetch-issue --allow-open-pr-wave)"
   assert_contains "STATE  FULLY_STARTED" "$allowed_start" "override bypasses start guard"
+
+  cat >"$fakegh/gh" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "$1" == "pr" && "$2" == "list" ]]; then
+  cat <<'JSON'
+[{"number":1169,"title":"[v0.86][WP-06] Runtime lane","url":"https://example.test/pr/1169","headRefName":"codex/1161-v0-86-wp-06-runtime-lane","baseRefName":"main","isDraft":true}]
+JSON
+  exit 0
+fi
+exit 1
+EOF
+  chmod +x "$fakegh/gh"
+  cross_preflight="$(PATH="$fakegh:$PATH" "$BASH_BIN" adl/tools/pr.sh preflight 990 --slug blocked-wave --version v0.86 --no-fetch-issue)"
+  assert_contains "TARGET_QUEUE=tools" "$cross_preflight" "preflight reports target queue"
+  assert_contains "OPEN_PR_COUNT=0" "$cross_preflight" "cross-queue preflight does not block"
+  assert_contains "PREFLIGHT=PASS" "$cross_preflight" "cross-queue preflight passes"
 
   chmod 555 "$repo/.git" "$repo/.git/refs" "$repo/.git/refs/heads"
   set +e

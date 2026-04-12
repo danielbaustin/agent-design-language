@@ -20,11 +20,12 @@ use super::pr_cmd_cards::{
 #[cfg(test)]
 use super::pr_cmd_prompt::load_issue_prompt;
 use super::pr_cmd_prompt::{
-    ensure_no_duplicate_issue_identities, infer_required_outcome_type,
+    ensure_no_duplicate_issue_identities, infer_required_outcome_type, infer_workflow_queue,
     normalize_issue_title_for_version, normalize_labels_csv, parse_issue_number_from_url,
     render_generated_issue_body, resolve_issue_body, resolve_issue_prompt_path,
-    resolve_issue_scope_and_slug_from_local_state, validate_issue_prompt_exists,
-    version_from_labels_csv, version_from_title,
+    resolve_issue_prompt_workflow_queue, resolve_issue_scope_and_slug_from_local_state,
+    validate_issue_prompt_exists, version_from_labels_csv, version_from_title,
+    WorkflowQueueResolution,
 };
 use super::pr_cmd_validate::{
     validate_authored_prompt_surface, validate_milestone_doc_drift_for_finish, PromptSurfaceKind,
@@ -279,11 +280,29 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     }
     ensure_no_duplicate_issue_identities(&repo_root, &issue_ref)?;
     let branch = issue_ref.branch_name(&parsed.prefix);
-    let unresolved = unresolved_milestone_pr_wave(&repo, &version, Some(&branch))?;
+    let target_queue = if issue_ref.issue_prompt_path(&repo_root).is_file() {
+        resolve_issue_prompt_workflow_queue(&issue_ref.issue_prompt_path(&repo_root))?
+    } else {
+        WorkflowQueueResolution {
+            queue: infer_workflow_queue(&title, &normalized_labels, None)
+                .ok_or_else(|| {
+                    anyhow!(
+                        "start: missing or invalid workflow queue for issue #{}; add a canonical queue such as wp/tools/demo/docs/review/release before execution",
+                        parsed.issue
+                    )
+                })?
+                .to_string(),
+            source: "inferred",
+        }
+    };
+    let unresolved =
+        unresolved_milestone_pr_wave(&repo, &version, &target_queue.queue, Some(&branch))?;
     if !parsed.allow_open_pr_wave && !unresolved.is_empty() {
         bail!(
-            "start: unresolved open PR wave detected for {}. Resolve or merge these PRs first, or rerun with --allow-open-pr-wave if you are deliberately overriding the guard:\n{}",
+            "start: unresolved open PR queue detected for {} [{}:{}]. Resolve or merge these PRs first, or rerun with --allow-open-pr-wave if you are deliberately overriding the guard:\n{}",
             version,
+            target_queue.queue,
+            target_queue.source,
             format_open_pr_wave(&unresolved)
         );
     }

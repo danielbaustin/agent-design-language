@@ -8,11 +8,14 @@ struct DoctorPreflightJsonPullRequest {
     number: u32,
     head_ref_name: String,
     state: &'static str,
+    queue: Option<String>,
     url: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct DoctorPreflightResult {
+    target_queue: String,
+    target_queue_source: &'static str,
     open_pr_count: usize,
     open_prs: Vec<DoctorPreflightJsonPullRequest>,
     status: &'static str,
@@ -40,6 +43,8 @@ struct DoctorJsonOutput {
     slug: String,
     branch: String,
     mode: &'static str,
+    target_queue: String,
+    target_queue_source: &'static str,
     preflight_status: &'static str,
     open_pr_count: usize,
     open_prs: Vec<DoctorPreflightJsonPullRequest>,
@@ -63,7 +68,7 @@ pub(super) fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
     let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
     let branch = issue_ref.branch_name("codex");
 
-    let preflight = run_doctor_preflight(&repo, &version, &branch)?;
+    let preflight = run_doctor_preflight(&repo_root, &repo, &version, &issue_ref, &branch)?;
     let ready = match parsed.mode {
         DoctorMode::Preflight => None,
         DoctorMode::Ready | DoctorMode::Full => {
@@ -91,6 +96,8 @@ pub(super) fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
             slug,
             branch,
             mode,
+            target_queue: preflight.target_queue.clone(),
+            target_queue_source: preflight.target_queue_source,
             preflight_status: preflight.status,
             open_pr_count: preflight.open_pr_count,
             open_prs: preflight.open_prs,
@@ -111,6 +118,8 @@ pub(super) fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
         println!("VERSION={version}");
         println!("SLUG={slug}");
         println!("BRANCH={branch}");
+        println!("TARGET_QUEUE={}", preflight.target_queue);
+        println!("TARGET_QUEUE_SOURCE={}", preflight.target_queue_source);
         print_doctor_preflight_text(&preflight);
         if let Some(ready) = &ready {
             print_doctor_ready_text(ready);
@@ -156,25 +165,39 @@ fn resolve_doctor_scope_and_slug(
     Ok((version, slug))
 }
 
-fn run_doctor_preflight(repo: &str, version: &str, branch: &str) -> Result<DoctorPreflightResult> {
-    let unresolved = unresolved_milestone_pr_wave(repo, version, Some(branch))?;
+fn run_doctor_preflight(
+    repo_root: &Path,
+    repo: &str,
+    version: &str,
+    issue_ref: &IssueRef,
+    branch: &str,
+) -> Result<DoctorPreflightResult> {
+    let source_path = resolve_issue_prompt_path(repo_root, issue_ref)?;
+    let target_queue = resolve_issue_prompt_workflow_queue(&source_path)?;
+    let unresolved =
+        unresolved_milestone_pr_wave(repo, version, &target_queue.queue, Some(branch))?;
     let open_prs = unresolved
         .iter()
         .map(|pr| DoctorPreflightJsonPullRequest {
             number: pr.number,
             head_ref_name: pr.head_ref_name.clone(),
             state: if pr.is_draft { "draft" } else { "ready" },
+            queue: pr.queue.clone(),
             url: pr.url.clone(),
         })
         .collect::<Vec<_>>();
     if open_prs.is_empty() {
         Ok(DoctorPreflightResult {
+            target_queue: target_queue.queue,
+            target_queue_source: target_queue.source,
             open_pr_count: 0,
             open_prs,
             status: "PASS",
         })
     } else {
         Ok(DoctorPreflightResult {
+            target_queue: target_queue.queue,
+            target_queue_source: target_queue.source,
             open_pr_count: open_prs.len(),
             open_prs,
             status: "BLOCK",
@@ -356,8 +379,12 @@ fn print_doctor_preflight_text(preflight: &DoctorPreflightResult) {
     println!("OPEN_PR_COUNT={}", preflight.open_pr_count);
     for pr in &preflight.open_prs {
         println!(
-            "OPEN_PR=#{}|{}|{}|{}",
-            pr.number, pr.head_ref_name, pr.state, pr.url
+            "OPEN_PR=#{}|{}|{}|{}|{}",
+            pr.number,
+            pr.head_ref_name,
+            pr.state,
+            pr.queue.as_deref().unwrap_or("unknown"),
+            pr.url
         );
     }
     println!("PREFLIGHT={}", preflight.status);
