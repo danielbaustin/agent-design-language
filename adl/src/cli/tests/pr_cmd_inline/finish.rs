@@ -92,10 +92,11 @@ fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
         .status()
         .expect("git config")
         .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
     fs::create_dir_all(repo.join("adl/src")).expect("adl src");
     fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write source");
     assert!(Command::new("git")
-        .args(["add", "-A"])
+        .args(["add", ".gitignore", "adl/src/lib.rs"])
         .current_dir(&repo)
         .status()
         .expect("git add")
@@ -282,10 +283,10 @@ fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
         ],
     )
     .expect("head files");
-    assert!(head_files.contains(".adl/v0.86/bodies/issue-1153-rust-finish-test.md"));
-    assert!(head_files.contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/stp.md"));
-    assert!(head_files.contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/sip.md"));
-    assert!(head_files.contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/sor.md"));
+    assert!(!head_files.contains(".adl/v0.86/bodies/issue-1153-rust-finish-test.md"));
+    assert!(!head_files.contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/stp.md"));
+    assert!(!head_files.contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/sip.md"));
+    assert!(!head_files.contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/sor.md"));
     assert!(Command::new("git")
         .args([
             "--git-dir",
@@ -334,10 +335,11 @@ fn real_pr_finish_fails_when_pr_janitor_auto_attach_fails() {
         .status()
         .expect("git config")
         .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
     fs::create_dir_all(repo.join("adl/src")).expect("adl src");
     fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write source");
     assert!(Command::new("git")
-        .args(["add", "-A"])
+        .args(["add", ".gitignore", "adl/src/lib.rs"])
         .current_dir(&repo)
         .status()
         .expect("git add")
@@ -857,7 +859,7 @@ fn real_pr_finish_syncs_completed_output_to_root_bundle_and_cards_surface() {
 }
 
 #[test]
-fn real_pr_finish_publishes_ignored_canonical_bundle_when_no_tracked_changes_remain() {
+fn real_pr_finish_refuses_to_publish_local_only_bundle_without_tracked_changes() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-ignored-bundle-only");
     let origin = temp.join("origin.git");
@@ -1002,8 +1004,11 @@ fn real_pr_finish_publishes_ignored_canonical_bundle_when_no_tracked_changes_rem
     unsafe {
         env::set_var("PATH", old_path);
     }
-    result.expect("real_pr finish");
-
+    let err = result
+        .expect_err("finish should reject local-only bundle publication without tracked changes");
+    assert!(err
+        .to_string()
+        .contains("No changes detected and branch has no commits ahead of origin/main"));
     let head_files = run_capture(
         "git",
         &[
@@ -1016,12 +1021,168 @@ fn real_pr_finish_publishes_ignored_canonical_bundle_when_no_tracked_changes_rem
         ],
     )
     .expect("head files");
-    assert!(head_files.contains(".adl/v0.86/bodies/issue-1157-rust-finish-ignored-bundle.md"));
-    assert!(head_files.contains(".adl/v0.86/tasks/issue-1157__rust-finish-ignored-bundle/stp.md"));
-    assert!(head_files.contains(".adl/v0.86/tasks/issue-1157__rust-finish-ignored-bundle/sip.md"));
-    assert!(head_files.contains(".adl/v0.86/tasks/issue-1157__rust-finish-ignored-bundle/sor.md"));
+    assert!(!head_files.contains(".adl/v0.86/bodies/issue-1157-rust-finish-ignored-bundle.md"));
+    assert!(!head_files.contains(".adl/v0.86/tasks/issue-1157__rust-finish-ignored-bundle/stp.md"));
+    assert!(!head_files.contains(".adl/v0.86/tasks/issue-1157__rust-finish-ignored-bundle/sip.md"));
+    assert!(!head_files.contains(".adl/v0.86/tasks/issue-1157__rust-finish-ignored-bundle/sor.md"));
     let gh_calls = fs::read_to_string(&gh_log).expect("read gh log");
-    assert!(gh_calls.contains("pr create"));
+    assert!(!gh_calls.contains("pr create"));
+}
+
+#[test]
+fn real_pr_finish_refuses_when_canonical_issue_surfaces_are_tracked() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-tracked-canonical-surfaces");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::create_dir_all(repo.join("adl/src")).expect("adl src");
+    fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write source");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "checkout",
+            "-q",
+            "-b",
+            "codex/1158-rust-finish-tracked-bundle"
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git checkout")
+        .success());
+
+    let issue_ref =
+        IssueRef::new(1158, "v0.86".to_string(), "rust-finish-tracked-bundle").expect("ref");
+    let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&bundle_dir).expect("bundle dir");
+    let stp = issue_ref.task_bundle_stp_path(&repo);
+    let input = issue_ref.task_bundle_input_path(&repo);
+    let output = issue_ref.task_bundle_output_path(&repo);
+    write_authored_issue_prompt(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Rust finish tracked bundle",
+    );
+    fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+    write_authored_sip(
+        &input,
+        &issue_ref,
+        "[v0.86][tools] Rust finish tracked bundle",
+        "codex/1158-rust-finish-tracked-bundle",
+        &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_completed_sor_fixture(&output, "codex/1158-rust-finish-tracked-bundle");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add tracked bundle")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "track local-only bundle"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit tracked bundle")
+        .success());
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_path = bin_dir.join("gh");
+    write_executable(
+        &gh_path,
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2 $3\" = 'repo view --json' ]; then\n  printf 'danielbaustin/agent-design-language\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr list' ]; then\n  exit 0\nfi\nexit 1\n",
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    let result = real_pr(&[
+        "finish".to_string(),
+        "1158".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Rust finish tracked bundle".to_string(),
+        "--paths".to_string(),
+        "adl".to_string(),
+        "--input".to_string(),
+        path_relative_to_repo(&repo, &input),
+        "--output".to_string(),
+        path_relative_to_repo(&repo, &output),
+        "--no-checks".to_string(),
+        "--no-open".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    let err = result.expect_err("finish should refuse tracked canonical issue surfaces");
+    assert!(err
+        .to_string()
+        .contains("canonical .adl issue surfaces must remain local-only"));
 }
 
 #[test]
@@ -1313,9 +1474,13 @@ fn real_pr_finish_updates_existing_pr_and_marks_ready() {
     );
     write_completed_sor_fixture(&output, "codex/1153-rust-finish-test-edit");
 
-    fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write change");
+    fs::write(
+        repo.join("adl/src/lib.rs"),
+        "pub fn placeholder() -> usize { 1 }\n",
+    )
+    .expect("write change");
     assert!(Command::new("git")
-        .args(["add", "-A"])
+        .args(["add", "adl/src/lib.rs"])
         .current_dir(&repo)
         .status()
         .expect("git add")
@@ -1417,12 +1582,12 @@ fn finish_helper_paths_cover_nonempty_and_staged_checks() {
     fs::write(repo.join("tracked.txt"), "changed\n").expect("modify tracked");
     assert!(has_uncommitted_changes(&repo).expect("dirty"));
 
-    stage_selected_paths_rust(&repo, "tracked.txt", &[]).expect("stage");
+    stage_selected_paths_rust(&repo, "tracked.txt").expect("stage");
     assert!(!staged_diff_is_empty(&repo).expect("staged diff"));
     assert!(!staged_gitignore_change_present(&repo).expect("no gitignore"));
 
     fs::write(repo.join(".gitignore"), "target\n").expect("write gitignore");
-    stage_selected_paths_rust(&repo, ".gitignore", &[]).expect("stage gitignore");
+    stage_selected_paths_rust(&repo, ".gitignore").expect("stage gitignore");
     assert!(staged_gitignore_change_present(&repo).expect("gitignore change"));
 
     let ignored_dir = repo.join(".adl").join("v0.86").join("tasks");
@@ -1434,14 +1599,7 @@ fn finish_helper_paths_cover_nonempty_and_staged_checks() {
         .expect("ignored parent");
     fs::write(&ignored_file, "ignored output\n").expect("ignored output");
     fs::write(repo.join(".gitignore"), ".adl/\ntarget\n").expect("write ignore rules");
-    stage_selected_paths_rust(
-        &repo,
-        "tracked.txt",
-        &[String::from(
-            ".adl/v0.86/tasks/issue-1153__rust-finish-test/sor.md",
-        )],
-    )
-    .expect("stage ignored bundle file");
+    stage_selected_paths_rust(&repo, "tracked.txt").expect("stage tracked file only");
     let staged_name_only = run_capture(
         "git",
         &[
@@ -1453,7 +1611,8 @@ fn finish_helper_paths_cover_nonempty_and_staged_checks() {
         ],
     )
     .expect("cached names");
-    assert!(staged_name_only.contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/sor.md"));
+    assert!(!staged_name_only.contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/sor.md"));
+    assert!(staged_name_only.contains("tracked.txt"));
 }
 
 #[test]
@@ -1653,6 +1812,7 @@ fn real_pr_finish_rejects_main_and_does_not_report_no_pr_when_bundle_sync_change
         .status()
         .expect("git config")
         .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
     assert!(Command::new("git")
         .args(["branch", "-M", "main"])
         .current_dir(&repo)
@@ -1671,7 +1831,7 @@ fn real_pr_finish_rejects_main_and_does_not_report_no_pr_when_bundle_sync_change
         "codex/1153-rust-finish-test",
     );
     assert!(Command::new("git")
-        .args(["add", "-A"])
+        .args(["add", ".gitignore", "adl/src/lib.rs"])
         .current_dir(&repo)
         .status()
         .expect("git add")
@@ -1879,6 +2039,7 @@ fn real_pr_finish_rejects_staged_gitignore_changes_without_allow_flag() {
         .status()
         .expect("git config")
         .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
     assert!(Command::new("git")
         .args(["branch", "-M", "main"])
         .current_dir(&repo)
@@ -1914,7 +2075,7 @@ fn real_pr_finish_rejects_staged_gitignore_changes_without_allow_flag() {
     ensure_symlink(&compat_output, &issue_ref.task_bundle_output_path(&repo))
         .expect("compat symlink");
     assert!(Command::new("git")
-        .args(["add", "-A"])
+        .args(["add", ".gitignore", "adl/src/lib.rs"])
         .current_dir(&repo)
         .status()
         .expect("git add")
@@ -1959,7 +2120,7 @@ fn real_pr_finish_rejects_staged_gitignore_changes_without_allow_flag() {
         .status()
         .expect("git checkout")
         .success());
-    fs::write(repo.join(".gitignore"), ".adl/\n").expect("write gitignore");
+    fs::write(repo.join(".gitignore"), ".adl/\ntarget\n").expect("write gitignore");
     assert!(Command::new("git")
         .args(["add", ".gitignore"])
         .current_dir(&repo)

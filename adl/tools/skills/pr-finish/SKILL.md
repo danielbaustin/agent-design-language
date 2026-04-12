@@ -11,7 +11,7 @@ Its job is to:
 - confirm the issue has completed its bounded execution work
 - validate and, when needed, normalize the output record before PR publication
 - stage only the intended tracked paths
-- ensure the finalized SOR is published on the canonical `.adl` task-bundle surface
+- ensure the finalized SOR is normalized on the canonical local-only `.adl` task-bundle surface without treating it as tracked publication payload
 - create or update the reviewable PR surface
 - emit a structured finish result
 - stop before silent merge or issue closure unless explicitly directed

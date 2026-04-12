@@ -1824,7 +1824,7 @@ Notes:
 - Uses "Closes #N" by default so GitHub auto-closes issues when merged.
 - run is a bounded v0.85 wrapper over the Rust adl runtime; browser/editor direct invocation remains follow-on work.
 - Runs Rust checks in adl/ by default (fmt, clippy -D warnings, test).
-- finish stages repo-root changes by default, and force-stages the canonical issue bundle even when `.adl/` is gitignored; use --paths to narrow tracked scope.
+- finish stages only the tracked repo-root paths selected by `--paths`; canonical `.adl` issue bundles remain local-only and must not be tracked or force-staged.
 - `--allow-gitignore` only permits staged `.gitignore` / `adl/.gitignore` changes during finish publication; it does not widen generic ignored-path staging.
 - Templates are stored in adl/templates/cards/ (legacy fallback: .adl/templates/).
 - Cards are stored locally under cards_root and are not committed to git.
