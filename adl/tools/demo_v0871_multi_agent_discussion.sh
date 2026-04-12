@@ -1,23 +1,31 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/provider_demo_common.sh"
+
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 OUT_DIR="${1:-$ROOT_DIR/artifacts/v0871/multi_agent_discussion}"
 RUNTIME_ROOT="$OUT_DIR/runtime"
 RUNS_ROOT="$RUNTIME_ROOT/runs"
 STEP_OUT="$OUT_DIR/out"
 RUN_ID="v0-87-1-multi-agent-tea-discussion"
-PORT=8791
+PORT="${ADL_MULTI_AGENT_PORT:-0}"
+PORT_FILE="$OUT_DIR/provider_server.port"
 SERVER_LOG="$OUT_DIR/provider_server.log"
 TRANSCRIPT="$OUT_DIR/transcript.md"
 TRANSCRIPT_CONTRACT="$OUT_DIR/transcript_contract.json"
 MANIFEST="$OUT_DIR/demo_manifest.json"
 README_OUT="$OUT_DIR/README.md"
+EXAMPLE="adl/examples/v0-87-1-multi-agent-tea-discussion.adl.yaml"
+GENERATED_EXAMPLE="$OUT_DIR/v0-87-1-multi-agent-tea-discussion.runtime.adl.yaml"
 
 rm -rf "$OUT_DIR"
 mkdir -p "$STEP_OUT"
 
-python3 "$ROOT_DIR/adl/tools/mock_multi_agent_discussion_provider.py" "$PORT" >"$SERVER_LOG" 2>&1 &
+python3 "$ROOT_DIR/adl/tools/mock_multi_agent_discussion_provider.py" \
+  "$PORT" \
+  --port-file "$PORT_FILE" \
+  >"$SERVER_LOG" 2>&1 &
 SERVER_PID=$!
 cleanup() {
   if kill -0 "$SERVER_PID" >/dev/null 2>&1; then
@@ -26,6 +34,19 @@ cleanup() {
   fi
 }
 trap cleanup EXIT
+
+PORT="$(provider_demo_wait_for_port "$PORT_FILE")"
+
+python3 - "$EXAMPLE" "$GENERATED_EXAMPLE" "$PORT" <<'PY'
+import sys
+
+source, target, port = sys.argv[1:4]
+text = open(source, encoding="utf-8").read()
+text = text.replace("http://127.0.0.1:8791/chatgpt", f"http://127.0.0.1:{port}/chatgpt")
+text = text.replace("http://127.0.0.1:8791/claude", f"http://127.0.0.1:{port}/claude")
+with open(target, "w", encoding="utf-8") as fh:
+    fh.write(text)
+PY
 
 python3 - "$PORT" <<'PY'
 import json
@@ -53,7 +74,7 @@ cd "$ROOT_DIR"
 
 ADL_RUNTIME_ROOT="$RUNTIME_ROOT" \
 ADL_RUNS_ROOT="$RUNS_ROOT" \
-  bash adl/tools/pr.sh run adl/examples/v0-87-1-multi-agent-tea-discussion.adl.yaml \
+  bash adl/tools/pr.sh run "$GENERATED_EXAMPLE" \
     --trace \
     --allow-unsigned \
     --out "$STEP_OUT" \
@@ -183,6 +204,7 @@ Secondary proof surfaces:
 - \`$OUT_DIR/run_log.txt\`
 - \`$MANIFEST\`
 - \`$SERVER_LOG\`
+- \`$PORT_FILE\`
 
 Scope note:
 - This is a bounded demo, not a general conversation-native runtime.

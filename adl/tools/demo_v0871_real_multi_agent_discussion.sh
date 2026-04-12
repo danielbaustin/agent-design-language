@@ -1,19 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/provider_demo_common.sh"
+
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 OUT_DIR="${1:-$ROOT_DIR/artifacts/v0871/real_multi_agent_discussion}"
 RUNTIME_ROOT="$OUT_DIR/runtime"
 RUNS_ROOT="$RUNTIME_ROOT/runs"
 STEP_OUT="$OUT_DIR/out"
 RUN_ID="v0-87-1-real-multi-agent-tea-discussion"
-PORT="${ADL_LIVE_MULTI_AGENT_PORT:-8792}"
+PORT="${ADL_LIVE_MULTI_AGENT_PORT:-0}"
+PORT_FILE="$OUT_DIR/provider_adapter.port"
 SERVER_LOG="$OUT_DIR/provider_adapter.log"
 INVOCATIONS="$OUT_DIR/provider_invocations.json"
 TRANSCRIPT="$OUT_DIR/transcript.md"
 TRANSCRIPT_CONTRACT="$OUT_DIR/transcript_contract.json"
 MANIFEST="$OUT_DIR/demo_manifest.json"
 README_OUT="$OUT_DIR/README.md"
+EXAMPLE="adl/examples/v0-87-1-real-multi-agent-tea-discussion.adl.yaml"
+GENERATED_EXAMPLE="$OUT_DIR/v0-87-1-real-multi-agent-tea-discussion.runtime.adl.yaml"
 OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-$HOME/keys/openai.key}"
 ANTHROPIC_KEY_FILE="${ADL_ANTHROPIC_KEY_FILE:-$HOME/keys/claude.key}"
 
@@ -60,6 +65,7 @@ mkdir -p "$STEP_OUT"
 
 python3 "$ROOT_DIR/adl/tools/real_multi_agent_provider_adapter.py" \
   --port "$PORT" \
+  --port-file "$PORT_FILE" \
   --metadata "$INVOCATIONS" \
   >"$SERVER_LOG" 2>&1 &
 SERVER_PID=$!
@@ -70,6 +76,19 @@ cleanup() {
   fi
 }
 trap cleanup EXIT
+
+PORT="$(provider_demo_wait_for_port "$PORT_FILE")"
+
+python3 - "$EXAMPLE" "$GENERATED_EXAMPLE" "$PORT" <<'PY'
+import sys
+
+source, target, port = sys.argv[1:4]
+text = open(source, encoding="utf-8").read()
+text = text.replace("http://127.0.0.1:8792/openai", f"http://127.0.0.1:{port}/openai")
+text = text.replace("http://127.0.0.1:8792/anthropic", f"http://127.0.0.1:{port}/anthropic")
+with open(target, "w", encoding="utf-8") as fh:
+    fh.write(text)
+PY
 
 python3 - "$PORT" <<'PY'
 import json
@@ -97,7 +116,7 @@ cd "$ROOT_DIR"
 
 ADL_RUNTIME_ROOT="$RUNTIME_ROOT" \
 ADL_RUNS_ROOT="$RUNS_ROOT" \
-  bash adl/tools/pr.sh run adl/examples/v0-87-1-real-multi-agent-tea-discussion.adl.yaml \
+  bash adl/tools/pr.sh run "$GENERATED_EXAMPLE" \
     --trace \
     --allow-unsigned \
     --out "$STEP_OUT" \
@@ -238,6 +257,7 @@ Secondary proof surfaces:
 - \`$TRANSCRIPT_CONTRACT\`
 - \`$OUT_DIR/run_log.txt\`
 - \`$MANIFEST\`
+- \`$PORT_FILE\`
 
 Scope note:
 - This is a live provider demo, not a CI-required deterministic test.

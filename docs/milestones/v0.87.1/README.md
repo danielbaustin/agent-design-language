@@ -31,7 +31,7 @@ This milestone focuses on:
 Key outcomes:
 - a real runtime-completion implementation surface with many thousands of lines of code
 - canonical milestone documents that truthfully describe the runtime
-- a runnable demo program and review package proving the runtime is real
+- a runnable demo program and review package providing bounded proof surfaces for the implemented runtime
 - a stable public surface for later chronosense and bounded-agency work
 - one authoritative runtime-environment bring-up/configuration contract:
   - `adl::runtime_environment::RuntimeEnvironment`

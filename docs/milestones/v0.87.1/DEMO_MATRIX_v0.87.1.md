@@ -133,7 +133,7 @@ Use this table as the fast review surface for milestone coverage.
 | D9 | Integrated Runtime Path | `WP-02` through `WP-08` integrated runtime completion | `bash adl/tools/demo_v0871_integrated_runtime.sh` | `artifacts/v0871/integrated_runtime/demo_manifest.json` | One run demonstrates the authoritative bounded runtime path from D1 through D8 end-to-end | Replay is judged by package ordering and proof-surface shape stability across the integrated manifest | READY |
 | D10 | Docs-To-Runtime Consistency Check | `WP-09`, `WP-15` docs/review convergence | `bash adl/tools/demo_v0871_docs_review.sh` | `artifacts/v0871/docs_review/docs_review_manifest.json` | Reviewer can move from promoted runtime docs to integrated proof surfaces without contradiction | Navigation and proof mapping remain stable for the bounded docs-to-proof map | READY |
 | D11 | Quality Gate Walkthrough | `WP-14` quality gate | `bash adl/tools/demo_v0871_quality_gate.sh` | `artifacts/v0871/quality_gate/quality_gate_record.json` | Tests, validators, and bounded demo checks are reviewable in one place with per-check logs | Same repo state should preserve gate outcome and log inventory | READY |
-| D12 | Release Review Package | `WP-16` through `WP-20` review/remediation/planning/release tail | `bash adl/tools/demo_v0871_release_review_package.sh` | `artifacts/v0871/release_review_package/release_review_package_manifest.json` | Review, remediation, planning, and release artifacts are coherent and navigable from one package root | Package layout and key entrypoints remain stable for the bounded release-review surface | READY |
+| D12 | Release Review Package | `WP-16` through `WP-20` release-tail review package / navigation surface | `bash adl/tools/demo_v0871_release_review_package.sh` | `artifacts/v0871/release_review_package/release_review_package_manifest.json` | Review, remediation, planning, and release-tail artifacts are coherent and navigable from one package root without implying final ceremony closure | Package layout and key entrypoints remain stable for the bounded release-review surface | READY |
 | D13 | Claude + ChatGPT Tea Discussion | bounded multi-agent runtime discussion proof (`#1490`, `#1491`, `#1501`, `#1502`) | `bash adl/tools/demo_v0871_multi_agent_discussion.sh` | `artifacts/v0871/multi_agent_discussion/transcript.md` | Reviewer can inspect five explicit turns, two named agents, runtime turn metadata, the transcript contract, and the paired runtime trace/summaries | Fixed shim outputs should preserve transcript shape and turn ordering | READY |
 | D13L | Live Claude + ChatGPT Tea Discussion | live-provider companion proof for D13 (`#1500`, `#1501`, `#1502`, `#1533`) | `bash adl/tools/demo_v0871_real_multi_agent_discussion.sh` | `artifacts/v0871/real_multi_agent_discussion/provider_invocations.json` plus `transcript.md` | Reviewer can inspect real OpenAI and Anthropic invocation metadata, five explicit turns, runtime turn metadata, and transcript contract proof without secret leakage when valid operator credentials and provider account credit are available; a no-credential test skip is a bounded non-proving disposition, not live-provider proof | Live model text is non-deterministic; runtime artifact shape, turn ordering, accepted contract shape, and non-secret invocation metadata remain stable | READY_WITH_OPERATOR_CREDENTIALS |
 
@@ -168,7 +168,7 @@ Status guidance:
 - `D9` -> all promoted `v0.87.1` runtime feature docs
 - `D10` -> `FEATURE_DOCS_v0.87.1.md` and all promoted `v0.87.1` runtime feature docs
 - `D11` -> milestone review and validation surfaces derived from the promoted runtime feature set
-- `D12` -> review, remediation, planning, and release surfaces for the runtime milestone
+- `D12` -> release-tail review, remediation, planning, and ceremony entry surfaces for the runtime milestone
 - `D13` -> bounded multi-agent runtime demo evidence for later conversation/runtime follow-on work (`#1490`, `#1491`, `#1501`, `#1502`)
 - `D13L` -> live provider evidence that the bounded D13 shape can call real OpenAI and Anthropic models through the current ADL HTTP completion boundary (`#1533`)
 
@@ -279,7 +279,7 @@ Failure policy:
 ## Determinism Evidence
 
 Evidence directory / run root:
-- runtime demo artifact roots will be defined per demo as implementation lands
+- runtime demo artifact roots are defined per demo in the coverage table and detail sections below
 - the canonical runtime root and runs root are established by `adl::runtime_environment::RuntimeEnvironment`
 
 Repeatability approach:
