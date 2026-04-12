@@ -15,12 +15,12 @@
 # `ADL` `v0.87.1` Release Notes
 
 ## Summary
-`v0.87.1` is the release vehicle for ADL's first full runtime milestone. The milestone work has turned the seeded execution substrate from `v0.87` into a coherent runtime system with explicit lifecycle boundaries, trace-aligned execution, local resilience, operator surfaces, review surfaces, and a substantial bounded proof program; final release wording remains pending until the open milestone gates are complete or explicitly deferred.
+`v0.87.1` is the release vehicle for ADL's first full runtime milestone. The milestone work has turned the seeded execution substrate from `v0.87` into a coherent runtime system with explicit lifecycle boundaries, trace-aligned execution, local resilience, operator surfaces, review surfaces, and a substantial bounded proof program; final release wording remains pending until the final release ceremony gate is complete or explicitly deferred.
 
 ## Highlights
 - Runtime environment and lifecycle completion surfaces landed for `v0.87.1`
 - Deterministic trace-aligned runtime and local resilience surfaces are part of the milestone scope
-- Demo-matrix proof surfaces are aligned to a real runtime implementation milestone, while checklist, review, and release surfaces remain release-gated until their work packages close
+- Demo-matrix proof surfaces are aligned to a real runtime implementation milestone, while the final checklist and release ceremony actions remain release-gated until `WP-20` closes
 
 ## What's New In Detail
 
@@ -35,7 +35,7 @@
 
 ### Proof, Review, And Release Discipline
 - Defined a substantial runtime demo program and reviewer entry surfaces for the milestone
-- Preserved explicit internal review, external review, remediation, next-milestone planning, and release ceremony steps in the closeout tail
+- Preserved explicit internal review, external review, remediation, next-milestone planning, and release ceremony steps in the closeout tail, with only the final ceremony step still open
 
 ## Upgrade Notes
 - `v0.87.1` is expected to ship real runtime implementation and proof surfaces, so upgrade notes should be finalized from the actual landed behavior before release
@@ -44,7 +44,7 @@
 ## Known Limitations
 - Final release text must be updated from actual landed runtime behavior before publish
 - Some runtime surfaces may still be intentionally deferred if bounded follow-on issues are recorded explicitly
-- The milestone is not release-complete until checklist, quality, review, remediation, next-milestone planning, and release ceremony gates are closed
+- The milestone is not release-complete until the checklist and final release ceremony gates are closed
 
 ## Validation Notes
 - Validation for this release must cover milestone docs, runtime demos, review surfaces, and standard repository quality gates
