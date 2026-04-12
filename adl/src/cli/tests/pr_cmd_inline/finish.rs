@@ -1792,7 +1792,7 @@ fn finish_helper_paths_cover_pr_lookup_and_closing_linkage() {
 }
 
 #[test]
-fn real_pr_finish_rejects_main_and_does_not_report_no_pr_when_bundle_sync_changes_exist() {
+fn real_pr_finish_rejects_main_and_reports_no_pr_when_only_local_bundle_sync_changes_exist() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-errors");
     let origin = temp.join("origin.git");
@@ -1964,7 +1964,7 @@ fn real_pr_finish_rejects_main_and_does_not_report_no_pr_when_bundle_sync_change
     unsafe {
         env::set_var("PATH", old_path);
     }
-    assert!(!bundle_sync_err.to_string().contains("Nothing to PR."));
+    assert!(bundle_sync_err.to_string().contains("Nothing to PR."));
 }
 
 #[test]
