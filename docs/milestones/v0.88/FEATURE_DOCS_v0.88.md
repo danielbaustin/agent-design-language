@@ -20,6 +20,9 @@ This page defines the bounded public feature-doc package for `v0.88`. It is an i
 It also has one flagship bounded demo surface:
 - Paper Sonata
 
+And one bounded supporting comparative proof surface:
+- Deep agents comparative proof
+
 This package intentionally excludes:
 - later-band aptitude and learning / skills planning
 - helper cluster maps and planning notes
@@ -57,6 +60,7 @@ Planning/package issues that established this tracked feature set:
 | `features/INSTINCT_RUNTIME_SURFACE.md` | runtime declaration, influence, and proof surface for instinct | `WP-11` |
 | `features/PAPER_SONATA_DEMO.md` | flagship multi-agent manuscript-assembly demo with truthful runtime evidence | `WP-12` |
 | `features/PAPER_SONATA_IMPLEMENTATION_PLAN.md` | bounded implementation plan for the Paper Sonata flagship demo | `WP-12` |
+| `features/DEEP_AGENTS_COMPARATIVE_PROOF.md` | bounded comparative proof row showing what ADL adds beyond filesystem-style deep-agent demos | `WP-13` |
 
 ## Local Planning Inputs Not Promoted
 
