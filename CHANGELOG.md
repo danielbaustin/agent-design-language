@@ -2,6 +2,33 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
+## v0.88 (Temporal / PHI / Instinct Review Tail In Progress)
+
+Status: Implementation wave complete through `WP-13`; quality, review, planning, and release tail in progress.
+
+Summary:
+- ADL now has a real `v0.88` milestone on `main`, centered on one bounded package:
+  `temporal structure -> continuity/query/deadlines -> PHI-style metrics -> instinct/bounded agency -> Paper Sonata proof surfaces`
+- The promoted `v0.88` feature-doc set now covers temporal schema, continuity, retrieval, commitments/deadlines, causality/explanation, execution policy/cost, PHI-style metrics, instinct, and bounded agency
+- The bounded `v0.88` demo and reviewer package now exists through temporal, PHI, instinct, review-surface, quality-gate, and Paper Sonata proof surfaces
+- The active tail now consists of internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony
+
+References:
+- `docs/milestones/v0.88/README.md`
+- `docs/milestones/v0.88/WBS_v0.88.md`
+- `docs/milestones/v0.88/SPRINT_v0.88.md`
+- `docs/milestones/v0.88/DEMO_MATRIX_v0.88.md`
+- `docs/milestones/v0.88/FEATURE_DOCS_v0.88.md`
+- `docs/milestones/v0.88/MILESTONE_CHECKLIST_v0.88.md`
+- `docs/milestones/v0.88/RELEASE_PLAN_v0.88.md`
+- `docs/milestones/v0.88/RELEASE_NOTES_v0.88.md`
+
+Not yet claimed in v0.88:
+- external / 3rd-party review completion
+- accepted-findings remediation completion
+- release ceremony completion
+- later milestone economics, security, or wider governance systems beyond the bounded `v0.88` substrate band
+
 ## v0.87.1 (Runtime Completion Review Tail In Progress)
 
 Status: Runtime implementation and bounded demo program landed; docs/review/quality/release tail in progress.

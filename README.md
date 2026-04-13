@@ -14,7 +14,7 @@ Those artifacts are schema-validated, compiled into a deterministic execution pl
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.87.1%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.88%20active-blue)
 
 ## Why ADL
 
@@ -83,19 +83,29 @@ bash adl/tools/demo_v0871_multi_agent_discussion.sh
 
 ## Current Status
 
-- Active milestone: **v0.87.1**
+- Active milestone: **v0.88**
 - Current crate version on `main`: **0.87.1**
-- Most recently completed milestone: **v0.87**
-- Previous completed milestone: **v0.86**
+- Most recently completed milestone: **v0.87.1**
+- Previous completed milestone: **v0.87**
 - Project changelog: `CHANGELOG.md`
 
 ADL is in active development. This repository contains both implemented runtime surfaces and milestone/spec/planning documents. Read the milestone docs as bounded engineering records: they distinguish what has shipped, what is under active review or closeout, what is demoable, and what is still planned.
 
 ## Recent Milestones
 
+### v0.88 - Temporal / PHI / Instinct Review-Tail Milestone
+
+v0.88 is the current active milestone. The implementation wave is complete through `WP-13`, and the remaining work is the quality, review, planning, and release tail that turns the milestone into a reviewer-legible release package.
+
+Key features:
+- temporal / chronosense, PHI-style, and instinct surfaces promoted into one bounded milestone package
+- Paper Sonata and comparative deep-agent proof surfaces preserved as reviewer-facing demos rather than speculative claims
+- quality-gate, internal-review, external-review, and release-tail proof surfaces made explicit instead of implied
+- bounded next-milestone planning underway while `v0.88` closes cleanly
+
 ### v0.87.1 - Runtime Completion and Reviewer-Facing Proof Package
 
-v0.87.1 is the current active milestone. The implementation and bounded demo program are in place, and the remaining work is the docs, review, quality, and release tail that makes the runtime package reviewable without oral reconstruction.
+v0.87.1 was the previous active milestone. The implementation and bounded demo program are in place, and the remaining work described there was the docs, review, quality, and release tail that made the runtime package reviewable without oral reconstruction.
 
 Key features:
 - runtime environment, lifecycle, execution-boundary, and resilience surfaces promoted into one canonical milestone package
