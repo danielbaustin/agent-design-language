@@ -6,7 +6,7 @@
 - Version: `v0.89`
 - Date: `2026-04-12`
 - Owner: `Daniel Austin`
-- Related issues: `#1662` and the seeded `v0.89` issue wave (`#1747` through `#1761`)
+- Related issues: `#1662` and the future `v0.89` implementation issue wave
 
 ## Purpose
 

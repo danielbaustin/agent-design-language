@@ -55,13 +55,13 @@ Additional environment / fixture requirements:
 
 | Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
 |---|---|---|---|---|---|---|---|
-| D1 | AEE convergence walkthrough | `WP-02` bounded convergence and stop conditions | `#1747` will land the canonical entry point | convergence artifact + output record | reviewer can see converge / stall / bounded-out behavior | use deterministic fixtures for repeated stop-state verification | PLANNED |
-| D2 | Freedom Gate v2 judgment demo | `WP-03` richer allow / defer / refuse / escalate behavior | `#1748` will land the canonical entry point | gate artifact + trace | reviewer can distinguish decision outcomes and rationale | stable test cases should replay to the same outcome class | PLANNED |
-| D3 | Decision + action mediation proof | `WP-04` - `WP-05` explicit choice and authorization boundary | `#1749` / `#1750` will land the canonical entry point | decision record + mediation artifact | reviewer can see model intent separated from authorized action | deterministic fixtures should preserve approval / rejection path | PLANNED |
-| D4 | Skill invocation contract demo | `WP-06` bounded skill execution protocol | `#1751` will land the canonical entry point | invocation artifact + trace | invocation lifecycle is reviewer-legible end to end | replay should preserve lifecycle structure | PLANNED |
-| D5 | Experiment record demo | `WP-07` governed adopt / reject improvement behavior | `#1752` will land the canonical entry point | experiment record artifact | reviewer can inspect baseline, variant, evidence, and decision | paired fixture runs should be stably comparable | PLANNED |
-| D6 | ObsMem evidence and ranking walkthrough | `WP-08` explainable retrieval and ranking | `#1753` will land the canonical entry point | retrieval explanation artifact | ranking cites evidence families and provenance | tie-break behavior should be stable under replay | PLANNED |
-| D7 | Security / trust / posture walkthrough | `WP-09` main-band security contract | `#1754` / `#1756` will land the canonical review/demo surface | reviewer-facing threat/posture/trust artifact set | reviewer can see explicit trust boundaries and declared posture | proof row may be document/artifact driven rather than fully executable | PLANNED |
+| D1 | AEE convergence walkthrough | `WP-02` bounded convergence and stop conditions | planned `WP-02` entry point | convergence artifact + output record | reviewer can see converge / stall / bounded-out behavior | use deterministic fixtures for repeated stop-state verification | PLANNED |
+| D2 | Freedom Gate v2 judgment demo | `WP-03` richer allow / defer / refuse / escalate behavior | planned `WP-03` entry point | gate artifact + trace | reviewer can distinguish decision outcomes and rationale | stable test cases should replay to the same outcome class | PLANNED |
+| D3 | Decision + action mediation proof | `WP-04` - `WP-05` explicit choice and authorization boundary | planned `WP-04` / `WP-05` entry points | decision record + mediation artifact | reviewer can see model intent separated from authorized action | deterministic fixtures should preserve approval / rejection path | PLANNED |
+| D4 | Skill invocation contract demo | `WP-06` bounded skill execution protocol | planned `WP-06` entry point | invocation artifact + trace | invocation lifecycle is reviewer-legible end to end | replay should preserve lifecycle structure | PLANNED |
+| D5 | Experiment record demo | `WP-07` governed adopt / reject improvement behavior | planned `WP-07` entry point | experiment record artifact | reviewer can inspect baseline, variant, evidence, and decision | paired fixture runs should be stably comparable | PLANNED |
+| D6 | ObsMem evidence and ranking walkthrough | `WP-08` explainable retrieval and ranking | planned `WP-08` entry point | retrieval explanation artifact | ranking cites evidence families and provenance | tie-break behavior should be stable under replay | PLANNED |
+| D7 | Security / trust / posture walkthrough | `WP-09` main-band security contract | planned `WP-09` / `WP-11` review surface | reviewer-facing threat/posture/trust artifact set | reviewer can see explicit trust boundaries and declared posture | proof row may be document/artifact driven rather than fully executable | PLANNED |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -90,7 +90,7 @@ Milestone claims / work packages covered:
 Commands to run:
 
 ```bash
-Provided by `#1747` when the `WP-02` implementation issue lands.
+Defined when the official `WP-02` issue opens and lands.
 ```
 
 Expected artifacts:
@@ -112,7 +112,7 @@ Reviewer checks:
 - verify that budget/policy stop states are visible
 
 Known limits / caveats:
-- command surface is owned by `#1747` but not yet landed
+- command surface will be established by the official `WP-02` issue
 
 ---
 
@@ -128,7 +128,7 @@ Milestone claims / work packages covered:
 Commands to run:
 
 ```bash
-Provided by `#1748` and `#1749` when the gate/decision implementation issues land.
+Defined when the official `WP-03` and `WP-04` issues open and land.
 ```
 
 Expected artifacts:
@@ -170,7 +170,7 @@ Failure policy:
 ## Determinism Evidence
 
 Evidence directory / run root:
-- established by the landed outputs of `#1747` through `#1758`
+- established by the landed outputs of the future `WP-02` through `WP-13` issues
 
 Repeatability approach:
 - prefer stable fixtures or bounded local/provider shims
@@ -182,7 +182,7 @@ Normalization rules:
 
 Observed results summary:
 - not yet available in this planning pass
-- must be filled only from actual demo validation tied to the seeded issue wave
+- must be filled only from actual demo validation tied to the official implementation issue wave
 - should distinguish runnable proof from alternate document/artifact proof
 
 ## Reviewer Sign-Off Surface

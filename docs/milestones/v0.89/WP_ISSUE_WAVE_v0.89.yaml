@@ -22,7 +22,7 @@ entries:
   work_package: AEE convergence
   summary: Turn AEE 1.0 convergence into an explicit runtime/trace/review contract with bounded stop conditions and progress signals.
   deliverable: code/doc/proof surface for AEE convergence
-  issue_column: '`#1747` open'
+  issue_column: planned issue wave
 - wp: WP-03
   issue_kind: execution
   title: '[v0.89][WP-03] Freedom Gate v2'
@@ -42,7 +42,7 @@ entries:
   work_package: Freedom Gate v2
   summary: Strengthen the gate from minimal bounded refusal into a richer judgment boundary.
   deliverable: gate design + implementation/proof surface
-  issue_column: '`#1748` open'
+  issue_column: planned issue wave
 - wp: WP-04
   issue_kind: execution
   title: '[v0.89][WP-04] Decision surfaces and decision schema'
@@ -62,7 +62,7 @@ entries:
   work_package: Decision surfaces and decision schema
   summary: Make points of choice and their record shape explicit and reusable across the runtime.
   deliverable: decision-surface contract + decision record support
-  issue_column: '`#1749` open'
+  issue_column: planned issue wave
 - wp: WP-05
   issue_kind: execution
   title: '[v0.89][WP-05] Action mediation and proposal schema'
@@ -83,7 +83,7 @@ entries:
   work_package: Action mediation and proposal schema
   summary: Establish the authority boundary between model intent and runtime execution.
   deliverable: action proposal + mediation surfaces
-  issue_column: '`#1750` open'
+  issue_column: planned issue wave
 - wp: WP-06
   issue_kind: execution
   title: '[v0.89][WP-06] Skill model and execution protocol'
@@ -103,7 +103,7 @@ entries:
   work_package: Skill model and execution protocol
   summary: Promote skills from repo practice into canonical governed execution contracts.
   deliverable: skill model + invocation protocol surfaces
-  issue_column: '`#1751` open'
+  issue_column: planned issue wave
 - wp: WP-07
   issue_kind: execution
   title: '[v0.89][WP-07] Godel experiment system'
@@ -124,7 +124,7 @@ entries:
   work_package: Godel experiment system
   summary: Deepen bounded scientific-loop behavior into explicit experiments and adopt/reject records.
   deliverable: experiment record and evaluation package
-  issue_column: '`#1752` open'
+  issue_column: planned issue wave
 - wp: WP-08
   issue_kind: execution
   title: '[v0.89][WP-08] ObsMem evidence and ranking'
@@ -144,7 +144,7 @@ entries:
   work_package: ObsMem evidence and ranking
   summary: Make retrieval evidence-aware, provenance-sensitive, and reviewer-legible.
   deliverable: ranking/explanation package
-  issue_column: '`#1753` open'
+  issue_column: planned issue wave
 - wp: WP-09
   issue_kind: execution
   title: '[v0.89][WP-09] Security, trust, and posture package'
@@ -165,7 +165,7 @@ entries:
   work_package: Security, trust, and posture package
   summary: 'Land the main `v0.89` security contract: threat model, posture model, and trust-under-adversary framing.'
   deliverable: security/trust/posture package
-  issue_column: '`#1754` open'
+  issue_column: planned issue wave
 - wp: WP-10
   issue_kind: execution
   title: '[v0.89][WP-10] `v0.89.2` handoff planning'
@@ -185,7 +185,7 @@ entries:
   work_package: '`v0.89.2` handoff planning'
   summary: Convert adversarial-runtime carry-forward into an explicit `v0.89.2` package with no ambiguity.
   deliverable: follow-on planning package for `v0.89.2`
-  issue_column: '`#1755` open'
+  issue_column: planned issue wave
 - wp: WP-11
   issue_kind: execution
   title: '[v0.89][WP-11] Demo scaffolding and proof entry points'
@@ -205,7 +205,7 @@ entries:
   work_package: Demo scaffolding and proof entry points
   summary: Define and land the bounded demo entry points for convergence, gate behavior, experiment evidence, and security review surfaces.
   deliverable: runnable or reviewer-legible demo surfaces
-  issue_column: '`#1756` open'
+  issue_column: planned issue wave
 - wp: WP-12
   issue_kind: execution
   title: '[v0.89][WP-12] Milestone convergence and follow-on mapping'
@@ -225,7 +225,7 @@ entries:
   work_package: Milestone convergence and follow-on mapping
   summary: Reconcile issue graph, carry-forward, and proof surfaces before the release tail starts.
   deliverable: converged issue graph and milestone status surfaces
-  issue_column: '`#1757` open'
+  issue_column: planned issue wave
 - wp: WP-13
   issue_kind: execution
   title: '[v0.89][WP-13] Demo matrix + integration demos'
@@ -245,7 +245,7 @@ entries:
   work_package: Demo matrix + integration demos
   summary: Validate the milestone claims through bounded demos and integration review.
   deliverable: canonical demo matrix and demo artifacts
-  issue_column: '`#1758` open'
+  issue_column: planned issue wave
 - wp: WP-14
   issue_kind: closeout
   title: '[v0.89][WP-14] Coverage / quality gate (ratchet + exclusions)'
@@ -265,7 +265,7 @@ entries:
   work_package: Coverage / quality gate (ratchet + exclusions)
   summary: Run quality gates and record any bounded exceptions truthfully.
   deliverable: green quality gate or documented exceptions
-  issue_column: '`#1759` open'
+  issue_column: planned issue wave
 - wp: WP-15
   issue_kind: closeout
   title: '[v0.89][WP-15] Docs + review pass (repo-wide alignment)'
@@ -285,7 +285,7 @@ entries:
   work_package: Docs + review pass (repo-wide alignment)
   summary: Align docs, review surfaces, and release-tail truth across the repo.
   deliverable: converged docs/review package
-  issue_column: '`#1760` open'
+  issue_column: planned issue wave
 - wp: WP-16
   issue_kind: closeout
   title: '[v0.89][WP-16] Release ceremony (final validation + tag + notes + cleanup)'
@@ -304,4 +304,4 @@ entries:
   work_package: Release ceremony (final validation + tag + notes + cleanup)
   summary: Close the milestone cleanly after validation and documentation are complete.
   deliverable: release tag, notes, and closeout
-  issue_column: '`#1761` open'
+  issue_column: planned issue wave

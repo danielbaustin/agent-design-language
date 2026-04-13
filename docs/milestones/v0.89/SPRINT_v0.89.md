@@ -20,17 +20,17 @@ This keeps the execution model aligned with the recent milestone pattern while p
 
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
-| `v0.89-s1` | seed the issue wave and execute the convergence / gate / action core | `WP-01` through `WP-05` | active; issue wave seeded |
+| `v0.89-s1` | open the issue wave and execute the convergence / gate / action core | `WP-01` through `WP-05` | planned |
 | `v0.89-s2` | execute the skill / experiment / memory / security package plus explicit `v0.89.2` handoff planning | `WP-06`, `WP-07`, `WP-08`, `WP-09`, `WP-10` | planned |
 | `v0.89-s3` | converge demos, quality, docs/review, and release ceremony | `WP-11` through `WP-16` | planned |
 
 ## Sprint 1
 
 ### Goal
-Move `v0.89` from a strong planning package into a real execution wave by seeding the issue graph and landing the first governed-adaptation core band.
+Move `v0.89` from a strong planning package into a real execution wave by opening the issue graph and landing the first governed-adaptation core band.
 
 ### Scope
-- issue-wave seeding from the promoted `v0.89` package
+- issue-wave opening from the promoted `v0.89` package
 - AEE convergence
 - Freedom Gate v2
 - decision surfaces and decision schema
@@ -38,13 +38,10 @@ Move `v0.89` from a strong planning package into a real execution wave by seedin
 
 Current issue map:
 - `WP-01` `#1662`
-- `WP-02` `#1747`
-- `WP-03` `#1748`
-- `WP-04` `#1749`
-- `WP-05` `#1750`
+- `WP-02` - `WP-05` planned; official issue wave not yet opened
 
 ### Exit Criteria
-- `WP-02` through `WP-05` are issueized and mapped in the milestone docs
+- `WP-02` through `WP-05` are mapped in the milestone docs and ready for issue creation
 - the convergence / gate / decision / action band has an executable issue wave
 - the main milestone docs stop speaking about the issue wave as hypothetical
 
@@ -61,15 +58,11 @@ Land the governed execution substrate that makes `v0.89` useful beyond judgment 
 - explicit `v0.89.2` handoff planning
 
 Current issue map:
-- `WP-06` `#1751`
-- `WP-07` `#1752`
-- `WP-08` `#1753`
-- `WP-09` `#1754`
-- `WP-10` `#1755`
+- `WP-06` - `WP-10` planned; official issue wave not yet opened
 
 ### Exit Criteria
-- `WP-06` through `WP-10` are issueized and tracked in the milestone package
-- the main `v0.89` feature band is fully represented in active issue/PR work
+- `WP-06` through `WP-10` are planned and tracked in the milestone package
+- the main `v0.89` feature band is fully represented in the planned execution package
 - `v0.89.2` carry-forward is explicit and bounded
 
 ## Sprint 3
@@ -86,12 +79,7 @@ Close the milestone using the normal ADL pattern: demos, quality, docs/review, a
 - release ceremony
 
 Current issue map:
-- `WP-11` `#1756`
-- `WP-12` `#1757`
-- `WP-13` `#1758`
-- `WP-14` `#1759`
-- `WP-15` `#1760`
-- `WP-16` `#1761`
+- `WP-11` - `WP-16` planned; official issue wave not yet opened
 
 ### Exit Criteria
 - reviewer-facing proof surfaces exist for the core `v0.89` claims
@@ -100,11 +88,11 @@ Current issue map:
 
 ## Risks / Dependencies
 - Dependency: `v0.88` release tail must close cleanly so the next wave does not inherit avoidable drift
-  - Risk: unresolved `v0.88` closeout work distracts from `v0.89` issue seeding
+  - Risk: unresolved `v0.88` closeout work distracts from `v0.89` issue opening
   - Mitigation: keep `v0.89` planning package self-contained and truth-based so execution can start cleanly once `v0.88` closes
-- Dependency: the seeded `v0.89` issue wave must stay aligned with the milestone docs
-  - Risk: issue bodies and milestone docs drift after seeding
-  - Mitigation: treat the seeded issue wave plus `WBS_v0.89.md` / `FEATURE_DOCS_v0.89.md` as one package and update them together
+- Dependency: the future `v0.89` issue wave must stay aligned with the milestone docs
+  - Risk: issue bodies and milestone docs drift once the wave opens
+  - Mitigation: treat the future issue wave plus `WBS_v0.89.md` / `FEATURE_DOCS_v0.89.md` as one package and update them together
 
 ## Demo / Review Plan
 - Demo artifact: `DEMO_MATRIX_v0.89.md` plus the later convergence/gate/experiment/security proof surfaces it governs

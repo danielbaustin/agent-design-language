@@ -15,7 +15,7 @@
 
 ## Summary
 
-`v0.89` is the milestone where ADL turns governed adaptive execution into a first-class package. The seeded issue wave now covers `WP-02` through `WP-16`; the release is expected to deepen AEE convergence, Freedom Gate behavior, decision/action mediation, skill execution contracts, experiment records, evidence-aware memory ranking, and the main-band security/trust/posture package.
+`v0.89` is the milestone where ADL turns governed adaptive execution into a first-class package. The planned release is expected to deepen AEE convergence, Freedom Gate behavior, decision/action mediation, skill execution contracts, experiment records, evidence-aware memory ranking, and the main-band security/trust/posture package.
 
 ## Planned Highlights
 - AEE 1.0 convergence as a real bounded runtime contract

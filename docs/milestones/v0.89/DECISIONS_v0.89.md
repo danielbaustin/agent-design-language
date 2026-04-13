@@ -21,8 +21,8 @@ Capture milestone-critical scope and packaging decisions for `v0.89`.
 
 ## Open Questions
 
-- How much of the security posture / trust package lands as code and tests inside `v0.89` versus remaining design-contract work for `v0.89.2`? (Owner: Daniel Austin) (Issue: `WP-09 / #1754`)
-- Which demo shapes are enough to count as `v0.89` proof surfaces before the heavier adversarial runtime band begins? (Owner: Daniel Austin) (Issue: `WP-11` - `WP-13` / `#1756` - `#1758`)
+- How much of the security posture / trust package lands as code and tests inside `v0.89` versus remaining design-contract work for `v0.89.2`? (Owner: Daniel Austin) (Issue: `future WP-09 issue`)
+- Which demo shapes are enough to count as `v0.89` proof surfaces before the heavier adversarial runtime band begins? (Owner: Daniel Austin) (Issue: `future WP-11` - `WP-13` issue wave)
 
 ## Exit Criteria
 

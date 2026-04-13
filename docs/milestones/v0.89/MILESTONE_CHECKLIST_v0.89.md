@@ -13,11 +13,11 @@ Ship/no-ship gate for `v0.89`. Check items only when evidence exists.
 ## Planning
 - [x] Milestone goal defined (`README.md`, `VISION_v0.89.md`)
 - [x] Scope + non-goals documented (`DESIGN_v0.89.md`)
-- [x] WBS created and mapped to the seeded issue wave (`WBS_v0.89.md`)
+- [x] WBS created and ready for the implementation issue wave (`WBS_v0.89.md`)
 - [x] Decision log initialized (`DECISIONS_v0.89.md`)
 - [x] Sprint plan created (`SPRINT_v0.89.md`)
 - [x] Feature index created with explicit carry-forward mapping (`FEATURE_DOCS_v0.89.md`)
-- [x] Core implementation issue wave created (`#1747` through `#1761`)
+- [ ] Core implementation issue wave opened
 
 ## Execution Discipline
 - [ ] Each issue has truthful input/output cards under `.adl/`

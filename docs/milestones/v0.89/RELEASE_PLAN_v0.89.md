@@ -15,7 +15,7 @@
 - [ ] Milestone checklist complete (`MILESTONE_CHECKLIST_v0.89.md`)
 - [ ] Release notes approved (`RELEASE_NOTES_v0.89.md`)
 - [ ] Go/no-go decision recorded (`DECISIONS_v0.89.md` or final release issue)
-- [x] Core implementation issue wave seeded (`#1747` through `#1761`)
+- [ ] Core implementation issue wave opened
 
 ## 2) Branch And Tag Preparation
 - [ ] Target branch confirmed (`main` unless explicitly changed)
