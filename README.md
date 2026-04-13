@@ -14,7 +14,7 @@ Those artifacts are schema-validated, compiled into a deterministic execution pl
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.87.1%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.88%20active-blue)
 
 ## Why ADL
 
@@ -60,6 +60,12 @@ cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-mi
 If you want the current milestone proof package:
 
 ```bash
+bash adl/tools/demo_v088_review_surface.sh
+```
+
+If you want the previous runtime-completion milestone proof suite:
+
+```bash
 bash adl/tools/demo_v0871_suite.sh
 ```
 
@@ -83,19 +89,31 @@ bash adl/tools/demo_v0871_multi_agent_discussion.sh
 
 ## Current Status
 
-- Active milestone: **v0.87.1**
+- Active milestone: **v0.88**
 - Current crate version on `main`: **0.87.1**
-- Most recently completed milestone: **v0.87**
-- Previous completed milestone: **v0.86**
+- Version note: **the `v0.88` milestone is active, but the crate version remains `0.87.1` until the `v0.88` release ceremony/version bump**
+- Most recently completed milestone package: **v0.87.1**
+- Previous completed milestone: **v0.87**
 - Project changelog: `CHANGELOG.md`
 
 ADL is in active development. This repository contains both implemented runtime surfaces and milestone/spec/planning documents. Read the milestone docs as bounded engineering records: they distinguish what has shipped, what is under active review or closeout, what is demoable, and what is still planned.
 
 ## Recent Milestones
 
+### v0.88 - Temporal / Chronosense + Instinct Review-Tail Milestone
+
+v0.88 is the current active milestone. The implementation wave is complete through `WP-13`, and the repository is now in the docs, review, remediation, next-milestone planning, and release tail.
+
+Key features:
+- promoted temporal / chronosense and instinct / bounded-agency feature-doc package
+- bounded proof surfaces for temporal review, PHI metrics, instinct review, and the integrated `v0.88` review surface
+- Paper Sonata as the flagship bounded public-facing demo
+- deep-agents comparative proof as a supporting reviewer-facing proof row
+- active handoff into internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony
+
 ### v0.87.1 - Runtime Completion and Reviewer-Facing Proof Package
 
-v0.87.1 is the current active milestone. The implementation and bounded demo program are in place, and the remaining work is the docs, review, quality, and release tail that makes the runtime package reviewable without oral reconstruction.
+v0.87.1 is the previous runtime-completion milestone. The implementation and bounded demo program landed on `main`, and it now serves as the prior runtime proof package that `v0.88` builds on.
 
 Key features:
 - runtime environment, lifecycle, execution-boundary, and resilience surfaces promoted into one canonical milestone package
@@ -113,7 +131,7 @@ Key features:
 - promoted feature docs and milestone docs reconciled against the real implementation and issue sequence
 - bounded demo and reviewer proof surfaces for trace, provider portability, shared ObsMem, skills, and control-plane behavior
 - completed Sprint 3 release-tail work for documentation convergence, review, quality gate, and release closeout
-- explicit handoff into `v0.87.1` for the runtime-completion milestone now moving through review and release closeout
+- explicit handoff into `v0.87.1` for the runtime-completion milestone that set up the current `v0.88` follow-on
 
 ### v0.86 - Bounded Cognitive System and Reviewable Proof Surfaces
 
@@ -173,6 +191,7 @@ Important supporting demo/readiness docs:
 - `docs/tooling/editor/five_command_regression_suite.md`
 
 For milestone-specific context:
+- `docs/milestones/v0.88/DEMO_MATRIX_v0.88.md`
 - `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
 - `docs/milestones/v0.86/DEMO_MATRIX_v0.86.md`
 - `docs/milestones/v0.7/DEMOS_v0.7.md`
