@@ -231,7 +231,6 @@ fn real_pr_finish_creates_draft_pr_and_commits_branch_changes() {
         path_relative_to_repo(&repo, &output),
         "--no-checks".to_string(),
         "--no-open".to_string(),
-        "--no-close".to_string(),
     ]);
 
     env::set_current_dir(prev_dir).expect("restore cwd");
