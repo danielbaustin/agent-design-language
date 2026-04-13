@@ -36,7 +36,7 @@ Other options:
   --tag <tag>             Override tag name (default: same as --version)
   --target-branch <name>  Branch required for ceremony mutations (default: main)
   --allow-dirty           Skip the clean-worktree check
-  --skip-sor-gate         Skip adl/tools/check_milestone_closed_issue_sor_truth.sh
+  --skip-sor-gate         Skip adl/tools/check_milestone_closed_issue_sor_truth.sh (closed-issue bundle truth gate)
   -h, --help              Show this help
 
 Examples:
@@ -117,17 +117,17 @@ check_cargo_version() {
 
 check_sor_gate() {
   if [[ "$SKIP_SOR_GATE" == "1" ]]; then
-    info "skipping closed-issue SOR truth gate by request"
+    info "skipping closed-issue bundle truth gate by request"
     return 0
   fi
 
   local checker="$ROOT/adl/tools/check_milestone_closed_issue_sor_truth.sh"
   [[ -x "$checker" || -f "$checker" ]] || {
-    info "closed-issue SOR truth gate not present; skipping"
+    info "closed-issue bundle truth gate not present; skipping"
     return 0
   }
 
-  info "running closed-issue SOR truth gate for $VERSION"
+  info "running closed-issue bundle truth gate for $VERSION"
   bash "$checker" --version "$VERSION"
 }
 

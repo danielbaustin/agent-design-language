@@ -1,17 +1,31 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+resolve_primary_root() {
+  local top
+  top="$(git -C "$SCRIPT_ROOT" rev-parse --show-toplevel 2>/dev/null || printf '%s\n' "$SCRIPT_ROOT")"
+  case "$top" in
+    */.worktrees/*)
+      printf '%s\n' "${top%%/.worktrees/*}"
+      ;;
+    *)
+      printf '%s\n' "$top"
+      ;;
+  esac
+}
+ROOT="$(resolve_primary_root)"
 VERSION=""
 REPO=""
 
 usage() {
   cat <<'EOF'
 Usage:
-  check_milestone_closed_issue_sor_truth.sh --version <v0.87.1> [--repo <owner/name>]
+  check_milestone_closed_issue_sor_truth.sh --version <v0.88> [--repo <owner/name>]
 
 Scans closed GitHub issues for the target milestone label and verifies the
-canonical local `.adl/<version>/tasks/issue-*__*/sor.md` records are not stale.
+canonical local `.adl/<version>/tasks/issue-*__*/` bundle surfaces are present
+and the final `sor.md` truth is not stale.
 EOF
 }
 
@@ -83,49 +97,64 @@ def extract(text: str, prefix: str):
             return line[len(prefix):].strip()
     return None
 
+def nonempty(path: Path) -> bool:
+    return path.is_file() and path.read_text().strip() != ""
+
 for issue in issues:
     number = issue["number"]
     state_reason = (issue.get("stateReason") or "").strip()
-    matches = sorted((root / ".adl" / version / "tasks").glob(f"issue-{number}__*/sor.md"))
-    if not matches:
-        errors.append(f"issue #{number}: missing canonical sor.md under .adl/{version}/tasks/issue-{number}__*/sor.md")
+    bundle_matches = sorted((root / ".adl" / version / "tasks").glob(f"issue-{number}__*/"))
+    if not bundle_matches:
+        errors.append(f"issue #{number}: missing canonical task bundle under .adl/{version}/tasks/issue-{number}__*/")
         continue
-    if len(matches) > 1:
-        for path in matches:
+    if len(bundle_matches) > 1:
+        for path in bundle_matches:
             errors.append(f"{path.relative_to(root)}: duplicate task bundle for closed issue #{number}")
         continue
 
     checked += 1
-    path = matches[0]
-    text = path.read_text()
+    bundle = bundle_matches[0]
+    stp = bundle / "stp.md"
+    sip = bundle / "sip.md"
+    sor = bundle / "sor.md"
+
+    if not nonempty(stp):
+        errors.append(f"{stp.relative_to(root)}: missing or empty canonical stp.md for closed issue #{number}")
+    if not nonempty(sip):
+        errors.append(f"{sip.relative_to(root)}: missing or empty canonical sip.md for closed issue #{number}")
+    if not nonempty(sor):
+        errors.append(f"{sor.relative_to(root)}: missing or empty canonical sor.md for closed issue #{number}")
+        continue
+
+    text = sor.read_text()
     status = extract(text, "Status:")
     integration_state = extract(text, "- Integration state:")
     verification_scope = extract(text, "- Verification scope:")
     worktree_paths = extract(text, "- Worktree-only paths remaining:")
 
     if status != "DONE":
-        errors.append(f"{path.relative_to(root)}: Status expected 'DONE' for closed issue #{number} but found {status!r}")
+        errors.append(f"{sor.relative_to(root)}: Status expected 'DONE' for closed issue #{number} but found {status!r}")
     if integration_state in (None, "worktree_only", "pr_open"):
         errors.append(
-            f"{path.relative_to(root)}: Integration state for closed issue #{number} must not be worktree_only/pr_open; found {integration_state!r}"
+            f"{sor.relative_to(root)}: Integration state for closed issue #{number} must not be worktree_only/pr_open; found {integration_state!r}"
         )
     if worktree_paths != "none":
         errors.append(
-            f"{path.relative_to(root)}: Worktree-only paths remaining for closed issue #{number} expected 'none' but found {worktree_paths!r}"
+            f"{sor.relative_to(root)}: Worktree-only paths remaining for closed issue #{number} expected 'none' but found {worktree_paths!r}"
         )
 
     if state_reason == "COMPLETED":
-        if integration_state != "merged":
+        if integration_state not in ("merged", "closed_no_pr"):
             errors.append(
-                f"{path.relative_to(root)}: Integration state for CLOSED/COMPLETED issue #{number} expected 'merged' but found {integration_state!r}"
+                f"{sor.relative_to(root)}: Integration state for CLOSED/COMPLETED issue #{number} expected 'merged' or 'closed_no_pr' but found {integration_state!r}"
             )
         if verification_scope != "main_repo":
             errors.append(
-                f"{path.relative_to(root)}: Verification scope for CLOSED/COMPLETED issue #{number} expected 'main_repo' but found {verification_scope!r}"
+                f"{sor.relative_to(root)}: Verification scope for CLOSED/COMPLETED issue #{number} expected 'main_repo' but found {verification_scope!r}"
             )
 
 if errors:
-    print(f"ERROR: stale closed-issue SOR truth detected for version {version}", file=sys.stderr)
+    print(f"ERROR: stale closed-issue bundle truth detected for version {version}", file=sys.stderr)
     for error in errors:
         print(error, file=sys.stderr)
     raise SystemExit(1)
