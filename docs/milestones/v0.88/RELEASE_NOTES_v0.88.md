@@ -2,15 +2,39 @@
 
 ## Status
 
-Pre-release planning state.
+Pre-release closeout state.
 
-`v0.88` now has an established tracked planning package and promoted feature-doc package, but it does not yet have implementation-complete release notes.
-The eventual release must be based on delivered code, tests, demos, and artifacts, not on planning alignment alone.
+`v0.88` now has a completed implementation wave through `WP-13` plus an active closeout tail through `WP-20`.
+These release notes are still provisional because the milestone is in docs / review / release convergence, but they are no longer planning-only.
 
 Planning/package issues already represented:
 - `#1527`
 - `#1579`
 - `#1497`
+- `#1643`
+
+Completed implementation issues already represented:
+- `#1644`
+- `#1646`
+- `#1648`
+- `#1650`
+- `#1651`
+- `#1653`
+- `#1655`
+- `#1645`
+- `#1649`
+- `#1654`
+- `#1656`
+- `#1657`
+
+Active closeout issues:
+- `#1652`
+- `#1658`
+- `#1659`
+- `#1660`
+- `#1661`
+- `#1662`
+- `#1663`
 
 ## Current Public Package
 - chronosense / substance-of-time foundation
@@ -31,4 +55,4 @@ Planning/package issues already represented:
 - The only accepted supporting backlog pull-ins are `#1614` and `#1618`.
 - protected local follow-on planning remains for deepening `Paper Sonata`
   beyond the bounded `v0.88` slice.
-- The actual `WP-02` through `WP-20` implementation and closeout issue wave still needs to be created from the canonical planning package.
+- The implementation and closeout issue wave exists; the remaining work is reviewer-truth convergence, review execution, remediation, and ceremony.

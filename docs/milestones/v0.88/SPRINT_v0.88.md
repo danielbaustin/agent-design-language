@@ -3,7 +3,7 @@
 ## Metadata
 - Milestone: `v0.88`
 - Sprint sequence: `v0.88-s1`, `v0.88-s2`, `v0.88-s3`
-- Start date: `TBD (execution not started)`
+- Start date: `2026-04-11`
 - End date: `TBD`
 - Owner: `Daniel Austin`
 
@@ -20,9 +20,9 @@ This keeps the closeout flow consistent with `v0.86` and `v0.87`.
 
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
-| `v0.88-s1` | lock canonical milestone truth and execute the temporal substrate | `WP-01` through `WP-08` | `WP-01` complete; execution issues pending for the rest |
-| `v0.88-s2` | execute PHI metrics, instinct / bounded-agency work, and the Paper Sonata flagship demo | `WP-09`, `WP-10`, `WP-11`, `WP-12`, `WP-13` | not started; issue seeding next |
-| `v0.88-s3` | converge docs, quality, review, release, and next-milestone planning | `WP-14` through `WP-20` | not started; follows implementation and demo proof |
+| `v0.88-s1` | lock canonical milestone truth and execute the temporal substrate | `WP-01` through `WP-08` | complete |
+| `v0.88-s2` | execute PHI metrics, instinct / bounded-agency work, and the Paper Sonata flagship demo | `WP-09`, `WP-10`, `WP-11`, `WP-12`, `WP-13` | complete |
+| `v0.88-s3` | converge docs, quality, review, release, and next-milestone planning | `WP-14` through `WP-20` | active; closeout tail in progress |
 
 ## Sprint 1
 
@@ -43,6 +43,7 @@ Establish the canonical `v0.88` package and land the temporal / chronosense subs
 - the tracked `v0.88` package is internally coherent
 - the full temporal band is represented in both docs and WBS
 - no placeholder-only planning-package language remains
+- the temporal execution wave is closed with concrete issue records from `#1644` through `#1655`
 
 ## Sprint 2
 
@@ -62,14 +63,14 @@ Execute the PHI metrics and instinct / bounded-agency bands and land the Paper S
 - instinct is a tracked, explicit, inspectable milestone surface
 - Paper Sonata is strong enough to function as a reviewer-facing and investor-facing milestone demo
 - at least one planned proof path shows how instinct affects routing or prioritization without escaping policy bounds
+- the implementation/demo wave is closed through `#1657`, with `#1618` providing the bounded comparative proof row
 
 ## Sprint 3
 
 ### Goal
-Close the milestone using the normal ADL pattern: demos, quality gate, docs/review, internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony.
+Close the milestone using the normal ADL pattern: quality gate, docs/review, internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony.
 
 ### Scope
-- demo matrix + integration demos
 - coverage / quality gate
 - docs + review pass
 - internal review
@@ -77,6 +78,15 @@ Close the milestone using the normal ADL pattern: demos, quality gate, docs/revi
 - review findings remediation
 - next milestone planning
 - release ceremony
+
+Current issue map:
+- `WP-14` `#1652`
+- `WP-15` `#1658`
+- `WP-16` `#1659`
+- `WP-17` `#1660`
+- `WP-18` `#1661`
+- `WP-19` `#1662`
+- `WP-20` `#1663`
 
 ### Exit Criteria
 - reviewer-facing docs match delivered proof surfaces

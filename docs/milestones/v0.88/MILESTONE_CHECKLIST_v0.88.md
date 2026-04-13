@@ -20,10 +20,10 @@ This milestone must prove a real temporal / PHI / instinct package with runnable
 - [x] Sprint state recorded truthfully (`docs/milestones/v0.88/SPRINT_v0.88.md`)
 
 ## Execution Readiness
-- [ ] Core implementation issue wave created
-- [ ] Each implementation issue promises concrete code, tests, artifacts, or demos rather than doc-only alignment
-- [ ] Demo / proof plan populated with runnable commands
-- [ ] Review-tail issues created and linked
+- [x] Core implementation issue wave created
+- [x] Each implementation issue promises concrete code, tests, artifacts, or demos rather than doc-only alignment
+- [x] Demo / proof plan populated with runnable commands
+- [x] Review-tail issues created and linked
 
 ## Functional / System Proof (v0.88-specific)
 
@@ -62,8 +62,8 @@ This milestone must prove a real temporal / PHI / instinct package with runnable
 
 ## Documentation Integrity
 - [x] DESIGN, README, WBS, SPRINT, and feature-doc inventory agree on the milestone boundary
-- [ ] demo matrix matches the actual runnable proof surface
-- [ ] docs match implementation truthfully once the issue wave lands
+- [x] demo matrix matches the actual runnable proof surface
+- [ ] docs match implementation truthfully once the review-tail reconciliation pass is complete
 
 ## Review
 - [ ] internal review completed and findings recorded

@@ -7,13 +7,12 @@
 
 ## Current State
 
-`v0.88` is not in release-tail execution yet.
+`v0.88` is in release-tail execution now.
 
 The current tracked work for `v0.88` is:
-- canonical milestone reconciliation
-- promoted temporal / chronosense feature package
-- promoted instinct / bounded-agency feature package
-- milestone closeout structure aligned to the standard ADL pattern
+- completed implementation wave through `WP-13`
+- active quality / docs / review / release tail through `WP-14` to `WP-20`
+- next-milestone planning already underway under `#1662`
 
 ## Purpose
 
@@ -28,7 +27,7 @@ This is not just a reminder that a release will happen later. When the milestone
 All of the following must be true before ceremony:
 
 - [ ] milestone checklist is fully updated and honest
-- [ ] implementation issue wave for `WP-02` through `WP-13` is complete or explicitly deferred
+- [x] implementation issue wave for `WP-02` through `WP-13` is complete or explicitly deferred
 - [ ] each completed implementation WP produced concrete code, tests, artifacts, demos, or an explicit defer record
 - [ ] demo matrix rows map to real runnable commands and proof artifacts
 - [ ] docs, WBS, demos, and implementation agree on the same bounded milestone
@@ -59,8 +58,7 @@ If any answer is NO, do not release.
 
 ## Intended Closeout Sequence
 
-When implementation begins, `v0.88` should close using the same bounded sequence used in `v0.86` and `v0.87`:
-- demos
+`v0.88` is currently traversing the same bounded closeout sequence used in `v0.86` and `v0.87`:
 - quality gate
 - docs + review pass
 - internal review

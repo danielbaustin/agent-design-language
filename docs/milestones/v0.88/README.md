@@ -98,6 +98,7 @@ Tracked planning/package issues already reflected in this milestone:
 - `#1527` initial `v0.88` planning shell and milestone scaffolding
 - `#1579` promotion of the bounded tracked `v0.88` feature-doc package
 - `#1497` canonical next-milestone planning reconciliation and scope closure
+- `#1643` seeding of the `v0.88` work-package issue wave
 
 Accepted supporting backlog pull-ins:
 - `#1614` bounded temporal/deadline pressure follow-on
@@ -117,17 +118,41 @@ The milestone should not invent an extra process sprint beyond that established 
 
 ## Status
 
-Current status: **tracked planning package reconciled; scope closed; execution issue wave pending**
+Current status: **implementation wave seeded and largely complete; `v0.88` is in late docs/review closeout**
 
-- Planning package: active
-- Promoted feature package: present
-- Scope shape: closed for `v0.88`; only accepted backlog pull-ins are the `#1614` temporal/deadline slice and `#1618` bounded comparative-demo direction
-- Issue wave: substantive `WP-02` through `WP-20` work-package issues still need to be created from this package, and they must promise real code, tests, artifacts, or demos rather than more scope-shaping work
-- Demo/review/release surfaces: seeded and aligned to the normal milestone pattern, but not yet populated with implementation evidence
+- Planning package: reconciled and stable
+- Promoted feature package: present and implemented across the main temporal / PHI / instinct bands
+- Scope shape: closed for `v0.88`; the only accepted bounded pull-ins were `#1614` and `#1618`, both completed
+- Issue wave: `WP-02` through `WP-13` are complete, and `WP-14` through `WP-20` are now the active closeout / review / release tail
+- Demo/review/release surfaces: present, runnable, and in active truth-tightening rather than pre-seeding
+
+### Active Work-Package State
+
+- Closed implementation wave:
+  - `WP-02` `#1644`
+  - `WP-03` `#1646`
+  - `WP-04` `#1648`
+  - `WP-05` `#1650`
+  - `WP-06` `#1651` plus bounded supporting slice `#1614`
+  - `WP-07` `#1653`
+  - `WP-08` `#1655`
+  - `WP-09` `#1645`
+  - `WP-10` `#1649`
+  - `WP-11` `#1654`
+  - `WP-12` `#1656`
+  - `WP-13` `#1657` plus bounded supporting proof `#1618`
+- Open closeout tail:
+  - `WP-14` `#1652`
+  - `WP-15` `#1658`
+  - `WP-16` `#1659`
+  - `WP-17` `#1660`
+  - `WP-18` `#1661`
+  - `WP-19` `#1662`
+  - `WP-20` `#1663`
 
 ## Exit Criteria
 
 - canonical `v0.88` milestone docs are internally consistent
 - tracked feature docs match the intended bounded milestone scope
 - local-only exploratory docs are not silently treated as canonical milestone promises
-- the `v0.88` issue wave can be seeded from this package without re-litigating milestone scope
+- the reviewer can distinguish completed implementation work from the still-open closeout tail without consulting local-only planning surfaces
