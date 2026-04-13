@@ -29,6 +29,10 @@ Accepted supporting backlog pull-ins for execution planning:
 - `#1614` temporal/deadline pressure slice
 - `#1618` bounded comparative-demo / positioning slice
 
+For repo truth, the bounded `#1614` temporal/deadline slice cashes out through
+`features/COMMITMENTS_AND_DEADLINES.md` and `WP-06 / #1651`, while the broader
+governance/reprioritization remainder stays local-only for later bands.
+
 Related bounded demo follow-on retained in backlog:
 - protected local follow-on planning deepens `Paper Sonata` beyond the initial `v0.88` flagship slice
 

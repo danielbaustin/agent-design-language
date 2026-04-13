@@ -56,6 +56,7 @@ This document defines:
 - lifecycle states
 - persistence expectations
 - missed-commitment detection semantics
+- the bounded `v0.88` urgency slice that belongs with commitments/deadlines
 
 This document does not define:
 - the final schema format
@@ -148,6 +149,31 @@ The system should not assume every commitment uses the same clock.
 ### Deadline Principle
 
 > A deadline is meaningful only relative to an explicit temporal frame.
+
+---
+
+## Bounded v0.88 Urgency Slice
+
+For `v0.88`, the accepted urgency contribution is deliberately narrow:
+
+- temporal/deadline pressure
+- obligation pressure from accepted open commitments
+- explicit visibility when an obligation becomes overdue or missed
+
+This is the part of the broader urgency/prioritization concept that belongs in the
+chronosense package and was accepted through the bounded support issue `#1614`.
+
+In repo truth, this bounded slice is delivered through `WP-06 / #1651`, which made the
+commitment/deadline contract explicit and reviewable.
+
+This feature does **not** claim:
+
+- dynamic reprioritization during execution
+- interruption/rescheduling machinery
+- general scheduler policy
+- broader governance-aware priority behavior
+
+Those remain later-band work and should not be smuggled into `v0.88`.
 
 ---
 
