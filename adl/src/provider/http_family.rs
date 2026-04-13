@@ -1189,10 +1189,9 @@ mod tests {
                 .expect("concurrent writer thread should not panic")
                 .expect("concurrent invocation write should succeed");
         }
-        let concurrent_payload: Value = serde_json::from_slice(
-            &std::fs::read(&artifact).expect("read concurrent artifact"),
-        )
-        .expect("concurrent artifact json");
+        let concurrent_payload: Value =
+            serde_json::from_slice(&std::fs::read(&artifact).expect("read concurrent artifact"))
+                .expect("concurrent artifact json");
         let invocations = concurrent_payload
             .get("invocations")
             .and_then(|v| v.as_array())
