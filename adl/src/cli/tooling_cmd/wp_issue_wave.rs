@@ -159,7 +159,7 @@ fn generate_wave_doc(
     let sprint_map = parse_sprint_overview(sprint_text)?;
     let entries = parse_wbs_rows(wbs_text)?
         .into_iter()
-        .filter(|row| row.issue_column.contains("to be seeded"))
+        .filter(|row| row.wp != "WP-01" && issue_column_is_trackable(&row.issue_column))
         .map(|row| build_entry(version, &row, &sprint_map))
         .collect::<Result<Vec<_>>>()?;
 
@@ -182,7 +182,8 @@ fn build_entry(
     let Some((sprint_id, sprint_label)) = sprint_map.get(&row.wp) else {
         bail!("no sprint mapping found for {}", row.wp);
     };
-    let area = infer_area(&row.work_package, &row.issue_column);
+    let is_closeout = is_closeout_row(&row.work_package, &row.issue_column);
+    let area = infer_area(&row.work_package, is_closeout);
     let slug = format!(
         "{}-{}-{}",
         slugify(version),
@@ -191,7 +192,7 @@ fn build_entry(
     );
     Ok(WaveEntry {
         wp: row.wp.clone(),
-        issue_kind: if row.issue_column.contains("closeout issue to be seeded") {
+        issue_kind: if is_closeout {
             "closeout".to_string()
         } else {
             "execution".to_string()
@@ -216,9 +217,28 @@ fn build_entry(
     })
 }
 
-fn infer_area(work_package: &str, issue_column: &str) -> &'static str {
-    let lowered = work_package.to_lowercase();
+fn issue_column_is_trackable(issue_column: &str) -> bool {
+    issue_column.contains("to be seeded") || issue_column.contains('#')
+}
+
+fn is_closeout_row(work_package: &str, issue_column: &str) -> bool {
     if issue_column.contains("closeout issue to be seeded") {
+        return true;
+    }
+    let lowered = work_package.to_lowercase();
+    lowered.contains("quality")
+        || lowered.contains("coverage")
+        || lowered.contains("docs + review")
+        || lowered == "internal review"
+        || lowered.contains("3rd-party review")
+        || lowered.contains("review findings remediation")
+        || lowered.contains("next milestone planning")
+        || lowered.contains("release ceremony")
+}
+
+fn infer_area(work_package: &str, is_closeout: bool) -> &'static str {
+    let lowered = work_package.to_lowercase();
+    if is_closeout {
         if lowered.contains("release") {
             "release"
         } else if lowered.contains("docs") || lowered.contains("next milestone planning") {
