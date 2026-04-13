@@ -12,6 +12,7 @@ pub fn usage() -> &'static str {
   adl identity continuity [--out <path>]
   adl identity retrieval [--out <path>]
   adl identity commitments [--out <path>]
+  adl identity causality [--out <path>]
   adl provider setup <family> [--out <dir>] [--force]
   adl pr create --title <title> [--slug <slug>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>]
   adl pr init <issue> [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>]
