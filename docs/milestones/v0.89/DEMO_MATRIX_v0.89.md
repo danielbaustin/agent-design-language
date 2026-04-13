@@ -1,68 +1,67 @@
-# Demo Matrix Template
+# Demo Matrix - v0.89
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
-- Related issues / work packages: {{issues_or_wps}}
+- Milestone: `v0.89`
+- Version: `v0.89`
+- Date: `2026-04-12`
+- Owner: `Daniel Austin`
+- Related issues / work packages: `WP-02` - `WP-13`
 
 ## Purpose
-Define the canonical milestone demo program: which bounded demos exist, which milestone claims they prove, how to run them, and what artifacts or proof surfaces reviewers should inspect.
 
-## How To Use
-- Use this document for runnable milestone evidence, not for broad feature brainstorming.
-- Keep demo rows and per-demo sections aligned so a reviewer can move from summary -> execution -> proof surface without reconstructing context by hand.
-- Prefer bounded, replayable, copy/paste-friendly commands over aspirational demo descriptions.
-- If a milestone claim cannot yet be shown through a runnable demo, say so explicitly and record the substitute proof surface.
-- Keep names stable across milestones where practical so comparisons remain easy.
-- If a section is not relevant, include a one-line rationale instead of deleting it.
+Define the canonical `v0.89` demo and proof program.
+
+This first pass is intentionally planning-grade: it names the intended proof rows, their milestone claims, and the expected proof surfaces so implementation can target them directly.
 
 ## Scope
 
-In scope for `{{milestone}}`:
-- {{in_scope_demo_area_1}}
-- {{in_scope_demo_area_2}}
-- {{in_scope_demo_area_3}}
+In scope for `v0.89`:
+- convergence behavior
+- gate / decision / action proof surfaces
+- experiment evidence and ObsMem explanation surfaces
+- security / trust / posture walkthroughs
 
-Out of scope for `{{milestone}}`:
-- {{out_of_scope_demo_area_1}}
-- {{out_of_scope_demo_area_2}}
+Out of scope for `v0.89`:
+- the full `v0.89.2` adversarial runtime/demo package
+- later signed-trace and reasoning-graph proof surfaces
 
 ## Runtime Preconditions
 
 Working directory:
 
 ```bash
-{{working_directory_command}}
+cd adl
 ```
 
 Deterministic runtime / provider assumptions:
 
 ```bash
-{{runtime_preconditions}}
+Prefer deterministic fixtures or bounded local/provider shims where possible.
+Do not require private credentials for the main v0.89 proof rows unless the row is explicitly marked as live-only.
 ```
 
 Additional environment / fixture requirements:
-- {{env_requirement_1}}
-- {{env_requirement_2}}
+- use stable test fixtures where possible for convergence and gate behavior
+- keep private-key or live-provider prerequisites out of the main proof row set unless explicitly justified
 
 ## Related Docs
-- Design contract: `{{design_doc}}`
-- WBS / milestone mapping: `{{wbs_doc}}`
-- Sprint / execution plan: `{{sprint_doc}}`
-- Release / checklist context: `{{release_or_checklist_doc}}`
-- Other proof-surface docs: {{other_related_docs}}
+- Design contract: `DESIGN_v0.89.md`
+- WBS / milestone mapping: `WBS_v0.89.md`
+- Sprint / execution plan: `SPRINT_v0.89.md`
+- Release / checklist context: `MILESTONE_CHECKLIST_v0.89.md`
+- Other proof-surface docs: `FEATURE_DOCS_v0.89.md`
 
 ## Demo Coverage Summary
 
-Use this table as the fast review surface for milestone coverage.
-
 | Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
 |---|---|---|---|---|---|---|---|
-| D1 | {{demo_title_1}} | {{claim_or_wp_1}} | `{{command_stub_1}}` | `{{proof_surface_1}}` | {{success_signal_1}} | {{determinism_note_1}} | {{status_1}} |
-| D2 | {{demo_title_2}} | {{claim_or_wp_2}} | `{{command_stub_2}}` | `{{proof_surface_2}}` | {{success_signal_2}} | {{determinism_note_2}} | {{status_2}} |
-| D3 | {{demo_title_3}} | {{claim_or_wp_3}} | `{{command_stub_3}}` | `{{proof_surface_3}}` | {{success_signal_3}} | {{determinism_note_3}} | {{status_3}} |
+| D1 | AEE convergence walkthrough | `WP-02` bounded convergence and stop conditions | `#1747` will land the canonical entry point | convergence artifact + output record | reviewer can see converge / stall / bounded-out behavior | use deterministic fixtures for repeated stop-state verification | PLANNED |
+| D2 | Freedom Gate v2 judgment demo | `WP-03` richer allow / defer / refuse / escalate behavior | `#1748` will land the canonical entry point | gate artifact + trace | reviewer can distinguish decision outcomes and rationale | stable test cases should replay to the same outcome class | PLANNED |
+| D3 | Decision + action mediation proof | `WP-04` - `WP-05` explicit choice and authorization boundary | `#1749` / `#1750` will land the canonical entry point | decision record + mediation artifact | reviewer can see model intent separated from authorized action | deterministic fixtures should preserve approval / rejection path | PLANNED |
+| D4 | Skill invocation contract demo | `WP-06` bounded skill execution protocol | `#1751` will land the canonical entry point | invocation artifact + trace | invocation lifecycle is reviewer-legible end to end | replay should preserve lifecycle structure | PLANNED |
+| D5 | Experiment record demo | `WP-07` governed adopt / reject improvement behavior | `#1752` will land the canonical entry point | experiment record artifact | reviewer can inspect baseline, variant, evidence, and decision | paired fixture runs should be stably comparable | PLANNED |
+| D6 | ObsMem evidence and ranking walkthrough | `WP-08` explainable retrieval and ranking | `#1753` will land the canonical entry point | retrieval explanation artifact | ranking cites evidence families and provenance | tie-break behavior should be stable under replay | PLANNED |
+| D7 | Security / trust / posture walkthrough | `WP-09` main-band security contract | `#1754` / `#1756` will land the canonical review/demo surface | reviewer-facing threat/posture/trust artifact set | reviewer can see explicit trust boundaries and declared posture | proof row may be document/artifact driven rather than fully executable | PLANNED |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -71,140 +70,98 @@ Status guidance:
 - `LANDED` = milestone evidence exists and is ready for review
 
 ## Coverage Rules
-- Every major milestone claim should map to a runnable demo or an explicit alternate proof surface.
-- Every demo should name one primary proof surface that a reviewer can inspect directly.
-- Commands should be copy/paste-ready and should not require private local state.
-- Success signals should say what to check, not just “command exits 0”.
-- Determinism / replay notes should explain how stability is judged.
+- every major milestone claim should map to a runnable demo or an explicit alternate proof surface
+- every demo should name one primary proof surface that a reviewer can inspect directly
+- commands should become copy/paste-ready as the issue wave lands
+- success signals should describe what to inspect, not only process exit codes
 
 ## Demo Details
 
-Repeat one block per demo in the coverage summary.
-
-### {{demo_id_1}}) {{demo_title_1}}
+### D1) AEE convergence walkthrough
 
 Description:
-- {{demo_description_1}}
-- {{demo_description_1b}}
+- demonstrate bounded convergence, stall, and bounded-out semantics
+- show why another iteration is or is not justified
 
 Milestone claims / work packages covered:
-- {{claim_detail_1a}}
-- {{claim_detail_1b}}
+- `WP-02`
+- bounded adaptive execution is a real surface, not a retry story
 
 Commands to run:
 
 ```bash
-{{demo_commands_1}}
+Provided by `#1747` when the `WP-02` implementation issue lands.
 ```
 
 Expected artifacts:
-- `{{artifact_1a}}`
-- `{{artifact_1b}}`
-- `{{artifact_1c}}`
+- convergence artifact path established by `WP-02`
+- reviewer-facing run summary established by `WP-02`
 
 Primary proof surface:
-- `{{primary_proof_surface_1}}`
-
-Secondary proof surfaces:
-- `{{secondary_proof_surface_1a}}`
-- `{{secondary_proof_surface_1b}}`
+- convergence artifact and linked output record
 
 Expected success signals:
-- {{success_detail_1a}}
-- {{success_detail_1b}}
+- reviewer can distinguish progress vs repetition
+- stop condition is explicit and justified
 
 Determinism / replay notes:
-- {{determinism_detail_1a}}
-- {{determinism_detail_1b}}
+- the same fixture should preserve the same convergence-state class
 
 Reviewer checks:
-- {{reviewer_check_1a}}
-- {{reviewer_check_1b}}
+- look for explicit convergence or stall reasoning
+- verify that budget/policy stop states are visible
 
 Known limits / caveats:
-- {{caveat_1}}
+- first-pass planning row only; command surface is now owned by `#1747` but not yet landed
 
 ---
 
-### {{demo_id_2}}) {{demo_title_2}}
+### D2) Freedom Gate v2 judgment demo
 
 Description:
-- {{demo_description_2}}
+- show a bounded governed judgment sequence with richer outcome classes
 
 Milestone claims / work packages covered:
-- {{claim_detail_2a}}
+- `WP-03`
+- `WP-04`
 
 Commands to run:
 
 ```bash
-{{demo_commands_2}}
+Provided by `#1748` and `#1749` when the gate/decision implementation issues land.
 ```
 
 Expected artifacts:
-- `{{artifact_2a}}`
-- `{{artifact_2b}}`
+- gate artifact path established by the gate implementation wave
+- decision record path established by the decision implementation wave
 
 Primary proof surface:
-- `{{primary_proof_surface_2}}`
+- gate artifact and decision record pair
 
 Expected success signals:
-- {{success_detail_2a}}
+- reviewer can see allow / defer / refuse / escalate distinctions
 
 Determinism / replay notes:
-- {{determinism_detail_2a}}
+- stable fixtures should preserve outcome class and rationale shape
 
 Reviewer checks:
-- {{reviewer_check_2a}}
+- verify the gate is a substrate boundary, not just prompt rhetoric
 
 Known limits / caveats:
-- {{caveat_2}}
-
----
-
-### {{demo_id_3}}) {{demo_title_3}}
-
-Description:
-- {{demo_description_3}}
-
-Milestone claims / work packages covered:
-- {{claim_detail_3a}}
-
-Commands to run:
-
-```bash
-{{demo_commands_3}}
-```
-
-Expected artifacts:
-- `{{artifact_3a}}`
-
-Primary proof surface:
-- `{{primary_proof_surface_3}}`
-
-Expected success signals:
-- {{success_detail_3a}}
-
-Determinism / replay notes:
-- {{determinism_detail_3a}}
-
-Reviewer checks:
-- {{reviewer_check_3a}}
-
-Known limits / caveats:
-- {{caveat_3}}
+- richer moral/constitutional layers remain later-band work
 
 ## Cross-Demo Validation
 
 Required baseline validation:
 
 ```bash
-{{baseline_validation_commands}}
+TBD after the implementation issues land. The seeded issue wave now exists; the final matrix should name the canonical smoke suite and any required deterministic fixtures using the landed issue outputs.
 ```
 
 Cross-demo checks:
-- {{cross_demo_check_1}}
-- {{cross_demo_check_2}}
-- {{cross_demo_check_3}}
+- convergence claims use the same stop-state vocabulary as the feature docs and WBS
+- gate / decision / action demos agree on outcome classes and authority boundaries
+- security/trust/posture proof rows do not overclaim adversarial runtime work that belongs to `v0.89.2`
 
 Failure policy:
 - If one demo is blocked, record the blocker and say whether milestone review can proceed with an alternate proof surface.
@@ -213,20 +170,20 @@ Failure policy:
 ## Determinism Evidence
 
 Evidence directory / run root:
-- `{{evidence_root}}`
+- `TBD by implementation issues #1747` through `#1758`
 
 Repeatability approach:
-- {{repeatability_rule_1}}
-- {{repeatability_rule_2}}
+- prefer stable fixtures or bounded local/provider shims
+- explain whether determinism means byte stability, stable ordering, or stable outcome class
 
 Normalization rules:
-- {{normalization_rule_1}}
-- {{normalization_rule_2}}
+- normalize timestamps, generated IDs, or provider-specific volatile fields when needed
+- keep normalization explicit and reviewable rather than hidden in prose
 
 Observed results summary:
-- {{determinism_result_1}}
-- {{determinism_result_2}}
-- {{determinism_result_3}}
+- not yet available in this planning pass
+- must be filled only from actual demo validation tied to the seeded issue wave
+- should distinguish runnable proof from alternate document/artifact proof
 
 ## Reviewer Sign-Off Surface
 
@@ -238,15 +195,15 @@ For each demo, the reviewer should be able to answer:
 - What caveats or substitutions apply?
 
 Review owners:
-- {{review_owner_1}}
-- {{review_owner_2}}
+- Daniel Austin
+- later third-party reviewer(s) as appropriate
 
 Review status:
-- {{review_status_note}}
+- planning pass complete; implementation and validation pending
 
 ## Notes
-- {{note_1}}
-- {{note_2}}
+- this matrix is intentionally specific enough to seed demo issues without pretending the demos already exist
+- `v0.89.2` adversarial runtime demos should not be silently folded into this matrix without an explicit scope decision
 
 ## Exit Criteria
 - The milestone’s major claims are mapped to bounded demos or explicit alternate proof surfaces.

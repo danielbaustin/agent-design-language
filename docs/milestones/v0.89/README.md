@@ -1,130 +1,165 @@
-# Milestone README Template
+# Milestone README - v0.89
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+- Milestone: `v0.89`
+- Version: `v0.89`
+- Date: `2026-04-12`
+- Owner: `Daniel Austin`
 
 ## Purpose
-Provide a single entry point for the milestone: what it is, why it matters, what is included, and how to navigate the canonical documents and artifacts.
 
-## How To Use
-- Start here before reading individual milestone documents.
-- Use this README to locate the canonical design, execution, and validation surfaces.
-- Keep this document concise and navigational; detailed content belongs in the linked docs.
-- Keep links up to date as files move or are renamed.
+Provide the canonical entry point for the `v0.89` milestone package.
+
+`v0.89` is where ADL moves from bounded cognition and persistence into governed adaptive behavior:
+- AEE becomes a real bounded convergence subsystem
+- Freedom Gate becomes a richer judgment boundary
+- action, decision, skill, and security surfaces become explicit enough to drive implementation rather than prose-only intent
 
 ## Overview
 
-`{{milestone}}` represents the stage where `{{project_name}}` moves from `{{previous_state}}` to `{{target_state}}`.
+`v0.89` represents the stage where ADL moves from:
+- bounded cognition, persistence, and instinct shaping
+
+into:
+- governed adaptive execution with explicit decision, action, skill, and security contracts
 
 This milestone focuses on:
-- {{focus_1}}
-- {{focus_2}}
-- {{focus_3}}
+- AEE 1.0 convergence
+- Freedom Gate v2 and decision/action mediation
+- skill execution contracts, experiment records, and security/threat planning
 
 Key outcomes:
-- {{outcome_1}}
-- {{outcome_2}}
-- {{outcome_3}}
+- a real tracked feature package for the `v0.89` core band
+- a coherent WBS and sprint plan that map feature docs to executable work
+- explicit carry-forward of adversarial runtime proof work into `v0.89.2`
 
 ## Scope Summary
 
 ### In scope
-- {{in_scope_1}}
-- {{in_scope_2}}
-- {{in_scope_3}}
+- convergence and stop-condition semantics for AEE 1.0
+- richer Freedom Gate and decision/action mediation surfaces
+- skill model, skill invocation protocol, experiment records, ObsMem evidence/ranking
+- security, trust, and posture planning sufficient to seed implementation issues
 
 ### Out of scope
-- {{out_of_scope_1}}
-- {{out_of_scope_2}}
+- full adversarial runtime / exploit-replay package in the main `v0.89` band
+- later identity, capability, and governance completion bands (`v0.92+`)
 
 ## Document Map
 
 Canonical milestone documents:
+- Vision: `VISION_v0.89.md`
+- Design: `DESIGN_v0.89.md`
+- Work Breakdown Structure (WBS): `WBS_v0.89.md`
+- Feature index: `FEATURE_DOCS_v0.89.md`
+- Sprint plan: `SPRINT_v0.89.md`
+- Decisions log: `DECISIONS_v0.89.md`
+- Demo matrix: `DEMO_MATRIX_v0.89.md`
+- Milestone checklist: `MILESTONE_CHECKLIST_v0.89.md`
+- Release plan / process: `RELEASE_PLAN_v0.89.md`
+- Release notes: `RELEASE_NOTES_v0.89.md`
 
-- Vision: `{{vision_doc}}`
-- Design: `{{design_doc}}`
-- Work Breakdown Structure (WBS): `{{wbs_doc}}`
-- Sprint plan: `{{sprint_doc}}`
-- Decisions log: `{{decisions_doc}}`
-- Demo matrix: `{{demo_matrix_doc}}`
-- Milestone checklist: `{{checklist_doc}}`
-- Release plan / process: `{{release_process_doc}}`
-- Release notes: `{{release_notes_doc}}`
+Tracked feature docs:
+- `features/AEE_CONVERGENCE_MODEL.md`
+- `features/FREEDOM_GATE_V2.md`
+- `features/DECISION_SURFACES.md`
+- `features/DECISION_SCHEMA.md`
+- `features/ACTION_MEDIATION_LAYER.md`
+- `features/ACTION_PROPOSAL_SCHEMA.md`
+- `features/SKILL_MODEL.md`
+- `features/SKILL_EXECUTION_PROTOCOL.md`
+- `features/GODEL_EXPERIMENT_SYSTEM.md`
+- `features/OBSMEM_EVIDENCE_AND_RANKING.md`
+- `features/SECURITY_AND_THREAT_MODELING.md`
+- `features/ADL_SECURITY_POSTURE_MODEL.md`
+- `features/ADL_TRUST_MODEL_UNDER_ADVERSARY.md`
 
-Supporting / domain-specific docs:
-- {{supporting_doc_1}}
-- {{supporting_doc_2}}
-- {{supporting_doc_3}}
+Supporting local planning inputs:
+- `.adl/docs/v0.89planning/*`
+- `.adl/docs/v0.89.2planning/*`
 
 ## Execution Model
 
-This milestone is executed as a sequence of work packages (WPs):
-
-- WP-01: Design pass (docs + planning)
-- WP-02 - WP-12: Feature and system work
-- WP-13: Demo matrix and integration demos
-- WP-14: Coverage / quality gate
-- WP-15: Docs and review convergence
-- WP-16: Release ceremony
+This milestone is executed as a sequence of work packages:
+- `WP-01`: milestone design pass and canonical package completion
+- `WP-02` - `WP-09`: core feature band
+- `WP-10` - `WP-12`: demoability, milestone convergence, and `v0.89.2` handoff
+- `WP-13`: demo matrix + integration demos
+- `WP-14`: quality gate
+- `WP-15`: docs + review convergence
+- `WP-16`: release ceremony
 
 Execution expectations:
-- Each WP is tracked by an issue and implemented via PRs.
-- Each issue produces structured artifacts (input/output cards, reports).
-- All work merges under green CI and passes quality gates.
+- each substantive WP gets a bounded issue and PR
+- promoted feature docs resolve to implementation, proofs, or explicit defer records
+- carry-forward to `v0.89.2` is explicit rather than implied
 
 ## Demo and Validation Surface
 
 Primary validation is defined in:
-- Demo matrix: `{{demo_matrix_doc}}`
+- `DEMO_MATRIX_v0.89.md`
 
 Additional validation surfaces:
-- Test suite results
-- Generated artifacts under `.adl/runs/`
-- Trace and replay outputs
+- tests and reviewer-facing artifacts
+- trace/replay evidence for convergence and gate behavior
+- issue/PR wave proving the core package actually lands
 
 Success criteria:
-- {{success_criteria_1}}
-- {{success_criteria_2}}
-- {{success_criteria_3}}
+- the milestone package tells one consistent story across README, design, WBS, sprint, and feature docs
+- every promoted feature doc has an implementation home in the WBS
+- every non-promoted source planning doc has an explicit later home
 
 ## Determinism and Reproducibility
 
 The milestone should demonstrate:
-- Deterministic or bounded-repeatable execution where required
-- Replayable traces and inspectable artifacts
-- Stable command entry points for demos
+- bounded-repeatable convergence behavior
+- explicit decision and action records
+- replayable or reviewer-legible proof surfaces for the main milestone claims
 
 Evidence locations:
-- {{determinism_evidence_path_1}}
-- {{determinism_evidence_path_2}}
+- `DEMO_MATRIX_v0.89.md`
+- issue outputs and run artifacts under `.adl/`
 
 ## Risks and Open Questions
 
 Known risks:
-- {{risk_1}}
-- {{risk_2}}
+- `v0.89` can blur together too many governance, security, and reasoning concepts if the scope boundary against `v0.89.2` is not maintained
+- the feature band is conceptually strong but still early in implementation, so issue-wave discipline matters
 
 Open questions:
-- {{open_question_1}}
-- {{open_question_2}}
+- how much of the security posture / trust package lands in `v0.89` code versus remaining design-contract work
+- which proof surfaces are enough for `v0.89` itself versus intentionally deferred to `v0.89.2`
 
 ## Status
 
-Current status: {{status}}
+Current status: planning package and execution issue wave seeded
 
-- Planning: {{planning_status}}
-- Execution: {{execution_status}}
-- Validation: {{validation_status}}
-- Release readiness: {{release_status}}
+- Planning: active
+- Execution: issueized through `WP-16`; implementation has not started yet
+- Validation: planned
+- Release readiness: not started
+
+Current issue map:
+- `WP-01` `#1662`
+- `WP-02` `#1747`
+- `WP-03` `#1748`
+- `WP-04` `#1749`
+- `WP-05` `#1750`
+- `WP-06` `#1751`
+- `WP-07` `#1752`
+- `WP-08` `#1753`
+- `WP-09` `#1754`
+- `WP-10` `#1755`
+- `WP-11` `#1756`
+- `WP-12` `#1757`
+- `WP-13` `#1758`
+- `WP-14` `#1759`
+- `WP-15` `#1760`
+- `WP-16` `#1761`
 
 ## Exit Criteria
 
-- All canonical milestone documents are complete and internally consistent.
-- All WBS items are implemented or explicitly deferred.
-- Demo matrix is runnable and validated.
-- Quality gates (fmt, clippy, test, CI) are passing.
-- Milestone checklist is complete or exceptions are documented.
-- Release artifacts (notes, tag, docs) are ready.
+- all canonical milestone documents are complete and internally consistent
+- every in-scope feature doc is mapped to a WBS item
+- every out-of-scope source doc has an explicit later home
+- the issue wave can be seeded directly from this package without reconstructing milestone intent
