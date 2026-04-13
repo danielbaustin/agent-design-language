@@ -1567,6 +1567,21 @@ fn format_offset(offset: FixedOffset) -> String {
 mod tests {
     use super::*;
     use chrono::TimeZone;
+    use std::{
+        env,
+        time::{SystemTime, UNIX_EPOCH},
+    };
+
+    fn unique_temp_path(label: &str) -> PathBuf {
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("time went backwards")
+            .as_nanos();
+        env::temp_dir().join(format!(
+            "chronosense-{label}-{}-{nanos}",
+            std::process::id()
+        ))
+    }
 
     #[test]
     fn identity_profile_derives_local_birth_fields() {
@@ -1584,6 +1599,43 @@ mod tests {
         assert_eq!(profile.birth_weekday_local, "Monday");
         assert_eq!(profile.birth_timezone, "America/Los_Angeles");
         assert_eq!(profile.continuity_mode, "repo_local_persistent");
+    }
+
+    #[test]
+    fn identity_profile_rejects_invalid_birthday_timezone_and_empty_fields() {
+        let err = IdentityProfile::from_birthday(
+            "codex",
+            "Codex",
+            "not-a-date",
+            "America/Los_Angeles",
+            "daniel",
+        )
+        .expect_err("invalid RFC3339 should fail");
+        assert!(err
+            .to_string()
+            .contains("invalid RFC3339 datetime 'not-a-date'"));
+
+        let err = IdentityProfile::from_birthday(
+            "codex",
+            "Codex",
+            "2026-03-30T13:34:00-07:00",
+            "Mars/Olympus",
+            "daniel",
+        )
+        .expect_err("invalid timezone should fail");
+        assert!(err
+            .to_string()
+            .contains("unsupported timezone 'Mars/Olympus'"));
+
+        let err = IdentityProfile::from_birthday(
+            "  ",
+            "Codex",
+            "2026-03-30T13:34:00-07:00",
+            "America/Los_Angeles",
+            "daniel",
+        )
+        .expect_err("empty identity field should fail");
+        assert!(err.to_string().contains("agent_id must not be empty"));
     }
 
     #[test]
@@ -1610,12 +1662,97 @@ mod tests {
     }
 
     #[test]
+    fn temporal_context_rejects_identity_with_invalid_persisted_birthday() {
+        let profile = IdentityProfile {
+            schema_version: IDENTITY_PROFILE_SCHEMA.to_string(),
+            agent_id: "codex".to_string(),
+            display_name: "Codex".to_string(),
+            birthday_rfc3339: "bad-value".to_string(),
+            birth_date_local: "2026-03-30".to_string(),
+            birth_weekday_local: "Monday".to_string(),
+            birth_timezone: "America/Los_Angeles".to_string(),
+            created_by: "daniel".to_string(),
+            continuity_mode: "repo_local_persistent".to_string(),
+        };
+        let now_utc = Utc.with_ymd_and_hms(2026, 3, 31, 20, 0, 0).unwrap();
+
+        let err = TemporalContext::from_now(now_utc, "America/Los_Angeles", Some(&profile))
+            .expect_err("invalid persisted birthday should fail");
+        assert!(err
+            .to_string()
+            .contains("invalid RFC3339 datetime 'bad-value'"));
+    }
+
+    #[test]
     fn default_identity_profile_path_is_repo_relative() {
         let path = default_identity_profile_path(Path::new("/repo"));
         assert_eq!(
             path,
             PathBuf::from("/repo/adl/identity/identity_profile.v1.json")
         );
+    }
+
+    #[test]
+    fn write_identity_profile_creates_parent_dirs_and_load_round_trips() {
+        let root = unique_temp_path("identity-profile-roundtrip");
+        let path = root.join("adl/identity/identity_profile.v1.json");
+        let profile = IdentityProfile::from_birthday(
+            "codex",
+            "Codex",
+            "2026-03-30T13:34:00-07:00",
+            "America/Los_Angeles",
+            "daniel",
+        )
+        .expect("profile");
+
+        write_identity_profile(&path, &profile).expect("write identity profile");
+        let loaded = load_identity_profile(&path).expect("load identity profile");
+
+        assert_eq!(loaded.agent_id, "codex");
+        assert_eq!(loaded.birth_timezone, "America/Los_Angeles");
+        assert_eq!(loaded.birthday_rfc3339, "2026-03-30T13:34:00-07:00");
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_identity_profile_rejects_malformed_json_and_unsupported_schema() {
+        let malformed_root = unique_temp_path("identity-profile-malformed");
+        let malformed_path = malformed_root.join("identity_profile.v1.json");
+        fs::create_dir_all(&malformed_root).expect("create malformed root");
+        fs::write(&malformed_path, b"{not json").expect("write malformed profile");
+
+        let err = load_identity_profile(&malformed_path).expect_err("malformed JSON should fail");
+        assert!(err.to_string().contains("failed to parse identity profile"));
+
+        let unsupported_root = unique_temp_path("identity-profile-unsupported");
+        let unsupported_path = unsupported_root.join("identity_profile.v1.json");
+        fs::create_dir_all(&unsupported_root).expect("create unsupported root");
+        fs::write(
+            &unsupported_path,
+            serde_json::to_vec_pretty(&serde_json::json!({
+                "schema_version": "identity_profile.v0",
+                "agent_id": "codex",
+                "display_name": "Codex",
+                "birthday_rfc3339": "2026-03-30T20:34:00+00:00",
+                "birth_date_local": "2026-03-30",
+                "birth_weekday_local": "Monday",
+                "birth_timezone": "America/Los_Angeles",
+                "created_by": "daniel",
+                "continuity_mode": "repo_local_persistent"
+            }))
+            .expect("json bytes"),
+        )
+        .expect("write unsupported profile");
+
+        let err =
+            load_identity_profile(&unsupported_path).expect_err("unsupported schema should fail");
+        assert!(err
+            .to_string()
+            .contains("unsupported identity profile schema version 'identity_profile.v0'"));
+
+        let _ = fs::remove_dir_all(malformed_root);
+        let _ = fs::remove_dir_all(unsupported_root);
     }
 
     #[test]
