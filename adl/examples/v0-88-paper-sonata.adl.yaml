@@ -1,0 +1,210 @@
+version: "0.5"
+
+providers:
+  local_mock:
+    profile: "mock:echo-v1"
+
+agents:
+  conductor:
+    provider: "local_mock"
+    model: "echo-v1"
+  scholar:
+    provider: "local_mock"
+    model: "echo-v1"
+  analyst:
+    provider: "local_mock"
+    model: "echo-v1"
+  composer:
+    provider: "local_mock"
+    model: "echo-v1"
+  editor:
+    provider: "local_mock"
+    model: "echo-v1"
+
+tasks:
+  conductor_plan:
+    prompt:
+      user: |
+        {
+          "schema_version": "paper_sonata.plan.v1",
+          "packet_id": "paper_sonata.synthetic_packet.v1",
+          "workflow_id": "v0-88-paper-sonata-demo",
+          "roles": [
+            "conductor",
+            "scholar",
+            "analyst",
+            "composer",
+            "editor"
+          ],
+          "stage_order": [
+            "conductor.plan",
+            "conductor.outline",
+            "scholar.literature_review",
+            "analyst.results_summary",
+            "composer.sections",
+            "editor.review"
+          ],
+          "manuscript_sections": [
+            "intro",
+            "method",
+            "results",
+            "discussion"
+          ],
+          "guardrails": [
+            "synthetic packet only",
+            "no live-web citation claims",
+            "no publication-readiness claims",
+            "preserve intermediate artifacts"
+          ]
+        }
+  conductor_outline:
+    prompt:
+      user: |
+        # Paper Sonata Outline
+
+        ## Workflow claim
+        This bounded demo turns one synthetic research packet into a manuscript package
+        without hiding intermediate role outputs.
+
+        ## Sections
+        1. Introduction
+        2. Method
+        3. Results
+        4. Discussion
+
+        ## Role handoff notes
+        - scholar synthesizes bounded prior-work themes from the synthetic packet
+        - analyst states which claims are and are not supported by the synthetic experiment log
+        - composer drafts four manuscript sections
+        - editor critiques unsupported claims, coherence, and overreach
+  scholar_literature_review:
+    prompt:
+      user: |
+        # Literature Review
+
+        ## Bounded themes
+        - workflow provenance matters when multi-agent writing systems emit many artifacts
+        - deterministic replay matters when reviewers need to inspect what happened
+
+        ## Packet-grounded synthesis
+        The synthetic packet frames the paper around temporal state anchors for
+        reproducible manuscript assembly rather than general scientific autonomy.
+
+        ## Citation posture
+        This flagship demo uses a bounded citation seed and does not claim live-web coverage
+        or publication-ready bibliography quality.
+  analyst_results_summary:
+    prompt:
+      user: |
+        # Results Summary
+
+        ## Supported findings
+        - anchored execution reduced dropped handoff fields from 3 to 0 in the synthetic study
+        - reviewer correction time fell from 18 minutes to 7 minutes
+        - replay consistency remained stable at 1.00 for repeated fixture runs
+
+        ## Unsupported claims
+        - broad generalization to arbitrary scientific domains
+        - journal-ready citation authority
+
+        ## Analyst note
+        The bounded evidence supports a narrow manuscript about reproducible multi-agent
+        assembly under explicit state anchors.
+  composer_intro:
+    prompt:
+      user: |
+        # Introduction
+
+        Multi-agent writing demos often skip the hardest reviewer question:
+        what actually happened between the initial packet and the final draft.
+        Paper Sonata presents a bounded answer by preserving explicit role outputs,
+        fixed artifact layout, and trace-backed runtime evidence for a single synthetic packet.
+  composer_method:
+    prompt:
+      user: |
+        # Method
+
+        The workflow uses five bounded roles: conductor, scholar, analyst, composer, and editor.
+        Each role writes one attributable artifact, and the manuscript package retains those
+        artifacts rather than collapsing them into a single opaque final draft.
+  composer_results:
+    prompt:
+      user: |
+        # Results
+
+        The synthetic study indicates that explicit temporal anchors preserved every expected
+        handoff field, reduced reviewer repair time, and kept replay outcomes stable across
+        repeated bounded executions.
+  composer_discussion:
+    prompt:
+      user: |
+        # Discussion
+
+        The flagship result is not autonomous science.
+        The result is a bounded and inspectable manuscript-assembly workflow whose runtime
+        evidence is strong enough for serious review and outward-facing demonstration.
+  editor_review:
+    prompt:
+      user: |
+        # Review Notes
+
+        ## Strengths
+        - the workflow keeps intermediate artifacts visible
+        - the draft stays aligned with the bounded synthetic evidence
+        - the manuscript does not overclaim live citation or publication authority
+
+        ## Required cautions
+        - keep the framing on manuscript assembly, not discovery
+        - preserve the unsupported-claims note in reviewer-facing summaries
+        - show the manifest and trace bundle alongside the draft package
+
+run:
+  name: "v0-88-paper-sonata-demo"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "paper_sonata.conductor.plan"
+        agent: "conductor"
+        task: "conductor_plan"
+        save_as: "paper_sonata_plan"
+        write_to: "roles/01-conductor-plan.json"
+      - id: "paper_sonata.conductor.outline"
+        agent: "conductor"
+        task: "conductor_outline"
+        save_as: "paper_sonata_outline"
+        write_to: "roles/02-conductor-outline.md"
+      - id: "paper_sonata.scholar.review"
+        agent: "scholar"
+        task: "scholar_literature_review"
+        save_as: "paper_sonata_literature_review"
+        write_to: "roles/03-scholar-literature-review.md"
+      - id: "paper_sonata.analyst.summary"
+        agent: "analyst"
+        task: "analyst_results_summary"
+        save_as: "paper_sonata_results_summary"
+        write_to: "roles/04-analyst-results-summary.md"
+      - id: "paper_sonata.composer.intro"
+        agent: "composer"
+        task: "composer_intro"
+        save_as: "paper_sonata_intro"
+        write_to: "roles/05-composer-intro.md"
+      - id: "paper_sonata.composer.method"
+        agent: "composer"
+        task: "composer_method"
+        save_as: "paper_sonata_method"
+        write_to: "roles/06-composer-method.md"
+      - id: "paper_sonata.composer.results"
+        agent: "composer"
+        task: "composer_results"
+        save_as: "paper_sonata_results"
+        write_to: "roles/07-composer-results.md"
+      - id: "paper_sonata.composer.discussion"
+        agent: "composer"
+        task: "composer_discussion"
+        save_as: "paper_sonata_discussion"
+        write_to: "roles/08-composer-discussion.md"
+      - id: "paper_sonata.editor.review"
+        agent: "editor"
+        task: "editor_review"
+        save_as: "paper_sonata_review_notes"
+        write_to: "roles/09-editor-review-notes.md"

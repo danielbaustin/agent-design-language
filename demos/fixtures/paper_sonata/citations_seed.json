@@ -1,0 +1,15 @@
+{
+  "schema_version": "paper_sonata.citations_seed.v1",
+  "items": [
+    {
+      "citation_id": "seed-01",
+      "theme": "workflow provenance",
+      "note": "Reviewers need explicit stage artifacts and derivation paths."
+    },
+    {
+      "citation_id": "seed-02",
+      "theme": "deterministic replay",
+      "note": "The same bounded packet should preserve workflow structure across reruns."
+    }
+  ]
+}

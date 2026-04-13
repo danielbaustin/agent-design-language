@@ -1,0 +1,13 @@
+{
+  "schema_version": "paper_sonata.synthetic_results.v1",
+  "study_id": "packet-anchor-eval",
+  "metrics": {
+    "dropped_handoff_fields_baseline": 3,
+    "dropped_handoff_fields_anchored": 0,
+    "reviewer_minutes_baseline": 18,
+    "reviewer_minutes_anchored": 7,
+    "replay_consistency_score": 1.0
+  },
+  "supported_claim": "explicit temporal anchors improved bounded manuscript-assembly reproducibility",
+  "unsupported_claim": "broad scientific autonomy"
+}

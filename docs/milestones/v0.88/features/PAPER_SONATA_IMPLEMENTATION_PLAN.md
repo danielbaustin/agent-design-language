@@ -112,3 +112,23 @@ The `v0.88` implementation slice is complete when:
 - the artifact layout is fixed and reviewable
 - the demo matrix points to the real proof surface
 - the resulting package is strong enough to function as a flagship milestone demo
+
+## Implemented v0.88 Surface
+
+Runner:
+- `adl/tools/demo_v088_paper_sonata.sh`
+
+Smoke path:
+- `adl/tools/test_demo_v088_paper_sonata.sh`
+
+Repo-tracked packet:
+- `demos/fixtures/paper_sonata/`
+
+Runtime workflow definition:
+- `adl/examples/v0-88-paper-sonata.adl.yaml`
+
+Primary proof outputs:
+- `artifacts/v088/paper_sonata/demo_manifest.json`
+- `artifacts/v088/paper_sonata/manuscript_package/paper_draft.md`
+- `artifacts/v088/paper_sonata/out/roles/`
+- `artifacts/v088/paper_sonata/runtime/runs/v0-88-paper-sonata-demo/`
