@@ -67,6 +67,7 @@ admission:
     - "sor_path"
     - "pr_state"
     - "stop_boundary"
+    - "dispatch"
   stop_if_missing:
     - "repo_root"
   require_one_of:
@@ -84,7 +85,7 @@ admission:
     - "policy.subagent_requirement_must_be_explicit"
     - "policy.allow_phase_inference_must_be_explicit"
 execution:
-  mode: "route_only"
+  mode: "route_and_dispatch_bounded_subtasks"
   allow_code_edits: false
   allow_network: true
   allow_subagents: true
@@ -93,7 +94,7 @@ execution:
     - "python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <validated-json>"
     - "python3 adl/tools/skills/workflow-conductor/scripts/select_next_skill.py"
     - "adl/tools/open_artifact.sh"
-  preferred_path: "inspect_state_then_route_without_executing_the_selected_skill"
+  preferred_path: "inspect_state_then_route_and_optionally_dispatch_one_bounded_downstream_skill"
   invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
 boundaries:
   writes_limited_to:
@@ -114,6 +115,7 @@ outputs:
     - "selected_skill"
     - "workflow_compliance"
     - "handoff_state"
+    - "dispatch"
 security:
   trusted_root_required: true
   deny_symlink_escape: true

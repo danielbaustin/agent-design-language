@@ -10,9 +10,10 @@ The conductor should:
 - apply skill/editor/subagent policy
 - classify known blocker families when doctor or PR evidence makes them clear
 - write one bounded routing artifact
-- stop after routing and compliance recording
+- optionally invoke one bounded downstream skill subtask
+- stop at that routing/dispatch boundary
 
-It should not perform the selected skill's underlying work.
+It should not perform the selected skill's underlying work itself.
 
 ## Routing Order
 
@@ -84,7 +85,13 @@ synthetic or real state snapshots. That helper must:
 - never perform the selected skill's underlying work
 - remain bounded to routing/compliance facts
 
-The bundle may also use a route-only collection entrypoint to derive those
+The bundle may also use a state-collection entrypoint to derive those
 state snapshots from a real issue, task bundle, branch, worktree, or PR.
 That collector must remain read-mostly, except for writing the declared routing
 artifact.
+
+When explicit dispatch mode is enabled, the conductor may call the selected
+downstream skill through one bounded subtask command. That dispatch must:
+- preserve the modular skill boundary
+- record the selected skill and downstream result
+- stop after the first downstream subtask instead of chaining more work

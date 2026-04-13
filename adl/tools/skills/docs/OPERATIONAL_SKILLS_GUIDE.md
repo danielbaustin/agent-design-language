@@ -121,7 +121,8 @@ It:
 - applies skill/editor/subagent policy
 - records workflow-compliance facts
 - writes one bounded routing artifact
-- stops before performing the selected skill's underlying work
+- may invoke one bounded downstream skill subtask when explicit dispatch mode is enabled
+- stops without absorbing the selected skill's underlying work
 
 ### When To Use It
 
@@ -195,7 +196,7 @@ observed_state:
 - it should route into `pr-*` or editor skills rather than reimplementing them
 - it is the best place to apply the execution-policy ideas for required skills, card editors, and subagents
 - it should return explicit `continue`, `ask_operator`, or `stop` handoff intent rather than leaving escalation implicit
-- the preferred route-only entrypoint is `python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <validated-json>`
+- the preferred route/dispatch entrypoint is `python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <validated-json>`
 
 `ready` and `preflight` are compatibility aliases that may still exist in repo
 surfaces, but doctor JSON is the canonical structured automation surface.

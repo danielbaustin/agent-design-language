@@ -27,6 +27,20 @@ policy:
   stop_after_routing: true
 observed_state:
   subagent_assigned: true | false
+dispatch:
+  mode: route_only | plan_subtask | invoke_subtask
+  allow_builtin_dispatch: true | false
+  timeout_secs: <positive integer optional>
+  command_overrides:
+    pr-init: [<argv token>, ...] optional
+    pr-ready: [<argv token>, ...] optional
+    pr-run: [<argv token>, ...] optional
+    pr-finish: [<argv token>, ...] optional
+    pr-janitor: [<argv token>, ...] optional
+    pr-closeout: [<argv token>, ...] optional
+    stp-editor: [<argv token>, ...] optional
+    sip-editor: [<argv token>, ...] optional
+    sor-editor: [<argv token>, ...] optional
 ```
 
 ## Purpose
@@ -39,9 +53,10 @@ The conductor should:
 - apply workflow policy
 - write one bounded routing artifact
 - classify known blocker families from doctor, PR, explicit related-issue references, or repo-policy residue when safe
-- stop after routing
+- optionally dispatch one bounded downstream skill subtask
+- stop at that routing/dispatch boundary
 
-It should not perform the selected skill's implementation work.
+It should not absorb the selected skill's implementation work into the conductor itself.
 
 ## Supported Modes
 
@@ -122,8 +137,9 @@ The conductor must stop after:
 - policy application
 - routing-artifact emission
 - workflow-compliance recording
+- optional single-subtask dispatch result capture
 
 It must not:
-- silently execute the selected lifecycle skill
+- silently chain several downstream skills
 - reimplement the selected skill's logic
 - widen into unrelated issue work
