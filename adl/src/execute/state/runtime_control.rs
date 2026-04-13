@@ -87,6 +87,15 @@ pub struct AgencyCandidateRecord {
     pub rationale: String,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AgencySelectionDecisionTemplate {
+    pub selection_mode: &'static str,
+    pub candidate_id: &'static str,
+    pub candidate_kind: &'static str,
+    pub candidate_action: &'static str,
+    pub candidate_reason: &'static str,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct BoundedExecutionState {
@@ -574,17 +583,22 @@ fn derive_agency_selection_state(
                     review_requirement: "light".to_string(),
                     execution_priority: 2,
                     rationale:
-                        "keep a fallback candidate available without changing the primary fast-path commitment"
+                        "keep a bounded verification candidate available when instinct pressure favors uncertainty reduction or extra constraint checks"
                             .to_string(),
                 },
             ];
+            let decision = select_instinct_runtime_candidate(
+                fast_slow.selected_path.as_str(),
+                signals.dominant_instinct.as_str(),
+                arbitration.risk_class.as_str(),
+            );
             (
-                "fast_candidate_commitment",
+                decision.selection_mode,
                 candidate_set,
-                "cand-fast-execute".to_string(),
-                "direct_execution".to_string(),
-                "execute selected candidate directly under bounded once semantics".to_string(),
-                "fast path prioritizes direct bounded execution when arbitration confidence is high and failure pressure is absent".to_string(),
+                decision.candidate_id.to_string(),
+                decision.candidate_kind.to_string(),
+                decision.candidate_action.to_string(),
+                decision.candidate_reason.to_string(),
             )
         }
         _ => {
@@ -609,9 +623,8 @@ fn derive_agency_selection_state(
                         "execute the current candidate without additional refinement".to_string(),
                     review_requirement: "minimal".to_string(),
                     execution_priority: 2,
-                    rationale:
-                        "retain the direct-execution alternative as a bounded comparator candidate"
-                            .to_string(),
+                    rationale: "retain the direct-execution alternative when completion pressure can still justify a bounded finish-first move"
+                        .to_string(),
                 },
                 AgencyCandidateRecord {
                     candidate_id: "cand-slow-defer".to_string(),
@@ -621,18 +634,22 @@ fn derive_agency_selection_state(
                             .to_string(),
                     review_requirement: "review_required".to_string(),
                     execution_priority: 3,
-                    rationale:
-                        "preserve a bounded non-execution option when policy or review pressure remains elevated"
-                            .to_string(),
+                    rationale: "preserve a bounded non-execution option when curiosity keeps uncertainty high or the system should pause before commitment"
+                        .to_string(),
                 },
             ];
+            let decision = select_instinct_runtime_candidate(
+                fast_slow.selected_path.as_str(),
+                signals.dominant_instinct.as_str(),
+                arbitration.risk_class.as_str(),
+            );
             (
-                "slow_candidate_comparison",
+                decision.selection_mode,
                 candidate_set,
-                "cand-slow-review".to_string(),
-                "review_and_refine".to_string(),
-                "review, refine, or veto the current candidate before execution".to_string(),
-                "slow path makes review/refinement the selected candidate when arbitration requires bounded caution".to_string(),
+                decision.candidate_id.to_string(),
+                decision.candidate_kind.to_string(),
+                decision.candidate_action.to_string(),
+                decision.candidate_reason.to_string(),
             )
         }
     };
@@ -651,6 +668,66 @@ fn derive_agency_selection_state(
         selected_candidate_kind,
         selected_candidate_action,
         selected_candidate_reason,
+    }
+}
+
+pub fn select_instinct_runtime_candidate(
+    selected_path: &str,
+    dominant_instinct: &str,
+    risk_class: &str,
+) -> AgencySelectionDecisionTemplate {
+    match selected_path {
+        "fast_path" => match dominant_instinct {
+            "curiosity" | "integrity" => AgencySelectionDecisionTemplate {
+                selection_mode: "fast_candidate_verification",
+                candidate_id: "cand-fast-verify",
+                candidate_kind: "bounded_verification",
+                candidate_action: "perform one bounded verification pass before execution",
+                candidate_reason:
+                    "fast path stays bounded, but curiosity or integrity pressure upgrades the selected candidate to a single verification pass before execution",
+            },
+            _ => AgencySelectionDecisionTemplate {
+                selection_mode: "fast_candidate_commitment",
+                candidate_id: "cand-fast-execute",
+                candidate_kind: "direct_execution",
+                candidate_action: "execute selected candidate directly under bounded once semantics",
+                candidate_reason:
+                    "fast path prioritizes direct bounded execution when instinct pressure does not require extra verification",
+            },
+        },
+        _ => {
+            if risk_class == "high" || matches!(dominant_instinct, "integrity" | "coherence") {
+                AgencySelectionDecisionTemplate {
+                    selection_mode: "slow_candidate_review",
+                    candidate_id: "cand-slow-review",
+                    candidate_kind: "review_and_refine",
+                    candidate_action:
+                        "review, refine, or veto the current candidate before execution",
+                    candidate_reason:
+                        "slow path keeps review/refinement selected when risk stays high or instinct pressure favors constraint and coherence preservation",
+                }
+            } else if dominant_instinct == "curiosity" {
+                AgencySelectionDecisionTemplate {
+                    selection_mode: "slow_candidate_uncertainty_hold",
+                    candidate_id: "cand-slow-defer",
+                    candidate_kind: "bounded_deferral",
+                    candidate_action:
+                        "defer execution and surface the candidate set for later gate/review stages",
+                    candidate_reason:
+                        "slow path preserves a bounded defer option when curiosity keeps uncertainty reduction more important than immediate execution",
+                }
+            } else {
+                AgencySelectionDecisionTemplate {
+                    selection_mode: "slow_candidate_review",
+                    candidate_id: "cand-slow-review",
+                    candidate_kind: "review_and_refine",
+                    candidate_action:
+                        "review, refine, or veto the current candidate before execution",
+                    candidate_reason:
+                        "slow path keeps review/refinement selected unless curiosity introduces a bounded uncertainty hold",
+                }
+            }
+        }
     }
 }
 
@@ -1056,4 +1133,33 @@ fn load_memory_read_entries(
     });
     entries.truncate(limit);
     entries
+}
+
+#[cfg(test)]
+mod tests {
+    use super::select_instinct_runtime_candidate;
+
+    #[test]
+    fn select_instinct_runtime_candidate_changes_fast_path_for_curiosity() {
+        let decision = select_instinct_runtime_candidate("fast_path", "curiosity", "low");
+
+        assert_eq!(decision.candidate_id, "cand-fast-verify");
+        assert_eq!(decision.candidate_kind, "bounded_verification");
+    }
+
+    #[test]
+    fn select_instinct_runtime_candidate_keeps_review_for_high_risk_slow_path() {
+        let decision = select_instinct_runtime_candidate("slow_path", "completion", "high");
+
+        assert_eq!(decision.candidate_id, "cand-slow-review");
+        assert_eq!(decision.candidate_kind, "review_and_refine");
+    }
+
+    #[test]
+    fn select_instinct_runtime_candidate_allows_curiosity_biased_slow_defer() {
+        let decision = select_instinct_runtime_candidate("slow_path", "curiosity", "medium");
+
+        assert_eq!(decision.candidate_id, "cand-slow-defer");
+        assert_eq!(decision.candidate_kind, "bounded_deferral");
+    }
 }

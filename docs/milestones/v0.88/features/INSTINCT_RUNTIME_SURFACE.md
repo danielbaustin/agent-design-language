@@ -20,27 +20,32 @@ It does not own:
 
 ## Core Runtime Contract
 
-Instinct should exist as an explicit structured surface attached to an agent or execution context.
+`WP-11` owns one bounded, reviewable runtime hook:
+- a shared instinct-sensitive agency-selection rule
+- deterministic candidate shifts inside the already-selected fast / slow path
+- a proof surface that exposes when instinct changed the selected candidate and when policy held it in place
 
-Each instinct entry should make it possible to represent:
-- an identifier
-- a bounded weight or strength
-- optional constraints or enablement state
+Owned runtime surfaces:
+- `adl::execute::select_instinct_runtime_candidate`
+- `adl::execute::AgencySelectionState`
+- `adl::execute::RuntimeControlState`
+- `adl identity instinct-runtime --out .adl/state/instinct_runtime_surface_v1.json`
 
 At runtime:
-- instincts are read during arbitration or planning
-- they influence prioritization or routing in a bounded way
-- they remain subordinate to higher-level policy and safety constraints
+- instinct is read after arbitration and fast / slow path selection
+- instinct may change the selected bounded candidate within that path
+- instinct remains subordinate to risk and policy constraints
 
 ## Observability Requirements
 
 Instinct influence must be visible in trace or derived artifacts.
 
 At minimum, a reviewer should be able to see:
-- which instinct settings were present
-- where they influenced a decision
-- which candidate or route was selected
-- whether policy or governance overrode the instinct pressure
+- which instinct setting was dominant
+- which path had already been selected
+- which candidate was chosen
+- why that candidate was chosen
+- whether risk / policy overrode instinct pressure
 
 If instinct influence is not inspectable, the feature is too implicit to trust.
 
@@ -48,8 +53,8 @@ If instinct influence is not inspectable, the feature is too implicit to trust.
 
 Primary integrations:
 - arbitration
-- fast / slow or equivalent routing surfaces
-- trace emission
+- fast / slow routing surfaces
+- agency candidate selection
 - proof artifacts
 
 Secondary integrations:
@@ -66,18 +71,28 @@ The runtime surface must remain:
 
 Instinct must not become a hidden source of non-deterministic drift.
 
-## Planned Proof Surface
+## Bounded Decision Rule
 
-`v0.88` should include at least one bounded proof path where:
-- two or more candidate actions or routes exist
-- instinct settings differ materially
-- the selected result changes in a reviewable way
-- the result remains policy-constrained and deterministic
+The shared rule is intentionally small:
+- on `fast_path`, `curiosity` or `integrity` upgrades direct execution to one bounded verification pass
+- on `slow_path`, `curiosity` may choose bounded deferral rather than immediate execution
+- on `slow_path`, `high` risk or `integrity` / `coherence` keeps review selected
+- on `slow_path`, `completion` still stays bounded inside review-first slow-path semantics
 
-Good proof examples:
-- completion-biased choice between finishing current work and exploring novelty
-- curiosity / coherence bias toward anomaly follow-up
-- integrity bias toward a slower, more constrained route
+This is enough to make instinct operational without turning it into hidden initiative.
+
+## Proof Surface
+
+`v0.88` now includes a bounded proof hook:
+
+```text
+adl identity instinct-runtime --out .adl/state/instinct_runtime_surface_v1.json
+```
+
+That proof surface includes review cases where:
+- `curiosity` changes a `fast_path` candidate from direct execution to bounded verification
+- `curiosity` changes a `slow_path` candidate from review to bounded deferral
+- `high` risk keeps the `slow_path` on review even when curiosity would otherwise defer
 
 ## Acceptance Shape
 
@@ -93,4 +108,4 @@ This is the runtime companion to `INSTINCT_MODEL.md`.
 
 Together, the two docs define:
 - what instinct means
-- how instinct shows up in actual ADL runtime behavior
+- how instinct changes bounded candidate selection at runtime

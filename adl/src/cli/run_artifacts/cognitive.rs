@@ -555,17 +555,22 @@ pub(crate) fn build_agency_selection_state(
                         bounded_action: "perform one bounded verification pass before execution".to_string(),
                         review_requirement: "light".to_string(),
                         execution_priority: 2,
-                        rationale: "keep a fallback candidate available without changing the primary fast-path commitment".to_string(),
+                        rationale: "keep a bounded verification candidate available when instinct pressure favors uncertainty reduction or extra constraint checks".to_string(),
                     },
                 ];
+            let decision = execute::select_instinct_runtime_candidate(
+                fast_slow_path.selected_path.as_str(),
+                signals.instinct.dominant_instinct.as_str(),
+                arbitration.risk_class.as_str(),
+            );
             (
-                    "fast_candidate_commitment",
-                    candidate_set,
-                    "cand-fast-execute".to_string(),
-                    "direct_execution".to_string(),
-                    "execute selected candidate directly under bounded once semantics".to_string(),
-                    "fast path prioritizes direct bounded execution when arbitration confidence is high and failure pressure is absent".to_string(),
-                )
+                decision.selection_mode,
+                candidate_set,
+                decision.candidate_id.to_string(),
+                decision.candidate_kind.to_string(),
+                decision.candidate_action.to_string(),
+                decision.candidate_reason.to_string(),
+            )
         }
         _ => {
             let candidate_set = vec![
@@ -586,7 +591,7 @@ pub(crate) fn build_agency_selection_state(
                         bounded_action: "execute the current candidate without additional refinement".to_string(),
                         review_requirement: "minimal".to_string(),
                         execution_priority: 2,
-                        rationale: "retain the direct-execution alternative as a bounded comparator candidate".to_string(),
+                        rationale: "retain the direct-execution alternative when completion pressure can still justify a bounded finish-first move".to_string(),
                     },
                     AgencyCandidateRecord {
                         candidate_id: "cand-slow-defer".to_string(),
@@ -594,17 +599,22 @@ pub(crate) fn build_agency_selection_state(
                         bounded_action: "defer execution and surface the candidate set for later gate/review stages".to_string(),
                         review_requirement: "review_required".to_string(),
                         execution_priority: 3,
-                        rationale: "preserve a bounded non-execution option when policy or review pressure remains elevated".to_string(),
+                        rationale: "preserve a bounded non-execution option when curiosity keeps uncertainty high or the system should pause before commitment".to_string(),
                     },
                 ];
+            let decision = execute::select_instinct_runtime_candidate(
+                fast_slow_path.selected_path.as_str(),
+                signals.instinct.dominant_instinct.as_str(),
+                arbitration.risk_class.as_str(),
+            );
             (
-                    "slow_candidate_comparison",
-                    candidate_set,
-                    "cand-slow-review".to_string(),
-                    "review_and_refine".to_string(),
-                    "review, refine, or veto the current candidate before execution".to_string(),
-                    "slow path makes review/refinement the selected candidate when arbitration requires bounded caution".to_string(),
-                )
+                decision.selection_mode,
+                candidate_set,
+                decision.candidate_id.to_string(),
+                decision.candidate_kind.to_string(),
+                decision.candidate_action.to_string(),
+                decision.candidate_reason.to_string(),
+            )
         }
     };
 
