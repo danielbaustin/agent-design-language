@@ -64,6 +64,25 @@ chmod +x "$PASS_REPO/.worktrees/adl-wp-1546/adl/tools/check_milestone_closed_iss
   PATH="$PASS_REPO/bin:$PATH" bash ./adl/tools/check_milestone_closed_issue_sor_truth.sh --version v0.87.1 --repo example/repo >/dev/null
 )
 
+mkdir -p "$PASS_REPO/.adl/v0.87.1/tasks/issue-1548__sample"
+cat >"$PASS_REPO/.adl/v0.87.1/tasks/issue-1548__sample/stp.md" <<'EOF'
+title: sample
+EOF
+cat >"$PASS_REPO/.adl/v0.87.1/tasks/issue-1548__sample/sip.md" <<'EOF'
+Title: sample
+EOF
+cat >"$PASS_REPO/.adl/v0.87.1/tasks/issue-1548__sample/sor.md" <<'EOF'
+Status: DONE
+- Integration state: closed_no_pr
+- Verification scope: main_repo
+- Worktree-only paths remaining: none
+EOF
+write_fake_gh "$PASS_REPO/bin" '[{"number":1546,"stateReason":"COMPLETED","title":"sample"},{"number":1548,"stateReason":"COMPLETED","title":"sample"}]'
+(
+  cd "$PASS_REPO"
+  PATH="$PASS_REPO/bin:$PATH" bash ./adl/tools/check_milestone_closed_issue_sor_truth.sh --version v0.87.1 --repo example/repo >/dev/null
+)
+
 FAIL_REPO="$TMP/fail"
 mkdir -p "$FAIL_REPO"
 init_repo "$FAIL_REPO"

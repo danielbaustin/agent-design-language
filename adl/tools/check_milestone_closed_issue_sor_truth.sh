@@ -144,9 +144,9 @@ for issue in issues:
         )
 
     if state_reason == "COMPLETED":
-        if integration_state != "merged":
+        if integration_state not in ("merged", "closed_no_pr"):
             errors.append(
-                f"{sor.relative_to(root)}: Integration state for CLOSED/COMPLETED issue #{number} expected 'merged' but found {integration_state!r}"
+                f"{sor.relative_to(root)}: Integration state for CLOSED/COMPLETED issue #{number} expected 'merged' or 'closed_no_pr' but found {integration_state!r}"
             )
         if verification_scope != "main_repo":
             errors.append(
