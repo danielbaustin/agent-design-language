@@ -5,6 +5,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 #[cfg(test)]
 use std::process::Command;
+#[cfg(test)]
+use std::sync::{Mutex, OnceLock};
 
 use super::pr_cmd_args::{
     parse_closeout_args, parse_create_args, parse_doctor_args, parse_finish_args, parse_init_args,
@@ -38,6 +40,13 @@ mod doctor;
 mod git_support;
 mod github;
 mod lifecycle;
+
+#[cfg(test)]
+type CreatePostBootstrapHook = fn(&Path, &IssueRef) -> Result<()>;
+
+#[cfg(test)]
+static CREATE_POST_BOOTSTRAP_HOOK: OnceLock<Mutex<Option<CreatePostBootstrapHook>>> =
+    OnceLock::new();
 
 #[cfg(test)]
 use self::git_support::{branch_checked_out_worktree_path, infer_repo_from_remote};
@@ -157,6 +166,19 @@ fn real_pr_create(args: &[String]) -> Result<()> {
     }
     let (stp_path, bundle_input, bundle_output, bundle_dir) =
         bootstrap_root_task_bundle(&repo_root, &issue_ref, &title, &source_path)?;
+    run_create_post_bootstrap_test_hook(&repo_root, &issue_ref)?;
+    let ready = doctor::run_doctor_ready(
+        &repo_root,
+        &repo,
+        &issue_ref,
+        &issue_ref.branch_name("codex"),
+    )
+    .with_context(|| {
+        format!(
+            "create: issue #{} failed immediate ready-state validation",
+            issue_ref.issue_number()
+        )
+    })?;
 
     println!("• Created:");
     println!("  ISSUE_URL  {issue_url}");
@@ -183,6 +205,8 @@ fn real_pr_create(args: &[String]) -> Result<()> {
         "  BUNDLE     {}",
         path_relative_to_repo(&repo_root, &bundle_dir)
     );
+    println!("  READY      {}", ready.status);
+    println!("  LIFECYCLE  {}", ready.lifecycle_state);
     println!("  NEXT       qualitative STP/SIP review, then adl/tools/pr.sh run {issue} --slug {slug} --version {version}");
     println!("  STATE      ISSUE_AND_BUNDLE_READY");
     eprintln!("• Done.");
@@ -1233,6 +1257,36 @@ fn write_temp_markdown(prefix: &str, body: &str) -> Result<PathBuf> {
 
 fn infer_required_outcome_type_for_create(labels_csv: &str, title: &str) -> &'static str {
     infer_required_outcome_type(labels_csv, title)
+}
+
+#[cfg(test)]
+fn run_create_post_bootstrap_test_hook(repo_root: &Path, issue_ref: &IssueRef) -> Result<()> {
+    if let Some(hook) = CREATE_POST_BOOTSTRAP_HOOK
+        .get_or_init(|| Mutex::new(None))
+        .lock()
+        .expect("lock create post-bootstrap hook")
+        .as_ref()
+        .copied()
+    {
+        hook(repo_root, issue_ref)?;
+    }
+    Ok(())
+}
+
+#[cfg(not(test))]
+fn run_create_post_bootstrap_test_hook(_repo_root: &Path, _issue_ref: &IssueRef) -> Result<()> {
+    Ok(())
+}
+
+#[cfg(test)]
+fn set_create_post_bootstrap_test_hook(
+    hook: Option<CreatePostBootstrapHook>,
+) -> Option<CreatePostBootstrapHook> {
+    let mut guard = CREATE_POST_BOOTSTRAP_HOOK
+        .get_or_init(|| Mutex::new(None))
+        .lock()
+        .expect("lock create post-bootstrap hook");
+    std::mem::replace(&mut *guard, hook)
 }
 
 #[cfg(test)]
