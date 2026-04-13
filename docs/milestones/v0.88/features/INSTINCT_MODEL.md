@@ -105,3 +105,79 @@ The milestone should prove that instinct can be:
 - declared explicitly
 - applied in a narrow runtime path
 - reviewed through trace and artifacts
+
+## Runtime Surface
+
+`WP-10` owns one bounded substrate contract:
+
+- `adl::chronosense::InstinctModelContract`
+- `adl identity instinct --out .adl/state/instinct_model_v1.json`
+
+This substrate is intentionally small and explicit so `WP-11` can wire it into runtime behavior without redefining what instinct means.
+
+## Initial Instinct Set
+
+The initial `v0.88` instinct set is:
+
+- `integrity`
+- `curiosity`
+- `coherence`
+- `completion`
+
+Each instinct must remain:
+
+- interpretable
+- policy-subordinate
+- stable enough for later runtime attachment
+- visible to reviewers as a declared surface rather than hidden prompt flavor
+
+## Representation Contract
+
+The bounded instinct representation must support:
+
+- `instinct_id`
+- `default_strength`
+- `meaning`
+
+Optional but allowed:
+
+- enablement state
+- allowed influence surfaces
+- explicit higher-order constraints
+
+## Semantics Boundaries
+
+The contract must preserve these distinctions:
+
+- instinct is persistent directional pressure
+- goals are explicit task-local aims
+- affect is dynamic state evaluation
+
+Instinct may shape prioritization or routing later, but this issue does not yet claim:
+
+- runtime arbitration proof
+- instinct-driven route changes
+- bounded agency demos
+
+Those belong to `WP-11`.
+
+## Proof Hook
+
+Current proof hook:
+
+```bash
+adl identity instinct --out .adl/state/instinct_model_v1.json
+```
+
+Expected proof artifact:
+
+- `.adl/state/instinct_model_v1.json`
+
+## Explicit Non-Goals
+
+This surface must not become:
+
+- a full psychology model
+- implicit autonomy theater
+- a substitute for policy or safety
+- later-band identity, governance, or social-cognition work
