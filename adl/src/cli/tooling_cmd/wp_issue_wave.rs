@@ -389,7 +389,7 @@ mod tests {
     fn extract_wp_refs_handles_lists_and_ranges() {
         assert_eq!(
             extract_wp_refs("`WP-02` through `WP-08`"),
-            vec!["WP-02", "WP-08"]
+            vec!["WP-02", "WP-03", "WP-04", "WP-05", "WP-06", "WP-07", "WP-08"]
         );
         assert_eq!(
             extract_wp_refs("`WP-09`, `WP-10`, `WP-11`"),
