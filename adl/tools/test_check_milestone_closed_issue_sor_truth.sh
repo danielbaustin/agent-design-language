@@ -38,6 +38,12 @@ PASS_REPO="$TMP/pass"
 mkdir -p "$PASS_REPO"
 init_repo "$PASS_REPO"
 mkdir -p "$PASS_REPO/.adl/v0.87.1/tasks/issue-1546__sample"
+cat >"$PASS_REPO/.adl/v0.87.1/tasks/issue-1546__sample/stp.md" <<'EOF'
+title: sample
+EOF
+cat >"$PASS_REPO/.adl/v0.87.1/tasks/issue-1546__sample/sip.md" <<'EOF'
+Title: sample
+EOF
 cat >"$PASS_REPO/.adl/v0.87.1/tasks/issue-1546__sample/sor.md" <<'EOF'
 Status: DONE
 - Integration state: merged
@@ -50,10 +56,21 @@ write_fake_gh "$PASS_REPO/bin" '[{"number":1546,"stateReason":"COMPLETED","title
   PATH="$PASS_REPO/bin:$PATH" bash ./adl/tools/check_milestone_closed_issue_sor_truth.sh --version v0.87.1 --repo example/repo >/dev/null
 )
 
+mkdir -p "$PASS_REPO/.worktrees/adl-wp-1546/adl/tools"
+cp "$ROOT/adl/tools/check_milestone_closed_issue_sor_truth.sh" "$PASS_REPO/.worktrees/adl-wp-1546/adl/tools/check_milestone_closed_issue_sor_truth.sh"
+chmod +x "$PASS_REPO/.worktrees/adl-wp-1546/adl/tools/check_milestone_closed_issue_sor_truth.sh"
+(
+  cd "$PASS_REPO/.worktrees/adl-wp-1546"
+  PATH="$PASS_REPO/bin:$PATH" bash ./adl/tools/check_milestone_closed_issue_sor_truth.sh --version v0.87.1 --repo example/repo >/dev/null
+)
+
 FAIL_REPO="$TMP/fail"
 mkdir -p "$FAIL_REPO"
 init_repo "$FAIL_REPO"
 mkdir -p "$FAIL_REPO/.adl/v0.87.1/tasks/issue-1547__sample"
+cat >"$FAIL_REPO/.adl/v0.87.1/tasks/issue-1547__sample/stp.md" <<'EOF'
+title: sample
+EOF
 cat >"$FAIL_REPO/.adl/v0.87.1/tasks/issue-1547__sample/sor.md" <<'EOF'
 Status: IN_PROGRESS
 - Integration state: pr_open
