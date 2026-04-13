@@ -107,9 +107,9 @@ Current issue map:
   - Mitigation: treat the seeded issue wave plus `WBS_v0.89.md` / `FEATURE_DOCS_v0.89.md` as one package and update them together
 
 ## Demo / Review Plan
-- Demo artifact: first-pass `DEMO_MATRIX_v0.89.md` plus later convergence/gate/experiment/security proof surfaces
+- Demo artifact: `DEMO_MATRIX_v0.89.md` plus the later convergence/gate/experiment/security proof surfaces it governs
 - Review date: milestone review date `TBD`
-- Sign-off owners: Daniel Austin plus future third-party review where appropriate
+- Sign-off owners: Daniel Austin plus later third-party review where appropriate
 
 ## Cadence Expectations
 - use issue cards (`stp` / `sip` / `sor`) for each issue

@@ -11,7 +11,7 @@
 
 Define the canonical `v0.89` demo and proof program.
 
-This first pass is intentionally planning-grade: it names the intended proof rows, their milestone claims, and the expected proof surfaces so implementation can target them directly.
+This matrix names the canonical proof rows, their milestone claims, and the expected proof surfaces so implementation can target them directly.
 
 ## Scope
 
@@ -112,7 +112,7 @@ Reviewer checks:
 - verify that budget/policy stop states are visible
 
 Known limits / caveats:
-- first-pass planning row only; command surface is now owned by `#1747` but not yet landed
+- command surface is owned by `#1747` but not yet landed
 
 ---
 
@@ -155,7 +155,7 @@ Known limits / caveats:
 Required baseline validation:
 
 ```bash
-TBD after the implementation issues land. The seeded issue wave now exists; the final matrix should name the canonical smoke suite and any required deterministic fixtures using the landed issue outputs.
+Defined by `WP-11` through `WP-13` as the demo and integration surfaces land.
 ```
 
 Cross-demo checks:
@@ -170,7 +170,7 @@ Failure policy:
 ## Determinism Evidence
 
 Evidence directory / run root:
-- `TBD by implementation issues #1747` through `#1758`
+- established by the landed outputs of `#1747` through `#1758`
 
 Repeatability approach:
 - prefer stable fixtures or bounded local/provider shims
@@ -202,7 +202,7 @@ Review status:
 - planning pass complete; implementation and validation pending
 
 ## Notes
-- this matrix is intentionally specific enough to seed demo issues without pretending the demos already exist
+- this matrix is specific enough to seed demo issues without pretending the demos already exist
 - `v0.89.2` adversarial runtime demos should not be silently folded into this matrix without an explicit scope decision
 
 ## Exit Criteria

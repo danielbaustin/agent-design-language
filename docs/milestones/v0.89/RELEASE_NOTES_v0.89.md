@@ -38,10 +38,10 @@
 
 ## Upgrade Notes
 - exact user-facing upgrade notes are `TBD` until implementation lands
-- this planning draft should be tightened during `WP-15`
+- this pre-release shell should be rewritten from shipped artifacts during `WP-15` and `WP-16`
 
 ## Known Limitations
-- this first-pass draft is intentionally pre-execution and should not be treated as a shipped-claims document yet
+- this document is pre-release and should not be treated as a shipped-claims document yet
 - the adversarial runtime/demo package is intentionally deferred to `v0.89.2`
 
 ## Validation Notes

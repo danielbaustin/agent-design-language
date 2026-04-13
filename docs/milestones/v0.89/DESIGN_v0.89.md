@@ -5,7 +5,7 @@
 - Version: `v0.89`
 - Date: `2026-04-12`
 - Owner: `Daniel Austin`
-- Related issues: `#1662` plus the future `v0.89` work-package issue wave
+- Related issues: `#1662` plus the seeded `v0.89` work-package issue wave (`#1747` through `#1761`)
 
 ## Purpose
 
@@ -61,7 +61,7 @@ Without a real `v0.89` package, later milestones would inherit drift instead of 
 
 ### Overview
 
-The first-pass `v0.89` package is organized as one main milestone band plus one explicit carry-forward sub-band:
+The `v0.89` package is organized as one main milestone band plus one explicit carry-forward sub-band:
 
 - `v0.89` core band:
   - governed convergence

@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Provide the canonical first-pass feature index for `v0.89`.
+Provide the canonical feature index for `v0.89`.
 
 This page defines:
 - which `v0.89` feature docs are promoted into the tracked milestone package now
@@ -30,7 +30,7 @@ The core tracked feature band is:
 - evidence-aware ObsMem retrieval
 - security, trust, and posture as explicit runtime planning surfaces
 
-This first pass intentionally does not absorb the full adversarial runtime and exploit package into the main `v0.89` core. That package is planned in the explicit `v0.89.2` follow-on band.
+This package intentionally does not absorb the full adversarial runtime and exploit package into the main `v0.89` core. That package is planned in the explicit `v0.89.2` follow-on band.
 
 ## Promoted Tracked Feature Docs
 

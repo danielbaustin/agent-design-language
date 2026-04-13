@@ -132,9 +132,9 @@ Open questions:
 
 ## Status
 
-Current status: planning package and execution issue wave seeded
+Current status: canonical planning package complete and execution issue wave seeded
 
-- Planning: active
+- Planning: complete
 - Execution: issueized through `WP-16`; implementation has not started yet
 - Validation: planned
 - Release readiness: not started
