@@ -3,14 +3,14 @@
 ## Metadata
 - Milestone: `v0.89`
 - Sprint sequence: `v0.89-s1`, `v0.89-s2`, `v0.89-s3`
-- Start date: `2026-04-12`
+- Start date: `2026-04-13`
 - End date: `TBD`
 - Owner: `Daniel Austin`
 
 ## Milestone Sprint Model
 
 `v0.89` is a three-sprint execution plan:
-- Sprint 1: seed the issue wave and land the convergence / judgment / action core
+- Sprint 1: open the official issue wave and land the convergence / judgment / action core
 - Sprint 2: land the skill / experiment / memory / security package and the explicit `v0.89.2` handoff
 - Sprint 3: converge demos, quality, docs/review, and release closure
 
@@ -20,7 +20,7 @@ This keeps the execution model aligned with the recent milestone pattern while p
 
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
-| `v0.89-s1` | open the issue wave and execute the convergence / gate / action core | `WP-01` through `WP-05` | planned |
+| `v0.89-s1` | open the official issue wave and execute the convergence / gate / action core | `WP-01` through `WP-05` | planned |
 | `v0.89-s2` | execute the skill / experiment / memory / security package plus explicit `v0.89.2` handoff planning | `WP-06`, `WP-07`, `WP-08`, `WP-09`, `WP-10` | planned |
 | `v0.89-s3` | converge demos, quality, docs/review, and release ceremony | `WP-11` through `WP-16` | planned |
 
@@ -38,11 +38,11 @@ Move `v0.89` from a strong planning package into a real execution wave by openin
 
 Current issue map:
 - `WP-01` `#1662`
-- `WP-02` - `WP-05` planned; official issue wave not yet opened
+- `WP-02` - `WP-05` reserved; official issue wave not yet opened
 
 ### Exit Criteria
 - `WP-02` through `WP-05` are mapped in the milestone docs and ready for issue creation
-- the convergence / gate / decision / action band has an executable issue wave
+- the convergence / gate / decision / action band has a ready-to-open executable issue wave
 - the main milestone docs stop speaking about the issue wave as hypothetical
 
 ## Sprint 2
@@ -58,7 +58,7 @@ Land the governed execution substrate that makes `v0.89` useful beyond judgment 
 - explicit `v0.89.2` handoff planning
 
 Current issue map:
-- `WP-06` - `WP-10` planned; official issue wave not yet opened
+- `WP-06` - `WP-10` reserved; official issue wave not yet opened
 
 ### Exit Criteria
 - `WP-06` through `WP-10` are planned and tracked in the milestone package
@@ -79,7 +79,7 @@ Close the milestone using the normal ADL pattern: demos, quality, docs/review, a
 - release ceremony
 
 Current issue map:
-- `WP-11` - `WP-16` planned; official issue wave not yet opened
+- `WP-11` - `WP-16` reserved; official issue wave not yet opened
 
 ### Exit Criteria
 - reviewer-facing proof surfaces exist for the core `v0.89` claims
@@ -90,9 +90,9 @@ Current issue map:
 - Dependency: `v0.88` release tail must close cleanly so the next wave does not inherit avoidable drift
   - Risk: unresolved `v0.88` closeout work distracts from `v0.89` issue opening
   - Mitigation: keep `v0.89` planning package self-contained and truth-based so execution can start cleanly once `v0.88` closes
-- Dependency: the future `v0.89` issue wave must stay aligned with the milestone docs
+- Dependency: the reserved official `v0.89` issue wave must stay aligned with the milestone docs
   - Risk: issue bodies and milestone docs drift once the wave opens
-  - Mitigation: treat the future issue wave plus `WBS_v0.89.md` / `FEATURE_DOCS_v0.89.md` as one package and update them together
+  - Mitigation: treat the reserved official issue wave plus `WBS_v0.89.md` / `FEATURE_DOCS_v0.89.md` as one package and update them together
 
 ## Demo / Review Plan
 - Demo artifact: `DEMO_MATRIX_v0.89.md` plus the later convergence/gate/experiment/security proof surfaces it governs

@@ -3,7 +3,7 @@
 ## Metadata
 - Milestone: `v0.89`
 - Version: `v0.89`
-- Date: `2026-04-12`
+- Date: `2026-04-13`
 - Owner: `Daniel Austin`
 - Related issues / work packages: `WP-02` - `WP-13`
 
@@ -72,7 +72,7 @@ Status guidance:
 ## Coverage Rules
 - every major milestone claim should map to a runnable demo or an explicit alternate proof surface
 - every demo should name one primary proof surface that a reviewer can inspect directly
-- commands should become copy/paste-ready as the issue wave lands
+- commands should become copy/paste-ready once the official issue wave lands
 - success signals should describe what to inspect, not only process exit codes
 
 ## Demo Details
@@ -170,7 +170,7 @@ Failure policy:
 ## Determinism Evidence
 
 Evidence directory / run root:
-- established by the landed outputs of the future `WP-02` through `WP-13` issues
+- established by the landed outputs of the reserved official `WP-02` through `WP-13` issue wave
 
 Repeatability approach:
 - prefer stable fixtures or bounded local/provider shims

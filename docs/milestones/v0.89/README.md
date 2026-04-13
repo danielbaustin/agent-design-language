@@ -3,7 +3,7 @@
 ## Metadata
 - Milestone: `v0.89`
 - Version: `v0.89`
-- Date: `2026-04-12`
+- Date: `2026-04-13`
 - Owner: `Daniel Austin`
 
 ## Purpose
@@ -80,7 +80,7 @@ Supporting local planning inputs:
 
 ## Execution Model
 
-This milestone is executed as a sequence of work packages:
+This milestone is designed to execute as a sequence of work packages once the official `v0.89` kickoff occurs:
 - `WP-01`: milestone design pass and canonical package completion
 - `WP-02` - `WP-09`: core feature band
 - `WP-10` - `WP-12`: demoability, milestone convergence, and `v0.89.2` handoff
@@ -89,7 +89,7 @@ This milestone is executed as a sequence of work packages:
 - `WP-15`: docs + review convergence
 - `WP-16`: release ceremony
 
-Execution expectations:
+Execution expectations after kickoff:
 - each substantive WP gets a bounded issue and PR
 - promoted feature docs resolve to implementation, proofs, or explicit defer records
 - carry-forward to `v0.89.2` is explicit rather than implied
@@ -132,7 +132,7 @@ Open questions:
 
 ## Status
 
-Current status: canonical planning package complete; implementation issue wave not yet opened
+Current status: canonical planning package complete; execution package ready for official kickoff but not yet opened
 
 - Planning: complete
 - Execution: not started
@@ -141,7 +141,7 @@ Current status: canonical planning package complete; implementation issue wave n
 
 Current issue map:
 - `WP-01` `#1662`
-- `WP-02` - `WP-16` planned; issue wave opens at official `v0.89` kickoff
+- `WP-02` - `WP-16` reserved in the planned issue-wave package; actual issues open only at official `v0.89` kickoff
 
 ## Exit Criteria
 

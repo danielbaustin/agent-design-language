@@ -3,9 +3,9 @@
 ## Metadata
 - Milestone: `v0.89`
 - Version: `v0.89`
-- Date: `2026-04-12`
+- Date: `2026-04-13`
 - Owner: `Daniel Austin`
-- Related issues: `#1662` plus the future `v0.89` work-package issue wave
+- Related issues: `#1662` plus the reserved official `v0.89` work-package issue wave
 
 ## Purpose
 
@@ -26,7 +26,7 @@ Without a real `v0.89` package, later milestones would inherit drift instead of 
 ## Goals
 - turn the core `v0.89` concept cluster into a bounded canonical feature package
 - map every source planning doc to an implementation home, defer home, or supporting-input role
-- seed a WBS that is strong enough to drive an issue wave without reconstructing milestone intent by hand
+- seed a WBS that is strong enough to drive the official issue wave without reconstructing milestone intent by hand
 
 ## Non-Goals
 - fully implement the `v0.89.2` adversarial runtime and exploit package inside the main `v0.89` core band
@@ -55,7 +55,7 @@ Without a real `v0.89` package, later milestones would inherit drift instead of 
 ### Non-functional
 - deterministic behavior and reproducible outputs where execution claims are made
 - clear failure semantics and observability
-- reviewer-legible scope boundaries so later issue-wave generation does not widen implicitly
+- reviewer-legible scope boundaries so later official issue-wave generation does not widen implicitly
 
 ## Proposed Design
 
@@ -90,14 +90,14 @@ This keeps the main milestone serious without letting the security proof/runtime
 - make authority and skill invocation explicit before deeper delegation and governance
 - establish threat/posture/trust language before adversarial runtime work
 
-The milestone package therefore prefers strong surface contracts first, then issue-wave implementation, then demo/review convergence.
+The milestone package therefore prefers strong surface contracts first, then official issue-wave implementation, then demo/review convergence.
 
 ## Risks and Mitigations
 
 - Risk: `v0.89` scope sprawls into `v0.89.2` adversarial runtime work.
   - Mitigation: keep the carry-forward package explicit in `FEATURE_DOCS_v0.89.md`, `WBS_v0.89.md`, and `DECISIONS_v0.89.md`.
 - Risk: the milestone package remains conceptually strong but execution-weak.
-  - Mitigation: map every promoted feature doc to a WBS row and planned issue-wave slot.
+  - Mitigation: map every promoted feature doc to a WBS row and reserved official issue-wave slot.
 
 ## Alternatives Considered
 
@@ -109,7 +109,7 @@ The milestone package therefore prefers strong surface contracts first, then iss
 ## Validation Plan
 
 - Checks/tests: doc consistency across README, VISION, DESIGN, WBS, SPRINT, FEATURE_DOCS, and promoted feature docs
-- Success metrics: every source planning doc has an explicit home; no placeholders remain in the core package; the issue wave can be seeded directly from the WBS
+- Success metrics: every source planning doc has an explicit home; no placeholders remain in the core package; the official issue wave can be seeded directly from the WBS
 - Rollback/fallback: if a promoted feature proves too early, demote it back to explicit local planning input with a named later home rather than leaving it ambiguous
 
 ## Exit Criteria

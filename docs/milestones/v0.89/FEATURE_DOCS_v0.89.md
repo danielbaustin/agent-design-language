@@ -3,7 +3,7 @@
 ## Metadata
 - Milestone: `v0.89`
 - Version: `v0.89`
-- Date: `2026-04-12`
+- Date: `2026-04-13`
 - Owner: `Daniel Austin`
 
 ## Purpose
@@ -15,7 +15,7 @@ This page defines:
 - which local planning docs remain supporting inputs but are not yet promoted
 - which security-heavy or adversarial runtime docs are intentionally carried into `v0.89.2`
 
-The goal is to eliminate floating feature notes. Every source planning doc should have an explicit implementation home.
+The goal is to eliminate floating feature notes. Every source planning doc should have an explicit implementation home or reserved later-band home.
 
 ## Scope Interpretation
 

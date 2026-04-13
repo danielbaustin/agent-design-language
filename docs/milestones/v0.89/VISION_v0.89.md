@@ -4,9 +4,9 @@
 - Project: `ADL`
 - Milestone: `v0.89`
 - Version: `v0.89`
-- Date: `2026-04-12`
+- Date: `2026-04-13`
 - Owner: `Daniel Austin`
-- Related issues: `#1662` and the future `v0.89` implementation issue wave
+- Related issues: `#1662` and the reserved official `v0.89` implementation issue wave
 
 ## Purpose
 
