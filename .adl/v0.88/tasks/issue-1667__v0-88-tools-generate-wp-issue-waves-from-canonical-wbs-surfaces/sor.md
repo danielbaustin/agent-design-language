@@ -24,7 +24,7 @@ Execution:
 - End Time: 2026-04-13T00:33:05Z
 
 ## Summary
-Added a deterministic `adl tooling generate-wp-issue-wave` control-plane generator that derives a stable WP issue-wave plan from the canonical milestone WBS and sprint docs, along with a checked-in `v0.88` proof artifact and operator documentation. The command is intentionally bounded: it emits planning/bootstrap metadata only and does not create issues, branches, or worktrees.
+Added a deterministic `adl tooling generate-wp-issue-wave` control-plane generator that derives a stable WP issue-wave plan from the canonical milestone WBS and sprint docs, along with a checked-in `v0.88` proof artifact and operator documentation. The command is intentionally bounded: it emits planning/bootstrap metadata only and does not create issues, branches, or worktrees. Published for review in PR `#1697`.
 
 ## Artifacts produced
 - `adl/src/cli/tooling_cmd/wp_issue_wave.rs`
@@ -43,14 +43,17 @@ Added a deterministic `adl tooling generate-wp-issue-wave` control-plane generat
 - Verified the conductor twice around this issue: once before execution, where it correctly routed `pre_run -> pr-run`, and once after implementation, where it still classified the issue as `run_bound` and asked for operator escalation instead of routing to `pr-finish`.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet
-- Worktree-only paths remaining: `adl/src/cli/tooling_cmd/wp_issue_wave.rs`, `adl/src/cli/tooling_cmd.rs`, `adl/src/cli/tooling_cmd/tests.rs`, `docs/tooling/WP_ISSUE_WAVE_GENERATION.md`, `docs/tooling/README.md`, `docs/milestones/v0.88/WP_ISSUE_WAVE_v0.88.yaml`
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths are updated on the issue branch via PR 1697
+- Worktree-only paths remaining: none
+- Integration state: pr_open
 - Verification scope: worktree
-- Integration method used: direct edits in the bound issue worktree before publication
+- Integration method used: `pr finish` validation followed by manual commit + push + PR creation because ignored local `.adl` issue-bundle paths and unrelated tracked legacy `.adl` residue on `main` blocked the publication guard
 - Verification performed:
-  - `git status --short` verified the intended tracked changes are limited to the issue-scoped code/docs/artifact surfaces.
-  - `ls docs/milestones/v0.88/WP_ISSUE_WAVE_v0.88.yaml` / equivalent path checks verified the generated proof artifact exists in the issue worktree.
+  - `bash adl/tools/pr.sh finish 1667 --title "[v0.88][tools] Generate WP issue waves from canonical WBS surfaces" --paths "adl/src/cli/tooling_cmd.rs,adl/src/cli/tooling_cmd/tests.rs,adl/src/cli/tooling_cmd/wp_issue_wave.rs,docs/tooling/README.md,docs/tooling/WP_ISSUE_WAVE_GENERATION.md,docs/milestones/v0.88/WP_ISSUE_WAVE_v0.88.yaml"` validated the issue bundle and publication inputs before stopping on ignored local `.adl` issue-bundle paths plus unrelated tracked legacy `.adl` residue on `main`.
+  - `git add ... && git add -f .adl/v0.88/.../issue-1667... && git commit` recorded the intended tracked changes plus the canonical issue bundle on the issue branch.
+  - `git push -u origin codex/1667-v0-88-tools-generate-wp-issue-waves-from-canonical-wbs-surfaces` published the issue branch.
+  - `gh pr create --base main --head codex/1667-v0-88-tools-generate-wp-issue-waves-from-canonical-wbs-surfaces --title "[v0.88][tools] Generate WP issue waves from canonical WBS surfaces"` opened PR `#1697` with closing linkage for issue `#1667`.
+  - `git status --short` verified the branch was clean before the publication-record correction commit.
 - Result: PASS
 
 Rules:
