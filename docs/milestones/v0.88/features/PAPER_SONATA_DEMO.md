@@ -141,6 +141,27 @@ The demo should give reviewers:
 - a manifest showing stage outputs and their relationships
 - normal ADL trace / run evidence
 
+## v0.88 Implementation Slice
+
+Canonical command:
+
+```bash
+bash adl/tools/demo_v088_paper_sonata.sh
+```
+
+Primary proof surfaces:
+- `artifacts/v088/paper_sonata/demo_manifest.json`
+- `artifacts/v088/paper_sonata/manuscript_package/paper_draft.md`
+- `artifacts/v088/paper_sonata/out/roles/`
+- `artifacts/v088/paper_sonata/runtime/runs/v0-88-paper-sonata-demo/run_summary.json`
+- `artifacts/v088/paper_sonata/runtime/runs/v0-88-paper-sonata-demo/logs/trace_v1.json`
+
+Bounded `v0.88` truth:
+- one repo-tracked synthetic packet
+- one fixed five-role workflow
+- one stable manuscript package
+- one smoke path proving the artifact contract is real
+
 ## Success Criteria
 
 The bounded `v0.88` version succeeds if:
