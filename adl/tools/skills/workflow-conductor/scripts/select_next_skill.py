@@ -82,12 +82,24 @@ def evaluate(payload):
         skill_name = "none"
         continuation = "ask_operator"
         escalation_reason = "child_issue_wave_satisfied"
+    elif blocker_class == "satisfied_by_related_issue_refs":
+        detected_phase = "already_satisfied"
+        selected_phase = "blocked"
+        skill_name = "none"
+        continuation = "ask_operator"
+        escalation_reason = "related_issue_ref_satisfied"
     elif blocker_class == "active_child_issue_wave":
         detected_phase = "tracker_in_flight"
         selected_phase = "blocked"
         skill_name = "none"
         continuation = "ask_operator"
         escalation_reason = "child_issue_wave_active"
+    elif blocker_class == "related_issue_ref_active":
+        detected_phase = "tracker_in_flight"
+        selected_phase = "blocked"
+        skill_name = "none"
+        continuation = "ask_operator"
+        escalation_reason = "related_issue_ref_active"
     elif lifecycle_state == "execution_done":
         selected_phase = "finish"
         skill_name = "pr-finish"
@@ -110,12 +122,14 @@ def evaluate(payload):
             continuation = "continue"
             escalation_reason = "none"
 
-    if blocker_class in ("open_pr_wave_only", "doctor_failed_or_inconclusive"):
+    if blocker_class in ("open_pr_wave_only", "doctor_failed_or_inconclusive", "tracked_adl_residue"):
         continuation = "ask_operator"
         if blocker_class == "open_pr_wave_only" and skill_name in ("pr-run", "pr-finish"):
             escalation_reason = "operator_override_required"
         elif blocker_class == "doctor_failed_or_inconclusive":
             escalation_reason = "ambiguous_live_state"
+        elif blocker_class == "tracked_adl_residue":
+            escalation_reason = "repo_policy_residue"
 
     bypasses = []
     policy_result = "PASS"

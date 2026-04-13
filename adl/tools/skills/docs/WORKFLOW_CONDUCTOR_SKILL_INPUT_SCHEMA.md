@@ -38,7 +38,7 @@ The conductor should:
 - select the next skill
 - apply workflow policy
 - write one bounded routing artifact
-- classify known blocker families from doctor or PR state when safe
+- classify known blocker families from doctor, PR, explicit related-issue references, or repo-policy residue when safe
 - stop after routing
 
 It should not perform the selected skill's implementation work.

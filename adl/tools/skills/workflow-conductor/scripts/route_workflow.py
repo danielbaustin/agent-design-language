@@ -219,6 +219,59 @@ def gh_child_issue_wave_state(repo_root: Path, parent_issue_number: int):
     return "active_child_issue_wave"
 
 
+def gh_issue_index(repo_root: Path):
+    result = run_command(
+        ["gh", "issue", "list", "--state", "all", "--limit", "200", "--json", "number,state,body,title"],
+        repo_root,
+    )
+    if result.returncode != 0 or not result.stdout.strip():
+        return {}
+    try:
+        issues = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return {}
+    return {int(issue.get("number")): issue for issue in issues if issue.get("number") is not None}
+
+
+def related_issue_reference_state(texts, issue_index):
+    refs = set()
+    patterns = [
+        r"(?:covered by|satisfied by|folded into|superseded by)\s+#(\d+)",
+        r"(?:duplicate of|resolved by)\s+#(\d+)",
+    ]
+    for text in texts:
+        lower = text.lower()
+        for pattern in patterns:
+            refs.update(int(match) for match in re.findall(pattern, lower))
+    if not refs:
+        return "none"
+    referenced = [issue_index.get(number) for number in sorted(refs)]
+    referenced = [issue for issue in referenced if issue]
+    if not referenced:
+        return "none"
+    if all(issue.get("state") == "CLOSED" for issue in referenced):
+        return "satisfied_by_related_issue_refs"
+    return "related_issue_ref_active"
+
+
+def detect_tracked_adl_residue(repo_root: Path):
+    guard = repo_root / "adl" / "tools" / "check_no_tracked_adl_issue_record_residue.sh"
+    if not guard.exists():
+        return False
+    result = run_command(["bash", str(guard)], repo_root)
+    return result.returncode != 0
+
+
+def worktree_execution_done(repo_root: Path, issue_number: int, slug: str, version: str, worktree_hint):
+    if not worktree_hint:
+        return False
+    worktree = Path(worktree_hint)
+    if not worktree.is_absolute():
+        worktree = repo_root / worktree
+    bundle = worktree / ".adl" / version / "tasks" / f"issue-{issue_number}__{slug}"
+    return read_output_status(bundle) == "DONE"
+
+
 def classify_pr_state(pr):
     state = pr.get("state")
     review = pr.get("reviewDecision")
@@ -240,6 +293,9 @@ def classify_pr_state(pr):
     elif checks == "blocked":
         pr_state = "open_checks_failed"
         blocker_class = "checks_failed"
+    elif merge_state == "BLOCKED" and checks == "pass":
+        pr_state = "open_linkage_only"
+        blocker_class = "open_linkage_only"
     elif merge_state == "BLOCKED":
         pr_state = "open_with_blockers"
         blocker_class = "merge_blocked"
@@ -337,6 +393,17 @@ def collect_route_issue(repo_root: Path, payload):
         workflow["blocker_class"] = "active_child_issue_wave"
         workflow["evidence_used"].append("child_issue_wave")
 
+    related_state = related_issue_reference_state(
+        [read_text(source_prompt), read_text(bundle / "stp.md") if bundle else ""],
+        gh_issue_index(repo_root),
+    )
+    if workflow["blocker_class"] == "none" and related_state == "satisfied_by_related_issue_refs":
+        workflow["blocker_class"] = "satisfied_by_related_issue_refs"
+        workflow["evidence_used"].append("related_issue_refs")
+    elif workflow["blocker_class"] == "none" and related_state == "related_issue_ref_active":
+        workflow["blocker_class"] = "related_issue_ref_active"
+        workflow["evidence_used"].append("related_issue_refs")
+
     doctor = doctor_snapshot(
         repo_root,
         issue_number,
@@ -352,11 +419,23 @@ def collect_route_issue(repo_root: Path, payload):
         workflow["evidence_used"].append("doctor_json")
         if doctor.get("worktree"):
             resolved_target.setdefault("worktree_path", doctor["worktree"])
+            if worktree_execution_done(
+                repo_root,
+                issue_number,
+                resolved_target.get("slug"),
+                resolved_target.get("version"),
+                doctor.get("worktree"),
+            ):
+                workflow["lifecycle_state"] = "execution_done"
+                workflow["evidence_used"].append("worktree_output_card")
         if doctor.get("branch"):
             resolved_target.setdefault("branch", doctor["branch"])
     else:
         workflow["lifecycle_state"] = "pre_run"
         workflow["evidence_used"].append("bundle_paths")
+    if workflow["blocker_class"] == "none" and detect_tracked_adl_residue(repo_root):
+        workflow["blocker_class"] = "tracked_adl_residue"
+        workflow["evidence_used"].append("tracked_adl_residue_guard")
     return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
 
@@ -393,6 +472,9 @@ def collect_route_task_bundle(repo_root: Path, payload):
     resolved_target["task_bundle_path"] = str(bundle)
     if source_prompt:
         resolved_target.setdefault("source_prompt_path", str(source_prompt))
+    if workflow["blocker_class"] == "none" and detect_tracked_adl_residue(repo_root):
+        workflow["blocker_class"] = "tracked_adl_residue"
+        workflow["evidence_used"].append("tracked_adl_residue_guard")
     return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
 
@@ -434,6 +516,9 @@ def collect_route_branch(repo_root: Path, payload):
         workflow["ready_state"] = doctor.get("ready_status", "unknown").lower()
         workflow["blocker_class"] = classify_doctor_state(doctor)
         workflow["evidence_used"].append("doctor_json")
+    if workflow["blocker_class"] == "none" and detect_tracked_adl_residue(repo_root):
+        workflow["blocker_class"] = "tracked_adl_residue"
+        workflow["evidence_used"].append("tracked_adl_residue_guard")
     return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
 
@@ -505,6 +590,9 @@ def collect_route_worktree(repo_root: Path, payload):
         workflow["ready_state"] = doctor.get("ready_status", "unknown").lower()
         workflow["blocker_class"] = classify_doctor_state(doctor)
         workflow["evidence_used"].append("doctor_json")
+    if workflow["blocker_class"] == "none" and detect_tracked_adl_residue(repo_root):
+        workflow["blocker_class"] = "tracked_adl_residue"
+        workflow["evidence_used"].append("tracked_adl_residue_guard")
     return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
 
@@ -561,6 +649,9 @@ def collect_route_pr(repo_root: Path, payload):
         "evidence_used": ["gh_pr"],
     }
     workflow["pr_state"], workflow["blocker_class"] = classify_pr_state(pr)
+    if workflow["blocker_class"] == "none" and detect_tracked_adl_residue(repo_root):
+        workflow["blocker_class"] = "tracked_adl_residue"
+        workflow["evidence_used"].append("tracked_adl_residue_guard")
     return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
 

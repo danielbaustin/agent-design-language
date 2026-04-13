@@ -121,6 +121,9 @@ Important rule:
 - treat partially completed early steps as normal state, not corruption
 - the conductor should resume from the next truthful step instead of restarting bootstrap by reflex
 - healthy open PRs should normally hand off to human review/waiting state rather than janitor unless there is an actual blocker
+- explicit `covered by #<n>` / `satisfied by #<n>` style references should block fresh execution when the referenced issue is already closed
+- repo-policy residue such as tracked legacy `.adl` issue records should escalate as a mechanical blocker rather than being mistaken for issue-local implementation work
+- linkage-only PR failures should route as a bounded janitor case rather than a generic merge-blocked state
 
 ## Policy Model
 
