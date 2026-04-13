@@ -60,6 +60,42 @@ restore_missing_local_adl_cards() {
   done <"$preserve_list"
 }
 
+latest_local_adl_version() {
+  local version_root="$repo_root/.adl"
+  [[ -d "$version_root" ]] || return 0
+  find "$version_root" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | \
+    sort -V | tail -n 1
+}
+
+run_closeout_catchup() {
+  [[ "${ADL_MAIN_SYNC_CLOSEOUT_DISABLE:-0}" == "1" ]] && return 0
+  command -v gh >/dev/null 2>&1 || {
+    echo "fix-git: gh not found; skipping closeout catch-up" >&2
+    return 0
+  }
+
+  local versions_csv="${ADL_MAIN_SYNC_CLOSEOUT_VERSIONS:-}"
+  local closeout_repo="${ADL_MAIN_SYNC_CLOSEOUT_REPO:-}"
+  if [[ -z "$versions_csv" ]]; then
+    versions_csv="$(latest_local_adl_version || true)"
+  fi
+  [[ -n "$versions_csv" ]] || return 0
+
+  local version
+  OLDIFS="$IFS"
+  IFS=','
+  for version in $versions_csv; do
+    version="$(echo "$version" | xargs)"
+    [[ -n "$version" ]] || continue
+    if [[ -n "$closeout_repo" ]]; then
+      bash "$repo_root/adl/tools/closeout_completed_issue_wave.sh" --version "$version" --repo "$closeout_repo"
+    else
+      bash "$repo_root/adl/tools/closeout_completed_issue_wave.sh" --version "$version"
+    fi
+  done
+  IFS="$OLDIFS"
+}
+
 repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" ||
   die "not inside a git checkout"
 
@@ -86,3 +122,4 @@ capture_local_adl_cards
 git -C "$repo_root" fetch origin main
 git -C "$repo_root" merge --ff-only origin/main
 restore_missing_local_adl_cards
+run_closeout_catchup

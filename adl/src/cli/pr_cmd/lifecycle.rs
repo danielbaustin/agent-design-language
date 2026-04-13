@@ -3,6 +3,7 @@ use serde::Deserialize;
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::process::{Command, Stdio};
 use std::thread;
 use std::time::Duration;
 
@@ -314,17 +315,20 @@ fn ensure_canonical_output_is_local_only(
         return Ok(());
     };
     let repo_relative = repo_relative.to_string_lossy().into_owned();
-    if run_status_allow_failure(
-        "git",
-        &[
+    let status = Command::new("git")
+        .args([
             "-C",
             path_str(repo_root)?,
             "ls-files",
             "--error-unmatch",
             "--",
             &repo_relative,
-        ],
-    )? {
+        ])
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .status()
+        .context("failed to spawn 'git'")?;
+    if status.success() {
         bail!(
             "{context}: '{}' is still tracked in git. Untrack canonical .adl issue surfaces before lifecycle normalization.",
             repo_relative
