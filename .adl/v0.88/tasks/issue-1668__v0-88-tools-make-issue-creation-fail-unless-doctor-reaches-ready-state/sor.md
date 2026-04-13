@@ -21,7 +21,7 @@ Execution:
 - Model: GPT-5 Codex
 - Provider: OpenAI
 - Start Time: 2026-04-13T00:48:37Z
-- End Time: 2026-04-13T01:02:07Z
+- End Time: 2026-04-13T01:03:58Z
 
 ## Summary
 
@@ -41,20 +41,18 @@ Made `pr create` prove immediate doctor-ready structural state after bootstrap. 
 - Updated `pr.sh create` help text so the published operator contract matches the new ready-gated behavior.
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none yet
-- Worktree-only paths remaining:
-  - `adl/src/cli/pr_cmd.rs`
-  - `adl/src/cli/pr_cmd/doctor.rs`
-  - `adl/src/cli/tests/pr_cmd_inline/basics.rs`
-  - `adl/tools/pr.sh`
-- Integration state: worktree_only
+- Main-repo paths updated: tracked repository paths are updated on the issue branch via PR 1701
+- Worktree-only paths remaining: none
+- Integration state: pr_open
 - Verification scope: worktree
-- Integration method used: branch-local validation before PR publication
+- Integration method used: branch commit plus manual PR publication after `pr finish` validation hit the known ignored-bundle and legacy-residue blocker
 - Verification performed:
   - `git status --short`
-    Verified the bounded implementation file set in the issue worktree before publication.
+    Verified the bounded implementation file set was committed cleanly in the issue worktree before and after publication.
   - `git diff --check`
     Verified there are no whitespace or patch-application defects in the touched paths.
+  - `gh pr view 1701 --repo danielbaustin/agent-design-language --json state,isDraft,url`
+    Verified PR 1701 is open and non-draft on the issue branch.
 - Result: PASS
 
 Rules:
@@ -168,6 +166,7 @@ verification_summary:
 ## Decisions / Deviations
 - Kept the create gate on doctor-ready only and did not include preflight/open-PR-wave blocking, because issue creation should prove structural readiness without turning into queue admission.
 - Used a test-only post-bootstrap hook to prove the failure path end-to-end without widening the production create surface.
+- `pr finish` validated the issue bundle but could not publish because ignored canonical `.adl` bundle paths and legacy tracked `.adl` residue still block the automated publication path on this repo, so publication was completed manually.
 
 ## Follow-ups / Deferred work
 - The workflow conductor still routed the finished 1668 worktree back to `pr-run` because `open_pr_wave_only` outweighed the post-implementation state; that maturity gap should be fixed separately so finished issues hand off to `pr-finish` or janitor surfaces more naturally.
