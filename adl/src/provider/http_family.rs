@@ -599,6 +599,12 @@ mod tests {
         body: String,
     }
 
+    type SpawnedJsonServer = (
+        String,
+        Arc<Mutex<Option<CapturedRequest>>>,
+        thread::JoinHandle<()>,
+    );
+
     fn env_lock() -> std::sync::MutexGuard<'static, ()> {
         static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
         LOCK.get_or_init(|| Mutex::new(()))
@@ -617,14 +623,7 @@ mod tests {
         Some(port)
     }
 
-    fn spawn_json_server(
-        status: u16,
-        response_body: &'static str,
-    ) -> Option<(
-        String,
-        Arc<Mutex<Option<CapturedRequest>>>,
-        thread::JoinHandle<()>,
-    )> {
+    fn spawn_json_server(status: u16, response_body: &'static str) -> Option<SpawnedJsonServer> {
         let port = reserve_local_port()?;
         let bind_addr = format!("127.0.0.1:{port}");
         let server = Server::http(&bind_addr).expect("bind tiny_http server");
@@ -895,7 +894,7 @@ mod tests {
         let (status_endpoint, _status_capture, status_handle) = status_server;
         let status_err = provider_http_json(
             "http",
-            reqwest::blocking::Client::new().post(&format!("{status_endpoint}/v1/complete")),
+            reqwest::blocking::Client::new().post(format!("{status_endpoint}/v1/complete")),
         )
         .expect_err("503 should fail");
         assert!(status_err
@@ -906,7 +905,7 @@ mod tests {
         let (invalid_endpoint, _invalid_capture, invalid_handle) = invalid_json_server;
         let invalid_json_err = provider_http_json(
             "http",
-            reqwest::blocking::Client::new().post(&format!("{invalid_endpoint}/v1/complete")),
+            reqwest::blocking::Client::new().post(format!("{invalid_endpoint}/v1/complete")),
         )
         .expect_err("invalid json should fail");
         assert!(invalid_json_err.to_string().contains("not valid JSON"));
