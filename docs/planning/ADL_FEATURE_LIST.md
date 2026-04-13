@@ -1,324 +1,319 @@
-# ADL Feature List, Status, and Completion Schedule
+# ADL Feature List
 
 ## Purpose
 
-This document is the durable feature inventory for ADL.
+This document is the canonical ADL capability overview.
 
-It answers three planning questions:
+It answers four practical questions:
 
-- which essential ADL features are already implemented
-- which currently implemented features were missing from the earlier feature
-  narrative
-- when the remaining features are scheduled to become complete enough for the
-  `v0.95` MVP
+- what ADL already does today
+- what is active in the current milestone
+- which major platform bands are planned next
+- how the project is expected to converge by `v0.95`
 
-The tone of the feature descriptions is intentionally strong, but the status
-language is conservative. A feature is only marked fully implemented when the
-repo already contains a material working surface for it; bounded demos, early
-surfaces, and planning-only work are called out as such.
+The tone should be strong because ADL has already become a substantial system.
+The status language should remain strict: we only call something implemented
+when the repo contains a real bounded runtime surface, proof surface, or
+reviewable artifact set for it.
+
+## What ADL Is Now
+
+ADL is no longer just a language idea or schema set.
+
+ADL is now a deterministic agent-runtime and orchestration platform with:
+- a Rust reference runtime and CLI
+- explicit workflow, task, agent, tool, and provider artifacts
+- deterministic planning and bounded execution semantics
+- trace, artifact, and review surfaces for post-run inspection
+- bounded demos and milestone proof packages
+- structured authoring and control-plane workflows for repo-scale execution
+
+In short: ADL has become an engineering system for building AI workflows that
+can survive code review, ops review, and postmortem analysis.
 
 ## Status Legend
 
-- **Implemented**: materially present in the repo with working code, artifacts,
-  docs, and/or demo/proof surfaces.
-- **Implemented baseline**: a real bounded version exists, but later milestones
-  are scheduled to deepen, harden, or integrate it.
-- **Partially implemented**: some enabling surfaces exist, but the feature is
-  not yet complete enough to count as a finished platform capability.
-- **Planned**: currently primarily planning/specification work.
-- **Deferred**: recognized, but not required for the `v0.95` MVP unless later
-  explicitly promoted.
+- **Implemented**: materially present on `main` with working code, artifacts,
+  docs, and/or demo or review surfaces.
+- **Implemented baseline**: already real and usable, with later milestones
+  deepening, integrating, or hardening it.
+- **Active milestone**: materially present and under active closeout/review in
+  the current milestone band.
+- **Partially implemented**: meaningful enabling surfaces exist, but the
+  capability is not yet complete enough to count as a finished platform band.
+- **Planned**: primarily a planned milestone/feature band today.
+- **Deferred**: recognized, but not currently part of the `v0.95` must-have
+  scope unless explicitly promoted later.
 
 ## Current Repo Status
 
-As of the current planning state, the repo treats `v0.87` as the most recently
-completed milestone, `v0.87.1` as the active release-tail completion band, and
-`v0.88` as the next major planned milestone. The feature list below therefore
-treats `v0.7` through `v0.87` as the implemented baseline, recognizes the
-runtime-completion work of `v0.87.1`, and uses the `ROAD_TO_v0.95` milestone
-sequence for the remaining major feature bands.
+The current repo truth is:
+- active milestone: `v0.88`
+- current crate version on `main`: `0.87.1`
+- most recently completed runtime-completion milestone package: `v0.87.1`
+- most recently completed substrate milestone package: `v0.87`
+
+That means the feature story should be read this way:
+- `v0.7` through `v0.87.1` provide the implemented platform baseline
+- `v0.88` is an active, materially landed milestone in review/remediation/closeout
+- `v0.89` through `v0.95` are the next planned capability bands
+
+## ADL at a Glance
+
+ADL already provides a serious platform baseline:
+- deterministic workflow execution
+- a real Rust runtime and CLI
+- bounded concurrency, retry, and failure policy
+- signing, verification, and trust surfaces
+- trace, artifact, and replay-oriented reviewability
+- provider and transport substrate
+- structured authoring and task-bundle workflow
+- review and validation contracts
+- bounded Godel-style experimentation
+- ObsMem indexing, retrieval, and shared-memory substrate
+- bounded cognitive and agency-oriented proof paths
+- operational skills and control-plane workflow substrate
+- reviewer-facing milestone packages and demo matrices
 
 ## Feature Status Matrix
 
-| Feature | Status now | Current proof surface | Completion target |
+| Feature band | Status now | Current proof surface | Completion target |
 | --- | --- | --- | --- |
-| Deterministic workflow execution | Implemented | Runtime/CLI, examples, v0.7+ docs | Complete baseline |
+| Deterministic workflow execution | Implemented | runtime/CLI, examples, milestone docs | Complete baseline |
 | ExecutionPlan runtime | Implemented | Rust runtime and plan execution | Complete baseline |
-| Sequential and fork/join coordination | Implemented | Examples, tests, demo docs | Complete baseline |
-| Bounded concurrency and retry/failure controls | Implemented | Runtime semantics, tests, v0.7 docs | Complete baseline |
-| Run artifacts and replay-oriented inspection | Implemented baseline | Run artifacts, traces, demo/review docs | Deepen through v0.90 |
-| Signing, verification, and trust policy | Implemented baseline | Signing/verification surfaces, trust docs | Deepen through v0.90 |
-| Remote/provider execution baseline | Implemented baseline | Remote execution MVP, provider docs | Deepen through v0.87 and v0.92 |
-| HITL pause/resume | Implemented baseline | v0.7/v0.85 proof surfaces | Integrate through v0.95 |
-| Structured authoring model | Implemented baseline | STP/SIP/SOR contracts, prompt tooling | Deepen through v0.95 |
-| Control-plane lifecycle | Implemented baseline | `pr init/create/start/run/finish` surfaces | Harden through v0.87.1 and v0.95 |
-| HTML/editor command surfaces | Implemented baseline | Editor docs, adapter/demo surfaces | Deepen through v0.95 |
-| Review and validation surfaces | Implemented baseline | Reviewer contracts, validation tools | Deepen through v0.95 |
-| Task-bundle workflow | Implemented baseline | Public task records and editor docs | Deepen through v0.95 |
-| Bounded Godel loop | Implemented baseline | v0.8 runtime artifacts and demos | Expand through v0.89 |
-| ObsMem indexing/retrieval | Implemented baseline | v0.8/v0.87 demos and shared-memory docs | Deepen through v0.87+ |
-| Bounded cognitive path | Implemented baseline | v0.86 cognitive demo/artifacts | Deepen through v0.88+ |
-| Trace v1 substrate | Implemented baseline | v0.87 trace docs and proof surfaces | Signed/query completion in v0.90 |
-| Provider/transport substrate | Implemented baseline | v0.87 provider portability docs | Capability maturation in v0.92 |
-| Operational skills substrate | Implemented baseline | v0.87 skills/control-plane docs | Harden through v0.87.1 |
-| Shared ObsMem foundation | Implemented baseline | v0.87 shared-memory docs | Deepen with persistence/identity |
-| Runtime environment and lifecycle completion | Partially implemented | v0.87.1 planning and runtime docs | v0.87.1 |
-| Local runtime resilience / Shepherd preservation | Partially implemented | v0.87.1 planning docs | v0.87.1 |
-| Chronosense substrate, execution posture/cost reviewability, PHI metrics, instinct, and bounded agency | Planned | v0.88 milestone planning docs and promoted feature package | v0.88 |
-| AEE 1.0 convergence | Partially implemented | AEE recovery/demo surfaces and planning | v0.89 |
-| Freedom Gate v2 | Implemented baseline | v0.86 Freedom Gate proof surfaces | v0.89 |
-| Reasoning graph baseline | Partially implemented | planning/schema/proof surfaces | v0.90 |
-| Signed trace and trace query | Planned | roadmap/planning docs | v0.90 |
-| Affect, moral cognition, kindness, humor | Planned | v0.91 planning docs | v0.91 |
-| Identity, capability, names, chronosense | Planned | v0.92 planning docs | v0.92 |
-| Governance, delegation, IAM, social contract | Planned | v0.93 planning docs | v0.93 |
-| Distributed execution substrate | Partially implemented | cluster groundwork/planning | v0.94/v0.95 integration |
-| Demo catalog and MVP walkthrough | Partially implemented | milestone demo matrices | v0.95 |
-| Tooling Rust migration | Partially implemented | shell-heavy control plane plus Rust runtime | v0.95 |
-| Zed integration | Deferred | planning docs only | Post-v0.95 unless promoted |
+| Sequential + fork/join coordination | Implemented | examples, tests, demo docs | Complete baseline |
+| Bounded concurrency and retry/failure controls | Implemented | runtime semantics, tests, v0.7 docs | Complete baseline |
+| Run artifacts and replay-oriented inspection | Implemented baseline | run artifacts, trace/review docs, milestone demos | Deepen through `v0.90` |
+| Signing, verification, and trust policy | Implemented baseline | signing/verification surfaces, trust docs | Deepen through `v0.90` |
+| Provider and transport substrate | Implemented baseline | provider docs, HTTP/local provider surfaces, reviewer package | Deepen through `v0.92` |
+| Remote execution baseline | Implemented baseline | bounded remote execution surfaces and docs | Deepen through `v0.92+` |
+| Human-in-the-loop pause/resume | Implemented baseline | runtime/control surfaces and review docs | Integrate through `v0.95` |
+| Structured authoring model | Implemented baseline | STP/SIP/SOR contracts and prompt tooling | Deepen through `v0.95` |
+| Control-plane lifecycle | Implemented baseline | `pr init/create/start/run/finish`, doctor, janitor, closeout surfaces | Harden through `v0.95` |
+| Editor and command-adapter surfaces | Implemented baseline | editor docs, demos, bounded command adapters | Deepen through `v0.95` |
+| Review and validation surfaces | Implemented baseline | reviewer contracts, validation tools, review packages | Deepen through `v0.95` |
+| Task-bundle workflow | Implemented baseline | issue/task bundles and public execution records | Deepen through `v0.95` |
+| Bounded Godel loop | Implemented baseline | `v0.8` runtime artifacts, demos, experiment surfaces | Deepen through `v0.89` |
+| ObsMem indexing and retrieval | Implemented baseline | `v0.8` / `v0.87` proof surfaces and shared memory docs | Deepen through `v0.88+` |
+| Shared ObsMem foundation | Implemented baseline | `v0.87` shared-memory docs and proof surfaces | Deepen with identity/continuity |
+| Bounded cognitive path | Implemented baseline | `v0.86` cognitive demo/artifact package | Deepen through `v0.88+` |
+| Freedom Gate baseline | Implemented baseline | `v0.86` bounded cognitive proof path | Deepen through `v0.89` |
+| Trace substrate | Implemented baseline | `v0.87` trace docs and reviewer-facing proof surfaces | Signed/query completion in `v0.90` |
+| Operational skills substrate | Implemented baseline | `v0.87` skills/control-plane docs and operational demos | Harden through `v0.95` |
+| Runtime environment and lifecycle completion | Implemented baseline | `v0.87.1` runtime docs, demos, and review package | Deepen through later hardening |
+| Local runtime resilience and Shepherd preservation | Implemented baseline | `v0.87.1` resilience and preservation docs/demos | Deepen through later runtime work |
+| Chronosense / temporal substrate | Active milestone | `v0.88` feature package and review surfaces | `v0.88` |
+| Commitments, deadlines, and bounded temporal causality | Active milestone | `v0.88` feature docs and reviewer package | `v0.88` |
+| PHI-style integration metrics | Active milestone | `v0.88` feature docs and review surfaces | `v0.88` |
+| Instinct and bounded agency | Active milestone | `v0.88` feature docs, instinct review surface, Paper Sonata | `v0.88` |
+| Paper Sonata public-facing proof surface | Active milestone | `demo_v088_paper_sonata.sh` and milestone docs | `v0.88` |
+| Deep-agents comparative proof | Active milestone | `demo_v088_deep_agents_comparative_proof.sh` and feature doc | `v0.88` |
+| AEE 1.0 convergence | Partially implemented | bounded recovery/AEE proof surfaces and planning docs | `v0.89` |
+| Freedom Gate v2 | Planned | baseline Freedom Gate plus `v0.89` planning docs | `v0.89` |
+| Decision, action, and skill-governance surfaces | Planned | `v0.89` planning package | `v0.89` |
+| Security, posture, and trust-under-adversary package | Planned | `v0.89` planning package | `v0.89` / `v0.89.2` |
+| Reasoning graph baseline | Planned | planning/schema/proof surfaces | `v0.90` |
+| Signed trace and trace query | Planned | roadmap and planning docs | `v0.90` |
+| Affect, kindness, moral cognition, humor | Planned | `v0.91` planning docs | `v0.91` |
+| Identity, capability, names, and continuity substrate | Planned | `v0.92` planning docs | `v0.92` |
+| Governance, delegation, IAM, social contract | Planned | `v0.93` planning docs | `v0.93` |
+| Economics, accounting, and payment substrate | Planned | economics planning corpus and roadmap docs | `v0.93` / `v0.94` |
+| Distributed execution integration | Partially implemented | cluster groundwork plus planning docs | `v0.94` / `v0.95` |
+| Demo catalog and polished MVP walkthrough | Partially implemented | milestone demo matrices and reviewer packages | `v0.95` |
+| Control-plane Rust migration / tooling hardening | Partially implemented | mixed Rust/shell control plane and active tooling hardening | `v0.95` |
+| Zed integration | Deferred | planning docs only | Post-`v0.95` unless promoted |
 
-## Features Fully Implemented Today
+## Implemented Platform Highlights
 
-### Deterministic Workflow Execution
+### Deterministic Runtime and Execution Semantics
 
-ADL already turns agent workflows into explicit, deterministic execution plans
-rather than fragile prompt chains. This is the foundation that makes the rest
-of the platform credible: users can inspect what will run, reason about the
-order of execution, and trust that the runtime is not improvising hidden
-behavior.
+ADL already executes workflows as explicit, deterministic plans rather than
+fragile prompt chains. That gives the project its core credibility: readers can
+inspect what will run, reason about ordering and failure behavior, and trust
+that the runtime is not improvising hidden orchestration logic.
 
-### ExecutionPlan Runtime
+### Real Rust Runtime and CLI
 
-The runtime already compiles structured workflow definitions into an
-ExecutionPlan and executes against that plan. This gives ADL the feel of a real
-language/runtime pair rather than a loose collection of scripts.
+The Rust runtime is not a placeholder. ADL already has a reference runtime and
+CLI capable of plan printing, execution, tracing, signing, verification,
+artifact emission, and bounded remote/provider interaction. That is the
+difference between “a language idea” and “a platform you can actually run.”
 
-### Sequential and Fork/Join Coordination
+### Bounded Workflow Coordination
 
-ADL already supports the essential workflow coordination patterns needed for
-serious agent orchestration. Sequential work, fork/join execution, deterministic
-ready ordering, and bounded coordination allow agent systems to scale beyond a
-single prompt while still remaining legible.
+ADL already supports the coordination patterns serious orchestration needs:
+sequential execution, fork/join structure, bounded concurrency, retries, and
+failure policy. This makes the system useful for real engineering workflows,
+not just single-prompt demos.
 
-### Bounded Concurrency and Failure Controls
+### Reviewable Artifacts and Proof Surfaces
 
-The runtime already includes bounded concurrency, retry, and failure-policy
-surfaces. These controls are crucial because they keep automation powerful
-without letting it become operationally reckless.
+Every important ADL milestone has pushed toward one principle: execution should
+leave behind durable proof surfaces. Trace artifacts, run records, milestone
+demo matrices, review handoffs, and local review packages make the platform
+inspectable after the fact rather than dependent on oral reconstruction.
 
-## Implemented Baselines That Continue to Deepen
+### Signing, Verification, and Trust Boundaries
 
-### Replay-Oriented Runs and Inspectable Artifacts
+ADL already includes signing and verification surfaces and treats trust as part
+of the runtime story. That baseline becomes richer later, but it is already a
+real part of the system, not an aspirational security note.
 
-ADL already emits stable run artifacts and review surfaces that make execution
-inspectable after the fact. This is implemented as a strong baseline, while the
-later signed-trace and query work will make the inspection story even more
-authoritative by `v0.90`.
+### Provider, Remote, and Transport Substrate
 
-### Signing, Verification, and Trust Policy
+ADL already has real provider/transport structure, including bounded remote
+execution and local/provider proof paths. This matters because it establishes
+the platform boundary between orchestration logic and execution backends.
 
-ADL already has signing and verification surfaces that make authenticity part
-of the execution model. The current implementation is real, and later signed
-trace work is scheduled to deepen this from workflow-level trust into a richer
-provenance stack.
+### Structured Authoring and Control Plane
 
-### Remote and Provider Execution Baseline
+The repo now has a real control-plane lifecycle around issue creation,
+bootstrap, run binding, validation, and closeout. STP/SIP/SOR records, doctor
+checks, janitoring, and bounded PR tooling give ADL a strong authoring and
+execution spine instead of relying on vague contributor habit.
 
-ADL already has remote/provider execution surfaces and early trust-policy
-guardrails. Provider and transport correctness are now being treated as a
-platform substrate, with v0.87 and v0.92 carrying the deeper portability and
-capability-contract work. This substrate defines what providers are capable of
-in principle. A later aptitude layer (v0.88) will distinguish which agents or
-providers are actually well-suited and reliable for specific bounded task
-families.
+### Operational Skills as System Intelligence
 
-### Human-in-the-Loop Control
+Operational skills are now part of ADL’s real platform story. They reduce
+error, improve determinism, and turn repeated repo operations into bounded,
+reviewable execution surfaces rather than free-form prompting.
 
-ADL already supports bounded human pause/resume and review-oriented control
-surfaces. The baseline is present; the long-term goal is to integrate HITL
-cleanly across the full authoring, execution, review, and governance story.
+### Bounded Godel, ObsMem, and Cognitive Substrate
 
-### Structured Authoring Model
+ADL already has real bounded reflective execution, memory participation, and
+cognitive proof surfaces:
+- `v0.8` established bounded Godel-style experimentation and canonical artifacts
+- `v0.86` established the first working bounded cognitive-system proof package
+- `v0.87` strengthened trace/provider/shared-memory/skills substrate
 
-ADL already has a real structured authoring model around artifacts such as STP,
-SIP, and SOR. This gives the platform a professional foundation for prompt
-engineering, issue work, implementation handoff, and execution records.
+These are not disconnected demos. Together they form the core of ADL’s claim
+that bounded adaptive systems can be both powerful and reviewable.
 
-### Control-Plane Lifecycle
+## Current Active Milestone: v0.88
 
-The `pr init`, `pr create`, `pr start`, `pr run`, and `pr finish` lifecycle is
-now a real ADL control-plane surface. It is implemented enough to support the
-authoring workflow, while `v0.87.1` and `v0.95` are scheduled to harden the
-runtime environment and migrate the highest-risk shell-heavy tooling.
+`v0.88` is not just planning work. It is an active, materially landed milestone
+whose implementation wave is complete through `WP-13`, with docs/review/
+remediation/release-tail work still in progress.
 
-### HTML Editor and Editor-Adapter Surfaces
+This milestone adds two major bounded bands:
+- temporal / chronosense substrate
+- instinct / bounded agency substrate
 
-ADL already has bounded editor surfaces and command-adapter proof paths. This
-is not yet the final product-quality editor, but it is a real baseline that
-proves the authoring model can become usable rather than remaining a raw-file
-discipline.
+High-signal `v0.88` achievements include:
+- promoted temporal schema, continuity/identity semantics, temporal retrieval,
+  commitments/deadlines, bounded temporal causality, PHI metrics, instinct, and
+  instinct runtime influence into one canonical feature package
+- reviewer-facing proof surfaces for temporal review, PHI review, instinct
+  review, and the integrated `v0.88` review surface
+- `Paper Sonata` as the flagship public-facing bounded demo
+- deep-agents comparative proof as a supporting reviewer-facing row
+- a full internal repo-code-review pass completed before 3rd-party review
 
-### Review and Validation Surfaces
+So the truthful `v0.88` story is:
+- core implementation: materially landed
+- review/remediation/closeout: still active
+- milestone value: already very real
 
-ADL already includes reviewer contracts, prompt/card validation, provenance
-surfaces, and structured review artifacts. This is a powerful baseline because
-it makes review part of the system rather than a purely manual afterthought.
+## Major Capability Bands Still to Come
 
-### Task-Bundle Workflow
+### v0.89 - Governed Adaptive Execution
 
-ADL already groups task work into structured bundles and public records. The
-current form is an early slice, but it establishes the essential unit of work:
-design intent, implementation prompt, and output record stay linked rather than
-drifting apart.
+`v0.89` is the band where ADL should turn governed adaptation into a first-class
+platform package:
+- AEE 1.0 convergence
+- Freedom Gate v2
+- explicit decision and action mediation surfaces
+- skill execution contracts
+- security, trust, and posture planning serious enough to support adversarial work
 
-### Bounded Godel Loop
+### v0.90 - Reasoning Graph, Signed Trace, and Query
 
-ADL already includes bounded Godel-style scientific loop surfaces with
-canonical artifacts and runnable proof paths. The baseline exists today, while
-the roadmap schedules stronger AEE/Godel convergence through `v0.89`.
-
-### ObsMem Indexing and Retrieval
-
-ADL already has ObsMem indexing and retrieval demo surfaces, including shared
-memory surfaces from v0.87. This is the memory foundation that later
-persistence, identity, and continuity features will build on.
-
-### Bounded Cognitive Path
-
-ADL already has an end-to-end bounded cognitive-system proof path from v0.86.
-This includes observable stages such as signal intake, candidate selection,
-arbitration, reasoning, bounded execution, evaluation, reframing, memory
-participation, and Freedom Gate behavior. The key point is that this is not
-just theory—it is a runnable, inspectable cognitive loop with artifacts and
-demo surfaces.
-
-### Trace, Provider, Shared Memory, and Skills Substrate
-
-ADL now includes v0.87 substrate work around trace, provider portability,
-shared ObsMem, operational skills, and reviewer-facing proof surfaces. These
-were missing from the older feature-list narrative, but they are essential
-implemented platform features because later AEE, identity, governance, and
-runtime-completion work depend on them.
-
-## Implemented Features Missing From the Earlier Feature List
-
-The earlier feature narrative was strong, but it underrepresented several
-currently implemented or materially present surfaces:
-
-- **Trace v1 substrate**: v0.87 makes trace and artifact inspection a core
-  platform surface rather than a generic replay note.
-- **Provider/transport portability**: provider/model/transport separation is a
-  distinct platform capability, not just remote execution.
-- **Operational skills substrate**: ADL now includes a real operational skills
-  substrate that constrains execution into bounded, repeatable surfaces. This is
-  not just a supporting feature; it is a primary mechanism for reducing error,
-  improving determinism, and stabilizing the control plane. By replacing
-  fragile free-form prompting with structured skill invocation, ADL
-  significantly improves reliability and execution quality across workflows.
-- **Five-command control plane**: `pr init/create/start/run/finish` deserves
-  explicit feature-list treatment because it is the spine of the authoring and
-  execution lifecycle.
-- **Runtime environment and lifecycle work**: v0.87.1 makes runtime
-  environment, lifecycle, resilience, and operator surfaces a first-class next
-  feature band.
-- **Freedom Gate baseline**: a bounded Freedom Gate surface already exists as
-  part of the v0.86 cognitive system. This is more specific than generic
-  cognitive control and should be named explicitly. Later work (v0.89) expands
-  and formalizes this into Freedom Gate v2 with stronger governance alignment.
-- **Demo catalog discipline**: ADL treats demos as a feature-legibility system,
-  not only as release evidence.
-
-## Planned Features and Completion Schedule
-
-### v0.87.1 - Runtime Completion
-
-The next milestone completes the local runtime environment, lifecycle,
-resilience, operator, state, and review surfaces. More importantly, it
-represents a stabilization phase where ADL transitions from an architecturally
-correct system to a reliably usable one. This includes hardening deterministic
-execution, improving tool and skill reliability, stabilizing the control-plane
-lifecycle, and materially reducing execution errors through bounded operational
-surfaces.
-
-### v0.88 - Chronosense, Execution Posture, PHI, Instinct, and Bounded Agency
-
-`v0.88` is scheduled to make chronosense and temporal continuity real as a
-bounded substrate, connect execution posture to realized cost and trace, add a
-bounded engineering interpretation of PHI-style integration metrics, and make
-instinct and bounded agency more concrete. This is also the milestone where ADL
-should gain a flagship public-facing multi-agent proof surface through the
-bounded `Paper Sonata` demo.
-
-This is the point where ADL should start to feel less like isolated execution
-and more like an agent substrate with continuity, shaped priorities, visible
-execution posture, and stronger internal structure.
-
-Note:
-- aptitude is no longer treated as a core `v0.88` milestone commitment
-- the active aptitude band now belongs with the later learning/governance
-  transition around `v0.89`
-
-### v0.89 - AEE 1.0 and Freedom Gate v2
-
-`v0.89` is scheduled to deliver AEE 1.0 convergence under explicit security and
-threat constraints. It should also strengthen Freedom Gate behavior so bounded
-adaptation has a clear action boundary.
-
-### v0.90 - Reasoning Graph, Signed Trace, and Trace Query
-
-`v0.90` is scheduled to turn reasoning and provenance into a stronger
-inspectable stack. The key outcomes are reasoning-graph baseline, signed trace
-completion, and query/inspection surfaces over reasoning and trace artifacts.
+`v0.90` is expected to deepen reasoning and provenance into a much stronger
+inspection stack:
+- reasoning-graph baseline
+- signed trace completion
+- query and inspection over reasoning and trace artifacts
 
 ### v0.91 - Affect and Moral Cognition
 
-`v0.91` is scheduled for affect, moral cognition, kindness, humor/absurdity,
-and related evaluation surfaces. This is where ADL's cognitive architecture
-becomes more emotionally legible and normatively serious without pretending to
-be unconstrained synthetic psychology.
+`v0.91` is where ADL’s cognitive architecture becomes more emotionally and
+normatively legible:
+- affect
+- kindness
+- humor/absurdity
+- moral cognition and related evaluation surfaces
 
-### v0.92 - Identity, Capability, Names, and Chronosense
+### v0.92 - Identity, Capability, and Continuity
 
-`v0.92` is scheduled to introduce first-class identity, model/provider
-capability contracts, stable names, and continuity hooks. This is the bridge
-from bounded cognitive behavior to identity-bearing agents that can maintain a
-coherent history across runs.
+`v0.92` is the bridge from bounded cognitive behavior to identity-bearing
+agents:
+- first-class identity
+- provider/model capability contracts
+- stable names
+- continuity hooks across runs
 
 ### v0.93 - Governance, Delegation, IAM, and Social Contract
 
-`v0.93` is scheduled to turn identity substrate into accountable governance.
-The feature band includes IAM, policy surfaces, constitutional delegation,
-rights/duties, social contract surfaces, and governed autonomy boundaries.
+`v0.93` is expected to turn identity substrate into accountable governance:
+- IAM
+- delegation
+- policy and constitutional surfaces
+- rights/duties and social contract surfaces
 
-### v0.94 - Integration and Dependency-Gap Closure
+### v0.93 - v0.94 Economics and Payment Substrate
 
-`v0.94` is the final gap-closure band before MVP freeze. It should be used for
-integration, distributed-substrate closure, cross-cutting dependency cleanup,
-and already-implied MVP work rather than new architectural domains.
+The planning corpus already points toward a serious economics band:
+- accounting schema
+- economic agency
+- governance rules
+- payment adapters
+- Lightning / x402 experiments
+- market and settlement surfaces
+
+This is an important future platform direction, even though it is not part of
+the current `v0.88` closure band.
+
+### v0.94 - Integration and Dependency Closure
+
+`v0.94` should close the remaining cross-cutting dependency gaps:
+- distributed-substrate integration
+- cross-band convergence
+- MVP dependency cleanup
 
 ### v0.95 - MVP Convergence and Feature Freeze
 
-`v0.95` is the MVP convergence point. It is scheduled for polished demos,
-platform convergence, tooling migration of the highest-risk surfaces, optional
-Zed carry-in if explicitly promoted, and the `1.0` scope freeze.
+`v0.95` is the planned convergence point:
+- polished demo catalog
+- coherent MVP walkthrough
+- control-plane/tooling hardening
+- feature freeze and `1.0` scope boundary
 
 ## Deferred Feature
 
 ### Zed Integration
 
-Zed integration is recognized as valuable, but it is not currently required for
-the `v0.95` MVP. HTML/editor surfaces remain the required editor path unless a
-later explicit decision promotes Zed into the must-have set.
+Zed integration is recognized as useful, but it is not currently required for
+the `v0.95` MVP. It should remain explicitly deferred unless a later milestone
+promotes it into must-have scope.
 
 ## Summary
 
-ADL already has a serious implemented foundation: deterministic execution,
-structured coordination, trust surfaces, authoring/control-plane workflows,
-bounded Godel loops, ObsMem, bounded cognition, trace/provider/shared-memory
-substrate, and reviewer-facing proof surfaces.
+ADL already has a substantial platform:
+- deterministic execution
+- a real Rust runtime
+- bounded orchestration semantics
+- trust and verification surfaces
+- reviewable traces and artifacts
+- provider and transport substrate
+- structured authoring and control-plane workflow
+- operational skills
+- bounded Godel, ObsMem, and cognitive proof paths
+- active temporal and bounded-agency milestone work
 
-The remaining work through `v0.95` is not random feature expansion. It is a
-planned convergence path: complete the runtime, deepen persistence and agency,
-finish AEE, make reasoning and trace inspectable, add affect and moral
-cognition, establish identity and governance, close integration gaps, and land
-the MVP with polished demos and a disciplined feature freeze.
+What remains through `v0.95` is not random feature accumulation. It is a
+deliberate convergence path:
+- finish `v0.88` cleanly
+- make governed adaptation explicit in `v0.89`
+- deepen reasoning and provenance in `v0.90`
+- add affect, identity, governance, and economics in bounded later bands
+- close the MVP as a serious, reviewable agent-runtime platform
