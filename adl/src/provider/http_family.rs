@@ -623,6 +623,7 @@ mod tests {
         Some(port)
     }
 
+    #[allow(clippy::type_complexity)]
     fn spawn_json_server(status: u16, response_body: &'static str) -> Option<SpawnedJsonServer> {
         let port = reserve_local_port()?;
         let bind_addr = format!("127.0.0.1:{port}");
