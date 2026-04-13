@@ -55,7 +55,7 @@ This milestone must prove a real temporal / PHI / instinct package with runnable
 - [ ] Paper Sonata is strong enough to function as a flagship public-facing demo
 
 ## Quality Gates
-- [ ] canonical quality gate defined (`docs/milestones/v0.88/QUALITY_GATE_v0.88.md`)
+- [x] canonical quality gate defined (`docs/milestones/v0.88/QUALITY_GATE_v0.88.md`)
 - [ ] formatting / lint gates pass
 - [ ] test and CI gates pass
 - [ ] coverage signal is acceptable or exceptions are documented
