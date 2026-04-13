@@ -27,10 +27,12 @@ This is not just a reminder that a release will happen later. When the milestone
 
 All of the following must be true before ceremony:
 
+- [ ] canonical quality gate doc is current and truthful
 - [ ] milestone checklist is fully updated and honest
 - [ ] implementation issue wave for `WP-02` through `WP-13` is complete or explicitly deferred
 - [ ] each completed implementation WP produced concrete code, tests, artifacts, demos, or an explicit defer record
 - [ ] demo matrix rows map to real runnable commands and proof artifacts
+- [ ] D11 quality-gate walkthrough is runnable and aligned to the current CI and coverage posture
 - [ ] docs, WBS, demos, and implementation agree on the same bounded milestone
 - [ ] PHI, instinct, temporal schema, and execution-policy/cost claims are each proven in at least one reviewable surface
 - [ ] Paper Sonata is strong enough to act as a flagship public-facing demo without overclaiming autonomy
@@ -74,6 +76,7 @@ When implementation begins, `v0.88` should close using the same bounded sequence
 Immediately before and after ceremony:
 
 - [ ] CI status checked on `main`
+- [ ] `bash adl/tools/demo_v088_quality_gate.sh` succeeds
 - [ ] release notes reviewed against actual milestone truth
 - [ ] demo commands run successfully from a clean checkout
 - [ ] proof artifacts are generated and inspectable

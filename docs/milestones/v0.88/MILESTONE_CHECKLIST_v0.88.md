@@ -55,14 +55,17 @@ This milestone must prove a real temporal / PHI / instinct package with runnable
 - [ ] Paper Sonata is strong enough to function as a flagship public-facing demo
 
 ## Quality Gates
+- [ ] canonical quality gate defined (`docs/milestones/v0.88/QUALITY_GATE_v0.88.md`)
 - [ ] formatting / lint gates pass
 - [ ] test and CI gates pass
 - [ ] coverage signal is acceptable or exceptions are documented
+- [ ] D11 quality-gate walkthrough is runnable and current
 - [ ] no unresolved high-priority blockers remain
 
 ## Documentation Integrity
 - [x] DESIGN, README, WBS, SPRINT, and feature-doc inventory agree on the milestone boundary
 - [ ] demo matrix matches the actual runnable proof surface
+- [ ] checklist / release plan / quality gate agree on the same Sprint 3 posture
 - [ ] docs match implementation truthfully once the issue wave lands
 
 ## Review
