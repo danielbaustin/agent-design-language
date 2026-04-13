@@ -1,4 +1,4 @@
-# ADL Feature List, Status, and Road to v0.95
+# ADL Feature List
 
 ## Purpose
 
