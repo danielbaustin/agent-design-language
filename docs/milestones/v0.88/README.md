@@ -141,9 +141,10 @@ Current status: **implementation wave seeded and largely complete; `v0.88` is in
   - `WP-11` `#1654`
   - `WP-12` `#1656`
   - `WP-13` `#1657` plus bounded supporting proof `#1618`
-- Open closeout tail:
+- Closed review-tail foundation:
   - `WP-14` `#1652`
   - `WP-15` `#1658`
+- Open closeout tail:
   - `WP-16` `#1659`
   - `WP-17` `#1660`
   - `WP-18` `#1661`
