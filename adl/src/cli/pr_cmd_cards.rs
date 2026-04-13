@@ -152,6 +152,8 @@ pub(crate) fn validate_issue_body_for_create(
     slug: &str,
     body: &str,
 ) -> Result<()> {
+    let init_template =
+        "docs/templates/PR_INIT_INVOCATION_TEMPLATE.md or an authored issue body file";
     let probe_issue = 999_999;
     let probe_url = format!(
         "https://github.com/{}/issues/{probe_issue}",
@@ -161,9 +163,17 @@ pub(crate) fn validate_issue_body_for_create(
         render_issue_prompt_from_body(probe_issue, slug, title, labels_csv, &probe_url, body);
     let temp = write_temp_markdown("issue_body_probe", &prompt)?;
     validate_bootstrap_stp(repo_root, &temp)
-        .with_context(|| "create: issue body cannot satisfy source-prompt validation")?;
+        .with_context(|| {
+            format!(
+                "create: issue body cannot satisfy source-prompt validation; provide an authored body or use {}",
+                init_template
+            )
+        })?;
     if let Some(reason) = placeholder_issue_body_reason(body) {
-        bail!("create: issue body is still bootstrap stub content ({reason})");
+        bail!(
+            "create: issue body is still bootstrap stub content ({reason}); provide an authored body or use {}",
+            init_template
+        );
     }
     Ok(())
 }

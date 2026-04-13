@@ -817,6 +817,59 @@ fn real_pr_create_rejects_issue_body_that_cannot_pass_source_prompt_validation()
     assert!(err
         .to_string()
         .contains("create: issue body cannot satisfy source-prompt validation"));
+    assert!(err
+        .to_string()
+        .contains("docs/templates/PR_INIT_INVOCATION_TEMPLATE.md"));
+}
+
+#[test]
+fn real_pr_create_rejects_bootstrap_stub_issue_body_with_authored_body_guidance() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-real-create-bootstrap-stub-body");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_path = bin_dir.join("gh");
+    write_executable(
+        &gh_path,
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 99\n",
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    let err = real_pr(&[
+        "create".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Bootstrap stub body".to_string(),
+        "--slug".to_string(),
+        "v0-86-tools-bootstrap-stub-body".to_string(),
+        "--body".to_string(),
+        "## Summary\n\nGuard create against bootstrap-stub issue bodies.\n\n## Goal\n\n## Required Outcome\n\nThis issue ships tooling code and tests.\n\n## Deliverables\n\n- create-path stub rejection guidance\n\n## Acceptance Criteria\n\n- placeholder bodies are rejected after structural validation\n\n## Repo Inputs\n\n- adl/src/cli/pr_cmd_cards.rs\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- lifecycle redesign\n\n## Issue-Graph Notes\n\n- test fixture\n\n## Notes\n\n- placeholder body should be rejected after structural validation\n\n## Tooling Notes\n\n- should fail with authored-body guidance\n".to_string(),
+        "--labels".to_string(),
+        "track:roadmap,type:task,area:tools".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect_err("bootstrap stub issue body should fail before gh issue create");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    assert!(err
+        .to_string()
+        .contains("create: issue body is still bootstrap stub content"));
+    assert!(err
+        .to_string()
+        .contains("docs/templates/PR_INIT_INVOCATION_TEMPLATE.md"));
 }
 
 #[test]
