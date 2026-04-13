@@ -2,7 +2,7 @@
 
 ## Status
 
-Promoted milestone feature doc for `v0.88`.
+Promoted milestone feature doc for `v0.88`; bounded runtime surface implemented for WP-07.
 
 ## Purpose
 
@@ -49,10 +49,13 @@ This document defines:
 - sequence vs dependency
 - causal explanation needs
 - bounded causal-link representation
+- the reviewable `TemporalCausalityExplanationContract`
+- the proof hook `adl identity causality --out .adl/state/temporal_causality_explanation_v1.json`
 
 This document does not define:
 - full causal inference theory
 - probabilistic scientific causality engines
+- planning or governance policy
 
 ---
 
@@ -82,14 +85,20 @@ These are explanation questions, not just logging questions.
 
 ## Causal Links
 
-Bounded causal representation may need to support:
+The bounded causal surface now supports:
 - source event or condition
 - target event or state
 - relation type
 - confidence or certainty class
 - explanation note
 
-The exact schema can be defined later.
+The current relation classes are:
+- temporal succession
+- declared dependency
+- causal contribution
+- unknown relationship
+
+The current contract preserves the rule that sequence alone is insufficient evidence for causality.
 
 ---
 
@@ -98,6 +107,29 @@ The exact schema can be defined later.
 - do not overclaim causality from mere order
 - preserve uncertainty where causality is unclear
 - allow explanation to cite dependencies and prior state changes
+- require explanation records to cite bounded evidence rather than narrative speculation
+
+## Runtime Surface
+
+The current `v0.88` owned surface is:
+- `adl::chronosense::TemporalCausalityExplanationContract`
+- `adl identity causality`
+
+The proof artifact is:
+- `.adl/state/temporal_causality_explanation_v1.json`
+
+The explanation surface requires:
+- source event or condition
+- target event or state
+- relation type
+- confidence
+- explanation note
+
+The contract keeps explicit uncertainty classes:
+- high
+- medium
+- low
+- unknown
 
 ---
 
