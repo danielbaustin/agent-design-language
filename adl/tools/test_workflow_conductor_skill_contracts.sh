@@ -174,6 +174,9 @@ git -C "${fixture_repo}" init -q
 git -C "${fixture_repo}" config user.email "codex@example.test"
 git -C "${fixture_repo}" config user.name "Codex"
 git -C "${fixture_repo}" commit --allow-empty -qm "init"
+cat >"${fixture_repo}/.gitignore" <<'EOF'
+.adl/
+EOF
 
 cat >"${fixture_repo}/adl/tools/pr.sh" <<'EOF'
 #!/usr/bin/env bash
@@ -195,12 +198,29 @@ JSON
 {"schema":"adl.pr.doctor.v1","issue":2006,"version":"v0.88","slug":"route-tracker-stop","branch":"codex/2006-route-tracker-stop","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"pre_run","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2006-route-tracker-stop.md","root_stp":".adl/v0.88/tasks/issue-2006__route-tracker-stop/stp.md","root_input":".adl/v0.88/tasks/issue-2006__route-tracker-stop/sip.md","root_output":".adl/v0.88/tasks/issue-2006__route-tracker-stop/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"doctor_status":"PASS"}
 JSON
     ;;
+  2007)
+    cat <<'JSON'
+{"schema":"adl.pr.doctor.v1","issue":2007,"version":"v0.88","slug":"route-issue-finish-from-worktree","branch":"codex/2007-route-issue-finish-from-worktree","mode":"full","preflight_status":"BLOCK","open_pr_count":1,"open_prs":[{"number":9998,"head_ref_name":"codex/other-open-wave","state":"ready","url":"https://example.test/pr/9998"}],"lifecycle_state":"run_bound","ready_status":"PASS","worktree":".worktrees/adl-wp-2007","source":".adl/v0.88/bodies/issue-2007-route-issue-finish-from-worktree.md","root_stp":".adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree/stp.md","root_input":".adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree/sip.md","root_output":".adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree/sor.md","wt_stp":".worktrees/adl-wp-2007/.adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree/stp.md","wt_input":".worktrees/adl-wp-2007/.adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree/sip.md","wt_output":".worktrees/adl-wp-2007/.adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree/sor.md","doctor_status":"BLOCK"}
+JSON
+    ;;
+  2008)
+    cat <<'JSON'
+{"schema":"adl.pr.doctor.v1","issue":2008,"version":"v0.88","slug":"route-related-satisfied","branch":"codex/2008-route-related-satisfied","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"pre_run","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2008-route-related-satisfied.md","root_stp":".adl/v0.88/tasks/issue-2008__route-related-satisfied/stp.md","root_input":".adl/v0.88/tasks/issue-2008__route-related-satisfied/sip.md","root_output":".adl/v0.88/tasks/issue-2008__route-related-satisfied/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"doctor_status":"PASS"}
+JSON
+    ;;
+  2009)
+    cat <<'JSON'
+{"schema":"adl.pr.doctor.v1","issue":2009,"version":"v0.88","slug":"route-residue-finish","branch":"codex/2009-route-residue-finish","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"execution_done","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2009-route-residue-finish.md","root_stp":".adl/v0.88/tasks/issue-2009__route-residue-finish/stp.md","root_input":".adl/v0.88/tasks/issue-2009__route-residue-finish/sip.md","root_output":".adl/v0.88/tasks/issue-2009__route-residue-finish/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"doctor_status":"PASS"}
+JSON
+    ;;
   *)
     exit 1
     ;;
 esac
 EOF
 chmod +x "${fixture_repo}/adl/tools/pr.sh"
+cp "${repo_root}/adl/tools/check_no_tracked_adl_issue_record_residue.sh" "${fixture_repo}/adl/tools/check_no_tracked_adl_issue_record_residue.sh"
+chmod +x "${fixture_repo}/adl/tools/check_no_tracked_adl_issue_record_residue.sh"
 
 mkdir -p "${fixture_repo}/.adl/v0.88/tasks/issue-2001__route-run"
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-2001__route-run/stp.md"
@@ -230,6 +250,27 @@ touch "${fixture_repo}/.adl/v0.88/tasks/issue-2006__route-tracker-stop/sip.md"
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-2006__route-tracker-stop/sor.md"
 touch "${fixture_repo}/.adl/v0.88/bodies/issue-2006-route-tracker-stop.md"
 
+mkdir -p "${fixture_repo}/.adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree/stp.md"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree/sip.md"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree/sor.md"
+touch "${fixture_repo}/.adl/v0.88/bodies/issue-2007-route-issue-finish-from-worktree.md"
+
+mkdir -p "${fixture_repo}/.adl/v0.88/tasks/issue-2008__route-related-satisfied"
+cat >"${fixture_repo}/.adl/v0.88/tasks/issue-2008__route-related-satisfied/stp.md" <<'EOF'
+## Issue-Graph Notes
+- covered by #2013
+EOF
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2008__route-related-satisfied/sip.md"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2008__route-related-satisfied/sor.md"
+touch "${fixture_repo}/.adl/v0.88/bodies/issue-2008-route-related-satisfied.md"
+
+mkdir -p "${fixture_repo}/.adl/v0.88/tasks/issue-2009__route-residue-finish"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2009__route-residue-finish/stp.md"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2009__route-residue-finish/sip.md"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2009__route-residue-finish/sor.md"
+touch "${fixture_repo}/.adl/v0.88/bodies/issue-2009-route-residue-finish.md"
+
 mkdir -p "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2005__route-worktree-finish"
 touch "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2005__route-worktree-finish/stp.md"
 touch "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2005__route-worktree-finish/sip.md"
@@ -242,6 +283,14 @@ mkdir -p "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2999__ex
 touch "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2999__extra-worktree-bundle/stp.md"
 touch "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2999__extra-worktree-bundle/sip.md"
 touch "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2999__extra-worktree-bundle/sor.md"
+
+mkdir -p "${fixture_repo}/.worktrees/adl-wp-2007/.adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree"
+touch "${fixture_repo}/.worktrees/adl-wp-2007/.adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree/stp.md"
+touch "${fixture_repo}/.worktrees/adl-wp-2007/.adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree/sip.md"
+cat >"${fixture_repo}/.worktrees/adl-wp-2007/.adl/v0.88/tasks/issue-2007__route-issue-finish-from-worktree/sor.md" <<'EOF'
+Task ID: issue-2007
+Status: DONE
+EOF
 
 cat >"${tmpdir}/route_issue.json" <<EOF
 {
@@ -379,6 +428,50 @@ cat >"${tmpdir}/route_tracker_satisfied.json" <<EOF
 }
 EOF
 
+cat >"${tmpdir}/route_issue_finish_from_worktree.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_issue",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "issue_number": 2007
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
+cat >"${tmpdir}/route_related_satisfied.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_issue",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "issue_number": 2008
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
 mock_bin="${tmpdir}/mock-bin"
 mkdir -p "${mock_bin}"
 cat >"${mock_bin}/gh" <<'EOF'
@@ -394,7 +487,9 @@ if [[ "$1" == "issue" && "$2" == "list" ]]; then
   cat <<'JSON'
 [
   {"number":2011,"state":"CLOSED","title":"child-a","body":"## Issue-Graph Notes\n- child of #2006"},
-  {"number":2012,"state":"CLOSED","title":"child-b","body":"## Issue-Graph Notes\n- child of #2006"}
+  {"number":2012,"state":"CLOSED","title":"child-b","body":"## Issue-Graph Notes\n- child of #2006"},
+  {"number":2013,"state":"CLOSED","title":"covered-fix","body":"Resolved by prior child issue"},
+  {"number":2014,"state":"OPEN","title":"active-follow-on","body":"Still in progress"}
 ]
 JSON
   exit 0
@@ -517,16 +612,65 @@ cat >"${tmpdir}/route_pr_linkage_only.json" <<EOF
 }
 EOF
 
+residue_repo="${tmpdir}/residue-repo"
+mkdir -p "${residue_repo}/adl/tools" "${residue_repo}/.adl/v0.88/bodies" "${residue_repo}/.adl/v0.88/tasks"
+git -C "${residue_repo}" init -q
+git -C "${residue_repo}" config user.email "codex@example.test"
+git -C "${residue_repo}" config user.name "Codex"
+cat >"${residue_repo}/.gitignore" <<'EOF'
+.adl/
+EOF
+cp "${repo_root}/adl/tools/check_no_tracked_adl_issue_record_residue.sh" "${residue_repo}/adl/tools/check_no_tracked_adl_issue_record_residue.sh"
+cp "${fixture_repo}/adl/tools/pr.sh" "${residue_repo}/adl/tools/pr.sh"
+chmod +x "${residue_repo}/adl/tools/check_no_tracked_adl_issue_record_residue.sh" "${residue_repo}/adl/tools/pr.sh"
+mkdir -p "${residue_repo}/.adl/v0.88/tasks/issue-2009__route-residue-finish"
+touch "${residue_repo}/.adl/v0.88/tasks/issue-2009__route-residue-finish/stp.md"
+touch "${residue_repo}/.adl/v0.88/tasks/issue-2009__route-residue-finish/sip.md"
+touch "${residue_repo}/.adl/v0.88/tasks/issue-2009__route-residue-finish/sor.md"
+touch "${residue_repo}/.adl/v0.88/bodies/issue-2009-route-residue-finish.md"
+mkdir -p "${residue_repo}/.adl/v0.88/tasks/issue-2998__tracked-residue"
+cat >"${residue_repo}/.adl/v0.88/tasks/issue-2998__tracked-residue/sor.md" <<'EOF'
+Status: DONE
+EOF
+git -C "${residue_repo}" add .gitignore adl/tools/check_no_tracked_adl_issue_record_residue.sh adl/tools/pr.sh
+git -C "${residue_repo}" add -f .adl/v0.88/tasks/issue-2998__tracked-residue/sor.md
+git -C "${residue_repo}" commit -qm "seed tracked residue fixture"
+
+cat >"${tmpdir}/route_residue_finish.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_issue",
+  "repo_root": "${residue_repo}",
+  "target": {
+    "issue_number": 2009
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_issue.json" --artifact-path ".adl/reviews/route-issue.md" >"${tmpdir}/route_issue.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_task_bundle.json" --artifact-path ".adl/reviews/route-task-bundle.md" >"${tmpdir}/route_task_bundle.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_finish.json" --artifact-path ".adl/reviews/route-finish.md" >"${tmpdir}/route_finish.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_worktree_finish.json" --artifact-path ".adl/reviews/route-worktree-finish.md" >"${tmpdir}/route_worktree_finish.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_worktree_disambiguated.json" --artifact-path ".adl/reviews/route-worktree-disambiguated.md" >"${tmpdir}/route_worktree_disambiguated.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_tracker_satisfied.json" --artifact-path ".adl/reviews/route-tracker-satisfied.md" >"${tmpdir}/route_tracker_satisfied.out.json"
+PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_issue_finish_from_worktree.json" --artifact-path ".adl/reviews/route-issue-finish-from-worktree.md" >"${tmpdir}/route_issue_finish_from_worktree.out.json"
+PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_related_satisfied.json" --artifact-path ".adl/reviews/route-related-satisfied.md" >"${tmpdir}/route_related_satisfied.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_blocked.json" --artifact-path ".adl/reviews/route-pr-blocked.md" >"${tmpdir}/route_pr_blocked.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_merged.json" --artifact-path ".adl/reviews/route-pr-merged.md" >"${tmpdir}/route_pr_merged.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_clean.json" --artifact-path ".adl/reviews/route-pr-clean.md" >"${tmpdir}/route_pr_clean.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_linkage_only.json" --artifact-path ".adl/reviews/route-pr-linkage-only.md" >"${tmpdir}/route_pr_linkage_only.out.json"
+PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_residue_finish.json" --artifact-path ".adl/reviews/route-residue-finish.md" >"${tmpdir}/route_residue_finish.out.json"
 
 python3 - "$tmpdir" "$fixture_repo" <<'PY'
 import json
@@ -563,6 +707,19 @@ assert route_tracker_satisfied["handoff_state"]["next_phase"] == "human_review"
 assert route_tracker_satisfied["handoff_state"]["continuation"] == "ask_operator"
 assert route_tracker_satisfied["handoff_state"]["escalation_reason"] == "child_issue_wave_satisfied"
 
+route_issue_finish_from_worktree = load("route_issue_finish_from_worktree.out.json")
+assert route_issue_finish_from_worktree["selected_skill"]["skill_name"] == "pr-finish"
+assert route_issue_finish_from_worktree["workflow_state"]["blocker_class"] == "open_pr_wave_only"
+assert route_issue_finish_from_worktree["handoff_state"]["continuation"] == "ask_operator"
+assert route_issue_finish_from_worktree["handoff_state"]["escalation_reason"] == "operator_override_required"
+
+route_related_satisfied = load("route_related_satisfied.out.json")
+assert route_related_satisfied["selected_skill"]["skill_name"] == "none"
+assert route_related_satisfied["workflow_state"]["blocker_class"] == "satisfied_by_related_issue_refs"
+assert route_related_satisfied["handoff_state"]["next_phase"] == "human_review"
+assert route_related_satisfied["handoff_state"]["continuation"] == "ask_operator"
+assert route_related_satisfied["handoff_state"]["escalation_reason"] == "related_issue_ref_satisfied"
+
 route_worktree_finish = load("route_worktree_finish.out.json")
 assert route_worktree_finish["selected_skill"]["skill_name"] == "pr-finish"
 
@@ -586,7 +743,13 @@ assert route_pr_clean["handoff_state"]["escalation_reason"] == "healthy_pr_waiti
 
 route_pr_linkage_only = load("route_pr_linkage_only.out.json")
 assert route_pr_linkage_only["selected_skill"]["skill_name"] == "pr-janitor"
-assert route_pr_linkage_only["workflow_state"]["blocker_class"] == "merge_blocked"
+assert route_pr_linkage_only["workflow_state"]["blocker_class"] == "open_linkage_only"
+
+route_residue_finish = load("route_residue_finish.out.json")
+assert route_residue_finish["selected_skill"]["skill_name"] == "pr-finish"
+assert route_residue_finish["workflow_state"]["blocker_class"] == "tracked_adl_residue"
+assert route_residue_finish["handoff_state"]["continuation"] == "ask_operator"
+assert route_residue_finish["handoff_state"]["escalation_reason"] == "repo_policy_residue"
 PY
 
 echo "PASS test_workflow_conductor_skill_contracts"
