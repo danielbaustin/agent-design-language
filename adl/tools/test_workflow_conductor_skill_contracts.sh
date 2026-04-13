@@ -29,6 +29,7 @@ grep -Fq "classify known blocker families" "${skills_root}/docs/WORKFLOW_CONDUCT
 grep -Fq "workflow-conductor" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 grep -Fq "resume from partially completed early steps" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 grep -Fq "child issue wave already appears to cover the acceptance surface" "${skills_root}/workflow-conductor/SKILL.md"
+grep -Fq "satisfied_by_sibling_issue_artifact" "${skills_root}/workflow-conductor/references/output-contract.md"
 
 cat >"${tmpdir}/bootstrap_missing.json" <<'EOF'
 {
@@ -170,12 +171,21 @@ PY
 
 fixture_repo="${tmpdir}/fixture-repo"
 mkdir -p "${fixture_repo}/adl/tools" "${fixture_repo}/.adl/v0.88/bodies" "${fixture_repo}/.adl/v0.88/tasks"
+mkdir -p "${fixture_repo}/docs/milestones/v0.88"
 git -C "${fixture_repo}" init -q
 git -C "${fixture_repo}" config user.email "codex@example.test"
 git -C "${fixture_repo}" config user.name "Codex"
 git -C "${fixture_repo}" commit --allow-empty -qm "init"
 cat >"${fixture_repo}/.gitignore" <<'EOF'
 .adl/
+EOF
+
+cat >"${fixture_repo}/docs/milestones/v0.88/WP_ISSUE_WAVE_v0.88.yaml" <<'EOF'
+version: v0.88
+entries:
+  - wp: WP-02
+    dependencies:
+      - WP-01
 EOF
 
 cat >"${fixture_repo}/adl/tools/pr.sh" <<'EOF'
@@ -211,6 +221,21 @@ JSON
   2009)
     cat <<'JSON'
 {"schema":"adl.pr.doctor.v1","issue":2009,"version":"v0.88","slug":"route-residue-finish","branch":"codex/2009-route-residue-finish","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"execution_done","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2009-route-residue-finish.md","root_stp":".adl/v0.88/tasks/issue-2009__route-residue-finish/stp.md","root_input":".adl/v0.88/tasks/issue-2009__route-residue-finish/sip.md","root_output":".adl/v0.88/tasks/issue-2009__route-residue-finish/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"doctor_status":"PASS"}
+JSON
+    ;;
+  2015)
+    cat <<'JSON'
+{"schema":"adl.pr.doctor.v1","issue":2015,"version":"v0.88","slug":"route-sibling-satisfied","branch":"codex/2015-route-sibling-satisfied","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"pre_run","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2015-route-sibling-satisfied.md","root_stp":".adl/v0.88/tasks/issue-2015__route-sibling-satisfied/stp.md","root_input":".adl/v0.88/tasks/issue-2015__route-sibling-satisfied/sip.md","root_output":".adl/v0.88/tasks/issue-2015__route-sibling-satisfied/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"doctor_status":"PASS"}
+JSON
+    ;;
+  2016)
+    cat <<'JSON'
+{"schema":"adl.pr.doctor.v1","issue":2016,"version":"v0.88","slug":"route-sibling-no-artifact","branch":"codex/2016-route-sibling-no-artifact","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"pre_run","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2016-route-sibling-no-artifact.md","root_stp":".adl/v0.88/tasks/issue-2016__route-sibling-no-artifact/stp.md","root_input":".adl/v0.88/tasks/issue-2016__route-sibling-no-artifact/sip.md","root_output":".adl/v0.88/tasks/issue-2016__route-sibling-no-artifact/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"doctor_status":"PASS"}
+JSON
+    ;;
+  2017)
+    cat <<'JSON'
+{"schema":"adl.pr.doctor.v1","issue":2017,"version":"v0.88","slug":"route-sibling-unrelated","branch":"codex/2017-route-sibling-unrelated","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"pre_run","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2017-route-sibling-unrelated.md","root_stp":".adl/v0.88/tasks/issue-2017__route-sibling-unrelated/stp.md","root_input":".adl/v0.88/tasks/issue-2017__route-sibling-unrelated/sip.md","root_output":".adl/v0.88/tasks/issue-2017__route-sibling-unrelated/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"doctor_status":"PASS"}
 JSON
     ;;
   *)
@@ -270,6 +295,45 @@ touch "${fixture_repo}/.adl/v0.88/tasks/issue-2009__route-residue-finish/stp.md"
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-2009__route-residue-finish/sip.md"
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-2009__route-residue-finish/sor.md"
 touch "${fixture_repo}/.adl/v0.88/bodies/issue-2009-route-residue-finish.md"
+
+mkdir -p "${fixture_repo}/.adl/v0.88/tasks/issue-2015__route-sibling-satisfied"
+cat >"${fixture_repo}/.adl/v0.88/tasks/issue-2015__route-sibling-satisfied/stp.md" <<'EOF'
+## Summary
+
+Add a machine-readable WP dependency surface for the milestone package.
+
+## Issue-Graph Notes
+- child of #2020
+EOF
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2015__route-sibling-satisfied/sip.md"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2015__route-sibling-satisfied/sor.md"
+touch "${fixture_repo}/.adl/v0.88/bodies/issue-2015-route-sibling-satisfied.md"
+
+mkdir -p "${fixture_repo}/.adl/v0.88/tasks/issue-2016__route-sibling-no-artifact"
+cat >"${fixture_repo}/.adl/v0.88/tasks/issue-2016__route-sibling-no-artifact/stp.md" <<'EOF'
+## Summary
+
+Add a machine-readable WP dependency surface for the milestone package.
+
+## Issue-Graph Notes
+- child of #2021
+EOF
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2016__route-sibling-no-artifact/sip.md"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2016__route-sibling-no-artifact/sor.md"
+touch "${fixture_repo}/.adl/v0.88/bodies/issue-2016-route-sibling-no-artifact.md"
+
+mkdir -p "${fixture_repo}/.adl/v0.88/tasks/issue-2017__route-sibling-unrelated"
+cat >"${fixture_repo}/.adl/v0.88/tasks/issue-2017__route-sibling-unrelated/stp.md" <<'EOF'
+## Summary
+
+Add a machine-readable WP dependency surface for the milestone package.
+
+## Issue-Graph Notes
+- child of #2022
+EOF
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2017__route-sibling-unrelated/sip.md"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2017__route-sibling-unrelated/sor.md"
+touch "${fixture_repo}/.adl/v0.88/bodies/issue-2017-route-sibling-unrelated.md"
 
 mkdir -p "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2005__route-worktree-finish"
 touch "${fixture_repo}/.worktrees/adl-wp-2005/.adl/v0.88/tasks/issue-2005__route-worktree-finish/stp.md"
@@ -472,6 +536,72 @@ cat >"${tmpdir}/route_related_satisfied.json" <<EOF
 }
 EOF
 
+cat >"${tmpdir}/route_sibling_satisfied.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_issue",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "issue_number": 2015
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
+cat >"${tmpdir}/route_sibling_no_artifact.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_issue",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "issue_number": 2016
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
+cat >"${tmpdir}/route_sibling_unrelated.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_issue",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "issue_number": 2017
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
 mock_bin="${tmpdir}/mock-bin"
 mkdir -p "${mock_bin}"
 cat >"${mock_bin}/gh" <<'EOF'
@@ -489,7 +619,10 @@ if [[ "$1" == "issue" && "$2" == "list" ]]; then
   {"number":2011,"state":"CLOSED","title":"child-a","body":"## Issue-Graph Notes\n- child of #2006"},
   {"number":2012,"state":"CLOSED","title":"child-b","body":"## Issue-Graph Notes\n- child of #2006"},
   {"number":2013,"state":"CLOSED","title":"covered-fix","body":"Resolved by prior child issue"},
-  {"number":2014,"state":"OPEN","title":"active-follow-on","body":"Still in progress"}
+  {"number":2014,"state":"OPEN","title":"active-follow-on","body":"Still in progress"},
+  {"number":2016,"state":"CLOSED","title":"Generate WP issue waves from canonical WBS surfaces","body":"## Issue-Graph Notes\n- child of #2020"},
+  {"number":2017,"state":"CLOSED","title":"Generate WP issue waves from canonical WBS surfaces","body":"## Issue-Graph Notes\n- child of #2021"},
+  {"number":2018,"state":"CLOSED","title":"Unrelated closed sibling","body":"## Issue-Graph Notes\n- child of #2022"}
 ]
 JSON
   exit 0
@@ -666,6 +799,10 @@ python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "$
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_tracker_satisfied.json" --artifact-path ".adl/reviews/route-tracker-satisfied.md" >"${tmpdir}/route_tracker_satisfied.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_issue_finish_from_worktree.json" --artifact-path ".adl/reviews/route-issue-finish-from-worktree.md" >"${tmpdir}/route_issue_finish_from_worktree.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_related_satisfied.json" --artifact-path ".adl/reviews/route-related-satisfied.md" >"${tmpdir}/route_related_satisfied.out.json"
+PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_sibling_satisfied.json" --artifact-path ".adl/reviews/route-sibling-satisfied.md" >"${tmpdir}/route_sibling_satisfied.out.json"
+PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_sibling_unrelated.json" --artifact-path ".adl/reviews/route-sibling-unrelated.md" >"${tmpdir}/route_sibling_unrelated.out.json"
+rm -f "${fixture_repo}/docs/milestones/v0.88/WP_ISSUE_WAVE_v0.88.yaml"
+PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_sibling_no_artifact.json" --artifact-path ".adl/reviews/route-sibling-no-artifact.md" >"${tmpdir}/route_sibling_no_artifact.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_blocked.json" --artifact-path ".adl/reviews/route-pr-blocked.md" >"${tmpdir}/route_pr_blocked.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_merged.json" --artifact-path ".adl/reviews/route-pr-merged.md" >"${tmpdir}/route_pr_merged.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_pr_clean.json" --artifact-path ".adl/reviews/route-pr-clean.md" >"${tmpdir}/route_pr_clean.out.json"
@@ -719,6 +856,21 @@ assert route_related_satisfied["workflow_state"]["blocker_class"] == "satisfied_
 assert route_related_satisfied["handoff_state"]["next_phase"] == "human_review"
 assert route_related_satisfied["handoff_state"]["continuation"] == "ask_operator"
 assert route_related_satisfied["handoff_state"]["escalation_reason"] == "related_issue_ref_satisfied"
+
+route_sibling_satisfied = load("route_sibling_satisfied.out.json")
+assert route_sibling_satisfied["selected_skill"]["skill_name"] == "none"
+assert route_sibling_satisfied["workflow_state"]["blocker_class"] == "satisfied_by_sibling_issue_artifact"
+assert route_sibling_satisfied["handoff_state"]["next_phase"] == "human_review"
+assert route_sibling_satisfied["handoff_state"]["continuation"] == "ask_operator"
+assert route_sibling_satisfied["handoff_state"]["escalation_reason"] == "sibling_issue_artifact_satisfied"
+
+route_sibling_no_artifact = load("route_sibling_no_artifact.out.json")
+assert route_sibling_no_artifact["selected_skill"]["skill_name"] == "pr-run"
+assert route_sibling_no_artifact["workflow_state"]["blocker_class"] == "none"
+
+route_sibling_unrelated = load("route_sibling_unrelated.out.json")
+assert route_sibling_unrelated["selected_skill"]["skill_name"] == "pr-run"
+assert route_sibling_unrelated["workflow_state"]["blocker_class"] == "none"
 
 route_worktree_finish = load("route_worktree_finish.out.json")
 assert route_worktree_finish["selected_skill"]["skill_name"] == "pr-finish"
