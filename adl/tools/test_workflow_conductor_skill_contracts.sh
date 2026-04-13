@@ -16,13 +16,15 @@ trap 'rm -rf "${tmpdir}"' EXIT
 [[ -f "${skills_root}/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md" ]]
 
 grep -Fq "thin orchestrator" "${skills_root}/workflow-conductor/SKILL.md"
-grep -Fq "stop after routing and compliance recording" "${skills_root}/workflow-conductor/SKILL.md"
+grep -Fq "dispatch one bounded downstream skill subtask" "${skills_root}/workflow-conductor/SKILL.md"
 grep -Fq "writes one bounded routing artifact" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
+grep -Fq "invoke one bounded downstream skill subtask" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 grep -Fq 'continue`, `ask_operator`, or `stop`' "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 grep -Fq 'id: "workflow_conductor.v1"' "${skills_root}/workflow-conductor/adl-skill.yaml"
 grep -Fq 'reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md"' "${skills_root}/workflow-conductor/adl-skill.yaml"
 grep -Fq "policy.stop_after_routing_must_be_true" "${skills_root}/workflow-conductor/adl-skill.yaml"
 grep -Fq "python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <validated-json>" "${skills_root}/workflow-conductor/adl-skill.yaml"
+grep -Fq "dispatch" "${skills_root}/workflow-conductor/references/output-contract.md"
 grep -Fq "route_issue" "${skills_root}/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md"
 grep -Fq "requires \`target.issue_number\`" "${skills_root}/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md"
 grep -Fq "classify known blocker families" "${skills_root}/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md"
@@ -191,7 +193,15 @@ EOF
 cat >"${fixture_repo}/adl/tools/pr.sh" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
-issue="$2"
+cmd="${1:-}"
+issue="${2:-}"
+if [[ "$cmd" == "run" ]]; then
+  echo "RUN:${issue}" >>"${ADL_DISPATCH_LOG}"
+  exit 0
+fi
+if [[ "$cmd" != "doctor" ]]; then
+  exit 1
+fi
 case "$issue" in
   2001)
     cat <<'JSON'
@@ -378,6 +388,33 @@ cat >"${tmpdir}/route_issue.json" <<EOF
 }
 EOF
 
+cat >"${tmpdir}/route_issue_dispatch.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_issue",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "issue_number": 2001
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "required",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true
+  },
+  "dispatch": {
+    "mode": "invoke_subtask",
+    "allow_builtin_dispatch": true,
+    "timeout_secs": 5
+  },
+  "observed_state": {
+    "subagent_assigned": true
+  }
+}
+EOF
+
 cat >"${tmpdir}/route_task_bundle.json" <<EOF
 {
   "skill_input_schema": "workflow_conductor.v1",
@@ -395,6 +432,43 @@ cat >"${tmpdir}/route_task_bundle.json" <<EOF
     "stop_after_routing": true,
     "required_card_skill_by_type": {
       "sip": "sip-editor"
+    }
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
+cat >"${tmpdir}/route_task_bundle_dispatch.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_task_bundle",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "task_bundle_path": ".adl/v0.88/tasks/issue-2003__route-editor"
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true,
+    "required_card_skill_by_type": {
+      "sip": "sip-editor"
+    }
+  },
+  "dispatch": {
+    "mode": "invoke_subtask",
+    "allow_builtin_dispatch": false,
+    "timeout_secs": 5,
+    "command_overrides": {
+      "sip-editor": [
+        "bash",
+        "-lc",
+        "printf 'EDITOR:%s\\n' \"{issue_number}\" >> \"${tmpdir}/editor-dispatch.log\""
+      ]
     }
   },
   "observed_state": {
@@ -791,8 +865,13 @@ cat >"${tmpdir}/route_residue_finish.json" <<EOF
 }
 EOF
 
+dispatch_log="${tmpdir}/dispatch.log"
+export ADL_DISPATCH_LOG="${dispatch_log}"
+
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_issue.json" --artifact-path ".adl/reviews/route-issue.md" >"${tmpdir}/route_issue.out.json"
+python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_issue_dispatch.json" --artifact-path ".adl/reviews/route-issue-dispatch.md" >"${tmpdir}/route_issue_dispatch.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_task_bundle.json" --artifact-path ".adl/reviews/route-task-bundle.md" >"${tmpdir}/route_task_bundle.out.json"
+python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_task_bundle_dispatch.json" --artifact-path ".adl/reviews/route-task-bundle-dispatch.md" >"${tmpdir}/route_task_bundle_dispatch.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_finish.json" --artifact-path ".adl/reviews/route-finish.md" >"${tmpdir}/route_finish.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_worktree_finish.json" --artifact-path ".adl/reviews/route-worktree-finish.md" >"${tmpdir}/route_worktree_finish.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_worktree_disambiguated.json" --artifact-path ".adl/reviews/route-worktree-disambiguated.md" >"${tmpdir}/route_worktree_disambiguated.out.json"
@@ -826,10 +905,25 @@ assert route_issue["artifact"]["path"].endswith(".adl/reviews/route-issue.md")
 assert "wrote routing artifact to" in route_issue["actions_taken"][-1]
 assert (repo / ".adl/reviews/route-issue.md").exists()
 
+route_issue_dispatch = load("route_issue_dispatch.out.json")
+assert route_issue_dispatch["selected_skill"]["skill_name"] == "pr-run"
+assert route_issue_dispatch["dispatch"]["command_source"] == "builtin"
+assert route_issue_dispatch["dispatch"]["status"] == "invoked"
+assert route_issue_dispatch["dispatch"]["result"] == "success"
+assert route_issue_dispatch["dispatch"]["command"][0:4] == ["bash", "adl/tools/pr.sh", "run", "2001"]
+assert (tmp / "dispatch.log").read_text().strip() == "RUN:2001"
+
 route_editor = load("route_task_bundle.out.json")
 assert route_editor["selected_skill"]["skill_name"] == "sip-editor"
 assert route_editor["status"] == "done"
 assert (repo / ".adl/reviews/route-task-bundle.md").exists()
+
+route_editor_dispatch = load("route_task_bundle_dispatch.out.json")
+assert route_editor_dispatch["selected_skill"]["skill_name"] == "sip-editor"
+assert route_editor_dispatch["dispatch"]["command_source"] == "override"
+assert route_editor_dispatch["dispatch"]["status"] == "invoked"
+assert route_editor_dispatch["dispatch"]["result"] == "success"
+assert (tmp / "editor-dispatch.log").read_text().strip() == "EDITOR:2003"
 
 route_finish = load("route_finish.out.json")
 assert route_finish["selected_skill"]["skill_name"] == "pr-finish"

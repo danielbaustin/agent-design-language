@@ -18,6 +18,63 @@ PRIMARY_TARGET_FIELDS = {
     "route_pr": "pr_number",
 }
 
+SKILL_FILES = {
+    "pr-init": "adl/tools/skills/pr-init/SKILL.md",
+    "pr-ready": "adl/tools/skills/pr-ready/SKILL.md",
+    "pr-run": "adl/tools/skills/pr-run/SKILL.md",
+    "pr-finish": "adl/tools/skills/pr-finish/SKILL.md",
+    "pr-janitor": "adl/tools/skills/pr-janitor/SKILL.md",
+    "pr-closeout": "adl/tools/skills/pr-closeout/SKILL.md",
+    "stp-editor": "adl/tools/skills/stp-editor/SKILL.md",
+    "sip-editor": "adl/tools/skills/sip-editor/SKILL.md",
+    "sor-editor": "adl/tools/skills/sor-editor/SKILL.md",
+}
+
+BUILTIN_DISPATCH_COMMANDS = {
+    "pr-init": [
+        "bash",
+        "adl/tools/pr.sh",
+        "init",
+        "{issue_number}",
+        "--slug",
+        "{slug}",
+        "--version",
+        "{version}",
+    ],
+    "pr-ready": [
+        "bash",
+        "adl/tools/pr.sh",
+        "doctor",
+        "{issue_number}",
+        "--slug",
+        "{slug}",
+        "--version",
+        "{version}",
+        "--mode",
+        "full",
+        "--json",
+    ],
+    "pr-run": [
+        "bash",
+        "adl/tools/pr.sh",
+        "run",
+        "{issue_number}",
+        "--slug",
+        "{slug}",
+        "--version",
+        "{version}",
+    ],
+    "pr-closeout": [
+        "bash",
+        "adl/tools/pr.sh",
+        "closeout",
+        "{issue_number}",
+        "--version",
+        "{version}",
+        "--no-fetch-issue",
+    ],
+}
+
 
 def load_payload(path: str):
     return json.loads(Path(path).read_text(encoding="utf-8"))
@@ -36,6 +93,24 @@ def run_command(args, cwd: Path):
         text=True,
         check=False,
     )
+
+
+def run_command_with_timeout(args, cwd: Path, timeout_secs=None):
+    try:
+        return subprocess.run(
+            args,
+            cwd=str(cwd),
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=timeout_secs,
+        )
+    except subprocess.TimeoutExpired as exc:
+        return {
+            "timed_out": True,
+            "stdout": exc.stdout or "",
+            "stderr": exc.stderr or "",
+        }
 
 
 def read_text(path: Path):
@@ -749,6 +824,7 @@ def render_markdown(result):
     selected = result["selected_skill"]
     compliance = result["workflow_compliance"]
     handoff = result["handoff_state"]
+    dispatch = result.get("dispatch", {})
     lines = [
         "# Workflow Conductor Review",
         "",
@@ -783,6 +859,16 @@ def render_markdown(result):
         f"- continuation: {handoff.get('continuation')}",
         f"- escalation_reason: {handoff.get('escalation_reason')}",
         "",
+        "## dispatch",
+        f"- mode: {dispatch.get('mode')}",
+        f"- selected_skill: {dispatch.get('selected_skill')}",
+        f"- skill_file: {dispatch.get('skill_file')}",
+        f"- command_source: {dispatch.get('command_source')}",
+        f"- command: {json.dumps(dispatch.get('command'))}",
+        f"- status: {dispatch.get('status')}",
+        f"- result: {dispatch.get('result')}",
+        f"- exit_code: {dispatch.get('exit_code')}",
+        "",
     ]
     return "\n".join(lines)
 
@@ -790,6 +876,114 @@ def render_markdown(result):
 def default_artifact_path(repo_root: Path):
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     return repo_root / ".adl" / "reviews" / f"{stamp}-workflow-conductor.md"
+
+
+def dispatch_placeholders(repo_root: Path, result):
+    target = result.get("target", {})
+    artifact = result.get("artifact", {})
+    values = {
+        "repo_root": str(repo_root),
+        "issue_number": "" if target.get("issue_number") is None else str(target.get("issue_number")),
+        "task_bundle_path": target.get("task_bundle_path") or "",
+        "branch": target.get("branch") or "",
+        "worktree_path": target.get("worktree_path") or "",
+        "pr_number": "" if target.get("pr_number") is None else str(target.get("pr_number")),
+        "slug": target.get("slug") or "",
+        "version": target.get("version") or "",
+        "source_prompt_path": target.get("source_prompt_path") or "",
+        "artifact_path": artifact.get("path") or "",
+    }
+    return values
+
+
+def render_command_template(template, placeholders):
+    rendered = []
+    missing = []
+    for token in template:
+        try:
+            value = token.format(**placeholders)
+        except KeyError as exc:
+            missing.append(str(exc))
+            continue
+        if value == "":
+            missing.append(token)
+            continue
+        rendered.append(value)
+    if missing:
+        return None, sorted(set(missing))
+    return rendered, []
+
+
+def dispatch_plan(repo_root: Path, payload, result):
+    dispatch = payload.get("dispatch", {})
+    mode = dispatch.get("mode", "route_only")
+    selected_skill = result.get("selected_skill", {}).get("skill_name", "none")
+    plan = {
+        "mode": mode,
+        "selected_skill": selected_skill,
+        "skill_file": None,
+        "command_source": "none",
+        "command": None,
+        "status": "not_requested",
+        "result": "not_applicable",
+        "exit_code": None,
+        "stdout": "",
+        "stderr": "",
+    }
+    if selected_skill in SKILL_FILES:
+        plan["skill_file"] = str((repo_root / SKILL_FILES[selected_skill]).resolve())
+    if mode == "route_only":
+        return plan
+    if selected_skill in (None, "none"):
+        plan["status"] = "blocked"
+        plan["result"] = "no_selected_skill"
+        return plan
+
+    overrides = dispatch.get("command_overrides", {}) or {}
+    command_template = overrides.get(selected_skill)
+    if command_template:
+        plan["command_source"] = "override"
+    elif dispatch.get("allow_builtin_dispatch", True):
+        command_template = BUILTIN_DISPATCH_COMMANDS.get(selected_skill)
+        if command_template:
+            plan["command_source"] = "builtin"
+    if not command_template:
+        plan["status"] = "unsupported"
+        plan["result"] = "dispatch_unsupported_for_selected_skill"
+        return plan
+
+    command, missing = render_command_template(command_template, dispatch_placeholders(repo_root, result))
+    if not command:
+        plan["status"] = "blocked"
+        plan["result"] = "missing_dispatch_placeholders"
+        plan["stderr"] = f"missing placeholders: {', '.join(missing)}"
+        return plan
+
+    plan["command"] = command
+    plan["status"] = "planned"
+    plan["result"] = "planned"
+
+    if mode != "invoke_subtask":
+        return plan
+
+    executed = run_command_with_timeout(command, repo_root, dispatch.get("timeout_secs"))
+    if isinstance(executed, dict) and executed.get("timed_out"):
+        plan["status"] = "failed"
+        plan["result"] = "timeout"
+        plan["stderr"] = (executed.get("stderr") or "").strip()
+        plan["stdout"] = (executed.get("stdout") or "").strip()
+        return plan
+
+    plan["exit_code"] = executed.returncode
+    plan["stdout"] = executed.stdout.strip()
+    plan["stderr"] = executed.stderr.strip()
+    if executed.returncode == 0:
+        plan["status"] = "invoked"
+        plan["result"] = "success"
+    else:
+        plan["status"] = "failed"
+        plan["result"] = "failure"
+    return plan
 
 
 def main():
@@ -802,6 +996,10 @@ def main():
     payload = load_payload(args.input)
     snapshot = collect_state(payload)
     result = evaluate(snapshot)
+    result_target = result.setdefault("target", {})
+    for key in ("slug", "version", "source_prompt_path"):
+        if snapshot.get("target", {}).get(key) not in (None, ""):
+            result_target[key] = snapshot["target"][key]
     result["artifact"] = {"path": None}
 
     if not args.no_artifact:
@@ -810,9 +1008,22 @@ def main():
         if not artifact_path.is_absolute():
             artifact_path = repo_root / artifact_path
         artifact_path.parent.mkdir(parents=True, exist_ok=True)
-        artifact_path.write_text(render_markdown(result), encoding="utf-8")
         result["artifact"]["path"] = str(artifact_path)
         result.setdefault("actions_taken", []).append(f"wrote routing artifact to {artifact_path}")
+
+    result["dispatch"] = dispatch_plan(Path(payload["repo_root"]).resolve(), payload, result)
+    if result["dispatch"]["status"] in {"invoked", "failed", "unsupported", "blocked"}:
+        result.setdefault("actions_taken", []).append(
+            f"dispatch {result['dispatch']['result']} for {result['dispatch']['selected_skill']}"
+        )
+    elif result["dispatch"]["status"] == "planned":
+        result.setdefault("actions_taken", []).append(
+            f"planned dispatch for {result['dispatch']['selected_skill']}"
+        )
+
+    if not args.no_artifact:
+        artifact_path = Path(result["artifact"]["path"])
+        artifact_path.write_text(render_markdown(result), encoding="utf-8")
 
     print(json.dumps(result, indent=2))
 

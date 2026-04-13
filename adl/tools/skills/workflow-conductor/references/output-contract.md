@@ -32,6 +32,17 @@ handoff_state:
   next_phase: pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | sor-editor | human_review | blocked
   continuation: continue | ask_operator | stop
   escalation_reason: none | operator_override_required | ambiguous_live_state | healthy_pr_waiting | manual_review_required | policy_block | child_issue_wave_satisfied | related_issue_ref_satisfied | sibling_issue_artifact_satisfied | child_issue_wave_active | related_issue_ref_active | repo_policy_residue
+dispatch:
+  mode: route_only | plan_subtask | invoke_subtask
+  selected_skill: pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | sor-editor | none
+  skill_file: <absolute skill path or null>
+  command_source: none | builtin | override
+  command: <argv array or null>
+  status: not_requested | planned | invoked | failed | unsupported | blocked
+  result: not_applicable | planned | success | failure | timeout | dispatch_unsupported_for_selected_skill | missing_dispatch_placeholders | no_selected_skill
+  exit_code: <int or null>
+  stdout: <bounded text summary>
+  stderr: <bounded text summary>
 artifact:
   path: <path or null>
 ```

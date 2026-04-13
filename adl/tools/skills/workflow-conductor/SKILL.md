@@ -1,6 +1,7 @@
 ---
 name: workflow-conductor
 description: Lightweight conductor for the ADL workflow skills. Use when the operator wants one bounded entrypoint that detects the current issue/workflow state, selects the correct next lifecycle or editor skill, enforces skill/subagent policy, and stops after routing/compliance recording rather than reimplementing the underlying work.
+description: Lightweight conductor for the ADL workflow skills. Use when the operator wants one bounded entrypoint that detects the current issue/workflow state, selects the correct next lifecycle or editor skill, enforces skill/subagent policy, and either stops after routing or dispatches one bounded downstream skill subtask without reimplementing the underlying work.
 ---
 
 # Workflow Conductor
@@ -12,7 +13,9 @@ Its job is to:
 - choose the next appropriate lifecycle or editor skill
 - ensure card-local work is routed to the matching editor skill
 - apply explicit skill/subagent execution policy
-- record workflow-compliance outcomes, emit a bounded routing artifact, and stop
+- record workflow-compliance outcomes
+- emit a bounded routing artifact
+- when explicitly enabled, dispatch one bounded downstream skill subtask and stop at that boundary
 
 This skill must remain lightweight.
 
@@ -27,7 +30,7 @@ It must not replace:
 - `sip-editor`
 - `sor-editor`
 
-It must stop after routing and compliance recording rather than reimplementing the selected skill's underlying work.
+It must stop at the routing/dispatch boundary rather than reimplementing the selected skill's underlying work.
 
 The bundle may include small deterministic helpers for routing evaluation and test fixtures, but those helpers exist to support the stop-boundary contract, not to silently turn the conductor into a second execution engine.
 
@@ -102,7 +105,8 @@ If there is no concrete target, stop and report `blocked`.
 4. Apply the declared skill/subagent policy.
 5. Select the next skill.
 6. Record the workflow-compliance result and write the routing artifact.
-7. Stop before performing the selected skill's underlying work.
+7. When explicit dispatch mode is enabled, dispatch one bounded downstream skill subtask.
+8. Stop without absorbing the selected skill's logic.
 
 ## Routing Model
 
@@ -145,12 +149,25 @@ This skill must stop after:
 - selecting the next skill
 - recording compliance and routing facts
 - writing the bounded routing artifact
+- optionally dispatching one bounded downstream skill subtask
 - surfacing any blocker that prevents safe routing
 
 It must not:
-- perform the selected skill's implementation work
+- perform the selected skill's implementation work itself
 - silently invoke unrelated repo-wide cleanup
 - create an unrecorded fallback path
+
+## Dispatch Boundary
+
+When explicit dispatch mode is enabled, the conductor may:
+- call one supported downstream lifecycle skill through the repo-native command it already wraps
+- call one editor or special-case skill through an explicit operator-provided command override
+- record the selected skill, command source, command shape, and bounded result
+
+It must not:
+- inline the downstream skill's behavior into the conductor
+- chain multiple downstream skills in one silent rollout
+- continue past the first dispatched subtask as if it owned the downstream lifecycle
 
 ## Output
 
