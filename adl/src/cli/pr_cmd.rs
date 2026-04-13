@@ -492,6 +492,7 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
     }
 
     stage_selected_paths_rust(&repo_root, &parsed.paths)?;
+    ensure_no_staged_issue_bundle_mutations(&repo_root, &issue_ref)?;
     let has_uncommitted = has_uncommitted_changes(&repo_root)?;
     let ahead = commits_ahead_of_origin_main(&repo_root)?;
     if staged_diff_is_empty(&repo_root)? {
@@ -500,7 +501,7 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
         }
     } else if !parsed.allow_gitignore && staged_gitignore_change_present(&repo_root)? {
         bail!(
-            "finish: staged .gitignore or adl/.gitignore changes detected. Revert them or re-run with --allow-gitignore. Canonical issue bundle files are staged automatically."
+            "finish: staged .gitignore or adl/.gitignore changes detected. Revert them or re-run with --allow-gitignore. Canonical .adl issue bundles are local-only and must not be staged."
         );
     }
 
@@ -1015,6 +1016,77 @@ fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<()> {
     args.extend(paths);
     run_status("git", &args)?;
     Ok(())
+}
+
+fn ensure_no_staged_issue_bundle_mutations(repo_root: &Path, issue_ref: &IssueRef) -> Result<()> {
+    let staged = run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "diff",
+            "--cached",
+            "--name-status",
+            "--find-renames",
+            "--",
+            ".adl",
+        ],
+    )?;
+    let mut active_issue_paths = Vec::new();
+    let mut foreign_issue_paths = Vec::new();
+    for line in staged
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty())
+    {
+        let mut fields = line.split('\t');
+        let status = fields.next().unwrap_or("");
+        for path in fields {
+            let Some(issue_number) = issue_bundle_issue_number_from_repo_relative(path) else {
+                continue;
+            };
+            if status.starts_with('D') && issue_number != issue_ref.issue_number() {
+                continue;
+            }
+            if issue_number == issue_ref.issue_number() {
+                active_issue_paths.push(path.to_string());
+            } else {
+                foreign_issue_paths.push(path.to_string());
+            }
+        }
+    }
+
+    if !foreign_issue_paths.is_empty() {
+        foreign_issue_paths.sort();
+        foreign_issue_paths.dedup();
+        bail!(
+            "finish: staged .adl task-bundle changes for non-active issues detected: {}. Keep .adl bundles local-only and unstage them before publication.",
+            foreign_issue_paths.join(", ")
+        );
+    }
+    if !active_issue_paths.is_empty() {
+        active_issue_paths.sort();
+        active_issue_paths.dedup();
+        bail!(
+            "finish: staged canonical .adl issue-bundle paths detected: {}. Keep .adl bundles local-only and unstage them before publication.",
+            active_issue_paths.join(", ")
+        );
+    }
+
+    Ok(())
+}
+
+fn issue_bundle_issue_number_from_repo_relative(path: &str) -> Option<u32> {
+    let marker = "/tasks/issue-";
+    let start = path.find(marker)? + marker.len();
+    let digits = path[start..]
+        .chars()
+        .take_while(|ch| ch.is_ascii_digit())
+        .collect::<String>();
+    if digits.is_empty() {
+        return None;
+    }
+    digits.parse().ok()
 }
 
 fn staged_diff_is_empty(repo_root: &Path) -> Result<bool> {

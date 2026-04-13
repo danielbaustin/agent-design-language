@@ -1368,8 +1368,8 @@ verification_summary:
         "canonical bundle should exist after reconciliation"
     );
     assert!(
-        !duplicate_bundle.exists(),
-        "duplicate bundle should be removed after reconciliation"
+        duplicate_bundle.is_dir(),
+        "duplicate bundle should be preserved after reconciliation"
     );
     assert!(canonical_text.contains("Status: DONE"));
     assert!(canonical_text.contains("- Integration state: merged"));
