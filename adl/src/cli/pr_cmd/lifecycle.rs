@@ -137,6 +137,11 @@ pub(super) fn reconcile_closed_completed_issue_bundle(
         );
     }
 
+    ensure_canonical_output_is_local_only(
+        repo_root,
+        canonical_output,
+        "doctor: canonical .adl output surfaces must remain local-only during closed-issue reconciliation",
+    )?;
     normalize_closed_completed_output_card(canonical_output)?;
     validate_completed_sor(repo_root, canonical_output)?;
 
@@ -300,6 +305,34 @@ fn normalize_closed_completed_output_card(path: &Path) -> Result<()> {
     Ok(())
 }
 
+fn ensure_canonical_output_is_local_only(
+    repo_root: &Path,
+    canonical_output: &Path,
+    context: &str,
+) -> Result<()> {
+    let Ok(repo_relative) = canonical_output.strip_prefix(repo_root) else {
+        return Ok(());
+    };
+    let repo_relative = repo_relative.to_string_lossy().into_owned();
+    if run_status_allow_failure(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "ls-files",
+            "--error-unmatch",
+            "--",
+            &repo_relative,
+        ],
+    )? {
+        bail!(
+            "{context}: '{}' is still tracked in git. Untrack canonical .adl issue surfaces before lifecycle normalization.",
+            repo_relative
+        );
+    }
+    Ok(())
+}
+
 fn replace_field_line_in_text(text: &mut String, label: &str, value: &str) {
     let prefix = format!("{label}:");
     let mut out = Vec::new();
@@ -365,12 +398,17 @@ pub(super) fn sync_completed_output_surfaces(
     let copied_to_root =
         !(same_filesystem_target(&normalized_output_path, &canonical_root_output)?);
     if copied_to_root {
+        ensure_canonical_output_is_local_only(
+            primary_root,
+            &canonical_root_output,
+            "finish: canonical .adl output surfaces must remain local-only during output sync",
+        )?;
         if let Some(parent) = canonical_root_output.parent() {
             fs::create_dir_all(parent)?;
         }
         fs::copy(&normalized_output_path, &canonical_root_output).with_context(|| {
             format!(
-                "finish: failed to sync completed output card '{}' to canonical root task bundle '{}'",
+                "finish: failed to sync completed output card '{}' to canonical local task bundle '{}'",
                 normalized_output_path.display(),
                 canonical_root_output.display()
             )
@@ -679,6 +717,43 @@ mod tests {
         assert!(text.contains("- Integration state: merged"));
         assert!(text.contains("- Verification scope: main_repo"));
         assert!(text.contains("- Worktree-only paths remaining: none"));
+    }
+
+    #[test]
+    fn ensure_canonical_output_is_local_only_rejects_tracked_canonical_output() {
+        let _guard = env_lock();
+        let temp = temp_dir("adl-pr-lifecycle-local-only");
+        let repo = temp.join("repo");
+        let origin = temp.join("origin.git");
+        init_repo_with_origin(&repo, &origin);
+        let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+        let output = issue_ref.task_bundle_output_path(&repo);
+        fs::create_dir_all(output.parent().expect("output parent")).expect("create bundle dir");
+        fs::write(
+            &output,
+            "Status: DONE\n- Integration state: merged\n- Verification scope: main_repo\n- Worktree-only paths remaining: none\n",
+        )
+        .expect("write tracked output");
+        assert!(Command::new("git")
+            .args(["add", path_str(&output).expect("output path")])
+            .current_dir(&repo)
+            .status()
+            .expect("git add output")
+            .success());
+
+        let err = ensure_canonical_output_is_local_only(
+            &repo,
+            &output,
+            "finish: canonical .adl output surfaces must remain local-only during output sync",
+        )
+        .expect_err("tracked canonical output should be rejected");
+
+        assert!(err
+            .to_string()
+            .contains("canonical .adl output surfaces must remain local-only"));
+        assert!(err
+            .to_string()
+            .contains(".adl/v0.87/tasks/issue-1410__canonical-slug/sor.md"));
     }
 
     #[test]

@@ -501,7 +501,7 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
         }
     } else if !parsed.allow_gitignore && staged_gitignore_change_present(&repo_root)? {
         bail!(
-            "finish: staged .gitignore or adl/.gitignore changes detected. Revert them or re-run with --allow-gitignore. Canonical issue bundle files are staged automatically."
+            "finish: staged .gitignore or adl/.gitignore changes detected. Revert them or re-run with --allow-gitignore. Canonical .adl issue bundles are local-only and must not be staged."
         );
     }
 
@@ -1040,11 +1040,14 @@ fn ensure_no_staged_issue_bundle_mutations(repo_root: &Path, issue_ref: &IssueRe
         .filter(|line| !line.is_empty())
     {
         let mut fields = line.split('\t');
-        let _status = fields.next();
+        let status = fields.next().unwrap_or("");
         for path in fields {
             let Some(issue_number) = issue_bundle_issue_number_from_repo_relative(path) else {
                 continue;
             };
+            if status.starts_with('D') && issue_number != issue_ref.issue_number() {
+                continue;
+            }
             if issue_number == issue_ref.issue_number() {
                 active_issue_paths.push(path.to_string());
             } else {
