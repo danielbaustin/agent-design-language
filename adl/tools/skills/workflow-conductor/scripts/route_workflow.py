@@ -254,6 +254,52 @@ def related_issue_reference_state(texts, issue_index):
     return "related_issue_ref_active"
 
 
+def first_parent_issue_ref(texts):
+    for text in texts:
+        lower = text.lower()
+        match = re.search(r"child of #(\d+)", lower)
+        if match:
+            return int(match.group(1))
+    return None
+
+
+def mentions_machine_readable_wp_dependency(texts):
+    lowered = "\n".join(text.lower() for text in texts if text)
+    needles = (
+        "machine-readable wp dependency",
+        "machine-readable wp dependency surface",
+        "machine-readable dependency surface",
+        "wp dependency surface",
+    )
+    return any(needle in lowered for needle in needles)
+
+
+def sibling_issue_artifact_state(repo_root: Path, texts, issue_number: int, version: str, issue_index):
+    if not version or not mentions_machine_readable_wp_dependency(texts):
+        return "none"
+    parent_issue = first_parent_issue_ref(texts)
+    if parent_issue is None:
+        return "none"
+
+    artifact = repo_root / "docs" / "milestones" / version / f"WP_ISSUE_WAVE_{version}.yaml"
+    if not artifact.exists():
+        return "none"
+
+    sibling_needle = f"child of #{parent_issue}"
+    for sibling_issue in issue_index.values():
+        sibling_number = int(sibling_issue.get("number", 0) or 0)
+        if sibling_number == issue_number or sibling_issue.get("state") != "CLOSED":
+            continue
+        sibling_body = sibling_issue.get("body") or ""
+        if sibling_needle not in sibling_body.lower():
+            continue
+        sibling_title = (sibling_issue.get("title") or "").lower()
+        sibling_text = f"{sibling_title}\n{sibling_body.lower()}"
+        if "issue wave" in sibling_text and ("generate" in sibling_text or "generator" in sibling_text):
+            return "satisfied_by_sibling_issue_artifact"
+    return "none"
+
+
 def detect_tracked_adl_residue(repo_root: Path):
     guard = repo_root / "adl" / "tools" / "check_no_tracked_adl_issue_record_residue.sh"
     if not guard.exists():
@@ -385,6 +431,7 @@ def collect_route_issue(repo_root: Path, payload):
         workflow["evidence_used"].append("missing_root_bundle")
         return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
+    issue_index = gh_issue_index(repo_root)
     tracker_state = issue_tracker_state(repo_root, bundle, source_prompt, issue_number)
     if tracker_state == "satisfied_by_child_issue_wave":
         workflow["blocker_class"] = "satisfied_by_child_issue_wave"
@@ -395,7 +442,7 @@ def collect_route_issue(repo_root: Path, payload):
 
     related_state = related_issue_reference_state(
         [read_text(source_prompt), read_text(bundle / "stp.md") if bundle else ""],
-        gh_issue_index(repo_root),
+        issue_index,
     )
     if workflow["blocker_class"] == "none" and related_state == "satisfied_by_related_issue_refs":
         workflow["blocker_class"] = "satisfied_by_related_issue_refs"
@@ -403,6 +450,17 @@ def collect_route_issue(repo_root: Path, payload):
     elif workflow["blocker_class"] == "none" and related_state == "related_issue_ref_active":
         workflow["blocker_class"] = "related_issue_ref_active"
         workflow["evidence_used"].append("related_issue_refs")
+
+    sibling_artifact_state = sibling_issue_artifact_state(
+        repo_root,
+        [read_text(source_prompt), read_text(bundle / "stp.md") if bundle else ""],
+        issue_number,
+        resolved_target.get("version"),
+        issue_index,
+    )
+    if workflow["blocker_class"] == "none" and sibling_artifact_state == "satisfied_by_sibling_issue_artifact":
+        workflow["blocker_class"] = "satisfied_by_sibling_issue_artifact"
+        workflow["evidence_used"].append("sibling_issue_artifact")
 
     doctor = doctor_snapshot(
         repo_root,

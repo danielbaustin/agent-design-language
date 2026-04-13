@@ -88,6 +88,12 @@ def evaluate(payload):
         skill_name = "none"
         continuation = "ask_operator"
         escalation_reason = "related_issue_ref_satisfied"
+    elif blocker_class == "satisfied_by_sibling_issue_artifact":
+        detected_phase = "already_satisfied"
+        selected_phase = "blocked"
+        skill_name = "none"
+        continuation = "ask_operator"
+        escalation_reason = "sibling_issue_artifact_satisfied"
     elif blocker_class == "active_child_issue_wave":
         detected_phase = "tracker_in_flight"
         selected_phase = "blocked"
