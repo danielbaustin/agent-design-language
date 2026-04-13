@@ -28,6 +28,7 @@ checks_json+="$(run_check coverage_gate bash -lc "cd \"$ROOT_DIR/adl\" && cargo 
 checks_json+="$(run_check legacy_guardrail bash "$ROOT_DIR/adl/tools/check_no_new_legacy_swarm_refs.sh"),"
 checks_json+="$(run_check release_notes_commands bash "$ROOT_DIR/adl/tools/check_release_notes_commands.sh"),"
 checks_json+="$(run_check repo_code_review_contract bash "$ROOT_DIR/adl/tools/test_repo_code_review_skill_contracts.sh"),"
+checks_json+="$(run_check test_generator_contract bash "$ROOT_DIR/adl/tools/test_test_generator_skill_contracts.sh"),"
 checks_json+="$(run_check demo_smoke bash "$ROOT_DIR/adl/tools/demo_smoke_v07_story.sh"),"
 checks_json+="$(run_check review_surface bash "$ROOT_DIR/adl/tools/test_demo_v088_review_surface.sh"),"
 checks_json+="$(run_check rust_module_watch bash "$ROOT_DIR/adl/tools/report_large_rust_modules.sh" --format tsv)"
