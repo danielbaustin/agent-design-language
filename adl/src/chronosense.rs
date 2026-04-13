@@ -15,6 +15,7 @@ pub const COMMITMENT_DEADLINE_SCHEMA: &str = "commitment_deadline_semantics.v1";
 pub const TEMPORAL_CAUSALITY_EXPLANATION_SCHEMA: &str = "temporal_causality_explanation.v1";
 pub const EXECUTION_POLICY_COST_MODEL_SCHEMA: &str = "execution_policy_cost_model.v1";
 pub const PHI_INTEGRATION_METRICS_SCHEMA: &str = "phi_integration_metrics.v1";
+pub const INSTINCT_MODEL_SCHEMA: &str = "instinct_model.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IdentityProfile {
@@ -355,6 +356,51 @@ pub struct PhiIntegrationMetricsContract {
     pub comparison_profiles: Vec<PhiComparisonProfile>,
     pub comparison_fixtures: Vec<PhiComparisonFixture>,
     pub review_surface: PhiReviewSurfaceContract,
+    pub proof_fixture_hooks: Vec<String>,
+    pub proof_hook_command: String,
+    pub proof_hook_output_path: String,
+    pub scope_boundary: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InstinctEntryContract {
+    pub instinct_id: String,
+    pub meaning: String,
+    pub default_strength: String,
+    pub allowed_influences: Vec<String>,
+    pub subordinate_to: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InstinctSemanticsContract {
+    pub instinct_definition: String,
+    pub distinctions_from_goals: Vec<String>,
+    pub distinctions_from_affect: Vec<String>,
+    pub boundedness_rules: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InstinctRepresentationContract {
+    pub required_fields: Vec<String>,
+    pub optional_fields: Vec<String>,
+    pub persistence_expectations: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InstinctReviewSurfaceContract {
+    pub required_questions: Vec<String>,
+    pub required_visibility: Vec<String>,
+    pub non_goals: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InstinctModelContract {
+    pub schema_version: String,
+    pub owned_runtime_surfaces: Vec<String>,
+    pub instinct_set: Vec<InstinctEntryContract>,
+    pub semantics: InstinctSemanticsContract,
+    pub representation: InstinctRepresentationContract,
+    pub review_surface: InstinctReviewSurfaceContract,
     pub proof_fixture_hooks: Vec<String>,
     pub proof_hook_command: String,
     pub proof_hook_output_path: String,
@@ -1212,6 +1258,138 @@ impl PhiIntegrationMetricsContract {
     }
 }
 
+impl InstinctModelContract {
+    pub fn v1() -> Self {
+        Self {
+            schema_version: INSTINCT_MODEL_SCHEMA.to_string(),
+            owned_runtime_surfaces: vec![
+                "adl::chronosense::InstinctModelContract".to_string(),
+                "adl::chronosense::InstinctEntryContract".to_string(),
+                "adl::chronosense::InstinctSemanticsContract".to_string(),
+                "adl::chronosense::InstinctRepresentationContract".to_string(),
+                "adl identity instinct".to_string(),
+            ],
+            instinct_set: vec![
+                InstinctEntryContract {
+                    instinct_id: "integrity".to_string(),
+                    meaning: "bias toward policy-respecting, constraint-honoring action under uncertainty".to_string(),
+                    default_strength: "medium".to_string(),
+                    allowed_influences: vec![
+                        "favor constrained route selection".to_string(),
+                        "increase anomaly attention when invariants look threatened".to_string(),
+                    ],
+                    subordinate_to: vec![
+                        "policy".to_string(),
+                        "safety".to_string(),
+                        "explicit task goals".to_string(),
+                    ],
+                },
+                InstinctEntryContract {
+                    instinct_id: "curiosity".to_string(),
+                    meaning: "bias toward bounded anomaly follow-up and unresolved-question attention".to_string(),
+                    default_strength: "medium".to_string(),
+                    allowed_influences: vec![
+                        "increase follow-up priority for unexplained signals".to_string(),
+                        "favor deeper inspection when competing options are otherwise close".to_string(),
+                    ],
+                    subordinate_to: vec![
+                        "policy".to_string(),
+                        "safety".to_string(),
+                        "budgeted execution limits".to_string(),
+                    ],
+                },
+                InstinctEntryContract {
+                    instinct_id: "coherence".to_string(),
+                    meaning: "bias toward internally consistent plans, traces, and explanations".to_string(),
+                    default_strength: "high".to_string(),
+                    allowed_influences: vec![
+                        "favor plans with clearer explanatory alignment".to_string(),
+                        "increase pressure to resolve contradictions before closing work".to_string(),
+                    ],
+                    subordinate_to: vec![
+                        "policy".to_string(),
+                        "safety".to_string(),
+                        "explicit task goals".to_string(),
+                    ],
+                },
+                InstinctEntryContract {
+                    instinct_id: "completion".to_string(),
+                    meaning: "bias toward finishing started bounded work rather than abandoning it casually".to_string(),
+                    default_strength: "medium".to_string(),
+                    allowed_influences: vec![
+                        "favor finishing current bounded work when policy permits".to_string(),
+                        "increase follow-through pressure on accepted obligations".to_string(),
+                    ],
+                    subordinate_to: vec![
+                        "policy".to_string(),
+                        "safety".to_string(),
+                        "higher-priority explicit goals".to_string(),
+                    ],
+                },
+            ],
+            semantics: InstinctSemanticsContract {
+                instinct_definition: "persistent background pressure that shapes prioritization, routing, and follow-through without replacing goals, affect, policy, or review".to_string(),
+                distinctions_from_goals: vec![
+                    "goals are explicit and task-specific".to_string(),
+                    "instinct remains active across tasks as directional bias".to_string(),
+                ],
+                distinctions_from_affect: vec![
+                    "affect is dynamic evaluation of current state".to_string(),
+                    "instinct is the lower-latency persistent leaning beneath that evaluation".to_string(),
+                ],
+                boundedness_rules: vec![
+                    "instinct must stay explicit and inspectable".to_string(),
+                    "instinct may influence prioritization or routing but may not bypass policy".to_string(),
+                    "instinct must not introduce hidden non-determinism".to_string(),
+                ],
+            },
+            representation: InstinctRepresentationContract {
+                required_fields: vec![
+                    "instinct_id".to_string(),
+                    "default_strength".to_string(),
+                    "meaning".to_string(),
+                ],
+                optional_fields: vec![
+                    "enabled".to_string(),
+                    "allowed_influences".to_string(),
+                    "subordinate_to".to_string(),
+                ],
+                persistence_expectations: vec![
+                    "remain available across tasks".to_string(),
+                    "stay explicit in execution context attachment".to_string(),
+                    "support later runtime wiring without changing the semantic core".to_string(),
+                ],
+            },
+            review_surface: InstinctReviewSurfaceContract {
+                required_questions: vec![
+                    "which instincts were declared".to_string(),
+                    "how does instinct differ from goals and affect".to_string(),
+                    "what higher-level constraints keep instinct bounded".to_string(),
+                ],
+                required_visibility: vec![
+                    "declared instinct set".to_string(),
+                    "meaning of each instinct".to_string(),
+                    "subordination to policy and safety".to_string(),
+                ],
+                non_goals: vec![
+                    "full psychology model".to_string(),
+                    "identity formation through instinct alone".to_string(),
+                    "hidden autonomy justification".to_string(),
+                ],
+            },
+            proof_fixture_hooks: vec![
+                "adl::chronosense::InstinctModelContract::v1".to_string(),
+                "adl identity instinct --out .adl/state/instinct_model_v1.json".to_string(),
+            ],
+            proof_hook_command:
+                "adl identity instinct --out .adl/state/instinct_model_v1.json".to_string(),
+            proof_hook_output_path: ".adl/state/instinct_model_v1.json".to_string(),
+            scope_boundary:
+                "bounded instinct substrate only; runtime influence, prioritization hooks, and bounded agency proof remain downstream work in WP-11".to_string(),
+        }
+    }
+}
+
 pub fn default_identity_profile_path(repo_root: &Path) -> PathBuf {
     repo_root
         .join("adl")
@@ -1569,5 +1747,47 @@ mod tests {
         assert!(contract
             .proof_hook_output_path
             .contains("phi_integration_metrics_v1.json"));
+    }
+
+    #[test]
+    fn instinct_model_contract_is_small_explicit_and_policy_subordinate() {
+        let contract = InstinctModelContract::v1();
+
+        assert_eq!(contract.schema_version, INSTINCT_MODEL_SCHEMA);
+        assert!(contract
+            .owned_runtime_surfaces
+            .contains(&"adl identity instinct".to_string()));
+        assert_eq!(contract.instinct_set.len(), 4);
+        assert!(contract
+            .instinct_set
+            .iter()
+            .any(|entry| entry.instinct_id == "integrity"));
+        assert!(contract
+            .instinct_set
+            .iter()
+            .all(|entry| entry.subordinate_to.contains(&"policy".to_string())));
+    }
+
+    #[test]
+    fn instinct_model_contract_distinguishes_instinct_from_goals_and_affect() {
+        let contract = InstinctModelContract::v1();
+
+        assert!(contract
+            .semantics
+            .distinctions_from_goals
+            .iter()
+            .any(|value| value.contains("task-specific")));
+        assert!(contract
+            .semantics
+            .distinctions_from_affect
+            .iter()
+            .any(|value| value.contains("dynamic evaluation")));
+        assert!(contract
+            .review_surface
+            .non_goals
+            .contains(&"full psychology model".to_string()));
+        assert!(contract
+            .proof_hook_output_path
+            .contains("instinct_model_v1.json"));
     }
 }
