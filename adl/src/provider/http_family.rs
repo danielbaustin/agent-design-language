@@ -1,7 +1,42 @@
 use super::*;
+use std::thread;
+use std::time::Duration;
 
 fn cfg_str<'a>(cfg: &'a HashMap<String, Value>, key: &str) -> Option<&'a str> {
     cfg.get(key).and_then(|v| v.as_str()).map(str::trim)
+}
+
+struct InvocationArtifactLock {
+    path: PathBuf,
+}
+
+impl Drop for InvocationArtifactLock {
+    fn drop(&mut self) {
+        let _ = fs::remove_dir(&self.path);
+    }
+}
+
+fn invocation_lock_path(path: &Path) -> PathBuf {
+    let mut os = path.as_os_str().to_os_string();
+    os.push(".lock");
+    PathBuf::from(os)
+}
+
+fn acquire_invocation_artifact_lock(path: &Path) -> std::io::Result<InvocationArtifactLock> {
+    let lock_path = invocation_lock_path(path);
+    for _attempt in 0..200 {
+        match fs::create_dir(&lock_path) {
+            Ok(()) => return Ok(InvocationArtifactLock { path: lock_path }),
+            Err(err) if err.kind() == std::io::ErrorKind::AlreadyExists => {
+                thread::sleep(Duration::from_millis(10));
+            }
+            Err(err) => return Err(err),
+        }
+    }
+    Err(std::io::Error::new(
+        std::io::ErrorKind::TimedOut,
+        "timed out waiting for invocation artifact lock",
+    ))
 }
 
 fn auth_env_for(spec: &adl::ProviderSpec, default_env: &str) -> Result<String> {
@@ -131,6 +166,20 @@ fn write_native_invocation_record(
         return Ok(());
     };
     let path = PathBuf::from(path);
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).map_err(|err| {
+            runtime_error(
+                family,
+                format!("failed to create provider invocation artifact directory: {err}"),
+            )
+        })?;
+    }
+    let _artifact_lock = acquire_invocation_artifact_lock(&path).map_err(|err| {
+        runtime_error(
+            family,
+            format!("failed to acquire provider invocation artifact lock: {err}"),
+        )
+    })?;
     let mut payload = if path.is_file() {
         serde_json::from_slice::<Value>(&fs::read(&path).map_err(|err| {
             runtime_error(
@@ -173,15 +222,6 @@ fn write_native_invocation_record(
         "prompt_chars": prompt.chars().count(),
         "output_chars": output.chars().count()
     }));
-
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).map_err(|err| {
-            runtime_error(
-                family,
-                format!("failed to create provider invocation artifact directory: {err}"),
-            )
-        })?;
-    }
     let bytes = serde_json::to_vec_pretty(&payload).map_err(|err| {
         runtime_error_non_retryable(
             family,
@@ -197,7 +237,16 @@ fn write_native_invocation_record(
 }
 
 fn write_file_atomic(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
-    let tmp = path.with_extension("tmp");
+    let mut os = path.as_os_str().to_os_string();
+    os.push(format!(
+        ".tmp-{}-{}",
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos()
+    ));
+    let tmp = PathBuf::from(os);
     fs::write(&tmp, bytes)?;
     fs::rename(tmp, path)
 }
@@ -1118,6 +1167,39 @@ mod tests {
                 .expect_err("artifact without array should fail")
                 .to_string()
                 .contains("missing invocations array")
+        );
+
+        std::fs::remove_file(&artifact).expect("remove malformed artifact");
+        let thread_count = 8usize;
+        let mut handles = Vec::new();
+        for idx in 0..thread_count {
+            handles.push(std::thread::spawn(move || {
+                write_native_invocation_record(
+                    "openai",
+                    "gpt-test",
+                    &format!("hello-{idx}"),
+                    &format!("world-{idx}"),
+                    200,
+                )
+            }));
+        }
+        for handle in handles {
+            handle
+                .join()
+                .expect("concurrent writer thread should not panic")
+                .expect("concurrent invocation write should succeed");
+        }
+        let concurrent_payload: Value =
+            serde_json::from_slice(&std::fs::read(&artifact).expect("read concurrent artifact"))
+                .expect("concurrent artifact json");
+        let invocations = concurrent_payload
+            .get("invocations")
+            .and_then(|v| v.as_array())
+            .expect("invocations array");
+        assert_eq!(
+            invocations.len(),
+            thread_count,
+            "concurrent writes should preserve every invocation entry"
         );
 
         match prev_artifact {

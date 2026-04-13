@@ -22,6 +22,8 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
 - `batched_checks.sh`, `preflight_review.sh`: quality/preflight checks, including the repo-code-review skill contract guard.
 - `check_issue_metadata_parity.sh`: canonical metadata parity audit for GitHub issue title/labels plus local `.adl` body/STP metadata identity.
+- `closeout_completed_issue_wave.sh`: bounded local catch-up helper that runs `pr closeout` across closed/completed issue bundles for a milestone version so local-only `.adl` truth can converge after merge or main sync.
+- `check_milestone_closed_issue_sor_truth.sh`: milestone closed-issue bundle truth gate for local-only `.adl` task bundles; verifies canonical `stp.md`, `sip.md`, and final `sor.md` truth for closed/completed issues.
 - `enforce_coverage_gates.sh`: deterministic coverage threshold enforcement (workspace + per-file).
 - `report_large_rust_modules.sh`: non-blocking Rust implementation-module size report for maintainability review.
 - `open_artifact.sh`: convenience opener for cards/reports.

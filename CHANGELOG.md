@@ -2,16 +2,20 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.88 (Temporal / PHI / Instinct Review Tail In Progress)
+## v0.88 (Temporal / Chronosense + Instinct Review Tail In Progress)
 
-Status: Implementation wave complete through `WP-13`; quality, review, planning, and release tail in progress.
+Status: Implementation wave completed through `WP-13`; docs/review/remediation/release tail in progress.
 
 Summary:
-- ADL now has a real `v0.88` milestone on `main`, centered on one bounded package:
-  `temporal structure -> continuity/query/deadlines -> PHI-style metrics -> instinct/bounded agency -> Paper Sonata proof surfaces`
-- The promoted `v0.88` feature-doc set now covers temporal schema, continuity, retrieval, commitments/deadlines, causality/explanation, execution policy/cost, PHI-style metrics, instinct, and bounded agency
-- The bounded `v0.88` demo and reviewer package now exists through temporal, PHI, instinct, review-surface, quality-gate, and Paper Sonata proof surfaces
-- The active tail now consists of internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony
+- ADL now has a real `v0.88` milestone on `main`, centered on two bounded substrate bands:
+  `temporal / chronosense -> instinct / bounded agency`
+- The promoted `v0.88` feature-doc package now covers temporal schema, continuity/identity semantics, temporal retrieval, commitments/deadlines, bounded temporal causality, PHI-style integration metrics, instinct, and instinct runtime influence
+- The bounded `v0.88` proof package now exists through `demo_v088_temporal_review_surface.sh`, `demo_v088_phi_review_surface.sh`, `demo_v088_instinct_review_surface.sh`, `demo_v088_paper_sonata.sh`, `demo_v088_deep_agents_comparative_proof.sh`, and `demo_v088_review_surface.sh`
+- Paper Sonata now serves as the flagship bounded public-facing `v0.88` demo, with the deep-agents comparative proof as a supporting reviewer-facing row
+- Internal review has completed a full repo code-review pass, and the one concrete implementation finding from that pass was remediated before 3rd-party review
+
+Version note:
+- the active milestone is `v0.88`, but the crate version on `main` remains `0.87.1` until the `v0.88` release ceremony/version bump
 
 References:
 - `docs/milestones/v0.88/README.md`
@@ -24,10 +28,9 @@ References:
 - `docs/milestones/v0.88/RELEASE_NOTES_v0.88.md`
 
 Not yet claimed in v0.88:
-- external / 3rd-party review completion
-- accepted-findings remediation completion
-- release ceremony completion
-- later milestone economics, security, or wider governance systems beyond the bounded `v0.88` substrate band
+- final 3rd-party review completion and accepted-findings remediation closeout
+- release ceremony completion and version/tag publication
+- later-band governance, economics, aptitude, or broader social-agency systems beyond the bounded `v0.88` slice
 
 ## v0.87.1 (Runtime Completion Review Tail In Progress)
 
