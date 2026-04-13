@@ -1,0 +1,3 @@
+display_name: Test Generator
+short_description: Generate focused regression tests
+default_prompt: Generate or update the smallest truthful test surface for this concrete target, following the repo's existing test style and staying bounded to tests, fixtures, and related validation.

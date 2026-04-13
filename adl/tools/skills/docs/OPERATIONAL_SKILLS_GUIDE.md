@@ -22,6 +22,7 @@ The tracked skill set is:
 - `pr-finish`
 - `pr-closeout`
 - `repo-code-review`
+- `test-generator`
 - `stp-editor`
 - `sip-editor`
 - `sor-editor`
@@ -41,6 +42,7 @@ The normal workflow is:
 7. `pr-closeout` after the PR outcome or explicit non-PR closure disposition is settled
 
 `repo-code-review` is cross-cutting rather than phase-specific.
+`test-generator` is a bounded helper skill for focused tests for a concrete issue, diff, file, or worktree.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
 
 The three editor skills are helper skills:
@@ -1304,6 +1306,109 @@ policy:
 Review the executable codebase first, include manifests and build configuration, run targeted local tests only when bounded and relevant, and write the review to .adl/reviews/<timestamp>-repo-review.md.
 ```
 
+## `test-generator`
+
+### Purpose
+
+`test-generator` writes or updates focused tests for one concrete target surface.
+
+It is a bounded helper skill, not a lifecycle phase.
+
+### When To Use It
+
+Use it when:
+
+- a concrete issue, diff, path, or worktree needs focused tests
+- a review comment asks for missing tests
+- one bounded regression, edge case, or failure path needs test backfill
+
+Do not use it for:
+
+- broad implementation work
+- vague repo-wide testing strategy
+- PR publication or janitoring
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- structured invocation should use `skill_input_schema: test_generator.v1`
+- one of:
+  - `target.issue_number`
+  - `target.diff_base`
+  - `target.target_path`
+  - `target.worktree_path`
+
+### Input Schema
+
+Canonical schema:
+
+- `adl/tools/skills/docs/TEST_GENERATOR_SKILL_INPUT_SCHEMA.md`
+
+Schema id:
+
+- `test_generator.v1`
+
+Structured invocation shape:
+
+```yaml
+skill_input_schema: test_generator.v1
+mode: generate_for_issue | generate_for_diff | generate_for_path | generate_for_worktree
+repo_root: /absolute/path
+target:
+  issue_number: <u32 or null>
+  diff_base: <string or null>
+  target_path: <path or null>
+  worktree_path: <path or null>
+  changed_paths:
+    - <path>
+  target_behavior: <string or null>
+policy:
+  test_depth: focused | moderate
+  allow_new_test_files: true | false
+  allow_fixture_updates: true | false
+  validation_mode: targeted | dry_run | none
+  stop_after_generation: true
+```
+
+### Output And Stop Boundary
+
+Expected output includes:
+
+- target
+- test plan
+- changes made
+- validation performed
+- residual risk
+
+The skill may write tests, fixtures, snapshots, and narrowly related test helpers.
+It must stop before broader implementation, janitoring, or finish.
+
+### Example Invocation
+
+```yaml
+Use $test-generator at /Users/daniel/git/agent-design-language/adl/tools/skills/test-generator/SKILL.md with:
+skill_input_schema: test_generator.v1
+mode: generate_for_issue
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  issue_number: 1769
+  diff_base: null
+  target_path: null
+  worktree_path: null
+  changed_paths:
+    - adl/src/provider.rs
+  target_behavior: split-provider-refactor-keeps-provider-tests-bounded
+policy:
+  test_depth: focused
+  allow_new_test_files: true
+  allow_fixture_updates: true
+  validation_mode: targeted
+  stop_after_generation: true
+Generate the smallest truthful test surface for the concrete target and stop after bounded test-writing work.
+```
+
 ## Choosing The Right Skill
 
 Use this quick selector:
@@ -1318,6 +1423,8 @@ Use this quick selector:
   - `pr-janitor`
 - need to finalize closeout/publication:
   - `pr-finish`
+- need to write focused regression or edge-case tests for one concrete target:
+  - `test-generator`
 - need to finalize local issue state after merge/closure:
   - `pr-closeout`
 - need a broad findings-first code review:
