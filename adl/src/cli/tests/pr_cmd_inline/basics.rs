@@ -660,9 +660,83 @@ fn real_pr_create_creates_issue_and_bootstraps_root_bundle() {
             .is_file(),
         "create should bootstrap the root sor"
     );
+    assert!(
+        !repo.join(".worktrees/adl-wp-1202").exists(),
+        "create should stop at doctor-ready pre_run state without creating a worktree"
+    );
     let issue_body = fs::read_to_string(&issue_body_log).expect("issue body");
     assert!(issue_body.contains("## Summary"));
     assert!(issue_body.contains("## Tooling Notes"));
+}
+
+fn corrupt_created_issue_bundle_for_test(repo_root: &Path, issue_ref: &IssueRef) -> Result<()> {
+    let input_path = issue_ref.task_bundle_input_path(repo_root);
+    fs::write(
+        &input_path,
+        "# ADL Input Card\n\nTask ID: broken\nRun ID: broken\nVersion: v0.86\nTitle: broken\nBranch: broken\n",
+    )
+    .context("rewrite created sip as invalid fixture")?;
+    Ok(())
+}
+
+#[test]
+fn real_pr_create_fails_when_post_bootstrap_ready_validation_fails() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-real-create-ready-fail");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_path = bin_dir.join("gh");
+    write_executable(
+        &gh_path,
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  printf 'https://github.com/example/repo/issues/1205\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Create ready fail\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    let previous_hook =
+        set_create_post_bootstrap_test_hook(Some(corrupt_created_issue_bundle_for_test));
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    let err = real_pr(&[
+        "create".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Create ready fail".to_string(),
+        "--slug".to_string(),
+        "v0-86-tools-create-ready-fail".to_string(),
+        "--body".to_string(),
+        "## Summary\n\nEnsure create fails when the bootstrap bundle cannot satisfy doctor-ready.\n\n## Goal\n\nRequire post-bootstrap readiness validation for new issues.\n\n## Required Outcome\n\nThis issue ships tooling code and tests.\n\n## Deliverables\n\n- post-bootstrap doctor-ready gate\n\n## Acceptance Criteria\n\n- create fails with actionable output when ready validation fails immediately after bootstrap\n\n## Repo Inputs\n\n- adl/src/cli/pr_cmd.rs\n- adl/src/cli/pr_cmd/doctor.rs\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- preflight or queue admission on create\n\n## Issue-Graph Notes\n\n- regression test\n\n## Notes\n\n- authored test body\n\n## Tooling Notes\n\n- should pass source-prompt validation before the deliberate test-only corruption runs\n".to_string(),
+        "--labels".to_string(),
+        "track:roadmap,type:task,area:tools".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect_err("create should fail when post-bootstrap ready validation fails");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    set_create_post_bootstrap_test_hook(previous_hook);
+
+    assert!(err
+        .to_string()
+        .contains("create: issue #1205 failed immediate ready-state validation"));
+    assert!(
+        repo.join(".adl/v0.86/bodies/issue-1205-v0-86-tools-create-ready-fail.md")
+            .is_file(),
+        "create failure should still leave the canonical source prompt for repair"
+    );
+    assert!(
+        repo.join(".adl/v0.86/tasks/issue-1205__v0-86-tools-create-ready-fail/sip.md")
+            .is_file(),
+        "create failure should still leave the bootstrapped bundle for repair"
+    );
 }
 
 #[test]
@@ -711,7 +785,7 @@ fn real_pr_create_fails_when_created_issue_is_missing_requested_labels() {
 }
 
 #[test]
-fn real_pr_create_generates_concrete_body_when_none_is_supplied() {
+fn real_pr_create_generated_body_leaves_repairable_evidence_when_not_immediately_ready() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-real-create-generated-body");
     init_git_repo(&repo);
@@ -736,7 +810,7 @@ fn real_pr_create_generates_concrete_body_when_none_is_supplied() {
     }
     env::set_current_dir(&repo).expect("chdir");
 
-    let result = real_pr(&[
+    let err = real_pr(&[
         "create".to_string(),
         "--title".to_string(),
         "[v0.86][tools] Generated issue body".to_string(),
@@ -746,13 +820,15 @@ fn real_pr_create_generates_concrete_body_when_none_is_supplied() {
         "track:roadmap,type:task,area:tools".to_string(),
         "--version".to_string(),
         "v0.86".to_string(),
-    ]);
+    ])
+    .expect_err(
+        "generated-body create should fail when doctor-ready still sees bootstrap stub content",
+    );
 
     env::set_current_dir(prev_dir).expect("restore cwd");
     unsafe {
         env::set_var("PATH", old_path);
     }
-    result.expect("real_pr create");
 
     let issue_body = fs::read_to_string(&issue_body_log).expect("issue body");
     assert!(issue_body.contains("## Goal"));
@@ -770,6 +846,14 @@ fn real_pr_create_generates_concrete_body_when_none_is_supplied() {
     assert!(prompt.contains("## Goal"));
     assert!(!prompt.contains("## Goal\n-"));
     assert!(prompt.contains("pr_start:\n  enabled: false"));
+    assert!(err
+        .to_string()
+        .contains("create: issue #1203 failed immediate ready-state validation"));
+    assert!(
+        repo.join(".adl/v0.86/tasks/issue-1203__v0-86-tools-generated-issue-body/sip.md")
+            .is_file(),
+        "generated-body failure should still leave the bootstrapped bundle for deterministic repair"
+    );
 }
 
 #[test]

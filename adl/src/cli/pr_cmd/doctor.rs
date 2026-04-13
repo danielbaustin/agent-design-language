@@ -22,8 +22,8 @@ struct DoctorPreflightResult {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-struct DoctorReadyResult {
-    lifecycle_state: &'static str,
+pub(super) struct DoctorReadyResult {
+    pub(super) lifecycle_state: &'static str,
     worktree: Option<String>,
     source: String,
     root_stp: String,
@@ -32,7 +32,7 @@ struct DoctorReadyResult {
     wt_stp: Option<String>,
     wt_input: Option<String>,
     wt_output: Option<String>,
-    status: &'static str,
+    pub(super) status: &'static str,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -205,7 +205,7 @@ fn run_doctor_preflight(
     }
 }
 
-fn run_doctor_ready(
+pub(super) fn run_doctor_ready(
     repo_root: &Path,
     repo: &str,
     issue_ref: &IssueRef,
