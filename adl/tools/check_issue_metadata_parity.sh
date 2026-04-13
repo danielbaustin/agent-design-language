@@ -17,6 +17,7 @@ Checks:
 - exact title parity with the canonical local issue prompt
 - presence of all prompt-declared labels on GitHub
 - presence of the matching version:<milestone> label on GitHub
+- local parity between the canonical issue prompt front matter and the canonical task-bundle STP front matter
 - duplicate local prompt/task-bundle identities for the same issue number
 EOF
 }
@@ -103,6 +104,38 @@ def parse_prompt(path: Path):
     return {"title": title, "issue_number": issue_number, "labels": labels}
 
 
+def parse_prompt_with_fields(path: Path):
+    text = path.read_text()
+    if not text.startswith("---\n"):
+        raise RuntimeError(f"{path}: missing front matter")
+    _, rest = text.split("---\n", 1)
+    fm_text, _ = rest.split("\n---\n", 1)
+    lines = fm_text.splitlines()
+    data = {"labels": []}
+    in_labels = False
+    for line in lines:
+        if line.startswith("title: "):
+            data["title"] = line.split(":", 1)[1].strip().strip('"')
+            in_labels = False
+        elif line.startswith("issue_number: "):
+            data["issue_number"] = int(line.split(":", 1)[1].strip())
+            in_labels = False
+        elif line.startswith("slug: "):
+            data["slug"] = line.split(":", 1)[1].strip().strip('"')
+            in_labels = False
+        elif line.startswith("wp: "):
+            data["wp"] = line.split(":", 1)[1].strip().strip('"')
+            in_labels = False
+        elif line.startswith("labels:"):
+            in_labels = True
+            data["labels"] = []
+        elif in_labels and line.startswith("  - "):
+            data["labels"].append(line.split("  - ", 1)[1].strip().strip('"'))
+        elif line and not line.startswith(" "):
+            in_labels = False
+    return data
+
+
 def gh_issue(issue_number: int):
     proc = subprocess.run(
         [
@@ -160,6 +193,44 @@ for prompt_path in sorted(body_dir.glob("issue-*.md")):
         errors.append(
             f"issue #{issue_number}: missing required version label version:{version}"
         )
+
+    body_meta = parse_prompt_with_fields(prompt_path)
+    canonical_task = root / ".adl" / version / "tasks" / prompt_path.stem.replace(
+        f"issue-{issue_number:04d}-", f"issue-{issue_number:04d}__"
+    )
+    stp_path = canonical_task / "stp.md"
+    if not stp_path.is_file():
+        errors.append(
+            f"issue #{issue_number}: missing canonical task-bundle STP: {stp_path.relative_to(root)}"
+        )
+    else:
+        stp_meta = parse_prompt_with_fields(stp_path)
+        for field in ("title", "issue_number", "slug", "wp"):
+            body_value = body_meta.get(field)
+            stp_value = stp_meta.get(field)
+            if body_value != stp_value:
+                errors.append(
+                    "issue #{}: local metadata mismatch for {} between {} and {}: expected {!r}, got {!r}".format(
+                        issue_number,
+                        field,
+                        prompt_path.relative_to(root),
+                        stp_path.relative_to(root),
+                        body_value,
+                        stp_value,
+                    )
+                )
+        body_labels = sorted(body_meta.get("labels", []))
+        stp_labels = sorted(stp_meta.get("labels", []))
+        if body_labels != stp_labels:
+            errors.append(
+                "issue #{}: local metadata mismatch for labels between {} and {}: expected {}, got {}".format(
+                    issue_number,
+                    prompt_path.relative_to(root),
+                    stp_path.relative_to(root),
+                    body_labels,
+                    stp_labels,
+                )
+            )
 
 for issue_number in sorted(seen_issue_numbers):
     body_hits = sorted(

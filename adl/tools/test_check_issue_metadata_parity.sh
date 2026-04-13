@@ -39,6 +39,37 @@ pr_start:
 # [v0.87.1][tools] Metadata parity
 EOF
 
+cat >"$REPO/.adl/v0.87.1/tasks/issue-1153__v0-87-1-tools-metadata-parity/stp.md" <<'EOF'
+---
+issue_card_schema: adl.issue.v1
+wp: "tools"
+slug: "v0-87-1-tools-metadata-parity"
+title: "[v0.87.1][tools] Metadata parity"
+labels:
+  - "track:roadmap"
+  - "type:task"
+  - "area:tools"
+  - "version:v0.87.1"
+issue_number: 1153
+status: "draft"
+action: "edit"
+depends_on: []
+milestone_sprint: "Pending sprint assignment"
+required_outcome_type:
+  - "code"
+repo_inputs: []
+canonical_files: []
+demo_required: false
+demo_names: []
+issue_graph_notes: []
+pr_start:
+  enabled: false
+  slug: "v0-87-1-tools-metadata-parity"
+---
+
+# [v0.87.1][tools] Metadata parity
+EOF
+
 cat >"$REPO/.adl/v0.87.1/tasks/issue-1153__v0-87-1-tools-metadata-parity/sor.md" <<'EOF'
 # placeholder
 EOF
@@ -76,5 +107,20 @@ if PATH="$REPO/bin:$PATH" GH_MODE=fail bash "$ROOT/adl/tools/check_issue_metadat
 fi
 
 PATH="$REPO/bin:$PATH" GH_MODE=pass bash "$ROOT/adl/tools/check_issue_metadata_parity.sh" --root "$REPO" --version v0.87.1 --repo owner/repo >/dev/null
+
+python3 - "$REPO/.adl/v0.87.1/tasks/issue-1153__v0-87-1-tools-metadata-parity/stp.md" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+text = path.read_text()
+text = text.replace('wp: "tools"', 'wp: "docs"', 1)
+path.write_text(text)
+PY
+
+if PATH="$REPO/bin:$PATH" GH_MODE=pass bash "$ROOT/adl/tools/check_issue_metadata_parity.sh" --root "$REPO" --version v0.87.1 --repo owner/repo >/dev/null 2>&1; then
+  echo "expected drift check to fail when local STP metadata drifts from the canonical issue prompt" >&2
+  exit 1
+fi
 
 echo "PASS test_check_issue_metadata_parity"

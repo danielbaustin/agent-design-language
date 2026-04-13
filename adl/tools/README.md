@@ -21,6 +21,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `adl tooling ...`: Rust-owned tooling surface for prompt/card/review validation helpers, with legacy wrapper scripts preserved at the historical `adl/tools/*` paths.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
 - `batched_checks.sh`, `preflight_review.sh`: quality/preflight checks, including the repo-code-review skill contract guard.
+- `check_issue_metadata_parity.sh`: canonical metadata parity audit for GitHub issue title/labels plus local `.adl` body/STP metadata identity.
 - `enforce_coverage_gates.sh`: deterministic coverage threshold enforcement (workspace + per-file).
 - `report_large_rust_modules.sh`: non-blocking Rust implementation-module size report for maintainability review.
 - `open_artifact.sh`: convenience opener for cards/reports.
@@ -90,6 +91,9 @@ bash ./adl/tools/pr.sh run <issue_num> --slug <slug>
 
 # run standard checks
 ./adl/tools/batched_checks.sh
+
+# audit GitHub/local issue metadata parity for one milestone package
+./adl/tools/check_issue_metadata_parity.sh --version v0.88
 
 # enforce coverage thresholds from coverage-summary.json
 cd ./adl/ && bash tools/enforce_coverage_gates.sh coverage-summary.json
