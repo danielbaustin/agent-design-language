@@ -31,8 +31,8 @@ After those feature bands, the milestone follows the same demo / quality / revie
 | WP-11 | Instinct runtime surface and bounded agency hook | make instinct visible in runtime declaration, routing, prioritization, trace, and demo proof | implementation slice, trace/artifact evidence, and bounded-agency proof case | `WP-10` | `#1654` closed |
 | WP-12 | Paper Sonata flagship demo | implement a bounded investor-/reviewer-facing multi-agent manuscript demo with durable artifacts and truthful runtime proof | bounded runner, synthetic fixture packet, stable artifact tree, and smoke/validation path | `WP-02` through `WP-11` | `#1656` closed; protected local follow-on planning retained |
 | WP-13 | Demo matrix + integration demos | define and implement the primary proof surfaces for temporal, PHI, instinct, and Paper Sonata bands | runnable demo entrypoints, validated artifacts, and reviewer-facing demo matrix | `WP-02` through `WP-12` | `#1657` closed; bounded supporting proof `#1618` closed |
-| WP-14 | Coverage / quality gate | enforce milestone quality and coverage posture | green quality gate | `WP-13` | `#1652` open |
-| WP-15 | Docs + review pass | converge reviewer-facing docs against delivered proof | reviewer-ready package | `WP-13`, `WP-14` | `#1658` open |
+| WP-14 | Coverage / quality gate | enforce milestone quality and coverage posture | green quality gate | `WP-13` | `#1652` closed |
+| WP-15 | Docs + review pass | converge reviewer-facing docs against delivered proof | reviewer-ready package | `WP-13`, `WP-14` | `#1658` closed |
 | WP-16 | Internal review | perform bounded internal review of milestone truth and proof surfaces | internal review record | `WP-15` | `#1659` open |
 | WP-17 | 3rd-party review | perform external review of the milestone package and capture findings | 3rd-party review record | `WP-15`, `WP-16` | `#1660` open |
 | WP-18 | Review findings remediation | resolve or explicitly defer accepted review findings | remediation record | `WP-16`, `WP-17` | `#1661` open |

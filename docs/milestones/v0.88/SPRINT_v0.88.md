@@ -80,8 +80,8 @@ Close the milestone using the normal ADL pattern: quality gate, docs/review, int
 - release ceremony
 
 Current issue map:
-- `WP-14` `#1652`
-- `WP-15` `#1658`
+- `WP-14` `#1652` closed
+- `WP-15` `#1658` closed
 - `WP-16` `#1659`
 - `WP-17` `#1660`
 - `WP-18` `#1661`

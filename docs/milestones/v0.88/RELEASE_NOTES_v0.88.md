@@ -29,8 +29,6 @@ Completed implementation issues already represented:
 - `#1657`
 
 Active closeout issues:
-- `#1652`
-- `#1658`
 - `#1659`
 - `#1660`
 - `#1661`
