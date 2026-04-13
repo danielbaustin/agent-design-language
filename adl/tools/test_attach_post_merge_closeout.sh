@@ -52,3 +52,39 @@ PATH="$BIN_DIR:$PATH" \
 grep -Fq 'closeout 1' "$CLOSEOUT_LOG"
 grep -Fq 'status: normalized' "$SUMMARY_FILE"
 grep -Fq 'canonical sor.md reconciled to closed merged truth' "$SUMMARY_FILE"
+
+cat >"$BIN_DIR/gh-open" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "$1 $2" == "pr view" ]]; then
+  printf '{"state":"OPEN","mergedAt":"","url":"https://example.test/pr/2"}\n'
+  exit 0
+fi
+if [[ "$1 $2" == "issue view" ]]; then
+  printf '{"state":"OPEN","stateReason":"","url":"https://example.test/issues/2"}\n'
+  exit 0
+fi
+exit 1
+EOF
+chmod +x "$BIN_DIR/gh-open"
+
+if PATH="$BIN_DIR:$PATH" GH="$BIN_DIR/gh-open" ADL_POST_MERGE_CLOSEOUT_MAX_ATTEMPTS=1 ADL_POST_MERGE_CLOSEOUT_SLEEP_SECS=0 bash -c '
+  function gh(){ "$GH" "$@"; }
+  export -f gh
+  bash "'"$ROOT_DIR"'/attach_post_merge_closeout.sh" \
+    --watch \
+    --repo-root "'"$TEMP_DIR"'/repo" \
+    --repo "owner/repo" \
+    --issue "2" \
+    --branch "codex/2-test" \
+    --pr-url "https://example.test/pr/2" \
+    --summary-file "'"$TEMP_DIR"'/timeout-summary.md" \
+    --run-log "'"$TEMP_DIR"'/timeout.log"
+'; then
+  echo "expected timeout watcher to fail non-zero" >&2
+  exit 1
+fi
+
+grep -Fq 'status: timeout' "$TEMP_DIR/timeout-summary.md"
+
+echo "PASS test_attach_post_merge_closeout"

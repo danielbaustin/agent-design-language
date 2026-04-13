@@ -83,7 +83,8 @@ run_watch_loop() {
   local summary_file="$2"
   local run_log="$3"
   local attempt=0
-  local max_attempts=240
+  local max_attempts="${ADL_POST_MERGE_CLOSEOUT_MAX_ATTEMPTS:-240}"
+  local sleep_secs="${ADL_POST_MERGE_CLOSEOUT_SLEEP_SECS:-30}"
 
   write_summary "$summary_file" "watching" "Waiting for PR merge and issue CLOSED/COMPLETED state before automatic closeout."
   while (( attempt < max_attempts )); do
@@ -95,10 +96,11 @@ run_watch_loop() {
       20) exit 20 ;;
     esac
     attempt=$((attempt + 1))
-    sleep 30
+    sleep "$sleep_secs"
   done
 
   write_summary "$summary_file" "timeout" "Timed out waiting for merged PR plus CLOSED/COMPLETED issue state; no automatic closeout was applied."
+  exit 30
 }
 
 REPO_ROOT=""
