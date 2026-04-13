@@ -1153,6 +1153,15 @@ mod tests {
             json["proof_hook_output_path"],
             ".adl/state/temporal_schema_v01.json"
         );
+        assert_eq!(
+            json["primary_temporal_anchor"]["monotonic_order"],
+            "required strictly increasing order token"
+        );
+        assert!(json["reference_frames"]["internal_reasoning"]
+            .as_array()
+            .expect("array")
+            .iter()
+            .any(|value| value == "monotonic"));
         assert!(json["execution_policy_trace_hooks"]
             .as_array()
             .expect("array")
@@ -1201,6 +1210,14 @@ mod tests {
             .expect("array")
             .iter()
             .any(|value| value == "resume_ready"));
+        assert!(json["resumption_rules"]
+            .as_array()
+            .expect("array")
+            .iter()
+            .any(|rule| {
+                rule["continuity_status"] == "continuity_refused"
+                    && rule["resume_permitted"] == Value::Bool(false)
+            }));
         assert_eq!(
             json["proof_hook_output_path"],
             ".adl/state/continuity_semantics_v1.json"
@@ -1294,6 +1311,16 @@ mod tests {
             json["proof_hook_output_path"],
             ".adl/state/commitment_deadline_semantics_v1.json"
         );
+        assert!(json["lifecycle"]["states"]
+            .as_array()
+            .expect("array")
+            .iter()
+            .any(|value| value == "missed"));
+        assert!(json["deadline_semantics"]["supported_frames"]
+            .as_array()
+            .expect("array")
+            .iter()
+            .any(|value| value == "continuity_relative"));
         assert!(json["owned_runtime_surfaces"]
             .as_array()
             .expect("array")
@@ -1341,6 +1368,15 @@ mod tests {
             json["proof_hook_output_path"],
             ".adl/state/temporal_causality_explanation_v1.json"
         );
+        assert_eq!(
+            json["causal_relations"]["sequence_boundary_rule"],
+            "sequence alone is insufficient evidence for causality"
+        );
+        assert!(json["causal_relations"]["relation_types"]
+            .as_array()
+            .expect("array")
+            .iter()
+            .any(|value| value == "unknown_relation"));
         assert!(json["owned_runtime_surfaces"]
             .as_array()
             .expect("array")
@@ -1435,6 +1471,15 @@ mod tests {
             json["proof_hook_output_path"],
             ".adl/state/phi_integration_metrics_v1.json"
         );
+        assert_eq!(
+            json["comparison_profiles"].as_array().expect("array").len(),
+            3
+        );
+        assert!(json["review_surface"]["non_goals"]
+            .as_array()
+            .expect("array")
+            .iter()
+            .any(|value| value == "formal IIT phi calculation"));
         assert!(json["owned_runtime_surfaces"]
             .as_array()
             .expect("array")
@@ -1482,6 +1527,19 @@ mod tests {
             json["proof_hook_output_path"],
             ".adl/state/instinct_model_v1.json"
         );
+        assert_eq!(json["instinct_set"].as_array().expect("array").len(), 4);
+        assert!(json["instinct_set"]
+            .as_array()
+            .expect("array")
+            .iter()
+            .any(|entry| {
+                entry["instinct_id"] == "integrity"
+                    && entry["subordinate_to"]
+                        .as_array()
+                        .expect("array")
+                        .iter()
+                        .any(|value| value == "policy")
+            }));
         assert!(json["owned_runtime_surfaces"]
             .as_array()
             .expect("array")
@@ -1529,6 +1587,15 @@ mod tests {
             json["proof_hook_output_path"],
             ".adl/state/instinct_runtime_surface_v1.json"
         );
+        assert!(json["proof_cases"]
+            .as_array()
+            .expect("array")
+            .iter()
+            .any(|value| value["expected_candidate_id"] == "cand-fast-verify"));
+        assert!(json["review_surface"]["policy_override_rule"]
+            .as_str()
+            .expect("string")
+            .contains("high-risk slow-path review remains mandatory"));
         assert!(json["owned_runtime_surfaces"]
             .as_array()
             .expect("array")
