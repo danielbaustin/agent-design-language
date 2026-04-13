@@ -9,6 +9,7 @@ ARTIFACT_ROOT="$TMPDIR_ROOT/artifacts"
 
 (
   cd "$ROOT_DIR"
+  OLLAMA_HOST=192.168.68.73 \
   bash adl/tools/demo_codex_ollama_operational_skills.sh --dry-run --artifact-root "$ARTIFACT_ROOT" >/dev/null
 )
 
@@ -66,6 +67,10 @@ grep -Fq '"capability_manifest"' "$MANIFEST_FILE" || {
 }
 grep -Fq '"execution_mode": "native_tool_calling"' "$MANIFEST_FILE" || {
   echo "assertion failed: manifest does not record native tool execution mode" >&2
+  exit 1
+}
+grep -Fq '"ollama_host_url": "http://192.168.68.73:11434"' "$MANIFEST_FILE" || {
+  echo "assertion failed: manifest did not normalize raw OLLAMA_HOST into the expected remote URL" >&2
   exit 1
 }
 grep -Fq 'Do not use absolute host paths.' "$PROMPT_FILE" || {

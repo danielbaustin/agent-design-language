@@ -1,13 +1,14 @@
 # Codex CLI + Ollama Operational Skills Demo
 
 This is a bounded, operator-facing demo for running the tracked operational
-skills through Codex CLI against a local OSS provider, with Ollama as the
-intended default and a tool-capable local model as the default execution path.
+skills through Codex CLI against an Ollama-backed OSS provider, with a local
+Ollama service as the default and a configured remote Ollama host also
+supported at the demo-wrapper layer.
 
 It is intentionally smaller than the full issue lifecycle. The proof target is:
 
 - install the tracked skills from the repo
-- run Codex CLI against a local Ollama-backed model
+- run Codex CLI against an Ollama-backed model
 - invoke real tracked skills rather than ad hoc prose alone
 - complete one bounded task similar to the card-cleanup work we do during real
   issue flow
@@ -19,7 +20,7 @@ This demo proves:
 - the tracked skills root under `adl/tools/skills` can be installed into a
   demo-local `CODEX_HOME`
 - Codex CLI can be directed to use those installed skills
-- a local Ollama model can be used for the session
+- a local or configured remote Ollama-hosted model can be used for the session
 - Codex can complete a small real task by applying the `stp-editor` and
   `sip-editor` skills to a prepared local bundle fixture
 - the Codex run can be bounded to the copied fixture workspace rather than the
@@ -37,7 +38,7 @@ This demo does **not** claim:
 ## Prerequisites
 
 - Codex CLI installed and available as `codex`
-- local Ollama service running and reachable at `http://127.0.0.1:11434` by default
+- Ollama service running and reachable at `http://127.0.0.1:11434` by default, or at a configured remote host
 - the target local model pulled in Ollama
 - repository checked out locally
 
@@ -55,8 +56,24 @@ demo now models that explicitly through a capability declaration plus a runtime
 semantic fallback path, while the most reliable native-tool baseline is still a
 tool-capable model such as `gpt-oss:latest`.
 
-If your local Ollama API is not on the default host, set `OLLAMA_HOST` or
+If your Ollama API is not on the default host, set `OLLAMA_HOST` or
 `OLLAMA_HOST_URL` before running the demo script.
+
+Examples:
+
+```bash
+OLLAMA_HOST=192.168.68.73 \
+bash adl/tools/demo_codex_ollama_operational_skills.sh --dry-run
+```
+
+```bash
+OLLAMA_HOST_URL=http://192.168.68.73:11434 \
+bash adl/tools/demo_codex_ollama_operational_skills.sh
+```
+
+This support is intentionally bounded to the demo wrapper. It does **not**
+claim that the full ADL runtime `ollama` / `local_ollama` provider surfaces
+already have first-class remote Ollama transport.
 
 If you need a longer or shorter semantic-fallback wait window for a slower
 local model, set `ADL_OLLAMA_GENERATE_TIMEOUT_SECS`.
@@ -133,7 +150,7 @@ models fail clearly instead of appearing to hang forever.
 7. validate the edited `stp.md` and bootstrap-phase `sip.md`
 8. write artifacts under `artifacts/v0871/codex_ollama_skills/`
 
-Before the model call, the script checks the Ollama HTTP API directly at
+Before the model call, the script checks the configured Ollama HTTP API directly at
 `/api/tags` rather than depending on the `ollama` CLI.
 
 The Codex working root is the copied fixture workspace. The prompt uses
@@ -188,7 +205,7 @@ without requiring live GitHub issue creation or a full PR lifecycle.
 
 - The demo uses a local fixture bundle, not a live GitHub issue.
 - The demo is intended to be rerunnable and reviewer-friendly.
-- Local Ollama availability and model quality are operator-dependent.
+- Ollama host availability and model quality are operator-dependent.
 - On machines where the local Ollama service is unavailable, the dry-run path
   still proves the install, prompt, fixture, and manifest surfaces.
 - If the local model struggles, the dry-run path still proves the install and

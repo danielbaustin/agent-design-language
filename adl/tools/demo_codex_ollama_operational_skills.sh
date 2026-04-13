@@ -8,11 +8,32 @@ CAPABILITY_FILE="$ROOT_DIR/adl/tools/local_model_capabilities.v1.json"
 CODEX_BIN="${CODEX_BIN:-codex}"
 MODEL="${CODEX_OLLAMA_MODEL:-gpt-oss:latest}"
 LOCAL_PROVIDER="${CODEX_LOCAL_PROVIDER:-ollama}"
-OLLAMA_HOST_URL="${OLLAMA_HOST_URL:-${OLLAMA_HOST:-http://127.0.0.1:11434}}"
+RAW_OLLAMA_HOST_INPUT="${OLLAMA_HOST_URL:-${OLLAMA_HOST:-http://127.0.0.1:11434}}"
 OLLAMA_GENERATE_TIMEOUT_SECS="${ADL_OLLAMA_GENERATE_TIMEOUT_SECS:-90}"
 FORCE_SEMANTIC_FALLBACK="${ADL_DEMO_FORCE_SEMANTIC_FALLBACK:-0}"
 SEMANTIC_FALLBACK_RESPONSE_FILE="${ADL_SEMANTIC_FALLBACK_RESPONSE_FILE:-}"
 DRY_RUN=0
+
+normalize_ollama_host_url() {
+  local raw="${1:-}"
+  local normalized="$raw"
+
+  if [[ -z "$normalized" ]]; then
+    normalized="http://127.0.0.1:11434"
+  fi
+
+  if [[ "$normalized" != http://* && "$normalized" != https://* ]]; then
+    normalized="http://$normalized"
+  fi
+
+  if [[ "$normalized" =~ ^https?://[^/:]+$ ]]; then
+    normalized="${normalized}:11434"
+  fi
+
+  printf '%s\n' "${normalized%/}"
+}
+
+OLLAMA_HOST_URL="$(normalize_ollama_host_url "$RAW_OLLAMA_HOST_INPUT")"
 
 usage() {
   cat <<'EOF'
@@ -29,6 +50,7 @@ Notes:
   - Default model: gpt-oss:latest
   - Default provider: ollama
   - Default Ollama API: http://127.0.0.1:11434
+  - Set OLLAMA_HOST=192.168.68.73 or OLLAMA_HOST_URL=http://192.168.68.73:11434 to target a remote Ollama host for this demo.
   - Default semantic-fallback timeout: 90 seconds
   - Non-tool local models are routed through semantic tool fallback instead of native Codex tool calling.
   - --dry-run prepares the workspace, prompt, and manifest but does not invoke Codex.
@@ -374,7 +396,7 @@ fi
 
 if [[ "$LOCAL_PROVIDER" == "ollama" && -z "$SEMANTIC_FALLBACK_RESPONSE_FILE" ]]; then
   curl -fsS "${OLLAMA_HOST_URL%/}/api/tags" >/dev/null 2>&1 || {
-    echo "ERROR: Ollama API not reachable at ${OLLAMA_HOST_URL%/}/api/tags; make sure the local Ollama service is running" >&2
+    echo "ERROR: configured Ollama API not reachable at ${OLLAMA_HOST_URL%/}/api/tags; check OLLAMA_HOST / OLLAMA_HOST_URL and make sure that Ollama host is reachable" >&2
     exit 1
   }
 fi

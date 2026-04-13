@@ -10,6 +10,7 @@ RESPONSE_FIXTURE="$ROOT_DIR/demos/fixtures/codex_ollama_operational_skills_demo/
 
 (
   cd "$ROOT_DIR"
+  OLLAMA_HOST_URL="http://192.168.68.73:11434" \
   ADL_SEMANTIC_FALLBACK_RESPONSE_FILE="$RESPONSE_FIXTURE" \
   bash adl/tools/demo_codex_ollama_operational_skills.sh \
     --artifact-root "$ARTIFACT_ROOT" \
@@ -36,6 +37,10 @@ grep -Fq '"execution_mode": "semantic_tool_fallback"' "$MANIFEST_FILE" || {
 }
 grep -Fq '"capability_profile_id": "ollama_deepseek_semantic_fallback"' "$MANIFEST_FILE" || {
   echo "assertion failed: manifest did not record deepseek fallback profile" >&2
+  exit 1
+}
+grep -Fq '"ollama_host_url": "http://192.168.68.73:11434"' "$MANIFEST_FILE" || {
+  echo "assertion failed: manifest did not preserve explicit remote OLLAMA_HOST_URL" >&2
   exit 1
 }
 grep -Fq 'Branch: not bound yet' "$SIP_PATH" || {
