@@ -86,6 +86,7 @@ Promoted feature-defining docs:
 - `features/INSTINCT_RUNTIME_SURFACE.md`
 - `features/PAPER_SONATA_DEMO.md`
 - `features/PAPER_SONATA_IMPLEMENTATION_PLAN.md`
+- `features/DEEP_AGENTS_COMPARATIVE_PROOF.md`
 
 Local planning docs intentionally not promoted yet:
 - later-band learning / skills planning: `.adl/docs/v0.89planning/APTITUDE_MODEL.md`

@@ -99,6 +99,9 @@ The promoted `v0.88` package is organized as two bounded feature bands.
 - `PAPER_SONATA_DEMO.md`
 - `PAPER_SONATA_IMPLEMENTATION_PLAN.md`
 
+### Supporting Comparative Proof Surface
+- `DEEP_AGENTS_COMPARATIVE_PROOF.md`
+
 ### Local Planning Inputs, Not Canonical Tracked Features
 - `v0.89planning/APTITUDE_MODEL.md` as later-band learning / skills planning
 - `TEMPORAL_CLUSTER_MAP.md`
@@ -112,6 +115,9 @@ The promoted `v0.88` package is organized as two bounded feature bands.
 temporal structure -> continuity semantics -> temporal retrieval / commitments -> execution policy and cost reviewability -> PHI-style integration comparison -> instinct-sensitive routing or prioritization -> bounded proof artifacts
 
 The flagship public-facing expression of that story should be `Paper Sonata`: a bounded research-writing workflow where role handoffs, artifact flow, and runtime truth are all visible.
+
+The bounded comparative companion to that story should be one explicit proof row showing why ADL is stronger than filesystem-style deep-agent demos:
+visible artifacts are necessary, but they are not sufficient without provenance, transcript contracts, and trace-backed runtime evidence.
 
 That means the milestone should deliver a runtime and review story where:
 - time is explicit in the execution model

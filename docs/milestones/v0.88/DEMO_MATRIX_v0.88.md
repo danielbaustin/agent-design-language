@@ -27,6 +27,7 @@ Each row must eventually resolve to:
 | D6 | instinct declaration and influence | explicit instinct configuration plus trace/artifact evidence that the setting materially influenced behavior | instinct runtime artifact | planned |
 | D7 | bounded agency under instinct | one deterministic proof case where instinct changes routing or prioritization without violating policy bounds | bounded-agency demo artifact | planned |
 | D8 | Paper Sonata flagship demo | bounded manuscript runner with stable artifact tree, intermediate role outputs, final draft package, and truthful runtime bundle | paper-sonata manifest, manuscript package, and trace bundle | planned |
+| D9 | deep-agents comparative proof | one comparative packet that shows the difference between visible-file multi-agent workflows and ADL's artifact-plus-trace proof surface | comparative proof note, manifest, transcript, provider invocations, and trace bundle | planned |
 
 ## Reviewer Rule
 

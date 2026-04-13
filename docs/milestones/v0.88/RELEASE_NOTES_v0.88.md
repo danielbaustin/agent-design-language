@@ -24,6 +24,7 @@ Planning/package issues already represented:
 - instinct model
 - instinct runtime surface
 - Paper Sonata flagship demo
+- deep-agents comparative proof surface
 
 ## Scope Notes
 - Scope is closed for `v0.88`.
