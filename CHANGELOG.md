@@ -15,7 +15,7 @@ Summary:
 - Internal review has completed a full repo code-review pass, and the one concrete implementation finding from that pass was remediated before 3rd-party review
 
 Version note:
-- the active milestone is `v0.88`, but the crate version on `main` remains `0.87.1` until the `v0.88` release ceremony/version bump
+- the active milestone is `v0.88`, and the crate version on `main` has already been bumped to `0.88.0`; the remaining release ceremony owns tagging and release publication rather than the version-number transition
 
 References:
 - `docs/milestones/v0.88/README.md`

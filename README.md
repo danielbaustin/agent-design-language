@@ -105,8 +105,8 @@ Other useful entrypoints:
 ## Current Status
 
 - Active milestone: **v0.88**
-- Current crate version on `main`: **0.87.1**
-- Version note: **the `v0.88` milestone is active, but the crate version remains `0.87.1` until the `v0.88` release ceremony/version bump**
+- Current crate version on `main`: **0.88.0**
+- Version note: **the crate version was bumped to `0.88.0` during the `v0.88` review/remediation tail so reviewers do not need a separate oral explanation for the milestone/version match; the final release ceremony still owns tagging and release publication**
 - Most recently completed milestone package: **v0.87.1**
 - Previous completed milestone: **v0.87**
 - Project changelog: `CHANGELOG.md`
