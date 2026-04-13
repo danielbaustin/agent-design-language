@@ -1,8 +1,10 @@
 # Agent Design Language (ADL)
 
-Agent Design Language (ADL) is a deterministic, contract-driven orchestration language for AI systems. It is built for teams that want AI workflows to be reviewable, testable, reproducible, and auditable, with clear execution semantics and transparent runtime behavior.
+Agent Design Language (ADL) is now more than a schema or notation layer. It is a deterministic orchestration system for AI workflows: a language, a reference Rust runtime, a CLI, review surfaces, and milestone proof packages that make agent execution inspectable and falsifiable.
 
-ADL lets you define the core pieces of an AI system as structured artifacts:
+ADL is built for teams that want AI systems to survive code review, ops review, and postmortem analysis. It turns orchestration into an engineering surface with explicit contracts, bounded runtime behavior, durable artifacts, and repository-visible proof instead of prompt theater.
+
+ADL still starts from structured artifacts:
 - providers
 - tools
 - agents
@@ -10,13 +12,19 @@ ADL lets you define the core pieces of an AI system as structured artifacts:
 - workflows
 - runs
 
-Those artifacts are schema-validated, compiled into a deterministic execution plan, and executed with explicit semantics for concurrency, failure handling, retries, signing, and artifact emission. Every run leaves behind stable review surfaces under `.adl/`, so execution can be inspected, replayed, and reviewed with confidence.
+But those artifacts are not the whole story. In the current repository, they are schema-validated, compiled into a deterministic execution plan, and executed by a real runtime with explicit semantics for concurrency, failure handling, retries, signing, tracing, remote execution boundaries, and artifact emission. Every run leaves behind stable review surfaces under `.adl/`, so execution can be inspected, replayed, and reviewed with confidence.
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
 ![Milestone](https://img.shields.io/badge/milestone-v0.88%20active-blue)
 
-ADL is for teams that want AI workflows to survive code review, ops review, and postmortem analysis. It treats orchestration as an engineering system: explicit contracts, bounded runtime behavior, durable proof surfaces, and repository-visible artifacts rather than prompt theater.
+Today, ADL includes:
+- a reference Rust runtime and CLI for deterministic workflow execution
+- explicit planning and execution semantics rather than hidden orchestration logic
+- bounded concurrency, retries, failure policy, and signing/verification surfaces
+- trace, run-manifest, and artifact emission surfaces for replay and review
+- provider and remote-execution boundaries that preserve local scheduler control
+- milestone-specific demo and review packages that make claims inspectable
 
 ## Start Here
 
@@ -69,6 +77,8 @@ ADL is built for readers and builders who care about:
 - bounded, inspectable agent behavior
 - local and enterprise-ready control over execution behavior
 
+ADL is not trying to be a vague "agent framework." Its center of gravity is execution truth: what runs, what artifacts are emitted, what reviewers can inspect, and what the repository can prove today.
+
 ## What ADL Provides
 
 ADL currently provides:
@@ -78,8 +88,9 @@ ADL currently provides:
 - bounded concurrency, retries, and failure policies
 - signing and verification surfaces for safer execution
 - remote-execution wiring without giving up local scheduler control
+- trace events, run manifests, and replay-friendly artifact roots
 - bounded scientific / Gödel-style execution loops with reviewable artifacts
-- runnable demo and proof surfaces that are meant to be inspectable and falsifiable
+- reviewer-facing milestone proof packages and runnable demos that are meant to be inspectable and falsifiable
 
 ## Quick Start
 
