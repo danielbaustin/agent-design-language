@@ -77,18 +77,21 @@ Use the tracked tooling rather than ad hoc shell commands:
 # inspect current worktree status and recommended fate
 ./adl/tools/worktree_doctor.sh
 
-# see what safe cleanup would happen
+# see what safe repo-local cleanup would happen
 ./adl/tools/worktree_prune.sh
 
-# apply only the clearly safe cleanup set
-./adl/tools/worktree_prune.sh --apply
+# write a reviewable first-batch report before deletion
+./adl/tools/worktree_prune.sh --limit 10 --report docs/tooling/worktree_cleanup/first_batch.md
+
+# apply only the clearly safe repo-local batch after review
+./adl/tools/worktree_prune.sh --limit 10 --report docs/tooling/worktree_cleanup/first_batch.md --apply
 ```
 
 The pruning flow is intentionally conservative:
 
 - it removes only clean managed worktrees whose branch is already merged into `main`
 - it prunes stale git worktree registrations
-- it does not silently delete orphan directories, dirty worktrees, or Codex-ephemeral worktrees
+- it does not silently delete orphan directories, dirty worktrees, Codex-ephemeral worktrees, legacy external clones, or repo-local scratch directories unless those broader scopes are explicitly requested
 
 ## Interaction with `pr.sh`
 
