@@ -16,6 +16,7 @@ pub const TEMPORAL_CAUSALITY_EXPLANATION_SCHEMA: &str = "temporal_causality_expl
 pub const EXECUTION_POLICY_COST_MODEL_SCHEMA: &str = "execution_policy_cost_model.v1";
 pub const PHI_INTEGRATION_METRICS_SCHEMA: &str = "phi_integration_metrics.v1";
 pub const INSTINCT_MODEL_SCHEMA: &str = "instinct_model.v1";
+pub const INSTINCT_RUNTIME_SURFACE_SCHEMA: &str = "instinct_runtime_surface.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IdentityProfile {
@@ -402,6 +403,37 @@ pub struct InstinctModelContract {
     pub representation: InstinctRepresentationContract,
     pub review_surface: InstinctReviewSurfaceContract,
     pub proof_fixture_hooks: Vec<String>,
+    pub proof_hook_command: String,
+    pub proof_hook_output_path: String,
+    pub scope_boundary: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InstinctRuntimeProofCase {
+    pub case_id: String,
+    pub selected_path: String,
+    pub dominant_instinct: String,
+    pub risk_class: String,
+    pub expected_candidate_id: String,
+    pub expected_candidate_kind: String,
+    pub expected_effect: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InstinctRuntimeReviewSurfaceContract {
+    pub visible_fields: Vec<String>,
+    pub required_questions: Vec<String>,
+    pub policy_override_rule: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InstinctRuntimeSurfaceContract {
+    pub schema_version: String,
+    pub owned_runtime_surfaces: Vec<String>,
+    pub shared_selection_rule: String,
+    pub bounded_influence_rules: Vec<String>,
+    pub proof_cases: Vec<InstinctRuntimeProofCase>,
+    pub review_surface: InstinctRuntimeReviewSurfaceContract,
     pub proof_hook_command: String,
     pub proof_hook_output_path: String,
     pub scope_boundary: String,
@@ -1390,6 +1422,81 @@ impl InstinctModelContract {
     }
 }
 
+impl InstinctRuntimeSurfaceContract {
+    pub fn v1() -> Self {
+        Self {
+            schema_version: INSTINCT_RUNTIME_SURFACE_SCHEMA.to_string(),
+            owned_runtime_surfaces: vec![
+                "adl::execute::select_instinct_runtime_candidate".to_string(),
+                "adl::execute::AgencySelectionState".to_string(),
+                "adl::execute::RuntimeControlState".to_string(),
+                "adl identity instinct-runtime".to_string(),
+            ],
+            shared_selection_rule:
+                "derive the selected bounded agency candidate from the already-selected fast/slow path, dominant instinct, and risk class using one deterministic shared rule"
+                    .to_string(),
+            bounded_influence_rules: vec![
+                "instinct may change candidate selection but may not bypass fast/slow routing".to_string(),
+                "high-risk slow-path decisions stay review-first regardless of completion pressure".to_string(),
+                "all instinct influence must remain visible through selected candidate id, kind, and reason".to_string(),
+            ],
+            proof_cases: vec![
+                InstinctRuntimeProofCase {
+                    case_id: "fast-curiosity-verification".to_string(),
+                    selected_path: "fast_path".to_string(),
+                    dominant_instinct: "curiosity".to_string(),
+                    risk_class: "medium".to_string(),
+                    expected_candidate_id: "cand-fast-verify".to_string(),
+                    expected_candidate_kind: "bounded_verification".to_string(),
+                    expected_effect: "curiosity upgrades fast-path direct execution to a single bounded verification pass".to_string(),
+                },
+                InstinctRuntimeProofCase {
+                    case_id: "slow-curiosity-defer".to_string(),
+                    selected_path: "slow_path".to_string(),
+                    dominant_instinct: "curiosity".to_string(),
+                    risk_class: "medium".to_string(),
+                    expected_candidate_id: "cand-slow-defer".to_string(),
+                    expected_candidate_kind: "bounded_deferral".to_string(),
+                    expected_effect: "curiosity can choose a bounded uncertainty-hold candidate instead of immediate execution or refinement".to_string(),
+                },
+                InstinctRuntimeProofCase {
+                    case_id: "slow-high-risk-review".to_string(),
+                    selected_path: "slow_path".to_string(),
+                    dominant_instinct: "curiosity".to_string(),
+                    risk_class: "high".to_string(),
+                    expected_candidate_id: "cand-slow-review".to_string(),
+                    expected_candidate_kind: "review_and_refine".to_string(),
+                    expected_effect: "policy-constrained high-risk review overrides curiosity's bounded deferral pressure".to_string(),
+                },
+            ],
+            review_surface: InstinctRuntimeReviewSurfaceContract {
+                visible_fields: vec![
+                    "dominant_instinct".to_string(),
+                    "selected_path".to_string(),
+                    "risk_class".to_string(),
+                    "selected_candidate_id".to_string(),
+                    "selected_candidate_reason".to_string(),
+                ],
+                required_questions: vec![
+                    "did instinct change the candidate or leave it unchanged".to_string(),
+                    "was the change still bounded by path and risk policy".to_string(),
+                    "can the selected candidate be replay-explained from visible fields".to_string(),
+                ],
+                policy_override_rule:
+                    "high-risk slow-path review remains mandatory even when curiosity would otherwise choose bounded deferral"
+                        .to_string(),
+            },
+            proof_hook_command:
+                "adl identity instinct-runtime --out .adl/state/instinct_runtime_surface_v1.json"
+                    .to_string(),
+            proof_hook_output_path: ".adl/state/instinct_runtime_surface_v1.json".to_string(),
+            scope_boundary:
+                "bounded instinct runtime hook only; this does not introduce open-ended autonomy, hidden initiative, or governance-layer override logic"
+                    .to_string(),
+        }
+    }
+}
+
 pub fn default_identity_profile_path(repo_root: &Path) -> PathBuf {
     repo_root
         .join("adl")
@@ -1789,5 +1896,40 @@ mod tests {
         assert!(contract
             .proof_hook_output_path
             .contains("instinct_model_v1.json"));
+    }
+
+    #[test]
+    fn instinct_runtime_surface_contract_proves_bounded_candidate_shift() {
+        let contract = InstinctRuntimeSurfaceContract::v1();
+
+        assert_eq!(contract.schema_version, INSTINCT_RUNTIME_SURFACE_SCHEMA);
+        assert!(contract
+            .owned_runtime_surfaces
+            .contains(&"adl identity instinct-runtime".to_string()));
+        assert!(contract
+            .proof_cases
+            .iter()
+            .any(|case| case.expected_candidate_id == "cand-fast-verify"));
+        assert!(contract
+            .proof_cases
+            .iter()
+            .any(|case| case.expected_candidate_id == "cand-slow-defer"));
+    }
+
+    #[test]
+    fn instinct_runtime_surface_contract_keeps_high_risk_review_policy_visible() {
+        let contract = InstinctRuntimeSurfaceContract::v1();
+
+        assert!(contract
+            .bounded_influence_rules
+            .iter()
+            .any(|value| value.contains("high-risk slow-path decisions stay review-first")));
+        assert!(contract
+            .review_surface
+            .policy_override_rule
+            .contains("high-risk slow-path review remains mandatory"));
+        assert!(contract
+            .proof_hook_output_path
+            .contains("instinct_runtime_surface_v1.json"));
     }
 }

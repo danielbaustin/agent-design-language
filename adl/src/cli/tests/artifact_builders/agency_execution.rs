@@ -1,4 +1,8 @@
 use super::*;
+use crate::cli::run_artifacts_types::{
+    CognitiveArbitrationArtifact, FastSlowPathArtifact, FastSlowPathState, SuggestedChangeIntent,
+    SuggestionEvidence, SuggestionItem, SuggestionsArtifact, SuggestionsGeneratedFrom,
+};
 
 #[test]
 fn build_agency_selection_artifact_is_deterministic_and_emits_multiple_candidates() {
@@ -199,6 +203,172 @@ fn build_agency_selection_artifact_is_deterministic_and_emits_multiple_candidate
         fast_left.selected_candidate_reason,
         slow.selected_candidate_reason
     );
+}
+
+#[test]
+fn build_agency_selection_artifact_exposes_instinct_sensitive_candidate_shift() {
+    let summary = RunSummaryArtifact {
+        run_summary_version: 1,
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_id: "agency-selection-instinct-run".to_string(),
+        workflow_id: "wf".to_string(),
+        adl_version: "0.88".to_string(),
+        swarm_version: "test".to_string(),
+        status: "success".to_string(),
+        error_kind: None,
+        counts: RunSummaryCounts {
+            total_steps: 2,
+            completed_steps: 2,
+            failed_steps: 0,
+            provider_call_count: 1,
+            delegation_steps: 0,
+            delegation_requires_verification_steps: 0,
+        },
+        policy: RunSummaryPolicy {
+            security_envelope_enabled: false,
+            signing_required: false,
+            key_id_required: false,
+            verify_allowed_algs: Vec::new(),
+            verify_allowed_key_sources: Vec::new(),
+            sandbox_policy: "centralized_path_resolver_v1".to_string(),
+            security_denials_by_code: BTreeMap::new(),
+        },
+        links: RunSummaryLinks {
+            run_json: "run.json".to_string(),
+            steps_json: "steps.json".to_string(),
+            pause_state_json: None,
+            outputs_dir: "outputs".to_string(),
+            logs_dir: "logs".to_string(),
+            learning_dir: "learning".to_string(),
+            scores_json: None,
+            suggestions_json: None,
+            aee_decision_json: None,
+            cognitive_signals_json: None,
+            fast_slow_path_json: None,
+            agency_selection_json: None,
+            bounded_execution_json: None,
+            evaluation_signals_json: None,
+            cognitive_arbitration_json: None,
+            affect_state_json: None,
+            reasoning_graph_json: None,
+            overlays_dir: "learning/overlays".to_string(),
+            cluster_groundwork_json: None,
+            trace_json: None,
+        },
+    };
+    let suggestions = SuggestionsArtifact {
+        suggestions_version: 1,
+        run_id: summary.run_id.clone(),
+        generated_from: SuggestionsGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+            scores_version: Some(1),
+        },
+        suggestions: vec![SuggestionItem {
+            id: "sug-001".to_string(),
+            category: "stability".to_string(),
+            severity: "medium".to_string(),
+            rationale: "follow up on unexplained variance before direct execution".to_string(),
+            evidence: SuggestionEvidence {
+                failure_count: 0,
+                retry_count: 1,
+                delegation_denied_count: 0,
+                security_denied_count: 0,
+                success_ratio: 0.8,
+                scheduler_max_parallel_observed: 1,
+            },
+            proposed_change: SuggestedChangeIntent {
+                intent: "review_failure_hotspots".to_string(),
+                target: "workflow-runtime".to_string(),
+            },
+        }],
+    };
+    let scores = ScoresArtifact {
+        scores_version: 1,
+        run_id: summary.run_id.clone(),
+        generated_from: ScoresGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+        },
+        summary: ScoresSummary {
+            success_ratio: 0.8,
+            failure_count: 0,
+            retry_count: 1,
+            delegation_denied_count: 0,
+            security_denied_count: 0,
+        },
+        metrics: ScoresMetrics {
+            scheduler_max_parallel_observed: 1,
+        },
+    };
+    let signals =
+        run_artifacts::build_cognitive_signals_artifact(&summary, &suggestions, Some(&scores));
+    assert_eq!(signals.instinct.dominant_instinct, "curiosity");
+
+    let arbitration = CognitiveArbitrationArtifact {
+        cognitive_arbitration_version: 1,
+        run_id: summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+            suggestions_version: 1,
+            scores_version: Some(1),
+        },
+        route_selected: "continue".to_string(),
+        reasoning_mode: "bounded_fast_path".to_string(),
+        confidence: "high".to_string(),
+        risk_class: "medium".to_string(),
+        applied_constraints: vec!["bounded_once".to_string()],
+        cost_latency_assumption: "prefer low latency".to_string(),
+        route_reason: "keep execution moving while reducing uncertainty".to_string(),
+        deterministic_selection_rule:
+            "derive route from visible arbitration state without hidden initiative".to_string(),
+    };
+    let fast_state = FastSlowPathState {
+        selected_path: "fast_path".to_string(),
+        path_family: "fast".to_string(),
+        runtime_branch_taken: "fast_direct_execution_branch".to_string(),
+        handoff_state: "candidate_ready".to_string(),
+        candidate_strategy: "single bounded candidate".to_string(),
+        review_depth: "minimal".to_string(),
+        execution_profile: "bounded_once".to_string(),
+        termination_expectation: "ready_for_evaluation".to_string(),
+        path_difference_summary: "fast path".to_string(),
+    };
+    let fast_artifact = FastSlowPathArtifact {
+        fast_slow_path_version: 1,
+        run_id: summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+            suggestions_version: 1,
+            scores_version: Some(1),
+        },
+        arbitration_route: "continue".to_string(),
+        selected_path: "fast_path".to_string(),
+        path_family: "fast".to_string(),
+        runtime_branch_taken: "fast_direct_execution_branch".to_string(),
+        handoff_state: "candidate_ready".to_string(),
+        candidate_strategy: "single bounded candidate".to_string(),
+        review_depth: "minimal".to_string(),
+        execution_profile: "bounded_once".to_string(),
+        termination_expectation: "ready_for_evaluation".to_string(),
+        path_difference_summary: "fast path".to_string(),
+        deterministic_handoff_rule: "test fixture".to_string(),
+    };
+
+    let agency = run_artifacts::build_agency_selection_state(
+        &signals,
+        &arbitration,
+        &fast_state,
+        &fast_artifact,
+    );
+
+    assert_eq!(agency.selected_candidate_id, "cand-fast-verify");
+    assert_eq!(agency.selected_candidate_kind, "bounded_verification");
+    assert!(agency
+        .selected_candidate_reason
+        .contains("curiosity or integrity pressure"));
 }
 
 #[test]
