@@ -16,6 +16,48 @@ Those artifacts are schema-validated, compiled into a deterministic execution pl
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
 ![Milestone](https://img.shields.io/badge/milestone-v0.88%20active-blue)
 
+ADL is for teams that want AI workflows to survive code review, ops review, and postmortem analysis. It treats orchestration as an engineering system: explicit contracts, bounded runtime behavior, durable proof surfaces, and repository-visible artifacts rather than prompt theater.
+
+## Start Here
+
+### If you want a fast first run
+
+Print a deterministic plan from a minimal example:
+
+```bash
+cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --print-plan
+```
+
+Actually run the same minimal example and emit trace/artifact output:
+
+```bash
+cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --run --trace --allow-unsigned
+```
+
+### If you want the current milestone proof package
+
+Run the integrated `v0.88` reviewer surface:
+
+```bash
+bash adl/tools/demo_v088_review_surface.sh
+```
+
+This is the best top-level entrypoint if you want to see what ADL currently proves in the active milestone.
+
+### If you want the flagship current demo
+
+Run `Paper Sonata`, the bounded public-facing `v0.88` demo:
+
+```bash
+bash adl/tools/demo_v088_paper_sonata.sh
+```
+
+### If you want the previous runtime milestone package
+
+```bash
+bash adl/tools/demo_v0871_suite.sh
+```
+
 ## Why ADL
 
 ADL focuses on making agent systems reliable, inspectable, and usable in real engineering workflows.
@@ -26,8 +68,6 @@ ADL is built for readers and builders who care about:
 - stable proof surfaces that support review and debugging
 - bounded, inspectable agent behavior
 - local and enterprise-ready control over execution behavior
-
-If you want AI systems that can survive code review, operations review, and postmortem analysis, ADL is aimed at you.
 
 ## What ADL Provides
 
@@ -43,49 +83,13 @@ ADL currently provides:
 
 ## Quick Start
 
-From repo root:
+For the most common entrypoints, use the `Start Here` section above.
 
-```bash
-cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --print-plan
-```
-
-This prints a deterministic one-step execution plan using the built-in mock provider profile, so it does not require credentials or local model setup.
-
-If you want the same minimal demo to actually run and emit trace/artifact output:
-
-```bash
-cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --run --trace --allow-unsigned
-```
-
-If you want the current milestone proof package:
-
-```bash
-bash adl/tools/demo_v088_review_surface.sh
-```
-
-If you want the previous runtime-completion milestone proof suite:
-
-```bash
-bash adl/tools/demo_v0871_suite.sh
-```
-
-If you want the completed substrate milestone demo suite:
-
-```bash
-bash adl/tools/demo_v087_suite.sh
-```
-
-If you want a bounded local operational-skills demo:
-
-```bash
-bash adl/tools/demo_codex_ollama_operational_skills.sh --dry-run
-```
-
-If you want a bounded multi-agent discussion demo:
-
-```bash
-bash adl/tools/demo_v0871_multi_agent_discussion.sh
-```
+Other useful entrypoints:
+- previous runtime-completion milestone package: `bash adl/tools/demo_v0871_suite.sh`
+- completed substrate milestone package: `bash adl/tools/demo_v087_suite.sh`
+- bounded local operational-skills demo: `bash adl/tools/demo_codex_ollama_operational_skills.sh --dry-run`
+- bounded multi-agent discussion demo: `bash adl/tools/demo_v0871_multi_agent_discussion.sh`
 
 ## Current Status
 
@@ -97,6 +101,19 @@ bash adl/tools/demo_v0871_multi_agent_discussion.sh
 - Project changelog: `CHANGELOG.md`
 
 ADL is in active development. This repository contains both implemented runtime surfaces and milestone/spec/planning documents. Read the milestone docs as bounded engineering records: they distinguish what has shipped, what is under active review or closeout, what is demoable, and what is still planned.
+
+## Current Milestone
+
+`v0.88` is the current active milestone. It brings together two bounded substrate bands:
+- temporal / chronosense
+- instinct / bounded agency
+
+The implementation wave is complete through `WP-13`. The repository is now in docs, review, remediation, next-milestone planning, and release-tail work.
+
+Best current `v0.88` entrypoints:
+- integrated reviewer package: `bash adl/tools/demo_v088_review_surface.sh`
+- flagship bounded demo: `bash adl/tools/demo_v088_paper_sonata.sh`
+- milestone docs: `docs/milestones/v0.88/README.md`
 
 ## Recent Milestones
 
@@ -183,7 +200,8 @@ Key features:
 ADL includes both user-facing demos and milestone-specific proof surfaces.
 
 Start here:
-- `demos/README.md`
+- current milestone reviewer package: `bash adl/tools/demo_v088_review_surface.sh`
+- canonical user-facing demo index: `demos/README.md`
 
 Important supporting demo/readiness docs:
 - `docs/tooling/editor/README.md`
