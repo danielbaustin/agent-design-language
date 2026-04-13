@@ -8,8 +8,8 @@ use std::process::Command;
 use ::adl::chronosense::{
     default_identity_profile_path, load_identity_profile, write_identity_profile,
     ChronosenseFoundation, CommitmentDeadlineContract, ContinuitySemanticsContract,
-    IdentityProfile, TemporalCausalityExplanationContract, TemporalContext,
-    TemporalQueryRetrievalContract, TemporalSchemaContract,
+    ExecutionPolicyCostModelContract, IdentityProfile, TemporalCausalityExplanationContract,
+    TemporalContext, TemporalQueryRetrievalContract, TemporalSchemaContract,
 };
 
 pub(crate) fn real_identity(args: &[String]) -> Result<()> {
@@ -34,12 +34,13 @@ fn real_identity_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
         "retrieval" => real_identity_retrieval(repo_root, &args[1..]),
         "commitments" => real_identity_commitments(repo_root, &args[1..]),
         "causality" => real_identity_causality(repo_root, &args[1..]),
+        "cost" => real_identity_cost(repo_root, &args[1..]),
         "--help" | "-h" | "help" => {
             println!("{}", super::usage::usage());
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown identity subcommand '{subcommand}' (expected init | show | now | foundation | schema | continuity | retrieval | commitments | causality)"
+            "unknown identity subcommand '{subcommand}' (expected init | show | now | foundation | schema | continuity | retrieval | commitments | causality | cost)"
         )),
     }
 }
@@ -471,6 +472,55 @@ fn real_identity_causality(repo_root: &Path, args: &[String]) -> Result<()> {
             )
         })?;
         println!("TEMPORAL_CAUSALITY_EXPLANATION_PATH={}", resolved.display());
+    } else {
+        println!("{json}");
+    }
+
+    Ok(())
+}
+
+fn real_identity_cost(repo_root: &Path, args: &[String]) -> Result<()> {
+    let mut out_path: Option<PathBuf> = None;
+
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--out" => {
+                out_path = Some(PathBuf::from(required_value(args, i, "--out")?));
+                i += 1;
+            }
+            "--help" | "-h" => {
+                println!("{}", super::usage::usage());
+                return Ok(());
+            }
+            other => return Err(anyhow!("unknown arg for identity cost: {other}")),
+        }
+        i += 1;
+    }
+
+    let contract = ExecutionPolicyCostModelContract::v1();
+    let json = to_string_pretty(&contract)?;
+
+    if let Some(out) = out_path {
+        let resolved = if out.is_absolute() {
+            out
+        } else {
+            repo_root.join(out)
+        };
+        let Some(parent) = resolved.parent() else {
+            return Err(anyhow!(
+                "identity cost --out path must have a parent directory"
+            ));
+        };
+        fs::create_dir_all(parent)
+            .with_context(|| format!("failed to create output directory {}", parent.display()))?;
+        fs::write(&resolved, json.as_bytes()).with_context(|| {
+            format!(
+                "failed to write execution policy cost artifact to {}",
+                resolved.display()
+            )
+        })?;
+        println!("EXECUTION_POLICY_COST_MODEL_PATH={}", resolved.display());
     } else {
         println!("{json}");
     }
@@ -1153,6 +1203,53 @@ mod tests {
             .contains("unknown arg for identity causality: --bogus"));
 
         let err = real_identity_in_repo(&["causality".to_string(), "--out".to_string()], &repo)
+            .expect_err("out flag without value should fail");
+        assert!(err.to_string().contains("--out requires a value"));
+    }
+
+    #[test]
+    fn identity_cost_writes_execution_policy_cost_model_contract_json() {
+        let _guard = TEST_MUTEX
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        let repo = temp_repo("identity-cost");
+        let out_path = repo.join(".adl/state/execution_policy_cost_model_v1.json");
+
+        real_identity_in_repo(
+            &[
+                "cost".to_string(),
+                "--out".to_string(),
+                ".adl/state/execution_policy_cost_model_v1.json".to_string(),
+            ],
+            &repo,
+        )
+        .expect("identity cost");
+
+        let json: Value =
+            serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
+        assert_eq!(json["schema_version"], "execution_policy_cost_model.v1");
+        assert_eq!(
+            json["proof_hook_output_path"],
+            ".adl/state/execution_policy_cost_model_v1.json"
+        );
+        assert!(json["owned_runtime_surfaces"]
+            .as_array()
+            .expect("array")
+            .iter()
+            .any(|value| value == "adl identity cost"));
+    }
+
+    #[test]
+    fn identity_cost_validates_unknown_args_and_missing_out_value() {
+        let repo = temp_repo("identity-cost-errors");
+
+        let err = real_identity_in_repo(&["cost".to_string(), "--bogus".to_string()], &repo)
+            .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for identity cost: --bogus"));
+
+        let err = real_identity_in_repo(&["cost".to_string(), "--out".to_string()], &repo)
             .expect_err("out flag without value should fail");
         assert!(err.to_string().contains("--out requires a value"));
     }

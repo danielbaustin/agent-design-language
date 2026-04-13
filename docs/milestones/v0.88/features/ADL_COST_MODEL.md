@@ -4,7 +4,7 @@
 
 ## Metadata
 - Owner: `adl`
-- Status: `promoted milestone feature doc`
+- Status: `promoted milestone feature doc`; bounded runtime review surface implemented for `WP-08`
 - Target milestone: `v0.88`
 - Area: Runtime / Cognitive Architecture / Economics
 
@@ -213,6 +213,12 @@ ADL should record both:
 
 Without that split, a reviewer can see spend but not understand why the system spent it.
 
+For the current bounded `v0.88` implementation, the proof surface is:
+
+- `adl::chronosense::ExecutionPolicyCostModelContract`
+- `adl identity cost --out .adl/state/execution_policy_cost_model_v1.json`
+- `.adl/state/execution_policy_cost_model_v1.json`
+
 ---
 
 ## Cost Anchoring (Mandatory)
@@ -236,6 +242,8 @@ This ensures:
 - replay consistency
 - auditability
 - policy-aware reviewability
+
+The current bounded contract keeps these anchor fields explicit as reviewer-facing requirements rather than hidden runtime metadata.
 
 ---
 
@@ -275,6 +283,8 @@ execution_realization:
   refinement_cycles
   replay_variance: strict | bounded | high
 ```
+
+The current bounded runtime surface owns these reviewable structures directly instead of scattering them across unrelated docs or output fields.
 
 ---
 
@@ -375,6 +385,17 @@ A reviewer must be able to answer:
 
 Cost is part of truth, not metadata.
 
+For `WP-08`, the required reviewer comparison rule is:
+
+> reviewers must be able to compare requested execution posture against realized cost and execution behavior
+
+The current required trace hooks are:
+
+- `run_state.v1.duration_ms`
+- `run_state.v1.scheduler_max_concurrency`
+- `run_summary.v1.policy`
+- `run_summary.v1.counts.provider_call_count`
+
 ---
 
 ## Demo Surface
@@ -442,6 +463,8 @@ These policies operate alongside:
 ### Policy Structure
 
 ```
+
+The current `v0.88` contract records these policy fields as bounded review surfaces. It does not yet implement a full adaptive enforcement engine.
 cost_policy:
   requested_mode: efficient | fast | deterministic | exploratory
   max_usd_per_run
@@ -504,6 +527,32 @@ Trace should record:
 - any policy adjustments or violations
 - the realized execution envelope
 - the realized cost vector
+
+## Runtime Surface
+
+The current owned surface is:
+
+- `adl::chronosense::ExecutionPolicyCostModelContract`
+- `adl::chronosense::ExecutionPolicySchema`
+- `adl::chronosense::ExecutionRealizationSchema`
+- `adl::chronosense::CostVectorSchema`
+- `adl::chronosense::CostPolicyContract`
+- `adl::chronosense::CostAnchorContract`
+- `adl identity cost`
+
+This bounded surface is intentionally limited to:
+
+- requested execution posture
+- realized execution envelope
+- realized cost vector
+- trace-anchored attribution
+- reviewer-facing comparison rules
+
+It does not yet implement:
+
+- dynamic runtime policy enforcement
+- enterprise pricing catalogs
+- instinct/governance integration
 
 ---
 
