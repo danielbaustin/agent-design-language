@@ -70,8 +70,14 @@ bash ./adl/tools/pr.sh run <issue_num> --slug <slug>
 # inspect worktree status/fate across managed, stale, orphan, and Codex-ephemeral namespaces
 ./adl/tools/worktree_doctor.sh
 
-# dry-run safe cleanup of merged clean worktrees + stale registrations
+# dry-run safe repo-local cleanup of merged clean worktrees + stale registrations
 ./adl/tools/worktree_prune.sh
+
+# write a reviewable report for a bounded first batch without deleting anything
+./adl/tools/worktree_prune.sh --limit 10 --report docs/tooling/worktree_cleanup/first_batch.md
+
+# apply the same bounded batch after review
+./adl/tools/worktree_prune.sh --limit 10 --report docs/tooling/worktree_cleanup/first_batch.md --apply
 
 # inventory local run artifacts without deleting or moving the source data
 ./adl/tools/archive_run_artifacts.sh --include-worktrees
