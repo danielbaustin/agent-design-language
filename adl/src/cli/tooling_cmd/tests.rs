@@ -855,6 +855,32 @@ fn tooling_dispatch_and_help_paths_cover_public_entrypoint() {
     .expect("card-prompt dispatch should succeed");
     assert!(prompt_out.is_file());
 
+    let wbs = repo.write_rel(
+        ".tmp/tooling_cmd_tests/wbs.md",
+        "# Work Breakdown Structure (WBS) - v0.88\n\n## Work Packages\n\n| ID | Work Package | Description | Deliverable | Dependencies | Issue |\n|---|---|---|---|---|---|\n| WP-01 | Canonical planning package | docs | docs | none | `#1` |\n| WP-02 | Chronosense foundation | chrono | proof hook | `WP-01` | execution issue to be seeded |\n| WP-14 | Coverage / quality gate | quality | green gate | `WP-13` | closeout issue to be seeded |\n",
+    );
+    let sprint = repo.write_rel(
+        ".tmp/tooling_cmd_tests/sprint.md",
+        "# Sprint Plan - v0.88\n\n## Sprint Overview\n\n| Sprint | Purpose | WPs | Current status |\n|---|---|---|---|\n| `v0.88-s1` | temporal | `WP-01` through `WP-08` | active |\n| `v0.88-s3` | closeout | `WP-14` through `WP-20` | not started |\n",
+    );
+    let wave_out = repo.path().join("wave.yaml");
+    real_tooling(&[
+        "generate-wp-issue-wave".to_string(),
+        "--version".to_string(),
+        "v0.88".to_string(),
+        "--wbs".to_string(),
+        wbs.to_string_lossy().to_string(),
+        "--sprint".to_string(),
+        sprint.to_string_lossy().to_string(),
+        "--out".to_string(),
+        wave_out.to_string_lossy().to_string(),
+    ])
+    .expect("wave generation dispatch should succeed");
+    let wave_text = fs::read_to_string(&wave_out).expect("wave output");
+    assert!(wave_text.contains("schema: adl.wp_issue_wave.v1"));
+    assert!(wave_text.contains("title: '[v0.88][WP-02] Chronosense foundation'"));
+    assert!(wave_text.contains("area:quality"));
+
     real_tooling(&[
         "lint-prompt-spec".to_string(),
         "--input".to_string(),

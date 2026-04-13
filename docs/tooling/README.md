@@ -53,6 +53,7 @@ These docs describe worktree governance, large-module tracking, and related main
 
 - [Worktree Governance](worktree_governance.md)
 - [Rust Module Watch List](rust_module_watch_list.md)
+- [WP Issue-Wave Generation](WP_ISSUE_WAVE_GENERATION.md)
 - [Historical Public Task Records](../records/README.md)
 
 ## Tooling Scripts and Utilities
@@ -65,6 +66,7 @@ Important repo-local tooling surfaces include:
 - `adl tooling lint-prompt-spec` — Prompt Spec lint and validation
 - `adl tooling card-prompt` — deterministic prompt generation from cards
 - `adl tooling validate-structured-prompt` — structured prompt contract validation
+- `adl tooling generate-wp-issue-wave` — deterministic WBS/sprint-to-issue-wave planning generator
 - `adl tooling verify-review-output-provenance` — provenance verification for review-output artifacts
 - `adl tooling review-card-surface` — bounded deterministic review helper
 - `adl tooling review-runtime-surface` — deterministic validator for the `v0.87.1` runtime review package
