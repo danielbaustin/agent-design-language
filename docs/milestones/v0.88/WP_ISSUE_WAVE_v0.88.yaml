@@ -22,7 +22,7 @@ entries:
   work_package: Chronosense foundation
   summary: establish the conceptual chronosense substrate
   deliverable: runtime-facing chronosense definitions, acceptance criteria, and at least one bounded proof hook
-  issue_column: execution issue to be seeded
+  issue_column: '#1644 closed'
 - wp: WP-03
   issue_kind: execution
   title: '[v0.88][WP-03] Temporal schema'
@@ -41,7 +41,7 @@ entries:
   work_package: Temporal schema
   summary: define temporal anchors, clocks, and execution-policy trace hooks
   deliverable: concrete schema fields, runtime serialization surface, and targeted tests
-  issue_column: execution issue to be seeded
+  issue_column: '#1646 closed'
 - wp: WP-04
   issue_kind: execution
   title: '[v0.88][WP-04] Continuity and identity semantics'
@@ -61,7 +61,7 @@ entries:
   work_package: Continuity and identity semantics
   summary: ground continuity, interruption, resumption, and identity semantics in temporal structure
   deliverable: continuity artifact contract, implementation slice, and at least one proof fixture
-  issue_column: execution issue to be seeded
+  issue_column: '#1648 closed'
 - wp: WP-05
   issue_kind: execution
   title: '[v0.88][WP-05] Temporal query and retrieval'
@@ -80,7 +80,7 @@ entries:
   work_package: Temporal query and retrieval
   summary: make time-aware retrieval and staleness queryable
   deliverable: query surface, fixture-backed examples, and validation tests
-  issue_column: execution issue to be seeded
+  issue_column: '#1650 closed'
 - wp: WP-06
   issue_kind: execution
   title: '[v0.88][WP-06] Commitments and deadlines'
@@ -100,7 +100,7 @@ entries:
   work_package: Commitments and deadlines
   summary: represent future obligations and missed commitments as first-class temporal records
   deliverable: commitment/deadline artifact model, bounded runtime path, and proof fixtures
-  issue_column: execution issue to be seeded; bounded pull-in `#1614`
+  issue_column: '#1651 closed; bounded supporting slice #1614 closed'
 - wp: WP-07
   issue_kind: execution
   title: '[v0.88][WP-07] Temporal causality and explanation'
@@ -120,7 +120,7 @@ entries:
   work_package: Temporal causality and explanation
   summary: define bounded causal / explanatory review surfaces
   deliverable: explanation artifact format, bounded evaluation path, and reviewer-facing examples
-  issue_column: execution issue to be seeded
+  issue_column: '#1653 closed'
 - wp: WP-08
   issue_kind: execution
   title: '[v0.88][WP-08] Execution policy and cost model'
@@ -139,7 +139,7 @@ entries:
   work_package: Execution policy and cost model
   summary: tie execution mode and realized cost back to trace reviewability
   deliverable: execution-policy contract, cost fields/artifacts, and comparison proof path
-  issue_column: execution issue to be seeded
+  issue_column: '#1655 closed'
 - wp: WP-09
   issue_kind: execution
   title: '[v0.88][WP-09] PHI-style integration metrics'
@@ -164,7 +164,7 @@ entries:
   work_package: PHI-style integration metrics
   summary: define bounded engineering metrics for integration, irreducibility, coupling, and adaptive depth in ADL systems
   deliverable: metric definitions, comparison runner or fixture set, and reviewable outputs
-  issue_column: execution issue to be seeded
+  issue_column: '#1645 closed'
 - wp: WP-10
   issue_kind: execution
   title: '[v0.88][WP-10] Instinct model'
@@ -183,7 +183,7 @@ entries:
   work_package: Instinct model
   summary: define bounded instinct as an explicit cognitive substrate
   deliverable: runtime-facing instinct contract, bounded semantics, and acceptance tests
-  issue_column: execution issue to be seeded
+  issue_column: '#1649 closed'
 - wp: WP-11
   issue_kind: execution
   title: '[v0.88][WP-11] Instinct runtime surface and bounded agency hook'
@@ -202,7 +202,7 @@ entries:
   work_package: Instinct runtime surface and bounded agency hook
   summary: make instinct visible in runtime declaration, routing, prioritization, trace, and demo proof
   deliverable: implementation slice, trace/artifact evidence, and bounded-agency proof case
-  issue_column: execution issue to be seeded
+  issue_column: '#1654 closed'
 - wp: WP-12
   issue_kind: execution
   title: '[v0.88][WP-12] Paper Sonata flagship demo'
@@ -230,7 +230,7 @@ entries:
   work_package: Paper Sonata flagship demo
   summary: implement a bounded investor-/reviewer-facing multi-agent manuscript demo with durable artifacts and truthful runtime proof
   deliverable: bounded runner, synthetic fixture packet, stable artifact tree, and smoke/validation path
-  issue_column: execution issue to be seeded; protected local follow-on planning retained
+  issue_column: '#1656 closed; protected local follow-on planning retained'
 - wp: WP-13
   issue_kind: execution
   title: '[v0.88][WP-13] Demo matrix + integration demos'
@@ -259,7 +259,7 @@ entries:
   work_package: Demo matrix + integration demos
   summary: define and implement the primary proof surfaces for temporal, PHI, instinct, and Paper Sonata bands
   deliverable: runnable demo entrypoints, validated artifacts, and reviewer-facing demo matrix
-  issue_column: execution issue to be seeded; supporting pull-in `#1618`
+  issue_column: '#1657 closed; bounded supporting proof #1618 closed'
 - wp: WP-14
   issue_kind: closeout
   title: '[v0.88][WP-14] Coverage / quality gate'
@@ -278,7 +278,7 @@ entries:
   work_package: Coverage / quality gate
   summary: enforce milestone quality and coverage posture
   deliverable: green quality gate
-  issue_column: closeout issue to be seeded
+  issue_column: '#1652 open'
 - wp: WP-15
   issue_kind: closeout
   title: '[v0.88][WP-15] Docs + review pass'
@@ -298,7 +298,7 @@ entries:
   work_package: Docs + review pass
   summary: converge reviewer-facing docs against delivered proof
   deliverable: reviewer-ready package
-  issue_column: closeout issue to be seeded
+  issue_column: '#1658 open'
 - wp: WP-16
   issue_kind: closeout
   title: '[v0.88][WP-16] Internal review'
@@ -317,7 +317,7 @@ entries:
   work_package: Internal review
   summary: perform bounded internal review of milestone truth and proof surfaces
   deliverable: internal review record
-  issue_column: closeout issue to be seeded
+  issue_column: '#1659 open'
 - wp: WP-17
   issue_kind: closeout
   title: '[v0.88][WP-17] 3rd-party review'
@@ -337,7 +337,7 @@ entries:
   work_package: 3rd-party review
   summary: perform external review of the milestone package and capture findings
   deliverable: 3rd-party review record
-  issue_column: closeout issue to be seeded
+  issue_column: '#1660 open'
 - wp: WP-18
   issue_kind: closeout
   title: '[v0.88][WP-18] Review findings remediation'
@@ -357,7 +357,7 @@ entries:
   work_package: Review findings remediation
   summary: resolve or explicitly defer accepted review findings
   deliverable: remediation record
-  issue_column: closeout issue to be seeded
+  issue_column: '#1661 open'
 - wp: WP-19
   issue_kind: closeout
   title: '[v0.88][WP-19] Next milestone planning'
@@ -376,7 +376,7 @@ entries:
   work_package: Next milestone planning
   summary: prepare the next milestone planning package before `v0.88` closeout
   deliverable: next-milestone package
-  issue_column: closeout issue to be seeded
+  issue_column: '#1662 open'
 - wp: WP-20
   issue_kind: closeout
   title: '[v0.88][WP-20] Release ceremony'
@@ -396,4 +396,4 @@ entries:
   work_package: Release ceremony
   summary: final validation, notes, tag, cleanup, and closeout record
   deliverable: release package
-  issue_column: closeout issue to be seeded
+  issue_column: '#1663 open'
