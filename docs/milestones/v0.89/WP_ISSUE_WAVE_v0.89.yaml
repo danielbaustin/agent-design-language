@@ -288,8 +288,86 @@ entries:
   issue_column: reserved for official v0.89 issue wave
 - wp: WP-16
   issue_kind: closeout
-  title: '[v0.89][WP-16] Release ceremony (final validation + tag + notes + cleanup)'
-  slug: v0-89-wp-16-release-ceremony-final-validation-tag-notes-cleanup
+  title: '[v0.89][WP-16] Internal review'
+  slug: v0-89-wp-16-internal-review
+  queue: wp
+  labels:
+  - track:roadmap
+  - type:task
+  - area:review
+  - version:v0.89
+  milestone_sprint: Sprint 3
+  sprint_id: v0.89-s3
+  dependencies:
+  - WP-15
+  dependency_notes: '`WP-15`'
+  work_package: Internal review
+  summary: Perform bounded internal review of milestone truth and proof surfaces.
+  deliverable: internal review record
+  issue_column: reserved for official v0.89 issue wave
+- wp: WP-17
+  issue_kind: closeout
+  title: '[v0.89][WP-17] 3rd-party review'
+  slug: v0-89-wp-17-3rd-party-review
+  queue: wp
+  labels:
+  - track:roadmap
+  - type:task
+  - area:review
+  - version:v0.89
+  milestone_sprint: Sprint 3
+  sprint_id: v0.89-s3
+  dependencies:
+  - WP-15
+  - WP-16
+  dependency_notes: '`WP-15`, `WP-16`'
+  work_package: 3rd-party review
+  summary: Perform external review of the milestone package and capture findings.
+  deliverable: 3rd-party review record
+  issue_column: reserved for official v0.89 issue wave
+- wp: WP-18
+  issue_kind: closeout
+  title: '[v0.89][WP-18] Review findings remediation'
+  slug: v0-89-wp-18-review-findings-remediation
+  queue: wp
+  labels:
+  - track:roadmap
+  - type:task
+  - area:review
+  - version:v0.89
+  milestone_sprint: Sprint 3
+  sprint_id: v0.89-s3
+  dependencies:
+  - WP-16
+  - WP-17
+  dependency_notes: '`WP-16`, `WP-17`'
+  work_package: Review findings remediation
+  summary: Resolve or explicitly defer accepted review findings.
+  deliverable: remediation record
+  issue_column: reserved for official v0.89 issue wave
+- wp: WP-19
+  issue_kind: closeout
+  title: '[v0.89][WP-19] Next milestone planning'
+  slug: v0-89-wp-19-next-milestone-planning
+  queue: wp
+  labels:
+  - track:roadmap
+  - type:task
+  - area:docs
+  - version:v0.89
+  milestone_sprint: Sprint 3
+  sprint_id: v0.89-s3
+  dependencies:
+  - WP-18
+  dependency_notes: '`WP-18`'
+  work_package: Next milestone planning
+  summary: Prepare the next milestone planning package before `v0.89` closeout.
+  deliverable: next-milestone package
+  issue_column: reserved for official v0.89 issue wave
+- wp: WP-20
+  issue_kind: closeout
+  title: '[v0.89][WP-20] Release ceremony (final validation + tag + notes + cleanup)'
+  slug: v0-89-wp-20-release-ceremony-final-validation-tag-notes-cleanup
   queue: wp
   labels:
   - track:roadmap
@@ -299,8 +377,9 @@ entries:
   milestone_sprint: Sprint 3
   sprint_id: v0.89-s3
   dependencies:
-  - WP-15
-  dependency_notes: '`WP-15`'
+  - WP-18
+  - WP-19
+  dependency_notes: '`WP-18`, `WP-19`'
   work_package: Release ceremony (final validation + tag + notes + cleanup)
   summary: Close the milestone cleanly after validation and documentation are complete.
   deliverable: release tag, notes, and closeout

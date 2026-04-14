@@ -39,12 +39,16 @@ The adversarial runtime/proof package is intentionally planned as the `v0.89.2` 
 | WP-13 | Demo matrix + integration demos | Validate the milestone claims through bounded demos and integration review. | canonical demo matrix and demo artifacts | `WP-02` - `WP-12` | reserved for official `v0.89` issue wave |
 | WP-14 | Coverage / quality gate (ratchet + exclusions) | Run quality gates and record any bounded exceptions truthfully. | green quality gate or documented exceptions | `WP-02` - `WP-13` | reserved for official `v0.89` issue wave |
 | WP-15 | Docs + review pass (repo-wide alignment) | Align docs, review surfaces, and release-tail truth across the repo. | converged docs/review package | `WP-13`, `WP-14` | reserved for official `v0.89` issue wave |
-| WP-16 | Release ceremony (final validation + tag + notes + cleanup) | Close the milestone cleanly after validation and documentation are complete. | release tag, notes, and closeout | `WP-15` | reserved for official `v0.89` issue wave |
+| WP-16 | Internal review | Perform bounded internal review of milestone truth and proof surfaces. | internal review record | `WP-15` | reserved for official `v0.89` issue wave |
+| WP-17 | 3rd-party review | Perform external review of the milestone package and capture findings. | 3rd-party review record | `WP-15`, `WP-16` | reserved for official `v0.89` issue wave |
+| WP-18 | Review findings remediation | Resolve or explicitly defer accepted review findings. | remediation record | `WP-16`, `WP-17` | reserved for official `v0.89` issue wave |
+| WP-19 | Next milestone planning | Prepare the next milestone planning package before `v0.89` closeout. | next-milestone package | `WP-18` | reserved for official `v0.89` issue wave |
+| WP-20 | Release ceremony (final validation + tag + notes + cleanup) | Close the milestone cleanly after validation and documentation are complete. | release tag, notes, and closeout | `WP-18`, `WP-19` | reserved for official `v0.89` issue wave |
 
 ## Sequencing
 - Phase 1: establish the canonical package and the seedable issue-wave plan (`WP-01`)
 - Phase 2: land the core feature band (`WP-02` - `WP-09`)
-- Phase 3: package demos, quality, docs/review, and release closure (`WP-10` - `WP-16`)
+- Phase 3: package demos, quality, review, remediation, next-milestone handoff, and release closure (`WP-10` - `WP-20`)
 
 ## Acceptance Mapping
 - WP-01 (Design pass) -> no template drift remains, every source planning doc has an explicit home, and the issue wave can seed directly from the package
@@ -62,7 +66,11 @@ The adversarial runtime/proof package is intentionally planned as the `v0.89.2` 
 - WP-13 (Demos) -> milestone claims have bounded proof surfaces
 - WP-14 (Quality gate) -> quality/coverage posture is truthful and reviewable
 - WP-15 (Docs/review) -> repo-wide docs and review surfaces are aligned with shipped truth
-- WP-16 (Release ceremony) -> milestone closes with truthful notes, tag, and follow-on capture
+- WP-16 (Internal review) -> bounded internal review truthfully records milestone strengths, risks, and open remediation
+- WP-17 (3rd-party review) -> external review is captured as a first-class milestone artifact
+- WP-18 (Review findings remediation) -> accepted review findings are remediated or explicitly deferred
+- WP-19 (Next milestone planning) -> the follow-on milestone package is ready before closeout
+- WP-20 (Release ceremony) -> milestone closes with truthful notes, tag, and follow-on capture
 
 ## Exit Criteria
 - every in-scope requirement maps to at least one WBS item

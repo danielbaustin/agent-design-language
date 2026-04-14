@@ -12,7 +12,7 @@
 `v0.89` is a three-sprint execution plan:
 - Sprint 1: open the official issue wave and land the convergence / judgment / action core
 - Sprint 2: land the skill / experiment / memory / security package and the explicit `v0.89.2` handoff
-- Sprint 3: converge demos, quality, docs/review, and release closure
+- Sprint 3: converge demos, quality, review, remediation, next-milestone planning, and release closure
 
 This keeps the execution model aligned with the recent milestone pattern while preserving a clean boundary between the main governed-adaptation band and the follow-on adversarial-runtime band.
 
@@ -22,7 +22,7 @@ This keeps the execution model aligned with the recent milestone pattern while p
 |---|---|---|---|
 | `v0.89-s1` | open the official issue wave and execute the convergence / gate / action core | `WP-01` through `WP-05` | planned |
 | `v0.89-s2` | execute the skill / experiment / memory / security package plus explicit `v0.89.2` handoff planning | `WP-06`, `WP-07`, `WP-08`, `WP-09`, `WP-10` | planned |
-| `v0.89-s3` | converge demos, quality, docs/review, and release ceremony | `WP-11` through `WP-16` | planned |
+| `v0.89-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` through `WP-20` | planned |
 
 ## Sprint 1
 
@@ -68,7 +68,7 @@ Current issue map:
 ## Sprint 3
 
 ### Goal
-Close the milestone using the normal ADL pattern: demos, quality, docs/review, and release ceremony.
+Close the milestone using the normal ADL pattern: demos, quality gate, docs/review, internal review, 3rd-party review, findings remediation, next-milestone planning, and release ceremony.
 
 ### Scope
 - demo scaffolding and proof entry points
@@ -76,13 +76,19 @@ Close the milestone using the normal ADL pattern: demos, quality, docs/review, a
 - demo matrix and integration demos
 - coverage / quality gate
 - docs + review pass
+- internal review
+- 3rd-party review
+- review findings remediation
+- next milestone planning
 - release ceremony
 
 Current issue map:
-- `WP-11` - `WP-16` reserved; official issue wave not yet opened
+- `WP-11` - `WP-20` reserved; official issue wave not yet opened
 
 ### Exit Criteria
 - reviewer-facing proof surfaces exist for the core `v0.89` claims
+- accepted review findings are remediated or explicitly deferred
+- release and next-milestone handoff are explicit and bounded
 - quality, docs, and release surfaces are consistent with delivered work
 - the milestone can close without reconstructing planning intent from local-only notes
 

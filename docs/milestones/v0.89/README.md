@@ -87,7 +87,9 @@ This milestone is designed to execute as a sequence of work packages once the of
 - `WP-13`: demo matrix + integration demos
 - `WP-14`: quality gate
 - `WP-15`: docs + review convergence
-- `WP-16`: release ceremony
+- `WP-16` - `WP-18`: internal review, 3rd-party review, and findings remediation
+- `WP-19`: next milestone planning
+- `WP-20`: release ceremony
 
 Execution expectations after kickoff:
 - each substantive WP gets a bounded issue and PR
@@ -141,7 +143,7 @@ Current status: canonical planning package complete; execution package ready for
 
 Current issue map:
 - `WP-01` `#1662`
-- `WP-02` - `WP-16` reserved in the planned issue-wave package; actual issues open only at official `v0.89` kickoff
+- `WP-02` - `WP-20` reserved in the planned issue-wave package; actual issues open only at official `v0.89` kickoff
 
 ## Exit Criteria
 
