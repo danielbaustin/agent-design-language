@@ -170,7 +170,7 @@ Failure policy:
 ## Determinism Evidence
 
 Evidence directory / run root:
-- established by the landed outputs of the reserved official `WP-02` through `WP-13` issue wave
+- established by the landed outputs of the official `WP-02` through `WP-13` issue wave (`#1789` through `#1800`)
 
 Repeatability approach:
 - prefer stable fixtures or bounded local/provider shims

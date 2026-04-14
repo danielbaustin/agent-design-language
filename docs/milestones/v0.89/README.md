@@ -134,16 +134,18 @@ Open questions:
 
 ## Status
 
-Current status: canonical planning package complete; execution package ready for official kickoff but not yet opened
+Current status: canonical planning package complete; official `v0.89` issue wave opened; execution work ready to begin from the seeded issue graph
 
 - Planning: complete
-- Execution: not started
+- Execution: issue wave opened; substantive implementation not started yet
 - Validation: planned
 - Release readiness: not started
 
 Current issue map:
 - `WP-01` `#1662`
-- `WP-02` - `WP-20` reserved in the planned issue-wave package; actual issues open only at official `v0.89` kickoff
+- `WP-02` - `WP-05` `#1789` - `#1792`
+- `WP-06` - `WP-10` `#1793` - `#1797`
+- `WP-11` - `WP-20` `#1798` - `#1807`
 
 ## Exit Criteria
 

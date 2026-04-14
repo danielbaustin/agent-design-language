@@ -5,7 +5,7 @@
 - Version: `v0.89`
 - Date: `2026-04-13`
 - Owner: `Daniel Austin`
-- Related issues: `#1662` plus the reserved official `v0.89` work-package issue wave
+- Related issues: `#1662` plus the official opened `v0.89` work-package issue wave (`#1789` - `#1807`)
 
 ## Purpose
 
@@ -97,7 +97,7 @@ The milestone package therefore prefers strong surface contracts first, then off
 - Risk: `v0.89` scope sprawls into `v0.89.2` adversarial runtime work.
   - Mitigation: keep the carry-forward package explicit in `FEATURE_DOCS_v0.89.md`, `WBS_v0.89.md`, and `DECISIONS_v0.89.md`.
 - Risk: the milestone package remains conceptually strong but execution-weak.
-  - Mitigation: map every promoted feature doc to a WBS row and reserved official issue-wave slot.
+  - Mitigation: map every promoted feature doc to a WBS row and an opened official issue-wave slot.
 
 ## Alternatives Considered
 
