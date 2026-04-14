@@ -7,12 +7,12 @@
 
 ## Current State
 
-`v0.88` is in release-tail execution now.
+`v0.88` is at the final ceremony gate now.
 
 The current tracked work for `v0.88` is:
 - completed implementation wave through `WP-13`
-- active quality / docs / review / release tail through `WP-14` to `WP-20`
-- next-milestone planning already underway under `#1662`
+- completed quality / docs / review / remediation / next-milestone tail through `WP-19`
+- only `WP-20` release ceremony remains open
 
 ## Purpose
 
@@ -26,41 +26,41 @@ This is not just a reminder that a release will happen later. When the milestone
 
 All of the following must be true before ceremony:
 
-- [ ] canonical quality gate doc is current and truthful
-- [ ] milestone checklist is fully updated and honest
+- [x] canonical quality gate doc is current and truthful
+- [x] milestone checklist is fully updated and honest
 - [x] implementation issue wave for `WP-02` through `WP-13` is complete or explicitly deferred
-- [ ] each completed implementation WP produced concrete code, tests, artifacts, demos, or an explicit defer record
-- [ ] demo matrix rows map to real runnable commands and proof artifacts
-- [ ] D11 quality-gate walkthrough is runnable and aligned to the current CI and coverage posture
-- [ ] docs, WBS, demos, and implementation agree on the same bounded milestone
-- [ ] PHI, instinct, temporal schema, and execution-policy/cost claims are each proven in at least one reviewable surface
-- [ ] Paper Sonata is strong enough to act as a flagship public-facing demo without overclaiming autonomy
+- [x] each completed implementation WP produced concrete code, tests, artifacts, demos, or an explicit defer record
+- [x] demo matrix rows map to real runnable commands and proof artifacts
+- [x] D11 quality-gate walkthrough is runnable and aligned to the current CI and coverage posture
+- [x] docs, WBS, demos, and implementation agree on the same bounded milestone
+- [x] PHI, instinct, temporal schema, and execution-policy/cost claims are each proven in at least one reviewable surface
+- [x] Paper Sonata is strong enough to act as a flagship public-facing demo without overclaiming autonomy
 
 ### Explicit GO / NO-GO Questions
 
 Answer all before release:
 
-- [ ] Does the runtime expose temporal structure and execution posture in a reviewer-legible way?
-- [ ] Can a reviewer inspect at least one proof path for commitments / retrieval / causality behavior?
-- [ ] Is requested execution policy visibly related to realized cost?
-- [ ] Do PHI-style metrics produce a bounded, useful comparison rather than rhetoric?
-- [ ] Does instinct visibly affect routing or prioritization while remaining policy-bounded?
-- [ ] Is Paper Sonata strong enough to show publicly as a serious ADL multi-agent demo?
-- [ ] Can a reviewer find the milestone proof commands and artifacts from the demo matrix alone?
+- [x] Does the runtime expose temporal structure and execution posture in a reviewer-legible way?
+- [x] Can a reviewer inspect at least one proof path for commitments / retrieval / causality behavior?
+- [x] Is requested execution policy visibly related to realized cost?
+- [x] Do PHI-style metrics produce a bounded, useful comparison rather than rhetoric?
+- [x] Does instinct visibly affect routing or prioritization while remaining policy-bounded?
+- [x] Is Paper Sonata strong enough to show publicly as a serious ADL multi-agent demo?
+- [x] Can a reviewer find the milestone proof commands and artifacts from the demo matrix alone?
 
 If any answer is NO, do not release.
 
 ## Branch And Tag Preparation
 
-- [ ] target branch confirmed
-- [ ] working tree clean
-- [ ] required PRs merged
-- [ ] version references updated if needed
-- [ ] tag plan prepared
+- [x] target branch confirmed
+- [x] working tree clean
+- [x] required PRs merged
+- [x] version references updated if needed
+- [x] tag plan prepared
 
 ## Intended Closeout Sequence
 
-`v0.88` is currently traversing the same bounded closeout sequence used in `v0.86` and `v0.87`:
+`v0.88` has completed the same bounded closeout sequence used in `v0.86` and `v0.87`:
 - quality gate
 - docs + review pass
 - internal review
@@ -73,12 +73,12 @@ If any answer is NO, do not release.
 
 Immediately before and after ceremony:
 
-- [ ] CI status checked on `main`
-- [ ] `bash adl/tools/demo_v088_quality_gate.sh` succeeds
-- [ ] release notes reviewed against actual milestone truth
-- [ ] demo commands run successfully from a clean checkout
-- [ ] proof artifacts are generated and inspectable
-- [ ] docs and feature surfaces still agree after final merges
+- [x] CI status checked on `main`
+- [x] `bash adl/tools/demo_v088_quality_gate.sh` succeeds
+- [x] release notes reviewed against actual milestone truth
+- [x] demo commands run successfully from a clean checkout
+- [x] proof artifacts are generated and inspectable
+- [x] docs and feature surfaces still agree after final merges
 
 If any failure occurs:
 - open issue
@@ -87,9 +87,9 @@ If any failure occurs:
 
 ## Communication
 
-- [ ] roadmap / status docs updated
-- [ ] milestone completion note prepared
-- [ ] any follow-on milestone links or deferred items captured clearly
+- [x] roadmap / status docs updated
+- [x] milestone completion note prepared
+- [x] any follow-on milestone links or deferred items captured clearly
 
 ## Post-Release Closure
 
