@@ -7,7 +7,7 @@ set -euo pipefail
 SUMMARY_JSON="${1:-coverage-summary.json}"
 WORKSPACE_THRESHOLD="${WORKSPACE_LINE_THRESHOLD:-90}"
 FILE_THRESHOLD="${PER_FILE_LINE_THRESHOLD:-80}"
-EXCLUDE_REGEX="${EXCLUDE_FROM_FILE_FLOOR_REGEX:-/adl/src/obsmem_contract.rs$}"
+EXCLUDE_REGEX="${EXCLUDE_FROM_FILE_FLOOR_REGEX:-^$}"
 
 if ! command -v jq >/dev/null 2>&1; then
   echo "jq is required for coverage gate enforcement."
