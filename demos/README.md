@@ -130,11 +130,16 @@ and records a reviewer-facing findings artifact plus runtime proof.
 
 ### v0.89 bounded provider-participation demos
 
+- `v0.89/deep_agents_comparative_wave_demo.md`
 - `v0.89/medium_article_writing_demo.md`
 - `v0.89/gemini_provider_harmony_and_economics_demo.md`
 - `v0.89/gemma4_issue_clerk_demo.md`
 - `v0.89/paper_sonata_demo_refresh.md`
 - `v0.89/multi_agent_repo_code_review_demo.md`
+
+Use `v0.89/deep_agents_comparative_wave_demo.md` for a richer comparative demo
+where ChatGPT, Claude, and Gemini contribute bounded positions and ADL emits a
+findings-first synthesis package instead of a flat proof row.
 
 Use `v0.89/medium_article_writing_demo.md` for a bounded publication-oriented
 demo where ADL turns one launch-essay brief into a reviewer-friendly article

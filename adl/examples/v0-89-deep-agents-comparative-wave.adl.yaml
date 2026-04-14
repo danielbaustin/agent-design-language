@@ -1,0 +1,138 @@
+version: "0.5"
+
+providers:
+  chatgpt_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8792/chatgpt"
+      timeout_secs: 10
+  claude_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8792/claude"
+      timeout_secs: 10
+  gemini_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8792/gemini"
+      timeout_secs: 10
+  synthesis_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8792/synthesis"
+      timeout_secs: 10
+
+agents:
+  chatgpt_builder:
+    provider: "chatgpt_local"
+    model: "gpt-5.4-demo"
+  claude_critic:
+    provider: "claude_local"
+    model: "claude-haiku-demo"
+  gemini_host:
+    provider: "gemini_local"
+    model: "gemini-2.0-flash-demo"
+  synthesis_editor:
+    provider: "synthesis_local"
+    model: "adl-synthesis-demo"
+
+tasks:
+  chatgpt_position:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-deep-agents-comparative-wave
+        TURN_ID: 01
+        SPEAKER: ChatGPT
+        ROLE: Builder
+        TOPIC: Compare ADL's runtime-backed review surfaces with looser deep-agent packet workflows.
+        INSTRUCTIONS: Make the strongest practical case for ADL as a reviewer-friendly runtime. Keep the claim bounded and public-facing.
+  claude_position:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-deep-agents-comparative-wave
+        TURN_ID: 02
+        SPEAKER: Claude
+        ROLE: Reflective Critic
+        TOPIC: Compare ADL's runtime-backed review surfaces with looser deep-agent packet workflows.
+        PREVIOUS_TURN_START
+        {{turn_01}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Add one real caution about overclaiming comparative advantage and keep the disagreement visible.
+  gemini_position:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-deep-agents-comparative-wave
+        TURN_ID: 03
+        SPEAKER: Gemini
+        ROLE: Harmonizing Analyst
+        TOPIC: Compare ADL's runtime-backed review surfaces with looser deep-agent packet workflows.
+        PREVIOUS_TURN_START
+        {{turn_02}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Identify where ADL is clearly stronger and where the looser packet style still has appeal.
+  synthesis_packet:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-deep-agents-comparative-wave
+        TURN_ID: 04
+        SPEAKER: ADL
+        ROLE: Synthesis Editor
+        PREVIOUS_TURN_START
+        {{turn_01}}
+
+        {{turn_02}}
+
+        {{turn_03}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Produce a findings-first synthesis with explicit agreement, disagreement, and public-positioning takeaways.
+
+run:
+  name: "v0-89-deep-agents-comparative-wave"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "deep_agents.chatgpt.position"
+        agent: "chatgpt_builder"
+        task: "chatgpt_position"
+        conversation:
+          id: "turn_01"
+          speaker: "ChatGPT"
+          sequence: 1
+          thread_id: "deep_agents_wave"
+        save_as: "turn_01"
+        write_to: "discussion/01-chatgpt-position.md"
+      - id: "deep_agents.claude.position"
+        agent: "claude_critic"
+        task: "claude_position"
+        conversation:
+          id: "turn_02"
+          speaker: "Claude"
+          sequence: 2
+          thread_id: "deep_agents_wave"
+          responds_to: "turn_01"
+        inputs:
+          turn_01: "@state:turn_01"
+        save_as: "turn_02"
+        write_to: "discussion/02-claude-position.md"
+      - id: "deep_agents.gemini.position"
+        agent: "gemini_host"
+        task: "gemini_position"
+        conversation:
+          id: "turn_03"
+          speaker: "Gemini"
+          sequence: 3
+          thread_id: "deep_agents_wave"
+          responds_to: "turn_02"
+        inputs:
+          turn_02: "@state:turn_02"
+        save_as: "turn_03"
+        write_to: "discussion/03-gemini-position.md"
+      - id: "deep_agents.synthesis"
+        agent: "synthesis_editor"
+        task: "synthesis_packet"
+        inputs:
+          turn_01: "@state:turn_01"
+          turn_02: "@state:turn_02"
+          turn_03: "@state:turn_03"
+        save_as: "deep_agents_synthesis"
+        write_to: "discussion/04-synthesis.md"
