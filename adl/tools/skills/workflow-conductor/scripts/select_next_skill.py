@@ -76,6 +76,12 @@ def evaluate(payload):
         skill_name = "pr-closeout"
         continuation = "continue"
         escalation_reason = "none"
+    elif lifecycle_state in ("closed", "closed_out"):
+        detected_phase = "closed_out"
+        selected_phase = "closeout"
+        skill_name = "pr-closeout"
+        continuation = "continue"
+        escalation_reason = "none"
     elif blocker_class == "satisfied_by_child_issue_wave":
         detected_phase = "already_satisfied"
         selected_phase = "blocked"
