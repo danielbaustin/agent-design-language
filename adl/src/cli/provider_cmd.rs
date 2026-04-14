@@ -276,6 +276,7 @@ fn repo_root() -> Result<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cli::tests::env_lock;
     use std::env;
     use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -497,7 +498,13 @@ mod tests {
 
     #[test]
     fn real_provider_uses_repo_root_for_default_output() {
-        let repo_root = repo_root().expect("repo root should resolve");
+        let _guard = env_lock();
+        let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .expect("adl crate lives under repo root")
+            .to_path_buf();
+        let prev_dir = env::current_dir().expect("cwd");
+        env::set_current_dir(&repo_root).expect("switch to repo root");
         let out = repo_root.join(".adl/provider-setup/deepseek");
         if out.exists() {
             fs::remove_dir_all(&out).expect("remove stale output");
@@ -511,5 +518,6 @@ mod tests {
         assert!(out.join("README.md").exists());
 
         fs::remove_dir_all(out).expect("cleanup generated output");
+        env::set_current_dir(prev_dir).expect("restore cwd");
     }
 }

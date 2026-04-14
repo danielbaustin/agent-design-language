@@ -69,6 +69,55 @@ use self::github::{
 
 const DEFAULT_VERSION: &str = "v0.86";
 const DEFAULT_NEW_LABELS: &str = "track:roadmap,type:task,area:tools";
+
+fn resolve_version_for_create(
+    explicit_version: Option<String>,
+    labels_csv: Option<&str>,
+    raw_title: &str,
+) -> Result<String> {
+    if let Some(version) = explicit_version {
+        return Ok(version);
+    }
+
+    version_from_labels_csv(labels_csv.unwrap_or_default())
+        .or_else(|| version_from_title(raw_title))
+        .ok_or_else(|| {
+            anyhow!(
+                "create: could not infer version from title or labels; pass --version or include a version:vX.Y label / [vX.Y] title prefix"
+            )
+        })
+}
+
+fn resolve_version_for_existing_issue(
+    repo_root: &Path,
+    repo: &str,
+    issue: u32,
+    explicit_version: Option<String>,
+    no_fetch_issue: bool,
+    command: &str,
+) -> Result<String> {
+    if let Some(version) = explicit_version {
+        return Ok(version);
+    }
+
+    if no_fetch_issue {
+        if let Some((version, _slug)) =
+            resolve_issue_scope_and_slug_from_local_state(repo_root, issue)?
+        {
+            return Ok(version);
+        }
+        bail!(
+            "{command}: --version is required when --no-fetch-issue is set and no canonical local bundle exists to infer the milestone band"
+        );
+    }
+
+    issue_version(issue, repo)?.ok_or_else(|| {
+        anyhow!(
+            "{command}: could not infer version for issue #{issue}; pass --version or add a version:vX.Y label / [vX.Y] title prefix"
+        )
+    })
+}
+
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
         bail!(
@@ -105,16 +154,8 @@ fn real_pr_create(args: &[String]) -> Result<()> {
         bail!("create: slug is empty after sanitization");
     }
 
-    let version = if let Some(version) = parsed.version.clone() {
-        version
-    } else {
-        parsed
-            .labels
-            .as_deref()
-            .and_then(version_from_labels_csv)
-            .or_else(|| version_from_title(&raw_title))
-            .unwrap_or_else(|| DEFAULT_VERSION.to_string())
-    };
+    let version =
+        resolve_version_for_create(parsed.version.clone(), parsed.labels.as_deref(), &raw_title)?;
     let title = normalize_issue_title_for_version(&raw_title, &version);
     if parsed.slug.as_deref().unwrap_or_default().trim().is_empty() {
         slug = sanitize_slug(&title);
@@ -251,13 +292,14 @@ fn real_pr_start(args: &[String]) -> Result<()> {
         title = slug.clone();
     }
 
-    let version = if let Some(version) = parsed.version.clone() {
-        version
-    } else if parsed.no_fetch_issue {
-        DEFAULT_VERSION.to_string()
-    } else {
-        issue_version(parsed.issue, &repo)?.unwrap_or_else(|| DEFAULT_VERSION.to_string())
-    };
+    let version = resolve_version_for_existing_issue(
+        &repo_root,
+        &repo,
+        parsed.issue,
+        parsed.version.clone(),
+        parsed.no_fetch_issue,
+        "start",
+    )?;
     title = normalize_issue_title_for_version(&title, &version);
     if parsed.slug.as_deref().unwrap_or_default().trim().is_empty() {
         slug = sanitize_slug(&title);
@@ -780,13 +822,14 @@ fn real_pr_init(args: &[String]) -> Result<()> {
         title = slug.clone();
     }
 
-    let version = if let Some(version) = parsed.version.clone() {
-        version
-    } else if parsed.no_fetch_issue {
-        DEFAULT_VERSION.to_string()
-    } else {
-        issue_version(issue, &repo)?.unwrap_or_else(|| DEFAULT_VERSION.to_string())
-    };
+    let version = resolve_version_for_existing_issue(
+        &repo_root,
+        &repo,
+        issue,
+        parsed.version.clone(),
+        parsed.no_fetch_issue,
+        "init",
+    )?;
     title = normalize_issue_title_for_version(&title, &version);
     if parsed.slug.as_deref().unwrap_or_default().trim().is_empty() {
         slug = sanitize_slug(&title);

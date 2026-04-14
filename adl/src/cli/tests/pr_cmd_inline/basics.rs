@@ -957,6 +957,60 @@ fn real_pr_create_rejects_bootstrap_stub_issue_body_with_authored_body_guidance(
 }
 
 #[test]
+fn real_pr_create_requires_explicit_or_inferable_version() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-real-create-missing-version");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            "https://github.com/example/repo.git",
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    write_executable(
+        &bin_dir.join("gh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 99\n",
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    let err = real_pr(&[
+        "create".to_string(),
+        "--title".to_string(),
+        "[runtime] Missing version signals".to_string(),
+        "--slug".to_string(),
+        "runtime-missing-version-signals".to_string(),
+        "--labels".to_string(),
+        "track:roadmap,type:task,area:runtime".to_string(),
+    ])
+    .expect_err("missing version signals should fail before issue creation");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    assert!(err
+        .to_string()
+        .contains("create: could not infer version from title or labels"));
+    assert!(!repo.join(".adl").join("v0.86").exists());
+}
+
+#[test]
 fn real_pr_create_rejects_missing_origin_before_spawning_gh_issue_create() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-real-create-no-origin");
