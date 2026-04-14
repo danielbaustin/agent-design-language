@@ -44,7 +44,9 @@ fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
         &input,
         &output,
         Some("extra notes"),
-        false,
+        Some(&render_default_finish_validation(
+            FinishValidationMode::FullRust,
+        )),
         "fp-123",
         &temp,
     )
@@ -63,12 +65,46 @@ fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
         &input,
         &output,
         Some("issue_card_schema: adl.issue.v1"),
-        false,
+        Some(&render_default_finish_validation(
+            FinishValidationMode::FullRust,
+        )),
         "fp-123",
         &temp,
     )
     .expect_err("issue template text should be rejected");
     assert!(err.to_string().contains("issue-template/prompt text"));
+}
+
+#[test]
+fn render_pr_body_defaults_docs_only_validation_when_needed() {
+    let temp = unique_temp_dir("adl-pr-render-body-docs-only");
+    fs::create_dir_all(&temp).expect("temp dir");
+    let input = temp.join("input.md");
+    let output = temp.join("output.md");
+    fs::write(&input, "# input\n").expect("write input");
+    fs::write(
+        &output,
+        "# rust-finish-test\n\n## Summary\nsummary text\n\n## Artifacts produced\n- docs/milestones/v0.89/README.md\n",
+    )
+    .expect("write output");
+
+    let body = render_pr_body(
+        Some("Closes #1153"),
+        &input,
+        &output,
+        None,
+        Some(&render_default_finish_validation(
+            FinishValidationMode::DocsOnly,
+        )),
+        "fp-123",
+        &temp,
+    )
+    .expect("render body");
+
+    assert!(body.contains("bash adl/tools/check_no_tracked_adl_issue_record_residue.sh"));
+    assert!(body.contains("git diff --check"));
+    assert!(!body.contains("cargo clippy --all-targets -- -D warnings"));
+    assert!(!body.contains("cargo test"));
 }
 
 #[test]
@@ -149,7 +185,7 @@ fn finish_helper_paths_cover_nonempty_and_staged_checks() {
 }
 
 #[test]
-fn finish_helper_paths_cover_ahead_count_and_batch_checks() {
+fn finish_helper_paths_cover_ahead_count_and_validation_modes() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-batch-checks");
     let origin = temp.join("origin.git");
@@ -256,7 +292,22 @@ fn finish_helper_paths_cover_ahead_count_and_batch_checks() {
     unsafe {
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
     }
-    run_batched_checks_rust(&repo).expect("batch checks");
+    assert_eq!(
+        select_finish_validation_mode("docs,README.md").expect("docs-only mode"),
+        FinishValidationMode::DocsOnly
+    );
+    run_finish_validation_rust(&repo, FinishValidationMode::DocsOnly)
+        .expect("docs-only validation");
+    assert!(
+        !cargo_log.exists(),
+        "docs-only validation should not invoke cargo"
+    );
+
+    assert_eq!(
+        select_finish_validation_mode("adl,docs").expect("full-rust mode"),
+        FinishValidationMode::FullRust
+    );
+    run_finish_validation_rust(&repo, FinishValidationMode::FullRust).expect("full validation");
     unsafe {
         env::set_var("PATH", old_path);
     }
