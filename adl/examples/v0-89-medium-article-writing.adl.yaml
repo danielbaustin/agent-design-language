@@ -1,0 +1,137 @@
+version: "0.5"
+
+providers:
+  local_mock:
+    profile: "mock:echo-v1"
+
+agents:
+  strategist:
+    provider: "local_mock"
+    model: "echo-v1"
+  writer:
+    provider: "local_mock"
+    model: "echo-v1"
+  editor:
+    provider: "local_mock"
+    model: "echo-v1"
+
+tasks:
+  strategist_outline:
+    prompt:
+      user: |
+        # Medium Article Outline
+
+        ## Working Thesis
+        ADL is not just another agent wrapper. It is a structured runtime for bounded, inspectable, reviewer-friendly AI work.
+
+        ## Audience
+        Technically curious builders and skeptical AI practitioners.
+
+        ## Shape
+        1. Open with the problem of vague agent demos.
+        2. Explain why runtime truth matters.
+        3. Introduce ADL as a bounded execution and review surface.
+        4. Close with why this makes serious AI systems more trustworthy.
+
+        ## Brief Anchor
+        {{brief}}
+  strategist_titles:
+    prompt:
+      user: |
+        # Title And Subtitle Options
+
+        - Title: ADL Is What Happens When Agent Demos Grow Up
+          Subtitle: A bounded runtime for serious, inspectable AI work
+
+        - Title: Why ADL Cares About Runtime Truth
+          Subtitle: Reviewable agent execution for people who are tired of demo theater
+
+        - Title: Beyond Prompt Orchestration
+          Subtitle: How ADL turns AI workflows into inspectable runtime systems
+  writer_draft:
+    prompt:
+      user: |
+        # Draft
+
+        Most agent demos are exciting for about five minutes.
+
+        They glow, they gesture, and then they dissolve the moment someone asks the simplest serious question: what actually happened here?
+
+        That question matters more than most of the current AI tooling ecosystem wants to admit. If a workflow cannot show its packet, its steps, its review surfaces, and its runtime evidence, then it is not yet a serious system. It is a performance.
+
+        ADL starts from that discomfort. It assumes that interesting AI systems should still be inspectable systems. Instead of centering one magical prompt and a blur of hidden state, ADL tries to make the runtime legible. The artifacts matter. The handoffs matter. The boundaries matter.
+
+        That changes the feel of the work. A bounded workflow can be reviewed. A saved packet can be inspected. A run can be replayed. A demo can become something sturdier than a vibe.
+
+        This is why ADL feels different from generic prompt orchestration. The point is not just to make models do things. The point is to host useful AI work in a way that other people can understand, critique, and trust.
+
+        {{brief}}
+  editor_notes:
+    prompt:
+      user: |
+        # Editorial Notes
+
+        ## What works
+        - the draft opens with a strong skeptical hook
+        - the runtime-truth framing is clear and memorable
+        - the tone is serious without sounding joyless
+
+        ## Tighten
+        - keep the claims on bounded inspectability rather than broad AGI rhetoric
+        - preserve one concrete sentence about packets, artifacts, and replay
+        - keep the ending pointed and public-facing
+
+        ## Publish posture
+        This should read like a thoughtful launch essay, not marketing copy.
+  publish_summary:
+    prompt:
+      user: |
+        {
+          "schema_version": "adl.medium_article_packet.v1",
+          "article_id": "v0.89.medium.writing.demo",
+          "voice": "serious but readable",
+          "primary_claim": "ADL makes AI workflows more trustworthy by making runtime truth reviewable.",
+          "recommended_next_action": "Use this packet as a bounded launch-essay proof, not as a full publication pipeline.",
+          "artifacts": [
+            "article_packet/outline.md",
+            "article_packet/title_options.md",
+            "article_packet/draft.md",
+            "article_packet/editorial_notes.md",
+            "article_packet/publish_summary.json"
+          ]
+        }
+
+run:
+  name: "v0-89-medium-article-writing"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "medium.article.outline"
+        agent: "strategist"
+        task: "strategist_outline"
+        inputs:
+          brief: "@file:packets/v0-89-medium-article-brief.md"
+        save_as: "medium_outline"
+        write_to: "article/01-outline.md"
+      - id: "medium.article.titles"
+        agent: "strategist"
+        task: "strategist_titles"
+        save_as: "medium_titles"
+        write_to: "article/02-title-options.md"
+      - id: "medium.article.draft"
+        agent: "writer"
+        task: "writer_draft"
+        inputs:
+          brief: "@file:packets/v0-89-medium-article-brief.md"
+        save_as: "medium_draft"
+        write_to: "article/03-draft.md"
+      - id: "medium.article.edit"
+        agent: "editor"
+        task: "editor_notes"
+        save_as: "medium_editor_notes"
+        write_to: "article/04-editorial-notes.md"
+      - id: "medium.article.summary"
+        agent: "editor"
+        task: "publish_summary"
+        save_as: "medium_publish_summary"
+        write_to: "article/05-publish-summary.json"

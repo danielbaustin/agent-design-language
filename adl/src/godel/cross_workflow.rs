@@ -185,6 +185,7 @@ mod tests {
     use crate::godel::prioritization::{
         PersistedPrioritizationArtifact, PrioritizationInputCandidate, RankedExperimentCandidate,
     };
+    use std::time::{SystemTime, UNIX_EPOCH};
 
     fn fixture_hypothesis() -> PersistedHypothesisArtifact {
         PersistedHypothesisArtifact {
@@ -255,6 +256,14 @@ mod tests {
         }
     }
 
+    fn unique_temp_dir(label: &str) -> PathBuf {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos();
+        std::env::temp_dir().join(format!("adl-cross-workflow-{label}-{now}"))
+    }
+
     #[test]
     fn build_cross_workflow_artifact_is_deterministic() {
         let hypothesis = fixture_hypothesis();
@@ -287,5 +296,159 @@ mod tests {
             left.downstream_decision.selected_candidate_id,
             "exp:retry-budget"
         );
+    }
+
+    #[test]
+    fn build_cross_workflow_artifact_rejects_mismatched_identity_surfaces() {
+        let hypothesis = fixture_hypothesis();
+        let mut policy = fixture_policy();
+        policy.workflow_id = "wf-other".to_string();
+        let prioritization = fixture_prioritization();
+
+        let err = build_cross_workflow_artifact(
+            &hypothesis,
+            Path::new("runs/run-1/godel/godel_hypothesis.v1.json"),
+            &policy,
+            Path::new("runs/run-1/godel/godel_policy.v1.json"),
+            &prioritization,
+            Path::new("runs/run-1/godel/godel_experiment_priority.v1.json"),
+        )
+        .expect_err("mismatched workflow ids must be rejected");
+
+        assert_eq!(
+            err.to_string(),
+            "GODEL_CROSS_WORKFLOW_INVALID: hypothesis, policy, and prioritization artifacts must share run_id and workflow_id"
+        );
+    }
+
+    #[test]
+    fn build_cross_workflow_artifact_covers_parser_guardrail_and_fallback_strategies() {
+        let hypothesis = fixture_hypothesis();
+        let policy = fixture_policy();
+        let mut prioritization = fixture_prioritization();
+        prioritization.ranked_candidates = vec![RankedExperimentCandidate {
+            candidate_id: "exp:parser-guardrail".to_string(),
+            strategy: "parser_guardrail_probe".to_string(),
+            target_surface: "parser".to_string(),
+            priority_score: 88,
+            confidence: 0.74,
+            ranking_reason: "parser-focused".to_string(),
+        }];
+
+        let parser = build_cross_workflow_artifact(
+            &hypothesis,
+            Path::new("runs/run-1/godel/godel_hypothesis.v1.json"),
+            &policy,
+            Path::new("runs/run-1/godel/godel_policy.v1.json"),
+            &prioritization,
+            Path::new("runs/run-1/godel/godel_experiment_priority.v1.json"),
+        )
+        .expect("parser strategy should build");
+        assert_eq!(
+            parser.downstream_decision.workflow_id,
+            "wf-parser-guardrail-learning"
+        );
+        assert!(parser
+            .downstream_decision
+            .expected_behavior_change
+            .contains("target_surface=parser"));
+
+        prioritization.ranked_candidates[0].strategy = "unknown_strategy".to_string();
+        prioritization.ranked_candidates[0].target_surface = "fallback-surface".to_string();
+        prioritization.ranked_candidates[0].confidence = 0.41;
+        let fallback = build_cross_workflow_artifact(
+            &hypothesis,
+            Path::new("runs/run-1/godel/godel_hypothesis.v1.json"),
+            &policy,
+            Path::new("runs/run-1/godel/godel_policy.v1.json"),
+            &prioritization,
+            Path::new("runs/run-1/godel/godel_experiment_priority.v1.json"),
+        )
+        .expect("fallback strategy should build");
+        assert_eq!(
+            fallback.downstream_decision.workflow_id,
+            "wf-fallback-surface-learning"
+        );
+        assert!(fallback
+            .downstream_decision
+            .expected_behavior_change
+            .contains("fallback-surface"));
+    }
+
+    #[test]
+    fn build_cross_workflow_artifact_rejects_empty_candidates_and_unsafe_paths() {
+        let hypothesis = fixture_hypothesis();
+        let policy = fixture_policy();
+        let mut prioritization = fixture_prioritization();
+        prioritization.ranked_candidates.clear();
+
+        let empty_err = build_cross_workflow_artifact(
+            &hypothesis,
+            Path::new("runs/run-1/godel/godel_hypothesis.v1.json"),
+            &policy,
+            Path::new("runs/run-1/godel/godel_policy.v1.json"),
+            &prioritization,
+            Path::new("runs/run-1/godel/godel_experiment_priority.v1.json"),
+        )
+        .expect_err("empty prioritization should be rejected");
+        assert_eq!(
+            empty_err.to_string(),
+            "GODEL_CROSS_WORKFLOW_INVALID: prioritization artifact must contain at least one ranked candidate"
+        );
+
+        let prioritization = fixture_prioritization();
+        let path_err = build_cross_workflow_artifact(
+            &hypothesis,
+            Path::new("/absolute/path.json"),
+            &policy,
+            Path::new("runs/run-1/godel/godel_policy.v1.json"),
+            &prioritization,
+            Path::new("runs/run-1/godel/godel_experiment_priority.v1.json"),
+        )
+        .expect_err("absolute artifact paths should be rejected");
+        assert_eq!(
+            path_err.to_string(),
+            "GODEL_CROSS_WORKFLOW_INVALID: artifact path '/absolute/path.json' must be a safe relative path"
+        );
+    }
+
+    #[test]
+    fn persist_cross_workflow_artifact_writes_expected_relative_path() {
+        let hypothesis = fixture_hypothesis();
+        let policy = fixture_policy();
+        let prioritization = fixture_prioritization();
+        let artifact = build_cross_workflow_artifact(
+            &hypothesis,
+            Path::new("runs/run-1/godel/godel_hypothesis.v1.json"),
+            &policy,
+            Path::new("runs/run-1/godel/godel_policy.v1.json"),
+            &prioritization,
+            Path::new("runs/run-1/godel/godel_experiment_priority.v1.json"),
+        )
+        .expect("artifact");
+        let runs_root = unique_temp_dir("persist");
+        fs::create_dir_all(&runs_root).expect("temp runs root");
+
+        let rel_path = persist_cross_workflow_artifact(&runs_root, &hypothesis.run_id, &artifact)
+            .expect("persist");
+        assert_eq!(
+            rel_path,
+            PathBuf::from("runs")
+                .join("run-1")
+                .join("godel")
+                .join("godel_cross_workflow_learning.v1.json")
+        );
+
+        let persisted_path = runs_root
+            .join("run-1")
+            .join("godel")
+            .join("godel_cross_workflow_learning.v1.json");
+        let persisted: PersistedCrossWorkflowArtifact = serde_json::from_str(
+            &fs::read_to_string(&persisted_path).expect("read persisted artifact"),
+        )
+        .expect("parse persisted artifact");
+        assert_eq!(persisted, artifact);
+
+        fs::remove_dir_all(&runs_root).expect("cleanup temp runs root");
     }
 }
