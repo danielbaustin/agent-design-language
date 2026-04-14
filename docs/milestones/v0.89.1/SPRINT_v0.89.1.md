@@ -1,0 +1,100 @@
+# Sprint Plan - v0.89.1
+
+## Metadata
+- Milestone: `v0.89.1`
+- Sprint sequence: `v0.89.1-s1`, `v0.89.1-s2`, `v0.89.1-s3`
+- Start date: `TBD`
+- End date: `TBD`
+- Owner: `Daniel Austin`
+
+## Milestone Sprint Model
+
+`v0.89.1` is a three-sprint execution plan:
+- Sprint 1: open the official issue wave and land the adversarial/runtime architecture core
+- Sprint 2: land exploit/replay, verification, demo, and governed execution surfaces
+- Sprint 3: converge demos, quality, review, remediation, next-milestone planning, and release closure
+
+## Sprint Overview
+
+| Sprint | Purpose | WPs | Current status |
+|---|---|---|---|
+| `v0.89.1-s1` | open the official issue wave and execute the adversarial/runtime core | `WP-01`, `WP-02` - `WP-05` | planning package only |
+| `v0.89.1-s2` | execute verification, self-attack, demo, and governed execution substrate work | `WP-06` - `WP-10` | not started |
+| `v0.89.1-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | not started |
+
+## Sprint 1
+
+### Goal
+Move `v0.89.1` from a carry-forward reference into a real execution package by opening the issue graph and landing the first adversarial/runtime architecture band.
+
+### Scope
+- issue-wave opening from the promoted `v0.89.1` package
+- adversarial runtime model
+- red / blue agent architecture
+- adversarial execution runner
+- exploit artifact and replay schema
+
+### Exit Criteria
+- `WP-02` through `WP-05` are opened and mapped to the canonical milestone docs
+- the adversarial/runtime core has an executable issue wave rather than a reserved placeholder band
+- the main milestone docs record the active issue graph truthfully instead of speaking about the wave as hypothetical
+
+## Sprint 2
+
+### Goal
+Land the exploit-proof and governed execution substrate that makes `v0.89.1` more than a security-intent package.
+
+### Scope
+- continuous verification and exploit generation
+- self-attacking systems
+- adversarial demo and security proof surfaces
+- operational skills substrate and skill composition
+- delegation/refusal/coordination follow-through
+- provider extension and packaging convergence
+
+### Exit Criteria
+- `WP-06` through `WP-10` are opened and tracked in the milestone package
+- the main `v0.89.1` feature band is fully represented in the active execution package
+- placeholder inputs are either integrated truthfully or explicitly left out
+
+## Sprint 3
+
+### Goal
+Close the milestone using the normal ADL pattern: demos, quality gate, docs/review, internal review, 3rd-party review, findings remediation, next-milestone planning, and release ceremony.
+
+### Scope
+- demo scaffolding and proof entry points
+- milestone convergence and follow-on mapping
+- demo matrix and integration demos
+- coverage / quality gate
+- docs + review pass
+- internal review
+- 3rd-party review
+- review findings remediation
+- next milestone planning
+- release ceremony
+
+### Exit Criteria
+- reviewer-facing proof surfaces exist for the core `v0.89.1` claims
+- accepted review findings are remediated or explicitly deferred
+- release and next-milestone handoff are explicit and bounded
+- quality, docs, and release surfaces are consistent with delivered work
+
+## Risks / Dependencies
+- Dependency: the settled `v0.89` package must remain a stable predecessor, not a moving target
+  - Risk: shifting `v0.89` scope makes the `v0.89.1` boundary fuzzy again
+  - Mitigation: treat the `v0.89` carry-forward language as settled input, not an invitation to rewrite `v0.89`
+- Dependency: empty or weak source docs should not be over-promoted
+  - Risk: milestone docs claim maturity that the source corpus does not support
+  - Mitigation: keep zero-content or weak inputs as supporting notes until they are properly authored
+
+## Demo / Review Plan
+- Demo artifact: `DEMO_MATRIX_v0.89.1.md` plus the later adversarial/replay proof surfaces it governs
+- Review date: `TBD`
+- Sign-off owners: Daniel Austin plus later third-party review where appropriate
+
+## Cadence Expectations
+- use issue cards (`stp` / `sip` / `sor`) for each issue
+- keep changes scoped per issue
+- prefer one bounded PR lane per queue unless explicit policy says otherwise
+- keep `.adl` local memory preserved while tracked milestone docs and code land through normal PR flow

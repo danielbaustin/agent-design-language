@@ -82,6 +82,12 @@ This package intentionally does not absorb the full adversarial runtime and expl
 
 ### `v0.89.1` carry-forward package
 
+The carry-forward is now represented by a tracked planning package under:
+
+- `docs/milestones/v0.89.1/`
+
+The rows below remain useful because they identify the original local source inputs for that package.
+
 | Local source doc | Disposition | Implementation home |
 |---|---|---|
 | `.adl/docs/v0.89.1planning/ADL_ADVERSARIAL_RUNTIME_MODEL.md` | carry forward | `v0.89.1` |

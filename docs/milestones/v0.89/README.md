@@ -78,6 +78,9 @@ Supporting local planning inputs:
 - `.adl/docs/v0.89planning/*`
 - `.adl/docs/v0.89.1planning/*`
 
+Tracked follow-on planning package:
+- `../v0.89.1/*`
+
 ## Execution Model
 
 This milestone is designed to execute as a sequence of work packages once the official `v0.89` kickoff occurs:
