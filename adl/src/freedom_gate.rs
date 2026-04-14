@@ -267,4 +267,72 @@ mod tests {
         assert_eq!(decision.required_follow_up, "escalate_for_judgment_review");
         assert_eq!(decision.decision_record_kind, "gate_escalation_record");
     }
+
+    #[test]
+    fn freedom_gate_defers_when_candidate_action_is_empty() {
+        let mut input = base_input();
+        input.candidate_action = "   ".to_string();
+        let decision = evaluate_freedom_gate(&input);
+        assert_eq!(decision.gate_decision, "defer");
+        assert_eq!(decision.reason_code, "insufficient_context");
+        assert_eq!(decision.judgment_boundary, "context_boundary");
+        assert_eq!(decision.required_follow_up, "restore_candidate_context");
+        assert!(decision.commitment_blocked);
+        assert_eq!(decision.decision_record_kind, "gate_defer_record");
+    }
+
+    #[test]
+    fn freedom_gate_defers_when_review_is_required_without_escalation() {
+        let mut input = base_input();
+        input.policy_context.requires_review = true;
+        let decision = evaluate_freedom_gate(&input);
+        assert_eq!(decision.gate_decision, "defer");
+        assert_eq!(decision.reason_code, "requires_review");
+        assert_eq!(decision.judgment_boundary, "review_boundary");
+        assert_eq!(decision.required_follow_up, "complete_bounded_review");
+        assert!(decision.commitment_blocked);
+    }
+
+    #[test]
+    fn freedom_gate_escalates_when_review_and_consequence_context_require_it() {
+        let mut input = base_input();
+        input.policy_context.requires_review = true;
+        input.consequence_context.escalation_available = true;
+        input.evaluation_signals.failure_signal = "tool_failure".to_string();
+        let decision = evaluate_freedom_gate(&input);
+        assert_eq!(decision.gate_decision, "escalate");
+        assert_eq!(decision.reason_code, "review_escalation_required");
+        assert_eq!(decision.judgment_boundary, "judgment_boundary");
+        assert_eq!(decision.required_follow_up, "escalate_for_review_board");
+        assert_eq!(decision.decision_record_kind, "gate_escalation_record");
+    }
+
+    #[test]
+    fn freedom_gate_escalates_high_risk_cases_when_operator_escalation_exists() {
+        let mut input = base_input();
+        input.risk_class = "high".to_string();
+        input.consequence_context.escalation_available = true;
+        let decision = evaluate_freedom_gate(&input);
+        assert_eq!(decision.gate_decision, "escalate");
+        assert_eq!(decision.reason_code, "high_risk_requires_escalation");
+        assert_eq!(
+            decision.required_follow_up,
+            "escalate_for_operator_decision"
+        );
+        assert_eq!(decision.decision_record_kind, "gate_escalation_record");
+        assert!(decision.commitment_blocked);
+    }
+
+    #[test]
+    fn freedom_gate_refuses_high_risk_cases_without_escalation_path() {
+        let mut input = base_input();
+        input.risk_class = "high".to_string();
+        let decision = evaluate_freedom_gate(&input);
+        assert_eq!(decision.gate_decision, "refuse");
+        assert_eq!(decision.reason_code, "risk_too_high");
+        assert_eq!(decision.judgment_boundary, "risk_boundary");
+        assert_eq!(decision.required_follow_up, "record_refusal_and_stop");
+        assert_eq!(decision.decision_record_kind, "gate_refusal_record");
+        assert!(decision.commitment_blocked);
+    }
 }
