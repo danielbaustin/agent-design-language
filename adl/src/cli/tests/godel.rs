@@ -505,6 +505,53 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         decision_reason: "Deterministic threshold decision: score=95 -> promote".to_string(),
         evaluation_artifact_path: "runs/run-745-a/godel/godel_eval_report.v1.json".to_string(),
     };
+    let canonical_input = ::adl::godel::StageLoopInput {
+        run_id: "run-745-a".to_string(),
+        workflow_id: "wf-godel-loop".to_string(),
+        failure_code: "tool_failure".to_string(),
+        failure_summary: "deterministic parse error".to_string(),
+        evidence_refs: vec!["runs/run-745-a/run_status.json".to_string()],
+    };
+    let mutation = ::adl::godel::mutation::MutationProposal {
+        id: "mut:run-745-a:tool_failure:00".to_string(),
+        hypothesis_id: "hyp:run-745-a:tool_failure:00".to_string(),
+        target_surface: "workflow-step-config".to_string(),
+        bounded_change: "Apply deterministic bounded workflow-step adjustment.".to_string(),
+    };
+    let canonical_mutation = ::adl::godel::mutation::build_canonical_mutation(
+        "run-745-a",
+        "wf-godel-loop",
+        "tool_failure",
+        &::adl::godel::hypothesis::HypothesisCandidate {
+            id: "hyp:run-745-a:tool_failure:00".to_string(),
+            statement: hypothesis.claim.clone(),
+            failure_code: "tool_failure".to_string(),
+            evidence_refs: vec!["runs/run-745-a/run_status.json".to_string()],
+        },
+        &mutation,
+    )
+    .expect("build canonical mutation");
+    let canonical_evidence =
+        ::adl::godel::canonical_evidence::build_canonical_evidence(&canonical_input)
+            .expect("build canonical evidence");
+    let canonical_evaluation_plan = ::adl::godel::evaluation::build_canonical_evaluation_plan(
+        "run-745-a",
+        "wf-godel-loop",
+        "tool_failure",
+        &canonical_input.evidence_refs,
+        &::adl::godel::hypothesis::HypothesisCandidate {
+            id: "hyp:run-745-a:tool_failure:00".to_string(),
+            statement: hypothesis.claim.clone(),
+            failure_code: "tool_failure".to_string(),
+            evidence_refs: vec!["runs/run-745-a/run_status.json".to_string()],
+        },
+        &mutation,
+    )
+    .expect("build canonical evaluation plan");
+    let runtime_record_rel =
+        std::path::PathBuf::from("runs/run-745-a/godel/experiment_record.runtime.v1.json");
+    let index_rel =
+        std::path::PathBuf::from("runs/run-745-a/godel/obsmem_index_entry.runtime.v1.json");
 
     std::fs::write(
         run_dir.join("experiment_record.runtime.v1.json"),
@@ -551,6 +598,25 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
         serde_json::to_string_pretty(&index).expect("index json"),
     )
     .expect("write index");
+    ::adl::godel::mutation::persist_canonical_mutation(&base, "run-745-a", &canonical_mutation)
+        .expect("write canonical mutation");
+    ::adl::godel::canonical_evidence::persist_canonical_evidence(&base, &canonical_evidence)
+        .expect("write canonical evidence");
+    ::adl::godel::evaluation::persist_canonical_evaluation_plan(
+        &base,
+        "run-745-a",
+        &canonical_evaluation_plan,
+    )
+    .expect("write canonical evaluation plan");
+    let canonical_record = ::adl::godel::experiment_record::build_canonical_record(
+        &base,
+        &record.record,
+        &runtime_record_rel,
+        &index_rel,
+    )
+    .expect("build canonical record");
+    ::adl::godel::experiment_record::persist_canonical_record(&base, &canonical_record)
+        .expect("write canonical record");
 
     real_godel_inspect(&[
         "--run-id".to_string(),
@@ -606,6 +672,25 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
             serde_json::to_string_pretty(&index).expect("index json"),
         )
         .expect("write index");
+        ::adl::godel::mutation::persist_canonical_mutation(&base, "run-745-a", &canonical_mutation)
+            .expect("write canonical mutation");
+        ::adl::godel::canonical_evidence::persist_canonical_evidence(&base, &canonical_evidence)
+            .expect("write canonical evidence");
+        ::adl::godel::evaluation::persist_canonical_evaluation_plan(
+            &base,
+            "run-745-a",
+            &canonical_evaluation_plan,
+        )
+        .expect("write canonical evaluation plan");
+        let canonical_record = ::adl::godel::experiment_record::build_canonical_record(
+            &base,
+            &record.record,
+            &runtime_record_rel,
+            &index_rel,
+        )
+        .expect("build canonical record");
+        ::adl::godel::experiment_record::persist_canonical_record(&base, &canonical_record)
+            .expect("write canonical record");
     };
 
     let parse_cases = [
@@ -637,6 +722,14 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
             "{",
             "GODEL_INSPECT_INVALID",
         ),
+        ("evaluation_plan.v1.json", "{", "GODEL_INSPECT_INVALID"),
+        ("mutation.v1.json", "{", "GODEL_INSPECT_INVALID"),
+        (
+            "canonical_evidence_view.v1.json",
+            "{",
+            "GODEL_INSPECT_INVALID",
+        ),
+        ("experiment_record.v1.json", "{", "GODEL_INSPECT_INVALID"),
         (
             "obsmem_index_entry.runtime.v1.json",
             "{",
@@ -662,6 +755,8 @@ fn real_godel_inspect_reads_persisted_runtime_artifacts() {
     let missing_cases = [
         "godel_eval_report.v1.json",
         "godel_promotion_decision.v1.json",
+        "evaluation_plan.v1.json",
+        "experiment_record.v1.json",
     ];
     for file_name in missing_cases {
         write_all();
