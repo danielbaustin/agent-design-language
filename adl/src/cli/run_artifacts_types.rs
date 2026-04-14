@@ -24,6 +24,8 @@ pub(crate) const MEMORY_READ_VERSION: u32 = 1;
 pub(crate) const MEMORY_WRITE_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_MEMORY_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_DECISIONS_VERSION: u32 = 1;
+pub(crate) const CONTROL_PATH_ACTION_PROPOSALS_VERSION: u32 = 1;
+pub(crate) const CONTROL_PATH_ACTION_MEDIATION_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_FINAL_RESULT_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
@@ -679,6 +681,39 @@ pub(crate) struct ControlPathMemoryArtifact {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub(crate) struct ControlPathActionProposalsArtifact {
+    pub(crate) control_path_action_proposals_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) proposal_schema_name: String,
+    pub(crate) proposal_schema_fields: Vec<String>,
+    pub(crate) proposal_kind_vocabulary: Vec<String>,
+    pub(crate) proposals: Vec<ActionProposalRecord>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ActionProposalRecord {
+    pub(crate) proposal_id: String,
+    pub(crate) kind: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) target: Option<String>,
+    #[serde(default)]
+    pub(crate) arguments: BTreeMap<String, String>,
+    pub(crate) intent: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) content: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) confidence: Option<f64>,
+    pub(crate) requires_approval: bool,
+    #[serde(default)]
+    pub(crate) metadata: BTreeMap<String, String>,
+    pub(crate) non_authoritative: bool,
+    pub(crate) temporal_anchor: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct ControlPathDecisionsArtifact {
     pub(crate) control_path_decisions_version: u32,
     pub(crate) run_id: String,
@@ -716,6 +751,36 @@ pub(crate) struct DecisionRecord {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub(crate) struct ControlPathActionMediationArtifact {
+    pub(crate) control_path_action_mediation_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) authority_boundary: String,
+    pub(crate) mediation_outcome_vocabulary: Vec<String>,
+    pub(crate) mediation: ActionMediationRecord,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ActionMediationRecord {
+    pub(crate) mediation_id: String,
+    pub(crate) proposal_id: String,
+    pub(crate) decision_id: String,
+    pub(crate) runtime_authority: String,
+    pub(crate) judgment_boundary: String,
+    pub(crate) mediation_outcome: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) approved_action_or_none: Option<String>,
+    pub(crate) required_follow_up: String,
+    pub(crate) validation_checks: Vec<String>,
+    pub(crate) policy_bindings: Vec<String>,
+    pub(crate) rationale: String,
+    pub(crate) temporal_anchor: String,
+    pub(crate) trace_expectation: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct ControlPathFinalResultArtifact {
     pub(crate) control_path_final_result_version: u32,
     pub(crate) run_id: String,
@@ -738,6 +803,8 @@ pub(crate) struct ControlPathSummaryContext<'a> {
     pub(crate) reframing: &'a ReframingArtifact,
     pub(crate) convergence: &'a AeeConvergenceArtifact,
     pub(crate) memory: &'a ControlPathMemoryArtifact,
+    pub(crate) action_proposals: &'a ControlPathActionProposalsArtifact,
+    pub(crate) mediation: &'a ControlPathActionMediationArtifact,
     pub(crate) freedom_gate: &'a FreedomGateArtifact,
     pub(crate) final_result: &'a ControlPathFinalResultArtifact,
 }

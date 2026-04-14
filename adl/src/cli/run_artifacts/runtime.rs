@@ -1,7 +1,8 @@
 use super::cognitive::{
     build_aee_decision_artifact, build_affect_state_artifact, build_agency_selection_artifact,
     build_bounded_execution_artifact, build_cognitive_arbitration_artifact_from_state,
-    build_cognitive_signals_artifact_from_state, build_control_path_decisions_artifact,
+    build_cognitive_signals_artifact_from_state, build_control_path_action_mediation_artifact,
+    build_control_path_action_proposals_artifact, build_control_path_decisions_artifact,
     build_control_path_final_result_artifact, build_control_path_memory_artifact,
     build_control_path_summary, build_evaluation_signals_artifact, build_fast_slow_path_artifact,
     build_freedom_gate_artifact, build_memory_read_artifact, build_memory_write_artifact,
@@ -253,6 +254,13 @@ pub(crate) fn write_run_state_artifacts(
     );
     let control_path_memory =
         build_control_path_memory_artifact(&run_summary, &memory_read, &memory_write);
+    let control_path_action_proposals = build_control_path_action_proposals_artifact(
+        &run_summary,
+        &cognitive_arbitration,
+        &agency_selection,
+        &freedom_gate,
+        Some(&scores_for_suggestions),
+    );
     let control_path_decisions = build_control_path_decisions_artifact(
         &run_summary,
         &cognitive_arbitration,
@@ -260,6 +268,13 @@ pub(crate) fn write_run_state_artifacts(
         &evaluation_signals,
         &reframing,
         &freedom_gate,
+        Some(&scores_for_suggestions),
+    );
+    let control_path_action_mediation = build_control_path_action_mediation_artifact(
+        &run_summary,
+        &control_path_action_proposals,
+        &freedom_gate,
+        &control_path_decisions,
         Some(&scores_for_suggestions),
     );
     let control_path_final_result = build_control_path_final_result_artifact(
@@ -278,6 +293,8 @@ pub(crate) fn write_run_state_artifacts(
         reframing: &reframing,
         convergence: &convergence,
         memory: &control_path_memory,
+        action_proposals: &control_path_action_proposals,
+        mediation: &control_path_action_mediation,
         freedom_gate: &freedom_gate,
         final_result: &control_path_final_result,
     });
@@ -303,8 +320,14 @@ pub(crate) fn write_run_state_artifacts(
         serde_json::to_vec_pretty(&memory_write).context("serialize memory_write.v1.json")?;
     let control_path_memory_json = serde_json::to_vec_pretty(&control_path_memory)
         .context("serialize control_path memory.json")?;
+    let control_path_action_proposals_json =
+        serde_json::to_vec_pretty(&control_path_action_proposals)
+            .context("serialize control_path action_proposals.json")?;
     let control_path_decisions_json = serde_json::to_vec_pretty(&control_path_decisions)
         .context("serialize control_path decisions.json")?;
+    let control_path_action_mediation_json =
+        serde_json::to_vec_pretty(&control_path_action_mediation)
+            .context("serialize control_path mediation.json")?;
     let control_path_final_result_json = serde_json::to_vec_pretty(&control_path_final_result)
         .context("serialize control_path final_result.json")?;
     let aee_decision = build_aee_decision_artifact(
@@ -377,8 +400,16 @@ pub(crate) fn write_run_state_artifacts(
         &control_path_memory_json,
     )?;
     artifacts::atomic_write(
+        &run_paths.control_path_action_proposals_json(),
+        &control_path_action_proposals_json,
+    )?;
+    artifacts::atomic_write(
         &run_paths.control_path_decisions_json(),
         &control_path_decisions_json,
+    )?;
+    artifacts::atomic_write(
+        &run_paths.control_path_action_mediation_json(),
+        &control_path_action_mediation_json,
     )?;
     artifacts::atomic_write(
         &run_paths.control_path_freedom_gate_json(),
@@ -1031,8 +1062,12 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         read_required_json_artifact(control_path_dir, "reframing.json")?;
     let memory: ControlPathMemoryArtifact =
         read_required_json_artifact(control_path_dir, "memory.json")?;
+    let action_proposals: ControlPathActionProposalsArtifact =
+        read_required_json_artifact(control_path_dir, "action_proposals.json")?;
     let decisions: ControlPathDecisionsArtifact =
         read_required_json_artifact(control_path_dir, "decisions.json")?;
+    let mediation: ControlPathActionMediationArtifact =
+        read_required_json_artifact(control_path_dir, "mediation.json")?;
     let freedom_gate: FreedomGateArtifact =
         read_required_json_artifact(control_path_dir, "freedom_gate.json")?;
     let convergence: AeeConvergenceArtifact =
@@ -1081,7 +1116,9 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         evaluation.run_id.as_str(),
         reframing.run_id.as_str(),
         memory.run_id.as_str(),
+        action_proposals.run_id.as_str(),
         decisions.run_id.as_str(),
+        mediation.run_id.as_str(),
         freedom_gate.run_id.as_str(),
         convergence.run_id.as_str(),
         final_result.run_id.as_str(),
@@ -1197,6 +1234,154 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         ));
     }
 
+    let expected_proposal_schema_fields = vec![
+        "proposal_id".to_string(),
+        "kind".to_string(),
+        "target".to_string(),
+        "arguments".to_string(),
+        "intent".to_string(),
+        "content".to_string(),
+        "confidence".to_string(),
+        "requires_approval".to_string(),
+        "metadata".to_string(),
+        "non_authoritative".to_string(),
+        "temporal_anchor".to_string(),
+    ];
+    if action_proposals.proposal_schema_fields != expected_proposal_schema_fields {
+        return Err(anyhow!(
+            "control-path action proposal schema fields mismatch: expected {:?}, found {:?}",
+            expected_proposal_schema_fields,
+            action_proposals.proposal_schema_fields
+        ));
+    }
+
+    let expected_proposal_kind_vocabulary = vec![
+        "tool_call".to_string(),
+        "skill_call".to_string(),
+        "memory_read".to_string(),
+        "memory_write".to_string(),
+        "final_answer".to_string(),
+        "refuse".to_string(),
+        "defer".to_string(),
+    ];
+    if action_proposals.proposal_kind_vocabulary != expected_proposal_kind_vocabulary {
+        return Err(anyhow!(
+            "control-path action proposal vocabulary mismatch: expected {:?}, found {:?}",
+            expected_proposal_kind_vocabulary,
+            action_proposals.proposal_kind_vocabulary
+        ));
+    }
+    if action_proposals.proposals.len() != 1 {
+        return Err(anyhow!(
+            "control-path action proposals artifact must contain exactly 1 bounded proposal"
+        ));
+    }
+    let proposal = &action_proposals.proposals[0];
+    if !proposal.non_authoritative {
+        return Err(anyhow!(
+            "control-path action proposal '{}' must remain non-authoritative",
+            proposal.proposal_id
+        ));
+    }
+    if !action_proposals
+        .proposal_kind_vocabulary
+        .contains(&proposal.kind)
+    {
+        return Err(anyhow!(
+            "control-path action proposal kind '{}' is not in the declared vocabulary",
+            proposal.kind
+        ));
+    }
+
+    let expected_mediation_outcome_vocabulary = vec![
+        "approved".to_string(),
+        "rejected".to_string(),
+        "deferred".to_string(),
+        "escalated".to_string(),
+    ];
+    if mediation.mediation_outcome_vocabulary != expected_mediation_outcome_vocabulary {
+        return Err(anyhow!(
+            "control-path mediation outcome vocabulary mismatch: expected {:?}, found {:?}",
+            expected_mediation_outcome_vocabulary,
+            mediation.mediation_outcome_vocabulary
+        ));
+    }
+    if mediation.authority_boundary != "models_propose_runtime_decides_executes" {
+        return Err(anyhow!(
+            "control-path mediation authority boundary mismatch: '{}'",
+            mediation.authority_boundary
+        ));
+    }
+    if mediation.mediation.proposal_id != proposal.proposal_id {
+        return Err(anyhow!(
+            "control-path mediation proposal '{}' does not match action proposal '{}'",
+            mediation.mediation.proposal_id,
+            proposal.proposal_id
+        ));
+    }
+    if mediation.mediation.runtime_authority != "freedom_gate" {
+        return Err(anyhow!(
+            "control-path mediation runtime authority '{}' must be freedom_gate",
+            mediation.mediation.runtime_authority
+        ));
+    }
+    let expected_mediation_outcome = match freedom_gate.gate_decision.as_str() {
+        "allow" => "approved",
+        "refuse" => "rejected",
+        "defer" => "deferred",
+        "escalate" => "escalated",
+        other => {
+            return Err(anyhow!(
+                "control-path mediation cannot classify unknown freedom-gate decision '{}'",
+                other
+            ))
+        }
+    };
+    if mediation.mediation.mediation_outcome != expected_mediation_outcome {
+        return Err(anyhow!(
+            "control-path mediation outcome '{}' does not match freedom_gate '{}'",
+            mediation.mediation.mediation_outcome,
+            freedom_gate.gate_decision
+        ));
+    }
+    if mediation.mediation.decision_id != "decision.commitment_gate" {
+        return Err(anyhow!(
+            "control-path mediation decision_id '{}' must reference decision.commitment_gate",
+            mediation.mediation.decision_id
+        ));
+    }
+    if mediation.mediation.temporal_anchor != "control_path/freedom_gate.json" {
+        return Err(anyhow!(
+            "control-path mediation temporal anchor '{}' must point at control_path/freedom_gate.json",
+            mediation.mediation.temporal_anchor
+        ));
+    }
+    if mediation.mediation.judgment_boundary != freedom_gate.judgment_boundary {
+        return Err(anyhow!(
+            "control-path mediation judgment_boundary '{}' does not match freedom_gate '{}'",
+            mediation.mediation.judgment_boundary,
+            freedom_gate.judgment_boundary
+        ));
+    }
+    if mediation.mediation.required_follow_up != freedom_gate.required_follow_up {
+        return Err(anyhow!(
+            "control-path mediation required_follow_up '{}' does not match freedom_gate '{}'",
+            mediation.mediation.required_follow_up,
+            freedom_gate.required_follow_up
+        ));
+    }
+    if expected_mediation_outcome == "approved" {
+        if mediation.mediation.approved_action_or_none.is_none() {
+            return Err(anyhow!(
+                "control-path mediation must carry approved_action_or_none when outcome is approved"
+            ));
+        }
+    } else if mediation.mediation.approved_action_or_none.is_some() {
+        return Err(anyhow!(
+            "control-path mediation must not carry approved_action_or_none when outcome is not approved"
+        ));
+    }
+
     let expected_surface_ids = [
         "delegation_and_routing.route_selection",
         "recovery_continuity.reframing",
@@ -1252,6 +1437,18 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
             decisions.decisions[0].outcome_class,
             decisions.decisions[1].outcome_class,
             decisions.decisions[2].outcome_class
+        ),
+        format!(
+            "action_proposal: kind={} target={} requires_approval={}",
+            proposal.kind,
+            proposal.target.as_deref().unwrap_or("<none>"),
+            proposal.requires_approval
+        ),
+        format!(
+            "action_mediation: outcome={} authority={} follow_up={}",
+            mediation.mediation.mediation_outcome,
+            mediation.mediation.runtime_authority,
+            mediation.mediation.required_follow_up
         ),
         format!("freedom_gate: decision={}", freedom_gate.gate_decision),
         format!(

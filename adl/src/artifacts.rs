@@ -168,6 +168,14 @@ impl RunArtifactPaths {
         self.control_path_dir().join("memory.json")
     }
 
+    pub fn control_path_action_proposals_json(&self) -> PathBuf {
+        self.control_path_dir().join("action_proposals.json")
+    }
+
+    pub fn control_path_action_mediation_json(&self) -> PathBuf {
+        self.control_path_dir().join("mediation.json")
+    }
+
     pub fn control_path_freedom_gate_json(&self) -> PathBuf {
         self.control_path_dir().join("freedom_gate.json")
     }
@@ -524,6 +532,18 @@ mod tests {
         assert!(paths
             .reasoning_graph_json()
             .ends_with(".adl/runs/artifact-path-accessors/learning/reasoning_graph.v1.json"));
+        assert!(paths
+            .control_path_action_proposals_json()
+            .ends_with(".adl/runs/artifact-path-accessors/control_path/action_proposals.json"));
+        assert!(paths
+            .control_path_action_mediation_json()
+            .ends_with(".adl/runs/artifact-path-accessors/control_path/mediation.json"));
+        assert!(paths
+            .control_path_decisions_json()
+            .ends_with(".adl/runs/artifact-path-accessors/control_path/decisions.json"));
+        assert!(paths
+            .control_path_final_result_json()
+            .ends_with(".adl/runs/artifact-path-accessors/control_path/final_result.json"));
     }
 
     #[test]

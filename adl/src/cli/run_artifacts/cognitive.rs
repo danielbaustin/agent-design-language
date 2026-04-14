@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use super::*;
 
 fn aee_decision_kind_for_intent(intent: &str) -> (&'static str, &'static str) {
@@ -1088,6 +1090,148 @@ fn gate_outcome_class(gate_decision: &str) -> &'static str {
     }
 }
 
+fn proposal_kind_for_candidate_kind(candidate_kind: &str) -> &'static str {
+    match candidate_kind {
+        "bounded_deferral" => "defer",
+        "refusal" => "refuse",
+        "memory_read" => "memory_read",
+        "memory_write" => "memory_write",
+        "final_answer" => "final_answer",
+        "tool_call" => "tool_call",
+        _ => "skill_call",
+    }
+}
+
+fn proposal_target_for_candidate_kind(candidate_kind: &str) -> Option<String> {
+    match proposal_kind_for_candidate_kind(candidate_kind) {
+        "defer" | "refuse" | "final_answer" => None,
+        _ => Some(format!("candidate.{}", candidate_kind.trim())),
+    }
+}
+
+fn proposal_confidence_for_arbitration(confidence: &str) -> Option<f64> {
+    match confidence.trim() {
+        "high" => Some(0.9),
+        "medium" => Some(0.72),
+        "guarded" => Some(0.58),
+        "reduced" => Some(0.41),
+        "low" => Some(0.28),
+        _ => None,
+    }
+}
+
+fn mediation_outcome_for_gate_decision(gate_decision: &str) -> &'static str {
+    match gate_decision {
+        "allow" => "approved",
+        "refuse" => "rejected",
+        "defer" => "deferred",
+        "escalate" => "escalated",
+        _ => "rejected",
+    }
+}
+
+pub(crate) fn build_control_path_action_proposals_artifact(
+    run_summary: &RunSummaryArtifact,
+    arbitration: &CognitiveArbitrationArtifact,
+    agency: &AgencySelectionArtifact,
+    freedom_gate: &FreedomGateArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> ControlPathActionProposalsArtifact {
+    let selected_candidate = agency
+        .candidate_set
+        .iter()
+        .find(|candidate| candidate.candidate_id == agency.selected_candidate_id)
+        .cloned()
+        .unwrap_or_else(|| AgencyCandidateRecord {
+            candidate_id: agency.selected_candidate_id.clone(),
+            candidate_kind: "review_and_refine".to_string(),
+            bounded_action: freedom_gate.input.candidate_action.clone(),
+            review_requirement: "review_required".to_string(),
+            execution_priority: 1,
+            rationale: agency.selected_candidate_reason.clone(),
+        });
+    let mut arguments = BTreeMap::new();
+    arguments.insert(
+        "candidate_id".to_string(),
+        agency.selected_candidate_id.clone(),
+    );
+    arguments.insert(
+        "candidate_kind".to_string(),
+        selected_candidate.candidate_kind.clone(),
+    );
+    arguments.insert(
+        "requested_action".to_string(),
+        selected_candidate.bounded_action.clone(),
+    );
+    arguments.insert(
+        "route_selected".to_string(),
+        arbitration.route_selected.clone(),
+    );
+
+    let mut metadata = BTreeMap::new();
+    metadata.insert(
+        "surface_id".to_string(),
+        "decision.commitment_gate".to_string(),
+    );
+    metadata.insert(
+        "decision_record_kind".to_string(),
+        freedom_gate.decision_record_kind.clone(),
+    );
+    metadata.insert(
+        "risk_class".to_string(),
+        freedom_gate.input.risk_class.clone(),
+    );
+
+    ControlPathActionProposalsArtifact {
+        control_path_action_proposals_version: CONTROL_PATH_ACTION_PROPOSALS_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: arbitration.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        proposal_schema_name: "adl.runtime.action_proposal.v1".to_string(),
+        proposal_schema_fields: vec![
+            "proposal_id".to_string(),
+            "kind".to_string(),
+            "target".to_string(),
+            "arguments".to_string(),
+            "intent".to_string(),
+            "content".to_string(),
+            "confidence".to_string(),
+            "requires_approval".to_string(),
+            "metadata".to_string(),
+            "non_authoritative".to_string(),
+            "temporal_anchor".to_string(),
+        ],
+        proposal_kind_vocabulary: vec![
+            "tool_call".to_string(),
+            "skill_call".to_string(),
+            "memory_read".to_string(),
+            "memory_write".to_string(),
+            "final_answer".to_string(),
+            "refuse".to_string(),
+            "defer".to_string(),
+        ],
+        proposals: vec![ActionProposalRecord {
+            proposal_id: "proposal.selected_candidate".to_string(),
+            kind: proposal_kind_for_candidate_kind(&selected_candidate.candidate_kind).to_string(),
+            target: proposal_target_for_candidate_kind(&selected_candidate.candidate_kind),
+            arguments,
+            intent: agency.selected_candidate_reason.clone(),
+            content: None,
+            confidence: proposal_confidence_for_arbitration(&arbitration.confidence),
+            requires_approval: freedom_gate.input.policy_context.requires_review
+                || freedom_gate.input.consequence_context.escalation_available
+                || freedom_gate.commitment_blocked,
+            metadata,
+            non_authoritative: true,
+            temporal_anchor: "control_path/candidate_selection.json".to_string(),
+        }],
+    }
+}
+
 pub(crate) fn build_control_path_decisions_artifact(
     run_summary: &RunSummaryArtifact,
     arbitration: &CognitiveArbitrationArtifact,
@@ -1260,6 +1404,97 @@ pub(crate) fn build_control_path_decisions_artifact(
     }
 }
 
+pub(crate) fn build_control_path_action_mediation_artifact(
+    run_summary: &RunSummaryArtifact,
+    action_proposals: &ControlPathActionProposalsArtifact,
+    freedom_gate: &FreedomGateArtifact,
+    decisions: &ControlPathDecisionsArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> ControlPathActionMediationArtifact {
+    let proposal = action_proposals
+        .proposals
+        .first()
+        .cloned()
+        .unwrap_or_else(|| ActionProposalRecord {
+            proposal_id: "proposal.none".to_string(),
+            kind: "defer".to_string(),
+            target: None,
+            arguments: BTreeMap::new(),
+            intent: "no bounded proposal available".to_string(),
+            content: None,
+            confidence: None,
+            requires_approval: true,
+            metadata: BTreeMap::new(),
+            non_authoritative: true,
+            temporal_anchor: "control_path/candidate_selection.json".to_string(),
+        });
+    let gate_decision = decisions
+        .decisions
+        .iter()
+        .find(|record| record.decision_id == "decision.commitment_gate")
+        .cloned()
+        .unwrap_or_else(|| DecisionRecord {
+            decision_id: "decision.commitment_gate".to_string(),
+            surface_id: "pre_execution_authorization.commitment_gate".to_string(),
+            proposal_or_action: proposal.intent.clone(),
+            outcome_class: gate_outcome_class(&freedom_gate.gate_decision).to_string(),
+            decision_maker: "freedom_gate".to_string(),
+            policy_bindings: Vec::new(),
+            rationale: freedom_gate.decision_reason.clone(),
+            downstream_consequence: freedom_gate.required_follow_up.clone(),
+            temporal_anchor: "control_path/freedom_gate.json".to_string(),
+        });
+    let approved_action_or_none = if freedom_gate.gate_decision == "allow" {
+        freedom_gate
+            .selected_action_or_none
+            .clone()
+            .or_else(|| Some(freedom_gate.input.candidate_action.clone()))
+    } else {
+        None
+    };
+
+    ControlPathActionMediationArtifact {
+        control_path_action_mediation_version: CONTROL_PATH_ACTION_MEDIATION_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: action_proposals.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        authority_boundary: "models_propose_runtime_decides_executes".to_string(),
+        mediation_outcome_vocabulary: vec![
+            "approved".to_string(),
+            "rejected".to_string(),
+            "deferred".to_string(),
+            "escalated".to_string(),
+        ],
+        mediation: ActionMediationRecord {
+            mediation_id: "mediation.commitment_gate".to_string(),
+            proposal_id: proposal.proposal_id,
+            decision_id: gate_decision.decision_id,
+            runtime_authority: "freedom_gate".to_string(),
+            judgment_boundary: freedom_gate.judgment_boundary.clone(),
+            mediation_outcome: mediation_outcome_for_gate_decision(&freedom_gate.gate_decision)
+                .to_string(),
+            approved_action_or_none,
+            required_follow_up: freedom_gate.required_follow_up.clone(),
+            validation_checks: vec![
+                "proposal_non_authoritative".to_string(),
+                "decision_surface_linked".to_string(),
+                "policy_bindings_present".to_string(),
+                "freedom_gate_authority_boundary".to_string(),
+            ],
+            policy_bindings: gate_decision.policy_bindings,
+            rationale: freedom_gate.decision_reason.clone(),
+            temporal_anchor: "control_path/freedom_gate.json".to_string(),
+            trace_expectation:
+                "approval, rejection, defer, or escalation remains trace-visible before privileged execution"
+                    .to_string(),
+        },
+    }
+}
+
 pub(crate) fn build_control_path_final_result_artifact(
     run_summary: &RunSummaryArtifact,
     arbitration: &CognitiveArbitrationArtifact,
@@ -1318,8 +1553,14 @@ pub(crate) fn build_control_path_summary(context: &ControlPathSummaryContext<'_>
     let reframing = context.reframing;
     let convergence = context.convergence;
     let memory = context.memory;
+    let action_proposals = context.action_proposals;
+    let mediation = context.mediation;
     let freedom_gate = context.freedom_gate;
     let final_result = context.final_result;
+    let proposal = action_proposals
+        .proposals
+        .first()
+        .expect("control_path summary requires one proposal");
 
     [
         "v0.86 canonical bounded cognitive path summary".to_string(),
@@ -1360,6 +1601,18 @@ pub(crate) fn build_control_path_summary(context: &ControlPathSummaryContext<'_>
             route_outcome_class(&arbitration.route_selected),
             reframing_outcome_class(&reframing.reframing_trigger),
             gate_outcome_class(&freedom_gate.gate_decision)
+        ),
+        format!(
+            "action_proposal: kind={} target={} requires_approval={}",
+            proposal.kind,
+            proposal.target.clone().unwrap_or_else(|| "<none>".to_string()),
+            proposal.requires_approval
+        ),
+        format!(
+            "action_mediation: outcome={} authority={} follow_up={}",
+            mediation.mediation.mediation_outcome,
+            mediation.mediation.runtime_authority,
+            mediation.mediation.required_follow_up
         ),
         format!(
             "memory: read_count={} influenced_stage={} write_reason={}",
