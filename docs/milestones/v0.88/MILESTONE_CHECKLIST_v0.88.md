@@ -28,50 +28,50 @@ This milestone must prove a real temporal / PHI / instinct package with runnable
 ## Functional / System Proof (v0.88-specific)
 
 ### Temporal Foundations
-- [ ] Chronosense substrate is implemented as a real surface, not only a concept doc
-- [ ] Temporal schema carries the required anchors / clocks / execution posture fields
-- [ ] Continuity and identity semantics are reflected in at least one proof surface
-- [ ] Temporal retrieval, commitments, and causality claims are each demonstrated in bounded form
+- [x] Chronosense substrate is implemented as a real surface, not only a concept doc
+- [x] Temporal schema carries the required anchors / clocks / execution posture fields
+- [x] Continuity and identity semantics are reflected in at least one proof surface
+- [x] Temporal retrieval, commitments, and causality claims are each demonstrated in bounded form
 
 ### Execution Policy + Cost
-- [ ] Requested execution policy is visible in artifacts or trace
-- [ ] Realized cost is visible in artifacts or trace
-- [ ] At least one proof path compares requested posture to realized behavior
+- [x] Requested execution policy is visible in artifacts or trace
+- [x] Realized cost is visible in artifacts or trace
+- [x] At least one proof path compares requested posture to realized behavior
 
 ### PHI / Integration Metrics
-- [ ] PHI-style dimensions are explicitly named and reviewable
-- [ ] At least one bounded comparison exists across differently integrated execution paths
-- [ ] PHI output remains engineering-facing rather than metaphysical
+- [x] PHI-style dimensions are explicitly named and reviewable
+- [x] At least one bounded comparison exists across differently integrated execution paths
+- [x] PHI output remains engineering-facing rather than metaphysical
 
 ### Instinct + Bounded Agency
-- [ ] Instinct is declared explicitly in at least one runtime or artifact surface
-- [ ] Instinct affects routing, prioritization, or candidate selection in at least one bounded case
-- [ ] Policy bounds remain visible and in force when instinct affects behavior
+- [x] Instinct is declared explicitly in at least one runtime or artifact surface
+- [x] Instinct affects routing, prioritization, or candidate selection in at least one bounded case
+- [x] Policy bounds remain visible and in force when instinct affects behavior
 
 ### Artifacts + Proof Surfaces
-- [ ] Demo matrix is accurate and points to real commands
-- [ ] Reviewers can find the intended proof artifacts easily
-- [ ] Major milestone claims map to trace, artifacts, or demo outputs
-- [ ] Paper Sonata is strong enough to function as a flagship public-facing demo
+- [x] Demo matrix is accurate and points to real commands
+- [x] Reviewers can find the intended proof artifacts easily
+- [x] Major milestone claims map to trace, artifacts, or demo outputs
+- [x] Paper Sonata is strong enough to function as a flagship public-facing demo
 
 ## Quality Gates
 - [x] canonical quality gate defined (`docs/milestones/v0.88/QUALITY_GATE_v0.88.md`)
-- [ ] formatting / lint gates pass
-- [ ] test and CI gates pass
-- [ ] coverage signal is acceptable or exceptions are documented
-- [ ] D11 quality-gate walkthrough is runnable and current
-- [ ] no unresolved high-priority blockers remain
+- [x] formatting / lint gates pass
+- [x] test and CI gates pass
+- [x] coverage signal is acceptable or exceptions are documented
+- [x] D11 quality-gate walkthrough is runnable and current
+- [x] no unresolved high-priority blockers remain
 
 ## Documentation Integrity
 - [x] DESIGN, README, WBS, SPRINT, and feature-doc inventory agree on the milestone boundary
 - [x] demo matrix matches the actual runnable proof surface
-- [ ] checklist / release plan / quality gate agree on the same Sprint 3 posture
-- [ ] docs match implementation truthfully once the review-tail reconciliation pass is complete
+- [x] checklist / release plan / quality gate agree on the same Sprint 3 posture
+- [x] docs match implementation truthfully once the review-tail reconciliation pass is complete
 
 ## Review
-- [ ] internal review completed and findings recorded
-- [ ] external / 3rd-party review completed
-- [ ] review findings resolved or explicitly deferred with ownership
+- [x] internal review completed and findings recorded
+- [x] external / 3rd-party review completed
+- [x] review findings resolved or explicitly deferred with ownership
 
 ## Scope Hygiene
 - [x] Missing real feature docs promoted into tracked milestone canon
@@ -79,9 +79,9 @@ This milestone must prove a real temporal / PHI / instinct package with runnable
 - [x] Closeout structure aligned to the `v0.86` / `v0.87` pattern
 
 ## Release Packaging
-- [ ] release notes finalized against actual implementation truth
-- [ ] release ceremony inputs prepared
-- [ ] next milestone planning package prepared before ceremony
+- [x] release notes finalized against actual implementation truth
+- [x] release ceremony inputs prepared
+- [x] next milestone planning package prepared before ceremony
 
 ## Post-Release
 - [ ] milestone issues closed with release links

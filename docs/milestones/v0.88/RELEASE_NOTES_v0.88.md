@@ -2,11 +2,11 @@
 
 ## Status
 
-Pre-release closeout state.
+Final ceremony draft.
 
-`v0.88` now has a completed implementation wave through `WP-13` plus an active closeout tail through `WP-20`.
-These release notes are still provisional because the milestone is in quality / docs / review / release convergence, but they are no longer planning-only.
-The eventual release must be based on delivered code, tests, demos, artifacts, and review-tail evidence rather than on planning alignment alone.
+`v0.88` has a completed implementation wave through `WP-13` plus a completed review and planning tail through `WP-19`.
+These notes are now aligned to shipped milestone truth and are waiting only on the final release-ceremony publish steps on `main`.
+The release claim is based on delivered code, tests, demos, artifacts, and completed review-tail evidence rather than on planning alignment alone.
 
 Planning/package issues already represented:
 - `#1527`
@@ -28,11 +28,7 @@ Completed implementation issues already represented:
 - `#1656`
 - `#1657`
 
-Active closeout issues:
-- `#1659`
-- `#1660`
-- `#1661`
-- `#1662`
+Final ceremony issue:
 - `#1663`
 
 ## Current Public Package
@@ -55,7 +51,7 @@ Active closeout issues:
 - protected local follow-on planning remains for deepening `Paper Sonata`
   beyond the bounded `v0.88` slice.
 - The implementation and closeout issue wave exists; the remaining work is reviewer-truth convergence, review execution, remediation, and ceremony.
-- The current closeout tail runs through:
+- The closeout tail ran in the standard bounded order:
   - `WP-14` quality gate
   - `WP-15` docs + review pass
   - `WP-16` internal review
@@ -71,3 +67,9 @@ The canonical Sprint 3 quality posture is:
 - `docs/milestones/v0.88/QUALITY_GATE_v0.88.md`
 - `bash adl/tools/demo_v088_quality_gate.sh`
 - primary artifact: `artifacts/v088/quality_gate/quality_gate_record.json`
+
+The final ceremony gate is backed by:
+
+- `bash adl/tools/check_milestone_closed_issue_sor_truth.sh --version v0.88`
+- `bash adl/tools/check_release_notes_commands.sh`
+- latest green `main` CI run on commit `6bf4ef71c93a95d19819cbe53811253bbd724381`
