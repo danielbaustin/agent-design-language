@@ -130,9 +130,14 @@ and records a reviewer-facing findings artifact plus runtime proof.
 
 ### v0.89 bounded provider-participation demos
 
+- `v0.89/medium_article_writing_demo.md`
 - `v0.89/gemma4_issue_clerk_demo.md`
 - `v0.89/paper_sonata_demo_refresh.md`
 - `v0.89/multi_agent_repo_code_review_demo.md`
+
+Use `v0.89/medium_article_writing_demo.md` for a bounded publication-oriented
+demo where ADL turns one launch-essay brief into a reviewer-friendly article
+packet with outline, draft, editorial notes, and runtime proof.
 
 Use `v0.89/gemma4_issue_clerk_demo.md` for a bounded operational-participation
 demo where an Ollama-hosted Gemma-family model proposes one issue-init payload,
