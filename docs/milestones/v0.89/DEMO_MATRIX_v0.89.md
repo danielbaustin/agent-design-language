@@ -56,7 +56,7 @@ Additional environment / fixture requirements:
 | Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
 |---|---|---|---|---|---|---|---|
 | D1 | AEE convergence walkthrough | `WP-02` bounded convergence and stop conditions | planned `WP-02` entry point | convergence artifact + output record | reviewer can see converge / stall / bounded-out behavior | use deterministic fixtures for repeated stop-state verification | PLANNED |
-| D2 | Freedom Gate v2 judgment demo | `WP-03` richer allow / defer / refuse / escalate behavior | planned `WP-03` entry point | gate artifact + trace | reviewer can distinguish decision outcomes and rationale | stable test cases should replay to the same outcome class | PLANNED |
+| D2 | Freedom Gate v2 judgment demo | `WP-03` richer allow / defer / refuse / escalate behavior | `cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture` | `learning/freedom_gate.v1.json` + `control_path/final_result.json` | reviewer can distinguish decision outcome, judgment boundary, and follow-up | stable fixtures should replay to the same outcome class and escalation path | READY |
 | D3 | Decision + action mediation proof | `WP-04` - `WP-05` explicit choice and authorization boundary | planned `WP-04` / `WP-05` entry points | decision record + mediation artifact | reviewer can see model intent separated from authorized action | deterministic fixtures should preserve approval / rejection path | PLANNED |
 | D4 | Skill invocation contract demo | `WP-06` bounded skill execution protocol | planned `WP-06` entry point | invocation artifact + trace | invocation lifecycle is reviewer-legible end to end | replay should preserve lifecycle structure | PLANNED |
 | D5 | Experiment record demo | `WP-07` governed adopt / reject improvement behavior | planned `WP-07` entry point | experiment record artifact | reviewer can inspect baseline, variant, evidence, and decision | paired fixture runs should be stably comparable | PLANNED |
@@ -123,26 +123,28 @@ Description:
 
 Milestone claims / work packages covered:
 - `WP-03`
-- `WP-04`
 
 Commands to run:
 
 ```bash
-Defined when the official `WP-03` and `WP-04` issues open and land.
+cargo test --manifest-path adl/Cargo.toml freedom_gate -- --nocapture
+cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture
 ```
 
 Expected artifacts:
-- gate artifact path established by the gate implementation wave
-- decision record path established by the decision implementation wave
+- `learning/freedom_gate.v1.json`
+- `control_path/final_result.json`
+- `control_path/summary.txt`
 
 Primary proof surface:
-- gate artifact and decision record pair
+- gate artifact and final-result pair
 
 Expected success signals:
 - reviewer can see allow / defer / refuse / escalate distinctions
+- reviewer can inspect `judgment_boundary`, `required_follow_up`, and deterministic rationale fields
 
 Determinism / replay notes:
-- stable fixtures should preserve outcome class and rationale shape
+- stable fixtures should preserve outcome class, rationale shape, and escalation follow-up
 
 Reviewer checks:
 - verify the gate is a substrate boundary, not just prompt rhetoric

@@ -820,7 +820,7 @@ mod tests {
         assert!(out.join("trace.jsonl").is_file());
         let summary = std::fs::read_to_string(out.join("summary.txt")).unwrap();
         assert!(
-            summary.contains("final_result: defer"),
+            summary.contains("final_result: escalate"),
             "summary was:\n{summary}"
         );
     }

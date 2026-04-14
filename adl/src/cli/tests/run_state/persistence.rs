@@ -337,9 +337,13 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
             .expect("read freedom gate artifact"),
     )
     .expect("parse freedom gate artifact");
-    assert_eq!(freedom_gate.gate_decision, "defer");
-    assert_eq!(freedom_gate.reason_code, "frame_inadequate");
+    assert_eq!(freedom_gate.gate_decision, "escalate");
+    assert_eq!(freedom_gate.reason_code, "frame_escalation_required");
     assert!(freedom_gate.commitment_blocked);
+    assert_eq!(
+        freedom_gate.required_follow_up,
+        "escalate_for_judgment_review"
+    );
     assert_eq!(freedom_gate.input.candidate_id, "cand-custom-review");
 
     let convergence: run_artifacts::AeeConvergenceArtifact = serde_json::from_str(
@@ -394,8 +398,8 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
         control_path_final_result.selected_candidate,
         "cand-custom-review"
     );
-    assert_eq!(control_path_final_result.gate_decision, "defer");
-    assert_eq!(control_path_final_result.final_result, "defer");
+    assert_eq!(control_path_final_result.gate_decision, "escalate");
+    assert_eq!(control_path_final_result.final_result, "escalate");
 
     let control_path_summary =
         std::fs::read_to_string(run_dir.join("control_path/summary.txt")).expect("read summary");
@@ -406,7 +410,9 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
         "summary was:\n{control_path_summary}"
     );
     assert!(
-        control_path_summary.contains("freedom_gate: decision=defer"),
+        control_path_summary.contains(
+            "freedom_gate: decision=escalate reason_code=frame_escalation_required follow_up=escalate_for_judgment_review"
+        ),
         "summary was:\n{control_path_summary}"
     );
     assert!(
