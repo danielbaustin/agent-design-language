@@ -16,10 +16,16 @@ RUN_ROOT="$OUT_DIR/runtime/runs/v0-88-paper-sonata-demo"
 for required in \
   "$OUT_DIR/demo_manifest.json" \
   "$OUT_DIR/README.md" \
+  "$OUT_DIR/input_packet/packet_manifest.json" \
+  "$OUT_DIR/manuscript_package/abstract.md" \
   "$OUT_DIR/manuscript_package/plan.json" \
   "$OUT_DIR/manuscript_package/outline.md" \
   "$OUT_DIR/manuscript_package/literature_review.md" \
   "$OUT_DIR/manuscript_package/results_summary.md" \
+  "$OUT_DIR/manuscript_package/claim_matrix.md" \
+  "$OUT_DIR/manuscript_package/figures_spec.json" \
+  "$OUT_DIR/manuscript_package/revision_requests.json" \
+  "$OUT_DIR/manuscript_package/reviewer_brief.md" \
   "$OUT_DIR/manuscript_package/review_notes.md" \
   "$OUT_DIR/manuscript_package/paper_draft.md" \
   "$OUT_DIR/manuscript_package/sections/intro.md" \
@@ -44,7 +50,7 @@ import sys
 
 manifest = json.load(open(sys.argv[1], encoding="utf-8"))
 paper_draft = open(sys.argv[2], encoding="utf-8").read()
-if manifest.get("schema_version") != "adl.paper_sonata_demo.v1":
+if manifest.get("schema_version") != "adl.paper_sonata_demo.v2":
     raise SystemExit("unexpected Paper Sonata manifest schema")
 if manifest.get("demo_id") != "D8":
     raise SystemExit("unexpected demo id")
@@ -54,6 +60,23 @@ if roles != ["conductor", "scholar", "analyst", "composer", "editor"]:
 if "# Introduction" not in paper_draft or "# Discussion" not in paper_draft:
     raise SystemExit("paper draft missing expected sections")
 PY
+
+grep -Fq '"schema_version": "paper_sonata.packet_manifest.v2"' "$OUT_DIR/input_packet/packet_manifest.json" || {
+  echo "assertion failed: packet manifest schema mismatch" >&2
+  exit 1
+}
+grep -Fq '## Supported Claim' "$OUT_DIR/manuscript_package/claim_matrix.md" || {
+  echo "assertion failed: claim matrix missing supported claim section" >&2
+  exit 1
+}
+grep -Fq '"schema_version": "paper_sonata.revision_requests.v1"' "$OUT_DIR/manuscript_package/revision_requests.json" || {
+  echo "assertion failed: revision requests schema mismatch" >&2
+  exit 1
+}
+grep -Fq 'Review this package in the following order' "$OUT_DIR/manuscript_package/reviewer_brief.md" || {
+  echo "assertion failed: reviewer brief missing expected guidance" >&2
+  exit 1
+}
 
 grep -Fq '"run_id": "v0-88-paper-sonata-demo"' "$RUN_ROOT/run_summary.json" || {
   echo "assertion failed: run_summary missing run id" >&2

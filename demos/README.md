@@ -52,6 +52,12 @@ If you want the bounded Gemma 4 issue-clerk demo:
 bash adl/tools/demo_v089_gemma4_issue_clerk.sh --dry-run
 ```
 
+If you want the refreshed Paper Sonata flagship demo:
+
+```bash
+bash adl/tools/demo_v088_paper_sonata.sh
+```
+
 If you want the bounded multi-agent repo code review demo:
 
 ```bash
@@ -125,12 +131,17 @@ and records a reviewer-facing findings artifact plus runtime proof.
 ### v0.89 bounded provider-participation demos
 
 - `v0.89/gemma4_issue_clerk_demo.md`
+- `v0.89/paper_sonata_demo_refresh.md`
 - `v0.89/multi_agent_repo_code_review_demo.md`
 
 Use `v0.89/gemma4_issue_clerk_demo.md` for a bounded operational-participation
 demo where an Ollama-hosted Gemma-family model proposes one issue-init payload,
 ADL validates it, and the final result is either accepted deterministically or
 rejected truthfully.
+
+Use `v0.89/paper_sonata_demo_refresh.md` for the refreshed reviewer-facing
+Paper Sonata package. It keeps the bounded flagship workflow, but adds a packet
+manifest, claim matrix, revision requests, and a clearer reviewer brief.
 
 Use `v0.89/multi_agent_repo_code_review_demo.md` for a bounded specialist-reviewer
 demo where ADL prepares one repo review packet, emits code/security/test/docs

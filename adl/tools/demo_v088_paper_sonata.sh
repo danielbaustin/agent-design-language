@@ -13,6 +13,7 @@ MANUSCRIPT_DIR="$OUT_DIR/manuscript_package"
 INPUT_PACKET_DIR="$OUT_DIR/input_packet"
 MANIFEST="$OUT_DIR/demo_manifest.json"
 README_OUT="$OUT_DIR/README.md"
+PACKET_MANIFEST="$INPUT_PACKET_DIR/packet_manifest.json"
 
 require_fixture() {
   local path="$1"
@@ -51,6 +52,31 @@ rm -rf "$OUT_DIR"
 mkdir -p "$INPUT_PACKET_DIR" "$MANUSCRIPT_DIR/sections"
 cp "$FIXTURE_DIR/"* "$INPUT_PACKET_DIR/"
 
+python3 - "$PACKET_MANIFEST" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+manifest = {
+    "schema_version": "paper_sonata.packet_manifest.v2",
+    "packet_id": "paper_sonata.synthetic_packet.v1",
+    "inputs": [
+        "idea_summary.md",
+        "lab_notes.md",
+        "experiment_results.json",
+        "target_venue.md",
+        "citations_seed.json",
+        "paper_constraints.md",
+    ],
+    "notes": [
+        "synthetic bounded packet only",
+        "no live-web citation claims",
+        "no publication-readiness guarantee",
+    ],
+}
+Path(sys.argv[1]).write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+PY
+
 cd "$ROOT_DIR"
 
 ADL_RUNTIME_ROOT="$RUNTIME_ROOT" \
@@ -75,6 +101,116 @@ cp "$STEP_OUT/roles/06-composer-method.md" "$MANUSCRIPT_DIR/sections/method.md"
 cp "$STEP_OUT/roles/07-composer-results.md" "$MANUSCRIPT_DIR/sections/results.md"
 cp "$STEP_OUT/roles/08-composer-discussion.md" "$MANUSCRIPT_DIR/sections/discussion.md"
 
+cat >"$MANUSCRIPT_DIR/abstract.md" <<'EOF'
+# Abstract
+
+Paper Sonata demonstrates a bounded manuscript-assembly workflow in which five
+explicit roles transform one synthetic research packet into a reviewer-legible
+paper package. The claim is narrow and inspectable: explicit anchors and
+retained intermediate artifacts make manuscript assembly easier to review and
+replay without overclaiming autonomous scientific discovery.
+EOF
+
+cat >"$MANUSCRIPT_DIR/reviewer_brief.md" <<'EOF'
+# Reviewer Brief
+
+Review this package in the following order:
+
+1. `input_packet/packet_manifest.json`
+2. `manuscript_package/abstract.md`
+3. `manuscript_package/paper_draft.md`
+4. `manuscript_package/claim_matrix.md`
+5. `manuscript_package/revision_requests.json`
+6. `out/roles/`
+7. `runtime/runs/v0-88-paper-sonata-demo/run_summary.json`
+
+This demo proves bounded manuscript assembly with truthful runtime evidence. It
+does not claim publication readiness or autonomous scientific discovery.
+EOF
+
+python3 - "$FIXTURE_DIR/experiment_results.json" "$MANUSCRIPT_DIR/claim_matrix.md" "$MANUSCRIPT_DIR/figures_spec.json" "$MANUSCRIPT_DIR/revision_requests.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+results_path, claim_matrix_path, figures_path, revisions_path = [Path(arg) for arg in sys.argv[1:]]
+results = json.loads(results_path.read_text(encoding="utf-8"))
+metrics = results["metrics"]
+supported = results["supported_claim"]
+unsupported = results["unsupported_claim"]
+
+claim_matrix = f"""# Claim Matrix
+
+## Supported Claim
+- Claim: {supported}
+- Evidence:
+  - dropped handoff fields improved from {metrics['dropped_handoff_fields_baseline']} to {metrics['dropped_handoff_fields_anchored']}
+  - reviewer repair time improved from {metrics['reviewer_minutes_baseline']} to {metrics['reviewer_minutes_anchored']} minutes
+  - replay consistency score remained {metrics['replay_consistency_score']:.2f}
+
+## Unsupported Claim
+- Claim: {unsupported}
+- Reason:
+  - the packet is synthetic and bounded
+  - there is no evidence for general scientific autonomy
+"""
+claim_matrix_path.write_text(claim_matrix, encoding="utf-8")
+
+figures = {
+    "schema_version": "paper_sonata.figures_spec.v1",
+    "figures": [
+        {
+            "figure_id": "fig-01",
+            "title": "Anchored handoff completeness",
+            "chart": "bar",
+            "x": ["baseline", "anchored"],
+            "y": [
+                metrics["dropped_handoff_fields_baseline"],
+                metrics["dropped_handoff_fields_anchored"],
+            ],
+            "y_label": "Dropped handoff fields",
+        },
+        {
+            "figure_id": "fig-02",
+            "title": "Reviewer repair time",
+            "chart": "bar",
+            "x": ["baseline", "anchored"],
+            "y": [
+                metrics["reviewer_minutes_baseline"],
+                metrics["reviewer_minutes_anchored"],
+            ],
+            "y_label": "Minutes",
+        },
+    ],
+}
+figures_path.write_text(json.dumps(figures, indent=2) + "\n", encoding="utf-8")
+
+revisions = {
+    "schema_version": "paper_sonata.revision_requests.v1",
+    "requests": [
+        {
+            "id": "rev-01",
+            "priority": "high",
+            "request": "Keep the framing on bounded manuscript assembly, not discovery.",
+            "source": "editor.review_notes",
+        },
+        {
+            "id": "rev-02",
+            "priority": "medium",
+            "request": "Keep unsupported-claim caveats visible in reviewer-facing artifacts.",
+            "source": "analyst.results_summary",
+        },
+        {
+            "id": "rev-03",
+            "priority": "medium",
+            "request": "Show the packet manifest and trace bundle beside the draft package.",
+            "source": "editor.review_notes",
+        },
+    ],
+}
+revisions_path.write_text(json.dumps(revisions, indent=2) + "\n", encoding="utf-8")
+PY
+
 cat >"$MANUSCRIPT_DIR/paper_draft.md" <<'EOF'
 # Paper Sonata Draft
 
@@ -95,7 +231,7 @@ from pathlib import Path
 manifest_path = Path(sys.argv[1])
 run_id = sys.argv[2]
 manifest = {
-    "schema_version": "adl.paper_sonata_demo.v1",
+    "schema_version": "adl.paper_sonata_demo.v2",
     "demo_id": "D8",
     "title": "v0.88 Paper Sonata flagship demo",
     "command": "bash adl/tools/demo_v088_paper_sonata.sh",
@@ -113,11 +249,17 @@ manifest = {
     },
     "artifacts": {
         "input_packet_dir": "input_packet",
+        "packet_manifest": "input_packet/packet_manifest.json",
         "role_outputs_dir": "out/roles",
+        "abstract": "manuscript_package/abstract.md",
         "plan": "manuscript_package/plan.json",
         "outline": "manuscript_package/outline.md",
         "literature_review": "manuscript_package/literature_review.md",
         "results_summary": "manuscript_package/results_summary.md",
+        "claim_matrix": "manuscript_package/claim_matrix.md",
+        "figures_spec": "manuscript_package/figures_spec.json",
+        "revision_requests": "manuscript_package/revision_requests.json",
+        "reviewer_brief": "manuscript_package/reviewer_brief.md",
         "review_notes": "manuscript_package/review_notes.md",
         "paper_draft": "manuscript_package/paper_draft.md",
         "sections": {
@@ -153,6 +295,9 @@ bash adl/tools/demo_v088_paper_sonata.sh
 
 Primary proof surfaces:
 - \`demo_manifest.json\`
+- \`input_packet/packet_manifest.json\`
+- \`manuscript_package/reviewer_brief.md\`
+- \`manuscript_package/claim_matrix.md\`
 - \`manuscript_package/paper_draft.md\`
 - \`out/roles/\`
 - \`runtime/runs/$RUN_ID/run_summary.json\`
@@ -172,7 +317,7 @@ import sys
 
 manifest_path, paper_draft, run_summary, steps, trace = sys.argv[1:6]
 manifest = json.load(open(manifest_path, encoding="utf-8"))
-if manifest.get("schema_version") != "adl.paper_sonata_demo.v1":
+if manifest.get("schema_version") != "adl.paper_sonata_demo.v2":
     raise SystemExit("unexpected Paper Sonata manifest schema")
 for path in (paper_draft, run_summary, steps, trace):
     if not os.path.isfile(path):
@@ -183,6 +328,9 @@ sanitize_generated_artifacts
 
 echo "Paper Sonata proof surface under the output directory:"
 echo "  demo_manifest.json"
+echo "  input_packet/packet_manifest.json"
+echo "  manuscript_package/reviewer_brief.md"
+echo "  manuscript_package/claim_matrix.md"
 echo "  manuscript_package/paper_draft.md"
 echo "  out/roles/"
 echo "  runtime/runs/$RUN_ID/run_summary.json"
