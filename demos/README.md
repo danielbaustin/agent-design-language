@@ -92,6 +92,10 @@ multi-agent runtime demo that keeps Claude and ChatGPT as two explicit named
 agents in a longer act-structured tea discussion and emits a transcript plus runtime proof
 artifacts.
 
+Use `v0.89/gemini_in_the_loop_demo.md` for a bounded provider-harmony demo that
+packages one review packet for Gemini, validates Gemini's structured response,
+and records a reviewer-facing findings artifact plus runtime proof.
+
 ### v0.89 bounded provider-participation demos
 
 - `v0.89/gemma4_issue_clerk_demo.md`
