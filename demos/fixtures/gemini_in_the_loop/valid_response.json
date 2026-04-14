@@ -1,0 +1,22 @@
+{
+  "schema_version": "adl.gemini.review.v1",
+  "packet_id": "gemini_review_packet.v1",
+  "provider_family": "gemini",
+  "execution_mode": "bounded_http_profile",
+  "verdict": "accept",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "medium",
+      "title": "Keep runtime ownership explicit",
+      "detail": "The packet is strongest when ADL, not Gemini, stays visibly responsible for repo access, validation, and artifact writing."
+    },
+    {
+      "id": "F2",
+      "severity": "low",
+      "title": "Preserve the welcoming tone",
+      "detail": "The demo should frame Gemini as a welcomed participant and avoid benchmark-style comparison language."
+    }
+  ],
+  "synthesis": "Gemini contributes best here when ADL supplies the bounded packet, validates the output, and records a calm reviewer-facing artifact."
+}

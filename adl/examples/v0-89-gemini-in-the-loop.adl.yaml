@@ -1,0 +1,66 @@
+version: "0.5"
+
+providers:
+  gemini_loop:
+    profile: "http:gemini-2.0-flash"
+    config:
+      endpoint: "http://127.0.0.1:8789/complete"
+      auth:
+        type: bearer
+        env: GEMINI_API_KEY
+      headers:
+        X-Client: "adl-v0.89-gemini-loop"
+      timeout_secs: 15
+      model_ref: "reasoning/default"
+      provider_model_id: "gemini-2.0-flash"
+
+agents:
+  gemini_agent:
+    provider: "gemini_loop"
+    model: "reasoning/default"
+
+tasks:
+  review_packet:
+    prompt:
+      user: |
+        You are Gemini inside a bounded ADL review-packet demo.
+
+        Review packet:
+        {{packet}}
+
+        Return exactly one JSON object with this schema:
+        {
+          "schema_version": "adl.gemini.review.v1",
+          "packet_id": "string",
+          "provider_family": "gemini",
+          "execution_mode": "bounded_http_profile",
+          "verdict": "accept" | "revise",
+          "findings": [
+            {
+              "id": "F1",
+              "severity": "high" | "medium" | "low",
+              "title": "short title",
+              "detail": "one concise paragraph"
+            }
+          ],
+          "synthesis": "short bounded synthesis"
+        }
+
+        Rules:
+        - Preserve the packet_id exactly.
+        - Keep findings grounded in the provided packet only.
+        - Do not mention browsing the repo.
+        - Do not emit Markdown or commentary outside the JSON object.
+
+run:
+  name: "v0-89-gemini-in-the-loop"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "gemini.review.packet"
+        agent: "gemini_agent"
+        task: "review_packet"
+        inputs:
+          packet: "@file:packets/v0-89-gemini-in-the-loop-review-packet.md"
+        save_as: "gemini_review_output"
+        write_to: "review/01-gemini-review.json"
