@@ -342,6 +342,15 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
     assert!(freedom_gate.commitment_blocked);
     assert_eq!(freedom_gate.input.candidate_id, "cand-custom-review");
 
+    let convergence: run_artifacts::AeeConvergenceArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("control_path/convergence.json"))
+            .expect("read convergence artifact"),
+    )
+    .expect("parse convergence artifact");
+    assert_eq!(convergence.convergence_state, "policy_stop");
+    assert_eq!(convergence.stop_condition_family, "policy_boundary");
+    assert_eq!(convergence.progress_signal, "steady_progress");
+
     let memory_read: MemoryReadArtifact = serde_json::from_str(
         &std::fs::read_to_string(run_dir.join("learning/memory_read.v1.json"))
             .expect("read memory read artifact"),
@@ -398,6 +407,12 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
     );
     assert!(
         control_path_summary.contains("freedom_gate: decision=defer"),
+        "summary was:\n{control_path_summary}"
+    );
+    assert!(
+        control_path_summary.contains(
+            "convergence: state=policy_stop stop_condition_family=policy_boundary progress_signal=steady_progress"
+        ),
         "summary was:\n{control_path_summary}"
     );
 

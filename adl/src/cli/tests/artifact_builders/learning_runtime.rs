@@ -1,6 +1,262 @@
 use super::*;
 
 #[test]
+fn build_aee_convergence_artifact_distinguishes_core_outcome_classes() {
+    let generated_from = AeeDecisionGeneratedFrom {
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_summary_version: 1,
+        suggestions_version: 1,
+        scores_version: Some(1),
+    };
+    let run_summary = RunSummaryArtifact {
+        run_summary_version: 1,
+        artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+        run_id: "conv-run".to_string(),
+        workflow_id: "wf".to_string(),
+        adl_version: "0.89".to_string(),
+        swarm_version: "test".to_string(),
+        status: "success".to_string(),
+        error_kind: None,
+        counts: RunSummaryCounts {
+            total_steps: 2,
+            completed_steps: 2,
+            failed_steps: 0,
+            provider_call_count: 1,
+            delegation_steps: 0,
+            delegation_requires_verification_steps: 0,
+        },
+        policy: RunSummaryPolicy {
+            security_envelope_enabled: false,
+            signing_required: false,
+            key_id_required: false,
+            verify_allowed_algs: Vec::new(),
+            verify_allowed_key_sources: Vec::new(),
+            sandbox_policy: "centralized_path_resolver_v1".to_string(),
+            security_denials_by_code: BTreeMap::new(),
+        },
+        links: RunSummaryLinks {
+            run_json: "run.json".to_string(),
+            steps_json: "steps.json".to_string(),
+            pause_state_json: None,
+            outputs_dir: "outputs".to_string(),
+            logs_dir: "logs".to_string(),
+            learning_dir: "learning".to_string(),
+            scores_json: None,
+            suggestions_json: None,
+            aee_decision_json: None,
+            cognitive_signals_json: None,
+            fast_slow_path_json: None,
+            agency_selection_json: None,
+            bounded_execution_json: None,
+            evaluation_signals_json: None,
+            cognitive_arbitration_json: None,
+            affect_state_json: None,
+            reasoning_graph_json: None,
+            overlays_dir: "learning/overlays".to_string(),
+            cluster_groundwork_json: None,
+            trace_json: None,
+        },
+    };
+    let bounded_execution = run_artifacts::BoundedExecutionArtifact {
+        bounded_execution_version: 1,
+        run_id: "conv-run".to_string(),
+        generated_from: generated_from.clone(),
+        selected_candidate_id: "cand-a".to_string(),
+        selected_path: "slow_path".to_string(),
+        execution_status: "completed".to_string(),
+        continuation_state: "bounded_review_complete".to_string(),
+        provisional_termination_state: "ready_for_evaluation".to_string(),
+        iteration_count: 2,
+        iterations: vec![
+            execute::BoundedExecutionIteration {
+                iteration_index: 1,
+                stage: "review".to_string(),
+                action: "review".to_string(),
+                outcome: "improve".to_string(),
+            },
+            execute::BoundedExecutionIteration {
+                iteration_index: 2,
+                stage: "execute".to_string(),
+                action: "execute".to_string(),
+                outcome: "complete".to_string(),
+            },
+        ],
+        deterministic_execution_rule: "rule".to_string(),
+    };
+    let converged_evaluation = run_artifacts::EvaluationSignalsArtifact {
+        evaluation_signals_version: 1,
+        run_id: "conv-run".to_string(),
+        generated_from: generated_from.clone(),
+        selected_candidate_id: "cand-a".to_string(),
+        selected_path: "slow_path".to_string(),
+        progress_signal: "steady_progress".to_string(),
+        contradiction_signal: "none".to_string(),
+        failure_signal: "none".to_string(),
+        termination_reason: "success".to_string(),
+        behavior_effect: "complete".to_string(),
+        next_control_action: "complete_run".to_string(),
+        deterministic_evaluation_rule: "rule".to_string(),
+    };
+    let stalled_evaluation = run_artifacts::EvaluationSignalsArtifact {
+        termination_reason: "bounded_failure".to_string(),
+        progress_signal: "stalled_progress".to_string(),
+        failure_signal: "bounded_failure_detected".to_string(),
+        next_control_action: "handoff_to_reframing".to_string(),
+        ..converged_evaluation.clone()
+    };
+    let bounded_out_evaluation = run_artifacts::EvaluationSignalsArtifact {
+        termination_reason: "no_progress".to_string(),
+        progress_signal: "stalled_progress".to_string(),
+        failure_signal: "bounded_failure_detected".to_string(),
+        next_control_action: "terminate_with_failure".to_string(),
+        ..converged_evaluation.clone()
+    };
+    let handoff_evaluation = run_artifacts::EvaluationSignalsArtifact {
+        termination_reason: "pause_boundary".to_string(),
+        progress_signal: "guarded_progress".to_string(),
+        failure_signal: "none".to_string(),
+        next_control_action: "await_resume".to_string(),
+        ..converged_evaluation.clone()
+    };
+    let steady_reframing = run_artifacts::ReframingArtifact {
+        reframing_version: 1,
+        run_id: "conv-run".to_string(),
+        generated_from: generated_from.clone(),
+        selected_candidate_id: "cand-a".to_string(),
+        selected_path: "slow_path".to_string(),
+        frame_adequacy_score: 88,
+        reframing_trigger: "not_triggered".to_string(),
+        reframing_reason: "adequate".to_string(),
+        prior_frame: "direct".to_string(),
+        new_frame: "retain".to_string(),
+        reexecution_choice: "no_reframe_required".to_string(),
+        post_reframe_state: "complete_run".to_string(),
+        deterministic_reframing_rule: "rule".to_string(),
+    };
+    let triggered_reframing = run_artifacts::ReframingArtifact {
+        reframing_trigger: "triggered".to_string(),
+        reexecution_choice: "bounded_reframe_and_retry".to_string(),
+        ..steady_reframing.clone()
+    };
+    let allow_gate = run_artifacts::FreedomGateArtifact {
+        freedom_gate_version: 1,
+        run_id: "conv-run".to_string(),
+        generated_from: generated_from.clone(),
+        input: execute::FreedomGateInputState {
+            candidate_id: "cand-a".to_string(),
+            candidate_action: "execute".to_string(),
+            candidate_rationale: "execute the reviewed bounded candidate".to_string(),
+            risk_class: "bounded".to_string(),
+            policy_context: execute::FreedomGatePolicyContextState {
+                route_selected: "slow".to_string(),
+                selected_candidate_kind: "review_and_refine".to_string(),
+                requires_review: true,
+                policy_blocked: false,
+            },
+            evaluation_signals: execute::FreedomGateEvaluationSignalsState {
+                progress_signal: "steady_progress".to_string(),
+                contradiction_signal: "none".to_string(),
+                failure_signal: "none".to_string(),
+                termination_reason: "success".to_string(),
+            },
+            frame_state: "retain_current_frame".to_string(),
+        },
+        gate_decision: "allow".to_string(),
+        reason_code: "within_policy".to_string(),
+        decision_reason: "allowed".to_string(),
+        selected_action_or_none: Some("execute".to_string()),
+        commitment_blocked: false,
+        deterministic_gate_rule: "rule".to_string(),
+    };
+    let defer_gate = run_artifacts::FreedomGateArtifact {
+        gate_decision: "defer".to_string(),
+        reason_code: "frame_inadequate".to_string(),
+        decision_reason: "defer".to_string(),
+        selected_action_or_none: None,
+        commitment_blocked: true,
+        ..allow_gate.clone()
+    };
+    let scores = ScoresArtifact {
+        scores_version: 1,
+        run_id: "conv-run".to_string(),
+        generated_from: ScoresGeneratedFrom {
+            artifact_model_version: artifacts::ARTIFACT_MODEL_VERSION,
+            run_summary_version: 1,
+        },
+        summary: ScoresSummary {
+            success_ratio: 1.0,
+            failure_count: 0,
+            retry_count: 0,
+            delegation_denied_count: 0,
+            security_denied_count: 0,
+        },
+        metrics: ScoresMetrics {
+            scheduler_max_parallel_observed: 1,
+        },
+    };
+
+    let converged = run_artifacts::build_aee_convergence_artifact(
+        &run_summary,
+        &bounded_execution,
+        &converged_evaluation,
+        &steady_reframing,
+        &allow_gate,
+        Some(&scores),
+    );
+    assert_eq!(converged.convergence_state, "converged");
+    assert_eq!(converged.stop_condition_family, "acceptance_satisfied");
+    assert!(converged.strategy_change_visible);
+
+    let stalled = run_artifacts::build_aee_convergence_artifact(
+        &run_summary,
+        &bounded_execution,
+        &stalled_evaluation,
+        &triggered_reframing,
+        &allow_gate,
+        Some(&scores),
+    );
+    assert_eq!(stalled.convergence_state, "stalled");
+    assert_eq!(stalled.stop_condition_family, "bounded_failure_cluster");
+
+    let bounded_out = run_artifacts::build_aee_convergence_artifact(
+        &run_summary,
+        &bounded_execution,
+        &bounded_out_evaluation,
+        &steady_reframing,
+        &allow_gate,
+        Some(&scores),
+    );
+    assert_eq!(bounded_out.convergence_state, "bounded_out");
+    assert_eq!(
+        bounded_out.stop_condition_family,
+        "no_meaningful_improvement"
+    );
+
+    let handoff = run_artifacts::build_aee_convergence_artifact(
+        &run_summary,
+        &bounded_execution,
+        &handoff_evaluation,
+        &steady_reframing,
+        &allow_gate,
+        Some(&scores),
+    );
+    assert_eq!(handoff.convergence_state, "handoff");
+    assert_eq!(handoff.stop_condition_family, "handoff_or_missing_input");
+
+    let policy_stop = run_artifacts::build_aee_convergence_artifact(
+        &run_summary,
+        &bounded_execution,
+        &stalled_evaluation,
+        &triggered_reframing,
+        &defer_gate,
+        Some(&scores),
+    );
+    assert_eq!(policy_stop.convergence_state, "policy_stop");
+    assert_eq!(policy_stop.stop_condition_family, "policy_boundary");
+    assert!(policy_stop.reviewer_summary.contains("policy_stop"));
+}
+
+#[test]
 fn build_reframing_artifact_is_deterministic_and_distinguishes_triggered_paths() {
     let success_summary = RunSummaryArtifact {
         run_summary_version: 1,
