@@ -511,8 +511,9 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
         })?;
     }
 
+    let finish_validation_mode = select_finish_validation_mode(&parsed.paths)?;
     if !parsed.no_checks {
-        run_batched_checks_rust(&repo_root)?;
+        run_finish_validation_rust(&repo_root, finish_validation_mode)?;
     }
 
     stage_selected_paths_rust(&repo_root, &parsed.paths)?;
@@ -537,6 +538,11 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
     } else {
         Some(format!("Closes #{}", parsed.issue))
     };
+    let default_validation = if parsed.no_checks {
+        None
+    } else {
+        Some(render_default_finish_validation(finish_validation_mode))
+    };
     let fingerprint = finish_inputs_fingerprint(
         &parsed.title,
         &parsed.paths,
@@ -548,7 +554,7 @@ fn real_pr_finish(args: &[String]) -> Result<()> {
         &input_path,
         &output_path,
         parsed.extra_body.as_deref(),
-        parsed.no_checks,
+        default_validation.as_deref(),
         &fingerprint,
         &repo_root,
     )?;
@@ -945,11 +951,56 @@ fn validate_completed_sor(repo_root: &Path, output_path: &Path) -> Result<()> {
     })
 }
 
-fn run_batched_checks_rust(repo_root: &Path) -> Result<()> {
-    let manifest = repo_root.join("adl/Cargo.toml");
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum FinishValidationMode {
+    DocsOnly,
+    FullRust,
+}
+
+fn finish_validation_guard(repo_root: &Path) -> Result<()> {
     let tracked_residue_guard =
         repo_root.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh");
-    run_status("bash", &[path_str(&tracked_residue_guard)?])?;
+    run_status("bash", &[path_str(&tracked_residue_guard)?])
+}
+
+fn select_finish_validation_mode(paths_csv: &str) -> Result<FinishValidationMode> {
+    let paths = paths_csv
+        .split(',')
+        .map(str::trim)
+        .filter(|path| !path.is_empty())
+        .collect::<Vec<_>>();
+    if paths.is_empty() {
+        bail!("finish: --paths resolved to empty");
+    }
+    if paths.iter().all(|path| finish_path_is_docs_only(path)) {
+        return Ok(FinishValidationMode::DocsOnly);
+    }
+    Ok(FinishValidationMode::FullRust)
+}
+
+fn finish_path_is_docs_only(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    if trimmed.is_empty() {
+        return false;
+    }
+    if trimmed == "docs" || trimmed.starts_with("docs/") {
+        return true;
+    }
+    !trimmed.contains('/')
+        && Path::new(trimmed)
+            .extension()
+            .and_then(|ext| ext.to_str())
+            .is_some_and(|ext| ext.eq_ignore_ascii_case("md"))
+}
+
+fn run_finish_validation_rust(repo_root: &Path, mode: FinishValidationMode) -> Result<()> {
+    finish_validation_guard(repo_root)?;
+    if mode == FinishValidationMode::DocsOnly {
+        run_status("git", &["-C", path_str(repo_root)?, "diff", "--check"])?;
+        return Ok(());
+    }
+
+    let manifest = repo_root.join("adl/Cargo.toml");
     run_status(
         "cargo",
         &[
@@ -974,6 +1025,23 @@ fn run_batched_checks_rust(repo_root: &Path) -> Result<()> {
     )?;
     run_status("cargo", &["test", "--manifest-path", path_str(&manifest)?])?;
     Ok(())
+}
+
+fn render_default_finish_validation(mode: FinishValidationMode) -> String {
+    match mode {
+        FinishValidationMode::DocsOnly => [
+            "- bash adl/tools/check_no_tracked_adl_issue_record_residue.sh",
+            "- git diff --check",
+        ]
+        .join("\n"),
+        FinishValidationMode::FullRust => [
+            "- bash adl/tools/check_no_tracked_adl_issue_record_residue.sh",
+            "- cargo fmt",
+            "- cargo clippy --all-targets -- -D warnings",
+            "- cargo test",
+        ]
+        .join("\n"),
+    }
 }
 
 fn ensure_issue_surfaces_are_local_only(
@@ -1171,7 +1239,7 @@ fn render_pr_body(
     input_path: &Path,
     output_path: &Path,
     extra_body: Option<&str>,
-    no_checks: bool,
+    default_validation: Option<&str>,
     fingerprint: &str,
     repo_root: &Path,
 ) -> Result<String> {
@@ -1206,11 +1274,9 @@ fn render_pr_body(
         parts.push("## Validation".to_string());
         parts.push(validation);
         parts.push(String::new());
-    } else if !no_checks {
+    } else if let Some(default_validation) = default_validation {
         parts.push("## Validation".to_string());
-        parts.push("- cargo fmt".to_string());
-        parts.push("- cargo clippy --all-targets -- -D warnings".to_string());
-        parts.push("- cargo test".to_string());
+        parts.push(default_validation.to_string());
         parts.push(String::new());
     }
     if let Some(extra) = extra_body {
