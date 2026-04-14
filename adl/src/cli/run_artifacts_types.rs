@@ -603,6 +603,9 @@ pub(crate) struct FreedomGateArtifact {
     pub(crate) decision_reason: String,
     pub(crate) selected_action_or_none: Option<String>,
     pub(crate) commitment_blocked: bool,
+    pub(crate) judgment_boundary: String,
+    pub(crate) required_follow_up: String,
+    pub(crate) decision_record_kind: String,
     pub(crate) deterministic_gate_rule: String,
 }
 

@@ -159,6 +159,12 @@ fn build_aee_convergence_artifact_distinguishes_core_outcome_classes() {
                 failure_signal: "none".to_string(),
                 termination_reason: "success".to_string(),
             },
+            consequence_context: execute::FreedomGateConsequenceContextState {
+                impact_scope: "local_bounded".to_string(),
+                recovery_cost: "low".to_string(),
+                operator_visibility: "routine".to_string(),
+                escalation_available: false,
+            },
             frame_state: "retain_current_frame".to_string(),
         },
         gate_decision: "allow".to_string(),
@@ -166,6 +172,9 @@ fn build_aee_convergence_artifact_distinguishes_core_outcome_classes() {
         decision_reason: "allowed".to_string(),
         selected_action_or_none: Some("execute".to_string()),
         commitment_blocked: false,
+        judgment_boundary: "commitment_boundary".to_string(),
+        required_follow_up: "commit_selected_action".to_string(),
+        decision_record_kind: "gate_allow_record".to_string(),
         deterministic_gate_rule: "rule".to_string(),
     };
     let defer_gate = run_artifacts::FreedomGateArtifact {
@@ -174,6 +183,9 @@ fn build_aee_convergence_artifact_distinguishes_core_outcome_classes() {
         decision_reason: "defer".to_string(),
         selected_action_or_none: None,
         commitment_blocked: true,
+        judgment_boundary: "frame_boundary".to_string(),
+        required_follow_up: "reframe_before_commitment".to_string(),
+        decision_record_kind: "gate_defer_record".to_string(),
         ..allow_gate.clone()
     };
     let scores = ScoresArtifact {
@@ -798,14 +810,24 @@ fn build_freedom_gate_artifact_is_deterministic_and_blocks_commitment_when_not_a
                 failure_signal: "none".to_string(),
                 termination_reason: "contradiction_detected".to_string(),
             },
+            consequence_context: execute::FreedomGateConsequenceContextState {
+                impact_scope: "cross_surface".to_string(),
+                recovery_cost: "requires_reframing".to_string(),
+                operator_visibility: "review_required".to_string(),
+                escalation_available: true,
+            },
             frame_state: "ready_for_reframed_execution".to_string(),
         },
-        gate_decision: "defer".to_string(),
-        reason_code: "frame_inadequate".to_string(),
-        decision_reason: "frame state requires bounded reframing before commitment can be allowed"
-            .to_string(),
+        gate_decision: "escalate".to_string(),
+        reason_code: "frame_escalation_required".to_string(),
+        decision_reason:
+            "frame state and consequence context require explicit escalation before commitment can proceed"
+                .to_string(),
         selected_action_or_none: None,
         commitment_blocked: true,
+        judgment_boundary: "judgment_boundary".to_string(),
+        required_follow_up: "escalate_for_judgment_review".to_string(),
+        decision_record_kind: "gate_escalation_record".to_string(),
     };
 
     let left = run_artifacts::build_freedom_gate_artifact(
@@ -824,10 +846,11 @@ fn build_freedom_gate_artifact_is_deterministic_and_blocks_commitment_when_not_a
         serde_json::to_value(&left).expect("freedom gate left"),
         serde_json::to_value(&right).expect("freedom gate right")
     );
-    assert_eq!(left.gate_decision, "defer");
-    assert_eq!(left.reason_code, "frame_inadequate");
+    assert_eq!(left.gate_decision, "escalate");
+    assert_eq!(left.reason_code, "frame_escalation_required");
     assert!(left.commitment_blocked);
     assert!(left.selected_action_or_none.is_none());
+    assert_eq!(left.decision_record_kind, "gate_escalation_record");
 }
 
 #[test]

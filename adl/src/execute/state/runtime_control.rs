@@ -146,6 +146,9 @@ pub struct FreedomGateState {
     pub decision_reason: String,
     pub selected_action_or_none: Option<String>,
     pub commitment_blocked: bool,
+    pub judgment_boundary: String,
+    pub required_follow_up: String,
+    pub decision_record_kind: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -157,6 +160,7 @@ pub struct FreedomGateInputState {
     pub risk_class: String,
     pub policy_context: FreedomGatePolicyContextState,
     pub evaluation_signals: FreedomGateEvaluationSignalsState,
+    pub consequence_context: FreedomGateConsequenceContextState,
     pub frame_state: String,
 }
 
@@ -176,6 +180,15 @@ pub struct FreedomGateEvaluationSignalsState {
     pub contradiction_signal: String,
     pub failure_signal: String,
     pub termination_reason: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FreedomGateConsequenceContextState {
+    pub impact_scope: String,
+    pub recovery_cost: String,
+    pub operator_visibility: String,
+    pub escalation_available: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -967,6 +980,32 @@ fn derive_freedom_gate_state(
             failure_signal: evaluation.failure_signal.clone(),
             termination_reason: evaluation.termination_reason.clone(),
         },
+        consequence_context: freedom_gate::FreedomGateConsequenceContext {
+            impact_scope: if arbitration.risk_class == "high" {
+                "cross_surface".to_string()
+            } else {
+                "local_bounded".to_string()
+            },
+            recovery_cost: if evaluation.next_control_action == "handoff_to_reframing" {
+                "requires_reframing".to_string()
+            } else if arbitration.route_selected == "slow" {
+                "bounded_review_replay".to_string()
+            } else {
+                "low".to_string()
+            },
+            operator_visibility: if arbitration.risk_class == "high"
+                || arbitration.route_selected == "slow"
+                || evaluation.contradiction_signal == "present"
+            {
+                "review_required".to_string()
+            } else {
+                "routine".to_string()
+            },
+            escalation_available: arbitration.route_selected == "slow"
+                || arbitration.risk_class == "high"
+                || evaluation.contradiction_signal == "present"
+                || evaluation.failure_signal != "none",
+        },
         frame_state: reframing.post_reframe_state.clone(),
     };
     let decision = freedom_gate::evaluate_freedom_gate(&input);
@@ -989,6 +1028,12 @@ fn derive_freedom_gate_state(
                 failure_signal: input.evaluation_signals.failure_signal,
                 termination_reason: input.evaluation_signals.termination_reason,
             },
+            consequence_context: FreedomGateConsequenceContextState {
+                impact_scope: input.consequence_context.impact_scope,
+                recovery_cost: input.consequence_context.recovery_cost,
+                operator_visibility: input.consequence_context.operator_visibility,
+                escalation_available: input.consequence_context.escalation_available,
+            },
             frame_state: input.frame_state,
         },
         gate_decision: decision.gate_decision,
@@ -996,6 +1041,9 @@ fn derive_freedom_gate_state(
         decision_reason: decision.decision_reason,
         selected_action_or_none: decision.selected_action_or_none,
         commitment_blocked: decision.commitment_blocked,
+        judgment_boundary: decision.judgment_boundary,
+        required_follow_up: decision.required_follow_up,
+        decision_record_kind: decision.decision_record_kind,
     }
 }
 

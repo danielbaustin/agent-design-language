@@ -898,8 +898,11 @@ pub(crate) fn build_freedom_gate_artifact(
         decision_reason: state.decision_reason.clone(),
         selected_action_or_none: state.selected_action_or_none.clone(),
         commitment_blocked: state.commitment_blocked,
+        judgment_boundary: state.judgment_boundary.clone(),
+        required_follow_up: state.required_follow_up.clone(),
+        decision_record_kind: state.decision_record_kind.clone(),
         deterministic_gate_rule:
-            "derive allow/defer/refuse commitment decisions from execute-owned freedom-gate input state before action commitment and without hidden bypass paths"
+            "derive allow/defer/refuse/escalate judgment decisions from execute-owned freedom-gate input state before action commitment and without hidden bypass paths"
                 .to_string(),
     }
 }
@@ -1080,6 +1083,7 @@ pub(crate) fn build_control_path_final_result_artifact(
             .unwrap_or_else(|| agency.selected_candidate_reason.clone()),
         "defer" => "defer".to_string(),
         "refuse" => "refuse".to_string(),
+        "escalate" => "escalate".to_string(),
         other => format!("unrecognized_gate_decision:{other}"),
     };
 
@@ -1158,8 +1162,11 @@ pub(crate) fn build_control_path_summary(context: &ControlPathSummaryContext<'_>
             memory.read.read_count, memory.read.influenced_stage, memory.write.write_reason
         ),
         format!(
-            "freedom_gate: decision={} reason_code={} commitment_blocked={}",
-            freedom_gate.gate_decision, freedom_gate.reason_code, freedom_gate.commitment_blocked
+            "freedom_gate: decision={} reason_code={} follow_up={} commitment_blocked={}",
+            freedom_gate.gate_decision,
+            freedom_gate.reason_code,
+            freedom_gate.required_follow_up,
+            freedom_gate.commitment_blocked
         ),
         format!("final_result: {}", final_result.final_result),
     ]

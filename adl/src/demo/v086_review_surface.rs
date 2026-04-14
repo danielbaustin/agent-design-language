@@ -123,15 +123,24 @@ fn custom_v086_control_path_runtime() -> execute::RuntimeControlState {
                     failure_signal: "none".to_string(),
                     termination_reason: "contradiction_detected".to_string(),
                 },
+                consequence_context: execute::FreedomGateConsequenceContextState {
+                    impact_scope: "cross_surface".to_string(),
+                    recovery_cost: "requires_reframing".to_string(),
+                    operator_visibility: "review_required".to_string(),
+                    escalation_available: true,
+                },
                 frame_state: "ready_for_reframed_execution".to_string(),
             },
-            gate_decision: "defer".to_string(),
-            reason_code: "frame_inadequate".to_string(),
+            gate_decision: "escalate".to_string(),
+            reason_code: "frame_escalation_required".to_string(),
             decision_reason:
-                "frame state requires bounded reframing before commitment can be allowed"
+                "frame state and consequence context require explicit escalation before commitment can proceed"
                     .to_string(),
             selected_action_or_none: None,
             commitment_blocked: true,
+            judgment_boundary: "judgment_boundary".to_string(),
+            required_follow_up: "escalate_for_judgment_review".to_string(),
+            decision_record_kind: "gate_escalation_record".to_string(),
         },
         memory: execute::MemoryParticipationState {
             read: execute::MemoryReadState {
@@ -309,6 +318,9 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         "decision_reason": runtime.freedom_gate.decision_reason,
         "selected_action_or_none": runtime.freedom_gate.selected_action_or_none,
         "commitment_blocked": runtime.freedom_gate.commitment_blocked,
+        "judgment_boundary": runtime.freedom_gate.judgment_boundary,
+        "required_follow_up": runtime.freedom_gate.required_follow_up,
+        "decision_record_kind": runtime.freedom_gate.decision_record_kind,
         "deterministic_gate_rule": "demo deterministic freedom gate"
     });
     let convergence = serde_json::json!({
@@ -328,8 +340,9 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         "strategy_change_visible": true,
         "reframing_trigger": runtime.reframing.reframing_trigger,
         "reviewer_summary": format!(
-            "AEE convergence ended as 'policy_stop' after 2 bounded iteration(s); progress signal '{}' led to stop family 'policy_boundary' with next control action 'handoff_to_reframing' and gate decision 'defer'.",
-            runtime.evaluation.progress_signal
+            "AEE convergence ended as 'policy_stop' after 2 bounded iteration(s); progress signal '{}' led to stop family 'policy_boundary' with next control action 'handoff_to_reframing' and gate decision '{}'.",
+            runtime.evaluation.progress_signal,
+            runtime.freedom_gate.gate_decision
         ),
         "deterministic_convergence_rule": "demo deterministic convergence projection"
     });
@@ -339,8 +352,8 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         "route_selected": "slow",
         "selected_candidate": "cand-custom-review",
         "termination_reason": "contradiction_detected",
-        "gate_decision": "defer",
-        "final_result": "defer",
+        "gate_decision": runtime.freedom_gate.gate_decision,
+        "final_result": runtime.freedom_gate.gate_decision,
         "commitment_blocked": true,
         "next_control_action": "handoff_to_reframing",
         "stage_order": [
@@ -370,8 +383,8 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
             runtime.evaluation.progress_signal
         ),
         "memory: read_count=1 influenced_stage=reframing write_reason=record_failure_for_future_reframing_context".to_string(),
-        "freedom_gate: decision=defer reason_code=frame_inadequate commitment_blocked=true".to_string(),
-        "final_result: defer".to_string(),
+        "freedom_gate: decision=escalate reason_code=frame_escalation_required follow_up=escalate_for_judgment_review commitment_blocked=true".to_string(),
+        "final_result: escalate".to_string(),
     ]
     .join("\n");
 
@@ -602,6 +615,12 @@ pub fn write_v086_freedom_gate_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
             failure_signal: "none".to_string(),
             termination_reason: "success".to_string(),
         },
+        consequence_context: freedom_gate::FreedomGateConsequenceContext {
+            impact_scope: "local_bounded".to_string(),
+            recovery_cost: "low".to_string(),
+            operator_visibility: "routine".to_string(),
+            escalation_available: false,
+        },
         frame_state: "complete_run".to_string(),
     };
     let blocked = freedom_gate::FreedomGateInput {
@@ -620,6 +639,12 @@ pub fn write_v086_freedom_gate_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
             contradiction_signal: "present".to_string(),
             failure_signal: "none".to_string(),
             termination_reason: "contradiction_detected".to_string(),
+        },
+        consequence_context: freedom_gate::FreedomGateConsequenceContext {
+            impact_scope: "cross_surface".to_string(),
+            recovery_cost: "high".to_string(),
+            operator_visibility: "review_required".to_string(),
+            escalation_available: false,
         },
         frame_state: "complete_run".to_string(),
     };
