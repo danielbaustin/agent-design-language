@@ -418,6 +418,35 @@ fn cli_artifact_validate_control_path_rejects_missing_required_artifact() {
 }
 
 #[test]
+fn cli_artifact_validate_control_path_rejects_missing_decisions_artifact() {
+    let out_dir = unique_temp_dir("adl-control-path-validate-missing-decisions");
+    real_demo(&[
+        "demo-g-v086-control-path".to_string(),
+        "--run".to_string(),
+        "--no-open".to_string(),
+        "--out".to_string(),
+        out_dir.to_string_lossy().to_string(),
+    ])
+    .expect("control-path demo should succeed");
+
+    let control_path_root = out_dir.join("demo-g-v086-control-path");
+    std::fs::remove_file(control_path_root.join("decisions.json"))
+        .expect("remove decisions artifact");
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject missing decisions artifact");
+    assert!(err
+        .to_string()
+        .contains("missing required control-path artifact"));
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
 fn cli_artifact_validate_control_path_rejects_malformed_artifact() {
     let out_dir = unique_temp_dir("adl-control-path-validate-malformed");
     real_demo(&[

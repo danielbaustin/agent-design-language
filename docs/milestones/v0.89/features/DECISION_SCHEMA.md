@@ -28,6 +28,36 @@ Define the bounded record shape that makes ADL decisions legible in trace, revie
 - outcome classes are not collapsed into generic success/failure
 - rationale and constraint bindings remain reviewable
 
+## Runtime Contract
+
+`WP-04` now defines a bounded reviewer-facing record shape for milestone-critical runtime
+decisions.
+
+The canonical runtime proof surface is:
+- `control_path/decisions.json`
+
+The decision schema used there makes these fields explicit:
+- `decision_id`
+- `surface_id`
+- `proposal_or_action`
+- `outcome_class`
+- `decision_maker`
+- `policy_bindings`
+- `rationale`
+- `downstream_consequence`
+- `temporal_anchor`
+
+The bounded outcome vocabulary for `v0.89` is:
+- `accept`
+- `reject`
+- `defer`
+- `escalate`
+- `reroute`
+
+This keeps decision records reviewer-legible and reusable across runtime artifacts without
+pretending `WP-04` already owns the full action mediation layer, negotiation transcripts, or
+later constitutional/governance work.
+
 ## Non-Goals
 
 - full negotiation transcript capture
@@ -43,3 +73,4 @@ Define the bounded record shape that makes ADL decisions legible in trace, revie
 
 - reviewers can answer what was decided, why, and under what constraints
 - decision-event language is consistent across planning docs and future issue wave seeding
+- the control-path proof set emits a stable decision record artifact with the bounded schema

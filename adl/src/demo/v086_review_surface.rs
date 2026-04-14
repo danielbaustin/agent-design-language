@@ -346,6 +346,100 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         ),
         "deterministic_convergence_rule": "demo deterministic convergence projection"
     });
+    let decisions = serde_json::json!({
+        "control_path_decisions_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
+        "decision_schema_name": "adl.runtime.decision.v1",
+        "decision_schema_fields": [
+            "decision_id",
+            "surface_id",
+            "proposal_or_action",
+            "outcome_class",
+            "decision_maker",
+            "policy_bindings",
+            "rationale",
+            "downstream_consequence",
+            "temporal_anchor"
+        ],
+        "outcome_class_vocabulary": [
+            "accept",
+            "reject",
+            "defer",
+            "escalate",
+            "reroute"
+        ],
+        "surfaces": [
+            {
+                "surface_id": "delegation_and_routing.route_selection",
+                "surface_family": "delegation_and_routing",
+                "bounded_role": "select the bounded runtime path before commitment is attempted",
+                "outcome_classes": ["accept", "reroute"],
+                "temporal_anchor_ref": "control_path/arbitration.json"
+            },
+            {
+                "surface_id": "recovery_continuity.reframing",
+                "surface_family": "recovery_continuity",
+                "bounded_role": "decide whether the current frame should be retained or rerouted through reframing",
+                "outcome_classes": ["accept", "reroute"],
+                "temporal_anchor_ref": "control_path/reframing.json"
+            },
+            {
+                "surface_id": "pre_execution_authorization.commitment_gate",
+                "surface_family": "pre_execution_authorization",
+                "bounded_role": "decide whether commitment may proceed for the selected bounded candidate",
+                "outcome_classes": ["accept", "reject", "defer", "escalate"],
+                "temporal_anchor_ref": "control_path/freedom_gate.json"
+            }
+        ],
+        "decisions": [
+            {
+                "decision_id": "decision.route_selection",
+                "surface_id": "delegation_and_routing.route_selection",
+                "proposal_or_action": "route candidate cand-custom-review through the slow path",
+                "outcome_class": "reroute",
+                "decision_maker": "cognitive_arbitration",
+                "policy_bindings": ["bounded_integrity_review", "contradiction_review_required"],
+                "rationale": runtime.arbitration.route_reason,
+                "downstream_consequence": "selected_path=slow reasoning_mode=review_heavy",
+                "temporal_anchor": "control_path/arbitration.json"
+            },
+            {
+                "decision_id": "decision.reframing",
+                "surface_id": "recovery_continuity.reframing",
+                "proposal_or_action": "decide whether candidate cand-custom-review should keep the current frame or reframe before re-execution",
+                "outcome_class": "reroute",
+                "decision_maker": "reframing_control",
+                "policy_bindings": [
+                    "frame_adequacy_score=24",
+                    "termination_reason=contradiction_detected",
+                    format!("progress_signal={}", runtime.evaluation.progress_signal)
+                ],
+                "rationale": runtime.reframing.reframing_reason,
+                "downstream_consequence": runtime.reframing.reexecution_choice,
+                "temporal_anchor": "control_path/reframing.json"
+            },
+            {
+                "decision_id": "decision.commitment_gate",
+                "surface_id": "pre_execution_authorization.commitment_gate",
+                "proposal_or_action": "review and refine the candidate",
+                "outcome_class": "escalate",
+                "decision_maker": "freedom_gate",
+                "policy_bindings": [
+                    "route_selected=slow",
+                    "selected_candidate_kind=review_and_refine",
+                    "requires_review=false",
+                    "policy_blocked=false",
+                    "impact_scope=cross_surface",
+                    "operator_visibility=review_required",
+                    "escalation_available=true"
+                ],
+                "rationale": runtime.freedom_gate.decision_reason,
+                "downstream_consequence": runtime.freedom_gate.required_follow_up,
+                "temporal_anchor": "control_path/freedom_gate.json"
+            }
+        ]
+    });
     let final_result = serde_json::json!({
         "control_path_final_result_version": 1,
         "run_id": DEMO_G_V086_CONTROL_PATH,
@@ -382,6 +476,7 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
             "convergence: state=policy_stop stop_condition_family=policy_boundary progress_signal={}",
             runtime.evaluation.progress_signal
         ),
+        "decisions: route_selection=reroute reframing=reroute commitment_gate=escalate".to_string(),
         "memory: read_count=1 influenced_stage=reframing write_reason=record_failure_for_future_reframing_context".to_string(),
         "freedom_gate: decision=escalate reason_code=frame_escalation_required follow_up=escalate_for_judgment_review commitment_blocked=true".to_string(),
         "final_result: escalate".to_string(),
@@ -432,6 +527,11 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         out_dir,
         "convergence.json",
         &serde_json::to_string_pretty(&convergence)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "decisions.json",
+        &serde_json::to_string_pretty(&decisions)?,
     )?);
     artifacts.push(write_file(
         out_dir,
