@@ -30,6 +30,21 @@
       }
     },
     {
+      "profile_id": "ollama_gemma_semantic_fallback",
+      "provider": "ollama",
+      "model_globs": [
+        "gemma4:*",
+        "gemma3:*",
+        "gemma2:*"
+      ],
+      "reason": "bounded_local_model_requires_runtime_validation",
+      "capabilities": {
+        "native_tool_calling": false,
+        "semantic_tool_fallback": true,
+        "structured_output_mode": "prompt_json"
+      }
+    },
+    {
       "profile_id": "ollama_deepseek_semantic_fallback",
       "provider": "ollama",
       "model_globs": [
