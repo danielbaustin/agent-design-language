@@ -147,3 +147,123 @@ fn merge_top_level_map(dst: &mut YamlMapping, src: &YamlMapping, src_path: &Path
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_yaml::Number as YamlNumber;
+
+    #[test]
+    fn merge_top_level_map_rejects_non_string_keys_and_shape_mismatches() {
+        let src_path = Path::new("fragment.yaml");
+
+        let mut non_string_key = YamlMapping::new();
+        non_string_key.insert(
+            YamlValue::Number(YamlNumber::from(7)),
+            YamlValue::String("bad".to_string()),
+        );
+        let err = merge_top_level_map(&mut YamlMapping::new(), &non_string_key, src_path)
+            .expect_err("non-string keys should fail");
+        assert!(err
+            .to_string()
+            .contains("top-level ADL keys must be strings"));
+
+        let mut dst = YamlMapping::new();
+        dst.insert(
+            YamlValue::String("providers".to_string()),
+            YamlValue::Sequence(Vec::new()),
+        );
+        let mut src = YamlMapping::new();
+        src.insert(
+            YamlValue::String("providers".to_string()),
+            YamlValue::Mapping(YamlMapping::new()),
+        );
+        let err = merge_top_level_map(&mut dst, &src, src_path)
+            .expect_err("mapping merge target mismatch should fail");
+        assert!(err
+            .to_string()
+            .contains("top-level 'providers' merge target is not a mapping"));
+
+        let mut dst = YamlMapping::new();
+        dst.insert(
+            YamlValue::String("patterns".to_string()),
+            YamlValue::Mapping(YamlMapping::new()),
+        );
+        let mut src = YamlMapping::new();
+        src.insert(
+            YamlValue::String("patterns".to_string()),
+            YamlValue::Sequence(Vec::new()),
+        );
+        let err = merge_top_level_map(&mut dst, &src, src_path)
+            .expect_err("sequence merge target mismatch should fail");
+        assert!(err
+            .to_string()
+            .contains("top-level 'patterns' merge target is not a sequence"));
+    }
+
+    #[test]
+    fn merge_top_level_map_merges_component_maps_and_appends_patterns() {
+        let src_path = Path::new("fragment.yaml");
+        let mut dst = YamlMapping::new();
+
+        let mut existing_providers = YamlMapping::new();
+        existing_providers.insert(
+            YamlValue::String("p1".to_string()),
+            YamlValue::String("provider-one".to_string()),
+        );
+        dst.insert(
+            YamlValue::String("providers".to_string()),
+            YamlValue::Mapping(existing_providers),
+        );
+        dst.insert(
+            YamlValue::String("patterns".to_string()),
+            YamlValue::Sequence(vec![YamlValue::String("base".to_string())]),
+        );
+
+        let mut src = YamlMapping::new();
+        let mut extra_providers = YamlMapping::new();
+        extra_providers.insert(
+            YamlValue::String("p2".to_string()),
+            YamlValue::String("provider-two".to_string()),
+        );
+        src.insert(
+            YamlValue::String("providers".to_string()),
+            YamlValue::Mapping(extra_providers),
+        );
+        src.insert(
+            YamlValue::String("patterns".to_string()),
+            YamlValue::Sequence(vec![YamlValue::String("extra".to_string())]),
+        );
+        src.insert(
+            YamlValue::String("version".to_string()),
+            YamlValue::String("0.5".to_string()),
+        );
+
+        merge_top_level_map(&mut dst, &src, src_path).expect("merge should succeed");
+
+        let providers = dst
+            .get(YamlValue::String("providers".to_string()))
+            .and_then(YamlValue::as_mapping)
+            .expect("providers map");
+        assert!(providers.contains_key(YamlValue::String("p1".to_string())));
+        assert!(providers.contains_key(YamlValue::String("p2".to_string())));
+
+        let patterns = dst
+            .get(YamlValue::String("patterns".to_string()))
+            .and_then(YamlValue::as_sequence)
+            .expect("patterns sequence");
+        assert_eq!(
+            patterns,
+            &vec![
+                YamlValue::String("base".to_string()),
+                YamlValue::String("extra".to_string())
+            ]
+        );
+
+        assert_eq!(
+            dst.get(YamlValue::String("version".to_string()))
+                .and_then(YamlValue::as_str),
+            Some("0.5")
+        );
+    }
+}
