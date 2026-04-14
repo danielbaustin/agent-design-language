@@ -231,6 +231,14 @@ pub(crate) fn write_run_state_artifacts(
         &runtime_control.freedom_gate,
         Some(&scores_for_suggestions),
     );
+    let convergence = build_aee_convergence_artifact(
+        &run_summary,
+        &bounded_execution,
+        &evaluation_signals,
+        &reframing,
+        &freedom_gate,
+        Some(&scores_for_suggestions),
+    );
     let memory_read = build_memory_read_artifact(
         &run_summary,
         &evaluation_signals,
@@ -259,6 +267,7 @@ pub(crate) fn write_run_state_artifacts(
         execution: &bounded_execution,
         evaluation: &evaluation_signals,
         reframing: &reframing,
+        convergence: &convergence,
         memory: &control_path_memory,
         freedom_gate: &freedom_gate,
         final_result: &control_path_final_result,
@@ -277,6 +286,8 @@ pub(crate) fn write_run_state_artifacts(
         serde_json::to_vec_pretty(&reframing).context("serialize reframing.v1.json")?;
     let freedom_gate_json =
         serde_json::to_vec_pretty(&freedom_gate).context("serialize freedom_gate.v1.json")?;
+    let convergence_json =
+        serde_json::to_vec_pretty(&convergence).context("serialize convergence.json")?;
     let memory_read_json =
         serde_json::to_vec_pretty(&memory_read).context("serialize memory_read.v1.json")?;
     let memory_write_json =
@@ -357,6 +368,10 @@ pub(crate) fn write_run_state_artifacts(
     artifacts::atomic_write(
         &run_paths.control_path_freedom_gate_json(),
         &freedom_gate_json,
+    )?;
+    artifacts::atomic_write(
+        &run_paths.control_path_convergence_json(),
+        &convergence_json,
     )?;
     artifacts::atomic_write(
         &run_paths.control_path_final_result_json(),
@@ -1003,6 +1018,8 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         read_required_json_artifact(control_path_dir, "memory.json")?;
     let freedom_gate: FreedomGateArtifact =
         read_required_json_artifact(control_path_dir, "freedom_gate.json")?;
+    let convergence: AeeConvergenceArtifact =
+        read_required_json_artifact(control_path_dir, "convergence.json")?;
     let final_result: ControlPathFinalResultArtifact =
         read_required_json_artifact(control_path_dir, "final_result.json")?;
 
@@ -1048,6 +1065,7 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         reframing.run_id.as_str(),
         memory.run_id.as_str(),
         freedom_gate.run_id.as_str(),
+        convergence.run_id.as_str(),
         final_result.run_id.as_str(),
     ];
     let canonical_run_id = final_result.run_id.as_str();
@@ -1093,6 +1111,34 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
             evaluation.next_control_action
         ));
     }
+    if convergence.selected_candidate_id != agency.selected_candidate_id {
+        return Err(anyhow!(
+            "control-path convergence selected_candidate_id '{}' does not match candidate_selection '{}'",
+            convergence.selected_candidate_id,
+            agency.selected_candidate_id
+        ));
+    }
+    if convergence.termination_reason != evaluation.termination_reason {
+        return Err(anyhow!(
+            "control-path convergence termination_reason '{}' does not match evaluation '{}'",
+            convergence.termination_reason,
+            evaluation.termination_reason
+        ));
+    }
+    if convergence.gate_decision != freedom_gate.gate_decision {
+        return Err(anyhow!(
+            "control-path convergence gate_decision '{}' does not match freedom_gate '{}'",
+            convergence.gate_decision,
+            freedom_gate.gate_decision
+        ));
+    }
+    if convergence.next_control_action != evaluation.next_control_action {
+        return Err(anyhow!(
+            "control-path convergence next_control_action '{}' does not match evaluation '{}'",
+            convergence.next_control_action,
+            evaluation.next_control_action
+        ));
+    }
 
     let required_summary_markers = [
         "stage_order: signals -> candidate_selection -> arbitration -> execution -> evaluation -> reframing -> memory -> freedom_gate -> final_result".to_string(),
@@ -1101,6 +1147,12 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         format!("evaluation: termination_reason={}", evaluation.termination_reason),
         format!("reframing: trigger={}", reframing.reframing_trigger),
         format!("freedom_gate: decision={}", freedom_gate.gate_decision),
+        format!(
+            "convergence: state={} stop_condition_family={} progress_signal={}",
+            convergence.convergence_state,
+            convergence.stop_condition_family,
+            convergence.progress_signal
+        ),
         format!("final_result: {}", final_result.final_result),
     ];
     for marker in required_summary_markers {

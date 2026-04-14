@@ -172,6 +172,10 @@ impl RunArtifactPaths {
         self.control_path_dir().join("freedom_gate.json")
     }
 
+    pub fn control_path_convergence_json(&self) -> PathBuf {
+        self.control_path_dir().join("convergence.json")
+    }
+
     pub fn control_path_final_result_json(&self) -> PathBuf {
         self.control_path_dir().join("final_result.json")
     }

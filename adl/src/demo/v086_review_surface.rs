@@ -311,6 +311,28 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         "commitment_blocked": runtime.freedom_gate.commitment_blocked,
         "deterministic_gate_rule": "demo deterministic freedom gate"
     });
+    let convergence = serde_json::json!({
+        "aee_convergence_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
+        "selected_candidate_id": runtime.agency.selected_candidate_id,
+        "selected_path": runtime.fast_slow.selected_path,
+        "convergence_state": "policy_stop",
+        "progress_signal": runtime.evaluation.progress_signal,
+        "stop_condition_family": "policy_boundary",
+        "termination_reason": runtime.evaluation.termination_reason,
+        "next_control_action": runtime.evaluation.next_control_action,
+        "gate_decision": runtime.freedom_gate.gate_decision,
+        "iteration_count": runtime.bounded_execution.iterations.len(),
+        "strategy_change_count": 2,
+        "strategy_change_visible": true,
+        "reframing_trigger": runtime.reframing.reframing_trigger,
+        "reviewer_summary": format!(
+            "AEE convergence ended as 'policy_stop' after 2 bounded iteration(s); progress signal '{}' led to stop family 'policy_boundary' with next control action 'handoff_to_reframing' and gate decision 'defer'.",
+            runtime.evaluation.progress_signal
+        ),
+        "deterministic_convergence_rule": "demo deterministic convergence projection"
+    });
     let final_result = serde_json::json!({
         "control_path_final_result_version": 1,
         "run_id": DEMO_G_V086_CONTROL_PATH,
@@ -333,19 +355,23 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
             "final_result"
         ]
     });
-    let summary = [
-        "v0.86 canonical bounded cognitive path summary",
-        "run_id: demo-g-v086-control-path",
-        "stage_order: signals -> candidate_selection -> arbitration -> execution -> evaluation -> reframing -> memory -> freedom_gate -> final_result",
-        "signals: instinct=integrity completion_pressure=guarded",
-        "candidate_selection: candidate_id=cand-custom-review rationale=custom selected candidate reason",
-        "arbitration: route=slow reasoning_mode=review_heavy",
-        "execution: status=completed iterations=2",
-        "evaluation: termination_reason=contradiction_detected next_control_action=handoff_to_reframing",
-        "reframing: trigger=triggered choice=bounded_reframe_and_retry",
-        "memory: read_count=1 influenced_stage=reframing write_reason=record_failure_for_future_reframing_context",
-        "freedom_gate: decision=defer reason_code=frame_inadequate commitment_blocked=true",
-        "final_result: defer",
+    let summary = vec![
+        "v0.86 canonical bounded cognitive path summary".to_string(),
+        "run_id: demo-g-v086-control-path".to_string(),
+        "stage_order: signals -> candidate_selection -> arbitration -> execution -> evaluation -> reframing -> memory -> freedom_gate -> final_result".to_string(),
+        "signals: instinct=integrity completion_pressure=guarded".to_string(),
+        "candidate_selection: candidate_id=cand-custom-review rationale=custom selected candidate reason".to_string(),
+        "arbitration: route=slow reasoning_mode=review_heavy".to_string(),
+        "execution: status=completed iterations=2".to_string(),
+        "evaluation: termination_reason=contradiction_detected next_control_action=handoff_to_reframing".to_string(),
+        "reframing: trigger=triggered choice=bounded_reframe_and_retry".to_string(),
+        format!(
+            "convergence: state=policy_stop stop_condition_family=policy_boundary progress_signal={}",
+            runtime.evaluation.progress_signal
+        ),
+        "memory: read_count=1 influenced_stage=reframing write_reason=record_failure_for_future_reframing_context".to_string(),
+        "freedom_gate: decision=defer reason_code=frame_inadequate commitment_blocked=true".to_string(),
+        "final_result: defer".to_string(),
     ]
     .join("\n");
 
@@ -388,6 +414,11 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         out_dir,
         "freedom_gate.json",
         &serde_json::to_string_pretty(&freedom_gate)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "convergence.json",
+        &serde_json::to_string_pretty(&convergence)?,
     )?);
     artifacts.push(write_file(
         out_dir,

@@ -19,6 +19,7 @@ pub(crate) const BOUNDED_EXECUTION_VERSION: u32 = 1;
 pub(crate) const EVALUATION_SIGNALS_VERSION: u32 = 1;
 pub(crate) const REFRAMING_VERSION: u32 = 1;
 pub(crate) const FREEDOM_GATE_VERSION: u32 = 1;
+pub(crate) const AEE_CONVERGENCE_VERSION: u32 = 1;
 pub(crate) const MEMORY_READ_VERSION: u32 = 1;
 pub(crate) const MEMORY_WRITE_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_MEMORY_VERSION: u32 = 1;
@@ -605,6 +606,28 @@ pub(crate) struct FreedomGateArtifact {
     pub(crate) deterministic_gate_rule: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct AeeConvergenceArtifact {
+    pub(crate) aee_convergence_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) selected_candidate_id: String,
+    pub(crate) selected_path: String,
+    pub(crate) convergence_state: String,
+    pub(crate) progress_signal: String,
+    pub(crate) stop_condition_family: String,
+    pub(crate) termination_reason: String,
+    pub(crate) next_control_action: String,
+    pub(crate) gate_decision: String,
+    pub(crate) iteration_count: u32,
+    pub(crate) strategy_change_count: u32,
+    pub(crate) strategy_change_visible: bool,
+    pub(crate) reframing_trigger: String,
+    pub(crate) reviewer_summary: String,
+    pub(crate) deterministic_convergence_rule: String,
+}
+
 pub(crate) type MemoryReadState = execute::MemoryReadState;
 pub(crate) type MemoryQueryState = execute::MemoryQueryState;
 pub(crate) type MemoryReadEntry = execute::MemoryReadEntry;
@@ -672,6 +695,7 @@ pub(crate) struct ControlPathSummaryContext<'a> {
     pub(crate) execution: &'a BoundedExecutionArtifact,
     pub(crate) evaluation: &'a EvaluationSignalsArtifact,
     pub(crate) reframing: &'a ReframingArtifact,
+    pub(crate) convergence: &'a AeeConvergenceArtifact,
     pub(crate) memory: &'a ControlPathMemoryArtifact,
     pub(crate) freedom_gate: &'a FreedomGateArtifact,
     pub(crate) final_result: &'a ControlPathFinalResultArtifact,

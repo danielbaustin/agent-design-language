@@ -94,11 +94,11 @@ Defined when the official `WP-02` issue opens and lands.
 ```
 
 Expected artifacts:
-- convergence artifact path established by `WP-02`
-- reviewer-facing run summary established by `WP-02`
+- `control_path/convergence.json`
+- `control_path/summary.txt`
 
 Primary proof surface:
-- convergence artifact and linked output record
+- `control_path/convergence.json` and the linked output record
 
 Expected success signals:
 - reviewer can distinguish progress vs repetition

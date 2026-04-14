@@ -904,6 +904,93 @@ pub(crate) fn build_freedom_gate_artifact(
     }
 }
 
+pub(crate) fn build_aee_convergence_artifact(
+    run_summary: &RunSummaryArtifact,
+    execution: &BoundedExecutionArtifact,
+    evaluation: &EvaluationSignalsArtifact,
+    reframing: &ReframingArtifact,
+    freedom_gate: &FreedomGateArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> AeeConvergenceArtifact {
+    let convergence_state = if freedom_gate.commitment_blocked
+        || matches!(
+            freedom_gate.gate_decision.as_str(),
+            "defer" | "refuse" | "escalate"
+        ) {
+        "policy_stop"
+    } else if evaluation.termination_reason == "success" {
+        "converged"
+    } else if evaluation.next_control_action == "await_resume" {
+        "handoff"
+    } else if evaluation.next_control_action == "handoff_to_reframing" {
+        "stalled"
+    } else {
+        "bounded_out"
+    };
+
+    let stop_condition_family = if freedom_gate.commitment_blocked
+        || matches!(
+            freedom_gate.gate_decision.as_str(),
+            "defer" | "refuse" | "escalate"
+        ) {
+        "policy_boundary"
+    } else {
+        match evaluation.termination_reason.as_str() {
+            "success" => "acceptance_satisfied",
+            "pause_boundary" => "handoff_or_missing_input",
+            "no_progress" => "no_meaningful_improvement",
+            "bounded_failure" => "bounded_failure_cluster",
+            _ => "bounded_runtime_stop",
+        }
+    };
+
+    let stage_shift_count = execution
+        .iterations
+        .windows(2)
+        .filter(|window| window[0].stage != window[1].stage)
+        .count() as u32;
+    let strategy_change_count =
+        stage_shift_count + u32::from(reframing.reframing_trigger == "triggered");
+    let strategy_change_visible = strategy_change_count > 0;
+
+    let reviewer_summary = format!(
+        "AEE convergence ended as '{}' after {} bounded iteration(s); progress signal '{}' led to stop family '{}' with next control action '{}' and gate decision '{}'.",
+        convergence_state,
+        execution.iteration_count,
+        evaluation.progress_signal,
+        stop_condition_family,
+        evaluation.next_control_action,
+        freedom_gate.gate_decision
+    );
+
+    AeeConvergenceArtifact {
+        aee_convergence_version: AEE_CONVERGENCE_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: evaluation.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        selected_candidate_id: execution.selected_candidate_id.clone(),
+        selected_path: execution.selected_path.clone(),
+        convergence_state: convergence_state.to_string(),
+        progress_signal: evaluation.progress_signal.clone(),
+        stop_condition_family: stop_condition_family.to_string(),
+        termination_reason: evaluation.termination_reason.clone(),
+        next_control_action: evaluation.next_control_action.clone(),
+        gate_decision: freedom_gate.gate_decision.clone(),
+        iteration_count: execution.iteration_count,
+        strategy_change_count,
+        strategy_change_visible,
+        reframing_trigger: reframing.reframing_trigger.clone(),
+        reviewer_summary,
+        deterministic_convergence_rule:
+            "derive convergence, stall, bounded-out, policy-stop, or handoff from bounded execution, evaluation, reframing, and freedom-gate evidence without hidden retry state"
+                .to_string(),
+    }
+}
+
 pub(crate) fn build_memory_read_artifact(
     run_summary: &RunSummaryArtifact,
     evaluation_signals: &EvaluationSignalsArtifact,
@@ -1027,6 +1114,7 @@ pub(crate) fn build_control_path_summary(context: &ControlPathSummaryContext<'_>
     let execution = context.execution;
     let evaluation = context.evaluation;
     let reframing = context.reframing;
+    let convergence = context.convergence;
     let memory = context.memory;
     let freedom_gate = context.freedom_gate;
     let final_result = context.final_result;
@@ -1058,6 +1146,12 @@ pub(crate) fn build_control_path_summary(context: &ControlPathSummaryContext<'_>
         format!(
             "reframing: trigger={} choice={}",
             reframing.reframing_trigger, reframing.reexecution_choice
+        ),
+        format!(
+            "convergence: state={} stop_condition_family={} progress_signal={}",
+            convergence.convergence_state,
+            convergence.stop_condition_family,
+            convergence.progress_signal
         ),
         format!(
             "memory: read_count={} influenced_stage={} write_reason={}",
