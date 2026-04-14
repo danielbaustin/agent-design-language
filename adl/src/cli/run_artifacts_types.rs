@@ -23,6 +23,7 @@ pub(crate) const AEE_CONVERGENCE_VERSION: u32 = 1;
 pub(crate) const MEMORY_READ_VERSION: u32 = 1;
 pub(crate) const MEMORY_WRITE_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_MEMORY_VERSION: u32 = 1;
+pub(crate) const CONTROL_PATH_DECISIONS_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_FINAL_RESULT_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
@@ -603,6 +604,9 @@ pub(crate) struct FreedomGateArtifact {
     pub(crate) decision_reason: String,
     pub(crate) selected_action_or_none: Option<String>,
     pub(crate) commitment_blocked: bool,
+    pub(crate) judgment_boundary: String,
+    pub(crate) required_follow_up: String,
+    pub(crate) decision_record_kind: String,
     pub(crate) deterministic_gate_rule: String,
 }
 
@@ -671,6 +675,43 @@ pub(crate) struct ControlPathMemoryArtifact {
     pub(crate) generated_from: AeeDecisionGeneratedFrom,
     pub(crate) read: MemoryReadArtifact,
     pub(crate) write: MemoryWriteArtifact,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ControlPathDecisionsArtifact {
+    pub(crate) control_path_decisions_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) decision_schema_name: String,
+    pub(crate) decision_schema_fields: Vec<String>,
+    pub(crate) outcome_class_vocabulary: Vec<String>,
+    pub(crate) surfaces: Vec<DecisionSurfaceRecord>,
+    pub(crate) decisions: Vec<DecisionRecord>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct DecisionSurfaceRecord {
+    pub(crate) surface_id: String,
+    pub(crate) surface_family: String,
+    pub(crate) bounded_role: String,
+    pub(crate) outcome_classes: Vec<String>,
+    pub(crate) temporal_anchor_ref: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct DecisionRecord {
+    pub(crate) decision_id: String,
+    pub(crate) surface_id: String,
+    pub(crate) proposal_or_action: String,
+    pub(crate) outcome_class: String,
+    pub(crate) decision_maker: String,
+    pub(crate) policy_bindings: Vec<String>,
+    pub(crate) rationale: String,
+    pub(crate) downstream_consequence: String,
+    pub(crate) temporal_anchor: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

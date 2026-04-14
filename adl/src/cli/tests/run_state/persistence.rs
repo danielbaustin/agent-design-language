@@ -337,9 +337,13 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
             .expect("read freedom gate artifact"),
     )
     .expect("parse freedom gate artifact");
-    assert_eq!(freedom_gate.gate_decision, "defer");
-    assert_eq!(freedom_gate.reason_code, "frame_inadequate");
+    assert_eq!(freedom_gate.gate_decision, "escalate");
+    assert_eq!(freedom_gate.reason_code, "frame_escalation_required");
     assert!(freedom_gate.commitment_blocked);
+    assert_eq!(
+        freedom_gate.required_follow_up,
+        "escalate_for_judgment_review"
+    );
     assert_eq!(freedom_gate.input.candidate_id, "cand-custom-review");
 
     let convergence: run_artifacts::AeeConvergenceArtifact = serde_json::from_str(
@@ -350,6 +354,39 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
     assert_eq!(convergence.convergence_state, "policy_stop");
     assert_eq!(convergence.stop_condition_family, "policy_boundary");
     assert_eq!(convergence.progress_signal, "steady_progress");
+
+    let decisions: run_artifacts::ControlPathDecisionsArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("control_path/decisions.json"))
+            .expect("read decisions artifact"),
+    )
+    .expect("parse decisions artifact");
+    assert_eq!(decisions.decision_schema_name, "adl.runtime.decision.v1");
+    assert_eq!(
+        decisions.outcome_class_vocabulary,
+        vec![
+            "accept".to_string(),
+            "reject".to_string(),
+            "defer".to_string(),
+            "escalate".to_string(),
+            "reroute".to_string(),
+        ]
+    );
+    assert_eq!(decisions.surfaces.len(), 3);
+    assert_eq!(decisions.decisions.len(), 3);
+    assert_eq!(
+        decisions.decisions[0].surface_id,
+        "delegation_and_routing.route_selection"
+    );
+    assert_eq!(decisions.decisions[0].outcome_class, "reroute");
+    assert_eq!(
+        decisions.decisions[2].surface_id,
+        "pre_execution_authorization.commitment_gate"
+    );
+    assert_eq!(decisions.decisions[2].outcome_class, "escalate");
+    assert_eq!(
+        decisions.decisions[2].downstream_consequence,
+        "escalate_for_judgment_review"
+    );
 
     let memory_read: MemoryReadArtifact = serde_json::from_str(
         &std::fs::read_to_string(run_dir.join("learning/memory_read.v1.json"))
@@ -394,8 +431,8 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
         control_path_final_result.selected_candidate,
         "cand-custom-review"
     );
-    assert_eq!(control_path_final_result.gate_decision, "defer");
-    assert_eq!(control_path_final_result.final_result, "defer");
+    assert_eq!(control_path_final_result.gate_decision, "escalate");
+    assert_eq!(control_path_final_result.final_result, "escalate");
 
     let control_path_summary =
         std::fs::read_to_string(run_dir.join("control_path/summary.txt")).expect("read summary");
@@ -406,12 +443,20 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
         "summary was:\n{control_path_summary}"
     );
     assert!(
-        control_path_summary.contains("freedom_gate: decision=defer"),
+        control_path_summary.contains(
+            "freedom_gate: decision=escalate reason_code=frame_escalation_required follow_up=escalate_for_judgment_review"
+        ),
         "summary was:\n{control_path_summary}"
     );
     assert!(
         control_path_summary.contains(
             "convergence: state=policy_stop stop_condition_family=policy_boundary progress_signal=steady_progress"
+        ),
+        "summary was:\n{control_path_summary}"
+    );
+    assert!(
+        control_path_summary.contains(
+            "decisions: route_selection=reroute reframing=reroute commitment_gate=escalate"
         ),
         "summary was:\n{control_path_summary}"
     );

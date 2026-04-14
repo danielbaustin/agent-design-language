@@ -898,8 +898,11 @@ pub(crate) fn build_freedom_gate_artifact(
         decision_reason: state.decision_reason.clone(),
         selected_action_or_none: state.selected_action_or_none.clone(),
         commitment_blocked: state.commitment_blocked,
+        judgment_boundary: state.judgment_boundary.clone(),
+        required_follow_up: state.required_follow_up.clone(),
+        decision_record_kind: state.decision_record_kind.clone(),
         deterministic_gate_rule:
-            "derive allow/defer/refuse commitment decisions from execute-owned freedom-gate input state before action commitment and without hidden bypass paths"
+            "derive allow/defer/refuse/escalate judgment decisions from execute-owned freedom-gate input state before action commitment and without hidden bypass paths"
                 .to_string(),
     }
 }
@@ -1059,6 +1062,204 @@ pub(crate) fn build_control_path_memory_artifact(
     }
 }
 
+fn route_outcome_class(route_selected: &str) -> &'static str {
+    if route_selected == "fast" {
+        "accept"
+    } else {
+        "reroute"
+    }
+}
+
+fn reframing_outcome_class(reframing_trigger: &str) -> &'static str {
+    if reframing_trigger == "triggered" {
+        "reroute"
+    } else {
+        "accept"
+    }
+}
+
+fn gate_outcome_class(gate_decision: &str) -> &'static str {
+    match gate_decision {
+        "allow" => "accept",
+        "refuse" => "reject",
+        "defer" => "defer",
+        "escalate" => "escalate",
+        _ => "reject",
+    }
+}
+
+pub(crate) fn build_control_path_decisions_artifact(
+    run_summary: &RunSummaryArtifact,
+    arbitration: &CognitiveArbitrationArtifact,
+    agency: &AgencySelectionArtifact,
+    evaluation: &EvaluationSignalsArtifact,
+    reframing: &ReframingArtifact,
+    freedom_gate: &FreedomGateArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> ControlPathDecisionsArtifact {
+    let route_policy_bindings = if arbitration.applied_constraints.is_empty() {
+        vec!["no_explicit_constraints".to_string()]
+    } else {
+        arbitration.applied_constraints.clone()
+    };
+    let reframing_policy_bindings = vec![
+        format!("frame_adequacy_score={}", reframing.frame_adequacy_score),
+        format!("termination_reason={}", evaluation.termination_reason),
+        format!("progress_signal={}", evaluation.progress_signal),
+    ];
+    let gate_policy_bindings = vec![
+        format!(
+            "route_selected={}",
+            freedom_gate.input.policy_context.route_selected
+        ),
+        format!(
+            "selected_candidate_kind={}",
+            freedom_gate.input.policy_context.selected_candidate_kind
+        ),
+        format!(
+            "requires_review={}",
+            freedom_gate.input.policy_context.requires_review
+        ),
+        format!(
+            "policy_blocked={}",
+            freedom_gate.input.policy_context.policy_blocked
+        ),
+        format!(
+            "impact_scope={}",
+            freedom_gate.input.consequence_context.impact_scope
+        ),
+        format!(
+            "operator_visibility={}",
+            freedom_gate.input.consequence_context.operator_visibility
+        ),
+        format!(
+            "escalation_available={}",
+            freedom_gate.input.consequence_context.escalation_available
+        ),
+    ];
+
+    ControlPathDecisionsArtifact {
+        control_path_decisions_version: CONTROL_PATH_DECISIONS_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: arbitration.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        decision_schema_name: "adl.runtime.decision.v1".to_string(),
+        decision_schema_fields: vec![
+            "decision_id".to_string(),
+            "surface_id".to_string(),
+            "proposal_or_action".to_string(),
+            "outcome_class".to_string(),
+            "decision_maker".to_string(),
+            "policy_bindings".to_string(),
+            "rationale".to_string(),
+            "downstream_consequence".to_string(),
+            "temporal_anchor".to_string(),
+        ],
+        outcome_class_vocabulary: vec![
+            "accept".to_string(),
+            "reject".to_string(),
+            "defer".to_string(),
+            "escalate".to_string(),
+            "reroute".to_string(),
+        ],
+        surfaces: vec![
+            DecisionSurfaceRecord {
+                surface_id: "delegation_and_routing.route_selection".to_string(),
+                surface_family: "delegation_and_routing".to_string(),
+                bounded_role:
+                    "select the bounded runtime path before commitment is attempted".to_string(),
+                outcome_classes: vec!["accept".to_string(), "reroute".to_string()],
+                temporal_anchor_ref: "control_path/arbitration.json".to_string(),
+            },
+            DecisionSurfaceRecord {
+                surface_id: "recovery_continuity.reframing".to_string(),
+                surface_family: "recovery_continuity".to_string(),
+                bounded_role:
+                    "decide whether the current frame should be retained or rerouted through reframing"
+                        .to_string(),
+                outcome_classes: vec!["accept".to_string(), "reroute".to_string()],
+                temporal_anchor_ref: "control_path/reframing.json".to_string(),
+            },
+            DecisionSurfaceRecord {
+                surface_id: "pre_execution_authorization.commitment_gate".to_string(),
+                surface_family: "pre_execution_authorization".to_string(),
+                bounded_role:
+                    "decide whether commitment may proceed for the selected bounded candidate"
+                        .to_string(),
+                outcome_classes: vec![
+                    "accept".to_string(),
+                    "reject".to_string(),
+                    "defer".to_string(),
+                    "escalate".to_string(),
+                ],
+                temporal_anchor_ref: "control_path/freedom_gate.json".to_string(),
+            },
+        ],
+        decisions: vec![
+            DecisionRecord {
+                decision_id: "decision.route_selection".to_string(),
+                surface_id: "delegation_and_routing.route_selection".to_string(),
+                proposal_or_action: format!(
+                    "route candidate {} through the {} path",
+                    agency.selected_candidate_id, arbitration.route_selected
+                ),
+                outcome_class: route_outcome_class(&arbitration.route_selected).to_string(),
+                decision_maker: "cognitive_arbitration".to_string(),
+                policy_bindings: route_policy_bindings,
+                rationale: arbitration.route_reason.clone(),
+                downstream_consequence: format!(
+                    "selected_path={} reasoning_mode={}",
+                    arbitration.route_selected, arbitration.reasoning_mode
+                ),
+                temporal_anchor: "control_path/arbitration.json".to_string(),
+            },
+            DecisionRecord {
+                decision_id: "decision.reframing".to_string(),
+                surface_id: "recovery_continuity.reframing".to_string(),
+                proposal_or_action: format!(
+                    "decide whether candidate {} should keep the current frame or reframe before re-execution",
+                    agency.selected_candidate_id
+                ),
+                outcome_class: reframing_outcome_class(&reframing.reframing_trigger).to_string(),
+                decision_maker: "reframing_control".to_string(),
+                policy_bindings: reframing_policy_bindings,
+                rationale: reframing.reframing_reason.clone(),
+                downstream_consequence: reframing.reexecution_choice.clone(),
+                temporal_anchor: "control_path/reframing.json".to_string(),
+            },
+            DecisionRecord {
+                decision_id: "decision.commitment_gate".to_string(),
+                surface_id: "pre_execution_authorization.commitment_gate".to_string(),
+                proposal_or_action: freedom_gate
+                    .selected_action_or_none
+                    .clone()
+                    .filter(|value| !value.trim().is_empty())
+                    .unwrap_or_else(|| {
+                        let candidate_action = freedom_gate.input.candidate_action.trim();
+                        if candidate_action.is_empty() {
+                            "withhold commitment until bounded context is restored".to_string()
+                        } else {
+                            candidate_action.to_string()
+                        }
+                    }),
+                outcome_class: gate_outcome_class(&freedom_gate.gate_decision).to_string(),
+                decision_maker: "freedom_gate".to_string(),
+                policy_bindings: gate_policy_bindings,
+                rationale: freedom_gate.decision_reason.clone(),
+                downstream_consequence: freedom_gate
+                    .selected_action_or_none
+                    .clone()
+                    .unwrap_or_else(|| freedom_gate.required_follow_up.clone()),
+                temporal_anchor: "control_path/freedom_gate.json".to_string(),
+            },
+        ],
+    }
+}
+
 pub(crate) fn build_control_path_final_result_artifact(
     run_summary: &RunSummaryArtifact,
     arbitration: &CognitiveArbitrationArtifact,
@@ -1080,6 +1281,7 @@ pub(crate) fn build_control_path_final_result_artifact(
             .unwrap_or_else(|| agency.selected_candidate_reason.clone()),
         "defer" => "defer".to_string(),
         "refuse" => "refuse".to_string(),
+        "escalate" => "escalate".to_string(),
         other => format!("unrecognized_gate_decision:{other}"),
     };
 
@@ -1154,12 +1356,21 @@ pub(crate) fn build_control_path_summary(context: &ControlPathSummaryContext<'_>
             convergence.progress_signal
         ),
         format!(
+            "decisions: route_selection={} reframing={} commitment_gate={}",
+            route_outcome_class(&arbitration.route_selected),
+            reframing_outcome_class(&reframing.reframing_trigger),
+            gate_outcome_class(&freedom_gate.gate_decision)
+        ),
+        format!(
             "memory: read_count={} influenced_stage={} write_reason={}",
             memory.read.read_count, memory.read.influenced_stage, memory.write.write_reason
         ),
         format!(
-            "freedom_gate: decision={} reason_code={} commitment_blocked={}",
-            freedom_gate.gate_decision, freedom_gate.reason_code, freedom_gate.commitment_blocked
+            "freedom_gate: decision={} reason_code={} follow_up={} commitment_blocked={}",
+            freedom_gate.gate_decision,
+            freedom_gate.reason_code,
+            freedom_gate.required_follow_up,
+            freedom_gate.commitment_blocked
         ),
         format!("final_result: {}", final_result.final_result),
     ]

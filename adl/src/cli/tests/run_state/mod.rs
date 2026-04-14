@@ -188,15 +188,24 @@ fn custom_runtime_control() -> execute::RuntimeControlState {
                     failure_signal: "none".to_string(),
                     termination_reason: "contradiction_detected".to_string(),
                 },
+                consequence_context: execute::FreedomGateConsequenceContextState {
+                    impact_scope: "cross_surface".to_string(),
+                    recovery_cost: "requires_reframing".to_string(),
+                    operator_visibility: "review_required".to_string(),
+                    escalation_available: true,
+                },
                 frame_state: "ready_for_reframed_execution".to_string(),
             },
-            gate_decision: "defer".to_string(),
-            reason_code: "frame_inadequate".to_string(),
+            gate_decision: "escalate".to_string(),
+            reason_code: "frame_escalation_required".to_string(),
             decision_reason:
-                "frame state requires bounded reframing before commitment can be allowed"
+                "frame state and consequence context require explicit escalation before commitment can proceed"
                     .to_string(),
             selected_action_or_none: None,
             commitment_blocked: true,
+            judgment_boundary: "judgment_boundary".to_string(),
+            required_follow_up: "escalate_for_judgment_review".to_string(),
+            decision_record_kind: "gate_escalation_record".to_string(),
         },
         memory: execute::MemoryParticipationState {
             read: execute::MemoryReadState {

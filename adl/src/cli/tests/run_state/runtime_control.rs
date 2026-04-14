@@ -24,8 +24,15 @@ fn derive_runtime_control_state_triggers_reframing_on_failure() {
         runtime_control.reframing.reexecution_choice,
         "bounded_reframe_and_retry"
     );
-    assert_eq!(runtime_control.freedom_gate.gate_decision, "defer");
-    assert_eq!(runtime_control.freedom_gate.reason_code, "frame_inadequate");
+    assert_eq!(runtime_control.freedom_gate.gate_decision, "escalate");
+    assert_eq!(
+        runtime_control.freedom_gate.reason_code,
+        "frame_escalation_required"
+    );
+    assert_eq!(
+        runtime_control.freedom_gate.required_follow_up,
+        "escalate_for_judgment_review"
+    );
     assert!(
         runtime_control.reframing.frame_adequacy_score < 50,
         "failure should lower the frame adequacy score"

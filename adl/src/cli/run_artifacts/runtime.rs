@@ -1,11 +1,11 @@
 use super::cognitive::{
     build_aee_decision_artifact, build_affect_state_artifact, build_agency_selection_artifact,
     build_bounded_execution_artifact, build_cognitive_arbitration_artifact_from_state,
-    build_cognitive_signals_artifact_from_state, build_control_path_final_result_artifact,
-    build_control_path_memory_artifact, build_control_path_summary,
-    build_evaluation_signals_artifact, build_fast_slow_path_artifact, build_freedom_gate_artifact,
-    build_memory_read_artifact, build_memory_write_artifact, build_reasoning_graph_artifact,
-    build_reframing_artifact,
+    build_cognitive_signals_artifact_from_state, build_control_path_decisions_artifact,
+    build_control_path_final_result_artifact, build_control_path_memory_artifact,
+    build_control_path_summary, build_evaluation_signals_artifact, build_fast_slow_path_artifact,
+    build_freedom_gate_artifact, build_memory_read_artifact, build_memory_write_artifact,
+    build_reasoning_graph_artifact, build_reframing_artifact,
 };
 use super::summary::{
     build_cluster_groundwork_artifact, build_scores_artifact, build_suggestions_artifact,
@@ -253,6 +253,15 @@ pub(crate) fn write_run_state_artifacts(
     );
     let control_path_memory =
         build_control_path_memory_artifact(&run_summary, &memory_read, &memory_write);
+    let control_path_decisions = build_control_path_decisions_artifact(
+        &run_summary,
+        &cognitive_arbitration,
+        &agency_selection,
+        &evaluation_signals,
+        &reframing,
+        &freedom_gate,
+        Some(&scores_for_suggestions),
+    );
     let control_path_final_result = build_control_path_final_result_artifact(
         &run_summary,
         &cognitive_arbitration,
@@ -294,6 +303,8 @@ pub(crate) fn write_run_state_artifacts(
         serde_json::to_vec_pretty(&memory_write).context("serialize memory_write.v1.json")?;
     let control_path_memory_json = serde_json::to_vec_pretty(&control_path_memory)
         .context("serialize control_path memory.json")?;
+    let control_path_decisions_json = serde_json::to_vec_pretty(&control_path_decisions)
+        .context("serialize control_path decisions.json")?;
     let control_path_final_result_json = serde_json::to_vec_pretty(&control_path_final_result)
         .context("serialize control_path final_result.json")?;
     let aee_decision = build_aee_decision_artifact(
@@ -364,6 +375,10 @@ pub(crate) fn write_run_state_artifacts(
     artifacts::atomic_write(
         &run_paths.control_path_memory_json(),
         &control_path_memory_json,
+    )?;
+    artifacts::atomic_write(
+        &run_paths.control_path_decisions_json(),
+        &control_path_decisions_json,
     )?;
     artifacts::atomic_write(
         &run_paths.control_path_freedom_gate_json(),
@@ -1016,6 +1031,8 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         read_required_json_artifact(control_path_dir, "reframing.json")?;
     let memory: ControlPathMemoryArtifact =
         read_required_json_artifact(control_path_dir, "memory.json")?;
+    let decisions: ControlPathDecisionsArtifact =
+        read_required_json_artifact(control_path_dir, "decisions.json")?;
     let freedom_gate: FreedomGateArtifact =
         read_required_json_artifact(control_path_dir, "freedom_gate.json")?;
     let convergence: AeeConvergenceArtifact =
@@ -1064,6 +1081,7 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         evaluation.run_id.as_str(),
         reframing.run_id.as_str(),
         memory.run_id.as_str(),
+        decisions.run_id.as_str(),
         freedom_gate.run_id.as_str(),
         convergence.run_id.as_str(),
         final_result.run_id.as_str(),
@@ -1140,12 +1158,101 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         ));
     }
 
+    let expected_schema_fields = vec![
+        "decision_id".to_string(),
+        "surface_id".to_string(),
+        "proposal_or_action".to_string(),
+        "outcome_class".to_string(),
+        "decision_maker".to_string(),
+        "policy_bindings".to_string(),
+        "rationale".to_string(),
+        "downstream_consequence".to_string(),
+        "temporal_anchor".to_string(),
+    ];
+    if decisions.decision_schema_fields != expected_schema_fields {
+        return Err(anyhow!(
+            "control-path decisions schema fields mismatch: expected {:?}, found {:?}",
+            expected_schema_fields,
+            decisions.decision_schema_fields
+        ));
+    }
+
+    let expected_outcome_vocabulary = vec![
+        "accept".to_string(),
+        "reject".to_string(),
+        "defer".to_string(),
+        "escalate".to_string(),
+        "reroute".to_string(),
+    ];
+    if decisions.outcome_class_vocabulary != expected_outcome_vocabulary {
+        return Err(anyhow!(
+            "control-path decisions outcome vocabulary mismatch: expected {:?}, found {:?}",
+            expected_outcome_vocabulary,
+            decisions.outcome_class_vocabulary
+        ));
+    }
+    if decisions.surfaces.len() != 3 || decisions.decisions.len() != 3 {
+        return Err(anyhow!(
+            "control-path decisions artifact must contain exactly 3 surfaces and 3 records"
+        ));
+    }
+
+    let expected_surface_ids = [
+        "delegation_and_routing.route_selection",
+        "recovery_continuity.reframing",
+        "pre_execution_authorization.commitment_gate",
+    ];
+    for expected_surface_id in expected_surface_ids {
+        let Some(surface) = decisions
+            .surfaces
+            .iter()
+            .find(|surface| surface.surface_id == expected_surface_id)
+        else {
+            return Err(anyhow!(
+                "control-path decisions artifact is missing surface '{}'",
+                expected_surface_id
+            ));
+        };
+        let Some(record) = decisions
+            .decisions
+            .iter()
+            .find(|record| record.surface_id == expected_surface_id)
+        else {
+            return Err(anyhow!(
+                "control-path decisions artifact is missing decision record for '{}'",
+                expected_surface_id
+            ));
+        };
+        if record.temporal_anchor != surface.temporal_anchor_ref {
+            return Err(anyhow!(
+                "control-path decision temporal anchor '{}' does not match surface anchor '{}'",
+                record.temporal_anchor,
+                surface.temporal_anchor_ref
+            ));
+        }
+        if !decisions
+            .outcome_class_vocabulary
+            .contains(&record.outcome_class)
+        {
+            return Err(anyhow!(
+                "control-path decision outcome '{}' is not in the declared vocabulary",
+                record.outcome_class
+            ));
+        }
+    }
+
     let required_summary_markers = [
         "stage_order: signals -> candidate_selection -> arbitration -> execution -> evaluation -> reframing -> memory -> freedom_gate -> final_result".to_string(),
         format!("candidate_selection: candidate_id={}", agency.selected_candidate_id),
         format!("arbitration: route={}", arbitration.route_selected),
         format!("evaluation: termination_reason={}", evaluation.termination_reason),
         format!("reframing: trigger={}", reframing.reframing_trigger),
+        format!(
+            "decisions: route_selection={} reframing={} commitment_gate={}",
+            decisions.decisions[0].outcome_class,
+            decisions.decisions[1].outcome_class,
+            decisions.decisions[2].outcome_class
+        ),
         format!("freedom_gate: decision={}", freedom_gate.gate_decision),
         format!(
             "convergence: state={} stop_condition_family={} progress_signal={}",

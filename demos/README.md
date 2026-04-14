@@ -22,7 +22,7 @@ If you want the historical `v0.8` flagship demo surface:
 cargo run --manifest-path demos/transpiler_demo/Cargo.toml --quiet
 ```
 
-If you want the current `v0.87.1` milestone demo-suite proof package:
+If you want the current `v0.87.1` reviewer proof suite:
 
 ```bash
 bash adl/tools/demo_v0871_suite.sh
@@ -58,12 +58,37 @@ If you want the refreshed Paper Sonata flagship demo:
 bash adl/tools/demo_v088_paper_sonata.sh
 ```
 
+If you want the bounded multi-agent repo code review demo:
+
+```bash
+bash adl/tools/demo_v089_multi_agent_repo_code_review.sh
+```
+
 ## Demo Categories
 
 - Runtime workflow demos live in `adl/examples/`.
   These are the actual ADL files you can pass to the CLI today.
 - Milestone runbooks and reviewer docs live here in `demos/`.
 - Spec-only example artifacts live in `adl-spec/examples/` and are not the main starting point for runnable demos.
+
+## Demo Taxonomy
+
+Use these categories consistently:
+
+- Ordinary demos:
+  bounded runnable surfaces intended for normal demo sweeps, milestone proof rows, or public-facing walkthroughs.
+- Reviewer packages:
+  heavier integrated review surfaces that bundle multiple proof rows for milestone or reviewer use.
+- Release and quality proof packages:
+  heavyweight validation or release-tail surfaces that are useful for review and ceremony work, but should not be treated as ordinary quick demos.
+
+Current heavyweight proof-package examples:
+- `bash adl/tools/demo_v0871_suite.sh`
+- `bash adl/tools/demo_v0871_quality_gate.sh`
+- `bash adl/tools/demo_v0871_release_review_package.sh`
+- `bash adl/tools/demo_v088_review_surface.sh`
+
+When planning a demo sweep, do not assume every proof-package command above belongs in the ordinary demo lane.
 
 ## Recommended Paths
 
@@ -82,8 +107,9 @@ entrypoint. It runs the currently implemented `v0.87.1` proof surfaces and
 writes a suite manifest at `artifacts/v0871/suite/demo_manifest.json`.
 
 Treat that suite as the current reviewer starting point for the milestone.
-It is the default bounded proof package. The live-provider D13L companion proof
-remains explicit and credential-gated rather than part of the default suite.
+It is a heavyweight reviewer proof package, not an ordinary quick demo.
+The live-provider D13L companion proof remains explicit and credential-gated
+rather than part of the default suite.
 
 Use `v0.87.1/codex_ollama_operational_skills_demo.md` for a bounded demo that
 installs the tracked skills into a demo-local `CODEX_HOME`, points Codex CLI at
@@ -98,10 +124,15 @@ multi-agent runtime demo that keeps Claude and ChatGPT as two explicit named
 agents in a longer act-structured tea discussion and emits a transcript plus runtime proof
 artifacts.
 
+Use `v0.89/gemini_in_the_loop_demo.md` for a bounded provider-harmony demo that
+packages one review packet for Gemini, validates Gemini's structured response,
+and records a reviewer-facing findings artifact plus runtime proof.
+
 ### v0.89 bounded provider-participation demos
 
 - `v0.89/gemma4_issue_clerk_demo.md`
 - `v0.89/paper_sonata_demo_refresh.md`
+- `v0.89/multi_agent_repo_code_review_demo.md`
 
 Use `v0.89/gemma4_issue_clerk_demo.md` for a bounded operational-participation
 demo where an Ollama-hosted Gemma-family model proposes one issue-init payload,
@@ -111,6 +142,10 @@ rejected truthfully.
 Use `v0.89/paper_sonata_demo_refresh.md` for the refreshed reviewer-facing
 Paper Sonata package. It keeps the bounded flagship workflow, but adds a packet
 manifest, claim matrix, revision requests, and a clearer reviewer brief.
+
+Use `v0.89/multi_agent_repo_code_review_demo.md` for a bounded specialist-reviewer
+demo where ADL prepares one repo review packet, emits code/security/test/docs
+review artifacts, and then writes one synthesized findings-first review.
 
 Use `v0.87/v087_demo_program.md` for the canonical `v0.87` demo order and bounded
 repo-local commands.
