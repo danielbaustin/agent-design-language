@@ -20,9 +20,9 @@ This keeps the execution model aligned with the recent milestone pattern while p
 
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
-| `v0.89-s1` | open the official issue wave and execute the convergence / gate / action core | `WP-01` through `WP-05` | planned |
-| `v0.89-s2` | execute the skill / experiment / memory / security package plus explicit `v0.89.2` handoff planning | `WP-06`, `WP-07`, `WP-08`, `WP-09`, `WP-10` | planned |
-| `v0.89-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` through `WP-20` | planned |
+| `v0.89-s1` | open the official issue wave and execute the convergence / gate / action core | `WP-01` (`#1662`), `WP-02` - `WP-05` (`#1789` - `#1792`) | issue wave open |
+| `v0.89-s2` | execute the skill / experiment / memory / security package plus explicit `v0.89.2` handoff planning | `WP-06` - `WP-10` (`#1793` - `#1797`) | issue wave open |
+| `v0.89-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` (`#1798` - `#1807`) | issue wave open |
 
 ## Sprint 1
 
@@ -38,12 +38,15 @@ Move `v0.89` from a strong planning package into a real execution wave by openin
 
 Current issue map:
 - `WP-01` `#1662`
-- `WP-02` - `WP-05` reserved; official issue wave not yet opened
+- `WP-02` `#1789`
+- `WP-03` `#1790`
+- `WP-04` `#1791`
+- `WP-05` `#1792`
 
 ### Exit Criteria
-- `WP-02` through `WP-05` are mapped in the milestone docs and ready for issue creation
-- the convergence / gate / decision / action band has a ready-to-open executable issue wave
-- the main milestone docs stop speaking about the issue wave as hypothetical
+- `WP-02` through `WP-05` are opened and mapped to the canonical milestone docs with their real issue numbers
+- the convergence / gate / decision / action band has an executable issue wave rather than a reserved placeholder band
+- the main milestone docs record the active issue graph truthfully instead of speaking about the issue wave as hypothetical
 
 ## Sprint 2
 
@@ -58,11 +61,15 @@ Land the governed execution substrate that makes `v0.89` useful beyond judgment 
 - explicit `v0.89.2` handoff planning
 
 Current issue map:
-- `WP-06` - `WP-10` reserved; official issue wave not yet opened
+- `WP-06` `#1793`
+- `WP-07` `#1794`
+- `WP-08` `#1795`
+- `WP-09` `#1796`
+- `WP-10` `#1797`
 
 ### Exit Criteria
-- `WP-06` through `WP-10` are planned and tracked in the milestone package
-- the main `v0.89` feature band is fully represented in the planned execution package
+- `WP-06` through `WP-10` are opened and tracked in the milestone package with their real issue numbers
+- the main `v0.89` feature band is fully represented in the active execution package
 - `v0.89.2` carry-forward is explicit and bounded
 
 ## Sprint 3
@@ -83,7 +90,16 @@ Close the milestone using the normal ADL pattern: demos, quality gate, docs/revi
 - release ceremony
 
 Current issue map:
-- `WP-11` - `WP-20` reserved; official issue wave not yet opened
+- `WP-11` `#1798`
+- `WP-12` `#1799`
+- `WP-13` `#1800`
+- `WP-14` `#1801`
+- `WP-15` `#1802`
+- `WP-16` `#1803`
+- `WP-17` `#1804`
+- `WP-18` `#1805`
+- `WP-19` `#1806`
+- `WP-20` `#1807`
 
 ### Exit Criteria
 - reviewer-facing proof surfaces exist for the core `v0.89` claims
@@ -96,9 +112,9 @@ Current issue map:
 - Dependency: `v0.88` release tail must close cleanly so the next wave does not inherit avoidable drift
   - Risk: unresolved `v0.88` closeout work distracts from `v0.89` issue opening
   - Mitigation: keep `v0.89` planning package self-contained and truth-based so execution can start cleanly once `v0.88` closes
-- Dependency: the reserved official `v0.89` issue wave must stay aligned with the milestone docs
+- Dependency: the official `v0.89` issue wave must stay aligned with the milestone docs
   - Risk: issue bodies and milestone docs drift once the wave opens
-  - Mitigation: treat the reserved official issue wave plus `WBS_v0.89.md` / `FEATURE_DOCS_v0.89.md` as one package and update them together
+  - Mitigation: treat the opened official issue wave plus `WBS_v0.89.md` / `FEATURE_DOCS_v0.89.md` as one package and update them together
 
 ## Demo / Review Plan
 - Demo artifact: `DEMO_MATRIX_v0.89.md` plus the later convergence/gate/experiment/security proof surfaces it governs

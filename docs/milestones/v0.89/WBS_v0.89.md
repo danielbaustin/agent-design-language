@@ -25,25 +25,25 @@ The adversarial runtime/proof package is intentionally planned as the `v0.89.2` 
 | ID | Work Package | Description | Deliverable | Dependencies | Issue |
 |---|---|---|---|---|---|
 | WP-01 | Design pass (milestone docs + planning) | Finalize the canonical `v0.89` package, promote the main feature docs, and map every source planning doc to an implementation home. | coherent milestone docs, feature index, seeded issue-wave plan | none | `#1662` |
-| WP-02 | AEE convergence | Turn AEE 1.0 convergence into an explicit runtime/trace/review contract with bounded stop conditions and progress signals. | code/doc/proof surface for AEE convergence | `WP-01` | reserved for official `v0.89` issue wave |
-| WP-03 | Freedom Gate v2 | Strengthen the gate from minimal bounded refusal into a richer judgment boundary. | gate design + implementation/proof surface | `WP-01`, `WP-02` | reserved for official `v0.89` issue wave |
-| WP-04 | Decision surfaces and decision schema | Make points of choice and their record shape explicit and reusable across the runtime. | decision-surface contract + decision record support | `WP-01`, `WP-03` | reserved for official `v0.89` issue wave |
-| WP-05 | Action mediation and proposal schema | Establish the authority boundary between model intent and runtime execution. | action proposal + mediation surfaces | `WP-01`, `WP-03`, `WP-04` | reserved for official `v0.89` issue wave |
-| WP-06 | Skill model and execution protocol | Promote skills from repo practice into canonical governed execution contracts. | skill model + invocation protocol surfaces | `WP-01`, `WP-05` | reserved for official `v0.89` issue wave |
-| WP-07 | Godel experiment system | Deepen bounded scientific-loop behavior into explicit experiments and adopt/reject records. | experiment record and evaluation package | `WP-02`, `WP-04`, `WP-06` | reserved for official `v0.89` issue wave |
-| WP-08 | ObsMem evidence and ranking | Make retrieval evidence-aware, provenance-sensitive, and reviewer-legible. | ranking/explanation package | `WP-02`, `WP-07` | reserved for official `v0.89` issue wave |
-| WP-09 | Security, trust, and posture package | Land the main `v0.89` security contract: threat model, posture model, and trust-under-adversary framing. | security/trust/posture package | `WP-04`, `WP-05`, `WP-06` | reserved for official `v0.89` issue wave |
-| WP-10 | `v0.89.2` handoff planning | Convert adversarial-runtime carry-forward into an explicit `v0.89.2` package with no ambiguity. | follow-on planning package for `v0.89.2` | `WP-01`, `WP-09` | reserved for official `v0.89` issue wave |
-| WP-11 | Demo scaffolding and proof entry points | Define and land the bounded demo entry points for convergence, gate behavior, experiment evidence, and security review surfaces. | runnable or reviewer-legible demo surfaces | `WP-02` - `WP-09` | reserved for official `v0.89` issue wave |
-| WP-12 | Milestone convergence and follow-on mapping | Reconcile issue graph, carry-forward, and proof surfaces before the release tail starts. | converged issue graph and milestone status surfaces | `WP-02` - `WP-11` | reserved for official `v0.89` issue wave |
-| WP-13 | Demo matrix + integration demos | Validate the milestone claims through bounded demos and integration review. | canonical demo matrix and demo artifacts | `WP-02` - `WP-12` | reserved for official `v0.89` issue wave |
-| WP-14 | Coverage / quality gate (ratchet + exclusions) | Run quality gates and record any bounded exceptions truthfully. | green quality gate or documented exceptions | `WP-02` - `WP-13` | reserved for official `v0.89` issue wave |
-| WP-15 | Docs + review pass (repo-wide alignment) | Align docs, review surfaces, and release-tail truth across the repo. | converged docs/review package | `WP-13`, `WP-14` | reserved for official `v0.89` issue wave |
-| WP-16 | Internal review | Perform bounded internal review of milestone truth and proof surfaces. | internal review record | `WP-15` | reserved for official `v0.89` issue wave |
-| WP-17 | 3rd-party review | Perform external review of the milestone package and capture findings. | 3rd-party review record | `WP-15`, `WP-16` | reserved for official `v0.89` issue wave |
-| WP-18 | Review findings remediation | Resolve or explicitly defer accepted review findings. | remediation record | `WP-16`, `WP-17` | reserved for official `v0.89` issue wave |
-| WP-19 | Next milestone planning | Prepare the next milestone planning package before `v0.89` closeout. | next-milestone package | `WP-18` | reserved for official `v0.89` issue wave |
-| WP-20 | Release ceremony (final validation + tag + notes + cleanup) | Close the milestone cleanly after validation and documentation are complete. | release tag, notes, and closeout | `WP-18`, `WP-19` | reserved for official `v0.89` issue wave |
+| WP-02 | AEE convergence | Turn AEE 1.0 convergence into an explicit runtime/trace/review contract with bounded stop conditions and progress signals. | code/doc/proof surface for AEE convergence | `WP-01` | `#1789` |
+| WP-03 | Freedom Gate v2 | Strengthen the gate from minimal bounded refusal into a richer judgment boundary. | gate design + implementation/proof surface | `WP-01`, `WP-02` | `#1790` |
+| WP-04 | Decision surfaces and decision schema | Make points of choice and their record shape explicit and reusable across the runtime. | decision-surface contract + decision record support | `WP-01`, `WP-03` | `#1791` |
+| WP-05 | Action mediation and proposal schema | Establish the authority boundary between model intent and runtime execution. | action proposal + mediation surfaces | `WP-01`, `WP-03`, `WP-04` | `#1792` |
+| WP-06 | Skill model and execution protocol | Promote skills from repo practice into canonical governed execution contracts. | skill model + invocation protocol surfaces | `WP-01`, `WP-05` | `#1793` |
+| WP-07 | Godel experiment system | Deepen bounded scientific-loop behavior into explicit experiments and adopt/reject records. | experiment record and evaluation package | `WP-02`, `WP-04`, `WP-06` | `#1794` |
+| WP-08 | ObsMem evidence and ranking | Make retrieval evidence-aware, provenance-sensitive, and reviewer-legible. | ranking/explanation package | `WP-02`, `WP-07` | `#1795` |
+| WP-09 | Security, trust, and posture package | Land the main `v0.89` security contract: threat model, posture model, and trust-under-adversary framing. | security/trust/posture package | `WP-04`, `WP-05`, `WP-06` | `#1796` |
+| WP-10 | `v0.89.2` handoff planning | Convert adversarial-runtime carry-forward into an explicit `v0.89.2` package with no ambiguity. | follow-on planning package for `v0.89.2` | `WP-01`, `WP-09` | `#1797` |
+| WP-11 | Demo scaffolding and proof entry points | Define and land the bounded demo entry points for convergence, gate behavior, experiment evidence, and security review surfaces. | runnable or reviewer-legible demo surfaces | `WP-02` - `WP-09` | `#1798` |
+| WP-12 | Milestone convergence and follow-on mapping | Reconcile issue graph, carry-forward, and proof surfaces before the release tail starts. | converged issue graph and milestone status surfaces | `WP-02` - `WP-11` | `#1799` |
+| WP-13 | Demo matrix + integration demos | Validate the milestone claims through bounded demos and integration review. | canonical demo matrix and demo artifacts | `WP-02` - `WP-12` | `#1800` |
+| WP-14 | Coverage / quality gate (ratchet + exclusions) | Run quality gates and record any bounded exceptions truthfully. | green quality gate or documented exceptions | `WP-02` - `WP-13` | `#1801` |
+| WP-15 | Docs + review pass (repo-wide alignment) | Align docs, review surfaces, and release-tail truth across the repo. | converged docs/review package | `WP-13`, `WP-14` | `#1802` |
+| WP-16 | Internal review | Perform bounded internal review of milestone truth and proof surfaces. | internal review record | `WP-15` | `#1803` |
+| WP-17 | 3rd-party review | Perform external review of the milestone package and capture findings. | 3rd-party review record | `WP-15`, `WP-16` | `#1804` |
+| WP-18 | Review findings remediation | Resolve or explicitly defer accepted review findings. | remediation record | `WP-16`, `WP-17` | `#1805` |
+| WP-19 | Next milestone planning | Prepare the next milestone planning package before `v0.89` closeout. | next-milestone package | `WP-18` | `#1806` |
+| WP-20 | Release ceremony (final validation + tag + notes + cleanup) | Close the milestone cleanly after validation and documentation are complete. | release tag, notes, and closeout | `WP-18`, `WP-19` | `#1807` |
 
 ## Sequencing
 - Phase 1: establish the canonical package and the seedable issue-wave plan (`WP-01`)
@@ -74,5 +74,5 @@ The adversarial runtime/proof package is intentionally planned as the `v0.89.2` 
 
 ## Exit Criteria
 - every in-scope requirement maps to at least one WBS item
-- every WBS item has a concrete deliverable and a reserved issue-wave home
+- every WBS item has a concrete deliverable and an explicit issue-wave home
 - dependency order is explicit enough to execute without reconstructing milestone logic by hand
