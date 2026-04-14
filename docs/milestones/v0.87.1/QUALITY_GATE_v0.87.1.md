@@ -152,7 +152,7 @@ must keep the documented policy and CI configuration aligned.
 
 The large-module watch list is governed by:
 
-- `docs/tooling/rust_module_watch_list.md`
+- local Rust size reports under `.adl/reports/manual/`
 - `adl/tools/report_large_rust_modules.sh`
 
 This surface is intentionally non-blocking.
@@ -161,6 +161,7 @@ Its purpose is to keep maintainability debt visible without converting every
 large-file warning into a fake release blocker. For `v0.87.1`, the watch-list
 posture is:
 
+- treat the current report as a local operational snapshot rather than a tracked governance file
 - use the report during review and quality-gate walkthroughs
 - keep the report script green-by-default
 - require explicit deferral rationale in output cards only when a PR materially
