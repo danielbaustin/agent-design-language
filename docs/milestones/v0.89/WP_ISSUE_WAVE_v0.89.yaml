@@ -1,8 +1,8 @@
 schema: adl.wp_issue_wave.v1
 version: v0.89
 sources:
-  wbs: .worktrees/adl-wp-1662/docs/milestones/v0.89/WBS_v0.89.md
-  sprint: .worktrees/adl-wp-1662/docs/milestones/v0.89/SPRINT_v0.89.md
+  wbs: docs/milestones/v0.89/WBS_v0.89.md
+  sprint: docs/milestones/v0.89/SPRINT_v0.89.md
 entries:
 - wp: WP-02
   issue_kind: execution
