@@ -17,9 +17,9 @@ git -C "$SEED" checkout -q -b main
 git -C "$SEED" config user.name "Test User"
 git -C "$SEED" config user.email "test@example.com"
 mkdir -p "$SEED/adl/tools"
-cp "$ROOT/adl/tools/fix_git_main_sync.sh" "$SEED/adl/tools/fix_git_main_sync.sh"
+cp "$ROOT/adl/tools/fix_git_main_sync_preserve_local_adl.sh" "$SEED/adl/tools/fix_git_main_sync_preserve_local_adl.sh"
 cp "$ROOT/adl/tools/closeout_completed_issue_wave.sh" "$SEED/adl/tools/closeout_completed_issue_wave.sh"
-chmod +x "$SEED/adl/tools/fix_git_main_sync.sh"
+chmod +x "$SEED/adl/tools/fix_git_main_sync_preserve_local_adl.sh"
 chmod +x "$SEED/adl/tools/closeout_completed_issue_wave.sh"
 printf '.adl/\n' >"$SEED/.gitignore"
 cat >"$SEED/adl/tools/pr.sh" <<'EOF'
@@ -31,7 +31,7 @@ EOF
 chmod +x "$SEED/adl/tools/pr.sh"
 mkdir -p "$SEED/$(dirname "$CARD_PATH")"
 printf 'tracked residue\n' >"$SEED/$CARD_PATH"
-git -C "$SEED" add -f .gitignore adl/tools/fix_git_main_sync.sh adl/tools/closeout_completed_issue_wave.sh adl/tools/pr.sh "$CARD_PATH"
+git -C "$SEED" add -f .gitignore adl/tools/fix_git_main_sync_preserve_local_adl.sh adl/tools/closeout_completed_issue_wave.sh adl/tools/pr.sh "$CARD_PATH"
 git -C "$SEED" commit -q -m "seed tracked residue"
 git -C "$SEED" push -q -u origin main
 
@@ -59,7 +59,7 @@ chmod +x "$BIN/gh"
 
 export TEST_CLOSEOUT_LOG="$TMP/closeout.log"
 
-(cd "$LOCAL" && PATH="$BIN:$PATH" ADL_MAIN_SYNC_CLOSEOUT_VERSIONS=v0.88 ADL_MAIN_SYNC_CLOSEOUT_REPO=danielbaustin/agent-design-language bash ./adl/tools/fix_git_main_sync.sh >/dev/null)
+(cd "$LOCAL" && PATH="$BIN:$PATH" ADL_MAIN_SYNC_CLOSEOUT_VERSIONS=v0.88 ADL_MAIN_SYNC_CLOSEOUT_REPO=danielbaustin/agent-design-language bash ./adl/tools/fix_git_main_sync_preserve_local_adl.sh >/dev/null)
 
 if [[ ! -f "$LOCAL/$CARD_PATH" ]]; then
   echo "expected local card to be restored after fast-forward sync" >&2
