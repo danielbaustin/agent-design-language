@@ -1,8 +1,15 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
+use serde::{Deserialize, Serialize};
 
 use crate::godel;
+use crate::obsmem_adapter::ObsMemAdapter;
+use crate::obsmem_retrieval_policy::{
+    explain_policy_results, ExplainedMemoryRecord, RetrievalOrder, RetrievalPolicyV1,
+    RetrievalRequest,
+};
+use crate::obsmem_store::FileObsMemClient;
 
 use super::write_file;
 
@@ -47,17 +54,48 @@ cargo run --manifest-path adl/Cargo.toml --bin adl -- demo demo-f-obsmem-retriev
 This demo seeds deterministic runtime experiment/index artifacts and performs deterministic retrieval by:
 
 - `failure_code`
-- optional `hypothesis_id`
-- optional `experiment_outcome`
+- explicit evidence-aware ranking explanations
+- provenance families derived from cited artifacts
+- deterministic tie-break values for equal-ranked hits
 
 Primary artifacts:
 - `runs/demo-f-run-a/godel/experiment_record.runtime.v1.json`
 - `runs/demo-f-run-a/godel/obsmem_index_entry.runtime.v1.json`
 - `runs/demo-f-run-b/godel/experiment_record.runtime.v1.json`
 - `runs/demo-f-run-b/godel/obsmem_index_entry.runtime.v1.json`
+- `runs/demo-f-run-c/godel/experiment_record.runtime.v1.json`
+- `runs/demo-f-run-c/godel/obsmem_index_entry.runtime.v1.json`
 - `obsmem_retrieval_result.json`
 - `trace.jsonl`
 "#;
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct DemoObsMemQueryDescriptor {
+    workflow_id: Option<String>,
+    failure_code: Option<String>,
+    tags: Vec<String>,
+    limit: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct DemoObsMemOrderingDescriptor {
+    policy_order: String,
+    tie_break_fields: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct DemoObsMemRetrievalArtifact {
+    schema_version: String,
+    shared_store_path: String,
+    query: DemoObsMemQueryDescriptor,
+    ordering: DemoObsMemOrderingDescriptor,
+    result_count: usize,
+    entries: Vec<crate::obsmem_contract::MemoryRecord>,
+    explained_results: Vec<ExplainedMemoryRecord>,
+}
 
 pub(super) fn run_godel_stage_loop_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
     let mut artifacts = Vec::new();
@@ -112,21 +150,43 @@ pub(super) fn seed_obsmem_retrieval_demo(out_dir: &Path) -> Result<Vec<PathBuf>>
     let runs_root = out_dir.join("runs");
     let exec = godel::GodelStageLoopExecutor::new(godel::StageLoopConfig::default());
 
-    let input_a = godel::StageLoopInput {
-        run_id: "demo-f-run-a".to_string(),
-        workflow_id: "godel-retrieval-demo".to_string(),
-        failure_code: "tool_failure".to_string(),
-        failure_summary: "deterministic failure A".to_string(),
-        evidence_refs: vec!["runs/demo-f-run-a/run_status.json".to_string()],
-    };
-    let mut input_b = input_a.clone();
-    input_b.run_id = "demo-f-run-b".to_string();
-    input_b.failure_code = "policy_denied".to_string();
-    input_b.failure_summary = "deterministic failure B".to_string();
-    input_b.evidence_refs = vec!["runs/demo-f-run-b/run_status.json".to_string()];
+    let runs = [
+        (
+            "demo-f-run-a",
+            "deterministic failure A",
+            "success",
+            vec!["runs/demo-f-run-a/run_status.json".to_string()],
+        ),
+        (
+            "demo-f-run-b",
+            "deterministic failure B",
+            "success",
+            vec!["runs/demo-f-run-b/run_status.json".to_string()],
+        ),
+        (
+            "demo-f-run-c",
+            "deterministic failure C",
+            "failed",
+            vec!["runs/demo-f-run-c/run_status.json".to_string()],
+        ),
+    ];
 
-    for input in [input_a, input_b] {
+    for (run_id, failure_summary, overall_status, evidence_refs) in runs {
+        let input = godel::StageLoopInput {
+            run_id: run_id.to_string(),
+            workflow_id: "godel-retrieval-demo".to_string(),
+            failure_code: "tool_failure".to_string(),
+            failure_summary: failure_summary.to_string(),
+            evidence_refs,
+        };
         let persisted = exec.execute_and_persist(&input, &runs_root)?;
+        write_demo_obsmem_runtime_artifacts(
+            &runs_root,
+            run_id,
+            "godel-retrieval-demo",
+            overall_status,
+            "tool_failure",
+        )?;
         artifacts.push(out_dir.join(&persisted.experiment_record_rel_path));
         artifacts.push(out_dir.join(&persisted.obsmem_index_rel_path));
     }
@@ -135,49 +195,147 @@ pub(super) fn seed_obsmem_retrieval_demo(out_dir: &Path) -> Result<Vec<PathBuf>>
 }
 
 pub(super) fn query_obsmem_retrieval_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
-    let mut entries: Vec<godel::obsmem_index::StageIndexEntry> = Vec::new();
     let runs_root = out_dir.join("runs");
-    for run_id in ["demo-f-run-a", "demo-f-run-b"] {
-        let path = runs_root
-            .join(run_id)
-            .join("godel")
-            .join("obsmem_index_entry.runtime.v1.json");
-        let raw = std::fs::read_to_string(&path)
-            .with_context(|| format!("failed to read '{}'", path.display()))?;
-        let persisted: godel::obsmem_index::PersistedStageIndexEntry =
-            serde_json::from_str(&raw)
-                .with_context(|| format!("failed to parse '{}'", path.display()))?;
-        entries.push(persisted.entry);
+    let shared_store_path = runs_root.join("_shared").join("obsmem_store.v1.json");
+    let adapter = ObsMemAdapter::new(FileObsMemClient::new(&shared_store_path));
+
+    for run_id in ["demo-f-run-a", "demo-f-run-b", "demo-f-run-c"] {
+        adapter
+            .index_run_from_artifacts(&runs_root, run_id)
+            .with_context(|| format!("index demo ObsMem artifacts for '{run_id}'"))?;
     }
 
-    let query = godel::obsmem_index::ObsMemIndexQuery {
-        failure_code: "tool_failure".to_string(),
-        hypothesis_id: None,
-        experiment_outcome: None,
+    let mut policy = RetrievalPolicyV1 {
+        default_limit: 10,
+        required_tags: vec!["workflow:godel-retrieval-demo".to_string()],
+        required_failure_code: Some("tool_failure".to_string()),
+        order: RetrievalOrder::EvidenceAdjustedDescIdAsc,
+    };
+    policy.normalize();
+
+    let request = RetrievalRequest {
+        workflow_id: Some("godel-retrieval-demo".to_string()),
+        failure_code: None,
+        tags: vec![],
+        limit_override: Some(10),
     };
 
-    let mut matches: Vec<_> = entries
-        .into_iter()
-        .filter(|e| godel::obsmem_index::matches_query(e, &query))
-        .collect();
-    matches.sort_by(|a, b| {
-        a.index_key
-            .cmp(&b.index_key)
-            .then(a.run_id.cmp(&b.run_id))
-            .then(a.mutation_id.cmp(&b.mutation_id))
-    });
+    let query = request
+        .to_query(&policy)
+        .context("build deterministic ObsMem demo query")?;
+    let raw_result = adapter
+        .query(
+            query.workflow_id.as_deref(),
+            query.failure_code.as_deref(),
+            &query.tags,
+            query.limit,
+        )
+        .context("query deterministic ObsMem demo results")?;
+    let explained = explain_policy_results(&policy, &request, raw_result)
+        .context("derive deterministic ObsMem ranking explanations")?;
+    let entries = explained
+        .iter()
+        .map(|entry| entry.record.clone())
+        .collect::<Vec<_>>();
 
-    let result = serde_json::json!({
-        "schema_version": "obsmem_retrieval_result.demo.v1",
-        "query": query,
-        "result_count": matches.len(),
-        "results": matches,
-    });
+    let result = DemoObsMemRetrievalArtifact {
+        schema_version: "obsmem_retrieval_result.demo.v2".to_string(),
+        shared_store_path: "runs/_shared/obsmem_store.v1.json".to_string(),
+        query: DemoObsMemQueryDescriptor {
+            workflow_id: query.workflow_id,
+            failure_code: query.failure_code,
+            tags: query.tags,
+            limit: query.limit,
+        },
+        ordering: DemoObsMemOrderingDescriptor {
+            policy_order: "evidence_adjusted_desc_id_asc".to_string(),
+            tie_break_fields: vec![
+                "id".to_string(),
+                "run_id".to_string(),
+                "workflow_id".to_string(),
+                "payload".to_string(),
+            ],
+        },
+        result_count: explained.len(),
+        entries,
+        explained_results: explained,
+    };
 
     let path = write_file(
         out_dir,
         "obsmem_retrieval_result.json",
         &serde_json::to_string_pretty(&result)?,
     )?;
-    Ok(vec![path])
+    Ok(vec![path, shared_store_path])
+}
+
+fn write_demo_obsmem_runtime_artifacts(
+    runs_root: &Path,
+    run_id: &str,
+    workflow_id: &str,
+    overall_status: &str,
+    failure_kind: &str,
+) -> Result<()> {
+    let run_dir = runs_root.join(run_id);
+    std::fs::create_dir_all(run_dir.join("logs"))
+        .with_context(|| format!("failed to create '{}'", run_dir.display()))?;
+
+    let run_summary = serde_json::json!({
+        "run_summary_version": 1,
+        "run_id": run_id,
+        "workflow_id": workflow_id,
+    });
+    std::fs::write(
+        run_dir.join("run_summary.json"),
+        serde_json::to_vec_pretty(&run_summary).context("serialize demo run_summary.json")?,
+    )
+    .with_context(|| format!("failed to write '{}/run_summary.json'", run_dir.display()))?;
+
+    let run_status = serde_json::json!({
+        "run_status_version": 1,
+        "run_id": run_id,
+        "overall_status": overall_status,
+        "failure_kind": failure_kind,
+    });
+    std::fs::write(
+        run_dir.join("run_status.json"),
+        serde_json::to_vec_pretty(&run_status).context("serialize demo run_status.json")?,
+    )
+    .with_context(|| format!("failed to write '{}/run_status.json'", run_dir.display()))?;
+
+    let activation = serde_json::json!({
+        "activation_log_version": 1,
+        "ordering": "append_only_emission_order",
+        "stable_ids": {
+            "step_id": "stable within resolved execution plan",
+            "delegation_id": "deterministic per run: del-<counter>",
+            "run_id": "run-scoped identifier; not replay-stable across independent runs",
+        },
+        "events": [
+            {
+                "kind": "StepStarted",
+                "step_id": "seed",
+                "agent_id": "demo-obsmem",
+                "provider_id": "local",
+                "task_id": "seed",
+                "delegation_json": null
+            },
+            {
+                "kind": "StepFinished",
+                "step_id": "seed",
+                "success": overall_status == "success"
+            }
+        ]
+    });
+    std::fs::write(
+        run_dir.join("logs").join("activation_log.json"),
+        serde_json::to_vec_pretty(&activation).context("serialize demo activation_log.json")?,
+    )
+    .with_context(|| {
+        format!(
+            "failed to write '{}/logs/activation_log.json'",
+            run_dir.display()
+        )
+    })?;
+    Ok(())
 }

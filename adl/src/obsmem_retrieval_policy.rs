@@ -1,3 +1,7 @@
+use std::path::Path;
+
+use serde::{Deserialize, Serialize};
+
 use crate::obsmem_contract::{
     MemoryQuery, MemoryQueryResult, MemoryRecord, ObsMemContractError, ObsMemContractErrorCode,
     OBSMEM_CONTRACT_VERSION,
@@ -69,6 +73,36 @@ pub struct RetrievalRequest {
     pub limit_override: Option<usize>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RetrievalTieBreakValues {
+    pub id: String,
+    pub run_id: String,
+    pub workflow_id: String,
+    pub payload: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RetrievalExplanation {
+    pub prior_score: String,
+    pub effective_score: String,
+    pub matched_query_tags: Vec<String>,
+    pub matched_failure_tag: Option<String>,
+    pub status_tags: Vec<String>,
+    pub citation_count: usize,
+    pub provenance_paths: Vec<String>,
+    pub provenance_families: Vec<String>,
+    pub trace_event_ref_count: usize,
+    pub explanation_signals: Vec<String>,
+    pub tie_break_values: RetrievalTieBreakValues,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ExplainedMemoryRecord {
+    pub rank: usize,
+    pub record: MemoryRecord,
+    pub explanation: RetrievalExplanation,
+}
+
 impl RetrievalRequest {
     /// Canonicalize request tags for deterministic behavior.
     pub fn normalize(&mut self) {
@@ -122,18 +156,41 @@ impl RetrievalRequest {
 pub fn apply_policy_to_results(
     policy: &RetrievalPolicyV1,
     request: &RetrievalRequest,
-    mut result: MemoryQueryResult,
+    result: MemoryQueryResult,
 ) -> Result<MemoryQueryResult, ObsMemContractError> {
+    let explained = explain_policy_results(policy, request, result)?;
+    Ok(MemoryQueryResult {
+        hits: explained.into_iter().map(|entry| entry.record).collect(),
+    })
+}
+
+pub fn explain_policy_results(
+    policy: &RetrievalPolicyV1,
+    request: &RetrievalRequest,
+    mut result: MemoryQueryResult,
+) -> Result<Vec<ExplainedMemoryRecord>, ObsMemContractError> {
     policy.validate()?;
 
     let query = request.to_query(policy)?;
+    retain_hits_for_query(&query, &mut result.hits);
+    stable_sort_hits(policy.order, &query, &mut result.hits);
+    result.hits.truncate(query.limit);
 
+    Ok(result
+        .hits
+        .into_iter()
+        .enumerate()
+        .map(|(idx, record)| explain_hit(policy.order, &query, idx + 1, record))
+        .collect())
+}
+
+fn retain_hits_for_query(query: &MemoryQuery, hits: &mut Vec<MemoryRecord>) {
     let required_failure_tag = query
         .failure_code
         .as_ref()
         .map(|fc| format!("failure:{fc}"));
 
-    result.hits.retain(|hit| {
+    hits.retain(|hit| {
         query
             .workflow_id
             .as_ref()
@@ -143,10 +200,6 @@ pub fn apply_policy_to_results(
                 .as_ref()
                 .is_none_or(|tag| hit.tags.binary_search(tag).is_ok())
     });
-
-    stable_sort_hits(policy.order, &query, &mut result.hits);
-    result.hits.truncate(query.limit);
-    Ok(result)
 }
 
 fn stable_sort_hits(order: RetrievalOrder, query: &MemoryQuery, hits: &mut [MemoryRecord]) {
@@ -185,6 +238,81 @@ fn stable_sort_hits(order: RetrievalOrder, query: &MemoryQuery, hits: &mut [Memo
     }
 }
 
+fn explain_hit(
+    order: RetrievalOrder,
+    query: &MemoryQuery,
+    rank: usize,
+    record: MemoryRecord,
+) -> ExplainedMemoryRecord {
+    let matched_failure_tag = query
+        .failure_code
+        .as_ref()
+        .map(|fc| format!("failure:{fc}"))
+        .filter(|tag| has_tag(&record, tag));
+    let matched_query_tags = query
+        .tags
+        .iter()
+        .filter(|tag| has_tag(&record, tag))
+        .cloned()
+        .collect::<Vec<_>>();
+    let status_tags = record
+        .tags
+        .iter()
+        .filter(|tag| tag.starts_with("status:"))
+        .cloned()
+        .collect::<Vec<_>>();
+    let provenance_paths = record
+        .citations
+        .iter()
+        .map(|citation| citation.path.clone())
+        .collect::<Vec<_>>();
+    let mut provenance_families = provenance_paths
+        .iter()
+        .map(|path| provenance_family_for_path(path))
+        .collect::<Vec<_>>();
+    provenance_families.sort();
+    provenance_families.dedup();
+
+    let prior_score = parse_score_hundredths(&record.score);
+    let effective_score = rank_score_hundredths(order, &record, query);
+
+    ExplainedMemoryRecord {
+        rank,
+        explanation: RetrievalExplanation {
+            prior_score: format_score_hundredths(prior_score),
+            effective_score: format_score_hundredths(effective_score),
+            matched_query_tags,
+            matched_failure_tag: matched_failure_tag.clone(),
+            status_tags,
+            citation_count: record.citations.len(),
+            provenance_paths,
+            provenance_families,
+            trace_event_ref_count: record.trace_event_refs.len(),
+            explanation_signals: build_explanation_signals(
+                &record,
+                query,
+                matched_failure_tag.is_some(),
+            ),
+            tie_break_values: RetrievalTieBreakValues {
+                id: record.id.clone(),
+                run_id: record.run_id.clone(),
+                workflow_id: record.workflow_id.clone(),
+                payload: record.payload.clone(),
+            },
+        },
+        record,
+    }
+}
+
+fn rank_score_hundredths(order: RetrievalOrder, hit: &MemoryRecord, query: &MemoryQuery) -> i64 {
+    match order {
+        RetrievalOrder::EvidenceAdjustedDescIdAsc => evidence_adjusted_score_hundredths(hit, query),
+        RetrievalOrder::ScoreDescIdAsc | RetrievalOrder::IdAsc => {
+            parse_score_hundredths(&hit.score)
+        }
+    }
+}
+
 fn evidence_adjusted_score_hundredths(hit: &MemoryRecord, query: &MemoryQuery) -> i64 {
     let prior = parse_score_hundredths(&hit.score).max(0);
     let multiplier_percent = evidence_multiplier_percent(hit, query);
@@ -216,6 +344,62 @@ fn has_tag(hit: &MemoryRecord, tag: &str) -> bool {
         .is_ok()
 }
 
+fn build_explanation_signals(
+    hit: &MemoryRecord,
+    query: &MemoryQuery,
+    matched_failure_tag: bool,
+) -> Vec<String> {
+    let mut signals = Vec::new();
+
+    if matched_failure_tag {
+        signals.push("failure_code_match".to_string());
+    }
+
+    let shared_query_tags = query.tags.iter().filter(|tag| has_tag(hit, tag)).count();
+    if shared_query_tags > 0 {
+        signals.push(format!("query_tag_overlap:{shared_query_tags}"));
+    }
+
+    if has_tag(hit, "status:success") {
+        signals.push("status_success_boost".to_string());
+    }
+    if has_tag(hit, "status:failed") || has_tag(hit, "status:failure") {
+        signals.push("status_failure_penalty".to_string());
+    }
+
+    let citation_boost = hit.citations.len().min(3);
+    if citation_boost > 0 {
+        signals.push(format!("citation_boost:{citation_boost}"));
+    }
+
+    if !hit.trace_event_refs.is_empty() {
+        signals.push(format!("trace_refs:{}", hit.trace_event_refs.len()));
+    }
+
+    signals
+}
+
+fn provenance_family_for_path(path: &str) -> String {
+    match Path::new(path).file_name().and_then(|name| name.to_str()) {
+        Some("run_summary.json") => "run_summary".to_string(),
+        Some("run_status.json") => "run_status".to_string(),
+        Some("activation_log.json") => "activation_log".to_string(),
+        Some(name) if path.contains("/godel/") => format!(
+            "godel:{}",
+            Path::new(name)
+                .file_stem()
+                .and_then(|stem| stem.to_str())
+                .unwrap_or("artifact")
+        ),
+        Some(name) => Path::new(name)
+            .file_stem()
+            .and_then(|stem| stem.to_str())
+            .unwrap_or("other")
+            .to_string(),
+        None => "unknown".to_string(),
+    }
+}
+
 fn parse_score_hundredths(score: &str) -> i64 {
     let trimmed = score.trim();
     let mut iter = trimmed.split('.');
@@ -228,6 +412,12 @@ fn parse_score_hundredths(score: &str) -> i64 {
     };
     let frac = frac_two.parse::<i64>().unwrap_or(0);
     whole * 100 + frac
+}
+
+fn format_score_hundredths(score: i64) -> String {
+    let sign = if score < 0 { "-" } else { "" };
+    let abs = score.abs();
+    format!("{sign}{}.{:02}", abs / 100, abs % 100)
 }
 
 #[cfg(test)]
@@ -492,6 +682,96 @@ mod tests {
             left.hits.iter().map(|h| h.id.as_str()).collect::<Vec<_>>(),
             vec!["a", "b"]
         );
+    }
+
+    #[test]
+    fn explain_policy_results_surfaces_ranking_reasons_and_provenance() {
+        let policy = RetrievalPolicyV1 {
+            default_limit: 10,
+            required_tags: vec![],
+            required_failure_code: Some("tool_failure".to_string()),
+            order: RetrievalOrder::EvidenceAdjustedDescIdAsc,
+        };
+        let request = RetrievalRequest {
+            workflow_id: Some("wf-a".to_string()),
+            failure_code: None,
+            tags: vec!["workflow:wf-a".to_string()],
+            limit_override: None,
+        };
+
+        let mut a = hit(
+            "a",
+            "1.00",
+            &["workflow:wf-a", "status:success", "failure:tool_failure"],
+        );
+        a.citations.push(MemoryCitation {
+            path: "runs/a/run_status.json".to_string(),
+            hash: "det64:0000000000000002".to_string(),
+        });
+        a.citations.push(MemoryCitation {
+            path: "runs/a/logs/activation_log.json".to_string(),
+            hash: "det64:0000000000000003".to_string(),
+        });
+
+        let mut b = hit(
+            "b",
+            "1.00",
+            &["workflow:wf-a", "status:success", "failure:tool_failure"],
+        );
+        b.citations.push(MemoryCitation {
+            path: "runs/b/run_status.json".to_string(),
+            hash: "det64:0000000000000004".to_string(),
+        });
+        b.citations.push(MemoryCitation {
+            path: "runs/b/logs/activation_log.json".to_string(),
+            hash: "det64:0000000000000005".to_string(),
+        });
+
+        let c = hit(
+            "c",
+            "1.00",
+            &["workflow:wf-a", "status:failed", "failure:tool_failure"],
+        );
+
+        let explained = explain_policy_results(
+            &policy,
+            &request,
+            MemoryQueryResult {
+                hits: vec![c, b, a],
+            },
+        )
+        .expect("explain policy");
+
+        assert_eq!(
+            explained
+                .iter()
+                .map(|entry| entry.record.id.as_str())
+                .collect::<Vec<_>>(),
+            vec!["a", "b", "c"]
+        );
+        assert_eq!(explained[0].rank, 1);
+        assert_eq!(
+            explained[0].explanation.matched_failure_tag.as_deref(),
+            Some("failure:tool_failure")
+        );
+        assert_eq!(
+            explained[0].explanation.provenance_families,
+            vec![
+                "activation_log".to_string(),
+                "run_status".to_string(),
+                "run_summary".to_string()
+            ]
+        );
+        assert!(explained[0]
+            .explanation
+            .explanation_signals
+            .contains(&"status_success_boost".to_string()));
+        assert_eq!(explained[0].explanation.tie_break_values.id, "a");
+        assert_eq!(explained[1].explanation.tie_break_values.id, "b");
+        assert!(explained[2]
+            .explanation
+            .explanation_signals
+            .contains(&"status_failure_penalty".to_string()));
     }
 
     #[test]
