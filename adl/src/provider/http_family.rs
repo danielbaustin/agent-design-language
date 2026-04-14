@@ -1,4 +1,5 @@
 use super::*;
+use reqwest::Url;
 use std::thread;
 use std::time::Duration;
 
@@ -96,6 +97,38 @@ fn vendor_endpoint(
         }
     }
     Ok(endpoint)
+}
+
+fn ollama_generate_endpoint(spec: &adl::ProviderSpec) -> Result<String> {
+    let explicit_endpoint = cfg_str(&spec.config, "endpoint").map(ToString::to_string);
+    let base_url = spec.base_url.clone();
+    let source = explicit_endpoint.or(base_url).ok_or_else(|| {
+        invalid_config(
+            "ollama",
+            "remote Ollama transport requires base_url or config.endpoint",
+        )
+    })?;
+    if !is_allowed_ollama_endpoint(&source) {
+        return Err(invalid_config(
+            "ollama",
+            "remote Ollama endpoint must use http:// or https://",
+        ));
+    }
+
+    let mut url = Url::parse(&source)
+        .map_err(|err| invalid_config("ollama", format!("invalid Ollama endpoint: {err}")))?;
+    let path = url.path().trim_end_matches('/');
+    let explicit_path = !path.is_empty() && path != "/";
+
+    if path.ends_with("/api/generate") {
+        return Ok(url.to_string());
+    }
+
+    if spec.base_url.is_some() || !explicit_path {
+        url.set_path("/api/generate");
+    }
+
+    Ok(url.to_string())
 }
 
 fn truncate_provider_body(text: &str) -> &str {
@@ -409,6 +442,67 @@ pub struct HttpProvider {
     auth: Option<HttpAuth>,
     headers: HashMap<String, String>,
     timeout_secs: Option<u64>,
+}
+
+#[derive(Debug, Clone)]
+pub struct OllamaHttpProvider {
+    endpoint: String,
+    model: String,
+    temperature: Option<f32>,
+    timeout_secs: Option<u64>,
+}
+
+impl OllamaHttpProvider {
+    pub fn from_target(
+        spec: &adl::ProviderSpec,
+        target: &ProviderInvocationTargetV1,
+    ) -> Result<Self> {
+        Ok(Self {
+            endpoint: ollama_generate_endpoint(spec)?,
+            model: target.provider_model_id.clone(),
+            temperature: super::local::cfg_f32(&spec.config, "temperature"),
+            timeout_secs: cfg_u64(&spec.config, "timeout_secs"),
+        })
+    }
+}
+
+impl Provider for OllamaHttpProvider {
+    fn complete(&self, prompt: &str) -> Result<String> {
+        let mut client_builder = reqwest::blocking::Client::builder();
+        if let Some(secs) = self.timeout_secs {
+            client_builder = client_builder.timeout(Duration::from_secs(secs));
+        }
+        let client = client_builder
+            .build()
+            .context("failed to build ollama http client")
+            .map_err(|err| runtime_error("ollama", err.to_string()))?;
+
+        let mut body = serde_json::json!({
+            "model": self.model,
+            "prompt": prompt,
+            "stream": false,
+        });
+        if let Some(temperature) = self.temperature {
+            body["options"] = serde_json::json!({ "temperature": temperature });
+        }
+
+        let req = client
+            .post(&self.endpoint)
+            .header("Content-Type", "application/json")
+            .json(&body);
+        let (json, http_status) = provider_http_json("ollama", req)?;
+        let output = json
+            .get("response")
+            .and_then(|v| v.as_str())
+            .map(str::trim)
+            .filter(|v| !v.is_empty())
+            .ok_or_else(|| {
+                runtime_error_non_retryable("ollama", "response missing 'response' text field")
+            })?
+            .to_string();
+        write_native_invocation_record("ollama", &self.model, prompt, &output, http_status)?;
+        Ok(output)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -742,6 +836,17 @@ mod tests {
         }
     }
 
+    fn ollama_provider_spec_with_base_url(base_url: &str) -> adl::ProviderSpec {
+        adl::ProviderSpec {
+            id: Some("ollama_primary".to_string()),
+            profile: None,
+            kind: "ollama".to_string(),
+            base_url: Some(base_url.to_string()),
+            default_model: Some("phi4-mini".to_string()),
+            config: HashMap::new(),
+        }
+    }
+
     fn provider_spec(
         kind: &str,
         endpoint: &str,
@@ -832,6 +937,53 @@ mod tests {
             Some(v) => env::set_var("OPENAI_API_KEY", v),
             None => env::remove_var("OPENAI_API_KEY"),
         }
+
+        let _ = handle.join();
+    }
+
+    #[test]
+    fn ollama_http_provider_complete_posts_to_generate_endpoint() {
+        let _guard = env_lock();
+        let Some((endpoint, captured, handle)) =
+            spawn_json_server(200, r#"{"response":"ollama ok","done":true}"#)
+        else {
+            return;
+        };
+
+        let spec = ollama_provider_spec_with_base_url(&endpoint);
+        let target = provider_target("ollama", endpoint.clone(), "phi4-mini");
+        let provider = OllamaHttpProvider::from_target(&spec, &target).expect("provider");
+
+        let output = provider.complete("hello ollama").expect("completion");
+        assert_eq!(output, "ollama ok");
+
+        let captured = captured.lock().expect("capture").clone().expect("request");
+        assert_eq!(captured.url, "/api/generate");
+        assert!(captured.body.contains(r#""model":"phi4-mini""#));
+        assert!(captured.body.contains(r#""prompt":"hello ollama""#));
+        assert!(captured.body.contains(r#""stream":false"#));
+
+        let _ = handle.join();
+    }
+
+    #[test]
+    fn ollama_http_provider_rejects_missing_response_text() {
+        let _guard = env_lock();
+        let Some((endpoint, _captured, handle)) = spawn_json_server(200, r#"{"done":true}"#) else {
+            return;
+        };
+
+        let spec = ollama_provider_spec_with_base_url(&endpoint);
+        let target = provider_target("ollama", endpoint, "phi4-mini");
+        let provider = OllamaHttpProvider::from_target(&spec, &target).expect("provider");
+        let err = provider
+            .complete("hello ollama")
+            .expect_err("missing response should fail");
+        assert!(
+            err.to_string()
+                .contains("response missing 'response' text field"),
+            "{err:#}"
+        );
 
         let _ = handle.join();
     }
