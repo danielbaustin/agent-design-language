@@ -1,6 +1,8 @@
 use super::dispatch::real_identity_in_repo;
-use super::helpers::{required_value, run_git_capture};
-use ::adl::chronosense::{load_identity_profile, TEMPORAL_CONTEXT_SCHEMA};
+use super::helpers::{repo_root, required_value, resolve_identity_path, run_git_capture};
+use ::adl::chronosense::{
+    default_identity_profile_path, load_identity_profile, TEMPORAL_CONTEXT_SCHEMA,
+};
 use once_cell::sync::Lazy;
 use serde_json::Value;
 use std::env;
@@ -892,13 +894,67 @@ fn identity_instinct_runtime_validates_unknown_args_and_missing_out_value() {
 
 #[test]
 fn required_value_and_git_capture_report_errors() {
+    let value = required_value(&["--name".to_string(), "Codex".to_string()], 0, "--name")
+        .expect("present flag value should succeed");
+    assert_eq!(value, "Codex");
+
     let err = required_value(&["--name".to_string()], 0, "--name")
         .expect_err("missing flag value should fail");
     assert!(err.to_string().contains("--name requires a value"));
+
+    let git_version = run_git_capture(&["--version"]).expect("git version should succeed");
+    assert!(git_version.starts_with("git version "));
 
     let err = run_git_capture(&["definitely-not-a-real-subcommand"])
         .expect_err("invalid git command should fail");
     assert!(err
         .to_string()
         .contains("git definitely-not-a-real-subcommand failed with status"));
+}
+
+#[test]
+fn resolve_identity_path_defaults_to_repo_identity_profile_path() {
+    let repo = temp_repo("identity-path-default");
+
+    let resolved = resolve_identity_path(&repo, &[]).expect("default path should resolve");
+
+    assert_eq!(resolved, default_identity_profile_path(&repo));
+}
+
+#[test]
+fn resolve_identity_path_accepts_explicit_path_and_rejects_unknown_args() {
+    let repo = temp_repo("identity-path-explicit");
+
+    let resolved = resolve_identity_path(
+        &repo,
+        &[
+            "--path".to_string(),
+            "identity/custom_profile.v1.json".to_string(),
+        ],
+    )
+    .expect("explicit path should resolve");
+    assert_eq!(resolved, PathBuf::from("identity/custom_profile.v1.json"));
+
+    let err = resolve_identity_path(&repo, &["--bogus".to_string()])
+        .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for identity show: --bogus"));
+
+    let err = resolve_identity_path(&repo, &["--path".to_string()])
+        .expect_err("missing path value should fail");
+    assert!(err.to_string().contains("--path requires a value"));
+}
+
+#[test]
+fn repo_root_matches_git_toplevel() {
+    let expected = PathBuf::from(
+        run_git_capture(&["rev-parse", "--show-toplevel"])
+            .expect("git top level")
+            .trim(),
+    );
+
+    let resolved = repo_root().expect("repo root should resolve");
+
+    assert_eq!(resolved, expected);
 }
