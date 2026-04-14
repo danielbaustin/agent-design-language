@@ -1,0 +1,105 @@
+version: "0.1"
+kind: "adl-skill"
+id: "demo-operator"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "demo_operator.v1"
+    reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/DEMO_OPERATOR_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "operate_named_demo"
+      - "operate_demo_command"
+      - "operate_demo_doc"
+    policy_fields:
+      - "classification_mode"
+      - "allow_live_provider"
+      - "validation_mode"
+      - "stop_after_operation"
+    mode_requirements:
+      operate_named_demo:
+        required_target_fields:
+          - "demo_name"
+      operate_demo_command:
+        required_target_fields:
+          - "demo_command"
+      operate_demo_doc:
+        required_target_fields:
+          - "demo_doc_path"
+  intent:
+    - "demo_execution"
+    - "proof_classification"
+    - "bounded_demo_operation"
+  required_inputs:
+    - "repo_root"
+  optional_inputs:
+    - "demo_name"
+    - "demo_command"
+    - "demo_doc_path"
+    - "artifact_root"
+    - "expected_artifacts"
+    - "provider_requirements"
+    - "operator_gate_reason"
+    - "validation_mode"
+  stop_if_missing:
+    - "repo_root"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_demo_operator.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "operate_named_demo_requires_target.demo_name"
+    - "operate_demo_command_requires_target.demo_command"
+    - "operate_demo_doc_requires_target.demo_doc_path"
+    - "policy.classification_mode_must_be_explicit"
+    - "policy.validation_mode_must_be_explicit"
+    - "policy.stop_after_operation_must_be_true"
+execution:
+  mode: "auto_apply"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: true
+  preferred_read_order:
+    - "demo_doc"
+    - "demo_entrypoint"
+    - "fixture_or_artifact_contract"
+    - "prerequisite_surface"
+  preferred_commands:
+    - "rg --files"
+    - "rg -n"
+    - "bash <demo-command> --dry-run"
+    - "bash <demo-test-command>"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  writes_limited_to:
+    - ".adl/**"
+    - "demo artifacts"
+    - "demo-local output manifests"
+  must_not_write:
+    - "underlying demo implementation"
+    - "unrelated issue bundles"
+    - "unrelated worktrees"
+  stop_on_partial_failure: true
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-demo-operator.md"
+  required_sections:
+    - "status"
+    - "target"
+    - "prerequisites"
+    - "execution"
+    - "classification"
+    - "follow_up"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  manifest_declares_executables: false
