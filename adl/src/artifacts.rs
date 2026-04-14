@@ -176,6 +176,15 @@ impl RunArtifactPaths {
         self.control_path_dir().join("mediation.json")
     }
 
+    pub fn control_path_skill_model_json(&self) -> PathBuf {
+        self.control_path_dir().join("skill_model.json")
+    }
+
+    pub fn control_path_skill_execution_protocol_json(&self) -> PathBuf {
+        self.control_path_dir()
+            .join("skill_execution_protocol.json")
+    }
+
     pub fn control_path_freedom_gate_json(&self) -> PathBuf {
         self.control_path_dir().join("freedom_gate.json")
     }
@@ -538,6 +547,14 @@ mod tests {
         assert!(paths
             .control_path_action_mediation_json()
             .ends_with(".adl/runs/artifact-path-accessors/control_path/mediation.json"));
+        assert!(paths
+            .control_path_skill_model_json()
+            .ends_with(".adl/runs/artifact-path-accessors/control_path/skill_model.json"));
+        assert!(paths
+            .control_path_skill_execution_protocol_json()
+            .ends_with(
+                ".adl/runs/artifact-path-accessors/control_path/skill_execution_protocol.json"
+            ));
         assert!(paths
             .control_path_decisions_json()
             .ends_with(".adl/runs/artifact-path-accessors/control_path/decisions.json"));

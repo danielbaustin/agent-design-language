@@ -530,6 +530,97 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
             "trace_expectation": "approval, rejection, defer, or escalation remains trace-visible before privileged execution"
         }
     });
+    let skill_model = serde_json::json!({
+        "control_path_skill_model_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
+        "skill_schema_name": "adl.runtime.skill_model.v1",
+        "skill_schema_fields": [
+            "skill_id",
+            "selection_status",
+            "purpose",
+            "bounded_role",
+            "input_contract_fields",
+            "output_contract_surfaces",
+            "stop_condition",
+            "distinguished_from",
+            "temporal_anchor"
+        ],
+        "distinction_vocabulary": [
+            "skill",
+            "provider_capability",
+            "raw_aptitude",
+            "tool_call",
+            "memory_operation",
+            "final_answer"
+        ],
+        "selected_execution_unit_kind": "skill_call",
+        "skill": {
+            "skill_id": "skill.review_and_refine",
+            "selection_status": "selected",
+            "purpose": "execute 'candidate.review_and_refine' as a reusable bounded skill instead of leaving it as implicit model behavior",
+            "bounded_role": "carry the bounded candidate intent as an explicit reusable execution unit before authorization and execution",
+            "input_contract_fields": [
+                "candidate_id",
+                "candidate_kind",
+                "requested_action",
+                "route_selected"
+            ],
+            "output_contract_surfaces": [
+                "control_path/mediation.json",
+                "control_path/final_result.json",
+                "logs/trace_v1.json"
+            ],
+            "stop_condition": "stop before execution and require explicit judgment review or escalation handling",
+            "distinguished_from": [
+                "provider_capability",
+                "raw_aptitude",
+                "tool_call"
+            ],
+            "temporal_anchor": "control_path/action_proposals.json"
+        }
+    });
+    let skill_execution_protocol = serde_json::json!({
+        "control_path_skill_execution_protocol_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
+        "protocol_name": "adl.runtime.skill_execution_protocol.v1",
+        "lifecycle_stages": [
+            "proposed",
+            "validated",
+            "authorized",
+            "trace_visible",
+            "ready_for_execution"
+        ],
+        "invocation": {
+            "invocation_id": "skill_invocation.selected_proposal",
+            "skill_id": "skill.review_and_refine",
+            "proposal_id": "proposal.selected_candidate",
+            "decision_id": "decision.commitment_gate",
+            "invocation_kind": "skill_call",
+            "invocation_context": {
+                "run_id": DEMO_G_V086_CONTROL_PATH,
+                "selected_execution_unit_kind": "skill_call",
+                "route_selected": "slow",
+                "candidate_id": "cand-custom-review"
+            },
+            "input_validation_expectation": "proposal schema, mediation linkage, and authority-boundary checks complete before execution",
+            "lifecycle_state": "escalated_before_execution",
+            "authorization_decision": "escalated",
+            "output_contract_surfaces": [
+                "control_path/mediation.json",
+                "control_path/final_result.json",
+                "logs/trace_v1.json"
+            ],
+            "error_outcome_vocabulary": [
+                "rejected",
+                "deferred",
+                "escalated"
+            ],
+            "trace_expectation": "approval, rejection, defer, or escalation remains trace-visible before privileged execution",
+            "temporal_anchor": "control_path/mediation.json"
+        }
+    });
     let final_result = serde_json::json!({
         "control_path_final_result_version": 1,
         "run_id": DEMO_G_V086_CONTROL_PATH,
@@ -569,6 +660,8 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         "decisions: route_selection=reroute reframing=reroute commitment_gate=escalate".to_string(),
         "action_proposal: kind=skill_call target=candidate.review_and_refine requires_approval=true".to_string(),
         "action_mediation: outcome=escalated authority=freedom_gate follow_up=escalate_for_judgment_review".to_string(),
+        "skill_model: selection_status=selected skill_id=skill.review_and_refine invocation_kind=skill_call".to_string(),
+        "skill_execution_protocol: lifecycle_state=escalated_before_execution authorization=escalated trace_expectation=approval, rejection, defer, or escalation remains trace-visible before privileged execution".to_string(),
         "memory: read_count=1 influenced_stage=reframing write_reason=record_failure_for_future_reframing_context".to_string(),
         "freedom_gate: decision=escalate reason_code=frame_escalation_required follow_up=escalate_for_judgment_review commitment_blocked=true".to_string(),
         "final_result: escalate".to_string(),
@@ -619,6 +712,16 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         out_dir,
         "mediation.json",
         &serde_json::to_string_pretty(&mediation)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "skill_model.json",
+        &serde_json::to_string_pretty(&skill_model)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "skill_execution_protocol.json",
+        &serde_json::to_string_pretty(&skill_execution_protocol)?,
     )?);
     artifacts.push(write_file(
         out_dir,

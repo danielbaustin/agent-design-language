@@ -1321,6 +1321,65 @@ fn build_action_proposal_and_mediation_artifacts_are_deterministic_and_non_autho
         "escalate_for_judgment_review"
     );
     assert!(mediation_left.mediation.approved_action_or_none.is_none());
+
+    let skill_model_left = run_artifacts::build_control_path_skill_model_artifact(
+        &run_summary,
+        &proposals_left,
+        &mediation_left,
+        Some(&scores),
+    );
+    let skill_model_right = run_artifacts::build_control_path_skill_model_artifact(
+        &run_summary,
+        &proposals_right,
+        &mediation_right,
+        Some(&scores),
+    );
+    assert_eq!(
+        serde_json::to_value(&skill_model_left).expect("skill model left"),
+        serde_json::to_value(&skill_model_right).expect("skill model right")
+    );
+    assert_eq!(
+        skill_model_left.skill_schema_name,
+        "adl.runtime.skill_model.v1"
+    );
+    assert_eq!(skill_model_left.selected_execution_unit_kind, "skill_call");
+    assert_eq!(skill_model_left.skill.selection_status, "selected");
+    assert_eq!(skill_model_left.skill.skill_id, "skill.review_and_refine");
+
+    let skill_protocol_left = run_artifacts::build_control_path_skill_execution_protocol_artifact(
+        &run_summary,
+        &proposals_left,
+        &skill_model_left,
+        &mediation_left,
+        Some(&scores),
+    );
+    let skill_protocol_right = run_artifacts::build_control_path_skill_execution_protocol_artifact(
+        &run_summary,
+        &proposals_right,
+        &skill_model_right,
+        &mediation_right,
+        Some(&scores),
+    );
+    assert_eq!(
+        serde_json::to_value(&skill_protocol_left).expect("skill protocol left"),
+        serde_json::to_value(&skill_protocol_right).expect("skill protocol right")
+    );
+    assert_eq!(
+        skill_protocol_left.protocol_name,
+        "adl.runtime.skill_execution_protocol.v1"
+    );
+    assert_eq!(
+        skill_protocol_left.invocation.lifecycle_state,
+        "escalated_before_execution"
+    );
+    assert_eq!(
+        skill_protocol_left.invocation.authorization_decision,
+        "escalated"
+    );
+    assert_eq!(
+        skill_protocol_left.invocation.skill_id,
+        "skill.review_and_refine"
+    );
 }
 
 #[test]

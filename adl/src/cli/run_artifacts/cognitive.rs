@@ -1130,6 +1130,73 @@ fn mediation_outcome_for_gate_decision(gate_decision: &str) -> &'static str {
     }
 }
 
+fn skill_id_for_proposal(proposal: &ActionProposalRecord) -> String {
+    if proposal.kind == "skill_call" {
+        proposal
+            .target
+            .as_deref()
+            .unwrap_or("candidate.review_and_refine")
+            .replace("candidate.", "skill.")
+    } else {
+        "skill.none".to_string()
+    }
+}
+
+fn skill_selection_status(proposal: &ActionProposalRecord) -> &'static str {
+    if proposal.kind == "skill_call" {
+        "selected"
+    } else {
+        "not_selected"
+    }
+}
+
+fn skill_purpose_for_proposal(proposal: &ActionProposalRecord) -> String {
+    if proposal.kind == "skill_call" {
+        format!(
+            "execute '{}' as a reusable bounded skill instead of leaving it as implicit model behavior",
+            proposal
+                .target
+                .as_deref()
+                .unwrap_or("candidate.review_and_refine")
+        )
+    } else {
+        format!(
+            "record that the bounded runtime selected '{}' rather than a governed skill invocation",
+            proposal.kind
+        )
+    }
+}
+
+fn skill_bounded_role_for_proposal(proposal: &ActionProposalRecord) -> &'static str {
+    if proposal.kind == "skill_call" {
+        "carry the bounded candidate intent as an explicit reusable execution unit before authorization and execution"
+    } else {
+        "make the distinction between governed skill invocations and other bounded runtime actions reviewer-legible"
+    }
+}
+
+fn skill_stop_condition_for_mediation(mediation: &ActionMediationRecord) -> &'static str {
+    match mediation.mediation_outcome.as_str() {
+        "approved" => {
+            "stop after runtime authorization succeeds; privileged execution proceeds only through the bounded execution lane"
+        }
+        "rejected" => "stop before execution and surface bounded refusal as the final mediated outcome",
+        "deferred" => "stop before execution and carry the proposal forward as deferred work",
+        "escalated" => "stop before execution and require explicit judgment review or escalation handling",
+        _ => "stop before execution when mediation outcome is not recognized",
+    }
+}
+
+fn skill_protocol_lifecycle_state(mediation: &ActionMediationRecord) -> &'static str {
+    match mediation.mediation_outcome.as_str() {
+        "approved" => "authorized_ready_for_execution",
+        "rejected" => "rejected_before_execution",
+        "deferred" => "deferred_before_execution",
+        "escalated" => "escalated_before_execution",
+        _ => "blocked_before_execution",
+    }
+}
+
 pub(crate) fn build_control_path_action_proposals_artifact(
     run_summary: &RunSummaryArtifact,
     arbitration: &CognitiveArbitrationArtifact,
@@ -1495,6 +1562,166 @@ pub(crate) fn build_control_path_action_mediation_artifact(
     }
 }
 
+pub(crate) fn build_control_path_skill_model_artifact(
+    run_summary: &RunSummaryArtifact,
+    action_proposals: &ControlPathActionProposalsArtifact,
+    mediation: &ControlPathActionMediationArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> ControlPathSkillModelArtifact {
+    let proposal = action_proposals
+        .proposals
+        .first()
+        .cloned()
+        .unwrap_or_else(|| ActionProposalRecord {
+            proposal_id: "proposal.none".to_string(),
+            kind: "defer".to_string(),
+            target: None,
+            arguments: BTreeMap::new(),
+            intent: "no bounded proposal available".to_string(),
+            content: None,
+            confidence: None,
+            requires_approval: true,
+            metadata: BTreeMap::new(),
+            non_authoritative: true,
+            temporal_anchor: "control_path/candidate_selection.json".to_string(),
+        });
+
+    ControlPathSkillModelArtifact {
+        control_path_skill_model_version: CONTROL_PATH_SKILL_MODEL_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: action_proposals.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        skill_schema_name: "adl.runtime.skill_model.v1".to_string(),
+        skill_schema_fields: vec![
+            "skill_id".to_string(),
+            "selection_status".to_string(),
+            "purpose".to_string(),
+            "bounded_role".to_string(),
+            "input_contract_fields".to_string(),
+            "output_contract_surfaces".to_string(),
+            "stop_condition".to_string(),
+            "distinguished_from".to_string(),
+            "temporal_anchor".to_string(),
+        ],
+        distinction_vocabulary: vec![
+            "skill".to_string(),
+            "provider_capability".to_string(),
+            "raw_aptitude".to_string(),
+            "tool_call".to_string(),
+            "memory_operation".to_string(),
+            "final_answer".to_string(),
+        ],
+        selected_execution_unit_kind: proposal.kind.clone(),
+        skill: SkillDefinitionRecord {
+            skill_id: skill_id_for_proposal(&proposal),
+            selection_status: skill_selection_status(&proposal).to_string(),
+            purpose: skill_purpose_for_proposal(&proposal),
+            bounded_role: skill_bounded_role_for_proposal(&proposal).to_string(),
+            input_contract_fields: proposal.arguments.keys().cloned().collect(),
+            output_contract_surfaces: vec![
+                "control_path/mediation.json".to_string(),
+                "control_path/final_result.json".to_string(),
+                "logs/trace_v1.json".to_string(),
+            ],
+            stop_condition: skill_stop_condition_for_mediation(&mediation.mediation).to_string(),
+            distinguished_from: vec![
+                "provider_capability".to_string(),
+                "raw_aptitude".to_string(),
+                "tool_call".to_string(),
+            ],
+            temporal_anchor: "control_path/action_proposals.json".to_string(),
+        },
+    }
+}
+
+pub(crate) fn build_control_path_skill_execution_protocol_artifact(
+    run_summary: &RunSummaryArtifact,
+    action_proposals: &ControlPathActionProposalsArtifact,
+    skill_model: &ControlPathSkillModelArtifact,
+    mediation: &ControlPathActionMediationArtifact,
+    scores: Option<&ScoresArtifact>,
+) -> ControlPathSkillExecutionProtocolArtifact {
+    let proposal = action_proposals
+        .proposals
+        .first()
+        .cloned()
+        .unwrap_or_else(|| ActionProposalRecord {
+            proposal_id: "proposal.none".to_string(),
+            kind: "defer".to_string(),
+            target: None,
+            arguments: BTreeMap::new(),
+            intent: "no bounded proposal available".to_string(),
+            content: None,
+            confidence: None,
+            requires_approval: true,
+            metadata: BTreeMap::new(),
+            non_authoritative: true,
+            temporal_anchor: "control_path/candidate_selection.json".to_string(),
+        });
+
+    let mut invocation_context = BTreeMap::new();
+    invocation_context.insert("run_id".to_string(), run_summary.run_id.clone());
+    invocation_context.insert(
+        "selected_execution_unit_kind".to_string(),
+        proposal.kind.clone(),
+    );
+    if let Some(route_selected) = proposal.arguments.get("route_selected") {
+        invocation_context.insert("route_selected".to_string(), route_selected.clone());
+    }
+    if let Some(candidate_id) = proposal.arguments.get("candidate_id") {
+        invocation_context.insert("candidate_id".to_string(), candidate_id.clone());
+    }
+
+    ControlPathSkillExecutionProtocolArtifact {
+        control_path_skill_execution_protocol_version:
+            CONTROL_PATH_SKILL_EXECUTION_PROTOCOL_VERSION,
+        run_id: run_summary.run_id.clone(),
+        generated_from: AeeDecisionGeneratedFrom {
+            artifact_model_version: run_summary.artifact_model_version,
+            run_summary_version: run_summary.run_summary_version,
+            suggestions_version: action_proposals.generated_from.suggestions_version,
+            scores_version: scores.map(|value| value.scores_version),
+        },
+        protocol_name: "adl.runtime.skill_execution_protocol.v1".to_string(),
+        lifecycle_stages: vec![
+            "proposed".to_string(),
+            "validated".to_string(),
+            "authorized".to_string(),
+            "trace_visible".to_string(),
+            "ready_for_execution".to_string(),
+        ],
+        invocation: SkillInvocationProtocolRecord {
+            invocation_id: "skill_invocation.selected_proposal".to_string(),
+            skill_id: skill_model.skill.skill_id.clone(),
+            proposal_id: proposal.proposal_id,
+            decision_id: mediation.mediation.decision_id.clone(),
+            invocation_kind: proposal.kind,
+            invocation_context,
+            input_validation_expectation:
+                "proposal schema, mediation linkage, and authority-boundary checks complete before execution"
+                    .to_string(),
+            lifecycle_state: skill_protocol_lifecycle_state(&mediation.mediation).to_string(),
+            authorization_decision: mediation.mediation.mediation_outcome.clone(),
+            output_contract_surfaces: vec![
+                "control_path/mediation.json".to_string(),
+                "control_path/final_result.json".to_string(),
+                "logs/trace_v1.json".to_string(),
+            ],
+            error_outcome_vocabulary: vec![
+                "rejected".to_string(),
+                "deferred".to_string(),
+                "escalated".to_string(),
+            ],
+            trace_expectation: mediation.mediation.trace_expectation.clone(),
+            temporal_anchor: "control_path/mediation.json".to_string(),
+        },
+    }
+}
+
 pub(crate) fn build_control_path_final_result_artifact(
     run_summary: &RunSummaryArtifact,
     arbitration: &CognitiveArbitrationArtifact,
@@ -1554,6 +1781,8 @@ pub(crate) fn build_control_path_summary(context: &ControlPathSummaryContext<'_>
     let convergence = context.convergence;
     let memory = context.memory;
     let action_proposals = context.action_proposals;
+    let skill_model = context.skill_model;
+    let skill_execution_protocol = context.skill_execution_protocol;
     let mediation = context.mediation;
     let freedom_gate = context.freedom_gate;
     let final_result = context.final_result;
@@ -1613,6 +1842,18 @@ pub(crate) fn build_control_path_summary(context: &ControlPathSummaryContext<'_>
             mediation.mediation.mediation_outcome,
             mediation.mediation.runtime_authority,
             mediation.mediation.required_follow_up
+        ),
+        format!(
+            "skill_model: selection_status={} skill_id={} invocation_kind={}",
+            skill_model.skill.selection_status,
+            skill_model.skill.skill_id,
+            skill_model.selected_execution_unit_kind
+        ),
+        format!(
+            "skill_execution_protocol: lifecycle_state={} authorization={} trace_expectation={}",
+            skill_execution_protocol.invocation.lifecycle_state,
+            skill_execution_protocol.invocation.authorization_decision,
+            skill_execution_protocol.invocation.trace_expectation
         ),
         format!(
             "memory: read_count={} influenced_stage={} write_reason={}",
