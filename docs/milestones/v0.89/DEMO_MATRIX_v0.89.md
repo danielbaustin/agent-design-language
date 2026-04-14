@@ -25,6 +25,20 @@ Out of scope for `v0.89`:
 - the full `v0.89.1` adversarial runtime/demo package
 - later signed-trace and reasoning-graph proof surfaces
 
+## Demo Taxonomy
+
+Use these categories consistently during `v0.89`:
+
+- Ordinary demos:
+  bounded runnable proof rows intended for milestone demo sweeps.
+- Heavyweight proof packages:
+  integrated reviewer, quality-gate, or release-tail surfaces that may still be canonical proof, but should not be treated like quick demos.
+
+For `v0.89`, rows `D1` through `D6` are expected to behave like ordinary demo rows.
+Row `D7` is a heavier reviewer-facing proof row and may remain artifact or document driven even when it is complete.
+
+Future quality-gate or release-review packages for `v0.89` should be classified as heavyweight proof packages, not ordinary demos.
+
 ## Runtime Preconditions
 
 Working directory:
@@ -68,6 +82,10 @@ Status guidance:
 - `READY` = runnable and locally validated
 - `BLOCKED` = known dependency or missing proof surface
 - `LANDED` = milestone evidence exists and is ready for review
+
+Heavyweight proof-package rule:
+- if a proof surface mainly exists to bundle review, release, or quality-gate evidence, classify it as a heavyweight proof package even if it is script-driven
+- do not silently fold heavyweight proof packages into ordinary demo sweeps without saying so explicitly
 
 ## Coverage Rules
 - every major milestone claim should map to a runnable demo or an explicit alternate proof surface
@@ -164,6 +182,7 @@ Cross-demo checks:
 - convergence claims use the same stop-state vocabulary as the feature docs and WBS
 - gate / decision / action demos agree on outcome classes and authority boundaries
 - security/trust/posture proof rows do not overclaim adversarial runtime work that belongs to `v0.89.1`
+- heavyweight proof packages remain clearly separated from ordinary demos in milestone guidance and review notes
 
 Failure policy:
 - If one demo is blocked, record the blocker and say whether milestone review can proceed with an alternate proof surface.
