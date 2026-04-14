@@ -91,8 +91,24 @@ fn godel_run_executes_bounded_stage_loop_and_persists_artifacts() {
         "runs/run-745-a/godel/godel_promotion_decision.v1.json"
     );
     assert_eq!(
+        summary["canonical_evaluation_plan_path"],
+        "runs/run-745-a/godel/evaluation_plan.v1.json"
+    );
+    assert_eq!(
+        summary["canonical_mutation_path"],
+        "runs/run-745-a/godel/mutation.v1.json"
+    );
+    assert_eq!(
+        summary["canonical_evidence_path"],
+        "runs/run-745-a/godel/canonical_evidence_view.v1.json"
+    );
+    assert_eq!(
         summary["experiment_record_path"],
         "runs/run-745-a/godel/experiment_record.runtime.v1.json"
+    );
+    assert_eq!(
+        summary["canonical_experiment_record_path"],
+        "runs/run-745-a/godel/experiment_record.v1.json"
     );
     assert_eq!(
         summary["obsmem_index_path"],
@@ -120,7 +136,17 @@ fn godel_run_executes_bounded_stage_loop_and_persists_artifacts() {
         .join("run-745-a/godel/godel_promotion_decision.v1.json")
         .is_file());
     assert!(runs_dir
+        .join("run-745-a/godel/evaluation_plan.v1.json")
+        .is_file());
+    assert!(runs_dir.join("run-745-a/godel/mutation.v1.json").is_file());
+    assert!(runs_dir
+        .join("run-745-a/godel/canonical_evidence_view.v1.json")
+        .is_file());
+    assert!(runs_dir
         .join("run-745-a/godel/experiment_record.runtime.v1.json")
+        .is_file());
+    assert!(runs_dir
+        .join("run-745-a/godel/experiment_record.v1.json")
         .is_file());
     assert!(runs_dir
         .join("run-745-a/godel/obsmem_index_entry.runtime.v1.json")
@@ -271,8 +297,24 @@ fn godel_inspect_reads_runtime_artifacts_deterministically() {
         "runs/run-745-a/godel/godel_promotion_decision.v1.json"
     );
     assert_eq!(
+        summary["canonical_evaluation_plan_path"],
+        "runs/run-745-a/godel/evaluation_plan.v1.json"
+    );
+    assert_eq!(
+        summary["canonical_mutation_path"],
+        "runs/run-745-a/godel/mutation.v1.json"
+    );
+    assert_eq!(
+        summary["canonical_evidence_path"],
+        "runs/run-745-a/godel/canonical_evidence_view.v1.json"
+    );
+    assert_eq!(
         summary["experiment_record_path"],
         "runs/run-745-a/godel/experiment_record.runtime.v1.json"
+    );
+    assert_eq!(
+        summary["canonical_experiment_record_path"],
+        "runs/run-745-a/godel/experiment_record.v1.json"
     );
     assert_eq!(
         summary["obsmem_index_path"],
@@ -334,6 +376,29 @@ fn godel_inspect_reads_runtime_artifacts_deterministically() {
         .contains("score=95 -> promote"));
     assert_eq!(summary["evaluation_decision"], "adopt");
     assert_eq!(summary["improvement_delta"], 1);
+    assert_eq!(
+        summary["canonical_evaluation_plan_id"],
+        "plan_run_745_a_tool_failure"
+    );
+    assert_eq!(
+        summary["canonical_mutation_id"],
+        "mut_mut_run_745_a_tool_failure_00"
+    );
+    assert_eq!(
+        summary["canonical_evidence_view_id"],
+        "cev-run-745-a-tool_failure"
+    );
+    assert_eq!(
+        summary["canonical_experiment_id"],
+        "exp-run-745-a-mut-run-745-a-tool_failure-00"
+    );
+    assert_eq!(summary["canonical_decision_result"], "adopt");
+    assert!(summary["canonical_decision_rationale"]
+        .as_str()
+        .expect("canonical rationale")
+        .contains("decision=Adopt"));
+    assert_eq!(summary["baseline_run_id"], "run-745-a");
+    assert_eq!(summary["variant_run_id"], "run-745-a");
     assert_eq!(
         summary["obsmem_index_key"],
         "tool_failure:hyp:run-745-a:tool_failure:00:adopt"
