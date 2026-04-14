@@ -109,10 +109,23 @@ assert_release_present() {
 
 check_cargo_version() {
   local expected="${VERSION#v}"
+  local expected_alt=""
   local actual
   actual="$(sed -n 's/^version = "\(.*\)"/\1/p' "$ROOT/adl/Cargo.toml" | head -n 1)"
   [[ -n "$actual" ]] || fail "could not read version from adl/Cargo.toml"
-  [[ "$actual" == "$expected" ]] || fail "adl/Cargo.toml version mismatch: expected $expected, found $actual"
+  if [[ "$expected" != *.*.* ]]; then
+    expected_alt="${expected}.0"
+  fi
+
+  if [[ "$actual" == "$expected" || ( -n "$expected_alt" && "$actual" == "$expected_alt" ) ]]; then
+    return 0
+  fi
+
+  if [[ -n "$expected_alt" ]]; then
+    fail "adl/Cargo.toml version mismatch: expected $expected or $expected_alt, found $actual"
+  fi
+
+  fail "adl/Cargo.toml version mismatch: expected $expected, found $actual"
 }
 
 check_sor_gate() {
