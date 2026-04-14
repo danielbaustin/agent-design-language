@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the bounded v0.87.1 multi-agent transcript artifact."""
+"""Validate bounded multi-agent transcript artifacts."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ REQUIRED_TITLE = "# Claude + ChatGPT Multi-Agent Tea Discussion Transcript"
 PROVENANCE_PHRASE = (
     "assembled from the runtime-written step outputs under `out/discussion/`"
 )
-REQUIRED_HEADINGS = [
+LEGACY_REQUIRED_HEADINGS = [
     "# Turn 1 - ChatGPT",
     "# Turn 2 - Claude",
     "# Turn 3 - ChatGPT",
@@ -23,7 +23,7 @@ REQUIRED_HEADINGS = [
 REQUIRED_CONTRACT_SCHEMA = "multi_agent_discussion_transcript.v1"
 
 
-def validate_transcript(path: Path) -> list[str]:
+def validate_transcript(path: Path, required_headings: list[str]) -> list[str]:
     errors: list[str] = []
     if not path.is_file():
         return [f"transcript missing: {path}"]
@@ -41,13 +41,13 @@ def validate_transcript(path: Path) -> list[str]:
         errors.append("transcript contains unresolved template marker")
 
     lines = text.splitlines()
-    heading_lines = {heading: [] for heading in REQUIRED_HEADINGS}
+    heading_lines = {heading: [] for heading in required_headings}
     for line_no, line in enumerate(lines):
         if line in heading_lines:
             heading_lines[line].append(line_no)
 
     positions: list[int] = []
-    for heading in REQUIRED_HEADINGS:
+    for heading in required_headings:
         count = len(heading_lines[heading])
         if count != 1:
             errors.append(f"expected exactly one heading '{heading}', found {count}")
@@ -58,14 +58,14 @@ def validate_transcript(path: Path) -> list[str]:
         errors.append("turn headings are not in required order")
 
     observed_turn_headings = [line for line in lines if line.startswith("# Turn ")]
-    if len(observed_turn_headings) != len(REQUIRED_HEADINGS):
+    if len(observed_turn_headings) != len(required_headings):
         errors.append(
             "expected "
-            f"{len(REQUIRED_HEADINGS)} turn headings, found {len(observed_turn_headings)}"
+            f"{len(required_headings)} turn headings, found {len(observed_turn_headings)}"
         )
 
     separator_count = sum(1 for line in lines if line.strip() == "---")
-    if separator_count != len(REQUIRED_HEADINGS):
+    if separator_count != len(required_headings):
         errors.append(
             "expected one stable separator before each turn, "
             f"found {separator_count}"
@@ -74,15 +74,31 @@ def validate_transcript(path: Path) -> list[str]:
     return errors
 
 
-def validate_contract(path: Path, transcript_path: Path) -> list[str]:
-    errors: list[str] = []
+def load_contract(path: Path) -> tuple[dict | None, list[str], list[str]]:
     if not path.is_file():
-        return [f"transcript contract missing: {path}"]
+        return None, LEGACY_REQUIRED_HEADINGS, [f"transcript contract missing: {path}"]
 
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
-        return [f"transcript contract is not valid JSON: {exc}"]
+        return None, LEGACY_REQUIRED_HEADINGS, [
+            f"transcript contract is not valid JSON: {exc}"
+        ]
+
+    turns = payload.get("turns")
+    headings: list[str] = []
+    if isinstance(turns, list):
+        for turn in turns:
+            if isinstance(turn, dict) and isinstance(turn.get("heading"), str):
+                headings.append(turn["heading"])
+    if not headings:
+        headings = LEGACY_REQUIRED_HEADINGS
+
+    return payload, headings, []
+
+
+def validate_contract(payload: dict, transcript_path: Path, required_headings: list[str]) -> list[str]:
+    errors: list[str] = []
 
     allowed_keys = {
         "schema_version",
@@ -99,18 +115,19 @@ def validate_contract(path: Path, transcript_path: Path) -> list[str]:
         errors.append("transcript contract has unsupported schema_version")
     if payload.get("transcript_path") != transcript_path.name:
         errors.append("transcript contract transcript_path must name the transcript file")
-    if payload.get("turn_count") != len(REQUIRED_HEADINGS):
-        errors.append("transcript contract turn_count does not match required headings")
+    if payload.get("turn_count") != len(required_headings):
+        errors.append("transcript contract turn_count does not match declared headings")
 
     turns = payload.get("turns")
     if not isinstance(turns, list):
         errors.append("transcript contract turns must be a list")
         turns = []
-    if len(turns) != len(REQUIRED_HEADINGS):
-        errors.append(f"transcript contract must declare {len(REQUIRED_HEADINGS)} turns")
+    if len(turns) != len(required_headings):
+        errors.append(
+            f"transcript contract must declare {len(required_headings)} turns"
+        )
 
-    expected_speakers = ["ChatGPT", "Claude", "ChatGPT", "Claude", "ChatGPT"]
-    for idx, turn in enumerate(turns[: len(REQUIRED_HEADINGS)], start=1):
+    for idx, turn in enumerate(turns[: len(required_headings)], start=1):
         if not isinstance(turn, dict):
             errors.append(f"turn {idx} must be an object")
             continue
@@ -123,10 +140,12 @@ def validate_contract(path: Path, transcript_path: Path) -> list[str]:
             errors.append(f"turn {idx} turn_id must be {expected_turn_id}")
         if turn.get("ordinal") != idx:
             errors.append(f"turn {idx} ordinal must be {idx}")
-        if turn.get("speaker") != expected_speakers[idx - 1]:
-            errors.append(f"turn {idx} speaker mismatch")
-        if turn.get("heading") != REQUIRED_HEADINGS[idx - 1]:
+        expected_heading = required_headings[idx - 1]
+        if turn.get("heading") != expected_heading:
             errors.append(f"turn {idx} heading mismatch")
+        speaker = turn.get("speaker")
+        if speaker not in {"ChatGPT", "Claude"}:
+            errors.append(f"turn {idx} speaker must be ChatGPT or Claude")
         source_output = turn.get("source_output")
         if not isinstance(source_output, str) or not source_output.startswith(
             "out/discussion/"
@@ -141,13 +160,18 @@ def validate_contract(path: Path, transcript_path: Path) -> list[str]:
             value = companions.get(key)
             if not isinstance(value, str) or not value:
                 errors.append(f"companion_artifacts.{key} must be a non-empty string")
+        optional_synthesis = companions.get("synthesis")
+        if optional_synthesis is not None and (
+            not isinstance(optional_synthesis, str) or not optional_synthesis
+        ):
+            errors.append("companion_artifacts.synthesis must be a non-empty string")
 
     return errors
 
 
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(
-        description="Validate the bounded v0.87.1 multi-agent transcript artifact."
+        description="Validate bounded multi-agent transcript artifacts."
     )
     parser.add_argument("transcript", type=Path)
     parser.add_argument(
@@ -157,9 +181,15 @@ def main(argv: list[str]) -> int:
     )
     args = parser.parse_args(argv)
 
-    errors = validate_transcript(args.transcript)
+    required_headings = LEGACY_REQUIRED_HEADINGS
+    errors: list[str] = []
     if args.contract is not None:
-        errors.extend(validate_contract(args.contract, args.transcript))
+        payload, required_headings, load_errors = load_contract(args.contract)
+        errors.extend(load_errors)
+        if payload is not None:
+            errors.extend(validate_contract(payload, args.transcript, required_headings))
+
+    errors.extend(validate_transcript(args.transcript, required_headings))
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)

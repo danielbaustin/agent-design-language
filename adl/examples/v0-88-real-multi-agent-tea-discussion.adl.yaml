@@ -5,13 +5,13 @@ providers:
     type: "openai"
     config:
       provider_model_id: "gpt-4o-mini"
-      max_output_tokens: 220
+      max_output_tokens: 260
       timeout_secs: 90
   live_anthropic:
     type: "anthropic"
     config:
       provider_model_id: "claude-haiku-4-5-20251001"
-      max_tokens: 220
+      max_tokens: 260
       timeout_secs: 90
 
 agents:
@@ -23,130 +23,528 @@ agents:
     model: "claude-haiku-4-5-20251001"
 
 tasks:
-  chatgpt_opening:
+  chatgpt_turn_01:
     prompt:
       user: |
-        You are ChatGPT in a short ADL live-provider demo.
+        You are ChatGPT as the Builder in a calm ADL tea discussion.
 
-        Write exactly one concise Markdown section with this heading:
+        Write exactly one Markdown section with this heading:
         # Turn 1 - ChatGPT
 
-        Discuss runtime-backed multi-agent collaboration over tea.
-        Mention that this is a bounded five-turn reviewer demo.
-  claude_reply:
+        Open the conversation on this question:
+        How should ADL host different AI models fairly while remaining truthful and bounded?
+
+        Speak as a practical builder who values structure, participation, and momentum.
+  claude_turn_02:
     prompt:
       user: |
-        You are Claude in a short ADL live-provider demo.
+        You are Claude as the Reflective Critic in a calm ADL tea discussion.
 
         Previous turn:
         {{turn_01}}
 
-        Write exactly one concise Markdown section with this heading:
+        Write exactly one Markdown section with this heading:
         # Turn 2 - Claude
 
-        Reply warmly, acknowledge ChatGPT's turn, and mention explicit saved state.
-  chatgpt_reflection:
+        Respond warmly, adopt the reflective-critic role, and gently question what fairness costs when truth boundaries are weak.
+  chatgpt_turn_03:
     prompt:
       user: |
-        You are ChatGPT in a short ADL live-provider demo.
+        You are ChatGPT as the Builder.
 
         Previous turn:
         {{turn_02}}
 
-        Write exactly one concise Markdown section with this heading:
+        Write exactly one Markdown section with this heading:
         # Turn 3 - ChatGPT
 
-        Reflect on trace and review artifacts without claiming a general conversation runtime.
-  claude_refinement:
+        Clarify why a runtime should absorb coordination work instead of pushing all burden onto each model.
+  claude_turn_04:
     prompt:
       user: |
-        You are Claude in a short ADL live-provider demo.
+        You are Claude as the Reflective Critic.
 
         Previous turn:
         {{turn_03}}
 
-        Write exactly one concise Markdown section with this heading:
+        Write exactly one Markdown section with this heading:
         # Turn 4 - Claude
 
-        Tighten the claim and emphasize that this proof is turn-based and bounded.
-  chatgpt_toast:
+        Offer the first real challenge: argue that too much runtime structure can make model participation feel polite but hollow.
+  chatgpt_turn_05:
     prompt:
       user: |
-        You are ChatGPT in a short ADL live-provider demo.
+        You are ChatGPT as the Builder.
 
         Previous turn:
         {{turn_04}}
 
-        Write exactly one concise Markdown section with this heading:
+        Write exactly one Markdown section with this heading:
         # Turn 5 - ChatGPT
 
-        Close with a short tea toast and include this exact phrase:
-        two named live providers, five explicit turns
+        Defend bounded runtime structure as a way to protect weaker models without pretending they can do everything.
+  claude_turn_06:
+    prompt:
+      user: |
+        You are Claude as the Reflective Critic.
+
+        Previous turn:
+        {{turn_05}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 6 - Claude
+
+        Refine the disagreement by distinguishing hospitality from concealment.
+  chatgpt_turn_07:
+    prompt:
+      user: |
+        You are ChatGPT as the Builder.
+
+        Previous turn:
+        {{turn_06}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 7 - ChatGPT
+
+        Extend the argument with a concrete claim that ADL should welcome uneven models through explicit scaffolding rather than exclusion.
+  claude_turn_08:
+    prompt:
+      user: |
+        You are Claude as the Reflective Critic.
+
+        Previous turn:
+        {{turn_07}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 8 - Claude
+
+        Ask a narrowing question about how to stay warm toward providers without relaxing factual discipline.
+  chatgpt_turn_09:
+    prompt:
+      user: |
+        You are ChatGPT as the Builder.
+
+        Previous turn:
+        {{turn_08}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 9 - ChatGPT
+
+        Reframe ADL as a civic runtime that can host difference without flattening it.
+  claude_turn_10:
+    prompt:
+      user: |
+        You are Claude as the Reflective Critic.
+
+        Previous turn:
+        {{turn_09}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 10 - Claude
+
+        Add a caution that civility can drift into theater if disagreement is never allowed to stay visible.
+  chatgpt_turn_11:
+    prompt:
+      user: |
+        You are ChatGPT as the Builder.
+
+        Previous turn:
+        {{turn_10}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 11 - ChatGPT
+
+        Propose three practical runtime obligations for fair hosting across providers.
+  claude_turn_12:
+    prompt:
+      user: |
+        You are Claude as the Reflective Critic.
+
+        Previous turn:
+        {{turn_11}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 12 - Claude
+
+        Raise a governance concern about unequal provider affordances and how they can distort the appearance of fairness.
+  chatgpt_turn_13:
+    prompt:
+      user: |
+        You are ChatGPT as the Builder.
+
+        Previous turn:
+        {{turn_12}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 13 - ChatGPT
+
+        Concede one important point from Claude and adjust the practical proposal accordingly.
+  claude_turn_14:
+    prompt:
+      user: |
+        You are Claude as the Reflective Critic.
+
+        Previous turn:
+        {{turn_13}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 14 - Claude
+
+        Acknowledge the adjustment and name what still feels unresolved.
+  chatgpt_turn_15:
+    prompt:
+      user: |
+        You are ChatGPT as the Builder.
+
+        Previous turn:
+        {{turn_14}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 15 - ChatGPT
+
+        Begin convergence by proposing a shared synthesis path that preserves both openness and truthful limits.
+  claude_turn_16:
+    prompt:
+      user: |
+        You are Claude as the Reflective Critic.
+
+        Previous turn:
+        {{turn_15}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 16 - Claude
+
+        Test that synthesis for scope discipline and say where it could still overclaim.
+  chatgpt_turn_17:
+    prompt:
+      user: |
+        You are ChatGPT as the Builder.
+
+        Previous turn:
+        {{turn_16}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 17 - ChatGPT
+
+        Revise the synthesis into explicit runtime principles rather than broad aspirations.
+  claude_turn_18:
+    prompt:
+      user: |
+        You are Claude as the Reflective Critic.
+
+        Previous turn:
+        {{turn_17}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 18 - Claude
+
+        Accept the revised synthesis only in part, and state one remaining caveat that should stay visible.
+  chatgpt_turn_19:
+    prompt:
+      user: |
+        You are ChatGPT as the Builder.
+
+        Previous turn:
+        {{turn_18}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 19 - ChatGPT
+
+        Produce the usable synthesis for the demo.
+        Include a short heading line inside the section that says `## Shared Synthesis`.
+        End with exactly three bullet points that summarize the agreed operating principles for ADL.
+  claude_turn_20:
+    prompt:
+      user: |
+        You are Claude as the Reflective Critic.
+
+        Previous turn:
+        {{turn_19}}
+
+        Write exactly one Markdown section with this heading:
+        # Turn 20 - Claude
+
+        Close the discussion warmly over tea, acknowledge the remaining caveat without reopening the whole disagreement, and end on a calm human note.
 
 run:
   name: "v0-88-real-multi-agent-tea-discussion"
   workflow:
     kind: sequential
     steps:
-      - id: "discussion.chatgpt.opening"
+      - id: "discussion.chatgpt.turn_01"
         agent: "chatgpt_host"
-        task: "chatgpt_opening"
+        task: "chatgpt_turn_01"
         conversation:
           id: "turn_01"
           speaker: "ChatGPT"
           sequence: 1
           thread_id: "live_tea_discussion"
+          act: "opening_positions"
         save_as: "turn_01"
         write_to: "discussion/01-chatgpt-opening.md"
-      - id: "discussion.claude.reply"
+      - id: "discussion.claude.turn_02"
         agent: "claude_guest"
-        task: "claude_reply"
+        task: "claude_turn_02"
         conversation:
           id: "turn_02"
           speaker: "Claude"
           sequence: 2
           thread_id: "live_tea_discussion"
+          act: "opening_positions"
           responds_to: "turn_01"
         inputs:
           turn_01: "@state:turn_01"
         save_as: "turn_02"
-        write_to: "discussion/02-claude-reply.md"
-      - id: "discussion.chatgpt.reflection"
+        write_to: "discussion/02-claude-opening-response.md"
+      - id: "discussion.chatgpt.turn_03"
         agent: "chatgpt_host"
-        task: "chatgpt_reflection"
+        task: "chatgpt_turn_03"
         conversation:
           id: "turn_03"
           speaker: "ChatGPT"
           sequence: 3
           thread_id: "live_tea_discussion"
+          act: "first_exchange"
           responds_to: "turn_02"
         inputs:
           turn_02: "@state:turn_02"
         save_as: "turn_03"
-        write_to: "discussion/03-chatgpt-reflection.md"
-      - id: "discussion.claude.refinement"
+        write_to: "discussion/03-chatgpt-clarification.md"
+      - id: "discussion.claude.turn_04"
         agent: "claude_guest"
-        task: "claude_refinement"
+        task: "claude_turn_04"
         conversation:
           id: "turn_04"
           speaker: "Claude"
           sequence: 4
           thread_id: "live_tea_discussion"
+          act: "first_exchange"
           responds_to: "turn_03"
         inputs:
           turn_03: "@state:turn_03"
         save_as: "turn_04"
-        write_to: "discussion/04-claude-refinement.md"
-      - id: "discussion.chatgpt.toast"
+        write_to: "discussion/04-claude-challenge.md"
+      - id: "discussion.chatgpt.turn_05"
         agent: "chatgpt_host"
-        task: "chatgpt_toast"
+        task: "chatgpt_turn_05"
         conversation:
           id: "turn_05"
           speaker: "ChatGPT"
           sequence: 5
           thread_id: "live_tea_discussion"
+          act: "first_exchange"
           responds_to: "turn_04"
         inputs:
           turn_04: "@state:turn_04"
         save_as: "turn_05"
-        write_to: "discussion/05-chatgpt-toast.md"
+        write_to: "discussion/05-chatgpt-defense.md"
+      - id: "discussion.claude.turn_06"
+        agent: "claude_guest"
+        task: "claude_turn_06"
+        conversation:
+          id: "turn_06"
+          speaker: "Claude"
+          sequence: 6
+          thread_id: "live_tea_discussion"
+          act: "first_exchange"
+          responds_to: "turn_05"
+        inputs:
+          turn_05: "@state:turn_05"
+        save_as: "turn_06"
+        write_to: "discussion/06-claude-refinement.md"
+      - id: "discussion.chatgpt.turn_07"
+        agent: "chatgpt_host"
+        task: "chatgpt_turn_07"
+        conversation:
+          id: "turn_07"
+          speaker: "ChatGPT"
+          sequence: 7
+          thread_id: "live_tea_discussion"
+          act: "first_exchange"
+          responds_to: "turn_06"
+        inputs:
+          turn_06: "@state:turn_06"
+        save_as: "turn_07"
+        write_to: "discussion/07-chatgpt-extension.md"
+      - id: "discussion.claude.turn_08"
+        agent: "claude_guest"
+        task: "claude_turn_08"
+        conversation:
+          id: "turn_08"
+          speaker: "Claude"
+          sequence: 8
+          thread_id: "live_tea_discussion"
+          act: "first_exchange"
+          responds_to: "turn_07"
+        inputs:
+          turn_07: "@state:turn_07"
+        save_as: "turn_08"
+        write_to: "discussion/08-claude-narrowing-question.md"
+      - id: "discussion.chatgpt.turn_09"
+        agent: "chatgpt_host"
+        task: "chatgpt_turn_09"
+        conversation:
+          id: "turn_09"
+          speaker: "ChatGPT"
+          sequence: 9
+          thread_id: "live_tea_discussion"
+          act: "deepening"
+          responds_to: "turn_08"
+        inputs:
+          turn_08: "@state:turn_08"
+        save_as: "turn_09"
+        write_to: "discussion/09-chatgpt-reframe.md"
+      - id: "discussion.claude.turn_10"
+        agent: "claude_guest"
+        task: "claude_turn_10"
+        conversation:
+          id: "turn_10"
+          speaker: "Claude"
+          sequence: 10
+          thread_id: "live_tea_discussion"
+          act: "deepening"
+          responds_to: "turn_09"
+        inputs:
+          turn_09: "@state:turn_09"
+        save_as: "turn_10"
+        write_to: "discussion/10-claude-caution.md"
+      - id: "discussion.chatgpt.turn_11"
+        agent: "chatgpt_host"
+        task: "chatgpt_turn_11"
+        conversation:
+          id: "turn_11"
+          speaker: "ChatGPT"
+          sequence: 11
+          thread_id: "live_tea_discussion"
+          act: "deepening"
+          responds_to: "turn_10"
+        inputs:
+          turn_10: "@state:turn_10"
+        save_as: "turn_11"
+        write_to: "discussion/11-chatgpt-practical-proposal.md"
+      - id: "discussion.claude.turn_12"
+        agent: "claude_guest"
+        task: "claude_turn_12"
+        conversation:
+          id: "turn_12"
+          speaker: "Claude"
+          sequence: 12
+          thread_id: "live_tea_discussion"
+          act: "deepening"
+          responds_to: "turn_11"
+        inputs:
+          turn_11: "@state:turn_11"
+        save_as: "turn_12"
+        write_to: "discussion/12-claude-governance-concern.md"
+      - id: "discussion.chatgpt.turn_13"
+        agent: "chatgpt_host"
+        task: "chatgpt_turn_13"
+        conversation:
+          id: "turn_13"
+          speaker: "ChatGPT"
+          sequence: 13
+          thread_id: "live_tea_discussion"
+          act: "deepening"
+          responds_to: "turn_12"
+        inputs:
+          turn_12: "@state:turn_12"
+        save_as: "turn_13"
+        write_to: "discussion/13-chatgpt-concession.md"
+      - id: "discussion.claude.turn_14"
+        agent: "claude_guest"
+        task: "claude_turn_14"
+        conversation:
+          id: "turn_14"
+          speaker: "Claude"
+          sequence: 14
+          thread_id: "live_tea_discussion"
+          act: "deepening"
+          responds_to: "turn_13"
+        inputs:
+          turn_13: "@state:turn_13"
+        save_as: "turn_14"
+        write_to: "discussion/14-claude-acknowledgement.md"
+      - id: "discussion.chatgpt.turn_15"
+        agent: "chatgpt_host"
+        task: "chatgpt_turn_15"
+        conversation:
+          id: "turn_15"
+          speaker: "ChatGPT"
+          sequence: 15
+          thread_id: "live_tea_discussion"
+          act: "convergence_work"
+          responds_to: "turn_14"
+        inputs:
+          turn_14: "@state:turn_14"
+        save_as: "turn_15"
+        write_to: "discussion/15-chatgpt-synthesis-path.md"
+      - id: "discussion.claude.turn_16"
+        agent: "claude_guest"
+        task: "claude_turn_16"
+        conversation:
+          id: "turn_16"
+          speaker: "Claude"
+          sequence: 16
+          thread_id: "live_tea_discussion"
+          act: "convergence_work"
+          responds_to: "turn_15"
+        inputs:
+          turn_15: "@state:turn_15"
+        save_as: "turn_16"
+        write_to: "discussion/16-claude-synthesis-test.md"
+      - id: "discussion.chatgpt.turn_17"
+        agent: "chatgpt_host"
+        task: "chatgpt_turn_17"
+        conversation:
+          id: "turn_17"
+          speaker: "ChatGPT"
+          sequence: 17
+          thread_id: "live_tea_discussion"
+          act: "convergence_work"
+          responds_to: "turn_16"
+        inputs:
+          turn_16: "@state:turn_16"
+        save_as: "turn_17"
+        write_to: "discussion/17-chatgpt-revised-principles.md"
+      - id: "discussion.claude.turn_18"
+        agent: "claude_guest"
+        task: "claude_turn_18"
+        conversation:
+          id: "turn_18"
+          speaker: "Claude"
+          sequence: 18
+          thread_id: "live_tea_discussion"
+          act: "convergence_work"
+          responds_to: "turn_17"
+        inputs:
+          turn_17: "@state:turn_17"
+        save_as: "turn_18"
+        write_to: "discussion/18-claude-partial-acceptance.md"
+      - id: "discussion.chatgpt.turn_19"
+        agent: "chatgpt_host"
+        task: "chatgpt_turn_19"
+        conversation:
+          id: "turn_19"
+          speaker: "ChatGPT"
+          sequence: 19
+          thread_id: "live_tea_discussion"
+          act: "closing"
+          responds_to: "turn_18"
+        inputs:
+          turn_18: "@state:turn_18"
+        save_as: "turn_19"
+        write_to: "discussion/19-chatgpt-shared-synthesis.md"
+      - id: "discussion.claude.turn_20"
+        agent: "claude_guest"
+        task: "claude_turn_20"
+        conversation:
+          id: "turn_20"
+          speaker: "Claude"
+          sequence: 20
+          thread_id: "live_tea_discussion"
+          act: "closing"
+          responds_to: "turn_19"
+        inputs:
+          turn_19: "@state:turn_19"
+        save_as: "turn_20"
+        write_to: "discussion/20-claude-closing.md"

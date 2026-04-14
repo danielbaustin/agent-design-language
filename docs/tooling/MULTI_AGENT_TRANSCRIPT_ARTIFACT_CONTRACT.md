@@ -1,84 +1,66 @@
 # Multi-Agent Transcript Artifact Contract
 
-Status: v0.87.1 bounded demo contract
+Status: bounded demo contract
 
-This document defines the canonical transcript artifact shape for bounded
-multi-agent discussion demos.
+This document defines the canonical reviewer-facing transcript artifact shape for
+bounded multi-agent discussion demos such as the ChatGPT + Claude tea
+discussion.
 
-The contract is intentionally narrow. It standardizes the reviewer-facing
-transcript file emitted by demos such as the Claude + ChatGPT tea discussion. It
-does not define a general conversation runtime, provider protocol, chat memory
-model, or long-lived agent collaboration substrate.
+The contract is intentionally narrow. It does not define a general conversation
+runtime, memory model, or autonomous agent society. It defines the proof surface
+for one bounded ADL run.
 
 ## Canonical Artifact
 
-The primary transcript artifact is:
+The primary readable artifact is:
 
 ```text
 transcript.md
 ```
 
-For the `v0.87.1` multi-agent discussion demo, the canonical path is:
+The transcript is paired with:
 
 ```text
-artifacts/v0871/multi_agent_discussion/transcript.md
+transcript_contract.json
 ```
 
-The transcript is accompanied by a machine-readable contract artifact:
-
-```text
-artifacts/v0871/multi_agent_discussion/transcript_contract.json
-```
-
-Generated transcript artifacts should be treated as demo output. They are proof
-surfaces for review, not source-of-truth inputs to the ADL runtime.
+Generated transcript artifacts are review surfaces, not source-of-truth runtime
+inputs.
 
 ## Required Layout
 
-A conforming bounded multi-agent transcript MUST contain:
+A conforming transcript must contain:
 
 - a top-level title
-- a short provenance statement explaining that the transcript was assembled from runtime-written step outputs
-- exactly one ordered section per turn
+- a provenance statement saying it was assembled from runtime-written step outputs
+- exactly one ordered section per declared turn
 - a stable separator between turns
-- a human-readable turn heading for each turn
+- a human-readable heading for each turn
 
-For the `v0.87.1` tea discussion demo, the required turn headings are:
-
-```text
-# Turn 1 - ChatGPT
-# Turn 2 - Claude
-# Turn 3 - ChatGPT
-# Turn 4 - Claude
-# Turn 5 - ChatGPT
-```
-
-The required turn order is the source of reviewer clarity. If a later demo needs
-a different speaker order, it should document and validate that order explicitly
-instead of reusing this demo-specific sequence silently.
+The required heading set is contract-defined. Different bounded demos may use
+different turn counts and speaker orders as long as they declare and validate
+them explicitly.
 
 ## Required Companion Artifacts
 
-A transcript proof surface is complete only when it is paired with:
+A transcript proof surface is complete only when paired with:
 
 - `demo_manifest.json`
 - runtime `run_summary.json`
 - runtime `logs/trace_v1.json`
-- the runtime-written per-turn step output files
+- runtime-written per-turn output files
 
-The transcript itself is a readable assembly of step outputs. The manifest and
-runtime artifacts provide the machine-checkable evidence that the transcript came
-from a bounded ADL run.
+Some demos may also publish additional reviewer aids such as `synthesis.md`.
 
 ## Machine-Readable Contract
 
-`transcript_contract.json` MUST use this object shape:
+`transcript_contract.json` must use this object shape:
 
 ```json
 {
   "schema_version": "multi_agent_discussion_transcript.v1",
   "transcript_path": "transcript.md",
-  "turn_count": 5,
+  "turn_count": 20,
   "turns": [
     {
       "turn_id": "turn_01",
@@ -90,29 +72,30 @@ from a bounded ADL run.
   ],
   "companion_artifacts": {
     "demo_manifest": "demo_manifest.json",
-    "run_summary": "runtime/runs/v0-87-1-multi-agent-tea-discussion/run_summary.json",
-    "trace": "runtime/runs/v0-87-1-multi-agent-tea-discussion/logs/trace_v1.json"
+    "synthesis": "synthesis.md",
+    "run_summary": "runtime/runs/v0-88-real-multi-agent-tea-discussion/run_summary.json",
+    "trace": "runtime/runs/v0-88-real-multi-agent-tea-discussion/logs/trace_v1.json"
   }
 }
 ```
 
-The example above shows one turn for readability. A conforming contract for the
-tea discussion demo must declare all five turns in order.
+The example above shows one turn for readability. A conforming contract must
+declare every turn in order.
 
 ## Validation Rules
 
-The transcript validator MUST check:
+The validator must check:
 
 - the transcript file exists
-- the transcript is valid UTF-8 text
+- the transcript is valid UTF-8
 - the title is present
-- the runtime-output provenance statement is present
-- all required turn headings are present exactly once
-- required turn headings appear in order
-- the transcript contains the expected number of turn sections
+- the provenance statement is present
+- all declared turn headings are present exactly once
+- declared turn headings appear in order
+- the transcript contains the declared number of turn sections
 - the transcript does not contain unresolved template markers
 
-The validator MUST NOT:
+The validator must not:
 
 - call providers
 - modify files
@@ -125,39 +108,25 @@ The validator MUST NOT:
 From repository root:
 
 ```bash
-python3 adl/tools/validate_multi_agent_transcript.py artifacts/v0871/multi_agent_discussion/transcript.md
-```
-
-To validate the transcript and its machine-readable contract together:
-
-```bash
 python3 adl/tools/validate_multi_agent_transcript.py \
-  artifacts/v0871/multi_agent_discussion/transcript.md \
-  --contract artifacts/v0871/multi_agent_discussion/transcript_contract.json
-```
-
-For the complete demo proof:
-
-```bash
-bash adl/tools/test_demo_v0871_multi_agent_discussion.sh
+  artifacts/v088/real_multi_agent_discussion/transcript.md \
+  --contract artifacts/v088/real_multi_agent_discussion/transcript_contract.json
 ```
 
 ## Reviewer Checklist
 
-- `transcript.md` exists at the documented demo output path.
+- `transcript.md` exists at the documented output path.
 - `transcript_contract.json` declares `multi_agent_discussion_transcript.v1`.
-- The transcript has five ordered turns for the bounded tea discussion demo.
+- The transcript contains the declared number of ordered turns.
 - Each turn heading names the speaker.
 - The transcript states it was assembled from runtime-written step outputs.
 - Companion manifest, run summary, and trace artifacts exist.
-- Generated transcript artifacts are not committed unless a review package
-  explicitly calls for checked-in evidence.
+- Any optional `synthesis.md` surface is truthful and derived from declared turns.
 
 ## Non-Goals
 
 - general chat transcript schema
 - provider-native transcript capture
-- model-to-model memory semantics
+- long-lived session persistence
 - autonomous conversation management
-- transcript hashing or signing
-- long-lived multi-agent session persistence
+- transcript signing

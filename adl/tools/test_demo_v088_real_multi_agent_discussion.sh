@@ -26,6 +26,7 @@ OUT_DIR="$TMPDIR_ROOT/artifacts"
 
 TRANSCRIPT="$OUT_DIR/transcript.md"
 TRANSCRIPT_CONTRACT="$OUT_DIR/transcript_contract.json"
+SYNTHESIS="$OUT_DIR/synthesis.md"
 INVOCATIONS="$OUT_DIR/provider_invocations.json"
 MANIFEST="$OUT_DIR/demo_manifest.json"
 SUMMARY="$OUT_DIR/runtime/runs/v0-88-real-multi-agent-tea-discussion/run_summary.json"
@@ -33,7 +34,7 @@ STEPS="$OUT_DIR/runtime/runs/v0-88-real-multi-agent-tea-discussion/steps.json"
 TRACE="$OUT_DIR/runtime/runs/v0-88-real-multi-agent-tea-discussion/logs/trace_v1.json"
 LOG_FILE="$OUT_DIR/run_log.txt"
 
-for required in "$TRANSCRIPT" "$TRANSCRIPT_CONTRACT" "$INVOCATIONS" "$MANIFEST" "$SUMMARY" "$STEPS" "$TRACE" "$LOG_FILE"; do
+for required in "$TRANSCRIPT" "$TRANSCRIPT_CONTRACT" "$SYNTHESIS" "$INVOCATIONS" "$MANIFEST" "$SUMMARY" "$STEPS" "$TRACE" "$LOG_FILE"; do
   [[ -f "$required" ]] || {
     echo "assertion failed: missing artifact $required" >&2
     exit 1
@@ -58,10 +59,10 @@ invocations = payload.get("invocations", [])
 families = [item.get("family") for item in invocations]
 if payload.get("schema_version") != "adl.native_provider_invocations.v1":
     raise SystemExit("unexpected provider invocation schema version")
-if families.count("openai") != 3:
-    raise SystemExit(f"expected 3 OpenAI invocations, found {families.count('openai')}")
-if families.count("anthropic") != 2:
-    raise SystemExit(f"expected 2 Anthropic invocations, found {families.count('anthropic')}")
+if families.count("openai") != 10:
+    raise SystemExit(f"expected 10 OpenAI invocations, found {families.count('openai')}")
+if families.count("anthropic") != 10:
+    raise SystemExit(f"expected 10 Anthropic invocations, found {families.count('anthropic')}")
 if any(item.get("http_status") != 200 for item in invocations):
     raise SystemExit("expected all native provider invocations to return HTTP 200")
 for item in invocations:
@@ -73,6 +74,11 @@ python3 "$ROOT_DIR/adl/tools/validate_multi_agent_transcript.py" \
   "$TRANSCRIPT" \
   --contract "$TRANSCRIPT_CONTRACT" \
   >/dev/null
+
+grep -Fq "## Shared Synthesis" "$SYNTHESIS" || {
+  echo "assertion failed: synthesis artifact missing shared synthesis heading" >&2
+  exit 1
+}
 
 if [[ -n "${OPENAI_API_KEY:-}" ]] && grep -R -F "$OPENAI_API_KEY" "$OUT_DIR" >/dev/null 2>&1; then
   echo "assertion failed: OPENAI_API_KEY value leaked into artifacts" >&2

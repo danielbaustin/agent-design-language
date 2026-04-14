@@ -89,7 +89,7 @@ prepare the prompt, workspace, and manifest without invoking a local model.
 
 Use `v0.87.1/claude_chatgpt_multi_agent_discussion_demo.md` for a bounded
 multi-agent runtime demo that keeps Claude and ChatGPT as two explicit named
-agents over five sequential turns and emits a transcript plus runtime proof
+agents in a longer act-structured tea discussion and emits a transcript plus runtime proof
 artifacts.
 
 ### v0.89 bounded provider-participation demos

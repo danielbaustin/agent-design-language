@@ -9,11 +9,35 @@ STEP_OUT="$OUT_DIR/out"
 RUN_ID="v0-88-real-multi-agent-tea-discussion"
 TRANSCRIPT="$OUT_DIR/transcript.md"
 TRANSCRIPT_CONTRACT="$OUT_DIR/transcript_contract.json"
+SYNTHESIS="$OUT_DIR/synthesis.md"
 MANIFEST="$OUT_DIR/demo_manifest.json"
 INVOCATIONS="$OUT_DIR/provider_invocations.json"
 README_OUT="$OUT_DIR/README.md"
 OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-}"
 ANTHROPIC_KEY_FILE="${ADL_ANTHROPIC_KEY_FILE:-}"
+
+TURN_FILES=(
+  "discussion/01-chatgpt-opening.md"
+  "discussion/02-claude-opening-response.md"
+  "discussion/03-chatgpt-clarification.md"
+  "discussion/04-claude-challenge.md"
+  "discussion/05-chatgpt-defense.md"
+  "discussion/06-claude-refinement.md"
+  "discussion/07-chatgpt-extension.md"
+  "discussion/08-claude-narrowing-question.md"
+  "discussion/09-chatgpt-reframe.md"
+  "discussion/10-claude-caution.md"
+  "discussion/11-chatgpt-practical-proposal.md"
+  "discussion/12-claude-governance-concern.md"
+  "discussion/13-chatgpt-concession.md"
+  "discussion/14-claude-acknowledgement.md"
+  "discussion/15-chatgpt-synthesis-path.md"
+  "discussion/16-claude-synthesis-test.md"
+  "discussion/17-chatgpt-revised-principles.md"
+  "discussion/18-claude-partial-acceptance.md"
+  "discussion/19-chatgpt-shared-synthesis.md"
+  "discussion/20-claude-closing.md"
+)
 
 load_key() {
   local env_name="$1"
@@ -98,32 +122,61 @@ cat >"$TRANSCRIPT" <<'EOF'
 This transcript is assembled from the runtime-written step outputs under `out/discussion/`.
 EOF
 
-for file in \
-  "$STEP_OUT/discussion/01-chatgpt-opening.md" \
-  "$STEP_OUT/discussion/02-claude-reply.md" \
-  "$STEP_OUT/discussion/03-chatgpt-reflection.md" \
-  "$STEP_OUT/discussion/04-claude-refinement.md" \
-  "$STEP_OUT/discussion/05-chatgpt-toast.md"; do
+for file in "${TURN_FILES[@]}"; do
   printf '\n\n---\n\n' >>"$TRANSCRIPT"
-  cat "$file" >>"$TRANSCRIPT"
+  cat "$STEP_OUT/$file" >>"$TRANSCRIPT"
 done
 
-cat >"$TRANSCRIPT_CONTRACT" <<EOF
+cat >"$SYNTHESIS" <<EOF
+# Shared Synthesis
+
+This synthesis surface highlights the convergence work from the flagship 20-turn ChatGPT + Claude tea discussion.
+
+## Primary synthesis turn
+
+\`\`\`markdown
+$(cat "$STEP_OUT/discussion/19-chatgpt-shared-synthesis.md")
+\`\`\`
+
+## Closing reflection
+
+\`\`\`markdown
+$(cat "$STEP_OUT/discussion/20-claude-closing.md")
+\`\`\`
+EOF
+
+cat >"$TRANSCRIPT_CONTRACT" <<'EOF'
 {
   "schema_version": "multi_agent_discussion_transcript.v1",
   "transcript_path": "transcript.md",
-  "turn_count": 5,
+  "turn_count": 20,
   "turns": [
     {"turn_id": "turn_01", "ordinal": 1, "speaker": "ChatGPT", "heading": "# Turn 1 - ChatGPT", "source_output": "out/discussion/01-chatgpt-opening.md"},
-    {"turn_id": "turn_02", "ordinal": 2, "speaker": "Claude", "heading": "# Turn 2 - Claude", "source_output": "out/discussion/02-claude-reply.md"},
-    {"turn_id": "turn_03", "ordinal": 3, "speaker": "ChatGPT", "heading": "# Turn 3 - ChatGPT", "source_output": "out/discussion/03-chatgpt-reflection.md"},
-    {"turn_id": "turn_04", "ordinal": 4, "speaker": "Claude", "heading": "# Turn 4 - Claude", "source_output": "out/discussion/04-claude-refinement.md"},
-    {"turn_id": "turn_05", "ordinal": 5, "speaker": "ChatGPT", "heading": "# Turn 5 - ChatGPT", "source_output": "out/discussion/05-chatgpt-toast.md"}
+    {"turn_id": "turn_02", "ordinal": 2, "speaker": "Claude", "heading": "# Turn 2 - Claude", "source_output": "out/discussion/02-claude-opening-response.md"},
+    {"turn_id": "turn_03", "ordinal": 3, "speaker": "ChatGPT", "heading": "# Turn 3 - ChatGPT", "source_output": "out/discussion/03-chatgpt-clarification.md"},
+    {"turn_id": "turn_04", "ordinal": 4, "speaker": "Claude", "heading": "# Turn 4 - Claude", "source_output": "out/discussion/04-claude-challenge.md"},
+    {"turn_id": "turn_05", "ordinal": 5, "speaker": "ChatGPT", "heading": "# Turn 5 - ChatGPT", "source_output": "out/discussion/05-chatgpt-defense.md"},
+    {"turn_id": "turn_06", "ordinal": 6, "speaker": "Claude", "heading": "# Turn 6 - Claude", "source_output": "out/discussion/06-claude-refinement.md"},
+    {"turn_id": "turn_07", "ordinal": 7, "speaker": "ChatGPT", "heading": "# Turn 7 - ChatGPT", "source_output": "out/discussion/07-chatgpt-extension.md"},
+    {"turn_id": "turn_08", "ordinal": 8, "speaker": "Claude", "heading": "# Turn 8 - Claude", "source_output": "out/discussion/08-claude-narrowing-question.md"},
+    {"turn_id": "turn_09", "ordinal": 9, "speaker": "ChatGPT", "heading": "# Turn 9 - ChatGPT", "source_output": "out/discussion/09-chatgpt-reframe.md"},
+    {"turn_id": "turn_10", "ordinal": 10, "speaker": "Claude", "heading": "# Turn 10 - Claude", "source_output": "out/discussion/10-claude-caution.md"},
+    {"turn_id": "turn_11", "ordinal": 11, "speaker": "ChatGPT", "heading": "# Turn 11 - ChatGPT", "source_output": "out/discussion/11-chatgpt-practical-proposal.md"},
+    {"turn_id": "turn_12", "ordinal": 12, "speaker": "Claude", "heading": "# Turn 12 - Claude", "source_output": "out/discussion/12-claude-governance-concern.md"},
+    {"turn_id": "turn_13", "ordinal": 13, "speaker": "ChatGPT", "heading": "# Turn 13 - ChatGPT", "source_output": "out/discussion/13-chatgpt-concession.md"},
+    {"turn_id": "turn_14", "ordinal": 14, "speaker": "Claude", "heading": "# Turn 14 - Claude", "source_output": "out/discussion/14-claude-acknowledgement.md"},
+    {"turn_id": "turn_15", "ordinal": 15, "speaker": "ChatGPT", "heading": "# Turn 15 - ChatGPT", "source_output": "out/discussion/15-chatgpt-synthesis-path.md"},
+    {"turn_id": "turn_16", "ordinal": 16, "speaker": "Claude", "heading": "# Turn 16 - Claude", "source_output": "out/discussion/16-claude-synthesis-test.md"},
+    {"turn_id": "turn_17", "ordinal": 17, "speaker": "ChatGPT", "heading": "# Turn 17 - ChatGPT", "source_output": "out/discussion/17-chatgpt-revised-principles.md"},
+    {"turn_id": "turn_18", "ordinal": 18, "speaker": "Claude", "heading": "# Turn 18 - Claude", "source_output": "out/discussion/18-claude-partial-acceptance.md"},
+    {"turn_id": "turn_19", "ordinal": 19, "speaker": "ChatGPT", "heading": "# Turn 19 - ChatGPT", "source_output": "out/discussion/19-chatgpt-shared-synthesis.md"},
+    {"turn_id": "turn_20", "ordinal": 20, "speaker": "Claude", "heading": "# Turn 20 - Claude", "source_output": "out/discussion/20-claude-closing.md"}
   ],
   "companion_artifacts": {
     "demo_manifest": "demo_manifest.json",
-    "run_summary": "runtime/runs/$RUN_ID/run_summary.json",
-    "trace": "runtime/runs/$RUN_ID/logs/trace_v1.json"
+    "synthesis": "synthesis.md",
+    "run_summary": "runtime/runs/v0-88-real-multi-agent-tea-discussion/run_summary.json",
+    "trace": "runtime/runs/v0-88-real-multi-agent-tea-discussion/logs/trace_v1.json"
   }
 }
 EOF
@@ -131,14 +184,28 @@ EOF
 cat >"$MANIFEST" <<EOF
 {
   "demo_id": "v0.88.real_multi_agent_discussion",
-  "title": "Rust-native live ChatGPT + Claude multi-agent tea discussion demo",
+  "title": "Rust-native live ChatGPT + Claude long-form tea discussion demo",
   "execution_mode": "runtime_native_live_providers",
   "provider_mode": "rust_native_openai_and_anthropic",
   "credential_policy": "operator_env_or_explicit_key_file_no_secret_material_recorded",
-  "steps": 5,
+  "steps": 20,
+  "structure": {
+    "acts": [
+      "opening_positions",
+      "first_exchange",
+      "deepening",
+      "convergence_work",
+      "closing"
+    ],
+    "roles": {
+      "ChatGPT": "Builder",
+      "Claude": "Reflective Critic"
+    }
+  },
   "proof_surfaces": {
     "transcript": "transcript.md",
     "transcript_contract": "transcript_contract.json",
+    "synthesis": "synthesis.md",
     "provider_invocations": "provider_invocations.json",
     "run_summary": "runtime/runs/$RUN_ID/run_summary.json",
     "trace": "runtime/runs/$RUN_ID/logs/trace_v1.json"
@@ -147,7 +214,7 @@ cat >"$MANIFEST" <<EOF
 EOF
 
 cat >"$README_OUT" <<EOF
-# v0.88 Demo - Rust-Native Live ChatGPT + Claude Multi-Agent Tea Discussion
+# v0.88 Demo - Rust-Native Live ChatGPT + Claude Long-Form Tea Discussion
 
 Canonical command:
 
@@ -163,10 +230,11 @@ Credential loading:
 What this proves:
 - one ADL runtime workflow with two named live provider families
 - direct Rust-native OpenAI and Anthropic provider invocation
-- five sequential turns with saved-state handoff, runtime conversation metadata, and transcript contract validation
+- a 20-turn act-structured discussion with explicit role framing, visible disagreement, and usable synthesis
 
 Primary proof surfaces:
 - \`transcript.md\`
+- \`synthesis.md\`
 - \`provider_invocations.json\`
 - \`runtime/runs/$RUN_ID/run_summary.json\`
 EOF
@@ -178,8 +246,9 @@ python3 "$ROOT_DIR/adl/tools/validate_multi_agent_transcript.py" \
 
 sanitize_generated_artifacts
 
-echo "Rust-native live multi-agent discussion proof surface under the output directory:"
+echo "Rust-native long-form multi-agent discussion proof surface under the output directory:"
 echo "  transcript.md"
+echo "  synthesis.md"
 echo "  provider_invocations.json"
 echo "  runtime/runs/$RUN_ID/run_summary.json"
 echo "  runtime/runs/$RUN_ID/logs/trace_v1.json"
