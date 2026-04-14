@@ -440,6 +440,96 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
             }
         ]
     });
+    let action_proposals = serde_json::json!({
+        "control_path_action_proposals_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
+        "proposal_schema_name": "adl.runtime.action_proposal.v1",
+        "proposal_schema_fields": [
+            "proposal_id",
+            "kind",
+            "target",
+            "arguments",
+            "intent",
+            "content",
+            "confidence",
+            "requires_approval",
+            "metadata",
+            "non_authoritative",
+            "temporal_anchor"
+        ],
+        "proposal_kind_vocabulary": [
+            "tool_call",
+            "skill_call",
+            "memory_read",
+            "memory_write",
+            "final_answer",
+            "refuse",
+            "defer"
+        ],
+        "proposals": [
+            {
+                "proposal_id": "proposal.selected_candidate",
+                "kind": "skill_call",
+                "target": "candidate.review_and_refine",
+                "arguments": {
+                    "candidate_id": "cand-custom-review",
+                    "candidate_kind": "review_and_refine",
+                    "requested_action": "review and refine the candidate",
+                    "route_selected": "slow"
+                },
+                "intent": runtime.agency.selected_candidate_reason,
+                "confidence": 0.58,
+                "requires_approval": true,
+                "metadata": {
+                    "surface_id": "decision.commitment_gate",
+                    "decision_record_kind": "gate_escalation_record",
+                    "risk_class": "high"
+                },
+                "non_authoritative": true,
+                "temporal_anchor": "control_path/candidate_selection.json"
+            }
+        ]
+    });
+    let mediation = serde_json::json!({
+        "control_path_action_mediation_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
+        "authority_boundary": "models_propose_runtime_decides_executes",
+        "mediation_outcome_vocabulary": [
+            "approved",
+            "rejected",
+            "deferred",
+            "escalated"
+        ],
+        "mediation": {
+            "mediation_id": "mediation.commitment_gate",
+            "proposal_id": "proposal.selected_candidate",
+            "decision_id": "decision.commitment_gate",
+            "runtime_authority": "freedom_gate",
+            "judgment_boundary": "judgment_boundary",
+            "mediation_outcome": "escalated",
+            "required_follow_up": "escalate_for_judgment_review",
+            "validation_checks": [
+                "proposal_non_authoritative",
+                "decision_surface_linked",
+                "policy_bindings_present",
+                "freedom_gate_authority_boundary"
+            ],
+            "policy_bindings": [
+                "route_selected=slow",
+                "selected_candidate_kind=review_and_refine",
+                "requires_review=false",
+                "policy_blocked=false",
+                "impact_scope=cross_surface",
+                "operator_visibility=review_required",
+                "escalation_available=true"
+            ],
+            "rationale": runtime.freedom_gate.decision_reason,
+            "temporal_anchor": "control_path/freedom_gate.json",
+            "trace_expectation": "approval, rejection, defer, or escalation remains trace-visible before privileged execution"
+        }
+    });
     let final_result = serde_json::json!({
         "control_path_final_result_version": 1,
         "run_id": DEMO_G_V086_CONTROL_PATH,
@@ -477,6 +567,8 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
             runtime.evaluation.progress_signal
         ),
         "decisions: route_selection=reroute reframing=reroute commitment_gate=escalate".to_string(),
+        "action_proposal: kind=skill_call target=candidate.review_and_refine requires_approval=true".to_string(),
+        "action_mediation: outcome=escalated authority=freedom_gate follow_up=escalate_for_judgment_review".to_string(),
         "memory: read_count=1 influenced_stage=reframing write_reason=record_failure_for_future_reframing_context".to_string(),
         "freedom_gate: decision=escalate reason_code=frame_escalation_required follow_up=escalate_for_judgment_review commitment_blocked=true".to_string(),
         "final_result: escalate".to_string(),
@@ -517,6 +609,16 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         out_dir,
         "memory.json",
         &serde_json::to_string_pretty(&memory)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "action_proposals.json",
+        &serde_json::to_string_pretty(&action_proposals)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "mediation.json",
+        &serde_json::to_string_pretty(&mediation)?,
     )?);
     artifacts.push(write_file(
         out_dir,

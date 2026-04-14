@@ -388,6 +388,46 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
         "escalate_for_judgment_review"
     );
 
+    let action_proposals: run_artifacts::ControlPathActionProposalsArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("control_path/action_proposals.json"))
+            .expect("read action proposals artifact"),
+    )
+    .expect("parse action proposals artifact");
+    assert_eq!(
+        action_proposals.proposal_schema_name,
+        "adl.runtime.action_proposal.v1"
+    );
+    assert_eq!(action_proposals.proposals.len(), 1);
+    assert!(action_proposals.proposals[0].non_authoritative);
+    assert_eq!(action_proposals.proposals[0].kind, "skill_call");
+    assert_eq!(
+        action_proposals.proposals[0].target.as_deref(),
+        Some("candidate.review_and_refine")
+    );
+    assert!(action_proposals.proposals[0].requires_approval);
+
+    let mediation: run_artifacts::ControlPathActionMediationArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("control_path/mediation.json"))
+            .expect("read mediation artifact"),
+    )
+    .expect("parse mediation artifact");
+    assert_eq!(
+        mediation.authority_boundary,
+        "models_propose_runtime_decides_executes"
+    );
+    assert_eq!(
+        mediation.mediation.proposal_id,
+        "proposal.selected_candidate"
+    );
+    assert_eq!(mediation.mediation.decision_id, "decision.commitment_gate");
+    assert_eq!(mediation.mediation.runtime_authority, "freedom_gate");
+    assert_eq!(mediation.mediation.mediation_outcome, "escalated");
+    assert_eq!(
+        mediation.mediation.required_follow_up,
+        "escalate_for_judgment_review"
+    );
+    assert!(mediation.mediation.approved_action_or_none.is_none());
+
     let memory_read: MemoryReadArtifact = serde_json::from_str(
         &std::fs::read_to_string(run_dir.join("learning/memory_read.v1.json"))
             .expect("read memory read artifact"),
@@ -457,6 +497,18 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
     assert!(
         control_path_summary.contains(
             "decisions: route_selection=reroute reframing=reroute commitment_gate=escalate"
+        ),
+        "summary was:\n{control_path_summary}"
+    );
+    assert!(
+        control_path_summary.contains(
+            "action_proposal: kind=skill_call target=candidate.review_and_refine requires_approval=true"
+        ),
+        "summary was:\n{control_path_summary}"
+    );
+    assert!(
+        control_path_summary.contains(
+            "action_mediation: outcome=escalated authority=freedom_gate follow_up=escalate_for_judgment_review"
         ),
         "summary was:\n{control_path_summary}"
     );
