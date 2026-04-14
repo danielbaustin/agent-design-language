@@ -23,6 +23,7 @@ The tracked skill set is:
 - `pr-closeout`
 - `repo-code-review`
 - `test-generator`
+- `demo-operator`
 - `stp-editor`
 - `sip-editor`
 - `sor-editor`
@@ -43,6 +44,7 @@ The normal workflow is:
 
 `repo-code-review` is cross-cutting rather than phase-specific.
 `test-generator` is a bounded helper skill for focused tests for a concrete issue, diff, file, or worktree.
+`demo-operator` is a bounded helper skill for running one named demo and classifying the proof result consistently.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
 
 The three editor skills are helper skills:
@@ -1409,6 +1411,104 @@ policy:
 Generate the smallest truthful test surface for the concrete target and stop after bounded test-writing work.
 ```
 
+## `demo-operator`
+
+### Purpose
+
+`demo-operator` runs one named demo in a bounded way and classifies the result as proving, non-proving, skipped, or failed.
+
+It is a bounded helper skill, not a lifecycle phase.
+
+### When To Use It
+
+Use it when:
+
+- one named demo should be executed consistently
+- the operator wants a reviewable proof classification artifact
+- the demo outcome should be recorded without ad hoc explanation
+
+Do not use it for:
+
+- implementing or rewriting the demo itself
+- release-evidence package assembly
+- broad milestone closeout
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- structured invocation should use `skill_input_schema: demo_operator.v1`
+- one of:
+  - `target.demo_name`
+  - `target.demo_command`
+  - `target.demo_doc_path`
+
+### Input Schema
+
+Canonical schema:
+
+- `adl/tools/skills/docs/DEMO_OPERATOR_SKILL_INPUT_SCHEMA.md`
+
+Schema id:
+
+- `demo_operator.v1`
+
+Structured invocation shape:
+
+```yaml
+skill_input_schema: demo_operator.v1
+mode: operate_named_demo | operate_demo_command | operate_demo_doc
+repo_root: /absolute/path
+target:
+  demo_name: <string or null>
+  demo_command: <string or null>
+  demo_doc_path: <path or null>
+  artifact_root: <path or null>
+  expected_artifacts:
+    - <path>
+policy:
+  classification_mode: strict | standard
+  allow_live_provider: true | false
+  validation_mode: dry_run | bounded_live | none
+  stop_after_operation: true
+```
+
+### Output And Stop Boundary
+
+Expected output includes:
+
+- target
+- prerequisites
+- execution
+- classification
+- follow-up
+
+The skill may run one bounded demo surface and write one artifact.
+It must stop before demo implementation, release-evidence assembly, or unrelated cleanup.
+
+### Example Invocation
+
+```yaml
+Use $demo-operator at /Users/daniel/git/agent-design-language/adl/tools/skills/demo-operator/SKILL.md with:
+skill_input_schema: demo_operator.v1
+mode: operate_named_demo
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  demo_name: gemma4_issue_clerk
+  demo_command: bash adl/tools/demo_v089_gemma4_issue_clerk.sh --dry-run
+  demo_doc_path: demos/v0.89/gemma4_issue_clerk_demo.md
+  artifact_root: null
+  expected_artifacts:
+    - artifacts/v089/gemma4_issue_clerk/demo_manifest.json
+policy:
+  classification_mode: strict
+  allow_live_provider: false
+  validation_mode: dry_run
+  stop_after_operation: true
+Run the named demo in a bounded way, classify the result, and stop.
+```
+
 ## Choosing The Right Skill
 
 Use this quick selector:
@@ -1425,6 +1525,8 @@ Use this quick selector:
   - `pr-finish`
 - need to write focused regression or edge-case tests for one concrete target:
   - `test-generator`
+- need to run one named demo and classify the proof result:
+  - `demo-operator`
 - need to finalize local issue state after merge/closure:
   - `pr-closeout`
 - need a broad findings-first code review:

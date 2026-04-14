@@ -58,6 +58,10 @@ jobs:
         run: bash adl/tools/test_test_generator_skill_contracts.sh
         working-directory: .
 
+      - name: demo-operator contract check
+        run: bash adl/tools/test_demo_operator_skill_contracts.sh
+        working-directory: .
+
       - name: fmt
         run: cargo fmt --all -- --check
 

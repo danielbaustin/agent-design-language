@@ -1,0 +1,3 @@
+display_name: Demo Operator
+short_description: Run one named demo and classify its proof result
+default_prompt: Run one bounded demo surface, classify the result as proving, non-proving, skipped, or failed, and stop without absorbing the underlying demo logic.
