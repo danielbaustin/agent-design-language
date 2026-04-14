@@ -146,6 +146,10 @@ Status guidance:
 - `BLOCKED` = known dependency or missing proof surface
 - `LANDED` = milestone evidence exists and is ready for review
 
+Heavyweight proof-row note:
+- `D11` and `D12` are reviewer/release proof packages, not ordinary quick demos.
+- they belong in review and release-tail sweeps, even though they remain in the matrix as canonical proof rows.
+
 ## Coverage Rules
 - Every major milestone claim should map to a runnable demo or an explicit alternate proof surface.
 - Demo coverage should be reviewed against the WBS Acceptance Mapping before internal review.
@@ -182,6 +186,7 @@ Description:
 - Provides the canonical WP-13 entrypoint for the bounded `v0.87.1` proof surfaces.
 - Runs the bounded runtime rows D1-D5 and D9-D12, the provider-family demos, the runtime review walkthrough, and the bounded multi-agent discussion demo.
 - Deliberately excludes the live D13L provider demo from the default suite because it depends on operator-managed OpenAI and Anthropic credentials.
+- Includes heavyweight reviewer and release-tail proof rows alongside ordinary demos; do not treat the whole suite as a quick demo sweep.
 
 Commands to run:
 

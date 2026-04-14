@@ -208,16 +208,21 @@ Key features:
 
 ## Demos and Proof Surfaces
 
-ADL includes both user-facing demos and milestone-specific proof surfaces.
+ADL includes both ordinary demos and heavyweight reviewer or release proof packages.
 
 Start here:
-- current milestone reviewer package: `bash adl/tools/demo_v088_review_surface.sh`
 - canonical user-facing demo index: `demos/README.md`
+- current milestone reviewer package: `bash adl/tools/demo_v088_review_surface.sh`
 
 Important supporting demo/readiness docs:
 - `docs/tooling/editor/README.md`
 - `docs/tooling/editor/five_command_demo.md`
 - `docs/tooling/editor/five_command_regression_suite.md`
+
+Use this split when choosing an entrypoint:
+- ordinary demos are bounded runnable proofs intended for demo sweeps and first-run exploration
+- reviewer packages combine multiple proof rows into one heavier review surface
+- quality-gate and release-review packages are heavyweight release-tail proofs, not ordinary demos
 
 For milestone-specific context:
 - `docs/milestones/v0.88/DEMO_MATRIX_v0.88.md`

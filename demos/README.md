@@ -22,7 +22,7 @@ If you want the historical `v0.8` flagship demo surface:
 cargo run --manifest-path demos/transpiler_demo/Cargo.toml --quiet
 ```
 
-If you want the current `v0.87.1` milestone demo-suite proof package:
+If you want the current `v0.87.1` reviewer proof suite:
 
 ```bash
 bash adl/tools/demo_v0871_suite.sh
@@ -59,6 +59,25 @@ bash adl/tools/demo_v089_gemma4_issue_clerk.sh --dry-run
 - Milestone runbooks and reviewer docs live here in `demos/`.
 - Spec-only example artifacts live in `adl-spec/examples/` and are not the main starting point for runnable demos.
 
+## Demo Taxonomy
+
+Use these categories consistently:
+
+- Ordinary demos:
+  bounded runnable surfaces intended for normal demo sweeps, milestone proof rows, or public-facing walkthroughs.
+- Reviewer packages:
+  heavier integrated review surfaces that bundle multiple proof rows for milestone or reviewer use.
+- Release and quality proof packages:
+  heavyweight validation or release-tail surfaces that are useful for review and ceremony work, but should not be treated as ordinary quick demos.
+
+Current heavyweight proof-package examples:
+- `bash adl/tools/demo_v0871_suite.sh`
+- `bash adl/tools/demo_v0871_quality_gate.sh`
+- `bash adl/tools/demo_v0871_release_review_package.sh`
+- `bash adl/tools/demo_v088_review_surface.sh`
+
+When planning a demo sweep, do not assume every proof-package command above belongs in the ordinary demo lane.
+
 ## Recommended Paths
 
 ### v0.87 demo program
@@ -76,8 +95,9 @@ entrypoint. It runs the currently implemented `v0.87.1` proof surfaces and
 writes a suite manifest at `artifacts/v0871/suite/demo_manifest.json`.
 
 Treat that suite as the current reviewer starting point for the milestone.
-It is the default bounded proof package. The live-provider D13L companion proof
-remains explicit and credential-gated rather than part of the default suite.
+It is a heavyweight reviewer proof package, not an ordinary quick demo.
+The live-provider D13L companion proof remains explicit and credential-gated
+rather than part of the default suite.
 
 Use `v0.87.1/codex_ollama_operational_skills_demo.md` for a bounded demo that
 installs the tracked skills into a demo-local `CODEX_HOME`, points Codex CLI at
