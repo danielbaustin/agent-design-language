@@ -176,6 +176,10 @@ impl RunArtifactPaths {
         self.control_path_dir().join("convergence.json")
     }
 
+    pub fn control_path_decisions_json(&self) -> PathBuf {
+        self.control_path_dir().join("decisions.json")
+    }
+
     pub fn control_path_final_result_json(&self) -> PathBuf {
         self.control_path_dir().join("final_result.json")
     }

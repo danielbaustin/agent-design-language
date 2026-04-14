@@ -151,11 +151,12 @@ cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_exe
 
 Expected artifacts:
 - `learning/freedom_gate.v1.json`
+- `control_path/decisions.json`
 - `control_path/final_result.json`
 - `control_path/summary.txt`
 
 Primary proof surface:
-- gate artifact and final-result pair
+- gate artifact and decision record pair, centered on `control_path/decisions.json`
 
 Expected success signals:
 - reviewer can see allow / defer / refuse / escalate distinctions
