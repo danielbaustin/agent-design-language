@@ -22,7 +22,7 @@ Define how trust assumptions change when the system is operating under adversari
 
 - trust under adversary is explicit rather than implied by normal-path assumptions
 - the system can distinguish ordinary runtime confidence from contested confidence
-- later `v0.89.2` adversarial work inherits a coherent trust story
+- later `v0.89.1` adversarial work inherits a coherent trust story
 
 ## Non-Goals
 

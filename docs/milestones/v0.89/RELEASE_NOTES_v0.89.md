@@ -42,14 +42,14 @@
 
 ## Known Limitations
 - this document is pre-release and should not be treated as a shipped-claims document yet
-- the adversarial runtime/demo package is intentionally deferred to `v0.89.2`
+- the adversarial runtime/demo package is intentionally deferred to `v0.89.1`
 
 ## Validation Notes
 - final release notes must be updated from shipped proof surfaces only
 - demo/review package and quality-gate outputs should be cited before release
 
 ## What's Next
-- `v0.89.2` adversarial runtime and exploit/replay package
+- `v0.89.1` adversarial runtime and exploit/replay package
 - later reasoning/signature/identity/governance bands continue after this milestone
 
 ## Exit Criteria

@@ -19,7 +19,7 @@
 - then land the core convergence / gate / action / skill / experiment / memory / security band
 - then package demos, quality, docs/review, and release closure
 
-The adversarial runtime/proof package is intentionally planned as the `v0.89.2` carry-forward band rather than silently swelling the main `v0.89` milestone.
+The adversarial runtime/proof package is intentionally planned as the `v0.89.1` carry-forward band rather than silently swelling the main `v0.89` milestone.
 
 ## Work Packages
 | ID | Work Package | Description | Deliverable | Dependencies | Issue |
@@ -33,7 +33,7 @@ The adversarial runtime/proof package is intentionally planned as the `v0.89.2` 
 | WP-07 | Godel experiment system | Deepen bounded scientific-loop behavior into explicit experiments and adopt/reject records. | experiment record and evaluation package | `WP-02`, `WP-04`, `WP-06` | `#1794` |
 | WP-08 | ObsMem evidence and ranking | Make retrieval evidence-aware, provenance-sensitive, and reviewer-legible. | ranking/explanation package | `WP-02`, `WP-07` | `#1795` |
 | WP-09 | Security, trust, and posture package | Land the main `v0.89` security contract: threat model, posture model, and trust-under-adversary framing. | security/trust/posture package | `WP-04`, `WP-05`, `WP-06` | `#1796` |
-| WP-10 | `v0.89.2` handoff planning | Convert adversarial-runtime carry-forward into an explicit `v0.89.2` package with no ambiguity. | follow-on planning package for `v0.89.2` | `WP-01`, `WP-09` | `#1797` |
+| WP-10 | `v0.89.1` handoff planning | Convert adversarial-runtime carry-forward into an explicit `v0.89.1` package with no ambiguity. | follow-on planning package for `v0.89.1` | `WP-01`, `WP-09` | `#1797` |
 | WP-11 | Demo scaffolding and proof entry points | Define and land the bounded demo entry points for convergence, gate behavior, experiment evidence, and security review surfaces. | runnable or reviewer-legible demo surfaces | `WP-02` - `WP-09` | `#1798` |
 | WP-12 | Milestone convergence and follow-on mapping | Reconcile issue graph, carry-forward, and proof surfaces before the release tail starts. | converged issue graph and milestone status surfaces | `WP-02` - `WP-11` | `#1799` |
 | WP-13 | Demo matrix + integration demos | Validate the milestone claims through bounded demos and integration review. | canonical demo matrix and demo artifacts | `WP-02` - `WP-12` | `#1800` |
@@ -47,7 +47,7 @@ The adversarial runtime/proof package is intentionally planned as the `v0.89.2` 
 
 ## Sequencing
 - Phase 1: establish the canonical package and the seedable issue-wave plan (`WP-01`)
-- Phase 2: land the core feature band plus the explicit `v0.89.2` handoff (`WP-02` - `WP-10`)
+- Phase 2: land the core feature band plus the explicit `v0.89.1` handoff (`WP-02` - `WP-10`)
 - Phase 3: package demos, quality, review, remediation, next-milestone handoff, and release closure (`WP-11` - `WP-20`)
 
 ## Acceptance Mapping
@@ -60,7 +60,7 @@ The adversarial runtime/proof package is intentionally planned as the `v0.89.2` 
 - WP-07 -> experiment records and governed adopt/reject behavior are explicit
 - WP-08 -> ObsMem retrieval becomes evidence-aware and explainable
 - WP-09 -> trust boundaries, posture, and threats are explicit enough to drive implementation and review
-- WP-10 -> the `v0.89.2` adversarial package is clear rather than implicit
+- WP-10 -> the `v0.89.1` adversarial package is clear rather than implicit
 - WP-11 -> demo/proof entry points exist for the main milestone claims
 - WP-12 -> the milestone package and issue graph are converged
 - WP-13 (Demos) -> milestone claims have bounded proof surfaces

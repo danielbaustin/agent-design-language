@@ -137,7 +137,7 @@ Important targets include:
 - explicit threat boundaries
 - declared security posture
 - explicit trust assumptions under adversary
-- carry-forward clarity into `v0.89.2`
+- carry-forward clarity into `v0.89.1`
 
 This milestone is not the entire adversarial runtime band. It is the point where the system gets a serious enough security and trust contract that later adversarial proof work has a coherent foundation.
 

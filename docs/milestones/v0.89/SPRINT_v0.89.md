@@ -11,7 +11,7 @@
 
 `v0.89` is a three-sprint execution plan:
 - Sprint 1: open the official issue wave and land the convergence / judgment / action core
-- Sprint 2: land the skill / experiment / memory / security package and the explicit `v0.89.2` handoff
+- Sprint 2: land the skill / experiment / memory / security package and the explicit `v0.89.1` handoff
 - Sprint 3: converge demos, quality, review, remediation, next-milestone planning, and release closure
 
 This keeps the execution model aligned with the recent milestone pattern while preserving a clean boundary between the main governed-adaptation band and the follow-on adversarial-runtime band.
@@ -21,7 +21,7 @@ This keeps the execution model aligned with the recent milestone pattern while p
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
 | `v0.89-s1` | open the official issue wave and execute the convergence / gate / action core | `WP-01` (`#1662`), `WP-02` - `WP-05` (`#1789` - `#1792`) | issue wave open |
-| `v0.89-s2` | execute the skill / experiment / memory / security package plus explicit `v0.89.2` handoff planning | `WP-06` - `WP-10` (`#1793` - `#1797`) | issue wave open |
+| `v0.89-s2` | execute the skill / experiment / memory / security package plus explicit `v0.89.1` handoff planning | `WP-06` - `WP-10` (`#1793` - `#1797`) | issue wave open |
 | `v0.89-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` (`#1798` - `#1807`) | issue wave open |
 
 ## Sprint 1
@@ -58,7 +58,7 @@ Land the governed execution substrate that makes `v0.89` useful beyond judgment 
 - Godel experiment system
 - ObsMem evidence and ranking
 - security, trust, and posture package
-- explicit `v0.89.2` handoff planning
+- explicit `v0.89.1` handoff planning
 
 Current issue map:
 - `WP-06` `#1793`
@@ -70,7 +70,7 @@ Current issue map:
 ### Exit Criteria
 - `WP-06` through `WP-10` are opened and tracked in the milestone package with their real issue numbers
 - the main `v0.89` feature band is fully represented in the active execution package
-- `v0.89.2` carry-forward is explicit and bounded
+- `v0.89.1` carry-forward is explicit and bounded
 
 ## Sprint 3
 

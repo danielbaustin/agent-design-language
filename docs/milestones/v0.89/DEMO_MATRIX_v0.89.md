@@ -22,7 +22,7 @@ In scope for `v0.89`:
 - security / trust / posture walkthroughs
 
 Out of scope for `v0.89`:
-- the full `v0.89.2` adversarial runtime/demo package
+- the full `v0.89.1` adversarial runtime/demo package
 - later signed-trace and reasoning-graph proof surfaces
 
 ## Runtime Preconditions
@@ -161,7 +161,7 @@ Defined by `WP-11` through `WP-13` as the demo and integration surfaces land.
 Cross-demo checks:
 - convergence claims use the same stop-state vocabulary as the feature docs and WBS
 - gate / decision / action demos agree on outcome classes and authority boundaries
-- security/trust/posture proof rows do not overclaim adversarial runtime work that belongs to `v0.89.2`
+- security/trust/posture proof rows do not overclaim adversarial runtime work that belongs to `v0.89.1`
 
 Failure policy:
 - If one demo is blocked, record the blocker and say whether milestone review can proceed with an alternate proof surface.
@@ -203,7 +203,7 @@ Review status:
 
 ## Notes
 - this matrix is specific enough to seed demo issues without pretending the demos already exist
-- `v0.89.2` adversarial runtime demos should not be silently folded into this matrix without an explicit scope decision
+- `v0.89.1` adversarial runtime demos should not be silently folded into this matrix without an explicit scope decision
 
 ## Exit Criteria
 - The milestone’s major claims are mapped to bounded demos or explicit alternate proof surfaces.

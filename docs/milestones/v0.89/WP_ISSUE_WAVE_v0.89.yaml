@@ -168,8 +168,8 @@ entries:
   issue_column: '#1796'
 - wp: WP-10
   issue_kind: execution
-  title: '[v0.89][WP-10] `v0.89.2` handoff planning'
-  slug: v0-89-wp-10-v0-89-2-handoff-planning
+  title: '[v0.89][WP-10] `v0.89.1` handoff planning'
+  slug: v0-89-wp-10-v0-89-1-handoff-planning
   queue: wp
   labels:
   - track:roadmap
@@ -182,9 +182,9 @@ entries:
   - WP-01
   - WP-09
   dependency_notes: '`WP-01`, `WP-09`'
-  work_package: '`v0.89.2` handoff planning'
-  summary: Convert adversarial-runtime carry-forward into an explicit `v0.89.2` package with no ambiguity.
-  deliverable: follow-on planning package for `v0.89.2`
+  work_package: '`v0.89.1` handoff planning'
+  summary: Convert adversarial-runtime carry-forward into an explicit `v0.89.1` package with no ambiguity.
+  deliverable: follow-on planning package for `v0.89.1`
   issue_column: '#1797'
 - wp: WP-11
   issue_kind: execution

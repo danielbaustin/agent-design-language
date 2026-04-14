@@ -23,7 +23,7 @@ Turn ADL security from intuition into an explicit trust-boundary and threat-mode
 
 - security claims become tied to actual runtime surfaces
 - trust boundaries are described in a way that can drive implementation and demos
-- the main band stays focused on governance and threat-model clarity, while heavier adversarial runtime proof work moves to `v0.89.2`
+- the main band stays focused on governance and threat-model clarity, while heavier adversarial runtime proof work moves to `v0.89.1`
 
 ## Non-Goals
 
