@@ -31,7 +31,7 @@ This milestone focuses on:
 Key outcomes:
 - a real tracked feature package for the `v0.89` core band
 - a coherent WBS and sprint plan that map feature docs to executable work
-- explicit carry-forward of adversarial runtime proof work into `v0.89.2`
+- explicit carry-forward of adversarial runtime proof work into `v0.89.1`
 
 ## Scope Summary
 
@@ -76,14 +76,14 @@ Tracked feature docs:
 
 Supporting local planning inputs:
 - `.adl/docs/v0.89planning/*`
-- `.adl/docs/v0.89.2planning/*`
+- `.adl/docs/v0.89.1planning/*`
 
 ## Execution Model
 
 This milestone is designed to execute as a sequence of work packages once the official `v0.89` kickoff occurs:
 - `WP-01`: milestone design pass and canonical package completion
 - `WP-02` - `WP-09`: core feature band
-- `WP-10` - `WP-12`: demoability, milestone convergence, and `v0.89.2` handoff
+- `WP-10` - `WP-12`: demoability, milestone convergence, and `v0.89.1` handoff
 - `WP-13`: demo matrix + integration demos
 - `WP-14`: quality gate
 - `WP-15`: docs + review convergence
@@ -94,7 +94,7 @@ This milestone is designed to execute as a sequence of work packages once the of
 Execution expectations after kickoff:
 - each substantive WP gets a bounded issue and PR
 - promoted feature docs resolve to implementation, proofs, or explicit defer records
-- carry-forward to `v0.89.2` is explicit rather than implied
+- carry-forward to `v0.89.1` is explicit rather than implied
 
 ## Demo and Validation Surface
 
@@ -125,12 +125,12 @@ Evidence locations:
 ## Risks and Open Questions
 
 Known risks:
-- `v0.89` can blur together too many governance, security, and reasoning concepts if the scope boundary against `v0.89.2` is not maintained
+- `v0.89` can blur together too many governance, security, and reasoning concepts if the scope boundary against `v0.89.1` is not maintained
 - the feature band is conceptually strong but still early in implementation, so issue-wave discipline matters
 
 Open questions:
 - how much of the security posture / trust package lands in `v0.89` code versus remaining design-contract work
-- which proof surfaces are enough for `v0.89` itself versus intentionally deferred to `v0.89.2`
+- which proof surfaces are enough for `v0.89` itself versus intentionally deferred to `v0.89.1`
 
 ## Status
 

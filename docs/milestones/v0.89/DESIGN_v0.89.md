@@ -29,7 +29,7 @@ Without a real `v0.89` package, later milestones would inherit drift instead of 
 - seed a WBS that is strong enough to drive the official issue wave without reconstructing milestone intent by hand
 
 ## Non-Goals
-- fully implement the `v0.89.2` adversarial runtime and exploit package inside the main `v0.89` core band
+- fully implement the `v0.89.1` adversarial runtime and exploit package inside the main `v0.89` core band
 - pull later identity, capability, or full governance work forward into this milestone
 
 ## Scope
@@ -49,7 +49,7 @@ Without a real `v0.89` package, later milestones would inherit drift instead of 
 
 ### Functional
 - the milestone must have a real feature index and promoted feature docs
-- the main planning docs must agree on what belongs to `v0.89` versus `v0.89.2`
+- the main planning docs must agree on what belongs to `v0.89` versus `v0.89.1`
 - every feature-planning source doc must have an explicit implementation home
 
 ### Non-functional
@@ -69,7 +69,7 @@ The `v0.89` package is organized as one main milestone band plus one explicit ca
   - skill execution contracts
   - experiment and evidence surfaces
   - security / trust / posture package
-- `v0.89.2` carry-forward band:
+- `v0.89.1` carry-forward band:
   - adversarial runtime
   - exploit / replay / red-blue package
   - security demos and self-attack surfaces
@@ -94,7 +94,7 @@ The milestone package therefore prefers strong surface contracts first, then off
 
 ## Risks and Mitigations
 
-- Risk: `v0.89` scope sprawls into `v0.89.2` adversarial runtime work.
+- Risk: `v0.89` scope sprawls into `v0.89.1` adversarial runtime work.
   - Mitigation: keep the carry-forward package explicit in `FEATURE_DOCS_v0.89.md`, `WBS_v0.89.md`, and `DECISIONS_v0.89.md`.
 - Risk: the milestone package remains conceptually strong but execution-weak.
   - Mitigation: map every promoted feature doc to a WBS row and an opened official issue-wave slot.
@@ -116,4 +116,4 @@ The milestone package therefore prefers strong surface contracts first, then off
 
 - goals/non-goals and scope boundaries are explicit
 - the promoted feature package is coherent and complete enough to seed implementation
-- major open questions are either tracked in the decisions log or explicitly carried to `v0.89.2`
+- major open questions are either tracked in the decisions log or explicitly carried to `v0.89.1`

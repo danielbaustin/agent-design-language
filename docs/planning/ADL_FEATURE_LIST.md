@@ -111,7 +111,7 @@ ADL already provides a serious platform baseline:
 | AEE 1.0 convergence | Partially implemented | bounded recovery/AEE proof surfaces and planning docs | `v0.89` |
 | Freedom Gate v2 | Planned | baseline Freedom Gate plus `v0.89` planning docs | `v0.89` |
 | Decision, action, and skill-governance surfaces | Planned | `v0.89` planning package | `v0.89` |
-| Security, posture, and trust-under-adversary package | Planned | `v0.89` planning package | `v0.89` / `v0.89.2` |
+| Security, posture, and trust-under-adversary package | Planned | `v0.89` planning package | `v0.89` / `v0.89.1` |
 | Reasoning graph baseline | Planned | planning/schema/proof surfaces | `v0.90` |
 | Signed trace and trace query | Planned | roadmap and planning docs | `v0.90` |
 | Affect, kindness, moral cognition, humor | Planned | `v0.91` planning docs | `v0.91` |

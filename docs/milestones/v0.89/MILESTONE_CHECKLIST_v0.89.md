@@ -23,7 +23,7 @@ Ship/no-ship gate for `v0.89`. Check items only when evidence exists.
 - [ ] Each issue has truthful input/output cards under `.adl/`
 - [ ] Draft PR opened for each tracked issue before merge where applicable
 - [ ] Queue and closeout discipline followed consistently
-- [ ] Carry-forward to `v0.89.2` remains explicit rather than implicit
+- [ ] Carry-forward to `v0.89.1` remains explicit rather than implicit
 - [ ] Green-only merge policy followed
 
 ## Quality Gates

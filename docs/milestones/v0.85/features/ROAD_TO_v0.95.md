@@ -318,7 +318,7 @@ Sub-milestones:
   explicit convergence signals, bounded stop conditions, and inspectable
   convergence state
 
-- `v0.89.2`:
+- `v0.89.1`:
   retry/adaptation loop + Freedom Gate v2
   visible adaptation behavior within bounded retries using the stabilized trace
   and shared-memory substrate, plus a stronger Freedom Gate with richer

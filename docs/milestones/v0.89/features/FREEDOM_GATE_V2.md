@@ -31,7 +31,7 @@ Deepen the existing bounded Freedom Gate into a richer judgment surface that sti
 
 - a complete moral philosophy engine
 - full later constitutional/governance band completion
-- adversarial red/blue runtime implementation, which belongs to `v0.89.2`
+- adversarial red/blue runtime implementation, which belongs to `v0.89.1`
 
 ## Dependencies
 

@@ -33,7 +33,7 @@ Define declared security posture as a first-class execution contract in ADL.
 
 - Security and Threat Modeling
 - Trust model under adversary
-- later `v0.89.2` adversarial execution work
+- later `v0.89.1` adversarial execution work
 
 ## Exit Criteria
 
