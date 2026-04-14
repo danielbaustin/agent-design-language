@@ -1,12 +1,15 @@
 use super::runner::{
-    effective_max_concurrency_with_source, effective_step_placement, resolve_call_binding,
+    effective_max_concurrency_with_source, effective_step_placement,
+    emit_delegation_lifecycle_finish, emit_delegation_lifecycle_start,
+    enforce_delegation_policy_for_step_actions, resolve_call_binding,
 };
 use super::*;
 use crate::adl::{
-    AdlDoc, PlacementMode, PromptSpec, RunDefaults, RunPlacementSpec, RunSpec, StepRetry,
-    WorkflowKind, WorkflowSpec,
+    AdlDoc, DelegationPolicyRuleSpec, DelegationPolicySpec, DelegationRuleEffect, PlacementMode,
+    PromptSpec, RunDefaults, RunPlacementSpec, RunSpec, StepRetry, WorkflowKind, WorkflowSpec,
 };
 use crate::resolve::AdlResolved;
+use crate::trace::TraceEvent;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 fn minimal_resolved() -> AdlResolved {
@@ -93,6 +96,33 @@ fn remote_retry_step(max_attempts: u32) -> crate::resolve::ResolvedStep {
         write_to: None,
         on_error: None,
         retry: Some(StepRetry { max_attempts }),
+    }
+}
+
+fn delegated_step(id: &str) -> crate::resolve::ResolvedStep {
+    crate::resolve::ResolvedStep {
+        id: id.to_string(),
+        agent: None,
+        provider: Some("p1".to_string()),
+        placement: None,
+        task: None,
+        call: None,
+        with: HashMap::new(),
+        as_ns: None,
+        delegation: Some(crate::adl::DelegationSpec {
+            role: Some("reviewer".to_string()),
+            requires_verification: Some(true),
+            escalation_target: None,
+            tags: vec!["safety".to_string()],
+        }),
+        conversation: None,
+        prompt: None,
+        inputs: HashMap::new(),
+        guards: vec![],
+        save_as: None,
+        write_to: None,
+        on_error: None,
+        retry: None,
     }
 }
 
@@ -972,4 +1002,121 @@ fn execute_called_workflow_nested_call_failure_is_propagated() {
     )
     .expect_err("nested call to missing workflow should fail");
     assert!(err.to_string().contains("unknown workflow"));
+}
+
+#[test]
+fn enforce_delegation_policy_for_step_actions_denies_filesystem_write_targets() {
+    let mut resolved = minimal_resolved();
+    resolved.doc.run.delegation_policy = Some(DelegationPolicySpec {
+        default_allow: true,
+        rules: vec![DelegationPolicyRuleSpec {
+            id: "deny-write".to_string(),
+            action: crate::adl::DelegationActionKind::FilesystemWrite,
+            target_id: Some("outputs/out.txt".to_string()),
+            effect: DelegationRuleEffect::Deny,
+            require_approval: false,
+        }],
+    });
+
+    let mut step = delegated_step("write-step");
+    step.write_to = Some("outputs/out.txt".to_string());
+    step.save_as = Some("saved.output".to_string());
+
+    let mut tr = crate::trace::Trace::new("run", "wf", "0.8");
+    let err = enforce_delegation_policy_for_step_actions(&mut tr, &step, &resolved.doc)
+        .expect_err("write policy should deny the step");
+
+    let rendered = err.to_string();
+    assert!(rendered.contains("filesystem_write"));
+    assert!(rendered.contains("outputs/out.txt"));
+    assert!(rendered.contains("rule_id=deny-write"));
+    assert_eq!(stable_failure_kind(&err), Some("policy_denied"));
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::DelegationDenied {
+            step_id,
+            action_kind,
+            target_id,
+            rule_id,
+            ..
+        } if step_id == "write-step"
+            && action_kind == "filesystem_write"
+            && target_id == "outputs/out.txt"
+            && rule_id.as_deref() == Some("deny-write")
+    )));
+}
+
+#[test]
+fn enforce_delegation_policy_for_step_actions_requires_approval_for_remote_exec() {
+    let mut resolved = minimal_resolved();
+    resolved.doc.run.delegation_policy = Some(DelegationPolicySpec {
+        default_allow: true,
+        rules: vec![DelegationPolicyRuleSpec {
+            id: "approve-remote".to_string(),
+            action: crate::adl::DelegationActionKind::RemoteExec,
+            target_id: Some("run.remote.endpoint".to_string()),
+            effect: DelegationRuleEffect::Allow,
+            require_approval: true,
+        }],
+    });
+
+    let mut step = delegated_step("remote-step");
+    step.placement = Some(PlacementMode::Remote);
+
+    let mut tr = crate::trace::Trace::new("run", "wf", "0.8");
+    let err = enforce_delegation_policy_for_step_actions(&mut tr, &step, &resolved.doc)
+        .expect_err("remote exec should require approval");
+
+    let rendered = err.to_string();
+    assert!(rendered.contains("requires approval"));
+    assert!(rendered.contains("remote_exec"));
+    assert!(rendered.contains("run.remote.endpoint"));
+    assert_eq!(stable_failure_kind(&err), Some("policy_denied"));
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::DelegationPolicyEvaluated {
+            step_id,
+            action_kind,
+            target_id,
+            decision,
+            rule_id,
+            ..
+        } if step_id == "remote-step"
+            && action_kind == "remote_exec"
+            && target_id == "run.remote.endpoint"
+            && decision == "needs_approval"
+            && rule_id.as_deref() == Some("approve-remote")
+    )));
+}
+
+#[test]
+fn delegation_lifecycle_events_follow_remote_step_shape() {
+    let resolved = minimal_resolved();
+    let mut step = delegated_step("remote-step");
+    step.provider = Some("remote-provider".to_string());
+    step.placement = Some(PlacementMode::Remote);
+
+    let mut tr = crate::trace::Trace::new("run", "wf", "0.8");
+    emit_delegation_lifecycle_start(&mut tr, &step, &resolved.doc);
+    emit_delegation_lifecycle_finish(&mut tr, &step, &resolved.doc, false, 17);
+
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::DelegationRequested {
+            step_id,
+            action_kind,
+            target_id,
+            ..
+        } if step_id == "remote-step"
+            && action_kind == "remote_exec"
+            && target_id == "remote-provider"
+    )));
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::DelegationCompleted {
+            step_id,
+            outcome,
+            ..
+        } if step_id == "remote-step" && outcome == "failure"
+    )));
 }
