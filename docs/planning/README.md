@@ -10,3 +10,7 @@ Current planning docs:
 
 - `ADL_FEATURE_LIST.md` - full feature list, current status, implemented gaps,
   and target completion milestones through `v0.95`
+- `DEEP_AGENTS_COMPARATIVE_WAVE.md` - future comparative/public-positioning
+  direction beyond the bounded `v0.88` proof row
+- `NEXT_MILESTONE_POSITIONING_CANDIDATES.md` - curated positioning/demo
+  candidates that are ready for milestone promotion discussion
