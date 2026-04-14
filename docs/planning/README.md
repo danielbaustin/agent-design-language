@@ -14,3 +14,7 @@ Current planning docs:
   direction beyond the bounded `v0.88` proof row
 - `NEXT_MILESTONE_POSITIONING_CANDIDATES.md` - curated positioning/demo
   candidates that are ready for milestone promotion discussion
+- `GEMINI_PROVIDER_HARMONY_AND_ECONOMICS_DEMO.md` - future Gemini-centered
+  provider-harmony demo direction beyond the bounded `v0.89` slice
+- `NEXT_MILESTONE_DEMO_CANDIDATES.md` - curated future-demo candidates ready
+  for milestone promotion discussion

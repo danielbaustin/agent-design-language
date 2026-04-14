@@ -136,15 +136,22 @@ fn top_level_version_flag_is_handled_before_workflow_dispatch() {
 
 #[test]
 fn provider_setup_dispatch_path_succeeds() {
+    let _lock = env_lock();
     let temp = unique_temp_dir("provider-setup-dispatch");
-    real_provider(&[
+    let prev_dir = std::env::current_dir().expect("cwd");
+    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("adl crate lives under repo root");
+    std::env::set_current_dir(repo_root).expect("chdir repo root");
+    let result = real_provider(&[
         "setup".to_string(),
         "chatgpt".to_string(),
         "--out".to_string(),
         temp.display().to_string(),
         "--force".to_string(),
-    ])
-    .expect("provider setup dispatch should succeed");
+    ]);
+    std::env::set_current_dir(prev_dir).expect("restore cwd");
+    result.expect("provider setup dispatch should succeed");
     assert!(temp.join("provider.adl.yaml").exists());
     assert!(temp.join(".env.example").exists());
     assert!(temp.join("README.md").exists());

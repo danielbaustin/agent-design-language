@@ -1,7 +1,7 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use ::adl::{
     artifacts, godel,
@@ -29,7 +29,11 @@ struct GodelRunCliSummary {
     cross_workflow_path: String,
     eval_report_path: String,
     promotion_decision_path: String,
+    canonical_evaluation_plan_path: String,
+    canonical_mutation_path: String,
+    canonical_evidence_path: String,
     experiment_record_path: String,
+    canonical_experiment_record_path: String,
     obsmem_index_path: String,
 }
 
@@ -43,7 +47,11 @@ struct GodelInspectCliSummary {
     cross_workflow_path: String,
     eval_report_path: String,
     promotion_decision_path: String,
+    canonical_evaluation_plan_path: String,
+    canonical_mutation_path: String,
+    canonical_evidence_path: String,
     experiment_record_path: String,
+    canonical_experiment_record_path: String,
     obsmem_index_path: String,
     failure_code: String,
     workflow_id: String,
@@ -69,6 +77,14 @@ struct GodelInspectCliSummary {
     mutation_id: String,
     evaluation_decision: String,
     improvement_delta: i32,
+    canonical_evaluation_plan_id: String,
+    canonical_mutation_id: String,
+    canonical_evidence_view_id: String,
+    canonical_experiment_id: String,
+    canonical_decision_result: String,
+    canonical_decision_rationale: String,
+    baseline_run_id: String,
+    variant_run_id: String,
     obsmem_index_key: String,
     experiment_outcome: String,
 }
@@ -96,6 +112,22 @@ struct GodelAffectSliceCliSummary {
     adapted_selected_strategy: String,
     changed_output_surface: String,
     changed_downstream_decision: bool,
+}
+
+fn load_canonical_artifact<T, E, F>(path: &Path, rel: &Path, load: F) -> Result<T>
+where
+    F: FnOnce(&Path) -> std::result::Result<T, E>,
+    E: std::fmt::Display,
+{
+    fs::metadata(path).map_err(|err| {
+        anyhow::anyhow!("GODEL_INSPECT_IO: failed to read {}: {err}", rel.display())
+    })?;
+    load(path).map_err(|err| {
+        anyhow::anyhow!(
+            "GODEL_INSPECT_INVALID: failed to parse {}: {err}",
+            rel.display()
+        )
+    })
 }
 
 pub(crate) fn real_godel(args: &[String]) -> Result<()> {
@@ -208,7 +240,17 @@ pub(crate) fn real_godel_run(args: &[String]) -> Result<()> {
         cross_workflow_path: result.cross_workflow_rel_path.display().to_string(),
         eval_report_path: result.eval_report_rel_path.display().to_string(),
         promotion_decision_path: result.promotion_decision_rel_path.display().to_string(),
+        canonical_evaluation_plan_path: result
+            .canonical_evaluation_plan_rel_path
+            .display()
+            .to_string(),
+        canonical_mutation_path: result.canonical_mutation_rel_path.display().to_string(),
+        canonical_evidence_path: result.canonical_evidence_rel_path.display().to_string(),
         experiment_record_path: result.experiment_record_rel_path.display().to_string(),
+        canonical_experiment_record_path: result
+            .canonical_experiment_record_rel_path
+            .display()
+            .to_string(),
         obsmem_index_path: result.obsmem_index_rel_path.display().to_string(),
     };
     println!("{}", serde_json::to_string_pretty(&summary)?);
@@ -282,6 +324,22 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         .join(&run_id)
         .join("godel")
         .join("godel_promotion_decision.v1.json");
+    let canonical_evaluation_plan_rel = PathBuf::from("runs")
+        .join(&run_id)
+        .join("godel")
+        .join("evaluation_plan.v1.json");
+    let canonical_mutation_rel = PathBuf::from("runs")
+        .join(&run_id)
+        .join("godel")
+        .join("mutation.v1.json");
+    let canonical_evidence_rel = PathBuf::from("runs")
+        .join(&run_id)
+        .join("godel")
+        .join("canonical_evidence_view.v1.json");
+    let canonical_experiment_record_rel = PathBuf::from("runs")
+        .join(&run_id)
+        .join("godel")
+        .join("experiment_record.v1.json");
     let obsmem_index_rel = PathBuf::from("runs")
         .join(&run_id)
         .join("godel")
@@ -314,10 +372,26 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         .join(&run_id)
         .join("godel")
         .join("godel_promotion_decision.v1.json");
+    let canonical_evaluation_plan_path = runs_dir
+        .join(&run_id)
+        .join("godel")
+        .join("evaluation_plan.v1.json");
+    let canonical_mutation_path = runs_dir
+        .join(&run_id)
+        .join("godel")
+        .join("mutation.v1.json");
+    let canonical_evidence_path = runs_dir
+        .join(&run_id)
+        .join("godel")
+        .join("canonical_evidence_view.v1.json");
     let experiment_record_path = runs_dir
         .join(&run_id)
         .join("godel")
         .join("experiment_record.runtime.v1.json");
+    let canonical_experiment_record_path = runs_dir
+        .join(&run_id)
+        .join("godel")
+        .join("experiment_record.v1.json");
     let obsmem_index_path = runs_dir
         .join(&run_id)
         .join("godel")
@@ -432,6 +506,26 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
             promotion_decision_rel.display()
         )
     })?;
+    let canonical_evaluation_plan = load_canonical_artifact(
+        &canonical_evaluation_plan_path,
+        &canonical_evaluation_plan_rel,
+        godel::evaluation::load_canonical_evaluation_plan,
+    )?;
+    let canonical_mutation = load_canonical_artifact(
+        &canonical_mutation_path,
+        &canonical_mutation_rel,
+        godel::mutation::load_canonical_mutation,
+    )?;
+    let canonical_evidence = load_canonical_artifact(
+        &canonical_evidence_path,
+        &canonical_evidence_rel,
+        godel::canonical_evidence::load_canonical_evidence,
+    )?;
+    let canonical_experiment_record = load_canonical_artifact(
+        &canonical_experiment_record_path,
+        &canonical_experiment_record_rel,
+        godel::experiment_record::load_canonical_record,
+    )?;
 
     let index: PersistedStageIndexEntry =
         serde_json::from_str(&fs::read_to_string(&obsmem_index_path).map_err(|err| {
@@ -462,7 +556,11 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         cross_workflow_path: cross_workflow_rel.display().to_string(),
         eval_report_path: eval_report_rel.display().to_string(),
         promotion_decision_path: promotion_decision_rel.display().to_string(),
+        canonical_evaluation_plan_path: canonical_evaluation_plan_rel.display().to_string(),
+        canonical_mutation_path: canonical_mutation_rel.display().to_string(),
+        canonical_evidence_path: canonical_evidence_rel.display().to_string(),
         experiment_record_path: experiment_record_rel.display().to_string(),
+        canonical_experiment_record_path: canonical_experiment_record_rel.display().to_string(),
         obsmem_index_path: obsmem_index_rel.display().to_string(),
         failure_code: record.record.failure_code.clone(),
         workflow_id: record.record.workflow_id.clone(),
@@ -499,6 +597,14 @@ pub(crate) fn real_godel_inspect(args: &[String]) -> Result<()> {
         mutation_id: record.record.mutation_id.clone(),
         evaluation_decision: record.record.evaluation_decision.clone(),
         improvement_delta: record.record.improvement_delta,
+        canonical_evaluation_plan_id: canonical_evaluation_plan.plan_id.clone(),
+        canonical_mutation_id: canonical_mutation.mutation_id.clone(),
+        canonical_evidence_view_id: canonical_evidence.evidence_view_id.clone(),
+        canonical_experiment_id: canonical_experiment_record.experiment_id.clone(),
+        canonical_decision_result: canonical_experiment_record.decision.result.clone(),
+        canonical_decision_rationale: canonical_experiment_record.decision.rationale.clone(),
+        baseline_run_id: canonical_experiment_record.runs.baseline_run_id.clone(),
+        variant_run_id: canonical_experiment_record.runs.variant_run_id.clone(),
         obsmem_index_key: index.entry.index_key.clone(),
         experiment_outcome: index.entry.experiment_outcome.clone(),
     };
