@@ -52,7 +52,7 @@ These docs describe the bounded editor and authoring surfaces used in the v0.85 
 These docs describe worktree governance, large-module tracking, and related maintenance guidance.
 
 - [Worktree Governance](worktree_governance.md)
-- [Rust Module Watch List](rust_module_watch_list.md)
+- Rust module size reports are local operational artifacts under `.adl/reports/manual/`; regenerate them with `./adl/tools/report_large_rust_modules.sh`
 - [WP Issue-Wave Generation](WP_ISSUE_WAVE_GENERATION.md)
 - [Historical Public Task Records](../records/README.md)
 
@@ -73,7 +73,7 @@ Important repo-local tooling surfaces include:
 - `bash adl/tools/demo_v0871_operator_surface.sh` — canonical `v0.87.1` operator-surface demo for runtime bring-up and proof-surface inspection
 - `bash adl/tools/demo_v0871_review_surface.sh` — canonical `v0.87.1` reviewer walkthrough package across operator and runtime-state proof roots
 - `adl/tools/*.sh` wrappers remain available as compatibility entrypoints over the Rust-owned commands
-- `adl/tools/report_large_rust_modules.sh` — non-blocking Rust implementation-module size report
+- `adl/tools/report_large_rust_modules.sh` — non-blocking Rust implementation-module size report; write current snapshots to `.adl/reports/manual/` instead of tracked repo docs
 - `adl/tools/sync_task_bundle_prompts.sh` — refresh canonical local task-bundle prompt layout from compatibility paths
 
 Deprecated compatibility aliases such as `pr ready`, `pr preflight`, and
