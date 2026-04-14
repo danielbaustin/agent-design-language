@@ -74,7 +74,7 @@ Additional environment / fixture requirements:
 | D3 | Decision + action mediation proof | `WP-04` - `WP-05` explicit choice and authorization boundary | planned `WP-04` / `WP-05` entry points | `control_path/decisions.json` + `control_path/action_proposals.json` + `control_path/mediation.json` | reviewer can see model intent separated from authorized action | deterministic fixtures should preserve approval / rejection path | PLANNED |
 | D4 | Skill invocation contract demo | `WP-06` bounded skill execution protocol | `cargo test --manifest-path adl/Cargo.toml cli_artifact_validate_control_path_ -- --nocapture` | `control_path/skill_model.json` + `control_path/skill_execution_protocol.json` + `control_path/summary.txt` | reviewer can distinguish a selected governed skill from other action kinds and inspect the pre-execution authorization lifecycle end to end | deterministic fixture replay should preserve lifecycle state, authorization outcome, and trace expectation | READY |
 | D5 | Godel experiment package demo | `WP-07` governed adopt / reject improvement behavior | `cargo run --manifest-path adl/Cargo.toml -- godel run ...` then `cargo run --manifest-path adl/Cargo.toml -- godel inspect ...` | `runs/<run-id>/godel/experiment_record.v1.json` + `evaluation_plan.v1.json` | reviewer can inspect baseline / variant pairing, canonical evidence, bounded mutation, and adopt / reject decision from one bounded summary | identical bounded inputs should preserve stage order, canonical artifact paths, and decision class | READY |
-| D6 | ObsMem evidence and ranking walkthrough | `WP-08` explainable retrieval and ranking | planned `WP-08` entry point | retrieval explanation artifact | ranking cites evidence families and provenance | tie-break behavior should be stable under replay | PLANNED |
+| D6 | ObsMem evidence and ranking walkthrough | `WP-08` explainable retrieval and ranking | `cargo run --manifest-path adl/Cargo.toml -- demo demo-f-obsmem-retrieval --run --trace --out ./out` | `obsmem_retrieval_result.json` | ranking cites evidence families, status signals, and deterministic tie-break values | identical demo inputs should preserve result order and explanation shape | READY |
 | D7 | Security / trust / posture walkthrough | `WP-09` main-band security contract | planned `WP-09` / `WP-11` review surface | reviewer-facing threat/posture/trust artifact set | reviewer can see explicit trust boundaries and declared posture | proof row may be document/artifact driven rather than fully executable | PLANNED |
 
 Status guidance:
@@ -218,6 +218,59 @@ Reviewer checks:
 Known limits / caveats:
 - this slice proves bounded experiment packaging and decision reviewability, not full later-band
   multi-run optimization or open-ended self-modification
+
+---
+
+### D6) ObsMem evidence and ranking walkthrough
+
+Description:
+- run the bounded ObsMem retrieval demo and inspect the resulting explanation-bearing retrieval
+  artifact
+- show that retrieval ordering is not just deterministic, but reviewer-legible through explicit
+  provenance, status, and tie-break signals
+
+Milestone claims / work packages covered:
+- `WP-08`
+
+Commands to run:
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- demo demo-f-obsmem-retrieval --run --trace --out ./out
+```
+
+Expected artifacts:
+- `runs/_shared/obsmem_store.v1.json`
+- `obsmem_retrieval_result.json`
+- `runs/demo-f-run-a/godel/experiment_record.runtime.v1.json`
+- `runs/demo-f-run-a/godel/obsmem_index_entry.runtime.v1.json`
+- `runs/demo-f-run-b/godel/experiment_record.runtime.v1.json`
+- `runs/demo-f-run-b/godel/obsmem_index_entry.runtime.v1.json`
+- `runs/demo-f-run-c/godel/experiment_record.runtime.v1.json`
+- `runs/demo-f-run-c/godel/obsmem_index_entry.runtime.v1.json`
+
+Primary proof surface:
+- `obsmem_retrieval_result.json`
+
+Expected success signals:
+- reviewer can inspect the normalized query, policy order, and returned hit set directly
+- each explained result records prior vs effective score, provenance families, and deterministic
+  tie-break values
+- equal-ranked successful hits preserve lexical tie-break order while failed hits are explicitly
+  penalized
+
+Determinism / replay notes:
+- identical demo inputs should preserve the same run ordering and explanation shape across repeated
+  runs
+
+Reviewer checks:
+- verify that provenance is surfaced as named families rather than buried inside raw citations
+- verify that `status_success_boost` / `status_failure_penalty` and query-tag overlap signals are
+  visible in the explanation surface
+- verify that the tie-break values explain why equal-ranked hits remain ordered predictably
+
+Known limits / caveats:
+- this slice proves bounded retrieval explanation and ranking legibility, not the later full
+  memory-architecture or identity-linked semantics work
 
 ## Cross-Demo Validation
 

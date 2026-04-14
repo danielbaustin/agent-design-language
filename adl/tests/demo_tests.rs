@@ -519,10 +519,75 @@ fn demo_f_run_writes_retrieval_artifacts() {
     );
     let run_out = out_root.join("demo-f-obsmem-retrieval");
     assert!(run_out.join("obsmem_retrieval_result.json").is_file());
+    assert!(run_out.join("runs/_shared/obsmem_store.v1.json").is_file());
     assert!(run_out
         .join("runs/demo-f-run-a/godel/obsmem_index_entry.runtime.v1.json")
         .is_file());
     assert!(run_out
         .join("runs/demo-f-run-b/godel/obsmem_index_entry.runtime.v1.json")
         .is_file());
+    assert!(run_out
+        .join("runs/demo-f-run-c/godel/obsmem_index_entry.runtime.v1.json")
+        .is_file());
+
+    let retrieval_text =
+        std::fs::read_to_string(run_out.join("obsmem_retrieval_result.json")).unwrap();
+    let retrieval: serde_json::Value = serde_json::from_str(&retrieval_text).unwrap();
+    assert_eq!(
+        retrieval
+            .get("schema_version")
+            .and_then(serde_json::Value::as_str),
+        Some("obsmem_retrieval_result.demo.v2")
+    );
+    let explained = retrieval
+        .get("explained_results")
+        .and_then(serde_json::Value::as_array)
+        .expect("explained_results array");
+    assert_eq!(explained.len(), 3);
+    assert_eq!(
+        explained[0]
+            .get("record")
+            .and_then(|entry| entry.get("run_id"))
+            .and_then(serde_json::Value::as_str),
+        Some("demo-f-run-a")
+    );
+    assert_eq!(
+        explained[1]
+            .get("record")
+            .and_then(|entry| entry.get("run_id"))
+            .and_then(serde_json::Value::as_str),
+        Some("demo-f-run-b")
+    );
+    assert_eq!(
+        explained[2]
+            .get("record")
+            .and_then(|entry| entry.get("run_id"))
+            .and_then(serde_json::Value::as_str),
+        Some("demo-f-run-c")
+    );
+    assert!(explained[0]
+        .get("explanation")
+        .and_then(|entry| entry.get("provenance_families"))
+        .and_then(serde_json::Value::as_array)
+        .is_some_and(|families| {
+            families
+                .iter()
+                .filter_map(serde_json::Value::as_str)
+                .collect::<Vec<_>>()
+                == vec!["activation_log", "run_status", "run_summary"]
+        }));
+    assert!(explained[0]
+        .get("explanation")
+        .and_then(|entry| entry.get("explanation_signals"))
+        .and_then(serde_json::Value::as_array)
+        .is_some_and(|signals| signals
+            .iter()
+            .any(|signal| signal == "status_success_boost")));
+    assert!(explained[2]
+        .get("explanation")
+        .and_then(|entry| entry.get("explanation_signals"))
+        .and_then(serde_json::Value::as_array)
+        .is_some_and(|signals| signals
+            .iter()
+            .any(|signal| signal == "status_failure_penalty")));
 }
