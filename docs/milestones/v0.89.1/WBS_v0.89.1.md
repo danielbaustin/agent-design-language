@@ -10,6 +10,7 @@
 - break work into independently mergeable issues once the milestone officially opens
 - keep each item measurable and reviewable
 - reserve the final WPs for demos, quality, docs/review convergence, and release ceremony
+- treat this WBS as queue-ready: if kickoff is slow, the problem should be tooling or lane availability, not milestone ambiguity
 
 ## WBS Summary
 
@@ -17,6 +18,10 @@
 - first establish the canonical milestone package and seedable issue-wave plan
 - then land the core adversarial/runtime, exploit/replay, and proof band
 - then package demos, quality, review, remediation, and release closure
+
+The package is intentionally shaped so kickoff can be rapid:
+- no extra milestone redesign should be needed before opening the wave
+- the issue-wave plan should be usable as-is once the lane is free
 
 ## Work Packages
 

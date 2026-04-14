@@ -16,6 +16,7 @@ This package should be strong enough to:
 - explain why the band exists
 - show exactly what belongs in it
 - seed a clean issue wave without reconstructing intent from local notes
+- open quickly once a free WP lane and fast-mode issue creation are available
 
 ## Overview
 
@@ -38,6 +39,7 @@ Key outcomes:
 - a real tracked feature package for the `v0.89.1` adversarial/runtime band
 - a coherent WBS and sprint plan that map the source planning corpus to executable work
 - a clean boundary between what belongs to `v0.89` and what belongs to this follow-on milestone
+- a queue-ready issue-wave definition that can be opened with minimal ceremony once execution begins
 
 ## Scope Summary
 
@@ -103,6 +105,7 @@ Execution expectations after kickoff:
 - each substantive WP gets a bounded issue and PR
 - promoted feature docs resolve to implementation, proofs, or explicit defer records
 - any remaining `v0.89` carry-forward ambiguity is eliminated by explicit issue ownership
+- milestone startup should be mechanical, not interpretive: the wave should open from this package directly
 
 ## Demo and Validation Surface
 
@@ -149,6 +152,7 @@ Current status: canonical planning package complete; issue wave not opened yet
 - Execution: not started
 - Validation: package-level checks passed; milestone execution validation still pending
 - Release readiness: not started
+- Queue readiness: seed-ready once the WP lane is available
 
 ## Exit Criteria
 
@@ -156,3 +160,4 @@ Current status: canonical planning package complete; issue wave not opened yet
 - every in-scope feature doc is mapped to a WBS item
 - every out-of-scope source doc has an explicit later home or supporting-input role
 - the issue wave can be seeded directly from this package without reconstructing milestone intent
+- the package is explicit enough that milestone kickoff can be fast and mechanical rather than another design pass

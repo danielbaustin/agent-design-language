@@ -14,6 +14,10 @@
 - Sprint 2: land exploit/replay, verification, demo, and governed execution surfaces
 - Sprint 3: converge demos, quality, review, remediation, next-milestone planning, and release closure
 
+This sprint plan is meant to be launch-ready, not another planning placeholder:
+- Sprint 1 should open from the package directly
+- fast milestone kickoff depends on workflow speed and lane availability, not missing planning detail
+
 ## Sprint Overview
 
 | Sprint | Purpose | WPs | Current status |
@@ -38,6 +42,7 @@ Move `v0.89.1` from a carry-forward reference into a real execution package by o
 - `WP-02` through `WP-05` are opened and mapped to the canonical milestone docs
 - the adversarial/runtime core has an executable issue wave rather than a reserved placeholder band
 - the main milestone docs record the active issue graph truthfully instead of speaking about the wave as hypothetical
+- opening the sprint does not require another planning rewrite
 
 ## Sprint 2
 
@@ -98,3 +103,4 @@ Close the milestone using the normal ADL pattern: demos, quality gate, docs/revi
 - keep changes scoped per issue
 - prefer one bounded PR lane per queue unless explicit policy says otherwise
 - keep `.adl` local memory preserved while tracked milestone docs and code land through normal PR flow
+- milestone kickoff should be quick once fast mode and the WP lane are available, because the planning package is already explicit

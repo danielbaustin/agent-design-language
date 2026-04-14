@@ -6,6 +6,7 @@ sources:
   - docs/milestones/v0.89.1/SPRINT_v0.89.1.md
 notes:
   - Reserved issue-wave plan only. No official issue wave has been opened yet.
+  - The package is intended to be seed-ready: opening the wave should not require another milestone design pass.
 wave:
   - wp: WP-02
     issue_kind: execution

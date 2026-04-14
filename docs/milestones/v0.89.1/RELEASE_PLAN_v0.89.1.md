@@ -19,6 +19,10 @@ That means:
 - no release candidate exists yet
 - quality, review, and ceremony work are all future steps
 
+It also means:
+- there should be no additional planning blocker before opening the wave
+- kickoff delay should come from workflow throughput or queue policy, not milestone ambiguity
+
 ## Planned Release Tail
 
 - `WP-11` - `WP-13`: proof/demos and milestone convergence
