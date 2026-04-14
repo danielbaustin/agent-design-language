@@ -317,3 +317,256 @@ fn finish_helper_paths_cover_ahead_count_and_validation_modes() {
     assert!(cargo_calls.contains("clippy --manifest-path"));
     assert!(cargo_calls.contains("test --manifest-path"));
 }
+
+#[test]
+fn finish_output_card_guards_cover_not_started_and_completed_validation_failures() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-finish-output-guards");
+    let tools_dir = repo.join("adl/tools");
+    fs::create_dir_all(&tools_dir).expect("tools dir");
+    let validator_log = repo.join("validator.log");
+    write_executable(
+        &tools_dir.join("validate_structured_prompt.sh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" > '{}'\nif [ \"${{VALIDATOR_MODE:-pass}}\" = 'fail' ]; then\n  exit 1\nfi\n",
+            validator_log.display()
+        ),
+    );
+
+    let output = repo.join("sor.md");
+    fs::write(&output, "Status: NOT_STARTED\n").expect("write bootstrap sor");
+    let err = ensure_output_card_is_started(&output).expect_err("bootstrap sor should fail");
+    assert!(err
+        .to_string()
+        .contains("output card is still bootstrap state"));
+
+    fs::write(&output, "Status: DONE\n").expect("write completed sor");
+    validate_completed_sor(&repo, &output).expect("completed sor should validate");
+    let validator_call = fs::read_to_string(&validator_log).expect("validator log");
+    assert!(validator_call.contains("--type"));
+    assert!(validator_call.contains("sor"));
+    assert!(validator_call.contains("--phase"));
+    assert!(validator_call.contains("completed"));
+    assert!(validator_call.contains(&output.display().to_string()));
+
+    unsafe {
+        env::set_var("VALIDATOR_MODE", "fail");
+    }
+    let err = validate_completed_sor(&repo, &output).expect_err("validator failure should bubble");
+    unsafe {
+        env::remove_var("VALIDATOR_MODE");
+    }
+    assert!(err
+        .to_string()
+        .contains("output card failed completed-phase validation"));
+    assert!(err.to_string().contains(&output.display().to_string()));
+}
+
+#[test]
+fn finish_path_tracking_covers_staged_vs_head_changes_and_local_only_issue_surfaces() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-path-tracking");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("tracked.txt"), "base\n").expect("base file");
+    assert!(Command::new("git")
+        .args(["add", "tracked.txt"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+
+    fs::write(repo.join("tracked.txt"), "staged change\n").expect("modify tracked");
+    stage_selected_paths_rust(&repo, "tracked.txt").expect("stage tracked");
+    assert_eq!(
+        finish_changed_paths(&repo, true).expect("staged paths"),
+        vec!["tracked.txt".to_string()]
+    );
+
+    fs::write(repo.join("ahead.txt"), "ahead\n").expect("ahead file");
+    assert!(Command::new("git")
+        .args(["add", "ahead.txt", "tracked.txt"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "ahead"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    let ahead_paths = finish_changed_paths(&repo, false).expect("ahead paths");
+    assert!(ahead_paths.contains(&"ahead.txt".to_string()));
+    assert!(ahead_paths.contains(&"tracked.txt".to_string()));
+
+    let issue_ref = IssueRef::new(1153, "v0.86".to_string(), "rust-finish-test".to_string())
+        .expect("issue ref");
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    let input_path = issue_ref.task_bundle_input_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("source parent");
+    fs::create_dir_all(input_path.parent().expect("input parent")).expect("input parent");
+    fs::write(&source_path, "---\nissue_card_schema: adl.issue.v1\n---\n").expect("source prompt");
+    fs::write(&input_path, "# input\n").expect("input card");
+    assert!(Command::new("git")
+        .args([
+            "add",
+            path_str(&source_path).expect("source path"),
+            path_str(&input_path).expect("input path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git add issue surfaces")
+        .success());
+
+    let tracked = tracked_issue_surface_paths(&repo, &repo, &issue_ref, &source_path)
+        .expect("tracked issue surfaces");
+    let expected_source = path_relative_to_repo(&repo, &source_path);
+    let expected_input = path_relative_to_repo(&repo, &input_path);
+    assert_eq!(
+        tracked,
+        vec![expected_source.clone(), expected_input.clone()]
+    );
+
+    let err = ensure_issue_surfaces_are_local_only(&repo, &repo, &issue_ref, &source_path)
+        .expect_err("tracked issue surfaces should fail");
+    assert!(err
+        .to_string()
+        .contains("canonical .adl issue surfaces must remain local-only"));
+    assert!(err.to_string().contains(&expected_source));
+    assert!(err.to_string().contains(&expected_input));
+}
+
+#[test]
+fn finish_misc_helpers_cover_section_parsing_fingerprint_and_create_outcomes() {
+    let temp = unique_temp_dir("adl-pr-finish-misc-helpers");
+    let markdown = temp.join("sections.md");
+    fs::write(
+        &markdown,
+        "# title\n\n## Summary\nline one\nline two\n\n## Validation\n- cargo test\n",
+    )
+    .expect("markdown");
+    assert_eq!(
+        extract_markdown_section(&markdown, "Summary").expect("summary"),
+        "line one\nline two"
+    );
+    assert_eq!(
+        extract_markdown_section(&markdown, "Missing").expect("missing"),
+        ""
+    );
+
+    assert!(extra_pr_body_looks_like_issue_template("wp: tools"));
+    assert!(extra_pr_body_looks_like_issue_template(
+        "## Goal\nDo a thing"
+    ));
+    assert!(!extra_pr_body_looks_like_issue_template(
+        "plain implementation note"
+    ));
+
+    assert_eq!(
+        issue_bundle_issue_number_from_repo_relative(".adl/v0.89/tasks/issue-1847__slug/sor.md"),
+        Some(1847)
+    );
+    assert_eq!(
+        issue_bundle_issue_number_from_repo_relative("docs/README.md"),
+        None
+    );
+
+    let fingerprint = finish_inputs_fingerprint(
+        "[v0.89][tests] Add coverage",
+        "adl/src/cli/pr_cmd.rs,docs/README.md",
+        ".adl/v0.89/tasks/issue-1847__slug/sip.md",
+        ".adl/v0.89/tasks/issue-1847__slug/sor.md",
+    );
+    assert_eq!(
+        fingerprint,
+        finish_inputs_fingerprint(
+            "[v0.89][tests] Add coverage",
+            "adl/src/cli/pr_cmd.rs,docs/README.md",
+            ".adl/v0.89/tasks/issue-1847__slug/sip.md",
+            ".adl/v0.89/tasks/issue-1847__slug/sor.md",
+        )
+    );
+    assert!(!fingerprint.contains('|'));
+    assert!(!fingerprint.contains('/'));
+
+    let temp_markdown = write_temp_markdown("adl-pr-finish", "hello world").expect("temp file");
+    assert_eq!(
+        fs::read_to_string(&temp_markdown).expect("temp contents"),
+        "hello world"
+    );
+
+    assert_eq!(
+        infer_required_outcome_type_for_create("track:roadmap,type:docs", "[v0.89][docs] Refresh"),
+        "docs"
+    );
+    assert_eq!(
+        infer_required_outcome_type_for_create(
+            "track:roadmap,area:tests",
+            "[v0.89] Improve coverage"
+        ),
+        "tests"
+    );
+    assert_eq!(
+        infer_required_outcome_type_for_create("track:roadmap", "[demo] Show the workflow"),
+        "demo"
+    );
+    assert_eq!(
+        infer_required_outcome_type_for_create("track:roadmap,type:task", "[v0.89] Ship code"),
+        "code"
+    );
+}
