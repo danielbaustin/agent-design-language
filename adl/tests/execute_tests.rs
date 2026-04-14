@@ -315,26 +315,29 @@ fn pause_state_path(run_id: &str) -> std::path::PathBuf {
     repo_runs_dir().join(run_id).join("pause_state.json")
 }
 
+fn trace_marker_step_ids(stdout: &str, marker: &str) -> Vec<String> {
+    let mut ids = Vec::new();
+    let mut cursor = 0;
+
+    while let Some(relative_pos) = stdout[cursor..].find(marker) {
+        let start = cursor + relative_pos + marker.len();
+        let tail = &stdout[start..];
+        let Some(step_id) = tail.split_whitespace().next() else {
+            break;
+        };
+        ids.push(step_id.to_string());
+        cursor = start + step_id.len();
+    }
+
+    ids
+}
+
 fn trace_started_step_ids(stdout: &str) -> Vec<String> {
-    stdout
-        .lines()
-        .filter_map(|line| {
-            let marker = "StepStarted step=";
-            let (_, tail) = line.split_once(marker)?;
-            Some(tail.split_whitespace().next()?.to_string())
-        })
-        .collect()
+    trace_marker_step_ids(stdout, "StepStarted step=")
 }
 
 fn trace_chunk_step_ids(stdout: &str) -> Vec<String> {
-    stdout
-        .lines()
-        .filter_map(|line| {
-            let marker = "StepOutputChunk step=";
-            let (_, tail) = line.split_once(marker)?;
-            Some(tail.split_whitespace().next()?.to_string())
-        })
-        .collect()
+    trace_marker_step_ids(stdout, "StepOutputChunk step=")
 }
 
 fn delegation_error_code(stderr: &str) -> Option<&str> {

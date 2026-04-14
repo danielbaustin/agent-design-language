@@ -4,6 +4,7 @@ use super::cognitive::{
     build_cognitive_signals_artifact_from_state, build_control_path_action_mediation_artifact,
     build_control_path_action_proposals_artifact, build_control_path_decisions_artifact,
     build_control_path_final_result_artifact, build_control_path_memory_artifact,
+    build_control_path_skill_execution_protocol_artifact, build_control_path_skill_model_artifact,
     build_control_path_summary, build_evaluation_signals_artifact, build_fast_slow_path_artifact,
     build_freedom_gate_artifact, build_memory_read_artifact, build_memory_write_artifact,
     build_reasoning_graph_artifact, build_reframing_artifact,
@@ -277,6 +278,20 @@ pub(crate) fn write_run_state_artifacts(
         &control_path_decisions,
         Some(&scores_for_suggestions),
     );
+    let control_path_skill_model = build_control_path_skill_model_artifact(
+        &run_summary,
+        &control_path_action_proposals,
+        &control_path_action_mediation,
+        Some(&scores_for_suggestions),
+    );
+    let control_path_skill_execution_protocol =
+        build_control_path_skill_execution_protocol_artifact(
+            &run_summary,
+            &control_path_action_proposals,
+            &control_path_skill_model,
+            &control_path_action_mediation,
+            Some(&scores_for_suggestions),
+        );
     let control_path_final_result = build_control_path_final_result_artifact(
         &run_summary,
         &cognitive_arbitration,
@@ -294,6 +309,8 @@ pub(crate) fn write_run_state_artifacts(
         convergence: &convergence,
         memory: &control_path_memory,
         action_proposals: &control_path_action_proposals,
+        skill_model: &control_path_skill_model,
+        skill_execution_protocol: &control_path_skill_execution_protocol,
         mediation: &control_path_action_mediation,
         freedom_gate: &freedom_gate,
         final_result: &control_path_final_result,
@@ -328,6 +345,11 @@ pub(crate) fn write_run_state_artifacts(
     let control_path_action_mediation_json =
         serde_json::to_vec_pretty(&control_path_action_mediation)
             .context("serialize control_path mediation.json")?;
+    let control_path_skill_model_json = serde_json::to_vec_pretty(&control_path_skill_model)
+        .context("serialize control_path skill_model.json")?;
+    let control_path_skill_execution_protocol_json =
+        serde_json::to_vec_pretty(&control_path_skill_execution_protocol)
+            .context("serialize control_path skill_execution_protocol.json")?;
     let control_path_final_result_json = serde_json::to_vec_pretty(&control_path_final_result)
         .context("serialize control_path final_result.json")?;
     let aee_decision = build_aee_decision_artifact(
@@ -410,6 +432,14 @@ pub(crate) fn write_run_state_artifacts(
     artifacts::atomic_write(
         &run_paths.control_path_action_mediation_json(),
         &control_path_action_mediation_json,
+    )?;
+    artifacts::atomic_write(
+        &run_paths.control_path_skill_model_json(),
+        &control_path_skill_model_json,
+    )?;
+    artifacts::atomic_write(
+        &run_paths.control_path_skill_execution_protocol_json(),
+        &control_path_skill_execution_protocol_json,
     )?;
     artifacts::atomic_write(
         &run_paths.control_path_freedom_gate_json(),
@@ -1068,6 +1098,10 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         read_required_json_artifact(control_path_dir, "decisions.json")?;
     let mediation: ControlPathActionMediationArtifact =
         read_required_json_artifact(control_path_dir, "mediation.json")?;
+    let skill_model: ControlPathSkillModelArtifact =
+        read_required_json_artifact(control_path_dir, "skill_model.json")?;
+    let skill_execution_protocol: ControlPathSkillExecutionProtocolArtifact =
+        read_required_json_artifact(control_path_dir, "skill_execution_protocol.json")?;
     let freedom_gate: FreedomGateArtifact =
         read_required_json_artifact(control_path_dir, "freedom_gate.json")?;
     let convergence: AeeConvergenceArtifact =
@@ -1119,6 +1153,8 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         action_proposals.run_id.as_str(),
         decisions.run_id.as_str(),
         mediation.run_id.as_str(),
+        skill_model.run_id.as_str(),
+        skill_execution_protocol.run_id.as_str(),
         freedom_gate.run_id.as_str(),
         convergence.run_id.as_str(),
         final_result.run_id.as_str(),
@@ -1382,6 +1418,185 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         ));
     }
 
+    let expected_skill_schema_fields = vec![
+        "skill_id".to_string(),
+        "selection_status".to_string(),
+        "purpose".to_string(),
+        "bounded_role".to_string(),
+        "input_contract_fields".to_string(),
+        "output_contract_surfaces".to_string(),
+        "stop_condition".to_string(),
+        "distinguished_from".to_string(),
+        "temporal_anchor".to_string(),
+    ];
+    if skill_model.skill_schema_fields != expected_skill_schema_fields {
+        return Err(anyhow!(
+            "control-path skill model schema fields mismatch: expected {:?}, found {:?}",
+            expected_skill_schema_fields,
+            skill_model.skill_schema_fields
+        ));
+    }
+    let expected_distinction_vocabulary = vec![
+        "skill".to_string(),
+        "provider_capability".to_string(),
+        "raw_aptitude".to_string(),
+        "tool_call".to_string(),
+        "memory_operation".to_string(),
+        "final_answer".to_string(),
+    ];
+    if skill_model.distinction_vocabulary != expected_distinction_vocabulary {
+        return Err(anyhow!(
+            "control-path skill model distinction vocabulary mismatch: expected {:?}, found {:?}",
+            expected_distinction_vocabulary,
+            skill_model.distinction_vocabulary
+        ));
+    }
+    if skill_model.selected_execution_unit_kind != proposal.kind {
+        return Err(anyhow!(
+            "control-path skill model selected_execution_unit_kind '{}' does not match proposal '{}'",
+            skill_model.selected_execution_unit_kind,
+            proposal.kind
+        ));
+    }
+    let expected_selection_status = if proposal.kind == "skill_call" {
+        "selected"
+    } else {
+        "not_selected"
+    };
+    if skill_model.skill.selection_status != expected_selection_status {
+        return Err(anyhow!(
+            "control-path skill model selection_status '{}' does not match expected '{}'",
+            skill_model.skill.selection_status,
+            expected_selection_status
+        ));
+    }
+    if skill_model.skill.temporal_anchor != "control_path/action_proposals.json" {
+        return Err(anyhow!(
+            "control-path skill model temporal anchor '{}' must point at control_path/action_proposals.json",
+            skill_model.skill.temporal_anchor
+        ));
+    }
+    let expected_skill_outputs = vec![
+        "control_path/mediation.json".to_string(),
+        "control_path/final_result.json".to_string(),
+        "logs/trace_v1.json".to_string(),
+    ];
+    if skill_model.skill.output_contract_surfaces != expected_skill_outputs {
+        return Err(anyhow!(
+            "control-path skill model output surfaces mismatch: expected {:?}, found {:?}",
+            expected_skill_outputs,
+            skill_model.skill.output_contract_surfaces
+        ));
+    }
+    let expected_input_contract_fields: Vec<String> = proposal.arguments.keys().cloned().collect();
+    if skill_model.skill.input_contract_fields != expected_input_contract_fields {
+        return Err(anyhow!(
+            "control-path skill model input contract fields mismatch: expected {:?}, found {:?}",
+            expected_input_contract_fields,
+            skill_model.skill.input_contract_fields
+        ));
+    }
+
+    let expected_protocol_stages = vec![
+        "proposed".to_string(),
+        "validated".to_string(),
+        "authorized".to_string(),
+        "trace_visible".to_string(),
+        "ready_for_execution".to_string(),
+    ];
+    if skill_execution_protocol.lifecycle_stages != expected_protocol_stages {
+        return Err(anyhow!(
+            "control-path skill execution protocol stages mismatch: expected {:?}, found {:?}",
+            expected_protocol_stages,
+            skill_execution_protocol.lifecycle_stages
+        ));
+    }
+    if skill_execution_protocol.invocation.proposal_id != proposal.proposal_id {
+        return Err(anyhow!(
+            "control-path skill execution protocol proposal '{}' does not match action proposal '{}'",
+            skill_execution_protocol.invocation.proposal_id,
+            proposal.proposal_id
+        ));
+    }
+    if skill_execution_protocol.invocation.decision_id != mediation.mediation.decision_id {
+        return Err(anyhow!(
+            "control-path skill execution protocol decision '{}' does not match mediation '{}'",
+            skill_execution_protocol.invocation.decision_id,
+            mediation.mediation.decision_id
+        ));
+    }
+    if skill_execution_protocol.invocation.invocation_kind != proposal.kind {
+        return Err(anyhow!(
+            "control-path skill execution protocol invocation_kind '{}' does not match proposal '{}'",
+            skill_execution_protocol.invocation.invocation_kind,
+            proposal.kind
+        ));
+    }
+    if skill_execution_protocol.invocation.skill_id != skill_model.skill.skill_id {
+        return Err(anyhow!(
+            "control-path skill execution protocol skill_id '{}' does not match skill model '{}'",
+            skill_execution_protocol.invocation.skill_id,
+            skill_model.skill.skill_id
+        ));
+    }
+    let expected_protocol_state = match mediation.mediation.mediation_outcome.as_str() {
+        "approved" => "authorized_ready_for_execution",
+        "rejected" => "rejected_before_execution",
+        "deferred" => "deferred_before_execution",
+        "escalated" => "escalated_before_execution",
+        _ => "blocked_before_execution",
+    };
+    if skill_execution_protocol.invocation.lifecycle_state != expected_protocol_state {
+        return Err(anyhow!(
+            "control-path skill execution protocol lifecycle_state '{}' does not match expected '{}'",
+            skill_execution_protocol.invocation.lifecycle_state,
+            expected_protocol_state
+        ));
+    }
+    if skill_execution_protocol.invocation.authorization_decision
+        != mediation.mediation.mediation_outcome
+    {
+        return Err(anyhow!(
+            "control-path skill execution protocol authorization_decision '{}' does not match mediation '{}'",
+            skill_execution_protocol.invocation.authorization_decision,
+            mediation.mediation.mediation_outcome
+        ));
+    }
+    if skill_execution_protocol.invocation.output_contract_surfaces != expected_skill_outputs {
+        return Err(anyhow!(
+            "control-path skill execution protocol output surfaces mismatch: expected {:?}, found {:?}",
+            expected_skill_outputs,
+            skill_execution_protocol.invocation.output_contract_surfaces
+        ));
+    }
+    let expected_error_outcomes = vec![
+        "rejected".to_string(),
+        "deferred".to_string(),
+        "escalated".to_string(),
+    ];
+    if skill_execution_protocol.invocation.error_outcome_vocabulary != expected_error_outcomes {
+        return Err(anyhow!(
+            "control-path skill execution protocol error vocabulary mismatch: expected {:?}, found {:?}",
+            expected_error_outcomes,
+            skill_execution_protocol.invocation.error_outcome_vocabulary
+        ));
+    }
+    if skill_execution_protocol.invocation.trace_expectation
+        != mediation.mediation.trace_expectation
+    {
+        return Err(anyhow!(
+            "control-path skill execution protocol trace expectation '{}' does not match mediation '{}'",
+            skill_execution_protocol.invocation.trace_expectation,
+            mediation.mediation.trace_expectation
+        ));
+    }
+    if skill_execution_protocol.invocation.temporal_anchor != "control_path/mediation.json" {
+        return Err(anyhow!(
+            "control-path skill execution protocol temporal anchor '{}' must point at control_path/mediation.json",
+            skill_execution_protocol.invocation.temporal_anchor
+        ));
+    }
+
     let expected_surface_ids = [
         "delegation_and_routing.route_selection",
         "recovery_continuity.reframing",
@@ -1449,6 +1664,18 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
             mediation.mediation.mediation_outcome,
             mediation.mediation.runtime_authority,
             mediation.mediation.required_follow_up
+        ),
+        format!(
+            "skill_model: selection_status={} skill_id={} invocation_kind={}",
+            skill_model.skill.selection_status,
+            skill_model.skill.skill_id,
+            skill_model.selected_execution_unit_kind
+        ),
+        format!(
+            "skill_execution_protocol: lifecycle_state={} authorization={} trace_expectation={}",
+            skill_execution_protocol.invocation.lifecycle_state,
+            skill_execution_protocol.invocation.authorization_decision,
+            skill_execution_protocol.invocation.trace_expectation
         ),
         format!("freedom_gate: decision={}", freedom_gate.gate_decision),
         format!(

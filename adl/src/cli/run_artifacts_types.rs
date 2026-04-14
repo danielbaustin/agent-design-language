@@ -26,6 +26,8 @@ pub(crate) const CONTROL_PATH_MEMORY_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_DECISIONS_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_ACTION_PROPOSALS_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_ACTION_MEDIATION_VERSION: u32 = 1;
+pub(crate) const CONTROL_PATH_SKILL_MODEL_VERSION: u32 = 1;
+pub(crate) const CONTROL_PATH_SKILL_EXECUTION_PROTOCOL_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_FINAL_RESULT_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
@@ -781,6 +783,63 @@ pub(crate) struct ActionMediationRecord {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub(crate) struct ControlPathSkillModelArtifact {
+    pub(crate) control_path_skill_model_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) skill_schema_name: String,
+    pub(crate) skill_schema_fields: Vec<String>,
+    pub(crate) distinction_vocabulary: Vec<String>,
+    pub(crate) selected_execution_unit_kind: String,
+    pub(crate) skill: SkillDefinitionRecord,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct SkillDefinitionRecord {
+    pub(crate) skill_id: String,
+    pub(crate) selection_status: String,
+    pub(crate) purpose: String,
+    pub(crate) bounded_role: String,
+    pub(crate) input_contract_fields: Vec<String>,
+    pub(crate) output_contract_surfaces: Vec<String>,
+    pub(crate) stop_condition: String,
+    pub(crate) distinguished_from: Vec<String>,
+    pub(crate) temporal_anchor: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ControlPathSkillExecutionProtocolArtifact {
+    pub(crate) control_path_skill_execution_protocol_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) protocol_name: String,
+    pub(crate) lifecycle_stages: Vec<String>,
+    pub(crate) invocation: SkillInvocationProtocolRecord,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct SkillInvocationProtocolRecord {
+    pub(crate) invocation_id: String,
+    pub(crate) skill_id: String,
+    pub(crate) proposal_id: String,
+    pub(crate) decision_id: String,
+    pub(crate) invocation_kind: String,
+    #[serde(default)]
+    pub(crate) invocation_context: BTreeMap<String, String>,
+    pub(crate) input_validation_expectation: String,
+    pub(crate) lifecycle_state: String,
+    pub(crate) authorization_decision: String,
+    pub(crate) output_contract_surfaces: Vec<String>,
+    pub(crate) error_outcome_vocabulary: Vec<String>,
+    pub(crate) trace_expectation: String,
+    pub(crate) temporal_anchor: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct ControlPathFinalResultArtifact {
     pub(crate) control_path_final_result_version: u32,
     pub(crate) run_id: String,
@@ -804,6 +863,8 @@ pub(crate) struct ControlPathSummaryContext<'a> {
     pub(crate) convergence: &'a AeeConvergenceArtifact,
     pub(crate) memory: &'a ControlPathMemoryArtifact,
     pub(crate) action_proposals: &'a ControlPathActionProposalsArtifact,
+    pub(crate) skill_model: &'a ControlPathSkillModelArtifact,
+    pub(crate) skill_execution_protocol: &'a ControlPathSkillExecutionProtocolArtifact,
     pub(crate) mediation: &'a ControlPathActionMediationArtifact,
     pub(crate) freedom_gate: &'a FreedomGateArtifact,
     pub(crate) final_result: &'a ControlPathFinalResultArtifact,

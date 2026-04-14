@@ -428,6 +428,51 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
     );
     assert!(mediation.mediation.approved_action_or_none.is_none());
 
+    let skill_model: run_artifacts::ControlPathSkillModelArtifact = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("control_path/skill_model.json"))
+            .expect("read skill model artifact"),
+    )
+    .expect("parse skill model artifact");
+    assert_eq!(skill_model.skill_schema_name, "adl.runtime.skill_model.v1");
+    assert_eq!(skill_model.selected_execution_unit_kind, "skill_call");
+    assert_eq!(skill_model.skill.selection_status, "selected");
+    assert_eq!(skill_model.skill.skill_id, "skill.review_and_refine");
+    assert_eq!(
+        skill_model.skill.output_contract_surfaces,
+        vec![
+            "control_path/mediation.json".to_string(),
+            "control_path/final_result.json".to_string(),
+            "logs/trace_v1.json".to_string(),
+        ]
+    );
+
+    let skill_execution_protocol: run_artifacts::ControlPathSkillExecutionProtocolArtifact =
+        serde_json::from_str(
+            &std::fs::read_to_string(run_dir.join("control_path/skill_execution_protocol.json"))
+                .expect("read skill execution protocol artifact"),
+        )
+        .expect("parse skill execution protocol artifact");
+    assert_eq!(
+        skill_execution_protocol.protocol_name,
+        "adl.runtime.skill_execution_protocol.v1"
+    );
+    assert_eq!(
+        skill_execution_protocol.invocation.skill_id,
+        "skill.review_and_refine"
+    );
+    assert_eq!(
+        skill_execution_protocol.invocation.lifecycle_state,
+        "escalated_before_execution"
+    );
+    assert_eq!(
+        skill_execution_protocol.invocation.authorization_decision,
+        "escalated"
+    );
+    assert_eq!(
+        skill_execution_protocol.invocation.proposal_id,
+        "proposal.selected_candidate"
+    );
+
     let memory_read: MemoryReadArtifact = serde_json::from_str(
         &std::fs::read_to_string(run_dir.join("learning/memory_read.v1.json"))
             .expect("read memory read artifact"),
@@ -509,6 +554,18 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
     assert!(
         control_path_summary.contains(
             "action_mediation: outcome=escalated authority=freedom_gate follow_up=escalate_for_judgment_review"
+        ),
+        "summary was:\n{control_path_summary}"
+    );
+    assert!(
+        control_path_summary.contains(
+            "skill_model: selection_status=selected skill_id=skill.review_and_refine invocation_kind=skill_call"
+        ),
+        "summary was:\n{control_path_summary}"
+    );
+    assert!(
+        control_path_summary.contains(
+            "skill_execution_protocol: lifecycle_state=escalated_before_execution authorization=escalated trace_expectation=approval, rejection, defer, or escalation remains trace-visible before privileged execution"
         ),
         "summary was:\n{control_path_summary}"
     );

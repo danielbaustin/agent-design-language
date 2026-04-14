@@ -355,6 +355,34 @@ fn cli_artifact_validate_control_path_accepts_demo_fixture() {
     let _ = std::fs::remove_dir_all(out_dir);
 }
 
+fn materialize_control_path_demo(name: &str) -> (std::path::PathBuf, std::path::PathBuf) {
+    let out_dir = unique_temp_dir(name);
+    real_demo(&[
+        "demo-g-v086-control-path".to_string(),
+        "--run".to_string(),
+        "--no-open".to_string(),
+        "--out".to_string(),
+        out_dir.to_string_lossy().to_string(),
+    ])
+    .expect("control-path demo should succeed");
+
+    let control_path_root = out_dir.join("demo-g-v086-control-path");
+
+    (out_dir, control_path_root)
+}
+
+fn rewrite_json_artifact(
+    control_path_root: &std::path::Path,
+    name: &str,
+    value: &serde_json::Value,
+) {
+    std::fs::write(
+        control_path_root.join(name),
+        serde_json::to_vec_pretty(value).expect("serialize artifact rewrite"),
+    )
+    .expect("rewrite control-path artifact");
+}
+
 #[test]
 fn cli_artifact_requires_subcommand() {
     let err = real_artifact(&[]).expect_err("artifact should require a subcommand");
@@ -505,6 +533,64 @@ fn cli_artifact_validate_control_path_rejects_missing_mediation_artifact() {
 }
 
 #[test]
+fn cli_artifact_validate_control_path_rejects_missing_skill_model_artifact() {
+    let out_dir = unique_temp_dir("adl-control-path-validate-missing-skill-model");
+    real_demo(&[
+        "demo-g-v086-control-path".to_string(),
+        "--run".to_string(),
+        "--no-open".to_string(),
+        "--out".to_string(),
+        out_dir.to_string_lossy().to_string(),
+    ])
+    .expect("control-path demo should succeed");
+
+    let control_path_root = out_dir.join("demo-g-v086-control-path");
+    std::fs::remove_file(control_path_root.join("skill_model.json"))
+        .expect("remove skill model artifact");
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject missing skill model artifact");
+    assert!(err
+        .to_string()
+        .contains("missing required control-path artifact"));
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_missing_skill_execution_protocol_artifact() {
+    let out_dir = unique_temp_dir("adl-control-path-validate-missing-skill-protocol");
+    real_demo(&[
+        "demo-g-v086-control-path".to_string(),
+        "--run".to_string(),
+        "--no-open".to_string(),
+        "--out".to_string(),
+        out_dir.to_string_lossy().to_string(),
+    ])
+    .expect("control-path demo should succeed");
+
+    let control_path_root = out_dir.join("demo-g-v086-control-path");
+    std::fs::remove_file(control_path_root.join("skill_execution_protocol.json"))
+        .expect("remove skill execution protocol artifact");
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject missing skill execution protocol artifact");
+    assert!(err
+        .to_string()
+        .contains("missing required control-path artifact"));
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
 fn cli_artifact_validate_control_path_rejects_malformed_artifact() {
     let out_dir = unique_temp_dir("adl-control-path-validate-malformed");
     real_demo(&[
@@ -530,6 +616,196 @@ fn cli_artifact_validate_control_path_rejects_malformed_artifact() {
     ])
     .expect_err("validator should reject malformed artifact");
     assert!(err.to_string().contains("invalid control-path artifact"));
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_skill_model_schema_field_mismatch() {
+    let (out_dir, control_path_root) =
+        materialize_control_path_demo("adl-control-path-validate-skill-model-schema");
+    let mut skill_model: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(control_path_root.join("skill_model.json")).expect("read skill model"),
+    )
+    .expect("parse skill model");
+    skill_model["skill_schema_fields"] = serde_json::json!(["wrong_field"]);
+    rewrite_json_artifact(&control_path_root, "skill_model.json", &skill_model);
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject skill model schema mismatch");
+    assert!(err
+        .to_string()
+        .contains("control-path skill model schema fields mismatch"));
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_skill_model_selection_status_mismatch() {
+    let (out_dir, control_path_root) =
+        materialize_control_path_demo("adl-control-path-validate-skill-model-selection");
+    let mut skill_model: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(control_path_root.join("skill_model.json")).expect("read skill model"),
+    )
+    .expect("parse skill model");
+    skill_model["skill"]["selection_status"] = serde_json::json!("not_selected");
+    rewrite_json_artifact(&control_path_root, "skill_model.json", &skill_model);
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject mismatched skill selection status");
+    assert!(err
+        .to_string()
+        .contains("control-path skill model selection_status"));
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_skill_model_temporal_anchor_mismatch() {
+    let (out_dir, control_path_root) =
+        materialize_control_path_demo("adl-control-path-validate-skill-model-anchor");
+    let mut skill_model: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(control_path_root.join("skill_model.json")).expect("read skill model"),
+    )
+    .expect("parse skill model");
+    skill_model["skill"]["temporal_anchor"] = serde_json::json!("control_path/mediation.json");
+    rewrite_json_artifact(&control_path_root, "skill_model.json", &skill_model);
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject mismatched skill model temporal anchor");
+    assert!(err
+        .to_string()
+        .contains("control-path skill model temporal anchor"));
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_skill_execution_protocol_stage_mismatch() {
+    let (out_dir, control_path_root) =
+        materialize_control_path_demo("adl-control-path-validate-skill-protocol-stages");
+    let mut skill_protocol: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(control_path_root.join("skill_execution_protocol.json"))
+            .expect("read skill execution protocol"),
+    )
+    .expect("parse skill execution protocol");
+    skill_protocol["lifecycle_stages"] = serde_json::json!(["proposed", "authorized"]);
+    rewrite_json_artifact(
+        &control_path_root,
+        "skill_execution_protocol.json",
+        &skill_protocol,
+    );
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject skill execution protocol stage mismatch");
+    assert!(err
+        .to_string()
+        .contains("control-path skill execution protocol stages mismatch"));
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_skill_execution_protocol_authorization_mismatch() {
+    let (out_dir, control_path_root) =
+        materialize_control_path_demo("adl-control-path-validate-skill-protocol-authorization");
+    let mut skill_protocol: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(control_path_root.join("skill_execution_protocol.json"))
+            .expect("read skill execution protocol"),
+    )
+    .expect("parse skill execution protocol");
+    skill_protocol["invocation"]["authorization_decision"] = serde_json::json!("rejected");
+    rewrite_json_artifact(
+        &control_path_root,
+        "skill_execution_protocol.json",
+        &skill_protocol,
+    );
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject skill execution protocol authorization mismatch");
+    assert!(err
+        .to_string()
+        .contains("control-path skill execution protocol authorization_decision"));
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_skill_execution_protocol_trace_expectation_mismatch()
+{
+    let (out_dir, control_path_root) =
+        materialize_control_path_demo("adl-control-path-validate-skill-protocol-trace");
+    let mut skill_protocol: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(control_path_root.join("skill_execution_protocol.json"))
+            .expect("read skill execution protocol"),
+    )
+    .expect("parse skill execution protocol");
+    skill_protocol["invocation"]["trace_expectation"] = serde_json::json!("not_visible");
+    rewrite_json_artifact(
+        &control_path_root,
+        "skill_execution_protocol.json",
+        &skill_protocol,
+    );
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject skill execution protocol trace expectation mismatch");
+    assert!(err
+        .to_string()
+        .contains("control-path skill execution protocol trace expectation"));
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_skill_execution_protocol_temporal_anchor_mismatch() {
+    let (out_dir, control_path_root) =
+        materialize_control_path_demo("adl-control-path-validate-skill-protocol-anchor");
+    let mut skill_protocol: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(control_path_root.join("skill_execution_protocol.json"))
+            .expect("read skill execution protocol"),
+    )
+    .expect("parse skill execution protocol");
+    skill_protocol["invocation"]["temporal_anchor"] =
+        serde_json::json!("control_path/action_proposals.json");
+    rewrite_json_artifact(
+        &control_path_root,
+        "skill_execution_protocol.json",
+        &skill_protocol,
+    );
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject skill execution protocol temporal anchor mismatch");
+    assert!(err
+        .to_string()
+        .contains("control-path skill execution protocol temporal anchor"));
 
     let _ = std::fs::remove_dir_all(out_dir);
 }
