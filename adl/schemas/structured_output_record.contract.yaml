@@ -30,7 +30,7 @@ fields:
     required: false
   Main Repo Integration.Integration state:
     type: enum
-    values: [worktree_only, pr_open, merged]
+    values: [worktree_only, pr_open, merged, closed_no_pr]
     required: false
   Main Repo Integration.Verification scope:
     type: enum

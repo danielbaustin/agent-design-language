@@ -731,6 +731,57 @@ EOF
 
 "$VALIDATOR" --type sor --phase completed --input "$tmpdir/sor_completed_worktree_only_valid.md" >/dev/null
 
+cat >"$tmpdir/sor_completed_closed_no_pr_valid.md" <<'EOF'
+# dependable-execution-fixture
+
+Task ID: issue-0899
+Run ID: issue-0899
+Version: v0.85
+Title: completed-closed-no-pr-valid-sor
+Branch: retrospective-no-branch
+Status: DONE
+
+Execution:
+- Actor: codex
+- Model: gpt-5-codex
+- Provider: codex desktop
+- Start Time: 2026-03-18T07:00:00Z
+- End Time: 2026-03-18T07:05:00Z
+
+## Summary
+Completed no-PR closeout record for truthful retrospective normalization.
+## Artifacts produced
+x
+## Actions taken
+x
+## Main Repo Integration (REQUIRED)
+- Main-repo paths updated:
+- Worktree-only paths remaining: none
+- Integration state: closed_no_pr
+- Verification scope: main_repo
+- Integration method used: direct write in main repo for local-only closeout surfaces
+- Verification performed:
+- Result: PASS
+## Validation
+x
+## Verification Summary
+x
+## Determinism Evidence
+x
+## Security / Privacy Checks
+x
+## Replay Artifacts
+x
+## Artifact Verification
+x
+## Decisions / Deviations
+x
+## Follow-ups / Deferred work
+x
+EOF
+
+"$VALIDATOR" --type sor --phase completed --input "$tmpdir/sor_completed_closed_no_pr_valid.md" >/dev/null
+
 cat >"$tmpdir/sor_absolute_path_invalid.md" <<'EOF'
 # dependable-execution-fixture
 
