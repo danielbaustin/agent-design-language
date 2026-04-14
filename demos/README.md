@@ -52,6 +52,12 @@ If you want the bounded Gemma 4 issue-clerk demo:
 bash adl/tools/demo_v089_gemma4_issue_clerk.sh --dry-run
 ```
 
+If you want the bounded multi-agent repo code review demo:
+
+```bash
+bash adl/tools/demo_v089_multi_agent_repo_code_review.sh
+```
+
 ## Demo Categories
 
 - Runtime workflow demos live in `adl/examples/`.
@@ -119,11 +125,16 @@ and records a reviewer-facing findings artifact plus runtime proof.
 ### v0.89 bounded provider-participation demos
 
 - `v0.89/gemma4_issue_clerk_demo.md`
+- `v0.89/multi_agent_repo_code_review_demo.md`
 
 Use `v0.89/gemma4_issue_clerk_demo.md` for a bounded operational-participation
 demo where an Ollama-hosted Gemma-family model proposes one issue-init payload,
 ADL validates it, and the final result is either accepted deterministically or
 rejected truthfully.
+
+Use `v0.89/multi_agent_repo_code_review_demo.md` for a bounded specialist-reviewer
+demo where ADL prepares one repo review packet, emits code/security/test/docs
+review artifacts, and then writes one synthesized findings-first review.
 
 Use `v0.87/v087_demo_program.md` for the canonical `v0.87` demo order and bounded
 repo-local commands.
