@@ -47,8 +47,8 @@ The adversarial runtime/proof package is intentionally planned as the `v0.89.2` 
 
 ## Sequencing
 - Phase 1: establish the canonical package and the seedable issue-wave plan (`WP-01`)
-- Phase 2: land the core feature band (`WP-02` - `WP-09`)
-- Phase 3: package demos, quality, review, remediation, next-milestone handoff, and release closure (`WP-10` - `WP-20`)
+- Phase 2: land the core feature band plus the explicit `v0.89.2` handoff (`WP-02` - `WP-10`)
+- Phase 3: package demos, quality, review, remediation, next-milestone handoff, and release closure (`WP-11` - `WP-20`)
 
 ## Acceptance Mapping
 - WP-01 (Design pass) -> no template drift remains, every source planning doc has an explicit home, and the issue wave can seed directly from the package
