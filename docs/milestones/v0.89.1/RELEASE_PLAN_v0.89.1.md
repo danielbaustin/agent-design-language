@@ -11,9 +11,10 @@ Record the release-tail plan for `v0.89.1`.
 
 ## Current Release Truth
 
-`v0.89.1` is currently a planning package only.
+`v0.89.1` is currently a complete planning package with no opened execution wave yet.
 
 That means:
+- the canonical planning package exists and is reviewable
 - no issue wave has been executed yet
 - no release candidate exists yet
 - quality, review, and ceremony work are all future steps

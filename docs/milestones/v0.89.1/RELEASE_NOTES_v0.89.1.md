@@ -7,7 +7,7 @@
 
 ## Status
 
-Planning-stage placeholder.
+Pre-release placeholder for a package that is planned but not yet executed.
 
 ## Intended Milestone Story
 
@@ -23,4 +23,4 @@ Intended highlights:
 ## Notes
 
 - Do not treat this as shipped release text yet.
-- Replace this placeholder with truthful landed outcomes during the real release tail.
+- Replace this placeholder with truthful landed outcomes once the `v0.89.1` issue wave and release tail have actually run.

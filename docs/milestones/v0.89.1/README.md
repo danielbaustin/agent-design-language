@@ -12,6 +12,11 @@ Provide the canonical entry point for the `v0.89.1` milestone package.
 
 `v0.89.1` is the explicit follow-on band to `v0.89`. It takes the adversarial, exploit-replay, and security-proof work that `v0.89` intentionally did not absorb and turns it into a real milestone package rather than an implied carry-forward note.
 
+This package should be strong enough to:
+- explain why the band exists
+- show exactly what belongs in it
+- seed a clean issue wave without reconstructing intent from local notes
+
 ## Overview
 
 `v0.89.1` represents the stage where ADL moves from:
@@ -76,11 +81,11 @@ Tracked feature docs:
 - `features/SKILL_COMPOSITION_MODEL.md`
 
 Supporting local planning inputs:
-- `.adl/docs/v0.89.1planning/DELEGATION_AND_REFUSAL.md`
-- `.adl/docs/v0.89.1planning/MULTI_AGENT_NEGOTIATION.md`
-- `.adl/docs/v0.89.1planning/PROPOSED_OPERATIONAL_SKILLS.md`
-- `.adl/docs/v0.89.1planning/ADL_SECURITY_DEMOS.md`
-- `.adl/docs/v0.89.1planning/PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md`
+- `DELEGATION_AND_REFUSAL.md`
+- `MULTI_AGENT_NEGOTIATION.md`
+- `PROPOSED_OPERATIONAL_SKILLS.md`
+- `ADL_SECURITY_DEMOS.md`
+- `PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md`
 
 ## Execution Model
 
@@ -138,11 +143,11 @@ Open questions:
 
 ## Status
 
-Current status: canonical planning package created; issue wave not opened yet
+Current status: canonical planning package complete; issue wave not opened yet
 
-- Planning: in progress through `#1860`
+- Planning: complete through `#1860`
 - Execution: not started
-- Validation: planned
+- Validation: package-level checks passed; milestone execution validation still pending
 - Release readiness: not started
 
 ## Exit Criteria

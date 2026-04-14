@@ -72,7 +72,7 @@ If any of these are unclear, the demo is incomplete.
 
 ## Demo Structure
 
-## Step 1. Target Definition
+### Step 1. Target Definition
 
 Define a bounded demo target.
 
@@ -90,7 +90,7 @@ Example targets:
 
 ---
 
-## Step 2. Security Posture Declaration
+### Step 2. Security Posture Declaration
 
 The run must declare posture.
 
@@ -114,7 +114,7 @@ security_posture:
 
 ---
 
-## Step 3. Exploit Hypothesis Generation
+### Step 3. Exploit Hypothesis Generation
 
 Red agent produces:
 
@@ -131,7 +131,7 @@ Red agent produces:
 
 ---
 
-## Step 4. Exploit Validation
+### Step 4. Exploit Validation
 
 Red agent performs bounded exploit attempt.
 
@@ -147,7 +147,7 @@ Produces:
 
 ---
 
-## Step 5. Replay Manifest Construction
+### Step 5. Replay Manifest Construction
 
 System produces:
 
@@ -161,7 +161,7 @@ System produces:
 
 ---
 
-## Step 6. Replay Execution (Pre-Mitigation)
+### Step 6. Replay Execution (Pre-Mitigation)
 
 Run replay:
 
@@ -174,7 +174,7 @@ Run replay:
 
 ---
 
-## Step 7. Mitigation Generation
+### Step 7. Mitigation Generation
 
 Blue agent produces:
 
@@ -193,7 +193,7 @@ Blue agent produces:
 
 ---
 
-## Step 8. Replay Execution (Post-Mitigation)
+### Step 8. Replay Execution (Post-Mitigation)
 
 Run replay again.
 
@@ -208,7 +208,7 @@ Expected result:
 
 ---
 
-## Step 9. Regression Promotion
+### Step 9. Regression Promotion
 
 System produces:
 

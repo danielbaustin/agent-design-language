@@ -45,21 +45,21 @@ This page defines:
 
 | Local source doc | Disposition | Implementation home |
 |---|---|---|
-| `.adl/docs/v0.89.1planning/ADL_ADVERSARIAL_RUNTIME_MODEL.md` | promoted | `v0.89.1 / WP-02` |
-| `.adl/docs/v0.89.1planning/RED_BLUE_AGENT_ARCHITECTURE.md` | promoted | `v0.89.1 / WP-03` |
-| `.adl/docs/v0.89.1planning/ADVERSARIAL_EXECUTION_RUNNER.md` | promoted | `v0.89.1 / WP-04` |
-| `.adl/docs/v0.89.1planning/EXPLOIT_ARTIFACT_SCHEMA.md` | promoted | `v0.89.1 / WP-05` |
-| `.adl/docs/v0.89.1planning/ADVERSARIAL_REPLAY_MANIFEST.md` | promoted | `v0.89.1 / WP-05` |
-| `.adl/docs/v0.89.1planning/CONTINUOUS_VERIFICATION_AND_EXPLOIT_GENERATION.md` | promoted | `v0.89.1 / WP-06` |
-| `.adl/docs/v0.89.1planning/SELF_ATTACKING_SYSTEMS.md` | promoted | `v0.89.1 / WP-06` |
-| `.adl/docs/v0.89.1planning/ADL_ADVERSARIAL_DEMO.md` | promoted | `v0.89.1 / WP-07` |
-| `.adl/docs/v0.89.1planning/OPERATIONAL_SKILLS_SUBSTRATE.md` | promoted | `v0.89.1 / WP-08` |
-| `.adl/docs/v0.89.1planning/SKILL_COMPOSITION_MODEL.md` | promoted | `v0.89.1 / WP-08` |
-| `.adl/docs/v0.89.1planning/DELEGATION_AND_REFUSAL.md` | supporting planning input | informs `WP-09` governance boundary work |
-| `.adl/docs/v0.89.1planning/MULTI_AGENT_NEGOTIATION.md` | supporting planning input | informs `WP-09` coordination and disagreement surfaces |
-| `.adl/docs/v0.89.1planning/PROPOSED_OPERATIONAL_SKILLS.md` | supporting planning input | informs `WP-08` and `WP-09` skill-surface packaging |
-| `.adl/docs/v0.89.1planning/ADL_SECURITY_DEMOS.md` | placeholder input | do not promote until authored; informs later demo packaging |
-| `.adl/docs/v0.89.1planning/PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md` | placeholder input | do not promote until authored; candidate later security-extension slice |
+| `ADL_ADVERSARIAL_RUNTIME_MODEL.md` | promoted | `v0.89.1 / WP-02` |
+| `RED_BLUE_AGENT_ARCHITECTURE.md` | promoted | `v0.89.1 / WP-03` |
+| `ADVERSARIAL_EXECUTION_RUNNER.md` | promoted | `v0.89.1 / WP-04` |
+| `EXPLOIT_ARTIFACT_SCHEMA.md` | promoted | `v0.89.1 / WP-05` |
+| `ADVERSARIAL_REPLAY_MANIFEST.md` | promoted | `v0.89.1 / WP-05` |
+| `CONTINUOUS_VERIFICATION_AND_EXPLOIT_GENERATION.md` | promoted | `v0.89.1 / WP-06` |
+| `SELF_ATTACKING_SYSTEMS.md` | promoted | `v0.89.1 / WP-06` |
+| `ADL_ADVERSARIAL_DEMO.md` | promoted | `v0.89.1 / WP-07` |
+| `OPERATIONAL_SKILLS_SUBSTRATE.md` | promoted | `v0.89.1 / WP-08` |
+| `SKILL_COMPOSITION_MODEL.md` | promoted | `v0.89.1 / WP-08` |
+| `DELEGATION_AND_REFUSAL.md` | supporting planning input | informs `WP-09` governance boundary work |
+| `MULTI_AGENT_NEGOTIATION.md` | supporting planning input | informs `WP-09` coordination and disagreement surfaces |
+| `PROPOSED_OPERATIONAL_SKILLS.md` | supporting planning input | informs `WP-08` and `WP-09` skill-surface packaging |
+| `ADL_SECURITY_DEMOS.md` | placeholder input | do not promote until authored; informs later demo packaging |
+| `PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md` | placeholder input | do not promote until authored; candidate later security-extension slice |
 
 ## Relationship To `v0.89`
 
@@ -74,5 +74,5 @@ That means:
 
 - Treat `README.md`, `VISION_v0.89.1.md`, `DESIGN_v0.89.1.md`, `WBS_v0.89.1.md`, and `SPRINT_v0.89.1.md` as the canonical milestone planning package.
 - Treat the files in `features/` as the promoted tracked feature commitments for the main `v0.89.1` band.
-- Treat the remaining `.adl/docs/v0.89.1planning/*` docs as local planning inputs, not already-shipped promises.
+- Treat the remaining local `v0.89.1` planning inputs as planning material, not already-shipped promises.
 - Treat contradictions between the planning package, promoted feature docs, and source mapping as defects.

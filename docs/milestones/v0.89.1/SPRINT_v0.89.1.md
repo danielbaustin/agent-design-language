@@ -18,9 +18,9 @@
 
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
-| `v0.89.1-s1` | open the official issue wave and execute the adversarial/runtime core | `WP-01`, `WP-02` - `WP-05` | planning package only |
-| `v0.89.1-s2` | execute verification, self-attack, demo, and governed execution substrate work | `WP-06` - `WP-10` | not started |
-| `v0.89.1-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | not started |
+| `v0.89.1-s1` | open the official issue wave and execute the adversarial/runtime core | `WP-01`, `WP-02` - `WP-05` | package ready; execution not started |
+| `v0.89.1-s2` | execute verification, self-attack, demo, and governed execution substrate work | `WP-06` - `WP-10` | reserved |
+| `v0.89.1-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | reserved |
 
 ## Sprint 1
 

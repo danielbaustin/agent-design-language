@@ -3,7 +3,7 @@
 ## Metadata
 - Milestone: `v0.89`
 - Status: `Planned`
-- Source planning doc: `.adl/docs/v0.89planning/AEE_CONVERGENCE_MODEL.md`
+- Source planning input: local `v0.89` planning corpus
 - Planned WP: `WP-02`
 
 ## Purpose

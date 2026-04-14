@@ -75,8 +75,8 @@ Tracked feature docs:
 - `features/ADL_TRUST_MODEL_UNDER_ADVERSARY.md`
 
 Supporting local planning inputs:
-- `.adl/docs/v0.89planning/*`
-- `.adl/docs/v0.89.1planning/*`
+- the local `v0.89` planning corpus
+- the local `v0.89.1` planning corpus
 
 Tracked follow-on planning package:
 - `../v0.89.1/*`
