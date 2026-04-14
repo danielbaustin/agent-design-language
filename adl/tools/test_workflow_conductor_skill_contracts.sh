@@ -199,6 +199,10 @@ if [[ "$cmd" == "run" ]]; then
   echo "RUN:${issue}" >>"${ADL_DISPATCH_LOG}"
   exit 0
 fi
+if [[ "$cmd" == "closeout" ]]; then
+  echo "CLOSEOUT:${issue}" >>"${ADL_DISPATCH_LOG}"
+  exit 0
+fi
 if [[ "$cmd" != "doctor" ]]; then
   exit 1
 fi
@@ -231,6 +235,11 @@ JSON
   2009)
     cat <<'JSON'
 {"schema":"adl.pr.doctor.v1","issue":2009,"version":"v0.88","slug":"route-residue-finish","branch":"codex/2009-route-residue-finish","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"execution_done","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2009-route-residue-finish.md","root_stp":".adl/v0.88/tasks/issue-2009__route-residue-finish/stp.md","root_input":".adl/v0.88/tasks/issue-2009__route-residue-finish/sip.md","root_output":".adl/v0.88/tasks/issue-2009__route-residue-finish/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"doctor_status":"PASS"}
+JSON
+    ;;
+  2010)
+    cat <<'JSON'
+{"schema":"adl.pr.doctor.v1","issue":2010,"version":"v0.88","slug":"route-issue-closeout","branch":"codex/2010-route-issue-closeout","mode":"full","preflight_status":"PASS","open_pr_count":0,"open_prs":[],"lifecycle_state":"closed","ready_status":"PASS","worktree":null,"source":".adl/v0.88/bodies/issue-2010-route-issue-closeout.md","root_stp":".adl/v0.88/tasks/issue-2010__route-issue-closeout/stp.md","root_input":".adl/v0.88/tasks/issue-2010__route-issue-closeout/sip.md","root_output":".adl/v0.88/tasks/issue-2010__route-issue-closeout/sor.md","wt_stp":null,"wt_input":null,"wt_output":null,"doctor_status":"PASS"}
 JSON
     ;;
   2015)
@@ -610,6 +619,55 @@ cat >"${tmpdir}/route_related_satisfied.json" <<EOF
 }
 EOF
 
+cat >"${tmpdir}/route_issue_closed.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_issue",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "issue_number": 2010
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
+cat >"${tmpdir}/route_issue_closed_dispatch.json" <<EOF
+{
+  "skill_input_schema": "workflow_conductor.v1",
+  "mode": "route_issue",
+  "repo_root": "${fixture_repo}",
+  "target": {
+    "issue_number": 2010
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional",
+    "bypass_without_explicit_blocker": false,
+    "allow_phase_inference": true,
+    "stop_after_routing": true
+  },
+  "dispatch": {
+    "mode": "invoke_subtask",
+    "allow_builtin_dispatch": true,
+    "timeout_secs": 5
+  },
+  "observed_state": {
+    "subagent_assigned": false
+  }
+}
+EOF
+
 cat >"${tmpdir}/route_sibling_satisfied.json" <<EOF
 {
   "skill_input_schema": "workflow_conductor.v1",
@@ -729,7 +787,10 @@ touch "${fixture_repo}/.adl/v0.88/tasks/issue-3001__pr-blocked/stp.md" "${fixtur
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-3002__pr-merged/stp.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3002__pr-merged/sip.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3002__pr-merged/sor.md"
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-3003__pr-clean/stp.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3003__pr-clean/sip.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3003__pr-clean/sor.md"
 touch "${fixture_repo}/.adl/v0.88/tasks/issue-3004__pr-linkage-only/stp.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3004__pr-linkage-only/sip.md" "${fixture_repo}/.adl/v0.88/tasks/issue-3004__pr-linkage-only/sor.md"
+mkdir -p "${fixture_repo}/.adl/v0.88/tasks/issue-2010__route-issue-closeout"
+touch "${fixture_repo}/.adl/v0.88/tasks/issue-2010__route-issue-closeout/stp.md" "${fixture_repo}/.adl/v0.88/tasks/issue-2010__route-issue-closeout/sip.md" "${fixture_repo}/.adl/v0.88/tasks/issue-2010__route-issue-closeout/sor.md"
 touch "${fixture_repo}/.adl/v0.88/bodies/issue-3001-pr-blocked.md" "${fixture_repo}/.adl/v0.88/bodies/issue-3002-pr-merged.md" "${fixture_repo}/.adl/v0.88/bodies/issue-3003-pr-clean.md" "${fixture_repo}/.adl/v0.88/bodies/issue-3004-pr-linkage-only.md"
+touch "${fixture_repo}/.adl/v0.88/bodies/issue-2010-route-issue-closeout.md"
 
 cat >"${tmpdir}/route_pr_blocked.json" <<EOF
 {
@@ -878,6 +939,8 @@ python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "$
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_tracker_satisfied.json" --artifact-path ".adl/reviews/route-tracker-satisfied.md" >"${tmpdir}/route_tracker_satisfied.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_issue_finish_from_worktree.json" --artifact-path ".adl/reviews/route-issue-finish-from-worktree.md" >"${tmpdir}/route_issue_finish_from_worktree.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_related_satisfied.json" --artifact-path ".adl/reviews/route-related-satisfied.md" >"${tmpdir}/route_related_satisfied.out.json"
+python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_issue_closed.json" --artifact-path ".adl/reviews/route-issue-closed.md" >"${tmpdir}/route_issue_closed.out.json"
+python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_issue_closed_dispatch.json" --artifact-path ".adl/reviews/route-issue-closed-dispatch.md" >"${tmpdir}/route_issue_closed_dispatch.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_sibling_satisfied.json" --artifact-path ".adl/reviews/route-sibling-satisfied.md" >"${tmpdir}/route_sibling_satisfied.out.json"
 PATH="${mock_bin}:$PATH" python3 "${skills_root}/workflow-conductor/scripts/route_workflow.py" --input "${tmpdir}/route_sibling_unrelated.json" --artifact-path ".adl/reviews/route-sibling-unrelated.md" >"${tmpdir}/route_sibling_unrelated.out.json"
 rm -f "${fixture_repo}/docs/milestones/v0.88/WP_ISSUE_WAVE_v0.88.yaml"
@@ -911,7 +974,7 @@ assert route_issue_dispatch["dispatch"]["command_source"] == "builtin"
 assert route_issue_dispatch["dispatch"]["status"] == "invoked"
 assert route_issue_dispatch["dispatch"]["result"] == "success"
 assert route_issue_dispatch["dispatch"]["command"][0:4] == ["bash", "adl/tools/pr.sh", "run", "2001"]
-assert (tmp / "dispatch.log").read_text().strip() == "RUN:2001"
+assert "RUN:2001" in (tmp / "dispatch.log").read_text()
 
 route_editor = load("route_task_bundle.out.json")
 assert route_editor["selected_skill"]["skill_name"] == "sip-editor"
@@ -950,6 +1013,19 @@ assert route_related_satisfied["workflow_state"]["blocker_class"] == "satisfied_
 assert route_related_satisfied["handoff_state"]["next_phase"] == "human_review"
 assert route_related_satisfied["handoff_state"]["continuation"] == "ask_operator"
 assert route_related_satisfied["handoff_state"]["escalation_reason"] == "related_issue_ref_satisfied"
+
+route_issue_closed = load("route_issue_closed.out.json")
+assert route_issue_closed["selected_skill"]["skill_name"] == "pr-closeout"
+assert route_issue_closed["workflow_state"]["detected_phase"] == "closed_out"
+assert route_issue_closed["handoff_state"]["next_phase"] == "pr-closeout"
+
+route_issue_closed_dispatch = load("route_issue_closed_dispatch.out.json")
+assert route_issue_closed_dispatch["selected_skill"]["skill_name"] == "pr-closeout"
+assert route_issue_closed_dispatch["dispatch"]["command_source"] == "builtin"
+assert route_issue_closed_dispatch["dispatch"]["status"] == "invoked"
+assert route_issue_closed_dispatch["dispatch"]["result"] == "success"
+assert route_issue_closed_dispatch["dispatch"]["command"][0:4] == ["bash", "adl/tools/pr.sh", "closeout", "2010"]
+assert "CLOSEOUT:2010" in (tmp / "dispatch.log").read_text()
 
 route_sibling_satisfied = load("route_sibling_satisfied.out.json")
 assert route_sibling_satisfied["selected_skill"]["skill_name"] == "none"
