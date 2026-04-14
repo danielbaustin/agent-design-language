@@ -37,6 +37,20 @@ assert_skill_bundle() {
   grep -Fq "bounded editing of \`stp.md\`" "${root}/skills/stp-editor/SKILL.md"
   grep -Fq "truthful lifecycle state" "${root}/skills/sip-editor/SKILL.md"
   grep -Fq "truthful execution and integration state" "${root}/skills/sor-editor/SKILL.md"
+
+  bash "${repo_root}/adl/tools/validate_skill_frontmatter.sh" \
+    "${root}/skills/workflow-conductor/SKILL.md" \
+    "${root}/skills/pr-init/SKILL.md" \
+    "${root}/skills/pr-ready/SKILL.md" \
+    "${root}/skills/pr-run/SKILL.md" \
+    "${root}/skills/pr-finish/SKILL.md" \
+    "${root}/skills/pr-janitor/SKILL.md" \
+    "${root}/skills/pr-closeout/SKILL.md" \
+    "${root}/skills/repo-code-review/SKILL.md" \
+    "${root}/skills/test-generator/SKILL.md" \
+    "${root}/skills/stp-editor/SKILL.md" \
+    "${root}/skills/sip-editor/SKILL.md" \
+    "${root}/skills/sor-editor/SKILL.md"
 }
 
 export CODEX_HOME="${tmpdir}/codex-home-copy"
@@ -50,6 +64,21 @@ assert_skill_bundle "${CODEX_HOME}"
 [[ -L "${CODEX_HOME}/skills/pr-init" ]]
 [[ -L "${CODEX_HOME}/skills/pr-ready" ]]
 [[ "$(cd "${CODEX_HOME}/skills/pr-init" && pwd -P)" == "${repo_root}/adl/tools/skills/pr-init" ]]
+
+malformed_root="${tmpdir}/malformed-skills"
+cp -R "${repo_root}/adl/tools/skills" "${malformed_root}"
+cat >"${malformed_root}/workflow-conductor/SKILL.md" <<'EOF'
+---
+name: broken
+description: first
+description: second
+---
+EOF
+if ADL_OPERATIONAL_SKILLS_SOURCE_ROOT="${malformed_root}" \
+  bash "${repo_root}/adl/tools/install_adl_operational_skills.sh" >/dev/null 2>&1; then
+  echo "expected malformed operational skill source to fail" >&2
+  exit 1
+fi
 
 if ADL_OPERATIONAL_SKILLS_INSTALL_MODE=bogus bash "${repo_root}/adl/tools/install_adl_operational_skills.sh" >/dev/null 2>&1; then
   echo "expected invalid install mode to fail" >&2

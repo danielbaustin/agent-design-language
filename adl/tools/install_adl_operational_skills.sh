@@ -8,7 +8,7 @@ if [[ -z "${repo_root}" ]]; then
 fi
 
 codex_home="${CODEX_HOME:-$HOME/.codex}"
-source_root="${repo_root}/adl/tools/skills"
+source_root="${ADL_OPERATIONAL_SKILLS_SOURCE_ROOT:-${repo_root}/adl/tools/skills}"
 dest_root="${codex_home}/skills"
 install_mode="${ADL_OPERATIONAL_SKILLS_INSTALL_MODE:-copy}"
 
@@ -35,6 +35,8 @@ for source_dir in "${source_root}"/*; do
   skill_name="$(basename "${source_dir}")"
   dest_dir="${dest_root}/${skill_name}"
 
+  bash "${repo_root}/adl/tools/validate_skill_frontmatter.sh" "${source_dir}/SKILL.md"
+
   rm -rf "${dest_dir}"
   case "${install_mode}" in
     copy)
@@ -44,6 +46,7 @@ for source_dir in "${source_root}"/*; do
         echo "install_adl_operational_skills.sh: install verification failed for ${dest_dir}" >&2
         exit 1
       fi
+      bash "${repo_root}/adl/tools/validate_skill_frontmatter.sh" "${dest_dir}/SKILL.md"
       ;;
     symlink)
       ln -s "${source_dir}" "${dest_dir}"
@@ -55,6 +58,7 @@ for source_dir in "${source_root}"/*; do
         echo "install_adl_operational_skills.sh: symlink verification failed for ${dest_dir}" >&2
         exit 1
       fi
+      bash "${repo_root}/adl/tools/validate_skill_frontmatter.sh" "${dest_dir}/SKILL.md"
       ;;
   esac
 
