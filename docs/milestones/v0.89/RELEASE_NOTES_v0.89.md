@@ -1,57 +1,58 @@
-# Release Notes Template
+# Release Notes - v0.89
 
 ## Metadata
-- Product: `{{product_name}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Tag: `{{tag_name}}`
+- Product: `ADL`
+- Version: `v0.89`
+- Release date: `TBD`
+- Tag: `v0.89`
 
 ## How To Use
-- Keep statements implementation-accurate and test-validated.
-- Prefer concise bullets over marketing language.
-- Explicitly separate shipped behavior from "What's Next."
+- keep statements implementation-accurate and test-validated
+- prefer concise bullets over marketing language
+- explicitly separate shipped behavior from `What's Next`
 
-# `{{product_name}}` `{{version}}` Release Notes
+# `ADL` `v0.89` Release Notes
 
 ## Summary
-{{summary_paragraph}}
 
-## Highlights
-- {{highlight_1}}
-- {{highlight_2}}
-- {{highlight_3}}
+`v0.89` is the milestone where ADL turns governed adaptive execution into a first-class package. The planned release is expected to deepen AEE convergence, Freedom Gate behavior, decision/action mediation, skill execution contracts, experiment records, evidence-aware memory ranking, and the main-band security/trust/posture package.
+
+## Planned Highlights
+- AEE 1.0 convergence as a real bounded runtime contract
+- Freedom Gate v2 plus explicit decision and action mediation surfaces
+- canonical skill execution, experiment, ObsMem evidence, and security/trust planning surfaces
 
 ## What's New In Detail
 
-### {{area_1}}
-- {{detail_1a}}
-- {{detail_1b}}
+### Governed adaptive execution
+- bounded convergence, stop conditions, and adaptation evidence
+- richer judgment behavior through Freedom Gate v2
 
-### {{area_2}}
-- {{detail_2a}}
-- {{detail_2b}}
+### Runtime authority and skills
+- explicit decision and action boundaries
+- canonical skill model and skill invocation protocol
 
-### {{area_3}}
-- {{detail_3a}}
-- {{detail_3b}}
+### Evidence and security
+- experiment records and evidence-aware ObsMem continuation
+- threat model, trust model, and declared security posture package
 
 ## Upgrade Notes
-- {{upgrade_note_1}}
-- {{upgrade_note_2}}
+- exact user-facing upgrade notes are `TBD` until implementation lands
+- this pre-release shell should be rewritten from shipped artifacts during `WP-15` and `WP-16`
 
 ## Known Limitations
-- {{limitation_1}}
-- {{limitation_2}}
+- this document is pre-release and should not be treated as a shipped-claims document yet
+- the adversarial runtime/demo package is intentionally deferred to `v0.89.2`
 
 ## Validation Notes
-- {{validation_note_1}}
-- {{validation_note_2}}
+- final release notes must be updated from shipped proof surfaces only
+- demo/review package and quality-gate outputs should be cited before release
 
 ## What's Next
-- {{next_1}}
-- {{next_2}}
+- `v0.89.2` adversarial runtime and exploit/replay package
+- later reasoning/signature/identity/governance bands continue after this milestone
 
 ## Exit Criteria
-- Notes reflect only shipped behavior.
-- Known limitations and future work are explicitly separated.
-- Final text is ready to paste into GitHub Release UI without further editing.
+- notes reflect only shipped behavior
+- known limitations and future work are explicitly separated
+- final text is ready to paste into GitHub Release UI without further editing
