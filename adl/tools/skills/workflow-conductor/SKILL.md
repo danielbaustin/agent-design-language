@@ -1,6 +1,5 @@
 ---
 name: workflow-conductor
-description: Lightweight conductor for the ADL workflow skills. Use when the operator wants one bounded entrypoint that detects the current issue/workflow state, selects the correct next lifecycle or editor skill, enforces skill/subagent policy, and stops after routing/compliance recording rather than reimplementing the underlying work.
 description: Lightweight conductor for the ADL workflow skills. Use when the operator wants one bounded entrypoint that detects the current issue/workflow state, selects the correct next lifecycle or editor skill, enforces skill/subagent policy, and either stops after routing or dispatches one bounded downstream skill subtask without reimplementing the underlying work.
 ---
 

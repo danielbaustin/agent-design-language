@@ -1,6 +1,6 @@
 ---
 name: adl_pr_cycle
-description: Deterministic Codex.app workflow for the real ADL authoring control plane: pr init, pr start, pr run, and pr finish, with bounded editor-adapter truth and required reporting.
+description: "Deterministic Codex.app workflow for the real ADL authoring control plane: pr init, pr start, pr run, and pr finish, with bounded editor-adapter truth and required reporting."
 ---
 
 # adl_pr_cycle
