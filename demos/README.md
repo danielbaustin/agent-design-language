@@ -46,6 +46,12 @@ If you want the bounded Claude + ChatGPT tea discussion demo:
 bash adl/tools/demo_v0871_multi_agent_discussion.sh
 ```
 
+If you want the bounded Gemma 4 issue-clerk demo:
+
+```bash
+bash adl/tools/demo_v089_gemma4_issue_clerk.sh --dry-run
+```
+
 ## Demo Categories
 
 - Runtime workflow demos live in `adl/examples/`.
@@ -85,6 +91,15 @@ Use `v0.87.1/claude_chatgpt_multi_agent_discussion_demo.md` for a bounded
 multi-agent runtime demo that keeps Claude and ChatGPT as two explicit named
 agents over five sequential turns and emits a transcript plus runtime proof
 artifacts.
+
+### v0.89 bounded provider-participation demos
+
+- `v0.89/gemma4_issue_clerk_demo.md`
+
+Use `v0.89/gemma4_issue_clerk_demo.md` for a bounded operational-participation
+demo where an Ollama-hosted Gemma-family model proposes one issue-init payload,
+ADL validates it, and the final result is either accepted deterministically or
+rejected truthfully.
 
 Use `v0.87/v087_demo_program.md` for the canonical `v0.87` demo order and bounded
 repo-local commands.
