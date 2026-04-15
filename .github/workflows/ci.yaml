@@ -117,9 +117,6 @@ jobs:
         env:
           WORKSPACE_LINE_THRESHOLD: "90"
           PER_FILE_LINE_THRESHOLD: "80"
-          # Documented exclusion rationale is tracked in
-          # docs/milestones/v0.88/QUALITY_GATE_v0.88.md.
-          EXCLUDE_FROM_FILE_FLOOR_REGEX: "/adl/src/obsmem_contract.rs$"
         run: |
           set -eu
           bash tools/enforce_coverage_gates.sh coverage-summary.json
