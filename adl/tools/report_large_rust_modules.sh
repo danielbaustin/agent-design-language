@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="adl/src"
+ROOTS=("adl/src" "adl/tests")
 THRESHOLD_WATCH=800
 THRESHOLD_REVIEW=1000
 THRESHOLD_RATIONALE=1500
@@ -14,7 +14,7 @@ Usage: adl/tools/report_large_rust_modules.sh [options]
 Report large Rust implementation modules without failing the build.
 
 Options:
-  --root <path>                Root to scan (default: adl/src)
+  --root <path>                Root to scan; repeatable (default: adl/src and adl/tests)
   --threshold-watch <n>        Watch threshold in lines (default: 800)
   --threshold-review <n>       Review threshold in lines (default: 1000)
   --threshold-rationale <n>    Rationale threshold in lines (default: 1500)
@@ -28,7 +28,10 @@ EOF
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --root)
-      ROOT="$2"
+      if [[ "${ROOTS[*]}" == "adl/src adl/tests" ]]; then
+        ROOTS=()
+      fi
+      ROOTS+=("$2")
       shift 2
       ;;
     --threshold-watch)
@@ -59,39 +62,46 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ ! -d "$ROOT" ]]; then
-  echo "Scan root does not exist: $ROOT" >&2
-  exit 2
-fi
+for root in "${ROOTS[@]}"; do
+  if [[ ! -d "$root" ]]; then
+    echo "Scan root does not exist: $root" >&2
+    exit 2
+  fi
+done
 
 if [[ "$FORMAT" != "table" && "$FORMAT" != "tsv" ]]; then
   echo "Unsupported format: $FORMAT" >&2
   exit 2
 fi
 
-python3 - "$ROOT" "$THRESHOLD_WATCH" "$THRESHOLD_REVIEW" "$THRESHOLD_RATIONALE" "$FORMAT" <<'PY'
+python3 - "$THRESHOLD_WATCH" "$THRESHOLD_REVIEW" "$THRESHOLD_RATIONALE" "$FORMAT" "${ROOTS[@]}" <<'PY'
 import sys
 from pathlib import Path
 
-root = Path(sys.argv[1])
-watch = int(sys.argv[2])
-review = int(sys.argv[3])
-rationale = int(sys.argv[4])
-fmt = sys.argv[5]
+watch = int(sys.argv[1])
+review = int(sys.argv[2])
+rationale = int(sys.argv[3])
+fmt = sys.argv[4]
+roots = [Path(arg) for arg in sys.argv[5:]]
 
 rows = []
-for path in sorted(root.rglob("*.rs")):
-    with path.open("r", encoding="utf-8") as handle:
-        loc = sum(1 for _ in handle)
-    if loc < watch:
-        continue
-    if loc >= rationale:
-        level = "RATIONALE"
-    elif loc >= review:
-        level = "REVIEW"
-    else:
-        level = "WATCH"
-    rows.append((str(path), loc, level))
+seen = set()
+for root in roots:
+    for path in sorted(root.rglob("*.rs")):
+        if path in seen:
+            continue
+        seen.add(path)
+        with path.open("r", encoding="utf-8") as handle:
+            loc = sum(1 for _ in handle)
+        if loc < watch:
+            continue
+        if loc >= rationale:
+            level = "RATIONALE"
+        elif loc >= review:
+            level = "REVIEW"
+        else:
+            level = "WATCH"
+        rows.append((str(path), loc, level))
 
 rows.sort(key=lambda row: (-row[1], row[0]))
 
@@ -102,7 +112,7 @@ if fmt == "tsv":
     sys.exit(0)
 
 print("Rust module size watch report")
-print(f"scan root: {root}")
+print(f"scan roots: {', '.join(str(root) for root in roots)}")
 print(f"thresholds: watch>={watch}, review>={review}, rationale>={rationale}")
 print("")
 

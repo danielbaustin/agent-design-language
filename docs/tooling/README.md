@@ -73,7 +73,7 @@ Important repo-local tooling surfaces include:
 - `bash adl/tools/demo_v0871_operator_surface.sh` — canonical `v0.87.1` operator-surface demo for runtime bring-up and proof-surface inspection
 - `bash adl/tools/demo_v0871_review_surface.sh` — canonical `v0.87.1` reviewer walkthrough package across operator and runtime-state proof roots
 - `adl/tools/*.sh` wrappers remain available as compatibility entrypoints over the Rust-owned commands
-- `adl/tools/report_large_rust_modules.sh` — non-blocking Rust implementation-module size report; write current snapshots to `.adl/reports/manual/` instead of tracked repo docs
+- `adl/tools/report_large_rust_modules.sh` — non-blocking Rust source-and-test module size report; by default it scans both `adl/src` and `adl/tests`, and current snapshots should live under `.adl/reports/manual/` instead of tracked repo docs
 - `adl/tools/sync_task_bundle_prompts.sh` — refresh canonical local task-bundle prompt layout from compatibility paths
 
 Deprecated compatibility aliases such as `pr ready`, `pr preflight`, and
