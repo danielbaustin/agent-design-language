@@ -123,7 +123,7 @@ It is a **dynamic graph** defined by:
 
 Adversarial exploration becomes graph traversal under constraints.
 
-This aligns with ADL’s broader model of structured execution and trace.
+This aligns with ADL's broader model of structured execution and trace.
 
 ---
 
@@ -146,7 +146,7 @@ This transforms security from reactive to proactive.
 
 ## Determinism as a Security Primitive
 
-ADL’s deterministic runtime provides a unique advantage:
+ADL's deterministic runtime provides a unique advantage:
 
 - attacks can be reproduced exactly
 - defenses can be verified against known exploits
@@ -271,7 +271,7 @@ Illustrate:
 
 - red and blue agents operating within the same runtime
 - shared trace substrate
-- exploit → mitigation → replay loop
+- exploit -> mitigation -> replay loop
 - temporal progression under chronosense
 
 ---

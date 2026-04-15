@@ -37,11 +37,11 @@ It demonstrates a complete closed loop:
 
 ```text
 exploit discovery
-→ exploit artifact
-→ replay manifest
-→ mitigation
-→ replay validation
-→ regression promotion
+-> exploit artifact
+-> replay manifest
+-> mitigation
+-> replay validation
+-> regression promotion
 ```
 
 This is not a simulation or narrative demo.
@@ -222,7 +222,7 @@ System produces:
 ### Requirements
 
 - promotion must be explicit
-- artifact must link exploit → mitigation → replay
+- artifact must link exploit -> mitigation -> replay
 
 ---
 
@@ -290,7 +290,7 @@ The demo fails if:
 Suggested artifact tree:
 
 ```text
-.adl/reports/adversarial-demo/
+reports/adversarial-demo/
   target/
   hypothesis.yaml
   evidence.yaml

@@ -6,6 +6,7 @@ sources:
   - docs/milestones/v0.89.1/SPRINT_v0.89.1.md
 notes:
   - Reserved issue-wave plan only. No official issue wave has been opened yet.
+  - Titles, labels, sprint placement, and dependency order are intended to be mechanically issueized once the lane opens.
 wave:
   - wp: WP-02
     issue_kind: execution
@@ -102,8 +103,8 @@ wave:
     dependencies: [WP-01, WP-04]
     dependency_notes: '`WP-01`, `WP-04`'
     work_package: Operational skills substrate and composition
-    summary: Make operational skill execution and composition explicit enough for adversarial/runtime use.
-    deliverable: substrate and composition package
+    summary: Make operational skill execution and composition explicit enough for adversarial/runtime use, including a bounded arXiv paper-writing skill.
+    deliverable: substrate and composition package plus bounded arxiv-paper-writer skill
     issue_column: planned issue wave
   - wp: WP-09
     issue_kind: execution
@@ -130,7 +131,7 @@ wave:
     dependencies: [WP-07, WP-09]
     dependency_notes: '`WP-07`, `WP-09`'
     work_package: Provider extension and milestone packaging convergence
-    summary: Decide and package what provider-security extension and related placeholder inputs actually belong in this milestone.
+    summary: Decide and package what provider-security extension and related under-authored supporting inputs actually belong in this milestone.
     deliverable: converged scope and packaging record
     issue_column: planned issue wave
   - wp: WP-11
@@ -172,8 +173,8 @@ wave:
     dependencies: [WP-02, WP-12]
     dependency_notes: '`WP-02` - `WP-12`'
     work_package: Demo matrix and integration demos
-    summary: Validate the milestone claims through bounded demos and integration review.
-    deliverable: canonical demo matrix and demo artifacts
+    summary: Validate the milestone claims through bounded demos, integration review, and the initial three-paper publication packet.
+    deliverable: canonical demo matrix, demo artifacts, and three-paper manuscript packet
     issue_column: planned issue wave
   - wp: WP-14
     issue_kind: execution

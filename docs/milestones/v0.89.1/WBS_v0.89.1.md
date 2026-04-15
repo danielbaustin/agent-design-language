@@ -10,6 +10,7 @@
 - break work into independently mergeable issues once the milestone officially opens
 - keep each item measurable and reviewable
 - reserve the final WPs for demos, quality, docs/review convergence, and release ceremony
+- treat this table and `WP_ISSUE_WAVE_v0.89.1.yaml` as the mechanical source for later issue creation rather than reopening milestone design
 
 ## WBS Summary
 
@@ -29,12 +30,12 @@
 | WP-05 | Exploit artifact and replay schema | Make exploit artifacts and replay manifests explicit and reusable. | artifact schema + replay package | `WP-02`, `WP-04` | planned issue wave |
 | WP-06 | Continuous verification and self-attack patterns | Define ongoing verification and self-attack behavior as bounded execution patterns. | verification/self-attack package | `WP-02`, `WP-04`, `WP-05` | planned issue wave |
 | WP-07 | Adversarial demo and security proof surfaces | Land the flagship demo and the primary review/proof surfaces for the milestone. | demo/proof package | `WP-03` - `WP-06` | planned issue wave |
-| WP-08 | Operational skills substrate and composition | Make operational skill execution and composition explicit enough for adversarial/runtime use. | substrate/composition package | `WP-01`, `WP-04` | planned issue wave |
+| WP-08 | Operational skills substrate and composition | Make operational skill execution and composition explicit enough for adversarial/runtime use, including a bounded `arxiv-paper-writer` skill rooted in the Paper Sonata manuscript workflow. | substrate/composition package + `arxiv-paper-writer` skill | `WP-01`, `WP-04` | planned issue wave |
 | WP-09 | Delegation, refusal, and coordination follow-through | Resolve the supporting governance/coordination inputs needed to keep the adversarial band legible and bounded. | bounded governance/coordination package | `WP-03`, `WP-07`, `WP-08` | planned issue wave |
-| WP-10 | Provider extension and milestone packaging convergence | Decide and package what provider-security extension and related placeholder inputs actually belong in this milestone. | converged scope/packaging record | `WP-07`, `WP-09` | planned issue wave |
+| WP-10 | Provider extension and milestone packaging convergence | Decide and package what provider-security extension and related under-authored supporting inputs actually belong in this milestone. | converged scope/packaging record | `WP-07`, `WP-09` | planned issue wave |
 | WP-11 | Demo scaffolding and proof entry points | Define and land the bounded proof entry points for adversarial runtime, exploit replay, and security demos. | runnable or reviewer-legible proof entry points | `WP-02` - `WP-10` | planned issue wave |
 | WP-12 | Milestone convergence and follow-on mapping | Reconcile issue graph, carry-forward, and proof surfaces before the release tail starts. | converged issue graph and milestone status surfaces | `WP-02` - `WP-11` | planned issue wave |
-| WP-13 | Demo matrix + integration demos | Validate the milestone claims through bounded demos and integration review. | canonical demo matrix and demo artifacts | `WP-02` - `WP-12` | planned issue wave |
+| WP-13 | Demo matrix + integration demos | Validate the milestone claims through bounded demos, integration review, and the initial three-paper publication packet. | canonical demo matrix, demo artifacts, and three-paper manuscript packet | `WP-02` - `WP-12` | planned issue wave |
 | WP-14 | Coverage / quality gate (ratchet + exclusions) | Run quality gates and record any bounded exceptions truthfully. | green quality gate or documented exceptions | `WP-02` - `WP-13` | planned issue wave |
 | WP-15 | Docs + review pass (repo-wide alignment) | Align docs, review surfaces, and release-tail truth across the repo. | converged docs/review package | `WP-13`, `WP-14` | planned issue wave |
 | WP-16 | Internal review | Perform bounded internal review of milestone truth and proof surfaces. | internal review record | `WP-15` | planned issue wave |
@@ -56,12 +57,12 @@
 - WP-05 -> exploit and replay artifacts are explicit and reusable
 - WP-06 -> continuous verification and self-attack patterns are explicit and reviewable
 - WP-07 -> the adversarial proof/demo package is legible and bounded
-- WP-08 -> the skill substrate/composition layer is explicit enough for runtime implementation
+- WP-08 -> the skill substrate/composition layer is explicit enough for runtime implementation and includes a bounded `arxiv-paper-writer` skill surface
 - WP-09 -> governance/coordination supporting inputs are resolved enough to keep the milestone coherent
-- WP-10 -> placeholder or extension docs are either integrated truthfully or explicitly kept out
+- WP-10 -> under-authored supporting inputs or extension docs are either integrated truthfully or explicitly kept out
 - WP-11 -> proof entry points exist for the main milestone claims
 - WP-12 -> the milestone package and issue graph are converged
-- WP-13 -> milestone claims have bounded demo/proof surfaces
+- WP-13 -> milestone claims have bounded demo/proof surfaces and the three-paper publication program has reviewer-legible manuscript outputs
 - WP-14 -> quality/coverage posture is truthful and reviewable
 - WP-15 -> repo-wide docs and review surfaces are aligned with delivered truth
 - WP-16 -> bounded internal review truthfully records milestone strengths, risks, and open remediation

@@ -21,7 +21,7 @@ This is a foundational piece of the ADL runtime.
 
 ## Core Principle
 
-> Complex behavior must be constructed from explicit, bounded skill compositions—not from implicit prompt nesting or hidden loops.
+> Complex behavior must be constructed from explicit, bounded skill compositions-not from implicit prompt nesting or hidden loops.
 
 Composition is:
 - explicit
@@ -67,7 +67,7 @@ Each primitive MUST:
 Execute skills in order.
 
 ```
-A → B → C
+A -> B -> C
 ```
 
 Properties:
@@ -97,7 +97,7 @@ Properties:
 Run a validation skill after another skill.
 
 ```
-A → validate(A)
+A -> validate(A)
 ```
 
 Properties:
@@ -111,8 +111,8 @@ Properties:
 Select execution path based on condition.
 
 ```
-if (condition) → A
-else → B
+if (condition) -> A
+else -> B
 ```
 
 Properties:
