@@ -99,7 +99,7 @@ Reasons:
 ## Risks
 
 - over-expanding the milestone into all security/governance work
-- promoting placeholder source docs as though they were mature feature contracts
+- promoting under-authored source docs as though they were mature feature contracts
 - confusing review/demo surfaces with real replayable evidence
 
 ## Design Exit Criteria
@@ -107,3 +107,4 @@ Reasons:
 - promoted feature set is explicit
 - non-promoted inputs are explicitly accounted for
 - runtime, artifact, and proof layers are each represented in the milestone package
+- the package is strong enough to be reviewed and later issueized without reopening milestone intent

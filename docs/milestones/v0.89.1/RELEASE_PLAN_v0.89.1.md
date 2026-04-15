@@ -3,11 +3,13 @@
 ## Metadata
 - Milestone: `v0.89.1`
 - Version: `v0.89.1`
-- Date: `2026-04-14`
+- Release date: `TBD`
+- Release manager: `Daniel Austin`
 
-## Purpose
-
-Record the release-tail plan for `v0.89.1`.
+## How To Use
+- execute sections in order and capture links for each completed step
+- keep this document focused on shipping mechanics; use release notes for narrative
+- do not publish until the adversarial/runtime core, demo program, and review surfaces are truthful
 
 ## Current Release Truth
 
@@ -15,24 +17,42 @@ Record the release-tail plan for `v0.89.1`.
 
 That means:
 - the canonical planning package exists and is reviewable
-- no issue wave has been executed yet
+- the reserved issue-wave plan is ready for later issueization
+- no implementation PR wave has started yet
 - no release candidate exists yet
 - quality, review, and ceremony work are all future steps
 
-## Planned Release Tail
+## 1) Release Readiness
+- [ ] Milestone checklist complete (`MILESTONE_CHECKLIST_v0.89.1.md`)
+- [ ] Release notes approved (`RELEASE_NOTES_v0.89.1.md`)
+- [ ] Go/no-go decision recorded (`DECISIONS_v0.89.1.md` or final release issue)
+- [ ] Core implementation issue wave opened
 
-- `WP-11` - `WP-13`: proof/demos and milestone convergence
-- `WP-14`: quality gate
-- `WP-15`: docs + review pass
-- `WP-16`: internal review
-- `WP-17`: 3rd-party review
-- `WP-18`: findings remediation
-- `WP-19`: next milestone planning
-- `WP-20`: release ceremony
+## 2) Branch And Tag Preparation
+- [ ] Target branch confirmed (`main` unless explicitly changed)
+- [ ] Working tree clean
+- [ ] Version string(s) validated
+- [ ] Tag created: `v0.89.1`
+- [ ] Tag pushed and verified
 
-## Release Preconditions
+## 3) GitHub Release Steps
+- [ ] GitHub Release draft created from `v0.89.1`
+- [ ] Release body populated from approved notes
+- [ ] Links to key PRs/issues included
+- [ ] Release visibility confirmed
+- [ ] Release published
 
-- the official issue wave is opened
-- core feature WPs are completed or explicitly deferred
-- demo/proof surfaces are real
-- review and quality surfaces are truthful
+## 4) Verification
+- [ ] Post-release CI status checked
+- [ ] Release links tested (docs, artifacts, notes)
+- [ ] Immediate regressions triaged and tracked
+
+## 5) Communication
+- [ ] Community announcement published
+- [ ] Internal update posted
+- [ ] Roadmap/status updated
+
+## Exit Criteria
+- tag and GitHub Release are published and accessible
+- verification completed with no unknown critical failures
+- communication and roadmap updates are captured

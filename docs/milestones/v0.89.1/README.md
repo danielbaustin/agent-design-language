@@ -16,6 +16,7 @@ This package should be strong enough to:
 - explain why the band exists
 - show exactly what belongs in it
 - seed a clean issue wave without reconstructing intent from local notes
+- survive review as a mechanically issueizable milestone rather than another exploratory planning pass
 
 ## Overview
 
@@ -67,6 +68,7 @@ Canonical milestone documents:
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.89.1.md`
 - Release plan / process: `RELEASE_PLAN_v0.89.1.md`
 - Release notes: `RELEASE_NOTES_v0.89.1.md`
+- Reserved issue wave: `WP_ISSUE_WAVE_v0.89.1.yaml`
 
 Tracked feature docs:
 - `features/ADL_ADVERSARIAL_RUNTIME_MODEL.md`
@@ -103,6 +105,7 @@ Execution expectations after kickoff:
 - each substantive WP gets a bounded issue and PR
 - promoted feature docs resolve to implementation, proofs, or explicit defer records
 - any remaining `v0.89` carry-forward ambiguity is eliminated by explicit issue ownership
+- issue creation should be mechanical from the WBS, sprint plan, and reserved issue-wave YAML rather than requiring another design rewrite
 
 ## Demo and Validation Surface
 
@@ -143,12 +146,24 @@ Open questions:
 
 ## Status
 
-Current status: canonical planning package complete; issue wave not opened yet
+Current status: canonical planning package complete; issue wave not opened yet; package is review-ready and seed-ready once the lane opens
 
-- Planning: complete through `#1860`
-- Execution: not started
+- Planning: complete through `#1860`, with `#1806` polishing the tracked review package
+- Execution: not started; reserved issue-wave plan is ready to issueize
 - Validation: package-level checks passed; milestone execution validation still pending
-- Release readiness: not started
+- Release readiness: not started; milestone docs are ready for review, not release
+
+## Kickoff Posture
+
+When `v0.89.1` opens, the expected motion should be:
+- review the package, not redesign it
+- seed the official issue wave directly from `WP_ISSUE_WAVE_v0.89.1.yaml`
+- preserve the settled `v0.89` / `v0.89.1` boundary rather than reabsorbing adversarial/runtime work back into `v0.89`
+
+What should not happen at kickoff:
+- reopening the core milestone interpretation
+- promoting weak supporting inputs as if they were mature tracked commitments
+- using issue creation as an excuse to rediscover milestone scope by hand
 
 ## Exit Criteria
 

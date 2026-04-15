@@ -6,6 +6,7 @@ sources:
   - docs/milestones/v0.89.1/SPRINT_v0.89.1.md
 notes:
   - Reserved issue-wave plan only. No official issue wave has been opened yet.
+  - Titles, labels, sprint placement, and dependency order are intended to be mechanically issueized once the lane opens.
 wave:
   - wp: WP-02
     issue_kind: execution
@@ -130,7 +131,7 @@ wave:
     dependencies: [WP-07, WP-09]
     dependency_notes: '`WP-07`, `WP-09`'
     work_package: Provider extension and milestone packaging convergence
-    summary: Decide and package what provider-security extension and related placeholder inputs actually belong in this milestone.
+    summary: Decide and package what provider-security extension and related under-authored supporting inputs actually belong in this milestone.
     deliverable: converged scope and packaging record
     issue_column: planned issue wave
   - wp: WP-11

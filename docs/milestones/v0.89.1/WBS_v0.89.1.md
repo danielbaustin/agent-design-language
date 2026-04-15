@@ -10,6 +10,7 @@
 - break work into independently mergeable issues once the milestone officially opens
 - keep each item measurable and reviewable
 - reserve the final WPs for demos, quality, docs/review convergence, and release ceremony
+- treat this table and `WP_ISSUE_WAVE_v0.89.1.yaml` as the mechanical source for later issue creation rather than reopening milestone design
 
 ## WBS Summary
 
@@ -31,7 +32,7 @@
 | WP-07 | Adversarial demo and security proof surfaces | Land the flagship demo and the primary review/proof surfaces for the milestone. | demo/proof package | `WP-03` - `WP-06` | planned issue wave |
 | WP-08 | Operational skills substrate and composition | Make operational skill execution and composition explicit enough for adversarial/runtime use. | substrate/composition package | `WP-01`, `WP-04` | planned issue wave |
 | WP-09 | Delegation, refusal, and coordination follow-through | Resolve the supporting governance/coordination inputs needed to keep the adversarial band legible and bounded. | bounded governance/coordination package | `WP-03`, `WP-07`, `WP-08` | planned issue wave |
-| WP-10 | Provider extension and milestone packaging convergence | Decide and package what provider-security extension and related placeholder inputs actually belong in this milestone. | converged scope/packaging record | `WP-07`, `WP-09` | planned issue wave |
+| WP-10 | Provider extension and milestone packaging convergence | Decide and package what provider-security extension and related under-authored supporting inputs actually belong in this milestone. | converged scope/packaging record | `WP-07`, `WP-09` | planned issue wave |
 | WP-11 | Demo scaffolding and proof entry points | Define and land the bounded proof entry points for adversarial runtime, exploit replay, and security demos. | runnable or reviewer-legible proof entry points | `WP-02` - `WP-10` | planned issue wave |
 | WP-12 | Milestone convergence and follow-on mapping | Reconcile issue graph, carry-forward, and proof surfaces before the release tail starts. | converged issue graph and milestone status surfaces | `WP-02` - `WP-11` | planned issue wave |
 | WP-13 | Demo matrix + integration demos | Validate the milestone claims through bounded demos and integration review. | canonical demo matrix and demo artifacts | `WP-02` - `WP-12` | planned issue wave |
@@ -58,7 +59,7 @@
 - WP-07 -> the adversarial proof/demo package is legible and bounded
 - WP-08 -> the skill substrate/composition layer is explicit enough for runtime implementation
 - WP-09 -> governance/coordination supporting inputs are resolved enough to keep the milestone coherent
-- WP-10 -> placeholder or extension docs are either integrated truthfully or explicitly kept out
+- WP-10 -> under-authored supporting inputs or extension docs are either integrated truthfully or explicitly kept out
 - WP-11 -> proof entry points exist for the main milestone claims
 - WP-12 -> the milestone package and issue graph are converged
 - WP-13 -> milestone claims have bounded demo/proof surfaces

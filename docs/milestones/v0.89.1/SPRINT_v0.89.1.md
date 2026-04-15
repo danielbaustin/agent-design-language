@@ -18,9 +18,9 @@
 
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
-| `v0.89.1-s1` | open the official issue wave and execute the adversarial/runtime core | `WP-01`, `WP-02` - `WP-05` | package ready; execution not started |
-| `v0.89.1-s2` | execute verification, self-attack, demo, and governed execution substrate work | `WP-06` - `WP-10` | reserved |
-| `v0.89.1-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | reserved |
+| `v0.89.1-s1` | open the official issue wave and execute the adversarial/runtime core | `WP-01`, `WP-02` - `WP-05` | seed-ready; issue wave not opened |
+| `v0.89.1-s2` | execute verification, self-attack, demo, and governed execution substrate work | `WP-06` - `WP-10` | seed-ready behind Sprint 1 |
+| `v0.89.1-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | planned release tail; no issue wave yet |
 
 ## Sprint 1
 
@@ -36,8 +36,9 @@ Move `v0.89.1` from a carry-forward reference into a real execution package by o
 
 ### Exit Criteria
 - `WP-02` through `WP-05` are opened and mapped to the canonical milestone docs
-- the adversarial/runtime core has an executable issue wave rather than a reserved placeholder band
+- the adversarial/runtime core has an executable issue wave rather than a merely reserved planning band
 - the main milestone docs record the active issue graph truthfully instead of speaking about the wave as hypothetical
+- issue creation can proceed directly from the milestone docs without reopening scope design
 
 ## Sprint 2
 
@@ -55,7 +56,8 @@ Land the exploit-proof and governed execution substrate that makes `v0.89.1` mor
 ### Exit Criteria
 - `WP-06` through `WP-10` are opened and tracked in the milestone package
 - the main `v0.89.1` feature band is fully represented in the active execution package
-- placeholder inputs are either integrated truthfully or explicitly left out
+- under-authored supporting inputs are either integrated truthfully or explicitly left out
+- supporting governance and provider-extension questions remain bounded instead of swelling the milestone mid-wave
 
 ## Sprint 3
 
@@ -92,6 +94,15 @@ Close the milestone using the normal ADL pattern: demos, quality gate, docs/revi
 - Demo artifact: `DEMO_MATRIX_v0.89.1.md` plus the later adversarial/replay proof surfaces it governs
 - Review date: `TBD`
 - Sign-off owners: Daniel Austin plus later third-party review where appropriate
+
+## Current Planning Readiness
+
+This package is ready for review and later issueization now.
+
+That means:
+- Sprint 1 issue creation should be mechanical from `WBS_v0.89.1.md`, `SPRINT_v0.89.1.md`, and `WP_ISSUE_WAVE_v0.89.1.yaml`
+- the remaining work before kickoff is review refinement, not milestone rediscovery
+- the reserved wave should remain unopened until the operator intentionally starts `v0.89.1`
 
 ## Cadence Expectations
 - use issue cards (`stp` / `sip` / `sor`) for each issue

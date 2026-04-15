@@ -60,3 +60,4 @@ The milestone succeeds when:
 - `v0.89` no longer carries an implied adversarial backlog
 - reviewers can point to a concrete `v0.89.1` package
 - the package is strong enough to seed a truthful implementation issue wave
+- the issue wave can be opened quickly from the docs without another design round
