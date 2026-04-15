@@ -19,13 +19,13 @@ mod http_family;
 mod local;
 mod profiles;
 
-pub use http_family::{AnthropicProvider, HttpProvider, OpenAiProvider};
+pub use http_family::{AnthropicProvider, HttpProvider, OllamaHttpProvider, OpenAiProvider};
 pub use local::{MockProvider, OllamaProvider};
 pub use profiles::{expand_provider_profiles, provider_profile_names};
 
 pub(crate) use profiles::{
-    is_allowed_remote_endpoint, ANTHROPIC_MESSAGES_ENDPOINT, ANTHROPIC_VERSION,
-    OPENAI_RESPONSES_ENDPOINT,
+    is_allowed_ollama_endpoint, is_allowed_remote_endpoint, ANTHROPIC_MESSAGES_ENDPOINT,
+    ANTHROPIC_VERSION, OPENAI_RESPONSES_ENDPOINT,
 };
 
 /// A minimal blocking provider interface for v0.1.
@@ -235,6 +235,7 @@ pub fn build_provider_for_id(
     match target.transport {
         provider_substrate::ProviderTransportV1::Http => match target.provider_kind.as_str() {
             "http" | "http_remote" => Ok(Box::new(HttpProvider::from_target(spec, &target)?)),
+            "ollama" => Ok(Box::new(OllamaHttpProvider::from_target(spec, &target)?)),
             "openai" => Ok(Box::new(OpenAiProvider::from_target(spec, &target)?)),
             "anthropic" => Ok(Box::new(AnthropicProvider::from_target(spec, &target)?)),
             other => Err(unknown_kind(other)),

@@ -42,6 +42,11 @@ pub(crate) fn is_allowed_remote_endpoint(endpoint: &str) -> bool {
         || normalized.starts_with("http://[::1]")
 }
 
+pub(crate) fn is_allowed_ollama_endpoint(endpoint: &str) -> bool {
+    let normalized = endpoint.trim().to_ascii_lowercase();
+    normalized.starts_with("https://") || normalized.starts_with("http://")
+}
+
 pub(crate) const OPENAI_RESPONSES_ENDPOINT: &str = "https://api.openai.com/v1/responses";
 pub(crate) const ANTHROPIC_MESSAGES_ENDPOINT: &str = "https://api.anthropic.com/v1/messages";
 pub(crate) const ANTHROPIC_VERSION: &str = "2023-06-01";

@@ -82,6 +82,11 @@ Key capabilities:
 - provide a configuration surface that lets agents target vendors and models without brittle string coupling
 - integrate cleanly with declared, observed, and effective capability envelopes
 
+Current runtime clarification:
+- `local_ollama` is the explicit local CLI-backed Ollama surface
+- `ollama` may resolve to either local CLI compatibility mode or first-class HTTP transport when `base_url` or `config.endpoint` is configured
+- remote Ollama intentionally permits explicit `http://` endpoints because native Ollama deployments commonly run on loopback or LAN-local plaintext HTTP
+
 ## Design
 
 ### Core Concepts

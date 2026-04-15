@@ -166,8 +166,15 @@ fn infer_vendor(spec: &adl::ProviderSpec) -> String {
 
 fn infer_transport(spec: &adl::ProviderSpec) -> Result<ProviderTransportV1> {
     match spec.kind.trim() {
+        "ollama" => {
+            if spec.base_url.is_some() || cfg_str(&spec.config, "endpoint").is_some() {
+                Ok(ProviderTransportV1::Http)
+            } else {
+                Ok(ProviderTransportV1::LocalCli)
+            }
+        }
         "http" | "http_remote" | "openai" | "anthropic" => Ok(ProviderTransportV1::Http),
-        "ollama" | "local_ollama" => Ok(ProviderTransportV1::LocalCli),
+        "local_ollama" => Ok(ProviderTransportV1::LocalCli),
         "mock" => Ok(ProviderTransportV1::InProcess),
         other => Err(anyhow!(
             "unsupported provider kind '{other}' for provider substrate v1"
@@ -181,6 +188,42 @@ fn infer_capability_defaults(
     model_ref: Option<&str>,
 ) -> ProviderCapabilitiesV1 {
     let model = model_ref.unwrap_or("").trim().to_lowercase();
+    if vendor == "ollama" {
+        let native_supported = model.contains("gpt-oss")
+            || model.contains("qwen3-coder")
+            || model.contains("qwen2.5-coder");
+        let tool_calling = if native_supported {
+            CapabilitySupportV1 {
+                supported: true,
+                mode: CapabilityModeV1::Native,
+            }
+        } else {
+            CapabilitySupportV1 {
+                supported: false,
+                mode: CapabilityModeV1::None,
+            }
+        };
+        let structured_json = if tool_calling.supported {
+            CapabilitySupportV1 {
+                supported: true,
+                mode: CapabilityModeV1::Native,
+            }
+        } else {
+            CapabilitySupportV1 {
+                supported: true,
+                mode: CapabilityModeV1::PromptBased,
+            }
+        };
+        return ProviderCapabilitiesV1 {
+            tool_calling,
+            structured_json,
+            semantic_tool_fallback: CapabilitySupportV1 {
+                supported: true,
+                mode: CapabilityModeV1::SemanticFallback,
+            },
+        };
+    }
+
     let native_tool_calling = match transport {
         ProviderTransportV1::Http | ProviderTransportV1::InProcess => CapabilitySupportV1 {
             supported: true,
@@ -458,6 +501,32 @@ mod tests {
         assert_eq!(target.transport, ProviderTransportV1::LocalCli);
         assert_eq!(target.model_ref, "phi4-mini");
         assert_eq!(target.provider_model_id, "phi4-mini-provider-native");
+    }
+
+    #[test]
+    fn provider_substrate_uses_http_transport_for_ollama_with_endpoint() {
+        let mut spec = provider_spec("ollama");
+        spec.base_url = Some("http://192.168.68.73:11434".to_string());
+        spec.default_model = Some("phi4-mini".to_string());
+
+        let substrate = provider_substrate_v1("remote_ollama", &spec).expect("substrate");
+        assert_eq!(substrate.vendor, "ollama");
+        assert_eq!(substrate.transport, ProviderTransportV1::Http);
+        assert!(substrate.capabilities.semantic_tool_fallback.supported);
+        assert_eq!(
+            substrate.capabilities.structured_json.mode,
+            CapabilityModeV1::PromptBased
+        );
+    }
+
+    #[test]
+    fn provider_substrate_keeps_local_ollama_cli_transport() {
+        let mut spec = provider_spec("local_ollama");
+        spec.default_model = Some("phi4-mini".to_string());
+
+        let substrate = provider_substrate_v1("local_ollama", &spec).expect("substrate");
+        assert_eq!(substrate.vendor, "ollama");
+        assert_eq!(substrate.transport, ProviderTransportV1::LocalCli);
     }
 
     #[test]

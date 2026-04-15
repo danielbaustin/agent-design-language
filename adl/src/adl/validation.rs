@@ -302,7 +302,35 @@ pub(super) fn validate_provider(provider_id: &str, provider: &ProviderSpec) -> R
     }
 
     match provider.kind.as_str() {
-        "ollama" | "local_ollama" | "mock" | "openai" | "anthropic" => Ok(()),
+        "ollama" => {
+            let endpoint = provider
+                .base_url
+                .as_deref()
+                .or_else(|| provider.config.get("endpoint").and_then(|v| v.as_str()));
+            if let Some(endpoint) = endpoint {
+                if !crate::provider::is_allowed_ollama_endpoint(endpoint) {
+                    return Err(anyhow!(
+                        "providers.{provider_id} kind 'ollama' requires an http:// or https:// base_url/config.endpoint when remote transport is configured"
+                    ));
+                }
+            }
+            Ok(())
+        }
+        "local_ollama" => {
+            if provider.base_url.is_some()
+                || provider
+                    .config
+                    .get("endpoint")
+                    .and_then(|v| v.as_str())
+                    .is_some()
+            {
+                return Err(anyhow!(
+                    "providers.{provider_id} kind 'local_ollama' is CLI-backed and must not set base_url or config.endpoint; use kind 'ollama' for remote HTTP transport"
+                ));
+            }
+            Ok(())
+        }
+        "mock" | "openai" | "anthropic" => Ok(()),
         "http" | "http_remote" => {
             let endpoint = provider
                 .base_url
