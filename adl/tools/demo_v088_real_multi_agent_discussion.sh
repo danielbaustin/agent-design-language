@@ -13,7 +13,7 @@ SYNTHESIS="$OUT_DIR/synthesis.md"
 MANIFEST="$OUT_DIR/demo_manifest.json"
 INVOCATIONS="$OUT_DIR/provider_invocations.json"
 README_OUT="$OUT_DIR/README.md"
-OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-}"
+OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-$HOME/keys/openai2.key}"
 ANTHROPIC_KEY_FILE="${ADL_ANTHROPIC_KEY_FILE:-}"
 
 TURN_FILES=(
@@ -224,7 +224,7 @@ bash adl/tools/demo_v088_real_multi_agent_discussion.sh
 
 Credential loading:
 - Uses \`OPENAI_API_KEY\` and \`ANTHROPIC_API_KEY\` when already set.
-- Otherwise reads operator-selected key files only when \`ADL_OPENAI_KEY_FILE\` and \`ADL_ANTHROPIC_KEY_FILE\` are set.
+- Otherwise defaults to \`\\\$HOME/keys/openai2.key\` for OpenAI and \`\\\$HOME/keys/claude.key\` for Anthropic, unless \`ADL_OPENAI_KEY_FILE\` or \`ADL_ANTHROPIC_KEY_FILE\` overrides are set explicitly.
 - Secret values, key-file paths, and raw Authorization headers are not written to generated artifacts.
 
 What this proves:

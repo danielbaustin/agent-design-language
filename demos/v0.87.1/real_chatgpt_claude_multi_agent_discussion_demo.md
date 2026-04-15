@@ -25,7 +25,7 @@ bash adl/tools/demo_v0871_real_multi_agent_discussion.sh
 
 The demo uses operator-managed credentials only:
 
-- `OPENAI_API_KEY` if already set, otherwise `$HOME/keys/openai.key`
+- `OPENAI_API_KEY` if already set, otherwise `$HOME/keys/openai2.key`
 - `ANTHROPIC_API_KEY` if already set, otherwise `$HOME/keys/claude.key`
 
 The scripts must not print, persist, or commit secret values. Generated proof

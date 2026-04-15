@@ -19,7 +19,7 @@ MANIFEST="$OUT_DIR/demo_manifest.json"
 README_OUT="$OUT_DIR/README.md"
 EXAMPLE="adl/examples/v0-87-1-real-multi-agent-tea-discussion.adl.yaml"
 GENERATED_EXAMPLE="$OUT_DIR/v0-87-1-real-multi-agent-tea-discussion.runtime.adl.yaml"
-OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-$HOME/keys/openai.key}"
+OPENAI_KEY_FILE="${ADL_OPENAI_KEY_FILE:-$HOME/keys/openai2.key}"
 ANTHROPIC_KEY_FILE="${ADL_ANTHROPIC_KEY_FILE:-$HOME/keys/claude.key}"
 
 load_key() {
@@ -235,7 +235,7 @@ bash adl/tools/demo_v0871_real_multi_agent_discussion.sh
 
 Credential loading:
 - Uses \`OPENAI_API_KEY\` and \`ANTHROPIC_API_KEY\` when already set.
-- Otherwise reads local operator-managed keys from \`\\\$HOME/keys/openai.key\` and \`\\\$HOME/keys/claude.key\`.
+- Otherwise reads local operator-managed keys from \`\\\$HOME/keys/openai2.key\` and \`\\\$HOME/keys/claude.key\`.
 - Secret values and raw Authorization headers are not written to generated artifacts.
 
 What this proves:
