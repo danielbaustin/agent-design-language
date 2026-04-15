@@ -148,7 +148,7 @@ fn build_aee_convergence_artifact_distinguishes_core_outcome_classes() {
             candidate_rationale: "execute the reviewed bounded candidate".to_string(),
             risk_class: "bounded".to_string(),
             policy_context: execute::FreedomGatePolicyContextState {
-                route_selected: "slow".to_string(),
+                route_selected: execute::Route::Slow,
                 selected_candidate_kind: "review_and_refine".to_string(),
                 requires_review: true,
                 policy_blocked: false,
@@ -677,7 +677,7 @@ fn build_control_path_security_review_artifact_projects_posture_and_trust() {
             candidate_rationale: "high-risk path remains bounded".to_string(),
             risk_class: "high".to_string(),
             policy_context: execute::FreedomGatePolicyContextState {
-                route_selected: "slow".to_string(),
+                route_selected: execute::Route::Slow,
                 selected_candidate_kind: "review_and_refine".to_string(),
                 requires_review: true,
                 policy_blocked: false,
@@ -1121,7 +1121,7 @@ fn build_freedom_gate_artifact_is_deterministic_and_blocks_commitment_when_not_a
             candidate_rationale: "custom selected candidate reason".to_string(),
             risk_class: "high".to_string(),
             policy_context: execute::FreedomGatePolicyContextState {
-                route_selected: "slow".to_string(),
+                route_selected: execute::Route::Slow,
                 selected_candidate_kind: "review_and_refine".to_string(),
                 requires_review: false,
                 policy_blocked: false,

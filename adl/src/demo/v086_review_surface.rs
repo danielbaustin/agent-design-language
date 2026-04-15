@@ -9,7 +9,7 @@ use super::{write_file, DEMO_G_V086_CONTROL_PATH};
 fn custom_v086_control_path_runtime() -> execute::RuntimeControlState {
     execute::RuntimeControlState {
         signals: execute::CognitiveSignalsState {
-            dominant_instinct: "integrity".to_string(),
+            dominant_instinct: execute::DominantInstinct::Integrity,
             completion_pressure: "guarded".to_string(),
             integrity_bias: "high".to_string(),
             curiosity_bias: "bounded".to_string(),
@@ -21,7 +21,7 @@ fn custom_v086_control_path_runtime() -> execute::RuntimeControlState {
             downstream_influence: "integrated control path demo".to_string(),
         },
         arbitration: execute::CognitiveArbitrationState {
-            route_selected: "slow".to_string(),
+            route_selected: execute::Route::Slow,
             reasoning_mode: "review_heavy".to_string(),
             confidence: "guarded".to_string(),
             risk_class: "high".to_string(),
@@ -37,7 +37,7 @@ fn custom_v086_control_path_runtime() -> execute::RuntimeControlState {
                     .to_string(),
         },
         fast_slow: execute::FastSlowPathState {
-            selected_path: "slow_path".to_string(),
+            selected_path: execute::SelectedPath::SlowPath,
             path_family: "slow".to_string(),
             runtime_branch_taken: "slow_review_refine_branch".to_string(),
             handoff_state: "review_handoff".to_string(),
@@ -112,7 +112,7 @@ fn custom_v086_control_path_runtime() -> execute::RuntimeControlState {
                     .to_string(),
                 risk_class: "high".to_string(),
                 policy_context: execute::FreedomGatePolicyContextState {
-                    route_selected: "slow".to_string(),
+                    route_selected: execute::Route::Slow,
                     selected_candidate_kind: "review_and_refine".to_string(),
                     requires_review: false,
                     policy_blocked: false,
@@ -893,7 +893,7 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
 pub fn write_v086_fast_slow_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
     let mut artifacts = Vec::new();
     let simple_arbitration = execute::CognitiveArbitrationState {
-        route_selected: "fast".to_string(),
+        route_selected: execute::Route::Fast,
         reasoning_mode: "quick_commit".to_string(),
         confidence: "high".to_string(),
         risk_class: "low".to_string(),
@@ -902,7 +902,7 @@ pub fn write_v086_fast_slow_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         route_reason: "simple bounded summary task remains on the fast path".to_string(),
     };
     let simple_path = execute::FastSlowPathState {
-        selected_path: "fast_path".to_string(),
+        selected_path: execute::SelectedPath::FastPath,
         path_family: "fast".to_string(),
         runtime_branch_taken: "fast_direct_execution_branch".to_string(),
         handoff_state: "direct_commit".to_string(),
@@ -914,7 +914,7 @@ pub fn write_v086_fast_slow_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
             .to_string(),
     };
     let complex_arbitration = execute::CognitiveArbitrationState {
-        route_selected: "slow".to_string(),
+        route_selected: execute::Route::Slow,
         reasoning_mode: "review_heavy".to_string(),
         confidence: "guarded".to_string(),
         risk_class: "high".to_string(),
@@ -929,7 +929,7 @@ pub fn write_v086_fast_slow_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
             .to_string(),
     };
     let complex_path = execute::FastSlowPathState {
-        selected_path: "slow_path".to_string(),
+        selected_path: execute::SelectedPath::SlowPath,
         path_family: "slow".to_string(),
         runtime_branch_taken: "slow_review_refine_branch".to_string(),
         handoff_state: "review_handoff".to_string(),

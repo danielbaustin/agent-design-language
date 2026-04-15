@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
@@ -23,10 +24,82 @@ pub struct RuntimeControlState {
     pub memory: MemoryParticipationState,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DominantInstinct {
+    Integrity,
+    Completion,
+    Curiosity,
+    Coherence,
+}
+
+impl DominantInstinct {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Integrity => "integrity",
+            Self::Completion => "completion",
+            Self::Curiosity => "curiosity",
+            Self::Coherence => "coherence",
+        }
+    }
+}
+
+impl fmt::Display for DominantInstinct {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Route {
+    Fast,
+    Hybrid,
+    Slow,
+}
+
+impl Route {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Fast => "fast",
+            Self::Hybrid => "hybrid",
+            Self::Slow => "slow",
+        }
+    }
+}
+
+impl fmt::Display for Route {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SelectedPath {
+    FastPath,
+    SlowPath,
+}
+
+impl SelectedPath {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::FastPath => "fast_path",
+            Self::SlowPath => "slow_path",
+        }
+    }
+}
+
+impl fmt::Display for SelectedPath {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct CognitiveSignalsState {
-    pub dominant_instinct: String,
+    pub dominant_instinct: DominantInstinct,
     pub completion_pressure: String,
     pub integrity_bias: String,
     pub curiosity_bias: String,
@@ -41,7 +114,7 @@ pub struct CognitiveSignalsState {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct CognitiveArbitrationState {
-    pub route_selected: String,
+    pub route_selected: Route,
     pub reasoning_mode: String,
     pub confidence: String,
     pub risk_class: String,
@@ -53,7 +126,7 @@ pub struct CognitiveArbitrationState {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct FastSlowPathState {
-    pub selected_path: String,
+    pub selected_path: SelectedPath,
     pub path_family: String,
     pub runtime_branch_taken: String,
     pub handoff_state: String,
@@ -164,10 +237,19 @@ pub struct FreedomGateInputState {
     pub frame_state: String,
 }
 
+fn parse_route(value: &str) -> Route {
+    match value {
+        "fast" => Route::Fast,
+        "hybrid" => Route::Hybrid,
+        "slow" => Route::Slow,
+        other => panic!("unexpected route_selected value: {other}"),
+    }
+}
+
 impl From<freedom_gate::FreedomGatePolicyContext> for FreedomGatePolicyContextState {
     fn from(value: freedom_gate::FreedomGatePolicyContext) -> Self {
         Self {
-            route_selected: value.route_selected,
+            route_selected: parse_route(&value.route_selected),
             selected_candidate_kind: value.selected_candidate_kind,
             requires_review: value.requires_review,
             policy_blocked: value.policy_blocked,
@@ -215,7 +297,7 @@ impl From<freedom_gate::FreedomGateInput> for FreedomGateInputState {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct FreedomGatePolicyContextState {
-    pub route_selected: String,
+    pub route_selected: Route,
     pub selected_candidate_kind: String,
     pub requires_review: bool,
     pub policy_blocked: bool,
@@ -416,18 +498,18 @@ fn derive_cognitive_signals_state(
         "low"
     };
     let dominant_instinct = if integrity_bias == "high" {
-        "integrity"
+        DominantInstinct::Integrity
     } else if completion_pressure == "elevated" {
-        "completion"
+        DominantInstinct::Completion
     } else if curiosity_bias == "active" {
-        "curiosity"
+        DominantInstinct::Curiosity
     } else {
-        "coherence"
+        DominantInstinct::Coherence
     };
     let candidate_selection_bias = match dominant_instinct {
-        "integrity" => "prefer lower-risk constrained candidates",
-        "completion" => "prefer candidates that reduce unfinished work quickly",
-        "curiosity" => "prefer candidates that reduce uncertainty",
+        DominantInstinct::Integrity => "prefer lower-risk constrained candidates",
+        DominantInstinct::Completion => "prefer candidates that reduce unfinished work quickly",
+        DominantInstinct::Curiosity => "prefer candidates that reduce uncertainty",
         _ => "prefer candidates that preserve bounded coherence",
     };
     let salience_level = if evidence.failure_count > 0 || evidence.delegation_denied_count > 0 {
@@ -451,7 +533,7 @@ fn derive_cognitive_signals_state(
     };
 
     CognitiveSignalsState {
-        dominant_instinct: dominant_instinct.to_string(),
+        dominant_instinct,
         completion_pressure: completion_pressure.to_string(),
         integrity_bias: integrity_bias.to_string(),
         curiosity_bias: curiosity_bias.to_string(),
@@ -462,7 +544,7 @@ fn derive_cognitive_signals_state(
         confidence_shift: confidence_shift.to_string(),
         downstream_influence: format!(
             "dominant_instinct={} failure_count={} retry_count={} delegation_denied_count={} max_parallel={}",
-            dominant_instinct,
+            dominant_instinct.as_str(),
             evidence.failure_count,
             evidence.retry_count,
             evidence.delegation_denied_count,
@@ -478,16 +560,16 @@ fn derive_cognitive_arbitration_state(
 ) -> CognitiveArbitrationState {
     let (route_selected, reasoning_mode) = if evidence.security_denied_count > 0
         || evidence.failure_count > 0
-        || signals.dominant_instinct == "integrity"
+        || signals.dominant_instinct == DominantInstinct::Integrity
     {
-        ("slow", "review_heavy")
+        (Route::Slow, "review_heavy")
     } else if evidence.retry_count > 0
         || overall_status == "paused"
         || signals.confidence_shift == "reduced"
     {
-        ("hybrid", "bounded_recovery")
+        (Route::Hybrid, "bounded_recovery")
     } else {
-        ("fast", "direct_execution")
+        (Route::Fast, "direct_execution")
     };
     let risk_class = if evidence.security_denied_count > 0 {
         "high"
@@ -496,9 +578,9 @@ fn derive_cognitive_arbitration_state(
     } else {
         "low"
     };
-    let confidence = if route_selected == "fast" {
+    let confidence = if route_selected == Route::Fast {
         "high"
-    } else if route_selected == "hybrid" {
+    } else if route_selected == Route::Hybrid {
         "guarded"
     } else {
         "review_required"
@@ -520,13 +602,13 @@ fn derive_cognitive_arbitration_state(
         applied_constraints.push("bounded_default_path".to_string());
     }
     let cost_latency_assumption = match route_selected {
-        "fast" => "prefer lower-cost low-latency execution when bounded evidence is stable",
-        "hybrid" => "allow bounded extra review when retry or pause pressure is present",
+        Route::Fast => "prefer lower-cost low-latency execution when bounded evidence is stable",
+        Route::Hybrid => "allow bounded extra review when retry or pause pressure is present",
         _ => "spend bounded additional cognition when failure or policy risk is present",
     };
 
     CognitiveArbitrationState {
-        route_selected: route_selected.to_string(),
+        route_selected,
         reasoning_mode: reasoning_mode.to_string(),
         confidence: confidence.to_string(),
         risk_class: risk_class.to_string(),
@@ -534,8 +616,8 @@ fn derive_cognitive_arbitration_state(
         cost_latency_assumption: cost_latency_assumption.to_string(),
         route_reason: format!(
             "route={} dominant_instinct={} overall_status={} failure_count={} retry_count={} delegation_denied_count={}",
-            route_selected,
-            signals.dominant_instinct,
+            route_selected.as_str(),
+            signals.dominant_instinct.as_str(),
             overall_status,
             evidence.failure_count,
             evidence.retry_count,
@@ -554,9 +636,9 @@ fn derive_fast_slow_path_state(arbitration: &CognitiveArbitrationState) -> FastS
         review_depth,
         execution_profile,
         termination_expectation,
-    ) = match arbitration.route_selected.as_str() {
-        "fast" => (
-            "fast_path",
+    ) = match arbitration.route_selected {
+        Route::Fast => (
+            SelectedPath::FastPath,
             "fast",
             "fast_direct_execution_branch",
             "direct_handoff",
@@ -565,8 +647,8 @@ fn derive_fast_slow_path_state(arbitration: &CognitiveArbitrationState) -> FastS
             "single_pass_direct_execution",
             "terminate_on_first_bounded_success_or_policy_block",
         ),
-        "hybrid" => (
-            "slow_path",
+        Route::Hybrid => (
+            SelectedPath::SlowPath,
             "slow",
             "slow_bounded_recovery_branch",
             "bounded_recovery_handoff",
@@ -575,8 +657,8 @@ fn derive_fast_slow_path_state(arbitration: &CognitiveArbitrationState) -> FastS
             "review_then_execute_once",
             "terminate_after_bounded_review_cycle_or_policy_block",
         ),
-        _ => (
-            "slow_path",
+        Route::Slow => (
+            SelectedPath::SlowPath,
             "slow",
             "slow_review_refine_branch",
             "review_handoff",
@@ -587,16 +669,16 @@ fn derive_fast_slow_path_state(arbitration: &CognitiveArbitrationState) -> FastS
         ),
     };
     let path_difference_summary = match selected_path {
-        "fast_path" => {
+        SelectedPath::FastPath => {
             "fast_path favors direct execution with minimal review and a single bounded candidate handoff"
         }
-        _ => {
+        SelectedPath::SlowPath => {
             "slow_path requires bounded review/refinement before execution and can revise or veto the current candidate"
         }
     };
 
     FastSlowPathState {
-        selected_path: selected_path.to_string(),
+        selected_path,
         path_family: path_family.to_string(),
         runtime_branch_taken: runtime_branch_taken.to_string(),
         handoff_state: handoff_state.to_string(),
@@ -620,8 +702,8 @@ fn derive_agency_selection_state(
         selected_candidate_kind,
         selected_candidate_action,
         selected_candidate_reason,
-    ) = match fast_slow.selected_path.as_str() {
-        "fast_path" => {
+    ) = match fast_slow.selected_path {
+        SelectedPath::FastPath => {
             let candidate_set = vec![
                 AgencyCandidateRecord {
                     candidate_id: "cand-fast-execute".to_string(),
@@ -633,7 +715,9 @@ fn derive_agency_selection_state(
                     execution_priority: 1,
                     rationale: format!(
                         "route={} dominant_instinct={} confidence={}",
-                        arbitration.route_selected, signals.dominant_instinct, arbitration.confidence
+                        arbitration.route_selected.as_str(),
+                        signals.dominant_instinct.as_str(),
+                        arbitration.confidence
                     ),
                 },
                 AgencyCandidateRecord {
@@ -649,8 +733,8 @@ fn derive_agency_selection_state(
                 },
             ];
             let decision = select_instinct_runtime_candidate(
-                fast_slow.selected_path.as_str(),
-                signals.dominant_instinct.as_str(),
+                fast_slow.selected_path,
+                signals.dominant_instinct,
                 arbitration.risk_class.as_str(),
             );
             (
@@ -674,7 +758,9 @@ fn derive_agency_selection_state(
                     execution_priority: 1,
                     rationale: format!(
                         "route={} dominant_instinct={} risk_class={}",
-                        arbitration.route_selected, signals.dominant_instinct, arbitration.risk_class
+                        arbitration.route_selected.as_str(),
+                        signals.dominant_instinct.as_str(),
+                        arbitration.risk_class
                     ),
                 },
                 AgencyCandidateRecord {
@@ -700,8 +786,8 @@ fn derive_agency_selection_state(
                 },
             ];
             let decision = select_instinct_runtime_candidate(
-                fast_slow.selected_path.as_str(),
-                signals.dominant_instinct.as_str(),
+                fast_slow.selected_path,
+                signals.dominant_instinct,
                 arbitration.risk_class.as_str(),
             );
             (
@@ -718,9 +804,9 @@ fn derive_agency_selection_state(
     AgencySelectionState {
         candidate_generation_basis: format!(
             "path={} runtime_branch={} route={} candidate_selection_bias={}",
-            fast_slow.selected_path,
+            fast_slow.selected_path.as_str(),
             fast_slow.runtime_branch_taken,
-            arbitration.route_selected,
+            arbitration.route_selected.as_str(),
             signals.candidate_selection_bias
         ),
         selection_mode: selection_mode.to_string(),
@@ -733,13 +819,13 @@ fn derive_agency_selection_state(
 }
 
 pub fn select_instinct_runtime_candidate(
-    selected_path: &str,
-    dominant_instinct: &str,
+    selected_path: SelectedPath,
+    dominant_instinct: DominantInstinct,
     risk_class: &str,
 ) -> AgencySelectionDecisionTemplate {
     match selected_path {
-        "fast_path" => match dominant_instinct {
-            "curiosity" | "integrity" => AgencySelectionDecisionTemplate {
+        SelectedPath::FastPath => match dominant_instinct {
+            DominantInstinct::Curiosity | DominantInstinct::Integrity => AgencySelectionDecisionTemplate {
                 selection_mode: "fast_candidate_verification",
                 candidate_id: "cand-fast-verify",
                 candidate_kind: "bounded_verification",
@@ -756,8 +842,10 @@ pub fn select_instinct_runtime_candidate(
                     "fast path prioritizes direct bounded execution when instinct pressure does not require extra verification",
             },
         },
-        _ => {
-            if risk_class == "high" || matches!(dominant_instinct, "integrity" | "coherence") {
+        SelectedPath::SlowPath => {
+            if risk_class == "high"
+                || matches!(dominant_instinct, DominantInstinct::Integrity | DominantInstinct::Coherence)
+            {
                 AgencySelectionDecisionTemplate {
                     selection_mode: "slow_candidate_review",
                     candidate_id: "cand-slow-review",
@@ -767,7 +855,7 @@ pub fn select_instinct_runtime_candidate(
                     candidate_reason:
                         "slow path keeps review/refinement selected when risk stays high or instinct pressure favors constraint and coherence preservation",
                 }
-            } else if dominant_instinct == "curiosity" {
+            } else if dominant_instinct == DominantInstinct::Curiosity {
                 AgencySelectionDecisionTemplate {
                     selection_mode: "slow_candidate_uncertainty_hold",
                     candidate_id: "cand-slow-defer",
@@ -928,9 +1016,9 @@ fn derive_reframing_control_state(
     bounded_execution: &BoundedExecutionState,
     evaluation: &EvaluationControlState,
 ) -> ReframingControlState {
-    let prior_frame = match fast_slow.selected_path.as_str() {
-        "fast_path" => "direct_execution_under_current_frame",
-        _ => "review_and_refine_under_current_frame",
+    let prior_frame = match fast_slow.selected_path {
+        SelectedPath::FastPath => "direct_execution_under_current_frame",
+        SelectedPath::SlowPath => "review_and_refine_under_current_frame",
     };
 
     let (
@@ -1016,7 +1104,7 @@ fn derive_freedom_gate_state(
         candidate_rationale: agency.selected_candidate_reason.clone(),
         risk_class: arbitration.risk_class.clone(),
         policy_context: freedom_gate::FreedomGatePolicyContext {
-            route_selected: arbitration.route_selected.clone(),
+            route_selected: arbitration.route_selected.as_str().to_string(),
             selected_candidate_kind: agency.selected_candidate_kind.clone(),
             requires_review: agency.selected_candidate_kind == "bounded_deferral"
                 || evaluation.next_control_action == "await_resume",
@@ -1036,20 +1124,20 @@ fn derive_freedom_gate_state(
             },
             recovery_cost: if evaluation.next_control_action == "handoff_to_reframing" {
                 "requires_reframing".to_string()
-            } else if arbitration.route_selected == "slow" {
+            } else if arbitration.route_selected == Route::Slow {
                 "bounded_review_replay".to_string()
             } else {
                 "low".to_string()
             },
             operator_visibility: if arbitration.risk_class == "high"
-                || arbitration.route_selected == "slow"
+                || arbitration.route_selected == Route::Slow
                 || evaluation.contradiction_signal == "present"
             {
                 "review_required".to_string()
             } else {
                 "routine".to_string()
             },
-            escalation_available: arbitration.route_selected == "slow"
+            escalation_available: arbitration.route_selected == Route::Slow
                 || arbitration.risk_class == "high"
                 || evaluation.contradiction_signal == "present"
                 || evaluation.failure_signal != "none",
@@ -1057,9 +1145,10 @@ fn derive_freedom_gate_state(
         frame_state: reframing.post_reframe_state.clone(),
     };
     let decision = freedom_gate::evaluate_freedom_gate(&input);
+    let input = input.into();
 
     FreedomGateState {
-        input: input.into(),
+        input,
         gate_decision: decision.gate_decision,
         reason_code: decision.reason_code,
         decision_reason: decision.decision_reason,
@@ -1091,12 +1180,14 @@ fn derive_memory_participation_state(
     } else if evaluation.next_control_action == "handoff_to_reframing" {
         format!(
             "prior_failure_memory reinforces bounded reframing for route={} selected_candidate={}",
-            arbitration.route_selected, agency.selected_candidate_id
+            arbitration.route_selected.as_str(),
+            agency.selected_candidate_id
         )
     } else {
         format!(
             "prior_success_memory reinforces retained bounded frame for route={} selected_candidate={}",
-            arbitration.route_selected, agency.selected_candidate_id
+            arbitration.route_selected.as_str(),
+            agency.selected_candidate_id
         )
     };
     let influenced_stage = if evaluation.next_control_action == "handoff_to_reframing" {
@@ -1129,7 +1220,7 @@ fn derive_memory_participation_state(
     let mut tags = vec![
         format!("workflow:{workflow_id}"),
         format!("status:{overall_status}"),
-        format!("route:{}", arbitration.route_selected),
+        format!("route:{}", arbitration.route_selected.as_str()),
         format!("candidate:{}", agency.selected_candidate_kind),
         format!("action:{}", evaluation.next_control_action),
     ];
@@ -1209,15 +1300,16 @@ fn load_memory_read_entries(
 
 #[cfg(test)]
 mod tests {
-    use super::{
-        select_instinct_runtime_candidate, FreedomGateConsequenceContextState,
-        FreedomGateEvaluationSignalsState, FreedomGateInputState, FreedomGatePolicyContextState,
-    };
+    use super::*;
     use crate::freedom_gate;
 
     #[test]
     fn select_instinct_runtime_candidate_changes_fast_path_for_curiosity() {
-        let decision = select_instinct_runtime_candidate("fast_path", "curiosity", "low");
+        let decision = select_instinct_runtime_candidate(
+            SelectedPath::FastPath,
+            DominantInstinct::Curiosity,
+            "low",
+        );
 
         assert_eq!(decision.candidate_id, "cand-fast-verify");
         assert_eq!(decision.candidate_kind, "bounded_verification");
@@ -1225,7 +1317,11 @@ mod tests {
 
     #[test]
     fn select_instinct_runtime_candidate_keeps_review_for_high_risk_slow_path() {
-        let decision = select_instinct_runtime_candidate("slow_path", "completion", "high");
+        let decision = select_instinct_runtime_candidate(
+            SelectedPath::SlowPath,
+            DominantInstinct::Completion,
+            "high",
+        );
 
         assert_eq!(decision.candidate_id, "cand-slow-review");
         assert_eq!(decision.candidate_kind, "review_and_refine");
@@ -1233,10 +1329,33 @@ mod tests {
 
     #[test]
     fn select_instinct_runtime_candidate_allows_curiosity_biased_slow_defer() {
-        let decision = select_instinct_runtime_candidate("slow_path", "curiosity", "medium");
+        let decision = select_instinct_runtime_candidate(
+            SelectedPath::SlowPath,
+            DominantInstinct::Curiosity,
+            "medium",
+        );
 
         assert_eq!(decision.candidate_id, "cand-slow-defer");
         assert_eq!(decision.candidate_kind, "bounded_deferral");
+    }
+
+    #[test]
+    fn runtime_control_enums_serialize_to_existing_string_values() {
+        let state = CognitiveSignalsState {
+            dominant_instinct: DominantInstinct::Integrity,
+            completion_pressure: "guarded".to_string(),
+            integrity_bias: "high".to_string(),
+            curiosity_bias: "bounded".to_string(),
+            candidate_selection_bias: "prefer lower-risk constrained candidates".to_string(),
+            urgency_level: "moderate".to_string(),
+            salience_level: "high".to_string(),
+            persistence_pressure: "stabilize_then_retry".to_string(),
+            confidence_shift: "reduced".to_string(),
+            downstream_influence: "demo".to_string(),
+        };
+
+        let json = serde_json::to_value(&state).expect("serialize state");
+        assert_eq!(json["dominant_instinct"], "integrity");
     }
 
     #[test]
@@ -1267,39 +1386,33 @@ mod tests {
             frame_state: "ready_for_reframed_execution".to_string(),
         };
 
-        let state: FreedomGateInputState = input.into();
+        let state = FreedomGateInputState::from(input);
 
         assert_eq!(state.candidate_id, "cand-007");
         assert_eq!(state.candidate_action, "review");
         assert_eq!(state.candidate_rationale, "bounded rationale");
         assert_eq!(state.risk_class, "medium");
+        assert_eq!(state.policy_context.route_selected, Route::Slow);
         assert_eq!(
-            state.policy_context,
-            FreedomGatePolicyContextState {
-                route_selected: "slow".to_string(),
-                selected_candidate_kind: "review_and_refine".to_string(),
-                requires_review: true,
-                policy_blocked: false,
-            }
+            state.policy_context.selected_candidate_kind,
+            "review_and_refine"
+        );
+        assert!(state.policy_context.requires_review);
+        assert!(!state.policy_context.policy_blocked);
+        assert_eq!(state.evaluation_signals.progress_signal, "guarded");
+        assert_eq!(state.evaluation_signals.contradiction_signal, "present");
+        assert_eq!(state.evaluation_signals.failure_signal, "none");
+        assert_eq!(state.evaluation_signals.termination_reason, "paused");
+        assert_eq!(state.consequence_context.impact_scope, "cross_surface");
+        assert_eq!(
+            state.consequence_context.recovery_cost,
+            "bounded_review_replay"
         );
         assert_eq!(
-            state.evaluation_signals,
-            FreedomGateEvaluationSignalsState {
-                progress_signal: "guarded".to_string(),
-                contradiction_signal: "present".to_string(),
-                failure_signal: "none".to_string(),
-                termination_reason: "paused".to_string(),
-            }
+            state.consequence_context.operator_visibility,
+            "review_required"
         );
-        assert_eq!(
-            state.consequence_context,
-            FreedomGateConsequenceContextState {
-                impact_scope: "cross_surface".to_string(),
-                recovery_cost: "bounded_review_replay".to_string(),
-                operator_visibility: "review_required".to_string(),
-                escalation_available: true,
-            }
-        );
+        assert!(state.consequence_context.escalation_available);
         assert_eq!(state.frame_state, "ready_for_reframed_execution");
     }
 }

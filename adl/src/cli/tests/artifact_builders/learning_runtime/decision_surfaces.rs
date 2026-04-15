@@ -130,7 +130,7 @@ fn build_control_path_decisions_artifact_is_deterministic_and_surfaces_core_reco
             candidate_rationale: "custom selected candidate reason".to_string(),
             risk_class: "high".to_string(),
             policy_context: execute::FreedomGatePolicyContextState {
-                route_selected: "slow".to_string(),
+                route_selected: execute::Route::Slow,
                 selected_candidate_kind: "review_and_refine".to_string(),
                 requires_review: false,
                 policy_blocked: false,
@@ -349,7 +349,7 @@ fn build_action_proposal_and_mediation_artifacts_are_deterministic_and_non_autho
             candidate_rationale: "custom selected candidate reason".to_string(),
             risk_class: "high".to_string(),
             policy_context: execute::FreedomGatePolicyContextState {
-                route_selected: "slow".to_string(),
+                route_selected: execute::Route::Slow,
                 selected_candidate_kind: "review_and_refine".to_string(),
                 requires_review: false,
                 policy_blocked: false,
