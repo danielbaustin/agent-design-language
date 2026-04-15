@@ -804,7 +804,7 @@ pub(crate) fn ensure_symlink(link_path: &Path, target: &Path) -> Result<()> {
     Ok(())
 }
 
-fn validate_bootstrap_cards(
+pub(crate) fn validate_bootstrap_cards(
     repo_root: &Path,
     issue: u32,
     slug: &str,
@@ -836,7 +836,13 @@ fn validate_bootstrap_cards(
             "--input",
             path_str(output_path)?,
         ],
-    )?;
+    )
+    .with_context(|| {
+        format!(
+            "doctor: output card failed bootstrap validation: {}",
+            output_path.display()
+        )
+    })?;
     let expected = format!("issue-{:04}", issue);
     if field_line_value(input_path, "Task ID")? != expected {
         bail!("start: input card Task ID mismatch");
@@ -858,6 +864,42 @@ fn validate_bootstrap_cards(
     }
     if !output_card_title_matches_slug(output_path, slug)? {
         bail!("start: output card title mismatch");
+    }
+    Ok(())
+}
+
+pub(crate) fn validate_bootstrap_output_card(
+    repo_root: &Path,
+    issue: u32,
+    slug: &str,
+    branch: &str,
+    output_path: &Path,
+) -> Result<()> {
+    let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
+    run_status(
+        "bash",
+        &[
+            path_str(&validator)?,
+            "--type",
+            "sor",
+            "--phase",
+            "bootstrap",
+            "--input",
+            path_str(output_path)?,
+        ],
+    )?;
+    let expected = format!("issue-{:04}", issue);
+    if field_line_value(output_path, "Task ID")? != expected {
+        bail!("doctor: output card Task ID mismatch");
+    }
+    if field_line_value(output_path, "Run ID")? != expected {
+        bail!("doctor: output card Run ID mismatch");
+    }
+    if field_line_value(output_path, "Branch")? != branch {
+        bail!("doctor: output card branch mismatch");
+    }
+    if !output_card_title_matches_slug(output_path, slug)? {
+        bail!("doctor: output card title mismatch");
     }
     Ok(())
 }
