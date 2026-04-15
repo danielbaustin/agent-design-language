@@ -17,13 +17,13 @@ Ship/no-ship gate for `v0.89`. Check items only when evidence exists.
 - [x] Decision log initialized (`DECISIONS_v0.89.md`)
 - [x] Sprint plan created (`SPRINT_v0.89.md`)
 - [x] Feature index created with explicit carry-forward mapping (`FEATURE_DOCS_v0.89.md`)
-- [ ] Core implementation issue wave opened
+- [x] Core implementation issue wave opened
 
 ## Execution Discipline
 - [ ] Each issue has truthful input/output cards under `.adl/`
 - [ ] Draft PR opened for each tracked issue before merge where applicable
 - [ ] Queue and closeout discipline followed consistently
-- [ ] Carry-forward to `v0.89.1` remains explicit rather than implicit
+- [x] Carry-forward to `v0.89.1` remains explicit rather than implicit
 - [ ] Green-only merge policy followed
 
 ## Quality Gates

@@ -137,17 +137,31 @@ Open questions:
 
 ## Status
 
-Current status: canonical planning package complete; official `v0.89` issue wave opened; execution work ready to begin from the seeded issue graph
+Current status: canonical planning package complete; official `v0.89` issue wave opened; core implementation is materially underway with the main convergence / gate / action / skill / experiment / ObsMem band landed and the security + release-tail wave still in flight
 
 - Planning: complete
-- Execution: issue wave opened; substantive implementation not started yet
-- Validation: planned
+- Execution: `WP-02` - `WP-08` landed, `WP-10` handoff satisfied, `WP-09` and `WP-11` - `WP-20` still active or pending
+- Validation: partial; core proof surfaces exist, release-tail proof and review surfaces remain in flight
 - Release readiness: not started
 
 Current issue map:
 - `WP-01` `#1662`
 - `WP-02` - `WP-05` `#1789` - `#1792`
 - `WP-06` - `WP-10` `#1793` - `#1797`
+- `WP-11` - `WP-20` `#1798` - `#1807`
+
+Currently landed:
+- `WP-02` `#1789`
+- `WP-03` `#1790`
+- `WP-04` `#1791`
+- `WP-05` `#1792`
+- `WP-06` `#1793`
+- `WP-07` `#1794`
+- `WP-08` `#1795`
+- `WP-10` `#1797` (satisfied by the tracked `v0.89.1` package)
+
+Still open:
+- `WP-09` `#1796`
 - `WP-11` - `WP-20` `#1798` - `#1807`
 
 ## Exit Criteria

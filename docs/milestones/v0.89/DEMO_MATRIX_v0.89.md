@@ -69,19 +69,23 @@ Additional environment / fixture requirements:
 
 | Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
 |---|---|---|---|---|---|---|---|
-| D1 | AEE convergence walkthrough | `WP-02` bounded convergence and stop conditions | `cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture` | `control_path/convergence.json` + `control_path/summary.txt` | reviewer can see converge / stall / bounded-out behavior and named stop-family reasoning | use deterministic runtime-control fixtures; D1 shares the bounded runtime-control proof run with D2 and D3 | READY |
-| D2 | Freedom Gate v2 judgment demo | `WP-03` richer allow / defer / refuse / escalate behavior | `cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture` | `learning/freedom_gate.v1.json` + `control_path/final_result.json` | reviewer can distinguish decision outcome, judgment boundary, and follow-up | stable fixtures should replay to the same outcome class and escalation path | READY |
-| D3 | Decision + action mediation proof | `WP-04` - `WP-05` explicit choice and authorization boundary | `cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture` | `control_path/decisions.json` + `control_path/action_proposals.json` + `control_path/mediation.json` | reviewer can see route selection, reframing, and commitment-gate outcomes separated from authorized runtime action | deterministic fixtures should preserve outcome classes and mediation follow-up from the shared runtime-control proof run | READY |
-| D4 | Skill invocation contract demo | `WP-06` bounded skill execution protocol | `cargo test --manifest-path adl/Cargo.toml cli_artifact_validate_control_path_ -- --nocapture` | `control_path/skill_model.json` + `control_path/skill_execution_protocol.json` + `control_path/summary.txt` | reviewer can distinguish a selected governed skill from other action kinds and inspect the pre-execution authorization lifecycle end to end | deterministic fixture replay should preserve lifecycle state, authorization outcome, and trace expectation | READY |
-| D5 | Godel experiment package demo | `WP-07` governed adopt / reject improvement behavior | `cargo run --manifest-path adl/Cargo.toml -- godel run ...` then `cargo run --manifest-path adl/Cargo.toml -- godel inspect ...` | `runs/<run-id>/godel/experiment_record.v1.json` + `evaluation_plan.v1.json` | reviewer can inspect baseline / variant pairing, canonical evidence, bounded mutation, and adopt / reject decision from one bounded summary | identical bounded inputs should preserve stage order, canonical artifact paths, and decision class | READY |
-| D6 | ObsMem evidence and ranking walkthrough | `WP-08` explainable retrieval and ranking | `cargo run --manifest-path adl/Cargo.toml -- demo demo-f-obsmem-retrieval --run --trace --out ./out` | `obsmem_retrieval_result.json` | ranking cites evidence families, status signals, and deterministic tie-break values | identical demo inputs should preserve result order and explanation shape | READY |
-| D7 | Security / trust / posture walkthrough | `WP-09` main-band security contract | `cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture`, then review `docs/milestones/v0.89/features/SECURITY_AND_THREAT_MODELING.md`, `docs/milestones/v0.89/features/ADL_SECURITY_POSTURE_MODEL.md`, and `docs/milestones/v0.89/features/ADL_TRUST_MODEL_UNDER_ADVERSARY.md` together | `control_path/security_review.json` + `control_path/summary.txt` + reviewer-facing threat/posture/trust document set | reviewer can see explicit trust boundaries, declared posture, contested trust state, and contested-operation trust assumptions without overclaiming `v0.89.1` adversarial runtime work | proof row is artifact-led with supporting reviewer docs and should replay to the same posture / trust classification for the same bounded fixture | READY |
+| D1 | AEE convergence walkthrough | `WP-02` bounded convergence and stop conditions | `cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture` | `control_path/convergence.json` + `control_path/summary.txt` | reviewer can see converge / stall / bounded-out behavior and named stop-family reasoning | use deterministic runtime-control fixtures; D1 shares the bounded runtime-control proof run with D2 and D3 | LANDED |
+| D2 | Freedom Gate v2 judgment demo | `WP-03` richer allow / defer / refuse / escalate behavior | `cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture` | `learning/freedom_gate.v1.json` + `control_path/final_result.json` | reviewer can distinguish decision outcome, judgment boundary, and follow-up | stable fixtures should replay to the same outcome class and escalation path | LANDED |
+| D3 | Decision + action mediation proof | `WP-04` - `WP-05` explicit choice and authorization boundary | `cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture` | `control_path/decisions.json` + `control_path/action_proposals.json` + `control_path/mediation.json` | reviewer can see route selection, reframing, and commitment-gate outcomes separated from authorized runtime action | deterministic fixtures should preserve outcome classes and mediation follow-up from the shared runtime-control proof run | LANDED |
+| D4 | Skill invocation contract demo | `WP-06` bounded skill execution protocol | `cargo test --manifest-path adl/Cargo.toml cli_artifact_validate_control_path_ -- --nocapture` | `control_path/skill_model.json` + `control_path/skill_execution_protocol.json` + `control_path/summary.txt` | reviewer can distinguish a selected governed skill from other action kinds and inspect the pre-execution authorization lifecycle end to end | deterministic fixture replay should preserve lifecycle state, authorization outcome, and trace expectation | LANDED |
+| D5 | Godel experiment package demo | `WP-07` governed adopt / reject improvement behavior | `cargo run --manifest-path adl/Cargo.toml -- godel run ...` then `cargo run --manifest-path adl/Cargo.toml -- godel inspect ...` | `runs/<run-id>/godel/experiment_record.v1.json` + `evaluation_plan.v1.json` | reviewer can inspect baseline / variant pairing, canonical evidence, bounded mutation, and adopt / reject decision from one bounded summary | identical bounded inputs should preserve stage order, canonical artifact paths, and decision class | LANDED |
+| D6 | ObsMem evidence and ranking walkthrough | `WP-08` explainable retrieval and ranking | `cargo run --manifest-path adl/Cargo.toml -- demo demo-f-obsmem-retrieval --run --trace --out ./out` | `obsmem_retrieval_result.json` | ranking cites evidence families, status signals, and deterministic tie-break values | identical demo inputs should preserve result order and explanation shape | LANDED |
+| D7 | Security / trust / posture walkthrough | `WP-09` main-band security contract | `cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture`, then review `docs/milestones/v0.89/features/SECURITY_AND_THREAT_MODELING.md`, `docs/milestones/v0.89/features/ADL_SECURITY_POSTURE_MODEL.md`, and `docs/milestones/v0.89/features/ADL_TRUST_MODEL_UNDER_ADVERSARY.md` together | `control_path/security_review.json` + `control_path/summary.txt` + reviewer-facing threat/posture/trust document set | reviewer can see explicit trust boundaries, declared posture, contested trust state, and contested-operation trust assumptions without overclaiming `v0.89.1` adversarial runtime work | proof row is artifact-led with supporting reviewer docs and should replay to the same posture / trust classification for the same bounded fixture | PLANNED |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
 - `READY` = runnable and locally validated
 - `BLOCKED` = known dependency or missing proof surface
 - `LANDED` = milestone evidence exists and is ready for review
+
+Current convergence note:
+- rows `D1` through `D6` now have landed milestone evidence from `WP-02` - `WP-08`
+- row `D7` remains the open main-band security proof row pending `WP-09`
 
 Heavyweight proof-package rule:
 - if a proof surface mainly exists to bundle review, release, or quality-gate evidence, classify it as a heavyweight proof package even if it is script-driven
@@ -108,7 +112,7 @@ Milestone claims / work packages covered:
 Commands to run:
 
 ```bash
-Defined when the official `WP-02` issue opens and lands.
+cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture
 ```
 
 Expected artifacts:
@@ -123,14 +127,14 @@ Expected success signals:
 - stop condition is explicit and justified
 
 Determinism / replay notes:
-- the same fixture should preserve the same convergence-state class
+- use deterministic runtime-control fixtures; the same fixture should preserve the same convergence-state class
 
 Reviewer checks:
 - look for explicit convergence or stall reasoning
 - verify that budget/policy stop states are visible
 
 Known limits / caveats:
-- command surface will be established by the official `WP-02` issue
+- this row proves bounded convergence artifacts, not the later adversarial runtime band
 
 ---
 
