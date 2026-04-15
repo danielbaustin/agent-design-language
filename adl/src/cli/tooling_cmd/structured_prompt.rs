@@ -502,9 +502,23 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
         !markdown_field(text, "Title").unwrap_or_default().is_empty(),
         "missing required field: Title"
     );
+    let integration_state = markdown_block_field(
+        text,
+        "Main Repo Integration (REQUIRED)",
+        "Integration state",
+    )
+    .unwrap_or_default();
+    ensure!(
+        integration_state.is_empty()
+            || ["worktree_only", "pr_open", "merged", "closed_no_pr"]
+                .contains(&integration_state.as_str()),
+        "Main Repo Integration.Integration state must be one of: worktree_only, pr_open, merged, closed_no_pr"
+    );
     let branch = markdown_field(text, "Branch").unwrap_or_default();
     let branch_ok = if phase == Some("bootstrap") {
         valid_branch(&branch) || branch.eq_ignore_ascii_case("not bound yet")
+    } else if phase == Some("completed") && integration_state == "closed_no_pr" {
+        branch.eq_ignore_ascii_case("retrospective-no-branch")
     } else {
         valid_branch(&branch)
     };
@@ -513,6 +527,8 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
         "Branch must be a codex/ branch{}",
         if phase == Some("bootstrap") {
             " or `not bound yet` in bootstrap phase"
+        } else if phase == Some("completed") && integration_state == "closed_no_pr" {
+            " or `retrospective-no-branch` when completed-phase Integration state is `closed_no_pr`"
         } else {
             ""
         }
@@ -531,17 +547,6 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
     ensure!(
         end.is_empty() || valid_iso8601_datetime(&end),
         "Execution.End Time must be UTC ISO 8601 / RFC3339 with trailing Z (YYYY-MM-DDTHH:MM:SSZ)"
-    );
-    let integration_state = markdown_block_field(
-        text,
-        "Main Repo Integration (REQUIRED)",
-        "Integration state",
-    )
-    .unwrap_or_default();
-    ensure!(
-        integration_state.is_empty()
-            || ["worktree_only", "pr_open", "merged"].contains(&integration_state.as_str()),
-        "Main Repo Integration.Integration state must be one of: worktree_only, pr_open, merged"
     );
     let verification_scope = markdown_block_field(
         text,

@@ -1026,6 +1026,36 @@ fn structured_prompt_sor_validator_accepts_not_bound_yet_only_in_bootstrap_phase
 }
 
 #[test]
+fn structured_prompt_completed_sor_validator_accepts_closed_no_pr_retrospective_branch() {
+    let sor = valid_sor_text()
+        .replace(
+            "Branch: codex/1374-tooling-test",
+            "Branch: retrospective-no-branch",
+        )
+        .replace(
+            "Integration state: merged",
+            "Integration state: closed_no_pr",
+        );
+
+    validate_sor_text(&sor, Some("completed"))
+        .expect("completed closed_no_pr SOR should accept retrospective-no-branch");
+}
+
+#[test]
+fn structured_prompt_completed_sor_closed_no_pr_still_rejects_non_retrospective_branch() {
+    let sor = valid_sor_text()
+        .replace("Branch: codex/1374-tooling-test", "Branch: not bound yet")
+        .replace(
+            "Integration state: merged",
+            "Integration state: closed_no_pr",
+        );
+
+    let err = validate_sor_text(&sor, Some("completed"))
+        .expect_err("closed_no_pr completed SOR should still reject invalid branch markers");
+    assert!(err.to_string().contains("retrospective-no-branch"));
+}
+
+#[test]
 fn review_commands_validate_and_render_expected_surfaces() {
     let repo = TempRepo::new("review");
     let input = repo.write_rel(
