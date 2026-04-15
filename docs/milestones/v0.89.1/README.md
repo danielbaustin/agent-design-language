@@ -158,7 +158,7 @@ Open questions:
 
 Current status: canonical planning package complete; issue wave not opened yet; package is review-ready and seed-ready once the lane opens
 
-- Planning: complete through `#1860`, with `#1806` polishing the tracked review package
+- Planning: complete through `#1860`, with `#1806` landing the tracked next-milestone package from the `v0.89` side
 - Execution: not started; reserved issue-wave plan is ready to issueize
 - Validation: package-level checks passed; milestone execution validation still pending
 - Release readiness: not started; milestone docs are ready for review, not release

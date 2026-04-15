@@ -4,7 +4,7 @@
 - Milestone: `v0.89`
 - Status: `Planned`
 - Source planning input: local `v0.89` planning corpus
-- Planned WP: `WP-03`
+- Milestone home: `WP-03`
 
 ## Purpose
 
