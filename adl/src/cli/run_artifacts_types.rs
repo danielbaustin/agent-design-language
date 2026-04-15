@@ -29,6 +29,7 @@ pub(crate) const CONTROL_PATH_ACTION_MEDIATION_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_SKILL_MODEL_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_SKILL_EXECUTION_PROTOCOL_VERSION: u32 = 1;
 pub(crate) const CONTROL_PATH_FINAL_RESULT_VERSION: u32 = 1;
+pub(crate) const CONTROL_PATH_SECURITY_REVIEW_VERSION: u32 = 1;
 pub(crate) const REASONING_GRAPH_VERSION: u32 = 1;
 pub(crate) const CLUSTER_GROUNDWORK_VERSION: u32 = 1;
 
@@ -853,6 +854,67 @@ pub(crate) struct ControlPathFinalResultArtifact {
     pub(crate) stage_order: Vec<String>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct ControlPathSecurityReviewArtifact {
+    pub(crate) control_path_security_review_version: u32,
+    pub(crate) run_id: String,
+    pub(crate) generated_from: AeeDecisionGeneratedFrom,
+    pub(crate) threat_model: SecurityThreatModelRecord,
+    pub(crate) posture: SecurityPostureRecord,
+    pub(crate) trust_under_adversary: SecurityTrustUnderAdversaryRecord,
+    pub(crate) evidence: SecurityReviewEvidenceRecord,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct SecurityThreatModelRecord {
+    pub(crate) attacker_pressure: String,
+    pub(crate) active_trust_boundaries: Vec<String>,
+    pub(crate) canonical_threat_classes: Vec<String>,
+    pub(crate) required_mitigations: Vec<String>,
+    pub(crate) reviewer_visible_surfaces: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct SecurityPostureRecord {
+    pub(crate) declared_posture: String,
+    pub(crate) accepted_risk_level: String,
+    pub(crate) commitment_policy: String,
+    pub(crate) mitigation_authority: String,
+    pub(crate) runtime_consequence: String,
+    pub(crate) posture_rationale: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct SecurityTrustUnderAdversaryRecord {
+    pub(crate) trust_state: String,
+    pub(crate) trusted_surfaces: Vec<String>,
+    pub(crate) reduced_trust_surfaces: Vec<String>,
+    pub(crate) revalidation_requirements: Vec<String>,
+    pub(crate) escalation_path: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct SecurityReviewEvidenceRecord {
+    pub(crate) route_selected: String,
+    pub(crate) risk_class: String,
+    pub(crate) mediation_outcome: String,
+    pub(crate) gate_decision: String,
+    pub(crate) final_result: String,
+    pub(crate) security_denied_count: usize,
+    pub(crate) security_envelope_enabled: bool,
+    pub(crate) signing_required: bool,
+    pub(crate) key_id_required: bool,
+    pub(crate) verify_allowed_algs: Vec<String>,
+    pub(crate) verify_allowed_key_sources: Vec<String>,
+    pub(crate) sandbox_policy: String,
+    pub(crate) trace_visibility_expectation: String,
+}
+
 pub(crate) struct ControlPathSummaryContext<'a> {
     pub(crate) signals: &'a CognitiveSignalsArtifact,
     pub(crate) agency: &'a AgencySelectionArtifact,
@@ -868,6 +930,7 @@ pub(crate) struct ControlPathSummaryContext<'a> {
     pub(crate) mediation: &'a ControlPathActionMediationArtifact,
     pub(crate) freedom_gate: &'a FreedomGateArtifact,
     pub(crate) final_result: &'a ControlPathFinalResultArtifact,
+    pub(crate) security_review: &'a ControlPathSecurityReviewArtifact,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
