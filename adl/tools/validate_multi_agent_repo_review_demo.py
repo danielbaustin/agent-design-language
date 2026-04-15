@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -14,6 +15,12 @@ REQUIRED_REVIEW_SECTIONS = [
     "## Follow-ups / Deferred Work",
     "## Final Assessment",
 ]
+
+ABSOLUTE_HOST_PATH_RE = re.compile(
+    r"(?:(?<![A-Za-z0-9._-])/(?:Users|home)/[^/\s`]+(?:/[^\s`]+)*)|"
+    r"(?:(?<![A-Za-z0-9._-])/(?:private|var|tmp|etc|opt|srv|root)/[^\s`]+)|"
+    r"(?:[A-Za-z]:\\\\[^\s`]+)"
+)
 
 
 def require(condition: bool, message: str) -> None:
@@ -28,6 +35,13 @@ def ordered_sections(text: str, sections: list[str], label: str) -> None:
         require(idx >= 0, f"{label}: missing section {section}")
         require(idx > last, f"{label}: section out of order for {section}")
         last = idx
+
+
+def absolute_host_path_match(text: str) -> str | None:
+    match = ABSOLUTE_HOST_PATH_RE.search(text)
+    if not match:
+        return None
+    return match.group(0)
 
 
 def main() -> int:
@@ -82,7 +96,8 @@ def main() -> int:
     require("Lower-Priority Observations:" in synthesis_text, "synthesis missing lower-priority observations classification")
 
     root_text = "\n".join(path.read_text(encoding="utf-8") for path in [selected_paths_path, synthesis_path, *reviewer_paths])
-    require("/Users/daniel/" not in root_text, "artifact leakage: absolute host path found")
+    leaked_path = absolute_host_path_match(root_text)
+    require(leaked_path is None, f"artifact leakage: absolute host path found: {leaked_path}")
 
     print("validate_multi_agent_repo_review_demo: ok")
     return 0

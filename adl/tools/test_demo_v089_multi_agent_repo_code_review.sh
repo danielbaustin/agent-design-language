@@ -44,4 +44,18 @@ grep -Fq '[P3] Workflow conductor routing remains concentrated in one large disp
   exit 1
 }
 
+for leaked_path in \
+  "/Users/alice/private.txt" \
+  "/home/bob/private.txt" \
+  "/private/tmp/demo-leak.txt"; do
+  LEAK_DIR="$TMPDIR_ROOT/leak-check"
+  rm -rf "$LEAK_DIR"
+  cp -R "$OUT_DIR" "$LEAK_DIR"
+  printf '\nInjected leak: %s\n' "$leaked_path" >> "$LEAK_DIR/reviewers/code_review.md"
+  if python3 "$ROOT_DIR/adl/tools/validate_multi_agent_repo_review_demo.py" "$LEAK_DIR" >/dev/null 2>&1; then
+    echo "assertion failed: validator accepted leaked path $leaked_path" >&2
+    exit 1
+  fi
+done
+
 echo "demo_v089_multi_agent_repo_code_review: ok"
