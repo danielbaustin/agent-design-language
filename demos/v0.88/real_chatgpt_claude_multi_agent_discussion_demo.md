@@ -15,7 +15,8 @@ bash adl/tools/demo_v088_real_multi_agent_discussion.sh
 The demo uses operator-managed credentials only:
 
 - `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` when already set
-- explicit `ADL_OPENAI_KEY_FILE` and `ADL_ANTHROPIC_KEY_FILE` overrides when the operator chooses key-file loading
+- otherwise `$HOME/keys/openai2.key` for OpenAI and `$HOME/keys/claude.key` for Anthropic
+- explicit `ADL_OPENAI_KEY_FILE` and `ADL_ANTHROPIC_KEY_FILE` overrides when the operator chooses different key-file paths
 
 Secret values, key-file paths, and raw credential headers must not be printed
 or written to generated artifacts.
