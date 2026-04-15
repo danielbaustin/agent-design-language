@@ -16,7 +16,7 @@ But those artifacts are not the whole story. In the current repository, they are
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.88%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.89%20active-blue)
 
 Today, ADL includes:
 - a reference Rust runtime and CLI for deterministic workflow execution
@@ -44,17 +44,17 @@ cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-mi
 
 ### If you want the current milestone proof package
 
-Run the integrated `v0.88` reviewer surface:
+Run the integrated `v0.89` reviewer surface:
 
 ```bash
-bash adl/tools/demo_v088_review_surface.sh
+bash adl/tools/demo_v089_review_surface.sh
 ```
 
 This is the best top-level entrypoint if you want to see what ADL currently proves in the active milestone.
 
 ### If you want the flagship current demo
 
-Run `Paper Sonata`, the bounded public-facing `v0.88` demo:
+Run the refreshed `Paper Sonata` package, the flagship bounded demo carried into the `v0.89` review wave:
 
 ```bash
 bash adl/tools/demo_v088_paper_sonata.sh
@@ -104,33 +104,45 @@ Other useful entrypoints:
 
 ## Current Status
 
-- Active milestone: **v0.88**
+- Active milestone: **v0.89**
 - Current crate version on `main`: **0.88.0**
-- Version note: **the crate version was bumped to `0.88.0` during the `v0.88` review/remediation tail so reviewers do not need a separate oral explanation for the milestone/version match; the final release ceremony still owns tagging and release publication**
-- Most recently completed milestone package: **v0.87.1**
-- Previous completed milestone: **v0.87**
+- Version note: **the active review/release tail has moved to `v0.89`, but the crate version remains `0.88.0` on `main` until the bounded `v0.89` release ceremony lands and publication is finalized**
+- Most recently completed milestone package: **v0.88**
+- Previous completed milestone: **v0.87.1**
 - Project changelog: `CHANGELOG.md`
 
 ADL is in active development. This repository contains both implemented runtime surfaces and milestone/spec/planning documents. Read the milestone docs as bounded engineering records: they distinguish what has shipped, what is under active review or closeout, what is demoable, and what is still planned.
 
 ## Current Milestone
 
-`v0.88` is the current active milestone. It brings together two bounded substrate bands:
-- temporal / chronosense
-- instinct / bounded agency
+`v0.89` is the current active milestone. It carries ADL from bounded cognition and persistence into governed adaptive behavior:
+- AEE convergence and stop-condition semantics
+- Freedom Gate v2, decision/action mediation, and governed skill execution
+- experiment, ObsMem evidence/ranking, and security/trust planning surfaces
 
-The implementation wave is complete through `WP-13`. The repository is now in docs, review, remediation, next-milestone planning, and release-tail work.
+The core implementation wave is landed through `WP-13`, and the repository is now in quality, docs, review, findings remediation, next-milestone planning, and release-tail work.
 
-Best current `v0.88` entrypoints:
-- integrated reviewer package: `bash adl/tools/demo_v088_review_surface.sh`
-- flagship bounded demo: `bash adl/tools/demo_v088_paper_sonata.sh`
-- milestone docs: `docs/milestones/v0.88/README.md`
+Best current `v0.89` entrypoints:
+- integrated reviewer package: `bash adl/tools/demo_v089_review_surface.sh`
+- flagship bounded demo package: `bash adl/tools/demo_v088_paper_sonata.sh` with reviewer guide `demos/v0.89/paper_sonata_demo_refresh.md`
+- milestone docs: `docs/milestones/v0.89/README.md`
 
 ## Recent Milestones
 
+### v0.89 - Governed Adaptive Execution and Review-Tail Milestone
+
+v0.89 is the current active milestone. The core execution wave is landed through `WP-13`, and the repository is now in quality, review, findings remediation, next-milestone planning, and release-tail work.
+
+Key features:
+- AEE 1.0 convergence and bounded stop-family proof surfaces
+- Freedom Gate v2, decision/action mediation, and governed skill execution contracts
+- experiment records, ObsMem evidence/ranking, and security/trust planning carried into one canonical package
+- bounded provider-participation demos plus an integrated `v0.89` reviewer surface
+- active handoff into internal review, 3rd-party review, remediation, `v0.89.1` planning, and release ceremony
+
 ### v0.88 - Temporal / Chronosense + Instinct Review-Tail Milestone
 
-v0.88 is the current active milestone. The implementation wave is complete through `WP-13`, and the repository is now in the docs, review, remediation, next-milestone planning, and release tail.
+v0.88 is the most recently completed milestone package. Its implementation wave completed through `WP-13`, and its review-tail work set up the current `v0.89` governance band.
 
 Key features:
 - promoted temporal / chronosense and instinct / bounded-agency feature-doc package
@@ -141,7 +153,7 @@ Key features:
 
 ### v0.87.1 - Runtime Completion and Reviewer-Facing Proof Package
 
-v0.87.1 is the previous runtime-completion milestone. The implementation and bounded demo program landed on `main`, and it now serves as the prior runtime proof package that `v0.88` builds on.
+v0.87.1 is the previous runtime-completion milestone. The implementation and bounded demo program landed on `main`, and it now serves as the prior runtime proof package that `v0.88` and `v0.89` build on.
 
 Key features:
 - runtime environment, lifecycle, execution-boundary, and resilience surfaces promoted into one canonical milestone package
@@ -212,7 +224,7 @@ ADL includes both ordinary demos and heavyweight reviewer or release proof packa
 
 Start here:
 - canonical user-facing demo index: `demos/README.md`
-- current milestone reviewer package: `bash adl/tools/demo_v088_review_surface.sh`
+- current milestone reviewer package: `bash adl/tools/demo_v089_review_surface.sh`
 
 Important supporting demo/readiness docs:
 - `docs/tooling/editor/README.md`
@@ -225,6 +237,7 @@ Use this split when choosing an entrypoint:
 - quality-gate and release-review packages are heavyweight release-tail proofs, not ordinary demos
 
 For milestone-specific context:
+- `docs/milestones/v0.89/DEMO_MATRIX_v0.89.md`
 - `docs/milestones/v0.88/DEMO_MATRIX_v0.88.md`
 - `docs/milestones/v0.87/DEMO_MATRIX_v0.87.md`
 - `docs/milestones/v0.86/DEMO_MATRIX_v0.86.md`
