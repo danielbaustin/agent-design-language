@@ -2,8 +2,7 @@ version: "0.1"
 
 providers:
   ollama_local:
-    type: ollama
-    base_url: "http://localhost:11434"
+    type: local_ollama
     default_model: "gemma3:latest"
 
 agents:
