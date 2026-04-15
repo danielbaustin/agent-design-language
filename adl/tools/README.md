@@ -26,7 +26,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `closeout_completed_issue_wave.sh`: bounded local catch-up helper that runs `pr closeout` across closed/completed issue bundles for a milestone version so local-only `.adl` truth can converge after merge or main sync.
 - `check_milestone_closed_issue_sor_truth.sh`: milestone closed-issue bundle truth gate for local-only `.adl` task bundles; verifies canonical `stp.md`, `sip.md`, and final `sor.md` truth for closed/completed issues.
 - `enforce_coverage_gates.sh`: deterministic coverage threshold enforcement (workspace + per-file).
-- `report_large_rust_modules.sh`: non-blocking Rust implementation-module size report for maintainability review.
+- `report_large_rust_modules.sh`: non-blocking Rust source-and-test module size report for maintainability review.
 - `open_artifact.sh`: convenience opener for cards/reports.
 - `update_reports_index.sh`, `update_latest_reports.sh`: report index maintenance.
 
@@ -110,7 +110,7 @@ bash adl/tools/demo_v089_quality_gate.sh
 # enforce coverage thresholds from coverage-summary.json
 cd ./adl/ && bash tools/enforce_coverage_gates.sh coverage-summary.json
 
-# report large Rust implementation modules without failing the build
+# report large Rust source and test modules without failing the build
 ./adl/tools/report_large_rust_modules.sh
 
 # generate deterministic execution prompt from an input card

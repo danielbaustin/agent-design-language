@@ -186,6 +186,8 @@ For `v0.89`, the watch-list posture is:
 
 - treat the current report as a local operational snapshot rather than a tracked
   governance file
+- let the default report cover both `adl/src` and `adl/tests` so the largest
+  Rust implementation and integration-test surfaces stay visible together
 - use the report during review and quality-gate walkthroughs
 - keep the report script green-by-default
 - require explicit deferral rationale in output cards only when a PR materially
