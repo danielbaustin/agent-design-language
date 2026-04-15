@@ -608,6 +608,8 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
         ),
         "summary was:\n{control_path_summary}"
     );
+    run_artifacts::validate_control_path_artifact_set(&run_dir.join("control_path"))
+        .expect("real runtime control-path layout should validate");
 
     let _ = std::fs::remove_dir_all(run_dir);
     let _ = std::fs::remove_dir_all(out_dir);

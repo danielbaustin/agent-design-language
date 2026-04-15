@@ -383,6 +383,36 @@ fn rewrite_json_artifact(
     .expect("rewrite control-path artifact");
 }
 
+fn expect_security_review_validation_error<F>(
+    control_path_root: &std::path::Path,
+    original_security_review: &str,
+    expected_substring: &str,
+    mutate: F,
+) where
+    F: FnOnce(&mut serde_json::Value),
+{
+    std::fs::write(
+        control_path_root.join("security_review.json"),
+        original_security_review,
+    )
+    .expect("restore security review artifact");
+    let mut security_review: serde_json::Value =
+        serde_json::from_str(original_security_review).expect("parse security review");
+    mutate(&mut security_review);
+    rewrite_json_artifact(control_path_root, "security_review.json", &security_review);
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject mutated security review");
+    assert!(
+        err.to_string().contains(expected_substring),
+        "expected '{expected_substring}' in error, got: {err}"
+    );
+}
+
 #[test]
 fn cli_artifact_requires_subcommand() {
     let err = real_artifact(&[]).expect_err("artifact should require a subcommand");
@@ -620,6 +650,26 @@ fn cli_artifact_validate_control_path_rejects_missing_security_review_artifact()
 }
 
 #[test]
+fn cli_artifact_validate_control_path_rejects_missing_run_summary_sibling() {
+    let (out_dir, control_path_root) =
+        materialize_control_path_demo("adl-control-path-validate-missing-run-summary");
+    std::fs::remove_file(control_path_root.join("run_summary.json"))
+        .expect("remove run summary sibling artifact");
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject missing run summary sibling");
+    assert!(err
+        .to_string()
+        .contains("missing required control-path sibling artifact 'run_summary.json'"));
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
 fn cli_artifact_validate_control_path_rejects_malformed_artifact() {
     let out_dir = unique_temp_dir("adl-control-path-validate-malformed");
     real_demo(&[
@@ -646,6 +696,249 @@ fn cli_artifact_validate_control_path_rejects_malformed_artifact() {
     .expect_err("validator should reject malformed artifact");
     assert!(err.to_string().contains("invalid control-path artifact"));
 
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_security_review_mismatches() {
+    let (out_dir, control_path_root) =
+        materialize_control_path_demo("adl-control-path-validate-security-review-mismatch");
+    let original_security_review =
+        std::fs::read_to_string(control_path_root.join("security_review.json"))
+            .expect("read security review artifact");
+
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review posture",
+        |security_review| {
+            security_review["posture"]["declared_posture"] = serde_json::json!("unsafe");
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review attacker_pressure",
+        |security_review| {
+            security_review["threat_model"]["attacker_pressure"] = serde_json::json!("benign");
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review accepted_risk_level",
+        |security_review| {
+            security_review["posture"]["accepted_risk_level"] = serde_json::json!("low");
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review commitment_policy",
+        |security_review| {
+            security_review["posture"]["commitment_policy"] = serde_json::json!("allow");
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review mitigation_authority",
+        |security_review| {
+            security_review["posture"]["mitigation_authority"] = serde_json::json!("operator");
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review trust_state",
+        |security_review| {
+            security_review["trust_under_adversary"]["trust_state"] =
+                serde_json::json!("fully_trusted");
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review boundaries mismatch",
+        |security_review| {
+            security_review["threat_model"]["active_trust_boundaries"] =
+                serde_json::json!(["operator_only"]);
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review threat classes mismatch",
+        |security_review| {
+            security_review["threat_model"]["canonical_threat_classes"] =
+                serde_json::json!(["tampering_only"]);
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review mitigations mismatch",
+        |security_review| {
+            security_review["threat_model"]["required_mitigations"] =
+                serde_json::json!(["manual_review"]);
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review proof surfaces mismatch",
+        |security_review| {
+            security_review["threat_model"]["reviewer_visible_surfaces"] =
+                serde_json::json!(["control_path/final_result.json"]);
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review trusted surfaces mismatch",
+        |security_review| {
+            security_review["trust_under_adversary"]["trusted_surfaces"] =
+                serde_json::json!(["control_path/final_result.json"]);
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review reduced trust surfaces mismatch",
+        |security_review| {
+            security_review["trust_under_adversary"]["reduced_trust_surfaces"] =
+                serde_json::json!(["control_path/final_result.json"]);
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review revalidation requirements mismatch",
+        |security_review| {
+            security_review["trust_under_adversary"]["revalidation_requirements"] =
+                serde_json::json!(["manual_recheck"]);
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review escalation_path",
+        |security_review| {
+            security_review["trust_under_adversary"]["escalation_path"] =
+                serde_json::json!("approve_immediately");
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review evidence route",
+        |security_review| {
+            security_review["evidence"]["route_selected"] = serde_json::json!("fast");
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review evidence risk_class",
+        |security_review| {
+            security_review["evidence"]["risk_class"] = serde_json::json!("low");
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review evidence mediation_outcome",
+        |security_review| {
+            security_review["evidence"]["mediation_outcome"] = serde_json::json!("approved");
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review evidence gate_decision",
+        |security_review| {
+            security_review["evidence"]["gate_decision"] = serde_json::json!("allow");
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review evidence final_result",
+        |security_review| {
+            security_review["evidence"]["final_result"] = serde_json::json!("allow");
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review evidence security_denied_count",
+        |security_review| {
+            security_review["evidence"]["security_denied_count"] = serde_json::json!(99);
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review evidence security_envelope_enabled",
+        |security_review| {
+            security_review["evidence"]["security_envelope_enabled"] = serde_json::json!(false);
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review evidence signing_required",
+        |security_review| {
+            security_review["evidence"]["signing_required"] = serde_json::json!(false);
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review evidence key_id_required",
+        |security_review| {
+            security_review["evidence"]["key_id_required"] = serde_json::json!(false);
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review evidence verify_allowed_algs mismatch",
+        |security_review| {
+            security_review["evidence"]["verify_allowed_algs"] = serde_json::json!(["rsa"]);
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review evidence verify_allowed_key_sources mismatch",
+        |security_review| {
+            security_review["evidence"]["verify_allowed_key_sources"] =
+                serde_json::json!(["local"]);
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review evidence sandbox_policy",
+        |security_review| {
+            security_review["evidence"]["sandbox_policy"] = serde_json::json!("none");
+        },
+    );
+    expect_security_review_validation_error(
+        &control_path_root,
+        &original_security_review,
+        "control-path security review evidence trace_visibility_expectation",
+        |security_review| {
+            security_review["evidence"]["trace_visibility_expectation"] =
+                serde_json::json!("hidden");
+        },
+    );
+
+    let _ = std::fs::write(
+        control_path_root.join("security_review.json"),
+        original_security_review,
+    );
     let _ = std::fs::remove_dir_all(out_dir);
 }
 
