@@ -2,7 +2,7 @@
 
 ## Metadata
 - Milestone: `v0.89`
-- Status: `Planned`
+- Status: `Landed`
 - Source planning input: local `v0.89` planning corpus
 - Milestone home: `WP-05`
 
