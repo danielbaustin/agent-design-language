@@ -1361,10 +1361,10 @@ mod tests {
     #[test]
     fn freedom_gate_input_state_conversion_preserves_nested_fields() {
         let input = freedom_gate::FreedomGateInput {
-            candidate_id: "cand-1".to_string(),
+            candidate_id: "cand-007".to_string(),
             candidate_action: "review".to_string(),
             candidate_rationale: "bounded rationale".to_string(),
-            risk_class: "high".to_string(),
+            risk_class: "medium".to_string(),
             policy_context: freedom_gate::FreedomGatePolicyContext {
                 route_selected: "slow".to_string(),
                 selected_candidate_kind: "review_and_refine".to_string(),
@@ -1372,14 +1372,14 @@ mod tests {
                 policy_blocked: false,
             },
             evaluation_signals: freedom_gate::FreedomGateEvaluationSignals {
-                progress_signal: "steady".to_string(),
+                progress_signal: "guarded".to_string(),
                 contradiction_signal: "present".to_string(),
                 failure_signal: "none".to_string(),
-                termination_reason: "contradiction_detected".to_string(),
+                termination_reason: "paused".to_string(),
             },
             consequence_context: freedom_gate::FreedomGateConsequenceContext {
                 impact_scope: "cross_surface".to_string(),
-                recovery_cost: "requires_reframing".to_string(),
+                recovery_cost: "bounded_review_replay".to_string(),
                 operator_visibility: "review_required".to_string(),
                 escalation_available: true,
             },
@@ -1388,9 +1388,30 @@ mod tests {
 
         let state = FreedomGateInputState::from(input);
 
-        assert_eq!(state.candidate_id, "cand-1");
+        assert_eq!(state.candidate_id, "cand-007");
+        assert_eq!(state.candidate_action, "review");
+        assert_eq!(state.candidate_rationale, "bounded rationale");
+        assert_eq!(state.risk_class, "medium");
         assert_eq!(state.policy_context.route_selected, Route::Slow);
+        assert_eq!(
+            state.policy_context.selected_candidate_kind,
+            "review_and_refine"
+        );
+        assert!(state.policy_context.requires_review);
+        assert!(!state.policy_context.policy_blocked);
+        assert_eq!(state.evaluation_signals.progress_signal, "guarded");
         assert_eq!(state.evaluation_signals.contradiction_signal, "present");
+        assert_eq!(state.evaluation_signals.failure_signal, "none");
+        assert_eq!(state.evaluation_signals.termination_reason, "paused");
+        assert_eq!(state.consequence_context.impact_scope, "cross_surface");
+        assert_eq!(
+            state.consequence_context.recovery_cost,
+            "bounded_review_replay"
+        );
+        assert_eq!(
+            state.consequence_context.operator_visibility,
+            "review_required"
+        );
         assert!(state.consequence_context.escalation_available);
         assert_eq!(state.frame_state, "ready_for_reframed_execution");
     }
