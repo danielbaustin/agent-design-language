@@ -1,0 +1,108 @@
+version: "0.1"
+kind: "adl-skill"
+id: "medium-article-writer"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "medium_article_writer.v1"
+    reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/MEDIUM_ARTICLE_WRITER_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "draft_from_brief_path"
+      - "draft_from_brief_text"
+      - "draft_from_demo_doc"
+    policy_fields:
+      - "writing_mode"
+      - "headline_style"
+      - "validation_mode"
+      - "stop_before_publish"
+    mode_requirements:
+      draft_from_brief_path:
+        required_target_fields:
+          - "article_brief_path"
+      draft_from_brief_text:
+        required_target_fields:
+          - "article_brief_text"
+      draft_from_demo_doc:
+        required_target_fields:
+          - "demo_doc_path"
+  intent:
+    - "medium_article_drafting"
+    - "editorial_packet_generation"
+    - "bounded_writing_support"
+  required_inputs:
+    - "repo_root"
+  optional_inputs:
+    - "article_brief_path"
+    - "article_brief_text"
+    - "demo_doc_path"
+    - "artifact_root"
+    - "audience"
+    - "house_style"
+    - "forbidden_claims"
+    - "expected_sections"
+    - "validation_mode"
+    - "reviewer_mode"
+  stop_if_missing:
+    - "repo_root"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_medium_article_writer.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "draft_from_brief_path_requires_target.article_brief_path"
+    - "draft_from_brief_text_requires_target.article_brief_text"
+    - "draft_from_demo_doc_requires_target.demo_doc_path"
+    - "policy.writing_mode_must_be_explicit"
+    - "policy.validation_mode_must_be_explicit"
+    - "policy.stop_before_publish_must_be_true"
+execution:
+  mode: "auto_apply"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: true
+  preferred_read_order:
+    - "brief"
+    - "medium_demo_doc"
+    - "medium_demo_entrypoint"
+    - "writing_playbook"
+  preferred_commands:
+    - "rg --files"
+    - "rg -n"
+    - "bash adl/tools/demo_v089_medium_article_writing.sh"
+    - "bash adl/tools/test_demo_v089_medium_article_writing.sh"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  writes_limited_to:
+    - ".adl/**"
+    - "article packet artifacts"
+    - "bounded review manifests"
+  must_not_write:
+    - "publication platforms"
+    - "editorial calendar state"
+    - "unrelated issue bundles"
+    - "unrelated worktrees"
+  stop_on_partial_failure: true
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-medium-article-writer.md"
+  required_sections:
+    - "status"
+    - "target"
+    - "packet"
+    - "medium_rules_applied"
+    - "publication_boundary"
+    - "follow_up"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  manifest_declares_executables: false

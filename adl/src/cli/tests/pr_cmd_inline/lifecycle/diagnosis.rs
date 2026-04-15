@@ -253,6 +253,147 @@ fn real_pr_doctor_full_accepts_pre_run_analysis_issue_with_partial_worktree_resi
 }
 
 #[test]
+fn real_pr_doctor_full_blocks_invalid_root_bootstrap_output_card() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-doctor-invalid-root-output");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "doctor invalid root output\n").expect("seed file");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref = IssueRef::new(1186, "v0.86", "doctor-invalid-root-output").expect("issue ref");
+    write_authored_issue_prompt(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Doctor invalid root output",
+    );
+    real_pr(&[
+        "init".to_string(),
+        "1186".to_string(),
+        "--slug".to_string(),
+        "doctor-invalid-root-output".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Doctor invalid root output".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr init");
+
+    let root_sip = issue_ref.task_bundle_input_path(&repo);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    write_authored_sip(
+        &root_sip,
+        &issue_ref,
+        "[v0.86][tools] Doctor invalid root output",
+        "not bound yet",
+        &source_path,
+        &repo,
+    );
+
+    let root_sor = issue_ref.task_bundle_output_path(&repo);
+    let invalid_sor = fs::read_to_string(&root_sor)
+        .expect("read bootstrap sor")
+        .replace("Status: IN_PROGRESS", "Status: NOT_STARTED")
+        .replace("- Start Time:", "- Start Time: not started yet")
+        .replace("- End Time:", "- End Time: not started yet")
+        .replace(
+            "- Integration state: worktree_only",
+            "- Integration state: main_repo",
+        );
+    fs::write(&root_sor, invalid_sor).expect("write invalid sor");
+
+    let doctor = real_pr(&[
+        "doctor".to_string(),
+        "1186".to_string(),
+        "--slug".to_string(),
+        "doctor-invalid-root-output".to_string(),
+        "--mode".to_string(),
+        "full".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+        "--json".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    let err = doctor.expect_err("doctor should fail when root bootstrap sor is invalid");
+    let text = err.to_string();
+    assert!(
+        text.contains("bash failed"),
+        "unexpected doctor error: {text}"
+    );
+}
+
+#[test]
 fn real_pr_doctor_full_succeeds_when_invoked_from_started_worktree() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-doctor-worktree-cwd");

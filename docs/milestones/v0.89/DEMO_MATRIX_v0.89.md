@@ -69,13 +69,13 @@ Additional environment / fixture requirements:
 
 | Demo ID | Demo title | Milestone claim / WP proved | Command entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
 |---|---|---|---|---|---|---|---|
-| D1 | AEE convergence walkthrough | `WP-02` bounded convergence and stop conditions | `cargo test --manifest-path adl/Cargo.toml cli_artifact_validate_control_path_ -- --nocapture` | `control_path/convergence.json` + `control_path/summary.txt` | reviewer can see converge / stall / bounded-out behavior | use deterministic fixtures for repeated stop-state verification | LANDED |
+| D1 | AEE convergence walkthrough | `WP-02` bounded convergence and stop conditions | `cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture` | `control_path/convergence.json` + `control_path/summary.txt` | reviewer can see converge / stall / bounded-out behavior and named stop-family reasoning | use deterministic runtime-control fixtures; D1 shares the bounded runtime-control proof run with D2 and D3 | LANDED |
 | D2 | Freedom Gate v2 judgment demo | `WP-03` richer allow / defer / refuse / escalate behavior | `cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture` | `learning/freedom_gate.v1.json` + `control_path/final_result.json` | reviewer can distinguish decision outcome, judgment boundary, and follow-up | stable fixtures should replay to the same outcome class and escalation path | LANDED |
-| D3 | Decision + action mediation proof | `WP-04` - `WP-05` explicit choice and authorization boundary | `cargo test --manifest-path adl/Cargo.toml cli_artifact_validate_control_path_ -- --nocapture` | `control_path/decisions.json` + `control_path/action_proposals.json` + `control_path/mediation.json` | reviewer can see model intent separated from authorized action | deterministic fixtures should preserve approval / rejection path | LANDED |
+| D3 | Decision + action mediation proof | `WP-04` - `WP-05` explicit choice and authorization boundary | `cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture` | `control_path/decisions.json` + `control_path/action_proposals.json` + `control_path/mediation.json` | reviewer can see route selection, reframing, and commitment-gate outcomes separated from authorized runtime action | deterministic fixtures should preserve outcome classes and mediation follow-up from the shared runtime-control proof run | LANDED |
 | D4 | Skill invocation contract demo | `WP-06` bounded skill execution protocol | `cargo test --manifest-path adl/Cargo.toml cli_artifact_validate_control_path_ -- --nocapture` | `control_path/skill_model.json` + `control_path/skill_execution_protocol.json` + `control_path/summary.txt` | reviewer can distinguish a selected governed skill from other action kinds and inspect the pre-execution authorization lifecycle end to end | deterministic fixture replay should preserve lifecycle state, authorization outcome, and trace expectation | LANDED |
 | D5 | Godel experiment package demo | `WP-07` governed adopt / reject improvement behavior | `cargo run --manifest-path adl/Cargo.toml -- godel run ...` then `cargo run --manifest-path adl/Cargo.toml -- godel inspect ...` | `runs/<run-id>/godel/experiment_record.v1.json` + `evaluation_plan.v1.json` | reviewer can inspect baseline / variant pairing, canonical evidence, bounded mutation, and adopt / reject decision from one bounded summary | identical bounded inputs should preserve stage order, canonical artifact paths, and decision class | LANDED |
 | D6 | ObsMem evidence and ranking walkthrough | `WP-08` explainable retrieval and ranking | `cargo run --manifest-path adl/Cargo.toml -- demo demo-f-obsmem-retrieval --run --trace --out ./out` | `obsmem_retrieval_result.json` | ranking cites evidence families, status signals, and deterministic tie-break values | identical demo inputs should preserve result order and explanation shape | LANDED |
-| D7 | Security / trust / posture walkthrough | `WP-09` main-band security contract | planned `WP-09` / `WP-11` review surface | reviewer-facing threat/posture/trust artifact set | reviewer can see explicit trust boundaries and declared posture | proof row may be document/artifact driven rather than fully executable | PLANNED |
+| D7 | Security / trust / posture walkthrough | `WP-09` main-band security contract | review `docs/milestones/v0.89/features/SECURITY_AND_THREAT_MODELING.md`, `docs/milestones/v0.89/features/ADL_SECURITY_POSTURE_MODEL.md`, and `docs/milestones/v0.89/features/ADL_TRUST_MODEL_UNDER_ADVERSARY.md` together | reviewer-facing threat/posture/trust document set | reviewer can see explicit trust boundaries, declared posture, and contested-operation trust assumptions without overclaiming `v0.89.1` adversarial runtime work | proof row is intentionally document/artifact driven in the main `v0.89` band | PLANNED |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -112,7 +112,7 @@ Milestone claims / work packages covered:
 Commands to run:
 
 ```bash
-cargo test --manifest-path adl/Cargo.toml cli_artifact_validate_control_path_ -- --nocapture
+cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture
 ```
 
 Expected artifacts:
@@ -127,7 +127,7 @@ Expected success signals:
 - stop condition is explicit and justified
 
 Determinism / replay notes:
-- the same fixture should preserve the same convergence-state class
+- use deterministic runtime-control fixtures; the same fixture should preserve the same convergence-state class
 
 Reviewer checks:
 - look for explicit convergence or stall reasoning
@@ -281,7 +281,9 @@ Known limits / caveats:
 Required baseline validation:
 
 ```bash
-Defined by `WP-11` through `WP-13` as the demo and integration surfaces land.
+Use `bash adl/tools/demo_v089_proof_entrypoints.sh` for the lightweight reviewer
+entrypoint manifest, then run the row-specific commands named above for D1-D6
+or review the D7 document set directly.
 ```
 
 Cross-demo checks:

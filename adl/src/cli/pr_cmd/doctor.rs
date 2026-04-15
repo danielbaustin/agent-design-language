@@ -1,4 +1,5 @@
 use super::*;
+use crate::cli::pr_cmd_cards::validate_bootstrap_output_card;
 use serde::Serialize;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -282,6 +283,15 @@ pub(super) fn run_doctor_ready(
         )
         || root_input_body
             .contains("Do not assume a branch or worktree already exists before `pr run`.");
+    if root_indicates_pre_run {
+        validate_bootstrap_output_card(
+            repo_root,
+            issue_ref.issue_number(),
+            issue_ref.slug(),
+            &root_branch,
+            &root_bundle_output,
+        )?;
+    }
     if !worktree_path.is_dir() {
         if root_indicates_pre_run {
             return Ok(DoctorReadyResult {

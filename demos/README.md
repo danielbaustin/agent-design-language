@@ -130,12 +130,26 @@ and records a reviewer-facing findings artifact plus runtime proof.
 
 ### v0.89 bounded provider-participation demos
 
+- `v0.89/v089_demo_program.md`
 - `v0.89/deep_agents_comparative_wave_demo.md`
 - `v0.89/medium_article_writing_demo.md`
 - `v0.89/gemini_provider_harmony_and_economics_demo.md`
 - `v0.89/gemma4_issue_clerk_demo.md`
 - `v0.89/paper_sonata_demo_refresh.md`
 - `v0.89/multi_agent_repo_code_review_demo.md`
+
+Use `v0.89/v089_demo_program.md` for the canonical `v0.89` proof-row entrypoint
+guide. It ties D1 through D7 to one reviewer flow and points at the bounded
+proof-entrypoint manifest produced by:
+
+```bash
+bash adl/tools/demo_v089_proof_entrypoints.sh
+```
+
+That command writes a lightweight review packet at:
+- `artifacts/v089/proof_entrypoints/demo_manifest.json`
+- `artifacts/v089/proof_entrypoints/README.md`
+- `artifacts/v089/proof_entrypoints/index.txt`
 
 Use `v0.89/deep_agents_comparative_wave_demo.md` for a richer comparative demo
 where ChatGPT, Claude, and Gemini contribute bounded positions and ADL emits a
