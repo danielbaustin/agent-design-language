@@ -289,11 +289,11 @@ Rules:
 
 ### Tool Isolation Principle
 
-> The runtime does not call tools directly—skills do.
+> The runtime does not call tools directly-skills do.
 
 This preserves the ADL boundary:
-- agents → skills
-- skills → tools/models
+- agents -> skills
+- skills -> tools/models
 
 ---
 
@@ -308,7 +308,7 @@ Rules:
 
 ### Provider Isolation Principle
 
-> The runtime orchestrates, but does not reason—the provider does.
+> The runtime orchestrates, but does not reason-the provider does.
 
 ---
 
@@ -373,7 +373,7 @@ Unauthorized capability use must result in immediate failure.
 
 ---
 
-## Composition ↔ Substrate Mapping
+## Composition <-> Substrate Mapping
 
 | Composition Concept | Runtime Behavior |
 |--------------------|----------------|
@@ -448,7 +448,7 @@ It is:
 - explicit in data flow
 - fully traceable
 
-> The substrate does not think—it ensures that thinking is structured, observable, and reliable.
+> The substrate does not think-it ensures that thinking is structured, observable, and reliable.
 
 ---
 

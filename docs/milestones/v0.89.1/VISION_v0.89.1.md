@@ -14,7 +14,7 @@ Describe the intended shape of `v0.89.1` at the product and architecture level.
 
 `v0.89.1` is where ADL becomes explicit about continuous intelligent opposition.
 
-The milestone vision is not merely “better security.” It is:
+The milestone vision is not merely "better security." It is:
 
 - runtime architecture that assumes contested operation
 - bounded adversarial execution loops

@@ -70,18 +70,18 @@ The replay manifest sits at a critical point in the lifecycle:
 
 ```text
 ExploitEvidenceArtifact
-→ AdversarialReplayManifest
-→ Mitigation validation
-→ Regression promotion
+-> AdversarialReplayManifest
+-> Mitigation validation
+-> Regression promotion
 ```
 
 It is the artifact that allows a system to move from:
 
-- “we saw something happen”
+- "we saw something happen"
 
 to:
 
-- “we can make it happen again under controlled conditions”
+- "we can make it happen again under controlled conditions"
 
 ---
 
@@ -348,10 +348,10 @@ Workflow:
 
 ```text
 ExploitEvidenceArtifact
-→ AdversarialReplayManifest
-→ Mitigation applied
-→ Replay executed
-→ Validation result
+-> AdversarialReplayManifest
+-> Mitigation applied
+-> Replay executed
+-> Validation result
 ```
 
 Without replay:
@@ -495,4 +495,4 @@ The Adversarial Replay Manifest provides:
 - validation
 - continuity
 
-It ensures that adversarial knowledge is not lost, but becomes part of the system’s durable cognitive and verification substrate.
+It ensures that adversarial knowledge is not lost, but becomes part of the system's durable cognitive and verification substrate.

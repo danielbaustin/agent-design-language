@@ -67,18 +67,18 @@ The runner executes the canonical loop:
 
 ```text
 load target
-→ declare posture
-→ enumerate surfaces
-→ generate hypothesis
-→ attempt exploit (bounded)
-→ record evidence
-→ build replay manifest
-→ (optional) run replay pre-fix
-→ generate mitigation
-→ (optional) apply bounded fix
-→ run replay post-fix
-→ classify and promote
-→ emit artifacts + trace
+-> declare posture
+-> enumerate surfaces
+-> generate hypothesis
+-> attempt exploit (bounded)
+-> record evidence
+-> build replay manifest
+-> (optional) run replay pre-fix
+-> generate mitigation
+-> (optional) apply bounded fix
+-> run replay post-fix
+-> classify and promote
+-> emit artifacts + trace
 ```
 
 Each step must be:
@@ -102,7 +102,7 @@ Start with a single-path, single-issue flow:
 6. One post-fix replay
 7. One promotion artifact
 
-No parallelism, no scheduling—just a clear, linear proof path.
+No parallelism, no scheduling-just a clear, linear proof path.
 
 ---
 

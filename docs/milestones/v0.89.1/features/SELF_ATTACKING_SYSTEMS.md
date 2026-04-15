@@ -101,7 +101,7 @@ Self-attack requires explicit offensive, defensive, and coordinating cognition.
 
 ### AEE
 Self-attack is naturally expressed as a bounded adaptive loop:
-explore → test → evaluate → mitigate → replay → retain.
+explore -> test -> evaluate -> mitigate -> replay -> retain.
 
 ### Freedom Gate
 Self-attack must remain constitutionally constrained.
@@ -125,15 +125,15 @@ The canonical self-attack loop in ADL is:
 
 ```text
 target selection
-→ attack-surface enumeration
-→ exploit hypothesis generation
-→ bounded exploit attempt
-→ exploit artifact
-→ blue mitigation decision
-→ mitigation artifact
-→ replay validation
-→ residual-risk decision
-→ learning promotion
+-> attack-surface enumeration
+-> exploit hypothesis generation
+-> bounded exploit attempt
+-> exploit artifact
+-> blue mitigation decision
+-> mitigation artifact
+-> replay validation
+-> residual-risk decision
+-> learning promotion
 ```
 
 This loop should be:
@@ -329,7 +329,7 @@ The Freedom Gate should govern:
 
 This matters because self-attack without constitutional bounds becomes indistinguishable from unsafe autonomy.
 
-ADL’s stance should be:
+ADL's stance should be:
 
 > self-attack is powerful only when its scope, posture, and consequences are governed.
 
@@ -417,7 +417,7 @@ Captures:
 
 ## Cognitive Interpretation
 
-The self-attacking pattern is one of the clearest places where ADL’s broader cognitive architecture becomes operationally meaningful.
+The self-attacking pattern is one of the clearest places where ADL's broader cognitive architecture becomes operationally meaningful.
 
 A self-attacking system shows:
 
@@ -430,7 +430,7 @@ A self-attacking system shows:
 
 This makes the pattern closely related to:
 
-- Gödel-style improvement loops
+- Godel-style improvement loops
 - bounded adaptive execution
 - persistent agency under constraint
 

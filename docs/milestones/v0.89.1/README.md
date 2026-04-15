@@ -144,7 +144,7 @@ Evidence locations:
 ## Risks and Open Questions
 
 Known risks:
-- `v0.89.1` can sprawl into a vague “security everything” band if the exploit/runtime focus is not maintained
+- `v0.89.1` can sprawl into a vague "security everything" band if the exploit/runtime focus is not maintained
 - negotiation, refusal, and provider-capability extensions are conceptually relevant but can easily over-expand the milestone if promoted too early
 - the publication track can starve the core runtime band if the writer-skill and manuscript work are not kept bounded and proof-oriented
 

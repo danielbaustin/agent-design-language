@@ -33,9 +33,9 @@ It requires explicit runtime roles with:
 
 This document defines three persistent roles:
 
-- **Red agents** — offensive discovery and exploit generation
-- **Blue agents** — defensive analysis, mitigation, and hardening
-- **Purple coordination layer** — bounded synthesis, learning, prioritization, and replay governance
+- **Red agents** - offensive discovery and exploit generation
+- **Blue agents** - defensive analysis, mitigation, and hardening
+- **Purple coordination layer** - bounded synthesis, learning, prioritization, and replay governance
 
 These roles are not metaphorical.
 They are concrete runtime surfaces.
@@ -53,7 +53,7 @@ This architecture sits downstream of the adversarial runtime model and connects 
 - instinct and bounded routing pressure
 - Freedom Gate and policy constraints
 
-Red/blue execution should therefore be understood not as a separate security product bolted onto ADL, but as an extension of ADL’s broader cognitive runtime.
+Red/blue execution should therefore be understood not as a separate security product bolted onto ADL, but as an extension of ADL's broader cognitive runtime.
 
 ---
 
@@ -163,14 +163,14 @@ The minimal red/blue loop in ADL is:
 
 ```text
 surface enumeration
-→ exploit hypothesis generation
-→ exploit attempt
-→ exploit artifact
-→ blue risk evaluation
-→ mitigation artifact
-→ replay validation
-→ residual-risk decision
-→ learning capture
+-> exploit hypothesis generation
+-> exploit attempt
+-> exploit artifact
+-> blue risk evaluation
+-> mitigation artifact
+-> replay validation
+-> residual-risk decision
+-> learning capture
 ```
 
 This loop must be:
@@ -338,7 +338,7 @@ The architecture should therefore preserve:
 - whether replay passed immediately or after iteration
 - how long residual risk remained open
 
-This makes adversarial events part of the system’s temporal history rather than isolated incidents.
+This makes adversarial events part of the system's temporal history rather than isolated incidents.
 
 ---
 
