@@ -4,6 +4,15 @@ use super::*;
 fn real_pr_finish_rejects_main_and_reports_no_pr_when_only_local_bundle_sync_changes_exist() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-errors");
+    let profraw_dir = temp.join("llvm-profraw");
+    fs::create_dir_all(&profraw_dir).expect("profraw dir");
+    let old_llvm_profile = env::var("LLVM_PROFILE_FILE").ok();
+    unsafe {
+        env::set_var(
+            "LLVM_PROFILE_FILE",
+            profraw_dir.join("finish-guard-%p.profraw"),
+        );
+    }
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
     fs::create_dir_all(&repo).expect("repo dir");
@@ -172,6 +181,10 @@ fn real_pr_finish_rejects_main_and_reports_no_pr_when_only_local_bundle_sync_cha
     env::set_current_dir(prev_dir).expect("restore cwd");
     unsafe {
         env::set_var("PATH", old_path);
+    }
+    match old_llvm_profile {
+        Some(value) => unsafe { env::set_var("LLVM_PROFILE_FILE", value) },
+        None => unsafe { env::remove_var("LLVM_PROFILE_FILE") },
     }
     assert!(bundle_sync_err.to_string().contains("Nothing to PR."));
 }

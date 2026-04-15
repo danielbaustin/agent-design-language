@@ -18,6 +18,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `worktree_doctor.sh`, `worktree_prune.sh`: deterministic worktree governance and safe cleanup helpers.
 - `archive_run_artifacts.sh`: dry-run/apply helper that inventories local run roots, copies unique run artifacts into `.adl/trace-archive/milestones/<milestone>/runs/`, and can move archived active `.adl/runs` entries into `.adl/trace-archive/source-roots/`.
 - `release_ceremony.sh`: canonical release-tail preflight and ceremony wrapper for milestone tag and GitHub Release execution, safe by default and only mutating release state when explicit flags are passed.
+- `demo_v089_quality_gate.sh`: canonical `v0.89` D11 quality-gate walkthrough that aggregates the bounded local gate and proof-package checks into one reviewer-facing manifest.
 - `adl tooling ...`: Rust-owned tooling surface for prompt/card/review validation helpers, with legacy wrapper scripts preserved at the historical `adl/tools/*` paths.
 - `burst_worktree.sh`, `burst_continue.sh`: burst lane/worktree helpers.
 - `batched_checks.sh`, `preflight_review.sh`: quality/preflight checks, including the repo-code-review skill contract guard.
@@ -99,6 +100,9 @@ bash ./adl/tools/pr.sh run <issue_num> --slug <slug>
 
 # run standard checks
 ./adl/tools/batched_checks.sh
+
+# build the bounded v0.89 D11 quality-gate walkthrough package
+bash adl/tools/demo_v089_quality_gate.sh
 
 # audit GitHub/local issue metadata parity for one milestone package
 ./adl/tools/check_issue_metadata_parity.sh --version v0.88

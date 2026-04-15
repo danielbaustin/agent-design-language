@@ -27,11 +27,13 @@ Ship/no-ship gate for `v0.89`. Check items only when evidence exists.
 - [ ] Green-only merge policy followed
 
 ## Quality Gates
+- [x] canonical quality gate defined (`docs/milestones/v0.89/QUALITY_GATE_v0.89.md`)
 - [ ] `cargo fmt` passes
 - [ ] `cargo clippy --all-targets -- -D warnings` passes
 - [ ] `cargo test` passes
 - [ ] CI is green on the merge target
 - [ ] Coverage signal is not red (or exception documented)
+- [ ] D11 quality-gate walkthrough is runnable and current (`bash adl/tools/demo_v089_quality_gate.sh`)
 - [ ] No unresolved high-priority blockers remain at release time
 
 ## Release Packaging

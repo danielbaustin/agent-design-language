@@ -55,6 +55,7 @@ Canonical milestone documents:
 - Sprint plan: `SPRINT_v0.89.md`
 - Decisions log: `DECISIONS_v0.89.md`
 - Demo matrix: `DEMO_MATRIX_v0.89.md`
+- Quality gate: `QUALITY_GATE_v0.89.md`
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.89.md`
 - Release plan / process: `RELEASE_PLAN_v0.89.md`
 - Release notes: `RELEASE_NOTES_v0.89.md`
@@ -108,6 +109,7 @@ Additional validation surfaces:
 - tests and reviewer-facing artifacts
 - trace/replay evidence for convergence and gate behavior
 - issue/PR wave proving the core package actually lands
+- quality-gate and review-tail evidence as Sprint 3 converges
 
 Success criteria:
 - the milestone package tells one consistent story across README, design, WBS, sprint, and feature docs
