@@ -12,7 +12,7 @@ skills_root="${repo_root}/adl/tools/skills"
 [[ -f "${skills_root}/docs/REPO_CODE_REVIEW_SKILL_INPUT_SCHEMA.md" ]]
 
 grep -Fq 'id: "repo_code_review.v1"' "${skills_root}/repo-code-review/adl-skill.yaml"
-grep -Fq 'reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/REPO_CODE_REVIEW_SKILL_INPUT_SCHEMA.md"' "${skills_root}/repo-code-review/adl-skill.yaml"
+grep -Fq 'reference_doc: "../docs/REPO_CODE_REVIEW_SKILL_INPUT_SCHEMA.md"' "${skills_root}/repo-code-review/adl-skill.yaml"
 grep -Fq "policy.review_depth_must_be_explicit" "${skills_root}/repo-code-review/adl-skill.yaml"
 grep -Fq "policy.stop_after_review_must_be_true" "${skills_root}/repo-code-review/adl-skill.yaml"
 grep -Fq "mode: review_repository | review_path | review_branch | review_diff" "${skills_root}/docs/REPO_CODE_REVIEW_SKILL_INPUT_SCHEMA.md"

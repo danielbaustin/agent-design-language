@@ -12,7 +12,7 @@ skills_root="${repo_root}/adl/tools/skills"
 [[ -f "${skills_root}/docs/TEST_GENERATOR_SKILL_INPUT_SCHEMA.md" ]]
 
 grep -Fq 'id: "test_generator.v1"' "${skills_root}/test-generator/adl-skill.yaml"
-grep -Fq 'reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/TEST_GENERATOR_SKILL_INPUT_SCHEMA.md"' "${skills_root}/test-generator/adl-skill.yaml"
+grep -Fq 'reference_doc: "../docs/TEST_GENERATOR_SKILL_INPUT_SCHEMA.md"' "${skills_root}/test-generator/adl-skill.yaml"
 grep -Fq "policy.test_depth_must_be_explicit" "${skills_root}/test-generator/adl-skill.yaml"
 grep -Fq "policy.validation_mode_must_be_explicit" "${skills_root}/test-generator/adl-skill.yaml"
 grep -Fq "bounded regression-test authoring" "${skills_root}/test-generator/SKILL.md"

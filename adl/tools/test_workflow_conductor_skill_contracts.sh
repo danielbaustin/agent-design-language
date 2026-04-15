@@ -21,7 +21,7 @@ grep -Fq "writes one bounded routing artifact" "${skills_root}/docs/OPERATIONAL_
 grep -Fq "invoke one bounded downstream skill subtask" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 grep -Fq 'continue`, `ask_operator`, or `stop`' "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 grep -Fq 'id: "workflow_conductor.v1"' "${skills_root}/workflow-conductor/adl-skill.yaml"
-grep -Fq 'reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md"' "${skills_root}/workflow-conductor/adl-skill.yaml"
+grep -Fq 'reference_doc: "../docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md"' "${skills_root}/workflow-conductor/adl-skill.yaml"
 grep -Fq "policy.stop_after_routing_must_be_true" "${skills_root}/workflow-conductor/adl-skill.yaml"
 grep -Fq "python3 adl/tools/skills/workflow-conductor/scripts/route_workflow.py --input <validated-json>" "${skills_root}/workflow-conductor/adl-skill.yaml"
 grep -Fq "dispatch" "${skills_root}/workflow-conductor/references/output-contract.md"

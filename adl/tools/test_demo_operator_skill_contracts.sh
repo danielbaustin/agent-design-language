@@ -12,7 +12,7 @@ skills_root="${repo_root}/adl/tools/skills"
 [[ -f "${skills_root}/docs/DEMO_OPERATOR_SKILL_INPUT_SCHEMA.md" ]]
 
 grep -Fq 'id: "demo_operator.v1"' "${skills_root}/demo-operator/adl-skill.yaml"
-grep -Fq 'reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/DEMO_OPERATOR_SKILL_INPUT_SCHEMA.md"' "${skills_root}/demo-operator/adl-skill.yaml"
+grep -Fq 'reference_doc: "../docs/DEMO_OPERATOR_SKILL_INPUT_SCHEMA.md"' "${skills_root}/demo-operator/adl-skill.yaml"
 grep -Fq "policy.classification_mode_must_be_explicit" "${skills_root}/demo-operator/adl-skill.yaml"
 grep -Fq "policy.validation_mode_must_be_explicit" "${skills_root}/demo-operator/adl-skill.yaml"
 grep -Fq "run one named demo" "${skills_root}/demo-operator/SKILL.md"

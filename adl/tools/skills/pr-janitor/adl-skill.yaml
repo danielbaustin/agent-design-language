@@ -9,7 +9,7 @@ codex_compat:
 admission:
   input_schema:
     id: "pr_janitor.v1"
-    reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/PR_JANITOR_SKILL_INPUT_SCHEMA.md"
+    reference_doc: "../docs/PR_JANITOR_SKILL_INPUT_SCHEMA.md"
     required_top_level_fields:
       - "skill_input_schema"
       - "mode"
