@@ -430,7 +430,7 @@ A self-attacking system shows:
 
 This makes the pattern closely related to:
 
-- Godel-style improvement loops
+- Gödel-style improvement loops
 - bounded adaptive execution
 - persistent agency under constraint
 

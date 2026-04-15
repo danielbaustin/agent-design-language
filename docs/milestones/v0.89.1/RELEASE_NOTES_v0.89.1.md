@@ -42,7 +42,7 @@
 - a bounded `arxiv-paper-writer` skill uses the Paper Sonata-style manuscript workflow to support serious technical writing with explicit source packets and review packets
 - the milestone aims to produce manuscript packets for:
   - What Is ADL?
-  - Godel Agents and ADL
+  - Gödel Agents and ADL
   - Cognitive Spacetime Manifold
 
 ## Upgrade Notes

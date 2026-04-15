@@ -79,7 +79,7 @@ Additional environment / fixture requirements:
 | D6 | Operational skills substrate integration | `WP-08` - `WP-09` operational skills, composition, and bounded governance follow-through | planned `WP-08` / `WP-09` governed composition entry point | substrate/composition packet + delegation/refusal integration note | reviewer can see that adversarial work runs through explicit skill/composition surfaces instead of ad hoc orchestration | orchestration structure should be deterministic even if node outputs remain stochastic | PLANNED |
 | D7 | Reviewer-facing security proof package | `WP-10` - `WP-13` packaging convergence, milestone convergence, and integration demos | planned `WP-10` / `WP-13` review package | reviewer-facing adversarial/replay/trust packet | reviewer can inspect milestone claims, carry-forward boundaries, and proof surfaces as one coherent package | may remain artifact/document driven rather than fully runnable | PLANNED |
 | D8 | Five-Agent Hey Jude MIDI demo | `WP-08` - `WP-10`, `WP-13` cross-provider coordination, human-in-the-loop orchestration, and integration delight surface | planned `WP-08` / `WP-13` coordination demo entry point | Hey Jude coordination packet + MIDI control trace + provider participation summary | reviewer can see one human plus four providers coordinating on one ADL runtime with explicit orchestration boundaries | bounded score/input should preserve composition shape, participant roles, and MIDI event ordering where declared | PLANNED |
-| D9 | ArXiv manuscript workflow packet | `WP-08`, `WP-13` bounded `arxiv-paper-writer` skill plus the initial three-paper publication program | planned `WP-08` / `WP-13` manuscript workflow entry point | writer-skill packet + source packet bundle + three-paper manuscript status packet | reviewer can see ADL use a bounded manuscript workflow to draft and review What Is ADL?, Godel Agents and ADL, and Cognitive Spacetime Manifold without losing claim discipline | bounded source packets should preserve role order, section structure, and packet shape where declared | PLANNED |
+| D9 | ArXiv manuscript workflow packet | `WP-08`, `WP-13` bounded `arxiv-paper-writer` skill plus the initial three-paper publication program | planned `WP-08` / `WP-13` manuscript workflow entry point | writer-skill packet + source packet bundle + three-paper manuscript status packet | reviewer can see ADL use a bounded manuscript workflow to draft and review What Is ADL?, Gödel Agents and ADL, and Cognitive Spacetime Manifold without losing claim discipline | bounded source packets should preserve role order, section structure, and packet shape where declared | PLANNED |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -283,7 +283,7 @@ Expected artifacts:
 - shared paper-source packet bundle
 - manuscript status packets for:
   - What Is ADL?
-  - Godel Agents and ADL
+  - Gödel Agents and ADL
   - Cognitive Spacetime Manifold
 
 Primary proof surface:

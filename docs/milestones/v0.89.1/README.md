@@ -41,7 +41,7 @@ Key outcomes:
 - a bounded `arxiv-paper-writer` operational skill grounded in `Paper Sonata` and the existing writing-skill surfaces
 - reviewer-legible manuscript packets for:
   - What Is ADL?
-  - Godel Agents and ADL
+  - Gödel Agents and ADL
   - Cognitive Spacetime Manifold
 - a coherent WBS and sprint plan that map the source planning corpus to executable work
 - a clean boundary between what belongs to `v0.89` and what belongs to this follow-on milestone
