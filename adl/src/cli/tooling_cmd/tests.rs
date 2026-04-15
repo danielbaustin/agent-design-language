@@ -1026,6 +1026,19 @@ fn structured_prompt_sor_validator_accepts_not_bound_yet_only_in_bootstrap_phase
 }
 
 #[test]
+fn structured_prompt_bootstrap_sor_rejects_free_form_not_started_timestamps() {
+    let sor = valid_sor_text()
+        .replace("Branch: codex/1374-tooling-test", "Branch: not bound yet")
+        .replace("Status: DONE", "Status: NOT_STARTED")
+        .replace("2026-04-07T19:00:00Z", "not started yet")
+        .replace("2026-04-07T19:05:00Z", "not started yet");
+
+    let err = validate_sor_text(&sor, Some("bootstrap"))
+        .expect_err("bootstrap SOR should reject free-form timestamp placeholders");
+    assert!(err.to_string().contains("Execution.Start Time"));
+}
+
+#[test]
 fn structured_prompt_completed_sor_validator_accepts_closed_no_pr_retrospective_branch() {
     let sor = valid_sor_text()
         .replace(
