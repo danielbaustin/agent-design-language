@@ -15,7 +15,7 @@
 
 ## Summary
 
-`v0.89.1` is the milestone where ADL turns adversarial runtime and exploit-evidence carry-forward into a first-class package. The current draft release story is that this milestone should make contested execution, exploit/replay artifacts, self-attack patterns, and adversarial proof surfaces explicit and reviewable once the wave lands.
+`v0.89.1` is the milestone where ADL turns adversarial runtime and exploit-evidence carry-forward into a first-class package. The current draft release story is that this milestone should make contested execution, exploit/replay artifacts, self-attack patterns, adversarial proof surfaces, and a bounded manuscript/publication workflow explicit and reviewable once the wave lands.
 
 ## Current Draft Highlights
 - explicit adversarial runtime model for contested operation
@@ -23,6 +23,7 @@
 - exploit artifact and replay contracts
 - continuous verification and self-attack proof surfaces
 - adversarial demo and governed execution substrate
+- bounded `arxiv-paper-writer` skill and the initial three-paper manuscript program
 
 ## What's New In Detail
 
@@ -36,6 +37,13 @@
 
 ### Governed execution substrate
 - operational skills substrate and composition surfaces make the adversarial band executable without collapsing into ad hoc prompt choreography
+
+### Publication and manuscript workflow
+- a bounded `arxiv-paper-writer` skill uses the Paper Sonata-style manuscript workflow to support serious technical writing with explicit source packets and review packets
+- the milestone aims to produce manuscript packets for:
+  - What Is ADL?
+  - Godel Agents and ADL
+  - Cognitive Spacetime Manifold
 
 ## Upgrade Notes
 - exact user-facing upgrade notes are still `TBD` until the issue wave, proof surfaces, and review tail land

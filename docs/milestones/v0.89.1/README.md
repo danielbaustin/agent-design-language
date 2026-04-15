@@ -34,9 +34,15 @@ This milestone focuses on:
 - self-attacking system patterns
 - adversarial and security demo surfaces
 - operational skill substrate and composition surfaces needed to run these behaviors cleanly
+- a bounded manuscript/publication workflow strong enough to write the initial ADL three-paper arXiv program inside the milestone
 
 Key outcomes:
 - a real tracked feature package for the `v0.89.1` adversarial/runtime band
+- a bounded `arxiv-paper-writer` operational skill grounded in `Paper Sonata` and the existing writing-skill surfaces
+- reviewer-legible manuscript packets for:
+  - What Is ADL?
+  - Godel Agents and ADL
+  - Cognitive Spacetime Manifold
 - a coherent WBS and sprint plan that map the source planning corpus to executable work
 - a clean boundary between what belongs to `v0.89` and what belongs to this follow-on milestone
 
@@ -49,6 +55,7 @@ Key outcomes:
 - self-attacking systems as a bounded architectural pattern
 - flagship adversarial demo planning and supporting security-proof demo surfaces
 - operational skills substrate and skill-composition runtime framing as they relate to adversarial/governed execution
+- a bounded `arxiv-paper-writer` skill plus execution of the initial three-paper arXiv program
 
 ### Out of scope
 - reopening or redefining the settled `v0.89` core milestone
@@ -88,14 +95,14 @@ Supporting local planning inputs:
 - `PROPOSED_OPERATIONAL_SKILLS.md`
 - `ADL_SECURITY_DEMOS.md`
 - `PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md`
-- `.adl/docs/TBD/ARXIV_PAPER_PROGRAM_PLAN.md` (supports a bounded `arxiv-paper-writer` follow-on candidate under the skills/publication band)
+- `.adl/docs/TBD/ARXIV_PAPER_PROGRAM_PLAN.md` (supports the committed `v0.89.1` publication/skills slice under `WP-08` and `WP-13`)
 
 ## Execution Model
 
 This milestone is designed to execute as a standard ADL issue wave once officially opened:
 - `WP-01`: milestone design pass and canonical package completion
 - `WP-02` - `WP-10`: core adversarial/runtime feature band
-- `WP-11` - `WP-13`: demo scaffolding, milestone convergence, and integration demos
+- `WP-11` - `WP-13`: demo scaffolding, milestone convergence, integration demos, and the initial three-paper publication packet
 - `WP-14`: quality gate
 - `WP-15`: docs + review convergence
 - `WP-16` - `WP-18`: internal review, 3rd-party review, and findings remediation
@@ -139,12 +146,13 @@ Evidence locations:
 Known risks:
 - `v0.89.1` can sprawl into a vague “security everything” band if the exploit/runtime focus is not maintained
 - negotiation, refusal, and provider-capability extensions are conceptually relevant but can easily over-expand the milestone if promoted too early
+- the publication track can starve the core runtime band if the writer-skill and manuscript work are not kept bounded and proof-oriented
 
 Open questions:
 - how much of the operational-skill substrate should land as code in `v0.89.1` versus remain design-contract work
 - whether provider-capability extension belongs in this band or should remain a later security-extension slice
 - which demo shapes are sufficient to prove adversarial/runtime behavior before heavier follow-on bands
-- whether the milestone should absorb a bounded `arxiv-paper-writer` operational skill as part of the `WP-08` / `WP-13` skills-and-proof follow-on, or leave it as a local backlog item if the runtime band is already full
+- whether the three-paper program should aim for fully submission-ready manuscripts inside `v0.89.1` or stop at review-ready manuscript packets with explicit post-milestone submission cleanup
 
 ## Status
 

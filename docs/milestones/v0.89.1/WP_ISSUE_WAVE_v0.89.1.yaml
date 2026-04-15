@@ -103,8 +103,8 @@ wave:
     dependencies: [WP-01, WP-04]
     dependency_notes: '`WP-01`, `WP-04`'
     work_package: Operational skills substrate and composition
-    summary: Make operational skill execution and composition explicit enough for adversarial/runtime use.
-    deliverable: substrate and composition package
+    summary: Make operational skill execution and composition explicit enough for adversarial/runtime use, including a bounded arXiv paper-writing skill.
+    deliverable: substrate and composition package plus bounded arxiv-paper-writer skill
     issue_column: planned issue wave
   - wp: WP-09
     issue_kind: execution
@@ -173,8 +173,8 @@ wave:
     dependencies: [WP-02, WP-12]
     dependency_notes: '`WP-02` - `WP-12`'
     work_package: Demo matrix and integration demos
-    summary: Validate the milestone claims through bounded demos and integration review.
-    deliverable: canonical demo matrix and demo artifacts
+    summary: Validate the milestone claims through bounded demos, integration review, and the initial three-paper publication packet.
+    deliverable: canonical demo matrix, demo artifacts, and three-paper manuscript packet
     issue_column: planned issue wave
   - wp: WP-14
     issue_kind: execution

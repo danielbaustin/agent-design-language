@@ -11,16 +11,16 @@
 
 `v0.89.1` is a three-sprint execution plan:
 - Sprint 1: open the official issue wave and land the adversarial/runtime architecture core
-- Sprint 2: land exploit/replay, verification, demo, and governed execution surfaces
-- Sprint 3: converge demos, quality, review, remediation, next-milestone planning, and release closure
+- Sprint 2: land exploit/replay, verification, demo, governed execution, and the bounded publication-skill substrate
+- Sprint 3: converge demos, manuscript outputs, quality, review, remediation, next-milestone planning, and release closure
 
 ## Sprint Overview
 
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
 | `v0.89.1-s1` | open the official issue wave and execute the adversarial/runtime core | `WP-01`, `WP-02` - `WP-05` | seed-ready; issue wave not opened |
-| `v0.89.1-s2` | execute verification, self-attack, demo, and governed execution substrate work | `WP-06` - `WP-10` | seed-ready behind Sprint 1 |
-| `v0.89.1-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | planned release tail; no issue wave yet |
+| `v0.89.1-s2` | execute verification, self-attack, demo, governed execution substrate, and the bounded publication skill | `WP-06` - `WP-10` | seed-ready behind Sprint 1 |
+| `v0.89.1-s3` | converge demos, manuscript outputs, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | planned release tail; no issue wave yet |
 
 ## Sprint 1
 
@@ -50,12 +50,14 @@ Land the exploit-proof and governed execution substrate that makes `v0.89.1` mor
 - self-attacking systems
 - adversarial demo and security proof surfaces
 - operational skills substrate and skill composition
+- bounded `arxiv-paper-writer` operational skill work
 - delegation/refusal/coordination follow-through
 - provider extension and packaging convergence
 
 ### Exit Criteria
 - `WP-06` through `WP-10` are opened and tracked in the milestone package
 - the main `v0.89.1` feature band is fully represented in the active execution package
+- the operational-skills band explicitly includes the bounded manuscript/publication skill needed for the paper program
 - under-authored supporting inputs are either integrated truthfully or explicitly left out
 - supporting governance and provider-extension questions remain bounded instead of swelling the milestone mid-wave
 
@@ -68,6 +70,7 @@ Close the milestone using the normal ADL pattern: demos, quality gate, docs/revi
 - demo scaffolding and proof entry points
 - milestone convergence and follow-on mapping
 - demo matrix and integration demos
+- the initial three-paper arXiv manuscript program
 - coverage / quality gate
 - docs + review pass
 - internal review
@@ -78,6 +81,7 @@ Close the milestone using the normal ADL pattern: demos, quality gate, docs/revi
 
 ### Exit Criteria
 - reviewer-facing proof surfaces exist for the core `v0.89.1` claims
+- reviewer-legible manuscript packets exist for the three-paper arXiv slate
 - accepted review findings are remediated or explicitly deferred
 - release and next-milestone handoff are explicit and bounded
 - quality, docs, and release surfaces are consistent with delivered work

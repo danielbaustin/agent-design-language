@@ -23,6 +23,7 @@ This page defines:
 - exploit artifacts and replay evidence become first-class
 - red/blue/self-attack behavior becomes architecture rather than implication
 - demo/review proof surfaces for this band become explicit
+- the bounded manuscript/publication workflow becomes explicit enough to support the initial three-paper arXiv program
 
 ## Promoted Tracked Feature Docs
 
@@ -58,7 +59,7 @@ This page defines:
 | `DELEGATION_AND_REFUSAL.md` | supporting planning input | informs `WP-09` governance boundary work |
 | `MULTI_AGENT_NEGOTIATION.md` | supporting planning input | informs `WP-09` coordination and disagreement surfaces |
 | `PROPOSED_OPERATIONAL_SKILLS.md` | supporting planning input | informs `WP-08` and `WP-09` skill-surface packaging |
-| `.adl/docs/TBD/ARXIV_PAPER_PROGRAM_PLAN.md` | supporting planning input | informs a candidate `arxiv-paper-writer` skill follow-on under `WP-08` / `WP-13`; do not promote as a tracked feature commitment yet |
+| `.adl/docs/TBD/ARXIV_PAPER_PROGRAM_PLAN.md` | supporting planning input | informs the committed `WP-08` bounded `arxiv-paper-writer` skill and the `WP-13` three-paper publication packet |
 | `ADL_SECURITY_DEMOS.md` | under-authored supporting input | do not promote until authored; informs later demo packaging |
 | `PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md` | under-authored supporting input | do not promote until authored; candidate later security-extension slice |
 
@@ -76,5 +77,5 @@ That means:
 - Treat `README.md`, `VISION_v0.89.1.md`, `DESIGN_v0.89.1.md`, `WBS_v0.89.1.md`, and `SPRINT_v0.89.1.md` as the canonical milestone planning package.
 - Treat the files in `features/` as the promoted tracked feature commitments for the main `v0.89.1` band.
 - Treat `WP_ISSUE_WAVE_v0.89.1.yaml` as the mechanical source for later issue creation once review is complete.
-- Treat the remaining local `v0.89.1` planning inputs as planning material, not already-shipped promises.
+- Treat the remaining local `v0.89.1` planning inputs as planning material unless the milestone docs explicitly absorb them into a named work package.
 - Treat contradictions between the planning package, promoted feature docs, and source mapping as defects.

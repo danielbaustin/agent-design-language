@@ -20,6 +20,7 @@ In scope for `v0.89.1`:
 - exploit artifacts and replay evidence
 - continuous verification and self-attack patterns
 - flagship adversarial demo and governed execution substrate
+- bounded manuscript/publication workflow for the initial three-paper arXiv program
 
 Out of scope for `v0.89.1`:
 - reopening the settled `v0.89` core package
@@ -36,7 +37,7 @@ Use these categories consistently during `v0.89.1`:
   reviewer, quality-gate, or release-tail surfaces that may be canonical proof but should not be treated like quick demos.
 
 For `v0.89.1`, rows `D1` through `D6` plus `D8` are expected to behave like ordinary or bounded-integration proof rows.
-Row `D7` is a heavier reviewer-facing package and may remain artifact or document driven even when complete.
+Rows `D7` and `D9` are heavier reviewer-facing packages and may remain artifact or document driven even when complete.
 
 ## Runtime Preconditions
 
@@ -78,6 +79,7 @@ Additional environment / fixture requirements:
 | D6 | Operational skills substrate integration | `WP-08` - `WP-09` operational skills, composition, and bounded governance follow-through | planned `WP-08` / `WP-09` governed composition entry point | substrate/composition packet + delegation/refusal integration note | reviewer can see that adversarial work runs through explicit skill/composition surfaces instead of ad hoc orchestration | orchestration structure should be deterministic even if node outputs remain stochastic | PLANNED |
 | D7 | Reviewer-facing security proof package | `WP-10` - `WP-13` packaging convergence, milestone convergence, and integration demos | planned `WP-10` / `WP-13` review package | reviewer-facing adversarial/replay/trust packet | reviewer can inspect milestone claims, carry-forward boundaries, and proof surfaces as one coherent package | may remain artifact/document driven rather than fully runnable | PLANNED |
 | D8 | Five-Agent Hey Jude MIDI demo | `WP-08` - `WP-10`, `WP-13` cross-provider coordination, human-in-the-loop orchestration, and integration delight surface | planned `WP-08` / `WP-13` coordination demo entry point | Hey Jude coordination packet + MIDI control trace + provider participation summary | reviewer can see one human plus four providers coordinating on one ADL runtime with explicit orchestration boundaries | bounded score/input should preserve composition shape, participant roles, and MIDI event ordering where declared | PLANNED |
+| D9 | ArXiv manuscript workflow packet | `WP-08`, `WP-13` bounded `arxiv-paper-writer` skill plus the initial three-paper publication program | planned `WP-08` / `WP-13` manuscript workflow entry point | writer-skill packet + source packet bundle + three-paper manuscript status packet | reviewer can see ADL use a bounded manuscript workflow to draft and review What Is ADL?, Godel Agents and ADL, and Cognitive Spacetime Manifold without losing claim discipline | bounded source packets should preserve role order, section structure, and packet shape where declared | PLANNED |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -257,6 +259,43 @@ Primary proof surface:
 Expected success signals:
 - reviewer can answer what was found, how it was exploited, how replay worked, what changed after mitigation, and what was promoted
 - the packet closes the loop without hidden reasoning steps
+
+---
+
+### D9) ArXiv manuscript workflow packet
+
+Description:
+- prove that `v0.89.1` can use a bounded manuscript workflow to support serious technical writing about ADL itself
+- make the writer skill, source packet, role decomposition, and three-paper outputs reviewer-legible
+
+Milestone claims / work packages covered:
+- `WP-08`
+- `WP-13`
+
+Planned entry point:
+
+```bash
+Defined when the official `WP-08` / `WP-13` publication-skill issues land.
+```
+
+Expected artifacts:
+- bounded `arxiv-paper-writer` skill packet
+- shared paper-source packet bundle
+- manuscript status packets for:
+  - What Is ADL?
+  - Godel Agents and ADL
+  - Cognitive Spacetime Manifold
+
+Primary proof surface:
+- reviewer-facing manuscript workflow packet plus three-paper status bundle
+
+Expected success signals:
+- reviewer can see the role mapping, source packet, section structure, and review packet shape directly
+- the paper workflow preserves claim discipline and distinguishes repo truth from future direction
+- the milestone can show real manuscript progress without pretending autonomous publication
+
+Known limits / caveats:
+- this row is about bounded drafting and review workflow, not automatic submission or unverifiable authorship claims
 
 Known limits / caveats:
 - this row is the flagship proof row and should stay bounded to a safe, intelligible target

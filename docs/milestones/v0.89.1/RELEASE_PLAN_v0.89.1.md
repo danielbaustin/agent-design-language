@@ -9,7 +9,7 @@
 ## How To Use
 - execute sections in order and capture links for each completed step
 - keep this document focused on shipping mechanics; use release notes for narrative
-- do not publish until the adversarial/runtime core, demo program, and review surfaces are truthful
+- do not publish until the adversarial/runtime core, publication skill, demo program, and review surfaces are truthful
 
 ## Current Release Truth
 
@@ -27,6 +27,7 @@ That means:
 - [ ] Release notes approved (`RELEASE_NOTES_v0.89.1.md`)
 - [ ] Go/no-go decision recorded (`DECISIONS_v0.89.1.md` or final release issue)
 - [ ] Core implementation issue wave opened
+- [ ] Three-paper manuscript packet is complete or explicitly deferred in release truth
 
 ## 2) Branch And Tag Preparation
 - [ ] Target branch confirmed (`main` unless explicitly changed)
