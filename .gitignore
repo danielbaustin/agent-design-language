@@ -11,6 +11,8 @@ out/
 target/
 artifacts/
 issue-*.sh
+*.profraw
+*.profdata
 
 # Local worktrees (generated)
 .worktrees/
