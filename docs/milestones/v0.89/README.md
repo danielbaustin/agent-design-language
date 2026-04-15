@@ -125,7 +125,7 @@ The milestone should demonstrate:
 
 Evidence locations:
 - `DEMO_MATRIX_v0.89.md`
-- issue outputs and run artifacts under `.adl/`
+- issue-scoped proof artifacts and review packets
 
 ## Risks and Open Questions
 
@@ -139,12 +139,12 @@ Open questions:
 
 ## Status
 
-Current status: canonical planning package complete; official `v0.89` issue wave opened; core implementation is materially underway with the main convergence / gate / action / skill / experiment / ObsMem band landed and the security + release-tail wave still in flight
+Current status: canonical planning package complete; official `v0.89` issue wave opened; the core convergence / gate / action / skill / experiment / ObsMem / security band is landed on `main`; demo/proof convergence and next-milestone planning are landed; quality/docs/review/release closure work remains in flight
 
 - Planning: complete
-- Execution: `WP-02` - `WP-08` landed, `WP-10` handoff satisfied, `WP-09` and `WP-11` - `WP-20` still active or pending
-- Validation: partial; core proof surfaces exist, release-tail proof and review surfaces remain in flight
-- Release readiness: not started
+- Execution: `WP-02` - `WP-13` landed, `WP-19` next-milestone planning landed, `WP-14` is active, and `WP-15` - `WP-18` plus `WP-20` remain open
+- Validation: partial; core proof surfaces, demo convergence, and the tracked `v0.89.1` handoff package exist, while quality/review/release-tail proof remains in flight
+- Release readiness: partial; release packaging and ceremony are not started, but the late-tail issue wave is now active rather than hypothetical
 
 Current issue map:
 - `WP-01` `#1662`
@@ -160,11 +160,20 @@ Currently landed:
 - `WP-06` `#1793`
 - `WP-07` `#1794`
 - `WP-08` `#1795`
+- `WP-09` `#1796`
 - `WP-10` `#1797` (satisfied by the tracked `v0.89.1` package)
+- `WP-11` `#1798`
+- `WP-12` `#1799`
+- `WP-13` `#1800`
+- `WP-19` `#1806` (tracked `v0.89.1` package prepared and landed on `main`)
 
 Still open:
-- `WP-09` `#1796`
-- `WP-11` - `WP-20` `#1798` - `#1807`
+- `WP-14` `#1801`
+- `WP-15` `#1802`
+- `WP-16` `#1803`
+- `WP-17` `#1804`
+- `WP-18` `#1805`
+- `WP-20` `#1807`
 
 ## Exit Criteria
 

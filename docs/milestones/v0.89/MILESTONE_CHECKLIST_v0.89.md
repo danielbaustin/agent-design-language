@@ -20,7 +20,7 @@ Ship/no-ship gate for `v0.89`. Check items only when evidence exists.
 - [x] Core implementation issue wave opened
 
 ## Execution Discipline
-- [ ] Each issue has truthful input/output cards under `.adl/`
+- [ ] Each issue has truthful local input/output cards
 - [ ] Draft PR opened for each tracked issue before merge where applicable
 - [ ] Queue and closeout discipline followed consistently
 - [x] Carry-forward to `v0.89.1` remains explicit rather than implicit

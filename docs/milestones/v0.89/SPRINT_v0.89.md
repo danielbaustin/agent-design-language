@@ -21,8 +21,8 @@ This keeps the execution model aligned with the recent milestone pattern while p
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
 | `v0.89-s1` | open the official issue wave and execute the convergence / gate / action core | `WP-01` (`#1662`), `WP-02` - `WP-05` (`#1789` - `#1792`) | complete |
-| `v0.89-s2` | execute the skill / experiment / memory / security package plus explicit `v0.89.1` handoff planning | `WP-06` - `WP-10` (`#1793` - `#1797`) | in progress; `WP-06` - `WP-08` landed, `WP-09` open, `WP-10` satisfied |
-| `v0.89-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` (`#1798` - `#1807`) | in progress; demo/proof convergence started, review tail not yet landed |
+| `v0.89-s2` | execute the skill / experiment / memory / security package plus explicit `v0.89.1` handoff planning | `WP-06` - `WP-10` (`#1793` - `#1797`) | complete; `WP-06` - `WP-09` landed and `WP-10` is satisfied by the tracked `v0.89.1` package |
+| `v0.89-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` (`#1798` - `#1807`) | in progress; demo/proof convergence and next-milestone planning landed, quality/docs/review/release tail still open |
 
 ## Sprint 1
 
@@ -109,8 +109,8 @@ Current issue map:
 - the milestone can close without reconstructing planning intent from local-only notes
 
 Current sprint-3 convergence target:
-- use `WP-11` and `WP-12` to turn the landed `WP-02` - `WP-08` core into reviewer-legible proof and milestone status surfaces
-- keep `WP-09` visible as the remaining core implementation dependency before the review and release tail
+- use the landed `WP-11` - `WP-13` proof surfaces plus the landed `WP-19` next-milestone package as the review-tail starting point
+- keep `WP-14` and the remaining review/remediation/release wave visible as the open closeout dependency set
 
 ## Risks / Dependencies
 - Dependency: `v0.88` release tail must close cleanly so the next wave does not inherit avoidable drift
@@ -129,7 +129,7 @@ Current sprint-3 convergence target:
 - use issue cards (`stp` / `sip` / `sor`) for each issue
 - keep changes scoped per issue; use draft PRs until checks pass
 - prefer one bounded PR lane per queue unless explicit policy says otherwise
-- keep `.adl` local memory preserved while tracked milestone docs and code land through normal PR flow
+- keep local issue memory preserved while tracked milestone docs and code land through normal PR flow
 
 ## Exit Criteria
 - all planned scope items are completed or explicitly deferred with rationale

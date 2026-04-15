@@ -17,6 +17,8 @@
 - [ ] Release notes approved (`RELEASE_NOTES_v0.89.md`)
 - [ ] Go/no-go decision recorded (`DECISIONS_v0.89.md` or final release issue)
 - [x] Core implementation issue wave opened
+- [x] Core feature and proof-convergence wave landed through `WP-13`
+- [x] Next-milestone planning package prepared through `WP-19`
 - [ ] D11 quality-gate walkthrough reviewed and current (`bash adl/tools/demo_v089_quality_gate.sh`)
 
 ## 2) Branch And Tag Preparation

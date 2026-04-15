@@ -112,4 +112,4 @@ That means:
 - use issue cards (`stp` / `sip` / `sor`) for each issue
 - keep changes scoped per issue
 - prefer one bounded PR lane per queue unless explicit policy says otherwise
-- keep `.adl` local memory preserved while tracked milestone docs and code land through normal PR flow
+- keep local issue memory preserved while tracked milestone docs and code land through normal PR flow

@@ -2,6 +2,35 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
+## v0.89 (Governed Adaptation Review Tail In Progress)
+
+Status: Core implementation and proof-convergence wave landed through `WP-13`; next-milestone planning landed through `WP-19`; quality/docs/review/remediation/release tail remains in progress.
+
+Summary:
+- ADL now has a real `v0.89` milestone on `main`, centered on one governed-adaptation package:
+  `convergence -> judgment -> decision/action mediation -> skill execution -> experiment evidence -> ObsMem explanation -> security posture/trust`
+- The promoted `v0.89` feature-doc set now covers AEE convergence, Freedom Gate v2, decision surfaces, action mediation, the skill model/protocol, the Godel experiment system, ObsMem evidence/ranking, and the main-band security/trust/posture contract
+- The bounded `v0.89` proof package now exists through the canonical demo matrix and the landed D1-D7 walkthrough/proof rows
+- Demo/proof convergence work has landed through `WP-13`, and the explicit tracked `v0.89.1` package is now prepared on `main` as the bounded next-milestone handoff
+- The remaining open work is the normal milestone tail: quality gate, docs/review alignment, internal review, 3rd-party review, findings remediation, and release ceremony
+
+References:
+- `docs/milestones/v0.89/README.md`
+- `docs/milestones/v0.89/WBS_v0.89.md`
+- `docs/milestones/v0.89/SPRINT_v0.89.md`
+- `docs/milestones/v0.89/DEMO_MATRIX_v0.89.md`
+- `docs/milestones/v0.89/FEATURE_DOCS_v0.89.md`
+- `docs/milestones/v0.89/MILESTONE_CHECKLIST_v0.89.md`
+- `docs/milestones/v0.89/RELEASE_PLAN_v0.89.md`
+- `docs/milestones/v0.89/RELEASE_NOTES_v0.89.md`
+- `docs/milestones/v0.89.1/README.md`
+
+Not yet claimed in v0.89:
+- final quality-gate closure
+- internal review, external / 3rd-party review, and accepted-findings remediation completion
+- release ceremony completion and version/tag publication
+- the adversarial runtime/exploit-replay package, which remains explicitly deferred to `v0.89.1`
+
 ## v0.88 (Temporal / Chronosense + Instinct Review Tail In Progress)
 
 Status: Implementation wave completed through `WP-13`; docs/review/remediation/release tail in progress.
