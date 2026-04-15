@@ -47,7 +47,13 @@
 
 ## Validation Notes
 - final release notes must be updated from shipped proof surfaces only
+- `docs/milestones/v0.89/DEMO_MATRIX_v0.89.md`
 - demo/review package and quality-gate outputs should be cited before release
+
+## Quality Gate
+- `docs/milestones/v0.89/QUALITY_GATE_v0.89.md`
+- `bash adl/tools/demo_v089_quality_gate.sh`
+- primary artifact: `artifacts/v089/quality_gate/quality_gate_record.json`
 
 ## What's Next
 - `v0.89.1` adversarial runtime and exploit/replay package
