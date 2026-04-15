@@ -80,7 +80,7 @@ fn runtime_control_for(status: &str, tr: &trace::Trace) -> execute::RuntimeContr
 fn custom_runtime_control() -> execute::RuntimeControlState {
     execute::RuntimeControlState {
         signals: execute::CognitiveSignalsState {
-            dominant_instinct: "integrity".to_string(),
+            dominant_instinct: execute::DominantInstinct::Integrity,
             completion_pressure: "guarded".to_string(),
             integrity_bias: "high".to_string(),
             curiosity_bias: "bounded".to_string(),
@@ -92,7 +92,7 @@ fn custom_runtime_control() -> execute::RuntimeControlState {
             downstream_influence: "custom downstream influence".to_string(),
         },
         arbitration: execute::CognitiveArbitrationState {
-            route_selected: "slow".to_string(),
+            route_selected: execute::Route::Slow,
             reasoning_mode: "review_heavy".to_string(),
             confidence: "guarded".to_string(),
             risk_class: "high".to_string(),
@@ -106,7 +106,7 @@ fn custom_runtime_control() -> execute::RuntimeControlState {
             route_reason: "custom arbitration reason".to_string(),
         },
         fast_slow: execute::FastSlowPathState {
-            selected_path: "slow_path".to_string(),
+            selected_path: execute::SelectedPath::SlowPath,
             path_family: "slow".to_string(),
             runtime_branch_taken: "slow_review_refine_branch".to_string(),
             handoff_state: "review_handoff".to_string(),
@@ -177,7 +177,7 @@ fn custom_runtime_control() -> execute::RuntimeControlState {
                 candidate_rationale: "custom selected candidate reason".to_string(),
                 risk_class: "high".to_string(),
                 policy_context: execute::FreedomGatePolicyContextState {
-                    route_selected: "slow".to_string(),
+                    route_selected: execute::Route::Slow,
                     selected_candidate_kind: "review_and_refine".to_string(),
                     requires_review: false,
                     policy_blocked: false,

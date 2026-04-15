@@ -12,11 +12,11 @@ pub use policy::{stable_failure_kind, ExecutionPolicyError, ExecutionPolicyError
 pub use runtime_control::{
     derive_runtime_control_state, select_instinct_runtime_candidate, AgencyCandidateRecord,
     AgencySelectionDecisionTemplate, AgencySelectionState, BoundedExecutionIteration,
-    BoundedExecutionState, CognitiveArbitrationState, CognitiveSignalsState,
+    BoundedExecutionState, CognitiveArbitrationState, CognitiveSignalsState, DominantInstinct,
     EvaluationControlState, FastSlowPathState, FreedomGateConsequenceContextState,
     FreedomGateEvaluationSignalsState, FreedomGateInputState, FreedomGatePolicyContextState,
     FreedomGateState, MemoryParticipationState, MemoryQueryState, MemoryReadEntry, MemoryReadState,
-    MemoryWriteState, ReframingControlState, RuntimeControlState,
+    MemoryWriteState, ReframingControlState, Route, RuntimeControlState, SelectedPath,
 };
 pub use steering::{
     apply_steering_patch, steering_record_from_patch, validate_steering_patch, PauseState,

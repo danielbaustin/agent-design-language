@@ -325,7 +325,7 @@ fn build_agency_selection_artifact_exposes_instinct_sensitive_candidate_shift() 
             "derive route from visible arbitration state without hidden initiative".to_string(),
     };
     let fast_state = FastSlowPathState {
-        selected_path: "fast_path".to_string(),
+        selected_path: execute::SelectedPath::FastPath,
         path_family: "fast".to_string(),
         runtime_branch_taken: "fast_direct_execution_branch".to_string(),
         handoff_state: "candidate_ready".to_string(),
