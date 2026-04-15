@@ -24,6 +24,7 @@ The tracked skill set is:
 - `repo-code-review`
 - `test-generator`
 - `demo-operator`
+- `medium-article-writer`
 - `stp-editor`
 - `sip-editor`
 - `sor-editor`
@@ -45,6 +46,7 @@ The normal workflow is:
 `repo-code-review` is cross-cutting rather than phase-specific.
 `test-generator` is a bounded helper skill for focused tests for a concrete issue, diff, file, or worktree.
 `demo-operator` is a bounded helper skill for running one named demo and classifying the proof result consistently.
+`medium-article-writer` is a bounded helper skill for turning one concrete article brief into a reviewer-friendly Medium packet without publishing.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
 
 The three editor skills are helper skills:

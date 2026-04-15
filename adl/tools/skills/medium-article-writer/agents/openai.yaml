@@ -1,0 +1,3 @@
+display_name: Medium Article Writer
+short_description: Draft one reviewer-friendly Medium article packet without publishing
+default_prompt: Turn one concrete article brief into a bounded Medium-style article packet with strong title options, a readable draft, and editorial notes, then stop before publication.
