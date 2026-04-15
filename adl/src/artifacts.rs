@@ -201,6 +201,10 @@ impl RunArtifactPaths {
         self.control_path_dir().join("final_result.json")
     }
 
+    pub fn control_path_security_review_json(&self) -> PathBuf {
+        self.control_path_dir().join("security_review.json")
+    }
+
     pub fn control_path_summary_txt(&self) -> PathBuf {
         self.control_path_dir().join("summary.txt")
     }
