@@ -88,6 +88,7 @@ Supporting local planning inputs:
 - `PROPOSED_OPERATIONAL_SKILLS.md`
 - `ADL_SECURITY_DEMOS.md`
 - `PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md`
+- `.adl/docs/TBD/ARXIV_PAPER_PROGRAM_PLAN.md` (supports a bounded `arxiv-paper-writer` follow-on candidate under the skills/publication band)
 
 ## Execution Model
 
@@ -143,6 +144,7 @@ Open questions:
 - how much of the operational-skill substrate should land as code in `v0.89.1` versus remain design-contract work
 - whether provider-capability extension belongs in this band or should remain a later security-extension slice
 - which demo shapes are sufficient to prove adversarial/runtime behavior before heavier follow-on bands
+- whether the milestone should absorb a bounded `arxiv-paper-writer` operational skill as part of the `WP-08` / `WP-13` skills-and-proof follow-on, or leave it as a local backlog item if the runtime band is already full
 
 ## Status
 
