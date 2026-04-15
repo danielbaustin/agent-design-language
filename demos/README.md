@@ -151,6 +151,12 @@ That command writes a lightweight review packet at:
 - `artifacts/v089/proof_entrypoints/README.md`
 - `artifacts/v089/proof_entrypoints/index.txt`
 
+Use `bash adl/tools/demo_v089_review_surface.sh` when you want the integrated
+`v0.89` reviewer package instead of the lighter row-entry map. It emits:
+- `artifacts/v089/review_surface/demo_manifest.json`
+- `artifacts/v089/review_surface/claim_matrix.md`
+- `artifacts/v089/review_surface/proof_entrypoints/demo_manifest.json`
+
 Use `v0.89/deep_agents_comparative_wave_demo.md` for a richer comparative demo
 where ChatGPT, Claude, and Gemini contribute bounded positions and ADL emits a
 findings-first synthesis package instead of a flat proof row.
