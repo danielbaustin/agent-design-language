@@ -35,7 +35,7 @@ Use these categories consistently during `v0.89.1`:
 - Heavyweight proof packages:
   reviewer, quality-gate, or release-tail surfaces that may be canonical proof but should not be treated like quick demos.
 
-For `v0.89.1`, rows `D1` through `D6` are expected to behave like ordinary or bounded-integration proof rows.
+For `v0.89.1`, rows `D1` through `D6` plus `D8` are expected to behave like ordinary or bounded-integration proof rows.
 Row `D7` is a heavier reviewer-facing package and may remain artifact or document driven even when complete.
 
 ## Runtime Preconditions
@@ -77,6 +77,7 @@ Additional environment / fixture requirements:
 | D5 | Flagship adversarial demo | `WP-07` full exploit -> replay -> mitigation -> promotion loop | planned `WP-07` adversarial demo entry point | flagship adversarial demo packet | reviewer can answer what was attacked, how it was reproduced, what mitigation was applied, and whether replay post-fix succeeded | replay should make before/after mitigation comparison explicit | PLANNED |
 | D6 | Operational skills substrate integration | `WP-08` - `WP-09` operational skills, composition, and bounded governance follow-through | planned `WP-08` / `WP-09` governed composition entry point | substrate/composition packet + delegation/refusal integration note | reviewer can see that adversarial work runs through explicit skill/composition surfaces instead of ad hoc orchestration | orchestration structure should be deterministic even if node outputs remain stochastic | PLANNED |
 | D7 | Reviewer-facing security proof package | `WP-10` - `WP-13` packaging convergence, milestone convergence, and integration demos | planned `WP-10` / `WP-13` review package | reviewer-facing adversarial/replay/trust packet | reviewer can inspect milestone claims, carry-forward boundaries, and proof surfaces as one coherent package | may remain artifact/document driven rather than fully runnable | PLANNED |
+| D8 | Five-Agent Hey Jude MIDI demo | `WP-08` - `WP-10`, `WP-13` cross-provider coordination, human-in-the-loop orchestration, and integration delight surface | planned `WP-08` / `WP-13` coordination demo entry point | Hey Jude coordination packet + MIDI control trace + provider participation summary | reviewer can see one human plus four providers coordinating on one ADL runtime with explicit orchestration boundaries | bounded score/input should preserve composition shape, participant roles, and MIDI event ordering where declared | PLANNED |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -325,3 +326,47 @@ Expected success signals:
 
 Known limits / caveats:
 - this is a heavyweight proof package and should not be confused with a quick demo row
+
+---
+
+### D8) Five-Agent Hey Jude MIDI demo
+
+Description:
+- prove that the adversarial/runtime band can also support a high-delight human-in-the-loop coordination surface
+- show one human plus four providers participating on one ADL runtime through a MIDI control surface
+
+Milestone claims / work packages covered:
+- `WP-08`
+- `WP-09`
+- `WP-10`
+- `WP-13`
+
+Planned entry point:
+
+```bash
+Defined when the official coordination/integration demo issues land.
+```
+
+Expected artifacts:
+- Hey Jude coordination packet
+- MIDI control trace or event summary
+- provider participation and orchestration packet
+- reviewer-facing integration summary
+
+Primary proof surface:
+- five-agent Hey Jude demo packet
+
+Expected success signals:
+- reviewer can see human-in-the-loop orchestration rather than passive provider fan-out
+- cross-provider participation is explicit and bounded
+- the demo is charming without becoming structurally vague
+
+Source planning inputs:
+- `docs/planning/NEXT_MILESTONE_DEMO_CANDIDATES.md`
+- `.adl/docs/TBD/FIVE_AGENT_HEY_JUDE_MIDI_DEMO_PLAN.md`
+- `.adl/docs/TBD/FIVE_AGENT_HEY_JUDE_MIDI_DEMO_IMPLEMENTATION_PLAN.md`
+- `.adl/docs/TBD/NEXT_MILESTONE_CANDIDATE_FIVE_AGENT_HEY_JUDE_MIDI_DEMO.md`
+
+Known limits / caveats:
+- this row is a flagship delight/integration surface, not the core exploit/replay proof row
+- it should remain bounded and reviewer-legible rather than turning into an open-ended performance artifact
