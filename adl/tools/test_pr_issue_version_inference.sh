@@ -43,26 +43,69 @@ cat >"$bindir/gh" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
 LOG_FILE="${GH_LOG_FILE:?}"
+STATE_DIR="$(dirname "$LOG_FILE")"
+TITLE_976_FILE="$STATE_DIR/issue-976.title"
+LABELS_976_FILE="$STATE_DIR/issue-976.labels"
 printf '%s\n' "$*" >>"$LOG_FILE"
+read_labels() {
+  local issue="$1"
+  if [[ "$issue" == "975" ]]; then
+    printf 'track:roadmap\ntype:task\narea:tools\nversion:v0.85\n'
+    return 0
+  fi
+  if [[ "$issue" == "976" ]]; then
+    if [[ -f "$LABELS_976_FILE" ]]; then
+      cat "$LABELS_976_FILE"
+    fi
+    return 0
+  fi
+  return 1
+}
+read_title() {
+  local issue="$1"
+  if [[ "$issue" == "975" ]]; then
+    printf '[v0.85][process] Infer current milestone card version from issue title when labels are missing\n'
+    return 0
+  fi
+  if [[ "$issue" == "976" ]]; then
+    if [[ -f "$TITLE_976_FILE" ]]; then
+      cat "$TITLE_976_FILE"
+    else
+      printf '[v0.87.1][process] Infer dot suffixed milestone card version from issue title when labels are missing\n'
+    fi
+    return 0
+  fi
+  return 1
+}
 if [[ "${1:-}" == "issue" && "${2:-}" == "view" ]]; then
   issue="${3:-}"
   shift 3
   if [[ "$issue" != "975" && "$issue" != "976" ]]; then
     exit 1
   fi
-  if [[ "$issue" == "975" && "$*" == *"--json labels"* && "$*" == *"-q .labels[].name"* ]]; then
-    echo "version:v0.85"
+  if [[ "$*" == *"--json labels"* && "$*" == *"-q .labels[].name"* ]]; then
+    read_labels "$issue"
     exit 0
   fi
-  if [[ "$issue" == "976" && "$*" == *"--json labels"* && "$*" == *"-q .labels[].name"* ]]; then
+  if [[ "$*" == *"--json title"* && "$*" == *"-q .title"* ]]; then
+    read_title "$issue"
     exit 0
   fi
-  if [[ "$issue" == "975" && "$*" == *"--json title"* && "$*" == *"-q .title"* ]]; then
-    echo "[v0.85][process] Infer current milestone card version from issue title when labels are missing"
+fi
+if [[ "${1:-}" == "issue" && "${2:-}" == "edit" ]]; then
+  issue="${3:-}"
+  shift 3
+  if [[ "$issue" == "976" && "$*" == *"--add-label"* ]]; then
+    cat <<'LABELS' >"$LABELS_976_FILE"
+track:roadmap
+type:task
+area:tools
+version:v0.87.1
+LABELS
     exit 0
   fi
-  if [[ "$issue" == "976" && "$*" == *"--json title"* && "$*" == *"-q .title"* ]]; then
-    echo "[v0.87.1][process] Infer dot suffixed milestone card version from issue title when labels are missing"
+  if [[ "$issue" == "976" && "$*" == *"--title"* ]]; then
+    printf '%s\n' '[v0.87.1][process] Infer dot suffixed milestone card version from issue title when labels are missing' >"$TITLE_976_FILE"
     exit 0
   fi
 fi
@@ -107,10 +150,12 @@ write_authored_source_prompt() {
 ---
 issue_card_schema: adl.issue.v1
 wp: "process"
+queue: "tools"
 slug: "$slug"
 title: "$title"
 labels:
   - "track:roadmap"
+  - "area:tools"
   - "version:$version"
 issue_number: $issue
 status: "draft"

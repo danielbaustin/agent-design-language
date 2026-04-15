@@ -444,6 +444,97 @@ fn real_pr_init_repairs_missing_version_metadata_on_github_issue() {
 }
 
 #[test]
+fn real_pr_init_requires_explicit_or_inferable_version_for_issue() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-init-missing-version");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            "https://github.com/owner/repo.git",
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    write_executable(
+        &bin_dir.join("gh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json title -q .title\"* ]]; then\n  printf '[runtime] Missing version metadata\\n'\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json labels -q .labels[].name\"* ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:runtime\\n'\n  exit 0\nfi\nexit 1\n",
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    let err = real_pr(&[
+        "init".to_string(),
+        "1153".to_string(),
+        "--slug".to_string(),
+        "runtime-missing-version-metadata".to_string(),
+    ])
+    .expect_err("missing version metadata should fail init");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    assert!(err
+        .to_string()
+        .contains("init: could not infer version for issue #1153"));
+}
+
+#[test]
+fn real_pr_start_requires_explicit_version_when_no_fetch_issue_has_no_local_bundle() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-start-no-fetch-missing-version");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            "https://github.com/owner/repo.git",
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+
+    let err = real_pr(&[
+        "start".to_string(),
+        "1153".to_string(),
+        "--slug".to_string(),
+        "runtime-missing-version-no-fetch".to_string(),
+        "--no-fetch-issue".to_string(),
+    ])
+    .expect_err("no-fetch start without local bundle or explicit version should fail");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    assert!(err.to_string().contains(
+        "start: --version is required when --no-fetch-issue is set and no canonical local bundle exists to infer the milestone band"
+    ));
+}
+
+#[test]
 fn current_pr_url_filters_empty_and_null_results() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-current-url");
