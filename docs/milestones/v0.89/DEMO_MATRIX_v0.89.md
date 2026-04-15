@@ -277,9 +277,8 @@ Known limits / caveats:
 Required baseline validation:
 
 ```bash
-Use `bash adl/tools/demo_v089_proof_entrypoints.sh` for the lightweight reviewer
-entrypoint manifest, then run the row-specific commands named above for D1-D6
-or review the D7 document set directly.
+bash adl/tools/demo_v089_proof_entrypoints.sh
+bash adl/tools/demo_v089_review_surface.sh
 ```
 
 Cross-demo checks:
@@ -287,6 +286,7 @@ Cross-demo checks:
 - gate / decision / action demos agree on outcome classes and authority boundaries
 - security/trust/posture proof rows do not overclaim adversarial runtime work that belongs to `v0.89.1`
 - heavyweight proof packages remain clearly separated from ordinary demos in milestone guidance and review notes
+- the integrated review surface preserves the same D1-D7 claim mapping as the lighter proof-entrypoint manifest
 
 Failure policy:
 - If one demo is blocked, record the blocker and say whether milestone review can proceed with an alternate proof surface.

@@ -17,6 +17,17 @@ That command writes:
 
 Use those artifacts as the reviewer entry surface for D1 through D7.
 
+If you want the integrated reviewer package instead of the row-by-row entry map:
+
+```bash
+bash adl/tools/demo_v089_review_surface.sh
+```
+
+That review surface assembles:
+- `artifacts/v089/review_surface/demo_manifest.json`
+- `artifacts/v089/review_surface/claim_matrix.md`
+- `artifacts/v089/review_surface/proof_entrypoints/demo_manifest.json`
+
 ## Demo Order
 
 ### D1) AEE convergence walkthrough
