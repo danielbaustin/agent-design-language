@@ -35,7 +35,7 @@ Use these categories consistently during `v0.89`:
   integrated reviewer, quality-gate, or release-tail surfaces that may still be canonical proof, but should not be treated like quick demos.
 
 For `v0.89`, rows `D1` through `D6` are expected to behave like ordinary demo rows.
-Row `D7` is a heavier reviewer-facing proof row and may remain artifact or document driven even when it is complete.
+Rows `D7` and `D11` are heavier reviewer-facing proof rows and may remain artifact or document driven even when they are complete.
 
 Future quality-gate or release-review packages for `v0.89` should be classified as heavyweight proof packages, not ordinary demos.
 
@@ -76,6 +76,7 @@ Additional environment / fixture requirements:
 | D5 | Godel experiment package demo | `WP-07` governed adopt / reject improvement behavior | `cargo run --manifest-path adl/Cargo.toml -- godel run ...` then `cargo run --manifest-path adl/Cargo.toml -- godel inspect ...` | `runs/<run-id>/godel/experiment_record.v1.json` + `evaluation_plan.v1.json` | reviewer can inspect baseline / variant pairing, canonical evidence, bounded mutation, and adopt / reject decision from one bounded summary | identical bounded inputs should preserve stage order, canonical artifact paths, and decision class | LANDED |
 | D6 | ObsMem evidence and ranking walkthrough | `WP-08` explainable retrieval and ranking | `cargo run --manifest-path adl/Cargo.toml -- demo demo-f-obsmem-retrieval --run --trace --out ./out` | `obsmem_retrieval_result.json` | ranking cites evidence families, status signals, and deterministic tie-break values | identical demo inputs should preserve result order and explanation shape | LANDED |
 | D7 | Security / trust / posture walkthrough | `WP-09` main-band security contract | `cargo test --manifest-path adl/Cargo.toml write_run_state_artifacts_projects_execute_owned_runtime_control_state -- --nocapture`, then review `docs/milestones/v0.89/features/SECURITY_AND_THREAT_MODELING.md`, `docs/milestones/v0.89/features/ADL_SECURITY_POSTURE_MODEL.md`, and `docs/milestones/v0.89/features/ADL_TRUST_MODEL_UNDER_ADVERSARY.md` together | `control_path/security_review.json` + `control_path/summary.txt` + reviewer-facing threat/posture/trust document set | reviewer can see explicit trust boundaries, declared posture, contested trust state, and contested-operation trust assumptions without overclaiming `v0.89.1` adversarial runtime work | proof row is artifact-led with supporting reviewer docs and should replay to the same posture / trust classification for the same bounded fixture | LANDED |
+| D11 | Quality-gate walkthrough | `WP-14` reviewer-facing quality / coverage / proof-package gate | `bash adl/tools/demo_v089_quality_gate.sh` | `artifacts/v089/quality_gate/quality_gate_record.json` + `artifacts/v089/quality_gate/README.md` | reviewer can inspect one bounded record that captures the local quality suite, coverage gate posture, proof-package checks, and maintainability-watch output with per-check logs | repeated runs should preserve the same check inventory and explicit PASS / FAIL structure for the same repo state | PLANNED |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -85,6 +86,7 @@ Status guidance:
 
 Current convergence note:
 - rows `D1` through `D7` now have landed milestone evidence from `WP-02` - `WP-09`
+- row `D11` is the explicit quality-gate walkthrough proof row for `WP-14`
 - the remaining proof-wave work is now about convergence, packaging, quality, and review rather than a missing main-band security row
 
 Heavyweight proof-package rule:
