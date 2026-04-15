@@ -286,7 +286,7 @@ fn build_cognitive_signals_state_is_deterministic_and_runtime_usable() {
     assert_eq!(left.dominant_instinct, right.dominant_instinct);
     assert_eq!(left.confidence_shift, right.confidence_shift);
     assert_eq!(left.persistence_pressure, right.persistence_pressure);
-    assert_eq!(left.dominant_instinct, "completion");
+    assert_eq!(left.dominant_instinct.as_str(), "completion");
     assert_eq!(left.confidence_shift, "reduced");
     assert_eq!(left.persistence_pressure, "retry_biased");
 }
@@ -386,7 +386,7 @@ fn build_cognitive_arbitration_artifact_is_deterministic_and_routes_boundedly() 
         serde_json::to_value(&right).expect("right value")
     );
     assert_eq!(left.cognitive_arbitration_version, 1);
-    assert_eq!(left.route_selected, "slow");
+    assert_eq!(left.route_selected.as_str(), "slow");
     assert_eq!(left.reasoning_mode, "review_heavy");
     assert_eq!(left.risk_class, "medium");
     assert!(left
@@ -491,8 +491,8 @@ fn build_cognitive_arbitration_artifact_consumes_signal_state() {
         Some(&scores),
     );
 
-    assert_eq!(fast.route_selected, "fast");
-    assert_eq!(hybrid.route_selected, "hybrid");
+    assert_eq!(fast.route_selected.as_str(), "fast");
+    assert_eq!(hybrid.route_selected.as_str(), "hybrid");
 }
 
 #[test]
@@ -599,7 +599,7 @@ fn build_fast_slow_path_artifact_is_deterministic_and_distinguishes_modes() {
         serde_json::to_value(&fast_left).expect("fast left value"),
         serde_json::to_value(&fast_right).expect("fast right value")
     );
-    assert_eq!(fast_left.selected_path, "fast_path");
+    assert_eq!(fast_left.selected_path.as_str(), "fast_path");
     assert_eq!(
         fast_left.runtime_branch_taken,
         "fast_direct_execution_branch"
@@ -653,7 +653,7 @@ fn build_fast_slow_path_artifact_is_deterministic_and_distinguishes_modes() {
         Some(&failure_scores),
     );
     assert_eq!(slow.fast_slow_path_version, 1);
-    assert_eq!(slow.selected_path, "slow_path");
+    assert_eq!(slow.selected_path.as_str(), "slow_path");
     assert_eq!(slow.runtime_branch_taken, "slow_review_refine_branch");
     assert_eq!(slow.review_depth, "verification_required");
     assert_eq!(slow.execution_profile, "review_and_refine_before_execution");

@@ -179,18 +179,20 @@ pub(crate) fn build_cognitive_signals_state(
         "low"
     };
     let dominant_instinct = if integrity_bias == "high" {
-        "integrity"
+        execute::DominantInstinct::Integrity
     } else if completion_pressure == "elevated" {
-        "completion"
+        execute::DominantInstinct::Completion
     } else if curiosity_bias == "active" {
-        "curiosity"
+        execute::DominantInstinct::Curiosity
     } else {
-        "coherence"
+        execute::DominantInstinct::Coherence
     };
     let candidate_selection_bias = match dominant_instinct {
-        "integrity" => "prefer lower-risk constrained candidates",
-        "completion" => "prefer candidates that reduce unfinished work quickly",
-        "curiosity" => "prefer candidates that reduce uncertainty",
+        execute::DominantInstinct::Integrity => "prefer lower-risk constrained candidates",
+        execute::DominantInstinct::Completion => {
+            "prefer candidates that reduce unfinished work quickly"
+        }
+        execute::DominantInstinct::Curiosity => "prefer candidates that reduce uncertainty",
         _ => "prefer candidates that preserve bounded coherence",
     };
     let salience_level = if selected.severity == "high" || selected.evidence.failure_count > 0 {
@@ -221,7 +223,7 @@ pub(crate) fn build_cognitive_signals_state(
     );
 
     CognitiveSignalsState {
-        dominant_instinct: dominant_instinct.to_string(),
+        dominant_instinct,
         completion_pressure: completion_pressure.to_string(),
         integrity_bias: integrity_bias.to_string(),
         curiosity_bias: curiosity_bias.to_string(),
@@ -261,7 +263,7 @@ pub(crate) fn build_cognitive_signals_artifact_from_state(
         },
         instinct: CognitiveInstinctRecord {
             instinct_profile_id: "instinct-001".to_string(),
-            dominant_instinct: state.dominant_instinct.clone(),
+            dominant_instinct: state.dominant_instinct.as_str().to_string(),
             completion_pressure: state.completion_pressure.clone(),
             integrity_bias: state.integrity_bias.clone(),
             curiosity_bias: state.curiosity_bias.clone(),
@@ -319,15 +321,15 @@ pub(crate) fn build_cognitive_arbitration_state(
         || selected.evidence.failure_count > 0
         || signals.instinct.integrity_bias == "reinforced"
     {
-        ("slow", "review_heavy")
+        (execute::Route::Slow, "review_heavy")
     } else if affect_state.affect.recovery_bias >= 2
         || selected.evidence.retry_count > 0
         || signals.affect.confidence_shift == "reduced"
         || signals.affect.persistence_pressure == "sustained"
     {
-        ("hybrid", "bounded_recovery")
+        (execute::Route::Hybrid, "bounded_recovery")
     } else {
-        ("fast", "direct_execution")
+        (execute::Route::Fast, "direct_execution")
     };
     let risk_class = if selected.evidence.security_denied_count > 0 {
         "high"
@@ -336,9 +338,9 @@ pub(crate) fn build_cognitive_arbitration_state(
     } else {
         "low"
     };
-    let confidence = if route_selected == "fast" {
+    let confidence = if route_selected == execute::Route::Fast {
         "high"
-    } else if route_selected == "hybrid" {
+    } else if route_selected == execute::Route::Hybrid {
         "guarded"
     } else {
         "review_required"
@@ -358,13 +360,17 @@ pub(crate) fn build_cognitive_arbitration_state(
     }
 
     let cost_latency_assumption = match route_selected {
-        "fast" => "prefer lower-cost low-latency execution when bounded evidence is stable",
-        "hybrid" => "allow bounded extra review when retry or recovery pressure is present",
+        execute::Route::Fast => {
+            "prefer lower-cost low-latency execution when bounded evidence is stable"
+        }
+        execute::Route::Hybrid => {
+            "allow bounded extra review when retry or recovery pressure is present"
+        }
         _ => "spend bounded additional cognition when failure or policy risk is present",
     };
     let route_reason = format!(
         "route={} dominant_instinct={} confidence_shift={} affect_mode={} failure_count={} retry_count={} security_denied_count={} selected_intent={}",
-        route_selected,
+        route_selected.as_str(),
         signals.instinct.dominant_instinct,
         signals.affect.confidence_shift,
         affect_state.affect.affect_mode,
@@ -375,7 +381,7 @@ pub(crate) fn build_cognitive_arbitration_state(
     );
 
     CognitiveArbitrationState {
-        route_selected: route_selected.to_string(),
+        route_selected,
         reasoning_mode: reasoning_mode.to_string(),
         confidence: confidence.to_string(),
         risk_class: risk_class.to_string(),
@@ -412,7 +418,7 @@ pub(crate) fn build_cognitive_arbitration_artifact_from_state(
             suggestions_version: suggestions.suggestions_version,
             scores_version: scores.map(|value| value.scores_version),
         },
-        route_selected: state.route_selected.clone(),
+        route_selected: state.route_selected.as_str().to_string(),
         reasoning_mode: state.reasoning_mode.clone(),
         confidence: state.confidence.clone(),
         risk_class: state.risk_class.clone(),
@@ -429,6 +435,12 @@ pub(crate) fn build_cognitive_arbitration_artifact_from_state(
 pub(crate) fn build_fast_slow_path_state(
     arbitration: &CognitiveArbitrationArtifact,
 ) -> FastSlowPathState {
+    let route_selected = match arbitration.route_selected.as_str() {
+        "fast" => execute::Route::Fast,
+        "hybrid" => execute::Route::Hybrid,
+        "slow" => execute::Route::Slow,
+        other => panic!("unexpected arbitration route_selected value: {other}"),
+    };
     let (
         selected_path,
         path_family,
@@ -438,9 +450,9 @@ pub(crate) fn build_fast_slow_path_state(
         review_depth,
         execution_profile,
         termination_expectation,
-    ) = match arbitration.route_selected.as_str() {
-        "fast" => (
-            "fast_path",
+    ) = match route_selected {
+        execute::Route::Fast => (
+            execute::SelectedPath::FastPath,
             "fast",
             "fast_direct_execution_branch",
             "direct_handoff",
@@ -449,8 +461,8 @@ pub(crate) fn build_fast_slow_path_state(
             "single_pass_direct_execution",
             "terminate_on_first_bounded_success_or_policy_block",
         ),
-        "hybrid" => (
-            "slow_path",
+        execute::Route::Hybrid => (
+            execute::SelectedPath::SlowPath,
             "slow",
             "slow_bounded_recovery_branch",
             "bounded_recovery_handoff",
@@ -460,7 +472,7 @@ pub(crate) fn build_fast_slow_path_state(
             "terminate_after_bounded_review_cycle_or_policy_block",
         ),
         _ => (
-            "slow_path",
+            execute::SelectedPath::SlowPath,
             "slow",
             "slow_review_refine_branch",
             "review_handoff",
@@ -471,16 +483,16 @@ pub(crate) fn build_fast_slow_path_state(
         ),
     };
     let path_difference_summary = match selected_path {
-        "fast_path" => {
+        execute::SelectedPath::FastPath => {
             "fast_path favors direct execution with minimal review and a single bounded candidate handoff"
         }
-        _ => {
+        execute::SelectedPath::SlowPath => {
             "slow_path requires bounded review/refinement before execution and can revise or veto the current candidate"
         }
     };
 
     FastSlowPathState {
-        selected_path: selected_path.to_string(),
+        selected_path,
         path_family: path_family.to_string(),
         runtime_branch_taken: runtime_branch_taken.to_string(),
         handoff_state: handoff_state.to_string(),
@@ -508,7 +520,7 @@ pub(crate) fn build_fast_slow_path_artifact(
             scores_version: scores.map(|value| value.scores_version),
         },
         arbitration_route: arbitration.route_selected.clone(),
-        selected_path: state.selected_path.clone(),
+        selected_path: state.selected_path.as_str().to_string(),
         path_family: state.path_family.clone(),
         runtime_branch_taken: state.runtime_branch_taken.clone(),
         handoff_state: state.handoff_state.clone(),
@@ -530,6 +542,18 @@ pub(crate) fn build_agency_selection_state(
     fast_slow_state: &FastSlowPathState,
     fast_slow_path: &FastSlowPathArtifact,
 ) -> AgencySelectionState {
+    let dominant_instinct = match signals.instinct.dominant_instinct.as_str() {
+        "integrity" => execute::DominantInstinct::Integrity,
+        "completion" => execute::DominantInstinct::Completion,
+        "curiosity" => execute::DominantInstinct::Curiosity,
+        "coherence" => execute::DominantInstinct::Coherence,
+        other => panic!("unexpected dominant_instinct value: {other}"),
+    };
+    let selected_path = match fast_slow_path.selected_path.as_str() {
+        "fast_path" => execute::SelectedPath::FastPath,
+        "slow_path" => execute::SelectedPath::SlowPath,
+        other => panic!("unexpected selected_path value: {other}"),
+    };
     let (
         selection_mode,
         candidate_set,
@@ -537,20 +561,22 @@ pub(crate) fn build_agency_selection_state(
         selected_candidate_kind,
         selected_candidate_action,
         selected_candidate_reason,
-    ) = match fast_slow_path.selected_path.as_str() {
-        "fast_path" => {
+    ) = match selected_path {
+        execute::SelectedPath::FastPath => {
             let candidate_set = vec![
-                    AgencyCandidateRecord {
-                        candidate_id: "cand-fast-execute".to_string(),
+                AgencyCandidateRecord {
+                    candidate_id: "cand-fast-execute".to_string(),
                         candidate_kind: "direct_execution".to_string(),
-                        bounded_action: "execute selected candidate directly under bounded once semantics".to_string(),
-                        review_requirement: "minimal".to_string(),
-                        execution_priority: 1,
-                        rationale: format!(
-                            "route={} dominant_instinct={} confidence={}",
-                            arbitration.route_selected, signals.instinct.dominant_instinct, arbitration.confidence
-                        ),
-                    },
+                    bounded_action: "execute selected candidate directly under bounded once semantics".to_string(),
+                    review_requirement: "minimal".to_string(),
+                    execution_priority: 1,
+                    rationale: format!(
+                        "route={} dominant_instinct={} confidence={}",
+                        arbitration.route_selected,
+                        dominant_instinct,
+                        arbitration.confidence
+                    ),
+                },
                     AgencyCandidateRecord {
                         candidate_id: "cand-fast-verify".to_string(),
                         candidate_kind: "bounded_verification".to_string(),
@@ -559,10 +585,10 @@ pub(crate) fn build_agency_selection_state(
                         execution_priority: 2,
                         rationale: "keep a bounded verification candidate available when instinct pressure favors uncertainty reduction or extra constraint checks".to_string(),
                     },
-                ];
+            ];
             let decision = execute::select_instinct_runtime_candidate(
-                fast_slow_path.selected_path.as_str(),
-                signals.instinct.dominant_instinct.as_str(),
+                selected_path,
+                dominant_instinct,
                 arbitration.risk_class.as_str(),
             );
             (
@@ -574,19 +600,21 @@ pub(crate) fn build_agency_selection_state(
                 decision.candidate_reason.to_string(),
             )
         }
-        _ => {
+        execute::SelectedPath::SlowPath => {
             let candidate_set = vec![
                     AgencyCandidateRecord {
                         candidate_id: "cand-slow-review".to_string(),
                         candidate_kind: "review_and_refine".to_string(),
-                        bounded_action: "review, refine, or veto the current candidate before execution".to_string(),
-                        review_requirement: "verification_required".to_string(),
-                        execution_priority: 1,
-                        rationale: format!(
-                            "route={} dominant_instinct={} risk_class={}",
-                            arbitration.route_selected, signals.instinct.dominant_instinct, arbitration.risk_class
-                        ),
-                    },
+                    bounded_action: "review, refine, or veto the current candidate before execution".to_string(),
+                    review_requirement: "verification_required".to_string(),
+                    execution_priority: 1,
+                    rationale: format!(
+                        "route={} dominant_instinct={} risk_class={}",
+                        arbitration.route_selected,
+                        dominant_instinct,
+                        arbitration.risk_class
+                    ),
+                },
                     AgencyCandidateRecord {
                         candidate_id: "cand-slow-direct".to_string(),
                         candidate_kind: "direct_execution".to_string(),
@@ -603,10 +631,10 @@ pub(crate) fn build_agency_selection_state(
                         execution_priority: 3,
                         rationale: "preserve a bounded non-execution option when curiosity keeps uncertainty high or the system should pause before commitment".to_string(),
                     },
-                ];
+            ];
             let decision = execute::select_instinct_runtime_candidate(
-                fast_slow_path.selected_path.as_str(),
-                signals.instinct.dominant_instinct.as_str(),
+                selected_path,
+                dominant_instinct,
                 arbitration.risk_class.as_str(),
             );
             (
@@ -623,7 +651,7 @@ pub(crate) fn build_agency_selection_state(
     AgencySelectionState {
         candidate_generation_basis: format!(
             "path={} runtime_branch={} route={} candidate_selection_bias={}",
-            fast_slow_path.selected_path,
+            selected_path,
             fast_slow_state.runtime_branch_taken,
             arbitration.route_selected,
             signals.instinct.candidate_selection_bias
