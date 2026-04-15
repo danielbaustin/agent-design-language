@@ -15,12 +15,13 @@
 
 ## Summary
 
-`v0.89` is the milestone where ADL turns governed adaptive execution into a first-class package. The planned release is expected to deepen AEE convergence, Freedom Gate behavior, decision/action mediation, skill execution contracts, experiment records, evidence-aware memory ranking, and the main-band security/trust/posture package.
+`v0.89` is the milestone where ADL turns governed adaptive execution into a first-class package. The current draft release story is that the convergence / gate / action / skill / experiment / ObsMem core has landed, while the security package and the review / release tail remain in flight.
 
-## Planned Highlights
+## Current Draft Highlights
 - AEE 1.0 convergence as a real bounded runtime contract
 - Freedom Gate v2 plus explicit decision and action mediation surfaces
-- canonical skill execution, experiment, ObsMem evidence, and security/trust planning surfaces
+- canonical skill execution, experiment, and ObsMem evidence surfaces
+- main-band security / trust / posture package still active rather than claimed as shipped
 
 ## What's New In Detail
 
@@ -37,8 +38,8 @@
 - threat model, trust model, and declared security posture package
 
 ## Upgrade Notes
-- exact user-facing upgrade notes are `TBD` until implementation lands
-- this pre-release shell should be rewritten from shipped artifacts during `WP-15` and `WP-16`
+- exact user-facing upgrade notes are still `TBD` until the security and review tail lands
+- this pre-release draft should still be rewritten from shipped proof surfaces during `WP-15` and `WP-16`
 
 ## Known Limitations
 - this document is pre-release and should not be treated as a shipped-claims document yet

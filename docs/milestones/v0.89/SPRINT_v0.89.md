@@ -20,9 +20,9 @@ This keeps the execution model aligned with the recent milestone pattern while p
 
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
-| `v0.89-s1` | open the official issue wave and execute the convergence / gate / action core | `WP-01` (`#1662`), `WP-02` - `WP-05` (`#1789` - `#1792`) | issue wave open |
-| `v0.89-s2` | execute the skill / experiment / memory / security package plus explicit `v0.89.1` handoff planning | `WP-06` - `WP-10` (`#1793` - `#1797`) | issue wave open |
-| `v0.89-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` (`#1798` - `#1807`) | issue wave open |
+| `v0.89-s1` | open the official issue wave and execute the convergence / gate / action core | `WP-01` (`#1662`), `WP-02` - `WP-05` (`#1789` - `#1792`) | complete |
+| `v0.89-s2` | execute the skill / experiment / memory / security package plus explicit `v0.89.1` handoff planning | `WP-06` - `WP-10` (`#1793` - `#1797`) | in progress; `WP-06` - `WP-08` landed, `WP-09` open, `WP-10` satisfied |
+| `v0.89-s3` | converge demos, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` (`#1798` - `#1807`) | in progress; demo/proof convergence started, review tail not yet landed |
 
 ## Sprint 1
 
@@ -44,9 +44,9 @@ Current issue map:
 - `WP-05` `#1792`
 
 ### Exit Criteria
-- `WP-02` through `WP-05` are opened and mapped to the canonical milestone docs with their real issue numbers
-- the convergence / gate / decision / action band has an executable issue wave rather than a reserved placeholder band
-- the main milestone docs record the active issue graph truthfully instead of speaking about the issue wave as hypothetical
+- `WP-02` through `WP-05` are landed and mapped to the canonical milestone docs with their real issue numbers
+- the convergence / gate / decision / action band is no longer a reserved placeholder band
+- the main milestone docs record the landed core issue graph truthfully rather than speaking about the issue wave as hypothetical
 
 ## Sprint 2
 
@@ -68,8 +68,8 @@ Current issue map:
 - `WP-10` `#1797`
 
 ### Exit Criteria
-- `WP-06` through `WP-10` are opened and tracked in the milestone package with their real issue numbers
-- the main `v0.89` feature band is fully represented in the active execution package
+- `WP-06` through `WP-10` are represented truthfully in the milestone package with their real issue numbers and current closure state
+- the main `v0.89` feature band is represented as landed where complete and still active where incomplete
 - `v0.89.1` carry-forward is explicit and bounded
 
 ## Sprint 3
@@ -107,6 +107,10 @@ Current issue map:
 - release and next-milestone handoff are explicit and bounded
 - quality, docs, and release surfaces are consistent with delivered work
 - the milestone can close without reconstructing planning intent from local-only notes
+
+Current sprint-3 convergence target:
+- use `WP-11` and `WP-12` to turn the landed `WP-02` - `WP-08` core into reviewer-legible proof and milestone status surfaces
+- keep `WP-09` visible as the remaining core implementation dependency before the review and release tail
 
 ## Risks / Dependencies
 - Dependency: `v0.88` release tail must close cleanly so the next wave does not inherit avoidable drift
