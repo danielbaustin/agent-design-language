@@ -75,7 +75,7 @@ Each specialist reviewer artifact should:
 - follow the repo review surface format
 - stay findings-first
 - state what was and was not reviewed
-- avoid secrets, absolute host paths, and raw prompts
+- avoid secrets, machine-specific absolute host paths, and raw prompts
 
 The final synthesis artifact must:
 
