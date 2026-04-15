@@ -184,6 +184,51 @@ fn custom_v086_control_path_runtime() -> execute::RuntimeControlState {
 pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
     let runtime = custom_v086_control_path_runtime();
     let mut artifacts = Vec::new();
+    let run_summary = serde_json::json!({
+        "run_summary_version": 1,
+        "artifact_model_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "workflow_id": "wf",
+        "adl_version": "0.89",
+        "swarm_version": "demo",
+        "status": "success",
+        "counts": {
+            "total_steps": 2,
+            "completed_steps": 2,
+            "failed_steps": 0,
+            "provider_call_count": 1,
+            "delegation_steps": 1,
+            "delegation_requires_verification_steps": 1
+        },
+        "policy": {
+            "security_envelope_enabled": true,
+            "signing_required": true,
+            "key_id_required": true,
+            "verify_allowed_algs": ["ed25519"],
+            "verify_allowed_key_sources": ["inline_trusted_keys"],
+            "sandbox_policy": "centralized_path_resolver_v1",
+            "security_denials_by_code": {
+                "delegation_policy_denied": 1
+            }
+        },
+        "links": {
+            "run_json": "run.json",
+            "steps_json": "steps.json",
+            "outputs_dir": "outputs",
+            "logs_dir": "logs",
+            "learning_dir": "learning",
+            "scores_json": "learning/scores.json",
+            "suggestions_json": "learning/suggestions.json",
+            "cognitive_signals_json": "learning/cognitive_signals.v1.json",
+            "fast_slow_path_json": "learning/fast_slow_path.v1.json",
+            "agency_selection_json": "learning/agency_selection.v1.json",
+            "bounded_execution_json": "learning/bounded_execution.v1.json",
+            "evaluation_signals_json": "learning/evaluation_signals.v1.json",
+            "cognitive_arbitration_json": "learning/cognitive_arbitration.v1.json",
+            "overlays_dir": "learning/overlays",
+            "trace_json": "logs/trace_v1.json"
+        }
+    });
     let generated_from = serde_json::json!({
         "artifact_model_version": 1,
         "run_summary_version": 1,
@@ -643,6 +688,91 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
             "final_result"
         ]
     });
+    let security_review = serde_json::json!({
+        "control_path_security_review_version": 1,
+        "run_id": DEMO_G_V086_CONTROL_PATH,
+        "generated_from": generated_from.clone(),
+        "threat_model": {
+            "attacker_pressure": "contested",
+            "active_trust_boundaries": [
+                "proposal_authority_boundary",
+                "freedom_gate_commitment_boundary",
+                "trace_visibility_boundary",
+                "memory_provenance_boundary",
+                "remote_execution_envelope_boundary"
+            ],
+            "canonical_threat_classes": [
+                "unreviewed_high_risk_action",
+                "proposal_authority_bypass",
+                "artifact_or_trace_visibility_loss",
+                "memory_provenance_confusion",
+                "transport_or_signature_tampering"
+            ],
+            "required_mitigations": [
+                "freedom_gate_judgment_boundary",
+                "trace_visible_mediation",
+                "bounded_skill_authorization",
+                "memory_provenance_tags",
+                "sandbox_policy=centralized_path_resolver_v1",
+                "remote_security_envelope",
+                "signed_execute_requests",
+                "key_id_required"
+            ],
+            "reviewer_visible_surfaces": [
+                "run_summary.json",
+                "control_path/freedom_gate.json",
+                "control_path/mediation.json",
+                "control_path/final_result.json",
+                "logs/trace_v1.json"
+            ]
+        },
+        "posture": {
+            "declared_posture": "hardened_review_first",
+            "accepted_risk_level": "high",
+            "commitment_policy": "escalate",
+            "mitigation_authority": "freedom_gate",
+            "runtime_consequence": "bounded action must escalate for judgment review before commitment",
+            "posture_rationale": "risk_class=high security_denied_count=1 route_selected=slow gate_decision=escalate"
+        },
+        "trust_under_adversary": {
+            "trust_state": "reduced_until_review",
+            "trusted_surfaces": [
+                "run_summary.json",
+                "control_path/freedom_gate.json",
+                "control_path/mediation.json",
+                "control_path/final_result.json",
+                "logs/trace_v1.json"
+            ],
+            "reduced_trust_surfaces": [
+                "control_path/action_proposals.json",
+                "control_path/candidate_selection.json",
+                "control_path/memory.json",
+                "remote_exec/request_envelope"
+            ],
+            "revalidation_requirements": [
+                "proposal_non_authoritative",
+                "decision_surface_linked",
+                "policy_bindings_present",
+                "freedom_gate_authority_boundary"
+            ],
+            "escalation_path": "escalate_for_judgment_review"
+        },
+        "evidence": {
+            "route_selected": "slow",
+            "risk_class": "high",
+            "mediation_outcome": "escalated",
+            "gate_decision": "escalate",
+            "final_result": "escalate",
+            "security_denied_count": 1,
+            "security_envelope_enabled": true,
+            "signing_required": true,
+            "key_id_required": true,
+            "verify_allowed_algs": ["ed25519"],
+            "verify_allowed_key_sources": ["inline_trusted_keys"],
+            "sandbox_policy": "centralized_path_resolver_v1",
+            "trace_visibility_expectation": "approval, rejection, defer, or escalation remains trace-visible before privileged execution"
+        }
+    });
     let summary = vec![
         "v0.86 canonical bounded cognitive path summary".to_string(),
         "run_id: demo-g-v086-control-path".to_string(),
@@ -664,9 +794,16 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         "skill_execution_protocol: lifecycle_state=escalated_before_execution authorization=escalated trace_expectation=approval, rejection, defer, or escalation remains trace-visible before privileged execution".to_string(),
         "memory: read_count=1 influenced_stage=reframing write_reason=record_failure_for_future_reframing_context".to_string(),
         "freedom_gate: decision=escalate reason_code=frame_escalation_required follow_up=escalate_for_judgment_review commitment_blocked=true".to_string(),
+        "security_review: posture=hardened_review_first trust_state=reduced_until_review attacker_pressure=contested".to_string(),
         "final_result: escalate".to_string(),
     ]
     .join("\n");
+
+    artifacts.push(write_file(
+        out_dir,
+        "run_summary.json",
+        &serde_json::to_string_pretty(&run_summary)?,
+    )?);
 
     artifacts.push(write_file(
         out_dir,
@@ -742,6 +879,11 @@ pub fn write_v086_control_path_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
         out_dir,
         "final_result.json",
         &serde_json::to_string_pretty(&final_result)?,
+    )?);
+    artifacts.push(write_file(
+        out_dir,
+        "security_review.json",
+        &serde_json::to_string_pretty(&security_review)?,
     )?);
     artifacts.push(write_file(out_dir, "summary.txt", &summary)?);
 

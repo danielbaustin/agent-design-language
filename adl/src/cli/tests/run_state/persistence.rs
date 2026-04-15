@@ -519,6 +519,39 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
     assert_eq!(control_path_final_result.gate_decision, "escalate");
     assert_eq!(control_path_final_result.final_result, "escalate");
 
+    let control_path_security_review: run_artifacts::ControlPathSecurityReviewArtifact =
+        serde_json::from_str(
+            &std::fs::read_to_string(run_dir.join("control_path/security_review.json"))
+                .expect("read control path security review artifact"),
+        )
+        .expect("parse control path security review artifact");
+    assert_eq!(
+        control_path_security_review.posture.declared_posture,
+        "hardened_review_first"
+    );
+    assert_eq!(
+        control_path_security_review.threat_model.attacker_pressure,
+        "contested"
+    );
+    assert_eq!(
+        control_path_security_review
+            .trust_under_adversary
+            .trust_state,
+        "reduced_until_review"
+    );
+    assert_eq!(
+        control_path_security_review.evidence.security_denied_count,
+        0
+    );
+    assert!(control_path_security_review
+        .threat_model
+        .reviewer_visible_surfaces
+        .contains(&"control_path/freedom_gate.json".to_string()));
+    assert_eq!(
+        control_path_security_review.evidence.trace_visibility_expectation,
+        "approval, rejection, defer, or escalation remains trace-visible before privileged execution"
+    );
+
     let control_path_summary =
         std::fs::read_to_string(run_dir.join("control_path/summary.txt")).expect("read summary");
     assert!(
@@ -566,6 +599,12 @@ fn write_run_state_artifacts_projects_execute_owned_runtime_control_state() {
     assert!(
         control_path_summary.contains(
             "skill_execution_protocol: lifecycle_state=escalated_before_execution authorization=escalated trace_expectation=approval, rejection, defer, or escalation remains trace-visible before privileged execution"
+        ),
+        "summary was:\n{control_path_summary}"
+    );
+    assert!(
+        control_path_summary.contains(
+            "security_review: posture=hardened_review_first trust_state=reduced_until_review attacker_pressure=contested"
         ),
         "summary was:\n{control_path_summary}"
     );

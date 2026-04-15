@@ -4,10 +4,15 @@ use super::cognitive::{
     build_cognitive_signals_artifact_from_state, build_control_path_action_mediation_artifact,
     build_control_path_action_proposals_artifact, build_control_path_decisions_artifact,
     build_control_path_final_result_artifact, build_control_path_memory_artifact,
+    build_control_path_security_review_artifact,
     build_control_path_skill_execution_protocol_artifact, build_control_path_skill_model_artifact,
     build_control_path_summary, build_evaluation_signals_artifact, build_fast_slow_path_artifact,
     build_freedom_gate_artifact, build_memory_read_artifact, build_memory_write_artifact,
     build_reasoning_graph_artifact, build_reframing_artifact,
+    control_path_security_attacker_pressure, control_path_security_boundaries,
+    control_path_security_posture, control_path_security_reduced_trust_surfaces,
+    control_path_security_required_mitigations, control_path_security_review_surfaces,
+    control_path_security_threat_classes, control_path_security_trust_state,
 };
 use super::summary::{
     build_cluster_groundwork_artifact, build_scores_artifact, build_suggestions_artifact,
@@ -299,6 +304,16 @@ pub(crate) fn write_run_state_artifacts(
         &evaluation_signals,
         &freedom_gate,
     );
+    let control_path_security_review = build_control_path_security_review_artifact(
+        &run_summary,
+        &cognitive_arbitration,
+        &control_path_action_proposals,
+        &control_path_action_mediation,
+        &freedom_gate,
+        &control_path_memory,
+        &control_path_final_result,
+        Some(&scores_for_suggestions),
+    );
     let control_path_summary = build_control_path_summary(&ControlPathSummaryContext {
         signals: &cognitive_signals,
         agency: &agency_selection,
@@ -314,6 +329,7 @@ pub(crate) fn write_run_state_artifacts(
         mediation: &control_path_action_mediation,
         freedom_gate: &freedom_gate,
         final_result: &control_path_final_result,
+        security_review: &control_path_security_review,
     });
     let cognitive_arbitration_json = serde_json::to_vec_pretty(&cognitive_arbitration)
         .context("serialize cognitive_arbitration.v1.json")?;
@@ -352,6 +368,9 @@ pub(crate) fn write_run_state_artifacts(
             .context("serialize control_path skill_execution_protocol.json")?;
     let control_path_final_result_json = serde_json::to_vec_pretty(&control_path_final_result)
         .context("serialize control_path final_result.json")?;
+    let control_path_security_review_json =
+        serde_json::to_vec_pretty(&control_path_security_review)
+            .context("serialize control_path security_review.json")?;
     let aee_decision = build_aee_decision_artifact(
         &run_summary,
         &suggestions,
@@ -452,6 +471,10 @@ pub(crate) fn write_run_state_artifacts(
     artifacts::atomic_write(
         &run_paths.control_path_final_result_json(),
         &control_path_final_result_json,
+    )?;
+    artifacts::atomic_write(
+        &run_paths.control_path_security_review_json(),
+        &control_path_security_review_json,
     )?;
     artifacts::atomic_write(
         &run_paths.control_path_summary_txt(),
@@ -1070,6 +1093,34 @@ where
         .with_context(|| format!("invalid control-path artifact '{}'", path.display()))
 }
 
+fn read_run_summary_near_control_path(control_path_dir: &Path) -> Result<RunSummaryArtifact> {
+    let candidate_paths = [
+        control_path_dir.join("run_summary.json"),
+        control_path_dir
+            .parent()
+            .map(|parent| parent.join("run_summary.json"))
+            .unwrap_or_else(|| control_path_dir.join("run_summary.json")),
+    ];
+    for path in candidate_paths {
+        if !path.exists() {
+            continue;
+        }
+        let raw = std::fs::read_to_string(&path).with_context(|| {
+            format!(
+                "failed to read control-path sibling artifact '{}'",
+                path.display()
+            )
+        })?;
+        return serde_json::from_str(&raw).with_context(|| {
+            format!("invalid control-path sibling artifact '{}'", path.display())
+        });
+    }
+    Err(anyhow!(
+        "missing required control-path sibling artifact 'run_summary.json' near '{}'",
+        control_path_dir.display()
+    ))
+}
+
 pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Result<()> {
     if !control_path_dir.exists() {
         return Err(anyhow!(
@@ -1108,6 +1159,9 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         read_required_json_artifact(control_path_dir, "convergence.json")?;
     let final_result: ControlPathFinalResultArtifact =
         read_required_json_artifact(control_path_dir, "final_result.json")?;
+    let security_review: ControlPathSecurityReviewArtifact =
+        read_required_json_artifact(control_path_dir, "security_review.json")?;
+    let run_summary = read_run_summary_near_control_path(control_path_dir)?;
 
     let summary_path = control_path_dir.join("summary.txt");
     let summary = std::fs::read_to_string(&summary_path).with_context(|| {
@@ -1158,6 +1212,7 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
         freedom_gate.run_id.as_str(),
         convergence.run_id.as_str(),
         final_result.run_id.as_str(),
+        security_review.run_id.as_str(),
     ];
     let canonical_run_id = final_result.run_id.as_str();
     if run_ids.iter().any(|run_id| *run_id != canonical_run_id) {
@@ -1228,6 +1283,225 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
             "control-path convergence next_control_action '{}' does not match evaluation '{}'",
             convergence.next_control_action,
             evaluation.next_control_action
+        ));
+    }
+    if security_review.posture.declared_posture
+        != control_path_security_posture(&run_summary, &freedom_gate)
+    {
+        return Err(anyhow!(
+            "control-path security review posture '{}' does not match derived posture '{}'",
+            security_review.posture.declared_posture,
+            control_path_security_posture(&run_summary, &freedom_gate)
+        ));
+    }
+    if security_review.threat_model.attacker_pressure
+        != control_path_security_attacker_pressure(&run_summary, &arbitration)
+    {
+        return Err(anyhow!(
+            "control-path security review attacker_pressure '{}' does not match derived '{}'",
+            security_review.threat_model.attacker_pressure,
+            control_path_security_attacker_pressure(&run_summary, &arbitration)
+        ));
+    }
+    if security_review.posture.accepted_risk_level != freedom_gate.input.risk_class {
+        return Err(anyhow!(
+            "control-path security review accepted_risk_level '{}' does not match freedom_gate '{}'",
+            security_review.posture.accepted_risk_level,
+            freedom_gate.input.risk_class
+        ));
+    }
+    if security_review.posture.commitment_policy != freedom_gate.gate_decision {
+        return Err(anyhow!(
+            "control-path security review commitment_policy '{}' does not match freedom_gate '{}'",
+            security_review.posture.commitment_policy,
+            freedom_gate.gate_decision
+        ));
+    }
+    if security_review.posture.mitigation_authority != mediation.mediation.runtime_authority {
+        return Err(anyhow!(
+            "control-path security review mitigation_authority '{}' does not match mediation '{}'",
+            security_review.posture.mitigation_authority,
+            mediation.mediation.runtime_authority
+        ));
+    }
+    if security_review.trust_under_adversary.trust_state
+        != control_path_security_trust_state(&action_proposals, &mediation, &freedom_gate)
+    {
+        return Err(anyhow!(
+            "control-path security review trust_state '{}' does not match derived '{}'",
+            security_review.trust_under_adversary.trust_state,
+            control_path_security_trust_state(&action_proposals, &mediation, &freedom_gate)
+        ));
+    }
+    if security_review.threat_model.active_trust_boundaries
+        != control_path_security_boundaries(&run_summary)
+    {
+        return Err(anyhow!(
+            "control-path security review boundaries mismatch: expected {:?}, found {:?}",
+            control_path_security_boundaries(&run_summary),
+            security_review.threat_model.active_trust_boundaries
+        ));
+    }
+    if security_review.threat_model.canonical_threat_classes
+        != control_path_security_threat_classes(&run_summary)
+    {
+        return Err(anyhow!(
+            "control-path security review threat classes mismatch: expected {:?}, found {:?}",
+            control_path_security_threat_classes(&run_summary),
+            security_review.threat_model.canonical_threat_classes
+        ));
+    }
+    if security_review.threat_model.required_mitigations
+        != control_path_security_required_mitigations(&run_summary)
+    {
+        return Err(anyhow!(
+            "control-path security review mitigations mismatch: expected {:?}, found {:?}",
+            control_path_security_required_mitigations(&run_summary),
+            security_review.threat_model.required_mitigations
+        ));
+    }
+    if security_review.threat_model.reviewer_visible_surfaces
+        != control_path_security_review_surfaces()
+    {
+        return Err(anyhow!(
+            "control-path security review proof surfaces mismatch: expected {:?}, found {:?}",
+            control_path_security_review_surfaces(),
+            security_review.threat_model.reviewer_visible_surfaces
+        ));
+    }
+    if security_review.trust_under_adversary.trusted_surfaces
+        != control_path_security_review_surfaces()
+    {
+        return Err(anyhow!(
+            "control-path security review trusted surfaces mismatch: expected {:?}, found {:?}",
+            control_path_security_review_surfaces(),
+            security_review.trust_under_adversary.trusted_surfaces
+        ));
+    }
+    if security_review.trust_under_adversary.reduced_trust_surfaces
+        != control_path_security_reduced_trust_surfaces(&run_summary, &memory)
+    {
+        return Err(anyhow!(
+            "control-path security review reduced trust surfaces mismatch: expected {:?}, found {:?}",
+            control_path_security_reduced_trust_surfaces(&run_summary, &memory),
+            security_review.trust_under_adversary.reduced_trust_surfaces
+        ));
+    }
+    if security_review
+        .trust_under_adversary
+        .revalidation_requirements
+        != mediation.mediation.validation_checks
+    {
+        return Err(anyhow!(
+            "control-path security review revalidation requirements mismatch: expected {:?}, found {:?}",
+            mediation.mediation.validation_checks,
+            security_review.trust_under_adversary.revalidation_requirements
+        ));
+    }
+    if security_review.trust_under_adversary.escalation_path != freedom_gate.required_follow_up {
+        return Err(anyhow!(
+            "control-path security review escalation_path '{}' does not match freedom_gate '{}'",
+            security_review.trust_under_adversary.escalation_path,
+            freedom_gate.required_follow_up
+        ));
+    }
+    let expected_security_denials: usize =
+        run_summary.policy.security_denials_by_code.values().sum();
+    if security_review.evidence.route_selected != arbitration.route_selected {
+        return Err(anyhow!(
+            "control-path security review evidence route '{}' does not match arbitration '{}'",
+            security_review.evidence.route_selected,
+            arbitration.route_selected
+        ));
+    }
+    if security_review.evidence.risk_class != freedom_gate.input.risk_class {
+        return Err(anyhow!(
+            "control-path security review evidence risk_class '{}' does not match freedom_gate '{}'",
+            security_review.evidence.risk_class,
+            freedom_gate.input.risk_class
+        ));
+    }
+    if security_review.evidence.mediation_outcome != mediation.mediation.mediation_outcome {
+        return Err(anyhow!(
+            "control-path security review evidence mediation_outcome '{}' does not match mediation '{}'",
+            security_review.evidence.mediation_outcome,
+            mediation.mediation.mediation_outcome
+        ));
+    }
+    if security_review.evidence.gate_decision != freedom_gate.gate_decision {
+        return Err(anyhow!(
+            "control-path security review evidence gate_decision '{}' does not match freedom_gate '{}'",
+            security_review.evidence.gate_decision,
+            freedom_gate.gate_decision
+        ));
+    }
+    if security_review.evidence.final_result != final_result.final_result {
+        return Err(anyhow!(
+            "control-path security review evidence final_result '{}' does not match final_result '{}'",
+            security_review.evidence.final_result,
+            final_result.final_result
+        ));
+    }
+    if security_review.evidence.security_denied_count != expected_security_denials {
+        return Err(anyhow!(
+            "control-path security review evidence security_denied_count '{}' does not match run_summary '{}'",
+            security_review.evidence.security_denied_count,
+            expected_security_denials
+        ));
+    }
+    if security_review.evidence.security_envelope_enabled
+        != run_summary.policy.security_envelope_enabled
+    {
+        return Err(anyhow!(
+            "control-path security review evidence security_envelope_enabled '{}' does not match run_summary '{}'",
+            security_review.evidence.security_envelope_enabled,
+            run_summary.policy.security_envelope_enabled
+        ));
+    }
+    if security_review.evidence.signing_required != run_summary.policy.signing_required {
+        return Err(anyhow!(
+            "control-path security review evidence signing_required '{}' does not match run_summary '{}'",
+            security_review.evidence.signing_required,
+            run_summary.policy.signing_required
+        ));
+    }
+    if security_review.evidence.key_id_required != run_summary.policy.key_id_required {
+        return Err(anyhow!(
+            "control-path security review evidence key_id_required '{}' does not match run_summary '{}'",
+            security_review.evidence.key_id_required,
+            run_summary.policy.key_id_required
+        ));
+    }
+    if security_review.evidence.verify_allowed_algs != run_summary.policy.verify_allowed_algs {
+        return Err(anyhow!(
+            "control-path security review evidence verify_allowed_algs mismatch: expected {:?}, found {:?}",
+            run_summary.policy.verify_allowed_algs,
+            security_review.evidence.verify_allowed_algs
+        ));
+    }
+    if security_review.evidence.verify_allowed_key_sources
+        != run_summary.policy.verify_allowed_key_sources
+    {
+        return Err(anyhow!(
+            "control-path security review evidence verify_allowed_key_sources mismatch: expected {:?}, found {:?}",
+            run_summary.policy.verify_allowed_key_sources,
+            security_review.evidence.verify_allowed_key_sources
+        ));
+    }
+    if security_review.evidence.sandbox_policy != run_summary.policy.sandbox_policy {
+        return Err(anyhow!(
+            "control-path security review evidence sandbox_policy '{}' does not match run_summary '{}'",
+            security_review.evidence.sandbox_policy,
+            run_summary.policy.sandbox_policy
+        ));
+    }
+    if security_review.evidence.trace_visibility_expectation
+        != mediation.mediation.trace_expectation
+    {
+        return Err(anyhow!(
+            "control-path security review evidence trace_visibility_expectation '{}' does not match mediation '{}'",
+            security_review.evidence.trace_visibility_expectation,
+            mediation.mediation.trace_expectation
         ));
     }
 
@@ -1676,6 +1950,12 @@ pub(crate) fn validate_control_path_artifact_set(control_path_dir: &Path) -> Res
             skill_execution_protocol.invocation.lifecycle_state,
             skill_execution_protocol.invocation.authorization_decision,
             skill_execution_protocol.invocation.trace_expectation
+        ),
+        format!(
+            "security_review: posture={} trust_state={} attacker_pressure={}",
+            security_review.posture.declared_posture,
+            security_review.trust_under_adversary.trust_state,
+            security_review.threat_model.attacker_pressure
         ),
         format!("freedom_gate: decision={}", freedom_gate.gate_decision),
         format!(
