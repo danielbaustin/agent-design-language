@@ -164,6 +164,54 @@ pub struct FreedomGateInputState {
     pub frame_state: String,
 }
 
+impl From<freedom_gate::FreedomGatePolicyContext> for FreedomGatePolicyContextState {
+    fn from(value: freedom_gate::FreedomGatePolicyContext) -> Self {
+        Self {
+            route_selected: value.route_selected,
+            selected_candidate_kind: value.selected_candidate_kind,
+            requires_review: value.requires_review,
+            policy_blocked: value.policy_blocked,
+        }
+    }
+}
+
+impl From<freedom_gate::FreedomGateEvaluationSignals> for FreedomGateEvaluationSignalsState {
+    fn from(value: freedom_gate::FreedomGateEvaluationSignals) -> Self {
+        Self {
+            progress_signal: value.progress_signal,
+            contradiction_signal: value.contradiction_signal,
+            failure_signal: value.failure_signal,
+            termination_reason: value.termination_reason,
+        }
+    }
+}
+
+impl From<freedom_gate::FreedomGateConsequenceContext> for FreedomGateConsequenceContextState {
+    fn from(value: freedom_gate::FreedomGateConsequenceContext) -> Self {
+        Self {
+            impact_scope: value.impact_scope,
+            recovery_cost: value.recovery_cost,
+            operator_visibility: value.operator_visibility,
+            escalation_available: value.escalation_available,
+        }
+    }
+}
+
+impl From<freedom_gate::FreedomGateInput> for FreedomGateInputState {
+    fn from(value: freedom_gate::FreedomGateInput) -> Self {
+        Self {
+            candidate_id: value.candidate_id,
+            candidate_action: value.candidate_action,
+            candidate_rationale: value.candidate_rationale,
+            risk_class: value.risk_class,
+            policy_context: value.policy_context.into(),
+            evaluation_signals: value.evaluation_signals.into(),
+            consequence_context: value.consequence_context.into(),
+            frame_state: value.frame_state,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct FreedomGatePolicyContextState {
@@ -1011,31 +1059,7 @@ fn derive_freedom_gate_state(
     let decision = freedom_gate::evaluate_freedom_gate(&input);
 
     FreedomGateState {
-        input: FreedomGateInputState {
-            candidate_id: input.candidate_id,
-            candidate_action: input.candidate_action,
-            candidate_rationale: input.candidate_rationale,
-            risk_class: input.risk_class,
-            policy_context: FreedomGatePolicyContextState {
-                route_selected: input.policy_context.route_selected,
-                selected_candidate_kind: input.policy_context.selected_candidate_kind,
-                requires_review: input.policy_context.requires_review,
-                policy_blocked: input.policy_context.policy_blocked,
-            },
-            evaluation_signals: FreedomGateEvaluationSignalsState {
-                progress_signal: input.evaluation_signals.progress_signal,
-                contradiction_signal: input.evaluation_signals.contradiction_signal,
-                failure_signal: input.evaluation_signals.failure_signal,
-                termination_reason: input.evaluation_signals.termination_reason,
-            },
-            consequence_context: FreedomGateConsequenceContextState {
-                impact_scope: input.consequence_context.impact_scope,
-                recovery_cost: input.consequence_context.recovery_cost,
-                operator_visibility: input.consequence_context.operator_visibility,
-                escalation_available: input.consequence_context.escalation_available,
-            },
-            frame_state: input.frame_state,
-        },
+        input: input.into(),
         gate_decision: decision.gate_decision,
         reason_code: decision.reason_code,
         decision_reason: decision.decision_reason,
@@ -1185,7 +1209,11 @@ fn load_memory_read_entries(
 
 #[cfg(test)]
 mod tests {
-    use super::select_instinct_runtime_candidate;
+    use super::{
+        select_instinct_runtime_candidate, FreedomGateConsequenceContextState,
+        FreedomGateEvaluationSignalsState, FreedomGateInputState, FreedomGatePolicyContextState,
+    };
+    use crate::freedom_gate;
 
     #[test]
     fn select_instinct_runtime_candidate_changes_fast_path_for_curiosity() {
@@ -1209,5 +1237,69 @@ mod tests {
 
         assert_eq!(decision.candidate_id, "cand-slow-defer");
         assert_eq!(decision.candidate_kind, "bounded_deferral");
+    }
+
+    #[test]
+    fn freedom_gate_input_state_conversion_preserves_nested_fields() {
+        let input = freedom_gate::FreedomGateInput {
+            candidate_id: "cand-007".to_string(),
+            candidate_action: "review".to_string(),
+            candidate_rationale: "bounded rationale".to_string(),
+            risk_class: "medium".to_string(),
+            policy_context: freedom_gate::FreedomGatePolicyContext {
+                route_selected: "slow".to_string(),
+                selected_candidate_kind: "review_and_refine".to_string(),
+                requires_review: true,
+                policy_blocked: false,
+            },
+            evaluation_signals: freedom_gate::FreedomGateEvaluationSignals {
+                progress_signal: "guarded".to_string(),
+                contradiction_signal: "present".to_string(),
+                failure_signal: "none".to_string(),
+                termination_reason: "paused".to_string(),
+            },
+            consequence_context: freedom_gate::FreedomGateConsequenceContext {
+                impact_scope: "cross_surface".to_string(),
+                recovery_cost: "bounded_review_replay".to_string(),
+                operator_visibility: "review_required".to_string(),
+                escalation_available: true,
+            },
+            frame_state: "ready_for_reframed_execution".to_string(),
+        };
+
+        let state: FreedomGateInputState = input.into();
+
+        assert_eq!(state.candidate_id, "cand-007");
+        assert_eq!(state.candidate_action, "review");
+        assert_eq!(state.candidate_rationale, "bounded rationale");
+        assert_eq!(state.risk_class, "medium");
+        assert_eq!(
+            state.policy_context,
+            FreedomGatePolicyContextState {
+                route_selected: "slow".to_string(),
+                selected_candidate_kind: "review_and_refine".to_string(),
+                requires_review: true,
+                policy_blocked: false,
+            }
+        );
+        assert_eq!(
+            state.evaluation_signals,
+            FreedomGateEvaluationSignalsState {
+                progress_signal: "guarded".to_string(),
+                contradiction_signal: "present".to_string(),
+                failure_signal: "none".to_string(),
+                termination_reason: "paused".to_string(),
+            }
+        );
+        assert_eq!(
+            state.consequence_context,
+            FreedomGateConsequenceContextState {
+                impact_scope: "cross_surface".to_string(),
+                recovery_cost: "bounded_review_replay".to_string(),
+                operator_visibility: "review_required".to_string(),
+                escalation_available: true,
+            }
+        );
+        assert_eq!(state.frame_state, "ready_for_reframed_execution");
     }
 }
