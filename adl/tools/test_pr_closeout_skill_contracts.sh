@@ -15,7 +15,7 @@ grep -Fq "post-merge and post-closure cleanup phase" "${skills_root}/pr-closeout
 grep -Fq "prune the local worktree safely" "${skills_root}/pr-closeout/SKILL.md"
 grep -Fq "record deferral, supersession, or duplicate links" "${skills_root}/pr-closeout/SKILL.md"
 grep -Fq 'id: "pr_closeout.v1"' "${skills_root}/pr-closeout/adl-skill.yaml"
-grep -Fq 'reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/PR_CLOSEOUT_SKILL_INPUT_SCHEMA.md"' "${skills_root}/pr-closeout/adl-skill.yaml"
+grep -Fq 'reference_doc: "../docs/PR_CLOSEOUT_SKILL_INPUT_SCHEMA.md"' "${skills_root}/pr-closeout/adl-skill.yaml"
 grep -Fq "policy.closure_outcome_must_be_explicit" "${skills_root}/pr-closeout/adl-skill.yaml"
 grep -Fq "policy.closure_references_must_be_present_when_closure_outcome_is_superseded_or_duplicate" "${skills_root}/pr-closeout/adl-skill.yaml"
 grep -Fq "closeout_pr" "${skills_root}/docs/PR_CLOSEOUT_SKILL_INPUT_SCHEMA.md"

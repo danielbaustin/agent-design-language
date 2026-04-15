@@ -9,7 +9,7 @@ codex_compat:
 admission:
   input_schema:
     id: "workflow_conductor.v1"
-    reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md"
+    reference_doc: "../docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md"
     required_top_level_fields:
       - "skill_input_schema"
       - "mode"

@@ -11,7 +11,7 @@ skills_root="${repo_root}/adl/tools/skills"
 [[ -f "${skills_root}/medium-article-writer/references/output-contract.md" ]]
 
 grep -Fq 'id: "medium_article_writer.v1"' "${skills_root}/medium-article-writer/adl-skill.yaml"
-grep -Fq 'reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/MEDIUM_ARTICLE_WRITER_SKILL_INPUT_SCHEMA.md"' "${skills_root}/medium-article-writer/adl-skill.yaml"
+grep -Fq 'reference_doc: "../docs/MEDIUM_ARTICLE_WRITER_SKILL_INPUT_SCHEMA.md"' "${skills_root}/medium-article-writer/adl-skill.yaml"
 grep -Fq "policy.writing_mode_must_be_explicit" "${skills_root}/medium-article-writer/adl-skill.yaml"
 grep -Fq "policy.stop_before_publish_must_be_true" "${skills_root}/medium-article-writer/adl-skill.yaml"
 grep -Fq "reviewer-friendly Medium article packet" "${skills_root}/medium-article-writer/SKILL.md"

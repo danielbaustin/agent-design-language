@@ -9,7 +9,7 @@ codex_compat:
 admission:
   input_schema:
     id: "medium_article_writer.v1"
-    reference_doc: "/Users/daniel/git/agent-design-language/adl/tools/skills/docs/MEDIUM_ARTICLE_WRITER_SKILL_INPUT_SCHEMA.md"
+    reference_doc: "../docs/MEDIUM_ARTICLE_WRITER_SKILL_INPUT_SCHEMA.md"
     required_top_level_fields:
       - "skill_input_schema"
       - "mode"
