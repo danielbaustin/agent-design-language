@@ -254,7 +254,7 @@ adl adversarial run \
   --posture validation \
   --goal "input validation bypass" \
   --limit 1 \
-  --output .adl/reports/adversarial-demo
+  --output reports/adversarial-demo
 ```
 
 Expected outcome:

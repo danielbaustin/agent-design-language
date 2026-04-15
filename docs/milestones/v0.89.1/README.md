@@ -95,7 +95,7 @@ Supporting local planning inputs:
 - `PROPOSED_OPERATIONAL_SKILLS.md`
 - `ADL_SECURITY_DEMOS.md`
 - `PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md`
-- `.adl/docs/TBD/ARXIV_PAPER_PROGRAM_PLAN.md` (supports the committed `v0.89.1` publication/skills slice under `WP-08` and `WP-13`)
+- local arXiv paper-program planning doc (supports the committed `v0.89.1` publication/skills slice under `WP-08` and `WP-13`)
 
 ## Execution Model
 
@@ -139,7 +139,7 @@ The milestone should demonstrate:
 
 Evidence locations:
 - `DEMO_MATRIX_v0.89.1.md`
-- issue outputs and run artifacts under `.adl/`
+- issue outputs and run artifacts in the local ADL control plane
 
 ## Risks and Open Questions
 

@@ -59,7 +59,7 @@ This page defines:
 | `DELEGATION_AND_REFUSAL.md` | supporting planning input | informs `WP-09` governance boundary work |
 | `MULTI_AGENT_NEGOTIATION.md` | supporting planning input | informs `WP-09` coordination and disagreement surfaces |
 | `PROPOSED_OPERATIONAL_SKILLS.md` | supporting planning input | informs `WP-08` and `WP-09` skill-surface packaging |
-| `.adl/docs/TBD/ARXIV_PAPER_PROGRAM_PLAN.md` | supporting planning input | informs the committed `WP-08` bounded `arxiv-paper-writer` skill and the `WP-13` three-paper publication packet |
+| local arXiv paper-program planning doc | supporting planning input | informs the committed `WP-08` bounded `arxiv-paper-writer` skill and the `WP-13` three-paper publication packet |
 | `ADL_SECURITY_DEMOS.md` | under-authored supporting input | do not promote until authored; informs later demo packaging |
 | `PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md` | under-authored supporting input | do not promote until authored; candidate later security-extension slice |
 

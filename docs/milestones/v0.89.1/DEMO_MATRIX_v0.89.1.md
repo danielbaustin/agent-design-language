@@ -402,9 +402,9 @@ Expected success signals:
 
 Source planning inputs:
 - `docs/planning/NEXT_MILESTONE_DEMO_CANDIDATES.md`
-- `.adl/docs/TBD/FIVE_AGENT_HEY_JUDE_MIDI_DEMO_PLAN.md`
-- `.adl/docs/TBD/FIVE_AGENT_HEY_JUDE_MIDI_DEMO_IMPLEMENTATION_PLAN.md`
-- `.adl/docs/TBD/NEXT_MILESTONE_CANDIDATE_FIVE_AGENT_HEY_JUDE_MIDI_DEMO.md`
+- local Hey Jude planning memo
+- local Hey Jude implementation plan
+- local next-milestone candidate note
 
 Known limits / caveats:
 - this row is a flagship delight/integration surface, not the core exploit/replay proof row

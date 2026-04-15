@@ -21,7 +21,7 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 - [ ] Official `v0.89.1` issue wave opened
 
 ## Execution Discipline
-- [ ] Each issue has truthful input/output cards under `.adl/`
+- [ ] Each issue has truthful local input/output cards in the ADL control plane
 - [ ] Draft PR opened for each tracked issue before merge where applicable
 - [ ] Queue and closeout discipline followed consistently
 - [ ] The `v0.89` / `v0.89.1` boundary remains explicit rather than blurred by carry-back scope

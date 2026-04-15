@@ -290,7 +290,7 @@ The demo fails if:
 Suggested artifact tree:
 
 ```text
-.adl/reports/adversarial-demo/
+reports/adversarial-demo/
   target/
   hypothesis.yaml
   evidence.yaml
