@@ -170,12 +170,12 @@ Open questions:
 
 ## Status
 
-Current status: canonical planning package complete; official issue wave opened; `WP-02` - `WP-15` landed; `WP-15` now provides the docs-review convergence surface before internal review, 3rd-party review, remediation, next-milestone planning, and release closure.
+Current status: canonical planning package complete; official issue wave opened; `WP-02` - `WP-16` landed or represented by the tracked release-tail proof surfaces; `WP-16` now provides the internal review record before 3rd-party review, remediation, next-milestone planning, and release closure.
 
 - Planning: canonical package completed in `#1860`, with visible `WP-01` anchor issue `#1922` and `#1806` landing the tracked next-milestone package from the `v0.89` side
-- Execution: issue wave opened through `#1921`; `WP-02` - `WP-15` are closed or represented by this docs-review pass, and `WP-16` - `WP-20` remain the release-tail queue
-- Validation: partial; the adversarial/runtime, exploit/replay, verification, skill/governance, provider-packaging, proof-entry-point, integration-demo, manuscript workflow, quality-gate, and docs-review surfaces exist, while internal review, 3rd-party review, remediation, next-milestone handoff, and release ceremony remain open
-- Release readiness: pre-release; the milestone has a converged proof package, quality gate surface, and docs-review surface, but not a release candidate
+- Execution: issue wave opened through `#1921`; `WP-02` - `WP-16` are closed or represented by the tracked docs-review/internal-review records, and `WP-17` - `WP-20` remain the release-tail queue
+- Validation: partial; the adversarial/runtime, exploit/replay, verification, skill/governance, provider-packaging, proof-entry-point, integration-demo, manuscript workflow, quality-gate, docs-review, and internal-review surfaces exist, while 3rd-party review, remediation, next-milestone handoff, and release ceremony remain open
+- Release readiness: pre-release; the milestone has a converged proof package, quality gate surface, docs-review surface, and internal review record, but not a release candidate
 
 Current issue map:
 - `WP-01` anchor: `#1922`
@@ -198,12 +198,12 @@ Currently landed:
 - `WP-13` `#1934`
 - `WP-14` `#1935`
 - `WP-15` `#1936`
-
-Active:
 - `WP-16` `#1937`
 
-Still queued:
+Active:
 - `WP-17` `#1938`
+
+Still queued:
 - `WP-18` `#1939`
 - `WP-19` `#1940`
 - `WP-20` `#1941`

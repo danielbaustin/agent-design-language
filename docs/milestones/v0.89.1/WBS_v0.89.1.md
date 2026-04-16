@@ -49,7 +49,7 @@
 `WP-15` should be read as the docs/review convergence gate before the review
 tail, not as a second planning pass.
 
-Landed through WP-15:
+Landed through WP-16:
 - `WP-02` through `WP-05` closed the adversarial/runtime and exploit/replay core
 - `WP-06` through `WP-10` closed verification, self-attack, flagship adversarial proof, operational skill/governance substrate, and bounded provider packaging
 - `WP-11` closed the demo proof entry-point package that downstream demo and review work should start from
@@ -57,9 +57,11 @@ Landed through WP-15:
 - `WP-13` landed integration demos, the five-agent Hey Jude demo, and the three-paper manuscript packet
 - `WP-14` landed the quality gate
 - `WP-15` lands the docs-review convergence record
+- `WP-16` lands the internal review record
 
 Explicitly still queued:
-- `WP-16` through `WP-18` own internal review, 3rd-party review, and accepted finding remediation
+- `WP-17` owns 3rd-party review
+- `WP-18` owns accepted finding remediation
 - `WP-19` owns next-milestone planning
 - `WP-20` owns release ceremony
 

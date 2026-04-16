@@ -8,7 +8,7 @@ notes:
   - Official issue wave opened via issue #1921.
   - Titles, labels, sprint placement, and dependency order were used to create the official WP-01 through WP-20 issue wave in strict numerical order.
   - WP-01 is represented by issue #1922 as the visible numbered anchor, with that issue pointing back to the planning package completed in #1860.
-  - WP-02 through WP-14 are closed on the live tracker; WP-15 owns docs/review convergence before WP-16 through WP-20.
+  - WP-02 through WP-16 are closed or represented by tracked release-tail proof surfaces; WP-17 through WP-20 own external review, remediation, planning, and release ceremony.
 wave:
   - wp: WP-01
     issue_kind: anchor
