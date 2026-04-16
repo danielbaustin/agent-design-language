@@ -89,15 +89,10 @@ fn collect_runtime_signal_evidence(
         .filter(|event| matches!(event, trace::TraceEvent::DelegationDenied { .. }))
         .count();
     let security_denied_count = delegation_denied_count;
-    let success_ratio_permille = if total_steps == 0 {
-        if overall_status == "success" {
-            1000
-        } else {
-            0
-        }
-    } else {
-        (success_count * 1000) / total_steps
-    };
+    let success_ratio_permille = success_count
+        .saturating_mul(1000)
+        .checked_div(total_steps)
+        .unwrap_or(if overall_status == "success" { 1000 } else { 0 });
     let scheduler_max_parallel_observed = compute_max_parallel_observed_from_trace(tr);
 
     RuntimeSignalEvidence {
