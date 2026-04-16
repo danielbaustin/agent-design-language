@@ -44,6 +44,30 @@
 | WP-19 | Next milestone planning | Prepare the next milestone planning package before `v0.89.1` closeout. | next-milestone package | `WP-18` | `#1940` |
 | WP-20 | Release ceremony (final validation + tag + notes + cleanup) | Close the milestone cleanly after validation and documentation are complete. | release tag, notes, and closeout | `WP-18`, `WP-19` | `#1941` |
 
+## Current Convergence Snapshot
+
+WP-12 should be read as a release-tail gate, not as a second planning pass.
+
+Landed before WP-12:
+- `WP-02` through `WP-05` closed the adversarial/runtime and exploit/replay core
+- `WP-06` through `WP-10` closed verification, self-attack, flagship adversarial proof, operational skill/governance substrate, and bounded provider packaging
+- `WP-11` closed the demo proof entry-point package that downstream demo and review work should start from
+
+Active now:
+- `WP-12` reconciles the issue graph, proof-surface posture, and carry-forward boundaries before `WP-13` starts
+
+Explicitly still queued:
+- `WP-13` owns integration demos, the five-agent Hey Jude demo, and the three-paper manuscript packet
+- `WP-14` owns the quality gate
+- `WP-15` through `WP-18` own docs/review, internal review, 3rd-party review, and accepted finding remediation
+- `WP-19` owns next-milestone planning
+- `WP-20` owns release ceremony
+
+Follow-on boundaries:
+- full provider-security extension work remains later security-extension scope
+- broader long-lived-agent runtime planning belongs to the `v0.90` planning band
+- later identity, moral-governance, and constitutional work remains outside `v0.89.1`
+
 ## Sequencing
 - Phase 1: establish the canonical package and the seedable issue-wave plan (`WP-01`)
 - Phase 2: land the core adversarial/runtime feature band (`WP-02` - `WP-10`)

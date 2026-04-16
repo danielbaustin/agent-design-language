@@ -15,7 +15,7 @@
 
 ## Summary
 
-`v0.89.1` is the milestone where ADL turns adversarial runtime and exploit-evidence carry-forward into a first-class package. The current draft release story is that this milestone should make contested execution, exploit/replay artifacts, self-attack patterns, adversarial proof surfaces, and a bounded manuscript/publication workflow explicit and reviewable once the wave lands.
+`v0.89.1` is the milestone where ADL turns adversarial runtime and exploit-evidence carry-forward into a first-class package. The current draft release story is that the core adversarial/runtime proof band has landed through `WP-11`, while integration demos, manuscript packet completion, quality, review, remediation, next-milestone planning, and release ceremony remain open.
 
 ## Current Draft Highlights
 - explicit adversarial runtime model for contested operation
@@ -55,7 +55,8 @@
 
 ## Validation Notes
 - final release notes must cite shipped proof surfaces only
-- adversarial demo/replay package and quality-gate outputs should be cited before release
+- `WP-02` - `WP-11` proof surfaces are available as draft evidence
+- integration demo, manuscript packet, quality-gate, review, and remediation outputs should be cited before release
 
 ## What's Next
 - later reasoning, identity, moral-governance, and broader constitutional bands continue after this milestone

@@ -100,7 +100,7 @@ Supporting local planning inputs:
 
 ## Execution Model
 
-This milestone is designed to execute as a standard ADL issue wave once officially opened:
+This milestone is executing as a standard ADL issue wave:
 - `WP-01`: milestone design pass and canonical package completion
 - `WP-02` - `WP-10`: core adversarial/runtime feature band
 - `WP-11` - `WP-13`: demo scaffolding, milestone convergence, integration demos, and the initial three-paper publication packet
@@ -159,24 +159,56 @@ Open questions:
 
 ## Status
 
-Current status: canonical planning package complete; official issue wave opened; Sprint 1 execution can proceed from the settled package
+Current status: canonical planning package complete; official issue wave opened; `WP-02` - `WP-11` landed; `WP-12` is the active convergence gate before integration demos, quality, review, next-milestone planning, and release closure.
 
 - Planning: canonical package completed in `#1860`, with visible `WP-01` anchor issue `#1922` and `#1806` landing the tracked next-milestone package from the `v0.89` side
-- Execution: issue wave opened through `#1921`; `WP-01` is visible as `#1922` and `WP-02` - `WP-20` are queued as `#1923` - `#1941`
-- Validation: package-level checks passed; milestone execution validation still pending
-- Release readiness: not started; milestone docs are ready for review, not release
+- Execution: issue wave opened through `#1921`; `WP-02` - `WP-11` are closed on the live tracker, `WP-12` is active as `#1933`, and `WP-13` - `WP-20` remain the release-tail queue
+- Validation: partial; the adversarial/runtime, exploit/replay, verification, skill/governance, provider-packaging, and proof-entry-point surfaces exist, while integration demos, quality, review, remediation, next-milestone handoff, and release ceremony remain open
+- Release readiness: pre-release; the milestone has a converged proof package, but not a release candidate
+
+Current issue map:
+- `WP-01` anchor: `#1922`
+- `WP-02` - `WP-05`: `#1923` - `#1926`
+- `WP-06` - `WP-10`: `#1927` - `#1931`
+- `WP-11` - `WP-20`: `#1932` - `#1941`
+
+Currently landed:
+- `WP-02` `#1923`
+- `WP-03` `#1924`
+- `WP-04` `#1925`
+- `WP-05` `#1926`
+- `WP-06` `#1927`
+- `WP-07` `#1928`
+- `WP-08` `#1929`
+- `WP-09` `#1930`
+- `WP-10` `#1931`
+- `WP-11` `#1932`
+
+Active:
+- `WP-12` `#1933`
+
+Still queued:
+- `WP-13` `#1934`
+- `WP-14` `#1935`
+- `WP-15` `#1936`
+- `WP-16` `#1937`
+- `WP-17` `#1938`
+- `WP-18` `#1939`
+- `WP-19` `#1940`
+- `WP-20` `#1941`
 
 ## Kickoff Posture
 
-When `v0.89.1` opens, the expected motion should be:
-- review the package, not redesign it
-- seed the official issue wave directly from `WP_ISSUE_WAVE_v0.89.1.yaml`
+The active release-tail posture is:
+- use the landed `WP-02` - `WP-11` proof surfaces as the starting point for `WP-13`, not as material to redesign
+- keep the five-agent Hey Jude integration demo and the three-paper manuscript packet owned by `WP-13`
+- keep full provider-security extension, broader long-lived-agent runtime work, and later governance/identity themes outside `v0.89.1`
 - preserve the settled `v0.89` / `v0.89.1` boundary rather than reabsorbing adversarial/runtime work back into `v0.89`
 
-What should not happen at kickoff:
+What should not happen during the release tail:
 - reopening the core milestone interpretation
 - promoting weak supporting inputs as if they were mature tracked commitments
-- using issue creation as an excuse to rediscover milestone scope by hand
+- treating integration demo, manuscript, quality, or review work as permission to expand the milestone
 
 ## Exit Criteria
 
