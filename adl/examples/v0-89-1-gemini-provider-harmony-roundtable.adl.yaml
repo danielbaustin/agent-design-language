@@ -1,0 +1,160 @@
+version: "0.5"
+
+providers:
+  gemini_roundtable:
+    profile: "http:gemini-2.0-flash"
+    config:
+      endpoint: "http://127.0.0.1:8793/gemini"
+      auth:
+        type: bearer
+        env: GEMINI_API_KEY
+      timeout_secs: 20
+      model_ref: "reasoning/default"
+      provider_model_id: "gemini-2.0-flash"
+  chatgpt_roundtable:
+    profile: "http:gpt-4.1-mini"
+    config:
+      endpoint: "http://127.0.0.1:8793/chatgpt"
+      auth:
+        type: bearer
+        env: OPENAI_API_KEY
+      timeout_secs: 20
+      model_ref: "reasoning/default"
+      provider_model_id: "gpt-4.1-mini"
+  claude_roundtable:
+    profile: "http:claude-3-7-sonnet"
+    config:
+      endpoint: "http://127.0.0.1:8793/claude"
+      auth:
+        type: bearer
+        env: ANTHROPIC_API_KEY
+      timeout_secs: 20
+      model_ref: "reasoning/default"
+      provider_model_id: "claude-3-7-sonnet"
+  synthesis_roundtable:
+    profile: "http:gpt-4.1-mini"
+    config:
+      endpoint: "http://127.0.0.1:8793/synthesis"
+      auth:
+        type: bearer
+        env: OPENAI_API_KEY
+      timeout_secs: 20
+      model_ref: "reasoning/default"
+      provider_model_id: "gpt-4.1-mini"
+
+agents:
+  gemini_host:
+    provider: "gemini_roundtable"
+    model: "reasoning/default"
+  chatgpt_guest:
+    provider: "chatgpt_roundtable"
+    model: "reasoning/default"
+  claude_guest:
+    provider: "claude_roundtable"
+    model: "reasoning/default"
+  synthesis_host:
+    provider: "synthesis_roundtable"
+    model: "reasoning/default"
+
+tasks:
+  gemini_opening:
+    prompt:
+      user: |
+        ROLE: Gemini Opening
+        TOPIC: {{topic}}
+
+        Write exactly one Markdown section with this heading:
+        # Gemini Opening
+
+        Explain why Gemini is the right provider for this bounded packet without claiming it is universally best.
+        Keep the tone calm, specific, and reviewer-friendly.
+  chatgpt_response:
+    prompt:
+      user: |
+        ROLE: ChatGPT Response
+        TOPIC: {{topic}}
+
+        Previous turn:
+        {{gemini_turn}}
+
+        Write exactly one Markdown section with this heading:
+        # ChatGPT Response
+
+        Respond as a respectful peer. Name one reason the Gemini choice is sensible and one tradeoff that still matters.
+  claude_response:
+    prompt:
+      user: |
+        ROLE: Claude Response
+        TOPIC: {{topic}}
+
+        Previous turn:
+        {{chatgpt_turn}}
+
+        Write exactly one Markdown section with this heading:
+        # Claude Response
+
+        Add a governance or reviewability caution while staying fair to Gemini.
+  synthesis:
+    prompt:
+      user: |
+        ROLE: Synthesis
+        TOPIC: {{topic}}
+
+        Gemini opening:
+        {{gemini_turn}}
+
+        ChatGPT response:
+        {{chatgpt_turn}}
+
+        Claude response:
+        {{claude_turn}}
+
+        Write exactly one Markdown section with this heading:
+        # Gemini Roundtable Synthesis
+
+        Include these subheadings:
+        ## Findings
+        ## Why Gemini Fits This Packet
+        ## Tradeoffs That Remain Visible
+        ## Acknowledgement
+
+        Keep the synthesis grounded in the three prior turns only.
+
+run:
+  name: "v0-89-1-gemini-provider-harmony-roundtable"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "gemini.opening"
+        agent: "gemini_host"
+        task: "gemini_opening"
+        inputs:
+          topic: "@file:packets/v0-89-1-gemini-provider-roundtable-topic.md"
+        save_as: "gemini_turn"
+        write_to: "discussion/01-gemini-opening.md"
+      - id: "chatgpt.response"
+        agent: "chatgpt_guest"
+        task: "chatgpt_response"
+        inputs:
+          topic: "@file:packets/v0-89-1-gemini-provider-roundtable-topic.md"
+          gemini_turn: "{{gemini_turn}}"
+        save_as: "chatgpt_turn"
+        write_to: "discussion/02-chatgpt-response.md"
+      - id: "claude.response"
+        agent: "claude_guest"
+        task: "claude_response"
+        inputs:
+          topic: "@file:packets/v0-89-1-gemini-provider-roundtable-topic.md"
+          chatgpt_turn: "{{chatgpt_turn}}"
+        save_as: "claude_turn"
+        write_to: "discussion/03-claude-response.md"
+      - id: "roundtable.synthesis"
+        agent: "synthesis_host"
+        task: "synthesis"
+        inputs:
+          topic: "@file:packets/v0-89-1-gemini-provider-roundtable-topic.md"
+          gemini_turn: "{{gemini_turn}}"
+          chatgpt_turn: "{{chatgpt_turn}}"
+          claude_turn: "{{claude_turn}}"
+        save_as: "synthesis_turn"
+        write_to: "discussion/04-synthesis.md"
