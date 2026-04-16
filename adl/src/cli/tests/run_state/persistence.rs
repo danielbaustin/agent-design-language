@@ -1,6 +1,7 @@
 use super::*;
 use ::adl::trace_schema_v1::{
-    validate_trace_event_envelope_v1, TraceEventEnvelopeV1, TraceEventTypeV1,
+    validate_trace_event_envelope_v1, ContractValidationResultV1, TraceEventEnvelopeV1,
+    TraceEventTypeV1,
 };
 use serde_json::Value as JsonValue;
 
@@ -228,6 +229,205 @@ fn write_run_state_artifacts_sanitizes_external_absolute_adl_path_in_pause_state
         !pause_artifact.adl_path.starts_with('/'),
         "pause artifact should not retain raw host absolute paths"
     );
+
+    let _ = std::fs::remove_dir_all(run_dir);
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn trace_v1_records_delegation_and_failure_events() {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("time")
+        .as_nanos();
+    let run_id = format!("trace-delegation-failure-{now}-{}", std::process::id());
+    let resolved = minimal_resolved_for_artifacts(run_id.clone());
+    let out_dir = std::env::temp_dir().join(format!("adl-main-trace-delegation-{now}"));
+    let runs_root = unique_temp_dir("adl-main-runs-trace-delegation");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
+
+    let mut tr = trace::Trace::new(run_id.clone(), "wf".to_string(), "0.5".to_string());
+    tr.step_started("s1", "a1", "p1", "t1", None);
+    tr.delegation_policy_evaluated("s1", "provider_call", "remote", "allowed", Some("rule-a"));
+    tr.delegation_approved("s1");
+    tr.step_finished("s1", true);
+    tr.step_started("s2", "a1", "p1", "t2", None);
+    tr.delegation_policy_evaluated(
+        "s2",
+        "filesystem_write",
+        "/tmp/out",
+        "denied",
+        Some("rule-b"),
+    );
+    tr.delegation_denied("s2", "filesystem_write", "/tmp/out", Some("rule-b"));
+    tr.step_finished("s2", false);
+    tr.run_failed("delegation denied");
+
+    let run_dir = write_run_state_artifacts(
+        &resolved,
+        &tr,
+        Path::new("examples/adl-0.1.yaml"),
+        &out_dir,
+        100,
+        175,
+        "failure",
+        None,
+        &[],
+        &runtime_control_for("failure", &tr),
+        None,
+        Some(&anyhow::anyhow!("delegation denied")),
+    )
+    .expect("write failed run artifacts");
+
+    let trace_v1: TraceEventEnvelopeV1 = serde_json::from_str(
+        &std::fs::read_to_string(run_dir.join("logs/trace_v1.json")).expect("read trace_v1.json"),
+    )
+    .expect("parse trace_v1.json");
+    validate_trace_event_envelope_v1(&trace_v1).expect("trace v1 must validate");
+
+    assert!(trace_v1.events.iter().any(|event| {
+        event.event_type == TraceEventTypeV1::ContractValidation
+            && event
+                .contract_validation
+                .as_ref()
+                .is_some_and(|validation| validation.result == ContractValidationResultV1::Pass)
+    }));
+    assert!(trace_v1.events.iter().any(|event| {
+        event.event_type == TraceEventTypeV1::ContractValidation
+            && event
+                .contract_validation
+                .as_ref()
+                .is_some_and(|validation| validation.result == ContractValidationResultV1::Fail)
+    }));
+    assert!(trace_v1
+        .events
+        .iter()
+        .any(|event| event.event_type == TraceEventTypeV1::Approval));
+    assert!(trace_v1
+        .events
+        .iter()
+        .any(|event| event.event_type == TraceEventTypeV1::Rejection));
+    assert!(trace_v1.events.iter().any(|event| {
+        event.event_type == TraceEventTypeV1::Error
+            && event
+                .error
+                .as_ref()
+                .is_some_and(|error| error.code == "STEP_FAILURE")
+    }));
+    assert!(trace_v1.events.iter().any(|event| {
+        event.event_type == TraceEventTypeV1::Error
+            && event
+                .error
+                .as_ref()
+                .is_some_and(|error| error.code == "RUN_FAILURE")
+    }));
+    assert_eq!(
+        trace_v1
+            .events
+            .last()
+            .and_then(|event| event.decision_context.as_ref())
+            .map(|context| context.outcome.as_str()),
+        Some("failure")
+    );
+    assert_eq!(
+        trace_v1.events.last().and_then(|event| {
+            event
+                .decision_context
+                .as_ref()
+                .and_then(|context| context.rationale.as_deref())
+        }),
+        Some("delegation denied")
+    );
+
+    let _ = std::fs::remove_dir_all(run_dir);
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn resume_helpers_validate_pause_artifacts_and_steering_patches() {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("time")
+        .as_nanos();
+    let run_id = format!("resume-helper-{now}-{}", std::process::id());
+    let resolved = minimal_resolved_for_artifacts(run_id.clone());
+    let out_dir = std::env::temp_dir().join(format!("adl-main-resume-helper-{now}"));
+    let runs_root = unique_temp_dir("adl-main-runs-resume-helper");
+    let _runs_guard = EnvGuard::set("ADL_RUNS_ROOT", &runs_root.to_string_lossy());
+
+    let pause = execute::PauseState {
+        paused_step_id: "s1".to_string(),
+        reason: Some("review".to_string()),
+        completed_step_ids: vec!["s1".to_string()],
+        remaining_step_ids: vec!["s2".to_string()],
+        saved_state: HashMap::from([(String::from("token"), String::from("kept"))]),
+        completed_outputs: HashMap::new(),
+    };
+    let tr = trace::Trace::new(run_id.clone(), "wf".to_string(), "0.5".to_string());
+    let run_dir = write_run_state_artifacts(
+        &resolved,
+        &tr,
+        Path::new("examples/adl-0.1.yaml"),
+        &out_dir,
+        0,
+        1,
+        "paused",
+        Some(&pause),
+        &[],
+        &runtime_control_for("paused", &tr),
+        None,
+        None,
+    )
+    .expect("write paused artifacts");
+
+    let derived_path = resume_state_path_for_run_id(&run_id).expect("derive pause state path");
+    assert_eq!(derived_path, run_dir.join("pause_state.json"));
+
+    let pause_artifact =
+        run_artifacts::load_pause_state_artifact(&derived_path).expect("load pause state");
+    validate_pause_artifact_for_resume(&pause_artifact, &run_id, &resolved)
+        .expect("pause artifact should validate for matching resolved run");
+
+    let mut wrong_workflow = pause_artifact;
+    wrong_workflow.workflow_id = "wf-other".to_string();
+    let err = validate_pause_artifact_for_resume(&wrong_workflow, &run_id, &resolved)
+        .expect_err("workflow mismatch should fail");
+    assert!(err.to_string().contains("workflow_id mismatch"));
+
+    let patch_path = run_dir.join("steering_patch.json");
+    std::fs::write(
+        &patch_path,
+        serde_json::json!({
+            "schema_version": execute::STEERING_PATCH_SCHEMA_VERSION,
+            "apply_at": execute::STEERING_APPLY_AT_RESUME_BOUNDARY,
+            "reason": "operator update",
+            "set_state": { "token": "updated" },
+            "remove_state": ["stale"]
+        })
+        .to_string(),
+    )
+    .expect("write steering patch");
+    let (patch, fingerprint) = load_steering_patch(&patch_path).expect("load steering patch");
+    assert_eq!(patch.reason.as_deref(), Some("operator update"));
+    assert_eq!(
+        patch.set_state.get("token").map(String::as_str),
+        Some("updated")
+    );
+    assert!(!fingerprint.is_empty());
+
+    let invalid_patch_path = run_dir.join("invalid_steering_patch.json");
+    std::fs::write(
+        &invalid_patch_path,
+        serde_json::json!({
+            "schema_version": execute::STEERING_PATCH_SCHEMA_VERSION,
+            "apply_at": "wrong_boundary",
+            "set_state": { "token": "updated" }
+        })
+        .to_string(),
+    )
+    .expect("write invalid steering patch");
+    let err = load_steering_patch(&invalid_patch_path).expect_err("invalid patch should fail");
+    assert!(err.to_string().contains("apply_at"));
 
     let _ = std::fs::remove_dir_all(run_dir);
     let _ = std::fs::remove_dir_all(out_dir);
