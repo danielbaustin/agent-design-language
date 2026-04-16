@@ -65,10 +65,10 @@ use self::git_support::commits_ahead_of_origin_main;
 #[cfg(test)]
 use self::git_support::{branch_checked_out_worktree_path, infer_repo_from_remote};
 use self::git_support::{
-    default_repo, ensure_git_metadata_writable, ensure_local_branch_exists,
+    current_branch, default_repo, ensure_git_metadata_writable, ensure_local_branch_exists,
     ensure_worktree_for_branch, fetch_origin_main_with_fallback, has_uncommitted_changes,
     issue_create_repo, path_str, primary_checkout_root, repo_root, run_capture,
-    run_capture_allow_failure, run_status,
+    run_capture_allow_failure, run_status, tracked_changes_status,
 };
 #[cfg(test)]
 use self::github::ensure_pr_closing_linkage;
@@ -321,6 +321,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
             bail!("start: title produced empty slug after normalization");
         }
     }
+    ensure_issue_run_primary_checkout_safe(&repo_root)?;
     let fetched_labels = if parsed.no_fetch_issue {
         String::new()
     } else {
@@ -442,6 +443,35 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     println!("  STATE  FULLY_STARTED");
     eprintln!("• Done.");
     Ok(())
+}
+
+fn ensure_issue_run_primary_checkout_safe(repo_root: &Path) -> Result<()> {
+    let primary_root = primary_checkout_root()?;
+    if !same_checkout_root(repo_root, &primary_root)? {
+        return Ok(());
+    }
+    if current_branch(repo_root)? != "main" {
+        return Ok(());
+    }
+    let tracked_status = tracked_changes_status(repo_root)?;
+    if tracked_status.trim().is_empty() {
+        return Ok(());
+    }
+    bail!(
+        "run: unsafe_root_checkout_execution: the primary checkout is on main with tracked changes. Issue-mode run may bind or reuse an issue worktree only from a tracked-clean main checkout. Move tracked edits into the issue worktree or clear them before rerunning; ignored local .adl notes may remain.\n{}",
+        tracked_status.trim()
+    );
+}
+
+fn same_checkout_root(left: &Path, right: &Path) -> Result<bool> {
+    if left == right {
+        return Ok(true);
+    }
+    let left = fs::canonicalize(left)
+        .with_context(|| format!("failed to canonicalize checkout path '{}'", left.display()))?;
+    let right = fs::canonicalize(right)
+        .with_context(|| format!("failed to canonicalize checkout path '{}'", right.display()))?;
+    Ok(left == right)
 }
 
 fn real_pr_ready(args: &[String]) -> Result<()> {

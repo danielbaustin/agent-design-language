@@ -26,6 +26,11 @@ Prefer the strongest available state evidence in this order:
 5. bounded issue metadata
 6. explicit observed operator state such as subagent assignment
 
+When doctor or git worktree evidence identifies a bound issue worktree, preserve
+that path in the target and route follow-on implementation or publication from
+that checkout. Do not collapse the execution surface back onto the primary
+checkout just because the primary checkout is where the conductor was invoked.
+
 ## Preferred Skill Selection
 
 - missing bootstrap/root bundle -> `pr-init`
@@ -76,6 +81,11 @@ Known cases that should normally produce `ask_operator`:
 - healthy open PRs that are waiting for review rather than janitor work
 - doctor output that is missing or too inconsistent to support confident routing
 - tracker or WP issues whose acceptance already appears satisfied by a closed child-issue wave
+
+Known cases that should normally produce `stop`:
+- `unsafe_root_checkout_execution`
+- `mismatched_publication_surface`
+- `rebind_to_issue_worktree_required`
 
 ## Deterministic Helper
 

@@ -53,6 +53,7 @@ The conductor should:
 - apply workflow policy
 - write one bounded routing artifact
 - classify known blocker families from doctor, PR, explicit related-issue references, or repo-policy residue when safe
+- preserve bound worktree identity from doctor/git evidence and classify unsafe root checkout or mismatched publication surfaces explicitly
 - optionally dispatch one bounded downstream skill subtask
 - stop at that routing/dispatch boundary
 

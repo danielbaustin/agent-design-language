@@ -112,6 +112,15 @@ def evaluate(payload):
         skill_name = "none"
         continuation = "ask_operator"
         escalation_reason = "related_issue_ref_active"
+    elif blocker_class in (
+        "unsafe_root_checkout_execution",
+        "mismatched_publication_surface",
+        "rebind_to_issue_worktree_required",
+    ):
+        selected_phase = "blocked"
+        skill_name = "none"
+        continuation = "stop"
+        escalation_reason = blocker_class
     elif lifecycle_state == "execution_done":
         selected_phase = "finish"
         skill_name = "pr-finish"
@@ -183,6 +192,8 @@ def evaluate(payload):
 
     next_phase = skill_name if skill_name != "none" else "human_review"
     status = "done" if skill_name != "none" else "blocked"
+    if selected_phase == "blocked" and continuation == "stop":
+        next_phase = "blocked"
     if blocked_by_policy and not policy.get("bypass_without_explicit_blocker", False):
         status = "blocked"
         next_phase = "blocked"

@@ -13,6 +13,7 @@ Its job is to:
 - ensure card-local work is routed to the matching editor skill
 - apply explicit skill/subagent execution policy
 - record workflow-compliance outcomes
+- preserve bound issue worktree identity as first-class routing evidence
 - emit a bounded routing artifact
 - when explicitly enabled, dispatch one bounded downstream skill subtask and stop at that boundary
 
@@ -123,6 +124,8 @@ Preferred next-skill mapping:
 Important rule:
 - treat partially completed early steps as normal state, not corruption
 - the conductor should resume from the next truthful step instead of restarting bootstrap by reflex
+- when doctor or worktree evidence reports a bound issue worktree, carry that path into the selected target and downstream handoff instead of treating the primary checkout as the execution surface
+- classify unsafe primary-checkout execution, publication from the wrong checkout, and required rebind-to-worktree cases as explicit blockers rather than improvising a root-checkout workflow
 - healthy open PRs should normally hand off to human review/waiting state rather than janitor unless there is an actual blocker
 - explicit `covered by #<n>` / `satisfied by #<n>` style references should block fresh execution when the referenced issue is already closed
 - repo-policy residue such as tracked legacy `.adl` issue records should escalate as a mechanical blocker rather than being mistaken for issue-local implementation work

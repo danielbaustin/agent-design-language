@@ -4,9 +4,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use super::git_support::{
-    commits_ahead_of_origin_main, current_branch, default_repo, ensure_not_on_main_branch,
-    has_uncommitted_changes, path_str, primary_checkout_root, repo_root, run_capture, run_status,
-    run_status_allow_failure,
+    branch_checked_out_worktree_path, commits_ahead_of_origin_main, current_branch, default_repo,
+    ensure_not_on_main_branch, has_uncommitted_changes, path_str, primary_checkout_root, repo_root,
+    run_capture, run_status, run_status_allow_failure,
 };
 use super::github::{
     attach_post_merge_closeout, attach_pr_janitor, current_pr_url,
@@ -31,6 +31,16 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     let primary_root = primary_checkout_root()?;
     let repo = default_repo(&repo_root)?;
 
+    let _ = run_status_allow_failure("git", &["fetch", "origin"]);
+
+    let inferred = resolve_issue_scope_and_slug_from_local_state(&primary_root, parsed.issue)?
+        .unwrap_or((
+            DEFAULT_VERSION.to_string(),
+            format!("issue-{}", parsed.issue),
+        ));
+    let issue_ref = IssueRef::new(parsed.issue, inferred.0.clone(), inferred.1.clone())?;
+    let expected_branch = issue_ref.branch_name("codex");
+    ensure_finish_uses_bound_checkout(&repo_root, &expected_branch)?;
     ensure_not_on_main_branch(&repo_root)?;
 
     let branch = current_branch(&repo_root)?;
@@ -43,14 +53,6 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         );
     }
 
-    let _ = run_status_allow_failure("git", &["fetch", "origin"]);
-
-    let inferred = resolve_issue_scope_and_slug_from_local_state(&repo_root, parsed.issue)?
-        .unwrap_or((
-            DEFAULT_VERSION.to_string(),
-            format!("issue-{}", parsed.issue),
-        ));
-    let issue_ref = IssueRef::new(parsed.issue, inferred.0.clone(), inferred.1.clone())?;
     let source_path = resolve_issue_prompt_path(&primary_root, &issue_ref)?;
     let stp_path = issue_ref.task_bundle_stp_path(&repo_root);
 
@@ -261,6 +263,40 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
 
     println!("{pr_url}");
     Ok(())
+}
+
+fn ensure_finish_uses_bound_checkout(repo_root: &Path, branch: &str) -> Result<()> {
+    let Some(bound_worktree) = branch_checked_out_worktree_path(branch)? else {
+        return Ok(());
+    };
+    if same_checkout_root(repo_root, &bound_worktree)? {
+        return Ok(());
+    }
+    bail!(
+        "finish: mismatched_publication_surface: branch '{}' is bound to worktree '{}', but finish is running from '{}'. Rerun finish from the bound issue worktree instead of publishing from the primary checkout or another checkout.",
+        branch,
+        bound_worktree.display(),
+        repo_root.display()
+    );
+}
+
+fn same_checkout_root(left: &Path, right: &Path) -> Result<bool> {
+    if left == right {
+        return Ok(true);
+    }
+    let left = fs::canonicalize(left).with_context(|| {
+        format!(
+            "finish: failed to canonicalize checkout '{}'",
+            left.display()
+        )
+    })?;
+    let right = fs::canonicalize(right).with_context(|| {
+        format!(
+            "finish: failed to canonicalize checkout '{}'",
+            right.display()
+        )
+    })?;
+    Ok(left == right)
 }
 
 pub(super) fn finish_changed_paths(repo_root: &Path, has_uncommitted: bool) -> Result<Vec<String>> {

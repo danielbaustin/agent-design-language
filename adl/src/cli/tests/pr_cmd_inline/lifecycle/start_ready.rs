@@ -1,6 +1,73 @@
 use super::*;
 
 #[test]
+fn real_pr_start_rejects_tracked_dirty_primary_main_before_binding_worktree() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-dirty-main-guard");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("gitignore");
+    fs::write(repo.join("README.md"), "clean main\n").expect("readme");
+    assert!(Command::new("git")
+        .args(["add", ".gitignore", "README.md"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+
+    fs::create_dir_all(repo.join(".adl/local-notes")).expect("local notes dir");
+    fs::write(repo.join(".adl/local-notes/ignored.md"), "local only\n").expect("ignored adl");
+    fs::write(repo.join("README.md"), "tracked drift on main\n").expect("dirty readme");
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let err = real_pr(&[
+        "start".to_string(),
+        "1777".to_string(),
+        "--slug".to_string(),
+        "dirty-main-guard".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Dirty main guard".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect_err("tracked dirty primary main should block issue-mode run");
+    env::set_current_dir(prev_dir).expect("restore cwd");
+
+    let err = err.to_string();
+    assert!(err.contains("unsafe_root_checkout_execution"));
+    assert!(err.contains("README.md"));
+    assert!(!err.contains("ignored.md"));
+}
+
+#[test]
 fn real_pr_start_bootstraps_worktree_and_ready_passes() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-start-ready");

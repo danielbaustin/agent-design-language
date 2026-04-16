@@ -133,11 +133,12 @@ Distinguish among:
 Allowed bounded interventions may include:
 - rerunning or re-verifying the smallest relevant local checks
 - preparing a focused fix for a clear CI failure
-- refreshing branch state or conflict remediation when the intended resolution is unambiguous
+- refreshing branch state or conflict remediation when the intended resolution is unambiguous and the fix is applied from the existing PR branch/worktree
 - refreshing PR metadata or the PR event when a linkage-only guardrail failure is caused by stale GitHub payload state
 - updating truthful PR progress notes or result output
 
 Do not auto-apply if the intervention would:
+- recreate the PR branch from primary main instead of repairing the existing PR branch/worktree
 - widen issue scope materially
 - rewrite large areas without a clear blocker-driven reason
 - override substantive reviewer judgment silently

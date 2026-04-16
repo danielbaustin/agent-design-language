@@ -76,6 +76,7 @@ If multiple surfaces disagree materially, report `blocked`.
 
 Before closeout:
 - confirm the issue work actually exists on the branch/worktree
+- confirm finish is running from the bound issue worktree when the issue branch is checked out in a worktree
 - confirm the output record exists and is not still a bootstrap stub
 - confirm the output record is finalized before any PR create/update action
 - confirm the intended staged paths are explicit or deterministically derived
@@ -91,9 +92,15 @@ This skill may:
 - create or update the reviewable draft PR
 
 This skill must not:
+- publish from the primary checkout or another checkout when the issue branch is bound elsewhere
 - silently widen scope
 - silently merge
 - silently close the issue
+
+If the repo control plane reports `mismatched_publication_surface`, stop and
+rerun finish from the bound issue worktree. If it reports
+`rebind_to_issue_worktree_required`, re-establish the issue worktree through the
+repo-native lifecycle before attempting publication.
 
 ### 4. Stop Boundary
 

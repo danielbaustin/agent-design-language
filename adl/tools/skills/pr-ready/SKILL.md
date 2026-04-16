@@ -111,8 +111,9 @@ If there is no concrete target, stop and report `blocked` with the missing targe
    - `blocked`
 7. Report preflight or scheduling gates separately from execution readiness when the issue structure itself is sound.
 8. Treat missing worktree before `pr-run` as expected pre-run state when the root bundle is authored and execution has not yet been bound.
-9. Apply only clearly safe bounded repairs if permitted.
-10. Emit a structured readiness result and stop.
+9. If the issue is already bound, report the exact worktree path and branch as readiness evidence.
+10. Apply only clearly safe bounded repairs if permitted.
+11. Emit a structured readiness result and stop.
 
 ## Workflow
 
@@ -138,6 +139,7 @@ At minimum, inspect where applicable:
 - worktree-local STP/SIP/SOR if execution has already been bound
 - branch naming and branch-to-issue traceability
 - worktree presence and worktree branch match
+- whether the reported worktree is the checkout that follow-on run or finish work must use
 - milestone/open-PR blocking state when a preflight-style check is relevant
 
 ### 3. Validate Core Readiness

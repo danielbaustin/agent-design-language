@@ -114,6 +114,23 @@ The conductor should be especially useful when:
 - the operator wants one bounded entrypoint
 - skill/subagent policy should be applied explicitly instead of by memory
 
+## Worktree-First Invariant
+
+The ADL workflow uses one primary checkout and issue-scoped worktrees.
+
+- The primary checkout stays on clean main and is used for root-level inspection, issue bootstrap, and issue-mode binding commands.
+- Tracked implementation, validation fixes, finish staging, and janitor repairs happen in the issue worktree after the issue is bound.
+- A bound worktree path reported by doctor or conductor evidence is first-class lifecycle state and must be preserved in follow-on handoffs.
+- `pr-run` may bind or reuse a worktree from the primary checkout only when main has no tracked changes.
+- Ignored local `.adl` planning, review, and routing notes may remain local-only in the primary checkout, but that exception does not permit tracked edits on main.
+- `pr-finish` must publish from the bound issue worktree when the issue branch is checked out there.
+- `pr-janitor` repairs the existing PR branch/worktree; it must not recreate work from primary main.
+
+Canonical blocker names:
+- `unsafe_root_checkout_execution`
+- `mismatched_publication_surface`
+- `rebind_to_issue_worktree_required`
+
 ## `workflow-conductor`
 
 ### Purpose

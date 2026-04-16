@@ -53,6 +53,9 @@ Important lifecycle rule:
 - branch and worktree creation are intentionally deferred until just before execution
 - do not create or expect a bound issue worktree earlier in the lifecycle unless the repo is still carrying compatibility state
 - late binding is preferred because it reduces unnecessary rebasing and branch drift across prepared-but-not-started issues
+- the primary checkout may be used to invoke the repo-native issue-mode run/bind command only while it is tracked-clean on main
+- after binding, all tracked implementation edits happen in the issue worktree, not in the primary checkout
+- ignored local `.adl` planning or review notes may remain local-only, but that exception must not widen into tracked repo edits on main
 
 ## Entry Conditions
 
@@ -148,6 +151,8 @@ Preferred behavior:
 - if the issue already has the correct bound branch/worktree because of compatibility or prior execution, reuse it
 - if binding is needed, use repo-native run commands rather than manual git surgery
 - keep branch/worktree naming traceable to the issue id and slug
+- if the primary checkout has tracked changes while on main, stop with `unsafe_root_checkout_execution` and move the work into the issue worktree before continuing
+- if an issue is already bound, run implementation reads/writes from the bound worktree path reported by doctor/conductor evidence
 
 This skill may create or confirm:
 - the issue execution branch
