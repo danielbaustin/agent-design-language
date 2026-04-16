@@ -12,6 +12,7 @@ use ::adl::chronosense::{
     PhiIntegrationMetricsContract, TemporalCausalityExplanationContract,
     TemporalQueryRetrievalContract, TemporalSchemaContract,
 };
+use ::adl::exploit_artifact_replay::ExploitArtifactReplayContract;
 use ::adl::red_blue_agent_architecture::RedBlueAgentArchitectureContract;
 
 use super::helpers::required_value;
@@ -122,6 +123,17 @@ pub(super) fn real_identity_adversarial_runner(repo_root: &Path, args: &[String]
         "adversarial execution runner",
         "ADVERSARIAL_EXECUTION_RUNNER_PATH",
         AdversarialExecutionRunnerContract::v1(),
+    )
+}
+
+pub(super) fn real_identity_exploit_replay(repo_root: &Path, args: &[String]) -> Result<()> {
+    write_contract_json(
+        repo_root,
+        args,
+        "exploit-replay",
+        "exploit artifact replay",
+        "EXPLOIT_ARTIFACT_REPLAY_PATH",
+        ExploitArtifactReplayContract::v1(),
     )
 }
 
