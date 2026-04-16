@@ -38,6 +38,7 @@ pub mod plan;
 pub mod prompt;
 pub mod provider;
 pub mod provider_substrate;
+pub mod red_blue_agent_architecture;
 pub mod remote_exec;
 pub mod resolve;
 pub mod runtime_environment;

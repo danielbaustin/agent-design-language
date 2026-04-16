@@ -164,7 +164,7 @@ fn identity_requires_subcommand_and_rejects_unknown_subcommand() {
     let err = real_identity_in_repo(&[], &repo).expect_err("missing subcommand should fail");
     assert!(err
         .to_string()
-        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | schema"));
+        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | schema"));
     assert!(err.to_string().contains("continuity"));
 
     let err = real_identity_in_repo(&["nope".to_string()], &repo)
@@ -188,6 +188,11 @@ fn identity_top_level_help_and_subcommand_help_succeed() {
         &repo,
     )
     .expect("adversarial-runtime help");
+    real_identity_in_repo(
+        &["red-blue-architecture".to_string(), "--help".to_string()],
+        &repo,
+    )
+    .expect("red-blue-architecture help");
     real_identity_in_repo(&["schema".to_string(), "--help".to_string()], &repo)
         .expect("schema help");
     real_identity_in_repo(&["continuity".to_string(), "--help".to_string()], &repo)
@@ -459,6 +464,75 @@ fn identity_adversarial_runtime_validates_unknown_args_and_missing_out_value() {
 
     let err = real_identity_in_repo(
         &["adversarial-runtime".to_string(), "--out".to_string()],
+        &repo,
+    )
+    .expect_err("out flag without value should fail");
+    assert!(err.to_string().contains("--out requires a value"));
+}
+
+#[test]
+fn identity_red_blue_architecture_writes_contract_json() {
+    let _guard = TEST_MUTEX
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    let repo = temp_repo("identity-red-blue-architecture");
+    let out_path = repo.join(".adl/state/red_blue_agent_architecture_v1.json");
+
+    real_identity_in_repo(
+        &[
+            "red-blue-architecture".to_string(),
+            "--out".to_string(),
+            ".adl/state/red_blue_agent_architecture_v1.json".to_string(),
+        ],
+        &repo,
+    )
+    .expect("identity red-blue-architecture");
+
+    let json: Value =
+        serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
+    assert_eq!(json["schema_version"], "red_blue_agent_architecture.v1");
+    assert_eq!(
+        json["proof_hook_output_path"],
+        ".adl/state/red_blue_agent_architecture_v1.json"
+    );
+    assert_eq!(json["red_role"]["role"], "red");
+    assert!(json["purple_coordination"]["governance_responsibilities"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "govern replay and escalation order"));
+    assert!(json["interaction_model"]["stage_order"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "blue risk evaluation"));
+    assert!(json["review_surface"]["downstream_boundaries"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value.as_str().expect("string").contains("WP-04")));
+    assert!(json["owned_runtime_surfaces"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "adl identity red-blue-architecture"));
+}
+
+#[test]
+fn identity_red_blue_architecture_validates_unknown_args_and_missing_out_value() {
+    let repo = temp_repo("identity-red-blue-architecture-errors");
+
+    let err = real_identity_in_repo(
+        &["red-blue-architecture".to_string(), "--bogus".to_string()],
+        &repo,
+    )
+    .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for identity red-blue-architecture: --bogus"));
+
+    let err = real_identity_in_repo(
+        &["red-blue-architecture".to_string(), "--out".to_string()],
         &repo,
     )
     .expect_err("out flag without value should fail");

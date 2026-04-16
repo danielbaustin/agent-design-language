@@ -11,6 +11,7 @@ use ::adl::chronosense::{
     PhiIntegrationMetricsContract, TemporalCausalityExplanationContract,
     TemporalQueryRetrievalContract, TemporalSchemaContract,
 };
+use ::adl::red_blue_agent_architecture::RedBlueAgentArchitectureContract;
 
 use super::helpers::required_value;
 
@@ -98,6 +99,17 @@ pub(super) fn real_identity_adversarial_runtime(repo_root: &Path, args: &[String
         "adversarial runtime model",
         "ADVERSARIAL_RUNTIME_MODEL_PATH",
         AdversarialRuntimeModelContract::v1(),
+    )
+}
+
+pub(super) fn real_identity_red_blue_architecture(repo_root: &Path, args: &[String]) -> Result<()> {
+    write_contract_json(
+        repo_root,
+        args,
+        "red-blue-architecture",
+        "red blue agent architecture",
+        "RED_BLUE_AGENT_ARCHITECTURE_PATH",
+        RedBlueAgentArchitectureContract::v1(),
     )
 }
 
