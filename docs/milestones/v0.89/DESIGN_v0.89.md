@@ -15,13 +15,15 @@ Define what `v0.89` is building, why it matters, and how the milestone stays bou
 
 ADL already has meaningful bounded cognition, persistence, instinct, provider/trace substrate, and operational workflow machinery. What it still lacks is a coherent package for governed adaptive behavior.
 
-Right now, too many of the important `v0.89` concepts live only as local planning notes:
-- convergence is described, but not yet packaged as a stable milestone contract
-- Freedom Gate v2 is described, but not yet integrated with explicit decision surfaces
-- action mediation and skill invocation semantics are spread across concept notes and repo practice
-- security and trust thinking exists, but not yet as one explicit milestone-bound threat/posture package
+At planning time, too many of the important `v0.89` concepts lived only as local planning notes:
+- convergence was described, but not yet packaged as a stable milestone contract
+- Freedom Gate v2 was described, but not yet integrated with explicit decision surfaces
+- action mediation and skill invocation semantics were spread across concept notes and repo practice
+- security and trust thinking existed, but not yet as one explicit milestone-bound threat/posture package
+- constitutional, learning, and GHB rationale existed as idea docs that needed a reader-visible milestone home
 
-Without a real `v0.89` package, later milestones would inherit drift instead of a stable substrate.
+The tracked package now separates feature contracts under `features/` from
+reader-visible rationale and conceptual scaffolding under `ideas/`.
 
 ## Goals
 - turn the core `v0.89` concept cluster into a bounded canonical feature package

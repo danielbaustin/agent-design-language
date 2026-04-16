@@ -71,6 +71,7 @@ Canonical milestone documents:
 
 Supporting / domain-specific docs:
 - promoted runtime feature docs live under `docs/milestones/v0.87.1/features/`
+- idea/accounting notes live under `docs/milestones/v0.87.1/ideas/`
 - runtime planning notes may still exist under `.adl/docs/v0.87.1planning/`, but tracked milestone truth lives under `docs/milestones/v0.87.1/`
 - roadmap and sequencing context remain in adjacent roadmap docs where needed
 

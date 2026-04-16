@@ -58,10 +58,9 @@ Owned mainly by:
 - `OPERATIONAL_SKILLS_SUBSTRATE.md`
 - `SKILL_COMPOSITION_MODEL.md`
 
-Supporting inputs:
-- `DELEGATION_AND_REFUSAL.md`
-- `MULTI_AGENT_NEGOTIATION.md`
-- `PROPOSED_OPERATIONAL_SKILLS.md`
+Supporting idea inputs:
+- `ideas/DELEGATION_AND_REFUSAL.md`
+- `ideas/MULTI_AGENT_NEGOTIATION.md`
 
 This layer answers:
 - how the adversarial band is demonstrated
@@ -81,19 +80,22 @@ This layer answers:
 
 That boundary must stay explicit.
 
-## Non-Promoted Inputs
+## Ideas And Non-Promoted Inputs
 
-These remain local supporting inputs rather than promoted tracked feature commitments in this package:
+These are tracked as ideas/backgrounders rather than promoted tracked feature commitments:
 
-- `DELEGATION_AND_REFUSAL.md`
-- `MULTI_AGENT_NEGOTIATION.md`
-- `PROPOSED_OPERATIONAL_SKILLS.md`
+- `ideas/DELEGATION_AND_REFUSAL.md`
+- `ideas/MULTI_AGENT_NEGOTIATION.md`
+
+These remain local-only or non-promoted supporting inputs:
+
 - `ADL_SECURITY_DEMOS.md`
 - `PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md`
 
 Reasons:
-- some are conceptually important but narrower than the main exploit/runtime core
-- two are currently empty source files and should not be over-promoted
+- the tracked ideas are conceptually important but narrower than the main exploit/runtime core
+- internal operational-skills process notes are not reader-facing milestone backgrounders
+- two source files are currently empty and should not be over-promoted
 - the milestone should avoid claiming more maturity than the corpus currently supports
 
 ## Risks

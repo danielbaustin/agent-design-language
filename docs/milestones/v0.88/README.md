@@ -74,6 +74,7 @@ Canonical milestone documents:
 
 Promoted feature-defining docs:
 - `FEATURE_DOCS_v0.88.md`
+- `ideas/README.md`
 - `features/SUBSTANCE_OF_TIME.md`
 - `features/TEMPORAL_SCHEMA_V01.md`
 - `features/CHRONOSENSE_AND_IDENTITY.md`
@@ -88,9 +89,9 @@ Promoted feature-defining docs:
 - `features/PAPER_SONATA_IMPLEMENTATION_PLAN.md`
 - `features/DEEP_AGENTS_COMPARATIVE_PROOF.md`
 
-Local planning docs intentionally not promoted yet:
-- later-band learning / skills planning: `.adl/docs/v0.89planning/APTITUDE_MODEL.md`
-- helper maps and planning notes: `.adl/docs/v0.88planning/TEMPORAL_CLUSTER_MAP.md`, `.adl/docs/v0.88planning/RUNTIME_PROVIDER_AND_ECONOMICS_CLUSTER_MAP.md`, `.adl/docs/v0.88planning/WP_INSTINCT_AND_BOUNDED_AGENCY.md`
+Ideas/accounting note:
+- `ideas/README.md` records which conceptual v0.88 planning docs are already
+  tracked and which helper notes were not promoted as stable backgrounders.
 
 ## Issue Map
 

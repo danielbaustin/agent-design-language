@@ -52,6 +52,7 @@ Canonical milestone documents:
 - Design: `DESIGN_v0.89.md`
 - Work Breakdown Structure (WBS): `WBS_v0.89.md`
 - Feature index: `FEATURE_DOCS_v0.89.md`
+- Ideas/backgrounder index: `ideas/README.md`
 - Sprint plan: `SPRINT_v0.89.md`
 - Decisions log: `DECISIONS_v0.89.md`
 - Demo matrix: `DEMO_MATRIX_v0.89.md`
@@ -75,9 +76,12 @@ Tracked feature docs:
 - `features/ADL_SECURITY_POSTURE_MODEL.md`
 - `features/ADL_TRUST_MODEL_UNDER_ADVERSARY.md`
 
-Supporting local planning inputs:
-- the local `v0.89` planning corpus
-- the local `v0.89.1` planning corpus
+Tracked ideas/backgrounders:
+- `ideas/ADL_CONSTITUTION.md`
+- `ideas/ADL_LEARNING_MODEL.md`
+- `ideas/ADL_AND_REASONABLENESS.md`
+- `ideas/GHB_EXECUTION_MODEL.md`
+- see `ideas/README.md` for the full promoted idea list and disposition notes
 
 Tracked follow-on planning package:
 - `../v0.89.1/*`

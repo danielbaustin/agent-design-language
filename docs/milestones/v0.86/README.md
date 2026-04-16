@@ -89,9 +89,8 @@ Promoted feature-defining docs:
 - `docs/milestones/v0.86/features/LOCAL_AGENT_DEMOS.md`
 - `docs/milestones/v0.86/features/CONCEPT_PLANNING_FOR_v0.86.md`
 
-Context / supplementary planning notes:
-- `.adl/docs/v0.86planning/INTELLECTUAL_INFLUENCES.md`
-- `.adl/docs/v0.86planning/VISION_NOTES__INSTINCT_AGENCY_AND_CIVILIZING_LLMS.md`
+Ideas / supplementary context:
+- `docs/milestones/v0.86/ideas/README.md`
 
 Interpretation note:
 - promoted feature docs may preserve future-facing architectural context
