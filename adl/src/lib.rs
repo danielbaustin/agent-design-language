@@ -22,6 +22,7 @@ pub mod control_plane;
 pub mod delegation_policy;
 pub mod delegation_refusal_coordination;
 pub mod demo;
+pub mod demo_proof_entry_points;
 pub mod execute;
 pub mod execution_plan;
 pub mod exploit_artifact_replay;

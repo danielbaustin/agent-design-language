@@ -125,6 +125,7 @@ Additional validation surfaces:
 - replayable exploit artifacts
 - adversarial runtime traces and reviewer-facing demo packets
 - provider extension packaging proof: `adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json`
+- demo proof entry-point package: `adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json`
 - quality-gate and review issue outputs
 
 Success criteria:

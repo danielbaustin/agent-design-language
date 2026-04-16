@@ -56,6 +56,11 @@ WP-10 proof hook:
 
 WP-10 keeps the existing provider substrate capability metadata in the milestone as a bounded packaging/proof surface. It does not promote the broader provider-security extension into `v0.89.1`; provider attestation, trust-tier scoring, network posture enforcement, secret lifecycle enforcement, provider sandboxing, and external provider-security demos remain later security-extension work.
 
+WP-11 proof hook:
+- `adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json`
+
+WP-11 makes the demo matrix copy/paste-ready by collecting the landed adversarial-runtime, replay, verification, skill-governance, provider-packaging, and flagship demo entry points into one reviewer-facing contract. It keeps the five-agent Hey Jude integration demo and final manuscript convergence owned by `WP-13`.
+
 ## Source Planning Corpus -> Implementation Home
 
 ### Core `v0.89.1` source docs

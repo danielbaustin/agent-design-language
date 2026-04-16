@@ -60,7 +60,7 @@
 - WP-08 -> the skill substrate/composition layer is explicit enough for runtime implementation and includes a bounded `arxiv-paper-writer` skill surface
 - WP-09 -> governance/coordination supporting inputs are resolved enough to keep the milestone coherent
 - WP-10 -> bounded provider capability packaging has a proof hook and under-authored provider-security extension docs are explicitly kept out
-- WP-11 -> proof entry points exist for the main milestone claims
+- WP-11 -> proof entry points exist for the main milestone claims via `adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json`
 - WP-12 -> the milestone package and issue graph are converged
 - WP-13 -> milestone claims have bounded demo/proof surfaces and the three-paper publication program has reviewer-legible manuscript outputs
 - WP-14 -> quality/coverage posture is truthful and reviewable

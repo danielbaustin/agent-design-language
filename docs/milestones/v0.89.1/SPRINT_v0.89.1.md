@@ -68,7 +68,7 @@ Land the exploit-proof and governed execution substrate that makes `v0.89.1` mor
 Close the milestone using the normal ADL pattern: demos, quality gate, docs/review, internal review, 3rd-party review, findings remediation, next-milestone planning, and release ceremony.
 
 ### Scope
-- demo scaffolding and proof entry points
+- demo scaffolding and proof entry points, including `adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json`
 - milestone convergence and follow-on mapping
 - demo matrix and integration demos
 - the initial three-paper arXiv manuscript program
