@@ -85,6 +85,20 @@ WP-13 proof hook:
 
 WP-13 lands the D7/D8/D9 integration packet, the five-agent Hey Jude MIDI demo, and the bounded three-paper manuscript workflow packet. It records the no-submission boundary for the publication track and consumes the merged WP-12 convergence state without reopening feature scope.
 
+WP-14 proof hook:
+- `bash adl/tools/demo_v0891_quality_gate.sh`
+
+WP-14 records the quality-gate posture for the milestone: local command suite,
+coverage policy, no active per-file coverage exclusion, D7/D8/D9 proof-package
+checks, and large-module watch-list visibility.
+
+WP-15 proof surface:
+- `DOCS_REVIEW_v0.89.1.md`
+
+WP-15 aligns the milestone docs and release-tail review surfaces with the
+delivered truth through `WP-14`. It is not a substitute for the internal review
+owned by `WP-16` or the 3rd-party review owned by `WP-17`.
+
 ## Source Planning Corpus -> Implementation Home
 
 ### Core `v0.89.1` source docs
@@ -125,3 +139,4 @@ That means:
 - Treat `WP_ISSUE_WAVE_v0.89.1.yaml` as the mechanical source for later issue creation once review is complete.
 - Treat the remaining local `v0.89.1` planning inputs as planning material unless the milestone docs explicitly absorb them into a named work package.
 - Treat contradictions between the planning package, promoted feature docs, and source mapping as defects.
+- Treat `DOCS_REVIEW_v0.89.1.md` as the handoff surface for internal and external review after the docs-review pass.

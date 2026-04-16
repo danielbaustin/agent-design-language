@@ -20,7 +20,7 @@
 |---|---|---|---|
 | `v0.89.1-s1` | open the official issue wave and execute the adversarial/runtime core | `WP-01`, `WP-02` - `WP-05` | complete; official wave opened and `WP-02` - `WP-05` landed |
 | `v0.89.1-s2` | execute verification, self-attack, demo, governed execution substrate, and the bounded publication skill | `WP-06` - `WP-10` | complete; `WP-06` - `WP-10` landed with provider-security extension explicitly deferred |
-| `v0.89.1-s3` | converge demos, manuscript outputs, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | active; `WP-11` - `WP-14` now provide demo, convergence, integration, manuscript, and quality-gate surfaces, while `WP-15` - `WP-20` remain release-tail work |
+| `v0.89.1-s3` | converge demos, manuscript outputs, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | active; `WP-11` - `WP-15` now provide demo, convergence, integration, manuscript, quality-gate, and docs-review surfaces, while `WP-16` - `WP-20` remain release-tail work |
 
 ## Sprint 1
 
@@ -91,7 +91,8 @@ Close the milestone using the normal ADL pattern: demos, quality gate, docs/revi
 Current sprint-3 convergence target:
 - use the landed `WP-11` demo proof entry-point package plus the `WP-02` - `WP-10` feature proofs as the review-tail starting point
 - keep `WP-13` focused on integration demos, the five-agent Hey Jude demo, and the three-paper manuscript packet
-- keep `WP-14` - `WP-20` visible as quality, docs/review, review, remediation, next-milestone planning, and release closure rather than absorbing them into `WP-12`
+- keep `WP-14` and `WP-15` as distinct quality and docs-review gates before internal/external review
+- keep `WP-16` - `WP-20` visible as review, remediation, next-milestone planning, and release closure rather than absorbing them into earlier convergence work
 - preserve full provider-security extension and long-lived-agent runtime planning as later-band work
 
 ## Risks / Dependencies
@@ -113,9 +114,9 @@ This package is actively executing.
 
 That means:
 - the official issue wave is open through `#1921`
-- `WP-02` - `WP-13` are closed on the live tracker
-- `WP-14` owns the release-tail quality-gate snapshot
-- the remaining work before delivery is docs/review, internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony, not milestone rediscovery
+- `WP-02` - `WP-14` are closed on the live tracker
+- `WP-15` owns this release-tail docs-review convergence pass
+- the remaining work before delivery is internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony, not milestone rediscovery
 
 ## Cadence Expectations
 - use issue cards (`stp` / `sip` / `sor`) for each issue

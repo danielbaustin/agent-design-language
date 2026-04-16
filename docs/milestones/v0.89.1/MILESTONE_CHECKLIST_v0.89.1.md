@@ -26,6 +26,7 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 - [ ] Queue and closeout discipline followed consistently
 - [ ] The `v0.89` / `v0.89.1` boundary remains explicit rather than blurred by carry-back scope
 - [ ] Green-only merge policy followed
+- [x] Docs-review convergence surface exists (`DOCS_REVIEW_v0.89.1.md`)
 
 ## Quality Gates
 - [x] `cargo fmt` passes
@@ -55,9 +56,9 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 
 At the moment this checklist should be read as:
 - planning-complete and review-ready
-- issue wave opened; `WP-02` - `WP-13` landed and `WP-14` is the active quality gate
-- docs/review, internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony are still unchecked release-tail work
-- execution, review, and release gates still future work
+- issue wave opened; `WP-02` - `WP-14` landed and `WP-15` provides the docs-review convergence surface
+- internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony are still unchecked release-tail work
+- formal review and release gates still future work
 
 ## Exit Criteria
 - all required gates are checked, or each exception has an owner and explicit rationale

@@ -5,7 +5,7 @@
 - Version: `v0.89.1`
 - Date: `2026-04-14`
 - Owner: `Daniel Austin`
-- Related issues / work packages: `WP-02` - `WP-13`
+- Related issues / work packages: `WP-02` - `WP-15`
 
 ## Purpose
 
@@ -67,6 +67,7 @@ Additional environment / fixture requirements:
 - Release / checklist context: `MILESTONE_CHECKLIST_v0.89.1.md`
 - Feature index: `FEATURE_DOCS_v0.89.1.md`
 - Quality gate: `QUALITY_GATE_v0.89.1.md`
+- Docs review: `DOCS_REVIEW_v0.89.1.md`
 
 ## Demo Coverage Summary
 
@@ -97,6 +98,7 @@ Current planning truth:
 - row `D8` is landed as a bounded five-agent Hey Jude MIDI integration demo
 - row `D9` is landed as a bounded manuscript workflow packet with final arXiv submission still out of scope
 - row `D10` is the `WP-14` quality-gate aggregation surface; it is a heavyweight proof package, not a quick demo sweep
+- `WP-15` adds the docs-review convergence record that reviewers should read alongside this matrix
 - this matrix is a convergence surface for review-tail execution, not permission to claim later demo work before it exists
 
 Heavyweight proof-package rule:
@@ -148,7 +150,7 @@ bash adl/tools/test_demo_v0891_quality_gate.sh
 Known limits / caveats:
 - this row does not replace CI
 - the PR closing-linkage guardrail remains CI-only because it depends on pull-request event context
-- later `WP-15` through `WP-20` still own docs/review, review, remediation, planning, and release ceremony
+- later `WP-16` through `WP-20` still own review, remediation, planning, and release ceremony
 
 ---
 
