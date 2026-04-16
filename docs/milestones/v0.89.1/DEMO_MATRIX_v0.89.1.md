@@ -75,7 +75,7 @@ Additional environment / fixture requirements:
 | D2 | Exploit artifact and replay proof | `WP-05` exploit artifact family and replay manifest | planned `WP-05` schema/replay validation surface | exploit artifact family + replay manifest packet | reviewer can inspect exploit hypothesis, evidence, replay mode, and expected outcome without narrative reconstruction | replay contract should declare deterministic, bounded-variance, or best-effort mode explicitly | PLANNED |
 | D3 | Continuous verification loop | `WP-06` continuous verification and exploit generation | `adl identity continuous-verification --out .adl/state/continuous_verification_self_attack_v1.json` | continuous verification contract artifact with lifecycle, cadence, replay, mitigation, and promotion rules | reviewer can see repeated falsification pressure as a governed execution pattern rather than ad hoc red-teaming | repeated bounded inputs should preserve lifecycle shape and proof packet structure | LANDED |
 | D4 | Self-attack scenario packet | `WP-06` self-attacking systems as architecture rather than rhetoric | `adl identity continuous-verification --out .adl/state/continuous_verification_self_attack_v1.json` | self-attack contract artifact with bounded layers, target/posture policy, and evidence/replay rules | reviewer can see the system's self-attack pattern before externalization and inspect the required evidence chain | scenario should remain posture-bounded and replay-legible | LANDED |
-| D5 | Flagship adversarial demo | `WP-07` full exploit -> replay -> mitigation -> promotion loop | planned `WP-07` adversarial demo entry point | flagship adversarial demo packet | reviewer can answer what was attacked, how it was reproduced, what mitigation was applied, and whether replay post-fix succeeded | replay should make before/after mitigation comparison explicit | PLANNED |
+| D5 | Flagship adversarial demo | `WP-07` full exploit -> replay -> mitigation -> promotion loop | `adl demo demo-h-v0891-adversarial-self-attack --run --trace --out .adl/reports/adversarial-demo --no-open` | `.adl/reports/adversarial-demo/demo-h-v0891-adversarial-self-attack/review_packet.json` | reviewer can answer what was attacked, how it was reproduced, what mitigation was applied, and whether replay post-fix succeeded | deterministic local replay compares the same request before and after mitigation | LANDED |
 | D6 | Operational skills substrate integration | `WP-08` - `WP-09` operational skills, composition, and bounded governance follow-through | planned `WP-08` / `WP-09` governed composition entry point | substrate/composition packet + delegation/refusal integration note | reviewer can see that adversarial work runs through explicit skill/composition surfaces instead of ad hoc orchestration | orchestration structure should be deterministic even if node outputs remain stochastic | PLANNED |
 | D7 | Reviewer-facing security proof package | `WP-10` - `WP-13` packaging convergence, milestone convergence, and integration demos | planned `WP-10` / `WP-13` review package | reviewer-facing adversarial/replay/trust packet | reviewer can inspect milestone claims, carry-forward boundaries, and proof surfaces as one coherent package | may remain artifact/document driven rather than fully runnable | PLANNED |
 | D8 | Five-Agent Hey Jude MIDI demo | `WP-08` - `WP-10`, `WP-13` cross-provider coordination, human-in-the-loop orchestration, and integration delight surface | planned `WP-08` / `WP-13` coordination demo entry point | Hey Jude coordination packet + MIDI control trace + provider participation summary | reviewer can see one human plus four providers coordinating on one ADL runtime with explicit orchestration boundaries | bounded score/input should preserve composition shape, participant roles, and MIDI event ordering where declared | PLANNED |
@@ -246,21 +246,33 @@ Milestone claims / work packages covered:
 Planned entry point:
 
 ```bash
-Defined when the official `WP-07` adversarial demo issue lands.
+adl demo demo-h-v0891-adversarial-self-attack --run --trace --out .adl/reports/adversarial-demo --no-open
 ```
 
 Expected artifacts:
-- exploit artifact packet
-- replay manifest and replay results
-- mitigation linkage artifact
-- promotion / regression artifact
+- `target/target.json`
+- `target/security_posture.json`
+- `hypothesis.json`
+- `evidence.json`
+- `classification.json`
+- `replay_manifest.json`
+- `replay_pre_fix/result.json`
+- `mitigation.json`
+- `replay_post_fix/result.json`
+- `promotion.json`
+- `review_packet.json`
+- `trace.jsonl`
 
 Primary proof surface:
-- flagship adversarial demo packet
+- `.adl/reports/adversarial-demo/demo-h-v0891-adversarial-self-attack/review_packet.json`
 
 Expected success signals:
 - reviewer can answer what was found, how it was exploited, how replay worked, what changed after mitigation, and what was promoted
 - the packet closes the loop without hidden reasoning steps
+- pre-mitigation replay reaches the unsafe state and post-mitigation replay denies the same request
+
+Known limits / caveats:
+- this row is the flagship proof row and stays bounded to a safe, local, deterministic target
 
 ---
 
@@ -298,11 +310,6 @@ Expected success signals:
 
 Known limits / caveats:
 - this row is about bounded drafting and review workflow, not automatic submission or unverifiable authorship claims
-
-Known limits / caveats:
-- this row is the flagship proof row and should stay bounded to a safe, intelligible target
-
----
 
 ### D6) Operational skills substrate integration
 

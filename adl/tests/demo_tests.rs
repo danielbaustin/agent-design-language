@@ -238,6 +238,68 @@ fn demo_c_run_writes_runtime_surface_artifacts() {
 }
 
 #[test]
+fn demo_h_run_writes_adversarial_review_packet() {
+    let out_root = tmp_dir("demo-h-run");
+    let out = run_swarm(&[
+        "demo",
+        "demo-h-v0891-adversarial-self-attack",
+        "--run",
+        "--trace",
+        "--out",
+        out_root.to_string_lossy().as_ref(),
+        "--no-open",
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let run_out = out_root.join("demo-h-v0891-adversarial-self-attack");
+    assert!(run_out.join("review_packet.json").is_file());
+    assert!(run_out.join("replay_manifest.json").is_file());
+    assert!(run_out.join("replay_pre_fix/result.json").is_file());
+    assert!(run_out.join("replay_post_fix/result.json").is_file());
+    assert!(run_out.join("promotion.json").is_file());
+    assert!(run_out.join("trace.jsonl").is_file());
+
+    let review: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(run_out.join("review_packet.json")).unwrap())
+            .unwrap();
+    assert_eq!(
+        review["primary_claim"],
+        "full exploit -> replay -> mitigation -> promotion loop"
+    );
+    assert_eq!(
+        review["result_summary"]["pre_mitigation_unsafe_state_reached"],
+        true
+    );
+    assert_eq!(
+        review["result_summary"]["post_mitigation_unsafe_state_reached"],
+        false
+    );
+    assert_eq!(review["result_summary"]["promotion_status"], "applied");
+
+    let trace = fs::read_to_string(run_out.join("trace.jsonl")).unwrap();
+    assert!(
+        trace.contains("StepStarted step=target_and_posture"),
+        "trace:\n{trace}"
+    );
+    assert!(
+        trace.contains("StepStarted step=replay_pre_fix"),
+        "trace:\n{trace}"
+    );
+    assert!(
+        trace.contains("StepStarted step=replay_post_fix"),
+        "trace:\n{trace}"
+    );
+    assert!(
+        trace.contains("StepStarted step=promotion"),
+        "trace:\n{trace}"
+    );
+}
+
+#[test]
 fn demo_d_print_plan_works() {
     let out = run_swarm(&["demo", "demo-d-godel-obsmem-loop", "--print-plan"]);
     assert!(

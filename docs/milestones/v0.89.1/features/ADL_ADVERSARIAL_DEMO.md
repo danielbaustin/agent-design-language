@@ -4,9 +4,12 @@
 
 ## Metadata
 - Project: `ADL`
-- Status: `Draft`
+- Status: `Implemented`
 - Owner: `Daniel Austin`
 - Created: `2026-04-12`
+- Updated: `2026-04-16`
+- Milestone: `v0.89.1`
+- Work package: `WP-07`
 
 ---
 
@@ -44,7 +47,7 @@ exploit discovery
 -> regression promotion
 ```
 
-This is not a simulation or narrative demo.
+This is not a prose-only demo.
 
 It must produce:
 
@@ -52,6 +55,31 @@ It must produce:
 - real trace
 - replayable behavior
 - a reviewer-verifiable result
+
+---
+
+## Implemented Proof Surface
+
+Canonical entry point:
+
+```bash
+adl demo demo-h-v0891-adversarial-self-attack --run --trace --out .adl/reports/adversarial-demo --no-open
+```
+
+Primary proof surface:
+
+```text
+.adl/reports/adversarial-demo/demo-h-v0891-adversarial-self-attack/review_packet.json
+```
+
+The implemented target is a safe local fixture, not a live exploit target. It models a token-gate policy-ordering flaw where `debug_override=true` can be evaluated before token verification for an admin request. The demo then replays the same request after mitigation and proves the unsafe state no longer occurs.
+
+Security bounds:
+
+- no network access
+- no private credentials
+- no uncontrolled external target
+- deterministic replay inputs before and after mitigation
 
 ---
 
@@ -290,33 +318,38 @@ The demo fails if:
 Suggested artifact tree:
 
 ```text
-reports/adversarial-demo/
-  target/
-  hypothesis.yaml
-  evidence.yaml
-  replay.yaml
-  mitigation.yaml
+.adl/reports/adversarial-demo/demo-h-v0891-adversarial-self-attack/
+  target/target.json
+  target/security_posture.json
+  hypothesis.json
+  evidence.json
+  classification.json
+  replay_manifest.json
   replay_pre_fix/
+    result.json
+  mitigation.json
   replay_post_fix/
-  promotion.yaml
-  trace/
+    result.json
+  promotion.json
+  review_packet.json
+  trace.jsonl
 ```
 
 ---
 
 ## Demo Matrix Integration
 
-Add a new demo row:
+This feature lands demo matrix row `D5`:
 
 | Demo ID | Focus | Output | Claim |
 |--------|------|--------|------|
-| D9 | adversarial self-attack loop | exploit + replay + mitigation artifacts | system can attack itself and prove mitigation |
+| D5 | adversarial self-attack loop | exploit + replay + mitigation + promotion artifacts | system can attack itself and prove mitigation |
 
 This complements existing demo rows focused on:
 
-- temporal structure
-- cost and posture
-- instinct and routing
+- adversarial runtime contracts
+- exploit artifact and replay schemas
+- continuous verification and self-attack contracts
 
 ---
 
