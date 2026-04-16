@@ -6,13 +6,13 @@ sources:
   - docs/milestones/v0.89.1/SPRINT_v0.89.1.md
 notes:
   - Official issue wave opened via issue #1921.
-  - Titles, labels, sprint placement, and dependency order were used to create the official WP-02 through WP-20 issue wave in strict numerical order.
-  - WP-01 is already represented by issue #1860 and should be normalized into the official wave as the existing completed anchor issue rather than duplicated.
+  - Titles, labels, sprint placement, and dependency order were used to create the official WP-01 through WP-20 issue wave in strict numerical order.
+  - WP-01 is represented by issue #1922 as the visible numbered anchor, with that issue pointing back to the planning package completed in #1860.
 wave:
   - wp: WP-01
-    issue_kind: existing_anchor
+    issue_kind: anchor
     title: '[v0.89.1][WP-01] Design pass (milestone docs + planning)'
-    slug: create-v0-89-1-planning-package
+    slug: v0-89-1-wp-01-design-pass-milestone-docs-planning
     queue: wp
     labels: ["track:roadmap", "type:task", "area:docs", "version:v0.89.1"]
     milestone_sprint: Sprint 1
@@ -20,10 +20,10 @@ wave:
     dependencies: []
     dependency_notes: none
     work_package: Design pass (milestone docs + planning)
-    summary: Existing planning-package issue that anchors the official v0.89.1 wave.
+    summary: Visible numbered WP-01 issue that records the planning package already completed in #1860.
     deliverable: coherent milestone docs, feature index, seeded issue-wave plan
-    existing_issue: '#1860'
-    issue_column: existing completed issue
+    basis_issue: '#1860'
+    issue_column: '#1922'
   - wp: WP-02
     issue_kind: execution
     title: '[v0.89.1][WP-02] Adversarial runtime model'

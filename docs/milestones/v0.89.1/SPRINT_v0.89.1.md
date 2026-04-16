@@ -18,9 +18,9 @@
 
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
-| `v0.89.1-s1` | open the official issue wave and execute the adversarial/runtime core | `WP-01`, `WP-02` - `WP-05` | seed-ready; issue wave not opened |
-| `v0.89.1-s2` | execute verification, self-attack, demo, governed execution substrate, and the bounded publication skill | `WP-06` - `WP-10` | seed-ready behind Sprint 1 |
-| `v0.89.1-s3` | converge demos, manuscript outputs, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | planned release tail; no issue wave yet |
+| `v0.89.1-s1` | open the official issue wave and execute the adversarial/runtime core | `WP-01`, `WP-02` - `WP-05` | official wave opened; Sprint 1 ready to execute |
+| `v0.89.1-s2` | execute verification, self-attack, demo, governed execution substrate, and the bounded publication skill | `WP-06` - `WP-10` | wave opened; queued behind Sprint 1 |
+| `v0.89.1-s3` | converge demos, manuscript outputs, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | wave opened; planned release tail |
 
 ## Sprint 1
 
@@ -101,12 +101,12 @@ Close the milestone using the normal ADL pattern: demos, quality gate, docs/revi
 
 ## Current Planning Readiness
 
-This package is ready for review and later issueization now.
+This package is ready for execution now.
 
 That means:
-- Sprint 1 issue creation should be mechanical from `WBS_v0.89.1.md`, `SPRINT_v0.89.1.md`, and `WP_ISSUE_WAVE_v0.89.1.yaml`
-- the remaining work before kickoff is review refinement, not milestone rediscovery
-- the reserved wave should remain unopened until the operator intentionally starts `v0.89.1`
+- the official issue wave is now open through `#1921`
+- Sprint 1 execution should proceed mechanically from `WBS_v0.89.1.md`, `SPRINT_v0.89.1.md`, and `WP_ISSUE_WAVE_v0.89.1.yaml`
+- the remaining work before delivery is implementation and proof, not milestone rediscovery
 
 ## Cadence Expectations
 - use issue cards (`stp` / `sip` / `sor`) for each issue

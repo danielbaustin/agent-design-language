@@ -88,8 +88,8 @@ Status guidance:
 - `LANDED` = milestone evidence exists and is ready for review
 
 Current planning truth:
-- all rows remain planned because the `v0.89.1` issue wave has not opened yet
-- this matrix is review-ready and intended to make later issue execution faster, not to claim implementation already exists
+- the `v0.89.1` issue wave is open, but the demo/proof rows remain planned until implementation work lands
+- this matrix is review-ready and intended to make issue execution faster, not to claim implementation already exists
 
 Heavyweight proof-package rule:
 - if a proof surface mainly exists to bundle review, release, or quality-gate evidence, classify it as a heavyweight proof package even if it is script-driven

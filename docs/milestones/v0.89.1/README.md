@@ -75,7 +75,7 @@ Canonical milestone documents:
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.89.1.md`
 - Release plan / process: `RELEASE_PLAN_v0.89.1.md`
 - Release notes: `RELEASE_NOTES_v0.89.1.md`
-- Reserved issue wave: `WP_ISSUE_WAVE_v0.89.1.yaml`
+- Issue wave: `WP_ISSUE_WAVE_v0.89.1.yaml`
 
 Tracked feature docs:
 - `features/ADL_ADVERSARIAL_RUNTIME_MODEL.md`
@@ -113,7 +113,7 @@ Execution expectations after kickoff:
 - each substantive WP gets a bounded issue and PR
 - promoted feature docs resolve to implementation, proofs, or explicit defer records
 - any remaining `v0.89` carry-forward ambiguity is eliminated by explicit issue ownership
-- issue creation should be mechanical from the WBS, sprint plan, and reserved issue-wave YAML rather than requiring another design rewrite
+- issue creation should be mechanical from the WBS, sprint plan, and issue-wave YAML rather than requiring another design rewrite
 
 ## Demo and Validation Surface
 
@@ -156,10 +156,10 @@ Open questions:
 
 ## Status
 
-Current status: canonical planning package complete; issue wave not opened yet; package is review-ready and seed-ready once the lane opens
+Current status: canonical planning package complete; official issue wave opened; Sprint 1 execution can proceed from the settled package
 
-- Planning: complete through `#1860`, with `#1806` landing the tracked next-milestone package from the `v0.89` side
-- Execution: not started; reserved issue-wave plan is ready to issueize
+- Planning: canonical package completed in `#1860`, with visible `WP-01` anchor issue `#1922` and `#1806` landing the tracked next-milestone package from the `v0.89` side
+- Execution: issue wave opened through `#1921`; `WP-01` is visible as `#1922` and `WP-02` - `WP-20` are queued as `#1923` - `#1941`
 - Validation: package-level checks passed; milestone execution validation still pending
 - Release readiness: not started; milestone docs are ready for review, not release
 

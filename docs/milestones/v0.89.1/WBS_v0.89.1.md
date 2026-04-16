@@ -23,26 +23,26 @@
 
 | ID | Work Package | Description | Deliverable | Dependencies | Issue |
 |---|---|---|---|---|---|
-| WP-01 | Design pass (milestone docs + planning) | Finalize the canonical `v0.89.1` package, promote the main feature docs, and map every source planning doc to an implementation home. | coherent milestone docs, feature index, seeded issue-wave plan | none | `#1860` |
-| WP-02 | Adversarial runtime model | Turn the carry-forward adversarial runtime into an explicit core runtime contract. | runtime model package | `WP-01` | planned issue wave |
-| WP-03 | Red / blue agent architecture | Define persistent adversarial roles and their bounded interaction model. | role architecture package | `WP-01`, `WP-02` | planned issue wave |
-| WP-04 | Adversarial execution runner | Establish the orchestration surface for adversarial execution and evidence capture. | execution-runner package | `WP-02`, `WP-03` | planned issue wave |
-| WP-05 | Exploit artifact and replay schema | Make exploit artifacts and replay manifests explicit and reusable. | artifact schema + replay package | `WP-02`, `WP-04` | planned issue wave |
-| WP-06 | Continuous verification and self-attack patterns | Define ongoing verification and self-attack behavior as bounded execution patterns. | verification/self-attack package | `WP-02`, `WP-04`, `WP-05` | planned issue wave |
-| WP-07 | Adversarial demo and security proof surfaces | Land the flagship demo and the primary review/proof surfaces for the milestone. | demo/proof package | `WP-03` - `WP-06` | planned issue wave |
-| WP-08 | Operational skills substrate and composition | Make operational skill execution and composition explicit enough for adversarial/runtime use, including a bounded `arxiv-paper-writer` skill rooted in the Paper Sonata manuscript workflow. | substrate/composition package + `arxiv-paper-writer` skill | `WP-01`, `WP-04` | planned issue wave |
-| WP-09 | Delegation, refusal, and coordination follow-through | Resolve the supporting governance/coordination inputs needed to keep the adversarial band legible and bounded. | bounded governance/coordination package | `WP-03`, `WP-07`, `WP-08` | planned issue wave |
-| WP-10 | Provider extension and milestone packaging convergence | Decide and package what provider-security extension and related under-authored supporting inputs actually belong in this milestone. | converged scope/packaging record | `WP-07`, `WP-09` | planned issue wave |
-| WP-11 | Demo scaffolding and proof entry points | Define and land the bounded proof entry points for adversarial runtime, exploit replay, and security demos. | runnable or reviewer-legible proof entry points | `WP-02` - `WP-10` | planned issue wave |
-| WP-12 | Milestone convergence and follow-on mapping | Reconcile issue graph, carry-forward, and proof surfaces before the release tail starts. | converged issue graph and milestone status surfaces | `WP-02` - `WP-11` | planned issue wave |
-| WP-13 | Demo matrix + integration demos | Validate the milestone claims through bounded demos, integration review, and the initial three-paper publication packet. | canonical demo matrix, demo artifacts, and three-paper manuscript packet | `WP-02` - `WP-12` | planned issue wave |
-| WP-14 | Coverage / quality gate (ratchet + exclusions) | Run quality gates and record any bounded exceptions truthfully. | green quality gate or documented exceptions | `WP-02` - `WP-13` | planned issue wave |
-| WP-15 | Docs + review pass (repo-wide alignment) | Align docs, review surfaces, and release-tail truth across the repo. | converged docs/review package | `WP-13`, `WP-14` | planned issue wave |
-| WP-16 | Internal review | Perform bounded internal review of milestone truth and proof surfaces. | internal review record | `WP-15` | planned issue wave |
-| WP-17 | 3rd-party review | Perform external review of the milestone package and capture findings. | 3rd-party review record | `WP-15`, `WP-16` | planned issue wave |
-| WP-18 | Review findings remediation | Resolve or explicitly defer accepted review findings. | remediation record | `WP-16`, `WP-17` | planned issue wave |
-| WP-19 | Next milestone planning | Prepare the next milestone planning package before `v0.89.1` closeout. | next-milestone package | `WP-18` | planned issue wave |
-| WP-20 | Release ceremony (final validation + tag + notes + cleanup) | Close the milestone cleanly after validation and documentation are complete. | release tag, notes, and closeout | `WP-18`, `WP-19` | planned issue wave |
+| WP-01 | Design pass (milestone docs + planning) | Finalize the canonical `v0.89.1` package, promote the main feature docs, and map every source planning doc to an implementation home. | coherent milestone docs, feature index, seeded issue-wave plan | none | `#1922` |
+| WP-02 | Adversarial runtime model | Turn the carry-forward adversarial runtime into an explicit core runtime contract. | runtime model package | `WP-01` | `#1923` |
+| WP-03 | Red / blue agent architecture | Define persistent adversarial roles and their bounded interaction model. | role architecture package | `WP-01`, `WP-02` | `#1924` |
+| WP-04 | Adversarial execution runner | Establish the orchestration surface for adversarial execution and evidence capture. | execution-runner package | `WP-02`, `WP-03` | `#1925` |
+| WP-05 | Exploit artifact and replay schema | Make exploit artifacts and replay manifests explicit and reusable. | artifact schema + replay package | `WP-02`, `WP-04` | `#1926` |
+| WP-06 | Continuous verification and self-attack patterns | Define ongoing verification and self-attack behavior as bounded execution patterns. | verification/self-attack package | `WP-02`, `WP-04`, `WP-05` | `#1927` |
+| WP-07 | Adversarial demo and security proof surfaces | Land the flagship demo and the primary review/proof surfaces for the milestone. | demo/proof package | `WP-03` - `WP-06` | `#1928` |
+| WP-08 | Operational skills substrate and composition | Make operational skill execution and composition explicit enough for adversarial/runtime use, including a bounded `arxiv-paper-writer` skill rooted in the Paper Sonata manuscript workflow. | substrate/composition package + `arxiv-paper-writer` skill | `WP-01`, `WP-04` | `#1929` |
+| WP-09 | Delegation, refusal, and coordination follow-through | Resolve the supporting governance/coordination inputs needed to keep the adversarial band legible and bounded. | bounded governance/coordination package | `WP-03`, `WP-07`, `WP-08` | `#1930` |
+| WP-10 | Provider extension and milestone packaging convergence | Decide and package what provider-security extension and related under-authored supporting inputs actually belong in this milestone. | converged scope/packaging record | `WP-07`, `WP-09` | `#1931` |
+| WP-11 | Demo scaffolding and proof entry points | Define and land the bounded proof entry points for adversarial runtime, exploit replay, and security demos. | runnable or reviewer-legible proof entry points | `WP-02` - `WP-10` | `#1932` |
+| WP-12 | Milestone convergence and follow-on mapping | Reconcile issue graph, carry-forward, and proof surfaces before the release tail starts. | converged issue graph and milestone status surfaces | `WP-02` - `WP-11` | `#1933` |
+| WP-13 | Demo matrix + integration demos | Validate the milestone claims through bounded demos, integration review, and the initial three-paper publication packet. | canonical demo matrix, demo artifacts, and three-paper manuscript packet | `WP-02` - `WP-12` | `#1934` |
+| WP-14 | Coverage / quality gate (ratchet + exclusions) | Run quality gates and record any bounded exceptions truthfully. | green quality gate or documented exceptions | `WP-02` - `WP-13` | `#1935` |
+| WP-15 | Docs + review pass (repo-wide alignment) | Align docs, review surfaces, and release-tail truth across the repo. | converged docs/review package | `WP-13`, `WP-14` | `#1936` |
+| WP-16 | Internal review | Perform bounded internal review of milestone truth and proof surfaces. | internal review record | `WP-15` | `#1937` |
+| WP-17 | 3rd-party review | Perform external review of the milestone package and capture findings. | 3rd-party review record | `WP-15`, `WP-16` | `#1938` |
+| WP-18 | Review findings remediation | Resolve or explicitly defer accepted review findings. | remediation record | `WP-16`, `WP-17` | `#1939` |
+| WP-19 | Next milestone planning | Prepare the next milestone planning package before `v0.89.1` closeout. | next-milestone package | `WP-18` | `#1940` |
+| WP-20 | Release ceremony (final validation + tag + notes + cleanup) | Close the milestone cleanly after validation and documentation are complete. | release tag, notes, and closeout | `WP-18`, `WP-19` | `#1941` |
 
 ## Sequencing
 - Phase 1: establish the canonical package and the seedable issue-wave plan (`WP-01`)
