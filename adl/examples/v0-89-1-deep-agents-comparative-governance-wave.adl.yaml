@@ -1,0 +1,138 @@
+version: "0.5"
+
+providers:
+  chatgpt_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8794/chatgpt"
+      timeout_secs: 10
+  claude_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8794/claude"
+      timeout_secs: 10
+  gemini_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8794/gemini"
+      timeout_secs: 10
+  synthesis_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8794/synthesis"
+      timeout_secs: 10
+
+agents:
+  chatgpt_builder:
+    provider: "chatgpt_local"
+    model: "gpt-5.4-demo"
+  claude_critic:
+    provider: "claude_local"
+    model: "claude-haiku-demo"
+  gemini_analyst:
+    provider: "gemini_local"
+    model: "gemini-2.0-flash-demo"
+  synthesis_editor:
+    provider: "synthesis_local"
+    model: "adl-synthesis-demo"
+
+tasks:
+  chatgpt_position:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-deep-agents-comparative-governance-wave
+        TURN_ID: 01
+        SPEAKER: ChatGPT
+        ROLE: Runtime Builder
+        TOPIC: Compare ADL's reviewer-facing runtime surfaces with looser filesystem-first deep-agent demos.
+        INSTRUCTIONS: Make the strongest bounded case for ADL's reviewability and trace legibility without claiming universal superiority.
+  claude_position:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-deep-agents-comparative-governance-wave
+        TURN_ID: 02
+        SPEAKER: Claude
+        ROLE: Governance Critic
+        TOPIC: Compare ADL's reviewer-facing runtime surfaces with looser filesystem-first deep-agent demos.
+        PREVIOUS_TURN_START
+        {{turn_01}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Add one real caution about coordination cost or over-ceremonial process and keep the disagreement visible.
+  gemini_position:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-deep-agents-comparative-governance-wave
+        TURN_ID: 03
+        SPEAKER: Gemini
+        ROLE: Comparative Analyst
+        TOPIC: Compare ADL's reviewer-facing runtime surfaces with looser filesystem-first deep-agent demos.
+        PREVIOUS_TURN_START
+        {{turn_02}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Name where ADL is clearly stronger on governance or review surfaces and where looser packet demos still feel faster or more playful.
+  synthesis_packet:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-deep-agents-comparative-governance-wave
+        TURN_ID: 04
+        SPEAKER: ADL
+        ROLE: Comparative Editor
+        PREVIOUS_TURN_START
+        {{turn_01}}
+
+        {{turn_02}}
+
+        {{turn_03}}
+        PREVIOUS_TURN_END
+        INSTRUCTIONS: Produce a findings-first synthesis with explicit sections for Findings, Agreement, Disagreement, Governance Delta, Operator Visibility, and Positioning Takeaway.
+
+run:
+  name: "v0-89-1-deep-agents-comparative-governance-wave"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "deep_agents.chatgpt.position"
+        agent: "chatgpt_builder"
+        task: "chatgpt_position"
+        conversation:
+          id: "turn_01"
+          speaker: "ChatGPT"
+          sequence: 1
+          thread_id: "deep_agents_governance_wave"
+        save_as: "turn_01"
+        write_to: "discussion/01-chatgpt-position.md"
+      - id: "deep_agents.claude.position"
+        agent: "claude_critic"
+        task: "claude_position"
+        conversation:
+          id: "turn_02"
+          speaker: "Claude"
+          sequence: 2
+          thread_id: "deep_agents_governance_wave"
+          responds_to: "turn_01"
+        inputs:
+          turn_01: "@state:turn_01"
+        save_as: "turn_02"
+        write_to: "discussion/02-claude-position.md"
+      - id: "deep_agents.gemini.position"
+        agent: "gemini_analyst"
+        task: "gemini_position"
+        conversation:
+          id: "turn_03"
+          speaker: "Gemini"
+          sequence: 3
+          thread_id: "deep_agents_governance_wave"
+          responds_to: "turn_02"
+        inputs:
+          turn_02: "@state:turn_02"
+        save_as: "turn_03"
+        write_to: "discussion/03-gemini-position.md"
+      - id: "deep_agents.synthesis"
+        agent: "synthesis_editor"
+        task: "synthesis_packet"
+        inputs:
+          turn_01: "@state:turn_01"
+          turn_02: "@state:turn_02"
+          turn_03: "@state:turn_03"
+        save_as: "comparative_synthesis"
+        write_to: "discussion/04-synthesis.md"
