@@ -4,6 +4,7 @@ use serde_json::to_string_pretty;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use ::adl::adversarial_execution_runner::AdversarialExecutionRunnerContract;
 use ::adl::adversarial_runtime::AdversarialRuntimeModelContract;
 use ::adl::chronosense::{
     ChronosenseFoundation, CommitmentDeadlineContract, ContinuitySemanticsContract,
@@ -110,6 +111,17 @@ pub(super) fn real_identity_red_blue_architecture(repo_root: &Path, args: &[Stri
         "red blue agent architecture",
         "RED_BLUE_AGENT_ARCHITECTURE_PATH",
         RedBlueAgentArchitectureContract::v1(),
+    )
+}
+
+pub(super) fn real_identity_adversarial_runner(repo_root: &Path, args: &[String]) -> Result<()> {
+    write_contract_json(
+        repo_root,
+        args,
+        "adversarial-runner",
+        "adversarial execution runner",
+        "ADVERSARIAL_EXECUTION_RUNNER_PATH",
+        AdversarialExecutionRunnerContract::v1(),
     )
 }
 

@@ -164,7 +164,7 @@ fn identity_requires_subcommand_and_rejects_unknown_subcommand() {
     let err = real_identity_in_repo(&[], &repo).expect_err("missing subcommand should fail");
     assert!(err
         .to_string()
-        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | schema"));
+        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | schema"));
     assert!(err.to_string().contains("continuity"));
 
     let err = real_identity_in_repo(&["nope".to_string()], &repo)
@@ -193,6 +193,11 @@ fn identity_top_level_help_and_subcommand_help_succeed() {
         &repo,
     )
     .expect("red-blue-architecture help");
+    real_identity_in_repo(
+        &["adversarial-runner".to_string(), "--help".to_string()],
+        &repo,
+    )
+    .expect("adversarial-runner help");
     real_identity_in_repo(&["schema".to_string(), "--help".to_string()], &repo)
         .expect("schema help");
     real_identity_in_repo(&["continuity".to_string(), "--help".to_string()], &repo)
@@ -533,6 +538,87 @@ fn identity_red_blue_architecture_validates_unknown_args_and_missing_out_value()
 
     let err = real_identity_in_repo(
         &["red-blue-architecture".to_string(), "--out".to_string()],
+        &repo,
+    )
+    .expect_err("out flag without value should fail");
+    assert!(err.to_string().contains("--out requires a value"));
+}
+
+#[test]
+fn identity_adversarial_runner_writes_contract_json() {
+    let _guard = TEST_MUTEX
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    let repo = temp_repo("identity-adversarial-runner");
+    let out_path = repo.join(".adl/state/adversarial_execution_runner_v1.json");
+
+    real_identity_in_repo(
+        &[
+            "adversarial-runner".to_string(),
+            "--out".to_string(),
+            ".adl/state/adversarial_execution_runner_v1.json".to_string(),
+        ],
+        &repo,
+    )
+    .expect("identity adversarial-runner");
+
+    let json: Value =
+        serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
+    assert_eq!(json["schema_version"], "adversarial_execution_runner.v1");
+    assert_eq!(
+        json["proof_hook_output_path"],
+        ".adl/state/adversarial_execution_runner_v1.json"
+    );
+    assert!(json["canonical_stages"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|stage| stage["stage_id"] == "attempt_bounded_exploit"
+            && stage["blocked_in_postures"]
+                .as_array()
+                .expect("array")
+                .iter()
+                .any(|posture| posture == "audit")));
+    assert!(json["posture_policy"]["enforcement_rules"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "limit exhaustion produces an explicit defer record"));
+    assert!(json["evidence_capture"]["linkage_rules"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value
+            .as_str()
+            .expect("string")
+            .contains("mitigation decisions must cite exploit evidence")));
+    assert!(json["review_surface"]["downstream_boundaries"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value.as_str().expect("string").contains("WP-05")));
+    assert!(json["owned_runtime_surfaces"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "adl identity adversarial-runner"));
+}
+
+#[test]
+fn identity_adversarial_runner_validates_unknown_args_and_missing_out_value() {
+    let repo = temp_repo("identity-adversarial-runner-errors");
+
+    let err = real_identity_in_repo(
+        &["adversarial-runner".to_string(), "--bogus".to_string()],
+        &repo,
+    )
+    .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for identity adversarial-runner: --bogus"));
+
+    let err = real_identity_in_repo(
+        &["adversarial-runner".to_string(), "--out".to_string()],
         &repo,
     )
     .expect_err("out flag without value should fail");
