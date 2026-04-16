@@ -1,19 +1,35 @@
 version: v0.89.1
 milestone: v0.89.1
-status: reserved
+status: opened
 sources:
   - docs/milestones/v0.89.1/WBS_v0.89.1.md
   - docs/milestones/v0.89.1/SPRINT_v0.89.1.md
 notes:
-  - Reserved issue-wave plan only. No official issue wave has been opened yet.
-  - Titles, labels, sprint placement, and dependency order are intended to be mechanically issueized once the lane opens.
+  - Official issue wave opened via issue #1921.
+  - Titles, labels, sprint placement, and dependency order were used to create the official WP-02 through WP-20 issue wave in strict numerical order.
+  - WP-01 is already represented by issue #1860 and should be normalized into the official wave as the existing completed anchor issue rather than duplicated.
 wave:
+  - wp: WP-01
+    issue_kind: existing_anchor
+    title: '[v0.89.1][WP-01] Design pass (milestone docs + planning)'
+    slug: create-v0-89-1-planning-package
+    queue: wp
+    labels: ["track:roadmap", "type:task", "area:docs", "version:v0.89.1"]
+    milestone_sprint: Sprint 1
+    sprint_id: v0.89.1-s1
+    dependencies: []
+    dependency_notes: none
+    work_package: Design pass (milestone docs + planning)
+    summary: Existing planning-package issue that anchors the official v0.89.1 wave.
+    deliverable: coherent milestone docs, feature index, seeded issue-wave plan
+    existing_issue: '#1860'
+    issue_column: existing completed issue
   - wp: WP-02
     issue_kind: execution
     title: '[v0.89.1][WP-02] Adversarial runtime model'
     slug: v0-89-1-wp-02-adversarial-runtime-model
     queue: wp
-    labels: [track:roadmap, type:task, area:runtime, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:runtime", "version:v0.89.1"]
     milestone_sprint: Sprint 1
     sprint_id: v0.89.1-s1
     dependencies: [WP-01]
@@ -21,13 +37,13 @@ wave:
     work_package: Adversarial runtime model
     summary: Turn the carry-forward adversarial runtime into an explicit core runtime contract.
     deliverable: runtime model package
-    issue_column: planned issue wave
+    issue_column: '#1923'
   - wp: WP-03
     issue_kind: execution
     title: '[v0.89.1][WP-03] Red / blue agent architecture'
     slug: v0-89-1-wp-03-red-blue-agent-architecture
     queue: wp
-    labels: [track:roadmap, type:task, area:runtime, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:runtime", "version:v0.89.1"]
     milestone_sprint: Sprint 1
     sprint_id: v0.89.1-s1
     dependencies: [WP-01, WP-02]
@@ -35,13 +51,13 @@ wave:
     work_package: Red / blue agent architecture
     summary: Define persistent adversarial roles and their bounded interaction model.
     deliverable: role architecture package
-    issue_column: planned issue wave
+    issue_column: '#1924'
   - wp: WP-04
     issue_kind: execution
     title: '[v0.89.1][WP-04] Adversarial execution runner'
     slug: v0-89-1-wp-04-adversarial-execution-runner
     queue: wp
-    labels: [track:roadmap, type:task, area:runtime, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:runtime", "version:v0.89.1"]
     milestone_sprint: Sprint 1
     sprint_id: v0.89.1-s1
     dependencies: [WP-02, WP-03]
@@ -49,13 +65,13 @@ wave:
     work_package: Adversarial execution runner
     summary: Establish the orchestration surface for adversarial execution and evidence capture.
     deliverable: execution-runner package
-    issue_column: planned issue wave
+    issue_column: '#1925'
   - wp: WP-05
     issue_kind: execution
     title: '[v0.89.1][WP-05] Exploit artifact and replay schema'
     slug: v0-89-1-wp-05-exploit-artifact-and-replay-schema
     queue: wp
-    labels: [track:roadmap, type:task, area:runtime, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:runtime", "version:v0.89.1"]
     milestone_sprint: Sprint 1
     sprint_id: v0.89.1-s1
     dependencies: [WP-02, WP-04]
@@ -63,13 +79,13 @@ wave:
     work_package: Exploit artifact and replay schema
     summary: Make exploit artifacts and replay manifests explicit and reusable.
     deliverable: artifact schema and replay package
-    issue_column: planned issue wave
+    issue_column: '#1926'
   - wp: WP-06
     issue_kind: execution
     title: '[v0.89.1][WP-06] Continuous verification and self-attack patterns'
     slug: v0-89-1-wp-06-continuous-verification-and-self-attack-patterns
     queue: wp
-    labels: [track:roadmap, type:task, area:runtime, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:runtime", "version:v0.89.1"]
     milestone_sprint: Sprint 2
     sprint_id: v0.89.1-s2
     dependencies: [WP-02, WP-04, WP-05]
@@ -77,13 +93,13 @@ wave:
     work_package: Continuous verification and self-attack patterns
     summary: Define ongoing verification and self-attack behavior as bounded execution patterns.
     deliverable: verification and self-attack package
-    issue_column: planned issue wave
+    issue_column: '#1927'
   - wp: WP-07
     issue_kind: execution
     title: '[v0.89.1][WP-07] Adversarial demo and security proof surfaces'
     slug: v0-89-1-wp-07-adversarial-demo-and-security-proof-surfaces
     queue: wp
-    labels: [track:roadmap, type:task, area:demo, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:demo", "version:v0.89.1"]
     milestone_sprint: Sprint 2
     sprint_id: v0.89.1-s2
     dependencies: [WP-03, WP-04, WP-05, WP-06]
@@ -91,13 +107,13 @@ wave:
     work_package: Adversarial demo and security proof surfaces
     summary: Land the flagship demo and the primary review/proof surfaces for the milestone.
     deliverable: demo and proof package
-    issue_column: planned issue wave
+    issue_column: '#1928'
   - wp: WP-08
     issue_kind: execution
     title: '[v0.89.1][WP-08] Operational skills substrate and composition'
     slug: v0-89-1-wp-08-operational-skills-substrate-and-composition
     queue: wp
-    labels: [track:roadmap, type:task, area:runtime, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:runtime", "version:v0.89.1"]
     milestone_sprint: Sprint 2
     sprint_id: v0.89.1-s2
     dependencies: [WP-01, WP-04]
@@ -105,13 +121,13 @@ wave:
     work_package: Operational skills substrate and composition
     summary: Make operational skill execution and composition explicit enough for adversarial/runtime use, including a bounded arXiv paper-writing skill.
     deliverable: substrate and composition package plus bounded arxiv-paper-writer skill
-    issue_column: planned issue wave
+    issue_column: '#1929'
   - wp: WP-09
     issue_kind: execution
     title: '[v0.89.1][WP-09] Delegation, refusal, and coordination follow-through'
     slug: v0-89-1-wp-09-delegation-refusal-and-coordination-follow-through
     queue: wp
-    labels: [track:roadmap, type:task, area:runtime, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:runtime", "version:v0.89.1"]
     milestone_sprint: Sprint 2
     sprint_id: v0.89.1-s2
     dependencies: [WP-03, WP-07, WP-08]
@@ -119,13 +135,13 @@ wave:
     work_package: Delegation, refusal, and coordination follow-through
     summary: Resolve the supporting governance and coordination inputs needed to keep the adversarial band legible and bounded.
     deliverable: bounded governance and coordination package
-    issue_column: planned issue wave
+    issue_column: '#1930'
   - wp: WP-10
     issue_kind: execution
     title: '[v0.89.1][WP-10] Provider extension and milestone packaging convergence'
     slug: v0-89-1-wp-10-provider-extension-and-milestone-packaging-convergence
     queue: wp
-    labels: [track:roadmap, type:task, area:runtime, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:runtime", "version:v0.89.1"]
     milestone_sprint: Sprint 2
     sprint_id: v0.89.1-s2
     dependencies: [WP-07, WP-09]
@@ -133,13 +149,13 @@ wave:
     work_package: Provider extension and milestone packaging convergence
     summary: Decide and package what provider-security extension and related under-authored supporting inputs actually belong in this milestone.
     deliverable: converged scope and packaging record
-    issue_column: planned issue wave
+    issue_column: '#1931'
   - wp: WP-11
     issue_kind: execution
     title: '[v0.89.1][WP-11] Demo scaffolding and proof entry points'
     slug: v0-89-1-wp-11-demo-scaffolding-and-proof-entry-points
     queue: wp
-    labels: [track:roadmap, type:task, area:demo, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:demo", "version:v0.89.1"]
     milestone_sprint: Sprint 3
     sprint_id: v0.89.1-s3
     dependencies: [WP-02, WP-10]
@@ -147,13 +163,13 @@ wave:
     work_package: Demo scaffolding and proof entry points
     summary: Define and land the bounded proof entry points for adversarial runtime, exploit replay, and security demos.
     deliverable: proof entry point package
-    issue_column: planned issue wave
+    issue_column: '#1932'
   - wp: WP-12
     issue_kind: execution
     title: '[v0.89.1][WP-12] Milestone convergence and follow-on mapping'
     slug: v0-89-1-wp-12-milestone-convergence-and-follow-on-mapping
     queue: wp
-    labels: [track:roadmap, type:task, area:docs, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:docs", "version:v0.89.1"]
     milestone_sprint: Sprint 3
     sprint_id: v0.89.1-s3
     dependencies: [WP-02, WP-11]
@@ -161,13 +177,13 @@ wave:
     work_package: Milestone convergence and follow-on mapping
     summary: Reconcile issue graph, carry-forward, and proof surfaces before the release tail starts.
     deliverable: converged milestone status package
-    issue_column: planned issue wave
+    issue_column: '#1933'
   - wp: WP-13
     issue_kind: execution
     title: '[v0.89.1][WP-13] Demo matrix and integration demos'
     slug: v0-89-1-wp-13-demo-matrix-and-integration-demos
     queue: wp
-    labels: [track:roadmap, type:task, area:demo, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:demo", "version:v0.89.1"]
     milestone_sprint: Sprint 3
     sprint_id: v0.89.1-s3
     dependencies: [WP-02, WP-12]
@@ -175,13 +191,13 @@ wave:
     work_package: Demo matrix and integration demos
     summary: Validate the milestone claims through bounded demos, integration review, and the initial three-paper publication packet.
     deliverable: canonical demo matrix, demo artifacts, and three-paper manuscript packet
-    issue_column: planned issue wave
+    issue_column: '#1934'
   - wp: WP-14
     issue_kind: execution
     title: '[v0.89.1][WP-14] Coverage / quality gate'
     slug: v0-89-1-wp-14-coverage-quality-gate
     queue: wp
-    labels: [track:roadmap, type:task, area:tests, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:tests", "version:v0.89.1"]
     milestone_sprint: Sprint 3
     sprint_id: v0.89.1-s3
     dependencies: [WP-02, WP-13]
@@ -189,13 +205,13 @@ wave:
     work_package: Coverage / quality gate
     summary: Run quality gates and record bounded exceptions truthfully.
     deliverable: quality gate result
-    issue_column: planned issue wave
+    issue_column: '#1935'
   - wp: WP-15
     issue_kind: execution
     title: '[v0.89.1][WP-15] Docs and review pass'
     slug: v0-89-1-wp-15-docs-and-review-pass
     queue: wp
-    labels: [track:roadmap, type:task, area:docs, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:docs", "version:v0.89.1"]
     milestone_sprint: Sprint 3
     sprint_id: v0.89.1-s3
     dependencies: [WP-13, WP-14]
@@ -203,13 +219,13 @@ wave:
     work_package: Docs and review pass
     summary: Align docs, review surfaces, and release-tail truth across the repo.
     deliverable: converged docs and review package
-    issue_column: planned issue wave
+    issue_column: '#1936'
   - wp: WP-16
     issue_kind: execution
     title: '[v0.89.1][WP-16] Internal review'
     slug: v0-89-1-wp-16-internal-review
     queue: wp
-    labels: [track:roadmap, type:task, area:review, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:review", "version:v0.89.1"]
     milestone_sprint: Sprint 3
     sprint_id: v0.89.1-s3
     dependencies: [WP-15]
@@ -217,13 +233,13 @@ wave:
     work_package: Internal review
     summary: Perform bounded internal review of milestone truth and proof surfaces.
     deliverable: internal review record
-    issue_column: planned issue wave
+    issue_column: '#1937'
   - wp: WP-17
     issue_kind: execution
     title: '[v0.89.1][WP-17] 3rd-party review'
     slug: v0-89-1-wp-17-3rd-party-review
     queue: wp
-    labels: [track:roadmap, type:task, area:review, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:review", "version:v0.89.1"]
     milestone_sprint: Sprint 3
     sprint_id: v0.89.1-s3
     dependencies: [WP-15, WP-16]
@@ -231,13 +247,13 @@ wave:
     work_package: 3rd-party review
     summary: Perform external review of the milestone package and capture findings.
     deliverable: 3rd-party review record
-    issue_column: planned issue wave
+    issue_column: '#1938'
   - wp: WP-18
     issue_kind: execution
     title: '[v0.89.1][WP-18] Review findings remediation'
     slug: v0-89-1-wp-18-review-findings-remediation
     queue: wp
-    labels: [track:roadmap, type:task, area:review, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:review", "version:v0.89.1"]
     milestone_sprint: Sprint 3
     sprint_id: v0.89.1-s3
     dependencies: [WP-16, WP-17]
@@ -245,13 +261,13 @@ wave:
     work_package: Review findings remediation
     summary: Resolve or explicitly defer accepted review findings.
     deliverable: remediation record
-    issue_column: planned issue wave
+    issue_column: '#1939'
   - wp: WP-19
     issue_kind: execution
     title: '[v0.89.1][WP-19] Next milestone planning'
     slug: v0-89-1-wp-19-next-milestone-planning
     queue: wp
-    labels: [track:roadmap, type:task, area:docs, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:docs", "version:v0.89.1"]
     milestone_sprint: Sprint 3
     sprint_id: v0.89.1-s3
     dependencies: [WP-18]
@@ -259,13 +275,13 @@ wave:
     work_package: Next milestone planning
     summary: Prepare the next milestone planning package before `v0.89.1` closeout.
     deliverable: next-milestone package
-    issue_column: planned issue wave
+    issue_column: '#1940'
   - wp: WP-20
     issue_kind: execution
     title: '[v0.89.1][WP-20] Release ceremony'
     slug: v0-89-1-wp-20-release-ceremony
     queue: wp
-    labels: [track:roadmap, type:task, area:release, version:v0.89.1]
+    labels: ["track:roadmap", "type:task", "area:release", "version:v0.89.1"]
     milestone_sprint: Sprint 3
     sprint_id: v0.89.1-s3
     dependencies: [WP-18, WP-19]
@@ -273,4 +289,4 @@ wave:
     work_package: Release ceremony
     summary: Close the milestone cleanly after validation and documentation are complete.
     deliverable: release tag, notes, and closeout
-    issue_column: planned issue wave
+    issue_column: '#1941'
