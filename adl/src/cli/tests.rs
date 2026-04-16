@@ -13,10 +13,11 @@ use super::run::{enforce_signature_policy, now_ms};
 use super::run_artifacts::{
     build_aee_decision_artifact, build_run_status, build_run_summary, build_scores_artifact,
     build_suggestions_artifact, classify_failure_kind, execution_plan_hash, load_resume_state,
-    read_scores_if_present, resume_state_path_for_run_id, validate_pause_artifact_basic,
-    write_run_state_artifacts, PauseStateArtifact, RunSummaryArtifact, RunSummaryCounts,
-    RunSummaryLinks, RunSummaryPolicy, ScoresArtifact, ScoresGeneratedFrom, ScoresMetrics,
-    ScoresSummary, StepStateArtifact, AEE_DECISION_VERSION, PAUSE_STATE_SCHEMA_VERSION,
+    load_steering_patch, read_scores_if_present, resume_state_path_for_run_id,
+    validate_pause_artifact_basic, validate_pause_artifact_for_resume, write_run_state_artifacts,
+    PauseStateArtifact, RunSummaryArtifact, RunSummaryCounts, RunSummaryLinks, RunSummaryPolicy,
+    ScoresArtifact, ScoresGeneratedFrom, ScoresMetrics, ScoresSummary, StepStateArtifact,
+    AEE_DECISION_VERSION, PAUSE_STATE_SCHEMA_VERSION,
 };
 use super::{
     dispatch_args, real_instrument, real_keygen, real_learn, real_sign, real_verify, usage,
