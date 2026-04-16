@@ -164,7 +164,7 @@ fn identity_requires_subcommand_and_rejects_unknown_subcommand() {
     let err = real_identity_in_repo(&[], &repo).expect_err("missing subcommand should fail");
     assert!(err
         .to_string()
-        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | continuous-verification | operational-skills | skill-composition | delegation-refusal-coordination | schema"));
+        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | continuous-verification | operational-skills | skill-composition | delegation-refusal-coordination | provider-extension-packaging | schema"));
     assert!(err.to_string().contains("continuity"));
 
     let err = real_identity_in_repo(&["nope".to_string()], &repo)
@@ -1007,6 +1007,77 @@ fn identity_delegation_refusal_coordination_validates_unknown_args_and_missing_o
     let err = real_identity_in_repo(
         &[
             "delegation-refusal-coordination".to_string(),
+            "--out".to_string(),
+        ],
+        &repo,
+    )
+    .expect_err("out flag without value should fail");
+    assert!(err.to_string().contains("--out requires a value"));
+}
+
+#[test]
+fn identity_provider_extension_packaging_writes_contract_json() {
+    let _guard = TEST_MUTEX
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    let repo = temp_repo("identity-provider-extension-packaging");
+    let out_path = repo.join(".adl/state/provider_extension_packaging_v1.json");
+
+    real_identity_in_repo(
+        &[
+            "provider-extension-packaging".to_string(),
+            "--out".to_string(),
+            ".adl/state/provider_extension_packaging_v1.json".to_string(),
+        ],
+        &repo,
+    )
+    .expect("identity provider-extension-packaging");
+
+    let json: Value =
+        serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
+    assert_eq!(json["schema_version"], "provider_extension_packaging.v1");
+    assert_eq!(
+        json["proof_hook_output_path"],
+        ".adl/state/provider_extension_packaging_v1.json"
+    );
+    assert!(json["scope_decision"]["non_promoted_inputs"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md"));
+    assert!(
+        json["capability_boundary"]["excluded_security_capabilities"]
+            .as_array()
+            .expect("array")
+            .iter()
+            .any(|value| value == "provider attestation")
+    );
+    assert!(json["owned_runtime_surfaces"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "adl identity provider-extension-packaging"));
+}
+
+#[test]
+fn identity_provider_extension_packaging_validates_unknown_args_and_missing_out_value() {
+    let repo = temp_repo("identity-provider-extension-packaging-errors");
+
+    let err = real_identity_in_repo(
+        &[
+            "provider-extension-packaging".to_string(),
+            "--bogus".to_string(),
+        ],
+        &repo,
+    )
+    .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for identity provider-extension-packaging: --bogus"));
+
+    let err = real_identity_in_repo(
+        &[
+            "provider-extension-packaging".to_string(),
             "--out".to_string(),
         ],
         &repo,

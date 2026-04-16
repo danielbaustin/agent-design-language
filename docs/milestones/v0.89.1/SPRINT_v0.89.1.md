@@ -60,6 +60,7 @@ Land the exploit-proof and governed execution substrate that makes `v0.89.1` mor
 - the operational-skills band explicitly includes the bounded manuscript/publication skill needed for the paper program
 - under-authored supporting inputs are either integrated truthfully or explicitly left out
 - supporting governance and provider-extension questions remain bounded instead of swelling the milestone mid-wave
+- `WP-10` proves provider capability packaging with `adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json` while leaving the full provider-security extension to later work
 
 ## Sprint 3
 

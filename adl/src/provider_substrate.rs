@@ -7,6 +7,8 @@ use std::collections::HashMap;
 use crate::adl;
 use crate::provider;
 
+pub const PROVIDER_SUBSTRATE_MANIFEST_SCHEMA: &str = "provider_substrate_manifest.v1";
+
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum CapabilityModeV1 {
@@ -389,7 +391,7 @@ pub fn provider_substrate_manifest_v1(doc: &adl::AdlDoc) -> Result<Value> {
         .map(|provider_id| provider_substrate_v1(provider_id, &expanded.providers[provider_id]))
         .collect::<Result<Vec<_>>>()?;
     Ok(json!({
-        "schema_name": "provider_substrate_manifest.v1",
+        "schema_name": PROVIDER_SUBSTRATE_MANIFEST_SCHEMA,
         "schema_version": 1,
         "providers": providers,
     }))

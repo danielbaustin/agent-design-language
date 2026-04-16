@@ -16,6 +16,7 @@ pub fn usage() -> &'static str {
   adl identity operational-skills [--out <path>]
   adl identity skill-composition [--out <path>]
   adl identity delegation-refusal-coordination [--out <path>]
+  adl identity provider-extension-packaging [--out <path>]
   adl identity schema [--out <path>]
   adl identity continuity [--out <path>]
   adl identity retrieval [--out <path>]
@@ -81,6 +82,7 @@ Examples:
   adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json
   adl identity skill-composition --out .adl/state/skill_composition_model_v1.json
   adl identity delegation-refusal-coordination --out .adl/state/delegation_refusal_coordination_v1.json
+  adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json
   adl provider setup chatgpt
   adl provider setup claude
   adl provider setup anthropic --out ./.adl/provider-setup/anthropic

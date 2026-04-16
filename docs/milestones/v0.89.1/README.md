@@ -34,6 +34,7 @@ This milestone focuses on:
 - self-attacking system patterns
 - adversarial and security demo surfaces
 - operational skill substrate and composition surfaces needed to run these behaviors cleanly
+- bounded provider capability packaging and explicit deferral of the broader provider-security extension
 - a bounded manuscript/publication workflow strong enough to write the initial ADL three-paper arXiv program inside the milestone
 
 Key outcomes:
@@ -123,6 +124,7 @@ Primary validation is defined in:
 Additional validation surfaces:
 - replayable exploit artifacts
 - adversarial runtime traces and reviewer-facing demo packets
+- provider extension packaging proof: `adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json`
 - quality-gate and review issue outputs
 
 Success criteria:
@@ -145,12 +147,12 @@ Evidence locations:
 
 Known risks:
 - `v0.89.1` can sprawl into a vague "security everything" band if the exploit/runtime focus is not maintained
-- negotiation, refusal, and provider-capability extensions are conceptually relevant but can easily over-expand the milestone if promoted too early
+- negotiation, refusal, and provider-security extensions are conceptually relevant but can easily over-expand the milestone if promoted too early
 - the publication track can starve the core runtime band if the writer-skill and manuscript work are not kept bounded and proof-oriented
 
 Open questions:
 - how much of the operational-skill substrate should land as code in `v0.89.1` versus remain design-contract work
-- whether provider-capability extension belongs in this band or should remain a later security-extension slice
+- which later issue should own the full provider-security extension after `WP-10` kept `v0.89.1` to bounded provider capability packaging
 - which demo shapes are sufficient to prove adversarial/runtime behavior before heavier follow-on bands
 - whether the three-paper program should aim for fully submission-ready manuscripts inside `v0.89.1` or stop at review-ready manuscript packets with explicit post-milestone submission cleanup
 

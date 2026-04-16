@@ -32,7 +32,7 @@
 | WP-07 | Adversarial demo and security proof surfaces | Land the flagship demo and the primary review/proof surfaces for the milestone. | demo/proof package | `WP-03` - `WP-06` | `#1928` |
 | WP-08 | Operational skills substrate and composition | Make operational skill execution and composition explicit enough for adversarial/runtime use, including a bounded `arxiv-paper-writer` skill rooted in the Paper Sonata manuscript workflow. | substrate/composition package + `arxiv-paper-writer` skill | `WP-01`, `WP-04` | `#1929` |
 | WP-09 | Delegation, refusal, and coordination follow-through | Resolve the supporting governance/coordination inputs needed to keep the adversarial band legible and bounded. | bounded governance/coordination package | `WP-03`, `WP-07`, `WP-08` | `#1930` |
-| WP-10 | Provider extension and milestone packaging convergence | Decide and package what provider-security extension and related under-authored supporting inputs actually belong in this milestone. | converged scope/packaging record | `WP-07`, `WP-09` | `#1931` |
+| WP-10 | Provider extension and milestone packaging convergence | Decide and package what provider-security extension and related under-authored supporting inputs actually belong in this milestone. | provider extension packaging contract + converged scope record | `WP-07`, `WP-09` | `#1931` |
 | WP-11 | Demo scaffolding and proof entry points | Define and land the bounded proof entry points for adversarial runtime, exploit replay, and security demos. | runnable or reviewer-legible proof entry points | `WP-02` - `WP-10` | `#1932` |
 | WP-12 | Milestone convergence and follow-on mapping | Reconcile issue graph, carry-forward, and proof surfaces before the release tail starts. | converged issue graph and milestone status surfaces | `WP-02` - `WP-11` | `#1933` |
 | WP-13 | Demo matrix + integration demos | Validate the milestone claims through bounded demos, integration review, and the initial three-paper publication packet. | canonical demo matrix, demo artifacts, and three-paper manuscript packet | `WP-02` - `WP-12` | `#1934` |
@@ -59,7 +59,7 @@
 - WP-07 -> the adversarial proof/demo package is legible and bounded
 - WP-08 -> the skill substrate/composition layer is explicit enough for runtime implementation and includes a bounded `arxiv-paper-writer` skill surface
 - WP-09 -> governance/coordination supporting inputs are resolved enough to keep the milestone coherent
-- WP-10 -> under-authored supporting inputs or extension docs are either integrated truthfully or explicitly kept out
+- WP-10 -> bounded provider capability packaging has a proof hook and under-authored provider-security extension docs are explicitly kept out
 - WP-11 -> proof entry points exist for the main milestone claims
 - WP-12 -> the milestone package and issue graph are converged
 - WP-13 -> milestone claims have bounded demo/proof surfaces and the three-paper publication program has reviewer-legible manuscript outputs

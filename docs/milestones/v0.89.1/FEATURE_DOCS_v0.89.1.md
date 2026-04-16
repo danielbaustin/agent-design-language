@@ -51,6 +51,11 @@ WP-09 proof hook:
 
 The local delegation/refusal and negotiation notes remain supporting inputs rather than promoted feature docs. WP-09 integrates their bounded runtime distinctions into a repo-visible contract so reviewers can see delegation, refusal, approval gates, and coordination outcomes without over-claiming final constitutional or negotiation governance.
 
+WP-10 proof hook:
+- `adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json`
+
+WP-10 keeps the existing provider substrate capability metadata in the milestone as a bounded packaging/proof surface. It does not promote the broader provider-security extension into `v0.89.1`; provider attestation, trust-tier scoring, network posture enforcement, secret lifecycle enforcement, provider sandboxing, and external provider-security demos remain later security-extension work.
+
 ## Source Planning Corpus -> Implementation Home
 
 ### Core `v0.89.1` source docs
@@ -72,7 +77,7 @@ The local delegation/refusal and negotiation notes remain supporting inputs rath
 | `PROPOSED_OPERATIONAL_SKILLS.md` | supporting planning input | informs `WP-08` skill-surface packaging and the `WP-09` skill-admission/handoff governance contract |
 | local arXiv paper-program planning doc | supporting planning input | informs the committed `WP-08` bounded `arxiv-paper-writer` skill and the `WP-13` three-paper publication packet |
 | `ADL_SECURITY_DEMOS.md` | under-authored supporting input | do not promote until authored; informs later demo packaging |
-| `PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md` | under-authored supporting input | do not promote until authored; candidate later security-extension slice |
+| `PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md` | under-authored supporting input | not promoted by `WP-10`; candidate later security-extension slice |
 
 ## Relationship To `v0.89`
 
