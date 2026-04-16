@@ -4,15 +4,29 @@
 
 ## Metadata
 - Project: `ADL`
-- Status: `Draft`
+- Milestone: `v0.89.1`
+- Status: `Implemented`
 - Owner: `Daniel Austin`
 - Created: `2026-04-12`
+- Updated: `2026-04-15`
+- WP: `WP-06`
 
 ---
 
 ## Purpose
 
-Define **self-attacking systems** as a first-class architectural pattern in ADL.
+Define **self-attacking systems** as a first-class architectural pattern in ADL, and bind the pattern to a concrete `WP-06` proof contract.
+
+The authoritative implementation surface is shared with continuous verification:
+
+- `adl::continuous_verification_self_attack::ContinuousVerificationSelfAttackContract::v1`
+- `adl identity continuous-verification`
+
+Proof hook:
+
+```text
+adl identity continuous-verification --out .adl/state/continuous_verification_self_attack_v1.json
+```
 
 This document describes how an ADL system can:
 
@@ -25,6 +39,51 @@ This document describes how an ADL system can:
 The central claim is:
 
 > The safest systems will be those that can discover, reproduce, and defend against their own failures before others do.
+
+`WP-06` is intentionally a contract and proof-surface slice. It defines self-attack layers, target allowlisting, posture bounds, evidence capture, replay validation, and learning promotion. It does not yet implement the flagship demo scenario, operational skill composition, or an always-on self-attack scheduler.
+
+---
+
+## Owned Surfaces
+
+`WP-06` owns these concrete repo surfaces:
+
+- `adl/src/continuous_verification_self_attack.rs`
+- `adl::continuous_verification_self_attack::ContinuousVerificationSelfAttackContract`
+- `adl::continuous_verification_self_attack::SelfAttackLayerContract`
+- `adl::continuous_verification_self_attack::ContinuousVerificationPolicyContract`
+- `adl identity continuous-verification`
+
+The implemented contract links upstream to:
+
+- `adversarial_runtime_model.v1`
+- `red_blue_agent_architecture.v1`
+- `adversarial_execution_runner.v1`
+- `exploit_artifact_replay.v1`
+
+---
+
+## Implemented Self-Attack Contract
+
+The `WP-06` contract implements the self-attack pattern as six bounded layers:
+
+- `target_selection`
+- `adversarial_hypothesis`
+- `bounded_exploit`
+- `defensive_response`
+- `replay_validation`
+- `learning_promotion`
+
+The policy boundary is deliberately strict:
+
+- target allowlists are required
+- arbitrary external systems are prohibited
+- audit posture blocks exploit attempts
+- mutation requires explicit posture permission and a mutation boundary
+- mitigation planning does not imply automatic application
+- patch-without-proof records residual risk when replay is available
+
+Reviewers should read the proof artifact as the normative `WP-06` contract: self-attack is legitimate only when the target, posture, evidence, replay status, mitigation linkage, and learning promotion are all review-visible.
 
 ---
 
