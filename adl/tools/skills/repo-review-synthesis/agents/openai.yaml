@@ -1,0 +1,3 @@
+display_name: Repo Review Synthesis
+short_description: Merge specialist repo review artifacts without hiding severity or residual risk
+default_prompt: Synthesize specialist code, security, tests, and docs review artifacts into one findings-first review packet, preserving severity, disagreement, missing coverage, and residual risk. Stop without remediation or approval claims.

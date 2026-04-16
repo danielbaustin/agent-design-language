@@ -1,0 +1,3 @@
+display_name: Repo Review Docs
+short_description: Review documentation truth and onboarding drift as one specialist role
+default_prompt: Review the bounded repository slice for stale commands, misleading docs, onboarding gaps, and release or demo truth drift. Emit findings first and stop without rewriting docs.
