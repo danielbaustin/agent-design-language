@@ -164,7 +164,7 @@ fn identity_requires_subcommand_and_rejects_unknown_subcommand() {
     let err = real_identity_in_repo(&[], &repo).expect_err("missing subcommand should fail");
     assert!(err
         .to_string()
-        .contains("identity requires a subcommand: init | show | now | foundation | schema"));
+        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | schema"));
     assert!(err.to_string().contains("continuity"));
 
     let err = real_identity_in_repo(&["nope".to_string()], &repo)
@@ -183,6 +183,11 @@ fn identity_top_level_help_and_subcommand_help_succeed() {
     real_identity_in_repo(&["now".to_string(), "--help".to_string()], &repo).expect("now help");
     real_identity_in_repo(&["foundation".to_string(), "--help".to_string()], &repo)
         .expect("foundation help");
+    real_identity_in_repo(
+        &["adversarial-runtime".to_string(), "--help".to_string()],
+        &repo,
+    )
+    .expect("adversarial-runtime help");
     real_identity_in_repo(&["schema".to_string(), "--help".to_string()], &repo)
         .expect("schema help");
     real_identity_in_repo(&["continuity".to_string(), "--help".to_string()], &repo)
@@ -393,6 +398,70 @@ fn identity_foundation_validates_unknown_args_and_missing_out_value() {
 
     let err = real_identity_in_repo(&["foundation".to_string(), "--out".to_string()], &repo)
         .expect_err("out flag without value should fail");
+    assert!(err.to_string().contains("--out requires a value"));
+}
+
+#[test]
+fn identity_adversarial_runtime_writes_contract_json() {
+    let _guard = TEST_MUTEX
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    let repo = temp_repo("identity-adversarial-runtime");
+    let out_path = repo.join(".adl/state/adversarial_runtime_model_v1.json");
+
+    real_identity_in_repo(
+        &[
+            "adversarial-runtime".to_string(),
+            "--out".to_string(),
+            ".adl/state/adversarial_runtime_model_v1.json".to_string(),
+        ],
+        &repo,
+    )
+    .expect("identity adversarial-runtime");
+
+    let json: Value =
+        serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
+    assert_eq!(json["schema_version"], "adversarial_runtime_model.v1");
+    assert_eq!(
+        json["proof_hook_output_path"],
+        ".adl/state/adversarial_runtime_model_v1.json"
+    );
+    assert!(json["adversarial_pressure"]["operating_assumptions"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value
+            == "systems are probed continuously rather than only during scheduled review windows"));
+    assert!(json["review_surface"]["downstream_boundaries"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value.as_str().expect("string").contains("WP-04")));
+    assert!(json["owned_runtime_surfaces"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "adl identity adversarial-runtime"));
+}
+
+#[test]
+fn identity_adversarial_runtime_validates_unknown_args_and_missing_out_value() {
+    let repo = temp_repo("identity-adversarial-runtime-errors");
+
+    let err = real_identity_in_repo(
+        &["adversarial-runtime".to_string(), "--bogus".to_string()],
+        &repo,
+    )
+    .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for identity adversarial-runtime: --bogus"));
+
+    let err = real_identity_in_repo(
+        &["adversarial-runtime".to_string(), "--out".to_string()],
+        &repo,
+    )
+    .expect_err("out flag without value should fail");
     assert!(err.to_string().contains("--out requires a value"));
 }
 
