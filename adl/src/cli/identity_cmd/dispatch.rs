@@ -5,10 +5,11 @@ use super::contracts::{
     real_identity_adversarial_runner, real_identity_adversarial_runtime, real_identity_causality,
     real_identity_commitments, real_identity_continuity, real_identity_continuous_verification,
     real_identity_cost, real_identity_delegation_refusal_coordination,
-    real_identity_exploit_replay, real_identity_foundation, real_identity_instinct,
-    real_identity_instinct_runtime, real_identity_operational_skills, real_identity_phi,
-    real_identity_provider_extension_packaging, real_identity_red_blue_architecture,
-    real_identity_retrieval, real_identity_schema, real_identity_skill_composition,
+    real_identity_demo_proof_entry_points, real_identity_exploit_replay, real_identity_foundation,
+    real_identity_instinct, real_identity_instinct_runtime, real_identity_operational_skills,
+    real_identity_phi, real_identity_provider_extension_packaging,
+    real_identity_red_blue_architecture, real_identity_retrieval, real_identity_schema,
+    real_identity_skill_composition,
 };
 use super::helpers::repo_root;
 use super::profile::{real_identity_init, real_identity_now, real_identity_show};
@@ -21,7 +22,7 @@ pub(crate) fn real_identity(args: &[String]) -> Result<()> {
 pub(super) fn real_identity_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | continuous-verification | operational-skills | skill-composition | delegation-refusal-coordination | provider-extension-packaging | schema | continuity | retrieval | commitments | causality | cost | phi | instinct | instinct-runtime"
+            "identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | continuous-verification | operational-skills | skill-composition | delegation-refusal-coordination | provider-extension-packaging | demo-proof-entry-points | schema | continuity | retrieval | commitments | causality | cost | phi | instinct | instinct-runtime"
         ));
     };
 
@@ -43,6 +44,7 @@ pub(super) fn real_identity_in_repo(args: &[String], repo_root: &Path) -> Result
         "provider-extension-packaging" => {
             real_identity_provider_extension_packaging(repo_root, &args[1..])
         }
+        "demo-proof-entry-points" => real_identity_demo_proof_entry_points(repo_root, &args[1..]),
         "schema" => real_identity_schema(repo_root, &args[1..]),
         "continuity" => real_identity_continuity(repo_root, &args[1..]),
         "retrieval" => real_identity_retrieval(repo_root, &args[1..]),
@@ -57,7 +59,7 @@ pub(super) fn real_identity_in_repo(args: &[String], repo_root: &Path) -> Result
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown identity subcommand '{subcommand}' (expected init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | continuous-verification | operational-skills | skill-composition | delegation-refusal-coordination | provider-extension-packaging | schema | continuity | retrieval | commitments | causality | cost | phi | instinct | instinct-runtime)"
+            "unknown identity subcommand '{subcommand}' (expected init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | continuous-verification | operational-skills | skill-composition | delegation-refusal-coordination | provider-extension-packaging | demo-proof-entry-points | schema | continuity | retrieval | commitments | causality | cost | phi | instinct | instinct-runtime)"
         )),
     }
 }

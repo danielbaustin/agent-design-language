@@ -14,6 +14,7 @@ use ::adl::chronosense::{
 };
 use ::adl::continuous_verification_self_attack::ContinuousVerificationSelfAttackContract;
 use ::adl::delegation_refusal_coordination::DelegationRefusalCoordinationContract;
+use ::adl::demo_proof_entry_points::DemoProofEntryPointsContract;
 use ::adl::exploit_artifact_replay::ExploitArtifactReplayContract;
 use ::adl::operational_skills_substrate::OperationalSkillsSubstrateContract;
 use ::adl::provider_extension_packaging::ProviderExtensionPackagingContract;
@@ -203,6 +204,20 @@ pub(super) fn real_identity_provider_extension_packaging(
         "provider extension packaging",
         "PROVIDER_EXTENSION_PACKAGING_PATH",
         ProviderExtensionPackagingContract::v1(),
+    )
+}
+
+pub(super) fn real_identity_demo_proof_entry_points(
+    repo_root: &Path,
+    args: &[String],
+) -> Result<()> {
+    write_contract_json(
+        repo_root,
+        args,
+        "demo-proof-entry-points",
+        "demo proof entry points",
+        "DEMO_PROOF_ENTRY_POINTS_PATH",
+        DemoProofEntryPointsContract::v1(),
     )
 }
 

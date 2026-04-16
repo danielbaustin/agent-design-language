@@ -164,7 +164,7 @@ fn identity_requires_subcommand_and_rejects_unknown_subcommand() {
     let err = real_identity_in_repo(&[], &repo).expect_err("missing subcommand should fail");
     assert!(err
         .to_string()
-        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | continuous-verification | operational-skills | skill-composition | delegation-refusal-coordination | provider-extension-packaging | schema"));
+        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | continuous-verification | operational-skills | skill-composition | delegation-refusal-coordination | provider-extension-packaging | demo-proof-entry-points | schema"));
     assert!(err.to_string().contains("continuity"));
 
     let err = real_identity_in_repo(&["nope".to_string()], &repo)
@@ -205,6 +205,11 @@ fn identity_top_level_help_and_subcommand_help_succeed() {
         &repo,
     )
     .expect("continuous-verification help");
+    real_identity_in_repo(
+        &["demo-proof-entry-points".to_string(), "--help".to_string()],
+        &repo,
+    )
+    .expect("demo-proof-entry-points help");
     real_identity_in_repo(
         &["operational-skills".to_string(), "--help".to_string()],
         &repo,
@@ -1080,6 +1085,77 @@ fn identity_provider_extension_packaging_validates_unknown_args_and_missing_out_
             "provider-extension-packaging".to_string(),
             "--out".to_string(),
         ],
+        &repo,
+    )
+    .expect_err("out flag without value should fail");
+    assert!(err.to_string().contains("--out requires a value"));
+}
+
+#[test]
+fn identity_demo_proof_entry_points_writes_contract_json() {
+    let _guard = TEST_MUTEX
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    let repo = temp_repo("identity-demo-proof-entry-points");
+    let out_path = repo.join(".adl/state/demo_proof_entry_points_v1.json");
+
+    real_identity_in_repo(
+        &[
+            "demo-proof-entry-points".to_string(),
+            "--out".to_string(),
+            ".adl/state/demo_proof_entry_points_v1.json".to_string(),
+        ],
+        &repo,
+    )
+    .expect("identity demo-proof-entry-points");
+
+    let json: Value =
+        serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
+    assert_eq!(json["schema_version"], "demo_proof_entry_points.v1");
+    assert_eq!(
+        json["proof_hook_output_path"],
+        ".adl/state/demo_proof_entry_points_v1.json"
+    );
+    assert!(json["owned_runtime_surfaces"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "adl identity demo-proof-entry-points"));
+    assert!(
+        json["package"]["rows"]
+            .as_array()
+            .expect("rows")
+            .iter()
+            .any(|row| row["demo_id"] == "D1"
+                && row["entry_commands"]
+                    .as_array()
+                    .expect("entry commands")
+                    .iter()
+                    .any(|command| command
+                        == "adl identity adversarial-runtime --out .adl/state/adversarial_runtime_model_v1.json"))
+    );
+    assert!(json["package"]["deferred_surfaces"]
+        .as_array()
+        .expect("deferred")
+        .iter()
+        .any(|surface| surface["owner"] == "WP-13"));
+}
+
+#[test]
+fn identity_demo_proof_entry_points_validates_unknown_args_and_missing_out_value() {
+    let repo = temp_repo("identity-demo-proof-entry-points-errors");
+
+    let err = real_identity_in_repo(
+        &["demo-proof-entry-points".to_string(), "--bogus".to_string()],
+        &repo,
+    )
+    .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for identity demo-proof-entry-points: --bogus"));
+
+    let err = real_identity_in_repo(
+        &["demo-proof-entry-points".to_string(), "--out".to_string()],
         &repo,
     )
     .expect_err("out flag without value should fail");

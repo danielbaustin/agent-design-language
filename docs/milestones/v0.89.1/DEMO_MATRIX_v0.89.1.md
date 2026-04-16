@@ -69,15 +69,15 @@ Additional environment / fixture requirements:
 
 ## Demo Coverage Summary
 
-| Demo ID | Demo title | Milestone claim / WP proved | Planned entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
+| Demo ID | Demo title | Milestone claim / WP proved | Entry point | Primary proof surface | Success signal | Determinism / replay note | Status |
 |---|---|---|---|---|---|---|---|
-| D1 | Adversarial runtime walkthrough | `WP-02` - `WP-04` contested runtime, role architecture, and execution runner | planned `WP-02` / `WP-04` adversarial runner entry point | adversarial runtime review packet + bounded trace bundle | reviewer can see posture, target, roles, and bounded execution stages end to end | same bounded target and posture should preserve stage order and role attribution | PLANNED |
-| D2 | Exploit artifact and replay proof | `WP-05` exploit artifact family and replay manifest | planned `WP-05` schema/replay validation surface | exploit artifact family + replay manifest packet | reviewer can inspect exploit hypothesis, evidence, replay mode, and expected outcome without narrative reconstruction | replay contract should declare deterministic, bounded-variance, or best-effort mode explicitly | PLANNED |
+| D1 | Adversarial runtime walkthrough | `WP-02` - `WP-04` contested runtime, role architecture, and execution runner | `adl identity adversarial-runtime --out .adl/state/adversarial_runtime_model_v1.json`, `adl identity red-blue-architecture --out .adl/state/red_blue_agent_architecture_v1.json`, and `adl identity adversarial-runner --out .adl/state/adversarial_execution_runner_v1.json` | adversarial runtime, red/blue architecture, and runner contract packets under `.adl/state/` | reviewer can see posture, target, roles, and bounded execution stages end to end | contract packets are deterministic; runner execution stays bounded by the declared contract | LANDED |
+| D2 | Exploit artifact and replay proof | `WP-05` exploit artifact family and replay manifest | `adl identity exploit-replay --out .adl/state/exploit_artifact_replay_v1.json` | `.adl/state/exploit_artifact_replay_v1.json` | reviewer can inspect exploit hypothesis, evidence, replay mode, and expected outcome without narrative reconstruction | replay contract declares deterministic, bounded-variance, or best-effort mode explicitly | LANDED |
 | D3 | Continuous verification loop | `WP-06` continuous verification and exploit generation | `adl identity continuous-verification --out .adl/state/continuous_verification_self_attack_v1.json` | continuous verification contract artifact with lifecycle, cadence, replay, mitigation, and promotion rules | reviewer can see repeated falsification pressure as a governed execution pattern rather than ad hoc red-teaming | repeated bounded inputs should preserve lifecycle shape and proof packet structure | LANDED |
 | D4 | Self-attack scenario packet | `WP-06` self-attacking systems as architecture rather than rhetoric | `adl identity continuous-verification --out .adl/state/continuous_verification_self_attack_v1.json` | self-attack contract artifact with bounded layers, target/posture policy, and evidence/replay rules | reviewer can see the system's self-attack pattern before externalization and inspect the required evidence chain | scenario should remain posture-bounded and replay-legible | LANDED |
 | D5 | Flagship adversarial demo | `WP-07` full exploit -> replay -> mitigation -> promotion loop | `adl demo demo-h-v0891-adversarial-self-attack --run --trace --out .adl/reports/adversarial-demo --no-open` | `.adl/reports/adversarial-demo/demo-h-v0891-adversarial-self-attack/review_packet.json` | reviewer can answer what was attacked, how it was reproduced, what mitigation was applied, and whether replay post-fix succeeded | deterministic local replay compares the same request before and after mitigation | LANDED |
 | D6 | Operational skills substrate integration | `WP-08` - `WP-09` operational skills, composition, and bounded governance follow-through | `adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json`, `adl identity skill-composition --out .adl/state/skill_composition_model_v1.json`, and `adl identity delegation-refusal-coordination --out .adl/state/delegation_refusal_coordination_v1.json` | substrate/composition/governance contract packets | reviewer can see that adversarial work runs through explicit skill/composition surfaces with bounded delegation, refusal, approval-gate, and coordination outcomes | orchestration structure and governance outcome taxonomy should be deterministic even if node outputs remain stochastic | LANDED |
-| D7 | Reviewer-facing security proof package | `WP-10` - `WP-13` packaging convergence, milestone convergence, and integration demos | `adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json` plus planned `WP-11` / `WP-13` review package | provider-extension packaging packet + reviewer-facing adversarial/replay/trust packet | reviewer can inspect milestone claims, carry-forward boundaries, and proof surfaces as one coherent package | `WP-10` proof packet is deterministic; later review package may remain artifact/document driven | PARTIAL |
+| D7 | Reviewer-facing security proof package | `WP-10` - `WP-13` packaging convergence, milestone convergence, and integration demos | `adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json` and `adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json` | provider-extension packaging packet + demo proof entry-point packet | reviewer can inspect milestone claims, carry-forward boundaries, and proof surfaces as one coherent package | `WP-10` and `WP-11` proof packets are deterministic; `WP-13` integration demos remain later work | PARTIAL |
 | D8 | Five-Agent Hey Jude MIDI demo | `WP-08` - `WP-10`, `WP-13` cross-provider coordination, human-in-the-loop orchestration, and integration delight surface | planned `WP-08` / `WP-13` coordination demo entry point | Hey Jude coordination packet + MIDI control trace + provider participation summary | reviewer can see one human plus four providers coordinating on one ADL runtime with explicit orchestration boundaries | bounded score/input should preserve composition shape, participant roles, and MIDI event ordering where declared | PLANNED |
 | D9 | ArXiv manuscript workflow packet | `WP-08`, `WP-13` bounded `arxiv-paper-writer` skill plus the initial three-paper publication program | `bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh` | `artifacts/v0891/arxiv_manuscript_workflow/demo_manifest.json` | reviewer can see the bounded manuscript workflow packet for What Is ADL?, Gödel Agents and ADL, and Cognitive Spacetime Manifold without losing claim discipline or hiding the WP-08/WP-13 boundary | packet generation is deterministic; bounded source packets preserve role order, section structure, and packet shape | READY |
 
@@ -115,19 +115,24 @@ Milestone claims / work packages covered:
 - `WP-03`
 - `WP-04`
 
-Planned entry point:
+Entry point:
 
 ```bash
-Defined when the official `WP-02` / `WP-04` issues land.
+adl identity adversarial-runtime --out .adl/state/adversarial_runtime_model_v1.json
+adl identity red-blue-architecture --out .adl/state/red_blue_agent_architecture_v1.json
+adl identity adversarial-runner --out .adl/state/adversarial_execution_runner_v1.json
 ```
 
 Expected artifacts:
-- adversarial runtime review packet
-- bounded adversarial execution trace bundle
-- posture declaration and role-attribution evidence
+- adversarial runtime contract packet
+- red / blue agent architecture contract packet
+- bounded adversarial execution runner contract packet
+- posture declaration and role-attribution evidence in the contract surfaces
 
 Primary proof surface:
-- reviewer-facing runtime packet centered on the adversarial execution runner
+- `.adl/state/adversarial_runtime_model_v1.json`
+- `.adl/state/red_blue_agent_architecture_v1.json`
+- `.adl/state/adversarial_execution_runner_v1.json`
 
 Expected success signals:
 - reviewer can see the declared target, posture, goal, and bounded limit
@@ -135,7 +140,7 @@ Expected success signals:
 - the execution loop is legible as architecture, not narrative
 
 Known limits / caveats:
-- this row is about runtime architecture and trace, not yet full mitigation or regression promotion
+- this row is about runtime architecture and runner contract scaffolding; full mitigation and regression promotion remain the flagship D5 demo path
 
 ---
 
@@ -148,10 +153,10 @@ Description:
 Milestone claims / work packages covered:
 - `WP-05`
 
-Planned entry point:
+Entry point:
 
 ```bash
-Defined when the official `WP-05` schema/replay issue lands.
+adl identity exploit-replay --out .adl/state/exploit_artifact_replay_v1.json
 ```
 
 Expected artifacts:
@@ -161,7 +166,7 @@ Expected artifacts:
 - adversarial replay manifest
 
 Primary proof surface:
-- exploit artifact family plus replay manifest packet
+- `.adl/state/exploit_artifact_replay_v1.json`
 
 Expected success signals:
 - reviewer can inspect exploit family, preconditions, unsafe outcome, replay mode, and success criteria directly
@@ -374,16 +379,18 @@ Entry point:
 
 ```bash
 adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json
+adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json
 ```
 
 Expected artifacts:
 - provider extension packaging contract packet
-- reviewer-facing adversarial/replay/trust packet
-- integration demo summary
+- demo proof entry-point packet
+- reviewer-facing adversarial/replay/trust packet index
 - milestone convergence and carry-forward note
 
 Primary proof surface:
-- provider extension packaging packet now; broader reviewer-facing security proof package remains `WP-11` / `WP-13`
+- `.adl/state/provider_extension_packaging_v1.json`
+- `.adl/state/demo_proof_entry_points_v1.json`
 
 Expected success signals:
 - reviewer can inspect the milestone as one coherent adversarial/runtime package
@@ -392,6 +399,7 @@ Expected success signals:
 
 Known limits / caveats:
 - this is a heavyweight proof package and should not be confused with a quick demo row
+- `WP-11` lands the proof entry-point package, while `WP-13` still owns broader integration demo convergence
 - `WP-10` does not implement provider attestation, trust scoring, network posture enforcement, secret lifecycle enforcement, provider sandboxing, or external provider-security demos
 
 ---
