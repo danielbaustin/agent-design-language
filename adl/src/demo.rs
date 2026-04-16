@@ -6,6 +6,8 @@ use crate::godel;
 use crate::prompt;
 use crate::trace::Trace;
 
+#[path = "demo/adversarial_self_attack.rs"]
+mod adversarial_self_attack;
 #[path = "demo/obsmem.rs"]
 mod obsmem;
 #[path = "demo/pipeline.rs"]
@@ -33,6 +35,18 @@ pub const DEMO_D_GODEL_OBSMEM_LOOP: &str = "demo-d-godel-obsmem-loop";
 pub const DEMO_E_MULTI_AGENT_CARD_PIPELINE: &str = "demo-e-multi-agent-card-pipeline";
 pub const DEMO_F_OBSMEM_RETRIEVAL: &str = "demo-f-obsmem-retrieval";
 pub const DEMO_G_V086_CONTROL_PATH: &str = "demo-g-v086-control-path";
+pub const DEMO_H_V0891_ADVERSARIAL_SELF_ATTACK: &str = "demo-h-v0891-adversarial-self-attack";
+
+pub const ALL_DEMOS: &[&str] = &[
+    DEMO_A_SAY_MCP,
+    DEMO_B_ONE_COMMAND,
+    DEMO_C_GODEL_RUNTIME,
+    DEMO_D_GODEL_OBSMEM_LOOP,
+    DEMO_E_MULTI_AGENT_CARD_PIPELINE,
+    DEMO_F_OBSMEM_RETRIEVAL,
+    DEMO_G_V086_CONTROL_PATH,
+    DEMO_H_V0891_ADVERSARIAL_SELF_ATTACK,
+];
 
 #[derive(Debug, Clone)]
 pub struct DemoResult {
@@ -42,30 +56,19 @@ pub struct DemoResult {
 }
 
 pub fn known_demo(name: &str) -> bool {
-    matches!(
-        name,
-        DEMO_A_SAY_MCP
-            | DEMO_B_ONE_COMMAND
-            | DEMO_C_GODEL_RUNTIME
-            | DEMO_D_GODEL_OBSMEM_LOOP
-            | DEMO_E_MULTI_AGENT_CARD_PIPELINE
-            | DEMO_F_OBSMEM_RETRIEVAL
-            | DEMO_G_V086_CONTROL_PATH
-    )
+    ALL_DEMOS.contains(&name)
+}
+
+pub fn available_demos() -> &'static [&'static str] {
+    ALL_DEMOS
 }
 
 pub fn run_demo(name: &str, out_dir: &Path) -> Result<DemoResult> {
     if !known_demo(name) {
         return Err(anyhow!(
-            "unknown demo '{}'; available demos: {}, {}, {}, {}, {}, {}, {}",
+            "unknown demo '{}'; available demos: {}",
             name,
-            DEMO_A_SAY_MCP,
-            DEMO_B_ONE_COMMAND,
-            DEMO_C_GODEL_RUNTIME,
-            DEMO_D_GODEL_OBSMEM_LOOP,
-            DEMO_E_MULTI_AGENT_CARD_PIPELINE,
-            DEMO_F_OBSMEM_RETRIEVAL,
-            DEMO_G_V086_CONTROL_PATH
+            available_demos().join(", ")
         ));
     }
 
@@ -220,6 +223,11 @@ pub fn run_demo(name: &str, out_dir: &Path) -> Result<DemoResult> {
                 }
                 _ => {}
             },
+            DEMO_H_V0891_ADVERSARIAL_SELF_ATTACK => {
+                artifacts.extend(adversarial_self_attack::write_adversarial_self_attack_step(
+                    out_dir, step_id,
+                )?);
+            }
             _ => {}
         }
         trace.step_finished(step_id, true);
@@ -244,6 +252,16 @@ pub fn plan_steps(name: &str) -> &'static [&'static str] {
         DEMO_E_MULTI_AGENT_CARD_PIPELINE => &["writer", "editor", "copyeditor", "publisher"],
         DEMO_F_OBSMEM_RETRIEVAL => &["seed", "query", "emit"],
         DEMO_G_V086_CONTROL_PATH => &["integrate", "summarize"],
+        DEMO_H_V0891_ADVERSARIAL_SELF_ATTACK => &[
+            "target_and_posture",
+            "exploit_hypothesis",
+            "exploit_evidence",
+            "replay_pre_fix",
+            "mitigation",
+            "replay_post_fix",
+            "promotion",
+            "review_packet",
+        ],
         _ => &[],
     }
 }
@@ -294,6 +312,40 @@ fn steps_for(name: &str) -> &'static [(&'static str, &'static str)] {
                 "Emit the canonical bounded cognitive path proof surfaces",
             ),
             ("summarize", "Emit deterministic control-path summary"),
+        ],
+        DEMO_H_V0891_ADVERSARIAL_SELF_ATTACK => &[
+            (
+                "target_and_posture",
+                "Declare the bounded demo target and security posture",
+            ),
+            (
+                "exploit_hypothesis",
+                "Emit a structured exploit hypothesis artifact",
+            ),
+            (
+                "exploit_evidence",
+                "Capture bounded exploit evidence and classification artifacts",
+            ),
+            (
+                "replay_pre_fix",
+                "Emit the replay manifest and pre-mitigation replay result",
+            ),
+            (
+                "mitigation",
+                "Link the exploit evidence to a concrete mitigation",
+            ),
+            (
+                "replay_post_fix",
+                "Replay the same request after mitigation and capture the changed result",
+            ),
+            (
+                "promotion",
+                "Promote the exploit into a durable regression surface",
+            ),
+            (
+                "review_packet",
+                "Emit the reviewer-facing adversarial demo proof packet",
+            ),
         ],
         _ => &[],
     }
@@ -822,6 +874,70 @@ mod tests {
         assert!(
             summary.contains("final_result: escalate"),
             "summary was:\n{summary}"
+        );
+    }
+
+    #[test]
+    fn run_demo_h_writes_adversarial_self_attack_artifacts() {
+        let out = tmp_dir("demo-h");
+        let result = run_demo(DEMO_H_V0891_ADVERSARIAL_SELF_ATTACK, &out).unwrap();
+        assert_eq!(result.run_id, DEMO_H_V0891_ADVERSARIAL_SELF_ATTACK);
+        assert!(out.join("target/target.json").is_file());
+        assert!(out.join("target/security_posture.json").is_file());
+        assert!(out.join("hypothesis.json").is_file());
+        assert!(out.join("evidence.json").is_file());
+        assert!(out.join("classification.json").is_file());
+        assert!(out.join("replay_manifest.json").is_file());
+        assert!(out.join("replay_pre_fix/result.json").is_file());
+        assert!(out.join("mitigation.json").is_file());
+        assert!(out.join("replay_post_fix/result.json").is_file());
+        assert!(out.join("promotion.json").is_file());
+        assert!(out.join("review_packet.json").is_file());
+        assert!(out.join("trace.jsonl").is_file());
+
+        let review: serde_json::Value =
+            serde_json::from_str(&std::fs::read_to_string(out.join("review_packet.json")).unwrap())
+                .unwrap();
+        assert_eq!(review["demo_id"], "D5");
+        assert_eq!(
+            review["result_summary"]["pre_mitigation_unsafe_state_reached"],
+            true
+        );
+        assert_eq!(
+            review["result_summary"]["post_mitigation_unsafe_state_reached"],
+            false
+        );
+        assert_eq!(review["result_summary"]["promotion_status"], "applied");
+
+        let manifest: serde_json::Value = serde_json::from_str(
+            &std::fs::read_to_string(out.join("replay_manifest.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(manifest["replay_mode"], "deterministic");
+        assert_eq!(
+            manifest["expected_outcome"]["pre_mitigation"]["unsafe_state_reached"],
+            true
+        );
+        assert_eq!(
+            manifest["expected_outcome"]["post_mitigation"]["unsafe_state_reached"],
+            false
+        );
+    }
+
+    #[test]
+    fn demo_h_plan_steps_capture_full_adversarial_loop() {
+        assert_eq!(
+            plan_steps(DEMO_H_V0891_ADVERSARIAL_SELF_ATTACK),
+            &[
+                "target_and_posture",
+                "exploit_hypothesis",
+                "exploit_evidence",
+                "replay_pre_fix",
+                "mitigation",
+                "replay_post_fix",
+                "promotion",
+                "review_packet",
+            ]
         );
     }
 

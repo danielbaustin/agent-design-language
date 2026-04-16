@@ -73,6 +73,8 @@ Examples:
   adl demo demo-d-godel-obsmem-loop --run --trace --out ./out
   adl demo demo-e-multi-agent-card-pipeline --run --trace --out ./out
   adl demo demo-f-obsmem-retrieval --run --trace --out ./out
+  adl demo demo-g-v086-control-path --run --trace --out ./out
+  adl demo demo-h-v0891-adversarial-self-attack --run --trace --out .adl/reports/adversarial-demo --no-open
   adl provider setup chatgpt
   adl provider setup claude
   adl provider setup anthropic --out ./.adl/provider-setup/anthropic
