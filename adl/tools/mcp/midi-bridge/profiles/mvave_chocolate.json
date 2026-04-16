@@ -1,0 +1,10 @@
+{
+  "profile_id": "mvave_chocolate",
+  "transport": "usb-midi-fixture",
+  "mapping": {
+    "60": "start_or_next_section",
+    "61": "trigger_chorus",
+    "62": "repeat_section",
+    "63": "curtain_call"
+  }
+}
