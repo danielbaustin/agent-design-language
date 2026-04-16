@@ -83,6 +83,7 @@ Close the milestone using the normal ADL pattern: demos, quality gate, docs/revi
 ### Exit Criteria
 - reviewer-facing proof surfaces exist for the core `v0.89.1` claims
 - reviewer-legible manuscript packets exist for the three-paper arXiv slate
+- WP-13 demo integration is reproducible through `bash adl/tools/demo_v0891_wp13_demo_integration.sh`
 - accepted review findings are remediated or explicitly deferred
 - release and next-milestone handoff are explicit and bounded
 - quality, docs, and release surfaces are consistent with delivered work

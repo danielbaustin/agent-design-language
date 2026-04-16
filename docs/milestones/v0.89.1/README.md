@@ -126,6 +126,9 @@ Additional validation surfaces:
 - adversarial runtime traces and reviewer-facing demo packets
 - provider extension packaging proof: `adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json`
 - demo proof entry-point package: `adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json`
+- WP-13 demo integration package: `bash adl/tools/demo_v0891_wp13_demo_integration.sh`
+- five-agent Hey Jude MIDI demo: `bash adl/tools/demo_v0891_five_agent_hey_jude.sh`
+- three-paper manuscript workflow packet: `bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh`
 - quality-gate and review issue outputs
 
 Success criteria:
