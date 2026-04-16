@@ -1,6 +1,91 @@
 use super::*;
 
 #[test]
+fn real_pr_finish_rejects_primary_checkout_when_issue_branch_is_bound_elsewhere() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-bound-worktree-guard");
+    let worktree = temp.join("issue-worktree");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
+    fs::create_dir_all(repo.join("adl/src")).expect("adl src");
+    fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write source");
+    assert!(Command::new("git")
+        .args(["add", ".gitignore", "adl/src/lib.rs"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "worktree",
+            "add",
+            "-b",
+            "codex/1153-rust-finish-bound",
+            path_str(&worktree).expect("worktree path"),
+            "HEAD",
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git worktree add")
+        .success());
+
+    let issue_ref = IssueRef::new(1153, "v0.86", "rust-finish-bound").expect("issue ref");
+    let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&bundle_dir).expect("bundle dir");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust finish bound");
+    fs::copy(
+        issue_ref.issue_prompt_path(&repo),
+        issue_ref.task_bundle_stp_path(&repo),
+    )
+    .expect("seed stp");
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let err = real_pr(&[
+        "finish".to_string(),
+        "1153".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Rust finish bound".to_string(),
+        "--no-checks".to_string(),
+        "--no-open".to_string(),
+    ])
+    .expect_err("finish should refuse the wrong checkout when branch is bound elsewhere");
+    env::set_current_dir(prev_dir).expect("restore cwd");
+
+    let err = err.to_string();
+    assert!(err.contains("mismatched_publication_surface"));
+    assert!(err.contains("codex/1153-rust-finish-bound"));
+    assert!(err.contains(&worktree.display().to_string()));
+}
+
+#[test]
 fn real_pr_finish_rejects_main_and_reports_no_pr_when_only_local_bundle_sync_changes_exist() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-errors");

@@ -125,6 +125,19 @@ pub(super) fn has_uncommitted_changes(repo_root: &Path) -> Result<bool> {
     Ok(!(unstaged && staged))
 }
 
+pub(super) fn tracked_changes_status(repo_root: &Path) -> Result<String> {
+    run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "status",
+            "--porcelain",
+            "--untracked-files=no",
+        ],
+    )
+}
+
 pub(super) fn commits_ahead_of_origin_main(repo_root: &Path) -> Result<usize> {
     let local_origin_main = run_status_allow_failure(
         "git",

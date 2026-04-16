@@ -383,6 +383,22 @@ def detect_tracked_adl_residue(repo_root: Path):
     return result.returncode != 0
 
 
+def primary_main_has_tracked_changes(repo_root: Path):
+    branch = run_command(["git", "rev-parse", "--abbrev-ref", "HEAD"], repo_root)
+    if branch.returncode != 0 or branch.stdout.strip() != "main":
+        return False
+    status = run_command(["git", "status", "--porcelain", "--untracked-files=no"], repo_root)
+    return status.returncode == 0 and bool(status.stdout.strip())
+
+
+def apply_root_execution_guard(repo_root: Path, workflow):
+    if workflow.get("blocker_class") != "none":
+        return
+    if primary_main_has_tracked_changes(repo_root):
+        workflow["blocker_class"] = "unsafe_root_checkout_execution"
+        workflow["evidence_used"].append("tracked_primary_main_status")
+
+
 def worktree_execution_done(repo_root: Path, issue_number: int, slug: str, version: str, worktree_hint):
     if not worktree_hint:
         return False
@@ -569,6 +585,7 @@ def collect_route_issue(repo_root: Path, payload):
     if workflow["blocker_class"] == "none" and detect_tracked_adl_residue(repo_root):
         workflow["blocker_class"] = "tracked_adl_residue"
         workflow["evidence_used"].append("tracked_adl_residue_guard")
+    apply_root_execution_guard(repo_root, workflow)
     return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
 
@@ -608,6 +625,7 @@ def collect_route_task_bundle(repo_root: Path, payload):
     if workflow["blocker_class"] == "none" and detect_tracked_adl_residue(repo_root):
         workflow["blocker_class"] = "tracked_adl_residue"
         workflow["evidence_used"].append("tracked_adl_residue_guard")
+    apply_root_execution_guard(repo_root, workflow)
     return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
 
@@ -652,6 +670,7 @@ def collect_route_branch(repo_root: Path, payload):
     if workflow["blocker_class"] == "none" and detect_tracked_adl_residue(repo_root):
         workflow["blocker_class"] = "tracked_adl_residue"
         workflow["evidence_used"].append("tracked_adl_residue_guard")
+    apply_root_execution_guard(repo_root, workflow)
     return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
 
@@ -726,6 +745,7 @@ def collect_route_worktree(repo_root: Path, payload):
     if workflow["blocker_class"] == "none" and detect_tracked_adl_residue(repo_root):
         workflow["blocker_class"] = "tracked_adl_residue"
         workflow["evidence_used"].append("tracked_adl_residue_guard")
+    apply_root_execution_guard(repo_root, workflow)
     return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
 
@@ -785,6 +805,7 @@ def collect_route_pr(repo_root: Path, payload):
     if workflow["blocker_class"] == "none" and detect_tracked_adl_residue(repo_root):
         workflow["blocker_class"] = "tracked_adl_residue"
         workflow["evidence_used"].append("tracked_adl_residue_guard")
+    apply_root_execution_guard(repo_root, workflow)
     return {"target": resolved_target, "workflow_state": workflow, "policy": payload.get("policy", {})}
 
 

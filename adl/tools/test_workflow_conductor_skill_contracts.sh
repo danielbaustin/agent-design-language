@@ -32,6 +32,10 @@ grep -Fq "workflow-conductor" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 grep -Fq "resume from partially completed early steps" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 grep -Fq "child issue wave already appears to cover the acceptance surface" "${skills_root}/workflow-conductor/SKILL.md"
 grep -Fq "satisfied_by_sibling_issue_artifact" "${skills_root}/workflow-conductor/references/output-contract.md"
+grep -Fq "preserve bound issue worktree identity" "${skills_root}/workflow-conductor/SKILL.md"
+grep -Fq "unsafe_root_checkout_execution" "${skills_root}/workflow-conductor/references/output-contract.md"
+grep -Fq "mismatched_publication_surface" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
+grep -Fq "rebind_to_issue_worktree_required" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 
 cat >"${tmpdir}/bootstrap_missing.json" <<'EOF'
 {
@@ -129,11 +133,32 @@ cat >"${tmpdir}/required_subagent_missing.json" <<'EOF'
 }
 EOF
 
+cat >"${tmpdir}/unsafe_root_checkout.json" <<'EOF'
+{
+  "target": {"issue_number": 1647},
+  "workflow_state": {
+    "bootstrap_present": true,
+    "lifecycle_state": "pre_run",
+    "ready_state": "pass",
+    "pr_state": "none",
+    "blocker_class": "unsafe_root_checkout_execution",
+    "subagent_assigned": true,
+    "evidence_used": ["tracked_primary_main_status"]
+  },
+  "policy": {
+    "skills_required": true,
+    "card_editor_skills_required": true,
+    "subagent_requirement": "optional"
+  }
+}
+EOF
+
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/bootstrap_missing.json" >"${tmpdir}/bootstrap_missing.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/stp_blocker.json" >"${tmpdir}/stp_blocker.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/resume_to_run.json" >"${tmpdir}/resume_to_run.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/pr_in_flight.json" >"${tmpdir}/pr_in_flight.out.json"
 python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/required_subagent_missing.json" >"${tmpdir}/required_subagent_missing.out.json"
+python3 "${skills_root}/workflow-conductor/scripts/select_next_skill.py" --input "${tmpdir}/unsafe_root_checkout.json" >"${tmpdir}/unsafe_root_checkout.out.json"
 
 python3 - "$tmpdir" <<'PY'
 import json
@@ -169,6 +194,13 @@ assert required_missing["status"] == "blocked"
 assert required_missing["handoff_state"]["next_phase"] == "blocked"
 assert required_missing["handoff_state"]["continuation"] == "stop"
 assert required_missing["handoff_state"]["escalation_reason"] == "policy_block"
+
+unsafe_root = load("unsafe_root_checkout.out.json")
+assert unsafe_root["status"] == "blocked"
+assert unsafe_root["selected_skill"]["skill_name"] == "none"
+assert unsafe_root["handoff_state"]["next_phase"] == "blocked"
+assert unsafe_root["handoff_state"]["continuation"] == "stop"
+assert unsafe_root["handoff_state"]["escalation_reason"] == "unsafe_root_checkout_execution"
 PY
 
 fixture_repo="${tmpdir}/fixture-repo"
@@ -1004,6 +1036,7 @@ assert route_tracker_satisfied["handoff_state"]["escalation_reason"] == "child_i
 route_issue_finish_from_worktree = load("route_issue_finish_from_worktree.out.json")
 assert route_issue_finish_from_worktree["selected_skill"]["skill_name"] == "pr-finish"
 assert route_issue_finish_from_worktree["workflow_state"]["blocker_class"] == "open_pr_wave_only"
+assert route_issue_finish_from_worktree["target"]["worktree_path"] == ".worktrees/adl-wp-2007"
 assert route_issue_finish_from_worktree["handoff_state"]["continuation"] == "ask_operator"
 assert route_issue_finish_from_worktree["handoff_state"]["escalation_reason"] == "operator_override_required"
 
