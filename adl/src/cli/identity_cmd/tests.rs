@@ -164,7 +164,7 @@ fn identity_requires_subcommand_and_rejects_unknown_subcommand() {
     let err = real_identity_in_repo(&[], &repo).expect_err("missing subcommand should fail");
     assert!(err
         .to_string()
-        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | continuous-verification | operational-skills | skill-composition | schema"));
+        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | continuous-verification | operational-skills | skill-composition | delegation-refusal-coordination | schema"));
     assert!(err.to_string().contains("continuity"));
 
     let err = real_identity_in_repo(&["nope".to_string()], &repo)
@@ -933,6 +933,82 @@ fn identity_skill_composition_validates_unknown_args_and_missing_out_value() {
 
     let err = real_identity_in_repo(
         &["skill-composition".to_string(), "--out".to_string()],
+        &repo,
+    )
+    .expect_err("out flag without value should fail");
+    assert!(err.to_string().contains("--out requires a value"));
+}
+
+#[test]
+fn identity_delegation_refusal_coordination_writes_contract_json() {
+    let _guard = TEST_MUTEX
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    let repo = temp_repo("identity-delegation-refusal-coordination");
+    let out_path = repo.join(".adl/state/delegation_refusal_coordination_v1.json");
+
+    real_identity_in_repo(
+        &[
+            "delegation-refusal-coordination".to_string(),
+            "--out".to_string(),
+            ".adl/state/delegation_refusal_coordination_v1.json".to_string(),
+        ],
+        &repo,
+    )
+    .expect("identity delegation-refusal-coordination");
+
+    let json: Value =
+        serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
+    assert_eq!(json["schema_version"], "delegation_refusal_coordination.v1");
+    assert_eq!(
+        json["proof_hook_output_path"],
+        ".adl/state/delegation_refusal_coordination_v1.json"
+    );
+    assert!(json["outcome_taxonomy"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value["outcome_kind"] == "governed_refusal"));
+    assert!(
+        json["delegation_refusal_boundary"]["failure_separation_rules"]
+            .as_array()
+            .expect("array")
+            .iter()
+            .any(|value| value.as_str().expect("string").contains("governed refusal"))
+    );
+    assert!(json["coordination_negotiation"]["allowed_outcomes"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "bounded_dissent"));
+    assert!(json["owned_runtime_surfaces"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "adl identity delegation-refusal-coordination"));
+}
+
+#[test]
+fn identity_delegation_refusal_coordination_validates_unknown_args_and_missing_out_value() {
+    let repo = temp_repo("identity-delegation-refusal-coordination-errors");
+
+    let err = real_identity_in_repo(
+        &[
+            "delegation-refusal-coordination".to_string(),
+            "--bogus".to_string(),
+        ],
+        &repo,
+    )
+    .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for identity delegation-refusal-coordination: --bogus"));
+
+    let err = real_identity_in_repo(
+        &[
+            "delegation-refusal-coordination".to_string(),
+            "--out".to_string(),
+        ],
         &repo,
     )
     .expect_err("out flag without value should fail");

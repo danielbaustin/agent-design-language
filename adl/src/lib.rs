@@ -20,6 +20,7 @@ pub mod chronosense;
 pub mod continuous_verification_self_attack;
 pub mod control_plane;
 pub mod delegation_policy;
+pub mod delegation_refusal_coordination;
 pub mod demo;
 pub mod execute;
 pub mod execution_plan;
