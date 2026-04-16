@@ -53,7 +53,8 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 
 At the moment this checklist should be read as:
 - planning-complete and review-ready
-- issue wave opened; execution still early
+- issue wave opened; `WP-02` - `WP-11` landed and `WP-12` is the active convergence gate
+- integration demos, manuscript packet completion, quality, docs/review, internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony are still unchecked release-tail work
 - execution, review, and release gates still future work
 
 ## Exit Criteria

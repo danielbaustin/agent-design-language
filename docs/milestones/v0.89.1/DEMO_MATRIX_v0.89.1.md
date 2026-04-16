@@ -11,7 +11,7 @@
 
 Define the canonical `v0.89.1` demo and proof program.
 
-This matrix names the milestone claims, the intended proof surfaces, and the expected reviewer signals before the issue wave opens. It is designed to make later implementation and review mechanical rather than forcing the proof story to be rediscovered during execution.
+This matrix names the milestone claims, landed proof surfaces, remaining integration rows, and expected reviewer signals now that the issue wave is active. It is designed to make release-tail implementation and review mechanical rather than forcing the proof story to be rediscovered during execution.
 
 ## Scope
 
@@ -89,8 +89,12 @@ Status guidance:
 - `LANDED` = milestone evidence exists and is ready for review
 
 Current planning truth:
-- the `v0.89.1` issue wave is open, and proof rows should move from `PLANNED` to `LANDED` only as implementation work provides copy/paste proof surfaces
-- this matrix is review-ready and intended to make issue execution faster without claiming later demo work before it exists
+- the `v0.89.1` issue wave is open
+- rows `D1` through `D6` are landed from `WP-02` - `WP-09`
+- row `D7` is partial because the `WP-10` and `WP-11` proof packets exist, while `WP-12` / `WP-13` release-tail packaging is still active
+- row `D8` remains planned for `WP-13`
+- row `D9` is ready as a bounded manuscript workflow packet, with final three-paper manuscript convergence still owned by `WP-13`
+- this matrix is a convergence surface for review-tail execution, not permission to claim later demo work before it exists
 
 Heavyweight proof-package rule:
 - if a proof surface mainly exists to bundle review, release, or quality-gate evidence, classify it as a heavyweight proof package even if it is script-driven
@@ -280,52 +284,6 @@ Expected success signals:
 Known limits / caveats:
 - this row is the flagship proof row and stays bounded to a safe, local, deterministic target
 
----
-
-### D9) ArXiv manuscript workflow packet
-
-Description:
-- prove that `v0.89.1` can use a bounded manuscript workflow to support serious technical writing about ADL itself
-- make the writer skill, source packet, role decomposition, and three-paper outputs reviewer-legible
-
-Milestone claims / work packages covered:
-- `WP-08`
-- `WP-13`
-
-Entry point:
-
-```bash
-bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh
-```
-
-Expected artifacts:
-- `artifacts/v0891/arxiv_manuscript_workflow/demo_manifest.json`
-- `artifacts/v0891/arxiv_manuscript_workflow/writer_skill_packet/writer_skill_status.json`
-- `artifacts/v0891/arxiv_manuscript_workflow/writer_skill_packet/workflow_contract.md`
-- `artifacts/v0891/arxiv_manuscript_workflow/source_packets/source_packet_manifest.json`
-- `artifacts/v0891/arxiv_manuscript_workflow/manuscript_status/three_paper_status.json`
-- `artifacts/v0891/arxiv_manuscript_workflow/review/review_gates.json`
-- `artifacts/v0891/arxiv_manuscript_workflow/review/claim_boundaries.md`
-- source and status packets for:
-  - What Is ADL?
-  - Gödel Agents and ADL
-  - Cognitive Spacetime Manifold
-
-Primary proof surface:
-- reviewer-facing manuscript workflow packet plus three-paper status bundle under `artifacts/v0891/arxiv_manuscript_workflow/`
-
-Expected success signals:
-- reviewer can see the role mapping, source packet, section structure, and review packet shape directly
-- the paper workflow preserves claim discipline and distinguishes repo truth from future direction
-- the milestone can show real manuscript progress without pretending autonomous publication
-
-Known limits / caveats:
-- this row is about bounded drafting and review workflow, not automatic submission or unverifiable authorship claims
-- WP-08 defines the writer skill and composition boundary; WP-13 still owns the three-paper manuscript status packet and publication follow-through
-- the WP-08 proof hooks are `adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json` and `adl identity skill-composition --out .adl/state/skill_composition_model_v1.json`
-
----
-
 ### D6) Operational skills substrate integration
 
 Description:
@@ -445,3 +403,47 @@ Source planning inputs:
 Known limits / caveats:
 - this row is a flagship delight/integration surface, not the core exploit/replay proof row
 - it should remain bounded and reviewer-legible rather than turning into an open-ended performance artifact
+
+---
+
+### D9) ArXiv manuscript workflow packet
+
+Description:
+- prove that `v0.89.1` can use a bounded manuscript workflow to support serious technical writing about ADL itself
+- make the writer skill, source packet, role decomposition, and three-paper outputs reviewer-legible
+
+Milestone claims / work packages covered:
+- `WP-08`
+- `WP-13`
+
+Entry point:
+
+```bash
+bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh
+```
+
+Expected artifacts:
+- `artifacts/v0891/arxiv_manuscript_workflow/demo_manifest.json`
+- `artifacts/v0891/arxiv_manuscript_workflow/writer_skill_packet/writer_skill_status.json`
+- `artifacts/v0891/arxiv_manuscript_workflow/writer_skill_packet/workflow_contract.md`
+- `artifacts/v0891/arxiv_manuscript_workflow/source_packets/source_packet_manifest.json`
+- `artifacts/v0891/arxiv_manuscript_workflow/manuscript_status/three_paper_status.json`
+- `artifacts/v0891/arxiv_manuscript_workflow/review/review_gates.json`
+- `artifacts/v0891/arxiv_manuscript_workflow/review/claim_boundaries.md`
+- source and status packets for:
+  - What Is ADL?
+  - Gödel Agents and ADL
+  - Cognitive Spacetime Manifold
+
+Primary proof surface:
+- reviewer-facing manuscript workflow packet plus three-paper status bundle under `artifacts/v0891/arxiv_manuscript_workflow/`
+
+Expected success signals:
+- reviewer can see the role mapping, source packet, section structure, and review packet shape directly
+- the paper workflow preserves claim discipline and distinguishes repo truth from future direction
+- the milestone can show real manuscript progress without pretending autonomous publication
+
+Known limits / caveats:
+- this row is about bounded drafting and review workflow, not automatic submission or unverifiable authorship claims
+- WP-08 defines the writer skill and composition boundary; WP-13 still owns the three-paper manuscript status packet and publication follow-through
+- the WP-08 proof hooks are `adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json` and `adl identity skill-composition --out .adl/state/skill_composition_model_v1.json`

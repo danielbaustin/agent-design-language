@@ -61,6 +61,12 @@ WP-11 proof hook:
 
 WP-11 makes the demo matrix copy/paste-ready by collecting the landed adversarial-runtime, replay, verification, skill-governance, provider-packaging, and flagship demo entry points into one reviewer-facing contract. It keeps the five-agent Hey Jude integration demo and final manuscript convergence owned by `WP-13`.
 
+WP-12 convergence note:
+- the promoted feature-doc band is considered landed through `WP-11`
+- remaining `v0.89.1` work should consume these feature docs as source-of-truth proof surfaces rather than reopening their scope
+- `WP-13` still owns integration demos, the five-agent Hey Jude demo, and the three-paper manuscript packet
+- full provider-security extension, broader long-lived-agent runtime work, and later governance/identity themes remain follow-on scope outside this milestone
+
 ## Source Planning Corpus -> Implementation Home
 
 ### Core `v0.89.1` source docs

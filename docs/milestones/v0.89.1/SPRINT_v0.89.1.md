@@ -18,9 +18,9 @@
 
 | Sprint | Purpose | WPs | Current status |
 |---|---|---|---|
-| `v0.89.1-s1` | open the official issue wave and execute the adversarial/runtime core | `WP-01`, `WP-02` - `WP-05` | official wave opened; Sprint 1 ready to execute |
-| `v0.89.1-s2` | execute verification, self-attack, demo, governed execution substrate, and the bounded publication skill | `WP-06` - `WP-10` | wave opened; queued behind Sprint 1 |
-| `v0.89.1-s3` | converge demos, manuscript outputs, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | wave opened; planned release tail |
+| `v0.89.1-s1` | open the official issue wave and execute the adversarial/runtime core | `WP-01`, `WP-02` - `WP-05` | complete; official wave opened and `WP-02` - `WP-05` landed |
+| `v0.89.1-s2` | execute verification, self-attack, demo, governed execution substrate, and the bounded publication skill | `WP-06` - `WP-10` | complete; `WP-06` - `WP-10` landed with provider-security extension explicitly deferred |
+| `v0.89.1-s3` | converge demos, manuscript outputs, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | active; `WP-11` landed, `WP-12` is the current convergence gate, and `WP-13` - `WP-20` remain queued |
 
 ## Sprint 1
 
@@ -35,10 +35,10 @@ Move `v0.89.1` from a carry-forward reference into a real execution package by o
 - exploit artifact and replay schema
 
 ### Exit Criteria
-- `WP-02` through `WP-05` are opened and mapped to the canonical milestone docs
-- the adversarial/runtime core has an executable issue wave rather than a merely reserved planning band
+- `WP-02` through `WP-05` are closed and mapped to the canonical milestone docs
+- the adversarial/runtime core has landed as a repo-visible issue wave rather than a merely reserved planning band
 - the main milestone docs record the active issue graph truthfully instead of speaking about the wave as hypothetical
-- issue creation can proceed directly from the milestone docs without reopening scope design
+- release-tail work can proceed directly from the milestone docs without reopening scope design
 
 ## Sprint 2
 
@@ -55,7 +55,7 @@ Land the exploit-proof and governed execution substrate that makes `v0.89.1` mor
 - provider extension and packaging convergence
 
 ### Exit Criteria
-- `WP-06` through `WP-10` are opened and tracked in the milestone package
+- `WP-06` through `WP-10` are closed and tracked in the milestone package
 - the main `v0.89.1` feature band is fully represented in the active execution package
 - the operational-skills band explicitly includes the bounded manuscript/publication skill needed for the paper program
 - under-authored supporting inputs are either integrated truthfully or explicitly left out
@@ -87,6 +87,12 @@ Close the milestone using the normal ADL pattern: demos, quality gate, docs/revi
 - release and next-milestone handoff are explicit and bounded
 - quality, docs, and release surfaces are consistent with delivered work
 
+Current sprint-3 convergence target:
+- use the landed `WP-11` demo proof entry-point package plus the `WP-02` - `WP-10` feature proofs as the review-tail starting point
+- keep `WP-13` focused on integration demos, the five-agent Hey Jude demo, and the three-paper manuscript packet
+- keep `WP-14` - `WP-20` visible as quality, docs/review, review, remediation, next-milestone planning, and release closure rather than absorbing them into `WP-12`
+- preserve full provider-security extension and long-lived-agent runtime planning as later-band work
+
 ## Risks / Dependencies
 - Dependency: the settled `v0.89` package must remain a stable predecessor, not a moving target
   - Risk: shifting `v0.89` scope makes the `v0.89.1` boundary fuzzy again
@@ -102,12 +108,13 @@ Close the milestone using the normal ADL pattern: demos, quality gate, docs/revi
 
 ## Current Planning Readiness
 
-This package is ready for execution now.
+This package is actively executing.
 
 That means:
-- the official issue wave is now open through `#1921`
-- Sprint 1 execution should proceed mechanically from `WBS_v0.89.1.md`, `SPRINT_v0.89.1.md`, and `WP_ISSUE_WAVE_v0.89.1.yaml`
-- the remaining work before delivery is implementation and proof, not milestone rediscovery
+- the official issue wave is open through `#1921`
+- `WP-02` - `WP-11` are closed on the live tracker
+- `WP-12` owns the release-tail convergence snapshot
+- the remaining work before delivery is integration demos, manuscript packet completion, quality, review, remediation, next-milestone planning, and release ceremony, not milestone rediscovery
 
 ## Cadence Expectations
 - use issue cards (`stp` / `sip` / `sor`) for each issue

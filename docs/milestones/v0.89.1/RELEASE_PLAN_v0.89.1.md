@@ -13,21 +13,23 @@
 
 ## Current Release Truth
 
-`v0.89.1` is currently a complete planning package with an opened execution wave and no release candidate yet.
+`v0.89.1` is currently an active execution milestone with the core adversarial/runtime proof band landed through `WP-11`, `WP-12` in progress as the convergence gate, and no release candidate yet.
 
 That means:
 - the canonical planning package exists and is reviewable
 - the official issue wave is open and visible through `#1922` - `#1941`
-- no implementation PR wave has started yet
+- `WP-02` - `WP-11` are closed on the live tracker
+- `WP-13` - `WP-20` remain release-tail work after `WP-12`
 - no release candidate exists yet
-- quality, review, and ceremony work are all future steps
+- quality, review, remediation, next-milestone planning, and ceremony work are all future steps
 
 ## 1) Release Readiness
 - [ ] Milestone checklist complete (`MILESTONE_CHECKLIST_v0.89.1.md`)
 - [ ] Release notes approved (`RELEASE_NOTES_v0.89.1.md`)
 - [ ] Go/no-go decision recorded (`DECISIONS_v0.89.1.md` or final release issue)
-- [ ] Core implementation issue wave opened
-- [ ] Three-paper manuscript packet is complete or explicitly deferred in release truth
+- [x] Core implementation issue wave opened
+- [x] Core adversarial/runtime and proof-entry wave landed through `WP-11`
+- [ ] Integration demos and three-paper manuscript packet complete or explicitly deferred in release truth
 
 ## 2) Branch And Tag Preparation
 - [ ] Target branch confirmed (`main` unless explicitly changed)
