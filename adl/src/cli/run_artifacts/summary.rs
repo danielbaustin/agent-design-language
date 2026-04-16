@@ -496,12 +496,11 @@ pub(crate) fn build_scores_artifact(
         .counts
         .completed_steps
         .saturating_sub(run_summary.counts.failed_steps);
-    let success_ratio = if run_summary.counts.total_steps == 0 {
-        1.0
-    } else {
-        let permille = (success_steps * 1000) / run_summary.counts.total_steps;
-        (permille as f64) / 1000.0
-    };
+    let success_ratio = success_steps
+        .saturating_mul(1000)
+        .checked_div(run_summary.counts.total_steps)
+        .map(|permille| (permille as f64) / 1000.0)
+        .unwrap_or(1.0);
     let security_denied_count: usize = run_summary.policy.security_denials_by_code.values().sum();
     let delegation_denied_count: usize = run_summary
         .policy
@@ -562,12 +561,11 @@ pub(crate) fn build_suggestions_artifact(
             .counts
             .completed_steps
             .saturating_sub(failed_steps);
-        let success_ratio = if run_summary.counts.total_steps == 0 {
-            1.0
-        } else {
-            let permille = (success_steps * 1000) / run_summary.counts.total_steps;
-            (permille as f64) / 1000.0
-        };
+        let success_ratio = success_steps
+            .saturating_mul(1000)
+            .checked_div(run_summary.counts.total_steps)
+            .map(|permille| (permille as f64) / 1000.0)
+            .unwrap_or(1.0);
         let security_denied_count: usize =
             run_summary.policy.security_denials_by_code.values().sum();
         let delegation_denied_count: usize = run_summary
