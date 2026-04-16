@@ -15,7 +15,7 @@
 
 ## Summary
 
-`v0.89.1` is the milestone where ADL turns adversarial runtime and exploit-evidence carry-forward into a first-class package. The current draft release story is that the core adversarial/runtime proof band has landed through `WP-11`, while integration demos, manuscript packet completion, quality, review, remediation, next-milestone planning, and release ceremony remain open.
+`v0.89.1` is the milestone where ADL turns adversarial runtime and exploit-evidence carry-forward into a first-class package. The current draft release story is that the adversarial/runtime proof band, integration demos, manuscript workflow packet, and quality-gate surface have landed through `WP-14`, while review, remediation, next-milestone planning, and release ceremony remain open.
 
 ## Current Draft Highlights
 - explicit adversarial runtime model for contested operation
@@ -55,8 +55,9 @@
 
 ## Validation Notes
 - final release notes must cite shipped proof surfaces only
-- `WP-02` - `WP-11` proof surfaces are available as draft evidence
-- integration demo, manuscript packet, quality-gate, review, and remediation outputs should be cited before release
+- `WP-02` - `WP-13` proof surfaces are available as draft evidence
+- `WP-14` owns the quality-gate proof surface: `QUALITY_GATE_v0.89.1.md` and `bash adl/tools/demo_v0891_quality_gate.sh`
+- quality-gate, review, and remediation outputs should be cited before release
 
 ## What's Next
 - later reasoning, identity, moral-governance, and broader constitutional bands continue after this milestone

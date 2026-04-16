@@ -20,7 +20,7 @@
 |---|---|---|---|
 | `v0.89.1-s1` | open the official issue wave and execute the adversarial/runtime core | `WP-01`, `WP-02` - `WP-05` | complete; official wave opened and `WP-02` - `WP-05` landed |
 | `v0.89.1-s2` | execute verification, self-attack, demo, governed execution substrate, and the bounded publication skill | `WP-06` - `WP-10` | complete; `WP-06` - `WP-10` landed with provider-security extension explicitly deferred |
-| `v0.89.1-s3` | converge demos, manuscript outputs, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | active; `WP-11` landed, `WP-12` is the current convergence gate, and `WP-13` - `WP-20` remain queued |
+| `v0.89.1-s3` | converge demos, manuscript outputs, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | active; `WP-11` - `WP-14` now provide demo, convergence, integration, manuscript, and quality-gate surfaces, while `WP-15` - `WP-20` remain release-tail work |
 
 ## Sprint 1
 
@@ -113,9 +113,9 @@ This package is actively executing.
 
 That means:
 - the official issue wave is open through `#1921`
-- `WP-02` - `WP-11` are closed on the live tracker
-- `WP-12` owns the release-tail convergence snapshot
-- the remaining work before delivery is integration demos, manuscript packet completion, quality, review, remediation, next-milestone planning, and release ceremony, not milestone rediscovery
+- `WP-02` - `WP-13` are closed on the live tracker
+- `WP-14` owns the release-tail quality-gate snapshot
+- the remaining work before delivery is docs/review, internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony, not milestone rediscovery
 
 ## Cadence Expectations
 - use issue cards (`stp` / `sip` / `sor`) for each issue

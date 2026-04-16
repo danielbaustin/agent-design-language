@@ -8,7 +8,7 @@ notes:
   - Official issue wave opened via issue #1921.
   - Titles, labels, sprint placement, and dependency order were used to create the official WP-01 through WP-20 issue wave in strict numerical order.
   - WP-01 is represented by issue #1922 as the visible numbered anchor, with that issue pointing back to the planning package completed in #1860.
-  - WP-02 through WP-11 are closed on the live tracker; WP-12 is the current convergence gate before WP-13 through WP-20.
+  - WP-02 through WP-13 are closed on the live tracker; WP-14 owns the quality gate before WP-15 through WP-20.
 wave:
   - wp: WP-01
     issue_kind: anchor

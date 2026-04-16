@@ -37,7 +37,7 @@ Use these categories consistently during `v0.89.1`:
   reviewer, quality-gate, or release-tail surfaces that may be canonical proof but should not be treated like quick demos.
 
 For `v0.89.1`, rows `D1` through `D6` plus `D8` are expected to behave like ordinary or bounded-integration proof rows.
-Rows `D7` and `D9` are heavier reviewer-facing packages and may remain artifact or document driven even when complete.
+Rows `D7`, `D9`, and `D10` are heavier reviewer-facing packages and may remain artifact or document driven even when complete.
 
 ## Runtime Preconditions
 
@@ -66,6 +66,7 @@ Additional environment / fixture requirements:
 - Sprint / execution plan: `SPRINT_v0.89.1.md`
 - Release / checklist context: `MILESTONE_CHECKLIST_v0.89.1.md`
 - Feature index: `FEATURE_DOCS_v0.89.1.md`
+- Quality gate: `QUALITY_GATE_v0.89.1.md`
 
 ## Demo Coverage Summary
 
@@ -80,6 +81,7 @@ Additional environment / fixture requirements:
 | D7 | Reviewer-facing security proof package | `WP-10` - `WP-13` packaging convergence, milestone convergence, and integration demos | `adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json`, `adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json`, and `bash adl/tools/demo_v0891_wp13_demo_integration.sh` | provider-extension packaging packet + demo proof entry-point packet + WP-13 integration manifest | reviewer can inspect milestone claims, carry-forward boundaries, D8, and D9 as one coherent package | identity packets and the WP-13 integration packet are deterministic; heavyweight child demos remain replayable through their own test commands | LANDED |
 | D8 | Five-Agent Hey Jude MIDI demo | `WP-08` - `WP-10`, `WP-13` cross-provider coordination, human-in-the-loop orchestration, and integration delight surface | `bash adl/tools/demo_v0891_five_agent_hey_jude.sh` | `artifacts/v0891/five_agent_hey_jude/performance_manifest.json` plus MIDI and participation artifacts | reviewer can see one human plus four providers coordinating on one ADL runtime with explicit orchestration boundaries | fixture-backed MVAVE Chocolate events preserve cue order and artifact shape | LANDED |
 | D9 | ArXiv manuscript workflow packet | `WP-08`, `WP-13` bounded `arxiv-paper-writer` skill plus the initial three-paper publication program | `bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh` | `artifacts/v0891/arxiv_manuscript_workflow/demo_manifest.json` plus `manuscript_status/three_paper_status.json` | reviewer can see the bounded manuscript workflow packet for What Is ADL?, Gödel Agents and ADL, and Cognitive Spacetime Manifold without losing claim discipline or hiding the WP-08/WP-13 boundary | packet generation is deterministic; bounded source packets preserve role order, section structure, packet shape, and no-submission boundary | LANDED |
+| D10 | Quality gate walkthrough | `WP-14` coverage/quality gate, coverage posture, proof-package aggregation, and maintainability watch posture | `bash adl/tools/demo_v0891_quality_gate.sh` | `artifacts/v0891/quality_gate/quality_gate_record.json` plus per-check logs | reviewer can see the local quality suite, coverage policy, D7/D8/D9 proof-package checks, and large-module watch output in one place | command uses deterministic local checks and fixture-backed proof demos; it does not replace CI or the CI-only PR closing-linkage guardrail | LANDED |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -94,6 +96,7 @@ Current planning truth:
 - row `D7` is landed through the `WP-10` / `WP-11` proof packets, `WP-12` convergence, and the `WP-13` integration packet
 - row `D8` is landed as a bounded five-agent Hey Jude MIDI integration demo
 - row `D9` is landed as a bounded manuscript workflow packet with final arXiv submission still out of scope
+- row `D10` is the `WP-14` quality-gate aggregation surface; it is a heavyweight proof package, not a quick demo sweep
 - this matrix is a convergence surface for review-tail execution, not permission to claim later demo work before it exists
 
 Heavyweight proof-package rule:
@@ -107,6 +110,47 @@ Heavyweight proof-package rule:
 - success signals should describe what to inspect, not only process exit codes
 
 ## Demo Details
+
+### D10) Quality gate walkthrough
+
+Description:
+- aggregate the `v0.89.1` local quality command suite into one reviewer-facing packet
+- prove that coverage policy, proof-package checks, and maintainability-watch output are visible together
+
+Milestone claims / work packages covered:
+- `WP-14`
+
+Entry point:
+
+```bash
+bash adl/tools/demo_v0891_quality_gate.sh
+```
+
+Expected artifacts:
+- `artifacts/v0891/quality_gate/quality_gate_record.json`
+- per-check logs under `artifacts/v0891/quality_gate/`
+- `artifacts/v0891/quality_gate/README.md`
+
+Primary proof surface:
+- `quality_gate_record.json`
+
+Expected success signals:
+- reviewer can see the local quality suite and proof-package checks in one manifest
+- coverage posture is explicit and has no active per-file exclusion regex
+- large-module reporting remains visible but non-blocking
+
+Validation:
+
+```bash
+bash adl/tools/test_demo_v0891_quality_gate.sh
+```
+
+Known limits / caveats:
+- this row does not replace CI
+- the PR closing-linkage guardrail remains CI-only because it depends on pull-request event context
+- later `WP-15` through `WP-20` still own docs/review, review, remediation, planning, and release ceremony
+
+---
 
 ### D1) Adversarial runtime walkthrough
 
