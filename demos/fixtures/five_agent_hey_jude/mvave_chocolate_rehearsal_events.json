@@ -1,0 +1,29 @@
+{
+  "schema_version": "adl.midi_fixture_events.v1",
+  "events": [
+    {
+      "index": 1,
+      "note": 60,
+      "velocity": 100,
+      "section_hint": "Opening"
+    },
+    {
+      "index": 2,
+      "note": 61,
+      "velocity": 110,
+      "section_hint": "Chorus Build"
+    },
+    {
+      "index": 3,
+      "note": 60,
+      "velocity": 98,
+      "section_hint": "Long Fade"
+    },
+    {
+      "index": 4,
+      "note": 63,
+      "velocity": 120,
+      "section_hint": "Curtain Call"
+    }
+  ]
+}

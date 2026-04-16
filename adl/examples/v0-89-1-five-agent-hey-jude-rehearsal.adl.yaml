@@ -1,0 +1,183 @@
+version: "0.5"
+
+providers:
+  layer8_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8796/layer8"
+      timeout_secs: 10
+  chatgpt_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8796/chatgpt"
+      timeout_secs: 10
+  claude_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8796/claude"
+      timeout_secs: 10
+  gemini_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8796/gemini"
+      timeout_secs: 10
+  deepseek_local:
+    type: "http"
+    config:
+      endpoint: "http://127.0.0.1:8796/deepseek"
+      timeout_secs: 10
+
+agents:
+  layer8_bandleader:
+    provider: "layer8_local"
+    model: "layer8-human-demo"
+  chatgpt_conductor:
+    provider: "chatgpt_local"
+    model: "gpt-5.4-demo"
+  claude_harmonizer:
+    provider: "claude_local"
+    model: "claude-haiku-demo"
+  gemini_performer:
+    provider: "gemini_local"
+    model: "gemini-2.0-flash-demo"
+  deepseek_patternkeeper:
+    provider: "deepseek_local"
+    model: "deepseek-chat-demo"
+
+tasks:
+  layer8_opening:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-five-agent-hey-jude-midi-demo
+        TURN_ID: 01
+        SPEAKER: Layer 8
+        SECTION: Opening
+        INSTRUCTIONS: Open the singalong warmly using section cues only. Do not print a full lyric line.
+  chatgpt_opening:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-five-agent-hey-jude-midi-demo
+        TURN_ID: 02
+        SPEAKER: ChatGPT
+        SECTION: Opening
+        INSTRUCTIONS: Act as the conductor-builder. Hand the ensemble into the verse rotation with one short cue-rich contribution.
+  claude_verse:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-five-agent-hey-jude-midi-demo
+        TURN_ID: 03
+        SPEAKER: Claude
+        SECTION: Verse Rotation
+        INSTRUCTIONS: Add warmth and human feeling using section cues, not a full lyric line.
+  gemini_verse:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-five-agent-hey-jude-midi-demo
+        TURN_ID: 04
+        SPEAKER: Gemini
+        SECTION: Verse Rotation
+        INSTRUCTIONS: Add brightness and energy with one short bounded turn.
+  deepseek_chorus:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-five-agent-hey-jude-midi-demo
+        TURN_ID: 05
+        SPEAKER: DeepSeek
+        SECTION: Chorus Build
+        INSTRUCTIONS: Establish the repeated-response pattern and keep the chorus loop disciplined.
+  layer8_fade_cue:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-five-agent-hey-jude-midi-demo
+        TURN_ID: 06
+        SPEAKER: Layer 8
+        SECTION: Long Fade
+        INSTRUCTIONS: Use the human cue role to raise the energy and bound the long fade to two loop passes.
+  chatgpt_chorus:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-five-agent-hey-jude-midi-demo
+        TURN_ID: 07
+        SPEAKER: ChatGPT
+        SECTION: Long Fade
+        INSTRUCTIONS: Keep the ensemble moving with a short shared-refrain cue.
+  claude_chorus:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-five-agent-hey-jude-midi-demo
+        TURN_ID: 08
+        SPEAKER: Claude
+        SECTION: Long Fade
+        INSTRUCTIONS: Add a gentle emotional lift while staying cue-based and short.
+  gemini_chorus:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-five-agent-hey-jude-midi-demo
+        TURN_ID: 09
+        SPEAKER: Gemini
+        SECTION: Long Fade
+        INSTRUCTIONS: Add a bright short refrain cue that feels communal rather than solo.
+  deepseek_curtain:
+    prompt:
+      user: |
+        DEMO_ID: v0-89-1-five-agent-hey-jude-midi-demo
+        TURN_ID: 10
+        SPEAKER: DeepSeek
+        SECTION: Curtain Call
+        INSTRUCTIONS: Close the run cleanly with one short curtain-call style contribution.
+
+run:
+  name: "v0-89-1-five-agent-hey-jude-midi-demo"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "hey_jude.layer8.opening"
+        agent: "layer8_bandleader"
+        task: "layer8_opening"
+        save_as: "turn_01"
+        write_to: "performance/01-layer8-opening.md"
+      - id: "hey_jude.chatgpt.opening"
+        agent: "chatgpt_conductor"
+        task: "chatgpt_opening"
+        save_as: "turn_02"
+        write_to: "performance/02-chatgpt-opening.md"
+      - id: "hey_jude.claude.verse"
+        agent: "claude_harmonizer"
+        task: "claude_verse"
+        save_as: "turn_03"
+        write_to: "performance/03-claude-verse.md"
+      - id: "hey_jude.gemini.verse"
+        agent: "gemini_performer"
+        task: "gemini_verse"
+        save_as: "turn_04"
+        write_to: "performance/04-gemini-verse.md"
+      - id: "hey_jude.deepseek.chorus"
+        agent: "deepseek_patternkeeper"
+        task: "deepseek_chorus"
+        save_as: "turn_05"
+        write_to: "performance/05-deepseek-chorus.md"
+      - id: "hey_jude.layer8.fade"
+        agent: "layer8_bandleader"
+        task: "layer8_fade_cue"
+        save_as: "turn_06"
+        write_to: "performance/06-layer8-fade-cue.md"
+      - id: "hey_jude.chatgpt.chorus"
+        agent: "chatgpt_conductor"
+        task: "chatgpt_chorus"
+        save_as: "turn_07"
+        write_to: "performance/07-chatgpt-chorus.md"
+      - id: "hey_jude.claude.chorus"
+        agent: "claude_harmonizer"
+        task: "claude_chorus"
+        save_as: "turn_08"
+        write_to: "performance/08-claude-chorus.md"
+      - id: "hey_jude.gemini.chorus"
+        agent: "gemini_performer"
+        task: "gemini_chorus"
+        save_as: "turn_09"
+        write_to: "performance/09-gemini-chorus.md"
+      - id: "hey_jude.deepseek.curtain"
+        agent: "deepseek_patternkeeper"
+        task: "deepseek_curtain"
+        save_as: "turn_10"
+        write_to: "performance/10-deepseek-curtain.md"
