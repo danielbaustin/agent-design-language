@@ -13,6 +13,8 @@ pub fn usage() -> &'static str {
   adl identity adversarial-runner [--out <path>]
   adl identity exploit-replay [--out <path>]
   adl identity continuous-verification [--out <path>]
+  adl identity operational-skills [--out <path>]
+  adl identity skill-composition [--out <path>]
   adl identity schema [--out <path>]
   adl identity continuity [--out <path>]
   adl identity retrieval [--out <path>]
@@ -75,6 +77,8 @@ Examples:
   adl demo demo-f-obsmem-retrieval --run --trace --out ./out
   adl demo demo-g-v086-control-path --run --trace --out ./out
   adl demo demo-h-v0891-adversarial-self-attack --run --trace --out .adl/reports/adversarial-demo --no-open
+  adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json
+  adl identity skill-composition --out .adl/state/skill_composition_model_v1.json
   adl provider setup chatgpt
   adl provider setup claude
   adl provider setup anthropic --out ./.adl/provider-setup/anthropic

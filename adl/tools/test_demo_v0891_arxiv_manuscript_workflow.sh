@@ -48,9 +48,9 @@ gates = json.load(open(sys.argv[6], encoding="utf-8"))
 assert manifest["schema_version"] == "adl.v0891.arxiv_manuscript_workflow_demo.v1"
 assert manifest["demo_id"] == "D9"
 assert manifest["disposition"] == "proving_packet_only"
-assert manifest["dependency_truth"]["writer_skill_status"] == "packet_only_dependency_open"
+assert manifest["dependency_truth"]["writer_skill_status"] == "wp08_contract_defined_packet_only"
 assert manifest["security_privacy"]["submits_to_arxiv"] is False
-assert writer["skill_status"] == "packet_only_dependency_open"
+assert writer["skill_status"] == "wp08_contract_defined_packet_only"
 assert writer["runnable_in_this_demo"] is False
 assert [role["order"] for role in writer["role_order"]] == [1, 2, 3, 4, 5]
 assert sources["packet_count"] == 3
@@ -64,7 +64,11 @@ assert {paper["title"] for paper in status["papers"]} == {
     "Cognitive Spacetime Manifold",
 }
 assert any(
-    gate["gate_id"] == "writer_skill_runnable" and gate["status"] == "blocked_by_dependency"
+    gate["gate_id"] == "wp08_writer_contract_defined" and gate["status"] == "pass"
+    for gate in gates["gates"]
+)
+assert any(
+    gate["gate_id"] == "wp13_manuscript_follow_through" and gate["status"] == "not_in_scope"
     for gate in gates["gates"]
 )
 PY

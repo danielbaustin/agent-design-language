@@ -3,7 +3,7 @@
 # ADL Operational Skills Substrate
 
 ## Status
-Draft
+Implemented
 
 ## Purpose
 
@@ -22,6 +22,23 @@ This is the bridge between:
 - the **Trace System** (what actually happened)
 
 ---
+
+## Implemented Surfaces
+
+WP-08 makes the substrate reviewer-visible through a contract module and identity proof hook:
+
+- Contract module: `adl/src/operational_skills_substrate.rs`
+- Identity proof hook: `adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json`
+- Output schema: `operational_skills_substrate.v1`
+- Companion composition hook: `adl identity skill-composition --out .adl/state/skill_composition_model_v1.json`
+
+The implementation defines the phase order, invocation boundary, immutable execution context, composition-runtime mapping, trace/replay model, security boundaries, and a bounded `arxiv-paper-writer` skill surface.
+
+Scope boundary:
+- this is a contract/proof surface for operational skill execution
+- it does not ship autonomous publication
+- it does not implement WP-09 delegation/refusal governance
+- it does not introduce dynamic graph mutation
 
 ## Core Principle
 
@@ -373,6 +390,27 @@ Unauthorized capability use must result in immediate failure.
 
 ---
 
+## Bounded ArXiv Paper Writer Skill
+
+WP-08 includes a bounded `arxiv-paper-writer` skill contract rooted in the Paper Sonata manuscript workflow.
+
+The skill is intentionally constrained:
+- it reads declared source packets
+- it writes outlines, draft sections, citation-gap reports, claim-boundary reports, and review packets
+- it emits citation and claim gaps instead of inventing support
+- it defers authorship and publication decisions to the human owner
+
+Explicitly prohibited:
+- `submit_to_arxiv`
+- `invent_citations`
+- `claim_repo_facts_without_source_packet`
+- hiding human approval requirements
+- converting planning notes into release claims without review
+
+WP-13 owns the later reviewer-facing manuscript packet and three-paper status bundle. WP-08 only makes the writer skill boundary executable and reviewable.
+
+---
+
 ## Composition <-> Substrate Mapping
 
 | Composition Concept | Runtime Behavior |
@@ -432,8 +470,27 @@ This document does not define:
 - dynamic graph mutation
 - autonomous planning
 - long-lived background agents
+- autonomous external publication
 
 These may come later.
+
+---
+
+## Proof Hooks
+
+Contract validation:
+
+```bash
+cargo test --manifest-path adl/Cargo.toml operational_skills_substrate
+```
+
+Reviewer artifact:
+
+```bash
+adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json
+```
+
+The generated artifact is deterministic for the same source tree and can be compared directly during review.
 
 ---
 
@@ -454,8 +511,8 @@ It is:
 
 ## Related Documents
 
-- `SKILL_MODEL.md`
-- `SKILL_COMPOSITION_MODEL.md`
-- `ADL_LEARNING_MODEL.md`
-- `TRACE_SCHEMA_V1.md`
-- `TRACE_RUNTIME_EMISSION.md`
+- `docs/milestones/v0.89.1/features/SKILL_COMPOSITION_MODEL.md`
+- `docs/milestones/v0.89.1/features/ADVERSARIAL_EXECUTION_RUNNER.md`
+- `docs/milestones/v0.89.1/features/CONTINUOUS_VERIFICATION_AND_EXPLOIT_GENERATION.md`
+- `adl/src/operational_skills_substrate.rs`
+- `adl/src/skill_composition_model.rs`

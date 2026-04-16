@@ -7,11 +7,11 @@ three-paper ADL publication program:
 - Gödel Agents and ADL
 - Cognitive Spacetime Manifold
 
-The packet is intentionally honest about dependency state. The bounded
-`arxiv-paper-writer` skill belongs to WP-08 issue `#1929`, which is still open
-for this execution slice. This demo therefore proves the source packet,
-role/order, review-gate, and manuscript-status shape without pretending final
-arXiv submission or a completed writer skill.
+The packet is intentionally honest about scope. The bounded
+`arxiv-paper-writer` contract belongs to WP-08 issue `#1929`, while WP-13 owns
+the final manuscript packet and publication follow-through. This demo therefore
+proves the source packet, role/order, review-gate, and manuscript-status shape
+without pretending final arXiv submission or completed manuscript delivery.
 
 ## Command
 
@@ -43,8 +43,8 @@ artifacts/v0891/arxiv_manuscript_workflow/
 - The workflow role order is explicit before any future drafting step.
 - Claim boundaries are reviewable and separate repo-supported claims from future
   work.
-- The WP-08 dependency is recorded truthfully instead of faking a runnable
-  `arxiv-paper-writer` skill.
+- The WP-08 writer contract and WP-13 manuscript boundary are recorded
+  truthfully instead of faking a full publication workflow.
 
 ## What It Does Not Claim
 
@@ -52,4 +52,4 @@ artifacts/v0891/arxiv_manuscript_workflow/
 - It does not claim submission-ready manuscripts.
 - It does not require private credentials, hidden chat transcripts, or local
   control-plane notes.
-- It does not complete the WP-08 writer skill.
+- It does not complete WP-13 manuscript follow-through.

@@ -164,7 +164,7 @@ fn identity_requires_subcommand_and_rejects_unknown_subcommand() {
     let err = real_identity_in_repo(&[], &repo).expect_err("missing subcommand should fail");
     assert!(err
         .to_string()
-        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | continuous-verification | schema"));
+        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | continuous-verification | operational-skills | skill-composition | schema"));
     assert!(err.to_string().contains("continuity"));
 
     let err = real_identity_in_repo(&["nope".to_string()], &repo)
@@ -205,6 +205,16 @@ fn identity_top_level_help_and_subcommand_help_succeed() {
         &repo,
     )
     .expect("continuous-verification help");
+    real_identity_in_repo(
+        &["operational-skills".to_string(), "--help".to_string()],
+        &repo,
+    )
+    .expect("operational-skills help");
+    real_identity_in_repo(
+        &["skill-composition".to_string(), "--help".to_string()],
+        &repo,
+    )
+    .expect("skill-composition help");
     real_identity_in_repo(&["schema".to_string(), "--help".to_string()], &repo)
         .expect("schema help");
     real_identity_in_repo(&["continuity".to_string(), "--help".to_string()], &repo)
@@ -777,6 +787,152 @@ fn identity_continuous_verification_validates_unknown_args_and_missing_out_value
 
     let err = real_identity_in_repo(
         &["continuous-verification".to_string(), "--out".to_string()],
+        &repo,
+    )
+    .expect_err("out flag without value should fail");
+    assert!(err.to_string().contains("--out requires a value"));
+}
+
+#[test]
+fn identity_operational_skills_writes_contract_json() {
+    let _guard = TEST_MUTEX
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    let repo = temp_repo("identity-operational-skills");
+    let out_path = repo.join(".adl/state/operational_skills_substrate_v1.json");
+
+    real_identity_in_repo(
+        &[
+            "operational-skills".to_string(),
+            "--out".to_string(),
+            ".adl/state/operational_skills_substrate_v1.json".to_string(),
+        ],
+        &repo,
+    )
+    .expect("identity operational-skills");
+
+    let json: Value =
+        serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
+    assert_eq!(json["schema_version"], "operational_skills_substrate.v1");
+    assert_eq!(
+        json["proof_hook_output_path"],
+        ".adl/state/operational_skills_substrate_v1.json"
+    );
+    assert_eq!(json["execution_phases"][0]["phase_id"], "plan");
+    assert_eq!(json["execution_phases"][4]["phase_id"], "commit");
+    assert!(json["invocation_boundary"]["required_fields"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "trace_correlation_id"));
+    assert!(json["bounded_arxiv_paper_writer"]["prohibited_actions"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "submit_to_arxiv"));
+    assert!(json["review_surface"]["downstream_boundaries"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value.as_str().expect("string").contains("WP-09")));
+    assert!(json["owned_runtime_surfaces"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "adl identity operational-skills"));
+}
+
+#[test]
+fn identity_operational_skills_validates_unknown_args_and_missing_out_value() {
+    let repo = temp_repo("identity-operational-skills-errors");
+
+    let err = real_identity_in_repo(
+        &["operational-skills".to_string(), "--bogus".to_string()],
+        &repo,
+    )
+    .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for identity operational-skills: --bogus"));
+
+    let err = real_identity_in_repo(
+        &["operational-skills".to_string(), "--out".to_string()],
+        &repo,
+    )
+    .expect_err("out flag without value should fail");
+    assert!(err.to_string().contains("--out requires a value"));
+}
+
+#[test]
+fn identity_skill_composition_writes_contract_json() {
+    let _guard = TEST_MUTEX
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    let repo = temp_repo("identity-skill-composition");
+    let out_path = repo.join(".adl/state/skill_composition_model_v1.json");
+
+    real_identity_in_repo(
+        &[
+            "skill-composition".to_string(),
+            "--out".to_string(),
+            ".adl/state/skill_composition_model_v1.json".to_string(),
+        ],
+        &repo,
+    )
+    .expect("identity skill-composition");
+
+    let json: Value =
+        serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
+    assert_eq!(json["schema_version"], "skill_composition_model.v1");
+    assert_eq!(
+        json["proof_hook_output_path"],
+        ".adl/state/skill_composition_model_v1.json"
+    );
+    assert!(json["primitive_order"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "adjudication"));
+    assert!(json["graph_contract"]["prohibited_shapes"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "dynamic_graph_mutation_after_plan_phase"));
+    assert!(json["bounded_arxiv_writer_composition"]["gates"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value
+            .as_str()
+            .expect("string")
+            .contains("human_publication_gate")));
+    assert!(json["review_surface"]["downstream_boundaries"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value.as_str().expect("string").contains("WP-13")));
+    assert!(json["owned_runtime_surfaces"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "adl identity skill-composition"));
+}
+
+#[test]
+fn identity_skill_composition_validates_unknown_args_and_missing_out_value() {
+    let repo = temp_repo("identity-skill-composition-errors");
+
+    let err = real_identity_in_repo(
+        &["skill-composition".to_string(), "--bogus".to_string()],
+        &repo,
+    )
+    .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for identity skill-composition: --bogus"));
+
+    let err = real_identity_in_repo(
+        &["skill-composition".to_string(), "--out".to_string()],
         &repo,
     )
     .expect_err("out flag without value should fail");
