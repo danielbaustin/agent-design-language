@@ -28,11 +28,13 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 - [ ] Green-only merge policy followed
 
 ## Quality Gates
-- [ ] `cargo fmt` passes
-- [ ] `cargo clippy --all-targets -- -D warnings` passes
-- [ ] `cargo test` passes
-- [ ] CI is green on the merge target
-- [ ] Coverage signal is not red (or exception documented)
+- [x] `cargo fmt` passes
+- [x] `cargo clippy --all-targets -- -D warnings` passes
+- [x] `cargo test` passes
+- [x] CI is green on the merge target
+- [x] Coverage signal is not red (or exception documented)
+- [x] Quality gate documented (`QUALITY_GATE_v0.89.1.md`)
+- [x] D10 quality-gate walkthrough passes (`bash adl/tools/demo_v0891_quality_gate.sh`)
 - [ ] No unresolved high-priority blockers remain at release time
 
 ## Release Packaging
@@ -53,8 +55,8 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 
 At the moment this checklist should be read as:
 - planning-complete and review-ready
-- issue wave opened; `WP-02` - `WP-11` landed and `WP-12` is the active convergence gate
-- integration demos, manuscript packet completion, quality, docs/review, internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony are still unchecked release-tail work
+- issue wave opened; `WP-02` - `WP-13` landed and `WP-14` is the active quality gate
+- docs/review, internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony are still unchecked release-tail work
 - execution, review, and release gates still future work
 
 ## Exit Criteria

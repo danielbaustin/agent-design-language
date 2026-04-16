@@ -73,6 +73,7 @@ Canonical milestone documents:
 - Sprint plan: `SPRINT_v0.89.1.md`
 - Decisions log: `DECISIONS_v0.89.1.md`
 - Demo matrix: `DEMO_MATRIX_v0.89.1.md`
+- Quality gate: `QUALITY_GATE_v0.89.1.md`
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.89.1.md`
 - Release plan / process: `RELEASE_PLAN_v0.89.1.md`
 - Release notes: `RELEASE_NOTES_v0.89.1.md`
@@ -129,6 +130,7 @@ Additional validation surfaces:
 - WP-13 demo integration package: `bash adl/tools/demo_v0891_wp13_demo_integration.sh`
 - five-agent Hey Jude MIDI demo: `bash adl/tools/demo_v0891_five_agent_hey_jude.sh`
 - three-paper manuscript workflow packet: `bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh`
+- quality gate walkthrough: `bash adl/tools/demo_v0891_quality_gate.sh`
 - quality-gate and review issue outputs
 
 Success criteria:
@@ -162,12 +164,12 @@ Open questions:
 
 ## Status
 
-Current status: canonical planning package complete; official issue wave opened; `WP-02` - `WP-11` landed; `WP-12` is the active convergence gate before integration demos, quality, review, next-milestone planning, and release closure.
+Current status: canonical planning package complete; official issue wave opened; `WP-02` - `WP-13` landed; `WP-14` now provides the quality-gate surface before docs/review, internal review, 3rd-party review, remediation, next-milestone planning, and release closure.
 
 - Planning: canonical package completed in `#1860`, with visible `WP-01` anchor issue `#1922` and `#1806` landing the tracked next-milestone package from the `v0.89` side
-- Execution: issue wave opened through `#1921`; `WP-02` - `WP-11` are closed on the live tracker, `WP-12` is active as `#1933`, and `WP-13` - `WP-20` remain the release-tail queue
-- Validation: partial; the adversarial/runtime, exploit/replay, verification, skill/governance, provider-packaging, and proof-entry-point surfaces exist, while integration demos, quality, review, remediation, next-milestone handoff, and release ceremony remain open
-- Release readiness: pre-release; the milestone has a converged proof package, but not a release candidate
+- Execution: issue wave opened through `#1921`; `WP-02` - `WP-13` are closed on the live tracker, `WP-14` owns the quality-gate issue as `#1935`, and `WP-15` - `WP-20` remain the release-tail queue
+- Validation: partial; the adversarial/runtime, exploit/replay, verification, skill/governance, provider-packaging, proof-entry-point, integration-demo, manuscript workflow, and quality-gate surfaces exist, while review, remediation, next-milestone handoff, and release ceremony remain open
+- Release readiness: pre-release; the milestone has a converged proof package and a quality gate surface, but not a release candidate
 
 Current issue map:
 - `WP-01` anchor: `#1922`
@@ -186,13 +188,13 @@ Currently landed:
 - `WP-09` `#1930`
 - `WP-10` `#1931`
 - `WP-11` `#1932`
+- `WP-12` `#1933`
+- `WP-13` `#1934`
 
 Active:
-- `WP-12` `#1933`
+- `WP-14` `#1935`
 
 Still queued:
-- `WP-13` `#1934`
-- `WP-14` `#1935`
 - `WP-15` `#1936`
 - `WP-16` `#1937`
 - `WP-17` `#1938`
@@ -203,8 +205,9 @@ Still queued:
 ## Kickoff Posture
 
 The active release-tail posture is:
-- use the landed `WP-02` - `WP-11` proof surfaces as the starting point for `WP-13`, not as material to redesign
-- keep the five-agent Hey Jude integration demo and the three-paper manuscript packet owned by `WP-13`
+- use the landed `WP-02` - `WP-13` proof surfaces as the starting point for the quality and review tail, not as material to redesign
+- keep the five-agent Hey Jude integration demo and the three-paper manuscript packet as landed `WP-13` proof inputs
+- use `QUALITY_GATE_v0.89.1.md` plus `bash adl/tools/demo_v0891_quality_gate.sh` as the `WP-14` quality-gate proof surface
 - keep full provider-security extension, broader long-lived-agent runtime work, and later governance/identity themes outside `v0.89.1`
 - preserve the settled `v0.89` / `v0.89.1` boundary rather than reabsorbing adversarial/runtime work back into `v0.89`
 

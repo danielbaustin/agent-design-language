@@ -50,10 +50,8 @@ jobs:
         id: report
         env:
           FILE_THRESHOLD: "80"
-          # Keep nightly per-file ratchet focused on canonical runtime surfaces.
-          # Compatibility shim bins are covered by integration tests and the
-          # workspace 90% gate, but are excluded from per-file floor enforcement.
-          EXCLUDE_FROM_FILE_FLOOR_REGEX: "/adl/src/obsmem_contract.rs$"
+          # Keep nightly aligned with the merge gate: no active per-file exclusion.
+          EXCLUDE_FROM_FILE_FLOOR_REGEX: "^$"
         run: |
           set -euo pipefail
 
@@ -158,7 +156,7 @@ jobs:
             echo
             echo "## Notes"
             echo "- This GitHub Actions workflow is a scheduled watchdog/reporter."
-            echo '- Per-file floor excludes `adl/src/obsmem_contract.rs`; workspace 90% gate remains enforced in CI.'
+            echo "- No active per-file exclusion is configured; workspace 90% and per-file 80% posture matches the merge gate."
             echo "- Code-changing ratchet work (test authoring + PRs) is still handled by Codex automation."
           } > "$report_path"
 
