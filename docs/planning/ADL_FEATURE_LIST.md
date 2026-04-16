@@ -48,15 +48,15 @@ can survive code review, ops review, and postmortem analysis.
 ## Current Repo Status
 
 The current repo truth is:
-- active milestone: `v0.88`
-- current crate version on `main`: `0.88.0`
-- most recently completed runtime-completion milestone package: `v0.87.1`
-- most recently completed substrate milestone package: `v0.87`
+- active milestone: `v0.89.1`
+- current crate version on `main`: `0.89.0`
+- most recently completed governed-adaptation milestone package: `v0.89`
+- most recently completed runtime-completion milestone package before that: `v0.87.1`
 
 That means the feature story should be read this way:
-- `v0.7` through `v0.87.1` provide the implemented platform baseline
-- `v0.88` is an active, materially landed milestone in review/remediation/closeout
-- `v0.89` through `v0.95` are the next planned capability bands
+- `v0.7` through `v0.89` provide the implemented platform baseline
+- `v0.89.1` is the active adversarial/runtime and publication-skills follow-on band
+- `v0.90` through `v0.95` are the next planned capability bands
 
 ## ADL at a Glance
 
@@ -93,25 +93,27 @@ ADL already provides a serious platform baseline:
 | Editor and command-adapter surfaces | Implemented baseline | editor docs, demos, bounded command adapters | Deepen through `v0.95` |
 | Review and validation surfaces | Implemented baseline | reviewer contracts, validation tools, review packages | Deepen through `v0.95` |
 | Task-bundle workflow | Implemented baseline | issue/task bundles and public execution records | Deepen through `v0.95` |
-| Bounded Godel loop | Implemented baseline | `v0.8` runtime artifacts, demos, experiment surfaces | Deepen through `v0.89` |
-| ObsMem indexing and retrieval | Implemented baseline | `v0.8` / `v0.87` proof surfaces and shared memory docs | Deepen through `v0.88+` |
+| Bounded Godel loop | Implemented baseline | `v0.8` runtime artifacts, demos, experiment surfaces, `v0.89` experiment package | Deepen through later reasoning/provenance work |
+| ObsMem indexing, retrieval, and evidence-aware ranking | Implemented baseline | `v0.8` / `v0.87` proof surfaces plus `v0.89` D6 retrieval/ranking proof | Deeper memory architecture remains later work |
 | Shared ObsMem foundation | Implemented baseline | `v0.87` shared-memory docs and proof surfaces | Deepen with identity/continuity |
 | Bounded cognitive path | Implemented baseline | `v0.86` cognitive demo/artifact package | Deepen through `v0.88+` |
-| Freedom Gate baseline | Implemented baseline | `v0.86` bounded cognitive proof path | Deepen through `v0.89` |
+| Freedom Gate baseline | Implemented baseline | `v0.86` bounded cognitive proof path | Complete baseline |
+| Freedom Gate v2 | Implemented baseline | `v0.89` judgment-boundary and gate proof surfaces | Deepen through adversarial/governance bands |
 | Trace substrate | Implemented baseline | `v0.87` trace docs and reviewer-facing proof surfaces | Signed/query completion in `v0.90` |
 | Operational skills substrate | Implemented baseline | `v0.87` skills/control-plane docs and operational demos | Harden through `v0.95` |
 | Runtime environment and lifecycle completion | Implemented baseline | `v0.87.1` runtime docs, demos, and review package | Deepen through later hardening |
 | Local runtime resilience and Shepherd preservation | Implemented baseline | `v0.87.1` resilience and preservation docs/demos | Deepen through later runtime work |
-| Chronosense / temporal substrate | Active milestone | `v0.88` feature package and review surfaces | `v0.88` |
-| Commitments, deadlines, and bounded temporal causality | Active milestone | `v0.88` feature docs and reviewer package | `v0.88` |
-| PHI-style integration metrics | Active milestone | `v0.88` feature docs and review surfaces | `v0.88` |
-| Instinct and bounded agency | Active milestone | `v0.88` feature docs, instinct review surface, Paper Sonata | `v0.88` |
-| Paper Sonata public-facing proof surface | Active milestone | `demo_v088_paper_sonata.sh` and milestone docs | `v0.88` |
-| Deep-agents comparative proof | Active milestone | `demo_v088_deep_agents_comparative_proof.sh` and feature doc | `v0.88` |
-| AEE 1.0 convergence | Partially implemented | bounded recovery/AEE proof surfaces and planning docs | `v0.89` |
-| Freedom Gate v2 | Planned | baseline Freedom Gate plus `v0.89` planning docs | `v0.89` |
-| Decision, action, and skill-governance surfaces | Planned | `v0.89` planning package | `v0.89` |
-| Security, posture, and trust-under-adversary package | Planned | `v0.89` planning package | `v0.89` / `v0.89.1` |
+| Chronosense / temporal substrate | Implemented baseline | `v0.88` feature package and review surfaces | Deepen through later identity/governance bands |
+| Commitments, deadlines, and bounded temporal causality | Implemented baseline | `v0.88` feature docs and reviewer package | Deepen through later governance bands |
+| PHI-style integration metrics | Implemented baseline | `v0.88` feature docs and review surfaces | Deepen through later evaluation bands |
+| Instinct and bounded agency | Implemented baseline | `v0.88` feature docs, instinct review surface, Paper Sonata | Deepen through later agency/governance bands |
+| Paper Sonata public-facing proof surface | Implemented baseline | `demo_v088_paper_sonata.sh` and milestone docs | Deepen through writing/publication skills |
+| Deep-agents comparative proof | Implemented baseline | `demo_v088_deep_agents_comparative_proof.sh` and `v0.89` follow-on demo docs | Future public-positioning wave if promoted |
+| AEE 1.0 convergence | Implemented baseline | `v0.89` `control_path/convergence.json`, D1 proof row, feature doc | Consume and extend in later bands |
+| Decision, action, and skill-governance surfaces | Implemented baseline | `v0.89` decision/action/skill docs, runtime/proof surfaces | Deepen through `v0.89.1+` |
+| Security, posture, and trust-under-adversary package | Implemented baseline | `v0.89` security posture package and proof surfaces | Adversarial runtime in `v0.89.1` |
+| Adversarial runtime, exploit/replay, and self-attack band | Active milestone | `v0.89.1` issue wave and feature package | `v0.89.1` |
+| arXiv paper writer and three-paper program | Active milestone | `v0.89.1` skills/publication package | `v0.89.1` |
 | Reasoning graph baseline | Planned | planning/schema/proof surfaces | `v0.90` |
 | Signed trace and trace query | Planned | roadmap and planning docs | `v0.90` |
 | Affect, kindness, moral cognition, humor | Planned | `v0.91` planning docs | `v0.91` |
@@ -189,13 +191,12 @@ cognitive proof surfaces:
 These are not disconnected demos. Together they form the core of ADL’s claim
 that bounded adaptive systems can be both powerful and reviewable.
 
-## Current Active Milestone: v0.88
+## Recently Completed Milestone Bands
 
-`v0.88` is not just planning work. It is an active, materially landed milestone
-whose implementation wave is complete through `WP-13`, with docs/review/
-remediation/release-tail work still in progress.
+### v0.88 - Temporal and Bounded Agency Substrate
 
-This milestone adds two major bounded bands:
+`v0.88` is complete as a materially landed milestone package. It added two
+major bounded bands:
 - temporal / chronosense substrate
 - instinct / bounded agency substrate
 
@@ -210,21 +211,36 @@ High-signal `v0.88` achievements include:
 - a full internal repo-code-review pass completed before 3rd-party review
 
 So the truthful `v0.88` story is:
-- core implementation: materially landed
-- review/remediation/closeout: still active
+- core implementation: landed
+- review/remediation/closeout: completed through the milestone closeout flow
 - milestone value: already very real
-
-## Major Capability Bands Still to Come
 
 ### v0.89 - Governed Adaptive Execution
 
-`v0.89` is the band where ADL should turn governed adaptation into a first-class
-platform package:
+`v0.89` turned governed adaptation into a first-class platform package:
 - AEE 1.0 convergence
 - Freedom Gate v2
 - explicit decision and action mediation surfaces
 - skill execution contracts
-- security, trust, and posture planning serious enough to support adversarial work
+- security, trust, and posture surfaces serious enough to support adversarial work
+
+The bounded v0.89 story is implemented baseline, not universal completion of
+every future adaptive-system idea. Later milestones should consume and deepen
+these surfaces rather than restating them as unbuilt from scratch.
+
+## Current Active Milestone: v0.89.1
+
+`v0.89.1` is the active follow-on milestone. Its useful work is not cosmetic:
+it prepares ADL for adversarial runtime discipline and public research-output
+discipline after the v0.89 closeout.
+
+The current active bands are:
+- adversarial runtime, exploit replay, and self-attack proof discipline
+- arXiv paper-writing skill creation and the three-paper writing program
+- continued workflow/tooling discipline that lets sprint work move quickly
+  without losing issue, PR, or review truth
+
+## Major Capability Bands Still to Come
 
 ### v0.90 - Reasoning Graph, Signed Trace, and Query
 
@@ -271,7 +287,7 @@ The planning corpus already points toward a serious economics band:
 - market and settlement surfaces
 
 This is an important future platform direction, even though it is not part of
-the current `v0.88` closure band.
+the current `v0.89.1` execution band.
 
 ### v0.94 - Integration and Dependency Closure
 
@@ -308,12 +324,12 @@ ADL already has a substantial platform:
 - structured authoring and control-plane workflow
 - operational skills
 - bounded Godel, ObsMem, and cognitive proof paths
-- active temporal and bounded-agency milestone work
+- completed temporal, bounded-agency, and governed-adaptation milestone work
+- active adversarial-runtime and publication-skill follow-on work
 
 What remains through `v0.95` is not random feature accumulation. It is a
 deliberate convergence path:
-- finish `v0.88` cleanly
-- make governed adaptation explicit in `v0.89`
+- execute `v0.89.1` quickly without losing issue/PR/review discipline
 - deepen reasoning and provenance in `v0.90`
 - add affect, identity, governance, and economics in bounded later bands
 - close the MVP as a serious, reviewable agent-runtime platform
