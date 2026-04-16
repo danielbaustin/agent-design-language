@@ -46,6 +46,11 @@ WP-08 proof hooks:
 
 The bounded `arxiv-paper-writer` skill is part of the WP-08 operational substrate and composition contracts. The later three-paper manuscript packet remains owned by `WP-13`.
 
+WP-09 proof hook:
+- `adl identity delegation-refusal-coordination --out .adl/state/delegation_refusal_coordination_v1.json`
+
+The local delegation/refusal and negotiation notes remain supporting inputs rather than promoted feature docs. WP-09 integrates their bounded runtime distinctions into a repo-visible contract so reviewers can see delegation, refusal, approval gates, and coordination outcomes without over-claiming final constitutional or negotiation governance.
+
 ## Source Planning Corpus -> Implementation Home
 
 ### Core `v0.89.1` source docs
@@ -62,9 +67,9 @@ The bounded `arxiv-paper-writer` skill is part of the WP-08 operational substrat
 | `ADL_ADVERSARIAL_DEMO.md` | promoted | `v0.89.1 / WP-07` |
 | `OPERATIONAL_SKILLS_SUBSTRATE.md` | promoted | `v0.89.1 / WP-08` |
 | `SKILL_COMPOSITION_MODEL.md` | promoted | `v0.89.1 / WP-08` |
-| `DELEGATION_AND_REFUSAL.md` | supporting planning input | informs `WP-09` governance boundary work |
-| `MULTI_AGENT_NEGOTIATION.md` | supporting planning input | informs `WP-09` coordination and disagreement surfaces |
-| `PROPOSED_OPERATIONAL_SKILLS.md` | supporting planning input | informs `WP-08` and `WP-09` skill-surface packaging |
+| `DELEGATION_AND_REFUSAL.md` | supporting planning input | integrated into the bounded `WP-09` delegation/refusal/coordination contract without promotion as a standalone feature doc |
+| `MULTI_AGENT_NEGOTIATION.md` | supporting planning input | integrated into the bounded `WP-09` coordination and disagreement surface without final negotiation-law claims |
+| `PROPOSED_OPERATIONAL_SKILLS.md` | supporting planning input | informs `WP-08` skill-surface packaging and the `WP-09` skill-admission/handoff governance contract |
 | local arXiv paper-program planning doc | supporting planning input | informs the committed `WP-08` bounded `arxiv-paper-writer` skill and the `WP-13` three-paper publication packet |
 | `ADL_SECURITY_DEMOS.md` | under-authored supporting input | do not promote until authored; informs later demo packaging |
 | `PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md` | under-authored supporting input | do not promote until authored; candidate later security-extension slice |
