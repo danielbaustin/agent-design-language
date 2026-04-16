@@ -64,8 +64,13 @@ WP-11 makes the demo matrix copy/paste-ready by collecting the landed adversaria
 WP-12 convergence note:
 - the promoted feature-doc band is considered landed through `WP-11`
 - remaining `v0.89.1` work should consume these feature docs as source-of-truth proof surfaces rather than reopening their scope
-- `WP-13` still owns integration demos, the five-agent Hey Jude demo, and the three-paper manuscript packet
+- `WP-13` consumes this convergence in the integration demo package, five-agent Hey Jude demo, and three-paper manuscript packet
 - full provider-security extension, broader long-lived-agent runtime work, and later governance/identity themes remain follow-on scope outside this milestone
+
+WP-13 proof hook:
+- `bash adl/tools/demo_v0891_wp13_demo_integration.sh`
+
+WP-13 lands the D7/D8/D9 integration packet, the five-agent Hey Jude MIDI demo, and the bounded three-paper manuscript workflow packet. It records the no-submission boundary for the publication track and consumes the merged WP-12 convergence state without reopening feature scope.
 
 ## Source Planning Corpus -> Implementation Home
 

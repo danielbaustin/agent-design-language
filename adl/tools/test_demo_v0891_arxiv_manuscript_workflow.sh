@@ -68,7 +68,7 @@ assert any(
     for gate in gates["gates"]
 )
 assert any(
-    gate["gate_id"] == "wp13_manuscript_follow_through" and gate["status"] == "not_in_scope"
+    gate["gate_id"] == "wp13_manuscript_packet" and gate["status"] == "pass"
     for gate in gates["gates"]
 )
 PY

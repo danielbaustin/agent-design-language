@@ -77,9 +77,9 @@ Additional environment / fixture requirements:
 | D4 | Self-attack scenario packet | `WP-06` self-attacking systems as architecture rather than rhetoric | `adl identity continuous-verification --out .adl/state/continuous_verification_self_attack_v1.json` | self-attack contract artifact with bounded layers, target/posture policy, and evidence/replay rules | reviewer can see the system's self-attack pattern before externalization and inspect the required evidence chain | scenario should remain posture-bounded and replay-legible | LANDED |
 | D5 | Flagship adversarial demo | `WP-07` full exploit -> replay -> mitigation -> promotion loop | `adl demo demo-h-v0891-adversarial-self-attack --run --trace --out .adl/reports/adversarial-demo --no-open` | `.adl/reports/adversarial-demo/demo-h-v0891-adversarial-self-attack/review_packet.json` | reviewer can answer what was attacked, how it was reproduced, what mitigation was applied, and whether replay post-fix succeeded | deterministic local replay compares the same request before and after mitigation | LANDED |
 | D6 | Operational skills substrate integration | `WP-08` - `WP-09` operational skills, composition, and bounded governance follow-through | `adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json`, `adl identity skill-composition --out .adl/state/skill_composition_model_v1.json`, and `adl identity delegation-refusal-coordination --out .adl/state/delegation_refusal_coordination_v1.json` | substrate/composition/governance contract packets | reviewer can see that adversarial work runs through explicit skill/composition surfaces with bounded delegation, refusal, approval-gate, and coordination outcomes | orchestration structure and governance outcome taxonomy should be deterministic even if node outputs remain stochastic | LANDED |
-| D7 | Reviewer-facing security proof package | `WP-10` - `WP-13` packaging convergence, milestone convergence, and integration demos | `adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json` and `adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json` | provider-extension packaging packet + demo proof entry-point packet | reviewer can inspect milestone claims, carry-forward boundaries, and proof surfaces as one coherent package | `WP-10` and `WP-11` proof packets are deterministic; `WP-13` integration demos remain later work | PARTIAL |
-| D8 | Five-Agent Hey Jude MIDI demo | `WP-08` - `WP-10`, `WP-13` cross-provider coordination, human-in-the-loop orchestration, and integration delight surface | planned `WP-08` / `WP-13` coordination demo entry point | Hey Jude coordination packet + MIDI control trace + provider participation summary | reviewer can see one human plus four providers coordinating on one ADL runtime with explicit orchestration boundaries | bounded score/input should preserve composition shape, participant roles, and MIDI event ordering where declared | PLANNED |
-| D9 | ArXiv manuscript workflow packet | `WP-08`, `WP-13` bounded `arxiv-paper-writer` skill plus the initial three-paper publication program | `bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh` | `artifacts/v0891/arxiv_manuscript_workflow/demo_manifest.json` | reviewer can see the bounded manuscript workflow packet for What Is ADL?, Gödel Agents and ADL, and Cognitive Spacetime Manifold without losing claim discipline or hiding the WP-08/WP-13 boundary | packet generation is deterministic; bounded source packets preserve role order, section structure, and packet shape | READY |
+| D7 | Reviewer-facing security proof package | `WP-10` - `WP-13` packaging convergence, milestone convergence, and integration demos | `adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json`, `adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json`, and `bash adl/tools/demo_v0891_wp13_demo_integration.sh` | provider-extension packaging packet + demo proof entry-point packet + WP-13 integration manifest | reviewer can inspect milestone claims, carry-forward boundaries, D8, and D9 as one coherent package | identity packets and the WP-13 integration packet are deterministic; heavyweight child demos remain replayable through their own test commands | LANDED |
+| D8 | Five-Agent Hey Jude MIDI demo | `WP-08` - `WP-10`, `WP-13` cross-provider coordination, human-in-the-loop orchestration, and integration delight surface | `bash adl/tools/demo_v0891_five_agent_hey_jude.sh` | `artifacts/v0891/five_agent_hey_jude/performance_manifest.json` plus MIDI and participation artifacts | reviewer can see one human plus four providers coordinating on one ADL runtime with explicit orchestration boundaries | fixture-backed MVAVE Chocolate events preserve cue order and artifact shape | LANDED |
+| D9 | ArXiv manuscript workflow packet | `WP-08`, `WP-13` bounded `arxiv-paper-writer` skill plus the initial three-paper publication program | `bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh` | `artifacts/v0891/arxiv_manuscript_workflow/demo_manifest.json` plus `manuscript_status/three_paper_status.json` | reviewer can see the bounded manuscript workflow packet for What Is ADL?, Gödel Agents and ADL, and Cognitive Spacetime Manifold without losing claim discipline or hiding the WP-08/WP-13 boundary | packet generation is deterministic; bounded source packets preserve role order, section structure, packet shape, and no-submission boundary | LANDED |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -91,9 +91,9 @@ Status guidance:
 Current planning truth:
 - the `v0.89.1` issue wave is open
 - rows `D1` through `D6` are landed from `WP-02` - `WP-09`
-- row `D7` is partial because the `WP-10` and `WP-11` proof packets exist, while `WP-12` / `WP-13` release-tail packaging is still active
-- row `D8` remains planned for `WP-13`
-- row `D9` is ready as a bounded manuscript workflow packet, with final three-paper manuscript convergence still owned by `WP-13`
+- row `D7` is landed through the `WP-10` / `WP-11` proof packets, `WP-12` convergence, and the `WP-13` integration packet
+- row `D8` is landed as a bounded five-agent Hey Jude MIDI integration demo
+- row `D9` is landed as a bounded manuscript workflow packet with final arXiv submission still out of scope
 - this matrix is a convergence surface for review-tail execution, not permission to claim later demo work before it exists
 
 Heavyweight proof-package rule:
@@ -338,26 +338,30 @@ Entry point:
 ```bash
 adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json
 adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json
+bash adl/tools/demo_v0891_wp13_demo_integration.sh
 ```
 
 Expected artifacts:
 - provider extension packaging contract packet
 - demo proof entry-point packet
+- WP-13 demo integration manifest
 - reviewer-facing adversarial/replay/trust packet index
 - milestone convergence and carry-forward note
 
 Primary proof surface:
 - `.adl/state/provider_extension_packaging_v1.json`
 - `.adl/state/demo_proof_entry_points_v1.json`
+- `artifacts/v0891/wp13_demo_integration/integration_manifest.json`
 
 Expected success signals:
 - reviewer can inspect the milestone as one coherent adversarial/runtime package
 - boundary with `v0.89` remains explicit and defensible
 - provider-security extension work is visible as deferred rather than silently promoted
+- D8 and D9 have runnable/testable proof entries rather than planned placeholders
 
 Known limits / caveats:
 - this is a heavyweight proof package and should not be confused with a quick demo row
-- `WP-11` lands the proof entry-point package, while `WP-13` still owns broader integration demo convergence
+- `WP-12` convergence has landed; `WP-13` consumes that convergence rather than closing or replacing WP-12
 - `WP-10` does not implement provider attestation, trust scoring, network posture enforcement, secret lifecycle enforcement, provider sandboxing, or external provider-security demos
 
 ---
@@ -374,35 +378,44 @@ Milestone claims / work packages covered:
 - `WP-10`
 - `WP-13`
 
-Planned entry point:
+Entry point:
 
 ```bash
-Defined when the official coordination/integration demo issues land.
+bash adl/tools/demo_v0891_five_agent_hey_jude.sh
 ```
 
 Expected artifacts:
-- Hey Jude coordination packet
-- MIDI control trace or event summary
-- provider participation and orchestration packet
-- reviewer-facing integration summary
+- `artifacts/v0891/five_agent_hey_jude/performance_manifest.json`
+- `artifacts/v0891/five_agent_hey_jude/cast.json`
+- `artifacts/v0891/five_agent_hey_jude/section_plan.json`
+- `artifacts/v0891/five_agent_hey_jude/cue_timeline.json`
+- `artifacts/v0891/five_agent_hey_jude/transcript.md`
+- `artifacts/v0891/five_agent_hey_jude/midi_event_log.json`
+- `artifacts/v0891/five_agent_hey_jude/provider_participation_summary.json`
+- `artifacts/v0891/five_agent_hey_jude/runtime/runs/v0-89-1-five-agent-hey-jude-midi-demo/run_summary.json`
 
 Primary proof surface:
-- five-agent Hey Jude demo packet
+- five-agent Hey Jude demo packet under `artifacts/v0891/five_agent_hey_jude/`
 
 Expected success signals:
 - reviewer can see human-in-the-loop orchestration rather than passive provider fan-out
 - cross-provider participation is explicit and bounded
 - the demo is charming without becoming structurally vague
 
+Validation:
+
+```bash
+bash adl/tools/test_demo_v0891_five_agent_hey_jude.sh
+```
+
 Source planning inputs:
 - `docs/planning/NEXT_MILESTONE_DEMO_CANDIDATES.md`
-- local Hey Jude planning memo
-- local Hey Jude implementation plan
-- local next-milestone candidate note
+- bounded demo doc: `demos/v0.89.1/five_agent_hey_jude_midi_demo.md`
 
 Known limits / caveats:
 - this row is a flagship delight/integration surface, not the core exploit/replay proof row
 - it should remain bounded and reviewer-legible rather than turning into an open-ended performance artifact
+- it uses section cues rather than storing a full lyric sheet in tracked repo artifacts
 
 ---
 
@@ -443,7 +456,13 @@ Expected success signals:
 - the paper workflow preserves claim discipline and distinguishes repo truth from future direction
 - the milestone can show real manuscript progress without pretending autonomous publication
 
+Validation:
+
+```bash
+bash adl/tools/test_demo_v0891_arxiv_manuscript_workflow.sh
+```
+
 Known limits / caveats:
 - this row is about bounded drafting and review workflow, not automatic submission or unverifiable authorship claims
-- WP-08 defines the writer skill and composition boundary; WP-13 still owns the three-paper manuscript status packet and publication follow-through
+- WP-08 defines the writer skill and composition boundary; WP-13 lands the three-paper manuscript status packet while leaving final arXiv submission out of scope
 - the WP-08 proof hooks are `adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json` and `adl identity skill-composition --out .adl/state/skill_composition_model_v1.json`

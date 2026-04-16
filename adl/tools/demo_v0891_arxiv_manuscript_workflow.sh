@@ -139,7 +139,7 @@ writer_status = {
     "dependency_issue": "#1929",
     "skill_status": "wp08_contract_defined_packet_only",
     "runnable_in_this_demo": False,
-    "execution_truth": "WP-08 issue #1929 defines the bounded arxiv-paper-writer contract; D9 demonstrates the manuscript workflow packet without claiming final writer execution or arXiv submission.",
+    "execution_truth": "WP-08 issue #1929 defines the bounded arxiv-paper-writer contract; D9 demonstrates the WP-13 manuscript workflow packet without claiming final arXiv submission.",
     "allowed_claim": "The packet proves role order, source packet shape, claim discipline, WP-08 contract alignment, and three-paper status tracking.",
     "forbidden_claims": [
         "final arXiv submission happened",
@@ -177,10 +177,10 @@ publication follow-through separate from the writer-skill contract.
 - review-ready packet is distinguished from final arXiv submission
 - post-milestone cleanup is recorded rather than hidden
 
-## Handoff To WP-13
+## WP-13 Integration
 
-WP-13 should consume the source packets and manuscript status records from this
-packet without changing the claim discipline, human review gates, or
+WP-13 consumes the source packets and manuscript status records from this
+packet while preserving claim discipline, human review gates, and the
 no-submission boundary.
 """
 write_text(writer_dir / "workflow_contract.md", workflow_contract)
@@ -248,13 +248,13 @@ status_payload = {
     "demo_id": "D9",
     "writer_skill_status": "wp08_contract_defined_packet_only",
     "submission_status": "not_submitted",
-    "review_ready_meaning": "source and status packets are ready for reviewer inspection; manuscripts are not final arXiv submissions",
+    "review_ready_meaning": "source and status packets are ready for reviewer inspection; final arXiv submission remains out of scope",
     "papers": [
         {
             "paper_id": paper["id"],
             "title": paper["title"],
             "packet_status": "review_packet_ready",
-            "draft_status": "not_finalized_until_wp13_manuscript_follow_through",
+            "draft_status": "review_packet_ready_submission_deferred",
             "source_packet_ref": f"source_packets/{paper['id']}_source_packet.md",
             "manuscript_status_ref": f"manuscript_status/{paper['id']}_status.md",
             "known_gaps": paper["known_gaps"],
@@ -271,7 +271,7 @@ for paper in paper_specs:
         "## Current State",
         "",
         "- Packet status: review_packet_ready",
-        "- Draft status: not_finalized_until_wp13_manuscript_follow_through",
+        "- Draft status: review_packet_ready_submission_deferred",
         "- Submission status: not_submitted",
         "- Dependency: #1929 WP-08 writer-skill contract plus #1934 WP-13 manuscript follow-through",
         "",
@@ -290,7 +290,7 @@ for paper in paper_specs:
             "",
             "## Next Step",
             "",
-            "Use the bounded writer contract from #1929 in the WP-13 manuscript follow-through while preserving the human review gates.",
+            "Use this packet as the WP-13 manuscript workflow proof surface while preserving human review gates before any future submission step.",
         ]
     )
     write_text(status_dir / f"{paper['id']}_status.md", "\n".join(status_lines))
@@ -302,7 +302,7 @@ review_gates = {
         {"gate_id": "role_order_declared", "status": "pass", "evidence": "writer_skill_packet/writer_skill_status.json"},
         {"gate_id": "claim_boundaries_declared", "status": "pass", "evidence": "review/claim_boundaries.md"},
         {"gate_id": "wp08_writer_contract_defined", "status": "pass", "evidence": "writer_skill_packet/workflow_contract.md"},
-        {"gate_id": "wp13_manuscript_follow_through", "status": "not_in_scope", "evidence": "#1934 owns final manuscript packet follow-through"},
+        {"gate_id": "wp13_manuscript_packet", "status": "pass", "evidence": "manuscript_status/three_paper_status.json"},
         {"gate_id": "arxiv_submission", "status": "not_in_scope", "evidence": "review-ready packets are not final arXiv submissions"},
     ],
 }
@@ -320,10 +320,9 @@ claim_boundaries = """# Claim Boundaries
 
 ## Not Claimed
 
-- Final arXiv submission.
 - Submission-ready manuscripts.
 - Private credentials or hidden chat state.
-- Completion of WP-13 manuscript follow-through.
+- Final arXiv submission or publication.
 - A full manuscript drafting run inside this D9 packet.
 - Full automation of scholarly authorship or peer review.
 """
@@ -343,8 +342,7 @@ Review this packet in the following order:
 
 The packet is intentionally honest about scope. It demonstrates the bounded
 manuscript workflow shape and three-paper review packet without claiming that
-final papers have been submitted to arXiv or that WP-13 manuscript
-follow-through is complete.
+final papers have been submitted to arXiv.
 """
 write_text(review_dir / "reviewer_brief.md", reviewer_brief)
 
@@ -398,8 +396,8 @@ Primary proof surfaces:
 - `review/reviewer_brief.md`
 
 This packet is a bounded publication workflow proof. It does not submit to
-arXiv, does not require credentials, and does not claim WP-13 manuscript
-follow-through is complete.
+arXiv, does not require credentials, and preserves future human review before
+any submission step.
 """
 write_text(out_dir / "README.md", readme)
 

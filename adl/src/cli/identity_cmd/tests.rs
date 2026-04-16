@@ -1134,11 +1134,29 @@ fn identity_demo_proof_entry_points_writes_contract_json() {
                     .any(|command| command
                         == "adl identity adversarial-runtime --out .adl/state/adversarial_runtime_model_v1.json"))
     );
-    assert!(json["package"]["deferred_surfaces"]
+    assert!(json["package"]["rows"]
         .as_array()
-        .expect("deferred")
+        .expect("rows")
         .iter()
-        .any(|surface| surface["owner"] == "WP-13"));
+        .any(|row| row["demo_id"] == "D8"
+            && row["status"] == "LANDED"
+            && row["entry_commands"]
+                .as_array()
+                .expect("entry commands")
+                .iter()
+                .any(|command| command == "bash adl/tools/demo_v0891_five_agent_hey_jude.sh")));
+    assert!(json["package"]["rows"]
+        .as_array()
+        .expect("rows")
+        .iter()
+        .any(|row| row["demo_id"] == "D9"
+            && row["status"] == "LANDED"
+            && row["primary_proof_surfaces"]
+                .as_array()
+                .expect("proof surfaces")
+                .iter()
+                .any(|surface| surface
+                    == "artifacts/v0891/arxiv_manuscript_workflow/manuscript_status/three_paper_status.json")));
 }
 
 #[test]

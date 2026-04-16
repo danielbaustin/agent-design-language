@@ -76,7 +76,7 @@ impl DemoProofEntryPointsContract {
                 "adl identity demo-proof-entry-points",
             ]),
             runtime_condition:
-                "v0.89.1 exposes reviewer-facing proof entry points for adversarial runtime, exploit replay, continuous verification, skill governance, and demo packets without absorbing later integration work."
+                "v0.89.1 exposes reviewer-facing proof entry points for adversarial runtime, exploit replay, continuous verification, skill governance, and bounded integration demo packets."
                     .to_string(),
             upstream_contracts: strings(&[
                 ADVERSARIAL_RUNTIME_MODEL_SCHEMA,
@@ -92,17 +92,17 @@ impl DemoProofEntryPointsContract {
             package: DemoProofPackage {
                 package_id: "v0.89.1.wp11.demo_proof_entry_points".to_string(),
                 milestone: "v0.89.1".to_string(),
-                work_package: "WP-11".to_string(),
+                work_package: "WP-11 / WP-13".to_string(),
                 package_role:
-                    "Copy/paste reviewer entry-point package for the milestone demo matrix."
+                    "Copy/paste reviewer entry-point package for the milestone demo matrix and WP-13 integration packet."
                         .to_string(),
                 rows: demo_rows(),
                 copy_paste_runbook: runbook_steps(),
                 deferred_surfaces: deferred_surfaces(),
                 review_boundaries: strings(&[
                     "The package names commands and proof surfaces; it does not execute every heavyweight demo during normal identity-contract validation.",
-                    "D8 remains planned until the coordination/integration demo issue lands.",
-                    "WP-13 still owns broader integration and manuscript convergence packets.",
+                    "D8 is landed as a bounded integration demo with a fixture-backed validation command.",
+                    "D9 is landed as a bounded manuscript workflow packet without claiming final arXiv submission.",
                     "Provider-security attestation, trust scoring, sandbox policy, and external provider-security demos remain out of v0.89.1 scope unless later work explicitly promotes them.",
                 ]),
             },
@@ -110,11 +110,11 @@ impl DemoProofEntryPointsContract {
                 "Which command should a reviewer run for each v0.89.1 demo row?",
                 "Which rows are already landed, partial, ready, or still planned?",
                 "Which proof surfaces are deterministic contract packets versus heavyweight demo runs?",
-                "Which later integration surfaces are intentionally deferred?",
+                "Which later release or provider-security surfaces are intentionally deferred?",
             ]),
             proof_fixture_hooks: strings(&[
                 "demo_proof_entry_points_exposes_copy_paste_runtime_and_replay_commands",
-                "demo_proof_entry_points_keeps_d8_and_wp13_deferred",
+                "demo_proof_entry_points_exposes_wp13_integration_demos",
                 "identity_demo_proof_entry_points_writes_contract_json",
             ]),
             proof_hook_command:
@@ -122,7 +122,7 @@ impl DemoProofEntryPointsContract {
                     .to_string(),
             proof_hook_output_path: ".adl/state/demo_proof_entry_points_v1.json".to_string(),
             scope_boundary:
-                "This contract lands WP-11 demo scaffolding and proof entry points; it does not replace WP-12 review, WP-13 integration demos, or later release closeout."
+                "This contract lands WP-11 demo scaffolding plus WP-13 integration rows; it does not replace WP-12 review, later quality gates, release review, or release closeout."
                     .to_string(),
         }
     }
@@ -255,27 +255,33 @@ fn demo_rows() -> Vec<DemoProofEntryPointRow> {
             primary_proof_surfaces: strings(&[
                 ".adl/state/provider_extension_packaging_v1.json",
                 ".adl/state/demo_proof_entry_points_v1.json",
+                "artifacts/v0891/wp13_demo_integration/integration_manifest.json",
             ]),
             proof_role:
-                "Bundles milestone proof commands, carry-forward boundaries, and reviewer-facing package status into one machine-readable packet."
+                "Bundles milestone proof commands, carry-forward boundaries, D8 delight demo, and D9 manuscript workflow packet into one machine-readable reviewer package."
                     .to_string(),
-            status: "PARTIAL".to_string(),
+            status: "LANDED".to_string(),
             determinism_note:
-                "WP-11 package generation is deterministic; WP-13 integration packets remain later work."
+                "WP-11 identity packets and the WP-13 integration packet are deterministic; heavyweight child demos remain replayable through their own test commands."
                     .to_string(),
         },
         DemoProofEntryPointRow {
             demo_id: "D8".to_string(),
             title: "Five-Agent Hey Jude MIDI demo".to_string(),
             work_packages: strings(&["WP-08", "WP-09", "WP-10", "WP-13"]),
-            entry_commands: Vec::new(),
-            primary_proof_surfaces: strings(&["planned WP-13 coordination demo packet"]),
+            entry_commands: strings(&["bash adl/tools/demo_v0891_five_agent_hey_jude.sh"]),
+            primary_proof_surfaces: strings(&[
+                "artifacts/v0891/five_agent_hey_jude/performance_manifest.json",
+                "artifacts/v0891/five_agent_hey_jude/midi_event_log.json",
+                "artifacts/v0891/five_agent_hey_jude/provider_participation_summary.json",
+                "artifacts/v0891/five_agent_hey_jude/runtime/runs/v0-89-1-five-agent-hey-jude-midi-demo/run_summary.json",
+            ]),
             proof_role:
-                "Future high-delight coordination demo for one human plus four providers on one ADL runtime."
+                "Shows one human Layer 8 participant plus four provider voices coordinating through one bounded ADL runtime packet and MIDI cue layer."
                     .to_string(),
-            status: "PLANNED".to_string(),
+            status: "LANDED".to_string(),
             determinism_note:
-                "Bounded score/input should preserve composition shape and MIDI event ordering once the demo lands."
+                "The fixture-backed MVAVE Chocolate event stream preserves cue order and validates the same artifact schema on each run."
                     .to_string(),
         },
         DemoProofEntryPointRow {
@@ -285,13 +291,16 @@ fn demo_rows() -> Vec<DemoProofEntryPointRow> {
             entry_commands: strings(&["bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh"]),
             primary_proof_surfaces: strings(&[
                 "artifacts/v0891/arxiv_manuscript_workflow/demo_manifest.json",
+                "artifacts/v0891/arxiv_manuscript_workflow/source_packets/source_packet_manifest.json",
+                "artifacts/v0891/arxiv_manuscript_workflow/manuscript_status/three_paper_status.json",
+                "artifacts/v0891/arxiv_manuscript_workflow/review/review_gates.json",
             ]),
             proof_role:
                 "Shows bounded manuscript workflow scaffolding, source packets, review gates, and three-paper status packet shape."
                     .to_string(),
-            status: "READY".to_string(),
+            status: "LANDED".to_string(),
             determinism_note:
-                "Packet generation is deterministic; WP-13 owns final manuscript convergence."
+                "Packet generation is deterministic and WP-13 preserves the no-submission boundary while making the three-paper status packet reviewable."
                     .to_string(),
         },
     ]
@@ -359,25 +368,33 @@ fn runbook_steps() -> Vec<DemoProofRunbookStep> {
                 ".adl/state/provider_extension_packaging_v1.json, .adl/state/demo_proof_entry_points_v1.json"
                     .to_string(),
         },
+        DemoProofRunbookStep {
+            step_id: "wp13-integration-packet".to_string(),
+            purpose: "Materialize the WP-13 integration package for D7, D8, and D9.".to_string(),
+            command: "bash adl/tools/demo_v0891_wp13_demo_integration.sh".to_string(),
+            expected_output: "artifacts/v0891/wp13_demo_integration/integration_manifest.json"
+                .to_string(),
+        },
+        DemoProofRunbookStep {
+            step_id: "five-agent-midi-demo".to_string(),
+            purpose: "Run D8 five-agent Hey Jude MIDI demo when integration demo execution is desired."
+                .to_string(),
+            command: "bash adl/tools/demo_v0891_five_agent_hey_jude.sh".to_string(),
+            expected_output:
+                "artifacts/v0891/five_agent_hey_jude/performance_manifest.json".to_string(),
+        },
+        DemoProofRunbookStep {
+            step_id: "arxiv-manuscript-workflow".to_string(),
+            purpose: "Run D9 bounded three-paper manuscript workflow packet.".to_string(),
+            command: "bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh".to_string(),
+            expected_output:
+                "artifacts/v0891/arxiv_manuscript_workflow/demo_manifest.json".to_string(),
+        },
     ]
 }
 
 fn deferred_surfaces() -> Vec<DemoProofDeferredSurface> {
     vec![
-        DemoProofDeferredSurface {
-            surface: "D8 five-agent Hey Jude MIDI coordination demo".to_string(),
-            owner: "WP-13".to_string(),
-            reason:
-                "The coordination/integration demo requires later cross-provider demo packaging and should not be claimed by WP-11."
-                    .to_string(),
-        },
-        DemoProofDeferredSurface {
-            surface: "final three-paper manuscript convergence".to_string(),
-            owner: "WP-13".to_string(),
-            reason:
-                "WP-11 names the manuscript workflow entry point; WP-13 owns final manuscript status and integration follow-through."
-                    .to_string(),
-        },
         DemoProofDeferredSurface {
             surface: "formal release review and remediation outcomes".to_string(),
             owner: "WP-14 through WP-20".to_string(),
@@ -430,8 +447,21 @@ mod tests {
     }
 
     #[test]
-    fn demo_proof_entry_points_keeps_d8_and_wp13_deferred() {
+    fn demo_proof_entry_points_exposes_wp13_integration_demos() {
         let contract = DemoProofEntryPointsContract::v1();
+
+        let d7 = contract
+            .package
+            .rows
+            .iter()
+            .find(|row| row.demo_id == "D7")
+            .expect("D7 row");
+        assert_eq!(d7.status, "LANDED");
+        assert!(d7
+            .primary_proof_surfaces
+            .iter()
+            .any(|surface| surface
+                == "artifacts/v0891/wp13_demo_integration/integration_manifest.json"));
 
         let d8 = contract
             .package
@@ -439,13 +469,32 @@ mod tests {
             .iter()
             .find(|row| row.demo_id == "D8")
             .expect("D8 row");
-        assert_eq!(d8.status, "PLANNED");
-        assert!(d8.entry_commands.is_empty());
+        assert_eq!(d8.status, "LANDED");
+        assert!(d8
+            .entry_commands
+            .iter()
+            .any(|command| command == "bash adl/tools/demo_v0891_five_agent_hey_jude.sh"));
+        assert!(d8
+            .primary_proof_surfaces
+            .iter()
+            .any(|surface| surface.ends_with("performance_manifest.json")));
+
+        let d9 = contract
+            .package
+            .rows
+            .iter()
+            .find(|row| row.demo_id == "D9")
+            .expect("D9 row");
+        assert_eq!(d9.status, "LANDED");
+        assert!(d9
+            .primary_proof_surfaces
+            .iter()
+            .any(|surface| surface.ends_with("three_paper_status.json")));
         assert!(contract
             .package
-            .deferred_surfaces
+            .copy_paste_runbook
             .iter()
-            .any(|surface| surface.owner == "WP-13"));
+            .any(|step| step.step_id == "wp13-integration-packet"));
         assert!(contract.scope_boundary.contains("does not replace WP-12"));
     }
 
