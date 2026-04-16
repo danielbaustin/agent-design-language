@@ -73,8 +73,8 @@ Additional environment / fixture requirements:
 |---|---|---|---|---|---|---|---|
 | D1 | Adversarial runtime walkthrough | `WP-02` - `WP-04` contested runtime, role architecture, and execution runner | planned `WP-02` / `WP-04` adversarial runner entry point | adversarial runtime review packet + bounded trace bundle | reviewer can see posture, target, roles, and bounded execution stages end to end | same bounded target and posture should preserve stage order and role attribution | PLANNED |
 | D2 | Exploit artifact and replay proof | `WP-05` exploit artifact family and replay manifest | planned `WP-05` schema/replay validation surface | exploit artifact family + replay manifest packet | reviewer can inspect exploit hypothesis, evidence, replay mode, and expected outcome without narrative reconstruction | replay contract should declare deterministic, bounded-variance, or best-effort mode explicitly | PLANNED |
-| D3 | Continuous verification loop | `WP-06` continuous verification and exploit generation | planned `WP-06` bounded verification runner | verification trace + exploit-attempt packet + classification/promotion artifacts | reviewer can see repeated falsification pressure as a governed execution pattern rather than ad hoc red-teaming | repeated bounded inputs should preserve lifecycle shape and proof packet structure | PLANNED |
-| D4 | Self-attack scenario packet | `WP-06` self-attacking systems as architecture rather than rhetoric | planned `WP-06` self-attack scenario entry point | self-attack review packet with bounded trace/evidence | reviewer can see the system attack itself before externalization and capture the result as explicit evidence | scenario should remain posture-bounded and replay-legible | PLANNED |
+| D3 | Continuous verification loop | `WP-06` continuous verification and exploit generation | `adl identity continuous-verification --out .adl/state/continuous_verification_self_attack_v1.json` | continuous verification contract artifact with lifecycle, cadence, replay, mitigation, and promotion rules | reviewer can see repeated falsification pressure as a governed execution pattern rather than ad hoc red-teaming | repeated bounded inputs should preserve lifecycle shape and proof packet structure | LANDED |
+| D4 | Self-attack scenario packet | `WP-06` self-attacking systems as architecture rather than rhetoric | `adl identity continuous-verification --out .adl/state/continuous_verification_self_attack_v1.json` | self-attack contract artifact with bounded layers, target/posture policy, and evidence/replay rules | reviewer can see the system's self-attack pattern before externalization and inspect the required evidence chain | scenario should remain posture-bounded and replay-legible | LANDED |
 | D5 | Flagship adversarial demo | `WP-07` full exploit -> replay -> mitigation -> promotion loop | planned `WP-07` adversarial demo entry point | flagship adversarial demo packet | reviewer can answer what was attacked, how it was reproduced, what mitigation was applied, and whether replay post-fix succeeded | replay should make before/after mitigation comparison explicit | PLANNED |
 | D6 | Operational skills substrate integration | `WP-08` - `WP-09` operational skills, composition, and bounded governance follow-through | planned `WP-08` / `WP-09` governed composition entry point | substrate/composition packet + delegation/refusal integration note | reviewer can see that adversarial work runs through explicit skill/composition surfaces instead of ad hoc orchestration | orchestration structure should be deterministic even if node outputs remain stochastic | PLANNED |
 | D7 | Reviewer-facing security proof package | `WP-10` - `WP-13` packaging convergence, milestone convergence, and integration demos | planned `WP-10` / `WP-13` review package | reviewer-facing adversarial/replay/trust packet | reviewer can inspect milestone claims, carry-forward boundaries, and proof surfaces as one coherent package | may remain artifact/document driven rather than fully runnable | PLANNED |
@@ -88,8 +88,8 @@ Status guidance:
 - `LANDED` = milestone evidence exists and is ready for review
 
 Current planning truth:
-- the `v0.89.1` issue wave is open, but the demo/proof rows remain planned until implementation work lands
-- this matrix is review-ready and intended to make issue execution faster, not to claim implementation already exists
+- the `v0.89.1` issue wave is open, and proof rows should move from `PLANNED` to `LANDED` only as implementation work provides copy/paste proof surfaces
+- this matrix is review-ready and intended to make issue execution faster without claiming later demo work before it exists
 
 Heavyweight proof-package rule:
 - if a proof surface mainly exists to bundle review, release, or quality-gate evidence, classify it as a heavyweight proof package even if it is script-driven
@@ -182,16 +182,16 @@ Milestone claims / work packages covered:
 Planned entry point:
 
 ```bash
-Defined when the official `WP-06` verification issue lands.
+adl identity continuous-verification --out .adl/state/continuous_verification_self_attack_v1.json
 ```
 
 Expected artifacts:
-- bounded verification runner packet
-- exploit-attempt evidence bundle
-- classification / promotion linkage artifacts
+- continuous verification contract artifact
+- lifecycle and cadence rules
+- replay, mitigation, and promotion linkage rules
 
 Primary proof surface:
-- bounded verification runner packet
+- `.adl/state/continuous_verification_self_attack_v1.json`
 
 Expected success signals:
 - reviewer can see surface selection, exploit hypothesis generation, bounded attempt, evidence capture, and promotion linkage
@@ -199,6 +199,7 @@ Expected success signals:
 
 Known limits / caveats:
 - this row should stay governed and posture-bounded rather than drifting into unconstrained offensive capability
+- this row proves the contract/proof surface; the flagship executable demo remains `WP-07`
 
 ---
 
@@ -213,16 +214,16 @@ Milestone claims / work packages covered:
 Planned entry point:
 
 ```bash
-Defined when the official `WP-06` self-attack slice lands.
+adl identity continuous-verification --out .adl/state/continuous_verification_self_attack_v1.json
 ```
 
 Expected artifacts:
-- self-attack scenario packet
-- bounded trace/evidence bundle
-- posture and target-scope record
+- self-attack contract artifact
+- bounded self-attack layer rules
+- posture, target-scope, evidence, replay, and learning-promotion requirements
 
 Primary proof surface:
-- self-attack review packet
+- `.adl/state/continuous_verification_self_attack_v1.json`
 
 Expected success signals:
 - reviewer can see the system attack itself before others do
@@ -230,6 +231,7 @@ Expected success signals:
 
 Known limits / caveats:
 - this row should not be mistaken for open-ended autonomous offense; it is a governed verification pattern
+- this row proves the bounded self-attack contract; concrete scenario execution remains `WP-07`
 
 ---
 

@@ -164,7 +164,7 @@ fn identity_requires_subcommand_and_rejects_unknown_subcommand() {
     let err = real_identity_in_repo(&[], &repo).expect_err("missing subcommand should fail");
     assert!(err
         .to_string()
-        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | schema"));
+        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | continuous-verification | schema"));
     assert!(err.to_string().contains("continuity"));
 
     let err = real_identity_in_repo(&["nope".to_string()], &repo)
@@ -200,6 +200,11 @@ fn identity_top_level_help_and_subcommand_help_succeed() {
     .expect("adversarial-runner help");
     real_identity_in_repo(&["exploit-replay".to_string(), "--help".to_string()], &repo)
         .expect("exploit-replay help");
+    real_identity_in_repo(
+        &["continuous-verification".to_string(), "--help".to_string()],
+        &repo,
+    )
+    .expect("continuous-verification help");
     real_identity_in_repo(&["schema".to_string(), "--help".to_string()], &repo)
         .expect("schema help");
     real_identity_in_repo(&["continuity".to_string(), "--help".to_string()], &repo)
@@ -694,6 +699,87 @@ fn identity_exploit_replay_validates_unknown_args_and_missing_out_value() {
 
     let err = real_identity_in_repo(&["exploit-replay".to_string(), "--out".to_string()], &repo)
         .expect_err("out flag without value should fail");
+    assert!(err.to_string().contains("--out requires a value"));
+}
+
+#[test]
+fn identity_continuous_verification_writes_contract_json() {
+    let _guard = TEST_MUTEX
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    let repo = temp_repo("identity-continuous-verification");
+    let out_path = repo.join(".adl/state/continuous_verification_self_attack_v1.json");
+
+    real_identity_in_repo(
+        &[
+            "continuous-verification".to_string(),
+            "--out".to_string(),
+            ".adl/state/continuous_verification_self_attack_v1.json".to_string(),
+        ],
+        &repo,
+    )
+    .expect("identity continuous-verification");
+
+    let json: Value =
+        serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
+    assert_eq!(
+        json["schema_version"],
+        "continuous_verification_self_attack.v1"
+    );
+    assert_eq!(
+        json["proof_hook_output_path"],
+        ".adl/state/continuous_verification_self_attack_v1.json"
+    );
+    assert!(json["cadence"]["supported_modes"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "continuous_bounded"));
+    assert!(json["lifecycle"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|stage| stage["stage_id"] == "validate_replay"));
+    assert!(json["self_attack_layers"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|layer| layer["layer_id"] == "learning_promotion"));
+    assert!(json["policy"]["prohibited_shortcuts"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "self-attack without target allowlist"));
+    assert!(json["upstream_contracts"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "exploit_artifact_replay.v1"));
+    assert!(json["owned_runtime_surfaces"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "adl identity continuous-verification"));
+}
+
+#[test]
+fn identity_continuous_verification_validates_unknown_args_and_missing_out_value() {
+    let repo = temp_repo("identity-continuous-verification-errors");
+
+    let err = real_identity_in_repo(
+        &["continuous-verification".to_string(), "--bogus".to_string()],
+        &repo,
+    )
+    .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for identity continuous-verification: --bogus"));
+
+    let err = real_identity_in_repo(
+        &["continuous-verification".to_string(), "--out".to_string()],
+        &repo,
+    )
+    .expect_err("out flag without value should fail");
     assert!(err.to_string().contains("--out requires a value"));
 }
 

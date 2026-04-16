@@ -12,6 +12,7 @@ use ::adl::chronosense::{
     PhiIntegrationMetricsContract, TemporalCausalityExplanationContract,
     TemporalQueryRetrievalContract, TemporalSchemaContract,
 };
+use ::adl::continuous_verification_self_attack::ContinuousVerificationSelfAttackContract;
 use ::adl::exploit_artifact_replay::ExploitArtifactReplayContract;
 use ::adl::red_blue_agent_architecture::RedBlueAgentArchitectureContract;
 
@@ -134,6 +135,20 @@ pub(super) fn real_identity_exploit_replay(repo_root: &Path, args: &[String]) ->
         "exploit artifact replay",
         "EXPLOIT_ARTIFACT_REPLAY_PATH",
         ExploitArtifactReplayContract::v1(),
+    )
+}
+
+pub(super) fn real_identity_continuous_verification(
+    repo_root: &Path,
+    args: &[String],
+) -> Result<()> {
+    write_contract_json(
+        repo_root,
+        args,
+        "continuous-verification",
+        "continuous verification self-attack",
+        "CONTINUOUS_VERIFICATION_SELF_ATTACK_PATH",
+        ContinuousVerificationSelfAttackContract::v1(),
     )
 }
 

@@ -12,6 +12,7 @@ pub fn usage() -> &'static str {
   adl identity red-blue-architecture [--out <path>]
   adl identity adversarial-runner [--out <path>]
   adl identity exploit-replay [--out <path>]
+  adl identity continuous-verification [--out <path>]
   adl identity schema [--out <path>]
   adl identity continuity [--out <path>]
   adl identity retrieval [--out <path>]
