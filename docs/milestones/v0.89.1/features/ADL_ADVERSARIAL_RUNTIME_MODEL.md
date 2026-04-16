@@ -2,289 +2,164 @@
 
 ## Metadata
 - Project: `ADL`
-- Status: `Draft`
+- Milestone: `v0.89.1`
+- Status: `Implemented`
 - Owner: `Daniel Austin`
-- Created: `2026-04-12`
+- Updated: `2026-04-15`
+- WP: `WP-02`
 
 ---
 
 ## Purpose
 
-Define the role of **adversarial cognition** within the ADL runtime.
+Make the carry-forward adversarial band explicit as a bounded runtime contract instead of leaving it as planning rhetoric.
 
-This document establishes a foundational shift:
+The core shift is simple:
 
-> ADL systems must assume continuous intelligent opposition.
+> ADL must assume continuous intelligent opposition as a first-class operating condition.
 
-Security is no longer a static property.  
-It is an ongoing, dynamic condition shaped by competing agents.
-
----
-
-## Overview
-
-Modern software systems are entering a regime where:
-
-- vulnerabilities are discovered rapidly
-- automated systems can probe continuously
-- intelligent agents can generate novel exploits
-- valuable systems are never unobserved or unchallenged
-
-This leads to a critical conclusion:
-
-> Any meaningful vulnerability will eventually be found.
-
-The implication is not pessimism.  
-It is architectural clarity.
-
-Systems must be designed to operate under **continuous adversarial pressure**.
+`WP-02` does not yet implement the role architecture, runner, exploit artifacts, or replay loop. It defines the contested-runtime assumptions and reviewer-facing guarantees that later `v0.89.1` work must preserve.
 
 ---
 
-## The Collapse of the Detection Ceiling
+## Owned Runtime Surfaces
 
-Historically, systems relied on:
+`WP-02` is now owned by these concrete repo surfaces:
 
-- obscurity
-- limited attacker capability
-- infrequent testing cycles
-- manual penetration testing
+- `adl::adversarial_runtime::AdversarialRuntimeModelContract`
+- `adl::adversarial_runtime::AdversarialPressureContract`
+- `adl::adversarial_runtime::DynamicAttackSurfaceContract`
+- `adl::adversarial_runtime::AdversarialRuntimeGuaranteeContract`
+- `adl identity adversarial-runtime`
 
-These assumptions are no longer valid.
+Proof hook:
 
-With LLMs, autonomous agents, and scalable compute:
+```bash
+adl identity adversarial-runtime --out .adl/state/adversarial_runtime_model_v1.json
+```
 
-- attack discovery is automated
-- exploration of state space is massively parallel
-- reasoning-driven exploit generation becomes feasible
+Primary proof artifact:
 
-The "detection ceiling" collapses.
-
-There is no longer a safe assumption that flaws will remain hidden.
-
----
-
-## Continuous Adversarial Pressure
-
-ADL introduces the concept of:
-
-> Continuous adversarial pressure as a first-class runtime condition.
-
-This means:
-
-- systems are assumed to be probed at all times
-- attack attempts are expected, not exceptional
-- defense must be continuous and adaptive
-- system behavior must remain stable under contest
-
-Security becomes a **dynamic equilibrium**, not a static guarantee.
+- `.adl/state/adversarial_runtime_model_v1.json`
 
 ---
 
-## Red and Blue as Persistent Cognitive Roles
+## Runtime Condition
 
-Adversarial behavior is not external to the system.  
-It becomes part of the system.
+ADL treats adversarial pressure as a normal runtime condition, not an exceptional afterthought.
 
-ADL defines persistent roles:
+That means:
 
-### Red Agents
-- generate exploits
-- probe system boundaries
-- search for vulnerabilities
-- simulate external attackers
+- valuable systems should be assumed to operate under contest
+- attack discovery is expected to be sustained, automated, and reasoning-assisted
+- static “secure until reviewed again” assumptions are no longer sufficient
 
-### Blue Agents
-- detect anomalies
-- patch vulnerabilities
-- enforce policy constraints
-- maintain system integrity
-
-### Purple Layer
-- coordinates learning between red and blue
-- captures exploit knowledge
-- improves both attack and defense strategies
-
-These roles operate continuously within the runtime.
+This is a runtime-model claim, not yet a full execution pipeline.
 
 ---
 
-## Attack Surface as a Dynamic Graph
+## Core Adversarial Pressure Contract
 
-The attack surface is not a static list.
+The bounded `WP-02` contract makes three claims explicit:
 
-It is a **dynamic graph** defined by:
+1. Meaningful weaknesses should be treated as eventually discoverable under sustained automated reasoning pressure.
+2. Security review must remain legible under contested conditions rather than relying on hidden hope, obscurity, or schedule gaps.
+3. Later adversarial execution surfaces must preserve traceability, attribution, posture visibility, and policy-bounded operation.
+
+Legacy assumptions explicitly displaced by this model:
+
+- obscurity is sufficient protection
+- manual pentest cadence is the dominant discovery path
+- adversarial behavior is exceptional rather than an always-possible runtime condition
+
+---
+
+## Dynamic Attack Surface Model
+
+The attack surface is modeled as a dynamic graph rather than a static checklist.
+
+Reviewer-visible dimensions:
 
 - current system state
-- available actions
-- exposed interfaces
-- temporal conditions
-- policy constraints
+- available actions and interfaces
+- temporal conditions and recurrence
+- policy and posture constraints
 
-Adversarial exploration becomes graph traversal under constraints.
-
-This aligns with ADL's broader model of structured execution and trace.
+This is the main structural claim of `WP-02`: adversarial reasoning happens against changing state, changing posture, and bounded authority, not against a frozen list of endpoints.
 
 ---
 
-## Self-Attacking Systems
+## Runtime Guarantees
 
-A key principle:
+Any later adversarial runtime lane in ADL must preserve these guarantees:
 
-> Systems should attack themselves before others do.
+- adversarial activity is traceable
+- security-relevant behavior is attributable to declared configuration and role context
+- adversarial work remains policy-bounded
+- replay and review surfaces are explicit rather than implied
 
-ADL enables:
+Required evidence posture for this band:
 
-- automated exploit generation
-- internal adversarial testing loops
-- continuous validation of defenses
-- deterministic replay of attacks
+- posture and target scope must be reviewer-visible
+- contested execution must link to trace or artifact references
+- replay expectations must be declared as strict, bounded, or deferred
 
-This transforms security from reactive to proactive.
+Prohibited shortcuts:
 
----
-
-## Determinism as a Security Primitive
-
-ADL's deterministic runtime provides a unique advantage:
-
-- attacks can be reproduced exactly
-- defenses can be verified against known exploits
-- regressions can be detected with certainty
-- learning can be grounded in stable traces
-
-Every exploit becomes:
-
-- a reproducible artifact
-- a test case
-- a permanent addition to system knowledge
+- unobserved adversarial execution
+- non-attributable mitigation claims
+- hidden escalation from review surface into exploit automation
 
 ---
 
-## Adversarial Runtime Contract
+## Relationship To Existing ADL Concepts
 
-ADL must define explicit guarantees for adversarial execution:
+This contract is intentionally aligned with already-settled `v0.89` substrate concepts:
 
-- Red agents must operate within bounded policy constraints
-- Blue agents must produce verifiable mitigation artifacts
-- All adversarial actions must be:
-  - traceable
-  - replayable
-  - attributable to a specific agent and configuration
-
-The runtime must ensure:
-
-- no adversarial action is unobserved
-- no mitigation is unverifiable
-- no exploit is non-reproducible
-
-This contract transforms adversarial behavior from chaos into structured cognition.
+- `Chronosense`: contested behavior unfolds over time and should remain temporally legible
+- execution posture and Freedom Gate: adversarial pressure must stay governed, not free-roaming
+- trace and artifact review: runtime claims must remain inspectable
+- instinct and routing pressure: later work may bias prioritization under threat, but only visibly and within policy
 
 ---
 
-## Relationship to Existing ADL Concepts
+## Review Surface
 
-This model integrates with:
+Reviewers should be able to answer these questions directly from the proof surface:
 
-### Chronosense
-- attacks and defenses occur over time
-- temporal patterns matter
-- persistence and recurrence become visible
+- what contested-runtime assumption is ADL making
+- how is the attack surface modeled conceptually
+- which guarantees must later runner, artifact, and replay work preserve
 
-### Execution Posture
-- aggressive probing vs defensive stability
-- cost vs coverage tradeoffs
-- observable behavior under stress
+Minimum required visibility:
 
-### Instinct
-- defensive bias can act as bounded pressure
-- prioritization of risk mitigation
-- routing decisions influenced by threat context
-
-### Trace
-- full visibility into attack and defense sequences
-- replayable adversarial interactions
-- auditability of system behavior
+- continuous adversarial pressure assumption
+- dynamic attack-surface graph model
+- boundedness and evidence requirements
 
 ---
 
-## Implications
+## Explicit Boundaries
 
-### 1. Security Becomes Continuous
-There is no "secure state", only "currently holding".
+`WP-02` is intentionally smaller than the surrounding adversarial band.
 
-### 2. Testing Becomes Runtime Behavior
-Testing is no longer a phase. It is a permanent activity.
+Still deferred downstream:
 
-### 3. Exploits Become First-Class Artifacts
-Every discovered vulnerability is stored, replayable, and analyzable.
+- persistent red / blue / purple role architecture: `WP-03`
+- adversarial execution runner: `WP-04`
+- exploit artifact schema and replay manifest: `WP-05`
+- continuous verification and self-attack loops: `WP-06`
 
-### 4. Systems Must Withstand Contest
-Correctness includes behavior under active opposition.
-
----
-
-## Demo Implications
-
-This model must be demonstrated, not only described.
-
-Minimum viable proof cases:
-
-- a red agent generates a concrete exploit artifact
-- a blue agent produces a corresponding fix
-- the exploit is replayed deterministically
-- the fix is validated against the replay
-- the entire sequence is inspectable via trace
-
-Each proof must answer:
-
-- what was attacked?
-- how was it exploited?
-- how was it fixed?
-- can the exploit be reproduced?
-- does the fix hold under replay?
-
-Without these proofs, the model remains theoretical.
+This keeps the current issue truthful: it resolves the runtime-model contract without pretending that the whole adversarial subsystem already exists.
 
 ---
 
-## Strategic Direction
+## Acceptance For WP-02
 
-ADL should evolve toward:
+`WP-02` is satisfied when:
 
-- native support for adversarial agents
-- deterministic exploit replay systems
-- continuous validation pipelines
-- integrated red/blue execution workflows
+- the contested-runtime model is explicit in code and docs
+- reviewers can inspect a concrete proof artifact for the runtime contract
+- later `v0.89.1` work has a stable bounded contract to extend rather than a prose-only carry-forward note
 
-This is not an optional feature.
-
-It is a necessary adaptation to a world where intelligent attack is ubiquitous.
-
----
-
-## Conceptual Diagram
-
-A dedicated diagram is intentionally deferred for now. The section structure and data surfaces in this document are the canonical contract.
-
-Illustrate:
-
-- red and blue agents operating within the same runtime
-- shared trace substrate
-- exploit -> mitigation -> replay loop
-- temporal progression under chronosense
-
----
-
-## Conclusion
-
-The fundamental shift is simple:
-
-> Software is no longer written and secured.  
-> It is continuously contested.
-
-ADL positions itself as:
-
-> A deterministic runtime for contested cognition under continuous adversarial pressure.
-
-This document defines the first step toward that future.
+That is the current state of this feature.

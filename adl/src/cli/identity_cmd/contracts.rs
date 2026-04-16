@@ -4,6 +4,7 @@ use serde_json::to_string_pretty;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use ::adl::adversarial_runtime::AdversarialRuntimeModelContract;
 use ::adl::chronosense::{
     ChronosenseFoundation, CommitmentDeadlineContract, ContinuitySemanticsContract,
     ExecutionPolicyCostModelContract, InstinctModelContract, InstinctRuntimeSurfaceContract,
@@ -86,6 +87,17 @@ pub(super) fn real_identity_foundation(repo_root: &Path, args: &[String]) -> Res
         "chronosense foundation",
         "CHRONOSENSE_FOUNDATION_PATH",
         ChronosenseFoundation::bounded_v088(),
+    )
+}
+
+pub(super) fn real_identity_adversarial_runtime(repo_root: &Path, args: &[String]) -> Result<()> {
+    write_contract_json(
+        repo_root,
+        args,
+        "adversarial-runtime",
+        "adversarial runtime model",
+        "ADVERSARIAL_RUNTIME_MODEL_PATH",
+        AdversarialRuntimeModelContract::v1(),
     )
 }
 
