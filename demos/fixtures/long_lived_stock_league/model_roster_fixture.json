@@ -1,0 +1,33 @@
+{
+  "schema": "adl.stock_league.model_roster.v1",
+  "mode": "fixture",
+  "generated_from": "observed-local-and-remote-ollama-shape",
+  "sources": [
+    {
+      "source_id": "local_ollama",
+      "label": "Local Ollama fixture",
+      "endpoint": "fixture://local-ollama",
+      "reachable": true,
+      "models": [
+        {"name": "gemma4:latest", "parameter_size": "8.0B", "family": "gemma4"},
+        {"name": "qwen3:14b", "parameter_size": "14B", "family": "qwen3"},
+        {"name": "mistral-nemo:latest", "parameter_size": "12B", "family": "mistral"},
+        {"name": "gpt-oss:latest", "parameter_size": "20.9B", "family": "gptoss"},
+        {"name": "deepseek-r1:32b", "parameter_size": "32.8B", "family": "qwen2"}
+      ]
+    },
+    {
+      "source_id": "remote_ollama",
+      "label": "Remote Ollama fixture",
+      "endpoint": "fixture://remote-ollama-128gb",
+      "reachable": true,
+      "models": [
+        {"name": "gemma4:latest", "parameter_size": "8.0B", "family": "gemma4"},
+        {"name": "qwen3:30b", "parameter_size": "30.5B", "family": "qwen3moe"},
+        {"name": "gpt-oss:120b", "parameter_size": "116.8B", "family": "gptoss"},
+        {"name": "llama4:16x17b", "parameter_size": "108.6B", "family": "llama4"},
+        {"name": "deepseek-r1:32b", "parameter_size": "32.8B", "family": "qwen2"}
+      ]
+    }
+  ]
+}
