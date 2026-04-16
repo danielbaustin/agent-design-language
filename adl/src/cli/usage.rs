@@ -10,6 +10,7 @@ pub fn usage() -> &'static str {
   adl identity foundation [--out <path>]
   adl identity adversarial-runtime [--out <path>]
   adl identity red-blue-architecture [--out <path>]
+  adl identity adversarial-runner [--out <path>]
   adl identity schema [--out <path>]
   adl identity continuity [--out <path>]
   adl identity retrieval [--out <path>]

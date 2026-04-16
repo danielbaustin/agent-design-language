@@ -12,6 +12,7 @@
 //! - remote execution MVP where scheduling remains local
 
 pub mod adl;
+pub mod adversarial_execution_runner;
 pub mod adversarial_runtime;
 pub mod artifacts;
 pub mod bounded_executor;
