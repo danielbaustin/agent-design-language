@@ -22,6 +22,7 @@ pub mod delegation_policy;
 pub mod demo;
 pub mod execute;
 pub mod execution_plan;
+pub mod exploit_artifact_replay;
 pub mod failure_taxonomy;
 pub mod freedom_gate;
 pub mod godel;

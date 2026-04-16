@@ -164,7 +164,7 @@ fn identity_requires_subcommand_and_rejects_unknown_subcommand() {
     let err = real_identity_in_repo(&[], &repo).expect_err("missing subcommand should fail");
     assert!(err
         .to_string()
-        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | schema"));
+        .contains("identity requires a subcommand: init | show | now | foundation | adversarial-runtime | red-blue-architecture | adversarial-runner | exploit-replay | schema"));
     assert!(err.to_string().contains("continuity"));
 
     let err = real_identity_in_repo(&["nope".to_string()], &repo)
@@ -198,6 +198,8 @@ fn identity_top_level_help_and_subcommand_help_succeed() {
         &repo,
     )
     .expect("adversarial-runner help");
+    real_identity_in_repo(&["exploit-replay".to_string(), "--help".to_string()], &repo)
+        .expect("exploit-replay help");
     real_identity_in_repo(&["schema".to_string(), "--help".to_string()], &repo)
         .expect("schema help");
     real_identity_in_repo(&["continuity".to_string(), "--help".to_string()], &repo)
@@ -622,6 +624,76 @@ fn identity_adversarial_runner_validates_unknown_args_and_missing_out_value() {
         &repo,
     )
     .expect_err("out flag without value should fail");
+    assert!(err.to_string().contains("--out requires a value"));
+}
+
+#[test]
+fn identity_exploit_replay_writes_contract_json() {
+    let _guard = TEST_MUTEX
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    let repo = temp_repo("identity-exploit-replay");
+    let out_path = repo.join(".adl/state/exploit_artifact_replay_v1.json");
+
+    real_identity_in_repo(
+        &[
+            "exploit-replay".to_string(),
+            "--out".to_string(),
+            ".adl/state/exploit_artifact_replay_v1.json".to_string(),
+        ],
+        &repo,
+    )
+    .expect("identity exploit-replay");
+
+    let json: Value =
+        serde_json::from_slice(&fs::read(&out_path).expect("read out")).expect("parse json");
+    assert_eq!(json["schema_version"], "exploit_artifact_replay.v1");
+    assert_eq!(
+        json["proof_hook_output_path"],
+        ".adl/state/exploit_artifact_replay_v1.json"
+    );
+    assert!(json["lifecycle_order"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "AdversarialReplayManifest"));
+    assert!(json["replay_manifest"]["replay_modes"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|mode| mode["mode"] == "bounded_variance"));
+    assert!(json["integrity"]["rules"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "no mitigation without exploit evidence linkage"));
+    assert!(json["runner_integration"]["upstream_contracts"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "adversarial_execution_runner.v1"));
+    assert!(json["owned_runtime_surfaces"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value == "adl identity exploit-replay"));
+}
+
+#[test]
+fn identity_exploit_replay_validates_unknown_args_and_missing_out_value() {
+    let repo = temp_repo("identity-exploit-replay-errors");
+
+    let err = real_identity_in_repo(
+        &["exploit-replay".to_string(), "--bogus".to_string()],
+        &repo,
+    )
+    .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for identity exploit-replay: --bogus"));
+
+    let err = real_identity_in_repo(&["exploit-replay".to_string(), "--out".to_string()], &repo)
+        .expect_err("out flag without value should fail");
     assert!(err.to_string().contains("--out requires a value"));
 }
 
