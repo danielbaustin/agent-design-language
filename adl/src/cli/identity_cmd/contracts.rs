@@ -16,6 +16,7 @@ use ::adl::continuous_verification_self_attack::ContinuousVerificationSelfAttack
 use ::adl::delegation_refusal_coordination::DelegationRefusalCoordinationContract;
 use ::adl::exploit_artifact_replay::ExploitArtifactReplayContract;
 use ::adl::operational_skills_substrate::OperationalSkillsSubstrateContract;
+use ::adl::provider_extension_packaging::ProviderExtensionPackagingContract;
 use ::adl::red_blue_agent_architecture::RedBlueAgentArchitectureContract;
 use ::adl::skill_composition_model::SkillCompositionModelContract;
 
@@ -188,6 +189,20 @@ pub(super) fn real_identity_delegation_refusal_coordination(
         "delegation refusal coordination",
         "DELEGATION_REFUSAL_COORDINATION_PATH",
         DelegationRefusalCoordinationContract::v1(),
+    )
+}
+
+pub(super) fn real_identity_provider_extension_packaging(
+    repo_root: &Path,
+    args: &[String],
+) -> Result<()> {
+    write_contract_json(
+        repo_root,
+        args,
+        "provider-extension-packaging",
+        "provider extension packaging",
+        "PROVIDER_EXTENSION_PACKAGING_PATH",
+        ProviderExtensionPackagingContract::v1(),
     )
 }
 
