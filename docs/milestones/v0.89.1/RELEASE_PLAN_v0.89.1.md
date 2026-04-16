@@ -13,13 +13,13 @@
 
 ## Current Release Truth
 
-`v0.89.1` is currently an active execution milestone with the adversarial/runtime proof band and integration-demo package landed through `WP-13`, `WP-14` owning the quality gate, and no release candidate yet.
+`v0.89.1` is currently an active execution milestone with the adversarial/runtime proof band, integration-demo package, quality gate, and docs-review convergence pass landed through `WP-15`, and no release candidate yet.
 
 That means:
 - the canonical planning package exists and is reviewable
 - the official issue wave is open and visible through `#1922` - `#1941`
-- `WP-02` - `WP-13` are closed on the live tracker
-- `WP-14` owns the quality-gate proof surface before `WP-15` docs/review
+- `WP-02` - `WP-14` are closed on the live tracker
+- `WP-15` owns the docs-review convergence surface before internal and external review
 - no release candidate exists yet
 - review, remediation, next-milestone planning, and ceremony work are all future steps
 
@@ -31,6 +31,7 @@ That means:
 - [x] Core adversarial/runtime and proof-entry wave landed through `WP-11`
 - [x] Integration demos and three-paper manuscript packet complete or explicitly deferred in release truth
 - [x] Quality gate complete (`QUALITY_GATE_v0.89.1.md` and `bash adl/tools/demo_v0891_quality_gate.sh`)
+- [x] Docs-review convergence complete (`DOCS_REVIEW_v0.89.1.md`)
 
 ## 2) Branch And Tag Preparation
 - [ ] Target branch confirmed (`main` unless explicitly changed)

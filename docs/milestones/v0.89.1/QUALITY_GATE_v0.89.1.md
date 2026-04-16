@@ -16,7 +16,7 @@ It is the release-truth surface for:
 - the required local and CI quality command suite
 - the merge-gate coverage posture
 - the non-blocking maintainability watch-list posture
-- the minimum milestone-proof package required before `WP-15` through `WP-20`
+- the minimum milestone-proof package required before `WP-16` through `WP-20`
   can claim a green state truthfully
 
 This document records the gate. It does not replace CI implementation, but the
@@ -221,6 +221,7 @@ the milestone must also establish:
 - `docs/milestones/v0.89.1/MILESTONE_CHECKLIST_v0.89.1.md`
 - `docs/milestones/v0.89.1/RELEASE_PLAN_v0.89.1.md`
 - `docs/milestones/v0.89.1/RELEASE_NOTES_v0.89.1.md`
+- `docs/milestones/v0.89.1/DOCS_REVIEW_v0.89.1.md`
 - issue `#1935` output record and validation evidence
 
 ### D10 quality-gate walkthrough
@@ -278,9 +279,9 @@ That does not invalidate this gate. It means only that later checklist/review or
 release items may still need explicit owner-bound dispositions until the closeout
 tail finishes.
 
-As of the `WP-14` authoring pass:
+As of the post-`WP-14` docs-review pass:
 
-- the latest `main` CI run for the landed `WP-13` merge was green
+- the latest `main` CI run for the landed `WP-14` merge was green
 - the merge gate carries no active per-file coverage exclusion
 - the nightly watchdog should no longer carry the stale `obsmem_contract.rs`
   dead-path exclusion
@@ -294,7 +295,7 @@ being flattened into a fake all-green release claim.
 - converting the large-module watch list into a build-failing gate
 - pretending the integrated proof package replaces CI
 - treating milestone demo proof as a substitute for tests / clippy / fmt
-- claiming release readiness for `WP-15` through `WP-20`
+- claiming release readiness for `WP-16` through `WP-20`
 
 ## Exit Criteria
 
