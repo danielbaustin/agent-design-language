@@ -38,6 +38,9 @@ all_models = {
 }
 assert "gemma4:latest" in all_models
 assert "gpt-oss:120b" in all_models
+remote = next(source for source in roster["sources"] if source["source_id"] == "remote_ollama")
+assert remote["hardware"]["system_ram_gb"] == 128
+assert remote["hardware"]["gpu"]["vram_gb"] == 24
 
 scoreboard = load("scoreboard/final_scoreboard.json")
 assert scoreboard["not_financial_advice"] is True
@@ -65,6 +68,7 @@ for path in root.rglob("*"):
 PY
 
 grep -Fq "Canonical mode: fixture replay" "$ARTIFACT_ROOT/audit/data_source_report.md"
+grep -Fq "Remote Ollama fixture hardware: 128 GB system RAM, RX-3090 with 24 GB VRAM" "$ARTIFACT_ROOT/audit/data_source_report.md"
 grep -Fq "not financial advice" "$ARTIFACT_ROOT/run_summary.md"
 
 echo "demo_v0891_long_lived_stock_league: ok"

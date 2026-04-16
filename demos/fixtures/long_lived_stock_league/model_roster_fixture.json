@@ -21,6 +21,15 @@
       "label": "Remote Ollama fixture",
       "endpoint": "fixture://remote-ollama-128gb",
       "reachable": true,
+      "hardware": {
+        "source": "operator_reported",
+        "system_ram_gb": 128,
+        "gpu": {
+          "model": "RX-3090",
+          "vram_gb": 24
+        },
+        "role": "optional high-capacity Ollama node for larger model runs"
+      },
       "models": [
         {"name": "gemma4:latest", "parameter_size": "8.0B", "family": "gemma4"},
         {"name": "qwen3:30b", "parameter_size": "30.5B", "family": "qwen3moe"},

@@ -385,6 +385,32 @@ def load_model_roster(args: argparse.Namespace) -> dict[str, Any]:
     }
 
 
+def roster_hardware_lines(roster: dict[str, Any]) -> list[str]:
+    lines: list[str] = []
+    for source in roster.get("sources", []):
+        if not isinstance(source, dict):
+            continue
+        hardware = source.get("hardware")
+        if not isinstance(hardware, dict):
+            continue
+        label = source.get("label") or source.get("source_id") or "model source"
+        details: list[str] = []
+        system_ram_gb = hardware.get("system_ram_gb")
+        if system_ram_gb is not None:
+            details.append(f"{system_ram_gb} GB system RAM")
+        gpu = hardware.get("gpu")
+        if isinstance(gpu, dict):
+            gpu_model = gpu.get("model")
+            gpu_vram_gb = gpu.get("vram_gb")
+            if gpu_model and gpu_vram_gb is not None:
+                details.append(f"{gpu_model} with {gpu_vram_gb} GB VRAM")
+            elif gpu_model:
+                details.append(str(gpu_model))
+        if details:
+            lines.append(f"- {label} hardware: {', '.join(details)}")
+    return lines
+
+
 def model_names_by_source(roster: dict[str, Any]) -> dict[str, set[str]]:
     result: dict[str, set[str]] = {}
     for source in roster.get("sources", []):
@@ -814,14 +840,21 @@ def main(argv: list[str] | None = None) -> int:
         "trimmed after the storm instead of rewriting a broken trend into a long-term thesis.\n",
         encoding="utf-8",
     )
+    hardware_lines = roster_hardware_lines(roster)
+    data_source_lines = [
+        "# Data Source Report",
+        "",
+        "- Canonical mode: fixture replay",
+        "- Market data: synthetic daily close fixture",
+        "- Network required: no",
+        "- Paid data required: no",
+        "- Broker integration: no",
+        f"- Fixture warnings: {', '.join(warnings) if warnings else 'none'}",
+    ]
+    if hardware_lines:
+        data_source_lines.extend(["", "## Optional Model Host Hardware", "", *hardware_lines])
     (artifact_root / "audit" / "data_source_report.md").write_text(
-        "# Data Source Report\n\n"
-        "- Canonical mode: fixture replay\n"
-        "- Market data: synthetic daily close fixture\n"
-        "- Network required: no\n"
-        "- Paid data required: no\n"
-        "- Broker integration: no\n"
-        f"- Fixture warnings: {', '.join(warnings) if warnings else 'none'}\n",
+        "\n".join(data_source_lines) + "\n",
         encoding="utf-8",
     )
 

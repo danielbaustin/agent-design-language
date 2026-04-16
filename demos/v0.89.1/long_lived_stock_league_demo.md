@@ -79,6 +79,12 @@ bash adl/tools/demo_v0891_long_lived_stock_league.sh --discover-models
 Model discovery only writes `model_roster.json`. It does not make the models
 select securities or produce financial advice.
 
+The fixture records the remote node as an optional high-capacity host with
+operator-reported 128 GB system RAM and an `RX-3090` with 24 GB VRAM. That
+hardware is useful for larger model conversations, but the canonical demo still
+proves from deterministic fixtures and does not require the remote node to be
+online.
+
 ## Agent Cast
 
 - The Value Monk uses a valuation-first identity and prefers `gemma4:latest`.
