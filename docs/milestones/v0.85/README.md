@@ -66,6 +66,7 @@ The current tracked v0.85 set includes:
 - `EDITING_ARCHITECTURE.md`
 - `HTA_EDITOR_PLANNING.md`
 - `HUMAN-IN-THE-LOOP-DESIGN-NOTES.MD`
+- `ideas/README.md`
 - `LAYER_8_IMPLEMENTATION.md`
 - `MILESTONE_CHECKLIST_v0.85.md`
 - `MILESTONE_ISSUE_RECONCILIATION_v0.85.md`
@@ -99,7 +100,8 @@ Readers new to the milestone should start with:
 1. `VISION_v0.85.md`
 2. `DESIGN_v0.85.md`
 3. `DEMO_MATRIX_v0.85.md`
-4. `QUALITY_GATE_v0.85.md`
-5. `RELEASE_NOTES_v0.85.md`
+4. `ideas/README.md`
+5. `QUALITY_GATE_v0.85.md`
+6. `RELEASE_NOTES_v0.85.md`
 
 These documents provide the clearest path through the milestone’s intent, implementation shape, proof surfaces, quality expectations, and release summary.

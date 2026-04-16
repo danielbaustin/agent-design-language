@@ -66,12 +66,13 @@ The v0.8 review packet is materially better aligned than the earlier recovery st
 2. [Architecture](ARCHITECTURE_V0.8.md)
 3. [Milestone Design](DESIGN_V0.8.md)
 4. [Epic Mapping](EPIC_MAPPING_v0.8.md)
-5. [Work Breakdown Structure (WBS)](WBS_V0.8.md)
-6. [Sprint Plan](SPRINT_V0.8.md)
-7. [Milestone Checklist](MILESTONE_CHECKLIST_V0.8.md)
-8. [Decisions Log](DECISIONS_V0.8.md)
-9. [Release Plan](RELEASE_PLAN_V0.8.md)
-10. [Release Notes](RELEASE_NOTES_V0.8.md)
+5. [Ideas and backgrounders](ideas/README.md)
+6. [Work Breakdown Structure (WBS)](WBS_V0.8.md)
+7. [Sprint Plan](SPRINT_V0.8.md)
+8. [Milestone Checklist](MILESTONE_CHECKLIST_V0.8.md)
+9. [Decisions Log](DECISIONS_V0.8.md)
+10. [Release Plan](RELEASE_PLAN_V0.8.md)
+11. [Release Notes](RELEASE_NOTES_V0.8.md)
 
 ## Review-Tail Packet
 
@@ -122,6 +123,7 @@ Use these docs together when checking current v0.8 truth:
 
 ## Supporting Design Docs and Demo Surfaces
 
+- [Ideas and backgrounders](ideas/README.md)
 - [RUST_TRANSPILER_DEMO.md](RUST_TRANSPILER_DEMO.md)
 - [RUST_TRANSPILER_VERIFICATION_V0.8.md](RUST_TRANSPILER_VERIFICATION_V0.8.md)
 - [../../demos/v0.8/v0.8-bounded-critical-demos.md](../../demos/v0.8/v0.8-bounded-critical-demos.md)

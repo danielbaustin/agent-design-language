@@ -12,10 +12,20 @@ Provide the canonical feature index for `v0.89`.
 
 This page defines:
 - which `v0.89` feature docs are promoted into the tracked milestone package now
-- which local planning docs remain supporting inputs but are not yet promoted
+- which concept/backgrounder docs are promoted into `ideas/` rather than `features/`
 - which security-heavy or adversarial runtime docs are intentionally carried into `v0.89.1`
 
 The goal is to eliminate floating feature notes. Every source planning doc should have an explicit implementation home or reserved later-band home.
+
+## Ideas / Backgrounder Lane
+
+`ideas/README.md` indexes the promoted rationale and conceptual architecture
+docs for `v0.89`.
+
+Use `features/` for executable commitments, schemas, runtime contracts, demos,
+or proof surfaces. Use `ideas/` for the why: philosophy, constitutional
+framing, learning architecture, reasoning patterns, cluster maps, and future
+conceptual scaffolding.
 
 ## Scope Interpretation
 
@@ -69,16 +79,16 @@ This package intentionally does not absorb the full adversarial runtime and expl
 | `SECURITY_AND_THREAT_MODELING.md` | promoted | `v0.89 / WP-09` |
 | `ADL_SECURITY_POSTURE_MODEL.md` | promoted | `v0.89 / WP-09` |
 | `ADL_TRUST_MODEL_UNDER_ADVERSARY.md` | promoted | `v0.89 / WP-09` |
-| `ADL_AND_REASONABLENESS.md` | supporting planning input | informs `v0.89` governance framing; broader home later `v0.93` |
-| `ADL_CONSTITUTION.md` | supporting planning input | later constitutional/governance band `v0.93` |
-| `ADL_LEARNING_MODEL.md` | supporting planning input | later learning/identity band `v0.92+` |
-| `APTITUDE_MODEL.md` | not in `v0.89` core | `v0.92` capability/identity band |
-| `CONSTITUTIONAL_SURFACE_MAP.md` | supporting planning input | later governance band `v0.93` |
-| `GHB_ALGORITHM_AND_STATE_SPACE_COMPRESSION.md` | supporting planning input | later reasoning band `v0.90` |
-| `GHB_EXECUTION_MODEL.md` | supporting planning input | later reasoning band `v0.90` |
-| `GOVERNANCE_CLUSTER_MAP.md` | local planning map | stays local until broader governance promotion |
-| `LEARNING_AND_SKILLS_CLUSTER_MAP.md` | local planning map | stays local until broader learning/skills promotion |
-| `REASONING_PATTERNS_CATALOG.md` | supporting planning input | later reasoning band `v0.90` |
+| `ADL_AND_REASONABLENESS.md` | promoted idea/backgrounder | `ideas/ADL_AND_REASONABLENESS.md`; informs governance framing and later `v0.93` |
+| `ADL_CONSTITUTION.md` | promoted idea/backgrounder | `ideas/ADL_CONSTITUTION.md`; later constitutional/governance band `v0.93` |
+| `ADL_LEARNING_MODEL.md` | promoted idea/backgrounder | `ideas/ADL_LEARNING_MODEL.md`; later learning/identity band `v0.92+` |
+| `APTITUDE_MODEL.md` | promoted idea/backgrounder | `ideas/APTITUDE_MODEL.md`; later capability/identity band `v0.92` |
+| `CONSTITUTIONAL_SURFACE_MAP.md` | promoted idea/backgrounder | `ideas/CONSTITUTIONAL_SURFACE_MAP.md`; later governance band `v0.93` |
+| `GHB_ALGORITHM_AND_STATE_SPACE_COMPRESSION.md` | promoted idea/backgrounder | `ideas/GHB_ALGORITHM_AND_STATE_SPACE_COMPRESSION.md`; later reasoning band `v0.90` |
+| `GHB_EXECUTION_MODEL.md` | promoted idea/backgrounder | `ideas/GHB_EXECUTION_MODEL.md`; later reasoning band `v0.90` |
+| `GOVERNANCE_CLUSTER_MAP.md` | promoted idea/backgrounder | `ideas/GOVERNANCE_CLUSTER_MAP.md`; broader governance promotion remains later |
+| `LEARNING_AND_SKILLS_CLUSTER_MAP.md` | promoted idea/backgrounder | `ideas/LEARNING_AND_SKILLS_CLUSTER_MAP.md`; broader learning/skills promotion remains later |
+| `REASONING_PATTERNS_CATALOG.md` | promoted idea/backgrounder | `ideas/REASONING_PATTERNS_CATALOG.md`; later reasoning band `v0.90` |
 
 ### `v0.89.1` carry-forward package
 
@@ -105,6 +115,7 @@ The rows below remain useful because they identify the original local source inp
 
 - Treat `README.md`, `VISION_v0.89.md`, `DESIGN_v0.89.md`, `WBS_v0.89.md`, and `SPRINT_v0.89.md` as the canonical milestone planning package.
 - Treat the files in `features/` as the promoted tracked feature commitments for the main `v0.89` band.
-- Treat the remaining local `v0.89` and `v0.89.1` planning inputs as planning material, not already-shipped promises.
+- Treat the files in `ideas/` as conceptual backgrounders and rationale, not already-shipped promises.
+- Treat any remaining local `v0.89` and `v0.89.1` planning inputs as planning material unless explicitly promoted.
 - Treat contradictions between the planning package, promoted feature docs, and carry-forward mapping as defects.
 - Treat every promoted feature doc as an engineering commitment that must resolve to code, tests, artifacts, demos, or explicit defer records.

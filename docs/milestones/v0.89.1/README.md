@@ -70,6 +70,7 @@ Canonical milestone documents:
 - Design: `DESIGN_v0.89.1.md`
 - Work Breakdown Structure (WBS): `WBS_v0.89.1.md`
 - Feature index: `FEATURE_DOCS_v0.89.1.md`
+- Ideas/backgrounder index: `ideas/README.md`
 - Sprint plan: `SPRINT_v0.89.1.md`
 - Decisions log: `DECISIONS_v0.89.1.md`
 - Demo matrix: `DEMO_MATRIX_v0.89.1.md`
@@ -90,13 +91,16 @@ Tracked feature docs:
 - `features/OPERATIONAL_SKILLS_SUBSTRATE.md`
 - `features/SKILL_COMPOSITION_MODEL.md`
 
-Supporting local planning inputs:
-- `DELEGATION_AND_REFUSAL.md`
-- `MULTI_AGENT_NEGOTIATION.md`
-- `PROPOSED_OPERATIONAL_SKILLS.md`
-- `ADL_SECURITY_DEMOS.md`
-- `PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md`
-- local arXiv paper-program planning doc (supports the committed `v0.89.1` publication/skills slice under `WP-08` and `WP-13`)
+Tracked ideas/backgrounders:
+- `ideas/DELEGATION_AND_REFUSAL.md`
+- `ideas/MULTI_AGENT_NEGOTIATION.md`
+- see `ideas/README.md` for supporting-input and not-promoted disposition notes
+
+Other supporting planning inputs:
+- local arXiv paper-program planning supports the committed `v0.89.1`
+  publication/skills slice under `WP-08` and `WP-13`
+- internal operational-skills process notes remain local-only and are not part
+  of the reader-facing milestone package
 
 ## Execution Model
 

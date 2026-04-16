@@ -12,8 +12,17 @@ Provide the canonical feature index for `v0.89.1`.
 
 This page defines:
 - which `v0.89.1` feature docs are promoted into the tracked milestone package now
-- which local planning docs remain supporting inputs but are not yet promoted
+- which concept/backgrounder docs are promoted into `ideas/` rather than `features/`
 - how the `v0.89` carry-forward corpus maps into this follow-on band
+
+## Ideas / Backgrounder Lane
+
+`ideas/README.md` indexes reader-visible rationale that supports the milestone
+without becoming a standalone feature commitment.
+
+Use `features/` for executable commitments, schemas, demos, runtime contracts,
+or proof surfaces. Use `ideas/` for supporting governance and coordination
+concepts such as refusal, delegation, and multi-agent negotiation.
 
 ## Scope Interpretation
 
@@ -49,7 +58,11 @@ The bounded `arxiv-paper-writer` skill is part of the WP-08 operational substrat
 WP-09 proof hook:
 - `adl identity delegation-refusal-coordination --out .adl/state/delegation_refusal_coordination_v1.json`
 
-The local delegation/refusal and negotiation notes remain supporting inputs rather than promoted feature docs. WP-09 integrates their bounded runtime distinctions into a repo-visible contract so reviewers can see delegation, refusal, approval gates, and coordination outcomes without over-claiming final constitutional or negotiation governance.
+The delegation/refusal and negotiation notes are tracked in `ideas/` as
+supporting backgrounders rather than promoted feature docs. WP-09 integrates
+their bounded runtime distinctions into a repo-visible contract so reviewers can
+see delegation, refusal, approval gates, and coordination outcomes without
+over-claiming final constitutional or negotiation governance.
 
 WP-10 proof hook:
 - `adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json`
@@ -88,9 +101,9 @@ WP-13 lands the D7/D8/D9 integration packet, the five-agent Hey Jude MIDI demo, 
 | `ADL_ADVERSARIAL_DEMO.md` | promoted | `v0.89.1 / WP-07` |
 | `OPERATIONAL_SKILLS_SUBSTRATE.md` | promoted | `v0.89.1 / WP-08` |
 | `SKILL_COMPOSITION_MODEL.md` | promoted | `v0.89.1 / WP-08` |
-| `DELEGATION_AND_REFUSAL.md` | supporting planning input | integrated into the bounded `WP-09` delegation/refusal/coordination contract without promotion as a standalone feature doc |
-| `MULTI_AGENT_NEGOTIATION.md` | supporting planning input | integrated into the bounded `WP-09` coordination and disagreement surface without final negotiation-law claims |
-| `PROPOSED_OPERATIONAL_SKILLS.md` | supporting planning input | informs `WP-08` skill-surface packaging and the `WP-09` skill-admission/handoff governance contract |
+| `DELEGATION_AND_REFUSAL.md` | promoted idea/backgrounder | `ideas/DELEGATION_AND_REFUSAL.md`; integrated into the bounded `WP-09` delegation/refusal/coordination contract without promotion as a standalone feature doc |
+| `MULTI_AGENT_NEGOTIATION.md` | promoted idea/backgrounder | `ideas/MULTI_AGENT_NEGOTIATION.md`; integrated into the bounded `WP-09` coordination and disagreement surface without final negotiation-law claims |
+| internal operational-skills process notes | internal-only supporting input | not promoted to tracked reader docs; inform internal skill-surface packaging discipline only |
 | local arXiv paper-program planning doc | supporting planning input | informs the committed `WP-08` bounded `arxiv-paper-writer` skill and the `WP-13` three-paper publication packet |
 | `ADL_SECURITY_DEMOS.md` | under-authored supporting input | do not promote until authored; informs later demo packaging |
 | `PROVIDER_SECURITY_CAPABILITIES_EXTENSION.md` | under-authored supporting input | not promoted by `WP-10`; candidate later security-extension slice |
@@ -108,6 +121,7 @@ That means:
 
 - Treat `README.md`, `VISION_v0.89.1.md`, `DESIGN_v0.89.1.md`, `WBS_v0.89.1.md`, and `SPRINT_v0.89.1.md` as the canonical milestone planning package.
 - Treat the files in `features/` as the promoted tracked feature commitments for the main `v0.89.1` band.
+- Treat the files in `ideas/` as conceptual backgrounders and rationale, not feature commitments.
 - Treat `WP_ISSUE_WAVE_v0.89.1.yaml` as the mechanical source for later issue creation once review is complete.
 - Treat the remaining local `v0.89.1` planning inputs as planning material unless the milestone docs explicitly absorb them into a named work package.
 - Treat contradictions between the planning package, promoted feature docs, and source mapping as defects.
