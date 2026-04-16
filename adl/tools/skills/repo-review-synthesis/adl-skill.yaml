@@ -1,0 +1,56 @@
+version: "0.1"
+kind: "adl-skill"
+id: "repo-review-synthesis"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "repo_review_synthesis.v1"
+    reference_doc: "../docs/MULTI_AGENT_REPO_REVIEW_SKILL_SUITE.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "synthesize_specialist_artifacts"
+      - "synthesize_review_packet"
+    policy_fields:
+      - "required_roles"
+      - "severity_policy"
+      - "write_review_artifact"
+      - "stop_after_synthesis"
+  intent:
+    - "multi_agent_review_synthesis"
+    - "findings_dedupe"
+    - "severity_preserving_review_merge"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_repo_review_synthesis.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "target.specialist_artifacts_must_not_be_empty"
+    - "policy.stop_after_synthesis_must_be_true"
+execution:
+  mode: "synthesis_only"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  test_policy: "do_not_run_new_tests_during_synthesis"
+outputs:
+  default_format: "markdown"
+  structured_contract: "../docs/MULTI_AGENT_REPO_REVIEW_SKILL_SUITE.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-repo-review-synthesis.md"
+  required_sections:
+    - "findings"
+    - "coverage_matrix"
+    - "dedupe_notes"
+    - "disagreements"
+    - "residual_risk"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  manifest_declares_executables: false
