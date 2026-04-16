@@ -79,7 +79,7 @@ Additional environment / fixture requirements:
 | D6 | Operational skills substrate integration | `WP-08` - `WP-09` operational skills, composition, and bounded governance follow-through | `adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json` and `adl identity skill-composition --out .adl/state/skill_composition_model_v1.json`; WP-09 governance remains pending | substrate/composition packet + later delegation/refusal integration note | reviewer can see that adversarial work runs through explicit skill/composition surfaces instead of ad hoc orchestration | orchestration structure should be deterministic even if node outputs remain stochastic | PLANNED |
 | D7 | Reviewer-facing security proof package | `WP-10` - `WP-13` packaging convergence, milestone convergence, and integration demos | planned `WP-10` / `WP-13` review package | reviewer-facing adversarial/replay/trust packet | reviewer can inspect milestone claims, carry-forward boundaries, and proof surfaces as one coherent package | may remain artifact/document driven rather than fully runnable | PLANNED |
 | D8 | Five-Agent Hey Jude MIDI demo | `WP-08` - `WP-10`, `WP-13` cross-provider coordination, human-in-the-loop orchestration, and integration delight surface | planned `WP-08` / `WP-13` coordination demo entry point | Hey Jude coordination packet + MIDI control trace + provider participation summary | reviewer can see one human plus four providers coordinating on one ADL runtime with explicit orchestration boundaries | bounded score/input should preserve composition shape, participant roles, and MIDI event ordering where declared | PLANNED |
-| D9 | ArXiv manuscript workflow packet | `WP-08`, `WP-13` bounded `arxiv-paper-writer` skill plus the initial three-paper publication program | WP-08 writer contract via `adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json`; WP-13 manuscript packet remains pending | writer-skill packet + source packet bundle + three-paper manuscript status packet | reviewer can see ADL use a bounded manuscript workflow to draft and review What Is ADL?, Gödel Agents and ADL, and Cognitive Spacetime Manifold without losing claim discipline | bounded source packets should preserve role order, section structure, and packet shape where declared | PLANNED |
+| D9 | ArXiv manuscript workflow packet | `WP-08`, `WP-13` bounded `arxiv-paper-writer` skill plus the initial three-paper publication program | `bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh` | `artifacts/v0891/arxiv_manuscript_workflow/demo_manifest.json` | reviewer can see the bounded manuscript workflow packet for What Is ADL?, Gödel Agents and ADL, and Cognitive Spacetime Manifold without losing claim discipline or hiding the WP-08/WP-13 boundary | packet generation is deterministic; bounded source packets preserve role order, section structure, and packet shape | READY |
 
 Status guidance:
 - `PLANNED` = intended but not yet validated
@@ -286,23 +286,27 @@ Milestone claims / work packages covered:
 - `WP-08`
 - `WP-13`
 
-Planned entry point:
+Entry point:
 
 ```bash
-adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json
-adl identity skill-composition --out .adl/state/skill_composition_model_v1.json
+bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh
 ```
 
 Expected artifacts:
-- bounded `arxiv-paper-writer` skill packet
-- shared paper-source packet bundle
-- manuscript status packets for:
+- `artifacts/v0891/arxiv_manuscript_workflow/demo_manifest.json`
+- `artifacts/v0891/arxiv_manuscript_workflow/writer_skill_packet/writer_skill_status.json`
+- `artifacts/v0891/arxiv_manuscript_workflow/writer_skill_packet/workflow_contract.md`
+- `artifacts/v0891/arxiv_manuscript_workflow/source_packets/source_packet_manifest.json`
+- `artifacts/v0891/arxiv_manuscript_workflow/manuscript_status/three_paper_status.json`
+- `artifacts/v0891/arxiv_manuscript_workflow/review/review_gates.json`
+- `artifacts/v0891/arxiv_manuscript_workflow/review/claim_boundaries.md`
+- source and status packets for:
   - What Is ADL?
   - Gödel Agents and ADL
   - Cognitive Spacetime Manifold
 
 Primary proof surface:
-- reviewer-facing manuscript workflow packet plus three-paper status bundle
+- reviewer-facing manuscript workflow packet plus three-paper status bundle under `artifacts/v0891/arxiv_manuscript_workflow/`
 
 Expected success signals:
 - reviewer can see the role mapping, source packet, section structure, and review packet shape directly
@@ -311,7 +315,10 @@ Expected success signals:
 
 Known limits / caveats:
 - this row is about bounded drafting and review workflow, not automatic submission or unverifiable authorship claims
-- WP-08 defines the writer skill and composition boundary; WP-13 still owns the three-paper manuscript status packet
+- WP-08 defines the writer skill and composition boundary; WP-13 still owns the three-paper manuscript status packet and publication follow-through
+- the WP-08 proof hooks are `adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json` and `adl identity skill-composition --out .adl/state/skill_composition_model_v1.json`
+
+---
 
 ### D6) Operational skills substrate integration
 
