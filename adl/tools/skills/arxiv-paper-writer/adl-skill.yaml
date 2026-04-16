@@ -1,0 +1,118 @@
+version: "0.1"
+kind: "adl-skill"
+id: "arxiv-paper-writer"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "arxiv_paper_writer.v1"
+    reference_doc: "../docs/ARXIV_PAPER_WRITER_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "draft_from_source_packet"
+      - "draft_section"
+      - "review_claims_and_citations"
+      - "revise_from_review_notes"
+    policy_fields:
+      - "citation_policy"
+      - "claim_policy"
+      - "validation_mode"
+      - "stop_before_submission"
+    mode_requirements:
+      draft_from_source_packet:
+        required_target_fields:
+          - "source_packet_path"
+      draft_section:
+        required_target_fields:
+          - "source_packet_path"
+          - "target_sections"
+      review_claims_and_citations:
+        required_target_fields:
+          - "source_packet_path"
+      revise_from_review_notes:
+        required_target_fields:
+          - "source_packet_path"
+          - "review_notes_path"
+  intent:
+    - "arxiv_manuscript_drafting"
+    - "citation_gap_review"
+    - "claim_boundary_review"
+    - "bounded_scholarly_writing_support"
+  required_inputs:
+    - "repo_root"
+  optional_inputs:
+    - "source_packet_path"
+    - "source_packet_text"
+    - "demo_doc_path"
+    - "review_notes_path"
+    - "artifact_root"
+    - "paper_title"
+    - "paper_domain"
+    - "target_sections"
+    - "known_citations"
+    - "forbidden_claims"
+    - "author_approval_state"
+    - "validation_mode"
+  stop_if_missing:
+    - "repo_root"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_arxiv_paper_writer.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "draft_from_source_packet_requires_target.source_packet_path"
+    - "draft_section_requires_target.source_packet_path_and_target.target_sections"
+    - "review_claims_and_citations_requires_target.source_packet_path"
+    - "revise_from_review_notes_requires_target.source_packet_path_and_target.review_notes_path"
+    - "policy.citation_policy_must_be_explicit"
+    - "policy.claim_policy_must_be_explicit"
+    - "policy.validation_mode_must_be_explicit"
+    - "policy.stop_before_submission_must_be_true"
+execution:
+  mode: "auto_apply"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: true
+  preferred_read_order:
+    - "source_packet"
+    - "review_notes"
+    - "arxiv_demo_doc"
+    - "arxiv_writing_playbook"
+  preferred_commands:
+    - "rg --files"
+    - "rg -n"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  writes_limited_to:
+    - ".adl/**"
+    - "manuscript packet artifacts"
+    - "bounded review manifests"
+  must_not_write:
+    - "publication platforms"
+    - "arxiv submission state"
+    - "unrelated issue bundles"
+    - "unrelated worktrees"
+  stop_on_partial_failure: true
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-arxiv-paper-writer.md"
+  required_sections:
+    - "status"
+    - "target"
+    - "packet"
+    - "claim_boundary_report"
+    - "citation_gap_report"
+    - "submission_boundary"
+    - "follow_up"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  manifest_declares_executables: false

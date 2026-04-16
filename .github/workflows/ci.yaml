@@ -62,6 +62,10 @@ jobs:
         run: bash adl/tools/test_demo_operator_skill_contracts.sh
         working-directory: .
 
+      - name: arxiv-paper-writer contract check
+        run: bash adl/tools/test_arxiv_paper_writer_skill_contracts.sh
+        working-directory: .
+
       - name: fmt
         run: cargo fmt --all -- --check
 
