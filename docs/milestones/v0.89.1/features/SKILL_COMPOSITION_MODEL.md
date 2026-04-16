@@ -3,7 +3,7 @@
 # ADL Skill Composition Model
 
 ## Status
-Draft
+Implemented
 
 ## Purpose
 
@@ -16,6 +16,25 @@ This document establishes:
 - safety boundaries
 
 This is a foundational piece of the ADL runtime.
+
+---
+
+## Implemented Surfaces
+
+WP-08 makes the model concrete through a contract module and identity proof hook:
+
+- Contract module: `adl/src/skill_composition_model.rs`
+- Identity proof hook: `adl identity skill-composition --out .adl/state/skill_composition_model_v1.json`
+- Output schema: `skill_composition_model.v1`
+- Upstream substrate schema: `operational_skills_substrate.v1`
+
+The implementation defines canonical composition primitives, DAG validation rules, trace/replay requirements, a bounded `arxiv-paper-writer` composition shape, and downstream boundaries for WP-09 and WP-13.
+
+Scope boundary:
+- this model defines composition contracts and proof artifacts
+- it does not implement governed delegation/refusal integration for WP-09
+- it does not package the final manuscript workflow for WP-13
+- it does not permit unbounded loops, hidden prompt recursion, or dynamic graph mutation after planning
 
 ---
 
@@ -373,6 +392,45 @@ The system WILL ensure (via feature work):
 
 ---
 
+## Bounded Writer Composition
+
+The bounded `arxiv-paper-writer` composition is represented as an explicit DAG:
+
+```text
+load_source_packet -> draft_outline -> draft_sections
+draft_sections -> citation_gap_review -> emit_review_packet
+draft_sections -> claim_boundary_review -> emit_review_packet
+emit_review_packet -> human_publication_gate
+```
+
+The composition keeps manuscript work reviewable by requiring:
+- a source packet before drafting
+- citation-gap review before packet finalization
+- claim-boundary review before packet finalization
+- a human publication gate before any external submission
+
+This is a WP-08 skill/composition surface. WP-13 owns the later three-paper manuscript packet and reviewer-facing publication workflow evidence.
+
+---
+
+## Proof Hooks
+
+Contract validation:
+
+```bash
+cargo test --manifest-path adl/Cargo.toml skill_composition_model
+```
+
+Reviewer artifact:
+
+```bash
+adl identity skill-composition --out .adl/state/skill_composition_model_v1.json
+```
+
+The generated artifact is deterministic for the same source tree and should mirror the composition primitives and DAG constraints in this document.
+
+---
+
 ## Summary
 
 ADL skill composition defines how skills combine into reliable behavior.
@@ -389,7 +447,8 @@ It is:
 
 ## Related Documents
 
-- `SKILL_MODEL.md`
-- `ADL_LEARNING_MODEL.md`
-- `TRACE_SCHEMA_V1.md`
-- `TRACE_RUNTIME_EMISSION.md`
+- `docs/milestones/v0.89.1/features/OPERATIONAL_SKILLS_SUBSTRATE.md`
+- `docs/milestones/v0.89.1/features/ADVERSARIAL_EXECUTION_RUNNER.md`
+- `docs/milestones/v0.89.1/DEMO_MATRIX_v0.89.1.md`
+- `adl/src/skill_composition_model.rs`
+- `adl/src/operational_skills_substrate.rs`

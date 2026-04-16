@@ -40,6 +40,12 @@ This page defines:
 | `features/OPERATIONAL_SKILLS_SUBSTRATE.md` | runtime execution substrate for operational skills | `WP-08` |
 | `features/SKILL_COMPOSITION_MODEL.md` | explicit composition primitives and execution semantics | `WP-08` |
 
+WP-08 proof hooks:
+- `adl identity operational-skills --out .adl/state/operational_skills_substrate_v1.json`
+- `adl identity skill-composition --out .adl/state/skill_composition_model_v1.json`
+
+The bounded `arxiv-paper-writer` skill is part of the WP-08 operational substrate and composition contracts. The later three-paper manuscript packet remains owned by `WP-13`.
+
 ## Source Planning Corpus -> Implementation Home
 
 ### Core `v0.89.1` source docs

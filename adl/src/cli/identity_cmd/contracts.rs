@@ -14,7 +14,9 @@ use ::adl::chronosense::{
 };
 use ::adl::continuous_verification_self_attack::ContinuousVerificationSelfAttackContract;
 use ::adl::exploit_artifact_replay::ExploitArtifactReplayContract;
+use ::adl::operational_skills_substrate::OperationalSkillsSubstrateContract;
 use ::adl::red_blue_agent_architecture::RedBlueAgentArchitectureContract;
+use ::adl::skill_composition_model::SkillCompositionModelContract;
 
 use super::helpers::required_value;
 
@@ -149,6 +151,28 @@ pub(super) fn real_identity_continuous_verification(
         "continuous verification self-attack",
         "CONTINUOUS_VERIFICATION_SELF_ATTACK_PATH",
         ContinuousVerificationSelfAttackContract::v1(),
+    )
+}
+
+pub(super) fn real_identity_operational_skills(repo_root: &Path, args: &[String]) -> Result<()> {
+    write_contract_json(
+        repo_root,
+        args,
+        "operational-skills",
+        "operational skills substrate",
+        "OPERATIONAL_SKILLS_SUBSTRATE_PATH",
+        OperationalSkillsSubstrateContract::v1(),
+    )
+}
+
+pub(super) fn real_identity_skill_composition(repo_root: &Path, args: &[String]) -> Result<()> {
+    write_contract_json(
+        repo_root,
+        args,
+        "skill-composition",
+        "skill composition model",
+        "SKILL_COMPOSITION_MODEL_PATH",
+        SkillCompositionModelContract::v1(),
     )
 }
 
