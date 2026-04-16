@@ -13,11 +13,11 @@
 
 ## Current Release Truth
 
-`v0.89.1` is currently a complete planning package with no opened execution wave yet.
+`v0.89.1` is currently a complete planning package with an opened execution wave and no release candidate yet.
 
 That means:
 - the canonical planning package exists and is reviewable
-- the reserved issue-wave plan is ready for later issueization
+- the official issue wave is open and visible through `#1922` - `#1941`
 - no implementation PR wave has started yet
 - no release candidate exists yet
 - quality, review, and ceremony work are all future steps

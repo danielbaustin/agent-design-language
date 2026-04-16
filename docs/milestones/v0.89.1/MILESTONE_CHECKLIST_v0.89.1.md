@@ -17,8 +17,8 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 - [x] Decision log initialized (`DECISIONS_v0.89.1.md`)
 - [x] Sprint plan created (`SPRINT_v0.89.1.md`)
 - [x] Feature index created with explicit carry-forward mapping (`FEATURE_DOCS_v0.89.1.md`)
-- [x] Reserved issue-wave plan drafted and review-ready (`WP_ISSUE_WAVE_v0.89.1.yaml`)
-- [ ] Official `v0.89.1` issue wave opened
+- [x] Official issue-wave plan drafted and review-ready (`WP_ISSUE_WAVE_v0.89.1.yaml`)
+- [x] Official `v0.89.1` issue wave opened
 
 ## Execution Discipline
 - [ ] Each issue has truthful local input/output cards in the ADL control plane
@@ -53,7 +53,7 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 
 At the moment this checklist should be read as:
 - planning-complete and review-ready
-- issue wave not opened yet
+- issue wave opened; execution still early
 - execution, review, and release gates still future work
 
 ## Exit Criteria
