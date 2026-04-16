@@ -1,0 +1,3 @@
+display_name: arXiv Paper Writer
+short_description: Draft bounded arXiv-style manuscript packets without submitting or inventing citations
+default_prompt: Turn one concrete source packet into a reviewer-friendly arXiv-style manuscript packet, surface citation and claim gaps, and stop before submission or publication.

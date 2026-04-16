@@ -25,6 +25,7 @@ The tracked skill set is:
 - `test-generator`
 - `demo-operator`
 - `medium-article-writer`
+- `arxiv-paper-writer`
 - `stp-editor`
 - `sip-editor`
 - `sor-editor`
@@ -47,6 +48,7 @@ The normal workflow is:
 `test-generator` is a bounded helper skill for focused tests for a concrete issue, diff, file, or worktree.
 `demo-operator` is a bounded helper skill for running one named demo and classifying the proof result consistently.
 `medium-article-writer` is a bounded helper skill for turning one concrete article brief into a reviewer-friendly Medium packet without publishing.
+`arxiv-paper-writer` is a bounded helper skill for turning one concrete scholarly source packet into a reviewer-friendly arXiv-style manuscript packet without submitting, publishing, or inventing citations.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
 
 The three editor skills are helper skills:
@@ -1511,6 +1513,129 @@ policy:
 Run the named demo in a bounded way, classify the result, and stop.
 ```
 
+## `arxiv-paper-writer`
+
+### Purpose
+
+`arxiv-paper-writer` drafts or reviews one arXiv-style manuscript packet from a
+bounded scholarly source packet.
+
+It is a bounded helper skill, not a publication or literature-search workflow.
+
+### When To Use It
+
+Use it when:
+
+- a concrete source packet should become a manuscript outline, abstract, section
+  draft, full packet, citation-gap report, or claim-boundary report
+- the operator wants source-backed scholarly drafting with explicit citation and
+  claim guardrails
+- the output should stop before arXiv submission or publication
+
+Do not use it for:
+
+- arXiv submission
+- live literature search or citation harvesting
+- inventing citations, author details, benchmark results, or novelty claims
+- broad research planning without a concrete source packet
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- structured invocation should use `skill_input_schema: arxiv_paper_writer.v1`
+- one of:
+  - `target.source_packet_path`
+  - `target.source_packet_text`
+  - `target.demo_doc_path`
+
+### Input Schema
+
+Canonical schema:
+
+- `adl/tools/skills/docs/ARXIV_PAPER_WRITER_SKILL_INPUT_SCHEMA.md`
+
+Schema id:
+
+- `arxiv_paper_writer.v1`
+
+Structured invocation shape:
+
+```yaml
+skill_input_schema: arxiv_paper_writer.v1
+mode: draft_from_source_packet | draft_section | review_claims_and_citations | revise_from_review_notes
+repo_root: /absolute/path
+target:
+  source_packet_path: <path or null>
+  source_packet_text: <string or null>
+  demo_doc_path: <path or null>
+  review_notes_path: <path or null>
+  artifact_root: <path or null>
+  paper_title: <string or null>
+  paper_domain: <string or null>
+  target_sections:
+    - <section name>
+  known_citations:
+    - <citation supplied by the source packet>
+  forbidden_claims:
+    - <string>
+  author_approval_state: unknown | draft_reviewed | approved_for_submission
+policy:
+  citation_policy: source_packet_only | mark_gaps
+  claim_policy: strict_source_bound | mark_unsupported
+  validation_mode: artifact_only | demo_aligned | none
+  stop_before_submission: true
+```
+
+### Output And Stop Boundary
+
+Expected output includes:
+
+- target source packet
+- manuscript packet contents
+- claim-boundary report
+- citation-gap report
+- submission boundary
+- follow-up recommendation
+
+The skill may write one bounded manuscript or review artifact.
+It must stop before submission, publication, author approval claims, or
+unbounded research.
+
+### Example Invocation
+
+```yaml
+Use $arxiv-paper-writer at /Users/daniel/git/agent-design-language/adl/tools/skills/arxiv-paper-writer/SKILL.md with:
+skill_input_schema: arxiv_paper_writer.v1
+mode: draft_from_source_packet
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  source_packet_path: demos/v0.89.1/arxiv_manuscript_workflow_demo.md
+  source_packet_text: null
+  demo_doc_path: demos/v0.89.1/arxiv_manuscript_workflow_demo.md
+  review_notes_path: null
+  artifact_root: null
+  paper_title: Agent Design Language manuscript packet
+  paper_domain: agentic software engineering
+  target_sections:
+    - abstract
+    - introduction
+    - limitations
+  known_citations: []
+  forbidden_claims:
+    - submitted to arXiv
+    - peer reviewed
+    - benchmark superiority without evidence
+  author_approval_state: unknown
+policy:
+  citation_policy: mark_gaps
+  claim_policy: mark_unsupported
+  validation_mode: artifact_only
+  stop_before_submission: true
+Draft the bounded packet, surface citation and claim gaps, and stop before submission.
+```
+
 ## Choosing The Right Skill
 
 Use this quick selector:
@@ -1533,6 +1658,8 @@ Use this quick selector:
   - `pr-closeout`
 - need a broad findings-first code review:
   - `repo-code-review`
+- need source-backed arXiv-style manuscript drafting or citation-gap review:
+  - `arxiv-paper-writer`
 
 ## Common Failure Modes
 
