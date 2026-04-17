@@ -114,4 +114,36 @@ memory:
         status_stdout.contains("\"state\": \"completed\""),
         "stdout:\n{status_stdout}"
     );
+
+    let inspect = run_adl(&["agent", "inspect", "--spec", spec_str, "--json"]);
+    assert!(
+        inspect.status.success(),
+        "expected agent inspect success, stderr:\n{}",
+        String::from_utf8_lossy(&inspect.stderr)
+    );
+    let inspect_stdout = String::from_utf8_lossy(&inspect.stdout);
+    assert!(
+        inspect_stdout.contains("\"schema\": \"adl.long_lived_agent_inspection_packet.v1\""),
+        "stdout:\n{inspect_stdout}"
+    );
+    assert!(
+        inspect_stdout.contains("\"manifest\": \"cycles/cycle-000003/cycle_manifest.json\""),
+        "stdout:\n{inspect_stdout}"
+    );
+    assert!(
+        inspect_stdout
+            .contains("\"guardrail_report\": \"cycles/cycle-000003/guardrail_report.json\""),
+        "stdout:\n{inspect_stdout}"
+    );
+
+    let human_inspect = run_adl(&["agent", "inspect", "--spec", spec_str]);
+    assert!(
+        human_inspect.status.success(),
+        "expected human agent inspect success, stderr:\n{}",
+        String::from_utf8_lossy(&human_inspect.stderr)
+    );
+    let human_inspect_stdout = String::from_utf8_lossy(&human_inspect.stdout);
+    assert!(human_inspect_stdout.contains("agent: smoke-agent"));
+    assert!(human_inspect_stdout.contains("cycle: cycle-000003 success"));
+    assert!(human_inspect_stdout.contains("proof: pass"));
 }

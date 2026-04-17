@@ -5,6 +5,7 @@ pub fn usage() -> &'static str {
   adl agent tick --spec <agent-spec.yaml> [--recover-stale-lease] [--json]
   adl agent run --spec <agent-spec.yaml> --max-cycles <n> [--interval-secs <n>] [--no-sleep] [--recover-stale-lease] [--json]
   adl agent status --spec <agent-spec.yaml> [--json]
+  adl agent inspect --spec <agent-spec.yaml> [--cycle <cycle-id>] [--json]
   adl agent stop --spec <agent-spec.yaml> --reason <text> [--json]
   adl artifact validate-control-path --root <dir>
   adl demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
@@ -76,6 +77,7 @@ Examples:
   adl agent tick --spec .adl/long_lived_agents/example-agent.yaml
   adl agent run --spec .adl/long_lived_agents/example-agent.yaml --max-cycles 3 --no-sleep
   adl agent status --spec .adl/long_lived_agents/example-agent.yaml --json
+  adl agent inspect --spec .adl/long_lived_agents/example-agent.yaml --json
   adl agent stop --spec .adl/long_lived_agents/example-agent.yaml --reason \"operator pause\"
   adl artifact validate-control-path --root /tmp/adl-v086-control-path-demo/demo-g-v086-control-path
   ADL_OLLAMA_BIN=adl/tools/mock_ollama_v0_4.sh adl examples/v0-4-demo-fork-join.adl.yaml --run --trace --out ./out
