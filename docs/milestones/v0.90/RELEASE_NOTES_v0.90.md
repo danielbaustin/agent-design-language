@@ -1,57 +1,57 @@
-# Release Notes Template
+# Release Notes - v0.90 Draft
 
 ## Metadata
-- Product: `{{product_name}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Tag: `{{tag_name}}`
 
-## How To Use
-- Keep statements implementation-accurate and test-validated.
-- Prefer concise bullets over marketing language.
-- Explicitly separate shipped behavior from "What's Next."
+- Milestone: v0.90
+- Version: v0.90
+- Date: 2026-04-16
+- Owner: Daniel Austin
+- Status: tracked planning package
 
-# `{{product_name}}` `{{version}}` Release Notes
+## Draft Summary
 
-## Summary
-{{summary_paragraph}}
+v0.90 is planned as the first bounded long-lived-agent runtime milestone.
 
-## Highlights
-- {{highlight_1}}
-- {{highlight_2}}
-- {{highlight_3}}
+The intended release story is:
 
-## What's New In Detail
+- supervised agents can run across bounded cycles
+- each cycle emits reviewable artifacts
+- continuity is explicit without claiming full identity
+- operators can inspect and stop long-lived execution
+- the stock league demo proves recurring supervised behavior safely
+- selected demo extensions strengthen proof coverage without displacing the
+  stock-league proof
+- coverage ratchets to `93%` if measurement and validation support it
+- milestone compression and repo visibility land as bounded pilots
+- Rust refactoring is explicit, scoped, and validated
 
-### {{area_1}}
-- {{detail_1a}}
-- {{detail_1b}}
+## Planned Highlights
 
-### {{area_2}}
-- {{detail_2a}}
-- {{detail_2b}}
+- long-lived supervisor and heartbeat
+- cycle manifest and artifact contract
+- state and continuity handle package
+- operator control and guardrail surfaces
+- stock league demo proof package
+- demo extension proof package
+- `93%` coverage tranche
+- milestone compression pilot
+- repo visibility manifest and linkage report
+- Rust refactoring validation record
 
-### {{area_3}}
-- {{detail_3a}}
-- {{detail_3b}}
+## Explicit Non-Claims
 
-## Upgrade Notes
-- {{upgrade_note_1}}
-- {{upgrade_note_2}}
+v0.90 should not claim:
 
-## Known Limitations
-- {{limitation_1}}
-- {{limitation_2}}
+- full v0.92 identity/capability substrate
+- live trading
+- financial advice
+- unbounded autonomy
+- full autonomous release approval or silent closeout automation
+- full repo semantic indexing
+- full signed-trace or TQL completion unless those are explicitly promoted and
+  implemented in the issue wave
 
-## Validation Notes
-- {{validation_note_1}}
-- {{validation_note_2}}
+## Release Status
 
-## What's Next
-- {{next_1}}
-- {{next_2}}
-
-## Exit Criteria
-- Notes reflect only shipped behavior.
-- Known limitations and future work are explicitly separated.
-- Final text is ready to paste into GitHub Release UI without further editing.
+Not started. This file is draft release-note scaffolding for the tracked v0.90
+planning package. Final release copy belongs to the v0.90 release tail.

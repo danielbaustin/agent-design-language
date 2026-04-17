@@ -1,50 +1,57 @@
-# Milestone Checklist Template
+# Milestone Checklist - v0.90
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Target release date: `{{target_release_date}}`
-- Owner: `{{owner}}`
 
-## Purpose
-Ship/no-ship gate for the milestone. Check items only when evidence exists.
+- Milestone: v0.90
+- Version: v0.90
+- Date: 2026-04-16
+- Owner: Daniel Austin
+- Status: tracked planning package
 
-## Planning
-- [ ] Milestone goal defined (`{{goal_doc_link}}`)
-- [ ] Scope + non-goals documented (`{{scope_doc_link}}`)
-- [ ] WBS created and mapped to issues (`{{wbs_link}}`)
-- [ ] Decision log initialized (`{{decisions_link}}`)
-- [ ] Sprint plan created (`{{sprint_plan_link}}`)
+## Planning Gate
 
-## Execution Discipline
-- [ ] Each issue has input/output cards under `.adl/cards/<issue>/`
-- [ ] Each burst writes artifacts under `.adl/reports/burst/<timestamp>/`
-- [ ] Draft PR opened for each issue before merge
-- [ ] Transient failures retried and documented
-- [ ] "Green-only merge" policy followed
+- [x] The `v0.89.1` WP-19 promotion gate promotes this package into tracked milestone docs.
+- [ ] FEATURE_DOCS_v0.90.md has final promoted/deferred dispositions.
+- [ ] WP_ISSUE_WAVE_v0.90.yaml has real issue titles and dependencies.
+- [ ] Every feature doc has a WBS row.
+- [ ] Every idea doc has a reader-facing or deferred home.
 
-## Quality Gates
-- [ ] `cargo fmt` passes
-- [ ] `cargo clippy --all-targets -- -D warnings` passes
-- [ ] `cargo test` passes
-- [ ] CI is green on the merge target
-- [ ] Coverage signal is not red (or exception documented) (`{{coverage_link_or_note}}`)
-- [ ] No unresolved high-priority blockers (`{{blocker_report_link}}`)
+## Scope Gate
 
-## Release Packaging
-- [ ] Release notes finalized (`{{release_notes_link}}`)
-- [ ] Tag verified: `{{tag_name}}`
-- [ ] GitHub Release drafted (`{{release_draft_link}}`)
-- [ ] Links validated in release body
-- [ ] Release published
+- [ ] v0.90 thesis is confirmed.
+- [ ] Full v0.92 identity is explicitly out of scope.
+- [ ] Live trading and financial advice are explicitly out of scope.
+- [ ] Trace/TQL/reasoning graph scope is accepted, narrowed, or deferred.
+- [ ] Demo extension scope is named and bounded.
+- [ ] Coverage ratchet target is confirmed as `93%` for this revision.
+- [ ] Milestone compression scope is limited to canonical state and drift checks unless explicitly widened.
+- [ ] Repo visibility scope is limited to a bounded manifest/linkage prototype.
+- [ ] Rust refactoring targets are justified by maintainability, testability, or review evidence.
 
-## Post-Release
-- [ ] Milestone/epic issues closed with release links
-- [ ] Deferred items moved to next milestone backlog
-- [ ] Follow-up bugs/tech debt captured as issues
-- [ ] Roadmap/status docs updated (`{{roadmap_update_link}}`)
-- [ ] Retrospective summary recorded (`{{retro_link}}`)
+## Implementation Gate
 
-## Exit Criteria
-- All required gates are checked, or each exception has an owner + due date.
-- Milestone can be audited end-to-end via the links captured above.
+- [ ] Supervisor/heartbeat work lands.
+- [ ] Cycle contract work lands.
+- [ ] Continuity handle work lands.
+- [ ] Operator control and safety work lands.
+- [ ] Demo scaffold lands.
+- [ ] Demo integration lands.
+- [ ] Demo extension lane lands or is explicitly deferred.
+- [ ] Coverage ratchet reaches `93%` only after measurement and proof are green.
+- [ ] Milestone compression pilot lands without autonomous release approval.
+- [ ] Repo visibility prototype lands with a reviewer-readable manifest and linkage report.
+- [ ] Rust refactoring pass lands with validation evidence.
+
+## Review And Release Gate
+
+- [ ] Quality gate is green.
+- [ ] Docs review is complete.
+- [ ] Rust refactor validation is complete.
+- [ ] Milestone compression drift checks are clean or explicitly dispositioned.
+- [ ] Repo visibility linkage report is reviewed.
+- [ ] Internal review is complete.
+- [ ] Third-party review is complete or explicitly deferred.
+- [ ] Findings remediation is complete.
+- [ ] Final quality and release readiness pass is complete.
+- [ ] Next milestone planning is complete before release ceremony.
+- [ ] Release ceremony is complete.

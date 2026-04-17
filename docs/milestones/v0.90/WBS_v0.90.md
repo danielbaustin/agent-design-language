@@ -1,65 +1,82 @@
-# Work Breakdown Structure (WBS) Template
+# Work Breakdown Structure - v0.90
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
 
-## How To Use
-- Break work into independently-mergeable issues.
-- Keep each item measurable and testable.
-- Include deliverables + dependencies + issue links.
-- `WP-01` is **always** the milestone **design pass** (canonical docs + WBS + decisions + sprint plan + checklist).
-- Reserve the final WPs for the release tail in this order: `WP-13` demos, `WP-14` quality/coverage gate, `WP-15` docs/review convergence, `WP-16` release ceremony.
+- Milestone: v0.90
+- Version: v0.90
+- Date: 2026-04-16
+- Owner: Daniel Austin
+- Status: tracked planning package
 
 ## WBS Summary
-{{wbs_summary}}
+
+This draft WBS treats v0.90 as the long-lived-agent runtime milestone, with
+bounded sidecar work for demo expansion, quality ratcheting, milestone
+compression, repo visibility, and explicit Rust refactoring.
+
+Issue numbers are intentionally blank until the v0.90 WP-01 issue-wave step
+opens the tracked v0.90 issue wave.
 
 ## Work Packages
-| ID | Work Package | Description | Deliverable | Dependencies | Issue |
-|---|---|---|---|---|---|
-| WP-01 | Design pass (milestone docs + planning) | {{description_01}} | {{deliverable_01}} | {{deps_01}} | {{issue_01}} |
-| WP-02 | {{package_02}} | {{description_02}} | {{deliverable_02}} | {{deps_02}} | {{issue_02}} |
-| WP-03 | {{package_03}} | {{description_03}} | {{deliverable_03}} | {{deps_03}} | {{issue_03}} |
-| WP-04 | {{package_04}} | {{description_04}} | {{deliverable_04}} | {{deps_04}} | {{issue_04}} |
-| WP-05 | {{package_05}} | {{description_05}} | {{deliverable_05}} | {{deps_05}} | {{issue_05}} |
-| WP-06 | {{package_06}} | {{description_06}} | {{deliverable_06}} | {{deps_06}} | {{issue_06}} |
-| WP-07 | {{package_07}} | {{description_07}} | {{deliverable_07}} | {{deps_07}} | {{issue_07}} |
-| WP-08 | {{package_08}} | {{description_08}} | {{deliverable_08}} | {{deps_08}} | {{issue_08}} |
-| WP-09 | {{package_09}} | {{description_09}} | {{deliverable_09}} | {{deps_09}} | {{issue_09}} |
-| WP-10 | {{package_10}} | {{description_10}} | {{deliverable_10}} | {{deps_10}} | {{issue_10}} |
-| WP-11 | {{package_11}} | {{description_11}} | {{deliverable_11}} | {{deps_11}} | {{issue_11}} |
-| WP-12 | {{package_12}} | {{description_12}} | {{deliverable_12}} | {{deps_12}} | {{issue_12}} |
-| WP-13 | Demo matrix + integration demos | {{description_13}} | {{deliverable_13}} | {{deps_13}} | {{issue_13}} |
-| WP-14 | Coverage / quality gate (ratchet + exclusions) | {{description_14}} | {{deliverable_14}} | {{deps_14}} | {{issue_14}} |
-| WP-15 | Docs + review pass (repo-wide alignment) | {{description_15}} | {{deliverable_15}} | {{deps_15}} | {{issue_15}} |
-| WP-16 | Release ceremony (final validation + tag + notes + cleanup) | {{description_16}} | {{deliverable_16}} | {{deps_16}} | {{issue_16}} |
 
-## Sequencing
-- Phase 1: {{phase_1}}
-- Phase 2: {{phase_2}}
-- Phase 3: {{phase_3}}
+| ID | Work Package | Description | Deliverable | Dependencies | Issue |
+| --- | --- | --- | --- | --- | --- |
+| WP-01 | Milestone planning and issue wave | Finalize the promoted tracked package, reconcile scope, and open issues | tracked v0.90 docs and issue wave | #1986, #1940 | TBD |
+| WP-02 | Long-lived supervisor and heartbeat | Implement or define supervisor state, heartbeat, lease, and scheduling surface | supervisor/heartbeat contract and proof | WP-01 | TBD |
+| WP-03 | Cycle contract and artifact root | Define cycle manifests, observations, decision records, run refs, and memory-write candidates | cycle artifact contract | WP-02 | TBD |
+| WP-04 | State and continuity handles | Define pre-v0.92 continuity files, ledgers, provider-binding history, and migration boundary | continuity contract | WP-02, WP-03 | TBD |
+| WP-05 | Operator control and safety | Define status, stop, guardrail, sanitization, and safety surfaces | operator control contract | WP-02, WP-03 | TBD |
+| WP-06 | Minimal inspection and trace boundary | Decide and implement the smallest status/query/trace slice needed for review | inspection proof surface | WP-02 through WP-05 | TBD |
+| WP-07 | Stock league demo scaffold | Build the bounded stock league demo skeleton and fixtures | demo scaffold and safety docs | WP-02 through WP-05 | TBD |
+| WP-08 | Long-lived demo integration | Integrate recurring cycles, continuity, status, and guardrails into the demo | runnable or reviewer-legible integration demo | WP-06, WP-07 | TBD |
+| WP-09 | Demo extensions and proof expansion | Add or extend selected demos without weakening the stock-league proof path | demo extension packet | WP-06 through WP-08 | TBD |
+| WP-10 | Coverage ratchet to 93 percent | Measure coverage hotspots, add focused tests, and raise the gate only after evidence is green | 93 percent quality gate report | WP-02 through WP-09 | TBD |
+| WP-11 | Milestone compression pilot | Define canonical milestone state and drift checks for issue/docs/release-tail truth | compression pilot and drift-check report | WP-01 through WP-10 | TBD |
+| WP-12 | Repo visibility prototype | Add a bounded manifest and code-doc-demo linkage report for one milestone or feature slice | repo visibility proof packet | WP-01 through WP-10 | TBD |
+| WP-13 | Docs and review pass | Align docs, feature index, demos, issue outputs, compression artifacts, and repo visibility artifacts | review-ready docs package | WP-09 through WP-12 | TBD |
+| WP-14 | Rust refactoring pass | Perform explicit, bounded Rust refactors justified by maintainability, testability, or review findings | refactor PRs and validation record | WP-10 through WP-13 | TBD |
+| WP-15 | Internal review | Conduct internal review and record findings | review artifact | WP-13, WP-14 | TBD |
+| WP-16 | Third-party review | Conduct external/third-party review and record findings | review artifact | WP-13, WP-14 | TBD |
+| WP-17 | Findings remediation | Fix or explicitly defer review findings | remediation PRs or defer log | WP-15, WP-16 | TBD |
+| WP-18 | Final quality and release readiness | Re-run quality, demo, docs, compression, visibility, and refactor readiness checks | release-readiness report | WP-17 | TBD |
+| WP-19 | Next milestone planning | Prepare the following milestone package | tracked planning package | WP-18 | TBD |
+| WP-20 | Release ceremony | Final validation, release notes, tag, and cleanup | release artifact set | WP-19 | TBD |
+
+## Candidate Scope Split
+
+Default Sprint 1:
+
+- WP-01 through WP-05
+
+Default Sprint 2:
+
+- WP-06 through WP-08
+
+Sidecar / process sprint:
+
+- WP-09 through WP-12
+
+Release tail:
+
+- WP-13 through WP-20
 
 ## Acceptance Mapping
-- WP-01 (Design pass) -> {{acceptance_criteria_01}}
-- WP-02 -> {{acceptance_criteria_02}}
-- WP-03 -> {{acceptance_criteria_03}}
-- WP-04 -> {{acceptance_criteria_04}}
-- WP-05 -> {{acceptance_criteria_05}}
-- WP-06 -> {{acceptance_criteria_06}}
-- WP-07 -> {{acceptance_criteria_07}}
-- WP-08 -> {{acceptance_criteria_08}}
-- WP-09 -> {{acceptance_criteria_09}}
-- WP-10 -> {{acceptance_criteria_10}}
-- WP-11 -> {{acceptance_criteria_11}}
-- WP-12 -> {{acceptance_criteria_12}}
-- WP-13 (Demos) -> {{acceptance_criteria_13}}
-- WP-14 (Quality gate) -> {{acceptance_criteria_14}}
-- WP-15 (Docs/review) -> {{acceptance_criteria_15}}
-- WP-16 (Release ceremony) -> {{acceptance_criteria_16}}
 
-## Exit Criteria
-- Every in-scope requirement maps to at least one WBS item.
-- Every WBS item has an owner, issue reference, and concrete deliverable.
-- Dependency order is explicit enough to execute deterministically.
+- WP-01: tracked v0.90 package exists and issue wave can be created mechanically
+- WP-02: supervisor/heartbeat state is explicit and bounded
+- WP-03: every long-lived cycle has a durable artifact contract
+- WP-04: continuity is explicit without claiming full identity
+- WP-05: operator controls and safety reports exist
+- WP-06: reviewers can inspect status and relevant trace evidence
+- WP-07: stock league demo has safe fixtures and no-financial-advice framing
+- WP-08: demo proves bounded multi-cycle continuity
+- WP-09: selected demo additions or extensions are named, bounded, and validated
+- WP-10: 93 percent coverage ratchet is measured, proven, and documented before threshold change
+- WP-11: milestone compression pilot catches drift without autonomous release behavior
+- WP-12: repo visibility prototype maps canonical docs to code, tests, demos, and review surfaces
+- WP-13: docs and feature mappings are consistent across core and sidecar work
+- WP-14: Rust refactors are bounded, validated, and justified by maintainability or testability
+- WP-15 through WP-17: review findings are closed or deferred truthfully
+- WP-18: final quality and release-readiness checks are complete
+- WP-19: next milestone planning is ready before release ceremony
+- WP-20: release package is complete

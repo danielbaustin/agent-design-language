@@ -1,153 +1,154 @@
-# Milestone README Template
-
-## Runtime v2 Follow-On Boundary
-
-v0.90 remains the long-lived bounded runtime milestone. Its job is to establish
-supervised long-lived agent cycles, heartbeat, continuity handles, operator
-control, and concrete proof/demo surfaces.
-
-The follow-on Runtime v2 substrate is intentionally staged after v0.90:
-
-- v0.90.1 owns the Runtime v2 foundation prototype.
-- v0.90.2 owns Runtime v2 hardening, invariant tests, violation artifacts,
-  recovery, and security-boundary proof surfaces.
-- v0.91 remains additive moral and emotional civilization work.
-- v0.92 owns the first true Gödel-agent birthday.
-
-The v0.90 WP-19 planning gate should seed v0.90.1 before v0.91 so this
-runtime-substrate work is ready without reducing the v0.91 moral, emotional,
-kindness, wellbeing, humor, cultivation, harm-prevention, or polis-governance
-scope.
-
-Roadmap: ../ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md
+# Milestone README - v0.90
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Date: `{{date}}`
-- Owner: `{{owner}}`
+
+- Milestone: v0.90
+- Version: v0.90
+- Date: 2026-04-16
+- Owner: Daniel Austin
+- Status: tracked planning package promoted by `v0.89.1` WP-19
+- Early planning issue: #1986
+- Promotion gate: #1940
 
 ## Purpose
-Provide a single entry point for the milestone: what it is, why it matters, what is included, and how to navigate the canonical documents and artifacts.
 
-## How To Use
-- Start here before reading individual milestone documents.
-- Use this README to locate the canonical design, execution, and validation surfaces.
-- Keep this document concise and navigational; detailed content belongs in the linked docs.
-- Keep links up to date as files move or are renamed.
+Provide the tracked planning entry point for v0.90 after `v0.89.1` WP-19
+promoted the package into milestone docs.
 
-## Overview
+This directory intentionally mirrors the tracked milestone layout:
 
-`{{milestone}}` represents the stage where `{{project_name}}` moves from `{{previous_state}}` to `{{target_state}}`.
+- root planning docs and issue-wave YAML live in this directory
+- feature contracts live under features/
+- reader-facing idea/backgrounder docs live under ideas/
 
-This milestone focuses on:
-- {{focus_1}}
-- {{focus_2}}
-- {{focus_3}}
+## Milestone Thesis
 
-Key outcomes:
-- {{outcome_1}}
-- {{outcome_2}}
-- {{outcome_3}}
+v0.90 should make ADL capable of supervising long-lived agents with bounded
+cycles, durable continuity handles, operator safety controls, and concrete demo
+evidence.
+
+The milestone should not claim to ship the full v0.92 identity/capability
+substrate. It should create a practical pre-identity long-lived runtime slice
+that later identity work can adopt or migrate.
 
 ## Scope Summary
 
-### In scope
-- {{in_scope_1}}
-- {{in_scope_2}}
-- {{in_scope_3}}
+### In Scope
 
-### Out of scope
-- {{out_of_scope_1}}
-- {{out_of_scope_2}}
+- long-lived supervisor and heartbeat behavior
+- bounded cycle contracts and artifact layout
+- pre-v0.92 state and continuity handles
+- operator stop, safety, and guardrail controls
+- status and inspection surfaces for supervised agents
+- a stock league demo as a bounded long-lived-agent proof slice
+- selected demo additions or extensions that have explicit proof claims and
+  validation commands
+- a 93 percent coverage ratchet tranche with measurement before threshold
+  changes
+- a careful milestone-compression pilot based on canonical state and drift
+  checks
+- a bounded repo visibility prototype with canonical-source and code-doc-demo
+  linkage evidence
+- explicit Rust refactoring justified by maintainability, testability, or
+  review evidence
+- a narrow decision on whether minimal trace/status queries belong in v0.90
+
+### Out Of Scope
+
+- full v0.92 identity/capability substrate
+- live financial advice or live trading behavior
+- unbounded autonomous agents
+- full autonomous release approval or silent closeout automation
+- full semantic indexing of the entire repository as a repo-visibility platform
+- full multi-agent society, accountability, or counterfactual reasoning
+- opening the v0.90 issue wave before `v0.89.1` release closeout
 
 ## Document Map
 
-Canonical milestone documents:
+Canonical planning docs:
 
-- Vision: `{{vision_doc}}`
-- Design: `{{design_doc}}`
-- Work Breakdown Structure (WBS): `{{wbs_doc}}`
-- Sprint plan: `{{sprint_doc}}`
-- Decisions log: `{{decisions_doc}}`
-- Demo matrix: `{{demo_matrix_doc}}`
-- Milestone checklist: `{{checklist_doc}}`
-- Release plan / process: `{{release_process_doc}}`
-- Release notes: `{{release_notes_doc}}`
+- Vision: VISION_v0.90.md
+- Design: DESIGN_v0.90.md
+- Work Breakdown Structure: WBS_v0.90.md
+- Feature index: FEATURE_DOCS_v0.90.md
+- Sprint plan: SPRINT_v0.90.md
+- Decisions log: DECISIONS_v0.90.md
+- Demo matrix: DEMO_MATRIX_v0.90.md
+- Milestone checklist: MILESTONE_CHECKLIST_v0.90.md
+- Release plan: RELEASE_PLAN_v0.90.md
+- Release notes draft: RELEASE_NOTES_v0.90.md
+- Issue-wave seed: WP_ISSUE_WAVE_v0.90.yaml
 
-Supporting / domain-specific docs:
-- {{supporting_doc_1}}
-- {{supporting_doc_2}}
-- {{supporting_doc_3}}
-- Maintainability hotspot split plan: `docs/milestones/v0.90/MAINTAINABILITY_HOTSPOT_SPLIT_PLAN_v0.90.md`
-- Early planning lane handoff: `docs/milestones/v0.90/EARLY_PLANNING_LANE_HANDOFF_v0.90.md`
+Planning control docs:
+
+- EARLY_PLANNING_LANE.md
+- V090_PLANNING_INVENTORY_AND_WP19_HANDOFF.md
+- LONG_LIVED_STOCK_LEAGUE_ISSUE_BODY.md
+
+Feature and idea lanes:
+
+- features/README.md
+- ideas/README.md
 
 ## Execution Model
 
-This milestone is executed as a sequence of work packages (WPs):
+This tracked package assumes a normal ADL milestone wave after `v0.89.1`
+release closeout:
 
-- WP-01: Design pass (docs + planning)
-- WP-02 - WP-12: Feature and system work
-- WP-13: Demo matrix and integration demos
-- WP-14: Coverage / quality gate
-- WP-15: Docs and review convergence
-- WP-16: Release ceremony
+- WP-01: promote and finalize the v0.90 milestone package
+- WP-02 through WP-05: long-lived runtime feature band
+- WP-06: minimal inspection / trace / status boundary
+- WP-07 and WP-08: stock league demo and integration proof
+- WP-09: demo extensions and proof expansion
+- WP-10: coverage ratchet to 93 percent
+- WP-11: milestone compression pilot
+- WP-12: repo visibility prototype
+- WP-13 and WP-14: docs pass and explicit Rust refactoring
+- WP-15 onward: reviews, remediation, readiness, next planning, release
 
-Execution expectations:
-- Each WP is tracked by an issue and implemented via PRs.
-- Each issue produces structured artifacts (input/output cards, reports).
-- All work merges under green CI and passes quality gates.
+The exact issue numbers are intentionally not assigned here. The v0.90 WP-01
+issue-wave step owns issue creation and replacement of null issue fields.
 
-## Demo and Validation Surface
+## Demo And Validation Surface
 
-Primary validation is defined in:
-- Demo matrix: `{{demo_matrix_doc}}`
+Primary planned demo:
 
-Additional validation surfaces:
-- Test suite results
-- Generated artifacts under `.adl/runs/`
-- Trace and replay outputs
+- stock league long-lived agents demo
 
-Success criteria:
-- {{success_criteria_1}}
-- {{success_criteria_2}}
-- {{success_criteria_3}}
+Additional planned demo lane:
 
-## Determinism and Reproducibility
+- selected new or extended demos, each with a named proof claim, validation
+  command, and non-goals
 
-The milestone should demonstrate:
-- Deterministic or bounded-repeatable execution where required
-- Replayable traces and inspectable artifacts
-- Stable command entry points for demos
+Primary planned proof surfaces:
 
-Evidence locations:
-- {{determinism_evidence_path_1}}
-- {{determinism_evidence_path_2}}
-
-## Risks and Open Questions
-
-Known risks:
-- {{risk_1}}
-- {{risk_2}}
-
-Open questions:
-- {{open_question_1}}
-- {{open_question_2}}
+- bounded supervisor state
+- heartbeat / lease status
+- cycle manifest and ledger artifacts
+- continuity handle files
+- operator stop and guardrail reports
+- delayed/public or fixture-backed paper market data
+- demo extension proof packets
+- coverage ratchet report to 93 percent
+- milestone state and drift-check report
+- repo visibility manifest and linkage report
+- Rust refactor validation record
 
 ## Status
 
-Current status: {{status}}
+- Planning: tracked planning package promoted by `v0.89.1` WP-19
+- Execution: not started
+- Validation: not started
+- Release readiness: not started
 
-- Planning: {{planning_status}}
-- Execution: {{execution_status}}
-- Validation: {{validation_status}}
-- Release readiness: {{release_status}}
+## WP-19 Promotion Result
 
-## Exit Criteria
+The `v0.89.1` WP-19 promotion gate:
 
-- All canonical milestone documents are complete and internally consistent.
-- All WBS items are implemented or explicitly deferred.
-- Demo matrix is runnable and validated.
-- Quality gates (fmt, clippy, test, CI) are passing.
-- Milestone checklist is complete or exceptions are documented.
-- Release artifacts (notes, tag, docs) are ready.
+- promotes this package into `docs/milestones/v0.90`
+- keeps issue numbers null until the v0.90 wave is opened
+- preserves feature contracts under `features/`
+- preserves backgrounder and later-band context under `ideas/`
+
+The `v0.89.1` WP-20 release ceremony can treat the v0.90 planning package as
+ready once this promotion PR merges.
