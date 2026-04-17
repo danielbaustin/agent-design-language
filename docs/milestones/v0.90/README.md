@@ -58,6 +58,7 @@ Supporting / domain-specific docs:
 - {{supporting_doc_1}}
 - {{supporting_doc_2}}
 - {{supporting_doc_3}}
+- Maintainability hotspot split plan: `docs/milestones/v0.90/MAINTAINABILITY_HOTSPOT_SPLIT_PLAN_v0.90.md`
 
 ## Execution Model
 
