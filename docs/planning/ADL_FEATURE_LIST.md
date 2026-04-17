@@ -48,15 +48,16 @@ can survive code review, ops review, and postmortem analysis.
 ## Current Repo Status
 
 The current repo truth is:
-- active milestone: `v0.89.1`
+- active milestone: `v0.90`
 - current crate version on `main`: `0.89.1`
+- most recently completed adversarial-runtime milestone package: `v0.89.1`
 - most recently completed governed-adaptation milestone package: `v0.89`
 - most recently completed runtime-completion milestone package before that: `v0.87.1`
 
 That means the feature story should be read this way:
-- `v0.7` through `v0.89` provide the implemented platform baseline
-- `v0.89.1` is the active adversarial/runtime and publication-skills follow-on band
-- `v0.90` through `v0.95` are the next planned capability bands
+- `v0.7` through `v0.89.1` provide the implemented platform baseline
+- `v0.90` is the active long-lived runtime, inspection, demo, compression, repo-visibility, and refactoring band
+- `v0.91` through `v0.95` are the next planned capability bands
 
 ## ADL at a Glance
 
@@ -83,8 +84,8 @@ ADL already provides a serious platform baseline:
 | ExecutionPlan runtime | Implemented | Rust runtime and plan execution | Complete baseline |
 | Sequential + fork/join coordination | Implemented | examples, tests, demo docs | Complete baseline |
 | Bounded concurrency and retry/failure controls | Implemented | runtime semantics, tests, v0.7 docs | Complete baseline |
-| Run artifacts and replay-oriented inspection | Implemented baseline | run artifacts, trace/review docs, milestone demos | Deepen through `v0.90` |
-| Signing, verification, and trust policy | Implemented baseline | signing/verification surfaces, trust docs | Deepen through `v0.90` |
+| Run artifacts and replay-oriented inspection | Implemented baseline | run artifacts, trace/review docs, milestone demos | Active deepening in `v0.90` |
+| Signing, verification, and trust policy | Implemented baseline | signing/verification surfaces, trust docs | Active deepening in `v0.90` |
 | Provider and transport substrate | Implemented baseline | provider docs, HTTP/local provider surfaces, reviewer package | Deepen through `v0.92` |
 | Remote execution baseline | Implemented baseline | bounded remote execution surfaces and docs | Deepen through `v0.92+` |
 | Human-in-the-loop pause/resume | Implemented baseline | runtime/control surfaces and review docs | Integrate through `v0.95` |
@@ -99,7 +100,7 @@ ADL already provides a serious platform baseline:
 | Bounded cognitive path | Implemented baseline | `v0.86` cognitive demo/artifact package | Deepen through `v0.88+` |
 | Freedom Gate baseline | Implemented baseline | `v0.86` bounded cognitive proof path | Complete baseline |
 | Freedom Gate v2 | Implemented baseline | `v0.89` judgment-boundary and gate proof surfaces | Deepen through adversarial/governance bands |
-| Trace substrate | Implemented baseline | `v0.87` trace docs and reviewer-facing proof surfaces | Signed/query completion in `v0.90` |
+| Trace substrate | Implemented baseline | `v0.87` trace docs and reviewer-facing proof surfaces | Active query/inspection boundary decision in `v0.90` |
 | Operational skills substrate | Implemented baseline | `v0.87` skills/control-plane docs and operational demos | Harden through `v0.95` |
 | Runtime environment and lifecycle completion | Implemented baseline | `v0.87.1` runtime docs, demos, and review package | Deepen through later hardening |
 | Local runtime resilience and Shepherd preservation | Implemented baseline | `v0.87.1` resilience and preservation docs/demos | Deepen through later runtime work |
@@ -110,12 +111,15 @@ ADL already provides a serious platform baseline:
 | Paper Sonata public-facing proof surface | Implemented baseline | `demo_v088_paper_sonata.sh` and milestone docs | Deepen through writing/publication skills |
 | Deep-agents comparative proof | Implemented baseline | `demo_v088_deep_agents_comparative_proof.sh` and `v0.89` follow-on demo docs | Future public-positioning wave if promoted |
 | AEE 1.0 convergence | Implemented baseline | `v0.89` `control_path/convergence.json`, D1 proof row, feature doc | Consume and extend in later bands |
-| Decision, action, and skill-governance surfaces | Implemented baseline | `v0.89` decision/action/skill docs, runtime/proof surfaces | Deepen through `v0.89.1+` |
-| Security, posture, and trust-under-adversary package | Implemented baseline | `v0.89` security posture package and proof surfaces | Adversarial runtime in `v0.89.1` |
-| Adversarial runtime, exploit/replay, and self-attack band | Active milestone | `v0.89.1` issue wave and feature package | `v0.89.1` |
-| arXiv paper writer and three-paper program | Active milestone | `v0.89.1` skills/publication package | `v0.89.1` |
-| Reasoning graph baseline | Planned | planning/schema/proof surfaces | `v0.90` |
-| Signed trace and trace query | Planned | roadmap and planning docs | `v0.90` |
+| Decision, action, and skill-governance surfaces | Implemented baseline | `v0.89` and `v0.89.1` decision/action/skill docs, runtime/proof surfaces | Deepen through later workflow/runtime bands |
+| Security, posture, and trust-under-adversary package | Implemented baseline | `v0.89` security posture package plus `v0.89.1` adversarial-runtime proof surfaces | Deepen through later safety/security bands |
+| Adversarial runtime, exploit/replay, and self-attack band | Implemented baseline | `v0.89.1` issue wave and feature package | Deepen through later safety/security bands |
+| arXiv paper writer and three-paper program | Implemented baseline | `v0.89.1` skills/publication package | Deepen through publication/research lanes |
+| Long-lived supervisor, heartbeat, and cycle artifacts | Active milestone | `v0.90` feature contracts, issue wave, stock-league demo package | `v0.90` |
+| Minimal status/inspection boundary | Active milestone | `v0.90` trace/status issue and execution-readiness gate | `v0.90` |
+| Milestone compression and repo visibility prototypes | Active milestone | `v0.90` compression and repo-visibility docs | `v0.90` |
+| Reasoning graph baseline | Planned | planning/schema/proof surfaces | Later reasoning/provenance band |
+| Signed trace and trace query | Planned | roadmap and planning docs | Later reasoning/provenance band |
 | Affect, kindness, moral cognition, humor | Planned | `v0.91` planning docs | `v0.91` |
 | Identity, capability, names, and continuity substrate | Planned | `v0.92` planning docs | `v0.92` |
 | Governance, delegation, IAM, social contract | Planned | `v0.93` planning docs | `v0.93` |
@@ -228,27 +232,38 @@ The bounded v0.89 story is implemented baseline, not universal completion of
 every future adaptive-system idea. Later milestones should consume and deepen
 these surfaces rather than restating them as unbuilt from scratch.
 
-## Current Active Milestone: v0.89.1
+## Current Active Milestone: v0.90
 
-`v0.89.1` is the active follow-on milestone. Its useful work is not cosmetic:
-it prepares ADL for adversarial runtime discipline and public research-output
-discipline after the v0.89 closeout.
+`v0.90` is the active milestone. Its useful work is concrete: it turns ADL
+toward bounded long-lived execution, stronger inspection surfaces, reviewer-
+visible demos, milestone compression, repo visibility, and evidence-driven
+refactoring.
 
 The current active bands are:
-- adversarial runtime, exploit replay, and self-attack proof discipline
-- arXiv paper-writing skill creation and the three-paper writing program
-- continued workflow/tooling discipline that lets sprint work move quickly
-  without losing issue, PR, or review truth
+- long-lived supervisor, heartbeat, cycle artifact, continuity, and operator
+  safety contracts
+- stock-league long-lived demo proof surfaces
+- minimal trace/status/inspection boundary work
+- coverage ratchet and milestone-compression pilot work
+- repo visibility prototype and explicit Rust refactoring guided by evidence
+
+The crate version remains `0.89.1` until the v0.90 release bump. Do not read
+that version number as meaning v0.89.1 is still the active milestone.
 
 ## Major Capability Bands Still to Come
 
-### v0.90 - Reasoning Graph, Signed Trace, and Query
+### v0.90 - Long-Lived Runtime, Inspection, and Milestone Compression
 
-`v0.90` is expected to deepen reasoning and provenance into a much stronger
-inspection stack:
-- reasoning-graph baseline
-- signed trace completion
-- query and inspection over reasoning and trace artifacts
+`v0.90` deepens ADL from bounded governed execution into practical long-lived
+runtime supervision:
+- supervisor and heartbeat behavior
+- cycle manifest and artifact contracts
+- continuity handles without claiming full identity substrate
+- operator stop and guardrail controls
+- status and inspection boundaries
+- stock-league long-lived demo evidence
+- milestone compression and repo visibility prototypes
+- evidence-driven Rust refactoring
 
 ### v0.91 - Affect and Moral Cognition
 
@@ -287,7 +302,7 @@ The planning corpus already points toward a serious economics band:
 - market and settlement surfaces
 
 This is an important future platform direction, even though it is not part of
-the current `v0.89.1` execution band.
+the current `v0.90` execution band.
 
 ### v0.94 - Integration and Dependency Closure
 
@@ -329,7 +344,7 @@ ADL already has a substantial platform:
 
 What remains through `v0.95` is not random feature accumulation. It is a
 deliberate convergence path:
-- execute `v0.89.1` quickly without losing issue/PR/review discipline
-- deepen reasoning and provenance in `v0.90`
+- execute `v0.90` without losing issue/PR/review discipline
+- make long-lived runtime behavior concrete and reviewable
 - add affect, identity, governance, and economics in bounded later bands
 - close the MVP as a serious, reviewable agent-runtime platform

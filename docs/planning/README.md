@@ -18,3 +18,23 @@ Current planning docs:
   provider-harmony demo direction beyond the bounded `v0.89` slice
 - `NEXT_MILESTONE_DEMO_CANDIDATES.md` - curated future-demo candidates ready
   for milestone promotion discussion
+
+## Directory Boundaries
+
+This directory is for living cross-milestone planning. It should stay small and
+intentional.
+
+Use milestone directories for shipped or active milestone records, including
+feature contracts, ideas/backgrounders, demo matrices, release notes, and WBS
+files for a specific version.
+
+Use `docs/records/` for historical task mirrors and closeout records that are
+kept for auditability but are not active planning surfaces.
+
+Use `docs/tooling/` for tool, editor, demo, and workflow-facing guides that
+remain useful outside a single milestone.
+
+Do not use this directory as a dumping ground for retired drafts, generated
+review traces, temporary files, or local workspace artifacts. Those should
+either be moved into a milestone archive, kept under local-only `.adl/`
+workspace state, or removed as generated cruft.

@@ -6,8 +6,8 @@ Use this index to find the right source of truth quickly.
 
 ## Start Here
 
+- Active milestone package: `milestones/v0.90/`
 - Most recently completed milestone: `milestones/v0.89.1/`
-- Next milestone planning package: `milestones/v0.90/`
 - Previous completed milestone package: `milestones/v0.89/`
 - Previous completed milestone: `milestones/v0.88/`
 - Root project overview: `../README.md`
@@ -17,8 +17,8 @@ Use this index to find the right source of truth quickly.
 
 ## Milestone Documentation
 
+- Active milestone package: `milestones/v0.90/`
 - Most recently completed milestone: `milestones/v0.89.1/`
-- Next milestone planning package: `milestones/v0.90/`
 - Previous completed milestone package: `milestones/v0.89/`
 - Previous completed milestone: `milestones/v0.88/`
 - Recent stable milestones: `milestones/v0.87.1/`, `milestones/v0.87/`, `milestones/v0.86/`, `milestones/v0.85/`, `milestones/v0.8/`
@@ -36,6 +36,7 @@ Use this index to find the right source of truth quickly.
 ## Demo and Tooling Surfaces
 
 - Canonical demo index: `../demos/README.md`
+- Active milestone demo matrix: `milestones/v0.90/DEMO_MATRIX_v0.90.md`
 - Most recently completed milestone demo matrix: `milestones/v0.89.1/DEMO_MATRIX_v0.89.1.md`
 - Previous completed milestone demo matrix: `milestones/v0.89/DEMO_MATRIX_v0.89.md`
 - Earlier milestone demo matrix: `milestones/v0.88/DEMO_MATRIX_v0.88.md`
@@ -43,4 +44,4 @@ Use this index to find the right source of truth quickly.
 
 ## Notes
 
-Milestone docs should be read as bounded engineering records. They distinguish what has shipped, what is currently being closed out, what is demoable, and what is planned for later milestones. At the moment, `v0.89.1` is the most recently completed adversarial-runtime milestone, `v0.90` is the next milestone planning package, and `v0.89` is the previous completed milestone package.
+Milestone docs should be read as bounded engineering records. They distinguish what has shipped, what is currently being implemented, what is demoable, and what is planned for later milestones. At the moment, `v0.90` is the active milestone package, `v0.89.1` is the most recently completed adversarial-runtime milestone, and `v0.89` is the previous completed milestone package.
