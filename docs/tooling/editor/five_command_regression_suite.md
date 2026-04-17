@@ -1,6 +1,6 @@
 # Five-Command Regression Suite
 
-This is the canonical regression entrypoint for the implemented v0.85 editing lifecycle.
+This is the canonical regression entrypoint for the historical five-command editing lifecycle.
 
 Run:
 
@@ -18,8 +18,8 @@ The suite protects the shipped authoring surface and its truthful editor claims:
 It also verifies:
 
 - the installed `adl_pr_cycle` skill still matches the tracked contract and preserves the real authoring state machine
-- the browser/editor adapter remains bounded to `pr start`
-- the editor docs do not overclaim direct browser execution for the other commands
+- the legacy browser/editor adapter remains bounded to `pr start` compatibility
+- the current editor docs do not overclaim direct browser execution for lifecycle commands
 - the bounded demo still emits the expected lifecycle artifacts
 
 ## Suite Components

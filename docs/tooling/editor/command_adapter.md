@@ -1,34 +1,41 @@
 # Editor Command Adapter Surface
 
-This document is the canonical near-term editor command adapter contract for v0.85.
+This document is the current editor command adapter contract for ADL task-bundle handoff.
 
-It defines what browser/editor surfaces may invoke directly, what they may only prepare or copy for a human to run, and what remains out of scope for direct browser invocation.
+It defines what browser/editor surfaces may prepare, what remains human-run through repo tooling and workflow skills, and what is explicitly out of scope for direct browser invocation.
 
 ## Contract
 
-The supported near-term adapter surface is intentionally narrow:
+The supported adapter surface is intentionally copy-only:
 
 - supported adapter action:
-  - `adl/tools/editor_action.sh start --issue <number> --branch codex/<issue>-<slug> [--slug <slug>] [--dry-run]`
+  - `adl/tools/editor_action.sh prepare --phase init|doctor-ready|run|finish --issue <number> --slug <slug> [--version <vN.N[.P]>] [--title <title>] [--paths <paths>]`
 - canonical control-plane mapping:
-  - `adl/tools/pr.sh start`
+  - `adl/tools/pr.sh init`
+  - `adl/tools/pr.sh doctor --mode ready`
+  - `adl/tools/pr.sh run`
+  - `adl/tools/pr.sh finish`
 - adapter mode:
-  - thin adapter only
+  - browser-prepared, human-run command handoff
 
 The browser/editor may:
 
-- prepare the adapter command
-- copy the adapter command for a human to run from the repo root
-- validate issue/branch pairing constraints before surfacing the command
+- prepare a lifecycle command
+- copy that command for a human to run from the repo root
+- validate issue, branch, slug, and version constraints before surfacing the command
 
 The browser/editor may not claim direct browser invocation of:
 
 - `pr create`
 - `pr init`
+- `pr doctor`
+- `pr ready`
 - `pr run`
 - `pr finish`
+- `pr janitor`
+- `pr closeout`
 
-Those commands exist in the repo control plane, but they are not part of the current browser-direct adapter surface for v0.85.
+Those commands exist in the repo control plane and related operational skills. They are not browser-direct actions.
 
 ## Why The Surface Is Narrow
 
@@ -36,21 +43,27 @@ The adapter must stay thin so the browser does not duplicate workflow logic alre
 
 That means:
 
-- browser code should not recreate `pr` lifecycle behavior in JavaScript
+- browser code should not recreate lifecycle behavior in JavaScript
 - browser code should not imply hidden direct execution paths
-- browser docs should distinguish:
-  - implemented control-plane commands
-  - supported browser-direct adapter actions
+- browser docs should distinguish implemented repo commands from browser-prepared command handoff
+- editor output should remain compatible with `pr-init`, `pr-ready`, `pr-run`, `pr-finish`, `pr-janitor`, `pr-closeout`, and the card editor skills
 
 ## Truth Table
 
-| Lifecycle command | Exists in repo | Browser-direct adapter support in v0.85 | Truthful near-term status |
+| Lifecycle command | Exists in repo | Browser-direct adapter support | Truthful editor status |
 | --- | --- | --- | --- |
 | `pr create` | yes | no | control-plane only |
-| `pr init` | yes | no | control-plane only |
-| `pr start` | yes | yes, via `adl/tools/editor_action.sh start` | supported thin adapter |
-| `pr run` | yes | no | control-plane only |
-| `pr finish` | yes | no | control-plane only |
+| `pr init` | yes | no | copy-only prepared handoff |
+| `pr doctor --mode ready` | yes | no | copy-only prepared handoff |
+| `pr run` | yes | no | copy-only prepared handoff |
+| `pr finish` | yes | no | copy-only prepared handoff |
+| `pr janitor` | skill-owned | no | out of browser scope |
+| `pr closeout` | skill-owned | no | out of browser scope |
+| `pr start` | legacy alias | no | deprecated compatibility only |
+
+## Legacy Compatibility
+
+`adl/tools/editor_action.sh start` remains available for older deterministic editor demos that still validate the v0.85 compatibility path. It is not the taught current workflow.
 
 ## Proof Surface
 
@@ -59,5 +72,6 @@ The contract is backed by:
 - `adl/tools/editor_action.sh`
 - `adl/tools/test_editor_action.sh`
 - `docs/tooling/editor/demo.md`
+- `docs/tooling/editor/current_skill_wiring_demo.md`
 
 The adapter surface should only be widened in a follow-on issue with matching docs, validation, and proof updates.

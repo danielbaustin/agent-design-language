@@ -1,6 +1,6 @@
 # `pr run` Demo
 
-This is the bounded v0.85 proof surface for the supported `pr run` path.
+This is the bounded historical proof surface for the supported `pr run` path.
 
 What it proves:
 
@@ -9,7 +9,7 @@ What it proves:
 - the command resolves and executes a bounded ADL workflow over the runtime primitives
 - the command leaves behind canonical run artifacts that can be inspected deterministically
 
-Current v0.85 limitation:
+Current limitation:
 
 - `pr run` is the supported control-plane run surface today
 - browser/editor direct invocation remains follow-on work

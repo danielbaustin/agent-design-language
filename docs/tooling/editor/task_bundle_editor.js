@@ -9,7 +9,7 @@ const ARTIFACTS = {
       { key: "issue_number", label: "GitHub Issue Number", required: false },
       { key: "status", label: "Status", required: true, defaultValue: "draft" },
       { key: "action", label: "Action", required: true, defaultValue: "edit" },
-      { key: "milestone_sprint", label: "Milestone Sprint", required: true, defaultValue: "Sprint 2" }
+      { key: "milestone_sprint", label: "Milestone Sprint", required: true, defaultValue: "v0.90 backlog" }
     ],
     sections: [
       ["goal", "Goal"],
@@ -25,9 +25,9 @@ const ARTIFACTS = {
       goal: "State the concrete outcome this task should produce.",
       required_outcome: "- Real code, docs, demo, or tests required\n- Docs-only completion is not sufficient",
       acceptance_criteria: "- At least one real surface ships\n- Bounded proof surface exists",
-      repo_inputs: "- docs/milestones/v0.85/WBS_v0.85.md",
-      dependencies: "- WP-04",
-      demo_expectations: "- Required demo: editor-workflow-demo",
+      repo_inputs: "- docs/tooling/editor/README.md\n- docs/default_workflow.md",
+      dependencies: "- Current ADL workflow skills",
+      demo_expectations: "- Required proof: editor_action prepare command and current-skill wiring demo",
       non_goals: "- Full long-term productization",
       notes: "- Future richer editors can build on this first slice."
     }
@@ -40,7 +40,7 @@ const ARTIFACTS = {
     metadata: [
       { key: "task_id", label: "Task ID", required: true },
       { key: "run_id", label: "Run ID", required: true },
-      { key: "version", label: "Version", required: true, defaultValue: "v0.85" },
+      { key: "version", label: "Version", required: true, defaultValue: "v0.90" },
       { key: "branch", label: "Branch", required: true },
       { key: "required_outcome_type", label: "Required Outcome Type", required: true, defaultValue: "code" },
       { key: "demo_required", label: "Demo Required", required: true, defaultValue: "true" }
@@ -62,9 +62,9 @@ const ARTIFACTS = {
       required_outcome: "- Ship code and docs\n- Produce a bounded proof surface",
       acceptance_criteria: "- Required commands pass\n- Demo/proof surface is captured",
       inputs: "- Source Structured Task Prompt\n- Relevant milestone docs",
-      target_files: "- docs/tooling/editor/index.html",
+      target_files: "- docs/tooling/editor/index.html\n- docs/tooling/editor/task_bundle_editor.js\n- adl/tools/editor_action.sh",
       validation_plan: "- Required commands:\n- Required tests:\n- Required artifacts / traces:",
-      demo_requirements: "- Required demo(s): editor-workflow-demo",
+      demo_requirements: "- Required demo(s): current-skill-wiring-demo",
       constraints: "- Preserve deterministic behavior\n- No absolute host paths",
       non_goals: "- Full productization",
       notes: "- Keep the slice bounded and honest."
@@ -78,7 +78,7 @@ const ARTIFACTS = {
     metadata: [
       { key: "task_id", label: "Task ID", required: true },
       { key: "run_id", label: "Run ID", required: true },
-      { key: "version", label: "Version", required: true, defaultValue: "v0.85" },
+      { key: "version", label: "Version", required: true, defaultValue: "v0.90" },
       { key: "branch", label: "Branch", required: true },
       { key: "status", label: "Status", required: true, defaultValue: "IN_PROGRESS" },
       { key: "integration_state", label: "Integration state", required: true, defaultValue: "pr_open" },
@@ -116,7 +116,7 @@ const ENUM_RULES = {
   },
   sor: {
     status: ["NOT_STARTED", "IN_PROGRESS", "DONE", "FAILED"],
-    integration_state: ["worktree_only", "pr_open", "merged"],
+    integration_state: ["worktree_only", "pr_open", "merged", "not_started", "local_only"],
     verification_scope: ["worktree", "pr_branch", "main_repo"]
   }
 };
@@ -243,9 +243,9 @@ function buildForm() {
     const note = document.createElement("div");
     note.className = "shell-note";
     note.innerHTML = `
-      <strong>SOR shell only in WP-05.</strong><br>
+      <strong>SOR review surface.</strong><br>
       This workspace proves that STP, SIP, and SOR stay linked as one task bundle.
-      Full SOR review, validation/provenance display, and decision flow land in the next review-surface slice.
+      Review, validation/provenance display, and decision flow remain bounded by the local card state.
     `;
     form.append(note);
   } else {
@@ -314,7 +314,7 @@ function artifactKey() {
 }
 
 function looksLikeTaskId(value) {
-  return /^task-[a-z0-9][a-z0-9-]*$/.test(value);
+  return /^task-[a-z0-9][a-z0-9-]*$/.test(value) || /^issue-[0-9]+$/.test(value);
 }
 
 function normalizedValue(value) {
@@ -329,52 +329,57 @@ function valueFor(id) {
 function updateBundlePath() {
   const artifact = ARTIFACTS[currentArtifact];
   const taskId = taskIdInput.value.trim() || "task-id";
-  bundleRoot.textContent = `Historical demo bundle root: docs/records/v0.85/tasks/${taskId}/`;
-  bundleActivePath.textContent = `Historical demo card target: docs/records/v0.85/tasks/${taskId}/${artifact.extension}`;
+  const version = draftFor("sip").metadata.version || "v0.90";
+  const branch = branchInput.value.trim();
+  const branchMatch = branch.match(/^codex\/([0-9]+)-([a-z0-9][a-z0-9-]*)$/);
+  const slug = branchMatch ? branchMatch[2] : "<slug>";
+  bundleRoot.textContent = `Current local bundle root: .adl/${version}/tasks/${taskId}__${slug}/`;
+  bundleActivePath.textContent = `Current local card target: .adl/${version}/tasks/${taskId}__${slug}/${artifact.extension} (copy-only preview; browser does not write tracked files)`;
 }
 
-function deriveStartAction() {
+function deriveLifecycleAction() {
   const stpDraft = draftFor("stp");
   const issueNumber = (valueFor("issue_number") || stpDraft.metadata.issue_number || "").trim();
   const branch = branchInput.value.trim();
   const branchMatch = branch.match(/^codex\/([0-9]+)-([a-z0-9][a-z0-9-]*)$/);
+  const version = draftFor("sip").metadata.version || "v0.90";
 
   if (!issueNumber) {
     return {
       ready: false,
-      summary: "Enter a GitHub Issue Number on the STP card to prepare the bounded pr start action.",
-      command: "adl/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
+      summary: "Enter a GitHub Issue Number on the STP card to prepare a current lifecycle command.",
+      command: "adl/tools/editor_action.sh prepare --phase run --issue <issue-number> --slug <slug> --version <version>"
     };
   }
 
   if (!/^[0-9]+$/.test(issueNumber)) {
     return {
       ready: false,
-      summary: "GitHub Issue Number must be numeric before the editor can prepare a pr start command.",
-      command: "adl/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
+      summary: "GitHub Issue Number must be numeric before the editor can prepare a lifecycle command.",
+      command: "adl/tools/editor_action.sh prepare --phase run --issue <issue-number> --slug <slug> --version <version>"
     };
   }
 
   if (!branchMatch) {
     return {
       ready: false,
-      summary: "Branch must match codex/<issue>-<slug> before the thin pr start adapter can run.",
-      command: "adl/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
+      summary: "Branch must match codex/<issue>-<slug> so the editor can derive the issue slug safely.",
+      command: "adl/tools/editor_action.sh prepare --phase run --issue <issue-number> --slug <slug> --version <version>"
     };
   }
 
   if (branchMatch[1] !== issueNumber) {
     return {
       ready: false,
-      summary: "GitHub Issue Number and branch prefix must match before the adapter can invoke pr start safely.",
-      command: "adl/tools/editor_action.sh start --issue <issue-number> --branch codex/<issue>-<slug>"
+      summary: "GitHub Issue Number and branch prefix must match before the adapter can prepare a command safely.",
+      command: "adl/tools/editor_action.sh prepare --phase run --issue <issue-number> --slug <slug> --version <version>"
     };
   }
 
   return {
     ready: true,
-    summary: "Thin control-plane adapter is ready to invoke pr start through the existing validated workflow.",
-    command: `adl/tools/editor_action.sh start --issue ${issueNumber} --branch ${branch}`
+    summary: "Copy-only lifecycle adapter is ready. The browser prepares the current pr run command; a human runs it from the repo root.",
+    command: `adl/tools/editor_action.sh prepare --phase run --issue ${issueNumber} --slug ${branchMatch[2]} --version ${version}`
   };
 }
 
@@ -383,9 +388,9 @@ function validate(model) {
   const results = [];
 
   if (looksLikeTaskId(taskIdInput.value.trim())) {
-    results.push({ ok: true, text: "Task ID uses the public task-bundle format." });
+    results.push({ ok: true, text: "Task ID uses a current issue bundle or public task-bundle format." });
   } else {
-    results.push({ ok: false, text: "Task ID should look like task-v085-wp05 or task-0870." });
+    results.push({ ok: false, text: "Task ID should look like issue-2053, task-v090-wp05, or task-0870." });
   }
 
   if (titleInput.value.trim()) {
@@ -475,11 +480,11 @@ function validate(model) {
     results.push({ ok: true, text: "SOR is visibly linked in the workspace shell and participates in the bounded review flow." });
   }
 
-  const startAction = deriveStartAction();
-  if (modelArtifactKey === "stp" && startAction.ready) {
-    results.push({ ok: true, text: "Thin pr start adapter command is ready from the editor path." });
+  const lifecycleAction = deriveLifecycleAction();
+  if (modelArtifactKey === "stp" && lifecycleAction.ready) {
+    results.push({ ok: true, text: "Copy-only current lifecycle command is ready from the editor path." });
   } else if (modelArtifactKey === "stp") {
-    results.push({ ok: false, text: "Thin pr start adapter needs matching numeric issue number and codex/<issue>-<slug> branch values." });
+    results.push({ ok: false, text: "Lifecycle command preparation needs matching numeric issue number and codex/<issue>-<slug> branch values." });
   }
 
   return results;
@@ -653,11 +658,11 @@ function updateAll() {
   renderValidation(results);
   renderReviewFlow(reviewModel);
   preview.textContent = renderMarkdown(model);
-  const startAction = deriveStartAction();
-  actionSummary.textContent = startAction.summary;
-  actionCommand.textContent = startAction.command;
-  copyActionButton.disabled = !startAction.ready;
-  copyActionButton.textContent = startAction.ready ? "Copy pr start command" : "Fix issue + branch first";
+  const lifecycleAction = deriveLifecycleAction();
+  actionSummary.textContent = lifecycleAction.summary;
+  actionCommand.textContent = lifecycleAction.command;
+  copyActionButton.disabled = !lifecycleAction.ready;
+  copyActionButton.textContent = lifecycleAction.ready ? "Copy pr run command" : "Fix issue + branch first";
 }
 
 copyButton.addEventListener("click", async () => {
@@ -675,7 +680,7 @@ copyActionButton.addEventListener("click", async () => {
   await navigator.clipboard.writeText(actionCommand.textContent);
   copyActionButton.textContent = "Copied";
   window.setTimeout(() => {
-    copyActionButton.textContent = "Copy pr start command";
+    copyActionButton.textContent = "Copy pr run command";
   }, 1200);
 });
 
@@ -691,8 +696,8 @@ taskIdInput.addEventListener("input", updateAll);
 titleInput.addEventListener("input", updateAll);
 branchInput.addEventListener("input", updateAll);
 
-taskIdInput.value = "task-v085-wp05";
-titleInput.value = "[v0.85][WP-05] First authoring/editor surfaces";
-branchInput.value = "codex/870-v085-wp05-first-editor-surfaces";
+taskIdInput.value = "issue-2053";
+titleInput.value = "[v0.90][tools] Refresh web task editor for current ADL skills";
+branchInput.value = "codex/2053-backlog-tools-refresh-web-task-editor-current-skills";
 buildCards();
 buildForm();
