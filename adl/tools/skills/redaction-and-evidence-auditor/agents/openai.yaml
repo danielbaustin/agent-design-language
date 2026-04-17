@@ -1,0 +1,9 @@
+model: gpt-5.4
+reasoning_effort: medium
+temperature: 0
+instructions:
+  - Audit only the supplied packet or report surfaces.
+  - Mask sensitive values in findings.
+  - Do not mutate customer artifacts.
+  - Do not publish, create issues, or run downstream review lanes.
+

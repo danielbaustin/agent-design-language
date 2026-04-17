@@ -1,0 +1,115 @@
+version: "0.1"
+kind: "adl-skill"
+id: "redaction-and-evidence-auditor"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "redaction_and_evidence_auditor.v1"
+    reference_doc: "../docs/REDACTION_AND_EVIDENCE_AUDITOR_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "artifact_root"
+      - "audience"
+      - "policy"
+    mode_enum:
+      - "audit_packet"
+      - "audit_report"
+      - "audit_review_bundle"
+      - "pre_publication_gate"
+    policy_fields:
+      - "privacy_mode"
+      - "publication_intent"
+      - "allow_internal_urls"
+      - "allow_private_paths"
+      - "allow_source_excerpts"
+      - "max_excerpt_lines"
+      - "stop_before_mutation"
+    mode_requirements:
+      audit_packet:
+        required_target_fields:
+          - "artifact_root"
+      audit_report:
+        required_target_fields:
+          - "artifact_root"
+      audit_review_bundle:
+        required_target_fields:
+          - "artifact_root"
+      pre_publication_gate:
+        required_target_fields:
+          - "artifact_root"
+          - "audience"
+  intent:
+    - "redaction_audit"
+    - "evidence_boundary_review"
+    - "publication_safety_gate"
+    - "codebuddy_review_engine"
+  required_inputs:
+    - "artifact_root"
+    - "audience"
+  optional_inputs:
+    - "report_path"
+    - "review_packet_path"
+    - "output_root"
+    - "max_excerpt_lines"
+    - "allowed_internal_domains"
+  stop_if_missing:
+    - "artifact_root"
+  prevalidation_rules:
+    - "artifact_root_must_exist"
+    - "skill_input_schema_must_equal_redaction_and_evidence_auditor.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "audience_must_be_explicit"
+    - "policy.privacy_mode_must_be_explicit"
+    - "policy.publication_intent_must_be_explicit"
+    - "policy.stop_before_mutation_must_be_true"
+execution:
+  mode: "audit_only"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  permitted_scripts:
+    - path: "scripts/audit_review_packet.py"
+      interpreter: "python3"
+      read_only: true
+      allowed_args:
+        - "<artifact-root>"
+        - "--out <report-root>"
+        - "--audience <audience>"
+        - "--max-excerpt-lines <count>"
+  preferred_read_order:
+    - "run_manifest.json"
+    - "repo_scope.md"
+    - "redaction_report.json"
+    - "specialist review outputs"
+    - "final report markdown"
+    - "supporting json artifacts"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  must_not_run:
+    - "artifact_mutation"
+    - "secret_redaction_in_place"
+    - "specialist_reviews"
+    - "issue_creation"
+    - "report_publication"
+outputs:
+  default_format: "markdown_and_json"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/codebuddy/<run_id>/redaction-audit/"
+  required_artifacts:
+    - "redaction_report.md"
+    - "redaction_report.json"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  secret_values_must_be_masked: true
+  manifest_declares_executables: true
+
+display_name: Redaction And Evidence Auditor
+short_description: Audit CodeBuddy packets and reports before publication
+default_prompt: Audit a CodeBuddy review packet or report for secrets, private paths, internal URLs, source over-disclosure, and publication safety. Stop before mutation or publication.
+
