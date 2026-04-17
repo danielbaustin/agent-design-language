@@ -37,8 +37,9 @@ It is not allowed to:
 5. Read `references/output-contract.md` when writing a diagram packet.
 6. Draft the diagram source with explicit assumptions and unknowns.
 7. If rendering is requested, use `scripts/render_diagrams.sh` and record PASS, SKIP, or FAIL truthfully.
-8. Add validation/render instructions.
-9. Stop before publication or unbounded redesign.
+8. Read `references/renderer-setup.md` when renderer installation, caches, or sandbox behavior matters.
+9. Add validation/render instructions.
+10. Stop before publication or unbounded redesign.
 
 ## Required Inputs
 
@@ -136,6 +137,8 @@ Renderer behavior:
 - PlantUML uses `plantuml`
 - Structurizr DSL uses `structurizr validate` and `structurizr export`
 - PNG derivation can use ImageMagick `convert` when SVG exists
+- `--skip-backends` can bypass a renderer that is optional, unavailable, or
+  blocked by the current sandbox
 
 If a renderer is missing and rendering is not required, record `SKIP` rather
 than failing or inventing a rendered artifact. Prefer SVG as the durable visual
@@ -169,6 +172,7 @@ When ADL expects a structured artifact, follow `references/output-contract.md`.
 Within this skill bundle, the operational details live in:
 - `references/diagram-playbook.md`
 - `references/output-contract.md`
+- `references/renderer-setup.md`
 
 The operator-facing invocation contract lives in:
 - `/Users/daniel/git/agent-design-language/adl/tools/skills/docs/DIAGRAM_AUTHOR_SKILL_INPUT_SCHEMA.md`

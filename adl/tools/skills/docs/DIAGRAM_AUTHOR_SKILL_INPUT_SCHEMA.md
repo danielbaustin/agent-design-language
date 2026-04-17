@@ -152,5 +152,7 @@ policy:
   D2 for polished explainers, and PlantUML for formal UML
 - use `adl/tools/skills/diagram-author/scripts/render_diagrams.sh` for local
   SVG/PNG generation when renderers are available
+- use `references/renderer-setup.md` for Homebrew install commands, repo-local
+  browser caches, sandbox caveats, and Rust-native renderer options
 - keep assumptions, unknowns, and unsupported claims out of the diagram body or
   label them explicitly in the packet

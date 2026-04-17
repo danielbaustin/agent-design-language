@@ -1756,6 +1756,9 @@ rendered local artifact packet. Use `adl/tools/skills/diagram-author/scripts/ren
 for SVG/PNG generation. Prefer Mermaid when the diagram needs to render inline
 in GitHub, PRs, issues, docs, or Codex chat. Prefer SVG as the durable rendered
 asset and PNG only for raster-only consumers.
+Use `adl/tools/skills/diagram-author/references/renderer-setup.md` for local
+renderer installation, browser-cache handling, sandbox caveats, and Rust-native
+renderer follow-up options.
 It must stop before external publication, broad architecture redesign, or
 unsupported visual claims.
 

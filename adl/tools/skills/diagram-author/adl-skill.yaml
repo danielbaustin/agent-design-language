@@ -91,10 +91,12 @@ execution:
     - "code_or_doc_target"
     - "existing_diagram"
     - "diagram_playbook"
+    - "renderer_setup"
   preferred_commands:
     - "rg --files"
     - "rg -n"
     - "adl/tools/skills/diagram-author/scripts/render_diagrams.sh --input <source-dir> --out <artifact-dir> --formats svg,png"
+    - "adl/tools/skills/diagram-author/scripts/render_diagrams.sh --input <source-dir> --out <artifact-dir> --formats svg,png --skip-backends mermaid"
     - "mmdc -i <input.mmd> -o <output.svg>"
     - "d2 <input.d2> <output.svg>"
     - "plantuml -tsvg <input.puml>"

@@ -11,6 +11,8 @@ Options:
   --input DIR       Directory containing diagram sources.
   --out DIR         Output directory for rendered artifacts and manifest.
   --formats LIST    Comma-separated formats. Supported: svg,png. Default: svg.
+  --skip-backends LIST
+                   Comma-separated backends to skip. Supported: mermaid,d2,plantuml,structurizr.
   --required        Fail when a renderer required for a discovered source is missing.
   --dry-run         Report planned actions without rendering.
   --check-tools     Print renderer availability and exit.
@@ -30,6 +32,7 @@ formats="svg"
 required=false
 dry_run=false
 check_tools=false
+skip_backends=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -43,6 +46,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --formats)
       formats="${2:-}"
+      shift 2
+      ;;
+    --skip-backends)
+      skip_backends="${2:-}"
       shift 2
       ;;
     --required)
@@ -102,6 +109,15 @@ if [[ ! -d "$input_dir" ]]; then
   exit 2
 fi
 
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cache_root="${ADL_DIAGRAM_RENDER_CACHE:-${repo_root}/.adl/.cache/diagram-renderers}"
+mkdir -p "$cache_root"
+
+# Keep renderer browser downloads local to the repository unless callers opt out.
+# Mermaid CLI uses Puppeteer; D2 may use Playwright for raster output.
+export PUPPETEER_CACHE_DIR="${PUPPETEER_CACHE_DIR:-${cache_root}/puppeteer}"
+export PLAYWRIGHT_BROWSERS_PATH="${PLAYWRIGHT_BROWSERS_PATH:-${cache_root}/playwright}"
+
 case ",${formats}," in
   *",svg,"*|*",png,"*) ;;
   *)
@@ -149,6 +165,13 @@ want_format() {
   esac
 }
 
+backend_skipped() {
+  case ",${skip_backends}," in
+    *",$1,"*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 png_from_svg() {
   local svg="$1"
   local png="$2"
@@ -160,13 +183,16 @@ png_from_svg() {
     return
   fi
 
-  if have convert; then
+  if have rsvg-convert; then
+    rsvg-convert "$svg" -o "$png"
+    record "$backend" "$source" "PASS" "$png" "derived PNG from SVG with rsvg-convert"
+  elif have convert; then
     convert "$svg" "$png"
-    record "$backend" "$source" "PASS" "$png" "derived PNG from SVG"
+    record "$backend" "$source" "PASS" "$png" "derived PNG from SVG with convert"
   else
-    record "$backend" "$source" "SKIP" "$png" "missing raster converter: convert"
+    record "$backend" "$source" "SKIP" "$png" "missing raster converter: rsvg-convert or convert"
     if [[ "$required" == true ]]; then
-      echo "render_diagrams: required raster converter missing: convert" >&2
+      echo "render_diagrams: required raster converter missing: rsvg-convert or convert" >&2
       exit 1
     fi
   fi
@@ -187,18 +213,27 @@ render_mermaid_file() {
     if [[ "$dry_run" == true ]]; then
       record "mermaid" "$source" "PLAN" "$svg" "would render SVG with mmdc"
     else
-      mmdc -i "$source" -o "$svg"
-      record "mermaid" "$source" "PASS" "$svg" "rendered SVG with mmdc"
+      if mmdc -i "$source" -o "$svg"; then
+        record "mermaid" "$source" "PASS" "$svg" "rendered SVG with mmdc"
+      else
+        record "mermaid" "$source" "FAIL" "$svg" "mmdc SVG render failed"
+        [[ "$required" == true ]] && exit 1
+        return
+      fi
     fi
   fi
 
   if want_format png; then
-    if [[ "$dry_run" == true ]]; then
-      record "mermaid" "$source" "PLAN" "$png" "would render PNG with mmdc"
-    else
-      mmdc -i "$source" -o "$png"
-      record "mermaid" "$source" "PASS" "$png" "rendered PNG with mmdc"
+    if [[ ! -f "$svg" && "$dry_run" != true ]]; then
+      if mmdc -i "$source" -o "$svg"; then
+        record "mermaid" "$source" "PASS" "$svg" "rendered intermediate SVG with mmdc"
+      else
+        record "mermaid" "$source" "FAIL" "$png" "mmdc SVG render failed before PNG conversion"
+        [[ "$required" == true ]] && exit 1
+        return
+      fi
     fi
+    png_from_svg "$svg" "$png" "$source" "mermaid"
   fi
 }
 
@@ -248,18 +283,27 @@ render_d2_file() {
     if [[ "$dry_run" == true ]]; then
       record "d2" "$source" "PLAN" "$svg" "would render SVG with d2"
     else
-      d2 "$source" "$svg"
-      record "d2" "$source" "PASS" "$svg" "rendered SVG with d2"
+      if d2 "$source" "$svg"; then
+        record "d2" "$source" "PASS" "$svg" "rendered SVG with d2"
+      else
+        record "d2" "$source" "FAIL" "$svg" "d2 SVG render failed"
+        [[ "$required" == true ]] && exit 1
+        return
+      fi
     fi
   fi
 
   if want_format png; then
-    if [[ "$dry_run" == true ]]; then
-      record "d2" "$source" "PLAN" "$png" "would render PNG with d2"
-    else
-      d2 "$source" "$png"
-      record "d2" "$source" "PASS" "$png" "rendered PNG with d2"
+    if [[ ! -f "$svg" && "$dry_run" != true ]]; then
+      if d2 "$source" "$svg"; then
+        record "d2" "$source" "PASS" "$svg" "rendered intermediate SVG with d2"
+      else
+        record "d2" "$source" "FAIL" "$png" "d2 SVG render failed before PNG conversion"
+        [[ "$required" == true ]] && exit 1
+        return
+      fi
     fi
+    png_from_svg "$svg" "$png" "$source" "d2"
   fi
 }
 
@@ -278,18 +322,27 @@ render_plantuml_file() {
     if [[ "$dry_run" == true ]]; then
       record "plantuml" "$source" "PLAN" "$svg" "would render SVG with plantuml"
     else
-      plantuml -tsvg -pipe < "$source" > "$svg"
-      record "plantuml" "$source" "PASS" "$svg" "rendered SVG with plantuml"
+      if plantuml -tsvg -pipe < "$source" > "$svg"; then
+        record "plantuml" "$source" "PASS" "$svg" "rendered SVG with plantuml"
+      else
+        record "plantuml" "$source" "FAIL" "$svg" "plantuml SVG render failed"
+        [[ "$required" == true ]] && exit 1
+        return
+      fi
     fi
   fi
 
   if want_format png; then
-    if [[ "$dry_run" == true ]]; then
-      record "plantuml" "$source" "PLAN" "$png" "would render PNG with plantuml"
-    else
-      plantuml -tpng -pipe < "$source" > "$png"
-      record "plantuml" "$source" "PASS" "$png" "rendered PNG with plantuml"
+    if [[ ! -f "$svg" && "$dry_run" != true ]]; then
+      if plantuml -tsvg -pipe < "$source" > "$svg"; then
+        record "plantuml" "$source" "PASS" "$svg" "rendered intermediate SVG with plantuml"
+      else
+        record "plantuml" "$source" "FAIL" "$png" "plantuml SVG render failed before PNG conversion"
+        [[ "$required" == true ]] && exit 1
+        return
+      fi
     fi
+    png_from_svg "$svg" "$png" "$source" "plantuml"
   fi
 }
 
@@ -321,19 +374,39 @@ for source in "$input_dir"/*; do
   stem="${filename%.*}"
   case "$source" in
     *.mmd|*.mermaid)
-      render_mermaid_file "$source" "$stem"
+      if backend_skipped mermaid; then
+        record "mermaid" "$source" "SKIP" "-" "backend skipped by operator"
+      else
+        render_mermaid_file "$source" "$stem"
+      fi
       ;;
     *.md)
-      extract_mermaid_from_markdown "$source" "$stem"
+      if backend_skipped mermaid; then
+        record "mermaid" "$source" "SKIP" "-" "backend skipped by operator"
+      else
+        extract_mermaid_from_markdown "$source" "$stem"
+      fi
       ;;
     *.d2)
-      render_d2_file "$source" "$stem"
+      if backend_skipped d2; then
+        record "d2" "$source" "SKIP" "-" "backend skipped by operator"
+      else
+        render_d2_file "$source" "$stem"
+      fi
       ;;
     *.puml|*.plantuml)
-      render_plantuml_file "$source" "$stem"
+      if backend_skipped plantuml; then
+        record "plantuml" "$source" "SKIP" "-" "backend skipped by operator"
+      else
+        render_plantuml_file "$source" "$stem"
+      fi
       ;;
     *.dsl)
-      render_structurizr_file "$source" "$stem"
+      if backend_skipped structurizr; then
+        record "structurizr" "$source" "SKIP" "-" "backend skipped by operator"
+      else
+        render_structurizr_file "$source" "$stem"
+      fi
       ;;
     *)
       record "unknown" "$source" "SKIP" "-" "unsupported extension"

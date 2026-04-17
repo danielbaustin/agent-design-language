@@ -74,6 +74,9 @@ Check local availability:
 adl/tools/skills/diagram-author/scripts/render_diagrams.sh --check-tools
 ```
 
+For install, cache, sandbox, and Rust-integration guidance, read
+`references/renderer-setup.md`.
+
 Examples:
 
 ```sh
