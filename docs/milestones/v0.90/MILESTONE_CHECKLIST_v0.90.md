@@ -6,13 +6,13 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: tracked planning package
+- Status: issue wave open
 
 ## Planning Gate
 
 - [x] The `v0.89.1` WP-19 promotion gate promotes this package into tracked milestone docs.
 - [ ] FEATURE_DOCS_v0.90.md has final promoted/deferred dispositions.
-- [ ] WP_ISSUE_WAVE_v0.90.yaml has real issue titles and dependencies.
+- [x] WP_ISSUE_WAVE_v0.90.yaml has real issue titles, dependencies, and issue numbers.
 - [ ] Every feature doc has a WBS row.
 - [ ] Every idea doc has a reader-facing or deferred home.
 

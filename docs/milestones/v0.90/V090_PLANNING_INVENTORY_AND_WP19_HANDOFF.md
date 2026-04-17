@@ -89,8 +89,8 @@ the full v0.92 identity/capability substrate.
 
 ## Suggested v0.90 Work Package Shape
 
-This is not the opened issue wave. v0.90 WP-01 owns the actual GitHub issue
-creation step and issue-number reconciliation.
+This is now the opened issue wave. v0.90 WP-01 created `#2019` for the
+wave-opener and `#2021` through `#2039` for WP-02 through WP-20.
 
 A plausible first shape is:
 

@@ -1,131 +1,131 @@
 version: v0.90
-status: tracked_planning_seed
-owner_issue: 1986
+status: issue_wave_open
+owner_issue: 2019
 promotion_gate: 1940
 release_ceremony_gate: 1941
 notes:
-  - This file is a tracked issue-wave seed, not an opened GitHub issue wave.
-  - The `v0.89.1` WP-19 promotion gate owns promotion into tracked docs.
-  - The v0.90 WP-01 issue-wave step owns issue creation.
-  - Issue numbers must remain null until the wave is actually opened.
+  - This file now records the opened v0.90 GitHub issue wave.
+  - The `v0.89.1` WP-19 promotion gate promoted the tracked planning package.
+  - The v0.90 WP-01 issue-wave step created WP-02 through WP-20 in order.
+  - WP-01 is #2019; WP-02 through WP-20 are #2021 through #2039.
 work_packages:
   - wp: WP-01
     title: "[v0.90][WP-01] Milestone planning and issue wave"
     queue: wp
-    issue: null
+    issue: 2019
     depends_on: ["#1986", "#1940"]
     outcome: docs
   - wp: WP-02
     title: "[v0.90][WP-02] Long-lived supervisor and heartbeat"
     queue: wp
-    issue: null
+    issue: 2021
     depends_on: ["WP-01"]
     outcome: code
   - wp: WP-03
     title: "[v0.90][WP-03] Cycle contract and artifact root"
     queue: wp
-    issue: null
+    issue: 2022
     depends_on: ["WP-02"]
     outcome: code
   - wp: WP-04
     title: "[v0.90][WP-04] State and continuity handles"
     queue: wp
-    issue: null
+    issue: 2023
     depends_on: ["WP-02", "WP-03"]
     outcome: code
   - wp: WP-05
     title: "[v0.90][WP-05] Operator control and safety"
     queue: wp
-    issue: null
+    issue: 2024
     depends_on: ["WP-02", "WP-03"]
     outcome: code
   - wp: WP-06
     title: "[v0.90][WP-06] Minimal inspection and trace boundary"
     queue: wp
-    issue: null
+    issue: 2025
     depends_on: ["WP-02", "WP-03", "WP-04", "WP-05"]
     outcome: code
   - wp: WP-07
     title: "[v0.90][WP-07] Stock league demo scaffold"
     queue: demo
-    issue: null
+    issue: 2026
     depends_on: ["WP-02", "WP-03", "WP-04", "WP-05"]
     outcome: demo
   - wp: WP-08
     title: "[v0.90][WP-08] Long-lived demo integration"
     queue: demo
-    issue: null
+    issue: 2027
     depends_on: ["WP-06", "WP-07"]
     outcome: demo
   - wp: WP-09
     title: "[v0.90][WP-09] Demo extensions and proof expansion"
     queue: demo
-    issue: null
+    issue: 2028
     depends_on: ["WP-08"]
     outcome: demo
   - wp: WP-10
     title: "[v0.90][WP-10] Coverage ratchet to 93 percent"
     queue: wp
-    issue: null
+    issue: 2029
     depends_on: ["WP-02", "WP-03", "WP-04", "WP-05", "WP-06", "WP-07", "WP-08", "WP-09"]
     outcome: tests
   - wp: WP-11
     title: "[v0.90][WP-11] Milestone compression pilot"
     queue: tools
-    issue: null
+    issue: 2030
     depends_on: ["WP-01", "WP-10"]
     outcome: docs
   - wp: WP-12
     title: "[v0.90][WP-12] Repo visibility prototype"
     queue: docs
-    issue: null
+    issue: 2031
     depends_on: ["WP-01", "WP-10"]
     outcome: docs
   - wp: WP-13
     title: "[v0.90][WP-13] Docs and review pass"
     queue: docs
-    issue: null
+    issue: 2032
     depends_on: ["WP-09", "WP-10", "WP-11", "WP-12"]
     outcome: docs
   - wp: WP-14
     title: "[v0.90][WP-14] Rust refactoring pass"
     queue: wp
-    issue: null
+    issue: 2033
     depends_on: ["WP-10", "WP-13"]
     outcome: code
   - wp: WP-15
     title: "[v0.90][WP-15] Internal review"
     queue: review
-    issue: null
+    issue: 2034
     depends_on: ["WP-13", "WP-14"]
     outcome: review
   - wp: WP-16
     title: "[v0.90][WP-16] Third-party review"
     queue: review
-    issue: null
+    issue: 2035
     depends_on: ["WP-13", "WP-14"]
     outcome: review
   - wp: WP-17
     title: "[v0.90][WP-17] Findings remediation"
     queue: review
-    issue: null
+    issue: 2036
     depends_on: ["WP-15", "WP-16"]
     outcome: code
   - wp: WP-18
     title: "[v0.90][WP-18] Final quality and release readiness"
     queue: wp
-    issue: null
+    issue: 2037
     depends_on: ["WP-17"]
     outcome: tests
   - wp: WP-19
     title: "[v0.90][WP-19] Next milestone planning"
     queue: docs
-    issue: null
+    issue: 2038
     depends_on: ["WP-18"]
     outcome: docs
   - wp: WP-20
     title: "[v0.90][WP-20] Release ceremony"
     queue: release
-    issue: null
+    issue: 2039
     depends_on: ["WP-19"]
     outcome: release

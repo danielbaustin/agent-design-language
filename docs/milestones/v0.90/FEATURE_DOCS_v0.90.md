@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: tracked planning package
+- Status: issue wave open
 
 ## Purpose
 
@@ -56,5 +56,5 @@ The default recommendation is:
 
 - Treat files in features/ as candidate executable contracts or proof surfaces.
 - Treat files in ideas/ as rationale, context, or later-band planning.
-- Treat this index as tracked planning truth for v0.90 until WP-01 assigns
-  issue numbers and reconciles any final scope changes.
+- Treat this index as tracked planning truth for v0.90 after WP-01 assigns
+  issue numbers and reconciles the opened issue wave.

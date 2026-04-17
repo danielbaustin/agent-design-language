@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: tracked planning package
+- Status: issue wave open
 
 ## Sprint Goal
 
@@ -79,7 +79,7 @@ Planned WPs:
 - Identify the Rust refactoring targets for WP-14 from real maintainability,
   testability, or review evidence.
 - Convert this tracked package into tracked docs under docs/milestones/v0.90.
-- Open issue numbers and update WP_ISSUE_WAVE_v0.90.yaml.
+- Issue numbers are open and WP_ISSUE_WAVE_v0.90.yaml now records `#2019` and `#2021` through `#2039`.
 
 ## Demo / Review Plan
 

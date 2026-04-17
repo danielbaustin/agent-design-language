@@ -7,11 +7,11 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: tracked planning package
+- Status: issue wave open
 
 ## Purpose
 
-Define the intended shape of v0.90 as the tracked planning package promoted by
+Define the intended shape of v0.90 as the tracked milestone package promoted by
 `v0.89.1` WP-19.
 
 ## Overview

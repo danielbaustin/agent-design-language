@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: tracked planning package promoted by `v0.89.1` WP-19
+- Status: issue wave open
 - Early planning issue: #1986
 - Promotion gate: #1940
 
@@ -61,7 +61,7 @@ that later identity work can adopt or migrate.
 - full autonomous release approval or silent closeout automation
 - full semantic indexing of the entire repository as a repo-visibility platform
 - full multi-agent society, accountability, or counterfactual reasoning
-- opening the v0.90 issue wave before `v0.89.1` release closeout
+- retroactively changing the v0.90 issue wave outside the tracked WP-01 branch
 
 ## Document Map
 
@@ -77,7 +77,7 @@ Canonical planning docs:
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.md
 - Release plan: RELEASE_PLAN_v0.90.md
 - Release notes draft: RELEASE_NOTES_v0.90.md
-- Issue-wave seed: WP_ISSUE_WAVE_v0.90.yaml
+- Issue wave: WP_ISSUE_WAVE_v0.90.yaml
 
 Planning control docs:
 
@@ -106,8 +106,8 @@ release closeout:
 - WP-13 and WP-14: docs pass and explicit Rust refactoring
 - WP-15 onward: reviews, remediation, readiness, next planning, release
 
-The exact issue numbers are intentionally not assigned here. The v0.90 WP-01
-issue-wave step owns issue creation and replacement of null issue fields.
+The v0.90 issue wave is now open. WP-01 is `#2019`; WP-02 through WP-20
+are `#2021` through `#2039`.
 
 ## Demo And Validation Surface
 
@@ -136,8 +136,8 @@ Primary planned proof surfaces:
 
 ## Status
 
-- Planning: tracked planning package promoted by `v0.89.1` WP-19
-- Execution: not started
+- Planning: tracked package promoted by `v0.89.1` WP-19 and opened by v0.90 WP-01
+- Execution: issue wave open; WP-02 is ready to start after WP-01 lands
 - Validation: not started
 - Release readiness: not started
 
@@ -146,9 +146,9 @@ Primary planned proof surfaces:
 The `v0.89.1` WP-19 promotion gate:
 
 - promotes this package into `docs/milestones/v0.90`
-- keeps issue numbers null until the v0.90 wave is opened
+- records the official v0.90 issue graph after WP-01 opens the wave
 - preserves feature contracts under `features/`
 - preserves backgrounder and later-band context under `ideas/`
 
-The `v0.89.1` WP-20 release ceremony can treat the v0.90 planning package as
-ready once this promotion PR merges.
+The `v0.89.1` WP-20 release ceremony treated the v0.90 planning package as
+ready, and v0.90 WP-01 now records the opened issue wave.
