@@ -179,6 +179,12 @@ impl OllamaProvider {
             .map_err(|_| panic_error("ollama", "stdout reader thread panicked"))?
             .context("failed reading ollama stdout")
             .map_err(|err| runtime_error("ollama", err.to_string()))?;
+        while let Ok(chunk) = rx.try_recv() {
+            out_buf.extend_from_slice(&chunk);
+            if let Some(cb) = on_chunk.as_deref_mut() {
+                cb(&String::from_utf8_lossy(&chunk));
+            }
+        }
         let err_buf = err_handle
             .join()
             .map_err(|_| panic_error("ollama", "stderr reader thread panicked"))?
