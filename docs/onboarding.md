@@ -27,6 +27,10 @@ Canonical local STPs live under `.adl/<version>/tasks/<task-id>__<slug>/`, compa
 GitHub issue state is the source of truth for whether a card is active or complete. Active/current cards stay flat under `.adl/cards/<issue>/` while milestone work is in flight; completed cards may be archived later under `.adl/cards/completed/<milestone>/<issue>/`.
 The browser/editor adapter remains narrower than the full control plane; execution work should follow the `pr ready` -> `pr run` path rather than the older `pr start` model.
 
+Compression-safe finish validation is allowed only when the issue is low-risk
+docs/static-tooling work and the SOR truthfully records focused local validation
+instead of full local validation. CI remains required before merge.
+
 ## Reading Order
 
 1. `README.md`

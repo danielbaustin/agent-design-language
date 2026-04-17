@@ -17,6 +17,8 @@ release tail. It is not an autonomous merge, release, or closeout system.
 
 - `CANONICAL_MILESTONE_STATE_v0.90.yaml`: the minimal milestone state model.
 - `DRIFT_CHECK_REPORT_v0.90.md`: pilot run result and known classifications.
+- `FINISH_VALIDATION_PROFILES_v0.90.md`: compression-safe validation profile
+  rules for low-risk finish paths.
 
 ## Drift Checker
 
@@ -35,9 +37,27 @@ The checker is deliberately read-only. It validates:
 - planned demo rows remain truthfully classified as planned until their
   implementation WPs land.
 
+## Finish Validation Profiles
+
+Compression is split into two lanes:
+
+- execution compression keeps issue scope, worktree binding, and drift checks
+  small enough to move quickly;
+- validation compression chooses the smallest truthful local validation set for
+  the changed surface while keeping CI required before merge.
+
+Low-risk docs/static-tooling issues may use the `FOCUSED_LOCAL_CI_GATED`
+profile defined in `FINISH_VALIDATION_PROFILES_v0.90.md`. That profile requires
+explicit changed paths, focused checks, SOR truth, root cleanliness, and CI
+handoff. It must never be described as full local validation.
+
+Runtime, schema, security, release, broad tooling, and ambiguous changes stay on
+the `FULL_LOCAL` path unless a human explicitly records a different decision.
+
 ## Boundaries
 
 - No GitHub network calls.
 - No mutation of docs, issues, branches, PRs, or release state.
 - No autonomous release approval.
 - No replacement for human ceremony decisions.
+- No claim that focused local validation is equivalent to full local validation.

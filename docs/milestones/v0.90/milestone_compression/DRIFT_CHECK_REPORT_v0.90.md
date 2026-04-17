@@ -64,3 +64,14 @@ python3 adl/tools/check_v090_milestone_state.py
 WP-13 should rerun this checker after the implementation WPs and sidecar WPs
 settle. WP-18 should treat the checker as one release-readiness input, not as a
 replacement for human release ceremony.
+
+## Finish Validation Refinement
+
+The #2053 compression experiment added one important follow-on lesson: the
+compression checker helped keep scope and milestone drift bounded, but closeout
+still paid the heavy local Rust validation cost during `pr finish`.
+
+Issue #2080 adds `FINISH_VALIDATION_PROFILES_v0.90.md` to separate execution
+compression from validation compression. Low-risk docs/static-tooling work may
+use focused local validation only when the SOR records that full local
+validation was not run and CI remains required before merge.
