@@ -76,7 +76,6 @@ Canonical milestone documents:
 - Demo matrix: `DEMO_MATRIX_v0.89.1.md`
 - Quality gate: `QUALITY_GATE_v0.89.1.md`
 - Docs review: `DOCS_REVIEW_v0.89.1.md`
-- Third-party review handoff: `THIRD_PARTY_REVIEW_HANDOFF_v0.89.1.md`
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.89.1.md`
 - Release plan / process: `RELEASE_PLAN_v0.89.1.md`
 - Release notes: `RELEASE_NOTES_v0.89.1.md`
