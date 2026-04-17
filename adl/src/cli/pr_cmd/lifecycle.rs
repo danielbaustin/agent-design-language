@@ -143,7 +143,11 @@ pub(super) fn reconcile_closed_completed_issue_bundle(
         canonical_output,
         "doctor: canonical .adl output surfaces must remain local-only during closed-issue reconciliation",
     )?;
+    normalize_closed_completed_stp(&issue_ref.task_bundle_stp_path(repo_root))?;
+    normalize_closed_completed_sip(&issue_ref.task_bundle_input_path(repo_root), issue_ref)?;
     normalize_closed_completed_output_card(canonical_output)?;
+    validate_closed_completed_stp(repo_root, &issue_ref.task_bundle_stp_path(repo_root))?;
+    validate_closed_completed_sip(repo_root, &issue_ref.task_bundle_input_path(repo_root))?;
     validate_completed_sor(repo_root, canonical_output)?;
 
     let cards_root = resolve_cards_root(repo_root, None);
@@ -187,28 +191,62 @@ pub(super) fn ensure_closed_completed_issue_bundle_truth(
         mismatches.push("missing canonical sor.md".to_string());
     } else {
         let text = fs::read_to_string(canonical_output)?;
-        check_required_field(&text, "Status:", "DONE", "Status", &mut mismatches);
+        check_required_field(&text, "Status:", "DONE", "SOR Status", &mut mismatches);
         check_required_field(
             &text,
             "- Integration state:",
             "merged",
-            "Integration state",
+            "SOR Integration state",
             &mut mismatches,
         );
         check_required_field(
             &text,
             "- Verification scope:",
             "main_repo",
-            "Verification scope",
+            "SOR Verification scope",
             &mut mismatches,
         );
         check_required_field(
             &text,
             "- Worktree-only paths remaining:",
             "none",
-            "Worktree-only paths remaining",
+            "SOR Worktree-only paths remaining",
             &mut mismatches,
         );
+    }
+
+    let stp_path = issue_ref.task_bundle_stp_path(repo_root);
+    if !ensure_nonempty_file_path(&stp_path)? {
+        mismatches.push("missing canonical stp.md".to_string());
+    } else {
+        let text = fs::read_to_string(&stp_path)?;
+        check_required_field(
+            &text,
+            "status:",
+            "\"complete\"",
+            "STP status",
+            &mut mismatches,
+        );
+    }
+
+    let sip_path = issue_ref.task_bundle_input_path(repo_root);
+    if !ensure_nonempty_file_path(&sip_path)? {
+        mismatches.push("missing canonical sip.md".to_string());
+    } else {
+        let text = fs::read_to_string(&sip_path)?;
+        check_required_field(
+            &text,
+            "Branch:",
+            &issue_ref.branch_name("codex"),
+            "SIP Branch",
+            &mut mismatches,
+        );
+        if text.contains("This issue is not started yet")
+            || text.contains("before execution is bound")
+            || text.contains("until `pr run` binds the branch and worktree")
+        {
+            mismatches.push("SIP still contains pre-run lifecycle wording".to_string());
+        }
     }
 
     if !mismatches.is_empty() {
@@ -304,6 +342,86 @@ fn normalize_closed_completed_output_card(path: &Path) -> Result<()> {
     );
     fs::write(path, text)?;
     Ok(())
+}
+
+fn normalize_closed_completed_stp(path: &Path) -> Result<()> {
+    let mut text = fs::read_to_string(path)?;
+    replace_field_line_in_text(&mut text, "status", "\"complete\"");
+    fs::write(path, text)?;
+    Ok(())
+}
+
+fn normalize_closed_completed_sip(path: &Path, issue_ref: &IssueRef) -> Result<()> {
+    let mut text = fs::read_to_string(path)?;
+    replace_field_line_in_text(&mut text, "Branch", &issue_ref.branch_name("codex"));
+    replace_first_exact_line(&mut text, "- PR: none", "- PR:");
+    replace_first_exact_line(
+        &mut text,
+        "- This issue is not started yet; do not assume a branch or worktree already exists.",
+        "- This issue is closed/completed; implementation branch/worktree lifecycle is finished.",
+    );
+    replace_first_exact_line(
+        &mut text,
+        "- Do not run `pr start`; use the current issue-mode `pr run` flow only if execution later becomes necessary.",
+        "- Do not run `pr start`; the issue has already completed its lifecycle.",
+    );
+    replace_first_exact_line(
+        &mut text,
+        "Prepare the linked issue prompt and review surfaces for truthful pre-run review before execution is bound.",
+        "Preserve the closed/completed issue prompt and local card truth after closeout.",
+    );
+    replace_first_exact_line(
+        &mut text,
+        "- Preserve truthful lifecycle state until `pr run` binds the branch and worktree.",
+        "- Preserve truthful closed/completed lifecycle state after merge and closeout.",
+    );
+    replace_first_exact_line(
+        &mut text,
+        "- The card bundle does not imply a branch or worktree exists before `pr run`.",
+        "- The card bundle records the completed issue branch and no longer claims pre-run state.",
+    );
+    fs::write(path, text)?;
+    Ok(())
+}
+
+fn validate_closed_completed_stp(repo_root: &Path, stp_path: &Path) -> Result<()> {
+    let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
+    run_status(
+        "bash",
+        &[
+            path_str(&validator)?,
+            "--type",
+            "stp",
+            "--input",
+            path_str(stp_path)?,
+        ],
+    )
+    .with_context(|| {
+        format!(
+            "closeout: stp failed closed/completed validation: {}",
+            stp_path.display()
+        )
+    })
+}
+
+fn validate_closed_completed_sip(repo_root: &Path, sip_path: &Path) -> Result<()> {
+    let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
+    run_status(
+        "bash",
+        &[
+            path_str(&validator)?,
+            "--type",
+            "sip",
+            "--input",
+            path_str(sip_path)?,
+        ],
+    )
+    .with_context(|| {
+        format!(
+            "closeout: sip failed closed/completed validation: {}",
+            sip_path.display()
+        )
+    })
 }
 
 fn ensure_canonical_output_is_local_only(
@@ -724,6 +842,45 @@ mod tests {
     }
 
     #[test]
+    fn normalize_closed_completed_stp_marks_issue_complete() {
+        let temp = temp_dir("adl-pr-lifecycle-stp");
+        let stp = temp.join("stp.md");
+        fs::write(
+            &stp,
+            "---\nstatus: \"draft\"\naction: \"edit\"\n---\n\n# Example\n",
+        )
+        .expect("write stp");
+
+        normalize_closed_completed_stp(&stp).expect("normalize stp");
+        let text = fs::read_to_string(&stp).expect("read stp");
+
+        assert!(text.contains("status: \"complete\""));
+        assert!(text.contains("action: \"edit\""));
+    }
+
+    #[test]
+    fn normalize_closed_completed_sip_rewrites_pre_run_lifecycle_truth() {
+        let temp = temp_dir("adl-pr-lifecycle-sip");
+        let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+        let sip = temp.join("sip.md");
+        fs::write(
+            &sip,
+            "# ADL Input Card\n\nTask ID: issue-1410\nRun ID: issue-1410\nVersion: v0.87\nTitle: Example\nBranch: not bound yet\n\n## Agent Execution Rules\n- This issue is not started yet; do not assume a branch or worktree already exists.\n- Do not run `pr start`; use the current issue-mode `pr run` flow only if execution later becomes necessary.\n\n## Goal\n\nPrepare the linked issue prompt and review surfaces for truthful pre-run review before execution is bound.\n\n## Required Outcome\n\n- Preserve truthful lifecycle state until `pr run` binds the branch and worktree.\n\n## Acceptance Criteria\n\n- The card bundle does not imply a branch or worktree exists before `pr run`.\n",
+        )
+        .expect("write sip");
+
+        normalize_closed_completed_sip(&sip, &issue_ref).expect("normalize sip");
+        let text = fs::read_to_string(&sip).expect("read sip");
+
+        assert!(text.contains("Branch: codex/1410-canonical-slug"));
+        assert!(!text.contains("- PR: none"));
+        assert!(text.contains("closed/completed"));
+        assert!(!text.contains("This issue is not started yet"));
+        assert!(!text.contains("before execution is bound"));
+        assert!(!text.contains("until `pr run` binds the branch and worktree"));
+    }
+
+    #[test]
     fn ensure_canonical_output_is_local_only_rejects_tracked_canonical_output() {
         let _guard = env_lock();
         let temp = temp_dir("adl-pr-lifecycle-local-only");
@@ -773,6 +930,18 @@ mod tests {
         fs::create_dir_all(&canonical_dir).expect("canonical dir");
         fs::create_dir_all(&duplicate_dir).expect("duplicate dir");
         let output = canonical_dir.join("sor.md");
+        let stp = canonical_dir.join("stp.md");
+        let sip = canonical_dir.join("sip.md");
+        fs::write(
+            &stp,
+            "---\nstatus: \"draft\"\naction: \"edit\"\n---\n\n# Example\n",
+        )
+        .expect("write stale stp");
+        fs::write(
+            &sip,
+            "# ADL Input Card\n\nBranch: not bound yet\n\n## Goal\n\nPrepare the linked issue prompt and review surfaces for truthful pre-run review before execution is bound.\n",
+        )
+        .expect("write stale sip");
         fs::write(
             &output,
             "Status: IN_PROGRESS\n- Integration state: pr_open\n- Verification scope: worktree\n- Worktree-only paths remaining: adl/src/foo.rs\n",
@@ -783,11 +952,17 @@ mod tests {
             .expect_err("stale truth should fail");
         let rendered = err.to_string();
         assert!(rendered.contains("canonical closed-issue sor truth drift"));
-        assert!(rendered.contains("Status expected 'DONE' but found 'IN_PROGRESS'"));
-        assert!(rendered.contains("Integration state expected 'merged' but found 'pr_open'"));
-        assert!(rendered.contains("Verification scope expected 'main_repo' but found 'worktree'"));
-        assert!(rendered
-            .contains("Worktree-only paths remaining expected 'none' but found 'adl/src/foo.rs'"));
+        assert!(rendered.contains("SOR Status expected 'DONE' but found 'IN_PROGRESS'"));
+        assert!(rendered.contains("SOR Integration state expected 'merged' but found 'pr_open'"));
+        assert!(
+            rendered.contains("SOR Verification scope expected 'main_repo' but found 'worktree'")
+        );
+        assert!(rendered.contains(
+            "SOR Worktree-only paths remaining expected 'none' but found 'adl/src/foo.rs'"
+        ));
+        assert!(rendered.contains("STP status expected '\"complete\"' but found '\"draft\"'"));
+        assert!(rendered.contains("SIP Branch expected 'codex/1410-canonical-slug'"));
+        assert!(rendered.contains("SIP still contains pre-run lifecycle wording"));
     }
 
     #[test]
@@ -796,6 +971,16 @@ mod tests {
         let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
         let canonical_dir = issue_ref.task_bundle_dir_path(&temp);
         fs::create_dir_all(&canonical_dir).expect("canonical dir");
+        fs::write(
+            canonical_dir.join("stp.md"),
+            "---\nstatus: \"complete\"\naction: \"edit\"\n---\n\n# Example\n",
+        )
+        .expect("write normalized stp");
+        fs::write(
+            canonical_dir.join("sip.md"),
+            "# ADL Input Card\n\nBranch: codex/1410-canonical-slug\n\n## Goal\n\nPreserve the closed/completed issue prompt and local card truth after closeout.\n",
+        )
+        .expect("write normalized sip");
         let output = canonical_dir.join("sor.md");
         fs::write(
             &output,
@@ -819,6 +1004,18 @@ mod tests {
             .join("issue-1410__legacy-slug");
         fs::create_dir_all(&canonical_dir).expect("canonical dir");
         fs::create_dir_all(&duplicate_dir).expect("duplicate dir");
+        for dir in [&canonical_dir, &duplicate_dir] {
+            fs::write(
+                dir.join("stp.md"),
+                "---\nstatus: \"complete\"\naction: \"edit\"\n---\n\n# Example\n",
+            )
+            .expect("write normalized stp");
+            fs::write(
+                dir.join("sip.md"),
+                "# ADL Input Card\n\nBranch: codex/1410-canonical-slug\n\n## Goal\n\nPreserve the closed/completed issue prompt and local card truth after closeout.\n",
+            )
+            .expect("write normalized sip");
+        }
         let output = canonical_dir.join("sor.md");
         fs::write(
             &output,

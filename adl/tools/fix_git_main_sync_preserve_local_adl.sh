@@ -65,11 +65,13 @@ restore_missing_local_adl_cards() {
   done <"$preserve_list"
 }
 
-latest_local_adl_version() {
+local_adl_versions() {
   local version_root="$repo_root/.adl"
   [[ -d "$version_root" ]] || return 0
-  find "$version_root" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | \
-    sort -V | tail -n 1
+  find "$version_root" -mindepth 1 -maxdepth 1 -type d -name 'v*' -exec basename {} \; | \
+    while IFS= read -r version; do
+      [[ -d "$version_root/$version/tasks" ]] && printf '%s\n' "$version"
+    done | sort -V
 }
 
 ensure_local_main_branch() {
@@ -97,7 +99,7 @@ run_closeout_catchup() {
   local versions_csv="${ADL_MAIN_SYNC_CLOSEOUT_VERSIONS:-}"
   local closeout_repo="${ADL_MAIN_SYNC_CLOSEOUT_REPO:-}"
   if [[ -z "$versions_csv" ]]; then
-    versions_csv="$(latest_local_adl_version || true)"
+    versions_csv="$(local_adl_versions | paste -sd, - || true)"
   fi
   [[ -n "$versions_csv" ]] || return 0
 

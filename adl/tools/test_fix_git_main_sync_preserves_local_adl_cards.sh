@@ -9,6 +9,7 @@ ORIGIN="$TMP/origin.git"
 SEED="$TMP/seed"
 LOCAL="$TMP/local"
 CARD_PATH=".adl/v0.88/tasks/issue-1650__v0-88-wp-05-temporal-query-and-retrieval/sor.md"
+FUTURE_CARD_PATH=".adl/v0.90/tasks/issue-1800__v0-90-planning/sor.md"
 
 git init --bare -q "$ORIGIN"
 
@@ -30,8 +31,10 @@ exit 0
 EOF
 chmod +x "$SEED/adl/tools/pr.sh"
 mkdir -p "$SEED/$(dirname "$CARD_PATH")"
+mkdir -p "$SEED/$(dirname "$FUTURE_CARD_PATH")"
 printf 'tracked residue\n' >"$SEED/$CARD_PATH"
-git -C "$SEED" add -f .gitignore adl/tools/fix_git_main_sync_preserve_local_adl.sh adl/tools/closeout_completed_issue_wave.sh adl/tools/pr.sh "$CARD_PATH"
+printf 'future lane local card\n' >"$SEED/$FUTURE_CARD_PATH"
+git -C "$SEED" add -f .gitignore adl/tools/fix_git_main_sync_preserve_local_adl.sh adl/tools/closeout_completed_issue_wave.sh adl/tools/pr.sh "$CARD_PATH" "$FUTURE_CARD_PATH"
 git -C "$SEED" commit -q -m "seed tracked residue"
 git -C "$SEED" push -q -u origin main
 
@@ -50,7 +53,7 @@ cat >"$BIN/gh" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
 if [[ "$1 $2" == "issue list" ]]; then
-  printf '[{"number":1650,"stateReason":"COMPLETED"}]\n'
+  printf '[{"number":1650,"stateReason":"COMPLETED"},{"number":1800,"stateReason":"COMPLETED"}]\n'
   exit 0
 fi
 exit 1
@@ -59,7 +62,7 @@ chmod +x "$BIN/gh"
 
 export TEST_CLOSEOUT_LOG="$TMP/closeout.log"
 
-(cd "$LOCAL" && PATH="$BIN:$PATH" ADL_MAIN_SYNC_CLOSEOUT_VERSIONS=v0.88 ADL_MAIN_SYNC_CLOSEOUT_REPO=danielbaustin/agent-design-language bash ./adl/tools/fix_git_main_sync_preserve_local_adl.sh >/dev/null)
+(cd "$LOCAL" && PATH="$BIN:$PATH" ADL_MAIN_SYNC_CLOSEOUT_REPO=danielbaustin/agent-design-language bash ./adl/tools/fix_git_main_sync_preserve_local_adl.sh >/dev/null)
 
 if [[ ! -f "$LOCAL/$CARD_PATH" ]]; then
   echo "expected local card to be restored after fast-forward sync" >&2
@@ -73,5 +76,6 @@ if [[ -n "$(git -C "$LOCAL" status --porcelain)" ]]; then
 fi
 
 grep -Fq 'closeout 1650 --version v0.88 --no-fetch-issue' "$TEST_CLOSEOUT_LOG"
+grep -Fq 'closeout 1800 --version v0.90 --no-fetch-issue' "$TEST_CLOSEOUT_LOG"
 
 echo "PASS test_fix_git_main_sync_preserves_local_adl_cards"
