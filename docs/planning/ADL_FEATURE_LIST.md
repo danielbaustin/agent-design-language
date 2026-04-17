@@ -49,7 +49,7 @@ can survive code review, ops review, and postmortem analysis.
 
 The current repo truth is:
 - active milestone: `v0.89.1`
-- current crate version on `main`: `0.89.0`
+- current crate version on `main`: `0.89.1`
 - most recently completed governed-adaptation milestone package: `v0.89`
 - most recently completed runtime-completion milestone package before that: `v0.87.1`
 

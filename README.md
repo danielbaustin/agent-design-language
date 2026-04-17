@@ -54,7 +54,7 @@ This is the best top-level entrypoint if you want to see the active milestone's 
 
 ### If you want the flagship current demo
 
-Run the five-agent Hey Jude MIDI package, the flagship bounded multi-agent demo carried into the `v0.89.1` review wave:
+Run the five-agent Hey Jude MIDI package, the flagship bounded multi-agent demo carried into the `v0.89.1` milestone:
 
 ```bash
 bash adl/tools/demo_v0891_five_agent_hey_jude.sh
