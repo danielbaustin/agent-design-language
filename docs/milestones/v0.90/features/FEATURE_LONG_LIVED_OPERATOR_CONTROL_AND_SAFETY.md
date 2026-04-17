@@ -157,6 +157,22 @@ last error: none
 
 JSON output reads from `status.json`.
 
+## Inspection Command
+
+`inspect` is the v0.90 reviewer proof surface. It reads the existing status and
+cycle artifacts and emits a compact packet pointing at the status record, latest
+or selected cycle manifest, guardrail report, run reference, and cycle summary:
+
+```bash
+adl agent inspect --spec stock-league-value-monk.yaml
+adl agent inspect --spec stock-league-value-monk.yaml --cycle cycle-000003 --json
+```
+
+The v0.90 decision is intentionally narrow: `inspect` may expose the cycle
+`run_ref.json` and any trace reference already recorded there, but a full TQL
+platform and a full signed-trace architecture remain deferred unless a later
+work package explicitly accepts that scope.
+
 ## Failure Behavior
 
 ### Workflow Failure

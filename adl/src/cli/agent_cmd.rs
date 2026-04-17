@@ -1,12 +1,12 @@
 use anyhow::{anyhow, Result};
 use std::path::PathBuf;
 
-use ::adl::long_lived_agent::{self, RunOptions, TickOptions};
+use ::adl::long_lived_agent::{self, InspectOptions, RunOptions, TickOptions};
 
 pub(crate) fn real_agent(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "agent requires a subcommand: tick | run | status | stop"
+            "agent requires a subcommand: tick | run | status | inspect | stop"
         ));
     };
 
@@ -14,13 +14,14 @@ pub(crate) fn real_agent(args: &[String]) -> Result<()> {
         "tick" => real_tick(&args[1..]),
         "run" => real_run(&args[1..]),
         "status" => real_status(&args[1..]),
+        "inspect" => real_inspect(&args[1..]),
         "stop" => real_stop(&args[1..]),
         "--help" | "-h" | "help" => {
             println!("{}", super::usage::usage());
             Ok(())
         }
         other => Err(anyhow!(
-            "unknown agent subcommand '{other}' (expected tick, run, status, stop)"
+            "unknown agent subcommand '{other}' (expected tick, run, status, inspect, stop)"
         )),
     }
 }
@@ -120,6 +121,33 @@ fn real_status(args: &[String]) -> Result<()> {
     print_status(&status, parsed.json_output)
 }
 
+fn real_inspect(args: &[String]) -> Result<()> {
+    let mut parsed = AgentArgs::default();
+    let mut cycle_id: Option<String> = None;
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--spec" => {
+                parsed.spec = Some(PathBuf::from(required_value(args, i, "--spec")?));
+                i += 1;
+            }
+            "--cycle" => {
+                cycle_id = Some(required_value(args, i, "--cycle")?.to_string());
+                i += 1;
+            }
+            "--json" => parsed.json_output = true,
+            "--help" | "-h" => {
+                println!("{}", super::usage::usage());
+                return Ok(());
+            }
+            other => return Err(anyhow!("unknown arg for agent inspect: {other}")),
+        }
+        i += 1;
+    }
+    let packet = long_lived_agent::inspect(&parsed.spec()?, InspectOptions { cycle_id })?;
+    print_inspection(&packet, parsed.json_output)
+}
+
 fn real_stop(args: &[String]) -> Result<()> {
     let mut parsed = AgentArgs::default();
     let mut reason: Option<String> = None;
@@ -210,6 +238,97 @@ fn print_status(status: &long_lived_agent::StatusRecord, json_output: bool) -> R
             .as_ref()
             .map(|error| format!("{}: {}", error.class, error.message))
             .unwrap_or_else(|| "none".to_string())
+    );
+    Ok(())
+}
+
+fn print_inspection(packet: &serde_json::Value, json_output: bool) -> Result<()> {
+    if json_output {
+        println!("{}", serde_json::to_string_pretty(packet)?);
+        return Ok(());
+    }
+    println!(
+        "agent: {}",
+        packet
+            .get("agent_instance_id")
+            .and_then(serde_json::Value::as_str)
+            .unwrap_or("unknown")
+    );
+    println!(
+        "state: {}",
+        packet
+            .get("status")
+            .and_then(|status| status.get("state"))
+            .and_then(serde_json::Value::as_str)
+            .unwrap_or("unknown")
+    );
+    println!(
+        "status ref: {}",
+        packet
+            .get("status_ref")
+            .and_then(serde_json::Value::as_str)
+            .unwrap_or("status.json")
+    );
+    if let Some(cycle) = packet.get("selected_cycle") {
+        println!(
+            "cycle: {} {}",
+            cycle
+                .get("cycle_id")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("unknown"),
+            cycle
+                .get("status")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("unknown")
+        );
+        let refs = cycle.get("refs").unwrap_or(&serde_json::Value::Null);
+        println!(
+            "manifest: {}",
+            refs.get("manifest")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("missing")
+        );
+        println!(
+            "guardrails: {} {}",
+            refs.get("guardrail_report")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("missing"),
+            cycle
+                .get("guardrails")
+                .and_then(|guardrails| guardrails.get("status"))
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("unknown")
+        );
+        println!(
+            "summary: {}",
+            refs.get("cycle_summary")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("missing")
+        );
+        println!(
+            "run ref: {}",
+            refs.get("run_ref")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("missing")
+        );
+    } else {
+        println!("cycle: none");
+    }
+    println!(
+        "trace/query: {}",
+        packet
+            .get("trace_query_decision")
+            .and_then(|decision| decision.get("status"))
+            .and_then(serde_json::Value::as_str)
+            .unwrap_or("unknown")
+    );
+    println!(
+        "proof: {}",
+        packet
+            .get("reviewer_proof")
+            .and_then(|proof| proof.get("status"))
+            .and_then(serde_json::Value::as_str)
+            .unwrap_or("unknown")
     );
     Ok(())
 }
@@ -333,6 +452,7 @@ memory:
         assert!(real_agent(&args(&["tick", "--help"])).is_ok());
         assert!(real_agent(&args(&["run", "--help"])).is_ok());
         assert!(real_agent(&args(&["status", "--help"])).is_ok());
+        assert!(real_agent(&args(&["inspect", "--help"])).is_ok());
         assert!(real_agent(&args(&["stop", "--help"])).is_ok());
 
         assert_err_contains(real_agent(&args(&[])), "agent requires a subcommand");
@@ -364,6 +484,11 @@ memory:
         );
         assert_err_contains(real_agent(&args(&["run", "--bogus"])), "unknown arg");
         assert_err_contains(real_agent(&args(&["status", "--bogus"])), "unknown arg");
+        assert_err_contains(real_agent(&args(&["inspect", "--bogus"])), "unknown arg");
+        assert_err_contains(
+            real_agent(&args(&["inspect", "--cycle"])),
+            "--cycle requires a value",
+        );
         assert_err_contains(
             real_agent(&args(&["stop", "--reason"])),
             "--reason requires a value",
@@ -401,6 +526,16 @@ memory:
 
         assert!(real_agent(&args(&["status", "--spec", spec])).is_ok());
         assert!(real_agent(&args(&["status", "--spec", spec, "--json"])).is_ok());
+        assert!(real_agent(&args(&["inspect", "--spec", spec])).is_ok());
+        assert!(real_agent(&args(&[
+            "inspect",
+            "--spec",
+            spec,
+            "--cycle",
+            "cycle-000002",
+            "--json",
+        ]))
+        .is_ok());
         assert!(real_agent(&args(&[
             "stop",
             "--spec",
