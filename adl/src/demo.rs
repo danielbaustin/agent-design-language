@@ -12,6 +12,8 @@ mod adversarial_self_attack;
 mod obsmem;
 #[path = "demo/pipeline.rs"]
 mod pipeline;
+#[path = "demo/stock_league.rs"]
+mod stock_league;
 #[path = "demo/v086_review_surface.rs"]
 mod v086_review_surface;
 
@@ -23,6 +25,7 @@ use self::pipeline::{
     build_card_pipeline_manifest, DEMO_E_COPYEDITOR_MD, DEMO_E_EDITOR_MD, DEMO_E_INPUT_CARD_MD,
     DEMO_E_README_MD, DEMO_E_WRITER_MD,
 };
+use self::stock_league::write_stock_league_scaffold_step;
 pub use self::v086_review_surface::{
     write_v086_candidate_selection_demo, write_v086_control_path_demo, write_v086_fast_slow_demo,
     write_v086_freedom_gate_demo, write_v086_review_surface_demo,
@@ -36,6 +39,7 @@ pub const DEMO_E_MULTI_AGENT_CARD_PIPELINE: &str = "demo-e-multi-agent-card-pipe
 pub const DEMO_F_OBSMEM_RETRIEVAL: &str = "demo-f-obsmem-retrieval";
 pub const DEMO_G_V086_CONTROL_PATH: &str = "demo-g-v086-control-path";
 pub const DEMO_H_V0891_ADVERSARIAL_SELF_ATTACK: &str = "demo-h-v0891-adversarial-self-attack";
+pub const DEMO_I_V090_STOCK_LEAGUE_SCAFFOLD: &str = stock_league::DEMO_NAME;
 
 pub const ALL_DEMOS: &[&str] = &[
     DEMO_A_SAY_MCP,
@@ -46,6 +50,7 @@ pub const ALL_DEMOS: &[&str] = &[
     DEMO_F_OBSMEM_RETRIEVAL,
     DEMO_G_V086_CONTROL_PATH,
     DEMO_H_V0891_ADVERSARIAL_SELF_ATTACK,
+    DEMO_I_V090_STOCK_LEAGUE_SCAFFOLD,
 ];
 
 #[derive(Debug, Clone)]
@@ -228,6 +233,9 @@ pub fn run_demo(name: &str, out_dir: &Path) -> Result<DemoResult> {
                     out_dir, step_id,
                 )?);
             }
+            DEMO_I_V090_STOCK_LEAGUE_SCAFFOLD => {
+                artifacts.extend(write_stock_league_scaffold_step(out_dir, step_id)?);
+            }
             _ => {}
         }
         trace.step_finished(step_id, true);
@@ -262,6 +270,7 @@ pub fn plan_steps(name: &str) -> &'static [&'static str] {
             "promotion",
             "review_packet",
         ],
+        DEMO_I_V090_STOCK_LEAGUE_SCAFFOLD => &["fixture", "agents", "paper_rules", "proof_packet"],
         _ => &[],
     }
 }
@@ -345,6 +354,24 @@ fn steps_for(name: &str) -> &'static [(&'static str, &'static str)] {
             (
                 "review_packet",
                 "Emit the reviewer-facing adversarial demo proof packet",
+            ),
+        ],
+        DEMO_I_V090_STOCK_LEAGUE_SCAFFOLD => &[
+            (
+                "fixture",
+                "Copy the deterministic paper-market fixture and market snapshots",
+            ),
+            (
+                "agents",
+                "Emit persistent stock-league agent identity and style cards",
+            ),
+            (
+                "paper_rules",
+                "Emit paper-only league rules, demo decisions, and guardrails",
+            ),
+            (
+                "proof_packet",
+                "Scan public artifacts and emit the reviewer proof packet",
             ),
         ],
         _ => &[],

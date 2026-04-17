@@ -1,0 +1,198 @@
+{
+  "schema_version": "adl.stock_league.fixture.v1",
+  "season_id": "season-001",
+  "mode": "fixture_replay",
+  "disclaimer": "This is a paper-market simulation for demonstrating persistent agent identity and accountability. It is not financial advice, trading advice, or a real investment strategy.",
+  "source": {
+    "name": "repo fixture",
+    "freshness": "historical",
+    "network_required": false,
+    "api_key_required": false,
+    "broker_required": false,
+    "license_note": "Small deterministic fixture for ADL demo review only."
+  },
+  "dates": [
+    "2024-10-01",
+    "2024-10-02"
+  ],
+  "symbols": [
+    {
+      "ticker": "MSFT",
+      "name": "Microsoft",
+      "sector": "software"
+    },
+    {
+      "ticker": "NVDA",
+      "name": "Nvidia",
+      "sector": "semiconductors"
+    },
+    {
+      "ticker": "KO",
+      "name": "Coca-Cola",
+      "sector": "consumer staples"
+    },
+    {
+      "ticker": "XOM",
+      "name": "Exxon Mobil",
+      "sector": "energy"
+    },
+    {
+      "ticker": "SPY",
+      "name": "SPDR S&P 500 ETF Trust",
+      "sector": "benchmark"
+    },
+    {
+      "ticker": "QQQ",
+      "name": "Invesco QQQ Trust",
+      "sector": "benchmark"
+    }
+  ],
+  "snapshots": [
+    {
+      "snapshot_id": "market-2024-10-01",
+      "as_of_date": "2024-10-01",
+      "mode": "fixture_replay",
+      "symbols": [
+        {
+          "ticker": "MSFT",
+          "open": 430.00,
+          "high": 433.50,
+          "low": 427.25,
+          "close": 431.20,
+          "adjusted_close": 431.20,
+          "volume": 18400000
+        },
+        {
+          "ticker": "NVDA",
+          "open": 121.40,
+          "high": 124.10,
+          "low": 119.90,
+          "close": 123.65,
+          "adjusted_close": 123.65,
+          "volume": 298000000
+        },
+        {
+          "ticker": "KO",
+          "open": 71.10,
+          "high": 71.45,
+          "low": 70.55,
+          "close": 70.92,
+          "adjusted_close": 70.92,
+          "volume": 13200000
+        },
+        {
+          "ticker": "XOM",
+          "open": 116.80,
+          "high": 118.20,
+          "low": 115.75,
+          "close": 117.40,
+          "adjusted_close": 117.40,
+          "volume": 15100000
+        },
+        {
+          "ticker": "SPY",
+          "open": 573.00,
+          "high": 574.40,
+          "low": 570.95,
+          "close": 572.85,
+          "adjusted_close": 572.85,
+          "volume": 41200000
+        },
+        {
+          "ticker": "QQQ",
+          "open": 485.20,
+          "high": 488.10,
+          "low": 482.80,
+          "close": 487.25,
+          "adjusted_close": 487.25,
+          "volume": 33100000
+        }
+      ],
+      "benchmarks": [
+        {
+          "ticker": "SPY",
+          "adjusted_close": 572.85
+        },
+        {
+          "ticker": "QQQ",
+          "adjusted_close": 487.25
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "snapshot_id": "market-2024-10-02",
+      "as_of_date": "2024-10-02",
+      "mode": "fixture_replay",
+      "symbols": [
+        {
+          "ticker": "MSFT",
+          "open": 431.30,
+          "high": 432.00,
+          "low": 424.90,
+          "close": 426.05,
+          "adjusted_close": 426.05,
+          "volume": 21900000
+        },
+        {
+          "ticker": "NVDA",
+          "open": 123.20,
+          "high": 125.00,
+          "low": 120.40,
+          "close": 121.15,
+          "adjusted_close": 121.15,
+          "volume": 275000000
+        },
+        {
+          "ticker": "KO",
+          "open": 70.95,
+          "high": 71.80,
+          "low": 70.70,
+          "close": 71.55,
+          "adjusted_close": 71.55,
+          "volume": 12100000
+        },
+        {
+          "ticker": "XOM",
+          "open": 117.20,
+          "high": 119.10,
+          "low": 116.95,
+          "close": 118.70,
+          "adjusted_close": 118.70,
+          "volume": 16400000
+        },
+        {
+          "ticker": "SPY",
+          "open": 572.10,
+          "high": 573.20,
+          "low": 567.90,
+          "close": 568.40,
+          "adjusted_close": 568.40,
+          "volume": 44800000
+        },
+        {
+          "ticker": "QQQ",
+          "open": 486.40,
+          "high": 487.30,
+          "low": 479.50,
+          "close": 480.05,
+          "adjusted_close": 480.05,
+          "volume": 37700000
+        }
+      ],
+      "benchmarks": [
+        {
+          "ticker": "SPY",
+          "adjusted_close": 568.40
+        },
+        {
+          "ticker": "QQQ",
+          "adjusted_close": 480.05
+        }
+      ],
+      "warnings": [
+        "fixture includes a small drawdown day to exercise identity accountability"
+      ]
+    }
+  ]
+}
