@@ -30,6 +30,9 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 - [x] Internal review surface exists (`INTERNAL_REVIEW_v0.89.1.md`)
 - [x] Internal-review remediation issues are closed through `#1992`
 - [x] Third-party review handoff is prepared in the local review store
+- [x] Third-party review completed with no additional P0/P1/P2 findings
+- [x] Review remediation closed with internal review fixes recorded and F8 deferred to v0.90
+- [x] Next-milestone planning package promoted by `WP-19`
 - [ ] Root main has been fast-forwarded after the handoff merge with no local tracked drift
 
 ## Quality Gates
@@ -60,10 +63,11 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 
 At the moment this checklist should be read as:
 - planning-complete and review-ready
-- issue wave opened; `WP-02` - `WP-15` landed and `WP-16` provides the internal-review surface
+- issue wave opened; `WP-02` - `WP-19` landed, closed, or represented by tracked release-tail proof surfaces
 - internal-review remediation is closed through `#1992`
-- 3rd-party review, accepted-finding remediation, final planning reconciliation, and release ceremony are still unchecked release-tail work
-- formal review and release gates still future work
+- third-party review closed with no additional P0/P1/P2 findings
+- review remediation closed with internal review fixes recorded and F8 deferred to v0.90
+- release ceremony remains the final unchecked release-tail work
 
 ## Exit Criteria
 - all required gates are checked, or each exception has an owner and explicit rationale

@@ -1,46 +1,60 @@
-# Release Process Template
+# Release Plan - v0.90
 
 ## Metadata
-- Milestone: `{{milestone}}`
-- Version: `{{version}}`
-- Release date: `{{release_date}}`
-- Release manager: `{{release_manager}}`
 
-## How To Use
-- Execute sections in order and capture links for each completed step.
-- Keep this doc focused on shipping mechanics; use release notes for narrative.
-- Mark blockers immediately; do not publish until gates pass.
+- Milestone: v0.90
+- Version: v0.90
+- Date: 2026-04-16
+- Owner: Daniel Austin
+- Status: tracked planning package
 
-## 1) Release Readiness
-- [ ] Milestone checklist complete (`{{milestone_checklist_link}}`)
-- [ ] Release notes approved (`{{release_notes_link}}`)
-- [ ] Go/no-go decision recorded (`{{decision_link}}`)
+## Purpose
 
-## 2) Branch And Tag Preparation
-- [ ] Target branch confirmed (`{{target_branch}}`)
-- [ ] Working tree clean
-- [ ] Version string(s) validated (`{{version_validation_link}}`)
-- [ ] Tag created: `{{tag_name}}`
-- [ ] Tag pushed and verified
+Record the intended release flow for v0.90 after `v0.89.1` WP-19 promotes the
+planning package into tracked milestone docs.
 
-## 3) GitHub Release Steps
-- [ ] GitHub Release draft created from `{{tag_name}}` (`{{release_draft_link}}`)
-- [ ] Release body populated from approved notes
-- [ ] Links to key PRs/issues included
-- [ ] Release visibility confirmed (draft/prerelease/final)
-- [ ] Release published
+## Release Flow
 
-## 4) Verification
-- [ ] Post-release CI status checked (`{{ci_run_link}}`)
-- [ ] Release links tested (docs, artifacts, notes)
-- [ ] Immediate regressions triaged and tracked (`{{triage_link}}`)
+1. The `v0.89.1` WP-19 promotion gate promotes this planning package into tracked milestone docs.
+2. WP-01 opens the official issue wave from this promoted package.
+3. Sprint 1 lands supervisor, cycle, continuity, and operator-safety surfaces.
+4. Sprint 2 lands inspection/status and the primary stock-league demo proof
+   surfaces.
+5. Sprint 3 lands bounded sidecar work: demo extensions, the `93%` coverage
+   tranche, milestone compression pilot, and repo visibility prototype.
+6. Sprint 4 completes docs, explicit Rust refactoring, reviews, remediation,
+   final readiness, next planning, and ceremony.
 
-## 5) Communication
-- [ ] Community announcement published (`{{announcement_link}}`)
-- [ ] Internal update posted (`{{internal_update_link}}`)
-- [ ] Roadmap/status updated (`{{roadmap_update_link}}`)
+## Quality Expectations
+
+- Every code-bearing WP runs the smallest truthful Rust validation set.
+- Every docs-only WP runs path/leakage and consistency scans.
+- Demo WPs must name primary proof surfaces before claiming success.
+- The coverage gate should ratchet to `93%` only after measurement and proof are
+  green.
+- Milestone compression should prove state and drift checks before any broader
+  write automation.
+- Repo visibility should produce a bounded manifest and linkage report, not a
+  full repo-indexing claim.
+- Rust refactoring must be explicit, bounded, and validated.
+- Release notes must not claim full identity, live trading, or general
+  autonomous operation.
+
+## Release Blockers
+
+- No issue wave should open from this tracked planning package before `v0.89.1`
+  release closeout and the v0.90 WP-01 issue-wave step.
+- No demo extension should displace the stock-league proof as the primary
+  long-lived runtime demo.
+- No milestone-compression automation should silently mutate release truth.
+- No release ceremony should begin until next-milestone planning is complete.
 
 ## Exit Criteria
-- Tag and GitHub Release are published and accessible.
-- Verification completed with no unknown critical failures.
-- Communication links captured.
+
+- issue wave complete or explicitly deferred
+- demo matrix validated
+- quality gate complete, including the `93%` coverage tranche if accepted
+- milestone compression and repo visibility pilots dispositioned
+- Rust refactor validation complete
+- review findings resolved or deferred
+- release notes and tag ready

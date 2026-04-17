@@ -15,7 +15,7 @@
 
 ## Summary
 
-`v0.89.1` is the milestone where ADL turns adversarial runtime and exploit-evidence carry-forward into a first-class package. The current draft release story is that the adversarial/runtime proof band, integration demos, manuscript workflow packet, quality-gate surface, docs-review convergence pass, internal review record, internal-review remediation, and next-milestone planning handoff are ready for third-party review, while external review, accepted-finding remediation, final planning reconciliation, and release ceremony remain open.
+`v0.89.1` is the milestone where ADL turns adversarial runtime and exploit-evidence carry-forward into a first-class package. The current draft release story is that the adversarial/runtime proof band, integration demos, manuscript workflow packet, quality-gate surface, docs-review convergence pass, internal review record, internal-review remediation, third-party review, and next-milestone planning handoff are complete or in final promotion, while release ceremony remains open.
 
 ## Current Draft Highlights
 - explicit adversarial runtime model for contested operation
@@ -28,6 +28,8 @@
 - internal-review remediation for signing trust, provider error handling,
   provider endpoint trust, deterministic setup failure classification, and
   closeout truth
+- third-party review completed with no additional P0/P1/P2 findings beyond the
+  internal review work already fixed or explicitly deferred
 
 ## What's New In Detail
 
@@ -51,8 +53,8 @@
 
 ## Upgrade Notes
 - no migration step is currently required for users of the local ADL CLI examples
-- final tag links, release links, and reviewer-finding outcomes remain `TBD` until `WP-17` through `WP-20` complete
-- this draft has been rewritten from shipped proof artifacts through `WP-16`, but it is not final release copy until external review, remediation, and ceremony land
+- final tag links and release links remain `TBD` until `WP-20` completes
+- this draft has been rewritten from shipped proof artifacts and review outcomes through `WP-19`, but it is not final release copy until ceremony lands
 
 ## Known Limitations
 - this document is still pre-release and must not be treated as a shipped-claims document yet
@@ -67,7 +69,10 @@
 - `#1994` through `#1997` and `#1992` close the internal-review remediation
   issues that must be settled before third-party review
 - `#1999` owns the local third-party review handoff surface
-- 3rd-party review, remediation, and release-ceremony outputs should be cited before release
+- `WP-17` third-party review closed with no additional P0/P1/P2 findings
+- `WP-18` review remediation closed with internal review fixes recorded and F8 deferred to v0.90 maintainability work
+- `WP-19` owns the v0.90 planning package promotion
+- release-ceremony outputs should be cited before release
 
 ## What's Next
 - later reasoning, identity, moral-governance, and broader constitutional bands continue after this milestone

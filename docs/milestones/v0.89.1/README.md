@@ -170,11 +170,11 @@ Open questions:
 
 ## Status
 
-Current status: canonical planning package complete; official issue wave opened; `WP-02` - `WP-16` landed or represented by the tracked release-tail proof surfaces; `WP-16` now provides the internal review record before 3rd-party review, remediation, next-milestone planning, and release closure.
+Current status: canonical planning package complete; official issue wave opened; `WP-02` - `WP-19` landed, closed, or represented by tracked release-tail proof surfaces; third-party review found no additional P0/P1/P2 findings beyond the internal review work already fixed or explicitly deferred; release ceremony remains.
 
 - Planning: canonical package completed in `#1860`, with visible `WP-01` anchor issue `#1922` and `#1806` landing the tracked next-milestone package from the `v0.89` side
-- Execution: issue wave opened through `#1921`; `WP-02` - `WP-16` are closed or represented by the tracked docs-review/internal-review records, and `WP-17` - `WP-20` remain the release-tail queue
-- Validation: partial; the adversarial/runtime, exploit/replay, verification, skill/governance, provider-packaging, proof-entry-point, integration-demo, manuscript workflow, quality-gate, docs-review, and internal-review surfaces exist, while 3rd-party review, remediation, next-milestone handoff, and release ceremony remain open
+- Execution: issue wave opened through `#1921`; `WP-02` - `WP-19` are closed or represented by tracked release-tail records, and `WP-20` remains the release-tail queue
+- Validation: partial; the adversarial/runtime, exploit/replay, verification, skill/governance, provider-packaging, proof-entry-point, integration-demo, manuscript workflow, quality-gate, docs-review, internal-review, third-party-review, remediation, and next-milestone handoff surfaces exist, while release ceremony remains open
 - Release readiness: pre-release; the milestone has a converged proof package, quality gate surface, docs-review surface, and internal review record, but not a release candidate
 
 Current issue map:

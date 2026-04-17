@@ -51,11 +51,11 @@ Promoted feature docs reviewed as an index set:
 
 The live tracker was checked during this pass.
 
-Current release-tail truth at the start of this pass:
+Release-tail truth at the start of this WP-15 pass:
 - `WP-02` through `WP-14` are closed on the live tracker
 - `WP-15` is the active docs/review convergence issue
-- `WP-16` through `WP-20` remain open release-tail work
-- two non-WP `v0.89.1` docs issues remain open for later/background work:
+- `WP-16` through `WP-20` were still open release-tail work
+- two non-WP `v0.89.1` docs issues were still open for later/background work:
   `#1986` and `#1987`
 
 Those non-WP docs issues are not release blockers for this pass unless their
@@ -87,7 +87,7 @@ aligning the milestone status language around the same issue-wave state.
 
 No release-blocking docs findings remain after this pass.
 
-Non-blocking residual risks:
+Non-blocking residual risks at the end of this WP-15 pass:
 - `WP-16` still needs to perform the bounded internal review against the updated
   milestone package.
 - `WP-17` still needs to capture external/third-party review findings.

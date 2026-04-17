@@ -13,17 +13,20 @@
 
 ## Current Release Truth
 
-`v0.89.1` is currently an active release-tail milestone with the adversarial/runtime proof band, integration-demo package, quality gate, docs-review convergence pass, internal review record, internal-review remediation issues, and next-milestone planning handoff landed before `WP-17`. There is no release candidate yet.
+`v0.89.1` is currently an active release-tail milestone with the adversarial/runtime proof band, integration-demo package, quality gate, docs-review convergence pass, internal review record, internal-review remediation issues, third-party review, and next-milestone planning handoff landed or in final promotion. There is no release candidate yet.
 
 That means:
 - the canonical planning package exists and is reviewable
 - the official issue wave is open and visible through `#1922` - `#1941`
 - `WP-02` - `WP-16` are closed or represented by tracked release-tail proof surfaces
-- `WP-16` owns the internal review surface before external review and remediation
+- `WP-16` owns the internal review surface
 - internal-review remediation is closed through `#1992`
-- `#1999` prepares the third-party review handoff before `WP-17`
+- `#1999` prepared the third-party review handoff before `WP-17`
+- `WP-17` third-party review is closed with no additional P0/P1/P2 findings
+- `WP-18` review remediation is closed with internal review fixes recorded and F8 deferred to v0.90 maintainability work
+- `WP-19` owns the v0.90 planning package promotion before ceremony
 - no release candidate exists yet
-- review, remediation, next-milestone planning, and ceremony work are all future steps
+- release ceremony remains the final release-tail step
 
 ## 1) Release Readiness
 - [ ] Milestone checklist complete (`MILESTONE_CHECKLIST_v0.89.1.md`)
@@ -37,6 +40,9 @@ That means:
 - [x] Internal review complete (`INTERNAL_REVIEW_v0.89.1.md`)
 - [x] Internal-review remediation closed through `#1992`
 - [x] Third-party review handoff prepared in the local review store
+- [x] Third-party review completed with no additional P0/P1/P2 findings
+- [x] Review remediation closed with internal review fixes recorded and F8 deferred
+- [x] Next-milestone planning package promoted by `WP-19`
 - [ ] Operator fast-forwarded root main after the handoff merge and confirmed no local tracked drift
 
 ## 2) Branch And Tag Preparation
