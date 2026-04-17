@@ -1,0 +1,135 @@
+version: "0.1"
+kind: "adl-skill"
+id: "repo-packet-builder"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "repo_packet_builder.v1"
+    reference_doc: "../docs/REPO_PACKET_BUILDER_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "build_repository_packet"
+      - "build_path_packet"
+      - "build_branch_packet"
+      - "build_diff_packet"
+      - "refresh_packet"
+    policy_fields:
+      - "scope_policy"
+      - "privacy_mode"
+      - "include_generated_code"
+      - "include_vendor_code"
+      - "context_budget"
+      - "specialist_lanes"
+      - "stop_before_review"
+    mode_requirements:
+      build_repository_packet:
+        required_target_fields: []
+      build_path_packet:
+        required_target_fields:
+          - "target_path"
+      build_branch_packet:
+        required_target_fields:
+          - "branch"
+      build_diff_packet:
+        required_target_fields:
+          - "diff_base"
+      refresh_packet:
+        required_target_fields:
+          - "existing_packet_path"
+  intent:
+    - "repo_packet_construction"
+    - "review_scope_planning"
+    - "codebuddy_review_engine"
+    - "specialist_lane_assignment"
+  required_inputs:
+    - "repo_root"
+  optional_inputs:
+    - "target_path"
+    - "branch"
+    - "diff_base"
+    - "changed_paths"
+    - "existing_packet_path"
+    - "artifact_root"
+    - "context_budget"
+    - "specialist_lanes"
+  stop_if_missing:
+    - "repo_root"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_repo_packet_builder.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "build_path_packet_requires_target.target_path"
+    - "build_branch_packet_requires_target.branch"
+    - "build_diff_packet_requires_target.diff_base"
+    - "refresh_packet_requires_target.existing_packet_path"
+    - "policy.scope_policy_must_be_explicit"
+    - "policy.privacy_mode_must_be_explicit"
+    - "policy.context_budget_must_be_explicit"
+    - "policy.stop_before_review_must_be_true"
+execution:
+  mode: "packet_only"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  permitted_scripts:
+    - path: "scripts/build_repo_packet.py"
+      interpreter: "python3"
+      read_only: true
+      allowed_args:
+        - "<repo-root>"
+        - "--out <artifact-root>"
+        - "--mode <mode>"
+        - "--target-path <path>"
+        - "--diff-base <ref>"
+        - "--privacy-mode <mode>"
+  preferred_read_order:
+    - "repo_root"
+    - "target_scope"
+    - "top_level_manifests"
+    - "ci_and_tooling"
+    - "docs_surfaces"
+    - "test_surfaces"
+    - "code_roots"
+    - "largest_code_files"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  ignore_by_default:
+    - ".git/**"
+    - "node_modules/**"
+    - "dist/**"
+    - "build/**"
+    - "target/**"
+    - "coverage/**"
+    - ".next/**"
+    - ".venv/**"
+    - "venv/**"
+  must_not_run:
+    - "specialist_reviews"
+    - "diagram_generation"
+    - "test_generation"
+    - "issue_creation"
+    - "report_publication"
+outputs:
+  default_format: "markdown_and_json"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/codebuddy/<run_id>/"
+  required_artifacts:
+    - "run_manifest.json"
+    - "repo_scope.md"
+    - "repo_inventory.json"
+    - "evidence_index.json"
+    - "specialist_assignments.json"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  manifest_declares_executables: true
+

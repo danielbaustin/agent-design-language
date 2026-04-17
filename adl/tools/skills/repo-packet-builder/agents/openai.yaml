@@ -1,0 +1,4 @@
+display_name: Repo Packet Builder
+short_description: Build a bounded CodeBuddy repo review packet
+default_prompt: Build a source-grounded repository review packet with explicit scope, exclusions, evidence references, and specialist lane assignments. Stop before review or remediation.
+
