@@ -208,6 +208,9 @@ state_root: state
 workflow:
   kind: demo_adapter
   name: agent_cmd_probe
+  run_args:
+    provider_id: local_ollama
+    model: gemma4:latest
 heartbeat:
   interval_secs: 1
   max_cycles: 2
@@ -248,6 +251,21 @@ memory:
             assert!(
                 cycle_dir.join(artifact).exists(),
                 "missing {artifact} for {cycle_id}"
+            );
+        }
+    }
+
+    fn assert_continuity_contract_exists(root: &Path) {
+        for artifact in [
+            "agent_spec.locked.json",
+            "continuity.json",
+            "cycle_ledger.jsonl",
+            "provider_binding_history.jsonl",
+            "memory_index.json",
+        ] {
+            assert!(
+                root.join("state").join(artifact).exists(),
+                "missing {artifact}"
             );
         }
     }
@@ -304,6 +322,7 @@ memory:
         let spec = spec.to_str().expect("utf8 spec path");
 
         assert!(real_agent(&args(&["tick", "--spec", spec])).is_ok());
+        assert_continuity_contract_exists(&root);
         assert_cycle_contract_exists(&root, "cycle-000001");
 
         assert!(real_agent(&args(&[
@@ -319,6 +338,9 @@ memory:
         ]))
         .is_ok());
         assert_cycle_contract_exists(&root, "cycle-000003");
+        let ledger =
+            fs::read_to_string(root.join("state/cycle_ledger.jsonl")).expect("cycle ledger");
+        assert_eq!(ledger.lines().count(), 3);
 
         assert!(real_agent(&args(&["status", "--spec", spec])).is_ok());
         assert!(real_agent(&args(&[
