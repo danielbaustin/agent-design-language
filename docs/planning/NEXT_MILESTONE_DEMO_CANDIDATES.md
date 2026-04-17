@@ -40,9 +40,9 @@ Promote this when we want one future-demo slice that ties together:
 
 ### Primary Sources
 
-- `.adl/docs/TBD/FIVE_AGENT_HEY_JUDE_MIDI_DEMO_PLAN.md`
-- `.adl/docs/TBD/FIVE_AGENT_HEY_JUDE_MIDI_DEMO_IMPLEMENTATION_PLAN.md`
-- `.adl/docs/TBD/NEXT_MILESTONE_CANDIDATE_FIVE_AGENT_HEY_JUDE_MIDI_DEMO.md`
+- `demos/v0.89.1/five_agent_hey_jude_midi_demo.md`
+- `docs/milestones/v0.89.1/DEMO_MATRIX_v0.89.1.md`
+- `docs/milestones/v0.89.1/RELEASE_NOTES_v0.89.1.md`
 
 ### Recommended Promotion Test
 

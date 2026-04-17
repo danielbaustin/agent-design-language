@@ -2,17 +2,45 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.89 (Governed Adaptation Review Tail In Progress)
+## v0.89.1 (Adversarial Runtime Review Tail In Progress)
 
-Status: Core implementation and proof-convergence wave landed through `WP-13`; next-milestone planning landed through `WP-19`; quality/docs/review/remediation/release tail remains in progress.
+Status: Core adversarial/runtime implementation, proof surfaces, internal review, and internal-review remediation have landed; third-party review and release ceremony remain in progress.
+
+Summary:
+- ADL now has a real `v0.89.1` milestone package on `main`, centered on one adversarial-runtime band:
+  `adversarial posture -> red/blue/purple roles -> execution runner -> exploit artifact -> replay manifest -> continuous verification -> self-attack -> review evidence`
+- The promoted `v0.89.1` feature-doc set covers the adversarial runtime model, red/blue agent architecture, adversarial execution runner, exploit artifact schema, replay manifest, continuous verification, self-attacking systems, and supporting operational-skill substrate
+- The bounded `v0.89.1` proof package includes the adversarial/security demo rows, provider-proof packaging, quality-gate evidence, docs-review convergence, internal review, and accepted internal-review remediation
+- The milestone also introduces the bounded `arxiv-paper-writer` workflow and the initial three-paper manuscript program for `What Is ADL?`, `Gödel Agents and ADL`, and `Cognitive Spacetime Manifold`
+- The crate version is now `0.89.1`; final third-party review findings, release ceremony, tag publication, and GitHub release copy remain owned by the release tail
+
+References:
+- `docs/milestones/v0.89.1/README.md`
+- `docs/milestones/v0.89.1/WBS_v0.89.1.md`
+- `docs/milestones/v0.89.1/SPRINT_v0.89.1.md`
+- `docs/milestones/v0.89.1/DEMO_MATRIX_v0.89.1.md`
+- `docs/milestones/v0.89.1/FEATURE_DOCS_v0.89.1.md`
+- `docs/milestones/v0.89.1/QUALITY_GATE_v0.89.1.md`
+- `docs/milestones/v0.89.1/DOCS_REVIEW_v0.89.1.md`
+- `docs/milestones/v0.89.1/INTERNAL_REVIEW_v0.89.1.md`
+- `docs/milestones/v0.89.1/RELEASE_PLAN_v0.89.1.md`
+- `docs/milestones/v0.89.1/RELEASE_NOTES_v0.89.1.md`
+
+Not yet claimed in v0.89.1:
+- third-party review completion and accepted third-party finding remediation
+- release ceremony completion, final tag publication, and GitHub release publication
+- the later Runtime v2, moral-governance, birthday, and polis-defense bands planned for later milestones
+
+## v0.89 (Completed Governed Adaptation Milestone)
+
+Status: Completed.
 
 Summary:
 - ADL now has a real `v0.89` milestone on `main`, centered on one governed-adaptation package:
   `convergence -> judgment -> decision/action mediation -> skill execution -> experiment evidence -> ObsMem explanation -> security posture/trust`
 - The promoted `v0.89` feature-doc set now covers AEE convergence, Freedom Gate v2, decision surfaces, action mediation, the skill model/protocol, the Godel experiment system, ObsMem evidence/ranking, and the main-band security/trust/posture contract
 - The bounded `v0.89` proof package now exists through the canonical demo matrix and the landed D1-D7 walkthrough/proof rows
-- Demo/proof convergence work has landed through `WP-13`, and the explicit tracked `v0.89.1` package is now prepared on `main` as the bounded next-milestone handoff
-- The remaining open work is the normal milestone tail: quality gate, docs/review alignment, internal review, 3rd-party review, findings remediation, and release ceremony
+- Demo/proof convergence work landed through `WP-13`, and the tracked `v0.89.1` package became the bounded adversarial-runtime follow-on
 
 References:
 - `docs/milestones/v0.89/README.md`
@@ -23,13 +51,10 @@ References:
 - `docs/milestones/v0.89/MILESTONE_CHECKLIST_v0.89.md`
 - `docs/milestones/v0.89/RELEASE_PLAN_v0.89.md`
 - `docs/milestones/v0.89/RELEASE_NOTES_v0.89.md`
-- `docs/milestones/v0.89.1/README.md`
 
 Not yet claimed in v0.89:
-- final quality-gate closure
-- internal review, external / 3rd-party review, and accepted-findings remediation completion
-- release ceremony completion and version/tag publication
-- the adversarial runtime/exploit-replay package, which remains explicitly deferred to `v0.89.1`
+- the adversarial runtime/exploit-replay package, which belongs to `v0.89.1`
+- later Runtime v2, moral-governance, birthday, and polis-defense work that belongs to later milestones
 
 ## v0.88 (Temporal / Chronosense + Instinct Review Tail In Progress)
 

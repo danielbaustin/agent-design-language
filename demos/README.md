@@ -22,16 +22,16 @@ If you want the historical `v0.8` flagship demo surface:
 cargo run --manifest-path demos/transpiler_demo/Cargo.toml --quiet
 ```
 
-If you want the current `v0.87.1` reviewer proof suite:
+If you want the current `v0.89.1` quality-gate proof package:
 
 ```bash
-bash adl/tools/demo_v0871_suite.sh
+bash adl/tools/demo_v0891_quality_gate.sh
 ```
 
-If you want the current `v0.87` substrate demo program:
+If you want the current `v0.89.1` integration demo package:
 
 ```bash
-bash adl/tools/demo_v087_suite.sh
+bash adl/tools/demo_v0891_wp13_demo_integration.sh
 ```
 
 If you want the local Codex CLI + Ollama operational-skills demo:
@@ -46,16 +46,16 @@ If you want the bounded Claude + ChatGPT tea discussion demo:
 bash adl/tools/demo_v0871_multi_agent_discussion.sh
 ```
 
-If you want the bounded Gemma 4 issue-clerk demo:
+If you want the bounded five-agent Hey Jude MIDI demo:
 
 ```bash
-bash adl/tools/demo_v089_gemma4_issue_clerk.sh --dry-run
+bash adl/tools/demo_v0891_five_agent_hey_jude.sh
 ```
 
-If you want the refreshed Paper Sonata flagship demo:
+If you want the bounded arXiv manuscript workflow demo:
 
 ```bash
-bash adl/tools/demo_v088_paper_sonata.sh
+bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh
 ```
 
 If you want the bounded multi-agent repo code review demo:
@@ -87,6 +87,8 @@ Current heavyweight proof-package examples:
 - `bash adl/tools/demo_v0871_quality_gate.sh`
 - `bash adl/tools/demo_v0871_release_review_package.sh`
 - `bash adl/tools/demo_v088_review_surface.sh`
+- `bash adl/tools/demo_v0891_quality_gate.sh`
+- `bash adl/tools/demo_v0891_wp13_demo_integration.sh`
 
 When planning a demo sweep, do not assume every proof-package command above belongs in the ordinary demo lane.
 
@@ -178,6 +180,26 @@ rejected truthfully.
 Use `v0.89/paper_sonata_demo_refresh.md` for the refreshed reviewer-facing
 Paper Sonata package. It keeps the bounded flagship workflow, but adds a packet
 manifest, claim matrix, revision requests, and a clearer reviewer brief.
+
+### v0.89.1 adversarial/runtime and publication demos
+
+- `v0.89.1/five_agent_hey_jude_midi_demo.md`
+- `v0.89.1/arxiv_manuscript_workflow_demo.md`
+- `v0.89.1/gemini_provider_harmony_roundtable_demo.md`
+- `v0.89.1/deep_agents_comparative_wave_follow_on_demo.md`
+- `v0.89.1/long_lived_stock_league_demo.md`
+
+Use `bash adl/tools/demo_v0891_quality_gate.sh` for the current release-tail
+quality-gate proof package.
+
+Use `bash adl/tools/demo_v0891_wp13_demo_integration.sh` for the integrated
+`v0.89.1` demo package.
+
+Use `bash adl/tools/demo_v0891_five_agent_hey_jude.sh` for the flagship bounded
+multi-agent music demo.
+
+Use `bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh` for the bounded
+manuscript workflow packet.
 
 Use `v0.89/multi_agent_repo_code_review_demo.md` for a bounded specialist-reviewer
 demo where ADL prepares one repo review packet, emits code/security/test/docs
