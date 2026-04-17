@@ -250,7 +250,7 @@ fn run_enforces_signature_by_default_and_allows_override() {
 }
 
 #[test]
-fn signed_run_executes_without_allow_unsigned() {
+fn signed_run_requires_trusted_signature_key_by_default() {
     let base = tmp_dir("sign-enforce-signed");
     let _bin = write_mock_ollama(&base);
     let _path_guard = EnvVarGuard::set("PATH", prepend_path(&base));
@@ -272,8 +272,83 @@ fn signed_run_executes_without_allow_unsigned() {
 
     let out = run_swarm(&[signed.to_str().unwrap(), "--run"]);
     assert!(
+        !out.status.success(),
+        "signed run with only an embedded key should not satisfy runtime trust by default"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("SIGN_POLICY_DISALLOWED_KEY_SOURCE"),
+        "stderr:\n{stderr}"
+    );
+    assert!(
+        stderr.contains("--signature-key"),
+        "stderr should guide operator toward trusted key source:\n{stderr}"
+    );
+}
+
+#[test]
+fn signed_run_executes_with_explicit_trusted_signature_key() {
+    let base = tmp_dir("sign-enforce-explicit-key");
+    let _bin = write_mock_ollama(&base);
+    let _path_guard = EnvVarGuard::set("PATH", prepend_path(&base));
+    let unsigned = write_unsigned_fixture(&base);
+    let key_dir = base.join(".keys");
+    let signed = base.join("signed.adl.yaml");
+
+    let keygen = run_swarm(&["keygen", "--out-dir", key_dir.to_str().unwrap()]);
+    assert!(keygen.status.success());
+    let sign = run_swarm(&[
+        "sign",
+        unsigned.to_str().unwrap(),
+        "--key",
+        key_dir.join("ed25519-private.b64").to_str().unwrap(),
+        "--out",
+        signed.to_str().unwrap(),
+    ]);
+    assert!(sign.status.success(), "sign failed");
+
+    let out = run_swarm(&[
+        signed.to_str().unwrap(),
+        "--run",
+        "--signature-key",
+        key_dir.join("ed25519-public.b64").to_str().unwrap(),
+    ]);
+    assert!(
         out.status.success(),
-        "signed run should pass without --allow-unsigned:\n{}",
+        "signed run should pass with an explicit trusted key:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+}
+
+#[test]
+fn signed_run_executes_with_explicit_embedded_key_dev_override() {
+    let base = tmp_dir("sign-enforce-embedded-dev");
+    let _bin = write_mock_ollama(&base);
+    let _path_guard = EnvVarGuard::set("PATH", prepend_path(&base));
+    let unsigned = write_unsigned_fixture(&base);
+    let key_dir = base.join(".keys");
+    let signed = base.join("signed.adl.yaml");
+
+    let keygen = run_swarm(&["keygen", "--out-dir", key_dir.to_str().unwrap()]);
+    assert!(keygen.status.success());
+    let sign = run_swarm(&[
+        "sign",
+        unsigned.to_str().unwrap(),
+        "--key",
+        key_dir.join("ed25519-private.b64").to_str().unwrap(),
+        "--out",
+        signed.to_str().unwrap(),
+    ]);
+    assert!(sign.status.success(), "sign failed");
+
+    let out = run_swarm(&[
+        signed.to_str().unwrap(),
+        "--run",
+        "--allow-embedded-signature-key",
+    ]);
+    assert!(
+        out.status.success(),
+        "explicit embedded-key dev override should preserve self-signed workflow runs:\n{}",
         String::from_utf8_lossy(&out.stderr)
     );
 }

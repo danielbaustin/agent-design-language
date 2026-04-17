@@ -31,6 +31,8 @@ pub(crate) fn run_workflow(args: &[String]) -> Result<()> {
     let mut quiet = false;
     let mut do_open = false;
     let mut allow_unsigned = false;
+    let mut allow_embedded_signature_key = false;
+    let mut signature_key_path: Option<PathBuf> = None;
     let mut resume_path: Option<PathBuf> = None;
     let mut steer_path: Option<PathBuf> = None;
     let mut overlay_path: Option<PathBuf> = None;
@@ -82,6 +84,16 @@ pub(crate) fn run_workflow(args: &[String]) -> Result<()> {
             "--quiet" | "--no-step-output" => quiet = true,
             "--open" | "--open-artifacts" => do_open = true,
             "--allow-unsigned" => allow_unsigned = true,
+            "--allow-embedded-signature-key" => allow_embedded_signature_key = true,
+            "--signature-key" => {
+                let Some(path) = args.get(i + 1) else {
+                    eprintln!("--signature-key requires a public key path");
+                    eprintln!("{}", usage());
+                    std::process::exit(2);
+                };
+                signature_key_path = Some(PathBuf::from(path));
+                i += 1;
+            }
             "--help" | "-h" => {
                 println!("{}", usage());
                 return Ok(());
@@ -130,7 +142,22 @@ pub(crate) fn run_workflow(args: &[String]) -> Result<()> {
         || std::env::var("ADL_ALLOW_UNSIGNED")
             .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
             .unwrap_or(false);
-    enforce_signature_policy(&doc, do_run, allow_unsigned)?;
+    let allow_embedded_signature_key = allow_embedded_signature_key
+        || std::env::var("ADL_ALLOW_EMBEDDED_SIGNATURE_KEY")
+            .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+            .unwrap_or(false);
+    let signature_key_path = signature_key_path.or_else(|| {
+        std::env::var_os("ADL_SIGNATURE_KEY")
+            .filter(|value| !value.is_empty())
+            .map(PathBuf::from)
+    });
+    enforce_signature_policy(
+        &doc,
+        do_run,
+        allow_unsigned,
+        signature_key_path.as_deref(),
+        allow_embedded_signature_key,
+    )?;
 
     let resolved = match resolve::resolve_run(&doc) {
         Ok(resolved) => resolved,
@@ -455,7 +482,19 @@ pub(crate) fn real_resume(args: &[String]) -> Result<()> {
     let allow_unsigned = std::env::var("ADL_ALLOW_UNSIGNED")
         .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
         .unwrap_or(false);
-    enforce_signature_policy(&doc, true, allow_unsigned)?;
+    let allow_embedded_signature_key = std::env::var("ADL_ALLOW_EMBEDDED_SIGNATURE_KEY")
+        .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+        .unwrap_or(false);
+    let signature_key_path = std::env::var_os("ADL_SIGNATURE_KEY")
+        .filter(|value| !value.is_empty())
+        .map(PathBuf::from);
+    enforce_signature_policy(
+        &doc,
+        true,
+        allow_unsigned,
+        signature_key_path.as_deref(),
+        allow_embedded_signature_key,
+    )?;
 
     let resolved = resolve::resolve_run(&doc)?;
     validate_pause_artifact_for_resume(&pause_artifact, run_id, &resolved)?;
@@ -584,10 +623,27 @@ pub(crate) fn enforce_signature_policy(
     doc: &adl::AdlDoc,
     do_run: bool,
     allow_unsigned: bool,
+    public_key_path: Option<&Path>,
+    allow_embedded_signature_key: bool,
 ) -> Result<()> {
     if do_run && doc.version.trim() == "0.5" && !allow_unsigned {
-        signing::verify_doc(doc, None)
-            .with_context(|| "signature enforcement failed (use --allow-unsigned for dev)")?;
+        let allowed_key_sources = if allow_embedded_signature_key {
+            vec![
+                signing::VerificationKeySource::Embedded,
+                signing::VerificationKeySource::ExplicitKey,
+            ]
+        } else {
+            vec![signing::VerificationKeySource::ExplicitKey]
+        };
+        let profile = signing::VerificationProfile {
+            require_signature: true,
+            require_key_id: false,
+            allowed_algs: vec!["ed25519".to_string()],
+            allowed_key_sources,
+        };
+        signing::verify_doc_with_profile(doc, public_key_path, &profile).with_context(|| {
+            "signature enforcement failed (use --signature-key <public_key_path> for trusted runtime verification, --allow-embedded-signature-key for dev self-signed workflows, or --allow-unsigned for unsigned dev runs)"
+        })?;
     }
     Ok(())
 }

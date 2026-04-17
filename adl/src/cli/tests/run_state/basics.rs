@@ -45,7 +45,9 @@ fn enforce_signature_policy_skips_when_not_running_or_not_v0_5() {
         },
     };
 
-    enforce_signature_policy(&mk_doc("0.5"), false, false).expect("do_run=false should skip");
-    enforce_signature_policy(&mk_doc("0.4"), true, false).expect("v0.4 should skip");
-    enforce_signature_policy(&mk_doc("0.5"), true, true).expect("allow_unsigned should skip");
+    enforce_signature_policy(&mk_doc("0.5"), false, false, None, false)
+        .expect("do_run=false should skip");
+    enforce_signature_policy(&mk_doc("0.4"), true, false, None, false).expect("v0.4 should skip");
+    enforce_signature_policy(&mk_doc("0.5"), true, true, None, false)
+        .expect("allow_unsigned should skip");
 }
