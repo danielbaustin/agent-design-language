@@ -35,6 +35,7 @@ fn real_tick(args: &[String]) -> Result<()> {
                 i += 1;
             }
             "--recover-stale-lease" => parsed.recover_stale_lease = true,
+            "--json" => parsed.json_output = true,
             "--help" | "-h" => {
                 println!("{}", super::usage::usage());
                 return Ok(());
@@ -49,7 +50,7 @@ fn real_tick(args: &[String]) -> Result<()> {
             recover_stale_lease: parsed.recover_stale_lease,
         },
     )?;
-    print_status(&status)
+    print_status(&status, parsed.json_output)
 }
 
 fn real_run(args: &[String]) -> Result<()> {
@@ -75,6 +76,7 @@ fn real_run(args: &[String]) -> Result<()> {
             }
             "--no-sleep" => no_sleep = true,
             "--recover-stale-lease" => parsed.recover_stale_lease = true,
+            "--json" => parsed.json_output = true,
             "--help" | "-h" => {
                 println!("{}", super::usage::usage());
                 return Ok(());
@@ -93,7 +95,7 @@ fn real_run(args: &[String]) -> Result<()> {
             recover_stale_lease: parsed.recover_stale_lease,
         },
     )?;
-    print_status(&status)
+    print_status(&status, parsed.json_output)
 }
 
 fn real_status(args: &[String]) -> Result<()> {
@@ -105,6 +107,7 @@ fn real_status(args: &[String]) -> Result<()> {
                 parsed.spec = Some(PathBuf::from(required_value(args, i, "--spec")?));
                 i += 1;
             }
+            "--json" => parsed.json_output = true,
             "--help" | "-h" => {
                 println!("{}", super::usage::usage());
                 return Ok(());
@@ -114,7 +117,7 @@ fn real_status(args: &[String]) -> Result<()> {
         i += 1;
     }
     let status = long_lived_agent::status(&parsed.spec()?)?;
-    print_status(&status)
+    print_status(&status, parsed.json_output)
 }
 
 fn real_stop(args: &[String]) -> Result<()> {
@@ -131,6 +134,7 @@ fn real_stop(args: &[String]) -> Result<()> {
                 reason = Some(required_value(args, i, "--reason")?.to_string());
                 i += 1;
             }
+            "--json" => parsed.json_output = true,
             "--help" | "-h" => {
                 println!("{}", super::usage::usage());
                 return Ok(());
@@ -141,13 +145,14 @@ fn real_stop(args: &[String]) -> Result<()> {
     }
     let reason = reason.ok_or_else(|| anyhow!("agent stop requires --reason <text>"))?;
     let status = long_lived_agent::stop(&parsed.spec()?, &reason)?;
-    print_status(&status)
+    print_status(&status, parsed.json_output)
 }
 
 #[derive(Default)]
 struct AgentArgs {
     spec: Option<PathBuf>,
     recover_stale_lease: bool,
+    json_output: bool,
 }
 
 impl AgentArgs {
@@ -169,9 +174,56 @@ fn parse_u64(raw: &str) -> Result<u64> {
         .map_err(|_| anyhow!("expected unsigned integer, got '{raw}'"))
 }
 
-fn print_status(status: &long_lived_agent::StatusRecord) -> Result<()> {
-    println!("{}", serde_json::to_string_pretty(status)?);
+fn print_status(status: &long_lived_agent::StatusRecord, json_output: bool) -> Result<()> {
+    if json_output {
+        println!("{}", serde_json::to_string_pretty(status)?);
+        return Ok(());
+    }
+    println!("agent: {}", status.agent_instance_id);
+    println!("state: {}", status_state_label(&status.state));
+    println!("completed cycles: {}", status.completed_cycle_count);
+    println!(
+        "last cycle: {}",
+        match (&status.last_cycle_id, &status.last_cycle_status) {
+            (Some(cycle_id), Some(cycle_status)) => format!("{cycle_id} {cycle_status}"),
+            (Some(cycle_id), None) => cycle_id.clone(),
+            _ => "none".to_string(),
+        }
+    );
+    println!(
+        "active lease: {}",
+        status
+            .active_lease
+            .as_ref()
+            .map(|lease| lease.lease_id.as_str())
+            .unwrap_or("none")
+    );
+    println!(
+        "stop requested: {}",
+        if status.stop_requested { "yes" } else { "no" }
+    );
+    println!("consecutive failures: {}", status.consecutive_failure_count);
+    println!(
+        "last error: {}",
+        status
+            .last_error
+            .as_ref()
+            .map(|error| format!("{}: {}", error.class, error.message))
+            .unwrap_or_else(|| "none".to_string())
+    );
     Ok(())
+}
+
+fn status_state_label(state: &long_lived_agent::AgentStatusState) -> &'static str {
+    match state {
+        long_lived_agent::AgentStatusState::NotStarted => "not_started",
+        long_lived_agent::AgentStatusState::Idle => "idle",
+        long_lived_agent::AgentStatusState::Leased => "leased",
+        long_lived_agent::AgentStatusState::RunningCycle => "running_cycle",
+        long_lived_agent::AgentStatusState::Stopped => "stopped",
+        long_lived_agent::AgentStatusState::Failed => "failed",
+        long_lived_agent::AgentStatusState::Completed => "completed",
+    }
 }
 
 #[cfg(test)]
@@ -218,7 +270,12 @@ heartbeat:
 safety:
   allow_network: false
   allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
   financial_advice: false
+  max_cycle_runtime_secs: 120
+  max_consecutive_failures: 2
 memory:
   namespace: tests/agent-cmd
   write_policy: append_only
@@ -343,12 +400,14 @@ memory:
         assert_eq!(ledger.lines().count(), 3);
 
         assert!(real_agent(&args(&["status", "--spec", spec])).is_ok());
+        assert!(real_agent(&args(&["status", "--spec", spec, "--json"])).is_ok());
         assert!(real_agent(&args(&[
             "stop",
             "--spec",
             spec,
             "--reason",
             "operator requested pause",
+            "--json",
         ]))
         .is_ok());
         assert!(root.join("state/stop.json").exists());

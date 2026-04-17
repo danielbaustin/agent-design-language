@@ -23,7 +23,12 @@ heartbeat:
 safety:
   allow_network: false
   allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
   financial_advice: false
+  max_cycle_runtime_secs: 120
+  max_consecutive_failures: 2
 memory:
   namespace: smoke/agent
   write_policy: append_only
@@ -40,6 +45,7 @@ memory:
         "--max-cycles",
         "3",
         "--no-sleep",
+        "--json",
     ]);
     assert!(
         out.status.success(),
@@ -87,7 +93,17 @@ memory:
     assert!(continuity.contains(r#""continuity_kind": "pre_v0_92_handle""#));
     assert!(continuity.contains(r#""latest_cycle_id": "cycle-000003""#));
 
-    let status = run_adl(&["agent", "status", "--spec", spec_str]);
+    let human_status = run_adl(&["agent", "status", "--spec", spec_str]);
+    assert!(
+        human_status.status.success(),
+        "expected agent status success, stderr:\n{}",
+        String::from_utf8_lossy(&human_status.stderr)
+    );
+    let human_stdout = String::from_utf8_lossy(&human_status.stdout);
+    assert!(human_stdout.contains("agent: smoke-agent"));
+    assert!(human_stdout.contains("state: completed"));
+
+    let status = run_adl(&["agent", "status", "--spec", spec_str, "--json"]);
     assert!(
         status.status.success(),
         "expected agent status success, stderr:\n{}",
