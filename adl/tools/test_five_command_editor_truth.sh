@@ -28,19 +28,25 @@ grep -Fq '| `pr create` | yes | no | control-plane only |' "$ROOT_DIR/docs/tooli
   exit 1
 }
 grep -Fq '| `pr init` | yes | no | control-plane only |' "$ROOT_DIR/docs/tooling/editor/command_adapter.md" || {
-  echo "assertion failed: command_adapter.md must keep pr init control-plane only" >&2
+  grep -Fq '| `pr init` | yes | no | copy-only prepared handoff |' "$ROOT_DIR/docs/tooling/editor/command_adapter.md" || {
+    echo "assertion failed: command_adapter.md must keep pr init out of browser-direct execution" >&2
+    exit 1
+  }
+}
+grep -Fq '| `pr start` | legacy alias | no | deprecated compatibility only |' "$ROOT_DIR/docs/tooling/editor/command_adapter.md" || {
+  echo "assertion failed: command_adapter.md must mark pr start as deprecated compatibility only" >&2
   exit 1
 }
-grep -Fq '| `pr start` | yes | yes, via `adl/tools/editor_action.sh start` | supported thin adapter |' "$ROOT_DIR/docs/tooling/editor/command_adapter.md" || {
-  echo "assertion failed: command_adapter.md must keep pr start as the only browser-direct adapter surface" >&2
+grep -Fq '| `pr run` | yes | no | copy-only prepared handoff |' "$ROOT_DIR/docs/tooling/editor/command_adapter.md" || {
+  echo "assertion failed: command_adapter.md must keep pr run out of browser-direct execution" >&2
   exit 1
 }
-grep -Fq '| `pr run` | yes | no | control-plane only |' "$ROOT_DIR/docs/tooling/editor/command_adapter.md" || {
-  echo "assertion failed: command_adapter.md must keep pr run control-plane only" >&2
+grep -Fq '| `pr finish` | yes | no | copy-only prepared handoff |' "$ROOT_DIR/docs/tooling/editor/command_adapter.md" || {
+  echo "assertion failed: command_adapter.md must keep pr finish out of browser-direct execution" >&2
   exit 1
 }
-grep -Fq '| `pr finish` | yes | no | control-plane only |' "$ROOT_DIR/docs/tooling/editor/command_adapter.md" || {
-  echo "assertion failed: command_adapter.md must keep pr finish control-plane only" >&2
+grep -Fq 'browser-prepared, human-run command handoff' "$ROOT_DIR/docs/tooling/editor/command_adapter.md" || {
+  echo "assertion failed: command_adapter.md must document copy-only human-run mode" >&2
   exit 1
 }
 

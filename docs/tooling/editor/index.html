@@ -9,12 +9,12 @@
 <body>
   <main class="page">
     <header class="hero">
-      <p class="eyebrow">WP-05 Editor Slice</p>
+      <p class="eyebrow">Current Skill Wiring Slice</p>
       <h1>ADL Task Bundle Editor</h1>
       <p class="lede">
         A bounded task-bundle workspace shell for Structured Task Prompts, Structured Implementation Prompts,
         and a real review-first Structured Output Record surface.
-        This editor keeps the public task-bundle model visible while reducing fragile raw markdown editing.
+        This editor keeps the current local task-bundle model visible while reducing fragile raw markdown editing.
       </p>
     </header>
 
@@ -22,15 +22,15 @@
       <div class="control-grid">
         <label>
           Task ID
-          <input id="task-id" type="text" placeholder="task-v085-wp05">
+          <input id="task-id" type="text" placeholder="issue-2053">
         </label>
         <label>
           Title
-          <input id="title" type="text" placeholder="[v0.85][WP-05] First authoring/editor surfaces">
+          <input id="title" type="text" placeholder="[v0.90][tools] Refresh web task editor for current ADL skills">
         </label>
         <label>
           Branch / Slug
-          <input id="branch" type="text" placeholder="codex/870-v085-wp05-first-editor-surfaces">
+          <input id="branch" type="text" placeholder="codex/2053-backlog-tools-refresh-web-task-editor-current-skills">
         </label>
       </div>
       <div class="bundle-path" id="bundle-root"></div>
@@ -48,11 +48,11 @@
     <section class="panel action-panel">
       <div class="section-header">
         <h2>Workflow Action</h2>
-        <p>Thin control-plane bridge. Run the copied command from the repo root.</p>
+        <p>Copy-only control-plane bridge. Run the copied command from the repo root.</p>
       </div>
       <div id="action-summary" class="action-summary"></div>
       <pre id="action-command" class="action-command"></pre>
-      <button id="copy-action" type="button">Copy pr start command</button>
+      <button id="copy-action" type="button">Copy pr run command</button>
     </section>
 
     <section class="panel review-panel">
@@ -104,14 +104,14 @@
     </section>
 
     <section class="panel notes">
-      <h2>First Slice Boundaries</h2>
+      <h2>Current Boundaries</h2>
       <ul>
-        <li>This issue establishes a task-bundle-native workspace shell with visible STP, SIP, and SOR cards.</li>
-        <li>STP and SIP remain the editable first-slice authoring surfaces in this issue.</li>
+        <li>This issue refreshes the task-bundle workspace shell for the current ADL workflow skill family.</li>
+        <li>STP and SIP remain editable authoring surfaces, and SOR remains an editable review-first closeout surface.</li>
         <li>SOR now has a bounded review-first surface for evidence, integration state, and follow-up structure.</li>
         <li>The review flow now turns SOR evidence, proof, and follow-up fields into a reviewer-facing checklist and bounded recommendation.</li>
-        <li>This editor demonstrates the historical tracked task-bundle model under <code>docs/records/&lt;scope&gt;/tasks/&lt;task-id&gt;/</code>.</li>
-        <li>The current canonical workflow state lives under <code>.adl/</code>; <code>docs/records/</code> is retained here as a bounded historical/public proof surface.</li>
+        <li>The editor prepares current lifecycle commands for a human to copy and run; browser direct execution remains out of scope.</li>
+        <li>The current canonical workflow state lives under <code>.adl/</code>; older <code>docs/records/</code> examples are historical proof surfaces only.</li>
       </ul>
     </section>
   </main>
