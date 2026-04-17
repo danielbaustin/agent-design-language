@@ -31,7 +31,7 @@ pub fn usage() -> &'static str {
   adl pr create --title <title> [--slug <slug>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>]
   adl pr init <issue> [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>]
   adl pr run <issue> [--prefix <prefix>] [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
-  adl pr run <adl.yaml> [--trace] [--allow-unsigned] [--runs-root <dir>] [--out <dir>]
+  adl pr run <adl.yaml> [--trace] [--signature-key <public_key_path>] [--allow-embedded-signature-key] [--allow-unsigned] [--runs-root <dir>] [--out <dir>]
   adl pr doctor <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
   adl pr finish <issue> --title <title> [--body <text>] [--paths <csv>] [-f|--input <path>] [--output-card <path>] [--no-checks] [--no-close] [--ready] [--merge] [--no-open]
   adl pr closeout <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
@@ -58,6 +58,10 @@ Options:
   --quiet            Suppress per-step output bodies (--no-step-output also accepted)
   --open             Open the first written HTML artifact after a successful run
   --no-open          Disable artifact auto-open for demo runs
+  --signature-key <path>
+                    Verify signed runtime workflows against this trusted public key
+  --allow-embedded-signature-key
+                    Allow embedded self-signed workflow keys (dev-only override)
   --allow-unsigned   Allow running unsigned workflows (dev-only override)
   -V, --version      Show the ADL CLI version
   -h, --help         Show this help
