@@ -16,6 +16,7 @@ coverage, or an explicit multi-agent review demo/proof surface.
 - `repo-review-security`
 - `repo-review-tests`
 - `repo-review-docs`
+- `repo-architecture-review`
 - `repo-review-synthesis`
 
 ## Invocation Order
@@ -26,7 +27,8 @@ Recommended order:
 2. `repo-review-security`
 3. `repo-review-tests`
 4. `repo-review-docs`
-5. `repo-review-synthesis`
+5. `repo-architecture-review`
+6. `repo-review-synthesis`
 
 The first four roles may run independently when the operator wants parallel
 review. The synthesis role should run after at least one specialist artifact is
@@ -35,7 +37,7 @@ available, and ideally after all required roles have reported.
 ## Shared Specialist Input Shape
 
 ```yaml
-skill_input_schema: repo_review_code.v1 | repo_review_security.v1 | repo_review_tests.v1 | repo_review_docs.v1
+skill_input_schema: repo_review_code.v1 | repo_review_security.v1 | repo_review_tests.v1 | repo_review_docs.v1 | repo_architecture_review.v1
 mode: review_repository | review_path | review_branch | review_diff | review_packet
 repo_root: /absolute/path
 target:
@@ -68,6 +70,7 @@ target:
     security: <path or null>
     tests: <path or null>
     docs: <path or null>
+    architecture: <path or null>
   artifact_root: <path or null>
 policy:
   required_roles:
@@ -75,6 +78,7 @@ policy:
     - security
     - tests
     - docs
+    - architecture
   severity_policy: preserve_highest | preserve_role_severity
   write_review_artifact: true | false
   stop_after_synthesis: true
@@ -86,7 +90,7 @@ Each specialist artifact should use this shape:
 
 ```md
 ## Metadata
-- Skill: repo-review-code | repo-review-security | repo-review-tests | repo-review-docs
+- Skill: repo-review-code | repo-review-security | repo-review-tests | repo-review-docs | repo-architecture-review
 - Target: <repo/path/branch/diff>
 - Date: <UTC timestamp or calendar date>
 - Artifact: <path or none>
@@ -94,7 +98,7 @@ Each specialist artifact should use this shape:
 ## Findings
 - <priority>: <title>
   File: <repo-relative path or none>
-  Role: <code | security | tests | docs>
+  Role: <code | security | tests | docs | architecture>
   Scenario: <trigger or review condition>
   Impact: <behavioral consequence>
   Evidence: <specific code/doc/test/config observation>
@@ -115,6 +119,7 @@ Each specialist artifact should use this shape:
 - `repo-review-security` must include `trust_boundaries` and asset/attacker notes when relevant.
 - `repo-review-tests` must include a `missing_proof_map` when coverage gaps are found.
 - `repo-review-docs` must include `commands_or_claims_checked` when docs make runnable claims.
+- `repo-architecture-review` must include an `architecture_map`, candidate diagram tasks, candidate ADRs, and candidate fitness functions.
 
 ## Synthesis Output Contract
 
@@ -128,6 +133,7 @@ Each specialist artifact should use this shape:
   - security: <path or missing>
   - tests: <path or missing>
   - docs: <path or missing>
+  - architecture: <path or missing>
 
 ## Findings
 - <priority>: <title>
@@ -142,6 +148,7 @@ Each specialist artifact should use this shape:
 - Security: present | missing | skipped
 - Tests: present | missing | skipped
 - Docs: present | missing | skipped
+- Architecture: present | missing | skipped
 
 ## Dedupe Notes
 - <what was merged and why>
@@ -168,6 +175,8 @@ Each specialist artifact should use this shape:
 - Do not hide missing tests behind a "no code defect found" result.
 - Do not convert docs truth drift into style feedback when it affects reviewer
   reproducibility or operator safety.
+- Do not collapse architecture drift into code style or docs polish when it
+  affects boundaries, layering, lifecycle, or state ownership.
 - Mark disagreement explicitly instead of silently choosing one role's view.
 
 ## Boundaries
@@ -198,4 +207,5 @@ Use this suite when:
 - the review is deep or release-adjacent
 - role separation is useful for traceability
 - security, tests, or docs need explicit ownership
+- architecture boundaries, state models, layering, or drift need explicit ownership
 - the synthesis artifact should show specialist coverage and disagreement
