@@ -531,6 +531,12 @@ fn helper_validation_and_extraction_paths_are_exercised() {
     assert_eq!(truncate_provider_body(&long_text).len(), 200);
     assert_eq!(truncate_provider_body("  short body  "), "short body");
 
+    let multibyte_boundary = format!("{}étail", "x".repeat(199));
+    let truncated = truncate_provider_body(&multibyte_boundary);
+    assert_eq!(truncated.len(), 199);
+    assert_eq!(truncated.chars().count(), 199);
+    assert!(truncated.ends_with('x'));
+
     assert_eq!(
         extract_openai_output_text(&json!({
             "output": [{"content": [{"text": ""}, {"text": " useful " }]}]
