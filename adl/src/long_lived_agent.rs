@@ -25,6 +25,9 @@ const CYCLE_LEDGER_ENTRY_SCHEMA: &str = "adl.long_lived_agent_cycle_ledger_entry
 const PROVIDER_BINDING_SCHEMA: &str = "adl.long_lived_agent_provider_binding.v1";
 const MEMORY_INDEX_SCHEMA: &str = "adl.long_lived_agent_memory_index.v1";
 const OPERATOR_EVENT_SCHEMA: &str = "adl.long_lived_agent_operator_event.v1";
+const DEFAULT_MAX_CYCLE_RUNTIME_SECS: u64 = 120;
+const DEFAULT_MAX_CONSECUTIVE_FAILURES: u64 = 2;
+const STOP_MODE_BEFORE_NEXT_CYCLE: &str = "stop_before_next_cycle";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentSpec {
@@ -100,9 +103,13 @@ pub struct StatusRecord {
     pub last_cycle_id: Option<String>,
     pub last_cycle_status: Option<String>,
     pub completed_cycle_count: u64,
+    #[serde(default)]
+    pub consecutive_failure_count: u64,
     pub active_lease: Option<LeaseRecord>,
     pub stop_requested: bool,
     pub last_error: Option<StatusError>,
+    #[serde(default)]
+    pub safety_policy: Value,
     pub updated_at: DateTime<Utc>,
 }
 
@@ -111,6 +118,10 @@ pub struct StopRecord {
     pub schema: String,
     pub agent_instance_id: String,
     pub reason: String,
+    #[serde(default = "default_requested_by")]
+    pub requested_by: String,
+    #[serde(default = "default_stop_mode")]
+    pub mode: String,
     pub requested_at: DateTime<Utc>,
 }
 
@@ -201,11 +212,12 @@ pub fn tick(spec_path: &Path, options: TickOptions) -> Result<StatusRecord> {
             Ok(status)
         }
         Err(err) => {
+            let cursor = ledger_cursor(&loaded).unwrap_or_default();
             let status = status_with_state(
                 &loaded,
                 AgentStatusState::Failed,
-                Some(cycle_id),
-                Some("failed".to_string()),
+                cursor.latest_cycle_id.or(Some(cycle_id)),
+                cursor.latest_status.or_else(|| Some("failed".to_string())),
                 None,
                 false,
                 Some(StatusError {
@@ -240,12 +252,34 @@ pub fn run(spec_path: &Path, options: RunOptions) -> Result<StatusRecord> {
             )?;
             break;
         }
-        last_status = tick(
+        match tick(
             spec_path,
             TickOptions {
                 recover_stale_lease: options.recover_stale_lease,
             },
-        )?;
+        ) {
+            Ok(status) => {
+                last_status = status;
+            }
+            Err(err) => {
+                last_status = status(spec_path)?;
+                let failures = consecutive_failure_count(&loaded)?;
+                if failures >= max_consecutive_failures(&loaded) {
+                    last_status = write_stop_record(
+                        &loaded,
+                        &format!(
+                            "max_consecutive_failures reached after {failures} blocked or failed cycles"
+                        ),
+                        "supervisor",
+                        "max_consecutive_failures",
+                    )?;
+                    break;
+                }
+                if index + 1 >= options.max_cycles {
+                    return Err(err);
+                }
+            }
+        }
         if last_status.state == AgentStatusState::Stopped {
             break;
         }
@@ -330,16 +364,12 @@ pub fn stop(spec_path: &Path, reason: &str) -> Result<StatusRecord> {
     }
     let loaded = load_spec(spec_path)?;
     ensure_state_root(&loaded)?;
-    let stop = StopRecord {
-        schema: STOP_SCHEMA.to_string(),
-        agent_instance_id: loaded.spec.agent_instance_id.clone(),
-        reason: reason.trim().to_string(),
-        requested_at: Utc::now(),
-    };
-    write_json_pretty(&stop_path(&loaded), &stop)?;
-    let status = stopped_status(&loaded, stop.reason);
-    write_status(&loaded, &status)?;
-    Ok(status)
+    write_stop_record(
+        &loaded,
+        reason.trim(),
+        "operator",
+        "operator_stop_requested",
+    )
 }
 
 fn validate_spec(spec: &AgentSpec) -> Result<()> {
@@ -362,6 +392,26 @@ fn validate_spec(spec: &AgentSpec) -> Result<()> {
     if stale == 0 {
         return Err(anyhow!(
             "agent spec heartbeat.stale_lease_after_secs must be greater than zero"
+        ));
+    }
+    if safety_u64(
+        &spec.safety,
+        "max_cycle_runtime_secs",
+        DEFAULT_MAX_CYCLE_RUNTIME_SECS,
+    ) == 0
+    {
+        return Err(anyhow!(
+            "agent spec safety.max_cycle_runtime_secs must be greater than zero"
+        ));
+    }
+    if safety_u64(
+        &spec.safety,
+        "max_consecutive_failures",
+        DEFAULT_MAX_CONSECUTIVE_FAILURES,
+    ) == 0
+    {
+        return Err(anyhow!(
+            "agent spec safety.max_consecutive_failures must be greater than zero"
         ));
     }
     Ok(())
@@ -505,6 +555,15 @@ fn acquire_lease(
                     "lease_stale: active lease is stale; rerun with --recover-stale-lease"
                 ));
             }
+            append_operator_event(
+                loaded,
+                "stale_lease_recovered",
+                json!({
+                    "lease_id": existing.lease_id,
+                    "stale_cycle_id": existing.cycle_id,
+                    "recovered_for_cycle_id": cycle_id
+                }),
+            )?;
             remove_lease(loaded)?;
         } else {
             let status = status_with_state(
@@ -573,17 +632,28 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
     let previous_cycle_id = latest_cycle_id(loaded)?;
     let workflow_ref = workflow_ref(&loaded.spec.workflow);
     let provider_binding = provider_binding(loaded, cycle_id, started_at);
+    let safety_policy = effective_safety_policy(loaded);
     let workflow_supported = workflow_kind_supported(&loaded.spec.workflow.kind);
-    let broker_allowed = safety_bool(&loaded.spec.safety, "allow_broker");
-    let financial_advice_allowed = safety_bool(&loaded.spec.safety, "financial_advice");
-    let guardrail_pass = workflow_supported && !broker_allowed && !financial_advice_allowed;
-    let cycle_status = if guardrail_pass { "success" } else { "blocked" };
-    let decision_status = if guardrail_pass {
-        "accepted"
-    } else {
-        "rejected"
-    };
-    let guardrail_status = if guardrail_pass { "pass" } else { "fail" };
+    let broker_allowed = safety_bool_default(&loaded.spec.safety, "allow_broker", false);
+    let financial_advice_allowed =
+        safety_bool_default(&loaded.spec.safety, "financial_advice", false);
+    let outside_writes_allowed = safety_bool_default(
+        &loaded.spec.safety,
+        "allow_filesystem_writes_outside_state_root",
+        false,
+    );
+    let real_world_side_effects_allowed =
+        safety_bool_default(&loaded.spec.safety, "allow_real_world_side_effects", false);
+    let require_sanitization = safety_bool_default(
+        &loaded.spec.safety,
+        "require_public_artifact_sanitization",
+        true,
+    );
+    let mut rejected_actions = rejected_actions_for_policy(loaded);
+    if !workflow_supported {
+        rejected_actions.push("unsupported_workflow_kind".to_string());
+    }
+    dedup_strings(&mut rejected_actions);
 
     let observations = json!({
         "schema": OBSERVATIONS_SCHEMA,
@@ -625,6 +695,39 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         "not_financial_advice": true
     });
     write_json_pretty(&cycle_dir.join("decision_request.json"), &decision_request)?;
+
+    let sanitization = if require_sanitization {
+        sanitize_public_artifacts(&[
+            ("observations.json", &observations),
+            ("decision_request.json", &decision_request),
+            ("provider_binding", &provider_binding),
+        ])?
+    } else {
+        SanitizationResult::skipped()
+    };
+    if !sanitization.passed {
+        rejected_actions.push("artifact_sanitization".to_string());
+        dedup_strings(&mut rejected_actions);
+    }
+
+    let max_runtime_not_exceeded =
+        Utc::now() <= started_at + ChronoDuration::seconds(max_cycle_runtime_secs(loaded) as i64);
+    if !max_runtime_not_exceeded {
+        rejected_actions.push("max_cycle_runtime_exceeded".to_string());
+        dedup_strings(&mut rejected_actions);
+    }
+
+    let guardrail_pass = workflow_supported
+        && rejected_actions.is_empty()
+        && sanitization.passed
+        && max_runtime_not_exceeded;
+    let cycle_status = if guardrail_pass { "success" } else { "blocked" };
+    let decision_status = if guardrail_pass {
+        "accepted"
+    } else {
+        "rejected"
+    };
+    let guardrail_status = if guardrail_pass { "pass" } else { "fail" };
 
     let decision = if guardrail_pass {
         json!({
@@ -700,37 +803,89 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
     update_memory_index(loaded, cycle_id)?;
     append_jsonl(&provider_binding_history_path(loaded), &provider_binding)?;
 
-    let mut checks = Vec::new();
-    checks.push(json!({
-        "check_id": "workflow_kind_supported",
-        "result": if workflow_supported { "pass" } else { "fail" },
-        "details": loaded.spec.workflow.kind.clone()
-    }));
-    checks.push(json!({
-        "check_id": "no_real_trading",
-        "result": if broker_allowed { "fail" } else { "pass" }
-    }));
-    checks.push(json!({
-        "check_id": "no_personalized_financial_advice",
-        "result": if financial_advice_allowed { "fail" } else { "pass" }
-    }));
-    let mut rejected_actions = Vec::new();
-    if !workflow_supported {
-        rejected_actions.push("unsupported_workflow_kind");
-    }
-    if broker_allowed {
-        rejected_actions.push("connect_broker");
-    }
-    if financial_advice_allowed {
-        rejected_actions.push("personalized_advice");
-    }
+    let checks = vec![
+        json!({
+            "check_id": "spec_policy_loaded",
+            "result": "pass",
+            "policy": safety_policy
+        }),
+        json!({
+            "check_id": "lease_valid",
+            "result": "pass"
+        }),
+        json!({
+            "check_id": "stop_not_requested",
+            "result": "pass"
+        }),
+        json!({
+            "check_id": "workflow_kind_supported",
+            "result": if workflow_supported { "pass" } else { "fail" },
+            "details": loaded.spec.workflow.kind.clone()
+        }),
+        json!({
+            "check_id": "no_forbidden_action",
+            "result": if rejected_actions.is_empty() { "pass" } else { "fail" },
+            "rejected_actions": rejected_actions.clone()
+        }),
+        json!({
+            "check_id": "artifact_sanitization",
+            "result": if sanitization.passed { "pass" } else { "fail" },
+            "findings": sanitization.findings
+        }),
+        json!({
+            "check_id": "max_runtime_not_exceeded",
+            "result": if max_runtime_not_exceeded { "pass" } else { "fail" },
+            "max_cycle_runtime_secs": max_cycle_runtime_secs(loaded)
+        }),
+        json!({
+            "check_id": "no_real_trading",
+            "result": if rejected_actions.iter().any(|action| action == "execute_order" || action == "place_order") {
+                "fail"
+            } else {
+                "pass"
+            }
+        }),
+        json!({
+            "check_id": "no_broker_integration",
+            "result": if broker_allowed || rejected_actions.iter().any(|action| action == "connect_broker") {
+                "fail"
+            } else {
+                "pass"
+            }
+        }),
+        json!({
+            "check_id": "not_financial_advice",
+            "result": if financial_advice_allowed || rejected_actions.iter().any(|action| action == "personalized_advice") {
+                "fail"
+            } else {
+                "pass"
+            }
+        }),
+        json!({
+            "check_id": "no_real_world_side_effects",
+            "result": if real_world_side_effects_allowed { "fail" } else { "pass" }
+        }),
+        json!({
+            "check_id": "writes_within_allowed_roots",
+            "result": if outside_writes_allowed { "fail" } else { "pass" }
+        }),
+        json!({
+            "check_id": "paper_only_ledger",
+            "result": if rejected_actions.iter().any(|action| action == "execute_order" || action == "place_order" || action == "connect_broker") {
+                "fail"
+            } else {
+                "pass"
+            }
+        }),
+    ];
     let guardrail_report = json!({
         "schema": GUARDRAIL_REPORT_SCHEMA,
         "agent_instance_id": loaded.spec.agent_instance_id.clone(),
         "cycle_id": cycle_id,
         "status": guardrail_status,
         "checks": checks,
-        "rejected_actions": rejected_actions
+        "rejected_actions": rejected_actions.clone(),
+        "policy_defaults": effective_safety_policy(loaded)
     });
     write_json_pretty(&cycle_dir.join("guardrail_report.json"), &guardrail_report)?;
 
@@ -819,11 +974,41 @@ fn status_with_state(
         last_cycle_id,
         last_cycle_status,
         completed_cycle_count: completed_cycle_count(loaded).unwrap_or(0),
+        consecutive_failure_count: consecutive_failure_count(loaded).unwrap_or(0),
         active_lease,
         stop_requested,
         last_error,
+        safety_policy: effective_safety_policy(loaded),
         updated_at: Utc::now(),
     }
+}
+
+fn write_stop_record(
+    loaded: &LoadedAgentSpec,
+    reason: &str,
+    requested_by: &str,
+    event: &str,
+) -> Result<StatusRecord> {
+    let stop = StopRecord {
+        schema: STOP_SCHEMA.to_string(),
+        agent_instance_id: loaded.spec.agent_instance_id.clone(),
+        reason: reason.to_string(),
+        requested_by: requested_by.to_string(),
+        mode: STOP_MODE_BEFORE_NEXT_CYCLE.to_string(),
+        requested_at: Utc::now(),
+    };
+    write_json_pretty(&stop_path(loaded), &stop)?;
+    append_operator_event(
+        loaded,
+        event,
+        json!({
+            "reason": reason,
+            "mode": STOP_MODE_BEFORE_NEXT_CYCLE
+        }),
+    )?;
+    let status = stopped_status(loaded, stop.reason);
+    write_status(loaded, &status)?;
+    Ok(status)
 }
 
 fn stopped_status(loaded: &LoadedAgentSpec, reason: String) -> StatusRecord {
@@ -864,6 +1049,33 @@ fn completed_cycle_count(loaded: &LoadedAgentSpec) -> Result<u64> {
         return Ok(ledger.count);
     }
     completed_cycle_count_from_dirs(loaded)
+}
+
+fn consecutive_failure_count(loaded: &LoadedAgentSpec) -> Result<u64> {
+    let path = cycle_ledger_path(loaded);
+    if !path.exists() {
+        return Ok(0);
+    }
+    let file = File::open(&path)
+        .with_context(|| format!("failed opening cycle ledger {}", path.display()))?;
+    let mut statuses = Vec::new();
+    for line in BufReader::new(file).lines() {
+        let line =
+            line.with_context(|| format!("failed reading cycle ledger {}", path.display()))?;
+        if line.trim().is_empty() {
+            continue;
+        }
+        let value: Value = serde_json::from_str(&line)
+            .with_context(|| format!("failed parsing cycle ledger {}", path.display()))?;
+        if let Some(status) = value.get("status").and_then(Value::as_str) {
+            statuses.push(status.to_string());
+        }
+    }
+    Ok(statuses
+        .iter()
+        .rev()
+        .take_while(|status| status.as_str() != "success")
+        .count() as u64)
 }
 
 fn completed_cycle_count_from_dirs(loaded: &LoadedAgentSpec) -> Result<u64> {
@@ -1149,6 +1361,177 @@ fn workflow_ref(workflow: &WorkflowSpec) -> String {
         .unwrap_or_else(|| workflow.kind.clone())
 }
 
+#[derive(Debug, Clone)]
+struct SanitizationResult {
+    passed: bool,
+    findings: Vec<Value>,
+}
+
+impl SanitizationResult {
+    fn skipped() -> Self {
+        Self {
+            passed: true,
+            findings: vec![json!({
+                "status": "skipped",
+                "reason": "require_public_artifact_sanitization is false"
+            })],
+        }
+    }
+}
+
+fn sanitize_public_artifacts(artifacts: &[(&str, &Value)]) -> Result<SanitizationResult> {
+    let mut findings = Vec::new();
+    let banned = [
+        ("host_path", "/users/"),
+        ("bearer_token", "bearer "),
+        ("private_key", "private key"),
+        ("api_key", "api_key"),
+        ("api_key", "api key"),
+        ("broker_account", "broker_account"),
+        ("broker_token", "broker_token"),
+        ("personal_portfolio", "personal_portfolio"),
+        ("personal_risk_profile", "personal_risk_profile"),
+    ];
+    for (artifact, value) in artifacts {
+        let raw = serde_json::to_string(value)
+            .with_context(|| format!("failed serializing public artifact {artifact}"))?;
+        let lower = raw.to_ascii_lowercase();
+        for (finding, needle) in &banned {
+            if lower.contains(needle) {
+                findings.push(json!({
+                    "artifact": artifact,
+                    "finding": finding,
+                    "pattern": needle
+                }));
+            }
+        }
+    }
+    Ok(SanitizationResult {
+        passed: findings.is_empty(),
+        findings,
+    })
+}
+
+fn rejected_actions_for_policy(loaded: &LoadedAgentSpec) -> Vec<String> {
+    let mut rejected = Vec::new();
+    let run_args = &loaded.spec.workflow.run_args;
+    for action in requested_actions(run_args) {
+        match action.to_ascii_lowercase().as_str() {
+            "execute_order" | "place_order" | "trade" | "buy" | "sell" => {
+                rejected.push("execute_order".to_string());
+            }
+            "connect_broker" | "broker_connect" => {
+                rejected.push("connect_broker".to_string());
+            }
+            "personalized_advice" | "financial_advice" | "recommend_to_user" => {
+                rejected.push("personalized_advice".to_string());
+            }
+            _ => {}
+        }
+    }
+    if safety_bool_default(&loaded.spec.safety, "allow_broker", false)
+        || contains_any_key(
+            run_args,
+            &[
+                "broker_url",
+                "broker_account_id",
+                "broker_token",
+                "broker_api_key",
+                "broker_credentials",
+            ],
+        )
+    {
+        rejected.push("connect_broker".to_string());
+    }
+    if safety_bool_default(&loaded.spec.safety, "financial_advice", false)
+        || contains_any_key(
+            run_args,
+            &[
+                "personal_portfolio",
+                "personal_risk_profile",
+                "personal_assets",
+                "private_portfolio_data",
+            ],
+        )
+    {
+        rejected.push("personalized_advice".to_string());
+    }
+    if safety_bool_default(&loaded.spec.safety, "allow_real_world_side_effects", false) {
+        rejected.push("real_world_side_effect".to_string());
+    }
+    if safety_bool_default(
+        &loaded.spec.safety,
+        "allow_filesystem_writes_outside_state_root",
+        false,
+    ) {
+        rejected.push("writes_outside_allowed_roots".to_string());
+    }
+    dedup_strings(&mut rejected);
+    rejected
+}
+
+fn requested_actions(value: &Value) -> Vec<String> {
+    let mut actions = Vec::new();
+    collect_requested_actions(value, &mut actions);
+    dedup_strings(&mut actions);
+    actions
+}
+
+fn collect_requested_actions(value: &Value, actions: &mut Vec<String>) {
+    match value {
+        Value::Object(map) => {
+            for (key, value) in map {
+                if matches!(
+                    key.as_str(),
+                    "action" | "requested_action" | "tool" | "tool_name"
+                ) {
+                    if let Some(action) = value.as_str() {
+                        actions.push(action.to_string());
+                    }
+                }
+                if key == "actions" {
+                    if let Some(items) = value.as_array() {
+                        for item in items {
+                            if let Some(action) = item.as_str() {
+                                actions.push(action.to_string());
+                            }
+                        }
+                    }
+                }
+                collect_requested_actions(value, actions);
+            }
+        }
+        Value::Array(items) => {
+            for item in items {
+                collect_requested_actions(item, actions);
+            }
+        }
+        _ => {}
+    }
+}
+
+fn contains_any_key(value: &Value, keys: &[&str]) -> bool {
+    match value {
+        Value::Object(map) => map.iter().any(|(key, value)| {
+            keys.iter().any(|candidate| key == candidate) || contains_any_key(value, keys)
+        }),
+        Value::Array(items) => items.iter().any(|item| contains_any_key(item, keys)),
+        _ => false,
+    }
+}
+
+fn dedup_strings(values: &mut Vec<String>) {
+    let mut seen = Vec::new();
+    values.retain(|value| {
+        if seen.contains(value) {
+            false
+        } else {
+            seen.push(value.clone());
+            true
+        }
+    });
+}
+
 fn path_artifact_ref(path: &Path) -> String {
     if path.is_absolute() {
         return path
@@ -1160,8 +1543,65 @@ fn path_artifact_ref(path: &Path) -> String {
     path.to_string_lossy().to_string()
 }
 
-fn safety_bool(safety: &Value, key: &str) -> bool {
-    safety.get(key).and_then(Value::as_bool).unwrap_or(false)
+fn safety_bool_default(safety: &Value, key: &str, default: bool) -> bool {
+    safety.get(key).and_then(Value::as_bool).unwrap_or(default)
+}
+
+fn safety_u64(safety: &Value, key: &str, default: u64) -> u64 {
+    safety.get(key).and_then(Value::as_u64).unwrap_or(default)
+}
+
+fn effective_safety_policy(loaded: &LoadedAgentSpec) -> Value {
+    json!({
+        "allow_network": safety_bool_default(&loaded.spec.safety, "allow_network", false),
+        "allow_broker": safety_bool_default(&loaded.spec.safety, "allow_broker", false),
+        "allow_filesystem_writes_outside_state_root": safety_bool_default(
+            &loaded.spec.safety,
+            "allow_filesystem_writes_outside_state_root",
+            false,
+        ),
+        "allow_real_world_side_effects": safety_bool_default(
+            &loaded.spec.safety,
+            "allow_real_world_side_effects",
+            false,
+        ),
+        "require_public_artifact_sanitization": safety_bool_default(
+            &loaded.spec.safety,
+            "require_public_artifact_sanitization",
+            true,
+        ),
+        "financial_advice": safety_bool_default(&loaded.spec.safety, "financial_advice", false),
+        "max_cycle_runtime_secs": safety_u64(
+            &loaded.spec.safety,
+            "max_cycle_runtime_secs",
+            DEFAULT_MAX_CYCLE_RUNTIME_SECS,
+        ),
+        "max_consecutive_failures": max_consecutive_failures(loaded)
+    })
+}
+
+fn max_cycle_runtime_secs(loaded: &LoadedAgentSpec) -> u64 {
+    safety_u64(
+        &loaded.spec.safety,
+        "max_cycle_runtime_secs",
+        DEFAULT_MAX_CYCLE_RUNTIME_SECS,
+    )
+}
+
+fn max_consecutive_failures(loaded: &LoadedAgentSpec) -> u64 {
+    safety_u64(
+        &loaded.spec.safety,
+        "max_consecutive_failures",
+        DEFAULT_MAX_CONSECUTIVE_FAILURES,
+    )
+}
+
+fn default_requested_by() -> String {
+    "operator".to_string()
+}
+
+fn default_stop_mode() -> String {
+    STOP_MODE_BEFORE_NEXT_CYCLE.to_string()
 }
 
 fn memory_namespace(loaded: &LoadedAgentSpec) -> String {
@@ -1252,6 +1692,22 @@ mod tests {
         allow_broker: bool,
         financial_advice: bool,
     ) -> PathBuf {
+        write_spec_with_safety_and_run_args(
+            root,
+            workflow_kind,
+            allow_broker,
+            financial_advice,
+            "    provider_id: local_ollama\n    model: gemma4:latest\n",
+        )
+    }
+
+    fn write_spec_with_safety_and_run_args(
+        root: &Path,
+        workflow_kind: &str,
+        allow_broker: bool,
+        financial_advice: bool,
+        run_args: &str,
+    ) -> PathBuf {
         let spec = root.join("agent.yaml");
         fs::write(
             &spec,
@@ -1264,16 +1720,19 @@ workflow:
   kind: {workflow_kind}
   name: wp02_heartbeat_probe
   run_args:
-    provider_id: local_ollama
-    model: gemma4:latest
-heartbeat:
+{run_args}heartbeat:
   interval_secs: 1
   max_cycles: 3
   stale_lease_after_secs: 60
 safety:
   allow_network: false
   allow_broker: {allow_broker}
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
   financial_advice: {financial_advice}
+  max_cycle_runtime_secs: 120
+  max_consecutive_failures: 2
 memory:
   namespace: tests/test-agent
   write_policy: append_only
@@ -1313,6 +1772,16 @@ memory:
         .into_iter()
         .map(|name| dir.join(name))
         .collect()
+    }
+
+    fn guardrail_check_result<'a>(guardrails: &'a Value, check_id: &str) -> &'a str {
+        guardrails["checks"]
+            .as_array()
+            .expect("checks")
+            .iter()
+            .find(|check| check["check_id"] == check_id)
+            .and_then(|check| check["result"].as_str())
+            .unwrap_or_else(|| panic!("missing check {check_id}"))
     }
 
     #[test]
@@ -1540,6 +2009,14 @@ memory:
         .expect("parse guardrails");
         assert_eq!(guardrails["status"], "fail");
         assert_eq!(
+            guardrail_check_result(&guardrails, "spec_policy_loaded"),
+            "pass"
+        );
+        assert_eq!(
+            guardrail_check_result(&guardrails, "artifact_sanitization"),
+            "pass"
+        );
+        assert_eq!(
             guardrails["rejected_actions"][0],
             "unsupported_workflow_kind"
         );
@@ -1568,15 +2045,109 @@ memory:
         )
         .expect("parse guardrails");
         assert_eq!(guardrails["status"], "fail");
-        assert_eq!(guardrails["checks"][1]["check_id"], "no_real_trading");
-        assert_eq!(guardrails["checks"][1]["result"], "fail");
         assert_eq!(
-            guardrails["checks"][2]["check_id"],
-            "no_personalized_financial_advice"
+            guardrail_check_result(&guardrails, "no_broker_integration"),
+            "fail"
         );
-        assert_eq!(guardrails["checks"][2]["result"], "fail");
+        assert_eq!(
+            guardrail_check_result(&guardrails, "not_financial_advice"),
+            "fail"
+        );
+        assert_eq!(
+            guardrail_check_result(&guardrails, "artifact_sanitization"),
+            "pass"
+        );
         assert_eq!(guardrails["rejected_actions"][0], "connect_broker");
         assert_eq!(guardrails["rejected_actions"][1], "personalized_advice");
+    }
+
+    #[test]
+    fn stock_league_execute_order_request_is_rejected_as_paper_only() {
+        let root = temp_dir("stock-illegal-order");
+        let spec = write_spec_with_safety_and_run_args(
+            &root,
+            "demo_adapter",
+            false,
+            false,
+            "    provider_id: local_ollama\n    model: gemma4:latest\n    requested_action: execute_order\n",
+        );
+
+        let err = tick(&spec, TickOptions::default()).expect_err("execute_order blocks");
+
+        assert!(err.to_string().contains("cycle_blocked"));
+        let guardrails: Value = serde_json::from_str(
+            &fs::read_to_string(root.join("state/cycles/cycle-000001/guardrail_report.json"))
+                .expect("read guardrails"),
+        )
+        .expect("parse guardrails");
+        assert_eq!(guardrails["status"], "fail");
+        assert_eq!(
+            guardrail_check_result(&guardrails, "no_forbidden_action"),
+            "fail"
+        );
+        assert_eq!(
+            guardrail_check_result(&guardrails, "no_real_trading"),
+            "fail"
+        );
+        assert_eq!(
+            guardrail_check_result(&guardrails, "paper_only_ledger"),
+            "fail"
+        );
+        assert_eq!(guardrails["rejected_actions"][0], "execute_order");
+    }
+
+    #[test]
+    fn sanitizer_blocks_public_artifact_host_path_leakage() {
+        let root = temp_dir("sanitize-host-path");
+        let spec = write_spec_with_safety_and_run_args(
+            &root,
+            "demo_adapter",
+            false,
+            false,
+            "    provider_id: local_ollama\n    model: /Users/daniel/private-model\n",
+        );
+
+        let err = tick(&spec, TickOptions::default()).expect_err("sanitizer blocks");
+
+        assert!(err.to_string().contains("cycle_blocked"));
+        let guardrails: Value = serde_json::from_str(
+            &fs::read_to_string(root.join("state/cycles/cycle-000001/guardrail_report.json"))
+                .expect("read guardrails"),
+        )
+        .expect("parse guardrails");
+        assert_eq!(
+            guardrail_check_result(&guardrails, "artifact_sanitization"),
+            "fail"
+        );
+        assert_eq!(guardrails["rejected_actions"][0], "artifact_sanitization");
+    }
+
+    #[test]
+    fn consecutive_failure_threshold_requests_supervisor_stop() {
+        let root = temp_dir("consecutive-failures");
+        let spec = write_spec_with_workflow_kind(&root, "unsupported_probe");
+
+        let stopped = run(
+            &spec,
+            RunOptions {
+                max_cycles: 3,
+                interval_secs: None,
+                no_sleep: true,
+                recover_stale_lease: false,
+            },
+        )
+        .expect("run stops after threshold");
+
+        assert_eq!(stopped.state, AgentStatusState::Stopped);
+        assert_eq!(stopped.completed_cycle_count, 2);
+        assert_eq!(stopped.consecutive_failure_count, 2);
+        assert!(root.join("state/stop.json").exists());
+        assert!(!root.join("state/cycles/cycle-000003").exists());
+        let ledger =
+            fs::read_to_string(root.join("state/cycle_ledger.jsonl")).expect("read ledger");
+        assert_eq!(ledger.lines().count(), 2);
+        let events = fs::read_to_string(root.join("state/operator_events.jsonl")).expect("events");
+        assert!(events.contains("\"event\":\"max_consecutive_failures\""));
     }
 
     #[test]
@@ -1688,6 +2259,8 @@ memory:
         .expect("recovered tick");
         assert_eq!(recovered.state, AgentStatusState::Idle);
         assert_eq!(recovered.completed_cycle_count, 1);
+        let events = fs::read_to_string(root.join("state/operator_events.jsonl")).expect("events");
+        assert!(events.contains("\"event\":\"stale_lease_recovered\""));
     }
 
     #[test]
@@ -1706,5 +2279,13 @@ memory:
             .expect("error")
             .message
             .contains("operator requested pause"));
+        let stop_record: Value =
+            serde_json::from_str(&fs::read_to_string(root.join("state/stop.json")).unwrap())
+                .expect("parse stop");
+        assert_eq!(stop_record["schema"], STOP_SCHEMA);
+        assert_eq!(stop_record["requested_by"], "operator");
+        assert_eq!(stop_record["mode"], STOP_MODE_BEFORE_NEXT_CYCLE);
+        let events = fs::read_to_string(root.join("state/operator_events.jsonl")).expect("events");
+        assert!(events.contains("\"event\":\"operator_stop_requested\""));
     }
 }

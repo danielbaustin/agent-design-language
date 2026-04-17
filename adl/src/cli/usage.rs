@@ -2,10 +2,10 @@ pub fn usage() -> &'static str {
     "Usage:
   adl <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--quiet] [--open]
   adl resume <run_id> [--steer <steering.json>]
-  adl agent tick --spec <agent-spec.yaml> [--recover-stale-lease]
-  adl agent run --spec <agent-spec.yaml> --max-cycles <n> [--interval-secs <n>] [--no-sleep] [--recover-stale-lease]
-  adl agent status --spec <agent-spec.yaml>
-  adl agent stop --spec <agent-spec.yaml> --reason <text>
+  adl agent tick --spec <agent-spec.yaml> [--recover-stale-lease] [--json]
+  adl agent run --spec <agent-spec.yaml> --max-cycles <n> [--interval-secs <n>] [--no-sleep] [--recover-stale-lease] [--json]
+  adl agent status --spec <agent-spec.yaml> [--json]
+  adl agent stop --spec <agent-spec.yaml> --reason <text> [--json]
   adl artifact validate-control-path --root <dir>
   adl demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
   adl identity init --name <display-name> --birthday <rfc3339> --timezone <IANA> [--agent-id <id>] [--created-by <name>] [--force]
@@ -75,7 +75,7 @@ Examples:
   adl resume hitl-pause-seq --steer /tmp/steer.json
   adl agent tick --spec .adl/long_lived_agents/example-agent.yaml
   adl agent run --spec .adl/long_lived_agents/example-agent.yaml --max-cycles 3 --no-sleep
-  adl agent status --spec .adl/long_lived_agents/example-agent.yaml
+  adl agent status --spec .adl/long_lived_agents/example-agent.yaml --json
   adl agent stop --spec .adl/long_lived_agents/example-agent.yaml --reason \"operator pause\"
   adl artifact validate-control-path --root /tmp/adl-v086-control-path-demo/demo-g-v086-control-path
   ADL_OLLAMA_BIN=adl/tools/mock_ollama_v0_4.sh adl examples/v0-4-demo-fork-join.adl.yaml --run --trace --out ./out
