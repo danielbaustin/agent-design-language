@@ -79,6 +79,7 @@ Canonical planning docs:
 - Release notes draft: RELEASE_NOTES_v0.90.md
 - WP execution readiness: WP_EXECUTION_READINESS_v0.90.md
 - Issue wave: WP_ISSUE_WAVE_v0.90.yaml
+- Milestone compression pilot: milestone_compression/README.md
 - Repo visibility prototype: repo_visibility/README.md
 
 Planning control docs:

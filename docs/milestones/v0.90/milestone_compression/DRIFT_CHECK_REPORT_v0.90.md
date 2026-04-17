@@ -1,0 +1,66 @@
+# Drift Check Report - v0.90
+
+## Metadata
+
+- Milestone: v0.90
+- Issue: #2030
+- Work package: WP-11 Milestone compression pilot
+- Checker: `python3 adl/tools/check_v090_milestone_state.py`
+- Status: pilot passing
+
+## Summary
+
+The v0.90 milestone compression pilot now has a minimal canonical state model
+and a read-only drift checker. The pilot focuses on high-signal milestone drift:
+issue-wave count, issue references in core docs, proof-packet status, and
+truthful planned-demo classification.
+
+This is intentionally not a release bot. It makes drift visible; it does not
+approve merges, close issues, or rewrite milestone truth.
+
+## Pilot Results
+
+Expected pass classifications:
+
+- The opened v0.90 issue wave records 20 work packages.
+- Core milestone docs expose issue references for WP-01 through WP-20.
+- The repo visibility proof packet exists and the state model marks it landed.
+- The milestone compression proof packet exists and the state model marks it
+  landed.
+- D1 through D5 remain planned in the demo matrix because their implementation
+  WPs have not all landed yet.
+
+Known mismatch policy:
+
+- If a demo row moves from planned to landed before its issue evidence exists,
+  the checker should report a known mismatch rather than silently treat the row
+  as release truth.
+- If a proof-packet directory exists but the state model still says planned,
+  the checker should report a known mismatch.
+
+Fail policy:
+
+- Missing issue-wave work packages are failures.
+- Missing issue references in the core milestone docs are failures.
+- A state model that marks a proof packet landed while its directory is missing
+  is a failure.
+
+## Validation Command
+
+```bash
+python3 adl/tools/check_v090_milestone_state.py
+```
+
+## Boundaries
+
+- No network calls.
+- No GitHub issue mutation.
+- No PR or branch mutation.
+- No release approval.
+- No root-checkout workflow.
+
+## Next Use
+
+WP-13 should rerun this checker after the implementation WPs and sidecar WPs
+settle. WP-18 should treat the checker as one release-readiness input, not as a
+replacement for human release ceremony.
