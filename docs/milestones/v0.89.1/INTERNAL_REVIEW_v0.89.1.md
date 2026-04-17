@@ -36,13 +36,9 @@ The attempted tests-specialist subagent did not complete in time and was closed
 rather than allowed to hold the review indefinitely. Test coverage was therefore
 handled by manual targeted validation and skill-contract checks in this pass.
 
-Local supporting artifacts were written under:
-- `.adl/docs/reviews/wp16_internal_review/specialists/`
-- `.adl/docs/reviews/wp16_internal_review/manual/`
-- `.adl/docs/reviews/wp16_internal_review/skill_based_repo_review.md`
-
-Those local artifacts are useful audit support, but this tracked document is
-the repo-visible `WP-16` milestone review record.
+Local supporting artifacts were generated during the review session. They are
+useful audit support, but this tracked document is the repo-visible `WP-16`
+milestone review record.
 
 ## Findings
 
@@ -214,3 +210,21 @@ runtime areas.
 `v0.89.1` is ready for external review, not release. The next correct move is
 to run `WP-17`, then use `WP-18` to remediate or explicitly defer accepted
 findings before next-milestone planning and release ceremony.
+
+## Post-Internal-Review Remediation Status
+
+This tracked review is no longer an open-ended finding list. The release tail
+has now closed the internal-review remediation issues needed before
+third-party review:
+
+- F1 trusted run signature enforcement: remediated by `#1994`
+- F2 UTF-8-safe provider error truncation: remediated by `#1995`
+- F3 provider credentials bound to trusted endpoints: remediated by `#1996`
+- F4 deterministic setup failures retried as transient: remediated by `#1997`
+- F5/F6 closeout truth and version-selection gaps: remediated by `#1992`
+- F7 release-tail status lag: remediated by tracked review and release-tail docs
+- F8 large-module hotspots: intentionally deferred to v0.90 maintainability
+  planning unless third-party review finds a concrete release-blocking defect
+
+The third-party reviewer should verify these dispositions rather than treating
+the internal review as unresolved release-tail ambiguity.

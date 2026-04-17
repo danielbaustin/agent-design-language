@@ -13,13 +13,15 @@
 
 ## Current Release Truth
 
-`v0.89.1` is currently an active execution milestone with the adversarial/runtime proof band, integration-demo package, quality gate, docs-review convergence pass, and internal review record landed through `WP-16`, and no release candidate yet.
+`v0.89.1` is currently an active release-tail milestone with the adversarial/runtime proof band, integration-demo package, quality gate, docs-review convergence pass, internal review record, internal-review remediation issues, and next-milestone planning handoff landed before `WP-17`. There is no release candidate yet.
 
 That means:
 - the canonical planning package exists and is reviewable
 - the official issue wave is open and visible through `#1922` - `#1941`
 - `WP-02` - `WP-16` are closed or represented by tracked release-tail proof surfaces
 - `WP-16` owns the internal review surface before external review and remediation
+- internal-review remediation is closed through `#1992`
+- `#1999` prepares the third-party review handoff before `WP-17`
 - no release candidate exists yet
 - review, remediation, next-milestone planning, and ceremony work are all future steps
 
@@ -33,6 +35,9 @@ That means:
 - [x] Quality gate complete (`QUALITY_GATE_v0.89.1.md` and `bash adl/tools/demo_v0891_quality_gate.sh`)
 - [x] Docs-review convergence complete (`DOCS_REVIEW_v0.89.1.md`)
 - [x] Internal review complete (`INTERNAL_REVIEW_v0.89.1.md`)
+- [x] Internal-review remediation closed through `#1992`
+- [ ] Third-party review handoff merged (`THIRD_PARTY_REVIEW_HANDOFF_v0.89.1.md`)
+- [ ] Operator fast-forwarded root main after the handoff merge and confirmed no local tracked drift
 
 ## 2) Branch And Tag Preparation
 - [ ] Target branch confirmed (`main` unless explicitly changed)

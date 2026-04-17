@@ -258,6 +258,24 @@ participate in the release-tail truth story.
   milestone docs
 - a quality-gate walkthrough that aggregates the current command suite and logs
 - a task-bundle output record with the commands actually executed for the issue
+
+## Post-Internal-Review Evidence For WP-17
+
+Before third-party review, the internal-review remediation tail closed with
+`#1992` and PR `#2009`.
+
+Fresh evidence for the reviewer handoff:
+
+- PR `#2009` merged after `adl-ci` completed successfully.
+- PR `#2009` merged after `adl-coverage` completed successfully.
+- `#1992` is closed, so the closeout tooling finding from internal review is no
+  longer open-ended.
+- `#1994` through `#1997` are closed, covering the signing, UTF-8 provider
+  error, provider endpoint trust, and deterministic setup-failure findings.
+
+This does not make `v0.89.1` release-ready by itself. It means the milestone is
+ready for `WP-17` third-party review with fresh passing merge-gate evidence and
+explicit internal-finding dispositions.
   branch
 
 ### Minimum evidence to capture in the output record
