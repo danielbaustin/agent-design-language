@@ -1,0 +1,5 @@
+name: repo-dependency-review
+display_name: Repo Dependency Review
+short_description: Review manifests, lockfiles, CI and Docker dependency setup, license cues, and supply-chain drift.
+default_prompt: Perform a bounded, findings-first dependency and supply-chain review from a repo scope or CodeBuddy packet. Stop after the specialist artifact and hand off remediation, tests, issues, and synthesis to separate skills.
+

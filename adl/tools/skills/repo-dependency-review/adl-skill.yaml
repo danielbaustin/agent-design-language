@@ -1,0 +1,103 @@
+version: "0.1"
+kind: "adl-skill"
+id: "repo-dependency-review"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "repo_dependency_review.v1"
+    reference_doc: "../docs/REPO_DEPENDENCY_REVIEW_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "review_repository"
+      - "review_path"
+      - "review_branch"
+      - "review_diff"
+      - "review_packet"
+    policy_fields:
+      - "review_depth"
+      - "validation_mode"
+      - "write_review_artifact"
+      - "stop_after_review"
+      - "dependency_focus"
+  intent:
+    - "dependency_review"
+    - "supply_chain_review"
+    - "manifest_review"
+    - "lockfile_review"
+    - "codebuddy_review_engine"
+  required_inputs:
+    - "repo_root"
+  optional_inputs:
+    - "target_path"
+    - "branch"
+    - "diff_base"
+    - "changed_paths"
+    - "review_packet_path"
+    - "artifact_root"
+    - "dependency_focus"
+  stop_if_missing:
+    - "repo_root"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_repo_dependency_review.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "policy.review_depth_must_be_explicit"
+    - "policy.stop_after_review_must_be_true"
+    - "review_packet_mode_requires_target.review_packet_path"
+execution:
+  mode: "findings_only"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  test_policy: "run_targeted_local_validation_when_bounded"
+  permitted_scripts:
+    - path: "scripts/prepare_dependency_review.py"
+      interpreter: "python3"
+      read_only: true
+      allowed_args:
+        - "<packet-root>"
+        - "--out <artifact-root>"
+        - "--repo-name <name>"
+  preferred_read_order:
+    - "repo_scope.md"
+    - "specialist_assignments.json"
+    - "evidence_index.json"
+    - "repo_inventory.json"
+    - "manifests"
+    - "lockfiles"
+    - "package_manager_config"
+    - "docker_and_runtime_images"
+    - "ci_dependency_setup"
+    - "license_and_notice_files"
+    - "tests_encoding_install_or_packaging_contracts"
+outputs:
+  default_format: "markdown_and_json"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-repo-dependency-review.md"
+  required_sections:
+    - "findings"
+    - "dependency_surface_map"
+    - "reviewed_surfaces"
+    - "candidate_supply_chain_findings"
+    - "candidate_dependency_test_gaps"
+    - "candidate_license_review_notes"
+    - "validation_performed"
+    - "residual_risk"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  manifest_declares_executables: true
+
+display_name: Repo Dependency Review
+short_description: Review dependency manifests, lockfiles, CI and Docker setup, license cues, and supply-chain drift
+default_prompt: Perform a bounded, findings-first dependency and supply-chain review from a repo scope or CodeBuddy packet. Stop after the specialist artifact and hand off remediation, tests, issues, and synthesis to separate skills.
+

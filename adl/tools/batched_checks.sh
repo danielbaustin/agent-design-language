@@ -40,6 +40,7 @@ run_step "repo-code-review contract check" bash "$ROOT/adl/tools/test_repo_code_
 run_step "repo-packet-builder contract check" bash "$ROOT/adl/tools/test_repo_packet_builder_skill_contracts.sh"
 run_step "redaction-and-evidence-auditor contract check" bash "$ROOT/adl/tools/test_redaction_and_evidence_auditor_skill_contracts.sh"
 run_step "repo-architecture-review contract check" bash "$ROOT/adl/tools/test_repo_architecture_review_skill_contracts.sh"
+run_step "repo-dependency-review contract check" bash "$ROOT/adl/tools/test_repo_dependency_review_skill_contracts.sh"
 run_step "test-generator contract check" bash "$ROOT/adl/tools/test_test_generator_skill_contracts.sh"
 run_step "demo-operator contract check" bash "$ROOT/adl/tools/test_demo_operator_skill_contracts.sh"
 run_step "medium-article-writer contract check" bash "$ROOT/adl/tools/test_medium_article_writer_skill_contracts.sh"
