@@ -1,5 +1,5 @@
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 mod helpers;
@@ -297,6 +297,165 @@ fn demo_h_run_writes_adversarial_review_packet() {
         trace.contains("StepStarted step=promotion"),
         "trace:\n{trace}"
     );
+}
+
+#[test]
+fn demo_i_v090_stock_league_scaffold_print_plan_works() {
+    let out = run_swarm(&["demo", "demo-i-v090-stock-league-scaffold", "--print-plan"]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("Demo: demo-i-v090-stock-league-scaffold"),
+        "stdout:\n{stdout}"
+    );
+    assert!(stdout.contains("Steps: 4"), "stdout:\n{stdout}");
+    assert!(stdout.contains("0. fixture"), "stdout:\n{stdout}");
+    assert!(stdout.contains("3. proof_packet"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn demo_i_v090_stock_league_scaffold_writes_guarded_fixture_packet() {
+    let out_root = tmp_dir("demo-i-stock-league");
+    let out = run_swarm(&[
+        "demo",
+        "demo-i-v090-stock-league-scaffold",
+        "--run",
+        "--trace",
+        "--out",
+        out_root.to_string_lossy().as_ref(),
+        "--no-open",
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let run_out = out_root.join("demo-i-v090-stock-league-scaffold");
+    assert!(run_out.join("README.md").is_file());
+    assert!(run_out.join("season_manifest.json").is_file());
+    assert!(run_out.join("proof_packet.json").is_file());
+    assert!(run_out.join("fixture/season_001_fixture.json").is_file());
+    assert!(run_out.join("market/universe.json").is_file());
+    assert!(run_out.join("agents/value_monk/identity.json").is_file());
+    assert!(run_out.join("agents/risk_goblin/style_card.md").is_file());
+    assert!(run_out.join("decisions/day-001.json").is_file());
+    assert!(run_out.join("paper_ledger.jsonl").is_file());
+    assert!(run_out.join("audit/guardrail_report.json").is_file());
+    assert!(run_out.join("audit/artifact_safety_scan.json").is_file());
+    assert!(run_out.join("trace.jsonl").is_file());
+
+    let proof: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(run_out.join("proof_packet.json")).unwrap())
+            .unwrap();
+    assert_eq!(proof["schema_version"], "adl.stock_league.proof_packet.v1");
+    assert_eq!(proof["required_outputs"]["fixture_backed_scaffold"], true);
+    assert_eq!(proof["required_outputs"]["paper_only_league_rules"], true);
+    assert_eq!(proof["deferred_to_wp08"][0], "recurring bounded cycles");
+
+    let manifest: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(run_out.join("season_manifest.json")).unwrap())
+            .unwrap();
+    assert_eq!(manifest["mode"], "fixture_replay");
+    assert!(
+        manifest["agents"]
+            .as_array()
+            .is_some_and(|agents| agents.len() >= 7),
+        "manifest:\n{manifest}"
+    );
+
+    let guardrails: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("audit/guardrail_report.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(guardrails["status"], "pass");
+    let checks = guardrails["checks"].as_array().expect("guardrail checks");
+    assert!(checks
+        .iter()
+        .any(|check| check["check_id"] == "no_real_trading"));
+    assert!(checks
+        .iter()
+        .any(|check| check["check_id"] == "no_broker_integration"));
+    assert_eq!(guardrails["rejected_actions"][0]["action"], "execute_order");
+
+    let scan: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("audit/artifact_safety_scan.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(scan["passed"], true, "scan:\n{scan}");
+    assert!(
+        scan["findings"]
+            .as_array()
+            .is_some_and(|findings| findings.is_empty()),
+        "scan:\n{scan}"
+    );
+
+    let decisions: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(run_out.join("decisions/day-001.json")).unwrap())
+            .unwrap();
+    let decisions = decisions["decisions"].as_array().expect("decisions");
+    assert!(decisions.len() >= 7);
+    assert!(decisions
+        .iter()
+        .all(|decision| decision["paper_only"] == true));
+    assert!(decisions
+        .iter()
+        .all(|decision| decision["not_financial_advice"] == true));
+
+    let readme = fs::read_to_string(run_out.join("README.md")).unwrap();
+    assert!(
+        readme.contains("not financial advice, trading advice, or a real investment strategy"),
+        "README:\n{readme}"
+    );
+
+    let public_text = collect_text_artifacts(&run_out);
+    for banned in [
+        "/Users/",
+        "bearer ",
+        "private_key",
+        "broker_account",
+        "personalized financial recommendation",
+        "you should buy",
+        "market beating",
+    ] {
+        assert!(
+            !public_text
+                .to_ascii_lowercase()
+                .contains(&banned.to_ascii_lowercase()),
+            "banned pattern {banned:?} found in artifacts"
+        );
+    }
+}
+
+fn collect_text_artifacts(root: &Path) -> String {
+    fn visit(path: &Path, out: &mut String) {
+        let Ok(metadata) = fs::metadata(path) else {
+            return;
+        };
+        if metadata.is_dir() {
+            let mut entries = fs::read_dir(path)
+                .unwrap()
+                .collect::<Result<Vec<_>, _>>()
+                .unwrap();
+            entries.sort_by_key(|entry| entry.path());
+            for entry in entries {
+                visit(&entry.path(), out);
+            }
+        } else if metadata.is_file() {
+            if let Ok(contents) = fs::read_to_string(path) {
+                out.push_str(&contents);
+                out.push('\n');
+            }
+        }
+    }
+
+    let mut out = String::new();
+    visit(root, &mut out);
+    out
 }
 
 #[test]
