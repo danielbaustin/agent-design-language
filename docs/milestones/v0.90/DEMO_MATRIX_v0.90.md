@@ -21,7 +21,7 @@ Define the planned proof surfaces for v0.90 before implementation starts.
 | D3 | Operator stop and guardrail controls | Operators remain authoritative over long-lived execution | To be defined by `#2024` / `#2025` | status output, stop marker, guardrail report | planned |
 | D4 | Stock league long-lived demo | A bounded demo can show recurring supervised cycles safely | To be defined by `#2026` / `#2027` | fixture-backed or delayed/public stock league run packet | planned |
 | D5 | Demo extension lane | Selected new or extended demos can be added without weakening the primary stock-league proof | To be defined by `#2028` | per-demo proof packets, commands, and explicit non-goals | planned |
-| D6 | Repo visibility proof packet | ADL can map one milestone or feature slice from canonical docs to implementation, tests, demos, and review surfaces | To be defined by `#2031` | manifest and code-doc-demo linkage report | planned |
+| D6 | Repo visibility proof packet | ADL can map one milestone or feature slice from canonical docs to implementation, tests, demos, and review surfaces | `docs/milestones/v0.90/repo_visibility/` | manifest and code-doc-demo linkage report | landed by `#2031` |
 | D7 | Milestone compression pilot | ADL can detect milestone drift from canonical state without silently mutating release truth | To be defined by `#2030` | canonical state file, drift-check output, and generated status summary | planned |
 
 ## Safety Rules

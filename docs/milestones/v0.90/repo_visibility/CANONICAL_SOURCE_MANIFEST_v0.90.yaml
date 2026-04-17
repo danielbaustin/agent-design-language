@@ -1,0 +1,156 @@
+schema: adl.repo_visibility_manifest.v1
+milestone: v0.90
+issue: 2031
+slice:
+  id: v0.90-long-lived-runtime
+  title: Long-lived runtime and stock-league proof slice
+  authority: tracked milestone docs plus current repository source
+  status: prototype_manifest
+  non_goals:
+    - full_repo_semantic_index
+    - autonomous_release_approval
+    - public_claims_from_local_adl_planning
+
+authority_model:
+  tracked_milestone_docs:
+    meaning: Public milestone planning and execution truth.
+    roots:
+      - docs/milestones/v0.90
+  feature_docs:
+    meaning: Candidate executable contracts or proof surfaces for v0.90.
+    roots:
+      - docs/milestones/v0.90/features
+  ideas:
+    meaning: Background and later-band context; not shipped work unless promoted.
+    roots:
+      - docs/milestones/v0.90/ideas
+  local_planning:
+    meaning: Local operator planning, not public release truth.
+    roots:
+      - .adl/docs/TBD
+      - .adl/docs/v0.*planning
+  retired_material:
+    meaning: Historical provenance only.
+    roots:
+      - .adl/docs/TBD/retired
+
+canonical_docs:
+  milestone_entrypoints:
+    - path: docs/milestones/v0.90/README.md
+      role: milestone_entrypoint
+    - path: docs/milestones/v0.90/WBS_v0.90.md
+      role: work_package_map
+    - path: docs/milestones/v0.90/SPRINT_v0.90.md
+      role: sprint_plan
+    - path: docs/milestones/v0.90/WP_ISSUE_WAVE_v0.90.yaml
+      role: issue_graph
+    - path: docs/milestones/v0.90/WP_EXECUTION_READINESS_v0.90.md
+      role: execution_gate
+    - path: docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
+      role: proof_surface_index
+  selected_feature_docs:
+    - path: docs/milestones/v0.90/features/LONG_LIVED_AGENT_RUNTIME_FEATURE_SET.md
+      claim: runtime package overview and sprint implementation slice
+    - path: docs/milestones/v0.90/features/FEATURE_LONG_LIVED_SUPERVISOR_HEARTBEAT.md
+      claim: supervisor tick/run/status/stop, heartbeat, lease, lifecycle
+    - path: docs/milestones/v0.90/features/FEATURE_LONG_LIVED_AGENT_CYCLE_CONTRACT.md
+      claim: per-cycle observe/decide/persist artifact contract
+    - path: docs/milestones/v0.90/features/FEATURE_LONG_LIVED_STATE_AND_CONTINUITY.md
+      claim: pre-v0.92 continuity handle and state ledger boundary
+    - path: docs/milestones/v0.90/features/FEATURE_LONG_LIVED_OPERATOR_CONTROL_AND_SAFETY.md
+      claim: operator authority, stop controls, guardrails, failure policy
+    - path: docs/milestones/v0.90/features/LONG_LIVED_STOCK_PICKING_AGENTS_DEMO_PLAN.md
+      claim: bounded stock-league proof design
+
+issue_graph:
+  implementation_wps:
+    - issue: 2021
+      wp: WP-02
+      title: Long-lived supervisor and heartbeat
+      status_source: GitHub issue plus v0.90 issue wave
+    - issue: 2022
+      wp: WP-03
+      title: Cycle contract and artifact root
+      status_source: GitHub issue plus v0.90 issue wave
+    - issue: 2023
+      wp: WP-04
+      title: State and continuity handles
+      status_source: GitHub issue plus v0.90 issue wave
+    - issue: 2024
+      wp: WP-05
+      title: Operator control and safety
+      status_source: GitHub issue plus v0.90 issue wave
+    - issue: 2025
+      wp: WP-06
+      title: Minimal inspection and trace boundary
+      status_source: GitHub issue plus v0.90 issue wave
+    - issue: 2026
+      wp: WP-07
+      title: Stock league demo scaffold
+      status_source: GitHub issue plus v0.90 issue wave
+    - issue: 2027
+      wp: WP-08
+      title: Long-lived demo integration
+      status_source: GitHub issue plus v0.90 issue wave
+  visibility_wp:
+    issue: 2031
+    wp: WP-12
+    title: Repo visibility prototype
+
+code_surfaces:
+  current_runtime:
+    - path: adl/src/long_lived_agent.rs
+      role: long-lived agent spec, state root, lease, status, stop, cycle artifacts, continuity, memory index, provider binding records
+    - path: adl/src/cli/agent_cmd.rs
+      role: operator CLI for agent tick, run, status, and stop
+  supporting_runtime:
+    - path: adl/src/chronosense/continuity.rs
+      role: existing continuity-related runtime surface
+  current_tests:
+    - path: adl/tests/cli_smoke/agent.rs
+      role: CLI smoke proof for bounded cycles, status, continuity, ledger, memory index, provider binding history
+  current_demos:
+    - path: demos/v0.89.1/long_lived_stock_league_demo.md
+      role: prior bounded stock-league proof narrative
+    - path: adl/tools/demo_v0891_long_lived_stock_league.sh
+      role: prior demo entrypoint
+    - path: adl/tools/test_demo_v0891_long_lived_stock_league.sh
+      role: prior demo validation entrypoint
+    - path: demos/fixtures/long_lived_stock_league/market_fixture.json
+      role: fixture market data for paper-only proof
+    - path: demos/fixtures/long_lived_stock_league/model_roster_fixture.json
+      role: deterministic model roster fixture
+
+proof_surfaces:
+  planned_v0_90:
+    - id: D1
+      title: Long-lived supervisor heartbeat
+      source: docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
+      status: planned
+    - id: D2
+      title: Cycle contract replay packet
+      source: docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
+      status: planned
+    - id: D3
+      title: Operator stop and guardrail controls
+      source: docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
+      status: planned
+    - id: D4
+      title: Stock league long-lived demo
+      source: docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
+      status: planned
+    - id: D6
+      title: Repo visibility proof packet
+      source: docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
+      status: this_issue
+
+known_gaps:
+  - id: v090-demo-command-entrypoints
+    status: expected_pending_implementation
+    detail: v0.90 demo commands remain planned until WP-02 through WP-09 land.
+  - id: broader_repo_index
+    status: out_of_scope
+    detail: This manifest covers one milestone slice, not the full repository.
+  - id: local_planning_ingestion
+    status: out_of_scope
+    detail: Local .adl planning material is intentionally excluded from public release truth.
