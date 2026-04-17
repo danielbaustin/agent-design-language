@@ -54,15 +54,24 @@ memory:
     );
     assert!(root.join("state/status.json").exists());
     assert!(root.join("state/agent_spec.locked.json").exists());
-    assert!(root
-        .join("state/cycles/cycle-000001/heartbeat.json")
-        .exists());
-    assert!(root
-        .join("state/cycles/cycle-000002/heartbeat.json")
-        .exists());
-    assert!(root
-        .join("state/cycles/cycle-000003/heartbeat.json")
-        .exists());
+    for cycle_id in ["cycle-000001", "cycle-000002", "cycle-000003"] {
+        let cycle_dir = root.join("state/cycles").join(cycle_id);
+        for artifact in [
+            "cycle_manifest.json",
+            "observations.json",
+            "decision_request.json",
+            "decision_result.json",
+            "run_ref.json",
+            "memory_writes.jsonl",
+            "guardrail_report.json",
+            "cycle_summary.md",
+        ] {
+            assert!(
+                cycle_dir.join(artifact).exists(),
+                "missing {artifact} for {cycle_id}"
+            );
+        }
+    }
 
     let status = run_adl(&["agent", "status", "--spec", spec_str]);
     assert!(
