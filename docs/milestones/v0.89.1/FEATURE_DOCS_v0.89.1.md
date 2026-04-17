@@ -99,6 +99,14 @@ WP-15 aligns the milestone docs and release-tail review surfaces with the
 delivered truth through `WP-14`. It is not a substitute for the internal review
 owned by `WP-16` or the 3rd-party review owned by `WP-17`.
 
+WP-16 proof surface:
+- `INTERNAL_REVIEW_v0.89.1.md`
+
+WP-16 records the internal review across specialist, skill-based, and manual
+review lanes. It identifies remediation inputs for `WP-18` while keeping the
+milestone state ready for `WP-17` third-party review rather than claiming final
+release readiness.
+
 ## Source Planning Corpus -> Implementation Home
 
 ### Core `v0.89.1` source docs

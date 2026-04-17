@@ -15,7 +15,7 @@
 
 ## Summary
 
-`v0.89.1` is the milestone where ADL turns adversarial runtime and exploit-evidence carry-forward into a first-class package. The current draft release story is that the adversarial/runtime proof band, integration demos, manuscript workflow packet, quality-gate surface, and docs-review convergence pass have landed through `WP-15`, while internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony remain open.
+`v0.89.1` is the milestone where ADL turns adversarial runtime and exploit-evidence carry-forward into a first-class package. The current draft release story is that the adversarial/runtime proof band, integration demos, manuscript workflow packet, quality-gate surface, docs-review convergence pass, and internal review record have landed through `WP-16`, while 3rd-party review, remediation, next-milestone planning, and release ceremony remain open.
 
 ## Current Draft Highlights
 - explicit adversarial runtime model for contested operation
@@ -24,7 +24,7 @@
 - continuous verification and self-attack proof surfaces
 - adversarial demo and governed execution substrate
 - bounded `arxiv-paper-writer` skill and the initial three-paper manuscript program
-- quality-gate and docs-review surfaces that make the release-tail proof story reproducible
+- quality-gate, docs-review, and internal-review surfaces that make the release-tail proof story reproducible
 
 ## What's New In Detail
 
@@ -48,8 +48,8 @@
 
 ## Upgrade Notes
 - no migration step is currently required for users of the local ADL CLI examples
-- final tag links, release links, and reviewer-finding outcomes remain `TBD` until `WP-16` through `WP-20` complete
-- this draft has been rewritten from shipped proof artifacts through `WP-15`, but it is not final release copy until review and ceremony land
+- final tag links, release links, and reviewer-finding outcomes remain `TBD` until `WP-17` through `WP-20` complete
+- this draft has been rewritten from shipped proof artifacts through `WP-16`, but it is not final release copy until external review, remediation, and ceremony land
 
 ## Known Limitations
 - this document is still pre-release and must not be treated as a shipped-claims document yet
@@ -60,7 +60,8 @@
 - `WP-02` - `WP-13` proof surfaces are available as draft evidence
 - `WP-14` owns the quality-gate proof surface: `QUALITY_GATE_v0.89.1.md` and `bash adl/tools/demo_v0891_quality_gate.sh`
 - `WP-15` owns the docs-review convergence surface: `DOCS_REVIEW_v0.89.1.md`
-- internal review, 3rd-party review, remediation, and release-ceremony outputs should be cited before release
+- `WP-16` owns the internal review surface: `INTERNAL_REVIEW_v0.89.1.md`
+- 3rd-party review, remediation, and release-ceremony outputs should be cited before release
 
 ## What's Next
 - later reasoning, identity, moral-governance, and broader constitutional bands continue after this milestone

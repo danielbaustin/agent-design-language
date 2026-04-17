@@ -150,7 +150,7 @@ bash adl/tools/test_demo_v0891_quality_gate.sh
 Known limits / caveats:
 - this row does not replace CI
 - the PR closing-linkage guardrail remains CI-only because it depends on pull-request event context
-- later `WP-16` through `WP-20` still own review, remediation, planning, and release ceremony
+- later `WP-17` through `WP-20` still own external review, remediation, planning, and release ceremony
 
 ---
 

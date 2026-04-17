@@ -16,7 +16,7 @@ It is the release-truth surface for:
 - the required local and CI quality command suite
 - the merge-gate coverage posture
 - the non-blocking maintainability watch-list posture
-- the minimum milestone-proof package required before `WP-16` through `WP-20`
+- the minimum milestone-proof package required before `WP-17` through `WP-20`
   can claim a green state truthfully
 
 This document records the gate. It does not replace CI implementation, but the
@@ -295,7 +295,7 @@ being flattened into a fake all-green release claim.
 - converting the large-module watch list into a build-failing gate
 - pretending the integrated proof package replaces CI
 - treating milestone demo proof as a substitute for tests / clippy / fmt
-- claiming release readiness for `WP-16` through `WP-20`
+- claiming release readiness for `WP-17` through `WP-20`
 
 ## Exit Criteria
 
