@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::fs::{self, File, OpenOptions};
-use std::io::Write;
+use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::thread;
 use std::time::Duration;
@@ -20,6 +20,11 @@ const DECISION_RESULT_SCHEMA: &str = "adl.long_lived_agent_decision_result.v1";
 const RUN_REF_SCHEMA: &str = "adl.long_lived_agent_run_ref.v1";
 const MEMORY_WRITE_SCHEMA: &str = "adl.long_lived_agent_memory_write.v1";
 const GUARDRAIL_REPORT_SCHEMA: &str = "adl.long_lived_agent_guardrail_report.v1";
+const CONTINUITY_SCHEMA: &str = "adl.long_lived_agent_continuity.v1";
+const CYCLE_LEDGER_ENTRY_SCHEMA: &str = "adl.long_lived_agent_cycle_ledger_entry.v1";
+const PROVIDER_BINDING_SCHEMA: &str = "adl.long_lived_agent_provider_binding.v1";
+const MEMORY_INDEX_SCHEMA: &str = "adl.long_lived_agent_memory_index.v1";
+const OPERATOR_EVENT_SCHEMA: &str = "adl.long_lived_agent_operator_event.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentSpec {
@@ -127,6 +132,14 @@ pub struct RunOptions {
     pub interval_secs: Option<u64>,
     pub no_sleep: bool,
     pub recover_stale_lease: bool,
+}
+
+#[derive(Debug, Clone, Default)]
+struct LedgerCursor {
+    latest_cycle_id: Option<String>,
+    latest_status: Option<String>,
+    count: u64,
+    max_cycle_number: u64,
 }
 
 pub fn load_spec(spec_path: &Path) -> Result<LoadedAgentSpec> {
@@ -252,17 +265,38 @@ pub fn run(spec_path: &Path, options: RunOptions) -> Result<StatusRecord> {
 pub fn status(spec_path: &Path) -> Result<StatusRecord> {
     let loaded = load_spec(spec_path)?;
     ensure_state_root(&loaded)?;
+    let ledger = ledger_cursor(&loaded)?;
     let mut current = read_status(&loaded)?.unwrap_or_else(|| {
-        status_with_state(
-            &loaded,
-            AgentStatusState::NotStarted,
-            None,
-            None,
-            None,
-            false,
-            None,
-        )
+        if ledger.latest_cycle_id.is_some() {
+            status_with_state(
+                &loaded,
+                AgentStatusState::Idle,
+                ledger.latest_cycle_id.clone(),
+                ledger.latest_status.clone(),
+                None,
+                false,
+                None,
+            )
+        } else {
+            status_with_state(
+                &loaded,
+                AgentStatusState::NotStarted,
+                None,
+                None,
+                None,
+                false,
+                None,
+            )
+        }
     });
+    if let Some(latest_cycle_id) = ledger.latest_cycle_id.clone() {
+        current.last_cycle_id = Some(latest_cycle_id);
+        current.last_cycle_status = ledger.latest_status.clone();
+        if current.state == AgentStatusState::NotStarted {
+            current.state = AgentStatusState::Idle;
+        }
+    }
+    current.completed_cycle_count = completed_cycle_count(&loaded)?;
 
     if let Some(stop) = read_stop(&loaded)? {
         current.state = AgentStatusState::Stopped;
@@ -336,11 +370,112 @@ fn validate_spec(spec: &AgentSpec) -> Result<()> {
 fn ensure_state_root(loaded: &LoadedAgentSpec) -> Result<()> {
     fs::create_dir_all(cycles_dir(loaded))
         .with_context(|| format!("failed creating {}", cycles_dir(loaded).display()))?;
-    let locked = loaded.state_root.join("agent_spec.locked.json");
-    if !locked.exists() {
-        write_json_pretty(&locked, &loaded.spec)?;
+    ensure_locked_spec(loaded)?;
+    ensure_jsonl_file(&cycle_ledger_path(loaded))?;
+    ensure_jsonl_file(&provider_binding_history_path(loaded))?;
+    ensure_continuity(loaded)?;
+    ensure_memory_index(loaded)?;
+    if !status_path(loaded).exists() {
+        let status = status_with_state(
+            loaded,
+            AgentStatusState::NotStarted,
+            None,
+            None,
+            None,
+            false,
+            None,
+        );
+        write_status(loaded, &status)?;
     }
     Ok(())
+}
+
+fn ensure_locked_spec(loaded: &LoadedAgentSpec) -> Result<()> {
+    let locked = locked_spec_path(loaded);
+    let current = serde_json::to_value(&loaded.spec)?;
+    if locked.exists() {
+        let locked_value: Value = read_json_required(&locked)?;
+        if locked_value != current {
+            append_operator_event(
+                loaded,
+                "spec_revision_requested",
+                json!({
+                    "reason": "operator spec changed after lock creation",
+                    "locked_spec_ref": "agent_spec.locked.json"
+                }),
+            )?;
+            return Err(anyhow!(
+                "spec_revision_required: {} differs from the locked continuity spec",
+                loaded.spec_path.display()
+            ));
+        }
+    } else {
+        write_json_pretty(&locked, &loaded.spec)?;
+        append_operator_event(
+            loaded,
+            "created",
+            json!({
+                "locked_spec_ref": "agent_spec.locked.json",
+                "continuity_kind": "pre_v0_92_handle"
+            }),
+        )?;
+    }
+    Ok(())
+}
+
+fn ensure_jsonl_file(path: &Path) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)
+            .with_context(|| format!("failed creating {}", parent.display()))?;
+    }
+    OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(path)
+        .with_context(|| format!("failed ensuring jsonl file {}", path.display()))?;
+    Ok(())
+}
+
+fn ensure_continuity(loaded: &LoadedAgentSpec) -> Result<()> {
+    let path = continuity_path(loaded);
+    if path.exists() {
+        return Ok(());
+    }
+    let continuity = json!({
+        "schema": CONTINUITY_SCHEMA,
+        "agent_instance_id": loaded.spec.agent_instance_id.clone(),
+        "display_name": loaded.spec.display_name.clone(),
+        "created_at": Utc::now(),
+        "created_by": "operator",
+        "continuity_kind": "pre_v0_92_handle",
+        "status": "active",
+        "state_root": path_artifact_ref(&loaded.spec.state_root),
+        "memory_namespace": memory_namespace(loaded),
+        "cycle_ledger_ref": "cycle_ledger.jsonl",
+        "latest_cycle_id": Value::Null,
+        "future_identity_ref": Value::Null,
+        "non_claims": [
+            "not_v0_92_identity_tuple",
+            "not_capability_governance",
+            "not_autonomous_legal_personhood"
+        ]
+    });
+    write_json_pretty(&path, &continuity)
+}
+
+fn ensure_memory_index(loaded: &LoadedAgentSpec) -> Result<()> {
+    let path = memory_index_path(loaded);
+    if path.exists() {
+        return Ok(());
+    }
+    let memory_index = json!({
+        "schema": MEMORY_INDEX_SCHEMA,
+        "memory_namespace": memory_namespace(loaded),
+        "append_only": true,
+        "local_memory_refs": [],
+        "obsmem_export_status": "not_exported"
+    });
+    write_json_pretty(&path, &memory_index)
 }
 
 fn acquire_lease(
@@ -435,8 +570,9 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
     fs::create_dir_all(&cycle_dir)
         .with_context(|| format!("failed creating cycle dir {}", cycle_dir.display()))?;
     let started_at = Utc::now();
-    let previous_cycle_id = previous_cycle_id(cycle_id)?;
+    let previous_cycle_id = latest_cycle_id(loaded)?;
     let workflow_ref = workflow_ref(&loaded.spec.workflow);
+    let provider_binding = provider_binding(loaded, cycle_id, started_at);
     let workflow_supported = workflow_kind_supported(&loaded.spec.workflow.kind);
     let broker_allowed = safety_bool(&loaded.spec.safety, "allow_broker");
     let financial_advice_allowed = safety_bool(&loaded.spec.safety, "financial_advice");
@@ -512,8 +648,8 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         "status": decision_status,
         "decision": decision,
         "provider": {
-            "source": loaded.spec.workflow.kind.clone(),
-            "model": null
+            "source": provider_binding["provider_id"].clone(),
+            "model": provider_binding["model"].clone()
         },
         "not_financial_advice": true
     });
@@ -561,6 +697,8 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         "write_policy": "append_only"
     });
     write_jsonl(&cycle_dir.join("memory_writes.jsonl"), &[memory_write])?;
+    update_memory_index(loaded, cycle_id)?;
+    append_jsonl(&provider_binding_history_path(loaded), &provider_binding)?;
 
     let mut checks = Vec::new();
     checks.push(json!({
@@ -645,6 +783,15 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         ),
     )
     .with_context(|| format!("failed writing cycle summary for {cycle_id}"))?;
+    append_cycle_ledger_entry(
+        loaded,
+        cycle_id,
+        cycle_status,
+        started_at,
+        completed_at,
+        previous_cycle_id.as_deref(),
+    )?;
+    update_continuity_after_cycle(loaded, cycle_id, cycle_status)?;
 
     if !guardrail_pass {
         return Err(anyhow!(
@@ -701,25 +848,25 @@ fn stopped_status(loaded: &LoadedAgentSpec, reason: String) -> StatusRecord {
 }
 
 fn next_cycle_id(loaded: &LoadedAgentSpec) -> Result<String> {
-    Ok(format!(
-        "cycle-{number:06}",
-        number = completed_cycle_count(loaded)? + 1
-    ))
+    let latest = ledger_cursor(loaded)?.max_cycle_number;
+    let directory_latest = completed_cycle_count_from_dirs(loaded)?;
+    let next = latest.max(directory_latest) + 1;
+    Ok(format!("cycle-{number:06}", number = next))
 }
 
-fn previous_cycle_id(cycle_id: &str) -> Result<Option<String>> {
-    let current = cycle_id
-        .trim_start_matches("cycle-")
-        .parse::<u64>()
-        .with_context(|| format!("invalid cycle id {cycle_id}"))?;
-    if current <= 1 {
-        Ok(None)
-    } else {
-        Ok(Some(format!("cycle-{number:06}", number = current - 1)))
-    }
+fn latest_cycle_id(loaded: &LoadedAgentSpec) -> Result<Option<String>> {
+    Ok(ledger_cursor(loaded)?.latest_cycle_id)
 }
 
 fn completed_cycle_count(loaded: &LoadedAgentSpec) -> Result<u64> {
+    let ledger = ledger_cursor(loaded)?;
+    if ledger.count > 0 {
+        return Ok(ledger.count);
+    }
+    completed_cycle_count_from_dirs(loaded)
+}
+
+fn completed_cycle_count_from_dirs(loaded: &LoadedAgentSpec) -> Result<u64> {
     let dir = cycles_dir(loaded);
     if !dir.exists() {
         return Ok(0);
@@ -737,6 +884,137 @@ fn completed_cycle_count(loaded: &LoadedAgentSpec) -> Result<u64> {
         }
     }
     Ok(max_seen)
+}
+
+fn ledger_cursor(loaded: &LoadedAgentSpec) -> Result<LedgerCursor> {
+    let path = cycle_ledger_path(loaded);
+    if !path.exists() {
+        return Ok(LedgerCursor::default());
+    }
+    let file = File::open(&path)
+        .with_context(|| format!("failed opening cycle ledger {}", path.display()))?;
+    let mut cursor = LedgerCursor::default();
+    for line in BufReader::new(file).lines() {
+        let line =
+            line.with_context(|| format!("failed reading cycle ledger {}", path.display()))?;
+        if line.trim().is_empty() {
+            continue;
+        }
+        let value: Value = serde_json::from_str(&line)
+            .with_context(|| format!("failed parsing cycle ledger {}", path.display()))?;
+        cursor.count += 1;
+        let Some(cycle_id) = value.get("cycle_id").and_then(Value::as_str) else {
+            continue;
+        };
+        let Some(number) = cycle_number(cycle_id) else {
+            continue;
+        };
+        if number >= cursor.max_cycle_number {
+            cursor.max_cycle_number = number;
+            cursor.latest_cycle_id = Some(cycle_id.to_string());
+            cursor.latest_status = value
+                .get("status")
+                .and_then(Value::as_str)
+                .map(str::to_string);
+        }
+    }
+    Ok(cursor)
+}
+
+fn cycle_number(cycle_id: &str) -> Option<u64> {
+    cycle_id.strip_prefix("cycle-")?.parse::<u64>().ok()
+}
+
+fn append_cycle_ledger_entry(
+    loaded: &LoadedAgentSpec,
+    cycle_id: &str,
+    status: &str,
+    started_at: DateTime<Utc>,
+    completed_at: DateTime<Utc>,
+    previous_cycle_id: Option<&str>,
+) -> Result<()> {
+    let entry = json!({
+        "schema": CYCLE_LEDGER_ENTRY_SCHEMA,
+        "agent_instance_id": loaded.spec.agent_instance_id.clone(),
+        "cycle_id": cycle_id,
+        "status": status,
+        "started_at": started_at,
+        "completed_at": completed_at,
+        "previous_cycle_id": previous_cycle_id,
+        "manifest_ref": format!("cycles/{cycle_id}/cycle_manifest.json"),
+        "summary_ref": format!("cycles/{cycle_id}/cycle_summary.md"),
+        "memory_writes_ref": format!("cycles/{cycle_id}/memory_writes.jsonl"),
+        "guardrail_report_ref": format!("cycles/{cycle_id}/guardrail_report.json"),
+        "continuity_kind": "pre_v0_92_handle"
+    });
+    append_jsonl(&cycle_ledger_path(loaded), &entry)
+}
+
+fn update_continuity_after_cycle(
+    loaded: &LoadedAgentSpec,
+    cycle_id: &str,
+    cycle_status: &str,
+) -> Result<()> {
+    ensure_continuity(loaded)?;
+    let path = continuity_path(loaded);
+    let mut continuity: Value = read_json_required(&path)?;
+    continuity["latest_cycle_id"] = json!(cycle_id);
+    continuity["latest_cycle_status"] = json!(cycle_status);
+    continuity["status"] = json!("active");
+    continuity["updated_at"] = json!(Utc::now());
+    write_json_pretty(&path, &continuity)
+}
+
+fn update_memory_index(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()> {
+    ensure_memory_index(loaded)?;
+    let path = memory_index_path(loaded);
+    let mut index: Value = read_json_required(&path)?;
+    let memory_ref = format!("cycles/{cycle_id}/memory_writes.jsonl");
+    let refs = index
+        .get_mut("local_memory_refs")
+        .and_then(Value::as_array_mut)
+        .ok_or_else(|| anyhow!("memory index local_memory_refs must be an array"))?;
+    if !refs.iter().any(|value| value.as_str() == Some(&memory_ref)) {
+        refs.push(json!(memory_ref));
+    }
+    write_json_pretty(&path, &index)
+}
+
+fn provider_binding(loaded: &LoadedAgentSpec, cycle_id: &str, bound_at: DateTime<Utc>) -> Value {
+    let provider_id = loaded
+        .spec
+        .workflow
+        .run_args
+        .get("provider_id")
+        .or_else(|| loaded.spec.workflow.run_args.get("provider"))
+        .and_then(Value::as_str)
+        .map(str::to_string);
+    let model = loaded
+        .spec
+        .workflow
+        .run_args
+        .get("model")
+        .and_then(Value::as_str)
+        .map(str::to_string);
+    let binding_status = if provider_id.is_some() || model.is_some() {
+        "available"
+    } else {
+        "not_available"
+    };
+    json!({
+        "schema": PROVIDER_BINDING_SCHEMA,
+        "agent_instance_id": loaded.spec.agent_instance_id.clone(),
+        "cycle_id": cycle_id,
+        "provider_id": provider_id.unwrap_or_else(|| loaded.spec.workflow.kind.clone()),
+        "model": model,
+        "binding_status": binding_status,
+        "source": if binding_status == "available" {
+            "workflow_run_args"
+        } else {
+            "workflow_kind_fallback"
+        },
+        "bound_at": bound_at
+    })
 }
 
 fn read_status(loaded: &LoadedAgentSpec) -> Result<Option<StatusRecord>> {
@@ -782,6 +1060,13 @@ where
     Ok(Some(value))
 }
 
+fn read_json_required(path: &Path) -> Result<Value> {
+    let raw = fs::read_to_string(path)
+        .with_context(|| format!("failed reading json artifact {}", path.display()))?;
+    serde_json::from_str(&raw)
+        .with_context(|| format!("failed parsing json artifact {}", path.display()))
+}
+
 fn write_json_pretty<T>(path: &Path, value: &T) -> Result<()>
 where
     T: Serialize,
@@ -817,6 +1102,35 @@ fn write_jsonl(path: &Path, values: &[Value]) -> Result<()> {
     Ok(())
 }
 
+fn append_jsonl(path: &Path, value: &Value) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)
+            .with_context(|| format!("failed creating {}", parent.display()))?;
+    }
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(path)
+        .with_context(|| format!("failed opening jsonl file {}", path.display()))?;
+    serde_json::to_writer(&mut file, value)
+        .with_context(|| format!("failed writing jsonl file {}", path.display()))?;
+    file.write_all(b"\n")
+        .with_context(|| format!("failed finalizing jsonl file {}", path.display()))?;
+    Ok(())
+}
+
+fn append_operator_event(loaded: &LoadedAgentSpec, event: &str, details: Value) -> Result<()> {
+    let record = json!({
+        "schema": OPERATOR_EVENT_SCHEMA,
+        "agent_instance_id": loaded.spec.agent_instance_id.clone(),
+        "event": event,
+        "at": Utc::now(),
+        "operator": "local",
+        "details": details
+    });
+    append_jsonl(&operator_events_path(loaded), &record)
+}
+
 fn sha256_json(value: &Value) -> Result<String> {
     let bytes = serde_json::to_vec(value)?;
     let digest = Sha256::digest(bytes);
@@ -850,8 +1164,43 @@ fn safety_bool(safety: &Value, key: &str) -> bool {
     safety.get(key).and_then(Value::as_bool).unwrap_or(false)
 }
 
+fn memory_namespace(loaded: &LoadedAgentSpec) -> String {
+    loaded
+        .spec
+        .memory
+        .get("namespace")
+        .and_then(Value::as_str)
+        .filter(|value| !value.trim().is_empty())
+        .map(str::to_string)
+        .unwrap_or_else(|| loaded.spec.agent_instance_id.clone())
+}
+
 fn cycles_dir(loaded: &LoadedAgentSpec) -> PathBuf {
     loaded.state_root.join("cycles")
+}
+
+fn locked_spec_path(loaded: &LoadedAgentSpec) -> PathBuf {
+    loaded.state_root.join("agent_spec.locked.json")
+}
+
+fn continuity_path(loaded: &LoadedAgentSpec) -> PathBuf {
+    loaded.state_root.join("continuity.json")
+}
+
+fn cycle_ledger_path(loaded: &LoadedAgentSpec) -> PathBuf {
+    loaded.state_root.join("cycle_ledger.jsonl")
+}
+
+fn provider_binding_history_path(loaded: &LoadedAgentSpec) -> PathBuf {
+    loaded.state_root.join("provider_binding_history.jsonl")
+}
+
+fn memory_index_path(loaded: &LoadedAgentSpec) -> PathBuf {
+    loaded.state_root.join("memory_index.json")
+}
+
+fn operator_events_path(loaded: &LoadedAgentSpec) -> PathBuf {
+    loaded.state_root.join("operator_events.jsonl")
 }
 
 fn status_path(loaded: &LoadedAgentSpec) -> PathBuf {
@@ -914,6 +1263,9 @@ state_root: state
 workflow:
   kind: {workflow_kind}
   name: wp02_heartbeat_probe
+  run_args:
+    provider_id: local_ollama
+    model: gemma4:latest
 heartbeat:
   interval_secs: 1
   max_cycles: 3
@@ -930,6 +1282,20 @@ memory:
         )
         .expect("write spec");
         spec
+    }
+
+    fn required_state_files(root: &Path) -> Vec<PathBuf> {
+        [
+            "agent_spec.locked.json",
+            "continuity.json",
+            "cycle_ledger.jsonl",
+            "status.json",
+            "provider_binding_history.jsonl",
+            "memory_index.json",
+        ]
+        .into_iter()
+        .map(|name| root.join("state").join(name))
+        .collect()
     }
 
     fn required_cycle_files(root: &Path, cycle_id: &str) -> Vec<PathBuf> {
@@ -950,6 +1316,29 @@ memory:
     }
 
     #[test]
+    fn status_initializes_required_continuity_files_without_running_cycle() {
+        let root = temp_dir("init");
+        let spec = write_spec(&root);
+
+        let initialized = status(&spec).expect("status initializes continuity");
+
+        assert_eq!(initialized.state, AgentStatusState::NotStarted);
+        assert_eq!(initialized.completed_cycle_count, 0);
+        for path in required_state_files(&root) {
+            assert!(path.exists(), "missing {}", path.display());
+        }
+        let ledger =
+            fs::read_to_string(root.join("state/cycle_ledger.jsonl")).expect("read ledger");
+        assert_eq!(ledger.lines().count(), 0);
+        let continuity: Value =
+            serde_json::from_str(&fs::read_to_string(root.join("state/continuity.json")).unwrap())
+                .expect("parse continuity");
+        assert_eq!(continuity["continuity_kind"], "pre_v0_92_handle");
+        assert_eq!(continuity["future_identity_ref"], Value::Null);
+        assert_eq!(continuity["latest_cycle_id"], Value::Null);
+    }
+
+    #[test]
     fn tick_creates_state_status_full_cycle_bundle_and_removes_lease() {
         let root = temp_dir("tick");
         let spec = write_spec(&root);
@@ -959,8 +1348,9 @@ memory:
         assert_eq!(status.state, AgentStatusState::Idle);
         assert_eq!(status.completed_cycle_count, 1);
         assert_eq!(status.last_cycle_id.as_deref(), Some("cycle-000001"));
-        assert!(root.join("state/agent_spec.locked.json").exists());
-        assert!(root.join("state/status.json").exists());
+        for path in required_state_files(&root) {
+            assert!(path.exists(), "missing {}", path.display());
+        }
         for path in required_cycle_files(&root, "cycle-000001") {
             assert!(path.exists(), "missing {}", path.display());
         }
@@ -989,6 +1379,42 @@ memory:
             fs::read_to_string(root.join("state/cycles/cycle-000001/memory_writes.jsonl"))
                 .expect("read memory writes");
         assert_eq!(memory_writes.lines().count(), 1);
+        let continuity: Value =
+            serde_json::from_str(&fs::read_to_string(root.join("state/continuity.json")).unwrap())
+                .expect("parse continuity");
+        assert_eq!(continuity["schema"], CONTINUITY_SCHEMA);
+        assert_eq!(continuity["continuity_kind"], "pre_v0_92_handle");
+        assert_eq!(continuity["latest_cycle_id"], "cycle-000001");
+        assert!(continuity["non_claims"]
+            .as_array()
+            .expect("non claims")
+            .contains(&json!("not_v0_92_identity_tuple")));
+        let ledger =
+            fs::read_to_string(root.join("state/cycle_ledger.jsonl")).expect("read cycle ledger");
+        assert_eq!(ledger.lines().count(), 1);
+        let ledger_entry: Value = serde_json::from_str(ledger.lines().next().expect("ledger line"))
+            .expect("parse ledger entry");
+        assert_eq!(ledger_entry["schema"], CYCLE_LEDGER_ENTRY_SCHEMA);
+        assert_eq!(ledger_entry["continuity_kind"], "pre_v0_92_handle");
+        let provider_history =
+            fs::read_to_string(root.join("state/provider_binding_history.jsonl"))
+                .expect("read provider history");
+        let provider_entry: Value =
+            serde_json::from_str(provider_history.lines().next().expect("provider line"))
+                .expect("parse provider binding");
+        assert_eq!(provider_entry["schema"], PROVIDER_BINDING_SCHEMA);
+        assert_eq!(provider_entry["provider_id"], "local_ollama");
+        assert_eq!(provider_entry["model"], "gemma4:latest");
+        assert_eq!(provider_entry["binding_status"], "available");
+        let memory_index: Value = serde_json::from_str(
+            &fs::read_to_string(root.join("state/memory_index.json")).unwrap(),
+        )
+        .expect("parse memory index");
+        assert_eq!(memory_index["schema"], MEMORY_INDEX_SCHEMA);
+        assert_eq!(
+            memory_index["local_memory_refs"][0],
+            "cycles/cycle-000001/memory_writes.jsonl"
+        );
         assert!(!root.join("state/lease.json").exists());
     }
 
@@ -1014,12 +1440,80 @@ memory:
         assert!(root.join("state/cycles/cycle-000002").exists());
         assert!(root.join("state/cycles/cycle-000003").exists());
         assert!(!root.join("state/cycles/cycle-000004").exists());
+        let ledger =
+            fs::read_to_string(root.join("state/cycle_ledger.jsonl")).expect("read cycle ledger");
+        assert_eq!(ledger.lines().count(), 3);
+        let provider_history =
+            fs::read_to_string(root.join("state/provider_binding_history.jsonl"))
+                .expect("read provider history");
+        assert_eq!(provider_history.lines().count(), 3);
+        let continuity: Value =
+            serde_json::from_str(&fs::read_to_string(root.join("state/continuity.json")).unwrap())
+                .expect("parse continuity");
+        assert_eq!(continuity["latest_cycle_id"], "cycle-000003");
+        let memory_index: Value = serde_json::from_str(
+            &fs::read_to_string(root.join("state/memory_index.json")).unwrap(),
+        )
+        .expect("parse memory index");
+        assert_eq!(
+            memory_index["local_memory_refs"]
+                .as_array()
+                .expect("memory refs")
+                .len(),
+            3
+        );
         let manifest: Value = serde_json::from_str(
             &fs::read_to_string(root.join("state/cycles/cycle-000002/cycle_manifest.json"))
                 .expect("read manifest"),
         )
         .expect("parse manifest");
         assert_eq!(manifest["previous_cycle_id"], "cycle-000001");
+    }
+
+    #[test]
+    fn status_recovers_latest_cycle_from_ledger_when_status_file_is_missing() {
+        let root = temp_dir("ledger-restart");
+        let spec = write_spec(&root);
+        run(
+            &spec,
+            RunOptions {
+                max_cycles: 2,
+                interval_secs: None,
+                no_sleep: true,
+                recover_stale_lease: false,
+            },
+        )
+        .expect("run");
+        fs::remove_file(root.join("state/status.json")).expect("remove status to simulate restart");
+
+        let recovered = status(&spec).expect("status recovers from ledger");
+
+        assert_eq!(recovered.state, AgentStatusState::Idle);
+        assert_eq!(recovered.completed_cycle_count, 2);
+        assert_eq!(recovered.last_cycle_id.as_deref(), Some("cycle-000002"));
+        assert_eq!(recovered.last_cycle_status.as_deref(), Some("success"));
+    }
+
+    #[test]
+    fn locked_spec_refuses_silent_revision_and_records_operator_event() {
+        let root = temp_dir("spec-revision");
+        let spec = write_spec(&root);
+        tick(&spec, TickOptions::default()).expect("initial tick locks spec");
+        let locked_before =
+            fs::read_to_string(root.join("state/agent_spec.locked.json")).expect("locked spec");
+        let changed = fs::read_to_string(&spec)
+            .expect("read spec")
+            .replace("display_name: Test Agent", "display_name: Different Agent");
+        fs::write(&spec, changed).expect("write changed spec");
+
+        let err = status(&spec).expect_err("changed spec should require revision");
+
+        assert!(err.to_string().contains("spec_revision_required"));
+        let locked_after =
+            fs::read_to_string(root.join("state/agent_spec.locked.json")).expect("locked spec");
+        assert_eq!(locked_after, locked_before);
+        let events = fs::read_to_string(root.join("state/operator_events.jsonl")).expect("events");
+        assert!(events.contains("\"event\":\"spec_revision_requested\""));
     }
 
     #[test]

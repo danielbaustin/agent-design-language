@@ -13,6 +13,9 @@ state_root: state
 workflow:
   kind: demo_adapter
   name: wp02_smoke_probe
+  run_args:
+    provider_id: local_ollama
+    model: gemma4:latest
 heartbeat:
   interval_secs: 1
   max_cycles: 3
@@ -54,6 +57,10 @@ memory:
     );
     assert!(root.join("state/status.json").exists());
     assert!(root.join("state/agent_spec.locked.json").exists());
+    assert!(root.join("state/continuity.json").exists());
+    assert!(root.join("state/cycle_ledger.jsonl").exists());
+    assert!(root.join("state/provider_binding_history.jsonl").exists());
+    assert!(root.join("state/memory_index.json").exists());
     for cycle_id in ["cycle-000001", "cycle-000002", "cycle-000003"] {
         let cycle_dir = root.join("state/cycles").join(cycle_id);
         for artifact in [
@@ -72,6 +79,13 @@ memory:
             );
         }
     }
+    let ledger =
+        fs::read_to_string(root.join("state/cycle_ledger.jsonl")).expect("read cycle ledger");
+    assert_eq!(ledger.lines().count(), 3);
+    let continuity =
+        fs::read_to_string(root.join("state/continuity.json")).expect("read continuity");
+    assert!(continuity.contains(r#""continuity_kind": "pre_v0_92_handle""#));
+    assert!(continuity.contains(r#""latest_cycle_id": "cycle-000003""#));
 
     let status = run_adl(&["agent", "status", "--spec", spec_str]);
     assert!(
