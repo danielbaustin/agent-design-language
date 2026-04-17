@@ -16,6 +16,7 @@ This skill is allowed to:
 - inspect one bounded source packet, issue, code slice, doc packet, or review surface
 - choose a diagram family and backend: Mermaid, D2, PlantUML, Structurizr DSL, or no-render markdown
 - draft diagram source plus rationale, assumptions, and validation commands
+- render SVG and optional PNG artifacts when the requested renderer is already available locally or rendering is explicitly required
 - write one bounded diagram packet or review artifact
 - recommend rendering commands when the relevant tool exists locally
 
@@ -23,6 +24,7 @@ It is not allowed to:
 - invent architecture, runtime behavior, trust boundaries, dependencies, or data flows
 - treat UML as the default when a simpler diagram communicates better
 - publish diagrams to external tools or docs sites without explicit separate approval
+- claim a rendered artifact exists unless rendering actually ran
 - silently replace architecture review, security review, or implementation proof
 - broaden into repo-wide diagram inventory work without a bounded target
 
@@ -34,8 +36,9 @@ It is not allowed to:
 4. Read `references/diagram-playbook.md` when choosing diagram types or tools.
 5. Read `references/output-contract.md` when writing a diagram packet.
 6. Draft the diagram source with explicit assumptions and unknowns.
-7. Add validation/render instructions.
-8. Stop before publication or unbounded redesign.
+7. If rendering is requested, use `scripts/render_diagrams.sh` and record PASS, SKIP, or FAIL truthfully.
+8. Add validation/render instructions.
+9. Stop before publication or unbounded redesign.
 
 ## Required Inputs
 
@@ -98,6 +101,10 @@ Default backend order:
 4. PlantUML for strict UML semantics or advanced UML diagram families
 5. Markdown outline when evidence is insufficient for diagram source
 
+Treat "renders in the current surface" as a first-class selection criterion.
+If the user asks to show a diagram in GitHub Markdown, Codex chat, an issue, or
+a PR body, prefer Mermaid unless another backend is explicitly required.
+
 When the backend is chosen, explain why.
 
 ### 4. Draft The Packet
@@ -110,7 +117,31 @@ Include:
 - validation/render commands
 - accessibility notes such as title, description, and readable labels
 
-### 5. Validate Boundaries
+### 5. Render When Requested
+
+Rendering is optional unless `policy.render_policy` is `render_required`.
+
+Use:
+
+```sh
+adl/tools/skills/diagram-author/scripts/render_diagrams.sh \
+  --input <diagram-source-dir> \
+  --out <artifact-dir> \
+  --formats svg,png
+```
+
+Renderer behavior:
+- Mermaid uses `mmdc`
+- D2 uses `d2`
+- PlantUML uses `plantuml`
+- Structurizr DSL uses `structurizr validate` and `structurizr export`
+- PNG derivation can use ImageMagick `convert` when SVG exists
+
+If a renderer is missing and rendering is not required, record `SKIP` rather
+than failing or inventing a rendered artifact. Prefer SVG as the durable visual
+asset. Use raster formats such as PNG only for surfaces that cannot consume SVG.
+
+### 6. Validate Boundaries
 
 Before returning, check:
 - no unsupported architecture or runtime claim was added

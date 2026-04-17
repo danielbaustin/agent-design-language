@@ -40,6 +40,16 @@ The default `diagram-author` artifact is markdown with these sections in this or
 - Validation Result: PASS | FAIL | NOT_RUN
 - Notes: <bounded summary>
 
+## Rendered Artifacts
+- SVG Artifacts:
+  - <path or none>
+- Raster Artifacts:
+  - <path or none>
+- Source-Only Artifacts:
+  - <path or none>
+- Skipped Renderers:
+  - <backend and reason or none>
+
 ## Publication Boundary
 - Publication Attempted: true | false
 - External Tool Upload Attempted: true | false
@@ -56,4 +66,5 @@ The default `diagram-author` artifact is markdown with these sections in this or
 - Do not make UML the default when a simpler diagram communicates better.
 - Do not hide assumptions; list them in the truth-boundary section.
 - Do not claim a rendered artifact exists unless rendering actually ran.
+- Prefer SVG for durable rendered artifacts and PNG only for raster-only surfaces.
 - Do not emit raw secrets, raw prompts, raw tool arguments, or unjustified absolute host paths.

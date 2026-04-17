@@ -50,7 +50,7 @@ The normal workflow is:
 `demo-operator` is a bounded helper skill for running one named demo and classifying the proof result consistently.
 `medium-article-writer` is a bounded helper skill for turning one concrete article brief into a reviewer-friendly Medium packet without publishing.
 `arxiv-paper-writer` is a bounded helper skill for turning one concrete scholarly source packet into a reviewer-friendly arXiv-style manuscript packet without submitting, publishing, or inventing citations.
-`diagram-author` is a bounded helper skill for turning one source packet, issue, code slice, or doc surface into a reviewable diagram-as-code packet with explicit backend selection and truth boundaries.
+`diagram-author` is a bounded helper skill for turning one source packet, issue, code slice, or doc surface into a reviewable diagram-as-code packet with explicit backend selection, optional SVG/PNG rendering, and truth boundaries.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
 
 The three editor skills are helper skills:
@@ -1674,6 +1674,8 @@ Use it when:
 - the operator needs a diagram type/backend recommendation before drawing
 - the output should preserve assumptions, unknowns, and render instructions
 - the diagram should be reviewable as text before publication or rendering
+- local renderers should produce SVG or PNG artifacts without uploading to an
+  external service
 
 Do not use it for:
 
@@ -1730,6 +1732,9 @@ policy:
   truth_policy: strict_source_bound | mark_assumptions
   render_policy: source_only | render_if_tool_available | render_required
   validation_mode: syntax_only | render_check | artifact_only | none
+  output_formats:
+    - svg
+    - png
   stop_before_publication: true
 ```
 
@@ -1740,12 +1745,17 @@ Expected output includes:
 - target source packet or issue/code/doc surface
 - selected diagram family and backend
 - diagram source or a markdown outline when evidence is insufficient
+- rendered SVG/PNG artifacts when rendering is requested and tools are present
 - assumptions and unknowns
 - render/validation instructions
 - publication boundary
 - follow-up recommendation
 
-The skill may write one bounded diagram packet or diagram source artifact.
+The skill may write one bounded diagram packet, diagram source artifact, or
+rendered local artifact packet. Use `adl/tools/skills/diagram-author/scripts/render_diagrams.sh`
+for SVG/PNG generation. Prefer Mermaid when the diagram needs to render inline
+in GitHub, PRs, issues, docs, or Codex chat. Prefer SVG as the durable rendered
+asset and PNG only for raster-only consumers.
 It must stop before external publication, broad architecture redesign, or
 unsupported visual claims.
 
@@ -1773,8 +1783,10 @@ target:
 policy:
   backend_policy: auto_select
   truth_policy: mark_assumptions
-  render_policy: source_only
-  validation_mode: artifact_only
+  render_policy: render_if_tool_available
+  validation_mode: render_check
+  output_formats:
+    - svg
   stop_before_publication: true
 Create the bounded diagram packet, explain backend choice, and stop before publication.
 ```

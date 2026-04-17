@@ -1,6 +1,7 @@
 # Diagram Playbook
 
-This skill stops at a reviewable diagram packet.
+This skill stops at a reviewable diagram packet unless rendering is explicitly
+requested by policy. Rendering still stops before external publication.
 
 ## Backend Selection
 
@@ -18,6 +19,22 @@ Mermaid is the default for ADL docs because it is easy to review in Markdown.
 Structurizr DSL is preferred when the durable artifact is a C4 model rather
 than a single picture. D2 is preferred when visual quality and layout matter.
 PlantUML is a specialist path for formal UML, not the default.
+
+## Render Policy
+
+Use three output tiers:
+
+1. Inline preview: Mermaid source for GitHub, PRs, issues, docs, and Codex chat.
+2. Review packet: source files plus commands and truth-boundary notes.
+3. Rendered asset packet: source files plus generated SVG/PNG artifacts when
+   local renderers exist or rendering is explicitly required.
+
+Prefer SVG as the durable rendered artifact. SVG scales cleanly and is suitable
+for docs and review. Produce PNG only when the target surface cannot use SVG or
+when the user explicitly asks for raster output.
+
+Do not produce raster screenshots as the canonical artifact when source or SVG
+would be reviewable.
 
 ## Diagram Families
 
@@ -42,6 +59,21 @@ PlantUML is a specialist path for formal UML, not the default.
 
 Use commands only when the tool exists locally or the user explicitly asks to install/use it.
 
+The bundled renderer harness is:
+
+```sh
+adl/tools/skills/diagram-author/scripts/render_diagrams.sh \
+  --input <diagram-source-dir> \
+  --out <artifact-dir> \
+  --formats svg,png
+```
+
+Check local availability:
+
+```sh
+adl/tools/skills/diagram-author/scripts/render_diagrams.sh --check-tools
+```
+
 Examples:
 
 ```sh
@@ -52,6 +84,8 @@ structurizr validate -workspace workspace.dsl
 ```
 
 If no renderer is available, provide the source and mark rendering as `not_run`.
+If a renderer is unavailable and rendering is optional, mark the individual
+source as `SKIP` rather than failing the whole packet.
 
 ## Accessibility And Review
 

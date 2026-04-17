@@ -25,6 +25,7 @@ assert_skill_bundle() {
   [[ -f "${root}/skills/medium-article-writer/SKILL.md" ]]
   [[ -f "${root}/skills/arxiv-paper-writer/SKILL.md" ]]
   [[ -f "${root}/skills/diagram-author/SKILL.md" ]]
+  [[ -x "${root}/skills/diagram-author/scripts/render_diagrams.sh" ]]
   [[ -f "${root}/skills/stp-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sip-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sor-editor/SKILL.md" ]]

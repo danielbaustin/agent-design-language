@@ -42,6 +42,9 @@ policy:
   truth_policy: strict_source_bound | mark_assumptions
   render_policy: source_only | render_if_tool_available | render_required
   validation_mode: syntax_only | render_check | artifact_only | none
+  output_formats:
+    - svg
+    - png
   stop_before_publication: true
 ```
 
@@ -98,6 +101,11 @@ Use when:
 - `render_policy`
   - required
   - one of `source_only`, `render_if_tool_available`, or `render_required`
+- `output_formats`
+  - optional
+  - list containing `svg`, `png`, or both
+  - default is `svg`
+  - prefer `svg`; use `png` only when raster output is explicitly useful
 - `validation_mode`
   - required
   - one of `syntax_only`, `render_check`, `artifact_only`, or `none`
@@ -130,8 +138,10 @@ target:
 policy:
   backend_policy: auto_select
   truth_policy: mark_assumptions
-  render_policy: source_only
-  validation_mode: artifact_only
+  render_policy: render_if_tool_available
+  validation_mode: render_check
+  output_formats:
+    - svg
   stop_before_publication: true
 ```
 
@@ -140,5 +150,7 @@ policy:
 - prefer reviewable diagram source over image-only artifacts
 - choose Mermaid for lightweight docs, Structurizr DSL for C4 model consistency,
   D2 for polished explainers, and PlantUML for formal UML
+- use `adl/tools/skills/diagram-author/scripts/render_diagrams.sh` for local
+  SVG/PNG generation when renderers are available
 - keep assumptions, unknowns, and unsupported claims out of the diagram body or
   label them explicitly in the packet
