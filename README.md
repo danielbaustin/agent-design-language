@@ -16,7 +16,7 @@ But those artifacts are not the whole story. In the current repository, they are
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.89.1%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.89.1%20released-blue)
 
 Today, ADL includes:
 - a reference Rust runtime and CLI for deterministic workflow execution
@@ -50,7 +50,7 @@ Run the integrated `v0.89.1` quality and review-tail surface:
 bash adl/tools/demo_v0891_quality_gate.sh
 ```
 
-This is the best top-level entrypoint if you want to see the active milestone's current release-tail proof surface.
+This is the best top-level entrypoint if you want to see the released milestone's quality proof surface.
 
 ### If you want the flagship current demo
 
@@ -104,10 +104,11 @@ Other useful entrypoints:
 
 ## Current Status
 
-- Active milestone: **v0.89.1**
+- Most recently completed milestone: **v0.89.1**
+- Next milestone planning package: **v0.90**
 - Current crate version on `main`: **0.89.1**
-- Version note: **the active review/release tail has moved to `v0.89.1`; third-party review and accepted remediation are complete, and release ceremony, tag publication, and GitHub release publication remain release-tail work**
-- Most recently completed milestone package: **v0.89**
+- Version note: **v0.89.1 is complete and released; the v0.90 planning package is ready for the next issue wave**
+- Previous completed milestone package: **v0.89**
 - Previous completed milestone: **v0.88**
 - Project changelog: `CHANGELOG.md`
 
@@ -115,14 +116,14 @@ ADL is in active development. This repository contains both implemented runtime 
 
 ## Current Milestone
 
-`v0.89.1` is the current active milestone. It carries ADL from governed adaptive execution into adversarial runtime and reviewable exploit-evidence behavior:
+`v0.89.1` is the most recently completed milestone. It carries ADL from governed adaptive execution into adversarial runtime and reviewable exploit-evidence behavior:
 - adversarial runtime architecture and red/blue/purple execution structure
 - exploit artifact and replay-manifest surfaces
 - continuous verification, exploit generation, and bounded self-attack patterns
 - operational skill substrate and composition surfaces for governed execution
 - bounded manuscript workflow for the initial ADL three-paper program
 
-The core implementation and proof wave is landed through the tracked `v0.89.1` release-tail surfaces. Third-party review found no additional P0/P1/P2 findings beyond the already-remediated internal review work, and the repository is now in next-milestone planning reconciliation and release ceremony.
+The core implementation and proof wave landed through the tracked `v0.89.1` release-tail surfaces. Third-party review found no additional P0/P1/P2 findings beyond the already-remediated internal review work, and WP-20 completed the release ceremony.
 
 Best current `v0.89.1` entrypoints:
 - quality-gate package: `bash adl/tools/demo_v0891_quality_gate.sh`
@@ -135,14 +136,14 @@ Best current `v0.89.1` entrypoints:
 
 ### v0.89.1 - Adversarial Runtime and Review-Tail Milestone
 
-v0.89.1 is the current active milestone. The adversarial/runtime implementation and proof surfaces have landed, third-party review and review remediation are closed, and the repository is now in next-milestone planning reconciliation and release ceremony.
+v0.89.1 is the most recently completed milestone. The adversarial/runtime implementation and proof surfaces landed, third-party review and review remediation are closed, and the v0.90 planning package is ready for the next issue wave.
 
 Key features:
 - adversarial runtime model and red/blue/purple execution architecture
 - exploit artifact schema, replay manifest, continuous verification, and self-attack proof surfaces
 - provider-proof packaging, proof-entry-point integration, and quality-gate review surfaces
 - five-agent Hey Jude MIDI demo and bounded arXiv manuscript workflow packet
-- completed third-party review and review remediation, with final release ceremony remaining
+- completed third-party review, review remediation, next-milestone planning, and release ceremony
 
 ### v0.89 - Completed Governed Adaptive Execution Milestone
 

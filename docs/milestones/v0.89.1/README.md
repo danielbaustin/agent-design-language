@@ -170,12 +170,12 @@ Open questions:
 
 ## Status
 
-Current status: canonical planning package complete; official issue wave opened; `WP-02` - `WP-19` landed, closed, or represented by tracked release-tail proof surfaces; third-party review found no additional P0/P1/P2 findings beyond the internal review work already fixed or explicitly deferred; release ceremony remains.
+Current status: released. The canonical planning package completed, the official issue wave opened, `WP-02` - `WP-20` landed or closed, third-party review found no additional P0/P1/P2 findings beyond the internal review work already fixed or explicitly deferred, and release ceremony completed on 2026-04-17.
 
 - Planning: canonical package completed in `#1860`, with visible `WP-01` anchor issue `#1922` and `#1806` landing the tracked next-milestone package from the `v0.89` side
-- Execution: issue wave opened through `#1921`; `WP-02` - `WP-19` are closed or represented by tracked release-tail records, and `WP-20` remains the release-tail queue
-- Validation: partial; the adversarial/runtime, exploit/replay, verification, skill/governance, provider-packaging, proof-entry-point, integration-demo, manuscript workflow, quality-gate, docs-review, internal-review, third-party-review, remediation, and next-milestone handoff surfaces exist, while release ceremony remains open
-- Release readiness: pre-release; the milestone has a converged proof package, quality gate surface, docs-review surface, and internal review record, but not a release candidate
+- Execution: issue wave opened through `#1921`; `WP-02` - `WP-20` are closed or represented by tracked release-tail records
+- Validation: complete for release; the adversarial/runtime, exploit/replay, verification, skill/governance, provider-packaging, proof-entry-point, integration-demo, manuscript workflow, quality-gate, docs-review, internal-review, third-party-review, remediation, next-milestone handoff, and release surfaces exist
+- Release readiness: released as `v0.89.1`
 
 Current issue map:
 - `WP-01` anchor: `#1922`
