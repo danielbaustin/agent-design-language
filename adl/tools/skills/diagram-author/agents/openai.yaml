@@ -1,0 +1,3 @@
+display_name: Diagram Author
+short_description: Create source-grounded diagram-as-code packets with the right backend
+default_prompt: Turn one bounded source packet, issue, code slice, or doc surface into a reviewable diagram packet, choose Mermaid, D2, PlantUML, or Structurizr deliberately, and label assumptions before rendering or publication.

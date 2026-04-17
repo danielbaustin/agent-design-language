@@ -26,6 +26,7 @@ The tracked skill set is:
 - `demo-operator`
 - `medium-article-writer`
 - `arxiv-paper-writer`
+- `diagram-author`
 - `stp-editor`
 - `sip-editor`
 - `sor-editor`
@@ -49,6 +50,7 @@ The normal workflow is:
 `demo-operator` is a bounded helper skill for running one named demo and classifying the proof result consistently.
 `medium-article-writer` is a bounded helper skill for turning one concrete article brief into a reviewer-friendly Medium packet without publishing.
 `arxiv-paper-writer` is a bounded helper skill for turning one concrete scholarly source packet into a reviewer-friendly arXiv-style manuscript packet without submitting, publishing, or inventing citations.
+`diagram-author` is a bounded helper skill for turning one source packet, issue, code slice, or doc surface into a reviewable diagram-as-code packet with explicit backend selection, optional SVG/PNG rendering, and truth boundaries.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
 
 The three editor skills are helper skills:
@@ -1651,6 +1653,145 @@ policy:
   validation_mode: artifact_only
   stop_before_submission: true
 Draft the bounded packet, surface citation and claim gaps, and stop before submission.
+```
+
+## `diagram-author`
+
+### Purpose
+
+`diagram-author` creates or revises one source-grounded diagram packet from a
+bounded brief, issue, code slice, doc packet, or review surface.
+
+It is a bounded helper skill for diagram-as-code and model-as-code work, not a
+general architecture approval workflow.
+
+### When To Use It
+
+Use it when:
+
+- a source packet should become a Mermaid, D2, PlantUML, Structurizr DSL, or
+  markdown-outline diagram packet
+- the operator needs a diagram type/backend recommendation before drawing
+- the output should preserve assumptions, unknowns, and render instructions
+- the diagram should be reviewable as text before publication or rendering
+- local renderers should produce SVG or PNG artifacts without uploading to an
+  external service
+
+Do not use it for:
+
+- inventing architecture, data flow, dependencies, or runtime behavior
+- treating UML as the default when a simpler diagram communicates better
+- publishing diagrams to external platforms without separate approval
+- replacing architecture, security, or implementation review
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- structured invocation should use `skill_input_schema: diagram_author.v1`
+- one of:
+  - `target.source_packet_path`
+  - `target.source_packet_text`
+  - `target.issue_number`
+  - `target.code_path`
+  - `target.doc_path`
+
+### Input Schema
+
+Canonical schema:
+
+- `adl/tools/skills/docs/DIAGRAM_AUTHOR_SKILL_INPUT_SCHEMA.md`
+
+Schema id:
+
+- `diagram_author.v1`
+
+Structured invocation shape:
+
+```yaml
+skill_input_schema: diagram_author.v1
+mode: draft_from_source_packet | draft_from_issue | draft_from_code | review_or_revise_diagram
+repo_root: /absolute/path
+target:
+  source_packet_path: <path or null>
+  source_packet_text: <string or null>
+  issue_number: <integer or null>
+  code_path: <path or null>
+  doc_path: <path or null>
+  diagram_path: <path or null>
+  artifact_root: <path or null>
+  diagram_goal: explain | prove | compare | debug | document | review | unknown
+  audience: engineer | reviewer | user | stakeholder | unknown
+  preferred_backend: mermaid | d2 | plantuml | structurizr | auto
+  required_diagram_family: flowchart | sequence | state | dependency | data_flow | c4 | uml | concept_map | auto
+  forbidden_assumptions:
+    - <string>
+policy:
+  backend_policy: auto_select | prefer_requested | require_requested
+  truth_policy: strict_source_bound | mark_assumptions
+  render_policy: source_only | render_if_tool_available | render_required
+  validation_mode: syntax_only | render_check | artifact_only | none
+  output_formats:
+    - svg
+    - png
+  stop_before_publication: true
+```
+
+### Output And Stop Boundary
+
+Expected output includes:
+
+- target source packet or issue/code/doc surface
+- selected diagram family and backend
+- diagram source or a markdown outline when evidence is insufficient
+- rendered SVG/PNG artifacts when rendering is requested and tools are present
+- assumptions and unknowns
+- render/validation instructions
+- publication boundary
+- follow-up recommendation
+
+The skill may write one bounded diagram packet, diagram source artifact, or
+rendered local artifact packet. Use `adl/tools/skills/diagram-author/scripts/render_diagrams.sh`
+for SVG/PNG generation. Prefer Mermaid when the diagram needs to render inline
+in GitHub, PRs, issues, docs, or Codex chat. Prefer SVG as the durable rendered
+asset and PNG only for raster-only consumers.
+Use `adl/tools/skills/diagram-author/references/renderer-setup.md` for local
+renderer installation, browser-cache handling, sandbox caveats, and Rust-native
+renderer follow-up options.
+It must stop before external publication, broad architecture redesign, or
+unsupported visual claims.
+
+### Example Invocation
+
+```yaml
+Use $diagram-author at /Users/daniel/git/agent-design-language/adl/tools/skills/diagram-author/SKILL.md with:
+skill_input_schema: diagram_author.v1
+mode: draft_from_issue
+repo_root: /Users/daniel/git/agent-design-language
+target:
+  source_packet_path: null
+  source_packet_text: null
+  issue_number: 2041
+  code_path: null
+  doc_path: null
+  diagram_path: null
+  artifact_root: .adl/reviews
+  diagram_goal: document
+  audience: engineer
+  preferred_backend: auto
+  required_diagram_family: auto
+  forbidden_assumptions:
+    - hidden runtime behavior
+policy:
+  backend_policy: auto_select
+  truth_policy: mark_assumptions
+  render_policy: render_if_tool_available
+  validation_mode: render_check
+  output_formats:
+    - svg
+  stop_before_publication: true
+Create the bounded diagram packet, explain backend choice, and stop before publication.
 ```
 
 ## Choosing The Right Skill
