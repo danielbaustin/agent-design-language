@@ -16,7 +16,7 @@ planning package into tracked milestone docs.
 ## Release Flow
 
 1. The `v0.89.1` WP-19 promotion gate promotes this planning package into tracked milestone docs.
-2. WP-01 opens the official issue wave from this promoted package.
+2. WP-01 opens the official issue wave from this promoted package. This is now `#2019`, with WP-02 through WP-20 opened as `#2021` through `#2039`.
 3. Sprint 1 lands supervisor, cycle, continuity, and operator-safety surfaces.
 4. Sprint 2 lands inspection/status and the primary stock-league demo proof
    surfaces.
@@ -42,8 +42,7 @@ planning package into tracked milestone docs.
 
 ## Release Blockers
 
-- No issue wave should open from this tracked planning package before `v0.89.1`
-  release closeout and the v0.90 WP-01 issue-wave step.
+- No implementation WP should start before the v0.90 WP-01 issue-wave update lands.
 - No demo extension should displace the stock-league proof as the primary
   long-lived runtime demo.
 - No milestone-compression automation should silently mutate release truth.
