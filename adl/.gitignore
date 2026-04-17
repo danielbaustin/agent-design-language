@@ -14,3 +14,4 @@ cov.old/
 adl/coverage/
 adl/coverage.last/
 coverage-summary.json
+coverage-summary.txt
