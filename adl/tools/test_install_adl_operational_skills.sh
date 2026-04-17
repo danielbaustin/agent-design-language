@@ -8,7 +8,7 @@ trap 'rm -rf "${tmpdir}"' EXIT
 assert_skill_bundle() {
   local root="$1"
 
-  for skill in workflow-conductor pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review test-generator demo-operator medium-article-writer arxiv-paper-writer diagram-author stp-editor sip-editor sor-editor; do
+  for skill in workflow-conductor pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review repo-diagram-planner test-generator demo-operator medium-article-writer arxiv-paper-writer diagram-author stp-editor sip-editor sor-editor; do
     [[ -d "${root}/skills/${skill}" ]]
   done
 
@@ -28,6 +28,8 @@ assert_skill_bundle() {
   [[ -x "${root}/skills/repo-architecture-review/scripts/prepare_architecture_review.py" ]]
   [[ -f "${root}/skills/repo-dependency-review/SKILL.md" ]]
   [[ -x "${root}/skills/repo-dependency-review/scripts/prepare_dependency_review.py" ]]
+  [[ -f "${root}/skills/repo-diagram-planner/SKILL.md" ]]
+  [[ -x "${root}/skills/repo-diagram-planner/scripts/plan_repo_diagrams.py" ]]
   [[ -f "${root}/skills/test-generator/SKILL.md" ]]
   [[ -f "${root}/skills/demo-operator/SKILL.md" ]]
   [[ -f "${root}/skills/medium-article-writer/SKILL.md" ]]
@@ -50,6 +52,7 @@ assert_skill_bundle() {
   grep -Fq "safety gate, not a reviewer" "${root}/skills/redaction-and-evidence-auditor/SKILL.md"
   grep -Fq "findings-first and source-grounded" "${root}/skills/repo-architecture-review/SKILL.md"
   grep -Fq "dependency and supply-chain surfaces" "${root}/skills/repo-dependency-review/SKILL.md"
+  grep -Fq "without becoming the diagram author" "${root}/skills/repo-diagram-planner/SKILL.md"
   grep -Fq "smallest truthful test surface" "${root}/skills/test-generator/SKILL.md"
   grep -Fq "run one named demo" "${root}/skills/demo-operator/SKILL.md"
   grep -Fq "stopping before publication" "${root}/skills/medium-article-writer/SKILL.md"
@@ -72,6 +75,7 @@ assert_skill_bundle() {
     "${root}/skills/redaction-and-evidence-auditor/SKILL.md" \
     "${root}/skills/repo-architecture-review/SKILL.md" \
     "${root}/skills/repo-dependency-review/SKILL.md" \
+    "${root}/skills/repo-diagram-planner/SKILL.md" \
     "${root}/skills/test-generator/SKILL.md" \
     "${root}/skills/demo-operator/SKILL.md" \
     "${root}/skills/medium-article-writer/SKILL.md" \
@@ -96,6 +100,7 @@ assert_skill_bundle "${CODEX_HOME}"
 [[ -L "${CODEX_HOME}/skills/redaction-and-evidence-auditor" ]]
 [[ -L "${CODEX_HOME}/skills/repo-architecture-review" ]]
 [[ -L "${CODEX_HOME}/skills/repo-dependency-review" ]]
+[[ -L "${CODEX_HOME}/skills/repo-diagram-planner" ]]
 [[ -L "${CODEX_HOME}/skills/arxiv-paper-writer" ]]
 [[ -L "${CODEX_HOME}/skills/diagram-author" ]]
 [[ "$(cd "${CODEX_HOME}/skills/pr-init" && pwd -P)" == "${repo_root}/adl/tools/skills/pr-init" ]]
