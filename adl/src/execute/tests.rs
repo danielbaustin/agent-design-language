@@ -99,6 +99,31 @@ fn remote_retry_step(max_attempts: u32) -> crate::resolve::ResolvedStep {
     }
 }
 
+fn local_retry_step(max_attempts: u32) -> crate::resolve::ResolvedStep {
+    crate::resolve::ResolvedStep {
+        id: "local-step".to_string(),
+        agent: None,
+        provider: Some("p1".to_string()),
+        placement: Some(PlacementMode::Local),
+        task: None,
+        call: None,
+        with: HashMap::new(),
+        as_ns: None,
+        delegation: None,
+        conversation: None,
+        prompt: Some(PromptSpec {
+            user: Some("hello".to_string()),
+            ..Default::default()
+        }),
+        inputs: HashMap::new(),
+        guards: vec![],
+        save_as: None,
+        write_to: None,
+        on_error: None,
+        retry: Some(StepRetry { max_attempts }),
+    }
+}
+
 fn delegated_step(id: &str) -> crate::resolve::ResolvedStep {
     crate::resolve::ResolvedStep {
         id: id.to_string(),
@@ -557,6 +582,63 @@ fn execute_step_with_retry_does_not_retry_remote_schema_violation() {
     assert_eq!(failure.attempts, 1);
     assert!(
         failure.err.to_string().contains("REMOTE_SCHEMA_VIOLATION"),
+        "unexpected error: {:#}",
+        failure.err
+    );
+}
+
+#[test]
+fn execute_step_with_retry_does_not_retry_missing_prompt_binding() {
+    let doc = minimal_resolved().doc;
+    let mut step = local_retry_step(3);
+    step.prompt = Some(PromptSpec {
+        user: Some("hello {{name}}".to_string()),
+        ..Default::default()
+    });
+
+    let failure = execute_step_with_retry_core(
+        &step,
+        &doc,
+        "run-1",
+        "wf-1",
+        &HashMap::new(),
+        std::path::Path::new("."),
+        false,
+        |_| {},
+    )
+    .expect_err("missing prompt binding should fail");
+
+    assert_eq!(failure.attempts, 1);
+    assert!(
+        failure.err.to_string().contains("missing input bindings"),
+        "unexpected error: {:#}",
+        failure.err
+    );
+}
+
+#[test]
+fn execute_step_with_retry_does_not_retry_unknown_provider_setup_failure() {
+    let doc = minimal_resolved().doc;
+    let step = local_retry_step(4);
+
+    let failure = execute_step_with_retry_core(
+        &step,
+        &doc,
+        "run-1",
+        "wf-1",
+        &HashMap::new(),
+        std::path::Path::new("."),
+        false,
+        |_| {},
+    )
+    .expect_err("unknown provider should fail");
+
+    assert_eq!(failure.attempts, 1);
+    assert!(
+        failure
+            .err
+            .to_string()
+            .contains("references unknown provider 'p1'"),
         "unexpected error: {:#}",
         failure.err
     );
