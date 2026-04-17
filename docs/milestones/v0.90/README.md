@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: tracked planning package promoted by `v0.89.1` WP-19
+- Status: issue wave open
 - Early planning issue: #1986
 - Promotion gate: #1940
 
@@ -136,7 +136,7 @@ Primary planned proof surfaces:
 
 ## Status
 
-- Planning: tracked planning package promoted by `v0.89.1` WP-19
+- Planning: tracked package promoted by `v0.89.1` WP-19 and opened by v0.90 WP-01
 - Execution: issue wave open; WP-02 is ready to start after WP-01 lands
 - Validation: not started
 - Release readiness: not started
@@ -150,5 +150,5 @@ The `v0.89.1` WP-19 promotion gate:
 - preserves feature contracts under `features/`
 - preserves backgrounder and later-band context under `ideas/`
 
-The `v0.89.1` WP-20 release ceremony can treat the v0.90 planning package as
-ready once this promotion PR merges.
+The `v0.89.1` WP-20 release ceremony treated the v0.90 planning package as
+ready, and v0.90 WP-01 now records the opened issue wave.

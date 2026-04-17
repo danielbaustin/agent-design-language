@@ -6,12 +6,12 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: tracked planning package
+- Status: issue wave open
 
 ## Purpose
 
 Capture the v0.90 design interpretation promoted by `v0.89.1` WP-19 as the
-tracked planning package for the next milestone.
+tracked milestone package for the v0.90 issue wave.
 
 ## Problem Statement
 

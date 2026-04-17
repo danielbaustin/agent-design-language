@@ -6,12 +6,12 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: tracked planning package
+- Status: issue wave open
 
 ## Purpose
 
-Record the intended release flow for v0.90 after `v0.89.1` WP-19 promotes the
-planning package into tracked milestone docs.
+Record the intended release flow for v0.90 after `v0.89.1` WP-19 promoted the
+planning package into tracked milestone docs and v0.90 WP-01 opened the issue wave.
 
 ## Release Flow
 
