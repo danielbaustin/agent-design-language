@@ -54,6 +54,8 @@ fn assert_failure_contains(out: &std::process::Output, needle: &str) {
     assert!(stderr.contains(needle), "stderr:\n{stderr}");
 }
 
+#[path = "cli_smoke/agent.rs"]
+mod agent;
 #[path = "cli_smoke/basics.rs"]
 mod basics;
 #[path = "cli_smoke/exports_and_remote.rs"]

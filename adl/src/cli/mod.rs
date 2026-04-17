@@ -1,5 +1,6 @@
 use anyhow::Result;
 
+mod agent_cmd;
 mod artifact_cmd;
 mod commands;
 mod demo_cmd;
@@ -20,6 +21,7 @@ mod tests;
 mod tooling_cmd;
 mod usage;
 
+use agent_cmd::real_agent;
 use artifact_cmd::real_artifact;
 use commands::{real_instrument, real_keygen, real_learn, real_sign, real_verify};
 use demo_cmd::real_demo;
@@ -79,6 +81,7 @@ fn dispatch_args(args: &[String]) -> Result<()> {
 
     match args.first().map(|s| s.as_str()) {
         Some("artifact") => real_artifact(&args[1..]),
+        Some("agent") => real_agent(&args[1..]),
         Some("demo") => real_demo(&args[1..]),
         Some("godel") => real_godel(&args[1..]),
         Some("identity") => real_identity(&args[1..]),

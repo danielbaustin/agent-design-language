@@ -32,6 +32,7 @@ pub mod godel;
 pub mod instrumentation;
 pub mod learning_export;
 pub mod learning_guardrails;
+pub mod long_lived_agent;
 pub mod obsmem_adapter;
 pub mod obsmem_contract;
 pub mod obsmem_demo;
