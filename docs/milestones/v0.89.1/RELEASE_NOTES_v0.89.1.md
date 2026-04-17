@@ -3,8 +3,9 @@
 ## Metadata
 - Product: `ADL`
 - Version: `v0.89.1`
-- Release date: `TBD`
+- Release date: `2026-04-17`
 - Tag: `v0.89.1`
+- GitHub Release: `https://github.com/danielbaustin/agent-design-language/releases/tag/v0.89.1`
 
 ## How To Use
 - keep statements implementation-accurate and test-validated
@@ -15,7 +16,7 @@
 
 ## Summary
 
-`v0.89.1` is the milestone where ADL turns adversarial runtime and exploit-evidence carry-forward into a first-class package. The current draft release story is that the adversarial/runtime proof band, integration demos, manuscript workflow packet, quality-gate surface, docs-review convergence pass, internal review record, internal-review remediation, third-party review, and next-milestone planning handoff are complete or in final promotion, while release ceremony remains open.
+`v0.89.1` is the milestone where ADL turns adversarial runtime and exploit-evidence carry-forward into a first-class package. The release story is that the adversarial/runtime proof band, integration demos, manuscript workflow packet, quality-gate surface, docs-review convergence pass, internal review record, internal-review remediation, third-party review, next-milestone planning handoff, and release ceremony are complete.
 
 ## Current Draft Highlights
 - explicit adversarial runtime model for contested operation
@@ -53,15 +54,15 @@
 
 ## Upgrade Notes
 - no migration step is currently required for users of the local ADL CLI examples
-- final tag links and release links remain `TBD` until `WP-20` completes
-- this draft has been rewritten from shipped proof artifacts and review outcomes through `WP-19`, but it is not final release copy until ceremony lands
+- release tag: `v0.89.1`
+- release URL: `https://github.com/danielbaustin/agent-design-language/releases/tag/v0.89.1`
+- no migration step is required for existing local ADL CLI examples
 
 ## Known Limitations
-- this document is still pre-release and must not be treated as a shipped-claims document yet
 - delegation/refusal, negotiation, and provider-extension questions remain intentionally bounded so the adversarial/runtime core does not sprawl
 
 ## Validation Notes
-- final release notes must cite shipped proof surfaces only
+- final release notes cite shipped proof surfaces only
 - `WP-02` - `WP-13` proof surfaces are available as draft evidence
 - `WP-14` owns the quality-gate proof surface: `QUALITY_GATE_v0.89.1.md` and `bash adl/tools/demo_v0891_quality_gate.sh`
 - `WP-15` owns the docs-review convergence surface: `DOCS_REVIEW_v0.89.1.md`
@@ -71,8 +72,8 @@
 - `#1999` owns the local third-party review handoff surface
 - `WP-17` third-party review closed with no additional P0/P1/P2 findings
 - `WP-18` review remediation closed with internal review fixes recorded and F8 deferred to v0.90 maintainability work
-- `WP-19` owns the v0.90 planning package promotion
-- release-ceremony outputs should be cited before release
+- `WP-19` promoted the v0.90 planning package
+- `WP-20` completed release ceremony, tag, and GitHub release publication
 
 ## What's Next
 - later reasoning, identity, moral-governance, and broader constitutional bands continue after this milestone
@@ -80,4 +81,4 @@
 ## Exit Criteria
 - notes reflect only shipped behavior
 - known limitations and future work are explicitly separated
-- final text is ready to paste into GitHub Release UI without further editing
+- final text is ready for GitHub Release publication

@@ -93,8 +93,8 @@ Non-blocking residual risks at the end of this WP-15 pass:
 - `WP-17` still needs to capture external/third-party review findings.
 - `WP-18` still needs to remediate or explicitly defer accepted findings.
 - `WP-19` and `WP-20` still own next-milestone planning and release ceremony.
-- The release notes remain pre-release until final links, tag truth, and review
-  outputs exist.
+- At this WP-15 point, the release notes remained pre-release until final links,
+  tag truth, and review outputs existed.
 
 ## Reviewer Entry Points
 

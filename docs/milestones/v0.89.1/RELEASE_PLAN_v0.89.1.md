@@ -3,7 +3,7 @@
 ## Metadata
 - Milestone: `v0.89.1`
 - Version: `v0.89.1`
-- Release date: `TBD`
+- Release date: `2026-04-17`
 - Release manager: `Daniel Austin`
 
 ## How To Use
@@ -13,7 +13,7 @@
 
 ## Current Release Truth
 
-`v0.89.1` is currently an active release-tail milestone with the adversarial/runtime proof band, integration-demo package, quality gate, docs-review convergence pass, internal review record, internal-review remediation issues, third-party review, and next-milestone planning handoff landed or in final promotion. There is no release candidate yet.
+`v0.89.1` is complete. The adversarial/runtime proof band, integration-demo package, quality gate, docs-review convergence pass, internal review record, internal-review remediation issues, third-party review, next-milestone planning handoff, and release ceremony have landed.
 
 That means:
 - the canonical planning package exists and is reviewable
@@ -24,14 +24,14 @@ That means:
 - `#1999` prepared the third-party review handoff before `WP-17`
 - `WP-17` third-party review is closed with no additional P0/P1/P2 findings
 - `WP-18` review remediation is closed with internal review fixes recorded and F8 deferred to v0.90 maintainability work
-- `WP-19` owns the v0.90 planning package promotion before ceremony
-- no release candidate exists yet
-- release ceremony remains the final release-tail step
+- `WP-19` promoted the v0.90 planning package before ceremony
+- `WP-20` completed release ceremony
+- release tag and GitHub release are `v0.89.1`
 
 ## 1) Release Readiness
-- [ ] Milestone checklist complete (`MILESTONE_CHECKLIST_v0.89.1.md`)
-- [ ] Release notes approved (`RELEASE_NOTES_v0.89.1.md`)
-- [ ] Go/no-go decision recorded (`DECISIONS_v0.89.1.md` or final release issue)
+- [x] Milestone checklist complete (`MILESTONE_CHECKLIST_v0.89.1.md`)
+- [x] Release notes approved (`RELEASE_NOTES_v0.89.1.md`)
+- [x] Go/no-go decision recorded in `#1941`
 - [x] Core implementation issue wave opened
 - [x] Core adversarial/runtime and proof-entry wave landed through `WP-11`
 - [x] Integration demos and three-paper manuscript packet complete or explicitly deferred in release truth
@@ -43,31 +43,31 @@ That means:
 - [x] Third-party review completed with no additional P0/P1/P2 findings
 - [x] Review remediation closed with internal review fixes recorded and F8 deferred
 - [x] Next-milestone planning package promoted by `WP-19`
-- [ ] Operator fast-forwarded root main after the handoff merge and confirmed no local tracked drift
+- [x] Operator fast-forwarded root main after the handoff merge and confirmed no local tracked drift
 
 ## 2) Branch And Tag Preparation
-- [ ] Target branch confirmed (`main` unless explicitly changed)
-- [ ] Working tree clean
-- [ ] Version string(s) validated
-- [ ] Tag created: `v0.89.1`
-- [ ] Tag pushed and verified
+- [x] Target branch confirmed (`main`)
+- [x] Working tree clean
+- [x] Version string(s) validated
+- [x] Tag created: `v0.89.1`
+- [x] Tag pushed and verified
 
 ## 3) GitHub Release Steps
-- [ ] GitHub Release draft created from `v0.89.1`
-- [ ] Release body populated from approved notes
-- [ ] Links to key PRs/issues included
-- [ ] Release visibility confirmed
-- [ ] Release published
+- [x] GitHub Release draft created from `v0.89.1`
+- [x] Release body populated from approved notes
+- [x] Links to key PRs/issues included
+- [x] Release visibility confirmed
+- [x] Release published
 
 ## 4) Verification
-- [ ] Post-release CI status checked
-- [ ] Release links tested (docs, artifacts, notes)
-- [ ] Immediate regressions triaged and tracked
+- [x] Post-release CI status checked
+- [x] Release links tested (docs, artifacts, notes)
+- [x] Immediate regressions triaged and tracked; none known at release
 
 ## 5) Communication
-- [ ] Community announcement published
-- [ ] Internal update posted
-- [ ] Roadmap/status updated
+- [x] Community announcement deferred outside repository release mechanics
+- [x] Internal update captured by release issue closeout
+- [x] Roadmap/status updated for v0.90 handoff
 
 ## Exit Criteria
 - tag and GitHub Release are published and accessible

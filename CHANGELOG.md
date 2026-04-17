@@ -2,17 +2,17 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.89.1 (Adversarial Runtime Release Tail In Progress)
+## v0.89.1 (Released 2026-04-17)
 
-Status: Core adversarial/runtime implementation, proof surfaces, internal review, internal-review remediation, and third-party review have landed; next-milestone planning and release ceremony remain in progress.
+Status: Completed and released.
 
 Summary:
 - ADL now has a real `v0.89.1` milestone package on `main`, centered on one adversarial-runtime band:
   `adversarial posture -> red/blue/purple roles -> execution runner -> exploit artifact -> replay manifest -> continuous verification -> self-attack -> review evidence`
 - The promoted `v0.89.1` feature-doc set covers the adversarial runtime model, red/blue agent architecture, adversarial execution runner, exploit artifact schema, replay manifest, continuous verification, self-attacking systems, and supporting operational-skill substrate
-- The bounded `v0.89.1` proof package includes the adversarial/security demo rows, provider-proof packaging, quality-gate evidence, docs-review convergence, internal review, accepted internal-review remediation, and third-party review with no additional P0/P1/P2 findings
+- The bounded `v0.89.1` proof package includes the adversarial/security demo rows, provider-proof packaging, quality-gate evidence, docs-review convergence, internal review, accepted internal-review remediation, third-party review with no additional P0/P1/P2 findings, and the final WP-20 release ceremony
 - The milestone also introduces the bounded `arxiv-paper-writer` workflow and the initial three-paper manuscript program for `What Is ADL?`, `Gödel Agents and ADL`, and `Cognitive Spacetime Manifold`
-- The crate version is now `0.89.1`; next-milestone planning, release ceremony, tag publication, and GitHub release copy remain owned by the release tail
+- The crate version is `0.89.1`; the v0.90 planning package is tracked and ready for the next issue wave
 
 References:
 - `docs/milestones/v0.89.1/README.md`
@@ -26,8 +26,7 @@ References:
 - `docs/milestones/v0.89.1/RELEASE_PLAN_v0.89.1.md`
 - `docs/milestones/v0.89.1/RELEASE_NOTES_v0.89.1.md`
 
-Not yet claimed in v0.89.1:
-- release ceremony completion, final tag publication, and GitHub release publication
+Not claimed in v0.89.1:
 - the later Runtime v2, moral-governance, birthday, and polis-defense bands planned for later milestones
 
 ## v0.89 (Completed Governed Adaptation Milestone)
@@ -55,9 +54,9 @@ Not yet claimed in v0.89:
 - the adversarial runtime/exploit-replay package, which belongs to `v0.89.1`
 - later Runtime v2, moral-governance, birthday, and polis-defense work that belongs to later milestones
 
-## v0.88 (Temporal / Chronosense + Instinct Review Tail In Progress)
+## v0.88 (Completed Temporal / Chronosense + Instinct Milestone)
 
-Status: Implementation wave completed through `WP-13`; docs/review/remediation/release tail in progress.
+Status: Completed.
 
 Summary:
 - ADL now has a real `v0.88` milestone on `main`, centered on two bounded substrate bands:
@@ -68,7 +67,7 @@ Summary:
 - Internal review has completed a full repo code-review pass, and the one concrete implementation finding from that pass was remediated before 3rd-party review
 
 Version note:
-- the active milestone is `v0.88`, and the crate version on `main` has already been bumped to `0.88.0`; the remaining release ceremony owns tagging and release publication rather than the version-number transition
+- `v0.88` is a completed historical milestone; later adversarial/runtime work moved into `v0.89` and `v0.89.1`.
 
 References:
 - `docs/milestones/v0.88/README.md`
@@ -80,14 +79,12 @@ References:
 - `docs/milestones/v0.88/RELEASE_PLAN_v0.88.md`
 - `docs/milestones/v0.88/RELEASE_NOTES_v0.88.md`
 
-Not yet claimed in v0.88:
-- final 3rd-party review completion and accepted-findings remediation closeout
-- release ceremony completion and version/tag publication
+Not claimed in v0.88:
 - later-band governance, economics, aptitude, or broader social-agency systems beyond the bounded `v0.88` slice
 
-## v0.87.1 (Runtime Completion Review Tail In Progress)
+## v0.87.1 (Completed Runtime Completion Milestone)
 
-Status: Runtime implementation and bounded demo program landed; docs/review/quality/release tail in progress.
+Status: Completed.
 
 Summary:
 - ADL now has a real `v0.87.1` runtime-completion milestone on `main`, centered on one coherent runtime package:
@@ -107,10 +104,7 @@ References:
 - `docs/milestones/v0.87.1/RELEASE_PLAN_v0.87.1.md`
 - `docs/milestones/v0.87.1/RELEASE_NOTES_v0.87.1.md`
 
-Not yet claimed in v0.87.1:
-- final quality-gate closeout
-- internal review, external / 3rd-party review, and accepted-findings remediation completion
-- release ceremony completion
+Not claimed in v0.87.1:
 - later-milestone chronosense, identity, governance, instinct, or broader bounded-agency systems beyond the runtime primitives landed here
 
 ## v0.87 (Completed Substrate Convergence Milestone)
@@ -138,9 +132,9 @@ References:
 Not yet claimed in v0.87:
 - later-milestone continuity, chronosense, governance, signed-trace, or broader runtime-completion work that belongs to `v0.87.1+`
 
-## v0.86 (Sprint 7 Closeout In Progress)
+## v0.86 (Completed Bounded Cognitive System Milestone)
 
-Status: Docs/review/release tail in progress.
+Status: Completed.
 
 Summary:
 - ADL now has its first working bounded cognitive system on `main`, centered on one canonical bounded cognitive path:
@@ -161,8 +155,7 @@ References:
 - `docs/milestones/v0.86/RELEASE_PLAN_v0.86.md`
 - `docs/milestones/v0.86/RELEASE_NOTES_v0.86.md`
 
-Not yet claimed in v0.86:
-- final internal/external review completion and release ceremony closeout
+Not claimed in v0.86:
 - later-milestone persistence, identity, governance, signed-trace, or broader AEE convergence work
 - anything beyond the bounded `v0.86` cognitive-system scope
 

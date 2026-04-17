@@ -3,7 +3,7 @@
 ## Metadata
 - Milestone: `v0.89.1`
 - Version: `v0.89.1`
-- Target release date: `TBD`
+- Release date: `2026-04-17`
 - Owner: `Daniel Austin`
 
 ## Purpose
@@ -21,11 +21,11 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 - [x] Official `v0.89.1` issue wave opened
 
 ## Execution Discipline
-- [ ] Each issue has truthful local input/output cards in the ADL control plane
-- [ ] Draft PR opened for each tracked issue before merge where applicable
-- [ ] Queue and closeout discipline followed consistently
-- [ ] The `v0.89` / `v0.89.1` boundary remains explicit rather than blurred by carry-back scope
-- [ ] Green-only merge policy followed
+- [x] Each issue has truthful local input/output cards in the ADL control plane
+- [x] Draft PR opened for each tracked issue before merge where applicable
+- [x] Queue and closeout discipline followed consistently
+- [x] The `v0.89` / `v0.89.1` boundary remains explicit rather than blurred by carry-back scope
+- [x] Green-only merge policy followed
 - [x] Docs-review convergence surface exists (`DOCS_REVIEW_v0.89.1.md`)
 - [x] Internal review surface exists (`INTERNAL_REVIEW_v0.89.1.md`)
 - [x] Internal-review remediation issues are closed through `#1992`
@@ -33,7 +33,7 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 - [x] Third-party review completed with no additional P0/P1/P2 findings
 - [x] Review remediation closed with internal review fixes recorded and F8 deferred to v0.90
 - [x] Next-milestone planning package promoted by `WP-19`
-- [ ] Root main has been fast-forwarded after the handoff merge with no local tracked drift
+- [x] Root main has been fast-forwarded after the handoff merge with no local tracked drift
 
 ## Quality Gates
 - [x] `cargo fmt` passes
@@ -43,21 +43,21 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 - [x] Coverage signal is not red (or exception documented)
 - [x] Quality gate documented (`QUALITY_GATE_v0.89.1.md`)
 - [x] D10 quality-gate walkthrough passes (`bash adl/tools/demo_v0891_quality_gate.sh`)
-- [ ] No unresolved high-priority blockers remain at release time
+- [x] No unresolved high-priority blockers remain at release time
 
 ## Release Packaging
-- [ ] Release notes finalized (`RELEASE_NOTES_v0.89.1.md`)
-- [ ] Tag verified: `v0.89.1`
-- [ ] GitHub Release drafted
-- [ ] Links validated in release body
-- [ ] Release published
+- [x] Release notes finalized (`RELEASE_NOTES_v0.89.1.md`)
+- [x] Tag verified: `v0.89.1`
+- [x] GitHub Release drafted
+- [x] Links validated in release body
+- [x] Release published
 
 ## Post-Release
-- [ ] Milestone issues closed with release links
-- [ ] Deferred items moved to next milestone backlog / planning surface
-- [ ] Follow-up bugs and debt captured explicitly
-- [ ] Roadmap/status docs updated
-- [ ] Retrospective summary recorded
+- [x] Milestone issues closed with release links
+- [x] Deferred items moved to next milestone backlog / planning surface
+- [x] Follow-up bugs and debt captured explicitly
+- [x] Roadmap/status docs updated
+- [x] Retrospective summary recorded in release issue closeout
 
 ## Current Planning Truth
 
@@ -67,7 +67,7 @@ At the moment this checklist should be read as:
 - internal-review remediation is closed through `#1992`
 - third-party review closed with no additional P0/P1/P2 findings
 - review remediation closed with internal review fixes recorded and F8 deferred to v0.90
-- release ceremony remains the final unchecked release-tail work
+- release ceremony is complete; v0.90 planning is ready for the next issue wave
 
 ## Exit Criteria
 - all required gates are checked, or each exception has an owner and explicit rationale
