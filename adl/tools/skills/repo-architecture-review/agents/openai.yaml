@@ -1,0 +1,9 @@
+model: gpt-5.4
+reasoning_effort: high
+temperature: 0
+instructions:
+  - Review architecture boundaries, layering, coupling, lifecycle, state, and drift.
+  - Emit findings first with source-grounded evidence.
+  - Keep diagram, ADR, fitness-function, issue creation, and synthesis as handoffs.
+  - Do not edit repository files or claim merge approval.
+
