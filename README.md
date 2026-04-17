@@ -16,7 +16,7 @@ But those artifacts are not the whole story. In the current repository, they are
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.89%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.89.1%20active-blue)
 
 Today, ADL includes:
 - a reference Rust runtime and CLI for deterministic workflow execution
@@ -44,20 +44,20 @@ cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-mi
 
 ### If you want the current milestone proof package
 
-Run the integrated `v0.89` reviewer surface:
+Run the integrated `v0.89.1` quality and review-tail surface:
 
 ```bash
-bash adl/tools/demo_v089_review_surface.sh
+bash adl/tools/demo_v0891_quality_gate.sh
 ```
 
-This is the best top-level entrypoint if you want to see what ADL currently proves in the active milestone.
+This is the best top-level entrypoint if you want to see the active milestone's current release-tail proof surface.
 
 ### If you want the flagship current demo
 
-Run the refreshed `Paper Sonata` package, the flagship bounded demo carried into the `v0.89` review wave:
+Run the five-agent Hey Jude MIDI package, the flagship bounded multi-agent demo carried into the `v0.89.1` review wave:
 
 ```bash
-bash adl/tools/demo_v088_paper_sonata.sh
+bash adl/tools/demo_v0891_five_agent_hey_jude.sh
 ```
 
 ### If you want the previous runtime milestone package
@@ -104,45 +104,60 @@ Other useful entrypoints:
 
 ## Current Status
 
-- Active milestone: **v0.89**
-- Current crate version on `main`: **0.88.0**
-- Version note: **the active review/release tail has moved to `v0.89`, but the crate version remains `0.88.0` on `main` until the bounded `v0.89` release ceremony lands and publication is finalized**
-- Most recently completed milestone package: **v0.88**
-- Previous completed milestone: **v0.87.1**
+- Active milestone: **v0.89.1**
+- Current crate version on `main`: **0.89.1**
+- Version note: **the active review/release tail has moved to `v0.89.1`; final third-party review findings, accepted remediation, release ceremony, tag publication, and GitHub release publication remain release-tail work**
+- Most recently completed milestone package: **v0.89**
+- Previous completed milestone: **v0.88**
 - Project changelog: `CHANGELOG.md`
 
 ADL is in active development. This repository contains both implemented runtime surfaces and milestone/spec/planning documents. Read the milestone docs as bounded engineering records: they distinguish what has shipped, what is under active review or closeout, what is demoable, and what is still planned.
 
 ## Current Milestone
 
-`v0.89` is the current active milestone. It carries ADL from bounded cognition and persistence into governed adaptive behavior:
-- AEE convergence and stop-condition semantics
-- Freedom Gate v2, decision/action mediation, and governed skill execution
-- experiment, ObsMem evidence/ranking, and security/trust planning surfaces
+`v0.89.1` is the current active milestone. It carries ADL from governed adaptive execution into adversarial runtime and reviewable exploit-evidence behavior:
+- adversarial runtime architecture and red/blue/purple execution structure
+- exploit artifact and replay-manifest surfaces
+- continuous verification, exploit generation, and bounded self-attack patterns
+- operational skill substrate and composition surfaces for governed execution
+- bounded manuscript workflow for the initial ADL three-paper program
 
-The core implementation wave is landed through `WP-13`, and the repository is now in quality, docs, review, findings remediation, next-milestone planning, and release-tail work.
+The core implementation and proof wave is landed through the tracked `v0.89.1` release-tail surfaces, and the repository is now in third-party review, accepted-finding remediation, next-milestone planning reconciliation, and release ceremony.
 
-Best current `v0.89` entrypoints:
-- integrated reviewer package: `bash adl/tools/demo_v089_review_surface.sh`
-- flagship bounded demo package: `bash adl/tools/demo_v088_paper_sonata.sh` with reviewer guide `demos/v0.89/paper_sonata_demo_refresh.md`
-- milestone docs: `docs/milestones/v0.89/README.md`
+Best current `v0.89.1` entrypoints:
+- quality-gate package: `bash adl/tools/demo_v0891_quality_gate.sh`
+- integration-demo package: `bash adl/tools/demo_v0891_wp13_demo_integration.sh`
+- flagship bounded demo package: `bash adl/tools/demo_v0891_five_agent_hey_jude.sh`
+- manuscript workflow package: `bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh`
+- milestone docs: `docs/milestones/v0.89.1/README.md`
 
 ## Recent Milestones
 
-### v0.89 - Governed Adaptive Execution and Review-Tail Milestone
+### v0.89.1 - Adversarial Runtime and Review-Tail Milestone
 
-v0.89 is the current active milestone. The core execution wave is landed through `WP-13`, and the repository is now in quality, review, findings remediation, next-milestone planning, and release-tail work.
+v0.89.1 is the current active milestone. The adversarial/runtime implementation and proof surfaces have landed, and the repository is now in third-party review, accepted-finding remediation, next-milestone planning reconciliation, and release ceremony.
+
+Key features:
+- adversarial runtime model and red/blue/purple execution architecture
+- exploit artifact schema, replay manifest, continuous verification, and self-attack proof surfaces
+- provider-proof packaging, proof-entry-point integration, and quality-gate review surfaces
+- five-agent Hey Jude MIDI demo and bounded arXiv manuscript workflow packet
+- active release-tail handoff into third-party review, accepted remediation, and final release ceremony
+
+### v0.89 - Completed Governed Adaptive Execution Milestone
+
+v0.89 is the completed governed-adaptation milestone. The core execution wave landed through `WP-13`, and its release-tail work handed off the adversarial/runtime carry-forward into `v0.89.1`.
 
 Key features:
 - AEE 1.0 convergence and bounded stop-family proof surfaces
 - Freedom Gate v2, decision/action mediation, and governed skill execution contracts
 - experiment records, ObsMem evidence/ranking, and security/trust planning carried into one canonical package
 - bounded provider-participation demos plus an integrated `v0.89` reviewer surface
-- active handoff into internal review, 3rd-party review, remediation, `v0.89.1` planning, and release ceremony
+- completed handoff into the `v0.89.1` adversarial/runtime follow-on
 
 ### v0.88 - Temporal / Chronosense + Instinct Review-Tail Milestone
 
-v0.88 is the most recently completed milestone package. Its implementation wave completed through `WP-13`, and its review-tail work set up the current `v0.89` governance band.
+v0.88 is the prior temporal / chronosense and instinct milestone package. Its implementation wave completed through `WP-13`, and its review-tail work set up the `v0.89` governance band.
 
 Key features:
 - promoted temporal / chronosense and instinct / bounded-agency feature-doc package
@@ -224,7 +239,8 @@ ADL includes both ordinary demos and heavyweight reviewer or release proof packa
 
 Start here:
 - canonical user-facing demo index: `demos/README.md`
-- current milestone reviewer package: `bash adl/tools/demo_v089_review_surface.sh`
+- current milestone quality-gate package: `bash adl/tools/demo_v0891_quality_gate.sh`
+- current milestone integration-demo package: `bash adl/tools/demo_v0891_wp13_demo_integration.sh`
 
 Important supporting demo/readiness docs:
 - `docs/tooling/editor/README.md`
