@@ -88,7 +88,8 @@ Release tail:
 - WP-11: milestone compression pilot catches drift without autonomous release
   behavior
 - WP-12: repo visibility prototype maps canonical docs to code, tests, demos,
-  and review surfaces for a bounded slice
+  and review surfaces for a bounded slice; the prototype packet lives under
+  `repo_visibility/`
 - WP-13: docs and feature mappings are consistent across core and sidecar work
 - WP-14: Rust refactors are bounded, validated, and justified by
   maintainability, testability, or review evidence
