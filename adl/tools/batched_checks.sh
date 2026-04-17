@@ -41,6 +41,7 @@ run_step "test-generator contract check" bash "$ROOT/adl/tools/test_test_generat
 run_step "demo-operator contract check" bash "$ROOT/adl/tools/test_demo_operator_skill_contracts.sh"
 run_step "medium-article-writer contract check" bash "$ROOT/adl/tools/test_medium_article_writer_skill_contracts.sh"
 run_step "arxiv-paper-writer contract check" bash "$ROOT/adl/tools/test_arxiv_paper_writer_skill_contracts.sh"
+run_step "diagram-author contract check" bash "$ROOT/adl/tools/test_diagram_author_skill_contracts.sh"
 run_step "tracked .adl issue-record residue guard" bash "$ROOT/adl/tools/check_no_tracked_adl_issue_record_residue.sh"
 echo "• Running adl checks (batched)…"
 (

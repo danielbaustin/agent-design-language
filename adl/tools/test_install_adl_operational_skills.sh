@@ -8,7 +8,7 @@ trap 'rm -rf "${tmpdir}"' EXIT
 assert_skill_bundle() {
   local root="$1"
 
-  for skill in workflow-conductor pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review test-generator demo-operator medium-article-writer arxiv-paper-writer stp-editor sip-editor sor-editor; do
+  for skill in workflow-conductor pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review test-generator demo-operator medium-article-writer arxiv-paper-writer diagram-author stp-editor sip-editor sor-editor; do
     [[ -d "${root}/skills/${skill}" ]]
   done
 
@@ -24,6 +24,7 @@ assert_skill_bundle() {
   [[ -f "${root}/skills/demo-operator/SKILL.md" ]]
   [[ -f "${root}/skills/medium-article-writer/SKILL.md" ]]
   [[ -f "${root}/skills/arxiv-paper-writer/SKILL.md" ]]
+  [[ -f "${root}/skills/diagram-author/SKILL.md" ]]
   [[ -f "${root}/skills/stp-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sip-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sor-editor/SKILL.md" ]]
@@ -40,6 +41,7 @@ assert_skill_bundle() {
   grep -Fq "run one named demo" "${root}/skills/demo-operator/SKILL.md"
   grep -Fq "stopping before publication" "${root}/skills/medium-article-writer/SKILL.md"
   grep -Fq "without submitting, publishing, inventing citations" "${root}/skills/arxiv-paper-writer/SKILL.md"
+  grep -Fq "diagram-as-code and model-as-code router" "${root}/skills/diagram-author/SKILL.md"
   grep -Fq "bounded editing of \`stp.md\`" "${root}/skills/stp-editor/SKILL.md"
   grep -Fq "truthful lifecycle state" "${root}/skills/sip-editor/SKILL.md"
   grep -Fq "truthful execution and integration state" "${root}/skills/sor-editor/SKILL.md"
@@ -57,6 +59,7 @@ assert_skill_bundle() {
     "${root}/skills/demo-operator/SKILL.md" \
     "${root}/skills/medium-article-writer/SKILL.md" \
     "${root}/skills/arxiv-paper-writer/SKILL.md" \
+    "${root}/skills/diagram-author/SKILL.md" \
     "${root}/skills/stp-editor/SKILL.md" \
     "${root}/skills/sip-editor/SKILL.md" \
     "${root}/skills/sor-editor/SKILL.md"
@@ -73,6 +76,7 @@ assert_skill_bundle "${CODEX_HOME}"
 [[ -L "${CODEX_HOME}/skills/pr-init" ]]
 [[ -L "${CODEX_HOME}/skills/pr-ready" ]]
 [[ -L "${CODEX_HOME}/skills/arxiv-paper-writer" ]]
+[[ -L "${CODEX_HOME}/skills/diagram-author" ]]
 [[ "$(cd "${CODEX_HOME}/skills/pr-init" && pwd -P)" == "${repo_root}/adl/tools/skills/pr-init" ]]
 
 malformed_root="${tmpdir}/malformed-skills"
