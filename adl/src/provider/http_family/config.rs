@@ -5,6 +5,81 @@ pub(super) fn cfg_str<'a>(cfg: &'a HashMap<String, Value>, key: &str) -> Option<
     cfg.get(key).and_then(|v| v.as_str()).map(str::trim)
 }
 
+fn cfg_bool(cfg: &HashMap<String, Value>, key: &str, provider_label: &str) -> Result<bool> {
+    match cfg.get(key) {
+        None => Ok(false),
+        Some(Value::Bool(value)) => Ok(*value),
+        Some(_) => Err(invalid_config(
+            provider_label,
+            format!("config.{key} must be a boolean when provided"),
+        )),
+    }
+}
+
+fn endpoint_host(endpoint: &str) -> Option<String> {
+    Url::parse(endpoint)
+        .ok()
+        .and_then(|url| url.host_str().map(|host| host.to_ascii_lowercase()))
+}
+
+fn is_loopback_endpoint(endpoint: &str) -> bool {
+    matches!(
+        endpoint_host(endpoint).as_deref(),
+        Some("localhost") | Some("127.0.0.1") | Some("::1")
+    )
+}
+
+fn is_trusted_vendor_endpoint(endpoint: &str, trusted_hosts: &[&str]) -> bool {
+    let Some(host) = endpoint_host(endpoint) else {
+        return false;
+    };
+    trusted_hosts
+        .iter()
+        .any(|trusted| host == trusted.to_ascii_lowercase())
+}
+
+pub(super) fn validate_vendor_credential_endpoint(
+    spec: &adl::ProviderSpec,
+    provider_label: &str,
+    endpoint: &str,
+    auth_env: &str,
+    default_auth_env: &str,
+    trusted_hosts: &[&str],
+) -> Result<()> {
+    if is_loopback_endpoint(endpoint)
+        || is_trusted_vendor_endpoint(endpoint, trusted_hosts)
+        || cfg_bool(&spec.config, "trust_custom_endpoint", provider_label)?
+    {
+        return Ok(());
+    }
+
+    let env_hint = if auth_env == default_auth_env {
+        format!("default {default_auth_env}")
+    } else {
+        format!("configured {auth_env}")
+    };
+    Err(invalid_config(
+        provider_label,
+        format!(
+            "refusing to send {env_hint} credentials to untrusted endpoint '{endpoint}'; use the vendor endpoint, a loopback endpoint, or set config.trust_custom_endpoint: true for intentional custom credential endpoints"
+        ),
+    ))
+}
+
+pub(super) fn validate_http_credential_endpoint(
+    cfg: &HashMap<String, Value>,
+    endpoint: &str,
+) -> Result<()> {
+    if is_loopback_endpoint(endpoint) || cfg_bool(cfg, "trust_custom_endpoint", "http")? {
+        return Ok(());
+    }
+
+    Err(invalid_config(
+        "http",
+        "config.auth requires config.trust_custom_endpoint: true for non-loopback bearer endpoints",
+    ))
+}
+
 pub(super) fn auth_env_for(spec: &adl::ProviderSpec, default_env: &str) -> Result<String> {
     let Some(auth_val) = spec.config.get("auth") else {
         return Ok(default_env.to_string());
