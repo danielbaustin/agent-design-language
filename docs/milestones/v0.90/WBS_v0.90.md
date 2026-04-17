@@ -86,7 +86,7 @@ Release tail:
 - WP-10: 93 percent coverage ratchet is measured, proven, and documented before
   threshold change
 - WP-11: milestone compression pilot catches drift without autonomous release
-  behavior
+  behavior; the pilot packet lives under `milestone_compression/`
 - WP-12: repo visibility prototype maps canonical docs to code, tests, demos,
   and review surfaces for a bounded slice; the prototype packet lives under
   `repo_visibility/`

@@ -1,0 +1,38 @@
+schema: adl.milestone_state.v1
+milestone: v0.90
+issue: 2030
+status: pilot
+authority:
+  issue_wave: docs/milestones/v0.90/WP_ISSUE_WAVE_v0.90.yaml
+  wbs: docs/milestones/v0.90/WBS_v0.90.md
+  sprint: docs/milestones/v0.90/SPRINT_v0.90.md
+  demo_matrix: docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
+  checklist: docs/milestones/v0.90/MILESTONE_CHECKLIST_v0.90.md
+state:
+  issue_wave: open
+  repo_visibility_packet: landed
+  milestone_compression_packet: landed
+  runtime_demos: planned
+  review_tail: pending
+  release_ceremony: pending
+checks:
+  issue_wave_count:
+    expected: 20
+    severity: fail
+  core_doc_issue_refs:
+    expected: all_wave_issues_visible_in_core_docs
+    severity: fail
+  repo_visibility_packet:
+    expected: directory_exists_when_state_landed
+    severity: fail
+  milestone_compression_packet:
+    expected: directory_exists_when_state_landed
+    severity: fail
+  planned_demo_rows:
+    expected: D1_through_D5_remain_planned_until_implementation_lands
+    severity: known_mismatch_if_changed
+non_goals:
+  - autonomous_merge
+  - autonomous_release_approval
+  - root_checkout_mutation
+  - replacing_human_ceremony_decisions
