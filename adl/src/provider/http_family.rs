@@ -40,13 +40,22 @@ fn acquire_invocation_artifact_lock(path: &Path) -> std::io::Result<InvocationAr
     ))
 }
 
-fn truncate_provider_body(text: &str) -> &str {
+const MAX_PROVIDER_ERROR_BODY_BYTES: usize = 200;
+
+fn truncate_provider_body(text: &str) -> String {
     let trimmed = text.trim();
-    if trimmed.len() > 200 {
-        &trimmed[..200]
-    } else {
-        trimmed
+    if trimmed.len() <= MAX_PROVIDER_ERROR_BODY_BYTES {
+        return trimmed.to_string();
     }
+
+    let end = trimmed
+        .char_indices()
+        .map(|(idx, _)| idx)
+        .chain(std::iter::once(trimmed.len()))
+        .take_while(|idx| *idx <= MAX_PROVIDER_ERROR_BODY_BYTES)
+        .last()
+        .unwrap_or(0);
+    trimmed[..end].to_string()
 }
 
 fn provider_http_json(
@@ -555,12 +564,6 @@ impl Provider for HttpProvider {
         if !resp.status().is_success() {
             let status = resp.status();
             let text = resp.text().unwrap_or_default();
-            let trimmed = text.trim();
-            let trimmed = if trimmed.len() > 200 {
-                &trimmed[..200]
-            } else {
-                trimmed
-            };
             let class = if status.is_client_error() {
                 "client_error"
             } else if status.is_server_error() {
@@ -568,7 +571,10 @@ impl Provider for HttpProvider {
             } else {
                 "http_error"
             };
-            let msg = format!("kind={class} status={status} body={trimmed}");
+            let msg = format!(
+                "kind={class} status={status} body={}",
+                truncate_provider_body(&text)
+            );
             if status.is_client_error() {
                 return Err(runtime_error_non_retryable("http", msg));
             }
