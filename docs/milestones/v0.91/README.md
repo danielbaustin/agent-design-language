@@ -1,5 +1,21 @@
 # Milestone README Template
 
+## Runtime v2 Inheritance Boundary
+
+v0.91 inherits Runtime v2 from the v0.90.1 and v0.90.2 follow-on milestones,
+but it should not be reduced to runtime plumbing.
+
+The center of gravity for v0.91 remains moral and emotional civilization:
+kindness, affect, wellbeing, humor, cultivation, harm prevention, moral
+resources, polis governance, and defensive posture. Runtime v2 gives those
+ideas a better substrate; it does not replace them.
+
+The first true Gödel-agent birthday is still out of scope for v0.91 and remains
+reserved for v0.92. v0.91 may prepare the moral and governance conditions for
+that birth, but it should not claim the birth event itself.
+
+Roadmap: ../ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md
+
 ## Metadata
 - Milestone: `{{milestone}}`
 - Version: `{{version}}`

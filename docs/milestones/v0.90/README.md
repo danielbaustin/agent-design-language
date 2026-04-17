@@ -1,5 +1,26 @@
 # Milestone README Template
 
+## Runtime v2 Follow-On Boundary
+
+v0.90 remains the long-lived bounded runtime milestone. Its job is to establish
+supervised long-lived agent cycles, heartbeat, continuity handles, operator
+control, and concrete proof/demo surfaces.
+
+The follow-on Runtime v2 substrate is intentionally staged after v0.90:
+
+- v0.90.1 owns the Runtime v2 foundation prototype.
+- v0.90.2 owns Runtime v2 hardening, invariant tests, violation artifacts,
+  recovery, and security-boundary proof surfaces.
+- v0.91 remains additive moral and emotional civilization work.
+- v0.92 owns the first true Gödel-agent birthday.
+
+The v0.90 WP-19 planning gate should seed v0.90.1 before v0.91 so this
+runtime-substrate work is ready without reducing the v0.91 moral, emotional,
+kindness, wellbeing, humor, cultivation, harm-prevention, or polis-governance
+scope.
+
+Roadmap: ../ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md
+
 ## Metadata
 - Milestone: `{{milestone}}`
 - Version: `{{version}}`

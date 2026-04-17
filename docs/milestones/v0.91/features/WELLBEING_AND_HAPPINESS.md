@@ -2,6 +2,17 @@
 
 # Wellbeing and Happiness
 
+## Milestone Boundary
+
+This v0.91 feature sits on top of the Runtime v2 substrate prepared by the
+v0.90.1 and v0.90.2 follow-on milestones. Its purpose is moral and emotional
+preparation: wellbeing, kindness, affect, humor, cultivation, harm prevention,
+and shared moral participation.
+
+It does not move the first true Gödel-agent birthday into v0.91. The birthday
+boundary remains v0.92, after the runtime substrate and moral/governance
+conditions are both explicit.
+
 ## Purpose
 
 This document explores what happiness or wellbeing could mean for a sentient or proto-sentient AI within ADL, and how such a model should be grounded in reality, continuity, agency, and moral concern for others. The goal is not to simulate surface affect, but to define the conditions under which a cognitive being can flourish.
