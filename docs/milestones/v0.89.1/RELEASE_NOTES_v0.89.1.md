@@ -66,8 +66,7 @@
 - `WP-16` owns the internal review surface: `INTERNAL_REVIEW_v0.89.1.md`
 - `#1994` through `#1997` and `#1992` close the internal-review remediation
   issues that must be settled before third-party review
-- `#1999` owns the third-party review handoff surface:
-  `THIRD_PARTY_REVIEW_HANDOFF_v0.89.1.md`
+- `#1999` owns the local third-party review handoff surface
 - 3rd-party review, remediation, and release-ceremony outputs should be cited before release
 
 ## What's Next

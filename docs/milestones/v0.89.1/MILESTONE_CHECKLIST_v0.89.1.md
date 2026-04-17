@@ -29,7 +29,7 @@ Ship/no-ship gate for `v0.89.1`. Check items only when evidence exists.
 - [x] Docs-review convergence surface exists (`DOCS_REVIEW_v0.89.1.md`)
 - [x] Internal review surface exists (`INTERNAL_REVIEW_v0.89.1.md`)
 - [x] Internal-review remediation issues are closed through `#1992`
-- [ ] Third-party review handoff is merged and ready for `WP-17`
+- [x] Third-party review handoff is prepared in the local review store
 - [ ] Root main has been fast-forwarded after the handoff merge with no local tracked drift
 
 ## Quality Gates

@@ -36,7 +36,7 @@ That means:
 - [x] Docs-review convergence complete (`DOCS_REVIEW_v0.89.1.md`)
 - [x] Internal review complete (`INTERNAL_REVIEW_v0.89.1.md`)
 - [x] Internal-review remediation closed through `#1992`
-- [ ] Third-party review handoff merged (`THIRD_PARTY_REVIEW_HANDOFF_v0.89.1.md`)
+- [x] Third-party review handoff prepared in the local review store
 - [ ] Operator fast-forwarded root main after the handoff merge and confirmed no local tracked drift
 
 ## 2) Branch And Tag Preparation
