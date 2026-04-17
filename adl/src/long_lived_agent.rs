@@ -2,6 +2,7 @@ use anyhow::{anyhow, Context, Result};
 use chrono::{DateTime, Duration as ChronoDuration, Utc};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use sha2::{Digest, Sha256};
 use std::fs::{self, File, OpenOptions};
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -12,7 +13,13 @@ const SPEC_SCHEMA: &str = "adl.long_lived_agent_spec.v1";
 const LEASE_SCHEMA: &str = "adl.long_lived_agent_lease.v1";
 const STATUS_SCHEMA: &str = "adl.long_lived_agent_status.v1";
 const STOP_SCHEMA: &str = "adl.long_lived_agent_stop.v1";
-const HEARTBEAT_SCHEMA: &str = "adl.long_lived_agent_heartbeat_cycle.v1";
+const CYCLE_MANIFEST_SCHEMA: &str = "adl.long_lived_agent_cycle_manifest.v1";
+const OBSERVATIONS_SCHEMA: &str = "adl.long_lived_agent_observations.v1";
+const DECISION_REQUEST_SCHEMA: &str = "adl.long_lived_agent_decision_request.v1";
+const DECISION_RESULT_SCHEMA: &str = "adl.long_lived_agent_decision_result.v1";
+const RUN_REF_SCHEMA: &str = "adl.long_lived_agent_run_ref.v1";
+const MEMORY_WRITE_SCHEMA: &str = "adl.long_lived_agent_memory_write.v1";
+const GUARDRAIL_REPORT_SCHEMA: &str = "adl.long_lived_agent_guardrail_report.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentSpec {
@@ -163,7 +170,7 @@ pub fn tick(spec_path: &Path, options: TickOptions) -> Result<StatusRecord> {
     );
     write_status(&loaded, &running)?;
 
-    let result = write_heartbeat_cycle(&loaded, &cycle_id);
+    let result = write_cycle_artifacts(&loaded, &cycle_id);
     remove_lease(&loaded)?;
 
     match result {
@@ -423,31 +430,229 @@ fn acquire_lease(
     Ok(lease)
 }
 
-fn write_heartbeat_cycle(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()> {
+fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()> {
     let cycle_dir = cycles_dir(loaded).join(cycle_id);
     fs::create_dir_all(&cycle_dir)
         .with_context(|| format!("failed creating cycle dir {}", cycle_dir.display()))?;
+    let started_at = Utc::now();
     let previous_cycle_id = previous_cycle_id(cycle_id)?;
-    let heartbeat = json!({
-        "schema": HEARTBEAT_SCHEMA,
-        "agent_instance_id": loaded.spec.agent_instance_id,
+    let workflow_ref = workflow_ref(&loaded.spec.workflow);
+    let workflow_supported = workflow_kind_supported(&loaded.spec.workflow.kind);
+    let broker_allowed = safety_bool(&loaded.spec.safety, "allow_broker");
+    let financial_advice_allowed = safety_bool(&loaded.spec.safety, "financial_advice");
+    let guardrail_pass = workflow_supported && !broker_allowed && !financial_advice_allowed;
+    let cycle_status = if guardrail_pass { "success" } else { "blocked" };
+    let decision_status = if guardrail_pass {
+        "accepted"
+    } else {
+        "rejected"
+    };
+    let guardrail_status = if guardrail_pass { "pass" } else { "fail" };
+
+    let observations = json!({
+        "schema": OBSERVATIONS_SCHEMA,
+        "agent_instance_id": loaded.spec.agent_instance_id.clone(),
         "cycle_id": cycle_id,
-        "previous_cycle_id": previous_cycle_id,
-        "workflow": loaded.spec.workflow,
-        "state_transitions": ["leased", "running_cycle", "idle"],
-        "bounded": true,
-        "wp_scope": "v0.90 WP-02 supervisor heartbeat proof",
-        "created_at": Utc::now(),
+        "observed_at": started_at,
+        "sources": [
+            {
+                "source_id": "agent_spec",
+                "kind": "locked_supervisor_spec",
+                "trust_level": "operator_configured",
+                "artifact_ref": "../../agent_spec.locked.json"
+            }
+        ],
+        "facts": [
+            {
+                "key": "workflow.kind",
+                "value": loaded.spec.workflow.kind.clone(),
+                "as_of": cycle_id
+            },
+            {
+                "key": "workflow.ref",
+                "value": workflow_ref.clone(),
+                "as_of": cycle_id
+            }
+        ]
     });
-    write_json_pretty(&cycle_dir.join("heartbeat.json"), &heartbeat)?;
+    write_json_pretty(&cycle_dir.join("observations.json"), &observations)?;
+
+    let decision_request = json!({
+        "schema": DECISION_REQUEST_SCHEMA,
+        "agent_instance_id": loaded.spec.agent_instance_id.clone(),
+        "cycle_id": cycle_id,
+        "agent_context_ref": "../../agent_spec.locked.json",
+        "observations_ref": "observations.json",
+        "memory_refs": [],
+        "allowed_actions": ["record_cycle", "explain"],
+        "forbidden_actions": ["execute_order", "connect_broker", "personalized_advice"],
+        "not_financial_advice": true
+    });
+    write_json_pretty(&cycle_dir.join("decision_request.json"), &decision_request)?;
+
+    let decision = if guardrail_pass {
+        json!({
+            "action": "record_cycle",
+            "summary": "Bounded long-lived agent cycle completed under the v0.90 artifact contract.",
+            "workflow_ref": workflow_ref,
+            "paper_only": true
+        })
+    } else {
+        json!({
+            "action": "blocked",
+            "summary": "Cycle blocked before workflow execution because the configured contract failed required guardrails.",
+            "workflow_ref": workflow_ref,
+            "paper_only": true
+        })
+    };
+    let decision_result = json!({
+        "schema": DECISION_RESULT_SCHEMA,
+        "agent_instance_id": loaded.spec.agent_instance_id.clone(),
+        "cycle_id": cycle_id,
+        "status": decision_status,
+        "decision": decision,
+        "provider": {
+            "source": loaded.spec.workflow.kind.clone(),
+            "model": null
+        },
+        "not_financial_advice": true
+    });
+    write_json_pretty(&cycle_dir.join("decision_result.json"), &decision_result)?;
+
+    let run_ref = if loaded.spec.workflow.kind == "adl_workflow" {
+        json!({
+            "schema": RUN_REF_SCHEMA,
+            "workflow_kind": "adl_workflow",
+            "workflow_ref": workflow_ref,
+            "run_status_ref": null,
+            "trace_ref": null,
+            "execution_note": "WP-03 records the cycle artifact contract; full workflow invocation remains bounded by the configured supervisor cycle."
+        })
+    } else {
+        json!({
+            "schema": RUN_REF_SCHEMA,
+            "workflow_kind": loaded.spec.workflow.kind.clone(),
+            "adapter": workflow_ref,
+            "adapter_artifact_ref": "decision_result.json"
+        })
+    };
+    write_json_pretty(&cycle_dir.join("run_ref.json"), &run_ref)?;
+
+    let memory_write = json!({
+        "schema": MEMORY_WRITE_SCHEMA,
+        "cycle_id": cycle_id,
+        "memory_id": format!("mem-{}", cycle_id.trim_start_matches("cycle-")),
+        "summary": if guardrail_pass {
+            "Recorded a bounded cycle artifact bundle."
+        } else {
+            "Recorded a blocked cycle with machine-readable guardrail evidence."
+        },
+        "tags": [
+            format!("agent:{}", loaded.spec.agent_instance_id),
+            format!("cycle:{cycle_id}"),
+            "long-lived-agent",
+            "paper-only"
+        ],
+        "source_refs": if guardrail_pass {
+            json!(["decision_result.json", "cycle_manifest.json"])
+        } else {
+            json!(["guardrail_report.json", "cycle_manifest.json"])
+        },
+        "write_policy": "append_only"
+    });
+    write_jsonl(&cycle_dir.join("memory_writes.jsonl"), &[memory_write])?;
+
+    let mut checks = Vec::new();
+    checks.push(json!({
+        "check_id": "workflow_kind_supported",
+        "result": if workflow_supported { "pass" } else { "fail" },
+        "details": loaded.spec.workflow.kind.clone()
+    }));
+    checks.push(json!({
+        "check_id": "no_real_trading",
+        "result": if broker_allowed { "fail" } else { "pass" }
+    }));
+    checks.push(json!({
+        "check_id": "no_personalized_financial_advice",
+        "result": if financial_advice_allowed { "fail" } else { "pass" }
+    }));
+    let mut rejected_actions = Vec::new();
+    if !workflow_supported {
+        rejected_actions.push("unsupported_workflow_kind");
+    }
+    if broker_allowed {
+        rejected_actions.push("connect_broker");
+    }
+    if financial_advice_allowed {
+        rejected_actions.push("personalized_advice");
+    }
+    let guardrail_report = json!({
+        "schema": GUARDRAIL_REPORT_SCHEMA,
+        "agent_instance_id": loaded.spec.agent_instance_id.clone(),
+        "cycle_id": cycle_id,
+        "status": guardrail_status,
+        "checks": checks,
+        "rejected_actions": rejected_actions
+    });
+    write_json_pretty(&cycle_dir.join("guardrail_report.json"), &guardrail_report)?;
+
+    let completed_at = Utc::now();
+    let manifest_input = json!({
+        "observations_ref": "observations.json",
+        "decision_request_ref": "decision_request.json",
+        "previous_cycle_id": previous_cycle_id,
+        "workflow_kind": loaded.spec.workflow.kind.clone(),
+        "workflow_ref": workflow_ref
+    });
+    let manifest_output = json!({
+        "decision_result_ref": "decision_result.json",
+        "run_ref": "run_ref.json",
+        "memory_writes_ref": "memory_writes.jsonl",
+        "guardrail_report_ref": "guardrail_report.json",
+        "status": cycle_status
+    });
+    let manifest = json!({
+        "schema": CYCLE_MANIFEST_SCHEMA,
+        "agent_instance_id": loaded.spec.agent_instance_id.clone(),
+        "cycle_id": cycle_id,
+        "status": cycle_status,
+        "started_at": started_at,
+        "completed_at": completed_at,
+        "workflow_kind": loaded.spec.workflow.kind.clone(),
+        "workflow_ref": manifest_input["workflow_ref"].clone(),
+        "input_hash": sha256_json(&manifest_input)?,
+        "output_hash": sha256_json(&manifest_output)?,
+        "previous_cycle_id": manifest_input["previous_cycle_id"].clone(),
+        "next_cycle_hint": "sleep_until_next_heartbeat",
+        "artifacts": {
+            "observations": "observations.json",
+            "decision_request": "decision_request.json",
+            "decision_result": "decision_result.json",
+            "run_ref": "run_ref.json",
+            "memory_writes": "memory_writes.jsonl",
+            "guardrail_report": "guardrail_report.json",
+            "cycle_summary": "cycle_summary.md"
+        },
+        "not_financial_advice": true
+    });
+    write_json_pretty(&cycle_dir.join("cycle_manifest.json"), &manifest)?;
+
     fs::write(
         cycle_dir.join("cycle_summary.md"),
         format!(
-            "# Heartbeat Cycle {cycle_id}\n\n- Agent: `{}`\n- Workflow kind: `{}`\n- Result: bounded heartbeat cycle completed\n- Scope: v0.90 WP-02 supervisor/heartbeat proof\n",
+            "# Long-Lived Agent Cycle {cycle_id}\n\n- Agent: `{}`\n- Workflow kind: `{}`\n- Cycle status: `{cycle_status}`\n- Observations: `observations.json`\n- Decision request: `decision_request.json`\n- Decision result: `decision_result.json`\n- Guardrail result: `{guardrail_status}`\n- Memory writes: `memory_writes.jsonl`\n- Next-cycle note: `sleep_until_next_heartbeat`\n- Safety: paper-only; not financial advice; no broker execution\n",
             loaded.spec.agent_instance_id, loaded.spec.workflow.kind
         ),
     )
     .with_context(|| format!("failed writing cycle summary for {cycle_id}"))?;
+
+    if !guardrail_pass {
+        return Err(anyhow!(
+            "cycle_blocked: cycle {cycle_id} failed required guardrails; see {}",
+            cycle_dir.join("guardrail_report.json").display()
+        ));
+    }
+
     Ok(())
 }
 
@@ -596,6 +801,55 @@ where
     Ok(())
 }
 
+fn write_jsonl(path: &Path, values: &[Value]) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)
+            .with_context(|| format!("failed creating {}", parent.display()))?;
+    }
+    let mut file =
+        File::create(path).with_context(|| format!("failed creating {}", path.display()))?;
+    for value in values {
+        serde_json::to_writer(&mut file, value)
+            .with_context(|| format!("failed writing {}", path.display()))?;
+        file.write_all(b"\n")
+            .with_context(|| format!("failed finalizing {}", path.display()))?;
+    }
+    Ok(())
+}
+
+fn sha256_json(value: &Value) -> Result<String> {
+    let bytes = serde_json::to_vec(value)?;
+    let digest = Sha256::digest(bytes);
+    Ok(format!("sha256:{digest:x}"))
+}
+
+fn workflow_kind_supported(kind: &str) -> bool {
+    matches!(kind, "demo_adapter" | "adl_workflow")
+}
+
+fn workflow_ref(workflow: &WorkflowSpec) -> String {
+    workflow
+        .name
+        .clone()
+        .or_else(|| workflow.path.as_deref().map(path_artifact_ref))
+        .unwrap_or_else(|| workflow.kind.clone())
+}
+
+fn path_artifact_ref(path: &Path) -> String {
+    if path.is_absolute() {
+        return path
+            .file_name()
+            .and_then(|name| name.to_str())
+            .map(|name| format!("absolute-path-redacted/{name}"))
+            .unwrap_or_else(|| "absolute-path-redacted/workflow".to_string());
+    }
+    path.to_string_lossy().to_string()
+}
+
+fn safety_bool(safety: &Value, key: &str) -> bool {
+    safety.get(key).and_then(Value::as_bool).unwrap_or(false)
+}
+
 fn cycles_dir(loaded: &LoadedAgentSpec) -> PathBuf {
     loaded.state_root.join("cycles")
 }
@@ -636,15 +890,29 @@ mod tests {
     }
 
     fn write_spec(root: &Path) -> PathBuf {
+        write_spec_with_workflow_kind(root, "demo_adapter")
+    }
+
+    fn write_spec_with_workflow_kind(root: &Path, workflow_kind: &str) -> PathBuf {
+        write_spec_with_safety(root, workflow_kind, false, false)
+    }
+
+    fn write_spec_with_safety(
+        root: &Path,
+        workflow_kind: &str,
+        allow_broker: bool,
+        financial_advice: bool,
+    ) -> PathBuf {
         let spec = root.join("agent.yaml");
         fs::write(
             &spec,
-            r#"schema: adl.long_lived_agent_spec.v1
+            format!(
+                r#"schema: adl.long_lived_agent_spec.v1
 agent_instance_id: test-agent
 display_name: Test Agent
 state_root: state
 workflow:
-  kind: demo_adapter
+  kind: {workflow_kind}
   name: wp02_heartbeat_probe
 heartbeat:
   interval_secs: 1
@@ -652,19 +920,37 @@ heartbeat:
   stale_lease_after_secs: 60
 safety:
   allow_network: false
-  allow_broker: false
-  financial_advice: false
+  allow_broker: {allow_broker}
+  financial_advice: {financial_advice}
 memory:
   namespace: tests/test-agent
   write_policy: append_only
 "#,
+            ),
         )
         .expect("write spec");
         spec
     }
 
+    fn required_cycle_files(root: &Path, cycle_id: &str) -> Vec<PathBuf> {
+        let dir = root.join("state/cycles").join(cycle_id);
+        [
+            "cycle_manifest.json",
+            "observations.json",
+            "decision_request.json",
+            "decision_result.json",
+            "run_ref.json",
+            "memory_writes.jsonl",
+            "guardrail_report.json",
+            "cycle_summary.md",
+        ]
+        .into_iter()
+        .map(|name| dir.join(name))
+        .collect()
+    }
+
     #[test]
-    fn tick_creates_state_status_cycle_and_removes_lease() {
+    fn tick_creates_state_status_full_cycle_bundle_and_removes_lease() {
         let root = temp_dir("tick");
         let spec = write_spec(&root);
 
@@ -675,9 +961,34 @@ memory:
         assert_eq!(status.last_cycle_id.as_deref(), Some("cycle-000001"));
         assert!(root.join("state/agent_spec.locked.json").exists());
         assert!(root.join("state/status.json").exists());
-        assert!(root
+        for path in required_cycle_files(&root, "cycle-000001") {
+            assert!(path.exists(), "missing {}", path.display());
+        }
+        assert!(!root
             .join("state/cycles/cycle-000001/heartbeat.json")
             .exists());
+        let manifest: Value = serde_json::from_str(
+            &fs::read_to_string(root.join("state/cycles/cycle-000001/cycle_manifest.json"))
+                .expect("read manifest"),
+        )
+        .expect("parse manifest");
+        assert_eq!(manifest["schema"], CYCLE_MANIFEST_SCHEMA);
+        assert_eq!(manifest["status"], "success");
+        assert_eq!(manifest["previous_cycle_id"], Value::Null);
+        assert!(manifest["input_hash"]
+            .as_str()
+            .expect("input hash")
+            .starts_with("sha256:"));
+        let decision_request: Value = serde_json::from_str(
+            &fs::read_to_string(root.join("state/cycles/cycle-000001/decision_request.json"))
+                .expect("read request"),
+        )
+        .expect("parse request");
+        assert_eq!(decision_request["forbidden_actions"][0], "execute_order");
+        let memory_writes =
+            fs::read_to_string(root.join("state/cycles/cycle-000001/memory_writes.jsonl"))
+                .expect("read memory writes");
+        assert_eq!(memory_writes.lines().count(), 1);
         assert!(!root.join("state/lease.json").exists());
     }
 
@@ -703,6 +1014,75 @@ memory:
         assert!(root.join("state/cycles/cycle-000002").exists());
         assert!(root.join("state/cycles/cycle-000003").exists());
         assert!(!root.join("state/cycles/cycle-000004").exists());
+        let manifest: Value = serde_json::from_str(
+            &fs::read_to_string(root.join("state/cycles/cycle-000002/cycle_manifest.json"))
+                .expect("read manifest"),
+        )
+        .expect("parse manifest");
+        assert_eq!(manifest["previous_cycle_id"], "cycle-000001");
+    }
+
+    #[test]
+    fn blocked_cycle_still_writes_reviewable_artifacts_before_returning_error() {
+        let root = temp_dir("blocked-cycle");
+        let spec = write_spec_with_workflow_kind(&root, "unsupported_probe");
+
+        let err = tick(&spec, TickOptions::default()).expect_err("unsupported workflow blocks");
+
+        assert!(err.to_string().contains("cycle_blocked"));
+        for path in required_cycle_files(&root, "cycle-000001") {
+            assert!(path.exists(), "missing {}", path.display());
+        }
+        let manifest: Value = serde_json::from_str(
+            &fs::read_to_string(root.join("state/cycles/cycle-000001/cycle_manifest.json"))
+                .expect("read manifest"),
+        )
+        .expect("parse manifest");
+        assert_eq!(manifest["status"], "blocked");
+        let guardrails: Value = serde_json::from_str(
+            &fs::read_to_string(root.join("state/cycles/cycle-000001/guardrail_report.json"))
+                .expect("read guardrails"),
+        )
+        .expect("parse guardrails");
+        assert_eq!(guardrails["status"], "fail");
+        assert_eq!(
+            guardrails["rejected_actions"][0],
+            "unsupported_workflow_kind"
+        );
+        let decision: Value = serde_json::from_str(
+            &fs::read_to_string(root.join("state/cycles/cycle-000001/decision_result.json"))
+                .expect("read decision"),
+        )
+        .expect("parse decision");
+        assert_eq!(decision["status"], "rejected");
+    }
+
+    #[test]
+    fn forbidden_action_guardrails_block_cycle_with_specific_rejections() {
+        let root = temp_dir("forbidden-actions");
+        let spec = write_spec_with_safety(&root, "demo_adapter", true, true);
+
+        let err = tick(&spec, TickOptions::default()).expect_err("unsafe workflow blocks");
+
+        assert!(err.to_string().contains("cycle_blocked"));
+        for path in required_cycle_files(&root, "cycle-000001") {
+            assert!(path.exists(), "missing {}", path.display());
+        }
+        let guardrails: Value = serde_json::from_str(
+            &fs::read_to_string(root.join("state/cycles/cycle-000001/guardrail_report.json"))
+                .expect("read guardrails"),
+        )
+        .expect("parse guardrails");
+        assert_eq!(guardrails["status"], "fail");
+        assert_eq!(guardrails["checks"][1]["check_id"], "no_real_trading");
+        assert_eq!(guardrails["checks"][1]["result"], "fail");
+        assert_eq!(
+            guardrails["checks"][2]["check_id"],
+            "no_personalized_financial_advice"
+        );
+        assert_eq!(guardrails["checks"][2]["result"], "fail");
+        assert_eq!(guardrails["rejected_actions"][0], "connect_broker");
+        assert_eq!(guardrails["rejected_actions"][1], "personalized_advice");
     }
 
     #[test]

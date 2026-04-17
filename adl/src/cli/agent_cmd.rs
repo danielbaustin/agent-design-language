@@ -233,6 +233,25 @@ memory:
         );
     }
 
+    fn assert_cycle_contract_exists(root: &Path, cycle_id: &str) {
+        let cycle_dir = root.join("state/cycles").join(cycle_id);
+        for artifact in [
+            "cycle_manifest.json",
+            "observations.json",
+            "decision_request.json",
+            "decision_result.json",
+            "run_ref.json",
+            "memory_writes.jsonl",
+            "guardrail_report.json",
+            "cycle_summary.md",
+        ] {
+            assert!(
+                cycle_dir.join(artifact).exists(),
+                "missing {artifact} for {cycle_id}"
+            );
+        }
+    }
+
     #[test]
     fn agent_dispatch_help_and_unknown_paths_are_reported() {
         assert!(real_agent(&args(&["help"])).is_ok());
@@ -285,9 +304,7 @@ memory:
         let spec = spec.to_str().expect("utf8 spec path");
 
         assert!(real_agent(&args(&["tick", "--spec", spec])).is_ok());
-        assert!(root
-            .join("state/cycles/cycle-000001/heartbeat.json")
-            .exists());
+        assert_cycle_contract_exists(&root, "cycle-000001");
 
         assert!(real_agent(&args(&[
             "run",
@@ -301,9 +318,7 @@ memory:
             "--recover-stale-lease",
         ]))
         .is_ok());
-        assert!(root
-            .join("state/cycles/cycle-000003/heartbeat.json")
-            .exists());
+        assert_cycle_contract_exists(&root, "cycle-000003");
 
         assert!(real_agent(&args(&["status", "--spec", spec])).is_ok());
         assert!(real_agent(&args(&[
