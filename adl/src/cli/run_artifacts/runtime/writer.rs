@@ -15,7 +15,7 @@ use super::super::summary::{
 };
 use super::super::ControlPathSummaryContext;
 use super::super::*;
-use super::trace_validation::build_trace_v1_envelope;
+use super::trace_envelope::build_trace_v1_envelope;
 use ::adl::runtime_environment::RuntimeEnvironment;
 use serde::Serialize;
 
