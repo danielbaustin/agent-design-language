@@ -8,7 +8,7 @@ trap 'rm -rf "${tmpdir}"' EXIT
 assert_skill_bundle() {
   local root="$1"
 
-  for skill in workflow-conductor pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review test-generator demo-operator medium-article-writer arxiv-paper-writer diagram-author stp-editor sip-editor sor-editor; do
+  for skill in workflow-conductor pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder test-generator demo-operator medium-article-writer arxiv-paper-writer diagram-author stp-editor sip-editor sor-editor; do
     [[ -d "${root}/skills/${skill}" ]]
   done
 
@@ -20,6 +20,8 @@ assert_skill_bundle() {
   [[ -f "${root}/skills/pr-janitor/SKILL.md" ]]
   [[ -f "${root}/skills/pr-closeout/SKILL.md" ]]
   [[ -f "${root}/skills/repo-code-review/SKILL.md" ]]
+  [[ -f "${root}/skills/repo-packet-builder/SKILL.md" ]]
+  [[ -x "${root}/skills/repo-packet-builder/scripts/build_repo_packet.py" ]]
   [[ -f "${root}/skills/test-generator/SKILL.md" ]]
   [[ -f "${root}/skills/demo-operator/SKILL.md" ]]
   [[ -f "${root}/skills/medium-article-writer/SKILL.md" ]]
@@ -38,6 +40,7 @@ assert_skill_bundle() {
   grep -Fq "failed checks or merge conflicts" "${root}/skills/pr-janitor/SKILL.md"
   grep -Fq "post-merge and post-closure cleanup phase" "${root}/skills/pr-closeout/SKILL.md"
   grep -Fq "findings-first" "${root}/skills/repo-code-review/SKILL.md"
+  grep -Fq "packet-construction skill, not a reviewer" "${root}/skills/repo-packet-builder/SKILL.md"
   grep -Fq "smallest truthful test surface" "${root}/skills/test-generator/SKILL.md"
   grep -Fq "run one named demo" "${root}/skills/demo-operator/SKILL.md"
   grep -Fq "stopping before publication" "${root}/skills/medium-article-writer/SKILL.md"
@@ -56,6 +59,7 @@ assert_skill_bundle() {
     "${root}/skills/pr-janitor/SKILL.md" \
     "${root}/skills/pr-closeout/SKILL.md" \
     "${root}/skills/repo-code-review/SKILL.md" \
+    "${root}/skills/repo-packet-builder/SKILL.md" \
     "${root}/skills/test-generator/SKILL.md" \
     "${root}/skills/demo-operator/SKILL.md" \
     "${root}/skills/medium-article-writer/SKILL.md" \
@@ -76,6 +80,7 @@ ADL_OPERATIONAL_SKILLS_INSTALL_MODE=symlink bash "${repo_root}/adl/tools/install
 assert_skill_bundle "${CODEX_HOME}"
 [[ -L "${CODEX_HOME}/skills/pr-init" ]]
 [[ -L "${CODEX_HOME}/skills/pr-ready" ]]
+[[ -L "${CODEX_HOME}/skills/repo-packet-builder" ]]
 [[ -L "${CODEX_HOME}/skills/arxiv-paper-writer" ]]
 [[ -L "${CODEX_HOME}/skills/diagram-author" ]]
 [[ "$(cd "${CODEX_HOME}/skills/pr-init" && pwd -P)" == "${repo_root}/adl/tools/skills/pr-init" ]]
