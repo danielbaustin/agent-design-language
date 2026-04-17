@@ -77,6 +77,7 @@ Canonical planning docs:
 - Milestone checklist: MILESTONE_CHECKLIST_v0.90.md
 - Release plan: RELEASE_PLAN_v0.90.md
 - Release notes draft: RELEASE_NOTES_v0.90.md
+- WP execution readiness: WP_EXECUTION_READINESS_v0.90.md
 - Issue wave: WP_ISSUE_WAVE_v0.90.yaml
 
 Planning control docs:
@@ -109,6 +110,11 @@ release closeout:
 The v0.90 issue wave is now open. WP-01 is `#2019`; WP-02 through WP-20
 are `#2021` through `#2039`.
 
+WP_EXECUTION_READINESS_v0.90.md records the execution gates for those open
+work packages. WP sessions should use it to bind each issue to concrete feature
+docs, proof surfaces, validation expectations, and non-goals before changing
+code or demos.
+
 ## Demo And Validation Surface
 
 Primary planned demo:
@@ -137,7 +143,8 @@ Primary planned proof surfaces:
 ## Status
 
 - Planning: tracked package promoted by `v0.89.1` WP-19 and opened by v0.90 WP-01
-- Execution: issue wave open; WP-02 is ready to start after WP-01 lands
+- Execution: issue wave open; WP-02 starts from the execution-readiness gate in
+  WP_EXECUTION_READINESS_v0.90.md
 - Validation: not started
 - Release readiness: not started
 

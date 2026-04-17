@@ -58,3 +58,5 @@ The default recommendation is:
 - Treat files in ideas/ as rationale, context, or later-band planning.
 - Treat this index as tracked planning truth for v0.90 after WP-01 assigns
   issue numbers and reconciles the opened issue wave.
+- Treat WP_EXECUTION_READINESS_v0.90.md as the bridge from these feature docs to
+  concrete WP execution requirements.

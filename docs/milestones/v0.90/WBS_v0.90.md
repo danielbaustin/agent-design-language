@@ -17,6 +17,10 @@ compression, repo visibility, and explicit Rust refactoring.
 Issue numbers were assigned by the v0.90 WP-01 issue-wave step. WP-01 is
 `#2019`; WP-02 through WP-20 are `#2021` through `#2039`.
 
+WP_EXECUTION_READINESS_v0.90.md is the tracked execution gate for these issues.
+It binds the WBS rows to concrete source docs, required artifact or proof
+surfaces, validation expectations, and non-goals.
+
 ## Work Packages
 
 | ID | Work Package | Description | Deliverable | Dependencies | Issue |
@@ -63,19 +67,31 @@ Release tail:
 ## Acceptance Mapping
 
 - WP-01: tracked v0.90 package exists and issue wave can be created mechanically
-- WP-02: supervisor/heartbeat state is explicit and bounded
-- WP-03: every long-lived cycle has a durable artifact contract
-- WP-04: continuity is explicit without claiming full identity
-- WP-05: operator controls and safety reports exist
-- WP-06: reviewers can inspect status and relevant trace evidence
-- WP-07: stock league demo has safe fixtures and no-financial-advice framing
-- WP-08: demo proves bounded multi-cycle continuity
-- WP-09: selected demo additions or extensions are named, bounded, and validated
-- WP-10: 93 percent coverage ratchet is measured, proven, and documented before threshold change
-- WP-11: milestone compression pilot catches drift without autonomous release behavior
-- WP-12: repo visibility prototype maps canonical docs to code, tests, demos, and review surfaces
+- WP-02: supervisor/heartbeat state is explicit, bounded, and validated against
+  FEATURE_LONG_LIVED_SUPERVISOR_HEARTBEAT.md
+- WP-03: every long-lived cycle has a durable artifact contract and focused
+  artifact-shape validation
+- WP-04: continuity is explicit, ledger-backed, restartable, and does not claim
+  full identity
+- WP-05: operator controls, safety reports, guardrails, and sanitization checks
+  exist
+- WP-06: reviewers can inspect status and relevant trace evidence through a
+  narrow proof command or proof packet
+- WP-07: stock league demo has safe fixtures, paper-only guardrails, and
+  no-financial-advice framing
+- WP-08: demo proves bounded multi-cycle continuity with replayable or runnable
+  proof artifacts
+- WP-09: selected demo additions or extensions are named, bounded, validated, or
+  explicitly deferred before execution
+- WP-10: 93 percent coverage ratchet is measured, proven, and documented before
+  threshold change
+- WP-11: milestone compression pilot catches drift without autonomous release
+  behavior
+- WP-12: repo visibility prototype maps canonical docs to code, tests, demos,
+  and review surfaces for a bounded slice
 - WP-13: docs and feature mappings are consistent across core and sidecar work
-- WP-14: Rust refactors are bounded, validated, and justified by maintainability or testability
+- WP-14: Rust refactors are bounded, validated, and justified by
+  maintainability, testability, or review evidence
 - WP-15 through WP-17: review findings are closed or deferred truthfully
 - WP-18: final quality and release-readiness checks are complete
 - WP-19: next milestone planning is ready before release ceremony
