@@ -109,6 +109,21 @@ Bounded lifecycle proof/demo:
 
 - `docs/tooling/editor/five_command_demo.md`
 
+### Compression-Safe Validation
+
+The v0.90 milestone compression pilot distinguishes execution compression from
+validation compression.
+
+Low-risk docs/static-tooling issues may use the
+`FOCUSED_LOCAL_CI_GATED` profile in
+`docs/milestones/v0.90/milestone_compression/FINISH_VALIDATION_PROFILES_v0.90.md`
+when focused local checks directly prove the changed surface. The output record
+must say that full local validation was not run, list the focused commands that
+did run, and keep CI required before merge.
+
+Use full local validation for runtime, schema, security, release, broad tooling,
+or ambiguous changes.
+
 ## 7) Finish PR
 
 ```bash
