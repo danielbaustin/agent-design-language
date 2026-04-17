@@ -383,6 +383,79 @@ fn rewrite_json_artifact(
     .expect("rewrite control-path artifact");
 }
 
+fn expect_control_path_artifact_validation_error<F>(
+    control_path_root: &std::path::Path,
+    artifact_name: &str,
+    expected_substring: &str,
+    mutate: F,
+) where
+    F: FnOnce(&mut serde_json::Value),
+{
+    let artifact_path = control_path_root.join(artifact_name);
+    let original_artifact =
+        std::fs::read_to_string(&artifact_path).expect("read control-path artifact");
+    let mut artifact: serde_json::Value =
+        serde_json::from_str(&original_artifact).expect("parse control-path artifact");
+    mutate(&mut artifact);
+    rewrite_json_artifact(control_path_root, artifact_name, &artifact);
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject mutated control-path artifact");
+    assert!(
+        err.to_string().contains(expected_substring),
+        "expected '{expected_substring}' in error, got: {err}"
+    );
+
+    std::fs::write(&artifact_path, original_artifact).expect("restore control-path artifact");
+}
+
+fn expect_two_control_path_artifacts_validation_error<F, G>(
+    control_path_root: &std::path::Path,
+    first_artifact_name: &str,
+    second_artifact_name: &str,
+    expected_substring: &str,
+    mutate_first: F,
+    mutate_second: G,
+) where
+    F: FnOnce(&mut serde_json::Value),
+    G: FnOnce(&mut serde_json::Value),
+{
+    let first_artifact_path = control_path_root.join(first_artifact_name);
+    let second_artifact_path = control_path_root.join(second_artifact_name);
+    let original_first_artifact =
+        std::fs::read_to_string(&first_artifact_path).expect("read first control-path artifact");
+    let original_second_artifact =
+        std::fs::read_to_string(&second_artifact_path).expect("read second control-path artifact");
+    let mut first_artifact: serde_json::Value =
+        serde_json::from_str(&original_first_artifact).expect("parse first control-path artifact");
+    let mut second_artifact: serde_json::Value = serde_json::from_str(&original_second_artifact)
+        .expect("parse second control-path artifact");
+    mutate_first(&mut first_artifact);
+    mutate_second(&mut second_artifact);
+    rewrite_json_artifact(control_path_root, first_artifact_name, &first_artifact);
+    rewrite_json_artifact(control_path_root, second_artifact_name, &second_artifact);
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject mutated control-path artifacts");
+    assert!(
+        err.to_string().contains(expected_substring),
+        "expected '{expected_substring}' in error, got: {err}"
+    );
+
+    std::fs::write(&first_artifact_path, original_first_artifact)
+        .expect("restore first control-path artifact");
+    std::fs::write(&second_artifact_path, original_second_artifact)
+        .expect("restore second control-path artifact");
+}
+
 fn expect_security_review_validation_error<F>(
     control_path_root: &std::path::Path,
     original_security_review: &str,
@@ -445,6 +518,22 @@ fn cli_artifact_validate_control_path_rejects_unknown_arg() {
     assert!(err
         .to_string()
         .contains("unknown arg for artifact validate-control-path: --bogus"));
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_missing_root() {
+    let missing_root = unique_temp_dir("adl-control-path-validate-missing-root");
+    std::fs::remove_dir_all(&missing_root).expect("remove temporary root");
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        missing_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject missing artifact root");
+    assert!(err
+        .to_string()
+        .contains("control-path artifact root does not exist"));
 }
 
 #[test]
@@ -700,6 +789,24 @@ fn cli_artifact_validate_control_path_rejects_malformed_artifact() {
 }
 
 #[test]
+fn cli_artifact_validate_control_path_rejects_empty_summary() {
+    let (out_dir, control_path_root) =
+        materialize_control_path_demo("adl-control-path-validate-empty-summary");
+    std::fs::write(control_path_root.join("summary.txt"), "\n\n")
+        .expect("empty control-path summary");
+
+    let err = real_artifact(&[
+        "validate-control-path".to_string(),
+        "--root".to_string(),
+        control_path_root.to_string_lossy().to_string(),
+    ])
+    .expect_err("validator should reject empty summary");
+    assert!(err.to_string().contains("control-path summary is empty"));
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
 fn cli_artifact_validate_control_path_rejects_security_review_mismatches() {
     let (out_dir, control_path_root) =
         materialize_control_path_demo("adl-control-path-validate-security-review-mismatch");
@@ -939,6 +1046,276 @@ fn cli_artifact_validate_control_path_rejects_security_review_mismatches() {
         control_path_root.join("security_review.json"),
         original_security_review,
     );
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_final_result_and_convergence_mismatches() {
+    let (out_dir, control_path_root) =
+        materialize_control_path_demo("adl-control-path-validate-final-result-mismatch");
+
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "final_result.json",
+        "control-path final_result stage_order mismatch",
+        |final_result| {
+            final_result["stage_order"] = serde_json::json!(["signals", "final_result"]);
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "final_result.json",
+        "control-path artifact run_id mismatch",
+        |final_result| {
+            final_result["run_id"] = serde_json::json!("other-run");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "final_result.json",
+        "control-path final_result route",
+        |final_result| {
+            final_result["route_selected"] = serde_json::json!("fast");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "final_result.json",
+        "control-path final_result selected_candidate",
+        |final_result| {
+            final_result["selected_candidate"] = serde_json::json!("cand-other");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "final_result.json",
+        "control-path final_result termination_reason",
+        |final_result| {
+            final_result["termination_reason"] = serde_json::json!("max_iterations");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "final_result.json",
+        "control-path final_result gate_decision",
+        |final_result| {
+            final_result["gate_decision"] = serde_json::json!("defer");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "final_result.json",
+        "control-path final_result next_control_action",
+        |final_result| {
+            final_result["next_control_action"] = serde_json::json!("continue");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "convergence.json",
+        "control-path convergence selected_candidate_id",
+        |convergence| {
+            convergence["selected_candidate_id"] = serde_json::json!("cand-other");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "convergence.json",
+        "control-path convergence termination_reason",
+        |convergence| {
+            convergence["termination_reason"] = serde_json::json!("max_iterations");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "convergence.json",
+        "control-path convergence gate_decision",
+        |convergence| {
+            convergence["gate_decision"] = serde_json::json!("defer");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "convergence.json",
+        "control-path convergence next_control_action",
+        |convergence| {
+            convergence["next_control_action"] = serde_json::json!("continue");
+        },
+    );
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_decision_and_proposal_mismatches() {
+    let (out_dir, control_path_root) =
+        materialize_control_path_demo("adl-control-path-validate-decision-proposal-mismatch");
+
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "decisions.json",
+        "control-path decisions schema fields mismatch",
+        |decisions| {
+            decisions["decision_schema_fields"] = serde_json::json!(["decision_id"]);
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "decisions.json",
+        "control-path decisions outcome vocabulary mismatch",
+        |decisions| {
+            decisions["outcome_class_vocabulary"] = serde_json::json!(["accept"]);
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "decisions.json",
+        "control-path decisions artifact must contain exactly 3 surfaces and 3 records",
+        |decisions| {
+            decisions["surfaces"] = serde_json::json!([]);
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "action_proposals.json",
+        "control-path action proposal schema fields mismatch",
+        |action_proposals| {
+            action_proposals["proposal_schema_fields"] = serde_json::json!(["proposal_id"]);
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "action_proposals.json",
+        "control-path action proposal vocabulary mismatch",
+        |action_proposals| {
+            action_proposals["proposal_kind_vocabulary"] = serde_json::json!(["tool_call"]);
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "action_proposals.json",
+        "control-path action proposals artifact must contain exactly 1 bounded proposal",
+        |action_proposals| {
+            let proposal = action_proposals["proposals"][0].clone();
+            action_proposals["proposals"] = serde_json::json!([proposal.clone(), proposal]);
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "action_proposals.json",
+        "must remain non-authoritative",
+        |action_proposals| {
+            action_proposals["proposals"][0]["non_authoritative"] = serde_json::json!(false);
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "action_proposals.json",
+        "is not in the declared vocabulary",
+        |action_proposals| {
+            action_proposals["proposals"][0]["kind"] = serde_json::json!("unknown_kind");
+        },
+    );
+
+    let _ = std::fs::remove_dir_all(out_dir);
+}
+
+#[test]
+fn cli_artifact_validate_control_path_rejects_mediation_mismatches() {
+    let (out_dir, control_path_root) =
+        materialize_control_path_demo("adl-control-path-validate-mediation-mismatch");
+
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "mediation.json",
+        "control-path mediation outcome vocabulary mismatch",
+        |mediation| {
+            mediation["mediation_outcome_vocabulary"] = serde_json::json!(["approved"]);
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "mediation.json",
+        "control-path mediation authority boundary mismatch",
+        |mediation| {
+            mediation["authority_boundary"] = serde_json::json!("model_decides");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "mediation.json",
+        "control-path mediation proposal",
+        |mediation| {
+            mediation["mediation"]["proposal_id"] = serde_json::json!("proposal.other");
+        },
+    );
+    expect_two_control_path_artifacts_validation_error(
+        &control_path_root,
+        "mediation.json",
+        "security_review.json",
+        "control-path mediation runtime authority",
+        |mediation| {
+            mediation["mediation"]["runtime_authority"] = serde_json::json!("model");
+        },
+        |security_review| {
+            security_review["posture"]["mitigation_authority"] = serde_json::json!("model");
+        },
+    );
+    expect_two_control_path_artifacts_validation_error(
+        &control_path_root,
+        "mediation.json",
+        "security_review.json",
+        "control-path mediation outcome",
+        |mediation| {
+            mediation["mediation"]["mediation_outcome"] = serde_json::json!("deferred");
+        },
+        |security_review| {
+            security_review["evidence"]["mediation_outcome"] = serde_json::json!("deferred");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "mediation.json",
+        "control-path mediation decision_id",
+        |mediation| {
+            mediation["mediation"]["decision_id"] = serde_json::json!("decision.other");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "mediation.json",
+        "control-path mediation temporal anchor",
+        |mediation| {
+            mediation["mediation"]["temporal_anchor"] =
+                serde_json::json!("control_path/mediation.json");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "mediation.json",
+        "control-path mediation judgment_boundary",
+        |mediation| {
+            mediation["mediation"]["judgment_boundary"] = serde_json::json!("other_boundary");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "mediation.json",
+        "control-path mediation required_follow_up",
+        |mediation| {
+            mediation["mediation"]["required_follow_up"] = serde_json::json!("none");
+        },
+    );
+    expect_control_path_artifact_validation_error(
+        &control_path_root,
+        "mediation.json",
+        "must not carry approved_action_or_none when outcome is not approved",
+        |mediation| {
+            mediation["mediation"]["approved_action_or_none"] =
+                serde_json::json!("candidate.review_and_refine");
+        },
+    );
+
     let _ = std::fs::remove_dir_all(out_dir);
 }
 

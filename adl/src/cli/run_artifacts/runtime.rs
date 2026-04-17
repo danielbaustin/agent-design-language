@@ -1,4 +1,5 @@
 mod resume_state;
+mod trace_envelope;
 mod trace_validation;
 mod writer;
 
