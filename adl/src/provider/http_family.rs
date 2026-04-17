@@ -4,7 +4,10 @@ use std::time::Duration;
 
 mod config;
 
-use config::{auth_env_for, ollama_generate_endpoint, vendor_endpoint, HttpAuth};
+use config::{
+    auth_env_for, ollama_generate_endpoint, validate_http_credential_endpoint,
+    validate_vendor_credential_endpoint, vendor_endpoint, HttpAuth,
+};
 pub(crate) use config::{cfg_u64, timeout_secs};
 
 struct InvocationArtifactLock {
@@ -241,9 +244,19 @@ impl OpenAiProvider {
         spec: &adl::ProviderSpec,
         target: &ProviderInvocationTargetV1,
     ) -> Result<Self> {
+        let endpoint = vendor_endpoint(spec, target, OPENAI_RESPONSES_ENDPOINT, "openai")?;
+        let auth_env = auth_env_for(spec, "OPENAI_API_KEY")?;
+        validate_vendor_credential_endpoint(
+            spec,
+            "openai",
+            &endpoint,
+            &auth_env,
+            "OPENAI_API_KEY",
+            &["api.openai.com"],
+        )?;
         Ok(Self {
-            endpoint: vendor_endpoint(spec, target, OPENAI_RESPONSES_ENDPOINT, "openai")?,
-            auth_env: auth_env_for(spec, "OPENAI_API_KEY")?,
+            endpoint,
+            auth_env,
             model: target.provider_model_id.clone(),
             max_output_tokens: cfg_u64(&spec.config, "max_output_tokens").unwrap_or(220),
             timeout_secs: cfg_u64(&spec.config, "timeout_secs"),
@@ -298,9 +311,19 @@ impl AnthropicProvider {
         spec: &adl::ProviderSpec,
         target: &ProviderInvocationTargetV1,
     ) -> Result<Self> {
+        let endpoint = vendor_endpoint(spec, target, ANTHROPIC_MESSAGES_ENDPOINT, "anthropic")?;
+        let auth_env = auth_env_for(spec, "ANTHROPIC_API_KEY")?;
+        validate_vendor_credential_endpoint(
+            spec,
+            "anthropic",
+            &endpoint,
+            &auth_env,
+            "ANTHROPIC_API_KEY",
+            &["api.anthropic.com"],
+        )?;
         Ok(Self {
-            endpoint: vendor_endpoint(spec, target, ANTHROPIC_MESSAGES_ENDPOINT, "anthropic")?,
-            auth_env: auth_env_for(spec, "ANTHROPIC_API_KEY")?,
+            endpoint,
+            auth_env,
             model: target.provider_model_id.clone(),
             max_tokens: cfg_u64(&spec.config, "max_tokens")
                 .or_else(|| cfg_u64(&spec.config, "max_output_tokens"))
@@ -485,6 +508,9 @@ impl HttpProvider {
         } else {
             None
         };
+        if auth.is_some() {
+            validate_http_credential_endpoint(cfg, &endpoint)?;
+        }
 
         Ok(Self {
             endpoint,

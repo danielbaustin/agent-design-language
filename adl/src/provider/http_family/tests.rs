@@ -421,6 +421,58 @@ fn http_provider_complete_and_helper_errors_cover_status_and_validation() {
         .to_string()
         .contains("endpoint must use https://"));
 
+    let untrusted_openai_spec = provider_spec(
+        "openai",
+        "https://proxy.example.com/v1/responses",
+        Some("OPENAI_API_KEY"),
+        &[],
+    );
+    let untrusted_openai_err = OpenAiProvider::from_target(
+        &untrusted_openai_spec,
+        &provider_target(
+            "openai",
+            "https://proxy.example.com/v1/responses".to_string(),
+            "gpt-test",
+        ),
+    )
+    .expect_err("default OpenAI credentials should not go to untrusted remote endpoints");
+    assert!(untrusted_openai_err
+        .to_string()
+        .contains("config.trust_custom_endpoint"));
+
+    let mut trusted_openai_spec = untrusted_openai_spec.clone();
+    trusted_openai_spec
+        .config
+        .insert("trust_custom_endpoint".to_string(), json!(true));
+    OpenAiProvider::from_target(
+        &trusted_openai_spec,
+        &provider_target(
+            "openai",
+            "https://proxy.example.com/v1/responses".to_string(),
+            "gpt-test",
+        ),
+    )
+    .expect("explicitly trusted OpenAI custom endpoint should build");
+
+    let untrusted_anthropic_spec = provider_spec(
+        "anthropic",
+        "https://proxy.example.com/v1/messages",
+        Some("ANTHROPIC_API_KEY"),
+        &[],
+    );
+    let untrusted_anthropic_err = AnthropicProvider::from_target(
+        &untrusted_anthropic_spec,
+        &provider_target(
+            "anthropic",
+            "https://proxy.example.com/v1/messages".to_string(),
+            "claude-test",
+        ),
+    )
+    .expect_err("default Anthropic credentials should not go to untrusted remote endpoints");
+    assert!(untrusted_anthropic_err
+        .to_string()
+        .contains("config.trust_custom_endpoint"));
+
     assert_eq!(
         extract_openai_output_text(&json!({"output_text": "  openai inline  "})),
         Some("openai inline".to_string())
@@ -526,6 +578,36 @@ fn helper_validation_and_extraction_paths_are_exercised() {
     .expect_err("empty endpoint override should fail")
     .to_string()
     .contains("config.endpoint must not be empty"));
+
+    OpenAiProvider::from_target(
+        &default_spec,
+        &ProviderInvocationTargetV1 {
+            endpoint: None,
+            base_url: None,
+            ..provider_target("openai", String::new(), "gpt-test")
+        },
+    )
+    .expect("default OpenAI vendor endpoint should build with default credentials");
+
+    let mut bad_trust_flag = default_spec.clone();
+    bad_trust_flag
+        .config
+        .insert("trust_custom_endpoint".to_string(), json!("yes"));
+    bad_trust_flag.config.insert(
+        "endpoint".to_string(),
+        json!("https://proxy.example.com/v1/responses"),
+    );
+    assert!(OpenAiProvider::from_target(
+        &bad_trust_flag,
+        &provider_target(
+            "openai",
+            "https://proxy.example.com/v1/responses".to_string(),
+            "gpt-test"
+        )
+    )
+    .expect_err("non-boolean trust flag should fail")
+    .to_string()
+    .contains("config.trust_custom_endpoint must be a boolean"));
 
     let long_text = format!("  {}  ", "x".repeat(250));
     assert_eq!(truncate_provider_body(&long_text).len(), 200);
@@ -688,4 +770,21 @@ fn invocation_artifact_and_http_constructor_error_paths_are_exercised() {
         .expect_err("missing auth env should fail")
         .to_string()
         .contains("config.auth.env is required"));
+
+    let mut untrusted_bearer_spec = provider_spec(
+        "http",
+        "https://api.example.com/v1/complete",
+        Some("HTTP_API_KEY"),
+        &[],
+    );
+    assert!(HttpProvider::from_target(&untrusted_bearer_spec, &target)
+        .expect_err("remote bearer auth should require explicit endpoint trust")
+        .to_string()
+        .contains("config.trust_custom_endpoint: true"));
+
+    untrusted_bearer_spec
+        .config
+        .insert("trust_custom_endpoint".to_string(), json!(true));
+    HttpProvider::from_target(&untrusted_bearer_spec, &target)
+        .expect("explicitly trusted remote bearer endpoint should build");
 }
