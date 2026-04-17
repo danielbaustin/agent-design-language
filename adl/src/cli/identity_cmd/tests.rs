@@ -1733,14 +1733,22 @@ fn resolve_identity_path_accepts_explicit_path_and_rejects_unknown_args() {
 
 #[test]
 fn repo_root_matches_git_toplevel() {
+    let _guard = TEST_MUTEX
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    let repo = temp_repo("identity-repo-root");
+
+    let original_cwd = env::current_dir().expect("capture cwd");
+    env::set_current_dir(&repo).expect("set cwd to temp repo");
+
     let expected = PathBuf::from(
         run_git_capture(&["rev-parse", "--show-toplevel"])
             .expect("git top level")
             .trim(),
     );
-
     let resolved = repo_root().expect("repo root should resolve");
 
+    env::set_current_dir(original_cwd).expect("restore cwd");
     assert_eq!(resolved, expected);
 }
 
