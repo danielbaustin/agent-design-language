@@ -4,11 +4,15 @@ use std::path::{Path, PathBuf};
 use anyhow::{anyhow, Context, Result};
 use serde_json::{json, Value};
 
+use crate::long_lived_agent::{self, InspectOptions, RunOptions};
+
 use super::write_file;
 
 pub(super) const DEMO_NAME: &str = "demo-i-v090-stock-league-scaffold";
+pub(super) const INTEGRATION_DEMO_NAME: &str = "demo-j-v090-stock-league-recurring";
 
 const RUN_ID: &str = "demo-i-stock-league-scaffold-run-001";
+const INTEGRATION_RUN_ID: &str = "demo-j-stock-league-recurring-run-001";
 const SEASON_ID: &str = "season-001";
 const FIXED_TIME: &str = "2026-04-17T00:00:00Z";
 const DISCLAIMER: &str = "This is a paper-market simulation for demonstrating persistent agent identity and accountability. It is not financial advice, trading advice, or a real investment strategy.";
@@ -103,6 +107,140 @@ pub(super) fn write_stock_league_scaffold_step(
         "proof_packet" => write_proof_packet_step(out_dir),
         _ => Ok(Vec::new()),
     }
+}
+
+pub(super) fn write_stock_league_integration_step(
+    out_dir: &Path,
+    step_id: &str,
+) -> Result<Vec<PathBuf>> {
+    match step_id {
+        "scaffold" => write_integration_scaffold_step(out_dir),
+        "recurring_cycles" => write_recurring_cycles_step(out_dir),
+        "inspection" => write_inspection_step(out_dir),
+        "proof_packet" => write_integration_proof_step(out_dir),
+        _ => Ok(Vec::new()),
+    }
+}
+
+fn write_integration_scaffold_step(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let mut artifacts = Vec::new();
+    artifacts.extend(write_fixture_step(out_dir)?);
+    artifacts.extend(write_agent_step(out_dir)?);
+    let mut paper_rule_artifacts = write_paper_rules_step(out_dir)?;
+    paper_rule_artifacts.retain(|path| {
+        path.strip_prefix(out_dir)
+            .ok()
+            .and_then(Path::to_str)
+            .is_none_or(|rel| !matches!(rel, "README.md" | "reviewer_walkthrough.md"))
+    });
+    artifacts.extend(paper_rule_artifacts);
+    artifacts.push(write_file(out_dir, "README.md", &integration_readme())?);
+    artifacts.push(write_file(
+        out_dir,
+        "reviewer_walkthrough.md",
+        &integration_reviewer_walkthrough(),
+    )?);
+    Ok(artifacts)
+}
+
+fn write_recurring_cycles_step(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let agent_root = out_dir.join("long_lived_agent");
+    if agent_root.exists() {
+        fs::remove_dir_all(&agent_root).with_context(|| {
+            format!(
+                "failed to reset stock league recurring state root '{}'",
+                agent_root.display()
+            )
+        })?;
+    }
+
+    let spec_rel = "long_lived_agent/stock_league_agent.yaml";
+    let spec_path = write_file(out_dir, spec_rel, &stock_league_agent_spec())?;
+    let status = long_lived_agent::run(
+        &spec_path,
+        RunOptions {
+            max_cycles: 3,
+            interval_secs: Some(0),
+            no_sleep: true,
+            recover_stale_lease: false,
+        },
+    )?;
+
+    let mut artifacts = vec![spec_path];
+    artifacts.push(write_json(
+        out_dir,
+        "long_lived_agent/run_status.json",
+        &serde_json::to_value(status)?,
+    )?);
+    artifacts.extend(collect_existing_files(
+        &out_dir.join("long_lived_agent/state"),
+    )?);
+    Ok(artifacts)
+}
+
+fn write_inspection_step(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let spec_path = out_dir.join("long_lived_agent/stock_league_agent.yaml");
+    if !spec_path.exists() {
+        return Err(anyhow!(
+            "stock league recurring integration requires recurring_cycles before inspection"
+        ));
+    }
+    Ok(vec![
+        write_json(
+            out_dir,
+            "inspection/latest.json",
+            &long_lived_agent::inspect(&spec_path, InspectOptions { cycle_id: None })?,
+        )?,
+        write_json(
+            out_dir,
+            "inspection/cycle-000001.json",
+            &long_lived_agent::inspect(
+                &spec_path,
+                InspectOptions {
+                    cycle_id: Some("cycle-000001".to_string()),
+                },
+            )?,
+        )?,
+        write_json(
+            out_dir,
+            "inspection/cycle-000003.json",
+            &long_lived_agent::inspect(
+                &spec_path,
+                InspectOptions {
+                    cycle_id: Some("cycle-000003".to_string()),
+                },
+            )?,
+        )?,
+    ])
+}
+
+fn write_integration_proof_step(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let continuity = recurring_continuity_proof(out_dir)?;
+    let continuity_path = write_json(out_dir, "continuity/continuity_proof.json", &continuity)?;
+    let guardrails = recurring_guardrail_summary(out_dir)?;
+    let guardrail_summary_path = write_json(
+        out_dir,
+        "audit/recurring_guardrail_summary.json",
+        &guardrails,
+    )?;
+    let manifest = integration_manifest();
+    let manifest_path = write_json(out_dir, "integration_manifest.json", &manifest)?;
+    let scan = scan_public_artifacts_for_run(out_dir, INTEGRATION_RUN_ID)?;
+    let scan_path = write_json(out_dir, "audit/artifact_safety_scan.json", &scan)?;
+    if !scan.get("passed").and_then(Value::as_bool).unwrap_or(false) {
+        return Err(anyhow!(
+            "stock league recurring integration safety scan failed"
+        ));
+    }
+    let proof = integration_proof_packet(&continuity, &guardrails);
+    let proof_path = write_json(out_dir, "integration_proof_packet.json", &proof)?;
+    Ok(vec![
+        continuity_path,
+        guardrail_summary_path,
+        manifest_path,
+        scan_path,
+        proof_path,
+    ])
 }
 
 fn write_fixture_step(out_dir: &Path) -> Result<Vec<PathBuf>> {
@@ -614,14 +752,290 @@ fn proof_packet() -> Value {
             "public_guardrails": true,
             "cheap_deterministic_fixture_path": true
         },
-        "deferred_to_wp08": [
-            "recurring bounded cycles",
-            "continuity and ledger evidence across more than one cycle",
-            "status and guardrail artifacts connected to an agent run",
-            "inspection over a real long-lived demo state root"
+        "wp08_integration": {
+            "status": "available_as_follow_on_demo",
+            "demo_id": INTEGRATION_DEMO_NAME,
+            "proof_command": "cargo run --manifest-path adl/Cargo.toml -- demo demo-j-v090-stock-league-recurring --run --trace --out out --no-open",
+            "adds": [
+                "recurring bounded cycles",
+                "continuity and ledger evidence across more than one cycle",
+                "status and guardrail artifacts connected to an agent run",
+                "inspection over a real long-lived demo state root"
+            ]
+        },
+        "not_financial_advice": true
+    })
+}
+
+fn stock_league_agent_spec() -> String {
+    format!(
+        r#"schema: adl.long_lived_agent_spec.v1
+agent_instance_id: stock-league-archivist
+display_name: Stock League Archivist
+state_root: state
+workflow:
+  kind: demo_adapter
+  name: stock_league_fixture_recorder
+  run_args:
+    season_id: {season_id}
+    fixture_ref: ../../fixture/season_001_fixture.json
+    scaffold_manifest_ref: ../../integration_manifest.json
+    requested_action: record_cycle
+    paper_only: true
+    public_claim: fixture-backed recurring stock league accountability demo
+    competing_agents:
+      - value_monk
+      - momentum_surfer
+      - contrarian_raccoon
+      - quality_gardener
+      - macro_weather_oracle
+    reviewers:
+      - risk_goblin
+      - archivist_referee
+heartbeat:
+  interval_secs: 0
+  max_cycles: 3
+  stale_lease_after_secs: 60
+safety:
+  allow_network: false
+  allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
+  financial_advice: false
+  max_cycle_runtime_secs: 120
+  max_consecutive_failures: 2
+memory:
+  namespace: stock-league/season-001/archivist
+  write_policy: append_only
+"#,
+        season_id = SEASON_ID
+    )
+}
+
+fn integration_manifest() -> Value {
+    json!({
+        "schema_version": "adl.stock_league.integration_manifest.v1",
+        "demo_id": INTEGRATION_DEMO_NAME,
+        "run_id": INTEGRATION_RUN_ID,
+        "season_id": SEASON_ID,
+        "mode": "fixture_replay_long_lived_agent",
+        "generated_at": FIXED_TIME,
+        "disclaimer": DISCLAIMER,
+        "primary_claim": "bounded recurring stock league cycles preserve visible history and guardrails",
+        "artifact_root": ".",
+        "state_root_ref": "long_lived_agent/state",
+        "agent_spec_ref": "long_lived_agent/stock_league_agent.yaml",
+        "scaffold_refs": {
+            "fixture": "fixture/season_001_fixture.json",
+            "agents": "agents/*/identity.json",
+            "league_rules": "league_rules.json",
+            "paper_ledger": "paper_ledger.jsonl"
+        },
+        "runtime_refs": {
+            "status": "long_lived_agent/state/status.json",
+            "cycle_ledger": "long_lived_agent/state/cycle_ledger.jsonl",
+            "continuity": "long_lived_agent/state/continuity.json",
+            "memory_index": "long_lived_agent/state/memory_index.json",
+            "provider_binding_history": "long_lived_agent/state/provider_binding_history.jsonl",
+            "cycles": "long_lived_agent/state/cycles"
+        },
+        "proof_refs": {
+            "latest_inspection": "inspection/latest.json",
+            "first_cycle_inspection": "inspection/cycle-000001.json",
+            "latest_cycle_inspection": "inspection/cycle-000003.json",
+            "continuity_proof": "continuity/continuity_proof.json",
+            "guardrail_summary": "audit/recurring_guardrail_summary.json",
+            "safety_scan": "audit/artifact_safety_scan.json",
+            "proof_packet": "integration_proof_packet.json"
+        },
+        "reviewer_steps": [
+            "Inspect long_lived_agent/state/status.json for completed multi-cycle state.",
+            "Inspect long_lived_agent/state/cycle_ledger.jsonl for append-only cycle order.",
+            "Inspect continuity/continuity_proof.json for previous-cycle links and preserved first-cycle artifacts.",
+            "Inspect inspection/latest.json and inspection/cycle-000001.json to compare latest and prior commitments.",
+            "Inspect audit/recurring_guardrail_summary.json for per-cycle safety results."
         ],
         "not_financial_advice": true
     })
+}
+
+fn integration_proof_packet(continuity: &Value, guardrails: &Value) -> Value {
+    json!({
+        "schema_version": "adl.stock_league.recurring_integration_proof_packet.v1",
+        "demo_id": INTEGRATION_DEMO_NAME,
+        "run_id": INTEGRATION_RUN_ID,
+        "season_id": SEASON_ID,
+        "status": "pass",
+        "primary_claim": "WP-08 integrates the stock league scaffold with the long-lived agent runtime for recurring bounded fixture cycles.",
+        "disclaimer": DISCLAIMER,
+        "proof_command": "cargo run --manifest-path adl/Cargo.toml -- demo demo-j-v090-stock-league-recurring --run --trace --out out --no-open",
+        "validation_command": "cargo test --manifest-path adl/Cargo.toml stock_league -- --nocapture",
+        "state_root_ref": "long_lived_agent/state",
+        "cycle_ledger_ref": "long_lived_agent/state/cycle_ledger.jsonl",
+        "status_ref": "long_lived_agent/state/status.json",
+        "inspection_refs": [
+            "inspection/latest.json",
+            "inspection/cycle-000001.json",
+            "inspection/cycle-000003.json"
+        ],
+        "continuity_proof": continuity,
+        "guardrail_summary": guardrails,
+        "required_outputs": {
+            "recurring_bounded_cycles": true,
+            "more_than_one_cycle": true,
+            "continuity_and_ledger_evidence": true,
+            "status_and_guardrail_artifacts": true,
+            "history_preservation_proof": true,
+            "deterministic_fixture_mode": true
+        },
+        "non_goals": [
+            "no live market loop",
+            "no hidden long-running process",
+            "no investment recommendation framing",
+            "no broker integration",
+            "no real order placement"
+        ],
+        "not_financial_advice": true
+    })
+}
+
+fn recurring_continuity_proof(out_dir: &Path) -> Result<Value> {
+    let state = "long_lived_agent/state";
+    let status = read_json_rel(out_dir, &format!("{state}/status.json"))?;
+    let continuity = read_json_rel(out_dir, &format!("{state}/continuity.json"))?;
+    let memory_index = read_json_rel(out_dir, &format!("{state}/memory_index.json"))?;
+    let ledger_lines = read_jsonl_rel(out_dir, &format!("{state}/cycle_ledger.jsonl"))?;
+    let mut cycles = Vec::new();
+    for cycle_id in ["cycle-000001", "cycle-000002", "cycle-000003"] {
+        let manifest_ref = format!("{state}/cycles/{cycle_id}/cycle_manifest.json");
+        let manifest = read_json_rel(out_dir, &manifest_ref)?;
+        let guardrail_ref = format!("{state}/cycles/{cycle_id}/guardrail_report.json");
+        let guardrail = read_json_rel(out_dir, &guardrail_ref)?;
+        cycles.push(json!({
+            "cycle_id": cycle_id,
+            "status": manifest["status"].clone(),
+            "previous_cycle_id": manifest["previous_cycle_id"].clone(),
+            "manifest_ref": manifest_ref,
+            "guardrail_report_ref": guardrail_ref,
+            "memory_writes_ref": format!("{state}/cycles/{cycle_id}/memory_writes.jsonl"),
+            "guardrail_status": guardrail["status"].clone()
+        }));
+    }
+
+    let first_manifest_still_present = out_dir
+        .join("long_lived_agent/state/cycles/cycle-000001/cycle_manifest.json")
+        .is_file();
+    let third_links_second = cycles
+        .get(2)
+        .and_then(|cycle| cycle.get("previous_cycle_id"))
+        .and_then(Value::as_str)
+        == Some("cycle-000002");
+    let second_links_first = cycles
+        .get(1)
+        .and_then(|cycle| cycle.get("previous_cycle_id"))
+        .and_then(Value::as_str)
+        == Some("cycle-000001");
+    let first_has_no_previous = cycles
+        .first()
+        .and_then(|cycle| cycle.get("previous_cycle_id"))
+        .is_some_and(Value::is_null);
+    let cycle_count = ledger_lines.len();
+
+    Ok(json!({
+        "schema_version": "adl.stock_league.continuity_proof.v1",
+        "run_id": INTEGRATION_RUN_ID,
+        "season_id": SEASON_ID,
+        "status": if cycle_count == 3 && first_has_no_previous && second_links_first && third_links_second && first_manifest_still_present {
+            "pass"
+        } else {
+            "fail"
+        },
+        "state_root_ref": "long_lived_agent/state",
+        "cycle_count": cycle_count,
+        "completed_cycle_count": status["completed_cycle_count"].clone(),
+        "latest_cycle_id": continuity["latest_cycle_id"].clone(),
+        "latest_cycle_status": continuity["latest_cycle_status"].clone(),
+        "append_only_ledger_ref": "long_lived_agent/state/cycle_ledger.jsonl",
+        "ledger_entry_count": ledger_lines.len(),
+        "cycles": cycles,
+        "history_preservation": {
+            "prior_commitments_preserved": first_manifest_still_present && second_links_first && third_links_second,
+            "cycle_000001_manifest_still_present_after_cycle_000003": first_manifest_still_present,
+            "cycle_chain_links_prior_cycle_ids": first_has_no_previous && second_links_first && third_links_second,
+            "memory_index_ref": "long_lived_agent/state/memory_index.json",
+            "memory_index_schema": memory_index["schema"].clone()
+        },
+        "fixture_commitment_refs": [
+            "decisions/day-001.json",
+            "paper_ledger.jsonl",
+            "agents/value_monk/memory_journal.jsonl"
+        ],
+        "not_financial_advice": true
+    }))
+}
+
+fn recurring_guardrail_summary(out_dir: &Path) -> Result<Value> {
+    let mut cycle_reports = Vec::new();
+    for cycle_id in ["cycle-000001", "cycle-000002", "cycle-000003"] {
+        let rel = format!("long_lived_agent/state/cycles/{cycle_id}/guardrail_report.json");
+        let report = read_json_rel(out_dir, &rel)?;
+        let failed_checks = report
+            .get("checks")
+            .and_then(Value::as_array)
+            .map(|checks| {
+                checks
+                    .iter()
+                    .filter(|check| check.get("result").and_then(Value::as_str) == Some("fail"))
+                    .map(|check| check.get("check_id").cloned().unwrap_or(Value::Null))
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_default();
+        cycle_reports.push(json!({
+            "cycle_id": cycle_id,
+            "guardrail_report_ref": rel,
+            "status": report["status"].clone(),
+            "failed_checks": failed_checks,
+            "rejected_actions": report["rejected_actions"].clone()
+        }));
+    }
+    let all_passed = cycle_reports
+        .iter()
+        .all(|report| report.get("status").and_then(Value::as_str) == Some("pass"));
+
+    Ok(json!({
+        "schema_version": "adl.stock_league.recurring_guardrail_summary.v1",
+        "run_id": INTEGRATION_RUN_ID,
+        "season_id": SEASON_ID,
+        "status": if all_passed { "pass" } else { "fail" },
+        "cycle_reports": cycle_reports,
+        "paper_only": true,
+        "network_required": false,
+        "broker_required": false,
+        "real_world_side_effects": false,
+        "not_financial_advice": true,
+        "disclaimer": DISCLAIMER
+    }))
+}
+
+fn read_json_rel(out_dir: &Path, rel: &str) -> Result<Value> {
+    let path = out_dir.join(rel);
+    let raw = fs::read_to_string(&path)
+        .with_context(|| format!("failed reading stock league artifact {rel}"))?;
+    serde_json::from_str(&raw)
+        .with_context(|| format!("failed parsing stock league artifact {rel}"))
+}
+
+fn read_jsonl_rel(out_dir: &Path, rel: &str) -> Result<Vec<Value>> {
+    let raw = fs::read_to_string(out_dir.join(rel))
+        .with_context(|| format!("failed reading stock league jsonl artifact {rel}"))?;
+    raw.lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| {
+            serde_json::from_str(line)
+                .with_context(|| format!("failed parsing stock league jsonl artifact {rel}"))
+        })
+        .collect()
 }
 
 fn readme() -> String {
@@ -637,7 +1051,14 @@ fn reviewer_walkthrough() -> String {
 }
 
 fn scan_public_artifacts(out_dir: &Path) -> Result<Value> {
-    let files = collect_files(out_dir)?;
+    scan_public_artifacts_for_run(out_dir, RUN_ID)
+}
+
+fn scan_public_artifacts_for_run(out_dir: &Path, run_id: &str) -> Result<Value> {
+    let files = collect_files(out_dir)?
+        .into_iter()
+        .filter(|rel| rel != Path::new("audit/artifact_safety_scan.json"))
+        .collect::<Vec<_>>();
     let patterns: &[(&str, &[&str])] = &[
         ("private_host_path", &["/users/", "\\users\\"]),
         (
@@ -685,13 +1106,13 @@ fn scan_public_artifacts(out_dir: &Path) -> Result<Value> {
         }
     }
 
-    Ok(json_ok_scan(files, findings))
+    Ok(json_ok_scan(files, findings, run_id))
 }
 
-fn json_ok_scan(files: Vec<PathBuf>, findings: Vec<Value>) -> Value {
+fn json_ok_scan(files: Vec<PathBuf>, findings: Vec<Value>, run_id: &str) -> Value {
     json!({
         "schema_version": "adl.stock_league.artifact_safety_scan.v1",
-        "run_id": RUN_ID,
+        "run_id": run_id,
         "season_id": SEASON_ID,
         "scanned_at": FIXED_TIME,
         "passed": findings.is_empty(),
@@ -709,6 +1130,18 @@ fn json_ok_scan(files: Vec<PathBuf>, findings: Vec<Value>) -> Value {
         },
         "disclaimer": DISCLAIMER
     })
+}
+
+fn integration_readme() -> String {
+    format!(
+        "# Stock League Recurring Demo Integration\n\n{DISCLAIMER}\n\n## What This Proves\n\nThe integration demo proves that the WP-07 fixture-backed stock league scaffold can be connected to the v0.90 long-lived-agent runtime for recurring bounded cycles. It writes status, continuity, cycle ledger, cycle manifests, guardrail reports, memory writes, and inspection packets under one reviewer-readable artifact root.\n\n## What This Does Not Do\n\n- It does not place orders.\n- It does not connect to broker APIs.\n- It does not use live market data.\n- It does not require a hidden daemon or long-running process.\n- It does not use personal financial information.\n- It does not claim suitability as an investment strategy.\n\n## Reviewer Path\n\n1. Inspect `integration_proof_packet.json`.\n2. Inspect `long_lived_agent/state/status.json` for completed multi-cycle state.\n3. Inspect `long_lived_agent/state/cycle_ledger.jsonl` for the append-only cycle ledger.\n4. Inspect `continuity/continuity_proof.json` for previous-cycle links and preserved first-cycle artifacts.\n5. Inspect `inspection/latest.json` and `inspection/cycle-000001.json` to compare latest state with prior commitments.\n6. Inspect `audit/recurring_guardrail_summary.json` and `audit/artifact_safety_scan.json` for public safety proof.\n"
+    )
+}
+
+fn integration_reviewer_walkthrough() -> String {
+    format!(
+        "# Recurring Demo Reviewer Walkthrough\n\n{DISCLAIMER}\n\nRun the demo with `cargo run --manifest-path adl/Cargo.toml -- demo demo-j-v090-stock-league-recurring --run --trace --out out --no-open`.\n\nThe command runs three no-sleep fixture cycles through the long-lived-agent runtime. The review question is whether the latest cycle can point back to prior cycle artifacts without erasing earlier commitments, and whether every cycle preserves the no-advice, no-broker, paper-only guardrail boundary.\n"
+    )
 }
 
 fn collect_files(root: &Path) -> Result<Vec<PathBuf>> {
@@ -733,4 +1166,14 @@ fn collect_files(root: &Path) -> Result<Vec<PathBuf>> {
     visit(root, root, &mut files)?;
     files.sort();
     Ok(files)
+}
+
+fn collect_existing_files(root: &Path) -> Result<Vec<PathBuf>> {
+    if !root.exists() {
+        return Ok(Vec::new());
+    }
+    Ok(collect_files(root)?
+        .into_iter()
+        .map(|rel| root.join(rel))
+        .collect())
 }

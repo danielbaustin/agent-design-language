@@ -355,7 +355,10 @@ fn demo_i_v090_stock_league_scaffold_writes_guarded_fixture_packet() {
     assert_eq!(proof["schema_version"], "adl.stock_league.proof_packet.v1");
     assert_eq!(proof["required_outputs"]["fixture_backed_scaffold"], true);
     assert_eq!(proof["required_outputs"]["paper_only_league_rules"], true);
-    assert_eq!(proof["deferred_to_wp08"][0], "recurring bounded cycles");
+    assert_eq!(
+        proof["wp08_integration"]["demo_id"],
+        "demo-j-v090-stock-league-recurring"
+    );
 
     let manifest: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(run_out.join("season_manifest.json")).unwrap())
@@ -410,6 +413,201 @@ fn demo_i_v090_stock_league_scaffold_writes_guarded_fixture_packet() {
     assert!(
         readme.contains("not financial advice, trading advice, or a real investment strategy"),
         "README:\n{readme}"
+    );
+
+    let public_text = collect_text_artifacts(&run_out);
+    for banned in [
+        "/Users/",
+        "bearer ",
+        "private_key",
+        "broker_account",
+        "personalized financial recommendation",
+        "you should buy",
+        "market beating",
+    ] {
+        assert!(
+            !public_text
+                .to_ascii_lowercase()
+                .contains(&banned.to_ascii_lowercase()),
+            "banned pattern {banned:?} found in artifacts"
+        );
+    }
+}
+
+#[test]
+fn demo_j_v090_stock_league_recurring_print_plan_works() {
+    let out = run_swarm(&["demo", "demo-j-v090-stock-league-recurring", "--print-plan"]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("Demo: demo-j-v090-stock-league-recurring"),
+        "stdout:\n{stdout}"
+    );
+    assert!(stdout.contains("Steps: 4"), "stdout:\n{stdout}");
+    assert!(stdout.contains("0. scaffold"), "stdout:\n{stdout}");
+    assert!(stdout.contains("1. recurring_cycles"), "stdout:\n{stdout}");
+    assert!(stdout.contains("3. proof_packet"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn demo_j_v090_stock_league_recurring_writes_multi_cycle_proof_packet() {
+    let out_root = tmp_dir("demo-j-stock-league");
+    let out = run_swarm(&[
+        "demo",
+        "demo-j-v090-stock-league-recurring",
+        "--run",
+        "--trace",
+        "--out",
+        out_root.to_string_lossy().as_ref(),
+        "--no-open",
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let run_out = out_root.join("demo-j-v090-stock-league-recurring");
+    assert!(run_out.join("integration_manifest.json").is_file());
+    assert!(run_out.join("integration_proof_packet.json").is_file());
+    assert!(run_out
+        .join("long_lived_agent/stock_league_agent.yaml")
+        .is_file());
+    assert!(run_out.join("long_lived_agent/state/status.json").is_file());
+    assert!(run_out
+        .join("long_lived_agent/state/cycle_ledger.jsonl")
+        .is_file());
+    assert!(run_out
+        .join("long_lived_agent/state/continuity.json")
+        .is_file());
+    assert!(run_out.join("inspection/latest.json").is_file());
+    assert!(run_out.join("inspection/cycle-000001.json").is_file());
+    assert!(run_out.join("inspection/cycle-000003.json").is_file());
+    assert!(run_out.join("continuity/continuity_proof.json").is_file());
+    assert!(run_out
+        .join("audit/recurring_guardrail_summary.json")
+        .is_file());
+    assert!(run_out.join("audit/artifact_safety_scan.json").is_file());
+    assert!(run_out.join("trace.jsonl").is_file());
+
+    for cycle_id in ["cycle-000001", "cycle-000002", "cycle-000003"] {
+        let cycle_dir = run_out.join("long_lived_agent/state/cycles").join(cycle_id);
+        assert!(cycle_dir.join("cycle_manifest.json").is_file());
+        assert!(cycle_dir.join("guardrail_report.json").is_file());
+        assert!(cycle_dir.join("cycle_summary.md").is_file());
+        assert!(cycle_dir.join("memory_writes.jsonl").is_file());
+    }
+
+    let ledger =
+        fs::read_to_string(run_out.join("long_lived_agent/state/cycle_ledger.jsonl")).unwrap();
+    assert_eq!(ledger.lines().count(), 3, "ledger:\n{ledger}");
+
+    let status: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("long_lived_agent/state/status.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(status["state"], "completed");
+    assert_eq!(status["completed_cycle_count"], 3);
+    assert_eq!(status["last_cycle_id"], "cycle-000003");
+
+    let latest: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(run_out.join("inspection/latest.json")).unwrap())
+            .unwrap();
+    assert_eq!(
+        latest["schema"],
+        "adl.long_lived_agent_inspection_packet.v1"
+    );
+    assert_eq!(latest["cycle_count"], 3);
+    assert_eq!(latest["selected_cycle_id"], "cycle-000003");
+    assert_eq!(latest["reviewer_proof"]["status"], "pass");
+
+    let continuity: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("continuity/continuity_proof.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(continuity["status"], "pass");
+    assert_eq!(continuity["cycle_count"], 3);
+    assert_eq!(
+        continuity["history_preservation"]["prior_commitments_preserved"],
+        true
+    );
+    assert_eq!(
+        continuity["history_preservation"]["cycle_chain_links_prior_cycle_ids"],
+        true
+    );
+
+    let proof: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("integration_proof_packet.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        proof["schema_version"],
+        "adl.stock_league.recurring_integration_proof_packet.v1"
+    );
+    assert_eq!(proof["required_outputs"]["recurring_bounded_cycles"], true);
+    assert_eq!(
+        proof["required_outputs"]["history_preservation_proof"],
+        true
+    );
+
+    let guardrails: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("audit/recurring_guardrail_summary.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(guardrails["status"], "pass");
+    assert!(guardrails["cycle_reports"]
+        .as_array()
+        .is_some_and(|reports| reports.len() == 3));
+
+    let scan: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("audit/artifact_safety_scan.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(scan["passed"], true, "scan:\n{scan}");
+    assert!(
+        scan["findings"]
+            .as_array()
+            .is_some_and(|findings| findings.is_empty()),
+        "scan:\n{scan}"
+    );
+
+    let rerun = run_swarm(&[
+        "demo",
+        "demo-j-v090-stock-league-recurring",
+        "--run",
+        "--trace",
+        "--out",
+        out_root.to_string_lossy().as_ref(),
+        "--no-open",
+    ]);
+    assert!(
+        rerun.status.success(),
+        "expected rerun success, stderr:\n{}",
+        String::from_utf8_lossy(&rerun.stderr)
+    );
+    let rerun_ledger =
+        fs::read_to_string(run_out.join("long_lived_agent/state/cycle_ledger.jsonl")).unwrap();
+    assert_eq!(rerun_ledger.lines().count(), 3, "ledger:\n{rerun_ledger}");
+    assert!(
+        !run_out
+            .join("long_lived_agent/state/cycles/cycle-000004")
+            .exists(),
+        "rerun must reset recurring state instead of appending extra cycles"
+    );
+    let rerun_scan: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("audit/artifact_safety_scan.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(rerun_scan["passed"], true, "scan:\n{rerun_scan}");
+    assert!(
+        rerun_scan["findings"]
+            .as_array()
+            .is_some_and(|findings| findings.is_empty()),
+        "scan:\n{rerun_scan}"
     );
 
     let public_text = collect_text_artifacts(&run_out);
