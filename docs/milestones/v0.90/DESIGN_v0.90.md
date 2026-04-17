@@ -99,9 +99,9 @@ fixture-backed or delayed/public data and clear no-financial-advice language.
 
 Owned by:
 
-- TBD/COVERAGE_95_RATCHET_PLAN.md through local backlog `LB-040`
-- TBD/MILESTONE_COMPRESSION_PLAN.md through local backlog `LB-041`
-- TBD/repo_visibility/* through local backlog `LB-042`
+- coverage-ratchet planning through local backlog `LB-040`
+- milestone-compression planning through local backlog `LB-041`
+- repo-visibility planning through local backlog `LB-042`
 - WBS_v0.90.md WP-09 through WP-12
 
 This layer strengthens the milestone without changing the core runtime thesis.

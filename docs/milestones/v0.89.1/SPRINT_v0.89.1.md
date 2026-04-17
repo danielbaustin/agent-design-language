@@ -20,7 +20,7 @@
 |---|---|---|---|
 | `v0.89.1-s1` | open the official issue wave and execute the adversarial/runtime core | `WP-01`, `WP-02` - `WP-05` | complete; official wave opened and `WP-02` - `WP-05` landed |
 | `v0.89.1-s2` | execute verification, self-attack, demo, governed execution substrate, and the bounded publication skill | `WP-06` - `WP-10` | complete; `WP-06` - `WP-10` landed with provider-security extension explicitly deferred |
-| `v0.89.1-s3` | converge demos, manuscript outputs, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | active; `WP-11` - `WP-16` now provide demo, convergence, integration, manuscript, quality-gate, docs-review, and internal-review surfaces, while `WP-17` - `WP-20` remain release-tail work |
+| `v0.89.1-s3` | converge demos, manuscript outputs, quality, review, remediation, next-milestone planning, and release ceremony | `WP-11` - `WP-20` | active; `WP-11` - `WP-19` now provide demo, convergence, integration, manuscript, quality-gate, docs-review, internal-review, third-party-review, remediation, and next-planning surfaces, while `WP-20` remains release-tail work |
 
 ## Sprint 1
 
@@ -117,7 +117,7 @@ That means:
 - `WP-02` - `WP-16` are closed or represented by tracked release-tail proof surfaces
 - `WP-15` owns the release-tail docs-review convergence pass
 - `WP-16` owns the internal review record
-- the remaining work before delivery is 3rd-party review, remediation, next-milestone planning, and release ceremony, not milestone rediscovery
+- the remaining work before delivery is release ceremony, not milestone rediscovery
 
 ## Cadence Expectations
 - use issue cards (`stp` / `sip` / `sor`) for each issue

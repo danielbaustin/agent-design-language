@@ -2,17 +2,17 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.89.1 (Adversarial Runtime Review Tail In Progress)
+## v0.89.1 (Adversarial Runtime Release Tail In Progress)
 
-Status: Core adversarial/runtime implementation, proof surfaces, internal review, and internal-review remediation have landed; third-party review and release ceremony remain in progress.
+Status: Core adversarial/runtime implementation, proof surfaces, internal review, internal-review remediation, and third-party review have landed; next-milestone planning and release ceremony remain in progress.
 
 Summary:
 - ADL now has a real `v0.89.1` milestone package on `main`, centered on one adversarial-runtime band:
   `adversarial posture -> red/blue/purple roles -> execution runner -> exploit artifact -> replay manifest -> continuous verification -> self-attack -> review evidence`
 - The promoted `v0.89.1` feature-doc set covers the adversarial runtime model, red/blue agent architecture, adversarial execution runner, exploit artifact schema, replay manifest, continuous verification, self-attacking systems, and supporting operational-skill substrate
-- The bounded `v0.89.1` proof package includes the adversarial/security demo rows, provider-proof packaging, quality-gate evidence, docs-review convergence, internal review, and accepted internal-review remediation
+- The bounded `v0.89.1` proof package includes the adversarial/security demo rows, provider-proof packaging, quality-gate evidence, docs-review convergence, internal review, accepted internal-review remediation, and third-party review with no additional P0/P1/P2 findings
 - The milestone also introduces the bounded `arxiv-paper-writer` workflow and the initial three-paper manuscript program for `What Is ADL?`, `Gödel Agents and ADL`, and `Cognitive Spacetime Manifold`
-- The crate version is now `0.89.1`; final third-party review findings, release ceremony, tag publication, and GitHub release copy remain owned by the release tail
+- The crate version is now `0.89.1`; next-milestone planning, release ceremony, tag publication, and GitHub release copy remain owned by the release tail
 
 References:
 - `docs/milestones/v0.89.1/README.md`
@@ -27,7 +27,6 @@ References:
 - `docs/milestones/v0.89.1/RELEASE_NOTES_v0.89.1.md`
 
 Not yet claimed in v0.89.1:
-- third-party review completion and accepted third-party finding remediation
 - release ceremony completion, final tag publication, and GitHub release publication
 - the later Runtime v2, moral-governance, birthday, and polis-defense bands planned for later milestones
 
