@@ -26,6 +26,36 @@ type StepJob = Box<dyn FnOnce() -> (String, Result<StepRunSuccess>) + Send>;
 pub const DELEGATION_POLICY_DENY_CODE: &str = "DELEGATION_POLICY_DENY";
 pub const DELEGATION_POLICY_APPROVAL_REQUIRED_CODE: &str = "DELEGATION_POLICY_APPROVAL_REQUIRED";
 
+#[derive(Debug)]
+struct DeterministicSetupError {
+    message: String,
+}
+
+impl DeterministicSetupError {
+    fn new(message: impl Into<String>) -> Self {
+        Self {
+            message: message.into(),
+        }
+    }
+}
+
+impl std::fmt::Display for DeterministicSetupError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.message)
+    }
+}
+
+impl std::error::Error for DeterministicSetupError {}
+
+fn deterministic_setup_error(message: impl Into<String>) -> anyhow::Error {
+    anyhow::Error::new(DeterministicSetupError::new(message))
+}
+
+fn is_deterministic_setup_error(err: &anyhow::Error) -> bool {
+    err.chain()
+        .any(|cause| cause.downcast_ref::<DeterministicSetupError>().is_some())
+}
+
 fn effective_prompt_with_defaults_from_doc(
     step: &crate::resolve::ResolvedStep,
     doc: &crate::adl::AdlDoc,
@@ -309,35 +339,44 @@ where
         let mut attempt_stream_chunks: Vec<String> = Vec::new();
         let result = (|| -> Result<StepRunSuccess> {
             let p = effective_prompt_with_defaults_from_doc(step, doc).ok_or_else(|| {
-                anyhow!(
+                deterministic_setup_error(format!(
                     "step '{}' has no effective prompt (step.prompt or task.prompt required)",
                     step_id
-                )
+                ))
             })?;
 
-            let merged_inputs = resolve_state_inputs(&step.id, &step.inputs, saved_state)
-                .with_context(|| format!("failed to resolve inputs for step '{}'", step_id))?;
+            let merged_inputs =
+                resolve_state_inputs(&step.id, &step.inputs, saved_state).map_err(|err| {
+                    err.context(DeterministicSetupError::new(format!(
+                        "failed to resolve inputs for step '{}'",
+                        step_id
+                    )))
+                })?;
             let missing = missing_prompt_inputs(&p, &merged_inputs);
             if !missing.is_empty() {
-                return Err(anyhow!(
+                return Err(deterministic_setup_error(format!(
                     "step '{}' missing input bindings for: {} (provide inputs or prior state)",
                     step_id,
                     missing.join(", ")
-                ));
+                )));
             }
 
-            let inputs = materialize_inputs(merged_inputs, adl_base_dir)
-                .with_context(|| format!("failed to materialize inputs for step '{}'", step_id))?;
+            let inputs = materialize_inputs(merged_inputs, adl_base_dir).map_err(|err| {
+                err.context(DeterministicSetupError::new(format!(
+                    "failed to materialize inputs for step '{}'",
+                    step_id
+                )))
+            })?;
 
             let prompt_text = prompt::trace_prompt_assembly(&p, &inputs);
             let prompt_hash = prompt::hash_prompt(&prompt_text);
             on_prompt_hash(&prompt_hash);
 
-            let spec = doc.providers.get(provider_id).with_context(|| {
-                format!(
+            let spec = doc.providers.get(provider_id).ok_or_else(|| {
+                deterministic_setup_error(format!(
                     "step '{}' references unknown provider '{}'",
                     step_id, provider_id
-                )
+                ))
             })?;
             let model_override = step
                 .agent
@@ -349,13 +388,12 @@ where
 
             let model_output = match placement {
                 crate::adl::PlacementMode::Local => {
+                    let build_context = DeterministicSetupError::new(format!(
+                        "failed to build provider '{}' for step '{}'",
+                        provider_id, step_id
+                    ));
                     let prov = provider::build_provider_for_id(provider_id, spec, model_override)
-                        .with_context(|| {
-                        format!(
-                            "failed to build provider '{}' for step '{}'",
-                            provider_id, step_id
-                        )
-                    })?;
+                        .map_err(|err| err.context(build_context))?;
                     let mut on_chunk = |chunk: &str| {
                         if capture_stream_chunks && !chunk.is_empty() {
                             attempt_stream_chunks.push(chunk.to_string());
@@ -444,7 +482,8 @@ where
             Ok(success) => return std::result::Result::Ok(success),
             Err(err) => {
                 last_stream_chunks = attempt_stream_chunks;
-                let retryable = provider::is_retryable_error(&err);
+                let retryable =
+                    !is_deterministic_setup_error(&err) && provider::is_retryable_error(&err);
                 last_err = Some(err);
                 if !retryable || attempt >= max_attempts {
                     break;
