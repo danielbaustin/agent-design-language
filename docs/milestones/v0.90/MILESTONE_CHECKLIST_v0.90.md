@@ -15,6 +15,8 @@
 - [x] WP_ISSUE_WAVE_v0.90.yaml has real issue titles, dependencies, and issue numbers.
 - [ ] Every feature doc has a WBS row.
 - [ ] Every idea doc has a reader-facing or deferred home.
+- [x] WP_EXECUTION_READINESS_v0.90.md binds open WPs to concrete source docs,
+  artifact/proof surfaces, validation expectations, and non-goals.
 
 ## Scope Gate
 
@@ -27,6 +29,8 @@
 - [ ] Milestone compression scope is limited to canonical state and drift checks unless explicitly widened.
 - [ ] Repo visibility scope is limited to a bounded manifest/linkage prototype.
 - [ ] Rust refactoring targets are justified by maintainability, testability, or review evidence.
+- [x] WP cards have a tracked execution-readiness gate that prevents generic
+  runtime, demo, coverage, compression, visibility, and refactor work.
 
 ## Implementation Gate
 
