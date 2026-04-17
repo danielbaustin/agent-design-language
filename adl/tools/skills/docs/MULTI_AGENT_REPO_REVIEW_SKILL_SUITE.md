@@ -17,6 +17,7 @@ coverage, or an explicit multi-agent review demo/proof surface.
 - `repo-review-tests`
 - `repo-review-docs`
 - `repo-architecture-review`
+- `repo-dependency-review`
 - `repo-review-synthesis`
 
 ## Invocation Order
@@ -28,7 +29,8 @@ Recommended order:
 3. `repo-review-tests`
 4. `repo-review-docs`
 5. `repo-architecture-review`
-6. `repo-review-synthesis`
+6. `repo-dependency-review`
+7. `repo-review-synthesis`
 
 The first four roles may run independently when the operator wants parallel
 review. The synthesis role should run after at least one specialist artifact is
@@ -37,7 +39,7 @@ available, and ideally after all required roles have reported.
 ## Shared Specialist Input Shape
 
 ```yaml
-skill_input_schema: repo_review_code.v1 | repo_review_security.v1 | repo_review_tests.v1 | repo_review_docs.v1 | repo_architecture_review.v1
+skill_input_schema: repo_review_code.v1 | repo_review_security.v1 | repo_review_tests.v1 | repo_review_docs.v1 | repo_architecture_review.v1 | repo_dependency_review.v1
 mode: review_repository | review_path | review_branch | review_diff | review_packet
 repo_root: /absolute/path
 target:
@@ -71,6 +73,7 @@ target:
     tests: <path or null>
     docs: <path or null>
     architecture: <path or null>
+    dependency: <path or null>
   artifact_root: <path or null>
 policy:
   required_roles:
@@ -79,6 +82,7 @@ policy:
     - tests
     - docs
     - architecture
+    - dependency
   severity_policy: preserve_highest | preserve_role_severity
   write_review_artifact: true | false
   stop_after_synthesis: true
@@ -90,7 +94,7 @@ Each specialist artifact should use this shape:
 
 ```md
 ## Metadata
-- Skill: repo-review-code | repo-review-security | repo-review-tests | repo-review-docs | repo-architecture-review
+- Skill: repo-review-code | repo-review-security | repo-review-tests | repo-review-docs | repo-architecture-review | repo-dependency-review
 - Target: <repo/path/branch/diff>
 - Date: <UTC timestamp or calendar date>
 - Artifact: <path or none>
@@ -98,7 +102,7 @@ Each specialist artifact should use this shape:
 ## Findings
 - <priority>: <title>
   File: <repo-relative path or none>
-  Role: <code | security | tests | docs | architecture>
+  Role: <code | security | tests | docs | architecture | dependency>
   Scenario: <trigger or review condition>
   Impact: <behavioral consequence>
   Evidence: <specific code/doc/test/config observation>
@@ -120,6 +124,7 @@ Each specialist artifact should use this shape:
 - `repo-review-tests` must include a `missing_proof_map` when coverage gaps are found.
 - `repo-review-docs` must include `commands_or_claims_checked` when docs make runnable claims.
 - `repo-architecture-review` must include an `architecture_map`, candidate diagram tasks, candidate ADRs, and candidate fitness functions.
+- `repo-dependency-review` must include a `dependency_surface_map`, candidate supply-chain findings, candidate dependency test gaps, and candidate license review notes.
 
 ## Synthesis Output Contract
 
@@ -134,6 +139,7 @@ Each specialist artifact should use this shape:
   - tests: <path or missing>
   - docs: <path or missing>
   - architecture: <path or missing>
+  - dependency: <path or missing>
 
 ## Findings
 - <priority>: <title>
@@ -149,6 +155,7 @@ Each specialist artifact should use this shape:
 - Tests: present | missing | skipped
 - Docs: present | missing | skipped
 - Architecture: present | missing | skipped
+- Dependency: present | missing | skipped
 
 ## Dedupe Notes
 - <what was merged and why>
@@ -177,6 +184,9 @@ Each specialist artifact should use this shape:
   reproducibility or operator safety.
 - Do not collapse architecture drift into code style or docs polish when it
   affects boundaries, layering, lifecycle, or state ownership.
+- Do not collapse dependency and supply-chain drift into generic security or
+  test feedback when it affects installability, package manager policy,
+  lockfile truth, license-sensitive evidence, or release reproducibility.
 - Mark disagreement explicitly instead of silently choosing one role's view.
 
 ## Boundaries
@@ -208,4 +218,6 @@ Use this suite when:
 - role separation is useful for traceability
 - security, tests, or docs need explicit ownership
 - architecture boundaries, state models, layering, or drift need explicit ownership
+- dependency manifests, lockfiles, CI install paths, containers, or license cues
+  need explicit ownership
 - the synthesis artifact should show specialist coverage and disagreement
