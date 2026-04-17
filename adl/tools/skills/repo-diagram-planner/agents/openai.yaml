@@ -1,0 +1,5 @@
+name: repo-diagram-planner
+display_name: Repo Diagram Planner
+short_description: Plan source-grounded diagram tasks from CodeBuddy packets and specialist review evidence.
+default_prompt: Produce a bounded source-grounded diagram plan from a repo packet or specialist artifacts. Stop before authoring diagram source, rendering, publishing, issues, PRs, or repo mutation.
+

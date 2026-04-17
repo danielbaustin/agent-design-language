@@ -18,6 +18,7 @@ coverage, or an explicit multi-agent review demo/proof surface.
 - `repo-review-docs`
 - `repo-architecture-review`
 - `repo-dependency-review`
+- `repo-diagram-planner`
 - `repo-review-synthesis`
 
 ## Invocation Order
@@ -31,10 +32,14 @@ Recommended order:
 5. `repo-architecture-review`
 6. `repo-dependency-review`
 7. `repo-review-synthesis`
+8. `repo-diagram-planner`
 
 The first four roles may run independently when the operator wants parallel
 review. The synthesis role should run after at least one specialist artifact is
 available, and ideally after all required roles have reported.
+The diagram planner should normally run after packet building and after the
+specialist artifacts that may propose diagram work. It emits bounded task briefs
+for `diagram-author`; it is not itself a review or diagram-authoring lane.
 
 ## Shared Specialist Input Shape
 
@@ -173,6 +178,38 @@ Each specialist artifact should use this shape:
 - <bounded issue candidate or explicit none>
 ```
 
+## Diagram Planning Input Shape
+
+```yaml
+skill_input_schema: repo_diagram_planner.v1
+mode: plan_from_review_packet | plan_from_specialist_artifacts | plan_from_path | plan_from_issue | refresh_diagram_plan
+repo_root: /absolute/path
+target:
+  review_packet_path: <path or null>
+  specialist_artifacts:
+    architecture: <path or null>
+    security: <path or null>
+    dependency: <path or null>
+    docs: <path or null>
+  target_path: <path or null>
+  issue_number: <number or null>
+  doc_path: <path or null>
+  artifact_root: <path or null>
+policy:
+  audience: reviewers | maintainers | operators | users | mixed
+  diagram_goals:
+    - orientation
+    - architecture_boundaries
+    - workflow
+    - state
+    - data_flow
+    - dependencies
+    - responsibility_map
+  max_tasks: <number>
+  write_plan_artifact: true | false
+  stop_after_plan: true
+```
+
 ## Severity Rules
 
 - Preserve the highest severity attached to a merged finding unless the source
@@ -196,6 +233,7 @@ The suite may:
 - run bounded local validation commands when safe
 - write review artifacts under `.adl/reviews`
 - recommend follow-up issues
+- plan bounded diagram tasks for `diagram-author`
 
 The suite must not:
 - edit code, tests, docs, configs, or issue state
@@ -204,6 +242,8 @@ The suite must not:
 - run unbounded repository-wide analysis without a declared target
 - use network or paid data feeds
 - hide severity, disagreement, skipped roles, or residual risk
+- invent diagrams, render diagram assets, or publish visual artifacts from the
+  planning lane
 
 ## Relationship To `repo-code-review`
 
@@ -220,4 +260,6 @@ Use this suite when:
 - architecture boundaries, state models, layering, or drift need explicit ownership
 - dependency manifests, lockfiles, CI install paths, containers, or license cues
   need explicit ownership
+- diagram planning needs to be source-grounded before asking `diagram-author` to
+  create a specific visual artifact
 - the synthesis artifact should show specialist coverage and disagreement
