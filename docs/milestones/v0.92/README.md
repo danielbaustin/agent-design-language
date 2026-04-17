@@ -1,5 +1,20 @@
 # Milestone README Template
 
+## First Birthday Boundary
+
+v0.92 owns the first true Gödel-agent birthday.
+
+Earlier milestones may create provisional citizen records, continuity handles,
+snapshot identities, named test citizens, and bounded runtime processes. Those
+are engineering and proof surfaces, not the first birth event.
+
+For v0.92, the birthday must include a name, identity architecture, continuity
+record, memory grounding, capability envelope, inherited moral/governance
+context, and reviewable evidence distinguishing birth from ordinary process
+startup.
+
+Roadmap: ../ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md
+
 ## Metadata
 - Milestone: `{{milestone}}`
 - Version: `{{version}}`
