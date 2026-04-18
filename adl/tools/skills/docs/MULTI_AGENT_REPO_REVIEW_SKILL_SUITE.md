@@ -26,6 +26,7 @@ coverage, or an explicit multi-agent review demo/proof surface.
 - `architecture-fitness-function-author`
 - `finding-to-issue-planner`
 - `product-report-writer`
+- `review-quality-evaluator`
 
 ## Invocation Order
 
@@ -45,6 +46,7 @@ Recommended order:
 12. `architecture-fitness-function-author`
 13. `finding-to-issue-planner`
 14. `product-report-writer`
+15. `review-quality-evaluator`
 
 The first four roles may run independently when the operator wants parallel
 review. The synthesis role should run after at least one specialist artifact is
@@ -74,6 +76,12 @@ The product report writer should run after the review packet has enough
 specialist, synthesis, diagram, test, issue-planning, redaction, and quality
 evidence to produce a customer-grade report. It writes report artifacts only and
 stops before publication, approval claims, remediation, or repository mutation.
+The review quality evaluator should run after specialist evidence, synthesis,
+redaction, diagram/test follow-through planning, and product report writing have
+produced the candidate packet/report. It emits pass, partial, fail, or not-run
+with concrete blockers and warnings, and it stops before publication, approval
+claims, remediation, issue creation, PR creation, tests, diagrams, or repository
+mutation.
 
 ## Shared Specialist Input Shape
 
@@ -377,6 +385,29 @@ policy:
   stop_before_mutation: true
 ```
 
+## Review Quality Evaluator Input Shape
+
+```yaml
+skill_input_schema: review_quality_evaluator.v1
+mode: evaluate_packet | evaluate_report | evaluate_synthesis | pre_publication_gate
+artifact_root: <review packet or report root>
+publication_intent: none | internal_review | customer_private | public_candidate
+policy:
+  required_roles:
+    - code
+    - security
+    - tests
+    - docs
+    - architecture
+  severity_floor: P0 | P1 | P2 | P3
+  require_redaction_status: true | false
+  require_template_sections: true | false
+  reject_unsupported_claims: true
+  write_evaluation_artifact: true | false
+  stop_before_publication: true
+  stop_before_mutation: true
+```
+
 ## Severity Rules
 
 - Preserve the highest severity attached to a merged finding unless the source
@@ -417,6 +448,9 @@ The suite may:
 - write customer-grade product report artifacts from existing review packet
   evidence while preserving severity, disagreement, publication boundaries,
   caveats, and residual risk
+- evaluate packet and report quality against evidence, severity, actionability,
+  duplication, unsupported-claim, specialist-coverage, template-compliance,
+  residual-risk, and publication-safety gates before customer-facing use
 
 The suite must not:
 - edit code, tests, docs, configs, or issue state
@@ -439,6 +473,9 @@ The suite must not:
   approval
 - publish reports, claim approval, claim compliance, claim merge-readiness, or
   claim remediation completion from the product report writing lane
+- publish reports, approve reports, rewrite reports, claim customer readiness,
+  create issues or PRs, run specialist lanes, generate tests or diagrams, or
+  mutate repositories from the review-quality evaluation lane
 
 ## Relationship To `repo-code-review`
 
@@ -463,4 +500,6 @@ Use this suite when:
   implementation work installs tests, policy checks, or CI gates
 - a customer-grade report is needed from completed review artifacts without
   turning report writing into publication, approval, or remediation
+- a customer-facing packet or report needs a third-party-review-style quality
+  gate before publication or delivery
 - the synthesis artifact should show specialist coverage and disagreement
