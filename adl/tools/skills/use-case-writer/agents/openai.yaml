@@ -1,0 +1,3 @@
+display_name: Use Case Writer
+short_description: Write source-grounded use-case packets without inventing product commitments
+default_prompt: Turn one declared source brief, issue, feature, demo, or milestone context into grounded use cases. Distinguish actors, user goals, system behavior, acceptance hooks, non-goals, assumptions, and unsupported assumptions; stop before issue creation, PR creation, publication, implementation planning, or unsupported product claims.
