@@ -1,0 +1,126 @@
+version: "0.1"
+kind: "adl-skill"
+id: "product-report-writer"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "product_report_writer.v1"
+    reference_doc: "../docs/PRODUCT_REPORT_WRITER_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "artifact_root"
+      - "audience"
+      - "policy"
+    mode_enum:
+      - "write_from_packet"
+      - "write_from_synthesis"
+      - "write_from_specialist_artifacts"
+      - "refresh_report"
+    policy_fields:
+      - "privacy_mode"
+      - "publication_intent"
+      - "write_report_artifact"
+      - "require_redaction_status"
+      - "preserve_specialist_disagreement"
+      - "stop_before_publication"
+      - "stop_before_mutation"
+    mode_requirements:
+      write_from_packet:
+        required_target_fields:
+          - "artifact_root"
+      write_from_synthesis:
+        required_target_fields:
+          - "synthesis_artifact"
+      write_from_specialist_artifacts:
+        required_target_fields:
+          - "specialist_artifacts"
+      refresh_report:
+        required_target_fields:
+          - "existing_report_path"
+  intent:
+    - "product_report_writing"
+    - "codebuddy_review_engine"
+    - "customer_grade_report"
+    - "review_packet_synthesis"
+  required_inputs:
+    - "artifact_root"
+    - "audience"
+  optional_inputs:
+    - "synthesis_artifact"
+    - "specialist_artifacts"
+    - "existing_report_path"
+    - "output_root"
+    - "quality_gate_path"
+    - "redaction_report_path"
+  stop_if_missing:
+    - "artifact_root"
+  prevalidation_rules:
+    - "artifact_root_must_exist"
+    - "skill_input_schema_must_equal_product_report_writer.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "audience_must_be_explicit"
+    - "policy.privacy_mode_must_be_explicit"
+    - "policy.publication_intent_must_be_explicit"
+    - "policy.stop_before_publication_must_be_true"
+    - "policy.stop_before_mutation_must_be_true"
+    - "policy.preserve_specialist_disagreement_must_be_true"
+execution:
+  mode: "report_only"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  permitted_scripts:
+    - path: "scripts/write_product_report.py"
+      interpreter: "python3"
+      read_only: true
+      allowed_args:
+        - "<packet-root>"
+        - "--out <artifact-root>"
+        - "--audience <audience>"
+        - "--repo-name <name>"
+  preferred_read_order:
+    - "run_manifest.json"
+    - "repo_scope.md"
+    - "final_report.md"
+    - "synthesis.md"
+    - "specialist review artifacts"
+    - "diagram manifests and reviews"
+    - "test recommendation artifacts"
+    - "issue planning artifacts"
+    - "redaction report"
+    - "quality evaluation"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  must_not_run:
+    - "publication"
+    - "approval_claims"
+    - "compliance_claims"
+    - "remediation_complete_claims"
+    - "tracker_item_creation"
+    - "pull_request_creation"
+    - "specialist_reviews"
+    - "test_generation"
+    - "diagram_generation"
+    - "customer_repository_mutation"
+outputs:
+  default_format: "markdown_and_json"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/codebuddy/<run_id>/product-report/"
+  required_artifacts:
+    - "codebuddy_product_report.md"
+    - "codebuddy_product_report.json"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  publication_requires_redaction_gate: true
+  no_approval_or_compliance_claims: true
+  manifest_declares_executables: true
+
+display_name: Product Report Writer
+short_description: Write customer-grade CodeBuddy reports from review packet artifacts
+default_prompt: Write a customer-grade CodeBuddy report from existing review artifacts. Preserve severity, evidence, disagreement, caveats, privacy status, and residual risk; stop before publication, approval claims, issue creation, PRs, remediation, tests, or repository mutation.
