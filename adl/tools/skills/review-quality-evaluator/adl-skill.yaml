@@ -1,0 +1,130 @@
+version: "0.1"
+kind: "adl-skill"
+id: "review-quality-evaluator"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "review_quality_evaluator.v1"
+    reference_doc: "../docs/REVIEW_QUALITY_EVALUATOR_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "artifact_root"
+      - "publication_intent"
+      - "policy"
+    mode_enum:
+      - "evaluate_packet"
+      - "evaluate_report"
+      - "evaluate_synthesis"
+      - "pre_publication_gate"
+    policy_fields:
+      - "publication_intent"
+      - "required_roles"
+      - "severity_floor"
+      - "require_redaction_status"
+      - "require_template_sections"
+      - "reject_unsupported_claims"
+      - "write_evaluation_artifact"
+      - "stop_before_publication"
+      - "stop_before_mutation"
+    mode_requirements:
+      evaluate_packet:
+        required_target_fields:
+          - "artifact_root"
+      evaluate_report:
+        required_target_fields:
+          - "report_path"
+      evaluate_synthesis:
+        required_target_fields:
+          - "synthesis_artifact"
+      pre_publication_gate:
+        required_target_fields:
+          - "artifact_root"
+          - "redaction_report_path"
+  intent:
+    - "review_quality_gate"
+    - "codebuddy_review_engine"
+    - "third_party_review_quality_bar"
+    - "pre_publication_quality_check"
+  required_inputs:
+    - "artifact_root"
+    - "publication_intent"
+    - "policy"
+  optional_inputs:
+    - "report_path"
+    - "synthesis_artifact"
+    - "specialist_artifacts"
+    - "output_root"
+    - "redaction_report_path"
+    - "product_report_path"
+  stop_if_missing:
+    - "artifact_root"
+  prevalidation_rules:
+    - "artifact_root_must_exist"
+    - "skill_input_schema_must_equal_review_quality_evaluator.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "publication_intent_must_be_explicit"
+    - "policy.stop_before_publication_must_be_true"
+    - "policy.stop_before_mutation_must_be_true"
+    - "policy.reject_unsupported_claims_must_be_true"
+execution:
+  mode: "quality_gate_only"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  permitted_scripts:
+    - path: "scripts/evaluate_review_quality.py"
+      interpreter: "python3"
+      read_only: true
+      allowed_args:
+        - "<packet-root>"
+        - "--out <artifact-root>"
+        - "--publication-intent <intent>"
+        - "--required-role <role>"
+  preferred_read_order:
+    - "run_manifest.json"
+    - "repo_scope.md"
+    - "final_report.md"
+    - "product-report/codebuddy_product_report.md"
+    - "synthesis.md"
+    - "specialist review artifacts"
+    - "redaction report"
+    - "diagram manifests and reviews"
+    - "test recommendation artifacts"
+    - "issue planning artifacts"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  must_not_run:
+    - "publication"
+    - "approval_claims"
+    - "compliance_claims"
+    - "remediation_complete_claims"
+    - "tracker_item_creation"
+    - "pull_request_creation"
+    - "specialist_reviews"
+    - "test_generation"
+    - "diagram_generation"
+    - "report_rewriting"
+    - "customer_repository_mutation"
+outputs:
+  default_format: "markdown_and_json"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/codebuddy/<run_id>/quality-evaluation/"
+  required_artifacts:
+    - "review_quality_evaluation.md"
+    - "review_quality_evaluation.json"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  publication_requires_redaction_gate: true
+  unsupported_claims_are_blockers: true
+  no_approval_or_compliance_claims: true
+  manifest_declares_executables: true
+
+display_name: Review Quality Evaluator
+short_description: Gate CodeBuddy packets and reports against the third-party-review quality bar
+default_prompt: Evaluate a CodeBuddy review packet or report for evidence quality, severity accuracy, actionability, duplication, unsupported claims, specialist coverage, template compliance, residual risk clarity, and publication safety. Emit pass, partial, fail, or not-run with concrete reasons; stop before publication, approval claims, remediation, issue creation, PRs, tests, diagrams, or repository mutation.
