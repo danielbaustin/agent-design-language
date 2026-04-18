@@ -19,6 +19,7 @@ coverage, or an explicit multi-agent review demo/proof surface.
 - `repo-architecture-review`
 - `repo-dependency-review`
 - `repo-diagram-planner`
+- `architecture-diagram-reviewer`
 - `repo-review-synthesis`
 
 ## Invocation Order
@@ -33,6 +34,7 @@ Recommended order:
 6. `repo-dependency-review`
 7. `repo-review-synthesis`
 8. `repo-diagram-planner`
+9. `architecture-diagram-reviewer`
 
 The first four roles may run independently when the operator wants parallel
 review. The synthesis role should run after at least one specialist artifact is
@@ -40,6 +42,10 @@ available, and ideally after all required roles have reported.
 The diagram planner should normally run after packet building and after the
 specialist artifacts that may propose diagram work. It emits bounded task briefs
 for `diagram-author`; it is not itself a review or diagram-authoring lane.
+The architecture diagram reviewer should run after `diagram-author` has produced
+a diagram packet or source set. It is a source-grounded quality gate that checks
+diagram truth, renderability evidence, assumptions, unknowns, and correction
+handoffs without authoring or rendering diagrams.
 
 ## Shared Specialist Input Shape
 
@@ -210,6 +216,28 @@ policy:
   stop_after_plan: true
 ```
 
+## Architecture Diagram Review Input Shape
+
+```yaml
+skill_input_schema: architecture_diagram_reviewer.v1
+mode: review_diagram_packet | review_diagram_sources | review_rendered_artifacts | review_revision
+repo_root: /absolute/path
+target:
+  review_packet_path: <path or null>
+  diagram_packet_path: <path or null>
+  diagram_sources:
+    - <path>
+  rendered_artifacts:
+    - <path>
+  artifact_root: <path or null>
+policy:
+  evidence_required: true
+  render_status_required: true
+  correction_handoff: diagram_planner | diagram_author | both | none
+  write_review_artifact: true | false
+  stop_after_review: true
+```
+
 ## Severity Rules
 
 - Preserve the highest severity attached to a merged finding unless the source
@@ -234,10 +262,15 @@ The suite may:
 - write review artifacts under `.adl/reviews`
 - recommend follow-up issues
 - plan bounded diagram tasks for `diagram-author`
+- review diagram packets and rendered artifact metadata for source-grounded
+  truth, missing major components, unsupported relationships, stale labels,
+  unrenderable sources, and correction handoffs
 
 The suite must not:
 - edit code, tests, docs, configs, or issue state
 - claim merge approval
+- author, edit, render, publish, or replace diagrams from the diagram review
+  lane
 - claim remediation
 - run unbounded repository-wide analysis without a declared target
 - use network or paid data feeds
