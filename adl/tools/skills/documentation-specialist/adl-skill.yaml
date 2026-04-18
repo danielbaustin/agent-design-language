@@ -1,0 +1,131 @@
+version: "0.1"
+kind: "adl-skill"
+id: "documentation-specialist"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "documentation_specialist.v1"
+    reference_doc: "../docs/DOCUMENTATION_SPECIALIST_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "target"
+      - "source_packet"
+      - "audience"
+      - "policy"
+    mode_enum:
+      - "write_doc"
+      - "repair_doc"
+      - "audit_doc"
+      - "polish_doc"
+      - "plan_doc"
+      - "refresh_doc"
+      - "handoff_packet"
+    policy_fields:
+      - "bounded_target_required"
+      - "source_evidence_required"
+      - "allow_repo_edits"
+      - "write_handoff_artifact"
+      - "check_commands"
+      - "stop_before_publication"
+      - "stop_before_broad_rewrite"
+    mode_requirements:
+      write_doc:
+        required_target_fields:
+          - "target.path"
+          - "source_packet.evidence_paths"
+      repair_doc:
+        required_target_fields:
+          - "target.path"
+          - "source_packet.evidence_paths"
+      audit_doc:
+        required_target_fields:
+          - "target.path"
+      polish_doc:
+        required_target_fields:
+          - "target.path"
+      plan_doc:
+        required_target_fields:
+          - "target.doc_type"
+      refresh_doc:
+        required_target_fields:
+          - "target.path"
+          - "source_packet.evidence_paths"
+      handoff_packet:
+        required_target_fields:
+          - "target.doc_type"
+  intent:
+    - "documentation_authoring"
+    - "documentation_repair"
+    - "documentation_audit"
+    - "truth_boundary_review"
+    - "onboarding_docs"
+    - "milestone_docs"
+    - "architecture_docs"
+    - "demo_docs"
+    - "skill_docs"
+  required_inputs:
+    - "target"
+    - "source_packet"
+    - "audience"
+    - "policy"
+  optional_inputs:
+    - "output_root"
+    - "validation_commands"
+    - "claim_ledger"
+    - "existing_findings"
+    - "handoff_path"
+  stop_if_missing:
+    - "target"
+    - "source_packet"
+  prevalidation_rules:
+    - "skill_input_schema_must_equal_documentation_specialist.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "policy.bounded_target_required_must_be_true"
+    - "policy.source_evidence_required_must_be_true"
+    - "policy.stop_before_publication_must_be_true"
+    - "policy.stop_before_broad_rewrite_must_be_true"
+execution:
+  mode: "bounded_docs"
+  allow_code_edits: false
+  allow_doc_edits: true
+  allow_network: false
+  allow_subagents: false
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+  validation_policy: "run_only_safe_bounded_doc_commands_and_record_skips"
+boundaries:
+  must_not_run:
+    - "external_publication"
+    - "release_approval"
+    - "review_approval"
+    - "compliance_claims"
+    - "adr_acceptance"
+    - "issue_creation"
+    - "pull_request_creation"
+    - "broad_repo_rewrite"
+    - "unsupported_behavior_claims"
+outputs:
+  default_format: "markdown_or_doc_edit_summary"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/docs/reviews/<run_id>-documentation-specialist.md"
+  required_sections:
+    - "documentation_scope"
+    - "source_evidence"
+    - "claim_ledger"
+    - "edits_or_recommendations"
+    - "validation"
+    - "residual_risk"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  no_external_publication: true
+  no_unbounded_doc_rewrite: true
+  manifest_declares_executables: false
+
+display_name: Documentation Specialist
+short_description: Plan, write, audit, and polish bounded repository documentation
+default_prompt: Plan, write, audit, or polish bounded repository documentation from explicit source evidence. Separate source-backed facts from recommendations and assumptions; flag stale commands, overclaims, missing validation evidence, and stop before publication or broad rewrites.
