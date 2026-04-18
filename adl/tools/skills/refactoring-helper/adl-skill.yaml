@@ -1,0 +1,119 @@
+version: "0.1"
+kind: "adl-skill"
+id: "refactoring-helper"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "refactoring_helper.v1"
+    reference_doc: "../docs/REFACTORING_HELPER_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "target"
+      - "current_behavior"
+      - "refactor_intent"
+      - "policy"
+    mode_enum:
+      - "plan_refactor"
+      - "slice_refactor"
+      - "review_refactor_plan"
+      - "prepare_refactor_handoff"
+    policy_fields:
+      - "behavior_change_allowed"
+      - "max_slice_count"
+      - "require_tests_before_edits"
+      - "require_rollback_notes"
+      - "stop_before_broad_rewrite"
+      - "write_refactor_artifact"
+    mode_requirements:
+      plan_refactor:
+        required_target_fields:
+          - "paths"
+      slice_refactor:
+        required_target_fields:
+          - "paths"
+          - "selected_slice"
+      review_refactor_plan:
+        required_target_fields:
+          - "refactor_plan_path"
+      prepare_refactor_handoff:
+        required_target_fields:
+          - "paths"
+          - "handoff_recipient"
+  intent:
+    - "refactor_planning"
+    - "safe_refactor_slicing"
+    - "behavior_preservation"
+    - "validation_planning"
+  required_inputs:
+    - "target"
+    - "current_behavior"
+    - "refactor_intent"
+    - "policy"
+  optional_inputs:
+    - "artifact_root"
+    - "known_risks"
+    - "invariants"
+    - "validation_commands"
+    - "rollback_constraints"
+  stop_if_missing:
+    - "target"
+  prevalidation_rules:
+    - "bounded_target_must_be_explicit"
+    - "skill_input_schema_must_equal_refactoring_helper.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "policy.stop_before_broad_rewrite_must_be_true"
+    - "behavior_change_must_be_explicit_when_allowed"
+execution:
+  mode: "plan_then_optional_single_slice"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  permitted_scripts:
+    - path: "scripts/plan_refactor.py"
+      interpreter: "python3"
+      read_only: true
+      allowed_args:
+        - "<refactor-root>"
+        - "--out <artifact-root>"
+        - "--run-id <id>"
+        - "--max-slices <n>"
+  preferred_read_order:
+    - "refactor_manifest.json"
+    - "target_surface.md"
+    - "current_behavior.md"
+    - "refactor_intent.md"
+    - "invariants.md"
+    - "validation.md"
+    - "known_risks.md"
+  invocation_guidance: "require_bounded_target_and_behavior_preservation_before_planning"
+boundaries:
+  must_not_run:
+    - "large_unbounded_rewrite"
+    - "silent_behavior_change"
+    - "unreviewed_code_deletion"
+    - "test_skipping_for_behavioral_surface"
+    - "tracker_item_creation"
+    - "pull_request_creation"
+    - "release_approval"
+outputs:
+  default_format: "markdown_and_json"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/refactoring-helper/<run_id>/"
+  required_artifacts:
+    - "refactor_plan.md"
+    - "refactor_plan.json"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  no_silent_behavior_changes: true
+  no_mutation_without_operator_approval: true
+  manifest_declares_executables: true
+
+display_name: Refactoring Helper
+short_description: Plan bounded behavior-preserving refactor slices with invariants, tests, and rollback notes
+default_prompt: Turn a bounded code surface into a safe refactor plan. Identify current behavior, invariants, risks, validation commands, small execution slices, rollback notes, and residual risks; stop before broad rewrites, silent behavior changes, or unapproved repository mutation.

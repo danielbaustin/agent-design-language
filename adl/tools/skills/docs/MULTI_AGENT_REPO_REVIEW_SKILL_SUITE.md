@@ -23,6 +23,7 @@ coverage, or an explicit multi-agent review demo/proof surface.
 - `architecture-diagram-reviewer`
 - `review-to-test-planner`
 - `gap-analysis`
+- `refactoring-helper`
 - `adr-curator`
 - `architecture-fitness-function-author`
 - `finding-to-issue-planner`
@@ -44,11 +45,12 @@ Recommended order:
 9. `architecture-diagram-reviewer`
 10. `review-to-test-planner`
 11. `gap-analysis`
-12. `adr-curator`
-13. `architecture-fitness-function-author`
-14. `finding-to-issue-planner`
-15. `product-report-writer`
-16. `review-quality-evaluator`
+12. `refactoring-helper`
+13. `adr-curator`
+14. `architecture-fitness-function-author`
+15. `finding-to-issue-planner`
+16. `product-report-writer`
+17. `review-quality-evaluator`
 
 The first four roles may run independently when the operator wants parallel
 review. The synthesis role should run after at least one specialist artifact is
@@ -67,6 +69,12 @@ The gap-analysis skill should run when a concrete expected baseline must be
 reconciled against observed implementation, docs, tests, review, report, PR, or
 closeout evidence. It emits source-grounded gap findings and stops before fixes,
 approval, publication, issue creation, PR creation, or repository mutation.
+The refactoring-helper skill should run when review findings, architecture
+findings, gap reports, or code surfaces need to be turned into bounded,
+behavior-preserving refactor slices. It identifies current behavior, invariants,
+risks, validation commands, rollback notes, residual risk, and follow-on slices;
+it stops before broad rewrites, silent behavior changes, issue creation, PR
+creation, or unapproved repository mutation.
 The ADR curator should run after architecture findings, synthesis, migration
 notes, or repo evidence identify durable decisions that need Architecture
 Decision Record candidates. It drafts proposed ADR packets without accepting
