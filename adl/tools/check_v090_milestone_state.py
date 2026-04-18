@@ -133,18 +133,18 @@ def main() -> int:
         results.append(("FAIL", "milestone_compression_packet", "compression packet directory missing"))
 
     demo_matrix = read(milestone / "DEMO_MATRIX_v0.90.md")
-    expected_pending = [
-        ("D1", "planned"),
-        ("D2", "planned"),
-        ("D3", "planned"),
-        ("D4", "planned"),
-        ("D5", "planned"),
+    expected_demo_status = [
+        ("D1", "landed by `#2021`"),
+        ("D2", "landed by `#2022`"),
+        ("D3", "landed by `#2024` / `#2025`"),
+        ("D4", "integrated by `#2027`"),
+        ("D5", "landed by `#2028`"),
     ]
-    for demo_id, expected in expected_pending:
+    for demo_id, expected in expected_demo_status:
         if re.search(rf"\| {demo_id} \|.*\| {expected} \|", demo_matrix):
-            results.append(("PASS", f"{demo_id}_status", f"{demo_id} remains truthfully {expected}"))
+            results.append(("PASS", f"{demo_id}_status", f"{demo_id} matches landed evidence: {expected}"))
         else:
-            results.append(("KNOWN_MISMATCH", f"{demo_id}_status", f"{demo_id} is no longer classified as {expected}"))
+            results.append(("KNOWN_MISMATCH", f"{demo_id}_status", f"{demo_id} is not classified as {expected}"))
 
     for result in results:
         print(" | ".join(result))

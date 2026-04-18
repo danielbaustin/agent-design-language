@@ -205,7 +205,7 @@ work package explicitly accepts that scope.
 
 Public demo mirrors must not contain:
 
-- `/Users/...` host paths
+- host-absolute private workstation paths
 - API keys
 - bearer tokens
 - private key material

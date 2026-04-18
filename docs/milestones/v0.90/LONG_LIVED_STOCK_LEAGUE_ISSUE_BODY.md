@@ -73,7 +73,7 @@ Ollama, or delayed public-market-data path optional and safely bounded.
 
 ## Issue-Graph Notes
 
-- New backlog/demo prototype seeded from the local TBD planning doc.
+- New backlog/demo prototype seeded from the local planning doc.
 - This issue is intentionally seeded for the `v0.90` planning band rather than
   the active `v0.89.1` execution wave running in another session.
 - Later promotion can move the demo into a future milestone once the fixture

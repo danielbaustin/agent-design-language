@@ -22,15 +22,20 @@
 | D-08 | Add repo visibility as a bounded prototype | accepted | Repo-aware cognition is useful now, but the first slice should be a manifest and linkage proof | Adds WP-12 without claiming full repo indexing |
 | D-09 | Add explicit Rust refactoring near the release tail | accepted | We are doing refactoring anyway, so it should be visible, bounded, and validated | Adds WP-14 for maintainability/testability/review-driven refactors |
 
-## Open Questions
+## Dispositioned Questions
 
-- Should signed trace and TQL be narrow v0.90 inspection features or deferred?
-- Should the hypothesis engine reasoning graph be part of v0.90 or a later reasoning milestone?
-- Should urgency/prioritization be implemented as scheduler policy in v0.90 or deferred to governance?
-- Should the stock league demo be fixture-only, delayed/public data, or both?
-- Which demo additions or extensions should be included under WP-09?
-- Which files or modules justify WP-14 Rust refactoring?
-- Which milestone slice should be used for the first repo visibility linkage proof?
+- Signed trace and TQL remain later-band or narrow inspection context unless a
+  later issue promotes them explicitly.
+- The hypothesis engine reasoning graph remains later reasoning-surface context,
+  not a v0.90 runtime commitment.
+- Urgency/prioritization remains governance and later scheduler-policy context.
+- The stock league demo uses deterministic fixture replay as the canonical
+  reviewer path.
+- WP-09 selected the stock-league reviewer evidence index extension.
+- WP-14 refactoring targets are driven by the maintainability hotspot plan and
+  child issues, not broad aesthetic cleanup.
+- WP-12 used the long-lived runtime and stock-league proof path for the first
+  repo visibility linkage proof.
 
 ## Exit Criteria
 

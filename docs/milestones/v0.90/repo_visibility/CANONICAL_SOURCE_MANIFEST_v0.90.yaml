@@ -27,12 +27,11 @@ authority_model:
   local_planning:
     meaning: Local operator planning, not public release truth.
     roots:
-      - .adl/docs/TBD
-      - .adl/docs/v0.*planning
+      - local_operator_planning
   retired_material:
     meaning: Historical provenance only.
     roots:
-      - .adl/docs/TBD/retired
+      - retired_local_planning
 
 canonical_docs:
   milestone_entrypoints:
@@ -122,32 +121,36 @@ code_surfaces:
       role: deterministic model roster fixture
 
 proof_surfaces:
-  planned_v0_90:
+  landed_v0_90:
     - id: D1
       title: Long-lived supervisor heartbeat
       source: docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
-      status: planned
+      status: landed_by_2021
     - id: D2
       title: Cycle contract replay packet
       source: docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
-      status: planned
+      status: landed_by_2022
     - id: D3
       title: Operator stop and guardrail controls
       source: docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
-      status: planned
+      status: landed_by_2024_and_2025
     - id: D4
       title: Stock league long-lived demo
       source: docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
-      status: planned
+      status: integrated_by_2027
+    - id: D5
+      title: Stock league proof expansion
+      source: docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
+      status: landed_by_2028
     - id: D6
       title: Repo visibility proof packet
       source: docs/milestones/v0.90/DEMO_MATRIX_v0.90.md
       status: this_issue
 
 known_gaps:
-  - id: v090-demo-command-entrypoints
-    status: expected_pending_implementation
-    detail: v0.90 demo commands remain planned until WP-02 through WP-09 land.
+  - id: coverage-ratchet-evidence
+    status: pending_wp10
+    detail: v0.90 coverage ratchet evidence remains open until WP-10 lands.
   - id: broader_repo_index
     status: out_of_scope
     detail: This manifest covers one milestone slice, not the full repository.

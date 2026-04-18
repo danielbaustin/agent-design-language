@@ -10,9 +10,9 @@
 
 ## Draft Summary
 
-v0.90 is planned as the first bounded long-lived-agent runtime milestone.
+v0.90 is the first bounded long-lived-agent runtime milestone.
 
-The intended release story is:
+The release story being assembled is:
 
 - supervised agents can run across bounded cycles
 - each cycle emits reviewable artifacts
@@ -25,7 +25,7 @@ The intended release story is:
 - milestone compression and repo visibility land as bounded pilots
 - Rust refactoring is explicit, scoped, and validated
 
-## Planned Highlights
+## Landed Highlights So Far
 
 - long-lived supervisor and heartbeat
 - cycle manifest and artifact contract
@@ -33,9 +33,15 @@ The intended release story is:
 - operator control and guardrail surfaces
 - stock league demo proof package
 - demo extension proof package
-- `93%` coverage tranche
 - milestone compression pilot
 - repo visibility manifest and linkage report
+
+Still open before final release copy:
+
+- `93%` coverage tranche
+- explicit Rust refactoring rollup
+- internal review, third-party review, findings remediation, final readiness,
+  next-milestone planning, and release ceremony
 - Rust refactoring validation record
 
 ## Explicit Non-Claims
@@ -53,5 +59,6 @@ v0.90 should not claim:
 
 ## Release Status
 
-Not started. This file is draft release-note scaffolding for the tracked v0.90
-planning package. Final release copy belongs to the v0.90 release tail.
+Draft. Runtime and demo proof work has landed through WP-09, and WP-11/WP-12
+sidecar proofs have landed. WP-10 and the review/release tail remain open, so
+this file must not yet be treated as final release copy.

@@ -81,25 +81,23 @@ Planned WPs:
 - WP-19: next milestone planning
 - WP-20: release ceremony
 
-## Blockers For The Current Promotion Gate
+## Current Promotion Gate Status
 
-- Decide whether reasoning graph, signed trace, and TQL are core v0.90 scope or
-  follow-on scope.
-- Decide whether urgency/prioritization is a narrow scheduler feature or a later
-  governance feature.
-- Decide which new or extended demos belong in WP-09 without diluting the stock
-  league proof path.
-- Confirm the WP-10 coverage ratchet target remains `93%` for this revision.
-- Confirm the WP-11 milestone-compression pilot stays read-only or low-mutation
-  until it proves accurate against real issue and PR truth.
-- Confirm the WP-12 repo visibility prototype is bounded to a manifest and one
-  linkage proof rather than a full repo-indexing platform.
-- Identify the Rust refactoring targets for WP-14 from real maintainability,
-  testability, or review evidence.
-- Keep WP_EXECUTION_READINESS_v0.90.md current as the tracked execution contract
-  for the open WP wave.
-- Convert this tracked package into tracked docs under docs/milestones/v0.90.
-- Issue numbers are open and WP_ISSUE_WAVE_v0.90.yaml now records `#2019` and `#2021` through `#2039`.
+- Reasoning graph, signed trace, TQL, and urgency/prioritization are accounted
+  for as deferred or later-band context unless promoted by a later issue.
+- WP-09 selected a bounded stock-league reviewer evidence extension without
+  diluting the primary stock-league proof path.
+- WP-10 remains open and must still prove the `93%` coverage tranche before any
+  release-readiness claim.
+- WP-11 landed a read-only milestone-compression pilot.
+- WP-12 landed a bounded manifest and one linkage proof rather than a full
+  repo-indexing platform.
+- WP-14 refactoring targets are drawn from the maintainability hotspot plan and
+  active child issues.
+- WP_EXECUTION_READINESS_v0.90.md remains the tracked execution contract for the
+  open WP wave.
+- Issue numbers are open and WP_ISSUE_WAVE_v0.90.yaml records `#2019` and
+  `#2021` through `#2039`.
 
 ## Demo / Review Plan
 
@@ -128,4 +126,5 @@ Required review checks:
 
 - every sprint item maps to a WBS row
 - every WBS row can become a bounded issue
-- demo and proof surfaces are named before implementation begins
+- demo and proof surfaces are named and their status is kept aligned with
+  landed or deferred work

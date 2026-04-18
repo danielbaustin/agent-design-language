@@ -24,8 +24,8 @@ repo-visibility prototype useful.
 | `docs/milestones/v0.90/*.md` | canonical tracked milestone truth | Public review starts here. |
 | `docs/milestones/v0.90/features/*.md` | feature contracts and proof designs | Executable only when linked by WBS/readiness gates. |
 | `docs/milestones/v0.90/ideas/*.md` | background and later-band context | Not shipped claims unless promoted. |
-| `.adl/docs/TBD` and `.adl/docs/v0.*planning` | local operator planning | Not public release truth. |
-| `.adl/docs/TBD/retired` | historical provenance | Do not treat as active scope. |
+| local operator planning material | local operator planning | Not public release truth. |
+| retired local planning material | historical provenance | Do not treat as active scope. |
 
 ## Canonical Docs For This Slice
 
@@ -53,16 +53,18 @@ repo-visibility prototype useful.
 | Bounded multi-cycle execution | `adl/src/long_lived_agent.rs` and `adl/tests/cli_smoke/agent.rs` cover bounded `run --max-cycles` behavior. | present |
 | Stop/status control | `adl/src/cli/agent_cmd.rs` and `adl/src/long_lived_agent.rs` expose status and stop paths. | present |
 | Cycle artifacts | `adl/src/long_lived_agent.rs` writes cycle manifests, observations, decision request/result, run refs, memory writes, guardrail reports, and summaries. | present |
-| Stock-league proof | `demos/v0.89.1/long_lived_stock_league_demo.md`, `adl/tools/demo_v0891_long_lived_stock_league.sh`, and `adl/tools/test_demo_v0891_long_lived_stock_league.sh` provide prior proof material and fixtures. | present as prior proof, pending v0.90 integration |
-| Minimal inspection/query surface | WP-06 owns the v0.90 inspection boundary. | pending #2025 |
+| Stock-league proof | `demos/v0.90/long_lived_stock_league_demo.md`, `demos/v0.90/stock_league_demo_extensions.md`, and `adl/src/demo/stock_league/` provide the v0.90 scaffold, recurring integration, and extension proof packets. | present |
+| Minimal inspection/query surface | `adl/src/long_lived_agent.rs` exposes `inspect`, latest-cycle inspection, specific-cycle inspection, and unsafe-cycle-ref rejection paths. | present |
 
 ## Test And Demo Linkage
 
 | Surface | What it proves | Status |
 | --- | --- | --- |
 | `adl/tests/cli_smoke/agent.rs` | Agent run writes exactly bounded cycles, preserves ledgers, writes continuity and status, and supports status reads after completion. | present |
-| `adl/tools/test_demo_v0891_long_lived_stock_league.sh` | Fixture-backed paper league produces proving demo artifacts without financial advice, broker integration, live model dependence, or host-path leakage. | prior proof present |
-| `docs/milestones/v0.90/DEMO_MATRIX_v0.90.md` D1-D4 | Planned v0.90 proof surfaces for supervisor heartbeat, cycle contract, operator controls, and stock-league integration. | planned |
+| `cargo test --manifest-path adl/Cargo.toml long_lived_agent::tests -- --nocapture` | Long-lived runtime tests prove heartbeat/lease, cycle artifacts, continuity, inspection, stop controls, guardrails, and paper-only rejection behavior. | present |
+| `cargo run --manifest-path adl/Cargo.toml -- demo demo-j-v090-stock-league-recurring --run --trace --out out --no-open` | Fixture-backed recurring paper league produces proving demo artifacts without financial advice, broker integration, live model dependence, or host-path leakage. | present |
+| `cargo run --manifest-path adl/Cargo.toml -- demo demo-k-v090-stock-league-proof-expansion --run --trace --out out --no-open` | Bounded demo extension adds reviewer evidence without replacing the primary D4 stock-league proof. | present |
+| `docs/milestones/v0.90/DEMO_MATRIX_v0.90.md` D1-D5 | Landed v0.90 proof surfaces for supervisor heartbeat, cycle contract, operator controls, stock-league integration, and proof expansion. | present |
 | `docs/milestones/v0.90/DEMO_MATRIX_v0.90.md` D6 | Repo visibility proof packet. | delivered by this issue |
 
 ## Issue Linkage
@@ -87,17 +89,16 @@ repo-visibility prototype useful.
 - Core long-lived runtime feature docs.
 - Rust long-lived agent module and agent CLI command surface.
 - CLI smoke test for bounded multi-cycle behavior.
-- Prior stock-league demo proof and validation script from v0.89.1.
+- v0.90 stock-league scaffold, recurring integration, and proof expansion docs.
 - This repo-visibility manifest and linkage report.
 
 ### Expected Pending Work
 
-- v0.90-specific demo command entrypoints should be finalized by WP-07 through
-  WP-09, not invented in this visibility issue.
-- WP-06 should decide and implement the minimal trace/status inspection
-  boundary.
+- WP-10 should finish the coverage ratchet evidence before release readiness.
 - WP-13 should verify that this report still matches the docs and code after
-  the implementation WPs merge.
+  the implementation and sidecar WPs merge.
+- WP-14 should finish the explicit Rust refactoring rollup after the remaining
+  refactor child issues settle.
 
 ### Deferred / Out Of Scope
 
@@ -114,7 +115,7 @@ A reviewer can use this packet to answer:
 
 - Which docs define the v0.90 long-lived runtime claim?
 - Which code and tests currently implement or prove parts of that claim?
-- Which demos are prior proof versus planned v0.90 proof?
+- Which demos are landed v0.90 proof versus still-open release-tail work?
 - Which issues own the remaining implementation and integration work?
 - Which materials are canonical tracked truth versus local planning or
   historical context?

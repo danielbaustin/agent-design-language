@@ -12,7 +12,8 @@ state:
   issue_wave: open
   repo_visibility_packet: landed
   milestone_compression_packet: landed
-  runtime_demos: planned
+  runtime_demos: landed_through_wp09
+  coverage_ratchet: pending_wp10
   review_tail: pending
   release_ceremony: pending
 checks:
@@ -28,8 +29,8 @@ checks:
   milestone_compression_packet:
     expected: directory_exists_when_state_landed
     severity: fail
-  planned_demo_rows:
-    expected: D1_through_D5_remain_planned_until_implementation_lands
+  demo_rows:
+    expected: D1_through_D5_reflect_landed_issue_evidence_after_wp09
     severity: known_mismatch_if_changed
 non_goals:
   - autonomous_merge
