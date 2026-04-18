@@ -13,7 +13,7 @@
 The v0.90 milestone compression pilot now has a minimal canonical state model
 and a read-only drift checker. The pilot focuses on high-signal milestone drift:
 issue-wave count, issue references in core docs, proof-packet status, and
-truthful planned-demo classification.
+truthful demo classification.
 
 This is intentionally not a release bot. It makes drift visible; it does not
 approve merges, close issues, or rewrite milestone truth.
@@ -27,14 +27,14 @@ Expected pass classifications:
 - The repo visibility proof packet exists and the state model marks it landed.
 - The milestone compression proof packet exists and the state model marks it
   landed.
-- D1 through D5 remain planned in the demo matrix because their implementation
-  WPs have not all landed yet.
+- D1 through D5 match the landed issue evidence now that WP-02 through WP-09
+  have landed.
 
 Known mismatch policy:
 
-- If a demo row moves from planned to landed before its issue evidence exists,
-  the checker should report a known mismatch rather than silently treat the row
-  as release truth.
+- If a demo row claims landed work without the expected issue evidence, the
+  checker should report a known mismatch rather than silently treat the row as
+  release truth.
 - If a proof-packet directory exists but the state model still says planned,
   the checker should report a known mismatch.
 
@@ -61,8 +61,8 @@ python3 adl/tools/check_v090_milestone_state.py
 
 ## Next Use
 
-WP-13 should rerun this checker after the implementation WPs and sidecar WPs
-settle. WP-18 should treat the checker as one release-readiness input, not as a
+WP-13 reruns this checker after the implementation WPs and sidecar WPs settle.
+WP-18 should treat the checker as one release-readiness input, not as a
 replacement for human release ceremony.
 
 ## Finish Validation Refinement

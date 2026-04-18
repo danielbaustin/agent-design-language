@@ -39,18 +39,22 @@ Likely later-band or backgrounder inputs:
 - ideas/TIMELINE_FORKS_AND_COUNTERFACTUALS.md
 - ideas/LATER_TEMPORAL_AND_SOCIETY_CLUSTER_MAP.md
 
-## Promotion Rule
+## Current Disposition
 
-The `v0.89.1` WP-19 promotion gate promotes the files that support the selected
-v0.90 thesis.
+The `v0.89.1` WP-19 promotion gate promoted the files that support the selected
+v0.90 thesis. WP-02 through WP-09 then executed the long-lived runtime and stock
+league proof band.
 
-The default recommendation is:
+Current disposition:
 
-- promote the long-lived runtime feature set and four core feature contracts
-- rewrite the stock demo into a bounded demo/proof feature
-- decide explicitly whether to include urgency, reasoning graph, signed trace,
-  and TQL
-- keep the temporal/society docs as ideas or defer them to later milestones
+- the long-lived runtime feature set and four core feature contracts are active
+  v0.90 implementation context
+- the stock-league demo is the bounded v0.90 proof feature and has scaffold,
+  recurring integration, and extension proof surfaces
+- urgency, reasoning graph, signed trace, and TQL remain scope-decision context
+  or later-band material unless a later issue promotes them explicitly
+- the temporal/society docs remain ideas or later-band rationale, not shipped
+  v0.90 runtime commitments
 
 ## Review Guidance
 

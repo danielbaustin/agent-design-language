@@ -34,8 +34,7 @@ The checker is deliberately read-only. It validates:
 - each work package issue number is visible in core milestone docs;
 - the repo visibility and milestone compression proof packet statuses match
   tracked directories;
-- planned demo rows remain truthfully classified as planned until their
-  implementation WPs land.
+- D1 through D5 demo rows match their landed issue evidence after WP-09.
 
 ## Finish Validation Profiles
 

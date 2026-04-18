@@ -11,39 +11,39 @@
 ## Planning Gate
 
 - [x] The `v0.89.1` WP-19 promotion gate promotes this package into tracked milestone docs.
-- [ ] FEATURE_DOCS_v0.90.md has final promoted/deferred dispositions.
+- [x] FEATURE_DOCS_v0.90.md has current promoted/deferred dispositions.
 - [x] WP_ISSUE_WAVE_v0.90.yaml has real issue titles, dependencies, and issue numbers.
-- [ ] Every feature doc has a WBS row.
-- [ ] Every idea doc has a reader-facing or deferred home.
+- [x] Every feature doc has a WBS row or a deferred/later-band home.
+- [x] Every idea doc has a reader-facing or deferred home.
 - [x] WP_EXECUTION_READINESS_v0.90.md binds open WPs to concrete source docs,
   artifact/proof surfaces, validation expectations, and non-goals.
 
 ## Scope Gate
 
-- [ ] v0.90 thesis is confirmed.
-- [ ] Full v0.92 identity is explicitly out of scope.
-- [ ] Live trading and financial advice are explicitly out of scope.
-- [ ] Trace/TQL/reasoning graph scope is accepted, narrowed, or deferred.
-- [ ] Demo extension scope is named and bounded.
+- [x] v0.90 thesis is confirmed.
+- [x] Full v0.92 identity is explicitly out of scope.
+- [x] Live trading and financial advice are explicitly out of scope.
+- [x] Trace/TQL/reasoning graph scope is accepted, narrowed, or deferred.
+- [x] Demo extension scope is named and bounded.
 - [ ] Coverage ratchet target is confirmed as `93%` for this revision.
-- [ ] Milestone compression scope is limited to canonical state and drift checks unless explicitly widened.
-- [ ] Repo visibility scope is limited to a bounded manifest/linkage prototype.
-- [ ] Rust refactoring targets are justified by maintainability, testability, or review evidence.
+- [x] Milestone compression scope is limited to canonical state and drift checks unless explicitly widened.
+- [x] Repo visibility scope is limited to a bounded manifest/linkage prototype.
+- [x] Rust refactoring targets are justified by maintainability, testability, or review evidence.
 - [x] WP cards have a tracked execution-readiness gate that prevents generic
   runtime, demo, coverage, compression, visibility, and refactor work.
 
 ## Implementation Gate
 
-- [ ] Supervisor/heartbeat work lands.
-- [ ] Cycle contract work lands.
-- [ ] Continuity handle work lands.
-- [ ] Operator control and safety work lands.
-- [ ] Demo scaffold lands.
-- [ ] Demo integration lands.
-- [ ] Demo extension lane lands or is explicitly deferred.
+- [x] Supervisor/heartbeat work lands.
+- [x] Cycle contract work lands.
+- [x] Continuity handle work lands.
+- [x] Operator control and safety work lands.
+- [x] Demo scaffold lands.
+- [x] Demo integration lands.
+- [x] Demo extension lane lands or is explicitly deferred.
 - [ ] Coverage ratchet reaches `93%` only after measurement and proof are green.
-- [ ] Milestone compression pilot lands without autonomous release approval.
-- [ ] Repo visibility prototype lands with a reviewer-readable manifest and linkage report.
+- [x] Milestone compression pilot lands without autonomous release approval.
+- [x] Repo visibility prototype lands with a reviewer-readable manifest and linkage report.
 - [ ] Rust refactoring pass lands with validation evidence.
 
 ## Review And Release Gate

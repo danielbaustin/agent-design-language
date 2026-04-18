@@ -119,16 +119,16 @@ code or demos.
 
 ## Demo And Validation Surface
 
-Primary planned demo:
+Primary landed demo:
 
 - stock league long-lived agents demo
 
-Additional planned demo lane:
+Additional landed demo lane:
 
 - selected new or extended demos, each with a named proof claim, validation
   command, and non-goals
 
-Primary planned proof surfaces:
+Primary landed proof surfaces:
 
 - bounded supervisor state
 - heartbeat / lease status
@@ -137,17 +137,25 @@ Primary planned proof surfaces:
 - operator stop and guardrail reports
 - delayed/public or fixture-backed paper market data
 - demo extension proof packets
-- coverage ratchet report to 93 percent
 - milestone state and drift-check report
 - repo visibility manifest and linkage report
-- Rust refactor validation record
+
+Still-open proof surfaces:
+
+- WP-10 coverage ratchet report to 93 percent
+- WP-13 docs and review alignment record
+- WP-14 Rust refactor validation rollup after the remaining refactor child
+  issues settle
+- WP-15 and WP-16 review artifacts
+- WP-17 through WP-20 release-tail records
 
 ## Status
 
 - Planning: tracked package promoted by `v0.89.1` WP-19 and opened by v0.90 WP-01
-- Execution: issue wave open; WP-02 starts from the execution-readiness gate in
-  WP_EXECUTION_READINESS_v0.90.md
-- Validation: not started
+- Execution: issue wave open; WP-02 through WP-09, WP-11, and WP-12 have
+  landed. WP-10, WP-13, WP-14, and the review/release tail remain open.
+- Validation: runtime and demo proof surfaces have landed through WP-09; the
+  coverage ratchet and final release quality gates remain open.
 - Release readiness: not started
 
 ## WP-19 Promotion Result

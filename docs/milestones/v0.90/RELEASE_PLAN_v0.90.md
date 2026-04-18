@@ -42,10 +42,12 @@ planning package into tracked milestone docs and v0.90 WP-01 opened the issue wa
 
 ## Release Blockers
 
-- No implementation WP should start before the v0.90 WP-01 issue-wave update lands.
+- The v0.90 WP-01 issue-wave update has landed.
 - No demo extension should displace the stock-league proof as the primary
   long-lived runtime demo.
 - No milestone-compression automation should silently mutate release truth.
+- WP-10 must finish the coverage ratchet evidence before quality-gate claims are
+  final.
 - No release ceremony should begin until next-milestone planning is complete.
 
 ## Exit Criteria
