@@ -1,0 +1,111 @@
+version: "0.1"
+kind: "adl-skill"
+id: "finding-to-issue-planner"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "finding_to_issue_planner.v1"
+    reference_doc: "../docs/FINDING_TO_ISSUE_PLANNER_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "finding_source"
+      - "policy"
+    mode_enum:
+      - "plan_from_review"
+      - "plan_from_synthesis"
+      - "plan_from_packet"
+      - "refresh_issue_plan"
+    policy_fields:
+      - "approval_required"
+      - "tracker_creation_allowed"
+      - "grouping_policy"
+      - "severity_floor"
+      - "preserve_specialist_disagreement"
+      - "stop_before_mutation"
+    mode_requirements:
+      plan_from_review:
+        required_target_fields:
+          - "finding_source"
+      plan_from_synthesis:
+        required_target_fields:
+          - "finding_source"
+      plan_from_packet:
+        required_target_fields:
+          - "finding_source"
+      refresh_issue_plan:
+        required_target_fields:
+          - "existing_plan_path"
+  intent:
+    - "finding_to_issue_planning"
+    - "review_follow_through"
+    - "codebuddy_review_engine"
+    - "approval_boundary"
+  required_inputs:
+    - "finding_source"
+  optional_inputs:
+    - "artifact_root"
+    - "tracker"
+    - "severity_floor"
+    - "existing_plan_path"
+    - "dependency_links"
+  stop_if_missing:
+    - "finding_source"
+  prevalidation_rules:
+    - "finding_source_must_exist"
+    - "skill_input_schema_must_equal_finding_to_issue_planner.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "policy.approval_required_must_be_true"
+    - "policy.tracker_creation_allowed_must_be_false"
+    - "policy.stop_before_mutation_must_be_true"
+    - "policy.preserve_specialist_disagreement_must_be_true"
+execution:
+  mode: "issue_candidates_only"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  permitted_scripts:
+    - path: "scripts/plan_review_issues.py"
+      interpreter: "python3"
+      read_only: true
+      allowed_args:
+        - "<finding-source>"
+        - "--out <artifact-root>"
+        - "--tracker <name>"
+        - "--severity-floor <P0|P1|P2|P3>"
+  preferred_read_order:
+    - "run_manifest.json"
+    - "repo_scope.md"
+    - "specialist review artifacts"
+    - "final_report.md"
+    - "redaction_report.md"
+    - "quality evaluation"
+  invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
+boundaries:
+  must_not_run:
+    - "tracker_item_creation"
+    - "pull_request_creation"
+    - "remediation_implementation"
+    - "test_generation"
+    - "customer_repository_mutation"
+    - "final_report_publication"
+outputs:
+  default_format: "markdown_and_json"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/codebuddy/<run_id>/issue-planning/"
+  required_artifacts:
+    - "issue_candidates.md"
+    - "issue_candidates.json"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  no_tracker_mutation_without_approval: true
+  manifest_declares_executables: true
+
+display_name: Finding To Issue Planner
+short_description: Draft reviewable issue candidates from CodeBuddy findings
+default_prompt: Turn CodeBuddy review findings into grouped issue candidates with evidence, acceptance criteria, validation plans, and approval boundaries. Stop before tracker creation or repository mutation.
