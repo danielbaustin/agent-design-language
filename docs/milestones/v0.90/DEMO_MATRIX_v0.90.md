@@ -23,6 +23,7 @@ Define the planned proof surfaces for v0.90 before implementation starts.
 | D5 | Stock league proof expansion | Selected demo extensions can add reviewer evidence without weakening the primary stock-league proof | `cargo run --manifest-path adl/Cargo.toml -- demo demo-k-v090-stock-league-proof-expansion --run --trace --out out --no-open` | selected-demo manifest, extension proof packet, evidence index, replay manifest, non-goals/deferrals, and extension safety scan | landed by `#2028` |
 | D6 | Repo visibility proof packet | ADL can map one milestone or feature slice from canonical docs to implementation, tests, demos, and review surfaces | `docs/milestones/v0.90/repo_visibility/` | manifest and code-doc-demo linkage report | landed by `#2031` |
 | D7 | Milestone compression pilot | ADL can detect milestone drift from canonical state without silently mutating release truth | `python3 adl/tools/check_v090_milestone_state.py` | canonical state file, drift-check output, and generated status summary | landed by `#2030` |
+| D8 | CodeBuddy multi-agent review showcase | ADL can present the CodeBuddy review-engine skill family as a product-style, packet-first repo review workflow without building the web app or mutating customer repos | `bash adl/tools/demo_v090_codebuddy_review_showcase.sh` | `artifacts/v090/codebuddy_review_showcase/run_manifest.json`, specialist reviews, redaction report, diagram artifacts, final report, and demo-operator classification | landed by `#2072`; intentionally `non_proving` until `#2070` lands |
 
 ## Safety Rules
 
@@ -46,6 +47,17 @@ Repo visibility and milestone-compression proof packets must:
 - distinguish canonical tracked docs from local planning and historical residue
 - avoid broad repo-ingestion claims
 - avoid autonomous release approval or silent closeout behavior
+
+The CodeBuddy showcase packet must:
+
+- keep review packet construction, specialist review, diagram review, redaction,
+  follow-through planning, and product-report writing as explicit lanes
+- preserve severity, evidence, caveats, specialist disagreement, and residual
+  risk in the final report
+- mark `review-quality-evaluator` as staged until `#2070` lands
+- avoid live provider calls, customer repositories, billing, and product-app
+  assumptions in the default demo path
+- block publication until redaction and evidence gates are explicit
 
 ## Validation Expectations
 
