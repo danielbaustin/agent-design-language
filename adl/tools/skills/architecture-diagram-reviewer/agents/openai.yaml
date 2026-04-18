@@ -1,0 +1,5 @@
+name: architecture-diagram-reviewer
+display_name: Architecture Diagram Reviewer
+short_description: Review architecture diagrams against source evidence, assumptions, and renderer truth.
+default_prompt: Review a bounded architecture diagram packet against source evidence. Stop after findings and correction handoffs; do not author, render, publish, create issues, or mutate the repo.
+
