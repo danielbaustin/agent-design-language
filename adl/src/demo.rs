@@ -25,7 +25,10 @@ use self::pipeline::{
     build_card_pipeline_manifest, DEMO_E_COPYEDITOR_MD, DEMO_E_EDITOR_MD, DEMO_E_INPUT_CARD_MD,
     DEMO_E_README_MD, DEMO_E_WRITER_MD,
 };
-use self::stock_league::{write_stock_league_integration_step, write_stock_league_scaffold_step};
+use self::stock_league::{
+    write_stock_league_extension_step, write_stock_league_integration_step,
+    write_stock_league_scaffold_step,
+};
 pub use self::v086_review_surface::{
     write_v086_candidate_selection_demo, write_v086_control_path_demo, write_v086_fast_slow_demo,
     write_v086_freedom_gate_demo, write_v086_review_surface_demo,
@@ -41,6 +44,7 @@ pub const DEMO_G_V086_CONTROL_PATH: &str = "demo-g-v086-control-path";
 pub const DEMO_H_V0891_ADVERSARIAL_SELF_ATTACK: &str = "demo-h-v0891-adversarial-self-attack";
 pub const DEMO_I_V090_STOCK_LEAGUE_SCAFFOLD: &str = stock_league::DEMO_NAME;
 pub const DEMO_J_V090_STOCK_LEAGUE_RECURRING: &str = stock_league::INTEGRATION_DEMO_NAME;
+pub const DEMO_K_V090_STOCK_LEAGUE_PROOF_EXPANSION: &str = stock_league::EXTENSION_DEMO_NAME;
 
 pub const ALL_DEMOS: &[&str] = &[
     DEMO_A_SAY_MCP,
@@ -53,6 +57,7 @@ pub const ALL_DEMOS: &[&str] = &[
     DEMO_H_V0891_ADVERSARIAL_SELF_ATTACK,
     DEMO_I_V090_STOCK_LEAGUE_SCAFFOLD,
     DEMO_J_V090_STOCK_LEAGUE_RECURRING,
+    DEMO_K_V090_STOCK_LEAGUE_PROOF_EXPANSION,
 ];
 
 #[derive(Debug, Clone)]
@@ -241,6 +246,9 @@ pub fn run_demo(name: &str, out_dir: &Path) -> Result<DemoResult> {
             DEMO_J_V090_STOCK_LEAGUE_RECURRING => {
                 artifacts.extend(write_stock_league_integration_step(out_dir, step_id)?);
             }
+            DEMO_K_V090_STOCK_LEAGUE_PROOF_EXPANSION => {
+                artifacts.extend(write_stock_league_extension_step(out_dir, step_id)?);
+            }
             _ => {}
         }
         trace.step_finished(step_id, true);
@@ -279,6 +287,12 @@ pub fn plan_steps(name: &str) -> &'static [&'static str] {
         DEMO_J_V090_STOCK_LEAGUE_RECURRING => {
             &["scaffold", "recurring_cycles", "inspection", "proof_packet"]
         }
+        DEMO_K_V090_STOCK_LEAGUE_PROOF_EXPANSION => &[
+            "selected_demos",
+            "recurring_proof",
+            "evidence_index",
+            "review_packet",
+        ],
         _ => &[],
     }
 }
@@ -398,6 +412,24 @@ fn steps_for(name: &str) -> &'static [(&'static str, &'static str)] {
             (
                 "proof_packet",
                 "Emit continuity, guardrail, safety-scan, and reviewer proof artifacts",
+            ),
+        ],
+        DEMO_K_V090_STOCK_LEAGUE_PROOF_EXPANSION => &[
+            (
+                "selected_demos",
+                "Name the bounded D5 demo extension choices, non-goals, and deferrals",
+            ),
+            (
+                "recurring_proof",
+                "Replay the D4 recurring stock-league proof path as the extension baseline",
+            ),
+            (
+                "evidence_index",
+                "Emit a reviewer evidence index, replay manifest, and proof-claim registry",
+            ),
+            (
+                "review_packet",
+                "Emit the D5 extension proof packet and public artifact safety scan",
             ),
         ],
         _ => &[],

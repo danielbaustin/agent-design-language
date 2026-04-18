@@ -72,3 +72,16 @@ cargo run --manifest-path adl/Cargo.toml -- demo demo-i-v090-stock-league-scaffo
 
 WP-08 adds recurring long-lived integration across cycles, status, continuity,
 guardrails, and inspection artifacts.
+
+## Extension Proof Command
+
+WP-09 adds a bounded reviewer-evidence extension without changing the primary
+D4 proof path:
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- demo demo-k-v090-stock-league-proof-expansion --run --trace --out out --no-open
+```
+
+The extension writes `extension_proof_packet.json` plus `extensions/*` evidence
+artifacts. See `demos/v0.90/stock_league_demo_extensions.md` for the D5
+selection, non-goals, deferrals, and reviewer path.
