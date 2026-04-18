@@ -20,6 +20,7 @@ coverage, or an explicit multi-agent review demo/proof surface.
 - `repo-dependency-review`
 - `repo-diagram-planner`
 - `architecture-diagram-reviewer`
+- `review-to-test-planner`
 - `repo-review-synthesis`
 
 ## Invocation Order
@@ -35,6 +36,7 @@ Recommended order:
 7. `repo-review-synthesis`
 8. `repo-diagram-planner`
 9. `architecture-diagram-reviewer`
+10. `review-to-test-planner`
 
 The first four roles may run independently when the operator wants parallel
 review. The synthesis role should run after at least one specialist artifact is
@@ -46,6 +48,9 @@ The architecture diagram reviewer should run after `diagram-author` has produced
 a diagram packet or source set. It is a source-grounded quality gate that checks
 diagram truth, renderability evidence, assumptions, unknowns, and correction
 handoffs without authoring or rendering diagrams.
+The review-to-test planner should run after specialist findings or synthesis
+exist. It maps findings to safe, bounded `test-generator` handoffs without
+writing tests or turning review follow-up into broad implementation work.
 
 ## Shared Specialist Input Shape
 
@@ -238,6 +243,34 @@ policy:
   stop_after_review: true
 ```
 
+## Review To Test Planning Input Shape
+
+```yaml
+skill_input_schema: review_to_test_planner.v1
+mode: plan_from_review_packet | plan_from_specialist_artifacts | plan_from_synthesis | plan_from_findings_file
+repo_root: /absolute/path
+target:
+  review_packet_path: <path or null>
+  specialist_artifacts:
+    code: <path or null>
+    security: <path or null>
+    tests: <path or null>
+    docs: <path or null>
+    architecture: <path or null>
+    dependency: <path or null>
+    synthesis: <path or null>
+  synthesis_artifact: <path or null>
+  findings_file: <path or null>
+  artifact_root: <path or null>
+policy:
+  test_depth: focused | moderate
+  validation_mode: targeted | inspect_only | none
+  allow_handoff_generation: true | false
+  unsafe_task_policy: mark_unsafe | skip
+  write_plan_artifact: true | false
+  stop_after_plan: true
+```
+
 ## Severity Rules
 
 - Preserve the highest severity attached to a merged finding unless the source
@@ -265,12 +298,16 @@ The suite may:
 - review diagram packets and rendered artifact metadata for source-grounded
   truth, missing major components, unsupported relationships, stale labels,
   unrenderable sources, and correction handoffs
+- plan bounded test-generation handoffs from review findings, including
+  behavior under test, fixture needs, expected assertions, validation commands,
+  and `generated` / `recommended` / `deferred` / `unsafe` status
 
 The suite must not:
 - edit code, tests, docs, configs, or issue state
 - claim merge approval
 - author, edit, render, publish, or replace diagrams from the diagram review
   lane
+- write tests or fixtures from the review-to-test planning lane
 - claim remediation
 - run unbounded repository-wide analysis without a declared target
 - use network or paid data feeds
