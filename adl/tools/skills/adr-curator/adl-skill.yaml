@@ -1,0 +1,119 @@
+version: "0.1"
+kind: "adl-skill"
+id: "adr-curator"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "adr_curator.v1"
+    reference_doc: "../docs/ADR_CURATOR_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "curate_from_review_packet"
+      - "curate_from_architecture_review"
+      - "curate_from_findings_file"
+      - "curate_from_migration_notes"
+      - "curate_from_path"
+      - "refresh_adr_packet"
+    policy_fields:
+      - "adr_status_policy"
+      - "approval_required"
+      - "mutation_allowed"
+      - "supersession_policy"
+      - "write_candidate_packet"
+      - "stop_before_acceptance"
+    mode_requirements:
+      curate_from_review_packet:
+        required_target_fields:
+          - "review_packet_path"
+      curate_from_architecture_review:
+        required_target_fields:
+          - "architecture_review_artifact"
+      curate_from_findings_file:
+        required_target_fields:
+          - "findings_file"
+      curate_from_migration_notes:
+        required_target_fields:
+          - "migration_notes_path"
+      refresh_adr_packet:
+        required_target_fields:
+          - "existing_adr_packet"
+  intent:
+    - "adr_curation"
+    - "architecture_decision_record_drafting"
+    - "codebuddy_review_engine"
+    - "decision_boundary"
+  required_inputs:
+    - "repo_root"
+  optional_inputs:
+    - "review_packet_path"
+    - "architecture_review_artifact"
+    - "findings_file"
+    - "migration_notes_path"
+    - "target_path"
+    - "artifact_root"
+    - "existing_adr_dir"
+    - "existing_adr_packet"
+  stop_if_missing:
+    - "repo_root"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_adr_curator.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "policy.approval_required_must_be_true"
+    - "policy.mutation_allowed_must_be_false"
+    - "policy.stop_before_acceptance_must_be_true"
+    - "curate_from_review_packet_requires_target.review_packet_path"
+    - "curate_from_architecture_review_requires_target.architecture_review_artifact"
+    - "curate_from_findings_file_requires_target.findings_file"
+execution:
+  mode: "candidate_adrs_only"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  permitted_scripts:
+    - path: "scripts/curate_adrs.py"
+      interpreter: "python3"
+      read_only: true
+      allowed_args:
+        - "<source-root>"
+        - "--out <artifact-root>"
+        - "--repo-name <name>"
+        - "--max-adrs <n>"
+  preferred_read_order:
+    - "existing ADR files"
+    - "architecture_review_artifact"
+    - "repo-review-synthesis artifact"
+    - "evidence_index.json"
+    - "repo_inventory.json"
+    - "migration notes"
+    - "findings_file"
+boundaries:
+  must_not_run:
+    - "adr_acceptance"
+    - "adr_file_mutation"
+    - "tracker_item_creation"
+    - "pull_request_creation"
+    - "remediation_implementation"
+    - "customer_repository_mutation"
+outputs:
+  default_format: "markdown_and_json"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/codebuddy/<run_id>/adr-curation/"
+  required_artifacts:
+    - "adr_candidates.md"
+    - "adr_candidates.json"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  no_decision_acceptance_without_approval: true
+  manifest_declares_executables: true
+

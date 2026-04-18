@@ -18,13 +18,14 @@ coverage, or an explicit multi-agent review demo/proof surface.
 - `repo-review-docs`
 - `repo-architecture-review`
 - `repo-dependency-review`
+- `repo-review-synthesis`
 - `repo-diagram-planner`
 - `architecture-diagram-reviewer`
 - `review-to-test-planner`
+- `adr-curator`
 - `architecture-fitness-function-author`
-- `product-report-writer`
-- `repo-review-synthesis`
 - `finding-to-issue-planner`
+- `product-report-writer`
 
 ## Invocation Order
 
@@ -40,9 +41,10 @@ Recommended order:
 8. `repo-diagram-planner`
 9. `architecture-diagram-reviewer`
 10. `review-to-test-planner`
-11. `architecture-fitness-function-author`
-12. `finding-to-issue-planner`
-13. `product-report-writer`
+11. `adr-curator`
+12. `architecture-fitness-function-author`
+13. `finding-to-issue-planner`
+14. `product-report-writer`
 
 The first four roles may run independently when the operator wants parallel
 review. The synthesis role should run after at least one specialist artifact is
@@ -57,6 +59,10 @@ handoffs without authoring or rendering diagrams.
 The review-to-test planner should run after specialist findings or synthesis
 exist. It maps findings to safe, bounded `test-generator` handoffs without
 writing tests or turning review follow-up into broad implementation work.
+The ADR curator should run after architecture findings, synthesis, migration
+notes, or repo evidence identify durable decisions that need Architecture
+Decision Record candidates. It drafts proposed ADR packets without accepting
+decisions, editing ADR files, or mutating repositories.
 The architecture fitness-function author should run after architecture findings
 or synthesis identify durable architecture rules worth preserving. It separates
 machine-checkable invariants from human-judgment candidates and deferred
@@ -288,6 +294,30 @@ policy:
   stop_after_plan: true
 ```
 
+## ADR Curator Input Shape
+
+```yaml
+skill_input_schema: adr_curator.v1
+mode: curate_from_review_packet | curate_from_architecture_review | curate_from_findings_file | curate_from_migration_notes | curate_from_path | refresh_adr_packet
+repo_root: /absolute/path
+target:
+  review_packet_path: <path or null>
+  architecture_review_artifact: <path or null>
+  findings_file: <path or null>
+  migration_notes_path: <path or null>
+  target_path: <path or null>
+  existing_adr_dir: <path or null>
+  existing_adr_packet: <path or null>
+  artifact_root: <path or null>
+policy:
+  adr_status_policy: conservative | preserve_source_status
+  approval_required: true
+  mutation_allowed: false
+  supersession_policy: preserve_explicit | infer_candidates
+  write_candidate_packet: true | false
+  stop_before_acceptance: true
+```
+
 ## Architecture Fitness Function Author Input Shape
 
 ```yaml
@@ -377,6 +407,8 @@ The suite may:
 - plan bounded test-generation handoffs from review findings, including
   behavior under test, fixture needs, expected assertions, validation commands,
   and `generated` / `recommended` / `deferred` / `unsafe` status
+- draft source-grounded ADR candidate packets with status, context, decision,
+  consequences, validation notes, supersession links, and approval boundaries
 - author bounded architecture fitness-function plans that separate
   machine-checkable invariants, human-judgment candidates, deferred automation,
   validation commands, expected failure modes, and implementation handoffs
@@ -392,6 +424,9 @@ The suite must not:
 - author, edit, render, publish, or replace diagrams from the diagram review
   lane
 - write tests or fixtures from the review-to-test planning lane
+- accept, reject, supersede, publish, or commit ADRs from the ADR curation lane
+- edit ADR files, docs, tests, CI, code, policy files, issues, or PRs from the
+  ADR curation lane
 - install or modify tests, CI gates, docs checks, dependency rules, policy files,
   issues, or PRs from the architecture fitness-function authoring lane
 - claim remediation
@@ -422,6 +457,8 @@ Use this suite when:
   need explicit ownership
 - diagram planning needs to be source-grounded before asking `diagram-author` to
   create a specific visual artifact
+- durable architecture decisions need proposed ADR packets before acceptance,
+  implementation, or follow-up automation work
 - durable architecture rules need executable-check planning before separate
   implementation work installs tests, policy checks, or CI gates
 - a customer-grade report is needed from completed review artifacts without
