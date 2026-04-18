@@ -166,6 +166,7 @@ fn real_pr_closeout_reconciles_closed_completed_issue_bundle() {
     assert!(canonical_text.contains("- Integration state: merged"));
     assert!(canonical_text.contains("- Verification scope: main_repo"));
     assert!(canonical_text.contains("- Worktree-only paths remaining: none"));
+    assert!(canonical_text.contains("- Worktree prune result: pruned: adl-wp-1596"));
     assert!(!worktree.exists());
 }
 
