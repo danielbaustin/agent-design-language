@@ -9,7 +9,7 @@ codex_compat:
 admission:
   input_schema:
     id: "repo_review_code.v1"
-    reference_doc: "../docs/MULTI_AGENT_REPO_REVIEW_SKILL_SUITE.md"
+    reference_doc: "../docs/REPO_REVIEW_CODE_SKILL_INPUT_SCHEMA.md"
     required_top_level_fields:
       - "skill_input_schema"
       - "mode"
@@ -45,7 +45,7 @@ execution:
   test_policy: "run_targeted_local_tests_when_bounded"
 outputs:
   default_format: "markdown"
-  structured_contract: "../docs/MULTI_AGENT_REPO_REVIEW_SKILL_SUITE.md"
+  structured_contract: "references/output-contract.md"
   artifact_path_pattern: ".adl/reviews/<timestamp>-repo-review-code.md"
   required_sections:
     - "findings"

@@ -9,7 +9,7 @@ codex_compat:
 admission:
   input_schema:
     id: "repo_review_synthesis.v1"
-    reference_doc: "../docs/MULTI_AGENT_REPO_REVIEW_SKILL_SUITE.md"
+    reference_doc: "../docs/REPO_REVIEW_SYNTHESIS_SKILL_INPUT_SCHEMA.md"
     required_top_level_fields:
       - "skill_input_schema"
       - "mode"
@@ -42,7 +42,7 @@ execution:
   test_policy: "do_not_run_new_tests_during_synthesis"
 outputs:
   default_format: "markdown"
-  structured_contract: "../docs/MULTI_AGENT_REPO_REVIEW_SKILL_SUITE.md"
+  structured_contract: "references/output-contract.md"
   artifact_path_pattern: ".adl/reviews/<timestamp>-repo-review-synthesis.md"
   required_sections:
     - "findings"
