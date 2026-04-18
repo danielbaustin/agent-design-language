@@ -1,0 +1,3 @@
+display_name: Architecture Fitness Function Author
+short_description: Author source-grounded architecture fitness-function plans and implementation handoffs.
+default_prompt: Author bounded architecture fitness-function specs from review evidence. Stop after the plan; do not edit tests, CI, docs, policies, issues, PRs, or repo files.
