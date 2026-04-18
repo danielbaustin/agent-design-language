@@ -1,0 +1,3 @@
+display_name: Product Report Writer
+short_description: Write customer-grade CodeBuddy reports from review packet artifacts
+default_prompt: Write a customer-grade CodeBuddy report from existing review artifacts. Preserve severity, evidence, disagreement, caveats, privacy status, and residual risk; stop before publication, approval claims, issue creation, PRs, remediation, tests, or repository mutation.

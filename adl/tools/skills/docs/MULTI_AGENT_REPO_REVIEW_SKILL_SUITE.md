@@ -22,6 +22,7 @@ coverage, or an explicit multi-agent review demo/proof surface.
 - `architecture-diagram-reviewer`
 - `review-to-test-planner`
 - `architecture-fitness-function-author`
+- `product-report-writer`
 - `repo-review-synthesis`
 - `finding-to-issue-planner`
 
@@ -41,6 +42,7 @@ Recommended order:
 10. `review-to-test-planner`
 11. `architecture-fitness-function-author`
 12. `finding-to-issue-planner`
+13. `product-report-writer`
 
 The first four roles may run independently when the operator wants parallel
 review. The synthesis role should run after at least one specialist artifact is
@@ -62,6 +64,10 @@ automation before any tests, CI gates, policy files, or repo checks are edited.
 The finding-to-issue planner should run only after review findings exist. It
 emits grouped, human-approved issue candidates and stops before tracker
 creation, PR creation, remediation, or test generation.
+The product report writer should run after the review packet has enough
+specialist, synthesis, diagram, test, issue-planning, redaction, and quality
+evidence to produce a customer-grade report. It writes report artifacts only and
+stops before publication, approval claims, remediation, or repository mutation.
 
 ## Shared Specialist Input Shape
 
@@ -324,6 +330,23 @@ policy:
   stop_before_mutation: true
 ```
 
+## Product Report Writer Input Shape
+
+```yaml
+skill_input_schema: product_report_writer.v1
+mode: write_from_packet | write_from_synthesis | write_from_specialist_artifacts | refresh_report
+artifact_root: <review packet root>
+audience: internal_review | customer_private | public_candidate
+policy:
+  privacy_mode: local_only | customer_private | public_candidate
+  publication_intent: none | internal_review | customer_private | public_candidate
+  write_report_artifact: true | false
+  require_redaction_status: true | false
+  preserve_specialist_disagreement: true
+  stop_before_publication: true
+  stop_before_mutation: true
+```
+
 ## Severity Rules
 
 - Preserve the highest severity attached to a merged finding unless the source
@@ -359,6 +382,9 @@ The suite may:
   validation commands, expected failure modes, and implementation handoffs
 - draft grouped issue candidates from findings after explicit review evidence
   exists, while preserving highest severity and specialist disagreement
+- write customer-grade product report artifacts from existing review packet
+  evidence while preserving severity, disagreement, publication boundaries,
+  caveats, and residual risk
 
 The suite must not:
 - edit code, tests, docs, configs, or issue state
@@ -376,6 +402,8 @@ The suite must not:
   planning lane
 - create tracker items from the issue-planning lane without explicit operator
   approval
+- publish reports, claim approval, claim compliance, claim merge-readiness, or
+  claim remediation completion from the product report writing lane
 
 ## Relationship To `repo-code-review`
 
@@ -396,4 +424,6 @@ Use this suite when:
   create a specific visual artifact
 - durable architecture rules need executable-check planning before separate
   implementation work installs tests, policy checks, or CI gates
+- a customer-grade report is needed from completed review artifacts without
+  turning report writing into publication, approval, or remediation
 - the synthesis artifact should show specialist coverage and disagreement
