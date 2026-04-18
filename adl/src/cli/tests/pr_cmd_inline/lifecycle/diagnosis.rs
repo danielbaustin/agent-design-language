@@ -953,5 +953,6 @@ verification_summary:
     assert!(canonical_text.contains("- Integration state: merged"));
     assert!(canonical_text.contains("- Verification scope: main_repo"));
     assert!(canonical_text.contains("- Worktree-only paths remaining: none"));
+    assert!(canonical_text.contains("- Worktree prune result: pruned: adl-wp-1410"));
     assert!(!worktree.exists());
 }

@@ -125,6 +125,20 @@ pub(super) fn has_uncommitted_changes(repo_root: &Path) -> Result<bool> {
     Ok(!(unstaged && staged))
 }
 
+pub(super) fn has_uncommitted_or_untracked_changes(repo_root: &Path) -> Result<bool> {
+    let status = run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "status",
+            "--porcelain",
+            "--untracked-files=all",
+        ],
+    )?;
+    Ok(!status.trim().is_empty())
+}
+
 pub(super) fn tracked_changes_status(repo_root: &Path) -> Result<String> {
     run_capture(
         "git",

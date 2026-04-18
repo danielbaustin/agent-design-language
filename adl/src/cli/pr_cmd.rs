@@ -63,12 +63,14 @@ use self::finish_support::{
 #[cfg(test)]
 use self::git_support::commits_ahead_of_origin_main;
 #[cfg(test)]
+use self::git_support::has_uncommitted_changes;
+#[cfg(test)]
 use self::git_support::{branch_checked_out_worktree_path, infer_repo_from_remote};
 use self::git_support::{
     current_branch, default_repo, ensure_git_metadata_writable, ensure_local_branch_exists,
-    ensure_worktree_for_branch, fetch_origin_main_with_fallback, has_uncommitted_changes,
-    issue_create_repo, path_str, primary_checkout_root, repo_root, run_capture,
-    run_capture_allow_failure, run_status, tracked_changes_status,
+    ensure_worktree_for_branch, fetch_origin_main_with_fallback,
+    has_uncommitted_or_untracked_changes, issue_create_repo, path_str, primary_checkout_root,
+    repo_root, run_capture, run_capture_allow_failure, run_status, tracked_changes_status,
 };
 #[cfg(test)]
 use self::github::ensure_pr_closing_linkage;

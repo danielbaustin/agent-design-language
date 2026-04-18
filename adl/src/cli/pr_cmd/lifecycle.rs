@@ -163,14 +163,33 @@ pub(super) fn closeout_closed_completed_issue_bundle(
     canonical_output: &Path,
 ) -> Result<()> {
     reconcile_closed_completed_issue_bundle(primary_root, issue_ref, canonical_output)?;
+    let worktree_path = issue_ref.default_worktree_path(
+        primary_root,
+        std::env::var_os("ADL_WORKTREE_ROOT")
+            .map(PathBuf::from)
+            .as_deref(),
+    );
+    if worktree_path.is_dir() && has_uncommitted_or_untracked_changes(&worktree_path)? {
+        let name = worktree_display_name(&worktree_path);
+        record_worktree_prune_result(canonical_output, &format!("blocked_dirty: retained {name}"))?;
+        replace_worktree_only_paths_remaining(
+            canonical_output,
+            &format!("issue worktree retained: {name}"),
+        )?;
+        bail!(
+            "closeout: refusing to prune dirty worktree '{}' because it contains staged, unstaged, or untracked changes",
+            worktree_path.display()
+        );
+    }
+    let prune_result = prune_issue_worktree(repo_root, primary_root, issue_ref)?;
+    record_worktree_prune_result(canonical_output, &prune_result.card_value())?;
     ensure_closed_completed_issue_bundle_truth(primary_root, issue_ref, canonical_output)
         .with_context(|| {
             format!(
                 "closeout: canonical closed-issue sor truth drift remains for issue #{}",
                 issue_ref.issue_number()
             )
-        })?;
-    prune_issue_worktree(repo_root, primary_root, issue_ref)
+        })
 }
 
 pub(super) fn ensure_closed_completed_issue_bundle_truth(
@@ -505,6 +524,39 @@ fn replace_first_prefixed_line(text: &mut String, prefix: &str, to: &str) {
     }
 }
 
+fn replace_or_insert_after_prefixed_line(
+    text: &mut String,
+    prefix: &str,
+    insert_prefix: &str,
+    to: &str,
+) {
+    let mut out = Vec::new();
+    let mut replaced = false;
+    let mut inserted = false;
+    for line in text.lines() {
+        if line.starts_with(insert_prefix) {
+            if !replaced {
+                out.push(to.to_string());
+                replaced = true;
+            }
+            continue;
+        }
+        out.push(line.to_string());
+        if !inserted && line.starts_with(prefix) && !replaced {
+            out.push(to.to_string());
+            inserted = true;
+            replaced = true;
+        }
+    }
+    if !replaced {
+        out.push(to.to_string());
+    }
+    *text = out.join("\n");
+    if !text.ends_with('\n') {
+        text.push('\n');
+    }
+}
+
 pub(super) fn sync_completed_output_surfaces(
     repo_root: &Path,
     primary_root: &Path,
@@ -556,7 +608,56 @@ fn same_filesystem_target(left: &Path, right: &Path) -> Result<bool> {
     Ok(false)
 }
 
-fn prune_issue_worktree(repo_root: &Path, primary_root: &Path, issue_ref: &IssueRef) -> Result<()> {
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum IssueWorktreePruneResult {
+    Missing(String),
+    Pruned(String),
+}
+
+impl IssueWorktreePruneResult {
+    fn card_value(&self) -> String {
+        match self {
+            Self::Missing(name) => format!("skipped_missing: {name}"),
+            Self::Pruned(name) => format!("pruned: {name}"),
+        }
+    }
+}
+
+fn worktree_display_name(path: &Path) -> String {
+    path.file_name()
+        .map(|name| name.to_string_lossy().to_string())
+        .filter(|name| !name.trim().is_empty())
+        .unwrap_or_else(|| "issue worktree".to_string())
+}
+
+fn record_worktree_prune_result(path: &Path, result: &str) -> Result<()> {
+    let mut text = fs::read_to_string(path)?;
+    replace_or_insert_after_prefixed_line(
+        &mut text,
+        "- Worktree-only paths remaining:",
+        "- Worktree prune result:",
+        &format!("- Worktree prune result: {result}"),
+    );
+    fs::write(path, text)?;
+    Ok(())
+}
+
+fn replace_worktree_only_paths_remaining(path: &Path, value: &str) -> Result<()> {
+    let mut text = fs::read_to_string(path)?;
+    replace_first_prefixed_line(
+        &mut text,
+        "- Worktree-only paths remaining:",
+        &format!("- Worktree-only paths remaining: {value}"),
+    );
+    fs::write(path, text)?;
+    Ok(())
+}
+
+fn prune_issue_worktree(
+    repo_root: &Path,
+    primary_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<IssueWorktreePruneResult> {
     let worktree_path = issue_ref.default_worktree_path(
         primary_root,
         std::env::var_os("ADL_WORKTREE_ROOT")
@@ -564,11 +665,17 @@ fn prune_issue_worktree(repo_root: &Path, primary_root: &Path, issue_ref: &Issue
             .as_deref(),
     );
     if !worktree_path.is_dir() {
-        return Ok(());
+        println!(
+            "closeout: issue worktree already absent; prune not needed: {}",
+            worktree_path.display()
+        );
+        return Ok(IssueWorktreePruneResult::Missing(worktree_display_name(
+            &worktree_path,
+        )));
     }
-    if has_uncommitted_changes(&worktree_path)? {
+    if has_uncommitted_or_untracked_changes(&worktree_path)? {
         bail!(
-            "closeout: refusing to prune dirty worktree '{}'",
+            "closeout: refusing to prune dirty worktree '{}' because it contains staged, unstaged, or untracked changes",
             worktree_path.display()
         );
     }
@@ -591,7 +698,13 @@ fn prune_issue_worktree(repo_root: &Path, primary_root: &Path, issue_ref: &Issue
             path_str(&worktree_path)?,
         ],
     )?;
-    Ok(())
+    println!(
+        "closeout: pruned issue worktree: {}",
+        worktree_path.display()
+    );
+    Ok(IssueWorktreePruneResult::Pruned(worktree_display_name(
+        &worktree_path,
+    )))
 }
 
 #[cfg(test)]
@@ -1054,7 +1167,12 @@ mod tests {
         init_repo_with_origin(&repo, &origin);
         let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
 
-        prune_issue_worktree(&repo, &repo, &issue_ref).expect("missing worktree is fine");
+        let result =
+            prune_issue_worktree(&repo, &repo, &issue_ref).expect("missing worktree is fine");
+        assert_eq!(
+            result,
+            IssueWorktreePruneResult::Missing("adl-wp-1410".to_string())
+        );
     }
 
     #[test]
@@ -1085,5 +1203,39 @@ mod tests {
 
         prune_issue_worktree(&repo, &repo, &issue_ref).expect_err("dirty worktree rejected");
         assert!(worktree.is_dir());
+    }
+
+    #[test]
+    fn prune_issue_worktree_removes_clean_issue_worktree() {
+        let _guard = env_lock();
+        let temp = temp_dir("adl-pr-lifecycle-prune-clean");
+        let repo = temp.join("repo");
+        let origin = temp.join("origin.git");
+        init_repo_with_origin(&repo, &origin);
+        let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+        let worktree = issue_ref.default_worktree_path(&repo, None);
+
+        assert!(Command::new("git")
+            .args([
+                "-C",
+                path_str(&repo).expect("repo path"),
+                "worktree",
+                "add",
+                path_str(&worktree).expect("worktree path"),
+                "-b",
+                "codex/1410-canonical-slug",
+                "main",
+            ])
+            .status()
+            .expect("git worktree add")
+            .success());
+        assert!(worktree.is_dir());
+
+        let result = prune_issue_worktree(&repo, &repo, &issue_ref).expect("clean worktree pruned");
+        assert_eq!(
+            result,
+            IssueWorktreePruneResult::Pruned("adl-wp-1410".to_string())
+        );
+        assert!(!worktree.exists());
     }
 }
