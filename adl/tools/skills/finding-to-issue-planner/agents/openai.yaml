@@ -1,0 +1,3 @@
+display_name: Finding To Issue Planner
+short_description: Draft reviewable issue candidates from CodeBuddy findings
+default_prompt: Turn CodeBuddy review findings into grouped issue candidates with evidence, acceptance criteria, validation plans, and approval boundaries. Stop before tracker creation or repository mutation.
