@@ -1,0 +1,23 @@
+%% Evidence: docs/milestones/v0.89.1/features/SKILL_COMPOSITION_MODEL.md, docs/milestones/v0.89.1/features/OPERATIONAL_SKILLS_SUBSTRATE.md
+%% Assumptions: specialist skill names are representative of the current CodeBuddy review stack.
+flowchart TD
+  Conductor["workflow-conductor"]
+  Lifecycle["Lifecycle skills"]
+  Editors["STP SIP SOR editors"]
+  Packet["repo-packet-builder"]
+  Specialists["Code security tests docs architecture dependency reviewers"]
+  Diagrams["diagram planner and diagram-author"]
+  Redaction["redaction and evidence auditor"]
+  Fitness["architecture fitness-function author"]
+  Report["product report and review-quality evaluator"]
+
+  Conductor --> Lifecycle
+  Conductor --> Editors
+  Lifecycle --> Packet
+  Packet --> Specialists
+  Specialists --> Diagrams
+  Specialists --> Redaction
+  Specialists --> Fitness
+  Diagrams --> Report
+  Redaction --> Report
+  Fitness --> Report

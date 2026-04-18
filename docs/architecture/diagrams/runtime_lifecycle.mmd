@@ -1,0 +1,24 @@
+%% Evidence: adl/src/execution_plan.rs, adl/src/execute/mod.rs, adl/src/trace.rs, adl/src/artifacts.rs
+%% Assumptions: lifecycle labels summarize code paths rather than every internal function.
+flowchart TD
+  Parse["Parse typed ADL document"]
+  Resolve["Resolve run workflow"]
+  Plan["Build acyclic execution plan"]
+  Schedule["Apply scheduler policy"]
+  Execute["Execute steps and calls"]
+  Delegate["Evaluate delegation policy"]
+  Provider["Call provider or tool boundary"]
+  Trace["Record trace events"]
+  Artifacts["Write run artifacts"]
+  Finish["Finish or fail run"]
+
+  Parse --> Resolve
+  Resolve --> Plan
+  Plan --> Schedule
+  Schedule --> Execute
+  Execute --> Delegate
+  Delegate --> Provider
+  Provider --> Trace
+  Execute --> Trace
+  Trace --> Artifacts
+  Artifacts --> Finish

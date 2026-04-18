@@ -70,6 +70,12 @@ If you want the CodeBuddy multi-agent review showcase packet:
 bash adl/tools/demo_v090_codebuddy_review_showcase.sh
 ```
 
+If you want the ADL architecture document generation proof packet:
+
+```bash
+bash adl/tools/demo_v090_architecture_document_generation.sh
+```
+
 ## Demo Categories
 
 - Runtime workflow demos live in `adl/examples/`.

@@ -1,0 +1,21 @@
+%% Evidence: docs/default_workflow.md, adl/src/control_plane.rs, pr-init/pr-ready/pr-run/pr-finish/pr-janitor/pr-closeout skills
+%% Assumptions: GitHub merge action remains a human/repository event, not an automatic ADL mutation.
+flowchart LR
+  Issue["Issue intent"]
+  Init["pr init"]
+  Ready["pr ready"]
+  Run["pr run in issue worktree"]
+  Finish["pr finish draft PR"]
+  Janitor["pr janitor"]
+  Merge["Human review and merge"]
+  Closeout["pr closeout"]
+  Prune["Pruned local execution surface"]
+
+  Issue --> Init
+  Init --> Ready
+  Ready --> Run
+  Run --> Finish
+  Finish --> Janitor
+  Janitor --> Merge
+  Merge --> Closeout
+  Closeout --> Prune

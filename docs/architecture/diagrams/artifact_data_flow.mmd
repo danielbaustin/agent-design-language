@@ -1,0 +1,24 @@
+%% Evidence: adl/src/artifacts.rs, adl/src/trace.rs, docs/architecture/TRACE_SYSTEM_ARCHITECTURE.md
+%% Assumptions: artifact groups summarize deterministic path families.
+flowchart LR
+  Run["Run id"]
+  RunJson["run.json"]
+  Steps["steps.json"]
+  Status["run_status.json"]
+  Trace["logs/trace_v1.json"]
+  Outputs["outputs/"]
+  Control["control_path/"]
+  Review["Reviewer reconstruction"]
+
+  Run --> RunJson
+  Run --> Steps
+  Run --> Status
+  Run --> Trace
+  Run --> Outputs
+  Run --> Control
+  RunJson --> Review
+  Steps --> Review
+  Status --> Review
+  Trace --> Review
+  Outputs --> Review
+  Control --> Review

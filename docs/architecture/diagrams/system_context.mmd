@@ -1,0 +1,23 @@
+%% Evidence: docs/architecture/ADL_ARCHITECTURE.md, adl/src/adl/types.rs, docs/default_workflow.md
+%% Assumptions: external providers and GitHub are represented as boundaries, not as controlled ADL internals.
+flowchart LR
+  Operator["Operator / reviewer"]
+  Issue["GitHub issue"]
+  PR["GitHub PR"]
+  Skills["ADL workflow skills"]
+  Runtime["ADL runtime"]
+  Providers["Model providers"]
+  Tools["Tools and local scripts"]
+  Artifacts["Trace and artifacts"]
+  Docs["Architecture docs and demos"]
+
+  Operator --> Issue
+  Issue --> Skills
+  Skills --> Runtime
+  Runtime --> Providers
+  Runtime --> Tools
+  Runtime --> Artifacts
+  Skills --> PR
+  Artifacts --> Docs
+  PR --> Operator
+  Docs --> Operator
