@@ -919,3 +919,138 @@ pub(crate) fn real_godel_affect_slice(args: &[String]) -> Result<()> {
     println!("{}", serde_json::to_string_pretty(&summary)?);
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn test_tmp_dir(label: &str) -> PathBuf {
+        let root =
+            std::env::temp_dir().join(format!("adl-godel-cmd-{label}-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        std::fs::create_dir_all(&root).expect("mkdir test tmp");
+        root
+    }
+
+    #[test]
+    fn godel_cli_rejects_unknown_subcommand() {
+        let err = real_godel(&["status".to_string()]).expect_err("unknown subcommand");
+        assert!(err.to_string().contains("unknown godel subcommand"));
+    }
+
+    #[test]
+    fn godel_run_rejects_unknown_argument() {
+        let err = real_godel_run(&[
+            "--run-id".to_string(),
+            "run-100".to_string(),
+            "--workflow-id".to_string(),
+            "wf-godel".to_string(),
+            "--failure-code".to_string(),
+            "tool_failure".to_string(),
+            "--failure-summary".to_string(),
+            "summary".to_string(),
+            "--bogus".to_string(),
+            "v1".to_string(),
+        ])
+        .expect_err("unknown args must fail");
+        assert!(err.to_string().contains("unknown godel run arg '--bogus'"));
+    }
+
+    #[test]
+    fn godel_run_rejects_missing_required_args() {
+        let err = real_godel_run(&["--run-id".to_string(), "run-100".to_string()])
+            .expect_err("missing required args must fail");
+        assert!(err.to_string().contains("godel run requires --workflow-id"));
+    }
+
+    #[test]
+    fn godel_run_executes_and_persists_artifacts() {
+        let tmp = test_tmp_dir("executes-and-persists");
+        let run_id = "run-100";
+        let err = real_godel_run(&[
+            "--run-id".to_string(),
+            run_id.to_string(),
+            "--workflow-id".to_string(),
+            "wf-godel".to_string(),
+            "--failure-code".to_string(),
+            "tool_failure".to_string(),
+            "--failure-summary".to_string(),
+            "summary".to_string(),
+            "--evidence-ref".to_string(),
+            "runs/run-100/run_status.json".to_string(),
+            "--runs-dir".to_string(),
+            tmp.to_str().unwrap().to_string(),
+        ]);
+        assert!(err.is_ok(), "godel run should succeed: {err:?}");
+        assert!(tmp
+            .join(run_id)
+            .join("godel")
+            .join("godel_hypothesis.v1.json")
+            .is_file());
+        assert!(tmp
+            .join(run_id)
+            .join("godel")
+            .join("experiment_record.runtime.v1.json")
+            .is_file());
+        let _ = std::fs::remove_dir_all(&tmp);
+    }
+
+    #[test]
+    fn godel_evaluate_rejects_invalid_result() {
+        let err = real_godel_evaluate(&[
+            "--failure-code".to_string(),
+            "tool_failure".to_string(),
+            "--experiment-result".to_string(),
+            "pending".to_string(),
+            "--score-delta".to_string(),
+            "0".to_string(),
+        ])
+        .expect_err("invalid evaluate result must fail");
+        assert!(err.to_string().contains("--experiment-result <ok|blocked>"));
+    }
+
+    #[test]
+    fn godel_load_canonical_artifact_reports_io_and_parse_errors() {
+        let tmp = test_tmp_dir("load-canonical");
+        let missing = tmp.join("missing.json");
+        let io_err = load_canonical_artifact::<serde_json::Value, String, _>(
+            &missing,
+            Path::new("missing.json"),
+            |path| {
+                let raw = std::fs::read_to_string(path).map_err(|err| err.to_string())?;
+                serde_json::from_str::<serde_json::Value>(&raw).map_err(|err| err.to_string())
+            },
+        )
+        .expect_err("missing file must fail");
+        assert!(io_err.to_string().contains("GODEL_INSPECT_IO"));
+
+        let invalid = tmp.join("invalid.json");
+        std::fs::write(&invalid, "{").unwrap_or_else(|err| panic!("write invalid fixture: {err}"));
+        let parse_err = load_canonical_artifact::<serde_json::Value, String, _>(
+            &invalid,
+            Path::new("invalid.json"),
+            |path| {
+                let raw = std::fs::read_to_string(path).map_err(|err| err.to_string())?;
+                serde_json::from_str::<serde_json::Value>(&raw).map_err(|err| err.to_string())
+            },
+        )
+        .expect_err("invalid json must fail");
+        assert!(parse_err.to_string().contains("GODEL_INSPECT_INVALID"));
+
+        let valid = tmp.join("valid.json");
+        std::fs::write(&valid, "{\"ok\":true}")
+            .unwrap_or_else(|err| panic!("write valid fixture: {err}"));
+        let parsed = load_canonical_artifact::<serde_json::Value, String, _>(
+            &valid,
+            Path::new("valid.json"),
+            |path| {
+                let raw = std::fs::read_to_string(path).map_err(|err| err.to_string())?;
+                serde_json::from_str::<serde_json::Value>(&raw).map_err(|err| err.to_string())
+            },
+        )
+        .unwrap();
+        assert_eq!(parsed["ok"], serde_json::json!(true));
+
+        let _ = std::fs::remove_dir_all(&tmp);
+    }
+}
