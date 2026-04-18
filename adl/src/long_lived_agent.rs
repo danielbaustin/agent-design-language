@@ -1644,6 +1644,14 @@ fn max_consecutive_failures(loaded: &LoadedAgentSpec) -> u64 {
     )
 }
 
+fn default_requested_by() -> String {
+    "operator".to_string()
+}
+
+fn default_stop_mode() -> String {
+    STOP_MODE_BEFORE_NEXT_CYCLE.to_string()
+}
+
 fn memory_namespace(loaded: &LoadedAgentSpec) -> String {
     loaded
         .spec

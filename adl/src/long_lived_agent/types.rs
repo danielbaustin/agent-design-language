@@ -3,8 +3,6 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::path::PathBuf;
 
-use super::schema::STOP_MODE_BEFORE_NEXT_CYCLE;
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentSpec {
     pub schema: String,
@@ -94,9 +92,9 @@ pub struct StopRecord {
     pub schema: String,
     pub agent_instance_id: String,
     pub reason: String,
-    #[serde(default = "default_requested_by")]
+    #[serde(default = "super::default_requested_by")]
     pub requested_by: String,
-    #[serde(default = "default_stop_mode")]
+    #[serde(default = "super::default_stop_mode")]
     pub mode: String,
     pub requested_at: DateTime<Utc>,
 }
@@ -132,12 +130,4 @@ pub(crate) struct LedgerCursor {
     pub(crate) latest_status: Option<String>,
     pub(crate) count: u64,
     pub(crate) max_cycle_number: u64,
-}
-
-fn default_requested_by() -> String {
-    "operator".to_string()
-}
-
-fn default_stop_mode() -> String {
-    STOP_MODE_BEFORE_NEXT_CYCLE.to_string()
 }
