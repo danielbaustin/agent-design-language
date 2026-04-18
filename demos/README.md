@@ -64,6 +64,12 @@ If you want the bounded multi-agent repo code review demo:
 bash adl/tools/demo_v089_multi_agent_repo_code_review.sh
 ```
 
+If you want the CodeBuddy multi-agent review showcase packet:
+
+```bash
+bash adl/tools/demo_v090_codebuddy_review_showcase.sh
+```
+
 ## Demo Categories
 
 - Runtime workflow demos live in `adl/examples/`.
@@ -204,6 +210,19 @@ manuscript workflow packet.
 Use `v0.89/multi_agent_repo_code_review_demo.md` for a bounded specialist-reviewer
 demo where ADL prepares one repo review packet, emits code/security/test/docs
 review artifacts, and then writes one synthesized findings-first review.
+
+### v0.90 long-lived agents and CodeBuddy review demos
+
+- `v0.90/long_lived_stock_league_demo.md`
+- `v0.90/stock_league_demo_extensions.md`
+- `v0.90/codebuddy_multi_agent_review_showcase_demo.md`
+
+Use `bash adl/tools/demo_v090_codebuddy_review_showcase.sh` for the
+fixture-backed CodeBuddy showcase packet. It emits a product-style review
+package with repo scope, specialist reviews, diagram and redaction gates,
+test/issue/ADR/fitness follow-through, final report, and demo-operator
+classification. It is intentionally classified as `non_proving` until the
+staged `review-quality-evaluator` lane from `#2070` lands.
 
 Use `v0.87/v087_demo_program.md` for the canonical `v0.87` demo order and bounded
 repo-local commands.
