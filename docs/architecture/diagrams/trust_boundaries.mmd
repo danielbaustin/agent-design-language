@@ -1,0 +1,19 @@
+%% Evidence: adl/src/signing.rs, adl/src/sandbox.rs, adl/src/remote_exec/security.rs, adl/src/provider/mod.rs
+%% Assumptions: publication gate is a review-process boundary, not a Rust module boundary.
+flowchart TD
+  Doc["ADL document"]
+  Parser["Typed parser and validator"]
+  Runtime["Runtime"]
+  Sandbox["Sandbox path validation"]
+  Signing["Signature verification"]
+  Remote["Remote execute request"]
+  Provider["Provider transport"]
+  Publication["Report publication gate"]
+
+  Doc --> Parser
+  Parser --> Runtime
+  Runtime --> Sandbox
+  Runtime --> Provider
+  Remote --> Signing
+  Signing --> Runtime
+  Runtime --> Publication

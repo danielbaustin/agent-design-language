@@ -24,6 +24,7 @@ Define the planned proof surfaces for v0.90 before implementation starts.
 | D6 | Repo visibility proof packet | ADL can map one milestone or feature slice from canonical docs to implementation, tests, demos, and review surfaces | `docs/milestones/v0.90/repo_visibility/` | manifest and code-doc-demo linkage report | landed by `#2031` |
 | D7 | Milestone compression pilot | ADL can detect milestone drift from canonical state without silently mutating release truth | `python3 adl/tools/check_v090_milestone_state.py` | canonical state file, drift-check output, and generated status summary | landed by `#2030` |
 | D8 | CodeBuddy multi-agent review showcase | ADL can present the CodeBuddy review-engine skill family as a product-style, packet-first repo review workflow without building the web app or mutating customer repos | `bash adl/tools/demo_v090_codebuddy_review_showcase.sh` | `artifacts/v090/codebuddy_review_showcase/run_manifest.json`, specialist reviews, redaction report, diagram artifacts, final report, and demo-operator classification | landed by `#2072`; intentionally `non_proving` until `#2070` lands |
+| D9 | ADL architecture document generation | ADL can maintain a source-grounded first-class architecture packet with diagrams, review automation, generation planning, candidate ADRs, and deterministic validation | `bash adl/tools/demo_v090_architecture_document_generation.sh` | `docs/architecture/`, `docs/architecture/diagrams/`, and `artifacts/v090/adl_architecture_document_generation/architecture_generation_manifest.json` | landed by `#2055` |
 
 ## Safety Rules
 
@@ -58,6 +59,15 @@ The CodeBuddy showcase packet must:
 - avoid live provider calls, customer repositories, billing, and product-app
   assumptions in the default demo path
 - block publication until redaction and evidence gates are explicit
+
+The architecture document generation packet must:
+
+- keep architecture claims source-grounded in tracked repository evidence
+- include evidence, assumptions, and validation notes for every diagram source
+- separate machine-checkable invariants from human architecture judgment
+- record missing documentation-specialist and gap-analysis skill dependencies
+- avoid private local trace paths, host-absolute paths, and secret markers in
+  public docs or proof artifacts
 
 ## Validation Expectations
 
