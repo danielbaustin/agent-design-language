@@ -21,6 +21,7 @@ coverage, or an explicit multi-agent review demo/proof surface.
 - `repo-diagram-planner`
 - `architecture-diagram-reviewer`
 - `review-to-test-planner`
+- `architecture-fitness-function-author`
 - `repo-review-synthesis`
 
 ## Invocation Order
@@ -37,6 +38,7 @@ Recommended order:
 8. `repo-diagram-planner`
 9. `architecture-diagram-reviewer`
 10. `review-to-test-planner`
+11. `architecture-fitness-function-author`
 
 The first four roles may run independently when the operator wants parallel
 review. The synthesis role should run after at least one specialist artifact is
@@ -51,6 +53,10 @@ handoffs without authoring or rendering diagrams.
 The review-to-test planner should run after specialist findings or synthesis
 exist. It maps findings to safe, bounded `test-generator` handoffs without
 writing tests or turning review follow-up into broad implementation work.
+The architecture fitness-function author should run after architecture findings
+or synthesis identify durable architecture rules worth preserving. It separates
+machine-checkable invariants from human-judgment candidates and deferred
+automation before any tests, CI gates, policy files, or repo checks are edited.
 
 ## Shared Specialist Input Shape
 
@@ -271,6 +277,33 @@ policy:
   stop_after_plan: true
 ```
 
+## Architecture Fitness Function Author Input Shape
+
+```yaml
+skill_input_schema: architecture_fitness_function_author.v1
+mode: author_from_review_packet | author_from_architecture_review | author_from_findings_file | author_from_path
+repo_root: /absolute/path
+target:
+  review_packet_path: <path or null>
+  architecture_review_artifact: <path or null>
+  findings_file: <path or null>
+  target_path: <path or null>
+  artifact_root: <path or null>
+policy:
+  allowed_check_types:
+    - dependency_rule
+    - forbidden_import
+    - contract_test
+    - docs_check
+    - ci_gate
+    - repo_policy_check
+  validation_mode: targeted | inspect_only | none
+  implementation_allowed: false
+  ci_gate_allowed: true | false
+  write_plan_artifact: true | false
+  stop_after_plan: true
+```
+
 ## Severity Rules
 
 - Preserve the highest severity attached to a merged finding unless the source
@@ -301,6 +334,9 @@ The suite may:
 - plan bounded test-generation handoffs from review findings, including
   behavior under test, fixture needs, expected assertions, validation commands,
   and `generated` / `recommended` / `deferred` / `unsafe` status
+- author bounded architecture fitness-function plans that separate
+  machine-checkable invariants, human-judgment candidates, deferred automation,
+  validation commands, expected failure modes, and implementation handoffs
 
 The suite must not:
 - edit code, tests, docs, configs, or issue state
@@ -308,6 +344,8 @@ The suite must not:
 - author, edit, render, publish, or replace diagrams from the diagram review
   lane
 - write tests or fixtures from the review-to-test planning lane
+- install or modify tests, CI gates, docs checks, dependency rules, policy files,
+  issues, or PRs from the architecture fitness-function authoring lane
 - claim remediation
 - run unbounded repository-wide analysis without a declared target
 - use network or paid data feeds
@@ -332,4 +370,6 @@ Use this suite when:
   need explicit ownership
 - diagram planning needs to be source-grounded before asking `diagram-author` to
   create a specific visual artifact
+- durable architecture rules need executable-check planning before separate
+  implementation work installs tests, policy checks, or CI gates
 - the synthesis artifact should show specialist coverage and disagreement
