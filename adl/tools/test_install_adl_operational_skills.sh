@@ -8,7 +8,7 @@ trap 'rm -rf "${tmpdir}"' EXIT
 assert_skill_bundle() {
   local root="$1"
 
-  for skill in workflow-conductor pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review repo-diagram-planner architecture-diagram-reviewer review-to-test-planner architecture-fitness-function-author test-generator demo-operator medium-article-writer arxiv-paper-writer diagram-author stp-editor sip-editor sor-editor; do
+  for skill in workflow-conductor pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review repo-diagram-planner architecture-diagram-reviewer review-to-test-planner adr-curator architecture-fitness-function-author finding-to-issue-planner test-generator demo-operator medium-article-writer arxiv-paper-writer diagram-author stp-editor sip-editor sor-editor; do
     [[ -d "${root}/skills/${skill}" ]]
   done
 
@@ -34,8 +34,12 @@ assert_skill_bundle() {
   [[ -x "${root}/skills/architecture-diagram-reviewer/scripts/review_architecture_diagrams.py" ]]
   [[ -f "${root}/skills/review-to-test-planner/SKILL.md" ]]
   [[ -x "${root}/skills/review-to-test-planner/scripts/plan_review_tests.py" ]]
+  [[ -f "${root}/skills/adr-curator/SKILL.md" ]]
+  [[ -x "${root}/skills/adr-curator/scripts/curate_adrs.py" ]]
   [[ -f "${root}/skills/architecture-fitness-function-author/SKILL.md" ]]
   [[ -x "${root}/skills/architecture-fitness-function-author/scripts/author_architecture_fitness_functions.py" ]]
+  [[ -f "${root}/skills/finding-to-issue-planner/SKILL.md" ]]
+  [[ -x "${root}/skills/finding-to-issue-planner/scripts/plan_review_issues.py" ]]
   [[ -f "${root}/skills/test-generator/SKILL.md" ]]
   [[ -f "${root}/skills/demo-operator/SKILL.md" ]]
   [[ -f "${root}/skills/medium-article-writer/SKILL.md" ]]
@@ -61,7 +65,9 @@ assert_skill_bundle() {
   grep -Fq "without becoming the diagram author" "${root}/skills/repo-diagram-planner/SKILL.md"
   grep -Fq 'quality gate after `diagram-author`' "${root}/skills/architecture-diagram-reviewer/SKILL.md"
   grep -Fq 'between review artifacts and `test-generator`' "${root}/skills/review-to-test-planner/SKILL.md"
+  grep -Fq "This skill is a curation lane, not a decision authority" "${root}/skills/adr-curator/SKILL.md"
   grep -Fq "turns recurring architecture risks into bounded checks" "${root}/skills/architecture-fitness-function-author/SKILL.md"
+  grep -Fq "Convert source-grounded CodeBuddy review findings" "${root}/skills/finding-to-issue-planner/SKILL.md"
   grep -Fq "smallest truthful test surface" "${root}/skills/test-generator/SKILL.md"
   grep -Fq "run one named demo" "${root}/skills/demo-operator/SKILL.md"
   grep -Fq "stopping before publication" "${root}/skills/medium-article-writer/SKILL.md"
@@ -87,7 +93,9 @@ assert_skill_bundle() {
     "${root}/skills/repo-diagram-planner/SKILL.md" \
     "${root}/skills/architecture-diagram-reviewer/SKILL.md" \
     "${root}/skills/review-to-test-planner/SKILL.md" \
+    "${root}/skills/adr-curator/SKILL.md" \
     "${root}/skills/architecture-fitness-function-author/SKILL.md" \
+    "${root}/skills/finding-to-issue-planner/SKILL.md" \
     "${root}/skills/test-generator/SKILL.md" \
     "${root}/skills/demo-operator/SKILL.md" \
     "${root}/skills/medium-article-writer/SKILL.md" \
@@ -115,7 +123,9 @@ assert_skill_bundle "${CODEX_HOME}"
 [[ -L "${CODEX_HOME}/skills/repo-diagram-planner" ]]
 [[ -L "${CODEX_HOME}/skills/architecture-diagram-reviewer" ]]
 [[ -L "${CODEX_HOME}/skills/review-to-test-planner" ]]
+[[ -L "${CODEX_HOME}/skills/adr-curator" ]]
 [[ -L "${CODEX_HOME}/skills/architecture-fitness-function-author" ]]
+[[ -L "${CODEX_HOME}/skills/finding-to-issue-planner" ]]
 [[ -L "${CODEX_HOME}/skills/arxiv-paper-writer" ]]
 [[ -L "${CODEX_HOME}/skills/diagram-author" ]]
 [[ "$(cd "${CODEX_HOME}/skills/pr-init" && pwd -P)" == "${repo_root}/adl/tools/skills/pr-init" ]]
