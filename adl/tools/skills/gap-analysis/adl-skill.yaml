@@ -1,0 +1,129 @@
+version: "0.1"
+kind: "adl-skill"
+id: "gap-analysis"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "gap_analysis.v1"
+    reference_doc: "../docs/GAP_ANALYSIS_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "expected_baseline"
+      - "observed_evidence"
+      - "policy"
+    mode_enum:
+      - "compare_issue_to_implementation"
+      - "compare_milestone_to_evidence"
+      - "compare_spec_to_docs"
+      - "compare_review_to_closeout"
+      - "compare_packet_to_report"
+    policy_fields:
+      - "severity_floor"
+      - "required_gap_types"
+      - "uncertainty_policy"
+      - "issue_creation_allowed"
+      - "write_gap_artifact"
+      - "stop_before_fix"
+      - "stop_before_mutation"
+    mode_requirements:
+      compare_issue_to_implementation:
+        required_target_fields:
+          - "issue_ref"
+          - "changed_paths"
+      compare_milestone_to_evidence:
+        required_target_fields:
+          - "milestone_plan"
+          - "evidence_root"
+      compare_spec_to_docs:
+        required_target_fields:
+          - "spec_path"
+          - "docs_paths"
+      compare_review_to_closeout:
+        required_target_fields:
+          - "review_artifact"
+          - "closeout_record"
+      compare_packet_to_report:
+        required_target_fields:
+          - "review_packet_path"
+          - "report_path"
+  intent:
+    - "gap_analysis"
+    - "expected_vs_observed_truth"
+    - "closeout_safety"
+    - "milestone_release_readiness"
+  required_inputs:
+    - "expected_baseline"
+    - "observed_evidence"
+    - "policy"
+  optional_inputs:
+    - "artifact_root"
+    - "issue_ref"
+    - "milestone_plan"
+    - "spec_path"
+    - "review_packet_path"
+    - "report_path"
+    - "closeout_record"
+  stop_if_missing:
+    - "expected_baseline"
+  prevalidation_rules:
+    - "expected_baseline_must_be_explicit"
+    - "skill_input_schema_must_equal_gap_analysis.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "policy.stop_before_fix_must_be_true"
+    - "policy.stop_before_mutation_must_be_true"
+execution:
+  mode: "analysis_only"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  permitted_scripts:
+    - path: "scripts/analyze_gaps.py"
+      interpreter: "python3"
+      read_only: true
+      allowed_args:
+        - "<gap-root>"
+        - "--out <artifact-root>"
+        - "--run-id <id>"
+        - "--baseline <path>"
+        - "--observed <path>"
+  preferred_read_order:
+    - "expected_baseline.md"
+    - "observed_evidence.md"
+    - "acceptance criteria"
+    - "changed paths"
+    - "validation artifacts"
+    - "docs and review artifacts"
+    - "output cards and closeout records"
+  invocation_guidance: "require_explicit_baseline_before_analysis"
+boundaries:
+  must_not_run:
+    - "implementation_fixes"
+    - "docs_fixes"
+    - "test_generation"
+    - "tracker_item_creation"
+    - "pull_request_creation"
+    - "release_approval"
+    - "closeout_approval"
+    - "publication"
+outputs:
+  default_format: "markdown_and_json"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/gap-analysis/<run_id>/"
+  required_artifacts:
+    - "gap_analysis_report.md"
+    - "gap_analysis_report.json"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  no_approval_or_compliance_claims: true
+  no_mutation_without_operator_approval: true
+  manifest_declares_executables: true
+
+display_name: Gap Analysis
+short_description: Compare expected outcomes to observed evidence and report source-grounded gaps
+default_prompt: Compare an explicit expected baseline against observed implementation, docs, tests, review, PR, milestone, or closeout evidence. Emit findings-first gaps with severity, evidence, uncertainty, and bounded follow-up recommendations; stop before fixing, approving, creating issues or PRs, publishing, or mutating repositories.

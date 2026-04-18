@@ -1,0 +1,3 @@
+display_name: Gap Analysis
+short_description: Compare expected outcomes to observed evidence and report source-grounded gaps
+default_prompt: Compare an explicit expected baseline against observed implementation, docs, tests, review, PR, milestone, or closeout evidence. Emit findings-first gaps with severity, evidence, uncertainty, and bounded follow-up recommendations; stop before fixing, approving, creating issues or PRs, publishing, or mutating repositories.

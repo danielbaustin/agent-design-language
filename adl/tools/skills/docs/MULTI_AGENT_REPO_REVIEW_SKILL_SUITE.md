@@ -22,6 +22,7 @@ coverage, or an explicit multi-agent review demo/proof surface.
 - `repo-diagram-planner`
 - `architecture-diagram-reviewer`
 - `review-to-test-planner`
+- `gap-analysis`
 - `adr-curator`
 - `architecture-fitness-function-author`
 - `finding-to-issue-planner`
@@ -42,11 +43,12 @@ Recommended order:
 8. `repo-diagram-planner`
 9. `architecture-diagram-reviewer`
 10. `review-to-test-planner`
-11. `adr-curator`
-12. `architecture-fitness-function-author`
-13. `finding-to-issue-planner`
-14. `product-report-writer`
-15. `review-quality-evaluator`
+11. `gap-analysis`
+12. `adr-curator`
+13. `architecture-fitness-function-author`
+14. `finding-to-issue-planner`
+15. `product-report-writer`
+16. `review-quality-evaluator`
 
 The first four roles may run independently when the operator wants parallel
 review. The synthesis role should run after at least one specialist artifact is
@@ -61,6 +63,10 @@ handoffs without authoring or rendering diagrams.
 The review-to-test planner should run after specialist findings or synthesis
 exist. It maps findings to safe, bounded `test-generator` handoffs without
 writing tests or turning review follow-up into broad implementation work.
+The gap-analysis skill should run when a concrete expected baseline must be
+reconciled against observed implementation, docs, tests, review, report, PR, or
+closeout evidence. It emits source-grounded gap findings and stops before fixes,
+approval, publication, issue creation, PR creation, or repository mutation.
 The ADR curator should run after architecture findings, synthesis, migration
 notes, or repo evidence identify durable decisions that need Architecture
 Decision Record candidates. It drafts proposed ADR packets without accepting
@@ -302,6 +308,42 @@ policy:
   stop_after_plan: true
 ```
 
+## Gap Analysis Input Shape
+
+```yaml
+skill_input_schema: gap_analysis.v1
+mode: compare_issue_to_implementation | compare_milestone_to_evidence | compare_spec_to_docs | compare_review_to_closeout | compare_packet_to_report
+expected_baseline:
+  issue_ref: <issue or null>
+  milestone_plan: <path or null>
+  spec_path: <path or null>
+  review_packet_path: <path or null>
+  closeout_record: <path or null>
+observed_evidence:
+  changed_paths:
+    - <path>
+  validation_artifacts:
+    - <path>
+  docs_paths:
+    - <path>
+  report_path: <path or null>
+  closeout_record: <path or null>
+policy:
+  severity_floor: P0 | P1 | P2 | P3
+  required_gap_types:
+    - missing_evidence
+    - implementation_gap
+    - docs_drift
+    - test_gap
+    - closeout_drift
+    - scope_ambiguity
+  uncertainty_policy: record_explicitly
+  issue_creation_allowed: false
+  write_gap_artifact: true | false
+  stop_before_fix: true
+  stop_before_mutation: true
+```
+
 ## ADR Curator Input Shape
 
 ```yaml
@@ -438,6 +480,8 @@ The suite may:
 - plan bounded test-generation handoffs from review findings, including
   behavior under test, fixture needs, expected assertions, validation commands,
   and `generated` / `recommended` / `deferred` / `unsafe` status
+- compare explicit baselines to observed evidence and emit source-grounded gap
+  findings, missing-evidence records, uncertainty, and follow-up recommendations
 - draft source-grounded ADR candidate packets with status, context, decision,
   consequences, validation notes, supersession links, and approval boundaries
 - author bounded architecture fitness-function plans that separate
@@ -458,6 +502,8 @@ The suite must not:
 - author, edit, render, publish, or replace diagrams from the diagram review
   lane
 - write tests or fixtures from the review-to-test planning lane
+- fix gaps, create issues or PRs, approve closeout, approve release, or mutate
+  repositories from the gap-analysis lane
 - accept, reject, supersede, publish, or commit ADRs from the ADR curation lane
 - edit ADR files, docs, tests, CI, code, policy files, issues, or PRs from the
   ADR curation lane
@@ -494,6 +540,8 @@ Use this suite when:
   need explicit ownership
 - diagram planning needs to be source-grounded before asking `diagram-author` to
   create a specific visual artifact
+- expected issue, milestone, review, report, or closeout truth must be compared
+  against observed evidence before release or closeout
 - durable architecture decisions need proposed ADR packets before acceptance,
   implementation, or follow-up automation work
 - durable architecture rules need executable-check planning before separate
