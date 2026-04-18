@@ -23,6 +23,7 @@ coverage, or an explicit multi-agent review demo/proof surface.
 - `review-to-test-planner`
 - `architecture-fitness-function-author`
 - `repo-review-synthesis`
+- `finding-to-issue-planner`
 
 ## Invocation Order
 
@@ -39,6 +40,7 @@ Recommended order:
 9. `architecture-diagram-reviewer`
 10. `review-to-test-planner`
 11. `architecture-fitness-function-author`
+12. `finding-to-issue-planner`
 
 The first four roles may run independently when the operator wants parallel
 review. The synthesis role should run after at least one specialist artifact is
@@ -57,6 +59,9 @@ The architecture fitness-function author should run after architecture findings
 or synthesis identify durable architecture rules worth preserving. It separates
 machine-checkable invariants from human-judgment candidates and deferred
 automation before any tests, CI gates, policy files, or repo checks are edited.
+The finding-to-issue planner should run only after review findings exist. It
+emits grouped, human-approved issue candidates and stops before tracker
+creation, PR creation, remediation, or test generation.
 
 ## Shared Specialist Input Shape
 
@@ -304,6 +309,21 @@ policy:
   stop_after_plan: true
 ```
 
+## Finding To Issue Planner Input Shape
+
+```yaml
+skill_input_schema: finding_to_issue_planner.v1
+mode: plan_from_review | plan_from_synthesis | plan_from_packet | refresh_issue_plan
+finding_source: <review artifact or packet root>
+policy:
+  approval_required: true
+  tracker_creation_allowed: false
+  grouping_policy: exact | conservative | none
+  severity_floor: P0 | P1 | P2 | P3
+  preserve_specialist_disagreement: true
+  stop_before_mutation: true
+```
+
 ## Severity Rules
 
 - Preserve the highest severity attached to a merged finding unless the source
@@ -337,6 +357,8 @@ The suite may:
 - author bounded architecture fitness-function plans that separate
   machine-checkable invariants, human-judgment candidates, deferred automation,
   validation commands, expected failure modes, and implementation handoffs
+- draft grouped issue candidates from findings after explicit review evidence
+  exists, while preserving highest severity and specialist disagreement
 
 The suite must not:
 - edit code, tests, docs, configs, or issue state
@@ -352,6 +374,8 @@ The suite must not:
 - hide severity, disagreement, skipped roles, or residual risk
 - invent diagrams, render diagram assets, or publish visual artifacts from the
   planning lane
+- create tracker items from the issue-planning lane without explicit operator
+  approval
 
 ## Relationship To `repo-code-review`
 
