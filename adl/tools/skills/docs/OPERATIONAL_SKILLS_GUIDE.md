@@ -14,22 +14,43 @@ scratch.
 
 The tracked skill set is:
 
-- `workflow-conductor`
+- `adr-curator`
+- `architecture-diagram-reviewer`
+- `architecture-fitness-function-author`
+- `arxiv-paper-writer`
+- `demo-operator`
+- `diagram-author`
+- `documentation-specialist`
+- `finding-to-issue-planner`
+- `gap-analysis`
+- `medium-article-writer`
+- `pr-closeout`
+- `pr-finish`
 - `pr-init`
+- `pr-janitor`
 - `pr-ready`
 - `pr-run`
-- `pr-janitor`
-- `pr-finish`
-- `pr-closeout`
+- `product-report-writer`
+- `redaction-and-evidence-auditor`
+- `refactoring-helper`
+- `repo-architecture-review`
 - `repo-code-review`
-- `test-generator`
-- `demo-operator`
-- `medium-article-writer`
-- `arxiv-paper-writer`
-- `diagram-author`
-- `stp-editor`
+- `repo-dependency-review`
+- `repo-diagram-planner`
+- `repo-packet-builder`
+- `repo-review-code`
+- `repo-review-docs`
+- `repo-review-security`
+- `repo-review-synthesis`
+- `repo-review-tests`
+- `review-quality-evaluator`
+- `review-to-test-planner`
 - `sip-editor`
 - `sor-editor`
+- `stp-editor`
+- `test-generator`
+- `use-case-writer`
+- `workflow-conductor`
 
 ## Workflow Shape
 
@@ -74,6 +95,38 @@ Each skill bundle typically contains:
   - playbooks and output contracts
 - `docs/*.md`
   - input-schema docs and operator-facing reference docs like this one
+
+Installed Codex skill bundles live under:
+
+- `$CODEX_HOME/skills`
+
+To install or resync the tracked ADL skill bundles:
+
+```bash
+bash adl/tools/install_adl_operational_skills.sh
+```
+
+To install the tracked bundles as symlinks instead of copies:
+
+```bash
+ADL_OPERATIONAL_SKILLS_INSTALL_MODE=symlink bash adl/tools/install_adl_operational_skills.sh
+```
+
+To verify installation behavior without mutating your real Codex home:
+
+```bash
+bash adl/tools/test_install_adl_operational_skills.sh
+```
+
+To verify a real deployed copy of one skill against the tracked bundle, compare
+the two directories:
+
+```bash
+diff -qr adl/tools/skills/test-generator "$CODEX_HOME/skills/test-generator"
+```
+
+Replace `test-generator` with the skill being checked. No output means the
+deployed copy matches the tracked bundle.
 
 ## General Invocation Pattern
 
@@ -1845,3 +1898,67 @@ For repo-wide review:
 
 1. run `repo-code-review`
 2. turn findings into issue work or follow-up PRs
+
+## Complete Skill Documentation Matrix
+
+Every first-class skill bundle must have a documented disposition for five
+surfaces:
+
+- `SKILL.md`: Codex-facing trigger and operating instructions
+- `adl-skill.yaml`: machine-readable admission and boundary contract
+- input schema: `adl/tools/skills/docs/<SKILL>_SKILL_INPUT_SCHEMA.md`
+- output contract: `references/output-contract.md` or an explicitly named
+  equivalent
+- install verification: covered by `test_install_adl_operational_skills.sh`
+
+| Skill | Input Schema | Output Contract | Primary Stop Boundary |
+| --- | --- | --- | --- |
+| `adr-curator` | `ADR_CURATOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | ADR candidate drafting only |
+| `architecture-diagram-reviewer` | `ARCHITECTURE_DIAGRAM_REVIEWER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | diagram review only |
+| `architecture-fitness-function-author` | `ARCHITECTURE_FITNESS_FUNCTION_AUTHOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | fitness-function plan only |
+| `arxiv-paper-writer` | `ARXIV_PAPER_WRITER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | manuscript packet only |
+| `demo-operator` | `DEMO_OPERATOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | one demo operation |
+| `diagram-author` | `DIAGRAM_AUTHOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | local diagram packet only |
+| `documentation-specialist` | `DOCUMENTATION_SPECIALIST_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | bounded docs write, audit, or handoff |
+| `finding-to-issue-planner` | `FINDING_TO_ISSUE_PLANNER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | issue candidates only |
+| `gap-analysis` | `GAP_ANALYSIS_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | gap report only |
+| `medium-article-writer` | `MEDIUM_ARTICLE_WRITER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | article packet only |
+| `pr-closeout` | `PR_CLOSEOUT_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | local closeout only |
+| `pr-finish` | `PR_FINISH_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | PR publication/update only |
+| `pr-init` | `PR_INIT_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | issue bootstrap only |
+| `pr-janitor` | `PR_JANITOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | in-flight PR monitoring or bounded repair |
+| `pr-ready` | `PR_READY_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | readiness diagnosis only |
+| `pr-run` | `PR_RUN_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | bounded issue execution only |
+| `product-report-writer` | `PRODUCT_REPORT_WRITER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | product report packet only |
+| `redaction-and-evidence-auditor` | `REDACTION_AND_EVIDENCE_AUDITOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | safety audit only |
+| `refactoring-helper` | `REFACTORING_HELPER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | refactor plan only |
+| `repo-architecture-review` | `REPO_ARCHITECTURE_REVIEW_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | architecture findings only |
+| `repo-code-review` | `REPO_CODE_REVIEW_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | findings-first code review only |
+| `repo-dependency-review` | `REPO_DEPENDENCY_REVIEW_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | dependency findings only |
+| `repo-diagram-planner` | `REPO_DIAGRAM_PLANNER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | diagram briefs only |
+| `repo-packet-builder` | `REPO_PACKET_BUILDER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | review packet construction only |
+| `repo-review-code` | `REPO_REVIEW_CODE_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | code/correctness findings only |
+| `repo-review-docs` | `REPO_REVIEW_DOCS_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | docs findings only |
+| `repo-review-security` | `REPO_REVIEW_SECURITY_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | security findings only |
+| `repo-review-synthesis` | `REPO_REVIEW_SYNTHESIS_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | severity-preserving synthesis only |
+| `repo-review-tests` | `REPO_REVIEW_TESTS_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | test-quality findings only |
+| `review-quality-evaluator` | `REVIEW_QUALITY_EVALUATOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | review-quality evaluation only |
+| `review-to-test-planner` | `REVIEW_TO_TEST_PLANNER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | test-generation handoff plan only |
+| `sip-editor` | `SIP_EDITOR_SKILL_INPUT_SCHEMA.md` | card-editor shared contract | SIP normalization only |
+| `sor-editor` | `SOR_EDITOR_SKILL_INPUT_SCHEMA.md` | card-editor shared contract | SOR normalization only |
+| `stp-editor` | `STP_EDITOR_SKILL_INPUT_SCHEMA.md` | card-editor shared contract | STP normalization only |
+| `test-generator` | `TEST_GENERATOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | focused test generation only |
+| `use-case-writer` | `USE_CASE_WRITER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | use-case packet only |
+| `workflow-conductor` | `WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | route or dispatch one bounded subtask |
+
+The card-editor skills share the contract coverage in
+`adl/tools/test_card_editor_skill_contracts.sh`; they do not each need a
+separate output-contract file unless their output model diverges.
+
+The `repo-review-code`, `repo-review-docs`, `repo-review-security`,
+`repo-review-synthesis`, and `repo-review-tests` specialist contracts are
+checked together by
+`adl/tools/test_multi_agent_repo_review_specialist_skill_contracts.sh`.
+
+The complete inventory expectation is checked by
+`adl/tools/test_skill_documentation_completeness.sh`.

@@ -41,6 +41,7 @@ run_step "repo-packet-builder contract check" bash "$ROOT/adl/tools/test_repo_pa
 run_step "redaction-and-evidence-auditor contract check" bash "$ROOT/adl/tools/test_redaction_and_evidence_auditor_skill_contracts.sh"
 run_step "repo-architecture-review contract check" bash "$ROOT/adl/tools/test_repo_architecture_review_skill_contracts.sh"
 run_step "repo-dependency-review contract check" bash "$ROOT/adl/tools/test_repo_dependency_review_skill_contracts.sh"
+run_step "multi-agent repo-review specialist contract check" bash "$ROOT/adl/tools/test_multi_agent_repo_review_specialist_skill_contracts.sh"
 run_step "repo-diagram-planner contract check" bash "$ROOT/adl/tools/test_repo_diagram_planner_skill_contracts.sh"
 run_step "architecture-diagram-reviewer contract check" bash "$ROOT/adl/tools/test_architecture_diagram_reviewer_skill_contracts.sh"
 run_step "review-to-test-planner contract check" bash "$ROOT/adl/tools/test_review_to_test_planner_skill_contracts.sh"
@@ -52,6 +53,7 @@ run_step "demo-operator contract check" bash "$ROOT/adl/tools/test_demo_operator
 run_step "medium-article-writer contract check" bash "$ROOT/adl/tools/test_medium_article_writer_skill_contracts.sh"
 run_step "arxiv-paper-writer contract check" bash "$ROOT/adl/tools/test_arxiv_paper_writer_skill_contracts.sh"
 run_step "diagram-author contract check" bash "$ROOT/adl/tools/test_diagram_author_skill_contracts.sh"
+run_step "skill documentation completeness check" bash "$ROOT/adl/tools/test_skill_documentation_completeness.sh"
 run_step "tracked .adl issue-record residue guard" bash "$ROOT/adl/tools/check_no_tracked_adl_issue_record_residue.sh"
 echo "• Running adl checks (batched)…"
 (

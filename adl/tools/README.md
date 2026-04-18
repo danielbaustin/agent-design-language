@@ -42,6 +42,18 @@ bash adl/tools/install_adl_operational_skills.sh
 # install the same bundles as symlinks so Codex reads the tracked repo copies directly
 ADL_OPERATIONAL_SKILLS_INSTALL_MODE=symlink bash adl/tools/install_adl_operational_skills.sh
 
+# verify install/resync behavior in an isolated temporary CODEX_HOME
+bash adl/tools/test_install_adl_operational_skills.sh
+
+# verify every tracked skill has schema/reference/operator-guide coverage
+bash adl/tools/test_skill_documentation_completeness.sh
+
+# verify the multi-agent repo-review specialist skill contracts
+bash adl/tools/test_multi_agent_repo_review_specialist_skill_contracts.sh
+
+# verify a deployed skill copy matches the tracked bundle; no output means identical
+diff -qr adl/tools/skills/test-generator "$CODEX_HOME/skills/test-generator"
+
 # install or resync the legacy adl_pr_cycle compatibility skill from the tracked contract
 bash adl/tools/install_adl_pr_cycle_skill.sh
 
@@ -142,6 +154,8 @@ are not the preferred public workflow:
 - Operational skills guide: `skills/docs/OPERATIONAL_SKILLS_GUIDE.md`
   - includes concrete usage patterns for `pr-init`, `pr-ready`, `pr-run`,
     `pr-janitor`, `pr-finish`, `pr-closeout`, and the helper card editors
+  - includes the full skill documentation matrix, install/resync guidance, and
+    deployed-copy verification recipe for `$CODEX_HOME/skills`
   - when touching `stp.md`, `sip.md`, or `sor.md`, use the matching editor
     skill explicitly rather than doing ad hoc card edits
 - Active milestone docs: `../../docs/milestones/v0.87/`
