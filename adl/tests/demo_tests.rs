@@ -454,6 +454,30 @@ fn demo_j_v090_stock_league_recurring_print_plan_works() {
 }
 
 #[test]
+fn demo_k_v090_stock_league_proof_expansion_print_plan_works() {
+    let out = run_swarm(&[
+        "demo",
+        "demo-k-v090-stock-league-proof-expansion",
+        "--print-plan",
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("Demo: demo-k-v090-stock-league-proof-expansion"),
+        "stdout:\n{stdout}"
+    );
+    assert!(stdout.contains("Steps: 4"), "stdout:\n{stdout}");
+    assert!(stdout.contains("0. selected_demos"), "stdout:\n{stdout}");
+    assert!(stdout.contains("1. recurring_proof"), "stdout:\n{stdout}");
+    assert!(stdout.contains("2. evidence_index"), "stdout:\n{stdout}");
+    assert!(stdout.contains("3. review_packet"), "stdout:\n{stdout}");
+}
+
+#[test]
 fn demo_j_v090_stock_league_recurring_writes_multi_cycle_proof_packet() {
     let out_root = tmp_dir("demo-j-stock-league");
     let out = run_swarm(&[
@@ -627,6 +651,142 @@ fn demo_j_v090_stock_league_recurring_writes_multi_cycle_proof_packet() {
             "banned pattern {banned:?} found in artifacts"
         );
     }
+}
+
+#[test]
+fn demo_k_v090_stock_league_proof_expansion_writes_selected_extension_packet() {
+    let out_root = tmp_dir("demo-k-stock-league");
+    let out = run_swarm(&[
+        "demo",
+        "demo-k-v090-stock-league-proof-expansion",
+        "--run",
+        "--trace",
+        "--out",
+        out_root.to_string_lossy().as_ref(),
+        "--no-open",
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let run_out = out_root.join("demo-k-v090-stock-league-proof-expansion");
+    assert!(run_out.join("demo_extension_selection.json").is_file());
+    assert!(run_out.join("integration_proof_packet.json").is_file());
+    assert!(run_out.join("extension_proof_packet.json").is_file());
+    assert!(run_out.join("extensions/evidence_index.json").is_file());
+    assert!(run_out.join("extensions/proof_claims.json").is_file());
+    assert!(run_out.join("extensions/replay_manifest.json").is_file());
+    assert!(run_out
+        .join("extensions/non_goals_and_deferrals.json")
+        .is_file());
+    assert!(run_out
+        .join("extensions/extension_artifact_safety_scan.json")
+        .is_file());
+    assert!(run_out.join("trace.jsonl").is_file());
+
+    let ledger =
+        fs::read_to_string(run_out.join("long_lived_agent/state/cycle_ledger.jsonl")).unwrap();
+    assert_eq!(ledger.lines().count(), 3, "ledger:\n{ledger}");
+
+    let selection: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("demo_extension_selection.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(selection["matrix_row"], "D5");
+    assert_eq!(
+        selection["selected_demo_choices"][0]["entrypoint"],
+        "demo-k-v090-stock-league-proof-expansion"
+    );
+    assert_eq!(
+        selection["selected_demo_choices"][0]["classification"],
+        "proving"
+    );
+    assert!(selection["explicit_deferrals"]
+        .as_array()
+        .is_some_and(|deferrals| deferrals.len() == 3));
+
+    let proof: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("extension_proof_packet.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        proof["schema_version"],
+        "adl.stock_league.demo_extension_proof_packet.v1"
+    );
+    assert_eq!(proof["status"], "pass");
+    assert_eq!(proof["matrix_row"], "D5");
+    assert_eq!(proof["required_outputs"]["named_demo_choices"], true);
+    assert_eq!(proof["required_outputs"]["demo_matrix_disposition"], true);
+
+    let evidence: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("extensions/evidence_index.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(evidence["status"], "pass");
+    assert_eq!(
+        evidence["extends_demo"],
+        "demo-j-v090-stock-league-recurring"
+    );
+    assert!(evidence["evidence_refs"]
+        .as_array()
+        .is_some_and(|refs| refs.len() >= 7));
+
+    let claims: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("extensions/proof_claims.json")).unwrap(),
+    )
+    .unwrap();
+    assert!(claims["claims"].as_array().is_some_and(|items| {
+        items
+            .iter()
+            .all(|claim| claim["result"].as_str() == Some("pass"))
+    }));
+
+    let replay: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("extensions/replay_manifest.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(replay["replay_mode"], "deterministic_fixture");
+    assert_eq!(replay["expected_cycle_count"], 3);
+    assert_eq!(replay["network_required"], false);
+
+    let scan: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("extensions/extension_artifact_safety_scan.json"))
+            .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(scan["passed"], true, "scan:\n{scan}");
+    assert!(
+        scan["findings"]
+            .as_array()
+            .is_some_and(|findings| findings.is_empty()),
+        "scan:\n{scan}"
+    );
+
+    let rerun = run_swarm(&[
+        "demo",
+        "demo-k-v090-stock-league-proof-expansion",
+        "--run",
+        "--trace",
+        "--out",
+        out_root.to_string_lossy().as_ref(),
+        "--no-open",
+    ]);
+    assert!(
+        rerun.status.success(),
+        "expected rerun success, stderr:\n{}",
+        String::from_utf8_lossy(&rerun.stderr)
+    );
+    let rerun_ledger =
+        fs::read_to_string(run_out.join("long_lived_agent/state/cycle_ledger.jsonl")).unwrap();
+    assert_eq!(rerun_ledger.lines().count(), 3, "ledger:\n{rerun_ledger}");
+    assert!(
+        !run_out
+            .join("long_lived_agent/state/cycles/cycle-000004")
+            .exists(),
+        "rerun must reset recurring state instead of appending extra cycles"
+    );
 }
 
 fn collect_text_artifacts(root: &Path) -> String {

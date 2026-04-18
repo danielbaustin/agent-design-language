@@ -10,9 +10,11 @@ use super::write_file;
 
 pub(super) const DEMO_NAME: &str = "demo-i-v090-stock-league-scaffold";
 pub(super) const INTEGRATION_DEMO_NAME: &str = "demo-j-v090-stock-league-recurring";
+pub(super) const EXTENSION_DEMO_NAME: &str = "demo-k-v090-stock-league-proof-expansion";
 
 const RUN_ID: &str = "demo-i-stock-league-scaffold-run-001";
 const INTEGRATION_RUN_ID: &str = "demo-j-stock-league-recurring-run-001";
+const EXTENSION_RUN_ID: &str = "demo-k-stock-league-proof-expansion-run-001";
 const SEASON_ID: &str = "season-001";
 const FIXED_TIME: &str = "2026-04-17T00:00:00Z";
 const DISCLAIMER: &str = "This is a paper-market simulation for demonstrating persistent agent identity and accountability. It is not financial advice, trading advice, or a real investment strategy.";
@@ -118,6 +120,19 @@ pub(super) fn write_stock_league_integration_step(
         "recurring_cycles" => write_recurring_cycles_step(out_dir),
         "inspection" => write_inspection_step(out_dir),
         "proof_packet" => write_integration_proof_step(out_dir),
+        _ => Ok(Vec::new()),
+    }
+}
+
+pub(super) fn write_stock_league_extension_step(
+    out_dir: &Path,
+    step_id: &str,
+) -> Result<Vec<PathBuf>> {
+    match step_id {
+        "selected_demos" => write_extension_selection_step(out_dir),
+        "recurring_proof" => write_extension_recurring_proof_step(out_dir),
+        "evidence_index" => write_extension_evidence_step(out_dir),
+        "review_packet" => write_extension_review_packet_step(out_dir),
         _ => Ok(Vec::new()),
     }
 }
@@ -241,6 +256,113 @@ fn write_integration_proof_step(out_dir: &Path) -> Result<Vec<PathBuf>> {
         scan_path,
         proof_path,
     ])
+}
+
+fn write_extension_selection_step(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let extension_root = out_dir.join("extensions");
+    if extension_root.exists() {
+        fs::remove_dir_all(&extension_root).with_context(|| {
+            format!(
+                "failed to reset stock league extension root '{}'",
+                extension_root.display()
+            )
+        })?;
+    }
+
+    let old_proof = out_dir.join("extension_proof_packet.json");
+    if old_proof.exists() {
+        fs::remove_file(&old_proof).with_context(|| {
+            format!(
+                "failed to remove stale stock league extension proof '{}'",
+                old_proof.display()
+            )
+        })?;
+    }
+
+    Ok(vec![write_json(
+        out_dir,
+        "demo_extension_selection.json",
+        &extension_selection(),
+    )?])
+}
+
+fn write_extension_recurring_proof_step(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let mut artifacts = Vec::new();
+    let mut scaffold_artifacts = write_integration_scaffold_step(out_dir)?;
+    scaffold_artifacts.retain(|path| {
+        path.strip_prefix(out_dir)
+            .ok()
+            .and_then(Path::to_str)
+            .is_none_or(|rel| !matches!(rel, "README.md" | "reviewer_walkthrough.md"))
+    });
+    artifacts.extend(scaffold_artifacts);
+    artifacts.extend(write_recurring_cycles_step(out_dir)?);
+    artifacts.extend(write_inspection_step(out_dir)?);
+    artifacts.extend(write_integration_proof_step(out_dir)?);
+    Ok(artifacts)
+}
+
+fn write_extension_evidence_step(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let integration_proof = read_json_rel(out_dir, "integration_proof_packet.json")?;
+    let continuity = read_json_rel(out_dir, "continuity/continuity_proof.json")?;
+    let guardrails = read_json_rel(out_dir, "audit/recurring_guardrail_summary.json")?;
+    let integration_scan = read_json_rel(out_dir, "audit/artifact_safety_scan.json")?;
+
+    let proof_claims = extension_proof_claims(&integration_proof, &continuity, &guardrails);
+    let evidence = extension_evidence_index(&integration_scan);
+    let replay = extension_replay_manifest();
+    let deferrals = extension_deferral_register();
+
+    Ok(vec![
+        write_json(out_dir, "extensions/proof_claims.json", &proof_claims)?,
+        write_json(out_dir, "extensions/evidence_index.json", &evidence)?,
+        write_json(out_dir, "extensions/replay_manifest.json", &replay)?,
+        write_json(
+            out_dir,
+            "extensions/non_goals_and_deferrals.json",
+            &deferrals,
+        )?,
+    ])
+}
+
+fn write_extension_review_packet_step(out_dir: &Path) -> Result<Vec<PathBuf>> {
+    let selection = read_json_rel(out_dir, "demo_extension_selection.json")?;
+    let proof_claims = read_json_rel(out_dir, "extensions/proof_claims.json")?;
+    let evidence = read_json_rel(out_dir, "extensions/evidence_index.json")?;
+    let replay = read_json_rel(out_dir, "extensions/replay_manifest.json")?;
+    let deferrals = read_json_rel(out_dir, "extensions/non_goals_and_deferrals.json")?;
+
+    let readme_path = write_file(out_dir, "README.md", &extension_readme())?;
+    let walkthrough_path = write_file(
+        out_dir,
+        "reviewer_walkthrough.md",
+        &extension_reviewer_walkthrough(),
+    )?;
+
+    let extension_scan = scan_public_artifacts_for_run(out_dir, EXTENSION_RUN_ID)?;
+    let scan_path = write_json(
+        out_dir,
+        "extensions/extension_artifact_safety_scan.json",
+        &extension_scan,
+    )?;
+    if !extension_scan
+        .get("passed")
+        .and_then(Value::as_bool)
+        .unwrap_or(false)
+    {
+        return Err(anyhow!("stock league extension safety scan failed"));
+    }
+
+    let proof = extension_proof_packet(
+        &selection,
+        &proof_claims,
+        &evidence,
+        &replay,
+        &deferrals,
+        &extension_scan,
+    );
+    let proof_path = write_json(out_dir, "extension_proof_packet.json", &proof)?;
+    Ok(vec![readme_path, walkthrough_path, scan_path, proof_path])
 }
 
 fn write_fixture_step(out_dir: &Path) -> Result<Vec<PathBuf>> {
@@ -900,6 +1022,274 @@ fn integration_proof_packet(continuity: &Value, guardrails: &Value) -> Value {
     })
 }
 
+fn extension_selection() -> Value {
+    json!({
+        "schema_version": "adl.stock_league.demo_extension_selection.v1",
+        "demo_id": EXTENSION_DEMO_NAME,
+        "run_id": EXTENSION_RUN_ID,
+        "matrix_row": "D5",
+        "status": "selected",
+        "selection_time": FIXED_TIME,
+        "selection_rule": "extend the D4 stock-league proof path without adding live data, broker surfaces, or unrelated product claims",
+        "selected_demo_choices": [
+            {
+                "choice_id": "D5-A",
+                "name": "stock_league_reviewer_evidence_index",
+                "entrypoint": EXTENSION_DEMO_NAME,
+                "extends_demo": INTEGRATION_DEMO_NAME,
+                "classification": "proving",
+                "proof_claim": "A reviewer can follow one stable evidence index from the selected D5 extension claim to the D4 recurring state root, continuity proof, guardrail summary, and replay command.",
+                "proof_packet_ref": "extension_proof_packet.json",
+                "expected_artifact_root": "out/demo-k-v090-stock-league-proof-expansion"
+            }
+        ],
+        "non_proving_surfaces": [
+            {
+                "name": "scaffold_only_walkthrough",
+                "classification": "supporting",
+                "reason": "The WP-07 scaffold is useful context, but D5 proof rests on the recurring D4 integration artifacts."
+            }
+        ],
+        "explicit_deferrals": [
+            {
+                "name": "live_market_data_extension",
+                "deferred_to": "post-v0.90",
+                "reason": "Live market data would add external dependency and review burden beyond this milestone."
+            },
+            {
+                "name": "broker_or_order_execution_extension",
+                "deferred_to": "out_of_scope",
+                "reason": "The v0.90 demo lane remains paper-only and must not expose order placement surfaces."
+            },
+            {
+                "name": "multi-provider_competitive_league",
+                "deferred_to": "post-v0.90",
+                "reason": "Provider competition would distract from the long-lived state and accountability proof."
+            }
+        ],
+        "not_financial_advice": true
+    })
+}
+
+fn extension_proof_claims(
+    integration_proof: &Value,
+    continuity: &Value,
+    guardrails: &Value,
+) -> Value {
+    json!({
+        "schema_version": "adl.stock_league.demo_extension_claims.v1",
+        "demo_id": EXTENSION_DEMO_NAME,
+        "run_id": EXTENSION_RUN_ID,
+        "status": "pass",
+        "claims": [
+            {
+                "claim_id": "D5-A-1",
+                "claim": "The selected extension is named, bounded, and classified before proof review.",
+                "evidence_refs": ["demo_extension_selection.json"],
+                "result": "pass"
+            },
+            {
+                "claim_id": "D5-A-2",
+                "claim": "The extension preserves D4 as the primary long-lived stock-league proof instead of competing with it.",
+                "evidence_refs": ["integration_proof_packet.json", "extensions/evidence_index.json"],
+                "result": if integration_proof.get("status").and_then(Value::as_str) == Some("pass") {
+                    "pass"
+                } else {
+                    "fail"
+                }
+            },
+            {
+                "claim_id": "D5-A-3",
+                "claim": "The recurring proof still shows three bounded cycles with preserved prior commitments.",
+                "evidence_refs": ["continuity/continuity_proof.json", "long_lived_agent/state/cycle_ledger.jsonl"],
+                "result": if continuity.get("status").and_then(Value::as_str) == Some("pass")
+                    && continuity.get("cycle_count").and_then(Value::as_u64) == Some(3)
+                    && continuity
+                        .pointer("/history_preservation/prior_commitments_preserved")
+                        .and_then(Value::as_bool)
+                        == Some(true)
+                {
+                    "pass"
+                } else {
+                    "fail"
+                }
+            },
+            {
+                "claim_id": "D5-A-4",
+                "claim": "The extension keeps the no-broker, paper-only, no-real-world-side-effect guardrail boundary visible.",
+                "evidence_refs": ["audit/recurring_guardrail_summary.json", "extensions/extension_artifact_safety_scan.json"],
+                "result": if guardrails.get("status").and_then(Value::as_str) == Some("pass") {
+                    "pass"
+                } else {
+                    "fail"
+                }
+            }
+        ],
+        "not_financial_advice": true
+    })
+}
+
+fn extension_evidence_index(integration_scan: &Value) -> Value {
+    json!({
+        "schema_version": "adl.stock_league.demo_extension_evidence_index.v1",
+        "demo_id": EXTENSION_DEMO_NAME,
+        "run_id": EXTENSION_RUN_ID,
+        "extends_demo": INTEGRATION_DEMO_NAME,
+        "status": if integration_scan.get("passed").and_then(Value::as_bool) == Some(true) {
+            "pass"
+        } else {
+            "fail"
+        },
+        "proof_command": "cargo run --manifest-path adl/Cargo.toml -- demo demo-k-v090-stock-league-proof-expansion --run --trace --out out --no-open",
+        "source_proof_command": "cargo run --manifest-path adl/Cargo.toml -- demo demo-j-v090-stock-league-recurring --run --trace --out out --no-open",
+        "evidence_refs": [
+            {
+                "artifact_ref": "demo_extension_selection.json",
+                "purpose": "selected D5 demo choices, explicit non-goals, and deferrals"
+            },
+            {
+                "artifact_ref": "integration_proof_packet.json",
+                "purpose": "source D4 recurring proof packet reused as the baseline"
+            },
+            {
+                "artifact_ref": "continuity/continuity_proof.json",
+                "purpose": "prior-cycle links and preserved first-cycle artifacts"
+            },
+            {
+                "artifact_ref": "audit/recurring_guardrail_summary.json",
+                "purpose": "per-cycle paper-only guardrail status"
+            },
+            {
+                "artifact_ref": "inspection/latest.json",
+                "purpose": "latest reviewer inspection packet"
+            },
+            {
+                "artifact_ref": "extensions/replay_manifest.json",
+                "purpose": "deterministic replay command and expected outputs"
+            },
+            {
+                "artifact_ref": "extensions/proof_claims.json",
+                "purpose": "claim-by-claim proof registry for the selected extension"
+            }
+        ],
+        "non_goals_ref": "extensions/non_goals_and_deferrals.json",
+        "not_financial_advice": true
+    })
+}
+
+fn extension_replay_manifest() -> Value {
+    json!({
+        "schema_version": "adl.stock_league.demo_extension_replay_manifest.v1",
+        "demo_id": EXTENSION_DEMO_NAME,
+        "run_id": EXTENSION_RUN_ID,
+        "replay_mode": "deterministic_fixture",
+        "command": "cargo run --manifest-path adl/Cargo.toml -- demo demo-k-v090-stock-league-proof-expansion --run --trace --out out --no-open",
+        "expected_artifacts": [
+            "demo_extension_selection.json",
+            "integration_proof_packet.json",
+            "continuity/continuity_proof.json",
+            "audit/recurring_guardrail_summary.json",
+            "extensions/evidence_index.json",
+            "extensions/proof_claims.json",
+            "extensions/non_goals_and_deferrals.json",
+            "extensions/extension_artifact_safety_scan.json",
+            "extension_proof_packet.json"
+        ],
+        "expected_cycle_count": 3,
+        "expected_latest_cycle_id": "cycle-000003",
+        "network_required": false,
+        "broker_required": false,
+        "real_world_side_effects": false,
+        "not_financial_advice": true
+    })
+}
+
+fn extension_deferral_register() -> Value {
+    json!({
+        "schema_version": "adl.stock_league.demo_extension_deferrals.v1",
+        "demo_id": EXTENSION_DEMO_NAME,
+        "run_id": EXTENSION_RUN_ID,
+        "non_goals": [
+            "no new live-market loop",
+            "no broker integration",
+            "no order placement",
+            "no provider competition claim",
+            "no product-readiness claim beyond the fixture-backed proof packet"
+        ],
+        "deferred": [
+            {
+                "name": "live_market_data_extension",
+                "home": "post-v0.90 planning",
+                "reason": "External data freshness and licensing are outside the bounded fixture proof."
+            },
+            {
+                "name": "broker_or_order_execution_extension",
+                "home": "out of scope for ADL v0.90",
+                "reason": "The release must remain paper-only."
+            },
+            {
+                "name": "multi-provider_competitive_league",
+                "home": "post-v0.90 planning",
+                "reason": "The v0.90 proof is about long-lived state, not provider ranking."
+            }
+        ],
+        "not_financial_advice": true
+    })
+}
+
+fn extension_proof_packet(
+    selection: &Value,
+    proof_claims: &Value,
+    evidence: &Value,
+    replay: &Value,
+    deferrals: &Value,
+    extension_scan: &Value,
+) -> Value {
+    let claims_pass = proof_claims
+        .get("claims")
+        .and_then(Value::as_array)
+        .is_some_and(|claims| {
+            claims
+                .iter()
+                .all(|claim| claim.get("result").and_then(Value::as_str) == Some("pass"))
+        });
+    let scan_pass = extension_scan.get("passed").and_then(Value::as_bool) == Some(true);
+
+    json!({
+        "schema_version": "adl.stock_league.demo_extension_proof_packet.v1",
+        "demo_id": EXTENSION_DEMO_NAME,
+        "run_id": EXTENSION_RUN_ID,
+        "matrix_row": "D5",
+        "season_id": SEASON_ID,
+        "status": if claims_pass && scan_pass { "pass" } else { "fail" },
+        "primary_claim": "WP-09 lands one bounded D5 demo extension that expands reviewer proof around the D4 recurring stock-league path without creating unrelated demo scope.",
+        "proof_command": "cargo run --manifest-path adl/Cargo.toml -- demo demo-k-v090-stock-league-proof-expansion --run --trace --out out --no-open",
+        "validation_command": "cargo test --manifest-path adl/Cargo.toml stock_league -- --nocapture",
+        "selected_demo_choices": selection["selected_demo_choices"].clone(),
+        "source_demo": {
+            "demo_id": INTEGRATION_DEMO_NAME,
+            "proof_packet_ref": "integration_proof_packet.json",
+            "state_root_ref": "long_lived_agent/state"
+        },
+        "proof_claims": proof_claims,
+        "evidence_index": evidence,
+        "replay_manifest": replay,
+        "non_goals_and_deferrals": deferrals,
+        "extension_safety_scan": extension_scan,
+        "required_outputs": {
+            "named_demo_choices": true,
+            "proof_claims": true,
+            "proof_command": true,
+            "proof_packet": true,
+            "non_goals": true,
+            "demo_matrix_disposition": true,
+            "deterministic_fixture_mode": true
+        },
+        "disclaimer": DISCLAIMER,
+        "not_financial_advice": true
+    })
+}
+
 fn recurring_continuity_proof(out_dir: &Path) -> Result<Value> {
     let state = "long_lived_agent/state";
     let status = read_json_rel(out_dir, &format!("{state}/status.json"))?;
@@ -1141,6 +1531,18 @@ fn integration_readme() -> String {
 fn integration_reviewer_walkthrough() -> String {
     format!(
         "# Recurring Demo Reviewer Walkthrough\n\n{DISCLAIMER}\n\nRun the demo with `cargo run --manifest-path adl/Cargo.toml -- demo demo-j-v090-stock-league-recurring --run --trace --out out --no-open`.\n\nThe command runs three no-sleep fixture cycles through the long-lived-agent runtime. The review question is whether the latest cycle can point back to prior cycle artifacts without erasing earlier commitments, and whether every cycle preserves the no-advice, no-broker, paper-only guardrail boundary.\n"
+    )
+}
+
+fn extension_readme() -> String {
+    format!(
+        "# Stock League Demo Extension Proof\n\n{DISCLAIMER}\n\n## What This Proves\n\nThe D5 extension proves that v0.90 can add a named, bounded demo-extension packet without weakening the primary stock-league proof. It replays the D4 recurring fixture path, then adds a selected-demo manifest, proof-claim registry, evidence index, replay manifest, non-goals and deferrals register, public artifact safety scan, and extension proof packet.\n\n## Selected Extension\n\n- D5-A: `stock_league_reviewer_evidence_index`\n- Entrypoint: `demo-k-v090-stock-league-proof-expansion`\n- Source proof: `demo-j-v090-stock-league-recurring`\n\n## What This Does Not Do\n\n- It does not add live market data.\n- It does not place orders.\n- It does not connect to broker APIs.\n- It does not rank model providers.\n- It does not claim product readiness beyond the fixture-backed proof packet.\n\n## Reviewer Path\n\n1. Inspect `extension_proof_packet.json`.\n2. Inspect `demo_extension_selection.json` for named selected demos, non-proving surfaces, and deferrals.\n3. Inspect `extensions/evidence_index.json` and `extensions/proof_claims.json`.\n4. Inspect `extensions/replay_manifest.json` for the deterministic proof command.\n5. Inspect `integration_proof_packet.json`, `continuity/continuity_proof.json`, and `audit/recurring_guardrail_summary.json` for the source D4 proof.\n6. Inspect `extensions/extension_artifact_safety_scan.json` for public-artifact safety proof.\n"
+    )
+}
+
+fn extension_reviewer_walkthrough() -> String {
+    format!(
+        "# Demo Extension Reviewer Walkthrough\n\n{DISCLAIMER}\n\nRun the extension with `cargo run --manifest-path adl/Cargo.toml -- demo demo-k-v090-stock-league-proof-expansion --run --trace --out out --no-open`.\n\nThe command intentionally uses the same deterministic stock-league fixture and three-cycle recurring run as D4. The new D5 review question is narrower: did the milestone name the selected extension, attach proof claims and evidence refs, classify non-proving surfaces, and defer anything that would widen scope?\n"
     )
 }
 
