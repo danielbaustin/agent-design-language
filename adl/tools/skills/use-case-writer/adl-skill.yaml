@@ -1,0 +1,117 @@
+version: "0.1"
+kind: "adl-skill"
+id: "use-case-writer"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "use_case_writer.v1"
+    reference_doc: "../docs/USE_CASE_WRITER_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "source"
+      - "audience"
+      - "policy"
+    mode_enum:
+      - "write_prd_use_cases"
+      - "write_issue_use_cases"
+      - "write_demo_use_cases"
+      - "write_milestone_use_cases"
+    policy_fields:
+      - "source_required"
+      - "unsupported_assumptions_policy"
+      - "implementation_status_claims_allowed"
+      - "issue_creation_allowed"
+      - "write_use_case_artifact"
+      - "stop_before_commitment"
+    mode_requirements:
+      write_prd_use_cases:
+        required_source_fields:
+          - "brief_path"
+      write_issue_use_cases:
+        required_source_fields:
+          - "issue_ref"
+      write_demo_use_cases:
+        required_source_fields:
+          - "demo_plan_path"
+      write_milestone_use_cases:
+        required_source_fields:
+          - "milestone_plan_path"
+  intent:
+    - "use_case_authoring"
+    - "prd_examples"
+    - "issue_acceptance_examples"
+    - "demo_scenarios"
+    - "milestone_planning_examples"
+  required_inputs:
+    - "source"
+    - "audience"
+    - "policy"
+  optional_inputs:
+    - "artifact_root"
+    - "actors"
+    - "acceptance_hooks"
+    - "non_goals"
+    - "unsupported_assumptions"
+  stop_if_missing:
+    - "source"
+  prevalidation_rules:
+    - "declared_source_must_be_explicit"
+    - "skill_input_schema_must_equal_use_case_writer.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "policy.source_required_must_be_true"
+    - "policy.stop_before_commitment_must_be_true"
+    - "implementation_status_claims_must_be_source_supported"
+execution:
+  mode: "source_grounded_authoring"
+  allow_code_edits: false
+  allow_network: false
+  allow_subagents: false
+  permitted_scripts:
+    - path: "scripts/write_use_cases.py"
+      interpreter: "python3"
+      read_only: true
+      allowed_args:
+        - "<use-case-root>"
+        - "--out <artifact-root>"
+        - "--run-id <id>"
+        - "--max-use-cases <n>"
+  preferred_read_order:
+    - "use_case_manifest.json"
+    - "source_brief.md"
+    - "actors.md"
+    - "goals.md"
+    - "system_behavior.md"
+    - "acceptance_hooks.md"
+    - "non_goals.md"
+    - "unsupported_assumptions.md"
+  invocation_guidance: "require_declared_source_before_writing_use_cases"
+boundaries:
+  must_not_run:
+    - "unsupported_requirement_invention"
+    - "implementation_status_claims_without_source"
+    - "tracker_item_creation"
+    - "pull_request_creation"
+    - "implementation_planning_takeover"
+    - "publication"
+outputs:
+  default_format: "markdown_and_json"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/use-case-writer/<run_id>/"
+  required_artifacts:
+    - "use_case_packet.md"
+    - "use_case_packet.json"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  no_unsupported_product_claims: true
+  no_mutation_without_operator_approval: true
+  manifest_declares_executables: true
+
+display_name: Use Case Writer
+short_description: Write source-grounded use-case packets without inventing product commitments
+default_prompt: Turn one declared source brief, issue, feature, demo, or milestone context into grounded use cases. Distinguish actors, user goals, system behavior, acceptance hooks, non-goals, assumptions, and unsupported assumptions; stop before issue creation, PR creation, publication, implementation planning, or unsupported product claims.
