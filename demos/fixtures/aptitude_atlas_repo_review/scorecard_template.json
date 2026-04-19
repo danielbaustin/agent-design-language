@@ -1,0 +1,57 @@
+{
+  "subject_id": "TBD",
+  "test_family": "review_aptitude",
+  "overall_band": "Not Tested",
+  "confidence": "low",
+  "dimension_scores": {
+    "true_positive_detection": {
+      "score": "TBD",
+      "notes": "TBD"
+    },
+    "false_positive_restraint": {
+      "score": "TBD",
+      "notes": "TBD"
+    },
+    "severity_calibration": {
+      "score": "TBD",
+      "notes": "TBD"
+    },
+    "evidence_quality": {
+      "score": "TBD",
+      "notes": "TBD"
+    },
+    "remediation_usefulness": {
+      "score": "TBD",
+      "notes": "TBD"
+    },
+    "uncertainty_handling": {
+      "score": "TBD",
+      "notes": "TBD"
+    },
+    "repair_burden": {
+      "score": "TBD",
+      "notes": "TBD"
+    }
+  },
+  "strengths": [
+    "TBD"
+  ],
+  "failure_modes": [
+    "TBD"
+  ],
+  "false_positive_notes": [
+    "TBD"
+  ],
+  "false_negative_notes": [
+    "TBD"
+  ],
+  "repair_burden": {
+    "score": "TBD",
+    "notes": "TBD"
+  },
+  "recommended_use": "TBD",
+  "discouraged_use": "TBD",
+  "caveats": [
+    "TBD"
+  ]
+}

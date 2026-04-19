@@ -1,0 +1,29 @@
+{
+  "test_family": "review_aptitude",
+  "fixture_id": "repo-review-v0.90.1-baseline-01",
+  "fixture_version": "v0.90.1-01",
+  "task_contract": {
+    "mode": "bounded_static_review",
+    "expected_evidence": [
+      "one_true_positive",
+      "one_trap_case",
+      "one_docs_truth_issue",
+      "one_residual_risk_surface"
+    ],
+    "scoring_dimensions": [
+      "true_positive_detection",
+      "false_positive_restraint",
+      "severity_calibration",
+      "evidence_quality",
+      "remediation_usefulness",
+      "uncertainty_handling",
+      "repair_burden"
+    ]
+  },
+  "publication_status": "internal_draft",
+  "validation_commands": [
+    "python3 -m json.tool subject_manifest_template.json",
+    "python3 -m json.tool run_manifest_template.json",
+    "python3 -m json.tool scorecard_template.json"
+  ]
+}

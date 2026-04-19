@@ -222,6 +222,7 @@ review artifacts, and then writes one synthesized findings-first review.
 - `v0.90/long_lived_stock_league_demo.md`
 - `v0.90/stock_league_demo_extensions.md`
 - `v0.90/codebuddy_multi_agent_review_showcase_demo.md`
+- `v0.90/aptitude_atlas_repo_review_aptitude_demo.md`
 
 Use `bash adl/tools/demo_v090_codebuddy_review_showcase.sh` for the
 fixture-backed CodeBuddy showcase packet. It emits a product-style review

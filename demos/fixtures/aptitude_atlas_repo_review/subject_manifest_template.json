@@ -1,0 +1,21 @@
+{
+  "subject_id": "TBD",
+  "subject_type": "model",
+  "model": "TBD",
+  "provider": "TBD",
+  "model_version_or_tag": "TBD",
+  "runtime_environment": {
+    "sandbox": "TBD",
+    "network_allowed": false,
+    "tool_access": [
+      "static_read",
+      "no_mutation"
+    ],
+    "privacy_mode": "internal"
+  },
+  "run_context": {
+    "fixture_id": "repo-review-v0.90.1-baseline-01",
+    "test_family": "review_aptitude",
+    "task_contract": "bounded fixture review protocol in demos/fixtures/aptitude_atlas_repo_review/fixture_definition.md"
+  }
+}
