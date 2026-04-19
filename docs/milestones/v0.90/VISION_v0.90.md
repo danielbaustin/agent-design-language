@@ -5,9 +5,9 @@
 - Project: ADL
 - Milestone: v0.90
 - Version: v0.90
-- Date: 2026-04-16
+- Date: 2026-04-18
 - Owner: Daniel Austin
-- Status: release-tail pre-ceremony
+- Status: final release copy
 
 ## Purpose
 

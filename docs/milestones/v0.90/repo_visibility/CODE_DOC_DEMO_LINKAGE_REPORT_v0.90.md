@@ -115,8 +115,8 @@ A reviewer can use this packet to answer:
 
 - Which docs define the v0.90 long-lived runtime claim?
 - Which code and tests currently implement or prove parts of that claim?
-- Which demos are landed v0.90 proof versus still-open release-tail work?
-- Which issues own the remaining implementation and integration work?
+- Which demos are landed v0.90 proof?
+- Which issues owned the implementation and integration work?
 - Which materials are canonical tracked truth versus local planning or
   historical context?
 

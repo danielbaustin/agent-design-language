@@ -4,9 +4,9 @@
 
 - Milestone: v0.90
 - Version: v0.90
-- Date: 2026-04-16
+- Date: 2026-04-18
 - Owner: Daniel Austin
-- Status: release-tail pre-ceremony
+- Status: final release copy
 
 ## Purpose
 
@@ -50,7 +50,7 @@ planning package into tracked milestone docs and v0.90 WP-01 opened the issue wa
 - No milestone-compression automation should silently mutate release truth.
 - WP-10 coverage ratchet evidence remains complete through third-party review.
 - WP-18 completed the readiness handoff before WP-16 third-party review began.
-- No release ceremony should begin until next-milestone planning is complete.
+- Release ceremony may run after this final release package merges.
 
 ## Exit Criteria
 
@@ -60,4 +60,4 @@ planning package into tracked milestone docs and v0.90 WP-01 opened the issue wa
 - milestone compression and repo visibility pilots dispositioned
 - Rust refactor validation complete
 - review findings resolved or deferred
-- release notes and tag ready
+- release notes finalized and tag/release script preflight passing

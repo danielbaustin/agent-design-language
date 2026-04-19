@@ -4,13 +4,13 @@
 
 - Milestone: v0.90
 - Version: v0.90
-- Date: 2026-04-16
+- Date: 2026-04-18
 - Owner: Daniel Austin
-- Status: release-tail pre-ceremony
+- Status: final release copy
 
 ## WBS Summary
 
-This draft WBS treats v0.90 as the long-lived-agent runtime milestone, with
+This WBS records v0.90 as the long-lived-agent runtime milestone, with
 bounded sidecar work for demo expansion, quality ratcheting, milestone
 compression, repo visibility, and explicit Rust refactoring.
 

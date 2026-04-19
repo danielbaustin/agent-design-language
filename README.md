@@ -16,7 +16,7 @@ But those artifacts are not the whole story. In the current repository, they are
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.90%20release--readiness-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.90%20released-blue)
 
 Today, ADL includes:
 - a reference Rust runtime and CLI for deterministic workflow execution
@@ -42,22 +42,22 @@ Actually run the same minimal example and emit trace/artifact output:
 cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --run --trace --allow-unsigned
 ```
 
-### If you want the current milestone proof package
+### If you want the latest completed milestone proof package
 
-Run the current v0.90 readiness and proof surfaces from the milestone package:
+Run the v0.90 readiness and proof surfaces from the milestone package:
 
 ```bash
 python3 adl/tools/check_v090_milestone_state.py
 ```
 
-This is the best top-level entrypoint if you want to see the current milestone-compression drift check before review.
+This is the best top-level entrypoint if you want to see the milestone-compression drift check and proof graph for the latest completed milestone.
 
-### If you want the flagship current demo
+### If you want the flagship v0.90 demo
 
-Run the five-agent Hey Jude MIDI package, the flagship bounded multi-agent demo carried by the v0.89.1 release:
+Run the long-lived stock-league package, the flagship bounded recurring-agent demo carried by the v0.90 release:
 
 ```bash
-bash adl/tools/demo_v0891_five_agent_hey_jude.sh
+bash adl/tools/demo_v0891_long_lived_stock_league.sh
 ```
 
 ### If you want the previous runtime milestone package
@@ -104,22 +104,24 @@ Other useful entrypoints:
 
 ## Current Status
 
-- Active milestone: **v0.90**
-- Current release state: **release-tail pre-ceremony**
-- Most recently completed milestone: **v0.89.1**
-- Current crate version in the v0.90 release-readiness branch: **0.90.0**
-- Version note: **v0.90 implementation, coverage, Rust refactoring, internal review, third-party review, accepted remediation, and next-milestone planning are in the release tail; ceremony remains**
-- Previous completed milestone package: **v0.89**
-- Previous completed milestone: **v0.88**
+- Active milestone: **v0.90.1 planning is ready to start**
+- Current release state: **v0.90 final release package ready for tag/release ceremony**
+- Most recently completed milestone: **v0.90**
+- Current crate version: **0.90.0**
+- Version note: **v0.90 implementation, coverage, Rust refactoring, internal review, third-party review, accepted remediation, next-milestone planning, and release ceremony preparation are complete; the release ceremony script creates the tag and GitHub release after merge**
+- Previous completed milestone package: **v0.89.1**
+- Previous completed milestone: **v0.89**
 - Project changelog: `CHANGELOG.md`
 
 ADL is in active development. This repository contains both implemented runtime surfaces and milestone/spec/planning documents. Read the milestone docs as bounded engineering records: they distinguish what has shipped, what is under active review or closeout, what is demoable, and what is still planned.
 
 ## Current Milestone
 
-v0.90 is the active long-lived-agent runtime milestone. It carries ADL from bounded single-run proof surfaces into supervised recurring cycles with durable artifacts, pre-identity continuity handles, operator controls, demo proof, milestone compression, repo visibility, explicit Rust refactoring, and a measured coverage ratchet.
+v0.90.1 is the next milestone package and is ready to start after the v0.90 tag/release ceremony. Its tracked planning package lives under `docs/milestones/v0.90.1/`.
 
-The implementation wave has landed through the long-lived runtime, stock-league demo, demo-extension, compression, repo-visibility, coverage, Rust-refactoring, docs, and internal-review surfaces. The release tail has also completed third-party review, accepted ADR remediation, and next-milestone planning. The v0.90 package should not be called released until ceremony completes.
+v0.90 is the just-completed long-lived-agent runtime milestone. It carries ADL from bounded single-run proof surfaces into supervised recurring cycles with durable artifacts, pre-identity continuity handles, operator controls, demo proof, milestone compression, repo visibility, explicit Rust refactoring, and a measured coverage ratchet.
+
+The implementation wave landed through the long-lived runtime, stock-league demo, demo-extension, compression, repo-visibility, coverage, Rust-refactoring, docs, and internal-review surfaces. The release tail completed third-party review, accepted ADR remediation, next-milestone planning, and release ceremony preparation. The release ceremony script performs the remaining tag/GitHub-release operation after this final package merges.
 
 Best current v0.90 entrypoints:
 - milestone docs: `docs/milestones/v0.90/README.md`
@@ -131,9 +133,21 @@ Best current v0.90 entrypoints:
 
 ## Recent Milestones
 
+### v0.90 - Long-Lived-Agent Runtime Milestone
+
+v0.90 is the most recently completed milestone package. It landed the bounded long-lived-agent runtime slice, stock-league proof package, release-discipline sidecars, coverage ratchet, Rust refactoring pass, internal and third-party review, ADR 0011 remediation, and v0.90.1 planning handoff.
+
+Key features:
+- supervised recurring cycles with heartbeat and lease status
+- durable cycle artifacts and explicit continuity handles
+- operator inspection, stop, and guardrail controls
+- stock-league long-lived-agent proof package plus bounded demo extensions
+- milestone compression and repo visibility proof packets
+- completed release review, accepted remediation, next planning, and release ceremony preparation
+
 ### v0.89.1 - Adversarial Runtime and Review-Tail Milestone
 
-v0.89.1 is the most recently completed milestone. The adversarial/runtime implementation and proof surfaces landed, third-party review and review remediation are closed, and the v0.90 planning package is ready for the next issue wave.
+v0.89.1 is the previous completed milestone. The adversarial/runtime implementation and proof surfaces landed, third-party review and review remediation are closed, and the v0.90 planning package handed off into the now-completed v0.90 wave.
 
 Key features:
 - adversarial runtime model and red/blue/purple execution architecture
