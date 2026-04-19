@@ -210,14 +210,8 @@ pub(super) fn ensure_closed_completed_issue_bundle_truth(
         mismatches.push("missing canonical sor.md".to_string());
     } else {
         let text = fs::read_to_string(canonical_output)?;
+        let integration_state = line_value_after_prefix(&text, "- Integration state:");
         check_required_field(&text, "Status:", "DONE", "SOR Status", &mut mismatches);
-        check_required_field(
-            &text,
-            "- Integration state:",
-            "merged",
-            "SOR Integration state",
-            &mut mismatches,
-        );
         check_required_field(
             &text,
             "- Verification scope:",
@@ -225,6 +219,22 @@ pub(super) fn ensure_closed_completed_issue_bundle_truth(
             "SOR Verification scope",
             &mut mismatches,
         );
+        match integration_state.as_deref() {
+            Some("merged") => (),
+            Some("closed_no_pr") => {
+                check_required_field(
+                    &text,
+                    "Branch:",
+                    "retrospective-no-branch",
+                    "SOR Branch for closed_no_pr",
+                    &mut mismatches,
+                );
+            }
+            Some(value) => mismatches.push(format!(
+                "SOR Integration state expected 'merged' or 'closed_no_pr' but found '{value}'"
+            )),
+            None => mismatches.push("SOR Integration state is missing".to_string()),
+        }
         check_required_field(
             &text,
             "- Worktree-only paths remaining:",
@@ -297,6 +307,13 @@ fn check_required_field(
         )),
         None => mismatches.push(format!("{} is missing", label)),
     }
+}
+
+fn line_value_after_prefix(text: &str, prefix: &str) -> Option<String> {
+    text.lines().find_map(|line| {
+        line.strip_prefix(prefix)
+            .map(|value| value.trim().to_string())
+    })
 }
 
 fn matching_task_bundle_dirs(repo_root: &Path, issue_ref: &IssueRef) -> Result<Vec<PathBuf>> {
@@ -1066,7 +1083,9 @@ mod tests {
         let rendered = err.to_string();
         assert!(rendered.contains("canonical closed-issue sor truth drift"));
         assert!(rendered.contains("SOR Status expected 'DONE' but found 'IN_PROGRESS'"));
-        assert!(rendered.contains("SOR Integration state expected 'merged' but found 'pr_open'"));
+        assert!(rendered.contains(
+            "SOR Integration state expected 'merged' or 'closed_no_pr' but found 'pr_open'"
+        ));
         assert!(
             rendered.contains("SOR Verification scope expected 'main_repo' but found 'worktree'")
         );
