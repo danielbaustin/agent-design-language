@@ -347,8 +347,7 @@ impl RuntimeV2KernelLoopArtifacts {
             ));
         }
         let mut seen_services = Vec::new();
-        for (expected_sequence, event) in
-            (self.events[0].event_sequence..).zip(self.events.iter())
+        for (expected_sequence, event) in (self.events[0].event_sequence..).zip(self.events.iter())
         {
             event.validate()?;
             if event.manifold_id != self.registry.manifold_id {
