@@ -48,6 +48,7 @@ run_step "review-to-test-planner contract check" bash "$ROOT/adl/tools/test_revi
 run_step "adr-curator contract check" bash "$ROOT/adl/tools/test_adr_curator_skill_contracts.sh"
 run_step "architecture-fitness-function-author contract check" bash "$ROOT/adl/tools/test_architecture_fitness_function_author_skill_contracts.sh"
 run_step "finding-to-issue-planner contract check" bash "$ROOT/adl/tools/test_finding_to_issue_planner_skill_contracts.sh"
+run_step "review-comment-triage contract check" bash "$ROOT/adl/tools/test_review_comment_triage_skill_contracts.sh"
 run_step "test-generator contract check" bash "$ROOT/adl/tools/test_test_generator_skill_contracts.sh"
 run_step "demo-operator contract check" bash "$ROOT/adl/tools/test_demo_operator_skill_contracts.sh"
 run_step "medium-article-writer contract check" bash "$ROOT/adl/tools/test_medium_article_writer_skill_contracts.sh"

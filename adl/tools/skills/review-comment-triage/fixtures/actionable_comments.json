@@ -1,0 +1,26 @@
+{
+  "source": {
+    "name": "actionable_feedback"
+  },
+  "comments": [
+    {
+      "id": "c1",
+      "file": "adl/tools/skills/issue-watcher/SKILL.md",
+      "line": 17,
+      "author": "reviewer-a",
+      "state": "open",
+      "review_url": "https://example.test/review/c1",
+      "body": "The error path should preserve repository root before fallback.",
+      "summary": "Needs explicit root handling for fallback path."
+    },
+    {
+      "id": "c2",
+      "file": "adl/tools/skills/finding-to-issue-planner/SKILL.md",
+      "line": 42,
+      "author": "reviewer-b",
+      "state": "requested_changes",
+      "review_url": "https://example.test/review/c2",
+      "body": "Clarify the policy stop condition for approval."
+    }
+  ]
+}
