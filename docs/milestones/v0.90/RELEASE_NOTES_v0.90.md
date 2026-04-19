@@ -1,18 +1,18 @@
-# Release Notes - v0.90 Draft
+# Release Notes - v0.90
 
 ## Metadata
 
 - Milestone: v0.90
 - Version: v0.90
-- Date: 2026-04-16
+- Date: 2026-04-18
 - Owner: Daniel Austin
-- Status: release-tail pre-ceremony
+- Status: final release copy
 
-## Draft Summary
+## Summary
 
 v0.90 is the first bounded long-lived-agent runtime milestone.
 
-The release story being assembled is:
+The release story is:
 
 - supervised agents can run across bounded cycles
 - each cycle emits reviewable artifacts
@@ -26,7 +26,7 @@ The release story being assembled is:
 - milestone compression and repo visibility land as bounded pilots
 - Rust refactoring is explicit, scoped, and validated
 
-## Landed Highlights So Far
+## Landed Highlights
 
 - long-lived supervisor and heartbeat
 - cycle manifest and artifact contract
@@ -44,10 +44,8 @@ The release story being assembled is:
 - third-party review with no P0/P1 findings and one accepted P2
 - ADR 0011 remediation for the long-lived-agent runtime architecture
 - v0.90.1 planning package promoted into tracked milestone docs
-
-Still open before final release copy:
-
-- release ceremony
+- release ceremony preflight passed with closed-issue truth, version, and
+  milestone-doc checks ready for the tag/release script
 
 ## Explicit Non-Claims
 
@@ -64,7 +62,8 @@ v0.90 should not claim:
 
 ## Release Status
 
-Draft. Runtime, demo, sidecar, coverage, refactor, docs, internal review,
-third-party review, accepted findings remediation, and next-milestone planning
-have landed. Release ceremony remains open, so this file must not yet be
-treated as final release copy.
+Final release copy. Runtime, demo, sidecar, coverage, refactor, docs, internal
+review, third-party review, accepted findings remediation, next-milestone
+planning, and release ceremony preparation have landed. The release ceremony
+script is the remaining operational step that creates/pushes the tag and
+GitHub release from this finalized package.

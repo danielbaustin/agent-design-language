@@ -4,9 +4,9 @@
 
 - Milestone: v0.90
 - Version: v0.90
-- Date: 2026-04-16
+- Date: 2026-04-18
 - Owner: Daniel Austin
-- Status: release-tail pre-ceremony
+- Status: final release copy
 
 ## Planning Gate
 
@@ -56,9 +56,9 @@
 - [x] Internal review is complete.
 - [x] Third-party review is complete.
 - [x] Findings remediation is complete.
-- [ ] Final quality and release readiness pass is complete for release ceremony.
+- [x] Final quality and release readiness pass is complete for release ceremony.
 - [x] Next milestone planning is complete before release ceremony.
-- [ ] Release ceremony is complete.
+- [x] Release ceremony package is complete and ready for the tag/release script.
 
 ## Current Tracker Snapshot
 
@@ -67,5 +67,5 @@
   file-floor exclusion. WP-10 validation also recorded `92.46%`.
 - Rust tracker: one `RATIONALE`, nineteen `REVIEW`, and fourteen `WATCH` items
   remain after the WP-14 child refactoring wave.
-- Closeout: an earlier closeout pass reconciled almost all closed issue cards;
-  remaining open issue work is normal release ceremony work.
+- Closeout: the release ceremony preflight closed-issue truth gate passes for
+  `v0.90` after reconciling the remaining local task-card truth.

@@ -4,9 +4,9 @@
 
 - Milestone: v0.90
 - Version: v0.90
-- Date: 2026-04-16
+- Date: 2026-04-18
 - Owner: Daniel Austin
-- Status: release-tail pre-ceremony
+- Status: final release copy
 - Early planning issue: #1986
 - Promotion gate: #1940
 
@@ -156,22 +156,22 @@ Recently completed proof surfaces:
 - WP-17 remediation completed the only accepted P2 by adding ADR 0011 for the
   long-lived-agent runtime architecture.
 - WP-19 promoted the v0.90.1 tracked planning package before release ceremony.
-- Closeout pass for almost all closed issues; remaining open issue work is
-  normal release ceremony work.
+- WP-20 completed the final release package and release ceremony preflight.
 
-Still-open proof surfaces:
+Final ceremony proof surface:
 
-- WP-20 release ceremony record.
+- WP-20 release ceremony record and passing release ceremony preflight.
 
 ## Status
 
 - Planning: tracked package promoted by `v0.89.1` WP-19 and opened by v0.90 WP-01
-- Execution: issue wave in release tail; WP-02 through WP-19 have landed or
-  closed through their intended child issue surfaces. WP-20 remains open for
-  release ceremony.
-- Validation: runtime, demo, sidecar, coverage, refactor, docs, and internal
-  review proof surfaces have landed.
-- Release readiness: pre-ceremony release tail.
+- Execution: issue wave complete; WP-02 through WP-20 have landed or closed
+  through their intended child issue surfaces.
+- Validation: runtime, demo, sidecar, coverage, refactor, docs, internal
+  review, third-party review, remediation, next-planning, and release preflight
+  proof surfaces have landed.
+- Release readiness: final release copy, ready for the tag/release ceremony
+  script after merge.
 
 ## WP-19 Promotion Result
 

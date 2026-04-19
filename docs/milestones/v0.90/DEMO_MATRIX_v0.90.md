@@ -4,9 +4,9 @@
 
 - Milestone: v0.90
 - Version: v0.90
-- Date: 2026-04-16
+- Date: 2026-04-18
 - Owner: Daniel Austin
-- Status: release-tail pre-ceremony
+- Status: final release copy
 
 ## Purpose
 
@@ -72,7 +72,6 @@ The architecture document generation packet must:
 
 ## Validation Expectations
 
-The v0.90 issue wave is in release-tail readiness. WP-13 and WP-15 have
-already aligned the matrix with landed or deferred work. WP-18 keeps this
-matrix as pre-third-party-review evidence; final release quality is not complete
-until WP-16, WP-17 if needed, WP-19, and WP-20 settle.
+The v0.90 issue wave has completed its demo/proof path. WP-13 and WP-15 aligned
+the matrix with landed or deferred work, WP-18 refreshed it for third-party
+review, and WP-20 leaves it as final release-copy evidence.

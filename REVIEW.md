@@ -21,7 +21,7 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the v0.90 release-tail review, start with:
+For the v0.90 post-release review, start with:
 
 - `docs/milestones/v0.90/README.md`
 - `docs/milestones/v0.90/V090_PRE_THIRD_PARTY_READINESS_REPORT.md`
@@ -33,10 +33,11 @@ For the v0.90 release-tail review, start with:
 - `adl/Cargo.toml`
 - `adl/Cargo.lock`
 
-The current v0.90 review posture is pre-release, not released. Runtime, demo,
-sidecar, coverage, Rust refactor, docs, internal-review work, third-party
-review, accepted findings remediation, and next planning have landed; release
-ceremony remains.
+The current v0.90 review posture is final release copy. Runtime, demo, sidecar,
+coverage, Rust refactor, docs, internal-review work, third-party review,
+accepted findings remediation, next planning, and release ceremony preparation
+have landed; the release ceremony script creates the tag and GitHub release
+after the final package merges.
 
 Current tracker values to preserve in review:
 
@@ -44,7 +45,7 @@ Current tracker values to preserve in review:
   tranche; WP-10 also recorded `92.46%`
 - Rust watch list: one `RATIONALE`, nineteen `REVIEW`, and fourteen `WATCH`
   items after the WP-14 child split wave
-- closeout: earlier closeout pass reconciled almost all closed issue cards
+- closeout: the release ceremony closed-issue truth gate passes for v0.90
 
 ---
 
