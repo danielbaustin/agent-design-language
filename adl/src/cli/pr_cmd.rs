@@ -370,7 +370,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
             queue: infer_workflow_queue(&title, &normalized_labels, None)
                 .ok_or_else(|| {
                     anyhow!(
-                        "start: missing or invalid workflow queue for issue #{}; add a canonical queue such as wp/tools/demo/docs/review/release before execution",
+                        "start: missing or invalid workflow queue for issue #{}; add a canonical queue such as wp/tools/runtime/demo/docs/review/release before execution",
                         parsed.issue
                     )
                 })?

@@ -209,6 +209,18 @@ fn infer_workflow_queue_prefers_explicit_signals_and_tags() {
         infer_workflow_queue("[v0.88] Example", "", Some("review")),
         Some("review")
     );
+    assert_eq!(
+        infer_workflow_queue(
+            "[v0.90.1] Runtime substrate",
+            "track:roadmap,area:runtime",
+            None
+        ),
+        Some("runtime")
+    );
+    assert_eq!(
+        infer_workflow_queue("[v0.90.1] Runtime substrate", "", Some("runtime")),
+        Some("runtime")
+    );
     assert_eq!(infer_workflow_queue("No queue signals", "", None), None);
 }
 
