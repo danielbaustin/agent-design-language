@@ -220,13 +220,18 @@ Training success requires:
 
 ## Current Result
 
-Status: non-proving rehearsal.
+Status: live comparison executed.
 
-Reason: this issue defines the fixture, scaffold, scorecard, and training path,
-but no live model run or Gemma fine-tuning run has been executed yet.
+Result document: `ANRM_GEMMA_SHEPHERD_COMPARISON_RESULTS.md`
+
+The first local Gemma-family run produced useful negative evidence. Raw Gemma
+outscored the initial scaffold on the strict five-case scorecard because both
+subjects missed the cross-polis export boundary, and the scaffold introduced
+some schema and mutation-framing drift.
 
 Recommended next action:
 
-- Run raw Gemma and scaffolded Gemma on the five fixture cases.
-- Record outputs and scorecard.
-- If scaffolded Gemma improves, create the tiny Gemma training feasibility issue.
+- Repair the scaffold so causal parent is not treated as authorization.
+- Add more export, migration, and trace-quality trap cases.
+- Build a small evaluator before attempting Gemma LoRA or QLoRA training.
+- Use the repaired run, not this first scaffold, as the training gate.
