@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CSM Observatory - Static Console Prototype</title>
+    <link rel="stylesheet" href="./csm_observatory_static_console.css">
+  </head>
+  <body>
+    <main class="observatory-shell" data-packet-ref="../../fixtures/csm_observatory/proto-csm-01-visibility-packet.json">
+      <section class="bridge" aria-labelledby="console-title">
+        <div class="bridge__grain" aria-hidden="true"></div>
+        <header class="bridge__mast">
+          <div>
+            <p class="eyebrow">CSM Observatory / fixture-backed</p>
+            <h1 id="console-title">Prototype CSM 01</h1>
+          </div>
+          <div class="truth-strip" aria-label="Truth boundary">
+            <span>Read-only</span>
+            <span>Fixture packet</span>
+            <span>Not a live Runtime v2 capture</span>
+          </div>
+        </header>
+
+        <section class="bridge__grid" aria-label="CSM Observatory first screen">
+          <section class="manifold-panel" aria-labelledby="manifold-heading">
+            <div class="manifold-panel__header">
+              <p class="eyebrow">Manifold Header</p>
+              <h2 id="manifold-heading">proto-csm-01</h2>
+              <p class="panel-note">Initialized bounded world. Snapshot and wake evidence are deferred.</p>
+            </div>
+
+            <div class="world-orb" aria-label="Citizen constellation">
+              <div class="world-orb__halo world-orb__halo--outer"></div>
+              <div class="world-orb__halo world-orb__halo--inner"></div>
+              <button class="citizen-node citizen-node--alpha is-selected" type="button" data-citizen="proto-citizen-alpha" aria-label="Inspect Prototype Citizen Alpha">
+                <span class="citizen-node__signal"></span>
+                <span class="citizen-node__label">Alpha</span>
+              </button>
+              <button class="citizen-node citizen-node--beta" type="button" data-citizen="proto-citizen-beta" aria-label="Inspect Prototype Citizen Beta">
+                <span class="citizen-node__signal citizen-node__signal--pending"></span>
+                <span class="citizen-node__label">Beta</span>
+              </button>
+              <div class="world-orb__core">
+                <span class="core-label">CSM</span>
+                <strong>01</strong>
+              </div>
+            </div>
+
+            <div class="world-stats" aria-label="Manifold status">
+              <div>
+                <span>State</span>
+                <strong>initialized</strong>
+              </div>
+              <div>
+                <span>Tick</span>
+                <strong>0</strong>
+              </div>
+              <div>
+                <span>Compute</span>
+                <strong>6 / 9</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="kernel-panel" aria-labelledby="kernel-heading">
+            <p class="eyebrow">Kernel Pulse</p>
+            <h2 id="kernel-heading">8 services ready</h2>
+            <div class="service-ladder" id="service-ladder" aria-label="Runtime v2 service states"></div>
+          </section>
+
+          <section class="docket-panel" aria-labelledby="docket-heading">
+            <p class="eyebrow">Freedom Gate Docket</p>
+            <h2 id="docket-heading">allow / defer / refuse</h2>
+            <div class="verdict-stack" id="verdict-stack"></div>
+          </section>
+
+          <section class="inspector-panel" aria-live="polite" aria-labelledby="inspector-heading">
+            <p class="eyebrow">Citizen Inspector</p>
+            <h2 id="inspector-heading">Prototype Citizen Alpha</h2>
+            <p id="inspector-state" class="state-line">active worker / provisional identity continuity</p>
+            <dl class="inspector-grid">
+              <div>
+                <dt>Episode</dt>
+                <dd id="inspector-episode">episode-resource-pressure-001</dd>
+              </div>
+              <div>
+                <dt>Compute</dt>
+                <dd id="inspector-compute">6 units</dd>
+              </div>
+              <div>
+                <dt>Allowed</dt>
+                <dd id="inspector-allowed">bounded task work, status report</dd>
+              </div>
+              <div>
+                <dt>Forbidden</dt>
+                <dd id="inspector-forbidden">direct runtime mutation, cross polis export</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section class="trace-panel" aria-labelledby="trace-heading">
+            <p class="eyebrow">Trace Ribbon</p>
+            <h2 id="trace-heading">latest kernel event: 8</h2>
+            <ol class="trace-ribbon" id="trace-ribbon"></ol>
+          </section>
+
+          <aside class="operator-rail" aria-labelledby="operator-heading">
+            <p class="eyebrow">Operator Action Rail</p>
+            <h2 id="operator-heading">Read-only affordances</h2>
+            <div id="operator-actions"></div>
+            <p class="rail-warning">Live mutation remains disabled until command packets route through the kernel.</p>
+          </aside>
+        </section>
+      </section>
+
+      <section class="review-band" aria-labelledby="review-heading">
+        <div>
+          <p class="eyebrow">Reviewer Proof Surface</p>
+          <h2 id="review-heading">Fixture-backed, not decorative</h2>
+        </div>
+        <p>
+          This prototype renders the adl.csm_visibility_packet.v1 fixture from the CSM Observatory packet contract.
+          It proves the operator mental model and visual language, not a live CSM run.
+        </p>
+      </section>
+    </main>
+
+    <script src="./csm_observatory_static_console.js"></script>
+  </body>
+</html>

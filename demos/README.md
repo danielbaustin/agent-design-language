@@ -76,6 +76,12 @@ If you want the ADL architecture document generation proof packet:
 bash adl/tools/demo_v090_architecture_document_generation.sh
 ```
 
+If you want the fixture-backed CSM Observatory static console:
+
+```text
+demos/v0.90.1/csm_observatory_static_console.html
+```
+
 ## Demo Categories
 
 - Runtime workflow demos live in `adl/examples/`.
@@ -230,6 +236,16 @@ package with repo scope, specialist reviews, diagram and redaction gates,
 test/issue/ADR/fitness follow-through, final report, and demo-operator
 classification. It is intentionally classified as `non_proving` until the
 staged `review-quality-evaluator` lane from `#2070` lands.
+
+### v0.90.1 Runtime v2 and CSM Observatory demos
+
+- `v0.90.1/csm_observatory_static_console.md`
+
+Use `v0.90.1/csm_observatory_static_console.html` for the first read-only CSM
+Observatory prototype. It renders the fixture-backed proto-csm-01 visibility
+packet into a control-room surface with manifold header, citizen constellation,
+kernel pulse, Freedom Gate docket, trace ribbon, and read-only operator action
+rail.
 
 Use `v0.87/v087_demo_program.md` for the canonical `v0.87` demo order and bounded
 repo-local commands.
