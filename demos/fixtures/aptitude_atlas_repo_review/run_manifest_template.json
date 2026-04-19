@@ -1,0 +1,23 @@
+{
+  "run_id": "TBD",
+  "started_at": "TBD",
+  "completed_at": "TBD",
+  "operator": "TBD",
+  "subject_id": "TBD",
+  "test_manifest": "test_manifest_template.json",
+  "output_paths": [
+    "final_report.md",
+    "evaluator_notes.md",
+    "scorecard.json",
+    "run_validation.log"
+  ],
+  "validation_commands": [
+    "python3 -m json.tool subject_manifest_template.json",
+    "python3 -m json.tool scorecard_template.json"
+  ],
+  "evaluator": {
+    "name": "TBD",
+    "version": "TBD"
+  },
+  "rerun_of": null
+}
