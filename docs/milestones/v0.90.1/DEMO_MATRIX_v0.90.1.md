@@ -2,7 +2,7 @@
 
 ## Status
 
-Planning draft. Demo commands are not final until implementation WPs land.
+Issue wave open. Demo commands are not final until implementation WPs land.
 
 | ID | Demo | WP | Proof Claim | Required Artifacts | Status |
 | --- | --- | --- | --- | --- | --- |

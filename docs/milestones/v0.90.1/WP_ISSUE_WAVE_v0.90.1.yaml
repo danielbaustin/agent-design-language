@@ -1,70 +1,132 @@
 milestone: v0.90.1
-status: tracked_planning_ready
-issue_wave_opened: false
+status: issue_wave_open
+issue_wave_opened: true
+owner_issue: 2141
 tracked_package: docs/milestones/v0.90.1
 notes:
   - "Tracked planning package promoted during v0.90 WP-19."
-  - "Create real issues only after v0.90 release ceremony approval."
+  - "v0.90.1 issue wave opened by WP-01 after the v0.90 release ceremony."
+  - "WP-01 is #2141; WP-02 through WP-20 are #2142 through #2160."
   - "Do not claim first true Gödel-agent birthday in v0.90.1."
   - "WP-02 through WP-04 intentionally front-load compression enablement before Runtime v2 coding."
 work_packages:
   - wp: WP-01
-    title: Open and author v0.90.1 issue wave
-    outcome: GitHub issues, task cards, and issue-number mapping
+    title: "[v0.90.1][WP-01] Issue wave and task cards"
+    queue: wp
+    issue: 2141
+    depends_on: ["v0.90 release ceremony"]
+    outcome: docs
   - wp: WP-02
-    title: Issue-wave template and generator alignment
-    outcome: reusable WP wave template and generator proof
+    title: "[v0.90.1][WP-02] Issue-wave template and generator alignment"
+    queue: tools
+    issue: 2142
+    depends_on: ["WP-01"]
+    outcome: docs
   - wp: WP-03
-    title: Worktree-first workflow hardening
-    outcome: guarded worktree-first execution path
+    title: "[v0.90.1][WP-03] Worktree-first workflow hardening"
+    queue: tools
+    issue: 2143
+    depends_on: ["WP-02"]
+    outcome: code
   - wp: WP-04
-    title: Compression-era execution policy
-    outcome: current operator policy for skills, validation, and evidence
+    title: "[v0.90.1][WP-04] Compression-era execution policy"
+    queue: docs
+    issue: 2144
+    depends_on: ["WP-02", "WP-03"]
+    outcome: docs
   - wp: WP-05
-    title: Runtime v2 manifold contract
-    outcome: persistent manifold manifest and validation
+    title: "[v0.90.1][WP-05] Runtime v2 manifold contract"
+    queue: runtime
+    issue: 2145
+    depends_on: ["WP-04"]
+    outcome: code
   - wp: WP-06
-    title: Kernel service loop
-    outcome: bounded kernel/service loop with traceable state
+    title: "[v0.90.1][WP-06] Kernel service loop"
+    queue: runtime
+    issue: 2146
+    depends_on: ["WP-05"]
+    outcome: code
   - wp: WP-07
-    title: Provisional citizen lifecycle
-    outcome: provisional citizen record and lifecycle state machine
+    title: "[v0.90.1][WP-07] Provisional citizen lifecycle"
+    queue: runtime
+    issue: 2147
+    depends_on: ["WP-05"]
+    outcome: code
   - wp: WP-08
-    title: Snapshot and rehydration
-    outcome: sleep/wake proof without duplicate activation
+    title: "[v0.90.1][WP-08] Snapshot and rehydration"
+    queue: runtime
+    issue: 2148
+    depends_on: ["WP-06", "WP-07"]
+    outcome: code
   - wp: WP-09
-    title: Invariant violation artifacts
-    outcome: rejected illegal state transition evidence
+    title: "[v0.90.1][WP-09] Invariant violation artifacts"
+    queue: runtime
+    issue: 2149
+    depends_on: ["WP-06"]
+    outcome: code
   - wp: WP-10
-    title: Operator controls
-    outcome: inspect, pause, resume, terminate proof surfaces
+    title: "[v0.90.1][WP-10] Operator controls"
+    queue: runtime
+    issue: 2150
+    depends_on: ["WP-06", "WP-08"]
+    outcome: code
   - wp: WP-11
-    title: Security-boundary proof
-    outcome: one invalid action rejected through kernel/policy path
+    title: "[v0.90.1][WP-11] Security-boundary proof"
+    queue: runtime
+    issue: 2151
+    depends_on: ["WP-09", "WP-10"]
+    outcome: code
   - wp: WP-12
-    title: Integrated Runtime v2 prototype demo
-    outcome: reviewer-facing end-to-end proof packet
+    title: "[v0.90.1][WP-12] Integrated Runtime v2 prototype demo"
+    queue: demo
+    issue: 2152
+    depends_on: ["WP-05", "WP-06", "WP-07", "WP-08", "WP-09", "WP-10", "WP-11"]
+    outcome: demo
   - wp: WP-13
-    title: Runtime v2 docs pass
-    outcome: aligned feature docs, demo matrix, and README
+    title: "[v0.90.1][WP-13] Runtime v2 docs pass"
+    queue: docs
+    issue: 2153
+    depends_on: ["WP-12"]
+    outcome: docs
   - wp: WP-14
-    title: Quality and coverage gate
-    outcome: truthful quality posture
+    title: "[v0.90.1][WP-14] Quality and coverage gate"
+    queue: wp
+    issue: 2154
+    depends_on: ["WP-12"]
+    outcome: tests
   - wp: WP-15
-    title: Internal review
-    outcome: findings-first internal review packet
+    title: "[v0.90.1][WP-15] Internal review"
+    queue: review
+    issue: 2155
+    depends_on: ["WP-13", "WP-14"]
+    outcome: review
   - wp: WP-16
-    title: Review remediation
-    outcome: accepted findings fixed or explicitly deferred
+    title: "[v0.90.1][WP-16] Review remediation"
+    queue: review
+    issue: 2156
+    depends_on: ["WP-15"]
+    outcome: code
   - wp: WP-17
-    title: Release readiness
-    outcome: release notes, checklist, and reviewer handoff
+    title: "[v0.90.1][WP-17] Release readiness"
+    queue: release
+    issue: 2157
+    depends_on: ["WP-16"]
+    outcome: docs
   - wp: WP-18
-    title: v0.91/v0.92 handoff
-    outcome: preserved moral/emotional and birthday boundaries
+    title: "[v0.90.1][WP-18] v0.91/v0.92 handoff"
+    queue: docs
+    issue: 2158
+    depends_on: ["WP-17"]
+    outcome: docs
   - wp: WP-19
-    title: Release-evidence packet
-    outcome: coherent proof trail across demos, quality, review, and readiness
+    title: "[v0.90.1][WP-19] Release-evidence packet"
+    queue: release
+    issue: 2159
+    depends_on: ["WP-17", "WP-18"]
+    outcome: docs
   - wp: WP-20
-    title: Release ceremony
-    outcome: v0.90.1 closed truthfully
+    title: "[v0.90.1][WP-20] Release ceremony"
+    queue: release
+    issue: 2160
+    depends_on: ["WP-18", "WP-19"]
+    outcome: release

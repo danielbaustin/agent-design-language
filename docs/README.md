@@ -6,7 +6,7 @@ Use this index to find the right source of truth quickly.
 
 ## Start Here
 
-- Active milestone package: `milestones/v0.90.1/` ready to start after v0.90 ceremony
+- Active milestone package: `milestones/v0.90.1/` with issue wave open
 - Most recently completed milestone: `milestones/v0.90/`
 - Previous completed milestone package: `milestones/v0.89.1/`
 - Previous completed milestone: `milestones/v0.89/`
@@ -17,7 +17,7 @@ Use this index to find the right source of truth quickly.
 
 ## Milestone Documentation
 
-- Active milestone package: `milestones/v0.90.1/` ready to start after v0.90 ceremony
+- Active milestone package: `milestones/v0.90.1/` with issue wave open
 - Most recently completed milestone: `milestones/v0.90/`
 - Previous completed milestone package: `milestones/v0.89.1/`
 - Previous completed milestone: `milestones/v0.89/`
@@ -44,4 +44,4 @@ Use this index to find the right source of truth quickly.
 
 ## Notes
 
-Milestone docs should be read as bounded engineering records. They distinguish what has shipped, what is currently being implemented, what is demoable, and what is planned for later milestones. At the moment, `v0.90.1` is the next active planning package, `v0.90` is the most recently completed long-lived-agent runtime milestone, and `v0.89.1` is the previous completed adversarial-runtime milestone.
+Milestone docs should be read as bounded engineering records. They distinguish what has shipped, what is currently being implemented, what is demoable, and what is planned for later milestones. At the moment, `v0.90.1` is the active Runtime v2 foundation milestone with its issue wave open, `v0.90` is the most recently completed long-lived-agent runtime milestone, and `v0.89.1` is the previous completed adversarial-runtime milestone.

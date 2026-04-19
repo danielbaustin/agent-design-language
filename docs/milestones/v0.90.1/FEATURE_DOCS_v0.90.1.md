@@ -2,7 +2,7 @@
 
 ## Implementation-Facing Features
 
-| Feature Doc | Purpose | Candidate WPs |
+| Feature Doc | Purpose | WPs / Issues |
 | --- | --- | --- |
 | `features/RUNTIME_V2_FOUNDATION_PROTOTYPE.md` | end-to-end prototype boundary and proof packet | WP-05-WP-12 |
 | `features/MANIFOLD_AND_SNAPSHOT_CONTRACT.md` | manifold root, snapshot, and rehydration contract | WP-05, WP-08 |
@@ -12,12 +12,12 @@
 
 ## Compression-Enabling Process Work
 
-| Work Surface | Purpose | Candidate WPs |
+| Work Surface | Purpose | WPs / Issues |
 | --- | --- | --- |
-| WP issue-wave template and generator alignment | make v0.90.1 and v0.90.2 issue waves cheaper and less error-prone | WP-02 |
-| Worktree-first workflow hardening | prevent tracked root-checkout drift during compressed execution | WP-03 |
-| Compression-era execution policy | align skills, explicit-only subagents, validation profiles, and SOR evidence | WP-04 |
-| Release-evidence packet | assemble the final proof trail without release-tail archaeology | WP-19 |
+| WP issue-wave template and generator alignment | make v0.90.1 and v0.90.2 issue waves cheaper and less error-prone | WP-02 / #2142 |
+| Worktree-first workflow hardening | prevent tracked root-checkout drift during compressed execution | WP-03 / #2143 |
+| Compression-era execution policy | align skills, explicit-only subagents, validation profiles, and SOR evidence | WP-04 / #2144 |
+| Release-evidence packet | assemble the final proof trail without release-tail archaeology | WP-19 / #2159 |
 
 ## Context / Idea Docs
 

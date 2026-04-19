@@ -3,8 +3,8 @@
 ## Planning
 
 - [x] Planning docs promoted into the tracked v0.90.1 milestone package
-- [ ] Issue wave opened from reviewed WP YAML
-- [ ] Scope boundary reviewed against v0.91 and v0.92
+- [x] Issue wave opened from reviewed WP YAML
+- [x] Scope boundary reviewed against v0.91 and v0.92
 
 ## Implementation
 
