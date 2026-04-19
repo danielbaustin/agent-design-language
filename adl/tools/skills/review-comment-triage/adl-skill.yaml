@@ -1,0 +1,85 @@
+version: "0.1"
+kind: "adl-skill"
+id: "review-comment-triage"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "review_comment_triage.v1"
+    reference_doc: "../docs/REVIEW_COMMENT_TRIAGE_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "triage_from_payload"
+      - "triage_live_pr_comments"
+  policy_fields:
+      - "allow_network"
+      - "stop_after_triage"
+      - "max_blocking_items_before_operator"
+      - "preserve_uncertainty"
+      - "route_follow_on_as_issue_planning"
+    mode_requirements:
+      triage_from_payload:
+        required_target_fields:
+          - "comment_payload_path"
+      triage_live_pr_comments:
+        required_target_fields:
+          - "pr_number"
+intent:
+  - "review_comment_triage"
+  - "comment_classification"
+  - "review_work_order"
+required_inputs:
+  - "repo_root"
+optional_inputs:
+  - "comment_payload_path"
+  - "pr_number"
+  - "pr_url"
+  - "artifact_root"
+  - "follow_on_template"
+  - "max_items"
+stop_if_missing:
+  - "repo_root"
+  - "policy.stop_after_triage"
+prevalidation_rules:
+  - "repo_root_must_be_absolute"
+  - "skill_input_schema_must_equal_review_comment_triage.v1_when_structured_input_is_used"
+  - "mode_must_match_supported_enum"
+  - "exactly_one_mode_contract_must_be_satisfied"
+  - "policy.stop_after_triage_must_be_true"
+  - "policy.preserve_uncertainty_must_be_true"
+execution:
+  mode: "triage_only"
+  allow_code_edits: false
+  allow_network: true
+  allow_subagents: false
+  preferred_commands:
+    - "python3 adl/tools/skills/review-comment-triage/scripts/triage_review_comments.py <payload-path>"
+  preferred_path: "payload_first"
+  stop_before:
+    - "issue_creation"
+    - "implementation"
+    - "pr_merge"
+    - "silent_scope_widening"
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-review-comment-triage.md"
+  required_sections:
+    - "status"
+    - "source"
+    - "triage"
+    - "execution_order"
+    - "handoff"
+    - "uncertainty"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  no_live_github_mutation_without_explicit_permission: true

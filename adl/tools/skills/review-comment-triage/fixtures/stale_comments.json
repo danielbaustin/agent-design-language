@@ -1,0 +1,28 @@
+{
+  "source": {
+    "name": "stale_feedback"
+  },
+  "comments": [
+    {
+      "id": "c5",
+      "file": "adl/tools/skills/repo-review-code/SKILL.md",
+      "line": 100,
+      "author": "reviewer-e",
+      "state": "open",
+      "stale": true,
+      "review_url": "https://example.test/review/c5",
+      "body": "This line refers to old behavior that no longer exists.",
+      "summary": "Context mismatch after a branch rebase."
+    },
+    {
+      "id": "c6",
+      "file": "adl/tools/skills/issue-watcher/references/output-contract.md",
+      "line": 4,
+      "author": "reviewer-f",
+      "state": "open",
+      "no_longer_reproducible": true,
+      "review_url": "https://example.test/review/c6",
+      "body": "Cannot reproduce after base branch moved."
+    }
+  ]
+}

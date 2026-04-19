@@ -34,6 +34,7 @@ The tracked skill set is:
 - `pr-stack-manager`
 - `product-report-writer`
 - `redaction-and-evidence-auditor`
+- `review-comment-triage`
 - `refactoring-helper`
 - `repo-architecture-review`
 - `repo-code-review`
@@ -2058,6 +2059,7 @@ surfaces:
 | `pr-run` | `PR_RUN_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | bounded issue execution only |
 | `product-report-writer` | `PRODUCT_REPORT_WRITER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | product report packet only |
 | `redaction-and-evidence-auditor` | `REDACTION_AND_EVIDENCE_AUDITOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | safety audit only |
+| `review-comment-triage` | `REVIEW_COMMENT_TRIAGE_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | review-comment triage only |
 | `refactoring-helper` | `REFACTORING_HELPER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | refactor plan only |
 | `repo-architecture-review` | `REPO_ARCHITECTURE_REVIEW_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | architecture findings only |
 | `repo-code-review` | `REPO_CODE_REVIEW_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | findings-first code review only |

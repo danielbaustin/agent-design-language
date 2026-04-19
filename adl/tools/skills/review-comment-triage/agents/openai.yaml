@@ -1,0 +1,3 @@
+display_name: Review Comment Triage
+short_description: Classify PR review comments into actionable, fixed, stale, and follow-on buckets
+default_prompt: "Use $review-comment-triage to turn PR review feedback into bounded buckets, preserve uncertain cases, and recommend the next no-widening handoff."

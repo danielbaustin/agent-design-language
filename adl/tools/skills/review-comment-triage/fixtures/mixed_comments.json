@@ -1,0 +1,58 @@
+{
+  "source": {
+    "name": "mixed_feedback"
+  },
+  "comments": [
+    {
+      "id": "c9",
+      "file": "adl/tools/skills/review-comment-triage/SKILL.md",
+      "line": 2,
+      "author": "reviewer-i",
+      "state": "open",
+      "review_url": "https://example.test/review/c9",
+      "body": "Action this now by moving stop boundary to one sentence.",
+      "summary": "Needs immediate edit to boundaries."
+    },
+    {
+      "id": "c10",
+      "file": "adl/tools/skills/review-comment-triage/scripts/triage_review_comments.py",
+      "line": 1,
+      "author": "reviewer-j",
+      "state": "open",
+      "resolved": false,
+      "requires_operator_decision": true,
+      "review_url": "https://example.test/review/c10",
+      "body": "Unsure if this should be script only or workflow."
+    },
+    {
+      "id": "c11",
+      "file": "adl/tools/skills/review-comment-triage/fixtures/already_fixed_comments.json",
+      "line": 5,
+      "author": "reviewer-k",
+      "state": "resolved",
+      "already_fixed": true,
+      "review_url": "https://example.test/review/c11",
+      "body": "Already addressed by earlier commit."
+    },
+    {
+      "id": "c12",
+      "file": "adl/tools/skills/review-comment-triage/fixtures/stale_comments.json",
+      "line": 5,
+      "author": "reviewer-l",
+      "state": "open",
+      "stale": true,
+      "review_url": "https://example.test/review/c12",
+      "body": "No longer reproducible after branch change."
+    },
+    {
+      "id": "c13",
+      "file": "adl/tools/skills/review-comment-triage/fixtures/follow_on_comments.json",
+      "line": 6,
+      "author": "reviewer-m",
+      "state": "open",
+      "follow_on": true,
+      "review_url": "https://example.test/review/c13",
+      "body": "Needs follow-on planning issue for docs-only validation."
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "source": {
+    "name": "follow_on_feedback"
+  },
+  "comments": [
+    {
+      "id": "c7",
+      "file": "adl/tools/skills/docs/WORKFLOW_CONDUCTOR_SKILL_INPUT_SCHEMA.md",
+      "line": 10,
+      "author": "reviewer-g",
+      "state": "open",
+      "follow_on": true,
+      "review_url": "https://example.test/review/c7",
+      "body": "This workflow should be tracked as a future hardening task.",
+      "summary": "Needs a separate issue outside current PR scope."
+    },
+    {
+      "id": "c8",
+      "file": "docs/milestones/v0.90.1/features/COMPRESSION_ERA_EXECUTION_POLICY.md",
+      "line": 58,
+      "author": "reviewer-h",
+      "state": "new",
+      "follow_on_issue": true,
+      "review_url": "https://example.test/review/c8",
+      "body": "Broader design alignment belongs in follow-up planning."
+    }
+  ]
+}

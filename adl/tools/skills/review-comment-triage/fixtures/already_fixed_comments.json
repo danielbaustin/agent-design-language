@@ -1,0 +1,27 @@
+{
+  "source": {
+    "name": "already_fixed_feedback"
+  },
+  "comments": [
+    {
+      "id": "c3",
+      "file": "adl/tools/skills/pr-run/references/run-playbook.md",
+      "line": 88,
+      "author": "reviewer-c",
+      "state": "resolved",
+      "already_fixed": true,
+      "review_url": "https://example.test/review/c3",
+      "body": "This typo was fixed in a later commit.",
+      "summary": "Already addressed in PR."
+    },
+    {
+      "id": "c4",
+      "file": "adl/tools/skills/review-comment-triage/references/output-contract.md",
+      "line": 3,
+      "author": "reviewer-d",
+      "state": "fixed",
+      "review_url": "https://example.test/review/c4",
+      "body": "Link has been added in follow-up."
+    }
+  ]
+}
