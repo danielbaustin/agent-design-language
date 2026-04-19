@@ -1,0 +1,42 @@
+{
+  "schema_version": "runtime_v2.invariant_violation.v1",
+  "violation_id": "violation-0001",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/invariants/violation-0001.json",
+  "detected_at_utc": "not_started",
+  "severity": "blocking",
+  "invariant_id": "no_duplicate_active_citizen_instance",
+  "invariant_owner_service_id": "invariant_checker",
+  "policy_enforcement_mode": "fail_closed_before_activation",
+  "attempted_transition": {
+    "actor": "kernel.identity_admission_guard",
+    "attempted_action": "duplicate_active_citizen_activation",
+    "attempted_state": "active_index_with_duplicate_proto_citizen_alpha",
+    "source_artifact_ref": "runtime_v2/citizens/proto-citizen-alpha.json"
+  },
+  "evaluated_refs": [
+    {
+      "ref_kind": "active_index",
+      "artifact_ref": "runtime_v2/citizens/active_index.json"
+    },
+    {
+      "ref_kind": "kernel_state",
+      "artifact_ref": "runtime_v2/kernel/service_state.json"
+    },
+    {
+      "ref_kind": "invariant_policy",
+      "artifact_ref": "runtime_v2/invariants/policy.json"
+    }
+  ],
+  "affected_citizens": [
+    "proto-citizen-alpha"
+  ],
+  "refusal_reason": "duplicate active citizen instance would violate identity continuity",
+  "source_error": "citizen_lifecycle.records contains duplicate citizen 'proto-citizen-alpha'",
+  "result": {
+    "resulting_state": "transition_refused_state_unchanged",
+    "blocked_before_commit": true,
+    "recovery_action": "retain_existing_active_index_and_record_violation",
+    "trace_ref": "runtime_v2/traces/invariants/violation-0001.json"
+  }
+}
