@@ -11,6 +11,7 @@ pub const RUNTIME_V2_PROVISIONAL_CITIZEN_SCHEMA: &str = "runtime_v2.provisional_
 pub const RUNTIME_V2_CITIZEN_REGISTRY_INDEX_SCHEMA: &str = "runtime_v2.citizen_registry_index.v1";
 pub const RUNTIME_V2_SNAPSHOT_MANIFEST_SCHEMA: &str = "runtime_v2.snapshot_manifest.v1";
 pub const RUNTIME_V2_REHYDRATION_REPORT_SCHEMA: &str = "runtime_v2.rehydration_report.v1";
+pub const RUNTIME_V2_INVARIANT_VIOLATION_SCHEMA: &str = "runtime_v2.invariant_violation.v1";
 pub const DEFAULT_MANIFOLD_ARTIFACT_PATH: &str = "runtime_v2/manifold.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -243,6 +244,47 @@ pub struct RuntimeV2RehydrationReport {
 pub struct RuntimeV2SnapshotAndRehydrationArtifacts {
     pub snapshot: RuntimeV2SnapshotManifest,
     pub rehydration_report: RuntimeV2RehydrationReport,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2InvariantViolationAttempt {
+    pub actor: String,
+    pub attempted_action: String,
+    pub attempted_state: String,
+    pub source_artifact_ref: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2InvariantViolationEvaluatedRef {
+    pub ref_kind: String,
+    pub artifact_ref: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2InvariantViolationResult {
+    pub resulting_state: String,
+    pub blocked_before_commit: bool,
+    pub recovery_action: String,
+    pub trace_ref: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2InvariantViolationArtifact {
+    pub schema_version: String,
+    pub violation_id: String,
+    pub manifold_id: String,
+    pub artifact_path: String,
+    pub detected_at_utc: String,
+    pub severity: String,
+    pub invariant_id: String,
+    pub invariant_owner_service_id: String,
+    pub policy_enforcement_mode: String,
+    pub attempted_transition: RuntimeV2InvariantViolationAttempt,
+    pub evaluated_refs: Vec<RuntimeV2InvariantViolationEvaluatedRef>,
+    pub affected_citizens: Vec<String>,
+    pub refusal_reason: String,
+    pub source_error: String,
+    pub result: RuntimeV2InvariantViolationResult,
 }
 
 impl RuntimeV2ManifoldRoot {
@@ -1033,6 +1075,210 @@ impl RuntimeV2RehydrationReport {
     }
 }
 
+impl RuntimeV2InvariantViolationArtifact {
+    pub fn duplicate_active_citizen_prototype(
+        manifold: &RuntimeV2ManifoldRoot,
+        kernel: &RuntimeV2KernelLoopArtifacts,
+        citizens: &RuntimeV2CitizenLifecycleArtifacts,
+    ) -> Result<Self> {
+        manifold.validate()?;
+        kernel.validate()?;
+        citizens.validate()?;
+        if kernel.state.manifold_id != manifold.manifold_id
+            || citizens.active_index.manifold_id != manifold.manifold_id
+        {
+            return Err(anyhow!(
+                "invariant violation inputs must share the same manifold id"
+            ));
+        }
+        let invariant_id = "no_duplicate_active_citizen_instance".to_string();
+        if !manifold
+            .invariant_policy_refs
+            .blocking_invariants
+            .contains(&invariant_id)
+        {
+            return Err(anyhow!(
+                "manifold policy must declare no_duplicate_active_citizen_instance"
+            ));
+        }
+        let active_citizen = citizens.active_index.citizens.first().ok_or_else(|| {
+            anyhow!("duplicate active citizen prototype requires an active citizen")
+        })?;
+        let mut illegal = citizens.clone();
+        let duplicate_record = citizens
+            .records
+            .iter()
+            .find(|record| record.citizen_id == active_citizen.citizen_id)
+            .ok_or_else(|| anyhow!("active citizen record missing from lifecycle records"))?
+            .clone();
+        illegal.records.push(duplicate_record);
+        let source_error = illegal
+            .validate()
+            .expect_err("duplicate active citizen input must be rejected")
+            .to_string();
+        let artifact = Self {
+            schema_version: RUNTIME_V2_INVARIANT_VIOLATION_SCHEMA.to_string(),
+            violation_id: "violation-0001".to_string(),
+            manifold_id: manifold.manifold_id.clone(),
+            artifact_path: "runtime_v2/invariants/violation-0001.json".to_string(),
+            detected_at_utc: "not_started".to_string(),
+            severity: "blocking".to_string(),
+            invariant_id,
+            invariant_owner_service_id: "invariant_checker".to_string(),
+            policy_enforcement_mode: manifold.invariant_policy_refs.enforcement_mode.clone(),
+            attempted_transition: RuntimeV2InvariantViolationAttempt {
+                actor: "kernel.identity_admission_guard".to_string(),
+                attempted_action: "duplicate_active_citizen_activation".to_string(),
+                attempted_state: "active_index_with_duplicate_proto_citizen_alpha".to_string(),
+                source_artifact_ref: active_citizen.record_path.clone(),
+            },
+            evaluated_refs: vec![
+                RuntimeV2InvariantViolationEvaluatedRef {
+                    ref_kind: "active_index".to_string(),
+                    artifact_ref: citizens.active_index.index_path.clone(),
+                },
+                RuntimeV2InvariantViolationEvaluatedRef {
+                    ref_kind: "kernel_state".to_string(),
+                    artifact_ref: kernel.state.service_state_path.clone(),
+                },
+                RuntimeV2InvariantViolationEvaluatedRef {
+                    ref_kind: "invariant_policy".to_string(),
+                    artifact_ref: manifold.invariant_policy_refs.policy_path.clone(),
+                },
+            ],
+            affected_citizens: vec![active_citizen.citizen_id.clone()],
+            refusal_reason: "duplicate active citizen instance would violate identity continuity"
+                .to_string(),
+            source_error,
+            result: RuntimeV2InvariantViolationResult {
+                resulting_state: "transition_refused_state_unchanged".to_string(),
+                blocked_before_commit: true,
+                recovery_action: "retain_existing_active_index_and_record_violation".to_string(),
+                trace_ref: "runtime_v2/traces/invariants/violation-0001.json".to_string(),
+            },
+        };
+        artifact.validate()?;
+        Ok(artifact)
+    }
+
+    pub fn validate(&self) -> Result<()> {
+        if self.schema_version != RUNTIME_V2_INVARIANT_VIOLATION_SCHEMA {
+            return Err(anyhow!(
+                "unsupported Runtime v2 invariant violation schema '{}'",
+                self.schema_version
+            ));
+        }
+        normalize_id(
+            self.violation_id.clone(),
+            "invariant_violation.violation_id",
+        )?;
+        normalize_id(self.manifold_id.clone(), "invariant_violation.manifold_id")?;
+        validate_relative_path(&self.artifact_path, "invariant_violation.artifact_path")?;
+        validate_timestamp_marker(&self.detected_at_utc, "invariant_violation.detected_at_utc")?;
+        validate_invariant_violation_severity(&self.severity)?;
+        normalize_id(
+            self.invariant_id.clone(),
+            "invariant_violation.invariant_id",
+        )?;
+        normalize_id(
+            self.invariant_owner_service_id.clone(),
+            "invariant_violation.invariant_owner_service_id",
+        )?;
+        match self.policy_enforcement_mode.as_str() {
+            "fail_closed_before_activation" | "report_only" => {}
+            other => {
+                return Err(anyhow!(
+                    "unsupported invariant_violation.policy_enforcement_mode '{other}'"
+                ))
+            }
+        }
+        self.attempted_transition.validate()?;
+        validate_invariant_violation_evaluated_refs(&self.evaluated_refs)?;
+        if self.affected_citizens.is_empty() {
+            return Err(anyhow!(
+                "invariant_violation.affected_citizens must not be empty"
+            ));
+        }
+        let mut seen = std::collections::BTreeSet::new();
+        for citizen_id in &self.affected_citizens {
+            normalize_id(citizen_id.clone(), "invariant_violation.affected_citizens")?;
+            if !seen.insert(citizen_id.clone()) {
+                return Err(anyhow!(
+                    "invariant_violation.affected_citizens contains duplicate '{}'",
+                    citizen_id
+                ));
+            }
+        }
+        validate_nonempty_text(&self.refusal_reason, "invariant_violation.refusal_reason")?;
+        validate_nonempty_text(&self.source_error, "invariant_violation.source_error")?;
+        self.result.validate()?;
+        if !self.result.blocked_before_commit {
+            return Err(anyhow!(
+                "invariant violation artifacts must prove rejection before commit"
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn to_pretty_json_bytes(&self) -> Result<Vec<u8>> {
+        self.validate()?;
+        serde_json::to_vec_pretty(self).context("serialize Runtime v2 invariant violation")
+    }
+
+    pub fn write_to_root(&self, root: impl AsRef<Path>) -> Result<()> {
+        write_relative(
+            root.as_ref(),
+            &self.artifact_path,
+            self.to_pretty_json_bytes()?,
+        )
+    }
+}
+
+impl RuntimeV2InvariantViolationAttempt {
+    pub fn validate(&self) -> Result<()> {
+        normalize_id(self.actor.clone(), "invariant_violation.actor")?;
+        normalize_id(
+            self.attempted_action.clone(),
+            "invariant_violation.attempted_action",
+        )?;
+        normalize_id(
+            self.attempted_state.clone(),
+            "invariant_violation.attempted_state",
+        )?;
+        validate_relative_path(
+            &self.source_artifact_ref,
+            "invariant_violation.source_artifact_ref",
+        )
+    }
+}
+
+impl RuntimeV2InvariantViolationEvaluatedRef {
+    pub fn validate(&self) -> Result<()> {
+        normalize_id(
+            self.ref_kind.clone(),
+            "invariant_violation.evaluated_ref_kind",
+        )?;
+        validate_relative_path(
+            &self.artifact_ref,
+            "invariant_violation.evaluated_artifact_ref",
+        )
+    }
+}
+
+impl RuntimeV2InvariantViolationResult {
+    pub fn validate(&self) -> Result<()> {
+        normalize_id(
+            self.resulting_state.clone(),
+            "invariant_violation.resulting_state",
+        )?;
+        normalize_id(
+            self.recovery_action.clone(),
+            "invariant_violation.recovery_action",
+        )?;
+        validate_relative_path(&self.trace_ref, "invariant_violation.trace_ref")
+    }
+}
+
 impl RuntimeV2ProvisionalCitizenRecord {
     pub fn validate(&self) -> Result<()> {
         if self.schema_version != RUNTIME_V2_PROVISIONAL_CITIZEN_SCHEMA {
@@ -1479,18 +1725,49 @@ fn validate_snapshot_invariant_statuses(
     Ok(())
 }
 
-fn validate_display_name(value: &str, field: &str) -> Result<()> {
+fn validate_invariant_violation_severity(value: &str) -> Result<()> {
+    match value {
+        "blocking" | "warning" | "audit" => Ok(()),
+        other => Err(anyhow!(
+            "unsupported invariant_violation.severity '{other}'"
+        )),
+    }
+}
+
+fn validate_invariant_violation_evaluated_refs(
+    refs: &[RuntimeV2InvariantViolationEvaluatedRef],
+) -> Result<()> {
+    if refs.is_empty() {
+        return Err(anyhow!(
+            "invariant_violation.evaluated_refs must not be empty"
+        ));
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    for evaluated_ref in refs {
+        evaluated_ref.validate()?;
+        let key = format!("{}:{}", evaluated_ref.ref_kind, evaluated_ref.artifact_ref);
+        if !seen.insert(key) {
+            return Err(anyhow!(
+                "invariant_violation.evaluated_refs contains duplicate ref"
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn validate_nonempty_text(value: &str, field: &str) -> Result<()> {
     if value.trim().is_empty() {
         return Err(anyhow!("{field} must not be empty"));
     }
     Ok(())
 }
 
+fn validate_display_name(value: &str, field: &str) -> Result<()> {
+    validate_nonempty_text(value, field)
+}
+
 fn validate_timestamp_marker(value: &str, field: &str) -> Result<()> {
-    if value.trim().is_empty() {
-        return Err(anyhow!("{field} must not be empty"));
-    }
-    Ok(())
+    validate_nonempty_text(value, field)
 }
 
 fn validate_required_kernel_services(
@@ -1602,6 +1879,15 @@ pub fn runtime_v2_snapshot_rehydration_contract() -> Result<RuntimeV2SnapshotAnd
     let kernel = RuntimeV2KernelLoopArtifacts::prototype(&manifold)?;
     let citizens = RuntimeV2CitizenLifecycleArtifacts::prototype(&manifold)?;
     RuntimeV2SnapshotAndRehydrationArtifacts::prototype(&manifold, &kernel, &citizens)
+}
+
+pub fn runtime_v2_invariant_violation_contract() -> Result<RuntimeV2InvariantViolationArtifact> {
+    let manifold = runtime_v2_manifold_contract()?;
+    let kernel = RuntimeV2KernelLoopArtifacts::prototype(&manifold)?;
+    let citizens = RuntimeV2CitizenLifecycleArtifacts::prototype(&manifold)?;
+    RuntimeV2InvariantViolationArtifact::duplicate_active_citizen_prototype(
+        &manifold, &kernel, &citizens,
+    )
 }
 
 #[cfg(test)]
@@ -2113,5 +2399,107 @@ mod tests {
             .expect_err("failed invariant should fail")
             .to_string()
             .contains("invariant checks must pass"));
+    }
+
+    #[test]
+    fn runtime_v2_invariant_violation_contract_records_rejected_transition() {
+        let manifold = runtime_v2_manifold_contract().expect("manifold");
+        let kernel = RuntimeV2KernelLoopArtifacts::prototype(&manifold).expect("kernel");
+        let citizens = RuntimeV2CitizenLifecycleArtifacts::prototype(&manifold).expect("citizens");
+        let violation = RuntimeV2InvariantViolationArtifact::duplicate_active_citizen_prototype(
+            &manifold, &kernel, &citizens,
+        )
+        .expect("violation");
+
+        assert_eq!(
+            violation.schema_version,
+            RUNTIME_V2_INVARIANT_VIOLATION_SCHEMA
+        );
+        assert_eq!(violation.manifold_id, manifold.manifold_id);
+        assert_eq!(
+            violation.invariant_id,
+            "no_duplicate_active_citizen_instance"
+        );
+        assert_eq!(violation.invariant_owner_service_id, "invariant_checker");
+        assert_eq!(violation.severity, "blocking");
+        assert_eq!(
+            violation.policy_enforcement_mode,
+            "fail_closed_before_activation"
+        );
+        assert_eq!(violation.affected_citizens, vec!["proto-citizen-alpha"]);
+        assert!(violation.result.blocked_before_commit);
+        assert!(violation.source_error.contains("duplicate citizen"));
+        assert!(violation
+            .evaluated_refs
+            .iter()
+            .any(|evaluated_ref| evaluated_ref.ref_kind == "kernel_state"));
+    }
+
+    #[test]
+    fn runtime_v2_invariant_violation_artifact_matches_golden_fixture() {
+        let violation = runtime_v2_invariant_violation_contract().expect("violation");
+        let generated =
+            String::from_utf8(violation.to_pretty_json_bytes().expect("json")).expect("utf8");
+
+        assert_eq!(
+            generated,
+            include_str!("../tests/fixtures/runtime_v2/invariants/violation-0001.json").trim_end()
+        );
+    }
+
+    #[test]
+    fn runtime_v2_invariant_violation_writes_artifact_without_path_leakage() {
+        let temp_root = unique_temp_path("invariant");
+        let violation = runtime_v2_invariant_violation_contract().expect("violation");
+
+        violation
+            .write_to_root(&temp_root)
+            .expect("write violation artifact");
+
+        let violation_path = temp_root.join(&violation.artifact_path);
+        assert!(violation_path.is_file());
+        let text = fs::read_to_string(violation_path).expect("violation text");
+        assert!(!text.contains(temp_root.to_string_lossy().as_ref()));
+        assert!(text.contains("\"schema_version\": \"runtime_v2.invariant_violation.v1\""));
+        assert!(text.contains("\"blocked_before_commit\": true"));
+
+        fs::remove_dir_all(temp_root).ok();
+    }
+
+    #[test]
+    fn runtime_v2_invariant_violation_validation_rejects_unsafe_or_ambiguous_state() {
+        let mut violation = runtime_v2_invariant_violation_contract().expect("violation");
+        violation.artifact_path = "/tmp/violation.json".to_string();
+        assert!(violation
+            .validate()
+            .expect_err("absolute path should fail")
+            .to_string()
+            .contains("repository-relative path"));
+
+        let mut violation = runtime_v2_invariant_violation_contract().expect("violation");
+        violation.result.blocked_before_commit = false;
+        assert!(violation
+            .validate()
+            .expect_err("unblocked violation should fail")
+            .to_string()
+            .contains("before commit"));
+
+        let mut violation = runtime_v2_invariant_violation_contract().expect("violation");
+        violation
+            .evaluated_refs
+            .push(violation.evaluated_refs[0].clone());
+        assert!(violation
+            .validate()
+            .expect_err("duplicate evaluated refs should fail")
+            .to_string()
+            .contains("duplicate ref"));
+
+        let mut violation = runtime_v2_invariant_violation_contract().expect("violation");
+        violation.refusal_reason = " ".to_string();
+        assert!(violation
+            .validate()
+            .expect_err("empty refusal reason should fail")
+            .to_string()
+            .contains("refusal_reason must not be empty"));
     }
 }
