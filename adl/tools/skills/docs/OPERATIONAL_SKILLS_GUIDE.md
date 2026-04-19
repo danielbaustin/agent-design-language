@@ -30,6 +30,7 @@ The tracked skill set is:
 - `pr-janitor`
 - `pr-ready`
 - `pr-run`
+- `pr-stack-manager`
 - `product-report-writer`
 - `redaction-and-evidence-auditor`
 - `refactoring-helper`

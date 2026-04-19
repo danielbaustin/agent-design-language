@@ -1,0 +1,5 @@
+display_name: PR Stack Manager
+short_description: Analyze PR stack ancestry, base drift, and bounded restack options for an issue and its dependent branches.
+default_prompt: >
+  Assess PR stack topology for the target issue/worktree, classify ordering risks,
+  and produce a machine-readable plan for safe bounded restack or dependency remediation.
