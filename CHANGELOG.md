@@ -2,6 +2,36 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
+## v0.90 (Pre-Release Review Tail)
+
+Status: Pre-third-party-review readiness. Not yet released.
+
+Summary:
+- ADL now has a v0.90 long-lived-agent runtime package in the release tail:
+  `supervisor -> heartbeat -> bounded cycle -> artifact root -> continuity handle -> operator control -> inspection/status -> stock-league proof`
+- The runtime and demo implementation WPs landed through the long-lived supervisor, cycle contract, state/continuity handles, operator safety, inspection boundary, stock-league scaffold, integrated long-lived demo, and demo-extension proof lane
+- The sidecar proof work landed milestone compression and repo visibility packets so reviewers can inspect milestone state, drift, and code-doc-demo linkage without treating those pilots as autonomous release tooling
+- The coverage tracker reports workspace line coverage at `92.40%`, which rounds to the intended `93%` tranche, with the workspace gate passing and the per-file gate passing without active file-floor exclusions; the WP-10 validation pass also recorded `92.46%`
+- The Rust tracker reports one `RATIONALE` item, nineteen `REVIEW` items, and fourteen `WATCH` items after the v0.90 WP-14 child refactoring wave, down from four `RATIONALE` items before the latest split pass
+- Internal review completed and its accepted findings were addressed before this pre-third-party-readiness gate; the remaining release tail is third-party review, any findings remediation, next-milestone planning, and ceremony
+- The crate version for the v0.90 release-readiness branch is `0.90.0`
+
+References:
+- `docs/milestones/v0.90/README.md`
+- `docs/milestones/v0.90/WBS_v0.90.md`
+- `docs/milestones/v0.90/SPRINT_v0.90.md`
+- `docs/milestones/v0.90/DEMO_MATRIX_v0.90.md`
+- `docs/milestones/v0.90/MILESTONE_CHECKLIST_v0.90.md`
+- `docs/milestones/v0.90/RELEASE_PLAN_v0.90.md`
+- `docs/milestones/v0.90/RELEASE_NOTES_v0.90.md`
+- `docs/milestones/v0.90/V090_PRE_THIRD_PARTY_READINESS_REPORT.md`
+
+Not yet claimed in v0.90:
+- release completion, third-party-review completion, or final ceremony
+- full v0.92 identity/capability substrate
+- live trading, financial advice, or unbounded autonomy
+- autonomous release approval or silent closeout automation
+
 ## v0.89.1 (Released 2026-04-17)
 
 Status: Completed and released.

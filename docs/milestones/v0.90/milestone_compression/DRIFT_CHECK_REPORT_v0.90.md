@@ -59,11 +59,13 @@ python3 adl/tools/check_v090_milestone_state.py
 - No release approval.
 - No root-checkout workflow.
 
-## Next Use
+## Current Release-Tail Use
 
-WP-13 reruns this checker after the implementation WPs and sidecar WPs settle.
-WP-18 should treat the checker as one release-readiness input, not as a
-replacement for human release ceremony.
+WP-13 reran this checker after the implementation WPs and sidecar WPs settled.
+WP-18 treats the checker as one pre-third-party readiness input, not as a
+replacement for human release ceremony. Final release still requires
+third-party review, accepted findings remediation if needed, next-milestone
+planning, and ceremony.
 
 ## Finish Validation Refinement
 

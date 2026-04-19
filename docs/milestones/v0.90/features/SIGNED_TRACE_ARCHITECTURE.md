@@ -676,7 +676,7 @@ The goal is a strong first trace substrate, not a complete observability platfor
   "tool": "shell",
   "command": "cargo test graph_affect::tests::ranking_changes",
   "artifact_refs": [
-    ".adl/v0.85/tasks/issue-0876__v085-wp16-reasoning-graph-affect/sor.md"
+    "artifact://adl/tasks/issue-0876/sor.md"
   ],
   "replay_class": "replayable",
   "details": {

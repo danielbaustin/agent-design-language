@@ -13,8 +13,8 @@ state:
   repo_visibility_packet: landed
   milestone_compression_packet: landed
   runtime_demos: landed_through_wp09
-  coverage_ratchet: pending_wp10
-  review_tail: pending
+  coverage_ratchet: landed_wp10
+  review_tail: pre_third_party_readiness
   release_ceremony: pending
 checks:
   issue_wave_count:

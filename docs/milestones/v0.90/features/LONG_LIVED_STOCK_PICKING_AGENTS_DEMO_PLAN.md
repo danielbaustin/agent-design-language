@@ -286,7 +286,7 @@ season events:
 Each agent gets a durable memory folder:
 
 ```text
-.adl/reports/demo-stock-league/
+artifacts/v090/demo-stock-league/
   season-001/
     agents/
       value_monk/

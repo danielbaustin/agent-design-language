@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: issue wave open
+- Status: pre-third-party-review readiness
 - Early planning issue: #1986
 - Promotion gate: #1940
 
@@ -107,7 +107,8 @@ release closeout:
 - WP-11: milestone compression pilot
 - WP-12: repo visibility prototype
 - WP-13 and WP-14: docs pass and explicit Rust refactoring
-- WP-15 onward: reviews, remediation, readiness, next planning, release
+- WP-15 onward: internal review, readiness, third-party review, remediation,
+  next planning, release
 
 The v0.90 issue wave is now open. WP-01 is `#2019`; WP-02 through WP-20
 are `#2021` through `#2039`.
@@ -140,23 +141,37 @@ Primary landed proof surfaces:
 - milestone state and drift-check report
 - repo visibility manifest and linkage report
 
+Recently completed proof surfaces:
+
+- WP-10 coverage ratchet evidence: current tracker reports `92.40%` workspace
+  line coverage, rounded to the intended `93%` tranche, with workspace and
+  per-file gates passing and no active file-floor exclusion. The WP-10
+  validation pass also recorded `92.46%`.
+- WP-13 docs and review alignment record.
+- WP-14 Rust refactor validation rollup: current tracker reports one
+  `RATIONALE` item, nineteen `REVIEW` items, and fourteen `WATCH` items after
+  the child split wave.
+- WP-15 internal review artifacts and accepted internal-finding remediation.
+- Closeout pass for almost all closed issues; the remaining open issues are
+  normal release-tail work.
+
 Still-open proof surfaces:
 
-- WP-10 coverage ratchet report to 93 percent
-- WP-13 docs and review alignment record
-- WP-14 Rust refactor validation rollup after the remaining refactor child
-  issues settle
-- WP-15 and WP-16 review artifacts
-- WP-17 through WP-20 release-tail records
+- WP-18 pre-third-party readiness report until this work package merges.
+- WP-16 third-party review artifacts.
+- WP-17 third-party findings remediation if findings are accepted.
+- WP-19 next-milestone planning finalization.
+- WP-20 release ceremony record.
 
 ## Status
 
 - Planning: tracked package promoted by `v0.89.1` WP-19 and opened by v0.90 WP-01
-- Execution: issue wave open; WP-02 through WP-09, WP-11, and WP-12 have
-  landed. WP-10, WP-13, WP-14, and the review/release tail remain open.
-- Validation: runtime and demo proof surfaces have landed through WP-09; the
-  coverage ratchet and final release quality gates remain open.
-- Release readiness: not started
+- Execution: issue wave in release tail; WP-02 through WP-15 have landed or closed through
+  their intended child issue surfaces. WP-18 is the active pre-third-party
+  readiness gate. WP-16, WP-17, WP-19, and WP-20 remain open release-tail work.
+- Validation: runtime, demo, sidecar, coverage, refactor, docs, and internal
+  review proof surfaces have landed. The next gate is third-party review.
+- Release readiness: pre-third-party readiness in progress.
 
 ## WP-19 Promotion Result
 

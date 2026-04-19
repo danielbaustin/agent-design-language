@@ -435,11 +435,12 @@ These WPs are not runtime-code WPs. Their value is milestone truth.
 
 - WP-15 internal review must produce findings-first review output or an explicit
   no-finding record with residual risks.
+- WP-18 final readiness must rerun quality, demo, docs, compression, visibility,
+  coverage, refactor, and closeout checks before third-party review.
 - WP-16 third-party review must record scope, files reviewed, requested review
   questions, severity rubric, and findings.
-- WP-17 findings remediation must fix or explicitly defer every finding.
-- WP-18 final readiness must rerun quality, demo, docs, compression, visibility,
-  and refactor checks.
+- WP-17 findings remediation must fix or explicitly defer every accepted
+  third-party finding.
 - WP-19 next milestone planning must prepare the following milestone before the
   release ceremony.
 - WP-20 release ceremony must verify release notes, version surfaces, tag, and

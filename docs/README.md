@@ -6,7 +6,7 @@ Use this index to find the right source of truth quickly.
 
 ## Start Here
 
-- Active milestone package: `milestones/v0.90/`
+- Active milestone package: `milestones/v0.90/` in pre-third-party-review readiness
 - Most recently completed milestone: `milestones/v0.89.1/`
 - Previous completed milestone package: `milestones/v0.89/`
 - Previous completed milestone: `milestones/v0.88/`
@@ -17,7 +17,7 @@ Use this index to find the right source of truth quickly.
 
 ## Milestone Documentation
 
-- Active milestone package: `milestones/v0.90/`
+- Active milestone package: `milestones/v0.90/` in pre-third-party-review readiness
 - Most recently completed milestone: `milestones/v0.89.1/`
 - Previous completed milestone package: `milestones/v0.89/`
 - Previous completed milestone: `milestones/v0.88/`
@@ -44,4 +44,4 @@ Use this index to find the right source of truth quickly.
 
 ## Notes
 
-Milestone docs should be read as bounded engineering records. They distinguish what has shipped, what is currently being implemented, what is demoable, and what is planned for later milestones. At the moment, `v0.90` is the active milestone package, `v0.89.1` is the most recently completed adversarial-runtime milestone, and `v0.89` is the previous completed milestone package.
+Milestone docs should be read as bounded engineering records. They distinguish what has shipped, what is currently being implemented, what is demoable, and what is planned for later milestones. At the moment, `v0.90` is the active milestone package in pre-third-party-review readiness, `v0.89.1` is the most recently completed adversarial-runtime milestone, and `v0.89` is the previous completed milestone package.

@@ -26,4 +26,4 @@ This directory is the tracked v0.90 feature lane promoted by `v0.89.1` WP-19.
 ## Planning Rule
 
 Keep only feature docs that support the selected v0.90 thesis here. Rewrite or
-defer the rest explicitly before the v0.90 issue wave opens.
+defer the rest explicitly before making release claims.
