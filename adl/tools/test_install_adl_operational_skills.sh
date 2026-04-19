@@ -8,11 +8,12 @@ trap 'rm -rf "${tmpdir}"' EXIT
 assert_skill_bundle() {
   local root="$1"
 
-  for skill in workflow-conductor pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review repo-diagram-planner architecture-diagram-reviewer review-to-test-planner adr-curator architecture-fitness-function-author finding-to-issue-planner test-generator demo-operator medium-article-writer arxiv-paper-writer diagram-author stp-editor sip-editor sor-editor; do
+  for skill in workflow-conductor issue-watcher pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review repo-diagram-planner architecture-diagram-reviewer review-to-test-planner adr-curator architecture-fitness-function-author finding-to-issue-planner test-generator demo-operator medium-article-writer arxiv-paper-writer diagram-author stp-editor sip-editor sor-editor; do
     [[ -d "${root}/skills/${skill}" ]]
   done
 
   [[ -f "${root}/skills/workflow-conductor/SKILL.md" ]]
+  [[ -f "${root}/skills/issue-watcher/SKILL.md" ]]
   [[ -f "${root}/skills/pr-init/SKILL.md" ]]
   [[ -f "${root}/skills/pr-ready/SKILL.md" ]]
   [[ -f "${root}/skills/pr-run/SKILL.md" ]]
@@ -56,6 +57,7 @@ assert_skill_bundle() {
   [[ -f "${root}/skills/sor-editor/SKILL.md" ]]
 
   grep -Fq "thin orchestrator" "${root}/skills/workflow-conductor/SKILL.md"
+  grep -Fq "Watch one issue, PR, branch, or dependency gate" "${root}/skills/issue-watcher/SKILL.md"
   grep -Fq "qualitative card review" "${root}/skills/pr-init/SKILL.md"
   grep -Fq "execution_readiness" "${root}/skills/pr-ready/references/output-contract.md"
   grep -Fq "perform the bounded implementation work" "${root}/skills/pr-run/SKILL.md"
@@ -84,6 +86,7 @@ assert_skill_bundle() {
 
   bash "${repo_root}/adl/tools/validate_skill_frontmatter.sh" \
     "${root}/skills/workflow-conductor/SKILL.md" \
+    "${root}/skills/issue-watcher/SKILL.md" \
     "${root}/skills/pr-init/SKILL.md" \
     "${root}/skills/pr-ready/SKILL.md" \
     "${root}/skills/pr-run/SKILL.md" \
@@ -120,6 +123,7 @@ export CODEX_HOME="${tmpdir}/codex-home-symlink"
 ADL_OPERATIONAL_SKILLS_INSTALL_MODE=symlink bash "${repo_root}/adl/tools/install_adl_operational_skills.sh" >/dev/null
 assert_skill_bundle "${CODEX_HOME}"
 [[ -L "${CODEX_HOME}/skills/pr-init" ]]
+[[ -L "${CODEX_HOME}/skills/issue-watcher" ]]
 [[ -L "${CODEX_HOME}/skills/pr-ready" ]]
 [[ -L "${CODEX_HOME}/skills/repo-packet-builder" ]]
 [[ -L "${CODEX_HOME}/skills/redaction-and-evidence-auditor" ]]
@@ -134,6 +138,7 @@ assert_skill_bundle "${CODEX_HOME}"
 [[ -L "${CODEX_HOME}/skills/arxiv-paper-writer" ]]
 [[ -L "${CODEX_HOME}/skills/diagram-author" ]]
 [[ "$(cd "${CODEX_HOME}/skills/pr-init" && pwd -P)" == "${repo_root}/adl/tools/skills/pr-init" ]]
+[[ "$(cd "${CODEX_HOME}/skills/issue-watcher" && pwd -P)" == "${repo_root}/adl/tools/skills/issue-watcher" ]]
 
 malformed_root="${tmpdir}/malformed-skills"
 cp -R "${repo_root}/adl/tools/skills" "${malformed_root}"
