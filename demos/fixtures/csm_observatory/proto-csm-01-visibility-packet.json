@@ -1,0 +1,437 @@
+{
+  "schema": "adl.csm_visibility_packet.v1",
+  "packet_id": "csm-observatory-fixture-proto-csm-01",
+  "generated_at": "2026-04-19T00:00:00Z",
+  "source": {
+    "mode": "fixture",
+    "evidence_level": "fixture_backed",
+    "fixture": true,
+    "runtime_artifact_root": null,
+    "claim_boundary": "Fixture-backed Observatory contract example. This is not a live Runtime v2 capture.",
+    "source_refs": [
+      "adl/tests/fixtures/runtime_v2/manifold.json",
+      "adl/tests/fixtures/runtime_v2/kernel/service_registry.json",
+      "adl/tests/fixtures/runtime_v2/kernel/service_state.json",
+      "adl/tests/fixtures/runtime_v2/kernel/service_loop.jsonl",
+      "adl/tests/fixtures/runtime_v2/citizens/active_index.json",
+      "adl/tests/fixtures/runtime_v2/citizens/pending_index.json"
+    ]
+  },
+  "manifold": {
+    "manifold_id": "proto-csm-01",
+    "display_name": "Prototype CSM 01",
+    "state": "initialized",
+    "lifecycle": "bounded_fixture_world",
+    "current_tick": 0,
+    "uptime": "not_started",
+    "policy_profile": "runtime_v2_minimal_prototype",
+    "snapshot_status": {
+      "state": "deferred",
+      "latest_snapshot_id": null,
+      "rehydration_report_ref": "runtime_v2/rehydration_report.json",
+      "note": "Snapshot and wake proof remain future Runtime v2 implementation surfaces."
+    },
+    "health": {
+      "summary": "initialized fixture",
+      "level": "nominal",
+      "attention_items": [
+        "citizen beta is proposed, not active",
+        "Freedom Gate packet is fixture-only",
+        "snapshot evidence is deferred"
+      ]
+    },
+    "evidence_refs": [
+      "runtime_v2/manifold.json"
+    ]
+  },
+  "kernel": {
+    "scheduler_state": "registered",
+    "trace_state": "bounded_tick_fixture",
+    "invariant_state": "policy_loaded",
+    "resource_state": "bounded_prototype",
+    "service_states": [
+      {
+        "service_id": "clock_service",
+        "service_kind": "clock",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 1,
+        "evidence_ref": "runtime_v2/kernel/service_state.json"
+      },
+      {
+        "service_id": "identity_admission_guard",
+        "service_kind": "admission",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 2,
+        "evidence_ref": "runtime_v2/kernel/service_state.json"
+      },
+      {
+        "service_id": "scheduler",
+        "service_kind": "scheduler",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 3,
+        "evidence_ref": "runtime_v2/kernel/service_state.json"
+      },
+      {
+        "service_id": "resource_ledger",
+        "service_kind": "resource",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 4,
+        "evidence_ref": "runtime_v2/kernel/service_state.json"
+      },
+      {
+        "service_id": "trace_writer",
+        "service_kind": "trace",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 5,
+        "evidence_ref": "runtime_v2/kernel/service_state.json"
+      },
+      {
+        "service_id": "snapshot_manager",
+        "service_kind": "snapshot",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 6,
+        "evidence_ref": "runtime_v2/kernel/service_state.json"
+      },
+      {
+        "service_id": "invariant_checker",
+        "service_kind": "invariant",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 7,
+        "evidence_ref": "runtime_v2/kernel/service_state.json"
+      },
+      {
+        "service_id": "operator_control_interface",
+        "service_kind": "operator",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 8,
+        "evidence_ref": "runtime_v2/kernel/service_state.json"
+      }
+    ],
+    "active_guardrails": [
+      "single_active_manifold_instance",
+      "no_duplicate_active_citizen_instance",
+      "trace_sequence_must_advance_monotonically",
+      "snapshot_restore_must_validate_before_active_state"
+    ],
+    "pulse": {
+      "status": "bounded_tick_complete",
+      "completed_through_event_sequence": 8,
+      "evidence_refs": [
+        "runtime_v2/kernel/service_registry.json",
+        "runtime_v2/kernel/service_loop.jsonl"
+      ]
+    }
+  },
+  "citizens": [
+    {
+      "citizen_id": "proto-citizen-alpha",
+      "display_name": "Prototype Citizen Alpha",
+      "role": "worker",
+      "lifecycle_state": "active",
+      "continuity_status": "provisional_identity_continuity",
+      "current_episode": "episode-resource-pressure-001",
+      "resource_balance": {
+        "compute_units": 6,
+        "scarcity_note": "Fixture allocation makes alpha schedulable before beta."
+      },
+      "recent_decisions": [
+        {
+          "decision_id": "fg-allow-alpha-001",
+          "decision": "allow",
+          "summary": "Bounded worker action admitted by fixture docket.",
+          "evidence_ref": "runtime_v2/freedom_gate/fixture_docket.json"
+        }
+      ],
+      "capability_envelope": {
+        "can_execute_episodes": true,
+        "allowed": [
+          "bounded_task_work",
+          "status_report"
+        ],
+        "forbidden": [
+          "direct_runtime_mutation",
+          "cross_polis_export"
+        ]
+      },
+      "alerts": [],
+      "evidence_refs": [
+        "runtime_v2/citizens/proto-citizen-alpha.json",
+        "runtime_v2/citizens/active_index.json"
+      ]
+    },
+    {
+      "citizen_id": "proto-citizen-beta",
+      "display_name": "Prototype Citizen Beta",
+      "role": "worker",
+      "lifecycle_state": "proposed",
+      "continuity_status": "admission_pending",
+      "current_episode": null,
+      "resource_balance": {
+        "compute_units": 3,
+        "scarcity_note": "Fixture keeps beta pending until admission evidence lands."
+      },
+      "recent_decisions": [
+        {
+          "decision_id": "fg-defer-beta-001",
+          "decision": "defer",
+          "summary": "Admission deferred until lifecycle proof is complete.",
+          "evidence_ref": "runtime_v2/freedom_gate/fixture_docket.json"
+        }
+      ],
+      "capability_envelope": {
+        "can_execute_episodes": false,
+        "allowed": [
+          "admission_review"
+        ],
+        "forbidden": [
+          "episode_execution",
+          "direct_runtime_mutation"
+        ]
+      },
+      "alerts": [
+        {
+          "severity": "info",
+          "message": "Citizen is proposed, not active."
+        }
+      ],
+      "evidence_refs": [
+        "runtime_v2/citizens/proto-citizen-beta.json",
+        "runtime_v2/citizens/pending_index.json"
+      ]
+    }
+  ],
+  "episodes": [
+    {
+      "episode_id": "episode-resource-pressure-001",
+      "title": "Bounded resource-pressure fixture",
+      "state": "planned",
+      "citizen_ids": [
+        "proto-citizen-alpha",
+        "proto-citizen-beta"
+      ],
+      "started_at": "not_started",
+      "last_event": "kernel_tick_completed",
+      "proof_surface": "runtime_v2/kernel/service_loop.jsonl",
+      "blocked_reason": "Fixture episode only; live scheduler execution is a later Runtime v2 surface."
+    }
+  ],
+  "freedom_gate": {
+    "recent_docket": [
+      {
+        "decision_id": "fg-allow-alpha-001",
+        "actor": "proto-citizen-alpha",
+        "action": "bounded_task_work",
+        "decision": "allow",
+        "rationale": "Action stays inside provisional worker capability envelope.",
+        "evidence_level": "fixture_backed",
+        "evidence_ref": "runtime_v2/freedom_gate/fixture_docket.json"
+      },
+      {
+        "decision_id": "fg-refuse-cross-polis-001",
+        "actor": "proto-citizen-alpha",
+        "action": "cross_polis_export",
+        "decision": "refuse",
+        "rationale": "Cross-polis export is outside v0.90.1 and v0.90.2 bounded local CSM scope.",
+        "evidence_level": "fixture_backed",
+        "evidence_ref": "runtime_v2/freedom_gate/fixture_docket.json"
+      },
+      {
+        "decision_id": "fg-defer-beta-001",
+        "actor": "proto-citizen-beta",
+        "action": "episode_execution",
+        "decision": "defer",
+        "rationale": "Beta is proposed and cannot execute episodes until admission is complete.",
+        "evidence_level": "fixture_backed",
+        "evidence_ref": "runtime_v2/freedom_gate/fixture_docket.json"
+      }
+    ],
+    "allow_count": 1,
+    "defer_count": 1,
+    "refuse_count": 1,
+    "open_questions": [
+      "Which live Freedom Gate artifact path becomes canonical in v0.90.2?"
+    ],
+    "rejected_actions": [
+      {
+        "action": "cross_polis_export",
+        "actor": "proto-citizen-alpha",
+        "reason": "future_scope"
+      }
+    ]
+  },
+  "invariants": [
+    {
+      "invariant_id": "single_active_manifold_instance",
+      "name": "Single active manifold instance",
+      "state": "healthy",
+      "severity": "critical",
+      "last_checked": "fixture_generation",
+      "evidence_ref": "runtime_v2/manifold.json"
+    },
+    {
+      "invariant_id": "no_duplicate_active_citizen_instance",
+      "name": "No duplicate active citizen instance",
+      "state": "healthy",
+      "severity": "critical",
+      "last_checked": "fixture_generation",
+      "evidence_ref": "runtime_v2/citizens/active_index.json"
+    },
+    {
+      "invariant_id": "trace_sequence_must_advance_monotonically",
+      "name": "Trace sequence must advance monotonically",
+      "state": "healthy",
+      "severity": "high",
+      "last_checked": "fixture_generation",
+      "evidence_ref": "runtime_v2/kernel/service_loop.jsonl"
+    },
+    {
+      "invariant_id": "snapshot_restore_must_validate_before_active_state",
+      "name": "Snapshot restore must validate before active state",
+      "state": "deferred",
+      "severity": "high",
+      "last_checked": "not_started",
+      "evidence_ref": "runtime_v2/rehydration_report.json"
+    }
+  ],
+  "resources": {
+    "compute_units": {
+      "total": 9,
+      "allocated": 6,
+      "available": 3
+    },
+    "memory_pressure": "low",
+    "queue_depth": 1,
+    "fairness_notes": [
+      "Alpha is active and schedulable; beta is proposed and intentionally deferred."
+    ],
+    "scarcity_events": [
+      {
+        "event_id": "resource-scarcity-fixture-001",
+        "summary": "Prototype fixture shows visible resource pressure without live scheduling claims.",
+        "evidence_level": "fixture_backed"
+      }
+    ]
+  },
+  "trace": {
+    "trace_tail": [
+      {
+        "event_sequence": 1,
+        "actor": "kernel.clock_service",
+        "event_type": "service_tick",
+        "summary": "Clock service observed ready.",
+        "evidence_ref": "runtime_v2/kernel/service_loop.jsonl"
+      },
+      {
+        "event_sequence": 3,
+        "actor": "kernel.scheduler",
+        "event_type": "service_tick",
+        "summary": "Scheduler observed ready.",
+        "evidence_ref": "runtime_v2/kernel/service_loop.jsonl"
+      },
+      {
+        "event_sequence": 8,
+        "actor": "kernel.operator_control_interface",
+        "event_type": "service_tick",
+        "summary": "Operator control interface observed ready.",
+        "evidence_ref": "runtime_v2/kernel/service_loop.jsonl"
+      }
+    ],
+    "causal_gaps": [
+      {
+        "gap_id": "freedom-gate-live-artifact-gap",
+        "summary": "Freedom Gate docket is fixture-backed until live decision packets land.",
+        "severity": "info"
+      }
+    ],
+    "latest_operator_event": null,
+    "latest_citizen_event": null,
+    "latest_kernel_event": {
+      "event_sequence": 8,
+      "event_ref": "runtime_v2/kernel/service_loop.jsonl"
+    }
+  },
+  "operator_actions": {
+    "available_actions": [
+      {
+        "action": "inspect_citizen",
+        "mode": "read_only",
+        "status": "available_in_console_prototype",
+        "event_required": false
+      },
+      {
+        "action": "open_freedom_gate_decision",
+        "mode": "read_only",
+        "status": "available_in_console_prototype",
+        "event_required": false
+      }
+    ],
+    "disabled_actions": [
+      {
+        "action": "pause_citizen",
+        "reason": "Requires operator command packet design and kernel handling.",
+        "future_issue": 2192
+      },
+      {
+        "action": "request_snapshot",
+        "reason": "Requires snapshot command packet and Runtime v2 snapshot implementation.",
+        "future_issue": 2192
+      },
+      {
+        "action": "resume_citizen",
+        "reason": "Requires recovery eligibility and wake semantics.",
+        "future_issue": 2192
+      }
+    ],
+    "required_confirmations": [
+      "live mutation actions must remain disabled until command packets are routed through the kernel"
+    ],
+    "safety_notes": [
+      "The packet is read-only.",
+      "The Observatory UI must never mutate Runtime v2 state directly.",
+      "Future commands must produce operator events."
+    ]
+  },
+  "review": {
+    "primary_artifacts": [
+      "docs/milestones/v0.90.1/features/CSM_OBSERVATORY_VISIBILITY_PACKET.md",
+      "adl/schemas/csm_visibility_packet.v1.schema.json",
+      "demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json"
+    ],
+    "missing_artifacts": [
+      {
+        "artifact": "runtime_v2/freedom_gate/live_decisions.jsonl",
+        "status": "deferred",
+        "owner": "future Runtime v2 Freedom Gate work"
+      },
+      {
+        "artifact": "runtime_v2/snapshots/latest/snapshot.json",
+        "status": "deferred",
+        "owner": "future snapshot/wake work"
+      }
+    ],
+    "demo_classification": "fixture_backed",
+    "caveats": [
+      "This packet is a fixture-backed contract and does not prove a live CSM run.",
+      "Citizen identity is provisional and does not claim v0.92 birthday or rebinding semantics.",
+      "Operator actions are read-only affordances until command packets and kernel handling land."
+    ],
+    "next_consumers": [
+      {
+        "issue": 2189,
+        "consumer": "static Observatory console prototype"
+      },
+      {
+        "issue": 2190,
+        "consumer": "operator report generator"
+      },
+      {
+        "issue": 2191,
+        "consumer": "CLI integration"
+      },
+      {
+        "issue": 2192,
+        "consumer": "operator command packet design"
+      }
+    ]
+  }
+}

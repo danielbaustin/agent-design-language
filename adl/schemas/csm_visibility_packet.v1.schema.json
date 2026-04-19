@@ -1,0 +1,282 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-design-language.org/schemas/csm_visibility_packet.v1.schema.json",
+  "title": "ADL CSM Visibility Packet v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "packet_id",
+    "generated_at",
+    "source",
+    "manifold",
+    "kernel",
+    "citizens",
+    "episodes",
+    "freedom_gate",
+    "invariants",
+    "resources",
+    "trace",
+    "operator_actions",
+    "review"
+  ],
+  "properties": {
+    "schema": {
+      "const": "adl.csm_visibility_packet.v1"
+    },
+    "packet_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "mode",
+        "evidence_level",
+        "fixture",
+        "runtime_artifact_root",
+        "claim_boundary"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "fixture",
+            "captured_artifacts",
+            "live_runtime"
+          ]
+        },
+        "evidence_level": {
+          "$ref": "#/$defs/evidence_level"
+        },
+        "fixture": {
+          "type": "boolean"
+        },
+        "runtime_artifact_root": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "claim_boundary": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "manifold": {
+      "type": "object",
+      "required": [
+        "manifold_id",
+        "display_name",
+        "state",
+        "lifecycle",
+        "current_tick",
+        "uptime",
+        "policy_profile",
+        "snapshot_status",
+        "health",
+        "evidence_refs"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "initialized",
+            "running",
+            "quiescing",
+            "sleeping",
+            "sealed",
+            "rehydrating",
+            "degraded",
+            "blocked"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "kernel": {
+      "type": "object",
+      "required": [
+        "scheduler_state",
+        "trace_state",
+        "invariant_state",
+        "resource_state",
+        "service_states",
+        "active_guardrails",
+        "pulse"
+      ],
+      "additionalProperties": true
+    },
+    "citizens": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": [
+          "citizen_id",
+          "display_name",
+          "role",
+          "lifecycle_state",
+          "continuity_status",
+          "current_episode",
+          "resource_balance",
+          "recent_decisions",
+          "capability_envelope",
+          "alerts",
+          "evidence_refs"
+        ],
+        "properties": {
+          "lifecycle_state": {
+            "enum": [
+              "proposed",
+              "active",
+              "awake",
+              "sleeping",
+              "paused",
+              "degraded",
+              "blocked",
+              "suspended",
+              "migrating"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "episodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "episode_id",
+          "title",
+          "state",
+          "citizen_ids",
+          "started_at",
+          "last_event",
+          "proof_surface",
+          "blocked_reason"
+        ],
+        "properties": {
+          "state": {
+            "enum": [
+              "planned",
+              "active",
+              "completed",
+              "blocked",
+              "deferred",
+              "failed"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "freedom_gate": {
+      "type": "object",
+      "required": [
+        "recent_docket",
+        "allow_count",
+        "defer_count",
+        "refuse_count",
+        "open_questions",
+        "rejected_actions"
+      ],
+      "additionalProperties": true
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "invariant_id",
+          "name",
+          "state",
+          "severity",
+          "last_checked",
+          "evidence_ref"
+        ],
+        "properties": {
+          "state": {
+            "enum": [
+              "healthy",
+              "warning",
+              "violated",
+              "blocked",
+              "missing",
+              "deferred"
+            ]
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "resources": {
+      "type": "object",
+      "required": [
+        "compute_units",
+        "memory_pressure",
+        "queue_depth",
+        "fairness_notes",
+        "scarcity_events"
+      ],
+      "additionalProperties": true
+    },
+    "trace": {
+      "type": "object",
+      "required": [
+        "trace_tail",
+        "causal_gaps",
+        "latest_operator_event",
+        "latest_citizen_event",
+        "latest_kernel_event"
+      ],
+      "additionalProperties": true
+    },
+    "operator_actions": {
+      "type": "object",
+      "required": [
+        "available_actions",
+        "disabled_actions",
+        "required_confirmations",
+        "safety_notes"
+      ],
+      "additionalProperties": true
+    },
+    "review": {
+      "type": "object",
+      "required": [
+        "primary_artifacts",
+        "missing_artifacts",
+        "demo_classification",
+        "caveats",
+        "next_consumers"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "evidence_level": {
+      "enum": [
+        "fixture_backed",
+        "artifact_backed",
+        "live_runtime_backed",
+        "missing",
+        "deferred"
+      ]
+    }
+  }
+}
