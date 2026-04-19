@@ -24,3 +24,8 @@ v2 artifacts to reviewer-facing console, report, CLI, and future operator
 command surfaces:
 
 - `CSM_OBSERVATORY_VISIBILITY_PACKET.md`
+
+The first text report surface renders that packet into a compact operator and
+reviewer brief:
+
+- `CSM_OBSERVATORY_OPERATOR_REPORT.md`
