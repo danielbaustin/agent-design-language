@@ -1,0 +1,45 @@
+# Milestone Checklist - v0.90.2
+
+## Planning
+
+- [ ] Planning docs promoted into `docs/milestones/v0.90.2/`
+- [ ] Issue wave opened from reviewed WP YAML
+- [ ] v0.90.1 inheritance audited against actual landed artifacts
+- [ ] Compression readiness reviewed before implementation begins
+- [ ] CSM run packet contract reviewed before Runtime v2 work widens
+- [ ] Scope boundary reviewed against v0.91 and v0.92
+
+## Implementation
+
+- [ ] `proto-csm-01` boot and citizen admission complete
+- [ ] Governed episode and resource scheduling complete
+- [ ] Freedom Gate mediation complete
+- [ ] Invalid action rejection complete
+- [ ] Snapshot rehydrate wake continuity complete
+- [ ] Observatory packet and operator report integrated
+- [ ] Invariant coverage map complete
+- [ ] Violation artifact contract implemented
+- [ ] Recovery eligibility model implemented
+- [ ] Quarantine state machine implemented
+- [ ] Governed adversarial hook complete with rules of engagement and evidence
+- [ ] Additional hardening probes complete
+- [ ] Integrated first CSM run demo implemented
+
+## Truth And Safety
+
+- [ ] No docs claim v0.90.2 births the first true Gödel agent
+- [ ] No docs claim full moral/emotional civilization
+- [ ] No docs claim cross-polis migration or v0.92 identity rebinding
+- [ ] No docs center red/blue ecology as the Runtime v2 thesis
+- [ ] Governed adversarial hook remains bounded and operator-scoped
+- [ ] Security-boundary evidence is present and bounded
+- [ ] Recovery and quarantine outcomes are explicit
+- [ ] Quality gate is green or exceptions are explicit
+
+## Release
+
+- [ ] Internal review complete
+- [ ] Accepted findings remediated or explicitly deferred
+- [ ] Release notes describe landed work only
+- [ ] v0.91/v0.92 handoff preserves later scope
+- [ ] Release ceremony complete

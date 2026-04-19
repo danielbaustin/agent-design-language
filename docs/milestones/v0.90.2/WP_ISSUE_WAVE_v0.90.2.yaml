@@ -1,0 +1,73 @@
+milestone: v0.90.2
+status: planning_draft
+issue_wave_opened: false
+planning_source: docs/milestones/v0.90.2
+promotion_target: docs/milestones/v0.90.2
+notes:
+  - "Draft only. Create real issues after v0.90.1 closeout and v0.90.2 promotion review."
+  - "Do not claim first true Gödel-agent birthday in v0.90.2."
+  - "Do not collapse v0.91 moral/emotional civilization or v0.92 birthday scope into v0.90.2."
+  - "v0.90.2 is the first bounded CSM run milestone plus hardening around that run."
+  - "Preserve one distinct governed adversarial hook in WP-13 without turning v0.90.2 into the full security ecology."
+  - "Apply v0.90.1 compression rules: generated issue wave, worktree-first execution, validation profiles, and continuously maintained evidence."
+work_packages:
+  - wp: WP-01
+    title: Promote and finalize v0.90.2 milestone package
+    outcome: tracked milestone docs and issue cards
+  - wp: WP-02
+    title: Runtime v2 inheritance and compression audit
+    outcome: inheritance and compression report
+  - wp: WP-03
+    title: CSM run packet contract
+    outcome: CSM run contract and fixture
+  - wp: WP-04
+    title: Invariant and violation artifact contract
+    outcome: invariant map, violation schema, and fixtures
+  - wp: WP-05
+    title: Manifold boot and citizen admission
+    outcome: boot/admission artifacts and tests
+  - wp: WP-06
+    title: Governed episode and resource scheduling
+    outcome: scheduling artifact and trace
+  - wp: WP-07
+    title: Freedom Gate mediation
+    outcome: decision artifact and tests
+  - wp: WP-08
+    title: Invalid action rejection
+    outcome: violation packet and negative test
+  - wp: WP-09
+    title: Snapshot rehydrate and wake continuity
+    outcome: continuity proof packet
+  - wp: WP-10
+    title: Observatory packet and operator report integration
+    outcome: Observatory packet and operator report
+  - wp: WP-11
+    title: Recovery eligibility model
+    outcome: recovery decision record
+  - wp: WP-12
+    title: Quarantine state machine
+    outcome: quarantine artifact and tests
+  - wp: WP-13
+    title: Governed adversarial hook and hardening probes
+    outcome: adversarial hook packet and hardening proof packets
+  - wp: WP-14
+    title: Integrated first CSM run demo
+    outcome: integrated CSM run demo packet
+  - wp: WP-15
+    title: Runtime v2 first-run docs pass
+    outcome: aligned feature docs, demo matrix, and README
+  - wp: WP-16
+    title: Quality and coverage gate
+    outcome: truthful quality posture
+  - wp: WP-17
+    title: Internal review
+    outcome: findings-first internal review packet
+  - wp: WP-18
+    title: Review remediation
+    outcome: accepted findings fixed or explicitly deferred
+  - wp: WP-19
+    title: Release readiness and v0.91/v0.92 handoff
+    outcome: release notes, checklist, reviewer handoff, and preserved later boundaries
+  - wp: WP-20
+    title: Release ceremony
+    outcome: v0.90.2 closed truthfully
