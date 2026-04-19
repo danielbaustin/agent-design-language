@@ -42,7 +42,7 @@ are not accepted ADRs until reviewed and promoted.
 
 ## Candidate 0004: Long-Lived Agents Are Cycle-Bounded
 
-- Proposed status: candidate
+- Proposed status: promoted as `docs/adr/0011-long-lived-agent-runtime.md`
 - Context: continuous agents can obscure state, authority, and failure history
   unless each cycle is bounded.
 - Proposed decision: long-lived agents should emit cycle-scoped leases, status,
