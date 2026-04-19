@@ -43,17 +43,25 @@ def source_files(source: Path) -> list[Path]:
         return [source]
     if not source.is_dir():
         return []
-    preferred = [
-        source / "final_report.md",
-        source / "synthesis.md",
+    for synthesized in (
+        [source / "final_report.md"],
+        [source / "synthesis.md", source / "specialist_reviews" / "synthesis.md"],
+        [source / "product-report" / "codebuddy_product_report.md"],
+    ):
+        files = [path for path in synthesized if path.is_file()]
+        if files:
+            return files
+
+    specialist = [
         source / "specialist_reviews" / "code.md",
         source / "specialist_reviews" / "security.md",
         source / "specialist_reviews" / "tests.md",
         source / "specialist_reviews" / "docs.md",
         source / "specialist_reviews" / "architecture.md",
         source / "specialist_reviews" / "dependencies.md",
+        source / "specialist_reviews" / "dependency.md",
     ]
-    files = [path for path in preferred if path.is_file()]
+    files = [path for path in specialist if path.is_file()]
     if files:
         return files
     return sorted(source.rglob("*.md"))[:30]

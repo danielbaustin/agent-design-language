@@ -90,6 +90,13 @@ cat >"${packet_root}/specialist_reviews/security.md" <<'MD'
 - Recommended action: require redaction status in the quality gate.
 - Validation or proof gap: verify customer-private output fails without redaction.
 MD
+cat >"${packet_root}/specialist_reviews/dependencies.md" <<'MD'
+# Dependency Review
+
+## Findings
+
+No dependency findings.
+MD
 cat >"${packet_root}/final_report.md" <<'MD'
 # CodeBuddy Review Report: example-repo
 
@@ -140,7 +147,7 @@ MD
 
 python3 "${skills_root}/review-quality-evaluator/scripts/evaluate_review_quality.py" \
   "${packet_root}" --out "${quality_root}" --publication-intent customer_private \
-  --required-role code --required-role security >/tmp/review-quality-evaluator.out
+  --required-role code --required-role security --required-role dependencies >/tmp/review-quality-evaluator.out
 [[ -f "${quality_root}/review_quality_evaluation.json" ]]
 [[ -f "${quality_root}/review_quality_evaluation.md" ]]
 grep -Fq '"schema": "codebuddy.review_quality_evaluation.v1"' "${quality_root}/review_quality_evaluation.json"
@@ -149,6 +156,18 @@ grep -Fq '"status": "pass"' "${quality_root}/review_quality_evaluation.json"
 grep -Fq '"publication_intent": "customer_private"' "${quality_root}/review_quality_evaluation.json"
 grep -Fq '"published_by_skill": false' "${quality_root}/review_quality_evaluation.json"
 grep -Fq '"approval_claimed": false' "${quality_root}/review_quality_evaluation.json"
+grep -Fq '"dependencies"' "${quality_root}/review_quality_evaluation.json"
+python3 - "${quality_root}/review_quality_evaluation.json" <<'PY'
+import json
+import sys
+evaluation = json.load(open(sys.argv[1], encoding="utf-8"))
+assert "dependencies" in evaluation["specialist_coverage"]["present_roles"]
+assert "dependencies" not in evaluation["specialist_coverage"]["missing_roles"]
+assert not [
+    warning for warning in evaluation["warnings"]
+    if warning.get("check") == "duplication"
+], evaluation["warnings"]
+PY
 grep -Fq "## Quality Gate Summary" "${quality_root}/review_quality_evaluation.md"
 grep -Fq "## Scorecard" "${quality_root}/review_quality_evaluation.md"
 grep -Fq "## Publication Boundary" "${quality_root}/review_quality_evaluation.md"
@@ -156,7 +175,7 @@ grep -Fq "## Publication Boundary" "${quality_root}/review_quality_evaluation.md
 rm "${packet_root}/redaction_report.md"
 python3 "${skills_root}/review-quality-evaluator/scripts/evaluate_review_quality.py" \
   "${packet_root}" --out "${quality_root}/fail" --publication-intent customer_private \
-  --required-role code --required-role security >/tmp/review-quality-evaluator-fail.out
+  --required-role code --required-role security --required-role dependencies >/tmp/review-quality-evaluator-fail.out
 grep -Fq '"status": "fail"' "${quality_root}/fail/review_quality_evaluation.json"
 grep -Fq '"check": "redaction"' "${quality_root}/fail/review_quality_evaluation.json"
 

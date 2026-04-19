@@ -105,23 +105,46 @@ def read_manifest(root: Path) -> dict[str, object]:
 
 
 def preferred_review_sources(root: Path) -> list[Path]:
-    preferred = [
-        root / "final_report.md",
-        root / "product-report" / "codebuddy_product_report.md",
-        root / "synthesis.md",
-        root / "specialist_reviews" / "synthesis.md",
+    for final_reports in (
+        [root / "final_report.md"],
+        [root / "product-report" / "codebuddy_product_report.md"],
+        [root / "synthesis.md", root / "specialist_reviews" / "synthesis.md"],
+    ):
+        found_final = [path for path in final_reports if path.is_file()]
+        if found_final:
+            return found_final
+
+    specialist = [
         root / "specialist_reviews" / "code.md",
         root / "specialist_reviews" / "security.md",
         root / "specialist_reviews" / "tests.md",
         root / "specialist_reviews" / "docs.md",
         root / "specialist_reviews" / "architecture.md",
         root / "specialist_reviews" / "dependencies.md",
+        root / "specialist_reviews" / "dependency.md",
         root / "redaction_report.md",
+        root / "redaction-audit" / "redaction_report.md",
     ]
-    found = [path for path in preferred if path.is_file()]
+    found = [path for path in specialist if path.is_file()]
     if found:
         return found
     return sorted(path for path in root.rglob("*.md") if "quality-evaluation" not in path.parts)[:50]
+
+
+def role_artifact_sources(root: Path) -> list[Path]:
+    preferred = [
+        root / "specialist_reviews" / "code.md",
+        root / "specialist_reviews" / "security.md",
+        root / "specialist_reviews" / "tests.md",
+        root / "specialist_reviews" / "docs.md",
+        root / "specialist_reviews" / "architecture.md",
+        root / "specialist_reviews" / "dependencies.md",
+        root / "specialist_reviews" / "dependency.md",
+        root / "architecture-review" / "architecture_review_scaffold.md",
+        root / "dependency-review" / "dependency_review_scaffold.md",
+    ]
+    found = [path for path in preferred if path.is_file()]
+    return found or preferred_review_sources(root)
 
 
 def all_review_text(root: Path) -> str:
@@ -211,13 +234,18 @@ def source_scope(root: Path) -> dict[str, object]:
 
 
 def role_coverage(root: Path, required_roles: list[str]) -> dict[str, object]:
-    sources = preferred_review_sources(root)
+    sources = role_artifact_sources(root)
     source_names = {packet_relative(root, path).lower() for path in sources}
     present: dict[str, bool] = {}
     for role in required_roles:
         role_l = role.lower()
+        aliases = {
+            "dependency": ["dependency", "dependencies"],
+            "dependencies": ["dependency", "dependencies"],
+        }.get(role_l, [role_l])
         present[role_l] = any(
-            f"/{role_l}.md" in f"/{name}" or role_l in read_text(path).lower().splitlines()[0:5]
+            any(f"/{alias}.md" in f"/{name}" or alias in name for alias in aliases)
+            or any(alias in "\n".join(read_text(path).lower().splitlines()[0:8]) for alias in aliases)
             for name, path in [(packet_relative(root, item).lower(), item) for item in sources]
         )
     missing = [role for role, exists in present.items() if not exists]

@@ -94,19 +94,37 @@ def role_from_path(path: Path, block: str) -> str:
     return "review"
 
 
+def first_existing(root: Path, candidates: list[str]) -> Path | None:
+    for rel in candidates:
+        path = root / rel
+        if path.is_file():
+            return path
+    return None
+
+
+def any_existing(root: Path, candidates: list[str]) -> bool:
+    return first_existing(root, candidates) is not None
+
+
 def finding_sources(root: Path) -> list[Path]:
-    preferred = [
-        root / "final_report.md",
-        root / "synthesis.md",
-        root / "specialist_reviews" / "synthesis.md",
+    for synthesized in (
+        [root / "final_report.md"],
+        [root / "synthesis.md", root / "specialist_reviews" / "synthesis.md"],
+    ):
+        found_synthesized = [path for path in synthesized if path.is_file()]
+        if found_synthesized:
+            return found_synthesized
+
+    specialist = [
         root / "specialist_reviews" / "code.md",
         root / "specialist_reviews" / "security.md",
         root / "specialist_reviews" / "tests.md",
         root / "specialist_reviews" / "docs.md",
         root / "specialist_reviews" / "architecture.md",
         root / "specialist_reviews" / "dependencies.md",
+        root / "specialist_reviews" / "dependency.md",
     ]
-    found = [path for path in preferred if path.is_file()]
+    found = [path for path in specialist if path.is_file()]
     if found:
         return found
     return sorted(root.rglob("*.md"))[:40]
@@ -195,17 +213,38 @@ def read_manifest(root: Path, repo_name_override: str | None) -> dict[str, objec
 
 def artifact_status(root: Path) -> dict[str, object]:
     return {
-        "redaction_report": (root / "redaction_report.md").is_file(),
-        "quality_evaluation": any(path.is_file() for path in [root / "quality_evaluation.md", root / "review_quality.md"]),
-        "diagram_manifest": any(path.is_file() for path in [root / "diagrams" / "diagram_manifest.md", root / "diagram_manifest.md"]),
-        "test_plan": any(path.is_file() for path in [root / "test_recommendations" / "test_gap_report.md", root / "review-to-test-plan" / "review_to_test_plan.md"]),
-        "issue_plan": any(path.is_file() for path in [root / "issue-planning" / "issue_candidates.md"]),
+        "redaction_report": any_existing(root, ["redaction_report.md", "redaction-audit/redaction_report.md"]),
+        "quality_evaluation": any_existing(
+            root,
+            [
+                "quality_evaluation.md",
+                "review_quality.md",
+                "quality-evaluation/review_quality_evaluation.md",
+            ],
+        ),
+        "diagram_manifest": any_existing(
+            root,
+            [
+                "diagrams/diagram_manifest.md",
+                "diagram_manifest.md",
+                "diagram-plan/repo_diagram_plan.md",
+            ],
+        ),
+        "test_plan": any_existing(
+            root,
+            [
+                "test_recommendations/test_gap_report.md",
+                "review-to-test-plan/review_to_test_plan.md",
+                "test-plan/review_to_test_plan.md",
+            ],
+        ),
+        "issue_plan": any_existing(root, ["issue-planning/issue_candidates.md", "issue-plan/issue_candidates.md"]),
     }
 
 
 def diagram_links(root: Path) -> list[str]:
     links: list[str] = []
-    for rel in ("diagrams/diagram_manifest.md", "diagram_manifest.md"):
+    for rel in ("diagrams/diagram_manifest.md", "diagram_manifest.md", "diagram-plan/repo_diagram_plan.md"):
         path = root / rel
         if path.is_file():
             links.append(rel)
@@ -216,6 +255,7 @@ def test_recommendations(root: Path) -> list[str]:
     paths = [
         root / "test_recommendations" / "test_gap_report.md",
         root / "review-to-test-plan" / "review_to_test_plan.md",
+        root / "test-plan" / "review_to_test_plan.md",
     ]
     found = [packet_relative(root, path) for path in paths if path.is_file()]
     return found or ["No test recommendation artifact found in packet."]
@@ -267,6 +307,7 @@ def build_report(root: Path, audience: str, repo_name_override: str | None) -> d
             "remediation_complete_claimed": False,
         },
         "scope": scope,
+        "artifact_status": artifacts,
         "top_findings": findings[:8],
         "architecture_summary": architecture_summary(findings, artifacts),
         "security_privacy_notes": security_privacy_notes(findings, artifacts, manifest),
@@ -308,9 +349,13 @@ def appendix(root: Path) -> list[str]:
         "synthesis.md",
         "redaction_report.md",
         "quality_evaluation.md",
+        "quality-evaluation/review_quality_evaluation.md",
         "diagrams/diagram_manifest.md",
+        "diagram-plan/repo_diagram_plan.md",
         "test_recommendations/test_gap_report.md",
+        "test-plan/review_to_test_plan.md",
         "issue-planning/issue_candidates.md",
+        "issue-plan/issue_candidates.md",
     ):
         if (root / rel).is_file():
             names.append(rel)
@@ -387,7 +432,7 @@ def write_markdown(path: Path, report: dict[str, object]) -> None:
 
 {numbered_lines(report['remediation_sequence'])}
 
-## Caveats And Residual Risks
+## Residual Risks
 
 {bullet_lines(report['residual_risks'])}
 

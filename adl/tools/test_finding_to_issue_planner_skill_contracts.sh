@@ -70,6 +70,61 @@ if grep -R "${tmpdir}" "${out_root}" >/dev/null; then
   exit 1
 fi
 
+packet_root="${tmpdir}/packet"
+packet_out="${tmpdir}/packet-issue-plan"
+mkdir -p "${packet_root}/specialist_reviews"
+cat >"${packet_root}/specialist_reviews/code.md" <<'MARKDOWN'
+# Code Review
+
+## Findings
+
+### Finding C-001: [P1] Duplicate raw packet finding
+
+- Role: code
+- Affected path or artifact: adl/tools/report.sh
+- Evidence: raw specialist evidence.
+- Impact: duplicate raw finding.
+- Recommended action: use synthesis.
+MARKDOWN
+cat >"${packet_root}/specialist_reviews/security.md" <<'MARKDOWN'
+# Security Review
+
+## Findings
+
+### Finding S-002: [P2] Duplicate raw packet finding
+
+- Role: security
+- Affected path or artifact: adl/tools/report.sh
+- Evidence: raw specialist evidence.
+- Impact: duplicate raw finding.
+- Recommended action: use synthesis.
+MARKDOWN
+cat >"${packet_root}/specialist_reviews/synthesis.md" <<'MARKDOWN'
+# Review Synthesis
+
+## Findings
+
+### Finding SYN-001: [P1] Synthesis grouped packet finding
+
+- Role: synthesis
+- Confidence: high
+- Affected path or artifact: adl/tools/report.sh
+- Evidence: synthesis groups C-001 and S-002 into one remediation bucket.
+- Impact: downstream issue planning should not create one issue per raw specialist finding.
+- Recommended action: create one bounded issue from the synthesis bucket.
+- Validation or proof gap: rerun finding-to-issue planner contract tests.
+- Related findings: C-001, S-002
+MARKDOWN
+
+python3 "${skills_root}/finding-to-issue-planner/scripts/plan_review_issues.py" \
+  "${packet_root}" --out "${packet_out}" --tracker github >/tmp/finding-to-issue-planner-packet.out
+grep -Fq '"candidate_count": 1' "${packet_out}/issue_candidates.json"
+grep -Fq '"SYN-001"' "${packet_out}/issue_candidates.json"
+if grep -Fq '"C-001"' "${packet_out}/issue_candidates.json" || grep -Fq '"S-002"' "${packet_out}/issue_candidates.json"; then
+  echo "packet issue planning should prefer synthesis over duplicate specialist findings" >&2
+  exit 1
+fi
+
 bash "${repo_root}/adl/tools/validate_skill_frontmatter.sh" \
   "${skills_root}/finding-to-issue-planner/SKILL.md"
 
