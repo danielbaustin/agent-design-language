@@ -2,7 +2,8 @@
 
 ## Headline
 
-v0.90.1 introduces the first bounded Runtime v2 foundation prototype.
+v0.90.1 is planned to introduce the first bounded Runtime v2 foundation
+prototype.
 
 ## Planned Highlights
 
