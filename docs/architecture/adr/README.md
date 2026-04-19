@@ -1,8 +1,11 @@
 # Architecture Decision Records
 
-This directory stores ADL architecture decision records and ADR candidates.
+This directory stores ADL architecture decision candidates and architecture
+review outputs.
 
-Current tracked file:
+Accepted ADRs live in `docs/adr/`.
+
+Current tracked candidate file:
 
 - `CANDIDATE_ADRS.md`
 
