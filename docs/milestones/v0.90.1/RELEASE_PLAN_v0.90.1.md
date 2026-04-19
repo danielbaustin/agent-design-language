@@ -9,6 +9,8 @@ weakened release truth.
 
 ## Required Release Evidence
 
+- Opened issue wave with WP-01 as #2141 and WP-02 through WP-20 as #2142
+  through #2160
 - Integrated Runtime v2 proof packet
 - Compression-enablement proof for issue-wave generation, worktree-first
   execution, and current execution policy

@@ -2,11 +2,11 @@
 
 ## Status
 
-Tracked next-milestone planning package promoted during the v0.90 WP-19
-release-tail planning gate.
+Active milestone package. The issue wave is open and ready for Sprint 1
+execution.
 
-The package is ready for v0.90.1 issue-wave authoring after v0.90 release
-ceremony approval. It is not evidence that v0.90.1 implementation has started.
+WP-01 opened the v0.90.1 issue wave after the v0.90 release ceremony. WP-01 is
+#2141; WP-02 through WP-20 are #2142 through #2160.
 
 ## Thesis
 
@@ -74,12 +74,11 @@ Out of scope:
 
 ## Issue-Wave Rule
 
-After v0.90 release ceremony approval, v0.90.1 WP-01 should open the actual
-GitHub issue wave and author the task cards from this tracked package.
+WP-01 opened the actual GitHub issue wave and authored the local task cards
+from this tracked package.
 
-Do not treat the tracked package itself as an opened issue wave. The wave is
-not open until the WP-01 issue-creation step records real issue numbers and
-updates the YAML.
+The wave is now open. Treat WP_ISSUE_WAVE_v0.90.1.yaml as the issue-number
+source of truth for WP routing.
 
 ## Compression Rule
 

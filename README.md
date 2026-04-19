@@ -104,11 +104,11 @@ Other useful entrypoints:
 
 ## Current Status
 
-- Active milestone: **v0.90.1 planning is ready to start**
-- Current release state: **v0.90 final release package ready for tag/release ceremony**
+- Active milestone: **v0.90.1**
+- Current release state: **v0.90 released; v0.90.1 issue wave open**
 - Most recently completed milestone: **v0.90**
 - Current crate version: **0.90.0**
-- Version note: **v0.90 implementation, coverage, Rust refactoring, internal review, third-party review, accepted remediation, next-milestone planning, and release ceremony preparation are complete; the release ceremony script creates the tag and GitHub release after merge**
+- Version note: **v0.90 is tagged and released; v0.90.1 WP-01 opened the Runtime v2 foundation issue wave**
 - Previous completed milestone package: **v0.89.1**
 - Previous completed milestone: **v0.89**
 - Project changelog: `CHANGELOG.md`
@@ -117,11 +117,11 @@ ADL is in active development. This repository contains both implemented runtime 
 
 ## Current Milestone
 
-v0.90.1 is the next milestone package and is ready to start after the v0.90 tag/release ceremony. Its tracked planning package lives under `docs/milestones/v0.90.1/`.
+v0.90.1 is the active milestone package. Its issue wave is open, with WP-01 at #2141 and WP-02 through WP-20 at #2142 through #2160. The tracked planning package lives under `docs/milestones/v0.90.1/`.
 
 v0.90 is the just-completed long-lived-agent runtime milestone. It carries ADL from bounded single-run proof surfaces into supervised recurring cycles with durable artifacts, pre-identity continuity handles, operator controls, demo proof, milestone compression, repo visibility, explicit Rust refactoring, and a measured coverage ratchet.
 
-The implementation wave landed through the long-lived runtime, stock-league demo, demo-extension, compression, repo-visibility, coverage, Rust-refactoring, docs, and internal-review surfaces. The release tail completed third-party review, accepted ADR remediation, next-milestone planning, and release ceremony preparation. The release ceremony script performs the remaining tag/GitHub-release operation after this final package merges.
+The implementation wave landed through the long-lived runtime, stock-league demo, demo-extension, compression, repo-visibility, coverage, Rust-refactoring, docs, and internal-review surfaces. The release tail completed third-party review, accepted ADR remediation, next-milestone planning, and release ceremony.
 
 Best current v0.90 entrypoints:
 - milestone docs: `docs/milestones/v0.90/README.md`
