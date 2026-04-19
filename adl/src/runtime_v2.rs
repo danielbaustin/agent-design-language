@@ -9,6 +9,8 @@ pub const RUNTIME_V2_KERNEL_SERVICE_STATE_SCHEMA: &str = "runtime_v2.kernel.serv
 pub const RUNTIME_V2_KERNEL_LOOP_EVENT_SCHEMA: &str = "runtime_v2.kernel.service_loop_event.v1";
 pub const RUNTIME_V2_PROVISIONAL_CITIZEN_SCHEMA: &str = "runtime_v2.provisional_citizen.v1";
 pub const RUNTIME_V2_CITIZEN_REGISTRY_INDEX_SCHEMA: &str = "runtime_v2.citizen_registry_index.v1";
+pub const RUNTIME_V2_SNAPSHOT_MANIFEST_SCHEMA: &str = "runtime_v2.snapshot_manifest.v1";
+pub const RUNTIME_V2_REHYDRATION_REPORT_SCHEMA: &str = "runtime_v2.rehydration_report.v1";
 pub const DEFAULT_MANIFOLD_ARTIFACT_PATH: &str = "runtime_v2/manifold.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -193,6 +195,54 @@ pub struct RuntimeV2CitizenLifecycleArtifacts {
     pub records: Vec<RuntimeV2ProvisionalCitizenRecord>,
     pub active_index: RuntimeV2CitizenRegistryIndex,
     pub pending_index: RuntimeV2CitizenRegistryIndex,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2SnapshotInvariantStatus {
+    pub invariant_id: String,
+    pub status: String,
+    pub checked_before_snapshot: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2SnapshotManifest {
+    pub schema_version: String,
+    pub snapshot_id: String,
+    pub manifold_id: String,
+    pub snapshot_path: String,
+    pub created_at_utc: String,
+    pub manifold_state: RuntimeV2ManifoldRoot,
+    pub citizen_records: Vec<RuntimeV2ProvisionalCitizenRecord>,
+    pub active_index: RuntimeV2CitizenRegistryIndex,
+    pub pending_index: RuntimeV2CitizenRegistryIndex,
+    pub kernel_service_state: RuntimeV2KernelServiceState,
+    pub last_trace_cursor: u64,
+    pub invariant_status: Vec<RuntimeV2SnapshotInvariantStatus>,
+    pub structural_checksum: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2RehydrationReport {
+    pub schema_version: String,
+    pub snapshot_id: String,
+    pub manifold_id: String,
+    pub report_path: String,
+    pub restored_manifold_id: String,
+    pub restored_lifecycle_state: String,
+    pub trace_resume_sequence: u64,
+    pub invariant_checks_ran_before_resume: bool,
+    pub duplicate_active_citizen_detected: bool,
+    pub restored_active_citizens: Vec<String>,
+    pub wake_allowed: bool,
+    pub wake_refused_reason: Option<String>,
+    pub snapshot_checksum: String,
+    pub rehydrated_at_utc: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RuntimeV2SnapshotAndRehydrationArtifacts {
+    pub snapshot: RuntimeV2SnapshotManifest,
+    pub rehydration_report: RuntimeV2RehydrationReport,
 }
 
 impl RuntimeV2ManifoldRoot {
@@ -680,6 +730,309 @@ impl RuntimeV2CitizenLifecycleArtifacts {
     }
 }
 
+impl RuntimeV2SnapshotAndRehydrationArtifacts {
+    pub fn prototype(
+        manifold: &RuntimeV2ManifoldRoot,
+        kernel: &RuntimeV2KernelLoopArtifacts,
+        citizens: &RuntimeV2CitizenLifecycleArtifacts,
+    ) -> Result<Self> {
+        manifold.validate()?;
+        kernel.validate()?;
+        citizens.validate()?;
+        if kernel.state.manifold_id != manifold.manifold_id {
+            return Err(anyhow!(
+                "snapshot kernel state manifold id must match manifold"
+            ));
+        }
+        if citizens.active_index.manifold_id != manifold.manifold_id {
+            return Err(anyhow!("snapshot citizen manifold id must match manifold"));
+        }
+
+        let snapshot_id = "snapshot-0001".to_string();
+        let mut manifold_state = manifold.clone();
+        manifold_state.lifecycle_state = "snapshotting".to_string();
+        manifold_state.snapshot_root.latest_snapshot_id = Some(snapshot_id.clone());
+        let invariant_status = manifold
+            .invariant_policy_refs
+            .blocking_invariants
+            .iter()
+            .map(|invariant_id| RuntimeV2SnapshotInvariantStatus {
+                invariant_id: invariant_id.clone(),
+                status: "passed".to_string(),
+                checked_before_snapshot: true,
+            })
+            .collect::<Vec<_>>();
+        let mut snapshot = RuntimeV2SnapshotManifest {
+            schema_version: RUNTIME_V2_SNAPSHOT_MANIFEST_SCHEMA.to_string(),
+            snapshot_id: snapshot_id.clone(),
+            manifold_id: manifold.manifold_id.clone(),
+            snapshot_path: "runtime_v2/snapshots/snapshot-0001.json".to_string(),
+            created_at_utc: "not_started".to_string(),
+            manifold_state,
+            citizen_records: citizens.records.clone(),
+            active_index: citizens.active_index.clone(),
+            pending_index: citizens.pending_index.clone(),
+            kernel_service_state: kernel.state.clone(),
+            last_trace_cursor: kernel.state.completed_through_event_sequence,
+            invariant_status,
+            structural_checksum: String::new(),
+        };
+        snapshot.structural_checksum = snapshot.compute_structural_checksum()?;
+        snapshot.validate()?;
+
+        let rehydration_report = RuntimeV2RehydrationReport {
+            schema_version: RUNTIME_V2_REHYDRATION_REPORT_SCHEMA.to_string(),
+            snapshot_id: snapshot.snapshot_id.clone(),
+            manifold_id: snapshot.manifold_id.clone(),
+            report_path: snapshot
+                .manifold_state
+                .snapshot_root
+                .rehydration_report_path
+                .clone(),
+            restored_manifold_id: snapshot.manifold_id.clone(),
+            restored_lifecycle_state: "active".to_string(),
+            trace_resume_sequence: snapshot.last_trace_cursor + 1,
+            invariant_checks_ran_before_resume: true,
+            duplicate_active_citizen_detected: false,
+            restored_active_citizens: snapshot
+                .active_index
+                .citizens
+                .iter()
+                .map(|entry| entry.citizen_id.clone())
+                .collect(),
+            wake_allowed: true,
+            wake_refused_reason: None,
+            snapshot_checksum: snapshot.structural_checksum.clone(),
+            rehydrated_at_utc: "not_started".to_string(),
+        };
+        let artifacts = Self {
+            snapshot,
+            rehydration_report,
+        };
+        artifacts.validate()?;
+        Ok(artifacts)
+    }
+
+    pub fn validate(&self) -> Result<()> {
+        self.snapshot.validate()?;
+        self.rehydration_report
+            .validate_against_snapshot(&self.snapshot)
+    }
+
+    pub fn snapshot_pretty_json_bytes(&self) -> Result<Vec<u8>> {
+        self.validate()?;
+        serde_json::to_vec_pretty(&self.snapshot).context("serialize Runtime v2 snapshot manifest")
+    }
+
+    pub fn rehydration_report_pretty_json_bytes(&self) -> Result<Vec<u8>> {
+        self.validate()?;
+        serde_json::to_vec_pretty(&self.rehydration_report)
+            .context("serialize Runtime v2 rehydration report")
+    }
+
+    pub fn write_to_root(&self, root: impl AsRef<Path>) -> Result<()> {
+        let root = root.as_ref();
+        write_relative(
+            root,
+            &self.snapshot.snapshot_path,
+            self.snapshot_pretty_json_bytes()?,
+        )?;
+        write_relative(
+            root,
+            &self.rehydration_report.report_path,
+            self.rehydration_report_pretty_json_bytes()?,
+        )?;
+        Ok(())
+    }
+}
+
+impl RuntimeV2SnapshotManifest {
+    pub fn validate(&self) -> Result<()> {
+        if self.schema_version != RUNTIME_V2_SNAPSHOT_MANIFEST_SCHEMA {
+            return Err(anyhow!(
+                "unsupported Runtime v2 snapshot schema '{}'",
+                self.schema_version
+            ));
+        }
+        normalize_id(self.snapshot_id.clone(), "snapshot.snapshot_id")?;
+        normalize_id(self.manifold_id.clone(), "snapshot.manifold_id")?;
+        validate_relative_path(&self.snapshot_path, "snapshot.snapshot_path")?;
+        validate_timestamp_marker(&self.created_at_utc, "snapshot.created_at_utc")?;
+        self.manifold_state.validate()?;
+        if self.manifold_state.manifold_id != self.manifold_id {
+            return Err(anyhow!("snapshot manifold id must match manifold state"));
+        }
+        if self.manifold_state.lifecycle_state != "snapshotting" {
+            return Err(anyhow!(
+                "snapshot manifold state must be captured while snapshotting"
+            ));
+        }
+        if self
+            .manifold_state
+            .snapshot_root
+            .latest_snapshot_id
+            .as_ref()
+            != Some(&self.snapshot_id)
+        {
+            return Err(anyhow!(
+                "snapshot manifold state must record the latest snapshot id"
+            ));
+        }
+        self.kernel_service_state.validate()?;
+        if self.kernel_service_state.manifold_id != self.manifold_id {
+            return Err(anyhow!(
+                "snapshot kernel service state manifold id must match snapshot"
+            ));
+        }
+        let lifecycle = RuntimeV2CitizenLifecycleArtifacts {
+            records: self.citizen_records.clone(),
+            active_index: self.active_index.clone(),
+            pending_index: self.pending_index.clone(),
+        };
+        lifecycle.validate()?;
+        if self.active_index.manifold_id != self.manifold_id
+            || self.pending_index.manifold_id != self.manifold_id
+        {
+            return Err(anyhow!(
+                "snapshot citizen indexes must match snapshot manifold"
+            ));
+        }
+        if self.last_trace_cursor != self.kernel_service_state.completed_through_event_sequence {
+            return Err(anyhow!(
+                "snapshot last_trace_cursor must match completed kernel event sequence"
+            ));
+        }
+        validate_snapshot_invariant_statuses(&self.invariant_status)?;
+        if !self
+            .invariant_status
+            .iter()
+            .all(|status| status.status == "passed" && status.checked_before_snapshot)
+        {
+            return Err(anyhow!(
+                "snapshot invariant checks must pass before rehydration can be allowed"
+            ));
+        }
+        let expected_checksum = self.compute_structural_checksum()?;
+        if self.structural_checksum != expected_checksum {
+            return Err(anyhow!("snapshot structural checksum mismatch"));
+        }
+        Ok(())
+    }
+
+    fn compute_structural_checksum(&self) -> Result<String> {
+        checksum_for_serialize(&(
+            &self.schema_version,
+            &self.snapshot_id,
+            &self.manifold_id,
+            &self.snapshot_path,
+            &self.created_at_utc,
+            &self.manifold_state,
+            &self.citizen_records,
+            &self.active_index,
+            &self.pending_index,
+            &self.kernel_service_state,
+            &self.last_trace_cursor,
+            &self.invariant_status,
+        ))
+    }
+}
+
+impl RuntimeV2RehydrationReport {
+    pub fn validate_against_snapshot(&self, snapshot: &RuntimeV2SnapshotManifest) -> Result<()> {
+        if self.schema_version != RUNTIME_V2_REHYDRATION_REPORT_SCHEMA {
+            return Err(anyhow!(
+                "unsupported Runtime v2 rehydration report schema '{}'",
+                self.schema_version
+            ));
+        }
+        normalize_id(self.snapshot_id.clone(), "rehydration.snapshot_id")?;
+        normalize_id(self.manifold_id.clone(), "rehydration.manifold_id")?;
+        validate_relative_path(&self.report_path, "rehydration.report_path")?;
+        normalize_id(
+            self.restored_manifold_id.clone(),
+            "rehydration.restored_manifold_id",
+        )?;
+        validate_lifecycle_state(&self.restored_lifecycle_state)?;
+        validate_timestamp_marker(&self.rehydrated_at_utc, "rehydration.rehydrated_at_utc")?;
+        if self.snapshot_id != snapshot.snapshot_id {
+            return Err(anyhow!(
+                "rehydration report snapshot id must match snapshot"
+            ));
+        }
+        if self.manifold_id != snapshot.manifold_id
+            || self.restored_manifold_id != snapshot.manifold_id
+        {
+            return Err(anyhow!(
+                "rehydration restored manifold id must match snapshot manifold id"
+            ));
+        }
+        if self.trace_resume_sequence <= snapshot.last_trace_cursor {
+            return Err(anyhow!(
+                "rehydration trace must resume after the snapshot cursor"
+            ));
+        }
+        if !self.invariant_checks_ran_before_resume {
+            return Err(anyhow!(
+                "rehydration invariants must run before active state resumes"
+            ));
+        }
+        let mut restored_ids = std::collections::BTreeSet::new();
+        for citizen_id in &self.restored_active_citizens {
+            normalize_id(citizen_id.clone(), "rehydration.restored_active_citizens")?;
+            if !restored_ids.insert(citizen_id.clone()) {
+                return Err(anyhow!(
+                    "rehydration restored active citizens contain duplicate '{}'",
+                    citizen_id
+                ));
+            }
+        }
+        let snapshot_active_ids = snapshot
+            .active_index
+            .citizens
+            .iter()
+            .map(|entry| entry.citizen_id.clone())
+            .collect::<Vec<_>>();
+        if self.restored_active_citizens != snapshot_active_ids {
+            return Err(anyhow!(
+                "rehydration restored active citizens must match snapshot active index"
+            ));
+        }
+        if self.duplicate_active_citizen_detected {
+            return Err(anyhow!(
+                "rehydration must refuse duplicate active citizen instances"
+            ));
+        }
+        if self.snapshot_checksum != snapshot.structural_checksum {
+            return Err(anyhow!("rehydration snapshot checksum must match snapshot"));
+        }
+        let expected_wake_allowed = self.invariant_checks_ran_before_resume
+            && !self.duplicate_active_citizen_detected
+            && self.trace_resume_sequence > snapshot.last_trace_cursor;
+        if self.wake_allowed != expected_wake_allowed {
+            return Err(anyhow!(
+                "rehydration wake_allowed must reflect invariant, duplicate, and trace checks"
+            ));
+        }
+        if self.wake_allowed && self.wake_refused_reason.is_some() {
+            return Err(anyhow!(
+                "rehydration wake_refused_reason must be absent when wake is allowed"
+            ));
+        }
+        if !self.wake_allowed
+            && self
+                .wake_refused_reason
+                .as_ref()
+                .map(|reason| reason.trim().is_empty())
+                .unwrap_or(true)
+        {
+            return Err(anyhow!(
+                "rehydration wake_refused_reason must explain refused wake"
+            ));
+        }
+        Ok(())
+    }
+}
+
 impl RuntimeV2ProvisionalCitizenRecord {
     pub fn validate(&self) -> Result<()> {
         if self.schema_version != RUNTIME_V2_PROVISIONAL_CITIZEN_SCHEMA {
@@ -1103,6 +1456,29 @@ fn validate_citizen_index_kind(value: &str) -> Result<()> {
     }
 }
 
+fn validate_snapshot_invariant_statuses(
+    statuses: &[RuntimeV2SnapshotInvariantStatus],
+) -> Result<()> {
+    if statuses.is_empty() {
+        return Err(anyhow!("snapshot invariant_status must not be empty"));
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    for status in statuses {
+        normalize_id(status.invariant_id.clone(), "snapshot.invariant_id")?;
+        match status.status.as_str() {
+            "passed" | "failed" | "not_checked" => {}
+            other => return Err(anyhow!("unsupported snapshot invariant status '{other}'")),
+        }
+        if !seen.insert(status.invariant_id.clone()) {
+            return Err(anyhow!(
+                "snapshot invariant_status contains duplicate invariant '{}'",
+                status.invariant_id
+            ));
+        }
+    }
+    Ok(())
+}
+
 fn validate_display_name(value: &str, field: &str) -> Result<()> {
     if value.trim().is_empty() {
         return Err(anyhow!("{field} must not be empty"));
@@ -1151,6 +1527,16 @@ fn write_relative(root: &Path, rel_path: &str, bytes: Vec<u8>) -> Result<()> {
             .with_context(|| format!("failed to create '{}'", parent.display()))?;
     }
     std::fs::write(&path, bytes).with_context(|| format!("failed to write '{}'", path.display()))
+}
+
+fn checksum_for_serialize(value: &impl Serialize) -> Result<String> {
+    let bytes = serde_json::to_vec(value).context("serialize Runtime v2 checksum input")?;
+    let mut checksum = 0xcbf29ce484222325_u64;
+    for byte in bytes {
+        checksum ^= u64::from(byte);
+        checksum = checksum.wrapping_mul(0x100000001b3);
+    }
+    Ok(format!("fnv1a64:{checksum:016x}"))
 }
 
 fn prototype_kernel_services() -> Vec<RuntimeV2KernelServiceRegistration> {
@@ -1208,6 +1594,14 @@ pub fn runtime_v2_kernel_loop_contract() -> Result<RuntimeV2KernelLoopArtifacts>
 
 pub fn runtime_v2_citizen_lifecycle_contract() -> Result<RuntimeV2CitizenLifecycleArtifacts> {
     RuntimeV2CitizenLifecycleArtifacts::prototype(&runtime_v2_manifold_contract()?)
+}
+
+pub fn runtime_v2_snapshot_rehydration_contract() -> Result<RuntimeV2SnapshotAndRehydrationArtifacts>
+{
+    let manifold = runtime_v2_manifold_contract()?;
+    let kernel = RuntimeV2KernelLoopArtifacts::prototype(&manifold)?;
+    let citizens = RuntimeV2CitizenLifecycleArtifacts::prototype(&manifold)?;
+    RuntimeV2SnapshotAndRehydrationArtifacts::prototype(&manifold, &kernel, &citizens)
 }
 
 #[cfg(test)]
@@ -1587,5 +1981,137 @@ mod tests {
             .expect_err("resource release without termination proof should fail")
             .to_string()
             .contains("before termination is recorded"));
+    }
+
+    #[test]
+    fn runtime_v2_snapshot_rehydration_contract_matches_upstream_refs() {
+        let manifold = runtime_v2_manifold_contract().expect("manifold");
+        let kernel = RuntimeV2KernelLoopArtifacts::prototype(&manifold).expect("kernel");
+        let citizens = RuntimeV2CitizenLifecycleArtifacts::prototype(&manifold).expect("citizens");
+        let artifacts =
+            RuntimeV2SnapshotAndRehydrationArtifacts::prototype(&manifold, &kernel, &citizens)
+                .expect("snapshot");
+
+        assert_eq!(
+            artifacts.snapshot.schema_version,
+            RUNTIME_V2_SNAPSHOT_MANIFEST_SCHEMA
+        );
+        assert_eq!(
+            artifacts.rehydration_report.schema_version,
+            RUNTIME_V2_REHYDRATION_REPORT_SCHEMA
+        );
+        assert_eq!(artifacts.snapshot.manifold_id, manifold.manifold_id);
+        assert_eq!(
+            artifacts.snapshot.last_trace_cursor,
+            kernel.state.completed_through_event_sequence
+        );
+        assert_eq!(artifacts.snapshot.citizen_records, citizens.records);
+        assert_eq!(artifacts.snapshot.active_index, citizens.active_index);
+        assert_eq!(
+            artifacts.rehydration_report.trace_resume_sequence,
+            artifacts.snapshot.last_trace_cursor + 1
+        );
+        assert!(artifacts.rehydration_report.wake_allowed);
+    }
+
+    #[test]
+    fn runtime_v2_snapshot_rehydration_artifacts_match_golden_fixtures() {
+        let artifacts = runtime_v2_snapshot_rehydration_contract().expect("snapshot");
+        let snapshot = String::from_utf8(
+            artifacts
+                .snapshot_pretty_json_bytes()
+                .expect("snapshot json"),
+        )
+        .expect("utf8 snapshot");
+        let rehydration = String::from_utf8(
+            artifacts
+                .rehydration_report_pretty_json_bytes()
+                .expect("rehydration json"),
+        )
+        .expect("utf8 rehydration");
+
+        assert_eq!(
+            snapshot,
+            include_str!("../tests/fixtures/runtime_v2/snapshots/snapshot-0001.json").trim_end()
+        );
+        assert_eq!(
+            rehydration,
+            include_str!("../tests/fixtures/runtime_v2/rehydration_report.json").trim_end()
+        );
+    }
+
+    #[test]
+    fn runtime_v2_snapshot_rehydration_writes_artifacts_without_path_leakage() {
+        let temp_root = unique_temp_path("snapshot");
+        let artifacts = runtime_v2_snapshot_rehydration_contract().expect("snapshot");
+
+        artifacts
+            .write_to_root(&temp_root)
+            .expect("write snapshot artifacts");
+
+        let snapshot_path = temp_root.join(&artifacts.snapshot.snapshot_path);
+        let report_path = temp_root.join(&artifacts.rehydration_report.report_path);
+        assert!(snapshot_path.is_file());
+        assert!(report_path.is_file());
+
+        let snapshot = fs::read_to_string(snapshot_path).expect("snapshot text");
+        let report = fs::read_to_string(report_path).expect("report text");
+        let temp_root_text = temp_root.to_string_lossy();
+        assert!(!snapshot.contains(temp_root_text.as_ref()));
+        assert!(!report.contains(temp_root_text.as_ref()));
+        assert!(snapshot.contains("\"structural_checksum\": \"fnv1a64:"));
+        assert!(report.contains("\"wake_allowed\": true"));
+
+        fs::remove_dir_all(temp_root).ok();
+    }
+
+    #[test]
+    fn runtime_v2_snapshot_rehydration_validation_rejects_unsafe_or_ambiguous_state() {
+        let mut artifacts = runtime_v2_snapshot_rehydration_contract().expect("snapshot");
+        artifacts.snapshot.structural_checksum = "fnv1a64:0000000000000000".to_string();
+        assert!(artifacts
+            .validate()
+            .expect_err("checksum drift should fail")
+            .to_string()
+            .contains("checksum mismatch"));
+
+        let mut artifacts = runtime_v2_snapshot_rehydration_contract().expect("snapshot");
+        artifacts.rehydration_report.restored_manifold_id = "other-manifold".to_string();
+        assert!(artifacts
+            .validate()
+            .expect_err("wrong restored manifold should fail")
+            .to_string()
+            .contains("restored manifold id"));
+
+        let mut artifacts = runtime_v2_snapshot_rehydration_contract().expect("snapshot");
+        artifacts.rehydration_report.trace_resume_sequence = artifacts.snapshot.last_trace_cursor;
+        assert!(artifacts
+            .validate()
+            .expect_err("non-advancing trace should fail")
+            .to_string()
+            .contains("resume after the snapshot cursor"));
+
+        let mut artifacts = runtime_v2_snapshot_rehydration_contract().expect("snapshot");
+        artifacts
+            .rehydration_report
+            .restored_active_citizens
+            .push("proto-citizen-alpha".to_string());
+        assert!(artifacts
+            .validate()
+            .expect_err("duplicate active citizen should fail")
+            .to_string()
+            .contains("duplicate"));
+
+        let mut artifacts = runtime_v2_snapshot_rehydration_contract().expect("snapshot");
+        artifacts.snapshot.invariant_status[0].status = "failed".to_string();
+        artifacts.snapshot.structural_checksum = artifacts
+            .snapshot
+            .compute_structural_checksum()
+            .expect("checksum");
+        assert!(artifacts
+            .validate()
+            .expect_err("failed invariant should fail")
+            .to_string()
+            .contains("invariant checks must pass"));
     }
 }
