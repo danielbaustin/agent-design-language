@@ -64,6 +64,7 @@ Out of scope:
 - Release plan: `RELEASE_PLAN_v0.90.1.md`
 - Release notes draft: `RELEASE_NOTES_v0.90.1.md`
 - Issue wave plan: `WP_ISSUE_WAVE_v0.90.1.yaml`
+- Issue-wave generator proof: `ISSUE_WAVE_GENERATOR_PROOF_v0.90.1.md`
 
 ## Feature And Idea Lanes
 
@@ -79,6 +80,9 @@ from this tracked package.
 
 The wave is now open. Treat WP_ISSUE_WAVE_v0.90.1.yaml as the issue-number
 source of truth for WP routing.
+
+WP-02 adds `ISSUE_WAVE_GENERATOR_PROOF_v0.90.1.md` as the mechanical proof that
+the reusable generator can read this package shape without hand repair.
 
 ## Compression Rule
 

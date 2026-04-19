@@ -7,6 +7,7 @@ notes:
   - "Tracked planning package promoted during v0.90 WP-19."
   - "v0.90.1 issue wave opened by WP-01 after the v0.90 release ceremony."
   - "WP-01 is #2141; WP-02 through WP-20 are #2142 through #2160."
+  - "WP-02 records generator alignment proof in ISSUE_WAVE_GENERATOR_PROOF_v0.90.1.md."
   - "Do not claim first true Gödel-agent birthday in v0.90.1."
   - "WP-02 through WP-04 intentionally front-load compression enablement before Runtime v2 coding."
 work_packages:
