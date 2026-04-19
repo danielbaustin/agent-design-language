@@ -1,0 +1,63 @@
+{
+  "schema_version": "runtime_v2.kernel.service_registry.v1",
+  "manifold_id": "proto-csm-01",
+  "registry_path": "runtime_v2/kernel/service_registry.json",
+  "services": [
+    {
+      "service_id": "clock_service",
+      "service_kind": "clock",
+      "lifecycle_state": "registered",
+      "activation_order": 1,
+      "owns_artifact_path": "runtime_v2/kernel/clock_service.json"
+    },
+    {
+      "service_id": "identity_admission_guard",
+      "service_kind": "admission",
+      "lifecycle_state": "registered",
+      "activation_order": 2,
+      "owns_artifact_path": "runtime_v2/kernel/admission_guard.json"
+    },
+    {
+      "service_id": "scheduler",
+      "service_kind": "scheduler",
+      "lifecycle_state": "registered",
+      "activation_order": 3,
+      "owns_artifact_path": "runtime_v2/kernel/scheduler.json"
+    },
+    {
+      "service_id": "resource_ledger",
+      "service_kind": "resource",
+      "lifecycle_state": "registered",
+      "activation_order": 4,
+      "owns_artifact_path": "runtime_v2/resource_ledger.json"
+    },
+    {
+      "service_id": "trace_writer",
+      "service_kind": "trace",
+      "lifecycle_state": "registered",
+      "activation_order": 5,
+      "owns_artifact_path": "runtime_v2/traces/events.jsonl"
+    },
+    {
+      "service_id": "snapshot_manager",
+      "service_kind": "snapshot",
+      "lifecycle_state": "registered",
+      "activation_order": 6,
+      "owns_artifact_path": "runtime_v2/snapshots"
+    },
+    {
+      "service_id": "invariant_checker",
+      "service_kind": "invariant",
+      "lifecycle_state": "registered",
+      "activation_order": 7,
+      "owns_artifact_path": "runtime_v2/invariants/policy.json"
+    },
+    {
+      "service_id": "operator_control_interface",
+      "service_kind": "operator",
+      "lifecycle_state": "registered",
+      "activation_order": 8,
+      "owns_artifact_path": "runtime_v2/operator/control_report.json"
+    }
+  ]
+}

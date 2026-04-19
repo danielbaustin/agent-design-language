@@ -1,0 +1,57 @@
+{
+  "schema_version": "runtime_v2.kernel.service_state.v1",
+  "manifold_id": "proto-csm-01",
+  "service_state_path": "runtime_v2/kernel/service_state.json",
+  "loop_status": "bounded_tick_complete",
+  "completed_through_event_sequence": 8,
+  "services": [
+    {
+      "service_id": "clock_service",
+      "lifecycle_state": "ready",
+      "last_event_sequence": 1,
+      "blocked_reason": null
+    },
+    {
+      "service_id": "identity_admission_guard",
+      "lifecycle_state": "ready",
+      "last_event_sequence": 2,
+      "blocked_reason": null
+    },
+    {
+      "service_id": "scheduler",
+      "lifecycle_state": "ready",
+      "last_event_sequence": 3,
+      "blocked_reason": null
+    },
+    {
+      "service_id": "resource_ledger",
+      "lifecycle_state": "ready",
+      "last_event_sequence": 4,
+      "blocked_reason": null
+    },
+    {
+      "service_id": "trace_writer",
+      "lifecycle_state": "ready",
+      "last_event_sequence": 5,
+      "blocked_reason": null
+    },
+    {
+      "service_id": "snapshot_manager",
+      "lifecycle_state": "ready",
+      "last_event_sequence": 6,
+      "blocked_reason": null
+    },
+    {
+      "service_id": "invariant_checker",
+      "lifecycle_state": "ready",
+      "last_event_sequence": 7,
+      "blocked_reason": null
+    },
+    {
+      "service_id": "operator_control_interface",
+      "lifecycle_state": "ready",
+      "last_event_sequence": 8,
+      "blocked_reason": null
+    }
+  ]
+}
