@@ -43,6 +43,7 @@ The tracked skill set is:
 - `repo-review-security`
 - `repo-review-synthesis`
 - `repo-review-tests`
+- `records-hygiene`
 - `review-quality-evaluator`
 - `review-to-test-planner`
 - `sip-editor`
@@ -1043,6 +1044,44 @@ policy:
 - use `stp-editor`, `sip-editor`, or `sor-editor` only when the closeout
   blocker is card-local rather than closure-state ambiguity
 
+## `records-hygiene`
+
+### Purpose
+
+`records-hygiene` is a focused workflow-maintenance skill for ADL task-record truth.
+
+It scans STP, SIP, and SOR for stale or contradictory lifecycle fields, PR/worktree
+claims, placeholder leakage, and integration wording drift, then returns a bounded
+machine-readable artifact.
+
+### When To Use It
+
+- before `pr-finish` or `pr-closeout` when records look stale,
+- when the issue has already been run and the output card claims look inconsistent,
+- when a concrete issue, task bundle, branch, or worktree target needs bounded hygiene.
+
+### Required Inputs
+
+Minimum:
+
+- `repo_root`
+- one of:
+  - `issue_number`
+  - `task_bundle_path`
+  - `branch`
+  - `worktree_path`
+
+Structured schema:
+
+- `adl/tools/skills/docs/RECORDS_HYGIENE_SKILL_INPUT_SCHEMA.md`
+- schema id: `records_hygiene.v1`
+
+### Typical Handoff
+
+Use `records-hygiene` when hygiene can be resolved by safe record repair.
+If the issue is ambiguous, unresolved, or not mechanically safe, use the output
+recommendations as a follow-on issue queue item and avoid scope expansion.
+
 ## `stp-editor`
 
 ### Purpose
@@ -1867,6 +1906,8 @@ Use this quick selector:
   - `demo-operator`
 - need to finalize local issue state after merge/closure:
   - `pr-closeout`
+- need to clean drifted lifecycle records before closeout or janitor handoff:
+  - `records-hygiene`
 - need a broad findings-first code review:
   - `repo-code-review`
 - need source-backed arXiv-style manuscript drafting or citation-gap review:
@@ -1942,6 +1983,7 @@ surfaces:
 | `repo-review-security` | `REPO_REVIEW_SECURITY_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | security findings only |
 | `repo-review-synthesis` | `REPO_REVIEW_SYNTHESIS_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | severity-preserving synthesis only |
 | `repo-review-tests` | `REPO_REVIEW_TESTS_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | test-quality findings only |
+| `records-hygiene` | `RECORDS_HYGIENE_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | hygiene findings and follow-on recommendations only |
 | `review-quality-evaluator` | `REVIEW_QUALITY_EVALUATOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | review-quality evaluation only |
 | `review-to-test-planner` | `REVIEW_TO_TEST_PLANNER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | test-generation handoff plan only |
 | `sip-editor` | `SIP_EDITOR_SKILL_INPUT_SCHEMA.md` | card-editor shared contract | SIP normalization only |
