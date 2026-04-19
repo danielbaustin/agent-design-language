@@ -388,6 +388,53 @@ fn parse_create_args_rejects_missing_title_and_conflicting_body_inputs() {
 }
 
 #[test]
+fn resolve_version_for_create_prefers_explicit_version() {
+    let version = resolve_version_for_create(
+        Some("v0.90".to_string()),
+        Some("track:roadmap,type:task,version:v0.89,area:tools"),
+        "[v0.89][tools] Explicit version should win",
+    )
+    .expect("resolve version");
+    assert_eq!(version, "v0.90");
+}
+
+#[test]
+fn resolve_version_for_create_rejects_uninferable_inputs() {
+    let err = resolve_version_for_create(
+        None,
+        Some("track:roadmap,area:tools"),
+        "[tools] Missing version metadata",
+    )
+    .expect_err("missing inference inputs should fail");
+    assert!(err.to_string().contains(
+        "create: could not infer version from title or labels; pass --version or include a version:vX.Y label / [vX.Y] title prefix"
+    ));
+}
+
+#[test]
+fn resolve_version_for_existing_issue_no_fetch_requires_local_identity_or_version() {
+    let repo = unique_temp_dir("adl-pr-existing-version-no-fetch");
+    let err =
+        resolve_version_for_existing_issue(&repo, "owner/repo", 1206, None, true, "preflight")
+            .expect_err("should require explicit version without local bundle");
+    assert!(err
+        .to_string()
+        .contains("preflight: --version is required when --no-fetch-issue is set and no canonical local bundle exists to infer the milestone band"));
+}
+
+#[test]
+fn same_checkout_root_handles_equivalent_and_missing_paths() {
+    let base = unique_temp_dir("adl-same-checkout-root");
+    assert!(same_checkout_root(&base, &base.join(".")).expect("same checkout"));
+
+    let missing = base.join("missing-checkout");
+    let err = same_checkout_root(&base, &missing).expect_err("missing path should fail");
+    assert!(err
+        .to_string()
+        .contains("failed to canonicalize checkout path"));
+}
+
+#[test]
 fn real_pr_dispatch_rejects_missing_and_unknown_subcommands() {
     let err = real_pr(&[]).expect_err("missing subcommand");
     assert!(err.to_string().contains(
