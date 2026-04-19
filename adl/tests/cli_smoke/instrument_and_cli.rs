@@ -98,6 +98,49 @@ fn instrument_replay_and_diff_trace_outputs_are_stable() {
 }
 
 #[test]
+fn csm_observatory_cli_writes_fixture_backed_bundle() {
+    let out_dir = unique_test_temp_dir("csm-observatory-cli");
+    let packet =
+        fixture_path("../demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json");
+    let out = run_adl(&[
+        "csm",
+        "observatory",
+        "--packet",
+        packet.to_str().unwrap(),
+        "--format",
+        "bundle",
+        "--out",
+        out_dir.to_str().unwrap(),
+    ]);
+    assert!(
+        out.status.success(),
+        "stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let manifest = fs::read_to_string(out_dir.join("demo_manifest.json")).unwrap();
+    let report = fs::read_to_string(out_dir.join("operator_report.md")).unwrap();
+    assert!(out_dir.join("visibility_packet.json").is_file());
+    assert!(out_dir.join("console_reference.md").is_file());
+    assert!(manifest.contains("adl.csm_observatory.demo_manifest.v1"));
+    assert!(manifest.contains("fixture_backed"));
+    assert!(report.contains("CSM Observatory Operator Report"));
+    assert!(report.contains("Operator action pause_citizen remains disabled"));
+}
+
+#[test]
+fn csm_observatory_cli_fails_safely_on_missing_packet() {
+    let out = run_adl(&[
+        "csm",
+        "observatory",
+        "--packet",
+        "missing-csm-observatory-packet.json",
+    ]);
+    assert_failure_contains(&out, "read CSM Observatory packet");
+}
+
+#[test]
 fn run_flag_executes_fixture_with_mock_provider_and_writes_outputs() {
     let out_dir = unique_test_temp_dir("cli-run-mock").join("out");
     let runs_root = unique_test_temp_dir("cli-run-mock-runs");

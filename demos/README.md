@@ -88,6 +88,12 @@ If you want the fixture-backed CSM Observatory operator report:
 bash adl/tools/test_demo_v0901_csm_observatory_operator_report.sh
 ```
 
+If you want the command-driven CSM Observatory demo bundle:
+
+```bash
+bash adl/tools/demo_v0901_csm_observatory.sh
+```
+
 ## Demo Categories
 
 - Runtime workflow demos live in `adl/examples/`.
@@ -247,6 +253,7 @@ staged `review-quality-evaluator` lane from `#2070` lands.
 
 - `v0.90.1/csm_observatory_static_console.md`
 - `v0.90.1/csm_observatory_operator_report.md`
+- `v0.90.1/csm_observatory_cli_demo.md`
 
 Use `v0.90.1/csm_observatory_static_console.html` for the first read-only CSM
 Observatory prototype. It renders the fixture-backed proto-csm-01 visibility
@@ -258,6 +265,10 @@ Use `bash adl/tools/test_demo_v0901_csm_observatory_operator_report.sh` to
 validate the packet-to-report proof surface. The generated Markdown report is a
 compact reviewer artifact for manifold status, citizen state, invariant risk,
 Freedom Gate decisions, trace tail, operator-action boundaries, and caveats.
+
+Use `bash adl/tools/demo_v0901_csm_observatory.sh` for the first command-driven
+Observatory demo bundle. It emits the packet copy, operator report, static
+console reference, and demo manifest from one ADL CLI command.
 
 Use `v0.87/v087_demo_program.md` for the canonical `v0.87` demo order and bounded
 repo-local commands.

@@ -19,6 +19,7 @@ pub mod bounded_executor;
 pub mod chronosense;
 pub mod continuous_verification_self_attack;
 pub mod control_plane;
+pub mod csm_observatory;
 pub mod delegation_policy;
 pub mod delegation_refusal_coordination;
 pub mod demo;
