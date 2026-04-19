@@ -6,7 +6,7 @@ Issue wave open. Demo commands are not final until implementation WPs land.
 
 | ID | Demo | WP | Proof Claim | Required Artifacts | Status |
 | --- | --- | --- | --- | --- | --- |
-| D0 | Compression enablement proof | WP-02/WP-03/WP-04 | Issue-wave, worktree, and execution-policy surfaces are ready before runtime coding starts | template/generator proof, worktree guardrail proof, policy validation note | PLANNED |
+| D0 | Compression enablement proof | WP-02/WP-03/WP-04 | Issue-wave, worktree, and execution-policy surfaces are ready before runtime coding starts | template/generator proof, worktree guardrail proof, policy validation note | READY |
 | D1 | Manifold boot | WP-05/WP-06 | Runtime v2 can create one bounded persistent manifold and start kernel services | manifold manifest, kernel loop report | PLANNED |
 | D2 | Provisional citizen admission | WP-07 | Provisional citizens can be admitted without claiming true Gödel-agent birth | citizen records, admission trace | PLANNED |
 | D3 | Snapshot and wake | WP-08 | Manifold state can be snapshotted and rehydrated without duplicate activation | snapshot, wake report | PLANNED |

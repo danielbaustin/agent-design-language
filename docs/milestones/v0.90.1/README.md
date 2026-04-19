@@ -65,6 +65,8 @@ Out of scope:
 - Release notes draft: `RELEASE_NOTES_v0.90.1.md`
 - Issue wave plan: `WP_ISSUE_WAVE_v0.90.1.yaml`
 - Issue-wave generator proof: `ISSUE_WAVE_GENERATOR_PROOF_v0.90.1.md`
+- Compression-era execution policy:
+  `features/COMPRESSION_ERA_EXECUTION_POLICY.md`
 
 ## Feature And Idea Lanes
 
@@ -83,6 +85,10 @@ source of truth for WP routing.
 
 WP-02 adds `ISSUE_WAVE_GENERATOR_PROOF_v0.90.1.md` as the mechanical proof that
 the reusable generator can read this package shape without hand repair.
+
+WP-04 adds `features/COMPRESSION_ERA_EXECUTION_POLICY.md` as the policy note for
+skill routing, worktree-first execution, subagent assignment, validation
+profiles, and SOR evidence expectations.
 
 ## Compression Rule
 

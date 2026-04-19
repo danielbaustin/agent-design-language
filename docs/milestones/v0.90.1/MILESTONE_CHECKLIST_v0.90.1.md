@@ -8,9 +8,9 @@
 
 ## Implementation
 
-- [ ] Issue-wave template and generator alignment complete
-- [ ] Worktree-first workflow hardening complete
-- [ ] Compression-era execution policy complete
+- [x] Issue-wave template and generator alignment complete
+- [x] Worktree-first workflow hardening complete
+- [x] Compression-era execution policy complete
 - [ ] Manifold contract implemented
 - [ ] Kernel service loop implemented
 - [ ] Provisional citizen records implemented

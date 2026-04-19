@@ -63,9 +63,9 @@ The normal workflow is:
 2. qualitative card review
 3. `pr-ready`
 4. `pr-run`
-5. `pr-janitor`
+5. `pr-finish`
+6. `pr-janitor`
    - the repo finish path should auto-attach the janitor hook after PR publication so in-flight monitoring starts without an extra manual step
-6. `pr-finish`
 7. `pr-closeout` after the PR outcome or explicit non-PR closure disposition is settled
 
 `repo-code-review` is cross-cutting rather than phase-specific.
@@ -210,6 +210,52 @@ The conductor should be especially useful when:
 - initial workflow steps are only partially complete
 - the operator wants one bounded entrypoint
 - skill/subagent policy should be applied explicitly instead of by memory
+
+## Compression-Era Execution Policy
+
+The v0.90.1 compression lane makes the current operating policy explicit before
+Runtime v2 coding starts. The tracked milestone policy note is:
+
+- `docs/milestones/v0.90.1/features/COMPRESSION_ERA_EXECUTION_POLICY.md`
+
+Default policy:
+
+- use `workflow-conductor` as the bounded router when the operator asks for the
+  conductor or when current state needs phase selection
+- use the named lifecycle skill for the selected phase rather than ad hoc git
+  or PR surgery
+- keep the primary checkout on clean `main`; tracked implementation and repair
+  edits happen in the bound issue worktree
+- use `stp-editor`, `sip-editor`, or `sor-editor` when those cards need
+  normalization
+- attach `pr-janitor` after PR publication for check, conflict, and review
+  monitoring
+- record policy compliance, validation profile, commands, and any bypasses in
+  the SOR
+
+Subagents are phase-aware, not automatic for every edit. Use them when the
+operator policy or selected phase requires a watcher or bounded delegated
+subtask. A subagent handoff must include the target issue or PR, branch or
+worktree, allowed scope, stop boundary, and a reminder not to merge, close,
+reset, recreate branches, or widen issue scope without explicit operator
+direction.
+
+Validation should match the changed surface:
+
+- `docs-bounded`: docs-only edits; check referenced paths, host-path or
+  credential-marker leakage, and any available Markdown or prompt contracts
+- `tooling-focused`: PR tooling, scripts, or workflow behavior; run focused
+  unit or shell tests plus formatting or linting when applicable
+- `rust-focused`: bounded Rust source changes; run targeted Rust tests and
+  formatting, with clippy when API or control-flow behavior changes
+- `repo-native-finish`: PR publication; rely on `pr-finish` default validation
+  plus output-card contract validation
+- `janitor-focused`: failed PR checks or conflicts; reproduce the smallest
+  failing check and validate the bounded repair
+
+Compression reduces redundant waiting and oversized local validation. It does
+not remove human review, output-card truth, or the requirement to prove the
+changed surface.
 
 ## Worktree-First Invariant
 
