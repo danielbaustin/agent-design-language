@@ -1,0 +1,23 @@
+{
+  "schema_version": "runtime_v2.provisional_citizen.v1",
+  "citizen_id": "proto-citizen-alpha",
+  "display_name": "Prototype Citizen Alpha",
+  "provisional_status": "provisional",
+  "lifecycle_state": "active",
+  "manifold_id": "proto-csm-01",
+  "record_path": "runtime_v2/citizens/proto-citizen-alpha.json",
+  "created_at_utc": "not_started",
+  "last_wake_at_utc": null,
+  "memory_identity_refs": {
+    "memory_root_ref": "runtime_v2/citizens/proto-citizen-alpha/memory",
+    "identity_profile_ref": "runtime_v2/citizens/proto-citizen-alpha/identity.json"
+  },
+  "policy_boundary_refs": {
+    "policy_ref": "runtime_v2/citizens/proto-citizen-alpha/policy.json",
+    "admission_trace_ref": "runtime_v2/traces/admission/proto-citizen-alpha.json"
+  },
+  "rehydration_validation_ref": null,
+  "termination_event_ref": null,
+  "resources_released": false,
+  "can_execute_episodes": true
+}
