@@ -11,9 +11,16 @@ The contracts are intentionally narrower than the full Runtime v2 idea corpus:
 - prove provisional citizens
 - prove snapshot and wake
 - prove invariant and security evidence
+- make the CSM visible through a bounded Observatory packet
 - preserve v0.91 and v0.92 scope
 
 Compression-enabling process policy lives beside the runtime feature contracts
 because WP-02 through WP-04 must be reviewable before Runtime v2 coding starts:
 
 - `COMPRESSION_ERA_EXECUTION_POLICY.md`
+
+The CSM Observatory packet contract is the first visibility bridge from Runtime
+v2 artifacts to reviewer-facing console, report, CLI, and future operator
+command surfaces:
+
+- `CSM_OBSERVATORY_VISIBILITY_PACKET.md`

@@ -9,6 +9,7 @@
 | `features/KERNEL_SERVICES_AND_CONTROL_PLANE.md` | kernel service loop, scheduling, admission, operator control | WP-06, WP-10 |
 | `features/PROVISIONAL_CITIZEN_LIFECYCLE.md` | provisional citizen record and lifecycle state machine | WP-07 |
 | `features/INVARIANT_AND_SECURITY_BOUNDARY.md` | invariant violation artifacts and one security-boundary proof | WP-09, WP-11 |
+| `features/CSM_OBSERVATORY_VISIBILITY_PACKET.md` | CSM visibility packet contract for Observatory console, reports, CLI, and operator-command follow-ons | #2188 |
 
 ## Compression-Enabling Process Work
 
