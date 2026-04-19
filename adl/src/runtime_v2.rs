@@ -346,9 +346,10 @@ impl RuntimeV2KernelLoopArtifacts {
                 "kernel registry and service state manifold ids must match"
             ));
         }
-        let mut expected_sequence = self.events[0].event_sequence;
         let mut seen_services = Vec::new();
-        for event in &self.events {
+        for (expected_sequence, event) in
+            (self.events[0].event_sequence..).zip(self.events.iter())
+        {
             event.validate()?;
             if event.manifold_id != self.registry.manifold_id {
                 return Err(anyhow!("kernel loop event manifold id must match registry"));
@@ -370,7 +371,6 @@ impl RuntimeV2KernelLoopArtifacts {
                 ));
             }
             seen_services.push(event.service_id.clone());
-            expected_sequence += 1;
         }
         let registry_ids = self
             .registry
