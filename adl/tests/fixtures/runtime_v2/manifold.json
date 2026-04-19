@@ -1,0 +1,70 @@
+{
+  "schema_version": "runtime_v2.manifold.v1",
+  "manifold_id": "proto-csm-01",
+  "lifecycle_state": "initialized",
+  "artifact_path": "runtime_v2/manifold.json",
+  "clock_anchor": {
+    "anchor_id": "clock_anchor_0000",
+    "clock_kind": "monotonic_logical",
+    "monotonic_tick": 0,
+    "observed_at_utc": "not_started"
+  },
+  "citizen_registry_refs": {
+    "registry_root": "runtime_v2/citizens",
+    "active_index": "runtime_v2/citizens/active_index.json",
+    "pending_index": "runtime_v2/citizens/pending_index.json"
+  },
+  "kernel_service_refs": {
+    "registry_path": "runtime_v2/kernel/service_registry.json",
+    "service_loop_path": "runtime_v2/kernel/service_loop.jsonl",
+    "service_state_path": "runtime_v2/kernel/service_state.json"
+  },
+  "trace_root": {
+    "trace_root": "runtime_v2/traces",
+    "event_log_path": "runtime_v2/traces/events.jsonl",
+    "next_event_sequence": 1
+  },
+  "snapshot_root": {
+    "snapshot_root": "runtime_v2/snapshots",
+    "latest_snapshot_id": null,
+    "rehydration_report_path": "runtime_v2/rehydration_report.json"
+  },
+  "resource_ledger": {
+    "ledger_path": "runtime_v2/resource_ledger.json",
+    "accounting_mode": "bounded_prototype"
+  },
+  "invariant_policy_refs": {
+    "policy_path": "runtime_v2/invariants/policy.json",
+    "enforcement_mode": "fail_closed_before_activation",
+    "blocking_invariants": [
+      "single_active_manifold_instance",
+      "no_duplicate_active_citizen_instance",
+      "trace_sequence_must_advance_monotonically",
+      "snapshot_restore_must_validate_before_active_state"
+    ]
+  },
+  "review_surface": {
+    "required_artifacts": [
+      "runtime_v2/manifold.json",
+      "runtime_v2/citizens/active_index.json",
+      "runtime_v2/kernel/service_registry.json",
+      "runtime_v2/traces/events.jsonl",
+      "runtime_v2/snapshots",
+      "runtime_v2/invariants/policy.json"
+    ],
+    "proof_hook_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2::tests::runtime_v2_manifold_root_contract_is_stable",
+    "proof_hook_output_path": "runtime_v2/manifold.json",
+    "downstream_boundaries": [
+      "WP-06 owns the bounded kernel service loop behavior",
+      "WP-07 owns provisional citizen record materialization",
+      "WP-08 owns snapshot writing, sealing, and rehydration",
+      "WP-09 owns invariant violation artifacts"
+    ],
+    "non_goals": [
+      "no true Godel-agent birthday or identity rebinding",
+      "no full moral, emotional, or polis governance layer",
+      "no cross-machine migration or cross-polis state transfer",
+      "no live kernel scheduling behavior in WP-05"
+    ]
+  }
+}

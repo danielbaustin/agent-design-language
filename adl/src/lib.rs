@@ -50,6 +50,7 @@ pub mod red_blue_agent_architecture;
 pub mod remote_exec;
 pub mod resolve;
 pub mod runtime_environment;
+pub mod runtime_v2;
 pub mod sandbox;
 pub mod schema;
 pub mod signing;
