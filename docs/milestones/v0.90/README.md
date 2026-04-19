@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: pre-third-party-review readiness
+- Status: release-tail pre-ceremony
 - Early planning issue: #1986
 - Promotion gate: #1940
 
@@ -152,26 +152,26 @@ Recently completed proof surfaces:
   `RATIONALE` item, nineteen `REVIEW` items, and fourteen `WATCH` items after
   the child split wave.
 - WP-15 internal review artifacts and accepted internal-finding remediation.
-- Closeout pass for almost all closed issues; the remaining open issues are
-  normal release-tail work.
+- WP-16 updated third-party review completed with no P0/P1 findings.
+- WP-17 remediation completed the only accepted P2 by adding ADR 0011 for the
+  long-lived-agent runtime architecture.
+- WP-19 promoted the v0.90.1 tracked planning package before release ceremony.
+- Closeout pass for almost all closed issues; remaining open issue work is
+  normal release ceremony work.
 
 Still-open proof surfaces:
 
-- WP-18 pre-third-party readiness report until this work package merges.
-- WP-16 third-party review artifacts.
-- WP-17 third-party findings remediation if findings are accepted.
-- WP-19 next-milestone planning finalization.
 - WP-20 release ceremony record.
 
 ## Status
 
 - Planning: tracked package promoted by `v0.89.1` WP-19 and opened by v0.90 WP-01
-- Execution: issue wave in release tail; WP-02 through WP-15 have landed or closed through
-  their intended child issue surfaces. WP-18 is the active pre-third-party
-  readiness gate. WP-16, WP-17, WP-19, and WP-20 remain open release-tail work.
+- Execution: issue wave in release tail; WP-02 through WP-19 have landed or
+  closed through their intended child issue surfaces. WP-20 remains open for
+  release ceremony.
 - Validation: runtime, demo, sidecar, coverage, refactor, docs, and internal
-  review proof surfaces have landed. The next gate is third-party review.
-- Release readiness: pre-third-party readiness in progress.
+  review proof surfaces have landed.
+- Release readiness: pre-ceremony release tail.
 
 ## WP-19 Promotion Result
 

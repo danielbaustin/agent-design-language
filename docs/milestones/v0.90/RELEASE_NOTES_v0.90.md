@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: pre-third-party-review readiness
+- Status: release-tail pre-ceremony
 
 ## Draft Summary
 
@@ -41,12 +41,12 @@ The release story being assembled is:
 - Rust refactoring wave: one `RATIONALE`, nineteen `REVIEW`, and fourteen
   `WATCH` tracker items after the WP-14 child splits
 - internal review and accepted internal-finding remediation
+- third-party review with no P0/P1 findings and one accepted P2
+- ADR 0011 remediation for the long-lived-agent runtime architecture
+- v0.90.1 planning package promoted into tracked milestone docs
 
 Still open before final release copy:
 
-- third-party review
-- third-party findings remediation, if findings are accepted
-- final next-milestone planning update
 - release ceremony
 
 ## Explicit Non-Claims
@@ -64,8 +64,7 @@ v0.90 should not claim:
 
 ## Release Status
 
-Draft. Runtime, demo, sidecar, coverage, refactor, docs, and internal-review
-proof work has landed. WP-18 is preparing the third-party review handoff; the
-third-party review, any accepted findings remediation, next-milestone planning
-finalization, and release ceremony remain open, so this file must not yet be
+Draft. Runtime, demo, sidecar, coverage, refactor, docs, internal review,
+third-party review, accepted findings remediation, and next-milestone planning
+have landed. Release ceremony remains open, so this file must not yet be
 treated as final release copy.

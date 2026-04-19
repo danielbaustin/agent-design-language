@@ -21,7 +21,7 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the v0.90 pre-third-party review, start with:
+For the v0.90 release-tail review, start with:
 
 - `docs/milestones/v0.90/README.md`
 - `docs/milestones/v0.90/V090_PRE_THIRD_PARTY_READINESS_REPORT.md`
@@ -34,9 +34,9 @@ For the v0.90 pre-third-party review, start with:
 - `adl/Cargo.lock`
 
 The current v0.90 review posture is pre-release, not released. Runtime, demo,
-sidecar, coverage, Rust refactor, docs, and internal-review work have landed;
-third-party review, any accepted findings remediation, next planning, and
-release ceremony remain.
+sidecar, coverage, Rust refactor, docs, internal-review work, third-party
+review, accepted findings remediation, and next planning have landed; release
+ceremony remains.
 
 Current tracker values to preserve in review:
 

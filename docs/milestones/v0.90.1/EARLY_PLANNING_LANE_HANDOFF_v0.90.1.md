@@ -2,14 +2,11 @@
 
 ## Status
 
-Issue #2090 opened the v0.90.1 planning lane.
+Issue #2090 opened the v0.90.1 planning lane before the full package was
+promoted.
 
-The active planning package lives in local workspace state at:
-
-- `.adl/docs/v0.90.1planning/`
-
-Do not treat this tracked handoff as the full milestone package. The full
-package should be promoted later, after v0.90 release-tail planning review.
+This file is now historical context. The active tracked v0.90.1 planning
+package lives in this directory.
 
 ## Package Shape
 
@@ -63,8 +60,12 @@ It does not claim:
 - complete cross-polis migration
 - full red/blue/purple security ecology
 
-## Promotion Rule
+## Historical Promotion Rule
 
-Promote the local planning package into this tracked milestone directory only
-after v0.90 reaches its release-tail planning gate and the package is reviewed
-against final v0.90 truth.
+The early planning lane was intended to be promoted only after v0.90 reached
+its release-tail planning gate and the package was reviewed against final
+v0.90 truth.
+
+That promotion has now happened. Future sessions should read the main v0.90.1
+planning docs in this directory as the active package and treat this handoff as
+historical context.

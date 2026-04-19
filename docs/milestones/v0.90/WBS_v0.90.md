@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: pre-third-party-review readiness
+- Status: release-tail pre-ceremony
 
 ## WBS Summary
 

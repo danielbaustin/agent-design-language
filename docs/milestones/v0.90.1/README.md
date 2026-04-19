@@ -1,84 +1,88 @@
-# Milestone README - v0.90.1
+# v0.90.1 Planning Package
 
-## Metadata
+## Status
 
-- Milestone: v0.90.1
-- Version: v0.90.1
-- Status: early planning lane open
-- Planning source: `.adl/docs/v0.90.1planning/`
-- Promotion target: `docs/milestones/v0.90.1/`
-- Planning issue: #2090
+Tracked next-milestone planning package promoted during the v0.90 WP-19
+release-tail planning gate.
 
-## Purpose
+The package is ready for v0.90.1 issue-wave authoring after v0.90 release
+ceremony approval. It is not evidence that v0.90.1 implementation has started.
 
-v0.90.1 is the follow-on milestone that turns the v0.90 long-lived-agent
-runtime into the first bounded Runtime v2 foundation prototype.
+## Thesis
 
-The milestone should prove the substrate, not the full citizen birth story.
-It creates inspectable runtime surfaces that later moral, emotional, and
-identity milestones can inherit.
+v0.90.1 should turn the v0.90 long-lived-agent runtime work into the first
+bounded Runtime v2 foundation prototype.
 
-## Planning Model
+The milestone is not the birth of the first true Gödel agent. It is the
+substrate proof that makes that later birth credible: kernel services,
+provisional citizen records, snapshots, manifold links, invariant violation
+artifacts, and operator controls that reviewers can inspect.
 
-The full planning package is being developed first under the local planning
-lane at `.adl/docs/v0.90.1planning/`, using the same directory structure as the
-v0.90 planning package:
+## Directory Shape
 
-- root planning docs and WP YAML in the package root
-- implementation-facing feature contracts under `features/`
-- reader-facing context and later-band backgrounders under `ideas/`
+This package mirrors the v0.90 planning package:
 
-When v0.90 reaches its release-tail planning gate, the package should be
-reviewed against final v0.90 truth and then promoted into this tracked
-milestone directory by a dedicated promotion issue.
+- root planning docs and WP YAML live in this directory
+- feature contracts live under `features/`
+- context and later-band backgrounders live under `ideas/`
 
-## Scope Summary
+## Scope Boundary
 
-### In Scope
+In scope:
 
-- kernel service loop for a bounded citizen-like process
-- minimal citizen record with explicit provisional status
-- snapshot and rehydration path
-- manifold links across identity, memory, task, and temporal surfaces
+- compression-enablement work that makes v0.90.1 and v0.90.2 faster and safer:
+  issue-wave template alignment, worktree-first hardening, and current execution
+  policy
+- bounded Runtime v2 kernel/service loop
+- provisional citizen record and lifecycle state machine
+- manifold and snapshot contract
 - invariant violation artifacts
-- operator inspect, pause, resume, and terminate controls
-- security-boundary evidence for defending the polis
+- operator inspect, pause, resume, terminate, and wake controls
+- one security-boundary proof that protects the polis without making red/blue
+  ecology the core runtime thesis
+- migration-ready shape without claiming full migration semantics
 
-### Out Of Scope
+Out of scope:
 
 - first true Gödel-agent birthday
 - full moral/emotional civilization
-- complete cross-polis migration semantics
-- red/blue/purple security ecology as CSM core
-- v0.91 affect, kindness, morals, humor, wellbeing, and civic substrate
-- v0.92 identity/capability rebinding and birthday semantics
+- v0.92 identity/capability rebinding
+- complete cross-polis migration
+- full red/blue/purple security ecology
+- business-product execution for CodeBuddy or capability testing
 
-## Acceptance Boundary
+## Canonical Planning Docs
 
-The milestone succeeds when Runtime v2 can be demonstrated as a bounded,
-reviewable substrate with explicit continuity handles and failure artifacts.
+- Vision: `VISION_v0.90.1.md`
+- Design: `DESIGN_v0.90.1.md`
+- Work Breakdown Structure: `WBS_v0.90.1.md`
+- Sprint plan: `SPRINT_v0.90.1.md`
+- Decisions log: `DECISIONS_v0.90.1.md`
+- Demo matrix: `DEMO_MATRIX_v0.90.1.md`
+- Feature index: `FEATURE_DOCS_v0.90.1.md`
+- Milestone checklist: `MILESTONE_CHECKLIST_v0.90.1.md`
+- Release plan: `RELEASE_PLAN_v0.90.1.md`
+- Release notes draft: `RELEASE_NOTES_v0.90.1.md`
+- Issue wave plan: `WP_ISSUE_WAVE_v0.90.1.yaml`
 
-It must not claim that a provisional citizen record is the first true Gödel
-agent. That event remains reserved for v0.92.
+## Feature And Idea Lanes
 
-## Planned Proof Surfaces
+- `features/` contains implementation-facing contracts for the Runtime v2
+  foundation prototype.
+- `ideas/` contains context that should inform the milestone without being
+  treated as v0.90.1 implementation scope.
 
-- manifold manifest
-- kernel service-loop report
-- provisional citizen records
-- snapshot and rehydration report
-- invariant violation artifact
-- operator control report
-- security-boundary proof packet
-- integrated Runtime v2 prototype demo packet
+## Issue-Wave Rule
 
-## Roadmap Boundary
+After v0.90 release ceremony approval, v0.90.1 WP-01 should open the actual
+GitHub issue wave and author the task cards from this tracked package.
 
-v0.90.1 adds a foundation slice between v0.90 and v0.91. It does not reduce the
-existing v0.91 or v0.92 milestone stories.
+Do not treat the tracked package itself as an opened issue wave. The wave is
+not open until the WP-01 issue-creation step records real issue numbers and
+updates the YAML.
 
-- v0.90: long-lived runtime, cycles, continuity handles, operator safety
-- v0.90.1: Runtime v2 foundation prototype
-- v0.91: affect, kindness, morals, humor, wellbeing, civic substrate
-- v0.92: first true Gödel-agent birthday, identity/capability continuity,
-  richer memory and rebinding
+## Compression Rule
+
+WP-02 through WP-04 should run before Runtime v2 coding starts. They are the
+enablement layer that should reduce issue-wave drift, unsafe checkout behavior,
+and validation-policy ambiguity during the runtime work.

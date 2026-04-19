@@ -4,7 +4,7 @@ All notable project-level changes are summarized here by milestone/release.
 
 ## v0.90 (Pre-Release Review Tail)
 
-Status: Pre-third-party-review readiness. Not yet released.
+Status: Release-tail pre-ceremony. Not yet released.
 
 Summary:
 - ADL now has a v0.90 long-lived-agent runtime package in the release tail:
@@ -13,7 +13,7 @@ Summary:
 - The sidecar proof work landed milestone compression and repo visibility packets so reviewers can inspect milestone state, drift, and code-doc-demo linkage without treating those pilots as autonomous release tooling
 - The coverage tracker reports workspace line coverage at `92.40%`, which rounds to the intended `93%` tranche, with the workspace gate passing and the per-file gate passing without active file-floor exclusions; the WP-10 validation pass also recorded `92.46%`
 - The Rust tracker reports one `RATIONALE` item, nineteen `REVIEW` items, and fourteen `WATCH` items after the v0.90 WP-14 child refactoring wave, down from four `RATIONALE` items before the latest split pass
-- Internal review completed and its accepted findings were addressed before this pre-third-party-readiness gate; the remaining release tail is third-party review, any findings remediation, next-milestone planning, and ceremony
+- Internal review, third-party review, accepted findings remediation, and next-milestone planning are complete in the release tail; the remaining release step is ceremony
 - The crate version for the v0.90 release-readiness branch is `0.90.0`
 
 References:
@@ -27,7 +27,7 @@ References:
 - `docs/milestones/v0.90/V090_PRE_THIRD_PARTY_READINESS_REPORT.md`
 
 Not yet claimed in v0.90:
-- release completion, third-party-review completion, or final ceremony
+- release completion or final ceremony
 - full v0.92 identity/capability substrate
 - live trading, financial advice, or unbounded autonomy
 - autonomous release approval or silent closeout automation
