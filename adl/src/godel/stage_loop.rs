@@ -913,4 +913,49 @@ mod tests {
             .expect_err("unsupported template stage must fail");
         assert!(err.to_string().contains("unsupported stage"));
     }
+
+    #[test]
+    fn stage_loop_input_evidence_refs_are_normalized_for_dedup_and_sort() {
+        let mut input = fixture_input();
+        input.evidence_refs = vec![
+            "runs/run-745-a/run_status.json".to_string(),
+            "runs/run-745-a/evidence/early.json".to_string(),
+            "runs/run-745-a/run_status.json".to_string(),
+            "runs/run-745-a/evidence/late.json".to_string(),
+        ];
+
+        assert_eq!(
+            input.normalized_evidence_refs(),
+            vec![
+                "runs/run-745-a/evidence/early.json".to_string(),
+                "runs/run-745-a/evidence/late.json".to_string(),
+                "runs/run-745-a/run_status.json".to_string(),
+            ]
+        );
+    }
+
+    #[test]
+    fn stage_loop_execute_uses_normalized_evidence_refs_in_output_artifacts() {
+        let exec = GodelStageLoopExecutor::new(StageLoopConfig::default());
+        let mut input = fixture_input();
+        input.evidence_refs = vec![
+            "runs/run-745-a/run_status.json".to_string(),
+            "runs/run-745-a/evidence/repeated.json".to_string(),
+            "runs/run-745-a/evidence/repeated.json".to_string(),
+            "runs/run-745-a/activation_log.json".to_string(),
+        ];
+
+        let run = exec
+            .execute(&input)
+            .expect("normalized evidence refs should not fail");
+
+        assert_eq!(
+            run.record.evidence_refs,
+            vec![
+                "runs/run-745-a/activation_log.json".to_string(),
+                "runs/run-745-a/evidence/repeated.json".to_string(),
+                "runs/run-745-a/run_status.json".to_string(),
+            ]
+        );
+    }
 }
