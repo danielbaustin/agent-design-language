@@ -1,0 +1,236 @@
+{
+  "schema_version": "runtime_v2.snapshot_manifest.v1",
+  "snapshot_id": "snapshot-0001",
+  "manifold_id": "proto-csm-01",
+  "snapshot_path": "runtime_v2/snapshots/snapshot-0001.json",
+  "created_at_utc": "not_started",
+  "manifold_state": {
+    "schema_version": "runtime_v2.manifold.v1",
+    "manifold_id": "proto-csm-01",
+    "lifecycle_state": "snapshotting",
+    "artifact_path": "runtime_v2/manifold.json",
+    "clock_anchor": {
+      "anchor_id": "clock_anchor_0000",
+      "clock_kind": "monotonic_logical",
+      "monotonic_tick": 0,
+      "observed_at_utc": "not_started"
+    },
+    "citizen_registry_refs": {
+      "registry_root": "runtime_v2/citizens",
+      "active_index": "runtime_v2/citizens/active_index.json",
+      "pending_index": "runtime_v2/citizens/pending_index.json"
+    },
+    "kernel_service_refs": {
+      "registry_path": "runtime_v2/kernel/service_registry.json",
+      "service_loop_path": "runtime_v2/kernel/service_loop.jsonl",
+      "service_state_path": "runtime_v2/kernel/service_state.json"
+    },
+    "trace_root": {
+      "trace_root": "runtime_v2/traces",
+      "event_log_path": "runtime_v2/traces/events.jsonl",
+      "next_event_sequence": 1
+    },
+    "snapshot_root": {
+      "snapshot_root": "runtime_v2/snapshots",
+      "latest_snapshot_id": "snapshot-0001",
+      "rehydration_report_path": "runtime_v2/rehydration_report.json"
+    },
+    "resource_ledger": {
+      "ledger_path": "runtime_v2/resource_ledger.json",
+      "accounting_mode": "bounded_prototype"
+    },
+    "invariant_policy_refs": {
+      "policy_path": "runtime_v2/invariants/policy.json",
+      "enforcement_mode": "fail_closed_before_activation",
+      "blocking_invariants": [
+        "single_active_manifold_instance",
+        "no_duplicate_active_citizen_instance",
+        "trace_sequence_must_advance_monotonically",
+        "snapshot_restore_must_validate_before_active_state"
+      ]
+    },
+    "review_surface": {
+      "required_artifacts": [
+        "runtime_v2/manifold.json",
+        "runtime_v2/citizens/active_index.json",
+        "runtime_v2/kernel/service_registry.json",
+        "runtime_v2/traces/events.jsonl",
+        "runtime_v2/snapshots",
+        "runtime_v2/invariants/policy.json"
+      ],
+      "proof_hook_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2::tests::runtime_v2_manifold_root_contract_is_stable",
+      "proof_hook_output_path": "runtime_v2/manifold.json",
+      "downstream_boundaries": [
+        "WP-06 owns the bounded kernel service loop behavior",
+        "WP-07 owns provisional citizen record materialization",
+        "WP-08 owns snapshot writing, sealing, and rehydration",
+        "WP-09 owns invariant violation artifacts"
+      ],
+      "non_goals": [
+        "no true Godel-agent birthday or identity rebinding",
+        "no full moral, emotional, or polis governance layer",
+        "no cross-machine migration or cross-polis state transfer",
+        "no live kernel scheduling behavior in WP-05"
+      ]
+    }
+  },
+  "citizen_records": [
+    {
+      "schema_version": "runtime_v2.provisional_citizen.v1",
+      "citizen_id": "proto-citizen-alpha",
+      "display_name": "Prototype Citizen Alpha",
+      "provisional_status": "provisional",
+      "lifecycle_state": "active",
+      "manifold_id": "proto-csm-01",
+      "record_path": "runtime_v2/citizens/proto-citizen-alpha.json",
+      "created_at_utc": "not_started",
+      "last_wake_at_utc": null,
+      "memory_identity_refs": {
+        "memory_root_ref": "runtime_v2/citizens/proto-citizen-alpha/memory",
+        "identity_profile_ref": "runtime_v2/citizens/proto-citizen-alpha/identity.json"
+      },
+      "policy_boundary_refs": {
+        "policy_ref": "runtime_v2/citizens/proto-citizen-alpha/policy.json",
+        "admission_trace_ref": "runtime_v2/traces/admission/proto-citizen-alpha.json"
+      },
+      "rehydration_validation_ref": null,
+      "termination_event_ref": null,
+      "resources_released": false,
+      "can_execute_episodes": true
+    },
+    {
+      "schema_version": "runtime_v2.provisional_citizen.v1",
+      "citizen_id": "proto-citizen-beta",
+      "display_name": "Prototype Citizen Beta",
+      "provisional_status": "provisional",
+      "lifecycle_state": "proposed",
+      "manifold_id": "proto-csm-01",
+      "record_path": "runtime_v2/citizens/proto-citizen-beta.json",
+      "created_at_utc": "not_started",
+      "last_wake_at_utc": null,
+      "memory_identity_refs": {
+        "memory_root_ref": "runtime_v2/citizens/proto-citizen-beta/memory",
+        "identity_profile_ref": "runtime_v2/citizens/proto-citizen-beta/identity.json"
+      },
+      "policy_boundary_refs": {
+        "policy_ref": "runtime_v2/citizens/proto-citizen-beta/policy.json",
+        "admission_trace_ref": "runtime_v2/traces/admission/proto-citizen-beta.json"
+      },
+      "rehydration_validation_ref": null,
+      "termination_event_ref": null,
+      "resources_released": false,
+      "can_execute_episodes": false
+    }
+  ],
+  "active_index": {
+    "schema_version": "runtime_v2.citizen_registry_index.v1",
+    "manifold_id": "proto-csm-01",
+    "registry_root": "runtime_v2/citizens",
+    "index_kind": "active",
+    "index_path": "runtime_v2/citizens/active_index.json",
+    "citizens": [
+      {
+        "citizen_id": "proto-citizen-alpha",
+        "lifecycle_state": "active",
+        "record_path": "runtime_v2/citizens/proto-citizen-alpha.json",
+        "can_execute_episodes": true
+      }
+    ]
+  },
+  "pending_index": {
+    "schema_version": "runtime_v2.citizen_registry_index.v1",
+    "manifold_id": "proto-csm-01",
+    "registry_root": "runtime_v2/citizens",
+    "index_kind": "pending",
+    "index_path": "runtime_v2/citizens/pending_index.json",
+    "citizens": [
+      {
+        "citizen_id": "proto-citizen-beta",
+        "lifecycle_state": "proposed",
+        "record_path": "runtime_v2/citizens/proto-citizen-beta.json",
+        "can_execute_episodes": false
+      }
+    ]
+  },
+  "kernel_service_state": {
+    "schema_version": "runtime_v2.kernel.service_state.v1",
+    "manifold_id": "proto-csm-01",
+    "service_state_path": "runtime_v2/kernel/service_state.json",
+    "loop_status": "bounded_tick_complete",
+    "completed_through_event_sequence": 8,
+    "services": [
+      {
+        "service_id": "clock_service",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 1,
+        "blocked_reason": null
+      },
+      {
+        "service_id": "identity_admission_guard",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 2,
+        "blocked_reason": null
+      },
+      {
+        "service_id": "scheduler",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 3,
+        "blocked_reason": null
+      },
+      {
+        "service_id": "resource_ledger",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 4,
+        "blocked_reason": null
+      },
+      {
+        "service_id": "trace_writer",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 5,
+        "blocked_reason": null
+      },
+      {
+        "service_id": "snapshot_manager",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 6,
+        "blocked_reason": null
+      },
+      {
+        "service_id": "invariant_checker",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 7,
+        "blocked_reason": null
+      },
+      {
+        "service_id": "operator_control_interface",
+        "lifecycle_state": "ready",
+        "last_event_sequence": 8,
+        "blocked_reason": null
+      }
+    ]
+  },
+  "last_trace_cursor": 8,
+  "invariant_status": [
+    {
+      "invariant_id": "single_active_manifold_instance",
+      "status": "passed",
+      "checked_before_snapshot": true
+    },
+    {
+      "invariant_id": "no_duplicate_active_citizen_instance",
+      "status": "passed",
+      "checked_before_snapshot": true
+    },
+    {
+      "invariant_id": "trace_sequence_must_advance_monotonically",
+      "status": "passed",
+      "checked_before_snapshot": true
+    },
+    {
+      "invariant_id": "snapshot_restore_must_validate_before_active_state",
+      "status": "passed",
+      "checked_before_snapshot": true
+    }
+  ],
+  "structural_checksum": "fnv1a64:3d7698db0accb4f7"
+}

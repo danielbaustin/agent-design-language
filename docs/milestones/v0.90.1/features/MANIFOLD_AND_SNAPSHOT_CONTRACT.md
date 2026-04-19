@@ -75,6 +75,31 @@ The snapshot should include enough information to validate wake:
 - invariant status
 - snapshot hash or structural checksum
 
+## WP-08 Implementation Surface
+
+WP-08 adds Rust-owned snapshot and rehydration proof artifacts in
+`adl/src/runtime_v2.rs`.
+
+The contract defines:
+
+- `RuntimeV2SnapshotManifest`
+- `RuntimeV2SnapshotInvariantStatus`
+- `RuntimeV2RehydrationReport`
+- `RuntimeV2SnapshotAndRehydrationArtifacts`
+
+The default prototype is available through
+`runtime_v2_snapshot_rehydration_contract()`. It consumes the WP-05 manifold,
+the WP-06 kernel loop state, and the WP-07 provisional citizen lifecycle
+artifacts, then emits:
+
+- `runtime_v2/snapshots/snapshot-0001.json`
+- `runtime_v2/rehydration_report.json`
+
+The snapshot is sealed with a deterministic structural checksum over the
+captured manifold state, citizen records/indexes, kernel service state, trace
+cursor, and invariant statuses. The rehydration report records the checksum it
+woke from so reviewers can detect stale or ambiguous wake evidence.
+
 ## Wake / Rehydration Proof
 
 Rehydration must prove:
@@ -83,6 +108,20 @@ Rehydration must prove:
 - restored manifold id matches snapshot
 - trace continues after restore
 - invariant checks run before active state resumes
+
+WP-08 enforces those proof checks in validation:
+
+- restored active citizens must match the snapshot active index exactly
+- the restored manifold id must match the snapshot manifold id
+- the trace resume sequence must be greater than the snapshot trace cursor
+- invariant checks must run before active state resumes
+- wake is allowed only when the duplicate, invariant, and trace checks pass
+
+The focused WP-08 proof hook is:
+
+```bash
+cargo test --manifest-path adl/Cargo.toml runtime_v2::tests::runtime_v2_snapshot
+```
 
 ## Non-Goals
 
