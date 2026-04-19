@@ -1,0 +1,15 @@
+{
+  "schema_version": "runtime_v2.citizen_registry_index.v1",
+  "manifold_id": "proto-csm-01",
+  "registry_root": "runtime_v2/citizens",
+  "index_kind": "active",
+  "index_path": "runtime_v2/citizens/active_index.json",
+  "citizens": [
+    {
+      "citizen_id": "proto-citizen-alpha",
+      "lifecycle_state": "active",
+      "record_path": "runtime_v2/citizens/proto-citizen-alpha.json",
+      "can_execute_episodes": true
+    }
+  ]
+}
