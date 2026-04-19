@@ -1,0 +1,70 @@
+milestone: v0.90.1
+status: tracked_planning_ready
+issue_wave_opened: false
+tracked_package: docs/milestones/v0.90.1
+notes:
+  - "Tracked planning package promoted during v0.90 WP-19."
+  - "Create real issues only after v0.90 release ceremony approval."
+  - "Do not claim first true Gödel-agent birthday in v0.90.1."
+  - "WP-02 through WP-04 intentionally front-load compression enablement before Runtime v2 coding."
+work_packages:
+  - wp: WP-01
+    title: Open and author v0.90.1 issue wave
+    outcome: GitHub issues, task cards, and issue-number mapping
+  - wp: WP-02
+    title: Issue-wave template and generator alignment
+    outcome: reusable WP wave template and generator proof
+  - wp: WP-03
+    title: Worktree-first workflow hardening
+    outcome: guarded worktree-first execution path
+  - wp: WP-04
+    title: Compression-era execution policy
+    outcome: current operator policy for skills, validation, and evidence
+  - wp: WP-05
+    title: Runtime v2 manifold contract
+    outcome: persistent manifold manifest and validation
+  - wp: WP-06
+    title: Kernel service loop
+    outcome: bounded kernel/service loop with traceable state
+  - wp: WP-07
+    title: Provisional citizen lifecycle
+    outcome: provisional citizen record and lifecycle state machine
+  - wp: WP-08
+    title: Snapshot and rehydration
+    outcome: sleep/wake proof without duplicate activation
+  - wp: WP-09
+    title: Invariant violation artifacts
+    outcome: rejected illegal state transition evidence
+  - wp: WP-10
+    title: Operator controls
+    outcome: inspect, pause, resume, terminate proof surfaces
+  - wp: WP-11
+    title: Security-boundary proof
+    outcome: one invalid action rejected through kernel/policy path
+  - wp: WP-12
+    title: Integrated Runtime v2 prototype demo
+    outcome: reviewer-facing end-to-end proof packet
+  - wp: WP-13
+    title: Runtime v2 docs pass
+    outcome: aligned feature docs, demo matrix, and README
+  - wp: WP-14
+    title: Quality and coverage gate
+    outcome: truthful quality posture
+  - wp: WP-15
+    title: Internal review
+    outcome: findings-first internal review packet
+  - wp: WP-16
+    title: Review remediation
+    outcome: accepted findings fixed or explicitly deferred
+  - wp: WP-17
+    title: Release readiness
+    outcome: release notes, checklist, and reviewer handoff
+  - wp: WP-18
+    title: v0.91/v0.92 handoff
+    outcome: preserved moral/emotional and birthday boundaries
+  - wp: WP-19
+    title: Release-evidence packet
+    outcome: coherent proof trail across demos, quality, review, and readiness
+  - wp: WP-20
+    title: Release ceremony
+    outcome: v0.90.1 closed truthfully

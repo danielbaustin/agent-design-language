@@ -105,10 +105,10 @@ Other useful entrypoints:
 ## Current Status
 
 - Active milestone: **v0.90**
-- Current release state: **pre-third-party-review readiness**
+- Current release state: **release-tail pre-ceremony**
 - Most recently completed milestone: **v0.89.1**
 - Current crate version in the v0.90 release-readiness branch: **0.90.0**
-- Version note: **v0.90 implementation, coverage, Rust refactoring, internal review, and readiness evidence are in the release tail; third-party review and ceremony remain**
+- Version note: **v0.90 implementation, coverage, Rust refactoring, internal review, third-party review, accepted remediation, and next-milestone planning are in the release tail; ceremony remains**
 - Previous completed milestone package: **v0.89**
 - Previous completed milestone: **v0.88**
 - Project changelog: `CHANGELOG.md`
@@ -119,12 +119,12 @@ ADL is in active development. This repository contains both implemented runtime 
 
 v0.90 is the active long-lived-agent runtime milestone. It carries ADL from bounded single-run proof surfaces into supervised recurring cycles with durable artifacts, pre-identity continuity handles, operator controls, demo proof, milestone compression, repo visibility, explicit Rust refactoring, and a measured coverage ratchet.
 
-The implementation wave has landed through the long-lived runtime, stock-league demo, demo-extension, compression, repo-visibility, coverage, Rust-refactoring, docs, and internal-review surfaces. The release tail is now in pre-third-party-review readiness: the v0.90 package should be reviewable, but it should not be called released until third-party review, any findings remediation, next-milestone planning, and ceremony complete.
+The implementation wave has landed through the long-lived runtime, stock-league demo, demo-extension, compression, repo-visibility, coverage, Rust-refactoring, docs, and internal-review surfaces. The release tail has also completed third-party review, accepted ADR remediation, and next-milestone planning. The v0.90 package should not be called released until ceremony completes.
 
 Best current v0.90 entrypoints:
 - milestone docs: `docs/milestones/v0.90/README.md`
 - demo matrix: `docs/milestones/v0.90/DEMO_MATRIX_v0.90.md`
-- readiness report: `docs/milestones/v0.90/V090_PRE_THIRD_PARTY_READINESS_REPORT.md`
+- pre-third-party readiness report: `docs/milestones/v0.90/V090_PRE_THIRD_PARTY_READINESS_REPORT.md`
 - milestone compression packet: `docs/milestones/v0.90/milestone_compression/README.md`
 - repo visibility packet: `docs/milestones/v0.90/repo_visibility/README.md`
 - stock-league demo docs: `demos/v0.90/long_lived_stock_league_demo.md`
@@ -162,7 +162,7 @@ Key features:
 - bounded proof surfaces for temporal review, PHI metrics, instinct review, and the integrated `v0.88` review surface
 - Paper Sonata as the flagship bounded public-facing demo
 - deep-agents comparative proof as a supporting reviewer-facing proof row
-- active handoff into internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony
+- completed handoff into internal review, 3rd-party review, remediation, next-milestone planning, and release ceremony
 
 ### v0.87.1 - Runtime Completion and Reviewer-Facing Proof Package
 

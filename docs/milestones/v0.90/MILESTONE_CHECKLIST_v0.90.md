@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: pre-third-party-review readiness
+- Status: release-tail pre-ceremony
 
 ## Planning Gate
 
@@ -48,16 +48,16 @@
 
 ## Review And Release Gate
 
-- [x] Quality gate is green for pre-third-party review.
-- [x] Docs review is complete for pre-third-party review.
+- [x] Quality gate is green through third-party review.
+- [x] Docs review is complete through third-party review.
 - [x] Rust refactor validation is complete.
 - [x] Milestone compression drift checks are clean or explicitly dispositioned.
 - [x] Repo visibility linkage report is reviewed.
 - [x] Internal review is complete.
-- [ ] Third-party review is complete or explicitly deferred.
-- [ ] Findings remediation is complete.
+- [x] Third-party review is complete.
+- [x] Findings remediation is complete.
 - [ ] Final quality and release readiness pass is complete for release ceremony.
-- [ ] Next milestone planning is complete before release ceremony.
+- [x] Next milestone planning is complete before release ceremony.
 - [ ] Release ceremony is complete.
 
 ## Current Tracker Snapshot
@@ -68,4 +68,4 @@
 - Rust tracker: one `RATIONALE`, nineteen `REVIEW`, and fourteen `WATCH` items
   remain after the WP-14 child refactoring wave.
 - Closeout: an earlier closeout pass reconciled almost all closed issue cards;
-  remaining open issues are normal review/release-tail work.
+  remaining open issue work is normal release ceremony work.
