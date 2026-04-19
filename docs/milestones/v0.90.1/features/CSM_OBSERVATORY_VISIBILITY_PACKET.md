@@ -310,6 +310,8 @@ fixture labeling, and obvious path or endpoint leakage.
 - Fixture packet: demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json
 - Validator: adl/tools/validate_csm_visibility_packet.py
 - Focused test: adl/tools/test_csm_visibility_packet.sh
+- Operator report: demos/v0.90.1/csm_observatory_operator_report.md
+- Operator report renderer: adl/tools/render_csm_observatory_report.py
 
 ## Non-Goals
 
