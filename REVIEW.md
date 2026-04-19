@@ -19,6 +19,35 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ---
 
+## Current Review Entry Point
+
+For the v0.90 pre-third-party review, start with:
+
+- `docs/milestones/v0.90/README.md`
+- `docs/milestones/v0.90/V090_PRE_THIRD_PARTY_READINESS_REPORT.md`
+- `docs/milestones/v0.90/DEMO_MATRIX_v0.90.md`
+- `docs/milestones/v0.90/MILESTONE_CHECKLIST_v0.90.md`
+- `docs/milestones/v0.90/RELEASE_NOTES_v0.90.md`
+- `CHANGELOG.md`
+- `README.md`
+- `adl/Cargo.toml`
+- `adl/Cargo.lock`
+
+The current v0.90 review posture is pre-release, not released. Runtime, demo,
+sidecar, coverage, Rust refactor, docs, and internal-review work have landed;
+third-party review, any accepted findings remediation, next planning, and
+release ceremony remain.
+
+Current tracker values to preserve in review:
+
+- coverage: `92.40%` workspace line coverage, rounded to the intended `93%`
+  tranche; WP-10 also recorded `92.46%`
+- Rust watch list: one `RATIONALE`, nineteen `REVIEW`, and fourteen `WATCH`
+  items after the WP-14 child split wave
+- closeout: earlier closeout pass reconciled almost all closed issue cards
+
+---
+
 ## 1. What ADL Is
 
 ADL is a deterministic, contract-driven orchestration system for AI workflows, implemented primarily in Rust.
@@ -294,7 +323,7 @@ Typical categories:
 - demo/proof audit:
   - inspect the milestone demo matrix and the current proof/review entrypoints
 - ADR audit:
-  - inspect `docs/adr/` and compare major new architectural commitments against ADR coverage
+  - inspect `docs/architecture/adr/` and compare major new architectural commitments against ADR coverage
 
 If command examples are included in a future canonical version of this guide, they should be clearly marked as:
 

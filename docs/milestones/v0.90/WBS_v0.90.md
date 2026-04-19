@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: issue wave open
+- Status: pre-third-party-review readiness
 
 ## WBS Summary
 
@@ -40,10 +40,10 @@ surfaces, validation expectations, and non-goals.
 | WP-13 | Docs and review pass | Align docs, feature index, demos, issue outputs, compression artifacts, and repo visibility artifacts | review-ready docs package | WP-09 through WP-12 | #2032 |
 | WP-14 | Rust refactoring pass | Perform explicit, bounded Rust refactors justified by maintainability, testability, or review findings | refactor PRs and validation record | WP-10 through WP-13 | #2033 |
 | WP-15 | Internal review | Conduct internal review and record findings | review artifact | WP-13, WP-14 | #2034 |
-| WP-16 | Third-party review | Conduct external/third-party review and record findings | review artifact | WP-13, WP-14 | #2035 |
-| WP-17 | Findings remediation | Fix or explicitly defer review findings | remediation PRs or defer log | WP-15, WP-16 | #2036 |
-| WP-18 | Final quality and release readiness | Re-run quality, demo, docs, compression, visibility, and refactor readiness checks | release-readiness report | WP-17 | #2037 |
-| WP-19 | Next milestone planning | Prepare the following milestone package | tracked planning package | WP-18 | #2038 |
+| WP-16 | Third-party review | Conduct external/third-party review and record findings | review artifact | WP-18 | #2035 |
+| WP-17 | Findings remediation | Fix or explicitly defer review findings | remediation PRs or defer log | WP-16 | #2036 |
+| WP-18 | Final quality and release readiness | Re-run quality, demo, docs, compression, visibility, and refactor readiness checks before third-party review | pre-third-party readiness report | WP-15 | #2037 |
+| WP-19 | Next milestone planning | Prepare the following milestone package | tracked planning package | WP-17 | #2038 |
 | WP-20 | Release ceremony | Final validation, release notes, tag, and cleanup | release artifact set | WP-19 | #2039 |
 
 ## Candidate Scope Split
@@ -93,7 +93,15 @@ Release tail:
 - WP-13: docs and feature mappings are consistent across core and sidecar work
 - WP-14: Rust refactors are bounded, validated, and justified by
   maintainability, testability, or review evidence
-- WP-15 through WP-17: review findings are closed or deferred truthfully
-- WP-18: final quality and release-readiness checks are complete
+- WP-15: internal review findings are closed or deferred truthfully
+- WP-18: pre-third-party quality and release-readiness checks are complete
+- WP-16 and WP-17: third-party review findings are closed or deferred truthfully
 - WP-19: next milestone planning is ready before release ceremony
 - WP-20: release package is complete
+
+Execution note:
+
+- The review-tail execution order is WP-15, WP-18, WP-16, WP-17, WP-19, and
+  WP-20. WP-18 runs before the third-party review so the reviewer receives the
+  freshest quality, demo, docs, compression, visibility, coverage, refactor, and
+  closeout truth.

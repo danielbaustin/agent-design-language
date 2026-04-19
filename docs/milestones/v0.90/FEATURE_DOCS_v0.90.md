@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: issue wave open
+- Status: pre-third-party-review readiness
 
 ## Purpose
 
@@ -60,7 +60,7 @@ Current disposition:
 
 - Treat files in features/ as candidate executable contracts or proof surfaces.
 - Treat files in ideas/ as rationale, context, or later-band planning.
-- Treat this index as tracked planning truth for v0.90 after WP-01 assigns
-  issue numbers and reconciles the opened issue wave.
+- Treat this index as tracked planning truth for v0.90 after WP-01 assigned
+  issue numbers and WP-18 refreshed release-tail truth.
 - Treat WP_EXECUTION_READINESS_v0.90.md as the bridge from these feature docs to
   concrete WP execution requirements.

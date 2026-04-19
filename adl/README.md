@@ -23,19 +23,30 @@ It provides:
 
 ## Current Status
 
-- Current active milestone in the main repo: **v0.87.1**
-- Recent stable runtime milestone: **v0.8**
-- Most recently completed runtime milestone in the main repo: **v0.87**
-- Previous closure milestone in the main repo: **v0.86**
-- Current crate version on `main`: **0.87.1**
+- Current active milestone in the main repo: **v0.90**
+- Current release state: **pre-third-party-review readiness**
+- Most recently completed milestone in the main repo: **v0.89.1**
+- Current crate version in the v0.90 release-readiness branch: **0.90.0**
 
 This README describes the runtime as it exists on the current `main` branch and points to the relevant milestone and demo surfaces in the parent repository.
 
 ## Recent Runtime Milestones
 
+### v0.90 — Long-Lived Runtime And Reviewer-Facing Proof Package
+
+v0.90 is the active runtime milestone. The implementation and proof wave has landed through the long-lived runtime, stock-league demo, demo-extension lane, milestone compression pilot, repo visibility prototype, coverage ratchet, Rust refactoring pass, docs pass, and internal review. The release tail still requires third-party review, any findings remediation, next planning, and ceremony before release.
+
+Highlights:
+- supervised long-lived agents with heartbeat, lease, status, tick/run/stop controls, and bounded cycle records
+- per-cycle artifact contracts for observe/decide/persist behavior
+- pre-v0.92 continuity handles that avoid claiming full identity
+- operator guardrail and stop surfaces
+- stock-league demo proof packets with fixture-backed, paper-only behavior
+- measured coverage and maintainability trackers for release-readiness review
+
 ### v0.87.1 — Runtime Completion And Reviewer-Facing Proof Package
 
-v0.87.1 is the active runtime milestone. The runtime-completion implementation and bounded demo program are landed; the remaining work is the quality/docs/review/release tail that makes the package externally reviewable.
+v0.87.1 is the completed runtime milestone that v0.88 through v0.90 build on.
 
 Highlights:
 - runtime environment, lifecycle, execution-boundary, resilience, and review surfaces promoted into one canonical milestone package

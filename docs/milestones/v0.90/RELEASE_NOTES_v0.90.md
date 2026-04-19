@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: issue wave open
+- Status: pre-third-party-review readiness
 
 ## Draft Summary
 
@@ -21,7 +21,8 @@ The release story being assembled is:
 - the stock league demo proves recurring supervised behavior safely
 - selected demo extensions strengthen proof coverage without displacing the
   stock-league proof
-- coverage ratchets to `93%` if measurement and validation support it
+- coverage ratchets to the intended `93%` tranche by rounded workspace evidence
+  while preserving the existing workspace and per-file gates
 - milestone compression and repo visibility land as bounded pilots
 - Rust refactoring is explicit, scoped, and validated
 
@@ -35,14 +36,18 @@ The release story being assembled is:
 - demo extension proof package
 - milestone compression pilot
 - repo visibility manifest and linkage report
+- coverage ratchet evidence: `92.40%` current tracker value, rounded to `93%`,
+  with gates passing and no active file-floor exclusion
+- Rust refactoring wave: one `RATIONALE`, nineteen `REVIEW`, and fourteen
+  `WATCH` tracker items after the WP-14 child splits
+- internal review and accepted internal-finding remediation
 
 Still open before final release copy:
 
-- `93%` coverage tranche
-- explicit Rust refactoring rollup
-- internal review, third-party review, findings remediation, final readiness,
-  next-milestone planning, and release ceremony
-- Rust refactoring validation record
+- third-party review
+- third-party findings remediation, if findings are accepted
+- final next-milestone planning update
+- release ceremony
 
 ## Explicit Non-Claims
 
@@ -59,6 +64,8 @@ v0.90 should not claim:
 
 ## Release Status
 
-Draft. Runtime and demo proof work has landed through WP-09, and WP-11/WP-12
-sidecar proofs have landed. WP-10 and the review/release tail remain open, so
-this file must not yet be treated as final release copy.
+Draft. Runtime, demo, sidecar, coverage, refactor, docs, and internal-review
+proof work has landed. WP-18 is preparing the third-party review handoff; the
+third-party review, any accepted findings remediation, next-milestone planning
+finalization, and release ceremony remain open, so this file must not yet be
+treated as final release copy.

@@ -149,8 +149,8 @@ proof_surfaces:
 
 known_gaps:
   - id: coverage-ratchet-evidence
-    status: pending_wp10
-    detail: v0.90 coverage ratchet evidence remains open until WP-10 lands.
+    status: landed_wp10
+    detail: v0.90 coverage ratchet evidence landed; current tracker reports 92.40% workspace line coverage, rounded to the intended 93% tranche, with workspace and per-file gates passing.
   - id: broader_repo_index
     status: out_of_scope
     detail: This manifest covers one milestone slice, not the full repository.

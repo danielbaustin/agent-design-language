@@ -103,25 +103,25 @@ work_packages:
     title: "[v0.90][WP-16] Third-party review"
     queue: review
     issue: 2035
-    depends_on: ["WP-13", "WP-14"]
+    depends_on: ["WP-18"]
     outcome: review
   - wp: WP-17
     title: "[v0.90][WP-17] Findings remediation"
     queue: review
     issue: 2036
-    depends_on: ["WP-15", "WP-16"]
+    depends_on: ["WP-16"]
     outcome: code
   - wp: WP-18
     title: "[v0.90][WP-18] Final quality and release readiness"
     queue: wp
     issue: 2037
-    depends_on: ["WP-17"]
+    depends_on: ["WP-15"]
     outcome: tests
   - wp: WP-19
     title: "[v0.90][WP-19] Next milestone planning"
     queue: docs
     issue: 2038
-    depends_on: ["WP-18"]
+    depends_on: ["WP-17"]
     outcome: docs
   - wp: WP-20
     title: "[v0.90][WP-20] Release ceremony"

@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: issue wave open
+- Status: pre-third-party-review readiness
 
 ## Decision Log
 
@@ -21,6 +21,7 @@
 | D-07 | Pilot milestone compression carefully | accepted | Compression matters, but write automation should not outrun state-model truth | Adds WP-11 for canonical milestone state and drift checks |
 | D-08 | Add repo visibility as a bounded prototype | accepted | Repo-aware cognition is useful now, but the first slice should be a manifest and linkage proof | Adds WP-12 without claiming full repo indexing |
 | D-09 | Add explicit Rust refactoring near the release tail | accepted | We are doing refactoring anyway, so it should be visible, bounded, and validated | Adds WP-14 for maintainability/testability/review-driven refactors |
+| D-10 | Run WP-18 before third-party review | accepted | The reviewer should receive current quality, tracker, docs, compression, visibility, and closeout truth rather than stale release-tail placeholders | Reorders the review tail to WP-15, WP-18, WP-16, WP-17, WP-19, WP-20 |
 
 ## Dispositioned Questions
 
@@ -36,8 +37,15 @@
   child issues, not broad aesthetic cleanup.
 - WP-12 used the long-lived runtime and stock-league proof path for the first
   repo visibility linkage proof.
+- WP-10 accepted the rounded `93%` tranche based on current tracker evidence:
+  `92.40%` workspace line coverage, with workspace and per-file gates passing
+  and no active file-floor exclusion.
+- WP-14 accepted the current Rust tracker state as managed follow-up rather than
+  a release blocker: one `RATIONALE`, nineteen `REVIEW`, and fourteen `WATCH`
+  items after the child split wave.
 
 ## Exit Criteria
 
-- v0.90 WP-01 turns proposed decisions into accepted/deferred tracked milestone decisions.
-- Every open question has a work-package or defer home in the opened issue wave.
+- v0.90 WP-01 turned proposed decisions into accepted/deferred tracked milestone decisions.
+- Every open question has a work-package or defer home in the opened issue wave
+  or a recorded later-band planning surface.

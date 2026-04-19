@@ -16,7 +16,7 @@ But those artifacts are not the whole story. In the current repository, they are
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.89.1%20released-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.90%20release--readiness-blue)
 
 Today, ADL includes:
 - a reference Rust runtime and CLI for deterministic workflow execution
@@ -44,17 +44,17 @@ cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-mi
 
 ### If you want the current milestone proof package
 
-Run the integrated `v0.89.1` quality and review-tail surface:
+Run the current v0.90 readiness and proof surfaces from the milestone package:
 
 ```bash
-bash adl/tools/demo_v0891_quality_gate.sh
+python3 adl/tools/check_v090_milestone_state.py
 ```
 
-This is the best top-level entrypoint if you want to see the released milestone's quality proof surface.
+This is the best top-level entrypoint if you want to see the current milestone-compression drift check before review.
 
 ### If you want the flagship current demo
 
-Run the five-agent Hey Jude MIDI package, the flagship bounded multi-agent demo carried into the `v0.89.1` milestone:
+Run the five-agent Hey Jude MIDI package, the flagship bounded multi-agent demo carried by the v0.89.1 release:
 
 ```bash
 bash adl/tools/demo_v0891_five_agent_hey_jude.sh
@@ -104,10 +104,11 @@ Other useful entrypoints:
 
 ## Current Status
 
+- Active milestone: **v0.90**
+- Current release state: **pre-third-party-review readiness**
 - Most recently completed milestone: **v0.89.1**
-- Next milestone planning package: **v0.90**
-- Current crate version on `main`: **0.89.1**
-- Version note: **v0.89.1 is complete and released; the v0.90 planning package is ready for the next issue wave**
+- Current crate version in the v0.90 release-readiness branch: **0.90.0**
+- Version note: **v0.90 implementation, coverage, Rust refactoring, internal review, and readiness evidence are in the release tail; third-party review and ceremony remain**
 - Previous completed milestone package: **v0.89**
 - Previous completed milestone: **v0.88**
 - Project changelog: `CHANGELOG.md`
@@ -116,21 +117,17 @@ ADL is in active development. This repository contains both implemented runtime 
 
 ## Current Milestone
 
-`v0.89.1` is the most recently completed milestone. It carries ADL from governed adaptive execution into adversarial runtime and reviewable exploit-evidence behavior:
-- adversarial runtime architecture and red/blue/purple execution structure
-- exploit artifact and replay-manifest surfaces
-- continuous verification, exploit generation, and bounded self-attack patterns
-- operational skill substrate and composition surfaces for governed execution
-- bounded manuscript workflow for the initial ADL three-paper program
+v0.90 is the active long-lived-agent runtime milestone. It carries ADL from bounded single-run proof surfaces into supervised recurring cycles with durable artifacts, pre-identity continuity handles, operator controls, demo proof, milestone compression, repo visibility, explicit Rust refactoring, and a measured coverage ratchet.
 
-The core implementation and proof wave landed through the tracked `v0.89.1` release-tail surfaces. Third-party review found no additional P0/P1/P2 findings beyond the already-remediated internal review work, and WP-20 completed the release ceremony.
+The implementation wave has landed through the long-lived runtime, stock-league demo, demo-extension, compression, repo-visibility, coverage, Rust-refactoring, docs, and internal-review surfaces. The release tail is now in pre-third-party-review readiness: the v0.90 package should be reviewable, but it should not be called released until third-party review, any findings remediation, next-milestone planning, and ceremony complete.
 
-Best current `v0.89.1` entrypoints:
-- quality-gate package: `bash adl/tools/demo_v0891_quality_gate.sh`
-- integration-demo package: `bash adl/tools/demo_v0891_wp13_demo_integration.sh`
-- flagship bounded demo package: `bash adl/tools/demo_v0891_five_agent_hey_jude.sh`
-- manuscript workflow package: `bash adl/tools/demo_v0891_arxiv_manuscript_workflow.sh`
-- milestone docs: `docs/milestones/v0.89.1/README.md`
+Best current v0.90 entrypoints:
+- milestone docs: `docs/milestones/v0.90/README.md`
+- demo matrix: `docs/milestones/v0.90/DEMO_MATRIX_v0.90.md`
+- readiness report: `docs/milestones/v0.90/V090_PRE_THIRD_PARTY_READINESS_REPORT.md`
+- milestone compression packet: `docs/milestones/v0.90/milestone_compression/README.md`
+- repo visibility packet: `docs/milestones/v0.90/repo_visibility/README.md`
+- stock-league demo docs: `demos/v0.90/long_lived_stock_league_demo.md`
 
 ## Recent Milestones
 

@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: issue wave open
+- Status: pre-third-party-review readiness
 
 ## Purpose
 
@@ -56,7 +56,7 @@ The CodeBuddy showcase packet must:
   follow-through planning, and product-report writing as explicit lanes
 - preserve severity, evidence, caveats, specialist disagreement, and residual
   risk in the final report
-- mark `review-quality-evaluator` as staged until `#2070` lands
+- treat `review-quality-evaluator` as landed by `#2070`
 - avoid live provider calls, customer repositories, billing, and product-app
   assumptions in the default demo path
 - block publication until redaction and evidence gates are explicit
@@ -66,12 +66,13 @@ The architecture document generation packet must:
 - keep architecture claims source-grounded in tracked repository evidence
 - include evidence, assumptions, and validation notes for every diagram source
 - separate machine-checkable invariants from human architecture judgment
-- record missing documentation-specialist and gap-analysis skill dependencies
+- treat documentation-specialist and gap-analysis support as available
 - avoid private local trace paths, host-absolute paths, and secret markers in
   public docs or proof artifacts
 
 ## Validation Expectations
 
-The v0.90 issue wave is open. WP-13 should keep this matrix aligned with
-landed or deferred work and should not treat release quality gates as complete
-until WP-10, WP-15, WP-16, WP-17, and WP-18 settle.
+The v0.90 issue wave is in release-tail readiness. WP-13 and WP-15 have
+already aligned the matrix with landed or deferred work. WP-18 keeps this
+matrix as pre-third-party-review evidence; final release quality is not complete
+until WP-16, WP-17 if needed, WP-19, and WP-20 settle.

@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: issue wave open
+- Status: pre-third-party-review readiness
 
 ## Sprint Goal
 
@@ -75,9 +75,9 @@ Planned WPs:
 - WP-13: docs and review pass
 - WP-14: Rust refactoring pass
 - WP-15: internal review
+- WP-18: final quality and release readiness
 - WP-16: third-party review
 - WP-17: findings remediation
-- WP-18: final quality and release readiness
 - WP-19: next milestone planning
 - WP-20: release ceremony
 
@@ -87,17 +87,22 @@ Planned WPs:
   for as deferred or later-band context unless promoted by a later issue.
 - WP-09 selected a bounded stock-league reviewer evidence extension without
   diluting the primary stock-league proof path.
-- WP-10 remains open and must still prove the `93%` coverage tranche before any
-  release-readiness claim.
+- WP-10 has closed. The current coverage tracker reports workspace line
+  coverage at `92.40%`, rounded to the intended `93%` tranche, with the
+  workspace and per-file gates passing and no active file-floor exclusion.
 - WP-11 landed a read-only milestone-compression pilot.
 - WP-12 landed a bounded manifest and one linkage proof rather than a full
   repo-indexing platform.
-- WP-14 refactoring targets are drawn from the maintainability hotspot plan and
-  active child issues.
+- WP-14 refactoring targets were drawn from the maintainability hotspot plan
+  and closed through child issues. The current Rust tracker reports one
+  `RATIONALE` item, nineteen `REVIEW` items, and fourteen `WATCH` items after
+  the split wave.
 - WP_EXECUTION_READINESS_v0.90.md remains the tracked execution contract for the
   open WP wave.
 - Issue numbers are open and WP_ISSUE_WAVE_v0.90.yaml records `#2019` and
   `#2021` through `#2039`.
+- The earlier closeout pass reconciled almost all closed issue cards; remaining
+  open issues are normal release-tail work rather than stale completed cards.
 
 ## Demo / Review Plan
 

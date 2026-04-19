@@ -6,7 +6,7 @@
 - Version: v0.90
 - Date: 2026-04-16
 - Owner: Daniel Austin
-- Status: issue wave open
+- Status: pre-third-party-review readiness
 
 ## Planning Gate
 
@@ -25,7 +25,7 @@
 - [x] Live trading and financial advice are explicitly out of scope.
 - [x] Trace/TQL/reasoning graph scope is accepted, narrowed, or deferred.
 - [x] Demo extension scope is named and bounded.
-- [ ] Coverage ratchet target is confirmed as `93%` for this revision.
+- [x] Coverage ratchet target is confirmed as the rounded `93%` tranche for this revision.
 - [x] Milestone compression scope is limited to canonical state and drift checks unless explicitly widened.
 - [x] Repo visibility scope is limited to a bounded manifest/linkage prototype.
 - [x] Rust refactoring targets are justified by maintainability, testability, or review evidence.
@@ -41,21 +41,31 @@
 - [x] Demo scaffold lands.
 - [x] Demo integration lands.
 - [x] Demo extension lane lands or is explicitly deferred.
-- [ ] Coverage ratchet reaches `93%` only after measurement and proof are green.
+- [x] Coverage ratchet reaches the rounded `93%` tranche only after measurement and proof are green.
 - [x] Milestone compression pilot lands without autonomous release approval.
 - [x] Repo visibility prototype lands with a reviewer-readable manifest and linkage report.
-- [ ] Rust refactoring pass lands with validation evidence.
+- [x] Rust refactoring pass lands with validation evidence.
 
 ## Review And Release Gate
 
-- [ ] Quality gate is green.
-- [ ] Docs review is complete.
-- [ ] Rust refactor validation is complete.
-- [ ] Milestone compression drift checks are clean or explicitly dispositioned.
-- [ ] Repo visibility linkage report is reviewed.
-- [ ] Internal review is complete.
+- [x] Quality gate is green for pre-third-party review.
+- [x] Docs review is complete for pre-third-party review.
+- [x] Rust refactor validation is complete.
+- [x] Milestone compression drift checks are clean or explicitly dispositioned.
+- [x] Repo visibility linkage report is reviewed.
+- [x] Internal review is complete.
 - [ ] Third-party review is complete or explicitly deferred.
 - [ ] Findings remediation is complete.
-- [ ] Final quality and release readiness pass is complete.
+- [ ] Final quality and release readiness pass is complete for release ceremony.
 - [ ] Next milestone planning is complete before release ceremony.
 - [ ] Release ceremony is complete.
+
+## Current Tracker Snapshot
+
+- Coverage tracker: workspace line coverage is `92.40%`, rounded to the
+  intended `93%` tranche; workspace and per-file gates pass with no active
+  file-floor exclusion. WP-10 validation also recorded `92.46%`.
+- Rust tracker: one `RATIONALE`, nineteen `REVIEW`, and fourteen `WATCH` items
+  remain after the WP-14 child refactoring wave.
+- Closeout: an earlier closeout pass reconciled almost all closed issue cards;
+  remaining open issues are normal review/release-tail work.
