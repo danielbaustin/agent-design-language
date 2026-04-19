@@ -124,6 +124,42 @@ fn real_godel_affect_slice_rejects_missing_value_flags() {
 }
 
 #[test]
+fn real_godel_affect_slice_rejects_missing_required_args() {
+    let missing_initial = real_godel_affect_slice(&[
+        "--adapted-run-id".to_string(),
+        "run-b".to_string(),
+        "--godel-run-id".to_string(),
+        "run-c".to_string(),
+    ])
+    .expect_err("missing initial run id should fail");
+    assert!(missing_initial
+        .to_string()
+        .contains("godel affect-slice requires --initial-run-id <id>"));
+
+    let missing_adapted = real_godel_affect_slice(&[
+        "--initial-run-id".to_string(),
+        "run-a".to_string(),
+        "--godel-run-id".to_string(),
+        "run-c".to_string(),
+    ])
+    .expect_err("missing adapted run id should fail");
+    assert!(missing_adapted
+        .to_string()
+        .contains("godel affect-slice requires --adapted-run-id <id>"));
+
+    let missing_godel = real_godel_affect_slice(&[
+        "--initial-run-id".to_string(),
+        "run-a".to_string(),
+        "--adapted-run-id".to_string(),
+        "run-b".to_string(),
+    ])
+    .expect_err("missing godel run id should fail");
+    assert!(missing_godel
+        .to_string()
+        .contains("godel affect-slice requires --godel-run-id <id>"));
+}
+
+#[test]
 fn real_godel_affect_slice_persists_vertical_slice_artifact() {
     let base = std::env::temp_dir().join(format!("adl-godel-affect-slice-{}", std::process::id()));
     let aee_root = base.join("aee-runs");
