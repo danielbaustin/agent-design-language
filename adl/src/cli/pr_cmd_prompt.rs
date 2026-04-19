@@ -21,7 +21,9 @@ pub(crate) struct WorkflowQueueResolution {
     pub(crate) source: &'static str,
 }
 
-const VALID_WORKFLOW_QUEUES: &[&str] = &["wp", "tools", "demo", "docs", "review", "release"];
+const VALID_WORKFLOW_QUEUES: &[&str] = &[
+    "wp", "tools", "runtime", "demo", "docs", "review", "release",
+];
 
 #[cfg(test)]
 #[derive(Debug)]
@@ -280,6 +282,9 @@ pub(crate) fn infer_workflow_queue(
     }
     if lowered.contains("area:release") || lowered.contains("[release]") {
         return Some("release");
+    }
+    if lowered.contains("area:runtime") || lowered.contains("[runtime]") {
+        return Some("runtime");
     }
     None
 }
