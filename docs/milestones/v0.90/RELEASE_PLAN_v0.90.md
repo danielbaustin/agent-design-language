@@ -48,9 +48,8 @@ planning package into tracked milestone docs and v0.90 WP-01 opened the issue wa
 - No demo extension should displace the stock-league proof as the primary
   long-lived runtime demo.
 - No milestone-compression automation should silently mutate release truth.
-- WP-10 coverage ratchet evidence is complete for pre-third-party review.
-- WP-18 must complete the readiness handoff before WP-16 third-party review
-  begins.
+- WP-10 coverage ratchet evidence remains complete through third-party review.
+- WP-18 completed the readiness handoff before WP-16 third-party review began.
 - No release ceremony should begin until next-milestone planning is complete.
 
 ## Exit Criteria

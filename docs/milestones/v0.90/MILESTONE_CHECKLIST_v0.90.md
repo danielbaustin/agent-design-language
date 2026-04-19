@@ -48,8 +48,8 @@
 
 ## Review And Release Gate
 
-- [x] Quality gate is green for pre-third-party review.
-- [x] Docs review is complete for pre-third-party review.
+- [x] Quality gate is green through third-party review.
+- [x] Docs review is complete through third-party review.
 - [x] Rust refactor validation is complete.
 - [x] Milestone compression drift checks are clean or explicitly dispositioned.
 - [x] Repo visibility linkage report is reviewed.
