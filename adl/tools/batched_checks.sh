@@ -53,6 +53,7 @@ run_step "demo-operator contract check" bash "$ROOT/adl/tools/test_demo_operator
 run_step "medium-article-writer contract check" bash "$ROOT/adl/tools/test_medium_article_writer_skill_contracts.sh"
 run_step "arxiv-paper-writer contract check" bash "$ROOT/adl/tools/test_arxiv_paper_writer_skill_contracts.sh"
 run_step "diagram-author contract check" bash "$ROOT/adl/tools/test_diagram_author_skill_contracts.sh"
+run_step "records-hygiene contract check" bash "$ROOT/adl/tools/test_records_hygiene_skill_contracts.sh"
 run_step "skill documentation completeness check" bash "$ROOT/adl/tools/test_skill_documentation_completeness.sh"
 run_step "tracked .adl issue-record residue guard" bash "$ROOT/adl/tools/check_no_tracked_adl_issue_record_residue.sh"
 echo "• Running adl checks (batched)…"

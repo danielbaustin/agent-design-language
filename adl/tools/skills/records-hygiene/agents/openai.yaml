@@ -1,0 +1,3 @@
+display_name: Records Hygiene
+short_description: Detect lifecycle-record drift and optionally apply safe bounded corrections
+default_prompt: Inspect task bundle record surfaces for stale lifecycle state, placeholders, drift, and integration truth; emit structured findings, safe repairs, and follow-ons.
