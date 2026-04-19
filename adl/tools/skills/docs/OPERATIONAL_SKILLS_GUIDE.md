@@ -23,6 +23,7 @@ The tracked skill set is:
 - `documentation-specialist`
 - `finding-to-issue-planner`
 - `gap-analysis`
+- `issue-watcher`
 - `medium-article-writer`
 - `pr-closeout`
 - `pr-finish`
@@ -75,6 +76,7 @@ The normal workflow is:
 `arxiv-paper-writer` is a bounded helper skill for turning one concrete scholarly source packet into a reviewer-friendly arXiv-style manuscript packet without submitting, publishing, or inventing citations.
 `diagram-author` is a bounded helper skill for turning one source packet, issue, code slice, or doc surface into a reviewable diagram-as-code packet with explicit backend selection, optional SVG/PNG rendering, and truth boundaries.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
+`issue-watcher` is a bounded wait-window helper for watching one issue, PR, branch, or dependency gate and routing blockers without mutating state.
 
 The three editor skills are helper skills:
 - `stp-editor` for bounded `stp.md` cleanup
@@ -138,7 +140,6 @@ The general pattern is:
 
 ```yaml
 Use $<skill-name> at /Users/daniel/git/agent-design-language/adl/tools/skills/<skill-name>/SKILL.md with this validated input:
-
 skill_input_schema: <schema-id>
 mode: <mode>
 repo_root: /Users/daniel/git/agent-design-language
@@ -149,6 +150,44 @@ policy:
 ```
 
 For `pr-init`, the payload uses `issue:` instead of `target:`.
+
+### `issue-watcher`
+
+Use `issue-watcher` when:
+
+- one issue, PR, branch, or dependency gate should be observed during a wait window
+- the operator needs a clear ready, pending, blocked, merged, closed, or action-required classification
+- PR blockers should be routed to `pr-janitor` rather than repaired inside the watcher
+
+Do not use it for:
+
+- implementation work
+- CI repair
+- issue or PR mutation
+- merge, closeout, or long-running scheduler behavior
+
+Structured schema:
+
+- `adl/tools/skills/docs/ISSUE_WATCHER_SKILL_INPUT_SCHEMA.md`
+- schema id: `issue_watcher.v1`
+
+Supported modes:
+
+- `watch_issue`
+- `watch_pr`
+- `watch_pr_url`
+- `watch_branch`
+- `watch_dependency_gate`
+
+Expected output includes:
+
+- target identity
+- observed issue/PR/check/merge state
+- dependency state
+- recommended handoff skill or operator action
+- actions taken and actions recommended
+
+It must stop before mutating issue, PR, branch, card, or implementation state.
 
 ## Core Model
 

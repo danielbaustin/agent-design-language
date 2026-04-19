@@ -1,0 +1,5 @@
+interface:
+  display_name: "Issue Watcher"
+  short_description: "Watch issue and dependency gates"
+  default_prompt: "Use $issue-watcher to inspect one issue, PR, branch, or dependency gate, classify whether it is ready or blocked, route the next handoff, and stop without mutating state."
+
