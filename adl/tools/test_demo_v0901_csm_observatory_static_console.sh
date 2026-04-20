@@ -16,6 +16,10 @@ for path in "${HTML}" "${CSS}" "${JS}" "${DOC}" "${PACKET}"; do
 done
 
 python3 "${ROOT_DIR}/adl/tools/validate_csm_visibility_packet.py" "${PACKET}" >/dev/null
+python3 "${ROOT_DIR}/adl/tools/validate_csm_static_console.py" \
+  --html "${HTML}" \
+  --js "${JS}" \
+  --packet "${PACKET}" >/dev/null
 python3 -m json.tool "${PACKET}" >/dev/null
 
 grep -Fq "data-packet-ref=\"../../fixtures/csm_observatory/proto-csm-01-visibility-packet.json\"" "${HTML}"

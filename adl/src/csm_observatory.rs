@@ -1,5 +1,6 @@
 use anyhow::{bail, Context, Result};
 use serde_json::{json, Value};
+use std::collections::HashSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -54,6 +55,7 @@ pub fn validate_visibility_packet(packet: &Value) -> Result<()> {
         "manifold",
         "kernel",
         "citizens",
+        "episodes",
         "freedom_gate",
         "invariants",
         "resources",
@@ -69,21 +71,458 @@ pub fn validate_visibility_packet(packet: &Value) -> Result<()> {
     if packet.pointer("/schema").and_then(Value::as_str) != Some(VISIBILITY_PACKET_SCHEMA) {
         bail!("CSM Observatory packet schema must be {VISIBILITY_PACKET_SCHEMA}");
     }
+    require_section_fields(
+        packet,
+        "/source",
+        "source",
+        &[
+            "mode",
+            "evidence_level",
+            "fixture",
+            "runtime_artifact_root",
+            "claim_boundary",
+        ],
+    )?;
+    require_section_fields(
+        packet,
+        "/manifold",
+        "manifold",
+        &[
+            "manifold_id",
+            "display_name",
+            "state",
+            "lifecycle",
+            "current_tick",
+            "uptime",
+            "policy_profile",
+            "snapshot_status",
+            "health",
+            "evidence_refs",
+        ],
+    )?;
+    require_section_fields(
+        packet,
+        "/kernel",
+        "kernel",
+        &[
+            "scheduler_state",
+            "trace_state",
+            "invariant_state",
+            "resource_state",
+            "service_states",
+            "active_guardrails",
+            "pulse",
+        ],
+    )?;
+    require_section_fields(
+        packet,
+        "/freedom_gate",
+        "freedom_gate",
+        &[
+            "recent_docket",
+            "allow_count",
+            "defer_count",
+            "refuse_count",
+            "open_questions",
+            "rejected_actions",
+        ],
+    )?;
+    require_section_fields(
+        packet,
+        "/operator_actions",
+        "operator_actions",
+        &[
+            "available_actions",
+            "disabled_actions",
+            "required_confirmations",
+            "safety_notes",
+        ],
+    )?;
+    require_section_fields(
+        packet,
+        "/review",
+        "review",
+        &[
+            "primary_artifacts",
+            "missing_artifacts",
+            "demo_classification",
+            "caveats",
+            "next_consumers",
+        ],
+    )?;
+    validate_source(packet)?;
+    validate_citizens(packet)?;
+    validate_episodes(packet)?;
+    validate_freedom_gate(packet)?;
+    validate_invariants(packet)?;
+    validate_operator_actions(packet)?;
+    validate_review(packet)?;
+    validate_refs_and_leakage(packet)?;
+    Ok(())
+}
+
+fn require_section_fields(
+    packet: &Value,
+    pointer: &str,
+    label: &str,
+    fields: &[&str],
+) -> Result<()> {
+    let Some(section) = packet.pointer(pointer).and_then(Value::as_object) else {
+        bail!("CSM Observatory packet {label} must be an object");
+    };
+    for field in fields {
+        if !section.contains_key(*field) {
+            bail!("CSM Observatory packet {label}.{field} is required");
+        }
+    }
+    Ok(())
+}
+
+fn array_at_required<'a>(packet: &'a Value, pointer: &str, label: &str) -> Result<&'a Vec<Value>> {
+    packet
+        .pointer(pointer)
+        .and_then(Value::as_array)
+        .with_context(|| format!("CSM Observatory packet {label} must be a list"))
+}
+
+fn validate_source(packet: &Value) -> Result<()> {
     let source_mode = packet.pointer("/source/mode").and_then(Value::as_str);
-    if source_mode == Some("fixture")
-        && packet
+    if !matches!(
+        source_mode,
+        Some("fixture" | "captured_artifacts" | "live_runtime")
+    ) {
+        bail!("CSM Observatory packet source.mode is invalid");
+    }
+    if source_mode == Some("fixture") {
+        if packet.pointer("/source/fixture").and_then(Value::as_bool) != Some(true) {
+            bail!("fixture CSM Observatory packets must set source.fixture to true");
+        }
+        let claim_boundary = packet
+            .pointer("/source/claim_boundary")
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_ascii_lowercase();
+        if !claim_boundary.contains("not a live") {
+            bail!("fixture CSM Observatory packets must state that they are not live runtime captures");
+        }
+        if packet
             .pointer("/review/demo_classification")
             .and_then(Value::as_str)
             != Some("fixture_backed")
-    {
-        bail!("fixture CSM Observatory packets must be classified as fixture_backed");
+        {
+            bail!("fixture CSM Observatory packets must be classified as fixture_backed");
+        }
+    }
+    Ok(())
+}
+
+fn validate_citizens(packet: &Value) -> Result<()> {
+    let citizens = array_at_required(packet, "/citizens", "citizens")?;
+    if citizens.len() < 2 {
+        bail!("CSM Observatory packet citizens must contain at least two items");
+    }
+    let mut seen = HashSet::new();
+    for citizen in citizens {
+        let citizen_object = citizen
+            .as_object()
+            .context("CSM Observatory packet citizen entries must be objects")?;
+        for field in [
+            "citizen_id",
+            "display_name",
+            "role",
+            "lifecycle_state",
+            "continuity_status",
+            "current_episode",
+            "resource_balance",
+            "recent_decisions",
+            "capability_envelope",
+            "alerts",
+            "evidence_refs",
+        ] {
+            if !citizen_object.contains_key(field) {
+                bail!("CSM Observatory packet citizen.{field} is required");
+            }
+        }
+        let citizen_id = citizen
+            .pointer("/citizen_id")
+            .and_then(Value::as_str)
+            .context("CSM Observatory packet citizen_id must be a string")?;
+        if !seen.insert(citizen_id.to_string()) {
+            bail!("CSM Observatory packet duplicate citizen_id: {citizen_id}");
+        }
+        if !matches!(
+            citizen.pointer("/lifecycle_state").and_then(Value::as_str),
+            Some(
+                "proposed"
+                    | "active"
+                    | "awake"
+                    | "sleeping"
+                    | "paused"
+                    | "degraded"
+                    | "blocked"
+                    | "suspended"
+                    | "migrating"
+            )
+        ) {
+            bail!("CSM Observatory packet citizen lifecycle_state is invalid");
+        }
+    }
+    Ok(())
+}
+
+fn validate_episodes(packet: &Value) -> Result<()> {
+    let citizens: HashSet<String> = array_at_required(packet, "/citizens", "citizens")?
+        .iter()
+        .filter_map(|citizen| citizen.pointer("/citizen_id").and_then(Value::as_str))
+        .map(ToOwned::to_owned)
+        .collect();
+    let episodes = array_at_required(packet, "/episodes", "episodes")?;
+    if episodes.is_empty() {
+        bail!("CSM Observatory packet episodes must contain at least one item");
+    }
+    for episode in episodes {
+        let episode_object = episode
+            .as_object()
+            .context("CSM Observatory packet episode entries must be objects")?;
+        for field in [
+            "episode_id",
+            "title",
+            "state",
+            "citizen_ids",
+            "started_at",
+            "last_event",
+            "proof_surface",
+            "blocked_reason",
+        ] {
+            if !episode_object.contains_key(field) {
+                bail!("CSM Observatory packet episode.{field} is required");
+            }
+        }
+        if !matches!(
+            episode.pointer("/state").and_then(Value::as_str),
+            Some("planned" | "active" | "completed" | "blocked" | "deferred" | "failed")
+        ) {
+            bail!("CSM Observatory packet episode state is invalid");
+        }
+        for citizen_id in array_at_required(episode, "/citizen_ids", "episode.citizen_ids")? {
+            let Some(citizen_id) = citizen_id.as_str() else {
+                bail!("CSM Observatory packet episode citizen_ids must be strings");
+            };
+            if !citizens.contains(citizen_id) {
+                bail!("CSM Observatory packet episode references unknown citizen_id: {citizen_id}");
+            }
+        }
+    }
+    Ok(())
+}
+
+fn validate_freedom_gate(packet: &Value) -> Result<()> {
+    let docket = array_at_required(
+        packet,
+        "/freedom_gate/recent_docket",
+        "freedom_gate.recent_docket",
+    )?;
+    let mut allow = 0;
+    let mut defer = 0;
+    let mut refuse = 0;
+    for entry in docket {
+        for field in [
+            "decision_id",
+            "actor",
+            "action",
+            "decision",
+            "rationale",
+            "evidence_ref",
+        ] {
+            if entry.pointer(&format!("/{field}")).is_none() {
+                bail!("CSM Observatory packet freedom_gate.recent_docket.{field} is required");
+            }
+        }
+        match entry.pointer("/decision").and_then(Value::as_str) {
+            Some("allow") => allow += 1,
+            Some("defer") => defer += 1,
+            Some("refuse") => refuse += 1,
+            _ => bail!("CSM Observatory packet Freedom Gate decision is invalid"),
+        }
+        if let Some(reference) = entry.pointer("/evidence_ref").and_then(Value::as_str) {
+            validate_repo_relative_ref(reference, "freedom_gate.recent_docket.evidence_ref")?;
+        }
     }
     if packet
-        .pointer("/operator_actions/available_actions")
-        .and_then(Value::as_array)
-        .is_none()
+        .pointer("/freedom_gate/allow_count")
+        .and_then(Value::as_i64)
+        != Some(allow)
     {
-        bail!("CSM Observatory packet operator_actions.available_actions must be a list");
+        bail!("CSM Observatory packet freedom_gate.allow_count does not match recent_docket");
+    }
+    if packet
+        .pointer("/freedom_gate/defer_count")
+        .and_then(Value::as_i64)
+        != Some(defer)
+    {
+        bail!("CSM Observatory packet freedom_gate.defer_count does not match recent_docket");
+    }
+    if packet
+        .pointer("/freedom_gate/refuse_count")
+        .and_then(Value::as_i64)
+        != Some(refuse)
+    {
+        bail!("CSM Observatory packet freedom_gate.refuse_count does not match recent_docket");
+    }
+    Ok(())
+}
+
+fn validate_invariants(packet: &Value) -> Result<()> {
+    let invariants = array_at_required(packet, "/invariants", "invariants")?;
+    if invariants.is_empty() {
+        bail!("CSM Observatory packet invariants must contain at least one item");
+    }
+    for invariant in invariants {
+        for field in [
+            "invariant_id",
+            "name",
+            "state",
+            "severity",
+            "last_checked",
+            "evidence_ref",
+        ] {
+            if invariant.pointer(&format!("/{field}")).is_none() {
+                bail!("CSM Observatory packet invariant.{field} is required");
+            }
+        }
+        if !matches!(
+            invariant.pointer("/state").and_then(Value::as_str),
+            Some("healthy" | "warning" | "violated" | "blocked" | "missing" | "deferred")
+        ) {
+            bail!("CSM Observatory packet invariant state is invalid");
+        }
+        if !matches!(
+            invariant.pointer("/severity").and_then(Value::as_str),
+            Some("info" | "low" | "medium" | "high" | "critical")
+        ) {
+            bail!("CSM Observatory packet invariant severity is invalid");
+        }
+        if let Some(reference) = invariant.pointer("/evidence_ref").and_then(Value::as_str) {
+            validate_repo_relative_ref(reference, "invariant.evidence_ref")?;
+        }
+    }
+    Ok(())
+}
+
+fn validate_operator_actions(packet: &Value) -> Result<()> {
+    let source_mode = packet.pointer("/source/mode").and_then(Value::as_str);
+    let available = array_at_required(
+        packet,
+        "/operator_actions/available_actions",
+        "operator_actions.available_actions",
+    )?;
+    if available.is_empty() {
+        bail!("CSM Observatory packet operator_actions.available_actions must contain at least one item");
+    }
+    for action in available {
+        let action_object = action
+            .as_object()
+            .context("CSM Observatory packet available actions must be objects")?;
+        for field in ["action", "mode", "status"] {
+            if !action_object.contains_key(field) {
+                bail!(
+                    "CSM Observatory packet operator_actions.available_actions.{field} is required"
+                );
+            }
+        }
+        if source_mode == Some("fixture")
+            && action.pointer("/mode").and_then(Value::as_str) != Some("read_only")
+        {
+            bail!("fixture CSM Observatory packet available actions must be read_only");
+        }
+    }
+    array_at_required(
+        packet,
+        "/operator_actions/disabled_actions",
+        "operator_actions.disabled_actions",
+    )?;
+    Ok(())
+}
+
+fn validate_review(packet: &Value) -> Result<()> {
+    let consumers = array_at_required(packet, "/review/next_consumers", "review.next_consumers")?;
+    let observed: HashSet<i64> = consumers
+        .iter()
+        .filter_map(|consumer| consumer.pointer("/issue").and_then(Value::as_i64))
+        .collect();
+    for issue in [2189, 2190, 2191, 2192] {
+        if !observed.contains(&issue) {
+            bail!("CSM Observatory packet review.next_consumers must include issue #{issue}");
+        }
+    }
+    Ok(())
+}
+
+fn validate_refs_and_leakage(packet: &Value) -> Result<()> {
+    walk_packet_strings(packet, "packet", &mut |path, value| {
+        if path.ends_with("_ref")
+            || path.contains("_refs[")
+            || path.contains("primary_artifacts[")
+            || path.contains("missing_artifacts[")
+        {
+            validate_repo_relative_ref(value, path)?;
+        }
+        validate_no_private_or_secret_text(value)?;
+        Ok(())
+    })
+}
+
+fn walk_packet_strings<F>(value: &Value, path: &str, visit: &mut F) -> Result<()>
+where
+    F: FnMut(&str, &str) -> Result<()>,
+{
+    match value {
+        Value::String(text) => visit(path, text),
+        Value::Array(items) => {
+            for (index, item) in items.iter().enumerate() {
+                walk_packet_strings(item, &format!("{path}[{index}]"), visit)?;
+            }
+            Ok(())
+        }
+        Value::Object(map) => {
+            for (key, child) in map {
+                walk_packet_strings(child, &format!("{path}.{key}"), visit)?;
+            }
+            Ok(())
+        }
+        _ => Ok(()),
+    }
+}
+
+fn validate_repo_relative_ref(reference: &str, path: &str) -> Result<()> {
+    if reference.starts_with("http://") || reference.starts_with("https://") {
+        bail!("CSM Observatory packet {path} must not be a URL");
+    }
+    let ref_path = Path::new(reference);
+    if ref_path.is_absolute()
+        || reference.split('/').any(|part| part == "..")
+        || reference.contains('\\')
+    {
+        bail!("CSM Observatory packet {path} must be repository-relative");
+    }
+    Ok(())
+}
+
+fn validate_no_private_or_secret_text(text: &str) -> Result<()> {
+    let lower = text.to_ascii_lowercase();
+    if text.contains("/Users/")
+        || text.contains("/private/var/")
+        || lower.contains("localhost:")
+        || lower.contains("192.168.")
+        || lower.contains("bearer ")
+        || lower.contains("api_key")
+        || lower.contains("apikey")
+        || lower.contains("secret=")
+        || lower.contains("secret:")
+        || lower.contains("token=")
+        || lower.contains("token:")
+    {
+        bail!("CSM Observatory packet leaked private path, endpoint, or secret-like value");
     }
     Ok(())
 }

@@ -15,12 +15,12 @@ The manifold is initialized at tick 0. The kernel pulse is bounded_tick_complete
 
 ## Attention Items
 - Prototype Citizen Beta is proposed, not active; continuity is admission_pending.
-- Snapshot evidence is deferred: Snapshot and wake proof remain future Runtime v2 implementation surfaces.
+- Snapshot evidence is deferred: Runtime v2 snapshot and rehydration proof exist in v0.90.1; this Observatory fixture does not perform a live snapshot or wake command.
 - Snapshot restore must validate before active state is deferred (high); evidence: runtime_v2/rehydration_report.json.
 - Freedom Gate packet is fixture-only
 - Open Freedom Gate question: Which live Freedom Gate artifact path becomes canonical in v0.90.2?
 - Operator action pause_citizen remains disabled: Requires Runtime v2 kernel handling of command packets. Future issue: #2192.
-- Operator action request_snapshot remains disabled: Requires Runtime v2 snapshot implementation and command handler. Future issue: #2192.
+- Operator action request_snapshot remains disabled: Requires CSM Observatory command routing to the landed Runtime v2 snapshot path. Future issue: #2192.
 - Operator action resume_citizen remains disabled: Requires recovery eligibility, wake semantics, and Runtime v2 kernel handling. Future issue: #2192.
 - Info: Freedom Gate docket is fixture-backed until live decision packets land.
 
@@ -83,7 +83,7 @@ Available read-only actions:
 
 Disabled mutation actions:
 - pause_citizen: Requires Runtime v2 kernel handling of command packets.
-- request_snapshot: Requires Runtime v2 snapshot implementation and command handler.
+- request_snapshot: Requires CSM Observatory command routing to the landed Runtime v2 snapshot path.
 - resume_citizen: Requires recovery eligibility, wake semantics, and Runtime v2 kernel handling.
 
 Required confirmations:
@@ -106,10 +106,11 @@ Primary evidence references:
 
 Missing or deferred artifacts:
 - runtime_v2/freedom_gate/live_decisions.jsonl: deferred; owner future Runtime v2 Freedom Gate work
-- runtime_v2/snapshots/latest/snapshot.json: deferred; owner future snapshot/wake work
+- runtime_v2/snapshots/latest/snapshot.json: deferred; owner future live CSM Observatory integration
 
 Caveats:
 - This packet is a fixture-backed contract and does not prove a live CSM run.
+- Runtime v2 snapshot and rehydration proof are landed v0.90.1 surfaces, but this Observatory fixture remains read-only and does not execute live snapshot or wake commands.
 - Citizen identity is provisional and does not claim v0.92 birthday or rebinding semantics.
 - Operator actions are read-only affordances until command packets and kernel handling land.
 

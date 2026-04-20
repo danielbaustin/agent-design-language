@@ -29,7 +29,7 @@
       "state": "deferred",
       "latest_snapshot_id": null,
       "rehydration_report_ref": "runtime_v2/rehydration_report.json",
-      "note": "Snapshot and wake proof remain future Runtime v2 implementation surfaces."
+      "note": "Runtime v2 snapshot and rehydration proof exist in v0.90.1; this Observatory fixture does not perform a live snapshot or wake command."
     },
     "health": {
       "summary": "initialized fixture",
@@ -373,7 +373,7 @@
       },
       {
         "action": "request_snapshot",
-        "reason": "Requires Runtime v2 snapshot implementation and command handler.",
+        "reason": "Requires CSM Observatory command routing to the landed Runtime v2 snapshot path.",
         "future_issue": 2192
       },
       {
@@ -406,12 +406,13 @@
       {
         "artifact": "runtime_v2/snapshots/latest/snapshot.json",
         "status": "deferred",
-        "owner": "future snapshot/wake work"
+        "owner": "future live CSM Observatory integration"
       }
     ],
     "demo_classification": "fixture_backed",
     "caveats": [
       "This packet is a fixture-backed contract and does not prove a live CSM run.",
+      "Runtime v2 snapshot and rehydration proof are landed v0.90.1 surfaces, but this Observatory fixture remains read-only and does not execute live snapshot or wake commands.",
       "Citizen identity is provisional and does not claim v0.92 birthday or rebinding semantics.",
       "Operator actions are read-only affordances until command packets and kernel handling land."
     ],
