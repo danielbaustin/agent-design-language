@@ -77,7 +77,7 @@ const fallbackPacket = {
     ],
     disabled_actions: [
       { action: "pause_citizen", reason: "Requires operator command packet design and kernel handling." },
-      { action: "request_snapshot", reason: "Requires snapshot command packet and Runtime v2 snapshot implementation." },
+      { action: "request_snapshot", reason: "Requires CSM Observatory command routing to the landed Runtime v2 snapshot path." },
       { action: "resume_citizen", reason: "Requires recovery eligibility and wake semantics." }
     ]
   }

@@ -141,6 +141,45 @@ fn csm_observatory_cli_fails_safely_on_missing_packet() {
 }
 
 #[test]
+fn csm_observatory_cli_rejects_packets_missing_episodes() {
+    let packet = csm_packet_with("missing-episodes", |packet| {
+        packet.as_object_mut().unwrap().remove("episodes");
+    });
+    let out = run_adl(&["csm", "observatory", "--packet", packet.to_str().unwrap()]);
+    assert_failure_contains(&out, "missing required field 'episodes'");
+}
+
+#[test]
+fn csm_observatory_cli_rejects_absolute_refs() {
+    let packet = csm_packet_with("absolute-ref", |packet| {
+        packet["review"]["primary_artifacts"][0] =
+            serde_json::Value::String("/tmp/csm-observatory/leak.json".to_string());
+    });
+    let out = run_adl(&["csm", "observatory", "--packet", packet.to_str().unwrap()]);
+    assert_failure_contains(&out, "must be repository-relative");
+}
+
+#[test]
+fn csm_observatory_cli_rejects_non_read_only_fixture_actions() {
+    let packet = csm_packet_with("mutation-action", |packet| {
+        packet["operator_actions"]["available_actions"][0]["mode"] =
+            serde_json::Value::String("mutation".to_string());
+    });
+    let out = run_adl(&["csm", "observatory", "--packet", packet.to_str().unwrap()]);
+    assert_failure_contains(&out, "available actions must be read_only");
+}
+
+#[test]
+fn csm_observatory_cli_rejects_secret_or_path_leakage() {
+    let packet = csm_packet_with("secret-leakage", |packet| {
+        packet["review"]["caveats"][0] =
+            serde_json::Value::String("debug token: abcdefghijk".to_string());
+    });
+    let out = run_adl(&["csm", "observatory", "--packet", packet.to_str().unwrap()]);
+    assert_failure_contains(&out, "secret-like value");
+}
+
+#[test]
 fn csm_observatory_cli_writes_report_only_output() {
     let out_dir = unique_test_temp_dir("csm-observatory-report-only");
     let packet =
@@ -225,6 +264,22 @@ fn csm_observatory_cli_help_surfaces_usage() {
         "stdout:\n{}",
         String::from_utf8_lossy(&subcommand_help.stdout)
     );
+}
+
+fn csm_packet_with(name: &str, mutate: impl FnOnce(&mut serde_json::Value)) -> std::path::PathBuf {
+    let fixture =
+        fixture_path("../demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json");
+    let mut packet: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(fixture).expect("read CSM packet fixture"))
+            .expect("parse CSM packet fixture");
+    mutate(&mut packet);
+    let path = unique_test_temp_dir(name).join("packet.json");
+    fs::write(
+        &path,
+        serde_json::to_string_pretty(&packet).expect("serialize CSM packet"),
+    )
+    .expect("write mutated CSM packet");
+    path
 }
 
 #[test]
