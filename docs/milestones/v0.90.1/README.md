@@ -2,19 +2,19 @@
 
 ## Status
 
-Active milestone package. The issue wave is open, WP-01 through WP-14 are
-closed or in publication, and the milestone now has review-facing docs plus a
-quality-gate proof surface before internal review, third-party review,
-remediation, and release tail.
+Active milestone package. The issue wave is open, WP-01 through WP-15A are
+closed or complete, the accepted WP-16 remediation bundles are closed, and the
+milestone is entering release-tail closeout.
 
 WP-01 opened the v0.90.1 issue wave after the v0.90 release ceremony. WP-01 is
 #2141; WP-02 through WP-20 are #2142 through #2160. WP-15A third-party review is
 #2215 and sits between internal review and remediation.
 
 The Runtime v2 implementation slice has now landed through WP-12, WP-13 aligned
-the docs package, and WP-14 defines the quality/coverage gate. Remaining work is
-review-tail work: WP-15 internal review, WP-15A third-party review, WP-16
-remediation, and WP-17 through WP-20 release closeout.
+the docs package, WP-14 defined the quality/coverage gate, WP-15 completed
+internal review, WP-15A completed third-party review, and the accepted WP-16
+remediation bundles are closed. Remaining work is WP-17 through WP-20 release
+closeout.
 
 ## Thesis
 
@@ -71,6 +71,7 @@ Out of scope:
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.90.1.md`
 - Quality gate: `QUALITY_GATE_v0.90.1.md`
 - Internal review: `INTERNAL_REVIEW_v0.90.1.md`
+- Third-party review disposition: `THIRD_PARTY_REVIEW_v0.90.1.md`
 - Release plan: `RELEASE_PLAN_v0.90.1.md`
 - Release notes draft: `RELEASE_NOTES_v0.90.1.md`
 - Issue wave plan: `WP_ISSUE_WAVE_v0.90.1.yaml`

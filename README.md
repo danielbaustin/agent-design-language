@@ -16,7 +16,7 @@ But those artifacts are not the whole story. In the current repository, they are
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.90%20released-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.90.1%20active-blue)
 
 Today, ADL includes:
 - a reference Rust runtime and CLI for deterministic workflow execution
@@ -105,7 +105,7 @@ Other useful entrypoints:
 ## Current Status
 
 - Active milestone: **v0.90.1**
-- Current release state: **v0.90 released; v0.90.1 issue wave open, implementation/docs/quality work complete through WP-14, review/remediation active in WP-15/WP-15A/WP-16**
+- Current release state: **v0.90 released; v0.90.1 issue wave open, implementation/docs/quality work complete through WP-14, internal and third-party review complete, accepted WP-16 remediation bundles closed**
 - Most recently completed milestone: **v0.90**
 - Current crate version: **0.90.1**
 - Version note: **v0.90.1 carries the active Runtime v2 foundation release line**
@@ -117,7 +117,7 @@ ADL is in active development. This repository contains both implemented runtime 
 
 ## Current Milestone
 
-v0.90.1 is the active milestone package. Its issue wave is open, with WP-01 at #2141, WP-02 through WP-20 at #2142 through #2160, and WP-15A third-party review at #2215. WP-01 through WP-14 are closed or in publication; WP-15 internal review, WP-15A third-party review, and WP-16 accepted-finding remediation are the active review-tail band before WP-17 release readiness, WP-18 v0.91/v0.92 handoff, WP-19 release-evidence packet, and WP-20 release ceremony. The tracked planning package lives under `docs/milestones/v0.90.1/`.
+v0.90.1 is the active milestone package. Its issue wave is open, with WP-01 at #2141, WP-02 through WP-20 at #2142 through #2160, and WP-15A third-party review at #2215. WP-01 through WP-15A are closed or complete, and the accepted WP-16 remediation bundles are closed before WP-17 release readiness, WP-18 v0.91/v0.92 handoff, WP-19 release-evidence packet, and WP-20 release ceremony. The tracked planning package lives under `docs/milestones/v0.90.1/`.
 
 v0.90 is the just-completed long-lived-agent runtime milestone. It carries ADL from bounded single-run proof surfaces into supervised recurring cycles with durable artifacts, pre-identity continuity handles, operator controls, demo proof, milestone compression, repo visibility, explicit Rust refactoring, and a measured coverage ratchet.
 

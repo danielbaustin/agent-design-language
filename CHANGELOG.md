@@ -5,8 +5,8 @@ All notable project-level changes are summarized here by milestone/release.
 ## v0.90.1 (Unreleased)
 
 Status: Active milestone; implementation/docs/quality work complete through
-WP-14, with WP-15/WP-15A/WP-16 review and remediation active before the
-WP-17 through WP-20 release tail.
+WP-14, internal and third-party review complete, and accepted WP-16 remediation
+bundles closed before the WP-17 through WP-20 release tail.
 
 Summary:
 - The v0.90.1 issue wave is open: WP-01 is #2141, WP-02 through WP-20 are
@@ -21,10 +21,10 @@ Summary:
   surfaces: visibility packet, operator report, CLI bundle, static console
   reference, and safe future command-packet design.
 - WP-13 aligned the review-facing docs, demo matrix, feature list, changelog,
-  README, and review guide; WP-14 established the quality gate; WP-15,
-  WP-15A, and WP-16 now carry the review/remediation band before WP-17 release
-  readiness, WP-18 v0.91/v0.92 handoff, WP-19 release evidence, and WP-20
-  release ceremony.
+  README, and review guide; WP-14 established the quality gate; WP-15 and
+  WP-15A completed internal and third-party review; the accepted WP-16
+  remediation bundles are closed before WP-17 release readiness, WP-18
+  v0.91/v0.92 handoff, WP-19 release evidence, and WP-20 release ceremony.
 - The crate version is `0.90.1` for the v0.90.1 release line.
 
 References:
@@ -34,6 +34,7 @@ References:
 - `docs/milestones/v0.90.1/DEMO_MATRIX_v0.90.1.md`
 - `docs/milestones/v0.90.1/FEATURE_DOCS_v0.90.1.md`
 - `docs/milestones/v0.90.1/MILESTONE_CHECKLIST_v0.90.1.md`
+- `docs/milestones/v0.90.1/THIRD_PARTY_REVIEW_v0.90.1.md`
 - `docs/milestones/v0.90.1/RELEASE_PLAN_v0.90.1.md`
 - `docs/milestones/v0.90.1/RELEASE_NOTES_v0.90.1.md`
 - `docs/planning/ADL_FEATURE_LIST.md`

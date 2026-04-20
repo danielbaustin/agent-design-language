@@ -31,8 +31,8 @@
 ## Release
 
 - [x] Internal review complete
-- [ ] Third-party review complete
-- [ ] Accepted internal and third-party findings remediated or explicitly deferred
+- [x] Third-party review complete
+- [x] Accepted internal and third-party findings remediated or explicitly deferred
 - [ ] Release notes describe landed work only
 - [ ] v0.91/v0.92 handoff preserves later scope
 - [ ] Release-evidence packet assembled
