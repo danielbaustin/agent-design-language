@@ -61,6 +61,13 @@ pub fn runtime_v2_security_boundary_proof_contract() -> Result<RuntimeV2Security
     )
 }
 
+pub fn runtime_v2_csm_run_packet_contract() -> Result<RuntimeV2CsmRunPacketContract> {
+    let manifold = runtime_v2_manifold_contract()?;
+    let kernel = RuntimeV2KernelLoopArtifacts::prototype(&manifold)?;
+    let citizens = RuntimeV2CitizenLifecycleArtifacts::prototype(&manifold)?;
+    RuntimeV2CsmRunPacketContract::prototype(&manifold, &kernel, &citizens)
+}
+
 pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
     RuntimeV2FoundationPrototypeArtifacts::prototype()
 }

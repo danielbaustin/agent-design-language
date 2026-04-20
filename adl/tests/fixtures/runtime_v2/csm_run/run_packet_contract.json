@@ -1,0 +1,177 @@
+{
+  "schema_version": "runtime_v2.csm_run_packet_contract.v1",
+  "contract_id": "runtime-v2-csm-run-packet-contract-0001",
+  "demo_id": "D2",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/csm_run/run_packet_contract.json",
+  "generated_at_utc": "2026-04-20T00:00:00Z",
+  "source_refs": [
+    "docs/milestones/v0.90.2/WBS_v0.90.2.md",
+    "docs/milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md",
+    "docs/milestones/v0.90.2/RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md",
+    "runtime_v2/manifold.json",
+    "runtime_v2/kernel/service_registry.json",
+    "runtime_v2/kernel/service_state.json",
+    "runtime_v2/citizens/active_index.json",
+    "runtime_v2/citizens/pending_index.json"
+  ],
+  "artifact_requirements": [
+    {
+      "artifact_id": "run_packet_contract",
+      "artifact_kind": "contract",
+      "path": "runtime_v2/csm_run/run_packet_contract.json",
+      "owner_wp": "WP-03",
+      "required_by_wp": "WP-04",
+      "must_exist_before_live_run": true,
+      "purpose": "stable contract for the first bounded CSM run packet"
+    },
+    {
+      "artifact_id": "run_packet_fixture",
+      "artifact_kind": "fixture",
+      "path": "runtime_v2/csm_run/proto-csm-01-run-packet.json",
+      "owner_wp": "WP-03",
+      "required_by_wp": "WP-05",
+      "must_exist_before_live_run": true,
+      "purpose": "fixture definition for the first live proto-csm-01 run"
+    },
+    {
+      "artifact_id": "invariant_map",
+      "artifact_kind": "invariant_map",
+      "path": "runtime_v2/invariants/csm_run_invariant_map.json",
+      "owner_wp": "WP-04",
+      "required_by_wp": "WP-05",
+      "must_exist_before_live_run": true,
+      "purpose": "expanded invariant map before runtime work widens"
+    },
+    {
+      "artifact_id": "violation_schema",
+      "artifact_kind": "violation_schema",
+      "path": "runtime_v2/violations/violation_artifact_schema.json",
+      "owner_wp": "WP-04",
+      "required_by_wp": "WP-08",
+      "must_exist_before_live_run": true,
+      "purpose": "stable negative-path artifact shape for invalid action rejection"
+    },
+    {
+      "artifact_id": "boot_manifest",
+      "artifact_kind": "runtime_artifact",
+      "path": "runtime_v2/csm_run/boot_manifest.json",
+      "owner_wp": "WP-05",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "live manifold boot evidence for the integrated proof"
+    },
+    {
+      "artifact_id": "first_run_trace",
+      "artifact_kind": "trace",
+      "path": "runtime_v2/csm_run/first_run_trace.jsonl",
+      "owner_wp": "WP-06",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "ordered trace spine for scheduling, mediation, and rejection"
+    },
+    {
+      "artifact_id": "observatory_packet",
+      "artifact_kind": "observatory",
+      "path": "runtime_v2/observatory/visibility_packet.json",
+      "owner_wp": "WP-10",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "operator-visible projection of the completed bounded run"
+    }
+  ],
+  "stages": [
+    {
+      "stage_id": "contract_and_fixture",
+      "sequence": 1,
+      "owner_wp": "WP-03",
+      "entry_artifact_ref": "runtime_v2/manifold.json",
+      "exit_artifact_ref": "runtime_v2/csm_run/run_packet_contract.json",
+      "required_invariants": [
+        "single_active_manifold_instance",
+        "no_duplicate_active_citizen_instance"
+      ],
+      "status_before_wp": "landed_by_wp03",
+      "proof_obligation": "D2 has a code-backed packet contract before runtime execution widens"
+    },
+    {
+      "stage_id": "invariant_and_violation_contract",
+      "sequence": 2,
+      "owner_wp": "WP-04",
+      "entry_artifact_ref": "runtime_v2/csm_run/run_packet_contract.json",
+      "exit_artifact_ref": "runtime_v2/invariants/csm_run_invariant_map.json",
+      "required_invariants": [
+        "trace_sequence_must_advance_monotonically",
+        "snapshot_restore_must_validate_before_active_state"
+      ],
+      "status_before_wp": "planned",
+      "proof_obligation": "D2 gains invariant map and violation schema before WP-05 starts"
+    },
+    {
+      "stage_id": "boot_and_admission",
+      "sequence": 3,
+      "owner_wp": "WP-05",
+      "entry_artifact_ref": "runtime_v2/csm_run/proto-csm-01-run-packet.json",
+      "exit_artifact_ref": "runtime_v2/csm_run/boot_manifest.json",
+      "required_invariants": [
+        "single_active_manifold_instance",
+        "no_duplicate_active_citizen_instance"
+      ],
+      "status_before_wp": "planned",
+      "proof_obligation": "proto-csm-01 boots and admits workers only after contract gates pass"
+    },
+    {
+      "stage_id": "governed_episode_and_rejection",
+      "sequence": 4,
+      "owner_wp": "WP-06-WP-08",
+      "entry_artifact_ref": "runtime_v2/csm_run/boot_manifest.json",
+      "exit_artifact_ref": "runtime_v2/csm_run/first_run_trace.jsonl",
+      "required_invariants": [
+        "trace_sequence_must_advance_monotonically",
+        "invalid_action_must_be_refused_before_commit"
+      ],
+      "status_before_wp": "planned",
+      "proof_obligation": "one resource-pressure episode and one invalid action rejection share the same trace spine"
+    },
+    {
+      "stage_id": "snapshot_wake_and_observatory",
+      "sequence": 5,
+      "owner_wp": "WP-09-WP-10",
+      "entry_artifact_ref": "runtime_v2/csm_run/first_run_trace.jsonl",
+      "exit_artifact_ref": "runtime_v2/observatory/visibility_packet.json",
+      "required_invariants": [
+        "snapshot_restore_must_validate_before_active_state",
+        "no_duplicate_active_citizen_instance"
+      ],
+      "status_before_wp": "planned",
+      "proof_obligation": "wake continuity and operator visibility are tied to the same bounded run"
+    }
+  ],
+  "review_target": {
+    "reviewer_entrypoint": "docs/milestones/v0.90.2/CSM_RUN_PACKET_CONTRACT_v0.90.2.md",
+    "required_artifacts": [
+      "runtime_v2/csm_run/run_packet_contract.json",
+      "runtime_v2/csm_run/proto-csm-01-run-packet.json",
+      "runtime_v2/invariants/csm_run_invariant_map.json",
+      "runtime_v2/violations/violation_artifact_schema.json"
+    ],
+    "validation_commands": [
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture",
+      "git diff --check"
+    ],
+    "non_claims": [
+      "does not execute a live CSM run",
+      "does not complete WP-04 invariant expansion",
+      "does not claim first true Godel-agent birth",
+      "does not implement v0.91 moral or emotional civilization scope",
+      "does not implement v0.92 identity or migration semantics"
+    ]
+  },
+  "downstream_consumers": [
+    "WP-04 invariant and violation artifact contract",
+    "WP-05 manifold boot and citizen admission",
+    "WP-10 Observatory packet and operator report integration",
+    "WP-14 integrated first CSM run demo"
+  ],
+  "claim_boundary": "This contract fixes the first bounded CSM run packet shape and review target; it is not a live Runtime v2 execution artifact."
+}

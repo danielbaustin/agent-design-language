@@ -11,6 +11,8 @@ Current execution state:
 - WP-02 through WP-20 are #2246-#2264.
 - WP-02 provides the Runtime v2 inheritance and compression audit before
   runtime implementation widens.
+- WP-03 provides the code-backed CSM run packet contract and fixture definition
+  that later Runtime v2 work packages must consume.
 
 ## Thesis
 
@@ -65,6 +67,7 @@ Out of scope:
 - Demo matrix: `DEMO_MATRIX_v0.90.2.md`
 - Inheritance and compression audit:
   `RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md`
+- CSM run packet contract: `CSM_RUN_PACKET_CONTRACT_v0.90.2.md`
 - Feature index: `FEATURE_DOCS_v0.90.2.md`
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.90.2.md`
 - Release plan: `RELEASE_PLAN_v0.90.2.md`
@@ -97,3 +100,10 @@ It is not permission to skip demos, tests, or release truth.
 artifact for this milestone. It records that v0.90.2 can inherit the v0.90.1
 Runtime v2 foundation, CSM Observatory read-only surfaces, release evidence, and
 compression workflow posture while preserving the later-scope non-claims.
+
+## WP-03 Contract Gate
+
+`CSM_RUN_PACKET_CONTRACT_v0.90.2.md` is the WP-03 / D2 contract gate. It records
+the code-backed `runtime_v2.csm_run_packet_contract.v1` shape, the
+`proto-csm-01` fixture definition, the pre-live-run artifact set, and the
+review target that WP-04 through WP-14 must preserve.
