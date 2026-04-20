@@ -32,6 +32,8 @@ if manifest.get("demo_id") != "D10":
     raise SystemExit("unexpected quality gate demo id")
 if manifest.get("manifest_version") != "adl.v0901.quality_gate.v1":
     raise SystemExit("unexpected quality gate manifest version")
+if manifest.get("mode") != "required":
+    raise SystemExit("unexpected quality gate mode")
 required = {
     "tooling_shell_sanity",
     "codex_pr_help",
@@ -78,5 +80,65 @@ grep -Fq 'fixture-backed and read-only' "$README" || {
   echo "assertion failed: README missing CSM Observatory boundary" >&2
   exit 1
 }
+
+FAIL_OUT_DIR="$TMPDIR_ROOT/fail-artifacts"
+if (
+  cd "$ROOT_DIR"
+  ADL_V0901_QUALITY_GATE_ONLY_CHECKS=tooling_shell_sanity \
+    ADL_V0901_QUALITY_GATE_FORCE_FAIL_CHECKS=tooling_shell_sanity \
+    bash adl/tools/demo_v0901_quality_gate.sh "$FAIL_OUT_DIR" >/dev/null 2>"$TMPDIR_ROOT/fail.stderr"
+); then
+  echo "assertion failed: forced quality-gate failure exited successfully" >&2
+  exit 1
+fi
+
+[[ -f "$FAIL_OUT_DIR/quality_gate_record.json" ]] || {
+  echo "assertion failed: missing forced-failure manifest" >&2
+  exit 1
+}
+[[ -f "$FAIL_OUT_DIR/README.md" ]] || {
+  echo "assertion failed: missing forced-failure README" >&2
+  exit 1
+}
+
+python3 - "$FAIL_OUT_DIR/quality_gate_record.json" <<'PY'
+import json
+import sys
+
+manifest = json.load(open(sys.argv[1], encoding="utf-8"))
+if manifest.get("mode") != "filtered":
+    raise SystemExit("forced-failure run should record filtered mode")
+check = manifest.get("checks", {}).get("tooling_shell_sanity", {})
+if check.get("status") != "FAIL":
+    raise SystemExit("forced-failure check did not record FAIL")
+if check.get("reason") != "forced_failure":
+    raise SystemExit("forced-failure reason missing")
+PY
+
+grep -Fq 'quality gate failed checks: tooling_shell_sanity' "$TMPDIR_ROOT/fail.stderr" || {
+  echo "assertion failed: forced-failure stderr did not name failed check" >&2
+  exit 1
+}
+
+INSPECT_OUT_DIR="$TMPDIR_ROOT/inspect-artifacts"
+(
+  cd "$ROOT_DIR"
+  ADL_V0901_QUALITY_GATE_INSPECT_ONLY=1 \
+    ADL_V0901_QUALITY_GATE_ONLY_CHECKS=tooling_shell_sanity \
+    ADL_V0901_QUALITY_GATE_FORCE_FAIL_CHECKS=tooling_shell_sanity \
+    bash adl/tools/demo_v0901_quality_gate.sh "$INSPECT_OUT_DIR" >/dev/null
+)
+
+python3 - "$INSPECT_OUT_DIR/quality_gate_record.json" <<'PY'
+import json
+import sys
+
+manifest = json.load(open(sys.argv[1], encoding="utf-8"))
+if manifest.get("mode") != "inspect_only":
+    raise SystemExit("inspect-only run should record inspect_only mode")
+check = manifest.get("checks", {}).get("tooling_shell_sanity", {})
+if check.get("status") != "FAIL":
+    raise SystemExit("inspect-only forced failure should still record FAIL")
+PY
 
 echo "demo_v0901_quality_gate: ok"

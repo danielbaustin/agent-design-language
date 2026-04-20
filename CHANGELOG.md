@@ -22,9 +22,7 @@ Summary:
 - WP-13 aligns the review-facing docs, demo matrix, feature list, changelog,
   README, and review guide before WP-14 quality gate, WP-15 internal review,
   WP-15A third-party review, and WP-16 remediation.
-- The crate version remains `0.90.0` until the v0.90.1 release bump. Do not
-  read that as v0.90.1 being unreleased code-free work; it is the normal
-  pre-release version boundary.
+- The crate version is `0.90.1` for the v0.90.1 release line.
 
 References:
 - `docs/milestones/v0.90.1/README.md`

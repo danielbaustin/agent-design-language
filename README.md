@@ -107,8 +107,8 @@ Other useful entrypoints:
 - Active milestone: **v0.90.1**
 - Current release state: **v0.90 released; v0.90.1 issue wave open, implementation complete through WP-12, docs pass underway in WP-13**
 - Most recently completed milestone: **v0.90**
-- Current crate version: **0.90.0**
-- Version note: **v0.90 is tagged and released; v0.90.1 WP-01 opened the Runtime v2 foundation issue wave**
+- Current crate version: **0.90.1**
+- Version note: **v0.90.1 carries the active Runtime v2 foundation release line**
 - Previous completed milestone package: **v0.89.1**
 - Previous completed milestone: **v0.89**
 - Project changelog: `CHANGELOG.md`

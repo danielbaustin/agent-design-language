@@ -21,8 +21,7 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the active v0.90.1 WP-13 documentation and review-readiness pass, start
-with:
+For the active v0.90.1 review-remediation pass, start with:
 
 - `docs/milestones/v0.90.1/README.md`
 - `docs/milestones/v0.90.1/WBS_v0.90.1.md`
@@ -39,14 +38,21 @@ with:
 - `adl/Cargo.toml`
 - `adl/Cargo.lock`
 
-The current v0.90.1 review posture is pre-release review copy. WP-01 through
-WP-12 are closed, WP-13 is aligning the documentation package, WP-14 quality
-gate, WP-15 internal review, WP-15A third-party review, WP-16 remediation, and
-the release tail remain ahead.
+The current v0.90.1 review posture is pre-release remediation copy. WP-01
+through WP-15A have produced the Runtime v2 foundation implementation,
+documentation package, quality evidence, internal review, and third-party review
+inputs. WP-16 remediation is being handled through bundled follow-up issues so
+the release can resolve review findings without paying one full issue ceremony
+per small defect.
 
-The crate version remains `0.90.0` until the v0.90.1 release bump. Reviewers
-should treat that as a pre-release version boundary, not as evidence that the
-active v0.90.1 work is absent.
+The crate version is `0.90.1` for the active v0.90.1 release line. Reviewers
+should treat any conflicting older version reference as a stale release-truth
+defect.
+
+Before a final third-party review or release-readiness review, verify that the
+accepted WP-16 remediation bundle PRs have merged, root main has been
+fast-forwarded by the operator, and the local third-party review handoff packet
+has been regenerated from the merged tree.
 
 For the most recently completed v0.90 post-release review, start with:
 
