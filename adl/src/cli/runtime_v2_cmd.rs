@@ -4,7 +4,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use ::adl::runtime_v2::{
-    runtime_v2_operator_control_report_contract, runtime_v2_security_boundary_proof_contract,
+    runtime_v2_foundation_demo_contract, runtime_v2_operator_control_report_contract,
+    runtime_v2_security_boundary_proof_contract,
 };
 
 pub(crate) fn real_runtime_v2(args: &[String]) -> Result<()> {
@@ -15,19 +16,20 @@ pub(crate) fn real_runtime_v2(args: &[String]) -> Result<()> {
 fn real_runtime_v2_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "runtime-v2 requires a subcommand: operator-controls or security-boundary"
+            "runtime-v2 requires a subcommand: operator-controls, security-boundary, or foundation-demo"
         ));
     };
 
     match subcommand {
         "operator-controls" => real_runtime_v2_operator_controls(repo_root, &args[1..]),
         "security-boundary" => real_runtime_v2_security_boundary(repo_root, &args[1..]),
+        "foundation-demo" => real_runtime_v2_foundation_demo(repo_root, &args[1..]),
         "--help" | "-h" | "help" => {
             println!("{}", super::usage::usage());
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown runtime-v2 subcommand '{subcommand}' (expected operator-controls or security-boundary)"
+            "unknown runtime-v2 subcommand '{subcommand}' (expected operator-controls, security-boundary, or foundation-demo)"
         )),
     }
 }
@@ -148,6 +150,52 @@ fn real_runtime_v2_security_boundary(repo_root: &Path, args: &[String]) -> Resul
     Ok(())
 }
 
+fn real_runtime_v2_foundation_demo(repo_root: &Path, args: &[String]) -> Result<()> {
+    let mut out_path: Option<PathBuf> = None;
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--out" => {
+                let Some(value) = args.get(i + 1) else {
+                    return Err(anyhow!("runtime-v2 foundation-demo requires --out <dir>"));
+                };
+                out_path = Some(PathBuf::from(value));
+                i += 1;
+            }
+            "--help" | "-h" => {
+                println!("{}", super::usage::usage());
+                return Ok(());
+            }
+            other => {
+                return Err(anyhow!(
+                    "unknown arg for runtime-v2 foundation-demo: {other}"
+                ))
+            }
+        }
+        i += 1;
+    }
+
+    let artifacts = runtime_v2_foundation_demo_contract()?;
+    let Some(out_path) = out_path else {
+        println!("{}", to_string_pretty(&artifacts.proof_packet)?);
+        return Ok(());
+    };
+    let resolved = if out_path.is_absolute() {
+        out_path
+    } else {
+        repo_root.join(out_path)
+    };
+    fs::create_dir_all(&resolved).with_context(|| {
+        format!(
+            "failed to create Runtime v2 foundation demo root {}",
+            resolved.display()
+        )
+    })?;
+    artifacts.write_to_root(&resolved)?;
+    println!("RUNTIME_V2_FOUNDATION_DEMO_ROOT={}", resolved.display());
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -225,7 +273,7 @@ mod tests {
         let err = real_runtime_v2_in_repo(&[], &repo).expect_err("missing subcommand should fail");
         assert!(err
             .to_string()
-            .contains("runtime-v2 requires a subcommand: operator-controls or security-boundary"));
+            .contains("runtime-v2 requires a subcommand: operator-controls, security-boundary, or foundation-demo"));
 
         let err = real_runtime_v2_in_repo(&["bogus".to_string()], &repo)
             .expect_err("unknown subcommand should fail");
@@ -338,6 +386,82 @@ mod tests {
         .expect("absolute output path");
 
         assert!(out_path.is_file());
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn runtime_v2_foundation_demo_writes_integrated_bundle() {
+        let repo = temp_repo("foundation-demo");
+        let out_dir = repo.join("out/foundation");
+
+        real_runtime_v2_in_repo(
+            &[
+                "foundation-demo".to_string(),
+                "--out".to_string(),
+                "out/foundation".to_string(),
+            ],
+            &repo,
+        )
+        .expect("foundation demo");
+
+        let proof_path = out_dir.join("runtime_v2/proof_packet.json");
+        assert!(proof_path.is_file());
+        assert!(out_dir.join("runtime_v2/manifold.json").is_file());
+        assert!(out_dir
+            .join("runtime_v2/security_boundary/proof_packet.json")
+            .is_file());
+        let json: serde_json::Value =
+            serde_json::from_slice(&fs::read(&proof_path).expect("proof packet should exist"))
+                .expect("valid json");
+        assert_eq!(
+            json["schema_version"],
+            "runtime_v2.foundation_proof_packet.v1"
+        );
+        assert_eq!(json["classification"], "proving");
+        assert_eq!(json["demo_id"], "D7");
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn runtime_v2_foundation_demo_validates_stdout_help_and_errors() {
+        let repo = temp_repo("foundation-demo-branches");
+        let out_dir = repo.join("absolute/foundation");
+
+        real_runtime_v2_in_repo(&["foundation-demo".to_string()], &repo)
+            .expect("stdout proof packet");
+        real_runtime_v2_in_repo(
+            &["foundation-demo".to_string(), "--help".to_string()],
+            &repo,
+        )
+        .expect("foundation demo help");
+        real_runtime_v2_in_repo(
+            &[
+                "foundation-demo".to_string(),
+                "--out".to_string(),
+                out_dir.to_string_lossy().to_string(),
+            ],
+            &repo,
+        )
+        .expect("absolute output dir");
+        assert!(out_dir.join("runtime_v2/proof_packet.json").is_file());
+
+        let err = real_runtime_v2_in_repo(
+            &["foundation-demo".to_string(), "--bogus".to_string()],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 foundation-demo: --bogus"));
+
+        let err =
+            real_runtime_v2_in_repo(&["foundation-demo".to_string(), "--out".to_string()], &repo)
+                .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 foundation-demo requires --out <dir>"));
 
         fs::remove_dir_all(repo).ok();
     }

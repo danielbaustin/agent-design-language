@@ -478,6 +478,107 @@ fn demo_k_v090_stock_league_proof_expansion_print_plan_works() {
 }
 
 #[test]
+fn demo_l_v0901_runtime_v2_foundation_print_plan_works() {
+    let out = run_swarm(&["demo", "demo-l-v0901-runtime-v2-foundation", "--print-plan"]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("Demo: demo-l-v0901-runtime-v2-foundation"),
+        "stdout:\n{stdout}"
+    );
+    assert!(stdout.contains("Steps: 4"), "stdout:\n{stdout}");
+    assert!(stdout.contains("0. assemble"), "stdout:\n{stdout}");
+    assert!(stdout.contains("3. proof_packet"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn demo_l_v0901_runtime_v2_foundation_writes_integrated_proof_packet() {
+    let out_root = tmp_dir("demo-l-runtime-v2");
+    let out = run_swarm(&[
+        "demo",
+        "demo-l-v0901-runtime-v2-foundation",
+        "--run",
+        "--trace",
+        "--out",
+        out_root.to_string_lossy().as_ref(),
+        "--no-open",
+    ]);
+    assert!(
+        out.status.success(),
+        "expected success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let run_out = out_root.join("demo-l-v0901-runtime-v2-foundation");
+    assert!(run_out.join("runtime_v2/demo_assembly.json").is_file());
+    assert!(run_out.join("runtime_v2/proof_packet.json").is_file());
+    assert!(run_out.join("runtime_v2/manifold.json").is_file());
+    assert!(run_out
+        .join("runtime_v2/kernel/service_registry.json")
+        .is_file());
+    assert!(run_out
+        .join("runtime_v2/kernel/service_state.json")
+        .is_file());
+    assert!(run_out
+        .join("runtime_v2/kernel/service_loop.jsonl")
+        .is_file());
+    assert!(run_out
+        .join("runtime_v2/citizens/proto-citizen-alpha.json")
+        .is_file());
+    assert!(run_out
+        .join("runtime_v2/citizens/proto-citizen-beta.json")
+        .is_file());
+    assert!(run_out
+        .join("runtime_v2/snapshots/snapshot-0001.json")
+        .is_file());
+    assert!(run_out.join("runtime_v2/rehydration_report.json").is_file());
+    assert!(run_out
+        .join("runtime_v2/invariants/violation-0001.json")
+        .is_file());
+    assert!(run_out
+        .join("runtime_v2/operator/control_report.json")
+        .is_file());
+    assert!(run_out
+        .join("runtime_v2/security_boundary/proof_packet.json")
+        .is_file());
+    assert!(run_out
+        .join("runtime_v2/reviewer_boundary_notes.md")
+        .is_file());
+    assert!(run_out.join("trace.jsonl").is_file());
+
+    let proof: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(run_out.join("runtime_v2/proof_packet.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        proof["schema_version"],
+        "runtime_v2.foundation_proof_packet.v1"
+    );
+    assert_eq!(proof["demo_id"], "D7");
+    assert_eq!(proof["classification"], "proving");
+    assert!(proof["integrated_artifacts"]
+        .as_array()
+        .is_some_and(|artifacts| artifacts.len() >= 10));
+    assert!(proof["non_claims"]
+        .as_array()
+        .is_some_and(|non_claims| non_claims.len() >= 3));
+
+    let public_text = collect_text_artifacts(&run_out);
+    for banned in ["/Users/", "bearer ", "private_key", "tool arguments"] {
+        assert!(
+            !public_text
+                .to_ascii_lowercase()
+                .contains(&banned.to_ascii_lowercase()),
+            "banned pattern {banned:?} found in artifacts"
+        );
+    }
+}
+
+#[test]
 fn demo_j_v090_stock_league_recurring_writes_multi_cycle_proof_packet() {
     let out_root = tmp_dir("demo-j-stock-league");
     let out = run_swarm(&[

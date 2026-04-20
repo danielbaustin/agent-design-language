@@ -1,0 +1,126 @@
+{
+  "schema_version": "runtime_v2.foundation_proof_packet.v1",
+  "proof_id": "runtime-v2-foundation-proof-0001",
+  "demo_id": "D7",
+  "demo_name": "runtime_v2_foundation_prototype",
+  "classification": "proving",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/proof_packet.json",
+  "generated_at_utc": "not_started",
+  "integrated_artifacts": [
+    {
+      "artifact_id": "manifold_root",
+      "artifact_kind": "manifold",
+      "schema_version": "runtime_v2.manifold.v1",
+      "path": "runtime_v2/manifold.json",
+      "source_wp": "WP-05",
+      "proves": "bounded persistent manifold root exists"
+    },
+    {
+      "artifact_id": "kernel_service_registry",
+      "artifact_kind": "kernel_registry",
+      "schema_version": "runtime_v2.kernel.service_registry.v1",
+      "path": "runtime_v2/kernel/service_registry.json",
+      "source_wp": "WP-06",
+      "proves": "kernel services are registered in deterministic activation order"
+    },
+    {
+      "artifact_id": "kernel_service_state",
+      "artifact_kind": "kernel_state",
+      "schema_version": "runtime_v2.kernel.service_state.v1",
+      "path": "runtime_v2/kernel/service_state.json",
+      "source_wp": "WP-06",
+      "proves": "bounded kernel loop state is reviewable"
+    },
+    {
+      "artifact_id": "active_citizen_record",
+      "artifact_kind": "citizen_record",
+      "schema_version": "runtime_v2.provisional_citizen.v1",
+      "path": "runtime_v2/citizens/proto-citizen-alpha.json",
+      "source_wp": "WP-07",
+      "proves": "one provisional citizen can be active without claiming true birth"
+    },
+    {
+      "artifact_id": "pending_citizen_record",
+      "artifact_kind": "citizen_record",
+      "schema_version": "runtime_v2.provisional_citizen.v1",
+      "path": "runtime_v2/citizens/proto-citizen-beta.json",
+      "source_wp": "WP-07",
+      "proves": "one provisional citizen can remain pending without duplicate activation"
+    },
+    {
+      "artifact_id": "snapshot_manifest",
+      "artifact_kind": "snapshot",
+      "schema_version": "runtime_v2.snapshot_manifest.v1",
+      "path": "runtime_v2/snapshots/snapshot-0001.json",
+      "source_wp": "WP-08",
+      "proves": "manifold state can be snapshotted with invariant status"
+    },
+    {
+      "artifact_id": "rehydration_report",
+      "artifact_kind": "rehydration",
+      "schema_version": "runtime_v2.rehydration_report.v1",
+      "path": "runtime_v2/rehydration_report.json",
+      "source_wp": "WP-08",
+      "proves": "wake can be refused when invariant preconditions are not satisfied"
+    },
+    {
+      "artifact_id": "invariant_violation",
+      "artifact_kind": "invariant_violation",
+      "schema_version": "runtime_v2.invariant_violation.v1",
+      "path": "runtime_v2/invariants/violation-0001.json",
+      "source_wp": "WP-09",
+      "proves": "illegal duplicate active citizen transition is rejected before commit"
+    },
+    {
+      "artifact_id": "operator_control_report",
+      "artifact_kind": "operator_control",
+      "schema_version": "runtime_v2.operator_control_report.v1",
+      "path": "runtime_v2/operator/control_report.json",
+      "source_wp": "WP-10",
+      "proves": "inspect, pause, resume, snapshot, and termination commands are bounded"
+    },
+    {
+      "artifact_id": "security_boundary_proof",
+      "artifact_kind": "security_boundary",
+      "schema_version": "runtime_v2.security_boundary_proof.v1",
+      "path": "runtime_v2/security_boundary/proof_packet.json",
+      "source_wp": "WP-11",
+      "proves": "invalid resume is refused through operator and scheduler policy"
+    }
+  ],
+  "proof_claims": [
+    "Runtime v2 foundation prototype can be inspected end to end",
+    "All WP-05 through WP-11 proof surfaces are bound to one manifold id",
+    "The prototype records both happy-path continuity handles and blocked invalid action evidence"
+  ],
+  "non_claims": [
+    "does not prove first true Godel-agent birth",
+    "does not prove full moral, emotional, or polis governance",
+    "does not prove live scheduling, cross-machine migration, or full security ecology"
+  ],
+  "checks": [
+    {
+      "check_id": "same_manifold_id",
+      "status": "pass",
+      "evidence_ref": "runtime_v2/manifold.json"
+    },
+    {
+      "check_id": "one_active_one_pending_citizen",
+      "status": "pass",
+      "evidence_ref": "runtime_v2/citizens/active_index.json"
+    },
+    {
+      "check_id": "snapshot_rehydration_linked",
+      "status": "pass",
+      "evidence_ref": "runtime_v2/rehydration_report.json"
+    },
+    {
+      "check_id": "invalid_action_refused",
+      "status": "pass",
+      "evidence_ref": "runtime_v2/security_boundary/proof_packet.json"
+    }
+  ],
+  "reviewer_entrypoint": "cargo run --manifest-path adl/Cargo.toml -- demo demo-l-v0901-runtime-v2-foundation --run --out artifacts/v0901 --no-open",
+  "replay_command": "cargo run --manifest-path adl/Cargo.toml -- runtime-v2 foundation-demo --out artifacts/v0901/demo-l-v0901-runtime-v2-foundation"
+}

@@ -4,6 +4,7 @@ use anyhow::{anyhow, Context, Result};
 
 use crate::godel;
 use crate::prompt;
+use crate::runtime_v2;
 use crate::trace::Trace;
 
 #[path = "demo/adversarial_self_attack.rs"]
@@ -45,6 +46,7 @@ pub const DEMO_H_V0891_ADVERSARIAL_SELF_ATTACK: &str = "demo-h-v0891-adversarial
 pub const DEMO_I_V090_STOCK_LEAGUE_SCAFFOLD: &str = stock_league::DEMO_NAME;
 pub const DEMO_J_V090_STOCK_LEAGUE_RECURRING: &str = stock_league::INTEGRATION_DEMO_NAME;
 pub const DEMO_K_V090_STOCK_LEAGUE_PROOF_EXPANSION: &str = stock_league::EXTENSION_DEMO_NAME;
+pub const DEMO_L_V0901_RUNTIME_V2_FOUNDATION: &str = "demo-l-v0901-runtime-v2-foundation";
 
 pub const ALL_DEMOS: &[&str] = &[
     DEMO_A_SAY_MCP,
@@ -58,6 +60,7 @@ pub const ALL_DEMOS: &[&str] = &[
     DEMO_I_V090_STOCK_LEAGUE_SCAFFOLD,
     DEMO_J_V090_STOCK_LEAGUE_RECURRING,
     DEMO_K_V090_STOCK_LEAGUE_PROOF_EXPANSION,
+    DEMO_L_V0901_RUNTIME_V2_FOUNDATION,
 ];
 
 #[derive(Debug, Clone)]
@@ -249,6 +252,9 @@ pub fn run_demo(name: &str, out_dir: &Path) -> Result<DemoResult> {
             DEMO_K_V090_STOCK_LEAGUE_PROOF_EXPANSION => {
                 artifacts.extend(write_stock_league_extension_step(out_dir, step_id)?);
             }
+            DEMO_L_V0901_RUNTIME_V2_FOUNDATION => {
+                artifacts.extend(write_runtime_v2_foundation_step(out_dir, step_id)?);
+            }
             _ => {}
         }
         trace.step_finished(step_id, true);
@@ -292,6 +298,12 @@ pub fn plan_steps(name: &str) -> &'static [&'static str] {
             "recurring_proof",
             "evidence_index",
             "review_packet",
+        ],
+        DEMO_L_V0901_RUNTIME_V2_FOUNDATION => &[
+            "assemble",
+            "write_artifacts",
+            "verify_boundaries",
+            "proof_packet",
         ],
         _ => &[],
     }
@@ -432,8 +444,87 @@ fn steps_for(name: &str) -> &'static [(&'static str, &'static str)] {
                 "Emit the D5 extension proof packet and public artifact safety scan",
             ),
         ],
+        DEMO_L_V0901_RUNTIME_V2_FOUNDATION => &[
+            (
+                "assemble",
+                "Assemble one integrated Runtime v2 foundation artifact graph",
+            ),
+            (
+                "write_artifacts",
+                "Write the manifold, citizens, kernel, snapshot, invariant, operator, and security artifacts",
+            ),
+            (
+                "verify_boundaries",
+                "Emit reviewer notes for claims, non-claims, and security boundary evidence",
+            ),
+            (
+                "proof_packet",
+                "Emit the integrated Runtime v2 foundation proof packet",
+            ),
+        ],
         _ => &[],
     }
+}
+
+fn write_runtime_v2_foundation_step(out_dir: &Path, step_id: &str) -> Result<Vec<PathBuf>> {
+    match step_id {
+        "assemble" => {
+            let artifacts = runtime_v2::runtime_v2_foundation_demo_contract()?;
+            let summary = serde_json::json!({
+                "schema_version": "runtime_v2.foundation_demo_assembly.v1",
+                "demo_id": "D7",
+                "demo_name": DEMO_L_V0901_RUNTIME_V2_FOUNDATION,
+                "classification": artifacts.proof_packet.classification,
+                "manifold_id": artifacts.manifold.manifold_id,
+                "artifact_count": artifacts.proof_packet.integrated_artifacts.len(),
+                "required_wp_range": "WP-05..WP-11",
+                "status": "ready_to_write"
+            });
+            Ok(vec![write_file(
+                out_dir,
+                "runtime_v2/demo_assembly.json",
+                &serde_json::to_string_pretty(&summary)?,
+            )?])
+        }
+        "write_artifacts" => {
+            let artifacts = runtime_v2::runtime_v2_foundation_demo_contract()?;
+            artifacts.write_to_root(out_dir)?;
+            Ok(runtime_v2_foundation_artifact_paths(out_dir))
+        }
+        "verify_boundaries" => Ok(vec![write_file(
+            out_dir,
+            "runtime_v2/reviewer_boundary_notes.md",
+            RUNTIME_V2_FOUNDATION_REVIEWER_NOTES,
+        )?]),
+        "proof_packet" => {
+            let artifacts = runtime_v2::runtime_v2_foundation_demo_contract()?;
+            artifacts.proof_packet.write_to_root(out_dir)?;
+            Ok(vec![out_dir.join(&artifacts.proof_packet.artifact_path)])
+        }
+        _ => Ok(Vec::new()),
+    }
+}
+
+fn runtime_v2_foundation_artifact_paths(out_dir: &Path) -> Vec<PathBuf> {
+    [
+        "runtime_v2/proof_packet.json",
+        "runtime_v2/manifold.json",
+        "runtime_v2/kernel/service_registry.json",
+        "runtime_v2/kernel/service_state.json",
+        "runtime_v2/kernel/service_loop.jsonl",
+        "runtime_v2/citizens/proto-citizen-alpha.json",
+        "runtime_v2/citizens/proto-citizen-beta.json",
+        "runtime_v2/citizens/active_index.json",
+        "runtime_v2/citizens/pending_index.json",
+        "runtime_v2/snapshots/snapshot-0001.json",
+        "runtime_v2/rehydration_report.json",
+        "runtime_v2/invariants/violation-0001.json",
+        "runtime_v2/operator/control_report.json",
+        "runtime_v2/security_boundary/proof_packet.json",
+    ]
+    .into_iter()
+    .map(|path| out_dir.join(path))
+    .collect()
 }
 
 fn write_file(out_dir: &Path, rel: &str, contents: &str) -> Result<PathBuf> {
@@ -463,6 +554,37 @@ fn write_trace_jsonl(out_dir: &Path, trace: &Trace) -> Result<PathBuf> {
         .with_context(|| format!("failed to write '{}'", path.display()))?;
     Ok(path)
 }
+
+const RUNTIME_V2_FOUNDATION_REVIEWER_NOTES: &str = r#"# Runtime v2 Foundation Demo Boundary Notes
+
+## Classification
+
+This demo is proving for the bounded v0.90.1 Runtime v2 foundation claim:
+reviewers can inspect one integrated artifact graph covering WP-05 through
+WP-11.
+
+## What It Proves
+
+- One manifold root binds the prototype artifacts.
+- One active provisional citizen and one pending provisional citizen are
+  represented without claiming true Gödel-agent birth.
+- Kernel, snapshot, rehydration, invariant, operator-control, and
+  security-boundary artifacts are present and linked.
+- The invalid resume path is refused through the normal operator-control and
+  scheduler policy path.
+
+## What It Does Not Prove
+
+- No true Gödel-agent birthday.
+- No full moral, emotional, or polis governance layer.
+- No live multi-agent scheduling service.
+- No cross-machine migration or full red/blue/purple defense ecology.
+
+## Reviewer Entry Point
+
+Start with `runtime_v2/proof_packet.json`, then inspect the artifact paths named
+in `integrated_artifacts`.
+"#;
 
 const CARGO_TOML: &str = r#"[package]
 name = "say_mcp_demo"

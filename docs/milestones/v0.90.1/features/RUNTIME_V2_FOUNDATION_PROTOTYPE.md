@@ -42,6 +42,30 @@ handles and failure artifacts.
 - `runtime_v2/operator/control_report.json`
 - `runtime_v2/security_boundary/proof_packet.json`
 
+## WP-12 Integrated Demo
+
+The integrated Runtime v2 foundation demo is now available as demo matrix row
+D7:
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- demo demo-l-v0901-runtime-v2-foundation --run --trace --out artifacts/v0901 --no-open
+```
+
+The same contract can also be generated directly through the Runtime v2 CLI:
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- runtime-v2 foundation-demo --out artifacts/v0901/demo-l-v0901-runtime-v2-foundation
+```
+
+The demo writes one integrated artifact graph rooted at
+`runtime_v2/proof_packet.json`. The proof packet indexes the WP-05 through
+WP-11 artifacts, records reviewer-visible proof claims and non-claims, and
+classifies the demo as `proving` for the bounded v0.90.1 foundation prototype.
+
+The proof remains intentionally bounded: it proves inspectability and
+cross-artifact linkage for the foundation substrate, not true Gödel-agent
+birth, live scheduling, cross-machine migration, or the full security ecology.
+
 ## WP-11 Security Boundary Proof
 
 The foundation prototype now exposes one bounded security-boundary proof through
