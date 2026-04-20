@@ -7,8 +7,9 @@ and produced reviewable hardening evidence around that run.
 
 ## Required Release Evidence
 
+- issue-wave truth for #2245-#2264
 - v0.90.1 inheritance audit
-- compression readiness and issue-wave truth
+- compression readiness evidence
 - first CSM run packet contract
 - manifold boot and citizen admission evidence
 - governed episode and resource scheduling evidence

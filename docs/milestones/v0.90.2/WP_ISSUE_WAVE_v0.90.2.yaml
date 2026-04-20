@@ -1,10 +1,11 @@
 milestone: v0.90.2
-status: planning_draft
-issue_wave_opened: false
+status: issue_wave_open
+issue_wave_opened: true
+owner_issue: 2245
 planning_source: docs/milestones/v0.90.2
-promotion_target: docs/milestones/v0.90.2
+tracked_package: docs/milestones/v0.90.2
 notes:
-  - "Draft only. Create real issues after v0.90.1 closeout and v0.90.2 promotion review."
+  - "Issue wave is open as #2245-#2264."
   - "Do not claim first true Gödel-agent birthday in v0.90.2."
   - "Do not collapse v0.91 moral/emotional civilization or v0.92 birthday scope into v0.90.2."
   - "v0.90.2 is the first bounded CSM run milestone plus hardening around that run."
@@ -13,62 +14,122 @@ notes:
   - "Preserve the v0.87.1 closeout pattern: docs/review convergence, internal review, external / 3rd-party review, remediation, next-milestone planning, release ceremony."
 work_packages:
   - wp: WP-01
+    issue: 2245
     title: Promote and finalize v0.90.2 milestone package
+    queue: docs
     outcome: tracked milestone docs and issue cards
+    depends_on: v0.90.1 closeout
   - wp: WP-02
+    issue: 2246
     title: Runtime v2 inheritance and compression audit
+    queue: docs
     outcome: inheritance and compression report
+    depends_on: WP-01
   - wp: WP-03
+    issue: 2247
     title: CSM run packet contract
+    queue: runtime
     outcome: CSM run contract and fixture
+    depends_on: WP-02
   - wp: WP-04
+    issue: 2248
     title: Invariant and violation artifact contract
+    queue: runtime
     outcome: invariant map, violation schema, and fixtures
+    depends_on: WP-03
   - wp: WP-05
+    issue: 2249
     title: Manifold boot and citizen admission
+    queue: runtime
     outcome: boot/admission artifacts and tests
+    depends_on: WP-03, WP-04
   - wp: WP-06
+    issue: 2250
     title: Governed episode and resource scheduling
+    queue: runtime
     outcome: scheduling artifact and trace
+    depends_on: WP-05
   - wp: WP-07
+    issue: 2251
     title: Freedom Gate mediation
+    queue: runtime
     outcome: decision artifact and tests
+    depends_on: WP-05, WP-06
   - wp: WP-08
+    issue: 2252
     title: Invalid action rejection
+    queue: runtime
     outcome: violation packet and negative test
+    depends_on: WP-04, WP-07
   - wp: WP-09
+    issue: 2253
     title: Snapshot rehydrate and wake continuity
+    queue: runtime
     outcome: continuity proof packet
+    depends_on: WP-05-WP-08
   - wp: WP-10
+    issue: 2254
     title: Observatory packet and operator report integration
+    queue: runtime
     outcome: Observatory packet and operator report
+    depends_on: WP-03, WP-05-WP-09
   - wp: WP-11
+    issue: 2255
     title: Recovery eligibility model
+    queue: runtime
     outcome: recovery decision record
+    depends_on: WP-08, WP-09
   - wp: WP-12
+    issue: 2256
     title: Quarantine state machine
+    queue: runtime
     outcome: quarantine artifact and tests
+    depends_on: WP-11
   - wp: WP-13
+    issue: 2257
     title: Governed adversarial hook and hardening probes
+    queue: runtime
     outcome: adversarial hook packet and hardening proof packets
+    depends_on: WP-11, WP-12
   - wp: WP-14
+    issue: 2258
     title: Integrated first CSM run demo
+    queue: demo
     outcome: integrated CSM run demo packet
+    depends_on: WP-05-WP-13
   - wp: WP-15
+    issue: 2259
     title: Docs, quality, and review convergence
+    queue: docs
     outcome: aligned docs, quality posture, demo matrix, README, and reviewer entry surfaces
+    depends_on: WP-14
   - wp: WP-16
+    issue: 2260
     title: Internal review
+    queue: review
     outcome: findings-first internal review packet
+    depends_on: WP-15
   - wp: WP-17
+    issue: 2261
     title: External / 3rd-party review
+    queue: review
     outcome: completed external review record
+    depends_on: WP-16
   - wp: WP-18
+    issue: 2262
     title: Review findings remediation
+    queue: review
     outcome: accepted findings fixed or explicitly deferred with owner and rationale
+    depends_on: WP-16, WP-17
   - wp: WP-19
+    issue: 2263
     title: Next milestone planning and v0.91/v0.92 handoff
+    queue: docs
     outcome: next-milestone planning package, release notes, checklist, reviewer handoff, and preserved later boundaries
+    depends_on: WP-18
   - wp: WP-20
+    issue: 2264
     title: Release ceremony
+    queue: release
     outcome: v0.90.2 closed truthfully
+    depends_on: WP-19

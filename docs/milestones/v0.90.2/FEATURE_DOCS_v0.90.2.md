@@ -2,14 +2,14 @@
 
 ## Implementation-Facing Features
 
-| Feature Doc | Purpose | Candidate WPs |
+| Feature Doc | Purpose | Execution WPs |
 | --- | --- | --- |
-| `features/RUNTIME_V2_HARDENING.md` | end-to-end first-run and hardening boundary | WP-02-WP-14 |
-| `features/INVARIANT_EXPANSION_AND_COVERAGE.md` | invariant coverage map and negative-test expectations | WP-04, WP-08, WP-13 |
-| `features/VIOLATION_ARTIFACT_CONTRACT.md` | stable violation artifact schema and examples | WP-04 |
-| `features/RECOVERY_AND_QUARANTINE.md` | safe recovery, rejection, and quarantine semantics | WP-11, WP-12 |
-| `features/OPERATOR_REVIEW_SURFACES.md` | CSM Observatory and reviewer inspection reports for first-run and hardening evidence | WP-10, WP-14 |
-| `features/SECURITY_BOUNDARY_EVIDENCE.md` | governed security-boundary proof without red/blue overclaim | WP-08, WP-13 |
+| `features/RUNTIME_V2_HARDENING.md` | end-to-end first-run and hardening boundary | WP-02 #2246 through WP-14 #2258 |
+| `features/INVARIANT_EXPANSION_AND_COVERAGE.md` | invariant coverage map and negative-test expectations | WP-04 #2248, WP-08 #2252, WP-13 #2257 |
+| `features/VIOLATION_ARTIFACT_CONTRACT.md` | stable violation artifact schema and examples | WP-04 #2248 |
+| `features/RECOVERY_AND_QUARANTINE.md` | safe recovery, rejection, and quarantine semantics | WP-11 #2255, WP-12 #2256 |
+| `features/OPERATOR_REVIEW_SURFACES.md` | CSM Observatory and reviewer inspection reports for first-run and hardening evidence | WP-10 #2254, WP-14 #2258 |
+| `features/SECURITY_BOUNDARY_EVIDENCE.md` | governed security-boundary proof without red/blue overclaim | WP-08 #2252, WP-13 #2257 |
 
 ## Context / Idea Docs
 

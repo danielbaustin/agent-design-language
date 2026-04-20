@@ -2,9 +2,14 @@
 
 ## Status
 
-Early planning lane. Do not promote into tracked milestone docs or open the
-issue wave until v0.90.1 has produced the Runtime v2 foundation prototype and
-the v0.90.2 promotion gate has reviewed this package.
+Active milestone package. v0.90.2 is open and the issue wave has been created
+as #2245-#2264 from the reviewed milestone package.
+
+Current execution state:
+
+- WP-01 is #2245 and finalizes this package after issue-wave creation.
+- WP-02 through WP-20 are #2246-#2264.
+- WP-02 is the next execution gate before runtime implementation widens.
 
 ## Thesis
 
@@ -63,11 +68,11 @@ Out of scope:
 - Release notes draft: `RELEASE_NOTES_v0.90.2.md`
 - Issue wave draft: `WP_ISSUE_WAVE_v0.90.2.yaml`
 
-## Promotion Rule
+## Execution Rule
 
-This package is a managed local planning lane. A later promotion issue should
-review it against the actual v0.90.1 outcome before copying anything into
-tracked milestone docs or creating v0.90.2 GitHub issues.
+This package is the tracked milestone source for v0.90.2 execution. The issue
+wave mapping lives in `WP_ISSUE_WAVE_v0.90.2.yaml`, and execution should proceed
+through issue worktrees with SOR evidence updated as each WP closes.
 
 ## Compression Rule
 
