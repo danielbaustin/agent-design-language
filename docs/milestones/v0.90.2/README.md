@@ -114,3 +114,11 @@ WP-04 extends the D2 contract gate with code-backed invariant and violation
 artifacts. The invariant map fixture fixes the D2 invariant set before WP-05
 boot/admission, and the violation schema fixture fixes the negative-path shape
 that WP-08 must consume. This proves contract readiness, not a live CSM run.
+
+## WP-05 Boot And Admission Gate
+
+WP-05 lands the D3 boot/admission proof surface for `proto-csm-01`. The
+code-backed boot manifest, citizen roster, and boot/admission trace prove that
+two worker citizens have traceable identity handles for the bounded first-run
+spine while preserving the provisional boundary and avoiding any true-birthday
+claim.

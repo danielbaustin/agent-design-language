@@ -11,14 +11,14 @@
 
 ## Implementation
 
-- [ ] `proto-csm-01` boot and citizen admission complete
+- [x] `proto-csm-01` boot and citizen admission complete
 - [ ] Governed episode and resource scheduling complete
 - [ ] Freedom Gate mediation complete
 - [ ] Invalid action rejection complete
 - [ ] Snapshot rehydrate wake continuity complete
 - [ ] Observatory packet and operator report integrated
-- [ ] Invariant coverage map complete
-- [ ] Violation artifact contract implemented
+- [x] Invariant coverage map complete
+- [x] Violation artifact contract implemented
 - [ ] Recovery eligibility model implemented
 - [ ] Quarantine state machine implemented
 - [ ] Governed adversarial hook complete with rules of engagement and evidence

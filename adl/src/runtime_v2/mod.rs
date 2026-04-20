@@ -1,3 +1,4 @@
+mod boot_admission;
 mod citizen;
 mod contracts;
 mod csm_run;
@@ -16,6 +17,8 @@ use anyhow::{anyhow, Context, Result};
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
+#[allow(unused_imports)]
+pub use boot_admission::*;
 #[allow(unused_imports)]
 pub use citizen::*;
 #[allow(unused_imports)]

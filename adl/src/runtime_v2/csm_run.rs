@@ -190,7 +190,7 @@ impl RuntimeV2CsmRunPacketContract {
                         "single_active_manifold_instance".to_string(),
                         "no_duplicate_active_citizen_instance".to_string(),
                     ],
-                    status_before_wp: "planned".to_string(),
+                    status_before_wp: "landed_by_wp05".to_string(),
                     proof_obligation:
                         "proto-csm-01 boots and admits workers only after contract gates pass"
                             .to_string(),
@@ -238,11 +238,12 @@ impl RuntimeV2CsmRunPacketContract {
                 validation_commands: vec![
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture".to_string(),
+                    "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_boot_admission -- --nocapture".to_string(),
                     "git diff --check".to_string(),
                 ],
                 non_claims: vec![
                     "does not execute a live CSM run".to_string(),
-                    "does not execute WP-05 boot and admission".to_string(),
+                    "does not execute WP-06 governed episode scheduling".to_string(),
                     "does not claim first true Godel-agent birth".to_string(),
                     "does not implement v0.91 moral or emotional civilization scope"
                         .to_string(),

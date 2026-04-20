@@ -41,7 +41,7 @@
       "owner_wp": "WP-05",
       "required_input": "runtime_v2/csm_run/proto-csm-01-run-packet.json",
       "required_output": "runtime_v2/csm_run/boot_manifest.json",
-      "live_run_state": "planned"
+      "live_run_state": "boot_admission_landed"
     },
     {
       "stage_id": "governed_episode_and_rejection",
@@ -60,6 +60,6 @@
   ],
   "review_target": {
     "entrypoint": "docs/milestones/v0.90.2/CSM_RUN_PACKET_CONTRACT_v0.90.2.md",
-    "focused_validation": "cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture"
+    "focused_validation": "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_boot_admission -- --nocapture"
   }
 }
