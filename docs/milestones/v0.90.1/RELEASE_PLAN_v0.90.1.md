@@ -17,7 +17,8 @@ weakened release truth.
 - Demo matrix with every proof claim landed, skipped, or non-proving
 - Quality gate record: `QUALITY_GATE_v0.90.1.md` and
   `bash adl/tools/demo_v0901_quality_gate.sh`
-- Internal review, third-party review, and remediation record
+- Internal review, third-party review, and remediation record:
+  `INTERNAL_REVIEW_v0.90.1.md` and `THIRD_PARTY_REVIEW_v0.90.1.md`
 - WP-17 release-readiness packet and checklist
 - WP-18 v0.91/v0.92 handoff preserving moral/emotional and birthday/identity
   boundaries without claiming implementation of those later milestones
