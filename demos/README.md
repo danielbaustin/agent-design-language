@@ -94,6 +94,12 @@ If you want the command-driven CSM Observatory demo bundle:
 bash adl/tools/demo_v0901_csm_observatory.sh
 ```
 
+If you want the integrated Runtime v2 foundation proof demo:
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- demo demo-l-v0901-runtime-v2-foundation --run --trace --out artifacts/v0901 --no-open
+```
+
 ## Demo Categories
 
 - Runtime workflow demos live in `adl/examples/`.
