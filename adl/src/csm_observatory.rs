@@ -146,9 +146,9 @@ fn render_manifest(packet: &Value, output: &ObservatoryOutput) -> Value {
         "classification": packet.pointer("/review/demo_classification").and_then(Value::as_str).unwrap_or("unknown"),
         "packet_id": packet.pointer("/packet_id").and_then(Value::as_str).unwrap_or("unknown"),
         "proof_surfaces": {
-            "visibility_packet": output.packet_path.as_ref().map(display_path),
-            "operator_report": output.report_path.as_ref().map(display_path),
-            "console_reference": output.console_reference_path.as_ref().map(display_path),
+            "visibility_packet": output.packet_path.as_deref().map(display_path),
+            "operator_report": output.report_path.as_deref().map(display_path),
+            "console_reference": output.console_reference_path.as_deref().map(display_path),
         },
         "truth_boundary": packet.pointer("/source/claim_boundary").and_then(Value::as_str).unwrap_or("not recorded"),
         "read_only": true,
@@ -156,7 +156,7 @@ fn render_manifest(packet: &Value, output: &ObservatoryOutput) -> Value {
     })
 }
 
-fn display_path(path: &PathBuf) -> String {
+fn display_path(path: &Path) -> String {
     path.file_name()
         .map(|name| name.to_string_lossy().to_string())
         .unwrap_or_else(|| path.display().to_string())
