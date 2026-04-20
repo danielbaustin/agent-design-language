@@ -1,0 +1,101 @@
+{
+  "schema_version": "runtime_v2.csm_run_invariant_map.v1",
+  "map_id": "proto-csm-01-invariant-map-0001",
+  "demo_id": "D2",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/invariants/csm_run_invariant_map.json",
+  "generated_at_utc": "2026-04-20T00:00:00Z",
+  "source_refs": [
+    "docs/milestones/v0.90.2/WBS_v0.90.2.md",
+    "docs/milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md",
+    "docs/milestones/v0.90.2/features/INVARIANT_EXPANSION_AND_COVERAGE.md",
+    "runtime_v2/csm_run/run_packet_contract.json",
+    "runtime_v2/invariants/violation-0001.json",
+    "runtime_v2/invariants/policy.json"
+  ],
+  "coverage_entries": [
+    {
+      "invariant_id": "single_active_manifold_instance",
+      "invariant_class": "manifold_integrity",
+      "owner_service_id": "kernel_runtime",
+      "enforcement_mode": "fail_closed_before_activation",
+      "stage_ref": "contract_and_fixture",
+      "required_before_wp": "WP-05",
+      "evidence_refs": [
+        "runtime_v2/manifold.json",
+        "runtime_v2/csm_run/run_packet_contract.json"
+      ],
+      "positive_fixture_ref": "runtime_v2/csm_run/run_packet_contract.json",
+      "negative_fixture_ref": "runtime_v2/invariants/violation-0001.json",
+      "coverage_status": "contracted",
+      "proof_obligation": "only one proto-csm-01 manifold head may be accepted for the run"
+    },
+    {
+      "invariant_id": "no_duplicate_active_citizen_instance",
+      "invariant_class": "citizen_continuity",
+      "owner_service_id": "invariant_checker",
+      "enforcement_mode": "fail_closed_before_activation",
+      "stage_ref": "boot_and_admission",
+      "required_before_wp": "WP-05",
+      "evidence_refs": [
+        "runtime_v2/citizens/active_index.json",
+        "runtime_v2/invariants/violation-0001.json"
+      ],
+      "positive_fixture_ref": "runtime_v2/csm_run/run_packet_contract.json",
+      "negative_fixture_ref": "runtime_v2/invariants/violation-0001.json",
+      "coverage_status": "negative_fixture_backed",
+      "proof_obligation": "duplicate active citizen activation must be refused before commit"
+    },
+    {
+      "invariant_id": "trace_sequence_must_advance_monotonically",
+      "invariant_class": "temporal_ordering",
+      "owner_service_id": "trace_writer",
+      "enforcement_mode": "fail_closed_before_activation",
+      "stage_ref": "governed_episode_and_rejection",
+      "required_before_wp": "WP-06",
+      "evidence_refs": [
+        "runtime_v2/kernel/service_loop.jsonl",
+        "runtime_v2/csm_run/first_run_trace.jsonl"
+      ],
+      "positive_fixture_ref": "runtime_v2/csm_run/run_packet_contract.json",
+      "negative_fixture_ref": "runtime_v2/invariants/violation-0001.json",
+      "coverage_status": "contracted_for_wp06",
+      "proof_obligation": "later trace events must be contiguous and may not rewrite prior order"
+    },
+    {
+      "invariant_id": "invalid_action_must_be_refused_before_commit",
+      "invariant_class": "security_boundary_enforcement",
+      "owner_service_id": "operator_control_interface",
+      "enforcement_mode": "fail_closed_before_activation",
+      "stage_ref": "governed_episode_and_rejection",
+      "required_before_wp": "WP-08",
+      "evidence_refs": [
+        "runtime_v2/invariants/violation-0001.json",
+        "runtime_v2/security_boundary/proof_packet.json"
+      ],
+      "positive_fixture_ref": "runtime_v2/csm_run/run_packet_contract.json",
+      "negative_fixture_ref": "runtime_v2/invariants/violation-0001.json",
+      "coverage_status": "negative_fixture_backed",
+      "proof_obligation": "invalid actions must emit stable refusal evidence without state mutation"
+    },
+    {
+      "invariant_id": "snapshot_restore_must_validate_before_active_state",
+      "invariant_class": "recovery_eligibility",
+      "owner_service_id": "snapshot_service",
+      "enforcement_mode": "fail_closed_before_activation",
+      "stage_ref": "snapshot_wake_and_observatory",
+      "required_before_wp": "WP-09",
+      "evidence_refs": [
+        "runtime_v2/snapshots/snapshot-0001.json",
+        "runtime_v2/rehydration_report.json"
+      ],
+      "positive_fixture_ref": "runtime_v2/csm_run/run_packet_contract.json",
+      "negative_fixture_ref": "runtime_v2/invariants/violation-0001.json",
+      "coverage_status": "contracted_for_wp09",
+      "proof_obligation": "wake must prove invariant checks before re-entering active state"
+    }
+  ],
+  "required_before_live_run": true,
+  "gap_policy": "missing or ambiguous invariant coverage blocks WP-05 boot and later live-run claims",
+  "claim_boundary": "This map contracts invariant coverage for D2; it is not evidence that a live Runtime v2 run has executed."
+}

@@ -3,6 +3,7 @@ mod contracts;
 mod csm_run;
 mod foundation;
 mod invariant;
+mod invariant_contract;
 mod kernel_loop;
 mod manifold;
 mod operator;
@@ -25,6 +26,8 @@ pub use csm_run::*;
 pub use foundation::*;
 #[allow(unused_imports)]
 pub use invariant::*;
+#[allow(unused_imports)]
+pub use invariant_contract::*;
 #[allow(unused_imports)]
 pub use kernel_loop::*;
 #[allow(unused_imports)]

@@ -1,0 +1,83 @@
+{
+  "schema_version": "runtime_v2.violation_artifact_schema_contract.v1",
+  "contract_id": "runtime-v2-violation-artifact-schema-0001",
+  "artifact_schema_version": "runtime_v2.invariant_violation.v1",
+  "artifact_path": "runtime_v2/violations/violation_artifact_schema.json",
+  "generated_at_utc": "2026-04-20T00:00:00Z",
+  "source_refs": [
+    "docs/milestones/v0.90.2/features/VIOLATION_ARTIFACT_CONTRACT.md",
+    "docs/milestones/v0.90.2/WBS_v0.90.2.md",
+    "runtime_v2/csm_run/run_packet_contract.json",
+    "runtime_v2/invariants/violation-0001.json"
+  ],
+  "required_fields": [
+    {
+      "field_name": "schema_version",
+      "requirement": "stable version for violation artifacts",
+      "validation_rule": "must equal runtime_v2.invariant_violation.v1"
+    },
+    {
+      "field_name": "violation_id",
+      "requirement": "stable identifier for the rejected transition",
+      "validation_rule": "must be a non-path id"
+    },
+    {
+      "field_name": "manifold_id",
+      "requirement": "manifold lineage affected by the attempted transition",
+      "validation_rule": "must match proto-csm-01 for D2"
+    },
+    {
+      "field_name": "invariant_id",
+      "requirement": "invariant that caused refusal",
+      "validation_rule": "must be a non-path id"
+    },
+    {
+      "field_name": "policy_enforcement_mode",
+      "requirement": "policy mode used for the decision",
+      "validation_rule": "must be fail_closed_before_activation or report_only"
+    },
+    {
+      "field_name": "attempted_transition",
+      "requirement": "actor, action, state, and source artifact for the attempt",
+      "validation_rule": "must name stable ids and repository-relative refs"
+    },
+    {
+      "field_name": "evaluated_refs",
+      "requirement": "artifacts checked before refusing the transition",
+      "validation_rule": "must be non-empty and unique"
+    },
+    {
+      "field_name": "affected_citizens",
+      "requirement": "citizen ids affected by the attempted transition",
+      "validation_rule": "must be non-empty and unique"
+    },
+    {
+      "field_name": "refusal_reason",
+      "requirement": "human-reviewable reason for the refusal",
+      "validation_rule": "must be non-empty"
+    },
+    {
+      "field_name": "source_error",
+      "requirement": "validator error or policy failure that caused refusal",
+      "validation_rule": "must be non-empty"
+    },
+    {
+      "field_name": "result",
+      "requirement": "resulting state, before-commit block proof, recovery action, and trace ref",
+      "validation_rule": "blocked_before_commit must be true"
+    }
+  ],
+  "required_decision_values": [
+    "transition_refused_state_unchanged",
+    "blocked_before_commit",
+    "retain_existing_active_index_and_record_violation"
+  ],
+  "positive_fixture_ref": "runtime_v2/csm_run/run_packet_contract.json",
+  "negative_fixture_ref": "runtime_v2/invariants/violation-0001.json",
+  "reviewer_entrypoint": "docs/milestones/v0.90.2/features/VIOLATION_ARTIFACT_CONTRACT.md",
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture",
+    "git diff --check"
+  ],
+  "claim_boundary": "This schema contract fixes violation artifact shape; it does not execute WP-08 invalid-action flow."
+}

@@ -28,6 +28,11 @@ pub fn runtime_v2_invariant_violation_contract() -> Result<RuntimeV2InvariantVio
     )
 }
 
+pub fn runtime_v2_invariant_and_violation_contract(
+) -> Result<RuntimeV2InvariantAndViolationContractArtifacts> {
+    RuntimeV2InvariantAndViolationContractArtifacts::prototype()
+}
+
 pub fn runtime_v2_operator_control_report_contract() -> Result<RuntimeV2OperatorControlReport> {
     let manifold = runtime_v2_manifold_contract()?;
     let kernel = RuntimeV2KernelLoopArtifacts::prototype(&manifold)?;

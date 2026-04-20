@@ -107,3 +107,10 @@ compression workflow posture while preserving the later-scope non-claims.
 the code-backed `runtime_v2.csm_run_packet_contract.v1` shape, the
 `proto-csm-01` fixture definition, the pre-live-run artifact set, and the
 review target that WP-04 through WP-14 must preserve.
+
+## WP-04 Invariant And Violation Gate
+
+WP-04 extends the D2 contract gate with code-backed invariant and violation
+artifacts. The invariant map fixture fixes the D2 invariant set before WP-05
+boot/admission, and the violation schema fixture fixes the negative-path shape
+that WP-08 must consume. This proves contract readiness, not a live CSM run.
