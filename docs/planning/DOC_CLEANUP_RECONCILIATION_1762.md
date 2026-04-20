@@ -1,5 +1,12 @@
 # Doc Cleanup Reconciliation - Issue 1762
 
+## Status
+
+Historical cleanup provenance.
+
+This document records the issue 1762 cleanup pass. It is not an active planning
+queue and should not be used as the current docs-cleanup backlog.
+
 ## Purpose
 
 Issue 1762 was originally parked during v0.88 closeout to capture stale

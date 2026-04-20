@@ -13,7 +13,7 @@ record, memory grounding, capability envelope, inherited moral/governance
 context, and reviewable evidence distinguishing birth from ordinary process
 startup.
 
-Roadmap: ../ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md
+Roadmap: ../../planning/ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md
 
 ## Metadata
 - Milestone: `{{milestone}}`

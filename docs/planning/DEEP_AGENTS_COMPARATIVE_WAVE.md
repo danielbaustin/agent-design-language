@@ -1,5 +1,13 @@
 # Deep Agents Comparative Wave
 
+## Status
+
+Delivered baseline / planning provenance.
+
+The v0.89 and v0.89.1 comparative wave demos have landed. This document is kept
+as source context for any future public-positioning follow-on, not as an active
+next-milestone commitment.
+
 ## Purpose
 
 Preserve and deepen the larger comparative/public-positioning story around
@@ -126,9 +134,9 @@ It should not become:
 - a “who is smarter” essay
 - a winner/loser narrative
 
-## Recommended Next-Milestone Slice
+## Recommended Future Slice
 
-The first good promotion would be:
+If this line is reopened, the next good promotion would be:
 
 `Build one reviewer-facing comparative wave package that deepens the v0.88 proof row with stronger public-positioning language and clearer governance/review surfaces.`
 
@@ -136,7 +144,7 @@ That is enough to move the story forward without turning it into a marketing det
 
 ## Success Criteria
 
-This future comparative wave succeeds if:
+Any future comparative wave succeeds if:
 
 - it clearly cites the bounded `v0.88` row as its predecessor
 - it widens the comparative story without losing discipline
