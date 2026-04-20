@@ -189,6 +189,25 @@ Recommended WP-16 ordering:
    the stronger proof expectations.
 5. Normalize stale milestone and release-tail docs.
 
+## WP-16 Issue Routing
+
+The initial one-finding-per-issue queue was intentionally consolidated after
+review so v0.90.1 can finish remediation sequentially without paying a full
+issue ceremony for every small finding. The accepted remediation work is routed
+through these bundled issues:
+
+| Bundle issue | Scope | Internal review findings covered |
+| --- | --- | --- |
+| #2221 | Quality gate and quality posture remediation | P1 quality gate can fail open; P3 dependency and supply-chain gate remains light; large-module/quality-posture disposition carried as release-tail truth. |
+| #2222 | Runtime v2 proof truth and command semantics | P1 security-boundary proof is not proving refusal; P1 Runtime v2 proof bundle declares artifacts that are not emitted; P2 rehydration refusal behavior is overclaimed; P3 absolute output-path policy; P3 Runtime v2 and CSM command-model alignment; P3 integrated-demo evidence-link depth. |
+| #2224 | CSM Observatory validation and report alignment | P2 CSM Observatory validation is shallower in Rust than in Python; P2 static console proof is grep-based; P2 generated CSM operator report contains stale future-work language; P3 feature-doc index missing static-console issue mapping. |
+| #2229 | Release docs routing and architecture truth | P2 release and root docs have stale lifecycle wording; P3 release notes omit WP-17 and WP-18; P3 docs still point at pre-refactor Runtime v2 paths; architecture/release truth cleanup needed for final review. |
+
+Superseded child issues from the temporary fine-grained queue should remain
+closed as superseded by the applicable bundle. The final release-tail review
+should verify the merged bundle PRs rather than re-opening the original
+fine-grained queue.
+
 ## Release-Tail Disposition
 
 WP-15 is complete as an internal review. v0.90.1 should continue through
