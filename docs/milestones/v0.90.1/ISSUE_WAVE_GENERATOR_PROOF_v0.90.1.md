@@ -21,7 +21,8 @@ cargo run --manifest-path adl/Cargo.toml -- tooling generate-wp-issue-wave --ver
 ```
 
 Expected result: command exits successfully and emits `schema:
-adl.wp_issue_wave.v1` with entries for WP-02 through WP-20.
+adl.wp_issue_wave.v1` with entries for WP-02 through WP-20 plus the
+supplemental WP-15A third-party review slot.
 
 ## Alignment Checks
 
@@ -31,6 +32,8 @@ The v0.90.1 package intentionally differs from the older generator fixture:
 - The WBS table records issue numbers in the second column.
 - The sprint plan uses sprint sections instead of a `## Sprint Overview` table.
 - WP-02 through WP-04 use fine-grained queues before Runtime v2 coding starts.
+- WP-15A uses an alphanumeric WP id so the parser preserves supplemental review
+  work without confusing it with WP-15 or WP-16.
 
 The generator now accepts those shapes and preserves these review-critical
 values:
@@ -41,6 +44,7 @@ values:
 | WP-03 | tools | code | Sprint 1 |
 | WP-04 | docs | docs | Sprint 1 |
 | WP-12 | demo | demo | Sprint 3 |
+| WP-15A | review | review | Sprint 4 |
 | WP-17 | release | docs | Release Tail |
 
 ## Regression Coverage
@@ -56,6 +60,7 @@ It covers:
 - legacy v0.88 `## Sprint Overview` and six-column WBS generation
 - current v0.90.1 `## Work Package Shape` generation
 - sprint-section parsing for Sprint 1 through Release Tail
+- alphanumeric supplemental WP ids such as WP-15A
 - queue and outcome inference for tools, docs, demo, release, and runtime rows
 - deterministic WP range expansion
 
@@ -63,4 +68,5 @@ It covers:
 
 This proof does not create GitHub issues, mutate tracker state, or replace the
 opened v0.90.1 issue map. `WP_ISSUE_WAVE_v0.90.1.yaml` remains the issue-number
-source of truth after WP-01 opened issues #2141 through #2160.
+source of truth after WP-01 opened issues #2141 through #2160 and WP-15A was
+added as #2215.

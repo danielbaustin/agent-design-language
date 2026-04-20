@@ -57,7 +57,7 @@ This is the best top-level entrypoint if you want to see the milestone-compressi
 Run the long-lived stock-league package, the flagship bounded recurring-agent demo carried by the v0.90 release:
 
 ```bash
-bash adl/tools/demo_v0891_long_lived_stock_league.sh
+cargo run --manifest-path adl/Cargo.toml -- demo demo-j-v090-stock-league-recurring --run --trace --out out --no-open
 ```
 
 ### If you want the previous runtime milestone package
@@ -105,7 +105,7 @@ Other useful entrypoints:
 ## Current Status
 
 - Active milestone: **v0.90.1**
-- Current release state: **v0.90 released; v0.90.1 issue wave open**
+- Current release state: **v0.90 released; v0.90.1 issue wave open, implementation complete through WP-12, docs pass underway in WP-13**
 - Most recently completed milestone: **v0.90**
 - Current crate version: **0.90.0**
 - Version note: **v0.90 is tagged and released; v0.90.1 WP-01 opened the Runtime v2 foundation issue wave**
@@ -117,7 +117,7 @@ ADL is in active development. This repository contains both implemented runtime 
 
 ## Current Milestone
 
-v0.90.1 is the active milestone package. Its issue wave is open, with WP-01 at #2141 and WP-02 through WP-20 at #2142 through #2160. The tracked planning package lives under `docs/milestones/v0.90.1/`.
+v0.90.1 is the active milestone package. Its issue wave is open, with WP-01 at #2141, WP-02 through WP-20 at #2142 through #2160, and WP-15A third-party review at #2215. WP-01 through WP-12 are closed; WP-13 is aligning the review-facing docs before WP-14 quality gate, WP-15 internal review, WP-15A third-party review, WP-16 remediation, and release closeout. The tracked planning package lives under `docs/milestones/v0.90.1/`.
 
 v0.90 is the just-completed long-lived-agent runtime milestone. It carries ADL from bounded single-run proof surfaces into supervised recurring cycles with durable artifacts, pre-identity continuity handles, operator controls, demo proof, milestone compression, repo visibility, explicit Rust refactoring, and a measured coverage ratchet.
 
@@ -251,8 +251,9 @@ ADL includes both ordinary demos and heavyweight reviewer or release proof packa
 
 Start here:
 - canonical user-facing demo index: `demos/README.md`
-- current milestone quality-gate package: `bash adl/tools/demo_v0891_quality_gate.sh`
-- current milestone integration-demo package: `bash adl/tools/demo_v0891_wp13_demo_integration.sh`
+- active milestone demo matrix: `docs/milestones/v0.90.1/DEMO_MATRIX_v0.90.1.md`
+- active CSM Observatory proof bundle: `bash adl/tools/demo_v0901_csm_observatory.sh`
+- latest completed milestone state check: `python3 adl/tools/check_v090_milestone_state.py`
 
 Important supporting demo/readiness docs:
 - `docs/tooling/editor/README.md`

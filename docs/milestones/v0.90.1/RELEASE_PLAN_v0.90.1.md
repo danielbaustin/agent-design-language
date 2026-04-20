@@ -9,14 +9,14 @@ weakened release truth.
 
 ## Required Release Evidence
 
-- Opened issue wave with WP-01 as #2141 and WP-02 through WP-20 as #2142
-  through #2160
+- Opened issue wave with WP-01 as #2141, WP-02 through WP-20 as #2142
+  through #2160, and WP-15A third-party review as #2215
 - Integrated Runtime v2 proof packet
 - Compression-enablement proof for issue-wave generation, worktree-first
   execution, and current execution policy
 - Demo matrix with every proof claim landed, skipped, or non-proving
 - Quality gate record
-- Internal review and remediation record
+- Internal review, third-party review, and remediation record
 - Release-evidence packet tying demos, quality, review, and readiness together
 - Release notes that do not overclaim birthday, moral/emotional civilization,
   complete migration, or red/blue ecology
@@ -25,6 +25,7 @@ weakened release truth.
 
 - Any claim that v0.90.1 is the first true Gödel-agent birthday
 - Any unreviewed security-boundary overclaim
+- Missing third-party review disposition before remediation
 - Missing snapshot/rehydration proof
 - Missing invariant violation artifact
 - Missing operator-control evidence

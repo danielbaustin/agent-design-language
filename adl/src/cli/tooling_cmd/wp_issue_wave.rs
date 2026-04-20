@@ -235,6 +235,7 @@ fn is_closeout_row(work_package: &str, issue_column: &str) -> bool {
         || lowered.contains("docs + review")
         || lowered == "internal review"
         || lowered.contains("3rd-party review")
+        || lowered.contains("third-party review")
         || lowered.contains("review findings remediation")
         || lowered.contains("review remediation")
         || lowered.contains("next milestone planning")
@@ -505,6 +506,9 @@ fn extract_wp_refs(text: &str) -> Vec<String> {
             while end < bytes.len() && bytes[end].is_ascii_digit() {
                 end += 1;
             }
+            while end < bytes.len() && bytes[end].is_ascii_uppercase() {
+                end += 1;
+            }
             if end > idx + 3 {
                 refs.push(text[idx..end].to_string());
                 idx = end;
@@ -526,7 +530,12 @@ fn extract_wp_refs(text: &str) -> Vec<String> {
 }
 
 fn parse_wp_number(value: &str) -> Option<u32> {
-    value.strip_prefix("WP-")?.parse::<u32>().ok()
+    let suffix = value.strip_prefix("WP-")?;
+    let digits = suffix
+        .chars()
+        .take_while(|ch| ch.is_ascii_digit())
+        .collect::<String>();
+    digits.parse::<u32>().ok()
 }
 
 fn slugify(value: &str) -> String {
@@ -564,6 +573,12 @@ mod tests {
         assert_eq!(
             extract_wp_refs("`WP-09`, `WP-10`, `WP-11`"),
             vec!["WP-09", "WP-10", "WP-11"]
+        );
+        assert_eq!(
+            extract_wp_refs(
+                "WP-15 internal review, WP-15A third-party review, and WP-16 remediation"
+            ),
+            vec!["WP-15", "WP-15A", "WP-16"]
         );
     }
 
@@ -628,7 +643,7 @@ mod tests {
         )
         .expect("generate v0.90.1 wave");
 
-        assert_eq!(wave.entries.len(), 19);
+        assert_eq!(wave.entries.len(), 20);
 
         let wp02 = &wave.entries[0];
         assert_eq!(wp02.wp, "WP-02");
@@ -677,5 +692,16 @@ mod tests {
             .expect("wp16 present");
         assert_eq!(wp16.queue, "review");
         assert_eq!(wp16.outcome, "code");
+        assert_eq!(wp16.dependencies, vec!["WP-15", "WP-15A"]);
+
+        let wp15a = wave
+            .entries
+            .iter()
+            .find(|entry| entry.wp == "WP-15A")
+            .expect("wp15a present");
+        assert_eq!(wp15a.queue, "review");
+        assert_eq!(wp15a.outcome, "review");
+        assert_eq!(wp15a.milestone_sprint, "Sprint 4");
+        assert_eq!(wp15a.dependencies, vec!["WP-15"]);
     }
 }
