@@ -19,9 +19,9 @@ The manifold is initialized at tick 0. The kernel pulse is bounded_tick_complete
 - Snapshot restore must validate before active state is deferred (high); evidence: runtime_v2/rehydration_report.json.
 - Freedom Gate packet is fixture-only
 - Open Freedom Gate question: Which live Freedom Gate artifact path becomes canonical in v0.90.2?
-- Operator action pause_citizen remains disabled: Requires operator command packet design and kernel handling. Future issue: #2192.
-- Operator action request_snapshot remains disabled: Requires snapshot command packet and Runtime v2 snapshot implementation. Future issue: #2192.
-- Operator action resume_citizen remains disabled: Requires recovery eligibility and wake semantics. Future issue: #2192.
+- Operator action pause_citizen remains disabled: Requires Runtime v2 kernel handling of command packets. Future issue: #2192.
+- Operator action request_snapshot remains disabled: Requires Runtime v2 snapshot implementation and command handler. Future issue: #2192.
+- Operator action resume_citizen remains disabled: Requires recovery eligibility, wake semantics, and Runtime v2 kernel handling. Future issue: #2192.
 - Info: Freedom Gate docket is fixture-backed until live decision packets land.
 
 ## Manifold And Kernel
@@ -82,9 +82,9 @@ Available read-only actions:
 - open_freedom_gate_decision: available_in_console_prototype
 
 Disabled mutation actions:
-- pause_citizen: Requires operator command packet design and kernel handling.
-- request_snapshot: Requires snapshot command packet and Runtime v2 snapshot implementation.
-- resume_citizen: Requires recovery eligibility and wake semantics.
+- pause_citizen: Requires Runtime v2 kernel handling of command packets.
+- request_snapshot: Requires Runtime v2 snapshot implementation and command handler.
+- resume_citizen: Requires recovery eligibility, wake semantics, and Runtime v2 kernel handling.
 
 Required confirmations:
 - live mutation actions must remain disabled until command packets are routed through the kernel
