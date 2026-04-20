@@ -1,0 +1,54 @@
+{
+  "schema_version": "runtime_v2.security_boundary_proof.v1",
+  "proof_id": "security-boundary-proof-0001",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/security_boundary/proof_packet.json",
+  "generated_at_utc": "not_started",
+  "boundary_service_id": "operator_control_interface",
+  "attempt": {
+    "actor": "operator.cli",
+    "attempted_action": "resume_manifold_without_fresh_invariant_pass",
+    "requested_state": "active",
+    "source_command_ref": "runtime_v2/operator/control_report.json"
+  },
+  "evaluated_rules": [
+    {
+      "rule_id": "require_fresh_invariant_pass_before_resume",
+      "rule_kind": "operator_policy",
+      "source_ref": "runtime_v2/invariants/policy.json",
+      "decision": "refuse"
+    },
+    {
+      "rule_id": "no_duplicate_active_citizen_instance",
+      "rule_kind": "blocking_invariant",
+      "source_ref": "runtime_v2/invariants/violation-0001.json",
+      "decision": "blocking_failure_present"
+    },
+    {
+      "rule_id": "scheduler_resume_gate",
+      "rule_kind": "kernel_service_policy",
+      "source_ref": "runtime_v2/kernel/service_state.json",
+      "decision": "keep_paused"
+    }
+  ],
+  "related_artifacts": [
+    "runtime_v2/manifold.json",
+    "runtime_v2/kernel/service_state.json",
+    "runtime_v2/invariants/violation-0001.json",
+    "runtime_v2/operator/control_report.json"
+  ],
+  "result": {
+    "allowed": false,
+    "refusal_reason": "resume refused because latest invariant evidence is blocking and no fresh pass is recorded",
+    "resulting_state": {
+      "manifold_lifecycle_state": "paused",
+      "kernel_loop_status": "operator_paused",
+      "active_citizen_count": 1,
+      "pending_citizen_count": 1,
+      "latest_snapshot_id": null,
+      "completed_through_event_sequence": 8
+    },
+    "trace_ref": "runtime_v2/traces/security_boundary/refused-resume-without-invariant.json",
+    "recovery_action": "remain_paused_and_require_invariant_checker_pass_before_resume"
+  }
+}
