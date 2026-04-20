@@ -26,7 +26,7 @@
 - [x] No docs claim full moral/emotional civilization
 - [x] No docs center red/blue ecology as the Runtime v2 thesis
 - [x] Security-boundary evidence is present and bounded
-- [ ] Quality gate is green or exceptions are explicit
+- [x] Quality gate is green or exceptions are explicit
 
 ## Release
 

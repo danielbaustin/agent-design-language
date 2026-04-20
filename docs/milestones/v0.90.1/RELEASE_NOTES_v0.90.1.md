@@ -16,13 +16,12 @@ v0.90.1 is building the first bounded Runtime v2 foundation prototype.
 - Operator inspect/pause/resume/terminate controls.
 - Security-boundary proof packet.
 - Integrated Runtime v2 prototype demo.
+- Quality and coverage gate with Runtime v2 and CSM Observatory proof checks.
 - CSM Observatory visibility packet, operator report, CLI bundle, static console
   reference, and future command-packet design.
 
 ## Remaining Release-Tail Highlights
 
-- WP-13 documentation alignment.
-- WP-14 quality and coverage gate.
 - WP-15 internal review.
 - WP-15A third-party review.
 - WP-16 accepted-finding remediation.
