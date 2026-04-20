@@ -22,11 +22,11 @@ contract before implementation begins.
 | WP-12 | Quarantine state machine | Implement quarantine state and evidence preservation for unsafe recovery | quarantine artifact and tests | WP-11 |
 | WP-13 | Governed adversarial hook and hardening probes | Add one bounded adversarial probe plus duplicate activation, snapshot integrity, and trace/replay gap negative probes | adversarial hook packet and hardening proof packets | WP-11, WP-12 |
 | WP-14 | Integrated first CSM run demo | Produce one end-to-end first-run and hardening proof packet | integrated CSM run demo packet | WP-05-WP-13 |
-| WP-15 | Runtime v2 first-run docs pass | Align feature docs, demo matrix, README, and Observatory claims | coherent docs package | WP-14 |
-| WP-16 | Quality and coverage gate | Run focused tests and quality posture | quality report | WP-14 |
-| WP-17 | Internal review | Review claims, artifacts, compression, and boundaries | findings-first review packet | WP-15, WP-16 |
-| WP-18 | Review remediation | Fix accepted findings or defer explicitly | patches and closure notes | WP-17 |
-| WP-19 | Release readiness and v0.91/v0.92 handoff | Finalize release notes, checklist, reviewer handoff, and later-boundary inheritance | readiness and handoff packet | WP-18 |
+| WP-15 | Docs, quality, and review convergence | Align feature docs, demo matrix, README, quality posture, and reviewer entry surfaces | coherent docs/review package and quality report | WP-14 |
+| WP-16 | Internal review | Review claims, artifacts, compression, quality, and boundaries | findings-first internal review packet | WP-15 |
+| WP-17 | External / 3rd-party review | Execute external review against the stabilized v0.90.2 proof package | completed external review record | WP-16 |
+| WP-18 | Review findings remediation | Fix accepted findings or defer explicitly with owner and rationale | patches, closure notes, and tracked deferrals | WP-16, WP-17 |
+| WP-19 | Next milestone planning | Finalize v0.91/v0.92 handoff and next-milestone planning before release closeout | next-milestone planning and handoff packet | WP-18 |
 | WP-20 | Release ceremony | Complete tag/release ceremony | release closure | WP-19 |
 
 ## Compression Candidate
@@ -41,5 +41,6 @@ Compression target:
   contract is stable
 - WP-13 should stay bounded to one governed adversarial hook plus concrete
   hardening probes, not expand into a full security-ecology sprint
-- WP-15 through WP-19 should consume continuously maintained evidence rather
-  than rediscovering the milestone at the end
+- WP-15 through WP-19 must preserve the v0.87.1 closeout pattern:
+  docs/review convergence, internal review, external / 3rd-party review,
+  findings remediation, next-milestone planning, then ceremony
