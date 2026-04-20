@@ -1,8 +1,8 @@
-# Release Notes Draft - v0.90.1
+# Release Notes - v0.90.1
 
 ## Headline
 
-v0.90.1 is building the first bounded Runtime v2 foundation prototype.
+v0.90.1 delivers the first bounded Runtime v2 foundation prototype.
 
 ## Landed Implementation Highlights
 
@@ -20,16 +20,15 @@ v0.90.1 is building the first bounded Runtime v2 foundation prototype.
 - CSM Observatory visibility packet, operator report, CLI bundle, static console
   reference, and future command-packet design.
 
-## Remaining Release-Tail Highlights
+## Release-Tail Evidence
 
-- WP-15 internal review.
-- WP-15A third-party review.
-- WP-16 accepted-finding remediation.
-- WP-17 release readiness with final checklist and readiness packet.
-- WP-18 v0.91/v0.92 handoff preserving moral/emotional and birthday/identity
-  boundaries without implementing those later milestone scopes.
-- WP-19 release-evidence packet for reviewer navigation.
-- WP-20 release ceremony and final version bump.
+- WP-15 internal review is complete.
+- WP-15A third-party review is complete.
+- WP-16 accepted-finding remediation is complete.
+- WP-17 release readiness is recorded in RELEASE_READINESS_v0.90.1.md.
+- WP-18 v0.91/v0.92 handoff is recorded in V091_V092_HANDOFF_v0.90.1.md.
+- WP-19 release evidence is recorded in RELEASE_EVIDENCE_v0.90.1.md.
+- WP-20 remains responsible for release ceremony.
 
 ## Explicit Non-Claims
 
@@ -43,6 +42,5 @@ v0.90.1 is building the first bounded Runtime v2 foundation prototype.
 
 ## Release Note Rule
 
-Before release, replace this draft with exact final scope, commands, review
-findings, remediation disposition, and version state. Do not ship aspirational
-language as release truth.
+WP-20 may use this file as release-note input. Do not add aspirational claims
+or later-milestone scope during ceremony.

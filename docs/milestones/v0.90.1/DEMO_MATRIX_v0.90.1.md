@@ -2,9 +2,9 @@
 
 ## Status
 
-Issue wave open. Runtime v2 foundation and CSM Observatory implementation rows
-have landed through WP-12 and the closed Observatory follow-on issues. Release
-evidence remains planned for WP-19.
+Issue wave open. Runtime v2 foundation, CSM Observatory implementation rows,
+quality evidence, review disposition, and release evidence have landed. WP-20
+release ceremony remains.
 
 | ID | Demo | WP | Proof Claim | Required Artifacts | Status |
 | --- | --- | --- | --- | --- | --- |
@@ -16,7 +16,7 @@ evidence remains planned for WP-19.
 | D5 | Operator control | WP-10 | Operator can inspect, pause, resume, and terminate bounded runtime state | operator control report | LANDED |
 | D6 | Security boundary | WP-11 | One invalid action is rejected through normal kernel/policy path | security-boundary proof packet, negative test, CLI proof hook | LANDED |
 | D7 | Runtime v2 integrated prototype | WP-12 | Reviewer can inspect the foundation prototype end to end | integrated proof packet, artifact graph, reviewer boundary notes, CLI/demo hook | LANDED |
-| D8 | Release evidence packet | WP-19 | Reviewer can trace demo, quality, review, and release-readiness evidence without reconstructing the milestone by hand | release-evidence packet | PLANNED |
+| D8 | Release evidence packet | WP-19 | Reviewer can trace demo, quality, review, and release-readiness evidence without reconstructing the milestone by hand | `RELEASE_EVIDENCE_v0.90.1.md` | LANDED |
 | D9A | CSM Observatory static console | #2189 | Reviewer can inspect a read-only fixture-backed console whose fallback packet and render path are semantically checked against the canonical packet fixture | static console HTML/CSS/JS/docs plus semantic render validation | LANDED |
 | D9 | CSM Observatory CLI bundle | #2191 | Reviewer can regenerate packet, operator report, console reference, and demo manifest from one read-only ADL CLI command | visibility_packet.json, operator_report.md, console_reference.md, demo_manifest.json | LANDED |
 | D10 | Quality gate walkthrough | WP-14 | Reviewer can inspect local quality, coverage, Runtime v2 proof, CSM Observatory proof, and Rust module watch posture in one manifest | `artifacts/v0901/quality_gate/quality_gate_record.json` plus per-check logs | LANDED |
