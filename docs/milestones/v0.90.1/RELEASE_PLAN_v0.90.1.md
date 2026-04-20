@@ -15,7 +15,8 @@ weakened release truth.
 - Compression-enablement proof for issue-wave generation, worktree-first
   execution, and current execution policy
 - Demo matrix with every proof claim landed, skipped, or non-proving
-- Quality gate record
+- Quality gate record: `QUALITY_GATE_v0.90.1.md` and
+  `bash adl/tools/demo_v0901_quality_gate.sh`
 - Internal review, third-party review, and remediation record
 - Release-evidence packet tying demos, quality, review, and readiness together
 - Release notes that do not overclaim birthday, moral/emotional civilization,
