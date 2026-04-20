@@ -44,9 +44,9 @@ WP-12 are closed, WP-13 is aligning the documentation package, WP-14 quality
 gate, WP-15 internal review, WP-15A third-party review, WP-16 remediation, and
 the release tail remain ahead.
 
-The crate version remains `0.90.0` until the v0.90.1 release bump. Reviewers
-should treat that as a pre-release version boundary, not as evidence that the
-active v0.90.1 work is absent.
+The crate version is `0.90.1` for the active v0.90.1 release line. Reviewers
+should treat any conflicting older version reference as a stale release-truth
+defect.
 
 For the most recently completed v0.90 post-release review, start with:
 
