@@ -8,6 +8,9 @@ README="$OUT_DIR/README.md"
 RUN_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/adl-v0901-quality-gate.XXXXXX")"
 BUILD_TARGET_DIR="${CARGO_TARGET_DIR:-$RUN_TMPDIR/cargo-target}"
 LLVM_COV_TARGET_DIR="${CARGO_LLVM_COV_TARGET_DIR:-$RUN_TMPDIR/llvm-cov-target}"
+INSPECT_ONLY="${ADL_V0901_QUALITY_GATE_INSPECT_ONLY:-0}"
+ONLY_CHECKS=",${ADL_V0901_QUALITY_GATE_ONLY_CHECKS:-},"
+FORCE_FAIL_CHECKS=",${ADL_V0901_QUALITY_GATE_FORCE_FAIL_CHECKS:-},"
 
 mkdir -p "$OUT_DIR"
 trap 'rm -rf "$RUN_TMPDIR"' EXIT
@@ -17,10 +20,27 @@ run_check() {
   shift
   local log="$OUT_DIR/$key.log"
   local log_rel="${log#$ROOT_DIR/}"
-  if "$@" >"$log" 2>&1; then
-    printf '"%s":{"status":"PASS","log":"%s"}' "$key" "$log_rel"
+  if [[ "$ONLY_CHECKS" != ",," && "$ONLY_CHECKS" != *",$key,"* ]]; then
+    printf '"%s":{"status":"SKIP","log":"%s","reason":"filtered"}' "$key" "$log_rel"
+  elif "$@" >"$log" 2>&1; then
+    if [[ "$FORCE_FAIL_CHECKS" == *",$key,"* ]]; then
+      printf 'forced failure for %s\n' "$key" >>"$log"
+      printf '"%s":{"status":"FAIL","log":"%s","reason":"forced_failure"}' "$key" "$log_rel"
+    else
+      printf '"%s":{"status":"PASS","log":"%s"}' "$key" "$log_rel"
+    fi
   else
     printf '"%s":{"status":"FAIL","log":"%s"}' "$key" "$log_rel"
+  fi
+}
+
+gate_mode() {
+  if [[ "$INSPECT_ONLY" == "1" ]]; then
+    printf 'inspect_only'
+  elif [[ "$ONLY_CHECKS" != ",," ]]; then
+    printf 'filtered'
+  else
+    printf 'required'
   fi
 }
 
@@ -48,7 +68,7 @@ checks_json+="$(run_check csm_observatory_cli_bundle bash "$ROOT_DIR/adl/tools/d
 checks_json+="$(run_check rust_module_watch bash "$ROOT_DIR/adl/tools/report_large_rust_modules.sh" --format tsv)"
 checks_json+="}"
 
-printf '{"demo_id":"D10","manifest_version":"adl.v0901.quality_gate.v1","checks":%s}\n' "$checks_json" >"$MANIFEST"
+printf '{"demo_id":"D10","manifest_version":"adl.v0901.quality_gate.v1","mode":"%s","checks":%s}\n' "$(gate_mode)" "$checks_json" >"$MANIFEST"
 
 cat >"$README" <<'EOF'
 # v0.90.1 Demo D10 - Quality Gate Walkthrough
@@ -70,4 +90,21 @@ Important boundary:
 - it does not replace CI or the PR closing-linkage guardrail, which remains CI-only
 - the live coverage gate has no active per-file exclusion regex
 - the CSM Observatory checks are fixture-backed and read-only; they do not prove live Runtime v2 mutation
+- required mode exits nonzero when any required check records FAIL
+- set ADL_V0901_QUALITY_GATE_INSPECT_ONLY=1 only for diagnostic artifact collection when preserving failed logs is more important than a green process signal
 EOF
+
+python3 - "$MANIFEST" "$INSPECT_ONLY" <<'PY'
+import json
+import sys
+
+manifest_path, inspect_only = sys.argv[1], sys.argv[2]
+manifest = json.load(open(manifest_path, encoding="utf-8"))
+checks = manifest.get("checks", {})
+failed = sorted(key for key, value in checks.items() if value.get("status") == "FAIL")
+if failed:
+    print("quality gate failed checks: " + ", ".join(failed), file=sys.stderr)
+    print(f"quality gate manifest preserved at {manifest_path}", file=sys.stderr)
+    if inspect_only != "1":
+        raise SystemExit(1)
+PY

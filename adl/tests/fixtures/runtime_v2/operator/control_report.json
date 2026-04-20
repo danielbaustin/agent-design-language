@@ -67,16 +67,16 @@
         "completed_through_event_sequence": 8
       },
       "post_state": {
-        "manifold_lifecycle_state": "paused",
-        "kernel_loop_status": "operator_paused",
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
         "active_citizen_count": 1,
         "pending_citizen_count": 1,
         "latest_snapshot_id": null,
         "completed_through_event_sequence": 8
       },
-      "outcome": "allowed",
+      "outcome": "deferred",
       "trace_event_ref": "runtime_v2/traces/operator/pause-manifold.json",
-      "reason": "scheduler accepts a bounded operator pause before new episodes"
+      "reason": "pause command is deferred while kernel lifecycle gating is explicit"
     },
     {
       "command": "resume_manifold",
@@ -91,16 +91,16 @@
         "completed_through_event_sequence": 8
       },
       "post_state": {
-        "manifold_lifecycle_state": "active",
-        "kernel_loop_status": "bounded_tick_complete",
+        "manifold_lifecycle_state": "paused",
+        "kernel_loop_status": "operator_paused",
         "active_citizen_count": 1,
         "pending_citizen_count": 1,
         "latest_snapshot_id": null,
         "completed_through_event_sequence": 8
       },
-      "outcome": "allowed",
+      "outcome": "refused",
       "trace_event_ref": "runtime_v2/traces/operator/resume-manifold.json",
-      "reason": "invariant checks passed and the paused manifold may resume"
+      "reason": "invalid resume attempt is deferred until fresh invariant evidence exists"
     },
     {
       "command": "request_snapshot",
@@ -115,16 +115,16 @@
         "completed_through_event_sequence": 8
       },
       "post_state": {
-        "manifold_lifecycle_state": "snapshotting",
+        "manifold_lifecycle_state": "active",
         "kernel_loop_status": "bounded_tick_complete",
         "active_citizen_count": 1,
         "pending_citizen_count": 1,
-        "latest_snapshot_id": "snapshot-0001",
+        "latest_snapshot_id": null,
         "completed_through_event_sequence": 8
       },
-      "outcome": "allowed",
+      "outcome": "deferred",
       "trace_event_ref": "runtime_v2/traces/operator/request-snapshot.json",
-      "reason": "snapshot manager can seal a bounded snapshot after invariants pass"
+      "reason": "snapshot command is deferred while live snapshot re-hydration policy is under v0.90.1 guard"
     },
     {
       "command": "inspect_last_failures",
@@ -163,16 +163,16 @@
         "completed_through_event_sequence": 8
       },
       "post_state": {
-        "manifold_lifecycle_state": "terminated",
-        "kernel_loop_status": "operator_terminated",
-        "active_citizen_count": 0,
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
+        "active_citizen_count": 1,
         "pending_citizen_count": 1,
-        "latest_snapshot_id": "snapshot-0001",
-        "completed_through_event_sequence": 14
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
       },
-      "outcome": "allowed",
+      "outcome": "deferred",
       "trace_event_ref": "runtime_v2/traces/operator/terminate-manifold.json",
-      "reason": "resource ledger records bounded termination and release intent"
+      "reason": "termination is deferred until live deactivation policy is explicit"
     }
   ]
 }

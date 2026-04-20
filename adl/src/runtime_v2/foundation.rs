@@ -221,6 +221,22 @@ impl RuntimeV2FoundationProofPacket {
                         .to_string(),
                 },
                 RuntimeV2FoundationArtifactRef {
+                    artifact_id: "active_citizen_index".to_string(),
+                    artifact_kind: "citizen_index".to_string(),
+                    schema_version: citizens.active_index.schema_version.clone(),
+                    path: citizens.active_index.index_path.clone(),
+                    source_wp: "WP-07".to_string(),
+                    proves: "active citizen index supports continuity and admission auditability".to_string(),
+                },
+                RuntimeV2FoundationArtifactRef {
+                    artifact_id: "pending_citizen_index".to_string(),
+                    artifact_kind: "citizen_index".to_string(),
+                    schema_version: citizens.pending_index.schema_version.clone(),
+                    path: citizens.pending_index.index_path.clone(),
+                    source_wp: "WP-07".to_string(),
+                    proves: "pending citizen index supports blocked reentry and wake readiness".to_string(),
+                },
+                RuntimeV2FoundationArtifactRef {
                     artifact_id: "snapshot_manifest".to_string(),
                     artifact_kind: "snapshot".to_string(),
                     schema_version: snapshot.snapshot.schema_version.clone(),
@@ -340,7 +356,12 @@ impl RuntimeV2FoundationProofPacket {
         validate_relative_path(&self.artifact_path, "foundation.artifact_path")?;
         validate_timestamp_marker(&self.generated_at_utc, "foundation.generated_at_utc")?;
         validate_foundation_artifact_refs(&self.integrated_artifacts)?;
-        validate_foundation_checks(&self.checks)?;
+        let artifact_paths = self
+            .integrated_artifacts
+            .iter()
+            .map(|artifact| artifact.path.clone())
+            .collect::<std::collections::BTreeSet<_>>();
+        validate_foundation_checks(&self.checks, &artifact_paths)?;
         if self.proof_claims.len() < 3 || self.non_claims.len() < 3 {
             return Err(anyhow!(
                 "Runtime v2 foundation proof packet must include explicit claims and non-claims"
@@ -362,6 +383,30 @@ impl RuntimeV2FoundationProofPacket {
             &self.artifact_path,
             self.to_pretty_json_bytes()?,
         )
+    }
+
+    pub fn validate_packaging_artifacts(&self, root: &Path) -> Result<()> {
+        for artifact in &self.integrated_artifacts {
+            let path = root.join(&artifact.path);
+            if !path.is_file() {
+                return Err(anyhow!(
+                    "Runtime v2 foundation proof artifact '{}' not found at {}",
+                    artifact.artifact_id,
+                    path.display()
+                ));
+            }
+        }
+        for check in &self.checks {
+            let path = root.join(&check.evidence_ref);
+            if !path.is_file() {
+                return Err(anyhow!(
+                    "Runtime v2 foundation proof check '{}' references missing evidence '{}'",
+                    check.check_id,
+                    check.evidence_ref
+                ));
+            }
+        }
+        Ok(())
     }
 }
 
@@ -407,6 +452,7 @@ fn validate_foundation_artifact_kind(value: &str) -> Result<()> {
         | "kernel_registry"
         | "kernel_state"
         | "citizen_record"
+        | "citizen_index"
         | "snapshot"
         | "rehydration"
         | "invariant_violation"
@@ -416,7 +462,10 @@ fn validate_foundation_artifact_kind(value: &str) -> Result<()> {
     }
 }
 
-fn validate_foundation_checks(checks: &[RuntimeV2FoundationProofCheck]) -> Result<()> {
+fn validate_foundation_checks(
+    checks: &[RuntimeV2FoundationProofCheck],
+    artifact_paths: &std::collections::BTreeSet<String>,
+) -> Result<()> {
     let mut seen = std::collections::BTreeSet::new();
     for check in checks {
         normalize_id(check.check_id.clone(), "foundation.check_id")?;
@@ -427,6 +476,13 @@ fn validate_foundation_checks(checks: &[RuntimeV2FoundationProofCheck]) -> Resul
             ));
         }
         validate_relative_path(&check.evidence_ref, "foundation.check_evidence_ref")?;
+        if !artifact_paths.contains(&check.evidence_ref) {
+            return Err(anyhow!(
+                "Runtime v2 foundation proof check '{}' references '{}', which is not declared in integrated artifacts",
+                check.check_id,
+                check.evidence_ref
+            ));
+        }
         if !seen.insert(check.check_id.clone()) {
             return Err(anyhow!(
                 "Runtime v2 foundation proof packet contains duplicate check '{}'",

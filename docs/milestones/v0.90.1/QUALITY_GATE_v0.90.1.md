@@ -247,6 +247,52 @@ one place.
 The walkthrough writes per-check logs beside the manifest. Generated artifacts
 are local proof artifacts and should not be committed.
 
+Required-mode behavior:
+
+- the walkthrough must exit nonzero when any required check records `FAIL`
+- the manifest and README must still be preserved for diagnosis on failure
+- diagnostic collection may use `ADL_V0901_QUALITY_GATE_INSPECT_ONLY=1`, but
+  that mode is not a release pass signal
+
+The walkthrough also records `mode` in the manifest:
+
+- `required` for the canonical full gate
+- `filtered` for focused validation/debug runs that intentionally run a subset
+  of checks
+- `inspect_only` for diagnostic artifact collection after expected failures
+
+Only `required` mode is acceptable as release-quality evidence.
+
+## Dependency And Supply-Chain Gate Posture
+
+The internal review identified a real follow-up gap: v0.90.1 does not yet have
+an automated dependency audit, license policy, or SBOM-style gate.
+
+Release-owner disposition for v0.90.1:
+
+- this is not a new v0.90.1 release blocker because the milestone did not
+  introduce a new dependency-management substrate
+- the gap must be carried into v0.90.2 or the next quality-gate hardening lane
+- the follow-up should evaluate `cargo audit`, `cargo deny`, license policy,
+  and SBOM-style artifact generation before enabling CI enforcement
+- any future enforcement must document expected failure modes and update this
+  quality-gate family in the same change
+
+## Large-Module Debt Disposition
+
+The large-module watch remains intentionally non-blocking for v0.90.1. The
+internal review confirmed that some long-lived, CLI, and test modules remain
+large enough to carry maintainability risk after the v0.90.1 refactoring pass.
+
+Release-owner disposition for v0.90.1:
+
+- do not block release solely on the watch-list output
+- carry remaining large-module splits into v0.90.2 or a later refactoring lane
+- preserve the watch-list output in the release evidence packet so the debt is
+  visible rather than forgotten
+- require future PRs that materially expand watched modules to record either a
+  split, a rationale, or a follow-up home
+
 ## Evidence Expectations For WP-14
 
 `WP-14` is in a good state when it leaves behind:

@@ -25,9 +25,7 @@ Summary:
   WP-15A, and WP-16 now carry the review/remediation band before WP-17 release
   readiness, WP-18 v0.91/v0.92 handoff, WP-19 release evidence, and WP-20
   release ceremony.
-- The crate version remains `0.90.0` until the v0.90.1 release bump. Do not
-  read that as v0.90.1 being unreleased code-free work; it is the normal
-  pre-release version boundary.
+- The crate version is `0.90.1` for the v0.90.1 release line.
 
 References:
 - `docs/milestones/v0.90.1/README.md`

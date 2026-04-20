@@ -13,6 +13,19 @@ pub(crate) fn real_runtime_v2(args: &[String]) -> Result<()> {
     real_runtime_v2_in_repo(args, &repo_root)
 }
 
+fn resolve_relative_output_path(
+    repo_root: &Path,
+    out_path: &PathBuf,
+    command: &str,
+) -> Result<PathBuf> {
+    if out_path.is_absolute() {
+        return Err(anyhow!(
+            "runtime-v2 {command} --out path must be repository-relative"
+        ));
+    }
+    Ok(repo_root.join(out_path))
+}
+
 fn real_runtime_v2_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
@@ -67,11 +80,7 @@ fn real_runtime_v2_operator_controls(repo_root: &Path, args: &[String]) -> Resul
         println!("{json}");
         return Ok(());
     };
-    let resolved = if out_path.is_absolute() {
-        out_path
-    } else {
-        repo_root.join(out_path)
-    };
+    let resolved = resolve_relative_output_path(repo_root, &out_path, "operator-controls")?;
     let Some(parent) = resolved.parent() else {
         return Err(anyhow!(
             "runtime-v2 operator-controls --out path must have a parent directory"
@@ -125,11 +134,7 @@ fn real_runtime_v2_security_boundary(repo_root: &Path, args: &[String]) -> Resul
         println!("{json}");
         return Ok(());
     };
-    let resolved = if out_path.is_absolute() {
-        out_path
-    } else {
-        repo_root.join(out_path)
-    };
+    let resolved = resolve_relative_output_path(repo_root, &out_path, "security-boundary")?;
     let Some(parent) = resolved.parent() else {
         return Err(anyhow!(
             "runtime-v2 security-boundary --out path must have a parent directory"
@@ -180,11 +185,7 @@ fn real_runtime_v2_foundation_demo(repo_root: &Path, args: &[String]) -> Result<
         println!("{}", to_string_pretty(&artifacts.proof_packet)?);
         return Ok(());
     };
-    let resolved = if out_path.is_absolute() {
-        out_path
-    } else {
-        repo_root.join(out_path)
-    };
+    let resolved = resolve_relative_output_path(repo_root, &out_path, "foundation-demo")?;
     fs::create_dir_all(&resolved).with_context(|| {
         format!(
             "failed to create Runtime v2 foundation demo root {}",
@@ -192,6 +193,9 @@ fn real_runtime_v2_foundation_demo(repo_root: &Path, args: &[String]) -> Result<
         )
     })?;
     artifacts.write_to_root(&resolved)?;
+    artifacts
+        .proof_packet
+        .validate_packaging_artifacts(&resolved)?;
     println!("RUNTIME_V2_FOUNDATION_DEMO_ROOT={}", resolved.display());
     Ok(())
 }
@@ -283,9 +287,8 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_operator_controls_covers_stdout_help_and_absolute_output() {
+    fn runtime_v2_operator_controls_rejects_absolute_output() {
         let repo = temp_repo("operator-controls-branches");
-        let out_path = repo.join("absolute/operator_report.json");
 
         real_runtime_v2_in_repo(&["operator-controls".to_string()], &repo).expect("stdout report");
         real_runtime_v2_in_repo(
@@ -293,17 +296,20 @@ mod tests {
             &repo,
         )
         .expect("operator controls help");
-        real_runtime_v2_in_repo(
+        let err = real_runtime_v2_in_repo(
             &[
                 "operator-controls".to_string(),
                 "--out".to_string(),
-                out_path.to_string_lossy().to_string(),
+                repo.join("absolute/operator_report.json")
+                    .to_string_lossy()
+                    .to_string(),
             ],
             &repo,
         )
-        .expect("absolute output path");
-
-        assert!(out_path.is_file());
+        .expect_err("absolute output path should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 operator-controls --out path must be repository-relative"));
 
         fs::remove_dir_all(repo).ok();
     }
@@ -365,9 +371,8 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_security_boundary_covers_stdout_help_and_absolute_output() {
+    fn runtime_v2_security_boundary_rejects_absolute_output() {
         let repo = temp_repo("security-boundary-branches");
-        let out_path = repo.join("absolute/security_boundary.json");
 
         real_runtime_v2_in_repo(&["security-boundary".to_string()], &repo).expect("stdout proof");
         real_runtime_v2_in_repo(
@@ -375,17 +380,20 @@ mod tests {
             &repo,
         )
         .expect("security boundary help");
-        real_runtime_v2_in_repo(
+        let err = real_runtime_v2_in_repo(
             &[
                 "security-boundary".to_string(),
                 "--out".to_string(),
-                out_path.to_string_lossy().to_string(),
+                repo.join("absolute/security_boundary.json")
+                    .to_string_lossy()
+                    .to_string(),
             ],
             &repo,
         )
-        .expect("absolute output path");
-
-        assert!(out_path.is_file());
+        .expect_err("absolute output path should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 security-boundary --out path must be repository-relative"));
 
         fs::remove_dir_all(repo).ok();
     }
@@ -425,9 +433,8 @@ mod tests {
     }
 
     #[test]
-    fn runtime_v2_foundation_demo_validates_stdout_help_and_errors() {
+    fn runtime_v2_foundation_demo_validates_stdout_help_and_output_path_rules() {
         let repo = temp_repo("foundation-demo-branches");
-        let out_dir = repo.join("absolute/foundation");
 
         real_runtime_v2_in_repo(&["foundation-demo".to_string()], &repo)
             .expect("stdout proof packet");
@@ -436,16 +443,20 @@ mod tests {
             &repo,
         )
         .expect("foundation demo help");
-        real_runtime_v2_in_repo(
+        let err = real_runtime_v2_in_repo(
             &[
                 "foundation-demo".to_string(),
                 "--out".to_string(),
-                out_dir.to_string_lossy().to_string(),
+                repo.join("absolute/foundation")
+                    .to_string_lossy()
+                    .to_string(),
             ],
             &repo,
         )
-        .expect("absolute output dir");
-        assert!(out_dir.join("runtime_v2/proof_packet.json").is_file());
+        .expect_err("absolute output dir should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 foundation-demo --out path must be repository-relative"));
 
         let err = real_runtime_v2_in_repo(
             &["foundation-demo".to_string(), "--bogus".to_string()],
