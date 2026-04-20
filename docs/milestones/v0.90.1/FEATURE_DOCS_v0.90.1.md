@@ -22,7 +22,9 @@
 | WP issue-wave template and generator alignment | make v0.90.1 and v0.90.2 issue waves cheaper and less error-prone | WP-02 / #2142 |
 | Worktree-first workflow hardening | prevent tracked root-checkout drift during compressed execution | WP-03 / #2143 |
 | `features/COMPRESSION_ERA_EXECUTION_POLICY.md` | align skills, explicit-only subagents, validation profiles, and SOR evidence | WP-04 / #2144 |
-| Release-evidence packet | assemble the final proof trail without release-tail archaeology | WP-19 / #2159 |
+| `RELEASE_READINESS_v0.90.1.md` | record release readiness before ceremony | WP-17 / #2157 |
+| `V091_V092_HANDOFF_v0.90.1.md` | preserve v0.91 and v0.92 boundaries before closeout | WP-18 / #2158 |
+| `RELEASE_EVIDENCE_v0.90.1.md` | assemble the final proof trail without release-tail archaeology | WP-19 / #2159 |
 
 ## Context / Idea Docs
 

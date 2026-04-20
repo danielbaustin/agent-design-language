@@ -30,7 +30,7 @@ The review confirmed the main milestone shape:
 | --- | --- | --- |
 | README milestone badge still identified v0.90 as the released milestone | P2 | Fixed in WP-16 by changing the root README badge to v0.90.1 active. |
 | Third-party review handoff still described the remediation bundle state as draft/pending | P2 | Fixed locally in the review archive after #2221, #2222, #2224, and #2229 closed. The tracked release docs now point reviewers to this disposition record. |
-| D8 release-evidence packet remains planned | P3 | Explicitly deferred to WP-19, where the release-evidence packet belongs. This is normal release-tail work, not a WP-16 blocker. |
+| D8 release-evidence packet remains planned | P3 | Resolved by WP-19 in RELEASE_EVIDENCE_v0.90.1.md. |
 
 ## Remediation Bundle Closure
 
@@ -42,18 +42,18 @@ bundles:
 - #2224: CSM Observatory validation and report alignment
 - #2229: release docs routing and architecture truth
 
-Those bundle issues are closed. WP-17 through WP-20 remain responsible for
-release readiness, v0.91/v0.92 handoff, release-evidence assembly, and release
-ceremony.
+Those bundle issues are closed. WP-17 through WP-19 have now assembled release
+readiness, v0.91/v0.92 handoff, and release evidence. WP-20 remains responsible
+for release ceremony.
 
 ## Residual Release-Tail Work
 
 The third-party review did not add new release-blocking findings. Remaining
 release-tail work is procedural and evidentiary:
 
-- WP-17: release readiness
-- WP-18: v0.91/v0.92 handoff
-- WP-19: D8 release-evidence packet
+- WP-17: release readiness, recorded in RELEASE_READINESS_v0.90.1.md
+- WP-18: v0.91/v0.92 handoff, recorded in V091_V092_HANDOFF_v0.90.1.md
+- WP-19: D8 release-evidence packet, recorded in RELEASE_EVIDENCE_v0.90.1.md
 - WP-20: release ceremony
 
 ## Non-Claims

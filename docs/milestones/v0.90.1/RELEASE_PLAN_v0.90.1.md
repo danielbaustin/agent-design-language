@@ -19,10 +19,13 @@ weakened release truth.
   `bash adl/tools/demo_v0901_quality_gate.sh`
 - Internal review, third-party review, and remediation record:
   `INTERNAL_REVIEW_v0.90.1.md` and `THIRD_PARTY_REVIEW_v0.90.1.md`
-- WP-17 release-readiness packet and checklist
+- WP-17 release-readiness packet and checklist:
+  `RELEASE_READINESS_v0.90.1.md`
 - WP-18 v0.91/v0.92 handoff preserving moral/emotional and birthday/identity
-  boundaries without claiming implementation of those later milestones
-- Release-evidence packet tying demos, quality, review, and readiness together
+  boundaries without claiming implementation of those later milestones:
+  `V091_V092_HANDOFF_v0.90.1.md`
+- Release-evidence packet tying demos, quality, review, and readiness together:
+  `RELEASE_EVIDENCE_v0.90.1.md`
 - Release notes that do not overclaim birthday, moral/emotional civilization,
   complete migration, or red/blue ecology
 
