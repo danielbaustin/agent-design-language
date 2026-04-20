@@ -4,6 +4,7 @@
 
 - WP-01 #2245 milestone package and issue wave
 - WP-02 #2246 Runtime v2 inheritance and compression audit
+  (`RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md`)
 - WP-03 #2247 CSM run packet contract
 - WP-04 #2248 invariant and violation artifact contract
 
