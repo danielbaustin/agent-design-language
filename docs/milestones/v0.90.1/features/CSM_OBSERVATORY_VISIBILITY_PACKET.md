@@ -254,6 +254,12 @@ Required fields:
 The v0.90.1 packet is read-only. Available actions may describe future affordance
 intent, but disabled actions must explain why live mutation is unavailable.
 
+The follow-on command packet contract defines how future action-rail controls
+become governed kernel submissions instead of direct UI mutations. Until a
+Runtime v2 handler exists, the visibility packet should keep state-changing
+actions disabled and point reviewers to
+CSM_OBSERVATORY_OPERATOR_COMMAND_PACKETS.md for the safety model.
+
 ### Review
 
 Required fields:
@@ -312,6 +318,10 @@ fixture labeling, and obvious path or endpoint leakage.
 - Focused test: adl/tools/test_csm_visibility_packet.sh
 - Operator report: demos/v0.90.1/csm_observatory_operator_report.md
 - Operator report renderer: adl/tools/render_csm_observatory_report.py
+- Operator command packet contract: docs/milestones/v0.90.1/features/CSM_OBSERVATORY_OPERATOR_COMMAND_PACKETS.md
+- Operator command packet schema: adl/schemas/csm_operator_command_packet.v1.schema.json
+- Operator command packet fixtures: demos/fixtures/csm_observatory/proto-csm-01-operator-command-packets.json
+- Operator command packet validator: adl/tools/validate_csm_operator_command_packets.py
 
 ## Non-Goals
 

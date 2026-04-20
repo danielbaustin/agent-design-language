@@ -1,0 +1,247 @@
+{
+  "schema": "adl.csm_operator_command_packet_examples.v1",
+  "packet_set_id": "proto-csm-01-operator-command-packets",
+  "manifold_id": "proto-csm-01",
+  "source_visibility_packet": "demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json",
+  "claim_boundary": "Fixture-backed command packet examples only. These packets do not prove live Runtime v2 mutation.",
+  "commands": [
+    {
+      "schema": "adl.csm_operator_command_packet.v1",
+      "command_id": "csm-cmd-proto-csm-01-inspect-citizen-0001",
+      "command_kind": "inspect_citizen",
+      "requested_by": "operator.demo",
+      "requested_at": "2026-04-19T12:00:00Z",
+      "target": {
+        "target_kind": "citizen",
+        "target_id": "proto-citizen-alpha",
+        "manifold_id": "proto-csm-01",
+        "evidence_ref": "demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json"
+      },
+      "intent": {
+        "summary": "Inspect current citizen state and evidence references.",
+        "rationale": "Read-only inspection is safe for the fixture-backed Observatory.",
+        "requested_outcome": "Render citizen status without changing Runtime v2 state."
+      },
+      "availability": {
+        "state": "available",
+        "reason": "The static console already exposes read-only citizen inspection.",
+        "enabled_in": "v0.90.1 fixture-backed Observatory console"
+      },
+      "safety": {
+        "classification": "read_only",
+        "policy_checks": [
+          "target_identity_present",
+          "visibility_packet_evidence_present",
+          "no_runtime_mutation"
+        ],
+        "side_effect_scope": "none",
+        "operator_risk": "low",
+        "citizen_risk": "none"
+      },
+      "confirmation": {
+        "required": false,
+        "prompt": null,
+        "required_phrase": null,
+        "expires_after_seconds": null
+      },
+      "kernel_handoff": {
+        "service": "operator_control_interface",
+        "operation": "inspect_citizen",
+        "policy_checks": [
+          "validate_operator_identity",
+          "validate_target_identity",
+          "append_operator_event"
+        ],
+        "trace_append_required": true,
+        "invariant_check_required": false,
+        "ui_direct_mutation_allowed": false
+      },
+      "event_logging": {
+        "event_schema": "adl.csm_operator_event.v1",
+        "event_ref": "runtime_v2/traces/operator/inspect-citizen.json",
+        "required_fields": [
+          "event_schema",
+          "event_id",
+          "command_id",
+          "command_kind",
+          "requested_by",
+          "requested_at",
+          "target",
+          "availability_state",
+          "safety_classification",
+          "decision",
+          "decision_reason",
+          "kernel_service",
+          "evidence_refs"
+        ],
+        "redact_prompt_or_tool_args": true,
+        "append_before_effect": true
+      },
+      "evidence_refs": [
+        "demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json"
+      ],
+      "claim_boundary": "Read-only fixture-backed inspection example."
+    },
+    {
+      "schema": "adl.csm_operator_command_packet.v1",
+      "command_id": "csm-cmd-proto-csm-01-request-snapshot-0001",
+      "command_kind": "request_snapshot",
+      "requested_by": "operator.demo",
+      "requested_at": "2026-04-19T12:05:00Z",
+      "target": {
+        "target_kind": "manifold",
+        "target_id": "proto-csm-01",
+        "manifold_id": "proto-csm-01",
+        "evidence_ref": "demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json"
+      },
+      "intent": {
+        "summary": "Request a governed snapshot of the manifold.",
+        "rationale": "Snapshotting is a future safety operation and must not be triggered directly by the UI.",
+        "requested_outcome": "Submit to the snapshot manager only after kernel handlers exist."
+      },
+      "availability": {
+        "state": "disabled",
+        "reason": "The CSM Observatory has no live Runtime v2 snapshot command handler yet.",
+        "enabled_in": "future Runtime v2 snapshot command handler work"
+      },
+      "safety": {
+        "classification": "guarded_mutation",
+        "policy_checks": [
+          "validate_operator_identity",
+          "validate_manifold_identity",
+          "validate_invariants_before_snapshot",
+          "append_operator_event_before_effect",
+          "write_repository_relative_snapshot_artifacts"
+        ],
+        "side_effect_scope": "snapshot manager may quiesce and seal Runtime v2 state after approval",
+        "operator_risk": "medium",
+        "citizen_risk": "medium"
+      },
+      "confirmation": {
+        "required": true,
+        "prompt": "Confirm that the kernel may request a governed snapshot for proto-csm-01.",
+        "required_phrase": "REQUEST SNAPSHOT proto-csm-01",
+        "expires_after_seconds": 300
+      },
+      "kernel_handoff": {
+        "service": "snapshot_manager",
+        "operation": "request_snapshot",
+        "policy_checks": [
+          "validate_operator_identity",
+          "validate_snapshot_preconditions",
+          "validate_invariants_before_snapshot",
+          "append_operator_event",
+          "append_outcome_event"
+        ],
+        "trace_append_required": true,
+        "invariant_check_required": true,
+        "ui_direct_mutation_allowed": false
+      },
+      "event_logging": {
+        "event_schema": "adl.csm_operator_event.v1",
+        "event_ref": "runtime_v2/traces/operator/request-snapshot.json",
+        "required_fields": [
+          "event_schema",
+          "event_id",
+          "command_id",
+          "command_kind",
+          "requested_by",
+          "requested_at",
+          "target",
+          "availability_state",
+          "safety_classification",
+          "decision",
+          "decision_reason",
+          "kernel_service",
+          "evidence_refs"
+        ],
+        "redact_prompt_or_tool_args": true,
+        "append_before_effect": true
+      },
+      "evidence_refs": [
+        "demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json",
+        "docs/milestones/v0.90.1/features/CSM_OBSERVATORY_OPERATOR_COMMAND_PACKETS.md"
+      ],
+      "claim_boundary": "Design-only disabled mutation example. No live snapshot is requested."
+    },
+    {
+      "schema": "adl.csm_operator_command_packet.v1",
+      "command_id": "csm-cmd-proto-csm-01-ask-shepherd-0001",
+      "command_kind": "ask_shepherd",
+      "requested_by": "operator.demo",
+      "requested_at": "2026-04-19T12:10:00Z",
+      "target": {
+        "target_kind": "shepherd",
+        "target_id": "proto-csm-01-shepherd",
+        "manifold_id": "proto-csm-01",
+        "evidence_ref": "demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json"
+      },
+      "intent": {
+        "summary": "Ask the shepherd for an evidence-grounded explanation of current manifold risk.",
+        "rationale": "A shepherd can help operators notice risk without receiving mutation authority.",
+        "requested_outcome": "Return an advisory explanation with evidence references and uncertainty."
+      },
+      "availability": {
+        "state": "deferred",
+        "reason": "The shepherd interface is not live yet; deterministic summaries remain the fallback.",
+        "enabled_in": "future ANRM or dedicated shepherd interface work"
+      },
+      "safety": {
+        "classification": "advisory",
+        "policy_checks": [
+          "visibility_packet_evidence_present",
+          "no_runtime_mutation",
+          "shepherd_output_must_cite_evidence",
+          "uncertainty_required"
+        ],
+        "side_effect_scope": "advisory response only",
+        "operator_risk": "low",
+        "citizen_risk": "low"
+      },
+      "confirmation": {
+        "required": false,
+        "prompt": null,
+        "required_phrase": null,
+        "expires_after_seconds": null
+      },
+      "kernel_handoff": {
+        "service": "shepherd_interface",
+        "operation": "ask_shepherd",
+        "policy_checks": [
+          "validate_operator_identity",
+          "ground_response_in_visibility_packet",
+          "append_operator_event"
+        ],
+        "trace_append_required": true,
+        "invariant_check_required": false,
+        "ui_direct_mutation_allowed": false
+      },
+      "event_logging": {
+        "event_schema": "adl.csm_operator_event.v1",
+        "event_ref": "runtime_v2/traces/operator/ask-shepherd.json",
+        "required_fields": [
+          "event_schema",
+          "event_id",
+          "command_id",
+          "command_kind",
+          "requested_by",
+          "requested_at",
+          "target",
+          "availability_state",
+          "safety_classification",
+          "decision",
+          "decision_reason",
+          "kernel_service",
+          "evidence_refs"
+        ],
+        "redact_prompt_or_tool_args": true,
+        "append_before_effect": true
+      },
+      "evidence_refs": [
+        "demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json",
+        "docs/milestones/v0.90.1/features/CSM_OBSERVATORY_OPERATOR_COMMAND_PACKETS.md"
+      ],
+      "claim_boundary": "Advisory design example. The shepherd may recommend and explain, but never silently mutates CSM state."
+    }
+  ]
+}

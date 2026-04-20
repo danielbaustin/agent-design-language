@@ -1,0 +1,31 @@
+{
+  "event_schema": "adl.csm_operator_event.v1",
+  "event_id": "csm-operator-event-proto-csm-01-request-snapshot-0001",
+  "command_id": "csm-cmd-proto-csm-01-request-snapshot-0001",
+  "command_kind": "request_snapshot",
+  "requested_by": "operator.demo",
+  "requested_at": "2026-04-19T12:05:00Z",
+  "recorded_at": "2026-04-19T12:05:01Z",
+  "target": {
+    "target_kind": "manifold",
+    "target_id": "proto-csm-01",
+    "manifold_id": "proto-csm-01",
+    "evidence_ref": "demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json"
+  },
+  "availability_state": "disabled",
+  "safety_classification": "guarded_mutation",
+  "decision": "blocked",
+  "decision_reason": "The command packet is valid as a design artifact, but live Runtime v2 snapshot command handling is not implemented.",
+  "kernel_service": "snapshot_manager",
+  "trace_ref": "runtime_v2/traces/operator/request-snapshot.json",
+  "evidence_refs": [
+    "demos/fixtures/csm_observatory/proto-csm-01-operator-command-packets.json",
+    "docs/milestones/v0.90.1/features/CSM_OBSERVATORY_OPERATOR_COMMAND_PACKETS.md"
+  ],
+  "redaction": {
+    "prompt_or_tool_args_redacted": true,
+    "private_paths_redacted": true,
+    "secret_material_redacted": true
+  },
+  "claim_boundary": "Fixture-backed operator event example only. No live Runtime v2 state changed."
+}

@@ -34,3 +34,9 @@ The first command-driven demo bundle lives in the demo docs rather than this
 feature directory, because it is a run surface over the packet/report contracts:
 
 - `../../../../demos/v0.90.1/csm_observatory_cli_demo.md`
+
+The first governed interaction contract lives here because it defines the safe
+boundary between the read-only action rail and future Runtime v2 kernel
+handlers:
+
+- `CSM_OBSERVATORY_OPERATOR_COMMAND_PACKETS.md`
