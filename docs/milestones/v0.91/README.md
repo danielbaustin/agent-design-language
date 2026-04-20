@@ -14,7 +14,7 @@ The first true Gödel-agent birthday is still out of scope for v0.91 and remains
 reserved for v0.92. v0.91 may prepare the moral and governance conditions for
 that birth, but it should not claim the birth event itself.
 
-Roadmap: ../ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md
+Roadmap: ../../planning/ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md
 
 ## Metadata
 - Milestone: `{{milestone}}`

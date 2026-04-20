@@ -1,5 +1,13 @@
 # Gemini Provider Harmony and Economics Demo
 
+## Status
+
+Delivered baseline / planning provenance.
+
+The bounded v0.89 and v0.89.1 Gemini/provider-harmony demos have landed. This
+document is kept as source context for any future cost-aware provider-routing or
+provider-participation follow-on, not as an active next-milestone commitment.
+
 ## Purpose
 
 Preserve the next meaningful Gemini-centered demo direction beyond the bounded
@@ -132,9 +140,9 @@ That way the demo proves:
 - ADL selected Gemini for a reason
 - the reason is legible afterward
 
-## Recommended Next-Milestone Slice
+## Recommended Future Slice
 
-If promoted, the first slice should be:
+If this line is reopened, the next slice should be:
 
 `Build a bounded Gemini provider-fit demo that records capability-and-cost-aware routing rationale and a calm reviewer-facing artifact.`
 
