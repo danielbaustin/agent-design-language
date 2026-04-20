@@ -6,7 +6,7 @@ tracked_package: docs/milestones/v0.90.1
 notes:
   - "Tracked planning package promoted during v0.90 WP-19."
   - "v0.90.1 issue wave opened by WP-01 after the v0.90 release ceremony."
-  - "WP-01 is #2141; WP-02 through WP-20 are #2142 through #2160."
+  - "WP-01 is #2141; WP-02 through WP-20 are #2142 through #2160; WP-15A third-party review is #2215."
   - "WP-02 records generator alignment proof in ISSUE_WAVE_GENERATOR_PROOF_v0.90.1.md."
   - "Do not claim first true Gödel-agent birthday in v0.90.1."
   - "WP-02 through WP-04 intentionally front-load compression enablement before Runtime v2 coding."
@@ -101,11 +101,17 @@ work_packages:
     issue: 2155
     depends_on: ["WP-13", "WP-14"]
     outcome: review
+  - wp: WP-15A
+    title: "[v0.90.1][WP-15A] Third-party review"
+    queue: review
+    issue: 2215
+    depends_on: ["WP-15"]
+    outcome: review
   - wp: WP-16
     title: "[v0.90.1][WP-16] Review remediation"
     queue: review
     issue: 2156
-    depends_on: ["WP-15"]
+    depends_on: ["WP-15", "WP-15A"]
     outcome: code
   - wp: WP-17
     title: "[v0.90.1][WP-17] Release readiness"

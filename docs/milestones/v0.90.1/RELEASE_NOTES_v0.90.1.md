@@ -2,22 +2,32 @@
 
 ## Headline
 
-v0.90.1 is planned to introduce the first bounded Runtime v2 foundation
-prototype.
+v0.90.1 is building the first bounded Runtime v2 foundation prototype.
 
-## Planned Highlights
+## Landed Implementation Highlights
 
-- Persistent manifold root
+- Persistent manifold root.
 - Front-loaded compression enablement for issue-wave creation, worktree-first
-  execution, and execution-policy clarity
-- Bounded kernel service loop
-- Provisional citizen records
-- Snapshot and rehydration path
-- Invariant violation artifacts
-- Operator inspect/pause/resume/terminate controls
-- Security-boundary proof packet
-- Integrated Runtime v2 prototype demo
-- Release-evidence packet for reviewer navigation
+  execution, and execution-policy clarity.
+- Bounded kernel service loop.
+- Provisional citizen records.
+- Snapshot and rehydration path.
+- Invariant violation artifacts.
+- Operator inspect/pause/resume/terminate controls.
+- Security-boundary proof packet.
+- Integrated Runtime v2 prototype demo.
+- CSM Observatory visibility packet, operator report, CLI bundle, static console
+  reference, and future command-packet design.
+
+## Remaining Release-Tail Highlights
+
+- WP-13 documentation alignment.
+- WP-14 quality and coverage gate.
+- WP-15 internal review.
+- WP-15A third-party review.
+- WP-16 accepted-finding remediation.
+- WP-19 release-evidence packet for reviewer navigation.
+- WP-20 release ceremony and final version bump.
 
 ## Explicit Non-Claims
 
@@ -31,5 +41,6 @@ prototype.
 
 ## Release Note Rule
 
-Before release, replace this draft with exact landed scope and commands. Do not
-ship aspirational language as release truth.
+Before release, replace this draft with exact final scope, commands, review
+findings, remediation disposition, and version state. Do not ship aspirational
+language as release truth.

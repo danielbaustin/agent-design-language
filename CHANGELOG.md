@@ -2,6 +2,48 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
+## v0.90.1 (Unreleased)
+
+Status: Active milestone; implementation wave complete through WP-12, docs pass
+under review in WP-13.
+
+Summary:
+- The v0.90.1 issue wave is open: WP-01 is #2141, WP-02 through WP-20 are
+  #2142 through #2160, and WP-15A third-party review is #2215.
+- The compression-enablement sprint landed first: issue-wave generation,
+  worktree-first workflow hardening, and the compression-era execution policy.
+- The Runtime v2 foundation slice has landed through the manifold contract,
+  bounded kernel service loop, provisional citizen lifecycle, snapshot and
+  rehydration, invariant violation artifacts, operator controls, one
+  security-boundary proof, and the integrated Runtime v2 prototype demo.
+- The CSM Observatory visibility lane has landed read-only reviewer/operator
+  surfaces: visibility packet, operator report, CLI bundle, static console
+  reference, and safe future command-packet design.
+- WP-13 aligns the review-facing docs, demo matrix, feature list, changelog,
+  README, and review guide before WP-14 quality gate, WP-15 internal review,
+  WP-15A third-party review, and WP-16 remediation.
+- The crate version remains `0.90.0` until the v0.90.1 release bump. Do not
+  read that as v0.90.1 being unreleased code-free work; it is the normal
+  pre-release version boundary.
+
+References:
+- `docs/milestones/v0.90.1/README.md`
+- `docs/milestones/v0.90.1/WBS_v0.90.1.md`
+- `docs/milestones/v0.90.1/SPRINT_v0.90.1.md`
+- `docs/milestones/v0.90.1/DEMO_MATRIX_v0.90.1.md`
+- `docs/milestones/v0.90.1/FEATURE_DOCS_v0.90.1.md`
+- `docs/milestones/v0.90.1/MILESTONE_CHECKLIST_v0.90.1.md`
+- `docs/milestones/v0.90.1/RELEASE_PLAN_v0.90.1.md`
+- `docs/milestones/v0.90.1/RELEASE_NOTES_v0.90.1.md`
+- `docs/planning/ADL_FEATURE_LIST.md`
+
+Not claimed in v0.90.1:
+- first true Gödel-agent birthday
+- full v0.92 identity/capability substrate
+- full moral/emotional civilization
+- complete cross-polis migration
+- full red/blue/purple security ecology
+
 ## v0.90 (Released 2026-04-18)
 
 Status: Completed and released.

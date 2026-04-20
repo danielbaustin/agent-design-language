@@ -23,7 +23,8 @@ still a follow-on foundation slice, not a full major milestone.
 | WP-13 | #2153 | Runtime v2 docs pass | Align feature docs, demo matrix, and README | coherent docs package | WP-12 |
 | WP-14 | #2154 | Quality and coverage gate | Run focused tests and quality posture | quality report | WP-12 |
 | WP-15 | #2155 | Internal review | Review scope, claims, and proof surfaces | review report and findings | WP-13, WP-14 |
-| WP-16 | #2156 | Review remediation | Fix accepted internal review findings | patches and closure notes | WP-15 |
+| WP-15A | #2215 | Third-party review | Run external review before remediation | review artifacts and finding disposition | WP-15 |
+| WP-16 | #2156 | Review remediation | Fix accepted internal and third-party review findings | patches and closure notes | WP-15, WP-15A |
 | WP-17 | #2157 | Release readiness | Finalize release notes, checklist, and handoff | readiness packet | WP-16 |
 | WP-18 | #2158 | v0.91/v0.92 handoff | Preserve moral/emotional and birthday boundaries | handoff doc | WP-17 |
 | WP-19 | #2159 | Release-evidence packet | Assemble the proof trail across demos, quality, review, and readiness | release evidence packet | WP-17, WP-18 |
@@ -35,5 +36,7 @@ This milestone is a strong compression candidate because WP-02 through WP-04
 remove process friction before Runtime v2 coding starts, and the runtime outputs
 can be proved by a compact artifact set.
 
-Compression must not remove review discipline. It should reduce waiting and
-redundant local validation only when focused proof is adequate.
+Compression must not remove review discipline. WP-15A is an explicit guardrail:
+external review happens before remediation so compressed execution still gets an
+outside truth check. Compression should reduce waiting and redundant local
+validation only when focused proof is adequate.

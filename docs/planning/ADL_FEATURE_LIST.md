@@ -48,16 +48,18 @@ can survive code review, ops review, and postmortem analysis.
 ## Current Repo Status
 
 The current repo truth is:
-- active milestone: `v0.90`
-- current crate version on `main`: `0.89.1`
-- most recently completed adversarial-runtime milestone package: `v0.89.1`
-- most recently completed governed-adaptation milestone package: `v0.89`
-- most recently completed runtime-completion milestone package before that: `v0.87.1`
+- active milestone: `v0.90.1`
+- current crate version on `main`: `0.90.0`
+- most recently completed long-lived runtime milestone package: `v0.90`
+- most recently completed adversarial-runtime milestone package before that: `v0.89.1`
+- most recently completed governed-adaptation milestone package before that: `v0.89`
 
 That means the feature story should be read this way:
 - `v0.7` through `v0.89.1` provide the implemented platform baseline
-- `v0.90` is the active long-lived runtime, inspection, demo, compression, repo-visibility, and refactoring band
-- `v0.91` through `v0.95` are the next planned capability bands
+- `v0.90` adds the implemented long-lived runtime, inspection, demo,
+  compression, repo-visibility, and refactoring band
+- `v0.90.1` is the active Runtime v2 foundation and CSM Observatory band
+- `v0.90.2` through `v0.95` are the next planned capability bands
 
 ## ADL at a Glance
 
@@ -84,8 +86,8 @@ ADL already provides a serious platform baseline:
 | ExecutionPlan runtime | Implemented | Rust runtime and plan execution | Complete baseline |
 | Sequential + fork/join coordination | Implemented | examples, tests, demo docs | Complete baseline |
 | Bounded concurrency and retry/failure controls | Implemented | runtime semantics, tests, v0.7 docs | Complete baseline |
-| Run artifacts and replay-oriented inspection | Implemented baseline | run artifacts, trace/review docs, milestone demos | Active deepening in `v0.90` |
-| Signing, verification, and trust policy | Implemented baseline | signing/verification surfaces, trust docs | Active deepening in `v0.90` |
+| Run artifacts and replay-oriented inspection | Implemented baseline | run artifacts, trace/review docs, milestone demos | Deepened in `v0.90`; continues through Runtime v2 |
+| Signing, verification, and trust policy | Implemented baseline | signing/verification surfaces, trust docs | Deepened in `v0.90`; continues through Runtime v2 and governance |
 | Provider and transport substrate | Implemented baseline | provider docs, HTTP/local provider surfaces, reviewer package | Deepen through `v0.92` |
 | Remote execution baseline | Implemented baseline | bounded remote execution surfaces and docs | Deepen through `v0.92+` |
 | Human-in-the-loop pause/resume | Implemented baseline | runtime/control surfaces and review docs | Integrate through `v0.95` |
@@ -94,40 +96,93 @@ ADL already provides a serious platform baseline:
 | Editor and command-adapter surfaces | Implemented baseline | editor docs, demos, bounded command adapters | Deepen through `v0.95` |
 | Review and validation surfaces | Implemented baseline | reviewer contracts, validation tools, review packages | Deepen through `v0.95` |
 | Task-bundle workflow | Implemented baseline | issue/task bundles and public execution records | Deepen through `v0.95` |
+| Agency, cognitive loop, and cognitive stack | Implemented baseline | `v0.86` agency/cognition feature package, demos, and review artifacts | Deepen through affect, identity, and governance bands |
+| Fast/slow thinking and cognitive arbitration | Implemented baseline | `v0.86` feature docs and bounded proof package | Deepen through later reasoning and moral-cognition work |
 | Bounded Godel loop | Implemented baseline | `v0.8` runtime artifacts, demos, experiment surfaces, `v0.89` experiment package | Deepen through later reasoning/provenance work |
 | ObsMem indexing, retrieval, and evidence-aware ranking | Implemented baseline | `v0.8` / `v0.87` proof surfaces plus `v0.89` D6 retrieval/ranking proof | Deeper memory architecture remains later work |
 | Shared ObsMem foundation | Implemented baseline | `v0.87` shared-memory docs and proof surfaces | Deepen with identity/continuity |
+| Trace validation, trace review, and trace-to-memory ingestion | Implemented baseline | `v0.87` trace schema/emission/artifact/review package and trace-ObsMem docs | Deepen through signed trace and query surfaces |
 | Bounded cognitive path | Implemented baseline | `v0.86` cognitive demo/artifact package | Deepen through `v0.88+` |
 | Freedom Gate baseline | Implemented baseline | `v0.86` bounded cognitive proof path | Complete baseline |
 | Freedom Gate v2 | Implemented baseline | `v0.89` judgment-boundary and gate proof surfaces | Deepen through adversarial/governance bands |
-| Trace substrate | Implemented baseline | `v0.87` trace docs and reviewer-facing proof surfaces | Active query/inspection boundary decision in `v0.90` |
+| Trace substrate | Implemented baseline | `v0.87` trace docs and reviewer-facing proof surfaces | Deepened by `v0.90` inspection work; continues through Runtime v2 |
 | Operational skills substrate | Implemented baseline | `v0.87` skills/control-plane docs and operational demos | Harden through `v0.95` |
 | Runtime environment and lifecycle completion | Implemented baseline | `v0.87.1` runtime docs, demos, and review package | Deepen through later hardening |
+| Execution boundaries and capability-aware local execution | Implemented baseline | `v0.87.1` runtime, local-model, and capability-aware execution docs/demos | Deepen through shepherd/evaluator work |
 | Local runtime resilience and Shepherd preservation | Implemented baseline | `v0.87.1` resilience and preservation docs/demos | Deepen through later runtime work |
 | Chronosense / temporal substrate | Implemented baseline | `v0.88` feature package and review surfaces | Deepen through later identity/governance bands |
+| Temporal query, retrieval, identity semantics, and continuity hooks | Implemented baseline | `v0.88` temporal schema, retrieval, and continuity/identity feature docs | Deepen through `v0.92` identity substrate |
 | Commitments, deadlines, and bounded temporal causality | Implemented baseline | `v0.88` feature docs and reviewer package | Deepen through later governance bands |
+| Cost model, accounting primitives, and bounded economics hooks | Implemented baseline | `v0.88` cost-model feature docs and planning surfaces | Deepen through economics/payment band |
 | PHI-style integration metrics | Implemented baseline | `v0.88` feature docs and review surfaces | Deepen through later evaluation bands |
 | Instinct and bounded agency | Implemented baseline | `v0.88` feature docs, instinct review surface, Paper Sonata | Deepen through later agency/governance bands |
 | Paper Sonata public-facing proof surface | Implemented baseline | `demo_v088_paper_sonata.sh` and milestone docs | Deepen through writing/publication skills |
 | Deep-agents comparative proof | Implemented baseline | `demo_v088_deep_agents_comparative_proof.sh` and `v0.89` follow-on demo docs | Future public-positioning wave if promoted |
 | AEE 1.0 convergence | Implemented baseline | `v0.89` `control_path/convergence.json`, D1 proof row, feature doc | Consume and extend in later bands |
 | Decision, action, and skill-governance surfaces | Implemented baseline | `v0.89` and `v0.89.1` decision/action/skill docs, runtime/proof surfaces | Deepen through later workflow/runtime bands |
+| Delegation, refusal, and coordination contracts | Implemented baseline | `v0.89.1` operational-skill and coordination package | Deepen through governance and workflow bands |
+| Provider-extension packaging and safe extension boundaries | Implemented baseline | `v0.89.1` provider-extension package and proof surfaces | Deepen through provider/security hardening |
 | Security, posture, and trust-under-adversary package | Implemented baseline | `v0.89` security posture package plus `v0.89.1` adversarial-runtime proof surfaces | Deepen through later safety/security bands |
 | Adversarial runtime, exploit/replay, and self-attack band | Implemented baseline | `v0.89.1` issue wave and feature package | Deepen through later safety/security bands |
+| Demo proof entry points and quality gate | Implemented baseline | `v0.89.1` demo matrix, proof-entry work, quality gate, and release review surfaces | Deepen through compression and review automation |
+| Five-agent Hey Jude MIDI demo | Implemented baseline | `v0.89.1` planning/proof surfaces and demo package | Future demo polish if promoted |
 | arXiv paper writer and three-paper program | Implemented baseline | `v0.89.1` skills/publication package | Deepen through publication/research lanes |
-| Long-lived supervisor, heartbeat, and cycle artifacts | Active milestone | `v0.90` feature contracts, issue wave, stock-league demo package | `v0.90` |
-| Minimal status/inspection boundary | Active milestone | `v0.90` trace/status issue and execution-readiness gate | `v0.90` |
-| Milestone compression and repo visibility prototypes | Active milestone | `v0.90` compression and repo-visibility docs | `v0.90` |
+| Long-lived supervisor, heartbeat, and cycle artifacts | Implemented baseline | `v0.90` feature contracts, runtime surfaces, and stock-league demo package | Deepen through Runtime v2 bands |
+| Stock-league long-lived demo family | Implemented baseline | `v0.90` stock-league scaffold, recurring run, and proof artifacts | Deepen through later demo/product surfaces |
+| Minimal status/inspection boundary | Implemented baseline | `v0.90` trace/status issue, CLI/report surfaces, and review gate | Deepen through CSM Observatory and Runtime v2 |
+| CodeBuddy review showcase and architecture-document generation | Implemented baseline | `v0.90` repo-review, diagram, product-report, and architecture-doc skill/demo package | Deepen through CodeBuddy product lane |
+| Coverage ratchet, test tracker, and quality tracking | Implemented baseline | `v0.90` coverage/test tracker updates and quality-gate docs | Continue through maintenance sprints |
+| Rust refactoring tracker and evidence-driven maintenance | Implemented baseline | `v0.90` refactoring tracker, ADR remediation, and follow-on maintenance planning | Continue through maintenance sprints |
+| Milestone compression and repo visibility prototypes | Implemented baseline | `v0.90` compression and repo-visibility docs/proofs | Deepen through `v0.90.1+` |
+| HTML milestone dashboard and compression reporting | Planned | backlog item and milestone-compression planning surfaces | Future compression/dashboard lane |
+| Runtime v2 foundation prototype | Active milestone | `v0.90.1` feature contracts, Runtime v2 WPs, integrated demo, and proof packet | `v0.90.1` foundation, `v0.90.2` hardening |
+| CSM Observatory visibility and operator-report surfaces | Active milestone | visibility packet, static console, operator report, CLI bundle, command packet design | `v0.90.1` read-only proof, later live operator integration |
+| Third-party review and review-quality gates | Active milestone | WP-15A third-party review, review handoff packets, finding disposition | Harden through release tails |
+| ANRM / shepherd-model experiments | Partially implemented | v0.90.1 ANRM Gemma scaffold comparison and ten-trial results | Planned shepherd/evaluator work before training |
+| CSM Shepherd model and Gemma training path | Planned | ANRM comparison results and evaluator/scaffold backlog | Future shepherd/evaluator/training lane |
+| Aptitude Atlas model-evaluation platform | Planned | TBD/product planning and backlog issues | Future product/project lane |
+| CodeBuddy repo-review product layer | Planned | CodeBuddy planning, repo-review skills, product-report backlog | Future product/project lane |
+| Automated repository modernization and external refactoring integration | Deferred | backlog note for ADL-to-Moderne or direct modernization workflows | Future product/tooling lane if promoted |
+| Web-based code editor integration | Planned | editor backlog issue and skills-wiring planning | Future editor/operator lane |
 | Reasoning graph baseline | Planned | planning/schema/proof surfaces | Later reasoning/provenance band |
 | Signed trace and trace query | Planned | roadmap and planning docs | Later reasoning/provenance band |
-| Affect, kindness, moral cognition, humor | Planned | `v0.91` planning docs | `v0.91` |
-| Identity, capability, names, and continuity substrate | Planned | `v0.92` planning docs | `v0.92` |
+| Wellbeing, affect, kindness, moral cognition, humor | Planned | `v0.91` planning docs | `v0.91` |
+| Runtime v2 hardening, recovery, quarantine, and expanded invariants | Planned | `v0.90.2` planning docs | `v0.90.2` |
+| First meaningful CSM run preparation | Planned | `v0.90.2` planning docs and Runtime v2 boundary docs | `v0.90.2` |
+| Identity, capability, names, and continuity substrate | Planned | `v0.92` planning docs and Runtime v2 boundary docs | `v0.92` |
+| First true Gödel-agent birthday | Planned | `v0.92` planning docs and identity boundary notes | `v0.92` |
 | Governance, delegation, IAM, social contract | Planned | `v0.93` planning docs | `v0.93` |
 | Economics, accounting, and payment substrate | Planned | economics planning corpus and roadmap docs | `v0.93` / `v0.94` |
 | Distributed execution integration | Partially implemented | cluster groundwork plus planning docs | `v0.94` / `v0.95` |
 | Demo catalog and polished MVP walkthrough | Partially implemented | milestone demo matrices and reviewer packages | `v0.95` |
 | Control-plane Rust migration / tooling hardening | Partially implemented | mixed Rust/shell control plane and active tooling hardening | `v0.95` |
 | Zed integration | Deferred | planning docs only | Post-`v0.95` unless promoted |
+
+## Milestone Coverage Crosswalk
+
+This crosswalk keeps the feature list connected to the milestone story. It is
+not a release note replacement; it is the map of which capability families ADL
+has already landed, is landing now, or has explicitly placed on the path to the
+`v0.95` MVP.
+
+| Milestone band | Capability families covered here |
+| --- | --- |
+| `v0.7` through `v0.8` | Deterministic workflow execution, execution plans, bounded concurrency, replayable artifacts, signing/verification, provider/transport foundations, bounded Godel-style experimentation, and early ObsMem indexing/retrieval. |
+| `v0.85` | Runtime/product positioning, demo discipline, and pre-cognitive milestone scaffolding that later milestones consume rather than repeat. |
+| `v0.86` | Agency, bounded cognitive system, cognitive loop/stack, fast/slow thinking, arbitration, Freedom Gate baseline, and local cognitive proof demos. |
+| `v0.87` | Trace schema/emission/artifacts, trace validation, trace review, trace-to-ObsMem ingestion, shared ObsMem, provider substrate, operational skills, and PR/control-plane workflow surfaces. |
+| `v0.87.1` | Runtime environment completion, agent lifecycle, execution boundaries, capability-aware local model execution, local runtime resilience, and Shepherd preservation. |
+| `v0.88` | Chronosense, temporal schema, temporal retrieval/query, identity/continuity semantics, commitments/deadlines, bounded temporal causality, PHI metrics, cost-model hooks, instinct, bounded agency, Paper Sonata, and deep-agents comparative proof. |
+| `v0.89` | AEE 1.0 convergence, Freedom Gate v2, decision/action mediation, skill governance, Godel experiment system, ObsMem evidence ranking, security posture, threat/trust surfaces, ADL Constitution/reasonableness/learning backgrounders, and governed-adaptation proof. |
+| `v0.89.1` | Adversarial runtime, red/blue proof surfaces, exploit artifacts, replay manifests, continuous verification, self-attack, operational skills, skill composition, delegation/refusal/coordination, provider-extension packaging, demo proof entry points, five-agent Hey Jude, arXiv writing workflow, and quality gate. |
+| `v0.90` | Long-lived supervisor, heartbeat, cycle manifests, artifact contracts, continuity handles, operator safety, status/inspection boundary, stock-league demos, repo visibility, milestone compression, CodeBuddy showcase, architecture-document generation, coverage ratchet, Rust refactoring tracker, ADR remediation, internal review, and third-party review closeout. |
+| `v0.90.1` | Runtime v2 foundation, manifold/snapshot contracts, kernel/control-plane boundaries, provisional citizens, invariant/security-boundary proof, CSM Observatory visibility packet, static console, operator report, CLI bundle, command-packet design, ANRM shepherd experiments, third-party review as WP-15A, Aptitude Atlas planning, and CodeBuddy product-lane planning. |
+| `v0.90.2` | Runtime v2 hardening, expanded invariants, violation artifacts, recovery/quarantine, operator review surfaces, stronger security-boundary evidence, CSM Observatory integration, and first meaningful CSM-run preparation. |
+| `v0.91` | Wellbeing and happiness, affect, kindness, humor, moral cognition, and the evaluation surfaces needed for emotionally and normatively legible agents. |
+| `v0.92` | Identity-bearing agent substrate, stable names, model/provider capability contracts, continuity across runs, and the first true Gödel-agent birthday. |
+| `v0.93` | Governance, delegation, IAM, social contract, policy/constitutional surfaces, rights/duties, and accountable multi-agent society boundaries. |
+| `v0.94` | Economics/payment work if promoted into a full milestone package, distributed-substrate integration, cross-band convergence, and dependency closure. |
+| `v0.95` | MVP convergence, polished demo catalog, coherent reviewer/customer walkthrough, control-plane/tooling hardening, feature freeze, and the 1.0 scope boundary. |
 
 ## Implemented Platform Highlights
 
@@ -232,30 +287,10 @@ The bounded v0.89 story is implemented baseline, not universal completion of
 every future adaptive-system idea. Later milestones should consume and deepen
 these surfaces rather than restating them as unbuilt from scratch.
 
-## Current Active Milestone: v0.90
-
-`v0.90` is the active milestone. Its useful work is concrete: it turns ADL
-toward bounded long-lived execution, stronger inspection surfaces, reviewer-
-visible demos, milestone compression, repo visibility, and evidence-driven
-refactoring.
-
-The current active bands are:
-- long-lived supervisor, heartbeat, cycle artifact, continuity, and operator
-  safety contracts
-- stock-league long-lived demo proof surfaces
-- minimal trace/status/inspection boundary work
-- coverage ratchet and milestone-compression pilot work
-- repo visibility prototype and explicit Rust refactoring guided by evidence
-
-The crate version remains `0.89.1` until the v0.90 release bump. Do not read
-that version number as meaning v0.89.1 is still the active milestone.
-
-## Major Capability Bands Still to Come
-
 ### v0.90 - Long-Lived Runtime, Inspection, and Milestone Compression
 
-`v0.90` deepens ADL from bounded governed execution into practical long-lived
-runtime supervision:
+`v0.90` is complete. It deepened ADL from bounded governed execution into
+practical long-lived runtime supervision:
 - supervisor and heartbeat behavior
 - cycle manifest and artifact contracts
 - continuity handles without claiming full identity substrate
@@ -264,6 +299,43 @@ runtime supervision:
 - stock-league long-lived demo evidence
 - milestone compression and repo visibility prototypes
 - evidence-driven Rust refactoring
+- internal and third-party release review gates
+
+The truthful v0.90 story is implemented baseline, with Runtime v2 consuming
+those surfaces rather than replacing them.
+
+## Current Active Milestone: v0.90.1
+
+`v0.90.1` is the active milestone. Its useful work is concrete: it turns the
+v0.90 long-lived-agent runtime into the first bounded Runtime v2 foundation
+prototype and makes that world visible through CSM Observatory surfaces.
+
+The current active bands are:
+- Runtime v2 manifold, kernel loop, provisional citizen records, snapshot and
+  rehydration contracts, invariant violation artifacts, operator controls, and
+  one security-boundary proof
+- integrated Runtime v2 foundation demo and proof packet
+- CSM Observatory visibility packet, static console, operator report, CLI
+  bundle, and future command-packet design
+- ANRM / shepherd-model experiments, kept explicitly experimental until
+  evaluator quality and safety boundaries improve
+- third-party review as WP-15A before remediation
+
+The first true Gödel-agent birthday remains a v0.92 event. v0.90.1 proves the
+foundation substrate; it does not claim full identity, moral civilization,
+cross-polis migration, or live operator mutation.
+
+## Major Capability Bands Still to Come
+
+### v0.90.2 - Runtime v2 Hardening and First-Run Preparation
+
+`v0.90.2` is expected to harden the Runtime v2 foundation after the first
+prototype:
+- expanded invariant tests and violation artifacts
+- recovery, quarantine, and remediation surfaces
+- stronger CSM Observatory integration
+- clearer live-versus-fixture proof boundaries
+- preparation for the first meaningful CSM run
 
 ### v0.91 - Affect and Moral Cognition
 
@@ -282,6 +354,7 @@ agents:
 - provider/model capability contracts
 - stable names
 - continuity hooks across runs
+- first true Gödel-agent birthday
 
 ### v0.93 - Governance, Delegation, IAM, and Social Contract
 
@@ -302,7 +375,7 @@ The planning corpus already points toward a serious economics band:
 - market and settlement surfaces
 
 This is an important future platform direction, even though it is not part of
-the current `v0.90` execution band.
+the current `v0.90.1` execution band.
 
 ### v0.94 - Integration and Dependency Closure
 
@@ -318,6 +391,19 @@ the current `v0.90` execution band.
 - coherent MVP walkthrough
 - control-plane/tooling hardening
 - feature freeze and `1.0` scope boundary
+
+### Product Lanes: CodeBuddy and Aptitude Atlas
+
+Two ADL-powered product directions are now recognized but intentionally kept out
+of the core Runtime v2 milestone path unless explicitly promoted:
+
+- CodeBuddy: repo-wide code and architecture review, diagrams, tests,
+  remediation plans, and product-grade reports powered by ADL review skills.
+- Aptitude Atlas: model capability and aptitude assessment with leaderboard-
+  style public reporting, deeper than one-off benchmark scores.
+
+Both are strategically important, but they should mature as product/project
+lanes rather than distorting core Runtime v2 scope.
 
 ## Deferred Feature
 
@@ -340,11 +426,14 @@ ADL already has a substantial platform:
 - operational skills
 - bounded Godel, ObsMem, and cognitive proof paths
 - completed temporal, bounded-agency, and governed-adaptation milestone work
-- active adversarial-runtime and publication-skill follow-on work
+- completed adversarial-runtime, publication-skill, and long-lived runtime
+  milestone work
+- active Runtime v2 foundation and CSM Observatory work
 
 What remains through `v0.95` is not random feature accumulation. It is a
 deliberate convergence path:
-- execute `v0.90` without losing issue/PR/review discipline
-- make long-lived runtime behavior concrete and reviewable
-- add affect, identity, governance, and economics in bounded later bands
+- execute `v0.90.1` without losing issue/PR/review discipline
+- make Runtime v2 concrete, visible, recoverable, and reviewable
+- add affect, identity, governance, economics, and product lanes in bounded
+  later bands
 - close the MVP as a serious, reviewable agent-runtime platform

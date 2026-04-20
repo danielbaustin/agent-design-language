@@ -21,7 +21,34 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the v0.90 post-release review, start with:
+For the active v0.90.1 WP-13 documentation and review-readiness pass, start
+with:
+
+- `docs/milestones/v0.90.1/README.md`
+- `docs/milestones/v0.90.1/WBS_v0.90.1.md`
+- `docs/milestones/v0.90.1/SPRINT_v0.90.1.md`
+- `docs/milestones/v0.90.1/DEMO_MATRIX_v0.90.1.md`
+- `docs/milestones/v0.90.1/FEATURE_DOCS_v0.90.1.md`
+- `docs/milestones/v0.90.1/MILESTONE_CHECKLIST_v0.90.1.md`
+- `docs/milestones/v0.90.1/RELEASE_PLAN_v0.90.1.md`
+- `docs/milestones/v0.90.1/RELEASE_NOTES_v0.90.1.md`
+- `docs/milestones/v0.90.1/WP_ISSUE_WAVE_v0.90.1.yaml`
+- `docs/planning/ADL_FEATURE_LIST.md`
+- `CHANGELOG.md`
+- `README.md`
+- `adl/Cargo.toml`
+- `adl/Cargo.lock`
+
+The current v0.90.1 review posture is pre-release review copy. WP-01 through
+WP-12 are closed, WP-13 is aligning the documentation package, WP-14 quality
+gate, WP-15 internal review, WP-15A third-party review, WP-16 remediation, and
+the release tail remain ahead.
+
+The crate version remains `0.90.0` until the v0.90.1 release bump. Reviewers
+should treat that as a pre-release version boundary, not as evidence that the
+active v0.90.1 work is absent.
+
+For the most recently completed v0.90 post-release review, start with:
 
 - `docs/milestones/v0.90/README.md`
 - `docs/milestones/v0.90/V090_PRE_THIRD_PARTY_READINESS_REPORT.md`
@@ -36,8 +63,7 @@ For the v0.90 post-release review, start with:
 The current v0.90 review posture is final release copy. Runtime, demo, sidecar,
 coverage, Rust refactor, docs, internal-review work, third-party review,
 accepted findings remediation, next planning, and release ceremony preparation
-have landed; the release ceremony script creates the tag and GitHub release
-after the final package merges.
+have landed; the release ceremony script created the tag and GitHub release.
 
 Current tracker values to preserve in review:
 

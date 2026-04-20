@@ -42,12 +42,13 @@ and the integrated Runtime v2 proof packet are all reviewable.
 - WP-13 docs pass
 - WP-14 quality and coverage gate
 - WP-15 internal review
+- WP-15A third-party review
 - WP-16 remediation
 
-Opened issues: #2153 through #2156.
+Opened issues: #2153 through #2156, plus WP-15A as #2215.
 
-Exit when the prototype can be reviewed end to end and accepted findings are
-fixed or explicitly deferred.
+Exit when the prototype can be reviewed end to end by internal and third-party
+review paths, and accepted findings are fixed or explicitly deferred.
 
 ## Release Tail
 
