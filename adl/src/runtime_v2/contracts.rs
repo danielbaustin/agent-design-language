@@ -60,3 +60,7 @@ pub fn runtime_v2_security_boundary_proof_contract() -> Result<RuntimeV2Security
         &operator_report,
     )
 }
+
+pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
+    RuntimeV2FoundationPrototypeArtifacts::prototype()
+}

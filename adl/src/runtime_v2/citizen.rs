@@ -311,4 +311,3 @@ impl RuntimeV2CitizenRegistryIndex {
         Ok(())
     }
 }
-

@@ -228,7 +228,9 @@ pub(crate) fn validate_invariant_violation_evaluated_refs(
     Ok(())
 }
 
-pub(crate) fn validate_operator_commands(commands: &[RuntimeV2OperatorCommandReport]) -> Result<()> {
+pub(crate) fn validate_operator_commands(
+    commands: &[RuntimeV2OperatorCommandReport],
+) -> Result<()> {
     let required = [
         "inspect_manifold",
         "inspect_citizens",

@@ -202,4 +202,3 @@ impl RuntimeV2InvariantViolationResult {
         validate_relative_path(&self.trace_ref, "invariant_violation.trace_ref")
     }
 }
-

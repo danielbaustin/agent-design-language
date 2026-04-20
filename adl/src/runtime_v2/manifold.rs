@@ -143,4 +143,3 @@ impl RuntimeV2ManifoldRoot {
         PathBuf::from(&self.artifact_path)
     }
 }
-
