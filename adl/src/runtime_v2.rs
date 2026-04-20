@@ -12,6 +12,7 @@ pub const RUNTIME_V2_CITIZEN_REGISTRY_INDEX_SCHEMA: &str = "runtime_v2.citizen_r
 pub const RUNTIME_V2_SNAPSHOT_MANIFEST_SCHEMA: &str = "runtime_v2.snapshot_manifest.v1";
 pub const RUNTIME_V2_REHYDRATION_REPORT_SCHEMA: &str = "runtime_v2.rehydration_report.v1";
 pub const RUNTIME_V2_INVARIANT_VIOLATION_SCHEMA: &str = "runtime_v2.invariant_violation.v1";
+pub const RUNTIME_V2_OPERATOR_CONTROL_REPORT_SCHEMA: &str = "runtime_v2.operator_control_report.v1";
 pub const DEFAULT_MANIFOLD_ARTIFACT_PATH: &str = "runtime_v2/manifold.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -285,6 +286,39 @@ pub struct RuntimeV2InvariantViolationArtifact {
     pub refusal_reason: String,
     pub source_error: String,
     pub result: RuntimeV2InvariantViolationResult,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2OperatorControlState {
+    pub manifold_lifecycle_state: String,
+    pub kernel_loop_status: String,
+    pub active_citizen_count: usize,
+    pub pending_citizen_count: usize,
+    pub latest_snapshot_id: Option<String>,
+    pub completed_through_event_sequence: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2OperatorCommandReport {
+    pub command: String,
+    pub requested_by: String,
+    pub affected_service: String,
+    pub pre_state: RuntimeV2OperatorControlState,
+    pub post_state: RuntimeV2OperatorControlState,
+    pub outcome: String,
+    pub trace_event_ref: String,
+    pub reason: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2OperatorControlReport {
+    pub schema_version: String,
+    pub report_id: String,
+    pub manifold_id: String,
+    pub artifact_path: String,
+    pub generated_at_utc: String,
+    pub control_interface_service_id: String,
+    pub commands: Vec<RuntimeV2OperatorCommandReport>,
 }
 
 impl RuntimeV2ManifoldRoot {
@@ -1279,6 +1313,250 @@ impl RuntimeV2InvariantViolationResult {
     }
 }
 
+impl RuntimeV2OperatorControlReport {
+    pub fn prototype(
+        manifold: &RuntimeV2ManifoldRoot,
+        kernel: &RuntimeV2KernelLoopArtifacts,
+        citizens: &RuntimeV2CitizenLifecycleArtifacts,
+        snapshot: &RuntimeV2SnapshotAndRehydrationArtifacts,
+        violation: &RuntimeV2InvariantViolationArtifact,
+    ) -> Result<Self> {
+        manifold.validate()?;
+        kernel.validate()?;
+        citizens.validate()?;
+        snapshot.validate()?;
+        violation.validate()?;
+        if kernel.state.manifold_id != manifold.manifold_id
+            || citizens.active_index.manifold_id != manifold.manifold_id
+            || snapshot.snapshot.manifold_id != manifold.manifold_id
+            || violation.manifold_id != manifold.manifold_id
+        {
+            return Err(anyhow!(
+                "operator control inputs must share the same manifold id"
+            ));
+        }
+        let active_state = RuntimeV2OperatorControlState::from_parts(
+            "active",
+            &kernel.state,
+            citizens,
+            manifold.snapshot_root.latest_snapshot_id.clone(),
+        );
+        let paused_state = RuntimeV2OperatorControlState {
+            manifold_lifecycle_state: "paused".to_string(),
+            kernel_loop_status: "operator_paused".to_string(),
+            ..active_state.clone()
+        };
+        let snapshotting_state = RuntimeV2OperatorControlState::from_parts(
+            "snapshotting",
+            &kernel.state,
+            citizens,
+            Some(snapshot.snapshot.snapshot_id.clone()),
+        );
+        let terminated_state = RuntimeV2OperatorControlState {
+            manifold_lifecycle_state: "terminated".to_string(),
+            kernel_loop_status: "operator_terminated".to_string(),
+            active_citizen_count: 0,
+            pending_citizen_count: citizens.pending_index.citizens.len(),
+            latest_snapshot_id: Some(snapshot.snapshot.snapshot_id.clone()),
+            completed_through_event_sequence: kernel.state.completed_through_event_sequence + 6,
+        };
+        let report = Self {
+            schema_version: RUNTIME_V2_OPERATOR_CONTROL_REPORT_SCHEMA.to_string(),
+            report_id: "operator-report-0001".to_string(),
+            manifold_id: manifold.manifold_id.clone(),
+            artifact_path: "runtime_v2/operator/control_report.json".to_string(),
+            generated_at_utc: "not_started".to_string(),
+            control_interface_service_id: "operator_control_interface".to_string(),
+            commands: vec![
+                RuntimeV2OperatorCommandReport {
+                    command: "inspect_manifold".to_string(),
+                    requested_by: "operator.cli".to_string(),
+                    affected_service: "operator_control_interface".to_string(),
+                    pre_state: active_state.clone(),
+                    post_state: active_state.clone(),
+                    outcome: "allowed".to_string(),
+                    trace_event_ref: "runtime_v2/traces/operator/inspect-manifold.json".to_string(),
+                    reason: "reported bounded manifold lifecycle and kernel status".to_string(),
+                },
+                RuntimeV2OperatorCommandReport {
+                    command: "inspect_citizens".to_string(),
+                    requested_by: "operator.cli".to_string(),
+                    affected_service: "operator_control_interface".to_string(),
+                    pre_state: active_state.clone(),
+                    post_state: active_state.clone(),
+                    outcome: "allowed".to_string(),
+                    trace_event_ref: "runtime_v2/traces/operator/inspect-citizens.json".to_string(),
+                    reason: "reported active and pending provisional citizen counts".to_string(),
+                },
+                RuntimeV2OperatorCommandReport {
+                    command: "pause_manifold".to_string(),
+                    requested_by: "operator.cli".to_string(),
+                    affected_service: "scheduler".to_string(),
+                    pre_state: active_state.clone(),
+                    post_state: paused_state.clone(),
+                    outcome: "allowed".to_string(),
+                    trace_event_ref: "runtime_v2/traces/operator/pause-manifold.json".to_string(),
+                    reason: "scheduler accepts a bounded operator pause before new episodes"
+                        .to_string(),
+                },
+                RuntimeV2OperatorCommandReport {
+                    command: "resume_manifold".to_string(),
+                    requested_by: "operator.cli".to_string(),
+                    affected_service: "scheduler".to_string(),
+                    pre_state: paused_state,
+                    post_state: active_state.clone(),
+                    outcome: "allowed".to_string(),
+                    trace_event_ref: "runtime_v2/traces/operator/resume-manifold.json".to_string(),
+                    reason: "invariant checks passed and the paused manifold may resume"
+                        .to_string(),
+                },
+                RuntimeV2OperatorCommandReport {
+                    command: "request_snapshot".to_string(),
+                    requested_by: "operator.cli".to_string(),
+                    affected_service: "snapshot_manager".to_string(),
+                    pre_state: active_state.clone(),
+                    post_state: snapshotting_state,
+                    outcome: "allowed".to_string(),
+                    trace_event_ref: "runtime_v2/traces/operator/request-snapshot.json".to_string(),
+                    reason: "snapshot manager can seal a bounded snapshot after invariants pass"
+                        .to_string(),
+                },
+                RuntimeV2OperatorCommandReport {
+                    command: "inspect_last_failures".to_string(),
+                    requested_by: "operator.cli".to_string(),
+                    affected_service: "invariant_checker".to_string(),
+                    pre_state: active_state.clone(),
+                    post_state: active_state.clone(),
+                    outcome: "allowed".to_string(),
+                    trace_event_ref: violation.result.trace_ref.clone(),
+                    reason: format!(
+                        "latest blocking invariant failure is {}",
+                        violation.violation_id
+                    ),
+                },
+                RuntimeV2OperatorCommandReport {
+                    command: "terminate_manifold".to_string(),
+                    requested_by: "operator.cli".to_string(),
+                    affected_service: "resource_ledger".to_string(),
+                    pre_state: active_state,
+                    post_state: terminated_state,
+                    outcome: "allowed".to_string(),
+                    trace_event_ref: "runtime_v2/traces/operator/terminate-manifold.json"
+                        .to_string(),
+                    reason: "resource ledger records bounded termination and release intent"
+                        .to_string(),
+                },
+            ],
+        };
+        report.validate()?;
+        Ok(report)
+    }
+
+    pub fn validate(&self) -> Result<()> {
+        if self.schema_version != RUNTIME_V2_OPERATOR_CONTROL_REPORT_SCHEMA {
+            return Err(anyhow!(
+                "unsupported Runtime v2 operator control report schema '{}'",
+                self.schema_version
+            ));
+        }
+        normalize_id(self.report_id.clone(), "operator_control.report_id")?;
+        normalize_id(self.manifold_id.clone(), "operator_control.manifold_id")?;
+        validate_relative_path(&self.artifact_path, "operator_control.artifact_path")?;
+        validate_timestamp_marker(&self.generated_at_utc, "operator_control.generated_at_utc")?;
+        normalize_id(
+            self.control_interface_service_id.clone(),
+            "operator_control.control_interface_service_id",
+        )?;
+        if self.control_interface_service_id != "operator_control_interface" {
+            return Err(anyhow!(
+                "operator control report must be owned by operator_control_interface"
+            ));
+        }
+        validate_operator_commands(&self.commands)?;
+        Ok(())
+    }
+
+    pub fn to_pretty_json_bytes(&self) -> Result<Vec<u8>> {
+        self.validate()?;
+        serde_json::to_vec_pretty(self).context("serialize Runtime v2 operator control report")
+    }
+
+    pub fn write_to_root(&self, root: impl AsRef<Path>) -> Result<()> {
+        write_relative(
+            root.as_ref(),
+            &self.artifact_path,
+            self.to_pretty_json_bytes()?,
+        )
+    }
+}
+
+impl RuntimeV2OperatorControlState {
+    fn from_parts(
+        manifold_lifecycle_state: &str,
+        kernel_state: &RuntimeV2KernelServiceState,
+        citizens: &RuntimeV2CitizenLifecycleArtifacts,
+        latest_snapshot_id: Option<String>,
+    ) -> Self {
+        Self {
+            manifold_lifecycle_state: manifold_lifecycle_state.to_string(),
+            kernel_loop_status: kernel_state.loop_status.clone(),
+            active_citizen_count: citizens.active_index.citizens.len(),
+            pending_citizen_count: citizens.pending_index.citizens.len(),
+            latest_snapshot_id,
+            completed_through_event_sequence: kernel_state.completed_through_event_sequence,
+        }
+    }
+
+    pub fn validate(&self) -> Result<()> {
+        validate_lifecycle_state(&self.manifold_lifecycle_state)?;
+        normalize_id(
+            self.kernel_loop_status.clone(),
+            "operator_control.kernel_loop_status",
+        )?;
+        if let Some(snapshot_id) = &self.latest_snapshot_id {
+            normalize_id(snapshot_id.clone(), "operator_control.latest_snapshot_id")?;
+        }
+        if self.completed_through_event_sequence == 0 {
+            return Err(anyhow!(
+                "operator_control.completed_through_event_sequence must be positive"
+            ));
+        }
+        if self.manifold_lifecycle_state == "terminated" && self.active_citizen_count != 0 {
+            return Err(anyhow!(
+                "operator_control terminated state must not retain active citizens"
+            ));
+        }
+        Ok(())
+    }
+}
+
+impl RuntimeV2OperatorCommandReport {
+    pub fn validate(&self) -> Result<()> {
+        validate_operator_command(&self.command)?;
+        normalize_id(self.requested_by.clone(), "operator_control.requested_by")?;
+        normalize_id(
+            self.affected_service.clone(),
+            "operator_control.affected_service",
+        )?;
+        self.pre_state.validate()?;
+        self.post_state.validate()?;
+        validate_operator_outcome(&self.outcome)?;
+        validate_relative_path(&self.trace_event_ref, "operator_control.trace_event_ref")?;
+        validate_nonempty_text(&self.reason, "operator_control.reason")?;
+        if self.outcome == "allowed" && self.pre_state == self.post_state {
+            match self.command.as_str() {
+                "inspect_manifold" | "inspect_citizens" | "inspect_last_failures" => {}
+                _ => {
+                    return Err(anyhow!(
+                        "operator mutating control commands must change post_state when allowed"
+                    ))
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
 impl RuntimeV2ProvisionalCitizenRecord {
     pub fn validate(&self) -> Result<()> {
         if self.schema_version != RUNTIME_V2_PROVISIONAL_CITIZEN_SCHEMA {
@@ -1755,6 +2033,59 @@ fn validate_invariant_violation_evaluated_refs(
     Ok(())
 }
 
+fn validate_operator_commands(commands: &[RuntimeV2OperatorCommandReport]) -> Result<()> {
+    let required = [
+        "inspect_manifold",
+        "inspect_citizens",
+        "pause_manifold",
+        "resume_manifold",
+        "request_snapshot",
+        "inspect_last_failures",
+        "terminate_manifold",
+    ];
+    if commands.len() != required.len() {
+        return Err(anyhow!(
+            "operator_control.commands must cover each bounded operator command exactly once"
+        ));
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    for (expected, command) in required.iter().zip(commands.iter()) {
+        command.validate()?;
+        if command.command != *expected {
+            return Err(anyhow!(
+                "operator_control.commands must preserve deterministic command order"
+            ));
+        }
+        if !seen.insert(command.command.clone()) {
+            return Err(anyhow!(
+                "operator_control.commands contains duplicate command '{}'",
+                command.command
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn validate_operator_command(value: &str) -> Result<()> {
+    match value {
+        "inspect_manifold"
+        | "inspect_citizens"
+        | "pause_manifold"
+        | "resume_manifold"
+        | "request_snapshot"
+        | "inspect_last_failures"
+        | "terminate_manifold" => Ok(()),
+        other => Err(anyhow!("unsupported operator_control.command '{other}'")),
+    }
+}
+
+fn validate_operator_outcome(value: &str) -> Result<()> {
+    match value {
+        "allowed" | "refused" | "deferred" => Ok(()),
+        other => Err(anyhow!("unsupported operator_control.outcome '{other}'")),
+    }
+}
+
 fn validate_nonempty_text(value: &str, field: &str) -> Result<()> {
     if value.trim().is_empty() {
         return Err(anyhow!("{field} must not be empty"));
@@ -1888,6 +2219,18 @@ pub fn runtime_v2_invariant_violation_contract() -> Result<RuntimeV2InvariantVio
     RuntimeV2InvariantViolationArtifact::duplicate_active_citizen_prototype(
         &manifold, &kernel, &citizens,
     )
+}
+
+pub fn runtime_v2_operator_control_report_contract() -> Result<RuntimeV2OperatorControlReport> {
+    let manifold = runtime_v2_manifold_contract()?;
+    let kernel = RuntimeV2KernelLoopArtifacts::prototype(&manifold)?;
+    let citizens = RuntimeV2CitizenLifecycleArtifacts::prototype(&manifold)?;
+    let snapshot =
+        RuntimeV2SnapshotAndRehydrationArtifacts::prototype(&manifold, &kernel, &citizens)?;
+    let violation = RuntimeV2InvariantViolationArtifact::duplicate_active_citizen_prototype(
+        &manifold, &kernel, &citizens,
+    )?;
+    RuntimeV2OperatorControlReport::prototype(&manifold, &kernel, &citizens, &snapshot, &violation)
 }
 
 #[cfg(test)]
@@ -2501,5 +2844,108 @@ mod tests {
             .expect_err("empty refusal reason should fail")
             .to_string()
             .contains("refusal_reason must not be empty"));
+    }
+
+    #[test]
+    fn runtime_v2_operator_control_report_records_bounded_controls() {
+        let report = runtime_v2_operator_control_report_contract().expect("operator report");
+
+        assert_eq!(
+            report.schema_version,
+            RUNTIME_V2_OPERATOR_CONTROL_REPORT_SCHEMA
+        );
+        assert_eq!(report.manifold_id, "proto-csm-01");
+        assert_eq!(
+            report.control_interface_service_id,
+            "operator_control_interface"
+        );
+        assert_eq!(report.commands.len(), 7);
+        assert_eq!(report.commands[0].command, "inspect_manifold");
+        assert_eq!(report.commands[2].command, "pause_manifold");
+        assert_eq!(
+            report.commands[2].post_state.manifold_lifecycle_state,
+            "paused"
+        );
+        assert_eq!(report.commands[3].command, "resume_manifold");
+        assert_eq!(
+            report.commands[4].post_state.latest_snapshot_id.as_deref(),
+            Some("snapshot-0001")
+        );
+        assert_eq!(report.commands[5].command, "inspect_last_failures");
+        assert!(report.commands[5]
+            .trace_event_ref
+            .contains("violation-0001"));
+        assert_eq!(
+            report.commands[6].post_state.manifold_lifecycle_state,
+            "terminated"
+        );
+        assert_eq!(report.commands[6].post_state.active_citizen_count, 0);
+    }
+
+    #[test]
+    fn runtime_v2_operator_control_report_matches_golden_fixture() {
+        let report = runtime_v2_operator_control_report_contract().expect("operator report");
+        let generated =
+            String::from_utf8(report.to_pretty_json_bytes().expect("json")).expect("utf8");
+
+        assert_eq!(
+            generated,
+            include_str!("../tests/fixtures/runtime_v2/operator/control_report.json").trim_end()
+        );
+    }
+
+    #[test]
+    fn runtime_v2_operator_control_report_writes_without_path_leakage() {
+        let temp_root = unique_temp_path("operator-controls");
+        let report = runtime_v2_operator_control_report_contract().expect("operator report");
+
+        report
+            .write_to_root(&temp_root)
+            .expect("write operator report");
+
+        let report_path = temp_root.join(&report.artifact_path);
+        assert!(report_path.is_file());
+        let text = fs::read_to_string(report_path).expect("operator report text");
+        assert!(!text.contains(temp_root.to_string_lossy().as_ref()));
+        assert!(text.contains("\"schema_version\": \"runtime_v2.operator_control_report.v1\""));
+        assert!(text.contains("\"command\": \"pause_manifold\""));
+        assert!(text.contains("\"command\": \"terminate_manifold\""));
+
+        fs::remove_dir_all(temp_root).ok();
+    }
+
+    #[test]
+    fn runtime_v2_operator_control_validation_rejects_unsafe_or_ambiguous_state() {
+        let mut report = runtime_v2_operator_control_report_contract().expect("operator report");
+        report.artifact_path = "/tmp/operator/control_report.json".to_string();
+        assert!(report
+            .validate()
+            .expect_err("absolute path should fail")
+            .to_string()
+            .contains("repository-relative path"));
+
+        let mut report = runtime_v2_operator_control_report_contract().expect("operator report");
+        report.commands[0].command = "inspect_citizens".to_string();
+        assert!(report
+            .validate()
+            .expect_err("command order should fail")
+            .to_string()
+            .contains("deterministic command order"));
+
+        let mut report = runtime_v2_operator_control_report_contract().expect("operator report");
+        report.commands[2].post_state = report.commands[2].pre_state.clone();
+        assert!(report
+            .validate()
+            .expect_err("mutating command with unchanged state should fail")
+            .to_string()
+            .contains("mutating control commands must change post_state"));
+
+        let mut report = runtime_v2_operator_control_report_contract().expect("operator report");
+        report.commands[6].post_state.active_citizen_count = 1;
+        assert!(report
+            .validate()
+            .expect_err("terminated state with active citizens should fail")
+            .to_string()
+            .contains("terminated state must not retain active citizens"));
     }
 }

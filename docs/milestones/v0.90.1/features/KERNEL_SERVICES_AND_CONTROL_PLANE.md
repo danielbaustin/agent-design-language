@@ -60,21 +60,32 @@ The focused proof hook is:
 cargo test --manifest-path adl/Cargo.toml runtime_v2::tests::runtime_v2_kernel
 ```
 
-## Operator Controls
+## WP-10 Operator Control Surface
 
-The operator should be able to:
+WP-10 adds a bounded operator control report contract to `adl/src/runtime_v2.rs`
+and a CLI hook for reviewers:
 
-- inspect manifold status
-- inspect citizen status
-- pause the manifold
-- resume the manifold
-- request snapshot
-- terminate the manifold
-- inspect last invariant/security failures
+```bash
+adl runtime-v2 operator-controls --out .adl/state/runtime_v2_operator_control_report.v1.json
+```
 
-## Proof Surface
+The report is intentionally deterministic and reviewable. It models the control
+surface that a live Runtime v2 operator interface must preserve without claiming
+that v0.90.1 already executes a long-lived runtime. The emitted artifact path is:
 
-The control plane must emit a report showing:
+- `runtime_v2/operator/control_report.json`
+
+The report covers these bounded commands:
+
+- `inspect_manifold`
+- `inspect_citizens`
+- `pause_manifold`
+- `resume_manifold`
+- `request_snapshot`
+- `inspect_last_failures`
+- `terminate_manifold`
+
+Each command records:
 
 - command requested
 - pre-state
@@ -82,8 +93,16 @@ The control plane must emit a report showing:
 - affected service
 - trace event ref
 - allowed/refused/deferred outcome
+- reason
+
+The focused proof hook is:
+
+```bash
+cargo test --manifest-path adl/Cargo.toml runtime_v2::tests::runtime_v2_operator
+```
 
 ## Boundary
 
 This is not autonomous release approval, governance voting, or social-contract
-execution. Those remain later work.
+execution. These controls are a prototype operator report and CLI/demo hook, not
+live kernel mutation or a persistent CSM control session.
