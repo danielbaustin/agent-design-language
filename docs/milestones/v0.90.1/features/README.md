@@ -29,3 +29,8 @@ The first text report surface renders that packet into a compact operator and
 reviewer brief:
 
 - `CSM_OBSERVATORY_OPERATOR_REPORT.md`
+
+The first command-driven demo bundle lives in the demo docs rather than this
+feature directory, because it is a run surface over the packet/report contracts:
+
+- `../../../../demos/v0.90.1/csm_observatory_cli_demo.md`

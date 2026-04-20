@@ -8,6 +8,7 @@ pub fn usage() -> &'static str {
   adl agent inspect --spec <agent-spec.yaml> [--cycle <cycle-id>] [--json]
   adl agent stop --spec <agent-spec.yaml> --reason <text> [--json]
   adl artifact validate-control-path --root <dir>
+  adl csm observatory --packet <visibility-packet.json> [--format bundle|json|report] [--out <dir>]
   adl demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
   adl identity init --name <display-name> --birthday <rfc3339> --timezone <IANA> [--agent-id <id>] [--created-by <name>] [--force]
   adl identity show [--path <path>]
@@ -81,6 +82,7 @@ Examples:
   adl agent inspect --spec .adl/long_lived_agents/example-agent.yaml --json
   adl agent stop --spec .adl/long_lived_agents/example-agent.yaml --reason \"operator pause\"
   adl artifact validate-control-path --root /tmp/adl-v086-control-path-demo/demo-g-v086-control-path
+  adl csm observatory --packet demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json --format bundle --out artifacts/v0901/csm-observatory
   ADL_OLLAMA_BIN=adl/tools/mock_ollama_v0_4.sh adl examples/v0-4-demo-fork-join.adl.yaml --run --trace --out ./out
   adl examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
   adl examples/v0-3-on-error-retry.adl.yaml --print-plan

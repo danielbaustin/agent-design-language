@@ -98,6 +98,136 @@ fn instrument_replay_and_diff_trace_outputs_are_stable() {
 }
 
 #[test]
+fn csm_observatory_cli_writes_fixture_backed_bundle() {
+    let out_dir = unique_test_temp_dir("csm-observatory-cli");
+    let packet =
+        fixture_path("../demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json");
+    let out = run_adl(&[
+        "csm",
+        "observatory",
+        "--packet",
+        packet.to_str().unwrap(),
+        "--format",
+        "bundle",
+        "--out",
+        out_dir.to_str().unwrap(),
+    ]);
+    assert!(
+        out.status.success(),
+        "stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let manifest = fs::read_to_string(out_dir.join("demo_manifest.json")).unwrap();
+    let report = fs::read_to_string(out_dir.join("operator_report.md")).unwrap();
+    assert!(out_dir.join("visibility_packet.json").is_file());
+    assert!(out_dir.join("console_reference.md").is_file());
+    assert!(manifest.contains("adl.csm_observatory.demo_manifest.v1"));
+    assert!(manifest.contains("fixture_backed"));
+    assert!(report.contains("CSM Observatory Operator Report"));
+    assert!(report.contains("Operator action pause_citizen remains disabled"));
+}
+
+#[test]
+fn csm_observatory_cli_fails_safely_on_missing_packet() {
+    let out = run_adl(&[
+        "csm",
+        "observatory",
+        "--packet",
+        "missing-csm-observatory-packet.json",
+    ]);
+    assert_failure_contains(&out, "read CSM Observatory packet");
+}
+
+#[test]
+fn csm_observatory_cli_writes_report_only_output() {
+    let out_dir = unique_test_temp_dir("csm-observatory-report-only");
+    let packet =
+        fixture_path("../demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json");
+    let out = run_adl(&[
+        "csm",
+        "observatory",
+        "--packet",
+        packet.to_str().unwrap(),
+        "--format",
+        "report",
+        "--out",
+        out_dir.to_str().unwrap(),
+    ]);
+    assert!(
+        out.status.success(),
+        "stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let report = fs::read_to_string(out_dir.join("operator_report.md")).unwrap();
+    assert!(stdout.contains("report="), "stdout:\n{stdout}");
+    assert!(!out_dir.join("visibility_packet.json").exists());
+    assert!(!out_dir.join("demo_manifest.json").exists());
+    assert!(report.contains("CSM Observatory Operator Report"));
+}
+
+#[test]
+fn csm_observatory_cli_writes_json_only_output() {
+    let out_dir = unique_test_temp_dir("csm-observatory-json-only");
+    let packet =
+        fixture_path("../demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json");
+    let out = run_adl(&[
+        "csm",
+        "observatory",
+        "--packet",
+        packet.to_str().unwrap(),
+        "--format",
+        "json",
+        "--out",
+        out_dir.to_str().unwrap(),
+    ]);
+    assert!(
+        out.status.success(),
+        "stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let packet_copy = fs::read_to_string(out_dir.join("visibility_packet.json")).unwrap();
+    assert!(stdout.contains("packet="), "stdout:\n{stdout}");
+    assert!(!out_dir.join("operator_report.md").exists());
+    assert!(!out_dir.join("demo_manifest.json").exists());
+    assert!(packet_copy.contains("adl.csm_visibility_packet.v1"));
+}
+
+#[test]
+fn csm_observatory_cli_help_surfaces_usage() {
+    let top_help = run_adl(&["csm", "--help"]);
+    assert!(
+        top_help.status.success(),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&top_help.stderr)
+    );
+    assert!(
+        String::from_utf8_lossy(&top_help.stdout).contains("adl csm observatory --packet"),
+        "stdout:\n{}",
+        String::from_utf8_lossy(&top_help.stdout)
+    );
+
+    let subcommand_help = run_adl(&["csm", "observatory", "--help"]);
+    assert!(
+        subcommand_help.status.success(),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&subcommand_help.stderr)
+    );
+    assert!(
+        String::from_utf8_lossy(&subcommand_help.stdout).contains("bundle writes"),
+        "stdout:\n{}",
+        String::from_utf8_lossy(&subcommand_help.stdout)
+    );
+}
+
+#[test]
 fn run_flag_executes_fixture_with_mock_provider_and_writes_outputs() {
     let out_dir = unique_test_temp_dir("cli-run-mock").join("out");
     let runs_root = unique_test_temp_dir("cli-run-mock-runs");

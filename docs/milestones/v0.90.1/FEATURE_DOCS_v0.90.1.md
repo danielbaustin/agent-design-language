@@ -11,6 +11,7 @@
 | `features/INVARIANT_AND_SECURITY_BOUNDARY.md` | invariant violation artifacts and one security-boundary proof | WP-09, WP-11 |
 | `features/CSM_OBSERVATORY_VISIBILITY_PACKET.md` | CSM visibility packet contract for Observatory console, reports, CLI, and operator-command follow-ons | #2188 |
 | `features/CSM_OBSERVATORY_OPERATOR_REPORT.md` | deterministic operator/reviewer report generated from the CSM visibility packet | #2190 |
+| `demos/v0.90.1/csm_observatory_cli_demo.md` | command-driven Observatory demo bundle for packet/report/console-reference proof | #2191 |
 
 ## Compression-Enabling Process Work
 
