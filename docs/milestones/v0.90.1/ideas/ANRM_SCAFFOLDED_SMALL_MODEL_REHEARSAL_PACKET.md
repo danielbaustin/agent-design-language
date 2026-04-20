@@ -220,18 +220,24 @@ Training success requires:
 
 ## Current Result
 
-Status: live comparison executed.
+Status: live comparison executed with a ten-trial aggregate.
 
 Result document: `ANRM_GEMMA_SHEPHERD_COMPARISON_RESULTS.md`
 
-The first local Gemma-family run produced useful negative evidence. Raw Gemma
-outscored the initial scaffold on the strict five-case scorecard because both
-subjects missed the cross-polis export boundary, and the scaffold introduced
-some schema and mutation-framing drift.
+Aggregate result document: `ANRM_GEMMA_SHEPHERD_TEN_TRIAL_RESULTS.md`
+
+The first single run was not enough evidence for a conclusion. The ten-trial
+Gemma 4 aggregate is more useful: raw Gemma scored 70 / 100, scaffolded Gemma
+scored 78 / 100, and the scaffold improved the cross-polis export boundary in 4
+of 10 trials while still allowing 6 unsafe proceed decisions.
+
+This keeps the ANRM/Gemma path alive. It does not justify training yet, but it
+does justify a repaired scaffold, evaluator, and larger repeated experiment.
 
 Recommended next action:
 
 - Repair the scaffold so causal parent is not treated as authorization.
 - Add more export, migration, and trace-quality trap cases.
 - Build a small evaluator before attempting Gemma LoRA or QLoRA training.
-- Use the repaired run, not this first scaffold, as the training gate.
+- Use repeated repaired-scaffold runs, not the original single run, as the
+  training gate.
