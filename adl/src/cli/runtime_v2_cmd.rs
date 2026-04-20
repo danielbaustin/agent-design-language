@@ -3,7 +3,9 @@ use serde_json::to_string_pretty;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use ::adl::runtime_v2::runtime_v2_operator_control_report_contract;
+use ::adl::runtime_v2::{
+    runtime_v2_operator_control_report_contract, runtime_v2_security_boundary_proof_contract,
+};
 
 pub(crate) fn real_runtime_v2(args: &[String]) -> Result<()> {
     let repo_root = std::env::current_dir().context("resolve current working directory")?;
@@ -13,18 +15,19 @@ pub(crate) fn real_runtime_v2(args: &[String]) -> Result<()> {
 fn real_runtime_v2_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "runtime-v2 requires a subcommand: operator-controls"
+            "runtime-v2 requires a subcommand: operator-controls or security-boundary"
         ));
     };
 
     match subcommand {
         "operator-controls" => real_runtime_v2_operator_controls(repo_root, &args[1..]),
+        "security-boundary" => real_runtime_v2_security_boundary(repo_root, &args[1..]),
         "--help" | "-h" | "help" => {
             println!("{}", super::usage::usage());
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown runtime-v2 subcommand '{subcommand}' (expected operator-controls)"
+            "unknown runtime-v2 subcommand '{subcommand}' (expected operator-controls or security-boundary)"
         )),
     }
 }
@@ -82,6 +85,64 @@ fn real_runtime_v2_operator_controls(repo_root: &Path, args: &[String]) -> Resul
     })?;
     println!(
         "RUNTIME_V2_OPERATOR_CONTROL_REPORT_PATH={}",
+        resolved.display()
+    );
+    Ok(())
+}
+
+fn real_runtime_v2_security_boundary(repo_root: &Path, args: &[String]) -> Result<()> {
+    let mut out_path: Option<PathBuf> = None;
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--out" => {
+                let Some(value) = args.get(i + 1) else {
+                    return Err(anyhow!(
+                        "runtime-v2 security-boundary requires --out <path>"
+                    ));
+                };
+                out_path = Some(PathBuf::from(value));
+                i += 1;
+            }
+            "--help" | "-h" => {
+                println!("{}", super::usage::usage());
+                return Ok(());
+            }
+            other => {
+                return Err(anyhow!(
+                    "unknown arg for runtime-v2 security-boundary: {other}"
+                ))
+            }
+        }
+        i += 1;
+    }
+
+    let proof = runtime_v2_security_boundary_proof_contract()?;
+    let json = to_string_pretty(&proof)?;
+    let Some(out_path) = out_path else {
+        println!("{json}");
+        return Ok(());
+    };
+    let resolved = if out_path.is_absolute() {
+        out_path
+    } else {
+        repo_root.join(out_path)
+    };
+    let Some(parent) = resolved.parent() else {
+        return Err(anyhow!(
+            "runtime-v2 security-boundary --out path must have a parent directory"
+        ));
+    };
+    fs::create_dir_all(parent)
+        .with_context(|| format!("failed to create output directory {}", parent.display()))?;
+    fs::write(&resolved, json.as_bytes()).with_context(|| {
+        format!(
+            "failed to write Runtime v2 security boundary proof to {}",
+            resolved.display()
+        )
+    })?;
+    println!(
+        "RUNTIME_V2_SECURITY_BOUNDARY_PROOF_PATH={}",
         resolved.display()
     );
     Ok(())
@@ -164,7 +225,7 @@ mod tests {
         let err = real_runtime_v2_in_repo(&[], &repo).expect_err("missing subcommand should fail");
         assert!(err
             .to_string()
-            .contains("runtime-v2 requires a subcommand: operator-controls"));
+            .contains("runtime-v2 requires a subcommand: operator-controls or security-boundary"));
 
         let err = real_runtime_v2_in_repo(&["bogus".to_string()], &repo)
             .expect_err("unknown subcommand should fail");
@@ -202,5 +263,82 @@ mod tests {
     #[test]
     fn runtime_v2_public_dispatch_uses_current_directory() {
         real_runtime_v2(&["operator-controls".to_string()]).expect("public dispatch stdout");
+    }
+
+    #[test]
+    fn runtime_v2_security_boundary_writes_proof_json() {
+        let repo = temp_repo("security-boundary");
+        let out_path = repo.join("out/security_boundary.json");
+
+        real_runtime_v2_in_repo(
+            &[
+                "security-boundary".to_string(),
+                "--out".to_string(),
+                "out/security_boundary.json".to_string(),
+            ],
+            &repo,
+        )
+        .expect("security boundary");
+
+        let json: serde_json::Value = serde_json::from_slice(
+            &fs::read(&out_path).expect("security boundary proof should be written"),
+        )
+        .expect("valid json");
+        assert_eq!(
+            json["schema_version"],
+            "runtime_v2.security_boundary_proof.v1"
+        );
+        assert_eq!(json["result"]["allowed"], false);
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn runtime_v2_security_boundary_validates_unknown_args_and_missing_out_value() {
+        let repo = temp_repo("security-boundary-errors");
+
+        let err = real_runtime_v2_in_repo(
+            &["security-boundary".to_string(), "--bogus".to_string()],
+            &repo,
+        )
+        .expect_err("unknown arg should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown arg for runtime-v2 security-boundary: --bogus"));
+
+        let err = real_runtime_v2_in_repo(
+            &["security-boundary".to_string(), "--out".to_string()],
+            &repo,
+        )
+        .expect_err("missing out value should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 security-boundary requires --out <path>"));
+    }
+
+    #[test]
+    fn runtime_v2_security_boundary_covers_stdout_help_and_absolute_output() {
+        let repo = temp_repo("security-boundary-branches");
+        let out_path = repo.join("absolute/security_boundary.json");
+
+        real_runtime_v2_in_repo(&["security-boundary".to_string()], &repo).expect("stdout proof");
+        real_runtime_v2_in_repo(
+            &["security-boundary".to_string(), "--help".to_string()],
+            &repo,
+        )
+        .expect("security boundary help");
+        real_runtime_v2_in_repo(
+            &[
+                "security-boundary".to_string(),
+                "--out".to_string(),
+                out_path.to_string_lossy().to_string(),
+            ],
+            &repo,
+        )
+        .expect("absolute output path");
+
+        assert!(out_path.is_file());
+
+        fs::remove_dir_all(repo).ok();
     }
 }

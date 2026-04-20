@@ -34,6 +34,7 @@ pub fn usage() -> &'static str {
   adl identity instinct [--out <path>]
   adl identity instinct-runtime [--out <path>]
   adl runtime-v2 operator-controls [--out <path>]
+  adl runtime-v2 security-boundary [--out <path>]
   adl provider setup <family> [--out <dir>] [--force]
   adl pr create --title <title> [--slug <slug>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>]
   adl pr init <issue> [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>]
@@ -103,6 +104,7 @@ Examples:
   adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json
   adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json
   adl runtime-v2 operator-controls --out .adl/state/runtime_v2_operator_control_report.v1.json
+  adl runtime-v2 security-boundary --out .adl/state/runtime_v2_security_boundary_proof.v1.json
   adl provider setup chatgpt
   adl provider setup claude
   adl provider setup anthropic --out ./.adl/provider-setup/anthropic

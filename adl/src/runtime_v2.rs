@@ -13,6 +13,7 @@ pub const RUNTIME_V2_SNAPSHOT_MANIFEST_SCHEMA: &str = "runtime_v2.snapshot_manif
 pub const RUNTIME_V2_REHYDRATION_REPORT_SCHEMA: &str = "runtime_v2.rehydration_report.v1";
 pub const RUNTIME_V2_INVARIANT_VIOLATION_SCHEMA: &str = "runtime_v2.invariant_violation.v1";
 pub const RUNTIME_V2_OPERATOR_CONTROL_REPORT_SCHEMA: &str = "runtime_v2.operator_control_report.v1";
+pub const RUNTIME_V2_SECURITY_BOUNDARY_PROOF_SCHEMA: &str = "runtime_v2.security_boundary_proof.v1";
 pub const DEFAULT_MANIFOLD_ARTIFACT_PATH: &str = "runtime_v2/manifold.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -319,6 +320,45 @@ pub struct RuntimeV2OperatorControlReport {
     pub generated_at_utc: String,
     pub control_interface_service_id: String,
     pub commands: Vec<RuntimeV2OperatorCommandReport>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2SecurityBoundaryAttempt {
+    pub actor: String,
+    pub attempted_action: String,
+    pub requested_state: String,
+    pub source_command_ref: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2SecurityBoundaryEvaluatedRule {
+    pub rule_id: String,
+    pub rule_kind: String,
+    pub source_ref: String,
+    pub decision: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2SecurityBoundaryResult {
+    pub allowed: bool,
+    pub refusal_reason: String,
+    pub resulting_state: RuntimeV2OperatorControlState,
+    pub trace_ref: String,
+    pub recovery_action: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2SecurityBoundaryProofPacket {
+    pub schema_version: String,
+    pub proof_id: String,
+    pub manifold_id: String,
+    pub artifact_path: String,
+    pub generated_at_utc: String,
+    pub boundary_service_id: String,
+    pub attempt: RuntimeV2SecurityBoundaryAttempt,
+    pub evaluated_rules: Vec<RuntimeV2SecurityBoundaryEvaluatedRule>,
+    pub related_artifacts: Vec<String>,
+    pub result: RuntimeV2SecurityBoundaryResult,
 }
 
 impl RuntimeV2ManifoldRoot {
@@ -1557,6 +1597,191 @@ impl RuntimeV2OperatorCommandReport {
     }
 }
 
+impl RuntimeV2SecurityBoundaryProofPacket {
+    pub fn refused_resume_without_invariant_prototype(
+        manifold: &RuntimeV2ManifoldRoot,
+        kernel: &RuntimeV2KernelLoopArtifacts,
+        violation: &RuntimeV2InvariantViolationArtifact,
+        operator_report: &RuntimeV2OperatorControlReport,
+    ) -> Result<Self> {
+        manifold.validate()?;
+        kernel.validate()?;
+        violation.validate()?;
+        operator_report.validate()?;
+        if kernel.state.manifold_id != manifold.manifold_id
+            || violation.manifold_id != manifold.manifold_id
+            || operator_report.manifold_id != manifold.manifold_id
+        {
+            return Err(anyhow!(
+                "security boundary inputs must share the same manifold id"
+            ));
+        }
+        let resume_command = operator_report
+            .commands
+            .iter()
+            .find(|command| command.command == "resume_manifold")
+            .ok_or_else(|| anyhow!("security boundary proof requires resume_manifold command"))?;
+        let inspect_failures_command = operator_report
+            .commands
+            .iter()
+            .find(|command| command.command == "inspect_last_failures")
+            .ok_or_else(|| {
+                anyhow!("security boundary proof requires inspect_last_failures command")
+            })?;
+        if inspect_failures_command.trace_event_ref != violation.result.trace_ref {
+            return Err(anyhow!(
+                "security boundary proof must use the latest invariant violation trace"
+            ));
+        }
+        let proof = Self {
+            schema_version: RUNTIME_V2_SECURITY_BOUNDARY_PROOF_SCHEMA.to_string(),
+            proof_id: "security-boundary-proof-0001".to_string(),
+            manifold_id: manifold.manifold_id.clone(),
+            artifact_path: "runtime_v2/security_boundary/proof_packet.json".to_string(),
+            generated_at_utc: "not_started".to_string(),
+            boundary_service_id: operator_report.control_interface_service_id.clone(),
+            attempt: RuntimeV2SecurityBoundaryAttempt {
+                actor: resume_command.requested_by.clone(),
+                attempted_action: "resume_manifold_without_fresh_invariant_pass".to_string(),
+                requested_state: "active".to_string(),
+                source_command_ref: operator_report.artifact_path.clone(),
+            },
+            evaluated_rules: vec![
+                RuntimeV2SecurityBoundaryEvaluatedRule {
+                    rule_id: "require_fresh_invariant_pass_before_resume".to_string(),
+                    rule_kind: "operator_policy".to_string(),
+                    source_ref: manifold.invariant_policy_refs.policy_path.clone(),
+                    decision: "refuse".to_string(),
+                },
+                RuntimeV2SecurityBoundaryEvaluatedRule {
+                    rule_id: violation.invariant_id.clone(),
+                    rule_kind: "blocking_invariant".to_string(),
+                    source_ref: violation.artifact_path.clone(),
+                    decision: "blocking_failure_present".to_string(),
+                },
+                RuntimeV2SecurityBoundaryEvaluatedRule {
+                    rule_id: "scheduler_resume_gate".to_string(),
+                    rule_kind: "kernel_service_policy".to_string(),
+                    source_ref: kernel.state.service_state_path.clone(),
+                    decision: "keep_paused".to_string(),
+                },
+            ],
+            related_artifacts: vec![
+                manifold.artifact_path.clone(),
+                kernel.state.service_state_path.clone(),
+                violation.artifact_path.clone(),
+                operator_report.artifact_path.clone(),
+            ],
+            result: RuntimeV2SecurityBoundaryResult {
+                allowed: false,
+                refusal_reason:
+                    "resume refused because latest invariant evidence is blocking and no fresh pass is recorded"
+                        .to_string(),
+                resulting_state: resume_command.pre_state.clone(),
+                trace_ref:
+                    "runtime_v2/traces/security_boundary/refused-resume-without-invariant.json"
+                        .to_string(),
+                recovery_action: "remain_paused_and_require_invariant_checker_pass_before_resume"
+                    .to_string(),
+            },
+        };
+        proof.validate()?;
+        Ok(proof)
+    }
+
+    pub fn validate(&self) -> Result<()> {
+        if self.schema_version != RUNTIME_V2_SECURITY_BOUNDARY_PROOF_SCHEMA {
+            return Err(anyhow!(
+                "unsupported Runtime v2 security boundary proof schema '{}'",
+                self.schema_version
+            ));
+        }
+        normalize_id(self.proof_id.clone(), "security_boundary.proof_id")?;
+        normalize_id(self.manifold_id.clone(), "security_boundary.manifold_id")?;
+        validate_relative_path(&self.artifact_path, "security_boundary.artifact_path")?;
+        validate_timestamp_marker(&self.generated_at_utc, "security_boundary.generated_at_utc")?;
+        normalize_id(
+            self.boundary_service_id.clone(),
+            "security_boundary.boundary_service_id",
+        )?;
+        if self.boundary_service_id != "operator_control_interface" {
+            return Err(anyhow!(
+                "security boundary proof must pass through operator_control_interface"
+            ));
+        }
+        self.attempt.validate()?;
+        validate_security_boundary_rules(&self.evaluated_rules)?;
+        validate_security_boundary_related_artifacts(&self.related_artifacts)?;
+        self.result.validate()?;
+        if self.result.allowed {
+            return Err(anyhow!(
+                "security boundary proof must demonstrate a refused invalid action"
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn to_pretty_json_bytes(&self) -> Result<Vec<u8>> {
+        self.validate()?;
+        serde_json::to_vec_pretty(self).context("serialize Runtime v2 security boundary proof")
+    }
+
+    pub fn write_to_root(&self, root: impl AsRef<Path>) -> Result<()> {
+        write_relative(
+            root.as_ref(),
+            &self.artifact_path,
+            self.to_pretty_json_bytes()?,
+        )
+    }
+}
+
+impl RuntimeV2SecurityBoundaryAttempt {
+    pub fn validate(&self) -> Result<()> {
+        normalize_id(self.actor.clone(), "security_boundary.actor")?;
+        normalize_id(
+            self.attempted_action.clone(),
+            "security_boundary.attempted_action",
+        )?;
+        validate_lifecycle_state(&self.requested_state)?;
+        validate_relative_path(
+            &self.source_command_ref,
+            "security_boundary.source_command_ref",
+        )
+    }
+}
+
+impl RuntimeV2SecurityBoundaryEvaluatedRule {
+    pub fn validate(&self) -> Result<()> {
+        normalize_id(self.rule_id.clone(), "security_boundary.rule_id")?;
+        validate_security_boundary_rule_kind(&self.rule_kind)?;
+        validate_relative_path(&self.source_ref, "security_boundary.source_ref")?;
+        validate_security_boundary_decision(&self.decision)
+    }
+}
+
+impl RuntimeV2SecurityBoundaryResult {
+    pub fn validate(&self) -> Result<()> {
+        validate_nonempty_text(&self.refusal_reason, "security_boundary.refusal_reason")?;
+        self.resulting_state.validate()?;
+        validate_relative_path(&self.trace_ref, "security_boundary.trace_ref")?;
+        normalize_id(
+            self.recovery_action.clone(),
+            "security_boundary.recovery_action",
+        )?;
+        if self.allowed {
+            return Err(anyhow!(
+                "security boundary result must be refused for this proof"
+            ));
+        }
+        if self.resulting_state.manifold_lifecycle_state != "paused" {
+            return Err(anyhow!(
+                "security boundary refused resume must leave the manifold paused"
+            ));
+        }
+        Ok(())
+    }
+}
+
 impl RuntimeV2ProvisionalCitizenRecord {
     pub fn validate(&self) -> Result<()> {
         if self.schema_version != RUNTIME_V2_PROVISIONAL_CITIZEN_SCHEMA {
@@ -2086,6 +2311,89 @@ fn validate_operator_outcome(value: &str) -> Result<()> {
     }
 }
 
+fn validate_security_boundary_rules(
+    rules: &[RuntimeV2SecurityBoundaryEvaluatedRule],
+) -> Result<()> {
+    if rules.len() < 3 {
+        return Err(anyhow!(
+            "security_boundary.evaluated_rules must include operator, invariant, and kernel checks"
+        ));
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    let mut has_operator = false;
+    let mut has_invariant = false;
+    let mut has_kernel = false;
+    for rule in rules {
+        rule.validate()?;
+        if !seen.insert(rule.rule_id.clone()) {
+            return Err(anyhow!(
+                "security_boundary.evaluated_rules contains duplicate rule '{}'",
+                rule.rule_id
+            ));
+        }
+        match rule.rule_kind.as_str() {
+            "operator_policy" => has_operator = true,
+            "blocking_invariant" => has_invariant = true,
+            "kernel_service_policy" => has_kernel = true,
+            _ => {}
+        }
+    }
+    if !(has_operator && has_invariant && has_kernel) {
+        return Err(anyhow!(
+            "security_boundary.evaluated_rules missing required policy/invariant/kernel coverage"
+        ));
+    }
+    Ok(())
+}
+
+fn validate_security_boundary_rule_kind(value: &str) -> Result<()> {
+    match value {
+        "operator_policy" | "blocking_invariant" | "kernel_service_policy" => Ok(()),
+        other => Err(anyhow!("unsupported security_boundary.rule_kind '{other}'")),
+    }
+}
+
+fn validate_security_boundary_decision(value: &str) -> Result<()> {
+    match value {
+        "refuse" | "blocking_failure_present" | "keep_paused" => Ok(()),
+        other => Err(anyhow!("unsupported security_boundary.decision '{other}'")),
+    }
+}
+
+fn validate_security_boundary_related_artifacts(artifacts: &[String]) -> Result<()> {
+    if artifacts.is_empty() {
+        return Err(anyhow!(
+            "security_boundary.related_artifacts must not be empty"
+        ));
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    for artifact in artifacts {
+        validate_relative_path(artifact, "security_boundary.related_artifacts")?;
+        if !seen.insert(artifact.clone()) {
+            return Err(anyhow!(
+                "security_boundary.related_artifacts contains duplicate artifact"
+            ));
+        }
+    }
+    if !artifacts
+        .iter()
+        .any(|artifact| artifact == "runtime_v2/invariants/violation-0001.json")
+    {
+        return Err(anyhow!(
+            "security_boundary.related_artifacts must include invariant violation evidence"
+        ));
+    }
+    if !artifacts
+        .iter()
+        .any(|artifact| artifact == "runtime_v2/operator/control_report.json")
+    {
+        return Err(anyhow!(
+            "security_boundary.related_artifacts must include operator control evidence"
+        ));
+    }
+    Ok(())
+}
+
 fn validate_nonempty_text(value: &str, field: &str) -> Result<()> {
     if value.trim().is_empty() {
         return Err(anyhow!("{field} must not be empty"));
@@ -2231,6 +2539,27 @@ pub fn runtime_v2_operator_control_report_contract() -> Result<RuntimeV2Operator
         &manifold, &kernel, &citizens,
     )?;
     RuntimeV2OperatorControlReport::prototype(&manifold, &kernel, &citizens, &snapshot, &violation)
+}
+
+pub fn runtime_v2_security_boundary_proof_contract() -> Result<RuntimeV2SecurityBoundaryProofPacket>
+{
+    let manifold = runtime_v2_manifold_contract()?;
+    let kernel = RuntimeV2KernelLoopArtifacts::prototype(&manifold)?;
+    let citizens = RuntimeV2CitizenLifecycleArtifacts::prototype(&manifold)?;
+    let snapshot =
+        RuntimeV2SnapshotAndRehydrationArtifacts::prototype(&manifold, &kernel, &citizens)?;
+    let violation = RuntimeV2InvariantViolationArtifact::duplicate_active_citizen_prototype(
+        &manifold, &kernel, &citizens,
+    )?;
+    let operator_report = RuntimeV2OperatorControlReport::prototype(
+        &manifold, &kernel, &citizens, &snapshot, &violation,
+    )?;
+    RuntimeV2SecurityBoundaryProofPacket::refused_resume_without_invariant_prototype(
+        &manifold,
+        &kernel,
+        &violation,
+        &operator_report,
+    )
 }
 
 #[cfg(test)]
@@ -2947,5 +3276,106 @@ mod tests {
             .expect_err("terminated state with active citizens should fail")
             .to_string()
             .contains("terminated state must not retain active citizens"));
+    }
+
+    #[test]
+    fn runtime_v2_security_boundary_proof_records_refused_invalid_action() {
+        let proof = runtime_v2_security_boundary_proof_contract().expect("security proof");
+
+        assert_eq!(
+            proof.schema_version,
+            RUNTIME_V2_SECURITY_BOUNDARY_PROOF_SCHEMA
+        );
+        assert_eq!(proof.manifold_id, "proto-csm-01");
+        assert_eq!(proof.boundary_service_id, "operator_control_interface");
+        assert_eq!(
+            proof.attempt.attempted_action,
+            "resume_manifold_without_fresh_invariant_pass"
+        );
+        assert!(!proof.result.allowed);
+        assert_eq!(
+            proof.result.resulting_state.manifold_lifecycle_state,
+            "paused"
+        );
+        assert!(proof
+            .evaluated_rules
+            .iter()
+            .any(|rule| rule.rule_kind == "blocking_invariant"));
+        assert!(proof
+            .related_artifacts
+            .contains(&"runtime_v2/operator/control_report.json".to_string()));
+        assert!(proof
+            .related_artifacts
+            .contains(&"runtime_v2/invariants/violation-0001.json".to_string()));
+    }
+
+    #[test]
+    fn runtime_v2_security_boundary_proof_matches_golden_fixture() {
+        let proof = runtime_v2_security_boundary_proof_contract().expect("security proof");
+        let generated =
+            String::from_utf8(proof.to_pretty_json_bytes().expect("json")).expect("utf8");
+
+        assert_eq!(
+            generated,
+            include_str!("../tests/fixtures/runtime_v2/security_boundary/proof_packet.json")
+                .trim_end()
+        );
+    }
+
+    #[test]
+    fn runtime_v2_security_boundary_proof_writes_without_path_leakage() {
+        let temp_root = unique_temp_path("security-boundary");
+        let proof = runtime_v2_security_boundary_proof_contract().expect("security proof");
+
+        proof
+            .write_to_root(&temp_root)
+            .expect("write security proof");
+
+        let proof_path = temp_root.join(&proof.artifact_path);
+        assert!(proof_path.is_file());
+        let text = fs::read_to_string(proof_path).expect("security proof text");
+        assert!(!text.contains(temp_root.to_string_lossy().as_ref()));
+        assert!(text.contains("\"schema_version\": \"runtime_v2.security_boundary_proof.v1\""));
+        assert!(text.contains("\"allowed\": false"));
+        assert!(text.contains("resume_manifold_without_fresh_invariant_pass"));
+
+        fs::remove_dir_all(temp_root).ok();
+    }
+
+    #[test]
+    fn runtime_v2_security_boundary_validation_rejects_unsafe_or_ambiguous_state() {
+        let mut proof = runtime_v2_security_boundary_proof_contract().expect("security proof");
+        proof.artifact_path = "/tmp/security/proof.json".to_string();
+        assert!(proof
+            .validate()
+            .expect_err("absolute path should fail")
+            .to_string()
+            .contains("repository-relative path"));
+
+        let mut proof = runtime_v2_security_boundary_proof_contract().expect("security proof");
+        proof.result.allowed = true;
+        assert!(proof
+            .validate()
+            .expect_err("allowed invalid action should fail")
+            .to_string()
+            .contains("must be refused"));
+
+        let mut proof = runtime_v2_security_boundary_proof_contract().expect("security proof");
+        proof.evaluated_rules.remove(1);
+        assert!(proof
+            .validate()
+            .expect_err("missing invariant coverage should fail")
+            .to_string()
+            .contains("must include operator, invariant, and kernel checks"));
+
+        let mut proof = runtime_v2_security_boundary_proof_contract().expect("security proof");
+        proof
+            .related_artifacts
+            .retain(|artifact| artifact != "runtime_v2/operator/control_report.json");
+        assert!(proof
+            .validate()
+            .expect_err("missing operator evidence should fail")
+            .to_string()
+            .contains("operator control evidence"));
     }
 }

@@ -41,3 +41,17 @@ handles and failure artifacts.
 - `runtime_v2/invariants/*.json`
 - `runtime_v2/operator/control_report.json`
 - `runtime_v2/security_boundary/proof_packet.json`
+
+## WP-11 Security Boundary Proof
+
+The foundation prototype now exposes one bounded security-boundary proof through
+`runtime_v2_security_boundary_proof_contract()` and:
+
+```bash
+adl runtime-v2 security-boundary --out .adl/state/runtime_v2_security_boundary_proof.v1.json
+```
+
+The proof consumes the invariant violation and operator-control report and
+shows that an invalid resume attempt is refused before the paused Runtime v2
+state changes. This is a first wall stone for Runtime v2 safety evidence, not a
+complete defensive ecology.
