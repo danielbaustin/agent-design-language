@@ -30,7 +30,7 @@
 
 ## Release
 
-- [ ] Internal review complete
+- [x] Internal review complete
 - [ ] Third-party review complete
 - [ ] Accepted internal and third-party findings remediated or explicitly deferred
 - [ ] Release notes describe landed work only
