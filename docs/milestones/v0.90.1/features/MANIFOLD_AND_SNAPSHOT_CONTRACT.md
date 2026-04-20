@@ -22,7 +22,8 @@ The manifold record should include:
 ## WP-05 Implementation Surface
 
 WP-05 introduces the Rust-owned `runtime_v2.manifold.v1` contract in
-`adl/src/runtime_v2.rs`.
+the split Runtime v2 module tree under `adl/src/runtime_v2/`, primarily
+`manifold.rs` with module wiring in `mod.rs`.
 
 The contract defines:
 
@@ -77,8 +78,8 @@ The snapshot should include enough information to validate wake:
 
 ## WP-08 Implementation Surface
 
-WP-08 adds Rust-owned snapshot and rehydration proof artifacts in
-`adl/src/runtime_v2.rs`.
+WP-08 adds Rust-owned snapshot and rehydration proof artifacts under
+`adl/src/runtime_v2/snapshot.rs`.
 
 The contract defines:
 
