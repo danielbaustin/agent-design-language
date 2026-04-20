@@ -1,0 +1,65 @@
+{
+  "schema": "adl.csm_run_packet_fixture.v1",
+  "fixture_id": "proto-csm-01-first-run-packet-fixture",
+  "contract_ref": "runtime_v2/csm_run/run_packet_contract.json",
+  "manifold_id": "proto-csm-01",
+  "demo_id": "D2",
+  "source_mode": "fixture_contract",
+  "claim_boundary": "Fixture definition for the first bounded CSM run. This packet does not prove that Runtime v2 has executed the run.",
+  "required_before_live_run": [
+    "runtime_v2/csm_run/run_packet_contract.json",
+    "runtime_v2/csm_run/proto-csm-01-run-packet.json",
+    "runtime_v2/invariants/csm_run_invariant_map.json",
+    "runtime_v2/violations/violation_artifact_schema.json"
+  ],
+  "run_identity": {
+    "run_id": "proto-csm-01-first-bounded-run-0001",
+    "world_id": "proto-csm-01",
+    "operator_id": "operator.demo",
+    "worker_citizens": [
+      "proto-citizen-alpha",
+      "proto-citizen-beta"
+    ]
+  },
+  "stage_plan": [
+    {
+      "stage_id": "contract_and_fixture",
+      "owner_wp": "WP-03",
+      "required_input": "runtime_v2/manifold.json",
+      "required_output": "runtime_v2/csm_run/run_packet_contract.json",
+      "live_run_state": "not_started"
+    },
+    {
+      "stage_id": "invariant_and_violation_contract",
+      "owner_wp": "WP-04",
+      "required_input": "runtime_v2/csm_run/run_packet_contract.json",
+      "required_output": "runtime_v2/invariants/csm_run_invariant_map.json",
+      "live_run_state": "blocked_until_wp04"
+    },
+    {
+      "stage_id": "boot_and_admission",
+      "owner_wp": "WP-05",
+      "required_input": "runtime_v2/csm_run/proto-csm-01-run-packet.json",
+      "required_output": "runtime_v2/csm_run/boot_manifest.json",
+      "live_run_state": "planned"
+    },
+    {
+      "stage_id": "governed_episode_and_rejection",
+      "owner_wp": "WP-06-WP-08",
+      "required_input": "runtime_v2/csm_run/boot_manifest.json",
+      "required_output": "runtime_v2/csm_run/first_run_trace.jsonl",
+      "live_run_state": "planned"
+    },
+    {
+      "stage_id": "snapshot_wake_and_observatory",
+      "owner_wp": "WP-09-WP-10",
+      "required_input": "runtime_v2/csm_run/first_run_trace.jsonl",
+      "required_output": "runtime_v2/observatory/visibility_packet.json",
+      "live_run_state": "planned"
+    }
+  ],
+  "review_target": {
+    "entrypoint": "docs/milestones/v0.90.2/CSM_RUN_PACKET_CONTRACT_v0.90.2.md",
+    "focused_validation": "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture"
+  }
+}

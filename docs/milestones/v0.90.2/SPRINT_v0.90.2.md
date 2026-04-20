@@ -6,6 +6,7 @@
 - WP-02 #2246 Runtime v2 inheritance and compression audit
   (`RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md`)
 - WP-03 #2247 CSM run packet contract
+  (`CSM_RUN_PACKET_CONTRACT_v0.90.2.md`)
 - WP-04 #2248 invariant and violation artifact contract
 
 Exit when the milestone knows exactly what v0.90.1 produced, which CSM
