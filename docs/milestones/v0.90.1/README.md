@@ -70,6 +70,7 @@ Out of scope:
 - Feature index: `FEATURE_DOCS_v0.90.1.md`
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.90.1.md`
 - Quality gate: `QUALITY_GATE_v0.90.1.md`
+- Internal review: `INTERNAL_REVIEW_v0.90.1.md`
 - Release plan: `RELEASE_PLAN_v0.90.1.md`
 - Release notes draft: `RELEASE_NOTES_v0.90.1.md`
 - Issue wave plan: `WP_ISSUE_WAVE_v0.90.1.yaml`
