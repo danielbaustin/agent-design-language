@@ -1,18 +1,21 @@
 use anyhow::{anyhow, Context, Result};
 use chrono::{DateTime, Duration as ChronoDuration, Utc};
-use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::fs::{self, File, OpenOptions};
 use std::io::{BufRead, BufReader, Write};
-use std::path::{Path, PathBuf};
+use std::path::Path;
+#[cfg(test)]
+use std::path::PathBuf;
 use std::thread;
 use std::time::Duration;
 
 mod schema;
+mod storage;
 mod types;
 
 use schema::*;
+use storage::*;
 use types::LedgerCursor;
 pub use types::{
     AgentSpec, AgentStatusState, HeartbeatSpec, InspectOptions, LeaseRecord, LoadedAgentSpec,
@@ -387,19 +390,6 @@ fn ensure_locked_spec(loaded: &LoadedAgentSpec) -> Result<()> {
             }),
         )?;
     }
-    Ok(())
-}
-
-fn ensure_jsonl_file(path: &Path) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)
-            .with_context(|| format!("failed creating {}", parent.display()))?;
-    }
-    OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(path)
-        .with_context(|| format!("failed ensuring jsonl file {}", path.display()))?;
     Ok(())
 }
 
@@ -1146,118 +1136,8 @@ fn provider_binding(loaded: &LoadedAgentSpec, cycle_id: &str, bound_at: DateTime
     })
 }
 
-fn read_status(loaded: &LoadedAgentSpec) -> Result<Option<StatusRecord>> {
-    read_json_optional(&status_path(loaded))
-}
-
-fn write_status(loaded: &LoadedAgentSpec, status: &StatusRecord) -> Result<()> {
-    write_json_pretty(&status_path(loaded), status)
-}
-
-fn read_lease(loaded: &LoadedAgentSpec) -> Result<Option<LeaseRecord>> {
-    read_json_optional(&lease_path(loaded))
-}
-
-fn read_stop(loaded: &LoadedAgentSpec) -> Result<Option<StopRecord>> {
-    read_json_optional(&stop_path(loaded))
-}
-
 fn lease_is_stale(lease: &LeaseRecord) -> bool {
     lease.status == "active" && lease.expires_at <= Utc::now()
-}
-
-fn remove_lease(loaded: &LoadedAgentSpec) -> Result<()> {
-    let path = lease_path(loaded);
-    match fs::remove_file(&path) {
-        Ok(()) => Ok(()),
-        Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(()),
-        Err(err) => Err(err).with_context(|| format!("failed removing lease {}", path.display())),
-    }
-}
-
-fn read_json_optional<T>(path: &Path) -> Result<Option<T>>
-where
-    T: for<'de> Deserialize<'de>,
-{
-    if !path.exists() {
-        return Ok(None);
-    }
-    let raw = fs::read_to_string(path)
-        .with_context(|| format!("failed reading json artifact {}", path.display()))?;
-    let value = serde_json::from_str(&raw)
-        .with_context(|| format!("failed parsing json artifact {}", path.display()))?;
-    Ok(Some(value))
-}
-
-fn read_json_required(path: &Path) -> Result<Value> {
-    let raw = fs::read_to_string(path)
-        .with_context(|| format!("failed reading json artifact {}", path.display()))?;
-    serde_json::from_str(&raw)
-        .with_context(|| format!("failed parsing json artifact {}", path.display()))
-}
-
-fn write_json_pretty<T>(path: &Path, value: &T) -> Result<()>
-where
-    T: Serialize,
-{
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)
-            .with_context(|| format!("failed creating {}", parent.display()))?;
-    }
-    let file = File::create(path).with_context(|| format!("failed creating {}", path.display()))?;
-    serde_json::to_writer_pretty(&file, value)
-        .with_context(|| format!("failed writing {}", path.display()))?;
-    fs::OpenOptions::new()
-        .append(true)
-        .open(path)?
-        .write_all(b"\n")
-        .with_context(|| format!("failed finalizing {}", path.display()))?;
-    Ok(())
-}
-
-fn write_jsonl(path: &Path, values: &[Value]) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)
-            .with_context(|| format!("failed creating {}", parent.display()))?;
-    }
-    let mut file =
-        File::create(path).with_context(|| format!("failed creating {}", path.display()))?;
-    for value in values {
-        serde_json::to_writer(&mut file, value)
-            .with_context(|| format!("failed writing {}", path.display()))?;
-        file.write_all(b"\n")
-            .with_context(|| format!("failed finalizing {}", path.display()))?;
-    }
-    Ok(())
-}
-
-fn append_jsonl(path: &Path, value: &Value) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)
-            .with_context(|| format!("failed creating {}", parent.display()))?;
-    }
-    let mut file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(path)
-        .with_context(|| format!("failed opening jsonl file {}", path.display()))?;
-    serde_json::to_writer(&mut file, value)
-        .with_context(|| format!("failed writing jsonl file {}", path.display()))?;
-    file.write_all(b"\n")
-        .with_context(|| format!("failed finalizing jsonl file {}", path.display()))?;
-    Ok(())
-}
-
-fn append_operator_event(loaded: &LoadedAgentSpec, event: &str, details: Value) -> Result<()> {
-    let record = json!({
-        "schema": OPERATOR_EVENT_SCHEMA,
-        "agent_instance_id": loaded.spec.agent_instance_id.clone(),
-        "event": event,
-        "at": Utc::now(),
-        "operator": "local",
-        "details": details
-    });
-    append_jsonl(&operator_events_path(loaded), &record)
 }
 
 fn inspect_cycle(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<Value> {
@@ -1661,46 +1541,6 @@ fn memory_namespace(loaded: &LoadedAgentSpec) -> String {
         .filter(|value| !value.trim().is_empty())
         .map(str::to_string)
         .unwrap_or_else(|| loaded.spec.agent_instance_id.clone())
-}
-
-fn cycles_dir(loaded: &LoadedAgentSpec) -> PathBuf {
-    loaded.state_root.join("cycles")
-}
-
-fn locked_spec_path(loaded: &LoadedAgentSpec) -> PathBuf {
-    loaded.state_root.join("agent_spec.locked.json")
-}
-
-fn continuity_path(loaded: &LoadedAgentSpec) -> PathBuf {
-    loaded.state_root.join("continuity.json")
-}
-
-fn cycle_ledger_path(loaded: &LoadedAgentSpec) -> PathBuf {
-    loaded.state_root.join("cycle_ledger.jsonl")
-}
-
-fn provider_binding_history_path(loaded: &LoadedAgentSpec) -> PathBuf {
-    loaded.state_root.join("provider_binding_history.jsonl")
-}
-
-fn memory_index_path(loaded: &LoadedAgentSpec) -> PathBuf {
-    loaded.state_root.join("memory_index.json")
-}
-
-fn operator_events_path(loaded: &LoadedAgentSpec) -> PathBuf {
-    loaded.state_root.join("operator_events.jsonl")
-}
-
-fn status_path(loaded: &LoadedAgentSpec) -> PathBuf {
-    loaded.state_root.join("status.json")
-}
-
-fn lease_path(loaded: &LoadedAgentSpec) -> PathBuf {
-    loaded.state_root.join("lease.json")
-}
-
-fn stop_path(loaded: &LoadedAgentSpec) -> PathBuf {
-    loaded.state_root.join("stop.json")
 }
 
 fn hostname() -> String {
