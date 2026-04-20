@@ -153,4 +153,54 @@ mod tests {
             .to_string()
             .contains("runtime-v2 operator-controls requires --out <path>"));
     }
+
+    #[test]
+    fn runtime_v2_dispatch_covers_help_and_subcommand_errors() {
+        let repo = temp_repo("dispatch");
+
+        real_runtime_v2_in_repo(&["--help".to_string()], &repo).expect("top-level help");
+        real_runtime_v2_in_repo(&["help".to_string()], &repo).expect("help alias");
+
+        let err = real_runtime_v2_in_repo(&[], &repo).expect_err("missing subcommand should fail");
+        assert!(err
+            .to_string()
+            .contains("runtime-v2 requires a subcommand: operator-controls"));
+
+        let err = real_runtime_v2_in_repo(&["bogus".to_string()], &repo)
+            .expect_err("unknown subcommand should fail");
+        assert!(err
+            .to_string()
+            .contains("unknown runtime-v2 subcommand 'bogus'"));
+    }
+
+    #[test]
+    fn runtime_v2_operator_controls_covers_stdout_help_and_absolute_output() {
+        let repo = temp_repo("operator-controls-branches");
+        let out_path = repo.join("absolute/operator_report.json");
+
+        real_runtime_v2_in_repo(&["operator-controls".to_string()], &repo).expect("stdout report");
+        real_runtime_v2_in_repo(
+            &["operator-controls".to_string(), "--help".to_string()],
+            &repo,
+        )
+        .expect("operator controls help");
+        real_runtime_v2_in_repo(
+            &[
+                "operator-controls".to_string(),
+                "--out".to_string(),
+                out_path.to_string_lossy().to_string(),
+            ],
+            &repo,
+        )
+        .expect("absolute output path");
+
+        assert!(out_path.is_file());
+
+        fs::remove_dir_all(repo).ok();
+    }
+
+    #[test]
+    fn runtime_v2_public_dispatch_uses_current_directory() {
+        real_runtime_v2(&["operator-controls".to_string()]).expect("public dispatch stdout");
+    }
 }
