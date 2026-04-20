@@ -38,8 +38,11 @@
 
 ## Release
 
+- [ ] Docs, quality, and reviewer entry surfaces converged
 - [ ] Internal review complete
+- [ ] External / 3rd-party review complete
 - [ ] Accepted findings remediated or explicitly deferred
 - [ ] Release notes describe landed work only
 - [ ] v0.91/v0.92 handoff preserves later scope
+- [ ] Next-milestone planning complete before release ceremony
 - [ ] Release ceremony complete

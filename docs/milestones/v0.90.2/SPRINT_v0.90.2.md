@@ -35,12 +35,17 @@ adversarial hook, concrete hardening probes, and one integrated proof packet.
 
 ## Sprint 4 - Review And Release Tail
 
-- WP-15 docs pass
-- WP-16 quality and coverage gate
-- WP-17 internal review
-- WP-18 remediation
-- WP-19 release readiness and v0.91/v0.92 handoff
+- WP-15 docs, quality, and review convergence
+- WP-16 internal review
+- WP-17 external / 3rd-party review
+- WP-18 review findings remediation
+- WP-19 next milestone planning and v0.91/v0.92 handoff
 - WP-20 release ceremony
 
 Exit when the milestone is truthful, releaseable, and does not steal later
 identity or moral/emotional scope.
+
+Sprint 4 must follow the v0.87.1 closeout order exactly: convergence before
+internal review, internal review before external review, external review before
+remediation, remediation before next-milestone planning, and planning before
+the final release ceremony.

@@ -10,6 +10,7 @@ notes:
   - "v0.90.2 is the first bounded CSM run milestone plus hardening around that run."
   - "Preserve one distinct governed adversarial hook in WP-13 without turning v0.90.2 into the full security ecology."
   - "Apply v0.90.1 compression rules: generated issue wave, worktree-first execution, validation profiles, and continuously maintained evidence."
+  - "Preserve the v0.87.1 closeout pattern: docs/review convergence, internal review, external / 3rd-party review, remediation, next-milestone planning, release ceremony."
 work_packages:
   - wp: WP-01
     title: Promote and finalize v0.90.2 milestone package
@@ -54,20 +55,20 @@ work_packages:
     title: Integrated first CSM run demo
     outcome: integrated CSM run demo packet
   - wp: WP-15
-    title: Runtime v2 first-run docs pass
-    outcome: aligned feature docs, demo matrix, and README
+    title: Docs, quality, and review convergence
+    outcome: aligned docs, quality posture, demo matrix, README, and reviewer entry surfaces
   - wp: WP-16
-    title: Quality and coverage gate
-    outcome: truthful quality posture
-  - wp: WP-17
     title: Internal review
     outcome: findings-first internal review packet
+  - wp: WP-17
+    title: External / 3rd-party review
+    outcome: completed external review record
   - wp: WP-18
-    title: Review remediation
-    outcome: accepted findings fixed or explicitly deferred
+    title: Review findings remediation
+    outcome: accepted findings fixed or explicitly deferred with owner and rationale
   - wp: WP-19
-    title: Release readiness and v0.91/v0.92 handoff
-    outcome: release notes, checklist, reviewer handoff, and preserved later boundaries
+    title: Next milestone planning and v0.91/v0.92 handoff
+    outcome: next-milestone planning package, release notes, checklist, reviewer handoff, and preserved later boundaries
   - wp: WP-20
     title: Release ceremony
     outcome: v0.90.2 closed truthfully
