@@ -44,6 +44,11 @@ completion, or v0.92 identity rebinding.
 All command behavior is read-only. The CLI validates and renders the packet; it
 does not mutate Runtime v2 state.
 
+Future operator actions are governed by the v0.90.1 command packet contract.
+That contract defines how pause, resume, snapshot, trace annotation, and
+shepherd requests must become kernel-routed command packets with operator-event
+logging before any live mutation is allowed.
+
 ## Why This Matters
 
 The static console is the spectacular human surface. The operator report is the

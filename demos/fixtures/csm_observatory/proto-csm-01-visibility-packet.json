@@ -368,17 +368,17 @@
     "disabled_actions": [
       {
         "action": "pause_citizen",
-        "reason": "Requires operator command packet design and kernel handling.",
+        "reason": "Requires Runtime v2 kernel handling of command packets.",
         "future_issue": 2192
       },
       {
         "action": "request_snapshot",
-        "reason": "Requires snapshot command packet and Runtime v2 snapshot implementation.",
+        "reason": "Requires Runtime v2 snapshot implementation and command handler.",
         "future_issue": 2192
       },
       {
         "action": "resume_citizen",
-        "reason": "Requires recovery eligibility and wake semantics.",
+        "reason": "Requires recovery eligibility, wake semantics, and Runtime v2 kernel handling.",
         "future_issue": 2192
       }
     ],

@@ -12,6 +12,7 @@
 | `features/CSM_OBSERVATORY_VISIBILITY_PACKET.md` | CSM visibility packet contract for Observatory console, reports, CLI, and operator-command follow-ons | #2188 |
 | `features/CSM_OBSERVATORY_OPERATOR_REPORT.md` | deterministic operator/reviewer report generated from the CSM visibility packet | #2190 |
 | `demos/v0.90.1/csm_observatory_cli_demo.md` | command-driven Observatory demo bundle for packet/report/console-reference proof | #2191 |
+| `features/CSM_OBSERVATORY_OPERATOR_COMMAND_PACKETS.md` | safe command packet contract for future Observatory pause/resume/snapshot/annotate/shepherd interactions without UI state mutation | #2192 |
 
 ## Compression-Enabling Process Work
 

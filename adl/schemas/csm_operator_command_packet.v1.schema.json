@@ -1,0 +1,320 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-design-language.org/schemas/csm_operator_command_packet.v1.schema.json",
+  "title": "ADL CSM Operator Command Packet v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "command_id",
+    "command_kind",
+    "requested_by",
+    "requested_at",
+    "target",
+    "intent",
+    "availability",
+    "safety",
+    "confirmation",
+    "kernel_handoff",
+    "event_logging",
+    "evidence_refs",
+    "claim_boundary"
+  ],
+  "properties": {
+    "schema": {
+      "const": "adl.csm_operator_command_packet.v1"
+    },
+    "command_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "command_kind": {
+      "$ref": "#/$defs/command_kind"
+    },
+    "requested_by": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requested_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_kind",
+        "target_id",
+        "manifold_id",
+        "evidence_ref"
+      ],
+      "properties": {
+        "target_kind": {
+          "$ref": "#/$defs/target_kind"
+        },
+        "target_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "manifold_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "summary",
+        "rationale",
+        "requested_outcome"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requested_outcome": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "availability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "reason",
+        "enabled_in"
+      ],
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/availability_state"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "enabled_in": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "policy_checks",
+        "side_effect_scope",
+        "operator_risk",
+        "citizen_risk"
+      ],
+      "properties": {
+        "classification": {
+          "$ref": "#/$defs/safety_classification"
+        },
+        "policy_checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "side_effect_scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operator_risk": {
+          "type": "string",
+          "minLength": 1
+        },
+        "citizen_risk": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "confirmation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "prompt",
+        "required_phrase",
+        "expires_after_seconds"
+      ],
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "prompt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "required_phrase": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expires_after_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      }
+    },
+    "kernel_handoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "service",
+        "operation",
+        "policy_checks",
+        "trace_append_required",
+        "invariant_check_required",
+        "ui_direct_mutation_allowed"
+      ],
+      "properties": {
+        "service": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "trace_append_required": {
+          "type": "boolean"
+        },
+        "invariant_check_required": {
+          "type": "boolean"
+        },
+        "ui_direct_mutation_allowed": {
+          "const": false
+        }
+      }
+    },
+    "event_logging": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_schema",
+        "event_ref",
+        "required_fields",
+        "redact_prompt_or_tool_args",
+        "append_before_effect"
+      ],
+      "properties": {
+        "event_schema": {
+          "const": "adl.csm_operator_event.v1"
+        },
+        "event_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required_fields": {
+          "type": "array",
+          "minItems": 10,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "redact_prompt_or_tool_args": {
+          "const": true
+        },
+        "append_before_effect": {
+          "type": "boolean"
+        }
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "claim_boundary": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$defs": {
+    "command_kind": {
+      "enum": [
+        "inspect_manifold",
+        "inspect_citizen",
+        "inspect_episode",
+        "open_freedom_gate_decision",
+        "annotate_trace",
+        "ask_shepherd",
+        "pause_citizen",
+        "resume_citizen",
+        "request_snapshot",
+        "request_quiesce",
+        "request_wake",
+        "request_recovery_review"
+      ]
+    },
+    "target_kind": {
+      "enum": [
+        "manifold",
+        "citizen",
+        "episode",
+        "trace",
+        "invariant",
+        "freedom_gate",
+        "shepherd",
+        "kernel_service",
+        "snapshot"
+      ]
+    },
+    "availability_state": {
+      "enum": [
+        "available",
+        "disabled",
+        "deferred",
+        "requires_confirmation",
+        "submitted",
+        "refused"
+      ]
+    },
+    "safety_classification": {
+      "enum": [
+        "read_only",
+        "advisory",
+        "reversible_state_change",
+        "guarded_mutation",
+        "destructive_or_irreversible"
+      ]
+    }
+  }
+}
