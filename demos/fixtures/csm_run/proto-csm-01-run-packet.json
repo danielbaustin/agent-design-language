@@ -34,7 +34,7 @@
       "owner_wp": "WP-04",
       "required_input": "runtime_v2/csm_run/run_packet_contract.json",
       "required_output": "runtime_v2/invariants/csm_run_invariant_map.json",
-      "live_run_state": "blocked_until_wp04"
+      "live_run_state": "contract_landed"
     },
     {
       "stage_id": "boot_and_admission",
@@ -60,6 +60,6 @@
   ],
   "review_target": {
     "entrypoint": "docs/milestones/v0.90.2/CSM_RUN_PACKET_CONTRACT_v0.90.2.md",
-    "focused_validation": "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture"
+    "focused_validation": "cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture"
   }
 }

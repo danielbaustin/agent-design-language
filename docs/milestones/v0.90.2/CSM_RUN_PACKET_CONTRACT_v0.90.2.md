@@ -2,7 +2,8 @@
 
 ## Status
 
-WP-03 / D2 contract artifact: LANDED.
+WP-03 / D2 packet contract artifact: LANDED.
+WP-04 / D2 invariant and violation contract artifacts: LANDED.
 
 This document defines the first bounded CSM run packet contract for
 `proto-csm-01`. It is intentionally a contract and fixture gate, not a live run
@@ -15,6 +16,8 @@ own run packet surfaces.
 | --- | --- |
 | `adl/src/runtime_v2/csm_run.rs` | Code-backed contract type, prototype, validation, and serialization |
 | `adl/tests/fixtures/runtime_v2/csm_run/run_packet_contract.json` | Golden contract fixture used by Runtime v2 tests |
+| `adl/tests/fixtures/runtime_v2/invariants/csm_run_invariant_map.json` | Golden invariant map fixture used by Runtime v2 tests |
+| `adl/tests/fixtures/runtime_v2/violations/violation_artifact_schema.json` | Golden violation schema fixture used by Runtime v2 tests |
 | `demos/fixtures/csm_run/proto-csm-01-run-packet.json` | Reviewer-facing fixture definition for the first bounded run |
 | `docs/milestones/v0.90.2/RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md` | WP-02 inheritance gate that this contract consumes |
 | `docs/milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md` | D2 proof target |
@@ -63,7 +66,7 @@ silently reorder this spine or produce competing first-run packet contracts.
 
 ## D2 Classification
 
-D2 is partially proving after WP-03.
+D2 is contract-proving after WP-04.
 
 Proved now:
 
@@ -71,11 +74,14 @@ Proved now:
 - the contract round-trips to a golden fixture
 - the fixture has a bounded claim boundary and stable review target
 - the run spine and pre-live-run gates are explicit
+- the invariant map is code-backed and golden-fixture checked
+- the violation artifact schema is code-backed and golden-fixture checked
+- the positive packet fixture and negative violation fixture are paired
 
 Not proved yet:
 
-- WP-04 invariant map and violation schema have not landed
 - `proto-csm-01` has not booted or executed a live run
+- WP-08 invalid-action flow has not executed through the live runtime path
 - Observatory output has not been generated from live first-run artifacts
 
 ## Validation
@@ -84,18 +90,21 @@ Focused validation:
 
 ```sh
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture
+cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture
 ```
 
-This validates the contract prototype, golden fixture, path hygiene, and
-negative cases for unsafe paths, non-contiguous stages, missing violation
-schema, and live-run overclaiming.
+This validates the contract prototypes, golden fixtures, path hygiene, positive
+and negative fixture pairing, and negative cases for unsafe paths,
+non-contiguous stages, missing invariant/violation coverage, and live-run
+overclaiming.
 
 ## Non-Claims
 
 This contract does not prove:
 
 - a live CSM run
-- complete WP-04 invariant expansion
+- WP-05 boot and admission
+- WP-08 invalid-action execution through the live runtime path
 - first true Gödel-agent birth
 - full v0.91 moral or emotional civilization
 - v0.92 identity, migration, capability rebinding, or birthday semantics

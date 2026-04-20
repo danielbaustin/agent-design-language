@@ -104,7 +104,7 @@
         "trace_sequence_must_advance_monotonically",
         "snapshot_restore_must_validate_before_active_state"
       ],
-      "status_before_wp": "planned",
+      "status_before_wp": "landed_by_wp04",
       "proof_obligation": "D2 gains invariant map and violation schema before WP-05 starts"
     },
     {
@@ -157,11 +157,12 @@
     ],
     "validation_commands": [
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture",
       "git diff --check"
     ],
     "non_claims": [
       "does not execute a live CSM run",
-      "does not complete WP-04 invariant expansion",
+      "does not execute WP-05 boot and admission",
       "does not claim first true Godel-agent birth",
       "does not implement v0.91 moral or emotional civilization scope",
       "does not implement v0.92 identity or migration semantics"

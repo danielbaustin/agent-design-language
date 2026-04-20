@@ -174,7 +174,7 @@ impl RuntimeV2CsmRunPacketContract {
                         "trace_sequence_must_advance_monotonically".to_string(),
                         "snapshot_restore_must_validate_before_active_state".to_string(),
                     ],
-                    status_before_wp: "planned".to_string(),
+                    status_before_wp: "landed_by_wp04".to_string(),
                     proof_obligation:
                         "D2 gains invariant map and violation schema before WP-05 starts"
                             .to_string(),
@@ -237,11 +237,12 @@ impl RuntimeV2CsmRunPacketContract {
                 ],
                 validation_commands: vec![
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture".to_string(),
+                    "cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture".to_string(),
                     "git diff --check".to_string(),
                 ],
                 non_claims: vec![
                     "does not execute a live CSM run".to_string(),
-                    "does not complete WP-04 invariant expansion".to_string(),
+                    "does not execute WP-05 boot and admission".to_string(),
                     "does not claim first true Godel-agent birth".to_string(),
                     "does not implement v0.91 moral or emotional civilization scope"
                         .to_string(),
