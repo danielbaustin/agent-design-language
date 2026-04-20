@@ -11,6 +11,12 @@
 | `features/OPERATOR_REVIEW_SURFACES.md` | CSM Observatory and reviewer inspection reports for first-run and hardening evidence | WP-10 #2254, WP-14 #2258 |
 | `features/SECURITY_BOUNDARY_EVIDENCE.md` | governed security-boundary proof without red/blue overclaim | WP-08 #2252, WP-13 #2257 |
 
+## Proof And Audit Docs
+
+| Doc | Purpose | Execution WPs |
+| --- | --- | --- |
+| `RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md` | D1 proof that v0.90.2 inherits the actual v0.90.1 Runtime v2 and CSM Observatory substrate before implementation widens | WP-02 #2246 |
+
 ## Context / Idea Docs
 
 | Idea Doc | Purpose | Boundary |

@@ -9,13 +9,14 @@ Current execution state:
 
 - WP-01 is #2245 and finalizes this package after issue-wave creation.
 - WP-02 through WP-20 are #2246-#2264.
-- WP-02 is the next execution gate before runtime implementation widens.
+- WP-02 provides the Runtime v2 inheritance and compression audit before
+  runtime implementation widens.
 
 ## Thesis
 
 v0.90.2 is the first bounded CSM run milestone.
 
-v0.90.1 should build the Runtime v2 substrate and the first visibility window.
+v0.90.1 built the Runtime v2 substrate and the first visibility window.
 v0.90.2 should make a small governed world actually run: boot a manifold, admit
 citizens, schedule governed episodes, reject one invalid action, snapshot,
 rehydrate, wake, and emit Observatory-visible evidence.
@@ -62,6 +63,8 @@ Out of scope:
 - Sprint plan: `SPRINT_v0.90.2.md`
 - Decisions log: `DECISIONS_v0.90.2.md`
 - Demo matrix: `DEMO_MATRIX_v0.90.2.md`
+- Inheritance and compression audit:
+  `RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md`
 - Feature index: `FEATURE_DOCS_v0.90.2.md`
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.90.2.md`
 - Release plan: `RELEASE_PLAN_v0.90.2.md`
@@ -87,3 +90,10 @@ v0.90.2 should inherit the v0.90.1 compression model:
 
 Compression is allowed only when it makes evidence easier to produce and review.
 It is not permission to skip demos, tests, or release truth.
+
+## WP-02 Inheritance Gate
+
+`RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md` is the D1 proof
+artifact for this milestone. It records that v0.90.2 can inherit the v0.90.1
+Runtime v2 foundation, CSM Observatory read-only surfaces, release evidence, and
+compression workflow posture while preserving the later-scope non-claims.
