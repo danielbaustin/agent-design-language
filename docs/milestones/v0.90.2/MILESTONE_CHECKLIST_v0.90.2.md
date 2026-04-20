@@ -2,8 +2,8 @@
 
 ## Planning
 
-- [ ] Planning docs promoted into `docs/milestones/v0.90.2/`
-- [ ] Issue wave opened from reviewed WP YAML
+- [x] Planning docs promoted into `docs/milestones/v0.90.2/`
+- [x] Issue wave opened from reviewed WP YAML as #2245-#2264
 - [ ] v0.90.1 inheritance audited against actual landed artifacts
 - [ ] Compression readiness reviewed before implementation begins
 - [ ] CSM run packet contract reviewed before Runtime v2 work widens
