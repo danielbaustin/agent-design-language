@@ -36,4 +36,4 @@
 - [x] Release notes describe landed work only
 - [x] v0.91/v0.92 handoff preserves later scope
 - [x] Release-evidence packet assembled
-- [ ] Release ceremony complete
+- [x] Release ceremony preflight complete; final tag/release publication runs from clean main after merge

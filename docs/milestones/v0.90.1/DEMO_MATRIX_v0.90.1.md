@@ -2,9 +2,9 @@
 
 ## Status
 
-Issue wave open. Runtime v2 foundation, CSM Observatory implementation rows,
-quality evidence, review disposition, and release evidence have landed. WP-20
-release ceremony remains.
+Issue wave closed through WP-20. Runtime v2 foundation, CSM Observatory
+implementation rows, quality evidence, review disposition, release evidence,
+and release ceremony preflight have landed.
 
 | ID | Demo | WP | Proof Claim | Required Artifacts | Status |
 | --- | --- | --- | --- | --- | --- |
