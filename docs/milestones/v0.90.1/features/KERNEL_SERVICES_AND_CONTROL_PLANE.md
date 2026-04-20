@@ -17,7 +17,8 @@ Define the bounded Runtime v2 kernel service loop and operator controls.
 
 ## WP-06 Implementation Surface
 
-WP-06 adds the bounded kernel service loop contract to `adl/src/runtime_v2.rs`.
+WP-06 adds the bounded kernel service loop contract under
+`adl/src/runtime_v2/kernel_loop.rs`.
 
 The contract defines:
 
@@ -62,8 +63,8 @@ cargo test --manifest-path adl/Cargo.toml runtime_v2::tests::runtime_v2_kernel
 
 ## WP-10 Operator Control Surface
 
-WP-10 adds a bounded operator control report contract to `adl/src/runtime_v2.rs`
-and a CLI hook for reviewers:
+WP-10 adds a bounded operator control report contract under
+`adl/src/runtime_v2/operator.rs` and a CLI hook for reviewers:
 
 ```bash
 adl runtime-v2 operator-controls --out .adl/state/runtime_v2_operator_control_report.v1.json

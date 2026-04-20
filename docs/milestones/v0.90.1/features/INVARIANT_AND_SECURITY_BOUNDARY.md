@@ -19,8 +19,9 @@ Candidate violations:
 
 ## WP-09 Implementation Surface
 
-WP-09 adds a Rust-owned invariant violation artifact in
-`adl/src/runtime_v2.rs`.
+WP-09 adds a Rust-owned invariant violation artifact in the split Runtime v2
+module tree under `adl/src/runtime_v2/`, primarily `invariant.rs` with shared
+contracts and types in `contracts.rs` and `types.rs`.
 
 The contract defines:
 
@@ -64,8 +65,8 @@ The security proof must include:
 
 ## WP-11 Implementation Surface
 
-WP-11 adds a Rust-owned security-boundary proof packet in
-`adl/src/runtime_v2.rs` and a reviewer CLI hook:
+WP-11 adds a Rust-owned security-boundary proof packet under
+`adl/src/runtime_v2/security.rs` and a reviewer CLI hook:
 
 ```bash
 adl runtime-v2 security-boundary --out .adl/state/runtime_v2_security_boundary_proof.v1.json

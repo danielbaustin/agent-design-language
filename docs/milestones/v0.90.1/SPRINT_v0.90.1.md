@@ -61,3 +61,7 @@ Opened issues: #2157 through #2160.
 
 Exit when the milestone is truthful, releaseable, and does not steal later
 identity or moral/emotional scope.
+
+WP-18 is a boundary-preserving handoff only: it records the moral/emotional
+v0.91 and birthday/identity v0.92 handoff without implementing those later
+milestones inside v0.90.1.

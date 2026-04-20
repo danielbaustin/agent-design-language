@@ -32,7 +32,9 @@ Each provisional citizen should include:
 
 ## WP-07 Implementation Surface
 
-WP-07 adds the provisional citizen lifecycle contract to `adl/src/runtime_v2.rs`.
+WP-07 adds the provisional citizen lifecycle contract under
+`adl/src/runtime_v2/citizen.rs`, with shared Runtime v2 contracts and types
+kept in `contracts.rs` and `types.rs`.
 
 The contract defines:
 

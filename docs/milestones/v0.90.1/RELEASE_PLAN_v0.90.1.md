@@ -18,6 +18,9 @@ weakened release truth.
 - Quality gate record: `QUALITY_GATE_v0.90.1.md` and
   `bash adl/tools/demo_v0901_quality_gate.sh`
 - Internal review, third-party review, and remediation record
+- WP-17 release-readiness packet and checklist
+- WP-18 v0.91/v0.92 handoff preserving moral/emotional and birthday/identity
+  boundaries without claiming implementation of those later milestones
 - Release-evidence packet tying demos, quality, review, and readiness together
 - Release notes that do not overclaim birthday, moral/emotional civilization,
   complete migration, or red/blue ecology
@@ -43,3 +46,7 @@ The release must hand off cleanly to:
 - v0.91 for affect, kindness, humor, morals, wellbeing, and civic substrate
 - v0.92 for first true birthday, identity continuity, capability rebinding, and
   richer memory
+
+WP-18 is the bounded handoff proof for those later milestone boundaries. It is
+not implementation of v0.91 moral/emotional civilization or v0.92 birthday and
+identity-continuity scope.

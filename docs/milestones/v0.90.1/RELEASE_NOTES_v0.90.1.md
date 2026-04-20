@@ -25,6 +25,9 @@ v0.90.1 is building the first bounded Runtime v2 foundation prototype.
 - WP-15 internal review.
 - WP-15A third-party review.
 - WP-16 accepted-finding remediation.
+- WP-17 release readiness with final checklist and readiness packet.
+- WP-18 v0.91/v0.92 handoff preserving moral/emotional and birthday/identity
+  boundaries without implementing those later milestone scopes.
 - WP-19 release-evidence packet for reviewer navigation.
 - WP-20 release ceremony and final version bump.
 

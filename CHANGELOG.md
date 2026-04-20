@@ -4,8 +4,9 @@ All notable project-level changes are summarized here by milestone/release.
 
 ## v0.90.1 (Unreleased)
 
-Status: Active milestone; implementation wave complete through WP-12, docs pass
-under review in WP-13.
+Status: Active milestone; implementation/docs/quality work complete through
+WP-14, with WP-15/WP-15A/WP-16 review and remediation active before the
+WP-17 through WP-20 release tail.
 
 Summary:
 - The v0.90.1 issue wave is open: WP-01 is #2141, WP-02 through WP-20 are
@@ -19,9 +20,11 @@ Summary:
 - The CSM Observatory visibility lane has landed read-only reviewer/operator
   surfaces: visibility packet, operator report, CLI bundle, static console
   reference, and safe future command-packet design.
-- WP-13 aligns the review-facing docs, demo matrix, feature list, changelog,
-  README, and review guide before WP-14 quality gate, WP-15 internal review,
-  WP-15A third-party review, and WP-16 remediation.
+- WP-13 aligned the review-facing docs, demo matrix, feature list, changelog,
+  README, and review guide; WP-14 established the quality gate; WP-15,
+  WP-15A, and WP-16 now carry the review/remediation band before WP-17 release
+  readiness, WP-18 v0.91/v0.92 handoff, WP-19 release evidence, and WP-20
+  release ceremony.
 - The crate version is `0.90.1` for the v0.90.1 release line.
 
 References:
