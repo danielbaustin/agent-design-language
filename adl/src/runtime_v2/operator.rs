@@ -32,13 +32,13 @@ impl RuntimeV2OperatorControlReport {
             kernel_loop_status: "operator_paused".to_string(),
             ..active_state.clone()
         };
-        let snapshotting_state = RuntimeV2OperatorControlState::from_parts(
+        let _snapshotting_state = RuntimeV2OperatorControlState::from_parts(
             "snapshotting",
             &kernel.state,
             citizens,
             Some(snapshot.snapshot.snapshot_id.clone()),
         );
-        let terminated_state = RuntimeV2OperatorControlState {
+        let _terminated_state = RuntimeV2OperatorControlState {
             manifold_lifecycle_state: "terminated".to_string(),
             kernel_loop_status: "operator_terminated".to_string(),
             active_citizen_count: 0,
@@ -79,21 +79,21 @@ impl RuntimeV2OperatorControlReport {
                     requested_by: "operator.cli".to_string(),
                     affected_service: "scheduler".to_string(),
                     pre_state: active_state.clone(),
-                    post_state: paused_state.clone(),
-                    outcome: "allowed".to_string(),
+                    post_state: active_state.clone(),
+                    outcome: "deferred".to_string(),
                     trace_event_ref: "runtime_v2/traces/operator/pause-manifold.json".to_string(),
-                    reason: "scheduler accepts a bounded operator pause before new episodes"
+                    reason: "pause command is deferred while kernel lifecycle gating is explicit"
                         .to_string(),
                 },
                 RuntimeV2OperatorCommandReport {
                     command: "resume_manifold".to_string(),
                     requested_by: "operator.cli".to_string(),
                     affected_service: "scheduler".to_string(),
-                    pre_state: paused_state,
-                    post_state: active_state.clone(),
-                    outcome: "allowed".to_string(),
+                    pre_state: paused_state.clone(),
+                    post_state: paused_state,
+                    outcome: "refused".to_string(),
                     trace_event_ref: "runtime_v2/traces/operator/resume-manifold.json".to_string(),
-                    reason: "invariant checks passed and the paused manifold may resume"
+                    reason: "invalid resume attempt is deferred until fresh invariant evidence exists"
                         .to_string(),
                 },
                 RuntimeV2OperatorCommandReport {
@@ -101,10 +101,10 @@ impl RuntimeV2OperatorControlReport {
                     requested_by: "operator.cli".to_string(),
                     affected_service: "snapshot_manager".to_string(),
                     pre_state: active_state.clone(),
-                    post_state: snapshotting_state,
-                    outcome: "allowed".to_string(),
+                    post_state: active_state.clone(),
+                    outcome: "deferred".to_string(),
                     trace_event_ref: "runtime_v2/traces/operator/request-snapshot.json".to_string(),
-                    reason: "snapshot manager can seal a bounded snapshot after invariants pass"
+                    reason: "snapshot command is deferred while live snapshot re-hydration policy is under v0.90.1 guard"
                         .to_string(),
                 },
                 RuntimeV2OperatorCommandReport {
@@ -124,12 +124,12 @@ impl RuntimeV2OperatorControlReport {
                     command: "terminate_manifold".to_string(),
                     requested_by: "operator.cli".to_string(),
                     affected_service: "resource_ledger".to_string(),
-                    pre_state: active_state,
-                    post_state: terminated_state,
-                    outcome: "allowed".to_string(),
+                    pre_state: active_state.clone(),
+                    post_state: active_state,
+                    outcome: "deferred".to_string(),
                     trace_event_ref: "runtime_v2/traces/operator/terminate-manifold.json"
                         .to_string(),
-                    reason: "resource ledger records bounded termination and release intent"
+                    reason: "termination is deferred until live deactivation policy is explicit"
                         .to_string(),
                 },
             ],

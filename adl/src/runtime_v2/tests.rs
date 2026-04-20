@@ -714,24 +714,28 @@ fn runtime_v2_operator_control_report_records_bounded_controls() {
     assert_eq!(report.commands.len(), 7);
     assert_eq!(report.commands[0].command, "inspect_manifold");
     assert_eq!(report.commands[2].command, "pause_manifold");
+    assert_eq!(report.commands[2].outcome, "deferred");
     assert_eq!(
         report.commands[2].post_state.manifold_lifecycle_state,
-        "paused"
+        "active"
     );
     assert_eq!(report.commands[3].command, "resume_manifold");
+    assert_eq!(report.commands[3].outcome, "refused");
     assert_eq!(
         report.commands[4].post_state.latest_snapshot_id.as_deref(),
-        Some("snapshot-0001")
+        None
     );
+    assert_eq!(report.commands[4].outcome, "deferred");
     assert_eq!(report.commands[5].command, "inspect_last_failures");
     assert!(report.commands[5]
         .trace_event_ref
         .contains("violation-0001"));
     assert_eq!(
         report.commands[6].post_state.manifold_lifecycle_state,
-        "terminated"
+        "active"
     );
-    assert_eq!(report.commands[6].post_state.active_citizen_count, 0);
+    assert_eq!(report.commands[6].outcome, "deferred");
+    assert_eq!(report.commands[6].post_state.active_citizen_count, 1);
 }
 
 #[test]
@@ -785,6 +789,7 @@ fn runtime_v2_operator_control_validation_rejects_unsafe_or_ambiguous_state() {
 
     let mut report = runtime_v2_operator_control_report_contract().expect("operator report");
     report.commands[2].post_state = report.commands[2].pre_state.clone();
+    report.commands[2].outcome = "allowed".to_string();
     assert!(report
         .validate()
         .expect_err("mutating command with unchanged state should fail")
@@ -792,6 +797,7 @@ fn runtime_v2_operator_control_validation_rejects_unsafe_or_ambiguous_state() {
         .contains("mutating control commands must change post_state"));
 
     let mut report = runtime_v2_operator_control_report_contract().expect("operator report");
+    report.commands[6].post_state.manifold_lifecycle_state = "terminated".to_string();
     report.commands[6].post_state.active_citizen_count = 1;
     assert!(report
         .validate()
