@@ -26,6 +26,8 @@ weakened release truth.
   `V091_V092_HANDOFF_v0.90.1.md`
 - Release-evidence packet tying demos, quality, review, and readiness together:
   `RELEASE_EVIDENCE_v0.90.1.md`
+- WP-20 release ceremony preflight:
+  `bash adl/tools/release_ceremony.sh --version v0.90.1 --target-branch codex/2160-v0-90-1-wp-20-release-ceremony`
 - Release notes that do not overclaim birthday, moral/emotional civilization,
   complete migration, or red/blue ecology
 

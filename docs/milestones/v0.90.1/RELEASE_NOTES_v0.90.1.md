@@ -28,7 +28,8 @@ v0.90.1 delivers the first bounded Runtime v2 foundation prototype.
 - WP-17 release readiness is recorded in RELEASE_READINESS_v0.90.1.md.
 - WP-18 v0.91/v0.92 handoff is recorded in V091_V092_HANDOFF_v0.90.1.md.
 - WP-19 release evidence is recorded in RELEASE_EVIDENCE_v0.90.1.md.
-- WP-20 remains responsible for release ceremony.
+- WP-20 release ceremony preflight passed, including the closed-issue SOR truth
+  gate across 54 closed v0.90.1 issues.
 
 ## Explicit Non-Claims
 
@@ -42,5 +43,5 @@ v0.90.1 delivers the first bounded Runtime v2 foundation prototype.
 
 ## Release Note Rule
 
-WP-20 may use this file as release-note input. Do not add aspirational claims
-or later-milestone scope during ceremony.
+This file is final release-note input for v0.90.1. Do not add aspirational
+claims or later-milestone scope during tag/release publication.

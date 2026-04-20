@@ -2,9 +2,9 @@
 
 ## Status
 
-Active milestone package. The issue wave is open, WP-01 through WP-19 are
-complete or represented by tracked release-tail docs, and WP-20 release ceremony
-remains.
+Completed milestone package. The issue wave is closed through WP-20, the
+release-tail docs are complete, and release ceremony preflight passed. Final
+tag/release publication runs from clean main after the WP-20 closeout PR merges.
 
 WP-01 opened the v0.90.1 issue wave after the v0.90 release ceremony. WP-01 is
 #2141; WP-02 through WP-20 are #2142 through #2160. WP-15A third-party review is
@@ -13,8 +13,8 @@ WP-01 opened the v0.90.1 issue wave after the v0.90 release ceremony. WP-01 is
 The Runtime v2 implementation slice has now landed through WP-12, WP-13 aligned
 the docs package, WP-14 defined the quality/coverage gate, WP-15 completed
 internal review, WP-15A completed third-party review, the accepted WP-16
-remediation bundles are closed, and WP-17 through WP-19 release-tail docs are
-assembled. Remaining work is WP-20 release ceremony.
+remediation bundles are closed, WP-17 through WP-19 release-tail docs are
+assembled, and WP-20 release ceremony preflight passed.
 
 ## Thesis
 

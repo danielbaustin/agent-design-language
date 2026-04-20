@@ -22,7 +22,11 @@ and produced reviewable hardening evidence around that run.
 - duplicate activation, snapshot integrity, and replay-gap negative proofs
 - bounded security-boundary hardening proof
 - integrated first CSM run demo packet
-- internal review and remediation record
+- docs, quality, and reviewer-entry convergence record
+- internal review record
+- external / 3rd-party review record
+- accepted-findings remediation or explicit owner-bound deferral record
+- next-milestone planning and v0.91/v0.92 handoff record
 - release notes that do not overclaim birthday, moral/emotional civilization,
   complete migration, or red/blue ecology
 
@@ -35,7 +39,21 @@ and produced reviewable hardening evidence around that run.
 - Missing violation artifact proof
 - Missing recovery/quarantine distinction
 - Missing operator-review evidence
+- Missing internal or external review disposition
+- Missing accepted-finding remediation or explicit deferral
+- Missing next-milestone planning before ceremony
 - Failing required CI without explicit release-owner disposition
+
+## Closeout Order
+
+Use the v0.87.1 closeout pattern for v0.90.2:
+
+1. WP-15 docs, quality, and review convergence.
+2. WP-16 internal review.
+3. WP-17 external / 3rd-party review.
+4. WP-18 review findings remediation.
+5. WP-19 next-milestone planning and v0.91/v0.92 handoff.
+6. WP-20 release ceremony.
 
 ## Handoff
 

@@ -16,7 +16,7 @@ But those artifacts are not the whole story. In the current repository, they are
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.90.1%20active-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.90.2%20planning-blue)
 
 Today, ADL includes:
 - a reference Rust runtime and CLI for deterministic workflow execution
@@ -104,11 +104,11 @@ Other useful entrypoints:
 
 ## Current Status
 
-- Active milestone: **v0.90.1**
-- Current release state: **v0.90 released; v0.90.1 issue wave open, release-tail docs complete through WP-19, WP-20 ceremony remains**
-- Most recently completed milestone: **v0.90**
+- Active milestone: **v0.90.2 planning**
+- Current release state: **v0.90.1 release ceremony preflight passed; final tag/release publication runs from clean main after merge**
+- Most recently completed milestone: **v0.90.1**
 - Current crate version: **0.90.1**
-- Version note: **v0.90.1 carries the active Runtime v2 foundation release line**
+- Version note: **v0.90.1 carries the completed Runtime v2 foundation release line**
 - Previous completed milestone package: **v0.89.1**
 - Previous completed milestone: **v0.89**
 - Project changelog: `CHANGELOG.md`
@@ -117,9 +117,11 @@ ADL is in active development. This repository contains both implemented runtime 
 
 ## Current Milestone
 
-v0.90.1 is the active milestone package. Its issue wave is open, with WP-01 at #2141, WP-02 through WP-20 at #2142 through #2160, and WP-15A third-party review at #2215. WP-01 through WP-19 are complete or represented by tracked release-tail docs; WP-20 release ceremony remains. The tracked planning package lives under `docs/milestones/v0.90.1/`.
+v0.90.2 is the active planning package for the first bounded CSM run and Runtime v2 hardening. Its tracked planning package lives under `docs/milestones/v0.90.2/`; the issue wave remains closed until v0.90.2 WP-01 promotion.
 
-v0.90 is the just-completed long-lived-agent runtime milestone. It carries ADL from bounded single-run proof surfaces into supervised recurring cycles with durable artifacts, pre-identity continuity handles, operator controls, demo proof, milestone compression, repo visibility, explicit Rust refactoring, and a measured coverage ratchet.
+v0.90.1 is the completed Runtime v2 foundation prototype milestone. Its issue wave opened with WP-01 at #2141, WP-02 through WP-20 at #2142 through #2160, and WP-15A third-party review at #2215. WP-20 release ceremony preflight passed, including the closed-issue SOR truth gate, and the final tag/release publication is the clean-main post-merge ceremony step. The tracked milestone package lives under `docs/milestones/v0.90.1/`.
+
+v0.90 is the previous long-lived-agent runtime milestone. It carries ADL from bounded single-run proof surfaces into supervised recurring cycles with durable artifacts, pre-identity continuity handles, operator controls, demo proof, milestone compression, repo visibility, explicit Rust refactoring, and a measured coverage ratchet.
 
 The implementation wave landed through the long-lived runtime, stock-league demo, demo-extension, compression, repo-visibility, coverage, Rust-refactoring, docs, and internal-review surfaces. The release tail completed third-party review, accepted ADR remediation, next-milestone planning, and release ceremony.
 

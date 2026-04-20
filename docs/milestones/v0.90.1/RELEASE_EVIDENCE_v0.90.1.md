@@ -3,7 +3,7 @@
 ## Purpose
 
 This packet is D8 in the v0.90.1 demo matrix. It gives reviewers one place to
-trace the milestone from claims to proof surfaces before WP-20 release ceremony.
+trace the milestone from claims to proof surfaces for WP-20 release ceremony.
 
 ## Milestone Claims
 
@@ -62,14 +62,13 @@ finding was D8 itself, which this packet resolves.
 
 ## Release Ceremony Input
 
-WP-20 should consume this packet as navigation evidence. It should not repeat
-the full review. The ceremony should confirm:
+WP-20 consumes this packet as navigation evidence. It should not repeat the full
+review. The ceremony preflight confirmed:
 
-- root main is fast-forwarded and clean
+- the WP-20 worktree is clean and based on the merged release-tail branch
 - release notes still match landed scope
-- checklist remains green except ceremony-only items
+- checklist records the WP-20 preflight state truthfully
 - Cargo.toml and Cargo.lock report 0.90.1
 - no release blocker has reappeared
 
-Once those checks pass, WP-20 may perform the normal tag and GitHub release
-ceremony.
+Final tag and GitHub release publication remain the clean-main post-merge step.

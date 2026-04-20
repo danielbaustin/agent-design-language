@@ -42,22 +42,23 @@ bundles:
 - #2224: CSM Observatory validation and report alignment
 - #2229: release docs routing and architecture truth
 
-Those bundle issues are closed. WP-17 through WP-19 have now assembled release
-readiness, v0.91/v0.92 handoff, and release evidence. WP-20 remains responsible
-for release ceremony.
+Those bundle issues are closed. WP-17 through WP-19 assembled release
+readiness, v0.91/v0.92 handoff, and release evidence. WP-20 release ceremony
+preflight has passed.
 
 ## Residual Release-Tail Work
 
-The third-party review did not add new release-blocking findings. Remaining
-release-tail work is procedural and evidentiary:
+The third-party review did not add new release-blocking findings. Release-tail
+work is recorded as follows:
 
 - WP-17: release readiness, recorded in RELEASE_READINESS_v0.90.1.md
 - WP-18: v0.91/v0.92 handoff, recorded in V091_V092_HANDOFF_v0.90.1.md
 - WP-19: D8 release-evidence packet, recorded in RELEASE_EVIDENCE_v0.90.1.md
-- WP-20: release ceremony
+- WP-20: release ceremony preflight passed; final tag/release publication runs
+  from clean main after merge
 
 ## Non-Claims
 
-This disposition does not claim that v0.90.1 is already released. It records
-that WP-15A review is complete and that accepted review findings have either
-been fixed or routed to their planned release-tail work package.
+This disposition records that WP-15A review is complete and that accepted
+review findings have either been fixed or routed to their planned release-tail
+work package.
