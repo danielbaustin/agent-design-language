@@ -10,6 +10,8 @@ is necessary, and why the true birthday remains later.
 
 - ANRM scaffolded small-model experiment: `ANRM_SCAFFOLDED_SMALL_MODEL_EXPERIMENT.md`
 - ANRM rehearsal proof packet: `ANRM_SCAFFOLDED_SMALL_MODEL_REHEARSAL_PACKET.md`
+- ANRM Gemma shepherd comparison results: `ANRM_GEMMA_SHEPHERD_COMPARISON_RESULTS.md`
+- ANRM Gemma shepherd ten-trial aggregate: `ANRM_GEMMA_SHEPHERD_TEN_TRIAL_RESULTS.md`
 
 ## Source Material
 
