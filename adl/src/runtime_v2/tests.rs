@@ -225,6 +225,60 @@ fn runtime_v2_kernel_loop_validation_rejects_unsafe_or_ambiguous_state() {
 }
 
 #[test]
+fn runtime_v2_kernel_loop_validation_rejects_disordered_state() {
+    let mut loop_artifacts = runtime_v2_kernel_loop_contract().expect("loop");
+    loop_artifacts.events[0].event_sequence = 0;
+    assert!(loop_artifacts
+        .validate()
+        .expect_err("zero event sequence should fail")
+        .to_string()
+        .contains("must be positive"));
+
+    let mut loop_artifacts = runtime_v2_kernel_loop_contract().expect("loop");
+    loop_artifacts.registry.manifold_id = "other-manifold".to_string();
+    assert!(loop_artifacts
+        .validate()
+        .expect_err("manifold mismatch should fail")
+        .to_string()
+        .contains("must match"));
+
+    let mut loop_artifacts = runtime_v2_kernel_loop_contract().expect("loop");
+    loop_artifacts.events[0].service_id = "unregistered_service".to_string();
+    assert!(loop_artifacts
+        .validate()
+        .expect_err("unknown event service should fail")
+        .to_string()
+        .contains("unknown service"));
+}
+
+#[test]
+fn runtime_v2_kernel_loop_validation_rejects_invalid_event_payloads() {
+    let mut loop_artifacts = runtime_v2_kernel_loop_contract().expect("loop");
+    loop_artifacts.events[0].outcome = "invalid".to_string();
+    assert!(loop_artifacts
+        .validate()
+        .expect_err("invalid event outcome should fail")
+        .to_string()
+        .contains("unsupported kernel_loop_event.outcome"));
+
+    let mut loop_artifacts = runtime_v2_kernel_loop_contract().expect("loop");
+    loop_artifacts.state.services[0].blocked_reason = Some("   ".to_string());
+    assert!(loop_artifacts
+        .validate()
+        .expect_err("blank blocked reason should fail")
+        .to_string()
+        .contains("blocked_reason must not be empty"));
+
+    let mut loop_artifacts = runtime_v2_kernel_loop_contract().expect("loop");
+    loop_artifacts.state.services[0].last_event_sequence = 0;
+    assert!(loop_artifacts
+        .validate()
+        .expect_err("zero event cursor should fail")
+        .to_string()
+        .contains("last_event_sequence must be positive"));
+}
+
+#[test]
 fn runtime_v2_citizen_lifecycle_contract_matches_manifold_refs() {
     let manifold = runtime_v2_manifold_contract().expect("manifold");
     let citizens = RuntimeV2CitizenLifecycleArtifacts::prototype(&manifold).expect("citizens");
@@ -502,6 +556,44 @@ fn runtime_v2_snapshot_rehydration_validation_rejects_unsafe_or_ambiguous_state(
         .expect_err("failed invariant should fail")
         .to_string()
         .contains("invariant checks must pass"));
+
+    let mut artifacts = runtime_v2_snapshot_rehydration_contract().expect("snapshot");
+    artifacts.snapshot.schema_version = "runtime_v2.snapshot.v0".to_string();
+    artifacts.snapshot.manifold_id = "other-manifold".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("snapshot schema and manifold mismatch should fail")
+        .to_string()
+        .contains("unsupported Runtime v2 snapshot schema"));
+
+    let mut artifacts = runtime_v2_snapshot_rehydration_contract().expect("snapshot");
+    artifacts.snapshot.manifold_state.lifecycle_state = "active".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("snapshot lifecycle should require snapshotting")
+        .to_string()
+        .contains("must be captured while snapshotting"));
+
+    let mut artifacts = runtime_v2_snapshot_rehydration_contract().expect("snapshot");
+    artifacts
+        .snapshot
+        .manifold_state
+        .snapshot_root
+        .latest_snapshot_id = Some("wrong".to_string());
+    assert!(artifacts
+        .validate()
+        .expect_err("stale latest snapshot id should fail")
+        .to_string()
+        .contains("latest snapshot id"));
+
+    let mut artifacts = runtime_v2_snapshot_rehydration_contract().expect("snapshot");
+    artifacts.rehydration_report.wake_allowed = true;
+    artifacts.rehydration_report.wake_refused_reason = Some("retry later".to_string());
+    assert!(artifacts
+        .validate()
+        .expect_err("woke with reason should fail")
+        .to_string()
+        .contains("must be absent when wake is allowed"));
 }
 
 #[test]
