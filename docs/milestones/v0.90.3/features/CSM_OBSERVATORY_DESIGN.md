@@ -45,6 +45,23 @@ Every visible element should answer one of three questions:
 If a panel does not answer one of those questions, it does not belong on the
 first screen.
 
+## Visual Assets
+
+The design surface includes both diagram-as-code sources and a static
+first-screen screenshot mockup.
+
+| Artifact | Purpose | Status |
+| --- | --- | --- |
+| `../diagrams/csm_observatory_surface_map.mmd` | information architecture for the Observatory first screen | source-backed Mermaid diagram |
+| `../diagrams/csm_observatory_projection_flow.mmd` | redacted projection and authority flow | source-backed Mermaid diagram |
+| `../assets/csm_observatory_first_screen.svg` | durable vector mockup of the first screen | rendered locally |
+| `../assets/csm_observatory_first_screen.png` | raster screenshot for review packets and surfaces that do not render SVG | rendered locally |
+
+The screenshot is a design mockup, not a runtime UI capture and not a proof
+artifact.
+
+![CSM Observatory first-screen mockup](../assets/csm_observatory_first_screen.png)
+
 ## Audiences
 
 | Audience | Primary Need | Visibility Boundary |
@@ -93,6 +110,57 @@ Required sections:
 - trace: recent causal events and gaps
 - operator_actions: available and disabled actions with safety reasons
 - review: primary artifacts, missing artifacts, classification, and caveats
+
+## Surface Map
+
+```mermaid
+flowchart LR
+    manifold["Manifold Header\nruntime state, tick, snapshot, global health"]
+    constellation["Citizen Constellation\ncitizens, guests, service actors, standing"]
+    pulse["Kernel Pulse\nscheduler, trace, invariants, resources, guardrails"]
+    docket["Freedom Gate Docket\nallow, defer, refuse, challenge, quarantine"]
+    ribbon["Timeline / Trace Ribbon\ncausal events and continuity markers"]
+    rail["Operator Action Rail\nread-only affordances and disabled reasons"]
+
+    manifold --> constellation
+    manifold --> pulse
+    constellation --> docket
+    pulse --> docket
+    docket --> ribbon
+    constellation --> ribbon
+    pulse --> ribbon
+    ribbon --> rail
+    docket --> rail
+```
+
+## Projection Flow
+
+```mermaid
+flowchart TB
+    private_state["Private citizen state\nsealed by default"]
+    checkpoint["Quintessence checkpoint\nlineage and envelope metadata"]
+    trace["Signed trace\ncausal events and temporal anchors"]
+    standing["Standing and access records\ncitizen, guest, service actor"]
+    freedom_gate["Freedom Gate decisions\nallow, defer, refuse, challenge"]
+    projector["Observatory projector\nredaction and visibility policy"]
+    operator["Operator view\nredacted controls and evidence"]
+    reviewer["Reviewer view\nproof links and caveats"]
+    public["Public demo view\nnon-authoritative story projection"]
+    denial["Denial record\nno protected argument leakage"]
+
+    private_state --> projector
+    checkpoint --> projector
+    trace --> projector
+    standing --> projector
+    freedom_gate --> projector
+
+    projector --> operator
+    projector --> reviewer
+    projector --> public
+    projector --> denial
+
+    private_state -.-> denial
+```
 
 ## First Screen
 
@@ -187,4 +255,3 @@ v0.90.3 Observatory design does not prove:
 
 It proves the intended visibility shape and gives WP-14/WP-14A a coherent
 design target.
-

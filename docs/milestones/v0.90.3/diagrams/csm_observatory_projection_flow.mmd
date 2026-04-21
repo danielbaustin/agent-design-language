@@ -1,0 +1,24 @@
+flowchart TB
+    private_state["Private citizen state\nsealed by default"]
+    checkpoint["Quintessence checkpoint\nlineage and envelope metadata"]
+    trace["Signed trace\ncausal events and temporal anchors"]
+    standing["Standing and access records\ncitizen, guest, service actor"]
+    freedom_gate["Freedom Gate decisions\nallow, defer, refuse, challenge"]
+    projector["Observatory projector\nredaction and visibility policy"]
+    operator["Operator view\nredacted controls and evidence"]
+    reviewer["Reviewer view\nproof links and caveats"]
+    public["Public demo view\nnon-authoritative story projection"]
+    denial["Denial record\nno protected argument leakage"]
+
+    private_state --> projector
+    checkpoint --> projector
+    trace --> projector
+    standing --> projector
+    freedom_gate --> projector
+
+    projector --> operator
+    projector --> reviewer
+    projector --> public
+    projector --> denial
+
+    private_state -.-> denial
