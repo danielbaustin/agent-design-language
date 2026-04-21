@@ -100,6 +100,7 @@ execution:
     - "git branch --all --list"
     - "git log --oneline --decorate --graph"
     - "gh pr view --json number,baseRefName,headRefName,state,title"
+    - "python3 adl/tools/skills/pr-stack-manager/scripts/analyze_pr_stack.py <stack-packet>"
     - "adl/tools/pr.sh doctor --json"
   preferred_path: "target_issue_stack_then_local_and_remote_stack_surfaces"
   repair_policy: "plan_only_by_default_then_apply_only_when_explicitly_safe"
@@ -127,4 +128,4 @@ outputs:
 security:
   trusted_root_required: true
   deny_symlink_escape: true
-  manifest_declares_executables: false
+  manifest_declares_executables: true

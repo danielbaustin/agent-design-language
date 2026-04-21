@@ -87,6 +87,7 @@ execution:
   preferred_commands:
     - "rg --files .adl"
     - "rg -n \"status|run_id|worktree_only|pr_open|issue|pr|integration\" .adl"
+    - "python3 adl/tools/skills/records-hygiene/scripts/analyze_records_hygiene.py <target>"
     - "git worktree list"
     - "adl/tools/pr.sh doctor --json"
   preferred_path: "target_issue_or_task_first_then_worktree_or_branch_bound_records"
@@ -116,4 +117,4 @@ outputs:
 security:
   trusted_root_required: true
   deny_symlink_escape: true
-  manifest_declares_executables: false
+  manifest_declares_executables: true

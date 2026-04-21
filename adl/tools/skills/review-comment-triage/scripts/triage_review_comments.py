@@ -7,11 +7,19 @@ from pathlib import Path
 
 CATEGORY_ORDER = [
     "actionable_now",
+    "blocked_or_operator_decision",
     "already_fixed",
     "stale_or_not_reproducible",
     "follow_on_issue_needed",
-    "blocked_or_operator_decision",
 ]
+
+HANDOFF_BY_CATEGORY = {
+    "actionable_now": "pr-janitor",
+    "blocked_or_operator_decision": "operator",
+    "already_fixed": "no_action",
+    "stale_or_not_reproducible": "no_action",
+    "follow_on_issue_needed": "finding-to-issue-planner",
+}
 
 
 def classify(comment):
@@ -78,6 +86,11 @@ def main():
         "counts": {category: len(items) for category, items in grouped.items()},
         "triage": grouped,
         "execution_order": CATEGORY_ORDER,
+        "recommended_handoffs": {
+            category: HANDOFF_BY_CATEGORY[category]
+            for category, items in grouped.items()
+            if items
+        },
         "mismatches": mismatches,
     }
 

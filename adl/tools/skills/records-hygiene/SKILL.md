@@ -68,6 +68,8 @@ Useful additional inputs:
 2. Read the authoritative surfaces for that target.
 3. Run deterministic drift detection for status, linkage, placeholder, IDs, and
    integration claims.
+   - For a deterministic local check, use
+     `python3 adl/tools/skills/records-hygiene/scripts/analyze_records_hygiene.py <target>`.
 4. Classify each finding as safe fix, skipped, or ambiguous.
 5. If `report_only` is false and the finding is safe/ambiguous-free,
    apply the repair.
@@ -152,4 +154,3 @@ Use `references/output-contract.md` and emit the structured shape described ther
 
 Artifact path pattern should be an `.adl/reviews` record under the active
 repository path.
-

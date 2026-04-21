@@ -78,15 +78,17 @@ for name, expected in expected_counts.items():
         assert triage["counts"].get(category, 0) == count, (name, category, triage["counts"], expected)
     for required in {
         "actionable_now",
+        "blocked_or_operator_decision",
         "already_fixed",
         "stale_or_not_reproducible",
         "follow_on_issue_needed",
-        "blocked_or_operator_decision",
     }:
         assert required in triage["triage"], required
+    assert "recommended_handoffs" in triage
 
     if name == "actionable_comments.json":
         assert triage["counts"]["actionable_now"] > 0
+        assert triage["recommended_handoffs"]["actionable_now"] == "pr-janitor"
 PY
 
 bash "${repo_root}/adl/tools/validate_skill_frontmatter.sh" \

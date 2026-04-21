@@ -78,6 +78,8 @@ The normal workflow is:
 `diagram-author` is a bounded helper skill for turning one source packet, issue, code slice, or doc surface into a reviewable diagram-as-code packet with explicit backend selection, optional SVG/PNG rendering, and truth boundaries.
 `workflow-conductor` is an orchestration front door rather than a lifecycle phase.
 `issue-watcher` is a bounded wait-window helper for watching one issue, PR, branch, or dependency gate and routing blockers without mutating state.
+`pr-stack-manager` is a bounded stack-topology helper for ancestry, base alignment, and dependency-order analysis.
+`review-comment-triage` is a bounded review-feedback helper for classifying PR comments before implementation.
 
 The three editor skills are helper skills:
 - `stp-editor` for bounded `stp.md` cleanup
@@ -1169,6 +1171,75 @@ Use `records-hygiene` when hygiene can be resolved by safe record repair.
 If the issue is ambiguous, unresolved, or not mechanically safe, use the output
 recommendations as a follow-on issue queue item and avoid scope expansion.
 
+Deterministic local analyzer:
+
+```bash
+python3 adl/tools/skills/records-hygiene/scripts/analyze_records_hygiene.py <target>
+```
+
+## `pr-stack-manager`
+
+### Purpose
+
+`pr-stack-manager` is a focused stack-maintenance skill for ADL issue branches
+and PR stacks. It inspects branch ancestry, expected PR bases, dependency
+edges, and merge-order risks without silently rebasing, retargeting, or merging.
+
+### When To Use It
+
+- when a dependent PR may have a stale base,
+- when merge order is unclear,
+- when stack truth in an issue record disagrees with GitHub or local git state,
+- before executing or finishing a PR that depends on another open PR.
+
+Structured schema:
+
+- `adl/tools/skills/docs/PR_STACK_MANAGER_SKILL_INPUT_SCHEMA.md`
+- schema id: `pr_stack_manager.v1`
+
+Deterministic fixture analyzer:
+
+```bash
+python3 adl/tools/skills/pr-stack-manager/scripts/analyze_pr_stack.py <stack-packet>
+```
+
+### Typical Handoff
+
+Use `pr-stack-manager` for stack analysis and planning. Hand off PR-specific CI,
+conflict, or review blockers to `pr-janitor`. Do not perform branch mutation
+unless the operator explicitly authorizes a bounded stack action.
+
+## `review-comment-triage`
+
+### Purpose
+
+`review-comment-triage` classifies PR review comments into a bounded execution
+plan while preserving comment identity, file and line context, links,
+uncertainty, and current-issue scope.
+
+### When To Use It
+
+- before addressing mixed review feedback,
+- when comments may be stale, already fixed, or outside the current issue,
+- when review feedback needs follow-on issue planning rather than direct fixes.
+
+Structured schema:
+
+- `adl/tools/skills/docs/REVIEW_COMMENT_TRIAGE_SKILL_INPUT_SCHEMA.md`
+- schema id: `review_comment_triage.v1`
+
+Deterministic fixture analyzer:
+
+```bash
+python3 adl/tools/skills/review-comment-triage/scripts/triage_review_comments.py <payload-path>
+```
+
+### Typical Handoff
+
+Use `pr-janitor` for actionable current-PR items, `github:gh-address-comments`
+for thread-resolution work, and `finding-to-issue-planner` when comments should
+become follow-on issue candidates.
+
 ## `stp-editor`
 
 ### Purpose
@@ -1995,6 +2066,10 @@ Use this quick selector:
   - `pr-closeout`
 - need to clean drifted lifecycle records before closeout or janitor handoff:
   - `records-hygiene`
+- need to inspect stacked PR topology or stale branch bases:
+  - `pr-stack-manager`
+- need to classify PR review comments before implementation:
+  - `review-comment-triage`
 - need a broad findings-first code review:
   - `repo-code-review`
 - need source-backed arXiv-style manuscript drafting or citation-gap review:
@@ -2057,6 +2132,7 @@ surfaces:
 | `pr-janitor` | `PR_JANITOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | in-flight PR monitoring or bounded repair |
 | `pr-ready` | `PR_READY_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | readiness diagnosis only |
 | `pr-run` | `PR_RUN_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | bounded issue execution only |
+| `pr-stack-manager` | `PR_STACK_MANAGER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | stack topology analysis or bounded stack plan only |
 | `product-report-writer` | `PRODUCT_REPORT_WRITER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | product report packet only |
 | `redaction-and-evidence-auditor` | `REDACTION_AND_EVIDENCE_AUDITOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | safety audit only |
 | `review-comment-triage` | `REVIEW_COMMENT_TRIAGE_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | review-comment triage only |

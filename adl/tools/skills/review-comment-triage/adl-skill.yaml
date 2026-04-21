@@ -19,7 +19,7 @@ admission:
     mode_enum:
       - "triage_from_payload"
       - "triage_live_pr_comments"
-  policy_fields:
+    policy_fields:
       - "allow_network"
       - "stop_after_triage"
       - "max_blocking_items_before_operator"
@@ -83,3 +83,4 @@ security:
   trusted_root_required: true
   deny_symlink_escape: true
   no_live_github_mutation_without_explicit_permission: true
+  manifest_declares_executables: true
