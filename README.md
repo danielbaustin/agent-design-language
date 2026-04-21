@@ -16,7 +16,7 @@ But those artifacts are not the whole story. In the current repository, they are
 
 [![adl-ci (main)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/danielbaustin/agent-design-language/actions/workflows/ci.yaml)
 [![coverage](https://codecov.io/gh/danielbaustin/agent-design-language/graph/badge.svg?branch=main)](https://app.codecov.io/gh/danielbaustin/agent-design-language/tree/main)
-![Milestone](https://img.shields.io/badge/milestone-v0.90.2%20planning-blue)
+![Milestone](https://img.shields.io/badge/milestone-v0.90.2%20review--tail-blue)
 
 Today, ADL includes:
 - a reference Rust runtime and CLI for deterministic workflow execution
@@ -42,15 +42,30 @@ Actually run the same minimal example and emit trace/artifact output:
 cargo run -q --manifest-path adl/Cargo.toml --bin adl -- adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --run --trace --allow-unsigned
 ```
 
-### If you want the latest completed milestone proof package
+### If you want the latest completed release proof package
 
-Run the v0.90 readiness and proof surfaces from the milestone package:
+Run the v0.90 readiness and proof surfaces from the completed milestone
+package:
 
 ```bash
 python3 adl/tools/check_v090_milestone_state.py
 ```
 
 This is the best top-level entrypoint if you want to see the milestone-compression drift check and proof graph for the latest completed milestone.
+
+### If you want the active v0.90.2 first-run proof package
+
+Generate the feature-proof coverage packet:
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- runtime-v2 feature-proof-coverage --out artifacts/v0902/feature-proof-coverage.json
+```
+
+Run the integrated bounded CSM first-run demo:
+
+```bash
+cargo run --manifest-path adl/Cargo.toml -- runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run
+```
 
 ### If you want the flagship v0.90 demo
 
@@ -104,11 +119,11 @@ Other useful entrypoints:
 
 ## Current Status
 
-- Active milestone: **v0.90.2 planning**
-- Current release state: **v0.90.1 release ceremony preflight passed; final tag/release publication runs from clean main after merge**
+- Active milestone: **v0.90.2 review tail**
+- Current release state: **v0.90.2 implementation and demo/proof coverage have landed through WP-14A; WP-15 starts docs, quality, and review convergence**
 - Most recently completed milestone: **v0.90.1**
-- Current crate version: **0.90.1**
-- Version note: **v0.90.1 carries the completed Runtime v2 foundation release line**
+- Current crate version: **0.90.2**
+- Version note: **v0.90.2 carries the bounded CSM first-run and Runtime v2 hardening release line**
 - Previous completed milestone package: **v0.89.1**
 - Previous completed milestone: **v0.89**
 - Project changelog: `CHANGELOG.md`
@@ -117,9 +132,20 @@ ADL is in active development. This repository contains both implemented runtime 
 
 ## Current Milestone
 
-v0.90.2 is the active planning package for the first bounded CSM run and Runtime v2 hardening. Its tracked planning package lives under `docs/milestones/v0.90.2/`; the issue wave remains closed until v0.90.2 WP-01 promotion.
+v0.90.2 is the active first bounded CSM run and Runtime v2 hardening
+milestone. Its tracked package lives under `docs/milestones/v0.90.2/`. The
+issue wave opened as #2245-#2264, and the explicit WP-14A demo/proof lane was
+added as #2301 before WP-15 review convergence. The milestone now has
+feature-by-feature proof coverage, an integrated first-run demo packet, and a
+review-tail sequence for internal review, third-party review, remediation,
+next-milestone handoff, and release ceremony.
 
-v0.90.1 is the completed Runtime v2 foundation prototype milestone. Its issue wave opened with WP-01 at #2141, WP-02 through WP-20 at #2142 through #2160, and WP-15A third-party review at #2215. WP-20 release ceremony preflight passed, including the closed-issue SOR truth gate, and the final tag/release publication is the clean-main post-merge ceremony step. The tracked milestone package lives under `docs/milestones/v0.90.1/`.
+v0.90.1 is the completed Runtime v2 foundation prototype milestone. Its issue
+wave opened with WP-01 at #2141, WP-02 through WP-20 at #2142 through #2160,
+and WP-15A third-party review at #2215. It carries the completed Runtime v2
+foundation, read-only CSM Observatory surfaces, review evidence, remediation,
+handoff, and release evidence. The tracked milestone package lives under
+`docs/milestones/v0.90.1/`.
 
 v0.90 is the previous long-lived-agent runtime milestone. It carries ADL from bounded single-run proof surfaces into supervised recurring cycles with durable artifacts, pre-identity continuity handles, operator controls, demo proof, milestone compression, repo visibility, explicit Rust refactoring, and a measured coverage ratchet.
 
@@ -253,8 +279,9 @@ ADL includes both ordinary demos and heavyweight reviewer or release proof packa
 
 Start here:
 - canonical user-facing demo index: `demos/README.md`
-- active milestone demo matrix: `docs/milestones/v0.90.1/DEMO_MATRIX_v0.90.1.md`
-- active CSM Observatory proof bundle: `bash adl/tools/demo_v0901_csm_observatory.sh`
+- active milestone demo matrix: `docs/milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md`
+- active CSM first-run demo: `cargo run --manifest-path adl/Cargo.toml -- runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run`
+- active feature-proof coverage packet: `cargo run --manifest-path adl/Cargo.toml -- runtime-v2 feature-proof-coverage --out artifacts/v0902/feature-proof-coverage.json`
 - latest completed milestone state check: `python3 adl/tools/check_v090_milestone_state.py`
 
 Important supporting demo/readiness docs:

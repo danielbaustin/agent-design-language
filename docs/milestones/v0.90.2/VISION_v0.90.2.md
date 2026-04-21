@@ -7,8 +7,8 @@ harder to fool.
 
 ## Why This Milestone Exists
 
-v0.90.1 should create the first bounded Runtime v2 foundation prototype and the
-CSM Observatory planning lane. That is not enough. A polis substrate must run in
+v0.90.1 created the first bounded Runtime v2 foundation prototype and the CSM
+Observatory planning lane. That is not enough. A polis substrate must run in
 bounded form and show what happens when things go wrong: illegal state
 transitions, duplicate activation attempts, replay gaps, incomplete snapshots,
 unsafe resumes, and adversarial pressure.

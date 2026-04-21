@@ -7,7 +7,7 @@
 - [x] v0.90.1 inheritance audited against actual landed artifacts
 - [x] Compression readiness reviewed before implementation begins
 - [x] CSM run packet contract reviewed before Runtime v2 work widens
-- [ ] Scope boundary reviewed against v0.91 and v0.92
+- [x] Scope boundary reviewed against v0.91 and v0.92
 
 ## Implementation
 
@@ -28,19 +28,20 @@
 
 ## Truth And Safety
 
-- [ ] No docs claim v0.90.2 births the first true Gödel agent
-- [ ] No docs claim full moral/emotional civilization
-- [ ] No docs claim cross-polis migration or v0.92 identity rebinding
-- [ ] No docs center red/blue ecology as the Runtime v2 thesis
+- [x] No docs claim v0.90.2 births the first true Gödel agent
+- [x] No docs claim full moral/emotional civilization
+- [x] No docs claim cross-polis migration or v0.92 identity rebinding
+- [x] No docs center red/blue ecology as the Runtime v2 thesis
 - [x] Governed adversarial hook remains bounded and operator-scoped
 - [x] Security-boundary evidence is present and bounded
 - [x] Recovery and quarantine outcomes are explicit
 - [x] Every feature claim has a runnable demo, proof packet, fixture-backed artifact, non-proving status, or explicit deferral
-- [ ] Quality gate is green or exceptions are explicit
+- [x] Quality posture is recorded and remaining release-tail exceptions are explicit
+- [x] Coverage, gap-status, and Rust module watch status reviewed for WP-15
 
 ## Release
 
-- [ ] Docs, quality, and reviewer entry surfaces converged
+- [x] Docs, quality, and reviewer entry surfaces converged
 - [ ] Internal review complete
 - [ ] External / 3rd-party review complete
 - [ ] Accepted findings remediated or explicitly deferred

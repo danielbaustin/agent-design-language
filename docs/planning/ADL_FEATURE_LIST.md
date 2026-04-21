@@ -48,8 +48,9 @@ can survive code review, ops review, and postmortem analysis.
 ## Current Repo Status
 
 The current repo truth is:
-- active milestone: `v0.90.1`
-- current crate version on `main`: `0.90.0`
+- active milestone: `v0.90.2`
+- current crate version on the active release line: `0.90.2`
+- most recently completed Runtime v2 foundation milestone package: `v0.90.1`
 - most recently completed long-lived runtime milestone package: `v0.90`
 - most recently completed adversarial-runtime milestone package before that: `v0.89.1`
 - most recently completed governed-adaptation milestone package before that: `v0.89`
@@ -58,8 +59,10 @@ That means the feature story should be read this way:
 - `v0.7` through `v0.89.1` provide the implemented platform baseline
 - `v0.90` adds the implemented long-lived runtime, inspection, demo,
   compression, repo-visibility, and refactoring band
-- `v0.90.1` is the active Runtime v2 foundation and CSM Observatory band
-- `v0.90.2` through `v0.95` are the next planned capability bands
+- `v0.90.1` adds the implemented Runtime v2 foundation and read-only CSM
+  Observatory band
+- `v0.90.2` is the active first bounded CSM run and Runtime v2 hardening band
+- `v0.90.3` through `v0.95` are the next planned capability bands
 
 ## ADL at a Glance
 
@@ -135,20 +138,22 @@ ADL already provides a serious platform baseline:
 | Rust refactoring tracker and evidence-driven maintenance | Implemented baseline | `v0.90` refactoring tracker, ADR remediation, and follow-on maintenance planning | Continue through maintenance sprints |
 | Milestone compression and repo visibility prototypes | Implemented baseline | `v0.90` compression and repo-visibility docs/proofs | Deepen through `v0.90.1+` |
 | HTML milestone dashboard and compression reporting | Planned | backlog item and milestone-compression planning surfaces | Future compression/dashboard lane |
-| Runtime v2 foundation prototype | Active milestone | `v0.90.1` feature contracts, Runtime v2 WPs, integrated demo, and proof packet | `v0.90.1` foundation, `v0.90.2` hardening |
-| CSM Observatory visibility and operator-report surfaces | Active milestone | visibility packet, static console, operator report, CLI bundle, command packet design | `v0.90.1` read-only proof, later live operator integration |
-| Third-party review and review-quality gates | Active milestone | WP-15A third-party review, review handoff packets, finding disposition | Harden through release tails |
+| Runtime v2 foundation prototype | Implemented baseline | `v0.90.1` feature contracts, Runtime v2 WPs, integrated demo, and proof packet | Foundation complete; hardened by `v0.90.2` |
+| CSM Observatory visibility and operator-report surfaces | Implemented baseline | visibility packet, static console, operator report, CLI bundle, command packet design, v0.90.2 operator report integration | Deepen through redacted projection and live operator integration |
+| Runtime v2 hardening, recovery, quarantine, and expanded invariants | Active milestone | `v0.90.2` implementation docs, proof packets, tests, and demo matrix | `v0.90.2` |
+| First bounded CSM run | Active milestone | `v0.90.2` integrated first-run demo, feature-proof coverage, CSM run packet, Observatory report | `v0.90.2` |
+| Third-party review and review-quality gates | Implemented baseline | v0.90.1 WP-15A, v0.90.2 review-tail planning, review handoff packets, finding disposition | Harden through release tails |
 | ANRM / shepherd-model experiments | Partially implemented | v0.90.1 ANRM Gemma scaffold comparison and ten-trial results | Planned shepherd/evaluator work before training |
 | CSM Shepherd model and Gemma training path | Planned | ANRM comparison results and evaluator/scaffold backlog | Future shepherd/evaluator/training lane |
 | Aptitude Atlas model-evaluation platform | Planned | TBD/product planning and backlog issues | Future product/project lane |
 | CodeBuddy repo-review product layer | Planned | CodeBuddy planning, repo-review skills, product-report backlog | Future product/project lane |
+| Governed tool calls and capability contracts | Planned | `TBD/tools` Universal Tool Schema, ADL Capability Contract, and tool-to-capability compiler planning | Near-term tools/runtime/security lane |
+| Cognitive Compression Cost instrumentation | Planned | CCC metric draft and milestone-compression planning | Near-term compression/evaluation lane |
 | Automated repository modernization and external refactoring integration | Deferred | backlog note for ADL-to-Moderne or direct modernization workflows | Future product/tooling lane if promoted |
 | Web-based code editor integration | Planned | editor backlog issue and skills-wiring planning | Future editor/operator lane |
 | Reasoning graph baseline | Planned | planning/schema/proof surfaces | Later reasoning/provenance band |
 | Signed trace and trace query | Planned | roadmap and planning docs | Later reasoning/provenance band |
 | Wellbeing, affect, kindness, moral cognition, humor | Planned | `v0.91` planning docs | `v0.91` |
-| Runtime v2 hardening, recovery, quarantine, and expanded invariants | Planned | `v0.90.2` planning docs | `v0.90.2` |
-| First meaningful CSM run preparation | Planned | `v0.90.2` planning docs and Runtime v2 boundary docs | `v0.90.2` |
 | Identity, capability, names, and continuity substrate | Planned | `v0.92` planning docs and Runtime v2 boundary docs | `v0.92` |
 | First true Gödel-agent birthday | Planned | `v0.92` planning docs and identity boundary notes | `v0.92` |
 | Governance, delegation, IAM, social contract | Planned | `v0.93` planning docs | `v0.93` |
@@ -178,6 +183,7 @@ has already landed, is landing now, or has explicitly placed on the path to the
 | `v0.90` | Long-lived supervisor, heartbeat, cycle manifests, artifact contracts, continuity handles, operator safety, status/inspection boundary, stock-league demos, repo visibility, milestone compression, CodeBuddy showcase, architecture-document generation, coverage ratchet, Rust refactoring tracker, ADR remediation, internal review, and third-party review closeout. |
 | `v0.90.1` | Runtime v2 foundation, manifold/snapshot contracts, kernel/control-plane boundaries, provisional citizens, invariant/security-boundary proof, CSM Observatory visibility packet, static console, operator report, CLI bundle, command-packet design, ANRM shepherd experiments, third-party review as WP-15A, Aptitude Atlas planning, and CodeBuddy product-lane planning. |
 | `v0.90.2` | Runtime v2 hardening, expanded invariants, violation artifacts, recovery/quarantine, operator review surfaces, stronger security-boundary evidence, CSM Observatory integration, and first meaningful CSM-run preparation. |
+| `v0.90.3+` | Citizen state security, standing, private-state envelopes, governed tool calls, cognitive compression metrics, and other near-term architecture slices as scheduled. |
 | `v0.91` | Wellbeing and happiness, affect, kindness, humor, moral cognition, and the evaluation surfaces needed for emotionally and normatively legible agents. |
 | `v0.92` | Identity-bearing agent substrate, stable names, model/provider capability contracts, continuity across runs, and the first true Gödel-agent birthday. |
 | `v0.93` | Governance, delegation, IAM, social contract, policy/constitutional surfaces, rights/duties, and accountable multi-agent society boundaries. |
@@ -304,38 +310,41 @@ practical long-lived runtime supervision:
 The truthful v0.90 story is implemented baseline, with Runtime v2 consuming
 those surfaces rather than replacing them.
 
-## Current Active Milestone: v0.90.1
+## Current Active Milestone: v0.90.2
 
-`v0.90.1` is the active milestone. Its useful work is concrete: it turns the
-v0.90 long-lived-agent runtime into the first bounded Runtime v2 foundation
-prototype and makes that world visible through CSM Observatory surfaces.
+`v0.90.2` is the active milestone. Its useful work is concrete: it turns the
+v0.90.1 Runtime v2 foundation and read-only Observatory substrate into the
+first bounded CSM run, then wraps that run in reviewable failure, recovery,
+quarantine, and hardening evidence.
 
 The current active bands are:
-- Runtime v2 manifold, kernel loop, provisional citizen records, snapshot and
-  rehydration contracts, invariant violation artifacts, operator controls, and
-  one security-boundary proof
-- integrated Runtime v2 foundation demo and proof packet
-- CSM Observatory visibility packet, static console, operator report, CLI
-  bundle, and future command-packet design
-- ANRM / shepherd-model experiments, kept explicitly experimental until
-  evaluator quality and safety boundaries improve
-- third-party review as WP-15A before remediation
+- first bounded CSM run for `proto-csm-01`
+- manifold boot, citizen admission, governed episode scheduling, Freedom Gate
+  mediation, invalid-action rejection, snapshot/rehydrate/wake continuity, and
+  Observatory-visible evidence
+- recovery eligibility, quarantine state, evidence preservation, governed
+  adversarial hook, and hardening probes
+- integrated first-run demo packet plus feature-proof coverage across D1-D11
+- docs, quality, internal review, external review, remediation, handoff, and
+  release ceremony
 
-The first true Gödel-agent birthday remains a v0.92 event. v0.90.1 proves the
-foundation substrate; it does not claim full identity, moral civilization,
-cross-polis migration, or live operator mutation.
+The first true Gödel-agent birthday remains a v0.92 event. v0.90.2 proves a
+bounded local CSM run and hardening evidence; it does not claim full identity,
+moral civilization, cross-polis migration, or live unbounded operator mutation.
 
 ## Major Capability Bands Still to Come
 
-### v0.90.2 - Runtime v2 Hardening and First-Run Preparation
+### v0.90.3 - Citizen State, Standing, And Private-State Substrate
 
-`v0.90.2` is expected to harden the Runtime v2 foundation after the first
-prototype:
-- expanded invariant tests and violation artifacts
-- recovery, quarantine, and remediation surfaces
-- stronger CSM Observatory integration
-- clearer live-versus-fixture proof boundaries
-- preparation for the first meaningful CSM run
+`v0.90.3` is expected to deepen citizen continuity after the first bounded CSM
+run:
+- private citizen-state format
+- signed envelopes and continuity witnesses
+- append-only lineage and anti-equivocation rules
+- sanctuary/quarantine behavior
+- redacted Observatory projections
+- access-control semantics for who may inspect, project, wake, migrate, or
+  challenge citizen state
 
 ### v0.91 - Affect and Moral Cognition
 
@@ -375,7 +384,7 @@ The planning corpus already points toward a serious economics band:
 - market and settlement surfaces
 
 This is an important future platform direction, even though it is not part of
-the current `v0.90.1` execution band.
+the current `v0.90.2` execution band.
 
 ### v0.94 - Integration and Dependency Closure
 
@@ -428,11 +437,11 @@ ADL already has a substantial platform:
 - completed temporal, bounded-agency, and governed-adaptation milestone work
 - completed adversarial-runtime, publication-skill, and long-lived runtime
   milestone work
-- active Runtime v2 foundation and CSM Observatory work
+- active Runtime v2 first-run, hardening, and CSM Observatory integration work
 
 What remains through `v0.95` is not random feature accumulation. It is a
 deliberate convergence path:
-- execute `v0.90.1` without losing issue/PR/review discipline
+- execute `v0.90.2` without losing issue/PR/review discipline
 - make Runtime v2 concrete, visible, recoverable, and reviewable
 - add affect, identity, governance, economics, and product lanes in bounded
   later bands
