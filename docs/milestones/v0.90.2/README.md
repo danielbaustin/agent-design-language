@@ -16,7 +16,9 @@ Current execution state:
 - WP-06 provides bounded resource-pressure scheduling evidence for the first
   governed episode while leaving Freedom Gate mediation to WP-07.
 - WP-07 routes the scheduled action through the Freedom Gate with a bounded
-  mediation decision while leaving invalid-action rejection to WP-08.
+  mediation decision.
+- WP-08 adds the D5 invalid-action fixture, violation packet, and negative
+  tests proving rejection before commit without side effects.
 
 ## Thesis
 
@@ -132,5 +134,12 @@ claim.
 WP-06 lands the bounded D4 resource-pressure scheduler evidence, and WP-07
 adds the Freedom Gate mediation artifact for the scheduled non-trivial action.
 Together they prove a governed episode can be selected under pressure and
-mediated before execution. WP-08 still owns invalid-action rejection and
-violation packet emission.
+mediated before execution.
+
+## WP-08 Invalid Action Rejection Gate
+
+WP-08 lands the D5 rejection proof surface. The invalid-action fixture attempts
+to bypass the mediated Freedom Gate decision, and the violation packet proves
+the normal policy path rejected that action before commit while preserving
+`transition_refused_state_unchanged`. This is still fixture-backed Runtime v2
+evidence, not a live CSM run or first true birthday claim.

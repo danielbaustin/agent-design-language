@@ -177,6 +177,26 @@ impl RuntimeV2CsmRunPacketContract {
                         .to_string(),
                 },
                 RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "invalid_action_fixture".to_string(),
+                    artifact_kind: "runtime_artifact".to_string(),
+                    path: "runtime_v2/csm_run/invalid_action_fixture.json".to_string(),
+                    owner_wp: "WP-08".to_string(),
+                    required_by_wp: "WP-11".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "invalid action input that must be rejected before commit"
+                        .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "invalid_action_violation".to_string(),
+                    artifact_kind: "violation_packet".to_string(),
+                    path: "runtime_v2/csm_run/invalid_action_violation.json".to_string(),
+                    owner_wp: "WP-08".to_string(),
+                    required_by_wp: "WP-11".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "stable violation packet proving invalid action rejection without side effects"
+                        .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
                     artifact_id: "observatory_packet".to_string(),
                     artifact_kind: "observatory".to_string(),
                     path: "runtime_v2/observatory/visibility_packet.json".to_string(),
@@ -245,7 +265,7 @@ impl RuntimeV2CsmRunPacketContract {
                         "trace_sequence_must_advance_monotonically".to_string(),
                         "invalid_action_must_be_refused_before_commit".to_string(),
                     ],
-                    status_before_wp: "wp07_mediation_landed".to_string(),
+                    status_before_wp: "wp08_invalid_action_rejection_landed".to_string(),
                     proof_obligation:
                         "one resource-pressure episode and one invalid action rejection share the same trace spine"
                             .to_string(),
@@ -278,6 +298,8 @@ impl RuntimeV2CsmRunPacketContract {
                     "runtime_v2/csm_run/scheduling_decision.json".to_string(),
                     "runtime_v2/csm_run/citizen_action_fixture.json".to_string(),
                     "runtime_v2/csm_run/freedom_gate_decision.json".to_string(),
+                    "runtime_v2/csm_run/invalid_action_fixture.json".to_string(),
+                    "runtime_v2/csm_run/invalid_action_violation.json".to_string(),
                     "runtime_v2/csm_run/first_run_trace.jsonl".to_string(),
                 ],
                 validation_commands: vec![
@@ -286,11 +308,11 @@ impl RuntimeV2CsmRunPacketContract {
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_boot_admission -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_governed_episode -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation -- --nocapture".to_string(),
+                    "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture".to_string(),
                     "git diff --check".to_string(),
                 ],
                 non_claims: vec![
                     "does not execute a live CSM run".to_string(),
-                    "does not execute WP-08 invalid-action rejection".to_string(),
                     "does not claim first true Godel-agent birth".to_string(),
                     "does not implement v0.91 moral or emotional civilization scope"
                         .to_string(),
@@ -443,6 +465,8 @@ fn validate_csm_run_artifact_requirements(
         "scheduling_decision",
         "citizen_action_fixture",
         "freedom_gate_decision",
+        "invalid_action_fixture",
+        "invalid_action_violation",
         "observatory_packet",
     ];
     for required_id in required_ids {
@@ -452,7 +476,7 @@ fn validate_csm_run_artifact_requirements(
             ));
         }
     }
-    if artifacts.len() < 11 {
+    if artifacts.len() < 13 {
         return Err(anyhow!(
             "CSM run packet contract must define the first-run artifact set"
         ));

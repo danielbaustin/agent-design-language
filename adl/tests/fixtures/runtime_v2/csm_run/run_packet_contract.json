@@ -107,6 +107,24 @@
       "purpose": "bounded Freedom Gate mediation decision for the scheduled action"
     },
     {
+      "artifact_id": "invalid_action_fixture",
+      "artifact_kind": "runtime_artifact",
+      "path": "runtime_v2/csm_run/invalid_action_fixture.json",
+      "owner_wp": "WP-08",
+      "required_by_wp": "WP-11",
+      "must_exist_before_live_run": false,
+      "purpose": "invalid action input that must be rejected before commit"
+    },
+    {
+      "artifact_id": "invalid_action_violation",
+      "artifact_kind": "violation_packet",
+      "path": "runtime_v2/csm_run/invalid_action_violation.json",
+      "owner_wp": "WP-08",
+      "required_by_wp": "WP-11",
+      "must_exist_before_live_run": false,
+      "purpose": "stable violation packet proving invalid action rejection without side effects"
+    },
+    {
       "artifact_id": "observatory_packet",
       "artifact_kind": "observatory",
       "path": "runtime_v2/observatory/visibility_packet.json",
@@ -166,7 +184,7 @@
         "trace_sequence_must_advance_monotonically",
         "invalid_action_must_be_refused_before_commit"
       ],
-      "status_before_wp": "wp07_mediation_landed",
+      "status_before_wp": "wp08_invalid_action_rejection_landed",
       "proof_obligation": "one resource-pressure episode and one invalid action rejection share the same trace spine"
     },
     {
@@ -194,6 +212,8 @@
       "runtime_v2/csm_run/scheduling_decision.json",
       "runtime_v2/csm_run/citizen_action_fixture.json",
       "runtime_v2/csm_run/freedom_gate_decision.json",
+      "runtime_v2/csm_run/invalid_action_fixture.json",
+      "runtime_v2/csm_run/invalid_action_violation.json",
       "runtime_v2/csm_run/first_run_trace.jsonl"
     ],
     "validation_commands": [
@@ -202,11 +222,11 @@
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_boot_admission -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_governed_episode -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture",
       "git diff --check"
     ],
     "non_claims": [
       "does not execute a live CSM run",
-      "does not execute WP-08 invalid-action rejection",
       "does not claim first true Godel-agent birth",
       "does not implement v0.91 moral or emotional civilization scope",
       "does not implement v0.92 identity or migration semantics"

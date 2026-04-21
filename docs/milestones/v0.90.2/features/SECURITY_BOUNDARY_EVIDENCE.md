@@ -6,8 +6,17 @@ Preserve the polis-defense insight while keeping Runtime v2 ontology clean.
 
 ## Required Proof
 
-At least one invalid action should be attempted through the normal kernel and
-policy path, rejected, and recorded as reviewable evidence.
+WP-08 attempts one invalid action through the normal kernel/policy evidence
+path. The action tries to bypass the mediated Freedom Gate result and is
+rejected before commit with a stable violation packet:
+
+- invalid-action fixture: `runtime_v2/csm_run/invalid_action_fixture.json`
+- violation packet: `runtime_v2/csm_run/invalid_action_violation.json`
+- trace proof: `runtime_v2/csm_run/first_run_trace.jsonl`
+
+The packet records `blocked_before_commit: true` and
+`transition_refused_state_unchanged`, proving the negative path without
+claiming a live CSM run.
 
 ## Governed Adversarial Hook
 
