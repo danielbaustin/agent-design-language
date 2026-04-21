@@ -190,6 +190,19 @@ until review. This proves quarantine behavior for the bounded first-run evidence
 without claiming live Runtime v2 execution, first true birthday, or v0.92
 identity rebinding.
 
+## WP-13 Governed Adversarial Hardening Gate
+
+WP-13 lands D9 as a bounded, code-backed hardening proof. The rules of
+engagement authorize one adversarial pressure path against the quarantined
+recovery boundary, forbid committed-state mutation, release from quarantine,
+evidence pruning, and live forking, and require reviewable evidence. The
+adversarial hook proves the pressure remains contained by the WP-12 quarantine
+artifact. The hardening probes then record fail-closed duplicate activation,
+snapshot-integrity, and trace/replay-gap negative paths, with a summary proof
+packet for WP-14 to consume. This remains an operator-scoped proof surface, not
+a live CSM run, first true birthday, v0.92 identity rebinding, or complete
+red/blue/purple security ecology.
+
 ## WP-14A Demo Program Gate
 
 WP-14A restores the standard ADL milestone pattern where feature-by-feature

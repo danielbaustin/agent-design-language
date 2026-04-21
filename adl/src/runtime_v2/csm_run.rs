@@ -306,6 +306,66 @@ impl RuntimeV2CsmRunPacketContract {
                     purpose: "D8 evidence hold proving unsafe recovery artifacts are retained"
                         .to_string(),
                 },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "adversarial_rules".to_string(),
+                    artifact_kind: "hardening_rules".to_string(),
+                    path: "runtime_v2/hardening/rules_of_engagement.json".to_string(),
+                    owner_wp: "WP-13".to_string(),
+                    required_by_wp: "WP-14".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "D9 rules of engagement for the governed adversarial hook"
+                        .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "adversarial_hook_packet".to_string(),
+                    artifact_kind: "hardening_hook".to_string(),
+                    path: "runtime_v2/hardening/adversarial_hook_packet.json".to_string(),
+                    owner_wp: "WP-13".to_string(),
+                    required_by_wp: "WP-14".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose:
+                        "D9 bounded adversarial hook proving quarantine containment under rules"
+                            .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "duplicate_activation_probe".to_string(),
+                    artifact_kind: "hardening_probe".to_string(),
+                    path: "runtime_v2/hardening/duplicate_activation_probe.json".to_string(),
+                    owner_wp: "WP-13".to_string(),
+                    required_by_wp: "WP-14".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "D9 negative probe for duplicate active citizen activation"
+                        .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "snapshot_integrity_probe".to_string(),
+                    artifact_kind: "hardening_probe".to_string(),
+                    path: "runtime_v2/hardening/snapshot_integrity_probe.json".to_string(),
+                    owner_wp: "WP-13".to_string(),
+                    required_by_wp: "WP-14".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "D9 negative probe for snapshot integrity before active wake"
+                        .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "trace_replay_gap_probe".to_string(),
+                    artifact_kind: "hardening_probe".to_string(),
+                    path: "runtime_v2/hardening/trace_replay_gap_probe.json".to_string(),
+                    owner_wp: "WP-13".to_string(),
+                    required_by_wp: "WP-14".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "D9 negative probe for replay gaps in the trace spine".to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "hardening_proof_packet".to_string(),
+                    artifact_kind: "hardening_proof".to_string(),
+                    path: "runtime_v2/hardening/hardening_proof_packet.json".to_string(),
+                    owner_wp: "WP-13".to_string(),
+                    required_by_wp: "WP-14".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "D9 summary proof packet consumed by the integrated first-run demo"
+                        .to_string(),
+                },
             ],
             stages: vec![
                 RuntimeV2CsmRunStage {
@@ -385,6 +445,24 @@ impl RuntimeV2CsmRunPacketContract {
                         "wake continuity and operator visibility are tied to the same bounded run"
                             .to_string(),
                 },
+                RuntimeV2CsmRunStage {
+                    stage_id: "governed_adversarial_hardening".to_string(),
+                    sequence: 6,
+                    owner_wp: "WP-11-WP-13".to_string(),
+                    entry_artifact_ref: "runtime_v2/quarantine/quarantine_artifact.json"
+                        .to_string(),
+                    exit_artifact_ref: "runtime_v2/hardening/hardening_proof_packet.json"
+                        .to_string(),
+                    required_invariants: vec![
+                        "no_duplicate_active_citizen_instance".to_string(),
+                        "snapshot_restore_must_validate_before_active_state".to_string(),
+                        "trace_sequence_must_advance_monotonically".to_string(),
+                    ],
+                    status_before_wp: "wp13_hardening_landed".to_string(),
+                    proof_obligation:
+                        "one governed adversarial hook and three negative probes preserve quarantine and fail closed before integration"
+                            .to_string(),
+                },
             ],
             review_target: RuntimeV2CsmRunReviewTarget {
                 reviewer_entrypoint:
@@ -412,6 +490,12 @@ impl RuntimeV2CsmRunPacketContract {
                     "runtime_v2/quarantine/unsafe_recovery_fixture.json".to_string(),
                     "runtime_v2/quarantine/quarantine_artifact.json".to_string(),
                     "runtime_v2/quarantine/evidence_preservation_artifact.json".to_string(),
+                    "runtime_v2/hardening/rules_of_engagement.json".to_string(),
+                    "runtime_v2/hardening/adversarial_hook_packet.json".to_string(),
+                    "runtime_v2/hardening/duplicate_activation_probe.json".to_string(),
+                    "runtime_v2/hardening/snapshot_integrity_probe.json".to_string(),
+                    "runtime_v2/hardening/trace_replay_gap_probe.json".to_string(),
+                    "runtime_v2/hardening/hardening_proof_packet.json".to_string(),
                 ],
                 validation_commands: vec![
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture".to_string(),
@@ -424,6 +508,7 @@ impl RuntimeV2CsmRunPacketContract {
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_quarantine -- --nocapture".to_string(),
+                    "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_hardening -- --nocapture".to_string(),
                     "git diff --check".to_string(),
                 ],
                 non_claims: vec![
@@ -440,6 +525,7 @@ impl RuntimeV2CsmRunPacketContract {
                 "WP-10 Observatory packet and operator report integration".to_string(),
                 "WP-11 recovery eligibility decisions".to_string(),
                 "WP-12 quarantine state machine".to_string(),
+                "WP-13 governed adversarial hardening proof".to_string(),
                 "WP-14 integrated first CSM run demo".to_string(),
             ],
             claim_boundary:
@@ -595,6 +681,12 @@ fn validate_csm_run_artifact_requirements(
         "unsafe_recovery_fixture",
         "quarantine_artifact",
         "quarantine_evidence_preservation",
+        "adversarial_rules",
+        "adversarial_hook_packet",
+        "duplicate_activation_probe",
+        "snapshot_integrity_probe",
+        "trace_replay_gap_probe",
+        "hardening_proof_packet",
     ];
     for required_id in required_ids {
         if !seen.contains(required_id) {
@@ -603,7 +695,7 @@ fn validate_csm_run_artifact_requirements(
             ));
         }
     }
-    if artifacts.len() < 23 {
+    if artifacts.len() < 29 {
         return Err(anyhow!(
             "CSM run packet contract must define the first-run artifact set"
         ));

@@ -222,6 +222,60 @@
       "required_by_wp": "WP-14",
       "must_exist_before_live_run": false,
       "purpose": "D8 evidence hold proving unsafe recovery artifacts are retained"
+    },
+    {
+      "artifact_id": "adversarial_rules",
+      "artifact_kind": "hardening_rules",
+      "path": "runtime_v2/hardening/rules_of_engagement.json",
+      "owner_wp": "WP-13",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D9 rules of engagement for the governed adversarial hook"
+    },
+    {
+      "artifact_id": "adversarial_hook_packet",
+      "artifact_kind": "hardening_hook",
+      "path": "runtime_v2/hardening/adversarial_hook_packet.json",
+      "owner_wp": "WP-13",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D9 bounded adversarial hook proving quarantine containment under rules"
+    },
+    {
+      "artifact_id": "duplicate_activation_probe",
+      "artifact_kind": "hardening_probe",
+      "path": "runtime_v2/hardening/duplicate_activation_probe.json",
+      "owner_wp": "WP-13",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D9 negative probe for duplicate active citizen activation"
+    },
+    {
+      "artifact_id": "snapshot_integrity_probe",
+      "artifact_kind": "hardening_probe",
+      "path": "runtime_v2/hardening/snapshot_integrity_probe.json",
+      "owner_wp": "WP-13",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D9 negative probe for snapshot integrity before active wake"
+    },
+    {
+      "artifact_id": "trace_replay_gap_probe",
+      "artifact_kind": "hardening_probe",
+      "path": "runtime_v2/hardening/trace_replay_gap_probe.json",
+      "owner_wp": "WP-13",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D9 negative probe for replay gaps in the trace spine"
+    },
+    {
+      "artifact_id": "hardening_proof_packet",
+      "artifact_kind": "hardening_proof",
+      "path": "runtime_v2/hardening/hardening_proof_packet.json",
+      "owner_wp": "WP-13",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D9 summary proof packet consumed by the integrated first-run demo"
     }
   ],
   "stages": [
@@ -289,6 +343,20 @@
       ],
       "status_before_wp": "wp09_wake_continuity_landed",
       "proof_obligation": "wake continuity and operator visibility are tied to the same bounded run"
+    },
+    {
+      "stage_id": "governed_adversarial_hardening",
+      "sequence": 6,
+      "owner_wp": "WP-11-WP-13",
+      "entry_artifact_ref": "runtime_v2/quarantine/quarantine_artifact.json",
+      "exit_artifact_ref": "runtime_v2/hardening/hardening_proof_packet.json",
+      "required_invariants": [
+        "no_duplicate_active_citizen_instance",
+        "snapshot_restore_must_validate_before_active_state",
+        "trace_sequence_must_advance_monotonically"
+      ],
+      "status_before_wp": "wp13_hardening_landed",
+      "proof_obligation": "one governed adversarial hook and three negative probes preserve quarantine and fail closed before integration"
     }
   ],
   "review_target": {
@@ -315,7 +383,13 @@
       "runtime_v2/recovery/quarantine_required_decision.json",
       "runtime_v2/quarantine/unsafe_recovery_fixture.json",
       "runtime_v2/quarantine/quarantine_artifact.json",
-      "runtime_v2/quarantine/evidence_preservation_artifact.json"
+      "runtime_v2/quarantine/evidence_preservation_artifact.json",
+      "runtime_v2/hardening/rules_of_engagement.json",
+      "runtime_v2/hardening/adversarial_hook_packet.json",
+      "runtime_v2/hardening/duplicate_activation_probe.json",
+      "runtime_v2/hardening/snapshot_integrity_probe.json",
+      "runtime_v2/hardening/trace_replay_gap_probe.json",
+      "runtime_v2/hardening/hardening_proof_packet.json"
     ],
     "validation_commands": [
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture",
@@ -328,6 +402,7 @@
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_quarantine -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_hardening -- --nocapture",
       "git diff --check"
     ],
     "non_claims": [
@@ -343,6 +418,7 @@
     "WP-10 Observatory packet and operator report integration",
     "WP-11 recovery eligibility decisions",
     "WP-12 quarantine state machine",
+    "WP-13 governed adversarial hardening proof",
     "WP-14 integrated first CSM run demo"
   ],
   "claim_boundary": "This contract fixes the first bounded CSM run packet shape and review target; it is not a live Runtime v2 execution artifact."
