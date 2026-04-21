@@ -14,7 +14,7 @@ land, but every planned demo now has a mapped WP issue.
 | D5 | Invalid action rejection | WP-08 #2252 | An invalid action is rejected through normal kernel/policy flow before commit | invalid-action fixture, negative test, violation packet, trace event | LANDED |
 | D6 | Snapshot rehydrate wake continuity | WP-09 #2253 | Local snapshot, rehydrate, and wake preserve continuity without duplicate activation | snapshot bundle, wake report, continuity proof | LANDED |
 | D7 | CSM Observatory visibility | WP-10 #2254 | Operator can see the first CSM run through packet/report surfaces | Observatory packet, operator report | LANDED |
-| D8 | Recovery versus quarantine | WP-11 #2255 / WP-12 #2256 | Runtime distinguishes safe resume from required quarantine | recovery eligibility model, recovery decisions, quarantine artifact | PARTIAL: WP-11 DECISION MODEL LANDED; WP-12 QUARANTINE ARTIFACT PLANNED |
+| D8 | Recovery versus quarantine | WP-11 #2255 / WP-12 #2256 | Runtime distinguishes safe resume from required quarantine | recovery eligibility model, recovery decisions, quarantine artifact | LANDED |
 | D9 | Governed adversarial hook and hardening probes | WP-13 #2257 | One bounded adversarial scenario is contained under explicit operator rules, and duplicate activation, snapshot integrity, and replay-gap failures are detected and recorded | adversarial hook packet, rules of engagement, hardening proof packets | PLANNED |
 | D10 | Integrated first CSM run proof | WP-14 #2258 | Reviewer can inspect the first bounded CSM run and its failure-boundary evidence end to end | integrated CSM run packet, trace, Observatory report, hardening artifacts | PLANNED |
 

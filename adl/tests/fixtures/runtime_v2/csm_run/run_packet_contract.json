@@ -195,6 +195,33 @@
       "required_by_wp": "WP-12",
       "must_exist_before_live_run": false,
       "purpose": "D8 negative recovery decision handing unsafe resume to WP-12 quarantine"
+    },
+    {
+      "artifact_id": "unsafe_recovery_fixture",
+      "artifact_kind": "quarantine_fixture",
+      "path": "runtime_v2/quarantine/unsafe_recovery_fixture.json",
+      "owner_wp": "WP-12",
+      "required_by_wp": "WP-13",
+      "must_exist_before_live_run": false,
+      "purpose": "D8 unsafe recovery input consumed by the quarantine state machine"
+    },
+    {
+      "artifact_id": "quarantine_artifact",
+      "artifact_kind": "quarantine_artifact",
+      "path": "runtime_v2/quarantine/quarantine_artifact.json",
+      "owner_wp": "WP-12",
+      "required_by_wp": "WP-13",
+      "must_exist_before_live_run": false,
+      "purpose": "D8 state machine artifact blocking unsafe recovery pending review"
+    },
+    {
+      "artifact_id": "quarantine_evidence_preservation",
+      "artifact_kind": "quarantine_evidence",
+      "path": "runtime_v2/quarantine/evidence_preservation_artifact.json",
+      "owner_wp": "WP-12",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D8 evidence hold proving unsafe recovery artifacts are retained"
     }
   ],
   "stages": [
@@ -285,7 +312,10 @@
       "runtime_v2/observatory/operator_report.md",
       "runtime_v2/recovery/eligibility_model.json",
       "runtime_v2/recovery/safe_resume_decision.json",
-      "runtime_v2/recovery/quarantine_required_decision.json"
+      "runtime_v2/recovery/quarantine_required_decision.json",
+      "runtime_v2/quarantine/unsafe_recovery_fixture.json",
+      "runtime_v2/quarantine/quarantine_artifact.json",
+      "runtime_v2/quarantine/evidence_preservation_artifact.json"
     ],
     "validation_commands": [
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture",
@@ -297,6 +327,7 @@
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_quarantine -- --nocapture",
       "git diff --check"
     ],
     "non_claims": [

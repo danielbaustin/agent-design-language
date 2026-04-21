@@ -20,7 +20,7 @@
 - [x] Invariant coverage map complete
 - [x] Violation artifact contract implemented
 - [x] Recovery eligibility model implemented
-- [ ] Quarantine state machine implemented
+- [x] Quarantine state machine implemented
 - [ ] Governed adversarial hook complete with rules of engagement and evidence
 - [ ] Additional hardening probes complete
 - [ ] Integrated first CSM run demo implemented
@@ -33,7 +33,7 @@
 - [ ] No docs center red/blue ecology as the Runtime v2 thesis
 - [ ] Governed adversarial hook remains bounded and operator-scoped
 - [ ] Security-boundary evidence is present and bounded
-- [ ] Recovery and quarantine outcomes are explicit
+- [x] Recovery and quarantine outcomes are explicit
 - [ ] Quality gate is green or exceptions are explicit
 
 ## Release

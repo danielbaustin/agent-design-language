@@ -276,6 +276,36 @@ impl RuntimeV2CsmRunPacketContract {
                     purpose: "D8 negative recovery decision handing unsafe resume to WP-12 quarantine"
                         .to_string(),
                 },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "unsafe_recovery_fixture".to_string(),
+                    artifact_kind: "quarantine_fixture".to_string(),
+                    path: "runtime_v2/quarantine/unsafe_recovery_fixture.json".to_string(),
+                    owner_wp: "WP-12".to_string(),
+                    required_by_wp: "WP-13".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "D8 unsafe recovery input consumed by the quarantine state machine"
+                        .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "quarantine_artifact".to_string(),
+                    artifact_kind: "quarantine_artifact".to_string(),
+                    path: "runtime_v2/quarantine/quarantine_artifact.json".to_string(),
+                    owner_wp: "WP-12".to_string(),
+                    required_by_wp: "WP-13".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "D8 state machine artifact blocking unsafe recovery pending review"
+                        .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "quarantine_evidence_preservation".to_string(),
+                    artifact_kind: "quarantine_evidence".to_string(),
+                    path: "runtime_v2/quarantine/evidence_preservation_artifact.json".to_string(),
+                    owner_wp: "WP-12".to_string(),
+                    required_by_wp: "WP-14".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose: "D8 evidence hold proving unsafe recovery artifacts are retained"
+                        .to_string(),
+                },
             ],
             stages: vec![
                 RuntimeV2CsmRunStage {
@@ -379,6 +409,9 @@ impl RuntimeV2CsmRunPacketContract {
                     "runtime_v2/recovery/eligibility_model.json".to_string(),
                     "runtime_v2/recovery/safe_resume_decision.json".to_string(),
                     "runtime_v2/recovery/quarantine_required_decision.json".to_string(),
+                    "runtime_v2/quarantine/unsafe_recovery_fixture.json".to_string(),
+                    "runtime_v2/quarantine/quarantine_artifact.json".to_string(),
+                    "runtime_v2/quarantine/evidence_preservation_artifact.json".to_string(),
                 ],
                 validation_commands: vec![
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture".to_string(),
@@ -390,6 +423,7 @@ impl RuntimeV2CsmRunPacketContract {
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture".to_string(),
+                    "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_quarantine -- --nocapture".to_string(),
                     "git diff --check".to_string(),
                 ],
                 non_claims: vec![
@@ -558,6 +592,9 @@ fn validate_csm_run_artifact_requirements(
         "recovery_eligibility_model",
         "safe_resume_decision",
         "quarantine_required_decision",
+        "unsafe_recovery_fixture",
+        "quarantine_artifact",
+        "quarantine_evidence_preservation",
     ];
     for required_id in required_ids {
         if !seen.contains(required_id) {
@@ -566,7 +603,7 @@ fn validate_csm_run_artifact_requirements(
             ));
         }
     }
-    if artifacts.len() < 20 {
+    if artifacts.len() < 23 {
         return Err(anyhow!(
             "CSM run packet contract must define the first-run artifact set"
         ));

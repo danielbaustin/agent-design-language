@@ -10,6 +10,7 @@ mod kernel_loop;
 mod manifold;
 mod observatory;
 mod operator;
+mod quarantine;
 mod recovery;
 mod security;
 mod snapshot;
@@ -44,6 +45,8 @@ pub use manifold::*;
 pub use observatory::*;
 #[allow(unused_imports)]
 pub use operator::*;
+#[allow(unused_imports)]
+pub use quarantine::*;
 #[allow(unused_imports)]
 pub use recovery::*;
 #[allow(unused_imports)]
