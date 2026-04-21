@@ -1,0 +1,33 @@
+{
+  "schema_version": "runtime_v2.private_state_anti_equivocation_proof.v1",
+  "proof_id": "private-state-anti-equivocation-negative-cases-proto-citizen-alpha",
+  "demo_id": "D7",
+  "conflict_ref": "runtime_v2/private_state/anti_equivocation_conflict.json",
+  "disposition_ref": "runtime_v2/private_state/anti_equivocation_disposition.json",
+  "ledger_ref": "runtime_v2/private_state/lineage_ledger.json",
+  "witness_set_ref": "runtime_v2/private_state/continuity_witnesses.json",
+  "required_negative_cases": [
+    {
+      "case_id": "dual_active_successors",
+      "mutation": "attempt to activate two signed successor candidates for the same sequence",
+      "expected_error_fragment": "cannot both become active"
+    },
+    {
+      "case_id": "missing_candidate_evidence",
+      "mutation": "drop one candidate entry hash from the disposition",
+      "expected_error_fragment": "preserve all candidate evidence"
+    },
+    {
+      "case_id": "candidate_not_bound_to_head",
+      "mutation": "change a candidate predecessor hash away from the accepted head",
+      "expected_error_fragment": "candidate does not target the contested successor position"
+    },
+    {
+      "case_id": "non_conflicting_candidates",
+      "mutation": "submit duplicate claim hashes instead of conflicting successors",
+      "expected_error_fragment": "must contain conflicting signed successors"
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_anti_equivocation -- --nocapture",
+  "claim_boundary": "Proves fixture-backed anti-equivocation detection for conflicting signed successors; does not implement full sanctuary UX or challenge/appeal."
+}

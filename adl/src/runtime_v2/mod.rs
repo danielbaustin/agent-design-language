@@ -15,6 +15,7 @@ mod observatory;
 mod operator;
 mod private_state;
 mod private_state_envelope;
+mod private_state_equivocation;
 mod private_state_lineage;
 mod private_state_sealing;
 mod private_state_witness;
@@ -63,6 +64,8 @@ pub use operator::*;
 pub use private_state::*;
 #[allow(unused_imports)]
 pub use private_state_envelope::*;
+#[allow(unused_imports)]
+pub use private_state_equivocation::*;
 #[allow(unused_imports)]
 pub use private_state_lineage::*;
 #[allow(unused_imports)]

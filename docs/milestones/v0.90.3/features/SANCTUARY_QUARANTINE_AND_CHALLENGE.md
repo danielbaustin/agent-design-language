@@ -2,7 +2,9 @@
 
 ## Status
 
-Planning contract for v0.90.3.
+Planning contract for v0.90.3. WP-08 has landed the first
+anti-equivocation disposition into `sanctuary_or_quarantine`; WP-09 still owns
+the broader sanctuary/quarantine behavior proof.
 
 ## Purpose
 
@@ -32,6 +34,11 @@ rights-preserving pause.
 Sanctuary should block destructive transitions and preserve evidence while
 review proceeds.
 
+The WP-08 anti-equivocation disposition applies this rule to conflicting signed
+successors for the same citizen lineage position. It blocks activation,
+preserves all candidate evidence, and routes review through
+`sanctuary_or_quarantine_operator_review`.
+
 ## Challenge And Appeal
 
 A citizen or authorized reviewer should be able to challenge:
@@ -60,3 +67,4 @@ state.
 - challenged projection authority blocks public projection
 - quarantine preserves evidence references
 - release from quarantine requires witness or review record
+- equivocation disposition blocks activation and preserves candidate evidence
