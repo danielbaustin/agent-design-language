@@ -7,7 +7,7 @@ with the explicit demo matrix and feature proof lane at WP-14A / #2341.
 
 | ID | Demo | WP | Proof Claim | Required Artifacts | Status |
 | --- | --- | --- | --- | --- | --- |
-| D1 | Citizen-state inheritance audit | WP-02 | v0.90.3 targets actual v0.90.2 citizen, snapshot, wake, quarantine, and Observatory artifacts | inheritance report, unsafe-assumption list | PLANNED |
+| D1 | Citizen-state inheritance audit | WP-02 | v0.90.3 targets actual v0.90.2 citizen, snapshot, wake, quarantine, and Observatory artifacts | `CITIZEN_STATE_INHERITANCE_AUDIT_v0.90.3.md`, unsafe-assumption list | LANDED |
 | D2 | Private state format fixture | WP-03 | Authoritative state is typed and distinct from JSON projection | schema, authoritative fixture, redacted projection fixture | PLANNED |
 | D3 | Signed envelope and trust-root negative cases | WP-04 | Missing, unknown, revoked, mismatched, regressed, and broken-predecessor states are rejected | envelope fixture, trust-root fixture, negative tests | PLANNED |
 | D4 | Local sealed quintessence checkpoint | WP-05 | Private checkpoint can be sealed locally without making cloud enclaves mandatory | sealed checkpoint fixture, key policy, open/decrypt refusal cases | PLANNED |
