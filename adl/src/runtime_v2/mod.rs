@@ -3,6 +3,7 @@ mod citizen;
 mod contracts;
 mod csm_run;
 mod foundation;
+mod governed_episode;
 mod invariant;
 mod invariant_contract;
 mod kernel_loop;
@@ -27,6 +28,8 @@ pub use contracts::*;
 pub use csm_run::*;
 #[allow(unused_imports)]
 pub use foundation::*;
+#[allow(unused_imports)]
+pub use governed_episode::*;
 #[allow(unused_imports)]
 pub use invariant::*;
 #[allow(unused_imports)]

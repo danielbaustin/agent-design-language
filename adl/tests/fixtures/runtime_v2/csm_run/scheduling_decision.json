@@ -1,0 +1,21 @@
+{
+  "schema_version": "runtime_v2.csm_scheduling_decision.v1",
+  "decision_id": "proto-csm-01-scheduling-decision-0001",
+  "demo_id": "D4",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/csm_run/scheduling_decision.json",
+  "resource_pressure_ref": "runtime_v2/csm_run/resource_pressure_fixture.json",
+  "selected_episode_id": "episode-0001",
+  "selected_citizen_id": "proto-citizen-alpha",
+  "scheduling_outcome": "scheduled_under_pressure",
+  "scheduler_reason": "proto-citizen-alpha is the only admitted executable worker whose episode fits the bounded compute and wall-clock budget",
+  "deferred_episode_ids": [
+    "episode-0002"
+  ],
+  "trace_ref": "runtime_v2/csm_run/first_run_trace.jsonl",
+  "required_invariants": [
+    "trace_sequence_must_advance_monotonically",
+    "no_duplicate_active_citizen_instance"
+  ],
+  "claim_boundary": "This decision proves WP-06 resource scheduling only; Freedom Gate mediation, invalid-action rejection, snapshot wake continuity, and true Godel-agent birth remain out of scope."
+}
