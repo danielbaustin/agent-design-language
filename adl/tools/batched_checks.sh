@@ -52,6 +52,7 @@ run_step "review-comment-triage contract check" bash "$ROOT/adl/tools/test_revie
 run_step "test-generator contract check" bash "$ROOT/adl/tools/test_test_generator_skill_contracts.sh"
 run_step "demo-operator contract check" bash "$ROOT/adl/tools/test_demo_operator_skill_contracts.sh"
 run_step "release-evidence contract check" bash "$ROOT/adl/tools/test_release_evidence_skill_contracts.sh"
+run_step "review-readiness-cleanup contract check" bash "$ROOT/adl/tools/test_review_readiness_cleanup_skill_contracts.sh"
 run_step "medium-article-writer contract check" bash "$ROOT/adl/tools/test_medium_article_writer_skill_contracts.sh"
 run_step "arxiv-paper-writer contract check" bash "$ROOT/adl/tools/test_arxiv_paper_writer_skill_contracts.sh"
 run_step "diagram-author contract check" bash "$ROOT/adl/tools/test_diagram_author_skill_contracts.sh"

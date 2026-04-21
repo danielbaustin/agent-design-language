@@ -1,0 +1,4 @@
+display_name: Review Readiness Cleanup
+short_description: Inspect review surfaces for structural readiness cleanup without remediating findings or approving review readiness
+default_prompt: Inspect one review packet or milestone review surface for stale markers, missing metadata, unclear blockers, skipped surfaces, follow-on cleanup, and structural readiness drift. Classify safe mechanical cleanup, blockers, skipped items, and follow-on needs with evidence, and stop before remediation, publication, finding rewrites, issue creation, PRs, or review approval.
+

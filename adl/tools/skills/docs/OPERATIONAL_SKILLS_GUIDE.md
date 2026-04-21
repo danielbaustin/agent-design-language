@@ -35,6 +35,7 @@ The tracked skill set is:
 - `product-report-writer`
 - `redaction-and-evidence-auditor`
 - `release-evidence`
+- `review-readiness-cleanup`
 - `review-comment-triage`
 - `refactoring-helper`
 - `repo-architecture-review`
@@ -82,6 +83,7 @@ The normal workflow is:
 `issue-watcher` is a bounded wait-window helper for watching one issue, PR, branch, or dependency gate and routing blockers without mutating state.
 `pr-stack-manager` is a bounded stack-topology helper for ancestry, base alignment, and dependency-order analysis.
 `review-comment-triage` is a bounded review-feedback helper for classifying PR comments before implementation.
+`review-readiness-cleanup` is a bounded review-cycle preflight helper for classifying safe cleanup, blockers, skipped surfaces, and follow-on needs before formal review starts.
 
 The three editor skills are helper skills:
 - `stp-editor` for bounded `stp.md` cleanup
@@ -1248,6 +1250,48 @@ Use `pr-janitor` for actionable current-PR items, `github:gh-address-comments`
 for thread-resolution work, and `finding-to-issue-planner` when comments should
 become follow-on issue candidates.
 
+## `review-readiness-cleanup`
+
+### Purpose
+
+`review-readiness-cleanup` inspects review packets, review plans, finding
+registers, demo or proof registers, and milestone review docs before formal
+review starts.
+
+It classifies structure-level readiness cleanup without changing substantive
+findings or approving review readiness.
+
+### When To Use It
+
+Use it when:
+
+- a review cycle is about to start and packet drift should be caught first
+- stale markers, missing metadata, or skipped surfaces may create false blockers
+- blockers and follow-on cleanup need to be separated before internal or external review
+
+Do not use it for:
+
+- running the review itself
+- remediating findings or rewriting severity
+- publishing reports or approving review readiness
+
+Structured schema:
+
+- `adl/tools/skills/docs/REVIEW_READINESS_CLEANUP_SKILL_INPUT_SCHEMA.md`
+- schema id: `review_readiness_cleanup.v1`
+
+Deterministic fixture analyzer:
+
+```bash
+python3 adl/tools/skills/review-readiness-cleanup/scripts/inspect_review_readiness.py --review-root <path> --out <artifact-root> --run-id <run-id>
+```
+
+### Typical Handoff
+
+Use `documentation-specialist` for approved mechanical cleanup, `gap-analysis`
+for scope-vs-evidence uncertainty, `finding-to-issue-planner` for follow-on
+issue candidates, and `review-quality-evaluator` for packet quality gates.
+
 ## `stp-editor`
 
 ### Purpose
@@ -2161,6 +2205,8 @@ Use this quick selector:
   - `pr-stack-manager`
 - need to classify PR review comments before implementation:
   - `review-comment-triage`
+- need to preflight review packets before a formal review cycle:
+  - `review-readiness-cleanup`
 - need a broad findings-first code review:
   - `repo-code-review`
 - need source-backed arXiv-style manuscript drafting or citation-gap review:
@@ -2228,6 +2274,7 @@ surfaces:
 | `redaction-and-evidence-auditor` | `REDACTION_AND_EVIDENCE_AUDITOR_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | safety audit only |
 | `release-evidence` | `RELEASE_EVIDENCE_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | release evidence packet only |
 | `review-comment-triage` | `REVIEW_COMMENT_TRIAGE_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | review-comment triage only |
+| `review-readiness-cleanup` | `REVIEW_READINESS_CLEANUP_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | review readiness cleanup classification only |
 | `refactoring-helper` | `REFACTORING_HELPER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | refactor plan only |
 | `repo-architecture-review` | `REPO_ARCHITECTURE_REVIEW_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | architecture findings only |
 | `repo-code-review` | `REPO_CODE_REVIEW_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | findings-first code review only |
