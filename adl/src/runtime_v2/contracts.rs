@@ -104,6 +104,10 @@ pub fn runtime_v2_csm_recovery_eligibility_contract(
     RuntimeV2CsmRecoveryEligibilityArtifacts::prototype()
 }
 
+pub fn runtime_v2_csm_quarantine_contract() -> Result<RuntimeV2CsmQuarantineArtifacts> {
+    RuntimeV2CsmQuarantineArtifacts::prototype()
+}
+
 pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
     RuntimeV2FoundationPrototypeArtifacts::prototype()
 }

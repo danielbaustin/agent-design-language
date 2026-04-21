@@ -176,3 +176,13 @@ positive path requires a declared predecessor, validated rehydration, and a
 single active head; the negative path refuses ambiguous or duplicate-head
 recovery and hands evidence preservation to WP-12. This does not implement the
 quarantine state machine or widen into live Runtime v2 execution.
+
+## WP-12 Quarantine State Machine Gate
+
+WP-12 completes D8 by adding the quarantine state machine and evidence hold. The
+unsafe recovery fixture consumes the WP-11 quarantine-required decision, the
+quarantine artifact blocks execution pending operator review, and the evidence
+preservation artifact records the immutable source evidence that must survive
+until review. This proves quarantine behavior for the bounded first-run evidence
+without claiming live Runtime v2 execution, first true birthday, or v0.92
+identity rebinding.

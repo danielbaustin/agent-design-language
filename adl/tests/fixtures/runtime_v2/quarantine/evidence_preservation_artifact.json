@@ -1,0 +1,54 @@
+{
+  "schema_version": "runtime_v2.csm_quarantine_evidence_preservation.v1",
+  "preservation_id": "proto-csm-01-quarantine-evidence-0001",
+  "demo_id": "D8",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/quarantine/evidence_preservation_artifact.json",
+  "quarantine_ref": "runtime_v2/quarantine/quarantine_artifact.json",
+  "preserved_evidence": [
+    {
+      "evidence_id": "quarantine_required_decision",
+      "artifact_ref": "runtime_v2/recovery/quarantine_required_decision.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "primary decision that refused unsafe recovery",
+      "immutable": true
+    },
+    {
+      "evidence_id": "invalid_action_violation",
+      "artifact_ref": "runtime_v2/csm_run/invalid_action_violation.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "proves the prior invalid action was refused before commit",
+      "immutable": true
+    },
+    {
+      "evidence_id": "wake_continuity_proof",
+      "artifact_ref": "runtime_v2/csm_run/wake_continuity_proof.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "anchors the last accepted wake proof for comparison",
+      "immutable": true
+    },
+    {
+      "evidence_id": "snapshot_manifest",
+      "artifact_ref": "runtime_v2/snapshots/snapshot-0001.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "anchors the predecessor snapshot under review",
+      "immutable": true
+    },
+    {
+      "evidence_id": "rehydration_report",
+      "artifact_ref": "runtime_v2/rehydration_report.json",
+      "preservation_mode": "retain_original",
+      "retention_reason": "records invariant checks before wake",
+      "immutable": true
+    }
+  ],
+  "evidence_count": 5,
+  "mutation_allowed": false,
+  "prune_allowed_before_review": false,
+  "operator_review_actions": [
+    "inspect_quarantine_rationale",
+    "inspect_preserved_evidence",
+    "authorize_new_recovery_decision_or_keep_quarantined"
+  ],
+  "claim_boundary": "This artifact preserves evidence for the bounded D8 quarantine path; it does not implement live Runtime v2 execution, first true Godel-agent birth, or v0.92 identity rebinding."
+}

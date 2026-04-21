@@ -11,6 +11,7 @@ WP-08 / D5 invalid-action rejection artifacts: LANDED.
 WP-09 / D6 snapshot rehydrate wake continuity artifacts: LANDED.
 WP-10 / D7 Observatory packet and operator report artifacts: LANDED.
 WP-11 / D8 recovery eligibility model and decision records: LANDED.
+WP-12 / D8 quarantine state machine and evidence preservation artifacts: LANDED.
 
 This document defines the first bounded CSM run packet contract for
 `proto-csm-01`. It is intentionally a contract and fixture gate, not a live run
@@ -45,6 +46,10 @@ own run packet surfaces.
 | `adl/tests/fixtures/runtime_v2/recovery/eligibility_model.json` | Golden D8 recovery eligibility model fixture |
 | `adl/tests/fixtures/runtime_v2/recovery/safe_resume_decision.json` | Golden D8 safe-resume decision fixture |
 | `adl/tests/fixtures/runtime_v2/recovery/quarantine_required_decision.json` | Golden D8 quarantine-required decision fixture |
+| `adl/src/runtime_v2/quarantine.rs` | Code-backed D8 quarantine state machine and evidence preservation artifacts |
+| `adl/tests/fixtures/runtime_v2/quarantine/unsafe_recovery_fixture.json` | Golden D8 unsafe recovery fixture |
+| `adl/tests/fixtures/runtime_v2/quarantine/quarantine_artifact.json` | Golden D8 quarantine state machine artifact |
+| `adl/tests/fixtures/runtime_v2/quarantine/evidence_preservation_artifact.json` | Golden D8 quarantine evidence-preservation artifact |
 | `demos/fixtures/csm_run/proto-csm-01-run-packet.json` | Reviewer-facing fixture definition for the first bounded run |
 | `docs/milestones/v0.90.2/RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md` | WP-02 inheritance gate that this contract consumes |
 | `docs/milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md` | D2 proof target |
@@ -88,6 +93,9 @@ The first bounded run must use these artifact requirements:
 | `runtime_v2/recovery/eligibility_model.json` | WP-11 | WP-12 | D8 rules distinguishing safe resume from required quarantine |
 | `runtime_v2/recovery/safe_resume_decision.json` | WP-11 | WP-14 | Positive D8 decision proving validated wake can resume safely |
 | `runtime_v2/recovery/quarantine_required_decision.json` | WP-11 | WP-12 | Negative D8 decision handing unsafe recovery to quarantine |
+| `runtime_v2/quarantine/unsafe_recovery_fixture.json` | WP-12 | WP-13 | Unsafe recovery input consumed by the quarantine state machine |
+| `runtime_v2/quarantine/quarantine_artifact.json` | WP-12 | WP-13 | State machine artifact blocking unsafe recovery pending review |
+| `runtime_v2/quarantine/evidence_preservation_artifact.json` | WP-12 | WP-14 | Evidence hold proving unsafe recovery artifacts are retained |
 
 ## Stage Contract
 
@@ -118,9 +126,9 @@ D6 is proving after WP-09.
 
 D7 is proving after WP-10.
 
-D8 is partially proving after WP-11: the recovery eligibility model and
-decision records are landed, while WP-12 still owns the quarantine artifact and
-state machine.
+D8 is proving after WP-12: the recovery eligibility model, decision records,
+quarantine state machine, unsafe recovery fixture, and evidence-preservation
+artifact are landed.
 
 Proved now:
 
@@ -153,11 +161,12 @@ Proved now:
 - the D8 recovery eligibility model is generated from the invalid-action and wake-continuity evidence
 - the safe-resume decision requires a declared predecessor, validated rehydration, and a unique active head
 - the reject/quarantine decision refuses ambiguous predecessor linkage and duplicate active-head risk
+- the D8 quarantine state machine accepts the quarantine-required decision, preserves evidence, and blocks execution pending operator review
+- the quarantine evidence artifact retains the decision, violation, wake proof, snapshot, and rehydration report as immutable review evidence
 
 Not proved yet:
 
 - Observatory output is not a live Runtime v2 capture
-- WP-12 still owns the quarantine artifact and quarantine state machine
 - WP-14 still owns the integrated first CSM run proof
 
 ## Validation
@@ -174,6 +183,7 @@ cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejectio
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture
+cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_quarantine -- --nocapture
 ```
 
 This validates the contract prototypes, golden fixtures, path hygiene, positive
@@ -184,7 +194,8 @@ ordering, Freedom Gate action/decision mismatches, invalid-action rejection
 before commit, duplicate-active wake rejection, wake continuity proof drift, and
 operator-report drift, missing D7 source artifacts, recovery decision polarity,
 ambiguous safe-resume rejection, complete recovery rule evaluation, and live-run
-overclaiming.
+overclaiming, quarantine transition ordering, immutable evidence preservation,
+and unsafe release-to-active transitions.
 
 ## Non-Claims
 
