@@ -1,0 +1,134 @@
+milestone: v0.90.5
+status: tracked_planning_ready
+issue_wave_opened: false
+owner_issue: 2350
+planning_source: docs/milestones/v0.90.5
+tracked_package: docs/milestones/v0.90.5
+notes:
+  - "Issue wave is not open yet."
+  - "This package is owned by Governed Tools v1.0 planning issue #2350."
+  - "v0.90.5 is intended to implement the first full governed tool suite, not only plan it."
+  - "UTS is portable and public-compatible; ACC is ADL-native and owns runtime authority."
+  - "UTS validity must never be treated as permission to execute."
+  - "Preserve a flagship Governed Tools v1.0 demo and per-feature proof coverage."
+work_packages:
+  - wp: WP-01
+    issue: planned
+    title: Promote v0.90.5 Governed Tools milestone package
+    queue: docs
+    outcome: tracked docs and issue cards
+    depends_on: v0.90.4 closeout or roadmap approval
+  - wp: WP-02
+    issue: planned
+    title: Tool-call threat model and semantics
+    queue: docs
+    outcome: threat model and semantics doc
+    depends_on: WP-01
+  - wp: WP-03
+    issue: planned
+    title: UTS public compatibility and conformance plan
+    queue: tools
+    outcome: UTS conformance plan
+    depends_on: WP-02
+  - wp: WP-04
+    issue: planned
+    title: UTS v1 schema finalization
+    queue: tools
+    outcome: UTS schema and tests
+    depends_on: WP-03
+  - wp: WP-05
+    issue: planned
+    title: UTS fixture and conformance suite
+    queue: tools
+    outcome: UTS fixture suite
+    depends_on: WP-04
+  - wp: WP-06
+    issue: planned
+    title: ACC v1 authority schema
+    queue: tools
+    outcome: ACC schema and authority fixtures
+    depends_on: WP-02
+  - wp: WP-07
+    issue: planned
+    title: ACC privacy, visibility, and delegation model
+    queue: tools
+    outcome: visibility/delegation matrix
+    depends_on: WP-06
+  - wp: WP-08
+    issue: planned
+    title: Tool registry and binding model
+    queue: tools
+    outcome: registry and binding tests
+    depends_on: WP-04, WP-06
+  - wp: WP-09
+    issue: planned
+    title: UTS to ACC compiler
+    queue: tools
+    outcome: compiler and mapping tests
+    depends_on: WP-05-WP-08
+  - wp: WP-10
+    issue: planned
+    title: Normalization and argument validation
+    queue: tools
+    outcome: normalization and rejection tests
+    depends_on: WP-09
+  - wp: WP-11
+    issue: planned
+    title: Policy injection and authority evaluation
+    queue: runtime
+    outcome: policy engine slice and tests
+    depends_on: WP-07, WP-09
+  - wp: WP-12
+    issue: planned
+    title: Freedom Gate integration
+    queue: runtime
+    outcome: decision events and gate tests
+    depends_on: WP-11
+  - wp: WP-13
+    issue: planned
+    title: Governed executor
+    queue: runtime
+    outcome: executor and refusal behavior
+    depends_on: WP-12
+  - wp: WP-14
+    issue: planned
+    title: Trace, replay, redaction, and evidence contract
+    queue: runtime
+    outcome: trace/redaction contract and tests
+    depends_on: WP-13
+  - wp: WP-15
+    issue: planned
+    title: Dangerous tool negative suite
+    queue: test
+    outcome: negative safety suite
+    depends_on: WP-08-WP-14
+  - wp: WP-16
+    issue: planned
+    title: Model proposal benchmark harness
+    queue: test
+    outcome: benchmark runner and report
+    depends_on: WP-04, WP-15
+  - wp: WP-17
+    issue: planned
+    title: Local model and Gemma-focused evaluation
+    queue: test
+    outcome: local model scorecards
+    depends_on: WP-16
+  - wp: WP-18
+    issue: planned
+    title: Governed Tools v1.0 flagship demo
+    queue: demo
+    outcome: flagship demo proof packet
+    depends_on: WP-13-WP-17
+  - wp: WP-19
+    issue: planned
+    title: Demo matrix, docs, review, and public-spec handoff
+    queue: docs
+    outcome: review-ready package
+    depends_on: WP-18
+  - wp: WP-20
+    issue: planned
+    title: Release ceremony
+    queue: release
+    outcome: release evidence and next handoff
+    depends_on: WP-19
