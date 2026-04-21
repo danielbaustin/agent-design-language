@@ -198,6 +198,7 @@ pub(super) fn ensure_closed_completed_issue_bundle_truth(
     canonical_output: &Path,
 ) -> Result<()> {
     let bundle_dir = issue_ref.task_bundle_dir_path(repo_root);
+    let mut sor_integration_state: Option<String> = None;
 
     let mut mismatches = Vec::new();
     if !bundle_dir.is_dir() {
@@ -210,7 +211,9 @@ pub(super) fn ensure_closed_completed_issue_bundle_truth(
         mismatches.push("missing canonical sor.md".to_string());
     } else {
         let text = fs::read_to_string(canonical_output)?;
-        let integration_state = line_value_after_prefix(&text, "- Integration state:");
+        sor_integration_state = line_value_after_prefix(&text, "- Integration state:");
+        let branch = line_value_after_prefix(&text, "Branch:");
+        let retrospective_no_branch = branch.as_deref() == Some("retrospective-no-branch");
         check_required_field(&text, "Status:", "DONE", "SOR Status", &mut mismatches);
         check_required_field(
             &text,
@@ -219,8 +222,15 @@ pub(super) fn ensure_closed_completed_issue_bundle_truth(
             "SOR Verification scope",
             &mut mismatches,
         );
-        match integration_state.as_deref() {
-            Some("merged") => (),
+        match sor_integration_state.as_deref() {
+            Some("merged") => {
+                if retrospective_no_branch {
+                    mismatches.push(
+                        "SOR Integration state is 'merged' but Branch is 'retrospective-no-branch'; use 'closed_no_pr'"
+                            .to_string(),
+                    );
+                }
+            }
             Some("closed_no_pr") => {
                 check_required_field(
                     &text,
@@ -263,13 +273,32 @@ pub(super) fn ensure_closed_completed_issue_bundle_truth(
         mismatches.push("missing canonical sip.md".to_string());
     } else {
         let text = fs::read_to_string(&sip_path)?;
-        check_required_field(
-            &text,
-            "Branch:",
-            &issue_ref.branch_name("codex"),
-            "SIP Branch",
-            &mut mismatches,
-        );
+        let expected_branch = issue_ref.branch_name("codex");
+        match sor_integration_state.as_deref() {
+            Some("merged") => check_required_field(
+                &text,
+                "Branch:",
+                &expected_branch,
+                "SIP Branch",
+                &mut mismatches,
+            ),
+            Some("closed_no_pr") => {
+                let branch = line_value_after_prefix(&text, "Branch:").unwrap_or_default();
+                if branch != expected_branch && branch != "retrospective-no-branch" {
+                    mismatches.push(format!(
+                        "SIP Branch expected '{}' or 'retrospective-no-branch' but found '{}'",
+                        expected_branch, branch
+                    ));
+                }
+            }
+            _ => check_required_field(
+                &text,
+                "Branch:",
+                &expected_branch,
+                "SIP Branch",
+                &mut mismatches,
+            ),
+        }
         if text.contains("This issue is not started yet")
             || text.contains("before execution is bound")
             || text.contains("until `pr run` binds the branch and worktree")
@@ -341,21 +370,45 @@ fn matching_task_bundle_dirs(repo_root: &Path, issue_ref: &IssueRef) -> Result<V
 fn normalize_closed_completed_output_card(path: &Path) -> Result<()> {
     let mut text = fs::read_to_string(path)?;
     replace_field_line_in_text(&mut text, "Status", "DONE");
-    replace_first_exact_line(
-        &mut text,
-        "- Integration state: worktree_only | pr_open | merged",
-        "- Integration state: merged",
-    );
-    replace_first_exact_line(
-        &mut text,
-        "- Integration state: worktree_only",
-        "- Integration state: merged",
-    );
-    replace_first_exact_line(
-        &mut text,
-        "- Integration state: pr_open",
-        "- Integration state: merged",
-    );
+    let branch = line_value_after_prefix(&text, "Branch:");
+    if branch.as_deref() == Some("retrospective-no-branch") {
+        replace_first_exact_line(
+            &mut text,
+            "- Integration state: worktree_only | pr_open | merged",
+            "- Integration state: closed_no_pr",
+        );
+        replace_first_exact_line(
+            &mut text,
+            "- Integration state: worktree_only",
+            "- Integration state: closed_no_pr",
+        );
+        replace_first_exact_line(
+            &mut text,
+            "- Integration state: pr_open",
+            "- Integration state: closed_no_pr",
+        );
+        replace_first_exact_line(
+            &mut text,
+            "- Integration state: merged",
+            "- Integration state: closed_no_pr",
+        );
+    } else {
+        replace_first_exact_line(
+            &mut text,
+            "- Integration state: worktree_only | pr_open | merged",
+            "- Integration state: merged",
+        );
+        replace_first_exact_line(
+            &mut text,
+            "- Integration state: worktree_only",
+            "- Integration state: merged",
+        );
+        replace_first_exact_line(
+            &mut text,
+            "- Integration state: pr_open",
+            "- Integration state: merged",
+        );
+    }
     replace_first_exact_line(
         &mut text,
         "- Verification scope: worktree | pr_branch | main_repo",
@@ -389,7 +442,10 @@ fn normalize_closed_completed_stp(path: &Path) -> Result<()> {
 
 fn normalize_closed_completed_sip(path: &Path, issue_ref: &IssueRef) -> Result<()> {
     let mut text = fs::read_to_string(path)?;
-    replace_field_line_in_text(&mut text, "Branch", &issue_ref.branch_name("codex"));
+    let branch = line_value_after_prefix(&text, "Branch:");
+    if branch.as_deref() != Some("retrospective-no-branch") {
+        replace_field_line_in_text(&mut text, "Branch", &issue_ref.branch_name("codex"));
+    }
     replace_first_exact_line(&mut text, "- PR: none", "- PR:");
     replace_first_exact_line(
         &mut text,
@@ -972,6 +1028,26 @@ mod tests {
     }
 
     #[test]
+    fn normalize_closed_completed_output_card_rewrites_no_direct_pr_truth() {
+        let temp = temp_dir("adl-pr-lifecycle-output-no-pr");
+        let output = temp.join("sor.md");
+        fs::write(
+            &output,
+            "Status: IN_PROGRESS\nBranch: retrospective-no-branch\n- Integration state: worktree_only\n- Verification scope: worktree\n- Worktree-only paths remaining: adl/src/foo.rs\n",
+        )
+        .expect("write output");
+
+        normalize_closed_completed_output_card(&output).expect("normalize");
+        let text = fs::read_to_string(&output).expect("read output");
+
+        assert!(text.contains("Status: DONE"));
+        assert!(text.contains("Branch: retrospective-no-branch"));
+        assert!(text.contains("- Integration state: closed_no_pr"));
+        assert!(text.contains("- Verification scope: main_repo"));
+        assert!(text.contains("- Worktree-only paths remaining: none"));
+    }
+
+    #[test]
     fn normalize_closed_completed_stp_marks_issue_complete() {
         let temp = temp_dir("adl-pr-lifecycle-stp");
         let stp = temp.join("stp.md");
@@ -1098,6 +1174,38 @@ mod tests {
     }
 
     #[test]
+    fn ensure_closed_completed_issue_bundle_truth_rejects_merged_with_retrospective_branch() {
+        let temp = temp_dir("adl-pr-lifecycle-truth-no-pr");
+        let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+        let canonical_dir = issue_ref.task_bundle_dir_path(&temp);
+        fs::create_dir_all(&canonical_dir).expect("canonical dir");
+        fs::write(
+            canonical_dir.join("stp.md"),
+            "---\nstatus: \"complete\"\naction: \"edit\"\n---\n\n# Example\n",
+        )
+        .expect("write normalized stp");
+        fs::write(
+            canonical_dir.join("sip.md"),
+            "# ADL Input Card\n\nBranch: retrospective-no-branch\n\n## Goal\n\nPreserve the closed/completed issue prompt and local card truth after closeout.\n",
+        )
+        .expect("write normalized sip");
+        let output = canonical_dir.join("sor.md");
+        fs::write(
+            &output,
+            "Status: DONE\nBranch: retrospective-no-branch\n- Integration state: merged\n- Verification scope: main_repo\n- Worktree-only paths remaining: none\n",
+        )
+        .expect("write stale output");
+
+        let err = ensure_closed_completed_issue_bundle_truth(&temp, &issue_ref, &output)
+            .expect_err("merged with retrospective branch should fail");
+        assert!(err
+            .to_string()
+            .contains(
+                "SOR Integration state is 'merged' but Branch is 'retrospective-no-branch'; use 'closed_no_pr'"
+            ));
+    }
+
+    #[test]
     fn ensure_closed_completed_issue_bundle_truth_accepts_normalized_bundle() {
         let temp = temp_dir("adl-pr-lifecycle-truth-clean");
         let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
@@ -1122,6 +1230,33 @@ mod tests {
 
         ensure_closed_completed_issue_bundle_truth(&temp, &issue_ref, &output)
             .expect("normalized truth should pass");
+    }
+
+    #[test]
+    fn ensure_closed_completed_issue_bundle_truth_accepts_retrospective_no_branch_closed_no_pr() {
+        let temp = temp_dir("adl-pr-lifecycle-truth-no-pr-clean");
+        let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+        let canonical_dir = issue_ref.task_bundle_dir_path(&temp);
+        fs::create_dir_all(&canonical_dir).expect("canonical dir");
+        fs::write(
+            canonical_dir.join("stp.md"),
+            "---\nstatus: \"complete\"\naction: \"edit\"\n---\n\n# Example\n",
+        )
+        .expect("write normalized stp");
+        fs::write(
+            canonical_dir.join("sip.md"),
+            "# ADL Input Card\n\nBranch: retrospective-no-branch\n\n## Goal\n\nPreserve the closed/completed issue prompt and local card truth after closeout.\n",
+        )
+        .expect("write normalized sip");
+        let output = canonical_dir.join("sor.md");
+        fs::write(
+            &output,
+            "Status: DONE\nBranch: retrospective-no-branch\n- Integration state: closed_no_pr\n- Verification scope: main_repo\n- Worktree-only paths remaining: none\n",
+        )
+        .expect("write normalized output");
+
+        ensure_closed_completed_issue_bundle_truth(&temp, &issue_ref, &output)
+            .expect("normalized no-pr truth should pass");
     }
 
     #[test]
