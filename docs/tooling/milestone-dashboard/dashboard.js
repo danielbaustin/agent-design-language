@@ -1,143 +1,191 @@
 const milestoneData = {
-  milestone: "v0.88",
-  version: "0.88",
+  milestone: "v0.90.2",
+  version: "0.90.2",
   owner: "Daniel Austin / Agent Logic",
-  updated: "2026-04-11",
+  updated: "2026-04-21",
   status: "active",
-  statusLabel: "Planning package active; issue wave pending",
+  statusLabel: "Active compression visibility; read-only dashboard",
   summary:
-    "v0.88 turns temporal / chronosense and instinct / bounded-agency planning into one coherent public execution package without letting later-band ideas leak into scope.",
-  bands: [
-    "Temporal / chronosense substrate",
-    "Instinct / bounded-agency substrate",
+    "v0.90.2 is the first bounded CSM run milestone. This dashboard mirrors milestone-compression state so operators can see issue-wave progress, PR posture, validation risk, review-tail gates, release blockers, deferred findings, and the next safe action without treating the page as release authority.",
+  boundary: [
+    "Read-only visibility surface; it must not mutate issues, PRs, branches, cards, releases, or closeout state.",
+    "Canonical truth remains in milestone docs, GitHub issues/PRs, task cards, validation output, and review records.",
+    "Unknown or stale evidence is shown as unknown/stale rather than green."
+  ],
+  authority: [
+    { label: "v0.90.2 WBS", path: "../../milestones/v0.90.2/WBS_v0.90.2.md", note: "20-WP execution map and dependencies." },
+    { label: "v0.90.2 issue wave", path: "../../milestones/v0.90.2/WP_ISSUE_WAVE_v0.90.2.yaml", note: "Canonical WP-to-issue mapping for #2245-#2264." },
+    { label: "v0.90.2 checklist", path: "../../milestones/v0.90.2/MILESTONE_CHECKLIST_v0.90.2.md", note: "Current milestone truth markers and release gates." },
+    { label: "v0.90.2 release plan", path: "../../milestones/v0.90.2/RELEASE_PLAN_v0.90.2.md", note: "Release blockers, evidence requirements, and closeout order." },
+    { label: "v0.90 compression model", path: "../../milestones/v0.90/milestone_compression/README.md", note: "Read-only compression pilot and authority boundary." },
+    { label: "finish validation profiles", path: "../../milestones/v0.90/milestone_compression/FINISH_VALIDATION_PROFILES_v0.90.md", note: "Focused validation profile boundaries inherited by v0.90.2." }
+  ],
+  signals: [
+    { label: "WP wave", value: "20", note: "#2245-#2264 open/closed issue set", tone: "good" },
+    { label: "Closed WPs", value: "9", note: "WP-01 through WP-09 are closed", tone: "good" },
+    { label: "Active PR", value: "#2296", note: "WP-10 draft PR checks in progress", tone: "warn" },
+    { label: "Release tail", value: "open", note: "WP-15 through WP-20 still require review/closeout", tone: "warn" }
   ],
   nextActions: [
-    "Seed the real execution issue wave from WP-02 through WP-20.",
-    "Start Sprint 1 with temporal substrate work, not more scope reshaping.",
-    "Keep accepted pull-ins bounded to #1614 and #1618.",
-    "Preserve the normal v0.86 / v0.87 closeout pattern."
+    "Watch #2296 for WP-10 check completion and review state.",
+    "Continue WP-11 recovery eligibility only after the WP-10 visibility packet is safely reviewed or explicitly unblocked.",
+    "Keep review-tail work WP-15 through WP-20 visibly gated until the integrated first CSM run demo lands.",
+    "Preserve v0.91/v0.92 boundaries: no birthday, moral/emotional civilization, or capability-rebinding claims in v0.90.2."
   ],
   watchlist: [
-    "Issue wave is still pending even though the planning package is now coherent.",
-    "Paper Sonata needs to stay bounded as the flagship demo, not become a catch-all.",
-    "Local planning notes must not silently become canonical milestone promises.",
-    "Sprint 3 should stay a closeout tail, not a second implementation sprint."
+    { label: "Observatory packet", state: "active", note: "WP-10 is in draft PR; dashboard must not mark Observatory evidence green until review lands." },
+    { label: "Recovery/quarantine", state: "unknown", note: "WP-11 and WP-12 are still open, so recovery and quarantine proof is not complete." },
+    { label: "Adversarial hook", state: "unknown", note: "WP-13 remains bounded future work, not a full security ecology." },
+    { label: "Review tail", state: "blocked", note: "Internal/external review and remediation are intentionally not green before WP-14/WP-15." }
   ],
-  sprints: [
+  lanes: [
     {
-      id: "v0.88-s1",
-      title: "Sprint 1",
+      id: "lane-setup",
+      title: "Setup and inherited truth",
+      status: "complete",
+      wps: ["WP-01", "WP-02", "WP-03", "WP-04"],
+      purpose: "Promote the package, audit inherited Runtime v2/CSM surfaces, and define first-run contracts."
+    },
+    {
+      id: "lane-first-run",
+      title: "First bounded CSM run",
       status: "active",
-      purpose: "Lock canonical milestone truth and execute the temporal substrate.",
-      wps: ["WP-01", "WP-02", "WP-03", "WP-04", "WP-05", "WP-06", "WP-07", "WP-08"]
+      wps: ["WP-05", "WP-06", "WP-07", "WP-08", "WP-09", "WP-10"],
+      purpose: "Boot citizens, run a governed episode, mediate actions, reject invalid actions, prove continuity, and expose Observatory evidence."
     },
     {
-      id: "v0.88-s2",
-      title: "Sprint 2",
-      status: "planned",
-      purpose: "Execute PHI metrics, instinct / bounded agency, and the Paper Sonata flagship demo.",
-      wps: ["WP-09", "WP-10", "WP-11", "WP-12", "WP-13"]
+      id: "lane-hardening",
+      title: "Recovery and hardening",
+      status: "unknown",
+      wps: ["WP-11", "WP-12", "WP-13", "WP-14"],
+      purpose: "Distinguish recovery from quarantine, add bounded hardening probes, and package the integrated CSM run demo."
     },
     {
-      id: "v0.88-s3",
-      title: "Sprint 3",
-      status: "planned",
-      purpose: "Converge demos, quality, reviews, remediation, next-milestone planning, and release ceremony.",
-      wps: ["WP-14", "WP-15", "WP-16", "WP-17", "WP-18", "WP-19", "WP-20"]
+      id: "lane-release-tail",
+      title: "Review and release tail",
+      status: "blocked",
+      wps: ["WP-15", "WP-16", "WP-17", "WP-18", "WP-19", "WP-20"],
+      purpose: "Converge docs, complete internal/external review, remediate findings, plan next milestone, and run ceremony."
     }
   ],
-  docs: [
-    { label: "README", path: "../../milestones/v0.88/README.md", note: "Canonical milestone purpose, scope, and issue map." },
-    { label: "WBS", path: "../../milestones/v0.88/WBS_v0.88.md", note: "Twenty-work-package execution map with dependencies." },
-    { label: "Sprint plan", path: "../../milestones/v0.88/SPRINT_v0.88.md", note: "Three-sprint sequence and exit criteria." },
-    { label: "Design", path: "../../milestones/v0.88/DESIGN_v0.88.md", note: "Milestone design boundary and architectural story." },
-    { label: "Feature index", path: "../../milestones/v0.88/FEATURE_DOCS_v0.88.md", note: "Promoted feature package and non-promoted local planning boundaries." },
-    { label: "Milestone checklist", path: "../../milestones/v0.88/MILESTONE_CHECKLIST_v0.88.md", note: "Closeout gates and release-tail proof expectations." },
-    { label: "Release plan", path: "../../milestones/v0.88/RELEASE_PLAN_v0.88.md", note: "Release-tail sequence and package discipline." },
-    { label: "Demo matrix", path: "../../milestones/v0.88/DEMO_MATRIX_v0.88.md", note: "Primary proof surfaces and reviewer-facing demos." }
-  ],
-  issues: [
-    { label: "#1527", url: "https://github.com/danielbaustin/agent-design-language/issues/1527", kind: "tracked planning", note: "Initial v0.88 planning shell and milestone scaffolding." },
-    { label: "#1579", url: "https://github.com/danielbaustin/agent-design-language/issues/1579", kind: "tracked planning", note: "Promotion of the bounded tracked v0.88 feature-doc package." },
-    { label: "#1497", url: "https://github.com/danielbaustin/agent-design-language/issues/1497", kind: "tracked planning", note: "Canonical next-milestone planning reconciliation and scope closure." },
-    { label: "#1614", url: "https://github.com/danielbaustin/agent-design-language/issues/1614", kind: "accepted pull-in", note: "Bounded temporal/deadline pressure follow-on." },
-    { label: "#1618", url: "https://github.com/danielbaustin/agent-design-language/issues/1618", kind: "accepted pull-in", note: "Bounded comparative-demo / positioning follow-on." }
-  ],
   workPackages: [
-    { id: "WP-01", title: "Canonical planning package", sprint: "v0.88-s1", status: "complete", issue: "#1527, #1579, #1497", deps: "none", desc: "Reconcile the tracked planning package, promoted feature index, and milestone structure.", deliverable: "Coherent milestone docs + promoted feature set" },
-    { id: "WP-02", title: "Chronosense foundation", sprint: "v0.88-s1", status: "pending", issue: "execution issue to be seeded", deps: "WP-01", desc: "Establish the conceptual chronosense substrate.", deliverable: "Runtime-facing chronosense definitions and one bounded proof hook" },
-    { id: "WP-03", title: "Temporal schema", sprint: "v0.88-s1", status: "pending", issue: "execution issue to be seeded", deps: "WP-01", desc: "Define temporal anchors, clocks, and execution-policy trace hooks.", deliverable: "Concrete schema fields and targeted tests" },
-    { id: "WP-04", title: "Continuity and identity semantics", sprint: "v0.88-s1", status: "pending", issue: "execution issue to be seeded", deps: "WP-02, WP-03", desc: "Ground continuity, interruption, resumption, and identity semantics in temporal structure.", deliverable: "Continuity artifact contract and proof fixture" },
-    { id: "WP-05", title: "Temporal query and retrieval", sprint: "v0.88-s1", status: "pending", issue: "execution issue to be seeded", deps: "WP-03", desc: "Make time-aware retrieval and staleness queryable.", deliverable: "Query surface and fixture-backed validation tests" },
-    { id: "WP-06", title: "Commitments and deadlines", sprint: "v0.88-s1", status: "pending", issue: "execution issue to be seeded; bounded pull-in #1614", deps: "WP-03, WP-05", desc: "Represent future obligations and missed commitments as first-class temporal records.", deliverable: "Commitment / deadline artifact model and proof fixtures" },
-    { id: "WP-07", title: "Temporal causality and explanation", sprint: "v0.88-s1", status: "pending", issue: "execution issue to be seeded", deps: "WP-03, WP-05", desc: "Define bounded causal and explanatory review surfaces.", deliverable: "Explanation artifact format and reviewer-facing examples" },
-    { id: "WP-08", title: "Execution policy and cost model", sprint: "v0.88-s1", status: "pending", issue: "execution issue to be seeded", deps: "WP-03", desc: "Tie execution mode and realized cost back to trace reviewability.", deliverable: "Execution-policy contract and cost proof path" },
-    { id: "WP-09", title: "PHI-style integration metrics", sprint: "v0.88-s2", status: "planned", issue: "execution issue to be seeded", deps: "WP-02 through WP-08", desc: "Define bounded engineering metrics for integration and adaptive depth.", deliverable: "Metric definitions and reviewable outputs" },
-    { id: "WP-10", title: "Instinct model", sprint: "v0.88-s2", status: "planned", issue: "execution issue to be seeded", deps: "WP-01", desc: "Define bounded instinct as an explicit cognitive substrate.", deliverable: "Runtime-facing instinct contract and acceptance tests" },
-    { id: "WP-11", title: "Instinct runtime surface and bounded agency hook", sprint: "v0.88-s2", status: "planned", issue: "execution issue to be seeded", deps: "WP-10", desc: "Make instinct visible in runtime declaration, routing, prioritization, trace, and demo proof.", deliverable: "Implementation slice and bounded-agency proof case" },
-    { id: "WP-12", title: "Paper Sonata flagship demo", sprint: "v0.88-s2", status: "planned", issue: "execution issue to be seeded", deps: "WP-02 through WP-11", desc: "Build a bounded multi-agent manuscript demo with durable artifacts and truthful runtime proof.", deliverable: "Runner, synthetic packet, artifact tree, and smoke path" },
-    { id: "WP-13", title: "Demo matrix + integration demos", sprint: "v0.88-s2", status: "planned", issue: "execution issue to be seeded; supporting pull-in #1618", deps: "WP-02 through WP-12", desc: "Define and implement the primary proof surfaces for temporal, PHI, instinct, and flagship demo bands.", deliverable: "Runnable demos and reviewer-facing matrix" },
-    { id: "WP-14", title: "Coverage / quality gate", sprint: "v0.88-s3", status: "closeout", issue: "closeout issue to be seeded", deps: "WP-13", desc: "Enforce milestone quality and coverage posture.", deliverable: "Green quality gate" },
-    { id: "WP-15", title: "Docs + review pass", sprint: "v0.88-s3", status: "closeout", issue: "closeout issue to be seeded", deps: "WP-13, WP-14", desc: "Converge reviewer-facing docs against delivered proof.", deliverable: "Reviewer-ready package" },
-    { id: "WP-16", title: "Internal review", sprint: "v0.88-s3", status: "closeout", issue: "closeout issue to be seeded", deps: "WP-15", desc: "Perform bounded internal review of milestone truth and proof surfaces.", deliverable: "Internal review record" },
-    { id: "WP-17", title: "3rd-party review", sprint: "v0.88-s3", status: "closeout", issue: "closeout issue to be seeded", deps: "WP-15, WP-16", desc: "Perform external review and capture findings.", deliverable: "3rd-party review record" },
-    { id: "WP-18", title: "Review findings remediation", sprint: "v0.88-s3", status: "closeout", issue: "closeout issue to be seeded", deps: "WP-16, WP-17", desc: "Resolve or explicitly defer accepted review findings.", deliverable: "Remediation record" },
-    { id: "WP-19", title: "Next milestone planning", sprint: "v0.88-s3", status: "closeout", issue: "closeout issue to be seeded", deps: "WP-18", desc: "Prepare the next milestone planning package before v0.88 closeout.", deliverable: "Next-milestone package" },
-    { id: "WP-20", title: "Release ceremony", sprint: "v0.88-s3", status: "closeout", issue: "closeout issue to be seeded", deps: "WP-18, WP-19", desc: "Do final validation, notes, tag, cleanup, and closeout record.", deliverable: "Release package" }
+    { id: "WP-01", issue: "#2245", title: "Milestone package and issue wave", queue: "docs", status: "complete", validation: "docs/package", checks: "issue-wave docs", action: "closed", evidence: "Planning docs promoted and issue wave opened." },
+    { id: "WP-02", issue: "#2246", title: "Runtime v2 inheritance and compression audit", queue: "docs", status: "complete", validation: "docs/compression", checks: "inheritance audit", action: "closed", evidence: "Inheritance and compression report landed." },
+    { id: "WP-03", issue: "#2247", title: "CSM run packet contract", queue: "runtime", status: "complete", validation: "contract", checks: "fixture contract", action: "closed", evidence: "First-run packet contract and fixture landed." },
+    { id: "WP-04", issue: "#2248", title: "Invariant and violation artifact contract", queue: "runtime", status: "complete", validation: "schema/fixture", checks: "artifact contract", action: "closed", evidence: "Invariant map and violation artifact proof landed." },
+    { id: "WP-05", issue: "#2249", title: "Manifold boot and citizen admission", queue: "runtime", status: "complete", validation: "runtime", checks: "boot/admission", action: "closed", evidence: "Boot and citizen admission artifacts landed." },
+    { id: "WP-06", issue: "#2250", title: "Governed episode and resource scheduling", queue: "runtime", status: "complete", validation: "runtime", checks: "scheduler proof", action: "closed", evidence: "Governed episode and scheduler explanation landed." },
+    { id: "WP-07", issue: "#2251", title: "Freedom Gate mediation", queue: "runtime", status: "complete", validation: "runtime", checks: "decision artifact", action: "closed", evidence: "Non-trivial citizen action routes through Freedom Gate." },
+    { id: "WP-08", issue: "#2252", title: "Invalid action rejection", queue: "runtime", status: "complete", validation: "negative test", checks: "violation packet", action: "closed", evidence: "Invalid action rejection proof landed." },
+    { id: "WP-09", issue: "#2253", title: "Snapshot rehydrate and wake continuity", queue: "runtime", status: "complete", validation: "runtime", checks: "continuity proof", action: "closed", evidence: "Snapshot/rehydrate/wake proof landed." },
+    { id: "WP-10", issue: "#2254 / PR #2296", title: "Observatory packet and operator report integration", queue: "runtime", status: "active", validation: "runtime/docs", checks: "CI in progress", action: "review #2296", evidence: "Draft PR open; do not mark green until merged." },
+    { id: "WP-11", issue: "#2255", title: "Recovery eligibility model", queue: "runtime", status: "unknown", validation: "runtime", checks: "not started/unknown", action: "queue after WP-10", evidence: "Open issue; recovery proof not landed." },
+    { id: "WP-12", issue: "#2256", title: "Quarantine state machine", queue: "runtime", status: "unknown", validation: "runtime", checks: "not started/unknown", action: "wait on WP-11", evidence: "Open issue; quarantine proof not landed." },
+    { id: "WP-13", issue: "#2257", title: "Governed adversarial hook and hardening probes", queue: "runtime", status: "unknown", validation: "security/runtime", checks: "not started/unknown", action: "wait on WP-11/WP-12", evidence: "Open issue; bounded hardening probes not landed." },
+    { id: "WP-14", issue: "#2258", title: "Integrated first CSM run demo", queue: "demo", status: "unknown", validation: "demo", checks: "not started/unknown", action: "wait on WP-05-WP-13", evidence: "Open issue; integrated demo not landed." },
+    { id: "WP-15", issue: "#2259", title: "Docs, quality, and review convergence", queue: "docs", status: "blocked", validation: "docs/quality", checks: "blocked by WP-14", action: "hold", evidence: "Review package cannot converge before integrated demo." },
+    { id: "WP-16", issue: "#2260", title: "Internal review", queue: "review", status: "blocked", validation: "review", checks: "blocked by WP-15", action: "hold", evidence: "Internal review waits for docs/quality convergence." },
+    { id: "WP-17", issue: "#2261", title: "External / 3rd-party review", queue: "review", status: "blocked", validation: "review", checks: "blocked by WP-16", action: "hold", evidence: "External review waits for internal review." },
+    { id: "WP-18", issue: "#2262", title: "Review findings remediation", queue: "review", status: "blocked", validation: "review", checks: "blocked by WP-16/WP-17", action: "hold", evidence: "No accepted review findings can be closed before reviews occur." },
+    { id: "WP-19", issue: "#2263", title: "Next milestone planning and v0.91/v0.92 handoff", queue: "docs", status: "blocked", validation: "docs", checks: "blocked by WP-18", action: "hold", evidence: "Handoff waits for findings disposition." },
+    { id: "WP-20", issue: "#2264", title: "Release ceremony", queue: "release", status: "blocked", validation: "release", checks: "blocked by WP-19", action: "hold", evidence: "Release ceremony waits for next-milestone planning." }
+  ],
+  validationProfiles: [
+    { label: "Docs/static dashboard", status: "active", profile: "Focused local validation plus static integrity scan.", command: "bash adl/tools/test_milestone_dashboard.sh" },
+    { label: "Runtime/schema/security", status: "blocked", profile: "Fuller validation required when implementation, schema, security, or release gates change.", command: "issue-specific cargo/tests/demo proof" },
+    { label: "Release ceremony", status: "blocked", profile: "No focused validation can approve release; human ceremony and review evidence remain required.", command: "WP-20 release closeout only" }
+  ],
+  releaseBlockers: [
+    "Missing Observatory-visible run evidence until WP-10 merges.",
+    "Recovery/quarantine distinction is still open until WP-11/WP-12 land.",
+    "Governed adversarial hook and hardening probes are still open until WP-13 lands.",
+    "Integrated first CSM run demo is still open until WP-14 lands.",
+    "Internal/external review, remediation, next-milestone planning, and release ceremony remain open."
+  ],
+  deferredFindings: [
+    { label: "Birthday boundary", state: "guarded", note: "v0.90.2 must not claim the first true Gödel-agent birthday." },
+    { label: "Moral/emotional civilization", state: "guarded", note: "v0.91 scope remains later; do not backport into v0.90.2 claims." },
+    { label: "Capability rebinding / richer memory", state: "guarded", note: "v0.92 scope remains later; do not present as current proof." },
+    { label: "Security ecology", state: "bounded", note: "WP-13 is one governed adversarial hook plus probes, not a complete red/blue ecology." }
   ]
 };
 
 const state = {
   statusFilter: "all",
-  sprintFilter: "all"
+  laneFilter: "all"
 };
 
 function byId(id) {
   return document.getElementById(id);
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 function humanStatus(status) {
   return {
     complete: "Complete",
     active: "Active",
-    pending: "Pending issue wave",
-    planned: "Planned",
-    closeout: "Closeout tail",
-    ready: "Ready",
-    blocked: "Blocked"
+    unknown: "Unknown / not landed",
+    blocked: "Blocked / gated",
+    stale: "Stale",
+    guarded: "Guarded",
+    bounded: "Bounded",
+    warn: "Attention",
+    good: "Healthy"
   }[status] || status;
+}
+
+function statusClass(status) {
+  return `status-${status}`;
 }
 
 function renderMeta() {
   byId("milestone-chip").textContent = `${milestoneData.milestone} / ${milestoneData.version}`;
-  byId("headline").textContent = `${milestoneData.milestone} milestone dashboard`;
+  byId("headline").textContent = `${milestoneData.milestone} compression dashboard`;
   byId("lede").textContent = milestoneData.summary;
 
   const badge = byId("status-badge");
   badge.textContent = milestoneData.statusLabel;
-  badge.className = `status-badge status-${milestoneData.status}`;
+  badge.className = `status-badge ${statusClass(milestoneData.status)}`;
 
   const meta = [
     ["Owner", milestoneData.owner],
     ["Updated", milestoneData.updated],
     ["Version", milestoneData.version],
-    ["Status", humanStatus(milestoneData.status)]
+    ["Boundary", "read-only"]
   ];
 
   byId("meta-list").innerHTML = meta
-    .map(([key, value]) => `<dt>${key}</dt><dd>${value}</dd>`)
+    .map(([key, value]) => `<dt>${escapeHtml(key)}</dt><dd>${escapeHtml(value)}</dd>`)
     .join("");
 
-  byId("bands-list").innerHTML = milestoneData.bands
-    .map((band) => `<li>${band}</li>`)
+  byId("boundary-list").innerHTML = milestoneData.boundary
+    .map((item) => `<li>${escapeHtml(item)}</li>`)
     .join("");
 
   byId("next-actions").innerHTML = milestoneData.nextActions
-    .map((item) => `<li>${item}</li>`)
+    .map((item) => `<li>${escapeHtml(item)}</li>`)
     .join("");
+}
 
-  byId("watchlist").innerHTML = milestoneData.watchlist
-    .map((item) => `<li>${item}</li>`)
+function renderSignals() {
+  byId("signal-grid").innerHTML = milestoneData.signals
+    .map(
+      (signal) => `
+        <article class="signal-card ${statusClass(signal.tone)}">
+          <span>${escapeHtml(signal.label)}</span>
+          <strong>${escapeHtml(signal.value)}</strong>
+          <p>${escapeHtml(signal.note)}</p>
+        </article>
+      `
+    )
     .join("");
 }
 
@@ -145,52 +193,66 @@ function renderMetrics() {
   const total = milestoneData.workPackages.length;
   const complete = milestoneData.workPackages.filter((wp) => wp.status === "complete").length;
   const active = milestoneData.workPackages.filter((wp) => wp.status === "active").length;
-  const pending = milestoneData.workPackages.filter((wp) => ["pending", "planned"].includes(wp.status)).length;
-  const closeout = milestoneData.workPackages.filter((wp) => wp.status === "closeout").length;
+  const unknown = milestoneData.workPackages.filter((wp) => wp.status === "unknown").length;
+  const blocked = milestoneData.workPackages.filter((wp) => wp.status === "blocked").length;
   const percent = Math.round((complete / total) * 100);
 
   const metrics = [
-    ["Completed", complete, "Work packages landed"],
-    ["Active", active, "Currently executing"],
-    ["Queued", pending, "Need issue-wave work"],
-    ["Closeout", closeout, "Review and release tail"]
+    ["Closed", complete, "Merged or closed WP issues"],
+    ["Active", active, "In review or in flight"],
+    ["Unknown", unknown, "Open, not yet landed"],
+    ["Blocked", blocked, "Release-tail gated"]
   ];
 
   byId("metric-stack").innerHTML = metrics
     .map(
       ([label, value, note]) => `
         <div class="metric">
-          <span class="metric-label">${label}</span>
-          <strong>${value}</strong>
-          <span>${note}</span>
+          <span class="metric-label">${escapeHtml(label)}</span>
+          <strong>${escapeHtml(value)}</strong>
+          <span>${escapeHtml(note)}</span>
         </div>
       `
     )
     .join("");
 
-  byId("progress-copy").textContent = `${percent}%`;
+  byId("progress-copy").textContent = `${percent}% closed`;
   requestAnimationFrame(() => {
     byId("progress-bar").style.width = `${percent}%`;
   });
 }
 
-function renderSprints() {
-  byId("sprint-grid").innerHTML = milestoneData.sprints
-    .map((sprint) => {
-      const wpCount = milestoneData.workPackages.filter((wp) => wp.sprint === sprint.id).length;
+function renderWatchlist() {
+  byId("watchlist").innerHTML = milestoneData.watchlist
+    .map(
+      (item) => `
+        <li>
+          <span class="inline-pill ${statusClass(item.state)}">${escapeHtml(humanStatus(item.state))}</span>
+          <strong>${escapeHtml(item.label)}</strong>
+          <span>${escapeHtml(item.note)}</span>
+        </li>
+      `
+    )
+    .join("");
+}
+
+function renderLanes() {
+  byId("lane-grid").innerHTML = milestoneData.lanes
+    .map((lane) => {
+      const wpCount = milestoneData.workPackages.filter((wp) => lane.wps.includes(wp.id)).length;
       return `
-        <article class="sprint-card">
-          <div class="sprint-topline">
+        <article class="lane-card">
+          <div class="lane-topline">
             <div>
-              <p class="section-kicker">${sprint.id}</p>
-              <h4>${sprint.title}</h4>
+              <p class="section-kicker">${escapeHtml(lane.id)}</p>
+              <h4>${escapeHtml(lane.title)}</h4>
             </div>
-            <span class="status-pill status-${sprint.status}">${humanStatus(sprint.status)}</span>
+            <span class="status-pill ${statusClass(lane.status)}">${escapeHtml(humanStatus(lane.status))}</span>
           </div>
-          <p>${sprint.purpose}</p>
+          <p>${escapeHtml(lane.purpose)}</p>
           <ul>
-            <li>${wpCount} work packages in this sprint</li>
-            <li>${sprint.wps.join(", ")}</li>
+            <li>${wpCount} work packages</li>
+            <li>${escapeHtml(lane.wps.join(", "))}</li>
           </ul>
         </article>
       `;
@@ -203,22 +265,22 @@ function renderFilters() {
     ["all", "All"],
     ["complete", "Complete"],
     ["active", "Active"],
-    ["pending", "Queued"],
-    ["closeout", "Closeout"]
+    ["unknown", "Unknown"],
+    ["blocked", "Blocked"]
   ];
 
-  const sprintOptions = [
-    ["all", "All sprints"],
-    ...milestoneData.sprints.map((sprint) => [sprint.id, sprint.id])
+  const laneOptions = [
+    ["all", "All lanes"],
+    ...milestoneData.lanes.map((lane) => [lane.id, lane.title])
   ];
 
   const renderChips = (options, activeValue) =>
     options
-      .map(([value, label]) => `<button class="chip${value === activeValue ? " active" : ""}" data-value="${value}" type="button">${label}</button>`)
+      .map(([value, label]) => `<button class="chip${value === activeValue ? " active" : ""}" data-value="${escapeHtml(value)}" type="button">${escapeHtml(label)}</button>`)
       .join("");
 
   byId("status-filters").innerHTML = renderChips(statusOptions, state.statusFilter);
-  byId("sprint-filters").innerHTML = renderChips(sprintOptions, state.sprintFilter);
+  byId("lane-filters").innerHTML = renderChips(laneOptions, state.laneFilter);
 
   byId("status-filters").querySelectorAll(".chip").forEach((chip) => {
     chip.addEventListener("click", () => {
@@ -228,67 +290,94 @@ function renderFilters() {
     });
   });
 
-  byId("sprint-filters").querySelectorAll(".chip").forEach((chip) => {
+  byId("lane-filters").querySelectorAll(".chip").forEach((chip) => {
     chip.addEventListener("click", () => {
-      state.sprintFilter = chip.dataset.value;
+      state.laneFilter = chip.dataset.value;
       renderFilters();
       renderWorkPackages();
     });
   });
 }
 
+function laneForWorkPackage(wpId) {
+  return milestoneData.lanes.find((lane) => lane.wps.includes(wpId));
+}
+
 function renderWorkPackages() {
   const filtered = milestoneData.workPackages.filter((wp) => {
-    const statusOk =
-      state.statusFilter === "all" ||
-      (state.statusFilter === "pending" && ["pending", "planned"].includes(wp.status)) ||
-      wp.status === state.statusFilter;
-    const sprintOk = state.sprintFilter === "all" || wp.sprint === state.sprintFilter;
-    return statusOk && sprintOk;
+    const lane = laneForWorkPackage(wp.id);
+    const statusOk = state.statusFilter === "all" || wp.status === state.statusFilter;
+    const laneOk = state.laneFilter === "all" || lane?.id === state.laneFilter;
+    return statusOk && laneOk;
   });
 
   byId("wp-list").innerHTML = filtered
-    .map(
-      (wp) => `
+    .map((wp) => {
+      const lane = laneForWorkPackage(wp.id);
+      return `
         <article class="wp-row">
           <div class="wp-title-block">
             <div class="wp-topline">
-              <strong class="wp-title">${wp.id} · ${wp.title}</strong>
+              <strong class="wp-title">${escapeHtml(wp.id)} · ${escapeHtml(wp.title)}</strong>
             </div>
-            <p class="wp-desc">${wp.desc}</p>
-            <p class="wp-meta">Deliverable: ${wp.deliverable}</p>
+            <p class="wp-desc">${escapeHtml(wp.evidence)}</p>
+            <p class="wp-meta">Lane: ${escapeHtml(lane?.title || "unknown")} · Queue: ${escapeHtml(wp.queue)}</p>
           </div>
-          <div><span class="status-pill status-${wp.status}">${humanStatus(wp.status)}</span></div>
-          <div>${wp.sprint}</div>
-          <div>${wp.deps}</div>
-          <div>${wp.issue}</div>
+          <div><span class="status-pill ${statusClass(wp.status)}">${escapeHtml(humanStatus(wp.status))}</span></div>
+          <div>${escapeHtml(wp.issue)}</div>
+          <div>${escapeHtml(wp.validation)}</div>
+          <div>${escapeHtml(wp.checks)}</div>
+          <div>${escapeHtml(wp.action)}</div>
         </article>
-      `
-    )
+      `;
+    })
     .join("");
 }
 
-function renderDocs() {
-  byId("docs-list").innerHTML = milestoneData.docs
+function renderAuthority() {
+  byId("authority-list").innerHTML = milestoneData.authority
     .map(
       (doc) => `
         <article class="doc-item">
-          <a href="${doc.path}">${doc.label}</a>
-          <span class="doc-meta">${doc.note}</span>
+          <a href="${escapeHtml(doc.path)}">${escapeHtml(doc.label)}</a>
+          <span class="doc-meta">${escapeHtml(doc.note)}</span>
         </article>
       `
     )
     .join("");
 }
 
-function renderIssues() {
-  byId("issues-list").innerHTML = milestoneData.issues
+function renderValidationProfiles() {
+  byId("validation-list").innerHTML = milestoneData.validationProfiles
     .map(
-      (issue) => `
+      (profile) => `
+        <article class="review-item">
+          <div>
+            <strong>${escapeHtml(profile.label)}</strong>
+            <p>${escapeHtml(profile.profile)}</p>
+          </div>
+          <span class="status-pill ${statusClass(profile.status)}">${escapeHtml(humanStatus(profile.status))}</span>
+          <code>${escapeHtml(profile.command)}</code>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderBlockers() {
+  byId("release-blockers").innerHTML = milestoneData.releaseBlockers
+    .map((item) => `<li>${escapeHtml(item)}</li>`)
+    .join("");
+}
+
+function renderDeferredFindings() {
+  byId("deferred-findings").innerHTML = milestoneData.deferredFindings
+    .map(
+      (finding) => `
         <article class="issue-item">
-          <a href="${issue.url}">${issue.label}</a>
-          <span class="doc-meta">${issue.kind}</span>
-          <span class="issue-copy">${issue.note}</span>
+          <span class="inline-pill ${statusClass(finding.state)}">${escapeHtml(humanStatus(finding.state))}</span>
+          <strong>${escapeHtml(finding.label)}</strong>
+          <span class="issue-copy">${escapeHtml(finding.note)}</span>
         </article>
       `
     )
@@ -297,12 +386,16 @@ function renderIssues() {
 
 function init() {
   renderMeta();
+  renderSignals();
   renderMetrics();
-  renderSprints();
+  renderWatchlist();
+  renderLanes();
   renderFilters();
   renderWorkPackages();
-  renderDocs();
-  renderIssues();
+  renderAuthority();
+  renderValidationProfiles();
+  renderBlockers();
+  renderDeferredFindings();
 }
 
 init();
