@@ -1,0 +1,110 @@
+# v0.90.4 Planning Package
+
+## Status
+
+Draft milestone package. v0.90.4 is planned as the citizen economics and
+contract-market substrate milestone under planning issue #2271.
+
+The issue wave has not been opened. This package is the reviewable planning
+source for a later WP-01 issue-wave creation pass.
+
+## Thesis
+
+v0.90.4 should make bounded economic agency legible inside the CSM polis.
+
+v0.90.3 is responsible for citizen-state safety: standing, private state,
+access control, projection policy, continuity witnesses, challenge flow, and
+quarantine/sanctuary behavior. v0.90.4 consumes that authority substrate and
+adds the first practical market layer:
+
+- citizens and authorized agents can publish bounded contracts
+- qualified counterparties can submit bids
+- evaluations are traceable and reviewable
+- awards and acceptance are authority-checked
+- delegation and subcontracting preserve parent responsibility
+- external counterparties participate through explicit trust and gateway rules
+- the contract lifecycle is stateful, signed, and auditable
+- reviewers can inspect one bounded contract-market proof without payment rails
+
+The milestone should prove contract-market mechanics before it attempts money,
+settlement, pricing markets, or full inter-polis trade.
+
+## Directory Shape
+
+- root planning docs and WP YAML live in this directory
+- feature contracts live under features/
+- context and later-band backgrounders live under ideas/
+
+## Scope Boundary
+
+In scope:
+
+- inheritance and readiness audit from v0.90.3 citizen-state outputs
+- contract schema
+- bid schema
+- evaluation and selection model
+- transition authority model
+- contract lifecycle state machine
+- external counterparty participation rules
+- delegation and subcontracting model
+- contract-market fixture set
+- deterministic contract-market runner
+- reviewer-facing contract-market summary artifact
+- one bounded contract-market demo
+- release/review evidence that the economics layer consumes citizen standing
+  and access-control authority rather than redefining citizenship
+
+Out of scope:
+
+- payment settlement
+- Lightning, x402, stablecoin, banking, invoicing, or other payment rails
+- full inter-polis economics
+- full constitutional governance
+- redefining citizen standing, admission, private state, or continuity
+- open-ended autonomous markets
+- production identity, KYC, billing, tax, or legal contracting systems
+
+## Canonical Planning Docs
+
+- Vision: VISION_v0.90.4.md
+- Design: DESIGN_v0.90.4.md
+- Work Breakdown Structure: WBS_v0.90.4.md
+- Sprint plan: SPRINT_v0.90.4.md
+- Decisions log: DECISIONS_v0.90.4.md
+- Demo matrix: DEMO_MATRIX_v0.90.4.md
+- Feature index: FEATURE_DOCS_v0.90.4.md
+- Milestone checklist: MILESTONE_CHECKLIST_v0.90.4.md
+- Release plan: RELEASE_PLAN_v0.90.4.md
+- Release notes draft: RELEASE_NOTES_v0.90.4.md
+- Issue wave draft: WP_ISSUE_WAVE_v0.90.4.yaml
+
+## Execution Rule
+
+This package is planning truth, not an execution claim. The WP issue wave must
+be created from the reviewed YAML before implementation starts.
+
+Once the wave opens, issue work should happen in issue worktrees. Root checkout
+edits are not part of the ADL execution model.
+
+## Compression Rule
+
+v0.90.4 should use the compression model learned in v0.90.1 through v0.90.3:
+
+- make schema, lifecycle, authority, fixture, and runner contracts explicit
+  before widening implementation
+- keep the first market proof small and reviewer-visible
+- front-load negative cases for unauthorized transition, invalid bid,
+  unsupported delegation, and trace discontinuity
+- keep demo claims narrow
+- let docs-only and fixture-only WPs run with focused validation
+- do not compress away authority checks, review summaries, external-party
+  boundaries, or release-truth work
+
+## Dependency On v0.90.3
+
+v0.90.4 must not define who is a citizen or what private state authority means.
+It depends on the v0.90.3 citizen-state substrate for standing, access-control,
+projection, challenge, appeal, and continuity semantics.
+
+If v0.90.3 defers a required authority surface, v0.90.4 should either narrow its
+proof to a fixture-backed boundary or delay the affected WP.
