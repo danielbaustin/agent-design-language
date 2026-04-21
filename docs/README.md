@@ -14,6 +14,7 @@ Use this index to find the right source of truth quickly.
 - Root project overview: `../README.md`
 - Runtime and CLI guide: `../adl/README.md`
 - Language/spec entrypoint: `../adl-spec/README.md`
+- Glossary: `GLOSSARY.md`
 - Default contributor workflow: `default_workflow.md`
 
 ## Milestone Documentation
@@ -30,6 +31,7 @@ Use this index to find the right source of truth quickly.
 ## Core Contributor and Reference Docs
 
 - Architecture decisions: `adr/`
+- Glossary: `GLOSSARY.md`
 - Default workflow guide: `default_workflow.md`
 - Design goals: `design_goals.md`
 - Codex operating procedure: `codex_playbook.md`
