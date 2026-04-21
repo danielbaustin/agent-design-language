@@ -46,6 +46,12 @@ v0.90.2 now has reviewable proof coverage for:
 
 ## Primary Commands
 
+Run the bounded v0.90.2 review-quality gate for internal/external review proof:
+
+```sh
+bash adl/tools/demo_v0902_review_quality_gate.sh
+```
+
 Generate the feature-proof coverage packet:
 
 ```sh
@@ -69,6 +75,16 @@ Run the integrated first-run test:
 ```sh
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_integrated_run -- --nocapture
 ```
+
+The v0.90.2 review-quality gate is intentionally bounded. It runs the focused
+review/demo proof scripts, milestone dashboard smoke proof, and the Runtime v2
+feature-proof and integrated-run tests used as internal/external review
+evidence. It does not replace full release-tail validation, full workspace
+`cargo test`, full clippy, coverage gates, or the release ceremony.
+
+Use `bash adl/tools/test_demo_v0901_quality_gate.sh` only as broader
+release-tail support evidence inherited from v0.90.1 when operators want a
+larger confidence sweep.
 
 ## WP-15 Validation Evidence
 
