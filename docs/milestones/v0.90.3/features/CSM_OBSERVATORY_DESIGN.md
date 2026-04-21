@@ -45,6 +45,34 @@ Every visible element should answer one of three questions:
 If a panel does not answer one of those questions, it does not belong on the
 first screen.
 
+## Interaction Inspiration
+
+The Observatory should borrow from the deeper lessons of Kai Krause's interface
+language without copying its period surface treatment.
+
+The useful pattern is the specialized room: a whole-screen environment built
+for one kind of attention, where controls, mood, spatial layout, and feedback
+all serve the task. For ADL, that means the Observatory should feel less like an
+admin dashboard and more like a governed instrument room: calm by default,
+alive under attention, and explicit about what is visible, sealed, deferred, or
+dangerous.
+
+Subtle inspirations to carry forward:
+
+- rooms, not generic pages: Observatory, Operator, and Citizen modes should each
+  feel like purpose-built environments
+- instruments, not widgets: the Freedom Gate docket, trace ribbon, kernel
+  pulse, and citizen constellation should read as precise instruments
+- progressive reveal: advanced controls can remain dimmed, folded, or
+  unavailable until context makes them relevant
+- memory dots: future saved views can preserve useful operator/reviewer
+  arrangements such as triage, citizen continuity, quarantine review, proof
+  packet, and resource weather
+- lenses: redaction and projection can be represented as inspectable lenses
+  over the polis, never as raw private-state access
+- visible protection: sealed, private, challenged, and quarantined regions
+  should remain visibly present while still protected
+
 ## Visual Assets
 
 The design surface includes both diagram-as-code sources and a static
@@ -90,6 +118,10 @@ operator events and must not bypass policy or trace.
 Future focused view for one citizen. It should show identity, lifecycle,
 memory handles, commitments, current episode, capability envelope, recent
 decisions, and continuity proof only within authorized visibility.
+
+These modes are rooms in the interaction sense. Switching mode should change
+the task environment and visibility contract, not merely highlight a different
+navigation item.
 
 ## Minimum Visibility Packet
 
@@ -240,6 +272,8 @@ Good motifs:
 - Freedom Gate verdict cards
 - resource pressure as weather or tide
 - quarantine as visible but protected boundary
+- redaction/projection lenses over protected state
+- saved operator/reviewer views as memory dots
 
 ## Non-Proving Boundaries
 
