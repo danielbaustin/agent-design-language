@@ -1,0 +1,41 @@
+{
+  "schema_version": "runtime_v2.private_state_envelope_proof.v1",
+  "proof_id": "v0-90-3-wp-04-envelope-negative-cases",
+  "demo_id": "D3",
+  "envelope_ref": "runtime_v2/private_state/proto-citizen-alpha.envelope.json",
+  "trust_root_ref": "runtime_v2/private_state/trust_root.json",
+  "required_negative_cases": [
+    {
+      "case_id": "missing_signature",
+      "mutation": "clear signature_b64",
+      "expected_error_fragment": "missing signature"
+    },
+    {
+      "case_id": "unknown_key",
+      "mutation": "replace signature_key_id",
+      "expected_error_fragment": "unknown key id"
+    },
+    {
+      "case_id": "revoked_key",
+      "mutation": "replace signature_key_id with revoked key",
+      "expected_error_fragment": "revoked key id"
+    },
+    {
+      "case_id": "content_hash_mismatch",
+      "mutation": "replace content_hash",
+      "expected_error_fragment": "content hash mismatch"
+    },
+    {
+      "case_id": "sequence_regression",
+      "mutation": "set state_sequence to zero",
+      "expected_error_fragment": "sequence"
+    },
+    {
+      "case_id": "broken_predecessor",
+      "mutation": "replace predecessor_state_hash",
+      "expected_error_fragment": "predecessor hash mismatch"
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_envelope -- --nocapture",
+  "claim_boundary": "D3 proves signed envelope and trust-root rejection behavior only; encryption, sealing, ledger authority, and key rotation are later WPs."
+}

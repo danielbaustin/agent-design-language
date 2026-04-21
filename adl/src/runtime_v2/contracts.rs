@@ -127,3 +127,8 @@ pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationProtot
 pub fn runtime_v2_private_state_contract() -> Result<RuntimeV2PrivateStateArtifacts> {
     RuntimeV2PrivateStateArtifacts::prototype()
 }
+
+pub fn runtime_v2_private_state_envelope_contract() -> Result<RuntimeV2PrivateStateEnvelopeArtifacts>
+{
+    RuntimeV2PrivateStateEnvelopeArtifacts::prototype()
+}

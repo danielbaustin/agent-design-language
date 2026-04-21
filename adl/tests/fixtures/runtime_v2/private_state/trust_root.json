@@ -1,0 +1,44 @@
+{
+  "schema_version": "runtime_v2.private_state_trust_root.v1",
+  "trust_root_id": "local-private-state-trust-root-0001",
+  "artifact_path": "runtime_v2/private_state/trust_root.json",
+  "allowed_algorithms": [
+    "ed25519"
+  ],
+  "trusted_keys": [
+    {
+      "key_id": "local-root-key-0001",
+      "writer_identity": "runtime-v2-state-writer",
+      "public_key_b64": "Zr5+Myx6RTMyvZ0Kf32wVfXF7xoGraZtmLOftoEMRzo=",
+      "status": "active",
+      "allowed_artifact_kinds": [
+        "signed_private_citizen_state"
+      ]
+    },
+    {
+      "key_id": "revoked-root-key-0001",
+      "writer_identity": "runtime-v2-state-writer",
+      "public_key_b64": "C1E62bSSQBXKCQLtB5BE06xdvsIwbwaUjBDajrbjny0=",
+      "status": "revoked",
+      "allowed_artifact_kinds": [
+        "signed_private_citizen_state"
+      ]
+    }
+  ],
+  "revoked_key_ids": [
+    "revoked-root-key-0001"
+  ],
+  "validation_policy": [
+    "missing signatures fail closed",
+    "unknown key ids fail closed",
+    "revoked key ids fail closed",
+    "content hash mismatches fail closed",
+    "predecessor hash mismatches fail closed",
+    "sequence mismatch or regression fails closed"
+  ],
+  "non_claims": [
+    "does not implement key rotation",
+    "does not implement encrypted local sealing",
+    "does not implement append-only lineage ledger authority"
+  ]
+}
