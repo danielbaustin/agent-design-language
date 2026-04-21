@@ -1,0 +1,23 @@
+{
+  "schema_version": "runtime_v2.private_state_envelope.v1",
+  "envelope_id": "envelope-proto-citizen-alpha-0001",
+  "artifact_kind": "signed_private_citizen_state",
+  "citizen_id": "proto-citizen-alpha",
+  "manifold_id": "proto-csm-01",
+  "lineage_id": "lineage-proto-citizen-alpha",
+  "state_sequence": 1,
+  "predecessor_state_hash": "genesis",
+  "content_hash": "sha256:b94a7c66b0c347a7b4a277bad6ed117b6920ac15186f593418cf83314780e992",
+  "canonical_state_schema": "runtime_v2.private_citizen_state.v1",
+  "canonical_state_ref": "runtime_v2/private_state/proto-citizen-alpha.private-state.bin",
+  "writer_identity": "runtime-v2-state-writer",
+  "signature_key_id": "local-root-key-0001",
+  "signature_algorithm": "ed25519",
+  "signature_b64": "Gd6nRq6o6m4/Cn7qn5yWBx49wHH90n7nvHKtzwxChcd9BcR9f8H/yPIWZl6aDz3ish+cfg+kxwf9MsSnQ4+UCg==",
+  "encryption_metadata": {
+    "status": "not_encrypted_in_wp_04",
+    "deferred_to_wp": "WP-05",
+    "reason": "WP-04 proves signatures and local trust roots before local sealing."
+  },
+  "claim_boundary": "This envelope proves local signature and trust-root validation; it does not encrypt or seal private state."
+}

@@ -14,6 +14,7 @@ mod manifold;
 mod observatory;
 mod operator;
 mod private_state;
+mod private_state_envelope;
 mod quarantine;
 mod recovery;
 mod security;
@@ -57,6 +58,8 @@ pub use observatory::*;
 pub use operator::*;
 #[allow(unused_imports)]
 pub use private_state::*;
+#[allow(unused_imports)]
+pub use private_state_envelope::*;
 #[allow(unused_imports)]
 pub use quarantine::*;
 #[allow(unused_imports)]
