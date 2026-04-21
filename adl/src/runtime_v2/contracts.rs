@@ -77,6 +77,10 @@ pub fn runtime_v2_csm_boot_admission_contract() -> Result<RuntimeV2CsmBootAdmiss
     RuntimeV2CsmBootAdmissionArtifacts::prototype()
 }
 
+pub fn runtime_v2_csm_governed_episode_contract() -> Result<RuntimeV2CsmGovernedEpisodeArtifacts> {
+    RuntimeV2CsmGovernedEpisodeArtifacts::prototype()
+}
+
 pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
     RuntimeV2FoundationPrototypeArtifacts::prototype()
 }

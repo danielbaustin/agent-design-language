@@ -13,6 +13,8 @@ Current execution state:
   runtime implementation widens.
 - WP-03 provides the code-backed CSM run packet contract and fixture definition
   that later Runtime v2 work packages must consume.
+- WP-06 provides bounded resource-pressure scheduling evidence for the first
+  governed episode while leaving Freedom Gate mediation to WP-07.
 
 ## Thesis
 

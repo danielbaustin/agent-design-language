@@ -12,7 +12,7 @@
 ## Implementation
 
 - [x] `proto-csm-01` boot and citizen admission complete
-- [ ] Governed episode and resource scheduling complete
+- [x] Governed episode and resource scheduling complete
 - [ ] Freedom Gate mediation complete
 - [ ] Invalid action rejection complete
 - [ ] Snapshot rehydrate wake continuity complete

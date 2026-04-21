@@ -10,7 +10,10 @@
     "runtime_v2/csm_run/run_packet_contract.json",
     "runtime_v2/csm_run/proto-csm-01-run-packet.json",
     "runtime_v2/invariants/csm_run_invariant_map.json",
-    "runtime_v2/violations/violation_artifact_schema.json"
+    "runtime_v2/violations/violation_artifact_schema.json",
+    "runtime_v2/csm_run/resource_pressure_fixture.json",
+    "runtime_v2/csm_run/scheduling_decision.json",
+    "runtime_v2/csm_run/first_run_trace.jsonl"
   ],
   "run_identity": {
     "run_id": "proto-csm-01-first-bounded-run-0001",
@@ -48,7 +51,7 @@
       "owner_wp": "WP-06-WP-08",
       "required_input": "runtime_v2/csm_run/boot_manifest.json",
       "required_output": "runtime_v2/csm_run/first_run_trace.jsonl",
-      "live_run_state": "planned"
+      "live_run_state": "wp06_scheduling_landed"
     },
     {
       "stage_id": "snapshot_wake_and_observatory",
@@ -60,6 +63,6 @@
   ],
   "review_target": {
     "entrypoint": "docs/milestones/v0.90.2/CSM_RUN_PACKET_CONTRACT_v0.90.2.md",
-    "focused_validation": "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_boot_admission -- --nocapture"
+    "focused_validation": "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_governed_episode -- --nocapture"
   }
 }
