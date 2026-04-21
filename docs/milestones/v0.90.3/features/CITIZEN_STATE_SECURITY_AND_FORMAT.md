@@ -27,7 +27,9 @@ as the long-term source of continuity.
 WP-03 selected deterministic tagged binary with protobuf-compatible field-number
 semantics as the v1 canonical private-state format. WP-04 wraps that canonical
 state in a deterministic Ed25519-signed envelope checked against a local trust
-root; JSON remains a projection and review surface, not private-state authority.
+root. WP-05 adds local-first sealed checkpoint fixtures. WP-06 adds the
+append-only lineage ledger and materialized-head validation rule. JSON remains
+a projection and review surface, not private-state authority.
 
 The format decision must include:
 
@@ -46,6 +48,14 @@ evidence in `adl/src/runtime_v2/private_state.rs` and fixture evidence under
 The landed signed-envelope proof is recorded in
 `docs/milestones/v0.90.3/SIGNED_PRIVATE_STATE_ENVELOPE_v0.90.3.md`, with runtime
 evidence in `adl/src/runtime_v2/private_state_envelope.rs`.
+
+The landed local sealed checkpoint proof is recorded in
+`docs/milestones/v0.90.3/LOCAL_PRIVATE_STATE_SEALING_v0.90.3.md`, with runtime
+evidence in `adl/src/runtime_v2/private_state_sealing.rs`.
+
+The landed append-only lineage proof is recorded in
+`docs/milestones/v0.90.3/APPEND_ONLY_LINEAGE_LEDGER_v0.90.3.md`, with runtime
+evidence in `adl/src/runtime_v2/private_state_lineage.rs`.
 
 ## Signed Envelope
 
@@ -81,8 +91,15 @@ The ledger should be append-only and should record:
 - receipt reference where applicable
 - signature
 
+WP-06 lands the first ledger contract. The ledger is authoritative over the
+materialized head. Accepted-head calculation replays the ordered entries,
+recomputes entry and ledger hashes, rejects truncation/replay/fork/tamper
+fixtures, and treats the materialized head as valid only when it matches the
+accepted ledger head.
+
 If the ledger and materialized head disagree, recovery must reconstruct from the
-ledger or enter quarantine.
+ledger or enter quarantine. The runtime must not trust whichever copy is most
+convenient.
 
 ## Continuity Witnesses And Receipts
 

@@ -1,0 +1,16 @@
+{
+  "schema_version": "runtime_v2.private_state_materialized_head.v1",
+  "head_id": "materialized-head-proto-citizen-alpha",
+  "artifact_path": "runtime_v2/private_state/materialized_head.json",
+  "citizen_id": "proto-citizen-alpha",
+  "manifold_id": "proto-csm-01",
+  "lineage_id": "lineage-proto-citizen-alpha",
+  "state_sequence": 1,
+  "head_entry_hash": "sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+  "ledger_ref": "runtime_v2/private_state/lineage_ledger.json",
+  "sealed_checkpoint_ref": "runtime_v2/private_state/proto-citizen-alpha.sealed-checkpoint.json",
+  "sealed_checkpoint_hash": "sha256:d427c62c2b291cc7a91c56d8ea66acec0d6076ea58fbca41858f57260891a880",
+  "canonical_state_hash": "sha256:b94a7c66b0c347a7b4a277bad6ed117b6920ac15186f593418cf83314780e992",
+  "status": "materialized_projection_of_accepted_ledger_head",
+  "authority_rule": "This file is valid only if it matches the append-only ledger accepted head; disagreement requires recovery_or_quarantine."
+}

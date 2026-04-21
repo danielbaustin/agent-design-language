@@ -15,7 +15,7 @@
 - [x] Canonical private-state format selected
 - [x] Signed envelope and trust-root fixture landed
 - [x] Local sealed checkpoint path defined
-- [ ] Append-only lineage ledger implemented
+- [x] Append-only lineage ledger implemented
 - [ ] Continuity witnesses and receipts emitted
 - [ ] Anti-equivocation negative test landed
 - [ ] Sanctuary/quarantine behavior proven

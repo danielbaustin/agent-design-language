@@ -1,0 +1,37 @@
+{
+  "schema_version": "runtime_v2.private_state_lineage_proof.v1",
+  "proof_id": "v0-90-3-wp-06-lineage-negative-cases",
+  "demo_id": "D5",
+  "ledger_ref": "runtime_v2/private_state/lineage_ledger.json",
+  "materialized_head_ref": "runtime_v2/private_state/materialized_head.json",
+  "sealed_checkpoint_ref": "runtime_v2/private_state/proto-citizen-alpha.sealed-checkpoint.json",
+  "required_negative_cases": [
+    {
+      "case_id": "tampered_entry",
+      "mutation": "mutate accepted entry canonical state hash without recomputing entry hash",
+      "expected_error_fragment": "entry hash mismatch"
+    },
+    {
+      "case_id": "truncated_ledger",
+      "mutation": "remove the only accepted head while retaining accepted_head_entry_hash",
+      "expected_error_fragment": "at least one accepted entry"
+    },
+    {
+      "case_id": "forked_successor",
+      "mutation": "present conflicting successor for the same sequence position",
+      "expected_error_fragment": "forked successor"
+    },
+    {
+      "case_id": "replayed_entry",
+      "mutation": "append an already accepted entry again",
+      "expected_error_fragment": "previous hash mismatch"
+    },
+    {
+      "case_id": "head_disagreement",
+      "mutation": "change materialized head hash away from ledger accepted head",
+      "expected_error_fragment": "recovery_or_quarantine"
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_lineage -- --nocapture",
+  "claim_boundary": "D5 proves append-only lineage replay, accepted-head calculation, and recovery_or_quarantine disposition for head disagreement; witnesses, receipts, and anti-equivocation are later WPs."
+}
