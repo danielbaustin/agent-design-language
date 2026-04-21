@@ -68,8 +68,10 @@ release ceremony have completed.
 WP-15 tracker status to preserve during review:
 - coverage remains above the active quality gate at `92.40%` workspace line
   coverage, with the per-file gate passing and no active file-floor exclusion
-- gap-analysis risk is now concentrated in release-tail execution and
-  lifecycle-record truth checks, not missing core v0.90.2 implementation proof
+- gap status is now captured in the WP-15 release-readiness record because the
+  only located gap-analysis note was a retired thin note; current risk is
+  concentrated in release-tail execution and lifecycle-record truth checks, not
+  missing core v0.90.2 implementation proof
 - Rust module watch status remains active; issue #2309 is still open for the
   governed-episode split and the Rust tracker should be refreshed after it
   merges

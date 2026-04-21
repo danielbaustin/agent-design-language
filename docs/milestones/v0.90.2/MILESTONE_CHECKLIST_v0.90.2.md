@@ -37,7 +37,7 @@
 - [x] Recovery and quarantine outcomes are explicit
 - [x] Every feature claim has a runnable demo, proof packet, fixture-backed artifact, non-proving status, or explicit deferral
 - [x] Quality posture is recorded and remaining release-tail exceptions are explicit
-- [x] Coverage, gap-analysis, and Rust module watch tracker status reviewed for WP-15
+- [x] Coverage, gap-status, and Rust module watch status reviewed for WP-15
 
 ## Release
 

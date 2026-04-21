@@ -23,10 +23,10 @@ Summary:
   claim has a runnable demo command, test-backed proof packet, fixture-backed
   artifact, documented non-proving status, or explicit deferral before review
   convergence.
-- WP-15 reviewed the active coverage, gap-analysis, and Rust module watch
+- WP-15 reviewed the active coverage, gap-status, and Rust module watch
   trackers: coverage remains above the active gates at `92.40%`, the remaining
-  gap-analysis risk is release-tail and lifecycle-record verification, and the
-  Rust tracker is waiting for issue #2309 before its next refresh.
+  gap risk is release-tail and lifecycle-record verification, and the Rust
+  tracker is waiting for issue #2309 before its next refresh.
 - The crate version is `0.90.2` for the active v0.90.2 release line.
 
 References:
