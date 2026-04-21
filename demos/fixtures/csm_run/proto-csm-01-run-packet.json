@@ -34,7 +34,9 @@
     "runtime_v2/hardening/duplicate_activation_probe.json",
     "runtime_v2/hardening/snapshot_integrity_probe.json",
     "runtime_v2/hardening/trace_replay_gap_probe.json",
-    "runtime_v2/hardening/hardening_proof_packet.json"
+    "runtime_v2/hardening/hardening_proof_packet.json",
+    "runtime_v2/csm_run/integrated_first_run_transcript.jsonl",
+    "runtime_v2/csm_run/integrated_first_run_proof_packet.json"
   ],
   "run_identity": {
     "run_id": "proto-csm-01-first-bounded-run-0001",
@@ -101,10 +103,18 @@
       "required_input": "runtime_v2/quarantine/quarantine_artifact.json",
       "required_output": "runtime_v2/hardening/hardening_proof_packet.json",
       "live_run_state": "wp13_hardening_landed"
+    },
+    {
+      "stage_id": "integrated_first_run_proof",
+      "owner_wp": "WP-14",
+      "required_input": "runtime_v2/hardening/hardening_proof_packet.json",
+      "required_output": "runtime_v2/csm_run/integrated_first_run_proof_packet.json",
+      "execution_transcript": "runtime_v2/csm_run/integrated_first_run_transcript.jsonl",
+      "live_run_state": "wp14_integrated_first_run_landed"
     }
   ],
   "review_target": {
     "entrypoint": "docs/milestones/v0.90.2/CSM_RUN_PACKET_CONTRACT_v0.90.2.md",
-    "focused_validation": "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture"
+    "focused_validation": "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_integrated_run -- --nocapture"
   }
 }

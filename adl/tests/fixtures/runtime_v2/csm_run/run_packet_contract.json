@@ -276,6 +276,24 @@
       "required_by_wp": "WP-14",
       "must_exist_before_live_run": false,
       "purpose": "D9 summary proof packet consumed by the integrated first-run demo"
+    },
+    {
+      "artifact_id": "integrated_first_run_transcript",
+      "artifact_kind": "execution_transcript",
+      "path": "runtime_v2/csm_run/integrated_first_run_transcript.jsonl",
+      "owner_wp": "WP-14",
+      "required_by_wp": "WP-14A",
+      "must_exist_before_live_run": false,
+      "purpose": "D10 deterministic stage transcript proving the flagship demo actually ran"
+    },
+    {
+      "artifact_id": "integrated_first_run_proof_packet",
+      "artifact_kind": "integrated_proof",
+      "path": "runtime_v2/csm_run/integrated_first_run_proof_packet.json",
+      "owner_wp": "WP-14",
+      "required_by_wp": "WP-14A",
+      "must_exist_before_live_run": false,
+      "purpose": "D10 integrated first-run proof packet tying WP-05 through WP-13 evidence together"
     }
   ],
   "stages": [
@@ -357,6 +375,21 @@
       ],
       "status_before_wp": "wp13_hardening_landed",
       "proof_obligation": "one governed adversarial hook and three negative probes preserve quarantine and fail closed before integration"
+    },
+    {
+      "stage_id": "integrated_first_run_proof",
+      "sequence": 7,
+      "owner_wp": "WP-14",
+      "entry_artifact_ref": "runtime_v2/hardening/hardening_proof_packet.json",
+      "exit_artifact_ref": "runtime_v2/csm_run/integrated_first_run_proof_packet.json",
+      "required_invariants": [
+        "trace_sequence_must_advance_monotonically",
+        "invalid_action_must_be_refused_before_commit",
+        "snapshot_restore_must_validate_before_active_state",
+        "no_duplicate_active_citizen_instance"
+      ],
+      "status_before_wp": "wp14_integrated_first_run_ready",
+      "proof_obligation": "D10 integrates first-run, recovery, quarantine, observatory, and hardening evidence without widening into unbounded live execution"
     }
   ],
   "review_target": {
@@ -389,7 +422,9 @@
       "runtime_v2/hardening/duplicate_activation_probe.json",
       "runtime_v2/hardening/snapshot_integrity_probe.json",
       "runtime_v2/hardening/trace_replay_gap_probe.json",
-      "runtime_v2/hardening/hardening_proof_packet.json"
+      "runtime_v2/hardening/hardening_proof_packet.json",
+      "runtime_v2/csm_run/integrated_first_run_transcript.jsonl",
+      "runtime_v2/csm_run/integrated_first_run_proof_packet.json"
     ],
     "validation_commands": [
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture",
@@ -403,6 +438,8 @@
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_quarantine -- --nocapture",
       "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_hardening -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_integrated_run -- --nocapture",
+      "adl runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run",
       "git diff --check"
     ],
     "non_claims": [
@@ -419,7 +456,8 @@
     "WP-11 recovery eligibility decisions",
     "WP-12 quarantine state machine",
     "WP-13 governed adversarial hardening proof",
-    "WP-14 integrated first CSM run demo"
+    "WP-14 integrated first CSM run demo",
+    "WP-14A demo matrix and feature proof coverage"
   ],
   "claim_boundary": "This contract fixes the first bounded CSM run packet shape and review target; it is not a live Runtime v2 execution artifact."
 }

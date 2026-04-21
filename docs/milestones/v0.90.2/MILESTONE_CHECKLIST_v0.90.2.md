@@ -23,7 +23,7 @@
 - [x] Quarantine state machine implemented
 - [x] Governed adversarial hook complete with rules of engagement and evidence
 - [x] Additional hardening probes complete
-- [ ] Integrated first CSM run demo implemented
+- [x] Integrated first CSM run demo implemented
 - [ ] WP-14A demo matrix and feature proof coverage completed before WP-15
 
 ## Truth And Safety

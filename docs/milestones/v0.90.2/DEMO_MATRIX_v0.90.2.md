@@ -18,7 +18,7 @@ convergence.
 | D7 | CSM Observatory visibility | WP-10 #2254 | Operator can see the first CSM run through packet/report surfaces | Observatory packet, operator report | LANDED |
 | D8 | Recovery versus quarantine | WP-11 #2255 / WP-12 #2256 | Runtime distinguishes safe resume from required quarantine | recovery eligibility model, recovery decisions, quarantine artifact | LANDED |
 | D9 | Governed adversarial hook and hardening probes | WP-13 #2257 | One bounded adversarial scenario is contained under explicit operator rules, and duplicate activation, snapshot integrity, and replay-gap failures are detected and recorded | adversarial hook packet, rules of engagement, hardening proof packets | LANDED |
-| D10 | Integrated first CSM run proof | WP-14 #2258 | Reviewer can inspect the first bounded CSM run and its failure-boundary evidence end to end | integrated CSM run packet, trace, Observatory report, hardening artifacts | PLANNED |
+| D10 | Integrated first CSM run flagship demo | WP-14 #2258 | Reviewer can run a bounded CSM stage spine, see the Observatory report in stdout, and inspect failure-boundary evidence end to end | runnable `adl runtime-v2 integrated-csm-run-demo`, `runtime_v2/csm_run/integrated_first_run_transcript.jsonl`, `runtime_v2/csm_run/integrated_first_run_proof_packet.json`, trace, Observatory report, hardening artifacts | LANDED |
 | D11 | Feature proof coverage record | WP-14A #2301 | Every v0.90.2 feature claim has a runnable demo command, test-backed proof packet, fixture-backed artifact, documented non-proving status, or explicit deferral before review convergence | demo matrix update and feature proof coverage record | PLANNED |
 
 ## Demo-Program Ownership

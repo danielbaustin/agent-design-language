@@ -112,6 +112,10 @@ pub fn runtime_v2_csm_hardening_contract() -> Result<RuntimeV2CsmHardeningArtifa
     RuntimeV2CsmHardeningArtifacts::prototype()
 }
 
+pub fn runtime_v2_csm_integrated_run_contract() -> Result<RuntimeV2CsmIntegratedRunArtifacts> {
+    RuntimeV2CsmIntegratedRunArtifacts::prototype()
+}
+
 pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
     RuntimeV2FoundationPrototypeArtifacts::prototype()
 }

@@ -366,6 +366,30 @@ impl RuntimeV2CsmRunPacketContract {
                     purpose: "D9 summary proof packet consumed by the integrated first-run demo"
                         .to_string(),
                 },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "integrated_first_run_transcript".to_string(),
+                    artifact_kind: "execution_transcript".to_string(),
+                    path: "runtime_v2/csm_run/integrated_first_run_transcript.jsonl"
+                        .to_string(),
+                    owner_wp: "WP-14".to_string(),
+                    required_by_wp: "WP-14A".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose:
+                        "D10 deterministic stage transcript proving the flagship demo actually ran"
+                            .to_string(),
+                },
+                RuntimeV2CsmRunArtifactRequirement {
+                    artifact_id: "integrated_first_run_proof_packet".to_string(),
+                    artifact_kind: "integrated_proof".to_string(),
+                    path: "runtime_v2/csm_run/integrated_first_run_proof_packet.json"
+                        .to_string(),
+                    owner_wp: "WP-14".to_string(),
+                    required_by_wp: "WP-14A".to_string(),
+                    must_exist_before_live_run: false,
+                    purpose:
+                        "D10 integrated first-run proof packet tying WP-05 through WP-13 evidence together"
+                            .to_string(),
+                },
             ],
             stages: vec![
                 RuntimeV2CsmRunStage {
@@ -463,6 +487,25 @@ impl RuntimeV2CsmRunPacketContract {
                         "one governed adversarial hook and three negative probes preserve quarantine and fail closed before integration"
                             .to_string(),
                 },
+                RuntimeV2CsmRunStage {
+                    stage_id: "integrated_first_run_proof".to_string(),
+                    sequence: 7,
+                    owner_wp: "WP-14".to_string(),
+                    entry_artifact_ref: "runtime_v2/hardening/hardening_proof_packet.json"
+                        .to_string(),
+                    exit_artifact_ref:
+                        "runtime_v2/csm_run/integrated_first_run_proof_packet.json".to_string(),
+                    required_invariants: vec![
+                        "trace_sequence_must_advance_monotonically".to_string(),
+                        "invalid_action_must_be_refused_before_commit".to_string(),
+                        "snapshot_restore_must_validate_before_active_state".to_string(),
+                        "no_duplicate_active_citizen_instance".to_string(),
+                    ],
+                    status_before_wp: "wp14_integrated_first_run_ready".to_string(),
+                    proof_obligation:
+                        "D10 integrates first-run, recovery, quarantine, observatory, and hardening evidence without widening into unbounded live execution"
+                            .to_string(),
+                },
             ],
             review_target: RuntimeV2CsmRunReviewTarget {
                 reviewer_entrypoint:
@@ -496,6 +539,8 @@ impl RuntimeV2CsmRunPacketContract {
                     "runtime_v2/hardening/snapshot_integrity_probe.json".to_string(),
                     "runtime_v2/hardening/trace_replay_gap_probe.json".to_string(),
                     "runtime_v2/hardening/hardening_proof_packet.json".to_string(),
+                    "runtime_v2/csm_run/integrated_first_run_transcript.jsonl".to_string(),
+                    "runtime_v2/csm_run/integrated_first_run_proof_packet.json".to_string(),
                 ],
                 validation_commands: vec![
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture".to_string(),
@@ -509,6 +554,8 @@ impl RuntimeV2CsmRunPacketContract {
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_quarantine -- --nocapture".to_string(),
                     "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_hardening -- --nocapture".to_string(),
+                    "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_integrated_run -- --nocapture".to_string(),
+                    "adl runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run".to_string(),
                     "git diff --check".to_string(),
                 ],
                 non_claims: vec![
@@ -527,6 +574,7 @@ impl RuntimeV2CsmRunPacketContract {
                 "WP-12 quarantine state machine".to_string(),
                 "WP-13 governed adversarial hardening proof".to_string(),
                 "WP-14 integrated first CSM run demo".to_string(),
+                "WP-14A demo matrix and feature proof coverage".to_string(),
             ],
             claim_boundary:
                 "This contract fixes the first bounded CSM run packet shape and review target; it is not a live Runtime v2 execution artifact."

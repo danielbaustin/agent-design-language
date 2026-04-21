@@ -5,6 +5,7 @@ mod csm_run;
 mod foundation;
 mod governed_episode;
 mod hardening;
+mod integrated_csm_run;
 mod invariant;
 mod invariant_contract;
 mod kernel_loop;
@@ -36,6 +37,8 @@ pub use foundation::*;
 pub use governed_episode::*;
 #[allow(unused_imports)]
 pub use hardening::*;
+#[allow(unused_imports)]
+pub use integrated_csm_run::*;
 #[allow(unused_imports)]
 pub use invariant::*;
 #[allow(unused_imports)]

@@ -203,6 +203,21 @@ packet for WP-14 to consume. This remains an operator-scoped proof surface, not
 a live CSM run, first true birthday, v0.92 identity rebinding, or complete
 red/blue/purple security ecology.
 
+## WP-14 Integrated First CSM Run Demo Gate
+
+WP-14 lands D10 as the bounded, code-backed flagship demo for v0.90.2. The
+`adl runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run`
+command executes a deterministic ten-stage CSM evidence spine, prints the stage
+summary and Observatory operator report to stdout, and writes the CSM run
+contract, invariant/violation artifacts,
+boot/admission evidence, governed episode trace, Freedom Gate mediation,
+invalid-action rejection, wake-continuity proof, Observatory packet/report,
+recovery decisions, quarantine evidence, governed hardening artifacts, and the
+integrated first-run transcript/proof packet into one reviewer-facing bundle.
+This proves the v0.90.2 first-run evidence package is connected end to end,
+while preserving the non-claims for unbounded live execution, first true birthday, v0.91 civic
+substrate, v0.92 identity rebinding, and a complete security ecology.
+
 ## WP-14A Demo Program Gate
 
 WP-14A restores the standard ADL milestone pattern where feature-by-feature
