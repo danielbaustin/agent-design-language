@@ -137,3 +137,8 @@ pub fn runtime_v2_private_state_sealing_contract() -> Result<RuntimeV2PrivateSta
 {
     RuntimeV2PrivateStateSealingArtifacts::prototype()
 }
+
+pub fn runtime_v2_private_state_lineage_contract() -> Result<RuntimeV2PrivateStateLineageArtifacts>
+{
+    RuntimeV2PrivateStateLineageArtifacts::prototype()
+}

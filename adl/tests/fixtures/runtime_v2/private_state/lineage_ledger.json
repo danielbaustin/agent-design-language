@@ -1,0 +1,45 @@
+{
+  "schema_version": "runtime_v2.private_state_lineage_ledger.v1",
+  "ledger_id": "private-state-lineage-proto-citizen-alpha",
+  "artifact_path": "runtime_v2/private_state/lineage_ledger.json",
+  "citizen_id": "proto-citizen-alpha",
+  "manifold_id": "proto-csm-01",
+  "lineage_id": "lineage-proto-citizen-alpha",
+  "authority_rule": "The append-only ledger is the authoritative continuity record; materialized head files are projections that must match the accepted head.",
+  "append_only_rule": "Accepted entries form one sequence-linked chain by previous_entry_hash, state_sequence, and predecessor_state_hash; silent truncation, replay, or fork is invalid.",
+  "entries": [
+    {
+      "entry_id": "lineage-entry-proto-citizen-alpha-0001",
+      "entry_hash": "sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+      "previous_entry_hash": "genesis",
+      "transition_type": "admission",
+      "citizen_id": "proto-citizen-alpha",
+      "manifold_id": "proto-csm-01",
+      "lineage_id": "lineage-proto-citizen-alpha",
+      "state_sequence": 1,
+      "predecessor_state_hash": "genesis",
+      "envelope_ref": "runtime_v2/private_state/proto-citizen-alpha.envelope.json",
+      "envelope_hash": "sha256:d4abf3f2679b88a93a86b91270357a2c191d348abd74f76b2c85afa253dc6e47",
+      "sealed_checkpoint_ref": "runtime_v2/private_state/proto-citizen-alpha.sealed-checkpoint.json",
+      "sealed_checkpoint_hash": "sha256:d427c62c2b291cc7a91c56d8ea66acec0d6076ea58fbca41858f57260891a880",
+      "canonical_state_hash": "sha256:b94a7c66b0c347a7b4a277bad6ed117b6920ac15186f593418cf83314780e992",
+      "writer_identity": "runtime-v2-state-writer",
+      "witness_ref": null,
+      "receipt_ref": null,
+      "recorded_at_logical_tick": 1,
+      "disposition": "accepted"
+    }
+  ],
+  "accepted_head_entry_hash": "sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+  "ledger_root_hash": "sha256:156e4b1c2c9699b9c83f093832d61e09600c7e0c5c114bfd78aca20728deeb2b",
+  "recovery_policy": [
+    "materialized head must equal accepted ledger head before activation",
+    "ledger/head disagreement enters recovery_or_quarantine instead of trusting the convenient copy",
+    "truncated, replayed, tampered, or forked ledgers fail closed"
+  ],
+  "non_claims": [
+    "does not emit continuity witnesses or citizen-facing receipts",
+    "does not implement anti-equivocation across multiple signed successors",
+    "does not claim first true Godel-agent birth"
+  ]
+}
