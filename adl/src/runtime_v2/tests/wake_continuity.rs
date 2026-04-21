@@ -252,3 +252,122 @@ fn runtime_v2_csm_wake_continuity_validation_rejects_guard_and_lineage_drift() {
         .to_string()
         .contains("continuity_status"));
 }
+
+#[test]
+fn runtime_v2_csm_wake_continuity_record_validator_rejects_contract_drift() {
+    let artifacts = runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+
+    let mut artifacts = artifacts.clone();
+    artifacts.wake_continuity_proof.schema_version =
+        "runtime_v2.csm_wake_continuity_proof.v0".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("unsupported wake proof schema should fail")
+        .to_string()
+        .contains("unsupported Runtime v2 CSM wake continuity proof schema"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts.wake_continuity_proof.demo_id = "D5".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("wrong wake demo should fail")
+        .to_string()
+        .contains("must map to D6"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts.wake_continuity_proof.source_trace_ref =
+        "runtime_v2/csm_run/other_trace.jsonl".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("wrong source trace should fail")
+        .to_string()
+        .contains("source_trace_ref"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts.wake_continuity_proof.proof_outcome = "wake_unknown".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("unsupported proof outcome should fail")
+        .to_string()
+        .contains("proof_outcome"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts.wake_continuity_proof.continuity_checks[0].status = "unknown".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("unsupported wake check status should fail")
+        .to_string()
+        .contains("check.status"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts.wake_continuity_proof.continuity_checks[0].checked_before_wake = false;
+    assert!(artifacts
+        .validate()
+        .expect_err("late wake check should fail")
+        .to_string()
+        .contains("must run before wake"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts.wake_continuity_proof.continuity_checks[1].invariant_id =
+        artifacts.wake_continuity_proof.continuity_checks[0]
+            .invariant_id
+            .clone();
+    assert!(artifacts
+        .validate()
+        .expect_err("duplicate wake check should fail")
+        .to_string()
+        .contains("duplicate check"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts.wake_continuity_proof.continuity_checks.pop();
+    assert!(artifacts
+        .validate()
+        .expect_err("too few wake checks should fail")
+        .to_string()
+        .contains("snapshot, restore, and duplicate-head checks"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts.wake_continuity_proof.citizen_continuity.pop();
+    assert!(artifacts
+        .validate()
+        .expect_err("missing citizen continuity should fail")
+        .to_string()
+        .contains("one continuity entry per active citizen"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts.wake_continuity_proof.citizen_continuity[0].citizen_id =
+        "proto-citizen-gamma".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("outside snapshot citizen should fail")
+        .to_string()
+        .contains("outside the snapshot active index"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts.wake_continuity_proof.citizen_continuity[0].predecessor_snapshot_id =
+        "snapshot-9999".to_string();
+    assert!(artifacts
+        .validate()
+        .expect_err("wrong predecessor snapshot should fail")
+        .to_string()
+        .contains("predecessor snapshot"));
+
+    let mut artifacts =
+        runtime_v2_csm_wake_continuity_contract().expect("wake continuity artifacts");
+    artifacts.wake_continuity_proof.citizen_continuity[0].successor_trace_sequence = 999;
+    assert!(artifacts
+        .validate()
+        .expect_err("wrong successor trace sequence should fail")
+        .to_string()
+        .contains("successor sequence"));
+}

@@ -156,3 +156,57 @@ fn runtime_v2_csm_invalid_action_rejection_validation_rejects_unsafe_or_ambiguou
         .to_string()
         .contains("later-WP non-claims"));
 }
+
+#[test]
+fn runtime_v2_csm_invalid_action_record_validator_rejects_contract_drift() {
+    let artifacts = runtime_v2_csm_invalid_action_rejection_contract()
+        .expect("invalid-action rejection artifacts");
+
+    let mut invalid_action = artifacts.invalid_action.clone();
+    invalid_action.schema_version = "runtime_v2.csm_invalid_action_fixture.v0".to_string();
+    assert!(invalid_action
+        .validate()
+        .expect_err("unsupported invalid-action schema should fail")
+        .to_string()
+        .contains("unsupported Runtime v2 CSM invalid action fixture schema"));
+
+    let mut invalid_action = artifacts.invalid_action.clone();
+    invalid_action.demo_id = "D4".to_string();
+    assert!(invalid_action
+        .validate()
+        .expect_err("wrong invalid-action demo should fail")
+        .to_string()
+        .contains("must map to D5"));
+
+    let mut invalid_action = artifacts.invalid_action.clone();
+    invalid_action.attempted_action = "commit_anyway".to_string();
+    assert!(invalid_action
+        .validate()
+        .expect_err("unsupported attempted action should fail")
+        .to_string()
+        .contains("attempted_action"));
+
+    let mut invalid_action = artifacts.invalid_action.clone();
+    invalid_action.attempted_state = "mutated".to_string();
+    assert!(invalid_action
+        .validate()
+        .expect_err("unsupported attempted state should fail")
+        .to_string()
+        .contains("attempted_state"));
+
+    let mut invalid_action = artifacts.invalid_action.clone();
+    invalid_action.required_invariant = "none".to_string();
+    assert!(invalid_action
+        .validate()
+        .expect_err("unsupported required invariant should fail")
+        .to_string()
+        .contains("required_invariant"));
+
+    let mut invalid_action = artifacts.invalid_action.clone();
+    invalid_action.expected_result = "committed".to_string();
+    assert!(invalid_action
+        .validate()
+        .expect_err("unsupported expected result should fail")
+        .to_string()
+        .contains("expected_result"));
+}
