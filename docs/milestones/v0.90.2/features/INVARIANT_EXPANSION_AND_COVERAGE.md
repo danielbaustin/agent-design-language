@@ -41,14 +41,15 @@ The map covers the first CSM run spine before boot/admission work widens:
 | `single_active_manifold_instance` | manifold integrity | `kernel_runtime` | WP-05 | contracted |
 | `no_duplicate_active_citizen_instance` | citizen continuity | `invariant_checker` | WP-05 | negative fixture backed |
 | `trace_sequence_must_advance_monotonically` | temporal ordering | `trace_writer` | WP-06 | contracted for WP-06 |
-| `invalid_action_must_be_refused_before_commit` | security boundary enforcement | `operator_control_interface` | WP-08 | negative fixture backed |
+| `invalid_action_must_be_refused_before_commit` | security boundary enforcement | `operator_control_interface` | WP-08 | WP-08 rejection packet backed |
 | `snapshot_restore_must_validate_before_active_state` | recovery eligibility | `snapshot_service` | WP-09 | contracted for WP-09 |
 
 ## Gap Policy
 
 Missing or ambiguous coverage blocks WP-05 boot and any later live-run claim.
-Later WPs may add concrete runtime evidence, but they must not replace this
-map with a competing invariant set or silently weaken fail-closed behavior.
+WP-08 adds concrete rejection evidence for invalid actions before commit. Later
+WPs may add more runtime evidence, but they must not replace this map with a
+competing invariant set or silently weaken fail-closed behavior.
 
 ## Validation
 
@@ -56,8 +57,9 @@ Focused validation:
 
 ```sh
 cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture
+cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture
 ```
 
 This validates schema identity, golden fixture stability, path hygiene,
-positive/negative fixture pairing, required invariant coverage, and overclaim
-rejection.
+positive/negative fixture pairing, required invariant coverage, the WP-08
+before-commit rejection proof, and overclaim rejection.

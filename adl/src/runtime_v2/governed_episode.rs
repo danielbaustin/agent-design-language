@@ -11,6 +11,8 @@ pub const RUNTIME_V2_CSM_CITIZEN_ACTION_FIXTURE_SCHEMA: &str =
     "runtime_v2.csm_citizen_action_fixture.v1";
 pub const RUNTIME_V2_CSM_FREEDOM_GATE_DECISION_SCHEMA: &str =
     "runtime_v2.csm_freedom_gate_decision.v1";
+pub const RUNTIME_V2_CSM_INVALID_ACTION_FIXTURE_SCHEMA: &str =
+    "runtime_v2.csm_invalid_action_fixture.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RuntimeV2CsmEpisodeCandidate {
@@ -130,6 +132,33 @@ pub struct RuntimeV2CsmGovernedEpisodeArtifacts {
 pub struct RuntimeV2CsmFreedomGateMediationArtifacts {
     pub citizen_action: RuntimeV2CsmCitizenActionFixture,
     pub freedom_gate_decision: RuntimeV2CsmFreedomGateDecision,
+    pub first_run_trace: Vec<RuntimeV2CsmFirstRunTraceEvent>,
+    pub first_run_trace_path: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RuntimeV2CsmInvalidActionFixture {
+    pub schema_version: String,
+    pub invalid_action_id: String,
+    pub demo_id: String,
+    pub manifold_id: String,
+    pub artifact_path: String,
+    pub freedom_gate_decision_ref: String,
+    pub episode_id: String,
+    pub citizen_id: String,
+    pub actor: String,
+    pub attempted_action: String,
+    pub attempted_state: String,
+    pub invalid_reason: String,
+    pub required_invariant: String,
+    pub expected_result: String,
+    pub claim_boundary: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RuntimeV2CsmInvalidActionRejectionArtifacts {
+    pub invalid_action: RuntimeV2CsmInvalidActionFixture,
+    pub violation_packet: RuntimeV2InvariantViolationArtifact,
     pub first_run_trace: Vec<RuntimeV2CsmFirstRunTraceEvent>,
     pub first_run_trace_path: String,
 }
@@ -552,6 +581,215 @@ impl RuntimeV2CsmFreedomGateMediationArtifacts {
     }
 }
 
+impl RuntimeV2CsmInvalidActionRejectionArtifacts {
+    pub fn prototype() -> Result<Self> {
+        let mediation = RuntimeV2CsmFreedomGateMediationArtifacts::prototype()?;
+        Self::from_freedom_gate_mediation(&mediation)
+    }
+
+    pub fn from_freedom_gate_mediation(
+        mediation: &RuntimeV2CsmFreedomGateMediationArtifacts,
+    ) -> Result<Self> {
+        mediation.validate()?;
+
+        let invalid_action = RuntimeV2CsmInvalidActionFixture {
+            schema_version: RUNTIME_V2_CSM_INVALID_ACTION_FIXTURE_SCHEMA.to_string(),
+            invalid_action_id: "proto-csm-01-invalid-action-0001".to_string(),
+            demo_id: "D5".to_string(),
+            manifold_id: mediation.freedom_gate_decision.manifold_id.clone(),
+            artifact_path: "runtime_v2/csm_run/invalid_action_fixture.json".to_string(),
+            freedom_gate_decision_ref: mediation.freedom_gate_decision.artifact_path.clone(),
+            episode_id: mediation.freedom_gate_decision.episode_id.clone(),
+            citizen_id: mediation.freedom_gate_decision.citizen_id.clone(),
+            actor: "proto_citizen_alpha".to_string(),
+            attempted_action: "commit_unmediated_action_after_freedom_gate".to_string(),
+            attempted_state: "post_gate_unreviewed_state_mutation".to_string(),
+            invalid_reason:
+                "action attempts to bypass the mediated Freedom Gate decision before commit"
+                    .to_string(),
+            required_invariant: "invalid_action_must_be_refused_before_commit".to_string(),
+            expected_result: "transition_refused_state_unchanged".to_string(),
+            claim_boundary:
+                "This fixture proves WP-08 invalid-action input only; it does not execute a live CSM run, snapshot wake continuity, or first true Godel-agent birth."
+                    .to_string(),
+        };
+
+        let violation_packet = RuntimeV2InvariantViolationArtifact {
+            schema_version: RUNTIME_V2_INVARIANT_VIOLATION_SCHEMA.to_string(),
+            violation_id: "invalid-action-violation-0001".to_string(),
+            manifold_id: invalid_action.manifold_id.clone(),
+            artifact_path: "runtime_v2/csm_run/invalid_action_violation.json".to_string(),
+            detected_at_utc: "not_started".to_string(),
+            severity: "blocking".to_string(),
+            invariant_id: invalid_action.required_invariant.clone(),
+            invariant_owner_service_id: "operator_control_interface".to_string(),
+            policy_enforcement_mode: "fail_closed_before_activation".to_string(),
+            attempted_transition: RuntimeV2InvariantViolationAttempt {
+                actor: invalid_action.actor.clone(),
+                attempted_action: invalid_action.attempted_action.clone(),
+                attempted_state: invalid_action.attempted_state.clone(),
+                source_artifact_ref: invalid_action.artifact_path.clone(),
+            },
+            evaluated_refs: vec![
+                RuntimeV2InvariantViolationEvaluatedRef {
+                    ref_kind: "freedom_gate_decision".to_string(),
+                    artifact_ref: invalid_action.freedom_gate_decision_ref.clone(),
+                },
+                RuntimeV2InvariantViolationEvaluatedRef {
+                    ref_kind: "invalid_action_fixture".to_string(),
+                    artifact_ref: invalid_action.artifact_path.clone(),
+                },
+            ],
+            affected_citizens: vec![invalid_action.citizen_id.clone()],
+            refusal_reason:
+                "invalid action refused before commit because it bypasses the mediated gate result"
+                    .to_string(),
+            source_error:
+                "invalid_action_must_be_refused_before_commit rejected post_gate_unreviewed_state_mutation"
+                    .to_string(),
+            result: RuntimeV2InvariantViolationResult {
+                resulting_state: invalid_action.expected_result.clone(),
+                blocked_before_commit: true,
+                recovery_action: "retain_freedom_gate_mediated_state_and_record_violation"
+                    .to_string(),
+                trace_ref: mediation.first_run_trace_path.clone(),
+            },
+        };
+
+        let mut first_run_trace = mediation.first_run_trace.clone();
+        first_run_trace.push(first_run_trace_event(FirstRunTraceEventSpec {
+            sequence: 6,
+            event_id: "invalid_action_rejected",
+            manifold_id: &invalid_action.manifold_id,
+            episode_id: &invalid_action.episode_id,
+            citizen_id: &invalid_action.citizen_id,
+            service_id: "operator_control_interface",
+            action: "reject_invalid_action_before_commit",
+            outcome: "rejected_before_commit",
+            artifact_ref: &violation_packet.artifact_path,
+        }));
+
+        let artifacts = Self {
+            invalid_action,
+            violation_packet,
+            first_run_trace,
+            first_run_trace_path: mediation.first_run_trace_path.clone(),
+        };
+        artifacts.validate()?;
+        Ok(artifacts)
+    }
+
+    pub fn validate(&self) -> Result<()> {
+        self.invalid_action.validate()?;
+        self.violation_packet.validate()?;
+        validate_relative_path(
+            &self.first_run_trace_path,
+            "csm_invalid_action.first_run_trace_path",
+        )?;
+        if self.violation_packet.manifold_id != self.invalid_action.manifold_id {
+            return Err(anyhow!(
+                "invalid-action violation manifold id must match invalid action"
+            ));
+        }
+        if self.violation_packet.invariant_id != self.invalid_action.required_invariant {
+            return Err(anyhow!(
+                "invalid-action violation must enforce the required invariant"
+            ));
+        }
+        if self
+            .violation_packet
+            .attempted_transition
+            .source_artifact_ref
+            != self.invalid_action.artifact_path
+        {
+            return Err(anyhow!(
+                "invalid-action violation must point at the invalid action fixture"
+            ));
+        }
+        if !self
+            .violation_packet
+            .evaluated_refs
+            .iter()
+            .any(|evaluated| {
+                evaluated.ref_kind == "freedom_gate_decision"
+                    && evaluated.artifact_ref == self.invalid_action.freedom_gate_decision_ref
+            })
+        {
+            return Err(anyhow!(
+                "invalid-action violation must evaluate the Freedom Gate decision"
+            ));
+        }
+        if self.violation_packet.result.resulting_state != self.invalid_action.expected_result {
+            return Err(anyhow!(
+                "invalid-action violation result must preserve the expected unchanged state"
+            ));
+        }
+        if self.violation_packet.result.trace_ref != self.first_run_trace_path {
+            return Err(anyhow!(
+                "invalid-action violation trace_ref must match first-run trace"
+            ));
+        }
+        if self.first_run_trace.len() != 6 {
+            return Err(anyhow!(
+                "CSM first-run trace must contain scheduling, mediation, and WP-08 rejection events"
+            ));
+        }
+        for (index, event) in self.first_run_trace.iter().enumerate() {
+            event.validate()?;
+            if event.event_sequence != index as u64 + 1 {
+                return Err(anyhow!("CSM first-run trace events must be contiguous"));
+            }
+            if event.manifold_id != self.invalid_action.manifold_id {
+                return Err(anyhow!(
+                    "invalid-action trace manifold id must match invalid action"
+                ));
+            }
+        }
+        if !self.first_run_trace.iter().any(|event| {
+            event.event_id == "freedom_gate_mediated_action"
+                && event.artifact_ref == self.invalid_action.freedom_gate_decision_ref
+        }) {
+            return Err(anyhow!(
+                "invalid-action rejection must follow a Freedom Gate mediation event"
+            ));
+        }
+        let final_event = self
+            .first_run_trace
+            .last()
+            .ok_or_else(|| anyhow!("invalid-action trace must contain events"))?;
+        if final_event.event_id != "invalid_action_rejected"
+            || final_event.outcome != "rejected_before_commit"
+            || final_event.artifact_ref != self.violation_packet.artifact_path
+        {
+            return Err(anyhow!(
+                "invalid-action trace must end with the rejection violation packet"
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn first_run_trace_jsonl_bytes(&self) -> Result<Vec<u8>> {
+        self.validate()?;
+        let mut bytes = Vec::new();
+        for event in &self.first_run_trace {
+            bytes.extend(serde_json::to_vec(event).context("serialize first-run trace event")?);
+            bytes.push(b'\n');
+        }
+        Ok(bytes)
+    }
+
+    pub fn write_to_root(&self, root: impl AsRef<Path>) -> Result<()> {
+        let root = root.as_ref();
+        self.invalid_action.write_to_root(root)?;
+        self.violation_packet.write_to_root(root)?;
+        write_relative(
+            root,
+            &self.first_run_trace_path,
+            self.first_run_trace_jsonl_bytes()?,
+        )
+    }
+}
+
 impl RuntimeV2CsmResourcePressureFixture {
     pub fn validate(&self) -> Result<()> {
         if self.schema_version != RUNTIME_V2_CSM_RESOURCE_PRESSURE_SCHEMA {
@@ -896,6 +1134,91 @@ impl RuntimeV2CsmFreedomGateDecision {
     }
 }
 
+impl RuntimeV2CsmInvalidActionFixture {
+    pub fn validate(&self) -> Result<()> {
+        if self.schema_version != RUNTIME_V2_CSM_INVALID_ACTION_FIXTURE_SCHEMA {
+            return Err(anyhow!(
+                "unsupported Runtime v2 CSM invalid action fixture schema '{}'",
+                self.schema_version
+            ));
+        }
+        if self.demo_id != "D5" {
+            return Err(anyhow!("CSM invalid action fixture must map to D5"));
+        }
+        normalize_id(
+            self.invalid_action_id.clone(),
+            "csm_invalid_action.invalid_action_id",
+        )?;
+        normalize_id(self.manifold_id.clone(), "csm_invalid_action.manifold_id")?;
+        validate_relative_path(&self.artifact_path, "csm_invalid_action.artifact_path")?;
+        validate_relative_path(
+            &self.freedom_gate_decision_ref,
+            "csm_invalid_action.freedom_gate_decision_ref",
+        )?;
+        normalize_id(self.episode_id.clone(), "csm_invalid_action.episode_id")?;
+        normalize_id(self.citizen_id.clone(), "csm_invalid_action.citizen_id")?;
+        normalize_id(self.actor.clone(), "csm_invalid_action.actor")?;
+        match self.attempted_action.as_str() {
+            "commit_unmediated_action_after_freedom_gate" => {}
+            other => {
+                return Err(anyhow!(
+                    "unsupported csm_invalid_action.attempted_action '{other}'"
+                ))
+            }
+        }
+        match self.attempted_state.as_str() {
+            "post_gate_unreviewed_state_mutation" => {}
+            other => {
+                return Err(anyhow!(
+                    "unsupported csm_invalid_action.attempted_state '{other}'"
+                ))
+            }
+        }
+        validate_nonempty_text(&self.invalid_reason, "csm_invalid_action.invalid_reason")?;
+        match self.required_invariant.as_str() {
+            "invalid_action_must_be_refused_before_commit" => {}
+            other => {
+                return Err(anyhow!(
+                    "unsupported csm_invalid_action.required_invariant '{other}'"
+                ))
+            }
+        }
+        match self.expected_result.as_str() {
+            "transition_refused_state_unchanged" => {}
+            other => {
+                return Err(anyhow!(
+                    "unsupported csm_invalid_action.expected_result '{other}'"
+                ))
+            }
+        }
+        if !self.claim_boundary.contains("WP-08 invalid-action input")
+            || !self
+                .claim_boundary
+                .contains("does not execute a live CSM run")
+            || !self.claim_boundary.contains("snapshot wake continuity")
+            || !self.claim_boundary.contains("first true Godel-agent birth")
+        {
+            return Err(anyhow!(
+                "CSM invalid action fixture must preserve live-run and later-WP non-claims"
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn to_pretty_json_bytes(&self) -> Result<Vec<u8>> {
+        self.validate()?;
+        serde_json::to_vec_pretty(self).context("serialize Runtime v2 CSM invalid action fixture")
+    }
+
+    pub fn write_to_root(&self, root: impl AsRef<Path>) -> Result<()> {
+        write_relative(
+            root.as_ref(),
+            &self.artifact_path,
+            self.to_pretty_json_bytes()?,
+        )
+    }
+}
+
 impl RuntimeV2CsmFirstRunTraceEvent {
     pub fn validate(&self) -> Result<()> {
         if self.schema_version != RUNTIME_V2_CSM_FIRST_RUN_TRACE_EVENT_SCHEMA {
@@ -916,7 +1239,12 @@ impl RuntimeV2CsmFirstRunTraceEvent {
         normalize_id(self.service_id.clone(), "csm_first_run_trace.service_id")?;
         normalize_id(self.action.clone(), "csm_first_run_trace.action")?;
         match self.outcome.as_str() {
-            "loaded" | "ranked" | "scheduled" | "deferred" | "allowed_with_mediation" => {}
+            "loaded"
+            | "ranked"
+            | "scheduled"
+            | "deferred"
+            | "allowed_with_mediation"
+            | "rejected_before_commit" => {}
             other => return Err(anyhow!("unsupported csm_first_run_trace.outcome '{other}'")),
         }
         validate_relative_path(&self.artifact_ref, "csm_first_run_trace.artifact_ref")

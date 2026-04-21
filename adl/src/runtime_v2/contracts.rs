@@ -86,6 +86,11 @@ pub fn runtime_v2_csm_freedom_gate_mediation_contract(
     RuntimeV2CsmFreedomGateMediationArtifacts::prototype()
 }
 
+pub fn runtime_v2_csm_invalid_action_rejection_contract(
+) -> Result<RuntimeV2CsmInvalidActionRejectionArtifacts> {
+    RuntimeV2CsmInvalidActionRejectionArtifacts::prototype()
+}
+
 pub fn runtime_v2_foundation_demo_contract() -> Result<RuntimeV2FoundationPrototypeArtifacts> {
     RuntimeV2FoundationPrototypeArtifacts::prototype()
 }

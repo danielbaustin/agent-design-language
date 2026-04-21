@@ -59,9 +59,15 @@ The required negative decision values are:
 
 ## Boundary
 
-This contract fixes artifact shape for WP-08 and later invalid-action work. It
-does not execute WP-08, does not prove a live CSM run, and does not claim first
-true Godel-agent birth.
+This contract fixed artifact shape for WP-08 and later invalid-action work.
+WP-08 now consumes that shape through
+`runtime_v2/csm_run/invalid_action_violation.json`, which records an
+`invalid_action_must_be_refused_before_commit` rejection with
+`blocked_before_commit: true` and
+`transition_refused_state_unchanged`.
+
+The WP-08 evidence does not prove a live CSM run, snapshot wake continuity, or
+first true Godel-agent birth.
 
 ## Validation
 
@@ -69,7 +75,9 @@ Focused validation:
 
 ```sh
 cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture
+cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture
 ```
 
 This validates the schema contract, required fields, decision values,
-positive/negative fixture refs, write path hygiene, and overclaim rejection.
+positive/negative fixture refs, WP-08 invalid-action rejection packet, write
+path hygiene, and overclaim rejection.

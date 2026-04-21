@@ -15,6 +15,8 @@
     "runtime_v2/csm_run/scheduling_decision.json",
     "runtime_v2/csm_run/citizen_action_fixture.json",
     "runtime_v2/csm_run/freedom_gate_decision.json",
+    "runtime_v2/csm_run/invalid_action_fixture.json",
+    "runtime_v2/csm_run/invalid_action_violation.json",
     "runtime_v2/csm_run/first_run_trace.jsonl"
   ],
   "run_identity": {
@@ -53,7 +55,7 @@
       "owner_wp": "WP-06-WP-08",
       "required_input": "runtime_v2/csm_run/boot_manifest.json",
       "required_output": "runtime_v2/csm_run/first_run_trace.jsonl",
-      "live_run_state": "wp07_mediation_landed"
+      "live_run_state": "wp08_invalid_action_rejection_landed"
     },
     {
       "stage_id": "snapshot_wake_and_observatory",
@@ -65,6 +67,6 @@
   ],
   "review_target": {
     "entrypoint": "docs/milestones/v0.90.2/CSM_RUN_PACKET_CONTRACT_v0.90.2.md",
-    "focused_validation": "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation -- --nocapture"
+    "focused_validation": "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture"
   }
 }
