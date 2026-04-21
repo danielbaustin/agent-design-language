@@ -25,6 +25,7 @@ The tracked skill set is:
 - `gap-analysis`
 - `issue-watcher`
 - `medium-article-writer`
+- `portable-contract-normalizer`
 - `pr-closeout`
 - `pr-finish`
 - `pr-init`
@@ -84,6 +85,7 @@ The normal workflow is:
 `pr-stack-manager` is a bounded stack-topology helper for ancestry, base alignment, and dependency-order analysis.
 `review-comment-triage` is a bounded review-feedback helper for classifying PR comments before implementation.
 `review-readiness-cleanup` is a bounded review-cycle preflight helper for classifying safe cleanup, blockers, skipped surfaces, and follow-on needs before formal review starts.
+`portable-contract-normalizer` is a bounded portability helper for detecting machine-local assumptions and applying only explicitly approved safe mechanical normalization.
 
 The three editor skills are helper skills:
 - `stp-editor` for bounded `stp.md` cleanup
@@ -1292,6 +1294,50 @@ Use `documentation-specialist` for approved mechanical cleanup, `gap-analysis`
 for scope-vs-evidence uncertainty, `finding-to-issue-planner` for follow-on
 issue candidates, and `review-quality-evaluator` for packet quality gates.
 
+## `portable-contract-normalizer`
+
+### Purpose
+
+`portable-contract-normalizer` scans bounded repo contracts, tests, packets, and
+validation surfaces for machine-local assumptions such as absolute host paths,
+brittle worktree names, temp paths, stale hard-coded contract references, and
+environment-specific assertions.
+
+It separates safe mechanical normalization from findings that require design
+decisions.
+
+### When To Use It
+
+Use it when:
+
+- contract tests or review packets may contain local machine assumptions
+- a PR has portability drift from hard-coded paths or worktree names
+- safe fixture normalization should be separated from design-decision findings
+
+Do not use it for:
+
+- unbounded repository rewrites
+- hiding legitimate host-specific evidence
+- semantic test redesign
+- customer or review packet mutation without explicit permission
+
+Structured schema:
+
+- `adl/tools/skills/docs/PORTABLE_CONTRACT_NORMALIZER_SKILL_INPUT_SCHEMA.md`
+- schema id: `portable_contract_normalizer.v1`
+
+Deterministic fixture analyzer:
+
+```bash
+python3 adl/tools/skills/portable-contract-normalizer/scripts/normalize_portable_contracts.py --root <path> --out <artifact-root> --run-id <run-id>
+```
+
+### Typical Handoff
+
+Use `documentation-specialist` for approved fixture text cleanup,
+`gap-analysis` when portability claims need evidence comparison, and focused
+remediation issues when a finding requires design decisions.
+
 ## `stp-editor`
 
 ### Purpose
@@ -2207,6 +2253,8 @@ Use this quick selector:
   - `review-comment-triage`
 - need to preflight review packets before a formal review cycle:
   - `review-readiness-cleanup`
+- need to detect machine-local assumptions in bounded contract surfaces:
+  - `portable-contract-normalizer`
 - need a broad findings-first code review:
   - `repo-code-review`
 - need source-backed arXiv-style manuscript drafting or citation-gap review:
@@ -2263,6 +2311,7 @@ surfaces:
 | `finding-to-issue-planner` | `FINDING_TO_ISSUE_PLANNER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | issue candidates only |
 | `gap-analysis` | `GAP_ANALYSIS_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | gap report only |
 | `medium-article-writer` | `MEDIUM_ARTICLE_WRITER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | article packet only |
+| `portable-contract-normalizer` | `PORTABLE_CONTRACT_NORMALIZER_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | bounded portability scan or explicit safe normalization only |
 | `pr-closeout` | `PR_CLOSEOUT_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | local closeout only |
 | `pr-finish` | `PR_FINISH_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | PR publication/update only |
 | `pr-init` | `PR_INIT_SKILL_INPUT_SCHEMA.md` | `references/output-contract.md` | issue bootstrap only |
