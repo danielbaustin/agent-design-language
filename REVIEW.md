@@ -21,7 +21,7 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the active v0.90.2 review-tail package, start with:
+For the v0.90.2 release-closeout package, start with:
 
 - `docs/milestones/v0.90.2/README.md`
 - `docs/milestones/v0.90.2/WBS_v0.90.2.md`
@@ -30,6 +30,7 @@ For the active v0.90.2 review-tail package, start with:
 - `docs/milestones/v0.90.2/FEATURE_DOCS_v0.90.2.md`
 - `docs/milestones/v0.90.2/FEATURE_PROOF_COVERAGE_v0.90.2.md`
 - `docs/milestones/v0.90.2/RELEASE_READINESS_v0.90.2.md`
+- `docs/milestones/v0.90.2/RELEASE_EVIDENCE_v0.90.2.md`
 - `docs/milestones/v0.90.2/MILESTONE_CHECKLIST_v0.90.2.md`
 - `docs/milestones/v0.90.2/RELEASE_PLAN_v0.90.2.md`
 - `docs/milestones/v0.90.2/RELEASE_NOTES_v0.90.2.md`
@@ -40,7 +41,7 @@ For the active v0.90.2 review-tail package, start with:
 - `adl/Cargo.toml`
 - `adl/Cargo.lock`
 
-The current v0.90.2 review posture is release-tail copy. WP-01 through WP-14A
+The current v0.90.2 review posture is release-closeout copy. WP-01 through WP-14A
 produced the first bounded CSM run and Runtime v2 hardening proof package:
 CSM run packet contract, invariant and violation artifacts, boot/admission
 evidence, governed episode scheduling, Freedom Gate mediation, invalid-action
@@ -48,11 +49,12 @@ rejection, snapshot/rehydrate/wake continuity, Observatory packet/report,
 recovery/quarantine evidence, governed adversarial hardening, integrated
 first-run demo, and feature-proof coverage.
 
-WP-15 docs convergence, WP-16 internal review, WP-17 external review, and WP-18
-accepted-finding remediation are complete. WP-19 is finalizing v0.90.3 and
-later-milestone handoff before WP-20 release ceremony.
+WP-15 docs convergence, WP-16 internal review, WP-17 external review, WP-18
+accepted-finding remediation, WP-19 v0.90.3/later-milestone handoff, and WP-20
+release ceremony preflight are complete. Final tag/release publication runs
+from clean main after closeout merge.
 
-The crate version is `0.90.2` for the active v0.90.2 release line. Reviewers
+The crate version is `0.90.2` for the v0.90.2 release line. Reviewers
 should treat any conflicting older version reference as a stale release-truth
 defect.
 
@@ -65,8 +67,8 @@ Important v0.90.2 non-claims:
   migration.
 - v0.90.2 does not ship the complete red/blue/purple security ecology.
 
-Before release approval, verify that WP-19 next-milestone handoff and WP-20
-release ceremony have completed from clean main.
+Before final tag/release publication, verify that the closeout PR has merged
+and the ceremony script is rerun from clean main.
 
 WP-15 tracker status to preserve during review:
 - coverage remains above the active quality gate at `92.40%` workspace line

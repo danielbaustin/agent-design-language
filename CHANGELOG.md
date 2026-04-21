@@ -2,12 +2,12 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.90.2 (In progress)
+## v0.90.2 (Release closeout)
 
-Status: Implementation and demo/proof coverage have landed through WP-14A.
-WP-15 docs convergence, WP-16 internal review, WP-17 external review, and
-WP-18 accepted-finding remediation are complete. WP-19 is finalizing
-next-milestone handoff before WP-20 release ceremony.
+Status: Implementation, demo/proof coverage, docs convergence, internal
+review, external review, accepted-finding remediation, next-milestone handoff,
+and WP-20 release ceremony preflight are complete. Final tag/release
+publication runs from clean main after the closeout PR merges.
 
 Summary:
 - v0.90.2 is the first bounded CSM run and Runtime v2 hardening milestone.
@@ -31,7 +31,12 @@ Summary:
   WP-17 external review found zero P0/P1/P2/P3 findings, and WP-18 closed with
   only optional backlog candidates for milestone-compression documentation and
   a Runtime v2 overview diagram.
-- The crate version is `0.90.2` for the active v0.90.2 release line.
+- WP-19 polished the v0.90.3 planning package, restored the v0.87.1-style
+  quality/review/release tail, and left v0.90.3 ready for fast issue-wave
+  execution.
+- WP-20 release ceremony preflight passed, including the closed-issue SOR truth
+  gate across 40 closed v0.90.2 issues.
+- The crate version is `0.90.2` for the v0.90.2 release line.
 
 References:
 - `docs/milestones/v0.90.2/README.md`
@@ -41,6 +46,7 @@ References:
 - `docs/milestones/v0.90.2/FEATURE_DOCS_v0.90.2.md`
 - `docs/milestones/v0.90.2/FEATURE_PROOF_COVERAGE_v0.90.2.md`
 - `docs/milestones/v0.90.2/RELEASE_READINESS_v0.90.2.md`
+- `docs/milestones/v0.90.2/RELEASE_EVIDENCE_v0.90.2.md`
 - `docs/milestones/v0.90.2/RELEASE_PLAN_v0.90.2.md`
 - `docs/milestones/v0.90.2/RELEASE_NOTES_v0.90.2.md`
 

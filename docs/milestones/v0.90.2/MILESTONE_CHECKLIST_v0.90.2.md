@@ -45,8 +45,8 @@
 - [x] Internal review complete
 - [x] External / 3rd-party review complete
 - [x] Accepted findings remediated or explicitly deferred
-- [ ] Release notes describe landed work only
-- [ ] v0.91/v0.92 handoff preserves later scope
+- [x] Release notes describe landed work only
+- [x] v0.91/v0.92 handoff preserves later scope
 - [x] Next-milestone planning package ready for WP-19 refinement
-- [ ] Next-milestone planning complete before release ceremony
-- [ ] Release ceremony complete
+- [x] Next-milestone planning complete before release ceremony
+- [x] Release ceremony preflight complete; final tag/release publication runs from clean main after merge

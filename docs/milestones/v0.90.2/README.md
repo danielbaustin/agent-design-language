@@ -2,9 +2,9 @@
 
 ## Status
 
-Active milestone package. v0.90.2 is open and the issue wave has been created
-as #2245-#2264 from the reviewed milestone package, with WP-14A added as
-#2301 to restore the explicit demo matrix and feature proof demo lane.
+Release-closeout milestone package. v0.90.2 issue wave #2245-#2264 is complete
+through WP-20 release ceremony preflight, with WP-14A #2301 added to restore
+the explicit demo matrix and feature proof demo lane.
 
 Current execution state:
 
@@ -26,6 +26,9 @@ Current execution state:
   duplicate-active-head guard evidence.
 - WP-10 adds the D7 Observatory visibility packet and operator report generated
   from the bounded first-run artifacts.
+- WP-15 through WP-20 completed docs/quality convergence, internal review,
+  third-party review, accepted-finding remediation, next-milestone handoff, and
+  release ceremony preflight.
 
 ## Thesis
 
@@ -81,6 +84,8 @@ Out of scope:
 - Feature proof coverage: `FEATURE_PROOF_COVERAGE_v0.90.2.md`
 - Release readiness / WP-19 handoff:
   `RELEASE_READINESS_v0.90.2.md`
+- Release evidence / WP-20 preflight:
+  `RELEASE_EVIDENCE_v0.90.2.md`
 - Internal review / WP-16:
   `INTERNAL_REVIEW_v0.90.2.md`
 - Inheritance and compression audit:
@@ -89,7 +94,7 @@ Out of scope:
 - Feature index: `FEATURE_DOCS_v0.90.2.md`
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.90.2.md`
 - Release plan: `RELEASE_PLAN_v0.90.2.md`
-- Release notes draft: `RELEASE_NOTES_v0.90.2.md`
+- Release notes: `RELEASE_NOTES_v0.90.2.md`
 - Issue wave draft: `WP_ISSUE_WAVE_v0.90.2.yaml`
 
 ## Execution Rule
@@ -275,3 +280,10 @@ WP-19 prepares v0.90.3 to start quickly after v0.90.2 closes. The v0.90.3
 package now includes a polished citizen-state substrate plan, explicit
 WP-14A demo/proof lane, WP execution-readiness guidance for card authoring, and
 the same release-tail pattern v0.90.2 used successfully.
+
+## WP-20 Release Ceremony Gate
+
+WP-20 ran the release ceremony preflight and closed-issue SOR truth gate. The
+preflight passed in check-only mode on the WP-20 branch. Final tag/release
+publication runs from clean main after this closeout PR merges and Daniel
+fast-forwards the root checkout.

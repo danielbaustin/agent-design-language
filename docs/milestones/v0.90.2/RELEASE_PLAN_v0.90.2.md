@@ -28,6 +28,8 @@ and produced reviewable hardening evidence around that run.
 - external / 3rd-party review record
 - accepted-findings remediation or explicit owner-bound deferral record
 - next-milestone planning and v0.91/v0.92 handoff record
+- release evidence packet
+- release ceremony preflight with closed-issue SOR truth gate
 - release notes that do not overclaim birthday, moral/emotional civilization,
   complete migration, or red/blue ecology
 
