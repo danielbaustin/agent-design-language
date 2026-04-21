@@ -120,7 +120,7 @@ Other useful entrypoints:
 ## Current Status
 
 - Active milestone: **v0.90.2 review tail**
-- Current release state: **v0.90.2 implementation and demo/proof coverage have landed through WP-14A; WP-15 starts docs, quality, and review convergence**
+- Current release state: **v0.90.2 implementation, demo/proof coverage, docs convergence, internal review, third-party review, and accepted-finding remediation are complete; WP-19 is finalizing next-milestone handoff before WP-20 ceremony**
 - Most recently completed milestone: **v0.90.1**
 - Current crate version: **0.90.2**
 - Version note: **v0.90.2 carries the bounded CSM first-run and Runtime v2 hardening release line**
@@ -137,8 +137,9 @@ milestone. Its tracked package lives under `docs/milestones/v0.90.2/`. The
 issue wave opened as #2245-#2264, and the explicit WP-14A demo/proof lane was
 added as #2301 before WP-15 review convergence. The milestone now has
 feature-by-feature proof coverage, an integrated first-run demo packet, and a
-review-tail sequence for internal review, third-party review, remediation,
-next-milestone handoff, and release ceremony.
+review-tail sequence that has completed internal review, third-party review,
+and accepted-finding remediation. WP-19 now finalizes next-milestone handoff
+before WP-20 release ceremony.
 
 v0.90.1 is the completed Runtime v2 foundation prototype milestone. Its issue
 wave opened with WP-01 at #2141, WP-02 through WP-20 at #2142 through #2160,

@@ -43,9 +43,10 @@
 
 - [x] Docs, quality, and reviewer entry surfaces converged
 - [x] Internal review complete
-- [ ] External / 3rd-party review complete
-- [ ] Accepted findings remediated or explicitly deferred
+- [x] External / 3rd-party review complete
+- [x] Accepted findings remediated or explicitly deferred
 - [ ] Release notes describe landed work only
 - [ ] v0.91/v0.92 handoff preserves later scope
+- [x] Next-milestone planning package ready for WP-19 refinement
 - [ ] Next-milestone planning complete before release ceremony
 - [ ] Release ceremony complete

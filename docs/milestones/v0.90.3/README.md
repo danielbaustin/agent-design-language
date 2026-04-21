@@ -3,7 +3,8 @@
 ## Status
 
 Draft milestone package. v0.90.3 is planned as the citizen-state substrate
-milestone and is being prepared during v0.90.2 under issue #2269.
+milestone. It was created during v0.90.2 under issue #2269 and refined during
+the v0.90.2 WP-19 handoff pass (#2263).
 
 The issue wave has not been opened. This package is the reviewable planning
 source for a later WP-01 issue-wave creation pass.
@@ -93,6 +94,7 @@ dependencies.
 - Sprint plan: `SPRINT_v0.90.3.md`
 - Decisions log: `DECISIONS_v0.90.3.md`
 - Demo matrix: `DEMO_MATRIX_v0.90.3.md`
+- WP execution readiness: `WP_EXECUTION_READINESS_v0.90.3.md`
 - Feature index: `FEATURE_DOCS_v0.90.3.md`
 - Milestone checklist: `MILESTONE_CHECKLIST_v0.90.3.md`
 - Release plan: `RELEASE_PLAN_v0.90.3.md`
@@ -107,6 +109,10 @@ be created from the reviewed YAML before implementation starts.
 Once the wave opens, issue work should happen in issue worktrees. Root checkout
 edits are not part of the ADL execution model.
 
+WP-01 should use `WP_EXECUTION_READINESS_v0.90.3.md` when authoring cards so the
+issue bodies are not generic. Every execution session should inherit the
+relevant required outputs, validation, and non-goals before implementation.
+
 ## Compression Rule
 
 v0.90.3 should use the compression model learned in v0.90.1 and v0.90.2:
@@ -118,6 +124,10 @@ v0.90.3 should use the compression model learned in v0.90.1 and v0.90.2:
 - keep demo claims narrow
 - let docs-only and fixture-only WPs run with focused validation
 - do not compress away witness, redaction, threat-model, or release-truth work
+
+The release tail should preserve the proven v0.90.2 pattern: demo/proof matrix,
+docs and quality convergence, internal review, external review, accepted-finding
+remediation, next-milestone handoff, and release ceremony.
 
 ## Economics Boundary
 

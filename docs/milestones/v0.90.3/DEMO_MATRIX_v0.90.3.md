@@ -14,10 +14,11 @@ Planning draft. No v0.90.3 issue wave has been opened yet.
 | D6 | Continuity witness and citizen receipt | WP-07 | Admission, snapshot, wake, and quarantine transitions produce explainable continuity evidence | witness schema, receipt schema, sample receipt | PLANNED |
 | D7 | Anti-equivocation conflict | WP-08 | Conflicting signed successors for the same sequence are detected | conflict fixture and quarantine/sanctuary disposition | PLANNED |
 | D8 | Sanctuary/quarantine ambiguous wake | WP-09 | Ambiguous wake preserves evidence and blocks unsafe activation | ambiguous wake fixture, quarantine artifact, operator report | PLANNED |
-| D9 | Redacted Observatory projection | WP-10 / WP-14 | Operators see continuity status without raw private state | projection schema, leakage tests, Observatory packet/report | PLANNED |
-| D10 | Standing and communication boundary | WP-11 / WP-13 | Guests and service actors cannot silently acquire citizen rights or inspection access | standing events, access-denial events, communication examples | PLANNED |
-| D11 | Integrated citizen-state proof | WP-12 | Reviewer can inspect one bounded end-to-end citizen-state scenario | integrated proof packet, witness, receipt, projection, operator report | PLANNED |
-| D12 | Challenge and appeal flow | WP-15 | A challenged wake or projection freezes destructive transition and preserves evidence | challenge artifact, appeal/review artifact, resolution record | PLANNED |
+| D9 | Redacted Observatory projection | WP-10 | Operators see continuity status without raw private state | projection schema, leakage tests, Observatory packet/report | PLANNED |
+| D10 | Standing, communication, and access boundary | WP-11 / WP-12 | Guests and service actors cannot silently acquire citizen rights or inspection access | standing events, access-denial events, communication examples | PLANNED |
+| D11 | Challenge, appeal, and threat review | WP-13 | A challenged wake or projection freezes destructive transition and preserves evidence, with threat-model coverage before demo claims widen | challenge artifact, appeal/review artifact, threat model, economics placement record | PLANNED |
+| D12 | Integrated citizen-state proof | WP-14 | Reviewer can inspect one bounded end-to-end citizen-state scenario | integrated proof packet, witness, receipt, projection, operator report | PLANNED |
+| D13 | Feature proof coverage record | WP-14A | Every v0.90.3 feature claim has a runnable demo, proof packet, fixture-backed artifact, non-proving status, or explicit deferral | feature proof coverage record and demo matrix update | PLANNED |
 
 ## Non-Proving Boundaries
 

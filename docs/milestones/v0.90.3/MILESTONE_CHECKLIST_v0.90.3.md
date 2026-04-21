@@ -7,6 +7,7 @@
 - [ ] WP issue wave opened from reviewed YAML
 - [ ] Real issue numbers recorded in WBS and YAML
 - [ ] Cards generated and reviewed
+- [ ] WP execution readiness guidance copied into issue bodies
 
 ## Execution Gates
 
@@ -20,10 +21,11 @@
 - [ ] Sanctuary/quarantine behavior proven
 - [ ] Redacted Observatory projection proven
 - [ ] Standing, communication, and access boundaries proven
-- [ ] Integrated citizen-state demo complete
 - [ ] Challenge and appeal flow proven
 - [ ] Threat model reviewed
 - [ ] Economics placement decision recorded
+- [ ] Integrated citizen-state demo complete
+- [ ] Demo matrix and feature proof coverage record complete
 
 ## Review And Release
 
@@ -31,6 +33,7 @@
 - [ ] Internal review complete
 - [ ] External / third-party review complete
 - [ ] Accepted review findings remediated or explicitly deferred
+- [ ] Next-milestone planning and handoff complete
 - [ ] Release notes describe actual shipped scope
 - [ ] Release ceremony preflight passes
 - [ ] Tag and release completed or blocked truthfully
