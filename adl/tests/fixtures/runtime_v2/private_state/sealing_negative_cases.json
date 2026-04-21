@@ -1,0 +1,27 @@
+{
+  "schema_version": "runtime_v2.private_state_sealing_proof.v1",
+  "proof_id": "v0-90-3-wp-05-sealing-negative-cases",
+  "demo_id": "D4",
+  "checkpoint_ref": "runtime_v2/private_state/proto-citizen-alpha.sealed-checkpoint.json",
+  "key_policy_ref": "runtime_v2/private_state/key_policy.json",
+  "backend_seam_ref": "runtime_v2/private_state/sealing_backend_seam.json",
+  "required_negative_cases": [
+    {
+      "case_id": "unavailable_key",
+      "mutation": "mark sealing key unavailable",
+      "expected_error_fragment": "unavailable sealing key"
+    },
+    {
+      "case_id": "wrong_key",
+      "mutation": "open checkpoint with same key id but wrong material",
+      "expected_error_fragment": "wrong key material"
+    },
+    {
+      "case_id": "raw_json_payload",
+      "mutation": "replace sealed payload with JSON bytes",
+      "expected_error_fragment": "must not be raw JSON"
+    }
+  ],
+  "validation_command": "cargo test --manifest-path adl/Cargo.toml runtime_v2_private_state_sealing -- --nocapture",
+  "claim_boundary": "D4 proves local-first deterministic sealing fixture behavior only; production cryptography, key rotation, ledger authority, and enclave adapters are later work."
+}
