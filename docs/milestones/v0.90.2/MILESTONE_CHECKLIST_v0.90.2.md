@@ -24,6 +24,7 @@
 - [ ] Governed adversarial hook complete with rules of engagement and evidence
 - [ ] Additional hardening probes complete
 - [ ] Integrated first CSM run demo implemented
+- [ ] WP-14A demo matrix and feature proof coverage completed before WP-15
 
 ## Truth And Safety
 
@@ -34,6 +35,7 @@
 - [ ] Governed adversarial hook remains bounded and operator-scoped
 - [ ] Security-boundary evidence is present and bounded
 - [x] Recovery and quarantine outcomes are explicit
+- [ ] Every feature claim has a runnable demo, proof packet, fixture-backed artifact, non-proving status, or explicit deferral
 - [ ] Quality gate is green or exceptions are explicit
 
 ## Release

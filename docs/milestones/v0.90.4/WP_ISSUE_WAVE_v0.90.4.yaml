@@ -10,6 +10,7 @@ notes:
   - "v0.90.4 consumes v0.90.3 citizen-state, standing, access-control, projection, and challenge/appeal authority."
   - "Do not claim payment settlement, Lightning, x402, or full inter-polis economics in v0.90.4 unless a later decision explicitly changes scope."
   - "Use fixture-first contract-market proof before any production economics claims."
+  - "Preserve an explicit demo matrix and feature proof demo WP before docs/review convergence."
 work_packages:
   - wp: WP-01
     issue: planned
@@ -97,21 +98,21 @@ work_packages:
     depends_on: WP-06-WP-13
   - wp: WP-15
     issue: planned
-    title: Resource stewardship bridge
+    title: Resource stewardship bridge and late authority boundary
     queue: docs
-    outcome: resource bridge decision and fixture
+    outcome: resource bridge decision, fixture, and boundary notes
     depends_on: WP-13, WP-14
   - wp: WP-16
     issue: planned
-    title: Docs, feature index, and demo matrix convergence
-    queue: docs
-    outcome: coherent docs package
+    title: Demo matrix and feature proof demos
+    queue: demo
+    outcome: demo matrix update and feature proof coverage record
     depends_on: WP-03-WP-15
   - wp: WP-17
     issue: planned
-    title: Internal review
-    queue: review
-    outcome: findings-first internal review
+    title: Docs, quality, and review convergence
+    queue: docs
+    outcome: coherent docs package and review-ready surface
     depends_on: WP-16
   - wp: WP-18
     issue: planned
