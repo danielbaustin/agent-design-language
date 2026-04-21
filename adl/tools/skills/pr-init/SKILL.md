@@ -95,6 +95,11 @@ When the caller can provide structured input, prefer the tracked invocation
 template in:
 - `/Users/daniel/git/agent-design-language/docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
 
+When the caller provides an authored issue body, require it to follow the
+canonical authored issue body scaffold in that template before running create.
+This avoids iterative one-section-at-a-time validation failures and keeps the
+GitHub issue body, source prompt, and bootstrap cards aligned from the start.
+
 If no slug is given, derive one from the title using the repo's normal slug rules.
 
 ## Quick Start
@@ -108,20 +113,22 @@ If no slug is given, derive one from the title using the repo's normal slug rule
    - aggregate completion outside the skill instead of asking one invocation to bootstrap many issues
 3. If using structured invocation, start from the canonical tracked template
    rather than writing the payload from scratch.
-4. Prefer the Rust-owned path when available.
-5. For new issues:
+4. If supplying an authored issue body, start from the canonical authored issue
+   body scaffold in the same template.
+5. Prefer the Rust-owned path when available.
+6. For new issues:
    - create the GitHub issue correctly
    - pass explicit repo-standard labels rather than relying on label inference
    - verify the created issue actually has the expected labels before continuing
    - ensure the canonical local source issue prompt and root bundle exist
-6. For existing issues:
+7. For existing issues:
    - run the bootstrap/init phase
    - seed the task-bundle `stp.md`
    - seed the initial `sip.md`
    - seed the initial `sor.md`
    - ensure canonical compatibility links exist when the repo expects them
-7. Validate the resulting surfaces mechanically.
-8. Emit a structured readiness result for qualitative card review and stop.
+8. Validate the resulting surfaces mechanically.
+9. Emit a structured readiness result for qualitative card review and stop.
 
 ## Workflow
 

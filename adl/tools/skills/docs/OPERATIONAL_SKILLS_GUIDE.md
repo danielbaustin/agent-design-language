@@ -650,6 +650,12 @@ single batch.
 Canonical template:
 - `docs/templates/PR_INIT_INVOCATION_TEMPLATE.md`
 
+For authored issue bodies, use the canonical authored issue body scaffold in
+that template before calling `pr create --body`, `pr create --body-file`, or
+`pr-init` with `issue.body` / `issue.body_file`. The create path validates all
+required source-prompt sections up front and reports the complete missing
+section set in one failure.
+
 ```yaml
 Use $pr-init at /Users/daniel/git/agent-design-language/adl/tools/skills/pr-init/SKILL.md with this validated input:
 

@@ -153,7 +153,7 @@ pub(crate) fn validate_issue_body_for_create(
     body: &str,
 ) -> Result<()> {
     let init_template =
-        "docs/templates/PR_INIT_INVOCATION_TEMPLATE.md or an authored issue body file";
+        "docs/templates/PR_INIT_INVOCATION_TEMPLATE.md#canonical-authored-issue-body-scaffold or an authored issue body file";
     let probe_issue = 999_999;
     let probe_url = format!(
         "https://github.com/{}/issues/{probe_issue}",
@@ -162,13 +162,12 @@ pub(crate) fn validate_issue_body_for_create(
     let prompt =
         render_issue_prompt_from_body(probe_issue, slug, title, labels_csv, &probe_url, body);
     let temp = write_temp_markdown("issue_body_probe", &prompt)?;
-    validate_bootstrap_stp(repo_root, &temp)
-        .with_context(|| {
-            format!(
-                "create: issue body cannot satisfy source-prompt validation; provide an authored body or use {}",
-                init_template
-            )
-        })?;
+    if let Err(err) = validate_bootstrap_stp(repo_root, &temp) {
+        bail!(
+            "create: issue body cannot satisfy source-prompt validation: {err}; provide an authored body or use {}",
+            init_template
+        );
+    }
     if let Some(reason) = placeholder_issue_body_reason(body) {
         bail!(
             "create: issue body is still bootstrap stub content ({reason}); provide an authored body or use {}",
@@ -180,17 +179,33 @@ pub(crate) fn validate_issue_body_for_create(
 
 pub(crate) fn validate_bootstrap_stp(repo_root: &Path, path: &Path) -> Result<()> {
     let validator = repo_root.join("adl/tools/validate_structured_prompt.sh");
-    run_status(
-        "bash",
-        &[
+    let output = Command::new("bash")
+        .args([
             path_str(&validator)?,
             "--type",
             "stp",
             "--input",
             path_str(path)?,
-        ],
-    )
-    .with_context(|| format!("init: stp failed validation: {}", path.display()))
+        ])
+        .output()
+        .with_context(|| "failed to spawn 'bash'")?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
+        let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
+        let detail = if !stderr.is_empty() {
+            stderr
+        } else if !stdout.is_empty() {
+            stdout
+        } else {
+            format!("bash failed with status {:?}", output.status.code())
+        };
+        bail!(
+            "init: stp failed validation: {}: {}",
+            path.display(),
+            detail
+        );
+    }
+    Ok(())
 }
 
 pub(crate) fn validate_ready_cards(

@@ -267,6 +267,20 @@ pub(super) fn validate_prompt_spec(spec: &str) -> Result<()> {
     Ok(())
 }
 
+fn ensure_required_sections(text: &str, required_sections: &[&str]) -> Result<()> {
+    let missing = required_sections
+        .iter()
+        .copied()
+        .filter(|section| !markdown_has_heading(text, section))
+        .collect::<Vec<_>>();
+    ensure!(
+        missing.is_empty(),
+        "missing required sections: {}",
+        missing.join(", ")
+    );
+    Ok(())
+}
+
 pub(super) fn validate_stp_text(text: &str) -> Result<()> {
     let (fm_text, body_text) = split_front_matter(text)?;
     let fm_yaml: Value = serde_yaml::from_str(&fm_text)?;
@@ -274,25 +288,23 @@ pub(super) fn validate_stp_text(text: &str) -> Result<()> {
         .as_mapping()
         .ok_or_else(|| anyhow!("front matter must be a YAML mapping"))?;
 
-    for section in [
-        "Summary",
-        "Goal",
-        "Required Outcome",
-        "Deliverables",
-        "Acceptance Criteria",
-        "Repo Inputs",
-        "Dependencies",
-        "Demo Expectations",
-        "Non-goals",
-        "Issue-Graph Notes",
-        "Notes",
-        "Tooling Notes",
-    ] {
-        ensure!(
-            markdown_has_heading(&body_text, section),
-            "missing required section: {section}"
-        );
-    }
+    ensure_required_sections(
+        &body_text,
+        &[
+            "Summary",
+            "Goal",
+            "Required Outcome",
+            "Deliverables",
+            "Acceptance Criteria",
+            "Repo Inputs",
+            "Dependencies",
+            "Demo Expectations",
+            "Non-goals",
+            "Issue-Graph Notes",
+            "Notes",
+            "Tooling Notes",
+        ],
+    )?;
 
     ensure!(
         mapping_string(fm, "issue_card_schema").as_deref() == Some("adl.issue.v1"),
@@ -377,26 +389,24 @@ pub(super) fn validate_stp_text(text: &str) -> Result<()> {
 }
 
 pub(super) fn validate_sip_text(text: &str, path: &Path, phase: Option<&str>) -> Result<()> {
-    for section in [
-        "Goal",
-        "Required Outcome",
-        "Acceptance Criteria",
-        "Inputs",
-        "Target Files / Surfaces",
-        "Validation Plan",
-        "Demo / Proof Requirements",
-        "Constraints / Policies",
-        "System Invariants (must remain true)",
-        "Reviewer Checklist (machine-readable hints)",
-        "Non-goals / Out of scope",
-        "Notes / Risks",
-        "Instructions to the Agent",
-    ] {
-        ensure!(
-            markdown_has_heading(text, section),
-            "missing required section: {section}"
-        );
-    }
+    ensure_required_sections(
+        text,
+        &[
+            "Goal",
+            "Required Outcome",
+            "Acceptance Criteria",
+            "Inputs",
+            "Target Files / Surfaces",
+            "Validation Plan",
+            "Demo / Proof Requirements",
+            "Constraints / Policies",
+            "System Invariants (must remain true)",
+            "Reviewer Checklist (machine-readable hints)",
+            "Non-goals / Out of scope",
+            "Notes / Risks",
+            "Instructions to the Agent",
+        ],
+    )?;
     ensure!(
         valid_task_id(&markdown_field(text, "Task ID").unwrap_or_default()),
         "Task ID must match issue-0000"
@@ -480,12 +490,7 @@ pub(super) fn validate_sip_text(text: &str, path: &Path, phase: Option<&str>) ->
 }
 
 pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
-    for section in super::common::REQUIRED_OUTPUT_SECTIONS {
-        ensure!(
-            markdown_has_heading(text, section),
-            "missing required section: {section}"
-        );
-    }
+    ensure_required_sections(text, super::common::REQUIRED_OUTPUT_SECTIONS)?;
     ensure!(
         valid_task_id(&markdown_field(text, "Task ID").unwrap_or_default()),
         "Task ID must match issue-0000"
