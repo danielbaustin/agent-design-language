@@ -17,6 +17,7 @@ mod private_state;
 mod private_state_envelope;
 mod private_state_lineage;
 mod private_state_sealing;
+mod private_state_witness;
 mod quarantine;
 mod recovery;
 mod security;
@@ -66,6 +67,8 @@ pub use private_state_envelope::*;
 pub use private_state_lineage::*;
 #[allow(unused_imports)]
 pub use private_state_sealing::*;
+#[allow(unused_imports)]
+pub use private_state_witness::*;
 #[allow(unused_imports)]
 pub use quarantine::*;
 #[allow(unused_imports)]

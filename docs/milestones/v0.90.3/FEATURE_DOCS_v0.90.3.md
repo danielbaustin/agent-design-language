@@ -22,6 +22,10 @@
 | `WP_ISSUE_WAVE_v0.90.3.yaml` | live issue-wave source with real issue mapping | WP-01 |
 | `CITIZEN_STATE_INHERITANCE_AUDIT_v0.90.3.md` | D1 audit of v0.90.2 citizen, snapshot, wake, quarantine, Observatory, and hardening artifacts with v0.90.3 requirement mapping | WP-02 |
 | `PRIVATE_STATE_FORMAT_DECISION_v0.90.3.md` | D2 canonical private-state format decision, binary authority boundary, JSON projection non-authority rule, fixtures, and focused validation | WP-03 |
+| `SIGNED_PRIVATE_STATE_ENVELOPE_v0.90.3.md` | D3 signed envelope and local trust-root proof for canonical private state | WP-04 |
+| `LOCAL_PRIVATE_STATE_SEALING_v0.90.3.md` | D4 local sealed checkpoint, key policy, and backend seam proof | WP-05 |
+| `APPEND_ONLY_LINEAGE_LEDGER_v0.90.3.md` | D5 append-only lineage ledger, materialized-head authority, and negative-case proof | WP-06 |
+| `CONTINUITY_WITNESSES_AND_RECEIPTS_v0.90.3.md` | D6 continuity witness schema, citizen-facing receipt schema, transition examples, and privacy-preserving validation | WP-07 |
 
 ## Context / Idea Docs
 

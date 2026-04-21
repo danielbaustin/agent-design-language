@@ -1,0 +1,205 @@
+{
+  "schema_version": "runtime_v2.private_state_citizen_receipt_set.v1",
+  "receipt_set_id": "private-state-citizen-receipts-proto-citizen-alpha",
+  "artifact_path": "runtime_v2/private_state/citizen_receipts.json",
+  "witness_set_ref": "runtime_v2/private_state/continuity_witnesses.json",
+  "ledger_ref": "runtime_v2/private_state/lineage_ledger.json",
+  "receipts": [
+    {
+      "schema_version": "runtime_v2.private_state_citizen_receipt.v1",
+      "receipt_id": "citizen-receipt-proto-citizen-alpha-admission",
+      "transition_type": "admission",
+      "citizen_id": "proto-citizen-alpha",
+      "lineage_id": "lineage-proto-citizen-alpha",
+      "state_sequence": 1,
+      "witness_id": "continuity-witness-proto-citizen-alpha-admission",
+      "witness_hash": "sha256:86be995c86b61f364d2548e100753b48ab740b9d749a6ef702633999ea0698fa",
+      "ledger_ref": "runtime_v2/private_state/lineage_ledger.json",
+      "accepted_head_entry_hash": "sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+      "continuity_explanation": [
+        "The polis recognizes this admission as a valid continuation of the same governed participant because the accepted ledger head, signed envelope, and sealed checkpoint evidence agree.",
+        "The continuity witness checked signature, content hash, sequence, predecessor linkage, lifecycle legality, ledger/head agreement, and envelope evidence.",
+        "This receipt is an explanation of continuity, not authority to inspect unrelated private state."
+      ],
+      "citizen_visible_evidence": [
+        "witness_id=continuity-witness-proto-citizen-alpha-admission",
+        "witness_hash=sha256:86be995c86b61f364d2548e100753b48ab740b9d749a6ef702633999ea0698fa",
+        "ledger_ref=runtime_v2/private_state/lineage_ledger.json",
+        "accepted_head_entry_hash=sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+        "envelope_hash=sha256:d4abf3f2679b88a93a86b91270357a2c191d348abd74f76b2c85afa253dc6e47",
+        "sealed_checkpoint_hash=sha256:d427c62c2b291cc7a91c56d8ea66acec0d6076ea58fbca41858f57260891a880",
+        "canonical_state_hash=sha256:b94a7c66b0c347a7b4a277bad6ed117b6920ac15186f593418cf83314780e992"
+      ],
+      "privacy_boundary": [
+        "does not expose unrelated private state",
+        "does not expose raw private state bytes",
+        "does not expose sealed payload material",
+        "does not expose other citizens' state"
+      ],
+      "withheld_private_material": [
+        "raw private state",
+        "sealed payload",
+        "private memory compartments",
+        "unrelated citizen state"
+      ],
+      "receipt_hash": "sha256:fb0515b754789abf66f23fe0371af4f649f67f86933d874562cb65cbebf5517a"
+    },
+    {
+      "schema_version": "runtime_v2.private_state_citizen_receipt.v1",
+      "receipt_id": "citizen-receipt-proto-citizen-alpha-snapshot",
+      "transition_type": "snapshot",
+      "citizen_id": "proto-citizen-alpha",
+      "lineage_id": "lineage-proto-citizen-alpha",
+      "state_sequence": 1,
+      "witness_id": "continuity-witness-proto-citizen-alpha-snapshot",
+      "witness_hash": "sha256:a09e847adfb6c6774799e765e684404b5dc950510713543b657529d5d050aa8f",
+      "ledger_ref": "runtime_v2/private_state/lineage_ledger.json",
+      "accepted_head_entry_hash": "sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+      "continuity_explanation": [
+        "The polis recognizes this snapshot as a valid continuation of the same governed participant because the accepted ledger head, signed envelope, and sealed checkpoint evidence agree.",
+        "The continuity witness checked signature, content hash, sequence, predecessor linkage, lifecycle legality, ledger/head agreement, and envelope evidence.",
+        "This receipt is an explanation of continuity, not authority to inspect unrelated private state."
+      ],
+      "citizen_visible_evidence": [
+        "witness_id=continuity-witness-proto-citizen-alpha-snapshot",
+        "witness_hash=sha256:a09e847adfb6c6774799e765e684404b5dc950510713543b657529d5d050aa8f",
+        "ledger_ref=runtime_v2/private_state/lineage_ledger.json",
+        "accepted_head_entry_hash=sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+        "envelope_hash=sha256:d4abf3f2679b88a93a86b91270357a2c191d348abd74f76b2c85afa253dc6e47",
+        "sealed_checkpoint_hash=sha256:d427c62c2b291cc7a91c56d8ea66acec0d6076ea58fbca41858f57260891a880",
+        "canonical_state_hash=sha256:b94a7c66b0c347a7b4a277bad6ed117b6920ac15186f593418cf83314780e992"
+      ],
+      "privacy_boundary": [
+        "does not expose unrelated private state",
+        "does not expose raw private state bytes",
+        "does not expose sealed payload material",
+        "does not expose other citizens' state"
+      ],
+      "withheld_private_material": [
+        "raw private state",
+        "sealed payload",
+        "private memory compartments",
+        "unrelated citizen state"
+      ],
+      "receipt_hash": "sha256:4e02a6044dffec7ae69cba90d7d2ac3094777527804c042070b75096dcc191f3"
+    },
+    {
+      "schema_version": "runtime_v2.private_state_citizen_receipt.v1",
+      "receipt_id": "citizen-receipt-proto-citizen-alpha-wake",
+      "transition_type": "wake",
+      "citizen_id": "proto-citizen-alpha",
+      "lineage_id": "lineage-proto-citizen-alpha",
+      "state_sequence": 1,
+      "witness_id": "continuity-witness-proto-citizen-alpha-wake",
+      "witness_hash": "sha256:7862687955ae9f60ddc42a0af6292d5543119585bc58008620e17ec26f1979e3",
+      "ledger_ref": "runtime_v2/private_state/lineage_ledger.json",
+      "accepted_head_entry_hash": "sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+      "continuity_explanation": [
+        "The polis recognizes this wake as a valid continuation of the same governed participant because the accepted ledger head, signed envelope, and sealed checkpoint evidence agree.",
+        "The continuity witness checked signature, content hash, sequence, predecessor linkage, lifecycle legality, ledger/head agreement, and envelope evidence.",
+        "This receipt is an explanation of continuity, not authority to inspect unrelated private state."
+      ],
+      "citizen_visible_evidence": [
+        "witness_id=continuity-witness-proto-citizen-alpha-wake",
+        "witness_hash=sha256:7862687955ae9f60ddc42a0af6292d5543119585bc58008620e17ec26f1979e3",
+        "ledger_ref=runtime_v2/private_state/lineage_ledger.json",
+        "accepted_head_entry_hash=sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+        "envelope_hash=sha256:d4abf3f2679b88a93a86b91270357a2c191d348abd74f76b2c85afa253dc6e47",
+        "sealed_checkpoint_hash=sha256:d427c62c2b291cc7a91c56d8ea66acec0d6076ea58fbca41858f57260891a880",
+        "canonical_state_hash=sha256:b94a7c66b0c347a7b4a277bad6ed117b6920ac15186f593418cf83314780e992"
+      ],
+      "privacy_boundary": [
+        "does not expose unrelated private state",
+        "does not expose raw private state bytes",
+        "does not expose sealed payload material",
+        "does not expose other citizens' state"
+      ],
+      "withheld_private_material": [
+        "raw private state",
+        "sealed payload",
+        "private memory compartments",
+        "unrelated citizen state"
+      ],
+      "receipt_hash": "sha256:ef972c00682b1c3bacaf7f81480c0f0406279ee1b9c37847175f65c5b9e2531c"
+    },
+    {
+      "schema_version": "runtime_v2.private_state_citizen_receipt.v1",
+      "receipt_id": "citizen-receipt-proto-citizen-alpha-quarantine",
+      "transition_type": "quarantine",
+      "citizen_id": "proto-citizen-alpha",
+      "lineage_id": "lineage-proto-citizen-alpha",
+      "state_sequence": 1,
+      "witness_id": "continuity-witness-proto-citizen-alpha-quarantine",
+      "witness_hash": "sha256:18ef171dd4f7911d75e7d1ab7b445118df6bbda8dac04adc31a7cb3e522e26cf",
+      "ledger_ref": "runtime_v2/private_state/lineage_ledger.json",
+      "accepted_head_entry_hash": "sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+      "continuity_explanation": [
+        "The polis recognizes this quarantine as a valid continuation of the same governed participant because the accepted ledger head, signed envelope, and sealed checkpoint evidence agree.",
+        "The continuity witness checked signature, content hash, sequence, predecessor linkage, lifecycle legality, ledger/head agreement, and envelope evidence.",
+        "This receipt is an explanation of continuity, not authority to inspect unrelated private state."
+      ],
+      "citizen_visible_evidence": [
+        "witness_id=continuity-witness-proto-citizen-alpha-quarantine",
+        "witness_hash=sha256:18ef171dd4f7911d75e7d1ab7b445118df6bbda8dac04adc31a7cb3e522e26cf",
+        "ledger_ref=runtime_v2/private_state/lineage_ledger.json",
+        "accepted_head_entry_hash=sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+        "envelope_hash=sha256:d4abf3f2679b88a93a86b91270357a2c191d348abd74f76b2c85afa253dc6e47",
+        "sealed_checkpoint_hash=sha256:d427c62c2b291cc7a91c56d8ea66acec0d6076ea58fbca41858f57260891a880",
+        "canonical_state_hash=sha256:b94a7c66b0c347a7b4a277bad6ed117b6920ac15186f593418cf83314780e992"
+      ],
+      "privacy_boundary": [
+        "does not expose unrelated private state",
+        "does not expose raw private state bytes",
+        "does not expose sealed payload material",
+        "does not expose other citizens' state"
+      ],
+      "withheld_private_material": [
+        "raw private state",
+        "sealed payload",
+        "private memory compartments",
+        "unrelated citizen state"
+      ],
+      "receipt_hash": "sha256:cb7ba1d0c225c2e28fb76e23d1d2e818b6bb5635dabd221f55e249baf1200eb0"
+    },
+    {
+      "schema_version": "runtime_v2.private_state_citizen_receipt.v1",
+      "receipt_id": "citizen-receipt-proto-citizen-alpha-release-from-quarantine",
+      "transition_type": "release-from-quarantine",
+      "citizen_id": "proto-citizen-alpha",
+      "lineage_id": "lineage-proto-citizen-alpha",
+      "state_sequence": 1,
+      "witness_id": "continuity-witness-proto-citizen-alpha-release-from-quarantine",
+      "witness_hash": "sha256:bbc4b45ddc1017a4d5f37b580473e95bb2ae7e5279b1655ad6f367babb75914d",
+      "ledger_ref": "runtime_v2/private_state/lineage_ledger.json",
+      "accepted_head_entry_hash": "sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+      "continuity_explanation": [
+        "The polis recognizes this release from quarantine as a valid continuation of the same governed participant because the accepted ledger head, signed envelope, and sealed checkpoint evidence agree.",
+        "The continuity witness checked signature, content hash, sequence, predecessor linkage, lifecycle legality, ledger/head agreement, and envelope evidence.",
+        "This receipt is an explanation of continuity, not authority to inspect unrelated private state."
+      ],
+      "citizen_visible_evidence": [
+        "witness_id=continuity-witness-proto-citizen-alpha-release-from-quarantine",
+        "witness_hash=sha256:bbc4b45ddc1017a4d5f37b580473e95bb2ae7e5279b1655ad6f367babb75914d",
+        "ledger_ref=runtime_v2/private_state/lineage_ledger.json",
+        "accepted_head_entry_hash=sha256:62d929f3203fe2e2fadfae9b9f3cb69402a31e32bf523267f21ba6b149282ad9",
+        "envelope_hash=sha256:d4abf3f2679b88a93a86b91270357a2c191d348abd74f76b2c85afa253dc6e47",
+        "sealed_checkpoint_hash=sha256:d427c62c2b291cc7a91c56d8ea66acec0d6076ea58fbca41858f57260891a880",
+        "canonical_state_hash=sha256:b94a7c66b0c347a7b4a277bad6ed117b6920ac15186f593418cf83314780e992"
+      ],
+      "privacy_boundary": [
+        "does not expose unrelated private state",
+        "does not expose raw private state bytes",
+        "does not expose sealed payload material",
+        "does not expose other citizens' state"
+      ],
+      "withheld_private_material": [
+        "raw private state",
+        "sealed payload",
+        "private memory compartments",
+        "unrelated citizen state"
+      ],
+      "receipt_hash": "sha256:7f2ad08e9b6cf514ea0ccdda5e3b62d5b3c2b07628f4102fdf4bf710328b765b"
+    }
+  ],
+  "claim_boundary": "Receipts explain continuity to the citizen using ledger and witness evidence without exposing raw private state, sealed payloads, or unrelated citizen state."
+}

@@ -3,7 +3,8 @@
 ## Status
 
 WP-05 landed the local key policy, deterministic sealed checkpoint fixture, and
-backend seam for v0.90.3.
+backend seam for v0.90.3. WP-07 adds continuity witnesses and citizen-facing
+receipts above the sealed checkpoint evidence.
 
 ## Purpose
 
@@ -15,8 +16,8 @@ continuity checkpoint."
 
 ## Core Shape
 
-A checkpoint package includes the following WP-05 fields now, with later WPs
-adding ledger, witness, and receipt authority:
+A checkpoint package includes the following WP-05 fields, with WP-06 adding
+ledger authority and WP-07 adding witness and receipt evidence:
 
 - sealed private state blob
 - redacted projection
@@ -28,8 +29,8 @@ adding ledger, witness, and receipt authority:
 - schema id
 - key id
 - writer signature
-- continuity witness (later WP)
-- citizen-facing receipt (later WP)
+- continuity witness reference
+- citizen-facing receipt reference
 
 ## Local-First Backend
 
@@ -55,10 +56,14 @@ The landed runtime evidence is:
 - `adl/tests/fixtures/runtime_v2/private_state/sealing_backend_seam.json`
 - `adl/tests/fixtures/runtime_v2/private_state/proto-citizen-alpha.sealed-checkpoint.json`
 - `adl/tests/fixtures/runtime_v2/private_state/sealing_negative_cases.json`
+- `adl/tests/fixtures/runtime_v2/private_state/continuity_witnesses.json`
+- `adl/tests/fixtures/runtime_v2/private_state/citizen_receipts.json`
+- `adl/tests/fixtures/runtime_v2/private_state/witness_receipt_negative_cases.json`
 
 The milestone evidence note is:
 
 - `docs/milestones/v0.90.3/LOCAL_PRIVATE_STATE_SEALING_v0.90.3.md`
+- `docs/milestones/v0.90.3/CONTINUITY_WITNESSES_AND_RECEIPTS_v0.90.3.md`
 
 ## Non-Claims
 

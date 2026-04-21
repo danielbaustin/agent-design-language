@@ -16,7 +16,7 @@
 - [x] Signed envelope and trust-root fixture landed
 - [x] Local sealed checkpoint path defined
 - [x] Append-only lineage ledger implemented
-- [ ] Continuity witnesses and receipts emitted
+- [x] Continuity witnesses and receipts emitted
 - [ ] Anti-equivocation negative test landed
 - [ ] Sanctuary/quarantine behavior proven
 - [ ] Redacted Observatory projection proven
