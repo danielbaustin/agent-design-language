@@ -1,0 +1,56 @@
+{
+  "schema_version": "runtime_v2.csm_recovery_decision.v1",
+  "decision_id": "proto-csm-01-safe-resume-0001",
+  "demo_id": "D8",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/recovery/safe_resume_decision.json",
+  "model_ref": "runtime_v2/recovery/eligibility_model.json",
+  "attempt": {
+    "attempt_id": "safe-resume-from-wake-continuity-0001",
+    "attempt_kind": "safe_resume_fixture",
+    "requested_action": "resume_from_validated_wake_continuity_proof",
+    "source_artifact_ref": "runtime_v2/csm_run/wake_continuity_proof.json",
+    "requested_trace_sequence": 9,
+    "declared_predecessor_ref": "runtime_v2/snapshots/snapshot-0001.json",
+    "committed_state_mutation_risk": false,
+    "duplicate_active_head_risk": false
+  },
+  "evaluated_conditions": [
+    {
+      "condition_id": "invalid_action_blocked_before_commit",
+      "status": "passed",
+      "evidence_ref": "runtime_v2/csm_run/invalid_action_violation.json",
+      "consequence": "prior invalid action was refused before commit"
+    },
+    {
+      "condition_id": "snapshot_checksum_verified",
+      "status": "passed",
+      "evidence_ref": "runtime_v2/snapshots/snapshot-0001.json",
+      "consequence": "snapshot checksum matches rehydration report"
+    },
+    {
+      "condition_id": "rehydration_invariants_ran_before_resume",
+      "status": "passed",
+      "evidence_ref": "runtime_v2/rehydration_report.json",
+      "consequence": "invariants ran before active state resumed"
+    },
+    {
+      "condition_id": "wake_continuity_unique_active_head",
+      "status": "passed",
+      "evidence_ref": "runtime_v2/csm_run/wake_continuity_proof.json",
+      "consequence": "wake proof restores exactly one active citizen head"
+    },
+    {
+      "condition_id": "predecessor_linkage_unambiguous",
+      "status": "passed",
+      "evidence_ref": "runtime_v2/csm_run/wake_continuity_proof.json",
+      "consequence": "successor trace sequence links to the snapshot predecessor"
+    }
+  ],
+  "resume_allowed": true,
+  "quarantine_required": false,
+  "resulting_state": "resume_allowed_unique_active_head",
+  "recovery_action": "resume_from_validated_wake_continuity_proof",
+  "next_owner_wp": "WP-14",
+  "claim_boundary": "This safe-resume decision is fixture-backed D8 evidence for the bounded CSM run; it does not implement live Runtime v2 execution, first true Godel-agent birth, or v0.92 identity rebinding."
+}

@@ -1,0 +1,56 @@
+{
+  "schema_version": "runtime_v2.csm_recovery_decision.v1",
+  "decision_id": "proto-csm-01-quarantine-required-0001",
+  "demo_id": "D8",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/recovery/quarantine_required_decision.json",
+  "model_ref": "runtime_v2/recovery/eligibility_model.json",
+  "attempt": {
+    "attempt_id": "unsafe-resume-after-invalid-action-0001",
+    "attempt_kind": "reject_quarantine_fixture",
+    "requested_action": "resume_after_unmediated_state_mutation_attempt",
+    "source_artifact_ref": "runtime_v2/csm_run/invalid_action_violation.json",
+    "requested_trace_sequence": 9,
+    "declared_predecessor_ref": null,
+    "committed_state_mutation_risk": true,
+    "duplicate_active_head_risk": true
+  },
+  "evaluated_conditions": [
+    {
+      "condition_id": "invalid_action_blocked_before_commit",
+      "status": "passed",
+      "evidence_ref": "runtime_v2/csm_run/invalid_action_violation.json",
+      "consequence": "invalid action evidence exists and must be preserved"
+    },
+    {
+      "condition_id": "snapshot_checksum_verified",
+      "status": "passed",
+      "evidence_ref": "runtime_v2/snapshots/snapshot-0001.json",
+      "consequence": "snapshot evidence is available for review"
+    },
+    {
+      "condition_id": "rehydration_invariants_ran_before_resume",
+      "status": "passed",
+      "evidence_ref": "runtime_v2/rehydration_report.json",
+      "consequence": "rehydration gate has a prior valid proof"
+    },
+    {
+      "condition_id": "wake_continuity_unique_active_head",
+      "status": "failed",
+      "evidence_ref": "runtime_v2/csm_run/wake_continuity_proof.json",
+      "consequence": "attempt requests a duplicate active head outside the accepted wake proof"
+    },
+    {
+      "condition_id": "predecessor_linkage_unambiguous",
+      "status": "failed",
+      "evidence_ref": "runtime_v2/csm_run/invalid_action_violation.json",
+      "consequence": "attempt lacks an unambiguous declared predecessor for recovery"
+    }
+  ],
+  "resume_allowed": false,
+  "quarantine_required": true,
+  "resulting_state": "resume_refused_quarantine_required",
+  "recovery_action": "preserve_evidence_and_handoff_to_wp12_quarantine",
+  "next_owner_wp": "WP-12",
+  "claim_boundary": "This decision proves the WP-11 eligibility boundary and WP-12 handoff only; it does not implement quarantine storage, live Runtime v2 execution, first true Godel-agent birth, or v0.92 identity rebinding."
+}

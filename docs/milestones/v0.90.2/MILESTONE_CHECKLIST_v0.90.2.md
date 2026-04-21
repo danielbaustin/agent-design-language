@@ -19,7 +19,7 @@
 - [x] Observatory packet and operator report integrated
 - [x] Invariant coverage map complete
 - [x] Violation artifact contract implemented
-- [ ] Recovery eligibility model implemented
+- [x] Recovery eligibility model implemented
 - [ ] Quarantine state machine implemented
 - [ ] Governed adversarial hook complete with rules of engagement and evidence
 - [ ] Additional hardening probes complete
