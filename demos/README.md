@@ -76,6 +76,12 @@ If you want the stricter v0.90.2 multi-agent repo-review proof packet:
 bash adl/tools/demo_v0902_multi_agent_repo_review_proof.sh
 ```
 
+If you want the v0.90.2 Paper Sonata manuscript review/revision proof packet:
+
+```bash
+bash adl/tools/demo_v0902_paper_sonata_expansion.sh
+```
+
 If you want the CodeBuddy multi-agent review showcase packet:
 
 ```bash
@@ -270,12 +276,18 @@ staged `review-quality-evaluator` lane from `#2070` lands.
 ### v0.90.2 review proof demos
 
 - `v0.90.2/multi_agent_repo_review_proof_demo.md`
+- `v0.90.2/paper_sonata_expansion_demo.md`
 
 Use `bash adl/tools/demo_v0902_multi_agent_repo_review_proof.sh` for the
 stricter multi-agent repo-review proof packet. It is fixture-backed and
 deterministic, but it validates a stronger review contract than the original
 v0.89 demo: specialist boundaries, findings-first synthesis, explicit
 non-findings, residual risk, publication gates, and no merge-approval claims.
+
+Use `bash adl/tools/demo_v0902_paper_sonata_expansion.sh` for the bounded Paper
+Sonata manuscript review/revision proof packet. It preserves the delivered
+v0.88/v0.89 baseline while adding source/draft/review/revision separation,
+addressed revision requests, and an explicit no-submission publication gate.
 
 ### v0.90.1 Runtime v2 and CSM Observatory demos
 
