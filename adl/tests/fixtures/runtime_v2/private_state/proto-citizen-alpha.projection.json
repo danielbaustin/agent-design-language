@@ -1,0 +1,32 @@
+{
+  "schema_version": "runtime_v2.private_state_projection.v1",
+  "projection_id": "projection-proto-citizen-alpha-0001",
+  "projection_kind": "redacted_operator_projection",
+  "citizen_id": "proto-citizen-alpha",
+  "manifold_id": "proto-csm-01",
+  "lineage_id": "lineage-proto-citizen-alpha",
+  "state_sequence": 1,
+  "source_state_schema": "runtime_v2.private_citizen_state.v1",
+  "source_state_ref": "runtime_v2/private_state/proto-citizen-alpha.private-state.bin",
+  "source_state_hash": "sha256:b94a7c66b0c347a7b4a277bad6ed117b6920ac15186f593418cf83314780e992",
+  "visible_summary": [
+    "canonical private state exists for proto-citizen-alpha",
+    "state sequence 1 continues from genesis",
+    "private payload bytes and section digests are redacted from this projection",
+    "projection can support operator review but cannot authorize wake, restore, migration, or inspection"
+  ],
+  "redacted_fields": [
+    "private_sections.payload_bytes",
+    "private_sections.payload_digest",
+    "identity_core.contents",
+    "continuity_memory.contents"
+  ],
+  "authority_status": "projection_not_authority",
+  "validation_status": "hash_linked_to_canonical_binary_state",
+  "claim_boundary": "This JSON projection is review evidence only; canonical binary private-state bytes remain the authority.",
+  "non_claims": [
+    "does not expose raw private-state payloads",
+    "does not authorize wake or migration",
+    "does not replace signed envelope validation planned for WP-04"
+  ]
+}

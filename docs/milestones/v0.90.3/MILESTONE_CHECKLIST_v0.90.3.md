@@ -12,7 +12,7 @@
 ## Execution Gates
 
 - [x] v0.90.2 inheritance and unsafe-assumption audit complete
-- [ ] Canonical private-state format selected
+- [x] Canonical private-state format selected
 - [ ] Signed envelope and trust-root fixture landed
 - [ ] Local sealed checkpoint path defined
 - [ ] Append-only lineage ledger implemented

@@ -16,6 +16,7 @@ mod kernel_loop;
 mod manifold;
 mod observatory;
 mod operator_control;
+mod private_state;
 mod quarantine;
 mod recovery_eligibility;
 mod security_boundary;
